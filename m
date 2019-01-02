@@ -2,136 +2,127 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 746C3C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 17:36:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AEDAC43612
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 17:44:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40F40218EA
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 17:36:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GBABedig"
+	by mail.kernel.org (Postfix) with ESMTP id 1A8F6218DE
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 17:44:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726141AbfABRgU (ORCPT
+        id S1726788AbfABRoK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 12:36:20 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:38915 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726039AbfABRgS (ORCPT
+        Wed, 2 Jan 2019 12:44:10 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:48196 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726044AbfABRoK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 12:36:18 -0500
-Received: by mail-wm1-f66.google.com with SMTP id f81so28195549wmd.4
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 09:36:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=wqfuZcAjUCBtOLKWkS6SRZq/hte3EYpV7rEPQw3hkz8=;
-        b=GBABedigx8sH5GFwpRqipEDZ14ymhRvEFULjEU8wLa/LptdTisVFf9skUy8ylEKwgj
-         RF12pUwr344Vyvy3ZqJC4iKm1OZSWqoVLD5mJZkl91WIY/lo6o1i2e7+QvZjCRXC8gqD
-         TalGJ7+keqs9g4ydv5W/68JCwOiEcJUrlW170vCsYKVKJdezXyBqilxWlN06NaZHYTDc
-         QQgWpPrpqe6SqK7zrP/HpOaRELc378Wew1Pp2kpkP+K7TKwG3na64p2Wzdh2fIyKQxWR
-         416+4i3iHDx7qlDktBw/RgIj4tv1H8OekGka2BVVugetEBDgCsmpkgmw/g7V3gWXuDyc
-         OjoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=wqfuZcAjUCBtOLKWkS6SRZq/hte3EYpV7rEPQw3hkz8=;
-        b=YfSxDKJezHXLtg8bwd4Uyu3iGQVWDcMz1tUTpWLVifoLUaHyM85Jyn9Nl/3ygabELL
-         de2YVTEPMB7K45cs2xhyBfduASHtkUST8URm2mm1DexZWeS2KSmxqrqrgIezXjceeIEw
-         zB+0V0iUhFXBUqqNe9c0Yz0xYu0OuDKicsOIgeToaFGUN0zDgdY+ge0wP4/BUqahngx6
-         0gLZQYYV57wsyO5knLWnkjD422vIPq8728qF5fqWfgNqqSxgNd7P1CIWiE5tN+igWHhX
-         GgPPR6WNPwmkYcHYga+aMJeOABDTxkAcFCY3OOnXZlIUDHRt55Yt3oYjfwlMuV5YWoNT
-         +pAA==
-X-Gm-Message-State: AA+aEWYv74ncejW9RXDkaGCut7pmMIjWwz2nxsG4NjgYLXiqeOOTK7zb
-        WelUPflLjCLG2fAijZJkNH45/A==
-X-Google-Smtp-Source: AFSGD/W97uWDkFBwjy9qVKlmOmTQCuBOdfdQInnihelGax0GIIIDp5gYRmDwwP96Pfhda8t/d8RaVw==
-X-Received: by 2002:a1c:4108:: with SMTP id o8mr34987293wma.91.1546450576552;
-        Wed, 02 Jan 2019 09:36:16 -0800 (PST)
-Received: from andreyknvl0.muc.corp.google.com ([2a00:79e0:15:13:8ce:d7fa:9f4c:492])
-        by smtp.gmail.com with ESMTPSA id t4sm45987076wrm.6.2019.01.02.09.36.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 02 Jan 2019 09:36:15 -0800 (PST)
-From:   Andrey Konovalov <andreyknvl@google.com>
-To:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Christoph Lameter <cl@linux.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Dave Martin <dave.martin@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Paul Lawrence <paullawrence@google.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        kasan-dev@googlegroups.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sparse@vger.kernel.org, linux-mm@kvack.org,
-        linux-kbuild@vger.kernel.org
-Cc:     Kostya Serebryany <kcc@google.com>,
-        Evgeniy Stepanov <eugenis@google.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Jann Horn <jannh@google.com>,
-        Mark Brand <markbrand@google.com>,
-        Chintan Pandya <cpandya@codeaurora.org>,
-        Vishwath Mohan <vishwath@google.com>,
-        Andrey Konovalov <andreyknvl@google.com>
-Subject: [PATCH v2 2/3] kasan: make tag based mode work with CONFIG_HARDENED_USERCOPY
-Date:   Wed,  2 Jan 2019 18:36:07 +0100
-Message-Id: <21de3c171438760a232d51cea56792c886bc9160.1546450432.git.andreyknvl@google.com>
-X-Mailer: git-send-email 2.20.1.415.g653613c723-goog
-In-Reply-To: <cover.1546450432.git.andreyknvl@google.com>
-References: <cover.1546450432.git.andreyknvl@google.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Wed, 2 Jan 2019 12:44:10 -0500
+Received: from office.codethink.co.uk ([148.252.241.226] helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1gekYp-0006TE-Eo; Wed, 02 Jan 2019 17:44:07 +0000
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1gekYo-00062s-Qx; Wed, 02 Jan 2019 17:44:06 +0000
+Message-ID: <d87d33d64801d1a397762aec911541216c4243b1.camel@decadent.org.uk>
+Subject: Re: [PATCH 3.16 000/366] 3.16.61-rc1 review
+From:   Ben Hutchings <ben@decadent.org.uk>
+To:     Johannes Pointner <h4nn35.work@gmail.com>
+Cc:     linux@roeck-us.net, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org
+Date:   Wed, 02 Jan 2019 17:44:01 +0000
+In-Reply-To: <CAHvQdo3ysM2xcm_jC17pHiujCNTKSKo55Rnh9UrGAY+HTp8=Wg@mail.gmail.com>
+References: <lsq.1541965744.387173642@decadent.org.uk>
+         <20181113015707.GA5984@roeck-us.net>
+         <CAHvQdo3ysM2xcm_jC17pHiujCNTKSKo55Rnh9UrGAY+HTp8=Wg@mail.gmail.com>
+Content-Type: multipart/signed; micalg="pgp-sha512";
+        protocol="application/pgp-signature"; boundary="=-9y8fVNaneC0D0R9QtTuy"
+User-Agent: Evolution 3.30.3-1 
+Mime-Version: 1.0
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With CONFIG_HARDENED_USERCOPY enabled __check_heap_object() compares and
-then subtracts a potentially tagged pointer with a non-tagged address of
-the page that this pointer belongs to, which leads to unexpected behavior.
 
-Untag the pointer in __check_heap_object() before doing any of these
-operations.
+--=-9y8fVNaneC0D0R9QtTuy
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
----
- mm/slub.c | 2 ++
- 1 file changed, 2 insertions(+)
+On Wed, 2018-11-14 at 21:47 +0100, Johannes Pointner wrote:
+> On Tue, Nov 13, 2018 at 2:58 AM Guenter Roeck <linux@roeck-us.net>
+> wrote:
+> > On Sun, Nov 11, 2018 at 07:49:04PM +0000, Ben Hutchings wrote:
+> > > This is the start of the stable review cycle for the 3.16.61
+> > > release.
+> > > There are 366 patches in this series, which will be posted as
+> > > responses
+> > > to this one.  If anyone has any issues with these being applied,
+> > > please
+> > > let me know.
+> > >=20
+> > > Responses should be made by Fri Nov 16 18:00:00 UTC 2018.
+> > > Anything received after that time might be too late.
+> > >=20
+> > Build results:
+> >         total: 140 pass: 139 fail: 1
+> > Failed builds:
+> >         i386:tools/perf
+> > Qemu test results:
+> >         total: 217 pass: 217 fail: 0
+> >=20
+> > Details are available at https://kerneltests.org/builders/.
+> >=20
+> > Guenter
+>=20
+> Hello Ben,
+>=20
+> could you please include the following patch which makes it possible
+> to build arm with gcc8
+> a71ae0513c232c844009738af135a13e5d7e39c ARM: fix put_user() for gcc-8
+> this is the version which landed in 3.18
+> and also the following patch
+> 430c3fdb11ec1f0af1eca28460c922b9c1eb2ac5 turn off -Wattribute-alias
+> this also the version which landed in 3.18
 
-diff --git a/mm/slub.c b/mm/slub.c
-index 36c0befeebd8..1e3d0ec4e200 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -3846,6 +3846,8 @@ void __check_heap_object(const void *ptr, unsigned long n, struct page *page,
- 	unsigned int offset;
- 	size_t object_size;
- 
-+	ptr = kasan_reset_tag(ptr);
-+
- 	/* Find object and usable object size. */
- 	s = page->slab_cache;
- 
--- 
-2.20.1.415.g653613c723-goog
+I'm not sure how much point there is in using gcc 8 for Linux 3.16, but
+these look harmless enough so I've queued them up for the next update.
 
+Ben.
+
+--=20
+Ben Hutchings
+Absolutum obsoletum. (If it works, it's out of date.) - Stafford Beer
+
+
+
+--=-9y8fVNaneC0D0R9QtTuy
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEErCspvTSmr92z9o8157/I7JWGEQkFAlws+GIACgkQ57/I7JWG
+EQmquA/+Oh8C4W4VJlOP3x9GeHroy0XuN0PTFsf+LvWTKvzxzrjpRz6nn6Y0ahAZ
+2WXd9SYLIuqLJqdy6hjOcX70uN6lATDGdzbbA2wQ2b/QpAxEksa1zNAnvIBnhss6
+p1GLvpzjMT/yS+dMeGrqj8FXGGNgp74IsRTW5wB40iL/a5ZQxLqDY01gLawd1Jju
+IMxpUQfVFBH0O6EnbiV1Ruz71LF/m5p87OVmwLKcnWm5SffSViLHwfI9BKKlmlid
+u576Gtmy8L0nSKRjNIZqib2ry7AlNYL5wgFfBgumQmerveOpwF31LyN52E47gvUT
+YMm8agWSGnKF1bqGM6xTC0wSHx0smIhBF51w/DtpNA37xdlZA3guEJq7aiBo/Nox
+B8rVYifvsmelaJPmfL8+3/QOcsGDW03nO/6/CNXVTDxe+7MYZdm6Z0KHCt7Tv/Cb
+iony0BLTaRCsOR4OqFCfy3cxDrfz/m85HMJLHruT6x+5Y+MshfRI2NSLz8QAlMMN
+RX7joxQE3vCPKVChkIer1hgkTwwKuezEgssgpYE4lw1u3Fp78L4NM4jnZgZB3i1y
+nlKYQMWSQgC1pwdTu4BRpD18NuEVdn6Dh7zl16FkGumVt04pioIJkvrRCvtZUnl+
+9czdV7x39uKNG0ha7scCNXms3UwTsM/iGCm6G8in9obNILus3SU=
+=9o2v
+-----END PGP SIGNATURE-----
+
+--=-9y8fVNaneC0D0R9QtTuy--
