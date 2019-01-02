@@ -2,142 +2,130 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ED32C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 09:33:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04022C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 09:34:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9A29206C0
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 09:33:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9356218D0
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 09:34:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728450AbfABJdo (ORCPT
+        id S1728597AbfABJeg convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 04:33:44 -0500
-Received: from mailgw02.mediatek.com ([1.203.163.81]:20537 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726782AbfABJdn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 04:33:43 -0500
-X-UUID: 2c62b20328dd418f82c946b7842ab049-20190102
-X-UUID: 2c62b20328dd418f82c946b7842ab049-20190102
-Received: from mtkcas35.mediatek.inc [(172.27.4.250)] by mailgw02.mediatek.com
-        (envelope-from <yong.wu@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 1227216572; Wed, 02 Jan 2019 17:33:39 +0800
-Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS31N2.mediatek.inc
- (172.27.4.87) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 2 Jan
- 2019 17:33:35 +0800
-Received: from [10.17.3.153] (10.17.3.153) by MTKCAS36.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 2 Jan 2019 17:33:34 +0800
-Message-ID: <1546421615.32203.14.camel@mhfsdcap03>
-Subject: Re: [PATCH v5 09/20] iommu/mediatek: Refine protect memory
- definition
-From:   Yong Wu <yong.wu@mediatek.com>
-To:     Nicolas Boichat <drinkcat@chromium.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-CC:     Joerg Roedel <joro@8bytes.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        "Rob Herring" <robh+dt@kernel.org>, Tomasz Figa <tfiga@google.com>,
-        Will Deacon <will.deacon@arm.com>,
-        <linux-mediatek@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>, <devicetree@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        <iommu@lists.linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>,
-        Yingjoe Chen <yingjoe.chen@mediatek.com>,
-        <youlin.pei@mediatek.com>
-Date:   Wed, 2 Jan 2019 17:33:35 +0800
-In-Reply-To: <CANMq1KC0zciUAtvcYoxfBOOMbGFu_Un031QemtuDopjWvwk3cw@mail.gmail.com>
-References: <1546314952-15990-1-git-send-email-yong.wu@mediatek.com>
-         <1546314952-15990-10-git-send-email-yong.wu@mediatek.com>
-         <CANMq1KC0zciUAtvcYoxfBOOMbGFu_Un031QemtuDopjWvwk3cw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Wed, 2 Jan 2019 04:34:36 -0500
+Received: from mga05.intel.com ([192.55.52.43]:48305 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726782AbfABJeg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Jan 2019 04:34:36 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Jan 2019 01:34:35 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,430,1539673200"; 
+   d="scan'208";a="263795505"
+Received: from jlahtine-desk.ger.corp.intel.com (HELO localhost) ([10.251.83.195])
+  by orsmga004.jf.intel.com with ESMTP; 02 Jan 2019 01:34:31 -0800
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-X-MTK:  N
+Content-Transfer-Encoding: 8BIT
+To:     Pavel Machek <pavel@ucw.cz>
+From:   Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20181227083439.GA30407@amd>
+Cc:     bp@alien8.de, hpa@zytor.com,
+        kernel list <linux-kernel@vger.kernel.org>, mingo@redhat.com,
+        tglx@linutronix.de, x86@kernel.org, jani.nikula@linux.intel.com,
+        rodrigo.vivi@intel.com, intel-gfx@lists.freedesktop.org,
+        chris@chris-wilson.co.uk
+References: <20181108175803.GA10785@amd> <20181121115449.GA32455@amd>
+ <154296105546.7930.1457928786446716358@jlahtine-desk.ger.corp.intel.com>
+ <20181124152352.GA9548@amd> <20181208111346.GA5535@amd>
+ <20181208112447.GA9663@amd>
+ <64409c484c0601e7504ccc0cf8d211b3bb524ebe.camel@linux.intel.com>
+ <20181212182902.GA7380@amd>
+ <154468977288.4945.12937975200892746470@jlahtine-desk.ger.corp.intel.com>
+ <20181227083439.GA30407@amd>
+Message-ID: <154642167000.6261.3235659892574932494@jlahtine-desk.ger.corp.intel.com>
+User-Agent: alot/0.6
+Subject: Re: [regression from v4.19] Re: 4.20.0-rc6-next-20181210,
+ v4.20-rc1: list_del corruption on thinkpad x220, graphics related?
+Date:   Wed, 02 Jan 2019 11:34:30 +0200
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-01-02 at 14:23 +0800, Nicolas Boichat wrote:
-> On Tue, Jan 1, 2019 at 11:58 AM Yong Wu <yong.wu@mediatek.com> wrote:
-> >
-> > The protect memory setting is a little different in the different SoCs.
-> > In the register REG_MMU_CTRL_REG(0x110), the TF_PROT(translation fault
-> > protect) shift bit is normally 4 while it shift 5 bits only in the
-> > mt8173. This patch delete the complex MACRO and use a common if-else
-> > instead.
-> >
-> > Also, use "F_MMU_TF_PROT_TO_PROGRAM_ADDR" instead of the hard code(2)
-> > which means the M4U will output the dirty data to the programmed
-> > address that we allocated dynamically when translation fault occurs.
-> >
-> > Signed-off-by: Yong Wu <yong.wu@mediatek.com>
-> > ---
-> > @Nicalos, I don't put it in the plat_data since only the previous mt8173
-> > shift 5. As I know, the latest SoC always use the new setting like mt2712
-> > and mt8183. Thus, I think it is unnecessary to put it in plat_data and
-> > let all the latest SoC set it. Hence, I still keep "== mt8173" for this
-> > like the reg REG_MMU_CTRL_REG.
+Quoting Pavel Machek (2018-12-27 10:34:39)
+> Hi!
 > 
-> Should be ok this way. But maybe one way to avoid hard-coding 4/5
-> below is to have 2 macros:
+> > > > > If you think it is useful, I can try to update my machine to
+> > > > > linux-next.
+> > > > 
+> > > > linux-next is closer to drm-tip, so it's better. Do you have some
+> > > > specific reason for not wanting to run drm-tip (but linux-next is still
+> > > > ok)?
+> > > 
+> > > I already have build/update scripts for -next, and I trust -next not
+> > > to store screenshots of my desktop in my master boot record :-).
+> > > 
+> > > Anyway, it does happen with -next. This time, chromiums were running,
+> > > and crash happened minute? after I exited flightgear. It can be seen
+> > > in the logs.
+> > > 
+> > > Oh and I might want to mention -- machine was rather deep in swap this
+> > > time, as in "mouse jumping when starting fgfs" and "could feel the
+> > > chromium being swapped back in". I might have had this situation
+> > > before, and just powercycled the machine "because it is so deep in
+> > > swap that it will not recover".
+> > > 
+> > > top says:
+> > > 
+> > > top - 19:18:24 up 2 days,  8:03,  2 users,  load average: 3.02, 3.45,
+> > > 3.21
+> > > Tasks: 141 total,   1 running,  86 sleeping,   0 stopped,   2 zombie
+> > > %Cpu(s): 18.8 us,  7.6 sy,  3.0 ni, 68.4 id,  1.3 wa,  0.0 hi,  0.9
+> > > si,  0.0 st
+> > > KiB Mem:   5967968 total,   663244 used,  5304724 free,    48876
+> > > buffers
+> > > KiB Swap:  1681428 total,   170904 used,  1510524 free.   446280
+> > > cached Mem
+> > > 
+> > > ....but of course that memory is free once everything died.
+> > > 
+> > > Any ideas? Should I go back to v4.19 to see if it happens there, too?
+> > 
+> > linux-next includes very much the same code as drm-tip. There's nobody
+> > magically reviewing the code more than it is reviewed for inclusion into
+> > drm-tip, when it is fed into linux-next. So thinking linux-next would be
+> > some way safer is an illusion.
+> > 
+> > It sounds like having memory pressure expedites the corruption, which
+> > should make it easier to reproduce and thus fix.
+> > 
+> > So if you could please try drm-tip reproducing AND open a bug in Bugzilla.
+> > If you are unwilling to do that, it is very difficult to help you
+> > more.
 > 
-> #define F_MMU_TF_PROT_TO_PROGRAM_ADDR (2 << 4)
-> #define F_MMU_TF_PROT_TO_PROGRAM_ADDR_MT8173 (2 << 5)
+> Website says I have to read and agree to two different pieces of
+> legalesee, and I'd need to keep track of yet another password... so
+> you can "communicate" with me.
 > 
-> And still use the if below?
+> But you can already communicate with me, over email.
 
-Thanks for your quick review.
+I've listed all the reasons why our bug handling process is what it is.
 
-OK for me.
+If registering to the Bugzilla is too much of an effort for you, then I
+won't be able to help you further on this.
 
-I will wait Matthias's review for memory/ part. then send the next
-version.
+Regards, Joonas
 
+> I verified v4.19 is stable -- it worked ok for way more than two days
+> it usually takes to crash.
 > 
-> > ---
-> >  drivers/iommu/mtk_iommu.c | 12 +++++-------
-> >  1 file changed, 5 insertions(+), 7 deletions(-)
-> >
-> > diff --git a/drivers/iommu/mtk_iommu.c b/drivers/iommu/mtk_iommu.c
-> > index eca1536..35a1263 100644
-> > --- a/drivers/iommu/mtk_iommu.c
-> > +++ b/drivers/iommu/mtk_iommu.c
-> > @@ -53,11 +53,7 @@
-> >
-> >  #define REG_MMU_CTRL_REG                       0x110
-> >  #define F_MMU_PREFETCH_RT_REPLACE_MOD          BIT(4)
-> > -#define F_MMU_TF_PROTECT_SEL_SHIFT(data) \
-> > -       ((data)->plat_data->m4u_plat == M4U_MT2712 ? 4 : 5)
-> > -/* It's named by F_MMU_TF_PROT_SEL in mt2712. */
-> > -#define F_MMU_TF_PROTECT_SEL(prot, data) \
-> > -       (((prot) & 0x3) << F_MMU_TF_PROTECT_SEL_SHIFT(data))
-> > +#define F_MMU_TF_PROT_TO_PROGRAM_ADDR          2
-> >
-> >  #define REG_MMU_IVRP_PADDR                     0x114
-> >
-> > @@ -521,9 +517,11 @@ static int mtk_iommu_hw_init(const struct mtk_iommu_data *data)
-> >                 return ret;
-> >         }
-> >
-> > -       regval = F_MMU_TF_PROTECT_SEL(2, data);
-> >         if (data->plat_data->m4u_plat == M4U_MT8173)
-> > -               regval |= F_MMU_PREFETCH_RT_REPLACE_MOD;
-> > +               regval = F_MMU_PREFETCH_RT_REPLACE_MOD |
-> > +                         (F_MMU_TF_PROT_TO_PROGRAM_ADDR << 5);
-> > +       else
-> > +               regval = F_MMU_TF_PROT_TO_PROGRAM_ADDR << 4;
-> >         writel_relaxed(regval, data->base + REG_MMU_CTRL_REG);
-> >
-> >         regval = F_L2_MULIT_HIT_EN |
-> > --
-> > 1.9.1
-> >
-
-
+>                                                                 Pavel
+> -- 
+> (english) http://www.livejournal.com/~pavelmachek
+> (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
