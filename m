@@ -2,145 +2,206 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DB62C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 02:19:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04A4BC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 03:29:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DEE782171F
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 02:19:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE7192080A
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 03:29:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728261AbfABCT1 (ORCPT
+        id S1727726AbfABD24 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 1 Jan 2019 21:19:27 -0500
-Received: from mga03.intel.com ([134.134.136.65]:23730 "EHLO mga03.intel.com"
+        Tue, 1 Jan 2019 22:28:56 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:41132 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727360AbfABCT0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Jan 2019 21:19:26 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Jan 2019 18:19:25 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,429,1539673200"; 
-   d="scan'208";a="111443182"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by fmsmga007.fm.intel.com with ESMTP; 01 Jan 2019 18:19:24 -0800
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1geW7v-000HSF-Vj; Wed, 02 Jan 2019 10:19:23 +0800
-Date:   Wed, 2 Jan 2019 10:18:41 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Honghui Zhang <honghui.zhang@mediatek.com>
-Cc:     kbuild-all@01.org, linux-kernel@vger.kernel.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Ryder Lee <ryder.lee@mediatek.com>
-Subject: drivers/pci/controller/pcie-mediatek.c:720:13-16: WARNING:
- Suspicious code. resource_size is maybe missing with mem
-Message-ID: <201901021019.m2FWggcs%fengguang.wu@intel.com>
+        id S1726595AbfABD24 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Jan 2019 22:28:56 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 2CBB285546;
+        Wed,  2 Jan 2019 03:28:55 +0000 (UTC)
+Received: from [10.72.12.55] (ovpn-12-55.pek2.redhat.com [10.72.12.55])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5FEF1608C1;
+        Wed,  2 Jan 2019 03:28:45 +0000 (UTC)
+Subject: Re: [PATCH RFC 1/2] virtio-net: bql support
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, maxime.coquelin@redhat.com,
+        tiwei.bie@intel.com, wexu@redhat.com, jfreimann@redhat.com,
+        "David S. Miller" <davem@davemloft.net>,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org
+References: <20181205225323.12555-1-mst@redhat.com>
+ <20181205225323.12555-2-mst@redhat.com>
+ <21384cb5-99a6-7431-1039-b356521e1bc3@redhat.com>
+ <20181226101528-mutt-send-email-mst@kernel.org>
+ <0fa99d9b-e510-d7eb-db1b-831bd7610ce9@redhat.com>
+ <20181230134106-mutt-send-email-mst@kernel.org>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <b4f06d11-4761-dabb-f641-5fc05c1c34fc@redhat.com>
+Date:   Wed, 2 Jan 2019 11:28:43 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20181230134106-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Wed, 02 Jan 2019 03:28:55 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   8e143b90e4d45cca3dc53760d3cfab988bc74571
-commit: 031337ace2d1c22a447da6390716fe92592cdd6e PCI: mediatek: Add loadable kernel module support
-date:   3 months ago
+
+On 2018/12/31 上午2:45, Michael S. Tsirkin wrote:
+> On Thu, Dec 27, 2018 at 06:00:36PM +0800, Jason Wang wrote:
+>> On 2018/12/26 下午11:19, Michael S. Tsirkin wrote:
+>>> On Thu, Dec 06, 2018 at 04:17:36PM +0800, Jason Wang wrote:
+>>>> On 2018/12/6 上午6:54, Michael S. Tsirkin wrote:
+>>>>> When use_napi is set, let's enable BQLs.  Note: some of the issues are
+>>>>> similar to wifi.  It's worth considering whether something similar to
+>>>>> commit 36148c2bbfbe ("mac80211: Adjust TSQ pacing shift") might be
+>>>>> benefitial.
+>>>> I've played a similar patch several days before. The tricky part is the mode
+>>>> switching between napi and no napi. We should make sure when the packet is
+>>>> sent and trakced by BQL,  it should be consumed by BQL as well. I did it by
+>>>> tracking it through skb->cb.  And deal with the freeze by reset the BQL
+>>>> status. Patch attached.
+>>>>
+>>>> But when testing with vhost-net, I don't very a stable performance,
+>>> So how about increasing TSQ pacing shift then?
+>>
+>> I can test this. But changing default TCP value is much more than a
+>> virtio-net specific thing.
+> Well same logic as wifi applies. Unpredictable latencies related
+> to radio in one case, to host scheduler in the other.
+>
+>>>> it was
+>>>> probably because we batch the used ring updating so tx interrupt may come
+>>>> randomly. We probably need to implement time bounded coalescing mechanism
+>>>> which could be configured from userspace.
+>>> I don't think it's reasonable to expect userspace to be that smart ...
+>>> Why do we need time bounded? used ring is always updated when ring
+>>> becomes empty.
+>>
+>> We don't add used when means BQL may not see the consumed packet in time.
+>> And the delay varies based on the workload since we count packets not bytes
+>> or time before doing the batched updating.
+>>
+>> Thanks
+> Sorry I still don't get it.
+> When nothing is outstanding then we do update the used.
+> So if BQL stops userspace from sending packets then
+> we get an interrupt and packets start flowing again.
 
 
-coccinelle warnings: (new ones prefixed by >>)
+Yes, but how about the cases of multiple flows. That's where I see 
+unstable results.
 
->> drivers/pci/controller/pcie-mediatek.c:720:13-16: WARNING: Suspicious code. resource_size is maybe missing with mem
 
-vim +720 drivers/pci/controller/pcie-mediatek.c
+>
+> It might be suboptimal, we might need to tune it but I doubt running
+> timers is a solution, timer interrupts cause VM exits.
 
-b099631d drivers/pci/host/pcie-mediatek.c       Ryder Lee     2017-08-10  661  
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  662  static int mtk_pcie_startup_port_v2(struct mtk_pcie_port *port)
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  663  {
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  664  	struct mtk_pcie *pcie = port->pcie;
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  665  	struct resource *mem = &pcie->mem;
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  666  	const struct mtk_pcie_soc *soc = port->pcie->soc;
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  667  	u32 val;
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  668  	size_t size;
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  669  	int err;
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  670  
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  671  	/* MT7622 platforms need to enable LTSSM and ASPM from PCIe subsys */
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  672  	if (pcie->base) {
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  673  		val = readl(pcie->base + PCIE_SYS_CFG_V2);
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  674  		val |= PCIE_CSR_LTSSM_EN(port->slot) |
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  675  		       PCIE_CSR_ASPM_L1_EN(port->slot);
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  676  		writel(val, pcie->base + PCIE_SYS_CFG_V2);
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  677  	}
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  678  
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  679  	/* Assert all reset signals */
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  680  	writel(0, port->base + PCIE_RST_CTRL);
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  681  
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  682  	/*
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  683  	 * Enable PCIe link down reset, if link status changed from link up to
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  684  	 * link down, this will reset MAC control registers and configuration
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  685  	 * space.
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  686  	 */
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  687  	writel(PCIE_LINKDOWN_RST_EN, port->base + PCIE_RST_CTRL);
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  688  
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  689  	/* De-assert PHY, PE, PIPE, MAC and configuration reset	*/
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  690  	val = readl(port->base + PCIE_RST_CTRL);
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  691  	val |= PCIE_PHY_RSTB | PCIE_PERSTB | PCIE_PIPE_SRSTB |
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  692  	       PCIE_MAC_SRSTB | PCIE_CRSTB;
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  693  	writel(val, port->base + PCIE_RST_CTRL);
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  694  
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  695  	/* Set up vendor ID and class code */
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  696  	if (soc->need_fix_class_id) {
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  697  		val = PCI_VENDOR_ID_MEDIATEK;
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  698  		writew(val, port->base + PCIE_CONF_VEND_ID);
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  699  
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  700  		val = PCI_CLASS_BRIDGE_PCI;
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  701  		writew(val, port->base + PCIE_CONF_CLASS_ID);
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  702  	}
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  703  
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  704  	/* 100ms timeout value should be enough for Gen1/2 training */
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  705  	err = readl_poll_timeout(port->base + PCIE_LINK_STATUS_V2, val,
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  706  				 !!(val & PCIE_PORT_LINKUP_V2), 20,
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  707  				 100 * USEC_PER_MSEC);
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  708  	if (err)
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  709  		return -ETIMEDOUT;
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  710  
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  711  	/* Set INTx mask */
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  712  	val = readl(port->base + PCIE_INT_MASK);
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  713  	val &= ~INTX_MASK;
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  714  	writel(val, port->base + PCIE_INT_MASK);
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  715  
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  716  	if (IS_ENABLED(CONFIG_PCI_MSI))
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  717  		mtk_pcie_enable_msi(port);
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  718  
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  719  	/* Set AHB to PCIe translation windows */
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15 @720  	size = mem->end - mem->start;
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  721  	val = lower_32_bits(mem->start) | AHB2PCIE_SIZE(fls(size));
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  722  	writel(val, port->base + PCIE_AHB_TRANS_BASE0_L);
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  723  
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  724  	val = upper_32_bits(mem->start);
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  725  	writel(val, port->base + PCIE_AHB_TRANS_BASE0_H);
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  726  
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  727  	/* Set PCIe to AXI translation memory space.*/
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  728  	val = fls(0xffffffff) | WIN_ENABLE;
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  729  	writel(val, port->base + PCIE_AXI_WINDOW0);
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  730  
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  731  	return 0;
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  732  }
-3828d60f drivers/pci/controller/pcie-mediatek.c Honghui Zhang 2018-10-15  733  
 
-:::::: The code at line 720 was first introduced by commit
-:::::: 3828d60fd2ef99f97a677c1f95af2ab3e65e2576 PCI: mediatek: Fixup MSI enablement logic by enabling MSI before clocks
+Probably not a timer but a time counter (or event byte counter) in vhost 
+to add used and signal guest if it exceeds a value instead of waiting 
+the number of packets.
 
-:::::: TO: Honghui Zhang <honghui.zhang@mediatek.com>
-:::::: CC: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+Thanks
+
+
+>
+>>>> Btw, maybe it's time just enable napi TX by default. I get ~10% TCP_RR
+>>>> regression on machine without APICv, (haven't found time to test APICv
+>>>> machine). But consider it was for correctness, I think it's acceptable? Then
+>>>> we can do optimization on top?
+>>>>
+>>>>
+>>>> Thanks
+>>>>
+>>>>
+>>>>> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+>>>>> ---
+>>>>>     drivers/net/virtio_net.c | 27 +++++++++++++++++++--------
+>>>>>     1 file changed, 19 insertions(+), 8 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+>>>>> index cecfd77c9f3c..b657bde6b94b 100644
+>>>>> --- a/drivers/net/virtio_net.c
+>>>>> +++ b/drivers/net/virtio_net.c
+>>>>> @@ -1325,7 +1325,8 @@ static int virtnet_receive(struct receive_queue *rq, int budget,
+>>>>>     	return stats.packets;
+>>>>>     }
+>>>>> -static void free_old_xmit_skbs(struct send_queue *sq)
+>>>>> +static void free_old_xmit_skbs(struct send_queue *sq, struct netdev_queue *txq,
+>>>>> +			       bool use_napi)
+>>>>>     {
+>>>>>     	struct sk_buff *skb;
+>>>>>     	unsigned int len;
+>>>>> @@ -1347,6 +1348,9 @@ static void free_old_xmit_skbs(struct send_queue *sq)
+>>>>>     	if (!packets)
+>>>>>     		return;
+>>>>> +	if (use_napi)
+>>>>> +		netdev_tx_completed_queue(txq, packets, bytes);
+>>>>> +
+>>>>>     	u64_stats_update_begin(&sq->stats.syncp);
+>>>>>     	sq->stats.bytes += bytes;
+>>>>>     	sq->stats.packets += packets;
+>>>>> @@ -1364,7 +1368,7 @@ static void virtnet_poll_cleantx(struct receive_queue *rq)
+>>>>>     		return;
+>>>>>     	if (__netif_tx_trylock(txq)) {
+>>>>> -		free_old_xmit_skbs(sq);
+>>>>> +		free_old_xmit_skbs(sq, txq, true);
+>>>>>     		__netif_tx_unlock(txq);
+>>>>>     	}
+>>>>> @@ -1440,7 +1444,7 @@ static int virtnet_poll_tx(struct napi_struct *napi, int budget)
+>>>>>     	struct netdev_queue *txq = netdev_get_tx_queue(vi->dev, vq2txq(sq->vq));
+>>>>>     	__netif_tx_lock(txq, raw_smp_processor_id());
+>>>>> -	free_old_xmit_skbs(sq);
+>>>>> +	free_old_xmit_skbs(sq, txq, true);
+>>>>>     	__netif_tx_unlock(txq);
+>>>>>     	virtqueue_napi_complete(napi, sq->vq, 0);
+>>>>> @@ -1505,13 +1509,15 @@ static netdev_tx_t start_xmit(struct sk_buff *skb, struct net_device *dev)
+>>>>>     	struct send_queue *sq = &vi->sq[qnum];
+>>>>>     	int err;
+>>>>>     	struct netdev_queue *txq = netdev_get_tx_queue(dev, qnum);
+>>>>> -	bool kick = !skb->xmit_more;
+>>>>> +	bool more = skb->xmit_more;
+>>>>>     	bool use_napi = sq->napi.weight;
+>>>>> +	unsigned int bytes = skb->len;
+>>>>> +	bool kick;
+>>>>>     	/* Free up any pending old buffers before queueing new ones. */
+>>>>> -	free_old_xmit_skbs(sq);
+>>>>> +	free_old_xmit_skbs(sq, txq, use_napi);
+>>>>> -	if (use_napi && kick)
+>>>>> +	if (use_napi && !more)
+>>>>>     		virtqueue_enable_cb_delayed(sq->vq);
+>>>>>     	/* timestamp packet in software */
+>>>>> @@ -1552,7 +1558,7 @@ static netdev_tx_t start_xmit(struct sk_buff *skb, struct net_device *dev)
+>>>>>     		if (!use_napi &&
+>>>>>     		    unlikely(!virtqueue_enable_cb_delayed(sq->vq))) {
+>>>>>     			/* More just got used, free them then recheck. */
+>>>>> -			free_old_xmit_skbs(sq);
+>>>>> +			free_old_xmit_skbs(sq, txq, false);
+>>>>>     			if (sq->vq->num_free >= 2+MAX_SKB_FRAGS) {
+>>>>>     				netif_start_subqueue(dev, qnum);
+>>>>>     				virtqueue_disable_cb(sq->vq);
+>>>>> @@ -1560,7 +1566,12 @@ static netdev_tx_t start_xmit(struct sk_buff *skb, struct net_device *dev)
+>>>>>     		}
+>>>>>     	}
+>>>>> -	if (kick || netif_xmit_stopped(txq)) {
+>>>>> +	if (use_napi)
+>>>>> +		kick = __netdev_tx_sent_queue(txq, bytes, more);
+>>>>> +	else
+>>>>> +		kick = !more || netif_xmit_stopped(txq);
+>>>>> +
+>>>>> +	if (kick) {
+>>>>>     		if (virtqueue_kick_prepare(sq->vq) && virtqueue_notify(sq->vq)) {
+>>>>>     			u64_stats_update_begin(&sq->stats.syncp);
+>>>>>     			sq->stats.kicks++;
