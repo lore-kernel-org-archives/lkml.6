@@ -2,89 +2,81 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75E3DC43612
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 06:04:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40D2AC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 06:05:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46E8921019
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 06:04:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E10621019
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 06:05:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546409106;
+	bh=i5+Tzid5nPl2ZrJEsOWzT6avBy4GUJPyiNvxAmFr/iU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=bNdx2sHFg5jR+xnxDsm4jKu0dcsEVcdP8vhEat7zkF9mP0l07RFVPqzyt+7O0RgVh
+	 KDjG24FETfRDlAr46n2Y9g6+eWTvFswJmi7AAAmYMtpj9q8ifQtR2tOmD6P0X5vCc5
+	 tu0fLlKlckNKe8XfPpX2Wo9zHflphQl4TrCzKh88=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728213AbfABGEJ (ORCPT
+        id S1728554AbfABGFF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 01:04:09 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:6017 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727360AbfABGEJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 01:04:09 -0500
-X-UUID: 23eadf837a9b47388a0b368ad424e620-20190102
-X-UUID: 23eadf837a9b47388a0b368ad424e620-20190102
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
-        (envelope-from <honghui.zhang@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 123869111; Wed, 02 Jan 2019 14:03:58 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 2 Jan 2019 14:03:56 +0800
-Received: from localhost.localdomain (10.17.3.153) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 2 Jan 2019 14:03:56 +0800
-From:   <honghui.zhang@mediatek.com>
-To:     <lorenzo.pieralisi@arm.com>, <bhelgaas@google.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-pci@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <ryder.lee@mediatek.com>
-CC:     <youlin.pei@mediatek.com>, <jianjun.wang@mediatek.com>,
-        Honghui Zhang <honghui.zhang@mediatek.com>
-Subject: [PATCH] PCI: Mediatek: Use resource_size function on resource object
-Date:   Wed, 2 Jan 2019 14:03:53 +0800
-Message-ID: <1546409033-20412-1-git-send-email-honghui.zhang@mediatek.com>
-X-Mailer: git-send-email 2.6.4
+        Wed, 2 Jan 2019 01:05:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58732 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727836AbfABGFF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Jan 2019 01:05:05 -0500
+Received: from localhost (unknown [171.76.109.220])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BC3562089F;
+        Wed,  2 Jan 2019 06:05:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1546409104;
+        bh=i5+Tzid5nPl2ZrJEsOWzT6avBy4GUJPyiNvxAmFr/iU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=TtCXeomeLfZ/nFgLpI+5ZG5wDuH0ANAj51T8Ku/Vfjfg+xf4fbkN5Ec7wwxbgoUIZ
+         d24cPUdA07PPx/yxeNm5+Gm7MQyeNm3VWxNq9Og8HSq12Dzv4b44U7jv/LnuwX9OeO
+         7tQ6DXUFWswTz7K33MXNF5TDMg0ikcpg8D0q9UAc=
+Date:   Wed, 2 Jan 2019 11:33:24 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Julia Lawall <Julia.Lawall@lip6.fr>
+Cc:     Viresh Kumar <vireshk@kernel.org>, kernel-janitors@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 12/20] dmaengine: dw: drop useless LIST_HEAD
+Message-ID: <20190102060324.GF7581@vkoul-mobl>
+References: <1545555435-24576-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1545555435-24576-13-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1545555435-24576-13-git-send-email-Julia.Lawall@lip6.fr>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Honghui Zhang <honghui.zhang@mediatek.com>
+On 23-12-18, 09:57, Julia Lawall wrote:
+> Drop LIST_HEAD where the variable it declares is never used.
+> 
+> Commit ab703f818ac3 ("dmaengine: dw: lazy allocation of dma
+> descriptors") removed the uses, but not the declaration.
+> 
+> The semantic patch that fixes this problem is as follows:
+> (http://coccinelle.lip6.fr/)
+> 
+> // <smpl>
+> @@
+> identifier x;
+> @@
+> - LIST_HEAD(x);
+>   ... when != x
+> // </smpl>
 
-drivers/pci/pcie-mediatek.c:720:13-16: WARNING: Suspicious code. resource_size is maybe missing with mem
+Applied, thanks
 
-Generated by: scripts/coccinelle/api/resource_size.cocci
-
-Signed-off-by: Honghui Zhang <honghui.zhang@mediatek.com>
----
- drivers/pci/controller/pcie-mediatek.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
-index e307166..0168376 100644
---- a/drivers/pci/controller/pcie-mediatek.c
-+++ b/drivers/pci/controller/pcie-mediatek.c
-@@ -654,7 +654,6 @@ static int mtk_pcie_startup_port_v2(struct mtk_pcie_port *port)
- 	struct resource *mem = &pcie->mem;
- 	const struct mtk_pcie_soc *soc = port->pcie->soc;
- 	u32 val;
--	size_t size;
- 	int err;
- 
- 	/* MT7622 platforms need to enable LTSSM and ASPM from PCIe subsys */
-@@ -706,8 +705,7 @@ static int mtk_pcie_startup_port_v2(struct mtk_pcie_port *port)
- 		mtk_pcie_enable_msi(port);
- 
- 	/* Set AHB to PCIe translation windows */
--	size = mem->end - mem->start;
--	val = lower_32_bits(mem->start) | AHB2PCIE_SIZE(fls(size));
-+	val = lower_32_bits(mem->start) | AHB2PCIE_SIZE(fls(resource_size(mem)));
- 	writel(val, port->base + PCIE_AHB_TRANS_BASE0_L);
- 
- 	val = upper_32_bits(mem->start);
 -- 
-2.6.4
-
+~Vinod
