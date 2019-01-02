@@ -2,263 +2,124 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8382C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 20:58:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EDDFC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 20:59:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9388E21479
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 20:58:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC84B21479
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 20:59:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="n5Dmd1LE"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kf7OU3nI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729913AbfABU6i (ORCPT
+        id S1728582AbfABU7n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 15:58:38 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:14838 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728494AbfABU57 (ORCPT
+        Wed, 2 Jan 2019 15:59:43 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:36299 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726941AbfABU7n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 15:57:59 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c2d25ca0001>; Wed, 02 Jan 2019 12:57:46 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 02 Jan 2019 12:57:57 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 02 Jan 2019 12:57:57 -0800
-Received: from HQMAIL102.nvidia.com (172.18.146.10) by HQMAIL104.nvidia.com
- (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 2 Jan
- 2019 20:57:56 +0000
-Received: from HQMAIL106.nvidia.com (172.18.146.12) by HQMAIL102.nvidia.com
- (172.18.146.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 2 Jan
- 2019 20:57:56 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL106.nvidia.com
- (172.18.146.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
- Transport; Wed, 2 Jan 2019 20:57:56 +0000
-Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.103.52]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5c2d25d40001>; Wed, 02 Jan 2019 12:57:56 -0800
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <mperttunen@nvidia.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <adrian.hunter@intel.com>,
-        <ulf.hansson@linaro.org>
-CC:     <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
-        "Sowjanya Komatineni" <skomatineni@nvidia.com>
-Subject: [PATCH V3 2/3] arm64: dts: tegra: Add SDMMC Auto-cal settings
-Date:   Wed, 2 Jan 2019 12:57:53 -0800
-Message-ID: <1546462674-22856-2-git-send-email-skomatineni@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1546462674-22856-1-git-send-email-skomatineni@nvidia.com>
-References: <1546462674-22856-1-git-send-email-skomatineni@nvidia.com>
-X-NVConfidentiality: public
-MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1546462666; bh=2SWoPO6NwFIzFdpT72OH/hkAcXgzZSZZXtHlPMG46as=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
-         Content-Type;
-        b=n5Dmd1LEjV+z5X1H9glj5tduPTv0XcSYt+yfHm7pKvbAZtob/dGPtLZMAisbN1nd+
-         UIFUUl9DNYwtp4W3+bS/V6PyBc1/wF993RwF0qk4dt/pDr4wUADvz/XzhiEkS86WFm
-         CinlTXVN3k0HsP4hZjhpt1OCdg6uTjWghcMyMmiLcf3B7Tdr/1UKSi/Ep4vf5rP9LO
-         oLaKdI57ytyzZLLMEXOhP7JCwaQ5jQZhoGlklEm14x0OuGdEuEonglPX+MFbQjazVF
-         kwgA6LWNm/Og7GmWkD0alAwISbMasgKxL1RvmDl465rjzKDmvHCXH4xuo/cwZEdfwY
-         LZ8v1WH0CZ7+Q==
+        Wed, 2 Jan 2019 15:59:43 -0500
+Received: by mail-pg1-f196.google.com with SMTP id n2so15066181pgm.3
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 12:59:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=slOs5HVUDIi/Tpmu6RLaJrzMYZWLNYUNQu8MlH9pJVg=;
+        b=kf7OU3nI0S2hH7AACI8TgRbihF5wMq4j1iybBNcdzj8Ii/cRpXvYcM8afgiYGDtzog
+         JVPpGA6m1iHi4ki+AoGqnd7Fn6JPv21nmOoF3GB8oQ1Q11TUt4y1CXcZcBRYMPkCgbBR
+         G3NDYvWerD+tMhtZX1Z7SKtBxYWNvgReBn+s+Lhd2Znzo40DeAielNeHERmkecPvDOHc
+         MBppGX3/cXrnjkfiMDsS+se2Xdr+Xlrp/o1Z5wsgeeXgcYXeYqo55I03FkeOSbDIueaw
+         bHYgoP7/t+fveVxzFvBuOtzpJufkvMqLUMXNBM7P0RqurmG9Lgwej8+133rVxjVQt12N
+         kDAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=slOs5HVUDIi/Tpmu6RLaJrzMYZWLNYUNQu8MlH9pJVg=;
+        b=fmS/X1w0wiOy02XQCoh3ZCnZAFdVyeNgGhtNriyyLe78GBf6PQWiEGX/59zgIlE3zv
+         BMfJ9olO5zE1xYvmAT05CffdfDXxaY0lmQFMGbjEGBMcY6w6+6EfF9XSeEViSrDdWlU9
+         jhscUBGQWA5EVaEsOZDwh6swTjz1711Eo3T/gLmswJq+dexRLwI17VmnBEPcKnmCWMxg
+         qZkMhM8iGSPOfNkhYNTRwiXPrF/yepxRCsGe4IC9E9SLiaBW8xcFFRKwhbLhgaF7Ph9r
+         ca1+LhpBZdfNdmSPpZJ5YqhHdhgy/g+YLKecrJPyRJUAiQeymEgLg+yxi54vaC3UfIzh
+         fWzQ==
+X-Gm-Message-State: AA+aEWYRYzReW2W+/J8usLPGdXmnN3fB488eTHcGmDUrt8xVlpX9ZdLv
+        kbyLxfui0fmxANAaCgdIUyo=
+X-Google-Smtp-Source: AFSGD/Vvax0pYW9NlZyR7zElkVToNVJU1PJQMm6rUcxN2PSXY1xRgUlx+zn2FTTfvTifgdQRzIFGZA==
+X-Received: by 2002:a62:4c5:: with SMTP id 188mr46395749pfe.130.1546462781908;
+        Wed, 02 Jan 2019 12:59:41 -0800 (PST)
+Received: from localhost.localdomain ([2620:0:1008:fd00:78b4:3a07:980a:287b])
+        by smtp.gmail.com with ESMTPSA id k24sm79185108pfj.13.2019.01.02.12.59.41
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 02 Jan 2019 12:59:41 -0800 (PST)
+From:   Andrei Vagin <avagin@gmail.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, Andrei Vagin <avagin@gmail.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Subject: [PATCH] kernel: release ptraced tasks before zap_pid_ns_processes
+Date:   Wed,  2 Jan 2019 12:59:39 -0800
+Message-Id: <20190102205939.26231-1-avagin@gmail.com>
+X-Mailer: git-send-email 2.17.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add SDMMC initial pad offsets used by auto calibration process.
+Currently, exit_ptrace() adds all ptraced tasks in a dead list, than
+zap_pid_ns_processes() waits all tasks in a current pid ns, and only
+then tasks from the dead list are released.
 
-Add SDMMC fixed drive strengths for Tegra210 and above which are
-used when calibration timeouts.
-Fixed drive strengths are based on Pre SI Analysis of the pads.
+zap_pid_ns_processes() can stuck on waiting tasks from the dead list. In
+this case, we will have one unkillable process with one or more dead
+children.
 
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Andrei Vagin <avagin@gmail.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra186.dtsi |  2 ++
- arch/arm64/boot/dts/nvidia/tegra194.dtsi | 34 +++++++++++++++++++
- arch/arm64/boot/dts/nvidia/tegra210.dtsi | 57 ++++++++++++++++++++++++++++++--
- 3 files changed, 91 insertions(+), 2 deletions(-)
+ kernel/exit.c | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-index 2f3c8e29520d..0631bb9bfcc3 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-@@ -311,6 +311,8 @@
- 		nvidia,pad-autocal-pull-down-offset-hs400 = <0x05>;
- 		nvidia,pad-autocal-pull-up-offset-1v8-timeout = <0x0a>;
- 		nvidia,pad-autocal-pull-down-offset-1v8-timeout = <0x0a>;
-+		nvidia,pad-autocal-pull-up-offset-3v3-timeout = <0x0a>;
-+		nvidia,pad-autocal-pull-down-offset-3v3-timeout = <0x0a>;
- 		nvidia,default-tap = <0x5>;
- 		nvidia,default-trim = <0x9>;
- 		nvidia,dqs-trim = <63>;
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-index c2091bb16546..3fab6802c335 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-@@ -301,6 +301,17 @@
- 			clock-names = "sdhci";
- 			resets = <&bpmp TEGRA194_RESET_SDMMC1>;
- 			reset-names = "sdhci";
-+			nvidia,pad-autocal-pull-up-offset-3v3-timeout =
-+									<0x07>;
-+			nvidia,pad-autocal-pull-down-offset-3v3-timeout =
-+									<0x07>;
-+			nvidia,pad-autocal-pull-up-offset-1v8-timeout = <0x06>;
-+			nvidia,pad-autocal-pull-down-offset-1v8-timeout =
-+									<0x07>;
-+			nvidia,pad-autocal-pull-up-offset-sdr104 = <0x00>;
-+			nvidia,pad-autocal-pull-down-offset-sdr104 = <0x00>;
-+			nvidia,default-tap = <0x9>;
-+			nvidia,default-trim = <0x5>;
- 			status = "disabled";
- 		};
+diff --git a/kernel/exit.c b/kernel/exit.c
+index 0e21e6d21f35..ccaa6f6549ba 100644
+--- a/kernel/exit.c
++++ b/kernel/exit.c
+@@ -664,9 +664,6 @@ static void forget_original_parent(struct task_struct *father,
+ {
+ 	struct task_struct *p, *t, *reaper;
  
-@@ -312,6 +323,18 @@
- 			clock-names = "sdhci";
- 			resets = <&bpmp TEGRA194_RESET_SDMMC3>;
- 			reset-names = "sdhci";
-+			nvidia,pad-autocal-pull-up-offset-1v8 = <0x00>;
-+			nvidia,pad-autocal-pull-down-offset-1v8 = <0x7a>;
-+			nvidia,pad-autocal-pull-up-offset-3v3-timeout = <0x07>;
-+			nvidia,pad-autocal-pull-down-offset-3v3-timeout =
-+									<0x07>;
-+			nvidia,pad-autocal-pull-up-offset-1v8-timeout = <0x06>;
-+			nvidia,pad-autocal-pull-down-offset-1v8-timeout =
-+									<0x07>;
-+			nvidia,pad-autocal-pull-up-offset-sdr104 = <0x00>;
-+			nvidia,pad-autocal-pull-down-offset-sdr104 = <0x00>;
-+			nvidia,default-tap = <0x9>;
-+			nvidia,default-trim = <0x5>;
- 			status = "disabled";
- 		};
+-	if (unlikely(!list_empty(&father->ptraced)))
+-		exit_ptrace(father, dead);
+-
+ 	/* Can drop and reacquire tasklist_lock */
+ 	reaper = find_child_reaper(father);
+ 	if (list_empty(&father->children))
+@@ -705,8 +702,18 @@ static void exit_notify(struct task_struct *tsk, int group_dead)
+ 	LIST_HEAD(dead);
  
-@@ -323,6 +346,17 @@
- 			clock-names = "sdhci";
- 			resets = <&bpmp TEGRA194_RESET_SDMMC4>;
- 			reset-names = "sdhci";
-+			nvidia,pad-autocal-pull-up-offset-hs400 = <0x00>;
-+			nvidia,pad-autocal-pull-down-offset-hs400 = <0x00>;
-+			nvidia,pad-autocal-pull-up-offset-1v8-timeout = <0x0a>;
-+			nvidia,pad-autocal-pull-down-offset-1v8-timeout =
-+									<0x0a>;
-+			nvidia,pad-autocal-pull-up-offset-3v3-timeout = <0x0a>;
-+			nvidia,pad-autocal-pull-down-offset-3v3-timeout =
-+									<0x0a>;
-+			nvidia,default-tap = <0x8>;
-+			nvidia,default-trim = <0x14>;
-+			nvidia,dqs-trim = <40>;
- 			status = "disabled";
- 		};
+ 	write_lock_irq(&tasklist_lock);
+-	forget_original_parent(tsk, &dead);
++	if (unlikely(!list_empty(&tsk->ptraced)))
++		exit_ptrace(tsk, &dead);
++	write_unlock_irq(&tasklist_lock);
++
++	/* Ptraced tasks have to be released before zap_pid_ns_processes(). */
++	list_for_each_entry_safe(p, n, &dead, ptrace_entry) {
++		list_del_init(&p->ptrace_entry);
++		release_task(p);
++	}
  
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-index 2205d66b0443..41408df9d4e9 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-@@ -476,6 +476,48 @@
- 		compatible = "nvidia,tegra210-pinmux";
- 		reg = <0x0 0x700008d4 0x0 0x29c>, /* Pad control registers */
- 		      <0x0 0x70003000 0x0 0x294>; /* Mux registers */
-+		sdmmc1_3v3_drv: sdmmc1-3v3-drv {
-+			sdmmc1 {
-+				nvidia,pins = "drive_sdmmc1";
-+				nvidia,pull-down-strength = <0x8>;
-+				nvidia,pull-up-strength = <0x8>;
-+			};
-+		};
-+		sdmmc1_1v8_drv: sdmmc1-1v8-drv {
-+			sdmmc1 {
-+				nvidia,pins = "drive_sdmmc1";
-+				nvidia,pull-down-strength = <0x4>;
-+				nvidia,pull-up-strength = <0x3>;
-+			};
-+		};
-+		sdmmc2_1v8_drv: sdmmc2-1v8-drv {
-+			sdmmc2 {
-+				nvidia,pins = "drive_sdmmc2";
-+				nvidia,pull-down-strength = <0x10>;
-+				nvidia,pull-up-strength = <0x10>;
-+			};
-+		};
-+		sdmmc3_3v3_drv: sdmmc3-3v3-drv {
-+			sdmmc3 {
-+				nvidia,pins = "drive_sdmmc3";
-+				nvidia,pull-down-strength = <0x8>;
-+				nvidia,pull-up-strength = <0x8>;
-+			};
-+		};
-+		sdmmc3_1v8_drv: sdmmc3-1v8-drv {
-+			sdmmc3 {
-+				nvidia,pins = "drive_sdmmc3";
-+				nvidia,pull-down-strength = <0x4>;
-+				nvidia,pull-up-strength = <0x3>;
-+			};
-+		};
-+		sdmmc4_1v8_drv: sdmmc4-1v8-drv {
-+			sdmmc4 {
-+				nvidia,pins = "drive_sdmmc4";
-+				nvidia,pull-down-strength = <0x10>;
-+				nvidia,pull-up-strength = <0x10>;
-+			};
-+		};
- 	};
++	write_lock_irq(&tasklist_lock);
++	forget_original_parent(tsk, &dead);
+ 	if (group_dead)
+ 		kill_orphaned_pgrp(tsk->group_leader, NULL);
  
- 	/*
-@@ -1050,9 +1092,12 @@
- 		clock-names = "sdhci";
- 		resets = <&tegra_car 14>;
- 		reset-names = "sdhci";
--		pinctrl-names = "sdmmc-3v3", "sdmmc-1v8";
-+		pinctrl-names = "sdmmc-3v3", "sdmmc-1v8",
-+				"sdmmc-3v3-drv", "sdmmc-1v8-drv";
- 		pinctrl-0 = <&sdmmc1_3v3>;
- 		pinctrl-1 = <&sdmmc1_1v8>;
-+		pinctrl-2 = <&sdmmc1_3v3_drv>;
-+		pinctrl-3 = <&sdmmc1_1v8_drv>;
- 		nvidia,pad-autocal-pull-up-offset-3v3 = <0x00>;
- 		nvidia,pad-autocal-pull-down-offset-3v3 = <0x7d>;
- 		nvidia,pad-autocal-pull-up-offset-1v8 = <0x7b>;
-@@ -1075,6 +1120,8 @@
- 		clock-names = "sdhci";
- 		resets = <&tegra_car 9>;
- 		reset-names = "sdhci";
-+		pinctrl-names = "sdmmc-1v8-drv";
-+		pinctrl-0 = <&sdmmc2_1v8_drv>;
- 		nvidia,pad-autocal-pull-up-offset-1v8 = <0x05>;
- 		nvidia,pad-autocal-pull-down-offset-1v8 = <0x05>;
- 		nvidia,default-tap = <0x8>;
-@@ -1090,9 +1137,12 @@
- 		clock-names = "sdhci";
- 		resets = <&tegra_car 69>;
- 		reset-names = "sdhci";
--		pinctrl-names = "sdmmc-3v3", "sdmmc-1v8";
-+		pinctrl-names = "sdmmc-3v3", "sdmmc-1v8",
-+				"sdmmc-3v3-drv", "sdmmc-1v8-drv";
- 		pinctrl-0 = <&sdmmc3_3v3>;
- 		pinctrl-1 = <&sdmmc3_1v8>;
-+		pinctrl-2 = <&sdmmc3_3v3_drv>;
-+		pinctrl-3 = <&sdmmc3_1v8_drv>;
- 		nvidia,pad-autocal-pull-up-offset-3v3 = <0x00>;
- 		nvidia,pad-autocal-pull-down-offset-3v3 = <0x7d>;
- 		nvidia,pad-autocal-pull-up-offset-1v8 = <0x7b>;
-@@ -1110,6 +1160,9 @@
- 		clock-names = "sdhci";
- 		resets = <&tegra_car 15>;
- 		reset-names = "sdhci";
-+		pinctrl-names = "sdmmc-3v3-drv", "sdmmc-1v8-drv";
-+		pinctrl-0 = <&sdmmc4_1v8_drv>;
-+		pinctrl-1 = <&sdmmc4_1v8_drv>;
- 		nvidia,pad-autocal-pull-up-offset-1v8 = <0x05>;
- 		nvidia,pad-autocal-pull-down-offset-1v8 = <0x05>;
- 		nvidia,default-tap = <0x8>;
 -- 
-2.7.4
+2.17.2
 
