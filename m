@@ -2,71 +2,235 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77287C43444
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 12:24:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8577CC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 12:27:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FF9D206A3
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 12:24:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47269218CD
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 12:27:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="KUFtcbKg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729843AbfABMYz (ORCPT
+        id S1729844AbfABM1Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 07:24:55 -0500
-Received: from outbound-smtp16.blacknight.com ([46.22.139.233]:34890 "EHLO
-        outbound-smtp16.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728120AbfABMYz (ORCPT
+        Wed, 2 Jan 2019 07:27:25 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:51818 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728120AbfABM1Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 07:24:55 -0500
-Received: from mail.blacknight.com (pemlinmail01.blacknight.ie [81.17.254.10])
-        by outbound-smtp16.blacknight.com (Postfix) with ESMTPS id 6F6831C2829
-        for <linux-kernel@vger.kernel.org>; Wed,  2 Jan 2019 12:24:52 +0000 (GMT)
-Received: (qmail 12175 invoked from network); 2 Jan 2019 12:24:52 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[37.228.229.96])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 2 Jan 2019 12:24:52 -0000
-Date:   Wed, 2 Jan 2019 12:24:50 +0000
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Aditya Pakki <pakki001@umn.edu>, kjlu@umn.edu,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        David Rientjes <rientjes@google.com>,
-        Yang Shi <yang.shi@linux.alibaba.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Joe Perches <joe@perches.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH] mm: compaction.c: Propagate return value upstream
-Message-ID: <20190102122450.GD31517@techsingularity.net>
-References: <20181226194257.11038-1-pakki001@umn.edu>
- <20181227035029.GE20878@bombadil.infradead.org>
+        Wed, 2 Jan 2019 07:27:25 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x02CR3H2023476;
+        Wed, 2 Jan 2019 06:27:03 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1546432023;
+        bh=lOs1pYtZZ4BDSEjaj8NL32uFIdC+voVOPDxUtK3XZqQ=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=KUFtcbKgX64YuIFQN/gkVghOgmt2bIcYbClq5J+EMbkunB6vvvuI8XJ3/8qk8uXwN
+         hXCumOAtKLYIJGY1sE2jrArF4MWBx7k5mrc/wUpUDQ6ijRnjHWMAOMfzcTZwayaIbC
+         ZKcSWfNwmgLyVrCVi6ovaOW5+jn9fXvc/bfjsK1I=
+Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x02CR29h028417
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 2 Jan 2019 06:27:03 -0600
+Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 2
+ Jan 2019 06:27:02 -0600
+Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Wed, 2 Jan 2019 06:27:02 -0600
+Received: from [172.24.190.117] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x02CQwwT017314;
+        Wed, 2 Jan 2019 06:26:59 -0600
+Subject: Re: [RFC PATCH v4 12/13] irqchip: ti-sci-inta: Add support for
+ Interrupt Aggregator driver
+To:     Peter Ujfalusi <peter.ujfalusi@ti.com>, <marc.zyngier@arm.com>,
+        Nishanth Menon <nm@ti.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, <tglx@linutronix.de>,
+        <jason@lakedaemon.net>
+CC:     Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, Tero Kristo <t-kristo@ti.com>,
+        Sekhar Nori <nsekhar@ti.com>,
+        Device Tree Mailing List <devicetree@vger.kernel.org>
+References: <20181227060829.5080-1-lokeshvutla@ti.com>
+ <20181227061313.5451-1-lokeshvutla@ti.com>
+ <20181227061313.5451-12-lokeshvutla@ti.com>
+ <9efbb01b-2ef9-13e7-f871-8db2c92844ee@ti.com>
+From:   Lokesh Vutla <lokeshvutla@ti.com>
+Message-ID: <50da7038-9b1c-6910-2cf1-78fa98ddc3bd@ti.com>
+Date:   Wed, 2 Jan 2019 17:56:47 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <20181227035029.GE20878@bombadil.infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <9efbb01b-2ef9-13e7-f871-8db2c92844ee@ti.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 26, 2018 at 07:50:29PM -0800, Matthew Wilcox wrote:
-> On Wed, Dec 26, 2018 at 01:42:56PM -0600, Aditya Pakki wrote:
-> > In sysctl_extfrag_handler(), proc_dointvec_minmax() can return an
-> > error. The fix propagates the error upstream in case of failure.
-> 
-> Why not just ...
-> 
-> Mel, Randy?  You seem to have been the prime instigators on this.
-> 
+Hi Peter,
 
-Patch seems fine.
+On 02/01/19 5:19 PM, Peter Ujfalusi wrote:
+> 
+> 
+> 
+> On 27/12/2018 8.13, Lokesh Vutla wrote:
+>> Texas Instruments' K3 generation SoCs has an IP Interrupt Aggregator
+>> which is an interrupt controller that does the following:
+>> - Converts events to interrupts that can be understood by
+>>    an interrupt router.
+>> - Allows for multiplexing of events to interrupts.
+>>
+>> Configuration of the interrupt aggregator registers can only be done by
+>> a system co-processor and the driver needs to send a message to this
+>> co processor over TISCI protocol.
+>>
+>> Add support for Interrupt Aggregator driver over TISCI protocol.
+>>
+>> Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
+>> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+>> ---
+>>   MAINTAINERS                       |   1 +
+>>   drivers/irqchip/Kconfig           |  12 +
+>>   drivers/irqchip/Makefile          |   1 +
+>>   drivers/irqchip/irq-ti-sci-inta.c | 561 ++++++++++++++++++++++++++++++
+>>   4 files changed, 575 insertions(+)
+>>   create mode 100644 drivers/irqchip/irq-ti-sci-inta.c
+>>
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+>> index aebce615151e..7d12788c844a 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -15026,6 +15026,7 @@ F:	drivers/reset/reset-ti-sci.c
+>>   F:	Documentation/devicetree/bindings/interrupt-controller/ti,sci-intr.txt
+>>   F:	Documentation/devicetree/bindings/interrupt-controller/ti,sci-inta.txt
+>>   F:	drivers/irqchip/irq-ti-sci-intr.c
+>> +F:	drivers/irqchip/irq-ti-sci-inta.c
+>>   
+>>   Texas Instruments ASoC drivers
+>>   M:	Peter Ujfalusi <peter.ujfalusi@ti.com>
+>> diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
+>> index a8d9bed0254b..d16fd39408ad 100644
+>> --- a/drivers/irqchip/Kconfig
+>> +++ b/drivers/irqchip/Kconfig
+>> @@ -417,6 +417,18 @@ config TI_SCI_INTR_IRQCHIP
+>>   	  If you wish to use interrupt router irq resources managed by the
+>>   	  TI System Controller, say Y here. Otherwise, say N.
+>>   
+>> +config TI_SCI_INTA_IRQCHIP
+>> +	bool
+>> +	depends on TI_SCI_PROTOCOL && ARCH_K3
+>> +	select IRQ_DOMAIN
+>> +	select IRQ_DOMAIN_HIERARCHY
+>> +	select K3_INTA_MSI_DOMAIN
+>> +	help
+>> +	  This enables the irqchip driver support for K3 Interrupt aggregator
+>> +	  over TI System Control Interface available on some new TI's SoCs.
+>> +	  If you wish to use interrupt aggregator irq resources managed by the
+>> +	  TI System Controller, say Y here. Otherwise, say N.
+>> +
+>>   endmenu
+>>   
+>>   config SIFIVE_PLIC
+>> diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
+>> index b4ff376a08ef..a679490a7059 100644
+>> --- a/drivers/irqchip/Makefile
+>> +++ b/drivers/irqchip/Makefile
+>> @@ -95,3 +95,4 @@ obj-$(CONFIG_SIFIVE_PLIC)		+= irq-sifive-plic.o
+>>   obj-$(CONFIG_IMX_IRQSTEER)		+= irq-imx-irqsteer.o
+>>   obj-$(CONFIG_MADERA_IRQ)		+= irq-madera.o
+>>   obj-$(CONFIG_TI_SCI_INTR_IRQCHIP)	+= irq-ti-sci-intr.o
+>> +obj-$(CONFIG_TI_SCI_INTA_IRQCHIP)	+= irq-ti-sci-inta.o
+>> diff --git a/drivers/irqchip/irq-ti-sci-inta.c b/drivers/irqchip/irq-ti-sci-inta.c
+>> new file mode 100644
+>> index 000000000000..78bfc83a079a
+>> --- /dev/null
+>> +++ b/drivers/irqchip/irq-ti-sci-inta.c
+>> @@ -0,0 +1,561 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Texas Instruments' K3 Interrupt Aggregator irqchip driver
+>> + *
+>> + * Copyright (C) 2018 Texas Instruments Incorporated - http://www.ti.com/
+>> + *	Lokesh Vutla <lokeshvutla@ti.com>
+>> + */
+>> +
+>> +#include <linux/err.h>
+>> +#include <linux/io.h>
+>> +#include <linux/msi.h>
+>> +#include <linux/irqchip.h>
+>> +#include <linux/of_platform.h>
+>> +#include <linux/of_address.h>
+>> +#include <linux/of_irq.h>
+>> +#include <linux/module.h>
+>> +#include <linux/moduleparam.h>
+>> +#include <linux/irqdomain.h>
+> 
+> To fix this:
+> 
+> drivers/irqchip/irq-ti-sci-inta.c: In function ‘inta_msi_irq_handler’:
+> drivers/irqchip/irq-ti-sci-inta.c:308:8: error: ‘IRQF_TRIGGER_HIGH’ undeclared (first use in this function); did you mean ‘IRQD_TRIGGER_MASK’?
+>          IRQF_TRIGGER_HIGH)
+>          ^~~~~~~~~~~~~~~~~
+>          IRQD_TRIGGER_MASK
+> drivers/irqchip/irq-ti-sci-inta.c:308:8: note: each undeclared identifier is reported only once for each function it appears in
+> drivers/irqchip/irq-ti-sci-inta.c: In function ‘ti_sci_inta_alloc_parent_irq’:
+> drivers/irqchip/irq-ti-sci-inta.c:360:27: error: ‘IRQF_TRIGGER_HIGH’ undeclared (first use in this function); did you mean ‘IRQD_TRIGGER_MASK’?
+>    parent_fwspec.param[2] = IRQF_TRIGGER_HIGH;
+>                             ^~~~~~~~~~~~~~~~~
+>                             IRQD_TRIGGER_MASK
+> make[3]: *** [scripts/Makefile.build:276: drivers/irqchip/irq-ti-sci-inta.o] Error 1
+> 
+> Add this:
+> #include <linux/interrupt.h>
 
-Acked-by: Mel Gorman <mgorman@techsingularity.net>
+I did not see any such build error during my testing as shown below. But agree 
+about the report. Will fix it in next version
 
--- 
-Mel Gorman
-SUSE Labs
+➜  linux git:(nex-master) v8make defconfig
+   HOSTCC  scripts/basic/fixdep
+   HOSTCC  scripts/kconfig/conf.o
+   HOSTCC  scripts/kconfig/confdata.o
+   HOSTCC  scripts/kconfig/expr.o
+   HOSTCC  scripts/kconfig/symbol.o
+   HOSTCC  scripts/kconfig/preprocess.o
+   LEX     scripts/kconfig/zconf.lex.c
+   YACC    scripts/kconfig/zconf.tab.h
+   HOSTCC  scripts/kconfig/zconf.lex.o
+   YACC    scripts/kconfig/zconf.tab.c
+   HOSTCC  scripts/kconfig/zconf.tab.o
+v8  HOSTLD  scripts/kconfig/conf
+*** Default configuration is based on 'defconfig'
+make #
+# configuration written to .config
+#
+I% 
+ 
+                              ➜  linux git:(nex-master) v8make Image dtbs -j4 -s
+arch/arm64/boot/dts/rockchip/rk3399-gru-bob.dts:25.9-29.5: Warning (graph_port): 
+/edp-panel/ports: graph port node name should be 'port'
+arch/arm64/boot/dts/rockchip/rk3399-gru-kevin.dts:46.9-50.5: Warning 
+(graph_port): /edp-panel/ports: graph port node name should be 'port'
+arch/arm64/boot/dts/rockchip/rk3399-sapphire-excavator.dts:94.9-98.5: Warning 
+(graph_port): /edp-panel/ports: graph port node name should be 'port'
+<stdin>:1339:2: warning: #warning syscall open_tree not implemented [-Wcpp]
+<stdin>:1342:2: warning: #warning syscall move_mount not implemented [-Wcpp]
+<stdin>:1345:2: warning: #warning syscall fsopen not implemented [-Wcpp]
+<stdin>:1348:2: warning: #warning syscall fsconfig not implemented [-Wcpp]
+<stdin>:1351:2: warning: #warning syscall fsmount not implemented [-Wcpp]
+<stdin>:1354:2: warning: #warning syscall fspick not implemented [-Wcpp]
+➜  linux git:(nex-master)
+
+Thanks and regards,
+Lokesh
