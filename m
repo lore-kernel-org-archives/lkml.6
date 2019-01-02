@@ -2,199 +2,207 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 663BDC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 09:42:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47243C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 09:42:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F0E621871
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 09:42:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LwDj3eIU"
+	by mail.kernel.org (Postfix) with ESMTP id 1706321871
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 09:42:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729059AbfABJmW (ORCPT
+        id S1729113AbfABJmf convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 04:42:22 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:34928 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726499AbfABJmV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 04:42:21 -0500
-Received: by mail-it1-f195.google.com with SMTP id p197so38119156itp.0
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 01:42:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lN8aYFkXMIh18S4pB8FBTHOVGOAHhewcRsB/ZesP0k8=;
-        b=LwDj3eIUDGIoJS+mHmlbfX2Zo91VRMp+LruorF6HsmbIoZkHTnZY7g02/4umOkTYyD
-         74vh9+lb6HNl9qGDW8oN/8A4R33m9iO7J2LN7H0GoqHmxTnYGuNjclu3OMKQb+nxbFmt
-         lwvEWz47jcj/zJrXHHUCZg5/7QihJ/GPLB2EoY1ZJfkrmMoaLaIJrVRaR0qpjM7XVFWX
-         Mo+xU72+rFLCu/i9ccHfh5ar2VjD/GcT8FH2plOpGS8H8UCSd08m5FbFAjablcoJvePn
-         Q6YJHP+N/xuCntnzr+WjEcD67TaMdSrM+kw9xgl+ZvZa2wZB+YYLUFWVegy4HBSXaxLp
-         AvWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lN8aYFkXMIh18S4pB8FBTHOVGOAHhewcRsB/ZesP0k8=;
-        b=WO+JOjltdqFqHwhPY/+nCTUUrOleauTaB8RF3QRPgPsJ4JIMVgSB7kz53N/19HSsYZ
-         Qn1nUHcJhd9GKNgDJkFUuqan9RXAAAAZQ96UY2eJElurOdhgmLBy0yxIAJUYd8OExS9h
-         Gm91BB514HMlbSgUQ4wDd2MEFgRFEn/fdBKMFb3RCXZ1pGkoRtiXG8D0Sf+EzQJhDYTG
-         sAbOx70TyAe4Xc0bNQzqJpJkYD4bBq7832Mb4HG3T5u7ifgnDH16zTLCR1qQe5Pu4krs
-         s8KXtM5MbvCg+G2+uWILEzzkYTZW7Hw74mOb19NXEZKYPE1WOyEiirl4HqvOkxMZx8Cc
-         4Ldw==
-X-Gm-Message-State: AJcUukcbJmpemNXhuOhHbBSH3dDdwwLWnJ31UM9zOlX0vdGm4fAi8CD/
-        pmoRYoHTwEvHFuqEkaEDCdeKdTocYtJ/QEl3wfnRhw==
-X-Google-Smtp-Source: ALg8bN7gwybTqjDD89hwFMgbJZozgjyRs4uG2VeG2i7qs5FaTXiGETcgKHpF5DWLYjo9GWbEqRKgWjncBf8iec1fkcQ=
-X-Received: by 2002:a24:f14d:: with SMTP id q13mr25762990iti.166.1546422140133;
- Wed, 02 Jan 2019 01:42:20 -0800 (PST)
+        Wed, 2 Jan 2019 04:42:35 -0500
+Received: from mga09.intel.com ([134.134.136.24]:14275 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726499AbfABJme (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Jan 2019 04:42:34 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Jan 2019 01:42:34 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,430,1539673200"; 
+   d="scan'208";a="134653632"
+Received: from jlahtine-desk.ger.corp.intel.com (HELO localhost) ([10.251.83.195])
+  by fmsmga001.fm.intel.com with ESMTP; 02 Jan 2019 01:42:30 -0800
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <000000000000ae384d057dc685c1@google.com> <1186a139-3a46-3311-5f72-bef02d403ee1@suse.cz>
-In-Reply-To: <1186a139-3a46-3311-5f72-bef02d403ee1@suse.cz>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Wed, 2 Jan 2019 10:42:09 +0100
-Message-ID: <CACT4Y+YbM7sVDg7XEpY-E9bW2dF8a6xd_Wp_dWCnCM02DbrbtA@mail.gmail.com>
-Subject: Re: general protection fault in transparent_hugepage_enabled
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     syzbot <syzbot+a5fea9200aefd1cf4818@syzkaller.appspotmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>, Michal Hocko <mhocko@suse.com>,
-        David Rientjes <rientjes@google.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Matthew Wilcox <willy@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+To:     Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>,
+        David Woodhouse <dwmw2@infradead.org>, Eric Wong <e@80x24.org>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>
+From:   Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20181227114948.ev4b3jte3ubsc5us@dcvr>
+Cc:     iommu@lists.linux-foundation.org, intel-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20181227114948.ev4b3jte3ubsc5us@dcvr>
+Message-ID: <154642214920.6261.102817444136744919@jlahtine-desk.ger.corp.intel.com>
+User-Agent: alot/0.6
+Subject: Re: iommu_intel or i915 regression in 4.18, 4.19.12 and drm-tip
+Date:   Wed, 02 Jan 2019 11:42:29 +0200
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 2, 2019 at 8:42 AM Vlastimil Babka <vbabka@suse.cz> wrote:
->
-> On 12/24/18 4:48 PM, syzbot wrote:
-> > Hello,
-> >
-> > syzbot found the following crash on:
-> >
-> > HEAD commit:    6a1d293238c1 Add linux-next specific files for 20181224
-> > git tree:       linux-next
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=149a2add400000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=c190b602a5d2d731
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=a5fea9200aefd1cf4818
-> > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1798bfb7400000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17f4dc57400000
-> >
-> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> > Reported-by: syzbot+a5fea9200aefd1cf4818@syzkaller.appspotmail.com
-> >
-> > sshd (6016) used greatest stack depth: 15720 bytes left
-> > kasan: CONFIG_KASAN_INLINE enabled
-> > kasan: GPF could be caused by NULL-ptr deref or user memory access
-> > general protection fault: 0000 [#1] PREEMPT SMP KASAN
-> > CPU: 1 PID: 6032 Comm: syz-executor045 Not tainted 4.20.0-rc7-next-20181224
-> > #187
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> > Google 01/01/2011
-> > RIP: 0010:transparent_hugepage_enabled+0x8c/0x5e0 mm/huge_memory.c:69
->
-> FTR, it was most certainly the same thing as here:
-> https://marc.info/?l=linux-mm&m=154563777207477&w=2
+Quoting Eric Wong (2018-12-27 13:49:48)
+> I just got a used Thinkpad X201 (Core i5 M 520, Intel QM57
+> chipset) and hit some kernel panics while trying to view
+> image/animation-intensive stuff in Firefox (X11) unless I use
+> "iommu_intel=igfx_off".
+> 
+> With Debian stable backport kernels, "linux-image-4.17.0-0.bpo.3-amd64"
+> (4.17.17-1~bpo9+1) has no problems.  But "linux-image-4.18.0-0.bpo.3-amd64"
+> (4.18.20-2~bpo9+1) gives a blank screen before I can login via agetty
+> and run startx.
 
-Thanks for the update. I see the fix is still not in linux-next, which has:
+Could you open a new bug at (and attach relevant information there):
 
-+bool transparent_hugepage_enabled(struct vm_area_struct *vma)
-+{
-+       if (vma_is_anonymous(vma))
-+               return __transparent_hugepage_enabled(vma);
-+       if (vma_is_shmem(vma) && shmem_huge_enabled(vma))
-+               return __transparent_hugepage_enabled(vma);
-+
-+       return false;
-+}
+https://01.org/linuxgraphics/documentation/how-report-bugs
 
-Let's wait until the patch is updated and then tell syzbot that "mm,
-thp, proc: report THP eligibility for each vma" fixes this.
+Most confusing about this is that 4.17 would have worked to begin with,
+without intel_iommu=igfx_off (unless it was the default for older
+kernel?)
 
+Did you maybe update other parts of the system while updating the
+kernel?
 
-> > Code: 80 3c 02 00 0f 85 ae 04 00 00 4c 8b a3 a0 00 00 00 48 b8 00 00 00 00
-> > 00 fc ff df 49 8d bc 24 b8 01 00 00 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f
-> > 85 91 04 00 00 49 8b bc 24 b8 01 00 00 e8 2d 70 e6
-> > RSP: 0018:ffff8881c2237138 EFLAGS: 00010202
-> > RAX: dffffc0000000000 RBX: ffff8881c2bdbc60 RCX: 0000000000000000
-> > RDX: 0000000000000037 RSI: ffffffff81c8fa1a RDI: 00000000000001b8
-> > RBP: ffff8881c2237160 R08: ffffed10383b25ed R09: ffffed10383b25ec
-> > R10: ffffed10383b25ec R11: ffff8881c1d92f63 R12: 0000000000000000
-> > R13: ffff8881c2bdbd00 R14: dffffc0000000000 R15: 0000000000000f5e
-> > FS:  0000000001a48880(0000) GS:ffff8881dad00000(0000) knlGS:0000000000000000
-> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > CR2: 0000000020b58000 CR3: 00000001c2210000 CR4: 00000000001406e0
-> > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> > Call Trace:
-> >   show_smap+0x167/0x580 fs/proc/task_mmu.c:805
-> >   traverse+0x344/0x7b0 fs/seq_file.c:113
-> >   seq_read+0xc76/0x1150 fs/seq_file.c:188
-> >   do_loop_readv_writev fs/read_write.c:700 [inline]
-> >   do_iter_read+0x4bc/0x670 fs/read_write.c:924
-> >   vfs_readv+0x175/0x1c0 fs/read_write.c:986
-> >   kernel_readv fs/splice.c:362 [inline]
-> >   default_file_splice_read+0x539/0xb20 fs/splice.c:417
-> >   do_splice_to+0x12e/0x190 fs/splice.c:880
-> >   splice_direct_to_actor+0x31c/0x9d0 fs/splice.c:957
-> >   do_splice_direct+0x2d4/0x420 fs/splice.c:1066
-> >   do_sendfile+0x62a/0xe50 fs/read_write.c:1439
-> >   __do_sys_sendfile64 fs/read_write.c:1494 [inline]
-> >   __se_sys_sendfile64 fs/read_write.c:1486 [inline]
-> >   __x64_sys_sendfile64+0x15d/0x250 fs/read_write.c:1486
-> >   do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-> >   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> > RIP: 0033:0x440089
-> > Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7
-> > 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff
-> > ff 0f 83 5b 14 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-> > RSP: 002b:00007fff3d710a18 EFLAGS: 00000213 ORIG_RAX: 0000000000000028
-> > RAX: ffffffffffffffda RBX: 00007fff3d710a20 RCX: 0000000000440089
-> > RDX: 0000000020b58000 RSI: 0000000000000003 RDI: 0000000000000003
-> > RBP: 00000000006ca018 R08: 0000000000000010 R09: 65732f636f72702f
-> > R10: 000000000000ffff R11: 0000000000000213 R12: 0000000000401970
-> > R13: 0000000000401a00 R14: 0000000000000000 R15: 0000000000000000
-> > Modules linked in:
-> > ---[ end trace faf026efd8795e93 ]---
-> > RIP: 0010:transparent_hugepage_enabled+0x8c/0x5e0 mm/huge_memory.c:69
-> > Code: 80 3c 02 00 0f 85 ae 04 00 00 4c 8b a3 a0 00 00 00 48 b8 00 00 00 00
-> > 00 fc ff df 49 8d bc 24 b8 01 00 00 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f
-> > 85 91 04 00 00 49 8b bc 24 b8 01 00 00 e8 2d 70 e6
-> > RSP: 0018:ffff8881c2237138 EFLAGS: 00010202
-> > RAX: dffffc0000000000 RBX: ffff8881c2bdbc60 RCX: 0000000000000000
-> > RDX: 0000000000000037 RSI: ffffffff81c8fa1a RDI: 00000000000001b8
-> > RBP: ffff8881c2237160 R08: ffffed10383b25ed R09: ffffed10383b25ec
-> > R10: ffffed10383b25ec R11: ffff8881c1d92f63 R12: 0000000000000000
-> > R13: ffff8881c2bdbd00 R14: dffffc0000000000 R15: 0000000000000f5e
-> > FS:  0000000001a48880(0000) GS:ffff8881dad00000(0000) knlGS:0000000000000000
-> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > CR2: 0000000020b58000 CR3: 00000001c2210000 CR4: 00000000001406e0
-> > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> >
-> >
-> > ---
-> > This bug is generated by a bot. It may contain errors.
-> > See https://goo.gl/tpsmEJ for more information about syzbot.
-> > syzbot engineers can be reached at syzkaller@googlegroups.com.
-> >
-> > syzbot will keep track of this bug report. See:
-> > https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
-> > syzbot.
-> > syzbot can test patches for this bug, for details see:
-> > https://goo.gl/tpsmEJ#testing-patches
+If you could attach full boot dmesg from working and non-working kernel +
+have config file of both kernel's in Bugzilla. That'd be a good start!
+
+Regards, Joonas
+
+> Building 4.19.12 myself got me into X11 and able to start
+> Firefox to panic the kernel.  I also updated to the latest BIOS
+> (1.40), but it's an EOL laptop (but it's still the most powerful
+> laptop I use).  I intend to replace the BIOS with Coreboot soon...
+> 
+> Initially, I thought I was hitting another GPU hang from 4.18+:
+> 
+>         https://bugs.freedesktop.org/show_bug.cgi?id=107945
+> 
+> But building drm-tip @ commit 28bb1fc015cedadf3b099b8bd0bb27609849f362
+> ("drm-tip: 2018y-12m-25d-08h-12m-37s UTC integration manifest")
+> I was still able to reproduce the panic unless I use iommu_intel=igfx_off
+> "i915.reset=1" did not help matters, either.
+> 
+> Below is what I got from netconsole while on drm-tip:
+> 
+> Kernel panic - not syncing: DMAR hardware is malfunctioning
+> Shutting down cpus with NMI
+> Kernel Offset: disabled
+> ---[ end Kernel panic - not syncing: DMAR hardware is malfunctioning ]---
+> ------------[ cut here ]------------
+> sched: Unexpected reschedule of offline CPU#3!
+> WARNING: CPU: 0 PID: 105 at native_smp_send_reschedule+0x34/0x40
+> Modules linked in: netconsole ccm snd_hda_codec_hdmi snd_hda_codec_conexant snd_hda_codec_generic intel_powerclamp coretemp kvm_intel kvm irqbypass crc32_pclmul crc32c_intel ghash_clmulni_intel arc4 iwldvm aesni_intel aes_x86_64 crypto_simd cryptd mac80211 glue_helper intel_cstate iwlwifi intel_uncore i915 intel_gtt i2c_algo_bit iosf_mbi drm_kms_helper cfbfillrect syscopyarea intel_ips cfbimgblt sysfillrect sysimgblt fb_sys_fops cfbcopyarea thinkpad_acpi prime_numbers cfg80211 ledtrig_audio i2c_i801 sg snd_hda_intel led_class snd_hda_codec drm ac drm_panel_orientation_quirks snd_hwdep battery e1000e agpgart snd_hda_core snd_pcm snd_timer ptp snd soundcore pps_core ehci_pci ehci_hcd lpc_ich video mfd_core button acpi_cpufreq ecryptfs ip_tables x_tables ipv6 evdev thermal [last unloaded: netconsole]
+> CPU: 0 PID: 105 Comm: kworker/u8:3 Not tainted 4.20.0-rc7b1+ #1
+> Hardware name: LENOVO 3680FBU/3680FBU, BIOS 6QET70WW (1.40 ) 10/11/2012
+> Workqueue: i915 __i915_gem_free_work [i915]
+> RIP: 0010:native_smp_send_reschedule+0x34/0x40
+> Code: 05 69 c6 c9 00 73 15 48 8b 05 18 2d b3 00 be fd 00 00 00 48 8b 40 30 e9 9a 58 7d 00 89 fe 48 c7 c7 78 73 af 81 e8 dc c2 01 00 <0f> 0b c3 66 0f 1f 84 00 00 00 00 00 66 66 66 66 90 8b 05 0d 7d df
+> RSP: 0018:ffff888075003d98 EFLAGS: 00010092
+> RAX: 000000000000002e RBX: ffff8880751a0740 RCX: 0000000000000006
+> RDX: 0000000000000007 RSI: 0000000000000082 RDI: ffff888075015440
+> RBP: ffff88806e823700 R08: 0000000000000000 R09: ffff888072fc07c0
+> R10: ffff888075003d60 R11: 00000000fff5c002 R12: ffff8880751a0740
+> R13: ffff8880751a0740 R14: 0000000000000000 R15: 0000000000000003
+> FS:  0000000000000000(0000) GS:ffff888075000000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007fdb1f53f000 CR3: 0000000001c0a004 CR4: 00000000000206f0
+> Call Trace:
+>  <IRQ>
+>  ? check_preempt_curr+0x4e/0x90
+>  ? ttwu_do_wakeup.isra.19+0x14/0xf0
+>  ? try_to_wake_up+0x323/0x410
+>  ? autoremove_wake_function+0xe/0x30
+>  ? __wake_up_common+0x8d/0x140
+>  ? __wake_up_common_lock+0x6c/0x90
+>  ? irq_work_run_list+0x49/0x80
+>  ? tick_sched_handle.isra.6+0x50/0x50
+>  ? update_process_times+0x3b/0x50
+>  ? tick_sched_handle.isra.6+0x30/0x50
+>  ? tick_sched_timer+0x3b/0x80
+>  ? __hrtimer_run_queues+0xea/0x270
+>  ? hrtimer_interrupt+0x101/0x240
+>  ? smp_apic_timer_interrupt+0x6a/0x150
+>  ? apic_timer_interrupt+0xf/0x20
+>  </IRQ>
+>  ? panic+0x1ca/0x212
+>  ? panic+0x1c7/0x212
+>  ? __iommu_flush_iotlb+0x19e/0x1c0
+>  ? iommu_flush_iotlb_psi+0x96/0xf0
+>  ? intel_unmap+0xbf/0xf0
+>  ? i915_gem_object_put_pages_gtt+0x36/0x220 [i915]
+>  ? drm_ht_remove+0x20/0x20 [drm]
+>  ? drm_mm_remove_node+0x1ad/0x310 [drm]
+>  ? __pm_runtime_resume+0x54/0x70
+>  ? __i915_gem_object_unset_pages+0x129/0x170 [i915]
+>  ? __i915_gem_object_put_pages+0x70/0xa0 [i915]
+>  ? __i915_gem_free_objects+0x245/0x4e0 [i915]
+>  ? __switch_to_asm+0x24/0x60
+>  ? __i915_gem_free_work+0x65/0xa0 [i915]
+>  ? process_one_work+0x1fd/0x410
+>  ? worker_thread+0x49/0x3f0
+>  ? kthread+0xf8/0x130
+>  ? process_one_work+0x410/0x410
+>  ? kthread_park+0x90/0x90
+>  ? ret_from_fork+0x35/0x40
+> WARNING: CPU: 0 PID: 105 at native_smp_send_reschedule+0x34/0x40
+> ---[ end trace 7dd2184d8c86cef5 ]---
+> ------------[ cut here ]------------
+> sched: Unexpected reschedule of offline CPU#2!
+> WARNING: CPU: 0 PID: 105 at native_smp_send_reschedule+0x34/0x40
+> Modules linked in: netconsole ccm snd_hda_codec_hdmi snd_hda_codec_conexant snd_hda_codec_generic intel_powerclamp coretemp kvm_intel kvm irqbypass crc32_pclmul crc32c_intel ghash_clmulni_intel arc4 iwldvm aesni_intel aes_x86_64 crypto_simd cryptd mac80211 glue_helper intel_cstate iwlwifi intel_uncore i915 intel_gtt i2c_algo_bit iosf_mbi drm_kms_helper cfbfillrect syscopyarea intel_ips cfbimgblt sysfillrect sysimgblt fb_sys_fops cfbcopyarea thinkpad_acpi prime_numbers cfg80211 ledtrig_audio i2c_i801 sg snd_hda_intel led_class snd_hda_codec drm ac drm_panel_orientation_quirks snd_hwdep battery e1000e agpgart snd_hda_core snd_pcm snd_timer ptp snd soundcore pps_core ehci_pci ehci_hcd lpc_ich video mfd_core button acpi_cpufreq ecryptfs ip_tables x_tables ipv6 evdev thermal [last unloaded: netconsole]
+> CPU: 0 PID: 105 Comm: kworker/u8:3 Tainted: G        W         4.20.0-rc7b1+ #1
+> Hardware name: LENOVO 3680FBU/3680FBU, BIOS 6QET70WW (1.40 ) 10/11/2012
+> Workqueue: i915 __i915_gem_free_work [i915]
+> RIP: 0010:native_smp_send_reschedule+0x34/0x40
+> Code: 05 69 c6 c9 00 73 15 48 8b 05 18 2d b3 00 be fd 00 00 00 48 8b 40 30 e9 9a 58 7d 00 89 fe 48 c7 c7 78 73 af 81 e8 dc c2 01 00 <0f> 0b c3 66 0f 1f 84 00 00 00 00 00 66 66 66 66 90 8b 05 0d 7d df
+> RSP: 0018:ffff888075003d10 EFLAGS: 00010086
+> RAX: 000000000000002e RBX: ffff888075120740 RCX: 0000000000000006
+> RDX: 0000000000000007 RSI: 0000000000000096 RDI: ffff888075015440
+> RBP: ffff88807378b700 R08: 0000000000000000 R09: ffff888072fc07c0
+> R10: ffff888075003cd8 R11: 00000000ffeb4a02 R12: ffff888075120740
+> R13: ffff888075120740 R14: 0000000000000004 R15: 0000000000000002
+> FS:  0000000000000000(0000) GS:ffff888075000000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007fdb1f53f000 CR3: 0000000001c0a004 CR4: 00000000000206f0
+> Call Trace:
+>  <IRQ>
+>  ? check_preempt_curr+0x4e/0x90
+>  ? ttwu_do_wakeup.isra.19+0x14/0xf0
+>  ? try_to_wake_up+0x323/0x410
+>  ? __wake_up_common+0x8d/0x140
+>  ? ep_poll_callback+0xbd/0x2a0
+>  ? __wake_up_common+0x8d/0x140
+>  ? __wake_up_common_lock+0x6c/0x90
+>  ? irq_work_run_list+0x49/0x80
+>  ? tick_sched_handle.isra.6+0x50/0x50
+>  ? update_process_times+0x3b/0x50
+>  ? tick_sched_handle.isra.6+0x30/0x50
+>  ? tick_sched_timer+0x3b/0x80
+>  ? __hrtimer_run_queues+0xea/0x270
+>  ? hrtimer_interrupt+0x101/0x240
+>  ? smp_apic_timer_interrupt+0x6a/0x150
+>  ? apic_timer_interrupt+0xf/0x20
+>  </IRQ>
+>  ? panic+0x1ca/0x212
+>  ? panic+0x1c7/0x212
+>  ? __iommu_flush_iotlb+0x19e/0x1c0
+>  ? iommu_flush_iotlb_psi+0x96/0xf0
+>  ? intel_unmap+0xbf/0xf0
+>  ? i915_gem_object_put_pages_gtt+0x36/0x220 [i915]
+>  ? drm_ht_remove+0x20/0x20 [drm]
+> ---[ end trace 7dd2184d8c86cef6 ]---
+> 
+> 
+> Thanks.  I barely use graphics and certainly not with KVM;
+> so I don't think I'll be missing anything igfx_off.  But
+> maybe this bugreport can help other X201 users.
