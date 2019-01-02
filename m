@@ -2,274 +2,427 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DATE_IN_FUTURE_06_12,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38FE5C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 08:46:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A09EC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 08:50:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01C2B21019
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 08:46:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2001B21019
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 08:50:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729033AbfABIq3 (ORCPT
+        id S1728909AbfABIuO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 03:46:29 -0500
-Received: from mxhk.zte.com.cn ([63.217.80.70]:55898 "EHLO mxhk.zte.com.cn"
+        Wed, 2 Jan 2019 03:50:14 -0500
+Received: from mout.gmx.net ([212.227.15.19]:39757 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728505AbfABIq2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 03:46:28 -0500
-Received: from mse01.zte.com.cn (unknown [10.30.3.20])
-        by Forcepoint Email with ESMTPS id 20536CA289B3B2641E9B;
-        Wed,  2 Jan 2019 16:46:26 +0800 (CST)
-Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse01.zte.com.cn with ESMTP id x028kHEY003813;
-        Wed, 2 Jan 2019 16:46:17 +0800 (GMT-8)
-        (envelope-from peng.hao2@zte.com.cn)
-Received: from localhost.localdomain.localdomain ([10.74.120.59])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2019010216463935-20045751 ;
-          Wed, 2 Jan 2019 16:46:39 +0800 
-From:   Peng Hao <peng.hao2@zte.com.cn>
-To:     qiang.zhao@nxp.com, leoyang.li@nxp.com
-Cc:     linux-kernel@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-Subject: [RESEND PATCH v5] soc/fsl/qe: fix err handling of ucc_of_parse_tdm
-Date:   Thu, 3 Jan 2019 01:09:53 +0800
-Message-Id: <1546448993-17397-1-git-send-email-peng.hao2@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2019-01-02 16:46:39,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2019-01-02 16:46:09,
-        Serialize complete at 2019-01-02 16:46:09
-X-MAIL: mse01.zte.com.cn x028kHEY003813
+        id S1726293AbfABIuN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Jan 2019 03:50:13 -0500
+Received: from localhost.localdomain ([91.14.68.120]) by mail.gmx.com
+ (mrgmx001 [212.227.17.190]) with ESMTPSA (Nemesis) id
+ 0MePcd-1gy2ur0vhH-00Q9AY; Wed, 02 Jan 2019 09:49:54 +0100
+From:   Frank Wunderlich <frank-w@public-files.de>
+To:     CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+Cc:     Alexander Ryabchenko <d3adme4t@gmail.com>,
+        Frank Wunderlich <frank-w@public-files.de>
+Subject: [PATCH] drm/mediatek: Add MTK Framebuffer-Device (mt7623)
+Date:   Wed,  2 Jan 2019 09:49:17 +0100
+Message-Id: <20190102084917.4049-1-frank-w@public-files.de>
+X-Mailer: git-send-email 2.17.1
+X-Provags-ID: V03:K1:aVWalfcsmDmLlWpweYScmQAL75sa95cYXPWbuUrIGPEHrH8veqU
+ 9ABtHhBnZZ8Hqw7Ic5L1KiemJ4AfF+NuqAmqHzUFslQxKeDqFVsd8ylpG/4jq727+o5uNpH
+ vQPVSzM812nYEta/H6UF4STkmDqX8qSFi/o3XxmgZGyXUcvPFYSRUSAcAmNDlymVcxqYE/1
+ 1mFeoDsWHPkkVyjt1RnUQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:HZlDClP0Fj0=:yZAnXnz4gMAYlWPpUCap8o
+ VLHFnePiS5bLXt6MIfPm8/ExH5xYL/UdjUlabHVSXWCkbEKz3ZgsWx0hybm6g6jC2fIPWPgJn
+ YkwJlYPLSgQNf4ov/H0Bdzjkq2IeHjtDfzErm/8uuzOF9zShISzX79XLF9Vni0PExJp4euQ3S
+ RvwIH7au3rNqPEwRyfzqlgLc6OwyaDI0iy+4rkq9vYWUTwxT88RN9SFR+Z9j8KjE/CmdYBG69
+ MqQGyJq7EO3ybT8sN6+EiJ3+TfIzZXbSloxLvNnX4ctkaDuGyhruLVAGekylMCZmxqL+XMm44
+ ZxKv9SDUBHcm3I2axid5kncmaXuE3E/W4hiUN+bubiung1w2SYH+TVNdDfwLNR5nUrjRQu5PY
+ 2+FTTnD1q7ez3Jzl1FWh+YHGDp9KP7ICE/4n21QjEaC5d/ob9t5Q3PRy6bGQZ8OJkvUZqRd8o
+ vE0p0ihpSh84rpDDGZFjZ/CyL7iB7kbOQ+4q1/5YAAuavaj1i/nqweH7RXBFhK/f3f0AAY3hk
+ k4rk4rIQymetz2VAQTBwtNOAWVpkY3nRN853yJD86BKN16G1xCii8PR47htBK707jSpCXvr/5
+ 49XJJnK1Q/mOjnY3gv/IPejnl7jidLcFLghXa87NumR7LIBYYoZrjC4QJYx/oyuknRjGW70cQ
+ AkqyRzZRKlEEKfIN33dUcKicTzHxVrYr2fVu7Gk3xkiIic6InS8mhKXzsI3G2rJC+9FtoRZMi
+ LlJCfA3CY/4C1aOJqaslNqhaYAtNCnZPqPo03hJf4+jhuuNLXuAmmDgQTcjSZoO5SyxvhmP+t
+ BbTO+578xwfdb2V25fBlTQB18GlH4GMOLfmz7ucHk2ssyl5k+YKbElI+olL2hFiujOEgJsBtl
+ QfXbuP9chTjsbQUpJ+JqHKqU8mi4Y7Ba2O13Dw4x7BUH5SuMlx6D3gMMT+eJY7
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wen Yang <wen.yang99@zte.com.cn>
+From: CK Hu <ck.hu@mediatek.com>
 
-Currently there are some issues with the ucc_of_parse_tdm function:
-1, a possible null pointer dereference in ucc_of_parse_tdm,
-detected by the semantic patch deref_null.cocci,
-with the following warning:
-drivers/soc/fsl/qe/qe_tdm.c:177:21-24: ERROR: pdev is NULL but dereferenced.
-2, dev gets modified, so in any case that devm_iounmap() will fail
-even when the new pdev is valid, because the iomap was done with a
- different pdev.
-3, there is no driver bind with the "fsl,t1040-qe-si" or
-"fsl,t1040-qe-siram" device. So allocating resources using devm_*()
-with these devices won't provide a cleanup path for these resources
-when the caller fails.
+This patch adds Framebuffer-Driver for Mediatek
 
-This patch fixes them.
+currently tested on mt7623, maybe works on other platforms
+MTK-FBDev written by CK Hu and ported from 4.4
 
-Suggested-by: Li Yang <leoyang.li@nxp.com>
-Suggested-by: Christophe LEROY <christophe.leroy@c-s.fr>
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-Reviewed-by: Peng Hao <peng.hao2@zte.com.cn>
-CC: Julia Lawall <julia.lawall@lip6.fr>
-CC: Zhao Qiang <qiang.zhao@nxp.com>
-CC: David S. Miller <davem@davemloft.net>
-CC: netdev@vger.kernel.org
-CC: linuxppc-dev@lists.ozlabs.org
-CC: linux-kernel@vger.kernel.org
+based on patchset drm/hdmi for 7623 v5 (except last part included in 4.20)
+  https://patchwork.kernel.org/project/linux-mediatek/list/?series=25989
+
+depends on
+  dts-patch (resend of 5/5, parts 1-4 already in 4.20):
+    "arm: dts: mt7623: add display subsystem related device nodes"
+    https://patchwork.kernel.org/patch/10588951/
+  2 bugfix-patches from bibby hsieh
+    fix-boot-up-for-720-and-480-but-1080
+    using-different-round-rate-for-mt7623
+  1 Patch from Ryder Lee
+    http://forum.banana-pi.org/t/kernel-4-19-rc1-for-testers/6618/52
+
+full working tree here for reference:
+https://github.com/frank-w/BPI-R2-4.14/commits/4.20-hdmiv5
+
+Signed-off-by: CK Hu <ck.hu@mediatek.com>
+Signed-off-by: Alexander Ryabchenko <d3adme4t@gmail.com>
+Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
+Tested-by: Frank Wunderlich <frank-w@public-files.de>
 ---
-v5->v4:
-- "of_find_device_by_node()" takes a reference to the underlying device structure,
-   we should release it.
+ drivers/gpu/drm/mediatek/Makefile        |   1 +
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c   |   6 +
+ drivers/gpu/drm/mediatek/mtk_drm_drv.h   |   4 +
+ drivers/gpu/drm/mediatek/mtk_drm_fb.c    |  13 ++
+ drivers/gpu/drm/mediatek/mtk_drm_fb.h    |   3 +
+ drivers/gpu/drm/mediatek/mtk_drm_fbdev.c | 178 +++++++++++++++++++++++
+ drivers/gpu/drm/mediatek/mtk_drm_fbdev.h |  25 ++++
+ 7 files changed, 230 insertions(+)
+ create mode 100644 drivers/gpu/drm/mediatek/mtk_drm_fbdev.c
+ create mode 100644 drivers/gpu/drm/mediatek/mtk_drm_fbdev.h
 
-v4->v3:
-- This assignment to 'res' doesn't do what you think it does. The caller never
-  sees the value you compute.
-
-v3->v2:
-- there is no driver bind with the "fsl,t1040-qe-si" or
-  "fsl,t1040-qe-siram" device. So allocating resources using devm_*()
-  with these devices won't provide a cleanup path for these resources
-  when the caller fails.
-
-v2->v1:
-- dev gets modified, so in any case that devm_iounmap() will fail
-  even when the new pdev is valid, because the iomap was done with a
-  different pdev.
-  
- drivers/net/wan/fsl_ucc_hdlc.c | 62 +++++++++++++++++++++++++++++++++++++++++-
- drivers/soc/fsl/qe/qe_tdm.c    | 55 -------------------------------------
- 2 files changed, 61 insertions(+), 56 deletions(-)
-
-diff --git a/drivers/net/wan/fsl_ucc_hdlc.c b/drivers/net/wan/fsl_ucc_hdlc.c
-index 839fa77..f30a040 100644
---- a/drivers/net/wan/fsl_ucc_hdlc.c
-+++ b/drivers/net/wan/fsl_ucc_hdlc.c
-@@ -1057,6 +1057,54 @@ static const struct net_device_ops uhdlc_ops = {
- 	.ndo_tx_timeout	= uhdlc_tx_timeout,
+diff --git a/drivers/gpu/drm/mediatek/Makefile b/drivers/gpu/drm/mediatek/Makefile
+index 82ae49c64221..d71e57dea77a 100644
+--- a/drivers/gpu/drm/mediatek/Makefile
++++ b/drivers/gpu/drm/mediatek/Makefile
+@@ -14,6 +14,7 @@ mediatek-drm-y := mtk_disp_color.o \
+ 		  mtk_mipi_tx.o \
+ 		  mtk_dpi.o
+ 
++mediatek-drm-$(CONFIG_DRM_FBDEV_EMULATION) += mtk_drm_fbdev.o
+ obj-$(CONFIG_DRM_MEDIATEK) += mediatek-drm.o
+ 
+ mediatek-drm-hdmi-objs := mtk_cec.o \
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+index 7800822b4db1..51f1ec3412d3 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+@@ -32,6 +32,7 @@
+ #include "mtk_drm_ddp_comp.h"
+ #include "mtk_drm_drv.h"
+ #include "mtk_drm_fb.h"
++#include "mtk_drm_fbdev.h"
+ #include "mtk_drm_gem.h"
+ 
+ #define DRIVER_NAME "mediatek"
+@@ -299,6 +300,10 @@ static int mtk_drm_kms_init(struct drm_device *drm)
+ 	drm_kms_helper_poll_init(drm);
+ 	drm_mode_config_reset(drm);
+ 
++	ret = mtk_fbdev_init(drm);
++	if (ret)
++		goto err_component_unbind;
++
+ 	return 0;
+ 
+ err_component_unbind:
+@@ -311,6 +316,7 @@ static int mtk_drm_kms_init(struct drm_device *drm)
+ 
+ static void mtk_drm_kms_deinit(struct drm_device *drm)
+ {
++	mtk_fbdev_fini(drm);
+ 	drm_kms_helper_poll_fini(drm);
+ 
+ 	component_unbind_all(drm->dev, drm);
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.h b/drivers/gpu/drm/mediatek/mtk_drm_drv.h
+index 256a3ff2e66e..56129a21fb2b 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_drv.h
++++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.h
+@@ -14,6 +14,7 @@
+ #ifndef MTK_DRM_DRV_H
+ #define MTK_DRM_DRV_H
+ 
++#include <drm/drm_fb_helper.h>
+ #include <linux/io.h>
+ #include "mtk_drm_ddp_comp.h"
+ 
+@@ -43,6 +44,7 @@ struct mtk_drm_private {
+ 	struct drm_device *drm;
+ 	struct device *dma_dev;
+ 
++	struct drm_crtc *crtc[MAX_CRTC];
+ 	unsigned int num_pipes;
+ 
+ 	struct device_node *mutex_node;
+@@ -59,6 +61,8 @@ struct mtk_drm_private {
+ 	} commit;
+ 
+ 	struct drm_atomic_state *suspend_state;
++	struct drm_fb_helper fb_helper;
++	struct drm_gem_object *fbdev_bo;
  };
  
-+static int hdlc_map_iomem(char *name, int init_flag, void __iomem **ptr)
+ extern struct platform_driver mtk_ddp_driver;
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_fb.c b/drivers/gpu/drm/mediatek/mtk_drm_fb.c
+index be5f6f1daf55..7533aa4733d2 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_fb.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_fb.c
+@@ -56,6 +56,19 @@ static struct drm_framebuffer *mtk_drm_framebuffer_init(struct drm_device *dev,
+ 	return fb;
+ }
+ 
++struct drm_framebuffer *mtk_drm_framebuffer_create(struct drm_device *dev,
++					const struct drm_mode_fb_cmd2 *mode,
++					struct drm_gem_object *obj)
 +{
-+	struct device_node *np;
-+	struct platform_device *pdev;
-+	struct resource *res;
-+	static int siram_init_flag;
-+	int ret = 0;
++	struct drm_framebuffer *mtk_fb;
 +
-+	np = of_find_compatible_node(NULL, NULL, name);
-+	if (!np)
++	mtk_fb = mtk_drm_framebuffer_init(dev, mode, obj);
++	if (IS_ERR(mtk_fb))
++		return ERR_CAST(mtk_fb);
++
++	return mtk_fb;
++}
++
+ /*
+  * Wait for any exclusive fence in fb's gem object's reservation object.
+  *
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_fb.h b/drivers/gpu/drm/mediatek/mtk_drm_fb.h
+index 7f976b196a15..e49e015380d0 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_fb.h
++++ b/drivers/gpu/drm/mediatek/mtk_drm_fb.h
+@@ -18,5 +18,8 @@ int mtk_fb_wait(struct drm_framebuffer *fb);
+ struct drm_framebuffer *mtk_drm_mode_fb_create(struct drm_device *dev,
+ 					       struct drm_file *file,
+ 					       const struct drm_mode_fb_cmd2 *cmd);
++struct drm_framebuffer *mtk_drm_framebuffer_create(struct drm_device *dev,
++		const struct drm_mode_fb_cmd2 *mode,
++		struct drm_gem_object *obj);
+ 
+ #endif /* MTK_DRM_FB_H */
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_fbdev.c b/drivers/gpu/drm/mediatek/mtk_drm_fbdev.c
+new file mode 100644
+index 000000000000..9670f50d1247
+--- /dev/null
++++ b/drivers/gpu/drm/mediatek/mtk_drm_fbdev.c
+@@ -0,0 +1,178 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2018 MediaTek Inc.
++ * Author: CK Hu <ck.hu@mediatek.com>
++ */
++
++#include <drm/drmP.h>
++#include <drm/drm_crtc_helper.h>
++#include <drm/drm_fb_helper.h>
++#include <drm/drm_gem.h>
++
++#include "mtk_drm_drv.h"
++#include "mtk_drm_fb.h"
++#include "mtk_drm_gem.h"
++#include "mtk_drm_fbdev.h"
++
++#define to_drm_private(x) \
++		container_of(x, struct mtk_drm_private, fb_helper)
++
++static int mtk_drm_fbdev_mmap(struct fb_info *info, struct vm_area_struct *vma)
++{
++	struct drm_fb_helper *helper = info->par;
++	struct mtk_drm_private *private = to_drm_private(helper);
++
++	return mtk_drm_gem_mmap_buf(private->fbdev_bo, vma);
++}
++
++static struct fb_ops mtk_fbdev_ops = {
++	.owner = THIS_MODULE,
++	DRM_FB_HELPER_DEFAULT_OPS,
++	.fb_fillrect = drm_fb_helper_cfb_fillrect,
++	.fb_copyarea = drm_fb_helper_cfb_copyarea,
++	.fb_imageblit = drm_fb_helper_cfb_imageblit,
++	.fb_check_var = drm_fb_helper_check_var,
++	.fb_set_par = drm_fb_helper_set_par,
++	.fb_blank = drm_fb_helper_blank,
++	.fb_pan_display = drm_fb_helper_pan_display,
++	.fb_setcmap = drm_fb_helper_setcmap,
++	.fb_mmap = mtk_drm_fbdev_mmap,
++};
++
++static int mtk_fbdev_probe(struct drm_fb_helper *helper,
++			   struct drm_fb_helper_surface_size *sizes)
++{
++	struct drm_device *dev = helper->dev;
++	struct mtk_drm_private *private = to_drm_private(helper);
++	struct drm_mode_fb_cmd2 mode = { 0 };
++	struct mtk_drm_gem_obj *mtk_gem;
++	struct fb_info *info;
++	struct drm_framebuffer *fb;
++	unsigned int bytes_per_pixel;
++	unsigned long offset;
++	size_t size;
++	int err = 0;
++
++	bytes_per_pixel = DIV_ROUND_UP(sizes->surface_bpp, 8);
++
++	mode.width = sizes->surface_width;
++	mode.height = sizes->surface_height;
++	mode.pitches[0] = sizes->surface_width * bytes_per_pixel;
++	mode.pixel_format = drm_mode_legacy_fb_format(sizes->surface_bpp,
++						      sizes->surface_depth);
++
++	size = mode.pitches[0] * mode.height;
++
++	mtk_gem = mtk_drm_gem_create(dev, size, true);
++	if (IS_ERR(mtk_gem))
++		return PTR_ERR(mtk_gem);
++
++	private->fbdev_bo = &mtk_gem->base;
++
++	info = drm_fb_helper_alloc_fbi(helper);
++	if (IS_ERR(info)) {
++		DRM_DEV_ERROR(dev->dev,
++			"failed to allocate framebuffer info, %d\n",
++			err);
++		err = PTR_ERR(info);
++		goto out;
++	}
++
++	fb = mtk_drm_framebuffer_create(dev, &mode, private->fbdev_bo);
++	if (IS_ERR(fb)) {
++		DRM_DEV_ERROR(dev->dev,
++			"failed to allocate DRM framebuffer, %d\n",
++			err);
++		err = PTR_ERR(fb);
++		goto out;
++	}
++	helper->fb = fb;
++
++	info->par = helper;
++	info->flags = FBINFO_FLAG_DEFAULT;
++	info->fbops = &mtk_fbdev_ops;
++
++	drm_fb_helper_fill_fix(info, fb->pitches[0], fb->format->depth);
++	drm_fb_helper_fill_var(info, helper, sizes->fb_width, sizes->fb_height);
++
++	offset = info->var.xoffset * bytes_per_pixel;
++	offset += info->var.yoffset * fb->pitches[0];
++
++	dev->mode_config.fb_base = 0;
++	info->screen_base = mtk_gem->kvaddr + offset;
++	info->screen_size = size;
++	info->fix.smem_len = size;
++
++	DRM_DEBUG_KMS("FB [%ux%u]-%u offset=%lu size=%zd\n",
++		      fb->width, fb->height, fb->format->depth, offset, size);
++
++	info->skip_vt_switch = true;
++
++	return 0;
++
++out:
++
++
++	mtk_drm_gem_free_object(&mtk_gem->base);
++	return err;
++}
++
++static const struct drm_fb_helper_funcs mtk_drm_fb_helper_funcs = {
++	.fb_probe = mtk_fbdev_probe,
++};
++
++int mtk_fbdev_init(struct drm_device *dev)
++{
++	struct mtk_drm_private *priv = dev->dev_private;
++	struct drm_fb_helper *helper = &priv->fb_helper;
++	int ret;
++
++	if (!dev->mode_config.num_crtc || !dev->mode_config.num_connector)
 +		return -EINVAL;
 +
-+	pdev = of_find_device_by_node(np);
-+	if (!pdev) {
-+		pr_err("%pOFn: failed to lookup pdev\n", np);
-+		of_node_put(np);
-+		return -EINVAL;
++	drm_fb_helper_prepare(dev, helper, &mtk_drm_fb_helper_funcs);
++
++	ret = drm_fb_helper_init(dev, helper, dev->mode_config.num_connector);
++	if (ret < 0) {
++		DRM_DEV_ERROR(dev->dev,
++			"failed to initialize DRM FB helper, %d\n",
++			ret);
++//		goto fini;
++		return ret;
 +	}
 +
-+	of_node_put(np);
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	if (!res) {
-+		ret = -EINVAL;
-+		goto error_put_device;
-+	}
-+	*ptr = ioremap(res->start, resource_size(res));
-+	if (!*ptr) {
-+		ret = -ENOMEM;
-+		goto error_put_device;
++	ret = drm_fb_helper_single_add_all_connectors(helper);
++	if (ret < 0) {
++		DRM_DEV_ERROR(dev->dev, "failed to add connectors, %d\n", ret);
++		goto fini;
 +	}
 +
-+	/* We've remapped the addresses, and we don't need the device any
-+	 * more, so we should release it.
-+	 */
-+	put_device(&pdev->dev);
-+
-+	if (init_flag && siram_init_flag == 0) {
-+		memset_io(*ptr, 0, resource_size(res));
-+		siram_init_flag = 1;
++	ret = drm_fb_helper_initial_config(helper, 32);
++	if (ret < 0) {
++		DRM_DEV_ERROR(dev->dev,
++			"failed to set initial configuration, %d\n",
++			ret);
++		goto fini;
 +	}
-+	return  0;
 +
-+error_put_device:
-+	put_device(&pdev->dev);
++	return 0;
 +
++fini:
++	drm_fb_helper_fini(helper);
 +	return ret;
 +}
 +
- static int ucc_hdlc_probe(struct platform_device *pdev)
- {
- 	struct device_node *np = pdev->dev.of_node;
-@@ -1151,6 +1199,15 @@ static int ucc_hdlc_probe(struct platform_device *pdev)
- 		ret = ucc_of_parse_tdm(np, utdm, ut_info);
- 		if (ret)
- 			goto free_utdm;
++void mtk_fbdev_fini(struct drm_device *dev)
++{
++	struct mtk_drm_private *priv = dev->dev_private;
++	struct drm_fb_helper *helper = &priv->fb_helper;
 +
-+		ret = hdlc_map_iomem("fsl,t1040-qe-si", 0,
-+				     (void __iomem **)&utdm->si_regs);
-+		if (ret)
-+			goto free_utdm;
-+		ret = hdlc_map_iomem("fsl,t1040-qe-siram", 1,
-+				     (void __iomem **)&utdm->siram);
-+		if (ret)
-+			goto unmap_si_regs;
- 	}
- 
- 	if (of_property_read_u16(np, "fsl,hmask", &uhdlc_priv->hmask))
-@@ -1159,7 +1216,7 @@ static int ucc_hdlc_probe(struct platform_device *pdev)
- 	ret = uhdlc_init(uhdlc_priv);
- 	if (ret) {
- 		dev_err(&pdev->dev, "Failed to init uhdlc\n");
--		goto free_utdm;
-+		goto undo_uhdlc_init;
- 	}
- 
- 	dev = alloc_hdlcdev(uhdlc_priv);
-@@ -1188,6 +1245,9 @@ static int ucc_hdlc_probe(struct platform_device *pdev)
- free_dev:
- 	free_netdev(dev);
- undo_uhdlc_init:
-+	iounmap(utdm->siram);
-+unmap_si_regs:
-+	iounmap(utdm->si_regs);
- free_utdm:
- 	if (uhdlc_priv->tsa)
- 		kfree(utdm);
-diff --git a/drivers/soc/fsl/qe/qe_tdm.c b/drivers/soc/fsl/qe/qe_tdm.c
-index f78c346..76480df 100644
---- a/drivers/soc/fsl/qe/qe_tdm.c
-+++ b/drivers/soc/fsl/qe/qe_tdm.c
-@@ -44,10 +44,6 @@ int ucc_of_parse_tdm(struct device_node *np, struct ucc_tdm *utdm,
- 	const char *sprop;
- 	int ret = 0;
- 	u32 val;
--	struct resource *res;
--	struct device_node *np2;
--	static int siram_init_flag;
--	struct platform_device *pdev;
- 
- 	sprop = of_get_property(np, "fsl,rx-sync-clock", NULL);
- 	if (sprop) {
-@@ -124,57 +120,6 @@ int ucc_of_parse_tdm(struct device_node *np, struct ucc_tdm *utdm,
- 	utdm->siram_entry_id = val;
- 
- 	set_si_param(utdm, ut_info);
--
--	np2 = of_find_compatible_node(NULL, NULL, "fsl,t1040-qe-si");
--	if (!np2)
--		return -EINVAL;
--
--	pdev = of_find_device_by_node(np2);
--	if (!pdev) {
--		pr_err("%pOFn: failed to lookup pdev\n", np2);
--		of_node_put(np2);
--		return -EINVAL;
--	}
--
--	of_node_put(np2);
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	utdm->si_regs = devm_ioremap_resource(&pdev->dev, res);
--	if (IS_ERR(utdm->si_regs)) {
--		ret = PTR_ERR(utdm->si_regs);
--		goto err_miss_siram_property;
--	}
--
--	np2 = of_find_compatible_node(NULL, NULL, "fsl,t1040-qe-siram");
--	if (!np2) {
--		ret = -EINVAL;
--		goto err_miss_siram_property;
--	}
--
--	pdev = of_find_device_by_node(np2);
--	if (!pdev) {
--		ret = -EINVAL;
--		pr_err("%pOFn: failed to lookup pdev\n", np2);
--		of_node_put(np2);
--		goto err_miss_siram_property;
--	}
--
--	of_node_put(np2);
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	utdm->siram = devm_ioremap_resource(&pdev->dev, res);
--	if (IS_ERR(utdm->siram)) {
--		ret = PTR_ERR(utdm->siram);
--		goto err_miss_siram_property;
--	}
--
--	if (siram_init_flag == 0) {
--		memset_io(utdm->siram, 0,  resource_size(res));
--		siram_init_flag = 1;
--	}
--
--	return ret;
--
--err_miss_siram_property:
--	devm_iounmap(&pdev->dev, utdm->si_regs);
- 	return ret;
- }
- EXPORT_SYMBOL(ucc_of_parse_tdm);
++	drm_fb_helper_unregister_fbi(helper);
++
++	if (helper->fb) {
++		drm_framebuffer_unregister_private(helper->fb);
++		drm_framebuffer_remove(helper->fb);
++	}
++
++	drm_fb_helper_fini(helper);
++}
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_fbdev.h b/drivers/gpu/drm/mediatek/mtk_drm_fbdev.h
+new file mode 100644
+index 000000000000..45717b642dc5
+--- /dev/null
++++ b/drivers/gpu/drm/mediatek/mtk_drm_fbdev.h
+@@ -0,0 +1,25 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (c) 2018 MediaTek Inc.
++ * Author: CK Hu <ck.hu@mediatek.com>
++ */
++
++#ifndef MTK_DRM_FBDEV_H
++#define MTK_DRM_FBDEV_H
++
++#ifdef CONFIG_DRM_FBDEV_EMULATION
++int mtk_fbdev_init(struct drm_device *dev);
++void mtk_fbdev_fini(struct drm_device *dev);
++#else
++int mtk_fbdev_init(struct drm_device *dev)
++{
++	return 0;
++}
++
++void mtk_fbdev_fini(struct drm_device *dev)
++{
++
++}
++#endif /* CONFIG_DRM_FBDEV_EMULATION */
++
++#endif /* MTK_DRM_FBDEV_H */
 -- 
-2.9.5
+2.17.1
 
