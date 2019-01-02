@@ -2,109 +2,94 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11415C43612
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 20:04:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C4BDC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 20:05:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCD6C2171F
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 20:03:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 35044218DE
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 20:05:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=digitalocean.com header.i=@digitalocean.com header.b="FVUoshR6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729842AbfABUD7 (ORCPT
+        id S1727320AbfABUFg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 15:03:59 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:40764 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725984AbfABUD6 (ORCPT
+        Wed, 2 Jan 2019 15:05:36 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:45336 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725984AbfABUFf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 15:03:58 -0500
-Received: by mail-ot1-f68.google.com with SMTP id s5so27649290oth.7;
-        Wed, 02 Jan 2019 12:03:58 -0800 (PST)
+        Wed, 2 Jan 2019 15:05:35 -0500
+Received: by mail-oi1-f196.google.com with SMTP id y1so26016815oie.12
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 12:05:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=digitalocean.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=jwNzLMTXb+K6/MpjHKyHQEI4PyVQzu80D6rs7MUtTdg=;
+        b=FVUoshR6kTZsAcEIlAy811Gn+sD88fDMXWF8uWPdUFp89IZpOvZpAARU1UwUPf4knd
+         IYVH3843fsz4ValbAcrlfx7/Fi8mF5KXcxbrukGYj3xWVRUz+Gk50iCfpPWRzF+DvTbR
+         LRmlxBeFdq0VoTBqVljyhFq6paxGdiziW7vhU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=wHsg2FG5gmuVBMMbiDxSZDA8VrWifS4gHbxgzJfm+do=;
-        b=OxyL+salZFJmfttqyOAtjvmUU9bmlSpW9jnbMC54OPh9Mf+zj1dpDSA09xRtOh9078
-         R/oEczS5DHX+4Ozgz2qZehlqz1OTvFlYJeje9mFCDdIYg9NF3d8sRHCBnCZ4ih1XGwQs
-         4PQu6nl9acykK5elxjBGA1yAA1QeFKGK8cXLfMDhX8lGv50jutXs1yhiI3A94udiOAEm
-         paFYUUv/h90j/1fLVkzQGCn2Ee5KdyrQRfamotZ+GqBu4k9NTw5nRKytOTshXPRvuJ0e
-         VyYl8d/pVFxN2DXZI51bcnr5DzucBC/GoE+iDloktuVRfiL5SsvtpXsvg1kGNbBizgo3
-         Bnsw==
-X-Gm-Message-State: AJcUukcyr96lqWDpwLc+e9iEAN0IbSzNiikF2JWv2VNRY76NSeUCImjm
-        75T36gb5ksMc0brnmQCk6IFMq7mtLLOCgHpeqV4=
-X-Google-Smtp-Source: ALg8bN4rlLOUHOAt1YKwANgVIW5VDAh4ihwDJzHMVoO3d6T1G8jFx74s2TANoeX2DJ8vU0pn6J9LHCFrvtHbD5j6AeQ=
-X-Received: by 2002:a9d:24c5:: with SMTP id z63mr32953422ota.320.1546459438049;
- Wed, 02 Jan 2019 12:03:58 -0800 (PST)
+        bh=jwNzLMTXb+K6/MpjHKyHQEI4PyVQzu80D6rs7MUtTdg=;
+        b=DwezmX7x7++9dqMNiqpu3IRStt5IovITLjWTz5XVeXF+XClNvJdxGaqDEJgjYiwkHe
+         3FfTlh8TtArnXgaBpUbwcG9KYBZptEz/22L+PFdFUUSqjjwAsVQel39kU4JOgD0plduc
+         xk0jJafzBZEWgfa+PzZtSn8fnpZEu++eR6gpTgO2jjf9/rvbPFESddeJh5a6IRq3sSkO
+         Lj9XbnPhLtW6SSmwSqE9g13xPI1ig2dhYkUADjMTyWSrMR4aF6pLlfhjVKJHllxoL9vN
+         5Xo/gDaQqlfVGJUgIenxWfkWtnYQGmWkt6ls7sylzGGuxBx0Je1qXriwLSrp65LhYd72
+         WhTg==
+X-Gm-Message-State: AA+aEWZB6VzfP/EuS6VyMk51A7VovUjQMbbLQLjJKM+HmqHKNaG8iRPP
+        m8SrOsIPUDoEW106HSIJP+/TWASsr0vrrQ63KhPGKw==
+X-Google-Smtp-Source: ALg8bN6ENcIppHwHJfZ9Pot+DtaRMePk0FeFzNPj46Ihtl46V9A1CMs9WBV0x8ugovRz1Grbej5V07lZvgVzqNZZLpU=
+X-Received: by 2002:aca:4506:: with SMTP id s6mr28611606oia.115.1546459534608;
+ Wed, 02 Jan 2019 12:05:34 -0800 (PST)
 MIME-Version: 1.0
-References: <20181207125844.18775-1-malat@debian.org> <CA+7wUszBpmd2r18WZVjAXv2xq+ySrnKTqaRT7bGcHa71_M_j7g@mail.gmail.com>
-In-Reply-To: <CA+7wUszBpmd2r18WZVjAXv2xq+ySrnKTqaRT7bGcHa71_M_j7g@mail.gmail.com>
-From:   Mathieu Malaterre <malat@debian.org>
-Date:   Wed, 2 Jan 2019 21:03:45 +0100
-Message-ID: <CA+7wUsxN664BUjetUX3LhjN4JvZAAWY_Atv2d_eE9_UFGGwg2Q@mail.gmail.com>
-Subject: Re: [PATCH] video: offb: Pass actual name in offb_init_palette_hacks
-To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc:     "# v4 . 11" <stable@vger.kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Elimar Riesebieter <riesebie@lxtec.de>
+References: <20181203170934.16512-1-vpillai@digitalocean.com>
+ <20181203170934.16512-2-vpillai@digitalocean.com> <alpine.LSU.2.11.1812311635590.4106@eggly.anvils>
+ <CANaguZAStuiXpk2S0rYwdn3Zzsoakavaps4RzSRVqMs3wZ49qg@mail.gmail.com>
+ <alpine.LSU.2.11.1901012010440.13241@eggly.anvils> <CANaguZC_d2EBmNuXtcJRcEcw8uXK234tYSXx6Uc2o9JH_vfP4A@mail.gmail.com>
+ <alpine.LSU.2.11.1901021039490.13761@eggly.anvils>
+In-Reply-To: <alpine.LSU.2.11.1901021039490.13761@eggly.anvils>
+From:   Vineeth Pillai <vpillai@digitalocean.com>
+Date:   Wed, 2 Jan 2019 15:05:25 -0500
+Message-ID: <CANaguZDcJa9NxZU4Z3Q7DqvQK5zsDXZKNbhbO8fcppnYrTxMHw@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] mm: rid swapoff of quadratic complexity
+To:     Hugh Dickins <hughd@google.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Huang Ying <ying.huang@intel.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Kelley Nielsen <kelleynnn@gmail.com>,
+        Rik van Riel <riel@surriel.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Bartlomiej,
+On Wed, Jan 2, 2019 at 2:43 PM Hugh Dickins <hughd@google.com> wrote:
 
-Do you need an Acked-by from Rob, or can you take it in the next round
-of fixes for v4.20 ?
-
-Just to repeat myself, previous code would call
-offb_init_palette_hacks(), which in turn would do:
-
-       if (dp && !strncmp(name, "ATY,Rage128", 11)) {
-
-with name=NULL.
-
-Thanks
-
-On Thu, Dec 20, 2018 at 5:10 PM Mathieu Malaterre <malat@debian.org> wrote:
 >
-> Rob, any comment ?
+> Wrong.  Without heavier locking that would add unwelcome overhead to
+> common paths, we shall "always" need the retry logic.  It does not
+> come into play very often, but here are two examples of why it's
+> needed (if I thought longer, I might find more).  And in practice,
+> yes, I sometimes saw 1 retry needed.
 >
-> On Fri, Dec 7, 2018 at 1:59 PM Mathieu Malaterre <malat@debian.org> wrote:
-> >
-> > This is a partial revert of commit 5c63e407aaab ("fbdev: Convert to
-> > using %pOFn instead of device_node.name"). This is the minimal work to
-> > get a Mac Mini G4 back to a bootable state. The function
-> > offb_init_palette_hacks would need to handle the case where `name` has
-> > been set to NULL.
-> >
-> > Cc: Rob Herring <robh@kernel.org>
-> > Fixes: 5c63e407aaab ("fbdev: Convert to using %pOFn instead of device_node.name")
-> > Cc: stable@vger.kernel.org # v4.19+
-> > Signed-off-by: Mathieu Malaterre <malat@debian.org>
-> > ---
-> >  drivers/video/fbdev/offb.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/video/fbdev/offb.c b/drivers/video/fbdev/offb.c
-> > index 31f769d67195..6e75851f8142 100644
-> > --- a/drivers/video/fbdev/offb.c
-> > +++ b/drivers/video/fbdev/offb.c
-> > @@ -648,7 +648,7 @@ static void __init offb_init_nodriver(struct device_node *dp, int no_real_node)
-> >                 /* kludge for valkyrie */
-> >                 if (strcmp(dp->name, "valkyrie") == 0)
-> >                         address += 0x1000;
-> > -               offb_init_fb(no_real_node ? "bootx" : NULL,
-> > +               offb_init_fb(no_real_node ? "bootx" : dp->name,
-> >                              width, height, depth, pitch, address,
-> >                              foreign_endian, no_real_node ? NULL : dp);
-> >         }
-> > --
-> > 2.19.2
-> >
+Understood. Sorry, I missed these corner cases.
+
+> I don't use frontswap myself, and haven't paid any attention to the
+> frontswap partial swapoff case (though notice now that shmem_unuse()
+> lacks the plumbing needed for it - that needs fixing); but doubt it
+> would be a good idea to refactor it out as a separate case.
+>
+I shall rework the shmem side to take care of the frontswap and retain
+the retry logic in a simplified manner.
+
+Thanks again for all the comments and insights..
+
+~Vineeth
