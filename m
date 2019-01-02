@@ -2,89 +2,200 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FA50C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 01:34:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13C11C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 01:42:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7E462171F
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 01:34:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C67112171F
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 01:42:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=memeware.net header.i=@memeware.net header.b="fkVpp/0J"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728287AbfABBeh (ORCPT
+        id S1728311AbfABBmF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 1 Jan 2019 20:34:37 -0500
-Received: from mailgw02.mediatek.com ([1.203.163.81]:39482 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727456AbfABBeh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Jan 2019 20:34:37 -0500
-X-UUID: 10f49348f6eb4f47a8bd3afb9f35cf0c-20190102
-X-UUID: 10f49348f6eb4f47a8bd3afb9f35cf0c-20190102
-Received: from mtkcas36.mediatek.inc [(172.27.4.250)] by mailgw02.mediatek.com
-        (envelope-from <chunfeng.yun@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 1332452201; Wed, 02 Jan 2019 09:34:31 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- MTKMBS31N1.mediatek.inc (172.27.4.69) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 2 Jan 2019 09:34:24 +0800
-Received: from localhost.localdomain (10.17.3.153) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 2 Jan 2019 09:34:18 +0800
-From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Felipe Balbi <felipe.balbi@linux.intel.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>
-Subject: [PATCH v2] usb: devio: update max count of DPs per interval for ISOC
-Date:   Wed, 2 Jan 2019 09:33:56 +0800
-Message-ID: <1546392836-7087-1-git-send-email-chunfeng.yun@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
+        Tue, 1 Jan 2019 20:42:05 -0500
+Received: from cock.li ([185.100.85.212]:39854 "EHLO cock.li"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727935AbfABBmF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Jan 2019 20:42:05 -0500
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=memeware.net; s=mail;
+        t=1546393319; bh=+gj0rib5ZCjwymcYqC8hKiGMzA1RG70N0+cDiXFax4M=;
+        h=Date:From:To:Cc:Subject:From;
+        b=fkVpp/0JyTX+1rElsaec+gd0TlQ07JRX04W/pgRu43+fz4f4Tsc5OenHKDnXX6Fxb
+         j1m5+2amFZzQX8BPzcf4Z4OuPZX4VOMcLo3QGv/DIlYT0q8CZS2FMh/m3wd87Jf8nM
+         giIH+4Kx5ttxgLMp/SnXgaEkfrLZcz1VZ3ReudTwIRX/ib5cFNQEl3qeitP1i9Dx26
+         n6PTfogTRpZSn7Xp3mmC9/4Xa2lNfE5vrJpjTkHcCUJEfBWrXQ5NmLt/0yjnxezlxt
+         2lvZ9YUCqpEHmBqzBDa08eSShsQZF5rPvNAZhtITrw0/+iE4O7hQR8a9+Zlk5ldIZo
+         4cQuRMjuO92yA==
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 02 Jan 2019 01:41:58 +0000
+From:   vsnsdualce@memeware.net
+To:     linux-kernel@vger.kernel.org, gentoo-user@lists.gentoo.org,
+        ubuntu-users@lists.ubuntu.com, debian-user@lists.debian.org
+Cc:     freebsd-women@freebsd.org, freebsd-chat@freebsd.org,
+        misc@openbsd.org
+Subject: knifeshack (Linux Property rights)
+Message-ID: <5887db663842c078851e7795512bca45@memeware.net>
+X-Sender: vsnsdualce@memeware.net
+User-Agent: Roundcube Webmail/1.3.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The failure happened when I tried to send up to 96DPs per an interval
-for SSP ISOC transations by libusb, this is used to verify SSP ISOC
-function of USB3 GEN2 controller, so update it as 96DPs.
-(refer usb3.1r1.0 section 8.12.6 Isochronous Transactions)
+Let's say you had an old knife shack. Called Knife Shack InC. (you
+ain't incorporated, you just call it that, looks nice on the sign). On
+an old dusty road, telephone pole bout ready to fall down next typhoon
+hit. Behind yo knoif shack there is quite a body of water, now it's
+murky, but it is infact quite deep. An old sink hole, now filled
+beyond filling with the dandruff of the ages. No outlets, so the water
+just pools and infiltrates the surrounding properties.
 
-Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
----
-v2: update changelog text suggested by Greg
----
- drivers/usb/core/devio.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+You own this little piece of the world, owned it for a few
+generations, bought it off of the old landlords when they were selling
+mineral rights and then decided to get rid of the rest too.
 
-diff --git a/drivers/usb/core/devio.c b/drivers/usb/core/devio.c
-index a75bc0b8a50f..82c16210e34c 100644
---- a/drivers/usb/core/devio.c
-+++ b/drivers/usb/core/devio.c
-@@ -1564,12 +1564,10 @@ static int proc_do_submiturb(struct usb_dev_state *ps, struct usbdevfs_urb *uurb
- 		}
- 		for (totlen = u = 0; u < number_of_packets; u++) {
- 			/*
--			 * arbitrary limit need for USB 3.0
--			 * bMaxBurst (0~15 allowed, 1~16 packets)
--			 * bmAttributes (bit 1:0, mult 0~2, 1~3 packets)
--			 * sizemax: 1024 * 16 * 3 = 49152
-+			 * arbitrary limit need for USB 3.1 Gen2
-+			 * sizemax: 96 DPs at SSP, 96 * 1024 = 98304
- 			 */
--			if (isopkt[u].length > 49152) {
-+			if (isopkt[u].length > 98304) {
- 				ret = -EINVAL;
- 				goto error;
- 			}
--- 
-2.19.1
+They went up north. A reverse carpet-bagging situation.
+
+You don't have much. You have a house on another piece of property,
+quite aways up the road, and this shack, and this sinkhole. You
+actually are quite the property owner, but it ain't worth shit. That's
+what erryone tell you anyhow.
+
+The old big house been turned into an old folks home a decaded ago,
+shame, it's a piece of shit like your property now - least that's what
+everyone say.
+
+Pope's on TV, old fan from the 50s still working, You could get a flat
+screen but the power supplies can't handle the brown outs here, old TV
+still works fine, you use it like a radio anyway.
+
+Guy comes into your fish shack. You ain't never seen him in your life,
+you tell yourself. You know him however, he lives somewhat close,
+comes in from time to time, looks around, he in a suit, he never buys
+from you anything, he has a reputation, suits getting dusty, the
+pinstripes are wider than that which the people on TV wear.
+
+He comes up to you. You're playing with a knife of yours, spinning it
+on it's tip. It's a fish skinning knife with a gutting hook on the
+back. It is quite a large one. The blade is a full 15 inches, thick,
+you could work on the sand sharks with this, if you ever took the hour
+and ahalf drive down to the beach.
+
+You have a sign on your counter: "We's generous".
+
+Sometimes people ask you what that means.
+
+The man in the suit approaches you: first time for everthing.
+
+S: "Ay, I'd like that knife"
+
+You tell him it isn't for sale.
+
+S: "I ain neva said I thoughts it was, whass 'Wes generous' mean anyhow"
+
+You tell him that you will lend him the knife if he wishes.
+
+S: "Aight"
+
+He takes possession of the knife.
+
+He's a fisher he says.
+
+The man in the striped suit leaves.
+
+Months go by. You see the man sometimes, he tells you how the knife
+you licensed to him is getting great use, he fishes alot you see.
+
+He then inquires about that murky seemingly bottomless sinkhole out
+back. He wishes to be-able to dump some fishing refuse in it.
+
+S: "We's generous, right?"
+
+You grant him license to travel over your land to the sinkhole and
+dump the fishing refuse into the sinkhole.
+
+Time passes.
+
+You notice your knife has become more resplendent.
+
+Each time the stripped suited man, this fisher, catches a fish, it
+seems, he is in the habit of tacking a red five pointed star from
+Russia onto the handle. Each time the man comes into your shack you
+notice that there are more and more red stars, additionally, between
+the stars is now a dark red lacquer. It looks quite stunning, a battle
+worn cleaver; shouting it's victory against countless ensnared aquatic
+beings.
+
+Time, again, passes.
+
+Two police officers show up. Not the state troopers who sometimes come
+by the shop, no these are from one of the towns.
+
+P1: "You sell guttin knives here"
+
+You respond in the affirmative.
+
+P1: "You ever sold a rather large red gutting knife, tack handled"
+
+He seems to be getting agitated.
+You say no, but you have licensed a fisher to use a knife you own, and
+while it was not originally tack-handled, nor red, now it would indeed
+match such a description.
+
+P1: "You fking piece of shit, you get us back that knife or you are
+going down as an accomplice, you understand that you coal bla.."
+
+The second police man interrupts him.
+
+They start to head out.
+
+The second police man informs you that they will be by the store three
+days from now, as well as one week from now. To please reassert
+possession of the knife in that time.
+
+A month goes by and they do not come.
+
+Three months later you are arrested and interrogated in the harshest
+possible terms. You wonder if you can father children anymore.
+
+You are informed that the prosecutor has agreed to prosecute you as an
+accomplice, however if you come into possession of the knife, they may
+reconsider.
+
+Soon thereafter the suited man appears in your store.
+
+You tell him that you are ending the license you had extended to him,
+regarding both the knife and the permission to dump in the sinkhole.
+
+He contends that the knife is irrevocable:
+He relys upon the knife to execute his job of fishing.
+Furthermore he has put tacks in the knife, and if he were to return
+the knife to you his tack work would go to waste from his point of view.
+Additionally he tells you that he also relys on your extended license
+to dump the fishing refuse into the sinkhole for his fishing business
+and thus that license is irrevocable aswell.
+
+You desperately plead with him and yell "Give me back my fking knife!".
+
+He laughs and leaves.
+
+You are arrested and tried as an accomplice, your assets are seized
+under civil forfeiture as property used in the commission of crime.
+
+The suited man who was the fisher is tried in asbtentia for
+Conversion, amongst other rather more serious charges.
+
+As of right: the knife is yours, and you had every right to rescind
+the gratuitous license you granted regarding it. The fisher never
+payed you anything for use of the knife, nor of your land. He cannot
+hold you to your "bargain".
+
+The man was a fisher of men.
 
