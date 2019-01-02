@@ -2,85 +2,129 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA6C5C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 14:35:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F991C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 14:40:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73E18218DE
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 14:35:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GjnBYCRU"
+	by mail.kernel.org (Postfix) with ESMTP id 6300A218DE
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 14:40:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729410AbfABOfI (ORCPT
+        id S1729566AbfABOkU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 09:35:08 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:36002 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726855AbfABOfH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 09:35:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=cPQ2g3+veurSy3q3emnkvDRSorEYoRaPIhtKTF/98+w=; b=GjnBYCRUXU8Lm0EJnxHR1pBQRq
-        yeRlk+cXsiVBV8qJPnN57KdzycC1pjnhtiwCK7NvQwI0V7GUjxw6sU661bgUUovPIadymRXKnf+fn
-        /1vegpDN9s/DVhecTlLvSGMn4acmbWpQQ9OPtn2+1RPICPggtwkDqZpv7ZJuR/p/E66enoE+TWppb
-        AEaCQnWyIdhZPbFgOQ6upabqSUff6rjPFrO2o6UNt9rwWDBdoe0XWJRQI2nOSHIseDddVHys0tLY+
-        an5A//jYAMw0wDoztJnSKc9x1CcNPLcSNPU+VqjnYAKEduYkVjR7kltslLYDPjU8/Q9IAK8n1ehkX
-        GaVhKIPQ==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gehbv-0008Dq-KJ; Wed, 02 Jan 2019 14:35:07 +0000
-Date:   Wed, 2 Jan 2019 06:35:07 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH] Display CHECK files like CC files
-Message-ID: <20190102143507.GI6310@bombadil.infradead.org>
+        Wed, 2 Jan 2019 09:40:20 -0500
+Received: from mx2.suse.de ([195.135.220.15]:52760 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726855AbfABOkU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Jan 2019 09:40:20 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 0CEB3ACB1;
+        Wed,  2 Jan 2019 14:40:17 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 215BE1E1588; Wed,  2 Jan 2019 15:40:15 +0100 (CET)
+Date:   Wed, 2 Jan 2019 15:40:15 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Jan Kara <jack@suse.cz>, Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        syzbot <syzbot+9933e4476f365f5d5a1b@syzkaller.appspotmail.com>,
+        linux-mm@kvack.org, mgorman@techsingularity.net,
+        Michal Hocko <mhocko@kernel.org>, ak@linux.intel.com,
+        jlayton@redhat.com, linux-kernel@vger.kernel.org,
+        mawilcox@microsoft.com, syzkaller-bugs@googlegroups.com,
+        tim.c.chen@linux.intel.com,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: INFO: task hung in generic_file_write_iter
+Message-ID: <20190102144015.GA23089@quack2.suse.cz>
+References: <0000000000009ce88d05714242a8@google.com>
+ <4b349bff-8ad4-6410-250d-593b13d8d496@I-love.SAKURA.ne.jp>
+ <9b9fcdda-c347-53ee-fdbb-8a7d11cf430e@I-love.SAKURA.ne.jp>
+ <20180720130602.f3d6dc4c943558875a36cb52@linux-foundation.org>
+ <a2df1f24-f649-f5d8-0b2d-66d45b6cb61f@i-love.sakura.ne.jp>
+ <20180806100928.x7anab3c3y5q4ssa@quack2.suse.cz>
+ <e8a23623-feaf-7730-5492-b329cb0daa21@i-love.sakura.ne.jp>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <e8a23623-feaf-7730-5492-b329cb0daa21@i-love.sakura.ne.jp>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When building with O= and C=1, this output looks weird:
+On Fri 28-12-18 22:34:13, Tetsuo Handa wrote:
+> On 2018/08/06 19:09, Jan Kara wrote:
+> > On Tue 31-07-18 00:07:22, Tetsuo Handa wrote:
+> >> On 2018/07/21 5:06, Andrew Morton wrote:
+> >>> On Fri, 20 Jul 2018 19:36:23 +0900 Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp> wrote:
+> >>>
+> >>>>>
+> >>>>> This report is stalling after mount() completed and process used remap_file_pages().
+> >>>>> I think that we might need to use debug printk(). But I don't know what to examine.
+> >>>>>
+> >>>>
+> >>>> Andrew, can you pick up this debug printk() patch?
+> >>>> I guess we can get the result within one week.
+> >>>
+> >>> Sure, let's toss it in -next for a while.
+> >>>
+> >>>> >From 8f55e00b21fefffbc6abd9085ac503c52a302464 Mon Sep 17 00:00:00 2001
+> >>>> From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> >>>> Date: Fri, 20 Jul 2018 19:29:06 +0900
+> >>>> Subject: [PATCH] fs/buffer.c: add debug print for __getblk_gfp() stall problem
+> >>>>
+> >>>> Among syzbot's unresolved hung task reports, 18 out of 65 reports contain
+> >>>> __getblk_gfp() line in the backtrace. Since there is a comment block that
+> >>>> says that __getblk_gfp() will lock up the machine if try_to_free_buffers()
+> >>>> attempt from grow_dev_page() is failing, let's start from checking whether
+> >>>> syzbot is hitting that case. This change will be removed after the bug is
+> >>>> fixed.
+> >>>
+> >>> I'm not sure that grow_dev_page() is hanging.  It has often been
+> >>> suspected, but always is proven innocent.  Lets see.
+> >>
+> >> syzbot reproduced this problem ( https://syzkaller.appspot.com/text?tag=CrashLog&x=11f2fc44400000 ) .
+> >> It says that grow_dev_page() is returning 1 but __find_get_block() is failing forever. Any idea?
+> > 
+> > Looks like some kind of a race where device block size gets changed while
+> > getblk() runs (and creates buffers for underlying page). I don't have time
+> > to nail it down at this moment can have a look into it later unless someone
+> > beats me to it.
+> 
+> I feel that the frequency of hitting this problem was decreased
+> by merging loop module's ioctl() serialization patches. But this
+> problem is still there, and syzbot got a new line in
+> https://syzkaller.appspot.com/text?tag=CrashLog&x=177f889f400000 .
+> 
+>   [  615.881781] __loop_clr_fd: partition scan of loop5 failed (rc=-22)
+>   [  619.059920] syz-executor4(2193): getblk(): executed=cd bh_count=0 bh_state=29
+>   [  622.069808] syz-executor4(2193): getblk(): executed=9 bh_count=0 bh_state=0
+>   [  625.080013] syz-executor4(2193): getblk(): executed=9 bh_count=0 bh_state=0
+>   [  628.089900] syz-executor4(2193): getblk(): executed=9 bh_count=0 bh_state=0
+> 
+> I guess that loop module is somehow related to this problem.
 
-  CC      fs/file_table.o
-  CHECK   ../fs/file_table.c
-  CC      fs/open.o
-  CHECK   ../fs/open.c
-  CC      fs/super.o
-  CHECK   ../fs/super.c
-  CC      fs/read_write.o
-  CHECK   ../fs/read_write.c
+I had a look into this and the only good explanation for this I have is
+that sb->s_blocksize is different from (1 << sb->s_bdev->bd_inode->i_blkbits).
+If that would happen, we'd get exactly the behavior syzkaller observes
+because grow_buffers() would populate different page than
+__find_get_block() then looks up.
 
-Use $@ like CC instead of $< to produce the same output for both CHECK and CC.
+However I don't see how that's possible since the filesystem has the block
+device open exclusively and blkdev_bszset() makes sure we also have
+exclusive access to the block device before changing the block device size.
+So changing block device block size after filesystem gets access to the
+device should be impossible. 
 
-Signed-off-by: Matthew Wilcox <willy@infradead.org>
+Anyway, could you perhaps add to your debug patch a dump of 'size' passed
+to __getblk_slow() and bdev->bd_inode->i_blkbits? That should tell us
+whether my theory is right or not. Thanks!
 
-diff --git a/scripts/Makefile.build b/scripts/Makefile.build
-index fd03d60f6c5a..f36b03396d9a 100644
---- a/scripts/Makefile.build
-+++ b/scripts/Makefile.build
-@@ -74,10 +74,10 @@ __build: $(if $(KBUILD_BUILTIN),$(builtin-target) $(lib-target) $(extra-y)) \
- 
- # Linus' kernel sanity checking tool
- ifeq ($(KBUILD_CHECKSRC),1)
--  quiet_cmd_checksrc       = CHECK   $<
-+  quiet_cmd_checksrc       = CHECK   $@
-         cmd_checksrc       = $(CHECK) $(CHECKFLAGS) $(c_flags) $<
- else ifeq ($(KBUILD_CHECKSRC),2)
--  quiet_cmd_force_checksrc = CHECK   $<
-+  quiet_cmd_force_checksrc = CHECK   $@
-         cmd_force_checksrc = $(CHECK) $(CHECKFLAGS) $(c_flags) $<
- endif
- 
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
