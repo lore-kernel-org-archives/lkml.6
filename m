@@ -2,182 +2,74 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34A3BC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 09:47:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ACEAC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 09:50:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0570D218A4
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 09:47:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1ADA21871
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 09:50:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729164AbfABJrf (ORCPT
+        id S1729207AbfABJuR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 04:47:35 -0500
-Received: from mx2.suse.de ([195.135.220.15]:43738 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727294AbfABJre (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 04:47:34 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 8FD40AE83;
-        Wed,  2 Jan 2019 09:47:31 +0000 (UTC)
-Subject: Re: general protection fault in transparent_hugepage_enabled
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     syzbot <syzbot+a5fea9200aefd1cf4818@syzkaller.appspotmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>, Michal Hocko <mhocko@suse.com>,
-        David Rientjes <rientjes@google.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Matthew Wilcox <willy@infradead.org>
-References: <000000000000ae384d057dc685c1@google.com>
- <1186a139-3a46-3311-5f72-bef02d403ee1@suse.cz>
- <CACT4Y+YbM7sVDg7XEpY-E9bW2dF8a6xd_Wp_dWCnCM02DbrbtA@mail.gmail.com>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Message-ID: <b12b656c-04cb-6f34-e25a-f34d59e91316@suse.cz>
-Date:   Wed, 2 Jan 2019 10:47:30 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+        Wed, 2 Jan 2019 04:50:17 -0500
+Received: from mail.CARNet.hr ([161.53.123.6]:45176 "EHLO mail.carnet.hr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727695AbfABJuR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Jan 2019 04:50:17 -0500
+Received: from [2001:b68:ff:12::131] (port=40104 helo=gavran.carpriv.carnet.hr)
+        by mail.carnet.hr with esmtps (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <Valentin.Vidic@CARNet.hr>)
+        id 1gedAC-0006Vp-Ud; Wed, 02 Jan 2019 10:50:13 +0100
+Received: by gavran.carpriv.carnet.hr (Postfix, from userid 1000)
+        id C969B21B8F; Wed,  2 Jan 2019 10:50:12 +0100 (CET)
+Date:   Wed, 2 Jan 2019 10:50:12 +0100
+From:   Valentin Vidic <Valentin.Vidic@CARNet.hr>
+To:     Jiri Slaby <jslaby@suse.cz>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Message-ID: <20190102095012.GH8140@gavran.carpriv.carnet.hr>
+References: <20181229124829.3745-1-Valentin.Vidic@CARNet.hr>
+ <7e91df3a-d38b-fda4-b64f-4d47f4949623@suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <CACT4Y+YbM7sVDg7XEpY-E9bW2dF8a6xd_Wp_dWCnCM02DbrbtA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7e91df3a-d38b-fda4-b64f-4d47f4949623@suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: 2001:b68:ff:12::131
+Subject: Re: [PATCH] n_tty: update comment for WAKEUP_CHARS define
+X-SA-Exim-Version: 4.2.1 (built Mon, 26 Dec 2011 16:24:06 +0000)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/2/19 10:42 AM, Dmitry Vyukov wrote:
-> On Wed, Jan 2, 2019 at 8:42 AM Vlastimil Babka <vbabka@suse.cz> wrote:
->>
->> On 12/24/18 4:48 PM, syzbot wrote:
->>> Hello,
->>>
->>> syzbot found the following crash on:
->>>
->>> HEAD commit:    6a1d293238c1 Add linux-next specific files for 20181224
->>> git tree:       linux-next
->>> console output: https://syzkaller.appspot.com/x/log.txt?x=149a2add400000
->>> kernel config:  https://syzkaller.appspot.com/x/.config?x=c190b602a5d2d731
->>> dashboard link: https://syzkaller.appspot.com/bug?extid=a5fea9200aefd1cf4818
->>> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
->>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1798bfb7400000
->>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17f4dc57400000
->>>
->>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
->>> Reported-by: syzbot+a5fea9200aefd1cf4818@syzkaller.appspotmail.com
->>>
->>> sshd (6016) used greatest stack depth: 15720 bytes left
->>> kasan: CONFIG_KASAN_INLINE enabled
->>> kasan: GPF could be caused by NULL-ptr deref or user memory access
->>> general protection fault: 0000 [#1] PREEMPT SMP KASAN
->>> CPU: 1 PID: 6032 Comm: syz-executor045 Not tainted 4.20.0-rc7-next-20181224
->>> #187
->>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
->>> Google 01/01/2011
->>> RIP: 0010:transparent_hugepage_enabled+0x8c/0x5e0 mm/huge_memory.c:69
->>
->> FTR, it was most certainly the same thing as here:
->> https://marc.info/?l=linux-mm&m=154563777207477&w=2
+On Wed, Jan 02, 2019 at 07:48:42AM +0100, Jiri Slaby wrote:
+> On 29. 12. 18, 13:48, Valentin Vidic wrote:
+> > Give a better descriptions of what WAKEUP_CHARS represents.
+> > 
+> > Signed-off-by: Valentin Vidic <Valentin.Vidic@CARNet.hr>
 > 
-> Thanks for the update. I see the fix is still not in linux-next, which has:
+> I am not a native speaker, but this is much better than the current text.
 > 
-> +bool transparent_hugepage_enabled(struct vm_area_struct *vma)
-> +{
-> +       if (vma_is_anonymous(vma))
-> +               return __transparent_hugepage_enabled(vma);
-> +       if (vma_is_shmem(vma) && shmem_huge_enabled(vma))
-> +               return __transparent_hugepage_enabled(vma);
-> +
-> +       return false;
-> +}
+> Acked-by: Jiri Slaby <jslaby@suse.cz>
 > 
-> Let's wait until the patch is updated and then tell syzbot that "mm,
-> thp, proc: report THP eligibility for each vma" fixes this.
+> BTW this text is copy&pasted from/to all the other WAKEUP_CHARS
+> locations. Care to fix them all?
 
-Actually the fix was folded into the patch that caused the bug, and was
-already sent to and merged by Linus, commit
-7635d9cbe8327e131a1d3d8517dc186c2796ce2e
+Yes, I've seen other instances of WAKEUP_CHARS but they don't look like
+the same thing, for example:
 
->>> Code: 80 3c 02 00 0f 85 ae 04 00 00 4c 8b a3 a0 00 00 00 48 b8 00 00 00 00
->>> 00 fc ff df 49 8d bc 24 b8 01 00 00 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f
->>> 85 91 04 00 00 49 8b bc 24 b8 01 00 00 e8 2d 70 e6
->>> RSP: 0018:ffff8881c2237138 EFLAGS: 00010202
->>> RAX: dffffc0000000000 RBX: ffff8881c2bdbc60 RCX: 0000000000000000
->>> RDX: 0000000000000037 RSI: ffffffff81c8fa1a RDI: 00000000000001b8
->>> RBP: ffff8881c2237160 R08: ffffed10383b25ed R09: ffffed10383b25ec
->>> R10: ffffed10383b25ec R11: ffff8881c1d92f63 R12: 0000000000000000
->>> R13: ffff8881c2bdbd00 R14: dffffc0000000000 R15: 0000000000000f5e
->>> FS:  0000000001a48880(0000) GS:ffff8881dad00000(0000) knlGS:0000000000000000
->>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>> CR2: 0000000020b58000 CR3: 00000001c2210000 CR4: 00000000001406e0
->>> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->>> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->>> Call Trace:
->>>   show_smap+0x167/0x580 fs/proc/task_mmu.c:805
->>>   traverse+0x344/0x7b0 fs/seq_file.c:113
->>>   seq_read+0xc76/0x1150 fs/seq_file.c:188
->>>   do_loop_readv_writev fs/read_write.c:700 [inline]
->>>   do_iter_read+0x4bc/0x670 fs/read_write.c:924
->>>   vfs_readv+0x175/0x1c0 fs/read_write.c:986
->>>   kernel_readv fs/splice.c:362 [inline]
->>>   default_file_splice_read+0x539/0xb20 fs/splice.c:417
->>>   do_splice_to+0x12e/0x190 fs/splice.c:880
->>>   splice_direct_to_actor+0x31c/0x9d0 fs/splice.c:957
->>>   do_splice_direct+0x2d4/0x420 fs/splice.c:1066
->>>   do_sendfile+0x62a/0xe50 fs/read_write.c:1439
->>>   __do_sys_sendfile64 fs/read_write.c:1494 [inline]
->>>   __se_sys_sendfile64 fs/read_write.c:1486 [inline]
->>>   __x64_sys_sendfile64+0x15d/0x250 fs/read_write.c:1486
->>>   do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
->>>   entry_SYSCALL_64_after_hwframe+0x49/0xbe
->>> RIP: 0033:0x440089
->>> Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7
->>> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff
->>> ff 0f 83 5b 14 fc ff c3 66 2e 0f 1f 84 00 00 00 00
->>> RSP: 002b:00007fff3d710a18 EFLAGS: 00000213 ORIG_RAX: 0000000000000028
->>> RAX: ffffffffffffffda RBX: 00007fff3d710a20 RCX: 0000000000440089
->>> RDX: 0000000020b58000 RSI: 0000000000000003 RDI: 0000000000000003
->>> RBP: 00000000006ca018 R08: 0000000000000010 R09: 65732f636f72702f
->>> R10: 000000000000ffff R11: 0000000000000213 R12: 0000000000401970
->>> R13: 0000000000401a00 R14: 0000000000000000 R15: 0000000000000000
->>> Modules linked in:
->>> ---[ end trace faf026efd8795e93 ]---
->>> RIP: 0010:transparent_hugepage_enabled+0x8c/0x5e0 mm/huge_memory.c:69
->>> Code: 80 3c 02 00 0f 85 ae 04 00 00 4c 8b a3 a0 00 00 00 48 b8 00 00 00 00
->>> 00 fc ff df 49 8d bc 24 b8 01 00 00 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f
->>> 85 91 04 00 00 49 8b bc 24 b8 01 00 00 e8 2d 70 e6
->>> RSP: 0018:ffff8881c2237138 EFLAGS: 00010202
->>> RAX: dffffc0000000000 RBX: ffff8881c2bdbc60 RCX: 0000000000000000
->>> RDX: 0000000000000037 RSI: ffffffff81c8fa1a RDI: 00000000000001b8
->>> RBP: ffff8881c2237160 R08: ffffed10383b25ed R09: ffffed10383b25ec
->>> R10: ffffed10383b25ec R11: ffff8881c1d92f63 R12: 0000000000000000
->>> R13: ffff8881c2bdbd00 R14: dffffc0000000000 R15: 0000000000000f5e
->>> FS:  0000000001a48880(0000) GS:ffff8881dad00000(0000) knlGS:0000000000000000
->>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>> CR2: 0000000020b58000 CR3: 00000001c2210000 CR4: 00000000001406e0
->>> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->>> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->>>
->>>
->>> ---
->>> This bug is generated by a bot. It may contain errors.
->>> See https://goo.gl/tpsmEJ for more information about syzbot.
->>> syzbot engineers can be reached at syzkaller@googlegroups.com.
->>>
->>> syzbot will keep track of this bug report. See:
->>> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
->>> syzbot.
->>> syzbot can test patches for this bug, for details see:
->>> https://goo.gl/tpsmEJ#testing-patches
+rocket_int.h:/* number of characters left in xmit buffer before we ask for more */
+rocket_int.h:#define WAKEUP_CHARS 256
 
+rocket.c:       if (info->xmit_cnt < WAKEUP_CHARS) {
+rocket.c:               tty_wakeup(tty);
+
+Maybe the instance in n_tty.c could use a better name instead?
+
+-- 
+Valentin
