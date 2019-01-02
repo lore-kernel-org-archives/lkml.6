@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-11.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAE19C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 18:10:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5DDCC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 18:10:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D1F3218E2
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 18:10:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B23A6218EA
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 18:10:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546452651;
-	bh=JZnnp2wQfy+XsAm9luwqnZmGZbtwD0CvgOdsY7dYY8g=;
+	s=default; t=1546452654;
+	bh=h6vDfzm5LS6PEIkEJAO76i/zns7D8M78p/As8j7wk08=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Yg3iRpAA26BVSE9myyG19kodB0uM2tidF5RbeJ/jgQ1ODQuCC2tY8NaRNUgI5GXvt
-	 BKhNrJhpnlzKZuvPjLufUIytWaL/fDOVNd/WbOJj76Bwg1gGvNYhtFk8PMYUmf87Ko
-	 k7iY+h4x7aQthtOiCcGhWUxixsRAsprZM2UfKhc0=
+	b=d3x0bYF1q3gKZ/TSYDprjgfrXAztuseS+qAmjZLl/Cw7YwL+A3h/QQAPy9vbs1gRN
+	 vVRUfJbggFkyvfpa0PisxYcXTdO+I4o4BYEcGfMvgQUvkTxy85USxlQ9LGuQikfDBi
+	 Pek56UoCv5vEHDgx+CV27CUQ015dZR41lB/KIymE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727261AbfABSKu (ORCPT
+        id S1727232AbfABSKs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 13:10:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49160 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727192AbfABSKs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 2 Jan 2019 13:10:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49090 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727163AbfABSKq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Jan 2019 13:10:46 -0500
 Received: from sinanubuntu1604.mkjiurmyylmellclgttazegk5f.bx.internal.cloudapp.net (unknown [137.117.71.164])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BC96B218D3;
-        Wed,  2 Jan 2019 18:10:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C1FAD218EA;
+        Wed,  2 Jan 2019 18:10:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546452647;
-        bh=JZnnp2wQfy+XsAm9luwqnZmGZbtwD0CvgOdsY7dYY8g=;
+        s=default; t=1546452645;
+        bh=h6vDfzm5LS6PEIkEJAO76i/zns7D8M78p/As8j7wk08=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NPzTxWCucfkxaMboJru4ZkZiLxQLy1sPze/lppnuJD5TTVP/ugGimWv+z2hiOV7sC
-         KpUnazFEy8mvugwxhOKyBTD6Hob1pRrZguwCguNdUGqdPVIOF1owBhdjpcOx4qbDjM
-         3ylfaMgam8Cd8d1r8KKFVbeBSpTcsYFqx0DNSkD0=
+        b=y4uiHEjTvIUjRIjR9dZSSw0AtvpwcNSmJRRdswkay6KIEXKF4S8ylxbIM17rtk6B1
+         msiMmDCmV9UQPUO6tRDL0kbXVxnZPQZ6TMRsz2pbYfoVXtIbixnhw1p2cdWSLRT5No
+         q7xx/HRv8XtnW8tHHxXWzSC2JD1T8vQZYx+4viZQ=
 From:   Sinan Kaya <okaya@kernel.org>
 To:     linux-next@vger.kernel.org
 Cc:     linux-acpi@vger.kernel.org, Sinan Kaya <okaya@kernel.org>,
@@ -45,9 +45,9 @@ Cc:     linux-acpi@vger.kernel.org, Sinan Kaya <okaya@kernel.org>,
         Andy Shevchenko <andy@infradead.org>,
         platform-driver-x86@vger.kernel.org (open list:X86 PLATFORM DRIVERS),
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v5 06/11] platform/x86: apple-gmux: Make PCI dependency explicit
-Date:   Wed,  2 Jan 2019 18:10:33 +0000
-Message-Id: <20190102181038.4418-7-okaya@kernel.org>
+Subject: [PATCH v5 04/11] platform/x86: intel_ips: make PCI dependency explicit
+Date:   Wed,  2 Jan 2019 18:10:31 +0000
+Message-Id: <20190102181038.4418-5-okaya@kernel.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20190102181038.4418-1-okaya@kernel.org>
 References: <20190102181038.4418-1-okaya@kernel.org>
@@ -61,27 +61,28 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 After 'commit 5d32a66541c4 ("PCI/ACPI: Allow ACPI to be built without
 CONFIG_PCI set")' dependencies on CONFIG_PCI that previously were
 satisfied implicitly through dependencies on CONFIG_ACPI have to be
-specified directly. This driver depends on the PCI infrastructure but
-the dependency has not been explicitly called out.
+specified directly. Ipss driver is a PCI device driver but this has
+not been mentioned anywhere in Kconfig.
 
 Fixes: 5d32a66541c46 ("PCI/ACPI: Allow ACPI to be built without CONFIG_PCI set")
 Signed-off-by: Sinan Kaya <okaya@kernel.org>
 ---
- drivers/platform/x86/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/platform/x86/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-index 7afb96cb1cd6..89f4b86244a7 100644
+index e3b62c2ee8d1..b36ea14b41ad 100644
 --- a/drivers/platform/x86/Kconfig
 +++ b/drivers/platform/x86/Kconfig
-@@ -1136,6 +1136,7 @@ config SAMSUNG_Q10
- config APPLE_GMUX
- 	tristate "Apple Gmux Driver"
- 	depends on ACPI
-+	depends on PCI
- 	depends on PNP
- 	depends on BACKLIGHT_CLASS_DEVICE
- 	depends on BACKLIGHT_APPLE=n || BACKLIGHT_APPLE
+@@ -1009,7 +1009,7 @@ config INTEL_MFLD_THERMAL
+ 
+ config INTEL_IPS
+ 	tristate "Intel Intelligent Power Sharing"
+-	depends on ACPI
++	depends on ACPI && PCI
+ 	---help---
+ 	  Intel Calpella platforms support dynamic power sharing between the
+ 	  CPU and GPU, maximizing performance in a given TDP.  This driver,
 -- 
 2.19.0
 
