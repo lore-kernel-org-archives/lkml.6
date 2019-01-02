@@ -2,38 +2,37 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB28CC43612
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:26:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB330C43612
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:28:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAAC02075B
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:26:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C16F121871
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:28:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729373AbfABK0I (ORCPT
+        id S1729383AbfABK2E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 05:26:08 -0500
-Received: from lucky1.263xmail.com ([211.157.147.135]:37624 "EHLO
+        Wed, 2 Jan 2019 05:28:04 -0500
+Received: from lucky1.263xmail.com ([211.157.147.130]:37958 "EHLO
         lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728578AbfABK0H (ORCPT
+        with ESMTP id S1727105AbfABK2D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 05:26:07 -0500
-X-Greylist: delayed 352 seconds by postgrey-1.27 at vger.kernel.org; Wed, 02 Jan 2019 05:26:03 EST
-Received: from tony.xie?rock-chips.com (unknown [192.168.167.84])
-        by lucky1.263xmail.com (Postfix) with ESMTP id 8D7FB5E9;
-        Wed,  2 Jan 2019 18:23:39 +0800 (CST)
+        Wed, 2 Jan 2019 05:28:03 -0500
+Received: from tony.xie?rock-chips.com (unknown [192.168.167.154])
+        by lucky1.263xmail.com (Postfix) with ESMTP id 3E71D1286;
+        Wed,  2 Jan 2019 18:20:08 +0800 (CST)
 X-263anti-spam: KSV:0;
 X-MAIL-GRAY: 1
 X-MAIL-DELIVERY: 0
 X-KSVirus-check: 0
 X-ABS-CHECKED: 4
 Received: from localhost.localdomain (unknown [58.22.7.114])
-        by smtp.263.net (postfix) whith ESMTP id P6628T139711550613248S1546424617830894_;
-        Wed, 02 Jan 2019 18:23:39 +0800 (CST)
+        by smtp.263.net (postfix) whith ESMTP id P2183T140218981095168S1546424404041394_;
+        Wed, 02 Jan 2019 18:20:06 +0800 (CST)
 X-IP-DOMAINF: 1
-X-UNIQUE-TAG: <7c92a8dd6103aab0e6d016af675c5024>
+X-UNIQUE-TAG: <cad938946f652075f400e315c08e280c>
 X-RL-SENDER: tony.xie@rock-chips.com
 X-SENDER: xxx@rock-chips.com
 X-LOGIN-NAME: tony.xie@rock-chips.com
@@ -52,236 +51,77 @@ Cc:     broonie@kernel.org, lee.jones@linaro.org, robh+dt@kernel.org,
         linux-kernel@vger.kernel.org, chenjh@rock-chips.com,
         xsf@rock-chips.com, zhangqing@rock-chips.com,
         huangtao@rock-chips.com, tony.xie@rock-chips.com
-Subject: [PATCH v7 5/6] rtc: rk808: add RK809 and RK817 support.
-Date:   Wed,  2 Jan 2019 05:23:34 -0500
-Message-Id: <20190102102334.29322-1-tony.xie@rock-chips.com>
+Subject: [PATCH v7 0/6] support a new type of PMIC,including two chips(rk817 and rk809)
+Date:   Wed,  2 Jan 2019 05:19:56 -0500
+Message-Id: <20190102102002.29245-1-tony.xie@rock-chips.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190102102002.29245-1-tony.xie@rock-chips.com>
-References: <20190102102002.29245-1-tony.xie@rock-chips.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RK809 and RK817 are power management IC chips for multimedia products.
-Most of their functions and registers are same, including the rtc.
+Most of functions and registers of the rk817 and rk808 are the same,
+so they can share allmost all codes.
 
-Signed-off-by: Tony Xie <tony.xie@rock-chips.com>
-Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
----
- drivers/rtc/Kconfig     |  4 +--
- drivers/rtc/rtc-rk808.c | 68 ++++++++++++++++++++++++++++++++---------
- 2 files changed, 56 insertions(+), 16 deletions(-)
+Their specifications are as follows:
+  1) The RK809 and RK809 consist of 5 DCDCs, 9 LDOs and have the same
+registers
+     for these components except dcdc5.
+  2) The dcdc5 is a boost dcdc for RK817 and is a buck for RK809.
+  3) The RK817 has one switch but The Rk809 has two.
 
-diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
-index a819ef07b7ec..8c34f7ec0a59 100644
---- a/drivers/rtc/Kconfig
-+++ b/drivers/rtc/Kconfig
-@@ -363,11 +363,11 @@ config RTC_DRV_MAX77686
- 	  will be called rtc-max77686.
- 
- config RTC_DRV_RK808
--	tristate "Rockchip RK805/RK808/RK818 RTC"
-+	tristate "Rockchip RK805/RK808/RK809/RK817/RK818 RTC"
- 	depends on MFD_RK808
- 	help
- 	  If you say yes here you will get support for the
--	  RTC of RK805, RK808 and RK818 PMIC.
-+	  RTC of RK805, RK809 and RK817, RK808 and RK818 PMIC.
- 
- 	  This driver can also be built as a module. If so, the module
- 	  will be called rk808-rtc.
-diff --git a/drivers/rtc/rtc-rk808.c b/drivers/rtc/rtc-rk808.c
-index 739c0d42e835..5bacdafb7b21 100644
---- a/drivers/rtc/rtc-rk808.c
-+++ b/drivers/rtc/rtc-rk808.c
-@@ -50,9 +50,18 @@
- #define NUM_TIME_REGS	(RK808_WEEKS_REG - RK808_SECONDS_REG + 1)
- #define NUM_ALARM_REGS	(RK808_ALARM_YEARS_REG - RK808_ALARM_SECONDS_REG + 1)
- 
-+struct rk_rtc_compat_reg {
-+	unsigned int ctrl_reg;
-+	unsigned int status_reg;
-+	unsigned int alarm_seconds_reg;
-+	unsigned int int_reg;
-+	unsigned int seconds_reg;
-+};
-+
- struct rk808_rtc {
- 	struct rk808 *rk808;
- 	struct rtc_device *rtc;
-+	struct rk_rtc_compat_reg *creg;
- 	int irq;
- };
- 
-@@ -101,7 +110,7 @@ static int rk808_rtc_readtime(struct device *dev, struct rtc_time *tm)
- 	int ret;
- 
- 	/* Force an update of the shadowed registers right now */
--	ret = regmap_update_bits(rk808->regmap, RK808_RTC_CTRL_REG,
-+	ret = regmap_update_bits(rk808->regmap, rk808_rtc->creg->ctrl_reg,
- 				 BIT_RTC_CTRL_REG_RTC_GET_TIME,
- 				 BIT_RTC_CTRL_REG_RTC_GET_TIME);
- 	if (ret) {
-@@ -115,7 +124,7 @@ static int rk808_rtc_readtime(struct device *dev, struct rtc_time *tm)
- 	 * 32khz. If we clear the GET_TIME bit here, the time of i2c transfer
- 	 * certainly more than 31.25us: 16 * 2.5us at 400kHz bus frequency.
- 	 */
--	ret = regmap_update_bits(rk808->regmap, RK808_RTC_CTRL_REG,
-+	ret = regmap_update_bits(rk808->regmap, rk808_rtc->creg->ctrl_reg,
- 				 BIT_RTC_CTRL_REG_RTC_GET_TIME,
- 				 0);
- 	if (ret) {
-@@ -123,7 +132,7 @@ static int rk808_rtc_readtime(struct device *dev, struct rtc_time *tm)
- 		return ret;
- 	}
- 
--	ret = regmap_bulk_read(rk808->regmap, RK808_SECONDS_REG,
-+	ret = regmap_bulk_read(rk808->regmap, rk808_rtc->creg->seconds_reg,
- 			       rtc_data, NUM_TIME_REGS);
- 	if (ret) {
- 		dev_err(dev, "Failed to bulk read rtc_data: %d\n", ret);
-@@ -166,7 +175,7 @@ static int rk808_rtc_set_time(struct device *dev, struct rtc_time *tm)
- 	rtc_data[6] = bin2bcd(tm->tm_wday);
- 
- 	/* Stop RTC while updating the RTC registers */
--	ret = regmap_update_bits(rk808->regmap, RK808_RTC_CTRL_REG,
-+	ret = regmap_update_bits(rk808->regmap, rk808_rtc->creg->ctrl_reg,
- 				 BIT_RTC_CTRL_REG_STOP_RTC_M,
- 				 BIT_RTC_CTRL_REG_STOP_RTC_M);
- 	if (ret) {
-@@ -174,14 +183,14 @@ static int rk808_rtc_set_time(struct device *dev, struct rtc_time *tm)
- 		return ret;
- 	}
- 
--	ret = regmap_bulk_write(rk808->regmap, RK808_SECONDS_REG,
-+	ret = regmap_bulk_write(rk808->regmap, rk808_rtc->creg->seconds_reg,
- 				rtc_data, NUM_TIME_REGS);
- 	if (ret) {
- 		dev_err(dev, "Failed to bull write rtc_data: %d\n", ret);
- 		return ret;
- 	}
- 	/* Start RTC again */
--	ret = regmap_update_bits(rk808->regmap, RK808_RTC_CTRL_REG,
-+	ret = regmap_update_bits(rk808->regmap, rk808_rtc->creg->ctrl_reg,
- 				 BIT_RTC_CTRL_REG_STOP_RTC_M, 0);
- 	if (ret) {
- 		dev_err(dev, "Failed to update RTC control: %d\n", ret);
-@@ -199,8 +208,13 @@ static int rk808_rtc_readalarm(struct device *dev, struct rtc_wkalrm *alrm)
- 	uint32_t int_reg;
- 	int ret;
- 
--	ret = regmap_bulk_read(rk808->regmap, RK808_ALARM_SECONDS_REG,
-+	ret = regmap_bulk_read(rk808->regmap,
-+			       rk808_rtc->creg->alarm_seconds_reg,
- 			       alrm_data, NUM_ALARM_REGS);
-+	if (ret) {
-+		dev_err(dev, "Failed to read RTC alarm date REG: %d\n", ret);
-+		return ret;
-+	}
- 
- 	alrm->time.tm_sec = bcd2bin(alrm_data[0] & SECONDS_REG_MSK);
- 	alrm->time.tm_min = bcd2bin(alrm_data[1] & MINUTES_REG_MAK);
-@@ -210,7 +224,7 @@ static int rk808_rtc_readalarm(struct device *dev, struct rtc_wkalrm *alrm)
- 	alrm->time.tm_year = (bcd2bin(alrm_data[5] & YEARS_REG_MSK)) + 100;
- 	rockchip_to_gregorian(&alrm->time);
- 
--	ret = regmap_read(rk808->regmap, RK808_RTC_INT_REG, &int_reg);
-+	ret = regmap_read(rk808->regmap, rk808_rtc->creg->int_reg, &int_reg);
- 	if (ret) {
- 		dev_err(dev, "Failed to read RTC INT REG: %d\n", ret);
- 		return ret;
-@@ -231,7 +245,7 @@ static int rk808_rtc_stop_alarm(struct rk808_rtc *rk808_rtc)
- 	struct rk808 *rk808 = rk808_rtc->rk808;
- 	int ret;
- 
--	ret = regmap_update_bits(rk808->regmap, RK808_RTC_INT_REG,
-+	ret = regmap_update_bits(rk808->regmap, rk808_rtc->creg->int_reg,
- 				 BIT_RTC_INTERRUPTS_REG_IT_ALARM_M, 0);
- 
- 	return ret;
-@@ -242,7 +256,7 @@ static int rk808_rtc_start_alarm(struct rk808_rtc *rk808_rtc)
- 	struct rk808 *rk808 = rk808_rtc->rk808;
- 	int ret;
- 
--	ret = regmap_update_bits(rk808->regmap, RK808_RTC_INT_REG,
-+	ret = regmap_update_bits(rk808->regmap, rk808_rtc->creg->int_reg,
- 				 BIT_RTC_INTERRUPTS_REG_IT_ALARM_M,
- 				 BIT_RTC_INTERRUPTS_REG_IT_ALARM_M);
- 
-@@ -274,7 +288,8 @@ static int rk808_rtc_setalarm(struct device *dev, struct rtc_wkalrm *alrm)
- 	alrm_data[4] = bin2bcd(alrm->time.tm_mon + 1);
- 	alrm_data[5] = bin2bcd(alrm->time.tm_year - 100);
- 
--	ret = regmap_bulk_write(rk808->regmap, RK808_ALARM_SECONDS_REG,
-+	ret = regmap_bulk_write(rk808->regmap,
-+				rk808_rtc->creg->alarm_seconds_reg,
- 				alrm_data, NUM_ALARM_REGS);
- 	if (ret) {
- 		dev_err(dev, "Failed to bulk write: %d\n", ret);
-@@ -318,7 +333,7 @@ static irqreturn_t rk808_alarm_irq(int irq, void *data)
- 	struct i2c_client *client = rk808->i2c;
- 	int ret;
- 
--	ret = regmap_write(rk808->regmap, RK808_RTC_STATUS_REG,
-+	ret = regmap_write(rk808->regmap, rk808_rtc->creg->status_reg,
- 			   RTC_STATUS_MASK);
- 	if (ret) {
- 		dev_err(&client->dev,
-@@ -371,6 +386,22 @@ static int rk808_rtc_resume(struct device *dev)
- static SIMPLE_DEV_PM_OPS(rk808_rtc_pm_ops,
- 	rk808_rtc_suspend, rk808_rtc_resume);
- 
-+static struct rk_rtc_compat_reg rk808_creg = {
-+	.ctrl_reg = RK808_RTC_CTRL_REG,
-+	.status_reg = RK808_RTC_STATUS_REG,
-+	.alarm_seconds_reg = RK808_ALARM_SECONDS_REG,
-+	.int_reg = RK808_RTC_INT_REG,
-+	.seconds_reg = RK808_SECONDS_REG,
-+};
-+
-+static struct rk_rtc_compat_reg rk817_creg = {
-+	.ctrl_reg = RK817_RTC_CTRL_REG,
-+	.status_reg = RK817_RTC_STATUS_REG,
-+	.alarm_seconds_reg = RK817_ALARM_SECONDS_REG,
-+	.int_reg = RK817_RTC_INT_REG,
-+	.seconds_reg = RK817_SECONDS_REG,
-+};
-+
- static int rk808_rtc_probe(struct platform_device *pdev)
- {
- 	struct rk808 *rk808 = dev_get_drvdata(pdev->dev.parent);
-@@ -381,11 +412,20 @@ static int rk808_rtc_probe(struct platform_device *pdev)
- 	if (rk808_rtc == NULL)
- 		return -ENOMEM;
- 
-+	switch (rk808->variant) {
-+	case RK809_ID:
-+	case RK817_ID:
-+		rk808_rtc->creg = &rk817_creg;
-+		break;
-+	default:
-+		rk808_rtc->creg = &rk808_creg;
-+		break;
-+	}
- 	platform_set_drvdata(pdev, rk808_rtc);
- 	rk808_rtc->rk808 = rk808;
- 
- 	/* start rtc running by default, and use shadowed timer. */
--	ret = regmap_update_bits(rk808->regmap, RK808_RTC_CTRL_REG,
-+	ret = regmap_update_bits(rk808->regmap, rk808_rtc->creg->ctrl_reg,
- 				 BIT_RTC_CTRL_REG_STOP_RTC_M |
- 				 BIT_RTC_CTRL_REG_RTC_READSEL_M,
- 				 BIT_RTC_CTRL_REG_RTC_READSEL_M);
-@@ -395,7 +435,7 @@ static int rk808_rtc_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
--	ret = regmap_write(rk808->regmap, RK808_RTC_STATUS_REG,
-+	ret = regmap_write(rk808->regmap, rk808_rtc->creg->status_reg,
- 			   RTC_STATUS_MASK);
- 	if (ret) {
- 		dev_err(&pdev->dev,
+Changes in V2:
+1. initialize the pm_pwroff_fn to NULL. 
+2. use EXPORT_SYMBOL_GPL to export pm_power_off_prepare.
+3. change patch 2/3/4/5 subjects. 
+
+Changes in V3
+1. change patch 4 subjects
+2. replace pr_ with dev_ for printing in patch 2
+3. modify switch1 and switch2 configs in patch 2
+4. explain gpio information for rk809 and rk817 in patch 4
+
+Changes in V4:
+1. modify some codes for patch 2 and patch 5 according to comments 
+2. add reviewer mail lists for patch 3 and 4
+
+Changes in V5:
+modify some codes for patch 1 according to reveiw comments for v3.
+ 1) remove the pm_power_off_prepare() and replace with shutdown
+call-back from syscore
+ 2) move the macro REGMAP_IRQ_M into the regmap.h and rename it
+REGMAP_IRQ_LINE
+ 3) make some dev_warn() log clear
+
+Changes in V6:
+modify some codes according to reveiw comments for v5.
+
+Changes in V7:
+modify some codes for patch 2 according to reveiw comments.
+
+Tony Xie (6):
+  mfd: rk808: remove the id_table
+  mfd: rk808: Add RK817 and RK809 support
+  regulator: rk808: add RK809 and RK817 support.
+  dt-bindings: mfd: rk808: Add binding information for RK809 and RK817.
+  rtc: rk808: add RK809 and RK817 support.
+  clk: RK808: add RK809 and RK817 support.
+
+ .../devicetree/bindings/mfd/rk808.txt         |  44 ++
+ drivers/clk/Kconfig                           |   9 +-
+ drivers/clk/clk-rk808.c                       |  64 +-
+ drivers/mfd/Kconfig                           |   6 +-
+ drivers/mfd/rk808.c                           | 199 +++++-
+ drivers/regulator/Kconfig                     |   4 +-
+ drivers/regulator/rk808-regulator.c           | 657 +++++++++++++++++-
+ drivers/rtc/Kconfig                           |   4 +-
+ drivers/rtc/rtc-rk808.c                       |  68 +-
+ include/linux/mfd/rk808.h                     | 175 +++++
+ 10 files changed, 1164 insertions(+), 66 deletions(-)
+
 -- 
 2.17.1
 
