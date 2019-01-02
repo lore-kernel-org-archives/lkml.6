@@ -2,132 +2,353 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE4A2C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 17:02:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70E2DC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 17:05:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7EC2218EA
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 17:02:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 35C062171F
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 17:05:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730566AbfABRCG (ORCPT
+        id S1730487AbfABRF4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 12:02:06 -0500
-Received: from mail-it1-f197.google.com ([209.85.166.197]:42794 "EHLO
-        mail-it1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729527AbfABRCF (ORCPT
+        Wed, 2 Jan 2019 12:05:56 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:45656 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729909AbfABRFz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 12:02:05 -0500
-Received: by mail-it1-f197.google.com with SMTP id g7so36422068itg.7
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 09:02:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to:content-transfer-encoding;
-        bh=nUgKFwnc9bhZJ+BAHQwHTEQRqD4DNaQgGmFcAaqAsCc=;
-        b=sblacDmq5/WOZaFw4go4GYsG8M9GKtv3HSZPToo/Rp0o1o3GHWQHl7JTOGsj6ZVFaM
-         oWcwLIOKOex5MrWivWsh40moVGhz7KAzVuWyOcoicVH1gpX/rnpLVDF+zJp/4LK9rmeA
-         Rliq6MzzmQQaK1nlpjad6ZOqRKRYbJy5lo5D5D4hXjX6tuGKtRpyJrdDPtEMUhirSeE6
-         ZBxcNIbqyzS8SxR65TnWGn759sG728oKOKTXwiGXoXxF97p7VBgei78fe5/5lp8tZ1or
-         Uapw1dfj0FBJFKPlMNbv8aKDm2Nq275cJICXCUmJZx7wtX7IblLmudkxw4cwubJ/XB1X
-         wMdQ==
-X-Gm-Message-State: AJcUukfzEdOlkR0aSrVg5gOEjofoL1oOzKP/Ojp6hb+X6haUd3LybXF1
-        yOEKwifTRMw15wOroGn3n8xVZ2aWc7KjJ7kyspjE2ih85StH
-X-Google-Smtp-Source: ALg8bN5WpzHnKFCRXpWBFZTgPR5M21zX+6Lqlj/7AvWOXmLP7TjAuvKTTo7f8LfzgR7cTwHORWEtZxYxsfGnhLrkUMaKN0EFoxx1
+        Wed, 2 Jan 2019 12:05:55 -0500
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x02H508A103964
+        for <linux-kernel@vger.kernel.org>; Wed, 2 Jan 2019 12:05:53 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2pryqtmn2s-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 12:05:53 -0500
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Wed, 2 Jan 2019 17:05:49 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 2 Jan 2019 17:05:43 -0000
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x02H5g8u10027088
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 2 Jan 2019 17:05:42 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 89D8342045;
+        Wed,  2 Jan 2019 17:05:42 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 72EA642042;
+        Wed,  2 Jan 2019 17:05:40 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.205.4])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Wed,  2 Jan 2019 17:05:40 +0000 (GMT)
+Date:   Wed, 2 Jan 2019 19:05:38 +0200
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Baoquan He <bhe@redhat.com>
+Cc:     Pingfan Liu <kernelfans@gmail.com>, Tejun Heo <tj@kernel.org>,
+        linux-acpi@vger.kernel.org, linux-mm@kvack.org,
+        kexec@lists.infradead.org, Tang Chen <tangchen@cn.fujitsu.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Yaowei Bai <baiyaowei@cmss.chinamobile.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Daniel Vacek <neelx@redhat.com>,
+        Mathieu Malaterre <malat@debian.org>,
+        Stefan Agner <stefan@agner.ch>, Dave Young <dyoung@redhat.com>,
+        yinghai@kernel.org, vgoyal@redhat.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv3 1/2] mm/memblock: extend the limit inferior of
+ bottom-up after parsing hotplug attr
+References: <1545966002-3075-1-git-send-email-kernelfans@gmail.com>
+ <1545966002-3075-2-git-send-email-kernelfans@gmail.com>
+ <20181231084018.GA28478@rapoport-lnx>
+ <CAFgQCTvQnj7zReFvH_gmfVJdPXE325o+z4Xx76fupvsLR_7H2A@mail.gmail.com>
+ <20190102092749.GA22664@rapoport-lnx>
+ <20190102101804.GD1990@MiWiFi-R3L-srv>
 MIME-Version: 1.0
-X-Received: by 2002:a6b:5a02:: with SMTP id o2mr42648630iob.17.1546448524649;
- Wed, 02 Jan 2019 09:02:04 -0800 (PST)
-Date:   Wed, 02 Jan 2019 09:02:04 -0800
-In-Reply-To: <0000000000001aea21057e4c1ab5@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f9aaa5057e7c9ad5@google.com>
-Subject: Re: BUG: corrupted list in account_entity_enqueue
-From:   syzbot <syzbot+14005fa30c9a07192934@syzkaller.appspotmail.com>
-To:     linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        tglx@linutronix.de
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190102101804.GD1990@MiWiFi-R3L-srv>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 19010217-0020-0000-0000-000002FFA100
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19010217-0021-0000-0000-0000214FA6C2
+Message-Id: <20190102170537.GA3591@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-02_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901020153
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-c3l6Ym90IGhhcyBmb3VuZCBhIHJlcHJvZHVjZXIgZm9yIHRoZSBmb2xsb3dpbmcgY3Jhc2ggb246
-DQoNCkhFQUQgY29tbWl0OiAgICA0Y2QxYjYwZGVmNTEgQWRkIGxpbnV4LW5leHQgc3BlY2lmaWMg
-ZmlsZXMgZm9yIDIwMTkwMTAyDQpnaXQgdHJlZTogICAgICAgbGludXgtbmV4dA0KY29uc29sZSBv
-dXRwdXQ6IGh0dHBzOi8vc3l6a2FsbGVyLmFwcHNwb3QuY29tL3gvbG9nLnR4dD94PTEyYjEyZGJm
-NDAwMDAwDQprZXJuZWwgY29uZmlnOiAgaHR0cHM6Ly9zeXprYWxsZXIuYXBwc3BvdC5jb20veC8u
-Y29uZmlnP3g9M2JmNjY1Zjg4N2JkM2Q3ZQ0KZGFzaGJvYXJkIGxpbms6IGh0dHBzOi8vc3l6a2Fs
-bGVyLmFwcHNwb3QuY29tL2J1Zz9leHRpZD0xNDAwNWZhMzBjOWEwNzE5MjkzNA0KY29tcGlsZXI6
-ICAgICAgIGdjYyAoR0NDKSA5LjAuMCAyMDE4MTIzMSAoZXhwZXJpbWVudGFsKQ0Kc3l6IHJlcHJv
-OiAgICAgIGh0dHBzOi8vc3l6a2FsbGVyLmFwcHNwb3QuY29tL3gvcmVwcm8uc3l6P3g9MTA2MjFm
-NTM0MDAwMDANCkMgcmVwcm9kdWNlcjogICBodHRwczovL3N5emthbGxlci5hcHBzcG90LmNvbS94
-L3JlcHJvLmM/eD0xNTRkMDQyNzQwMDAwMA0KDQpJTVBPUlRBTlQ6IGlmIHlvdSBmaXggdGhlIGJ1
-ZywgcGxlYXNlIGFkZCB0aGUgZm9sbG93aW5nIHRhZyB0byB0aGUgY29tbWl0Og0KUmVwb3J0ZWQt
-Ynk6IHN5emJvdCsxNDAwNWZhMzBjOWEwNzE5MjkzNEBzeXprYWxsZXIuYXBwc3BvdG1haWwuY29t
-DQoNCmxpc3RfYWRkIGNvcnJ1cHRpb24uIG5leHQtPnByZXYgc2hvdWxkIGJlIHByZXYgKGZmZmY4
-ODgwYWU3MmQ4ZDgpLCBidXQgd2FzICANCjAwMDAwMDAwMDAwMDA2MTAuIChuZXh0PWZmZmY4ODgw
-YTk0YjY0ZjApLg0KLS0tLS0tLS0tLS0tWyBjdXQgaGVyZSBdLS0tLS0tLS0tLS0tDQprZXJuZWwg
-QlVHIGF0IGxpYi9saXN0X2RlYnVnLmM6MjMhDQppbnZhbGlkIG9wY29kZTogMDAwMCBbIzFdIFBS
-RUVNUFQgU01QIEtBU0FODQpDUFU6IDEgUElEOiAtMTk1ODUxMzcyMCBDb21tOiAQBiBOb3QgdGFp
-bnRlZCA0LjIwLjAtbmV4dC0yMDE5MDEwMiAjMg0KSGFyZHdhcmUgbmFtZTogR29vZ2xlIEdvb2ds
-ZSBDb21wdXRlIEVuZ2luZS9Hb29nbGUgQ29tcHV0ZSBFbmdpbmUsIEJJT1MgIA0KR29vZ2xlIDAx
-LzAxLzIwMTENClJJUDogMDAxMDpfX2xpc3RfYWRkX3ZhbGlkLmNvbGQrMHhmLzB4M2MgbGliL2xp
-c3RfZGVidWcuYzoyMw0KQ29kZTogMzQgZmUgZWIgZDUgNGMgODkgZTcgZTggM2EgODIgMzQgZmUg
-ZWIgYTMgNGMgODkgZjcgZTggMzAgODIgMzQgZmUgZTkgIA0KNTYgZmYgZmYgZmYgNGMgODkgZTEg
-NDggYzcgYzcgNDAgOTggODEgODggZTggMDAgY2IgZDYgZmQgPDBmPiAwYiA0OCA4OSBmMiAgDQo0
-YyA4OSBlMSA0YyA4OSBlZSA0OCBjNyBjNyA4MCA5OSA4MSA4OCBlOCBlOSBjYSBkNg0KUlNQOiAw
-MDE4OmZmZmY4ODgwYWU3MDc2NDggRUZMQUdTOiAwMDAxMDA4Ng0KUkFYOiAwMDAwMDAwMDAwMDAw
-MDc1IFJCWDogZmZmZjg4ODBhNDc4M2NjMCBSQ1g6IDAwMDAwMDAwMDAwMDAwMDANClJEWDogMDAw
-MDAwMDAwMDAwMDAwMCBSU0k6IGZmZmZmZmZmODE2N2Q3ODYgUkRJOiBmZmZmZWQxMDE1Y2UwZWJi
-DQpSQlA6IGZmZmY4ODgwYWU3MDc2NjAgUjA4OiAwMDAwMDAwMDAwMDAwMDc1IFIwOTogZmZmZmVk
-MTAxNWNlNTAyMQ0KUjEwOiBmZmZmZWQxMDE1Y2U1MDIwIFIxMTogZmZmZjg4ODBhZTcyODEwNyBS
-MTI6IGZmZmY4ODgwYTk0YjY0ZjANClIxMzogZmZmZjg4ODBhODQzYTUzMCBSMTQ6IGZmZmY4ODgw
-YWU3MDc2ZTggUjE1OiBmZmZmODg4MGE4NDNhNTMwDQpGUzogIDAwMDAwMDAwMDAwMDAwMDAoMDAw
-MCkgR1M6ZmZmZjg4ODBhZTcwMDAwMCgwMDAwKSBrbmxHUzowMDAwMDAwMDAwMDAwMDAwDQpDUzog
-IDAwMTAgRFM6IDAwMDAgRVM6IDAwMDAgQ1IwOiAwMDAwMDAwMDgwMDUwMDMzDQpDUjI6IDAwMDAw
-MDAwMDAwMDAwNjggQ1IzOiAwMDAwMDAwMGE0M2M3MDAwIENSNDogMDAwMDAwMDAwMDE0MDZlMA0K
-RFIwOiAwMDAwMDAwMDAwMDAwMDAwIERSMTogMDAwMDAwMDAwMDAwMDAwMCBEUjI6IDAwMDAwMDAw
-MDAwMDAwMDANCkRSMzogMDAwMDAwMDAwMDAwMDAwMCBEUjY6IDAwMDAwMDAwZmZmZTBmZjAgRFI3
-OiAwMDAwMDAwMDAwMDAwNDAwDQpDYWxsIFRyYWNlOg0KICA8SVJRPg0KICBfX2xpc3RfYWRkIGlu
-Y2x1ZGUvbGludXgvbGlzdC5oOjYwIFtpbmxpbmVdDQogIGxpc3RfYWRkIGluY2x1ZGUvbGludXgv
-bGlzdC5oOjc5IFtpbmxpbmVdDQogIGFjY291bnRfZW50aXR5X2VucXVldWUrMHgzYTAvMHg2NjAg
-a2VybmVsL3NjaGVkL2ZhaXIuYzoyNjc4DQogIGVucXVldWVfZW50aXR5KzB4Mjc2LzB4MjBiMCBr
-ZXJuZWwvc2NoZWQvZmFpci5jOjM5MDINCiAgZW5xdWV1ZV90YXNrX2ZhaXIrMHgyMzcvMHgxMGMw
-IGtlcm5lbC9zY2hlZC9mYWlyLmM6NTEzMw0KICBlbnF1ZXVlX3Rhc2sga2VybmVsL3NjaGVkL2Nv
-cmUuYzo3MzAgW2lubGluZV0NCiAgYWN0aXZhdGVfdGFzaysweDExZC8weDQ3MCBrZXJuZWwvc2No
-ZWQvY29yZS5jOjc1MQ0KICB0dHd1X2FjdGl2YXRlIGtlcm5lbC9zY2hlZC9jb3JlLmM6MTY0MyBb
-aW5saW5lXQ0KICB0dHd1X2RvX2FjdGl2YXRlKzB4ZDQvMHgxZjAga2VybmVsL3NjaGVkL2NvcmUu
-YzoxNzAyDQogIHR0d3VfcXVldWUga2VybmVsL3NjaGVkL2NvcmUuYzoxODQ3IFtpbmxpbmVdDQog
-IHRyeV90b193YWtlX3VwKzB4OTk3LzB4MTQ4MCBrZXJuZWwvc2NoZWQvY29yZS5jOjIwNTcNCiAg
-d2FrZV91cF9wcm9jZXNzKzB4MTAvMHgyMCBrZXJuZWwvc2NoZWQvY29yZS5jOjIxMjkNCiAgaHJ0
-aW1lcl93YWtldXArMHg0OC8weDYwIGtlcm5lbC90aW1lL2hydGltZXIuYzoxNjM3DQogIF9fcnVu
-X2hydGltZXIga2VybmVsL3RpbWUvaHJ0aW1lci5jOjEzODkgW2lubGluZV0NCiAgX19ocnRpbWVy
-X3J1bl9xdWV1ZXMrMHgzYTcvMHgxMDUwIGtlcm5lbC90aW1lL2hydGltZXIuYzoxNDUxDQogIGhy
-dGltZXJfaW50ZXJydXB0KzB4MzE0LzB4NzcwIGtlcm5lbC90aW1lL2hydGltZXIuYzoxNTA5DQog
-IGxvY2FsX2FwaWNfdGltZXJfaW50ZXJydXB0IGFyY2gveDg2L2tlcm5lbC9hcGljL2FwaWMuYzox
-MDM1IFtpbmxpbmVdDQogIHNtcF9hcGljX3RpbWVyX2ludGVycnVwdCsweDE4ZC8weDc2MCBhcmNo
-L3g4Ni9rZXJuZWwvYXBpYy9hcGljLmM6MTA2MA0KICBhcGljX3RpbWVyX2ludGVycnVwdCsweGYv
-MHgyMCBhcmNoL3g4Ni9lbnRyeS9lbnRyeV82NC5TOjgwNw0KICA8L0lSUT4NCk1vZHVsZXMgbGlu
-a2VkIGluOg0KLS0tWyBlbmQgdHJhY2UgMjFhMDAyNDZjZTkyMDljZSBdLS0tDQpSSVA6IDAwMTA6
-X19saXN0X2FkZF92YWxpZC5jb2xkKzB4Zi8weDNjIGxpYi9saXN0X2RlYnVnLmM6MjMNCkNvZGU6
-IDM0IGZlIGViIGQ1IDRjIDg5IGU3IGU4IDNhIDgyIDM0IGZlIGViIGEzIDRjIDg5IGY3IGU4IDMw
-IDgyIDM0IGZlIGU5ICANCjU2IGZmIGZmIGZmIDRjIDg5IGUxIDQ4IGM3IGM3IDQwIDk4IDgxIDg4
-IGU4IDAwIGNiIGQ2IGZkIDwwZj4gMGIgNDggODkgZjIgIA0KNGMgODkgZTEgNGMgODkgZWUgNDgg
-YzcgYzcgODAgOTkgODEgODggZTggZTkgY2EgZDYNClJTUDogMDAxODpmZmZmODg4MGFlNzA3NjQ4
-IEVGTEFHUzogMDAwMTAwODYNClJBWDogMDAwMDAwMDAwMDAwMDA3NSBSQlg6IGZmZmY4ODgwYTQ3
-ODNjYzAgUkNYOiAwMDAwMDAwMDAwMDAwMDAwDQpSRFg6IDAwMDAwMDAwMDAwMDAwMDAgUlNJOiBm
-ZmZmZmZmZjgxNjdkNzg2IFJESTogZmZmZmVkMTAxNWNlMGViYg0KUkJQOiBmZmZmODg4MGFlNzA3
-NjYwIFIwODogMDAwMDAwMDAwMDAwMDA3NSBSMDk6IGZmZmZlZDEwMTVjZTUwMjENClIxMDogZmZm
-ZmVkMTAxNWNlNTAyMCBSMTE6IGZmZmY4ODgwYWU3MjgxMDcgUjEyOiBmZmZmODg4MGE5NGI2NGYw
-DQpSMTM6IGZmZmY4ODgwYTg0M2E1MzAgUjE0OiBmZmZmODg4MGFlNzA3NmU4IFIxNTogZmZmZjg4
-ODBhODQzYTUzMA0KRlM6ICAwMDAwMDAwMDAwMDAwMDAwKDAwMDApIEdTOmZmZmY4ODgwYWU3MDAw
-MDAoMDAwMCkga25sR1M6MDAwMDAwMDAwMDAwMDAwMA0KQ1M6ICAwMDEwIERTOiAwMDAwIEVTOiAw
-MDAwIENSMDogMDAwMDAwMDA4MDA1MDAzMw0KQ1IyOiAwMDAwMDAwMDAwMDAwMDY4IENSMzogMDAw
-MDAwMDBhNDNjNzAwMCBDUjQ6IDAwMDAwMDAwMDAxNDA2ZTANCkRSMDogMDAwMDAwMDAwMDAwMDAw
-MCBEUjE6IDAwMDAwMDAwMDAwMDAwMDAgRFIyOiAwMDAwMDAwMDAwMDAwMDAwDQpEUjM6IDAwMDAw
-MDAwMDAwMDAwMDAgRFI2OiAwMDAwMDAwMGZmZmUwZmYwIERSNzogMDAwMDAwMDAwMDAwMDQwMA0K
-DQo=
+(added Tejun)
+
+On Wed, Jan 02, 2019 at 06:18:04PM +0800, Baoquan He wrote:
+> On 01/02/19 at 11:27am, Mike Rapoport wrote:
+> > On Wed, Jan 02, 2019 at 02:47:34PM +0800, Pingfan Liu wrote:
+> > > On Mon, Dec 31, 2018 at 4:40 PM Mike Rapoport <rppt@linux.ibm.com> wrote:
+> > > >
+> > > > On Fri, Dec 28, 2018 at 11:00:01AM +0800, Pingfan Liu wrote:
+> > > > > The bottom-up allocation style is introduced to cope with movable_node,
+> > > > > where the limit inferior of allocation starts from kernel's end, due to
+> > > > > lack of knowledge of memory hotplug info at this early time. But if later,
+> > > > > hotplug info has been got, the limit inferior can be extend to 0.
+> > > > > 'kexec -c' prefers to reuse this style to alloc mem at lower address,
+> > > > > since if the reserved region is beyond 4G, then it requires extra mem
+> > > > > (default is 16M) for swiotlb.
+> > > >
+> > > > I fail to understand why the availability of memory hotplug information
+> > > > would allow to extend the lower limit of bottom-up memblock allocations
+> > > > below the kernel. The memory in the physical range [0, kernel_start) can be
+> > > > allocated as soon as the kernel memory is reserved.
+> > > >
+> > > Yes, the  [0, kernel_start) can be allocated at this time by some func
+> > > e.g. memblock_reserve(). But there is trick. For the func like
+> > > memblock_find_in_range(), this is hotplug attr checking ,,it will
+> > > check the hotmovable attr in __next_mem_range()
+> > > {
+> > > if (movable_node_is_enabled() && memblock_is_hotpluggable(m))
+> > > continue
+> > > }.  So the movable memory can be safely skipped.
+> > 
+> > I still don't see the connection between allocating memory below
+> > kernel_start and the hotplug info.
+> > 
+> > The check for 'end > kernel_end' in
+> > 
+> >  	if (memblock_bottom_up() && end > kernel_end)
+> > 
+> > does not protect against allocation in a hotplugable area.
+> > If memblock_find_in_range() is called before hotplug info is parsed it can
+> > return a range in a hotplugable area.
+> > 
+> > The point I'd like to clarify is why allocating memory in the range [0,
+> > kernel_start) cannot be done before hotplug info is available and why it is
+> > safe to allocate that memory afterwards?
+> 
+> Well, I think that's because we have KASLR. Before KASLR was introdueced,
+> kernel is put at a low and fixed physical address. Allocating memblock
+> bottom-up after kernel can make sure those kernel data is in the same node
+> as kernel text itself before SRAT parsed. While [0, kernel_start) is a
+> very small range, e.g on x86, it was 16 MB, which is very possibly used
+> up.
+> 
+> But now, with KASLR enabled by default, this bottom-up after kernel text
+> allocation has potential issue. E.g we have node0 (including normal zone),
+> node1(including movable zone), if KASLR put kernel at top of node0, the
+> next memblock allocation before SRAT parsed will stamp into movable zone
+> of node1, hotplug doesn't work well any more consequently. I had
+> considered this issue previously, but haven't thought of a way to fix
+> it.
+ 
+I agree that currently the bottom-up allocation after the kernel text has
+issues with KASLR. But this issues are not necessarily related to the
+memory hotplug. Even with a single memory node, a bottom-up allocation will
+fail if KASLR would put the kernel near the end of node0.
+
+What I am trying to understand is whether there is a fundamental reason to
+prevent allocations from [0, kernel_start)?
+
+Maybe Tejun can recall why he suggested to start bottom-up allocations from
+kernel_end.
+
+> While it's not related to this patch. About this patchset, I didn't
+> check it carefully in v2 post, and acked it. In fact the current way is
+> not good, Pingfan should call __memblock_find_range_bottom_up() directly
+> for crashkernel reserving. Reasons are:
+> 1)SRAT parsing is done, system restore to take top-down way to do
+> memblock allocat.
+> 2)we do need to find range bottom-up if user specify crashkernel=xxM
+> (without a explicit base address).
+> 
+> Thanks
+> Baoquan
+> 
+> > 
+> > > Thanks for your kindly review.
+> > > 
+> > > Regards,
+> > > Pingfan
+> > > 
+> > > > The extents of the memory node hosting the kernel image can be used to
+> > > > limit memblok allocations from that particular node, even in top-down mode.
+> > > >
+> > > > > Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
+> > > > > Cc: Tang Chen <tangchen@cn.fujitsu.com>
+> > > > > Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+> > > > > Cc: Len Brown <lenb@kernel.org>
+> > > > > Cc: Andrew Morton <akpm@linux-foundation.org>
+> > > > > Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
+> > > > > Cc: Michal Hocko <mhocko@suse.com>
+> > > > > Cc: Jonathan Corbet <corbet@lwn.net>
+> > > > > Cc: Yaowei Bai <baiyaowei@cmss.chinamobile.com>
+> > > > > Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
+> > > > > Cc: Nicholas Piggin <npiggin@gmail.com>
+> > > > > Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+> > > > > Cc: Daniel Vacek <neelx@redhat.com>
+> > > > > Cc: Mathieu Malaterre <malat@debian.org>
+> > > > > Cc: Stefan Agner <stefan@agner.ch>
+> > > > > Cc: Dave Young <dyoung@redhat.com>
+> > > > > Cc: Baoquan He <bhe@redhat.com>
+> > > > > Cc: yinghai@kernel.org,
+> > > > > Cc: vgoyal@redhat.com
+> > > > > Cc: linux-kernel@vger.kernel.org
+> > > > > ---
+> > > > >  drivers/acpi/numa.c      |  4 ++++
+> > > > >  include/linux/memblock.h |  1 +
+> > > > >  mm/memblock.c            | 58 +++++++++++++++++++++++++++++-------------------
+> > > > >  3 files changed, 40 insertions(+), 23 deletions(-)
+> > > > >
+> > > > > diff --git a/drivers/acpi/numa.c b/drivers/acpi/numa.c
+> > > > > index 2746994..3eea4e4 100644
+> > > > > --- a/drivers/acpi/numa.c
+> > > > > +++ b/drivers/acpi/numa.c
+> > > > > @@ -462,6 +462,10 @@ int __init acpi_numa_init(void)
+> > > > >
+> > > > >               cnt = acpi_table_parse_srat(ACPI_SRAT_TYPE_MEMORY_AFFINITY,
+> > > > >                                           acpi_parse_memory_affinity, 0);
+> > > > > +
+> > > > > +#if defined(CONFIG_X86) || defined(CONFIG_ARM64)
+> > > > > +             mark_mem_hotplug_parsed();
+> > > > > +#endif
+> > > > >       }
+> > > > >
+> > > > >       /* SLIT: System Locality Information Table */
+> > > > > diff --git a/include/linux/memblock.h b/include/linux/memblock.h
+> > > > > index aee299a..d89ed9e 100644
+> > > > > --- a/include/linux/memblock.h
+> > > > > +++ b/include/linux/memblock.h
+> > > > > @@ -125,6 +125,7 @@ int memblock_reserve(phys_addr_t base, phys_addr_t size);
+> > > > >  void memblock_trim_memory(phys_addr_t align);
+> > > > >  bool memblock_overlaps_region(struct memblock_type *type,
+> > > > >                             phys_addr_t base, phys_addr_t size);
+> > > > > +void mark_mem_hotplug_parsed(void);
+> > > > >  int memblock_mark_hotplug(phys_addr_t base, phys_addr_t size);
+> > > > >  int memblock_clear_hotplug(phys_addr_t base, phys_addr_t size);
+> > > > >  int memblock_mark_mirror(phys_addr_t base, phys_addr_t size);
+> > > > > diff --git a/mm/memblock.c b/mm/memblock.c
+> > > > > index 81ae63c..a3f5e46 100644
+> > > > > --- a/mm/memblock.c
+> > > > > +++ b/mm/memblock.c
+> > > > > @@ -231,6 +231,12 @@ __memblock_find_range_top_down(phys_addr_t start, phys_addr_t end,
+> > > > >       return 0;
+> > > > >  }
+> > > > >
+> > > > > +static bool mem_hotmovable_parsed __initdata_memblock;
+> > > > > +void __init_memblock mark_mem_hotplug_parsed(void)
+> > > > > +{
+> > > > > +     mem_hotmovable_parsed = true;
+> > > > > +}
+> > > > > +
+> > > > >  /**
+> > > > >   * memblock_find_in_range_node - find free area in given range and node
+> > > > >   * @size: size of free area to find
+> > > > > @@ -259,7 +265,7 @@ phys_addr_t __init_memblock memblock_find_in_range_node(phys_addr_t size,
+> > > > >                                       phys_addr_t end, int nid,
+> > > > >                                       enum memblock_flags flags)
+> > > > >  {
+> > > > > -     phys_addr_t kernel_end, ret;
+> > > > > +     phys_addr_t kernel_end, ret = 0;
+> > > > >
+> > > > >       /* pump up @end */
+> > > > >       if (end == MEMBLOCK_ALLOC_ACCESSIBLE)
+> > > > > @@ -270,34 +276,40 @@ phys_addr_t __init_memblock memblock_find_in_range_node(phys_addr_t size,
+> > > > >       end = max(start, end);
+> > > > >       kernel_end = __pa_symbol(_end);
+> > > > >
+> > > > > -     /*
+> > > > > -      * try bottom-up allocation only when bottom-up mode
+> > > > > -      * is set and @end is above the kernel image.
+> > > > > -      */
+> > > > > -     if (memblock_bottom_up() && end > kernel_end) {
+> > > > > -             phys_addr_t bottom_up_start;
+> > > > > +     if (memblock_bottom_up()) {
+> > > > > +             phys_addr_t bottom_up_start = start;
+> > > > >
+> > > > > -             /* make sure we will allocate above the kernel */
+> > > > > -             bottom_up_start = max(start, kernel_end);
+> > > > > -
+> > > > > -             /* ok, try bottom-up allocation first */
+> > > > > -             ret = __memblock_find_range_bottom_up(bottom_up_start, end,
+> > > > > -                                                   size, align, nid, flags);
+> > > > > -             if (ret)
+> > > > > +             if (mem_hotmovable_parsed) {
+> > > > > +                     ret = __memblock_find_range_bottom_up(
+> > > > > +                             bottom_up_start, end, size, align, nid,
+> > > > > +                             flags);
+> > > > >                       return ret;
+> > > > >
+> > > > >               /*
+> > > > > -              * we always limit bottom-up allocation above the kernel,
+> > > > > -              * but top-down allocation doesn't have the limit, so
+> > > > > -              * retrying top-down allocation may succeed when bottom-up
+> > > > > -              * allocation failed.
+> > > > > -              *
+> > > > > -              * bottom-up allocation is expected to be fail very rarely,
+> > > > > -              * so we use WARN_ONCE() here to see the stack trace if
+> > > > > -              * fail happens.
+> > > > > +              * if mem hotplug info is not parsed yet, try bottom-up
+> > > > > +              * allocation with @end above the kernel image.
+> > > > >                */
+> > > > > -             WARN_ONCE(IS_ENABLED(CONFIG_MEMORY_HOTREMOVE),
+> > > > > +             } else if (!mem_hotmovable_parsed && end > kernel_end) {
+> > > > > +                     /* make sure we will allocate above the kernel */
+> > > > > +                     bottom_up_start = max(start, kernel_end);
+> > > > > +                     ret = __memblock_find_range_bottom_up(
+> > > > > +                             bottom_up_start, end, size, align, nid,
+> > > > > +                             flags);
+> > > > > +                     if (ret)
+> > > > > +                             return ret;
+> > > > > +                     /*
+> > > > > +                      * we always limit bottom-up allocation above the
+> > > > > +                      * kernel, but top-down allocation doesn't have
+> > > > > +                      * the limit, so retrying top-down allocation may
+> > > > > +                      * succeed when bottom-up allocation failed.
+> > > > > +                      *
+> > > > > +                      * bottom-up allocation is expected to be fail
+> > > > > +                      * very rarely, so we use WARN_ONCE() here to see
+> > > > > +                      * the stack trace if fail happens.
+> > > > > +                      */
+> > > > > +                     WARN_ONCE(IS_ENABLED(CONFIG_MEMORY_HOTREMOVE),
+> > > > >                         "memblock: bottom-up allocation failed, memory hotremove may be affected\n");
+> > > > > +             }
+> > > > >       }
+> > > > >
+> > > > >       return __memblock_find_range_top_down(start, end, size, align, nid,
+> > > > > --
+> > > > > 2.7.4
+> > > > >
+> > > >
+> > > > --
+> > > > Sincerely yours,
+> > > > Mike.
+> > > >
+> > > 
+> > 
+> > -- 
+> > Sincerely yours,
+> > Mike.
+> > 
+> 
+
+-- 
+Sincerely yours,
+Mike.
+
