@@ -1,77 +1,277 @@
 Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: **
-X-Spam-Status: No, score=2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_MIXED_ES,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Level: 
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93BBFC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 09:29:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3F97C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 09:30:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6322A218A4
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 09:29:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 499EB218A4
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 09:30:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=your-benefits.eu header.i=@your-benefits.eu header.b="gL0DHk7+"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="e8NnlhuO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729199AbfABJ3I (ORCPT
+        id S1729200AbfABJa3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 04:29:08 -0500
-Received: from mail.your-benefits.eu ([80.211.149.54]:35752 "EHLO
-        your-benefits.eu" rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org
-        with ESMTP id S1728873AbfABJ3I (ORCPT
+        Wed, 2 Jan 2019 04:30:29 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:34909 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728873AbfABJa2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 04:29:08 -0500
-X-Greylist: delayed 496 seconds by postgrey-1.27 at vger.kernel.org; Wed, 02 Jan 2019 04:29:07 EST
-Received: by your-benefits.eu (Postfix, from userid 1001)
-        id C837AA00AE; Wed,  2 Jan 2019 10:20:43 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=your-benefits.eu;
-        s=mail; t=1546420849;
-        bh=AmEWXfPSZ+b+m37GjJrbvDSe3+CIldJSrJkn0IGwJoA=;
-        h=Date:From:To:Subject:From;
-        b=gL0DHk7+xREMUw0EpXHx1gUDoBXTKU8QEUSUXWN/XUMYpVI1uk0nmVdU3KrLxao9p
-         6LAG8oObG/sk+7rqkLrukvTrJUDNoE/zlBgPW/HvDL/jsXPOhCG6F6XoungG/+PQ7C
-         a8Ys0ybrWWHkYNkYCVVm0OvpUgNHHTjqroVP6IMc=
-Received: by mail.your-benefits.eu.your-benefits.eu for <linux-kernel@vger.kernel.org>; Wed,  2 Jan 2019 09:20:39 GMT
-Message-ID: <20190102084502-0.1.14.1b22.0.yd8y9k8b3g@your-benefits.eu>
-Date:   Wed,  2 Jan 2019 09:20:39 GMT
-From:   =?UTF-8?Q? "L=C3=A1szl=C3=B3_P=C3=A9ter" ?= 
-        <peter.laszlo@your-benefits.eu>
-To:     <linux-kernel@vger.kernel.org>
-Subject: =?UTF-8?Q?Dolgoz=C3=B3i_juttat=C3=A1sok?=
-X-Mailer: mail.your-benefits.eu
+        Wed, 2 Jan 2019 04:30:28 -0500
+Received: by mail-it1-f196.google.com with SMTP id p197so38091162itp.0
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 01:30:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=v5Ke8eYw+zh7CxllxjV9oNaftn96IKy9eV7VpLHXus8=;
+        b=e8NnlhuOm8aS5O800aQgKlv0RmA7YZSTWV/v6OZ3gCrKw5uDBVRTPw8MECqe1GRj8S
+         w6gT7p5g+PQETnrEuUMVTlK1IDYm8RqQHbMuNb9W0xkdhxc0RfuhxflboNZSwuKMsn8o
+         Px9ipA9g7bKaIX5NXP1eecDfnTpaBWzHvcwiU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=v5Ke8eYw+zh7CxllxjV9oNaftn96IKy9eV7VpLHXus8=;
+        b=RzOn4qMoN3Cx7/Hyspctxp4EE6N1cgSCMx3MKRi2H1nB61d52WGvk49szD+D7BjuRW
+         wKOaMldFE6FdQ/Adnsnb7uG7xfY8EIHYLFE0AEy7QDh0F1jfctjEA7iwFqmZDihIJ8Zq
+         /AwPSMxKoOJgeoNk4etDAjnrD6FEW/FN1b96bsQxlSvFXX8K9Xt9YzlNPJ1yVGhB/9/N
+         IJtOJMIxORr6Po+bBuiGr+5fjheAf2qCzvGJJcOPCKLmz/fk9y/ShVhrgl8trfVkLy5r
+         u8ObnBu0yfnUCkCpP4Yh44Fr4B4Yb9nve8wzk9ebs/lsH4SqthYQyI4mzp2xNwON5jS6
+         NR+g==
+X-Gm-Message-State: AA+aEWbJoWUR593wYxJjjWp5mukKqIhYkK/t4p4w7qqnHtA6lmMEX8aG
+        ol2Ean2Bi3oRd16tRe5ODzmecK8nzwaCHk+WpMM1cw==
+X-Google-Smtp-Source: AFSGD/XTIBkJqwR2vMJb6NDDdIRbpvGocUV92xfrEu+o99b80gpuI2A4zV7z2Ub5RvFKFI1HTSGLkO1UpMvXuOPeUgc=
+X-Received: by 2002:a24:784a:: with SMTP id p71mr31280975itc.158.1546421427351;
+ Wed, 02 Jan 2019 01:30:27 -0800 (PST)
 MIME-Version: 1.0
+References: <20181227190122.23149-1-ard.biesheuvel@linaro.org> <20181227190122.23149-2-ard.biesheuvel@linaro.org>
+In-Reply-To: <20181227190122.23149-2-ard.biesheuvel@linaro.org>
+From:   Jens Wiklander <jens.wiklander@linaro.org>
+Date:   Wed, 2 Jan 2019 10:30:16 +0100
+Message-ID: <CAHUa44GNhkbsM6RuVdsc3=BU0xtD8iCzrz+7p-AN2Due_w8BGA@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/2] optee: model OP-TEE as a platform device/driver
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Sumit Garg <sumit.garg@linaro.org>,
+        Graeme Gregory <graeme.gregory@linaro.org>,
+        Jerome Forissier <jerome.forissier@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-=C3=9Cdv=C3=B6zl=C3=B6m!
+Hi Ard and Arnd,
 
-2019-t=C5=91l majdnem az =C3=B6sszes kieg=C3=A9sz=C3=ADt=C5=91 juttat=C3=A1=
-s j=C3=B6vedelemk=C3=A9nt fog ad=C3=B3zni (kiv=C3=A9ve a SZ=C3=89P k=C3=A1=
-rty=C3=A1t).
+On Thu, Dec 27, 2018 at 8:01 PM Ard Biesheuvel
+<ard.biesheuvel@linaro.org> wrote:
+>
+> To simplify adding ACPI support to the OP-TEE driver, model it as
+> a platform driver. This will permit us to use the generic device
+> property layer for parsing additional properties, regardless of
+> whether DT or ACPI is being used.
+>
+> Note that this change will result in the OP-TEE driver to be loaded
+> automatically on systems that advertise the presence of OP-TEE via
+> the device tree.
+>
+> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> ---
+>  drivers/tee/optee/core.c | 86 ++++++++------------
+>  1 file changed, 32 insertions(+), 54 deletions(-)
 
-Szeretn=C3=A9m az =C3=96n=C3=B6k figyelm=C3=A9be aj=C3=A1nlani juttat=C3=A1=
-s k=C3=A1rty=C3=A1inkat, melyek az =C3=BAj tehets=C3=A9gek megnyer=C3=A9s=
-=C3=A9nek =C3=A9s a dolgoz=C3=B3k megtart=C3=A1s=C3=A1nak =C3=A9s motiv=C3=
-=A1l=C3=A1s=C3=A1nak versenyk=C3=A9pes eszk=C3=B6zei.
+In the earlier postings of the TEE subsystem (v8) the OP-TEE device
+was based on a platform device. Arnd didn't like this back then so it
+was dropped. The situation has changed a bit now. A platform device
+will make it easier to add ACPI support. Arnd, what do you think?
 
-A SZ=C3=89P k=C3=A1rtya megold=C3=A1sait=C3=B3l elt=C3=A9r=C5=91en a mi k=
-=C3=A1rty=C3=A1inkat a munkav=C3=A1llal=C3=B3 tetsz=C5=91leges c=C3=A9lok=
-ra haszn=C3=A1lhatja fel: =C3=A9lelmiszer v=C3=A1s=C3=A1rl=C3=A1sra, eg=C3=
-=A9szs=C3=A9g=C3=BCgyi ell=C3=A1t=C3=A1sra, elektronik=C3=A1ra, sz=C3=A1l=
-l=C3=A1sra, oktat=C3=A1sra =C3=A9s egy=C3=A9b c=C3=A9lokra, vagy ak=C3=A1=
-r k=C3=A9szp=C3=A9nzfelv=C3=A9teli lehet=C5=91s=C3=A9get is v=C3=A1laszth=
-at.=20
+Thanks,
+Jens
 
-Szeretn=C3=A9k megismerni juttat=C3=A1s k=C3=A1rty=C3=A1ink felhaszn=C3=A1=
-l=C3=A1si lehet=C5=91s=C3=A9geit a c=C3=A9g=C3=BCkn=C3=A9l?
-
-
-L=C3=A1szl=C3=B3 P=C3=A9ter
-Product Manager
-www.your-benefits.eu
+>
+> diff --git a/drivers/tee/optee/core.c b/drivers/tee/optee/core.c
+> index e1aafe842d66..61ea65cfaedd 100644
+> --- a/drivers/tee/optee/core.c
+> +++ b/drivers/tee/optee/core.c
+> @@ -529,13 +529,13 @@ static void optee_smccc_hvc(unsigned long a0, unsigned long a1,
+>         arm_smccc_hvc(a0, a1, a2, a3, a4, a5, a6, a7, res);
+>  }
+>
+> -static optee_invoke_fn *get_invoke_func(struct device_node *np)
+> +static optee_invoke_fn *get_invoke_func(struct device *dev)
+>  {
+>         const char *method;
+>
+> -       pr_info("probing for conduit method from DT.\n");
+> +       pr_info("probing for conduit method.\n");
+>
+> -       if (of_property_read_string(np, "method", &method)) {
+> +       if (device_property_read_string(dev, "method", &method)) {
+>                 pr_warn("missing \"method\" property\n");
+>                 return ERR_PTR(-ENXIO);
+>         }
+> @@ -549,7 +549,7 @@ static optee_invoke_fn *get_invoke_func(struct device_node *np)
+>         return ERR_PTR(-EINVAL);
+>  }
+>
+> -static struct optee *optee_probe(struct device_node *np)
+> +static int optee_probe(struct platform_device *pdev)
+>  {
+>         optee_invoke_fn *invoke_fn;
+>         struct tee_shm_pool *pool;
+> @@ -559,25 +559,25 @@ static struct optee *optee_probe(struct device_node *np)
+>         u32 sec_caps;
+>         int rc;
+>
+> -       invoke_fn = get_invoke_func(np);
+> +       invoke_fn = get_invoke_func(&pdev->dev);
+>         if (IS_ERR(invoke_fn))
+> -               return (void *)invoke_fn;
+> +               return PTR_ERR(invoke_fn);
+>
+>         if (!optee_msg_api_uid_is_optee_api(invoke_fn)) {
+>                 pr_warn("api uid mismatch\n");
+> -               return ERR_PTR(-EINVAL);
+> +               return -EINVAL;
+>         }
+>
+>         optee_msg_get_os_revision(invoke_fn);
+>
+>         if (!optee_msg_api_revision_is_compatible(invoke_fn)) {
+>                 pr_warn("api revision mismatch\n");
+> -               return ERR_PTR(-EINVAL);
+> +               return -EINVAL;
+>         }
+>
+>         if (!optee_msg_exchange_capabilities(invoke_fn, &sec_caps)) {
+>                 pr_warn("capabilities mismatch\n");
+> -               return ERR_PTR(-EINVAL);
+> +               return -EINVAL;
+>         }
+>
+>         /*
+> @@ -585,11 +585,11 @@ static struct optee *optee_probe(struct device_node *np)
+>          * doesn't have any reserved memory we can use we can't continue.
+>          */
+>         if (!(sec_caps & OPTEE_SMC_SEC_CAP_HAVE_RESERVED_SHM))
+> -               return ERR_PTR(-EINVAL);
+> +               return -EINVAL;
+>
+>         pool = optee_config_shm_memremap(invoke_fn, &memremaped_shm, sec_caps);
+>         if (IS_ERR(pool))
+> -               return (void *)pool;
+> +               return PTR_ERR(pool);
+>
+>         optee = kzalloc(sizeof(*optee), GFP_KERNEL);
+>         if (!optee) {
+> @@ -600,6 +600,8 @@ static struct optee *optee_probe(struct device_node *np)
+>         optee->invoke_fn = invoke_fn;
+>         optee->sec_caps = sec_caps;
+>
+> +       platform_set_drvdata(pdev, optee);
+> +
+>         teedev = tee_device_alloc(&optee_desc, NULL, pool, optee);
+>         if (IS_ERR(teedev)) {
+>                 rc = PTR_ERR(teedev);
+> @@ -632,7 +634,7 @@ static struct optee *optee_probe(struct device_node *np)
+>         optee_enable_shm_cache(optee);
+>
+>         pr_info("initialized driver\n");
+> -       return optee;
+> +       return 0;
+>  err:
+>         if (optee) {
+>                 /*
+> @@ -648,11 +650,13 @@ static struct optee *optee_probe(struct device_node *np)
+>                 tee_shm_pool_free(pool);
+>         if (memremaped_shm)
+>                 memunmap(memremaped_shm);
+> -       return ERR_PTR(rc);
+> +       return rc;
+>  }
+>
+> -static void optee_remove(struct optee *optee)
+> +static int optee_remove(struct platform_device *pdev)
+>  {
+> +       struct optee *optee = platform_get_drvdata(pdev);
+> +
+>         /*
+>          * Ask OP-TEE to free all cached shared memory objects to decrease
+>          * reference counters and also avoid wild pointers in secure world
+> @@ -675,51 +679,25 @@ static void optee_remove(struct optee *optee)
+>         mutex_destroy(&optee->call_queue.mutex);
+>
+>         kfree(optee);
+> +
+> +       return 0;
+>  }
+>
+> -static const struct of_device_id optee_match[] = {
+> +static const struct of_device_id optee_dt_match[] = {
+>         { .compatible = "linaro,optee-tz" },
+>         {},
+>  };
+> -
+> -static struct optee *optee_svc;
+> -
+> -static int __init optee_driver_init(void)
+> -{
+> -       struct device_node *fw_np;
+> -       struct device_node *np;
+> -       struct optee *optee;
+> -
+> -       /* Node is supposed to be below /firmware */
+> -       fw_np = of_find_node_by_name(NULL, "firmware");
+> -       if (!fw_np)
+> -               return -ENODEV;
+> -
+> -       np = of_find_matching_node(fw_np, optee_match);
+> -       if (!np)
+> -               return -ENODEV;
+> -
+> -       optee = optee_probe(np);
+> -       of_node_put(np);
+> -
+> -       if (IS_ERR(optee))
+> -               return PTR_ERR(optee);
+> -
+> -       optee_svc = optee;
+> -
+> -       return 0;
+> -}
+> -module_init(optee_driver_init);
+> -
+> -static void __exit optee_driver_exit(void)
+> -{
+> -       struct optee *optee = optee_svc;
+> -
+> -       optee_svc = NULL;
+> -       if (optee)
+> -               optee_remove(optee);
+> -}
+> -module_exit(optee_driver_exit);
+> +MODULE_DEVICE_TABLE(of, optee_dt_match);
+> +
+> +static struct platform_driver optee_driver = {
+> +       .probe  = optee_probe,
+> +       .remove = optee_remove,
+> +       .driver = {
+> +               .name = "optee",
+> +               .of_match_table = optee_dt_match,
+> +       },
+> +};
+> +module_platform_driver(optee_driver);
+>
+>  MODULE_AUTHOR("Linaro");
+>  MODULE_DESCRIPTION("OP-TEE driver");
+> --
+> 2.19.2
+>
