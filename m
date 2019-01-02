@@ -2,102 +2,172 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6447DC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 11:16:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17C45C43444
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 11:16:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2426F218A4
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 11:16:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D64EA218CD
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 11:16:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="dpwcP/BQ"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="oFMR64yZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729644AbfABLQG (ORCPT
+        id S1729652AbfABLQX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 06:16:06 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:45022 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729630AbfABLQF (ORCPT
+        Wed, 2 Jan 2019 06:16:23 -0500
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:53814 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726762AbfABLQX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 06:16:05 -0500
-Received: by mail-ed1-f66.google.com with SMTP id y56so25811104edd.11
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 03:16:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=rtFVI3fk/KkfKLAmAe8eL9UhZGNuM1DrGCtJlY3CQwc=;
-        b=dpwcP/BQzjGa2oNExz0Nt5RlVigZFpoHr1xpCrAHvfS59eLxU30pjZ361gE3xXvNX0
-         e6eQfiQF1khldD2B8cYUtedeSPefpc4FOQtuabl8I2QS/ER/UtGFyR5w/6Qi/WWfoFYh
-         Qpr+bEf1SxXciyRUMDsjDSTrAloCuBA/HDJheADuEY2ZzZAw/lAmzP2XRWuXfFkREaHs
-         wghNSBmxu20qBD7e2WWilMuWmyMk71/WFxoQuMiv56Lvrvt6VtUtFMUTc8Ir4oQb1Bnl
-         2q+5083LM2SBzkh7eoWCf9+O2bsE8zGMvWdJ3dZIrQZAdSg96UPJipTDwRwSBnk/edBm
-         ypyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=rtFVI3fk/KkfKLAmAe8eL9UhZGNuM1DrGCtJlY3CQwc=;
-        b=QXd1xuhsZ6H2QlujRVuuZc2IAFOsR2UKfq13lahLky3oRpmuV2CaogB3Ivvwzjnkud
-         24A+we+kBMpoTptRU0z0yuUxXLke4WA3p54A4xiQzWnPLsN8Iy/QslD/+SNtN/CcUEj8
-         l8zl7BN8Io44UcUfItkYrItm8hXZYGxHq7ihnWQQRHXmkqUhczNQJ3vN7DQOEDLWEgtY
-         eZEXeFzQMKZ/VSVHP1r+leu2e1GESaZQ5Frh9sV+kQz26vtIurOyIfBZJn+5JoM/tO/7
-         HsEpuBrByqNodxLM5EQrsev1dt5Ksdk+E9UOzYyM52gpm7mbGVVLwUjfYVZKK5SFgNOz
-         9hwg==
-X-Gm-Message-State: AA+aEWapXGjL7Clg3zhEo6+jzVveCukXlcn8KAYZdAnIhvYMJsym/MRN
-        xdhkNnO0XF0UmDKNi+rZz5duyX2c0wM=
-X-Google-Smtp-Source: AFSGD/Uel86CkkY/E5TKn4626ej24F9IsFKA9trNxkaW5wWNxvsNxTX30q7oyEPSI0h5FmoBgywEQA==
-X-Received: by 2002:aa7:c594:: with SMTP id g20mr36752575edq.79.1546427763978;
-        Wed, 02 Jan 2019 03:16:03 -0800 (PST)
-Received: from brauner.io ([2a02:8109:b6c0:d6c:700b:b2fa:de8a:175d])
-        by smtp.gmail.com with ESMTPSA id v20-v6sm12076682ejr.46.2019.01.02.03.16.03
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 02 Jan 2019 03:16:03 -0800 (PST)
-Date:   Wed, 2 Jan 2019 12:16:02 +0100
-From:   Christian Brauner <christian@brauner.io>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     gregkh@linuxfoundation.org, tkjos@android.com,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        joel@joelfernandes.org, arve@android.com, maco@android.com,
-        Todd Kjos <tkjos@google.com>
-Subject: Re: [PATCH v1 1/2] binderfs: implement "max" mount option
-Message-ID: <20190102111601.gvvxtfw7kg64rczf@brauner.io>
-References: <20181223143550.10672-1-christian@brauner.io>
- <20190102091731.GB3781@kadam>
+        Wed, 2 Jan 2019 06:16:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=iWNPHFJGDvose4o0gtMoXuzRhPa2haLDUxTB7E2ViRQ=; b=oFMR64yZIMtPJ157W43PZ8Vut
+        yYFCtJFNWvRsoncQ1rYgSaJyrmYmg/QKnw5zRaY4ZrQ/4LSkx1TpNFgB18/udd7tHBwebjuq/dhdP
+        9pSIFhqyT9La6sPKPvziV3Fdgc/GIvzf4vQh/QYFXAgKMowyqmKgSyi0+Tu5zQfQfbLSk=;
+Received: from n2100.armlinux.org.uk ([2002:4e20:1eda:1:214:fdff:fe10:4f86]:41072)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1geeVC-0008Av-Qf; Wed, 02 Jan 2019 11:15:58 +0000
+Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
+        (envelope-from <linux@n2100.armlinux.org.uk>)
+        id 1geeV9-00015W-73; Wed, 02 Jan 2019 11:15:55 +0000
+Date:   Wed, 2 Jan 2019 11:15:54 +0000
+From:   Russell King - ARM Linux <linux@armlinux.org.uk>
+To:     Souptick Joarder <jrdr.linux@gmail.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@suse.com>, pawel@osciak.com,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>, mchehab@kernel.org,
+        robin.murphy@arm.com, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Linux-MM <linux-mm@kvack.org>
+Subject: Re: [PATCH v5 7/9] videobuf2/videobuf2-dma-sg.c: Convert to use
+ vm_insert_range
+Message-ID: <20190102111553.GG26090@n2100.armlinux.org.uk>
+References: <20181224132658.GA22166@jordon-HP-15-Notebook-PC>
+ <CAFqt6zZU6c3MyVQpCegntu1ZxtFri=HMwZJ3xg+tCxRARo3zMA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190102091731.GB3781@kadam>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <CAFqt6zZU6c3MyVQpCegntu1ZxtFri=HMwZJ3xg+tCxRARo3zMA@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 02, 2019 at 12:17:31PM +0300, Dan Carpenter wrote:
-> On Sun, Dec 23, 2018 at 03:35:49PM +0100, Christian Brauner wrote:
-> >  static inline struct binderfs_info *BINDERFS_I(const struct inode *inode)
-> > @@ -110,10 +132,16 @@ static int binderfs_binder_device_create(struct inode *ref_inode,
-> >  
-> >  	/* Reserve new minor number for the new device. */
-> >  	mutex_lock(&binderfs_minors_mutex);
-> > -	minor = ida_alloc_max(&binderfs_minors, BINDERFS_MAX_MINOR, GFP_KERNEL);
-> > +	if (++info->device_count <= info->mount_opts.max)
-> > +		minor = ida_alloc_max(&binderfs_minors, BINDERFS_MAX_MINOR,
-> > +				      GFP_KERNEL);
-> > +	else
-> > +		minor = -ENOSPC;
-> >  	mutex_unlock(&binderfs_minors_mutex);
-> > -	if (minor < 0)
-> > +	if (minor < 0) {
-> > +		--info->device_count;
+On Wed, Jan 02, 2019 at 04:23:15PM +0530, Souptick Joarder wrote:
+> On Mon, Dec 24, 2018 at 6:53 PM Souptick Joarder <jrdr.linux@gmail.com> wrote:
+> >
+> > Convert to use vm_insert_range to map range of kernel memory
+> > to user vma.
+> >
+> > Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+> > Reviewed-by: Matthew Wilcox <willy@infradead.org>
+> > Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> > Acked-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+> > ---
+> >  drivers/media/common/videobuf2/videobuf2-dma-sg.c | 23 +++++++----------------
+> >  1 file changed, 7 insertions(+), 16 deletions(-)
+> >
+> > diff --git a/drivers/media/common/videobuf2/videobuf2-dma-sg.c b/drivers/media/common/videobuf2/videobuf2-dma-sg.c
+> > index 015e737..898adef 100644
+> > --- a/drivers/media/common/videobuf2/videobuf2-dma-sg.c
+> > +++ b/drivers/media/common/videobuf2/videobuf2-dma-sg.c
+> > @@ -328,28 +328,19 @@ static unsigned int vb2_dma_sg_num_users(void *buf_priv)
+> >  static int vb2_dma_sg_mmap(void *buf_priv, struct vm_area_struct *vma)
+> >  {
+> >         struct vb2_dma_sg_buf *buf = buf_priv;
+> > -       unsigned long uaddr = vma->vm_start;
+> > -       unsigned long usize = vma->vm_end - vma->vm_start;
+> > -       int i = 0;
+> > +       unsigned long page_count = vma_pages(vma);
+> > +       int err;
+> >
+> >         if (!buf) {
+> >                 printk(KERN_ERR "No memory to map\n");
+> >                 return -EINVAL;
+> >         }
+> >
+> > -       do {
+> > -               int ret;
+> > -
+> > -               ret = vm_insert_page(vma, uaddr, buf->pages[i++]);
+> > -               if (ret) {
+> > -                       printk(KERN_ERR "Remapping memory, error: %d\n", ret);
+> > -                       return ret;
+> > -               }
+> > -
+> > -               uaddr += PAGE_SIZE;
+> > -               usize -= PAGE_SIZE;
+> > -       } while (usize > 0);
+> > -
+> > +       err = vm_insert_range(vma, vma->vm_start, buf->pages, page_count);
+> > +       if (err) {
+> > +               printk(KERN_ERR "Remapping memory, error: %d\n", err);
+> > +               return err;
+> > +       }
+> >
 > 
-> Isn't this decrement supposed to happen under binderfs_minors_mutex?
+> Looking into the original code -
+> drivers/media/common/videobuf2/videobuf2-dma-sg.c
+> 
+> Inside vb2_dma_sg_alloc(),
+>            ...
+>            buf->num_pages = size >> PAGE_SHIFT;
+>            buf->dma_sgt = &buf->sg_table;
+> 
+>            buf->pages = kvmalloc_array(buf->num_pages, sizeof(struct page *),
+>                                                        GFP_KERNEL | __GFP_ZERO);
+>            ...
+> 
+> buf->pages has index upto  *buf->num_pages*.
+> 
+> now inside vb2_dma_sg_mmap(),
+> 
+>            unsigned long usize = vma->vm_end - vma->vm_start;
+>            int i = 0;
+>            ...
+>            do {
+>                  int ret;
+> 
+>                  ret = vm_insert_page(vma, uaddr, buf->pages[i++]);
+>                  if (ret) {
+>                            printk(KERN_ERR "Remapping memory, error:
+> %d\n", ret);
+>                            return ret;
+>                  }
+> 
+>                 uaddr += PAGE_SIZE;
+>                 usize -= PAGE_SIZE;
+>            } while (usize > 0);
+>            ...
+> is it possible for any value of  *i  > (buf->num_pages)*,
+> buf->pages[i] is going to overrun the page boundary ?
 
-Indeed. Good catch!
-Leftover from when this was an atomic_t.
+Yes it is, and you've found an array-overrun condition that is
+triggerable from userspace - potentially non-root userspace too.
+Depending on what it can cause to be mapped without oopsing the
+kernel, it could be very serious.  At best, it'll oops the kernel.
+At worst, it could expose pages of memory that userspace should
+not have access to.
 
-Thanks!
-Christian
+This is why I've been saying that we need a helper that takes the
+_object_ and the user request, and does all the checking internally,
+so these kinds of checks do not get overlooked.
+
+A good API is one that helpers authors avoid bugs.
+
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
