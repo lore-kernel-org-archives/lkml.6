@@ -2,123 +2,86 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B996C43612
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 20:43:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F7B4C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 20:47:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 203D020874
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 20:43:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D28120665
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 20:47:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728052AbfABUnM (ORCPT
+        id S1728097AbfABUrL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 15:43:12 -0500
-Received: from fieldses.org ([173.255.197.46]:38374 "EHLO fieldses.org"
+        Wed, 2 Jan 2019 15:47:11 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:55696 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726009AbfABUnJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 15:43:09 -0500
-Received: by fieldses.org (Postfix, from userid 2815)
-        id F33DB3F3; Wed,  2 Jan 2019 15:43:07 -0500 (EST)
-Date:   Wed, 2 Jan 2019 15:43:07 -0500
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] nfsd
-Message-ID: <20190102204307.GA28209@fieldses.org>
+        id S1726409AbfABUrL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Jan 2019 15:47:11 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id F26C32F3D;
+        Wed,  2 Jan 2019 20:47:10 +0000 (UTC)
+Received: from redhat.com (ovpn-120-148.rdu2.redhat.com [10.10.120.148])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 1266760140;
+        Wed,  2 Jan 2019 20:47:09 +0000 (UTC)
+Date:   Wed, 2 Jan 2019 15:47:09 -0500
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        davem@davemloft.net
+Subject: Re: [RFC PATCH V3 0/5] Hi:
+Message-ID: <20190102154038-mutt-send-email-mst@kernel.org>
+References: <20181229124656.3900-1-jasowang@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
-From:   bfields@fieldses.org (J. Bruce Fields)
+In-Reply-To: <20181229124656.3900-1-jasowang@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Wed, 02 Jan 2019 20:47:11 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Please pull nfsd changes from
+On Sat, Dec 29, 2018 at 08:46:51PM +0800, Jason Wang wrote:
+> This series tries to access virtqueue metadata through kernel virtual
+> address instead of copy_user() friends since they had too much
+> overheads like checks, spec barriers or even hardware feature
+> toggling.
 
-  git://linux-nfs.org/~bfields/linux.git tags/nfsd-4.21
+Will review, thanks!
+One questions that comes to mind is whether it's all about bypassing
+stac/clac.  Could you please include a performance comparison with
+nosmap?
 
-Thanks to Vasily Averin for fixing a use-after-free in the containerized
-NFSv4.2 client, and cleaning up some convoluted backchannel server code
-in the process.  Otherwise, miscellaneous smaller bugfixes and cleanup.
-
---b.
-
-----------------------------------------------------------------
-Benjamin Coddington (1):
-      lockd: Show pid of lockd for remote locks
-
-Chuck Lever (1):
-      svcrdma: Optimize the logic that selects the R_key to invalidate
-
-Colin Ian King (1):
-      nfsd: clean up indentation, increase indentation in switch statement
-
-J. Bruce Fields (6):
-      nfsd4: zero-length WRITE should succeed
-      nfsd4: remove unused nfs4_check_olstateid parameter
-      nfsd4: forbid all renames during grace period
-      nfsd4: skip unused assignment
-      lockd: fix decoding of TEST results
-      nfsd4: fix crash on writing v4_end_grace before nfsd startup
-
-Julia Lawall (1):
-      nfsd: drop useless LIST_HEAD
-
-Olga Kornievskaia (1):
-      NFSD remove OP_CACHEME from 4.2 op_flags
-
-Scott Mayhew (1):
-      nfsd: fix a warning in __cld_pipe_upcall()
-
-Vasily Averin (12):
-      sunrpc: fix cache_head leak due to queued request
-      sunrpc: use SVC_NET() in svcauth_gss_* functions
-      sunrpc: use-after-free in svc_process_common()
-      sunrpc: replace svc_serv->sv_bc_xprt by boolean flag
-      sunrpc: remove unused bc_up operation from rpc_xprt_ops
-      sunrpc: remove svc_tcp_bc_class
-      sunrpc: remove svc_rdma_bc_class
-      sunrpc: remove unused xpo_prep_reply_hdr callback
-      sunrpc: make visible processing error in bc_svc_process()
-      sunrpc: fix debug message in svc_create_xprt()
-      nfs: minor typo in nfs4_callback_up_net()
-      nfs: fixed broken compilation in nfs_callback_up_net()
-
-zhengbin (1):
-      nfsd: Return EPERM, not EACCES, in some SETATTR cases
-
- fs/lockd/clnt4xdr.c                      |  22 ++----
- fs/lockd/clntproc.c                      |   2 +-
- fs/lockd/clntxdr.c                       |  22 ++----
- fs/lockd/xdr.c                           |   4 +-
- fs/lockd/xdr4.c                          |   4 +-
- fs/nfs/callback.c                        |  10 +--
- fs/nfsd/nfs4layouts.c                    |   1 -
- fs/nfsd/nfs4proc.c                       |  15 ++--
- fs/nfsd/nfs4recover.c                    |  17 ++---
- fs/nfsd/nfs4state.c                      |  10 +--
- fs/nfsd/nfsctl.c                         |   2 +
- fs/nfsd/vfs.c                            |  17 ++++-
- include/linux/sunrpc/bc_xprt.h           |  19 +++--
- include/linux/sunrpc/svc.h               |   7 +-
- include/linux/sunrpc/svc_rdma.h          |   2 +-
- include/linux/sunrpc/svc_xprt.h          |   1 -
- include/linux/sunrpc/xprt.h              |   1 -
- include/trace/events/sunrpc.h            |   6 +-
- net/sunrpc/auth_gss/svcauth_gss.c        |   8 +--
- net/sunrpc/cache.c                       |  10 ++-
- net/sunrpc/svc.c                         |  24 +++++--
- net/sunrpc/svc_xprt.c                    |   9 +--
- net/sunrpc/svcsock.c                     | 120 -------------------------------
- net/sunrpc/xprtrdma/backchannel.c        |  20 ------
- net/sunrpc/xprtrdma/svc_rdma.c           |   6 --
- net/sunrpc/xprtrdma/svc_rdma_recvfrom.c  |  63 ++++++++++++++++
- net/sunrpc/xprtrdma/svc_rdma_sendto.c    |  57 ++++-----------
- net/sunrpc/xprtrdma/svc_rdma_transport.c |  59 ---------------
- net/sunrpc/xprtrdma/transport.c          |   1 -
- net/sunrpc/xprtrdma/xprt_rdma.h          |   1 -
- net/sunrpc/xprtsock.c                    |  12 ----
- 31 files changed, 192 insertions(+), 360 deletions(-)
+> 
+> Test shows about 24% improvement on TX PPS. It should benefit other
+> cases as well.
+>
+> Changes from V2:
+> - fix buggy range overlapping check
+> - tear down MMU notifier during vhost ioctl to make sure invalidation
+>   request can read metadata userspace address and vq size without
+>   holding vq mutex.
+> Changes from V1:
+> - instead of pinning pages, use MMU notifier to invalidate vmaps and
+>   remap duing metadata prefetch
+> - fix build warning on MIPS
+> 
+> Jason Wang (5):
+>   vhost: generalize adding used elem
+>   vhost: fine grain userspace memory accessors
+>   vhost: rename vq_iotlb_prefetch() to vq_meta_prefetch()
+>   vhost: introduce helpers to get the size of metadata area
+>   vhost: access vq metadata through kernel virtual address
+> 
+>  drivers/vhost/net.c   |   4 +-
+>  drivers/vhost/vhost.c | 416 +++++++++++++++++++++++++++++++++++++-----
+>  drivers/vhost/vhost.h |  15 +-
+>  3 files changed, 384 insertions(+), 51 deletions(-)
+> 
+> -- 
+> 2.17.1
