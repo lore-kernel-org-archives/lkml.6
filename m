@@ -2,172 +2,98 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17C45C43444
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 11:16:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4295C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 11:22:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D64EA218CD
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 11:16:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="oFMR64yZ"
+	by mail.kernel.org (Postfix) with ESMTP id A5DB8218D4
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 11:22:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729652AbfABLQX (ORCPT
+        id S1729665AbfABLWm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 06:16:23 -0500
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:53814 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726762AbfABLQX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 06:16:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=iWNPHFJGDvose4o0gtMoXuzRhPa2haLDUxTB7E2ViRQ=; b=oFMR64yZIMtPJ157W43PZ8Vut
-        yYFCtJFNWvRsoncQ1rYgSaJyrmYmg/QKnw5zRaY4ZrQ/4LSkx1TpNFgB18/udd7tHBwebjuq/dhdP
-        9pSIFhqyT9La6sPKPvziV3Fdgc/GIvzf4vQh/QYFXAgKMowyqmKgSyi0+Tu5zQfQfbLSk=;
-Received: from n2100.armlinux.org.uk ([2002:4e20:1eda:1:214:fdff:fe10:4f86]:41072)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1geeVC-0008Av-Qf; Wed, 02 Jan 2019 11:15:58 +0000
-Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
-        (envelope-from <linux@n2100.armlinux.org.uk>)
-        id 1geeV9-00015W-73; Wed, 02 Jan 2019 11:15:55 +0000
-Date:   Wed, 2 Jan 2019 11:15:54 +0000
-From:   Russell King - ARM Linux <linux@armlinux.org.uk>
-To:     Souptick Joarder <jrdr.linux@gmail.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@suse.com>, pawel@osciak.com,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>, mchehab@kernel.org,
-        robin.murphy@arm.com, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Linux-MM <linux-mm@kvack.org>
-Subject: Re: [PATCH v5 7/9] videobuf2/videobuf2-dma-sg.c: Convert to use
- vm_insert_range
-Message-ID: <20190102111553.GG26090@n2100.armlinux.org.uk>
-References: <20181224132658.GA22166@jordon-HP-15-Notebook-PC>
- <CAFqt6zZU6c3MyVQpCegntu1ZxtFri=HMwZJ3xg+tCxRARo3zMA@mail.gmail.com>
+        Wed, 2 Jan 2019 06:22:42 -0500
+Received: from ozlabs.org ([203.11.71.1]:50619 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726762AbfABLWl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Jan 2019 06:22:41 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43V7v05cZMz9s9G;
+        Wed,  2 Jan 2019 22:22:36 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kbuild@vger.kernel.org
+Cc:     masahiroy@kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        linux-kernel@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Max Filippov <jcmvbkbc@gmail.com>, linux-arch@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org,
+        linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org, x86@kernel.org,
+        linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: Re: [PATCH] jump_label: move 'asm goto' support test to Kconfig
+In-Reply-To: <1546182855-24290-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1546182855-24290-1-git-send-email-yamada.masahiro@socionext.com>
+Date:   Wed, 02 Jan 2019 22:22:44 +1100
+Message-ID: <87imz7xq0r.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFqt6zZU6c3MyVQpCegntu1ZxtFri=HMwZJ3xg+tCxRARo3zMA@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 02, 2019 at 04:23:15PM +0530, Souptick Joarder wrote:
-> On Mon, Dec 24, 2018 at 6:53 PM Souptick Joarder <jrdr.linux@gmail.com> wrote:
-> >
-> > Convert to use vm_insert_range to map range of kernel memory
-> > to user vma.
-> >
-> > Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-> > Reviewed-by: Matthew Wilcox <willy@infradead.org>
-> > Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> > Acked-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-> > ---
-> >  drivers/media/common/videobuf2/videobuf2-dma-sg.c | 23 +++++++----------------
-> >  1 file changed, 7 insertions(+), 16 deletions(-)
-> >
-> > diff --git a/drivers/media/common/videobuf2/videobuf2-dma-sg.c b/drivers/media/common/videobuf2/videobuf2-dma-sg.c
-> > index 015e737..898adef 100644
-> > --- a/drivers/media/common/videobuf2/videobuf2-dma-sg.c
-> > +++ b/drivers/media/common/videobuf2/videobuf2-dma-sg.c
-> > @@ -328,28 +328,19 @@ static unsigned int vb2_dma_sg_num_users(void *buf_priv)
-> >  static int vb2_dma_sg_mmap(void *buf_priv, struct vm_area_struct *vma)
-> >  {
-> >         struct vb2_dma_sg_buf *buf = buf_priv;
-> > -       unsigned long uaddr = vma->vm_start;
-> > -       unsigned long usize = vma->vm_end - vma->vm_start;
-> > -       int i = 0;
-> > +       unsigned long page_count = vma_pages(vma);
-> > +       int err;
-> >
-> >         if (!buf) {
-> >                 printk(KERN_ERR "No memory to map\n");
-> >                 return -EINVAL;
-> >         }
-> >
-> > -       do {
-> > -               int ret;
-> > -
-> > -               ret = vm_insert_page(vma, uaddr, buf->pages[i++]);
-> > -               if (ret) {
-> > -                       printk(KERN_ERR "Remapping memory, error: %d\n", ret);
-> > -                       return ret;
-> > -               }
-> > -
-> > -               uaddr += PAGE_SIZE;
-> > -               usize -= PAGE_SIZE;
-> > -       } while (usize > 0);
-> > -
-> > +       err = vm_insert_range(vma, vma->vm_start, buf->pages, page_count);
-> > +       if (err) {
-> > +               printk(KERN_ERR "Remapping memory, error: %d\n", err);
-> > +               return err;
-> > +       }
-> >
-> 
-> Looking into the original code -
-> drivers/media/common/videobuf2/videobuf2-dma-sg.c
-> 
-> Inside vb2_dma_sg_alloc(),
->            ...
->            buf->num_pages = size >> PAGE_SHIFT;
->            buf->dma_sgt = &buf->sg_table;
-> 
->            buf->pages = kvmalloc_array(buf->num_pages, sizeof(struct page *),
->                                                        GFP_KERNEL | __GFP_ZERO);
->            ...
-> 
-> buf->pages has index upto  *buf->num_pages*.
-> 
-> now inside vb2_dma_sg_mmap(),
-> 
->            unsigned long usize = vma->vm_end - vma->vm_start;
->            int i = 0;
->            ...
->            do {
->                  int ret;
-> 
->                  ret = vm_insert_page(vma, uaddr, buf->pages[i++]);
->                  if (ret) {
->                            printk(KERN_ERR "Remapping memory, error:
-> %d\n", ret);
->                            return ret;
->                  }
-> 
->                 uaddr += PAGE_SIZE;
->                 usize -= PAGE_SIZE;
->            } while (usize > 0);
->            ...
-> is it possible for any value of  *i  > (buf->num_pages)*,
-> buf->pages[i] is going to overrun the page boundary ?
+Masahiro Yamada <yamada.masahiro@socionext.com> writes:
 
-Yes it is, and you've found an array-overrun condition that is
-triggerable from userspace - potentially non-root userspace too.
-Depending on what it can cause to be mapped without oopsing the
-kernel, it could be very serious.  At best, it'll oops the kernel.
-At worst, it could expose pages of memory that userspace should
-not have access to.
+> Currently, CONFIG_JUMP_LABEL just means "I _want_ to use jump label".
+>
+> The jump label is controlled by HAVE_JUMP_LABEL, which is defined
+> like this:
+>
+>   #if defined(CC_HAVE_ASM_GOTO) && defined(CONFIG_JUMP_LABEL)
+>   # define HAVE_JUMP_LABEL
+>   #endif
+>
+> We can improve this by testing 'asm goto' support in Kconfig, then
+> make JUMP_LABEL depend on CC_HAS_ASM_GOTO.
+>
+> Ugly #ifdef HAVE_JUMP_LABEL will go away, and CONFIG_JUMP_LABEL will
+> match to the real kernel capability.
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
+>
+> This is a trivial conversion from the build system PoV.
+> I want to queue this up to kbuild tree.
+>
+>
+>  Makefile                                          |  7 -------
+>  arch/Kconfig                                      |  1 +
+>  arch/arm/kernel/jump_label.c                      |  4 ----
+>  arch/arm64/kernel/jump_label.c                    |  4 ----
+>  arch/mips/kernel/jump_label.c                     |  4 ----
+>  arch/powerpc/include/asm/asm-prototypes.h         |  2 +-
+>  arch/powerpc/kernel/jump_label.c                  |  2 --
+>  arch/powerpc/platforms/powernv/opal-tracepoints.c |  2 +-
+>  arch/powerpc/platforms/powernv/opal-wrappers.S    |  2 +-
+>  arch/powerpc/platforms/pseries/hvCall.S           |  4 ++--
+>  arch/powerpc/platforms/pseries/lpar.c             |  2 +-
 
-This is why I've been saying that we need a helper that takes the
-_object_ and the user request, and does all the checking internally,
-so these kinds of checks do not get overlooked.
+Looks OK to me.
 
-A good API is one that helpers authors avoid bugs.
+If there's any odd build errors they should get caught in linux-next.
 
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+Acked-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
+
+cheers
