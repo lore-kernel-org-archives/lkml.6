@@ -2,205 +2,192 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 452E5C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 18:29:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41253C43444
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 18:29:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F93821871
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 18:29:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 053E8218EA
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 18:29:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="S7wuCq0z"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="O0Z9W7W+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728105AbfABS3o (ORCPT
+        id S1728151AbfABS35 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 13:29:44 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:45973 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728069AbfABS3n (ORCPT
+        Wed, 2 Jan 2019 13:29:57 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:52773 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725993AbfABS34 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 13:29:43 -0500
-Received: by mail-io1-f66.google.com with SMTP id c2so3027061iom.12
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 10:29:42 -0800 (PST)
+        Wed, 2 Jan 2019 13:29:56 -0500
+Received: by mail-it1-f194.google.com with SMTP id g76so42089102itg.2
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 10:29:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=dEtgMdgrRwB7E/S8vh13UWGDjjT83i0QNMMZoYtOVwo=;
-        b=S7wuCq0znPBLndPwOshGeBMPl/T0Q2qYShI79W8GaHeby14SM0NuuSjQdNEl8RReib
-         QI3gplrcfaLpvQpnlEV9HJqkV7yKPGyQu2fuTz3jlmPaOfIqDjwvWRUps+49RQ6VaDl1
-         UCNHT9Djt8FLNOQIWnVES/GO0eW8cY0aqYxskFeLI9jZiBVvyV6GKSQ4Eqf+jIDTcrQ0
-         A2EZASGNEyHuA3E9TYv5w1rCnRJcwsGu52B4hijMcd3DXqRoLswQ0moJKesSVbNbpdf5
-         qnBB3+JarXo3gtRyxM4MN5WFqkvJnHyDyJwCAwM1w9dpm05s1qXTjPZByrkE9XN8deXZ
-         ugBA==
+        bh=D9SJWAAY9/QXJCI4Fl7OpN64fV1E5Pup0uWqSCVW0E0=;
+        b=O0Z9W7W+4aozqnfp0HoWpaEDW+EyNHpaTcHcnBiPZ4xczP7WE4sku38nwwbO8tmvr4
+         iLiy7XU3Fsoh8Qm+fNc2+RZxhv1VryvhrfK8Ss2TEETv8SM+PrL63qGabIFWE4jVX3DG
+         79sCrtVBHeu9MFs8Or6Y2gL4PE07Uc3lpJEfEo3OuFMknVnTz4WEhSHj9OQrFKOtVRSp
+         ABVNd04RTDQ+S/H1L/rFr3bV9L2/QC64MWgwyDkpyPuPaptZft4EGlNFtNA1JTE1b/7R
+         Qq9a3TQQK1ZiZEVgSt1NRe+6a1oeQDxgkBUoex3ORftsLmKrp9k1o/TI2sXfWgk614yc
+         x9IQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=dEtgMdgrRwB7E/S8vh13UWGDjjT83i0QNMMZoYtOVwo=;
-        b=J0m+eRD5cjaJ4fP7922mNlDZ7j/yytyRCfIhYnA243qiv0INVgXoPWJCEr9kKl94la
-         8srxsx1rF3JgygfKjpxcwXqQwA8/zrKnYgM2zMl5mUbBlZZLnHwoEgQt9IRRYjPlroNZ
-         34FW7hOIT0rDNrZF/oCMQytBVHPdBfE01RDHM3C36pttCTRCLn3pTVADtlrdRy2FLwil
-         jcvRjW8WTbMACdNDsNTZFbXYqdUvoCWSf052fdTYNUgl4CgMWKYOleIEwdKW4GaWULz5
-         9NwTpg/mTOmDTPfn3vGHtq1cwxX7jBcq2OfgCyGgBPmQHvADoFGGmO6SnnjK5W0ilHJQ
-         LL5A==
-X-Gm-Message-State: AJcUukf620BOcYNFpSNvAjpuHJy3qWQl+CBofHpA42jN6yAS35BA81Gs
-        gGtUeoiuFVeFZrBIJm4DuY3JcmoRSCTXj+NBm1SetA==
-X-Google-Smtp-Source: ALg8bN4p35K1/JsWvHA/FylMqYIdG8UoeuQwSyWF1O5tnbjij/Htp/zSyMgVdxixTAbCKxX5RDpoOXe9XbV563uix40=
-X-Received: by 2002:a6b:1414:: with SMTP id 20mr31039933iou.140.1546453782362;
- Wed, 02 Jan 2019 10:29:42 -0800 (PST)
+        bh=D9SJWAAY9/QXJCI4Fl7OpN64fV1E5Pup0uWqSCVW0E0=;
+        b=PwqHwqBE3jKvR0GMu1tO8zoYjVx836/aBt38tYzHs0cds3JomNLEUVboC8MZo0Y4D1
+         0yxjKhZkfQ5GdM09HXC99JWNmnRExR4olG2gYIBxz7cXdQbgvAFn0SVpzuiISlqyjwL+
+         ohuIWBt/vb3JUHEdVb8lXeK29YAumeEI9I6OkLunvPq+jVmynBScgfrbPsSaNoGw7B0U
+         O+MOh3dB/LyW5w1ME3lBad3HdplsmXgttBnVETkKnkU1fc8ZyI28Xtpf/on8PI/NablR
+         wJFFHIFhCb3A1faIyqX3G+tQuyXLvLhx4YlfdfhgricxzVxDWcUonobyGo2rv11EGGVd
+         N/bQ==
+X-Gm-Message-State: AA+aEWbu9/ZQP6seKHquVBE4gWtHfqmO5HU1A3wlyvruFKxnMnrjLCpU
+        lG08Qtl4bnNp3PTvAJAOWrC12QV44QFCWTprHDNEvw==
+X-Google-Smtp-Source: AFSGD/W1I60Vw1bn7yGCdnLtnh1tD0To3yq/OKcokKIE45lZQKx2QO8AQ0mdMz8dcO7HvLgRUdOBkShCKMKRIMBj+SI=
+X-Received: by 2002:a02:ac8c:: with SMTP id x12mr27388743jan.72.1546453795043;
+ Wed, 02 Jan 2019 10:29:55 -0800 (PST)
 MIME-Version: 1.0
-References: <20181211142253.23747-1-faiz_abbas@ti.com> <20181211142253.23747-3-faiz_abbas@ti.com>
- <CAPDyKFoi+NzS-d8E8oz-h_ab70jY7owwqPXsEoJWnRg6J2zcNA@mail.gmail.com>
-In-Reply-To: <CAPDyKFoi+NzS-d8E8oz-h_ab70jY7owwqPXsEoJWnRg6J2zcNA@mail.gmail.com>
-From:   Olof Johansson <olof@lixom.net>
-Date:   Wed, 2 Jan 2019 10:29:31 -0800
-Message-ID: <CAOesGMjXcpY1c0Bpf2tMACVVXNW1W-Gp3HO+yjK8f6dQ-cp5bQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] mmc: sdhci-omap: Workaround errata regarding
- SDR104/HS200 tuning failures (i929)
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Faiz Abbas <faiz_abbas@ti.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Kishon <kishon@ti.com>, Keerthy <j-keerthy@ti.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Tony Lindgren <tony@atomide.com>
+References: <000000000000f67ca2057e75bec3@google.com> <1194004c-f176-6253-a5fd-682472dccacc@suse.cz>
+ <20190102180611.GE31517@techsingularity.net>
+In-Reply-To: <20190102180611.GE31517@techsingularity.net>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Wed, 2 Jan 2019 19:29:43 +0100
+Message-ID: <CACT4Y+YMc0hiU-taTmwvm_6u4hAruBWV0qAz_Bp4f2a6JC-UiA@mail.gmail.com>
+Subject: Re: possible deadlock in __wake_up_common_lock
+To:     Mel Gorman <mgorman@techsingularity.net>
+Cc:     Vlastimil Babka <vbabka@suse.cz>,
+        syzbot <syzbot+93d94a001cfbce9e60e1@syzkaller.appspotmail.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>, linux@dominikbrodowski.net,
+        Michal Hocko <mhocko@suse.com>,
+        David Rientjes <rientjes@google.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        xieyisheng1@huawei.com, zhong jiang <zhongjiang@huawei.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-
-On Wed, Dec 12, 2018 at 1:20 AM Ulf Hansson <ulf.hansson@linaro.org> wrote:
+On Wed, Jan 2, 2019 at 7:06 PM Mel Gorman <mgorman@techsingularity.net> wrote:
 >
-> + Thermal maintainers
+> On Wed, Jan 02, 2019 at 01:51:01PM +0100, Vlastimil Babka wrote:
+> > On 1/2/19 9:51 AM, syzbot wrote:
+> > > Hello,
+> > >
+> > > syzbot found the following crash on:
+> > >
+> > > HEAD commit:    f346b0becb1b Merge branch 'akpm' (patches from Andrew)
+> > > git tree:       upstream
+> > > console output: https://syzkaller.appspot.com/x/log.txt?x=1510cefd400000
+> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=c255c77ba370fe7c
+> > > dashboard link: https://syzkaller.appspot.com/bug?extid=93d94a001cfbce9e60e1
+> > > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> > > userspace arch: i386
+> > >
+> > > Unfortunately, I don't have any reproducer for this crash yet.
+> > >
+> > > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > > Reported-by: syzbot+93d94a001cfbce9e60e1@syzkaller.appspotmail.com
+> > >
+> > >
+> > > ======================================================
+> > > WARNING: possible circular locking dependency detected
+> > > 4.20.0+ #297 Not tainted
+> > > ------------------------------------------------------
+> > > syz-executor0/8529 is trying to acquire lock:
+> > > 000000005e7fb829 (&pgdat->kswapd_wait){....}, at:
+> > > __wake_up_common_lock+0x19e/0x330 kernel/sched/wait.c:120
+> >
+> > From the backtrace at the end of report I see it's coming from
+> >
+> > >   wakeup_kswapd+0x5f0/0x930 mm/vmscan.c:3982
+> > >   steal_suitable_fallback+0x538/0x830 mm/page_alloc.c:2217
+> >
+> > This wakeup_kswapd is new due to Mel's 1c30844d2dfe ("mm: reclaim small
+> > amounts of memory when an external fragmentation event occurs") so CC Mel.
+> >
 >
-> On Tue, 11 Dec 2018 at 15:20, Faiz Abbas <faiz_abbas@ti.com> wrote:
+> New year new bugs :(
+
+Old too :(
+https://syzkaller.appspot.com/#upstream-open
+
+> > > but task is already holding lock:
+> > > 000000009bb7bae0 (&(&zone->lock)->rlock){-.-.}, at: spin_lock
+> > > include/linux/spinlock.h:329 [inline]
+> > > 000000009bb7bae0 (&(&zone->lock)->rlock){-.-.}, at: rmqueue_bulk
+> > > mm/page_alloc.c:2548 [inline]
+> > > 000000009bb7bae0 (&(&zone->lock)->rlock){-.-.}, at: __rmqueue_pcplist
+> > > mm/page_alloc.c:3021 [inline]
+> > > 000000009bb7bae0 (&(&zone->lock)->rlock){-.-.}, at: rmqueue_pcplist
+> > > mm/page_alloc.c:3050 [inline]
+> > > 000000009bb7bae0 (&(&zone->lock)->rlock){-.-.}, at: rmqueue
+> > > mm/page_alloc.c:3072 [inline]
+> > > 000000009bb7bae0 (&(&zone->lock)->rlock){-.-.}, at:
+> > > get_page_from_freelist+0x1bae/0x52a0 mm/page_alloc.c:3491
+> > >
+> > > which lock already depends on the new lock.
 > >
-> > Errata i929 in certain OMAP5/DRA7XX/AM57XX silicon revisions
-> > (SPRZ426D - November 2014 - Revised February 2018 [1]) mentions
-> > unexpected tuning pattern errors. A small failure band may be present
-> > in the tuning range which may be missed by the current algorithm.
-> > Furthermore, the failure bands vary with temperature leading to
-> > different optimum tuning values for different temperatures.
+> > However, I don't understand why lockdep thinks it's a problem. IIRC it
+> > doesn't like that we are locking pgdat->kswapd_wait.lock while holding
+> > zone->lock. That means it has learned that the opposite order also
+> > exists, e.g. somebody would take zone->lock while manipulating the wait
+> > queue? I don't see where but I admit I'm not good at reading lockdep
+> > splats, so CCing Peterz and Ingo as well. Keeping rest of mail for
+> > reference.
 > >
-> > As suggested in the related Application Report (SPRACA9B - October 2017
-> > - Revised July 2018 [2]), tuning should be done in two stages.
-> > In stage 1, assign the optimum ratio in the maximum pass window for the
-> > current temperature. In stage 2, if the chosen value is close to the
-> > small failure band, move away from it in the appropriate direction.
-> >
-> > References:
-> > [1] http://www.ti.com/lit/pdf/sprz426
-> > [2] http://www.ti.com/lit/pdf/SPRACA9
-> >
-> > Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
-> > Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-> > ---
-> >  drivers/mmc/host/Kconfig      |  2 +
-> >  drivers/mmc/host/sdhci-omap.c | 90 ++++++++++++++++++++++++++++++++++-
-> >  2 files changed, 91 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-> > index 5fa580cec831..d8f984483ab0 100644
-> > --- a/drivers/mmc/host/Kconfig
-> > +++ b/drivers/mmc/host/Kconfig
-> > @@ -977,6 +977,8 @@ config MMC_SDHCI_XENON
-> >  config MMC_SDHCI_OMAP
-> >         tristate "TI SDHCI Controller Support"
-> >         depends on MMC_SDHCI_PLTFM && OF
-> > +       select THERMAL
-> > +       select TI_SOC_THERMAL
-> >         help
-> >           This selects the Secure Digital Host Controller Interface (SDHCI)
-> >           support present in TI's DRA7 SOCs. The controller supports
-> > diff --git a/drivers/mmc/host/sdhci-omap.c b/drivers/mmc/host/sdhci-omap.c
-> > index f588ab679cb0..b75c55011fcb 100644
-> > --- a/drivers/mmc/host/sdhci-omap.c
-> > +++ b/drivers/mmc/host/sdhci-omap.c
-> > @@ -27,6 +27,7 @@
-> >  #include <linux/regulator/consumer.h>
-> >  #include <linux/pinctrl/consumer.h>
-> >  #include <linux/sys_soc.h>
-> > +#include <linux/thermal.h>
-> >
-> >  #include "sdhci-pltfm.h"
-> >
-> > @@ -286,15 +287,19 @@ static int sdhci_omap_execute_tuning(struct mmc_host *mmc, u32 opcode)
-> >         struct sdhci_host *host = mmc_priv(mmc);
-> >         struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> >         struct sdhci_omap_host *omap_host = sdhci_pltfm_priv(pltfm_host);
-> > +       struct thermal_zone_device *thermal_dev;
-> >         struct device *dev = omap_host->dev;
-> >         struct mmc_ios *ios = &mmc->ios;
-> >         u32 start_window = 0, max_window = 0;
-> > +       bool single_point_failure = false;
-> >         bool dcrc_was_enabled = false;
-> >         u8 cur_match, prev_match = 0;
-> >         u32 length = 0, max_len = 0;
-> >         u32 phase_delay = 0;
-> > +       int temperature;
-> >         int ret = 0;
-> >         u32 reg;
-> > +       int i;
-> >
-> >         /* clock tuning is not needed for upto 52MHz */
-> >         if (ios->clock <= 52000000)
-> > @@ -304,6 +309,16 @@ static int sdhci_omap_execute_tuning(struct mmc_host *mmc, u32 opcode)
-> >         if (ios->timing == MMC_TIMING_UHS_SDR50 && !(reg & CAPA2_TSDR50))
-> >                 return 0;
-> >
-> > +       thermal_dev = thermal_zone_get_zone_by_name("cpu_thermal");
 >
-> I couldn't find a corresponding call to a put function, like
-> "thermal_zone_put()" or whatever, which made me realize that the
-> thermal zone API is incomplete. Or depending on how you put it, it
-> lacks object reference counting, unless I am missing something.
+> I'm not sure I'm reading the output correctly because I'm having trouble
+> seeing the exact pattern that allows lockdep to conclude the lock ordering
+> is problematic.
 >
-> For example, what happens if the thermal zone becomes unregistered
-> between this point and when you call thermal_zone_get_temp() a couple
-> of line below. I assume it's a known problem, but just wanted to point
-> it out.
+> I think it's hungup on the fact that mod_timer can allocate debug
+> objects for KASAN and somehow concludes that the waking of kswapd is
+> problematic because potentially a lock ordering exists that would trip.
+> I don't see how it's actually possible though due to either a lack of
+> imagination or maybe lockdep is being cautious as something could change
+> in the future that allows the lockup.
 >
-> > +       if (IS_ERR(thermal_dev)) {
-> > +               dev_err(dev, "Unable to get thermal zone for tuning\n");
-> > +               return PTR_ERR(thermal_dev);
-> > +       }
-> > +
-> > +       ret = thermal_zone_get_temp(thermal_dev, &temperature);
-> > +       if (ret)
-> > +               return ret;
-> > +
+> There are a few options I guess in order of preference.
 >
-> [...]
+> 1. Drop zone->lock for the call. It's not necessarily to keep track of
+>    the IRQ flags as callers into that path already do things like treat
+>    IRQ disabling and the spin lock separately.
 >
-> Anyway, I have applied this for next, thanks!
+> 2. Use another alloc_flag in steal_suitable_fallback that is set when a
+>    wakeup is required but do the actual wakeup in rmqueue() after the
+>    zone locks are dropped and the allocation request is completed
+>
+> 3. Always wakeup kswapd if watermarks are boosted. I like this the least
+>    because it means doing wakeups that are unrelated to fragmentation
+>    that occurred in the current context.
+>
+> Any particular preference?
+>
+> While I recognise there is no test case available, how often does this
+> trigger in syzbot as it would be nice to have some confirmation any
+> patch is really fixing the problem.
 
-This is throwing errors on builds of keystone_defconfig in next and mainline:
+This info is always available over the "dashboard link" in the report:
+https://syzkaller.appspot.com/bug?extid=93d94a001cfbce9e60e1
 
-http://arm-soc.lixom.net/buildlogs/next/next-20190102/buildall.arm.keystone_defconfig.log.passed
+In this case it's 1. I don't know why. Lock inversions are easier to
+trigger in some sense as information accumulates globally. Maybe one
+of these stacks is hard to trigger, or maybe all these stacks are
+rarely triggered on one machine. While the info accumulates globally,
+non of the machines are actually run for any prolonged time: they all
+crash right away on hundreds of known bugs.
 
-WARNING: unmet direct dependencies detected for TI_SOC_THERMAL
-  Depends on [n]: THERMAL [=y] && (ARCH_HAS_BANDGAP [=n] ||
-COMPILE_TEST [=n]) && HAS_IOMEM [=y]
-  Selected by [y]:
-  - MMC_SDHCI_OMAP [=y] && MMC [=y] && MMC_SDHCI_PLTFM [=y] && OF [=y]
-
-So, thermal depends on ARCH_HAS_BANDGAP, which keystone doesn't provide.
-
-Selecting a major framework such as THERMAL from a driver config is
-likely not the right solution anyway, especially since THERMAL does
-provide stubbed out versions of the functions if it's not enabled.
-
-
--Olof
+So good that Qian can reproduce this.
