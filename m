@@ -2,99 +2,302 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44650C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 09:26:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FFFDC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 09:28:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A65A2171F
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 09:26:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46A1F21019
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 09:28:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729141AbfABJ0R (ORCPT
+        id S1729181AbfABJ2F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 04:26:17 -0500
-Received: from dispatch1-us1.ppe-hosted.com ([67.231.154.164]:37548 "EHLO
-        dispatch1-us1.ppe-hosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728451AbfABJ0Q (ORCPT
+        Wed, 2 Jan 2019 04:28:05 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55750 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728582AbfABJ2F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 04:26:16 -0500
-X-Virus-Scanned: Proofpoint Essentials engine
-Received: from webmail.solarflare.com (uk.solarflare.com [193.34.186.16])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mx1-us4.ppe-hosted.com (Proofpoint Essentials ESMTP Server) with ESMTPS id 01833B40068;
-        Wed,  2 Jan 2019 09:26:15 +0000 (UTC)
-Received: from hgk-desktop.uk.solarflarecom.com (10.17.20.82) by
- ukex01.SolarFlarecom.com (10.17.10.4) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 2 Jan 2019 09:26:08 +0000
-Subject: Re: [PATCH] net: sfc: checks status of efx_mcdi_rpc
-To:     Kangjie Lu <kjlu@umn.edu>
-CC:     <pakki001@umn.edu>,
-        Solarflare linux maintainers <linux-net-drivers@solarflare.com>,
-        Edward Cree <ecree@solarflare.com>,
-        "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20181226050517.74381-1-kjlu@umn.edu>
-From:   Bert Kenward <bkenward@solarflare.com>
-Message-ID: <59347b7d-3b71-348a-9fba-c8a4cc73af3f@solarflare.com>
-Date:   Wed, 2 Jan 2019 09:26:04 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        Wed, 2 Jan 2019 04:28:05 -0500
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x029NRWr087646
+        for <linux-kernel@vger.kernel.org>; Wed, 2 Jan 2019 04:28:03 -0500
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2prt3n9gmu-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 04:28:03 -0500
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Wed, 2 Jan 2019 09:28:01 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 2 Jan 2019 09:27:53 -0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x029Rrk755771262
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 2 Jan 2019 09:27:53 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EAA684C04E;
+        Wed,  2 Jan 2019 09:27:52 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4D5734C040;
+        Wed,  2 Jan 2019 09:27:51 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.8.244])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Wed,  2 Jan 2019 09:27:51 +0000 (GMT)
+Date:   Wed, 2 Jan 2019 11:27:49 +0200
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Pingfan Liu <kernelfans@gmail.com>
+Cc:     linux-acpi@vger.kernel.org, linux-mm@kvack.org,
+        kexec@lists.infradead.org, Tang Chen <tangchen@cn.fujitsu.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Yaowei Bai <baiyaowei@cmss.chinamobile.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Daniel Vacek <neelx@redhat.com>,
+        Mathieu Malaterre <malat@debian.org>,
+        Stefan Agner <stefan@agner.ch>, Dave Young <dyoung@redhat.com>,
+        Baoquan He <bhe@redhat.com>, yinghai@kernel.org,
+        vgoyal@redhat.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv3 1/2] mm/memblock: extend the limit inferior of
+ bottom-up after parsing hotplug attr
+References: <1545966002-3075-1-git-send-email-kernelfans@gmail.com>
+ <1545966002-3075-2-git-send-email-kernelfans@gmail.com>
+ <20181231084018.GA28478@rapoport-lnx>
+ <CAFgQCTvQnj7zReFvH_gmfVJdPXE325o+z4Xx76fupvsLR_7H2A@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20181226050517.74381-1-kjlu@umn.edu>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.17.20.82]
-X-ClientProxiedBy: ocex03.SolarFlarecom.com (10.20.40.36) To
- ukex01.SolarFlarecom.com (10.17.10.4)
-X-TM-AS-Product-Ver: SMEX-12.5.0.1300-8.5.1010-24330.003
-X-TM-AS-Result: No-5.956300-8.000000-10
-X-TMASE-MatchedRID: pBwXUM+nCwsOwH4pD14DsPHkpkyUphL9vtVce6w5+K+pFqY8JHz7MIpb
-        wG9fIuITrmdCENzlRmI5r9xVI8WH2z6e2U7joGs6XP5rFAucBUEF15s6prCIuwpcq1+LTpsUo8W
-        MkQWv6iUD0yuKrQIMCBBWOoA5nlyNC24oEZ6SpSk6XEE7Yhw4Fk0eY87ooSGMUEeSIWllgkC6OR
-        Df9cbUkpcUhpaXW2NDe5Y0uE82u9s=
-X-TM-AS-User-Approved-Sender: Yes
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--5.956300-8.000000
-X-TMASE-Version: SMEX-12.5.0.1300-8.5.1010-24330.003
-X-MDID: 1546421175-YPLAg4_GMMLT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAFgQCTvQnj7zReFvH_gmfVJdPXE325o+z4Xx76fupvsLR_7H2A@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 19010209-0016-0000-0000-0000023E72A5
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19010209-0017-0000-0000-0000329776B3
+Message-Id: <20190102092749.GA22664@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-02_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901020086
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Wed, Jan 02, 2019 at 02:47:34PM +0800, Pingfan Liu wrote:
+> On Mon, Dec 31, 2018 at 4:40 PM Mike Rapoport <rppt@linux.ibm.com> wrote:
+> >
+> > On Fri, Dec 28, 2018 at 11:00:01AM +0800, Pingfan Liu wrote:
+> > > The bottom-up allocation style is introduced to cope with movable_node,
+> > > where the limit inferior of allocation starts from kernel's end, due to
+> > > lack of knowledge of memory hotplug info at this early time. But if later,
+> > > hotplug info has been got, the limit inferior can be extend to 0.
+> > > 'kexec -c' prefers to reuse this style to alloc mem at lower address,
+> > > since if the reserved region is beyond 4G, then it requires extra mem
+> > > (default is 16M) for swiotlb.
+> >
+> > I fail to understand why the availability of memory hotplug information
+> > would allow to extend the lower limit of bottom-up memblock allocations
+> > below the kernel. The memory in the physical range [0, kernel_start) can be
+> > allocated as soon as the kernel memory is reserved.
+> >
+> Yes, the  [0, kernel_start) can be allocated at this time by some func
+> e.g. memblock_reserve(). But there is trick. For the func like
+> memblock_find_in_range(), this is hotplug attr checking ,,it will
+> check the hotmovable attr in __next_mem_range()
+> {
+> if (movable_node_is_enabled() && memblock_is_hotpluggable(m))
+> continue
+> }.  So the movable memory can be safely skipped.
 
-On 26/12/18 05:05, Kangjie Lu wrote:
-> efx_mcdi_rpc() could fail. The fix checks its status and issues an error
-> message if it fails.
+I still don't see the connection between allocating memory below
+kernel_start and the hotplug info.
+
+The check for 'end > kernel_end' in
+
+ 	if (memblock_bottom_up() && end > kernel_end)
+
+does not protect against allocation in a hotplugable area.
+If memblock_find_in_range() is called before hotplug info is parsed it can
+return a range in a hotplugable area.
+
+The point I'd like to clarify is why allocating memory in the range [0,
+kernel_start) cannot be done before hotplug info is available and why it is
+safe to allocate that memory afterwards?
+
+> Thanks for your kindly review.
 > 
-> Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-> ---
->  drivers/net/ethernet/sfc/mcdi.c | 3 +++
->  1 file changed, 3 insertions(+)
+> Regards,
+> Pingfan
 > 
-> diff --git a/drivers/net/ethernet/sfc/mcdi.c b/drivers/net/ethernet/sfc/mcdi.c
-> index dfad93fca0a6..9486e6534dea 100644
-> --- a/drivers/net/ethernet/sfc/mcdi.c
-> +++ b/drivers/net/ethernet/sfc/mcdi.c
-> @@ -1819,6 +1819,9 @@ void efx_mcdi_set_id_led(struct efx_nic *efx, enum efx_led_mode mode)
->  
->  	rc = efx_mcdi_rpc(efx, MC_CMD_SET_ID_LED, inbuf, sizeof(inbuf),
->  			  NULL, 0, NULL);
-> +	if (rc)
-> +		netif_err(efx, hw, efx->net_dev, "%s: failed rc=%d\n",
-> +				__func__, rc);
->  }
+> > The extents of the memory node hosting the kernel image can be used to
+> > limit memblok allocations from that particular node, even in top-down mode.
+> >
+> > > Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
+> > > Cc: Tang Chen <tangchen@cn.fujitsu.com>
+> > > Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+> > > Cc: Len Brown <lenb@kernel.org>
+> > > Cc: Andrew Morton <akpm@linux-foundation.org>
+> > > Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
+> > > Cc: Michal Hocko <mhocko@suse.com>
+> > > Cc: Jonathan Corbet <corbet@lwn.net>
+> > > Cc: Yaowei Bai <baiyaowei@cmss.chinamobile.com>
+> > > Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
+> > > Cc: Nicholas Piggin <npiggin@gmail.com>
+> > > Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+> > > Cc: Daniel Vacek <neelx@redhat.com>
+> > > Cc: Mathieu Malaterre <malat@debian.org>
+> > > Cc: Stefan Agner <stefan@agner.ch>
+> > > Cc: Dave Young <dyoung@redhat.com>
+> > > Cc: Baoquan He <bhe@redhat.com>
+> > > Cc: yinghai@kernel.org,
+> > > Cc: vgoyal@redhat.com
+> > > Cc: linux-kernel@vger.kernel.org
+> > > ---
+> > >  drivers/acpi/numa.c      |  4 ++++
+> > >  include/linux/memblock.h |  1 +
+> > >  mm/memblock.c            | 58 +++++++++++++++++++++++++++++-------------------
+> > >  3 files changed, 40 insertions(+), 23 deletions(-)
+> > >
+> > > diff --git a/drivers/acpi/numa.c b/drivers/acpi/numa.c
+> > > index 2746994..3eea4e4 100644
+> > > --- a/drivers/acpi/numa.c
+> > > +++ b/drivers/acpi/numa.c
+> > > @@ -462,6 +462,10 @@ int __init acpi_numa_init(void)
+> > >
+> > >               cnt = acpi_table_parse_srat(ACPI_SRAT_TYPE_MEMORY_AFFINITY,
+> > >                                           acpi_parse_memory_affinity, 0);
+> > > +
+> > > +#if defined(CONFIG_X86) || defined(CONFIG_ARM64)
+> > > +             mark_mem_hotplug_parsed();
+> > > +#endif
+> > >       }
+> > >
+> > >       /* SLIT: System Locality Information Table */
+> > > diff --git a/include/linux/memblock.h b/include/linux/memblock.h
+> > > index aee299a..d89ed9e 100644
+> > > --- a/include/linux/memblock.h
+> > > +++ b/include/linux/memblock.h
+> > > @@ -125,6 +125,7 @@ int memblock_reserve(phys_addr_t base, phys_addr_t size);
+> > >  void memblock_trim_memory(phys_addr_t align);
+> > >  bool memblock_overlaps_region(struct memblock_type *type,
+> > >                             phys_addr_t base, phys_addr_t size);
+> > > +void mark_mem_hotplug_parsed(void);
+> > >  int memblock_mark_hotplug(phys_addr_t base, phys_addr_t size);
+> > >  int memblock_clear_hotplug(phys_addr_t base, phys_addr_t size);
+> > >  int memblock_mark_mirror(phys_addr_t base, phys_addr_t size);
+> > > diff --git a/mm/memblock.c b/mm/memblock.c
+> > > index 81ae63c..a3f5e46 100644
+> > > --- a/mm/memblock.c
+> > > +++ b/mm/memblock.c
+> > > @@ -231,6 +231,12 @@ __memblock_find_range_top_down(phys_addr_t start, phys_addr_t end,
+> > >       return 0;
+> > >  }
+> > >
+> > > +static bool mem_hotmovable_parsed __initdata_memblock;
+> > > +void __init_memblock mark_mem_hotplug_parsed(void)
+> > > +{
+> > > +     mem_hotmovable_parsed = true;
+> > > +}
+> > > +
+> > >  /**
+> > >   * memblock_find_in_range_node - find free area in given range and node
+> > >   * @size: size of free area to find
+> > > @@ -259,7 +265,7 @@ phys_addr_t __init_memblock memblock_find_in_range_node(phys_addr_t size,
+> > >                                       phys_addr_t end, int nid,
+> > >                                       enum memblock_flags flags)
+> > >  {
+> > > -     phys_addr_t kernel_end, ret;
+> > > +     phys_addr_t kernel_end, ret = 0;
+> > >
+> > >       /* pump up @end */
+> > >       if (end == MEMBLOCK_ALLOC_ACCESSIBLE)
+> > > @@ -270,34 +276,40 @@ phys_addr_t __init_memblock memblock_find_in_range_node(phys_addr_t size,
+> > >       end = max(start, end);
+> > >       kernel_end = __pa_symbol(_end);
+> > >
+> > > -     /*
+> > > -      * try bottom-up allocation only when bottom-up mode
+> > > -      * is set and @end is above the kernel image.
+> > > -      */
+> > > -     if (memblock_bottom_up() && end > kernel_end) {
+> > > -             phys_addr_t bottom_up_start;
+> > > +     if (memblock_bottom_up()) {
+> > > +             phys_addr_t bottom_up_start = start;
+> > >
+> > > -             /* make sure we will allocate above the kernel */
+> > > -             bottom_up_start = max(start, kernel_end);
+> > > -
+> > > -             /* ok, try bottom-up allocation first */
+> > > -             ret = __memblock_find_range_bottom_up(bottom_up_start, end,
+> > > -                                                   size, align, nid, flags);
+> > > -             if (ret)
+> > > +             if (mem_hotmovable_parsed) {
+> > > +                     ret = __memblock_find_range_bottom_up(
+> > > +                             bottom_up_start, end, size, align, nid,
+> > > +                             flags);
+> > >                       return ret;
+> > >
+> > >               /*
+> > > -              * we always limit bottom-up allocation above the kernel,
+> > > -              * but top-down allocation doesn't have the limit, so
+> > > -              * retrying top-down allocation may succeed when bottom-up
+> > > -              * allocation failed.
+> > > -              *
+> > > -              * bottom-up allocation is expected to be fail very rarely,
+> > > -              * so we use WARN_ONCE() here to see the stack trace if
+> > > -              * fail happens.
+> > > +              * if mem hotplug info is not parsed yet, try bottom-up
+> > > +              * allocation with @end above the kernel image.
+> > >                */
+> > > -             WARN_ONCE(IS_ENABLED(CONFIG_MEMORY_HOTREMOVE),
+> > > +             } else if (!mem_hotmovable_parsed && end > kernel_end) {
+> > > +                     /* make sure we will allocate above the kernel */
+> > > +                     bottom_up_start = max(start, kernel_end);
+> > > +                     ret = __memblock_find_range_bottom_up(
+> > > +                             bottom_up_start, end, size, align, nid,
+> > > +                             flags);
+> > > +                     if (ret)
+> > > +                             return ret;
+> > > +                     /*
+> > > +                      * we always limit bottom-up allocation above the
+> > > +                      * kernel, but top-down allocation doesn't have
+> > > +                      * the limit, so retrying top-down allocation may
+> > > +                      * succeed when bottom-up allocation failed.
+> > > +                      *
+> > > +                      * bottom-up allocation is expected to be fail
+> > > +                      * very rarely, so we use WARN_ONCE() here to see
+> > > +                      * the stack trace if fail happens.
+> > > +                      */
+> > > +                     WARN_ONCE(IS_ENABLED(CONFIG_MEMORY_HOTREMOVE),
+> > >                         "memblock: bottom-up allocation failed, memory hotremove may be affected\n");
+> > > +             }
+> > >       }
+> > >
+> > >       return __memblock_find_range_top_down(start, end, size, align, nid,
+> > > --
+> > > 2.7.4
+> > >
+> >
+> > --
+> > Sincerely yours,
+> > Mike.
+> >
+> 
 
-efx_mcdi_rpc() already issues an error message on failure, so this doesn't add
-anything beyond that.
+-- 
+Sincerely yours,
+Mike.
 
-Are you trying to address a particular issue with this patch?
-
-Thanks,
-
-Bert.
