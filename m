@@ -2,270 +2,114 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00240C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 08:14:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F7F0C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 08:23:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5DB521871
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 08:14:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5219A21871
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 08:23:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="T4YgV3zd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728912AbfABIOR convert rfc822-to-8bit (ORCPT
+        id S1728960AbfABIXo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 03:14:17 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:33547 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726059AbfABIOR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 03:14:17 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 43V3jc5g04z9v0lq;
-        Wed,  2 Jan 2019 09:14:12 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id ji2xEjdDqvVd; Wed,  2 Jan 2019 09:14:12 +0100 (CET)
-Received: from vm-hermes.si.c-s.fr (vm-hermes.si.c-s.fr [192.168.25.253])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 43V3jc46Xnz9v0ln;
-        Wed,  2 Jan 2019 09:14:12 +0100 (CET)
-Received: by vm-hermes.si.c-s.fr (Postfix, from userid 33)
-        id 5D1D7913; Wed,  2 Jan 2019 09:14:12 +0100 (CET)
-Received: from 37.168.207.163 ([37.168.207.163]) by messagerie.si.c-s.fr
- (Horde Framework) with HTTP; Wed, 02 Jan 2019 09:14:12 +0100
-Date:   Wed, 02 Jan 2019 09:14:12 +0100
-Message-ID: <20190102091412.Horde.y2c3R1S1rMxnqDcnPLDPaA4@messagerie.si.c-s.fr>
-From:   LEROY Christophe <christophe.leroy@c-s.fr>
-To:     Peng Hao <peng.hao2@zte.com.cn>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        linuxppc-dev@lists.ozlabs.org, Julia Lawall <julia.lawall@lip6.fr>,
-        Wen Yang <wen.yang99@zte.com.cn>, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, leoyang.li@nxp.com, qiang.zhao@nxp.com
-Subject: Re: [PATCH v5] soc/fsl/qe: fix err handling of ucc_of_parse_tdm
-In-Reply-To: <1546446223-17184-1-git-send-email-peng.hao2@zte.com.cn>
-User-Agent: Internet Messaging Program (IMP) H5 (6.2.3)
-Content-Type: text/plain; charset=UTF-8; format=flowed; DelSp=Yes
+        Wed, 2 Jan 2019 03:23:44 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:52524 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728870AbfABIXo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Jan 2019 03:23:44 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x028NZTj081582;
+        Wed, 2 Jan 2019 02:23:35 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1546417415;
+        bh=Dbbfcr2Z83lDGzZ9bITKlN6X9XQCAz28Vy5dbqwInfE=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=T4YgV3zdZP93waJPKkHhemNhe+6Exwy78EcFTbcoJLg1rJWWIh71alm1a6CbNTp70
+         DwJQ8fzYzbk7qYMq2HlQyo1DOD24KczKnUddFznj0ImGSTFLUgoFuy0/UPBeLvURqb
+         h50c17IBruc6tSSJuUH+1jQZcLDJOK2DnodlhFH8=
+Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x028NZlY039848
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 2 Jan 2019 02:23:35 -0600
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 2
+ Jan 2019 02:23:35 -0600
+Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Wed, 2 Jan 2019 02:23:35 -0600
+Received: from [172.24.190.215] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x028NVUQ001262;
+        Wed, 2 Jan 2019 02:23:32 -0600
+Subject: Re: [PATCH V4 1/3] mmc: sdhci: add support for using external DMA
+ devices
+To:     Chunyan Zhang <zhang.lyra@gmail.com>,
+        Adrian Hunter <adrian.hunter@intel.com>
+CC:     Chunyan Zhang <zhang.chunyan@linaro.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Sekhar Nori <nsekhar@ti.com>
+References: <1544519572-21921-1-git-send-email-zhang.chunyan@linaro.org>
+ <1544519572-21921-2-git-send-email-zhang.chunyan@linaro.org>
+ <0e683aef-383c-8200-0059-44a9abb654b8@intel.com>
+ <CAAfSe-tHu5m3Of6=KBCxBBH1T8=4tgN8aZP_7QaGERctECZPoQ@mail.gmail.com>
+From:   Faiz Abbas <faiz_abbas@ti.com>
+Message-ID: <f8adce24-99eb-7b65-a2f6-79536686511c@ti.com>
+Date:   Wed, 2 Jan 2019 13:56:25 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <CAAfSe-tHu5m3Of6=KBCxBBH1T8=4tgN8aZP_7QaGERctECZPoQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Peng Hao <peng.hao2@zte.com.cn> a écrit :
+Adrian,
 
-> From: Wen Yang <wen.yang99@zte.com.cn>
->
-> Currently there are some issues with the ucc_of_parse_tdm function:
-> 1, a possible null pointer dereference in ucc_of_parse_tdm,
-> detected by the semantic patch deref_null.cocci,
-> with the following warning:
-> drivers/soc/fsl/qe/qe_tdm.c:177:21-24: ERROR: pdev is NULL but dereferenced.
-> 2, dev gets modified, so in any case that devm_iounmap() will fail
-> even when the new pdev is valid, because the iomap was done with a
->  different pdev.
-> 3, there is no driver bind with the "fsl,t1040-qe-si" or
-> "fsl,t1040-qe-siram" device. So allocating resources using devm_*()
-> with these devices won't provide a cleanup path for these resources
-> when the caller fails.
->
-> This patch fixes them.
->
-> Suggested-by: Li Yang <leoyang.li@nxp.com>
-> Suggested-by: Christophe LEROY <christophe.leroy@c-s.fr>
-> Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-> Reviewed-by: Peng Hao <peng.hao2@zte.com.cn>
-> CC: Julia Lawall <julia.lawall@lip6.fr>
-> CC: Zhao Qiang <qiang.zhao@nxp.com>
-> CC: David S. Miller <davem@davemloft.net>
-> CC: netdev@vger.kernel.org
-> CC: linuxppc-dev@lists.ozlabs.org
-> CC: linux-kernel@vger.kernel.org
-> ---
+On 27/12/18 1:32 PM, Chunyan Zhang wrote:
+> On Thu, 27 Dec 2018 at 15:44, Adrian Hunter <adrian.hunter@intel.com> wrote:
+>>
+>> On 11/12/18 11:12 AM, Chunyan Zhang wrote:
+>>> Some standard SD host controllers can support both external dma
+>>> controllers as well as ADMA/SDMA in which the SD host controller
+>>> acts as DMA master. TI's omap controller is the case as an example.
+>>>
+>>> Currently the generic SDHCI code supports ADMA/SDMA integrated in
+>>> the host controller but does not have any support for external DMA
+>>> controllers implemented using dmaengine, meaning that custom code is
+>>> needed for any systems that use an external DMA controller with SDHCI.
+>>>
+>>> Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
+>>
+>> FYI, I am waiting on successful testing before reviewing these patches again.
+> 
+> Yeah, that makes sense, thanks Adrian!
+> 
+> I intend to send out another new patchset after the holidays.
+> After had another look at omap_hsmmc, I knew something need to be
+> modified (emailed Faiz about this privately), but I was still not sure
+> if it can fix the problem Faiz found.
+> 
 
-In order to ease review, could add the list of changes between each  
-version of the patch ? Usually we do it at this place so that it is  
-available for reviewers but not part of the commit text.
+I am currently working on moving am335 and am43 devices from omap_hsmmc
+to sdhci-omap driver. External DMA would be an integral part of this.
+The plan is to post these patches as a part of my series after testing
+on all those devices.
 
-Christophe
-
->  drivers/net/wan/fsl_ucc_hdlc.c | 62  
-> +++++++++++++++++++++++++++++++++++++++++-
->  drivers/soc/fsl/qe/qe_tdm.c    | 55 -------------------------------------
->  2 files changed, 61 insertions(+), 56 deletions(-)
->
-> diff --git a/drivers/net/wan/fsl_ucc_hdlc.c b/drivers/net/wan/fsl_ucc_hdlc.c
-> index 839fa77..f30a040 100644
-> --- a/drivers/net/wan/fsl_ucc_hdlc.c
-> +++ b/drivers/net/wan/fsl_ucc_hdlc.c
-> @@ -1057,6 +1057,54 @@ static const struct net_device_ops uhdlc_ops = {
->  	.ndo_tx_timeout	= uhdlc_tx_timeout,
->  };
->
-> +static int hdlc_map_iomem(char *name, int init_flag, void __iomem **ptr)
-> +{
-> +	struct device_node *np;
-> +	struct platform_device *pdev;
-> +	struct resource *res;
-> +	static int siram_init_flag;
-> +	int ret = 0;
-> +
-> +	np = of_find_compatible_node(NULL, NULL, name);
-> +	if (!np)
-> +		return -EINVAL;
-> +
-> +	pdev = of_find_device_by_node(np);
-> +	if (!pdev) {
-> +		pr_err("%pOFn: failed to lookup pdev\n", np);
-> +		of_node_put(np);
-> +		return -EINVAL;
-> +	}
-> +
-> +	of_node_put(np);
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	if (!res) {
-> +		ret = -EINVAL;
-> +		goto error_put_device;
-> +	}
-> +	*ptr = ioremap(res->start, resource_size(res));
-> +	if (!*ptr) {
-> +		ret = -ENOMEM;
-> +		goto error_put_device;
-> +	}
-> +
-> +	/* We've remapped the addresses, and we don't need the device any
-> +	 * more, so we should release it.
-> +	 */
-> +	put_device(&pdev->dev);
-> +
-> +	if (init_flag && siram_init_flag == 0) {
-> +		memset_io(*ptr, 0, resource_size(res));
-> +		siram_init_flag = 1;
-> +	}
-> +	return  0;
-> +
-> +error_put_device:
-> +	put_device(&pdev->dev);
-> +
-> +	return ret;
-> +}
-> +
->  static int ucc_hdlc_probe(struct platform_device *pdev)
->  {
->  	struct device_node *np = pdev->dev.of_node;
-> @@ -1151,6 +1199,15 @@ static int ucc_hdlc_probe(struct  
-> platform_device *pdev)
->  		ret = ucc_of_parse_tdm(np, utdm, ut_info);
->  		if (ret)
->  			goto free_utdm;
-> +
-> +		ret = hdlc_map_iomem("fsl,t1040-qe-si", 0,
-> +				     (void __iomem **)&utdm->si_regs);
-> +		if (ret)
-> +			goto free_utdm;
-> +		ret = hdlc_map_iomem("fsl,t1040-qe-siram", 1,
-> +				     (void __iomem **)&utdm->siram);
-> +		if (ret)
-> +			goto unmap_si_regs;
->  	}
->
->  	if (of_property_read_u16(np, "fsl,hmask", &uhdlc_priv->hmask))
-> @@ -1159,7 +1216,7 @@ static int ucc_hdlc_probe(struct platform_device *pdev)
->  	ret = uhdlc_init(uhdlc_priv);
->  	if (ret) {
->  		dev_err(&pdev->dev, "Failed to init uhdlc\n");
-> -		goto free_utdm;
-> +		goto undo_uhdlc_init;
->  	}
->
->  	dev = alloc_hdlcdev(uhdlc_priv);
-> @@ -1188,6 +1245,9 @@ static int ucc_hdlc_probe(struct platform_device *pdev)
->  free_dev:
->  	free_netdev(dev);
->  undo_uhdlc_init:
-> +	iounmap(utdm->siram);
-> +unmap_si_regs:
-> +	iounmap(utdm->si_regs);
->  free_utdm:
->  	if (uhdlc_priv->tsa)
->  		kfree(utdm);
-> diff --git a/drivers/soc/fsl/qe/qe_tdm.c b/drivers/soc/fsl/qe/qe_tdm.c
-> index f78c346..76480df 100644
-> --- a/drivers/soc/fsl/qe/qe_tdm.c
-> +++ b/drivers/soc/fsl/qe/qe_tdm.c
-> @@ -44,10 +44,6 @@ int ucc_of_parse_tdm(struct device_node *np,  
-> struct ucc_tdm *utdm,
->  	const char *sprop;
->  	int ret = 0;
->  	u32 val;
-> -	struct resource *res;
-> -	struct device_node *np2;
-> -	static int siram_init_flag;
-> -	struct platform_device *pdev;
->
->  	sprop = of_get_property(np, "fsl,rx-sync-clock", NULL);
->  	if (sprop) {
-> @@ -124,57 +120,6 @@ int ucc_of_parse_tdm(struct device_node *np,  
-> struct ucc_tdm *utdm,
->  	utdm->siram_entry_id = val;
->
->  	set_si_param(utdm, ut_info);
-> -
-> -	np2 = of_find_compatible_node(NULL, NULL, "fsl,t1040-qe-si");
-> -	if (!np2)
-> -		return -EINVAL;
-> -
-> -	pdev = of_find_device_by_node(np2);
-> -	if (!pdev) {
-> -		pr_err("%pOFn: failed to lookup pdev\n", np2);
-> -		of_node_put(np2);
-> -		return -EINVAL;
-> -	}
-> -
-> -	of_node_put(np2);
-> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	utdm->si_regs = devm_ioremap_resource(&pdev->dev, res);
-> -	if (IS_ERR(utdm->si_regs)) {
-> -		ret = PTR_ERR(utdm->si_regs);
-> -		goto err_miss_siram_property;
-> -	}
-> -
-> -	np2 = of_find_compatible_node(NULL, NULL, "fsl,t1040-qe-siram");
-> -	if (!np2) {
-> -		ret = -EINVAL;
-> -		goto err_miss_siram_property;
-> -	}
-> -
-> -	pdev = of_find_device_by_node(np2);
-> -	if (!pdev) {
-> -		ret = -EINVAL;
-> -		pr_err("%pOFn: failed to lookup pdev\n", np2);
-> -		of_node_put(np2);
-> -		goto err_miss_siram_property;
-> -	}
-> -
-> -	of_node_put(np2);
-> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	utdm->siram = devm_ioremap_resource(&pdev->dev, res);
-> -	if (IS_ERR(utdm->siram)) {
-> -		ret = PTR_ERR(utdm->siram);
-> -		goto err_miss_siram_property;
-> -	}
-> -
-> -	if (siram_init_flag == 0) {
-> -		memset_io(utdm->siram, 0,  resource_size(res));
-> -		siram_init_flag = 1;
-> -	}
-> -
-> -	return ret;
-> -
-> -err_miss_siram_property:
-> -	devm_iounmap(&pdev->dev, utdm->si_regs);
->  	return ret;
->  }
->  EXPORT_SYMBOL(ucc_of_parse_tdm);
-> --
-> 2.9.5
-
-
+Thanks,
+Faiz
