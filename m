@@ -2,83 +2,84 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D38EC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 17:07:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2289C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 17:10:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC96A2171F
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 17:07:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E3222171F
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 17:10:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730592AbfABRHo (ORCPT
+        id S1730600AbfABRKA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 12:07:44 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:17532 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729375AbfABRHn (ORCPT
+        Wed, 2 Jan 2019 12:10:00 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:60408 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727424AbfABRKA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 12:07:43 -0500
-Received: from fsav107.sakura.ne.jp (fsav107.sakura.ne.jp [27.133.134.234])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x02H6x1K029517;
-        Thu, 3 Jan 2019 02:06:59 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav107.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav107.sakura.ne.jp);
- Thu, 03 Jan 2019 02:06:59 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav107.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x02H6w2M029513
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Thu, 3 Jan 2019 02:06:58 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: INFO: rcu detected stall in ndisc_alloc_skb
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     syzbot <syzbot+ea7d9cb314b4ab49a18a@syzkaller.appspotmail.com>,
-        David Miller <davem@davemloft.net>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        LKML <linux-kernel@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        Linux-MM <linux-mm@kvack.org>
-References: <0000000000007beca9057e4c8c14@google.com>
- <CACT4Y+Yx4BJw=F_PMx9a8AjPKzEwhzLnzt9K-dgkBoNkKQj2+g@mail.gmail.com>
- <ef2508c9-d069-2143-09a6-a90b9ef12568@I-love.SAKURA.ne.jp>
- <CACT4Y+YYwYDnqFmMwfSg6UNXnrbh46bo0jp7ijbej8nkDDmBXQ@mail.gmail.com>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <eeb95c52-5bf8-d3ce-d32b-269aa86bcd93@i-love.sakura.ne.jp>
-Date:   Thu, 3 Jan 2019 02:06:58 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <CACT4Y+YYwYDnqFmMwfSg6UNXnrbh46bo0jp7ijbej8nkDDmBXQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        Wed, 2 Jan 2019 12:10:00 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: ezequiel)
+        with ESMTPSA id 12545279684
+Message-ID: <a8c5337fb0825fa7892b777d29fbda738a1057c4.camel@collabora.com>
+Subject: Re: [PATCH 02/10] drm/virtio: fix pageflip flush
+From:   Ezequiel Garcia <ezequiel@collabora.com>
+To:     Gerd Hoffmann <kraxel@redhat.com>, dri-devel@lists.freedesktop.org,
+        David Airlie <airlied@redhat.com>
+Cc:     David Airlie <airlied@linux.ie>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:VIRTIO GPU DRIVER" 
+        <virtualization@lists.linux-foundation.org>
+Date:   Wed, 02 Jan 2019 14:09:52 -0300
+In-Reply-To: <20181219122708.4586-3-kraxel@redhat.com>
+References: <20181219122708.4586-1-kraxel@redhat.com>
+         <20181219122708.4586-3-kraxel@redhat.com>
+Organization: Collabora
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.3-1 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/12/31 17:24, Dmitry Vyukov wrote:
->>> Since this involves OOMs and looks like a one-off induced memory corruption:
->>>
->>> #syz dup: kernel panic: corrupted stack end in wb_workfn
->>>
->>
->> Why?
->>
->> RCU stall in this case is likely to be latency caused by flooding of printk().
+On Wed, 2018-12-19 at 13:27 +0100, Gerd Hoffmann wrote:
+> Sending the flush command only makes sense if we actually have
+> a framebuffer attached to the scanout (handle != 0).
 > 
-> Just a hypothesis. OOMs lead to arbitrary memory corruptions, so can
-> cause stalls as well. But can be what you said too. I just thought
-> that cleaner dashboard is more useful than a large assorted pile of
-> crashes. If you think it's actionable in some way, feel free to undup.
+> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+> ---
+>  drivers/gpu/drm/virtio/virtgpu_plane.c | 11 ++++++-----
+>  1 file changed, 6 insertions(+), 5 deletions(-)
 > 
+> diff --git a/drivers/gpu/drm/virtio/virtgpu_plane.c b/drivers/gpu/drm/virtio/virtgpu_plane.c
+> index ead5c53d4e..548265b8e8 100644
+> --- a/drivers/gpu/drm/virtio/virtgpu_plane.c
+> +++ b/drivers/gpu/drm/virtio/virtgpu_plane.c
+> @@ -130,11 +130,12 @@ static void virtio_gpu_primary_plane_update(struct drm_plane *plane,
+>  				   plane->state->src_h >> 16,
+>  				   plane->state->src_x >> 16,
+>  				   plane->state->src_y >> 16);
+> -	virtio_gpu_cmd_resource_flush(vgdev, handle,
+> -				      plane->state->src_x >> 16,
+> -				      plane->state->src_y >> 16,
+> -				      plane->state->src_w >> 16,
+> -				      plane->state->src_h >> 16);
+> +	if (handle)
+> +		virtio_gpu_cmd_resource_flush(vgdev, handle,
+> +					      plane->state->src_x >> 16,
+> +					      plane->state->src_y >> 16,
+> +					      plane->state->src_w >> 16,
+> +					      plane->state->src_h >> 16);
+>  }
+>  
+>  static int virtio_gpu_cursor_prepare_fb(struct drm_plane *plane,
 
-We don't know why bpf tree is hitting this problem.
-Let's continue monitoring this problem.
+Reviewed-by: Ezequiel Garcia <ezequiel@collabora.com>
 
-#syz undup
+Regards,
+Ezequiel
+
