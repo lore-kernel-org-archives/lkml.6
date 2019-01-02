@@ -2,118 +2,105 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C543C43444
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:55:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACF59C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:56:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 262282171F
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:55:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C7592171F
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:56:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="M8EoxKHg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729303AbfABKzZ convert rfc822-to-8bit (ORCPT
+        id S1729524AbfABK4O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 05:55:25 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:37516 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727294AbfABKzZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 05:55:25 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id DC8EF207B0; Wed,  2 Jan 2019 11:55:22 +0100 (CET)
-Received: from xps13 (aaubervilliers-681-1-29-148.w90-88.abo.wanadoo.fr [90.88.149.148])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 87F7A206A6;
-        Wed,  2 Jan 2019 11:55:22 +0100 (CET)
-Date:   Wed, 2 Jan 2019 11:55:22 +0100
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Nadav Haklai <nadavh@marvell.com>
-Subject: Re: [PATCH v3 1/4] clk: core: clarify the check for runtime PM
-Message-ID: <20190102115522.2d7a1c37@xps13>
-In-Reply-To: <154534015908.79149.14109221006631310404@swboyd.mtv.corp.google.com>
-References: <20181204192440.12125-1-miquel.raynal@bootlin.com>
-        <20181204192440.12125-2-miquel.raynal@bootlin.com>
-        <154517780935.238328.764268020422357561@swboyd.mtv.corp.google.com>
-        <20181219090331.4c8c4852@xps13>
-        <154534015908.79149.14109221006631310404@swboyd.mtv.corp.google.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Wed, 2 Jan 2019 05:56:14 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:36530 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727294AbfABK4O (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Jan 2019 05:56:14 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x02AsvAA037344;
+        Wed, 2 Jan 2019 10:55:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=CU9h6cODLTfVhuz97Um/hesryVZhwPyCreyjzCmuROM=;
+ b=M8EoxKHgRO5of3rjfm3OUaEcLYcxSwPuE/Wz2FtgbBi9ZQBUGGc4z5brOc7FkmdO9U3w
+ UA99iSU1PnEI4grFzC/TkeNYGVJqnjKTm52M7gvdz9qjsupRCzg+V5lsZ+nrRTC/qYaz
+ 8+bALTtwfh97FO9ygRTVr8zggQnItMW4BQVzubHhdhQQgfR+pdiFWAxhxJQNa40lXhQl
+ O2Y/FAXHCcvOim1jkAM1d+oxx3gj181nbLidj8IJT1aZlF0WReRQpWnX8hJu3qchISdc
+ uLnFk/epTV7JG8tGfqKzgXaOC5RDXEldtHkMI2zAEWBL/rwgw1I8bT0dvZNq57NOBCU9 1g== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2130.oracle.com with ESMTP id 2pp0btsjjj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 02 Jan 2019 10:55:54 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x02Atsqm026676
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 2 Jan 2019 10:55:54 GMT
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x02AtqKw015850;
+        Wed, 2 Jan 2019 10:55:52 GMT
+Received: from kadam (/197.157.0.49)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 02 Jan 2019 02:55:51 -0800
+Date:   Wed, 2 Jan 2019 13:55:31 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     YueHaibing <yuehaibing@huawei.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Will Drewry <wad@chromium.org>,
+        Marcos Paulo de Souza <marcos.souza.org@gmail.com>,
+        David Windsor <dave@nullcore.net>,
+        Roman Gushchin <guro@fb.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Rik van Riel <riel@surriel.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH -next] mm: Mark 'stack_vm_area' with __maybe_unused
+Message-ID: <20190102105531.GI3781@kadam>
+References: <1545965190-2381-1-git-send-email-yuehaibing@huawei.com>
+ <20181228085804.GR16738@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181228085804.GR16738@dhcp22.suse.cz>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9123 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1901020100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stephen,
-
-Stephen Boyd <sboyd@kernel.org> wrote on Thu, 20 Dec 2018 13:09:19
--0800:
-
-> Quoting Miquel Raynal (2018-12-19 00:03:31)
-> > Hi Stephen,
-> > 
-> > Stephen Boyd <sboyd@kernel.org> wrote on Tue, 18 Dec 2018 16:03:29
-> > -0800:
-> >   
-> > > Quoting Miquel Raynal (2018-12-04 11:24:37)  
-> > > > Currently, the core->dev entry is populated only if runtime PM is
-> > > > enabled. Doing so prevents accessing the device structure in any
-> > > > case.
-> > > > 
-> > > > Keep the same logic but instead of using the presence of core->dev as
-> > > > the only condition, also check the status of
-> > > > pm_runtime_enabled(). Then, we can set the core->dev pointer at any
-> > > > time as long as a device structure is available.
-> > > > 
-> > > > This change will help supporting device links in the clock subsystem.
-> > > > 
-> > > > Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-> > > > ---
-> > > >  drivers/clk/clk.c | 11 +++++------
-> > > >  1 file changed, 5 insertions(+), 6 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> > > > index af011974d4ec..b799347c5fd6 100644
-> > > > --- a/drivers/clk/clk.c
-> > > > +++ b/drivers/clk/clk.c
-> > > > @@ -97,7 +97,7 @@ static int clk_pm_runtime_get(struct clk_core *core)
-> > > >  {
-> > > >         int ret = 0;
-> > > >  
-> > > > -       if (!core->dev)
-> > > > +       if (!core->dev || !pm_runtime_enabled(core->dev))    
-> > > 
-> > > This looks potentially dangerous. What if runtime PM is disabled for the
-> > > clk when this function is called? Shouldn't we just stash a bool away in
-> > > the clk_core structure when it's registered? And then we can replace the
-> > > check for !core->dev with a check for 'core->rpm_enabled' instead. That
-> > > would be a more exact transformation.  
-> > 
-> > Sure, I'll do that if you think there is a danger.  
+On Fri, Dec 28, 2018 at 09:58:04AM +0100, Michal Hocko wrote:
+> On Fri 28-12-18 02:46:30, YueHaibing wrote:
+> > Fixes gcc '-Wunused-but-set-variable' warning when
+> > CONFIG_VMAP_STACK is not set:
 > 
-> I've made the change and pushed it out to the clk tree. I'm working on
-> some patches to change how we do parent lookups and reworking clk_get()
-> in the process. Take a look so we don't duplicate efforts. The code
-> isn't complete, but I hope to finish soon. Your device links patches can
-> build upon this.
+> Isn't this warning disabled? I can see the following
+> # These warnings generated too much noise in a regular build.
+> # Use make W=1 to enable them (see scripts/Makefile.extrawarn)
+> KBUILD_CFLAGS += -Wno-unused-but-set-variable
 > 
->  git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-parent-rewrite
+> in the main makefile. IMHO this warning doesn't really give us much.
 > 
 
-Sorry for the delay and thanks for the update. I have been preempted by
-another issue, I will switch to clocks and propose something ASAP.
+It would be nice to enable that warning.  YueHaibing and Colin King have
+been whittling away at the problematic code...
 
+YueHaibing, how many of these warnings do we have remaining on an
+allmodoconfig?
 
-Thanks,
-Miquèl
+regards,
+dan carpenter
+
