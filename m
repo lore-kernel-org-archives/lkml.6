@@ -7,138 +7,116 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5E6EC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 22:20:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98BD4C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 22:21:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F3AC218CD
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 22:20:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 623E8214C6
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 22:21:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="qpusOG32"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="cTFLusnh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729665AbfABWUF (ORCPT
+        id S1729707AbfABWVP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 17:20:05 -0500
-Received: from ozlabs.org ([203.11.71.1]:43633 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726304AbfABWUF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 17:20:05 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43VQTY4t5Jz9rxp;
-        Thu,  3 Jan 2019 09:20:01 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1546467601;
-        bh=sSiM09/ulTY4WwIZ+w2cm7d5/8jPeeVddoQkIWZfRqk=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=qpusOG32Hn1EOxQR0FtwCukjupPtXCZH41kvJ5rfcOrufsxP09EgbgxsJMMFMpIEH
-         5hbQWGX7D9EZrh1doXs9rMmC2jBwfkNlcPZlSXM/rRefi+qvU23nqhGUj7zelmFJQ8
-         PBMxdI6EXJzG0IPKQO4ABzbCRnX3HD9MNVrmPXYiVBVTl8K+7jXQqbgwirJ2nJ24m4
-         LYlDDeeC3NemjrAG8t/KW/Clj8+6EQ1rdE+zaO1NuwYoBZXXJW+9SZOjHp21CBTwrf
-         v+pqAh24y7Qn+OKD8RdoPBby/KO+HWdBF8z/k48IAGoRGqxiUiDroNtvluVd/xXRWX
-         9m067CS6emYwQ==
-Date:   Thu, 3 Jan 2019 09:19:55 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Zhang Rui <rui.zhang@intel.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Amit Kucheria <amit.kucheria@linaro.org>
-Subject: Re: linux-next: manual merge of the thermal tree with the kbuild
- tree
-Message-ID: <20190103091912.4fe2b2da@canb.auug.org.au>
-In-Reply-To: <20181217105715.5da0b389@canb.auug.org.au>
-References: <20181217105715.5da0b389@canb.auug.org.au>
+        Wed, 2 Jan 2019 17:21:15 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:56178 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726071AbfABWVP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Jan 2019 17:21:15 -0500
+Received: by mail-wm1-f67.google.com with SMTP id y139so27682266wmc.5
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 14:21:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6ojsTVbVTAIs/niPLHtQCX4zbvkoWHK82NQCIk9i6+8=;
+        b=cTFLusnhZoz3q1fJeFAUiB9UfM8v2Go7kbvchGEIQFjv/F/Jemi0KXEmU4+B+Lo2xR
+         /Ur3P+C+vywRWfDPC+I/Grv3M0zWL8yUbTGNxhg0Z1jS0R0hYhoArKUOpuuJYDt2lhh2
+         +lgm7ZEyR5gDCcTaNI76Br9Y5TgDDYLLzsAKs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6ojsTVbVTAIs/niPLHtQCX4zbvkoWHK82NQCIk9i6+8=;
+        b=QOnLq/qF9hX8WcOytLHZk/LVmciFzNCw02VjFu/ymnkjMTu6rVsoeR+DntMMKygPRR
+         TS041ZllvHx6LHoZCJg2b9pkgT2mCVjbz4rFv7ZiOKqWCYL/ey2hQkOmWHMKTZYYzkwV
+         7V+Yssn+DgYEKdT4eIQSWVUA5KJq33xYsSuF+scejqEmImmBAZqeW1Cu+8U5X7PknSY8
+         PsrNgGodPzomEOqMou+9P0+DACgenV52T0ztFpvnAeDUhxjlzAppPYU5VfqK+dZy7AuN
+         4rq3xBN8aOA7bzgTdHPAJRUKjPkUihbihk2+all/79W4XSHHmzeZUvNhXPFljX1TzSPE
+         +Cyw==
+X-Gm-Message-State: AA+aEWaKa8bFuTC6CjuujrlwmCmdlGMBenJHDU7kLwgYEidJEXrmUneM
+        l3L/kGlz7AMXFcJbRD1Psr7jWsaOwVsZ2s+fPob34A==
+X-Google-Smtp-Source: ALg8bN43iK9qfYLUWpVldk4Xure8bzEyIOlklXkgIW3+BA1O8pwlUcSS5szn/Ni7Hv4AI6gY8ogyoKnoxOp3SRHZiHc=
+X-Received: by 2002:a1c:b456:: with SMTP id d83mr38299481wmf.115.1546467673353;
+ Wed, 02 Jan 2019 14:21:13 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/BgvhUMfKshEZZG4L3ULlMrk"; protocol="application/pgp-signature"
+References: <6ccac7db-3ab7-e396-90be-8681a8ee336b@web.de>
+In-Reply-To: <6ccac7db-3ab7-e396-90be-8681a8ee336b@web.de>
+From:   John Stultz <john.stultz@linaro.org>
+Date:   Wed, 2 Jan 2019 14:21:01 -0800
+Message-ID: <CALAqxLXz_s6B=NzSp17Lj6xMTYybEsMh4jDR8COXnWQCnFTrsw@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: hikey: Give wifi some time after power-on
+To:     Jan Kiszka <jan.kiszka@web.de>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Wei Xu <xuwei5@hisilicon.com>, Ryan Grachek <ryan@edited.us>,
+        linux-wireless@vger.kernel.org, "Reizer, Eyal" <eyalr@ti.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        KISHON VIJAY ABRAHAM <kishon@ti.com>,
+        "Mishol, Guy" <guym@ti.com>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Ricardo Salveti <rsalveti@rsalveti.net>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/BgvhUMfKshEZZG4L3ULlMrk
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Adding a few folks to cc from the thread here:
+https://patchwork.kernel.org/patch/10734021/
 
-Hi all,
+As this sounds like a very similar issue.
+thanks
+-john
 
-On Mon, 17 Dec 2018 10:57:15 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
+On Sun, Dec 30, 2018 at 3:38 AM Jan Kiszka <jan.kiszka@web.de> wrote:
 >
-> Today's linux-next merge of the thermal tree got a conflict in:
->=20
->   drivers/thermal/Kconfig
->=20
-> between commit:
->=20
->   17815cc6622c ("treewide: surround Kconfig file paths with double quotes=
-")
->=20
-> from the kbuild tree and commit:
->=20
->   3e8c4d31f8ed ("drivers: thermal: Move various drivers for intel platfor=
-ms into a subdir")
->=20
-> from the thermal tree.
->=20
-> I fixed it up (I used the thermal tree version of this file and added
-> the following merge fix patch) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->=20
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Mon, 17 Dec 2018 10:54:07 +1100
-> Subject: [PATCH] drivers: thermal: fixup for Kconfig string parsing tight=
-ening up
->=20
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> From: Jan Kiszka <jan.kiszka@siemens.com>
+>
+> Somewhere along recent changes to power control of the wl1835, power-on
+> became very unreliable on the hikey, failing like this:
+>
+> wl1271_sdio: probe of mmc2:0001:1 failed with error -16
+> wl1271_sdio: probe of mmc2:0001:2 failed with error -16
+>
+> After playing with some dt parameters and comparing to other users of
+> this chip, it turned out we need some power-on delay to make things
+> stable again. In contrast to those other users which define 200 ms, the
+> hikey is already very happy with 1 ms.
+>
+> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
 > ---
->  drivers/thermal/intel/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/thermal/intel/Kconfig b/drivers/thermal/intel/Kconfig
-> index 9c06d4ad7c97..2e013eeb4a1d 100644
-> --- a/drivers/thermal/intel/Kconfig
-> +++ b/drivers/thermal/intel/Kconfig
-> @@ -55,7 +55,7 @@ config INTEL_QUARK_DTS_THERMAL
->  	  underlying BIOS/Firmware.
-> =20
->  menu "ACPI INT340X thermal drivers"
-> -source drivers/thermal/intel/int340x_thermal/Kconfig
-> +source "drivers/thermal/intel/int340x_thermal/Kconfig"
->  endmenu
-> =20
->  config INTEL_BXT_PMIC_THERMAL
-> --=20
-> 2.19.1
-
-I am still applying that patch every day.  It could be applied directly
-to the thermal tree as it does not depend on the kbuild tree change.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/BgvhUMfKshEZZG4L3ULlMrk
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwtOQwACgkQAVBC80lX
-0Gx1OAf/TnTyVR9QqpMLlR8PR2m18JuT6gAY+ejftGfFN9bERusH+XSxdyYReseT
-/MQaZ6AVejaYMRo6LzLN8qZd3sgJDu86GAjNlhg9wLpzUJqYXrrkmnjvb2wcNhgw
-tyQQ/OQHZtdArkMvpEO9kfQHNhU9LaI5NowSuOo+wdO1vcvBofiguD5Q7IwKKWQs
-dxYaH4aHiw70su1QYF8zzmDUwf8PpadaKQoLir01QoTE2/ZxqK1qzLsu89nmY6yz
-TsdqRdZjA1om5NaBUY7V4k6jRHK3r3W0bmU/f6HoP4lv3nQHj1OnZXMUShSmYg34
-Ydl4GDN9HoDWWgU83JwOMd3U48wmNw==
-=B1RX
------END PGP SIGNATURE-----
-
---Sig_/BgvhUMfKshEZZG4L3ULlMrk--
+>
+> Tested with 4.19 and linus/master.
+>
+>   arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts | 1 +
+>   1 file changed, 1 insertion(+)
+>
+> diff --git a/arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts
+> b/arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts
+> index f4964bee6a1a..1e771bf201b9 100644
+> --- a/arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts
+> +++ b/arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts
+> @@ -118,6 +118,7 @@
+>                 reset-gpios = <&gpio0 5 GPIO_ACTIVE_LOW>;
+>                 clocks = <&pmic>;
+>                 clock-names = "ext_clock";
+> +               post-power-on-delay-ms = <1>;
+>                 power-off-delay-us = <10>;
+>         };
+>
+> --
+> 2.16.4
