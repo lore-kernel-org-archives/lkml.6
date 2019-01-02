@@ -2,94 +2,122 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BB00C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:33:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73FBFC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:34:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62083218D9
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:33:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546425235;
-	bh=k19IHa8lVf3i58ZGWRFTaexJagpxXxIM8FtACvCr9FM=;
-	h=From:Date:Subject:To:Cc:List-ID:From;
-	b=QF54G6zBY0KE6CVH6B4tqx6ar1T76SgoHQ4GcAH3wHCzQD0HvBDFxI6TWN+oPzrLX
-	 2sZREJqSWH/HTHsd6un73uQ5zY8kASNpB+ceYrj9LjVvW1CaLKN9un5XXtWtqtF43x
-	 VMscO+ALkf0ull/O4PZallumshb2B66RLA3jJldM=
+	by mail.kernel.org (Postfix) with ESMTP id 422B6218A4
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:34:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="DOli538Z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729491AbfABKdy (ORCPT
+        id S1729504AbfABKes (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 05:33:54 -0500
-Received: from mail-ot1-f45.google.com ([209.85.210.45]:33939 "EHLO
-        mail-ot1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728287AbfABKdy (ORCPT
+        Wed, 2 Jan 2019 05:34:48 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:47894 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728287AbfABKes (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 05:33:54 -0500
-Received: by mail-ot1-f45.google.com with SMTP id t5so26407157otk.1;
-        Wed, 02 Jan 2019 02:33:54 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=nVz3Y5yKbCZhyG1ecgROmZxZ7Zwfdv5LHTBC1fO839I=;
-        b=W9hEcOXuvE5u0lpAUPXXcEipuY89K7X4GXyhbVQSN5G8Y32zmJ52CT5IWnapu2arsJ
-         4A0CAV5Yzser9Pr9qyp4ReR8jFKwgleVWdACo06ILWFj+MEl4RHfIdplKW9d5H3w1v+m
-         3OW/CP9WbKRJEbu5AyBUPaCHbIDk0V0z3Dpn+lxXmjU/Rh3Gb41YmV0Gn49QQAhSxsad
-         CLQu4yDRG8l3toSbnJITv0UlPJk+NhVb2IdCjgJhqx1Sbf8i17ZpEjoahFai2FHsVCOZ
-         oLemVf/Jxfh0McTkessnjsAm5701zzvxF75+1+FACP1ScxilZtyQGCHGGgbXwY5gRIEt
-         61Hg==
-X-Gm-Message-State: AJcUukea/Zv7easyv6m7Q5jhRcmwxaUrzWHJTPzbVpYQuuwOsTvySeoK
-        AyGSUJo07S9q25gRdSp5r51s+rTdYzbbkUF4Tnk=
-X-Google-Smtp-Source: ALg8bN7SXMDToSZDwBWgdyFvQ9oX+hYJVASlH5NLDEnld0oLamdZnXWG8z4F+Fs9oMn7+KL6wnAjcEFYyxoO4DAHNik=
-X-Received: by 2002:a9d:5e8c:: with SMTP id f12mr32107498otl.343.1546425233524;
- Wed, 02 Jan 2019 02:33:53 -0800 (PST)
+        Wed, 2 Jan 2019 05:34:48 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x02AXuAt022462;
+        Wed, 2 Jan 2019 10:34:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=8m5CQcVw9/JZek/qfpCoMoQmVsyqlHBB2Ju/0Vjhgbc=;
+ b=DOli538ZH5eaWBPfvq0zhZIArP1H/7R/V2LTPElfMzkQueN1nqOMz2E1WVYwKK7ZnIum
+ jdXDOoHwxfvpOlgZ33ELdNCq5LcIND71Eqsj2lSnT6d8S6HqfIkS2nCNS3ZEmZh6ZzZ4
+ EdPUyoRgYgbPYvarubQMdyVO8YvVSm2Cr0V0dm5IagVGCTK2Uqoe/gsDH14umrcVA7f5
+ jNzERYnwNgbLsq3g32sDnhvQayoNXYWcwnzryDxAv4TmfhS8SvPbpPjgqevtbCRyZkx7
+ IGsMrcwAuqgf+PpAE61QQDrIrtxvJ0g997TDFCGhLhvfjmHT7GkpR4jeYOTUuIeCgFZb ZQ== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2130.oracle.com with ESMTP id 2pp0btsgaw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 02 Jan 2019 10:34:41 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x02AYepF027237
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 2 Jan 2019 10:34:40 GMT
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x02AYdRU013978;
+        Wed, 2 Jan 2019 10:34:39 GMT
+Received: from kadam (/197.157.0.49)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 02 Jan 2019 02:34:38 -0800
+Date:   Wed, 2 Jan 2019 13:34:21 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Kangjie Lu <kjlu@umn.edu>
+Cc:     devel@driverdev.osuosl.org,
+        Florian Schilhabel <florian.c.schilhabel@googlemail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org,
+        =?iso-8859-1?Q?Andr=E9?= Lehmann <lenneman@web.de>,
+        pakki001@umn.edu, Larry Finger <Larry.Finger@lwfinger.net>
+Subject: Re: [PATCH v2] rtl8712: add a check for the status of register_netdev
+Message-ID: <20190102103421.GG3781@kadam>
+References: <20181226023955.72139-1-kjlu@umn.edu>
 MIME-Version: 1.0
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Wed, 2 Jan 2019 11:33:42 +0100
-Message-ID: <CAJZ5v0h9Xj-gqYfkJFoEyVoFQKm1hBKboPtcvmPzE0OYTLu0sA@mail.gmail.com>
-Subject: [GIT PULL] Device properties framework fixes for v4.21-rc1
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181226023955.72139-1-kjlu@umn.edu>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9123 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1901020096
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Tue, Dec 25, 2018 at 08:39:53PM -0600, Kangjie Lu wrote:
+> register_netdev() may fail, so let's check its return value, and if it
+> fails, issue an error message.
+> 
+> Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+> ---
+>  drivers/staging/rtl8712/hal_init.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/staging/rtl8712/hal_init.c b/drivers/staging/rtl8712/hal_init.c
+> index 7cdd609cab6c..ca0858660a45 100644
+> --- a/drivers/staging/rtl8712/hal_init.c
+> +++ b/drivers/staging/rtl8712/hal_init.c
+> @@ -32,10 +32,10 @@
+>  static void rtl871x_load_fw_cb(const struct firmware *firmware, void *context)
+>  {
+>  	struct _adapter *padapter = context;
+> +	struct usb_device *udev = padapter->dvobjpriv.pusbdev;
+>  
+>  	complete(&padapter->rtl8712_fw_ready);
+>  	if (!firmware) {
+> -		struct usb_device *udev = padapter->dvobjpriv.pusbdev;
+>  		struct usb_interface *pusb_intf = padapter->pusb_intf;
+>  
+>  		dev_err(&udev->dev, "r8712u: Firmware request failed\n");
+> @@ -45,7 +45,8 @@ static void rtl871x_load_fw_cb(const struct firmware *firmware, void *context)
+>  	}
+>  	padapter->fw = firmware;
+>  	/* firmware available - start netdev */
+> -	register_netdev(padapter->pnetdev);
+> +	if (register_netdev(padapter->pnetdev))
+> +		dev_err(&udev->dev, "r8712u: Registering netdev failed\n");
 
-Please pull from the tag
+This error handling doesn't seem complete.  You're just adding the
+minimum to make the static analysis tool happy.
 
- git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
- devprop-4.21-rc1-2
+If you leave the code as-is, maybe someone else will see the static
+analysis warning and fix it properly.  But you're silencing the warning
+so now no one will fix it.
 
-with top-most commit f4747b9c68b8864cac32cddc45fdcfdfafb3397c
+Warnings are valuable.  Don't silence them without fixing the bug.
 
- drivers: base: swnode: check if swnode is NULL before dereferencing it
+regards,
+dan carpenter
 
-on top of commit d8924c0d76aaa52e4811b5c64115d9a7f36cc73a
-
- Merge tag 'devprop-4.21-rc1' of
-git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm
-
-to receive device properties framework fixes for v4.21-rc1.
-
-These fix two potential NULL pointer dereferences found by Coverity
-in the software nodes code introduced recently (Colin Ian King).
-
-Thanks!
-
-
----------------
-
-Colin Ian King (2):
-      drivers: base: swnode: check if pointer p is NULL before dereferencing it
-      drivers: base: swnode: check if swnode is NULL before dereferencing it
-
----------------
-
- drivers/base/swnode.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
