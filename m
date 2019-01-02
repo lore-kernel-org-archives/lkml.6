@@ -2,93 +2,98 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43235C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 15:17:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3F5DC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 15:19:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 12E7B218DE
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 15:17:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F177218EA
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 15:19:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Wc7DPsu9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729937AbfABPRU (ORCPT
+        id S1730020AbfABPTA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 10:17:20 -0500
-Received: from mx0a-002e3701.pphosted.com ([148.163.147.86]:42866 "EHLO
-        mx0a-002e3701.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728998AbfABPRU (ORCPT
+        Wed, 2 Jan 2019 10:19:00 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:43164 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728998AbfABPTA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 10:17:20 -0500
-X-Greylist: delayed 5021 seconds by postgrey-1.27 at vger.kernel.org; Wed, 02 Jan 2019 10:17:19 EST
-Received: from pps.filterd (m0134422.ppops.net [127.0.0.1])
-        by mx0b-002e3701.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x02DpUoP003488;
-        Wed, 2 Jan 2019 13:53:31 GMT
-Received: from g4t3426.houston.hpe.com (g4t3426.houston.hpe.com [15.241.140.75])
-        by mx0b-002e3701.pphosted.com with ESMTP id 2pruk8110g-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 02 Jan 2019 13:53:31 +0000
-Received: from g4t3433.houston.hpecorp.net (g4t3433.houston.hpecorp.net [16.208.49.245])
-        by g4t3426.houston.hpe.com (Postfix) with ESMTP id 351E45A;
-        Wed,  2 Jan 2019 13:53:30 +0000 (UTC)
-Received: from hpe.com (teo-eag.americas.hpqcorp.net [10.33.152.10])
-        by g4t3433.houston.hpecorp.net (Postfix) with ESMTP id C7EC647;
-        Wed,  2 Jan 2019 13:53:29 +0000 (UTC)
-Date:   Wed, 2 Jan 2019 07:53:29 -0600
-From:   Dimitri Sivanich <sivanich@hpe.com>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Dimitri Sivanich <sivanich@hpe.com>, Arnd Bergmann <arnd@arndb.de>,
+        Wed, 2 Jan 2019 10:19:00 -0500
+Received: by mail-pf1-f196.google.com with SMTP id w73so15293260pfk.10
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 07:19:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=TTa/Cpj//DAXZ+qsZt/BdISx8sOAhaNi0VmpmwYlG9k=;
+        b=Wc7DPsu9evplx04B9EEKVfbx2OXpPaP+a5RnDXEXQlQZXlMr/KVXjNcHFiXwx5KcwB
+         kXWkDr9mHZV7NfkAPOBdXc+EEg7EQgLGkwB7W5eXw0QO0nclBVtBD/KyosmBF8T/ilUA
+         hcpJENmT4oSmyvlp4NK1PM+DM95kWFaajUe6Y=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=TTa/Cpj//DAXZ+qsZt/BdISx8sOAhaNi0VmpmwYlG9k=;
+        b=ufC8d4PKmKn5ro5CEJp8jEV4fNYbbb+I11NnrTzIvILHZJf65ySgOw7D3wh2ZvGFOW
+         3s1g+G8NlR4DRGvahkyr/+sN53T2FQlq89Ax+uBZg2MmWTQvfmG/krMKqyVVzs+aIBZe
+         Xch8S3j/mKx8hR/gbiTC9qa9i0SXf2cPLUKqa+XtgOu7wyryMR2fqfd2Q/4yqxUrJgS6
+         2rblX+xOzKTOMEqfRMA4LARw+yMPDxsuoW11d2qK96M4fTQ9uB0NAa+3DXA/y/gJbVJm
+         I2AT0xV0CMgsvNpAjhleEX8uKExN8VPMkSa98L3X9jm6iDOJo4guyDb8s7A5cmvm1/49
+         KX0w==
+X-Gm-Message-State: AJcUukdtYtIMhbWatZ/yQFiqEH0rkCFcwguFNKPkUNZ0oVWdDdJbjH1Y
+        sHJRZ+PYrGwN2idCyqiKT9VJvRhs9Gs=
+X-Google-Smtp-Source: ALg8bN68MEyuLHAp3RKDcoF4ZOUZIK223jC4cpRkUH50PRdhkzmrzXutVhmAzAQAGrEqprAZKvs9cQ==
+X-Received: by 2002:a63:d208:: with SMTP id a8mr13616122pgg.77.1546442339942;
+        Wed, 02 Jan 2019 07:18:59 -0800 (PST)
+Received: from qualcomm-HP-ZBook-14-G2.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com. [103.229.18.19])
+        by smtp.gmail.com with ESMTPSA id i2sm14726788pfi.66.2019.01.02.07.18.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 02 Jan 2019 07:18:59 -0800 (PST)
+From:   Firoz Khan <firoz.khan@linaro.org>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-m68k@lists.linux-m68k.org,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] gru: clean up indentation issue, remove spaces
-Message-ID: <20190102135329.GB9199@hpe.com>
-References: <20181221224419.15284-1-colin.king@canonical.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181221224419.15284-1-colin.king@canonical.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-HPE-SCL: -1
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-02_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901020126
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>
+Cc:     y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, arnd@arndb.de, deepa.kernel@gmail.com,
+        marcin.juszkiewicz@linaro.org, firoz.khan@linaro.org
+Subject: [PATCH 0/2] m68k: Unify the system call scripts
+Date:   Wed,  2 Jan 2019 20:48:37 +0530
+Message-Id: <1546442319-20461-1-git-send-email-firoz.khan@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Acked-by: Dimitri Sivanich <sivanich@hpe.com>
+System call table generation support is provided for
+alpha, ia64, m68k, microblaze, mips, parisc, powerpc,
+sh, sparc and xtensa architectures. The implementat-
+ions are almost similar across all the above archte-
+ctures. In order to reduce the source code across all
+the above architectures, create common ".sh" files and
+keep it in the common directory, script/. This will 
+be a generic scripts which can use for all the above
+architectures.
 
-On Fri, Dec 21, 2018 at 10:44:19PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There are a couple of statements that have extra spaces in the identation,
-> fix this by removing them.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/misc/sgi-gru/grufault.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/misc/sgi-gru/grufault.c b/drivers/misc/sgi-gru/grufault.c
-> index 93be82fc338a..2ec5808ba464 100644
-> --- a/drivers/misc/sgi-gru/grufault.c
-> +++ b/drivers/misc/sgi-gru/grufault.c
-> @@ -616,8 +616,8 @@ irqreturn_t gru_intr_mblade(int irq, void *dev_id)
->  	for_each_possible_blade(blade) {
->  		if (uv_blade_nr_possible_cpus(blade))
->  			continue;
-> -		 gru_intr(0, blade);
-> -		 gru_intr(1, blade);
-> +		gru_intr(0, blade);
-> +		gru_intr(1, blade);
->  	}
->  	return IRQ_HANDLED;
->  }
-> -- 
-> 2.19.1
-> 
+This patch depends on;
+ https://lore.kernel.org/lkml/1546439331-18646-1-git-send-email-firoz.khan@linaro.org/
+
+Firoz Khan (2):
+  m68k: remove nargs from __SYSCALL
+  m68k: generate uapi header and syscall table header files
+
+ arch/m68k/kernel/syscalls/Makefile      | 11 ++++++++--
+ arch/m68k/kernel/syscalls/syscallhdr.sh | 36 ---------------------------------
+ arch/m68k/kernel/syscalls/syscalltbl.sh | 32 -----------------------------
+ arch/m68k/kernel/syscalltable.S         |  2 +-
+ 4 files changed, 10 insertions(+), 71 deletions(-)
+ delete mode 100644 arch/m68k/kernel/syscalls/syscallhdr.sh
+ delete mode 100644 arch/m68k/kernel/syscalls/syscalltbl.sh
+
+-- 
+1.9.1
+
