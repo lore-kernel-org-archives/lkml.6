@@ -2,159 +2,152 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 730ABC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 08:33:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BA64C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 08:38:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41FAF2171F
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 08:33:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F1E0E2171F
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 08:38:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728969AbfABIdl convert rfc822-to-8bit (ORCPT
+        id S1728993AbfABIi5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 03:33:41 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:35807 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726927AbfABIdk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 03:33:40 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id BF13520748; Wed,  2 Jan 2019 09:33:38 +0100 (CET)
-Received: from xps13 (aaubervilliers-681-1-29-148.w90-88.abo.wanadoo.fr [90.88.149.148])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 7FE27206A6;
-        Wed,  2 Jan 2019 09:33:38 +0100 (CET)
-Date:   Wed, 2 Jan 2019 09:33:38 +0100
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Romain Perier <romain.perier@gmail.com>
-Cc:     Naga Sureshkumar Relli <naga.sureshkumar.relli@xilinx.com>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        linux-mtd@lists.infradead.org, peterpandong@micron.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [LINUX PATCH v12] mtd: rawnand: pl353: Add basic driver for arm
- pl353 smc nand interface
-Message-ID: <20190102093338.3b4a8c69@xps13>
-In-Reply-To: <20181221091750.GA19470@hp-probook-450>
-References: <1533620414-3332-1-git-send-email-naga.sureshkumar.relli@xilinx.com>
-        <20181221091750.GA19470@hp-probook-450>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Wed, 2 Jan 2019 03:38:57 -0500
+Received: from mx2.suse.de ([195.135.220.15]:32810 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726396AbfABIi4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Jan 2019 03:38:56 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 9A292AC55;
+        Wed,  2 Jan 2019 08:38:54 +0000 (UTC)
+Received: by unicorn.suse.cz (Postfix, from userid 1000)
+        id 235D2E00B3; Wed,  2 Jan 2019 09:38:54 +0100 (CET)
+Date:   Wed, 2 Jan 2019 09:38:54 +0100
+From:   Michal Kubecek <mkubecek@suse.cz>
+To:     linux-kernel@vger.kernel.org
+Cc:     Christoph Hellwig <hch@lst.de>
+Subject: crash in gart_unmap_page() with master snapshot (commit e1ef035d272e)
+Message-ID: <20190102083854.GA28932@unicorn.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Romain,
+Hello,
 
-Switching Boris address.
+today I encountered a crash with kernel built from master branch
+snapshot (commit e1ef035d272e):
 
-Romain Perier <romain.perier@gmail.com> wrote on Fri, 21 Dec 2018
-10:17:50 +0100:
+CPU: 1 PID: 0 Comm: swapper/1 Kdump: loaded Tainted: G            E     4.21.0-rc0-1.gd3c9245-default #1 openSUSE Tumbleweed (unreleased)
+Hardware name: MICRO-STAR INTERANTIONAL CO.,LTD MS-7376/MS-7376, BIOS V1.2 12/21/2007
+RIP: 0010:gart_unmap_page+0x69/0xc0
+Code: 29 c5 48 c1 eb 0c 48 c1 ed 0c 85 db 7e 27 48 8b 35 dc 9b 8b 01 8d 53 ff 8b 0d bb 9b 8b 01 48 01 ea 48 8d 04 ae 48 8d 54 96 04 <89> 08 48 83 c0 04 48 39 c2 75 f5 48 c7 c7 88 b2 92 89 e8 00 23 81
+RSP: 0018:ffff98a4e7a83dd8 EFLAGS: 00010002
+RAX: 003f98a4e750a438 RBX: 0000000000000001 RCX: 0000000027788023
+RDX: 003f98a4e750a43c RSI: ffff98a4e7750000 RDI: ffff98a4e74020b0
+RBP: 000ffffffff6e90e R08: 0000000000000000 R09: ffffffff88071720
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000001
+R13: ffff98a4e74020b0 R14: 0000000000000001 R15: ffff98a4e2aea418
+FS:  0000000000000000(0000) GS:ffff98a4e7a80000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00002743b1f4f890 CR3: 00000001f5a70000 CR4: 00000000000006e0
+Call Trace:
+ <IRQ>
+ gart_unmap_sg+0x52/0x70
+ __ata_qc_complete+0xfb/0x160
+ ata_qc_complete_multiple+0xbd/0xe0
+ ahci_handle_port_interrupt+0xcd/0x5a0
+ ? blk_mq_run_hw_queue+0x38/0xc0
+ ahci_handle_port_intr+0x54/0xb0
+ ahci_single_level_irq_intr+0x3b/0x60
+ __handle_irq_event_percpu+0x46/0x1c0
+ handle_irq_event_percpu+0x20/0x60
+ handle_irq_event+0x3a/0x5a
+ handle_fasteoi_irq+0x9c/0x160
+ handle_irq+0x1f/0x30
+ do_IRQ+0x49/0xd0
+ common_interrupt+0xf/0xf
+ </IRQ>
 
-> Hello,
-> 
-> I have rebased this patch onto 4.19.11. I use it on a Zynq7000-based
-> board with a NAND chip Micron MT29F4G08ABADAH4, since ~2 weeks now.
-> The only problem I have to report is that when I boot with an unchanged
-> driver on my board, I get the following logs:
-> 
-> [    1.988797] nand: device found, Manufacturer ID: 0x2c, Chip ID: 0xdc
-> [    1.995184] nand: Micron MT29F4G08ABADAH4
-> [    1.999187] nand: 512 MiB, SLC, erase size: 128 KiB, page size: 2048, OOB size: 64
-> [    2.402661] nand: timeout while waiting for chip to become ready
-> [    2.408665] nand: timing mode 5 not acknowledged by the NAND chip
-> [    2.416251] Bad block table not found for chip 0
-> [    2.422278] Bad block table not found for chip 0
-> [    2.426903] Scanning device for bad blocks
-> [    2.431024] Bad eraseblock 0 at 0x000000000000
-> [    2.435509] Bad eraseblock 1 at 0x000000020000
-> [    2.439978] Bad eraseblock 2 at 0x000000040000
-> [    2.444465] Bad eraseblock 3 at 0x000000060000
-> [    2.448936] Bad eraseblock 4 at 0x000000080000
-> [    2.453423] Bad eraseblock 5 at 0x0000000a0000
-> [    2.457893] Bad eraseblock 6 at 0x0000000c0000
-> [    2.462354] Bad eraseblock 7 at 0x0000000e0000
-> [    2.466841] Bad eraseblock 8 at 0x000000100000
-> [    2.471304] Bad eraseblock 9 at 0x000000120000
-> [    2.475793] Bad eraseblock 10 at 0x000000140000
-> [    2.480349] Bad eraseblock 11 at 0x000000160000
-> 
-> [...]
-> 
-> 
-> After investigation, it seems that during the nand_scan phase, the NAND
-> subsystem tests different timing modes on the NAND chip (mode 0 seems to be
-> apply during reset, and then it tries to detect the best mode supported by the
-> NAND chip). Only the mode 0 works here, trying the use the mode 5 resuls in an
-> error (as you can see in the log) and a bad BBT detection. Both modes are
-> supported by the NAND chip. In order to fix this, I had to put the nfc timing
-> into the device node of the nfc, inside the DT (that's not a real fix, ihmo).
+This is the code of gart_unmap_page():
 
-Thanks for testing! Indeed, the ->setup_data_interface() callback should be fixed.
+254     in ../arch/x86/kernel/amd_gart_64.c
+   0xffffffff81071660 <+0>:     callq  0xffffffff81a01990 <__fentry__>
 
-> Except this, everything is working as expected. Everything is stable with correct
-> performances.
-> 
-> If I can provide more informations, feel free to ask.
+255     in ../arch/x86/kernel/amd_gart_64.c
+256     in ../arch/x86/kernel/amd_gart_64.c
+257     in ../arch/x86/kernel/amd_gart_64.c
+258     in ../arch/x86/kernel/amd_gart_64.c
+259     in ../arch/x86/kernel/amd_gart_64.c
+   0xffffffff81071665 <+5>:     cmp    $0xffffffffffffffff,%rsi
+   0xffffffff81071669 <+9>:     je     0xffffffff8107171c <gart_unmap_page+188>
+   0xffffffff8107166f <+15>:    mov    0x18b9c32(%rip),%rax        # 0xffffffff8292b2a8 <iommu_bus_base>
+   0xffffffff81071676 <+22>:    mov    0x18b9c23(%rip),%rcx        # 0xffffffff8292b2a0 <iommu_size>
+   0xffffffff8107167d <+29>:    add    %rax,%rcx
+   0xffffffff81071680 <+32>:    cmp    %rsi,%rcx
+   0xffffffff81071683 <+35>:    jbe    0xffffffff8107171c <gart_unmap_page+188>
 
-[...]
+260     in ../arch/x86/kernel/amd_gart_64.c
+261     in ../arch/x86/kernel/amd_gart_64.c
+262     in ../arch/x86/kernel/amd_gart_64.c
+263     in ../arch/x86/kernel/amd_gart_64.c
+   0xffffffff81071689 <+41>:    push   %r12
+   0xffffffff8107168b <+43>:    push   %rbp
+   0xffffffff8107168c <+44>:    mov    %rsi,%rbp
+   0xffffffff8107168f <+47>:    and    $0xfff,%esi
+   0xffffffff81071695 <+53>:    push   %rbx
+   0xffffffff81071696 <+54>:    lea    0xfff(%rdx,%rsi,1),%rbx
+   0xffffffff8107169e <+62>:    sub    %rax,%rbp
+   0xffffffff810716a1 <+65>:    shr    $0xc,%rbx
+   0xffffffff810716a5 <+69>:    shr    $0xc,%rbp
 
-> > +static int pl353_setup_data_interface(struct mtd_info *mtd, int csline,
-> > +				       const struct nand_data_interface *conf)
-> > +{
-> > +	struct nand_chip *chip = mtd_to_nand(mtd);
-> > +	struct pl353_nand_controller *xnfc =
-> > +		container_of(chip, struct pl353_nand_controller, chip);
-> > +	const struct nand_sdr_timings *sdr;
-> > +	u32 timings[7], mckperiodps;
-> > +
-> > +	if (csline == NAND_DATA_IFACE_CHECK_ONLY)
-> > +		return 0;
-> > +
-> > +	sdr = nand_get_sdr_timings(conf);
-> > +	if (IS_ERR(sdr))
-> > +		return PTR_ERR(sdr);
-> > +
-> > +	/*
-> > +	 * SDR timings are given in pico-seconds while NFC timings must be
-> > +	 * expressed in NAND controller clock cycles.
-> > +	 */
-> > +	mckperiodps = NSEC_PER_SEC / clk_get_rate(xnfc->mclk);
-> > +	mckperiodps *= 1000;
-> > +	if (sdr->tRC_min <= 20000)
-> > +		/*
-> > +		 * PL353 SMC needs one extra read cycle in SDR Mode 5
-> > +		 * This is not written anywhere in the datasheet but
-> > +		 * the results observed during testing.
-> > +		 */
-> > +		timings[0] = DIV_ROUND_UP(sdr->tRC_min, mckperiodps) + 1;
-> > +	else
-> > +		timings[0] = DIV_ROUND_UP(sdr->tRC_min, mckperiodps);
-> > +
-> > +	timings[1] = DIV_ROUND_UP(sdr->tWC_min, mckperiodps);
-> > +	/*
-> > +	 * For all SDR modes, PL353 SMC needs tREA max value as 1,
-> > +	 * Results observed during testing.
-> > +	 */
-> > +	timings[2] = PL353_TREA_MAX_VALUE;
-> > +	timings[3] = DIV_ROUND_UP(sdr->tWP_min, mckperiodps);
-> > +	timings[4] = DIV_ROUND_UP(sdr->tCLR_min, mckperiodps);
-> > +	timings[5] = DIV_ROUND_UP(sdr->tAR_min, mckperiodps);
-> > +	timings[6] = DIV_ROUND_UP(sdr->tRR_min, mckperiodps);
-> > +	pl353_smc_set_cycles(timings);
-> > +
-> > +	return 0;
-> > +}  
-> 
-> If I hack this function in order to limit the timings only to mode 0,
-> everything works. Otherwise it hangs when it tries to apply mode 5.
-> 
+264     in ../arch/x86/kernel/amd_gart_64.c
+265     in ../arch/x86/kernel/amd_gart_64.c
+   0xffffffff810716a9 <+73>:    test   %ebx,%ebx
+   0xffffffff810716ab <+75>:    jle    0xffffffff810716d4 <gart_unmap_page+116>
+   0xffffffff810716ad <+77>:    mov    0x18b9bdc(%rip),%rsi        # 0xffffffff8292b290 <iommu_gatt_base>
+   0xffffffff810716b4 <+84>:    lea    -0x1(%rbx),%edx
+   0xffffffff810716b7 <+87>:    mov    0x18b9bbb(%rip),%ecx        # 0xffffffff8292b278 <gart_unmapped_entry>
+   0xffffffff810716bd <+93>:    add    %rbp,%rdx
+   0xffffffff810716c0 <+96>:    lea    (%rsi,%rbp,4),%rax
+   0xffffffff810716c4 <+100>:   lea    0x4(%rsi,%rdx,4),%rdx
 
-Maybe Naga is not using a chip compatible with mode 5 and did not ran
-into this issue?
+266     in ../arch/x86/kernel/amd_gart_64.c
+   0xffffffff810716c9 <+105>:   mov    %ecx,(%rax)	<-------- crashed here
+   0xffffffff810716cb <+107>:   add    $0x4,%rax
+   0xffffffff810716cf <+111>:   cmp    %rax,%rdx
+   0xffffffff810716d2 <+114>:   jne    0xffffffff810716c9 <gart_unmap_page+105>
+...
 
+According to the register values, i = 0 and npages = 1 but the problem
+is iommu_page in %rbp which is 0x000ffffffff6e90e. The way it is
+calculated it looks as if a kernel pointer was passed as dma_addr rather
+than a DMA address.
 
-Thanks,
-Miquèl
+There is a recent change in gart_unmap_page() from commit 9e8aa6b5461b
+("x86/amd_gart: remove the mapping_error dma_map_ops method"):
+
+------------------------------------------------------------------------
+@@ -271,7 +259,7 @@ static void gart_unmap_page(struct device *dev, dma_addr_t dma_addr,
+        int npages;
+        int i;
+ 
+-       if (dma_addr < iommu_bus_base + EMERGENCY_PAGES*PAGE_SIZE ||
++       if (dma_addr == DMA_MAPPING_ERROR ||
+            dma_addr >= iommu_bus_base + iommu_size)
+                return;
+ 
+------------------------------------------------------------------------
+
+It seems the condition removed by this commit would catch such invalid
+value of dma_addr so that it's possible this is an older problem which
+was masked before and commit 9e8aa6b5461b uncovered it.
+
+Michal Kubecek
