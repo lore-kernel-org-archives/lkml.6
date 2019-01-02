@@ -2,139 +2,91 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B75BDC43612
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 20:47:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B8A4C43612
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 20:55:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 900D52073F
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 20:47:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DDCED2171F
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 20:55:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728131AbfABUry (ORCPT
+        id S1727630AbfABUzB convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 15:47:54 -0500
-Received: from mga18.intel.com ([134.134.136.126]:55885 "EHLO mga18.intel.com"
+        Wed, 2 Jan 2019 15:55:01 -0500
+Received: from mga01.intel.com ([192.55.52.88]:52603 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726009AbfABUry (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 15:47:54 -0500
-X-Amp-Result: UNSCANNABLE
+        id S1726009AbfABUzA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Jan 2019 15:55:00 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Jan 2019 12:47:53 -0800
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Jan 2019 12:55:00 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,432,1539673200"; 
-   d="scan'208";a="131018704"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
-  by fmsmga002.fm.intel.com with ESMTP; 02 Jan 2019 12:47:52 -0800
-Date:   Wed, 2 Jan 2019 12:47:52 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Jethro Beekman <jethro@fortanix.com>,
+   d="scan'208";a="122860582"
+Received: from orsmsx105.amr.corp.intel.com ([10.22.225.132])
+  by FMSMGA003.fm.intel.com with ESMTP; 02 Jan 2019 12:55:00 -0800
+Received: from orsmsx106.amr.corp.intel.com ([169.254.1.152]) by
+ ORSMSX105.amr.corp.intel.com ([169.254.2.191]) with mapi id 14.03.0415.000;
+ Wed, 2 Jan 2019 12:54:59 -0800
+From:   "Yu, Fenghua" <fenghua.yu@intel.com>
+To:     "Moger, Babu" <Babu.Moger@amd.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "x86@kernel.org" <x86@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>,
+        "Luck, Tony" <tony.luck@intel.com>,
         Peter Zijlstra <peterz@infradead.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        "Dr . Greg Wettstein" <greg@enjellic.com>
-Subject: Re: x86/sgx: uapi change proposal
-Message-ID: <20190102204752.GG7460@linux.intel.com>
-References: <20181214215729.4221-1-sean.j.christopherson@intel.com>
- <7706b2aa71312e1f0009958bcab24e1e9d8d1237.camel@linux.intel.com>
- <598cd050-f0b5-d18c-96a0-915f02525e3e@fortanix.com>
- <20181219091148.GA5121@linux.intel.com>
- <613c6814-4e71-38e5-444a-545f0e286df8@fortanix.com>
- <20181219144515.GA30909@linux.intel.com>
- <CALCETrW_8LnitFamYUU7POHFOJFxLO7ESFUdS=aeG_SOvHVPkw@mail.gmail.com>
- <20181220103204.GB26410@linux.intel.com>
- <20181222081649.GB8895@linux.intel.com>
- <20181222082502.GA13275@linux.intel.com>
+        "Chatre, Reinette" <reinette.chatre@intel.com>,
+        James Morse <james.morse@arm.com>,
+        "Shen, Xiaochen" <xiaochen.shen@intel.com>,
+        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
+        "Prakhya, Sai Praneeth" <sai.praneeth.prakhya@intel.com>,
+        "Pathan, Arshiya Hayatkhan" <arshiya.hayatkhan.pathan@intel.com>
+CC:     linux-kernel <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v4 08/10] selftests/resctrl Add Cache QoS Monitoring
+ (CQM) selftest
+Thread-Topic: [PATCH v4 08/10] selftests/resctrl Add Cache QoS Monitoring
+ (CQM) selftest
+Thread-Index: AQHUmY0E7PbQrfGorE+0Ns6hcp2JeKWdA1YA//+CyeA=
+Date:   Wed, 2 Jan 2019 20:54:59 +0000
+Message-ID: <3E5A0FA7E9CA944F9D5414FEC6C71220985C2046@ORSMSX106.amr.corp.intel.com>
+References: <1545438038-75107-1-git-send-email-fenghua.yu@intel.com>
+ <1545438038-75107-9-git-send-email-fenghua.yu@intel.com>
+ <ea7b91f7-aadc-c26a-f616-e400b5e4cf2d@amd.com>
+In-Reply-To: <ea7b91f7-aadc-c26a-f616-e400b5e4cf2d@amd.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMWMyZThhNTMtYmRlYi00OGM3LWFlMTktNmMwMzI0ZDM1M2RmIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiZndHKzd5S3Ztb1wvNlMrazFnQ2tuK2NVeXdqQkRYVVlUMFBlaUNRVFh6RGMrRTh2U0J1WldCa0tneVdSdWM3M1YifQ==
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.22.254.140]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181222082502.GA13275@linux.intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Dec 22, 2018 at 10:25:02AM +0200, Jarkko Sakkinen wrote:
-> On Sat, Dec 22, 2018 at 10:16:49AM +0200, Jarkko Sakkinen wrote:
-> > On Thu, Dec 20, 2018 at 12:32:04PM +0200, Jarkko Sakkinen wrote:
-> > > On Wed, Dec 19, 2018 at 06:58:48PM -0800, Andy Lutomirski wrote:
-> > > > Can one of you explain why SGX_ENCLAVE_CREATE is better than just
-> > > > opening a new instance of /dev/sgx for each encalve?
-> > > 
-> > > I think that fits better to the SCM_RIGHTS scenario i.e. you could send
-> > > the enclav to a process that does not have necessarily have rights to
-> > > /dev/sgx. Gives more robust environment to configure SGX.
-> > 
-> > Sean, is this why you wanted enclave fd and anon inode and not just use
-> > the address space of /dev/sgx? Just taking notes of all observations.
-> > I'm not sure what your rationale was (maybe it was somewhere). This was
-> > something I made up, and this one is wrong deduction. You can easily
-> > get the same benefit with /dev/sgx associated fd representing the
-> > enclave.
-> > 
-> > This all means that for v19 I'm going without enclave fd involved with
-> > fd to /dev/sgx representing the enclave. No anon inodes will be
-> > involved.
-> 
-> Based on these observations I updated the uapi.
-> 
-> As far as I'm concerned there has to be a solution to do EPC mapping
-> with a sequence:
-> 
-> 1. Ping /dev/kvm to do something.
-> 2. KVM asks SGX core to do something.
-> 3. SGX core does something.
-> 
-> I don't care what the something is exactly is, but KVM is the only sane
-> place for KVM uapi. I would be surprised if KVM maintainers didn't agree
-> that they don't want to sprinkle KVM uapi to random places in other
-> subsystems.
+> From: Moger, Babu [mailto:Babu.Moger@amd.com]
+>   for (int i = 0; i < argc; i++) {
+>            ^
+> resctrl_tests.c:39:56: note: previous declaration of 'i' was here
+>   int res, c, core_id = 1, span = 250, argc_new = argc, i, no_of_bits = 5;
+>                                                         ^
+> resctrl_tests.c:46:2: error: 'for' loop initial declarations are only allowed in
+> C99 mode
+>   for (int i = 0; i < argc; i++) {
+>   ^
+> resctrl_tests.c:46:2: note: use option -std=c99 or -std=gnu99 to compile your
+> code
 
-It's not a KVM uapi.
+Sure. Will fix this.
 
-KVM isn't a hypervisor in the traditional sense.  The "real" hypervisor
-lives in userspace, e.g. Qemu, KVM is essentially just a (very fancy)
-driver for hardware accelerators, e.g. VMX.  Qemu for example is fully
-capable of running an x86 VM without KVM, it's just substantially slower.
+Thanks.
 
-In terms of guest memory, KVM doesn't care or even know what a particular
-region of memory represents or what, if anything, is backing a region in
-the host.  There are cases when KVM is made aware of certain aspects of
-guest memory for performance or functional reasons, e.g. emulated MMIO
-and encrypted memory, but in all cases the control logic ultimately
-resides in userspace.
-
-SGX is a weird case because ENCLS can't be emulated in software, i.e.
-exposing SGX to a VM without KVM's help would be difficult.  But, it
-wouldn't be impossible, just slow and ugly.
-
-And so, ignoring host oversubscription for the moment, there is no hard
-requirement that SGX EPC can only be exposed to a VM through KVM.  In
-other words, allocating and exposing EPC to a VM is orthogonal to KVM
-supporting SGX.  Exposing EPC to userspace via /dev/sgx/epc would mean
-that KVM would handle it like any other guest memory region, and all EPC
-related code/logic would reside in the SGX subsystem.
-
-Oversubscription throws a wrench in the system because ENCLV can only
-be executed post-VMXON and EPC conflicts generate VMX VM-Exits.  But
-even then, KVM doesn't need to own the EPC uapi, e.g. it can call into
-the SGX subsystem to handle EPC conflict VM-Exits and the SGX subsystem
-can wrap ENCLV with exception fixup and forcefully reclaim EPC pages if
-ENCLV faults.
-
-I can't be 100% certain the oversubscription scheme will be sane without
-actually writing the code, but I'd like to at least keep the option open,
-i.e. not structure /dev/sgx/ in such a way that adding e.g. /dev/sgx/epc
-is impossible or ugly.
+-Fenghua
