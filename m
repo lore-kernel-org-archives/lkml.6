@@ -2,117 +2,126 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36CD6C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 18:07:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BBEDC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 18:09:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F2CD218E2
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 18:07:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="WI9X1XQz"
+	by mail.kernel.org (Postfix) with ESMTP id 4008F218E2
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 18:09:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727110AbfABSHG (ORCPT
+        id S1727133AbfABSJl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 13:07:06 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:35517 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726756AbfABSHG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 13:07:06 -0500
-Received: by mail-qk1-f194.google.com with SMTP id w204so18327060qka.2
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 10:07:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=8MMhR4sblhioJzUomNsJ/I2PWvUxrPx/Sn5DmGetoyA=;
-        b=WI9X1XQz1cEWUVgamTBHZcl3PQGgqDRDzpXDrsx+G5yIjjab4UqzZJ1PufW3xKw29B
-         nsllIBrjMpBqRDWhWn/z5dNKq+BTx4Ho9Ho3i0bneu9CuA6rJ7/GbXhSW5wvhgKVdRVG
-         LVZoTWCBas8/Y9ck0JdKd4pEa1/tVVLzQsv0cmpXRcyzOEb26aK5tnw6lAe/vQbdwEsm
-         +SKtD5vc/f7oBzpBz3aqAsfW50ITxNGhgE0H0rfbMS9kYitq+F4AuXZETpD31KrnuDdw
-         skAi1YrJYMo1QZwNDQgew5NYc0saNIIKflc4XrbvweXrMYrT4ies0F1id4CYO7YA+UNX
-         rMWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=8MMhR4sblhioJzUomNsJ/I2PWvUxrPx/Sn5DmGetoyA=;
-        b=BWZHyhsGY0YAGREvozFfD8fWitIiMu0Dwn4Eu9W9EA0wcmCsIc0YKd4xCjQv6Iv3n1
-         XIRmUnYEqNRV10CyEs06Qe59LWaIRYorYHBLQXVTfXLpKC0y6X58JhnouF941rwHOuho
-         iTrWlTwhDm+AT8iwAkJC74b2mEzY3Xq24YW+GUd/Si3aSbp3/lV0cIkpiB0z1p6ve9MS
-         3NZH53EWZCOu7y8g/9cy8hjZiTAVdcPqey8m5NWkxC/sQhR5JeNBxPOet/7XlBt73cIQ
-         d4C3e3IG2ogzTOagq2FTfSzyETjjqeVr08YPqjB0o1GQjFRh81G/+bq+ulYgi/Oulzby
-         4FOQ==
-X-Gm-Message-State: AJcUukfbU0VH3u2H3+8vmquy1Okdc7BMTLB9FDAqHpk4hNLHJAA8zDZP
-        So0r1/WRDNjqSDMrZS6XvU7DEA==
-X-Google-Smtp-Source: ALg8bN55wjlWgpEnZeB50u7PpcQBjVNz4nbpZukoG+mAzwR0FtKM7suKPI+Wa/vrT/HimRArfkXlTw==
-X-Received: by 2002:a37:ae87:: with SMTP id x129mr42158644qke.15.1546452425245;
-        Wed, 02 Jan 2019 10:07:05 -0800 (PST)
-Received: from ovpn-120-55.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id u67sm23243069qki.22.2019.01.02.10.07.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 02 Jan 2019 10:07:04 -0800 (PST)
-From:   Qian Cai <cai@lca.pw>
-To:     catalin.marinas@arm.com
-Cc:     akpm@linux-foundation.org, cl@linux.com, penberg@kernel.org,
-        rientjes@google.com, iamjoonsoo.kim@lge.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Qian Cai <cai@lca.pw>
-Subject: [PATCH v2] kmemleak: survive in a low-memory situation
-Date:   Wed,  2 Jan 2019 13:06:19 -0500
-Message-Id: <20190102180619.12392-1-cai@lca.pw>
-X-Mailer: git-send-email 2.17.2 (Apple Git-113)
-In-Reply-To: <20190102165931.GB6584@arrakis.emea.arm.com>
-References: <20190102165931.GB6584@arrakis.emea.arm.com>
+        Wed, 2 Jan 2019 13:09:41 -0500
+Received: from mga01.intel.com ([192.55.52.88]:35841 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726756AbfABSJk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Jan 2019 13:09:40 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Jan 2019 10:09:39 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,431,1539673200"; 
+   d="scan'208";a="106453125"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
+  by orsmga008.jf.intel.com with ESMTP; 02 Jan 2019 10:09:39 -0800
+Date:   Wed, 2 Jan 2019 10:09:39 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Yang Weijiang <weijiang.yang@intel.com>
+Cc:     pbonzini@redhat.com, rkrcmar@redhat.com,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org, mst@redhat.com,
+        yu-cheng.yu@intel.com, yi.z.zhang@intel.com, hjl.tools@gmail.com,
+        Zhang Yi Z <yi.z.zhang@linux.intel.com>
+Subject: Re: [PATCH v1 1/8] kvm:vmx  Introduce CET related VMCS field
+ definitions.
+Message-ID: <20190102180939.GA7460@linux.intel.com>
+References: <20181226081532.30698-1-weijiang.yang@intel.com>
+ <20181226081532.30698-2-weijiang.yang@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181226081532.30698-2-weijiang.yang@intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Kmemleak could quickly fail to allocate an object structure and then
-disable itself in a low-memory situation. For example, running a mmap()
-workload triggering swapping and OOM [1].
+On Wed, Dec 26, 2018 at 04:15:25PM +0800, Yang Weijiang wrote:
+> VMX relies on these fields to save/restore CET states for
+> guest and host. They are added here as VMCS placeholders
+> for the function.
 
-Kmemleak allocation could fail even though the trackig object is
-succeeded. Hence, it could still try to start a direct reclaim if it is
-not executed in an atomic context (spinlock, irq-handler etc), or a
-high-priority allocation in an atomic context as a last-ditch effort.
+The changelog needs a lot more detail on what is saved where and when,
+e.g. hardware unconditionally saves the guest MSRs to the VMCS fields
+on exit, hence there is no VM_EXIT_SAVE_GUEST_CET_STATE control bit.
 
-[1]
-https://github.com/linux-test-project/ltp/blob/master/testcases/kernel/mem/oom/oom01.c
+It's also worth calling out that the other CET MSRs are saved/loaded
+via XSAVES/XRSTORS.
 
-Signed-off-by: Qian Cai <cai@lca.pw>
----
+> 
+> Signed-off-by: Zhang Yi Z <yi.z.zhang@linux.intel.com>
+> Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
+> ---
+>  arch/x86/include/asm/vmx.h | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/arch/x86/include/asm/vmx.h b/arch/x86/include/asm/vmx.h
+> index ade0f153947d..db745a1d49ae 100644
+> --- a/arch/x86/include/asm/vmx.h
+> +++ b/arch/x86/include/asm/vmx.h
+> @@ -98,6 +98,7 @@
+>  #define VM_EXIT_LOAD_IA32_EFER                  0x00200000
+>  #define VM_EXIT_SAVE_VMX_PREEMPTION_TIMER       0x00400000
+>  #define VM_EXIT_CLEAR_BNDCFGS                   0x00800000
+> +#define VM_EXIT_LOAD_HOST_CET_STATE             0x10000000
+>  
+>  #define VM_EXIT_ALWAYSON_WITHOUT_TRUE_MSR	0x00036dff
+>  
+> @@ -109,6 +110,7 @@
+>  #define VM_ENTRY_LOAD_IA32_PAT			0x00004000
+>  #define VM_ENTRY_LOAD_IA32_EFER                 0x00008000
+>  #define VM_ENTRY_LOAD_BNDCFGS                   0x00010000
+> +#define VM_ENTRY_LOAD_GUEST_CET_STATE           0x00100000
+>  
+>  #define VM_ENTRY_ALWAYSON_WITHOUT_TRUE_MSR	0x000011ff
+>  
+> @@ -325,6 +327,9 @@ enum vmcs_field {
+>  	GUEST_PENDING_DBG_EXCEPTIONS    = 0x00006822,
+>  	GUEST_SYSENTER_ESP              = 0x00006824,
+>  	GUEST_SYSENTER_EIP              = 0x00006826,
+> +	GUEST_IA32_S_CET                = 0x00006828,
+> +	GUEST_SSP                       = 0x0000682a,
+> +	GUEST_INT_SSP_TABL              = 0x0000682c,
 
-v2: remove the needless checking for NULL objects in slab_post_alloc_hook()
-    pointed out by Catalin.
+Dropping a single letter from "TABLE" seems pointless, "INTERRUPT" is
+usually "INTR", and the docs I've seen list the name as
+IA32_INTERRUPT_SSP_TABLE_ADDR.  So maybe?
 
- mm/kmemleak.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+    {GUEST,HOST}_INTR_SSP_TABLE_ADDR
 
-diff --git a/mm/kmemleak.c b/mm/kmemleak.c
-index f9d9dc250428..9e1aa3b7df75 100644
---- a/mm/kmemleak.c
-+++ b/mm/kmemleak.c
-@@ -576,6 +576,16 @@ static struct kmemleak_object *create_object(unsigned long ptr, size_t size,
- 	struct rb_node **link, *rb_parent;
- 
- 	object = kmem_cache_alloc(object_cache, gfp_kmemleak_mask(gfp));
-+#ifdef CONFIG_PREEMPT_COUNT
-+	if (!object) {
-+		/* last-ditch effort in a low-memory situation */
-+		if (irqs_disabled() || is_idle_task(current) || in_atomic())
-+			gfp = GFP_ATOMIC;
-+		else
-+			gfp = gfp_kmemleak_mask(gfp) | __GFP_DIRECT_RECLAIM;
-+		object = kmem_cache_alloc(object_cache, gfp);
-+	}
-+#endif
- 	if (!object) {
- 		pr_warn("Cannot allocate a kmemleak_object structure\n");
- 		kmemleak_disable();
--- 
-2.17.2 (Apple Git-113)
 
+Also, the SSP and INTERRUPT_SSP_TABL_ADDR fields are 64-bit fields, we
+we should define the _HIGH variations.
+
+
+>  	HOST_CR0                        = 0x00006c00,
+>  	HOST_CR3                        = 0x00006c02,
+>  	HOST_CR4                        = 0x00006c04,
+> @@ -337,6 +342,9 @@ enum vmcs_field {
+>  	HOST_IA32_SYSENTER_EIP          = 0x00006c12,
+>  	HOST_RSP                        = 0x00006c14,
+>  	HOST_RIP                        = 0x00006c16,
+> +	HOST_IA32_S_CET                 = 0x00006c18,
+> +	HOST_SSP                        = 0x00006c1a,
+> +	HOST_INT_SSP_TABL               = 0x00006c1c
+>  };
+>  
+>  /*
+> -- 
+> 2.17.1
+> 
