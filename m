@@ -2,96 +2,199 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FC52C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 09:42:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 663BDC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 09:42:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F8BD21871
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 09:42:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546422129;
-	bh=FpV0fMSz1j6wkj8WyQlF52BgW4ytoQrtPvaX20T0ZlA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=nr9PUFdR1bQMZbFz+ETBswq3+EW62Kp6eqwvEsPOpQXvW2uZ2KZutknd4aGHJAX8P
-	 wpYQ1nqMCjl8sZBJH7YswFENU0QCbzmcwj281wPAbE7JCtUEheV5IMqNIcqRhmtMhy
-	 EA29hVbXLxjfZqPDnSO+qil0lMxUwxM1WhPhFOSk=
+	by mail.kernel.org (Postfix) with ESMTP id 1F0E621871
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 09:42:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LwDj3eIU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728968AbfABJmH (ORCPT
+        id S1729059AbfABJmW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 04:42:07 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:34818 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726499AbfABJmH (ORCPT
+        Wed, 2 Jan 2019 04:42:22 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:34928 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726499AbfABJmV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 04:42:07 -0500
-Received: by mail-ot1-f66.google.com with SMTP id 81so26271326otj.2
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 01:42:07 -0800 (PST)
+        Wed, 2 Jan 2019 04:42:21 -0500
+Received: by mail-it1-f195.google.com with SMTP id p197so38119156itp.0
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 01:42:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=lN8aYFkXMIh18S4pB8FBTHOVGOAHhewcRsB/ZesP0k8=;
+        b=LwDj3eIUDGIoJS+mHmlbfX2Zo91VRMp+LruorF6HsmbIoZkHTnZY7g02/4umOkTYyD
+         74vh9+lb6HNl9qGDW8oN/8A4R33m9iO7J2LN7H0GoqHmxTnYGuNjclu3OMKQb+nxbFmt
+         lwvEWz47jcj/zJrXHHUCZg5/7QihJ/GPLB2EoY1ZJfkrmMoaLaIJrVRaR0qpjM7XVFWX
+         Mo+xU72+rFLCu/i9ccHfh5ar2VjD/GcT8FH2plOpGS8H8UCSd08m5FbFAjablcoJvePn
+         Q6YJHP+N/xuCntnzr+WjEcD67TaMdSrM+kw9xgl+ZvZa2wZB+YYLUFWVegy4HBSXaxLp
+         AvWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=d+787IwLgI4COzA79Dv98FiXtazThVHpcWWIdM6pGGM=;
-        b=c+pGTpknobwB13DQPXVgSSAhcPKap/3XhPiFyNcIB28a1qsBChwXCxNDhd9e/LT/gt
-         2d44EgeTbHpU3xGuH28AuBiqJwkn4rSecuZy7OXmhEk36oLn98LnxPuPFnaJOQKOYPKw
-         +hSC/AzD1lyxEDAuNo4p8Hhnad7/fnIo3LT5g5C2dWVB0ntsNACCIOM6YIY2swAeB2mK
-         BkyJmHN6We2H+GmhgkHHKzTrSYtGBHb410hEXxbAynHnqBregAh5+Vy4D52S+mugqUVg
-         i68m/NIgCgkC//myzh+F3tKeMA4rsbOTr+GO/gXVzgIEoLrjyBez+Mt9RIhWkPpiH3RP
-         gnmw==
-X-Gm-Message-State: AJcUukc1HdmBTUzH0zJO6/sB8EHFeHZBSdGrGmJd5SZzbHS3363GPLO6
-        WfRd/JWfS3yE9mKEh+FGWsx7d2IL3l8qzkwETzfywA==
-X-Google-Smtp-Source: ALg8bN4agZAvlD7ASY5W5sy2D+oXV5zpoIO07GYmfbIViFow+A9d5e1FIFDeMtRgXLufxcaNVIoUuNFE9ro1PAqYVmQ=
-X-Received: by 2002:a9d:2062:: with SMTP id n89mr28258113ota.244.1546422126700;
- Wed, 02 Jan 2019 01:42:06 -0800 (PST)
+        bh=lN8aYFkXMIh18S4pB8FBTHOVGOAHhewcRsB/ZesP0k8=;
+        b=WO+JOjltdqFqHwhPY/+nCTUUrOleauTaB8RF3QRPgPsJ4JIMVgSB7kz53N/19HSsYZ
+         Qn1nUHcJhd9GKNgDJkFUuqan9RXAAAAZQ96UY2eJElurOdhgmLBy0yxIAJUYd8OExS9h
+         Gm91BB514HMlbSgUQ4wDd2MEFgRFEn/fdBKMFb3RCXZ1pGkoRtiXG8D0Sf+EzQJhDYTG
+         sAbOx70TyAe4Xc0bNQzqJpJkYD4bBq7832Mb4HG3T5u7ifgnDH16zTLCR1qQe5Pu4krs
+         s8KXtM5MbvCg+G2+uWILEzzkYTZW7Hw74mOb19NXEZKYPE1WOyEiirl4HqvOkxMZx8Cc
+         4Ldw==
+X-Gm-Message-State: AJcUukcbJmpemNXhuOhHbBSH3dDdwwLWnJ31UM9zOlX0vdGm4fAi8CD/
+        pmoRYoHTwEvHFuqEkaEDCdeKdTocYtJ/QEl3wfnRhw==
+X-Google-Smtp-Source: ALg8bN7gwybTqjDD89hwFMgbJZozgjyRs4uG2VeG2i7qs5FaTXiGETcgKHpF5DWLYjo9GWbEqRKgWjncBf8iec1fkcQ=
+X-Received: by 2002:a24:f14d:: with SMTP id q13mr25762990iti.166.1546422140133;
+ Wed, 02 Jan 2019 01:42:20 -0800 (PST)
 MIME-Version: 1.0
-References: <20181230034652.6214-1-sergey.senozhatsky@gmail.com>
-In-Reply-To: <20181230034652.6214-1-sergey.senozhatsky@gmail.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Wed, 2 Jan 2019 10:41:55 +0100
-Message-ID: <CAJZ5v0iCmGaVXwOZwKo9k_vFamiY7E8jNyCFykrLsFnXbo0-nQ@mail.gmail.com>
-Subject: Re: [PATCH] debugfs: debugfs_use_start/finish do not exist anymore
-To:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <000000000000ae384d057dc685c1@google.com> <1186a139-3a46-3311-5f72-bef02d403ee1@suse.cz>
+In-Reply-To: <1186a139-3a46-3311-5f72-bef02d403ee1@suse.cz>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Wed, 2 Jan 2019 10:42:09 +0100
+Message-ID: <CACT4Y+YbM7sVDg7XEpY-E9bW2dF8a6xd_Wp_dWCnCM02DbrbtA@mail.gmail.com>
+Subject: Re: general protection fault in transparent_hugepage_enabled
+To:     Vlastimil Babka <vbabka@suse.cz>
+Cc:     syzbot <syzbot+a5fea9200aefd1cf4818@syzkaller.appspotmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>, Michal Hocko <mhocko@suse.com>,
+        David Rientjes <rientjes@google.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Matthew Wilcox <willy@infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 30, 2018 at 4:49 AM Sergey Senozhatsky
-<sergey.senozhatsky@gmail.com> wrote:
+On Wed, Jan 2, 2019 at 8:42 AM Vlastimil Babka <vbabka@suse.cz> wrote:
 >
-> debugfs_use_file_start() and debugfs_use_file_finish() do not exist
-> since commit c9afbec27089 ("debugfs: purge obsolete SRCU based removal
-> protection"); tweak debugfs_create_file_unsafe() comment.
+> On 12/24/18 4:48 PM, syzbot wrote:
+> > Hello,
+> >
+> > syzbot found the following crash on:
+> >
+> > HEAD commit:    6a1d293238c1 Add linux-next specific files for 20181224
+> > git tree:       linux-next
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=149a2add400000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=c190b602a5d2d731
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=a5fea9200aefd1cf4818
+> > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1798bfb7400000
+> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17f4dc57400000
+> >
+> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > Reported-by: syzbot+a5fea9200aefd1cf4818@syzkaller.appspotmail.com
+> >
+> > sshd (6016) used greatest stack depth: 15720 bytes left
+> > kasan: CONFIG_KASAN_INLINE enabled
+> > kasan: GPF could be caused by NULL-ptr deref or user memory access
+> > general protection fault: 0000 [#1] PREEMPT SMP KASAN
+> > CPU: 1 PID: 6032 Comm: syz-executor045 Not tainted 4.20.0-rc7-next-20181224
+> > #187
+> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> > Google 01/01/2011
+> > RIP: 0010:transparent_hugepage_enabled+0x8c/0x5e0 mm/huge_memory.c:69
 >
-> Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+> FTR, it was most certainly the same thing as here:
+> https://marc.info/?l=linux-mm&m=154563777207477&w=2
 
-Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Thanks for the update. I see the fix is still not in linux-next, which has:
 
-> ---
->  fs/debugfs/inode.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/debugfs/inode.c b/fs/debugfs/inode.c
-> index 13b01351dd1c..4354069101b4 100644
-> --- a/fs/debugfs/inode.c
-> +++ b/fs/debugfs/inode.c
-> @@ -422,8 +422,8 @@ EXPORT_SYMBOL_GPL(debugfs_create_file);
->   * debugfs core.
->   *
->   * It is your responsibility to protect your struct file_operation
-> - * methods against file removals by means of debugfs_use_file_start()
-> - * and debugfs_use_file_finish(). ->open() is still protected by
-> + * methods against file removals by means of debugfs_file_get()
-> + * and debugfs_file_put(). ->open() is still protected by
->   * debugfs though.
->   *
->   * Any struct file_operations defined by means of
-> --
-> 2.20.1
->
++bool transparent_hugepage_enabled(struct vm_area_struct *vma)
++{
++       if (vma_is_anonymous(vma))
++               return __transparent_hugepage_enabled(vma);
++       if (vma_is_shmem(vma) && shmem_huge_enabled(vma))
++               return __transparent_hugepage_enabled(vma);
++
++       return false;
++}
+
+Let's wait until the patch is updated and then tell syzbot that "mm,
+thp, proc: report THP eligibility for each vma" fixes this.
+
+
+> > Code: 80 3c 02 00 0f 85 ae 04 00 00 4c 8b a3 a0 00 00 00 48 b8 00 00 00 00
+> > 00 fc ff df 49 8d bc 24 b8 01 00 00 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f
+> > 85 91 04 00 00 49 8b bc 24 b8 01 00 00 e8 2d 70 e6
+> > RSP: 0018:ffff8881c2237138 EFLAGS: 00010202
+> > RAX: dffffc0000000000 RBX: ffff8881c2bdbc60 RCX: 0000000000000000
+> > RDX: 0000000000000037 RSI: ffffffff81c8fa1a RDI: 00000000000001b8
+> > RBP: ffff8881c2237160 R08: ffffed10383b25ed R09: ffffed10383b25ec
+> > R10: ffffed10383b25ec R11: ffff8881c1d92f63 R12: 0000000000000000
+> > R13: ffff8881c2bdbd00 R14: dffffc0000000000 R15: 0000000000000f5e
+> > FS:  0000000001a48880(0000) GS:ffff8881dad00000(0000) knlGS:0000000000000000
+> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > CR2: 0000000020b58000 CR3: 00000001c2210000 CR4: 00000000001406e0
+> > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> > Call Trace:
+> >   show_smap+0x167/0x580 fs/proc/task_mmu.c:805
+> >   traverse+0x344/0x7b0 fs/seq_file.c:113
+> >   seq_read+0xc76/0x1150 fs/seq_file.c:188
+> >   do_loop_readv_writev fs/read_write.c:700 [inline]
+> >   do_iter_read+0x4bc/0x670 fs/read_write.c:924
+> >   vfs_readv+0x175/0x1c0 fs/read_write.c:986
+> >   kernel_readv fs/splice.c:362 [inline]
+> >   default_file_splice_read+0x539/0xb20 fs/splice.c:417
+> >   do_splice_to+0x12e/0x190 fs/splice.c:880
+> >   splice_direct_to_actor+0x31c/0x9d0 fs/splice.c:957
+> >   do_splice_direct+0x2d4/0x420 fs/splice.c:1066
+> >   do_sendfile+0x62a/0xe50 fs/read_write.c:1439
+> >   __do_sys_sendfile64 fs/read_write.c:1494 [inline]
+> >   __se_sys_sendfile64 fs/read_write.c:1486 [inline]
+> >   __x64_sys_sendfile64+0x15d/0x250 fs/read_write.c:1486
+> >   do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+> >   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> > RIP: 0033:0x440089
+> > Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7
+> > 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff
+> > ff 0f 83 5b 14 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+> > RSP: 002b:00007fff3d710a18 EFLAGS: 00000213 ORIG_RAX: 0000000000000028
+> > RAX: ffffffffffffffda RBX: 00007fff3d710a20 RCX: 0000000000440089
+> > RDX: 0000000020b58000 RSI: 0000000000000003 RDI: 0000000000000003
+> > RBP: 00000000006ca018 R08: 0000000000000010 R09: 65732f636f72702f
+> > R10: 000000000000ffff R11: 0000000000000213 R12: 0000000000401970
+> > R13: 0000000000401a00 R14: 0000000000000000 R15: 0000000000000000
+> > Modules linked in:
+> > ---[ end trace faf026efd8795e93 ]---
+> > RIP: 0010:transparent_hugepage_enabled+0x8c/0x5e0 mm/huge_memory.c:69
+> > Code: 80 3c 02 00 0f 85 ae 04 00 00 4c 8b a3 a0 00 00 00 48 b8 00 00 00 00
+> > 00 fc ff df 49 8d bc 24 b8 01 00 00 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f
+> > 85 91 04 00 00 49 8b bc 24 b8 01 00 00 e8 2d 70 e6
+> > RSP: 0018:ffff8881c2237138 EFLAGS: 00010202
+> > RAX: dffffc0000000000 RBX: ffff8881c2bdbc60 RCX: 0000000000000000
+> > RDX: 0000000000000037 RSI: ffffffff81c8fa1a RDI: 00000000000001b8
+> > RBP: ffff8881c2237160 R08: ffffed10383b25ed R09: ffffed10383b25ec
+> > R10: ffffed10383b25ec R11: ffff8881c1d92f63 R12: 0000000000000000
+> > R13: ffff8881c2bdbd00 R14: dffffc0000000000 R15: 0000000000000f5e
+> > FS:  0000000001a48880(0000) GS:ffff8881dad00000(0000) knlGS:0000000000000000
+> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > CR2: 0000000020b58000 CR3: 00000001c2210000 CR4: 00000000001406e0
+> > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> >
+> >
+> > ---
+> > This bug is generated by a bot. It may contain errors.
+> > See https://goo.gl/tpsmEJ for more information about syzbot.
+> > syzbot engineers can be reached at syzkaller@googlegroups.com.
+> >
+> > syzbot will keep track of this bug report. See:
+> > https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
+> > syzbot.
+> > syzbot can test patches for this bug, for details see:
+> > https://goo.gl/tpsmEJ#testing-patches
