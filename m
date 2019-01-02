@@ -2,166 +2,86 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AB1AC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 23:21:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89608C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 23:27:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D66F420874
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 23:21:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4CEA32080A
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 23:27:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nisi.nl header.i=j.vlietland@nisi.nl header.b="DRppX+Wr"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vBMPfxa8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729940AbfABXVM (ORCPT
+        id S1729863AbfABX1J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 18:21:12 -0500
-Received: from sender-of-o53.zoho.com ([135.84.80.218]:21820 "EHLO
-        sender-of-o53.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729521AbfABXVM (ORCPT
+        Wed, 2 Jan 2019 18:27:09 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:38731 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727320AbfABX1J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 18:21:12 -0500
-ARC-Seal: i=1; a=rsa-sha256; t=1546471256; cv=none; 
-        d=zoho.com; s=zohoarc; 
-        b=FCSZsvxavWY51S81TIAjJplIanPj+b4Fqri3hQT5Ra7g0m6xh5dnPNH66ZVpn5uAjiHMQO9kyxCl3a7i5d0t/8jEOR45fn8umWfmtahzUxmvDNwRvLQDxaM9HTH3kZTt0fkDgOxFPILPVtJOguQZqKwFniRM5iUhxTN8KYyhoBM=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
-        t=1546471256; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To:ARC-Authentication-Results; 
-        bh=xcGqOifgzpddqBFavnZYWRxPO+PGGxHhoRu3AiLG07k=; 
-        b=J7ZRJoLrCHbFmOLOnUaKhGbrBtCU+rgF8/hf87U2fSVmawer75f/7GQtvx9XUN+ygh5aMIIme8JsP5OUxR1HU4Ns3aF7gXS1wZeOnwkn/WV+seU+gPU4TASGAVUa0Lw/CDh64pp7J1LURpQIYEumeYvjaaNhopagviFw06boSpM=
-ARC-Authentication-Results: i=1; mx.zoho.com;
-        dkim=pass  header.i=nisi.nl;
-        spf=pass  smtp.mailfrom=j.vlietland@nisi.nl;
-        dmarc=pass header.from=<j.vlietland@nisi.nl> header.from=<j.vlietland@nisi.nl>
-DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws; 
-  s=zoho; d=nisi.nl; 
-  h=subject:to:cc:references:from:message-id:date:user-agent:mime-version:in-reply-to:content-type; 
-  b=RSqToULC1bjXLRaopPpqFr00VS/V0f1LdIR9PiwUH751qO5sEaixBbEojb4ox1nzo7bv0dOfZByR
-    jjA0q+G/rrMsxL1ZFLpFaTMEgrjUVebudtTpY6Vlf9fVhLtHb+rLQIXLqTqVw4+/Say22VsnaPbE
-    cIujdT49iK+j+O0V/E8=  
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1546471256;
-        s=zoho; d=nisi.nl; i=j.vlietland@nisi.nl;
-        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:In-Reply-To:Content-Type:Content-Transfer-Encoding;
-        l=3549; bh=xcGqOifgzpddqBFavnZYWRxPO+PGGxHhoRu3AiLG07k=;
-        b=DRppX+WrVs/uBvrBappiYH9MFN/9eR9Cws+fNpU5eeJgkHfTT3N9H3Y6YW8THeHn
-        skRmLUkdXPWtY57s6Awc9Oym7Av5czhyxQJM9PPK/btfDJ5XJSM5dJd3sEwBRWj5oji
-        v7SKNZpSq6sITJYtbs/m65Awgcyb1BFEHzB3veXw=
-Received: from [192.168.93.103] (5357467A.cm-6-8b.dynamic.ziggo.nl [83.87.70.122]) by mx.zohomail.com
-        with SMTPS id 1546471253406681.2572921603587; Wed, 2 Jan 2019 15:20:53 -0800 (PST)
-Subject: Please help!: Keyboard backlight not working on my NP900X5N laptop
- <previous not accepted due to HTML encoding>
-To:     Jan Vlietland <j.vlietland@nisi.nl>,
-        Corentin Chary <corentin.chary@gmail.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        open list <linux-kernel@vger.kernel.org>
-Cc:     "open list:SAMSUNG LAPTOP DRIVER" 
-        <platform-driver-x86@vger.kernel.org>
-References: <c3ea9b3f-5ffe-df8f-726c-0bf6f3a82701@nisi.nl>
-From:   Jan Vlietland <j.vlietland@nisi.nl>
-Message-ID: <0e16bba8-046c-c559-9ee1-88c0341a51d5@nisi.nl>
-Date:   Thu, 3 Jan 2019 00:20:15 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 2 Jan 2019 18:27:09 -0500
+Received: by mail-it1-f195.google.com with SMTP id h65so40691882ith.3
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 15:27:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=cxlb00yXd4iinTkVLhy1QF9aoqxxUYJBNn8i+UuGVXM=;
+        b=vBMPfxa8lp64v4EVumWD8KiZugAg7LLOgO8c9mBLn/Xam0gGJ0BwNR2V0w8GlmDTlx
+         WUOrAFGkDlIJ1B5ygQrETaySozK7ggOZzYG1nvy9D0sJ8kROC7fvvidyUXA3hw7UVu7L
+         RG2KACDgRS9TRTOegbWD4rwKNCyYjDnmYQI/Iy3Z2qSsmWJaAcwLfj2m5epKcqbont7F
+         EB/AyeSxT+PZxV3LYr0NWyi011ySgs2OlK4FpKotVNkG3Sr1hnZ2PMv6F6XQfqCsI7Yc
+         HGS7zYxUrHgD7EPjFACHJXL996WQ50/rHKCjpHYbQx34s7ftkHPd/lm4lbYgjTOK1+Fq
+         xdSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=cxlb00yXd4iinTkVLhy1QF9aoqxxUYJBNn8i+UuGVXM=;
+        b=rmZrv6o3BQzKTXzKgxwsDqHN1gKbuprTEFW3HiY/k3PKmQvZmuFLe8KTog6nkXOhO2
+         CEgJecmKt7o+Zv/RyLtJsbErvHGF16k2YChHbHhjWb3UlptTKJE2H1BehBAEAeeEczg/
+         xGRTTj5eDPhUDaHzk/ouqddI5P4UGU6TmULWi56G9Xih6t0mWbOHIxWOIYTut4qZW8wv
+         V9uwU2VmyT3BIfkLLhmjAnTWQ2ScgOjo5w3HcmuBTfmMOXamDOwrp2WxgIIcRqRFuHMC
+         KDxiAmU3fIj9a5e3zTd26vIwDyUuv6lsyYnXOEAf3IkChvcxWUjeQ7RYhD6v3gO9vlU3
+         4QqQ==
+X-Gm-Message-State: AA+aEWaGKv6obchFGK8eqtXs9hWBNRWMLY2FJC4yE4tspx49acXhNDHH
+        yn78OyyVNNNWmBv6LSExSDr9ovMGbHnPyxoMKCfynbmREpM=
+X-Google-Smtp-Source: AFSGD/VZ1Dm0Hgjw1mbehr5Q0AQN7/wuBkgV3zXfsf+MOWyzTQXRlaiuA4sKZhNcK3aMspSbsW3ofb+bZRacTEQHfMk=
+X-Received: by 2002:a24:4a95:: with SMTP id k143mr28726948itb.77.1546471628031;
+ Wed, 02 Jan 2019 15:27:08 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <c3ea9b3f-5ffe-df8f-726c-0bf6f3a82701@nisi.nl>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-Content-Language: nl
-X-ZohoMailClient: External
+References: <1545816338-1171-1-git-send-email-wei.w.wang@intel.com> <1545816338-1171-5-git-send-email-wei.w.wang@intel.com>
+In-Reply-To: <1545816338-1171-5-git-send-email-wei.w.wang@intel.com>
+From:   Jim Mattson <jmattson@google.com>
+Date:   Wed, 2 Jan 2019 15:26:56 -0800
+Message-ID: <CALMp9eRPvxPCnAnWr8+U98PzZLQ8LzeBRMyPk0qROKBzSzSnRQ@mail.gmail.com>
+Subject: Re: [PATCH v4 04/10] KVM/x86: intel_pmu_lbr_enable
+To:     Wei Wang <wei.w.wang@intel.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        kvm list <kvm@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Kan Liang <kan.liang@intel.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        like.xu@intel.com, Jann Horn <jannh@google.com>,
+        arei.gonglei@huawei.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi guys,
+On Wed, Dec 26, 2018 at 2:01 AM Wei Wang <wei.w.wang@intel.com> wrote:
+>
+> The lbr stack is architecturally specific, for example, SKX has 32 lbr
+> stack entries while HSW has 16 entries, so a HSW guest running on a SKX
+> machine may not get accurate perf results. Currently, we forbid the
+> guest lbr enabling when the guest and host see different lbr stack
+> entries.
 
-Sorry but still walking with this bug under my arm.
-
-I can't find the right group to file the bug on bugzilla and also on=20
-freenode I cannot find the right group.
-
-Please help!
-
-Regards,
-
-Jan
-
-
-On 01-01-19 13:48, Jan Vlietland wrote:
-> Hi all,
->
-> Greg K-H suggested to mail you guys.
->
-> I installed Linux 4.20.0-rc7 (downloaded, compiled and installed) on a=20
-> Samsung NP900X5N laptop and have noticed 3 bugs. 2 of them I found in=20
-> Bugzilla and replied on them (i915 and Nouveau issues). I am currently=20
-> discussing them with an intel engineer.
->
-> On other bug I haven't found so therefore a mail directly to you guys=20
-> as maintainers.
->
-> On my other machine, a Samsung NP900X4D (just bought it in the USA,=20
-> 2017 model), the samsung-laptop.ko module is enabling the use of the=20
-> keyboard backlight keys.
->
-> It is not working on my new machine NP900X5N. My samsung-laptop.ko=20
-> driver isn't loading. If I try to load it manually it complains about=20
-> 'no such device".
->
-> My Linux kernel is working in CSM mode. The module is still not loaded.
->
-> As it is weekend I did some more reading and debugging of the module.=20
-> To my understanding the module checks the model and type of the=20
-> laptop. The known models and types are stored in the struct:
->
-> static struct dmi_system_id __initdata samsung_dmi_table[]
->
-> I wondr if the NP900X5N notebook is included in this list.
->
-> With dmidecode -t chassis it shows:
-> Getting SMBIOS data from sysfs.
-> SMBIOS 3.0.0 present.
->
-> Handle 0x0003, DMI type 3, 22 bytes
-> Chassis Information
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Manufacturer: SAMSUNG ELECTRON=
-ICS CO., LTD.
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Type: Notebook
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Lock: Not Present
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Version: N/A
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Serial Number: 0F4C91CJ900346
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Asset Tag: No Asset Tag
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Boot-up State: Safe
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Power Supply State: Safe
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Thermal State: Other
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Security Status: None
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 OEM Information: 0x00000000
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Height: Unspecified
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Number Of Power Cords: 1
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Contained Elements: 0
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 SKU Number: Chassis
->
-> If I use the -u flag. The notebook value is 0x0A, not 0x10!!!
->
-> Could that be the reason for not loading?
->
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .matches =3D {
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 DMI_MA=
-TCH(DMI_SYS_VENDOR,
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "SAMSUNG ELECTRONICS CO., LTD.")=
-,
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 DMI_MA=
-TCH(DMI_CHASSIS_TYPE, "10"), /* Notebook */
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 },
->
-> Maybe another reason could that that either the i915 and Nouveau=20
-> modules are not working well. I get black screens with the i915 and=20
-> MMIO faults with the nouveau driver. That is another issue that I need=20
-> to tackle.
->
-> Oh happy new year :-)
->
-
-
+How do you handle live migration?
