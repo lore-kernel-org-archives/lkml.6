@@ -2,134 +2,302 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3CF4C43444
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:17:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7400CC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:18:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83920218A4
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:17:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="ewJa0WoK"
+	by mail.kernel.org (Postfix) with ESMTP id 381172075B
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:18:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729327AbfABKRi (ORCPT
+        id S1729330AbfABKSP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 05:17:38 -0500
-Received: from smtprelay4.synopsys.com ([198.182.47.9]:34402 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727294AbfABKRi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 05:17:38 -0500
-Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id D8F4B24E11ED;
-        Wed,  2 Jan 2019 02:17:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1546424258; bh=dVn8PzrY2tVGmJLGmwNOrof8PMvNIVBdLsSpBWH5zF4=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To:From;
-        b=ewJa0WoKMc7VbHFWH0YHGE7gjktu8QgfYosap5huL7SgI1DP8qXoKYjSvv2OkZdbb
-         8TABp3Hyora7lTktjDfgC2wdyQ0wJKT0DbqtD8X8v6L4xr/p+zZGvSKMnlxihKWyBI
-         kwO6cnyaHt/LIQcV75bCb4vyG0Sk5RwDMNLW4lVZXusei1L5OE7DIuQmimmiOO4LWj
-         +8G/yh4nyKvpszrmLTTOfU1EHkiztyRcj6EqBKKaIgcx4/xfSqgOsCCcB7IPns7pOt
-         7/1tjrd8i2kxYq1H/po6N0ouYT7HZy4e4r7o3jgivD0Hi8lZKjptXANazK5d26gUqN
-         +WYc0T0H05uZQ==
-Received: from us01wehtc1.internal.synopsys.com (us01wehtc1-vip.internal.synopsys.com [10.12.239.236])
-        by mailhost.synopsys.com (Postfix) with ESMTP id EDEC83CC2;
-        Wed,  2 Jan 2019 02:17:36 -0800 (PST)
-Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
- us01wehtc1.internal.synopsys.com (10.12.239.231) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Wed, 2 Jan 2019 02:17:37 -0800
-Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
- DE02WEHTCB.internal.synopsys.com (10.225.19.94) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Wed, 2 Jan 2019 11:17:34 +0100
-Received: from [10.107.25.131] (10.107.25.131) by
- DE02WEHTCA.internal.synopsys.com (10.225.19.80) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Wed, 2 Jan 2019 11:17:34 +0100
-Subject: Re: [PATCH 10/10] PCI: dwc: Do not write to MSI control registers if
- the platform doesn't use it
-To:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Murali Karicheri <m-karicheri2@ti.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Marc Zyngier <marc.zyngier@arm.com>
-CC:     Bjorn Helgaas <bhelgaas@google.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20181219124207.13479-1-kishon@ti.com>
- <20181219124207.13479-11-kishon@ti.com>
-From:   Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Message-ID: <96242503-4727-be68-84d2-4d340c7b3f5c@synopsys.com>
-Date:   Wed, 2 Jan 2019 10:13:03 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+        Wed, 2 Jan 2019 05:18:15 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:58976 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726499AbfABKSO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Jan 2019 05:18:14 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 21B88C0495B8;
+        Wed,  2 Jan 2019 10:18:14 +0000 (UTC)
+Received: from localhost (ovpn-8-22.pek2.redhat.com [10.72.8.22])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A54AE5C22C;
+        Wed,  2 Jan 2019 10:18:06 +0000 (UTC)
+Date:   Wed, 2 Jan 2019 18:18:04 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     Mike Rapoport <rppt@linux.ibm.com>
+Cc:     Pingfan Liu <kernelfans@gmail.com>, linux-acpi@vger.kernel.org,
+        linux-mm@kvack.org, kexec@lists.infradead.org,
+        Tang Chen <tangchen@cn.fujitsu.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Yaowei Bai <baiyaowei@cmss.chinamobile.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Daniel Vacek <neelx@redhat.com>,
+        Mathieu Malaterre <malat@debian.org>,
+        Stefan Agner <stefan@agner.ch>, Dave Young <dyoung@redhat.com>,
+        yinghai@kernel.org, vgoyal@redhat.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv3 1/2] mm/memblock: extend the limit inferior of
+ bottom-up after parsing hotplug attr
+Message-ID: <20190102101804.GD1990@MiWiFi-R3L-srv>
+References: <1545966002-3075-1-git-send-email-kernelfans@gmail.com>
+ <1545966002-3075-2-git-send-email-kernelfans@gmail.com>
+ <20181231084018.GA28478@rapoport-lnx>
+ <CAFgQCTvQnj7zReFvH_gmfVJdPXE325o+z4Xx76fupvsLR_7H2A@mail.gmail.com>
+ <20190102092749.GA22664@rapoport-lnx>
 MIME-Version: 1.0
-In-Reply-To: <20181219124207.13479-11-kishon@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.107.25.131]
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190102092749.GA22664@rapoport-lnx>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Wed, 02 Jan 2019 10:18:14 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 19/12/2018 12:42, Kishon Vijay Abraham I wrote:
-> Platforms which populate msi_host_init, has it's own MSI controller
-> logic. Writing to MSI control registers on platforms which doesn't use
-> Designware's MSI controller logic might have side effects. To
-> be safe, do not write to MSI control registers if the platform uses
-> it's own MSI controller logic instead of Designware's MSI controller
-> logic.
+On 01/02/19 at 11:27am, Mike Rapoport wrote:
+> On Wed, Jan 02, 2019 at 02:47:34PM +0800, Pingfan Liu wrote:
+> > On Mon, Dec 31, 2018 at 4:40 PM Mike Rapoport <rppt@linux.ibm.com> wrote:
+> > >
+> > > On Fri, Dec 28, 2018 at 11:00:01AM +0800, Pingfan Liu wrote:
+> > > > The bottom-up allocation style is introduced to cope with movable_node,
+> > > > where the limit inferior of allocation starts from kernel's end, due to
+> > > > lack of knowledge of memory hotplug info at this early time. But if later,
+> > > > hotplug info has been got, the limit inferior can be extend to 0.
+> > > > 'kexec -c' prefers to reuse this style to alloc mem at lower address,
+> > > > since if the reserved region is beyond 4G, then it requires extra mem
+> > > > (default is 16M) for swiotlb.
+> > >
+> > > I fail to understand why the availability of memory hotplug information
+> > > would allow to extend the lower limit of bottom-up memblock allocations
+> > > below the kernel. The memory in the physical range [0, kernel_start) can be
+> > > allocated as soon as the kernel memory is reserved.
+> > >
+> > Yes, the  [0, kernel_start) can be allocated at this time by some func
+> > e.g. memblock_reserve(). But there is trick. For the func like
+> > memblock_find_in_range(), this is hotplug attr checking ,,it will
+> > check the hotmovable attr in __next_mem_range()
+> > {
+> > if (movable_node_is_enabled() && memblock_is_hotpluggable(m))
+> > continue
+> > }.  So the movable memory can be safely skipped.
 > 
-> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
-> ---
->  .../pci/controller/dwc/pcie-designware-host.c | 24 ++++++++++---------
->  1 file changed, 13 insertions(+), 11 deletions(-)
+> I still don't see the connection between allocating memory below
+> kernel_start and the hotplug info.
 > 
-> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
-> index dbc94f3be3d5..6644a5683b2b 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-> @@ -647,17 +647,19 @@ void dw_pcie_setup_rc(struct pcie_port *pp)
->  
->  	dw_pcie_setup(pci);
->  
-> -	num_ctrls = pp->num_vectors / MAX_MSI_IRQS_PER_CTRL;
-> -
-> -	/* Initialize IRQ Status array */
-> -	for (ctrl = 0; ctrl < num_ctrls; ctrl++) {
-> -		dw_pcie_wr_own_conf(pp, PCIE_MSI_INTR0_MASK +
-> -					(ctrl * MSI_REG_CTRL_BLOCK_SIZE),
-> -				    4, ~0);
-> -		dw_pcie_wr_own_conf(pp, PCIE_MSI_INTR0_ENABLE +
-> -					(ctrl * MSI_REG_CTRL_BLOCK_SIZE),
-> -				    4, ~0);
-> -		pp->irq_status[ctrl] = 0;
-> +	if (!pp->ops->msi_host_init) {
-> +		num_ctrls = pp->num_vectors / MAX_MSI_IRQS_PER_CTRL;
-> +
-> +		/* Initialize IRQ Status array */
-> +		for (ctrl = 0; ctrl < num_ctrls; ctrl++) {
-> +			dw_pcie_wr_own_conf(pp, PCIE_MSI_INTR0_MASK +
-> +					    (ctrl * MSI_REG_CTRL_BLOCK_SIZE),
-> +					    4, ~0);
-> +			dw_pcie_wr_own_conf(pp, PCIE_MSI_INTR0_ENABLE +
-> +					    (ctrl * MSI_REG_CTRL_BLOCK_SIZE),
-> +					    4, ~0);
-> +			pp->irq_status[ctrl] = 0;
-> +		}
->  	}
->  
->  	/* Setup RC BARs */
+> The check for 'end > kernel_end' in
 > 
+>  	if (memblock_bottom_up() && end > kernel_end)
+> 
+> does not protect against allocation in a hotplugable area.
+> If memblock_find_in_range() is called before hotplug info is parsed it can
+> return a range in a hotplugable area.
+> 
+> The point I'd like to clarify is why allocating memory in the range [0,
+> kernel_start) cannot be done before hotplug info is available and why it is
+> safe to allocate that memory afterwards?
 
-Acked-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Well, I think that's because we have KASLR. Before KASLR was introdueced,
+kernel is put at a low and fixed physical address. Allocating memblock
+bottom-up after kernel can make sure those kernel data is in the same node
+as kernel text itself before SRAT parsed. While [0, kernel_start) is a
+very small range, e.g on x86, it was 16 MB, which is very possibly used
+up.
 
-Regards,
-Gustavo
+But now, with KASLR enabled by default, this bottom-up after kernel text
+allocation has potential issue. E.g we have node0 (including normal zone),
+node1(including movable zone), if KASLR put kernel at top of node0, the
+next memblock allocation before SRAT parsed will stamp into movable zone
+of node1, hotplug doesn't work well any more consequently. I had
+considered this issue previously, but haven't thought of a way to fix
+it.
+
+While it's not related to this patch. About this patchset, I didn't
+check it carefully in v2 post, and acked it. In fact the current way is
+not good, Pingfan should call __memblock_find_range_bottom_up() directly
+for crashkernel reserving. Reasons are:
+1)SRAT parsing is done, system restore to take top-down way to do
+memblock allocat.
+2)we do need to find range bottom-up if user specify crashkernel=xxM
+(without a explicit base address).
+
+Thanks
+Baoquan
+
+> 
+> > Thanks for your kindly review.
+> > 
+> > Regards,
+> > Pingfan
+> > 
+> > > The extents of the memory node hosting the kernel image can be used to
+> > > limit memblok allocations from that particular node, even in top-down mode.
+> > >
+> > > > Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
+> > > > Cc: Tang Chen <tangchen@cn.fujitsu.com>
+> > > > Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+> > > > Cc: Len Brown <lenb@kernel.org>
+> > > > Cc: Andrew Morton <akpm@linux-foundation.org>
+> > > > Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
+> > > > Cc: Michal Hocko <mhocko@suse.com>
+> > > > Cc: Jonathan Corbet <corbet@lwn.net>
+> > > > Cc: Yaowei Bai <baiyaowei@cmss.chinamobile.com>
+> > > > Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
+> > > > Cc: Nicholas Piggin <npiggin@gmail.com>
+> > > > Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+> > > > Cc: Daniel Vacek <neelx@redhat.com>
+> > > > Cc: Mathieu Malaterre <malat@debian.org>
+> > > > Cc: Stefan Agner <stefan@agner.ch>
+> > > > Cc: Dave Young <dyoung@redhat.com>
+> > > > Cc: Baoquan He <bhe@redhat.com>
+> > > > Cc: yinghai@kernel.org,
+> > > > Cc: vgoyal@redhat.com
+> > > > Cc: linux-kernel@vger.kernel.org
+> > > > ---
+> > > >  drivers/acpi/numa.c      |  4 ++++
+> > > >  include/linux/memblock.h |  1 +
+> > > >  mm/memblock.c            | 58 +++++++++++++++++++++++++++++-------------------
+> > > >  3 files changed, 40 insertions(+), 23 deletions(-)
+> > > >
+> > > > diff --git a/drivers/acpi/numa.c b/drivers/acpi/numa.c
+> > > > index 2746994..3eea4e4 100644
+> > > > --- a/drivers/acpi/numa.c
+> > > > +++ b/drivers/acpi/numa.c
+> > > > @@ -462,6 +462,10 @@ int __init acpi_numa_init(void)
+> > > >
+> > > >               cnt = acpi_table_parse_srat(ACPI_SRAT_TYPE_MEMORY_AFFINITY,
+> > > >                                           acpi_parse_memory_affinity, 0);
+> > > > +
+> > > > +#if defined(CONFIG_X86) || defined(CONFIG_ARM64)
+> > > > +             mark_mem_hotplug_parsed();
+> > > > +#endif
+> > > >       }
+> > > >
+> > > >       /* SLIT: System Locality Information Table */
+> > > > diff --git a/include/linux/memblock.h b/include/linux/memblock.h
+> > > > index aee299a..d89ed9e 100644
+> > > > --- a/include/linux/memblock.h
+> > > > +++ b/include/linux/memblock.h
+> > > > @@ -125,6 +125,7 @@ int memblock_reserve(phys_addr_t base, phys_addr_t size);
+> > > >  void memblock_trim_memory(phys_addr_t align);
+> > > >  bool memblock_overlaps_region(struct memblock_type *type,
+> > > >                             phys_addr_t base, phys_addr_t size);
+> > > > +void mark_mem_hotplug_parsed(void);
+> > > >  int memblock_mark_hotplug(phys_addr_t base, phys_addr_t size);
+> > > >  int memblock_clear_hotplug(phys_addr_t base, phys_addr_t size);
+> > > >  int memblock_mark_mirror(phys_addr_t base, phys_addr_t size);
+> > > > diff --git a/mm/memblock.c b/mm/memblock.c
+> > > > index 81ae63c..a3f5e46 100644
+> > > > --- a/mm/memblock.c
+> > > > +++ b/mm/memblock.c
+> > > > @@ -231,6 +231,12 @@ __memblock_find_range_top_down(phys_addr_t start, phys_addr_t end,
+> > > >       return 0;
+> > > >  }
+> > > >
+> > > > +static bool mem_hotmovable_parsed __initdata_memblock;
+> > > > +void __init_memblock mark_mem_hotplug_parsed(void)
+> > > > +{
+> > > > +     mem_hotmovable_parsed = true;
+> > > > +}
+> > > > +
+> > > >  /**
+> > > >   * memblock_find_in_range_node - find free area in given range and node
+> > > >   * @size: size of free area to find
+> > > > @@ -259,7 +265,7 @@ phys_addr_t __init_memblock memblock_find_in_range_node(phys_addr_t size,
+> > > >                                       phys_addr_t end, int nid,
+> > > >                                       enum memblock_flags flags)
+> > > >  {
+> > > > -     phys_addr_t kernel_end, ret;
+> > > > +     phys_addr_t kernel_end, ret = 0;
+> > > >
+> > > >       /* pump up @end */
+> > > >       if (end == MEMBLOCK_ALLOC_ACCESSIBLE)
+> > > > @@ -270,34 +276,40 @@ phys_addr_t __init_memblock memblock_find_in_range_node(phys_addr_t size,
+> > > >       end = max(start, end);
+> > > >       kernel_end = __pa_symbol(_end);
+> > > >
+> > > > -     /*
+> > > > -      * try bottom-up allocation only when bottom-up mode
+> > > > -      * is set and @end is above the kernel image.
+> > > > -      */
+> > > > -     if (memblock_bottom_up() && end > kernel_end) {
+> > > > -             phys_addr_t bottom_up_start;
+> > > > +     if (memblock_bottom_up()) {
+> > > > +             phys_addr_t bottom_up_start = start;
+> > > >
+> > > > -             /* make sure we will allocate above the kernel */
+> > > > -             bottom_up_start = max(start, kernel_end);
+> > > > -
+> > > > -             /* ok, try bottom-up allocation first */
+> > > > -             ret = __memblock_find_range_bottom_up(bottom_up_start, end,
+> > > > -                                                   size, align, nid, flags);
+> > > > -             if (ret)
+> > > > +             if (mem_hotmovable_parsed) {
+> > > > +                     ret = __memblock_find_range_bottom_up(
+> > > > +                             bottom_up_start, end, size, align, nid,
+> > > > +                             flags);
+> > > >                       return ret;
+> > > >
+> > > >               /*
+> > > > -              * we always limit bottom-up allocation above the kernel,
+> > > > -              * but top-down allocation doesn't have the limit, so
+> > > > -              * retrying top-down allocation may succeed when bottom-up
+> > > > -              * allocation failed.
+> > > > -              *
+> > > > -              * bottom-up allocation is expected to be fail very rarely,
+> > > > -              * so we use WARN_ONCE() here to see the stack trace if
+> > > > -              * fail happens.
+> > > > +              * if mem hotplug info is not parsed yet, try bottom-up
+> > > > +              * allocation with @end above the kernel image.
+> > > >                */
+> > > > -             WARN_ONCE(IS_ENABLED(CONFIG_MEMORY_HOTREMOVE),
+> > > > +             } else if (!mem_hotmovable_parsed && end > kernel_end) {
+> > > > +                     /* make sure we will allocate above the kernel */
+> > > > +                     bottom_up_start = max(start, kernel_end);
+> > > > +                     ret = __memblock_find_range_bottom_up(
+> > > > +                             bottom_up_start, end, size, align, nid,
+> > > > +                             flags);
+> > > > +                     if (ret)
+> > > > +                             return ret;
+> > > > +                     /*
+> > > > +                      * we always limit bottom-up allocation above the
+> > > > +                      * kernel, but top-down allocation doesn't have
+> > > > +                      * the limit, so retrying top-down allocation may
+> > > > +                      * succeed when bottom-up allocation failed.
+> > > > +                      *
+> > > > +                      * bottom-up allocation is expected to be fail
+> > > > +                      * very rarely, so we use WARN_ONCE() here to see
+> > > > +                      * the stack trace if fail happens.
+> > > > +                      */
+> > > > +                     WARN_ONCE(IS_ENABLED(CONFIG_MEMORY_HOTREMOVE),
+> > > >                         "memblock: bottom-up allocation failed, memory hotremove may be affected\n");
+> > > > +             }
+> > > >       }
+> > > >
+> > > >       return __memblock_find_range_top_down(start, end, size, align, nid,
+> > > > --
+> > > > 2.7.4
+> > > >
+> > >
+> > > --
+> > > Sincerely yours,
+> > > Mike.
+> > >
+> > 
+> 
+> -- 
+> Sincerely yours,
+> Mike.
+> 
