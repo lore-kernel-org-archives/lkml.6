@@ -2,127 +2,109 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B192C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 00:50:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A82BBC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 00:51:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D15222171F
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 00:50:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6773B2171F
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 00:51:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TFutalGh"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bdaBqUaM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727786AbfABAub (ORCPT
+        id S1727903AbfABAvh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 1 Jan 2019 19:50:31 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:42861 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726829AbfABAua (ORCPT
+        Tue, 1 Jan 2019 19:51:37 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:36577 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726829AbfABAvh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Jan 2019 19:50:30 -0500
-Received: by mail-qt1-f193.google.com with SMTP id d19so32089364qtq.9;
-        Tue, 01 Jan 2019 16:50:29 -0800 (PST)
+        Tue, 1 Jan 2019 19:51:37 -0500
+Received: by mail-pl1-f193.google.com with SMTP id g9so13855915plo.3;
+        Tue, 01 Jan 2019 16:51:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=XxLqDJO83NzZqUs9l0I2WXpjX0hVp/k0rXBXAMJGIk4=;
-        b=TFutalGh8rIsw9l6y3WCoJSbIDE7i90D8OAJReTXbwVQszwM7cVsNCsZmNPDap+nXV
-         FM5p448PHmHt8ds5r71c7b2m5r0VDfxNHBTejvCkXYj58WpMCOZoFWEwlsM9oGgb5boo
-         FBYUFM4sHxugm8jPNguVOdcRyKLwe7UUexKpy483FUgb15oMz8thbjrDx1PK3rlIEvIz
-         nzkPaAxokILb+YuhlM//a++6TIxqTksoVRHTHEflpdvQ/aQzYC3RPXDD1zIcODfwSyl8
-         PdTib+wEN3IBaTPiMkxaV+YdBsydilOXhdvBUzg4SGNSE3tOOOlizVhLANWAwx/oT5Xb
-         riUg==
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=bAaRW1/Ei0qr9/KNwDarEc5yyN+GFrW6XRfdQ6M97UM=;
+        b=bdaBqUaMkwO+8rLSlCD3n1Sdy1ftsOvgqHa35D183yJJiQwqKVxiNPz++wltqAkQC7
+         XuqpJNOXA52L3IUkTcsyjPxIEv5GhSdqkubEG28hVpWHxsq5bsPp4YDBSJ6P/Hx+r6kp
+         nSzP7fwwB6x16+HAemq+6yol1tSlCyHgw+vvtUz+ri88sTz9657ZhRP12lKJN4efJH6b
+         AVxob8aAeJXKmJ0BKB1HBuQbv8zPFYR37KO7OoTjPcC/+Icj/Cke0nPqhGJ42bprV3q0
+         k/DYo+JgCyTXJQCXVig8ZTOrd1BwRB30NjuXZy05TtshmXk/0Wf6tSa9MBOtnVIgTp+U
+         3Npw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=XxLqDJO83NzZqUs9l0I2WXpjX0hVp/k0rXBXAMJGIk4=;
-        b=Yhggw5e34/8g22FS0XY1R6okJNChQ0FrhFqemhR2oLGlqpioxvJi1giGaahBF7Vevv
-         ohHbHxbHHofUwMDfWD6JK4YiSJryKfm31yaAXVU6se/WoPvz8ytATH97OBXXAFHIaDNe
-         xpw3y1+AGTDRjxclYiuAg+QecZLU4W/MhDQTsMNQj9iAtLxz6iz6kt0t3lxwo3glpBtB
-         h/STE16t93JjRftwWhT8ra8YmKLsDldd4CvvQnQCN6yPQnGSs4bTCkTg1hWy1qSjZae7
-         8UNcX+kxQ1FddTRqVoYC9NYO/KG8uIg14ug0lLuJhBj2lVJtcsga+AbPKj6SXKuiWOQd
-         WNGw==
-X-Gm-Message-State: AJcUukdXM9736hb9fGvxQzpmP822+fIcjyRoM0yHvVa9dzQzw+H9gyU5
-        9jcpGk4f2JuBRGU1BjnEAybBShHvF+Y=
-X-Google-Smtp-Source: ALg8bN6kboAfpvRJIHGus8N7ynTb0SCyOAmo5QwelouWfD3ErTdAkiNt02z/JaFRxYuDDyoOUgykRA==
-X-Received: by 2002:a0c:fa8f:: with SMTP id o15mr41761945qvn.135.1546390228764;
-        Tue, 01 Jan 2019 16:50:28 -0800 (PST)
-Received: from bebop ([186.212.93.174])
-        by smtp.gmail.com with ESMTPSA id j95sm23244327qtb.74.2019.01.01.16.50.25
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 01 Jan 2019 16:50:28 -0800 (PST)
-Date:   Tue, 1 Jan 2019 22:50:58 -0200
-From:   Marcos Paulo de Souza <marcos.souza.org@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
-Subject: Re: [PATCH] Docs/kernel-api.rst: Remove removed blk-tag.c reference
-Message-ID: <20190102005056.GA54189@bebop>
-References: <20190102004015.47152-1-marcos.souza.org@gmail.com>
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=bAaRW1/Ei0qr9/KNwDarEc5yyN+GFrW6XRfdQ6M97UM=;
+        b=EM8a4y5eOzrHidBKCk1SXzlXsMP2Y9WgwODQbJAs7ErpJmjS5ASilLTti0S0BHh7sW
+         /Is3EuA/lhkT2xdhhSK+2guRwpOvwnt8xXlPg6198EUdnQOZpPXaP4vQ41GwqbE+zcsM
+         EAOng9yow/FJh+ciLGyat/Qt0fLwFL0/1ygmtV+ODyQXIWgvRdqBV4DsD4La5WHGmC+q
+         ZjlF5UQCR0lbcyRjniNu8D1Qc+NtQkzE6zSluatNkiLo4IDm62+zNSUpsvwrP8f9JbsZ
+         Rnp/UAVFMQ1F7RaXmCu+qnbxLxKENBmzEMLKGFJ4GzdIRNYfdHUhsqbz8w2HYqGwL4ii
+         vgSA==
+X-Gm-Message-State: AJcUukey+G8Mk4BG91WFlo1tiAUDr8ELJu+rOUgqVG6bceGDj/KYh4cL
+        BSq2C2W3BMN6VY2rJIiWjLU=
+X-Google-Smtp-Source: ALg8bN72jlCp1eKBMompXTlW05EWROoYAVoXNXqA/GSacfoN7pyflCB4Oxx6z2dPfZWgNq4nCZq5Dw==
+X-Received: by 2002:a17:902:2:: with SMTP id 2mr15074356pla.228.1546390296198;
+        Tue, 01 Jan 2019 16:51:36 -0800 (PST)
+Received: from localhost.localdomain ([2601:644:8201:32e0:7256:81ff:febd:926d])
+        by smtp.gmail.com with ESMTPSA id 128sm76819876pfu.129.2019.01.01.16.51.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 01 Jan 2019 16:51:35 -0800 (PST)
+Date:   Tue, 1 Jan 2019 16:51:25 -0800
+From:   Eduardo Valentin <edubezval@gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Rui Zhang <rui.zhang@intel.com>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [GIT PULL] Thermal-SoC management updates for v4.21-rc1
+Message-ID: <20190102005121.GB7944@localhost.localdomain>
+References: <20190101160503.GA3306@localhost.localdomain>
+ <CAHk-=whXWWXSMMPpm3eGV=PL12=K5LFM3didLBuGy1Y7vUbXVg@mail.gmail.com>
+ <20190101231526.GA7944@localhost.localdomain>
+ <CAHk-=wiku0MygbFLmLjvCo-zzu4ygivkshdGzVVADYdwe-b57A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190102004015.47152-1-marcos.souza.org@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHk-=wiku0MygbFLmLjvCo-zzu4ygivkshdGzVVADYdwe-b57A@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Patch sent by mistake. The commit message should be:
-"Docs/kernel-api.rst: Remove blk-tag.c reference"
+On Tue, Jan 01, 2019 at 03:32:50PM -0800, Linus Torvalds wrote:
+> On Tue, Jan 1, 2019 at 3:16 PM Eduardo Valentin <edubezval@gmail.com> wrote:
+> >
+> > > It doesn't even build cleanly.
+> > >
+> >
+> > Do you still have have a copy of the build error?
+> 
+> A plain "make allmodconfig" shows a warning.
 
-Thanks,
+I see. I am afraid I really did not catch this. I supposed you are
+referring to the warning like this:
 
-On Tue, Jan 01, 2019 at 10:40:14PM -0200, Marcos Paulo de Souza wrote:
-> After 7ca01926463a, legacy rq tagging was removed, so block/blk-tag.c
-> does not exists anymore. When generating pdfdocs, sphinx complains about
-> this missing file:
-> 
-> Error: Cannot open file ./block/blk-tag.c
-> Error: Cannot open file ./block/blk-tag.c
-> Error: Cannot open file ./block/blk-tag.c
-> Error: Cannot open file ./block/blk-tag.c
-> 
-> So remove blk-tag.c traces from kernel-api.rst file to silence these
-> warnings.
-> 
-> Signed-off-by: Marcos Paulo de Souza <marcos.souza.org@gmail.com>
-> ---
->  Documentation/core-api/kernel-api.rst | 6 ------
->  1 file changed, 6 deletions(-)
-> 
-> diff --git a/Documentation/core-api/kernel-api.rst b/Documentation/core-api/kernel-api.rst
-> index 3431337ee4e6..cdd24943fbcc 100644
-> --- a/Documentation/core-api/kernel-api.rst
-> +++ b/Documentation/core-api/kernel-api.rst
-> @@ -291,12 +291,6 @@ Block Devices
->  .. kernel-doc:: block/blk-lib.c
->     :export:
->  
-> -.. kernel-doc:: block/blk-tag.c
-> -   :export:
-> -
-> -.. kernel-doc:: block/blk-tag.c
-> -   :internal:
-> -
->  .. kernel-doc:: block/blk-integrity.c
->     :export:
->  
-> -- 
-> 2.16.4
-> 
+    thermal_hwmon.h:29:1: warning: ‘thermal_remove_hwmon_sysfs’ defined but not used [-Wunused-function]
 
--- 
-Thanks,
-Marcos
+I am sending out a patch for this on thermal_hwmon.h  and will be resending the pull request
+once the CIs report back.
+
+
+> 
+> And I refuse to add new warnings.
+
+Fair enough. I would not expect anything different. Thanks for reporting.
+
+> 
+>                  Linus
