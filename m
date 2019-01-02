@@ -2,105 +2,158 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31A0DC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 01:18:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D7D0C43612
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 01:28:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 018C22080A
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 01:18:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ubhccRLm"
+	by mail.kernel.org (Postfix) with ESMTP id 6BB3C218A4
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 01:28:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546392493;
+	bh=hjrUtNXCE4m20teCOVhOxvQ3bn9KxyuOFTRLDwbwEDg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=ZlhAvj6pw+HkREPY3t+SDwNtNGv4cdiDuKZLrDHb2RjvnOcOk2rEvvh7STXrHvqcO
+	 PKmbmUNJtvHtfNjGa1u7WOtdNNXNsTgoGlxWUHlTkQ4tMmsWnYz0suDPcQJlexFrDs
+	 X5BePOejOOw+ZTsYCsyatRB+9AQTs6uBHiRwm6Nk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728159AbfABBSp (ORCPT
+        id S1728207AbfABB2M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 1 Jan 2019 20:18:45 -0500
-Received: from ozlabs.org ([203.11.71.1]:40669 "EHLO ozlabs.org"
+        Tue, 1 Jan 2019 20:28:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46350 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726194AbfABBSo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Jan 2019 20:18:44 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        id S1728162AbfABB2M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Jan 2019 20:28:12 -0500
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43TtVB0pzVz9s4s;
-        Wed,  2 Jan 2019 12:18:42 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1546391922;
-        bh=xj7ISfSNnIbNRH0H0T2RZ9Cpd99ZvUg5AatOWMZUhxM=;
-        h=Date:From:To:Cc:Subject:From;
-        b=ubhccRLmOAnK5vdF/sTL0iOiLKhFva33ANK8l2xuzYmbAZcl1nEuYxDMgeYNpuT/S
-         plZ3d9X/Sku5AE667Zr7K+iaTVTIR+6FML21EMG5t9aQI1/iU3/Drh64ITKf4TIL1s
-         mUpPIqWtbRhsZmoicrnumr86BoC1MH9rUjCz7bCVI5VQuaGIK/SONy4BWTZUqTwsYl
-         MvFJytNlDRrZSPT/m6U3dJEVz/o7vXWKeXUx97fisCQLaeaS4eSk/wemqHoOvSqScU
-         3hDFLDr35LJqsgMAihfJRaQuVO1+gyub4xOOol0LogZ4zFnJar5gncf88NBzQpAXBF
-         HPlyWhxc4K+mg==
-Date:   Wed, 2 Jan 2019 12:18:41 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Al Viro <viro@ZenIV.linux.org.uk>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Ondrej Mosnacek <omosnace@redhat.com>,
-        Tejun Heo <tj@kernel.org>
-Subject: linux-next: manual merge of the vfs tree with Linus' tree
-Message-ID: <20190102121841.3d792549@canb.auug.org.au>
+        by mail.kernel.org (Postfix) with ESMTPSA id D03C42171F;
+        Wed,  2 Jan 2019 01:28:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1546392491;
+        bh=hjrUtNXCE4m20teCOVhOxvQ3bn9KxyuOFTRLDwbwEDg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=1RGs6CXj2CIrNcJ6qzohel+sWH3k61Xg7ierw69ZZz+aheurP4lorSh0tiHH64j/g
+         7kuLE+LAKW/sn57ay7ve3yWBitHDI9geR2yesE2TfNYjkD1dKn+R/MLBjtoK/zD3eW
+         TbheBijN1yVfanTY4QdTtgsTIX6vQZDDku4oE/5M=
+Date:   Tue, 1 Jan 2019 19:28:09 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Richard Zhu <hongxing.zhu@nxp.com>
+Cc:     "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+        "andrew.smirnov@gmail.com" <andrew.smirnov@gmail.com>,
+        "TheSven73@googlemail.com" <TheSven73@googlemail.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [v6] PCI: imx: make msi work without CONFIG_PCIEPORTBUS=y
+Message-ID: <20190102012809.GB126384@google.com>
+References: <1545365708-13086-1-git-send-email-hongxing.zhu@nxp.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/R/y4_dkLueN0Lg+3Gk8wlEh"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1545365708-13086-1-git-send-email-hongxing.zhu@nxp.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/R/y4_dkLueN0Lg+3Gk8wlEh
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Fri, Dec 21, 2018 at 04:33:38AM +0000, Richard Zhu wrote:
+> The MSI Enable bit in the MSI Capability (PCIe r4.0, sec 7.7.1.2)
+> controls whether a Function can request service using MSI.
+> 
+> i.MX6 Root Ports implement the MSI Capability and may use MSI to
+> request service for events like PME, hotplug, AER, etc.  In
+> addition, on i.MX6, the MSI Enable bit controls delivery of MSI
+> interrupts from components below the Root Port.
+> 
+> Prior to commit f3fdfc4ac3a2 ("PCI: Remove host driver Kconfig selection
+> of CONFIG_PCIEPORTBUS"), enabling CONFIG_PCI_IMX6 automatically also
+> enabled CONFIG_PCIEPORTBUS, and when portdrv claimed the Root Ports,
+> it set the MSI Enable bit so it could use PME, hotplug, AER, etc.
+> As a side effect, that also enabled delivery of MSI interrupts from
+> downstream components.
+> 
+> After f3fdfc4ac3a2, the imx6q-pcie driver can operate without
+> portdrv, but that means imx6q-pcie must set the MSI Enable bit
+> itself if downstream components use MSI.
+> 
+> Fixes: f3fdfc4ac3a2 ("PCI: Remove host driver Kconfig selection of CONFIG_PCIEPORTBUS")
+> 
+> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+> Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
+> Tested-by: Sven Van Asbroeck <TheSven73@googlemail.com>
+> Acked-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 
-Hi Al,
+Applied with Trent's tested-by to pci/imx6 for v4.21.
 
-Today's linux-next merge of the vfs tree got conflicts in:
-
-  kernel/cgroup/cgroup.c
-
-between commit:
-
-  e250d91d6575 ("cgroup: fix parsing empty mount option string")
-
-from Linus' tree and commit:
-
-  b3678086951a ("kernfs, sysfs, cgroup, intel_rdt: Support fs_context")
-
-from the vfs tree.
-
-I fixed it up (I just used the vfs version) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/R/y4_dkLueN0Lg+3Gk8wlEh
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwsEXEACgkQAVBC80lX
-0GyL3wf/bJDNKj6NlcAKzv628k0O49J4jvme5E9XX6KSC2QkYyEvHb7EPSGGMYIp
-YOBfeoMq4ya0I1a7iCRX4Y+o/MMK9q+KAR3qsZ5nbTBV7UdpCQjBKEy+N5dItjEI
-NFPUQhXAiJDAO4z0Ppy4Fv1YzG+fQNptXWm7utnwJ7ed9Lpb8aQpCJ5TZKfEKd9H
-eW2xLeQNSGhYrGK1MTrz83sDkRqQI+agJzOqtaeDF+8DaKMv8PKz1ZktHChAvG71
-4QA7osVQUWEruQcbjHw0vvtdTcRrFl/X8ZzFTe3fAFUA9wh8KpMLLueXdC/AZ+iO
-ffdl7+Riz31IMplPbXV2hD50JvNIWg==
-=+XpJ
------END PGP SIGNATURE-----
-
---Sig_/R/y4_dkLueN0Lg+3Gk8wlEh--
+> ---
+> Changes v1 -> v2:
+> * Assert the MSI_EN unconditionally when MSI is supported.
+> Changes v2 -> v3:
+> * Remove the IS_ENABLED(CONFIG_PCI_MSI) since the driver depends on
+> PCI_MSI_IRQ_DOMAIN
+> * Extended with a check for pci_msi_enabled() to see if the user
+> explicitly want legacy IRQs
+> Changes v3 -> v4:
+> * Refer to Bjorn's comments, refine the subject and commit log and change
+> the PCI_MSI_CAP to PCIE_RC_IMX6_MSI_CAP.
+> Changes v4 -> v5:
+> * Correct one spell mistake from PCIE_RC_MSI_IMX6_CAP to
+> PCIE_RC_IMX6_MSI_CAP.
+> Changes v5 -> v6:
+> * Update with Bjorn's commit.
+> * One "commit" added in "Prior to f3fdfc4ac3a2" refer to the complain of
+> checkpatch.pl.
+> ---
+>  drivers/pci/controller/dwc/pci-imx6.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
+> index e563ca9..73542dd 100644
+> --- a/drivers/pci/controller/dwc/pci-imx6.c
+> +++ b/drivers/pci/controller/dwc/pci-imx6.c
+> @@ -82,6 +82,7 @@ struct imx6_pcie {
+>  #define PHY_PLL_LOCK_WAIT_USLEEP_MAX	200
+>  
+>  /* PCIe Root Complex registers (memory-mapped) */
+> +#define PCIE_RC_IMX6_MSI_CAP			0x50
+>  #define PCIE_RC_LCR				0x7c
+>  #define PCIE_RC_LCR_MAX_LINK_SPEEDS_GEN1	0x1
+>  #define PCIE_RC_LCR_MAX_LINK_SPEEDS_GEN2	0x2
+> @@ -999,6 +1000,7 @@ static int imx6_pcie_probe(struct platform_device *pdev)
+>  	struct resource *dbi_base;
+>  	struct device_node *node = dev->of_node;
+>  	int ret;
+> +	u16 val;
+>  
+>  	imx6_pcie = devm_kzalloc(dev, sizeof(*imx6_pcie), GFP_KERNEL);
+>  	if (!imx6_pcie)
+> @@ -1149,6 +1151,14 @@ static int imx6_pcie_probe(struct platform_device *pdev)
+>  	if (ret < 0)
+>  		return ret;
+>  
+> +	if (pci_msi_enabled()) {
+> +		val = dw_pcie_readw_dbi(pci, PCIE_RC_IMX6_MSI_CAP +
+> +				PCI_MSI_FLAGS);
+> +		val |= PCI_MSI_FLAGS_ENABLE;
+> +		dw_pcie_writew_dbi(pci, PCIE_RC_IMX6_MSI_CAP +
+> +				PCI_MSI_FLAGS, val);
+> +	}
+> +
+>  	return 0;
+>  }
+>  
+> -- 
+> 2.7.4
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
