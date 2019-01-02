@@ -2,116 +2,113 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B662C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 13:43:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF680C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 13:43:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27B79218DE
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 13:43:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546436606;
-	bh=EXVLsjJndhhREKVRe7zUPO1uhd6Jb/krnDkMBUNq/kI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=l2oaj/uBGhQQkuCuYIMiF/kO96ZcPg3qGzOSQhKDgM7xgLC6Avc1bJDIbPyeSi7rF
-	 lPrTZ+CqO5awY+I8jdd9grW1vGuiETtIQi0q7OIE2/BSGi98XkgqOLO90DLqLkl+0v
-	 cDyfl3bToDa5RLCx30bRr29gxb2FcePIreb0C0oQ=
+	by mail.kernel.org (Postfix) with ESMTP id 8A576218EA
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 13:43:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GnyUKvr6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729949AbfABNnZ (ORCPT
+        id S1729964AbfABNnb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 2 Jan 2019 08:43:31 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:52618 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729474AbfABNnZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 2 Jan 2019 08:43:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40600 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729553AbfABNnY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 08:43:24 -0500
-Received: from quaco.ghostprotocols.net (unknown [179.97.41.186])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C83FC218DE;
-        Wed,  2 Jan 2019 13:43:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546436604;
-        bh=EXVLsjJndhhREKVRe7zUPO1uhd6Jb/krnDkMBUNq/kI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=CA31iYYQwRKqUpAng2oQixM6tRzre0C41gQmlcrq9zLl5+aqjKj9BuHh+l8oxjPb8
-         RZg5IaQsJIlEn601++2w3CGy3OvVxhPW93nzvq9apNK1YYWSD8RGpuhED0MV7/tTZG
-         +he/FaCl0tNGuAIkSNAW7DqzoAhFQf/Bn/XzwlSg=
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id C2D9040F61; Wed,  2 Jan 2019 10:43:20 -0300 (-03)
-Date:   Wed, 2 Jan 2019 10:43:20 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Adrian Hunter <adrian.hunter@intel.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6/8] perf thread-stack: Allocate an array of thread stacks
-Message-ID: <20190102134320.GA15460@kernel.org>
-References: <20181221120620.9659-1-adrian.hunter@intel.com>
- <20181221120620.9659-7-adrian.hunter@intel.com>
- <20190101182852.GA13760@krava>
+Received: by mail-it1-f193.google.com with SMTP id g76so40867778itg.2
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 05:43:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=z0IEYMlCFQ3fQw6tpC+uFNCr9CXFPvxgMCkoH1I9Q9k=;
+        b=GnyUKvr6j0b4Wg2YxX7L5kav07HvMfPOTjZqIh/Wo0lFIufQR46Z3i0gzNIhqc8BWp
+         7hE3DC9jPp6Y83fp+UL6JsQA/T8t1+x4Wt0wn/wciaUMb72a6aj2KBOh3+yISUUZlQj+
+         A4YFwwlovSJz8c37Xfxf2zFQpfhU0L3ctVBGrsEnnlrFE34YB9LDzvYtV5RHElvRyiRa
+         bDKlbNeEEKMATl38kh85SxHonIog+YLxk8IdrduhUWWe9qsdR04f/RmrMEu7k+0f7olV
+         dOHsjntdoG+GTnxvzVSiQA8B2sQwWZEDU92QlL3n3sGQmXVm4IGb9Tevem5snwQKBWJ9
+         CCtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=z0IEYMlCFQ3fQw6tpC+uFNCr9CXFPvxgMCkoH1I9Q9k=;
+        b=sM4aRTxfbXskGy+8J1BdtcWFF45jlG/FgyxfF8dRi5VV6piiuFM0VgR9O+hh1ZvomG
+         VsKvwCaqZ826cd9rjS6yuKDRzDfST8BEyaGNiNk7eeZ1LojIHs2JtOVKrXekZnbKKFCt
+         LrP/FAM5CILFX3V2NAYADKivI61/OKQ3uJ53M/gWDKoA1QP8/Ner0zr5p1GB3pGbUqOM
+         iEQE5jhjvLGj40+nOWCDAQkIgdlF80kE8XWszpaNvUb2dT6CEFUoR8jnHpCDdsUpdjnp
+         zBV4JqMqtxnSz4rJUvQ8p1wvsnaGtnEItcoBNwNJp9LvUJPDfE5ITiDlok5Ro5/4pXp6
+         wppw==
+X-Gm-Message-State: AJcUukc2WzHcZ58L3sewVaacGs/DtI3vce/sxdSluSjzFSNyBlJ3dOai
+        1KbEeKxF3XWhqsm9OIEhhjn/s8MVo7uoaxOKb+zSCA==
+X-Google-Smtp-Source: ALg8bN5Xy+Yv8MIQFQL+2KpFi8QMB2tWfjlIUwTrCXhZz6cNNVOTvXjifH4MIwby5uPUR7lfn9ziABKNC069XO9a9Wc=
+X-Received: by 2002:a24:6511:: with SMTP id u17mr5835585itb.12.1546436603675;
+ Wed, 02 Jan 2019 05:43:23 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190101182852.GA13760@krava>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1542702858-4318-1-git-send-email-wanpengli@tencent.com>
+ <442fc8ca-f92c-eded-9ede-c800a03bf39a@redhat.com> <CACT4Y+Z_wqpUoLDdTdAoSHSXEYRR8PFpGOzLC0kS4Y52c3QmPw@mail.gmail.com>
+ <CAHk-=whZ3_T9b=pac=H1tvdjgX0vjE7FDsC=LfQYDmiY5Aq_kg@mail.gmail.com>
+ <CACT4Y+YRs3HLf7-0AhMPMuvHGvKHge_7R5Qo6Q9H1A2w1fQ39A@mail.gmail.com> <20181228221308.ev2mjvnh273qcrml@gmail.com>
+In-Reply-To: <20181228221308.ev2mjvnh273qcrml@gmail.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Wed, 2 Jan 2019 14:43:12 +0100
+Message-ID: <CACT4Y+Ytm0h83GeH2LLQDddOBPsPmkfLCzGCn_Bic447Gu+bdQ@mail.gmail.com>
+Subject: Re: [PATCH] KVM: X86: Fix scan ioapic use-before-initialization
+To:     Joey Pabalinas <joeypabalinas@gmail.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Wanpeng Li <kernellwp@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        dledford@redhat.com, KVM list <kvm@vger.kernel.org>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Wei Wu <ww9210@gmail.com>, Kostya Serebryany <kcc@google.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        syzkaller <syzkaller@googlegroups.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Chris Mason <clm@fb.com>, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@google.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Olof Johansson <olofj@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Theodore Tso <tytso@google.com>, Tim.Bird@sony.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, Jan 01, 2019 at 07:28:52PM +0100, Jiri Olsa escreveu:
-> On Fri, Dec 21, 2018 at 02:06:18PM +0200, Adrian Hunter wrote:
-> > In preparation for fixing thread stack processing for the idle task,
-> > allocate an array of thread stacks.
-> > 
-> > Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-> > ---
-> >  tools/perf/util/thread-stack.c | 30 ++++++++++++++++++------------
-> >  1 file changed, 18 insertions(+), 12 deletions(-)
-> > 
-> > diff --git a/tools/perf/util/thread-stack.c b/tools/perf/util/thread-stack.c
-> > index 4340381d54c2..a896d89fe5f7 100644
-> > --- a/tools/perf/util/thread-stack.c
-> > +++ b/tools/perf/util/thread-stack.c
-> > @@ -114,20 +114,26 @@ static int thread_stack__init(struct thread_stack *ts, struct thread *thread,
-> >  static struct thread_stack *thread_stack__new(struct thread *thread,
-> >  					      struct call_return_processor *crp)
-> >  {
-> > -	struct thread_stack *ts;
-> > -
-> > -	ts = zalloc(sizeof(struct thread_stack));
-> > -	if (!ts)
-> > -		return NULL;
-> > -
-> > -	ts->arr_sz = 1;
-> > -
-> > -	if (thread_stack__init(ts, thread, crp)) {
-> > -		free(ts);
-> > -		return NULL;
-> > +	struct thread_stack *ts = thread->ts, *new_ts;
-> > +	unsigned int old_sz = ts ? ts->arr_sz : 0;
-> > +	unsigned int new_sz = 1;
-> > +
-> > +	if (!ts || new_sz > old_sz) {
-> > +		new_ts = calloc(new_sz, sizeof(*ts));
-> > +		if (!new_ts)
-> > +			return NULL;
-> > +		if (ts)
-> > +			memcpy(new_ts, ts, old_sz * sizeof(*ts));
-> > +		new_ts->arr_sz = new_sz;
-> > +		if (thread->ts)
-> > +			zfree(&thread->ts);
-> 
-> you don't need to check for thread->ts,
-> anyway it looks all good, for the patchset:
-> 
-> Acked-by: Jiri Olsa <jolsa@kernel.org>
+On Fri, Dec 28, 2018 at 11:13 PM Joey Pabalinas <joeypabalinas@gmail.com> wrote:
+>
+> On Fri, Dec 28, 2018 at 10:43:11AM +0100, 'Dmitry Vyukov' via syzkaller wrote:
+> > On Thu, Dec 27, 2018 at 6:00 PM Linus Torvalds <torvalds@linux-foundation.org> wrote:
+> > > Nobody reads the kernel mailing list directly - there's just too much traffic.
+> >
+> > As the result bug reports and patches got lots and this is bad and it
+> > would be useful to stop it from happening and there are known ways for
+> > this.
+>
+> What are the "known ways"? The only effective way I can think of is to
+> setup personal email filters for specific topics, and while this is
+> useful and something I do myself, it requires a lot of up front work.
+>
+> I don't think it's realistic to expect others to be doing this
+> instead of just subscribing to the topic lists.
 
-I'll fix that when merging, which I'm now doing.
+Hi Joey,
 
-Thanks,
+I mean using a bug tracking system.
 
-- Arnaldo
+E.g. here are all open KASAN bugs regardless of when they were filed:
+https://bugzilla.kernel.org/buglist.cgi?bug_status=__open__&component=Sanitizers&list_id=1010485&product=Memory%20Management
+
+Here are all open syzkaller bugs:
+https://github.com/google/syzkaller/issues
