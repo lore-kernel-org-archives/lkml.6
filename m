@@ -2,188 +2,145 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+X-Spam-Status: No, score=-5.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D054CC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:49:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C76BC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:51:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F3192171F
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:49:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZhSr+GH0"
+	by mail.kernel.org (Postfix) with ESMTP id C9D3B2171F
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:51:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729243AbfABKt6 (ORCPT
+        id S1729574AbfABKvF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 05:49:58 -0500
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:36193 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728632AbfABKt6 (ORCPT
+        Wed, 2 Jan 2019 05:51:05 -0500
+Received: from mail-io1-f69.google.com ([209.85.166.69]:56481 "EHLO
+        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727174AbfABKvE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 05:49:58 -0500
-Received: by mail-ua1-f66.google.com with SMTP id j3so9762214uap.3
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 02:49:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=KCM4zcI+RR1+/bzgV3jD0DJeQEh0SfqnhgYBnwCExKA=;
-        b=ZhSr+GH0Y2o+ChXtECqlPg2rP4Nr+1BtEFq/dpOO0PGFbkvpFJbpHxjClnQr5nbQFM
-         PFPzTZ5IApGDULCJkXB1lgegjGTDfxTbNbp0//3lK7ZyOHEtpB9u6Vm8AJN5ZT8Y/1u4
-         JYH6MlhS1mm1bD+uHa8qepM8MO2u87w64PoWI=
+        Wed, 2 Jan 2019 05:51:04 -0500
+Received: by mail-io1-f69.google.com with SMTP id x2so35286140ioa.23
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 02:51:03 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KCM4zcI+RR1+/bzgV3jD0DJeQEh0SfqnhgYBnwCExKA=;
-        b=LCoSnHwN+uopG4qxx5sUuNAxnCQTpMP7GDmWlROYXN9YSEo7tK+/ptfvrFoi0H0p4b
-         3J/k6MLDMCMOCbyauBYQH7Qh7pz9V7AsIj9vSTysCyvJhI4o5AL44iuMyRTdTSoZ7v5U
-         nPE53Fyse/AlDvziHMluGeb3KaHZDdDlTF1mxIpL+Z84bPOoxexws53mGBmL7W4iBX2v
-         kGwePJWXMu8CdKqY1CIHAVFYOAiR4WznBFKLkSfQnSVe4mIOwMhskQrCJM+2qk3wtWc/
-         0LExB4f7lD4oCeAiyeccdajPCObjsXvqnGiYvoYH7pSgi5+0PYUkmIFw5ChJbZ1CE9Ns
-         gvtw==
-X-Gm-Message-State: AJcUukcurNyLfkqGWC+gaSrVucJmboZ5eCr2MhKzOmDrznQMreeHeUt+
-        /mS+TcYF7PNaCuynAuNYeor87UbkvaMmK18PZKQ3uCxJ54w=
-X-Google-Smtp-Source: ALg8bN4fbViE9+cPJv1b1sVfzEz7DZgfrnL4vh6GWW6q6S+ieK1Le3oi7CHDapOqDPdlQRmxEdrn1vMvxemh5ZXxTKc=
-X-Received: by 2002:a9f:2244:: with SMTP id 62mr14813289uad.119.1546426196756;
- Wed, 02 Jan 2019 02:49:56 -0800 (PST)
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=G1WkJnuBbVPXqkl5b3USafcgkt1yFk4a4tFbqFeX9+w=;
+        b=UiSQpuyIgWS/RLnkRyAhKNuqNLVTT2jzXsBAWF2NZm+tUUsjyxwz6jmS/Y3gCxYViV
+         3U+GSJpnwI0UcJkIMFejplUKXB8DyfN2PCGyqzWUhlNd1Kvvcmetl0xG/Hmi2OYqM018
+         bPwXlHEw8GlimGAtAaE+7jXEk4zaYAdHJFSErcbJcnoYCuwUovt5x5TIm1+cObz0XYpI
+         hHnEzUZDsdTC0lCQ/yHHK2mQUw3+XK/NAPjJL47+Fx5KRh3bxqgUqQWuOqO1uF6L6XK/
+         9Ts72DrAZTYmOdbfK8vrUct+86i740Q/tbjl7BVnHk2hU1BhNkq6Fm7hpBF4I3YdTB03
+         JSTA==
+X-Gm-Message-State: AJcUukfYnMpJx1sarmi85XT5mT7t5p/RZcDOYDUtYvVMLAQZ7nggSLSo
+        crSCRwkCBgdnirgVXv/188vRprer1BChtrs0tez5SIVCRXNC
+X-Google-Smtp-Source: ALg8bN6j7XgXduAsIwAibKlC7m730uQ8EeLEjeJX+vRiF29bf0KBlII+5KnU9gAtI66eczMZUbRPAKoMObswmLww34avLmgQrsGo
 MIME-Version: 1.0
-References: <1545930550-9906-1-git-send-email-aisheng.dong@nxp.com>
- <CAPDyKFrP8HOum_4S0-4Bx+sYbTNSyctv3rQDB78zozeNWOuv=A@mail.gmail.com> <AM0PR04MB42117D773477A408462D19D180B00@AM0PR04MB4211.eurprd04.prod.outlook.com>
-In-Reply-To: <AM0PR04MB42117D773477A408462D19D180B00@AM0PR04MB4211.eurprd04.prod.outlook.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Wed, 2 Jan 2019 11:49:20 +0100
-Message-ID: <CAPDyKFq4eji_FVKrRJ2k=c1iKuVP_3aERspy6vpXQzeFdBYt9w@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/1] PM / Domains: Add multi PM domains support for attach_dev
-To:     Aisheng Dong <aisheng.dong@nxp.com>
-Cc:     "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "dongas86@gmail.com" <dongas86@gmail.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
-        "khilman@kernel.org" <khilman@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
+X-Received: by 2002:a6b:b4cc:: with SMTP id d195mr41552165iof.39.1546426263475;
+ Wed, 02 Jan 2019 02:51:03 -0800 (PST)
+Date:   Wed, 02 Jan 2019 02:51:03 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000001b1a1d057e776c92@google.com>
+Subject: WARNING in hsr_addr_subst_dest
+From:   syzbot <syzbot+b92e4f1472a54e1c7dec@syzkaller.appspotmail.com>
+To:     arvid.brodin@alten.se, davem@davemloft.net,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 29 Dec 2018 at 07:43, Aisheng Dong <aisheng.dong@nxp.com> wrote:
->
-> > From: Ulf Hansson [mailto:ulf.hansson@linaro.org]
-> > Sent: Friday, December 28, 2018 11:37 PM
-> >
-> > On Thu, 27 Dec 2018 at 18:14, Aisheng Dong <aisheng.dong@nxp.com>
-> > wrote:
-> > >
-> > > Currently attach_dev() in power domain infrastructure still does not
-> > > support multi domains case as the struct device *dev passed down from
-> > > genpd_dev_pm_attach_by_id() is a virtual PD device, it does not help
-> > > for parsing the real device information from device tree, e.g.
-> > > Device/Power IDs, Clocks and it's unware of which real power domain
-> > > the device should attach.
-> >
-> > Thanks for working on this!
-> >
-> > I would appreciate if the changelog could clarify the problem a bit.
-> > Perhaps something along the lines of the below.
-> >
->
-> Sounds good to me.
-> I will add them in commit message.
-> Thanks for the suggestion.
->
-> > "A genpd provider's ->attach_dev() callback may be invoked with a so called
-> > virtual device, which is created by genpd, at the point when a device is being
-> > attached to one of its corresponding multiple PM domains.
-> >
-> > In these cases, the genpd provider fails to look up any resource, by a
-> > clk_get() for example, for the virtual device in question. This is because, the
-> > virtual device that was created by genpd, does not have the virt_dev->of_node
-> > assigned."
-> >
-> > >
-> > > Extend the framework a bit to store the multi PM domains information
-> > > in per-device struct generic_pm_domain_data, then power domain driver
-> > > could retrieve it for necessary operations during attach_dev().
-> > >
-> > > Two new APIs genpd_is_mpd_device() and dev_gpd_mpd_data() are also
-> > > introduced to ease the driver operation.
-> > >
-> > > Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-> > > Cc: Kevin Hilman <khilman@kernel.org>
-> > > Cc: Ulf Hansson <ulf.hansson@linaro.org>
-> > > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > > Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-> > > ---
-> > > This patch is a follow-up work of the earlier discussion with Ulf
-> > > Hansson about the multi PM domains support for the attach_dev() function
-> > [1].
-> > > After a bit more thinking, this is a less intrusive implementation
-> > > with the mininum impact on the exist function definitions and calling
-> > follows.
-> > > One known little drawback is that we have to use the device driver
-> > > private data (device.drvdata) to pass down the multi domains
-> > > information in a earlier time. However, as multi PD devices are
-> > > created by domain framework, this seems to be safe to use it in domain
-> > > core code as device driver is not likely going to use it.
-> > > Anyway, if any better ideas, please let me know.
-> > >
-> > > With the two new APIs, the using can be simply as:
-> > > static int xxx_attach_dev(struct generic_pm_domain *domain,
-> > >                           struct device *dev) {
-> > >         ...
-> > >         if (genpd_is_mpd_device(dev)) {
-> > >                 mpd_data = dev_gpd_mpd_data(dev);
-> > >                 np = mpd_data->parent->of_node;
-> > >                 idx = mpd_data->index;
-> > >                 //dts parsing
-> > >                 ...
-> > >         }
-> > >         ...
-> >
-> > I think we can make this a lot less complicated. Just assign virt_dev->of_node =
-> > of_node_get(dev->of_node), somewhere in
-> > genpd_dev_pm_attach_by_id() and before calling __genpd_dev_pm_attach().
-> >
-> > Doing that, would mean the genpd provider's ->attach_dev() callback, don't
-> > have to distinguish between virtual and non-virtual devices.
-> > Instead they should be able to look up resources in the same way as they did
-> > before.
-> >
->
-> Yes, that seems like a smart way.
-> But there's still a remain problem that how about the domain index information
-> needed for attach_dev()?
->
+Hello,
 
-What do you mean by domain index?
+syzbot found the following crash on:
 
-The ->attach_dev() is given both the device and the genpd in question
-as in-parameters. Could you store the domain index as part of your
-genpd struct? No?
+HEAD commit:    195303136f19 Merge tag 'kconfig-v4.21-2' of git://git.kern..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14fcd2e7400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5e7dc790609552d7
+dashboard link: https://syzkaller.appspot.com/bug?extid=b92e4f1472a54e1c7dec
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=107db700c00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12304827400000
 
-If you are talking about using the "power-domains" specifier from the
-DT node of the device, that should then work, similar to as been done
-in:
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+b92e4f1472a54e1c7dec@syzkaller.appspotmail.com
 
-drivers/soc/ti/ti_sci_pm_domains.c
-ti_sci_pd_attach_dev()
+IPv6: ADDRCONF(NETDEV_CHANGE): team0: link becomes ready
+IPv6: ADDRCONF(NETDEV_UP): vxcan1: link is not ready
+8021q: adding VLAN 0 to HW filter on device batadv0
+------------[ cut here ]------------
+hsr_addr_subst_dest: Unknown node
+WARNING: CPU: 1 PID: 7814 at net/hsr/hsr_framereg.c:301  
+hsr_addr_subst_dest+0x6c7/0x850 net/hsr/hsr_framereg.c:301
+Kernel panic - not syncing: panic_on_warn set ...
+CPU: 1 PID: 7814 Comm: syz-executor962 Not tainted 4.20.0+ #396
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1d3/0x2c6 lib/dump_stack.c:113
+  panic+0x2ad/0x55f kernel/panic.c:189
+  __warn.cold.8+0x20/0x52 kernel/panic.c:544
+  report_bug+0x254/0x2d0 lib/bug.c:186
+  fixup_bug arch/x86/kernel/traps.c:178 [inline]
+  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:271
+  do_invalid_op+0x36/0x40 arch/x86/kernel/traps.c:290
+  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:973
+RIP: 0010:hsr_addr_subst_dest+0x6c7/0x850 net/hsr/hsr_framereg.c:301
+Code: bf dc 5f f9 0f 0b e9 ad fd ff ff e8 23 97 96 f9 48 c7 c6 20 fc f9 88  
+48 c7 c7 e0 fb f9 88 c6 05 ac 7d 4b 02 01 e8 99 dc 5f f9 <0f> 0b e9 87 fd  
+ff ff 48 89 cf e8 2a 7b da f9 e9 e7 f9 ff ff 48 89
+RSP: 0018:ffff8880a0e9ec60 EFLAGS: 00010282
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffffffff81683f55 RDI: 0000000000000005
+RBP: ffff8880a0e9ed78 R08: ffff888090ed6580 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: dffffc0000000000
+R13: ffff888086d356a0 R14: ffffed10141d3da2 R15: ffff888086d356a0
+  hsr_xmit net/hsr/hsr_forward.c:230 [inline]
+  hsr_forward_do net/hsr/hsr_forward.c:295 [inline]
+  hsr_forward_skb+0x1e68/0x28a0 net/hsr/hsr_forward.c:373
+  hsr_dev_xmit+0x71/0xa0 net/hsr/hsr_device.c:243
+  __netdev_start_xmit include/linux/netdevice.h:4382 [inline]
+  netdev_start_xmit include/linux/netdevice.h:4391 [inline]
+  xmit_one net/core/dev.c:3278 [inline]
+  dev_hard_start_xmit+0x286/0xc80 net/core/dev.c:3294
+  __dev_queue_xmit+0x2f62/0x3ac0 net/core/dev.c:3864
+  dev_queue_xmit+0x17/0x20 net/core/dev.c:3897
+  packet_snd net/packet/af_packet.c:2932 [inline]
+  packet_sendmsg+0x298a/0x6ad0 net/packet/af_packet.c:2957
+  sock_sendmsg_nosec net/socket.c:621 [inline]
+  sock_sendmsg+0xd5/0x120 net/socket.c:631
+  __sys_sendto+0x3d7/0x670 net/socket.c:1788
+  __do_sys_sendto net/socket.c:1800 [inline]
+  __se_sys_sendto net/socket.c:1796 [inline]
+  __x64_sys_sendto+0xe1/0x1a0 net/socket.c:1796
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x442129
+Code: e8 4c 06 03 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 7b 0a fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007fffb6839fa8 EFLAGS: 00000216 ORIG_RAX: 000000000000002c
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000442129
+RDX: 0000000000000011 RSI: 0000000020000140 RDI: 0000000000000003
+RBP: 0000000000000003 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000004 R11: 0000000000000216 R12: 0000000000000000
+R13: 00007fffb6839ff0 R14: 0000000000000000 R15: 0000000000000000
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
-You may also provide your own xlate callback for your genpd provider,
-like what is done in drivers/soc/tegra/powergate-bpmp. - if that
-helps!?
 
-Or am I missing something?
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-[...]
-
-Kind regards
-Uffe
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
