@@ -2,202 +2,121 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9895BC43612
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 01:07:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3E80C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 01:09:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67683208E3
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 01:07:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B5951208E3
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 01:09:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=raithlin.onmicrosoft.com header.i=@raithlin.onmicrosoft.com header.b="Arz64sUU"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="jiRT8RE5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727967AbfABBHd (ORCPT
+        id S1728034AbfABBJP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 1 Jan 2019 20:07:33 -0500
-Received: from mail-eopbgr660099.outbound.protection.outlook.com ([40.107.66.99]:43262
-        "EHLO CAN01-QB1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726194AbfABBHd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Jan 2019 20:07:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=raithlin.onmicrosoft.com; s=selector1-raithlin-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zrz7FSXmjJiIb++mxj5YXyjnHJ3p5Oy1wG7BGjFZEpA=;
- b=Arz64sUU4d6GKxV1wK81WcXaxiAw05G7Wzl9dmmmLbymtQ3sJDkrk2QdPvEIUXWuwW3cO6Een93NbCPLutRx/Xkdc2/lir2tVAjRO3rzPduO1yG4CbhJrVRfmhKF17romgFhCtuyA9klRfSmE1URLySpcxbK4Ayc8v3bWIPPngo=
-Received: from YQXPR0101MB0728.CANPRD01.PROD.OUTLOOK.COM (52.132.75.145) by
- YQXPR0101MB2246.CANPRD01.PROD.OUTLOOK.COM (52.132.80.147) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1471.20; Wed, 2 Jan 2019 01:07:28 +0000
-Received: from YQXPR0101MB0728.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::1c44:9d90:7c3f:8fe2]) by YQXPR0101MB0728.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::1c44:9d90:7c3f:8fe2%2]) with mapi id 15.20.1471.019; Wed, 2 Jan 2019
- 01:07:28 +0000
-From:   "Stephen  Bates" <sbates@raithlin.com>
-To:     Eric Wehage <Eric.Wehage@huawei.com>,
-        Bjorn Helgaas <helgaas@kernel.org>, yu <kkndyu@gmail.com>
-CC:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Jonathan Cameron <jonathan.cameron@huawei.com>,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>
-Subject: Re: How to force RC to forward p2p TLPs
-Thread-Topic: How to force RC to forward p2p TLPs
-Thread-Index: AQHUnx5WMU0tGDh35kWKmEWxpQy9mqWZ9ggAgAE3IhI=
-Date:   Wed, 2 Jan 2019 01:07:27 +0000
-Message-ID: <YQXPR0101MB07284F610E52FB61030913F1AA8C0@YQXPR0101MB0728.CANPRD01.PROD.OUTLOOK.COM>
-References: <CADayL-pxr_dpJykyiTeQDO13XmKPoKUs544zVrB2taHTVEx9Pw@mail.gmail.com>
- <20181229022923.GA159477@google.com>,<DD8FB053C05D2D4DB8AA6C93326178785997FDDC@sjceml521-mbs.china.huawei.com>
-In-Reply-To: <DD8FB053C05D2D4DB8AA6C93326178785997FDDC@sjceml521-mbs.china.huawei.com>
-Accept-Language: en-CA, en-US
-Content-Language: en-CA
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=sbates@raithlin.com; 
-x-originating-ip: [70.65.250.31]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;YQXPR0101MB2246;6:Wvw3GWOuoZyzPMMv3HVrx+7irw9zWmfdTeZLYYRvwZkix9CvjXI0+Lnr9F/mGZWQjARliJ/EQQcSoJHCM3sTYiVclSM/8UD8cmuEITlG5H3ruWth2ctZIv2uJtQ2X06UWwad7LJrMSnwT9C0ORbRPKjEykZs4ZWDQxGx6wIz6JWOk727SNO/gMSzSkUFhqVxfXdsSVKU8kS96Wd5k39YOmfFWKgupTdBf/AKe5aFNUauhzIOb7uchzGsxRxUaQBTSS3kjdbNNy8C8YeI/gzqy9V3cCUwHc49gWtXhYrTA5pQ7ZAvb3xc48eYHtGs+4koNoTwh0Qkdk1rxMjLSvmZJJsz+anUGtA7D/7zA7a/+7lOwJDoyomvEPyPXIWuh1+dBHGpXB6z8IWi6umHhmuDfss1a0tlxOM4apm+M2Yj1OP6CTNmU/2HQ41B1qFnOZfOK3TWkdkglBhwhfE/O8HZEw==;5:5cyrfy+x4YhcTK58PoRGtgnQGSyNjijkYNEyeDYD2cRFOnBvduS2VvkBQXnUUKqws3QxD92RJT6Bydki4VzVfOWqjVYmJ8SBBDvvPWRW7Rs0/FDwxx5Rj0lgVcwBIP3imKiicA06f/Hm1OnaX0wrO8loiTsgOcnQCOxHqAPyCH8=;7:G3krZbShUe7MC1u6XfnCwgtnn6CVkoDWMBnbHA52mjoeQKfW7AVlYCO7y4Gbwlof193IHap3I/GW2Yr1ancJ4qEq6AeQt8xK6B4wFDmtKtOpOGYudloZVfavZRrzMX/aOjL1FgQpEifz8Ew4/SQQ7w==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 8b7e7170-7abd-4f45-c5f6-08d6704eaa09
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(7021145)(8989299)(5600109)(711020)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(2017052603328)(7153060)(7193020);SRVR:YQXPR0101MB2246;
-x-ms-traffictypediagnostic: YQXPR0101MB2246:
-x-microsoft-antispam-prvs: <YQXPR0101MB22463EE44A5BF87624F4160BAA8C0@YQXPR0101MB2246.CANPRD01.PROD.OUTLOOK.COM>
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(3230021)(908002)(999002)(5005026)(6040522)(8220060)(2401047)(8121501046)(3002001)(93006095)(93001095)(3231475)(944501520)(52105112)(10201501046)(6041310)(20161123560045)(20161123558120)(20161123564045)(2016111802025)(20161123562045)(6043046)(201708071742011)(7699051)(76991095);SRVR:YQXPR0101MB2246;BCL:0;PCL:0;RULEID:;SRVR:YQXPR0101MB2246;
-x-forefront-prvs: 0905A6B2C7
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(376002)(136003)(39830400003)(346002)(366004)(199004)(189003)(51444003)(13464003)(53754006)(508600001)(6116002)(33656002)(6246003)(11346002)(81166006)(8936002)(3846002)(4326008)(476003)(6506007)(7696005)(99286004)(316002)(39060400002)(26005)(76176011)(68736007)(14454004)(486006)(8676002)(102836004)(81156014)(2906002)(53546011)(53936002)(54906003)(446003)(110136005)(186003)(25786009)(229853002)(256004)(305945005)(6436002)(9686003)(7736002)(86362001)(55016002)(5660300001)(71190400001)(14444005)(71200400001)(66066001)(97736004)(106356001)(105586002)(74316002);DIR:OUT;SFP:1102;SCL:1;SRVR:YQXPR0101MB2246;H:YQXPR0101MB0728.CANPRD01.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: raithlin.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 4VzADk/GQaK4Nqn8kBzRS8TUTPUQK1d5jSGq4WmdKa1Nl+7eZMFP6zM2E4JGjKG7UfPpfbvp6BTZonsED7MtA4OuitT8FIMsUHhu7DPVch8OStXAH6OXphQ4LFasvTW/VKiDbxv3G10mGQSoW/uvCEZcnpOKDJ3jkexESf8Fu6144+c7mH4wyMR6Iwtw8gOBLmsBGWGDaqPS+Fh5lowgZqDOEMzbideZtJIuiBG9MWnVrDn2AYQmipR4FDGPgvaYWLKtMAigzpVK8Nf0kRDbIOLdd10fLU8NbXZF9JBMRtNFf7yxpMdT80yhg/sBWyDC
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 1 Jan 2019 20:09:15 -0500
+Received: from ozlabs.org ([203.11.71.1]:54837 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726194AbfABBJP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Jan 2019 20:09:15 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43TtHC3jV0z9s4s;
+        Wed,  2 Jan 2019 12:09:11 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1546391352;
+        bh=nylm1KhCfsoBhkT63fCk/6vhQYHzm/+QcjPbTDYIoWY=;
+        h=Date:From:To:Cc:Subject:From;
+        b=jiRT8RE5y8Qj1Np953FgtodYfyNxJovtDkXvsNCXDoGFtWZvJRxUjXKWk4XOpzQhp
+         dkMgrd0u+TNR/ld3tIkqaGwJBbVMUMNNF3Vl0iODjnw8q0re3vRAQFzz82nB7nNesQ
+         qaOu2RxL+mc3IXBhawh2VNArp6p7IfeTEFEzJBnKvwgMlC5LxUtG0SItWmlP++wBAp
+         yHfjJbLfxNGr+jHzJ5RSufSxMZJ7nhGccBd40kCeJlTv3b4fCWy+vxztu/lI2xuSUW
+         YJBA7zx/0asKarnDFurqO3D/i3AWnFkk8wtH8At6EIkn9uD7qmhjqAE1RntAzerV/S
+         qpkDnMK6ifu1w==
+Date:   Wed, 2 Jan 2019 12:09:10 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Al Viro <viro@ZenIV.linux.org.uk>, Jan Kara <jack@suse.cz>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Phillip Potter <phil@philpotter.co.uk>,
+        Amir Goldstein <amir73il@gmail.com>
+Subject: linux-next: manual merge of the vfs tree with the ext3 tree
+Message-ID: <20190102120910.7a673e28@canb.auug.org.au>
 MIME-Version: 1.0
-X-OriginatorOrg: raithlin.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8b7e7170-7abd-4f45-c5f6-08d6704eaa09
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Jan 2019 01:07:27.9687
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 18519031-7ff4-4cbb-bbcb-c3252d330f4b
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: YQXPR0101MB2246
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/NnCFe0smkMd93ta7/3oa+hz"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+--Sig_/NnCFe0smkMd93ta7/3oa+hz
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Hi Yu
+Hi Al,
 
-As I understand it you are asking about the case where the two PCIe End Poi=
-nts (EPs) are connected below the same PCIe switch that is connected via it=
-'s Upstream Port (UPS) to a Root Port (RP) that is part of a Root  Complex =
-(RC). Do I understand this correctly?
+Today's linux-next merge of the vfs tree got a conflict in:
 
-The ECR Eric mentioned aims to implement a platform neutral method for dete=
-rmining if P2P *between* RPs is viable in a system. However I think that is=
- a bit different to your case (since your EPs are connected to the same RP =
-via a PCIe switch).
+  fs/Makefile
 
-What I *think* should be happening in your case when ACS is enabled is the =
-the TLPs should be routed to the RP and from there to some translation agen=
-t (often an IOMMU). If the IOMMU has an entry for the addresses in  the TLP=
-s then it should attempt to do a translation and forward on the TLP. If the=
- IOMMU does not have a translation (or does not exist) then the behaviour i=
-s probably ill-defined and very specific to the platform you are working on=
-.
+between commit:
 
-If the IOMMU does exist and does have a translation entry it still may not =
-support routing the TLP back to the PCI hierarchy. This again would be plat=
-form specific.
+  d44170a7ba48 ("fs: common implementation of file type")
 
-I guess what I am saying is the same as Logan and Eric. Once TLPs leave the=
- PCIe Root Port and enter the system (CPU or SOC) you leave the world of th=
-e PCI/PCIe specification and the behaviour of those TLPs will be dependant =
- on the specifics of your platform.
+from the ext3 tree and commits:
 
-Do note that if your platform and your EPs=A0supports ATS then I think the =
-behaviour can be different again because then the P2P TLPs should be able t=
-o use a translated address and you can setup ACS to allow for translated  a=
-ddresses. However we have not had access to any ATS enabled systems to work=
- on this aspect of p2pdma yet. It's on the roadmap.
+  fe43eec04841 ("vfs: Introduce fs_context, switch vfs_kern_mount() to it.")
+  82685adaccb3 ("vfs: Add configuration parser helpers")
 
-Cheers
+from the vfs tree.
 
-Stephen
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
+--=20
+Cheers,
+Stephen Rothwell
 
+diff --cc fs/Makefile
+index da0d43eb2bc5,9a0b8003f069..000000000000
+--- a/fs/Makefile
++++ b/fs/Makefile
+@@@ -13,7 -13,7 +13,7 @@@ obj-y :=3D	open.o read_write.o file_table
+  		seq_file.o xattr.o libfs.o fs-writeback.o \
+  		pnode.o splice.o sync.o utimes.o d_path.o \
+  		stack.o fs_struct.o statfs.o fs_pin.o nsfs.o \
+- 		fs_types.o
+ -		fs_context.o fs_parser.o
+++		fs_types.o fs_context.o fs_parser.o
+ =20
+  ifeq ($(CONFIG_BLOCK),y)
+  obj-y +=3D	buffer.o block_dev.o direct-io.o mpage.o
 
+--Sig_/NnCFe0smkMd93ta7/3oa+hz
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-From: Eric Wehage <Eric.Wehage@huawei.com>
-Sent: December 31, 2018 11:20 PM
-To: Bjorn Helgaas; yu
-Cc: linux-pci@vger.kernel.org; linux-kernel@vger.kernel.org; Logan Gunthorp=
-e; Stephen Bates; Jonathan Cameron; Alexander Duyck
-Subject: RE: How to force RC to forward p2p TLPs
-=A0=20
+-----BEGIN PGP SIGNATURE-----
 
-There is no method to force an RC to forward requests p2p. RC's are also no=
-t required to support p2p and whether they do or not is implementation spec=
-ific. There is also currently no PCIe based standard to determine whether a=
-n RC supports  p2p or in what capacity. Also, even if p2p is supported, it =
-might not be supported in a system that enables Virtualization (the Virtual=
-ization would have to setup p2p tables to allow it).
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwsDzYACgkQAVBC80lX
+0GyURgf/en+UO6BfIbaIPXKlEDPDl+20r/Te3xZvbqCj5MLErzEjFxzD7qGN5ZlU
+loEzuYyMkNDrWKxQvx2BHChu0Re0UD03y9FdC7XyJN9Zc44xiayw8hy4JxepFTjX
+yU0FQb/hopfQZ6sXnsBIBd4JnDlKgQ6D901qSr0l6/mXYHy0uxsx6fDNikLMvFxI
+ccQ6dyenlMd0FsM9cm1LXEhGMBJKvTvSzhVgRN3FdesRu1k7CN4BoUtljnEjRsyU
+PK7GPnlFJ19p2mKSS7EX9f1KmtzIGVv2gOlAacGrbwKOD1BoKLjiWSVrQsV2Hy/K
+l/9A7bEhHoxrHpFSIWwQxeyiUQnyzw==
+=BK9a
+-----END PGP SIGNATURE-----
 
-There is currently a PCIe ECR that has been submitted, but is undergoing re=
-view, that defines a PCIe capability for bridge devices (Root Ports and Swi=
-tch Downstream Ports) that would allow them to advertise what level of p2p =
-is supported by the device.
-
-Eric Wehage
-Huawei Principal Engineer, PCIe
-
------Original Message-----
-From: Bjorn Helgaas [mailto:helgaas@kernel.org]
-Sent: Friday, December 28, 2018 6:29 PM
-To: yu <kkndyu@gmail.com>
-Cc: linux-pci@vger.kernel.org; linux-kernel@vger.kernel.org; Logan Gunthorp=
-e <logang@deltatee.com>; Stephen Bates <sbates@raithlin.com>; Jonathan Came=
-ron <jonathan.cameron@huawei.com>; Eric Wehage <Eric.Wehage@huawei.com>; Al=
-exander Duyck <alexander.h.duyck@linux.intel.com>
-Subject: Re: How to force RC to forward p2p TLPs
-
-[+cc Logan, Stephen, Jonathan, Eric, Alex]
-
-On Sat, Dec 22, 2018 at 12:50:19PM +0800, yu wrote:
-> Hi all,
->=20
-> We have a PCIE card which has a PEX8732 switch on-board,=A0 and there=20
-> are two endpoint SOCs like graphic decoder behind the switch, and by=20
-> default the ACS is enabled in 8732.
->=20
-> We use the p2p DMA to transfer data between these two endpoint SOCs,=20
-> and if the host server is not enable ACS in BIOS, the p2p works well,=20
-> but when ACS is enabled in BIOS, the p2p is always failed. With the=20
-> help of a protocol analyzer, we can see that the TLP is redirected to=20
-> RC, and RC just discard it.
->=20
-> I tried to find how to make RC forward redirected TLP to its original=20
-> target, but nothing found, it seems this is highly related to the RC=20
-> vendors.
->=20
-> In the PCIE 4.0 spec, the section of the RC behavior of the p2p=20
-> request redirect=A0 said that ''implementation-specific logic within the=
-=20
-> RC that determines whether the request is directed towards its=20
-> original target, or blocked as an ACS Violation error. the algorithms=20
-> and specific controls for making this determination are not=20
-> architected by this spec''.
->=20
->=20
-> So is there some spec or document to describe how to set the RC? Any=20
-> suggestion is appreciated.
-
-Not that I'm aware of, but the folks I cc'd would know a lot more about thi=
-s area.
-
-Bjorn
-      =
+--Sig_/NnCFe0smkMd93ta7/3oa+hz--
