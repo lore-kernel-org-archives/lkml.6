@@ -2,302 +2,85 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF189C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 08:59:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7CC9C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 09:01:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8547A21871
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 08:59:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 76D3A218AE
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 09:01:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hXMrUOnY"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="cxC9vq+p"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729078AbfABI7u (ORCPT
+        id S1729090AbfABJBD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 03:59:50 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:39202 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729048AbfABI7r (ORCPT
+        Wed, 2 Jan 2019 04:01:03 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:40737 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729048AbfABJBD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 03:59:47 -0500
-Received: by mail-lf1-f67.google.com with SMTP id n18so20519199lfh.6
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 00:59:45 -0800 (PST)
+        Wed, 2 Jan 2019 04:01:03 -0500
+Received: by mail-pg1-f196.google.com with SMTP id z10so14346963pgp.7
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 01:01:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=rarOyscPiom4BfOyukPjF18EdM0Vr2KllAf9JRQ6xOs=;
-        b=hXMrUOnY5kfX6othwfgOCM1MWxpu49CBGcP7AmVOvFEbB7XiwDK+PR6KqVxQaEGg7y
-         anPT/E+LSiXHSoCzZO7D/t2BPT5tr7geD/5ozb/6uMio8vh3NXSCzZK2/Cm6s39kpmKa
-         Tua3Oz6YkZScDiZ30uZ2J4432iJ6Kp1JLMbcPeNCOZApc+rBZkKxNgOa7RMwvrxaGEPo
-         JQgaggbmGDXtUKuxB4YhOtnBVslkHIrKD09nbnbnei8FENLLBlBRNCCpMKAj+gaNj0/q
-         7SWH+BTzJW5AiIb0Wv2BYZJ4TpWUZKWtWc3h3sQuaDJQOesKK9DnbNrgvKQ4KH+hcxjF
-         qI8w==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=AkRnltpAfGeRTRXNHHnmiDE764q7J7pbBxvUYFDJVFU=;
+        b=cxC9vq+pO7vKsVSQbpL/aINhBdKWb45oJ1CYeoH+nlKJj8yiZz3t0RV5Tlm6ZGSo9O
+         3x/sBknxyaoU6UTMab3Jp2KucmqZytvFMLadUleVcs8vvDX1zPqJhsvLYhwF8zWIo+Fy
+         lL9zDILBisEoYVQ7f/zAESL7SAMngeR4pQpf8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=rarOyscPiom4BfOyukPjF18EdM0Vr2KllAf9JRQ6xOs=;
-        b=SfrFCusPMTopUIIS04qmdR7o9qVSAl5vrF5VjttkJGthsrV+yKQsvdIzFAo/7JwTl8
-         hAU7xxEb5s5Yk8nVgTrSJPjxG0Yh9Pocm6TAns+V4iM0LdX3xbpoO7iwjqwiKX9gekdK
-         ikFYO2xaIM3mX2Q77003Kkd8PiSlRUAtk8TLjGG3joBigzYTft69kV27RP8Vh3NqiTP0
-         8fV4a4PGf0VL9zNOZK81okJ6aL3fbN2uorn5oQ2Ca+4jLdHv/+6UqRWun8nm/x1QVGiv
-         p544uFbq7hhfnTuI6nqONDDAVu2jAzx1asXZ7B8CMcnhWnwEEteVpObST9pxgMLIRuOY
-         /xmQ==
-X-Gm-Message-State: AA+aEWYTTJNzHjKr6mfB9AY6DvJ1ab6OsikyQ4R7suoVr37wJv14j/5l
-        yzsN6FM8QWNqQvAaIl+u0fo=
-X-Google-Smtp-Source: AFSGD/UlF7IwT1L9rmiQG9sOiuefsgfcYqz2shl+JBnq0+GikF8jkxXvRK4hhzM9jimP6jmw3pkPUQ==
-X-Received: by 2002:a19:10a4:: with SMTP id 36mr20677421lfq.60.1546419584706;
-        Wed, 02 Jan 2019 00:59:44 -0800 (PST)
-Received: from localhost.localdomain (mm-79-4-214-37.mogilev.dynamic.pppoe.byfly.by. [37.214.4.79])
-        by smtp.gmail.com with ESMTPSA id 10sm7489670ljr.4.2019.01.02.00.59.42
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=AkRnltpAfGeRTRXNHHnmiDE764q7J7pbBxvUYFDJVFU=;
+        b=PF5fBYCBWW9h5ySgMqR35y6dR3EGPr3zQgAWf7nyibruWuabs1oFQiEzXq7K9vhG4m
+         ADKbGHabblFjDkg9qm9TkLMGXcGtjggzudy1NpHZw3HZC/4bUKY7neo5LZLkaLrtLAJL
+         ukZdO07EO0D3N5UDcOX0/AQWTHkjh7BNCogqEfDsgGRh50H0eoF80hnp+6zMH4eiNpn4
+         //0SHJf9fsJvf7p6uoIu7D4tl+b4IdbiMKdL4fxbKQrBjaxERmlME9AWBSx3qIQHByNU
+         tGjWJIiymnvqbKyWUGZ+WeaIIF5YmubXRci9F1F8uBQ+5+f/YZXkppgEaRWkasxUpSao
+         5Enw==
+X-Gm-Message-State: AA+aEWa/QaP78l8D6nxgPHwmjV2FXc7uYaTlpiWf2gg87+EAPYi7YUeU
+        +ESkLOLQSQiwqsgjGXoZnFmuOw==
+X-Google-Smtp-Source: AFSGD/XmfI8gL/QnZXby0GH8OWLoo3QIKrywDbzmBTqUJFfcLMTftcNO/2xbKp0lWCsjpT/Qs+cIkA==
+X-Received: by 2002:a62:5c41:: with SMTP id q62mr44606045pfb.171.1546419662341;
+        Wed, 02 Jan 2019 01:01:02 -0800 (PST)
+Received: from localhost ([122.166.131.155])
+        by smtp.gmail.com with ESMTPSA id z62sm107115922pfi.4.2019.01.02.01.01.01
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 02 Jan 2019 00:59:44 -0800 (PST)
-From:   "Uladzislau Rezki (Sony)" <urezki@gmail.com>
-To:     Michal Hocko <mhocko@suse.com>, Kees Cook <keescook@chromium.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Oleksiy Avramchenko <oleksiy.avramchenko@sonymobile.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Uladzislau Rezki (Sony)" <urezki@gmail.com>
-Subject: [RFC v3 3/3] selftests/vm: add script helper for CONFIG_TEST_VMALLOC_MODULE
-Date:   Wed,  2 Jan 2019 09:59:24 +0100
-Message-Id: <20190102085924.14145-4-urezki@gmail.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20190102085924.14145-1-urezki@gmail.com>
-References: <20190102085924.14145-1-urezki@gmail.com>
+        Wed, 02 Jan 2019 01:01:01 -0800 (PST)
+Date:   Wed, 2 Jan 2019 14:30:59 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Rajendra Nayak <rnayak@codeaurora.org>
+Cc:     andy.gross@linaro.org, robh@kernel.org, sboyd@kernel.org,
+        ulf.hansson@linaro.org, collinsd@codeaurora.org, mka@chromium.org,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 08/10] PM / Domains: Add a
+ simple_opp_to_performance_state() helper
+Message-ID: <20190102090059.lk4ejzjtk3bil66m@vireshk-i7>
+References: <20181221085622.25573-1-rnayak@codeaurora.org>
+ <20181221085622.25573-9-rnayak@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181221085622.25573-9-rnayak@codeaurora.org>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the test script for the kernel test driver to analyse vmalloc
-allocator for benchmarking and stressing purposes. It is just a kernel
-module loader. You can specify and pass different parameters in order
-to investigate allocations behaviour. See "usage" output for more
-details.
+On 21-12-18, 14:26, Rajendra Nayak wrote:
+> +unsigned int simple_opp_to_performance_state(struct generic_pm_domain *genpd,
+> +					     struct dev_pm_opp *opp,
 
-Also add basic vmalloc smoke test to the "run_vmtests" suite.
+Maybe name it as:
 
-Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
----
- tools/testing/selftests/vm/run_vmtests     |  16 +++
- tools/testing/selftests/vm/test_vmalloc.sh | 176 +++++++++++++++++++++++++++++
- 2 files changed, 192 insertions(+)
- create mode 100755 tools/testing/selftests/vm/test_vmalloc.sh
+dev_pm_opp_read_u32_prop().
 
-diff --git a/tools/testing/selftests/vm/run_vmtests b/tools/testing/selftests/vm/run_vmtests
-index 88cbe5575f0c..48ac0f757e9c 100755
---- a/tools/testing/selftests/vm/run_vmtests
-+++ b/tools/testing/selftests/vm/run_vmtests
-@@ -200,4 +200,20 @@ else
-     echo "[PASS]"
- fi
- 
-+echo "------------------------------------"
-+echo "running vmalloc stability smoke test"
-+echo "------------------------------------"
-+./test_vmalloc.sh smoke
-+ret_val=$?
-+
-+if [ $ret_val -eq 0 ]; then
-+	echo "[PASS]"
-+elif [ $ret_val -eq $ksft_skip ]; then
-+	 echo "[SKIP]"
-+	 exitcode=$ksft_skip
-+else
-+	echo "[FAIL]"
-+	exitcode=1
-+fi
-+
- exit $exitcode
-diff --git a/tools/testing/selftests/vm/test_vmalloc.sh b/tools/testing/selftests/vm/test_vmalloc.sh
-new file mode 100755
-index 000000000000..06d2bb109f06
---- /dev/null
-+++ b/tools/testing/selftests/vm/test_vmalloc.sh
-@@ -0,0 +1,176 @@
-+#!/bin/bash
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# Copyright (C) 2018 Uladzislau Rezki (Sony) <urezki@gmail.com>
-+#
-+# This is a test script for the kernel test driver to analyse vmalloc
-+# allocator. Therefore it is just a kernel module loader. You can specify
-+# and pass different parameters in order to:
-+#     a) analyse performance of vmalloc allocations;
-+#     b) stressing and stability check of vmalloc subsystem.
-+
-+TEST_NAME="vmalloc"
-+DRIVER="test_${TEST_NAME}"
-+
-+# 1 if fails
-+exitcode=1
-+
-+# Kselftest framework requirement - SKIP code is 4.
-+ksft_skip=4
-+
-+#
-+# Static templates for performance, stressing and smoke tests.
-+# Also it is possible to pass any supported parameters manualy.
-+#
-+PERF_PARAM="single_cpu_test=1 sequential_test_order=1 test_repeat_count=3"
-+SMOKE_PARAM="single_cpu_test=1 test_loop_count=10000 test_repeat_count=10"
-+STRESS_PARAM="test_repeat_count=20"
-+
-+check_test_requirements()
-+{
-+	uid=$(id -u)
-+	if [ $uid -ne 0 ]; then
-+		echo "$0: Must be run as root"
-+		exit $ksft_skip
-+	fi
-+
-+	if ! which modprobe > /dev/null 2>&1; then
-+		echo "$0: You need modprobe installed"
-+		exit $ksft_skip
-+	fi
-+
-+	if ! modinfo $DRIVER > /dev/null 2>&1; then
-+		echo "$0: You must have the following enabled in your kernel:"
-+		echo "CONFIG_TEST_VMALLOC=m"
-+		exit $ksft_skip
-+	fi
-+}
-+
-+run_perfformance_check()
-+{
-+	echo "Run performance tests to evaluate how fast vmalloc allocation is."
-+	echo "It runs all test cases on one single CPU with sequential order."
-+
-+	modprobe $DRIVER $PERF_PARAM > /dev/null 2>&1
-+	echo "Done."
-+	echo "Ccheck the kernel message buffer to see the summary."
-+}
-+
-+run_stability_check()
-+{
-+	echo "Run stability tests. In order to stress vmalloc subsystem we run"
-+	echo "all available test cases on all available CPUs simultaneously."
-+	echo "It will take time, so be patient."
-+
-+	modprobe $DRIVER $STRESS_PARAM > /dev/null 2>&1
-+	echo "Done."
-+	echo "Check the kernel ring buffer to see the summary."
-+}
-+
-+run_smoke_check()
-+{
-+	echo "Run smoke test. Note, this test provides basic coverage."
-+	echo "Please check $0 output how it can be used"
-+	echo "for deep performance analysis as well as stress testing."
-+
-+	modprobe $DRIVER $SMOKE_PARAM > /dev/null 2>&1
-+	echo "Done."
-+	echo "Check the kernel ring buffer to see the summary."
-+}
-+
-+usage()
-+{
-+	echo -n "Usage: $0 [ performance ] | [ stress ] | | [ smoke ] | "
-+	echo "manual parameters"
-+	echo
-+	echo "Valid tests and parameters:"
-+	echo
-+	modinfo $DRIVER
-+	echo
-+	echo "Example usage:"
-+	echo
-+	echo "# Shows help message"
-+	echo "./${DRIVER}.sh"
-+	echo
-+	echo "# Runs 1 test(id_1), repeats it 5 times on all online CPUs"
-+	echo "./${DRIVER}.sh run_test_mask=1 test_repeat_count=5"
-+	echo
-+	echo -n "# Runs 4 tests(id_1|id_2|id_4|id_16) on one CPU with "
-+	echo "sequential order"
-+	echo -n "./${DRIVER}.sh single_cpu_test=1 sequential_test_order=1 "
-+	echo "run_test_mask=23"
-+	echo
-+	echo -n "# Runs all tests on all online CPUs, shuffled order, repeats "
-+	echo "20 times"
-+	echo "./${DRIVER}.sh test_repeat_count=20"
-+	echo
-+	echo "# Performance analysis"
-+	echo "./${DRIVER}.sh performance"
-+	echo
-+	echo "# Stress testing"
-+	echo "./${DRIVER}.sh stress"
-+	echo
-+	exit 0
-+}
-+
-+function validate_passed_args()
-+{
-+	VALID_ARGS=`modinfo $DRIVER | awk '/parm:/ {print $2}' | sed 's/:.*//'`
-+
-+	#
-+	# Something has been passed, check it.
-+	#
-+	for passed_arg in $@; do
-+		key=${passed_arg//=*/}
-+		val="${passed_arg:$((${#key}+1))}"
-+		valid=0
-+
-+		for valid_arg in $VALID_ARGS; do
-+			if [[ $key = $valid_arg ]] && [[ $val -gt 0 ]]; then
-+				valid=1
-+				break
-+			fi
-+		done
-+
-+		if [[ $valid -ne 1 ]]; then
-+			echo "Error: key or value is not correct: ${key} $val"
-+			exit $exitcode
-+		fi
-+	done
-+}
-+
-+function run_manual_check()
-+{
-+	#
-+	# Validate passed parameters. If there is wrong one,
-+	# the script exists and does not execute further.
-+	#
-+	validate_passed_args $@
-+
-+	echo "Run the test with following parameters: $@"
-+	modprobe $DRIVER $@ > /dev/null 2>&1
-+	echo "Done."
-+	echo "Check the kernel ring buffer to see the summary."
-+}
-+
-+function run_test()
-+{
-+	if [ $# -eq 0 ]; then
-+		usage
-+	else
-+		if [[ "$1" = "performance" ]]; then
-+			run_perfformance_check
-+		elif [[ "$1" = "stress" ]]; then
-+			run_stability_check
-+		elif [[ "$1" = "smoke" ]]; then
-+			run_smoke_check
-+		else
-+			run_manual_check $@
-+		fi
-+	fi
-+}
-+
-+check_test_requirements
-+run_test $@
-+
-+exit 0
 -- 
-2.11.0
-
+viresh
