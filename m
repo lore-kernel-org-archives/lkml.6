@@ -2,302 +2,204 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7400CC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:18:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEA6EC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:21:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 381172075B
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:18:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A51692075B
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:21:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729330AbfABKSP (ORCPT
+        id S1729161AbfABKVE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 05:18:15 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:58976 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726499AbfABKSO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 05:18:14 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 21B88C0495B8;
-        Wed,  2 Jan 2019 10:18:14 +0000 (UTC)
-Received: from localhost (ovpn-8-22.pek2.redhat.com [10.72.8.22])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id A54AE5C22C;
-        Wed,  2 Jan 2019 10:18:06 +0000 (UTC)
-Date:   Wed, 2 Jan 2019 18:18:04 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     Mike Rapoport <rppt@linux.ibm.com>
-Cc:     Pingfan Liu <kernelfans@gmail.com>, linux-acpi@vger.kernel.org,
-        linux-mm@kvack.org, kexec@lists.infradead.org,
-        Tang Chen <tangchen@cn.fujitsu.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Yaowei Bai <baiyaowei@cmss.chinamobile.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Daniel Vacek <neelx@redhat.com>,
-        Mathieu Malaterre <malat@debian.org>,
-        Stefan Agner <stefan@agner.ch>, Dave Young <dyoung@redhat.com>,
-        yinghai@kernel.org, vgoyal@redhat.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv3 1/2] mm/memblock: extend the limit inferior of
- bottom-up after parsing hotplug attr
-Message-ID: <20190102101804.GD1990@MiWiFi-R3L-srv>
-References: <1545966002-3075-1-git-send-email-kernelfans@gmail.com>
- <1545966002-3075-2-git-send-email-kernelfans@gmail.com>
- <20181231084018.GA28478@rapoport-lnx>
- <CAFgQCTvQnj7zReFvH_gmfVJdPXE325o+z4Xx76fupvsLR_7H2A@mail.gmail.com>
- <20190102092749.GA22664@rapoport-lnx>
+        Wed, 2 Jan 2019 05:21:04 -0500
+Received: from mail-it1-f200.google.com ([209.85.166.200]:41833 "EHLO
+        mail-it1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728612AbfABKVE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Jan 2019 05:21:04 -0500
+Received: by mail-it1-f200.google.com with SMTP id 123so35638902itv.6
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 02:21:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=WgtcSQ+WvROBT7ufAgP/mILiNqZAG7uZin7/Asrfuno=;
+        b=Ge6ET+HasnXpNW4J5ZbPDobqqTDB8/UExCPBrUqy5zswFReRJ0s8PKxw2c5sxE2p15
+         Ve8FebIeDirGp/0E36ofIWvEfgX7NWl1f68XrU9fFui+QQL6iKpkccB6Im5FFIao4TsW
+         km5xMMbDiRktWVzWum8f+V7K6E2ndTcj6Bjnd59TMwBt48mAmS/mb2njoQuGB0tLGHvJ
+         RYD5z3cDuvnpDg5EOW5n5gZ1EzPgo7YTni3c72QacXMraJwAEEV2L4vWGiQKAWiWsMfY
+         fVPzOjT3eau6Bmm946XkZAupEJWyTD6u9nTtG21iapSBbCeMe5OeyH8u657ypx/rD+eu
+         GL2A==
+X-Gm-Message-State: AA+aEWbWT6YcD/eybLRodOH5eKFGeD9fCmKvhQ3lzZoWHYiNdqkwY0Fo
+        a3KEqj4BgMNVjjj+i03xS3rcKFvVYUv6fBX4GumZfSpxXTTJ
+X-Google-Smtp-Source: AFSGD/UtOPSX8fMBQcz8kY05o/2DUOS0BOj85toYNsNZJ2Z7QMPE4ZhHlDSMyh6R4dOGMyW3PXNjfCJWENQ7cETLnQ+RU1pfOc0U
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190102092749.GA22664@rapoport-lnx>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Wed, 02 Jan 2019 10:18:14 +0000 (UTC)
+X-Received: by 2002:a02:2b18:: with SMTP id h24mr33752738jaa.7.1546424462919;
+ Wed, 02 Jan 2019 02:21:02 -0800 (PST)
+Date:   Wed, 02 Jan 2019 02:21:02 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000c8d239057e77004f@google.com>
+Subject: KASAN: use-after-free Read in nr_rx_frame
+From:   syzbot <syzbot+72f911fa716e011378ae@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, linux-hams@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        ralf@linux-mips.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/02/19 at 11:27am, Mike Rapoport wrote:
-> On Wed, Jan 02, 2019 at 02:47:34PM +0800, Pingfan Liu wrote:
-> > On Mon, Dec 31, 2018 at 4:40 PM Mike Rapoport <rppt@linux.ibm.com> wrote:
-> > >
-> > > On Fri, Dec 28, 2018 at 11:00:01AM +0800, Pingfan Liu wrote:
-> > > > The bottom-up allocation style is introduced to cope with movable_node,
-> > > > where the limit inferior of allocation starts from kernel's end, due to
-> > > > lack of knowledge of memory hotplug info at this early time. But if later,
-> > > > hotplug info has been got, the limit inferior can be extend to 0.
-> > > > 'kexec -c' prefers to reuse this style to alloc mem at lower address,
-> > > > since if the reserved region is beyond 4G, then it requires extra mem
-> > > > (default is 16M) for swiotlb.
-> > >
-> > > I fail to understand why the availability of memory hotplug information
-> > > would allow to extend the lower limit of bottom-up memblock allocations
-> > > below the kernel. The memory in the physical range [0, kernel_start) can be
-> > > allocated as soon as the kernel memory is reserved.
-> > >
-> > Yes, the  [0, kernel_start) can be allocated at this time by some func
-> > e.g. memblock_reserve(). But there is trick. For the func like
-> > memblock_find_in_range(), this is hotplug attr checking ,,it will
-> > check the hotmovable attr in __next_mem_range()
-> > {
-> > if (movable_node_is_enabled() && memblock_is_hotpluggable(m))
-> > continue
-> > }.  So the movable memory can be safely skipped.
-> 
-> I still don't see the connection between allocating memory below
-> kernel_start and the hotplug info.
-> 
-> The check for 'end > kernel_end' in
-> 
->  	if (memblock_bottom_up() && end > kernel_end)
-> 
-> does not protect against allocation in a hotplugable area.
-> If memblock_find_in_range() is called before hotplug info is parsed it can
-> return a range in a hotplugable area.
-> 
-> The point I'd like to clarify is why allocating memory in the range [0,
-> kernel_start) cannot be done before hotplug info is available and why it is
-> safe to allocate that memory afterwards?
+Hello,
 
-Well, I think that's because we have KASLR. Before KASLR was introdueced,
-kernel is put at a low and fixed physical address. Allocating memblock
-bottom-up after kernel can make sure those kernel data is in the same node
-as kernel text itself before SRAT parsed. While [0, kernel_start) is a
-very small range, e.g on x86, it was 16 MB, which is very possibly used
-up.
+syzbot found the following crash on:
 
-But now, with KASLR enabled by default, this bottom-up after kernel text
-allocation has potential issue. E.g we have node0 (including normal zone),
-node1(including movable zone), if KASLR put kernel at top of node0, the
-next memblock allocation before SRAT parsed will stamp into movable zone
-of node1, hotplug doesn't work well any more consequently. I had
-considered this issue previously, but haven't thought of a way to fix
-it.
+HEAD commit:    e1ef035d272e Merge tag 'armsoc-defconfig' of git://git.ker..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=166315fd400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9c6a26e22579190b
+dashboard link: https://syzkaller.appspot.com/bug?extid=72f911fa716e011378ae
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=172848bb400000
 
-While it's not related to this patch. About this patchset, I didn't
-check it carefully in v2 post, and acked it. In fact the current way is
-not good, Pingfan should call __memblock_find_range_bottom_up() directly
-for crashkernel reserving. Reasons are:
-1)SRAT parsing is done, system restore to take top-down way to do
-memblock allocat.
-2)we do need to find range bottom-up if user specify crashkernel=xxM
-(without a explicit base address).
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+72f911fa716e011378ae@syzkaller.appspotmail.com
 
-Thanks
-Baoquan
+IPv6: ADDRCONF(NETDEV_UP): vxcan1: link is not ready
+8021q: adding VLAN 0 to HW filter on device batadv0
+8021q: adding VLAN 0 to HW filter on device batadv0
+==================================================================
+BUG: KASAN: use-after-free in sk_acceptq_added include/net/sock.h:855  
+[inline]
+BUG: KASAN: use-after-free in nr_rx_frame+0x1c5f/0x1d50  
+net/netrom/af_netrom.c:1012
+Read of size 4 at addr ffff8880969d07e8 by task swapper/0/0
 
-> 
-> > Thanks for your kindly review.
-> > 
-> > Regards,
-> > Pingfan
-> > 
-> > > The extents of the memory node hosting the kernel image can be used to
-> > > limit memblok allocations from that particular node, even in top-down mode.
-> > >
-> > > > Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
-> > > > Cc: Tang Chen <tangchen@cn.fujitsu.com>
-> > > > Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-> > > > Cc: Len Brown <lenb@kernel.org>
-> > > > Cc: Andrew Morton <akpm@linux-foundation.org>
-> > > > Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
-> > > > Cc: Michal Hocko <mhocko@suse.com>
-> > > > Cc: Jonathan Corbet <corbet@lwn.net>
-> > > > Cc: Yaowei Bai <baiyaowei@cmss.chinamobile.com>
-> > > > Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
-> > > > Cc: Nicholas Piggin <npiggin@gmail.com>
-> > > > Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-> > > > Cc: Daniel Vacek <neelx@redhat.com>
-> > > > Cc: Mathieu Malaterre <malat@debian.org>
-> > > > Cc: Stefan Agner <stefan@agner.ch>
-> > > > Cc: Dave Young <dyoung@redhat.com>
-> > > > Cc: Baoquan He <bhe@redhat.com>
-> > > > Cc: yinghai@kernel.org,
-> > > > Cc: vgoyal@redhat.com
-> > > > Cc: linux-kernel@vger.kernel.org
-> > > > ---
-> > > >  drivers/acpi/numa.c      |  4 ++++
-> > > >  include/linux/memblock.h |  1 +
-> > > >  mm/memblock.c            | 58 +++++++++++++++++++++++++++++-------------------
-> > > >  3 files changed, 40 insertions(+), 23 deletions(-)
-> > > >
-> > > > diff --git a/drivers/acpi/numa.c b/drivers/acpi/numa.c
-> > > > index 2746994..3eea4e4 100644
-> > > > --- a/drivers/acpi/numa.c
-> > > > +++ b/drivers/acpi/numa.c
-> > > > @@ -462,6 +462,10 @@ int __init acpi_numa_init(void)
-> > > >
-> > > >               cnt = acpi_table_parse_srat(ACPI_SRAT_TYPE_MEMORY_AFFINITY,
-> > > >                                           acpi_parse_memory_affinity, 0);
-> > > > +
-> > > > +#if defined(CONFIG_X86) || defined(CONFIG_ARM64)
-> > > > +             mark_mem_hotplug_parsed();
-> > > > +#endif
-> > > >       }
-> > > >
-> > > >       /* SLIT: System Locality Information Table */
-> > > > diff --git a/include/linux/memblock.h b/include/linux/memblock.h
-> > > > index aee299a..d89ed9e 100644
-> > > > --- a/include/linux/memblock.h
-> > > > +++ b/include/linux/memblock.h
-> > > > @@ -125,6 +125,7 @@ int memblock_reserve(phys_addr_t base, phys_addr_t size);
-> > > >  void memblock_trim_memory(phys_addr_t align);
-> > > >  bool memblock_overlaps_region(struct memblock_type *type,
-> > > >                             phys_addr_t base, phys_addr_t size);
-> > > > +void mark_mem_hotplug_parsed(void);
-> > > >  int memblock_mark_hotplug(phys_addr_t base, phys_addr_t size);
-> > > >  int memblock_clear_hotplug(phys_addr_t base, phys_addr_t size);
-> > > >  int memblock_mark_mirror(phys_addr_t base, phys_addr_t size);
-> > > > diff --git a/mm/memblock.c b/mm/memblock.c
-> > > > index 81ae63c..a3f5e46 100644
-> > > > --- a/mm/memblock.c
-> > > > +++ b/mm/memblock.c
-> > > > @@ -231,6 +231,12 @@ __memblock_find_range_top_down(phys_addr_t start, phys_addr_t end,
-> > > >       return 0;
-> > > >  }
-> > > >
-> > > > +static bool mem_hotmovable_parsed __initdata_memblock;
-> > > > +void __init_memblock mark_mem_hotplug_parsed(void)
-> > > > +{
-> > > > +     mem_hotmovable_parsed = true;
-> > > > +}
-> > > > +
-> > > >  /**
-> > > >   * memblock_find_in_range_node - find free area in given range and node
-> > > >   * @size: size of free area to find
-> > > > @@ -259,7 +265,7 @@ phys_addr_t __init_memblock memblock_find_in_range_node(phys_addr_t size,
-> > > >                                       phys_addr_t end, int nid,
-> > > >                                       enum memblock_flags flags)
-> > > >  {
-> > > > -     phys_addr_t kernel_end, ret;
-> > > > +     phys_addr_t kernel_end, ret = 0;
-> > > >
-> > > >       /* pump up @end */
-> > > >       if (end == MEMBLOCK_ALLOC_ACCESSIBLE)
-> > > > @@ -270,34 +276,40 @@ phys_addr_t __init_memblock memblock_find_in_range_node(phys_addr_t size,
-> > > >       end = max(start, end);
-> > > >       kernel_end = __pa_symbol(_end);
-> > > >
-> > > > -     /*
-> > > > -      * try bottom-up allocation only when bottom-up mode
-> > > > -      * is set and @end is above the kernel image.
-> > > > -      */
-> > > > -     if (memblock_bottom_up() && end > kernel_end) {
-> > > > -             phys_addr_t bottom_up_start;
-> > > > +     if (memblock_bottom_up()) {
-> > > > +             phys_addr_t bottom_up_start = start;
-> > > >
-> > > > -             /* make sure we will allocate above the kernel */
-> > > > -             bottom_up_start = max(start, kernel_end);
-> > > > -
-> > > > -             /* ok, try bottom-up allocation first */
-> > > > -             ret = __memblock_find_range_bottom_up(bottom_up_start, end,
-> > > > -                                                   size, align, nid, flags);
-> > > > -             if (ret)
-> > > > +             if (mem_hotmovable_parsed) {
-> > > > +                     ret = __memblock_find_range_bottom_up(
-> > > > +                             bottom_up_start, end, size, align, nid,
-> > > > +                             flags);
-> > > >                       return ret;
-> > > >
-> > > >               /*
-> > > > -              * we always limit bottom-up allocation above the kernel,
-> > > > -              * but top-down allocation doesn't have the limit, so
-> > > > -              * retrying top-down allocation may succeed when bottom-up
-> > > > -              * allocation failed.
-> > > > -              *
-> > > > -              * bottom-up allocation is expected to be fail very rarely,
-> > > > -              * so we use WARN_ONCE() here to see the stack trace if
-> > > > -              * fail happens.
-> > > > +              * if mem hotplug info is not parsed yet, try bottom-up
-> > > > +              * allocation with @end above the kernel image.
-> > > >                */
-> > > > -             WARN_ONCE(IS_ENABLED(CONFIG_MEMORY_HOTREMOVE),
-> > > > +             } else if (!mem_hotmovable_parsed && end > kernel_end) {
-> > > > +                     /* make sure we will allocate above the kernel */
-> > > > +                     bottom_up_start = max(start, kernel_end);
-> > > > +                     ret = __memblock_find_range_bottom_up(
-> > > > +                             bottom_up_start, end, size, align, nid,
-> > > > +                             flags);
-> > > > +                     if (ret)
-> > > > +                             return ret;
-> > > > +                     /*
-> > > > +                      * we always limit bottom-up allocation above the
-> > > > +                      * kernel, but top-down allocation doesn't have
-> > > > +                      * the limit, so retrying top-down allocation may
-> > > > +                      * succeed when bottom-up allocation failed.
-> > > > +                      *
-> > > > +                      * bottom-up allocation is expected to be fail
-> > > > +                      * very rarely, so we use WARN_ONCE() here to see
-> > > > +                      * the stack trace if fail happens.
-> > > > +                      */
-> > > > +                     WARN_ONCE(IS_ENABLED(CONFIG_MEMORY_HOTREMOVE),
-> > > >                         "memblock: bottom-up allocation failed, memory hotremove may be affected\n");
-> > > > +             }
-> > > >       }
-> > > >
-> > > >       return __memblock_find_range_top_down(start, end, size, align, nid,
-> > > > --
-> > > > 2.7.4
-> > > >
-> > >
-> > > --
-> > > Sincerely yours,
-> > > Mike.
-> > >
-> > 
-> 
-> -- 
-> Sincerely yours,
-> Mike.
-> 
+CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.20.0+ #3
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  <IRQ>
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1db/0x2d0 lib/dump_stack.c:113
+  print_address_description.cold+0x7c/0x20d mm/kasan/report.c:187
+  kasan_report.cold+0x1b/0x40 mm/kasan/report.c:317
+  __asan_report_load4_noabort+0x14/0x20 mm/kasan/generic_report.c:134
+  sk_acceptq_added include/net/sock.h:855 [inline]
+  nr_rx_frame+0x1c5f/0x1d50 net/netrom/af_netrom.c:1012
+  nr_loopback_timer+0x7b/0x170 net/netrom/nr_loopback.c:62
+  call_timer_fn+0x254/0x900 kernel/time/timer.c:1325
+  expire_timers kernel/time/timer.c:1362 [inline]
+  __run_timers+0x6fc/0xd50 kernel/time/timer.c:1681
+  run_timer_softirq+0x52/0xb0 kernel/time/timer.c:1694
+  __do_softirq+0x30b/0xb11 kernel/softirq.c:292
+  invoke_softirq kernel/softirq.c:373 [inline]
+  irq_exit+0x180/0x1d0 kernel/softirq.c:413
+  exiting_irq arch/x86/include/asm/apic.h:536 [inline]
+  smp_apic_timer_interrupt+0x1b7/0x760 arch/x86/kernel/apic/apic.c:1062
+  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:807
+  </IRQ>
+RIP: 0010:native_safe_halt+0x2/0x10 arch/x86/include/asm/irqflags.h:58
+Code: ff ff ff 48 89 c7 48 89 45 d8 e8 59 49 d3 f9 48 8b 45 d8 e9 ce fe ff  
+ff 48 89 df e8 48 49 d3 f9 eb 82 90 90 90 90 90 90 fb f4 <c3> 0f 1f 00 66  
+2e 0f 1f 84 00 00 00 00 00 f4 c3 90 90 90 90 90 90
+RSP: 0018:ffffffff89807c60 EFLAGS: 00000286 ORIG_RAX: ffffffffffffff13
+RAX: 1ffffffff13249e9 RBX: 1ffffffff1300f8f RCX: 0000000000000000
+RDX: dffffc0000000000 RSI: 0000000000000001 RDI: ffffffff8987b73c
+RBP: ffffffff89807d20 R08: ffffffff8987aec0 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+R13: ffffffff89807cf8 R14: 0000000000000000 R15: ffffffff89924f38
+  arch_cpu_idle+0x10/0x20 arch/x86/kernel/process.c:555
+  default_idle_call+0x36/0x90 kernel/sched/idle.c:93
+  cpuidle_idle_call kernel/sched/idle.c:153 [inline]
+  do_idle+0x386/0x5d0 kernel/sched/idle.c:262
+  cpu_startup_entry+0x1b/0x20 kernel/sched/idle.c:353
+  rest_init+0x245/0x37b init/main.c:443
+  arch_call_rest_init+0xe/0x1b
+  start_kernel+0x882/0x8bd init/main.c:741
+  x86_64_start_reservations+0x29/0x2b arch/x86/kernel/head64.c:470
+  x86_64_start_kernel+0x77/0x7b arch/x86/kernel/head64.c:451
+  secondary_startup_64+0xa4/0xb0 arch/x86/kernel/head_64.S:243
+
+Allocated by task 10788:
+  save_stack+0x45/0xd0 mm/kasan/common.c:73
+  set_track mm/kasan/common.c:85 [inline]
+  kasan_kmalloc mm/kasan/common.c:482 [inline]
+  kasan_kmalloc+0xcf/0xe0 mm/kasan/common.c:455
+  __do_kmalloc mm/slab.c:3709 [inline]
+  __kmalloc+0x15c/0x740 mm/slab.c:3718
+  kmalloc include/linux/slab.h:550 [inline]
+  sk_prot_alloc+0x19c/0x2e0 net/core/sock.c:1477
+  sk_alloc+0xd7/0x1690 net/core/sock.c:1531
+  nr_create+0xb9/0x5e0 net/netrom/af_netrom.c:436
+  __sock_create+0x532/0x930 net/socket.c:1277
+  sock_create net/socket.c:1317 [inline]
+  __sys_socket+0x106/0x260 net/socket.c:1347
+  __do_sys_socket net/socket.c:1356 [inline]
+  __se_sys_socket net/socket.c:1354 [inline]
+  __x64_sys_socket+0x73/0xb0 net/socket.c:1354
+  do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Freed by task 10834:
+  save_stack+0x45/0xd0 mm/kasan/common.c:73
+  set_track mm/kasan/common.c:85 [inline]
+  __kasan_slab_free+0x102/0x150 mm/kasan/common.c:444
+  kasan_slab_free+0xe/0x10 mm/kasan/common.c:452
+  __cache_free mm/slab.c:3485 [inline]
+  kfree+0xcf/0x230 mm/slab.c:3804
+  sk_prot_free net/core/sock.c:1514 [inline]
+  __sk_destruct+0x76d/0xa60 net/core/sock.c:1596
+  sk_destruct+0x7b/0x90 net/core/sock.c:1604
+  __sk_free+0xce/0x300 net/core/sock.c:1615
+  sk_free+0x42/0x50 net/core/sock.c:1626
+  sock_put include/net/sock.h:1703 [inline]
+  nr_release+0x337/0x3c0 net/netrom/af_netrom.c:557
+  __sock_release+0xd3/0x250 net/socket.c:579
+  sock_close+0x1b/0x30 net/socket.c:1141
+  __fput+0x3c5/0xb10 fs/file_table.c:278
+  ____fput+0x16/0x20 fs/file_table.c:309
+  task_work_run+0x1f4/0x2b0 kernel/task_work.c:113
+  get_signal+0x168d/0x19b0 kernel/signal.c:2347
+  do_signal+0x91/0x1e80 arch/x86/kernel/signal.c:816
+  exit_to_usermode_loop+0x2f7/0x3b0 arch/x86/entry/common.c:162
+  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
+  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
+  do_syscall_64+0x696/0x800 arch/x86/entry/common.c:293
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+The buggy address belongs to the object at ffff8880969d0440
+  which belongs to the cache kmalloc-2k of size 2048
+The buggy address is located 936 bytes inside of
+  2048-byte region [ffff8880969d0440, ffff8880969d0c40)
+The buggy address belongs to the page:
+page:ffffea00025a7400 count:1 mapcount:0 mapping:ffff88812c3f0c40 index:0x0  
+compound_mapcount: 0
+flags: 0x1fffc0000010200(slab|head)
+raw: 01fffc0000010200 ffffea000292f708 ffffea00023ae408 ffff88812c3f0c40
+raw: 0000000000000000 ffff8880969d0440 0000000100000003 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff8880969d0680: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8880969d0700: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> ffff8880969d0780: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                                           ^
+  ffff8880969d0800: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8880969d0880: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
