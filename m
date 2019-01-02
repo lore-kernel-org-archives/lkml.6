@@ -2,198 +2,94 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12F3EC43444
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:32:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BB00C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:33:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB10E218D0
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:32:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aTP0E6Ou"
+	by mail.kernel.org (Postfix) with ESMTP id 62083218D9
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:33:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546425235;
+	bh=k19IHa8lVf3i58ZGWRFTaexJagpxXxIM8FtACvCr9FM=;
+	h=From:Date:Subject:To:Cc:List-ID:From;
+	b=QF54G6zBY0KE6CVH6B4tqx6ar1T76SgoHQ4GcAH3wHCzQD0HvBDFxI6TWN+oPzrLX
+	 2sZREJqSWH/HTHsd6un73uQ5zY8kASNpB+ceYrj9LjVvW1CaLKN9un5XXtWtqtF43x
+	 VMscO+ALkf0ull/O4PZallumshb2B66RLA3jJldM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729477AbfABKcV (ORCPT
+        id S1729491AbfABKdy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 05:32:21 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:51750 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728287AbfABKcV (ORCPT
+        Wed, 2 Jan 2019 05:33:54 -0500
+Received: from mail-ot1-f45.google.com ([209.85.210.45]:33939 "EHLO
+        mail-ot1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728287AbfABKdy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 05:32:21 -0500
-Received: by mail-it1-f196.google.com with SMTP id w18so40373508ite.1
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 02:32:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+D4ccszRSj/KLpoKgCTt9tBlEN0s5ecSJaxVrk2vx6Q=;
-        b=aTP0E6OukAwr5mmMYJd+C9ufxSUS9M7mYrRORqRtN/+5Wq0J5LZRUK5RikQ9RpEXWy
-         e7fDvUIBFYR+c43b8YG0XaIiaWFIWaWMsQB5g567hhO722kIVZEKMVShK34xxpixjrdi
-         vxuy2M52qs/o4Xw44wv5WFNtLS3sEmqwKoPT9A39I5ljCXxWVy5vOdZnKCaPLF4PfKtn
-         i00c+Sp4I1ENGPyd/fFNpq1K/z+8UcZcFccAo3odilN6pbMUZnOLBK5xMPARY3Ld79Zx
-         v98b3OuBgdaIV05i3vrHmkM3SGyc1XDWiqdkD5GIk0WJSCvUVlImE2072Wiuax0LyKtm
-         kclg==
+        Wed, 2 Jan 2019 05:33:54 -0500
+Received: by mail-ot1-f45.google.com with SMTP id t5so26407157otk.1;
+        Wed, 02 Jan 2019 02:33:54 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+D4ccszRSj/KLpoKgCTt9tBlEN0s5ecSJaxVrk2vx6Q=;
-        b=Y95BN/f8/KwBPGGrVUz2fpy9nCsL9B8tssKO8+ROiq0iFvv92C9WI4wa0pdMJjlx80
-         xZYhAM8lbFT2OuChNnWpDJpV7gMmrvOrmsrH4StXaLAdPqcHJDFO2WuX3U62jghyTbSI
-         tQ5vowxkCOqXznSUqvk7xy0hfKwVKqVUKbUVBCYtOSK2JpI1m2oNUEOyDnDE+vgHZhxl
-         GNi4dIspkO3KdFM1Ys5P0kmSxXwRpGQ7Gp0IoI+58RvH2x7p08rz6+5OCdky7qDwBrFr
-         QVs4fPMtNmIFxRCYoKvzSjhpl1pIc8A3dqkF2QSgKOl8tu0IMTLZI8AuPHk945IBqDIk
-         bBpQ==
-X-Gm-Message-State: AJcUukdVvMwb9+touehD/UNVfq/9Cu1vkKxINCa7eWl7FOD45CuLyz7x
-        nevx9nIEYPq7mTdYsItZeCw0BfQ+x2bL1tIB5XKNuQ==
-X-Google-Smtp-Source: ALg8bN6C35S6IAj1IVO0roJaJGKpssp9DFrLJsTAnLOVTMVl5OYEtTsduHNW7kRfKodK5+VgOOjmeY4lW6XEVCtmvfs=
-X-Received: by 2002:a24:6511:: with SMTP id u17mr5477679itb.12.1546425139839;
- Wed, 02 Jan 2019 02:32:19 -0800 (PST)
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=nVz3Y5yKbCZhyG1ecgROmZxZ7Zwfdv5LHTBC1fO839I=;
+        b=W9hEcOXuvE5u0lpAUPXXcEipuY89K7X4GXyhbVQSN5G8Y32zmJ52CT5IWnapu2arsJ
+         4A0CAV5Yzser9Pr9qyp4ReR8jFKwgleVWdACo06ILWFj+MEl4RHfIdplKW9d5H3w1v+m
+         3OW/CP9WbKRJEbu5AyBUPaCHbIDk0V0z3Dpn+lxXmjU/Rh3Gb41YmV0Gn49QQAhSxsad
+         CLQu4yDRG8l3toSbnJITv0UlPJk+NhVb2IdCjgJhqx1Sbf8i17ZpEjoahFai2FHsVCOZ
+         oLemVf/Jxfh0McTkessnjsAm5701zzvxF75+1+FACP1ScxilZtyQGCHGGgbXwY5gRIEt
+         61Hg==
+X-Gm-Message-State: AJcUukea/Zv7easyv6m7Q5jhRcmwxaUrzWHJTPzbVpYQuuwOsTvySeoK
+        AyGSUJo07S9q25gRdSp5r51s+rTdYzbbkUF4Tnk=
+X-Google-Smtp-Source: ALg8bN7SXMDToSZDwBWgdyFvQ9oX+hYJVASlH5NLDEnld0oLamdZnXWG8z4F+Fs9oMn7+KL6wnAjcEFYyxoO4DAHNik=
+X-Received: by 2002:a9d:5e8c:: with SMTP id f12mr32107498otl.343.1546425233524;
+ Wed, 02 Jan 2019 02:33:53 -0800 (PST)
 MIME-Version: 1.0
-References: <000000000000ae384d057dc685c1@google.com> <1186a139-3a46-3311-5f72-bef02d403ee1@suse.cz>
- <CACT4Y+YbM7sVDg7XEpY-E9bW2dF8a6xd_Wp_dWCnCM02DbrbtA@mail.gmail.com>
- <b12b656c-04cb-6f34-e25a-f34d59e91316@suse.cz> <CACT4Y+ZFnpWiBm80YRFUhjYmoTw6_1rH2=5cAj1kqR8p7Am7HQ@mail.gmail.com>
- <a04f4ed2-da5d-99ec-5d8c-b617966a4728@suse.cz>
-In-Reply-To: <a04f4ed2-da5d-99ec-5d8c-b617966a4728@suse.cz>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Wed, 2 Jan 2019 11:32:08 +0100
-Message-ID: <CACT4Y+aLQ_wYBvcnevLXGUy9WBgrdpV43vhwTKgwmNrEfRTf6A@mail.gmail.com>
-Subject: Re: general protection fault in transparent_hugepage_enabled
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     syzbot <syzbot+a5fea9200aefd1cf4818@syzkaller.appspotmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>, Michal Hocko <mhocko@suse.com>,
-        David Rientjes <rientjes@google.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Matthew Wilcox <willy@infradead.org>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Wed, 2 Jan 2019 11:33:42 +0100
+Message-ID: <CAJZ5v0h9Xj-gqYfkJFoEyVoFQKm1hBKboPtcvmPzE0OYTLu0sA@mail.gmail.com>
+Subject: [GIT PULL] Device properties framework fixes for v4.21-rc1
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 2, 2019 at 11:24 AM Vlastimil Babka <vbabka@suse.cz> wrote:
->
-> On 1/2/19 11:03 AM, Dmitry Vyukov wrote:
-> > On Wed, Jan 2, 2019 at 10:47 AM Vlastimil Babka <vbabka@suse.cz> wrote:
-> >>
-> >> Actually the fix was folded into the patch that caused the bug, and was
-> >> already sent to and merged by Linus, commit
-> >> 7635d9cbe8327e131a1d3d8517dc186c2796ce2e
-> >
-> >
-> > But the email thread you referenced says that we need:
-> >
-> > @@ -66,6 +66,8 @@ bool transparent_hugepage_enabled(struct vm_area_struct *vma)
-> >  {
-> >   if (vma_is_anonymous(vma))
-> >   return __transparent_hugepage_enabled(vma);
-> > + if (!vma->vm_file || !vma->vm_file->f_mapping)
-> > + return false;
-> >   if (shmem_mapping(vma->vm_file->f_mapping) && shmem_huge_enabled(vma))
-> >   return __transparent_hugepage_enabled(vma);
-> >
-> > and 7635d9cbe8327e131a1d3d8517dc186c2796ce2e contains:
-> >
-> > +bool transparent_hugepage_enabled(struct vm_area_struct *vma)
-> > +{
-> > +       if (vma_is_anonymous(vma))
-> > +               return __transparent_hugepage_enabled(vma);
-> > +       if (vma_is_shmem(vma) && shmem_huge_enabled(vma))
-> > +               return __transparent_hugepage_enabled(vma);
-> > +
-> > +       return false;
-> > +}
-> >
-> > What am I missing?
->
-> Ah, the solution with vma_is_shmem() appeared later in the thread:
-> https://marc.info/?l=linux-mm&m=154567747315893&w=2
+Hi Linus,
 
-Ah, thanks, just wanted to make sure I understand what happens here.
-Then let's record this in trackable way:
+Please pull from the tag
 
-#syz fix: mm, thp, proc: report THP eligibility for each vma
+ git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
+ devprop-4.21-rc1-2
 
-> >>>>> Code: 80 3c 02 00 0f 85 ae 04 00 00 4c 8b a3 a0 00 00 00 48 b8 00 00 00 00
-> >>>>> 00 fc ff df 49 8d bc 24 b8 01 00 00 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f
-> >>>>> 85 91 04 00 00 49 8b bc 24 b8 01 00 00 e8 2d 70 e6
-> >>>>> RSP: 0018:ffff8881c2237138 EFLAGS: 00010202
-> >>>>> RAX: dffffc0000000000 RBX: ffff8881c2bdbc60 RCX: 0000000000000000
-> >>>>> RDX: 0000000000000037 RSI: ffffffff81c8fa1a RDI: 00000000000001b8
-> >>>>> RBP: ffff8881c2237160 R08: ffffed10383b25ed R09: ffffed10383b25ec
-> >>>>> R10: ffffed10383b25ec R11: ffff8881c1d92f63 R12: 0000000000000000
-> >>>>> R13: ffff8881c2bdbd00 R14: dffffc0000000000 R15: 0000000000000f5e
-> >>>>> FS:  0000000001a48880(0000) GS:ffff8881dad00000(0000) knlGS:0000000000000000
-> >>>>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> >>>>> CR2: 0000000020b58000 CR3: 00000001c2210000 CR4: 00000000001406e0
-> >>>>> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> >>>>> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> >>>>> Call Trace:
-> >>>>>   show_smap+0x167/0x580 fs/proc/task_mmu.c:805
-> >>>>>   traverse+0x344/0x7b0 fs/seq_file.c:113
-> >>>>>   seq_read+0xc76/0x1150 fs/seq_file.c:188
-> >>>>>   do_loop_readv_writev fs/read_write.c:700 [inline]
-> >>>>>   do_iter_read+0x4bc/0x670 fs/read_write.c:924
-> >>>>>   vfs_readv+0x175/0x1c0 fs/read_write.c:986
-> >>>>>   kernel_readv fs/splice.c:362 [inline]
-> >>>>>   default_file_splice_read+0x539/0xb20 fs/splice.c:417
-> >>>>>   do_splice_to+0x12e/0x190 fs/splice.c:880
-> >>>>>   splice_direct_to_actor+0x31c/0x9d0 fs/splice.c:957
-> >>>>>   do_splice_direct+0x2d4/0x420 fs/splice.c:1066
-> >>>>>   do_sendfile+0x62a/0xe50 fs/read_write.c:1439
-> >>>>>   __do_sys_sendfile64 fs/read_write.c:1494 [inline]
-> >>>>>   __se_sys_sendfile64 fs/read_write.c:1486 [inline]
-> >>>>>   __x64_sys_sendfile64+0x15d/0x250 fs/read_write.c:1486
-> >>>>>   do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-> >>>>>   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> >>>>> RIP: 0033:0x440089
-> >>>>> Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7
-> >>>>> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff
-> >>>>> ff 0f 83 5b 14 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-> >>>>> RSP: 002b:00007fff3d710a18 EFLAGS: 00000213 ORIG_RAX: 0000000000000028
-> >>>>> RAX: ffffffffffffffda RBX: 00007fff3d710a20 RCX: 0000000000440089
-> >>>>> RDX: 0000000020b58000 RSI: 0000000000000003 RDI: 0000000000000003
-> >>>>> RBP: 00000000006ca018 R08: 0000000000000010 R09: 65732f636f72702f
-> >>>>> R10: 000000000000ffff R11: 0000000000000213 R12: 0000000000401970
-> >>>>> R13: 0000000000401a00 R14: 0000000000000000 R15: 0000000000000000
-> >>>>> Modules linked in:
-> >>>>> ---[ end trace faf026efd8795e93 ]---
-> >>>>> RIP: 0010:transparent_hugepage_enabled+0x8c/0x5e0 mm/huge_memory.c:69
-> >>>>> Code: 80 3c 02 00 0f 85 ae 04 00 00 4c 8b a3 a0 00 00 00 48 b8 00 00 00 00
-> >>>>> 00 fc ff df 49 8d bc 24 b8 01 00 00 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f
-> >>>>> 85 91 04 00 00 49 8b bc 24 b8 01 00 00 e8 2d 70 e6
-> >>>>> RSP: 0018:ffff8881c2237138 EFLAGS: 00010202
-> >>>>> RAX: dffffc0000000000 RBX: ffff8881c2bdbc60 RCX: 0000000000000000
-> >>>>> RDX: 0000000000000037 RSI: ffffffff81c8fa1a RDI: 00000000000001b8
-> >>>>> RBP: ffff8881c2237160 R08: ffffed10383b25ed R09: ffffed10383b25ec
-> >>>>> R10: ffffed10383b25ec R11: ffff8881c1d92f63 R12: 0000000000000000
-> >>>>> R13: ffff8881c2bdbd00 R14: dffffc0000000000 R15: 0000000000000f5e
-> >>>>> FS:  0000000001a48880(0000) GS:ffff8881dad00000(0000) knlGS:0000000000000000
-> >>>>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> >>>>> CR2: 0000000020b58000 CR3: 00000001c2210000 CR4: 00000000001406e0
-> >>>>> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> >>>>> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> >>>>>
-> >>>>>
-> >>>>> ---
-> >>>>> This bug is generated by a bot. It may contain errors.
-> >>>>> See https://goo.gl/tpsmEJ for more information about syzbot.
-> >>>>> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> >>>>>
-> >>>>> syzbot will keep track of this bug report. See:
-> >>>>> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
-> >>>>> syzbot.
-> >>>>> syzbot can test patches for this bug, for details see:
-> >>>>> https://goo.gl/tpsmEJ#testing-patches
-> >>
->
+with top-most commit f4747b9c68b8864cac32cddc45fdcfdfafb3397c
+
+ drivers: base: swnode: check if swnode is NULL before dereferencing it
+
+on top of commit d8924c0d76aaa52e4811b5c64115d9a7f36cc73a
+
+ Merge tag 'devprop-4.21-rc1' of
+git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm
+
+to receive device properties framework fixes for v4.21-rc1.
+
+These fix two potential NULL pointer dereferences found by Coverity
+in the software nodes code introduced recently (Colin Ian King).
+
+Thanks!
+
+
+---------------
+
+Colin Ian King (2):
+      drivers: base: swnode: check if pointer p is NULL before dereferencing it
+      drivers: base: swnode: check if swnode is NULL before dereferencing it
+
+---------------
+
+ drivers/base/swnode.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
