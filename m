@@ -2,178 +2,293 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37412C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 11:36:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BD22C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 11:38:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3733218D3
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 11:36:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F21C52171F
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 11:38:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729668AbfABLgF (ORCPT
+        id S1729697AbfABLim (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 06:36:05 -0500
-Received: from mail-it1-f199.google.com ([209.85.166.199]:55428 "EHLO
-        mail-it1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727631AbfABLgF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 06:36:05 -0500
-Received: by mail-it1-f199.google.com with SMTP id j3so32886649itf.5
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 03:36:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=MXmDgYnD5vhY7VnxcK+lvh/RF8zEPtKYkgL8Hy7d2SY=;
-        b=KIl3gTVxftvV6uIUz39HpAaVc6mASnUiIvSFh6vrDLmC3nn/7UwcjE7JgQqe/us/Xb
-         uMseG0YhM4apvph+b1/16NIyKc8zCHUbyUNuDbzoxmjIq0FZ0bH3/7Xz7/0BiJ7To1gJ
-         vgmtkhvIBybpIBfC6XA3LcoS9ezO48bPVj9RoZ3o3TbqYBj8y+LlAtyEwaBidoxPnUuW
-         fWuY9TRzLToyR+9zw60ec6+EbTID0APNfyTMCDAzzaqjziRFK2+kLnaTOUpaGvCGtpax
-         MNbEQUjoGnaa9DuBULQLQpvc+gC4kPMKEBFPg4CG7OcUVaUeDB625jnGwI/0kfwwkulS
-         m2Kw==
-X-Gm-Message-State: AA+aEWb3JjbdDllSMRh+OSypSuzP0AG+BNDBTLTE5yIojOhkfSGQJbi1
-        0tdtkInRU9IcwurYYZHJmZFW4/BTJ7Kvmyk13pmNzCiASIXS
-X-Google-Smtp-Source: AFSGD/XKqc/lFvwDRWTIKTOnm6GUn9cxDWUTyt+Y6TIZlBN8tStNCftIo4LEcAcMqVWUp1Zxc3QyUZOw+VT3NqFchXnG+MgHKBgo
+        Wed, 2 Jan 2019 06:38:42 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:39758 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727631AbfABLil (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Jan 2019 06:38:41 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 089E1C05B02D;
+        Wed,  2 Jan 2019 11:38:41 +0000 (UTC)
+Received: from [10.72.12.159] (ovpn-12-159.pek2.redhat.com [10.72.12.159])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 725795D756;
+        Wed,  2 Jan 2019 11:38:36 +0000 (UTC)
+Subject: Re: [PATCH net-next 3/3] vhost: access vq metadata through kernel
+ virtual address
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20181213102713-mutt-send-email-mst@kernel.org>
+ <d70c5ac1-c805-cefd-ace1-643a2e271ba0@redhat.com>
+ <20181214073332-mutt-send-email-mst@kernel.org>
+ <2ea274df-a79a-250f-648f-12927529d78a@redhat.com>
+ <20181224125237-mutt-send-email-mst@kernel.org>
+ <b31dbf4c-d499-1d34-f39f-f10cc0febc84@redhat.com>
+ <20181225071501-mutt-send-email-mst@kernel.org>
+ <70978ed8-bf76-693a-0e11-d31b6234af5c@redhat.com>
+ <20181226092431-mutt-send-email-mst@kernel.org>
+ <8ef53a5c-ad4e-fadd-b460-18b3e589ead9@redhat.com>
+ <20181230132614-mutt-send-email-mst@kernel.org>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <16185718-e8f2-ff11-c695-aa5d9c9689f6@redhat.com>
+Date:   Wed, 2 Jan 2019 19:38:33 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-X-Received: by 2002:a24:e4cf:: with SMTP id o198mr31968201ith.20.1546428963826;
- Wed, 02 Jan 2019 03:36:03 -0800 (PST)
-Date:   Wed, 02 Jan 2019 03:36:03 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000000f35c6057e780d36@google.com>
-Subject: BUG: unable to handle kernel NULL pointer dereference in setup_kmem_cache_node
-From:   syzbot <syzbot+d6ed4ec679652b4fd4e4@syzkaller.appspotmail.com>
-To:     asmadeus@codewreck.org, davem@davemloft.net, ericvh@gmail.com,
-        linux-kernel@vger.kernel.org, lucho@ionkov.net,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        v9fs-developer@lists.sourceforge.net
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <20181230132614-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Wed, 02 Jan 2019 11:38:41 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
 
-syzbot found the following crash on:
+On 2018/12/31 上午2:30, Michael S. Tsirkin wrote:
+> On Thu, Dec 27, 2018 at 05:39:21PM +0800, Jason Wang wrote:
+>> On 2018/12/26 下午11:02, Michael S. Tsirkin wrote:
+>>> On Wed, Dec 26, 2018 at 11:57:32AM +0800, Jason Wang wrote:
+>>>> On 2018/12/25 下午8:50, Michael S. Tsirkin wrote:
+>>>>> On Tue, Dec 25, 2018 at 06:05:25PM +0800, Jason Wang wrote:
+>>>>>> On 2018/12/25 上午2:10, Michael S. Tsirkin wrote:
+>>>>>>> On Mon, Dec 24, 2018 at 03:53:16PM +0800, Jason Wang wrote:
+>>>>>>>> On 2018/12/14 下午8:36, Michael S. Tsirkin wrote:
+>>>>>>>>> On Fri, Dec 14, 2018 at 11:57:35AM +0800, Jason Wang wrote:
+>>>>>>>>>> On 2018/12/13 下午11:44, Michael S. Tsirkin wrote:
+>>>>>>>>>>> On Thu, Dec 13, 2018 at 06:10:22PM +0800, Jason Wang wrote:
+>>>>>>>>>>>> It was noticed that the copy_user() friends that was used to access
+>>>>>>>>>>>> virtqueue metdata tends to be very expensive for dataplane
+>>>>>>>>>>>> implementation like vhost since it involves lots of software check,
+>>>>>>>>>>>> speculation barrier, hardware feature toggling (e.g SMAP). The
+>>>>>>>>>>>> extra cost will be more obvious when transferring small packets.
+>>>>>>>>>>>>
+>>>>>>>>>>>> This patch tries to eliminate those overhead by pin vq metadata pages
+>>>>>>>>>>>> and access them through vmap(). During SET_VRING_ADDR, we will setup
+>>>>>>>>>>>> those mappings and memory accessors are modified to use pointers to
+>>>>>>>>>>>> access the metadata directly.
+>>>>>>>>>>>>
+>>>>>>>>>>>> Note, this was only done when device IOTLB is not enabled. We could
+>>>>>>>>>>>> use similar method to optimize it in the future.
+>>>>>>>>>>>>
+>>>>>>>>>>>> Tests shows about ~24% improvement on TX PPS when using virtio-user +
+>>>>>>>>>>>> vhost_net + xdp1 on TAP (CONFIG_HARDENED_USERCOPY is not enabled):
+>>>>>>>>>>>>
+>>>>>>>>>>>> Before: ~5.0Mpps
+>>>>>>>>>>>> After:  ~6.1Mpps
+>>>>>>>>>>>>
+>>>>>>>>>>>> Signed-off-by: Jason Wang<jasowang@redhat.com>
+>>>>>>>>>>>> ---
+>>>>>>>>>>>>        drivers/vhost/vhost.c | 178 ++++++++++++++++++++++++++++++++++++++++++
+>>>>>>>>>>>>        drivers/vhost/vhost.h |  11 +++
+>>>>>>>>>>>>        2 files changed, 189 insertions(+)
+>>>>>>>>>>>>
+>>>>>>>>>>>> diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
+>>>>>>>>>>>> index bafe39d2e637..1bd24203afb6 100644
+>>>>>>>>>>>> --- a/drivers/vhost/vhost.c
+>>>>>>>>>>>> +++ b/drivers/vhost/vhost.c
+>>>>>>>>>>>> @@ -443,6 +443,9 @@ void vhost_dev_init(struct vhost_dev *dev,
+>>>>>>>>>>>>        		vq->indirect = NULL;
+>>>>>>>>>>>>        		vq->heads = NULL;
+>>>>>>>>>>>>        		vq->dev = dev;
+>>>>>>>>>>>> +		memset(&vq->avail_ring, 0, sizeof(vq->avail_ring));
+>>>>>>>>>>>> +		memset(&vq->used_ring, 0, sizeof(vq->used_ring));
+>>>>>>>>>>>> +		memset(&vq->desc_ring, 0, sizeof(vq->desc_ring));
+>>>>>>>>>>>>        		mutex_init(&vq->mutex);
+>>>>>>>>>>>>        		vhost_vq_reset(dev, vq);
+>>>>>>>>>>>>        		if (vq->handle_kick)
+>>>>>>>>>>>> @@ -614,6 +617,102 @@ static void vhost_clear_msg(struct vhost_dev *dev)
+>>>>>>>>>>>>        	spin_unlock(&dev->iotlb_lock);
+>>>>>>>>>>>>        }
+>>>>>>>>>>>> +static int vhost_init_vmap(struct vhost_vmap *map, unsigned long uaddr,
+>>>>>>>>>>>> +			   size_t size, int write)
+>>>>>>>>>>>> +{
+>>>>>>>>>>>> +	struct page **pages;
+>>>>>>>>>>>> +	int npages = DIV_ROUND_UP(size, PAGE_SIZE);
+>>>>>>>>>>>> +	int npinned;
+>>>>>>>>>>>> +	void *vaddr;
+>>>>>>>>>>>> +
+>>>>>>>>>>>> +	pages = kmalloc_array(npages, sizeof(struct page *), GFP_KERNEL);
+>>>>>>>>>>>> +	if (!pages)
+>>>>>>>>>>>> +		return -ENOMEM;
+>>>>>>>>>>>> +
+>>>>>>>>>>>> +	npinned = get_user_pages_fast(uaddr, npages, write, pages);
+>>>>>>>>>>>> +	if (npinned != npages)
+>>>>>>>>>>>> +		goto err;
+>>>>>>>>>>>> +
+>>>>>>>>>>> As I said I have doubts about the whole approach, but this
+>>>>>>>>>>> implementation in particular isn't a good idea
+>>>>>>>>>>> as it keeps the page around forever.
+>>>>>>>> The pages wil be released during set features.
+>>>>>>>>
+>>>>>>>>
+>>>>>>>>>>> So no THP, no NUMA rebalancing,
+>>>>>>>> For THP, we will probably miss 2 or 4 pages, but does this really matter
+>>>>>>>> consider the gain we have?
+>>>>>>> We as in vhost? networking isn't the only thing guest does.
+>>>>>>> We don't even know if this guest does a lot of networking.
+>>>>>>> You don't
+>>>>>>> know what else is in this huge page. Can be something very important
+>>>>>>> that guest touches all the time.
+>>>>>> Well, the probability should be very small consider we usually give several
+>>>>>> gigabytes to guest. The rest of the pages that doesn't sit in the same
+>>>>>> hugepage with metadata can still be merged by THP.  Anyway, I can test the
+>>>>>> differences.
+>>>>> Thanks!
+>>>>>
+>>>>>>>> For NUMA rebalancing, I'm even not quite sure if
+>>>>>>>> it can helps for the case of IPC (vhost). It looks to me the worst case it
+>>>>>>>> may cause page to be thrash between nodes if vhost and userspace are running
+>>>>>>>> in two nodes.
+>>>>>>> So again it's a gain for vhost but has a completely unpredictable effect on
+>>>>>>> other functionality of the guest.
+>>>>>>>
+>>>>>>> That's what bothers me with this approach.
+>>>>>> So:
+>>>>>>
+>>>>>> - The rest of the pages could still be balanced to other nodes, no?
+>>>>>>
+>>>>>> - try to balance metadata pages (belongs to co-operate processes) itself is
+>>>>>> still questionable
+>>>>> I am not sure why. It should be easy enough to force the VCPU and vhost
+>>>>> to move (e.g. start them pinned to 1 cpu, then pin them to another one).
+>>>>> Clearly sometimes this would be necessary for load balancing reasons.
+>>>> Yes, but it looks to me the part of motivation of auto NUMA is to avoid
+>>>> manual pinning.
+>>> ... of memory. Yes.
+>>>
+>>>
+>>>>> With autonuma after a while (could take seconds but it will happen) the
+>>>>> memory will migrate.
+>>>>>
+>>>> Yes. As you mentioned during the discuss, I wonder we could do it similarly
+>>>> through mmu notifier like APIC access page in commit c24ae0dcd3e ("kvm: x86:
+>>>> Unpin and remove kvm_arch->apic_access_page")
+>>> That would be a possible approach.
+>>
+>> Yes, this looks possible, and the conversion seems not hard. Let me have a
+>> try with this.
+>>
+>>
+>> [...]
+>>
+>>
+>>>>>>>>> I don't see how a kthread makes any difference. We do have a validation
+>>>>>>>>> step which makes some difference.
+>>>>>>>> The problem is not kthread but the address of userspace address. The
+>>>>>>>> addresses of vq metadata tends to be consistent for a while, and vhost knows
+>>>>>>>> they will be frequently. SMAP doesn't help too much in this case.
+>>>>>>>>
+>>>>>>>> Thanks.
+>>>>>>> It's true for a real life applications but a malicious one
+>>>>>>> can call the setup ioctls any number of times. And SMAP is
+>>>>>>> all about malcious applications.
+>>>>>> We don't do this in the path of ioctl, there's no context switch between
+>>>>>> userspace and kernel in the worker thread. SMAP is used to prevent kernel
+>>>>>> from accessing userspace pages unexpectedly which is not the case for
+>>>>>> metadata access.
+>>>>>>
+>>>>>> Thanks
+>>>>> OK let's forget smap for now.
+>>>> Some numbers I measured:
+>>>>
+>>>> On an old Sandy bridge machine without SMAP support. Remove speculation
+>>>> barrier boost the performance from 4.6Mpps to 5.1Mpps
+>>>>
+>>>> On a newer Broadwell machine with SMAP support. Remove speculation barrier
+>>>> only gives 2%-5% improvement, disable SMAP completely through Kconfig boost
+>>>> 57% performance from 4.8Mpps to 7.5Mpps. (Vmap gives 6Mpps - 6.1Mpps, it
+>>>> only bypass SMAP for metadata).
+>>>>
+>>>> So it looks like for recent machine, SMAP becomes pain point when the copy
+>>>> is short (e.g 64B) for high PPS.
+>>>>
+>>>> Thanks
+>>> Thanks a lot for looking into this!
+>>>
+>>> So first of all users can just boot with nosmap, right?
+>>> What's wrong with that?
+>>
+>> Nothing wrong, just realize we had this kernel parameter.
+>>
+>>
+>>>    Yes it's not fine-grained but OTOH
+>>> it's easy to understand.
+>>>
+>>> And I guess this confirms that if we are going to worry
+>>> about smap enabled, we need to look into packet copies
+>>> too, not just meta-data.
+>>
+>> For packet copies, we can do batch copy which is pretty simple for the case
+>> of XDP. I've already had patches for this.
+>>
+>>
+>>> Vaguely could see a module option (off by default)
+>>> where vhost basically does user_access_begin
+>>> when it starts running, then uses unsafe accesses
+>>> in vhost and tun and then user_access_end.
+>>
+>> Using user_access_begin() is more tricky than imaged. E.g it requires:
+>>
+>> - userspace address to be validated before through access_ok() [1]
+> This part is fine I think - addresses come from the memory
+> map and when userspace supplies the memory map
+> we validate everything with access_ok.
+> Well do we validate with the iotlb too? Don't see it right now
+> so maybe not but it's easy to add.
 
-HEAD commit:    903b77c63167 Merge tag 'linux-kselftest-4.21-rc1' of git:/..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=133428e3400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=53a2f2aa0b1f7606
-dashboard link: https://syzkaller.appspot.com/bug?extid=d6ed4ec679652b4fd4e4
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
-Unfortunately, I don't have any reproducer for this crash yet.
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+d6ed4ec679652b4fd4e4@syzkaller.appspotmail.com
-
-BUG: unable to handle kernel NULL pointer dereference at 0000000000000038
-#PF error: [WRITE]
-PGD 8b2a5067 P4D 8b2a5067 PUD a53ed067 PMD 0
-Oops: 0002 [#1] PREEMPT SMP KASAN
-CPU: 1 PID: 16188 Comm: syz-executor4 Not tainted 4.20.0+ #174
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:init_arraycache mm/slab.c:562 [inline]
-RIP: 0010:__alloc_alien_cache mm/slab.c:669 [inline]
-RIP: 0010:alloc_alien_cache mm/slab.c:689 [inline]
-RIP: 0010:setup_kmem_cache_node+0x1ed/0x400 mm/slab.c:910
-Code: 63 48 63 c3 48 0f a3 05 59 9c 72 08 73 56 8b 75 b8 4d 8d 2c c6 44 89  
-e2 48 8b 7d a8 e8 fc e9 ff ff 48 83 f8 c8 49 89 c7 74 17 <c7> 40 38 00 00  
-00 00 8b 45 b0 41 89 47 3c b8 0d f0 ad ba 49 89 47
-RSP: 0018:ffff88804e827318 EFLAGS: 00010213
-RAX: 0000000000000000 RBX: 0000000000000001 RCX: 00000000006000c0
-RDX: 00000000000000a8 RSI: 0000000000000000 RDI: ffff88812c3f0040
-RBP: ffff88804e827378 R08: ffff888054cc86c0 R09: ffffed1015ce5b8f
-R10: ffffed1015ce5b8f R11: ffff8880ae72dc7b R12: 0000000000000000
-R13: ffff888095642648 R14: ffff888095642640 R15: 0000000000000000
-FS:  00007f6fef838700(0000) GS:ffff8880ae700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000000038 CR3: 000000005034d000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  setup_kmem_cache_nodes mm/slab.c:3819 [inline]
-  __do_tune_cpucache+0x165/0x220 mm/slab.c:3889
-  do_tune_cpucache+0x25/0xd0 mm/slab.c:3898
-  enable_cpucache+0x3e/0xd0 mm/slab.c:3979
-  setup_cpu_cache+0xd4/0x1e0 mm/slab.c:1821
-  __kmem_cache_create+0x191/0x230 mm/slab.c:2134
-  create_cache+0xcd/0x1f0 mm/slab_common.c:391
-  kmem_cache_create_usercopy+0x18a/0x240 mm/slab_common.c:487
-  p9_client_create+0x986/0x1674 net/9p/client.c:1054
-  v9fs_session_init+0x217/0x1bb0 fs/9p/v9fs.c:421
-  v9fs_mount+0x7c/0x8f0 fs/9p/vfs_super.c:135
-  mount_fs+0xae/0x31d fs/super.c:1261
-kobject: 'loop1' (000000003afcedd0): kobject_uevent_env
-  vfs_kern_mount.part.35+0xdc/0x4f0 fs/namespace.c:961
-kobject: 'loop1' (000000003afcedd0): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-  vfs_kern_mount fs/namespace.c:951 [inline]
-  do_new_mount fs/namespace.c:2469 [inline]
-  do_mount+0x581/0x31f0 fs/namespace.c:2801
-kobject: 'loop2' (00000000108c69f3): kobject_uevent_env
-kobject: 'loop2' (00000000108c69f3): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-  ksys_mount+0x12d/0x140 fs/namespace.c:3017
-  __do_sys_mount fs/namespace.c:3031 [inline]
-  __se_sys_mount fs/namespace.c:3028 [inline]
-  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3028
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x4579b9
-Code: fd b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 cb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f6fef837c78 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007f6fef837c90 RCX: 00000000004579b9
-RDX: 0000000020000000 RSI: 00000000200000c0 RDI: 0000000000000000
-RBP: 000000000073bf00 R08: 0000000020000240 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f6fef8386d4
-R13: 00000000004c369b R14: 00000000004d61f8 R15: 0000000000000005
-Modules linked in:
-CR2: 0000000000000038
----[ end trace c630b12329ae5f74 ]---
-RIP: 0010:init_arraycache mm/slab.c:562 [inline]
-RIP: 0010:__alloc_alien_cache mm/slab.c:669 [inline]
-RIP: 0010:alloc_alien_cache mm/slab.c:689 [inline]
-RIP: 0010:setup_kmem_cache_node+0x1ed/0x400 mm/slab.c:910
-kobject: 'loop3' (00000000e06f18ba): kobject_uevent_env
-Code: 63 48 63 c3 48 0f a3 05 59 9c 72 08 73 56 8b 75 b8 4d 8d 2c c6 44 89  
-e2 48 8b 7d a8 e8 fc e9 ff ff 48 83 f8 c8 49 89 c7 74 17 <c7> 40 38 00 00  
-00 00 8b 45 b0 41 89 47 3c b8 0d f0 ad ba 49 89 47
-kobject: 'loop3' (00000000e06f18ba): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-RSP: 0018:ffff88804e827318 EFLAGS: 00010213
-kobject: 'loop5' (00000000bc6ae381): kobject_uevent_env
-RAX: 0000000000000000 RBX: 0000000000000001 RCX: 00000000006000c0
-kobject: 'loop5' (00000000bc6ae381): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-RDX: 00000000000000a8 RSI: 0000000000000000 RDI: ffff88812c3f0040
-kobject: 'loop3' (00000000e06f18ba): kobject_uevent_env
-kobject: 'loop3' (00000000e06f18ba): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-RBP: ffff88804e827378 R08: ffff888054cc86c0 R09: ffffed1015ce5b8f
-kobject: 'loop1' (000000003afcedd0): kobject_uevent_env
-R10: ffffed1015ce5b8f R11: ffff8880ae72dc7b R12: 0000000000000000
-kobject: 'loop1' (000000003afcedd0): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-R13: ffff888095642648 R14: ffff888095642640 R15: 0000000000000000
-FS:  00007f6fef838700(0000) GS:ffff8880ae600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000400200 CR3: 000000005034d000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Yes, it's not hard.
 
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+>> - It doesn't support calling a function that does explicit schedule since
+>> SMAP/PAN state is not maintained through schedule() [2]
+>>
+>> [1] https://lwn.net/Articles/736348/
+>>
+>> [2] https://lkml.org/lkml/2018/11/23/430
+>>
+>> So calling user_access_begin() all the time when vhost is running seems
+>> pretty dangerous.
+> Yes it requires some rework e.g. to try getting memory with
+> GFP_ATOMIC. We could then do a slow path with GFP_KERNEL
+> if that fails.
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
+
+I'm not sure this is the only part that needs care. Consider all the 
+under layer network or block codes assumes a process context, it's not 
+easy to figure out all I'm afraid. And even if we could, it's hard to 
+prevent it from being added in the future.
+
+Thanks
+
+
+>
+>> For a better batched datacopy, I tend to build not only XDP but also skb in
+>> vhost in the future.
+>>
+>> Thanks
+> Sure, why not.
+>
+>>>
+>>>>>>>>>> Packet or AF_XDP benefit from
+>>>>>>>>>> accessing metadata directly, we should do it as well.
+>>>>>>>>>>
+>>>>>>>>>> Thanks
