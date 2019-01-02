@@ -2,106 +2,175 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4C7EC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 13:23:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5B4EC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 13:27:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E17A218CD
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 13:23:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B1BE21871
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 13:27:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729146AbfABNXp (ORCPT
+        id S1729577AbfABN1m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 08:23:45 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:54972 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726934AbfABNXp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 08:23:45 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B961076528;
-        Wed,  2 Jan 2019 13:23:44 +0000 (UTC)
-Received: from gondolin (dhcp-192-187.str.redhat.com [10.33.192.187])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C5D7E1001947;
-        Wed,  2 Jan 2019 13:23:40 +0000 (UTC)
-Date:   Wed, 2 Jan 2019 14:23:38 +0100
-From:   Cornelia Huck <cohuck@redhat.com>
-To:     Halil Pasic <pasic@linux.ibm.com>
-Cc:     "Wang, Wei W" <wei.w.wang@intel.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "mst@redhat.com" <mst@redhat.com>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "dgilbert@redhat.com" <dgilbert@redhat.com>
-Subject: Re: [virtio-dev] RE: [PATCH v1 0/2] Virtio: fix some vq allocation
- issues
-Message-ID: <20190102142338.15bfe876.cohuck@redhat.com>
-In-Reply-To: <20190102105314.0b4e2485.cohuck@redhat.com>
-References: <1545963986-11280-1-git-send-email-wei.w.wang@intel.com>
-        <c6746307-fae5-7652-af8d-19f560fc31d9@de.ibm.com>
-        <286AC319A985734F985F78AFA26841F73DEEA8E9@shsmsx102.ccr.corp.intel.com>
-        <20181230070600.512bbb8b@oc2783563651>
-        <286AC319A985734F985F78AFA26841F73DEEC8DF@shsmsx102.ccr.corp.intel.com>
-        <20190101004019.7f20aafa@oc2783563651>
-        <20190102105314.0b4e2485.cohuck@redhat.com>
-Organization: Red Hat GmbH
+        Wed, 2 Jan 2019 08:27:42 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:49228 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729184AbfABN1m (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Jan 2019 08:27:42 -0500
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x02DOErX143702
+        for <linux-kernel@vger.kernel.org>; Wed, 2 Jan 2019 08:27:41 -0500
+Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2pru041cbx-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 08:27:40 -0500
+Received: from localhost
+        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Wed, 2 Jan 2019 13:27:39 -0000
+Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
+        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 2 Jan 2019 13:27:36 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x02DRZAu15138826
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 2 Jan 2019 13:27:35 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C9CEFB2064;
+        Wed,  2 Jan 2019 13:27:35 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 94BE9B2065;
+        Wed,  2 Jan 2019 13:27:35 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.85.153.1])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed,  2 Jan 2019 13:27:35 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id C569916C2DBB; Wed,  2 Jan 2019 05:27:53 -0800 (PST)
+Date:   Wed, 2 Jan 2019 05:27:53 -0800
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Junchang Wang <junchangwang@gmail.com>
+Cc:     dave@stgolabs.net, josh@joshtriplett.org,
+        Jonathan Corbet <corbet@lwn.net>, rostedt@goodmis.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        jiangshanlai@gmail.com, joel@joelfernandes.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-doc@vger.kernel.org
+Subject: Re: [PATCH 2/2] torture.txt: update the list of supported torture
+ types
+Reply-To: paulmck@linux.ibm.com
+References: <1546351400-16389-1-git-send-email-junchangwang@gmail.com>
+ <1546351400-16389-3-git-send-email-junchangwang@gmail.com>
+ <20190101175510.GW4170@linux.ibm.com>
+ <CABoNC82px+072c2eKWcpjMyJX-m8Dh4=L0W6Wxw5Q+HeXoK2Pg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Wed, 02 Jan 2019 13:23:44 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CABoNC82px+072c2eKWcpjMyJX-m8Dh4=L0W6Wxw5Q+HeXoK2Pg@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 19010213-0064-0000-0000-0000038F44DA
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010331; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000272; SDB=6.01140667; UDB=6.00593598; IPR=6.00920889;
+ MB=3.00024938; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-02 13:27:39
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19010213-0065-0000-0000-00003BE09899
+Message-Id: <20190102132753.GZ4170@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-02_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901020122
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2 Jan 2019 10:53:14 +0100
-Cornelia Huck <cohuck@redhat.com> wrote:
-
-> On Tue, 1 Jan 2019 00:40:19 +0100
-> Halil Pasic <pasic@linux.ibm.com> wrote:
-
-> > As I said, at the moment I don't have a preference regarding the fix,
-> > partly because I'm not sure if "reading config inside the handler" is OK
-> > or not. Maybe Connie or Michael can help us here. I'm however sure that
-> > commit 86a5597 "virtio-balloon: VIRTIO_BALLOON_F_FREE_PAGE_HINT"
-> > breaks virtio-balloon with the ccw transport (i.e. effectively breaks 
-> > virtio-balloon on s390): it used to work before and does not work
-> > after.  
+On Wed, Jan 02, 2019 at 11:48:00AM +0800, Junchang Wang wrote:
+> On Wed, Jan 2, 2019 at 1:54 AM Paul E. McKenney <paulmck@linux.ibm.com> wrote:
+> >
+> > On Tue, Jan 01, 2019 at 10:03:20PM +0800, Junchang Wang wrote:
+> > > Torture types "rcu_bh" and "sched" were removed in commit "c770c82a23".
+> > > The name of torture type "rcu_busted" was changed to "busted" in commit
+> > > "b3c983142d". Two other types, "srcud" and "busted_srcud" were added in
+> > > commits "ca1d51ed98" and "2397d072f7", respectively. This patch updates
+> > > torture.txt accordingly.
+> > >
+> > > Signed-off-by: Junchang Wang <junchangwang@gmail.com>
+> >
+> > Given that this section of this file duplicates the rcutorture kernel boot
+> > parameters called out in Documentation/admin-guide/kernel-parameters.txt,
+> > perhaps the best way forward is to instead remove this information from
+> > Documentation/RCU/torture.txt in favor of a reference to the information
+> > (with search string) in Documentation/admin-guide/kernel-parameters.txt.
+> >
+> > Thoughts?
 > 
-> Yes, that's unfortunate.
+> Hi Paul,
 > 
-> > 
-> > AFAICT tweaking the balloon code may be simpler than tweaking the
-> > virtio-ccw (transport code). ccw_io_helper() relies on getting
-> > an interrupt when the issued IO is done. If virtio-ccw is buggy, it
-> > needs to be fixed, but I'm not sure it is.  
+> Thanks for the comment; indeed the section "MODULE PARAMETERS" in
+> torture.txt duplicates the corresponding sections in
+> kernel-parameters.txt. I can resubmit a patch that (1) removes the
+> section "MODULE PARAMETERS" in torture.txt, and (2) add a single
+> sentence saying "Module parameters are detailed in
+> Documentation/admin-guide/kernel-parameters.txt". Does that sound
+> good?
+
+A patch that did that would be quite welcome!
+
+							Thanx, Paul
+
+> Thanks,
+> --Junchang
 > 
-> I would not call virtio-ccw buggy, but it has some constraints that
-> virtio-pci apparently doesn't have (and which did not show up so far;
-> e.g. virtio-blk schedules a work item on config change, so there's no
-> deadlock there.)
+> >
+> >                                                         Thanx, Paul
+> >
+> > > ---
+> > >  Documentation/RCU/torture.txt | 15 +++++++--------
+> > >  1 file changed, 7 insertions(+), 8 deletions(-)
+> > >
+> > > diff --git a/Documentation/RCU/torture.txt b/Documentation/RCU/torture.txt
+> > > index 55918b5..6395f0b 100644
+> > > --- a/Documentation/RCU/torture.txt
+> > > +++ b/Documentation/RCU/torture.txt
+> > > @@ -155,20 +155,19 @@ torture_type    The type of RCU to test, with string values as follows:
+> > >                       along with expedited, synchronous, and polling
+> > >                       variants.
+> > >
+> > > -             "rcu_bh": rcu_read_lock_bh(), rcu_read_unlock_bh(), and
+> > > -                     call_rcu_bh(), along with expedited and synchronous
+> > > -                     variants.
+> > > -
+> > > -             "rcu_busted": This tests an intentionally incorrect version
+> > > +             "busted": This tests an intentionally incorrect version
+> > >                       of RCU in order to help test rcutorture itself.
+> > >
+> > >               "srcu": srcu_read_lock(), srcu_read_unlock() and
+> > >                       call_srcu(), along with expedited and
+> > >                       synchronous variants.
+> > >
+> > > -             "sched": preempt_disable(), preempt_enable(), and
+> > > -                     call_rcu_sched(), along with expedited,
+> > > -                     synchronous, and polling variants.
+> > > +             "srcud": A second form of srcu that dynamically allocates
+> > > +                     and frees srcu_struct to test srcu cleanup code path.
+> > > +
+> > > +             "busted_srcud": This torture type verifies rcutorture's ability
+> > > +                     to detect extensions of RCU read-side critical sections
+> > > +                     that are not handled.
+> > >
+> > >               "tasks": voluntary context switch and call_rcu_tasks(),
+> > >                       along with expedited and synchronous variants.
+> > > --
+> > > 2.7.4
+> > >
+> >
 > 
-> One way to get out of that constraint (don't interact with the config
-> space directly in the config changed handler) would be to schedule a
-> work item in virtio-ccw that calls virtio_config_changed() for the
-> device. My understanding is that delaying the notification to a work
-> queue would be fine.
 
-Unfortunately, calling virtio_config_changed() from a work item is not
-enough: That function takes the config_lock, and the virtio-ccw code to
-get the config both needs to allocate some memory and call schedule :/
-
-The best option really seems to be
-- have virtio-balloon move the handling of the config change onto a
-  workqueue or something like that, and
-- document that you cannot read/write the virtio config space from an
-  atomic context
-
-Unless someone has a better idea?
