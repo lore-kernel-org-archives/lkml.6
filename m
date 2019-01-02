@@ -2,194 +2,95 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BD68C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 01:43:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 668C0C43612
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 01:47:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF1AD208E3
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 01:43:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Lopqunwu"
+	by mail.kernel.org (Postfix) with ESMTP id 33D0E218D0
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 01:47:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728379AbfABBmo (ORCPT
+        id S1728071AbfABBrP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 1 Jan 2019 20:42:44 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:50794 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727806AbfABBmn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Jan 2019 20:42:43 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x021YMVC009235;
-        Wed, 2 Jan 2019 01:42:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=82cQUolvA5dyGeWtg4YU+neFztLWSZNFGYOSdTHtYyc=;
- b=Lopqunwua84iIIGtBtELCK6nvX9Wn6pdM5M3R6koeAmLLJJF6pbNCiekdx1ylFMkr8aJ
- QfZS1mGiXQw4xC1l2dwDT17Y6Y7I2oelQct14DUglXV9bQI3h6lsbqhx9ZNM3INan86W
- Ji/TjMjiaeURsiWSpUnJbBeNw4/f5V474yalDiycgAXurWB4dtPggROJS61UqCC8mXVn
- 33RMxzFv8aRW/XtauIkuV12j2o8tU+uXHBQnTq7p0DLejzl6/SoBP6YEj8MelOxwE+qf
- KiDJxppAb7wp8b+DLdDAga61EMIG57ul5UKcq2yhmPtbGkgNG8jYVkqKrXkbh3sJTjip mw== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by aserp2130.oracle.com with ESMTP id 2pnxee07t0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 02 Jan 2019 01:42:38 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x021gbFu020408
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 2 Jan 2019 01:42:38 GMT
-Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x021gbf0013006;
-        Wed, 2 Jan 2019 01:42:37 GMT
-Received: from [10.182.71.8] (/10.182.71.8)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 01 Jan 2019 17:42:37 -0800
-Subject: Re: [PATCH] net/mlx4_en: ensure rx_desc updating reaches HW before
- prod db updating
-To:     Tariq Toukan <tariqt@mellanox.com>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     "junxiao.bi@oracle.com" <junxiao.bi@oracle.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Saeed Mahameed <saeedm@mellanox.com>
-References: <1515728542-3060-1-git-send-email-jianchao.w.wang@oracle.com>
- <20180112163247.GB15974@ziepe.ca> <1515775567.131759.42.camel@gmail.com>
- <a40e44f4-106b-1075-8f92-f7741508372c@oracle.com>
- <af562737-4a3e-0429-1fd6-fc25c3e3f867@mellanox.com>
- <fea0aa1c-b68e-9485-3826-2dfad7824911@oracle.com>
- <53b1ac4d-a294-eb98-149e-65d7954243da@oracle.com>
- <1516376999.3606.39.camel@gmail.com>
- <dfc02a48-7d2a-56da-dc4e-d90a9fcc559c@mellanox.com>
- <339a7156-9ef1-1f3c-30b8-3cc3558d124e@mellanox.com>
- <c8b0955b-a3fc-afe2-2c67-e655ca2ee6f6@oracle.com>
- <532b4d71-e2eb-35f3-894e-1c3288e7bc3f@oracle.com>
- <1516852543.3715.43.camel@gmail.com>
- <89066a75-43db-0f62-f171-70b0abaa8ea0@oracle.com>
- <918db4ec-8c3c-aafa-4be6-0e00a99632e2@mellanox.com>
- <c60ee78e-3cee-c188-7259-e7ad393e6bae@oracle.com>
- <d9883261-e93e-400a-757c-3a81d8b6aca1@mellanox.com>
-From:   "jianchao.wang" <jianchao.w.wang@oracle.com>
-Message-ID: <61230e99-9b16-e1f2-93cf-637f0280f4df@oracle.com>
-Date:   Wed, 2 Jan 2019 09:43:56 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <d9883261-e93e-400a-757c-3a81d8b6aca1@mellanox.com>
-Content-Type: text/plain; charset=utf-8
+        Tue, 1 Jan 2019 20:47:15 -0500
+Received: from mga01.intel.com ([192.55.52.88]:23484 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727203AbfABBrP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Jan 2019 20:47:15 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Jan 2019 17:47:14 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,429,1539673200"; 
+   d="scan'208";a="122641330"
+Received: from kmsmsx152.gar.corp.intel.com ([172.21.73.87])
+  by FMSMGA003.fm.intel.com with ESMTP; 01 Jan 2019 17:47:13 -0800
+Received: from pgsmsx109.gar.corp.intel.com ([169.254.14.187]) by
+ KMSMSX152.gar.corp.intel.com ([169.254.11.13]) with mapi id 14.03.0415.000;
+ Wed, 2 Jan 2019 09:47:12 +0800
+From:   "Tan, Ley Foon" <ley.foon.tan@intel.com>
+To:     "helgaas@kernel.org" <helgaas@kernel.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "lftan.linux@gmail.com" <lftan.linux@gmail.com>
+Subject: Re: [PATCH v2 1/2] pci: altera: Add Stratix10 PCIe support
+Thread-Topic: [PATCH v2 1/2] pci: altera: Add Stratix10 PCIe support
+Thread-Index: AQHUoOJf5nxJfFbQskSLdMJODwRKs6WYcAMAgAJCOwA=
+Date:   Wed, 2 Jan 2019 01:47:11 +0000
+Message-ID: <1546393624.35646.2.camel@intel.com>
+References: <1546244693-34633-1-git-send-email-ley.foon.tan@intel.com>
+         <1546244693-34633-2-git-send-email-ley.foon.tan@intel.com>
+         <20181231151730.GD159477@google.com>
+In-Reply-To: <20181231151730.GD159477@google.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9123 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1901020012
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.226.248.90]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <ED99A248D1515F4C9A92013BA1895647@intel.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 12/31/18 12:27 AM, Tariq Toukan wrote:
-> 
-> 
-> On 1/27/2018 2:41 PM, jianchao.wang wrote:
->> Hi Tariq
->>
->> Thanks for your kindly response.
->> That's really appreciated.
->>
->> On 01/25/2018 05:54 PM, Tariq Toukan wrote:
->>>
->>>
->>> On 25/01/2018 8:25 AM, jianchao.wang wrote:
->>>> Hi Eric
->>>>
->>>> Thanks for you kindly response and suggestion.
->>>> That's really appreciated.
->>>>
->>>> Jianchao
->>>>
->>>> On 01/25/2018 11:55 AM, Eric Dumazet wrote:
->>>>> On Thu, 2018-01-25 at 11:27 +0800, jianchao.wang wrote:
->>>>>> Hi Tariq
->>>>>>
->>>>>> On 01/22/2018 10:12 AM, jianchao.wang wrote:
->>>>>>>>> On 19/01/2018 5:49 PM, Eric Dumazet wrote:
->>>>>>>>>> On Fri, 2018-01-19 at 23:16 +0800, jianchao.wang wrote:
->>>>>>>>>>> Hi Tariq
->>>>>>>>>>>
->>>>>>>>>>> Very sad that the crash was reproduced again after applied the patch.
->>>>>>>>
->>>>>>>> Memory barriers vary for different Archs, can you please share more details regarding arch and repro steps?
->>>>>>> The hardware is HP ProLiant DL380 Gen9/ProLiant DL380 Gen9, BIOS P89 12/27/2015
->>>>>>> The xen is installed. The crash occurred in DOM0.
->>>>>>> Regarding to the repro steps, it is a customer's test which does heavy disk I/O over NFS storage without any guest.
->>>>>>>
->>>>>>
->>>>>> What is the finial suggestion on this ?
->>>>>> If use wmb there, is the performance pulled down ?
->>>
->>> I want to evaluate this effect.
->>> I agree with Eric, expected impact is restricted, especially after batching the allocations.>
->>>>>
->>>>> Since https://urldefense.proofpoint.com/v2/url?u=https-3A__git.kernel.org_pub_scm_linux_kernel_git_davem_net-2Dnext.git_commit_-3Fid-3Ddad42c3038a59d27fced28ee4ec1d4a891b28155&d=DwICaQ&c=RoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65eapI_JnE&r=7WdAxUBeiTUTCy8v-7zXyr4qk7sx26ATvfo6QSTvZyQ&m=c0oI8duFkyFBILMQYDsqRApHQrOlLY_2uGiz_utcd7s&s=E4_XKmSI0B63qB0DLQ1EX_fj1bOP78ZdeYADBf33B-k&e=
->>>>>
->>>>> we batch allocations, so mlx4_en_refill_rx_buffers() is not called that often.
->>>>>
->>>>> I doubt the additional wmb() will have serious impact there.
->>>>>
->>>
->>> I will test the effect (it'll be beginning of next week).
->>> I'll update so we can make a more confident decision.
->>>
->> I have also sent patches with wmb and batching allocations to customer and let them check whether the performance is impacted.
->> And update here asap when get feedback.
->>
->>> Thanks,
->>> Tariq
->>>
-> 
-> Hi Jianchao,
-> 
-> I am interested to push this bug fix.
-> Do you want me to submit, or do it yourself?
-> Can you elaborate regarding the arch with the repro?
-> 
-> This is the patch I suggest:
-> 
-> --- a/drivers/net/ethernet/mellanox/mlx4/en_rx.c
-> +++ b/drivers/net/ethernet/mellanox/mlx4/en_rx.c
-> @@ -161,6 +161,8 @@ static bool mlx4_en_is_ring_empty(const struct 
-> mlx4_en_rx_ring *ring)
-> 
->   static inline void mlx4_en_update_rx_prod_db(struct mlx4_en_rx_ring *ring)
->   {
-> +       /* ensure rx_desc updating reaches HW before prod db updating */
-> +       wmb();
->          *ring->wqres.db.db = cpu_to_be32(ring->prod & 0xffff);
->   }
-> 
-
-Hi Tariq
-
-Happy new year !
-
-The customer provided confused test result for us.
-The fix cannot fix their issue.
-
-And we finally find a upstream fix
-5d70bd5c98d0e655bde2aae2b5251bdd44df5e71
-(net/mlx4_en: fix potential use-after-free with dma_unmap_page)
-and killed the issue during Oct 2018. That's really a long way.
-
-Please go ahead with this patch.
-
-Thanks
-Jianchao
+T24gTW9uLCAyMDE4LTEyLTMxIGF0IDA5OjE3IC0wNjAwLCBCam9ybiBIZWxnYWFzIHdyb3RlOg0K
+PiBSdW4gImdpdCBsb2cgLS1vbmVsaW5lIC0tZm9sbG93IGRyaXZlcnMvcGNpL2NvbnRyb2xsZXIv
+cGNpZS1hbHRlcmEuYyIgDQo+IGFuZA0KPiBtYWtlIHlvdXIgc3ViamVjdCBsaW5lIG1hdGNoIGlu
+IHN0eWxlLCBwaHJhc2luZywgYW5kIGNhcGl0YWxpemF0aW9uLg0KPiANCj4gSGludDoNCj4gDQo+
+IMKgIC4uLi4uLi4uLi4uLiBwY2k6IGFsdGVyYTogQWRkIFN0cmF0aXgxMCBQQ0llIHN1cHBvcnQN
+Cj4gwqAgZWY3NTM2OWE1YjlhIFBDSTogYWx0ZXJhOiBGaXggcGxhdGZvcm1fZ2V0X2lycSgpIGVy
+cm9yIGhhbmRsaW5nDQo+IMKgIGJmZGJiZjBlM2MyYSBQQ0k6IGFsdGVyYTogVXNlIHNpemU9NCBJ
+UlEgZG9tYWluIGZvciBsZWdhY3kgSU5UeA0KPiDCoCA2YWIzODA5NTc4MzggUENJOiBhbHRlcmE6
+IERyb3AgcGNpX2ZpeHVwX2lycXMoKQ0KPiDCoCA5ODE1NzkxMzE5YTAgUENJOiBhbHRlcmE6IENv
+bnZlcnQgUENJIHNjYW4gQVBJIHRvDQo+IHBjaV9zY2FuX3Jvb3RfYnVzX2JyaWRnZSgpDQo+IMKg
+IDJhNzI3NWEzZDg2NyBQQ0k6IGFsdGVyYTogRml4IFRMUF9DRkdfRFcwIGZvciBUTFAgd3JpdGUN
+Cj4gDQo+IE9uZSBvZiB0aGVzZSBpcyBub3QgbGlrZSB0aGUgb3RoZXJzLg0KT2theSwgd2lsbCBj
+aGFuZ2UgaXQuDQoNCj4gDQo+IE9uIE1vbiwgRGVjIDMxLCAyMDE4IGF0IDA0OjI0OjUyUE0gKzA4
+MDAsIExleSBGb29uIFRhbiB3cm90ZToNCj4gLi4uDQo+ID4gDQo+ID4gK3N0cnVjdCBhbHRlcmFf
+cGNpZV9kYXRhIHsNCj4gPiArCWludCAoKnRscF9yZWFkX3BrdCkoc3RydWN0IGFsdGVyYV9wY2ll
+ICpwY2llLCB1MzIgKnZhbHVlKTsNCj4gPiArCXZvaWQgKCp0bHBfd3JpdGVfcGt0KShzdHJ1Y3Qg
+YWx0ZXJhX3BjaWUgKnBjaWUsIHUzMg0KPiA+ICpoZWFkZXJzLA0KPiA+ICsJCQnCoMKgwqDCoMKg
+wqB1MzIgZGF0YSwgYm9vbCBhbGlnbik7DQo+ID4gKwlib29sICgqZ2V0X2xpbmtfc3RhdHVzKShz
+dHJ1Y3QgYWx0ZXJhX3BjaWUgKnBjaWUpOw0KPiA+ICsJaW50ICgqcnBfcmVhZF9jZmcpKHN0cnVj
+dCBhbHRlcmFfcGNpZSAqcGNpZSwgaW50IHdoZXJlLA0KPiA+ICsJCQnCoMKgwqBpbnQgc2l6ZSwg
+dTMyICp2YWx1ZSk7DQo+ID4gKwlpbnQgKCpycF93cml0ZV9jZmcpKHN0cnVjdCBhbHRlcmFfcGNp
+ZSAqcGNpZSwgdTggYnVzLCBpbnQNCj4gPiB3aGVyZSwNCj4gPiArCQkJwqDCoMKgwqBpbnQgc2l6
+ZSwgdTMyIHZhbHVlKTsNCj4gPiArCWJvb2wgczEwX2ZsYWc7CQkvKiBTdHJhdGl4IDEwICovDQo+
+IFRoaXMgaXMgT0sgaWYgeW91IG9ubHkgZXZlciBoYXZlIHR3byBwcm9ncmFtbWluZyBtb2RlbHMg
+KHRoZSBvcmlnaW5hbA0KPiBhbmQgU3RyYXRpeCAxMCkuwqDCoEJ1dCBpZiB0aGVyZSdzIGEgcG9z
+c2liaWxpdHkgb2YgbW9yZSwgYW4gaW50IG1vZGVsDQo+IHR5cGUgdGhhdCBjYW4gYmUgdGVzdGVk
+IHdpdGggYSBzd2l0Y2ggaXMgbW9yZSBleHRlbnNpYmxlLg0KPiANCj4gUGVyc29uYWxseSBJIHBy
+ZWZlciBiaXRmaWVsZHMgb3ZlciBib29sIGluIHN0cnVjdHVyZXMsIGJ1dCB1bHRpbWF0ZWx5DQo+
+IExvcmVuem8gd2lsbCB0YWtlIHRoaXMgYW5kIEkgZG9uJ3Qga25vdyB3aGV0aGVyIGhlIGhhcyBh
+IHByZWZlcmVuY2UuDQo+IA0KPiBodHRwczovL2xrbWwua2VybmVsLm9yZy9yL0NBKzU1YUZ4bmVQ
+RGlta1ZLVnR2M2dObVJHY3djOEtRNW1IWXZVeFk4c0ENCj4gUWc2eXZWWWdAbWFpbC5nbWFpbC5j
+b20NCj4gaHR0cHM6Ly9sa21sLmtlcm5lbC5vcmcvci9DQSs1NWFGektRNlBqMThUQjhwNFlyME00
+dCtTK0JzaUhIPUJKTm1uPTc2DQo+IC1OY2pUai1nQG1haWwuZ21haWwuY29tDQoNClllcywgeW91
+IGFyZSByaWdodC4gV2lsbCBjaGFuZ2UgaXQgdG8gc29tZXRoaW5nIGxpa2UgInZlcnNpb24gdHlw
+ZSIuDQoNClJlZ2FyZHMNCkxleSBGb29uDQo=
