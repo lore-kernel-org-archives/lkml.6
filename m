@@ -2,381 +2,111 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14FDDC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 17:06:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AC84C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 17:06:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C66EF2171F
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 17:06:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C796218EA
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 17:06:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uqUAtJUt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730579AbfABRGi (ORCPT
+        id S1730587AbfABRGm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 12:06:38 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:60392 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729909AbfABRGi (ORCPT
+        Wed, 2 Jan 2019 12:06:42 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:36541 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729568AbfABRGl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 12:06:38 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: ezequiel)
-        with ESMTPSA id 9D6CA27967A
-Message-ID: <4bd8e4cbb72fb4e8a70dfbc9187949dfbd578203.camel@collabora.com>
-Subject: Re: [PATCH] drm/virtio: switch to generic fbdev emulation
-From:   Ezequiel Garcia <ezequiel@collabora.com>
-To:     Gerd Hoffmann <kraxel@redhat.com>, dri-devel@lists.freedesktop.org
-Cc:     David Airlie <airlied@linux.ie>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:VIRTIO GPU DRIVER" 
-        <virtualization@lists.linux-foundation.org>
-Date:   Wed, 02 Jan 2019 14:06:29 -0300
-In-Reply-To: <20181213134915.24722-1-kraxel@redhat.com>
-References: <20181213134915.24722-1-kraxel@redhat.com>
-Organization: Collabora
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.3-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Wed, 2 Jan 2019 12:06:41 -0500
+Received: by mail-pf1-f194.google.com with SMTP id b85so15435377pfc.3
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 09:06:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=NNMFfm8TbUG0EK1ZBv6bIRDbrgZ3RA6KxsPrECi5Blk=;
+        b=uqUAtJUtHFQ/dOKF50GDJ4ZPwbnqESw2ZeVa7+6upJK4qlIH1x/iKJJt4Ztz2khGo0
+         49WaYagIms3hcDFnwCZGEpODV1m5JCItOQv/OrDNR30a7fbV1jHDU9sf1RzvLl9gudtX
+         xTZSu7NN5HsTh7qkCoJVy1UPQP48sjONlqrt9cqcXC+S8qHb5dfh9tSIk19/6B5/WG6E
+         VMEZ4+VZdua4bSGtYvh5R0tq6Wfh8lOefN4afnzLsG7vmxK1VbQeX1nnE9xYChRgZjpC
+         qbojpdVX/502rVCNfdhcqTEWdC/Xz45Ct//8BJCa86/KKLhnpVtG7PjKTWzwkWJexLuw
+         nazQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=NNMFfm8TbUG0EK1ZBv6bIRDbrgZ3RA6KxsPrECi5Blk=;
+        b=ZHKZl9DP5RfVt3WM07OaWzlr3sgjHo3NwBip3Prw7qogJVcRMQzWapSgLn5hX7wYH2
+         X2pu3Xl7zThc4A/Il50diz+VOy4XZ9fGdXHnXnz4UKiLRY6XFXzqVBREO0Qk5MQ5E9je
+         Fr5sOXF97Rt9blHEW8kTbMvCDAeJCuvFsxMGnS1jpYGoukxhbrR54HX9z0ykA8FYEhsg
+         amzuBKOMI1FweXOWuGFYrpBj2YPUF0JllPX8y7o+E3gf6bKzVcVxWeyqWonPdS0IM+qu
+         K9OF43gTx+jlaOg0l+F3WTmSUyZu1M8lUPhQy2Bj3Nwz6jUFyctFnMykeeBPaj0gbgtQ
+         rrlQ==
+X-Gm-Message-State: AA+aEWYAiAVzReTkHtpMy3MauJk3gvGJrJl6oyle+JQC+VVUdbXJphGZ
+        Gw7HTbOj5Q8VG5DHwoxGivHO2rZm64qlhA==
+X-Google-Smtp-Source: ALg8bN6jHUJDtgZUHYSl7LgHmWjBpKY9lsamfS5pvKdyfUv3a4i07h3RbKsU1EW6MvMaeKTHowSJUA==
+X-Received: by 2002:a62:cec6:: with SMTP id y189mr46843735pfg.100.1546448800201;
+        Wed, 02 Jan 2019 09:06:40 -0800 (PST)
+Received: from Ideapad-330S ([49.206.14.88])
+        by smtp.gmail.com with ESMTPSA id m11sm68836429pgh.51.2019.01.02.09.06.36
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 02 Jan 2019 09:06:39 -0800 (PST)
+Date:   Wed, 2 Jan 2019 22:36:33 +0530
+From:   b-ak <anur.bhargav@gmail.com>
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] ASoC: tlv320aic32x4: Kernel OOPS while entering DAPM standby
+ mode
+Message-ID: <20190102170633.GA9724@Ideapad-330S>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-12-13 at 14:49 +0100, Gerd Hoffmann wrote:
+During the bootup of the kernel, as soon as the DAPM framework kicks in
+it pushes the codec into standy mode.
 
-A few words explaining why the generic emulation is OK would be useful.
+The existing TVL320AIC32x4 codec driver doesn't prepare the clock in
+the probe function.
+This leads to an OOPS when the DAPM tries to put it into standy by calling
+clk_disable_unprepare()
 
-The commit might be clear for seasoned DRM developers, however
-given this driver is a nice target for those learning DRM
-(as it can be tested easily), I think having a more verbose
-history is useful.
+This patch fixes that problem.
 
-The patch looks good:
+Signed-off-by: b-ak <anur.bhargav@gmail.com>
+---
+ sound/soc/codecs/tlv320aic32x4.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Reviewed-by: Ezequiel Garcia <ezequiel@collabora.com>
-
-> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
-> ---
->  drivers/gpu/drm/virtio/virtgpu_drv.h     |  14 ---
->  drivers/gpu/drm/virtio/virtgpu_display.c |   1 -
->  drivers/gpu/drm/virtio/virtgpu_drv.c     |   9 +-
->  drivers/gpu/drm/virtio/virtgpu_fb.c      | 191 -------------------------------
->  drivers/gpu/drm/virtio/virtgpu_kms.c     |   8 --
->  5 files changed, 8 insertions(+), 215 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.h b/drivers/gpu/drm/virtio/virtgpu_drv.h
-> index 1deb41d42e..63704915f8 100644
-> --- a/drivers/gpu/drm/virtio/virtgpu_drv.h
-> +++ b/drivers/gpu/drm/virtio/virtgpu_drv.h
-> @@ -137,19 +137,10 @@ struct virtio_gpu_framebuffer {
->  #define to_virtio_gpu_framebuffer(x) \
->  	container_of(x, struct virtio_gpu_framebuffer, base)
->  
-> -struct virtio_gpu_fbdev {
-> -	struct drm_fb_helper           helper;
-> -	struct virtio_gpu_framebuffer  vgfb;
-> -	struct virtio_gpu_device       *vgdev;
-> -	struct delayed_work            work;
-> -};
-> -
->  struct virtio_gpu_mman {
->  	struct ttm_bo_device		bdev;
->  };
->  
-> -struct virtio_gpu_fbdev;
-> -
->  struct virtio_gpu_queue {
->  	struct virtqueue *vq;
->  	spinlock_t qlock;
-> @@ -180,8 +171,6 @@ struct virtio_gpu_device {
->  
->  	struct virtio_gpu_mman mman;
->  
-> -	/* pointer to fbdev info structure */
-> -	struct virtio_gpu_fbdev *vgfbdev;
->  	struct virtio_gpu_output outputs[VIRTIO_GPU_MAX_SCANOUTS];
->  	uint32_t num_scanouts;
->  
-> @@ -249,9 +238,6 @@ int virtio_gpu_mode_dumb_mmap(struct drm_file *file_priv,
->  			      uint32_t handle, uint64_t *offset_p);
->  
->  /* virtio_fb */
-> -#define VIRTIO_GPUFB_CONN_LIMIT 1
-> -int virtio_gpu_fbdev_init(struct virtio_gpu_device *vgdev);
-> -void virtio_gpu_fbdev_fini(struct virtio_gpu_device *vgdev);
->  int virtio_gpu_surface_dirty(struct virtio_gpu_framebuffer *qfb,
->  			     struct drm_clip_rect *clips,
->  			     unsigned int num_clips);
-> diff --git a/drivers/gpu/drm/virtio/virtgpu_display.c b/drivers/gpu/drm/virtio/virtgpu_display.c
-> index b5580b11a0..e1c223e18d 100644
-> --- a/drivers/gpu/drm/virtio/virtgpu_display.c
-> +++ b/drivers/gpu/drm/virtio/virtgpu_display.c
-> @@ -390,6 +390,5 @@ void virtio_gpu_modeset_fini(struct virtio_gpu_device *vgdev)
->  
->  	for (i = 0 ; i < vgdev->num_scanouts; ++i)
->  		kfree(vgdev->outputs[i].edid);
-> -	virtio_gpu_fbdev_fini(vgdev);
->  	drm_mode_config_cleanup(vgdev->ddev);
->  }
-> diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.c b/drivers/gpu/drm/virtio/virtgpu_drv.c
-> index f7f32a885a..7df50920c1 100644
-> --- a/drivers/gpu/drm/virtio/virtgpu_drv.c
-> +++ b/drivers/gpu/drm/virtio/virtgpu_drv.c
-> @@ -42,13 +42,20 @@ module_param_named(modeset, virtio_gpu_modeset, int, 0400);
->  
->  static int virtio_gpu_probe(struct virtio_device *vdev)
->  {
-> +	int ret;
-> +
->  	if (vgacon_text_force() && virtio_gpu_modeset == -1)
->  		return -EINVAL;
->  
->  	if (virtio_gpu_modeset == 0)
->  		return -EINVAL;
->  
-> -	return drm_virtio_init(&driver, vdev);
-> +	ret = drm_virtio_init(&driver, vdev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	drm_fbdev_generic_setup(vdev->priv, 32);
-> +	return 0;
->  }
->  
->  static void virtio_gpu_remove(struct virtio_device *vdev)
-> diff --git a/drivers/gpu/drm/virtio/virtgpu_fb.c b/drivers/gpu/drm/virtio/virtgpu_fb.c
-> index fb1cc8b2f1..b07584b1c2 100644
-> --- a/drivers/gpu/drm/virtio/virtgpu_fb.c
-> +++ b/drivers/gpu/drm/virtio/virtgpu_fb.c
-> @@ -27,8 +27,6 @@
->  #include <drm/drm_fb_helper.h>
->  #include "virtgpu_drv.h"
->  
-> -#define VIRTIO_GPU_FBCON_POLL_PERIOD (HZ / 60)
-> -
->  static int virtio_gpu_dirty_update(struct virtio_gpu_framebuffer *fb,
->  				   bool store, int x, int y,
->  				   int width, int height)
-> @@ -150,192 +148,3 @@ int virtio_gpu_surface_dirty(struct virtio_gpu_framebuffer *vgfb,
->  				      left, top, right - left, bottom - top);
->  	return 0;
->  }
-> -
-> -static void virtio_gpu_fb_dirty_work(struct work_struct *work)
-> -{
-> -	struct delayed_work *delayed_work = to_delayed_work(work);
-> -	struct virtio_gpu_fbdev *vfbdev =
-> -		container_of(delayed_work, struct virtio_gpu_fbdev, work);
-> -	struct virtio_gpu_framebuffer *vgfb = &vfbdev->vgfb;
-> -
-> -	virtio_gpu_dirty_update(&vfbdev->vgfb, false, vgfb->x1, vgfb->y1,
-> -				vgfb->x2 - vgfb->x1, vgfb->y2 - vgfb->y1);
-> -}
-> -
-> -static void virtio_gpu_3d_fillrect(struct fb_info *info,
-> -				   const struct fb_fillrect *rect)
-> -{
-> -	struct virtio_gpu_fbdev *vfbdev = info->par;
-> -
-> -	drm_fb_helper_sys_fillrect(info, rect);
-> -	virtio_gpu_dirty_update(&vfbdev->vgfb, true, rect->dx, rect->dy,
-> -			     rect->width, rect->height);
-> -	schedule_delayed_work(&vfbdev->work, VIRTIO_GPU_FBCON_POLL_PERIOD);
-> -}
-> -
-> -static void virtio_gpu_3d_copyarea(struct fb_info *info,
-> -				   const struct fb_copyarea *area)
-> -{
-> -	struct virtio_gpu_fbdev *vfbdev = info->par;
-> -
-> -	drm_fb_helper_sys_copyarea(info, area);
-> -	virtio_gpu_dirty_update(&vfbdev->vgfb, true, area->dx, area->dy,
-> -			   area->width, area->height);
-> -	schedule_delayed_work(&vfbdev->work, VIRTIO_GPU_FBCON_POLL_PERIOD);
-> -}
-> -
-> -static void virtio_gpu_3d_imageblit(struct fb_info *info,
-> -				    const struct fb_image *image)
-> -{
-> -	struct virtio_gpu_fbdev *vfbdev = info->par;
-> -
-> -	drm_fb_helper_sys_imageblit(info, image);
-> -	virtio_gpu_dirty_update(&vfbdev->vgfb, true, image->dx, image->dy,
-> -			     image->width, image->height);
-> -	schedule_delayed_work(&vfbdev->work, VIRTIO_GPU_FBCON_POLL_PERIOD);
-> -}
-> -
-> -static struct fb_ops virtio_gpufb_ops = {
-> -	.owner = THIS_MODULE,
-> -	DRM_FB_HELPER_DEFAULT_OPS,
-> -	.fb_fillrect = virtio_gpu_3d_fillrect,
-> -	.fb_copyarea = virtio_gpu_3d_copyarea,
-> -	.fb_imageblit = virtio_gpu_3d_imageblit,
-> -};
-> -
-> -static int virtio_gpufb_create(struct drm_fb_helper *helper,
-> -			       struct drm_fb_helper_surface_size *sizes)
-> -{
-> -	struct virtio_gpu_fbdev *vfbdev =
-> -		container_of(helper, struct virtio_gpu_fbdev, helper);
-> -	struct drm_device *dev = helper->dev;
-> -	struct virtio_gpu_device *vgdev = dev->dev_private;
-> -	struct fb_info *info;
-> -	struct drm_framebuffer *fb;
-> -	struct drm_mode_fb_cmd2 mode_cmd = {};
-> -	struct virtio_gpu_object *obj;
-> -	uint32_t format, size;
-> -	int ret;
-> -
-> -	mode_cmd.width = sizes->surface_width;
-> -	mode_cmd.height = sizes->surface_height;
-> -	mode_cmd.pitches[0] = mode_cmd.width * 4;
-> -	mode_cmd.pixel_format = DRM_FORMAT_HOST_XRGB8888;
-> -
-> -	format = virtio_gpu_translate_format(mode_cmd.pixel_format);
-> -	if (format == 0)
-> -		return -EINVAL;
-> -
-> -	size = mode_cmd.pitches[0] * mode_cmd.height;
-> -	obj = virtio_gpu_alloc_object(dev, size, false, true);
-> -	if (IS_ERR(obj))
-> -		return PTR_ERR(obj);
-> -
-> -	virtio_gpu_cmd_create_resource(vgdev, obj, format,
-> -				       mode_cmd.width, mode_cmd.height);
-> -
-> -	ret = virtio_gpu_object_kmap(obj);
-> -	if (ret) {
-> -		DRM_ERROR("failed to kmap fb %d\n", ret);
-> -		goto err_obj_vmap;
-> -	}
-> -
-> -	/* attach the object to the resource */
-> -	ret = virtio_gpu_object_attach(vgdev, obj, NULL);
-> -	if (ret)
-> -		goto err_obj_attach;
-> -
-> -	info = drm_fb_helper_alloc_fbi(helper);
-> -	if (IS_ERR(info)) {
-> -		ret = PTR_ERR(info);
-> -		goto err_fb_alloc;
-> -	}
-> -
-> -	info->par = helper;
-> -
-> -	ret = virtio_gpu_framebuffer_init(dev, &vfbdev->vgfb,
-> -					  &mode_cmd, &obj->gem_base);
-> -	if (ret)
-> -		goto err_fb_alloc;
-> -
-> -	fb = &vfbdev->vgfb.base;
-> -
-> -	vfbdev->helper.fb = fb;
-> -
-> -	strcpy(info->fix.id, "virtiodrmfb");
-> -	info->fbops = &virtio_gpufb_ops;
-> -	info->pixmap.flags = FB_PIXMAP_SYSTEM;
-> -
-> -	info->screen_buffer = obj->vmap;
-> -	info->screen_size = obj->gem_base.size;
-> -	drm_fb_helper_fill_fix(info, fb->pitches[0], fb->format->depth);
-> -	drm_fb_helper_fill_var(info, &vfbdev->helper,
-> -			       sizes->fb_width, sizes->fb_height);
-> -
-> -	info->fix.mmio_start = 0;
-> -	info->fix.mmio_len = 0;
-> -	return 0;
-> -
-> -err_fb_alloc:
-> -	virtio_gpu_object_detach(vgdev, obj);
-> -err_obj_attach:
-> -err_obj_vmap:
-> -	virtio_gpu_gem_free_object(&obj->gem_base);
-> -	return ret;
-> -}
-> -
-> -static int virtio_gpu_fbdev_destroy(struct drm_device *dev,
-> -				    struct virtio_gpu_fbdev *vgfbdev)
-> -{
-> -	struct virtio_gpu_framebuffer *vgfb = &vgfbdev->vgfb;
-> -
-> -	drm_fb_helper_unregister_fbi(&vgfbdev->helper);
-> -
-> -	if (vgfb->base.obj[0])
-> -		vgfb->base.obj[0] = NULL;
-> -	drm_fb_helper_fini(&vgfbdev->helper);
-> -	drm_framebuffer_cleanup(&vgfb->base);
-> -
-> -	return 0;
-> -}
-> -static const struct drm_fb_helper_funcs virtio_gpu_fb_helper_funcs = {
-> -	.fb_probe = virtio_gpufb_create,
-> -};
-> -
-> -int virtio_gpu_fbdev_init(struct virtio_gpu_device *vgdev)
-> -{
-> -	struct virtio_gpu_fbdev *vgfbdev;
-> -	int bpp_sel = 32; /* TODO: parameter from somewhere? */
-> -	int ret;
-> -
-> -	vgfbdev = kzalloc(sizeof(struct virtio_gpu_fbdev), GFP_KERNEL);
-> -	if (!vgfbdev)
-> -		return -ENOMEM;
-> -
-> -	vgfbdev->vgdev = vgdev;
-> -	vgdev->vgfbdev = vgfbdev;
-> -	INIT_DELAYED_WORK(&vgfbdev->work, virtio_gpu_fb_dirty_work);
-> -
-> -	drm_fb_helper_prepare(vgdev->ddev, &vgfbdev->helper,
-> -			      &virtio_gpu_fb_helper_funcs);
-> -	ret = drm_fb_helper_init(vgdev->ddev, &vgfbdev->helper,
-> -				 VIRTIO_GPUFB_CONN_LIMIT);
-> -	if (ret) {
-> -		kfree(vgfbdev);
-> -		return ret;
-> -	}
-> -
-> -	drm_fb_helper_single_add_all_connectors(&vgfbdev->helper);
-> -	drm_fb_helper_initial_config(&vgfbdev->helper, bpp_sel);
-> -	return 0;
-> -}
-> -
-> -void virtio_gpu_fbdev_fini(struct virtio_gpu_device *vgdev)
-> -{
-> -	if (!vgdev->vgfbdev)
-> -		return;
-> -
-> -	virtio_gpu_fbdev_destroy(vgdev->ddev, vgdev->vgfbdev);
-> -	kfree(vgdev->vgfbdev);
-> -	vgdev->vgfbdev = NULL;
-> -}
-> diff --git a/drivers/gpu/drm/virtio/virtgpu_kms.c b/drivers/gpu/drm/virtio/virtgpu_kms.c
-> index 3af6181c05..1072064a0d 100644
-> --- a/drivers/gpu/drm/virtio/virtgpu_kms.c
-> +++ b/drivers/gpu/drm/virtio/virtgpu_kms.c
-> @@ -28,11 +28,6 @@
->  #include <drm/drmP.h>
->  #include "virtgpu_drv.h"
->  
-> -static int virtio_gpu_fbdev = 1;
-> -
-> -MODULE_PARM_DESC(fbdev, "Disable/Enable framebuffer device & console");
-> -module_param_named(fbdev, virtio_gpu_fbdev, int, 0400);
-> -
->  static void virtio_gpu_config_changed_work_func(struct work_struct *work)
->  {
->  	struct virtio_gpu_device *vgdev =
-> @@ -212,9 +207,6 @@ int virtio_gpu_driver_load(struct drm_device *dev, unsigned long flags)
->  	virtio_gpu_cmd_get_display_info(vgdev);
->  	wait_event_timeout(vgdev->resp_wq, !vgdev->display_info_pending,
->  			   5 * HZ);
-> -	if (virtio_gpu_fbdev)
-> -		virtio_gpu_fbdev_init(vgdev);
-> -
->  	return 0;
->  
->  err_modeset:
-
+diff --git a/sound/soc/codecs/tlv320aic32x4.c b/sound/soc/codecs/tlv320aic32x4.c
+index e2b5a11b16d1..7cf363595abd 100644
+--- a/sound/soc/codecs/tlv320aic32x4.c
++++ b/sound/soc/codecs/tlv320aic32x4.c
+@@ -1167,6 +1167,12 @@ int aic32x4_probe(struct device *dev, struct regmap *regmap)
+ 	if (IS_ERR(aic32x4->mclk)) {
+ 		dev_err(dev, "Failed getting the mclk. The current implementation does not support the usage of this codec without mclk\n");
+ 		return PTR_ERR(aic32x4->mclk);
++	} else {
++		ret = clk_prepare_enable(aic32x4->mclk);
++		if (ret != 0) {
++			dev_err(dev, "Failed to enable MCLK: %d\n", ret);
++			return ret;
++		}
+ 	}
+ 
+ 	if (gpio_is_valid(aic32x4->rstn_gpio)) {
+-- 
+2.19.1
 
