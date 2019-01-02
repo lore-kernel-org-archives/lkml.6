@@ -6,47 +6,47 @@ X-Spam-Status: No, score=-5.7 required=3.0 tests=FROM_LOCAL_HEX,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
 	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4B17C43387
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8404C43444
 	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:41:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93DC0218A4
+	by mail.kernel.org (Postfix) with ESMTP id C0AA4218D0
 	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:41:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729529AbfABKlG (ORCPT
+        id S1729574AbfABKlO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 05:41:06 -0500
-Received: from mail-io1-f72.google.com ([209.85.166.72]:46650 "EHLO
-        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729522AbfABKlF (ORCPT
+        Wed, 2 Jan 2019 05:41:14 -0500
+Received: from mail-it1-f199.google.com ([209.85.166.199]:36757 "EHLO
+        mail-it1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729552AbfABKlH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 05:41:05 -0500
-Received: by mail-io1-f72.google.com with SMTP id o22so36338286iob.13
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 02:41:04 -0800 (PST)
+        Wed, 2 Jan 2019 05:41:07 -0500
+Received: by mail-it1-f199.google.com with SMTP id w15so35715280ita.1
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 02:41:06 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=aTUwpHCx1FLdDBAHHAZ+jK2gQvKYlwbDNtinjNRoPpo=;
-        b=JFq3Buyamvn4pSQFW9HqX7xWIjWh0lxIrK4iWtK1xKEUy8weCNWIIaCSvA0xeqp1KX
-         L8lKfXQ+dIKlsWnhI5P7xt2tCxhey+H2QGwepmtSF3i1H1vEQbor0D1uQrUe1DZ0AGXg
-         lcFFJYQ6OY7zLhTvOqOY0wqo4ZZXoDFxqyW7SsuWDr4cuVAhyZSg1H7k19vEQOiaRlOP
-         S88Hhm9YX8DVA0tZ3CkIPpam7fTWxDUIjo64krs5AxLsyv2JozTqfk8RDzlsTMEkZR+U
-         zLxZtsKZIkffp4jCs9pmh5R40JoovXL41Lm3z0M2J2yKjHDL85WTGDXDYOpRfOPYgtZ5
-         dbpw==
-X-Gm-Message-State: AA+aEWZ2IxvNGyQClBmP5qlEmciQ1xj+7ICtG+X/voqm+oYA1AepXw3x
-        deF9trtubakKqi7QgMk2kFSUWm7dccRglZJrb4VUi9lr25fd
-X-Google-Smtp-Source: AFSGD/VuXlIEpbfg+gbPxNWDPpJd8+ViSMQgjksrJp37RVAWxNOgfnyZaga6Gd0LGfdP6ZNXzKWV0d2QY9eyGhbQ0R6oljIZWH+H
+        bh=JgkJDl8VgnFVEwtJi3/G7N57evA41C9STvYCWUK5A10=;
+        b=Q0R4ruv1eOafDkULM/J38NFM1wwHyRqoCG3xlKtHHAu5HqCmi0d97YmaPFA3HDl5xH
+         /X4ZGwbcDd4CI5ykFHuiFeUhRe8f+LHmd2k5kCEyxwV/3H9ljcvppjg6BGKynviHvR8f
+         EjuPaQW16yEBfihWAsjNaL5zqcvwkMrKapvG8NKUzoPolwOYaV0Jk7bKGKNG9mI9/rEL
+         XiD18kp2o/ad4Yawl/ocJK7lULx0EtiwUbCrxDq49n7TpgOWJZCi93KnufIRLHQ6+S0k
+         9+69VeHU1HtqcuC4XkwNIZJuGoDMUUJoFZQyOyCHhUkCE10VbbJRfxl6Az0Uwni3DGRo
+         nROQ==
+X-Gm-Message-State: AA+aEWaYjD/qDRKDWQavNNQrmIew1AYqJ1VtxDkYgRTHza7oF5LTc6Mh
+        r1sWRua3TiQb0ZpRVXywkfEFmhbCM/QGGp8fF9Oh2zTjFIPq
+X-Google-Smtp-Source: AFSGD/WTHuBM5JxrWu3ky18pjuz0RwvwGTdXzCnOrMb+c3KrWaJh2UFOd07MQZ7JwrNlbNb7oEdZi4QlJPTdkCl9UH9QPNEp6TV3
 MIME-Version: 1.0
-X-Received: by 2002:a02:7110:: with SMTP id n16mr34079708jac.22.1546425664032;
- Wed, 02 Jan 2019 02:41:04 -0800 (PST)
-Date:   Wed, 02 Jan 2019 02:41:04 -0800
+X-Received: by 2002:a02:4dc9:: with SMTP id t70mr33875871jad.0.1546425665736;
+ Wed, 02 Jan 2019 02:41:05 -0800 (PST)
+Date:   Wed, 02 Jan 2019 02:41:05 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000060600e057e7748dc@google.com>
-Subject: general protection fault in __smc_diag_dump
-From:   syzbot <syzbot+5dd1f9327a9ee760048c@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, ubraun@linux.ibm.com
+Message-ID: <0000000000007a5aad057e7748c9@google.com>
+Subject: KASAN: use-after-free Read in lock_sock_nested
+From:   syzbot <syzbot+500c69d1e21d970e461b@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, linux-hams@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        ralf@linux-mips.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -57,93 +57,145 @@ Hello,
 
 syzbot found the following crash on:
 
-HEAD commit:    28e8c4bc8eb4 Merge tag 'rtc-4.21' of git://git.kernel.org/..
+HEAD commit:    e1ef035d272e Merge tag 'armsoc-defconfig' of git://git.ker..
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10c040d3400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c2ab9708c613a224
-dashboard link: https://syzkaller.appspot.com/bug?extid=5dd1f9327a9ee760048c
+console output: https://syzkaller.appspot.com/x/log.txt?x=1674b0bb400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9c6a26e22579190b
+dashboard link: https://syzkaller.appspot.com/bug?extid=500c69d1e21d970e461b
 compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15d17880c00000
+
+Unfortunately, I don't have any reproducer for this crash yet.
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+5dd1f9327a9ee760048c@syzkaller.appspotmail.com
+Reported-by: syzbot+500c69d1e21d970e461b@syzkaller.appspotmail.com
 
-IPv6: ADDRCONF(NETDEV_CHANGE): team0: link becomes ready
-IPv6: ADDRCONF(NETDEV_UP): vxcan1: link is not ready
-8021q: adding VLAN 0 to HW filter on device batadv0
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] PREEMPT SMP KASAN
-CPU: 1 PID: 7982 Comm: syz-executor0 Not tainted 4.20.0+ #4
+IPVS: ftp: loaded support on port[0] = 21
+IPVS: ftp: loaded support on port[0] = 21
+audit: type=1400 audit(1546374052.492:5134): avc:  denied  { map } for   
+pid=30025 comm="blkid" path="/sbin/blkid" dev="sda1" ino=16128  
+scontext=system_u:system_r:kernel_t:s0 tcontext=system_u:object_r:file_t:s0  
+tclass=file permissive=1
+==================================================================
+BUG: KASAN: use-after-free in perf_trace_lock_acquire+0x62d/0x7d0  
+include/trace/events/lock.h:13
+Read of size 8 at addr ffff88804fb90e78 by task syz-executor3/30043
+
+CPU: 1 PID: 30043 Comm: syz-executor3 Not tainted 4.20.0+ #3
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
-RIP: 0010:smc_diag_msg_common_fill net/smc/smc_diag.c:43 [inline]
-RIP: 0010:__smc_diag_dump.isra.0+0x32a/0x2ba0 net/smc/smc_diag.c:93
-Code: 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 26 25 00 00 48 b8 00 00 00 00  
-00 fc ff df 4d 8b 7f 20 49 8d 7f 0e 48 89 fa 48 c1 ea 03 <0f> b6 14 02 48  
-89 f8 83 e0 07 83 c0 01 38 d0 7c 08 84 d2 0f 85 d2
-RSP: 0018:ffff88808a29f120 EFLAGS: 00010203
-RAX: dffffc0000000000 RBX: ffff88807f4d7240 RCX: 0000000000000000
-RDX: 0000000000000001 RSI: ffffffff87b4e7c2 RDI: 000000000000000e
-RBP: ffff88808a29f3e8 R08: ffff88808d5721c0 R09: ffff888098960e90
-R10: fffffbfff14a0020 R11: ffffffff8a500103 R12: ffff88808878d760
-R13: ffff888098960e40 R14: ffff88807f4d76a0 R15: 0000000000000000
-FS:  00007f6b83b40700(0000) GS:ffff8880ae700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000000000 CR3: 0000000095561000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 Call Trace:
-  smc_diag_dump_proto.isra.0+0x2e7/0x3c0 net/smc/smc_diag.c:211
-  smc_diag_dump+0x27/0x80 net/smc/smc_diag.c:225
-  netlink_dump+0x5f2/0x1070 net/netlink/af_netlink.c:2244
-  __netlink_dump_start+0x5b4/0x7e0 net/netlink/af_netlink.c:2352
-  netlink_dump_start include/linux/netlink.h:225 [inline]
-  smc_diag_handler_dump+0x2a7/0x350 net/smc/smc_diag.c:242
-  __sock_diag_cmd net/core/sock_diag.c:232 [inline]
-  sock_diag_rcv_msg+0x322/0x410 net/core/sock_diag.c:263
-  netlink_rcv_skb+0x17d/0x410 net/netlink/af_netlink.c:2477
-  sock_diag_rcv+0x2b/0x40 net/core/sock_diag.c:274
-  netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
-  netlink_unicast+0x574/0x770 net/netlink/af_netlink.c:1336
-  netlink_sendmsg+0xa05/0xf90 net/netlink/af_netlink.c:1917
-  sock_sendmsg_nosec net/socket.c:621 [inline]
-  sock_sendmsg+0xdd/0x130 net/socket.c:631
-  ___sys_sendmsg+0x7ec/0x910 net/socket.c:2116
-  __sys_sendmsg+0x112/0x270 net/socket.c:2154
-  __do_sys_sendmsg net/socket.c:2163 [inline]
-  __se_sys_sendmsg net/socket.c:2161 [inline]
-  __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2161
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1db/0x2d0 lib/dump_stack.c:113
+  print_address_description.cold+0x7c/0x20d mm/kasan/report.c:187
+  kasan_report.cold+0x1b/0x40 mm/kasan/report.c:317
+  __asan_report_load8_noabort+0x14/0x20 mm/kasan/generic_report.c:135
+  perf_trace_lock_acquire+0x62d/0x7d0 include/trace/events/lock.h:13
+  trace_lock_acquire include/trace/events/lock.h:13 [inline]
+  lock_acquire+0x371/0x570 kernel/locking/lockdep.c:3840
+audit: type=1400 audit(1546374052.492:5135): avc:  denied  { map } for   
+pid=30025 comm="blkid" path="/lib/x86_64-linux-gnu/libblkid.so.1.1.0"  
+dev="sda1" ino=2825 scontext=system_u:system_r:kernel_t:s0  
+tcontext=system_u:object_r:file_t:s0 tclass=file permissive=1
+  __raw_spin_lock_bh include/linux/spinlock_api_smp.h:135 [inline]
+  _raw_spin_lock_bh+0x33/0x50 kernel/locking/spinlock.c:168
+audit: type=1400 audit(1546374052.502:5136): avc:  denied  { map } for   
+pid=30024 comm="modprobe" path="/bin/kmod" dev="sda1" ino=1440  
+scontext=system_u:system_r:kernel_t:s0 tcontext=system_u:object_r:file_t:s0  
+tclass=file permissive=1
+  spin_lock_bh include/linux/spinlock.h:334 [inline]
+  lock_sock_nested+0x41/0x120 net/core/sock.c:2780
+  lock_sock include/net/sock.h:1502 [inline]
+  nr_connect+0xc77/0x1380 net/netrom/af_netrom.c:743
+  __sys_connect+0x357/0x490 net/socket.c:1664
+  __do_sys_connect net/socket.c:1675 [inline]
+  __se_sys_connect net/socket.c:1672 [inline]
+  __x64_sys_connect+0x73/0xb0 net/socket.c:1672
   do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
   entry_SYSCALL_64_after_hwframe+0x49/0xbe
 RIP: 0033:0x457ec9
 Code: 6d b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
 ff 0f 83 3b b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f6b83b3fc78 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RSP: 002b:00007f3f0371fc78 EFLAGS: 00000246 ORIG_RAX: 000000000000002a
 RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457ec9
-RDX: 0000000000000000 RSI: 0000000020000040 RDI: 0000000000000006
-RBP: 000000000073bf00 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f6b83b406d4
-R13: 00000000004c5188 R14: 00000000004d8a10 R15: 00000000ffffffff
-Modules linked in:
----[ end trace db4e074cdaa51579 ]---
-RIP: 0010:smc_diag_msg_common_fill net/smc/smc_diag.c:43 [inline]
-RIP: 0010:__smc_diag_dump.isra.0+0x32a/0x2ba0 net/smc/smc_diag.c:93
-Code: 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 26 25 00 00 48 b8 00 00 00 00  
-00 fc ff df 4d 8b 7f 20 49 8d 7f 0e 48 89 fa 48 c1 ea 03 <0f> b6 14 02 48  
-89 f8 83 e0 07 83 c0 01 38 d0 7c 08 84 d2 0f 85 d2
-RSP: 0018:ffff88808a29f120 EFLAGS: 00010203
-RAX: dffffc0000000000 RBX: ffff88807f4d7240 RCX: 0000000000000000
-RDX: 0000000000000001 RSI: ffffffff87b4e7c2 RDI: 000000000000000e
-RBP: ffff88808a29f3e8 R08: ffff88808d5721c0 R09: ffff888098960e90
-R10: fffffbfff14a0020 R11: ffffffff8a500103 R12: ffff88808878d760
-R13: ffff888098960e40 R14: ffff88807f4d76a0 R15: 0000000000000000
-FS:  00007f6b83b40700(0000) GS:ffff8880ae700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000000000 CR3: 0000000095561000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+RDX: 0000000000000048 RSI: 0000000020000000 RDI: 0000000000000004
+RBP: 000000000073bfa0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f3f037206d4
+R13: 00000000004be35a R14: 00000000004ce5e8 R15: 00000000ffffffff
+
+Allocated by task 30040:
+  save_stack+0x45/0xd0 mm/kasan/common.c:73
+  set_track mm/kasan/common.c:85 [inline]
+  kasan_kmalloc mm/kasan/common.c:482 [inline]
+  kasan_kmalloc+0xcf/0xe0 mm/kasan/common.c:455
+  __do_kmalloc mm/slab.c:3709 [inline]
+  __kmalloc+0x15c/0x740 mm/slab.c:3718
+  kmalloc include/linux/slab.h:550 [inline]
+  sk_prot_alloc+0x19c/0x2e0 net/core/sock.c:1477
+  sk_alloc+0xd7/0x1690 net/core/sock.c:1531
+audit: type=1400 audit(1546374052.502:5137): avc:  denied  { map } for   
+pid=30024 comm="modprobe" path="/bin/kmod" dev="sda1" ino=1440  
+scontext=system_u:system_r:kernel_t:s0 tcontext=system_u:object_r:file_t:s0  
+tclass=file permissive=1
+  nr_create+0xb9/0x5e0 net/netrom/af_netrom.c:436
+  __sock_create+0x532/0x930 net/socket.c:1277
+  sock_create net/socket.c:1317 [inline]
+  __sys_socket+0x106/0x260 net/socket.c:1347
+  __do_sys_socket net/socket.c:1356 [inline]
+  __se_sys_socket net/socket.c:1354 [inline]
+  __x64_sys_socket+0x73/0xb0 net/socket.c:1354
+  do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Freed by task 30035:
+  save_stack+0x45/0xd0 mm/kasan/common.c:73
+  set_track mm/kasan/common.c:85 [inline]
+  __kasan_slab_free+0x102/0x150 mm/kasan/common.c:444
+  kasan_slab_free+0xe/0x10 mm/kasan/common.c:452
+  __cache_free mm/slab.c:3485 [inline]
+  kfree+0xcf/0x230 mm/slab.c:3804
+  sk_prot_free net/core/sock.c:1514 [inline]
+  __sk_destruct+0x76d/0xa60 net/core/sock.c:1596
+  sk_destruct+0x7b/0x90 net/core/sock.c:1604
+  __sk_free+0xce/0x300 net/core/sock.c:1615
+  sk_free+0x42/0x50 net/core/sock.c:1626
+  sock_put include/net/sock.h:1703 [inline]
+  nr_release+0x337/0x3c0 net/netrom/af_netrom.c:557
+  __sock_release+0xd3/0x250 net/socket.c:579
+  sock_close+0x1b/0x30 net/socket.c:1141
+  __fput+0x3c5/0xb10 fs/file_table.c:278
+  ____fput+0x16/0x20 fs/file_table.c:309
+  task_work_run+0x1f4/0x2b0 kernel/task_work.c:113
+  tracehook_notify_resume include/linux/tracehook.h:188 [inline]
+  exit_to_usermode_loop+0x32a/0x3b0 arch/x86/entry/common.c:166
+  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
+  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
+  do_syscall_64+0x696/0x800 arch/x86/entry/common.c:293
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+The buggy address belongs to the object at ffff88804fb90dc0
+  which belongs to the cache kmalloc-2k of size 2048
+The buggy address is located 184 bytes inside of
+  2048-byte region [ffff88804fb90dc0, ffff88804fb915c0)
+IPVS: ftp: loaded support on port[0] = 21
+The buggy address belongs to the page:
+page:ffffea00013ee400 count:1 mapcount:0 mapping:ffff88812c3f0c40 index:0x0  
+compound_mapcount: 0
+flags: 0x1fffc0000010200(slab|head)
+raw: 01fffc0000010200 ffffea00015f8b88 ffffea00025b1908 ffff88812c3f0c40
+raw: 0000000000000000 ffff88804fb90540 0000000100000003 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff88804fb90d00: 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc fc
+  ffff88804fb90d80: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
+> ffff88804fb90e00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                                                 ^
+  ffff88804fb90e80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff88804fb90f00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+kobject: 'lo' (0000000050df09a4): kobject_add_internal: parent: 'net',  
+set: 'devices'
 
 
 ---
@@ -154,5 +206,3 @@ syzbot engineers can be reached at syzkaller@googlegroups.com.
 syzbot will keep track of this bug report. See:
 https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
 syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
