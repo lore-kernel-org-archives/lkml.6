@@ -2,163 +2,104 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CC7AC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 22:58:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C849C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 23:00:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1576E2070D
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 22:58:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546469918;
-	bh=x81zMFByEwwbiOt+nSfbY8l0nMemOCoixK0m9bjpXBY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=Pg9XryK6Wms7zu3PcLl6XIL4YQNIwlV8Cct32y3+3WHsFfrs1kJuYIZZfcFEThc87
-	 fftrlSo8COI2b1K1zAsOA6VwDX+uMXxMUYaONaVDoPRL0sIFBbNXGybgvSKyO+bSa4
-	 yhXtnXz7MTgnVKwLTS+nonQyPmAOhjqOClGsv4FU=
+	by mail.kernel.org (Postfix) with ESMTP id 245032070D
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 23:00:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="L/hMUhEz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730020AbfABW6h (ORCPT
+        id S1730025AbfABXAy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 17:58:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44652 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726521AbfABW6g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 17:58:36 -0500
-Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A72892171F;
-        Wed,  2 Jan 2019 22:58:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546469914;
-        bh=x81zMFByEwwbiOt+nSfbY8l0nMemOCoixK0m9bjpXBY=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=DRie+9UcdWhVqfQDfk8IC2tuar/YVFeforUrNyYz855Mg7pVHhnc71MqBsQ3PwFJZ
-         PHp2DvFb29/DyBTt0Pf+F7lHK4TTufONSVz3FAvlsTb3r0dqLOtUphTeuwu6d3EgGO
-         v5vB0MTb1y1Qt5FZTmWjCJGoQWDWzMH8k7BeauSY=
-Received: by mail-oi1-f181.google.com with SMTP id v6so26352481oif.2;
-        Wed, 02 Jan 2019 14:58:34 -0800 (PST)
-X-Gm-Message-State: AJcUukfPJE4QtDNqcdA02hBY6sLRECNE7mmpn+aU4Yd+sXlodqJyeDoe
-        dheKhdT0nthJ0vb1Yb/KY9Rg9l7ZpGH7r/KbKMo=
-X-Google-Smtp-Source: ALg8bN7nOOo/xKnUrdpIRN0dZGkBQE7O0X62qaesVRD/xhi8ZVNMQWaWS7fyqmdl56K1PEDj62SZ3TZxKBpTCBN9JDg=
-X-Received: by 2002:aca:5e09:: with SMTP id s9mr14016461oib.153.1546469913950;
- Wed, 02 Jan 2019 14:58:33 -0800 (PST)
+        Wed, 2 Jan 2019 18:00:54 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:55644 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726693AbfABXAy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Jan 2019 18:00:54 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x02Ms7IM002525;
+        Wed, 2 Jan 2019 23:00:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=PJ9K7ciMWXZgk87IyP0blkqgvN+X4giuiFG4xHt9beM=;
+ b=L/hMUhEzgwQtIhsG+MvALIQpkcu9GI3ZPzMBtGQM6zV0x8t1RS0yOceTc60xl7Bcxvib
+ LfcGVXEaJMEXl8TGCcxruti2uYcTokRtCEHGMlg6VDqgQHeSdNg419QjZPYjwN0KpRrQ
+ CDhtW6LcZ5rhViNw0KLZE3f3yduYlK5om3mer0VwgD3GEtICE6jFGzZgsmPirTtnppFo
+ RZenKoJQBbHfizq/DVlx/FRpgUv3foqw/+IyTqSjNVd+4X1NTKUpYtSXfI6wHB5XQrfW
+ BPM7qqHmViFzHq7IvcC9ymG7nq7Yi/Hs5+Y9rRiha3AafW1Un7E8oQUWPcx4WAKnxwSW rQ== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2130.oracle.com with ESMTP id 2pp0btvfra-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 02 Jan 2019 23:00:41 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x02N0dOa021660
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 2 Jan 2019 23:00:40 GMT
+Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x02N0djF027270;
+        Wed, 2 Jan 2019 23:00:39 GMT
+Received: from ca-dmjordan1.us.oracle.com (/10.211.9.48)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 02 Jan 2019 15:00:38 -0800
+Date:   Wed, 2 Jan 2019 15:00:54 -0800
+From:   Daniel Jordan <daniel.m.jordan@oracle.com>
+To:     Yang Shi <yang.shi@linux.alibaba.com>
+Cc:     ying.huang@intel.com, tim.c.chen@intel.com, minchan@kernel.org,
+        akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [v4 PATCH 1/2] mm: swap: check if swap backing device is
+ congested or not
+Message-ID: <20190102230054.m5ire5gdhm5fzecq@ca-dmjordan1.us.oracle.com>
+References: <1546145375-793-1-git-send-email-yang.shi@linux.alibaba.com>
 MIME-Version: 1.0
-References: <20190102181038.4418-1-okaya@kernel.org> <20190102181038.4418-9-okaya@kernel.org>
- <57ed1d94-7f89-20e8-3289-7ef7efd18c20@linux.intel.com> <CAK9iUCNMAuDOh_CM-bTE1xT5FePfYbq7W+0R4KF1KbqskuJ8FA@mail.gmail.com>
- <a9ccf7e1-4752-6bf5-2621-15b21a80c2ca@linux.intel.com>
-In-Reply-To: <a9ccf7e1-4752-6bf5-2621-15b21a80c2ca@linux.intel.com>
-From:   Sinan Kaya <Okaya@kernel.org>
-Date:   Wed, 2 Jan 2019 22:58:22 +0000
-X-Gmail-Original-Message-ID: <CAK9iUCPWQ=9EgnUFo8BHraEgFwHs3FdbegPLwhT-KHD=r2WBkQ@mail.gmail.com>
-Message-ID: <CAK9iUCPWQ=9EgnUFo8BHraEgFwHs3FdbegPLwhT-KHD=r2WBkQ@mail.gmail.com>
-Subject: Re: [alsa-devel] [PATCH v5 08/11] ASoC: Intel: atom: Make PCI
- dependency explicit
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        "moderated list:INTEL ASoC DRIVERS" <alsa-devel@alsa-project.org>,
-        Takashi Iwai <tiwai@suse.com>,
-        Jie Yang <yang.jie@linux.intel.com>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        ACPI Devel Mailing List <linux-acpi@vger.kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1546145375-793-1-git-send-email-yang.shi@linux.alibaba.com>
+User-Agent: NeoMutt/20180323-268-5a959c
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9124 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=871
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1901020199
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 2, 2019 at 10:50 PM Pierre-Louis Bossart
-<pierre-louis.bossart@linux.intel.com> wrote:
->
->
-> > This is pointing to a kconfig issue on ia64 arch.
-> >
-> > arch/ia64/Kconfig:128:error: recursive dependency detected!
-> > arch/ia64/Kconfig:128:    choice <choice> contains symbol IA64_HP_SIM
-> > arch/ia64/Kconfig:202:    symbol IA64_HP_SIM is part of choice PM
-> >
-> > IA64_HP_SIM is both a choice and is selected.
-> >
-> > I did allyesconfig and disabled PCI afterwards to find all the issues
-> > on this patchset.
->
-> Are you saying there's a newer series that fixes this issue for both
-> allyesconfig and allmodconfig?
->
-> if yes, then we're good.
+On Sun, Dec 30, 2018 at 12:49:34PM +0800, Yang Shi wrote:
+> The test on my virtual machine with congested HDD shows long tail
+> latency is reduced significantly.
+> 
+> Without the patch
+>  page_fault1_thr-1490  [023]   129.311706: funcgraph_entry:      #57377.796 us |  do_swap_page();
+>  page_fault1_thr-1490  [023]   129.369103: funcgraph_entry:        5.642us   |  do_swap_page();
+>  page_fault1_thr-1490  [023]   129.369119: funcgraph_entry:      #1289.592 us |  do_swap_page();
+>  page_fault1_thr-1490  [023]   129.370411: funcgraph_entry:        4.957us   |  do_swap_page();
+>  page_fault1_thr-1490  [023]   129.370419: funcgraph_entry:        1.940us   |  do_swap_page();
+>  page_fault1_thr-1490  [023]   129.378847: funcgraph_entry:      #1411.385 us |  do_swap_page();
+>  page_fault1_thr-1490  [023]   129.380262: funcgraph_entry:        3.916us   |  do_swap_page();
+>  page_fault1_thr-1490  [023]   129.380275: funcgraph_entry:      #4287.751 us |  do_swap_page();
+> 
+> With the patch
+>       runtest.py-1417  [020]   301.925911: funcgraph_entry:      #9870.146 us |  do_swap_page();
+>       runtest.py-1417  [020]   301.935785: funcgraph_entry:        9.802us   |  do_swap_page();
+>       runtest.py-1417  [020]   301.935799: funcgraph_entry:        3.551us   |  do_swap_page();
+>       runtest.py-1417  [020]   301.935806: funcgraph_entry:        2.142us   |  do_swap_page();
+>       runtest.py-1417  [020]   301.935853: funcgraph_entry:        6.938us   |  do_swap_page();
+>       runtest.py-1417  [020]   301.935864: funcgraph_entry:        3.765us   |  do_swap_page();
+>       runtest.py-1417  [020]   301.935871: funcgraph_entry:        3.600us   |  do_swap_page();
+>       runtest.py-1417  [020]   301.935878: funcgraph_entry:        7.202us   |  do_swap_page();
 
+Hi Yang, I guess runtest.py just calls page_fault1_thr?  Being explicit about
+this may improve the changelog for those unfamiliar with will-it-scale.
 
-No, I haven't fixed ia64 kconfig issue. That's somebody else's job. I
-used allyesconfig to find out all compilation issues on x86 arch to
-come up with this patchset.
-
-
->
-> >
-> >> 2. there are different patterns to express the dependency on PCI e.g.
-> >>
-> >>    config MMC_SDHCI_ACPI
-> >>        tristate "SDHCI support for ACPI enumerated SDHCI controllers"
-> >>        depends on MMC_SDHCI && ACPI
-> >> -    select IOSF_MBI if X86
-> >> +    select IOSF_MBI if (X86 && PCI)
-> >>
-> >> but
-> >>
-> >> config SND_SST_ATOM_HIFI2_PLATFORM_ACPI
-> >>        tristate "ACPI HiFi2 (Baytrail, Cherrytrail) Platforms"
-> >>        default ACPI
-> >> -    depends on X86 && ACPI
-> >> +    depends on X86 && ACPI && PCI
-> >>        select SND_SST_IPC_ACPI
-> >>        select SND_SST_ATOM_HIFI2_PLATFORM
-> >>        select SND_SOC_ACPI_INTEL_MATCH
-> >>
-> > I matched depends line to
-> >
-> > depends on X86 && ACPI && PCI
-> >
-> > for MMC_SDHCI_ACPI per feedback from Rafael on V5. This should resolve
-> > the inconsistency.
-> ok, I didn't see the delta
-> >
-> >
-> >> IOSF is only needed for Baytrail-CR detection, and the code will compile
-> >> fine without it, so maybe it'd be a better model if you used the
-> >> following diff?
-> >>
-> >> diff --git a/sound/soc/intel/Kconfig b/sound/soc/intel/Kconfig
-> >> index 2fd1b61e8331..68af0ea5c96c 100644
-> >> --- a/sound/soc/intel/Kconfig
-> >> +++ b/sound/soc/intel/Kconfig
-> >> @@ -95,7 +95,7 @@ config SND_SST_ATOM_HIFI2_PLATFORM_ACPI
-> >>           select SND_SST_IPC_ACPI
-> >>           select SND_SST_ATOM_HIFI2_PLATFORM
-> >>           select SND_SOC_ACPI_INTEL_MATCH
-> >> -       select IOSF_MBI
-> >> +       select IOSF_MBI if PCI
-> >>
-> >> 3. All the Intel machine drivers depend on X86_INTEL_LPSS which depends
-> >> on PCI. But for Baytrail/Haswell/Broadwell we have only a dependency on
-> >> ACPI, so we expose drivers that can be selected but fail on probe since
-> >> there are no machine drivers. I am not sure if we want to be strict and
-> >> only expose meaningful configurations, or allow for more compilations
-> >> tests and corner cases?
-> > Hopefully, v5 resolves this too with
-> >
-> > depends on X86 && ACPI && PCI
-> >
-> > Let me know otherwise.
->
-> it doesn't but that's not a good enough reason to lay on the tracks.
-> I'll follow-up with a cleanup for the Intel audio parts when this series
-> is merged. The PCI dependency could be moved to the top-level since it's
-> pretty much required for all platforms except for compilation tests, and
-> there are multiple dependencies that repeated for no good reason, so FWIW
->
-> Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
->
+May also be useful to name will-it-scale and how it was run (#thr, runtime,
+system cpus/memory/swap) for more context.
