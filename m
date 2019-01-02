@@ -2,33 +2,33 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8E1FC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 14:01:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9F19C43612
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 14:01:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE0E5218EA
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 14:01:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B2D3D218EA
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 14:01:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730027AbfABOBH (ORCPT
+        id S1730063AbfABOBL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 09:01:07 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:26590 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729397AbfABOBG (ORCPT
+        Wed, 2 Jan 2019 09:01:11 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:43549 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1730011AbfABOBI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 09:01:06 -0500
-X-UUID: ab0098f85fe94414bb84c00bc6df16a7-20190102
-X-UUID: ab0098f85fe94414bb84c00bc6df16a7-20190102
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
+        Wed, 2 Jan 2019 09:01:08 -0500
+X-UUID: 345b80b9619e49628f2f8a04e3d5d62e-20190102
+X-UUID: 345b80b9619e49628f2f8a04e3d5d62e-20190102
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
         (envelope-from <henryc.chen@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1555353887; Wed, 02 Jan 2019 22:00:57 +0800
+        with ESMTP id 690843923; Wed, 02 Jan 2019 22:00:58 +0800
 Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs02n1.mediatek.inc (172.21.101.77) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 2 Jan 2019 22:00:55 +0800
+ mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 2 Jan 2019 22:00:56 +0800
 Received: from mtkslt205.mediatek.inc (10.21.15.75) by mtkcas09.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
  Transport; Wed, 2 Jan 2019 22:00:56 +0800
@@ -45,33 +45,69 @@ CC:     Mark Rutland <mark.rutland@arm.com>,
         <devicetree@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [RFC PATCH 0/7] Add driver for dvfsrc and add support for active state of scpsys on mt8183
-Date:   Wed, 2 Jan 2019 21:43:57 +0800
-Message-ID: <1546436644-19234-1-git-send-email-henryc.chen@mediatek.com>
+        <linux-kernel@vger.kernel.org>,
+        Henry Chen <henryc.chen@mediatek.com>
+Subject: [RFC PATCH 4/7] arm64: dts: mt8183: add performance state support of scpsys
+Date:   Wed, 2 Jan 2019 21:44:01 +0800
+Message-ID: <1546436644-19234-5-git-send-email-henryc.chen@mediatek.com>
 X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1546436644-19234-1-git-send-email-henryc.chen@mediatek.com>
+References: <1546436644-19234-1-git-send-email-henryc.chen@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
+X-TM-SNTS-SMTP: 44C3CBE4EF796AAE985068504F4839A19F03833298C4F73B53A065E3F196931A2000:8
 X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patchsets add support for MediaTek hardware module named DVFSRC
-(dynamic voltage and frequency scaling resource collector). The DVFSRC is
-a HW module which is used to collect all the requests from both software
-and hardware and turn into the decision of minimum operating voltage and
-minimum DRAM frequency to fulfill those requests.
+Add support for performance state of scpsys on mt8183 platform.
 
-So, This series is to implement the dvfsrc driver to collect all the
-requests of operating voltage or DRAM bandwidth from other device drivers
-likes GPU/Camera through 2 frameworks basically:
+Signed-off-by: Henry Chen <henryc.chen@mediatek.com>
+---
+ arch/arm64/boot/dts/mediatek/mt8183.dtsi | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-1. PM_QOS_MEMORY_BANDWIDTH from PM QOS: to aggregate the bandwidth
-   requirements from different clients
-2. Active state management of power domains[1]: to handle the operating
-   voltage opp requirement from different power domains
-
-[1] https://lwn.net/Articles/744047/
+diff --git a/arch/arm64/boot/dts/mediatek/mt8183.dtsi b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
+index 47926a7..e396410 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8183.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
+@@ -9,6 +9,7 @@
+ #include <dt-bindings/interrupt-controller/irq.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/power/mt8183-power.h>
++#include <dt-bindings/soc/mtk,dvfsrc.h>
+ 
+ / {
+ 	compatible = "mediatek,mt8183";
+@@ -243,6 +244,26 @@
+ 			      "vpu-3", "vpu-4", "vpu-5";
+ 		infracfg = <&infracfg>;
+ 		smi_comm = <&smi_common>;
++		operating-points-v2 = <&dvfsrc_opp_table>;
++		dvfsrc_opp_table: opp-table {
++			compatible = "operating-points-v2-mtk-level";
++
++			dvfsrc_vol_min: opp1 {
++				mtk,level = <MT8183_DVFSRC_LEVEL_1>;
++			};
++
++			dvfsrc_freq_medium: opp2 {
++				mtk,level = <MT8183_DVFSRC_LEVEL_2>;
++			};
++
++			dvfsrc_freq_max: opp3 {
++				mtk,level = <MT8183_DVFSRC_LEVEL_3>;
++			};
++
++			dvfsrc_vol_max: opp4 {
++				mtk,level = <MT8183_DVFSRC_LEVEL_4>;
++			};
++		};
+ 	};
+ 
+ 	apmixedsys: syscon@1000c000 {
+-- 
+1.9.1
 
