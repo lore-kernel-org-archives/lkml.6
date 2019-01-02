@@ -2,139 +2,140 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01AD9C43612
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 18:28:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14B87C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 18:29:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBC1F21915
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 18:28:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JzdtyI56"
+	by mail.kernel.org (Postfix) with ESMTP id EBAC021871
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 18:29:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728014AbfABS2X (ORCPT
+        id S1728063AbfABS32 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 13:28:23 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:36923 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727968AbfABS2X (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 13:28:23 -0500
-Received: by mail-wr1-f65.google.com with SMTP id s12so31364059wrt.4;
-        Wed, 02 Jan 2019 10:28:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=gMhKoB56fl1CENDGxaDFPrqlt7cUUK874k7xw397NdU=;
-        b=JzdtyI56NkMTgEJWWUI7nVrrdM4ObN36HtPjzfrSSjcdqdR9Gtl9t/46owiSX02KfJ
-         wude1FNPPx52lUIBO6Mj1WbUQ7dn1GEkoUAWSBE0ruGW/AYS1ZdrVE4WEG+cjM3s9gDR
-         POqYiDhxqJkxRfi/ZQiGRyw+4M3gWrbKCVED24XGoMjWdIchuBU3I7Qy08q7YX29sIRl
-         C45vCtxvK5eXALv38zLCau929LZIPSi7uRWZXAZqMmFxcagAMxgyR+2mO7MegAWSvLAk
-         kG2L+cFubVPh+1r7Unm9pPfxY26p6AQdjpHnpqt7xJNVRwcb8LLKTAinlvtgIm1zyhP+
-         cv8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=gMhKoB56fl1CENDGxaDFPrqlt7cUUK874k7xw397NdU=;
-        b=UQaP2uu2nEQpRfBo+5x5dzF1sR3riT+ZTpdXTfdFsntMfXhruUjMtHX6jlkvTK3KBY
-         TKwcDPKAHbDADSxod69YXpaoyjBnGi84lt5rg8x93t9spznLdH6f7wfGb8fxZjl9P8q7
-         Bp3NMj2WQRb6ab6Nlbob5Yx7ypPvbbny4hBZfxXX+G4L0+CfXvtHmo9ufHKxF9DnT+lq
-         fZUpgAH9oR0UIjPfY6lBTHZ+wW5wt8y0F0wDUjiaPJfhJa2Ws9QVMRyN6AEYIdN1Iw1K
-         hKDIkbP3DzEehYiaemrwBwenB7FPdAorjrt3oOLXc8sOMDFxCclRSniWRpTpZzNQYSCY
-         ZDmQ==
-X-Gm-Message-State: AJcUukcgHALA0TK2anEac40v9gozn2o3Z5U7+MYmCw6tbanX6yapS3B2
-        a2b0i/SDj8l5erkKYa5FMzJ1DfGkuOxtT1slFRk=
-X-Google-Smtp-Source: ALg8bN5DG7KGiHBMbCIxnPHPogckdubzNMt/jjijDA8hZ2AZq8k3DkpH3670RP94iJyqTvr7cTVkl8RWceaALOX7seg=
-X-Received: by 2002:a5d:4b01:: with SMTP id v1mr37134675wrq.5.1546453701202;
- Wed, 02 Jan 2019 10:28:21 -0800 (PST)
-MIME-Version: 1.0
-References: <20181221072716.29017-1-andrew.smirnov@gmail.com>
- <20181221072716.29017-12-andrew.smirnov@gmail.com> <86e8172d-d1dc-59d6-0b64-b11ce014b6a4@synopsys.com>
-In-Reply-To: <86e8172d-d1dc-59d6-0b64-b11ce014b6a4@synopsys.com>
-From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-Date:   Wed, 2 Jan 2019 10:28:09 -0800
-Message-ID: <CAHQ1cqH3uFj51ORhp1eHPp6jVNoM0D1nv5qHvQESnmPX3-ESoQ@mail.gmail.com>
-Subject: Re: [PATCH 11/21] PCI: designware: Make use of BIT() in constant definitions
-To:     Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Cc:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        Wed, 2 Jan 2019 13:29:28 -0500
+Received: from mga14.intel.com ([192.55.52.115]:41253 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727130AbfABS31 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Jan 2019 13:29:27 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Jan 2019 10:29:27 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,431,1539673200"; 
+   d="scan'208";a="263911103"
+Received: from yoojae-mobl1.amr.corp.intel.com (HELO [10.7.153.143]) ([10.7.153.143])
+  by orsmga004.jf.intel.com with ESMTP; 02 Jan 2019 10:29:26 -0800
+Subject: Re: [PATCH v9 07/12] dt-bindings: mfd: Add a document for PECI client
+ MFD
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     Rob Herring <robh+dt@kernel.org>, Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
         Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        "A.s. Dong" <aisheng.dong@nxp.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        "linux-imx@nxp.com" <linux-imx@nxp.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Eric Sandeen <sandeen@redhat.com>,
+        Arnd Bergmann <arnd@arndb.de>, Wu Hao <hao.wu@intel.com>,
+        Tomohiro Kusumi <kusumi.tomohiro@gmail.com>,
+        "Bryant G . Ly" <bryantly@linux.vnet.ibm.com>,
+        Frederic Barrat <fbarrat@linux.vnet.ibm.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        David Kershner <david.kershner@unisys.com>,
+        Uwe Kleine-Konig <u.kleine-koenig@pengutronix.de>,
+        Sagar Dharia <sdharia@codeaurora.org>,
+        Johan Hovold <johan@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Juergen Gross <jgross@suse.com>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        openbmc@lists.ozlabs.org,
+        James Feist <james.feist@linux.intel.com>,
+        Jason M Biils <jason.m.bills@linux.intel.com>,
+        Vernon Mauery <vernon.mauery@linux.intel.com>
+References: <20181218210417.30140-1-jae.hyun.yoo@linux.intel.com>
+ <20181218210417.30140-8-jae.hyun.yoo@linux.intel.com>
+ <20181221144754.GS13248@dell>
+From:   Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+Message-ID: <fa605dae-977f-452a-cd86-2c0db9237892@linux.intel.com>
+Date:   Wed, 2 Jan 2019 10:29:26 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
+MIME-Version: 1.0
+In-Reply-To: <20181221144754.GS13248@dell>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 26, 2018 at 7:19 AM Gustavo Pimentel
-<gustavo.pimentel@synopsys.com> wrote:
->
-> Hi,
->
-> On 21/12/2018 07:27, Andrey Smirnov wrote:
-> > Avoid using explicit left shifts and convert various definitions to
-> > use BIT() instead. No functional change intended.
-> >
-> > Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-> > Cc: Bjorn Helgaas <bhelgaas@google.com>
-> > Cc: Fabio Estevam <fabio.estevam@nxp.com>
-> > Cc: Chris Healy <cphealy@gmail.com>
-> > Cc: Lucas Stach <l.stach@pengutronix.de>
-> > Cc: Leonard Crestez <leonard.crestez@nxp.com>
-> > Cc: "A.s. Dong" <aisheng.dong@nxp.com>
-> > Cc: Richard Zhu <hongxing.zhu@nxp.com>
-> > Cc: linux-imx@nxp.com
-> > Cc: linux-arm-kernel@lists.infradead.org
-> > Cc: linux-kernel@vger.kernel.org
-> > Cc: linux-pci@vger.kernel.org
-> > Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-> > ---
-> >  drivers/pci/controller/dwc/pcie-designware.c |  2 +-
-> >  drivers/pci/controller/dwc/pcie-designware.h | 18 +++++++++---------
-> >  2 files changed, 10 insertions(+), 10 deletions(-)
-> >
-> > diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci=
-/controller/dwc/pcie-designware.c
-> > index d123ac290b9e..086e87a40316 100644
-> > --- a/drivers/pci/controller/dwc/pcie-designware.c
-> > +++ b/drivers/pci/controller/dwc/pcie-designware.c
-> > @@ -300,7 +300,7 @@ void dw_pcie_disable_atu(struct dw_pcie *pci, int i=
-ndex,
-> >       }
-> >
-> >       dw_pcie_writel_dbi(pci, PCIE_ATU_VIEWPORT, region | index);
-> > -     dw_pcie_writel_dbi(pci, PCIE_ATU_CR2, ~PCIE_ATU_ENABLE);
-> > +     dw_pcie_writel_dbi(pci, PCIE_ATU_CR2, (u32)~PCIE_ATU_ENABLE);
->
-> This is unrelated with the patch description purpose.
->
+Hi Lee,
 
-This is a direct result of converting PCIE_ATU_ENABLE to BIT(31).
-BIT(31) expands to (1UL << 31) so, without that cast I get
+On 12/21/2018 6:47 AM, Lee Jones wrote:
+> On Tue, 18 Dec 2018, Jae Hyun Yoo wrote:
+> 
+>> This commit adds a dt-bindings document for PECI client MFD.
+>>
+>> +* Intel PECI client bindings
 
-drivers/pci/controller/dwc/pcie-designware.c: In function
-=E2=80=98dw_pcie_disable_atu=E2=80=99:
-drivers/pci/controller/dwc/pcie-designware.c:303:40: warning: large
-integer implicitly truncated to unsigned type [-Woverflow]
-  dw_pcie_writel_dbi(pci, PCIE_ATU_CR2, ~PCIE_ATU_ENABLE);
+<snip>
 
-on AArch64. I am guessing that original definition of (1 << 31) avoids
-this problem by being an "int" instead of "unsigned long".
+>> +PECI (Platform Environment Control Interface) is a one-wire bus interface that
+>> +provides a communication channel from PECI clients in Intel processors and
+>> +chipset components to external monitoring or control devices. PECI is designed
+>> +to support the following sideband functions:
+>> +
+>> +- Processor and DRAM thermal management
+>> +- Platform Manageability
+>> +- Processor Interface Tuning and Diagnostics
+>> +- Failure Analysis
+>> +
+>> +Required properties:
+>> +- compatible : Should be "intel,peci-client".
+>> +- reg        : Should contain address of a client CPU. According to the PECI
+>> +	       specification, client addresses start from 0x30.
+>> +
+>> +Example:
+>> +	peci-bus@0 {
+>> +		compatible = "vendor,soc-peci";
+>> +		reg = <0x0 0x1000>;
+>> +		#address-cells = <1>;
+>> +		#size-cells = <0>;
+>> +
+>> +		peci-client@30 {
+>> +			compatible = "intel,peci-client";
+>> +			reg = <0x30>;
+>> +		};
+>> +
+>> +		peci-client@31 {
+>> +			compatible = "intel,peci-client";
+>> +			reg = <0x31>;
+>> +		};
+> 
+> The PECI Client driver (masquerading as an MFD driver in this set)
+> doesn't actually do anything special.  Instead of detailing it here,
+> register the child devices directly instead.
+> 
+
+Main purpose of the PECI client driver is providing 'reg' value to its
+child devices. If I add the child nodes directly, compiler will make
+warnings while building dtb because the child nodes are using the same
+unit address.
 
 Thanks,
-Andrey Smirnov
+Jae
