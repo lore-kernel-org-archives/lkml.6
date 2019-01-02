@@ -2,146 +2,145 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 721D9C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 20:20:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D38C3C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 20:22:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DD5C2171F
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 20:20:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A26A82171F
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 20:22:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F2ZmcHcI"
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="ynZ52DE2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726718AbfABUUh (ORCPT
+        id S1726760AbfABUWS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 15:20:37 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:45706 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726009AbfABUUg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 15:20:36 -0500
-Received: by mail-ed1-f67.google.com with SMTP id d39so27189387edb.12;
-        Wed, 02 Jan 2019 12:20:35 -0800 (PST)
+        Wed, 2 Jan 2019 15:22:18 -0500
+Received: from mail-eopbgr750059.outbound.protection.outlook.com ([40.107.75.59]:36672
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726711AbfABUWS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Jan 2019 15:22:18 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=j4+3vTeKmxVtxYqZdZFhf8nc09KCLy9pGkfWnOHlBvU=;
-        b=F2ZmcHcIcrSSkCZ+5iaSB9Y3eKiJPsylLFAEmMMZGNs5a7Rh/UnvnsXbcdqPHijRY0
-         EdmfEBmhy8cDwLYeMX5FNwZmaCw2fjXmu7kyMT75UYYLRjYbcl1c/RJQY/zIkmQjoGzr
-         mqA7r9JPhgUT00VE5sslMOgQbsUOkUcU2UYDFPQlDJ5wlRL7ojLLTT47tR22XXCZgRW3
-         myROfRTq3lXfQ2b9SHby3q1MWpwIUeC4UDzVfoY5cOdm/RRoPV+SEz194b86pZ0U3AY6
-         L4M6rmYbkwDC81Zw5oGCDl0pepM/5NY3zCr6ZrDXMKDw+Y2QnZtJvBU/+TmWXochOxHK
-         0L7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=j4+3vTeKmxVtxYqZdZFhf8nc09KCLy9pGkfWnOHlBvU=;
-        b=TPYIeZikatYGaWukB53DVX7otg0o9UlG38MemHQGI/TxepL5jqsH5DSAKN2JPpt28l
-         l+tv6zed1MG9QfcCWOy0/LwrWSMMjLs21nNZINY8biSQHnRqqWseUBzxy0PhHe0rhJ0H
-         MGFaD2NVtIGuvs8pYxUzSh3PQ/0DJK9KE1x4NC2E2w++BjJmhlyb7XCTfZ6vloX+7mh0
-         PwhnXAg/TJeOV6nl54rgndgGe4I0joemt/HxTKUJ9vO7tpYWENGpBtt1PQjGn5BI4q96
-         fF6/bshh4p39R+bsxzjKD8fsPgp06J4nx4aBjQgrH+ulLhAM01/NpQrA9h/iM9HT/E7R
-         MiUA==
-X-Gm-Message-State: AA+aEWbjiLGuc1raJAmZWc/xZhUqJ2BUNHjfoWM8PhDWvBqHFpljAUqz
-        ne3Vdwi8aeq5hNippTIbTfQ=
-X-Google-Smtp-Source: AFSGD/UKKorszS1/nhBb8LL0dvXLgVeJAkPp/3v/tzTzB2zjYeFBOc46OYlrGXhRJlV3l++bpx7Cww==
-X-Received: by 2002:a50:94f4:: with SMTP id t49mr40955353eda.24.1546460434747;
-        Wed, 02 Jan 2019 12:20:34 -0800 (PST)
-Received: from eldamar (80-218-24-251.dclient.hispeed.ch. [80.218.24.251])
-        by smtp.gmail.com with ESMTPSA id h11-v6sm12372404ejc.3.2019.01.02.12.20.33
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 02 Jan 2019 12:20:33 -0800 (PST)
-Date:   Wed, 2 Jan 2019 21:20:32 +0100
-From:   Salvatore Bonaccorso <carnil@debian.org>
-To:     Steven Sistare <steven.sistare@oracle.com>
-Cc:     Dominique Martinet <asmadeus@codewreck.org>,
-        Pavel Tatashin <pavel.tatashin@microsoft.com>,
-        daniel.m.jordan@oracle.com, linux@armlinux.org.uk,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        john.stultz@linaro.org, sboyd@codeaurora.org, x86@kernel.org,
-        linux-kernel@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
-        hpa@zytor.com, douly.fnst@cn.fujitsu.com, peterz@infradead.org,
-        prarit@redhat.com, feng.tang@intel.com, pmladek@suse.com,
-        gnomes@lxorguk.ukuu.org.uk, linux-s390@vger.kernel.org,
-        boris.ostrovsky@oracle.com, jgross@suse.com, pbonzini@redhat.com,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
-        qemu-devel@nongnu.org
-Subject: Re: [PATCH v15 23/26] sched: early boot clock
-Message-ID: <20190102202032.GA1034@eldamar.local>
-References: <20180719205545.16512-1-pasha.tatashin@oracle.com>
- <20180719205545.16512-24-pasha.tatashin@oracle.com>
- <20181106054212.GA31768@nautica>
- <95c3920e-bf80-0c7e-7854-01a1c3189c23@oracle.com>
+ d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Jm1GTEmlNZ1ksnOgauHKTpiGdOit8h8uVP1UGbn4nBQ=;
+ b=ynZ52DE2OFBrNMMz4fILlYR1zPBh0Pi+l1LoJxr/dA4of6yGNSkcJzZMKRTer4fJw8TNs01KbBIl8zaSsLuPg8hQtXvGb62nDGgEQu4mp4DTrnhySty1iCxI7illMDt/ThiCr6WZvkqd7h71oxdLMqgcqshZPwMn8jjr6vBWnqk=
+Received: from BL0PR12MB2468.namprd12.prod.outlook.com (52.132.11.143) by
+ BL0PR12MB2500.namprd12.prod.outlook.com (52.132.11.151) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1471.20; Wed, 2 Jan 2019 20:22:10 +0000
+Received: from BL0PR12MB2468.namprd12.prod.outlook.com
+ ([fe80::a1ce:59b2:803b:9164]) by BL0PR12MB2468.namprd12.prod.outlook.com
+ ([fe80::a1ce:59b2:803b:9164%7]) with mapi id 15.20.1471.019; Wed, 2 Jan 2019
+ 20:22:10 +0000
+From:   "Moger, Babu" <Babu.Moger@amd.com>
+To:     Fenghua Yu <fenghua.yu@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Reinette Chatre <reinette.chatre@intel.com>,
+        James Morse <james.morse@arm.com>,
+        Xiaochen Shen <xiaochen.shen@intel.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
+        Arshiya Hayatkhan Pathan <arshiya.hayatkhan.pathan@intel.com>
+CC:     linux-kernel <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v4 10/10] selftests/resctrl: Add the test in MAINTAINERS
+Thread-Topic: [PATCH v4 10/10] selftests/resctrl: Add the test in MAINTAINERS
+Thread-Index: AQHUmYz+cVac1iwhvE+xtgU5I09Pq6Wcfo+A
+Date:   Wed, 2 Jan 2019 20:22:10 +0000
+Message-ID: <c6a28360-b6fa-9003-8981-a6618ac6a0ff@amd.com>
+References: <1545438038-75107-1-git-send-email-fenghua.yu@intel.com>
+ <1545438038-75107-11-git-send-email-fenghua.yu@intel.com>
+In-Reply-To: <1545438038-75107-11-git-send-email-fenghua.yu@intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: SN4PR0501CA0114.namprd05.prod.outlook.com
+ (2603:10b6:803:42::31) To BL0PR12MB2468.namprd12.prod.outlook.com
+ (2603:10b6:207:4e::15)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Babu.Moger@amd.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [165.204.78.1]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BL0PR12MB2500;20:BnsE8pa75sPJohPzbMSBt12JXNnBCCax7Uf+Uja/pXVLw7/DYW6EDv4AQY0SWrnlcuX/hJQW0FQF7CaNvA38Q2H5hFdIba+oUbrzgj3fHcz+Zs1U1XhEJ1Dzeb+EO5LTT+oqsVIUxDGV/JugBDrpGBlpL7vyoc99n2ab4m4LM4Gb0npJx2V46aE+Y4wihfgYIH9wLiM1eMmcKzRFgB84ssyQ+0ebHC47fpi5GqfGXJzTIaOsVemAKN2hgUtQ/LFz
+x-ms-office365-filtering-correlation-id: 47fb2632-ba4e-42c8-1ddf-08d670eff92a
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600109)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:BL0PR12MB2500;
+x-ms-traffictypediagnostic: BL0PR12MB2500:
+x-microsoft-antispam-prvs: <BL0PR12MB2500FA9E70DDD14F3EAC4610958C0@BL0PR12MB2500.namprd12.prod.outlook.com>
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(908002)(999002)(5005026)(6040522)(8220060)(2401047)(8121501046)(3002001)(93006095)(93001095)(3231475)(944501520)(52105112)(10201501046)(6055026)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123560045)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:BL0PR12MB2500;BCL:0;PCL:0;RULEID:;SRVR:BL0PR12MB2500;
+x-forefront-prvs: 0905A6B2C7
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(136003)(376002)(346002)(366004)(39860400002)(13464003)(199004)(189003)(97736004)(4326008)(31696002)(6246003)(6116002)(316002)(31686004)(66066001)(36756003)(86362001)(478600001)(476003)(256004)(76176011)(486006)(72206003)(14444005)(14454004)(71190400001)(26005)(52116002)(25786009)(71200400001)(3846002)(6512007)(53936002)(81166006)(68736007)(305945005)(106356001)(2616005)(8676002)(110136005)(2906002)(7736002)(11346002)(105586002)(446003)(229853002)(102836004)(5660300001)(6436002)(6506007)(53546011)(81156014)(386003)(7416002)(99286004)(186003)(6486002)(8936002)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:BL0PR12MB2500;H:BL0PR12MB2468.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: fpNHC1r2VDRfyUz1pLtzpgOeaITrU7XdSRO622PYECF2hG9IIWrJnsbHTZYfeY57I6K17ovjGcAlsuVAOyWip3Ggp1Ln3ykeKu1T9woF1+iaUuaU2E8t8wwVUhoYjJItfeAnOWp2y5jQhBjHTJKvP63e/1JJQgZ35/x/KTe2UeZ9aIlR/7IFcK8wfgFcszhGZF9OZGfnCfIDKAfbwYkZlXFHfa42jXzxbCP4pI+QQX/a9qHmni6pW9tbdHL13xpVczS5aMKgtiVxjzk1qkC3wyo48DemwkzMROmrRrqgFZClPdhHrTmoCO/sQNLgrmuW
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="Windows-1252"
+Content-ID: <DA255AFACF5D2343913EDDC2C09ED23F@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <95c3920e-bf80-0c7e-7854-01a1c3189c23@oracle.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 47fb2632-ba4e-42c8-1ddf-08d670eff92a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Jan 2019 20:22:10.1627
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR12MB2500
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi Fenghua,
 
-On Tue, Nov 06, 2018 at 06:35:36AM -0500, Steven Sistare wrote:
-> Pavel has a new email address, cc'd - steve
-> 
-> On 11/6/2018 12:42 AM, Dominique Martinet wrote:
-> > (added various kvm/virtualization lists in Cc as well as qemu as I don't
-> > know who's "wrong" here)
-> > 
-> > Pavel Tatashin wrote on Thu, Jul 19, 2018:
-> >> Allow sched_clock() to be used before schec_clock_init() is called.
-> >> This provides with a way to get early boot timestamps on machines with
-> >> unstable clocks.
-> > 
-> > This isn't something I understand, but bisect tells me this patch
-> > (landed as 857baa87b64 ("sched/clock: Enable sched clock early")) makes
-> > a VM running with kvmclock take a step in uptime/printk timer early in
-> > boot sequence as illustrated below. The step seems to be related to the
-> > amount of time the host was suspended while qemu was running before the
-> > reboot.
-> > 
-> > $ dmesg
-> > ...
-> > [    0.000000] SMBIOS 2.8 present.
-> > [    0.000000] DMI: QEMU Standard PC (i440FX + PIIX, 1996), BIOS ?-20180724_192412-buildhw-07.phx2.fedoraproject.org-1.fc29 04/01/2014
-> > [    0.000000] Hypervisor detected: KVM
-> > [    0.000000] kvm-clock: Using msrs 4b564d01 and 4b564d00
-> > [283120.529821] kvm-clock: cpu 0, msr 321a8001, primary cpu clock
-> > [283120.529822] clocksource: kvm-clock: mask: 0xffffffffffffffff max_cycles: 0x1cd42e4dffb, max_idle_ns: 881590591483 ns
-> > [283120.529824] tsc: Detected 2592.000 MHz processor
-> > ...
-> > 
-> > (The VM is x86_64 on x86_64, I can provide my .config on request but
-> > don't think it's related)
-> > 
-> > 
-> > It's rather annoying for me as I often reboot VMs and rely on the
-> > 'uptime' command to check if I did just reboot or not as I have the
-> > attention span of a goldfish; I'd rather not have to find something else
-> > to check if I did just reboot or not.
-> > 
-> > Note that if the qemu process is restarted, there is no offset anymore.
-> > 
-> > I unfortunately just did that so cannot say with confidence (putting my
-> > laptop to sleep for 30s only led to a 2s offset and I do not want to
-> > wait longer right now), but it looks like the clock is still mostly
-> > correct after reboot after disabling my VM's ntp client. Will infirm
-> > that tomorrow if I was wrong.
-> > 
-> > 
-> > Happy to try to help fixing this in any way, as written above the quote
-> > I'm not even actually sure who is wrong here.
+> -----Original Message-----
+> From: Fenghua Yu <fenghua.yu@intel.com>
+> Sent: Friday, December 21, 2018 6:21 PM
+> To: Thomas Gleixner <tglx@linutronix.de>; Ingo Molnar
+> <mingo@redhat.com>; H Peter Anvin <hpa@zytor.com>; Tony Luck
+> <tony.luck@intel.com>; Peter Zijlstra <peterz@infradead.org>; Reinette
+> Chatre <reinette.chatre@intel.com>; Moger, Babu
+> <Babu.Moger@amd.com>; James Morse <james.morse@arm.com>;
+> Xiaochen Shen <xiaochen.shen@intel.com>; Ravi V Shankar
+> <ravi.v.shankar@intel.com>; Sai Praneeth Prakhya
+> <sai.praneeth.prakhya@intel.com>; Arshiya Hayatkhan Pathan
+> <arshiya.hayatkhan.pathan@intel.com>
+> Cc: linux-kernel <linux-kernel@vger.kernel.org>; Fenghua Yu
+> <fenghua.yu@intel.com>
+> Subject: [PATCH v4 10/10] selftests/resctrl: Add the test in MAINTAINERS
+>=20
+> The resctrl selftest will be maintained by RDT maintainers.
+>=20
+> Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
+> ---
+>  MAINTAINERS | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 842b697a1511..edafdecb1e41 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -12650,6 +12650,7 @@ S:	Supported
+>  F:	arch/x86/kernel/cpu/intel_rdt*
+>  F:	arch/x86/include/asm/intel_rdt_sched.h
+>  F:	Documentation/x86/intel_rdt*
 
-A user in Debian reported the same/similar issue (with 4.19.13):
+This patch does not apply cleanly.  We have changed the above names from
+intel_rdt to resctrl now. You need to re-base again.
 
-https://bugs.debian.org/918036
+> +F:	tools/testing/selftests/resctrl
+>=20
+>  READ-COPY UPDATE (RCU)
+>  M:	"Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+> --
+> 2.19.1
 
-Regards,
-Salvatore
