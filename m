@@ -6,47 +6,47 @@ X-Spam-Status: No, score=-5.7 required=3.0 tests=FROM_LOCAL_HEX,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
 	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09967C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:31:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCDE0C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:31:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C30A0218CD
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:31:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 95A6B218A4
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:31:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728287AbfABKbF (ORCPT
+        id S1729067AbfABKbJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 05:31:05 -0500
-Received: from mail-it1-f199.google.com ([209.85.166.199]:40146 "EHLO
-        mail-it1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726670AbfABKbF (ORCPT
+        Wed, 2 Jan 2019 05:31:09 -0500
+Received: from mail-io1-f69.google.com ([209.85.166.69]:49346 "EHLO
+        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727633AbfABKbG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 05:31:05 -0500
-Received: by mail-it1-f199.google.com with SMTP id 135so35677998itk.5
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 02:31:04 -0800 (PST)
+        Wed, 2 Jan 2019 05:31:06 -0500
+Received: by mail-io1-f69.google.com with SMTP id c4so10042624ioh.16
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 02:31:05 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=NVqSBQFFNxfWmjALEBkB0QX5+yqmf84HzRKtmC4AMmA=;
-        b=drB56NMG+mS+K4JUgRhiqzjTDU0Kzefde7rE4v+B/9Q0aR4JRdqsz7SINMWFdrMWZY
-         wYnYH0VvnlmyimlqrOHqNLzf/QMH90REMuTlwXjTgZUBiiE0G7pdtv3CX31h7kZE0rLD
-         j3nbO/3S5Mfh5o2Ep9UuaCluGN21txGoBrsK/J1wktzDTiRdoyOyd/MiAgDzlwQKodiS
-         TqrLKTwh1UlQUMyFuH5rKwJF+x3SVLOMsdd79xJ14/ZKXaItQ8HGgQsgQ9j5a5W8JDrr
-         F7ZpfALueKVGInr7bVg/KmXrBXvSkDPAEciEyylsr2pIwasf9xxrw35PfWQa/zNxtdLt
-         zsdQ==
-X-Gm-Message-State: AA+aEWb7Hg/q5/Kt/Exuhs0gFWZES77Rp7z8Jij9SWt5MFflVCp+KRvN
-        9RvJoNgAOWFqxknM0l4XbS8zkJHP3MK6XIu0BdzR/mgsN0vn
-X-Google-Smtp-Source: AFSGD/UX+V8xg95Iz9Do55RvrJH3QB/a2pBgG0RW3+eafg4SbRePjmDOxTBJmImHkq7TMaN0X28KqmOa34lpA+Jba2yuCCmvd6TF
+        bh=moDNfs8b7De+NLBTL0iYtgL6IL6VT8q0BSPOsCfyBOQ=;
+        b=CbzxVxIDjUoPaXhgJnmt98yAJNHLy/NkF+P9OAGZdOL3eoHp4IBfLZxj4DCkH2UfWb
+         D8TxggS36OxS0En0hWIEx0sKgb+nFelLP74E9SbDPvWvh0OVY/d9xtZgLwoRZRZXJnWI
+         9p1Djy/MP43e5hFGCSWgZhAcfGk4igUwO//MZIU74HE62D6hMqveRhjuhhUakkDrO5Pc
+         fAt0AFd621z3lW4I/6eVFB6mHsvINELwKRcCgOuu8ueSLoK78iT1KiiLYbuLmFCZc9Vt
+         MbAh3kAET5+hXqmpocG1Rps5nVxiXOBqK1gloCQqwXzrQJ81L9OTcpBF+8CsijaPwDfw
+         aeog==
+X-Gm-Message-State: AJcUukcRBCDwLmAnlv25vy4fHbVymDxIdf6reDdXP3D/Tmm/jSGpbCr2
+        ToE2X8aoQPqkd8tS1hdx2h1Lo32mBd+xImpqI5D74GFnJ71p
+X-Google-Smtp-Source: ALg8bN4lS/o/oTI24UMkrzj5M/aW1syNFhptW0zUroTusgDtec/JidGmhjAf0wVDziCqJwsbVRtH3F8stS3kAtI1qhIS1Ax5p4rX
 MIME-Version: 1.0
-X-Received: by 2002:a24:f986:: with SMTP id l128mr31821922ith.5.1546425064197;
+X-Received: by 2002:a5e:d918:: with SMTP id n24mr16078841iop.3.1546425064719;
  Wed, 02 Jan 2019 02:31:04 -0800 (PST)
 Date:   Wed, 02 Jan 2019 02:31:04 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000009f94c1057e772431@google.com>
-Subject: WARNING in hsr_forward_skb
-From:   syzbot <syzbot+fdce8f2a8903f3ba0e6b@syzkaller.appspotmail.com>
-To:     arvid.brodin@alten.se, davem@davemloft.net,
+Message-ID: <000000000000a7904f057e772492@google.com>
+Subject: possible deadlock in nr_destroy_socket
+From:   syzbot <syzbot+acfc1713819b146ae4b2@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, linux-hams@vger.kernel.org,
         linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
+        ralf@linux-mips.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -57,82 +57,347 @@ Hello,
 
 syzbot found the following crash on:
 
-HEAD commit:    195303136f19 Merge tag 'kconfig-v4.21-2' of git://git.kern..
+HEAD commit:    e1ef035d272e Merge tag 'armsoc-defconfig' of git://git.ker..
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10abf757400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5e7dc790609552d7
-dashboard link: https://syzkaller.appspot.com/bug?extid=fdce8f2a8903f3ba0e6b
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15f6d1fd400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17290fdd400000
+console output: https://syzkaller.appspot.com/x/log.txt?x=159934e3400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9c6a26e22579190b
+dashboard link: https://syzkaller.appspot.com/bug?extid=acfc1713819b146ae4b2
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+
+Unfortunately, I don't have any reproducer for this crash yet.
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+fdce8f2a8903f3ba0e6b@syzkaller.appspotmail.com
+Reported-by: syzbot+acfc1713819b146ae4b2@syzkaller.appspotmail.com
 
-IPv6: ADDRCONF(NETDEV_CHANGE): hsr0: link becomes ready
-IPv6: ADDRCONF(NETDEV_UP): vxcan1: link is not ready
-8021q: adding VLAN 0 to HW filter on device batadv0
-------------[ cut here ]------------
-HSR: VLAN not yet supported
-WARNING: CPU: 0 PID: 8203 at net/hsr/hsr_forward.c:336 hsr_fill_frame_info  
-net/hsr/hsr_forward.c:336 [inline]
-WARNING: CPU: 0 PID: 8203 at net/hsr/hsr_forward.c:336  
-hsr_forward_skb+0x2196/0x28a0 net/hsr/hsr_forward.c:370
-Kernel panic - not syncing: panic_on_warn set ...
-CPU: 0 PID: 8203 Comm: syz-executor112 Not tainted 4.20.0+ #175
+
+======================================================
+WARNING: possible circular locking dependency detected
+4.20.0+ #3 Not tainted
+------------------------------------------------------
+swapper/0/0 is trying to acquire lock:
+000000002a66169c (nr_list_lock){+.-.}, at: spin_lock_bh  
+include/linux/spinlock.h:334 [inline]
+000000002a66169c (nr_list_lock){+.-.}, at: nr_remove_socket  
+net/netrom/af_netrom.c:96 [inline]
+000000002a66169c (nr_list_lock){+.-.}, at: nr_destroy_socket+0x96/0x6e0  
+net/netrom/af_netrom.c:264
+
+but task is already holding lock:
+0000000049240dca (slock-AF_NETROM){+.-.}, at: spin_lock  
+include/linux/spinlock.h:329 [inline]
+0000000049240dca (slock-AF_NETROM){+.-.}, at: nr_destroy_timer+0x32/0x90  
+net/netrom/af_netrom.c:247
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #1 (slock-AF_NETROM){+.-.}:
+        __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
+        _raw_spin_lock+0x2f/0x40 kernel/locking/spinlock.c:144
+        spin_lock include/linux/spinlock.h:329 [inline]
+        nr_find_listener net/netrom/af_netrom.c:156 [inline]
+        nr_rx_frame+0x60c/0x1d50 net/netrom/af_netrom.c:955
+        nr_loopback_timer+0x7b/0x170 net/netrom/nr_loopback.c:62
+        call_timer_fn+0x254/0x900 kernel/time/timer.c:1325
+        expire_timers kernel/time/timer.c:1362 [inline]
+        __run_timers+0x6fc/0xd50 kernel/time/timer.c:1681
+        run_timer_softirq+0x52/0xb0 kernel/time/timer.c:1694
+        __do_softirq+0x30b/0xb11 kernel/softirq.c:292
+        invoke_softirq kernel/softirq.c:373 [inline]
+        irq_exit+0x180/0x1d0 kernel/softirq.c:413
+        exiting_irq arch/x86/include/asm/apic.h:536 [inline]
+        smp_apic_timer_interrupt+0x1b7/0x760 arch/x86/kernel/apic/apic.c:1062
+        apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:807
+        _raw_spin_lock+0x0/0x40
+        __do_sys_close fs/open.c:1159 [inline]
+        __se_sys_close fs/open.c:1157 [inline]
+        __x64_sys_close+0x69/0xf0 fs/open.c:1157
+        do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
+        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+-> #0 (nr_list_lock){+.-.}:
+        lock_acquire+0x1db/0x570 kernel/locking/lockdep.c:3841
+        __raw_spin_lock_bh include/linux/spinlock_api_smp.h:135 [inline]
+        _raw_spin_lock_bh+0x33/0x50 kernel/locking/spinlock.c:168
+        spin_lock_bh include/linux/spinlock.h:334 [inline]
+        nr_remove_socket net/netrom/af_netrom.c:96 [inline]
+        nr_destroy_socket+0x96/0x6e0 net/netrom/af_netrom.c:264
+        nr_destroy_timer+0x42/0x90 net/netrom/af_netrom.c:249
+        call_timer_fn+0x254/0x900 kernel/time/timer.c:1325
+        expire_timers kernel/time/timer.c:1362 [inline]
+        __run_timers+0x6fc/0xd50 kernel/time/timer.c:1681
+        run_timer_softirq+0x52/0xb0 kernel/time/timer.c:1694
+        __do_softirq+0x30b/0xb11 kernel/softirq.c:292
+        invoke_softirq kernel/softirq.c:373 [inline]
+        irq_exit+0x180/0x1d0 kernel/softirq.c:413
+        exiting_irq arch/x86/include/asm/apic.h:536 [inline]
+        smp_apic_timer_interrupt+0x1b7/0x760 arch/x86/kernel/apic/apic.c:1062
+        apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:807
+        native_safe_halt+0x2/0x10 arch/x86/include/asm/irqflags.h:57
+        arch_cpu_idle+0x10/0x20 arch/x86/kernel/process.c:555
+        default_idle_call+0x36/0x90 kernel/sched/idle.c:93
+        cpuidle_idle_call kernel/sched/idle.c:153 [inline]
+        do_idle+0x386/0x5d0 kernel/sched/idle.c:262
+        cpu_startup_entry+0x1b/0x20 kernel/sched/idle.c:353
+        rest_init+0x245/0x37b init/main.c:443
+        arch_call_rest_init+0xe/0x1b
+        start_kernel+0x882/0x8bd init/main.c:741
+        x86_64_start_reservations+0x29/0x2b arch/x86/kernel/head64.c:470
+        x86_64_start_kernel+0x77/0x7b arch/x86/kernel/head64.c:451
+        secondary_startup_64+0xa4/0xb0 arch/x86/kernel/head_64.S:243
+
+other info that might help us debug this:
+
+  Possible unsafe locking scenario:
+
+        CPU0                    CPU1
+        ----                    ----
+   lock(slock-AF_NETROM);
+                                lock(nr_list_lock);
+                                lock(slock-AF_NETROM);
+   lock(nr_list_lock);
+
+  *** DEADLOCK ***
+
+2 locks held by swapper/0/0:
+  #0: 00000000652b24b3 ((&sk->sk_timer)#2){+.-.}, at: lockdep_copy_map  
+include/linux/lockdep.h:171 [inline]
+  #0: 00000000652b24b3 ((&sk->sk_timer)#2){+.-.}, at:  
+call_timer_fn+0x1b4/0x900 kernel/time/timer.c:1315
+  #1: 0000000049240dca (slock-AF_NETROM){+.-.}, at: spin_lock  
+include/linux/spinlock.h:329 [inline]
+  #1: 0000000049240dca (slock-AF_NETROM){+.-.}, at:  
+nr_destroy_timer+0x32/0x90 net/netrom/af_netrom.c:247
+
+stack backtrace:
+CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.20.0+ #3
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
 Call Trace:
+  <IRQ>
   __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1d3/0x2c6 lib/dump_stack.c:113
-  panic+0x2ad/0x55f kernel/panic.c:189
-  __warn.cold.8+0x20/0x52 kernel/panic.c:544
-  report_bug+0x254/0x2d0 lib/bug.c:186
-  fixup_bug arch/x86/kernel/traps.c:178 [inline]
-  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:271
-  do_invalid_op+0x36/0x40 arch/x86/kernel/traps.c:290
-  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:973
-RIP: 0010:hsr_fill_frame_info net/hsr/hsr_forward.c:336 [inline]
-RIP: 0010:hsr_forward_skb+0x2196/0x28a0 net/hsr/hsr_forward.c:370
-Code: e7 e8 9e 2a ff ff e9 8f f3 ff ff 48 89 85 b0 fe ff ff e8 8d d5 95 f9  
-48 c7 c7 a0 0e fa 88 c6 05 25 bc 4a 02 01 e8 0a 1b 5f f9 <0f> 0b 48 8b 85  
-a8 fe ff ff 48 b9 00 00 00 00 00 fc ff df 48 89 c2
-RSP: 0018:ffff8880a6ae6b28 EFLAGS: 00010282
-RAX: 0000000000000000 RBX: ffff88808486b580 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: ffffffff81683f55 RDI: 0000000000000006
-RBP: ffff8880a6ae6cb8 R08: ffff8880a8b28100 R09: 0000000000000000
+  dump_stack+0x1db/0x2d0 lib/dump_stack.c:113
+  print_circular_bug.isra.0.cold+0x1cc/0x28f kernel/locking/lockdep.c:1224
+  check_prev_add kernel/locking/lockdep.c:1866 [inline]
+  check_prevs_add kernel/locking/lockdep.c:1979 [inline]
+  validate_chain kernel/locking/lockdep.c:2350 [inline]
+  __lock_acquire+0x3014/0x4a30 kernel/locking/lockdep.c:3338
+  lock_acquire+0x1db/0x570 kernel/locking/lockdep.c:3841
+  __raw_spin_lock_bh include/linux/spinlock_api_smp.h:135 [inline]
+  _raw_spin_lock_bh+0x33/0x50 kernel/locking/spinlock.c:168
+  spin_lock_bh include/linux/spinlock.h:334 [inline]
+  nr_remove_socket net/netrom/af_netrom.c:96 [inline]
+  nr_destroy_socket+0x96/0x6e0 net/netrom/af_netrom.c:264
+  nr_destroy_timer+0x42/0x90 net/netrom/af_netrom.c:249
+  call_timer_fn+0x254/0x900 kernel/time/timer.c:1325
+  expire_timers kernel/time/timer.c:1362 [inline]
+  __run_timers+0x6fc/0xd50 kernel/time/timer.c:1681
+  run_timer_softirq+0x52/0xb0 kernel/time/timer.c:1694
+  __do_softirq+0x30b/0xb11 kernel/softirq.c:292
+  invoke_softirq kernel/softirq.c:373 [inline]
+  irq_exit+0x180/0x1d0 kernel/softirq.c:413
+  exiting_irq arch/x86/include/asm/apic.h:536 [inline]
+  smp_apic_timer_interrupt+0x1b7/0x760 arch/x86/kernel/apic/apic.c:1062
+  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:807
+  </IRQ>
+RIP: 0010:native_safe_halt+0x2/0x10 arch/x86/include/asm/irqflags.h:58
+Code: ff ff ff 48 89 c7 48 89 45 d8 e8 59 49 d3 f9 48 8b 45 d8 e9 ce fe ff  
+ff 48 89 df e8 48 49 d3 f9 eb 82 90 90 90 90 90 90 fb f4 <c3> 0f 1f 00 66  
+2e 0f 1f 84 00 00 00 00 00 f4 c3 90 90 90 90 90 90
+RSP: 0018:ffffffff89807c60 EFLAGS: 00000286 ORIG_RAX: ffffffffffffff13
+RAX: 1ffffffff13249e9 RBX: 1ffffffff1300f8f RCX: 0000000000000000
+RDX: dffffc0000000000 RSI: 0000000000000001 RDI: ffffffff8987b73c
+RBP: ffffffff89807d20 R08: ffffffff8987aec0 R09: 0000000000000000
 R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-R13: ffff88808e274400 R14: ffff88808486b636 R15: ffff8880a6ae6c90
-  hsr_dev_xmit+0x71/0xa0 net/hsr/hsr_device.c:243
-  __netdev_start_xmit include/linux/netdevice.h:4382 [inline]
-  netdev_start_xmit include/linux/netdevice.h:4391 [inline]
-  xmit_one net/core/dev.c:3278 [inline]
-  dev_hard_start_xmit+0x286/0xc80 net/core/dev.c:3294
-  __dev_queue_xmit+0x2f62/0x3ac0 net/core/dev.c:3864
-  dev_queue_xmit+0x17/0x20 net/core/dev.c:3897
-  packet_snd net/packet/af_packet.c:2932 [inline]
-  packet_sendmsg+0x298a/0x6ad0 net/packet/af_packet.c:2957
-  sock_sendmsg_nosec net/socket.c:621 [inline]
-  sock_sendmsg+0xd5/0x120 net/socket.c:631
-  ___sys_sendmsg+0x51d/0x930 net/socket.c:2116
-  __sys_sendmmsg+0x246/0x6d0 net/socket.c:2211
-  __do_sys_sendmmsg net/socket.c:2240 [inline]
-  __se_sys_sendmmsg net/socket.c:2237 [inline]
-  __x64_sys_sendmmsg+0x9d/0x100 net/socket.c:2237
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x4418a9
-Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 bb 10 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffdeaf8c9e8 EFLAGS: 00000213 ORIG_RAX: 0000000000000133
-RAX: ffffffffffffffda RBX: 0000000000000002 RCX: 00000000004418a9
-RDX: 0000000000000300 RSI: 0000000020008a80 RDI: 0000000000000003
-RBP: 0000000000000003 R08: 0000000001bbbbbb R09: 0000000001bbbbbb
-R10: 0000000000000000 R11: 0000000000000213 R12: 00007ffdeaf8ca30
-R13: 00007ffdeaf8ca20 R14: 0000000000000000 R15: 0000000000000000
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
+R13: ffffffff89807cf8 R14: 0000000000000000 R15: ffffffff89924f38
+  arch_cpu_idle+0x10/0x20 arch/x86/kernel/process.c:555
+  default_idle_call+0x36/0x90 kernel/sched/idle.c:93
+  cpuidle_idle_call kernel/sched/idle.c:153 [inline]
+  do_idle+0x386/0x5d0 kernel/sched/idle.c:262
+  cpu_startup_entry+0x1b/0x20 kernel/sched/idle.c:353
+  rest_init+0x245/0x37b init/main.c:443
+  arch_call_rest_init+0xe/0x1b
+  start_kernel+0x882/0x8bd init/main.c:741
+  x86_64_start_reservations+0x29/0x2b arch/x86/kernel/head64.c:470
+  x86_64_start_kernel+0x77/0x7b arch/x86/kernel/head64.c:451
+  secondary_startup_64+0xa4/0xb0 arch/x86/kernel/head_64.S:243
+net_ratelimit: 16 callbacks suppressed
+protocol 88fb is buggy, dev hsr_slave_0
+protocol 88fb is buggy, dev hsr_slave_1
+protocol 88fb is buggy, dev hsr_slave_0
+protocol 88fb is buggy, dev hsr_slave_1
+protocol 88fb is buggy, dev hsr_slave_0
+protocol 88fb is buggy, dev hsr_slave_1
+protocol 88fb is buggy, dev hsr_slave_0
+protocol 88fb is buggy, dev hsr_slave_1
+kobject: 'loop5' (00000000f6c15714): kobject_uevent_env
+kobject: 'loop5' (00000000f6c15714): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+protocol 88fb is buggy, dev hsr_slave_0
+protocol 88fb is buggy, dev hsr_slave_1
+kobject: 'loop3' (000000009eab774b): kobject_uevent_env
+kobject: 'loop3' (000000009eab774b): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop3' (000000009eab774b): kobject_uevent_env
+kobject: 'loop3' (000000009eab774b): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop3' (000000009eab774b): kobject_uevent_env
+kobject: 'loop3' (000000009eab774b): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop0' (000000006ef955fb): kobject_uevent_env
+kobject: 'loop0' (000000006ef955fb): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop3' (000000009eab774b): kobject_uevent_env
+kobject: 'loop3' (000000009eab774b): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop1' (0000000039030495): kobject_uevent_env
+kobject: 'loop1' (0000000039030495): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop2' (00000000a229739b): kobject_uevent_env
+kobject: 'loop2' (00000000a229739b): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop4' (000000001f21180a): kobject_uevent_env
+kobject: 'loop4' (000000001f21180a): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop0' (000000006ef955fb): kobject_uevent_env
+kobject: 'loop0' (000000006ef955fb): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop5' (00000000f6c15714): kobject_uevent_env
+kobject: 'loop5' (00000000f6c15714): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop3' (000000009eab774b): kobject_uevent_env
+kobject: 'loop3' (000000009eab774b): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop3' (000000009eab774b): kobject_uevent_env
+kobject: 'loop3' (000000009eab774b): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop3' (000000009eab774b): kobject_uevent_env
+kobject: 'loop3' (000000009eab774b): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop3' (000000009eab774b): kobject_uevent_env
+kobject: 'loop3' (000000009eab774b): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop3' (000000009eab774b): kobject_uevent_env
+kobject: 'loop3' (000000009eab774b): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop3' (000000009eab774b): kobject_uevent_env
+kobject: 'loop3' (000000009eab774b): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop3' (000000009eab774b): kobject_uevent_env
+kobject: 'loop3' (000000009eab774b): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop4' (000000001f21180a): kobject_uevent_env
+kobject: 'loop4' (000000001f21180a): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop0' (000000006ef955fb): kobject_uevent_env
+kobject: 'loop0' (000000006ef955fb): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop2' (00000000a229739b): kobject_uevent_env
+kobject: 'loop2' (00000000a229739b): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop1' (0000000039030495): kobject_uevent_env
+kobject: 'loop1' (0000000039030495): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop5' (00000000f6c15714): kobject_uevent_env
+kobject: 'loop5' (00000000f6c15714): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop3' (000000009eab774b): kobject_uevent_env
+kobject: 'loop3' (000000009eab774b): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop3' (000000009eab774b): kobject_uevent_env
+net_ratelimit: 20 callbacks suppressed
+protocol 88fb is buggy, dev hsr_slave_0
+protocol 88fb is buggy, dev hsr_slave_1
+kobject: 'loop3' (000000009eab774b): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+protocol 88fb is buggy, dev hsr_slave_0
+protocol 88fb is buggy, dev hsr_slave_1
+kobject: 'loop3' (000000009eab774b): kobject_uevent_env
+kobject: 'loop3' (000000009eab774b): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop4' (000000001f21180a): kobject_uevent_env
+kobject: 'loop4' (000000001f21180a): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop0' (000000006ef955fb): kobject_uevent_env
+kobject: 'loop0' (000000006ef955fb): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+protocol 88fb is buggy, dev hsr_slave_0
+protocol 88fb is buggy, dev hsr_slave_1
+kobject: 'loop0' (000000006ef955fb): kobject_uevent_env
+kobject: 'loop0' (000000006ef955fb): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop1' (0000000039030495): kobject_uevent_env
+kobject: 'loop1' (0000000039030495): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop2' (00000000a229739b): kobject_uevent_env
+kobject: 'loop2' (00000000a229739b): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop5' (00000000f6c15714): kobject_uevent_env
+kobject: 'loop5' (00000000f6c15714): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop3' (000000009eab774b): kobject_uevent_env
+kobject: 'loop3' (000000009eab774b): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop3' (000000009eab774b): kobject_uevent_env
+kobject: 'loop3' (000000009eab774b): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop3' (000000009eab774b): kobject_uevent_env
+kobject: 'loop3' (000000009eab774b): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop1' (0000000039030495): kobject_uevent_env
+kobject: 'loop1' (0000000039030495): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop3' (000000009eab774b): kobject_uevent_env
+kobject: 'loop3' (000000009eab774b): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+protocol 88fb is buggy, dev hsr_slave_0
+protocol 88fb is buggy, dev hsr_slave_1
+protocol 88fb is buggy, dev hsr_slave_0
+protocol 88fb is buggy, dev hsr_slave_1
+kobject: 'loop1' (0000000039030495): kobject_uevent_env
+kobject: 'loop1' (0000000039030495): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop2' (00000000a229739b): kobject_uevent_env
+kobject: 'loop2' (00000000a229739b): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop0' (000000006ef955fb): kobject_uevent_env
+kobject: 'loop0' (000000006ef955fb): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop5' (00000000f6c15714): kobject_uevent_env
+kobject: 'loop5' (00000000f6c15714): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop4' (000000001f21180a): kobject_uevent_env
+kobject: 'loop4' (000000001f21180a): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop3' (000000009eab774b): kobject_uevent_env
+kobject: 'loop3' (000000009eab774b): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop3' (000000009eab774b): kobject_uevent_env
+kobject: 'loop3' (000000009eab774b): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop3' (000000009eab774b): kobject_uevent_env
+kobject: 'loop3' (000000009eab774b): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop3' (000000009eab774b): kobject_uevent_env
+kobject: 'loop3' (000000009eab774b): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop3' (000000009eab774b): kobject_uevent_env
+kobject: 'loop3' (000000009eab774b): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop1' (0000000039030495): kobject_uevent_env
+kobject: 'loop1' (0000000039030495): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop0' (000000006ef955fb): kobject_uevent_env
+kobject: 'loop0' (000000006ef955fb): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop2' (00000000a229739b): kobject_uevent_env
+kobject: 'loop2' (00000000a229739b): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop4' (000000001f21180a): kobject_uevent_env
+kobject: 'loop4' (000000001f21180a): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
 
 
 ---
@@ -143,5 +408,3 @@ syzbot engineers can be reached at syzkaller@googlegroups.com.
 syzbot will keep track of this bug report. See:
 https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
 syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
