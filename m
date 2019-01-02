@@ -2,179 +2,195 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA8FEC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:31:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC37BC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:31:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78BC9218CD
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:31:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ABE2E218EA
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:31:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZRoXfFMd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729372AbfABKbT (ORCPT
+        id S1729469AbfABKbs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 05:31:19 -0500
-Received: from mail-it1-f197.google.com ([209.85.166.197]:57836 "EHLO
-        mail-it1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726817AbfABKbF (ORCPT
+        Wed, 2 Jan 2019 05:31:48 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:33287 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728811AbfABKbs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 05:31:05 -0500
-Received: by mail-it1-f197.google.com with SMTP id n124so32780674itb.7
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 02:31:04 -0800 (PST)
+        Wed, 2 Jan 2019 05:31:48 -0500
+Received: by mail-ed1-f65.google.com with SMTP id p6so25816094eds.0;
+        Wed, 02 Jan 2019 02:31:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=jAbhEv01L2qwCkYKLDLhjrRuLFnohUgvi9oiWW1LUPY=;
+        b=ZRoXfFMdR7GBFtALYs+KVuwiphGlSGGEtYvoIFZkxvKlZ+UpaYMnxx1lXm+DyEPyQm
+         AQtWu6zgPp5IjsO3vP+KmTN7m0KCMWCunpqJ4TUdrj8cZ/34v+uKVuGB9smfHe3wGRFE
+         ShjOvkOYjwJCebCqzeA9xAyq9ETbQE/8w2nX1DhF/1adObA4dxS8vGPQeBLq7SEJyd33
+         PweWN4fRSivr/FQpmre0zxcEFVEK96bcVMOYmLY9KhZJFmp/ORfAk82xjSRoRhEcNAXr
+         Q2c27slir1rwTmXLkcJZ/QzwPCtQWeMe9ULKe8ZLvLQfCVCpY0vRnsiwXhc//FztwPju
+         lppA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=IosoUU0o8I5k2BgUnOEGGZQrWVSHh42HIZdY8RvAydM=;
-        b=iwxhM3xq7VZH1seoWycmDrCVQ0nMUZzrX+94yx/QJ3vUHdiFHJGpdccBqKdMhkYZ+g
-         WyJinagapkBr/LkD1rUznhbUOTNQUK8KfBVfTczfcORoAxXwReaobEycuzZ3zQg8/0iX
-         JPgTfI2SUnhQBGZTDisE1RJYWaxX0or6wwt9uwJdC73E2wggIvbT5wAR/T6eEEFJGRxX
-         mf+G15ggrKb3SCKe/iR3gs2O9MdoroxtpbDFnbpeyC5mwtuVUBRe2+3v8ERYOVkBs754
-         GOVBrhvhzbiMEvW+4afpc0KfAiW6QORgtKGKZ2zlVsW4gRukFYQl/MR+WMxAZ3wUd3bW
-         7bzg==
-X-Gm-Message-State: AA+aEWbWbQKTbo1wMA40q8T7GToSzyMeytG8GBbJq4YuwE0jkUsG3qAR
-        e6YQO1bg8gVOSE2WBnZoNkti1r/q7DoLNazzXrTp2/7fN6yK
-X-Google-Smtp-Source: ALg8bN4zNZnrit37OxLsI05225fAk8AWY8bBebnPXB/EUw76ieoThPbEZHV5FfZRuUUEZaAvfGr45Aui0Bll5U9E4/N3HrXXmmGM
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=jAbhEv01L2qwCkYKLDLhjrRuLFnohUgvi9oiWW1LUPY=;
+        b=thU8UahIfTts0grvBLCjctS4nuHLAGFKY+YN8nI0fQSlftNVU5K+dL5B9/VulAaKq9
+         I7YUDJvfWUYqThgzITjo5Jd+JJVGgxueOk/9YRUNC2UAsSLKVXF0wnZHrK1BcwYh9LRn
+         xQ9L8HmIvtleGuZkDWa0GaiE2ZD3kuaLxPLDPHrhxakWOSoqk3jsukDdrbLaE4ZeHlKa
+         z+cW1qXer7/f3nWamZt/bwmQlQTW9ukgDgPG5070KZ/AKuXuL2gIX0zVrYprF69nLjx0
+         U2VpVKlAtd7K3QFnCXS1D0gry7Nwdh8EqeOdNAJkGrY7GS4WChVBsKe4RvVubl87zLNi
+         vwNw==
+X-Gm-Message-State: AA+aEWZqVINX/XFIaBbAdzdUq1ksIoEhE3UpFwtzONEpnQr3AQgcwL4r
+        CC8ls74R/zPIHvCdSLxa+QI=
+X-Google-Smtp-Source: AFSGD/XBV+kzGvUawWIDP7QH2FtM+nEofBe8EtOKcAxe8Dqu1AicQYunscCUxByg7BGX4j8DP/Ivpg==
+X-Received: by 2002:a50:b667:: with SMTP id c36mr40121223ede.190.1546425105031;
+        Wed, 02 Jan 2019 02:31:45 -0800 (PST)
+Received: from Red ([2a01:cb1d:147:7200:2e56:dcff:fed2:c6d6])
+        by smtp.googlemail.com with ESMTPSA id j23sm19506204edr.89.2019.01.02.02.31.43
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 02 Jan 2019 02:31:44 -0800 (PST)
+Date:   Wed, 2 Jan 2019 11:31:41 +0100
+From:   Corentin Labbe <clabbe.montjoie@gmail.com>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     davem@davemloft.net, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [BUG] net: sungem: device driver frees DMA memory with wrong
+ function
+Message-ID: <20190102103141.GA15872@Red>
+References: <20181223193821.GA24922@Red>
+ <20181228083621.GA25585@infradead.org>
 MIME-Version: 1.0
-X-Received: by 2002:a24:138f:: with SMTP id 137mr31897046itz.18.1546425064492;
- Wed, 02 Jan 2019 02:31:04 -0800 (PST)
-Date:   Wed, 02 Jan 2019 02:31:04 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000a415f5057e772463@google.com>
-Subject: KASAN: use-after-free Read in posix_lock_inode
-From:   syzbot <syzbot+239d99847eb49ecb3899@syzkaller.appspotmail.com>
-To:     bfields@fieldses.org, jlayton@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181228083621.GA25585@infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Fri, Dec 28, 2018 at 12:36:21AM -0800, Christoph Hellwig wrote:
+> Please try this patch:
+> 
 
-syzbot found the following crash on:
+The error type change to "DMA-API: gem 0000:00:0f.0: device driver failed to check map error" (I will send patch for fixing this).
+Note that I used the patch from your just sent DMA series (since the patch below is included in).
 
-HEAD commit:    e1ef035d272e Merge tag 'armsoc-defconfig' of git://git.ker..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16bb4c4b400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9c6a26e22579190b
-dashboard link: https://syzkaller.appspot.com/bug?extid=239d99847eb49ecb3899
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=128aa377400000
+So you can add my
+Tested-by: LABBE Corentin <clabbe.montjoie@gmail.com>
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+239d99847eb49ecb3899@syzkaller.appspotmail.com
+Thanks
 
-IPv6: ADDRCONF(NETDEV_UP): vxcan1: link is not ready
-IPv6: ADDRCONF(NETDEV_UP): vxcan1: link is not ready
-8021q: adding VLAN 0 to HW filter on device batadv0
-8021q: adding VLAN 0 to HW filter on device batadv0
-==================================================================
-BUG: KASAN: use-after-free in what_owner_is_waiting_for fs/locks.c:1000  
-[inline]
-BUG: KASAN: use-after-free in posix_locks_deadlock fs/locks.c:1023 [inline]
-BUG: KASAN: use-after-free in posix_lock_inode+0x1f9e/0x2750 fs/locks.c:1163
-Read of size 8 at addr ffff88808791b000 by task syz-executor2/10100
-
-CPU: 1 PID: 10100 Comm: syz-executor2 Not tainted 4.20.0+ #3
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1db/0x2d0 lib/dump_stack.c:113
-  print_address_description.cold+0x7c/0x20d mm/kasan/report.c:187
-  kasan_report.cold+0x1b/0x40 mm/kasan/report.c:317
-  __asan_report_load8_noabort+0x14/0x20 mm/kasan/generic_report.c:135
-  what_owner_is_waiting_for fs/locks.c:1000 [inline]
-  posix_locks_deadlock fs/locks.c:1023 [inline]
-  posix_lock_inode+0x1f9e/0x2750 fs/locks.c:1163
-  posix_lock_file fs/locks.c:1346 [inline]
-  vfs_lock_file fs/locks.c:2314 [inline]
-  vfs_lock_file+0xc7/0xf0 fs/locks.c:2309
-  do_lock_file_wait.part.0+0xe5/0x260 fs/locks.c:2328
-  do_lock_file_wait fs/locks.c:2324 [inline]
-  fcntl_setlk+0x2f1/0xfe0 fs/locks.c:2413
-  do_fcntl+0x843/0x12b0 fs/fcntl.c:370
-  __do_sys_fcntl fs/fcntl.c:463 [inline]
-  __se_sys_fcntl fs/fcntl.c:448 [inline]
-  __x64_sys_fcntl+0x16d/0x1e0 fs/fcntl.c:448
-  do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x457ec9
-Code: 6d b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 3b b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f58bbb50c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000048
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457ec9
-RDX: 0000000020000140 RSI: 0000000000000007 RDI: 0000000000000003
-RBP: 000000000073bf00 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f58bbb516d4
-R13: 00000000004be5f0 R14: 00000000004ceab0 R15: 00000000ffffffff
-
-Allocated by task 10100:
-  save_stack+0x45/0xd0 mm/kasan/common.c:73
-  set_track mm/kasan/common.c:85 [inline]
-  kasan_kmalloc mm/kasan/common.c:482 [inline]
-  kasan_kmalloc+0xcf/0xe0 mm/kasan/common.c:455
-  kasan_slab_alloc+0xf/0x20 mm/kasan/common.c:397
-  kmem_cache_alloc+0x12d/0x710 mm/slab.c:3541
-  kmem_cache_zalloc include/linux/slab.h:730 [inline]
-  locks_alloc_lock+0x8e/0x2f0 fs/locks.c:344
-  fcntl_setlk+0xa9/0xfe0 fs/locks.c:2362
-  do_fcntl+0x843/0x12b0 fs/fcntl.c:370
-  __do_sys_fcntl fs/fcntl.c:463 [inline]
-  __se_sys_fcntl fs/fcntl.c:448 [inline]
-  __x64_sys_fcntl+0x16d/0x1e0 fs/fcntl.c:448
-  do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Freed by task 10100:
-  save_stack+0x45/0xd0 mm/kasan/common.c:73
-  set_track mm/kasan/common.c:85 [inline]
-  __kasan_slab_free+0x102/0x150 mm/kasan/common.c:444
-  kasan_slab_free+0xe/0x10 mm/kasan/common.c:452
-  __cache_free mm/slab.c:3485 [inline]
-  kmem_cache_free+0x86/0x260 mm/slab.c:3747
-  locks_free_lock+0x27a/0x3f0 fs/locks.c:381
-  fcntl_setlk+0x7b5/0xfe0 fs/locks.c:2439
-  do_fcntl+0x843/0x12b0 fs/fcntl.c:370
-  __do_sys_fcntl fs/fcntl.c:463 [inline]
-  __se_sys_fcntl fs/fcntl.c:448 [inline]
-  __x64_sys_fcntl+0x16d/0x1e0 fs/fcntl.c:448
-  do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-The buggy address belongs to the object at ffff88808791b000
-  which belongs to the cache file_lock_cache of size 264
-The buggy address is located 0 bytes inside of
-  264-byte region [ffff88808791b000, ffff88808791b108)
-The buggy address belongs to the page:
-page:ffffea00021e46c0 count:1 mapcount:0 mapping:ffff8880aa16a1c0 index:0x0
-flags: 0x1fffc0000000200(slab)
-raw: 01fffc0000000200 ffffea0002333508 ffffea00021d76c8 ffff8880aa16a1c0
-raw: 0000000000000000 ffff88808791b000 000000010000000c 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff88808791af00: fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc fc
-  ffff88808791af80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> ffff88808791b000: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                    ^
-  ffff88808791b080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff88808791b100: fb fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb
-==================================================================
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+> diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
+> index a52c6409bdc2..f454e0ed1398 100644
+> --- a/include/linux/dma-mapping.h
+> +++ b/include/linux/dma-mapping.h
+> @@ -284,32 +284,25 @@ static inline void dma_direct_sync_sg_for_cpu(struct device *dev,
+>  }
+>  #endif
+>  
+> -static inline dma_addr_t dma_map_single_attrs(struct device *dev, void *ptr,
+> -					      size_t size,
+> -					      enum dma_data_direction dir,
+> -					      unsigned long attrs)
+> +static inline dma_addr_t dma_map_page_attrs(struct device *dev,
+> +		struct page *page, size_t offset, size_t size,
+> +		enum dma_data_direction dir, unsigned long attrs)
+>  {
+>  	const struct dma_map_ops *ops = get_dma_ops(dev);
+>  	dma_addr_t addr;
+>  
+>  	BUG_ON(!valid_dma_direction(dir));
+> -	debug_dma_map_single(dev, ptr, size);
+>  	if (dma_is_direct(ops))
+> -		addr = dma_direct_map_page(dev, virt_to_page(ptr),
+> -				offset_in_page(ptr), size, dir, attrs);
+> +		addr = dma_direct_map_page(dev, page, offset, size, dir, attrs);
+>  	else
+> -		addr = ops->map_page(dev, virt_to_page(ptr),
+> -				offset_in_page(ptr), size, dir, attrs);
+> -	debug_dma_map_page(dev, virt_to_page(ptr),
+> -			   offset_in_page(ptr), size,
+> -			   dir, addr, true);
+> +		addr = ops->map_page(dev, page, offset, size, dir, attrs);
+> +	debug_dma_map_page(dev, page, offset, size, dir, addr, false);
+> +
+>  	return addr;
+>  }
+>  
+> -static inline void dma_unmap_single_attrs(struct device *dev, dma_addr_t addr,
+> -					  size_t size,
+> -					  enum dma_data_direction dir,
+> -					  unsigned long attrs)
+> +static inline void dma_unmap_page_attrs(struct device *dev, dma_addr_t addr,
+> +		size_t size, enum dma_data_direction dir, unsigned long attrs)
+>  {
+>  	const struct dma_map_ops *ops = get_dma_ops(dev);
+>  
+> @@ -321,12 +314,6 @@ static inline void dma_unmap_single_attrs(struct device *dev, dma_addr_t addr,
+>  	debug_dma_unmap_page(dev, addr, size, dir, true);
+>  }
+>  
+> -static inline void dma_unmap_page_attrs(struct device *dev, dma_addr_t addr,
+> -		size_t size, enum dma_data_direction dir, unsigned long attrs)
+> -{
+> -	return dma_unmap_single_attrs(dev, addr, size, dir, attrs);
+> -}
+> -
+>  /*
+>   * dma_maps_sg_attrs returns 0 on error and > 0 on success.
+>   * It should never return a value < 0.
+> @@ -363,25 +350,6 @@ static inline void dma_unmap_sg_attrs(struct device *dev, struct scatterlist *sg
+>  		ops->unmap_sg(dev, sg, nents, dir, attrs);
+>  }
+>  
+> -static inline dma_addr_t dma_map_page_attrs(struct device *dev,
+> -					    struct page *page,
+> -					    size_t offset, size_t size,
+> -					    enum dma_data_direction dir,
+> -					    unsigned long attrs)
+> -{
+> -	const struct dma_map_ops *ops = get_dma_ops(dev);
+> -	dma_addr_t addr;
+> -
+> -	BUG_ON(!valid_dma_direction(dir));
+> -	if (dma_is_direct(ops))
+> -		addr = dma_direct_map_page(dev, page, offset, size, dir, attrs);
+> -	else
+> -		addr = ops->map_page(dev, page, offset, size, dir, attrs);
+> -	debug_dma_map_page(dev, page, offset, size, dir, addr, false);
+> -
+> -	return addr;
+> -}
+> -
+>  static inline dma_addr_t dma_map_resource(struct device *dev,
+>  					  phys_addr_t phys_addr,
+>  					  size_t size,
+> @@ -488,6 +456,19 @@ dma_sync_sg_for_device(struct device *dev, struct scatterlist *sg,
+>  
+>  }
+>  
+> +static inline dma_addr_t dma_map_single_attrs(struct device *dev, void *ptr,
+> +		size_t size, enum dma_data_direction dir, unsigned long attrs)
+> +{
+> +	return dma_map_page_attrs(dev, virt_to_page(ptr), offset_in_page(ptr),
+> +			size, dir, attrs);
+> +}
+> +
+> +static inline void dma_unmap_single_attrs(struct device *dev, dma_addr_t addr,
+> +		size_t size, enum dma_data_direction dir, unsigned long attrs)
+> +{
+> +	return dma_unmap_page_attrs(dev, addr, size, dir, attrs);
+> +}
+> +
+>  #define dma_map_single(d, a, s, r) dma_map_single_attrs(d, a, s, r, 0)
+>  #define dma_unmap_single(d, a, s, r) dma_unmap_single_attrs(d, a, s, r, 0)
+>  #define dma_map_sg(d, s, n, r) dma_map_sg_attrs(d, s, n, r, 0)
