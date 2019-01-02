@@ -2,99 +2,132 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52777C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 16:59:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE4A2C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 17:02:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B28E206C0
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 16:59:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7EC2218EA
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 17:02:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730534AbfABQ7g (ORCPT
+        id S1730566AbfABRCG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 11:59:36 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:33566 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728720AbfABQ7g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 11:59:36 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CB98D80D;
-        Wed,  2 Jan 2019 08:59:35 -0800 (PST)
-Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.196.113])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2BDF33F5D4;
-        Wed,  2 Jan 2019 08:59:34 -0800 (PST)
-Date:   Wed, 2 Jan 2019 16:59:31 +0000
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Qian Cai <cai@lca.pw>
-Cc:     akpm@linux-foundation.org, cl@linux.com, penberg@kernel.org,
-        rientjes@google.com, iamjoonsoo.kim@lge.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kmemleak: survive in a low-memory situation
-Message-ID: <20190102165931.GB6584@arrakis.emea.arm.com>
-References: <0b2ecfe8-b98b-755c-5b5d-00a09a0d9e57@lca.pw>
- <20190102160849.11480-1-cai@lca.pw>
+        Wed, 2 Jan 2019 12:02:06 -0500
+Received: from mail-it1-f197.google.com ([209.85.166.197]:42794 "EHLO
+        mail-it1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729527AbfABRCF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Jan 2019 12:02:05 -0500
+Received: by mail-it1-f197.google.com with SMTP id g7so36422068itg.7
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 09:02:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to:content-transfer-encoding;
+        bh=nUgKFwnc9bhZJ+BAHQwHTEQRqD4DNaQgGmFcAaqAsCc=;
+        b=sblacDmq5/WOZaFw4go4GYsG8M9GKtv3HSZPToo/Rp0o1o3GHWQHl7JTOGsj6ZVFaM
+         oWcwLIOKOex5MrWivWsh40moVGhz7KAzVuWyOcoicVH1gpX/rnpLVDF+zJp/4LK9rmeA
+         Rliq6MzzmQQaK1nlpjad6ZOqRKRYbJy5lo5D5D4hXjX6tuGKtRpyJrdDPtEMUhirSeE6
+         ZBxcNIbqyzS8SxR65TnWGn759sG728oKOKTXwiGXoXxF97p7VBgei78fe5/5lp8tZ1or
+         Uapw1dfj0FBJFKPlMNbv8aKDm2Nq275cJICXCUmJZx7wtX7IblLmudkxw4cwubJ/XB1X
+         wMdQ==
+X-Gm-Message-State: AJcUukfzEdOlkR0aSrVg5gOEjofoL1oOzKP/Ojp6hb+X6haUd3LybXF1
+        yOEKwifTRMw15wOroGn3n8xVZ2aWc7KjJ7kyspjE2ih85StH
+X-Google-Smtp-Source: ALg8bN5WpzHnKFCRXpWBFZTgPR5M21zX+6Lqlj/7AvWOXmLP7TjAuvKTTo7f8LfzgR7cTwHORWEtZxYxsfGnhLrkUMaKN0EFoxx1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190102160849.11480-1-cai@lca.pw>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Received: by 2002:a6b:5a02:: with SMTP id o2mr42648630iob.17.1546448524649;
+ Wed, 02 Jan 2019 09:02:04 -0800 (PST)
+Date:   Wed, 02 Jan 2019 09:02:04 -0800
+In-Reply-To: <0000000000001aea21057e4c1ab5@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000f9aaa5057e7c9ad5@google.com>
+Subject: Re: BUG: corrupted list in account_entity_enqueue
+From:   syzbot <syzbot+14005fa30c9a07192934@syzkaller.appspotmail.com>
+To:     linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        tglx@linutronix.de
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Qian,
-
-On Wed, Jan 02, 2019 at 11:08:49AM -0500, Qian Cai wrote:
-> Kmemleak could quickly fail to allocate an object structure and then
-> disable itself in a low-memory situation. For example, running a mmap()
-> workload triggering swapping and OOM [1].
-> 
-> First, it unnecessarily attempt to allocate even though the tracking
-> object is NULL in kmem_cache_alloc(). For example,
-> 
-> alloc_io
->   bio_alloc_bioset
->     mempool_alloc
->       mempool_alloc_slab
->         kmem_cache_alloc
->           slab_alloc_node
->             __slab_alloc <-- could return NULL
->             slab_post_alloc_hook
->               kmemleak_alloc_recursive
-
-kmemleak_alloc() only continues with the kmemleak_object allocation if
-the given pointer is not NULL.
-
-> diff --git a/mm/slab.h b/mm/slab.h
-> index 4190c24ef0e9..51a9a942cc56 100644
-> --- a/mm/slab.h
-> +++ b/mm/slab.h
-> @@ -435,15 +435,16 @@ static inline void slab_post_alloc_hook(struct kmem_cache *s, gfp_t flags,
->  {
->  	size_t i;
->  
-> -	flags &= gfp_allowed_mask;
-> -	for (i = 0; i < size; i++) {
-> -		void *object = p[i];
-> -
-> -		kmemleak_alloc_recursive(object, s->object_size, 1,
-> -					 s->flags, flags);
-> -		p[i] = kasan_slab_alloc(s, object, flags);
-> +	if (*p) {
-> +		flags &= gfp_allowed_mask;
-> +		for (i = 0; i < size; i++) {
-> +			void *object = p[i];
-> +
-> +			kmemleak_alloc_recursive(object, s->object_size, 1,
-> +						 s->flags, flags);
-> +			p[i] = kasan_slab_alloc(s, object, flags);
-> +		}
->  	}
-
-This is not necessary for kmemleak.
-
--- 
-Catalin
+c3l6Ym90IGhhcyBmb3VuZCBhIHJlcHJvZHVjZXIgZm9yIHRoZSBmb2xsb3dpbmcgY3Jhc2ggb246
+DQoNCkhFQUQgY29tbWl0OiAgICA0Y2QxYjYwZGVmNTEgQWRkIGxpbnV4LW5leHQgc3BlY2lmaWMg
+ZmlsZXMgZm9yIDIwMTkwMTAyDQpnaXQgdHJlZTogICAgICAgbGludXgtbmV4dA0KY29uc29sZSBv
+dXRwdXQ6IGh0dHBzOi8vc3l6a2FsbGVyLmFwcHNwb3QuY29tL3gvbG9nLnR4dD94PTEyYjEyZGJm
+NDAwMDAwDQprZXJuZWwgY29uZmlnOiAgaHR0cHM6Ly9zeXprYWxsZXIuYXBwc3BvdC5jb20veC8u
+Y29uZmlnP3g9M2JmNjY1Zjg4N2JkM2Q3ZQ0KZGFzaGJvYXJkIGxpbms6IGh0dHBzOi8vc3l6a2Fs
+bGVyLmFwcHNwb3QuY29tL2J1Zz9leHRpZD0xNDAwNWZhMzBjOWEwNzE5MjkzNA0KY29tcGlsZXI6
+ICAgICAgIGdjYyAoR0NDKSA5LjAuMCAyMDE4MTIzMSAoZXhwZXJpbWVudGFsKQ0Kc3l6IHJlcHJv
+OiAgICAgIGh0dHBzOi8vc3l6a2FsbGVyLmFwcHNwb3QuY29tL3gvcmVwcm8uc3l6P3g9MTA2MjFm
+NTM0MDAwMDANCkMgcmVwcm9kdWNlcjogICBodHRwczovL3N5emthbGxlci5hcHBzcG90LmNvbS94
+L3JlcHJvLmM/eD0xNTRkMDQyNzQwMDAwMA0KDQpJTVBPUlRBTlQ6IGlmIHlvdSBmaXggdGhlIGJ1
+ZywgcGxlYXNlIGFkZCB0aGUgZm9sbG93aW5nIHRhZyB0byB0aGUgY29tbWl0Og0KUmVwb3J0ZWQt
+Ynk6IHN5emJvdCsxNDAwNWZhMzBjOWEwNzE5MjkzNEBzeXprYWxsZXIuYXBwc3BvdG1haWwuY29t
+DQoNCmxpc3RfYWRkIGNvcnJ1cHRpb24uIG5leHQtPnByZXYgc2hvdWxkIGJlIHByZXYgKGZmZmY4
+ODgwYWU3MmQ4ZDgpLCBidXQgd2FzICANCjAwMDAwMDAwMDAwMDA2MTAuIChuZXh0PWZmZmY4ODgw
+YTk0YjY0ZjApLg0KLS0tLS0tLS0tLS0tWyBjdXQgaGVyZSBdLS0tLS0tLS0tLS0tDQprZXJuZWwg
+QlVHIGF0IGxpYi9saXN0X2RlYnVnLmM6MjMhDQppbnZhbGlkIG9wY29kZTogMDAwMCBbIzFdIFBS
+RUVNUFQgU01QIEtBU0FODQpDUFU6IDEgUElEOiAtMTk1ODUxMzcyMCBDb21tOiAQBiBOb3QgdGFp
+bnRlZCA0LjIwLjAtbmV4dC0yMDE5MDEwMiAjMg0KSGFyZHdhcmUgbmFtZTogR29vZ2xlIEdvb2ds
+ZSBDb21wdXRlIEVuZ2luZS9Hb29nbGUgQ29tcHV0ZSBFbmdpbmUsIEJJT1MgIA0KR29vZ2xlIDAx
+LzAxLzIwMTENClJJUDogMDAxMDpfX2xpc3RfYWRkX3ZhbGlkLmNvbGQrMHhmLzB4M2MgbGliL2xp
+c3RfZGVidWcuYzoyMw0KQ29kZTogMzQgZmUgZWIgZDUgNGMgODkgZTcgZTggM2EgODIgMzQgZmUg
+ZWIgYTMgNGMgODkgZjcgZTggMzAgODIgMzQgZmUgZTkgIA0KNTYgZmYgZmYgZmYgNGMgODkgZTEg
+NDggYzcgYzcgNDAgOTggODEgODggZTggMDAgY2IgZDYgZmQgPDBmPiAwYiA0OCA4OSBmMiAgDQo0
+YyA4OSBlMSA0YyA4OSBlZSA0OCBjNyBjNyA4MCA5OSA4MSA4OCBlOCBlOSBjYSBkNg0KUlNQOiAw
+MDE4OmZmZmY4ODgwYWU3MDc2NDggRUZMQUdTOiAwMDAxMDA4Ng0KUkFYOiAwMDAwMDAwMDAwMDAw
+MDc1IFJCWDogZmZmZjg4ODBhNDc4M2NjMCBSQ1g6IDAwMDAwMDAwMDAwMDAwMDANClJEWDogMDAw
+MDAwMDAwMDAwMDAwMCBSU0k6IGZmZmZmZmZmODE2N2Q3ODYgUkRJOiBmZmZmZWQxMDE1Y2UwZWJi
+DQpSQlA6IGZmZmY4ODgwYWU3MDc2NjAgUjA4OiAwMDAwMDAwMDAwMDAwMDc1IFIwOTogZmZmZmVk
+MTAxNWNlNTAyMQ0KUjEwOiBmZmZmZWQxMDE1Y2U1MDIwIFIxMTogZmZmZjg4ODBhZTcyODEwNyBS
+MTI6IGZmZmY4ODgwYTk0YjY0ZjANClIxMzogZmZmZjg4ODBhODQzYTUzMCBSMTQ6IGZmZmY4ODgw
+YWU3MDc2ZTggUjE1OiBmZmZmODg4MGE4NDNhNTMwDQpGUzogIDAwMDAwMDAwMDAwMDAwMDAoMDAw
+MCkgR1M6ZmZmZjg4ODBhZTcwMDAwMCgwMDAwKSBrbmxHUzowMDAwMDAwMDAwMDAwMDAwDQpDUzog
+IDAwMTAgRFM6IDAwMDAgRVM6IDAwMDAgQ1IwOiAwMDAwMDAwMDgwMDUwMDMzDQpDUjI6IDAwMDAw
+MDAwMDAwMDAwNjggQ1IzOiAwMDAwMDAwMGE0M2M3MDAwIENSNDogMDAwMDAwMDAwMDE0MDZlMA0K
+RFIwOiAwMDAwMDAwMDAwMDAwMDAwIERSMTogMDAwMDAwMDAwMDAwMDAwMCBEUjI6IDAwMDAwMDAw
+MDAwMDAwMDANCkRSMzogMDAwMDAwMDAwMDAwMDAwMCBEUjY6IDAwMDAwMDAwZmZmZTBmZjAgRFI3
+OiAwMDAwMDAwMDAwMDAwNDAwDQpDYWxsIFRyYWNlOg0KICA8SVJRPg0KICBfX2xpc3RfYWRkIGlu
+Y2x1ZGUvbGludXgvbGlzdC5oOjYwIFtpbmxpbmVdDQogIGxpc3RfYWRkIGluY2x1ZGUvbGludXgv
+bGlzdC5oOjc5IFtpbmxpbmVdDQogIGFjY291bnRfZW50aXR5X2VucXVldWUrMHgzYTAvMHg2NjAg
+a2VybmVsL3NjaGVkL2ZhaXIuYzoyNjc4DQogIGVucXVldWVfZW50aXR5KzB4Mjc2LzB4MjBiMCBr
+ZXJuZWwvc2NoZWQvZmFpci5jOjM5MDINCiAgZW5xdWV1ZV90YXNrX2ZhaXIrMHgyMzcvMHgxMGMw
+IGtlcm5lbC9zY2hlZC9mYWlyLmM6NTEzMw0KICBlbnF1ZXVlX3Rhc2sga2VybmVsL3NjaGVkL2Nv
+cmUuYzo3MzAgW2lubGluZV0NCiAgYWN0aXZhdGVfdGFzaysweDExZC8weDQ3MCBrZXJuZWwvc2No
+ZWQvY29yZS5jOjc1MQ0KICB0dHd1X2FjdGl2YXRlIGtlcm5lbC9zY2hlZC9jb3JlLmM6MTY0MyBb
+aW5saW5lXQ0KICB0dHd1X2RvX2FjdGl2YXRlKzB4ZDQvMHgxZjAga2VybmVsL3NjaGVkL2NvcmUu
+YzoxNzAyDQogIHR0d3VfcXVldWUga2VybmVsL3NjaGVkL2NvcmUuYzoxODQ3IFtpbmxpbmVdDQog
+IHRyeV90b193YWtlX3VwKzB4OTk3LzB4MTQ4MCBrZXJuZWwvc2NoZWQvY29yZS5jOjIwNTcNCiAg
+d2FrZV91cF9wcm9jZXNzKzB4MTAvMHgyMCBrZXJuZWwvc2NoZWQvY29yZS5jOjIxMjkNCiAgaHJ0
+aW1lcl93YWtldXArMHg0OC8weDYwIGtlcm5lbC90aW1lL2hydGltZXIuYzoxNjM3DQogIF9fcnVu
+X2hydGltZXIga2VybmVsL3RpbWUvaHJ0aW1lci5jOjEzODkgW2lubGluZV0NCiAgX19ocnRpbWVy
+X3J1bl9xdWV1ZXMrMHgzYTcvMHgxMDUwIGtlcm5lbC90aW1lL2hydGltZXIuYzoxNDUxDQogIGhy
+dGltZXJfaW50ZXJydXB0KzB4MzE0LzB4NzcwIGtlcm5lbC90aW1lL2hydGltZXIuYzoxNTA5DQog
+IGxvY2FsX2FwaWNfdGltZXJfaW50ZXJydXB0IGFyY2gveDg2L2tlcm5lbC9hcGljL2FwaWMuYzox
+MDM1IFtpbmxpbmVdDQogIHNtcF9hcGljX3RpbWVyX2ludGVycnVwdCsweDE4ZC8weDc2MCBhcmNo
+L3g4Ni9rZXJuZWwvYXBpYy9hcGljLmM6MTA2MA0KICBhcGljX3RpbWVyX2ludGVycnVwdCsweGYv
+MHgyMCBhcmNoL3g4Ni9lbnRyeS9lbnRyeV82NC5TOjgwNw0KICA8L0lSUT4NCk1vZHVsZXMgbGlu
+a2VkIGluOg0KLS0tWyBlbmQgdHJhY2UgMjFhMDAyNDZjZTkyMDljZSBdLS0tDQpSSVA6IDAwMTA6
+X19saXN0X2FkZF92YWxpZC5jb2xkKzB4Zi8weDNjIGxpYi9saXN0X2RlYnVnLmM6MjMNCkNvZGU6
+IDM0IGZlIGViIGQ1IDRjIDg5IGU3IGU4IDNhIDgyIDM0IGZlIGViIGEzIDRjIDg5IGY3IGU4IDMw
+IDgyIDM0IGZlIGU5ICANCjU2IGZmIGZmIGZmIDRjIDg5IGUxIDQ4IGM3IGM3IDQwIDk4IDgxIDg4
+IGU4IDAwIGNiIGQ2IGZkIDwwZj4gMGIgNDggODkgZjIgIA0KNGMgODkgZTEgNGMgODkgZWUgNDgg
+YzcgYzcgODAgOTkgODEgODggZTggZTkgY2EgZDYNClJTUDogMDAxODpmZmZmODg4MGFlNzA3NjQ4
+IEVGTEFHUzogMDAwMTAwODYNClJBWDogMDAwMDAwMDAwMDAwMDA3NSBSQlg6IGZmZmY4ODgwYTQ3
+ODNjYzAgUkNYOiAwMDAwMDAwMDAwMDAwMDAwDQpSRFg6IDAwMDAwMDAwMDAwMDAwMDAgUlNJOiBm
+ZmZmZmZmZjgxNjdkNzg2IFJESTogZmZmZmVkMTAxNWNlMGViYg0KUkJQOiBmZmZmODg4MGFlNzA3
+NjYwIFIwODogMDAwMDAwMDAwMDAwMDA3NSBSMDk6IGZmZmZlZDEwMTVjZTUwMjENClIxMDogZmZm
+ZmVkMTAxNWNlNTAyMCBSMTE6IGZmZmY4ODgwYWU3MjgxMDcgUjEyOiBmZmZmODg4MGE5NGI2NGYw
+DQpSMTM6IGZmZmY4ODgwYTg0M2E1MzAgUjE0OiBmZmZmODg4MGFlNzA3NmU4IFIxNTogZmZmZjg4
+ODBhODQzYTUzMA0KRlM6ICAwMDAwMDAwMDAwMDAwMDAwKDAwMDApIEdTOmZmZmY4ODgwYWU3MDAw
+MDAoMDAwMCkga25sR1M6MDAwMDAwMDAwMDAwMDAwMA0KQ1M6ICAwMDEwIERTOiAwMDAwIEVTOiAw
+MDAwIENSMDogMDAwMDAwMDA4MDA1MDAzMw0KQ1IyOiAwMDAwMDAwMDAwMDAwMDY4IENSMzogMDAw
+MDAwMDBhNDNjNzAwMCBDUjQ6IDAwMDAwMDAwMDAxNDA2ZTANCkRSMDogMDAwMDAwMDAwMDAwMDAw
+MCBEUjE6IDAwMDAwMDAwMDAwMDAwMDAgRFIyOiAwMDAwMDAwMDAwMDAwMDAwDQpEUjM6IDAwMDAw
+MDAwMDAwMDAwMDAgRFI2OiAwMDAwMDAwMGZmZmUwZmYwIERSNzogMDAwMDAwMDAwMDAwMDQwMA0K
+DQo=
