@@ -2,114 +2,102 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60C4FC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 15:31:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04B45C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 15:37:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14311218CD
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 15:31:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C0A07218CD
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 15:37:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="be3KX7Oc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730186AbfABPbm (ORCPT
+        id S1730152AbfABPhu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 10:31:42 -0500
-Received: from mail1.bemta25.messagelabs.com ([195.245.230.1]:30150 "EHLO
-        mail1.bemta25.messagelabs.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729559AbfABPbl (ORCPT
+        Wed, 2 Jan 2019 10:37:50 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:46901 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729294AbfABPht (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 10:31:41 -0500
-Received: from [46.226.52.98] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
-        by server-1.bemta.az-a.eu-west-1.aws.symcld.net id DD/48-09202-A59DC2C5; Wed, 02 Jan 2019 15:31:38 +0000
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrGKsWRWlGSWpSXmKPExsVy8IPnUd2omzo
-  xBrM/aVhMffiEzeLZrb1MFs2L17NZXN41h81i+7dHbBZzlp5gsZj7ZSqzA7vH76OP2T12zrrL
-  7rFpVSebx6HDHYwe++euYff4vEkugC2KNTMvKb8igTXjzfXTrAV3+SrubDrH1sB4hK+LkYtDS
-  GApo8SO0/dZuxg5OdgEDCXmvXnP2MXIwSEioCsx5ycTSA2zwDEmiZ9TZjKB1AgLBEtsOfuQHc
-  QWEQiRmLDtHCOE7STxtv0L2BwWARWJtmv3wGxegQCJ6wu2MEIse8socfDfITaQBKdAoMTMea/
-  ABjEKyEp8aVzNDGIzC4hL3HoyH2yZhICAxJI955khbFGJl4//sULY8hJ31yyBqrGXeH3vHQvI
-  0RIC+hJ9jcUQYUOJVdMOsEDY5hL7pt5kAilhFtCUWL9LH2KTosSUbohXeAUEJU7OfMIygVF8F
-  pIjZiF0zELSMQtJxwJGllWMFklFmekZJbmJmTm6hgYGuoaGRrqGlkBsYa6XWKWbqJdaqlueWl
-  yia6iXWF6sV1yZm5yTopeXWrKJERjnKQUHdu9gfN+VfohRkoNJSZR31SmdGCG+pPyUyozE4oz
-  4otKc1OJDjDIcHEoSvDdvAOUEi1LTUyvSMnOACQcmLcHBoyTCa3cdKM1bXJCYW5yZDpE6xajL
-  ceVM5wxmIZa8/LxUKXHeaJAZAiBFGaV5cCNgye8So6yUMC8jAwODEE9BalFuZgmq/CtGcQ5GJ
-  WHe9yCreDLzSuA2vQI6ggnoCBMJsCNKEhFSUg2MPbWVVRtE5icdcwieY1w7pfLvvLs2ERZnLp
-  g63n2U+c2W6eXXNKF5sbvLLiozKDC5Sl45nvesvHJiuC9b0rKO1m8r9nLFFiT7Byxpddg3NTe
-  i5vsNFt7Vcy41ay56IhW+i9FV7e9dC8bo2NkKDm1SH1IePbO0jnN60Hx3jXL91N87Vi8or/mp
-  xFKckWioxVxUnAgAVjcpi3kDAAA=
-X-Env-Sender: stwiss.opensource@diasemi.com
-X-Msg-Ref: server-19.tower-262.messagelabs.com!1546443098!831404!1
-X-Originating-IP: [193.240.73.197]
-X-SYMC-ESS-Client-Auth: outbound-route-from=pass
-X-StarScan-Received: 
-X-StarScan-Version: 9.31.5; banners=-,-,-
-X-VirusChecked: Checked
-Received: (qmail 13206 invoked from network); 2 Jan 2019 15:31:38 -0000
-Received: from unknown (HELO sw-ex-cashub01.diasemi.com) (193.240.73.197)
-  by server-19.tower-262.messagelabs.com with AES128-SHA256 encrypted SMTP; 2 Jan 2019 15:31:38 -0000
-Received: from SW-EX-MBX02.diasemi.com ([169.254.4.193]) by
- sw-ex-cashub01.diasemi.com ([10.20.16.141]) with mapi id 14.03.0382.000; Wed,
- 2 Jan 2019 15:31:37 +0000
-From:   Steve Twiss <stwiss.opensource@diasemi.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-CC:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-        Matti Vaittinen <mazziesaccount@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Support Opensource <Support.Opensource@diasemi.com>,
-        Mark Brown <broonie@kernel.org>
-Subject: RE: [PATCH] regmap: regmap-irq: silently ignore unsupported type
- settings
-Thread-Topic: [PATCH] regmap: regmap-irq: silently ignore unsupported type
- settings
-Thread-Index: AQHUn2eRGEaG3Adhikys+xUg2f+AdKWZO0oAgAF24YCAAWWCAA==
-Date:   Wed, 2 Jan 2019 15:31:36 +0000
-Message-ID: <6ED8E3B22081A4459DAC7699F3695FB70221795DAD@SW-EX-MBX02.diasemi.com>
-References: <20181227084443.GA23991@localhost.localdomain>
- <CAMuHMdUg=C+pNrbauM-f7LchXRnwu1ufYyUSp=jO+8hs_SrgXQ@mail.gmail.com>
- <20181231191428.GM1846@sirena.org.uk>
- <CAMuHMdXi60ZnVMgAxTnBr2ydvhcFzVbooosc+O+gC4q0-0_sEA@mail.gmail.com>
-In-Reply-To: <CAMuHMdXi60ZnVMgAxTnBr2ydvhcFzVbooosc+O+gC4q0-0_sEA@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.20.27.87]
-x-kse-attachmentfiltering-interceptor-info: protection disabled
-x-kse-serverinfo: sw-ex-cashub01.diasemi.com, 9
-x-kse-antivirus-interceptor-info: scan successful
-x-kse-antivirus-info: Clean, bases: 02/01/2019 12:52:00
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+        Wed, 2 Jan 2019 10:37:49 -0500
+Received: by mail-pf1-f193.google.com with SMTP id c73so15313073pfe.13
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 07:37:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=+j/dgRTDiVSzbUDCRzPGt+zP8/yDGDgaZrkAo6eKseo=;
+        b=be3KX7Oc6r/Tmq5hRE+1Jz4USdpfOjv8JT1W/yEWlOGdlLTyOiGIOhANxLn0vA74R0
+         JeS1rmYYu29pLbRwpCWepiywrSszaEvA7LZ5YXYvAB40Jv04YawXxBcSFXnNMj/7ma+L
+         35GhPfODUNMot2oXhjLP0UJZ+Iq+sxoH9Cw6M=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=+j/dgRTDiVSzbUDCRzPGt+zP8/yDGDgaZrkAo6eKseo=;
+        b=jhvg691zqrqB/jfBrdKXnw1NC3s9Yb9Zq3nAnUmd2zq+OHgYgLxHxs99JGXSnBa9Zq
+         /UTyFE/Z10iLQd/BhCy7SdcNNb/TgSkOTsxePeYXzkk2PNlc1gUW4iYzeznB2Y5lC0Ze
+         kYW8D1MuH7tdGyVCQ9saHNaQ44D9R/027buH1JCv1gF/w5fLLW6kjleF7MSpDbm/AVFI
+         I6fw6sPL63Akcrr4s8hEgtER6ZD5ltGrUm7K8EG1oQ/U3L2bWEDYRREGZXDRrUKcn2vJ
+         BfvIEZA/UN7FgatzxGvx0zQkjQtMGTRKYd99zqhW7yuADyioNv/wnGI9uki1n6zLIATZ
+         XVEA==
+X-Gm-Message-State: AA+aEWYsuSWsKMyfVtSuddIHGqAVCugjc0DyJ662Ftr/6f/0wQT7Gekr
+        PikoW74pBdf6Bpxz+4kepz9NYfGVy2o=
+X-Google-Smtp-Source: AFSGD/U1hf3mI0/IOLQsiMIVzMAa8UrjMhneiLIFPuL6w378zNqymQa9Re4Zax33WLgKjiydMqVvtQ==
+X-Received: by 2002:a62:4bcf:: with SMTP id d76mr46817894pfj.170.1546443467760;
+        Wed, 02 Jan 2019 07:37:47 -0800 (PST)
+Received: from qualcomm-HP-ZBook-14-G2.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com. [103.229.18.19])
+        by smtp.gmail.com with ESMTPSA id c4sm108500721pfm.151.2019.01.02.07.37.43
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 02 Jan 2019 07:37:47 -0800 (PST)
+From:   Firoz Khan <firoz.khan@linaro.org>
+To:     Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        linux-sh@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>
+Cc:     y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, arnd@arndb.de, deepa.kernel@gmail.com,
+        marcin.juszkiewicz@linaro.org, firoz.khan@linaro.org
+Subject: [PATCH 0/2] sh: Unify the system call scripts
+Date:   Wed,  2 Jan 2019 21:07:23 +0530
+Message-Id: <1546443445-21075-1-git-send-email-firoz.khan@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgR2VlcnQsDQoNCk9uIDAxIEphbnVhcnkgMjAxOSBAMTc6MzYsIEdlZXJ0IFV5dHRlcmhvZXZl
-biB3cm90ZToNCg0KPiBTdWJqZWN0OiBSZTogW1BBVENIXSByZWdtYXA6IHJlZ21hcC1pcnE6IHNp
-bGVudGx5IGlnbm9yZSB1bnN1cHBvcnRlZCB0eXBlIHNldHRpbmdzDQo+IE9uIE1vbiwgRGVjIDMx
-LCAyMDE4IGF0IDg6MTQgUE0gTWFyayBCcm93biA8YnJvb25pZUBrZXJuZWwub3JnPiB3cm90ZToN
-Cj4gPiBPbiBTYXQsIERlYyAyOSwgMjAxOCBhdCAxMjoxMzozMlBNICswMTAwLCBHZWVydCBVeXR0
-ZXJob2V2ZW4gd3JvdGU6DQo+ID4gPiA+IEdlZXJ0LCBkbyB5b3Uga25vdyBpZiBhbnlvbmUgdm91
-bGQgdG8gdGVzdCB0aGlzPw0KPiA+DQo+ID4gPiBUaGFua3MsIHRoYXQgc2VlbXMgdG8gZml4IHRo
-ZSBpc3N1ZSB3aXRoIGRhOTA2My1ydGMuDQo+ID4NCj4gPiA+IEkgZG9uJ3Qga25vdyBob3cgdG8g
-dHJpZ2dlciBhbiBhY3R1YWwgaW50ZXJydXB0LCB0aG91Z2guDQo+ID4NCj4gPiBJZiBpdCdzIGEg
-UlRDIGRvZXMgaXQgaGF2ZSBhbiBhbGFybSB5b3UgY2FuIHNldD8NCj4gDQo+IFRoYXQncyB3aGF0
-IEkgaGFkIGV4cGVjdGVkLCB0b28sIGJ1dCB0aGVyZSBpcyBubyBhbGFybSBmaWxlIHVuZGVyDQo+
-IC9zeXMvY2xhc3MvcnRjLy4NCj4gDQo+IEdye29ldGplLGVldGluZ31zLA0KPiANCj4gR2VlcnQN
-Cg0KVG8gY29tbXVuaWNhdGUgd2l0aCB0aGUgREE5MDYzIFJUQyBJIGFtIHVzZSBpb2N0bCBmdW5j
-dGlvbiBjYWxscw0KDQogLSBSVENfU0VUX1RJTUUNCiAtIFJUQ19SRF9USU1FDQogLSBSVENfQUxN
-X1NFVA0KIC0gUlRDX0FMTV9SRUFEDQogLSBSVENfQUlFX09ODQogLSBSVENfQUlFX09GRg0KDQot
-IGh0dHBzOi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L3RvcnZhbGRz
-L2xpbnV4LmdpdC90cmVlL0RvY3VtZW50YXRpb24vcnRjLnR4dA0KLSBodHRwczovL2dpdC5rZXJu
-ZWwub3JnL3B1Yi9zY20vbGludXgva2VybmVsL2dpdC90b3J2YWxkcy9saW51eC5naXQvdHJlZS90
-b29scy90ZXN0aW5nL3NlbGZ0ZXN0cy9ydGMNCg0KQWx0aG91Z2ggSSBkb24ndCB1c2UgdGhlIHRl
-c3QgcHJvZ3JhbXMgZm91bmQgaW4gTGludXgsIHRoZSBpb2N0bCBjYWxscyBJDQptYWtlIGFyZSBz
-aG93biBpbiB0aGUgTGludXggc2VsZnRlc3RzLiBJIGJlbGlldmUgdGhhdCBBbGV4YW5kcmUgQmVs
-bG9uaQ0KdXBkYXRlZCB0aGUgUlRDIHRlc3RzIHJlY2VudGx5IC0tIGJ1dCBJIGFtIG5vdCB1cCB0
-byBkYXRlIHdpdGggdGhlIGxhdGVzdC4NCg0KZ2l0IHNob3cgZDhkYTg2NjVlOGUzNGMxNGY5YjIw
-ZmUzZjIxZGZmMjliMjRjYmYwMjp0b29scy90ZXN0aW5nL3NlbGZ0ZXN0cy9ydGMvcnRjdGVzdC5j
-DQoNClJlZ2FyZHMsDQpTdGV2ZQ0KDQoNCg==
+System call table generation support is provided for
+alpha, ia64, m68k, microblaze, mips, parisc, powerpc,
+sh, sparc and xtensa architectures. The implementat-
+ions are almost similar across all the above archte-
+ctures. In order to reduce the source code across all
+the above architectures, create common ".sh" files and
+keep it in the common directory, script/. This will 
+be a generic scripts which can use for all the above
+architectures.
+
+This patch depends on;
+ https://lore.kernel.org/lkml/1546439331-18646-1-git-send-email-firoz.khan@linaro.org/
+
+Firoz Khan (2):
+  sh: remove nargs from __SYSCALL
+  sh: generate uapi header and syscall table header files
+
+ arch/sh/kernel/syscalls/Makefile      | 11 +++++++++--
+ arch/sh/kernel/syscalls/syscallhdr.sh | 36 -----------------------------------
+ arch/sh/kernel/syscalls/syscalltbl.sh | 32 -------------------------------
+ arch/sh/kernel/syscalls_32.S          |  2 +-
+ 4 files changed, 10 insertions(+), 71 deletions(-)
+ delete mode 100644 arch/sh/kernel/syscalls/syscallhdr.sh
+ delete mode 100644 arch/sh/kernel/syscalls/syscalltbl.sh
+
+-- 
+1.9.1
+
