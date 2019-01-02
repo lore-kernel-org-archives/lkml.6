@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4644C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 15:29:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3812EC43444
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 15:29:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1664218CD
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 15:29:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 077A5218CD
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 15:29:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="QC8VEHME"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="LQYHljM0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730152AbfABP3X (ORCPT
+        id S1730165AbfABP32 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 10:29:23 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:44785 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730137AbfABP3W (ORCPT
+        Wed, 2 Jan 2019 10:29:28 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:43917 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729844AbfABP31 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 10:29:22 -0500
-Received: by mail-pl1-f194.google.com with SMTP id e11so14630072plt.11
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 07:29:21 -0800 (PST)
+        Wed, 2 Jan 2019 10:29:27 -0500
+Received: by mail-pf1-f195.google.com with SMTP id w73so15304246pfk.10
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 07:29:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=myGiGPFYzEzo3ceYJtj1+5n7XmY861E8tGq+s31tnXA=;
-        b=QC8VEHMElJnlDDPtKVmbXwhtKQ8Xxe/7/+6XLmYHwJPcOwskfIZHyggVVl5gURJ5+0
-         3gY+0RgpiHio56Z6sYWWsTHq9aDLP9I9aXiBpIdcFzICrFZJ7cnjTtiX0KBEjwfNVdAL
-         FIZaheFYrOX6ILzPP4iPpmh7eqtnJkvLFDL6o=
+        bh=m6wIvAqQqDtOsFm5HOdbf9JHds76mwQFop2PYsMwmMA=;
+        b=LQYHljM0j+ny4Prhby73BH7YD/wqcNb3RCXf+Up1Nb7Qzbf8P35hlM96zEj2z/UM4i
+         lVm3QvMVF/fyKKG63yFUng9t2qUBaD5be+VK5SpirgY0t6i6Q1P7y+1UqpfNoVC/2AtV
+         X9n3p/JH7RU2vOyIP7canqy0OwMptNZN8s4kE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=myGiGPFYzEzo3ceYJtj1+5n7XmY861E8tGq+s31tnXA=;
-        b=StGvtghbxQWKQ8iv0r5WNMyIlkdzSYN8WvYxMua2U7RA+YBodjYAERUDFsndOHVfJR
-         ErWwZDyxk3gjB2I5lA7yzp7Y9o5bPjzHc4s2bx/KwbevvGf8PmJSlG3aDJAYMpmd4Rru
-         6FE6dh5CFfSTaqkm8ajNsPQucMenLjm8RNQg4Oj/sSuQOnMx+3IfzBdmrrALj2pkOza/
-         pdnjzNh8NrXyVz8TrWN5NlayybZoprYjY8GXS8PSXbpWHoO7xBZJUn1Uji3cUz8ax3ZG
-         wLXQbwEZMfUM03Es7/lkqPgC7+koc/vklUzNfcHCAFT2A9BKNxeFco0xcR3iEoTF5pV3
-         hPaQ==
-X-Gm-Message-State: AJcUukf3YaHAqKFiUJs+VaXLPMcHAlhuyLtMxb7DzropBVNs0V48Uhl6
-        hYS53sZH+mYkjlDBf4sUd8zZfQ==
-X-Google-Smtp-Source: ALg8bN6e0tnuCTkF5fEGOTEKxUkhc3gVU2ZrpqfNuAukFNHINd2bhny+T7DJKx4kPGX8bf0lzsxIKA==
-X-Received: by 2002:a17:902:b01:: with SMTP id 1mr44490225plq.331.1546442961658;
-        Wed, 02 Jan 2019 07:29:21 -0800 (PST)
+        bh=m6wIvAqQqDtOsFm5HOdbf9JHds76mwQFop2PYsMwmMA=;
+        b=iFeh8S4nIBPkMTaZbt+geiE2iSax5bsQ4dljZ9dA/DYmyTL6kNJ47/+ThtYJmLwOZO
+         1GmU7XJ5Am6tmql4IIchCrRO6spVFmO+Ff7K7NSxLYuMuydtR3wT5lehdKBWUU7LA7NA
+         sytP35K9wl+flWjBziLusRZiZZwCSnbMmOqm7CCyZFL5MKBsqX44ihss9Pe3S8AiBT6D
+         449dJEPg6WFJj6LvoNXhu/IVg0sdZ1sXc6WFqGoWeYVoJd+v3JOnC2l6AXBWMnGfkhOP
+         YEbfzezAo7UrKxjKeD7KHItXu2Q05hSCEqXkFapjhEmvcapO4p0xW6FriY4EN7fqduGh
+         Vayw==
+X-Gm-Message-State: AJcUukePOiQglWjYxX4aWc7YqCx5jcJSh3Sms8KEosFvt4Ha7v+NGUiz
+        C9x2IEVuwBQiid7r25LrY4LNjQ==
+X-Google-Smtp-Source: ALg8bN5Vxfq9LHlgjAif3bVN9QpDoPXecPtKzK/5bdzurIjrx+1/Zjl29FzlqR5vnVsLssjNoQmAbw==
+X-Received: by 2002:a63:de04:: with SMTP id f4mr13662948pgg.292.1546442966126;
+        Wed, 02 Jan 2019 07:29:26 -0800 (PST)
 Received: from qualcomm-HP-ZBook-14-G2.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com. [103.229.18.19])
-        by smtp.gmail.com with ESMTPSA id k191sm63030673pgd.9.2019.01.02.07.29.17
+        by smtp.gmail.com with ESMTPSA id k191sm63030673pgd.9.2019.01.02.07.29.21
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 02 Jan 2019 07:29:21 -0800 (PST)
+        Wed, 02 Jan 2019 07:29:25 -0800 (PST)
 From:   Firoz Khan <firoz.khan@linaro.org>
 To:     Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>,
         Dominik Brodowski <linux@dominikbrodowski.net>,
@@ -63,9 +63,9 @@ To:     Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>,
 Cc:     y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
         linux-arch@vger.kernel.org, arnd@arndb.de, deepa.kernel@gmail.com,
         marcin.juszkiewicz@linaro.org, firoz.khan@linaro.org
-Subject: [PATCH 1/2] xtensa: remove nargs from __SYSCALL
-Date:   Wed,  2 Jan 2019 20:58:31 +0530
-Message-Id: <1546442912-20818-2-git-send-email-firoz.khan@linaro.org>
+Subject: [PATCH 2/2] xtensa: generate uapi header and syscall table header files
+Date:   Wed,  2 Jan 2019 20:58:32 +0530
+Message-Id: <1546442912-20818-3-git-send-email-firoz.khan@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1546442912-20818-1-git-send-email-firoz.khan@linaro.org>
 References: <1546442912-20818-1-git-send-email-firoz.khan@linaro.org>
@@ -74,52 +74,137 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The __SYSCALL macro's arguments are system call number,
-system call entry name and number of arguments for the
-system call.
+Unified system call table generation script must be run to
+generate unistd_32.h and syscall_table.h files. This patch
+will have changes which will invokes the script.
 
-Argument- nargs in __SYSCALL(nr, entry, nargs) is neither
-calculated nor used anywhere. So it would be better to
-keep the implementaion as  __SYSCALL(nr, entry). This will
-unifies the implementation with some other architetures
-too.
+This patch will generate unistd_32.h and syscall_table.h
+files by the syscall table generation script invoked by
+xtensa/Makefile and the generated files against the removed
+files must be identical.
+
+The generated uapi header file will be included in uapi/-
+asm/unistd.h and generated system call table header file
+will be included by kernel/syscall.c file.
 
 Signed-off-by: Firoz Khan <firoz.khan@linaro.org>
 ---
- arch/xtensa/kernel/syscall.c              | 2 +-
- arch/xtensa/kernel/syscalls/syscalltbl.sh | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ arch/xtensa/kernel/syscalls/Makefile      | 11 ++++++++--
+ arch/xtensa/kernel/syscalls/syscallhdr.sh | 36 -------------------------------
+ arch/xtensa/kernel/syscalls/syscalltbl.sh | 32 ---------------------------
+ 3 files changed, 9 insertions(+), 70 deletions(-)
+ delete mode 100644 arch/xtensa/kernel/syscalls/syscallhdr.sh
+ delete mode 100644 arch/xtensa/kernel/syscalls/syscalltbl.sh
 
-diff --git a/arch/xtensa/kernel/syscall.c b/arch/xtensa/kernel/syscall.c
-index 2c415fc..0665339 100644
---- a/arch/xtensa/kernel/syscall.c
-+++ b/arch/xtensa/kernel/syscall.c
-@@ -31,7 +31,7 @@
- syscall_t sys_call_table[__NR_syscalls] /* FIXME __cacheline_aligned */= {
- 	[0 ... __NR_syscalls - 1] = (syscall_t)&sys_ni_syscall,
+diff --git a/arch/xtensa/kernel/syscalls/Makefile b/arch/xtensa/kernel/syscalls/Makefile
+index 659faef..75c7421 100644
+--- a/arch/xtensa/kernel/syscalls/Makefile
++++ b/arch/xtensa/kernel/syscalls/Makefile
+@@ -6,8 +6,9 @@ _dummy := $(shell [ -d '$(uapi)' ] || mkdir -p '$(uapi)')	\
+ 	  $(shell [ -d '$(kapi)' ] || mkdir -p '$(kapi)')
  
--#define __SYSCALL(nr, entry, nargs)[nr] = (syscall_t)entry,
-+#define __SYSCALL(nr, entry)[nr] = (syscall_t)entry,
- #include <asm/syscall_table.h>
- #undef __SYSCALL
- };
+ syscall := $(srctree)/$(src)/syscall.tbl
+-syshdr := $(srctree)/$(src)/syscallhdr.sh
+-systbl := $(srctree)/$(src)/syscalltbl.sh
++syshdr := $(srctree)/scripts/syscallhdr.sh
++sysnr := $(srctree)/scripts/syscallnr.sh
++systbl := $(srctree)/scripts/syscalltbl.sh
+ 
+ quiet_cmd_syshdr = SYSHDR  $@
+       cmd_syshdr = $(CONFIG_SHELL) '$(syshdr)' '$<' '$@'	\
+@@ -15,6 +16,12 @@ quiet_cmd_syshdr = SYSHDR  $@
+ 		   '$(syshdr_pfx_$(basetarget))'		\
+ 		   '$(syshdr_offset_$(basetarget))'
+ 
++quiet_cmd_sysnr = SYSNR  $@
++      cmd_sysnr = $(CONFIG_SHELL) '$(sysnr)' '$<' '$@'		\
++		  '$(sysnr_abis_$(basetarget))'			\
++		  '$(sysnr_pfx_$(basetarget))'			\
++		  '$(sysnr_offset_$(basetarget))'
++
+ quiet_cmd_systbl = SYSTBL  $@
+       cmd_systbl = $(CONFIG_SHELL) '$(systbl)' '$<' '$@'	\
+ 		   '$(systbl_abis_$(basetarget))'		\
+diff --git a/arch/xtensa/kernel/syscalls/syscallhdr.sh b/arch/xtensa/kernel/syscalls/syscallhdr.sh
+deleted file mode 100644
+index d37db64..0000000
+--- a/arch/xtensa/kernel/syscalls/syscallhdr.sh
++++ /dev/null
+@@ -1,36 +0,0 @@
+-#!/bin/sh
+-# SPDX-License-Identifier: GPL-2.0
+-
+-in="$1"
+-out="$2"
+-my_abis=`echo "($3)" | tr ',' '|'`
+-prefix="$4"
+-offset="$5"
+-
+-fileguard=_UAPI_ASM_XTENSA_`basename "$out" | sed \
+-	-e 'y/abcdefghijklmnopqrstuvwxyz/ABCDEFGHIJKLMNOPQRSTUVWXYZ/' \
+-	-e 's/[^A-Z0-9_]/_/g' -e 's/__/_/g'`
+-grep -E "^[0-9A-Fa-fXx]+[[:space:]]+${my_abis}" "$in" | sort -n | (
+-	printf "#ifndef %s\n" "${fileguard}"
+-	printf "#define %s\n" "${fileguard}"
+-	printf "\n"
+-
+-	nxt=0
+-	while read nr abi name entry ; do
+-		if [ -z "$offset" ]; then
+-			printf "#define __NR_%s%s\t%s\n" \
+-				"${prefix}" "${name}" "${nr}"
+-		else
+-			printf "#define __NR_%s%s\t(%s + %s)\n" \
+-				"${prefix}" "${name}" "${offset}" "${nr}"
+-		fi
+-		nxt=$((nr+1))
+-	done
+-
+-	printf "\n"
+-	printf "#ifdef __KERNEL__\n"
+-	printf "#define __NR_syscalls\t%s\n" "${nxt}"
+-	printf "#endif\n"
+-	printf "\n"
+-	printf "#endif /* %s */" "${fileguard}"
+-) > "$out"
 diff --git a/arch/xtensa/kernel/syscalls/syscalltbl.sh b/arch/xtensa/kernel/syscalls/syscalltbl.sh
-index 85d78d9..904b8e6 100644
+deleted file mode 100644
+index 904b8e6..0000000
 --- a/arch/xtensa/kernel/syscalls/syscalltbl.sh
-+++ b/arch/xtensa/kernel/syscalls/syscalltbl.sh
-@@ -13,10 +13,10 @@ emit() {
- 	t_entry="$3"
- 
- 	while [ $t_nxt -lt $t_nr ]; do
--		printf "__SYSCALL(%s, sys_ni_syscall, )\n" "${t_nxt}"
-+		printf "__SYSCALL(%s,sys_ni_syscall)\n" "${t_nxt}"
- 		t_nxt=$((t_nxt+1))
- 	done
--	printf "__SYSCALL(%s, %s, )\n" "${t_nxt}" "${t_entry}"
-+	printf "__SYSCALL(%s,%s)\n" "${t_nxt}" "${t_entry}"
- }
- 
- grep -E "^[0-9A-Fa-fXx]+[[:space:]]+${my_abis}" "$in" | sort -n | (
++++ /dev/null
+@@ -1,32 +0,0 @@
+-#!/bin/sh
+-# SPDX-License-Identifier: GPL-2.0
+-
+-in="$1"
+-out="$2"
+-my_abis=`echo "($3)" | tr ',' '|'`
+-my_abi="$4"
+-offset="$5"
+-
+-emit() {
+-	t_nxt="$1"
+-	t_nr="$2"
+-	t_entry="$3"
+-
+-	while [ $t_nxt -lt $t_nr ]; do
+-		printf "__SYSCALL(%s,sys_ni_syscall)\n" "${t_nxt}"
+-		t_nxt=$((t_nxt+1))
+-	done
+-	printf "__SYSCALL(%s,%s)\n" "${t_nxt}" "${t_entry}"
+-}
+-
+-grep -E "^[0-9A-Fa-fXx]+[[:space:]]+${my_abis}" "$in" | sort -n | (
+-	nxt=0
+-	if [ -z "$offset" ]; then
+-		offset=0
+-	fi
+-
+-	while read nr abi name entry ; do
+-		emit $((nxt+offset)) $((nr+offset)) $entry
+-		nxt=$((nr+1))
+-	done
+-) > "$out"
 -- 
 1.9.1
 
