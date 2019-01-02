@@ -2,170 +2,122 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66835C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 04:33:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0509C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 04:56:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A5E52171F
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 04:33:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="VS4d1tLA"
+	by mail.kernel.org (Postfix) with ESMTP id 8BB6F2089F
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 04:56:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728427AbfABEc5 (ORCPT
+        id S1727780AbfABEz6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 1 Jan 2019 23:32:57 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:52738 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727995AbfABEc5 (ORCPT
+        Tue, 1 Jan 2019 23:55:58 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59878 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726353AbfABEz5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Jan 2019 23:32:57 -0500
-Received: by mail-wm1-f66.google.com with SMTP id m1so25698481wml.2
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Jan 2019 20:32:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=e64NoCid3NQ++u61fL13VoDWD1H9PCdoaVblLH37Kxs=;
-        b=VS4d1tLAze7sRQKbNFHP6uZGVCJ3R7BVaD0PpO96VaJ6HjM5EvJDFJn8H50mrhI0iV
-         32EwHuM5Dyj0qKtAmG2Ijfn42xmffnCxtvOGGhhSAeO/uEgbjQjypZs0rOXLEEOOmjC0
-         DpPfLlvoDug/21ZO7eyBZUXD2F6IntYfJzaNM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=e64NoCid3NQ++u61fL13VoDWD1H9PCdoaVblLH37Kxs=;
-        b=VpswMF9dPCdbRuqK3UY7rKOsBOJt81fqE8iEqFCRB75GpnYL7Qci+t/S9mz+r8/EcC
-         o64PGW1UQHWJ5i6OwimJYWRMM4tzPRi+7GpZUBl7TKJjTh8BlMb9GHo+yud88OAYSRBD
-         kgLl1EA8NN/0lXbULPZ+nAkYovLhTS42m60vAByfPoETo7IXJwoECCTVQKE/eOWXU20F
-         QkBNCv2o2TgfU7ZYyobVDGpCKyyI1fktMt85x33OtDci/qwfpRoQS37odUzXmEML+wdn
-         mPl3y4UhU9TEGpYFk3JhRto0ILG2vgde2KyhQN7o+w6W9ftAUhFbRquZjrbCu1wYgxpF
-         8C5Q==
-X-Gm-Message-State: AJcUuke01VbQG0pQyc1+zLlXCGzNzgNL/JpeOusSjIg2Y5/MzG4e5AfC
-        ECcCO85/M7h5cQKMhsuD0H4JA4T8qMMM7aZ/YjJyEw==
-X-Google-Smtp-Source: AFSGD/X1YYqsEEGFqSFCEWy8HihMhO9nK9oGgO8rSCyRmpU0W6F8ULTpPT/9VWuj+1m2Fqvty/iGYfnhDeQjhTjVFbg=
-X-Received: by 2002:a1c:ce0e:: with SMTP id e14mr33650697wmg.53.1546403574489;
- Tue, 01 Jan 2019 20:32:54 -0800 (PST)
-MIME-Version: 1.0
-References: <1539702680-3746-1-git-send-email-srinath.mannam@broadcom.com>
- <b6e02875-784f-4908-a985-5ee7e3df3ac6@gmail.com> <CABe79T4mpnbkaTCerYegmc1+uY4idOVOxCVDqHramk3fYipiCA@mail.gmail.com>
- <3c05a1f1-5041-ebb7-27e5-0a2321314b0a@broadcom.com> <1546351479.2077.1.camel@intel.com>
- <20190101160733.GB3306@localhost.localdomain>
-In-Reply-To: <20190101160733.GB3306@localhost.localdomain>
-From:   Srinath Mannam <srinath.mannam@broadcom.com>
-Date:   Wed, 2 Jan 2019 10:02:43 +0530
-Message-ID: <CABe79T7FiAiCELmgK9xUiSaW8g=Vx6mBzan7+=8zx4uZ2jh1Rw@mail.gmail.com>
-Subject: Re: [PATCH v5 0/3] Stingray thermal driver support
-To:     Eduardo Valentin <edubezval@gmail.com>
-Cc:     Zhang Rui <rui.zhang@intel.com>,
-        Florian Fainelli <florian.fainelli@broadcom.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org,
+        Tue, 1 Jan 2019 23:55:57 -0500
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x024sAG5051698
+        for <linux-kernel@vger.kernel.org>; Tue, 1 Jan 2019 23:55:56 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2prgda2a9n-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Jan 2019 23:55:55 -0500
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <chandan@linux.ibm.com>;
+        Wed, 2 Jan 2019 04:55:54 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 2 Jan 2019 04:55:51 -0000
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x024toLR58196152
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 2 Jan 2019 04:55:50 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6DAE242052;
+        Wed,  2 Jan 2019 04:55:50 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 19CDB4203F;
+        Wed,  2 Jan 2019 04:55:49 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.102.3.54])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed,  2 Jan 2019 04:55:48 +0000 (GMT)
+From:   Chandan Rajendra <chandan@linux.ibm.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     "Theodore Ts'o" <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Chandan Rajendra <chandan@linux.vnet.ibm.com>
+Subject: Re: linux-next: manual merge of the f2fs tree with the fscrypt tree
+Date:   Wed, 02 Jan 2019 10:26:09 +0530
+Organization: IBM
+In-Reply-To: <20190102112610.3bc5fb97@canb.auug.org.au>
+References: <20181211101322.438946fe@canb.auug.org.au> <20190102112610.3bc5fb97@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+X-TM-AS-GCONF: 00
+x-cbid: 19010204-0020-0000-0000-000002FF5B5C
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19010204-0021-0000-0000-0000214F5D99
+Message-Id: <2265186.H1UptfE7Oa@localhost.localdomain>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-02_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901020043
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rui, Eduardo,
-
-Wish you very happy new year and Thank you very much for your response.
-
-Regards,
-Srinath.
-
-On Tue, Jan 1, 2019 at 9:37 PM Eduardo Valentin <edubezval@gmail.com> wrote=
-:
->
-> On Tue, Jan 01, 2019 at 10:04:39PM +0800, Zhang Rui wrote:
-> > On =E4=B8=80, 2018-12-31 at 14:15 -0800, Florian Fainelli wrote:
-> > >
-> > > On 04/12/2018 19:17, Srinath Mannam wrote:
-> > > >
-> > > > Hi,
-> > > >
-> > > > Could you please provide your feedback to this patch series?
-> > > Rui or Eduardo can we get either one of you to review the thermal
-> > > driver
-> > > parts of this patch series? Why do we constantly have to chase people
-> > > to
-> > > respond in this specific subsystem?
-> > >
-> > Eduardo, can you please take a look at this patch series?
->
-> Yup, I will take a look.
->
+On Wednesday, January 2, 2019 5:56:10 AM IST Stephen Rothwell wrote:
+> Hi all,
+> 
+> On Tue, 11 Dec 2018 10:13:22 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 > >
-> > thanks,
-> > rui
-> > > >
-> > > >
-> > > > Regards,
-> > > > Srinath.
-> > > > On Thu, Nov 8, 2018 at 3:45 AM Florian Fainelli <f.fainelli@gmail.c
-> > > > om> wrote:
-> > > > >
-> > > > >
-> > > > >
-> > > > >
-> > > > > On 10/16/2018 8:11 AM, Srinath Mannam wrote:
-> > > > > >
-> > > > > > These patches adds the stingray thermal driver and its
-> > > > > > corresponding DT nodes with documentation.
-> > > > > Can we get feedback from the thermal maintains whether this is
-> > > > > acceptable or not?
-> > > > >
-> > > > > >
-> > > > > >
-> > > > > > Changes from v4
-> > > > > >   - Addressed Rob Herring comments on DT parameters and
-> > > > > >     thermal driver architecture.
-> > > > > >   - Removed brcm,max-crit-temp DT parameter
-> > > > > >   - Changed driver to thermal sensor registration model.
-> > > > > >   - Added trip DT properties.
-> > > > > >
-> > > > > > Changes from v3
-> > > > > >   - Addressed Daniel lezcano comments.
-> > > > > >   - Elaborated commit description of thermal driver patch.
-> > > > > >   - Added brcm,max-crit-temp DT parameter.
-> > > > > >
-> > > > > > Changes from v2:
-> > > > > >   - All stingray TMON DT nodes are combine together into
-> > > > > > single.
-> > > > > >     Temperature registers are combined into one mem resource.
-> > > > > >     brcm,tmon-mask parameter has available TMONs mask value.
-> > > > > >   - All available TMONs are initialized together in single
-> > > > > >     instance of driver probe call.
-> > > > > >
-> > > > > > Changes from v1:
-> > > > > >   - Fixed auto build sparce warning.
-> > > > > >
-> > > > > > Pramod Kumar (3):
-> > > > > >   dt-bindings: thermal: Add binding document for SR thermal
-> > > > > >   thermal: broadcom: Add Stingray thermal driver
-> > > > > >   arm64: dts: stingray: Add Stingray Thermal DT support.
-> > > > > >
-> > > > > >  .../bindings/thermal/brcm,sr-thermal.txt           | 105
-> > > > > > ++++++++++++++++
-> > > > > >  .../arm64/boot/dts/broadcom/stingray/stingray.dtsi |  89
-> > > > > > +++++++++++++
-> > > > > >  drivers/thermal/Kconfig                            |   3 +-
-> > > > > >  drivers/thermal/broadcom/Kconfig                   |   9 ++
-> > > > > >  drivers/thermal/broadcom/Makefile                  |   1 +
-> > > > > >  drivers/thermal/broadcom/sr-thermal.c              | 138
-> > > > > > +++++++++++++++++++++
-> > > > > >  6 files changed, 344 insertions(+), 1 deletion(-)
-> > > > > >  create mode 100644
-> > > > > > Documentation/devicetree/bindings/thermal/brcm,sr-thermal.txt
-> > > > > >  create mode 100644 drivers/thermal/broadcom/sr-thermal.c
-> > > > > >
-> > > > > --
-> > > > > Florian
+> > Today's linux-next merge of the f2fs tree got a conflict in:
+> > 
+> >   fs/f2fs/dir.c
+> > 
+> > between commit:
+> > 
+> >   848a010287e6 ("f2fs: use IS_ENCRYPTED() to check encryption status")
+> > 
+> > from the fscrypt tree and commit:
+> > 
+> >   4e240d1bab1e ("f2fs: check memory boundary by insane namelen")
+> > 
+> > from the f2fs tree.
+> > 
+> > I fixed it up (see below) and can carry the fix as necessary. This
+> > is now fixed as far as linux-next is concerned, but any non trivial
+> > conflicts should be mentioned to your upstream maintainer when your tree
+> > is submitted for merging.  You may also want to consider cooperating
+> > with the maintainer of the conflicting tree to minimise any particularly
+> > complex conflicts.
+> > 
+> 
+> This is now a conflict between the fscrypt tree and Linus' tree.
+> 
+> 
+
+fscrypt's master branch has fsverity patches applied. These are not available
+on Linus' tree. Hence the conflict.
+
+Just FYI, The discussion on merging fsverity into mainline kernel is still
+going on.
+
+-- 
+chandan
+
+
+
