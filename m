@@ -2,288 +2,129 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A601C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 13:47:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39C8BC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 13:54:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25B1D218DE
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 13:47:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546436856;
-	bh=af7rCfmSnkwpyvq7GmTMqubSQ20RPrguoyUvYgjY540=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=2JQGQNerwPojLZqi1Px4j1nxZyQnCSqacvujWwtDm3Gk8YIoUzFPPKM1uXGysZ9Vc
-	 sBJJq5OURLW+W/RP32/U/WWkjm/nj6hO/NrQMuSAQqLBshsBHYyBKbah7ZJ7taMaCj
-	 nctz4FinXyhUhgZf+hDU30vwAZGoDVm61/k3f4Pk=
+	by mail.kernel.org (Postfix) with ESMTP id 0C2A9218DE
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 13:54:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729603AbfABNrf (ORCPT
+        id S1729965AbfABNyk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 08:47:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47280 "EHLO mail.kernel.org"
+        Wed, 2 Jan 2019 08:54:40 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:58682 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727294AbfABNre (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 08:47:34 -0500
-Received: from quaco.ghostprotocols.net (unknown [179.97.41.186])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727294AbfABNyj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Jan 2019 08:54:39 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D2834218DE;
-        Wed,  2 Jan 2019 13:47:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546436853;
-        bh=af7rCfmSnkwpyvq7GmTMqubSQ20RPrguoyUvYgjY540=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=HLUhONr2zqWhukjKJrWB2bMFsR1EtF1/q7R6XZjNMNJQZ7Df7kvQFKI0ClA3q7NBm
-         xINRf7waP5KWKnhW6m6bggdpKjKDQ4mAqfEZMcKqxfI+9i3765cRDtY8f1wN7Zhx2a
-         UyeTA3/31CVIT5JfIXAEHn6xnxuZ4ijzEgg65wMI=
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id A791340F61; Wed,  2 Jan 2019 10:47:29 -0300 (-03)
-Date:   Wed, 2 Jan 2019 10:47:29 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Adrian Hunter <adrian.hunter@intel.com>
-Cc:     Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/8] perf thread-stack: Avoid direct reference to the
- thread's stack
-Message-ID: <20190102134729.GB15460@kernel.org>
-References: <20181221120620.9659-1-adrian.hunter@intel.com>
- <20181221120620.9659-4-adrian.hunter@intel.com>
+        by mx1.redhat.com (Postfix) with ESMTPS id DF970C058CB2;
+        Wed,  2 Jan 2019 13:54:38 +0000 (UTC)
+Received: from redhat.com (ovpn-120-148.rdu2.redhat.com [10.10.120.148])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 427125D9C5;
+        Wed,  2 Jan 2019 13:54:26 +0000 (UTC)
+Date:   Wed, 2 Jan 2019 08:54:24 -0500
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, maxime.coquelin@redhat.com,
+        tiwei.bie@intel.com, wexu@redhat.com, jfreimann@redhat.com,
+        "David S. Miller" <davem@davemloft.net>,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org
+Subject: Re: [PATCH RFC 1/2] virtio-net: bql support
+Message-ID: <20190102083202-mutt-send-email-mst@kernel.org>
+References: <20181205225323.12555-1-mst@redhat.com>
+ <20181205225323.12555-2-mst@redhat.com>
+ <21384cb5-99a6-7431-1039-b356521e1bc3@redhat.com>
+ <20181226102100-mutt-send-email-mst@kernel.org>
+ <620cfd46-aa3e-7eb6-0757-f4afbafda44b@redhat.com>
+ <20181230134539-mutt-send-email-mst@kernel.org>
+ <01e0fe8f-bd75-c39b-9d77-c5a9baf87348@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20181221120620.9659-4-adrian.hunter@intel.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <01e0fe8f-bd75-c39b-9d77-c5a9baf87348@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Wed, 02 Jan 2019 13:54:39 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Fri, Dec 21, 2018 at 02:06:15PM +0200, Adrian Hunter escreveu:
-> In preparation for fixing thread stack processing for the idle task,
-> avoid direct reference to the thread's stack. The thread stack will change
-> to an array of thread stacks, at which point the meaning of the direct
-> reference will change.
+On Wed, Jan 02, 2019 at 11:30:11AM +0800, Jason Wang wrote:
 > 
-> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-> ---
->  tools/perf/util/thread-stack.c | 81 ++++++++++++++++++++--------------
->  1 file changed, 49 insertions(+), 32 deletions(-)
+> On 2018/12/31 上午2:48, Michael S. Tsirkin wrote:
+> > On Thu, Dec 27, 2018 at 06:04:53PM +0800, Jason Wang wrote:
+> > > On 2018/12/26 下午11:22, Michael S. Tsirkin wrote:
+> > > > On Thu, Dec 06, 2018 at 04:17:36PM +0800, Jason Wang wrote:
+> > > > > On 2018/12/6 上午6:54, Michael S. Tsirkin wrote:
+> > > > > > When use_napi is set, let's enable BQLs.  Note: some of the issues are
+> > > > > > similar to wifi.  It's worth considering whether something similar to
+> > > > > > commit 36148c2bbfbe ("mac80211: Adjust TSQ pacing shift") might be
+> > > > > > benefitial.
+> > > > > I've played a similar patch several days before. The tricky part is the mode
+> > > > > switching between napi and no napi. We should make sure when the packet is
+> > > > > sent and trakced by BQL,  it should be consumed by BQL as well.
+> > > > I just went over the patch again and I don't understand this comment.
+> > > > This patch only enabled BQL with tx napi.
+> > > > 
+> > > > Thus there's no mode switching.
+> > > > 
+> > > > What did I miss?
+> > > Consider the case:
+> > > 
+> > > 
+> > > TX NAPI is disabled:
+> > > 
+> > > send N packets
+> > > 
+> > > turn TX NAPI on:
+> > > 
+> > > get tx interrupt
+> > > 
+> > > BQL try to consume those packets when lead WARN for dql.
+> > > 
+> > > 
+> > > Thanks
+> > Can one really switch tx napi on and off? How?
+> > While root can change the napi_tx module parameter, I don't think
+> > that has any effect outside device probe time. What did I miss?
+> > 
+> > 
+> > 
 > 
-> diff --git a/tools/perf/util/thread-stack.c b/tools/perf/util/thread-stack.c
-> index 068c7c8db4be..e13127755293 100644
-> --- a/tools/perf/util/thread-stack.c
-> +++ b/tools/perf/util/thread-stack.c
-> @@ -111,9 +111,16 @@ static struct thread_stack *thread_stack__new(struct thread *thread,
->  		ts->kernel_start = 1ULL << 63;
->  	ts->crp = crp;
->  
-> +	thread->ts = ts;
-> +
->  	return ts;
->  }
->  
-> +static inline struct thread_stack *thread_stack__ts(struct thread *thread)
-> +{
-> +	return thread ? thread->ts : NULL;
-> +}
+> We support switch the mode through ethtool recently. See
+> 
+> commit 0c465be183c7c57a26446df6ea96d8676b865f92
+> Author: Jason Wang <jasowang@redhat.com>
+> Date:   Tue Oct 9 10:06:26 2018 +0800
+> 
+>     virtio_net: ethtool tx napi configuration
+> 
+>     Implement ethtool .set_coalesce (-C) and .get_coalesce (-c) handlers.
+>     Interrupt moderation is currently not supported, so these accept and
+>     display the default settings of 0 usec and 1 frame.
+> 
+>     Toggle tx napi through setting tx-frames. So as to not interfere
+>     with possible future interrupt moderation, value 1 means tx napi while
+>     value 0 means not.
+> 
+>     Only allow the switching when device is down for simplicity.
+> 
+>     Link: https://patchwork.ozlabs.org/patch/948149/
+>     Suggested-by: Jason Wang <jasowang@redhat.com>
+>     Signed-off-by: Willem de Bruijn <willemb@google.com>
+>     Signed-off-by: Jason Wang <jasowang@redhat.com>
+>     Signed-off-by: David S. Miller <davem@davemloft.net>
+> 
+> Thanks
 
-So, this is a 'thread' method, so it should be instead:
 
-static inline struct thread_stack *thread__stack(struct thread *thread)
-
-perhaps?
-
-Or thread__ts() or the longer thread__thread_stack(), I think
-thread__stack() is ok, I'm doing it tentatively in my local branch,
-holler if you disagree.
-
-- Arnaldo
-  
-
-> +
->  static int thread_stack__push(struct thread_stack *ts, u64 ret_addr,
->  			      bool trace_end)
->  {
-> @@ -226,8 +233,10 @@ static int __thread_stack__flush(struct thread *thread, struct thread_stack *ts)
->  
->  int thread_stack__flush(struct thread *thread)
->  {
-> -	if (thread->ts)
-> -		return __thread_stack__flush(thread, thread->ts);
-> +	struct thread_stack *ts = thread->ts;
-> +
-> +	if (ts)
-> +		return __thread_stack__flush(thread, ts);
->  
->  	return 0;
->  }
-> @@ -235,16 +244,18 @@ int thread_stack__flush(struct thread *thread)
->  int thread_stack__event(struct thread *thread, u32 flags, u64 from_ip,
->  			u64 to_ip, u16 insn_len, u64 trace_nr)
->  {
-> +	struct thread_stack *ts = thread_stack__ts(thread);
-> +
->  	if (!thread)
->  		return -EINVAL;
->  
-> -	if (!thread->ts) {
-> -		thread->ts = thread_stack__new(thread, NULL);
-> -		if (!thread->ts) {
-> +	if (!ts) {
-> +		ts = thread_stack__new(thread, NULL);
-> +		if (!ts) {
->  			pr_warning("Out of memory: no thread stack\n");
->  			return -ENOMEM;
->  		}
-> -		thread->ts->trace_nr = trace_nr;
-> +		ts->trace_nr = trace_nr;
->  	}
->  
->  	/*
-> @@ -252,14 +263,14 @@ int thread_stack__event(struct thread *thread, u32 flags, u64 from_ip,
->  	 * the stack might be completely invalid.  Better to report nothing than
->  	 * to report something misleading, so flush the stack.
->  	 */
-> -	if (trace_nr != thread->ts->trace_nr) {
-> -		if (thread->ts->trace_nr)
-> -			__thread_stack__flush(thread, thread->ts);
-> -		thread->ts->trace_nr = trace_nr;
-> +	if (trace_nr != ts->trace_nr) {
-> +		if (ts->trace_nr)
-> +			__thread_stack__flush(thread, ts);
-> +		ts->trace_nr = trace_nr;
->  	}
->  
->  	/* Stop here if thread_stack__process() is in use */
-> -	if (thread->ts->crp)
-> +	if (ts->crp)
->  		return 0;
->  
->  	if (flags & PERF_IP_FLAG_CALL) {
-> @@ -270,7 +281,7 @@ int thread_stack__event(struct thread *thread, u32 flags, u64 from_ip,
->  		ret_addr = from_ip + insn_len;
->  		if (ret_addr == to_ip)
->  			return 0; /* Zero-length calls are excluded */
-> -		return thread_stack__push(thread->ts, ret_addr,
-> +		return thread_stack__push(ts, ret_addr,
->  					  flags & PERF_IP_FLAG_TRACE_END);
->  	} else if (flags & PERF_IP_FLAG_TRACE_BEGIN) {
->  		/*
-> @@ -280,10 +291,10 @@ int thread_stack__event(struct thread *thread, u32 flags, u64 from_ip,
->  		 * address, so try to pop that. Also, do not expect a call made
->  		 * when the trace ended, to return, so pop that.
->  		 */
-> -		thread_stack__pop(thread->ts, to_ip);
-> -		thread_stack__pop_trace_end(thread->ts);
-> +		thread_stack__pop(ts, to_ip);
-> +		thread_stack__pop_trace_end(ts);
->  	} else if ((flags & PERF_IP_FLAG_RETURN) && from_ip) {
-> -		thread_stack__pop(thread->ts, to_ip);
-> +		thread_stack__pop(ts, to_ip);
->  	}
->  
->  	return 0;
-> @@ -291,21 +302,25 @@ int thread_stack__event(struct thread *thread, u32 flags, u64 from_ip,
->  
->  void thread_stack__set_trace_nr(struct thread *thread, u64 trace_nr)
->  {
-> -	if (!thread || !thread->ts)
-> +	struct thread_stack *ts = thread_stack__ts(thread);
-> +
-> +	if (!ts)
->  		return;
->  
-> -	if (trace_nr != thread->ts->trace_nr) {
-> -		if (thread->ts->trace_nr)
-> -			__thread_stack__flush(thread, thread->ts);
-> -		thread->ts->trace_nr = trace_nr;
-> +	if (trace_nr != ts->trace_nr) {
-> +		if (ts->trace_nr)
-> +			__thread_stack__flush(thread, ts);
-> +		ts->trace_nr = trace_nr;
->  	}
->  }
->  
->  void thread_stack__free(struct thread *thread)
->  {
-> -	if (thread->ts) {
-> -		__thread_stack__flush(thread, thread->ts);
-> -		zfree(&thread->ts->stack);
-> +	struct thread_stack *ts = thread->ts;
-> +
-> +	if (ts) {
-> +		__thread_stack__flush(thread, ts);
-> +		zfree(&ts->stack);
->  		zfree(&thread->ts);
->  	}
->  }
-> @@ -318,6 +333,7 @@ static inline u64 callchain_context(u64 ip, u64 kernel_start)
->  void thread_stack__sample(struct thread *thread, struct ip_callchain *chain,
->  			  size_t sz, u64 ip, u64 kernel_start)
->  {
-> +	struct thread_stack *ts = thread_stack__ts(thread);
->  	u64 context = callchain_context(ip, kernel_start);
->  	u64 last_context;
->  	size_t i, j;
-> @@ -330,15 +346,15 @@ void thread_stack__sample(struct thread *thread, struct ip_callchain *chain,
->  	chain->ips[0] = context;
->  	chain->ips[1] = ip;
->  
-> -	if (!thread || !thread->ts) {
-> +	if (!ts) {
->  		chain->nr = 2;
->  		return;
->  	}
->  
->  	last_context = context;
->  
-> -	for (i = 2, j = 1; i < sz && j <= thread->ts->cnt; i++, j++) {
-> -		ip = thread->ts->stack[thread->ts->cnt - j].ret_addr;
-> +	for (i = 2, j = 1; i < sz && j <= ts->cnt; i++, j++) {
-> +		ip = ts->stack[ts->cnt - j].ret_addr;
->  		context = callchain_context(ip, kernel_start);
->  		if (context != last_context) {
->  			if (i >= sz - 1)
-> @@ -590,7 +606,7 @@ int thread_stack__process(struct thread *thread, struct comm *comm,
->  			  struct addr_location *to_al, u64 ref,
->  			  struct call_return_processor *crp)
->  {
-> -	struct thread_stack *ts = thread->ts;
-> +	struct thread_stack *ts = thread_stack__ts(thread);
->  	int err = 0;
->  
->  	if (ts && !ts->crp) {
-> @@ -600,10 +616,9 @@ int thread_stack__process(struct thread *thread, struct comm *comm,
->  	}
->  
->  	if (!ts) {
-> -		thread->ts = thread_stack__new(thread, crp);
-> -		if (!thread->ts)
-> +		ts = thread_stack__new(thread, crp);
-> +		if (!ts)
->  			return -ENOMEM;
-> -		ts = thread->ts;
->  		ts->comm = comm;
->  	}
->  
-> @@ -668,7 +683,9 @@ int thread_stack__process(struct thread *thread, struct comm *comm,
->  
->  size_t thread_stack__depth(struct thread *thread)
->  {
-> -	if (!thread->ts)
-> +	struct thread_stack *ts = thread_stack__ts(thread);
-> +
-> +	if (!ts)
->  		return 0;
-> -	return thread->ts->cnt;
-> +	return ts->cnt;
->  }
-> -- 
-> 2.17.1
+It's disabled when device is up - isn't that enough?
 
 -- 
-
-- Arnaldo
+MST
