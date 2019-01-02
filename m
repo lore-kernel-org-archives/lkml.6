@@ -2,174 +2,99 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C17DEC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 21:48:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 929ADC43612
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 21:53:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84C6F217D9
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 21:48:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5DD7221479
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 21:53:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="XC72H91D"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g7hdrt4S"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728783AbfABVsp (ORCPT
+        id S1728902AbfABVxp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 16:48:45 -0500
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:8436 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726163AbfABVsp (ORCPT
+        Wed, 2 Jan 2019 16:53:45 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:37357 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726143AbfABVxp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 16:48:45 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c2d31ae0000>; Wed, 02 Jan 2019 13:48:30 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 02 Jan 2019 13:48:43 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 02 Jan 2019 13:48:43 -0800
-Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 2 Jan
- 2019 21:48:43 +0000
-Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 2 Jan
- 2019 21:48:42 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
- Transport; Wed, 2 Jan 2019 21:48:42 +0000
-Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.103.52]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5c2d31ba0002>; Wed, 02 Jan 2019 13:48:42 -0800
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <talho@nvidia.com>
-CC:     <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-i2c@vger.kernel.org>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH V1] i2c: tegra: Fix Maximum transfer size
-Date:   Wed, 2 Jan 2019 13:48:41 -0800
-Message-ID: <1546465721-12108-1-git-send-email-skomatineni@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-X-NVConfidentiality: public
+        Wed, 2 Jan 2019 16:53:45 -0500
+Received: by mail-qk1-f195.google.com with SMTP id g125so18678571qke.4;
+        Wed, 02 Jan 2019 13:53:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=dpU9ueJWimRZN5ClORmbPV5vMXo80pKzaKAGizI7NnQ=;
+        b=g7hdrt4Syl2G3/8HbeDcQPY4Cv3qr3lv9T6BdqVvR4JyOqVbPPeu21Kfk0r+J5G9RT
+         l5tCy87xrEHoemsH8uNo+kv+giZDS5OktVhZA1JOCICUpGvJ57JUi2RwOk4udTT80qMI
+         wqUQJlTB3J4chy+1c8rZwzXrSuhkY0ahT0lJZsypDdfQPy5HAghKxcJU8CELTBR+w5It
+         scQG/nVsLJy+v4xStnRzAIfI/WAhRYkjzTXXaEmNCZ5uRSejMUazJ0f5ed9ryxs9ShYX
+         0/qHgxTQhNpb8s/tukrnSs2dTHuRbjO9YOb21sdTfMjOd6Pq74e5yBSd5ogVJCM/HjKj
+         J6QA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dpU9ueJWimRZN5ClORmbPV5vMXo80pKzaKAGizI7NnQ=;
+        b=f9iVB4uI6tpXozZDrQJB0wnRJJj/DiqPoCdz9fLsf+8N/YoBQ7YbqU5+02CmIM+aXD
+         Z+dA6A8LK36GQFnLI+fiteUehzv6VKxyKkr7+bVqq8ChNfZvX3u0fw8WHMDnt5W0yM6a
+         cDvhYI0drulxkQibSBfXUiN9ojQaVoimvkxA744Kri1FqSYu4L1/yVpN31T3HummDvaO
+         szRwCXqiVTG2UkPb9COrKl7VoiFG/7iSOWV7jyvlPCnCl8caAQ9O38C0ZH35g2lRUr0u
+         t33K9xxau9Bbw1wqMScGHU1X8HLmjLE5WK9q4LD74UIUoyuToK5y0Q+MJobGY/eqigvX
+         vz2Q==
+X-Gm-Message-State: AJcUukd/KaryKFVPmMpua/FwgYHr+zE9pGJaETiN9+eGAt1EKnNsQt5L
+        AchMpkYgitTfKeXL5MDyIBe/fKFYW8uBvdkrT64=
+X-Google-Smtp-Source: ALg8bN4N5FwxzflmYfuhrfDpz3T0ttVhqT+g7g5JuoxtMq9w3CYLljkK071Evk7GNOqUflJRgU/vrKVhuYobL4RbAEI=
+X-Received: by 2002:a37:8383:: with SMTP id f125mr42244769qkd.49.1546466024135;
+ Wed, 02 Jan 2019 13:53:44 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1546465710; bh=oAov22G7E4MpEfDLpDUQXVs46dBVU2hXuiNZ2KWl7IQ=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         X-NVConfidentiality:MIME-Version:Content-Type;
-        b=XC72H91DjdBP2T935nS5ZS6YY3JbMMe0uiCnFFxQtm6iAz/G15Qejpw59dYQzdWZY
-         ulFIDLQOlAYMbgA+xLE7NJdd8oE3FqRN2n94Rja8wyz+5MZgBpie3NRl9NBj1xRKc9
-         HzakjuWgOCDf7ttV45/Bu8ATZxmG/tDfeK50o8p7nvBWtoVZO8QfnoDILxmTCqmtt4
-         I7RXlvu405Exn+dwmGNRE02VQyJFniVUWa17hcQ6bc/aRDKgnyLlAYCFwUUN0sYQ+f
-         MzDMCDr8i2tiB5Xec6EGy7BGU15+oZOeyEU/6yoiS8oIl+ggZafcNYPm/KdcgvbKkk
-         6ZJTn0SeTKn3Q==
+References: <20181207190720.18517-1-hch@lst.de> <20181207190720.18517-3-hch@lst.de>
+In-Reply-To: <20181207190720.18517-3-hch@lst.de>
+From:   Tony Luck <tony.luck@gmail.com>
+Date:   Wed, 2 Jan 2019 13:53:33 -0800
+Message-ID: <CA+8MBb+9prWYSmp25K-LMUv1_0eekvFqXhoj87CV9zcaXfMDGg@mail.gmail.com>
+Subject: Re: [PATCH 02/15] swiotlb: remove dma_mark_clean
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     iommu@lists.linux-foundation.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jesper Dangaard Brouer <brouer@redhat.com>,
+        Tariq Toukan <tariqt@mellanox.com>,
+        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+        =?UTF-8?B?VG9rZSBIw7hpbGFuZC1Kw7hyZ2Vuc2Vu?= <toke@toke.dk>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Jonathan Derrick <jonathan.derrick@intel.com>,
+        linux-pci@vger.kernel.org,
+        "linux-ia64@vger.kernel.org" <linux-ia64@vger.kernel.org>,
+        X86-ML <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tegra194 supports maximum 64K Bytes transfer per packet.
-Tegra186 and prior supports maximum 4K Bytes transfer per packet.
+On Fri, Dec 7, 2018 at 11:08 AM Christoph Hellwig <hch@lst.de> wrote:
+>
+> Instead of providing a special dma_mark_clean hook just for ia64, switch
+> ia64 to use the normal arch_sync_dma_for_cpu hooks instead.
+>
+> This means that we now also set the PG_arch_1 bit for pages in the
+> swiotlb buffer, which isn't stricly needed as we will never execute code
+> out of the swiotlb buffer, but otherwise harmless.
 
-This patch fixes this payload difference between Tegra194 and prior
-tegra chipsets.
+ia64 build based on arch/ia64/configs/zx1_defconfig now fails with undefined
+symbols arch_dma_alloc and arch_dma_free (used by kernel/dma/direct.c).
 
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
----
- drivers/i2c/busses/i2c-tegra.c | 16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
+This config doesn't define CONFIG_SWIOTLB, so we don't get the
+benefit of the routines in arch/ia64/kernel/dma-mapping.c
 
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 437294ea2f0a..0c08ed8b6c94 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -167,6 +167,7 @@ struct tegra_i2c_hw_feature {
- 	bool has_multi_master_mode;
- 	bool has_slcg_override_reg;
- 	bool has_mst_fifo;
-+	struct i2c_adapter_quirks *quirks;
- };
- 
- /**
-@@ -833,6 +834,12 @@ static const struct i2c_adapter_quirks tegra_i2c_quirks = {
- 	.max_write_len = 4096,
- };
- 
-+static const struct i2c_adapter_quirks tegra194_i2c_quirks = {
-+	.flags = I2C_AQ_NO_ZERO_LEN,
-+	.max_read_len = 65536,
-+	.max_write_len = 65536,
-+};
-+
- static const struct tegra_i2c_hw_feature tegra20_i2c_hw = {
- 	.has_continue_xfer_support = false,
- 	.has_per_pkt_xfer_complete_irq = false,
-@@ -844,6 +851,7 @@ static const struct tegra_i2c_hw_feature tegra20_i2c_hw = {
- 	.has_multi_master_mode = false,
- 	.has_slcg_override_reg = false,
- 	.has_mst_fifo = false,
-+	.quirks = &tegra_i2c_quirks,
- };
- 
- static const struct tegra_i2c_hw_feature tegra30_i2c_hw = {
-@@ -857,6 +865,7 @@ static const struct tegra_i2c_hw_feature tegra30_i2c_hw = {
- 	.has_multi_master_mode = false,
- 	.has_slcg_override_reg = false,
- 	.has_mst_fifo = false,
-+	.quirks = &tegra_i2c_quirks,
- };
- 
- static const struct tegra_i2c_hw_feature tegra114_i2c_hw = {
-@@ -870,6 +879,7 @@ static const struct tegra_i2c_hw_feature tegra114_i2c_hw = {
- 	.has_multi_master_mode = false,
- 	.has_slcg_override_reg = false,
- 	.has_mst_fifo = false,
-+	.quirks = &tegra_i2c_quirks,
- };
- 
- static const struct tegra_i2c_hw_feature tegra124_i2c_hw = {
-@@ -883,6 +893,7 @@ static const struct tegra_i2c_hw_feature tegra124_i2c_hw = {
- 	.has_multi_master_mode = false,
- 	.has_slcg_override_reg = true,
- 	.has_mst_fifo = false,
-+	.quirks = &tegra_i2c_quirks,
- };
- 
- static const struct tegra_i2c_hw_feature tegra210_i2c_hw = {
-@@ -896,6 +907,7 @@ static const struct tegra_i2c_hw_feature tegra210_i2c_hw = {
- 	.has_multi_master_mode = true,
- 	.has_slcg_override_reg = true,
- 	.has_mst_fifo = false,
-+	.quirks = &tegra_i2c_quirks,
- };
- 
- static const struct tegra_i2c_hw_feature tegra194_i2c_hw = {
-@@ -909,6 +921,7 @@ static const struct tegra_i2c_hw_feature tegra194_i2c_hw = {
- 	.has_multi_master_mode = true,
- 	.has_slcg_override_reg = true,
- 	.has_mst_fifo = true,
-+	.quirks = &tegra194_i2c_quirks,
- };
- 
- /* Match table for of_platform binding */
-@@ -960,7 +973,6 @@ static int tegra_i2c_probe(struct platform_device *pdev)
- 	i2c_dev->base = base;
- 	i2c_dev->div_clk = div_clk;
- 	i2c_dev->adapter.algo = &tegra_i2c_algo;
--	i2c_dev->adapter.quirks = &tegra_i2c_quirks;
- 	i2c_dev->irq = irq;
- 	i2c_dev->cont_id = pdev->id;
- 	i2c_dev->dev = &pdev->dev;
-@@ -976,6 +988,8 @@ static int tegra_i2c_probe(struct platform_device *pdev)
- 	i2c_dev->hw = of_device_get_match_data(&pdev->dev);
- 	i2c_dev->is_dvc = of_device_is_compatible(pdev->dev.of_node,
- 						  "nvidia,tegra20-i2c-dvc");
-+	i2c_dev->adapter.quirks = i2c_dev->hw->quirks;
-+
- 	init_completion(&i2c_dev->msg_complete);
- 	spin_lock_init(&i2c_dev->xfer_lock);
- 
--- 
-2.7.4
-
+-Tony
