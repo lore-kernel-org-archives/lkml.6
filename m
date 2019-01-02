@@ -2,169 +2,202 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AD11C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:24:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB360C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:25:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B0E62075B
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:24:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B8052075B
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:25:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729329AbfABKYf (ORCPT
+        id S1729347AbfABKZB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 05:24:35 -0500
-Received: from mx2.suse.de ([195.135.220.15]:51918 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728451AbfABKYf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 05:24:35 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 231F9AD02;
-        Wed,  2 Jan 2019 10:24:32 +0000 (UTC)
-Subject: Re: general protection fault in transparent_hugepage_enabled
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     syzbot <syzbot+a5fea9200aefd1cf4818@syzkaller.appspotmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>, Michal Hocko <mhocko@suse.com>,
-        David Rientjes <rientjes@google.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Matthew Wilcox <willy@infradead.org>
-References: <000000000000ae384d057dc685c1@google.com>
- <1186a139-3a46-3311-5f72-bef02d403ee1@suse.cz>
- <CACT4Y+YbM7sVDg7XEpY-E9bW2dF8a6xd_Wp_dWCnCM02DbrbtA@mail.gmail.com>
- <b12b656c-04cb-6f34-e25a-f34d59e91316@suse.cz>
- <CACT4Y+ZFnpWiBm80YRFUhjYmoTw6_1rH2=5cAj1kqR8p7Am7HQ@mail.gmail.com>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Message-ID: <a04f4ed2-da5d-99ec-5d8c-b617966a4728@suse.cz>
-Date:   Wed, 2 Jan 2019 11:24:31 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+        Wed, 2 Jan 2019 05:25:01 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:38140 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728451AbfABKZB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Jan 2019 05:25:01 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id A9F58D4E56;
+        Wed,  2 Jan 2019 10:25:00 +0000 (UTC)
+Received: from localhost (ovpn-116-137.ams2.redhat.com [10.36.116.137])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9F499608DC;
+        Wed,  2 Jan 2019 10:24:56 +0000 (UTC)
+Date:   Wed, 2 Jan 2019 10:24:55 +0000
+From:   Stefan Hajnoczi <stefanha@redhat.com>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Cornelia Huck <cohuck@redhat.com>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        Vivek Goyal <vgoyal@redhat.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        miklos@szeredi.hu, sweil@redhat.com, swhiteho@redhat.com
+Subject: Re: [PATCH 18/52] virtio-fs: Map cache using the values from the
+ capabilities
+Message-ID: <20190102102455.GF24009@stefanha-x1.localdomain>
+References: <20181213100058.GC2313@work-vm>
+ <96d9ea85-ddf3-3331-77ce-124475b26da4@redhat.com>
+ <20181213121548.GN2313@work-vm>
+ <0f1b43f6-57e3-c6d2-7ffe-cf783e125a7b@redhat.com>
+ <20181213133823.2272736b.cohuck@redhat.com>
+ <20181214134434.GA3882@stefanha-x1.localdomain>
+ <cf910f77-203c-8efd-fed1-6b041b078d63@redhat.com>
+ <20181217145638.GH6785@stefanha-x1.localdomain>
+ <20181218181358.3bc2615a.cohuck@redhat.com>
+ <4a870d9c-8c46-7f2e-4947-a3913a824d14@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <CACT4Y+ZFnpWiBm80YRFUhjYmoTw6_1rH2=5cAj1kqR8p7Am7HQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="xaMk4Io5JJdpkLEb"
+Content-Disposition: inline
+In-Reply-To: <4a870d9c-8c46-7f2e-4947-a3913a824d14@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Wed, 02 Jan 2019 10:25:00 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/2/19 11:03 AM, Dmitry Vyukov wrote:
-> On Wed, Jan 2, 2019 at 10:47 AM Vlastimil Babka <vbabka@suse.cz> wrote:
->>
->> Actually the fix was folded into the patch that caused the bug, and was
->> already sent to and merged by Linus, commit
->> 7635d9cbe8327e131a1d3d8517dc186c2796ce2e
-> 
-> 
-> But the email thread you referenced says that we need:
-> 
-> @@ -66,6 +66,8 @@ bool transparent_hugepage_enabled(struct vm_area_struct *vma)
->  {
->   if (vma_is_anonymous(vma))
->   return __transparent_hugepage_enabled(vma);
-> + if (!vma->vm_file || !vma->vm_file->f_mapping)
-> + return false;
->   if (shmem_mapping(vma->vm_file->f_mapping) && shmem_huge_enabled(vma))
->   return __transparent_hugepage_enabled(vma);
-> 
-> and 7635d9cbe8327e131a1d3d8517dc186c2796ce2e contains:
-> 
-> +bool transparent_hugepage_enabled(struct vm_area_struct *vma)
-> +{
-> +       if (vma_is_anonymous(vma))
-> +               return __transparent_hugepage_enabled(vma);
-> +       if (vma_is_shmem(vma) && shmem_huge_enabled(vma))
-> +               return __transparent_hugepage_enabled(vma);
-> +
-> +       return false;
-> +}
-> 
-> What am I missing?
 
-Ah, the solution with vma_is_shmem() appeared later in the thread:
-https://marc.info/?l=linux-mm&m=154567747315893&w=2
+--xaMk4Io5JJdpkLEb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->>>>> Code: 80 3c 02 00 0f 85 ae 04 00 00 4c 8b a3 a0 00 00 00 48 b8 00 00 00 00
->>>>> 00 fc ff df 49 8d bc 24 b8 01 00 00 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f
->>>>> 85 91 04 00 00 49 8b bc 24 b8 01 00 00 e8 2d 70 e6
->>>>> RSP: 0018:ffff8881c2237138 EFLAGS: 00010202
->>>>> RAX: dffffc0000000000 RBX: ffff8881c2bdbc60 RCX: 0000000000000000
->>>>> RDX: 0000000000000037 RSI: ffffffff81c8fa1a RDI: 00000000000001b8
->>>>> RBP: ffff8881c2237160 R08: ffffed10383b25ed R09: ffffed10383b25ec
->>>>> R10: ffffed10383b25ec R11: ffff8881c1d92f63 R12: 0000000000000000
->>>>> R13: ffff8881c2bdbd00 R14: dffffc0000000000 R15: 0000000000000f5e
->>>>> FS:  0000000001a48880(0000) GS:ffff8881dad00000(0000) knlGS:0000000000000000
->>>>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>>>> CR2: 0000000020b58000 CR3: 00000001c2210000 CR4: 00000000001406e0
->>>>> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->>>>> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->>>>> Call Trace:
->>>>>   show_smap+0x167/0x580 fs/proc/task_mmu.c:805
->>>>>   traverse+0x344/0x7b0 fs/seq_file.c:113
->>>>>   seq_read+0xc76/0x1150 fs/seq_file.c:188
->>>>>   do_loop_readv_writev fs/read_write.c:700 [inline]
->>>>>   do_iter_read+0x4bc/0x670 fs/read_write.c:924
->>>>>   vfs_readv+0x175/0x1c0 fs/read_write.c:986
->>>>>   kernel_readv fs/splice.c:362 [inline]
->>>>>   default_file_splice_read+0x539/0xb20 fs/splice.c:417
->>>>>   do_splice_to+0x12e/0x190 fs/splice.c:880
->>>>>   splice_direct_to_actor+0x31c/0x9d0 fs/splice.c:957
->>>>>   do_splice_direct+0x2d4/0x420 fs/splice.c:1066
->>>>>   do_sendfile+0x62a/0xe50 fs/read_write.c:1439
->>>>>   __do_sys_sendfile64 fs/read_write.c:1494 [inline]
->>>>>   __se_sys_sendfile64 fs/read_write.c:1486 [inline]
->>>>>   __x64_sys_sendfile64+0x15d/0x250 fs/read_write.c:1486
->>>>>   do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
->>>>>   entry_SYSCALL_64_after_hwframe+0x49/0xbe
->>>>> RIP: 0033:0x440089
->>>>> Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7
->>>>> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff
->>>>> ff 0f 83 5b 14 fc ff c3 66 2e 0f 1f 84 00 00 00 00
->>>>> RSP: 002b:00007fff3d710a18 EFLAGS: 00000213 ORIG_RAX: 0000000000000028
->>>>> RAX: ffffffffffffffda RBX: 00007fff3d710a20 RCX: 0000000000440089
->>>>> RDX: 0000000020b58000 RSI: 0000000000000003 RDI: 0000000000000003
->>>>> RBP: 00000000006ca018 R08: 0000000000000010 R09: 65732f636f72702f
->>>>> R10: 000000000000ffff R11: 0000000000000213 R12: 0000000000401970
->>>>> R13: 0000000000401a00 R14: 0000000000000000 R15: 0000000000000000
->>>>> Modules linked in:
->>>>> ---[ end trace faf026efd8795e93 ]---
->>>>> RIP: 0010:transparent_hugepage_enabled+0x8c/0x5e0 mm/huge_memory.c:69
->>>>> Code: 80 3c 02 00 0f 85 ae 04 00 00 4c 8b a3 a0 00 00 00 48 b8 00 00 00 00
->>>>> 00 fc ff df 49 8d bc 24 b8 01 00 00 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f
->>>>> 85 91 04 00 00 49 8b bc 24 b8 01 00 00 e8 2d 70 e6
->>>>> RSP: 0018:ffff8881c2237138 EFLAGS: 00010202
->>>>> RAX: dffffc0000000000 RBX: ffff8881c2bdbc60 RCX: 0000000000000000
->>>>> RDX: 0000000000000037 RSI: ffffffff81c8fa1a RDI: 00000000000001b8
->>>>> RBP: ffff8881c2237160 R08: ffffed10383b25ed R09: ffffed10383b25ec
->>>>> R10: ffffed10383b25ec R11: ffff8881c1d92f63 R12: 0000000000000000
->>>>> R13: ffff8881c2bdbd00 R14: dffffc0000000000 R15: 0000000000000f5e
->>>>> FS:  0000000001a48880(0000) GS:ffff8881dad00000(0000) knlGS:0000000000000000
->>>>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>>>> CR2: 0000000020b58000 CR3: 00000001c2210000 CR4: 00000000001406e0
->>>>> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->>>>> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->>>>>
->>>>>
->>>>> ---
->>>>> This bug is generated by a bot. It may contain errors.
->>>>> See https://goo.gl/tpsmEJ for more information about syzbot.
->>>>> syzbot engineers can be reached at syzkaller@googlegroups.com.
->>>>>
->>>>> syzbot will keep track of this bug report. See:
->>>>> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
->>>>> syzbot.
->>>>> syzbot can test patches for this bug, for details see:
->>>>> https://goo.gl/tpsmEJ#testing-patches
->>
+On Tue, Dec 18, 2018 at 06:25:27PM +0100, David Hildenbrand wrote:
+> On 18.12.18 18:13, Cornelia Huck wrote:
+> > On Mon, 17 Dec 2018 14:56:38 +0000
+> > Stefan Hajnoczi <stefanha@redhat.com> wrote:
+> >=20
+> >> On Mon, Dec 17, 2018 at 11:53:46AM +0100, David Hildenbrand wrote:
+> >>> On 14.12.18 14:44, Stefan Hajnoczi wrote: =20
+> >>>> On Thu, Dec 13, 2018 at 01:38:23PM +0100, Cornelia Huck wrote: =20
+> >>>>> On Thu, 13 Dec 2018 13:24:31 +0100
+> >>>>> David Hildenbrand <david@redhat.com> wrote:
+> >=20
+> >>>>>> As s390x does not have the concept of memory mapped io (RAM is RAM,
+> >>>>>> nothing else), this is not architectured. vitio-ccw can therefore =
+not
+> >>>>>> define anything similar like that. However, in virtual environment=
+s we
+> >>>>>> can do whatever we want on top of the pure transport (e.g. on the =
+virtio
+> >>>>>> layer).
+> >>>>>>
+> >>>>>> Conny can correct me if I am wrong. =20
+> >>>>>
+> >>>>> I don't think you're wrong, but I haven't read the code yet and I'm
+> >>>>> therefore not aware of the purpose of this BAR.
+> >>>>>
+> >>>>> Generally, if there is a memory location shared between host and gu=
+est,
+> >>>>> we need a way to communicate its location, which will likely differ
+> >>>>> between transports. For ccw, I could imagine a new channel command
+> >>>>> dedicated to exchanging configuration information (similar to what
+> >>>>> exists today to communicate the locations of virtqueues), but I'd
+> >>>>> rather not go down this path.
+> >>>>>
+> >>>>> Without reading the code/design further, can we use one of the
+> >>>>> following instead of a BAR:
+> >>>>> - a virtqueue;
+> >>>>> - something in config space?
+> >>>>> That would be implementable by any virtio transport. =20
+> >>>>
+> >>>> The way I think about this is that we wish to extend the VIRTIO devi=
+ce
+> >>>> model with the concept of shared memory.  virtio-fs, virtio-gpu, and
+> >>>> virtio-vhost-user all have requirements for shared memory.
+> >>>>
+> >>>> This seems like a transport-level issue to me.  PCI supports
+> >>>> memory-mapped I/O and that's the right place to do it.  If you try to
+> >>>> put it into config space or the virtqueue, you'll end up with someth=
+ing
+> >>>> that cannot be realized as a PCI device because it bypasses PCI bus
+> >>>> address translation.
+> >>>>
+> >>>> If CCW needs a side-channel, that's fine.  But that side-channel is a
+> >>>> CCW-specific mechanism and probably doesn't apply to all other
+> >>>> transports.
+> >>>>
+> >>>> Stefan
+> >>>>  =20
+> >>>
+> >>> I think the problem is more fundamental. There is no iommu. Whatever
+> >>> shared region you want to indicate, you want it to be assigned a memo=
+ry
+> >>> region in guest physical memory. Like a DIMM/NVDIMM. And this should =
+be
+> >>> different to the concept of a BAR. Or am I missing something? =20
+> >>
+> >> If you implement a physical virtio PCI adapter then there is bus
+> >> addressing and an IOMMU and VIRTIO has support for that.  I'm not sure=
+ I
+> >> understand what you mean by "there is no iommu"?
+> >=20
+> > For ccw, there is no iommu; channel-program translation is doing
+> > similar things. (I hope that is what David meant :)
+> >=20
+> >>
+> >>> I am ok with using whatever other channel to transport such informati=
+on.
+> >>> But I believe this is different to a typical BAR. (I wish I knew more
+> >>> about PCI internals ;) ).
+> >>>
+> >>> I would also like to know how shared memory works as of now for e.g.
+> >>> virtio-gpu. =20
+> >>
+> >> virtio-gpu currently does not use shared memory, it needs it for future
+> >> features.
+> >=20
+> > OK, that all sounds like we need to define a generic, per transport,
+> > device agnostic way to specify shared memory.
+> >=20
+> > Where is that memory situated? Is it something in guest memory (like
+> > virtqueues)? If it is something provided by the device, things will get
+> > tricky for ccw (remember that there's no mmio on s390; pci on s390 uses
+> > special instructions for that.)
+> >=20
+>=20
+> I am just very very confused right now. What I am struggling with right
+> now (Stefan, hope you can clarify it for me):
+>=20
+> We need some place where this shared memory is located in the guest
+> physical memory. On x86 - if I am not wrong - this BAR is placed into
+> the reserved memory area between 3 and 4 GB.
 
+Right, the shared memory is provided by the device and does not live in
+guest RAM.
+
+> There is no such thing on
+> s390x. Because we don't have IO via memory (yet). All we have is one or
+> two KVM memory slots filled with all memory.
+>=20
+> So what we will need on s390x is on the QEMU side such a reserved memory
+> region where devices like virtio-fs can reserve a region for shared memor=
+y.
+>=20
+> So it is something like a dimm/nvdimm except that it is smaller and not
+> visible to the user directly (via memory backends).
+
+I see.  That makes sense.
+
+Stefan
+
+--xaMk4Io5JJdpkLEb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEcBAEBAgAGBQJcLJF3AAoJEJykq7OBq3PII0EH/1WLYdqfHmm+0kFPXDkJu7rW
+E9pynkVz0uG9knT9oZ/pFDsBfSHEAlNW9pAv7z2CV0ZzwBOVqUoSyquosKVKs80o
+hMoAvT728XV0CcEqYx6tWmeoMYTb/Cy6Su0Crz/zzZMXRc6LIq7eZZ5Nq6OJ0wCv
+UPXhE+tuLDPpHR9bw1xAwY8IL6+P5VasQegth0uwVcRSIB87OpkEKyXuyzwTHCu2
+kIKuo9SJA8EZfIhERk3p6idS5oKCxPM55wVuEfKtpyvB39p1scdxMHoeblXjDpSh
+w8BKJ9ThO5asEsDIpkmPxiCeuGdTqotuODGog955KfwXmJ/TpFEV42drcf7RChg=
+=eR0M
+-----END PGP SIGNATURE-----
+
+--xaMk4Io5JJdpkLEb--
