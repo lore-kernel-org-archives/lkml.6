@@ -1,212 +1,77 @@
 Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: **
+X-Spam-Status: No, score=2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_MIXED_ES,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D782C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 09:28:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93BBFC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 09:29:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B25521019
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 09:28:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6322A218A4
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 09:29:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=your-benefits.eu header.i=@your-benefits.eu header.b="gL0DHk7+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729189AbfABJ2m (ORCPT
+        id S1729199AbfABJ3I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 04:28:42 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37766 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728873AbfABJ2l (ORCPT
+        Wed, 2 Jan 2019 04:29:08 -0500
+Received: from mail.your-benefits.eu ([80.211.149.54]:35752 "EHLO
+        your-benefits.eu" rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org
+        with ESMTP id S1728873AbfABJ3I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 04:28:41 -0500
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x029NU72087467
-        for <linux-kernel@vger.kernel.org>; Wed, 2 Jan 2019 04:28:40 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2prt58saxc-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 04:28:40 -0500
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Wed, 2 Jan 2019 09:28:28 -0000
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 2 Jan 2019 09:28:21 -0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x029SKc458654784
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 2 Jan 2019 09:28:21 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DFAAEAE058;
-        Wed,  2 Jan 2019 09:28:20 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4B910AE051;
-        Wed,  2 Jan 2019 09:28:19 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.8.244])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Wed,  2 Jan 2019 09:28:19 +0000 (GMT)
-Date:   Wed, 2 Jan 2019 11:28:17 +0200
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Pingfan Liu <kernelfans@gmail.com>
-Cc:     linux-acpi@vger.kernel.org, linux-mm@kvack.org,
-        kexec@lists.infradead.org, Tang Chen <tangchen@cn.fujitsu.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Yaowei Bai <baiyaowei@cmss.chinamobile.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Daniel Vacek <neelx@redhat.com>,
-        Mathieu Malaterre <malat@debian.org>,
-        Stefan Agner <stefan@agner.ch>, Dave Young <dyoung@redhat.com>,
-        Baoquan He <bhe@redhat.com>, yinghai@kernel.org,
-        vgoyal@redhat.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv3 2/2] x86/kdump: bugfix, make the behavior of
- crashkernel=X consistent with kaslr
-References: <1545966002-3075-1-git-send-email-kernelfans@gmail.com>
- <1545966002-3075-3-git-send-email-kernelfans@gmail.com>
- <20181231084608.GB28478@rapoport-lnx>
- <CAFgQCTs2A-_ZzLAz=wZng=2e3+VURd97wJxLv5UesVUTMaw0hg@mail.gmail.com>
+        Wed, 2 Jan 2019 04:29:08 -0500
+X-Greylist: delayed 496 seconds by postgrey-1.27 at vger.kernel.org; Wed, 02 Jan 2019 04:29:07 EST
+Received: by your-benefits.eu (Postfix, from userid 1001)
+        id C837AA00AE; Wed,  2 Jan 2019 10:20:43 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=your-benefits.eu;
+        s=mail; t=1546420849;
+        bh=AmEWXfPSZ+b+m37GjJrbvDSe3+CIldJSrJkn0IGwJoA=;
+        h=Date:From:To:Subject:From;
+        b=gL0DHk7+xREMUw0EpXHx1gUDoBXTKU8QEUSUXWN/XUMYpVI1uk0nmVdU3KrLxao9p
+         6LAG8oObG/sk+7rqkLrukvTrJUDNoE/zlBgPW/HvDL/jsXPOhCG6F6XoungG/+PQ7C
+         a8Ys0ybrWWHkYNkYCVVm0OvpUgNHHTjqroVP6IMc=
+Received: by mail.your-benefits.eu.your-benefits.eu for <linux-kernel@vger.kernel.org>; Wed,  2 Jan 2019 09:20:39 GMT
+Message-ID: <20190102084502-0.1.14.1b22.0.yd8y9k8b3g@your-benefits.eu>
+Date:   Wed,  2 Jan 2019 09:20:39 GMT
+From:   =?UTF-8?Q? "L=C3=A1szl=C3=B3_P=C3=A9ter" ?= 
+        <peter.laszlo@your-benefits.eu>
+To:     <linux-kernel@vger.kernel.org>
+Subject: =?UTF-8?Q?Dolgoz=C3=B3i_juttat=C3=A1sok?=
+X-Mailer: mail.your-benefits.eu
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFgQCTs2A-_ZzLAz=wZng=2e3+VURd97wJxLv5UesVUTMaw0hg@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 19010209-0020-0000-0000-000002FF732C
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19010209-0021-0000-0000-0000214F7718
-Message-Id: <20190102092817.GB22664@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-02_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901020086
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 02, 2019 at 02:47:54PM +0800, Pingfan Liu wrote:
-> On Mon, Dec 31, 2018 at 4:46 PM Mike Rapoport <rppt@linux.ibm.com> wrote:
-> >
-> > On Fri, Dec 28, 2018 at 11:00:02AM +0800, Pingfan Liu wrote:
-> > > Customer reported a bug on a high end server with many pcie devices, where
-> > > kernel bootup with crashkernel=384M, and kaslr is enabled. Even
-> > > though we still see much memory under 896 MB, the finding still failed
-> > > intermittently. Because currently we can only find region under 896 MB,
-> > > if w/0 ',high' specified. Then KASLR breaks 896 MB into several parts
-> > > randomly, and crashkernel reservation need be aligned to 128 MB, that's
-> > > why failure is found. It raises confusion to the end user that sometimes
-> > > crashkernel=X works while sometimes fails.
-> > > If want to make it succeed, customer can change kernel option to
-> > > "crashkernel=384M, high". Just this give "crashkernel=xx@yy" a very
-> > > limited space to behave even though its grammer looks more generic.
-> > > And we can't answer questions raised from customer that confidently:
-> > > 1) why it doesn't succeed to reserve 896 MB;
-> > > 2) what's wrong with memory region under 4G;
-> > > 3) why I have to add ',high', I only require 384 MB, not 3840 MB.
-> > >
-> > > This patch simplifies the method suggested in the mail [1]. It just goes
-> > > bottom-up to find a candidate region for crashkernel. The bottom-up may be
-> > > better compatible with the old reservation style, i.e. still want to get
-> > > memory region from 896 MB firstly, then [896 MB, 4G], finally above 4G.
-> > >
-> > > There is one trivial thing about the compatibility with old kexec-tools:
-> > > if the reserved region is above 896M, then old tool will fail to load
-> > > bzImage. But without this patch, the old tool also fail since there is no
-> > > memory below 896M can be reserved for crashkernel.
-> > >
-> > > [1]: http://lists.infradead.org/pipermail/kexec/2017-October/019571.html
-> > > Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
-> > > Cc: Tang Chen <tangchen@cn.fujitsu.com>
-> > > Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-> > > Cc: Len Brown <lenb@kernel.org>
-> > > Cc: Andrew Morton <akpm@linux-foundation.org>
-> > > Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
-> > > Cc: Michal Hocko <mhocko@suse.com>
-> > > Cc: Jonathan Corbet <corbet@lwn.net>
-> > > Cc: Yaowei Bai <baiyaowei@cmss.chinamobile.com>
-> > > Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
-> > > Cc: Nicholas Piggin <npiggin@gmail.com>
-> > > Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-> > > Cc: Daniel Vacek <neelx@redhat.com>
-> > > Cc: Mathieu Malaterre <malat@debian.org>
-> > > Cc: Stefan Agner <stefan@agner.ch>
-> > > Cc: Dave Young <dyoung@redhat.com>
-> > > Cc: Baoquan He <bhe@redhat.com>
-> > > Cc: yinghai@kernel.org,
-> > > Cc: vgoyal@redhat.com
-> > > Cc: linux-kernel@vger.kernel.org
-> > > ---
-> > >  arch/x86/kernel/setup.c | 9 ++++++---
-> > >  1 file changed, 6 insertions(+), 3 deletions(-)
-> > >
-> > > diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-> > > index d494b9b..165f9c3 100644
-> > > --- a/arch/x86/kernel/setup.c
-> > > +++ b/arch/x86/kernel/setup.c
-> > > @@ -541,15 +541,18 @@ static void __init reserve_crashkernel(void)
-> > >
-> > >       /* 0 means: find the address automatically */
-> > >       if (crash_base <= 0) {
-> > > +             bool bottom_up = memblock_bottom_up();
-> > > +
-> > > +             memblock_set_bottom_up(true);
-> > >
-> > >               /*
-> > >                * Set CRASH_ADDR_LOW_MAX upper bound for crash memory,
-> > >                * as old kexec-tools loads bzImage below that, unless
-> > >                * "crashkernel=size[KMG],high" is specified.
-> > >                */
-> > >               crash_base = memblock_find_in_range(CRASH_ALIGN,
-> > > -                                                 high ? CRASH_ADDR_HIGH_MAX
-> > > -                                                      : CRASH_ADDR_LOW_MAX,
-> > > -                                                 crash_size, CRASH_ALIGN);
-> > > +                     (max_pfn * PAGE_SIZE), crash_size, CRASH_ALIGN);
-> > > +             memblock_set_bottom_up(bottom_up);
-> >
-> > Using bottom-up does not guarantee that the allocation won't fall into a
-> > removable memory, it only makes it highly probable.
-> >
-> > I think that the 'max_pfn * PAGE_SIZE' limit should be replaced with the
-> > end of the non-removable memory node.
-> >
-> Since passing MEMBLOCK_NONE, memblock_find_in_range() ->...->
-> __next_mem_range(), there is a logic to guarantee hotmovable memory
-> will not be stamped over.
-> if (movable_node_is_enabled() && memblock_is_hotpluggable(m))
-> continue;
+=C3=9Cdv=C3=B6zl=C3=B6m!
 
-Thanks for the clarification, I've missed that.
- 
-> Thanks,
-> Pingfan
-> 
-> > > +
-> > >               if (!crash_base) {
-> > >                       pr_info("crashkernel reservation failed - No suitable area found.\n");
-> > >                       return;
-> > > --
-> > > 2.7.4
-> > >
-> >
-> > --
-> > Sincerely yours,
-> > Mike.
-> >
-> 
+2019-t=C5=91l majdnem az =C3=B6sszes kieg=C3=A9sz=C3=ADt=C5=91 juttat=C3=A1=
+s j=C3=B6vedelemk=C3=A9nt fog ad=C3=B3zni (kiv=C3=A9ve a SZ=C3=89P k=C3=A1=
+rty=C3=A1t).
 
--- 
-Sincerely yours,
-Mike.
+Szeretn=C3=A9m az =C3=96n=C3=B6k figyelm=C3=A9be aj=C3=A1nlani juttat=C3=A1=
+s k=C3=A1rty=C3=A1inkat, melyek az =C3=BAj tehets=C3=A9gek megnyer=C3=A9s=
+=C3=A9nek =C3=A9s a dolgoz=C3=B3k megtart=C3=A1s=C3=A1nak =C3=A9s motiv=C3=
+=A1l=C3=A1s=C3=A1nak versenyk=C3=A9pes eszk=C3=B6zei.
 
+A SZ=C3=89P k=C3=A1rtya megold=C3=A1sait=C3=B3l elt=C3=A9r=C5=91en a mi k=
+=C3=A1rty=C3=A1inkat a munkav=C3=A1llal=C3=B3 tetsz=C5=91leges c=C3=A9lok=
+ra haszn=C3=A1lhatja fel: =C3=A9lelmiszer v=C3=A1s=C3=A1rl=C3=A1sra, eg=C3=
+=A9szs=C3=A9g=C3=BCgyi ell=C3=A1t=C3=A1sra, elektronik=C3=A1ra, sz=C3=A1l=
+l=C3=A1sra, oktat=C3=A1sra =C3=A9s egy=C3=A9b c=C3=A9lokra, vagy ak=C3=A1=
+r k=C3=A9szp=C3=A9nzfelv=C3=A9teli lehet=C5=91s=C3=A9get is v=C3=A1laszth=
+at.=20
+
+Szeretn=C3=A9k megismerni juttat=C3=A1s k=C3=A1rty=C3=A1ink felhaszn=C3=A1=
+l=C3=A1si lehet=C5=91s=C3=A9geit a c=C3=A9g=C3=BCkn=C3=A9l?
+
+
+L=C3=A1szl=C3=B3 P=C3=A9ter
+Product Manager
+www.your-benefits.eu
