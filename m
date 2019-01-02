@@ -2,181 +2,230 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A01DC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 11:52:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B8A6C43444
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 11:54:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E77E218D9
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 11:52:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D594218FC
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 11:54:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rZzR0IvH"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="inIW1Yol"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729782AbfABLwW (ORCPT
+        id S1729789AbfABLyQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 06:52:22 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:35503 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729218AbfABLwV (ORCPT
+        Wed, 2 Jan 2019 06:54:16 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:35983 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726855AbfABLyP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 06:52:21 -0500
-Received: by mail-it1-f193.google.com with SMTP id p197so38431436itp.0
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 03:52:21 -0800 (PST)
+        Wed, 2 Jan 2019 06:54:15 -0500
+Received: by mail-it1-f194.google.com with SMTP id c9so38431331itj.1
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 03:54:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=gNGCteC4MRBPwSAKxbuPYNhtqp9s9Jk2DmhI1lWL3gY=;
-        b=rZzR0IvHUHO6kuFNV52bupbgnAyOX5B1nDoRnNfXlI4k3sPFa8s20fD9vwzYYREHcb
-         yTxSCV97vjzV3ulsBDK8AGodFGZOnlcWAlKvhz+iWmWgiPzGRYxhlkuCU0lwIaMT7K7o
-         LDBe6b/p3ZOskxkGX41DKilBT1sGAmxV7naqqmzYwZfHspU2+1bROP+KXrUk7Go35Gun
-         TYs/PjkkXbFrD7+9h3R553qoXNzh1kGC2T//yoYv+iIsurU/6h7vihq15KP4S4dlMfWt
-         R1EIaPBPA8I9a77sDYDNHeeLRuteg1JouuXFzHAl3iSAPN022dzN0Grm0YkRbAD58EUL
-         jJJg==
+         :cc;
+        bh=5YY/Z6WD5GCTh40GRusn11FiGIKlWnJ9nbkQK6HHmW4=;
+        b=inIW1YolOifB0wZNpsj1XRh/WYPJy6S0qzXhlgXWHBoUVSKnRC/vKw8MBClEdXTPIq
+         d1ScujQs8nD7TjNELqyHzV2xArGBiO2dSHGgT/OhNupQaliUTRQ2dQBZOxC25muxM7Ky
+         3yTV/lsoXtUA1oBbPF3y97fkUnQrTiCG3fiFVFUN7etYwXoKgSXEwNVwYWK8yiXLJaxl
+         maRExr8VeVGZedhpbde3I2WhO5GAVz6nIf4qNgWrjdPiwRsVLcmYeGbvaWop1v4KOEUR
+         g1WL7RZC40/B5fbHCVuY6lYIO7sXuxFJzUScf6q3ULoWmGRvdiIj5TWdv2W+Gk96C5nS
+         2HGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=gNGCteC4MRBPwSAKxbuPYNhtqp9s9Jk2DmhI1lWL3gY=;
-        b=HLHGJojgmdaq8OZguivJJH3QbgTDowTyRALu+H345+MhA8/ZySIfz5idPMz0DGhHdw
-         tw39evsmoX1NYkMLKSbXhwBwfC5gOccqbnwCyP1IKDALRsS3n/X/YAlrVUsVe2NayeHv
-         IvsKtZLr+UC9RcrEdeDQRWx7j33RlKK6sevD4KOgQSUbpcPuV6maSsXwLJMYWCOZgJL8
-         SpnDMNr8Tz10wH/9OAoVLbrJslof9pvWM6OQQ3QpEke95oTpWiZ66VoeWuX5hv+vnTrf
-         COhnBo8tY7dGhHuAUjsskk440N9z0lxTha5b9B3uo62dIabpcMNQfKR55ZvlrLCCEa5N
-         feIw==
-X-Gm-Message-State: AJcUukdKl9W9FC9ajXeWv0tjv7We+W698DDwzElGNCrrRVHhqjGKRbVw
-        jKtwxPOLZ3ig7uG4gzVUQrgTuWj9AKV9f0X2bIsVOw==
-X-Google-Smtp-Source: ALg8bN4XVway+ZdJyYUKE3GECayJzMLDC0PXe8mQjc8xjthfb+fQU0egxbOFUWWOnMiU9xwJQDmBqgxwyZtuwosdAGw=
-X-Received: by 2002:a24:f14d:: with SMTP id q13mr25949510iti.166.1546429940489;
- Wed, 02 Jan 2019 03:52:20 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=5YY/Z6WD5GCTh40GRusn11FiGIKlWnJ9nbkQK6HHmW4=;
+        b=pCpXn/4uskjunMRetCnQqv0l+h1ddjf+icakYgJxanxUoXNcQpMmTGbjpdBpcFNv52
+         nphyRBPmzdPwUPJvwCGewGxhrHyiOHcSAGdAm//Pn9pzjoTH+nm0lmglMKBvtdlt8DDx
+         plKfLXN1rb6VTlI446Nozg7op/TDz7/UeUSjmBiHaej7uZEP/ed5ossMgifO5ESPHf45
+         mWnZk5ULYkc7aMKbc6ZnRjhuTDnv5ItPA11t5pFGZcFLMAlcycdSMYn2hvM3IK30sgR8
+         QvgMPhwwoVXwqz6HiuEbHHbMEctElV0ukY3aYJJxIgjU88lSzXNvBWVUqL0ObooXM1XD
+         HgpQ==
+X-Gm-Message-State: AA+aEWbTq90qyJs9krU1dE1nvKKz9HU1fOPsr0Nw5HNrszXVUY9RBHPt
+        MPlQjFmIP3fb/QYNl630iXzu61iVlVKnsb5UW0rCBIApIamt4w==
+X-Google-Smtp-Source: AFSGD/WfhHvymwlmW2vNptrlSlryxwUk+UcUmwlBx8zo+jcQ0A/u2Gn41tXSz6Wv8gadZA2Hkgr7PbEzM94U2/YkQhA=
+X-Received: by 2002:a02:8904:: with SMTP id o4mr28098762jaj.35.1546430054098;
+ Wed, 02 Jan 2019 03:54:14 -0800 (PST)
 MIME-Version: 1.0
-References: <20170116.144051.1777999685832100508.davem@davemloft.net>
- <1a4ee351-031c-932e-0332-779ce33e90e6@trinnet.net> <20170201080217.4d8443bb@brox.localnet>
- <3e3f25fc-fc60-c01b-1139-245284200656@trinnet.net> <39dad041-f224-735e-adb7-e0fb42771858@free.fr>
- <25ee9245-3595-85f7-93b8-a18d6066a2e3@free.fr> <07a1454e-99a2-8cec-d50a-006257687c2e@free.fr>
- <12e0547b-cb2c-1ca0-abc0-d849d8a62139@trinnet.net> <3d0e170e-3995-84d0-007e-3d2065296237@free.fr>
- <9f9dba49-c2a5-41e8-9382-9154802e7fbf@trinnet.net> <20170327163641.0f992e2d@brox.localnet>
- <06ce7640-bbd6-dd5e-05d9-f1afcec680e5@free.fr> <309904235.63498.1492029796017@ox-groupware.bfs.de>
- <6bd2a0b4-12b0-0de0-7bc2-e911d3ab4446@free.fr> <a4f993a0-b12a-f3e6-455c-16ea2da28737@trinnet.net>
- <74b515a0-0de1-ebaf-a874-b55f2b682efe@free.fr> <4188542e-1404-badc-cc8d-8bb07cb6d55a@free.fr>
- <969c06f8-572b-db66-3ebb-1e02205461fa@trinnet.net> <b20c7da4-66f5-0f6b-ac21-41ab075b9d69@free.fr>
- <21e6f319-f0cf-276e-a374-d44c9bd8827e@free.fr>
-In-Reply-To: <21e6f319-f0cf-276e-a374-d44c9bd8827e@free.fr>
+References: <0000000000000f35c6057e780d36@google.com>
+In-Reply-To: <0000000000000f35c6057e780d36@google.com>
 From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Wed, 2 Jan 2019 12:52:09 +0100
-Message-ID: <CACT4Y+b05+AgnLxBvG6QBmHJu=vQhLc9fs9Sonp-Q+4-Kxi3UQ@mail.gmail.com>
-Subject: Re: [ROSE] rose dereferenced pointer kernel panic
-To:     Bernard Pidoux <f6bvp@free.fr>
-Cc:     David Ranch <linux-hams@trinnet.net>, ralf@linux-mips.org,
-        David Miller <davem@davemloft.net>, linux-hams@vger.kernel.org,
-        netdev <netdev@vger.kernel.org>,
+Date:   Wed, 2 Jan 2019 12:54:03 +0100
+Message-ID: <CACT4Y+ZECp8Ymq=0QUNfwmfpQvWkBpoMgyUCuz0M=peehEeCHw@mail.gmail.com>
+Subject: Re: BUG: unable to handle kernel NULL pointer dereference in setup_kmem_cache_node
+To:     syzbot <syzbot+d6ed4ec679652b4fd4e4@syzkaller.appspotmail.com>
+Cc:     Dominique Martinet <asmadeus@codewreck.org>,
+        David Miller <davem@davemloft.net>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
         LKML <linux-kernel@vger.kernel.org>,
-        syzkaller <syzkaller@googlegroups.com>
+        Latchesar Ionkov <lucho@ionkov.net>,
+        netdev <netdev@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        v9fs-developer@lists.sourceforge.net,
+        Linux-MM <linux-mm@kvack.org>, Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 2, 2019 at 12:12 AM Bernard Pidoux <f6bvp@free.fr> wrote:
+On Wed, Jan 2, 2019 at 12:36 PM syzbot
+<syzbot+d6ed4ec679652b4fd4e4@syzkaller.appspotmail.com> wrote:
 >
-> Hi David,
+> Hello,
 >
-> In my previous message I should have reported the following patch rather =
-than the one I reported.
+> syzbot found the following crash on:
 >
-> The reason is that the bug is better explained here :
+> HEAD commit:    903b77c63167 Merge tag 'linux-kselftest-4.21-rc1' of git:/..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=133428e3400000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=53a2f2aa0b1f7606
+> dashboard link: https://syzkaller.appspot.com/bug?extid=d6ed4ec679652b4fd4e4
+> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 >
-> https://marc.info/?l=3Dlinux-hams&m=3D154478673812818&w=3D2
+> Unfortunately, I don't have any reproducer for this crash yet.
 >
-> and  I hope the new proposed patch is more convenient.
->
->
-> Bernard
->
->
-> Le 01/01/2019 =C3=A0 23:39, Bernard Pidoux a =C3=A9crit :
->
-> Hi David,
->
-> As you already know I am still looking for the simplest way to configure =
-a kernel rose failure situation when rose_route_frame is called with a NULL=
- pointer.
->
-> Could you explain with full details how to have "TCP/IP over AX.25 fully =
-configured" ?
->
-> More specifically how can we configure rose device without NOARP ? This i=
-s not the case when performing Dmitry Vyukov :
->
-> # ip link set dev rose0 address 11:22:33:44:55
-> # ip link set dev rose0 up
->
-> 73 de Bernard, f6bvp
->
->
-> Le 08/12/2018 =C3=A0 17:23, David Ranch a =C3=A9crit :
->
-> Hello Bernard, Everyone,
->
-> Yes, I've seen a similar behavior with another program I have here that b=
-roadcasts on all live TCP/IP interfaces when it loads.  That all depends if=
- you have TCP/IP over AX.25 fully configured on your machine.  If you do, t=
-his cp,,amd should key up your radio to send out an ARP:
->
->     ping -b -c 1 <broadcast IP on your ROSE or AX.25 interface>
->    --
->    d710: fm KI6ZHD to QST ctl UI pid=3DCC(IP) len 84
->    IP: len 84 44.4.10.39->44.4.10.127 ihl 20 ttl 64 DF prot ICMP
->    ICMP: type Echo Request id 50814 seq 1
->    P=EF=BF=BD.\
->    =EF=BF=BD~.
->    ................ !"#$%&'()*+,-./01234567
->    --
->
-> Btw, I've been aware of this ROSE panic issue for some time and I'm prett=
-y sure I forwarded those details on to you but that was many years ago.  An=
-other way to reproduce a ROSE panic is, if I remember correctly, you remove=
- the backing AX.25 interface's connection (say killing kisssattach for ax0)=
- on a ROSE interface that has an IP, that will also panic the kernel every =
-time.
->
-> --David
-> KI6ZHD
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+d6ed4ec679652b4fd4e4@syzkaller.appspotmail.com
 
-+mailing lists
++mm maintianers
 
-Hi Bernard,
+Am I missing something or __alloc_alien_cache misses check for
+kmalloc_node result?
 
-I've provided a bit more information on what I did here:
-https://groups.google.com/d/msg/syzkaller/v-4B3zoBC-4/MVgYoeSQCgAJ
+static struct alien_cache *__alloc_alien_cache(int node, int entries,
+                                                int batch, gfp_t gfp)
+{
+        size_t memsize = sizeof(void *) * entries + sizeof(struct alien_cache);
+        struct alien_cache *alc = NULL;
 
-I really did not do anything fancy.
-
-FWIW I had to do the following locally just to prevent rose from
-crashing my machine all the time. I don't know if it's the right fix
-or not, I just used this as stop-gap.
-
-diff --git a/net/rose/rose_route.c b/net/rose/rose_route.c
-index 77e9f85a2c92..218308a3c02c 100644
---- a/net/rose/rose_route.c
-+++ b/net/rose/rose_route.c
-@@ -874,6 +874,8 @@ int rose_route_frame(struct sk_buff *skb, ax25_cb *ax25=
-)
-             skb->data[ROSE_CALL_REQ_ADDR_LEN_OFF] !=3D
-             ROSE_CALL_REQ_ADDR_LEN_VAL))
-                return res;
-+       if (ax25 =3D=3D NULL)
-+               return res;
-        src_addr  =3D (rose_address *)(skb->data + ROSE_CALL_REQ_SRC_ADDR_O=
-FF);
-        dest_addr =3D (rose_address *)(skb->data + ROSE_CALL_REQ_DEST_ADDR_=
-OFF);
+        alc = kmalloc_node(memsize, gfp, node);
+        init_arraycache(&alc->ac, entries, batch);
+        spin_lock_init(&alc->lock);
+        return alc;
+}
 
 
-rose_xmit calls rose_route_frame with ax25=3D=3DNULL, then
-rose_route_frame uses ax25 without any checks.
+> BUG: unable to handle kernel NULL pointer dereference at 0000000000000038
+> #PF error: [WRITE]
+> PGD 8b2a5067 P4D 8b2a5067 PUD a53ed067 PMD 0
+> Oops: 0002 [#1] PREEMPT SMP KASAN
+> CPU: 1 PID: 16188 Comm: syz-executor4 Not tainted 4.20.0+ #174
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> RIP: 0010:init_arraycache mm/slab.c:562 [inline]
+> RIP: 0010:__alloc_alien_cache mm/slab.c:669 [inline]
+> RIP: 0010:alloc_alien_cache mm/slab.c:689 [inline]
+> RIP: 0010:setup_kmem_cache_node+0x1ed/0x400 mm/slab.c:910
+> Code: 63 48 63 c3 48 0f a3 05 59 9c 72 08 73 56 8b 75 b8 4d 8d 2c c6 44 89
+> e2 48 8b 7d a8 e8 fc e9 ff ff 48 83 f8 c8 49 89 c7 74 17 <c7> 40 38 00 00
+> 00 00 8b 45 b0 41 89 47 3c b8 0d f0 ad ba 49 89 47
+> RSP: 0018:ffff88804e827318 EFLAGS: 00010213
+> RAX: 0000000000000000 RBX: 0000000000000001 RCX: 00000000006000c0
+> RDX: 00000000000000a8 RSI: 0000000000000000 RDI: ffff88812c3f0040
+> RBP: ffff88804e827378 R08: ffff888054cc86c0 R09: ffffed1015ce5b8f
+> R10: ffffed1015ce5b8f R11: ffff8880ae72dc7b R12: 0000000000000000
+> R13: ffff888095642648 R14: ffff888095642640 R15: 0000000000000000
+> FS:  00007f6fef838700(0000) GS:ffff8880ae700000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000000000000038 CR3: 000000005034d000 CR4: 00000000001406e0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>   setup_kmem_cache_nodes mm/slab.c:3819 [inline]
+>   __do_tune_cpucache+0x165/0x220 mm/slab.c:3889
+>   do_tune_cpucache+0x25/0xd0 mm/slab.c:3898
+>   enable_cpucache+0x3e/0xd0 mm/slab.c:3979
+>   setup_cpu_cache+0xd4/0x1e0 mm/slab.c:1821
+>   __kmem_cache_create+0x191/0x230 mm/slab.c:2134
+>   create_cache+0xcd/0x1f0 mm/slab_common.c:391
+>   kmem_cache_create_usercopy+0x18a/0x240 mm/slab_common.c:487
+>   p9_client_create+0x986/0x1674 net/9p/client.c:1054
+>   v9fs_session_init+0x217/0x1bb0 fs/9p/v9fs.c:421
+>   v9fs_mount+0x7c/0x8f0 fs/9p/vfs_super.c:135
+>   mount_fs+0xae/0x31d fs/super.c:1261
+> kobject: 'loop1' (000000003afcedd0): kobject_uevent_env
+>   vfs_kern_mount.part.35+0xdc/0x4f0 fs/namespace.c:961
+> kobject: 'loop1' (000000003afcedd0): fill_kobj_path: path
+> = '/devices/virtual/block/loop1'
+>   vfs_kern_mount fs/namespace.c:951 [inline]
+>   do_new_mount fs/namespace.c:2469 [inline]
+>   do_mount+0x581/0x31f0 fs/namespace.c:2801
+> kobject: 'loop2' (00000000108c69f3): kobject_uevent_env
+> kobject: 'loop2' (00000000108c69f3): fill_kobj_path: path
+> = '/devices/virtual/block/loop2'
+>   ksys_mount+0x12d/0x140 fs/namespace.c:3017
+>   __do_sys_mount fs/namespace.c:3031 [inline]
+>   __se_sys_mount fs/namespace.c:3028 [inline]
+>   __x64_sys_mount+0xbe/0x150 fs/namespace.c:3028
+>   do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+>   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> RIP: 0033:0x4579b9
+> Code: fd b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7
+> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff
+> ff 0f 83 cb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+> RSP: 002b:00007f6fef837c78 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+> RAX: ffffffffffffffda RBX: 00007f6fef837c90 RCX: 00000000004579b9
+> RDX: 0000000020000000 RSI: 00000000200000c0 RDI: 0000000000000000
+> RBP: 000000000073bf00 R08: 0000000020000240 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 00007f6fef8386d4
+> R13: 00000000004c369b R14: 00000000004d61f8 R15: 0000000000000005
+> Modules linked in:
+> CR2: 0000000000000038
+> ---[ end trace c630b12329ae5f74 ]---
+> RIP: 0010:init_arraycache mm/slab.c:562 [inline]
+> RIP: 0010:__alloc_alien_cache mm/slab.c:669 [inline]
+> RIP: 0010:alloc_alien_cache mm/slab.c:689 [inline]
+> RIP: 0010:setup_kmem_cache_node+0x1ed/0x400 mm/slab.c:910
+> kobject: 'loop3' (00000000e06f18ba): kobject_uevent_env
+> Code: 63 48 63 c3 48 0f a3 05 59 9c 72 08 73 56 8b 75 b8 4d 8d 2c c6 44 89
+> e2 48 8b 7d a8 e8 fc e9 ff ff 48 83 f8 c8 49 89 c7 74 17 <c7> 40 38 00 00
+> 00 00 8b 45 b0 41 89 47 3c b8 0d f0 ad ba 49 89 47
+> kobject: 'loop3' (00000000e06f18ba): fill_kobj_path: path
+> = '/devices/virtual/block/loop3'
+> RSP: 0018:ffff88804e827318 EFLAGS: 00010213
+> kobject: 'loop5' (00000000bc6ae381): kobject_uevent_env
+> RAX: 0000000000000000 RBX: 0000000000000001 RCX: 00000000006000c0
+> kobject: 'loop5' (00000000bc6ae381): fill_kobj_path: path
+> = '/devices/virtual/block/loop5'
+> RDX: 00000000000000a8 RSI: 0000000000000000 RDI: ffff88812c3f0040
+> kobject: 'loop3' (00000000e06f18ba): kobject_uevent_env
+> kobject: 'loop3' (00000000e06f18ba): fill_kobj_path: path
+> = '/devices/virtual/block/loop3'
+> RBP: ffff88804e827378 R08: ffff888054cc86c0 R09: ffffed1015ce5b8f
+> kobject: 'loop1' (000000003afcedd0): kobject_uevent_env
+> R10: ffffed1015ce5b8f R11: ffff8880ae72dc7b R12: 0000000000000000
+> kobject: 'loop1' (000000003afcedd0): fill_kobj_path: path
+> = '/devices/virtual/block/loop1'
+> R13: ffff888095642648 R14: ffff888095642640 R15: 0000000000000000
+> FS:  00007f6fef838700(0000) GS:ffff8880ae600000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000000000400200 CR3: 000000005034d000 CR4: 00000000001406f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>
+>
+> ---
+> This bug is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this bug report. See:
+> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
+> syzbot.
+>
+> --
+> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/0000000000000f35c6057e780d36%40google.com.
+> For more options, visit https://groups.google.com/d/optout.
