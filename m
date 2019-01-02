@@ -2,150 +2,117 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBE91C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 18:06:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36CD6C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 18:07:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB7EA218E2
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 18:06:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F2CD218E2
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 18:07:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="WI9X1XQz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727086AbfABSGR (ORCPT
+        id S1727110AbfABSHG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 13:06:17 -0500
-Received: from outbound-smtp11.blacknight.com ([46.22.139.106]:53542 "EHLO
-        outbound-smtp11.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726756AbfABSGR (ORCPT
+        Wed, 2 Jan 2019 13:07:06 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:35517 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726756AbfABSHG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 13:06:17 -0500
-Received: from mail.blacknight.com (pemlinmail04.blacknight.ie [81.17.254.17])
-        by outbound-smtp11.blacknight.com (Postfix) with ESMTPS id 4DB541C3549
-        for <linux-kernel@vger.kernel.org>; Wed,  2 Jan 2019 18:06:13 +0000 (GMT)
-Received: (qmail 1287 invoked from network); 2 Jan 2019 18:06:13 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[37.228.229.96])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 2 Jan 2019 18:06:13 -0000
-Date:   Wed, 2 Jan 2019 18:06:11 +0000
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     syzbot <syzbot+93d94a001cfbce9e60e1@syzkaller.appspotmail.com>,
-        aarcange@redhat.com, akpm@linux-foundation.org,
-        kirill.shutemov@linux.intel.com, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux@dominikbrodowski.net, mhocko@suse.com,
-        rientjes@google.com, syzkaller-bugs@googlegroups.com,
-        xieyisheng1@huawei.com, zhongjiang@huawei.com,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: Re: possible deadlock in __wake_up_common_lock
-Message-ID: <20190102180611.GE31517@techsingularity.net>
-References: <000000000000f67ca2057e75bec3@google.com>
- <1194004c-f176-6253-a5fd-682472dccacc@suse.cz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <1194004c-f176-6253-a5fd-682472dccacc@suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 2 Jan 2019 13:07:06 -0500
+Received: by mail-qk1-f194.google.com with SMTP id w204so18327060qka.2
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 10:07:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=8MMhR4sblhioJzUomNsJ/I2PWvUxrPx/Sn5DmGetoyA=;
+        b=WI9X1XQz1cEWUVgamTBHZcl3PQGgqDRDzpXDrsx+G5yIjjab4UqzZJ1PufW3xKw29B
+         nsllIBrjMpBqRDWhWn/z5dNKq+BTx4Ho9Ho3i0bneu9CuA6rJ7/GbXhSW5wvhgKVdRVG
+         LVZoTWCBas8/Y9ck0JdKd4pEa1/tVVLzQsv0cmpXRcyzOEb26aK5tnw6lAe/vQbdwEsm
+         +SKtD5vc/f7oBzpBz3aqAsfW50ITxNGhgE0H0rfbMS9kYitq+F4AuXZETpD31KrnuDdw
+         skAi1YrJYMo1QZwNDQgew5NYc0saNIIKflc4XrbvweXrMYrT4ies0F1id4CYO7YA+UNX
+         rMWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=8MMhR4sblhioJzUomNsJ/I2PWvUxrPx/Sn5DmGetoyA=;
+        b=BWZHyhsGY0YAGREvozFfD8fWitIiMu0Dwn4Eu9W9EA0wcmCsIc0YKd4xCjQv6Iv3n1
+         XIRmUnYEqNRV10CyEs06Qe59LWaIRYorYHBLQXVTfXLpKC0y6X58JhnouF941rwHOuho
+         iTrWlTwhDm+AT8iwAkJC74b2mEzY3Xq24YW+GUd/Si3aSbp3/lV0cIkpiB0z1p6ve9MS
+         3NZH53EWZCOu7y8g/9cy8hjZiTAVdcPqey8m5NWkxC/sQhR5JeNBxPOet/7XlBt73cIQ
+         d4C3e3IG2ogzTOagq2FTfSzyETjjqeVr08YPqjB0o1GQjFRh81G/+bq+ulYgi/Oulzby
+         4FOQ==
+X-Gm-Message-State: AJcUukfbU0VH3u2H3+8vmquy1Okdc7BMTLB9FDAqHpk4hNLHJAA8zDZP
+        So0r1/WRDNjqSDMrZS6XvU7DEA==
+X-Google-Smtp-Source: ALg8bN55wjlWgpEnZeB50u7PpcQBjVNz4nbpZukoG+mAzwR0FtKM7suKPI+Wa/vrT/HimRArfkXlTw==
+X-Received: by 2002:a37:ae87:: with SMTP id x129mr42158644qke.15.1546452425245;
+        Wed, 02 Jan 2019 10:07:05 -0800 (PST)
+Received: from ovpn-120-55.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id u67sm23243069qki.22.2019.01.02.10.07.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 02 Jan 2019 10:07:04 -0800 (PST)
+From:   Qian Cai <cai@lca.pw>
+To:     catalin.marinas@arm.com
+Cc:     akpm@linux-foundation.org, cl@linux.com, penberg@kernel.org,
+        rientjes@google.com, iamjoonsoo.kim@lge.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Qian Cai <cai@lca.pw>
+Subject: [PATCH v2] kmemleak: survive in a low-memory situation
+Date:   Wed,  2 Jan 2019 13:06:19 -0500
+Message-Id: <20190102180619.12392-1-cai@lca.pw>
+X-Mailer: git-send-email 2.17.2 (Apple Git-113)
+In-Reply-To: <20190102165931.GB6584@arrakis.emea.arm.com>
+References: <20190102165931.GB6584@arrakis.emea.arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 02, 2019 at 01:51:01PM +0100, Vlastimil Babka wrote:
-> On 1/2/19 9:51 AM, syzbot wrote:
-> > Hello,
-> > 
-> > syzbot found the following crash on:
-> > 
-> > HEAD commit:    f346b0becb1b Merge branch 'akpm' (patches from Andrew)
-> > git tree:       upstream
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=1510cefd400000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=c255c77ba370fe7c
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=93d94a001cfbce9e60e1
-> > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> > userspace arch: i386
-> > 
-> > Unfortunately, I don't have any reproducer for this crash yet.
-> > 
-> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> > Reported-by: syzbot+93d94a001cfbce9e60e1@syzkaller.appspotmail.com
-> > 
-> > 
-> > ======================================================
-> > WARNING: possible circular locking dependency detected
-> > 4.20.0+ #297 Not tainted
-> > ------------------------------------------------------
-> > syz-executor0/8529 is trying to acquire lock:
-> > 000000005e7fb829 (&pgdat->kswapd_wait){....}, at:  
-> > __wake_up_common_lock+0x19e/0x330 kernel/sched/wait.c:120
-> 
-> From the backtrace at the end of report I see it's coming from
-> 
-> >   wakeup_kswapd+0x5f0/0x930 mm/vmscan.c:3982
-> >   steal_suitable_fallback+0x538/0x830 mm/page_alloc.c:2217
-> 
-> This wakeup_kswapd is new due to Mel's 1c30844d2dfe ("mm: reclaim small
-> amounts of memory when an external fragmentation event occurs") so CC Mel.
-> 
+Kmemleak could quickly fail to allocate an object structure and then
+disable itself in a low-memory situation. For example, running a mmap()
+workload triggering swapping and OOM [1].
 
-New year new bugs :(
+Kmemleak allocation could fail even though the trackig object is
+succeeded. Hence, it could still try to start a direct reclaim if it is
+not executed in an atomic context (spinlock, irq-handler etc), or a
+high-priority allocation in an atomic context as a last-ditch effort.
 
-> > but task is already holding lock:
-> > 000000009bb7bae0 (&(&zone->lock)->rlock){-.-.}, at: spin_lock  
-> > include/linux/spinlock.h:329 [inline]
-> > 000000009bb7bae0 (&(&zone->lock)->rlock){-.-.}, at: rmqueue_bulk  
-> > mm/page_alloc.c:2548 [inline]
-> > 000000009bb7bae0 (&(&zone->lock)->rlock){-.-.}, at: __rmqueue_pcplist  
-> > mm/page_alloc.c:3021 [inline]
-> > 000000009bb7bae0 (&(&zone->lock)->rlock){-.-.}, at: rmqueue_pcplist  
-> > mm/page_alloc.c:3050 [inline]
-> > 000000009bb7bae0 (&(&zone->lock)->rlock){-.-.}, at: rmqueue  
-> > mm/page_alloc.c:3072 [inline]
-> > 000000009bb7bae0 (&(&zone->lock)->rlock){-.-.}, at:  
-> > get_page_from_freelist+0x1bae/0x52a0 mm/page_alloc.c:3491
-> > 
-> > which lock already depends on the new lock.
-> 
-> However, I don't understand why lockdep thinks it's a problem. IIRC it
-> doesn't like that we are locking pgdat->kswapd_wait.lock while holding
-> zone->lock. That means it has learned that the opposite order also
-> exists, e.g. somebody would take zone->lock while manipulating the wait
-> queue? I don't see where but I admit I'm not good at reading lockdep
-> splats, so CCing Peterz and Ingo as well. Keeping rest of mail for
-> reference.
-> 
+[1]
+https://github.com/linux-test-project/ltp/blob/master/testcases/kernel/mem/oom/oom01.c
 
-I'm not sure I'm reading the output correctly because I'm having trouble
-seeing the exact pattern that allows lockdep to conclude the lock ordering
-is problematic.
+Signed-off-by: Qian Cai <cai@lca.pw>
+---
 
-I think it's hungup on the fact that mod_timer can allocate debug
-objects for KASAN and somehow concludes that the waking of kswapd is
-problematic because potentially a lock ordering exists that would trip.
-I don't see how it's actually possible though due to either a lack of
-imagination or maybe lockdep is being cautious as something could change
-in the future that allows the lockup.
+v2: remove the needless checking for NULL objects in slab_post_alloc_hook()
+    pointed out by Catalin.
 
-There are a few options I guess in order of preference.
+ mm/kmemleak.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-1. Drop zone->lock for the call. It's not necessarily to keep track of
-   the IRQ flags as callers into that path already do things like treat
-   IRQ disabling and the spin lock separately.
-
-2. Use another alloc_flag in steal_suitable_fallback that is set when a
-   wakeup is required but do the actual wakeup in rmqueue() after the
-   zone locks are dropped and the allocation request is completed
-
-3. Always wakeup kswapd if watermarks are boosted. I like this the least
-   because it means doing wakeups that are unrelated to fragmentation
-   that occurred in the current context.
-
-Any particular preference?
-
-While I recognise there is no test case available, how often does this
-trigger in syzbot as it would be nice to have some confirmation any
-patch is really fixing the problem.
-
+diff --git a/mm/kmemleak.c b/mm/kmemleak.c
+index f9d9dc250428..9e1aa3b7df75 100644
+--- a/mm/kmemleak.c
++++ b/mm/kmemleak.c
+@@ -576,6 +576,16 @@ static struct kmemleak_object *create_object(unsigned long ptr, size_t size,
+ 	struct rb_node **link, *rb_parent;
+ 
+ 	object = kmem_cache_alloc(object_cache, gfp_kmemleak_mask(gfp));
++#ifdef CONFIG_PREEMPT_COUNT
++	if (!object) {
++		/* last-ditch effort in a low-memory situation */
++		if (irqs_disabled() || is_idle_task(current) || in_atomic())
++			gfp = GFP_ATOMIC;
++		else
++			gfp = gfp_kmemleak_mask(gfp) | __GFP_DIRECT_RECLAIM;
++		object = kmem_cache_alloc(object_cache, gfp);
++	}
++#endif
+ 	if (!object) {
+ 		pr_warn("Cannot allocate a kmemleak_object structure\n");
+ 		kmemleak_disable();
 -- 
-Mel Gorman
-SUSE Labs
+2.17.2 (Apple Git-113)
+
