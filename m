@@ -2,120 +2,150 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AB22C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 18:02:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBE91C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 18:06:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11ABD218D3
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 18:02:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB7EA218E2
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 18:06:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727068AbfABSCl (ORCPT
+        id S1727086AbfABSGR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 13:02:41 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:42038 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727031AbfABSCk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 13:02:40 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3165419D4D1;
-        Wed,  2 Jan 2019 18:02:40 +0000 (UTC)
-Received: from gondolin (ovpn-116-86.ams2.redhat.com [10.36.116.86])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E0290608D9;
-        Wed,  2 Jan 2019 18:02:35 +0000 (UTC)
-Date:   Wed, 2 Jan 2019 19:02:33 +0100
-From:   Cornelia Huck <cohuck@redhat.com>
-To:     Halil Pasic <pasic@linux.ibm.com>
-Cc:     "Wang, Wei W" <wei.w.wang@intel.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "mst@redhat.com" <mst@redhat.com>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "dgilbert@redhat.com" <dgilbert@redhat.com>
-Subject: Re: [virtio-dev] RE: [PATCH v1 0/2] Virtio: fix some vq allocation
- issues
-Message-ID: <20190102190233.69b267fb.cohuck@redhat.com>
-In-Reply-To: <20190102165919.0cd9365a@oc2783563651>
-References: <1545963986-11280-1-git-send-email-wei.w.wang@intel.com>
-        <c6746307-fae5-7652-af8d-19f560fc31d9@de.ibm.com>
-        <286AC319A985734F985F78AFA26841F73DEEA8E9@shsmsx102.ccr.corp.intel.com>
-        <20181230070600.512bbb8b@oc2783563651>
-        <286AC319A985734F985F78AFA26841F73DEEC8DF@shsmsx102.ccr.corp.intel.com>
-        <20190101004019.7f20aafa@oc2783563651>
-        <20190102105314.0b4e2485.cohuck@redhat.com>
-        <20190102142338.15bfe876.cohuck@redhat.com>
-        <20190102165919.0cd9365a@oc2783563651>
-Organization: Red Hat GmbH
+        Wed, 2 Jan 2019 13:06:17 -0500
+Received: from outbound-smtp11.blacknight.com ([46.22.139.106]:53542 "EHLO
+        outbound-smtp11.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726756AbfABSGR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Jan 2019 13:06:17 -0500
+Received: from mail.blacknight.com (pemlinmail04.blacknight.ie [81.17.254.17])
+        by outbound-smtp11.blacknight.com (Postfix) with ESMTPS id 4DB541C3549
+        for <linux-kernel@vger.kernel.org>; Wed,  2 Jan 2019 18:06:13 +0000 (GMT)
+Received: (qmail 1287 invoked from network); 2 Jan 2019 18:06:13 -0000
+Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[37.228.229.96])
+  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 2 Jan 2019 18:06:13 -0000
+Date:   Wed, 2 Jan 2019 18:06:11 +0000
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     Vlastimil Babka <vbabka@suse.cz>
+Cc:     syzbot <syzbot+93d94a001cfbce9e60e1@syzkaller.appspotmail.com>,
+        aarcange@redhat.com, akpm@linux-foundation.org,
+        kirill.shutemov@linux.intel.com, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux@dominikbrodowski.net, mhocko@suse.com,
+        rientjes@google.com, syzkaller-bugs@googlegroups.com,
+        xieyisheng1@huawei.com, zhongjiang@huawei.com,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: Re: possible deadlock in __wake_up_common_lock
+Message-ID: <20190102180611.GE31517@techsingularity.net>
+References: <000000000000f67ca2057e75bec3@google.com>
+ <1194004c-f176-6253-a5fd-682472dccacc@suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Wed, 02 Jan 2019 18:02:40 +0000 (UTC)
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+In-Reply-To: <1194004c-f176-6253-a5fd-682472dccacc@suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2 Jan 2019 16:59:19 +0100
-Halil Pasic <pasic@linux.ibm.com> wrote:
-
-> On Wed, 2 Jan 2019 14:23:38 +0100
-> Cornelia Huck <cohuck@redhat.com> wrote:
+On Wed, Jan 02, 2019 at 01:51:01PM +0100, Vlastimil Babka wrote:
+> On 1/2/19 9:51 AM, syzbot wrote:
+> > Hello,
+> > 
+> > syzbot found the following crash on:
+> > 
+> > HEAD commit:    f346b0becb1b Merge branch 'akpm' (patches from Andrew)
+> > git tree:       upstream
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=1510cefd400000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=c255c77ba370fe7c
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=93d94a001cfbce9e60e1
+> > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> > userspace arch: i386
+> > 
+> > Unfortunately, I don't have any reproducer for this crash yet.
+> > 
+> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > Reported-by: syzbot+93d94a001cfbce9e60e1@syzkaller.appspotmail.com
+> > 
+> > 
+> > ======================================================
+> > WARNING: possible circular locking dependency detected
+> > 4.20.0+ #297 Not tainted
+> > ------------------------------------------------------
+> > syz-executor0/8529 is trying to acquire lock:
+> > 000000005e7fb829 (&pgdat->kswapd_wait){....}, at:  
+> > __wake_up_common_lock+0x19e/0x330 kernel/sched/wait.c:120
 > 
-> > On Wed, 2 Jan 2019 10:53:14 +0100
-> > Cornelia Huck <cohuck@redhat.com> wrote:
-> >   
-> > > On Tue, 1 Jan 2019 00:40:19 +0100
-> > > Halil Pasic <pasic@linux.ibm.com> wrote:  
-
-> > > > AFAICT tweaking the balloon code may be simpler than tweaking the
-> > > > virtio-ccw (transport code). ccw_io_helper() relies on getting
-> > > > an interrupt when the issued IO is done. If virtio-ccw is buggy, it
-> > > > needs to be fixed, but I'm not sure it is.    
-> > > 
-> > > I would not call virtio-ccw buggy, but it has some constraints that
-> > > virtio-pci apparently doesn't have (and which did not show up so far;
-> > > e.g. virtio-blk schedules a work item on config change, so there's no
-> > > deadlock there.)
-> > > 
-> > > One way to get out of that constraint (don't interact with the config
-> > > space directly in the config changed handler) would be to schedule a
-> > > work item in virtio-ccw that calls virtio_config_changed() for the
-> > > device. My understanding is that delaying the notification to a work
-> > > queue would be fine.  
-> > 
-> > Unfortunately, calling virtio_config_changed() from a work item is not
-> > enough: That function takes the config_lock, and the virtio-ccw code to
-> > get the config both needs to allocate some memory and call schedule :/
-> > 
-> > The best option really seems to be
-> > - have virtio-balloon move the handling of the config change onto a
-> >   workqueue or something like that, and
-> > - document that you cannot read/write the virtio config space from an
-> >   atomic context
-> > 
-> > Unless someone has a better idea?
-> >   
+> From the backtrace at the end of report I see it's coming from
 > 
-> I wonder, would making config_lock a mutex suffice?
+> >   wakeup_kswapd+0x5f0/0x930 mm/vmscan.c:3982
+> >   steal_suitable_fallback+0x538/0x830 mm/page_alloc.c:2217
+> 
+> This wakeup_kswapd is new due to Mel's 1c30844d2dfe ("mm: reclaim small
+> amounts of memory when an external fragmentation event occurs") so CC Mel.
+> 
 
-Unless I'm mistaken, you can't take a mutex in an interrupt path.
+New year new bugs :(
 
-> I've already hinted that a virtio-balloon side fix is probably the
-> simpler variant. 
+> > but task is already holding lock:
+> > 000000009bb7bae0 (&(&zone->lock)->rlock){-.-.}, at: spin_lock  
+> > include/linux/spinlock.h:329 [inline]
+> > 000000009bb7bae0 (&(&zone->lock)->rlock){-.-.}, at: rmqueue_bulk  
+> > mm/page_alloc.c:2548 [inline]
+> > 000000009bb7bae0 (&(&zone->lock)->rlock){-.-.}, at: __rmqueue_pcplist  
+> > mm/page_alloc.c:3021 [inline]
+> > 000000009bb7bae0 (&(&zone->lock)->rlock){-.-.}, at: rmqueue_pcplist  
+> > mm/page_alloc.c:3050 [inline]
+> > 000000009bb7bae0 (&(&zone->lock)->rlock){-.-.}, at: rmqueue  
+> > mm/page_alloc.c:3072 [inline]
+> > 000000009bb7bae0 (&(&zone->lock)->rlock){-.-.}, at:  
+> > get_page_from_freelist+0x1bae/0x52a0 mm/page_alloc.c:3491
+> > 
+> > which lock already depends on the new lock.
+> 
+> However, I don't understand why lockdep thinks it's a problem. IIRC it
+> doesn't like that we are locking pgdat->kswapd_wait.lock while holding
+> zone->lock. That means it has learned that the opposite order also
+> exists, e.g. somebody would take zone->lock while manipulating the wait
+> queue? I don't see where but I admit I'm not good at reading lockdep
+> splats, so CCing Peterz and Ingo as well. Keeping rest of mail for
+> reference.
+> 
 
-Yes, I think so as well.
+I'm not sure I'm reading the output correctly because I'm having trouble
+seeing the exact pattern that allows lockdep to conclude the lock ordering
+is problematic.
 
-> I agree, let's fix the regression first, and think about wether to teach
-> virtio-ccw to allow config manipulation from virtio_config_changed() or
-> not later.
+I think it's hungup on the fact that mod_timer can allocate debug
+objects for KASAN and somehow concludes that the waking of kswapd is
+problematic because potentially a lock ordering exists that would trip.
+I don't see how it's actually possible though due to either a lack of
+imagination or maybe lockdep is being cautious as something could change
+in the future that allows the lockup.
 
-Or whether we can tweak the virtio code instead. But I agree, let's get
-things working again first.
+There are a few options I guess in order of preference.
+
+1. Drop zone->lock for the call. It's not necessarily to keep track of
+   the IRQ flags as callers into that path already do things like treat
+   IRQ disabling and the spin lock separately.
+
+2. Use another alloc_flag in steal_suitable_fallback that is set when a
+   wakeup is required but do the actual wakeup in rmqueue() after the
+   zone locks are dropped and the allocation request is completed
+
+3. Always wakeup kswapd if watermarks are boosted. I like this the least
+   because it means doing wakeups that are unrelated to fragmentation
+   that occurred in the current context.
+
+Any particular preference?
+
+While I recognise there is no test case available, how often does this
+trigger in syzbot as it would be nice to have some confirmation any
+patch is really fixing the problem.
+
+-- 
+Mel Gorman
+SUSE Labs
