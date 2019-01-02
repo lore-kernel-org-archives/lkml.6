@@ -2,132 +2,172 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 032A9C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 23:50:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C60ACC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 23:51:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C75072075B
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 23:50:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9CEDF20879
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 23:51:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728417AbfABXu3 (ORCPT
+        id S1730109AbfABXv4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 18:50:29 -0500
-Received: from mga06.intel.com ([134.134.136.31]:26780 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728145AbfABXu3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 18:50:29 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Jan 2019 15:50:28 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,432,1539673200"; 
-   d="scan'208";a="106524032"
-Received: from ellorapa-mobl1.amr.corp.intel.com (HELO [10.252.195.139]) ([10.252.195.139])
-  by orsmga008.jf.intel.com with ESMTP; 02 Jan 2019 15:50:27 -0800
-Subject: Re: [alsa-devel] [PATCH v5 08/11] ASoC: Intel: atom: Make PCI
- dependency explicit
-To:     Sinan Kaya <Okaya@kernel.org>
-Cc:     "moderated list:INTEL ASoC DRIVERS" <alsa-devel@alsa-project.org>,
-        Mark Brown <broonie@kernel.org>,
-        Jie Yang <yang.jie@linux.intel.com>,
-        Takashi Iwai <tiwai@suse.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        ACPI Devel Mailing List <linux-acpi@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Chandan Rajendra <chandan@linux.vnet.ibm.com>
-References: <20190102181038.4418-1-okaya@kernel.org>
- <20190102181038.4418-9-okaya@kernel.org>
- <57ed1d94-7f89-20e8-3289-7ef7efd18c20@linux.intel.com>
- <CAK9iUCNMAuDOh_CM-bTE1xT5FePfYbq7W+0R4KF1KbqskuJ8FA@mail.gmail.com>
- <a9ccf7e1-4752-6bf5-2621-15b21a80c2ca@linux.intel.com>
- <CAK9iUCPWQ=9EgnUFo8BHraEgFwHs3FdbegPLwhT-KHD=r2WBkQ@mail.gmail.com>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <8c69f8d0-6a95-0011-ff87-8ac9236a992d@linux.intel.com>
-Date:   Wed, 2 Jan 2019 17:50:27 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 2 Jan 2019 18:51:56 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:47877 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727714AbfABXv4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Jan 2019 18:51:56 -0500
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 194A28076A; Thu,  3 Jan 2019 00:51:48 +0100 (CET)
+Date:   Thu, 3 Jan 2019 00:51:52 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Thomas Gleixner <tglx@linutronix.de>, corbet@lwn.net
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Tony Luck <tony.luck@intel.com>,
+        Salvatore Bonaccorso <carnil@debian.org>,
+        linux-doc@vger.kernel.org
+Subject: [patch] Fix up l1ft documentation was Re: Taking a break - time to
+ look back
+Message-ID: <20190102235152.GA24163@amd>
+References: <alpine.DEB.2.21.1812200022580.1651@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <CAK9iUCPWQ=9EgnUFo8BHraEgFwHs3FdbegPLwhT-KHD=r2WBkQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="6TrnltStXW4iwmi0"
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1812200022580.1651@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-On 1/2/19 4:58 PM, Sinan Kaya wrote:
-> On Wed, Jan 2, 2019 at 10:50 PM Pierre-Louis Bossart
-> <pierre-louis.bossart@linux.intel.com> wrote:
->>
->>> This is pointing to a kconfig issue on ia64 arch.
->>>
->>> arch/ia64/Kconfig:128:error: recursive dependency detected!
->>> arch/ia64/Kconfig:128:    choice <choice> contains symbol IA64_HP_SIM
->>> arch/ia64/Kconfig:202:    symbol IA64_HP_SIM is part of choice PM
->>>
->>> IA64_HP_SIM is both a choice and is selected.
->>>
->>> I did allyesconfig and disabled PCI afterwards to find all the issues
->>> on this patchset.
->> Are you saying there's a newer series that fixes this issue for both
->> allyesconfig and allmodconfig?
->>
->> if yes, then we're good.
->
-> No, I haven't fixed ia64 kconfig issue. That's somebody else's job. I
-> used allyesconfig to find out all compilation issues on x86 arch to
-> come up with this patchset.
+--6TrnltStXW4iwmi0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Nothing makes me cringe more than "somebody else's job" statements. In 
-this case, there is obviously a correlation with your ACPI changes since 
-the circular dependency happens because of the ACPI symbol.
+Hi!
 
-arch/ia64/Kconfig:126:error: recursive dependency detected!
-arch/ia64/Kconfig:126:    choice <choice> contains symbol IA64_HP_SIM
-arch/ia64/Kconfig:200:    symbol IA64_HP_SIM is part of choice PM
-kernel/power/Kconfig:144:    symbol PM is selected by PM_SLEEP
-kernel/power/Kconfig:104:    symbol PM_SLEEP depends on HIBERNATE_CALLBACKS
-kernel/power/Kconfig:31:    symbol HIBERNATE_CALLBACKS is selected by 
-HIBERNATION
-kernel/power/Kconfig:34:    symbol HIBERNATION depends on SWAP
-init/Kconfig:250:    symbol SWAP depends on BLOCK
-block/Kconfig:5:    symbol BLOCK is selected by UBIFS_FS
-fs/ubifs/Kconfig:1:    symbol UBIFS_FS depends on MISC_FILESYSTEMS
-fs/Kconfig:220:    symbol MISC_FILESYSTEMS is selected by ACPI_APEI
-drivers/acpi/apei/Kconfig:8:    symbol ACPI_APEI depends on ACPI
-drivers/acpi/Kconfig:9:    symbol ACPI depends on ARCH_SUPPORTS_ACPI 
-<<<< LOOK HERE
-drivers/acpi/Kconfig:6:    symbol ARCH_SUPPORTS_ACPI is selected by 
-IA64_HP_SIM
-arch/ia64/Kconfig:200:    symbol IA64_HP_SIM is part of choice <choice>
+> The next round of speculation-related issues including the scary L1TF
+> hardware bug was a way more "pleasant" experience to work on. While for
+> obvious reasons the mitigation development happened behind closed doors in
+> a smaller group of people, we were at least able to collaborate in a way
+> which is somehow close to what we are used to.
 
-At any rate, a 3 mn git bisect tells me the circular dependency is 
-exposed by this change:
+Ok, I guess L1TF was a lot of fun, and there was not time for a good
+documentation.
 
-f3fd6cd74fedf99b6060f75df00943fda13b65f2 is the first bad commit
-commit f3fd6cd74fedf99b6060f75df00943fda13b65f2
-Author: Chandan Rajendra <chandan@linux.vnet.ibm.com>
-Date:   Sat Dec 8 12:21:38 2018 +0530
+There's admin guide that is written as an advertisment, and
+unfortunately is slightly "inaccurate" at places (to the point of
+lying).
 
-     fscrypt: remove filesystem specific build config option
+Plus, I believe it should go to x86/ directory, as this is really
+Intel issue, and not anything ARM (or RISC-V) people need to
+know. (But we already have some urls in printk messages that may need
+fixing up..?)
 
-     In order to have a common code base for fscrypt "post read" processing
-     for all filesystems which support encryption, this commit removes
-     filesystem specific build config option (e.g. 
-CONFIG_EXT4_FS_ENCRYPTION)
-     and replaces it with a build option (i.e. CONFIG_FS_ENCRYPTION) whose
-     value affects all the filesystems making use of fscrypt.
+Signed-off-by: Pavel Machek <pavel@ucw.cz>
 
-     Signed-off-by: Chandan Rajendra <chandan@linux.vnet.ibm.com>
-     Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+diff --git a/Documentation/admin-guide/l1tf.rst b/Documentation/admin-guide=
+/l1tf.rst
+index b85dd80..05c5422 100644
+--- a/Documentation/admin-guide/l1tf.rst
++++ b/Documentation/admin-guide/l1tf.rst
+@@ -1,10 +1,11 @@
+ L1TF - L1 Terminal Fault
+ =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+=20
+-L1 Terminal Fault is a hardware vulnerability which allows unprivileged
+-speculative access to data which is available in the Level 1 Data Cache
+-when the page table entry controlling the virtual address, which is used
+-for the access, has the Present bit cleared or other reserved bits set.
++L1 Terminal Fault is a hardware vulnerability on most recent Intel x86
++CPUs which allows unprivileged speculative access to data which is
++available in the Level 1 Data Cache when the page table entry
++controlling the virtual address, which is used for the access, has the
++Present bit cleared or other reserved bits set.
+=20
+ Affected processors
+ -------------------
+@@ -76,12 +77,14 @@ Attack scenarios
+    deterministic and more practical.
+=20
+    The Linux kernel contains a mitigation for this attack vector, PTE
+-   inversion, which is permanently enabled and has no performance
+-   impact. The kernel ensures that the address bits of PTEs, which are not
+-   marked present, never point to cacheable physical memory space.
++   inversion, which is permanently enabled and has no measurable
++   performance impact in most configurations. The kernel ensures that
++   the address bits of PTEs, which are not marked present, never point
++   to cacheable physical memory space. On x86-32, this physical memory
++   needs to be limited to 2GiB to make mitigation effective.
+=20
+-   A system with an up to date kernel is protected against attacks from
+-   malicious user space applications.
++   Mitigation is present in kernels v4.19 and newer, and in
++   recent -stable kernels.
+=20
+ 2. Malicious guest in a virtual machine
+ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+@@ -405,6 +408,9 @@ time with the option "l1tf=3D". The valid arguments for=
+ this option are:
+=20
+   off		Disables hypervisor mitigations and doesn't emit any
+ 		warnings.
++		It also drops the swap size and available RAM limit restrictions
++		on both hypervisor and bare metal.
++
+   =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+=20
+ The default is 'flush'. For details about L1D flushing see :ref:`l1d_flush=
+`.
+@@ -576,7 +582,8 @@ Default mitigations
+   The kernel default mitigations for vulnerable processors are:
+=20
+   - PTE inversion to protect against malicious user space. This is done
+-    unconditionally and cannot be controlled.
++    unconditionally and cannot be controlled. The swap storage is limited
++    to ~16TB.
+=20
+   - L1D conditional flushing on VMENTER when EPT is enabled for
+     a guest.
 
--Pierre
 
 
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--6TrnltStXW4iwmi0
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlwtTpgACgkQMOfwapXb+vJ8fQCdHMi3YPJwrHWpdUjNLAOYoB8Z
+1YMAoJzLEAcJKiMpg8+/1DNH5wceGAUQ
+=wFSl
+-----END PGP SIGNATURE-----
+
+--6TrnltStXW4iwmi0--
