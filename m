@@ -2,93 +2,138 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD769C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 23:28:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26834C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 23:35:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A71692080A
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 23:28:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8BD52080A
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 23:35:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="igRa5A0O"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Xt2BREZI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730087AbfABX2M (ORCPT
+        id S1730087AbfABXfq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 18:28:12 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:40330 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727320AbfABX2L (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 18:28:11 -0500
-Received: by mail-pf1-f196.google.com with SMTP id i12so15821011pfo.7
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 15:28:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=QC3KDRNg78ZjCdaYRzmXMg4fN3X9D3EMFOzaXBEjkuk=;
-        b=igRa5A0O7uVPEiWOEJan6YaUgB5SS6IuRI9x2VZOPWVLf6Wz5CQpZpRf26GfeCQFDF
-         3NNmjS3UBgpTHzBePe+eK9cjALqpp9j+nzrwa+4jKXupfNPvn4OUVf1pp/rdCglVpJ0c
-         /5TYHRopo0wmfdT6XBRBA84G01+9bp3im1A4lD2adIuWXMIBXvMleCuBhqPpODTSjflg
-         SLIEYuA7NRu7MfYT0/tvnqNP5eqwbXZu14uknISmijGHxCMIMESgq1o2sG4kpig9thLr
-         VJgC9lq0pQA/IBJMJDAEFSaVoBspDQEb+wMdguFYQutP0gjdnX+vcTkuKOtBFELaQh2R
-         B9Zw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=QC3KDRNg78ZjCdaYRzmXMg4fN3X9D3EMFOzaXBEjkuk=;
-        b=GBkTidXVEPxY56v31k9KFnSVEBpSiUbtR2qP9wDzldrf8HxxsKg0BQyhgJYDH8fEJX
-         oEzlCdP34URTl3wBaEJw00T52PiSOgnnIx+fN6g2l4bJE4avwiwBtwkuZkoTA7OM2mWY
-         Na/UmOCm5qjOpmtqR4ZzgV/8fl7x6f3CfzSEw7JccT0WHH+3p15xRCzteY0fZ6xWEpUA
-         /Ry9FJSmF3D2kDlesP+2J5WvxIje+kdNZgI+koh99NM43+hwkKjyfMHksgnCNGGeNSar
-         aMyR8Ftb2+tIF8ZU/YkBJRGZcMftz0MqAfUKuxnUxf7HMp+MNtKAaNnV+zJothLBLsRI
-         fqNA==
-X-Gm-Message-State: AJcUukdMErC97qboZ+lKwvzyO+DglyreQaLsp+B6+AKdsQH/gA9qwI4S
-        oUgoHjxDBJOzXS7FdwQJQKp3tQ==
-X-Google-Smtp-Source: AFSGD/VVXyV29wFyP7Xgzmj6FlY4dbgvnTKwAVYfonD2JKyzkZ6fWayUmt4XLW93NJbpfcFF0OtddA==
-X-Received: by 2002:a62:868b:: with SMTP id x133mr48570543pfd.252.1546471691085;
-        Wed, 02 Jan 2019 15:28:11 -0800 (PST)
-Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
-        by smtp.gmail.com with ESMTPSA id 186sm106375178pga.36.2019.01.02.15.28.09
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 02 Jan 2019 15:28:10 -0800 (PST)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1gepvl-0007o5-2v; Wed, 02 Jan 2019 16:28:09 -0700
-Date:   Wed, 2 Jan 2019 16:28:09 -0700
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Aditya Pakki <pakki001@umn.edu>
-Cc:     kjlu@umn.edu, Michal Kalderon <Michal.Kalderon@cavium.com>,
-        Ariel Elior <Ariel.Elior@cavium.com>,
-        Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] infiniband/qedr: Potential null ptr dereference of qp
-Message-ID: <20190102232809.GA29987@ziepe.ca>
-References: <20181224182445.21256-1-pakki001@umn.edu>
+        Wed, 2 Jan 2019 18:35:46 -0500
+Received: from nat-hk.nvidia.com ([203.18.50.4]:51621 "EHLO nat-hk.nvidia.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727842AbfABXfp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Jan 2019 18:35:45 -0500
+Received: from hkpgpgate101.nvidia.com (Not Verified[10.18.92.77]) by nat-hk.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c2d4acc0001>; Thu, 03 Jan 2019 07:35:40 +0800
+Received: from HKMAIL104.nvidia.com ([10.18.16.13])
+  by hkpgpgate101.nvidia.com (PGP Universal service);
+  Wed, 02 Jan 2019 15:35:40 -0800
+X-PGP-Universal: processed;
+        by hkpgpgate101.nvidia.com on Wed, 02 Jan 2019 15:35:40 -0800
+Received: from HKMAIL101.nvidia.com (10.18.16.10) by HKMAIL104.nvidia.com
+ (10.18.16.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 2 Jan
+ 2019 23:35:40 +0000
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (104.47.36.59) by
+ HKMAIL101.nvidia.com (10.18.16.10) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4 via Frontend Transport; Wed, 2 Jan 2019 23:35:39 +0000
+Received: from BN7PR12MB2836.namprd12.prod.outlook.com (20.176.178.161) by
+ BN7PR12MB2772.namprd12.prod.outlook.com (20.176.178.144) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1495.6; Wed, 2 Jan 2019 23:35:18 +0000
+Received: from BN7PR12MB2836.namprd12.prod.outlook.com
+ ([fe80::4024:c208:f331:505e]) by BN7PR12MB2836.namprd12.prod.outlook.com
+ ([fe80::4024:c208:f331:505e%3]) with mapi id 15.20.1495.005; Wed, 2 Jan 2019
+ 23:35:17 +0000
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     Wolfram Sang <wsa@the-dreams.de>
+CC:     "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Timo Alho <talho@nvidia.com>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+Subject: RE: [PATCH V2] i2c: tegra: Fix Maximum transfer size
+Thread-Topic: [PATCH V2] i2c: tegra: Fix Maximum transfer size
+Thread-Index: AQHUout6tntEaJKJCkybVGr/nm8PJqWck86AgAABP/A=
+Date:   Wed, 2 Jan 2019 23:35:17 +0000
+Message-ID: <BN7PR12MB283637DD2AA8882E46B76EDFC28C0@BN7PR12MB2836.namprd12.prod.outlook.com>
+References: <1546468519-2128-1-git-send-email-skomatineni@nvidia.com>
+ <20190102224512.GA2750@kunai>
+In-Reply-To: <20190102224512.GA2750@kunai>
+Accept-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=skomatineni@nvidia.com; 
+x-originating-ip: [216.228.112.22]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BN7PR12MB2772;6:0De1ER1iRnDLrwsRFHUmzbmf0flnzZtP7qqftaEZZsrjSgNUwAIIcGXzGHqF2Mn12DY+wZRlWkNQ+qAm6A8FYTIVZ5Xp++Q6+RitgWqhQ0SCauK1NcGcjTMSp5UOwxHcs/ePSy97w79tBc7gjy1jmFbGs9PBwF4l1CBmRlNG4hdLmcTZbevLlHWBdcGd0tkjvU467JuSkPpfJ/vDCRUJmyeJc3Sgoqz8KHO+fpWzaSW3OGRHJUzkP86aPEf6J0b1SQoxKdfTGINXg0JTQ4iRFBVvEh3oKukMrMkETL90hPIHmeGViIyPo0L8o2zUo0doHkjND3CtOzCzgswP79ynsRtwPOTaRFLvM5j/tkqLBUGQG0+eEasU6/DtJTyueCcD9yUZzoiYVSf6XNJX53Mvk9+KqNbhKNOYy1Iiv5/bcTo/a+sV+w2phi6ALbSuuU0JgvabMsbadf7ds47LdYXjCA==;5:aww5WhDuAlIURcsByJg7cb/gJy6/r5+jnIFBdy52F0Eap8kElDPLVkx27EN48yov0jiSyJKX7ETnPwYzWEqE3les3wdOmdzaY9mQE6MSjx57/Wfl5KXSSfc/U1bO5Wo6wp8F8DB4wWHV7DmWnBtQOwfjlak4p1se4OjVuhoweutzQo9l3Tw12l1kUuWs3s3sSyNJo0+Qq/vCPl6jnafyPw==;7:qfmfY1YhrKFLFGTCJPYEfhPTAMhDy0+Vc7KyPbJ4lW8RFVnYXf3EUIXkNAzlioGP/s+irQvPcdTQ9JQ7YJlSEBaAIlFJEr9baY851N9lJpIooSTrkTFeYQc4Do78FSDEU6h2a+tvdkxmY4pfnmLv4Q==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(376002)(366004)(136003)(396003)(39850400004)(346002)(189003)(199004)(2906002)(53936002)(9686003)(54906003)(6246003)(55016002)(97736004)(68736007)(99286004)(316002)(81166006)(8676002)(6116002)(3846002)(305945005)(81156014)(8936002)(7696005)(76176011)(7736002)(5660300001)(33656002)(66066001)(186003)(11346002)(476003)(86362001)(74316002)(446003)(486006)(256004)(14454004)(229853002)(6916009)(478600001)(105586002)(25786009)(71190400001)(71200400001)(39060400002)(6436002)(4326008)(106356001)(102836004)(26005)(6506007);DIR:OUT;SFP:1101;SCL:1;SRVR:BN7PR12MB2772;H:BN7PR12MB2836.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-ms-office365-filtering-correlation-id: bb9dfe72-eb65-486e-c65b-08d6710af401
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(2017052603328)(7153060)(7193020);SRVR:BN7PR12MB2772;
+x-ms-traffictypediagnostic: BN7PR12MB2772:
+x-microsoft-antispam-prvs: <BN7PR12MB27721C2AD683C79F41735BEFC28C0@BN7PR12MB2772.namprd12.prod.outlook.com>
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(3230021)(908002)(999002)(5005026)(6040522)(8220060)(2401047)(8121501046)(3002001)(10201501046)(3231475)(944501520)(52105112)(93006095)(93001095)(6041310)(20161123560045)(20161123558120)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:BN7PR12MB2772;BCL:0;PCL:0;RULEID:;SRVR:BN7PR12MB2772;
+x-forefront-prvs: 0905A6B2C7
+received-spf: None (protection.outlook.com: nvidia.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: kVn1fOQZcng8byCbnI+DMLrJluYWob3PcblZ3sqATchnQ9N2orIP9kTurKeRuTI89nRq+pjXAnYU3NIUM5ysaCGk2ZkYKBvrAJaTiB9qvQZ6s9mzr07+U7kF+FpKXx9tIbcDzAzIGBO+WR365XdK97lJQ/HeGVzETvCaTqCKKN8IABcHyJg5hBSXkXuGTNwWps+8Es3gO0wQcHoo3DTX7y0Zxq/+m3bRdUD6ddADgMzEnVep8pNRTJWfpOiubhMdjoqLdRhPPjR4/8RsNVG3kb49Z8oPpIOrtLly+t1ZHDstFhwYHoMkJKRSUqH4PHuL
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181224182445.21256-1-pakki001@umn.edu>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-MS-Exchange-CrossTenant-Network-Message-Id: bb9dfe72-eb65-486e-c65b-08d6710af401
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Jan 2019 23:35:17.5401
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR12MB2772
+X-OriginatorOrg: Nvidia.com
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1546472141; bh=TCmT6IU03iLtqg6TCj6UD/+tS9rUKKFhEoqPpcfhrto=;
+        h=X-PGP-Universal:From:To:CC:Subject:Thread-Topic:Thread-Index:Date:
+         Message-ID:References:In-Reply-To:Accept-Language:X-MS-Has-Attach:
+         X-MS-TNEF-Correlator:authentication-results:x-originating-ip:
+         x-ms-publictraffictype:x-microsoft-exchange-diagnostics:
+         x-ms-exchange-antispam-srfa-diagnostics:
+         x-forefront-antispam-report:
+         x-ms-office365-filtering-correlation-id:x-microsoft-antispam:
+         x-ms-traffictypediagnostic:x-microsoft-antispam-prvs:
+         x-exchange-antispam-report-cfa-test:x-forefront-prvs:received-spf:
+         x-ms-exchange-senderadcheck:x-microsoft-antispam-message-info:
+         spamdiagnosticoutput:spamdiagnosticmetadata:MIME-Version:
+         X-MS-Exchange-CrossTenant-Network-Message-Id:
+         X-MS-Exchange-CrossTenant-originalarrivaltime:
+         X-MS-Exchange-CrossTenant-fromentityheader:
+         X-MS-Exchange-CrossTenant-id:
+         X-MS-Exchange-Transport-CrossTenantHeadersStamped:X-OriginatorOrg:
+         Content-Language:Content-Type:Content-Transfer-Encoding;
+        b=Xt2BREZIbYTSV9ezWoiq2Z9Tr1zACJAju27KZutH77s6p/YlefZW8gw7VALEnqF9i
+         nLBFew7W0kUaY4riuxkxyKKrpG4YYe4287t92yOX72KKlc4UYFut71NwhW6RHzRVXK
+         y17iYivSwYuaW/osW/8hbW0yws2e3cr/WgaVXdPqEDVofdr/tpy0Qll5zdQXhKQSeH
+         BJWp8cyIpbzF4Fiz8GOCNI6X6a6dolW1x6TZeA1O1B2+5PiJfAMPZpfGgGiCXvSpk+
+         VhKo2ejPhISgQ7RdbL4jIbw9htbqx1ExAIhV2LC3YZ2hR95skjNdoP4lBRgllbhG4d
+         qrMDUDzY9VJiA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 24, 2018 at 12:24:45PM -0600, Aditya Pakki wrote:
-> idr_find() may fail and return a NULL pointer. The fix checks the
-> return value of the function and returns an error in case of NULL.
-> 
-> Signed-off-by: Aditya Pakki <pakki001@umn.edu>
-> Acked-by: Michal Kalderon <michal.kalderon@marvell.com>
-> ---
->  drivers/infiniband/hw/qedr/qedr_iw_cm.c | 2 ++
->  1 file changed, 2 insertions(+)
+Thanks Wolfram.=20
 
-Applied to for-rc thanks
+>> Tegra194 supports maximum 64K Bytes transfer per packet.
+>
+>Linux I2C doesn't support more than 64K of transfers as well...
+>
+>> +	.max_read_len =3D 65535,
+>> +	.max_write_len =3D 65535,
+>
+>... so you can simply drop these lines.
 
-Jason
+Oh Yes right, msg len is u16. will fix it. Thanks.
+
+Thanks
+Sowjanya
+
