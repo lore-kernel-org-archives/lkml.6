@@ -2,203 +2,119 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F3E5C43444
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 14:11:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 969A6C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 14:15:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCD2B218CD
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 14:11:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5FE34218EA
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 14:15:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546438544;
+	bh=vHKW7dKsiO6fE1IxcZtzx9Hdgc8p8ihT2hm4/XbZGJ4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=OfFu2YK7tvR1hYVVcmHaXI49VVVyGOwCz2dIspGyr7/xLhfMRIARuwZtxJunAuq4P
+	 Ny4X1G3IIvG256kRTCSCYFw4ahv10rmUQTEe6XvCpvlEcAqe7rY60VAXoF4gldSyBY
+	 Hd0Wd1Pearbb7Y2DW+kDnHmPSLb1T9mJzsuuKTP8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729733AbfABOLF (ORCPT
+        id S1729309AbfABOPn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 09:11:05 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:12335 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728983AbfABOKc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 09:10:32 -0500
-X-UUID: 230062ad104c4f09b58bfb842d54505e-20190102
-X-UUID: 230062ad104c4f09b58bfb842d54505e-20190102
-Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
-        (envelope-from <henryc.chen@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1737905816; Wed, 02 Jan 2019 22:10:28 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 2 Jan 2019 22:10:26 +0800
-Received: from mtkslt205.mediatek.inc (10.21.15.75) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 2 Jan 2019 22:10:26 +0800
-From:   Henry Chen <henryc.chen@mediatek.com>
-To:     Viresh Kumar <vireshk@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-CC:     Mark Rutland <mark.rutland@arm.com>,
-        Fan Chen <fan.chen@mediatek.com>,
-        Weiyi Lu <weiyi.lu@mediatek.com>,
-        James Liao <jamesjj.liao@mediatek.com>,
-        Kees Cook <keescook@chromium.org>, <linux-pm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Henry Chen <henryc.chen@mediatek.com>
-Subject: [RFC RESEND PATCH 3/7] soc: mediatek: add support for the performance state
-Date:   Wed, 2 Jan 2019 22:09:54 +0800
-Message-ID: <1546438198-1677-4-git-send-email-henryc.chen@mediatek.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1546438198-1677-1-git-send-email-henryc.chen@mediatek.com>
-References: <1546438198-1677-1-git-send-email-henryc.chen@mediatek.com>
+        Wed, 2 Jan 2019 09:15:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40614 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727424AbfABOPn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Jan 2019 09:15:43 -0500
+Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A10A2218E2;
+        Wed,  2 Jan 2019 14:15:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1546438541;
+        bh=vHKW7dKsiO6fE1IxcZtzx9Hdgc8p8ihT2hm4/XbZGJ4=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=xUKt9P/zv8xXGhkh3WR6EhH56cX+0v1Qvj0/BfWD1a7w5z70z0Yq9VUtviiaA3vNf
+         MHwCB6SPMWV0xrFwNT6pQbmqHbGyiztiI8Aqfc/5KTWRyE2FxLD6P6C/1DberB66oN
+         c6PSyr8pFvE/pmIMmgSQMKOjTZictOTSqyQstV10=
+Received: by mail-oi1-f173.google.com with SMTP id t204so25149160oie.7;
+        Wed, 02 Jan 2019 06:15:41 -0800 (PST)
+X-Gm-Message-State: AJcUukcNk2L898Eehs8eJrjLiXuPGzoyYGZGOBWEQDjFTaY1g39ln8p9
+        9lSK2oT6uxLAD5QeWJPh+YQFzNnGDJ8dQjTFzqk=
+X-Google-Smtp-Source: ALg8bN40o1BqSZLuE/173mD0xn00p30bx6oRGQ+deRiin83nChVPLTQMqqpkhuDW82bbQMZOv4frybvjlSIxds09mUY=
+X-Received: by 2002:aca:5e09:: with SMTP id s9mr13041290oib.153.1546438540985;
+ Wed, 02 Jan 2019 06:15:40 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-SNTS-SMTP: 5C466D51986E1AC154E56F047E4429BF8A93C06EC63D993862788E22D55C0FEB2000:8
-X-MTK:  N
+References: <20181223232521.11320-1-okaya@kernel.org> <20181223232521.11320-10-okaya@kernel.org>
+ <CAJZ5v0jFXvGJH_V9gJ8c3T5x80yYHQmk=0WfJi=vvkSJ_aShwg@mail.gmail.com>
+ <CAK9iUCPqqyK7KMvchM4jY_FBgujnQm019J27TpDJjXUXvu5sjQ@mail.gmail.com>
+ <CAJZ5v0hw_=Odpok=6qWVWAfJ0wG7Z8NjwzMCpaFgxYnEAreKcg@mail.gmail.com> <21e732e8-84e4-72f9-4142-8e6af54f1346@intel.com>
+In-Reply-To: <21e732e8-84e4-72f9-4142-8e6af54f1346@intel.com>
+From:   Sinan Kaya <Okaya@kernel.org>
+Date:   Wed, 2 Jan 2019 14:15:29 +0000
+X-Gmail-Original-Message-ID: <CAK9iUCOce2x9NPGs9aryU8eqdWroPdjM0SP6LohhDjsCmdERAA@mail.gmail.com>
+Message-ID: <CAK9iUCOce2x9NPGs9aryU8eqdWroPdjM0SP6LohhDjsCmdERAA@mail.gmail.com>
+Subject: Re: [PATCH v3 09/11] mmc: add PCI dependency into IOSF_MBI
+To:     Adrian Hunter <adrian.hunter@intel.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>, faiz_abbas@ti.com,
+        chunyan.zhang@unisoc.com, Jisheng.Zhang@synaptics.com,
+        ludovic.barre@st.com, Arnd Bergmann <arnd@arndb.de>,
+        alex.smith@imgtec.com, chris.brandt@renesas.com,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Support power domain performance state, add header file for scp event.
+On Wed, Jan 2, 2019 at 2:04 PM Adrian Hunter <adrian.hunter@intel.com> wrote:
+>
+> On 31/12/18 11:40 AM, Rafael J. Wysocki wrote:
+> > On Sun, Dec 30, 2018 at 7:57 PM Sinan Kaya <Okaya@kernel.org> wrote:
+> >>
+> >> On Wed, Dec 26, 2018 at 12:41 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
+> >>>
+> >>> On Mon, Dec 24, 2018 at 12:26 AM Sinan Kaya <okaya@kernel.org> wrote:
+> >>>>
+> >>>> Select IOSF_MBI only when PCI is set.
+> >>>>
+> >>>> Signed-off-by: Sinan Kaya <okaya@kernel.org>
+> >>>> ---
+> >>>>  drivers/mmc/host/Kconfig | 2 +-
+> >>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >>>>
+> >>>> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+> >>>> index e26b8145efb3..4c5f037b246d 100644
+> >>>> --- a/drivers/mmc/host/Kconfig
+> >>>> +++ b/drivers/mmc/host/Kconfig
+> >>>> @@ -117,7 +117,7 @@ config MMC_RICOH_MMC
+> >>>>  config MMC_SDHCI_ACPI
+> >>>>         tristate "SDHCI support for ACPI enumerated SDHCI controllers"
+> >>>>         depends on MMC_SDHCI && ACPI
+> >>>
+> >>> It should depend on PCI as well, shouldn't it?
+> >>>
+> >>
+> >> I don't think so. The PCI dependency is at IOSF_MBI code so code
+> >> should select IOSF_MBI only when x86 and pci is defined as below.
+> >>
+> >> This driver does not depend on PCI.
+> >
+> > Are you sure?
+> >
+> > Do you know any systems in which to use it without PCI?
+> >
+>
+> Qualcomm use it and I don't know if those systems have PCI.
+> AMD use it but probably also have PCI.  And yes Intel systems (just BYT and
+> CHT IIRC) that use this driver will always have PCI.
 
-Signed-off-by: Henry Chen <henryc.chen@mediatek.com>
----
- drivers/soc/mediatek/mtk-scpsys.c | 60 +++++++++++++++++++++++++++++++++++++++
- drivers/soc/mediatek/mtk-scpsys.h | 22 ++++++++++++++
- 2 files changed, 82 insertions(+)
- create mode 100644 drivers/soc/mediatek/mtk-scpsys.h
-
-diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
-index 58d84fe..90102ae 100644
---- a/drivers/soc/mediatek/mtk-scpsys.c
-+++ b/drivers/soc/mediatek/mtk-scpsys.c
-@@ -11,7 +11,9 @@
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <linux/pm_domain.h>
-+#include <linux/pm_opp.h>
- #include <linux/regulator/consumer.h>
-+#include <linux/slab.h>
- #include <linux/soc/mediatek/infracfg.h>
- #include <linux/soc/mediatek/scpsys-ext.h>
- 
-@@ -22,6 +24,7 @@
- #include <dt-bindings/power/mt7623a-power.h>
- #include <dt-bindings/power/mt8173-power.h>
- #include <dt-bindings/power/mt8183-power.h>
-+#include "mtk-scpsys.h"
- 
- #define MTK_POLL_DELAY_US   10
- #define MTK_POLL_TIMEOUT    (jiffies_to_usecs(HZ))
-@@ -187,6 +190,18 @@ struct scp_soc_data {
- 	bool bus_prot_reg_update;
- };
- 
-+BLOCKING_NOTIFIER_HEAD(scpsys_notifier_list);
-+
-+int register_scpsys_notifier(struct notifier_block *nb)
-+{
-+	return blocking_notifier_chain_register(&scpsys_notifier_list, nb);
-+}
-+
-+int unregister_scpsys_notifier(struct notifier_block *nb)
-+{
-+	return blocking_notifier_chain_unregister(&scpsys_notifier_list, nb);
-+}
-+
- static int scpsys_domain_is_on(struct scp_domain *scpd)
- {
- 	struct scp *scp = scpd->scp;
-@@ -536,6 +551,48 @@ static void init_clks(struct platform_device *pdev, struct clk **clk)
- 		clk[i] = devm_clk_get(&pdev->dev, clk_names[i]);
- }
- 
-+static int mtk_pd_set_performance(struct generic_pm_domain *genpd,
-+				  unsigned int state)
-+{
-+	int i;
-+	struct scp_domain *scpd =
-+		container_of(genpd, struct scp_domain, genpd);
-+	struct scp_event_data scpe;
-+	struct scp *scp = scpd->scp;
-+	struct genpd_onecell_data *pd_data = &scp->pd_data;
-+
-+	for (i = 0; i < pd_data->num_domains; i++) {
-+		if (genpd == pd_data->domains[i]) {
-+			dev_dbg(scp->dev, "%d. %s = %d\n",
-+				i, genpd->name, state);
-+			break;
-+		}
-+	}
-+
-+	scpe.event_type = MTK_SCPSYS_PSTATE;
-+	scpe.genpd = genpd;
-+	scpe.domain_id = i;
-+	blocking_notifier_call_chain(&scpsys_notifier_list, state, &scpe);
-+
-+	return 0;
-+}
-+
-+static unsigned int mtk_pd_get_performance(struct generic_pm_domain *genpd,
-+					   struct dev_pm_opp *opp)
-+{
-+	struct device_node *np;
-+	unsigned int state;
-+
-+	np = dev_pm_opp_get_of_node(opp);
-+
-+	if (of_property_read_u32(np, "mtk,level", &state))
-+		return 0;
-+
-+	of_node_put(np);
-+
-+	return state;
-+}
-+
- static struct scp *init_scp(struct platform_device *pdev,
- 			const struct scp_domain_data *scp_domain_data, int num,
- 			const struct scp_ctrl_reg *scp_ctrl_reg,
-@@ -659,6 +716,9 @@ static struct scp *init_scp(struct platform_device *pdev,
- 		genpd->power_on = scpsys_power_on;
- 		if (MTK_SCPD_CAPS(scpd, MTK_SCPD_ACTIVE_WAKEUP))
- 			genpd->flags |= GENPD_FLAG_ACTIVE_WAKEUP;
-+
-+		genpd->set_performance_state = mtk_pd_set_performance;
-+		genpd->opp_to_performance_state = mtk_pd_get_performance;
- 	}
- 
- 	return scp;
-diff --git a/drivers/soc/mediatek/mtk-scpsys.h b/drivers/soc/mediatek/mtk-scpsys.h
-new file mode 100644
-index 0000000..c1e8325
---- /dev/null
-+++ b/drivers/soc/mediatek/mtk-scpsys.h
-@@ -0,0 +1,22 @@
-+/* SPDX-License-Identifier: GPL-2.0
-+ *
-+ * Copyright (c) 2018 MediaTek Inc.
-+ */
-+
-+#ifndef __MTK_SCPSYS_H__
-+#define __MTK_SCPSYS_H__
-+
-+struct scp_event_data {
-+	int event_type;
-+	int domain_id;
-+	struct generic_pm_domain *genpd;
-+};
-+
-+enum scp_event_type {
-+	MTK_SCPSYS_PSTATE,
-+};
-+
-+int register_scpsys_notifier(struct notifier_block *nb);
-+int unregister_scpsys_notifier(struct notifier_block *nb);
-+
-+#endif /* __MTK_SCPSYS_H__ */
--- 
-1.9.1
-
+QCOM doesn't use PCI for SDHC.
