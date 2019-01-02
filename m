@@ -2,109 +2,114 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A82BBC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 00:51:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85F5EC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 01:02:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6773B2171F
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 00:51:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bdaBqUaM"
+	by mail.kernel.org (Postfix) with ESMTP id 50791208E3
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 01:02:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727903AbfABAvh (ORCPT
+        id S1727959AbfABBB7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 1 Jan 2019 19:51:37 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:36577 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726829AbfABAvh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Jan 2019 19:51:37 -0500
-Received: by mail-pl1-f193.google.com with SMTP id g9so13855915plo.3;
-        Tue, 01 Jan 2019 16:51:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=bAaRW1/Ei0qr9/KNwDarEc5yyN+GFrW6XRfdQ6M97UM=;
-        b=bdaBqUaMkwO+8rLSlCD3n1Sdy1ftsOvgqHa35D183yJJiQwqKVxiNPz++wltqAkQC7
-         XuqpJNOXA52L3IUkTcsyjPxIEv5GhSdqkubEG28hVpWHxsq5bsPp4YDBSJ6P/Hx+r6kp
-         nSzP7fwwB6x16+HAemq+6yol1tSlCyHgw+vvtUz+ri88sTz9657ZhRP12lKJN4efJH6b
-         AVxob8aAeJXKmJ0BKB1HBuQbv8zPFYR37KO7OoTjPcC/+Icj/Cke0nPqhGJ42bprV3q0
-         k/DYo+JgCyTXJQCXVig8ZTOrd1BwRB30NjuXZy05TtshmXk/0Wf6tSa9MBOtnVIgTp+U
-         3Npw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=bAaRW1/Ei0qr9/KNwDarEc5yyN+GFrW6XRfdQ6M97UM=;
-        b=EM8a4y5eOzrHidBKCk1SXzlXsMP2Y9WgwODQbJAs7ErpJmjS5ASilLTti0S0BHh7sW
-         /Is3EuA/lhkT2xdhhSK+2guRwpOvwnt8xXlPg6198EUdnQOZpPXaP4vQ41GwqbE+zcsM
-         EAOng9yow/FJh+ciLGyat/Qt0fLwFL0/1ygmtV+ODyQXIWgvRdqBV4DsD4La5WHGmC+q
-         ZjlF5UQCR0lbcyRjniNu8D1Qc+NtQkzE6zSluatNkiLo4IDm62+zNSUpsvwrP8f9JbsZ
-         Rnp/UAVFMQ1F7RaXmCu+qnbxLxKENBmzEMLKGFJ4GzdIRNYfdHUhsqbz8w2HYqGwL4ii
-         vgSA==
-X-Gm-Message-State: AJcUukey+G8Mk4BG91WFlo1tiAUDr8ELJu+rOUgqVG6bceGDj/KYh4cL
-        BSq2C2W3BMN6VY2rJIiWjLU=
-X-Google-Smtp-Source: ALg8bN72jlCp1eKBMompXTlW05EWROoYAVoXNXqA/GSacfoN7pyflCB4Oxx6z2dPfZWgNq4nCZq5Dw==
-X-Received: by 2002:a17:902:2:: with SMTP id 2mr15074356pla.228.1546390296198;
-        Tue, 01 Jan 2019 16:51:36 -0800 (PST)
-Received: from localhost.localdomain ([2601:644:8201:32e0:7256:81ff:febd:926d])
-        by smtp.gmail.com with ESMTPSA id 128sm76819876pfu.129.2019.01.01.16.51.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 01 Jan 2019 16:51:35 -0800 (PST)
-Date:   Tue, 1 Jan 2019 16:51:25 -0800
-From:   Eduardo Valentin <edubezval@gmail.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Rui Zhang <rui.zhang@intel.com>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [GIT PULL] Thermal-SoC management updates for v4.21-rc1
-Message-ID: <20190102005121.GB7944@localhost.localdomain>
-References: <20190101160503.GA3306@localhost.localdomain>
- <CAHk-=whXWWXSMMPpm3eGV=PL12=K5LFM3didLBuGy1Y7vUbXVg@mail.gmail.com>
- <20190101231526.GA7944@localhost.localdomain>
- <CAHk-=wiku0MygbFLmLjvCo-zzu4ygivkshdGzVVADYdwe-b57A@mail.gmail.com>
+        Tue, 1 Jan 2019 20:01:59 -0500
+Received: from mga03.intel.com ([134.134.136.65]:19308 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727914AbfABBB6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Jan 2019 20:01:58 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Jan 2019 17:01:58 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,429,1539673200"; 
+   d="scan'208";a="106229491"
+Received: from yy-desk-7060.sh.intel.com (HELO localhost) ([10.239.161.32])
+  by orsmga008.jf.intel.com with ESMTP; 01 Jan 2019 17:01:55 -0800
+Date:   Wed, 2 Jan 2019 08:59:37 +0800
+From:   Yuan Yao <yuan.yao@linux.intel.com>
+To:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+Cc:     Fengguang Wu <fengguang.wu@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Yao Yuan <yuan.yao@intel.com>, kvm@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>, Fan Du <fan.du@intel.com>,
+        Peng Dong <dongx.peng@intel.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Liu Jingqi <jingqi.liu@intel.com>,
+        Dong Eddie <eddie.dong@intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Zhang Yi <yi.z.zhang@linux.intel.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: Re: [RFC][PATCH v2 11/21] kvm: allocate page table pages from DRAM
+Message-ID: <20190102005936.GA12352@yy-desk-7060>
+References: <20181226131446.330864849@intel.com>
+ <20181226133351.703380444@intel.com>
+ <87pntg7mv8.fsf@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHk-=wiku0MygbFLmLjvCo-zzu4ygivkshdGzVVADYdwe-b57A@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <87pntg7mv8.fsf@linux.ibm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 01, 2019 at 03:32:50PM -0800, Linus Torvalds wrote:
-> On Tue, Jan 1, 2019 at 3:16 PM Eduardo Valentin <edubezval@gmail.com> wrote:
+On Tue, Jan 01, 2019 at 02:53:07PM +0530, Aneesh Kumar K.V wrote:
+> Fengguang Wu <fengguang.wu@intel.com> writes:
+> 
+> > From: Yao Yuan <yuan.yao@intel.com>
 > >
-> > > It doesn't even build cleanly.
-> > >
+> > Signed-off-by: Yao Yuan <yuan.yao@intel.com>
+> > Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
+> > ---
+> > arch/x86/kvm/mmu.c |   12 +++++++++++-
+> > 1 file changed, 11 insertions(+), 1 deletion(-)
 > >
-> > Do you still have have a copy of the build error?
+> > --- linux.orig/arch/x86/kvm/mmu.c	2018-12-26 20:54:48.846720344 +0800
+> > +++ linux/arch/x86/kvm/mmu.c	2018-12-26 20:54:48.842719614 +0800
+> > @@ -950,6 +950,16 @@ static void mmu_free_memory_cache(struct
+> >  		kmem_cache_free(cache, mc->objects[--mc->nobjs]);
+> >  }
+> >  
+> > +static unsigned long __get_dram_free_pages(gfp_t gfp_mask)
+> > +{
+> > +       struct page *page;
+> > +
+> > +       page = __alloc_pages(GFP_KERNEL_ACCOUNT, 0, numa_node_id());
+> > +       if (!page)
+> > +	       return 0;
+> > +       return (unsigned long) page_address(page);
+> > +}
+> > +
 > 
-> A plain "make allmodconfig" shows a warning.
+> May be it is explained in other patches. What is preventing the
+> allocation from pmem here? Is it that we are not using the memory
+> policy prefered node id and hence the zone list we built won't have the
+> PMEM node?
 
-I see. I am afraid I really did not catch this. I supposed you are
-referring to the warning like this:
+That because the PMEM nodes are memory-only node in the patchset,
+so numa_node_id() will always return the node id from DRAM nodes.
 
-    thermal_hwmon.h:29:1: warning: ‘thermal_remove_hwmon_sysfs’ defined but not used [-Wunused-function]
-
-I am sending out a patch for this on thermal_hwmon.h  and will be resending the pull request
-once the CIs report back.
-
-
-> 
-> And I refuse to add new warnings.
-
-Fair enough. I would not expect anything different. Thanks for reporting.
+About the zone list, yes in patch 10/21 we build the PMEM nodes to
+seperate zonelist, so DRAM nodes will not fall back to PMEM nodes.
 
 > 
->                  Linus
+> >  static int mmu_topup_memory_cache_page(struct kvm_mmu_memory_cache *cache,
+> >  				       int min)
+> >  {
+> > @@ -958,7 +968,7 @@ static int mmu_topup_memory_cache_page(s
+> >  	if (cache->nobjs >= min)
+> >  		return 0;
+> >  	while (cache->nobjs < ARRAY_SIZE(cache->objects)) {
+> > -		page = (void *)__get_free_page(GFP_KERNEL_ACCOUNT);
+> > +		page = (void *)__get_dram_free_pages(GFP_KERNEL_ACCOUNT);
+> >  		if (!page)
+> >  			return cache->nobjs >= min ? 0 : -ENOMEM;
+> >  		cache->objects[cache->nobjs++] = page;
+> 
+> -aneesh
+> 
