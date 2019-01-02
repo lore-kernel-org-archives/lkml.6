@@ -2,212 +2,103 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B47E5C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 15:53:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5774C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 15:56:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A30C218DE
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 15:53:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="UvBut2rs"
+	by mail.kernel.org (Postfix) with ESMTP id 757B9218FF
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 15:56:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546444575;
+	bh=zmmo5zBPHJszCwxcol5XhtaV1GpebvMAjD5BlPoERvc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=Vp+GUA4sr49IyDHbe9WMZIVXgCeLhRFB29kmZNRKMY02a0/5OObTVUYA5JZW7+vU5
+	 aGg+NCRWBJ9eOD+1/ijUmVMGqNcFpKXo/lsS03XtKGXO0AbcwNhRXImk/yu/Lb0YS8
+	 QPjZHJCdPlCp+1MHZq0yC4Wue8hkJXHaibh8TBOQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730317AbfABPxb (ORCPT
+        id S1729658AbfABP4O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 10:53:31 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:34786 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730301AbfABPx3 (ORCPT
+        Wed, 2 Jan 2019 10:56:14 -0500
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:45341 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728026AbfABP4N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 10:53:29 -0500
-Received: by mail-pf1-f193.google.com with SMTP id h3so15356929pfg.1
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 07:53:28 -0800 (PST)
+        Wed, 2 Jan 2019 10:56:13 -0500
+Received: by mail-yw1-f65.google.com with SMTP id d190so12163768ywd.12;
+        Wed, 02 Jan 2019 07:56:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=/6QIRkSywJIAMa7P20oR43mtkBtoVMs6c6JfHglievg=;
-        b=UvBut2rsd5wSSYOe0iapCEq1qfsXDQFns6i8u9tKA2rggBxhyfrXM8m4l3d2ZEDpa9
-         gypCnTqf08i9JwLUoBDx3zlmV77nxJ7KR9bjyRCycudqeda7Fqp4hqbavk3TOvDZRJuY
-         dnoRQpsnQoPxurB8+XcinSUd5VYILZFFkAUCI=
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=BGyphusPVmyKOgfZwxPiTbaMVHhwPo7VwZbqrFW8CcE=;
+        b=ZJmiamyfEykbygxcmx1H/pBXb2S+Y27xQBlWUHC5VqCkFnsNGFJnjxifThDyyFOysc
+         vYGVBZw0AaKxyL0fE8xKiF0PWBCBh787PgKPOZKjWNT1+bCnLfsVFa1F5NHpStL963du
+         B/1K6siD90E7ui48l6uFXuofc/0eDDX3yBjCQXry4WjyKLt5Bu8SbE5F8CnAWz+DHmbI
+         J6ZUKdhf/SkLCKBPoY6phZfJrBk8kGL7mNlMiQe8spxp/yntRf0bTdVHIvZyy/ZGl8hi
+         QEAIOtjMGx1qhWWCBRqpDxfMYG2P0va9MosLBZpe08ccwqmSX3h8fx8tUmv3RHW3PY1O
+         w/1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=/6QIRkSywJIAMa7P20oR43mtkBtoVMs6c6JfHglievg=;
-        b=Qkt449Re7THk53qYX8AB83LuYX8dDeHcRH+yMTLmtRWaXeq/dLtGkLjjvR9KY6aqIc
-         tz6zp4HOTFTzkAQZPC0HaHti0f61efFea5o2h9X6aQ6agBOeEZpocj91Zygo9WB/mCAt
-         8sEH9qJY4Za9pMC1Ep/OaCVA3sVBzFE0Kqeb3POppN76Yi6Clsx5/yVAcxXhr5S0seGe
-         41a3vplGUu8EOuzUZu3DiXMQNES91FTxOjPGVrD9HIpYdWF8CC+MBXf1kngliw48Opaf
-         uNVY0mK2c/SbWiwjoDHuch7lJ7iR3bl7FppAYxrlsxMZwx9IX5+AMqXPTaPf3lSaWYzj
-         MfmA==
-X-Gm-Message-State: AJcUuke/HFibELuC4d6ZMj7VZYHcNJ2eACINBhUd2RzmW89LdCK7uFaN
-        kMk1Cv+5JA+TMDAj9CaX06WOgvLixPk=
-X-Google-Smtp-Source: ALg8bN6g1EDKB1Eas6Ui7hLVjWVa+W43Dk55+6+9gLfNI8ukBswU9VBqty+ciSlQGrB/5NC2t1LyIw==
-X-Received: by 2002:a62:8d4f:: with SMTP id z76mr46207397pfd.2.1546444408523;
-        Wed, 02 Jan 2019 07:53:28 -0800 (PST)
-Received: from qualcomm-HP-ZBook-14-G2.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com. [103.229.18.19])
-        by smtp.gmail.com with ESMTPSA id n7sm95242637pff.36.2019.01.02.07.53.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 02 Jan 2019 07:53:28 -0800 (PST)
-From:   Firoz Khan <firoz.khan@linaro.org>
-To:     "David S . Miller" <davem@davemloft.net>,
-        Al Viro <viro@zeniv.linux.org.uk>, sparclinux@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>
-Cc:     y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, arnd@arndb.de, deepa.kernel@gmail.com,
-        marcin.juszkiewicz@linaro.org, firoz.khan@linaro.org
-Subject: [PATCH 3/3] sparc: generate uapi header and system call table files
-Date:   Wed,  2 Jan 2019 21:22:53 +0530
-Message-Id: <1546444373-21386-4-git-send-email-firoz.khan@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1546444373-21386-1-git-send-email-firoz.khan@linaro.org>
-References: <1546444373-21386-1-git-send-email-firoz.khan@linaro.org>
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=BGyphusPVmyKOgfZwxPiTbaMVHhwPo7VwZbqrFW8CcE=;
+        b=IzQXzd4mYM6UNJwPiwf/h4rqOwUTl9b7sCfsA/OFkzwHpZCmRS2EHoTeBtIUGXdTYX
+         7PsW55PHZM3DURbj7inDAr/7NRJ00ijJS9BRYODESBk2AVJPpiOU++rj40gMNHVofEdC
+         vppSBd87HfKW3pN+nOtCkIHmcdOjZafEh1MpQ5+2QkQYzzIsd4Aryxf6VVearap4qpmZ
+         emJIhwPmufvklVh1TXBC1siv/tz+ArhKAnntrKZq6LufJnUUnxEbPLSfpaBCvJ1yUt1y
+         Z2HYYYhBWJ/5nT+YSmtd8yOsTFBDY3NfQ5sk3shVDjfWoO6EkZ+7B4rRkBMp8gTt7i3m
+         w8bA==
+X-Gm-Message-State: AA+aEWZ+JnJEYWV7k7X8gRmlimTeiu0MasrHRqhDa/zPA7a/aKF3GO7T
+        TvSosrG843pldqtfPDtXAbI=
+X-Google-Smtp-Source: AFSGD/VHrUaqjeLArUm5QnP7Eec02Dd0/gC7BbjYv4/UqnjIbFeAfjU8A/RCHnDhUMKx3NAp8cRPvA==
+X-Received: by 2002:a81:33c4:: with SMTP id z187mr45695055ywz.294.1546444572622;
+        Wed, 02 Jan 2019 07:56:12 -0800 (PST)
+Received: from localhost ([2620:10d:c091:200::6:f03d])
+        by smtp.gmail.com with ESMTPSA id 141sm20524815yws.47.2019.01.02.07.56.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 02 Jan 2019 07:56:11 -0800 (PST)
+Date:   Wed, 2 Jan 2019 07:56:09 -0800
+From:   Tejun Heo <tj@kernel.org>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     Otto Sabart <ottosabart@seberm.com>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] doc: cgroup: use graphviz code instead of ASCII art
+Message-ID: <20190102155609.GO2509588@devbig004.ftw2.facebook.com>
+References: <20181230164945.GA2644@personal>
+ <20181230104020.1074d807@lwn.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181230104020.1074d807@lwn.net>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Unified system call table generation script must be run to
-generate unistd_32/64.h and syscall_table_32/64/c32.h files.
-This patch will have changes which will invokes the script.
+On Sun, Dec 30, 2018 at 10:40:29AM -0700, Jonathan Corbet wrote:
+> On Sun, 30 Dec 2018 17:49:45 +0100
+> Otto Sabart <ottosabart@seberm.com> wrote:
+> 
+> > The graphviz looks better. This patch also fixes multiple build warnings:
+> > "WARNING: Block quote ends without a blank line; unexpected unindent."
+> > 
+> > Signed-off-by: Otto Sabart <ottosabart@seberm.com>
+> 
+> The graphviz looks better *in some settings*, such as the formatted
+> version of the docs.  Please remember, though, that we need to preserve
+> the readability of the plain-text documents as well, and my own feeling
+> is that this patch is a step backward in that regard.  I'll defer to
+> Tejun on this if he feels otherwise, but my sense is that this is not
+> something we want to do.
 
-This patch will generate unistd_32/64.h and syscall_table-
-_32/64/c32.h files by the syscall table generation script
-invoked by parisc/Makefile and the generated files against
-the removed files must be identical.
+Yeah, I'd much prefer to prioritize source file readability.  My
+anecdotal experience is that most folks read the text file directly.
 
-The generated uapi header file will be included in uapi/-
-asm/unistd.h and generated system call table header file
-will be included by kernel/systbls_32/64.S file.
+Thanks.
 
-Signed-off-by: Firoz Khan <firoz.khan@linaro.org>
----
- arch/sparc/kernel/syscalls/Makefile      | 11 ++++++++--
- arch/sparc/kernel/syscalls/syscallhdr.sh | 36 --------------------------------
- arch/sparc/kernel/syscalls/syscalltbl.sh | 36 --------------------------------
- 3 files changed, 9 insertions(+), 74 deletions(-)
- delete mode 100644 arch/sparc/kernel/syscalls/syscallhdr.sh
- delete mode 100644 arch/sparc/kernel/syscalls/syscalltbl.sh
-
-diff --git a/arch/sparc/kernel/syscalls/Makefile b/arch/sparc/kernel/syscalls/Makefile
-index c22a21c..e24272d 100644
---- a/arch/sparc/kernel/syscalls/Makefile
-+++ b/arch/sparc/kernel/syscalls/Makefile
-@@ -6,8 +6,9 @@ _dummy := $(shell [ -d '$(uapi)' ] || mkdir -p '$(uapi)')	\
- 	  $(shell [ -d '$(kapi)' ] || mkdir -p '$(kapi)')
- 
- syscall := $(srctree)/$(src)/syscall.tbl
--syshdr := $(srctree)/$(src)/syscallhdr.sh
--systbl := $(srctree)/$(src)/syscalltbl.sh
-+syshdr := $(srctree)/scripts/syscallhdr.sh
-+sysnr := $(srctree)/scripts/syscallnr.sh
-+systbl := $(srctree)/scripts/syscalltbl.sh
- 
- quiet_cmd_syshdr = SYSHDR  $@
-       cmd_syshdr = $(CONFIG_SHELL) '$(syshdr)' '$<' '$@'	\
-@@ -15,6 +16,12 @@ quiet_cmd_syshdr = SYSHDR  $@
- 		   '$(syshdr_pfx_$(basetarget))'		\
- 		   '$(syshdr_offset_$(basetarget))'
- 
-+quiet_cmd_sysnr = SYSNR  $@
-+      cmd_sysnr = $(CONFIG_SHELL) '$(sysnr)' '$<' '$@'		\
-+		  '$(sysnr_abis_$(basetarget))'			\
-+		  '$(sysnr_pfx_$(basetarget))'			\
-+		  '$(sysnr_offset_$(basetarget))'
-+
- quiet_cmd_systbl = SYSTBL  $@
-       cmd_systbl = $(CONFIG_SHELL) '$(systbl)' '$<' '$@'	\
- 		   '$(systbl_abis_$(basetarget))'		\
-diff --git a/arch/sparc/kernel/syscalls/syscallhdr.sh b/arch/sparc/kernel/syscalls/syscallhdr.sh
-deleted file mode 100644
-index 626b574..0000000
---- a/arch/sparc/kernel/syscalls/syscallhdr.sh
-+++ /dev/null
-@@ -1,36 +0,0 @@
--#!/bin/sh
--# SPDX-License-Identifier: GPL-2.0
--
--in="$1"
--out="$2"
--my_abis=`echo "($3)" | tr ',' '|'`
--prefix="$4"
--offset="$5"
--
--fileguard=_UAPI_ASM_SPARC_`basename "$out" | sed \
--	-e 'y/abcdefghijklmnopqrstuvwxyz/ABCDEFGHIJKLMNOPQRSTUVWXYZ/' \
--	-e 's/[^A-Z0-9_]/_/g' -e 's/__/_/g'`
--grep -E "^[0-9A-Fa-fXx]+[[:space:]]+${my_abis}" "$in" | sort -n | (
--	printf "#ifndef %s\n" "${fileguard}"
--	printf "#define %s\n" "${fileguard}"
--	printf "\n"
--
--	nxt=0
--	while read nr abi name entry compat ; do
--		if [ -z "$offset" ]; then
--			printf "#define __NR_%s%s\t%s\n" \
--				"${prefix}" "${name}" "${nr}"
--		else
--			printf "#define __NR_%s%s\t(%s + %s)\n" \
--				"${prefix}" "${name}" "${offset}" "${nr}"
--		fi
--		nxt=$((nr+1))
--	done
--
--	printf "\n"
--	printf "#ifdef __KERNEL__\n"
--	printf "#define __NR_syscalls\t%s\n" "${nxt}"
--	printf "#endif\n"
--	printf "\n"
--	printf "#endif /* %s */" "${fileguard}"
--) > "$out"
-diff --git a/arch/sparc/kernel/syscalls/syscalltbl.sh b/arch/sparc/kernel/syscalls/syscalltbl.sh
-deleted file mode 100644
-index ffe954b..0000000
---- a/arch/sparc/kernel/syscalls/syscalltbl.sh
-+++ /dev/null
-@@ -1,36 +0,0 @@
--#!/bin/sh
--# SPDX-License-Identifier: GPL-2.0
--
--in="$1"
--out="$2"
--my_abis=`echo "($3)" | tr ',' '|'`
--my_abi="$4"
--offset="$5"
--
--emit() {
--	t_nxt="$1"
--	t_nr="$2"
--	t_entry="$3"
--
--	while [ $t_nxt -lt $t_nr ]; do
--		printf "__SYSCALL(%s,sys_nis_syscall)\n" "${t_nxt}"
--		t_nxt=$((t_nxt+1))
--	done
--	printf "__SYSCALL(%s,%s)\n" "${t_nxt}" "${t_entry}"
--}
--
--grep -E "^[0-9A-Fa-fXx]+[[:space:]]+${my_abis}" "$in" | sort -n | (
--	nxt=0
--	if [ -z "$offset" ]; then
--		offset=0
--	fi
--
--	while read nr abi name entry compat ; do
--		if [ "$my_abi" = "c32" ] && [ ! -z "$compat" ]; then
--			emit $((nxt+offset)) $((nr+offset)) $compat
--		else
--			emit $((nxt+offset)) $((nr+offset)) $entry
--		fi
--		nxt=$((nr+1))
--	done
--) > "$out"
 -- 
-1.9.1
-
+tejun
