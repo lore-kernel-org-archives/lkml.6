@@ -2,204 +2,169 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEA6EC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:21:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AD11C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:24:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A51692075B
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:21:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B0E62075B
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:24:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729161AbfABKVE (ORCPT
+        id S1729329AbfABKYf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 05:21:04 -0500
-Received: from mail-it1-f200.google.com ([209.85.166.200]:41833 "EHLO
-        mail-it1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728612AbfABKVE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 05:21:04 -0500
-Received: by mail-it1-f200.google.com with SMTP id 123so35638902itv.6
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 02:21:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=WgtcSQ+WvROBT7ufAgP/mILiNqZAG7uZin7/Asrfuno=;
-        b=Ge6ET+HasnXpNW4J5ZbPDobqqTDB8/UExCPBrUqy5zswFReRJ0s8PKxw2c5sxE2p15
-         Ve8FebIeDirGp/0E36ofIWvEfgX7NWl1f68XrU9fFui+QQL6iKpkccB6Im5FFIao4TsW
-         km5xMMbDiRktWVzWum8f+V7K6E2ndTcj6Bjnd59TMwBt48mAmS/mb2njoQuGB0tLGHvJ
-         RYD5z3cDuvnpDg5EOW5n5gZ1EzPgo7YTni3c72QacXMraJwAEEV2L4vWGiQKAWiWsMfY
-         fVPzOjT3eau6Bmm946XkZAupEJWyTD6u9nTtG21iapSBbCeMe5OeyH8u657ypx/rD+eu
-         GL2A==
-X-Gm-Message-State: AA+aEWbWT6YcD/eybLRodOH5eKFGeD9fCmKvhQ3lzZoWHYiNdqkwY0Fo
-        a3KEqj4BgMNVjjj+i03xS3rcKFvVYUv6fBX4GumZfSpxXTTJ
-X-Google-Smtp-Source: AFSGD/UtOPSX8fMBQcz8kY05o/2DUOS0BOj85toYNsNZJ2Z7QMPE4ZhHlDSMyh6R4dOGMyW3PXNjfCJWENQ7cETLnQ+RU1pfOc0U
+        Wed, 2 Jan 2019 05:24:35 -0500
+Received: from mx2.suse.de ([195.135.220.15]:51918 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728451AbfABKYf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Jan 2019 05:24:35 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 231F9AD02;
+        Wed,  2 Jan 2019 10:24:32 +0000 (UTC)
+Subject: Re: general protection fault in transparent_hugepage_enabled
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     syzbot <syzbot+a5fea9200aefd1cf4818@syzkaller.appspotmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>, Michal Hocko <mhocko@suse.com>,
+        David Rientjes <rientjes@google.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Matthew Wilcox <willy@infradead.org>
+References: <000000000000ae384d057dc685c1@google.com>
+ <1186a139-3a46-3311-5f72-bef02d403ee1@suse.cz>
+ <CACT4Y+YbM7sVDg7XEpY-E9bW2dF8a6xd_Wp_dWCnCM02DbrbtA@mail.gmail.com>
+ <b12b656c-04cb-6f34-e25a-f34d59e91316@suse.cz>
+ <CACT4Y+ZFnpWiBm80YRFUhjYmoTw6_1rH2=5cAj1kqR8p7Am7HQ@mail.gmail.com>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Openpgp: preference=signencrypt
+Message-ID: <a04f4ed2-da5d-99ec-5d8c-b617966a4728@suse.cz>
+Date:   Wed, 2 Jan 2019 11:24:31 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-X-Received: by 2002:a02:2b18:: with SMTP id h24mr33752738jaa.7.1546424462919;
- Wed, 02 Jan 2019 02:21:02 -0800 (PST)
-Date:   Wed, 02 Jan 2019 02:21:02 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000c8d239057e77004f@google.com>
-Subject: KASAN: use-after-free Read in nr_rx_frame
-From:   syzbot <syzbot+72f911fa716e011378ae@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, linux-hams@vger.kernel.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        ralf@linux-mips.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <CACT4Y+ZFnpWiBm80YRFUhjYmoTw6_1rH2=5cAj1kqR8p7Am7HQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On 1/2/19 11:03 AM, Dmitry Vyukov wrote:
+> On Wed, Jan 2, 2019 at 10:47 AM Vlastimil Babka <vbabka@suse.cz> wrote:
+>>
+>> Actually the fix was folded into the patch that caused the bug, and was
+>> already sent to and merged by Linus, commit
+>> 7635d9cbe8327e131a1d3d8517dc186c2796ce2e
+> 
+> 
+> But the email thread you referenced says that we need:
+> 
+> @@ -66,6 +66,8 @@ bool transparent_hugepage_enabled(struct vm_area_struct *vma)
+>  {
+>   if (vma_is_anonymous(vma))
+>   return __transparent_hugepage_enabled(vma);
+> + if (!vma->vm_file || !vma->vm_file->f_mapping)
+> + return false;
+>   if (shmem_mapping(vma->vm_file->f_mapping) && shmem_huge_enabled(vma))
+>   return __transparent_hugepage_enabled(vma);
+> 
+> and 7635d9cbe8327e131a1d3d8517dc186c2796ce2e contains:
+> 
+> +bool transparent_hugepage_enabled(struct vm_area_struct *vma)
+> +{
+> +       if (vma_is_anonymous(vma))
+> +               return __transparent_hugepage_enabled(vma);
+> +       if (vma_is_shmem(vma) && shmem_huge_enabled(vma))
+> +               return __transparent_hugepage_enabled(vma);
+> +
+> +       return false;
+> +}
+> 
+> What am I missing?
 
-syzbot found the following crash on:
+Ah, the solution with vma_is_shmem() appeared later in the thread:
+https://marc.info/?l=linux-mm&m=154567747315893&w=2
 
-HEAD commit:    e1ef035d272e Merge tag 'armsoc-defconfig' of git://git.ker..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=166315fd400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9c6a26e22579190b
-dashboard link: https://syzkaller.appspot.com/bug?extid=72f911fa716e011378ae
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=172848bb400000
+>>>>> Code: 80 3c 02 00 0f 85 ae 04 00 00 4c 8b a3 a0 00 00 00 48 b8 00 00 00 00
+>>>>> 00 fc ff df 49 8d bc 24 b8 01 00 00 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f
+>>>>> 85 91 04 00 00 49 8b bc 24 b8 01 00 00 e8 2d 70 e6
+>>>>> RSP: 0018:ffff8881c2237138 EFLAGS: 00010202
+>>>>> RAX: dffffc0000000000 RBX: ffff8881c2bdbc60 RCX: 0000000000000000
+>>>>> RDX: 0000000000000037 RSI: ffffffff81c8fa1a RDI: 00000000000001b8
+>>>>> RBP: ffff8881c2237160 R08: ffffed10383b25ed R09: ffffed10383b25ec
+>>>>> R10: ffffed10383b25ec R11: ffff8881c1d92f63 R12: 0000000000000000
+>>>>> R13: ffff8881c2bdbd00 R14: dffffc0000000000 R15: 0000000000000f5e
+>>>>> FS:  0000000001a48880(0000) GS:ffff8881dad00000(0000) knlGS:0000000000000000
+>>>>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>>>> CR2: 0000000020b58000 CR3: 00000001c2210000 CR4: 00000000001406e0
+>>>>> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+>>>>> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>>>>> Call Trace:
+>>>>>   show_smap+0x167/0x580 fs/proc/task_mmu.c:805
+>>>>>   traverse+0x344/0x7b0 fs/seq_file.c:113
+>>>>>   seq_read+0xc76/0x1150 fs/seq_file.c:188
+>>>>>   do_loop_readv_writev fs/read_write.c:700 [inline]
+>>>>>   do_iter_read+0x4bc/0x670 fs/read_write.c:924
+>>>>>   vfs_readv+0x175/0x1c0 fs/read_write.c:986
+>>>>>   kernel_readv fs/splice.c:362 [inline]
+>>>>>   default_file_splice_read+0x539/0xb20 fs/splice.c:417
+>>>>>   do_splice_to+0x12e/0x190 fs/splice.c:880
+>>>>>   splice_direct_to_actor+0x31c/0x9d0 fs/splice.c:957
+>>>>>   do_splice_direct+0x2d4/0x420 fs/splice.c:1066
+>>>>>   do_sendfile+0x62a/0xe50 fs/read_write.c:1439
+>>>>>   __do_sys_sendfile64 fs/read_write.c:1494 [inline]
+>>>>>   __se_sys_sendfile64 fs/read_write.c:1486 [inline]
+>>>>>   __x64_sys_sendfile64+0x15d/0x250 fs/read_write.c:1486
+>>>>>   do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+>>>>>   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>>>>> RIP: 0033:0x440089
+>>>>> Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7
+>>>>> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff
+>>>>> ff 0f 83 5b 14 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+>>>>> RSP: 002b:00007fff3d710a18 EFLAGS: 00000213 ORIG_RAX: 0000000000000028
+>>>>> RAX: ffffffffffffffda RBX: 00007fff3d710a20 RCX: 0000000000440089
+>>>>> RDX: 0000000020b58000 RSI: 0000000000000003 RDI: 0000000000000003
+>>>>> RBP: 00000000006ca018 R08: 0000000000000010 R09: 65732f636f72702f
+>>>>> R10: 000000000000ffff R11: 0000000000000213 R12: 0000000000401970
+>>>>> R13: 0000000000401a00 R14: 0000000000000000 R15: 0000000000000000
+>>>>> Modules linked in:
+>>>>> ---[ end trace faf026efd8795e93 ]---
+>>>>> RIP: 0010:transparent_hugepage_enabled+0x8c/0x5e0 mm/huge_memory.c:69
+>>>>> Code: 80 3c 02 00 0f 85 ae 04 00 00 4c 8b a3 a0 00 00 00 48 b8 00 00 00 00
+>>>>> 00 fc ff df 49 8d bc 24 b8 01 00 00 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f
+>>>>> 85 91 04 00 00 49 8b bc 24 b8 01 00 00 e8 2d 70 e6
+>>>>> RSP: 0018:ffff8881c2237138 EFLAGS: 00010202
+>>>>> RAX: dffffc0000000000 RBX: ffff8881c2bdbc60 RCX: 0000000000000000
+>>>>> RDX: 0000000000000037 RSI: ffffffff81c8fa1a RDI: 00000000000001b8
+>>>>> RBP: ffff8881c2237160 R08: ffffed10383b25ed R09: ffffed10383b25ec
+>>>>> R10: ffffed10383b25ec R11: ffff8881c1d92f63 R12: 0000000000000000
+>>>>> R13: ffff8881c2bdbd00 R14: dffffc0000000000 R15: 0000000000000f5e
+>>>>> FS:  0000000001a48880(0000) GS:ffff8881dad00000(0000) knlGS:0000000000000000
+>>>>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>>>> CR2: 0000000020b58000 CR3: 00000001c2210000 CR4: 00000000001406e0
+>>>>> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+>>>>> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>>>>>
+>>>>>
+>>>>> ---
+>>>>> This bug is generated by a bot. It may contain errors.
+>>>>> See https://goo.gl/tpsmEJ for more information about syzbot.
+>>>>> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>>>>>
+>>>>> syzbot will keep track of this bug report. See:
+>>>>> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
+>>>>> syzbot.
+>>>>> syzbot can test patches for this bug, for details see:
+>>>>> https://goo.gl/tpsmEJ#testing-patches
+>>
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+72f911fa716e011378ae@syzkaller.appspotmail.com
-
-IPv6: ADDRCONF(NETDEV_UP): vxcan1: link is not ready
-8021q: adding VLAN 0 to HW filter on device batadv0
-8021q: adding VLAN 0 to HW filter on device batadv0
-==================================================================
-BUG: KASAN: use-after-free in sk_acceptq_added include/net/sock.h:855  
-[inline]
-BUG: KASAN: use-after-free in nr_rx_frame+0x1c5f/0x1d50  
-net/netrom/af_netrom.c:1012
-Read of size 4 at addr ffff8880969d07e8 by task swapper/0/0
-
-CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.20.0+ #3
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  <IRQ>
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1db/0x2d0 lib/dump_stack.c:113
-  print_address_description.cold+0x7c/0x20d mm/kasan/report.c:187
-  kasan_report.cold+0x1b/0x40 mm/kasan/report.c:317
-  __asan_report_load4_noabort+0x14/0x20 mm/kasan/generic_report.c:134
-  sk_acceptq_added include/net/sock.h:855 [inline]
-  nr_rx_frame+0x1c5f/0x1d50 net/netrom/af_netrom.c:1012
-  nr_loopback_timer+0x7b/0x170 net/netrom/nr_loopback.c:62
-  call_timer_fn+0x254/0x900 kernel/time/timer.c:1325
-  expire_timers kernel/time/timer.c:1362 [inline]
-  __run_timers+0x6fc/0xd50 kernel/time/timer.c:1681
-  run_timer_softirq+0x52/0xb0 kernel/time/timer.c:1694
-  __do_softirq+0x30b/0xb11 kernel/softirq.c:292
-  invoke_softirq kernel/softirq.c:373 [inline]
-  irq_exit+0x180/0x1d0 kernel/softirq.c:413
-  exiting_irq arch/x86/include/asm/apic.h:536 [inline]
-  smp_apic_timer_interrupt+0x1b7/0x760 arch/x86/kernel/apic/apic.c:1062
-  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:807
-  </IRQ>
-RIP: 0010:native_safe_halt+0x2/0x10 arch/x86/include/asm/irqflags.h:58
-Code: ff ff ff 48 89 c7 48 89 45 d8 e8 59 49 d3 f9 48 8b 45 d8 e9 ce fe ff  
-ff 48 89 df e8 48 49 d3 f9 eb 82 90 90 90 90 90 90 fb f4 <c3> 0f 1f 00 66  
-2e 0f 1f 84 00 00 00 00 00 f4 c3 90 90 90 90 90 90
-RSP: 0018:ffffffff89807c60 EFLAGS: 00000286 ORIG_RAX: ffffffffffffff13
-RAX: 1ffffffff13249e9 RBX: 1ffffffff1300f8f RCX: 0000000000000000
-RDX: dffffc0000000000 RSI: 0000000000000001 RDI: ffffffff8987b73c
-RBP: ffffffff89807d20 R08: ffffffff8987aec0 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-R13: ffffffff89807cf8 R14: 0000000000000000 R15: ffffffff89924f38
-  arch_cpu_idle+0x10/0x20 arch/x86/kernel/process.c:555
-  default_idle_call+0x36/0x90 kernel/sched/idle.c:93
-  cpuidle_idle_call kernel/sched/idle.c:153 [inline]
-  do_idle+0x386/0x5d0 kernel/sched/idle.c:262
-  cpu_startup_entry+0x1b/0x20 kernel/sched/idle.c:353
-  rest_init+0x245/0x37b init/main.c:443
-  arch_call_rest_init+0xe/0x1b
-  start_kernel+0x882/0x8bd init/main.c:741
-  x86_64_start_reservations+0x29/0x2b arch/x86/kernel/head64.c:470
-  x86_64_start_kernel+0x77/0x7b arch/x86/kernel/head64.c:451
-  secondary_startup_64+0xa4/0xb0 arch/x86/kernel/head_64.S:243
-
-Allocated by task 10788:
-  save_stack+0x45/0xd0 mm/kasan/common.c:73
-  set_track mm/kasan/common.c:85 [inline]
-  kasan_kmalloc mm/kasan/common.c:482 [inline]
-  kasan_kmalloc+0xcf/0xe0 mm/kasan/common.c:455
-  __do_kmalloc mm/slab.c:3709 [inline]
-  __kmalloc+0x15c/0x740 mm/slab.c:3718
-  kmalloc include/linux/slab.h:550 [inline]
-  sk_prot_alloc+0x19c/0x2e0 net/core/sock.c:1477
-  sk_alloc+0xd7/0x1690 net/core/sock.c:1531
-  nr_create+0xb9/0x5e0 net/netrom/af_netrom.c:436
-  __sock_create+0x532/0x930 net/socket.c:1277
-  sock_create net/socket.c:1317 [inline]
-  __sys_socket+0x106/0x260 net/socket.c:1347
-  __do_sys_socket net/socket.c:1356 [inline]
-  __se_sys_socket net/socket.c:1354 [inline]
-  __x64_sys_socket+0x73/0xb0 net/socket.c:1354
-  do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Freed by task 10834:
-  save_stack+0x45/0xd0 mm/kasan/common.c:73
-  set_track mm/kasan/common.c:85 [inline]
-  __kasan_slab_free+0x102/0x150 mm/kasan/common.c:444
-  kasan_slab_free+0xe/0x10 mm/kasan/common.c:452
-  __cache_free mm/slab.c:3485 [inline]
-  kfree+0xcf/0x230 mm/slab.c:3804
-  sk_prot_free net/core/sock.c:1514 [inline]
-  __sk_destruct+0x76d/0xa60 net/core/sock.c:1596
-  sk_destruct+0x7b/0x90 net/core/sock.c:1604
-  __sk_free+0xce/0x300 net/core/sock.c:1615
-  sk_free+0x42/0x50 net/core/sock.c:1626
-  sock_put include/net/sock.h:1703 [inline]
-  nr_release+0x337/0x3c0 net/netrom/af_netrom.c:557
-  __sock_release+0xd3/0x250 net/socket.c:579
-  sock_close+0x1b/0x30 net/socket.c:1141
-  __fput+0x3c5/0xb10 fs/file_table.c:278
-  ____fput+0x16/0x20 fs/file_table.c:309
-  task_work_run+0x1f4/0x2b0 kernel/task_work.c:113
-  get_signal+0x168d/0x19b0 kernel/signal.c:2347
-  do_signal+0x91/0x1e80 arch/x86/kernel/signal.c:816
-  exit_to_usermode_loop+0x2f7/0x3b0 arch/x86/entry/common.c:162
-  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
-  do_syscall_64+0x696/0x800 arch/x86/entry/common.c:293
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-The buggy address belongs to the object at ffff8880969d0440
-  which belongs to the cache kmalloc-2k of size 2048
-The buggy address is located 936 bytes inside of
-  2048-byte region [ffff8880969d0440, ffff8880969d0c40)
-The buggy address belongs to the page:
-page:ffffea00025a7400 count:1 mapcount:0 mapping:ffff88812c3f0c40 index:0x0  
-compound_mapcount: 0
-flags: 0x1fffc0000010200(slab|head)
-raw: 01fffc0000010200 ffffea000292f708 ffffea00023ae408 ffff88812c3f0c40
-raw: 0000000000000000 ffff8880969d0440 0000000100000003 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff8880969d0680: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8880969d0700: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> ffff8880969d0780: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                                           ^
-  ffff8880969d0800: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8880969d0880: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
