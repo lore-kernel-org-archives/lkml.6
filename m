@@ -2,152 +2,123 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 442E2C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 09:53:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E930CC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 09:54:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1719E218A4
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 09:53:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B259221871
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 09:54:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="cNFR9tUX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729221AbfABJxW convert rfc822-to-8bit (ORCPT
+        id S1729234AbfABJyE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 04:53:22 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:58180 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728283AbfABJxV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 04:53:21 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id EF9B8461F8;
-        Wed,  2 Jan 2019 09:53:20 +0000 (UTC)
-Received: from gondolin (dhcp-192-187.str.redhat.com [10.33.192.187])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 003A619C65;
-        Wed,  2 Jan 2019 09:53:16 +0000 (UTC)
-Date:   Wed, 2 Jan 2019 10:53:14 +0100
-From:   Cornelia Huck <cohuck@redhat.com>
-To:     Halil Pasic <pasic@linux.ibm.com>
-Cc:     "Wang, Wei W" <wei.w.wang@intel.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "mst@redhat.com" <mst@redhat.com>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "dgilbert@redhat.com" <dgilbert@redhat.com>
-Subject: Re: [virtio-dev] RE: [PATCH v1 0/2] Virtio: fix some vq allocation
- issues
-Message-ID: <20190102105314.0b4e2485.cohuck@redhat.com>
-In-Reply-To: <20190101004019.7f20aafa@oc2783563651>
-References: <1545963986-11280-1-git-send-email-wei.w.wang@intel.com>
-        <c6746307-fae5-7652-af8d-19f560fc31d9@de.ibm.com>
-        <286AC319A985734F985F78AFA26841F73DEEA8E9@shsmsx102.ccr.corp.intel.com>
-        <20181230070600.512bbb8b@oc2783563651>
-        <286AC319A985734F985F78AFA26841F73DEEC8DF@shsmsx102.ccr.corp.intel.com>
-        <20190101004019.7f20aafa@oc2783563651>
-Organization: Red Hat GmbH
+        Wed, 2 Jan 2019 04:54:04 -0500
+Received: from mail-it1-f175.google.com ([209.85.166.175]:52838 "EHLO
+        mail-it1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728958AbfABJyE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Jan 2019 04:54:04 -0500
+Received: by mail-it1-f175.google.com with SMTP id g76so40211609itg.2
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 01:54:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=from:references:in-reply-to:mime-version:thread-index:date
+         :message-id:subject:to:cc;
+        bh=79wF/LLmWclybjJHnhYuLXTw2JwMV0rfZxsnEihMyGA=;
+        b=cNFR9tUXaqHc8TIDldW7NP5CxmqIsBlWOlhRcTie4j6pbXMC0AkAF1t5lghbgikFJ/
+         Z2J/4uOtvWQe+84thD3AI4VIkd/s36Acv27mhkK2ASyGuuHOxXS6bf5CR7LLqAvfoL8b
+         WwE3Rat1njm3UfupQP9iE/LiXBOrrvhluLiAk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:references:in-reply-to:mime-version
+         :thread-index:date:message-id:subject:to:cc;
+        bh=79wF/LLmWclybjJHnhYuLXTw2JwMV0rfZxsnEihMyGA=;
+        b=tOVhu5wdd/WstPLdDpcZKXSacPS1mszgv0Yztgw4XpE24kpfWrdoDl4Fx8suqbapH2
+         tZYpMPIqF/rNAETI929fcgNDaGAV6CXhDAgYw7eZYCYyjVfrd65+1AyAVCQk6jlwPu45
+         Sb+rBtxAbeDLApcLboedKPlXYMLDRzN2cSHtbrvn/PPzGpHcJ1pF2+u2frAPMHDDQFAr
+         Jhl5FERctKzmaBNOQkXIP7zt8s/+P/gpN+NC4sMve7JyS3SzAR9u4i5vzzfMBz0juUPj
+         XYHl1qQHsMPTyexSV3er0t1PtnBmKoq42Aa2mShbYLt2Oo3MHCtzYwNjkw3eIPG4EQUL
+         Hk6A==
+X-Gm-Message-State: AA+aEWZJV0RijLWMGcofW89Pd0wc84hB70V46i8E95VVdCAkQSCstnV4
+        XE0VMGjHmOAXgkwuh/XIUuVKBUuYj2tRKx/UBYJhCQ==
+X-Google-Smtp-Source: AFSGD/WpyZbGMtswn9jX4x9AcEnkyEdRPYiTcNrDgFiOkC+MA5cAdHddiDIXUYKTt+tRlr6g0at+gFK+RVQywQmV5lg=
+X-Received: by 2002:a02:5c0e:: with SMTP id q14mr28541331jab.13.1546422842914;
+ Wed, 02 Jan 2019 01:54:02 -0800 (PST)
+From:   Murali Krishna Policharla <murali.policharla@broadcom.com>
+References: <1546324934-17555-1-git-send-email-murali.policharla@broadcom.com>
+ <20190101083450.GA17613@lunn.ch> <30ecb54251911d28c50b61299b0f8d3d@mail.gmail.com>
+ <20190101232443.GA22737@lunn.ch>
+In-Reply-To: <20190101232443.GA22737@lunn.ch>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8BIT
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Wed, 02 Jan 2019 09:53:21 +0000 (UTC)
+X-Mailer: Microsoft Outlook 14.0
+Thread-Index: AQDi+mxIHKhl/yIiH43SW54sVYgmegFJi9UIATpxsa4CXZKPHadX9Zsg
+Date:   Wed, 2 Jan 2019 15:24:01 +0530
+Message-ID: <b6ff97415cd415614393e35793972ccc@mail.gmail.com>
+Subject: RE: [PATCH] net: core: Fix to store new mtu setting in netdevice.
+To:     Andrew Lunn <andrew@lunn.ch>,
+        Heiner Kallweit <hkallweit1@gmail.com>
+Cc:     davem@davemloft.net, amritha.nambiar@intel.com,
+        ecree@solarflare.com, ktkhai@virtuozzo.com,
+        alexander.h.duyck@intel.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 1 Jan 2019 00:40:19 +0100
-Halil Pasic <pasic@linux.ibm.com> wrote:
+> Hi Andrew,
+>                            Currently net/dsa/slave.c does not have
+> ndo_change_mtu function.  But shortly I will be submitting a separate
+> patch outside this fix that has ndo_change_mtu function support added to
+> DSA switch.  As part of testing the newly added ndo_change_mtu function
+> for DSA switch it uncovered that new mtu size is not being updated to
+> netdevice structure. This patch fixes this issue and updates  new mtu
+size
+> to  netdevice structure.
+>
+> Hope this clarifies, let me know if you need any further information.
 
-> On Mon, 31 Dec 2018 06:03:51 +0000
-> "Wang, Wei W" <wei.w.wang@intel.com> wrote:
-> 
-> > On Sunday, December 30, 2018 2:06 PM, Halil Pasic wrote:  
-> > > 
-> > > I guess you are the first one trying to read virtio config from within interrupt
-> > > context. AFAICT this never worked.  
-> > 
-> > I'm not sure about "never worked". It seems to work well with virtio-pci.
-> > But looking forward to hearing a solid reason why reading config inside
-> > the handler is forbidden (if that's true).  
-> 
-> By "never worked" I meant "never worked with virtio-ccw". Sorry
-> about the misunderstanding. Seems I've also failed to convey that I don't
-> know if reading config inside the handler is forbidden or not. So please
-> don't expect me providing the solid reasons you are looking forward to.
+> Hi Murali
 
-It won't work with the current code, and this is all a bit ugly :( More
-verbose explanation below.
+> Thanks for the explanation.
 
-> 
-> >   
-> > > About what happens. The apidoc of ccw_device_start() says it needs to be
-> > > called with the ccw device lock held, so ccw_io_helper() tries to take it (since
-> > > forever I guess). OTOH do_cio_interrupt() takes the subchannel lock and
-> > > io_subchannel_initialize_dev() makes the ccw device lock be the subchannel
-> > > lock. That means when one tries to get virtio config form within a cio
-> > > interrupt context we deadlock, because we try to take a lock we already have.
-> > > 
-> > > That said, I don't think this limitation is by design (i.e. intended).
-> > > Maybe Connie can help us with that question. AFAIK we have nothing
-> > > documented regarding this (neither that can nor can't).
+> However, i looked at the patch you listed as 'fixes'. I don't see what
+> came before that setting the mtu when an ndo_change_mtu function is
+> provided. It seems to me, if you provide an ndo_change_mtu, it has to
+> do the assignment. I don't think you are fixing anything here.
 
-The main problem is that channel I/O is a fundamentally asynchronous
-mechanism. As channel devices don't have the concept of config spaces
-(or some other things that virtio needs), I decided to map
-reading/writing the config space to channel commands. Starting I/O on a
-subchannel always needs the lock (to avoid races on the subchannel),
-and the asynchronous interrupt for that I/O needs the lock as well (for
-the same reason; things like the scsw contain state that you want to
-access without races). A config change also means that the subchannel
-becomes state pending (and an interrupt is made pending), so the
-subchannel lock is taken for that path as well. (Virtqueue
-notifications are handled differently on modern QEMU, but that does not
-come into play here.)
+> If you do want to move the assignment into the core, please review all
+> the MAC drivers which implement ndo_change_mtu and remove the
+> assignment from them.
 
-> > > 
-> > > Obviously, there are multiple ways around this problem, and at the moment
-> > > I can't tell which would be my preferred one.  
-> > 
-> > Yes, it's also not difficult to tweak the virtio-balloon code to avoid that issue.
-> > But if that's just an issue with ccw itself, I think it's better to tweak ccw and
-> > remain virtio-balloon unchanged.
-> >   
-> 
-> As I said, at the moment I don't have a preference regarding the fix,
-> partly because I'm not sure if "reading config inside the handler" is OK
-> or not. Maybe Connie or Michael can help us here. I'm however sure that
-> commit 86a5597 "virtio-balloon: VIRTIO_BALLOON_F_FREE_PAGE_HINT"
-> breaks virtio-balloon with the ccw transport (i.e. effectively breaks 
-> virtio-balloon on s390): it used to work before and does not work
-> after.
+>	   Thanks
+>		Andrew
 
-Yes, that's unfortunate.
+Hi Andrew/Heiner
 
-> 
-> AFAICT tweaking the balloon code may be simpler than tweaking the
-> virtio-ccw (transport code). ccw_io_helper() relies on getting
-> an interrupt when the issued IO is done. If virtio-ccw is buggy, it
-> needs to be fixed, but I'm not sure it is.
+                                       Thanks for the feedback. This patch
+fixes a case where ndo_change_mtu function is provided but the callback
+function is not storing mtu to netdevice structure. In the discussion
+thread for this patch it is mentioned that there is a possibility of
+ndo_change_mtu function to manipulate the mtu size and then store the
+modified value  to netdevice structure. For me it appears this is
+incorrect operation since mtu value is being modified and it is not
+storing the value that user has configured.  In another  use case that is
+discussed user configures mtu value that exceeds the max/min permitted
+value. In this case an error should be returned to the user rather than
+modifying/storing only the permitted value.  Also any modifications done
+to mtu in the callback function for DMA operations/restrictions should be
+transparent to user.   As per my understanding ndo_change_mtu callback
+function can modify and use the mtu value that suits for the respective
+device operation, but only user configured mtu size should be stored in
+netdevice structure and this is done in the core driver with this fix.
+Please let me know your inputs.
 
-I would not call virtio-ccw buggy, but it has some constraints that
-virtio-pci apparently doesn't have (and which did not show up so far;
-e.g. virtio-blk schedules a work item on config change, so there's no
-deadlock there.)
 
-One way to get out of that constraint (don't interact with the config
-space directly in the config changed handler) would be to schedule a
-work item in virtio-ccw that calls virtio_config_changed() for the
-device. My understanding is that delaying the notification to a work
-queue would be fine.
-
-From what I can see, that should make us safe on any modern QEMU (that
-uses adapter interrupts). There still might be problems if we are using
-classic subchannel interrupts for virtqueue notifications and the
-handler interacts with the config space, but I'm not sure whether it is
-worth spending time on that.
+Thanks
+Murali
