@@ -2,230 +2,317 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D12CC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:10:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05833C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:15:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDE34218B0
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:10:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lz+RD29b"
+	by mail.kernel.org (Postfix) with ESMTP id C0A6D218A4
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:15:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729280AbfABKKF (ORCPT
+        id S1729277AbfABKPa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 05:10:05 -0500
-Received: from mail-vk1-f196.google.com ([209.85.221.196]:34633 "EHLO
-        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729255AbfABKKE (ORCPT
+        Wed, 2 Jan 2019 05:15:30 -0500
+Received: from ms01.santannapisa.it ([193.205.80.98]:36572 "EHLO
+        mail.santannapisa.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726499AbfABKPa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 05:10:04 -0500
-Received: by mail-vk1-f196.google.com with SMTP id y14so6477187vkd.1
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 02:10:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=So3sVy2xR+VxO4sb+ze1AumiRsZSdHxsEHnLAMncwsk=;
-        b=lz+RD29b52BCEUSQyxB+egjvdGV0ZCrsFrAj1of35D4YZEuVDBQU0eQBtpEF0hLTIW
-         r7HBlJxxBqRYzIlrOZ43EJiBpWPTcAFdop7Ek7NK40ijUxN5TSHlIeC5gGKqb3XD9lsz
-         mbvOfIbIIR6/Yi0ewOFM2RRbjhO8X2YRux04ylbhtbBsZ6zrdefTuYJ3Wia3kj8+6AEV
-         Tl3umWW+85rAOA9w0woDyEUEhPdWH5a+nh6fJvvK/oJa+CBRtpncUBQXr4k0zNj4C48+
-         z1utET5RVc4QHeqbBww910YS3exbUMxWjQA9hXbrGMojqo0heRfumdVnGfjlEssdi9qE
-         T9EQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=So3sVy2xR+VxO4sb+ze1AumiRsZSdHxsEHnLAMncwsk=;
-        b=bWv/jaM4PLK22psMG3HVf2tG/pgOV8svW2ovLLZpvmxXZm4ezzvMemHICq/yxm7M2b
-         jUu3APU8aBgiQRkrh4BH89qzIiERehGxXlUPTtQrMKbcTlMoLRY1OY3guLrDuzn/JoGu
-         JZpUg7HsPmLHM3HGFRMbPqqjocZ0oi6PI/z3gTzlKQ8A/jaApMML1ykkmbLOn4vMDwbt
-         UHBTuK5XuVt+2eoK88/usDoIyfi0XV8IeG7rdxf+c1SpQuvQGq7r36WswtaFBLyaLZfR
-         g7FUiGZkL4C021FE3HpFrejfwMYb9fi1AMIIBOrd4aBfUPqmiw0cffffiMXJs0Hp5Pz5
-         7tMg==
-X-Gm-Message-State: AJcUukdI8ZNCz3+5bDh2p6j2TLiT7Fu7K15rWfKbRJY8Dbepr8FXjmXg
-        9iPFPFsXSaFcKc2w6VRp3dIGvpRYhNiky0gmy0utAxSrI0w=
-X-Google-Smtp-Source: ALg8bN7r+DtM+DuL2f5JrRDB7RFuscu0lueXYOsNkz5zuGGnLUftvT8Nk1xwXjGh/RKznmEi3kWmeGUGycAMhtqTQGs=
-X-Received: by 2002:a1f:9350:: with SMTP id v77mr14674710vkd.64.1546423802798;
- Wed, 02 Jan 2019 02:10:02 -0800 (PST)
+        Wed, 2 Jan 2019 05:15:30 -0500
+X-Greylist: delayed 3601 seconds by postgrey-1.27 at vger.kernel.org; Wed, 02 Jan 2019 05:15:27 EST
+Received: from [151.40.186.16] (account l.abeni@santannapisa.it HELO sweethome)
+  by santannapisa.it (CommuniGate Pro SMTP 6.1.11)
+  with ESMTPSA id 135439519; Wed, 02 Jan 2019 10:15:24 +0100
+Date:   Wed, 2 Jan 2019 10:15:18 +0100
+From:   luca abeni <luca.abeni@santannapisa.it>
+To:     juri.lelli@redhat.com
+Cc:     syzbot <syzbot+119ba87189432ead09b4@syzkaller.appspotmail.com>,
+        bp@alien8.de, bristot@redhat.com, hpa@zytor.com,
+        linux-kernel@vger.kernel.org, luto@kernel.org, mingo@redhat.com,
+        peterz@infradead.org, syzkaller-bugs@googlegroups.com,
+        tglx@linutronix.de, x86@kernel.org
+Subject: Re: WARNING in enqueue_task_dl
+Message-ID: <20190102101518.1d21ba0c@sweethome>
+In-Reply-To: <0000000000001f4fee057e52b284@google.com>
+References: <000000000000b5e346057af4da06@google.com>
+        <0000000000001f4fee057e52b284@google.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <00000000000016eb330575bd2fab@google.com> <CAG_fn=WwdgnCQ2fOw_LEXwv7Fdbmshxo57XJXNbfbawDndJZ_Q@mail.gmail.com>
- <CAG_fn=UjeL9BmAq+FDK01n4mH7ieQXpxkRRxAbDPd5UcC7eZPw@mail.gmail.com> <06a3b403-7fe3-24fd-0ce2-9a604f3bbe62@kernel.dk>
-In-Reply-To: <06a3b403-7fe3-24fd-0ce2-9a604f3bbe62@kernel.dk>
-From:   Alexander Potapenko <glider@google.com>
-Date:   Wed, 2 Jan 2019 11:09:51 +0100
-Message-ID: <CAG_fn=UgdYm4YHpWkwv=Us1m1Fms64JCPEOkUR1+6pxJako7bg@mail.gmail.com>
-Subject: Re: KMSAN: kernel-infoleak in copy_page_to_iter (2)
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, bart.vanassche@wdc.com,
-        matias.bjorling@wdc.com, Andi Kleen <ak@linux.intel.com>,
-        jack@suse.cz, jlayton@redhat.com,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        mawilcox@microsoft.com, mgorman@techsingularity.net,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 19, 2018 at 2:23 PM Jens Axboe <axboe@kernel.dk> wrote:
->
-> On 12/19/18 3:23 AM, Alexander Potapenko wrote:
-> > On Thu, Sep 13, 2018 at 11:23 AM Alexander Potapenko <glider@google.com=
-> wrote:
-> >>
-> >> On Thu, Sep 13, 2018 at 11:18 AM syzbot
-> >> <syzbot+2dcfeaf8cb49b05e8f1a@syzkaller.appspotmail.com> wrote:
-> >>>
-> >>> Hello,
-> >>>
-> >>> syzbot found the following crash on:
-> >>>
-> >>> HEAD commit:    123906095e30 kmsan: introduce kmsan_interrupt_enter()=
-/kmsa..
-> >>> git tree:       https://github.com/google/kmsan.git/master
-> >>> console output: https://syzkaller.appspot.com/x/log.txt?x=3D1249fcb84=
-00000
-> >>> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D848e40757=
-852af3e
-> >>> dashboard link: https://syzkaller.appspot.com/bug?extid=3D2dcfeaf8cb4=
-9b05e8f1a
-> >>> compiler:       clang version 7.0.0 (trunk 334104)
-> >>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D116ef05=
-0400000
-> >>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D122870ff8=
-00000
-> >>>
-> >>> IMPORTANT: if you fix the bug, please add the following tag to the co=
-mmit:
-> >>> Reported-by: syzbot+2dcfeaf8cb49b05e8f1a@syzkaller.appspotmail.com
-> >>>
-> >>> random: sshd: uninitialized urandom read (32 bytes read)
-> >>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >>> BUG: KMSAN: kernel-infoleak in copyout lib/iov_iter.c:140 [inline]
-> >>> BUG: KMSAN: kernel-infoleak in copy_page_to_iter_iovec lib/iov_iter.c=
-:212
-> >>> [inline]
-> >>> BUG: KMSAN: kernel-infoleak in copy_page_to_iter+0x754/0x1b70
-> >>> lib/iov_iter.c:716
-> >>> CPU: 0 PID: 4516 Comm: blkid Not tainted 4.17.0+ #9
-> >>> Hardware name: Google Google Compute Engine/Google Compute Engine, BI=
-OS
-> >>> Google 01/01/2011
-> >>> Call Trace:
-> >>>   __dump_stack lib/dump_stack.c:77 [inline]
-> >>>   dump_stack+0x185/0x1d0 lib/dump_stack.c:113
-> >>>   kmsan_report+0x188/0x2a0 mm/kmsan/kmsan.c:1125
-> >>>   kmsan_internal_check_memory+0x17e/0x1f0 mm/kmsan/kmsan.c:1238
-> >>>   kmsan_copy_to_user+0x7a/0x160 mm/kmsan/kmsan.c:1261
-> >>>   copyout lib/iov_iter.c:140 [inline]
-> >>>   copy_page_to_iter_iovec lib/iov_iter.c:212 [inline]
-> >>>   copy_page_to_iter+0x754/0x1b70 lib/iov_iter.c:716
-> >>>   generic_file_buffered_read mm/filemap.c:2185 [inline]
-> >>>   generic_file_read_iter+0x2ef8/0x44d0 mm/filemap.c:2362
-> >>>   blkdev_read_iter+0x20d/0x280 fs/block_dev.c:1930
-> >>>   call_read_iter include/linux/fs.h:1778 [inline]
-> >>>   new_sync_read fs/read_write.c:406 [inline]
-> >>>   __vfs_read+0x775/0x9d0 fs/read_write.c:418
-> >>>   vfs_read+0x36c/0x6b0 fs/read_write.c:452
-> >>>   ksys_read fs/read_write.c:578 [inline]
-> >>>   __do_sys_read fs/read_write.c:588 [inline]
-> >>>   __se_sys_read fs/read_write.c:586 [inline]
-> >>>   __x64_sys_read+0x1bf/0x3e0 fs/read_write.c:586
-> >>>   do_syscall_64+0x15b/0x230 arch/x86/entry/common.c:287
-> >>>   entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> >>> RIP: 0033:0x7fdeff68f310
-> >>> RSP: 002b:00007ffe999660b8 EFLAGS: 00000246 ORIG_RAX: 000000000000000=
-0
-> >>> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fdeff68f310
-> >>> RDX: 0000000000000100 RSI: 0000000001e78df8 RDI: 0000000000000003
-> >>> RBP: 0000000001e78dd0 R08: 0000000000000028 R09: 0000000001680000
-> >>> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000001e78030
-> >>> R13: 0000000000000100 R14: 0000000001e78080 R15: 0000000001e78de8
-> >>>
-> >>> Uninit was created at:
-> >>>   kmsan_save_stack_with_flags mm/kmsan/kmsan.c:282 [inline]
-> >>>   kmsan_alloc_meta_for_pages+0x161/0x3a0 mm/kmsan/kmsan.c:819
-> >>>   kmsan_alloc_page+0x82/0xe0 mm/kmsan/kmsan.c:889
-> >>>   __alloc_pages_nodemask+0xf7b/0x5cc0 mm/page_alloc.c:4402
-> >>>   alloc_pages_current+0x6b1/0x970 mm/mempolicy.c:2093
-> >>>   alloc_pages include/linux/gfp.h:494 [inline]
-> >>>   __page_cache_alloc+0x95/0x320 mm/filemap.c:946
-> >>>   pagecache_get_page+0x52b/0x1450 mm/filemap.c:1577
-> >>>   grab_cache_page_write_begin+0x10d/0x190 mm/filemap.c:3089
-> >>>   block_write_begin+0xf9/0x3a0 fs/buffer.c:2068
-> >>>   blkdev_write_begin+0xf5/0x110 fs/block_dev.c:584
-> >>>   generic_perform_write+0x438/0x9d0 mm/filemap.c:3139
-> >>>   __generic_file_write_iter+0x43b/0xa10 mm/filemap.c:3264
-> >>>   blkdev_write_iter+0x3a8/0x5f0 fs/block_dev.c:1910
-> >>>   do_iter_readv_writev+0x81c/0xa20 include/linux/fs.h:1778
-> >>>   do_iter_write+0x30d/0xd50 fs/read_write.c:959
-> >>>   vfs_writev fs/read_write.c:1004 [inline]
-> >>>   do_writev+0x3be/0x820 fs/read_write.c:1039
-> >>>   __do_sys_writev fs/read_write.c:1112 [inline]
-> >>>   __se_sys_writev fs/read_write.c:1109 [inline]
-> >>>   __x64_sys_writev+0xe1/0x120 fs/read_write.c:1109
-> >>>   do_syscall_64+0x15b/0x230 arch/x86/entry/common.c:287
-> >>>   entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> >>>
-> >>> Bytes 4-255 of 256 are uninitialized
-> >>> Memory access starts at ffff8801b9903000
-> >>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >> This particular report was caused by the repro program writing a byte
-> >> to /dev/nullb0 and /sbin/blkid reading from that device in the
-> >> background.
-> >> But it turns out that simply running `cat /dev/nullb0` already prints
-> >> uninitialized kernel memory.
-> >> Is this the intended behavior of the null block driver?
-> > A friendly ping, this bug is still reproducible on syzbot.
->
-> Does this fix it?
-There must be something wrong with my tool, as it stops reporting this
-bug when I apply your patch.
-However when I run `cat /dev/nullb0 | strings` and wait long enough I
-start seeing meaningful strings (file names, env dumps etc.)
-I suspect this is still unexpected, right?
->
-> diff --git a/drivers/block/null_blk_main.c b/drivers/block/null_blk_main.=
-c
-> index 62c9654b9ce8..08808c572692 100644
-> --- a/drivers/block/null_blk_main.c
-> +++ b/drivers/block/null_blk_main.c
-> @@ -655,7 +655,7 @@ static struct nullb_page *null_alloc_page(gfp_t gfp_f=
-lags)
->         if (!t_page)
->                 goto out;
->
-> -       t_page->page =3D alloc_pages(gfp_flags, 0);
-> +       t_page->page =3D alloc_pages(gfp_flags | __GFP_ZERO, 0);
->         if (!t_page->page)
->                 goto out_freepage;
->
->
-> --
-> Jens Axboe
->
+Hi all,
+(and, happy new year to everyone!)
+
+this looks similar to a bug we have seen some time ago (a task
+switching from SCHED_OTHER to SCHED_DEADLINE while inheriting a
+deadline from a SCHED_DEADLINE task triggers the warning)...
+
+Juri, I think you found a fix for such a bug; has it been committed?
 
 
---=20
-Alexander Potapenko
-Software Engineer
 
-Google Germany GmbH
-Erika-Mann-Stra=C3=9Fe, 33
-80636 M=C3=BCnchen
+			Thanks,
+				Luca
 
-Gesch=C3=A4ftsf=C3=BChrer: Paul Manicle, Halimah DeLaine Prado
-Registergericht und -nummer: Hamburg, HRB 86891
-Sitz der Gesellschaft: Hamburg
+On Mon, 31 Dec 2018 07:02:04 -0800
+syzbot <syzbot+119ba87189432ead09b4@syzkaller.appspotmail.com> wrote:
+
+> syzbot has found a reproducer for the following crash on:
+> 
+> HEAD commit:    195303136f19 Merge tag 'kconfig-v4.21-2' of
+> git://git.kern.. git tree:       upstream
+> console output:
+> https://syzkaller.appspot.com/x/log.txt?x=118af84b400000 kernel
+> config:  https://syzkaller.appspot.com/x/.config?x=76d28549be7c27cf
+> dashboard link:
+> https://syzkaller.appspot.com/bug?extid=119ba87189432ead09b4
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental) syz
+> repro:
+> https://syzkaller.appspot.com/x/repro.syz?x=10eb7ebf400000 C
+> reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14156d77400000
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the
+> commit: Reported-by:
+> syzbot+119ba87189432ead09b4@syzkaller.appspotmail.com
+> 
+> WARNING: CPU: 0 PID: 9019 at kernel/sched/deadline.c:628  
+> setup_new_dl_entity kernel/sched/deadline.c:629 [inline]
+> WARNING: CPU: 0 PID: 9019 at kernel/sched/deadline.c:628
+> enqueue_dl_entity kernel/sched/deadline.c:1429 [inline]
+> WARNING: CPU: 0 PID: 9019 at kernel/sched/deadline.c:628  
+> enqueue_task_dl+0x2355/0x3dc0 kernel/sched/deadline.c:1500
+> Kernel panic - not syncing: panic_on_warn set ...
+> CPU: 0 PID: 9019 Comm: syz-executor280 Not tainted 4.20.0+ #1
+> Hardware name: Google Google Compute Engine/Google Compute Engine,
+> BIOS Google 01/01/2011
+> Call Trace:
+>   __dump_stack lib/dump_stack.c:77 [inline]
+>   dump_stack+0x1db/0x2d0 lib/dump_stack.c:113
+>   panic+0x2cb/0x589 kernel/panic.c:189
+>   __warn.cold+0x20/0x4b kernel/panic.c:544
+>   report_bug+0x263/0x2b0 lib/bug.c:186
+>   fixup_bug arch/x86/kernel/traps.c:178 [inline]
+>   fixup_bug arch/x86/kernel/traps.c:173 [inline]
+>   do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:271
+>   do_invalid_op+0x37/0x50 arch/x86/kernel/traps.c:290
+>   invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:973
+> RIP: 0010:setup_new_dl_entity kernel/sched/deadline.c:628 [inline]
+> RIP: 0010:enqueue_dl_entity kernel/sched/deadline.c:1429 [inline]
+> RIP: 0010:enqueue_task_dl+0x2355/0x3dc0 kernel/sched/deadline.c:1500
+> Code: 3c 02 00 0f 85 ba 05 00 00 49 8b b5 50 0a 00 00 e9 53 fa ff ff
+> e8 fb f2 64 00 48 8d 4d d8 e9 48 dd ff ff 0f 0b e9 92 f1 ff ff <0f>
+> 0b e9 18 f1 ff ff 4c 89 ef 4c 89 95 28 ff ff ff 4c 89 85 30 ff
+> RSP: 0018:ffff88809eebfaf8 EFLAGS: 00010002
+> RAX: 0000000000000002 RBX: 1ffff11013dd7f6a RCX: dffffc0000000000
+> RDX: 000000333cf09f75 RSI: 0000000000000004 RDI: ffff8880ae62d850
+> RBP: ffff88809eebfbf8 R08: ffff88807fb0a538 R09: ffff88807fb0a2fc
+> R10: ffff88807fb0a580 R11: ffff8880ae62dc7b R12: ffff88807fb0a2c0
+> R13: ffff8880ae62ce00 R14: ffff8880ae62ce00 R15: ffff88807fb0a58c
+>   enqueue_task+0xb9/0x380 kernel/sched/core.c:730
+>   __sched_setscheduler+0xe32/0x1fe0 kernel/sched/core.c:4336
+>   sched_setattr kernel/sched/core.c:4394 [inline]
+>   __do_sys_sched_setattr kernel/sched/core.c:4570 [inline]
+>   __se_sys_sched_setattr kernel/sched/core.c:4549 [inline]
+>   __x64_sys_sched_setattr+0x1af/0x2f0 kernel/sched/core.c:4549
+>   do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
+>   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> RIP: 0033:0x44c829
+> Code: e8 8c d8 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48
+> 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48>
+> 3d 01 f0 ff ff 0f 83 eb c9 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+> RSP: 002b:00007f28685e8ce8 EFLAGS: 00000246 ORIG_RAX: 000000000000013a
+> RAX: ffffffffffffffda RBX: 00000000006e49f8 RCX: 000000000044c829
+> RDX: 0000000000000000 RSI: 0000000020000000 RDI: 0000000000000000
+> RBP: 00000000006e49f0 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 00000000006e49fc
+> R13: 00007ffd1981c8af R14: 00007f28685e99c0 R15: 0000000000000001
+> 
+> ======================================================
+> WARNING: possible circular locking dependency detected
+> 4.20.0+ #1 Not tainted
+> ------------------------------------------------------
+> syz-executor280/9019 is trying to acquire lock:
+> 000000001aef527c ((console_sem).lock){-.-.}, at:
+> down_trylock+0x13/0x70 kernel/locking/semaphore.c:136
+> 
+> but task is already holding lock:
+> 000000000ba17b09 (&rq->lock){-.-.}, at: task_rq_lock+0xc8/0x290  
+> kernel/sched/core.c:99
+> 
+> which lock already depends on the new lock.
+> 
+> 
+> the existing dependency chain (in reverse order) is:
+> 
+> -> #2 (&rq->lock){-.-.}:  
+>         __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
+>         _raw_spin_lock+0x2f/0x40 kernel/locking/spinlock.c:144
+>         rq_lock kernel/sched/sched.h:1149 [inline]
+>         task_fork_fair+0xb5/0x7a0 kernel/sched/fair.c:10083
+>         sched_fork+0x437/0xb90 kernel/sched/core.c:2359
+>         copy_process+0x1ff6/0x8730 kernel/fork.c:1893
+>         _do_fork+0x1a9/0x1170 kernel/fork.c:2222
+>         kernel_thread+0x34/0x40 kernel/fork.c:2281
+>         rest_init+0x28/0x37b init/main.c:409
+>         arch_call_rest_init+0xe/0x1b
+>         start_kernel+0x882/0x8bd init/main.c:741
+>         x86_64_start_reservations+0x29/0x2b
+> arch/x86/kernel/head64.c:470 x86_64_start_kernel+0x77/0x7b
+> arch/x86/kernel/head64.c:451 secondary_startup_64+0xa4/0xb0
+> arch/x86/kernel/head_64.S:243
+> 
+> -> #1 (&p->pi_lock){-.-.}:  
+>         __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110
+> [inline] _raw_spin_lock_irqsave+0x95/0xcd
+> kernel/locking/spinlock.c:152 try_to_wake_up+0xb9/0x1480
+> kernel/sched/core.c:1965 wake_up_process+0x10/0x20
+> kernel/sched/core.c:2129 __up.isra.0+0x1c0/0x2a0
+> kernel/locking/semaphore.c:262 up+0x13e/0x1c0
+> kernel/locking/semaphore.c:187 __up_console_sem+0xb7/0x1c0
+> kernel/printk/printk.c:236 console_unlock+0x778/0x11e0
+> kernel/printk/printk.c:2426 con_flush_chars drivers/tty/vt/vt.c:3197
+> [inline] con_flush_chars drivers/tty/vt/vt.c:3185 [inline]
+>         con_write+0xa2/0xb0 drivers/tty/vt/vt.c:3117
+>         process_output_block drivers/tty/n_tty.c:593 [inline]
+>         n_tty_write+0x497/0x1220 drivers/tty/n_tty.c:2331
+>         do_tty_write drivers/tty/tty_io.c:959 [inline]
+>         tty_write+0x45b/0x7a0 drivers/tty/tty_io.c:1043
+>         __vfs_write+0x116/0xb40 fs/read_write.c:485
+>         vfs_write+0x20c/0x580 fs/read_write.c:549
+>         ksys_write+0x105/0x260 fs/read_write.c:598
+>         __do_sys_write fs/read_write.c:610 [inline]
+>         __se_sys_write fs/read_write.c:607 [inline]
+>         __x64_sys_write+0x73/0xb0 fs/read_write.c:607
+>         do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
+>         entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> 
+> -> #0 ((console_sem).lock){-.-.}:  
+>         lock_acquire+0x1db/0x570 kernel/locking/lockdep.c:3841
+>         __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110
+> [inline] _raw_spin_lock_irqsave+0x95/0xcd
+> kernel/locking/spinlock.c:152 down_trylock+0x13/0x70
+> kernel/locking/semaphore.c:136 __down_trylock_console_sem+0xa8/0x210
+> kernel/printk/printk.c:219 console_trylock+0x15/0xa0
+> kernel/printk/printk.c:2242 console_trylock_spinning
+> kernel/printk/printk.c:1662 [inline] vprintk_emit+0x351/0x960
+> kernel/printk/printk.c:1930 vprintk_default+0x28/0x30
+> kernel/printk/printk.c:1958 vprintk_func+0x7e/0x189
+> kernel/printk/printk_safe.c:398 printk+0xba/0xed
+> kernel/printk/printk.c:1991 __warn+0x9e/0x1d0 kernel/panic.c:526
+>         report_bug+0x263/0x2b0 lib/bug.c:186
+>         fixup_bug arch/x86/kernel/traps.c:178 [inline]
+>         fixup_bug arch/x86/kernel/traps.c:173 [inline]
+>         do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:271
+>         do_invalid_op+0x37/0x50 arch/x86/kernel/traps.c:290
+>         invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:973
+>         setup_new_dl_entity kernel/sched/deadline.c:629 [inline]
+>         enqueue_dl_entity kernel/sched/deadline.c:1429 [inline]
+>         enqueue_task_dl+0x2355/0x3dc0 kernel/sched/deadline.c:1500
+>         enqueue_task+0xb9/0x380 kernel/sched/core.c:730
+>         __sched_setscheduler+0xe32/0x1fe0 kernel/sched/core.c:4336
+>         sched_setattr kernel/sched/core.c:4394 [inline]
+>         __do_sys_sched_setattr kernel/sched/core.c:4570 [inline]
+>         __se_sys_sched_setattr kernel/sched/core.c:4549 [inline]
+>         __x64_sys_sched_setattr+0x1af/0x2f0 kernel/sched/core.c:4549
+>         do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
+>         entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> 
+> other info that might help us debug this:
+> 
+> Chain exists of:
+>    (console_sem).lock --> &p->pi_lock --> &rq->lock
+> 
+>   Possible unsafe locking scenario:
+> 
+>         CPU0                    CPU1
+>         ----                    ----
+>    lock(&rq->lock);
+>                                 lock(&p->pi_lock);
+>                                 lock(&rq->lock);
+>    lock((console_sem).lock);
+> 
+>   *** DEADLOCK ***
+> 
+> 3 locks held by syz-executor280/9019:
+>   #0: 0000000014b8e16d (rcu_read_lock){....}, at:
+> __do_sys_sched_setattr kernel/sched/core.c:4563 [inline]
+>   #0: 0000000014b8e16d (rcu_read_lock){....}, at:
+> __se_sys_sched_setattr kernel/sched/core.c:4549 [inline]
+>   #0: 0000000014b8e16d (rcu_read_lock){....}, at:  
+> __x64_sys_sched_setattr+0x144/0x2f0 kernel/sched/core.c:4549
+>   #1: 00000000b31ff59d (&p->pi_lock){-.-.}, at:
+> task_rq_lock+0x6a/0x290 kernel/sched/core.c:97
+>   #2: 000000000ba17b09 (&rq->lock){-.-.}, at:
+> task_rq_lock+0xc8/0x290 kernel/sched/core.c:99
+> 
+> stack backtrace:
+> CPU: 0 PID: 9019 Comm: syz-executor280 Not tainted 4.20.0+ #1
+> Hardware name: Google Google Compute Engine/Google Compute Engine,
+> BIOS Google 01/01/2011
+> Call Trace:
+>   __dump_stack lib/dump_stack.c:77 [inline]
+>   dump_stack+0x1db/0x2d0 lib/dump_stack.c:113
+>   print_circular_bug.isra.0.cold+0x1cc/0x28f
+> kernel/locking/lockdep.c:1224 check_prev_add
+> kernel/locking/lockdep.c:1866 [inline] check_prevs_add
+> kernel/locking/lockdep.c:1979 [inline] validate_chain
+> kernel/locking/lockdep.c:2350 [inline] __lock_acquire+0x3014/0x4a30
+> kernel/locking/lockdep.c:3338 lock_acquire+0x1db/0x570
+> kernel/locking/lockdep.c:3841 __raw_spin_lock_irqsave
+> include/linux/spinlock_api_smp.h:110 [inline]
+> _raw_spin_lock_irqsave+0x95/0xcd kernel/locking/spinlock.c:152
+> down_trylock+0x13/0x70 kernel/locking/semaphore.c:136
+> __down_trylock_console_sem+0xa8/0x210 kernel/printk/printk.c:219
+> console_trylock+0x15/0xa0 kernel/printk/printk.c:2242
+> console_trylock_spinning kernel/printk/printk.c:1662 [inline]
+> vprintk_emit+0x351/0x960 kernel/printk/printk.c:1930
+> vprintk_default+0x28/0x30 kernel/printk/printk.c:1958
+> vprintk_func+0x7e/0x189 kernel/printk/printk_safe.c:398
+> printk+0xba/0xed kernel/printk/printk.c:1991 __warn+0x9e/0x1d0
+> kernel/panic.c:526 report_bug+0x263/0x2b0 lib/bug.c:186
+>   fixup_bug arch/x86/kernel/traps.c:178 [inline]
+>   fixup_bug arch/x86/kernel/traps.c:173 [inline]
+>   do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:271
+>   do_invalid_op+0x37/0x50 arch/x86/kernel/traps.c:290
+>   invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:973
+> RIP: 0010:setup_new_dl_entity kernel/sched/deadline.c:628 [inline]
+> RIP: 0010:enqueue_dl_entity kernel/sched/deadline.c:1429 [inline]
+> RIP: 0010:enqueue_task_dl+0x2355/0x3dc0 kernel/sched/deadline.c:1500
+> Code: 3c 02 00 0f 85 ba 05 00 00 49 8b b5 50 0a 00 00 e9 53 fa ff ff
+> e8 fb f2 64 00 48 8d 4d d8 e9 48 dd ff ff 0f 0b e9 92 f1 ff ff <0f>
+> 0b e9 18 f1 ff ff 4c 89 ef 4c 89 95 28 ff ff ff 4c 89 85 30 ff
+> RSP: 0018:ffff88809eebfaf8 EFLAGS: 00010002
+> RAX: 0000000000000002 RBX: 1ffff11013dd7f6a RCX: dffffc0000000000
+> RDX: 000000333cf09f75 RSI: 0000000000000004 RDI: ffff8880ae62d850
+> RBP: ffff88809eebfbf8 R08: ffff88807fb0a538 R09: ffff88807fb0a2fc
+> R10: ffff88807fb0a580 R11: ffff8880ae62dc7b R12: ffff88807fb0a2c0
+> R13: ffff8880ae62ce00 R14: ffff8880ae62ce00 R15: ffff88807fb0a58c
+>   enqueue_task+0xb9/0x380 kernel/sched/core.c:730
+>   __sched_setscheduler+0xe32/0x1fe0 kernel/sched/core.c:4336
+>   sched_setattr kernel/sched/core.c:4394 [inline]
+>   __do_sys_sched_setattr kernel/sched/core.c:4570 [inline]
+>   __se_sys_sched_setattr kernel/sched/core.c:4549 [inline]
+>   __x64_sys_sched_setattr+0x1af/0x2f0 kernel/sched/core.c:4549
+>   do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
+>   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> RIP: 0033:0x44c829
+> Code: e8 8c d8 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48
+> 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48>
+> 3d 01 f0 ff ff 0f 83 eb c9 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+> RSP: 002b:00007f28685e8ce8 EFLAGS: 00000246 ORIG_RAX: 000000000000013a
+> RAX: ffffffffffffffda RBX: 00000000006e49f8 RCX: 000000000044c829
+> RDX: 0000000000000000 RSI: 0000000020000000 RDI: 0000000000000000
+> RBP: 00000000006e49f0 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 00000000006e49fc
+> R13: 00007ffd1981c8af R14: 00007f28685e99c0 R15: 0000000000000001
+> Shutting down cpus with NMI
+> Kernel Offset: disabled
+> Rebooting in 86400 seconds..
+> 
+
