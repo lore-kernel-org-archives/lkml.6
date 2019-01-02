@@ -7,65 +7,67 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA8AAC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 11:32:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AC7CC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 11:32:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1F1E218D3
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 11:32:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC2C42171F
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 11:32:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="JNm5bluO"
+	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="eSyO6TqC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729697AbfABLc3 (ORCPT
+        id S1729710AbfABLcd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 06:32:29 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:40539 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726762AbfABLc3 (ORCPT
+        Wed, 2 Jan 2019 06:32:33 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:36076 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729102AbfABLc3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 2 Jan 2019 06:32:29 -0500
-Received: by mail-ed1-f65.google.com with SMTP id g22so25879387edr.7
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 03:32:27 -0800 (PST)
+Received: by mail-ed1-f68.google.com with SMTP id f23so25922727edb.3
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 03:32:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=brauner.io; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=jRM+HCzdoA/no8KVicekhOw/lDWf1KgmSHeBIpaEkmQ=;
-        b=JNm5bluOKux7yvGbilhwZOLTAmXdz8yaYH/fzUXQFi8aLjNbFSzNH69THV0XAhOmxJ
-         xIFDXs0uafNZCpdrzP1ZIN+0UM95aexouuQaHFrNYJRc1eMD6aMmGhvsU6HBwxVIVpJW
-         +36jgyBHEwnG54rag0gi+H9Syosla/vLe05ydn6HQc7+S7/fRjJ7fyZ0LHZpBrej1e4u
-         NRPEzLt4Codt/UlQuj+PR/GMu2X5n0BrZw9k+vQFiGjN3JK3uyFeN4TYVzDEqYF9VH5Q
-         9UpffTvsl3MNcERWQfPzQxQO8RmeIOhc+7oj90xPWkEiv9iyZy+hmtxNAyGghQqNGpo0
-         9JEw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=fqeROWBc8NR4hPRRRZhBGhYhRi4kob3W/cJYEz0dpUs=;
+        b=eSyO6TqCm0Ogj2C9sKsnETNxv1cjFXI2xMLQwcGvNU9yYiGOKeCzxTnJsq7ctiiNQX
+         JqEWMkVieQmkT8NyKnha1ojFVMo9t0rv37rWBTct0ldlG7bS7EC2n2/9nmqGt98xQ9gX
+         nSg+3ix1cu9+CUl6rPHQiEgHtSoEK/WTtgeOOthoHx0cthJx9HkAU6uYV0UXikrybWY/
+         Lq94FYjYgw+uHqyvQFAMFlPw1toPh0hc7TiqtiKYHUHJIeRZSB0T9K1ektDESwWkB8JL
+         jbEfk+6boGT8D5ZGHglIkT8LoxvEipbz1spB0v6/jipvJ26edU2ZM3CCAOUG/IWfWgkv
+         h+ig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=jRM+HCzdoA/no8KVicekhOw/lDWf1KgmSHeBIpaEkmQ=;
-        b=Bg8RhicEJS+f7XxYhVmd+CBx9r/UODS58gi3NA1XdBqlqnHgw5WV7BtDPBmtUA8rKi
-         oXzscN+Km50OUhQ9zhjAEE9W89DY0F5USfOQJG7sT8qaXVoczG5XZO39flJvq8onaaby
-         OK/p1atmLNL32bBobPcO+alnGSamKj6J2I8ArUWa2jgUBIRkexi3liwXBMK1mmLOMdf1
-         TsT0mKt11uLD3Ky9hKj8+TQaEOgrDXRTH3XMAbTTE141PSTcAHOht9+s8PJnpSPeYQLg
-         V0z5coSYZV+r7jiqf5EAKcZTvmWDcZSsOvWryHg0NTg2jf/UeP+Fpx6nVpHe1nzWvBja
-         2NOQ==
-X-Gm-Message-State: AA+aEWY0orPEyk/wTztpsL6GnUaAdjwK4ukAAfN+ZR+GZnPg2NfkytPK
-        TYule+pUG+M7PISyRFuyTAUnmA==
-X-Google-Smtp-Source: AFSGD/VdT2uo21Rbb/PGqBWgjb7iUXNEE3w7XRZGO9BuMaOpYLeD4Gje7vksftpWz3riQGRbCDguXQ==
-X-Received: by 2002:a50:903c:: with SMTP id b57mr39778443eda.161.1546428746678;
-        Wed, 02 Jan 2019 03:32:26 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=fqeROWBc8NR4hPRRRZhBGhYhRi4kob3W/cJYEz0dpUs=;
+        b=hHkHPJZwG+CiDomXxS8LG4d79g1uEc/LBhUHhNdOVwbQc/50+OPZ7QhxIMzPQH+6LI
+         bqek5bZ6whjZ18pCELkrML/NJYQiTiw/SEDpf95zaX3BBhvTOkoTD2pXMOzBPwHb9qbs
+         OeVfjQm3FKyGAzQEyW4+gJq/hgSDkPB1Fe5Jmims58BzVyq80r3Ynv+iJdFLzTxFgXNO
+         Yid1VTxPNLAFwhBzBA5kZHRTFlQD1F6CHNiwuv+8rf/v/uhG7NuLUJPbd7zCB9XiidHo
+         0MV0cmcIVovNHa4CpbsDpDkKbMnkgfDQmbzmTvPNjoF6w74gbxuo9IoU0VLMPIqGQ49K
+         Ss6g==
+X-Gm-Message-State: AA+aEWZHomy0Z0MjP5GpPvGW3mWVO9Iv3SV0hGgXCIohweia48maj4l9
+        MolLbusa4q2LHj+hqhqFbv8J9Rc4HOY=
+X-Google-Smtp-Source: AFSGD/VTaQHqE+kFW/RYBiym+jFReSatiFqjVStkN8wS6LnJWsEu2Qgw2xe4mu07Nxi8x+H0at24kQ==
+X-Received: by 2002:aa7:d597:: with SMTP id r23mr39488022edq.51.1546428747665;
+        Wed, 02 Jan 2019 03:32:27 -0800 (PST)
 Received: from localhost.localdomain ([2a02:8109:b6c0:d6c:700b:b2fa:de8a:175d])
-        by smtp.gmail.com with ESMTPSA id a17-v6sm10690738ejr.55.2019.01.02.03.32.25
+        by smtp.gmail.com with ESMTPSA id a17-v6sm10690738ejr.55.2019.01.02.03.32.26
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 02 Jan 2019 03:32:26 -0800 (PST)
+        Wed, 02 Jan 2019 03:32:27 -0800 (PST)
 From:   Christian Brauner <christian@brauner.io>
 To:     gregkh@linuxfoundation.org, tkjos@android.com,
         devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 Cc:     arve@android.com, maco@android.com, joel@joelfernandes.org,
         tkjos@google.com, dan.carpenter@oracle.com,
         Christian Brauner <christian@brauner.io>
-Subject: [PATCH v2 1/2] binderfs: implement "max" mount option
-Date:   Wed,  2 Jan 2019 12:32:18 +0100
-Message-Id: <20190102113219.3716-1-christian@brauner.io>
+Subject: [PATCH v2 2/2] binderfs: reserve devices for initial mount
+Date:   Wed,  2 Jan 2019 12:32:19 +0100
+Message-Id: <20190102113219.3716-2-christian@brauner.io>
 X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190102113219.3716-1-christian@brauner.io>
+References: <20190102113219.3716-1-christian@brauner.io>
 MIME-Version: 1.0
 X-Patchwork-Bot: notify
 Content-Transfer-Encoding: 8bit
@@ -74,236 +76,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since binderfs can be mounted by userns root in non-initial user namespaces
-some precautions are in order. First, a way to set a maximum on the number
-of binder devices that can be allocated per binderfs instance and second, a
-way to reserve a reasonable chunk of binderfs devices for the initial ipc
-namespace.
-A first approach as seen in [1] used sysctls similiar to devpts but was
-shown to be flawed (cf. [2] and [3]) since some aspects were unneeded. This
-is an alternative approach which avoids sysctls completely and instead
-switches to a single mount option.
-
-Starting with this commit binderfs instances can be mounted with a limit on
-the number of binder devices that can be allocated. The max=<count> mount
-option serves as a per-instance limit. If max=<count> is set then only
-<count> number of binder devices can be allocated in this binderfs
-instance.
-
-This allows to safely bind-mount binderfs instances into unprivileged user
-namespaces since userns root in a non-initial user namespace cannot change
-the mount option as long as it does not own the mount namespace the
-binderfs mount was created in and hence cannot drain the host of minor
-device numbers
-
-[1]: https://lore.kernel.org/lkml/20181221133909.18794-1-christian@brauner.io/
-[2]; https://lore.kernel.org/lkml/20181221163316.GA8517@kroah.com/
-[3]: https://lore.kernel.org/lkml/CAHRSSEx+gDVW4fKKK8oZNAir9G5icJLyodO8hykv3O0O1jt2FQ@mail.gmail.com/
-[4]: https://lore.kernel.org/lkml/20181221192044.5yvfnuri7gdop4rs@brauner.io/
+The binderfs instance in the initial ipc namespace will always have a
+reserve of 4 binder devices unless explicitly capped by specifying a lower
+value via the "max" mount option.
+This ensures when binder devices are removed (on accident or on purpose)
+they can always be recreated without risking that all minor numbers have
+already been used up.
 
 Cc: Todd Kjos <tkjos@google.com>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
 ---
 v2:
-- grab mutex to decrement device_count in the one place where it was
-  missing (cf. [changelog-3]).
+- patch unchanged
 v1:
-- split reserving devices for the binderfs instance in the initial ipc
-  namespace into a separate patch (cf. [changelog-1])
-- s/</<=/g for capping at max=<count>
-- use simple int instead of atomic_t for counting devices since we're
-  incrementing and decrementing under a mutex anyway (cf. [1])
-- correctly use match_int() (cf. [changelog-2])
-v0:
 - patch introduced
-
-[changelog-1]: https://lore.kernel.org/lkml/20181223112944.GC27818@kroah.com/
-[changelog-2]: https://lore.kernel.org/lkml/20181223135755.sqnv5ave62jtj4se@brauner.io/
-[changelog-3]: https://lore.kernel.org/lkml/20190102091731.GB3781@kadam/
+v0:
+- patch not present
 ---
- drivers/android/binderfs.c | 104 ++++++++++++++++++++++++++++++++++---
- 1 file changed, 98 insertions(+), 6 deletions(-)
+ drivers/android/binderfs.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/android/binderfs.c b/drivers/android/binderfs.c
-index 7496b10532aa..386e286f077f 100644
+index 386e286f077f..8d54368b3c1a 100644
 --- a/drivers/android/binderfs.c
 +++ b/drivers/android/binderfs.c
-@@ -20,6 +20,7 @@
- #include <linux/parser.h>
- #include <linux/radix-tree.h>
- #include <linux/sched.h>
-+#include <linux/seq_file.h>
- #include <linux/slab.h>
- #include <linux/spinlock_types.h>
- #include <linux/stddef.h>
-@@ -46,6 +47,24 @@ static dev_t binderfs_dev;
- static DEFINE_MUTEX(binderfs_minors_mutex);
- static DEFINE_IDA(binderfs_minors);
+@@ -40,6 +40,8 @@
+ #define INODE_OFFSET 3
+ #define INTSTRLEN 21
+ #define BINDERFS_MAX_MINOR (1U << MINORBITS)
++/* Ensure that the initial ipc namespace always has devices available. */
++#define BINDERFS_MAX_MINOR_CAPPED (BINDERFS_MAX_MINOR - 4)
  
-+/**
-+ * binderfs_mount_opts - mount options for binderfs
-+ * @max: maximum number of allocatable binderfs binder devices
-+ */
-+struct binderfs_mount_opts {
-+	int max;
-+};
-+
-+enum {
-+	Opt_max,
-+	Opt_err
-+};
-+
-+static const match_table_t tokens = {
-+	{ Opt_max, "max=%d" },
-+	{ Opt_err, NULL     }
-+};
-+
- /**
-  * binderfs_info - information about a binderfs mount
-  * @ipc_ns:         The ipc namespace the binderfs mount belongs to.
-@@ -55,13 +74,16 @@ static DEFINE_IDA(binderfs_minors);
-  *                  created.
-  * @root_gid:       gid that needs to be used when a new binder device is
-  *                  created.
-+ * @mount_opts:     The mount options in use.
-+ * @device_count:   The current number of allocated binder devices.
-  */
- struct binderfs_info {
- 	struct ipc_namespace *ipc_ns;
- 	struct dentry *control_dentry;
- 	kuid_t root_uid;
- 	kgid_t root_gid;
--
-+	struct binderfs_mount_opts mount_opts;
-+	int device_count;
- };
+ static struct vfsmount *binderfs_mnt;
  
- static inline struct binderfs_info *BINDERFS_I(const struct inode *inode)
-@@ -110,10 +132,17 @@ static int binderfs_binder_device_create(struct inode *ref_inode,
+@@ -129,11 +131,14 @@ static int binderfs_binder_device_create(struct inode *ref_inode,
+ 	struct inode *inode = NULL;
+ 	struct super_block *sb = ref_inode->i_sb;
+ 	struct binderfs_info *info = sb->s_fs_info;
++	bool use_reserve = (info->ipc_ns == &init_ipc_ns);
  
  	/* Reserve new minor number for the new device. */
  	mutex_lock(&binderfs_minors_mutex);
--	minor = ida_alloc_max(&binderfs_minors, BINDERFS_MAX_MINOR, GFP_KERNEL);
--	mutex_unlock(&binderfs_minors_mutex);
--	if (minor < 0)
-+	if (++info->device_count <= info->mount_opts.max)
-+		minor = ida_alloc_max(&binderfs_minors, BINDERFS_MAX_MINOR,
-+				      GFP_KERNEL);
-+	else
-+		minor = -ENOSPC;
-+	if (minor < 0) {
-+		--info->device_count;
-+		mutex_unlock(&binderfs_minors_mutex);
- 		return minor;
-+	}
-+	mutex_unlock(&binderfs_minors_mutex);
- 
- 	ret = -ENOMEM;
- 	device = kzalloc(sizeof(*device), GFP_KERNEL);
-@@ -187,6 +216,7 @@ static int binderfs_binder_device_create(struct inode *ref_inode,
- 	kfree(name);
- 	kfree(device);
- 	mutex_lock(&binderfs_minors_mutex);
-+	--info->device_count;
- 	ida_free(&binderfs_minors, minor);
- 	mutex_unlock(&binderfs_minors_mutex);
- 	iput(inode);
-@@ -232,6 +262,7 @@ static long binder_ctl_ioctl(struct file *file, unsigned int cmd,
- static void binderfs_evict_inode(struct inode *inode)
- {
- 	struct binder_device *device = inode->i_private;
-+	struct binderfs_info *info = BINDERFS_I(inode);
- 
- 	clear_inode(inode);
- 
-@@ -239,6 +270,7 @@ static void binderfs_evict_inode(struct inode *inode)
- 		return;
- 
- 	mutex_lock(&binderfs_minors_mutex);
-+	--info->device_count;
- 	ida_free(&binderfs_minors, device->miscdev.minor);
- 	mutex_unlock(&binderfs_minors_mutex);
- 
-@@ -246,9 +278,65 @@ static void binderfs_evict_inode(struct inode *inode)
- 	kfree(device);
- }
- 
-+/**
-+ * binderfs_parse_mount_opts - parse binderfs mount options
-+ * @data: options to set (can be NULL in which case defaults are used)
-+ */
-+static int binderfs_parse_mount_opts(char *data,
-+				     struct binderfs_mount_opts *opts)
-+{
-+	char *p;
-+	opts->max = BINDERFS_MAX_MINOR;
-+
-+	while ((p = strsep(&data, ",")) != NULL) {
-+		substring_t args[MAX_OPT_ARGS];
-+		int token;
-+		int max_devices;
-+
-+		if (!*p)
-+			continue;
-+
-+		token = match_token(p, tokens, args);
-+		switch (token) {
-+		case Opt_max:
-+			if (match_int(&args[0], &max_devices) ||
-+			    (max_devices < 0 ||
-+			     (max_devices > BINDERFS_MAX_MINOR)))
-+				return -EINVAL;
-+
-+			opts->max = max_devices;
-+			break;
-+		default:
-+			pr_err("Invalid mount options\n");
-+			return -EINVAL;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static int binderfs_remount(struct super_block *sb, int *flags, char *data)
-+{
-+	struct binderfs_info *info = sb->s_fs_info;
-+	return binderfs_parse_mount_opts(data, &info->mount_opts);
-+}
-+
-+static int binderfs_show_mount_opts(struct seq_file *seq, struct dentry *root)
-+{
-+	struct binderfs_info *info;
-+
-+	info = root->d_sb->s_fs_info;
-+	if (info->mount_opts.max <= BINDERFS_MAX_MINOR)
-+		seq_printf(seq, ",max=%d", info->mount_opts.max);
-+
-+	return 0;
-+}
-+
- static const struct super_operations binderfs_super_ops = {
--	.statfs = simple_statfs,
--	.evict_inode = binderfs_evict_inode,
-+	.evict_inode    = binderfs_evict_inode,
-+	.remount_fs	= binderfs_remount,
-+	.show_options	= binderfs_show_mount_opts,
-+	.statfs         = simple_statfs,
- };
- 
- static int binderfs_rename(struct inode *old_dir, struct dentry *old_dentry,
-@@ -409,6 +497,10 @@ static int binderfs_fill_super(struct super_block *sb, void *data, int silent)
- 	if (!info)
- 		goto err_without_dentry;
- 
-+	ret = binderfs_parse_mount_opts(data, &info->mount_opts);
-+	if (ret)
-+		goto err_without_dentry;
-+
- 	info->ipc_ns = ipc_ns;
- 	info->root_gid = make_kgid(sb->s_user_ns, 0);
- 	if (!gid_valid(info->root_gid))
+ 	if (++info->device_count <= info->mount_opts.max)
+-		minor = ida_alloc_max(&binderfs_minors, BINDERFS_MAX_MINOR,
++		minor = ida_alloc_max(&binderfs_minors,
++				      use_reserve ? BINDERFS_MAX_MINOR :
++						    BINDERFS_MAX_MINOR_CAPPED,
+ 				      GFP_KERNEL);
+ 	else
+ 		minor = -ENOSPC;
 -- 
 2.19.1
 
