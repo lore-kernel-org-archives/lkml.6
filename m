@@ -2,317 +2,144 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05833C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:15:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84648C43612
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:17:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0A6D218A4
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:15:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5273A2073F
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:17:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="RjFjLG7R"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729277AbfABKPa (ORCPT
+        id S1729291AbfABKRG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 05:15:30 -0500
-Received: from ms01.santannapisa.it ([193.205.80.98]:36572 "EHLO
-        mail.santannapisa.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726499AbfABKPa (ORCPT
+        Wed, 2 Jan 2019 05:17:06 -0500
+Received: from smtprelay.synopsys.com ([198.182.60.111]:50170 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726499AbfABKRG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 05:15:30 -0500
-X-Greylist: delayed 3601 seconds by postgrey-1.27 at vger.kernel.org; Wed, 02 Jan 2019 05:15:27 EST
-Received: from [151.40.186.16] (account l.abeni@santannapisa.it HELO sweethome)
-  by santannapisa.it (CommuniGate Pro SMTP 6.1.11)
-  with ESMTPSA id 135439519; Wed, 02 Jan 2019 10:15:24 +0100
-Date:   Wed, 2 Jan 2019 10:15:18 +0100
-From:   luca abeni <luca.abeni@santannapisa.it>
-To:     juri.lelli@redhat.com
-Cc:     syzbot <syzbot+119ba87189432ead09b4@syzkaller.appspotmail.com>,
-        bp@alien8.de, bristot@redhat.com, hpa@zytor.com,
-        linux-kernel@vger.kernel.org, luto@kernel.org, mingo@redhat.com,
-        peterz@infradead.org, syzkaller-bugs@googlegroups.com,
-        tglx@linutronix.de, x86@kernel.org
-Subject: Re: WARNING in enqueue_task_dl
-Message-ID: <20190102101518.1d21ba0c@sweethome>
-In-Reply-To: <0000000000001f4fee057e52b284@google.com>
-References: <000000000000b5e346057af4da06@google.com>
-        <0000000000001f4fee057e52b284@google.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Wed, 2 Jan 2019 05:17:06 -0500
+Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id BC3D910C1225;
+        Wed,  2 Jan 2019 02:17:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1546424225; bh=wxJi1wjnP2O1RFdQq+JpmzFD++SKjdnAhXh8JrHpfGI=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To:From;
+        b=RjFjLG7R7t3vznz6BFwX+9qOfwI2icWAK0P+9OqRwvi2t/HgNJFxejypzfWV2JwE7
+         tlMHrrgJqVPH67ae9SC8ZeOG5aCAQ0XoqBeQvz9Hp+3QvANe8GKxLedG9H/qEQecuv
+         OjX+7L8wvFzd6l6t43Epi04BYdDXSE7ghzPa3FYkYZ0II5SM6q2WLwQEsAWA9OofVQ
+         iylCWERyEyT2uF5OTbKZBTfgXk1brWBFXf2ySNgxNMz3SApkFVNIY3RrR63d4+sShS
+         a/4tY7R7ungxyZtsSKB+375y5u7yWibS8IrZN6xwRYfz1SMl5Lb91L/Tmibdat53Mq
+         5dj5UI3OuXXWg==
+Received: from US01WXQAHTC1.internal.synopsys.com (us01wxqahtc1.internal.synopsys.com [10.12.238.230])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 8D4EC34A2;
+        Wed,  2 Jan 2019 02:17:05 -0800 (PST)
+Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
+ US01WXQAHTC1.internal.synopsys.com (10.12.238.230) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Wed, 2 Jan 2019 02:17:05 -0800
+Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
+ DE02WEHTCB.internal.synopsys.com (10.225.19.94) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Wed, 2 Jan 2019 11:17:03 +0100
+Received: from [10.107.25.131] (10.107.25.131) by
+ DE02WEHTCA.internal.synopsys.com (10.225.19.80) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Wed, 2 Jan 2019 11:17:03 +0100
+Subject: Re: [PATCH 07/10] PCI: dwc: Add support to use non default
+ msi_irq_chip
+To:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Murali Karicheri <m-karicheri2@ti.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Marc Zyngier <marc.zyngier@arm.com>
+CC:     Bjorn Helgaas <bhelgaas@google.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20181219124207.13479-1-kishon@ti.com>
+ <20181219124207.13479-8-kishon@ti.com>
+From:   Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Message-ID: <d84eb74c-4006-b4ce-19b3-9f2e0f33e5a8@synopsys.com>
+Date:   Wed, 2 Jan 2019 10:12:32 +0000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20181219124207.13479-8-kishon@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.107.25.131]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
-(and, happy new year to everyone!)
+Hi,
 
-this looks similar to a bug we have seen some time ago (a task
-switching from SCHED_OTHER to SCHED_DEADLINE while inheriting a
-deadline from a SCHED_DEADLINE task triggers the warning)...
+On 19/12/2018 12:42, Kishon Vijay Abraham I wrote:
+> Platforms using Designware IP uses dw_pci_msi_bottom_irq_chip for
+> configuring the MSI controller logic within the Designware IP. However
+> certain platforms like Keystone (K2G) which uses Desingware IP has
+> it's own MSI controller logic. For handling such platforms,
+> the irqchip ops uses msi_irq_ack, msi_set_irq, msi_clear_irq callback
+> functions.
 
-Juri, I think you found a fix for such a bug; has it been committed?
+Keystone also uses get_msi_addr and get_msi_data callbacks, do you want to
+update the description to add those references as well?
 
-
-
-			Thanks,
-				Luca
-
-On Mon, 31 Dec 2018 07:02:04 -0800
-syzbot <syzbot+119ba87189432ead09b4@syzkaller.appspotmail.com> wrote:
-
-> syzbot has found a reproducer for the following crash on:
 > 
-> HEAD commit:    195303136f19 Merge tag 'kconfig-v4.21-2' of
-> git://git.kern.. git tree:       upstream
-> console output:
-> https://syzkaller.appspot.com/x/log.txt?x=118af84b400000 kernel
-> config:  https://syzkaller.appspot.com/x/.config?x=76d28549be7c27cf
-> dashboard link:
-> https://syzkaller.appspot.com/bug?extid=119ba87189432ead09b4
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental) syz
-> repro:
-> https://syzkaller.appspot.com/x/repro.syz?x=10eb7ebf400000 C
-> reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14156d77400000
+> Add support to use different msi_irq_chip with default as
+> dw_pci_msi_bottom_irq_chip. This is in preparation to get rid off
+> msi_irq_ack, msi_set_irq, msi_clear_irq and other Keystone specific
+> dw_pcie_host_ops.
 > 
-> IMPORTANT: if you fix the bug, please add the following tag to the
-> commit: Reported-by:
-> syzbot+119ba87189432ead09b4@syzkaller.appspotmail.com
+> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+> ---
+>  drivers/pci/controller/dwc/pcie-designware-host.c | 5 ++++-
+>  drivers/pci/controller/dwc/pcie-designware.h      | 1 +
+>  2 files changed, 5 insertions(+), 1 deletion(-)
 > 
-> WARNING: CPU: 0 PID: 9019 at kernel/sched/deadline.c:628  
-> setup_new_dl_entity kernel/sched/deadline.c:629 [inline]
-> WARNING: CPU: 0 PID: 9019 at kernel/sched/deadline.c:628
-> enqueue_dl_entity kernel/sched/deadline.c:1429 [inline]
-> WARNING: CPU: 0 PID: 9019 at kernel/sched/deadline.c:628  
-> enqueue_task_dl+0x2355/0x3dc0 kernel/sched/deadline.c:1500
-> Kernel panic - not syncing: panic_on_warn set ...
-> CPU: 0 PID: 9019 Comm: syz-executor280 Not tainted 4.20.0+ #1
-> Hardware name: Google Google Compute Engine/Google Compute Engine,
-> BIOS Google 01/01/2011
-> Call Trace:
->   __dump_stack lib/dump_stack.c:77 [inline]
->   dump_stack+0x1db/0x2d0 lib/dump_stack.c:113
->   panic+0x2cb/0x589 kernel/panic.c:189
->   __warn.cold+0x20/0x4b kernel/panic.c:544
->   report_bug+0x263/0x2b0 lib/bug.c:186
->   fixup_bug arch/x86/kernel/traps.c:178 [inline]
->   fixup_bug arch/x86/kernel/traps.c:173 [inline]
->   do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:271
->   do_invalid_op+0x37/0x50 arch/x86/kernel/traps.c:290
->   invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:973
-> RIP: 0010:setup_new_dl_entity kernel/sched/deadline.c:628 [inline]
-> RIP: 0010:enqueue_dl_entity kernel/sched/deadline.c:1429 [inline]
-> RIP: 0010:enqueue_task_dl+0x2355/0x3dc0 kernel/sched/deadline.c:1500
-> Code: 3c 02 00 0f 85 ba 05 00 00 49 8b b5 50 0a 00 00 e9 53 fa ff ff
-> e8 fb f2 64 00 48 8d 4d d8 e9 48 dd ff ff 0f 0b e9 92 f1 ff ff <0f>
-> 0b e9 18 f1 ff ff 4c 89 ef 4c 89 95 28 ff ff ff 4c 89 85 30 ff
-> RSP: 0018:ffff88809eebfaf8 EFLAGS: 00010002
-> RAX: 0000000000000002 RBX: 1ffff11013dd7f6a RCX: dffffc0000000000
-> RDX: 000000333cf09f75 RSI: 0000000000000004 RDI: ffff8880ae62d850
-> RBP: ffff88809eebfbf8 R08: ffff88807fb0a538 R09: ffff88807fb0a2fc
-> R10: ffff88807fb0a580 R11: ffff8880ae62dc7b R12: ffff88807fb0a2c0
-> R13: ffff8880ae62ce00 R14: ffff8880ae62ce00 R15: ffff88807fb0a58c
->   enqueue_task+0xb9/0x380 kernel/sched/core.c:730
->   __sched_setscheduler+0xe32/0x1fe0 kernel/sched/core.c:4336
->   sched_setattr kernel/sched/core.c:4394 [inline]
->   __do_sys_sched_setattr kernel/sched/core.c:4570 [inline]
->   __se_sys_sched_setattr kernel/sched/core.c:4549 [inline]
->   __x64_sys_sched_setattr+0x1af/0x2f0 kernel/sched/core.c:4549
->   do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
->   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x44c829
-> Code: e8 8c d8 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48
-> 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48>
-> 3d 01 f0 ff ff 0f 83 eb c9 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-> RSP: 002b:00007f28685e8ce8 EFLAGS: 00000246 ORIG_RAX: 000000000000013a
-> RAX: ffffffffffffffda RBX: 00000000006e49f8 RCX: 000000000044c829
-> RDX: 0000000000000000 RSI: 0000000020000000 RDI: 0000000000000000
-> RBP: 00000000006e49f0 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 00000000006e49fc
-> R13: 00007ffd1981c8af R14: 00007f28685e99c0 R15: 0000000000000001
-> 
-> ======================================================
-> WARNING: possible circular locking dependency detected
-> 4.20.0+ #1 Not tainted
-> ------------------------------------------------------
-> syz-executor280/9019 is trying to acquire lock:
-> 000000001aef527c ((console_sem).lock){-.-.}, at:
-> down_trylock+0x13/0x70 kernel/locking/semaphore.c:136
-> 
-> but task is already holding lock:
-> 000000000ba17b09 (&rq->lock){-.-.}, at: task_rq_lock+0xc8/0x290  
-> kernel/sched/core.c:99
-> 
-> which lock already depends on the new lock.
-> 
-> 
-> the existing dependency chain (in reverse order) is:
-> 
-> -> #2 (&rq->lock){-.-.}:  
->         __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
->         _raw_spin_lock+0x2f/0x40 kernel/locking/spinlock.c:144
->         rq_lock kernel/sched/sched.h:1149 [inline]
->         task_fork_fair+0xb5/0x7a0 kernel/sched/fair.c:10083
->         sched_fork+0x437/0xb90 kernel/sched/core.c:2359
->         copy_process+0x1ff6/0x8730 kernel/fork.c:1893
->         _do_fork+0x1a9/0x1170 kernel/fork.c:2222
->         kernel_thread+0x34/0x40 kernel/fork.c:2281
->         rest_init+0x28/0x37b init/main.c:409
->         arch_call_rest_init+0xe/0x1b
->         start_kernel+0x882/0x8bd init/main.c:741
->         x86_64_start_reservations+0x29/0x2b
-> arch/x86/kernel/head64.c:470 x86_64_start_kernel+0x77/0x7b
-> arch/x86/kernel/head64.c:451 secondary_startup_64+0xa4/0xb0
-> arch/x86/kernel/head_64.S:243
-> 
-> -> #1 (&p->pi_lock){-.-.}:  
->         __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110
-> [inline] _raw_spin_lock_irqsave+0x95/0xcd
-> kernel/locking/spinlock.c:152 try_to_wake_up+0xb9/0x1480
-> kernel/sched/core.c:1965 wake_up_process+0x10/0x20
-> kernel/sched/core.c:2129 __up.isra.0+0x1c0/0x2a0
-> kernel/locking/semaphore.c:262 up+0x13e/0x1c0
-> kernel/locking/semaphore.c:187 __up_console_sem+0xb7/0x1c0
-> kernel/printk/printk.c:236 console_unlock+0x778/0x11e0
-> kernel/printk/printk.c:2426 con_flush_chars drivers/tty/vt/vt.c:3197
-> [inline] con_flush_chars drivers/tty/vt/vt.c:3185 [inline]
->         con_write+0xa2/0xb0 drivers/tty/vt/vt.c:3117
->         process_output_block drivers/tty/n_tty.c:593 [inline]
->         n_tty_write+0x497/0x1220 drivers/tty/n_tty.c:2331
->         do_tty_write drivers/tty/tty_io.c:959 [inline]
->         tty_write+0x45b/0x7a0 drivers/tty/tty_io.c:1043
->         __vfs_write+0x116/0xb40 fs/read_write.c:485
->         vfs_write+0x20c/0x580 fs/read_write.c:549
->         ksys_write+0x105/0x260 fs/read_write.c:598
->         __do_sys_write fs/read_write.c:610 [inline]
->         __se_sys_write fs/read_write.c:607 [inline]
->         __x64_sys_write+0x73/0xb0 fs/read_write.c:607
->         do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
->         entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> 
-> -> #0 ((console_sem).lock){-.-.}:  
->         lock_acquire+0x1db/0x570 kernel/locking/lockdep.c:3841
->         __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110
-> [inline] _raw_spin_lock_irqsave+0x95/0xcd
-> kernel/locking/spinlock.c:152 down_trylock+0x13/0x70
-> kernel/locking/semaphore.c:136 __down_trylock_console_sem+0xa8/0x210
-> kernel/printk/printk.c:219 console_trylock+0x15/0xa0
-> kernel/printk/printk.c:2242 console_trylock_spinning
-> kernel/printk/printk.c:1662 [inline] vprintk_emit+0x351/0x960
-> kernel/printk/printk.c:1930 vprintk_default+0x28/0x30
-> kernel/printk/printk.c:1958 vprintk_func+0x7e/0x189
-> kernel/printk/printk_safe.c:398 printk+0xba/0xed
-> kernel/printk/printk.c:1991 __warn+0x9e/0x1d0 kernel/panic.c:526
->         report_bug+0x263/0x2b0 lib/bug.c:186
->         fixup_bug arch/x86/kernel/traps.c:178 [inline]
->         fixup_bug arch/x86/kernel/traps.c:173 [inline]
->         do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:271
->         do_invalid_op+0x37/0x50 arch/x86/kernel/traps.c:290
->         invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:973
->         setup_new_dl_entity kernel/sched/deadline.c:629 [inline]
->         enqueue_dl_entity kernel/sched/deadline.c:1429 [inline]
->         enqueue_task_dl+0x2355/0x3dc0 kernel/sched/deadline.c:1500
->         enqueue_task+0xb9/0x380 kernel/sched/core.c:730
->         __sched_setscheduler+0xe32/0x1fe0 kernel/sched/core.c:4336
->         sched_setattr kernel/sched/core.c:4394 [inline]
->         __do_sys_sched_setattr kernel/sched/core.c:4570 [inline]
->         __se_sys_sched_setattr kernel/sched/core.c:4549 [inline]
->         __x64_sys_sched_setattr+0x1af/0x2f0 kernel/sched/core.c:4549
->         do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
->         entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> 
-> other info that might help us debug this:
-> 
-> Chain exists of:
->    (console_sem).lock --> &p->pi_lock --> &rq->lock
-> 
->   Possible unsafe locking scenario:
-> 
->         CPU0                    CPU1
->         ----                    ----
->    lock(&rq->lock);
->                                 lock(&p->pi_lock);
->                                 lock(&rq->lock);
->    lock((console_sem).lock);
-> 
->   *** DEADLOCK ***
-> 
-> 3 locks held by syz-executor280/9019:
->   #0: 0000000014b8e16d (rcu_read_lock){....}, at:
-> __do_sys_sched_setattr kernel/sched/core.c:4563 [inline]
->   #0: 0000000014b8e16d (rcu_read_lock){....}, at:
-> __se_sys_sched_setattr kernel/sched/core.c:4549 [inline]
->   #0: 0000000014b8e16d (rcu_read_lock){....}, at:  
-> __x64_sys_sched_setattr+0x144/0x2f0 kernel/sched/core.c:4549
->   #1: 00000000b31ff59d (&p->pi_lock){-.-.}, at:
-> task_rq_lock+0x6a/0x290 kernel/sched/core.c:97
->   #2: 000000000ba17b09 (&rq->lock){-.-.}, at:
-> task_rq_lock+0xc8/0x290 kernel/sched/core.c:99
-> 
-> stack backtrace:
-> CPU: 0 PID: 9019 Comm: syz-executor280 Not tainted 4.20.0+ #1
-> Hardware name: Google Google Compute Engine/Google Compute Engine,
-> BIOS Google 01/01/2011
-> Call Trace:
->   __dump_stack lib/dump_stack.c:77 [inline]
->   dump_stack+0x1db/0x2d0 lib/dump_stack.c:113
->   print_circular_bug.isra.0.cold+0x1cc/0x28f
-> kernel/locking/lockdep.c:1224 check_prev_add
-> kernel/locking/lockdep.c:1866 [inline] check_prevs_add
-> kernel/locking/lockdep.c:1979 [inline] validate_chain
-> kernel/locking/lockdep.c:2350 [inline] __lock_acquire+0x3014/0x4a30
-> kernel/locking/lockdep.c:3338 lock_acquire+0x1db/0x570
-> kernel/locking/lockdep.c:3841 __raw_spin_lock_irqsave
-> include/linux/spinlock_api_smp.h:110 [inline]
-> _raw_spin_lock_irqsave+0x95/0xcd kernel/locking/spinlock.c:152
-> down_trylock+0x13/0x70 kernel/locking/semaphore.c:136
-> __down_trylock_console_sem+0xa8/0x210 kernel/printk/printk.c:219
-> console_trylock+0x15/0xa0 kernel/printk/printk.c:2242
-> console_trylock_spinning kernel/printk/printk.c:1662 [inline]
-> vprintk_emit+0x351/0x960 kernel/printk/printk.c:1930
-> vprintk_default+0x28/0x30 kernel/printk/printk.c:1958
-> vprintk_func+0x7e/0x189 kernel/printk/printk_safe.c:398
-> printk+0xba/0xed kernel/printk/printk.c:1991 __warn+0x9e/0x1d0
-> kernel/panic.c:526 report_bug+0x263/0x2b0 lib/bug.c:186
->   fixup_bug arch/x86/kernel/traps.c:178 [inline]
->   fixup_bug arch/x86/kernel/traps.c:173 [inline]
->   do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:271
->   do_invalid_op+0x37/0x50 arch/x86/kernel/traps.c:290
->   invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:973
-> RIP: 0010:setup_new_dl_entity kernel/sched/deadline.c:628 [inline]
-> RIP: 0010:enqueue_dl_entity kernel/sched/deadline.c:1429 [inline]
-> RIP: 0010:enqueue_task_dl+0x2355/0x3dc0 kernel/sched/deadline.c:1500
-> Code: 3c 02 00 0f 85 ba 05 00 00 49 8b b5 50 0a 00 00 e9 53 fa ff ff
-> e8 fb f2 64 00 48 8d 4d d8 e9 48 dd ff ff 0f 0b e9 92 f1 ff ff <0f>
-> 0b e9 18 f1 ff ff 4c 89 ef 4c 89 95 28 ff ff ff 4c 89 85 30 ff
-> RSP: 0018:ffff88809eebfaf8 EFLAGS: 00010002
-> RAX: 0000000000000002 RBX: 1ffff11013dd7f6a RCX: dffffc0000000000
-> RDX: 000000333cf09f75 RSI: 0000000000000004 RDI: ffff8880ae62d850
-> RBP: ffff88809eebfbf8 R08: ffff88807fb0a538 R09: ffff88807fb0a2fc
-> R10: ffff88807fb0a580 R11: ffff8880ae62dc7b R12: ffff88807fb0a2c0
-> R13: ffff8880ae62ce00 R14: ffff8880ae62ce00 R15: ffff88807fb0a58c
->   enqueue_task+0xb9/0x380 kernel/sched/core.c:730
->   __sched_setscheduler+0xe32/0x1fe0 kernel/sched/core.c:4336
->   sched_setattr kernel/sched/core.c:4394 [inline]
->   __do_sys_sched_setattr kernel/sched/core.c:4570 [inline]
->   __se_sys_sched_setattr kernel/sched/core.c:4549 [inline]
->   __x64_sys_sched_setattr+0x1af/0x2f0 kernel/sched/core.c:4549
->   do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
->   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x44c829
-> Code: e8 8c d8 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48
-> 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48>
-> 3d 01 f0 ff ff 0f 83 eb c9 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-> RSP: 002b:00007f28685e8ce8 EFLAGS: 00000246 ORIG_RAX: 000000000000013a
-> RAX: ffffffffffffffda RBX: 00000000006e49f8 RCX: 000000000044c829
-> RDX: 0000000000000000 RSI: 0000000020000000 RDI: 0000000000000000
-> RBP: 00000000006e49f0 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 00000000006e49fc
-> R13: 00007ffd1981c8af R14: 00007f28685e99c0 R15: 0000000000000001
-> Shutting down cpus with NMI
-> Kernel Offset: disabled
-> Rebooting in 86400 seconds..
+> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
+> index 0fa9e8fdce66..db21bd11f153 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+> @@ -245,7 +245,7 @@ static int dw_pcie_irq_domain_alloc(struct irq_domain *domain,
+>  
+>  	for (i = 0; i < nr_irqs; i++)
+>  		irq_domain_set_info(domain, virq + i, bit + i,
+> -				    &dw_pci_msi_bottom_irq_chip,
+> +				    pp->msi_irq_chip,
+>  				    pp, handle_edge_irq,
+>  				    NULL, NULL);
+>  
+> @@ -277,6 +277,9 @@ int dw_pcie_allocate_domains(struct pcie_port *pp)
+>  	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+>  	struct fwnode_handle *fwnode = of_node_to_fwnode(pci->dev->of_node);
+>  
+> +	if (!pp->msi_irq_chip)
+> +		pp->msi_irq_chip = &dw_pci_msi_bottom_irq_chip;
+> +
+>  	pp->irq_domain = irq_domain_create_linear(fwnode, pp->num_vectors,
+>  					       &dw_pcie_msi_domain_ops, pp);
+>  	if (!pp->irq_domain) {
+> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
+> index 0989d880ac46..0873ee4084aa 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware.h
+> +++ b/drivers/pci/controller/dwc/pcie-designware.h
+> @@ -168,6 +168,7 @@ struct pcie_port {
+>  	struct irq_domain	*irq_domain;
+>  	struct irq_domain	*msi_domain;
+>  	dma_addr_t		msi_data;
+> +	struct irq_chip		*msi_irq_chip;
+>  	u32			num_vectors;
+>  	u32			irq_status[MAX_MSI_CTRLS];
+>  	raw_spinlock_t		lock;
 > 
 
+Acked-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+
+Regards,
+Gustavo
