@@ -2,81 +2,108 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92E05C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 06:56:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5734C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 06:59:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 604DC21871
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 06:56:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8966B2171F
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 06:59:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="nENtUXR/";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="o53PFq3i"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728835AbfABG4K (ORCPT
+        id S1728854AbfABG7p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 01:56:10 -0500
-Received: from szxga02-in.huawei.com ([45.249.212.188]:6952 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727558AbfABG4K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 01:56:10 -0500
-Received: from DGGEMM406-HUB.china.huawei.com (unknown [172.30.72.56])
-        by Forcepoint Email with ESMTP id 0E3D04867FA1E;
-        Wed,  2 Jan 2019 14:56:02 +0800 (CST)
-Received: from DGGEMM528-MBX.china.huawei.com ([169.254.8.187]) by
- DGGEMM406-HUB.china.huawei.com ([10.3.20.214]) with mapi id 14.03.0415.000;
- Wed, 2 Jan 2019 14:55:54 +0800
-From:   "liujian (CE)" <liujian56@huawei.com>
-To:     Xiubo Li <xiubli@redhat.com>
-CC:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "liujian (CE)" <liujian56@huawei.com>
-Subject: RE: [PATCH] driver: uio: fix possible memory leak in uio_open
-Thread-Topic: [PATCH] driver: uio: fix possible memory leak in uio_open
-Thread-Index: AQHUomQL5cJ/9lfbTk6cTYBwakUoCaWbADaAgACIq4A=
-Date:   Wed, 2 Jan 2019 06:55:54 +0000
-Message-ID: <4F88C5DDA1E80143B232E89585ACE27D02584121@DGGEMM528-MBX.china.huawei.com>
-References: <1546446416-40831-1-git-send-email-liujian56@huawei.com>
- <50ee4818-a154-5ea7-20f8-3c0f0859f4fa@redhat.com>
-In-Reply-To: <50ee4818-a154-5ea7-20f8-3c0f0859f4fa@redhat.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.177.97.126]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Wed, 2 Jan 2019 01:59:45 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:57546 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728570AbfABG7p (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Jan 2019 01:59:45 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 047DE60722; Wed,  2 Jan 2019 06:59:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1546412385;
+        bh=rRtnfLLwyfFD1tOYGp/KrrvjdmpDS/5yJounfvxv4Iw=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=nENtUXR/HeBB/O7D0G38KAYfb1o7tClzeGafjtm3bMV6Pb9PZ55ss+q2ZI2iMhjXe
+         yMecpGkJZc2DxLuw3Q2xQYZxOKDujV56aG4BwVG7Kjz3m+Ub3LMqea5MK+P97WlcYa
+         CSNbeOG3DFdvlzoloClaMigh8UCPPGrtXQoDcGt4=
+Received: from [10.204.79.128] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: sramana@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 9C8E760722;
+        Wed,  2 Jan 2019 06:59:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1546412376;
+        bh=rRtnfLLwyfFD1tOYGp/KrrvjdmpDS/5yJounfvxv4Iw=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=o53PFq3iz/rrw/JOdWsg3bCoNjpEs2hoLU/ORjiygijtdT+X4QyNfnyAuCcTCMzQb
+         kzS9cfT/W68oCP+nPI/BM967Km7py2X3zFDwgDaLrhsDPq6tPmrjMdH1gAZOywVmGs
+         eakybRsC6VNS+uL3DxXdPeZUpr0frR84Hi22bxK0=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9C8E760722
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sramana@codeaurora.org
+Subject: Re: [PATCH] genirq: Make sure the affinity to be set is not empty
+To:     tglx@linutronix.de
+Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+References: <1545312957-8504-1-git-send-email-sramana@codeaurora.org>
+From:   Srinivas Ramana <sramana@codeaurora.org>
+Message-ID: <45756028-c96f-e3b5-389d-d8f022c59c5d@codeaurora.org>
+Date:   Wed, 2 Jan 2019 12:29:33 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+In-Reply-To: <1545312957-8504-1-git-send-email-sramana@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCg0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IGxpbnV4LWtlcm5l
-bC1vd25lckB2Z2VyLmtlcm5lbC5vcmcNCj4gW21haWx0bzpsaW51eC1rZXJuZWwtb3duZXJAdmdl
-ci5rZXJuZWwub3JnXSBPbiBCZWhhbGYgT2YgWGl1Ym8gTGkNCj4gU2VudDogV2VkbmVzZGF5LCBK
-YW51YXJ5IDAyLCAyMDE5IDI6MzcgUE0NCj4gVG86IGxpdWppYW4gKENFKSA8bGl1amlhbjU2QGh1
-YXdlaS5jb20+DQo+IENjOiBncmVna2hAbGludXhmb3VuZGF0aW9uLm9yZzsgbGludXgta2VybmVs
-QHZnZXIua2VybmVsLm9yZw0KPiBTdWJqZWN0OiBSZTogW1BBVENIXSBkcml2ZXI6IHVpbzogZml4
-IHBvc3NpYmxlIG1lbW9yeSBsZWFrIGluIHVpb19vcGVuDQo+IA0KPiBPbiAyMDE5LzEvMyAwOjI2
-LCBsaXVqaWFuIHdyb3RlOg0KPiA+IEZpeGVzOiA1N2M1ZjRkZjBhNWEgKCJ1aW86IGZpeCBjcmFz
-aCBhZnRlciB0aGUgZGV2aWNlIGlzDQo+ID4gdW5yZWdpc3RlcmVkIikNCj4gPiBTaWduZWQtb2Zm
-LWJ5OiBsaXVqaWFuIDxsaXVqaWFuNTZAaHVhd2VpLmNvbT4NCj4gPiAtLS0NCj4gPiAgIGRyaXZl
-cnMvdWlvL3Vpby5jIHwgMyArKy0NCj4gPiAgIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMo
-KyksIDEgZGVsZXRpb24oLSkNCj4gPg0KPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3Vpby91aW8u
-YyBiL2RyaXZlcnMvdWlvL3Vpby5jIGluZGV4DQo+ID4gNWMxMGZjNy4uYmRlN2Q3YSAxMDA2NDQN
-Cj4gPiAtLS0gYS9kcml2ZXJzL3Vpby91aW8uYw0KPiA+ICsrKyBiL2RyaXZlcnMvdWlvL3Vpby5j
-DQo+ID4gQEAgLTQ5Niw3ICs0OTYsNyBAQCBzdGF0aWMgaW50IHVpb19vcGVuKHN0cnVjdCBpbm9k
-ZSAqaW5vZGUsIHN0cnVjdCBmaWxlDQo+ICpmaWxlcCkNCj4gPiAgIAlpZiAoIWlkZXYtPmluZm8p
-IHsNCj4gPiAgIAkJbXV0ZXhfdW5sb2NrKCZpZGV2LT5pbmZvX2xvY2spOw0KPiA+ICAgCQlyZXQg
-PSAtRUlOVkFMOw0KPiA+IC0JCWdvdG8gZXJyX2FsbG9jX2xpc3RlbmVyOw0KPiA+ICsJCWdvdG8g
-ZXJyX2luZm9vcGVuOw0KPiA+ICAgCX0NCj4gPg0KPiA+ICAgCWlmIChpZGV2LT5pbmZvICYmIGlk
-ZXYtPmluZm8tPm9wZW4pIEBAIC01MDgsNiArNTA4LDcgQEAgc3RhdGljIGludA0KPiA+IHVpb19v
-cGVuKHN0cnVjdCBpbm9kZSAqaW5vZGUsIHN0cnVjdCBmaWxlICpmaWxlcCkNCj4gPiAgIAlyZXR1
-cm4gMDsNCj4gPg0KPiA+ICAgZXJyX2luZm9vcGVuOg0KPiANCj4gTWF5YmUgd2Ugc2hvdWxkIHJl
-bmFtZSB0aGUgImVycl9pbmZvb3BlbiIgdG8gc29tZXRoaW5nIGxpa2UNCj4gImVycl9pZGV2X2lu
-Zm8iLi4uDQo+IA0KWWVzLCBpdCdzIGJldHRlciB0byBjaGFuZ2UgdGhpcywgSSB3aWxsIHNlbmQg
-djIsIHRoYW5rIHlvdX4NCg0KQmVzdCBSZWdhcmRzLA0KbGl1amlhbg0KDQo+IFRoYW5rcy4NCj4g
-DQo+IEJScw0KPiANCj4gPiArCWZpbGVwLT5wcml2YXRlX2RhdGEgPSBOVUxMOw0KPiA+ICAgCWtm
-cmVlKGxpc3RlbmVyKTsNCj4gPg0KPiA+ICAgZXJyX2FsbG9jX2xpc3RlbmVyOg0KPiANCg0K
+On 12/20/2018 7:05 PM, Srinivas Ramana wrote:
+> If the default_affinity is managed/initialized by a system and
+> all the cpus present in irq_default_affinity are hotplugged out
+> we may end up passing a cpumask of 0 to irq_do_set_affinity().
+> 
+> Fix this by falling back to cpu_online_mask in case the
+> calculated affinity becomes zero.
+> 
+> Signed-off-by: Srinivas Ramana <sramana@codeaurora.org>
+> ---
+>   kernel/irq/manage.c | 3 +++
+>   1 file changed, 3 insertions(+)
+> 
+> diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
+> index 9dbdccab3b6a..5c0ba5ca5930 100644
+> --- a/kernel/irq/manage.c
+> +++ b/kernel/irq/manage.c
+> @@ -393,6 +393,9 @@ int irq_setup_affinity(struct irq_desc *desc)
+>   	}
+>   
+>   	cpumask_and(&mask, cpu_online_mask, set);
+> +	if (cpumask_empty(&mask))
+> +		cpumask_copy(&mask, cpu_online_mask);
+> +
+>   	if (node != NUMA_NO_NODE) {
+>   		const struct cpumask *nodemask = cpumask_of_node(node);
+>   
+> 
+
+Hi,
+
+Can you provide your feedback on this?
+
+Thanks,
+-- Srinivas R
+
+-- 
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation
+Center, Inc., is a member of Code Aurora Forum, a Linux Foundation
+Collaborative Project
