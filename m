@@ -2,31 +2,31 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04A4BC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 03:29:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22467C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 03:30:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE7192080A
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 03:29:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA4002080A
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 03:30:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727726AbfABD24 (ORCPT
+        id S1727849AbfABDaa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 1 Jan 2019 22:28:56 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:41132 "EHLO mx1.redhat.com"
+        Tue, 1 Jan 2019 22:30:30 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:54858 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726595AbfABD24 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Jan 2019 22:28:56 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        id S1727481AbfABDa3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Jan 2019 22:30:29 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2CBB285546;
-        Wed,  2 Jan 2019 03:28:55 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5B1827F6A8;
+        Wed,  2 Jan 2019 03:30:29 +0000 (UTC)
 Received: from [10.72.12.55] (ovpn-12-55.pek2.redhat.com [10.72.12.55])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5FEF1608C1;
-        Wed,  2 Jan 2019 03:28:45 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id AA7555D73F;
+        Wed,  2 Jan 2019 03:30:14 +0000 (UTC)
 Subject: Re: [PATCH RFC 1/2] virtio-net: bql support
 To:     "Michael S. Tsirkin" <mst@redhat.com>
 Cc:     linux-kernel@vger.kernel.org, maxime.coquelin@redhat.com,
@@ -36,30 +36,30 @@ Cc:     linux-kernel@vger.kernel.org, maxime.coquelin@redhat.com,
 References: <20181205225323.12555-1-mst@redhat.com>
  <20181205225323.12555-2-mst@redhat.com>
  <21384cb5-99a6-7431-1039-b356521e1bc3@redhat.com>
- <20181226101528-mutt-send-email-mst@kernel.org>
- <0fa99d9b-e510-d7eb-db1b-831bd7610ce9@redhat.com>
- <20181230134106-mutt-send-email-mst@kernel.org>
+ <20181226102100-mutt-send-email-mst@kernel.org>
+ <620cfd46-aa3e-7eb6-0757-f4afbafda44b@redhat.com>
+ <20181230134539-mutt-send-email-mst@kernel.org>
 From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <b4f06d11-4761-dabb-f641-5fc05c1c34fc@redhat.com>
-Date:   Wed, 2 Jan 2019 11:28:43 +0800
+Message-ID: <01e0fe8f-bd75-c39b-9d77-c5a9baf87348@redhat.com>
+Date:   Wed, 2 Jan 2019 11:30:11 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181230134106-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20181230134539-mutt-send-email-mst@kernel.org>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Wed, 02 Jan 2019 03:28:55 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Wed, 02 Jan 2019 03:30:29 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-On 2018/12/31 上午2:45, Michael S. Tsirkin wrote:
-> On Thu, Dec 27, 2018 at 06:00:36PM +0800, Jason Wang wrote:
->> On 2018/12/26 下午11:19, Michael S. Tsirkin wrote:
+On 2018/12/31 上午2:48, Michael S. Tsirkin wrote:
+> On Thu, Dec 27, 2018 at 06:04:53PM +0800, Jason Wang wrote:
+>> On 2018/12/26 下午11:22, Michael S. Tsirkin wrote:
 >>> On Thu, Dec 06, 2018 at 04:17:36PM +0800, Jason Wang wrote:
 >>>> On 2018/12/6 上午6:54, Michael S. Tsirkin wrote:
 >>>>> When use_napi is set, let's enable BQLs.  Note: some of the issues are
@@ -68,140 +68,58 @@ On 2018/12/31 上午2:45, Michael S. Tsirkin wrote:
 >>>>> benefitial.
 >>>> I've played a similar patch several days before. The tricky part is the mode
 >>>> switching between napi and no napi. We should make sure when the packet is
->>>> sent and trakced by BQL,  it should be consumed by BQL as well. I did it by
->>>> tracking it through skb->cb.  And deal with the freeze by reset the BQL
->>>> status. Patch attached.
->>>>
->>>> But when testing with vhost-net, I don't very a stable performance,
->>> So how about increasing TSQ pacing shift then?
+>>>> sent and trakced by BQL,  it should be consumed by BQL as well.
+>>> I just went over the patch again and I don't understand this comment.
+>>> This patch only enabled BQL with tx napi.
+>>>
+>>> Thus there's no mode switching.
+>>>
+>>> What did I miss?
+>> Consider the case:
 >>
->> I can test this. But changing default TCP value is much more than a
->> virtio-net specific thing.
-> Well same logic as wifi applies. Unpredictable latencies related
-> to radio in one case, to host scheduler in the other.
->
->>>> it was
->>>> probably because we batch the used ring updating so tx interrupt may come
->>>> randomly. We probably need to implement time bounded coalescing mechanism
->>>> which could be configured from userspace.
->>> I don't think it's reasonable to expect userspace to be that smart ...
->>> Why do we need time bounded? used ring is always updated when ring
->>> becomes empty.
 >>
->> We don't add used when means BQL may not see the consumed packet in time.
->> And the delay varies based on the workload since we count packets not bytes
->> or time before doing the batched updating.
+>> TX NAPI is disabled:
+>>
+>> send N packets
+>>
+>> turn TX NAPI on:
+>>
+>> get tx interrupt
+>>
+>> BQL try to consume those packets when lead WARN for dql.
+>>
 >>
 >> Thanks
-> Sorry I still don't get it.
-> When nothing is outstanding then we do update the used.
-> So if BQL stops userspace from sending packets then
-> we get an interrupt and packets start flowing again.
-
-
-Yes, but how about the cases of multiple flows. That's where I see 
-unstable results.
-
-
+> Can one really switch tx napi on and off? How?
+> While root can change the napi_tx module parameter, I don't think
+> that has any effect outside device probe time. What did I miss?
 >
-> It might be suboptimal, we might need to tune it but I doubt running
-> timers is a solution, timer interrupts cause VM exits.
+>
+>
 
+We support switch the mode through ethtool recently. See
 
-Probably not a timer but a time counter (or event byte counter) in vhost 
-to add used and signal guest if it exceeds a value instead of waiting 
-the number of packets.
+commit 0c465be183c7c57a26446df6ea96d8676b865f92
+Author: Jason Wang <jasowang@redhat.com>
+Date:   Tue Oct 9 10:06:26 2018 +0800
 
+     virtio_net: ethtool tx napi configuration
+
+     Implement ethtool .set_coalesce (-C) and .get_coalesce (-c) handlers.
+     Interrupt moderation is currently not supported, so these accept and
+     display the default settings of 0 usec and 1 frame.
+
+     Toggle tx napi through setting tx-frames. So as to not interfere
+     with possible future interrupt moderation, value 1 means tx napi while
+     value 0 means not.
+
+     Only allow the switching when device is down for simplicity.
+
+     Link: https://patchwork.ozlabs.org/patch/948149/
+     Suggested-by: Jason Wang <jasowang@redhat.com>
+     Signed-off-by: Willem de Bruijn <willemb@google.com>
+     Signed-off-by: Jason Wang <jasowang@redhat.com>
+     Signed-off-by: David S. Miller <davem@davemloft.net>
 
 Thanks
 
-
->
->>>> Btw, maybe it's time just enable napi TX by default. I get ~10% TCP_RR
->>>> regression on machine without APICv, (haven't found time to test APICv
->>>> machine). But consider it was for correctness, I think it's acceptable? Then
->>>> we can do optimization on top?
->>>>
->>>>
->>>> Thanks
->>>>
->>>>
->>>>> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
->>>>> ---
->>>>>     drivers/net/virtio_net.c | 27 +++++++++++++++++++--------
->>>>>     1 file changed, 19 insertions(+), 8 deletions(-)
->>>>>
->>>>> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
->>>>> index cecfd77c9f3c..b657bde6b94b 100644
->>>>> --- a/drivers/net/virtio_net.c
->>>>> +++ b/drivers/net/virtio_net.c
->>>>> @@ -1325,7 +1325,8 @@ static int virtnet_receive(struct receive_queue *rq, int budget,
->>>>>     	return stats.packets;
->>>>>     }
->>>>> -static void free_old_xmit_skbs(struct send_queue *sq)
->>>>> +static void free_old_xmit_skbs(struct send_queue *sq, struct netdev_queue *txq,
->>>>> +			       bool use_napi)
->>>>>     {
->>>>>     	struct sk_buff *skb;
->>>>>     	unsigned int len;
->>>>> @@ -1347,6 +1348,9 @@ static void free_old_xmit_skbs(struct send_queue *sq)
->>>>>     	if (!packets)
->>>>>     		return;
->>>>> +	if (use_napi)
->>>>> +		netdev_tx_completed_queue(txq, packets, bytes);
->>>>> +
->>>>>     	u64_stats_update_begin(&sq->stats.syncp);
->>>>>     	sq->stats.bytes += bytes;
->>>>>     	sq->stats.packets += packets;
->>>>> @@ -1364,7 +1368,7 @@ static void virtnet_poll_cleantx(struct receive_queue *rq)
->>>>>     		return;
->>>>>     	if (__netif_tx_trylock(txq)) {
->>>>> -		free_old_xmit_skbs(sq);
->>>>> +		free_old_xmit_skbs(sq, txq, true);
->>>>>     		__netif_tx_unlock(txq);
->>>>>     	}
->>>>> @@ -1440,7 +1444,7 @@ static int virtnet_poll_tx(struct napi_struct *napi, int budget)
->>>>>     	struct netdev_queue *txq = netdev_get_tx_queue(vi->dev, vq2txq(sq->vq));
->>>>>     	__netif_tx_lock(txq, raw_smp_processor_id());
->>>>> -	free_old_xmit_skbs(sq);
->>>>> +	free_old_xmit_skbs(sq, txq, true);
->>>>>     	__netif_tx_unlock(txq);
->>>>>     	virtqueue_napi_complete(napi, sq->vq, 0);
->>>>> @@ -1505,13 +1509,15 @@ static netdev_tx_t start_xmit(struct sk_buff *skb, struct net_device *dev)
->>>>>     	struct send_queue *sq = &vi->sq[qnum];
->>>>>     	int err;
->>>>>     	struct netdev_queue *txq = netdev_get_tx_queue(dev, qnum);
->>>>> -	bool kick = !skb->xmit_more;
->>>>> +	bool more = skb->xmit_more;
->>>>>     	bool use_napi = sq->napi.weight;
->>>>> +	unsigned int bytes = skb->len;
->>>>> +	bool kick;
->>>>>     	/* Free up any pending old buffers before queueing new ones. */
->>>>> -	free_old_xmit_skbs(sq);
->>>>> +	free_old_xmit_skbs(sq, txq, use_napi);
->>>>> -	if (use_napi && kick)
->>>>> +	if (use_napi && !more)
->>>>>     		virtqueue_enable_cb_delayed(sq->vq);
->>>>>     	/* timestamp packet in software */
->>>>> @@ -1552,7 +1558,7 @@ static netdev_tx_t start_xmit(struct sk_buff *skb, struct net_device *dev)
->>>>>     		if (!use_napi &&
->>>>>     		    unlikely(!virtqueue_enable_cb_delayed(sq->vq))) {
->>>>>     			/* More just got used, free them then recheck. */
->>>>> -			free_old_xmit_skbs(sq);
->>>>> +			free_old_xmit_skbs(sq, txq, false);
->>>>>     			if (sq->vq->num_free >= 2+MAX_SKB_FRAGS) {
->>>>>     				netif_start_subqueue(dev, qnum);
->>>>>     				virtqueue_disable_cb(sq->vq);
->>>>> @@ -1560,7 +1566,12 @@ static netdev_tx_t start_xmit(struct sk_buff *skb, struct net_device *dev)
->>>>>     		}
->>>>>     	}
->>>>> -	if (kick || netif_xmit_stopped(txq)) {
->>>>> +	if (use_napi)
->>>>> +		kick = __netdev_tx_sent_queue(txq, bytes, more);
->>>>> +	else
->>>>> +		kick = !more || netif_xmit_stopped(txq);
->>>>> +
->>>>> +	if (kick) {
->>>>>     		if (virtqueue_kick_prepare(sq->vq) && virtqueue_notify(sq->vq)) {
->>>>>     			u64_stats_update_begin(&sq->stats.syncp);
->>>>>     			sq->stats.kicks++;
