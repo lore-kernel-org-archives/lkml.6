@@ -2,209 +2,312 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C92A3C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 12:52:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADB9BC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 13:02:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 899C02171F
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 12:52:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pc7SSV7U"
+	by mail.kernel.org (Postfix) with ESMTP id 71B082075B
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 13:02:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729871AbfABMwS (ORCPT
+        id S1729891AbfABNBG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 07:52:18 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:38181 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726772AbfABMwS (ORCPT
+        Wed, 2 Jan 2019 08:01:06 -0500
+Received: from mail-it1-f199.google.com ([209.85.166.199]:56639 "EHLO
+        mail-it1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728419AbfABNBF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 07:52:18 -0500
-Received: by mail-lj1-f193.google.com with SMTP id c19-v6so26909827lja.5;
-        Wed, 02 Jan 2019 04:52:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=i5ZkuLL0YkEz2DgdlKRmCxBUwyCwpZqWs3VUjxD9AU4=;
-        b=pc7SSV7U0+XOIxyIDesBH4G8hiVbMXhZ6tzz0krUP/MHa6Ygrq3aFqb7Dov/IJ73kr
-         dgrykbcAoCHS5SjUMmMwxKBubHaS5DDwH5K5rvYHpIAznPBR9FvsvUhWLu2lF1jOgB5K
-         CberImji/XSdTMcbKrhZ0kJl1R5jxjXlmXXUKBGejVvInGD64PifWDAyGSPymno9hrLe
-         nii5YhgT11vkA+k0VuawtkoK+2LNAB6TVf0JU04o7OQGw9HUM4Gn1a+lBHraCYgGNmbl
-         +O/FmY5qiDTuYkfNvwCOvbOCd5wi9EUNjNY7cy59mB9vE52D10fSp0Jh+5xq0VR1bHOG
-         F9oQ==
+        Wed, 2 Jan 2019 08:01:05 -0500
+Received: by mail-it1-f199.google.com with SMTP id x3so33029977itb.6
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 05:01:04 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=i5ZkuLL0YkEz2DgdlKRmCxBUwyCwpZqWs3VUjxD9AU4=;
-        b=B4qSTo83Lmxn+pUDTnEUgN6cHLSgZRtWhdEuH83GqEcNrrcUULXtE30070jxGh/bmG
-         TE7jfAXnYKWWKWfiHZM7DUWNnbaO23wW0YN4u9lSTQ80MDxkSPN6CLzeFtAf7xCmTbxC
-         qOWo0tL+XXbqj2EmbwDFo6nWMCvXy94/a+5wtEZsmYyJ4yHGNZAGGn+3Pi3rjV4wxpxT
-         5Zvxnm7JKZlRDVBfdm6Qmiz0Ny/ZF8aRfcd6bX9sJri4ZnaVatih3woSGwtgnlRsS6Tt
-         TfYmYndgUliBokkVHCOeh5bd2aEKrong8kHxLk/yP80hmCUgmKFi5HFjvvAvGhmw61R8
-         w8tA==
-X-Gm-Message-State: AJcUukf2KXQNr+7M7EadZfCaWk2kkTB2ovnfLkix0dqWlQRgrBmgz/Q7
-        m/9YG98wR1JpQqcLpRtjSzs=
-X-Google-Smtp-Source: ALg8bN6AnXCFckGJI9kfiwRGJQYPzhzLXsmIuYFWGfarEihcYASL3thokEr6gf84u6oaE6ujiW1rXA==
-X-Received: by 2002:a2e:3e04:: with SMTP id l4-v6mr23521946lja.148.1546433534378;
-        Wed, 02 Jan 2019 04:52:14 -0800 (PST)
-Received: from linux-veee.lan (ip-194-187-74-233.konfederacka.maverick.com.pl. [194.187.74.233])
-        by smtp.gmail.com with ESMTPSA id g3-v6sm11395432lje.50.2019.01.02.04.52.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 02 Jan 2019 04:52:13 -0800 (PST)
-From:   =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-To:     Paul Burton <paul.burton@mips.com>
-Cc:     Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Hauke Mehrtens <hauke@hauke-m.de>, linux-mips@linux-mips.org,
-        linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
-        =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>
-Subject: [PATCH mips-fixes] MIPS: BCM47XX: Setup struct device for the SoC
-Date:   Wed,  2 Jan 2019 13:51:47 +0100
-Message-Id: <20190102125147.3282-1-zajec5@gmail.com>
-X-Mailer: git-send-email 2.13.7
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=hK9B/5cBZKe4Rlvrcua+tl4s4BF94cvUHGg3kc0hZlU=;
+        b=f22NEaiJvqzSOOlg33azbEPwwJOzp6kP96YW9I5wtyzLr3YRCPbsk+P0fjtHM9Fuh3
+         6SvR9vgN3IG0w1F+p7uggSlqFu4DVkGViZeAHHVDe/0qo9ZDP30vytD3vDJ9TXzvAfE+
+         N85nedjhDBeoJjz/RmyB6emKMmbohOzmBOnjCpRVB545xL1Ep1AidZAay8cg7mJeGYNx
+         Anu3utVhwIKTL1LS60HExADrjG66O8IQLW2J3LYE0XAEw906kjw1GbZBPmOFwF8faUv2
+         8OUCyeFUsXWDPaO9gTJY9USEi02a2vC+1bKczAecTvJdu+RcLnvr0b1BOMmDwLElhCzo
+         gyEw==
+X-Gm-Message-State: AJcUukefpVB1GXht9ALpK2ugPlzs8CSL1a6xX8onFJ80UcQdLB6wPnO+
+        QD8U/WBpwsO+SscYdWF93S86Oli1VW9wJlmYR+XBx2axguZJ
+X-Google-Smtp-Source: ALg8bN5Ra43dQjcXwpW17wMW66ko0Dbj5IGXU92XiFif8/2KgIfLGB3kT9V6LobVjujtcagXPbxzWW1xFmCpZZQdLHsQvjP7MrRD
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a24:ed8c:: with SMTP id r134mr32293833ith.30.1546434064362;
+ Wed, 02 Jan 2019 05:01:04 -0800 (PST)
+Date:   Wed, 02 Jan 2019 05:01:04 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000133d0a057e793df4@google.com>
+Subject: KASAN: stack-out-of-bounds Read in corrupted (3)
+From:   syzbot <syzbot+2ab493acb9d8329345a3@syzkaller.appspotmail.com>
+To:     crecklin@redhat.com, keescook@chromium.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rafał Miłecki <rafal@milecki.pl>
+Hello,
 
-So far we never had any device registered for the SoC. This resulted in
-some small issues that we kept ignoring like:
-1) Not working GPIOLIB_IRQCHIP (gpiochip_irqchip_add_key() failing)
-2) Lack of proper tree in the /sys/devices/
-3) mips_dma_alloc_coherent() silently handling empty coherent_dma_mask
+syzbot found the following crash on:
 
-Kernel 4.19 came with a lot of DMA changes and caused a regression on
-bcm47xx. Starting with the commit f8c55dc6e828 ("MIPS: use generic dma
-noncoherent ops for simple noncoherent platforms") DMA coherent
-allocations just fail. Example:
-[    1.114914] bgmac_bcma bcma0:2: Allocation of TX ring 0x200 failed
-[    1.121215] bgmac_bcma bcma0:2: Unable to alloc memory for DMA
-[    1.127626] bgmac_bcma: probe of bcma0:2 failed with error -12
-[    1.133838] bgmac_bcma: Broadcom 47xx GBit MAC driver loaded
+HEAD commit:    28e8c4bc8eb4 Merge tag 'rtc-4.21' of git://git.kernel.org/..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=122355bf400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c2ab9708c613a224
+dashboard link: https://syzkaller.appspot.com/bug?extid=2ab493acb9d8329345a3
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=106e29e7400000
 
-The bgmac driver also triggers a WARNING:
-[    0.959486] ------------[ cut here ]------------
-[    0.964387] WARNING: CPU: 0 PID: 1 at ./include/linux/dma-mapping.h:516 bgmac_enet_probe+0x1b4/0x5c4
-[    0.973751] Modules linked in:
-[    0.976913] CPU: 0 PID: 1 Comm: swapper Not tainted 4.19.9 #0
-[    0.982750] Stack : 804a0000 804597c4 00000000 00000000 80458fd8 8381bc2c 838282d4 80481a47
-[    0.991367]         8042e3ec 00000001 804d38f0 00000204 83980000 00000065 8381bbe0 6f55b24f
-[    0.999975]         00000000 00000000 80520000 00002018 00000000 00000075 00000007 00000000
-[    1.008583]         00000000 80480000 000ee811 00000000 00000000 00000000 80432c00 80248db8
-[    1.017196]         00000009 00000204 83980000 803ad7b0 00000000 801feeec 00000000 804d0000
-[    1.025804]         ...
-[    1.028325] Call Trace:
-[    1.030875] [<8000aef8>] show_stack+0x58/0x100
-[    1.035513] [<8001f8b4>] __warn+0xe4/0x118
-[    1.039708] [<8001f9a4>] warn_slowpath_null+0x48/0x64
-[    1.044935] [<80248db8>] bgmac_enet_probe+0x1b4/0x5c4
-[    1.050101] [<802498e0>] bgmac_probe+0x558/0x590
-[    1.054906] [<80252fd0>] bcma_device_probe+0x38/0x70
-[    1.060017] [<8020e1e8>] really_probe+0x170/0x2e8
-[    1.064891] [<8020e714>] __driver_attach+0xa4/0xec
-[    1.069784] [<8020c1e0>] bus_for_each_dev+0x58/0xb0
-[    1.074833] [<8020d590>] bus_add_driver+0xf8/0x218
-[    1.079731] [<8020ef24>] driver_register+0xcc/0x11c
-[    1.084804] [<804b54cc>] bgmac_init+0x1c/0x44
-[    1.089258] [<8000121c>] do_one_initcall+0x7c/0x1a0
-[    1.094343] [<804a1d34>] kernel_init_freeable+0x150/0x218
-[    1.099886] [<803a082c>] kernel_init+0x10/0x104
-[    1.104583] [<80005878>] ret_from_kernel_thread+0x14/0x1c
-[    1.110107] ---[ end trace f441c0d873d1fb5b ]---
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+2ab493acb9d8329345a3@syzkaller.appspotmail.com
 
-This patch setups a "struct device" (and passes it to the bcma) which
-allows fixing all the mentioned problems. It'll also require a tiny bcma
-patch which will follow through the wireless tree & its maintainer.
 
-Fixes: f8c55dc6e828 ("MIPS: use generic dma noncoherent ops for simple noncoherent platforms")
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: stable@vger.kernel.org # v4.19+
-Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
+------------[ cut here ]------------
+==================================================================
+DEBUG_LOCKS_WARN_ON(current->hardirq_context)
+------------[ cut here ]------------
+BUG: KASAN: stack-out-of-bounds in debug_spin_lock_before  
+kernel/locking/spinlock_debug.c:83 [inline]
+BUG: KASAN: stack-out-of-bounds in do_raw_spin_lock+0x303/0x360  
+kernel/locking/spinlock_debug.c:112
+Bad or missing usercopy whitelist? Kernel memory overwrite attempt detected  
+to SLAB object 'task_struct' (offset 912, size 2)!
+Read of size 4 at addr ffff8880a9466a44 by task kworker/1:0/7562
+WARNING: CPU: 0 PID: -1455013312 at mm/usercopy.c:78  
+usercopy_warn+0xeb/0x110 mm/usercopy.c:78
+
+Kernel panic - not syncing: panic_on_warn set ...
+CPU: 1 PID: 7562 Comm: kworker/1:0 Not tainted 4.20.0+ #4
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: rcu_gp process_srcu
+Call Trace:
+  <IRQ>
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1db/0x2d0 lib/dump_stack.c:113
+  print_address_description.cold+0x7c/0x20d mm/kasan/report.c:187
+  kasan_report.cold+0x1b/0x40 mm/kasan/report.c:317
+  __asan_report_load4_noabort+0x14/0x20 mm/kasan/generic_report.c:134
+  debug_spin_lock_before kernel/locking/spinlock_debug.c:83 [inline]
+  do_raw_spin_lock+0x303/0x360 kernel/locking/spinlock_debug.c:112
+  __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:117 [inline]
+  _raw_spin_lock_irqsave+0x9d/0xcd kernel/locking/spinlock.c:152
+  try_to_wake_up+0xb9/0x1480 kernel/sched/core.c:1965
+  wake_up_process+0x10/0x20 kernel/sched/core.c:2129
+  process_timeout+0x31/0x40 kernel/time/timer.c:1732
+  call_timer_fn+0x254/0x900 kernel/time/timer.c:1325
+  expire_timers kernel/time/timer.c:1362 [inline]
+  __run_timers+0x6fc/0xd50 kernel/time/timer.c:1681
+  run_timer_softirq+0x52/0xb0 kernel/time/timer.c:1694
+  __do_softirq+0x30b/0xb11 kernel/softirq.c:292
+  invoke_softirq kernel/softirq.c:373 [inline]
+  irq_exit+0x180/0x1d0 kernel/softirq.c:413
+  exiting_irq arch/x86/include/asm/apic.h:536 [inline]
+  smp_apic_timer_interrupt+0x1b7/0x760 arch/x86/kernel/apic/apic.c:1062
+  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:807
+  </IRQ>
+RIP: 0010:rdtsc arch/x86/include/asm/msr.h:207 [inline]
+RIP: 0010:rdtsc_ordered arch/x86/include/asm/msr.h:232 [inline]
+RIP: 0010:delay_tsc+0x4c/0xc0 arch/x86/lib/delay.c:61
+Code: e8 0f 31 48 c1 e2 20 48 09 c2 49 89 d4 eb 16 f3 90 bf 01 00 00 00 e8  
+33 70 68 f9 e8 de 5c a0 fb 44 39 e8 75 36 0f ae e8 0f 31 <48> c1 e2 20 48  
+89 d3 48 09 c3 48 89 d8 4c 29 e0 4c 39 f0 73 24 bf
+RSP: 0018:ffff8880891af5a0 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff13
+RAX: 00000000f513364d RBX: 00000201f5133563 RCX: ffffffff838fb3ca
+RDX: 0000000000000201 RSI: ffffffff838fb3d8 RDI: 0000000000000005
+RBP: ffff8880891af5c0 R08: ffff88808f0ec240 R09: fffffbfff16af64d
+R10: ffff8880891af710 R11: ffffffff8b57b267 R12: 00000201f51326c9
+R13: 0000000000000001 R14: 0000000000002ced R15: ffffffff8b57aec0
+  __delay arch/x86/lib/delay.c:161 [inline]
+  __const_udelay+0x5f/0x80 arch/x86/lib/delay.c:175
+  try_check_zero+0x352/0x5c0 kernel/rcu/srcutree.c:730
+  srcu_advance_state kernel/rcu/srcutree.c:1167 [inline]
+  process_srcu+0x642/0x1400 kernel/rcu/srcutree.c:1261
+  process_one_work+0xd0c/0x1ce0 kernel/workqueue.c:2153
+  worker_thread+0x143/0x14a0 kernel/workqueue.c:2296
+  kthread+0x357/0x430 kernel/kthread.c:246
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
+
+CPU: 0 PID: -1455013312 Comm:  Not tainted 4.20.0+ #4
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Allocated by task 2839968544:
+Call Trace:
+BUG: unable to handle kernel paging request at ffffffff8cf07580
+#PF error: [normal kernel read fault]
+PGD 9871067 P4D 9871067 PUD 9872063 PMD 0
+Oops: 0000 [#1] PREEMPT SMP KASAN
+CPU: 1 PID: 7562 Comm: kworker/1:0 Not tainted 4.20.0+ #4
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: rcu_gp process_srcu
+RIP: 0010:depot_fetch_stack+0x10/0x30 lib/stackdepot.c:202
+Code: 36 0f 23 fe e9 20 fe ff ff 48 89 df e8 29 0f 23 fe e9 f1 fd ff ff 90  
+90 90 90 89 f8 c1 ef 11 25 ff ff 1f 00 81 e7 f0 3f 00 00 <48> 03 3c c5 80  
+31 f4 8b 8b 47 0c 48 83 c7 18 c7 46 10 00 00 00 00
+RSP: 0018:ffff8880ae707640 EFLAGS: 00010006
+RAX: 00000000001f8880 RBX: ffff8880a9467a44 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffff8880ae707648 RDI: 0000000000003ff0
+RBP: ffff8880ae707670 R08: 000000000000001d R09: ffffed1015ce3ef9
+R10: ffffed1015ce3ef8 R11: ffff8880ae71f7c7 R12: ffffea0002a51980
+R13: ffff8880a9466a44 R14: ffff8880aa13d900 R15: ffff8880a9467a40
+FS:  0000000000000000(0000) GS:ffff8880ae700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffffff8cf07580 CR3: 0000000099fe2000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  <IRQ>
+  describe_object mm/kasan/report.c:158 [inline]
+  print_address_description.cold+0x16a/0x20d mm/kasan/report.c:194
+  kasan_report.cold+0x1b/0x40 mm/kasan/report.c:317
+  __asan_report_load4_noabort+0x14/0x20 mm/kasan/generic_report.c:134
+  debug_spin_lock_before kernel/locking/spinlock_debug.c:83 [inline]
+  do_raw_spin_lock+0x303/0x360 kernel/locking/spinlock_debug.c:112
+  __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:117 [inline]
+  _raw_spin_lock_irqsave+0x9d/0xcd kernel/locking/spinlock.c:152
+  try_to_wake_up+0xb9/0x1480 kernel/sched/core.c:1965
+  wake_up_process+0x10/0x20 kernel/sched/core.c:2129
+  process_timeout+0x31/0x40 kernel/time/timer.c:1732
+  call_timer_fn+0x254/0x900 kernel/time/timer.c:1325
+  expire_timers kernel/time/timer.c:1362 [inline]
+  __run_timers+0x6fc/0xd50 kernel/time/timer.c:1681
+  run_timer_softirq+0x52/0xb0 kernel/time/timer.c:1694
+  __do_softirq+0x30b/0xb11 kernel/softirq.c:292
+  invoke_softirq kernel/softirq.c:373 [inline]
+  irq_exit+0x180/0x1d0 kernel/softirq.c:413
+  exiting_irq arch/x86/include/asm/apic.h:536 [inline]
+  smp_apic_timer_interrupt+0x1b7/0x760 arch/x86/kernel/apic/apic.c:1062
+  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:807
+  </IRQ>
+RIP: 0010:rdtsc arch/x86/include/asm/msr.h:207 [inline]
+RIP: 0010:rdtsc_ordered arch/x86/include/asm/msr.h:232 [inline]
+RIP: 0010:delay_tsc+0x4c/0xc0 arch/x86/lib/delay.c:61
+Code: e8 0f 31 48 c1 e2 20 48 09 c2 49 89 d4 eb 16 f3 90 bf 01 00 00 00 e8  
+33 70 68 f9 e8 de 5c a0 fb 44 39 e8 75 36 0f ae e8 0f 31 <48> c1 e2 20 48  
+89 d3 48 09 c3 48 89 d8 4c 29 e0 4c 39 f0 73 24 bf
+RSP: 0018:ffff8880891af5a0 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff13
+RAX: 00000000f513364d RBX: 00000201f5133563 RCX: ffffffff838fb3ca
+RDX: 0000000000000201 RSI: ffffffff838fb3d8 RDI: 0000000000000005
+RBP: ffff8880891af5c0 R08: ffff88808f0ec240 R09: fffffbfff16af64d
+R10: ffff8880891af710 R11: ffffffff8b57b267 R12: 00000201f51326c9
+R13: 0000000000000001 R14: 0000000000002ced R15: ffffffff8b57aec0
+  __delay arch/x86/lib/delay.c:161 [inline]
+  __const_udelay+0x5f/0x80 arch/x86/lib/delay.c:175
+  try_check_zero+0x352/0x5c0 kernel/rcu/srcutree.c:730
+  srcu_advance_state kernel/rcu/srcutree.c:1167 [inline]
+  process_srcu+0x642/0x1400 kernel/rcu/srcutree.c:1261
+  process_one_work+0xd0c/0x1ce0 kernel/workqueue.c:2153
+  worker_thread+0x143/0x14a0 kernel/workqueue.c:2296
+  kthread+0x357/0x430 kernel/kthread.c:246
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
+Modules linked in:
+CR2: ffffffff8cf07580
+---[ end trace 7f399f30ebf94723 ]---
+RIP: 0010:depot_fetch_stack+0x10/0x30 lib/stackdepot.c:202
+Code: 36 0f 23 fe e9 20 fe ff ff 48 89 df e8 29 0f 23 fe e9 f1 fd ff ff 90  
+90 90 90 89 f8 c1 ef 11 25 ff ff 1f 00 81 e7 f0 3f 00 00 <48> 03 3c c5 80  
+31 f4 8b 8b 47 0c 48 83 c7 18 c7 46 10 00 00 00 00
+RSP: 0018:ffff8880ae707640 EFLAGS: 00010006
+RAX: 00000000001f8880 RBX: ffff8880a9467a44 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffff8880ae707648 RDI: 0000000000003ff0
+RBP: ffff8880ae707670 R08: 000000000000001d R09: ffffed1015ce3ef9
+R10: ffffed1015ce3ef8 R11: ffff8880ae71f7c7 R12: ffffea0002a51980
+R13: ffff8880a9466a44 R14: ffff8880aa13d900 R15: ffff8880a9467a40
+FS:  0000000000000000(0000) GS:ffff8880ae700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffffff8cf07580 CR3: 0000000099fe2000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Shutting down cpus with NMI
+usercopy: Kernel memory overwrite attempt detected to SLAB  
+object 'sighand_cache' (offset 2320, size 2)!
+------------[ cut here ]------------
+kernel BUG at mm/usercopy.c:102!
+WARNING: CPU: 0 PID: -1455013312 at kernel/rcu/tree_plugin.h:414  
+__rcu_read_lock+0x75/0x90 kernel/rcu/tree_plugin.h:416
+Modules linked in:
+CPU: 0 PID: -1455013312 Comm:  Tainted: G      D           4.20.0+ #4
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:__rcu_read_lock+0x75/0x90 kernel/rcu/tree_plugin.h:414
+Code: 00 48 8d bb 70 03 00 00 48 89 fa 48 c1 ea 03 0f b6 04 02 84 c0 74 04  
+3c 03 7e 14 81 bb 70 03 00 00 ff ff ff 3f 7f 03 5b 5d c3 <0f> 0b 5b 5d c3  
+e8 61 db 59 00 eb e5 e8 5a db 59 00 eb aa 0f 1f 84
+RSP: 0018:ffff8880a9463850 EFLAGS: 00010012
+RAX: 0000000000000000 RBX: ffff8880a9464240 RCX: ffffffff816b545f
+RDX: 0000000000000000 RSI: 0000000000000004 RDI: ffff8880a94645b0
+RBP: ffff8880a9463858 R08: ffff8880a9464240 R09: 0000000000000004
+R10: ffffed1015cc3ef8 R11: ffff8880ae61f7c7 R12: 0000000000000000
+R13: 0000000000000008 R14: ffff8880a94638d0 R15: ffff8880a94639d8
+FS:  0000000000000000(0000) GS:ffff8880ae600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f1524df3169 CR3: 000000008509b000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+irq event stamp: 2321324489
+hardirqs last  enabled at (2170814927): [<ffffed101528c974>]  
+0xffffed101528c974
+hardirqs last disabled at (2321324489): [<ffffffff8167a729>]  
+vprintk_emit+0x169/0x960 kernel/printk/printk.c:1911
+softirqs last  enabled at (0): [<ffffffff86e92120>] gue6_err+0x0/0x6b0  
+net/ipv6/fou6.c:86
+softirqs last disabled at (1): [<0000000000000001>] 0x1
+---[ end trace 7f399f30ebf94724 ]---
+invalid opcode: 0000 [#2] PREEMPT SMP KASAN
+CPU: 0 PID: -1455013312 Comm:  Tainted: G      D W         4.20.0+ #4
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:usercopy_abort+0xbd/0xbf mm/usercopy.c:102
+Code: c0 e8 0d 0b b2 ff 48 8b 55 c0 49 89 d9 4d 89 f0 ff 75 c8 4c 89 e1 4c  
+89 ee 48 c7 c7 00 27 55 88 ff 75 d0 41 57 e8 5d 4b 98 ff <0f> 0b e8 e2 0a  
+b2 ff e8 dd af f5 ff 8b 95 20 ff ff ff 4c 89 e1 31
+RSP: 0018:ffff8880a9463a80 EFLAGS: 00010086
+RAX: 0000000000000068 RBX: ffffffff88494720 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffffffff8167d666 RDI: ffffed101528c742
+RBP: ffff8880a9463ad8 R08: 0000000000000068 R09: ffffed1015cc3ef9
+R10: ffffed1015cc3ef8 R11: ffff8880ae61f7c7 R12: ffffffff893bcfb5
+R13: ffffffff88552560 R14: ffffffff885524a0 R15: ffffffff88552460
+FS:  0000000000000000(0000) GS:ffff8880ae600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f1524df3169 CR3: 000000008509b000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+Modules linked in:
+---[ end trace 7f399f30ebf94725 ]---
+RIP: 0010:depot_fetch_stack+0x10/0x30 lib/stackdepot.c:202
+Code: 36 0f 23 fe e9 20 fe ff ff 48 89 df e8 29 0f 23 fe e9 f1 fd ff ff 90  
+90 90 90 89 f8 c1 ef 11 25 ff ff 1f 00 81 e7 f0 3f 00 00 <48> 03 3c c5 80  
+31 f4 8b 8b 47 0c 48 83 c7 18 c7 46 10 00 00 00 00
+RSP: 0018:ffff8880ae707640 EFLAGS: 00010006
+RAX: 00000000001f8880 RBX: ffff8880a9467a44 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffff8880ae707648 RDI: 0000000000003ff0
+RBP: ffff8880ae707670 R08: 000000000000001d R09: ffffed1015ce3ef9
+R10: ffffed1015ce3ef8 R11: ffff8880ae71f7c7 R12: ffffea0002a51980
+R13: ffff8880a9466a44 R14: ffff8880aa13d900 R15: ffff8880a9467a40
+FS:  0000000000000000(0000) GS:ffff8880ae600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f1524df3169 CR3: 000000008509b000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+
 ---
- arch/mips/bcm47xx/setup.c     | 30 ++++++++++++++++++++++++++++++
- include/linux/bcma/bcma_soc.h |  1 +
- 2 files changed, 31 insertions(+)
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/arch/mips/bcm47xx/setup.c b/arch/mips/bcm47xx/setup.c
-index 6054d49e608e..9339a31a0a87 100644
---- a/arch/mips/bcm47xx/setup.c
-+++ b/arch/mips/bcm47xx/setup.c
-@@ -173,6 +173,31 @@ void __init plat_mem_setup(void)
- 	pm_power_off = bcm47xx_machine_halt;
- }
- 
-+#ifdef CONFIG_BCM47XX_BCMA
-+static struct device * __init bcm47xx_setup_device(void)
-+{
-+	struct device *dev;
-+	int err;
-+
-+	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
-+	if (!dev)
-+		return NULL;
-+
-+	err = dev_set_name(dev, "bcm47xx_soc");
-+	if (err) {
-+		pr_err("Failed to set SoC device name: %d\n", err);
-+		kfree(dev);
-+		return NULL;
-+	}
-+
-+	err = dma_coerce_mask_and_coherent(dev, DMA_BIT_MASK(32));
-+	if (err)
-+		pr_err("Failed to set SoC DMA mask: %d\n", err);
-+
-+	return dev;
-+}
-+#endif
-+
- /*
-  * This finishes bus initialization doing things that were not possible without
-  * kmalloc. Make sure to call it late enough (after mm_init).
-@@ -183,6 +208,10 @@ void __init bcm47xx_bus_setup(void)
- 	if (bcm47xx_bus_type == BCM47XX_BUS_TYPE_BCMA) {
- 		int err;
- 
-+		bcm47xx_bus.bcma.dev = bcm47xx_setup_device();
-+		if (!bcm47xx_bus.bcma.dev)
-+			panic("Failed to setup SoC device\n");
-+
- 		err = bcma_host_soc_init(&bcm47xx_bus.bcma);
- 		if (err)
- 			panic("Failed to initialize BCMA bus (err %d)", err);
-@@ -235,6 +264,7 @@ static int __init bcm47xx_register_bus_complete(void)
- #endif
- #ifdef CONFIG_BCM47XX_BCMA
- 	case BCM47XX_BUS_TYPE_BCMA:
-+		device_register(bcm47xx_bus.bcma.dev);
- 		bcma_bus_register(&bcm47xx_bus.bcma.bus);
- 		break;
- #endif
-diff --git a/include/linux/bcma/bcma_soc.h b/include/linux/bcma/bcma_soc.h
-index 7cca5f859a90..72a9a5cf962b 100644
---- a/include/linux/bcma/bcma_soc.h
-+++ b/include/linux/bcma/bcma_soc.h
-@@ -5,6 +5,7 @@
- #include <linux/bcma/bcma.h>
- 
- struct bcma_soc {
-+	struct device *dev;
- 	struct bcma_bus bus;
- };
- 
--- 
-2.20.1
-
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
