@@ -2,116 +2,178 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5051BC43612
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 11:34:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37412C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 11:36:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1EDDF218D3
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 11:34:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Wd+zzXhY"
+	by mail.kernel.org (Postfix) with ESMTP id F3733218D3
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 11:36:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729608AbfABLek (ORCPT
+        id S1729668AbfABLgF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 06:34:40 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:37158 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728876AbfABLek (ORCPT
+        Wed, 2 Jan 2019 06:36:05 -0500
+Received: from mail-it1-f199.google.com ([209.85.166.199]:55428 "EHLO
+        mail-it1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727631AbfABLgF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 06:34:40 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x02BTDFC021085;
-        Wed, 2 Jan 2019 11:34:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=UmChkRnrEq6k2X3BG6k328rkxH6SwfkrBWfrbXBpbnI=;
- b=Wd+zzXhYT5kDXr3PxCtUF2CoiSkeeZilusZwFq8gnQrcKKTBT2ZtAuPEjeFQDEtdcqJz
- iUd4a5A33j5salQClSmRrf43FtDevNj3Bt39HxFe6La4Sz6YccAEONCrV8DBMBpVTbY0
- Kl+ImLUiMOM0vKxXT/1YgyBwsdmxpGpddc+ByN4TwOEGi5IXlSnvpbH0JbKsFZwP5xA4
- URxYq8/qnDSBi3eCAZlx7CyfT38XAIgIkAPQeLXk+9uWBW4TB4NGIZofGiTANxX+qqY3
- e2c19S/08gcWQ2QodIJFvfKZf41H/nobscHOkojr95aUaRc41m6d62aaoueITV8Az+xp +g== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2120.oracle.com with ESMTP id 2pp1jr1kej-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 02 Jan 2019 11:34:09 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x02BY8Bq030729
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 2 Jan 2019 11:34:08 GMT
-Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x02BY6qd006308;
-        Wed, 2 Jan 2019 11:34:06 GMT
-Received: from kadam (/197.157.0.49)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 02 Jan 2019 03:34:06 -0800
-Date:   Wed, 2 Jan 2019 14:33:46 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Amir Mahdi Ghorbanian <indigoomega021@gmail.com>
-Cc:     lars@metafoo.de, devel@driverdev.osuosl.org,
-        Michael.Hennerich@analog.com, linux-iio@vger.kernel.org,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        pmeerw@pmeerw.net, knaack.h@gmx.de, jic23@kernel.org
-Subject: Re: [PATCH] Staging: iio: ad7192: replaced bool in struct
-Message-ID: <20190102113346.GM3781@kadam>
-References: <1545434786-15220-1-git-send-email-indigoomega021@gmail.com>
+        Wed, 2 Jan 2019 06:36:05 -0500
+Received: by mail-it1-f199.google.com with SMTP id j3so32886649itf.5
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 03:36:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=MXmDgYnD5vhY7VnxcK+lvh/RF8zEPtKYkgL8Hy7d2SY=;
+        b=KIl3gTVxftvV6uIUz39HpAaVc6mASnUiIvSFh6vrDLmC3nn/7UwcjE7JgQqe/us/Xb
+         uMseG0YhM4apvph+b1/16NIyKc8zCHUbyUNuDbzoxmjIq0FZ0bH3/7Xz7/0BiJ7To1gJ
+         vgmtkhvIBybpIBfC6XA3LcoS9ezO48bPVj9RoZ3o3TbqYBj8y+LlAtyEwaBidoxPnUuW
+         fWuY9TRzLToyR+9zw60ec6+EbTID0APNfyTMCDAzzaqjziRFK2+kLnaTOUpaGvCGtpax
+         MNbEQUjoGnaa9DuBULQLQpvc+gC4kPMKEBFPg4CG7OcUVaUeDB625jnGwI/0kfwwkulS
+         m2Kw==
+X-Gm-Message-State: AA+aEWb3JjbdDllSMRh+OSypSuzP0AG+BNDBTLTE5yIojOhkfSGQJbi1
+        0tdtkInRU9IcwurYYZHJmZFW4/BTJ7Kvmyk13pmNzCiASIXS
+X-Google-Smtp-Source: AFSGD/XKqc/lFvwDRWTIKTOnm6GUn9cxDWUTyt+Y6TIZlBN8tStNCftIo4LEcAcMqVWUp1Zxc3QyUZOw+VT3NqFchXnG+MgHKBgo
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1545434786-15220-1-git-send-email-indigoomega021@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9123 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=871
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1901020105
+X-Received: by 2002:a24:e4cf:: with SMTP id o198mr31968201ith.20.1546428963826;
+ Wed, 02 Jan 2019 03:36:03 -0800 (PST)
+Date:   Wed, 02 Jan 2019 03:36:03 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000000f35c6057e780d36@google.com>
+Subject: BUG: unable to handle kernel NULL pointer dereference in setup_kmem_cache_node
+From:   syzbot <syzbot+d6ed4ec679652b4fd4e4@syzkaller.appspotmail.com>
+To:     asmadeus@codewreck.org, davem@davemloft.net, ericvh@gmail.com,
+        linux-kernel@vger.kernel.org, lucho@ionkov.net,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        v9fs-developer@lists.sourceforge.net
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 21, 2018 at 03:26:26PM -0800, Amir Mahdi Ghorbanian wrote:
-> Replaced bool in struct with unsigned int bitfield to conserve space and
-> more clearly define size of varibales
-> 
-> Signed-off-by: Amir Mahdi Ghorbanian <indigoomega021@gmail.com>
-> ---
->  drivers/staging/iio/adc/ad7192.h | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/staging/iio/adc/ad7192.h b/drivers/staging/iio/adc/ad7192.h
-> index 7433a43..7d3e62f 100644
-> --- a/drivers/staging/iio/adc/ad7192.h
-> +++ b/drivers/staging/iio/adc/ad7192.h
-> @@ -35,13 +35,13 @@ struct ad7192_platform_data {
->  	u16		vref_mv;
->  	u8		clock_source_sel;
->  	u32		ext_clk_hz;
-> -	bool		refin2_en;
-> -	bool		rej60_en;
-> -	bool		sinc3_en;
-> -	bool		chop_en;
-> -	bool		buf_en;
-> -	bool		unipolar_en;
-> -	bool		burnout_curr_en;
-> +	unsigned int	refin2_en : 1;
-> +	unsigned int	rej60_en : 1;
-> +	unsigned int	sinc3_en : 1;
-> +	unsigned int	chop_en : 1;
-> +	unsigned int	buf_en : 1;
-> +	unsigned int	unipolar_en : 1;
-> +	unsigned int	burnout_curr_en : 1;
+Hello,
 
-Don't put spaces around the :.  Just do:
+syzbot found the following crash on:
 
-	unsigned int    burnout_curr_en:1;
+HEAD commit:    903b77c63167 Merge tag 'linux-kselftest-4.21-rc1' of git:/..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=133428e3400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=53a2f2aa0b1f7606
+dashboard link: https://syzkaller.appspot.com/bug?extid=d6ed4ec679652b4fd4e4
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
-Otherwise it looks like part of a select statement or something.
+Unfortunately, I don't have any reproducer for this crash yet.
 
-regards,
-dan carpenter
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+d6ed4ec679652b4fd4e4@syzkaller.appspotmail.com
 
+BUG: unable to handle kernel NULL pointer dereference at 0000000000000038
+#PF error: [WRITE]
+PGD 8b2a5067 P4D 8b2a5067 PUD a53ed067 PMD 0
+Oops: 0002 [#1] PREEMPT SMP KASAN
+CPU: 1 PID: 16188 Comm: syz-executor4 Not tainted 4.20.0+ #174
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:init_arraycache mm/slab.c:562 [inline]
+RIP: 0010:__alloc_alien_cache mm/slab.c:669 [inline]
+RIP: 0010:alloc_alien_cache mm/slab.c:689 [inline]
+RIP: 0010:setup_kmem_cache_node+0x1ed/0x400 mm/slab.c:910
+Code: 63 48 63 c3 48 0f a3 05 59 9c 72 08 73 56 8b 75 b8 4d 8d 2c c6 44 89  
+e2 48 8b 7d a8 e8 fc e9 ff ff 48 83 f8 c8 49 89 c7 74 17 <c7> 40 38 00 00  
+00 00 8b 45 b0 41 89 47 3c b8 0d f0 ad ba 49 89 47
+RSP: 0018:ffff88804e827318 EFLAGS: 00010213
+RAX: 0000000000000000 RBX: 0000000000000001 RCX: 00000000006000c0
+RDX: 00000000000000a8 RSI: 0000000000000000 RDI: ffff88812c3f0040
+RBP: ffff88804e827378 R08: ffff888054cc86c0 R09: ffffed1015ce5b8f
+R10: ffffed1015ce5b8f R11: ffff8880ae72dc7b R12: 0000000000000000
+R13: ffff888095642648 R14: ffff888095642640 R15: 0000000000000000
+FS:  00007f6fef838700(0000) GS:ffff8880ae700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000000038 CR3: 000000005034d000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  setup_kmem_cache_nodes mm/slab.c:3819 [inline]
+  __do_tune_cpucache+0x165/0x220 mm/slab.c:3889
+  do_tune_cpucache+0x25/0xd0 mm/slab.c:3898
+  enable_cpucache+0x3e/0xd0 mm/slab.c:3979
+  setup_cpu_cache+0xd4/0x1e0 mm/slab.c:1821
+  __kmem_cache_create+0x191/0x230 mm/slab.c:2134
+  create_cache+0xcd/0x1f0 mm/slab_common.c:391
+  kmem_cache_create_usercopy+0x18a/0x240 mm/slab_common.c:487
+  p9_client_create+0x986/0x1674 net/9p/client.c:1054
+  v9fs_session_init+0x217/0x1bb0 fs/9p/v9fs.c:421
+  v9fs_mount+0x7c/0x8f0 fs/9p/vfs_super.c:135
+  mount_fs+0xae/0x31d fs/super.c:1261
+kobject: 'loop1' (000000003afcedd0): kobject_uevent_env
+  vfs_kern_mount.part.35+0xdc/0x4f0 fs/namespace.c:961
+kobject: 'loop1' (000000003afcedd0): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+  vfs_kern_mount fs/namespace.c:951 [inline]
+  do_new_mount fs/namespace.c:2469 [inline]
+  do_mount+0x581/0x31f0 fs/namespace.c:2801
+kobject: 'loop2' (00000000108c69f3): kobject_uevent_env
+kobject: 'loop2' (00000000108c69f3): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+  ksys_mount+0x12d/0x140 fs/namespace.c:3017
+  __do_sys_mount fs/namespace.c:3031 [inline]
+  __se_sys_mount fs/namespace.c:3028 [inline]
+  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3028
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x4579b9
+Code: fd b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 cb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f6fef837c78 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007f6fef837c90 RCX: 00000000004579b9
+RDX: 0000000020000000 RSI: 00000000200000c0 RDI: 0000000000000000
+RBP: 000000000073bf00 R08: 0000000020000240 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f6fef8386d4
+R13: 00000000004c369b R14: 00000000004d61f8 R15: 0000000000000005
+Modules linked in:
+CR2: 0000000000000038
+---[ end trace c630b12329ae5f74 ]---
+RIP: 0010:init_arraycache mm/slab.c:562 [inline]
+RIP: 0010:__alloc_alien_cache mm/slab.c:669 [inline]
+RIP: 0010:alloc_alien_cache mm/slab.c:689 [inline]
+RIP: 0010:setup_kmem_cache_node+0x1ed/0x400 mm/slab.c:910
+kobject: 'loop3' (00000000e06f18ba): kobject_uevent_env
+Code: 63 48 63 c3 48 0f a3 05 59 9c 72 08 73 56 8b 75 b8 4d 8d 2c c6 44 89  
+e2 48 8b 7d a8 e8 fc e9 ff ff 48 83 f8 c8 49 89 c7 74 17 <c7> 40 38 00 00  
+00 00 8b 45 b0 41 89 47 3c b8 0d f0 ad ba 49 89 47
+kobject: 'loop3' (00000000e06f18ba): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+RSP: 0018:ffff88804e827318 EFLAGS: 00010213
+kobject: 'loop5' (00000000bc6ae381): kobject_uevent_env
+RAX: 0000000000000000 RBX: 0000000000000001 RCX: 00000000006000c0
+kobject: 'loop5' (00000000bc6ae381): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+RDX: 00000000000000a8 RSI: 0000000000000000 RDI: ffff88812c3f0040
+kobject: 'loop3' (00000000e06f18ba): kobject_uevent_env
+kobject: 'loop3' (00000000e06f18ba): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+RBP: ffff88804e827378 R08: ffff888054cc86c0 R09: ffffed1015ce5b8f
+kobject: 'loop1' (000000003afcedd0): kobject_uevent_env
+R10: ffffed1015ce5b8f R11: ffff8880ae72dc7b R12: 0000000000000000
+kobject: 'loop1' (000000003afcedd0): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+R13: ffff888095642648 R14: ffff888095642640 R15: 0000000000000000
+FS:  00007f6fef838700(0000) GS:ffff8880ae600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000400200 CR3: 000000005034d000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
