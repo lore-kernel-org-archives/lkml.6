@@ -2,213 +2,288 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2559C43612
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:26:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB28CC43612
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:26:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F62C218D4
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:26:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="d5A789s/"
+	by mail.kernel.org (Postfix) with ESMTP id BAAC02075B
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:26:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729359AbfABKZ7 (ORCPT
+        id S1729373AbfABK0I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 05:25:59 -0500
-Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:34742 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728578AbfABKZ7 (ORCPT
+        Wed, 2 Jan 2019 05:26:08 -0500
+Received: from lucky1.263xmail.com ([211.157.147.135]:37624 "EHLO
+        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728578AbfABK0H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 05:25:59 -0500
-Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id AD8D024E11FC;
-        Wed,  2 Jan 2019 02:25:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1546424759; bh=DbM8GDdJKlSpbVLoK63r8vFdbrHDFjR72e6F/u//36o=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To:From;
-        b=d5A789s/OICdbG2ySZfcMWj4A67ALlf5DkGWsm5OM8eevW06KEkYtfUKFXsBNKix7
-         sJIUSyfQErBIjyvj9mVQat+0115YDUjWS9RpQz2eTGVjil+67oJhVwp79+W+wnnY4f
-         muMEkVHew7CeKxsRw5u+4eq442RoHLbRcCR25Uus0dk8D3bnFJsm1haHN7B3zBr9K/
-         hGtvnPUPzMjLSRgo7wu41XnTiAsSq6B6PomhSrO83217jel1q2h4nguXfQEmJTvpcx
-         lIl4OCCa5//yyf5IpF4krUWrna/yOGmaLebaQH/OUhNfQT6Ptko4eRDLaGDnWrG0+n
-         YjgI7vlRY6ijw==
-Received: from US01WEHTC2.internal.synopsys.com (us01wehtc2-vip.internal.synopsys.com [10.12.239.238])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 3ADB352F3;
-        Wed,  2 Jan 2019 02:25:58 -0800 (PST)
-Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
- US01WEHTC2.internal.synopsys.com (10.12.239.237) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Wed, 2 Jan 2019 02:25:58 -0800
-Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
- DE02WEHTCB.internal.synopsys.com (10.225.19.94) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Wed, 2 Jan 2019 11:25:56 +0100
-Received: from [10.107.25.131] (10.107.25.131) by
- DE02WEHTCA.internal.synopsys.com (10.225.19.80) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Wed, 2 Jan 2019 11:25:56 +0100
-Subject: Re: [PATCH 08/21] PCI: designware: Share code for
- dw_pcie_rd/wr_other_conf()
-To:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
-CC:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        "A.s. Dong" <aisheng.dong@nxp.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        "linux-imx@nxp.com" <linux-imx@nxp.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20181221072716.29017-1-andrew.smirnov@gmail.com>
- <20181221072716.29017-9-andrew.smirnov@gmail.com>
-From:   Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Message-ID: <3d995998-ccec-339d-3676-6abd013dad09@synopsys.com>
-Date:   Wed, 2 Jan 2019 10:21:25 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
-MIME-Version: 1.0
-In-Reply-To: <20181221072716.29017-9-andrew.smirnov@gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.107.25.131]
+        Wed, 2 Jan 2019 05:26:07 -0500
+X-Greylist: delayed 352 seconds by postgrey-1.27 at vger.kernel.org; Wed, 02 Jan 2019 05:26:03 EST
+Received: from tony.xie?rock-chips.com (unknown [192.168.167.84])
+        by lucky1.263xmail.com (Postfix) with ESMTP id 8D7FB5E9;
+        Wed,  2 Jan 2019 18:23:39 +0800 (CST)
+X-263anti-spam: KSV:0;
+X-MAIL-GRAY: 1
+X-MAIL-DELIVERY: 0
+X-KSVirus-check: 0
+X-ABS-CHECKED: 4
+Received: from localhost.localdomain (unknown [58.22.7.114])
+        by smtp.263.net (postfix) whith ESMTP id P6628T139711550613248S1546424617830894_;
+        Wed, 02 Jan 2019 18:23:39 +0800 (CST)
+X-IP-DOMAINF: 1
+X-UNIQUE-TAG: <7c92a8dd6103aab0e6d016af675c5024>
+X-RL-SENDER: tony.xie@rock-chips.com
+X-SENDER: xxx@rock-chips.com
+X-LOGIN-NAME: tony.xie@rock-chips.com
+X-FST-TO: heiko@sntech.de
+X-SENDER-IP: 58.22.7.114
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+From:   Tony Xie <tony.xie@rock-chips.com>
+To:     heiko@sntech.de
+Cc:     broonie@kernel.org, lee.jones@linaro.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, chenjh@rock-chips.com,
+        xsf@rock-chips.com, zhangqing@rock-chips.com,
+        huangtao@rock-chips.com, tony.xie@rock-chips.com
+Subject: [PATCH v7 5/6] rtc: rk808: add RK809 and RK817 support.
+Date:   Wed,  2 Jan 2019 05:23:34 -0500
+Message-Id: <20190102102334.29322-1-tony.xie@rock-chips.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190102102002.29245-1-tony.xie@rock-chips.com>
+References: <20190102102002.29245-1-tony.xie@rock-chips.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+RK809 and RK817 are power management IC chips for multimedia products.
+Most of their functions and registers are same, including the rtc.
 
-On 21/12/2018 07:27, Andrey Smirnov wrote:
-> Default implementation of pcie_rd_other_conf() and
-> dw_pcie_wd_other_conf() share more than 80% of their code. Move shared
-> code into a dedicated subroutine and convert pcie_rd_other_conf() and
-> dw_pcie_wd_other_conf() to use it. No functional change intended.
-> 
-> Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> Cc: Fabio Estevam <fabio.estevam@nxp.com>
-> Cc: Chris Healy <cphealy@gmail.com>
-> Cc: Lucas Stach <l.stach@pengutronix.de>
-> Cc: Leonard Crestez <leonard.crestez@nxp.com>
-> Cc: "A.s. Dong" <aisheng.dong@nxp.com>
-> Cc: Richard Zhu <hongxing.zhu@nxp.com>
-> Cc: linux-imx@nxp.com
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-pci@vger.kernel.org
-> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-> ---
->  .../pci/controller/dwc/pcie-designware-host.c | 61 +++++++------------
->  1 file changed, 23 insertions(+), 38 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
-> index 721d60a5d9e4..8f957cd6901b 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-> @@ -512,8 +512,9 @@ int dw_pcie_host_init(struct pcie_port *pp)
->  	return ret;
->  }
->  
-> -static int dw_pcie_rd_other_conf(struct pcie_port *pp, struct pci_bus *bus,
-> -				 u32 devfn, int where, int size, u32 *val)
-> +static int dw_pcie_access_other_conf(struct pcie_port *pp, struct pci_bus *bus,
-> +				     u32 devfn, int where, int size, u32 *val,
-> +				     bool write)
->  {
->  	int ret, type;
->  	u32 busdev, cfg_size;
-> @@ -521,9 +522,6 @@ static int dw_pcie_rd_other_conf(struct pcie_port *pp, struct pci_bus *bus,
->  	void __iomem *va_cfg_base;
->  	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
->  
-> -	if (pp->ops->rd_other_conf)
-> -		return pp->ops->rd_other_conf(pp, bus, devfn, where, size, val);
-> -
->  	busdev = PCIE_ATU_BUS(bus->number) | PCIE_ATU_DEV(PCI_SLOT(devfn)) |
->  		 PCIE_ATU_FUNC(PCI_FUNC(devfn));
->  
-> @@ -542,7 +540,11 @@ static int dw_pcie_rd_other_conf(struct pcie_port *pp, struct pci_bus *bus,
->  	dw_pcie_prog_outbound_atu(pci, PCIE_ATU_REGION_INDEX1,
->  				  type, cpu_addr,
->  				  busdev, cfg_size);
-> -	ret = dw_pcie_read(va_cfg_base + where, size, val);
-> +	if (write)
-> +		ret = dw_pcie_write(va_cfg_base + where, size, *val);
-> +	else
-> +		ret = dw_pcie_read(va_cfg_base + where, size, val);
-> +
->  	if (pci->num_viewport <= 2)
->  		dw_pcie_prog_outbound_atu(pci, PCIE_ATU_REGION_INDEX1,
->  					  PCIE_ATU_TYPE_IO, pp->io_base,
-> @@ -551,43 +553,26 @@ static int dw_pcie_rd_other_conf(struct pcie_port *pp, struct pci_bus *bus,
->  	return ret;
->  }
->  
-> +static int dw_pcie_rd_other_conf(struct pcie_port *pp, struct pci_bus *bus,
-> +				 u32 devfn, int where, int size, u32 *val)
-> +{
-> +	if (pp->ops->rd_other_conf)
-> +		return pp->ops->rd_other_conf(pp, bus, devfn, where,
-> +					      size, val);
-> +
-> +	return dw_pcie_access_other_conf(pp, bus, devfn, where, size, val,
-> +					 false);
-> +}
-> +
->  static int dw_pcie_wr_other_conf(struct pcie_port *pp, struct pci_bus *bus,
->  				 u32 devfn, int where, int size, u32 val)
->  {
-> -	int ret, type;
-> -	u32 busdev, cfg_size;
-> -	u64 cpu_addr;
-> -	void __iomem *va_cfg_base;
-> -	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-> -
->  	if (pp->ops->wr_other_conf)
-> -		return pp->ops->wr_other_conf(pp, bus, devfn, where, size, val);
-> -
-> -	busdev = PCIE_ATU_BUS(bus->number) | PCIE_ATU_DEV(PCI_SLOT(devfn)) |
-> -		 PCIE_ATU_FUNC(PCI_FUNC(devfn));
-> +		return pp->ops->wr_other_conf(pp, bus, devfn, where,
-> +					      size, val);
->  
-> -	if (bus->parent->number == pp->root_bus_nr) {
-> -		type = PCIE_ATU_TYPE_CFG0;
-> -		cpu_addr = pp->cfg0_base;
-> -		cfg_size = pp->cfg0_size;
-> -		va_cfg_base = pp->va_cfg0_base;
-> -	} else {
-> -		type = PCIE_ATU_TYPE_CFG1;
-> -		cpu_addr = pp->cfg1_base;
-> -		cfg_size = pp->cfg1_size;
-> -		va_cfg_base = pp->va_cfg1_base;
-> -	}
-> -
-> -	dw_pcie_prog_outbound_atu(pci, PCIE_ATU_REGION_INDEX1,
-> -				  type, cpu_addr,
-> -				  busdev, cfg_size);
-> -	ret = dw_pcie_write(va_cfg_base + where, size, val);
-> -	if (pci->num_viewport <= 2)
-> -		dw_pcie_prog_outbound_atu(pci, PCIE_ATU_REGION_INDEX1,
-> -					  PCIE_ATU_TYPE_IO, pp->io_base,
-> -					  pp->io_bus_addr, pp->io_size);
-> -
-> -	return ret;
-> +	return dw_pcie_access_other_conf(pp, bus, devfn, where, size, &val,
-> +					 true);
->  }
->  
->  static int dw_pcie_valid_device(struct pcie_port *pp, struct pci_bus *bus,
-> 
+Signed-off-by: Tony Xie <tony.xie@rock-chips.com>
+Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+---
+ drivers/rtc/Kconfig     |  4 +--
+ drivers/rtc/rtc-rk808.c | 68 ++++++++++++++++++++++++++++++++---------
+ 2 files changed, 56 insertions(+), 16 deletions(-)
 
-Nice!
+diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
+index a819ef07b7ec..8c34f7ec0a59 100644
+--- a/drivers/rtc/Kconfig
++++ b/drivers/rtc/Kconfig
+@@ -363,11 +363,11 @@ config RTC_DRV_MAX77686
+ 	  will be called rtc-max77686.
+ 
+ config RTC_DRV_RK808
+-	tristate "Rockchip RK805/RK808/RK818 RTC"
++	tristate "Rockchip RK805/RK808/RK809/RK817/RK818 RTC"
+ 	depends on MFD_RK808
+ 	help
+ 	  If you say yes here you will get support for the
+-	  RTC of RK805, RK808 and RK818 PMIC.
++	  RTC of RK805, RK809 and RK817, RK808 and RK818 PMIC.
+ 
+ 	  This driver can also be built as a module. If so, the module
+ 	  will be called rk808-rtc.
+diff --git a/drivers/rtc/rtc-rk808.c b/drivers/rtc/rtc-rk808.c
+index 739c0d42e835..5bacdafb7b21 100644
+--- a/drivers/rtc/rtc-rk808.c
++++ b/drivers/rtc/rtc-rk808.c
+@@ -50,9 +50,18 @@
+ #define NUM_TIME_REGS	(RK808_WEEKS_REG - RK808_SECONDS_REG + 1)
+ #define NUM_ALARM_REGS	(RK808_ALARM_YEARS_REG - RK808_ALARM_SECONDS_REG + 1)
+ 
++struct rk_rtc_compat_reg {
++	unsigned int ctrl_reg;
++	unsigned int status_reg;
++	unsigned int alarm_seconds_reg;
++	unsigned int int_reg;
++	unsigned int seconds_reg;
++};
++
+ struct rk808_rtc {
+ 	struct rk808 *rk808;
+ 	struct rtc_device *rtc;
++	struct rk_rtc_compat_reg *creg;
+ 	int irq;
+ };
+ 
+@@ -101,7 +110,7 @@ static int rk808_rtc_readtime(struct device *dev, struct rtc_time *tm)
+ 	int ret;
+ 
+ 	/* Force an update of the shadowed registers right now */
+-	ret = regmap_update_bits(rk808->regmap, RK808_RTC_CTRL_REG,
++	ret = regmap_update_bits(rk808->regmap, rk808_rtc->creg->ctrl_reg,
+ 				 BIT_RTC_CTRL_REG_RTC_GET_TIME,
+ 				 BIT_RTC_CTRL_REG_RTC_GET_TIME);
+ 	if (ret) {
+@@ -115,7 +124,7 @@ static int rk808_rtc_readtime(struct device *dev, struct rtc_time *tm)
+ 	 * 32khz. If we clear the GET_TIME bit here, the time of i2c transfer
+ 	 * certainly more than 31.25us: 16 * 2.5us at 400kHz bus frequency.
+ 	 */
+-	ret = regmap_update_bits(rk808->regmap, RK808_RTC_CTRL_REG,
++	ret = regmap_update_bits(rk808->regmap, rk808_rtc->creg->ctrl_reg,
+ 				 BIT_RTC_CTRL_REG_RTC_GET_TIME,
+ 				 0);
+ 	if (ret) {
+@@ -123,7 +132,7 @@ static int rk808_rtc_readtime(struct device *dev, struct rtc_time *tm)
+ 		return ret;
+ 	}
+ 
+-	ret = regmap_bulk_read(rk808->regmap, RK808_SECONDS_REG,
++	ret = regmap_bulk_read(rk808->regmap, rk808_rtc->creg->seconds_reg,
+ 			       rtc_data, NUM_TIME_REGS);
+ 	if (ret) {
+ 		dev_err(dev, "Failed to bulk read rtc_data: %d\n", ret);
+@@ -166,7 +175,7 @@ static int rk808_rtc_set_time(struct device *dev, struct rtc_time *tm)
+ 	rtc_data[6] = bin2bcd(tm->tm_wday);
+ 
+ 	/* Stop RTC while updating the RTC registers */
+-	ret = regmap_update_bits(rk808->regmap, RK808_RTC_CTRL_REG,
++	ret = regmap_update_bits(rk808->regmap, rk808_rtc->creg->ctrl_reg,
+ 				 BIT_RTC_CTRL_REG_STOP_RTC_M,
+ 				 BIT_RTC_CTRL_REG_STOP_RTC_M);
+ 	if (ret) {
+@@ -174,14 +183,14 @@ static int rk808_rtc_set_time(struct device *dev, struct rtc_time *tm)
+ 		return ret;
+ 	}
+ 
+-	ret = regmap_bulk_write(rk808->regmap, RK808_SECONDS_REG,
++	ret = regmap_bulk_write(rk808->regmap, rk808_rtc->creg->seconds_reg,
+ 				rtc_data, NUM_TIME_REGS);
+ 	if (ret) {
+ 		dev_err(dev, "Failed to bull write rtc_data: %d\n", ret);
+ 		return ret;
+ 	}
+ 	/* Start RTC again */
+-	ret = regmap_update_bits(rk808->regmap, RK808_RTC_CTRL_REG,
++	ret = regmap_update_bits(rk808->regmap, rk808_rtc->creg->ctrl_reg,
+ 				 BIT_RTC_CTRL_REG_STOP_RTC_M, 0);
+ 	if (ret) {
+ 		dev_err(dev, "Failed to update RTC control: %d\n", ret);
+@@ -199,8 +208,13 @@ static int rk808_rtc_readalarm(struct device *dev, struct rtc_wkalrm *alrm)
+ 	uint32_t int_reg;
+ 	int ret;
+ 
+-	ret = regmap_bulk_read(rk808->regmap, RK808_ALARM_SECONDS_REG,
++	ret = regmap_bulk_read(rk808->regmap,
++			       rk808_rtc->creg->alarm_seconds_reg,
+ 			       alrm_data, NUM_ALARM_REGS);
++	if (ret) {
++		dev_err(dev, "Failed to read RTC alarm date REG: %d\n", ret);
++		return ret;
++	}
+ 
+ 	alrm->time.tm_sec = bcd2bin(alrm_data[0] & SECONDS_REG_MSK);
+ 	alrm->time.tm_min = bcd2bin(alrm_data[1] & MINUTES_REG_MAK);
+@@ -210,7 +224,7 @@ static int rk808_rtc_readalarm(struct device *dev, struct rtc_wkalrm *alrm)
+ 	alrm->time.tm_year = (bcd2bin(alrm_data[5] & YEARS_REG_MSK)) + 100;
+ 	rockchip_to_gregorian(&alrm->time);
+ 
+-	ret = regmap_read(rk808->regmap, RK808_RTC_INT_REG, &int_reg);
++	ret = regmap_read(rk808->regmap, rk808_rtc->creg->int_reg, &int_reg);
+ 	if (ret) {
+ 		dev_err(dev, "Failed to read RTC INT REG: %d\n", ret);
+ 		return ret;
+@@ -231,7 +245,7 @@ static int rk808_rtc_stop_alarm(struct rk808_rtc *rk808_rtc)
+ 	struct rk808 *rk808 = rk808_rtc->rk808;
+ 	int ret;
+ 
+-	ret = regmap_update_bits(rk808->regmap, RK808_RTC_INT_REG,
++	ret = regmap_update_bits(rk808->regmap, rk808_rtc->creg->int_reg,
+ 				 BIT_RTC_INTERRUPTS_REG_IT_ALARM_M, 0);
+ 
+ 	return ret;
+@@ -242,7 +256,7 @@ static int rk808_rtc_start_alarm(struct rk808_rtc *rk808_rtc)
+ 	struct rk808 *rk808 = rk808_rtc->rk808;
+ 	int ret;
+ 
+-	ret = regmap_update_bits(rk808->regmap, RK808_RTC_INT_REG,
++	ret = regmap_update_bits(rk808->regmap, rk808_rtc->creg->int_reg,
+ 				 BIT_RTC_INTERRUPTS_REG_IT_ALARM_M,
+ 				 BIT_RTC_INTERRUPTS_REG_IT_ALARM_M);
+ 
+@@ -274,7 +288,8 @@ static int rk808_rtc_setalarm(struct device *dev, struct rtc_wkalrm *alrm)
+ 	alrm_data[4] = bin2bcd(alrm->time.tm_mon + 1);
+ 	alrm_data[5] = bin2bcd(alrm->time.tm_year - 100);
+ 
+-	ret = regmap_bulk_write(rk808->regmap, RK808_ALARM_SECONDS_REG,
++	ret = regmap_bulk_write(rk808->regmap,
++				rk808_rtc->creg->alarm_seconds_reg,
+ 				alrm_data, NUM_ALARM_REGS);
+ 	if (ret) {
+ 		dev_err(dev, "Failed to bulk write: %d\n", ret);
+@@ -318,7 +333,7 @@ static irqreturn_t rk808_alarm_irq(int irq, void *data)
+ 	struct i2c_client *client = rk808->i2c;
+ 	int ret;
+ 
+-	ret = regmap_write(rk808->regmap, RK808_RTC_STATUS_REG,
++	ret = regmap_write(rk808->regmap, rk808_rtc->creg->status_reg,
+ 			   RTC_STATUS_MASK);
+ 	if (ret) {
+ 		dev_err(&client->dev,
+@@ -371,6 +386,22 @@ static int rk808_rtc_resume(struct device *dev)
+ static SIMPLE_DEV_PM_OPS(rk808_rtc_pm_ops,
+ 	rk808_rtc_suspend, rk808_rtc_resume);
+ 
++static struct rk_rtc_compat_reg rk808_creg = {
++	.ctrl_reg = RK808_RTC_CTRL_REG,
++	.status_reg = RK808_RTC_STATUS_REG,
++	.alarm_seconds_reg = RK808_ALARM_SECONDS_REG,
++	.int_reg = RK808_RTC_INT_REG,
++	.seconds_reg = RK808_SECONDS_REG,
++};
++
++static struct rk_rtc_compat_reg rk817_creg = {
++	.ctrl_reg = RK817_RTC_CTRL_REG,
++	.status_reg = RK817_RTC_STATUS_REG,
++	.alarm_seconds_reg = RK817_ALARM_SECONDS_REG,
++	.int_reg = RK817_RTC_INT_REG,
++	.seconds_reg = RK817_SECONDS_REG,
++};
++
+ static int rk808_rtc_probe(struct platform_device *pdev)
+ {
+ 	struct rk808 *rk808 = dev_get_drvdata(pdev->dev.parent);
+@@ -381,11 +412,20 @@ static int rk808_rtc_probe(struct platform_device *pdev)
+ 	if (rk808_rtc == NULL)
+ 		return -ENOMEM;
+ 
++	switch (rk808->variant) {
++	case RK809_ID:
++	case RK817_ID:
++		rk808_rtc->creg = &rk817_creg;
++		break;
++	default:
++		rk808_rtc->creg = &rk808_creg;
++		break;
++	}
+ 	platform_set_drvdata(pdev, rk808_rtc);
+ 	rk808_rtc->rk808 = rk808;
+ 
+ 	/* start rtc running by default, and use shadowed timer. */
+-	ret = regmap_update_bits(rk808->regmap, RK808_RTC_CTRL_REG,
++	ret = regmap_update_bits(rk808->regmap, rk808_rtc->creg->ctrl_reg,
+ 				 BIT_RTC_CTRL_REG_STOP_RTC_M |
+ 				 BIT_RTC_CTRL_REG_RTC_READSEL_M,
+ 				 BIT_RTC_CTRL_REG_RTC_READSEL_M);
+@@ -395,7 +435,7 @@ static int rk808_rtc_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
+-	ret = regmap_write(rk808->regmap, RK808_RTC_STATUS_REG,
++	ret = regmap_write(rk808->regmap, rk808_rtc->creg->status_reg,
+ 			   RTC_STATUS_MASK);
+ 	if (ret) {
+ 		dev_err(&pdev->dev,
+-- 
+2.17.1
 
-Acked-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
 
-Regards,
-Gustavo
+
