@@ -2,132 +2,113 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DA6CC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 16:52:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 151F0C43612
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 16:54:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D58BD218A4
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 16:52:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D8C89218A4
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 16:54:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="RqbKQ7nP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730503AbfABQwa (ORCPT
+        id S1730517AbfABQya (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 11:52:30 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58792 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728720AbfABQwa (ORCPT
+        Wed, 2 Jan 2019 11:54:30 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:60068 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728720AbfABQy3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 11:52:30 -0500
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x02GnGWF008826
-        for <linux-kernel@vger.kernel.org>; Wed, 2 Jan 2019 11:52:29 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2prxffymdk-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 11:52:28 -0500
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
-        Wed, 2 Jan 2019 16:52:27 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 2 Jan 2019 16:52:23 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x02GqMCh62128292
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 2 Jan 2019 16:52:22 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0F0D94C058;
-        Wed,  2 Jan 2019 16:52:22 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 645064C044;
-        Wed,  2 Jan 2019 16:52:21 +0000 (GMT)
-Received: from [9.152.224.140] (unknown [9.152.224.140])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed,  2 Jan 2019 16:52:21 +0000 (GMT)
-Reply-To: pmorel@linux.ibm.com
-Subject: Re: [PATCH v5 04/15] KVM: s390: use pending_irqs_no_gisa() where
- appropriate
-To:     Michael Mueller <mimu@linux.ibm.com>,
-        KVM Mailing List <kvm@vger.kernel.org>
-Cc:     Linux-S390 Mailing List <linux-s390@vger.kernel.org>,
-        linux-kernel@vger.kernel.org,
-        kvm390-list@tuxmaker.boeblingen.de.ibm.com,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Halil Pasic <pasic@linux.ibm.com>
-References: <20181219191756.57973-1-mimu@linux.ibm.com>
- <20181219191756.57973-5-mimu@linux.ibm.com>
-From:   Pierre Morel <pmorel@linux.ibm.com>
-Date:   Wed, 2 Jan 2019 17:52:21 +0100
+        Wed, 2 Jan 2019 11:54:29 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x02GmvBI070945;
+        Wed, 2 Jan 2019 16:54:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=/ypah8wJvDvd6wm0z/IV+9XsHXGEoTAmaF/xx1029j0=;
+ b=RqbKQ7nP7SR2gqW45H8h8O5NFSXMm1za9oezSnCLbEev8WzmcwHAWt3torTggun6XVH7
+ 6tpJ778QG2C07aes9iHSFpAy20kFuZaY7hEe2r8JqTUmOl3w7bqzSgb3wZu1wrFMqqeg
+ lWBUa5YAiR5uRYMy7VXbJBILp8UzR7O+nhGTjvjOU6vaZiF5TmTbL57pNOcgG5LTSPKU
+ ZwOYqlkOgpwezkjkoF7E3Njb9fA3AWSXIOK7HSsXn16+m2fiKMyM2eDUPGNifdWPV/iN
+ vPbGP09e5EQ/aNtuLuypERyEHXb/IkVRk/r5IjTRoHDgNnfltkT8kbi5EAbBfTwf2P7U +Q== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by aserp2130.oracle.com with ESMTP id 2pnxee35qv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 02 Jan 2019 16:54:13 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x02GsBWP006289
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 2 Jan 2019 16:54:11 GMT
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x02Gs9Ki026431;
+        Wed, 2 Jan 2019 16:54:09 GMT
+Received: from [192.168.1.164] (/50.38.38.67)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 02 Jan 2019 08:54:09 -0800
+Subject: Re: [LKP] [hugetlbfs] 9c83282117: vm-scalability.throughput -4.3%
+ regression
+To:     kernel test robot <rong.a.chen@intel.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Michal Hocko <mhocko@kernel.org>,
+        Hugh Dickins <hughd@google.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Prakash Sangappa <prakash.sangappa@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        stable@vger.kernel.org, lkp@01.org
+References: <20181228142608.GA17624@shao2-debian>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <21117eab-862e-562b-0c86-ec2ccc1f68e4@oracle.com>
+Date:   Wed, 2 Jan 2019 08:54:07 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-In-Reply-To: <20181219191756.57973-5-mimu@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20181228142608.GA17624@shao2-debian>
+Content-Type: text/plain; charset=windows-1252
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19010216-0020-0000-0000-000002FF9FC3
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19010216-0021-0000-0000-0000214FA57A
-Message-Id: <88988ed9-dd61-90c0-c689-a317dd1ff23a@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-02_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901020151
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9124 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=917
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1901020151
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19/12/2018 20:17, Michael Mueller wrote:
-> Interruption types that are not represented in GISA shall
-> use pending_irqs_no_gisa() to test pending interruptions.
+On 12/28/18 6:26 AM, kernel test robot wrote:
+> Greeting,
 > 
-> Signed-off-by: Michael Mueller <mimu@linux.ibm.com>
-> ---
->   arch/s390/kvm/interrupt.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
+> FYI, we noticed a -4.3% regression of vm-scalability.throughput due to commit:
 > 
-> diff --git a/arch/s390/kvm/interrupt.c b/arch/s390/kvm/interrupt.c
-> index c3a8b2fbbcf2..093b568b6356 100644
-> --- a/arch/s390/kvm/interrupt.c
-> +++ b/arch/s390/kvm/interrupt.c
-> @@ -353,7 +353,7 @@ static void set_intercept_indicators_io(struct kvm_vcpu *vcpu)
->   
->   static void set_intercept_indicators_ext(struct kvm_vcpu *vcpu)
->   {
-> -	if (!(pending_irqs(vcpu) & IRQ_PEND_EXT_MASK))
-> +	if (!(pending_irqs_no_gisa(vcpu) & IRQ_PEND_EXT_MASK))
->   		return;
->   	if (psw_extint_disabled(vcpu))
->   		kvm_s390_set_cpuflags(vcpu, CPUSTAT_EXT_INT);
-> @@ -363,7 +363,7 @@ static void set_intercept_indicators_ext(struct kvm_vcpu *vcpu)
->   
->   static void set_intercept_indicators_mchk(struct kvm_vcpu *vcpu)
->   {
-> -	if (!(pending_irqs(vcpu) & IRQ_PEND_MCHK_MASK))
-> +	if (!(pending_irqs_no_gisa(vcpu) & IRQ_PEND_MCHK_MASK))
->   		return;
->   	if (psw_mchk_disabled(vcpu))
->   		vcpu->arch.sie_block->ictl |= ICTL_LPSW;
 > 
+> commit: 9c83282117778856d647ffc461c4aede2abb6742 ("[PATCH v3 1/2] hugetlbfs: use i_mmap_rwsem for more pmd sharing synchronization")
+> url: https://github.com/0day-ci/linux/commits/Mike-Kravetz/hugetlbfs-use-i_mmap_rwsem-for-better-synchronization/20181223-095226
+> 
+> 
+> in testcase: vm-scalability
+> on test machine: 104 threads Intel(R) Xeon(R) Platinum 8170 CPU @ 2.10GHz with 64G memory
+> with following parameters:
+> 
+> 	runtime: 300s
+> 	size: 8T
+> 	test: anon-cow-seq-hugetlb
+> 	cpufreq_governor: performance
+> 	ucode: 0x200004d
 
-Reviewed-by: Pierre Morel<pmorel@linux.ibm.com>
+I'll take a closer look.
 
+The patch does introduce longer i_mmap_rwsem hold times for the sake of
+correctness.  Need to more fully understand the test and results to determine
+if this is expected.
 
 -- 
-Pierre Morel
-Linux/KVM/QEMU in Böblingen - Germany
-
+Mike Kravetz
