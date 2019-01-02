@@ -2,545 +2,134 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD150C43444
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 16:17:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E753FC43612
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 16:28:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66D8B21901
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 16:17:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B620F218DE
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 16:28:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="OkqaDaYS"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="BiIw0OXC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730410AbfABQRm (ORCPT
+        id S1729722AbfABQ2L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 11:17:42 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:36754 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730384AbfABQRl (ORCPT
+        Wed, 2 Jan 2019 11:28:11 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:34363 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729492AbfABQ2K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 11:17:41 -0500
-Received: by mail-ed1-f68.google.com with SMTP id f23so26641572edb.3
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 08:17:37 -0800 (PST)
+        Wed, 2 Jan 2019 11:28:10 -0500
+Received: by mail-wr1-f68.google.com with SMTP id j2so31128153wrw.1
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 08:28:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=PVewjK+WZgXG8aJrPOjn6YwGTbcieMK5eAf0Dz5fQac=;
-        b=OkqaDaYSelEprsGFnUz0xRO96uDCGGd9iPWGS4yEx90Frae6HtCHX9VHS8Rp5zu2r3
-         nwoXZ/XcQkTpDtMi4O5dogbipjaYUZ6F6DwwyDS1JMj8SaPll6GJoQXsomWzl8uScHv3
-         Z+/FeX+GgLNcLXlHC72bauzNlCIXiyGLTR60p9o5HW3ILV+YdVjiaoL2yADj+fJuL4zD
-         cbduHW8cP1aH97nMXMxx2Avm9HLPU7GcA/TEL3aDPJ19xceOH9kCLlyHpbwwIi3UP+NG
-         hYmpmJvuqGx/sgLgU+8hUqlYVVvK+ZA5klof+TfvFci/l/hYRHHLgFwoaAG3rzZUS914
-         YTNA==
+        d=linaro.org; s=google;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=zoEN4e7FVLBdSCM0JYwFQBKnXFgM1dT6w5T9AKkbJH8=;
+        b=BiIw0OXCrudcQU0jcN1txwA/8FRcTFQA1AxQR5YzktjRsEHIJIAbu5rYwEbu3m+CZ6
+         YTm+fuD1qtRH9p3dY9OQrb3tzMg6q4R66WcI4x8WmgRVEpN7CEhjujAsotpvheB3dpLn
+         OOqibQOGfEFtJRSqXhsOPJ2zDYrUPRHV6y1MY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=PVewjK+WZgXG8aJrPOjn6YwGTbcieMK5eAf0Dz5fQac=;
-        b=ER06HKodQ/J9VRM3eVxAUDUmGr5m28NgbVyInO1jWKsYSe2OfNp3Ketrzyns2GIE6h
-         aqOhpEJSPzMR5eCco/ntzdkpAhei+DanWM3P3Psevg2v3ny/TPSuRgzwN2nxVq7DFumK
-         YLr2olu6e79JgeKxOjd4Mq1Yr/yyHN/AOfS1gu909RkuPBJVLCk9mfTHCLNm+kLuv31T
-         50uXSqnkBQd6cXZcfcIbSlko86jJAyDCg39p3qo3TnZu39goyULUDr/y+/BLZvcQ4kb3
-         P+aazzyjL17q/agzrnt/Trd95k4+Wz4H8VcrCDOaTo8rIEi8hg4tm9nDD6f8tAe+kJTB
-         ISAA==
-X-Gm-Message-State: AA+aEWZwu0/Lke7INmIFYqcX/DBTQTzy57pZY1thC9/Ay/V8d8R19NP8
-        xVQ0zQMJXtrw5PNq4k0oHBsewDns29pxLg==
-X-Google-Smtp-Source: AFSGD/WNTkGnf/b4HBy1byYq0T4kN2jqP3ohworK+UOisbrRAAVWog6xXCGSO6d6BhrnUMK/bPgZiw==
-X-Received: by 2002:a50:8ad6:: with SMTP id k22mr40458600edk.189.1546445856887;
-        Wed, 02 Jan 2019 08:17:36 -0800 (PST)
-Received: from localhost.localdomain ([2a02:8109:b6c0:d6c:700b:b2fa:de8a:175d])
-        by smtp.gmail.com with ESMTPSA id k20sm22513972eda.71.2019.01.02.08.17.35
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=zoEN4e7FVLBdSCM0JYwFQBKnXFgM1dT6w5T9AKkbJH8=;
+        b=R3ML6+q350SznuSCG+zzEAXpAQOk0p+m+jOxTDLBpoTSLqprO5ewuPjQJPaDUV/eU/
+         BabT8n5b4PX0aaUt7pgSLrQKrOY//9wKIxU6Z1qRQP3cRl5ehSO30Odr+S4ucMpHmYDA
+         Y95d7+7AX/VEqtFoOgeOoqF4fH+nQkaPCCpV3Vj4VLqjXcx29lW8sp4iYKZPA2rt//2T
+         Q7j6EFtkSRsKx0tGOsuuMIE0nCdd4Zgezoc0SqyOx8Sz9D9LYhO/G9LbI04Rfu7PlynV
+         JpRiKQiBAszPot43JCtpN3+MvXh/K8X0MfAIIh/wOajBM2sipSefClXXD9GhQSY6jzNE
+         tDbA==
+X-Gm-Message-State: AJcUukeaO/YDLZZSqbcbOVSjEqUDKDI661f6OMi+DXQRljsGXGFO4T4V
+        MUZ1rS2v23jKqbVP8j5wkkzhwA==
+X-Google-Smtp-Source: ALg8bN4Knmwz+1m6Bhl2vLnw8aluVF5FsOUZVpEBD7Oy4JrJMEHq4MEvNhH4pPqmINuLIlcdN+9Opw==
+X-Received: by 2002:adf:9d08:: with SMTP id k8mr41141220wre.203.1546446488156;
+        Wed, 02 Jan 2019 08:28:08 -0800 (PST)
+Received: from [192.168.0.101] ([88.147.66.57])
+        by smtp.gmail.com with ESMTPSA id x3sm39486974wrd.19.2019.01.02.08.28.06
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 02 Jan 2019 08:17:36 -0800 (PST)
-From:   Christian Brauner <christian@brauner.io>
-To:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        luto@kernel.org, arnd@arndb.de, serge@hallyn.com,
-        keescook@chromium.org, akpm@linux-foundation.org
-Cc:     jannh@google.com, oleg@redhat.com, cyphar@cyphar.com,
-        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        dancol@google.com, timmurray@google.com, fweimer@redhat.com,
-        tglx@linutronix.de, x86@kernel.org, ebiederm@xmission.com,
-        Christian Brauner <christian@brauner.io>
-Subject: [PATCH v7 2/2] selftests: add tests for pidfd_send_signal()
-Date:   Wed,  2 Jan 2019 17:16:54 +0100
-Message-Id: <20190102161654.9093-2-christian@brauner.io>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190102161654.9093-1-christian@brauner.io>
-References: <20190102161654.9093-1-christian@brauner.io>
-MIME-Version: 1.0
-X-Patchwork-Bot: notify
-Content-Transfer-Encoding: 8bit
+        Wed, 02 Jan 2019 08:28:07 -0800 (PST)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
+Subject: Re: [PATCH V2 00/10] unify the interface of the proportional-share
+ policy in blkio/io
+From:   Paolo Valente <paolo.valente@linaro.org>
+In-Reply-To: <20190102160328.GR2509588@devbig004.ftw2.facebook.com>
+Date:   Wed, 2 Jan 2019 17:28:05 +0100
+Cc:     'Paolo Valente' via bfq-iosched <bfq-iosched@googlegroups.com>,
+        Angelo Ruocco <angelo.ruocco.90@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Li Zefan <lizefan@huawei.com>,
+        Angelo Ruocco <angeloruocco90@gmail.com>,
+        Dennis Zhou <dennis@kernel.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Liu Bo <bo.liu@linux.alibaba.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>, broonie@kernel.org,
+        oleksandr@natalenko.name, cgroups@vger.kernel.org,
+        linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
+Content-Transfer-Encoding: 7bit
+Message-Id: <CAFEB3AA-1E80-4A75-8B93-D3E4A46C30DB@linaro.org>
+References: <7D7FAB43-5F62-4402-A9B3-E7C2E30AE680@linaro.org>
+ <20181130184256.GI2509588@devbig004.ftw2.facebook.com>
+ <5534B7D4-A5D9-4F44-9620-970A7F9EC140@linaro.org>
+ <CADiTV-29TmkB5-k=TtQfoJqjP2Qv7GSsGLXAPBaTB6DoQ+6yyw@mail.gmail.com>
+ <874A0232-2103-4364-BD88-F33B85D6A764@linaro.org>
+ <20181218164126.GX2509588@devbig004.ftw2.facebook.com>
+ <EC4F9B54-2352-4D85-B56C-5800CFEBCCB8@linaro.org>
+ <A360EBDC-B297-4754-AF5C-0A6C30D725B4@linaro.org>
+ <20181227234144.GE2509588@devbig004.ftw2.facebook.com>
+ <F2A4E669-8C79-46D7-8A97-2C561FF5346B@linaro.org>
+ <20190102160328.GR2509588@devbig004.ftw2.facebook.com>
+To:     Tejun Heo <tj@kernel.org>
+X-Mailer: Apple Mail (2.3445.102.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As suggested by Andrew Morton in [1] add selftests for the new
-sys_pidfd_send_signal() syscall:
 
-/* test_pidfd_send_signal_syscall_support */
-Test whether the pidfd_send_signal() syscall is supported and the tests can
-be run or need to be skipped.
 
-/* test_pidfd_send_signal_simple_success */
-Test whether sending a signal via a pidfd works.
+> Il giorno 2 gen 2019, alle ore 17:03, Tejun Heo <tj@kernel.org> ha scritto:
+> 
+> Hello, Paolo.
+> 
+> On Sun, Dec 30, 2018 at 11:25:25AM +0100, Paolo Valente wrote:
+>> What's the benefit of throwing away months of work, on which we agreed
+>> before starting it, and that solves a problem already acknowledged by
+>> interested parties?
+> 
+> Showing multiple conflicting numbers definitely isn't anything which
+> is agreed upon.
+> 
 
-/* test_pidfd_send_signal_exited_fail */
-Verify that sending a signal to an already exited process fails with ESRCH.
+Sorry, of course you din't realize that sharing interface files had
+this consequence, otherwise you'd have protested beforehand.
 
-/* test_pidfd_send_signal_recycled_pid_fail */
-Verify that a recycled pid cannot be signaled via a pidfd referring to an
-already exited process that had the same pid (cf. [2], [3]).
+The problem is that this consequence seems unavoidable: if two
+policies have different numbers to convey, through a shared interface
+file, then they must be allowed to write their different numbers.  To
+me, this doesn't sound like a problem.
 
-[1]: https://lore.kernel.org/lkml/20181228152012.dbf0508c2508138efc5f2bbe@linux-foundation.org/
-[2]: https://lore.kernel.org/lkml/20181230210245.GA30252@mail.hallyn.com/
-[3]: https://lore.kernel.org/lkml/20181230232711.7aayb7vnhogbv4co@brauner.io/
+The only other natural option is no unification, unless you have a
+third way.
 
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Jann Horn <jannh@google.com>
-Cc: Andy Lutomirsky <luto@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Cc: Aleksa Sarai <cyphar@cyphar.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Florian Weimer <fweimer@redhat.com>
-Signed-off-by: Christian Brauner <christian@brauner.io>
-Acked-by: Serge Hallyn <serge@hallyn.com>
----
-/* Changelog */
-v7:
-- add test for pid recycling (cf. [2] and [3]) as suggested by Serge
-- add test for pidfd_send_signal() syscalls support so we can skip tests if
-  it isn't
-v6:
-- patch introduced
-v5..v0:
-- patch not present
----
- tools/testing/selftests/Makefile           |   1 +
- tools/testing/selftests/pidfd/Makefile     |   6 +
- tools/testing/selftests/pidfd/pidfd_test.c | 381 +++++++++++++++++++++
- 3 files changed, 388 insertions(+)
- create mode 100644 tools/testing/selftests/pidfd/Makefile
- create mode 100644 tools/testing/selftests/pidfd/pidfd_test.c
+What do you prefer, or propose?
 
-diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
-index eb54df682d56..84dd78a684e4 100644
---- a/tools/testing/selftests/Makefile
-+++ b/tools/testing/selftests/Makefile
-@@ -29,6 +29,7 @@ TARGETS += net
- TARGETS += netfilter
- TARGETS += networking/timestamping
- TARGETS += nsfs
-+TARGETS += pidfd
- TARGETS += powerpc
- TARGETS += proc
- TARGETS += pstore
-diff --git a/tools/testing/selftests/pidfd/Makefile b/tools/testing/selftests/pidfd/Makefile
-new file mode 100644
-index 000000000000..deaf8073bc06
---- /dev/null
-+++ b/tools/testing/selftests/pidfd/Makefile
-@@ -0,0 +1,6 @@
-+CFLAGS += -g -I../../../../usr/include/
-+
-+TEST_GEN_PROGS := pidfd_test
-+
-+include ../lib.mk
-+
-diff --git a/tools/testing/selftests/pidfd/pidfd_test.c b/tools/testing/selftests/pidfd/pidfd_test.c
-new file mode 100644
-index 000000000000..d59378a93782
---- /dev/null
-+++ b/tools/testing/selftests/pidfd/pidfd_test.c
-@@ -0,0 +1,381 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+#define _GNU_SOURCE
-+#include <errno.h>
-+#include <fcntl.h>
-+#include <linux/types.h>
-+#include <sched.h>
-+#include <signal.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <syscall.h>
-+#include <sys/mount.h>
-+#include <sys/wait.h>
-+#include <unistd.h>
-+
-+#include "../kselftest.h"
-+
-+static inline int sys_pidfd_send_signal(int pidfd, int sig, siginfo_t *info,
-+					unsigned int flags)
-+{
-+	return syscall(__NR_pidfd_send_signal, pidfd, sig, info, flags);
-+}
-+
-+static int signal_received;
-+
-+static void set_signal_received_on_sigusr1(int sig)
-+{
-+	if (sig == SIGUSR1)
-+		signal_received = 1;
-+}
-+
-+/*
-+ * Straightforward test to see whether pidfd_send_signal() works is to send
-+ * a signal to ourself.
-+ */
-+static int test_pidfd_send_signal_simple_success(void)
-+{
-+	int pidfd, ret;
-+	const char *test_name = "pidfd_send_signal send SIGUSR1";
-+
-+	pidfd = open("/proc/self", O_DIRECTORY | O_CLOEXEC);
-+	if (pidfd < 0)
-+		ksft_exit_fail_msg(
-+			"%s test: Failed to open process file descriptor\n",
-+			test_name);
-+
-+	signal(SIGUSR1, set_signal_received_on_sigusr1);
-+
-+	ret = sys_pidfd_send_signal(pidfd, SIGUSR1, NULL, 0);
-+	close(pidfd);
-+	if (ret < 0)
-+		ksft_exit_fail_msg("%s test: Failed to send signal\n",
-+				   test_name);
-+
-+	if (signal_received != 1)
-+		ksft_exit_fail_msg("%s test: Failed to receive signal\n",
-+				   test_name);
-+
-+	signal_received = 0;
-+	ksft_test_result_pass("%s test: Sent signal\n", test_name);
-+	return 0;
-+}
-+
-+static int wait_for_pid(pid_t pid)
-+{
-+	int status, ret;
-+
-+again:
-+	ret = waitpid(pid, &status, 0);
-+	if (ret == -1) {
-+		if (errno == EINTR)
-+			goto again;
-+
-+		return -1;
-+	}
-+
-+	if (ret != pid)
-+		goto again;
-+
-+	if (!WIFEXITED(status))
-+		return -1;
-+
-+	return WEXITSTATUS(status);
-+}
-+
-+static int test_pidfd_send_signal_exited_fail(void)
-+{
-+	int pidfd, ret, saved_errno;
-+	char buf[256];
-+	pid_t pid;
-+	const char *test_name = "pidfd_send_signal signal exited process";
-+
-+	pid = fork();
-+	if (pid < 0)
-+		ksft_exit_fail_msg("%s test: Failed to create new process\n",
-+				   test_name);
-+
-+	if (pid == 0)
-+		_exit(EXIT_SUCCESS);
-+
-+	snprintf(buf, sizeof(buf), "/proc/%d", pid);
-+
-+	pidfd = open(buf, O_DIRECTORY | O_CLOEXEC);
-+
-+	(void)wait_for_pid(pid);
-+
-+	if (pidfd < 0)
-+		ksft_exit_fail_msg(
-+			"%s test: Failed to open process file descriptor\n",
-+			test_name);
-+
-+	ret = sys_pidfd_send_signal(pidfd, 0, NULL, 0);
-+	saved_errno = errno;
-+	close(pidfd);
-+	if (ret == 0)
-+		ksft_exit_fail_msg(
-+			"%s test: Managed to send signal to process even though it should have failed\n",
-+			test_name);
-+
-+	if (saved_errno != ESRCH)
-+		ksft_exit_fail_msg(
-+			"%s test: Expected to receive ESRCH as errno value but received %d instead\n",
-+			test_name, saved_errno);
-+
-+	ksft_test_result_pass("%s test: Failed to send signal as expected\n",
-+			      test_name);
-+	return 0;
-+}
-+
-+/*
-+ * The kernel reserves 300 pids via RESERVED_PIDS in kernel/pid.c
-+ * That means, when it wraps around any pid < 300 will be skipped.
-+ * So we need to use a pid > 300 in order to test recycling.
-+ */
-+#define PID_RECYCLE 1000
-+
-+/*
-+ * Maximum number of cycles we allow. This is equivalent to PID_MAX_DEFAULT.
-+ * If users set a higher limit or we have cycled PIDFD_MAX_DEFAULT number of
-+ * times then we skip the test to not go into an infinite loop or block for a
-+ * long time.
-+ */
-+#define PIDFD_MAX_DEFAULT 0x8000
-+
-+/*
-+ * Define a few custom error codes for the child process to clearly indicate
-+ * what is happening. This way we can tell the difference between a system
-+ * error, a test error, etc.
-+ */
-+#define PIDFD_PASS 0
-+#define PIDFD_FAIL 1
-+#define PIDFD_ERROR 2
-+#define PIDFD_SKIP 3
-+#define PIDFD_XFAIL 4
-+
-+static int test_pidfd_send_signal_recycled_pid_fail(void)
-+{
-+	int i, ret;
-+	pid_t pid1;
-+	const char *test_name = "pidfd_send_signal signal recycled pid";
-+
-+	ret = unshare(CLONE_NEWPID);
-+	if (ret < 0)
-+		ksft_exit_fail_msg("%s test: Failed to unshare pid namespace\n",
-+				   test_name);
-+
-+	ret = unshare(CLONE_NEWNS);
-+	if (ret < 0)
-+		ksft_exit_fail_msg(
-+			"%s test: Failed to unshare mount namespace\n",
-+			test_name);
-+
-+	ret = mount(NULL, "/", NULL, MS_REC | MS_PRIVATE, 0);
-+	if (ret < 0)
-+		ksft_exit_fail_msg("%s test: Failed to remount / private\n",
-+				   test_name);
-+
-+	/* pid 1 in new pid namespace */
-+	pid1 = fork();
-+	if (pid1 < 0)
-+		ksft_exit_fail_msg("%s test: Failed to create new process\n",
-+				   test_name);
-+
-+	if (pid1 == 0) {
-+		char buf[256];
-+		pid_t pid2;
-+		int pidfd = -1;
-+
-+		(void)umount2("/proc", MNT_DETACH);
-+		ret = mount("proc", "/proc", "proc", 0, NULL);
-+		if (ret < 0)
-+			_exit(PIDFD_ERROR);
-+
-+		/* grab pid PID_RECYCLE */
-+		for (i = 0; i <= PIDFD_MAX_DEFAULT; i++) {
-+			pid2 = fork();
-+			if (pid2 < 0)
-+				_exit(PIDFD_ERROR);
-+
-+			if (pid2 == 0)
-+				_exit(PIDFD_PASS);
-+
-+			if (pid2 == PID_RECYCLE) {
-+				snprintf(buf, sizeof(buf), "/proc/%d", pid2);
-+				ksft_print_msg("pid to recycle is %d\n", pid2);
-+				pidfd = open(buf, O_DIRECTORY | O_CLOEXEC);
-+			}
-+
-+			if (wait_for_pid(pid2))
-+				_exit(PIDFD_ERROR);
-+
-+			if (pid2 >= PID_RECYCLE)
-+				break;
-+		}
-+
-+		/*
-+		 * We want to be as predictable as we can so if we haven't been
-+		 * able to grab pid PID_RECYCLE skip the test.
-+		 */
-+		if (pid2 != PID_RECYCLE) {
-+			/* skip test */
-+			close(pidfd);
-+			_exit(PIDFD_SKIP);
-+		}
-+
-+		if (pidfd < 0)
-+			_exit(PIDFD_ERROR);
-+
-+		for (i = 0; i <= PIDFD_MAX_DEFAULT; i++) {
-+			char c;
-+			int pipe_fds[2];
-+			pid_t recycled_pid;
-+			int child_ret = PIDFD_PASS;
-+
-+			ret = pipe2(pipe_fds, O_CLOEXEC);
-+			if (ret < 0)
-+				_exit(PIDFD_ERROR);
-+
-+			recycled_pid = fork();
-+			if (recycled_pid < 0)
-+				_exit(PIDFD_ERROR);
-+
-+			if (recycled_pid == 0) {
-+				close(pipe_fds[1]);
-+				(void)read(pipe_fds[0], &c, 1);
-+				close(pipe_fds[0]);
-+
-+				_exit(PIDFD_PASS);
-+			}
-+
-+			/*
-+			 * Stop the child so we can inspect whether we have
-+			 * recycled pid PID_RECYCLE.
-+			 */
-+			close(pipe_fds[0]);
-+			ret = kill(recycled_pid, SIGSTOP);
-+			close(pipe_fds[1]);
-+			if (ret) {
-+				(void)wait_for_pid(recycled_pid);
-+				_exit(PIDFD_ERROR);
-+			}
-+
-+			/*
-+			 * We have recycled the pid. Try to signal it. This
-+			 * needs to fail since this is a different process than
-+			 * the one the pidfd refers to.
-+			 */
-+			if (recycled_pid == PID_RECYCLE) {
-+				ret = sys_pidfd_send_signal(pidfd, SIGCONT,
-+							    NULL, 0);
-+				if (ret && errno == ESRCH)
-+					child_ret = PIDFD_XFAIL;
-+				else
-+					child_ret = PIDFD_FAIL;
-+			}
-+
-+			/* let the process move on */
-+			ret = kill(recycled_pid, SIGCONT);
-+			if (ret)
-+				(void)kill(recycled_pid, SIGKILL);
-+
-+			if (wait_for_pid(recycled_pid))
-+				_exit(PIDFD_ERROR);
-+
-+			switch (child_ret) {
-+			case PIDFD_FAIL:
-+				/* fallthrough */
-+			case PIDFD_XFAIL:
-+				_exit(child_ret);
-+			case PIDFD_PASS:
-+				break;
-+			default:
-+				/* not reached */
-+				_exit(PIDFD_ERROR);
-+			}
-+
-+			/*
-+			 * If the user set a custom pid_max limit we could be
-+			 * in the millions.
-+			 * Skip the test in this case.
-+			 */
-+			if (recycled_pid > PIDFD_MAX_DEFAULT)
-+				_exit(PIDFD_SKIP);
-+		}
-+
-+		/* failed to recycle pid */
-+		_exit(PIDFD_SKIP);
-+	}
-+
-+	ret = wait_for_pid(pid1);
-+	switch (ret) {
-+	case PIDFD_FAIL:
-+		ksft_exit_fail_msg(
-+			"%s test: Managed to signal recycled pid %d\n",
-+			test_name, PID_RECYCLE);
-+	case PIDFD_PASS:
-+		ksft_exit_fail_msg("%s test: Failed to recycle pid %d\n",
-+				   test_name, PID_RECYCLE);
-+	case PIDFD_SKIP:
-+		ksft_print_msg("%s test: Skipping test\n", test_name);
-+		ret = 0;
-+		break;
-+	case PIDFD_XFAIL:
-+		ksft_test_result_pass(
-+			"%s test: Failed to signal recycled pid as expected\n",
-+			test_name);
-+		ret = 0;
-+		break;
-+	default /* PIDFD_ERROR */:
-+		ksft_exit_fail_msg("%s test: Error while running tests\n",
-+				   test_name);
-+	}
-+
-+	return ret;
-+}
-+
-+static int test_pidfd_send_signal_syscall_support(void)
-+{
-+	int pidfd, ret;
-+	const char *test_name = "pidfd_send_signal check for support";
-+
-+	pidfd = open("/proc/self", O_DIRECTORY | O_CLOEXEC);
-+	if (pidfd < 0)
-+		ksft_exit_fail_msg(
-+			"%s test: Failed to open process file descriptor\n",
-+			test_name);
-+
-+	ret = sys_pidfd_send_signal(pidfd, 0, NULL, 0);
-+	if (ret < 0) {
-+		/*
-+		 * pidfd_send_signal() will currently return ENOSYS when
-+		 * CONFIG_PROC_FS is not set.
-+		 */
-+		if (errno == ENOSYS)
-+			ksft_exit_skip(
-+				"%s test: pidfd_send_signal() syscall not supported (Ensure that CONFIG_PROC_FS=y is set)\n",
-+				test_name);
-+
-+		ksft_exit_fail_msg("%s test: Failed to send signal\n",
-+				   test_name);
-+	}
-+
-+	close(pidfd);
-+	ksft_test_result_pass(
-+		"%s test: pidfd_send_signal() syscall is supported. Tests can be executed\n",
-+		test_name);
-+	return 0;
-+}
-+
-+int main(int argc, char **argv)
-+{
-+	ksft_print_header();
-+
-+	test_pidfd_send_signal_syscall_support();
-+	test_pidfd_send_signal_simple_success();
-+	test_pidfd_send_signal_exited_fail();
-+	test_pidfd_send_signal_recycled_pid_fail();
-+
-+	return ksft_exit_pass();
-+}
--- 
-2.19.1
+Thanks,
+Paolo
+
+> Thanks.
+> 
+> -- 
+> tejun
 
