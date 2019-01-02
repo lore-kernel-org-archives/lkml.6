@@ -2,114 +2,159 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F7F0C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 08:23:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 730ABC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 08:33:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5219A21871
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 08:23:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="T4YgV3zd"
+	by mail.kernel.org (Postfix) with ESMTP id 41FAF2171F
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 08:33:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728960AbfABIXo (ORCPT
+        id S1728969AbfABIdl convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 03:23:44 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:52524 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728870AbfABIXo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 03:23:44 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x028NZTj081582;
-        Wed, 2 Jan 2019 02:23:35 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1546417415;
-        bh=Dbbfcr2Z83lDGzZ9bITKlN6X9XQCAz28Vy5dbqwInfE=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=T4YgV3zdZP93waJPKkHhemNhe+6Exwy78EcFTbcoJLg1rJWWIh71alm1a6CbNTp70
-         DwJQ8fzYzbk7qYMq2HlQyo1DOD24KczKnUddFznj0ImGSTFLUgoFuy0/UPBeLvURqb
-         h50c17IBruc6tSSJuUH+1jQZcLDJOK2DnodlhFH8=
-Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x028NZlY039848
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 2 Jan 2019 02:23:35 -0600
-Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 2
- Jan 2019 02:23:35 -0600
-Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Wed, 2 Jan 2019 02:23:35 -0600
-Received: from [172.24.190.215] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x028NVUQ001262;
-        Wed, 2 Jan 2019 02:23:32 -0600
-Subject: Re: [PATCH V4 1/3] mmc: sdhci: add support for using external DMA
- devices
-To:     Chunyan Zhang <zhang.lyra@gmail.com>,
-        Adrian Hunter <adrian.hunter@intel.com>
-CC:     Chunyan Zhang <zhang.chunyan@linaro.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Sekhar Nori <nsekhar@ti.com>
-References: <1544519572-21921-1-git-send-email-zhang.chunyan@linaro.org>
- <1544519572-21921-2-git-send-email-zhang.chunyan@linaro.org>
- <0e683aef-383c-8200-0059-44a9abb654b8@intel.com>
- <CAAfSe-tHu5m3Of6=KBCxBBH1T8=4tgN8aZP_7QaGERctECZPoQ@mail.gmail.com>
-From:   Faiz Abbas <faiz_abbas@ti.com>
-Message-ID: <f8adce24-99eb-7b65-a2f6-79536686511c@ti.com>
-Date:   Wed, 2 Jan 2019 13:56:25 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 2 Jan 2019 03:33:41 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:35807 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726927AbfABIdk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Jan 2019 03:33:40 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id BF13520748; Wed,  2 Jan 2019 09:33:38 +0100 (CET)
+Received: from xps13 (aaubervilliers-681-1-29-148.w90-88.abo.wanadoo.fr [90.88.149.148])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 7FE27206A6;
+        Wed,  2 Jan 2019 09:33:38 +0100 (CET)
+Date:   Wed, 2 Jan 2019 09:33:38 +0100
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Romain Perier <romain.perier@gmail.com>
+Cc:     Naga Sureshkumar Relli <naga.sureshkumar.relli@xilinx.com>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        linux-mtd@lists.infradead.org, peterpandong@micron.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [LINUX PATCH v12] mtd: rawnand: pl353: Add basic driver for arm
+ pl353 smc nand interface
+Message-ID: <20190102093338.3b4a8c69@xps13>
+In-Reply-To: <20181221091750.GA19470@hp-probook-450>
+References: <1533620414-3332-1-git-send-email-naga.sureshkumar.relli@xilinx.com>
+        <20181221091750.GA19470@hp-probook-450>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <CAAfSe-tHu5m3Of6=KBCxBBH1T8=4tgN8aZP_7QaGERctECZPoQ@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adrian,
+Hi Romain,
 
-On 27/12/18 1:32 PM, Chunyan Zhang wrote:
-> On Thu, 27 Dec 2018 at 15:44, Adrian Hunter <adrian.hunter@intel.com> wrote:
->>
->> On 11/12/18 11:12 AM, Chunyan Zhang wrote:
->>> Some standard SD host controllers can support both external dma
->>> controllers as well as ADMA/SDMA in which the SD host controller
->>> acts as DMA master. TI's omap controller is the case as an example.
->>>
->>> Currently the generic SDHCI code supports ADMA/SDMA integrated in
->>> the host controller but does not have any support for external DMA
->>> controllers implemented using dmaengine, meaning that custom code is
->>> needed for any systems that use an external DMA controller with SDHCI.
->>>
->>> Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
->>
->> FYI, I am waiting on successful testing before reviewing these patches again.
+Switching Boris address.
+
+Romain Perier <romain.perier@gmail.com> wrote on Fri, 21 Dec 2018
+10:17:50 +0100:
+
+> Hello,
 > 
-> Yeah, that makes sense, thanks Adrian!
+> I have rebased this patch onto 4.19.11. I use it on a Zynq7000-based
+> board with a NAND chip Micron MT29F4G08ABADAH4, since ~2 weeks now.
+> The only problem I have to report is that when I boot with an unchanged
+> driver on my board, I get the following logs:
 > 
-> I intend to send out another new patchset after the holidays.
-> After had another look at omap_hsmmc, I knew something need to be
-> modified (emailed Faiz about this privately), but I was still not sure
-> if it can fix the problem Faiz found.
+> [    1.988797] nand: device found, Manufacturer ID: 0x2c, Chip ID: 0xdc
+> [    1.995184] nand: Micron MT29F4G08ABADAH4
+> [    1.999187] nand: 512 MiB, SLC, erase size: 128 KiB, page size: 2048, OOB size: 64
+> [    2.402661] nand: timeout while waiting for chip to become ready
+> [    2.408665] nand: timing mode 5 not acknowledged by the NAND chip
+> [    2.416251] Bad block table not found for chip 0
+> [    2.422278] Bad block table not found for chip 0
+> [    2.426903] Scanning device for bad blocks
+> [    2.431024] Bad eraseblock 0 at 0x000000000000
+> [    2.435509] Bad eraseblock 1 at 0x000000020000
+> [    2.439978] Bad eraseblock 2 at 0x000000040000
+> [    2.444465] Bad eraseblock 3 at 0x000000060000
+> [    2.448936] Bad eraseblock 4 at 0x000000080000
+> [    2.453423] Bad eraseblock 5 at 0x0000000a0000
+> [    2.457893] Bad eraseblock 6 at 0x0000000c0000
+> [    2.462354] Bad eraseblock 7 at 0x0000000e0000
+> [    2.466841] Bad eraseblock 8 at 0x000000100000
+> [    2.471304] Bad eraseblock 9 at 0x000000120000
+> [    2.475793] Bad eraseblock 10 at 0x000000140000
+> [    2.480349] Bad eraseblock 11 at 0x000000160000
+> 
+> [...]
+> 
+> 
+> After investigation, it seems that during the nand_scan phase, the NAND
+> subsystem tests different timing modes on the NAND chip (mode 0 seems to be
+> apply during reset, and then it tries to detect the best mode supported by the
+> NAND chip). Only the mode 0 works here, trying the use the mode 5 resuls in an
+> error (as you can see in the log) and a bad BBT detection. Both modes are
+> supported by the NAND chip. In order to fix this, I had to put the nfc timing
+> into the device node of the nfc, inside the DT (that's not a real fix, ihmo).
+
+Thanks for testing! Indeed, the ->setup_data_interface() callback should be fixed.
+
+> Except this, everything is working as expected. Everything is stable with correct
+> performances.
+> 
+> If I can provide more informations, feel free to ask.
+
+[...]
+
+> > +static int pl353_setup_data_interface(struct mtd_info *mtd, int csline,
+> > +				       const struct nand_data_interface *conf)
+> > +{
+> > +	struct nand_chip *chip = mtd_to_nand(mtd);
+> > +	struct pl353_nand_controller *xnfc =
+> > +		container_of(chip, struct pl353_nand_controller, chip);
+> > +	const struct nand_sdr_timings *sdr;
+> > +	u32 timings[7], mckperiodps;
+> > +
+> > +	if (csline == NAND_DATA_IFACE_CHECK_ONLY)
+> > +		return 0;
+> > +
+> > +	sdr = nand_get_sdr_timings(conf);
+> > +	if (IS_ERR(sdr))
+> > +		return PTR_ERR(sdr);
+> > +
+> > +	/*
+> > +	 * SDR timings are given in pico-seconds while NFC timings must be
+> > +	 * expressed in NAND controller clock cycles.
+> > +	 */
+> > +	mckperiodps = NSEC_PER_SEC / clk_get_rate(xnfc->mclk);
+> > +	mckperiodps *= 1000;
+> > +	if (sdr->tRC_min <= 20000)
+> > +		/*
+> > +		 * PL353 SMC needs one extra read cycle in SDR Mode 5
+> > +		 * This is not written anywhere in the datasheet but
+> > +		 * the results observed during testing.
+> > +		 */
+> > +		timings[0] = DIV_ROUND_UP(sdr->tRC_min, mckperiodps) + 1;
+> > +	else
+> > +		timings[0] = DIV_ROUND_UP(sdr->tRC_min, mckperiodps);
+> > +
+> > +	timings[1] = DIV_ROUND_UP(sdr->tWC_min, mckperiodps);
+> > +	/*
+> > +	 * For all SDR modes, PL353 SMC needs tREA max value as 1,
+> > +	 * Results observed during testing.
+> > +	 */
+> > +	timings[2] = PL353_TREA_MAX_VALUE;
+> > +	timings[3] = DIV_ROUND_UP(sdr->tWP_min, mckperiodps);
+> > +	timings[4] = DIV_ROUND_UP(sdr->tCLR_min, mckperiodps);
+> > +	timings[5] = DIV_ROUND_UP(sdr->tAR_min, mckperiodps);
+> > +	timings[6] = DIV_ROUND_UP(sdr->tRR_min, mckperiodps);
+> > +	pl353_smc_set_cycles(timings);
+> > +
+> > +	return 0;
+> > +}  
+> 
+> If I hack this function in order to limit the timings only to mode 0,
+> everything works. Otherwise it hangs when it tries to apply mode 5.
 > 
 
-I am currently working on moving am335 and am43 devices from omap_hsmmc
-to sdhci-omap driver. External DMA would be an integral part of this.
-The plan is to post these patches as a part of my series after testing
-on all those devices.
+Maybe Naga is not using a chip compatible with mode 5 and did not ran
+into this issue?
+
 
 Thanks,
-Faiz
+Miquèl
