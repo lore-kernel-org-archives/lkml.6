@@ -6,54 +6,51 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDE71C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 18:14:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C27D7C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 18:14:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B032E218DE
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 18:14:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0B52218DE
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 18:14:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727750AbfABSOC (ORCPT
+        id S1727847AbfABSOa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 13:14:02 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:43900 "EHLO
+        Wed, 2 Jan 2019 13:14:30 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:43910 "EHLO
         shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726609AbfABSOC (ORCPT
+        with ESMTP id S1727228AbfABSO3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 13:14:02 -0500
+        Wed, 2 Jan 2019 13:14:29 -0500
 Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::cf9])
         (using TLSv1 with cipher AES256-SHA (256/256 bits))
         (Client did not present a certificate)
         (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 5E40014C043CD;
-        Wed,  2 Jan 2019 10:14:01 -0800 (PST)
-Date:   Wed, 02 Jan 2019 10:13:57 -0800 (PST)
-Message-Id: <20190102.101357.632783619633935793.davem@davemloft.net>
-To:     xuechaojing@huawei.com
-Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        wulike1@huawei.com, chiqijun@huawei.com, fy.wang@huawei.com,
-        tony.qu@huawei.com, luoshaokai@huawei.com
-Subject: Re: [PATCH 1/1] net-next/hinic:add shutdown callback
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 30E7314C043CD;
+        Wed,  2 Jan 2019 10:14:29 -0800 (PST)
+Date:   Wed, 02 Jan 2019 10:14:28 -0800 (PST)
+Message-Id: <20190102.101428.1174032328446323667.davem@davemloft.net>
+To:     kai.heng.feng@canonical.com
+Cc:     hkallweit1@gmail.com, nic_swsd@realtek.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] r8169: Add support for new Realtek Ethernet
 From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20190101193933.27361-1-xuechaojing@huawei.com>
-References: <20190101193933.27361-1-xuechaojing@huawei.com>
+In-Reply-To: <20190102064507.32122-1-kai.heng.feng@canonical.com>
+References: <20190102064507.32122-1-kai.heng.feng@canonical.com>
 X-Mailer: Mew version 6.8 on Emacs 26.1
 Mime-Version: 1.0
 Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 02 Jan 2019 10:14:01 -0800 (PST)
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 02 Jan 2019 10:14:29 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xue Chaojing <xuechaojing@huawei.com>
-Date: Tue, 1 Jan 2019 19:39:33 +0000
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Date: Wed,  2 Jan 2019 14:45:07 +0800
 
-> If there is no shutdown callback, our board will report pcie UNF errors
-> after restarting. This patch add shutdown callback for hinic.
+> There are two new Realtek Ethernet devices which are re-branded r8168h.
+> Add the IDs to to support them.
 > 
-> Signed-off-by: Xue Chaojing <xuechaojing@huawei.com>
+> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
 
-Applied, thanks.
-
- 
+Heiner, please review.
