@@ -2,104 +2,201 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D321DC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 14:04:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89DB7C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 14:08:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A435F20836
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 14:04:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 49849218CD
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 14:08:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="l3Ajae3U"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729382AbfABOEx (ORCPT
+        id S1729306AbfABOIn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 09:04:53 -0500
-Received: from mga02.intel.com ([134.134.136.20]:37936 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727827AbfABOEx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 09:04:53 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Jan 2019 06:04:52 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,431,1539673200"; 
-   d="scan'208";a="113614933"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.56]) ([10.237.72.56])
-  by fmsmga008.fm.intel.com with ESMTP; 02 Jan 2019 06:04:47 -0800
-Subject: Re: [PATCH v3 09/11] mmc: add PCI dependency into IOSF_MBI
-To:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Sinan Kaya <Okaya@kernel.org>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>, faiz_abbas@ti.com,
-        chunyan.zhang@unisoc.com, Jisheng.Zhang@synaptics.com,
-        ludovic.barre@st.com, Arnd Bergmann <arnd@arndb.de>,
-        alex.smith@imgtec.com, chris.brandt@renesas.com,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20181223232521.11320-1-okaya@kernel.org>
- <20181223232521.11320-10-okaya@kernel.org>
- <CAJZ5v0jFXvGJH_V9gJ8c3T5x80yYHQmk=0WfJi=vvkSJ_aShwg@mail.gmail.com>
- <CAK9iUCPqqyK7KMvchM4jY_FBgujnQm019J27TpDJjXUXvu5sjQ@mail.gmail.com>
- <CAJZ5v0hw_=Odpok=6qWVWAfJ0wG7Z8NjwzMCpaFgxYnEAreKcg@mail.gmail.com>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <21e732e8-84e4-72f9-4142-8e6af54f1346@intel.com>
-Date:   Wed, 2 Jan 2019 16:03:14 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Wed, 2 Jan 2019 09:08:43 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:34985 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727711AbfABOIm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Jan 2019 09:08:42 -0500
+Received: by mail-io1-f68.google.com with SMTP id f4so6328030ion.2
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 06:08:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MMsRcrvnG/TSTxSwUQbncDuxiv4T4Zr0GtrwCmaUQqI=;
+        b=l3Ajae3UBfMHHLhzG6Q5GIkv6rpmnpNSMB/iE3KqJqlBFk/o921zjde8Rw0GEXnuN+
+         R4p1e1f0i0LrIqbWfEk3hExag44L3sCxFR4Ec4Pl2j2tAdzHGw0UzBJajg3pp+HRjaCm
+         Unuh0yE2qoxCnDnNxLsi8NzM7JPlm0Xwe71lImE/yJe6F0a1qxpIHG6bdSyCoFVq5KXQ
+         UnjPWwDbPYxR2isx2nbHrk8/X+SQFMy7DKpe15Uoywo4GqNj1UqjP14/MzqzevnuVg4/
+         ifIE30SvBNq29shad0a5ZgdXC+EsAgUhjAPB/yHRoTld3XPBak4ENYhuoxIBrJXyG5BT
+         QdJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MMsRcrvnG/TSTxSwUQbncDuxiv4T4Zr0GtrwCmaUQqI=;
+        b=k9PSo+NUYVnYDaU81vZXJeo0fSB7L7Tef/NpJ6zuothKlnpQZtzswPjpPo45tJWi0v
+         XUhj+sAuWhMs/4T2ykmb4goPwO8AadMR/1navAnAgs35K3JXs4zzCeeUlA4n6zrzuC3F
+         IJxUyhYSb2EmcRbbSjraGOLY32N5dXmkZU2t2tQrsjAwnQaOAmhQ6Blr3lK3U9Vuwou2
+         2Ft8UnJ4OvkgnHDH8OoRHsGK+KLpxYzTikQDrJqpwKVmai/IsQbUZhBgh5KgLOD4vkiS
+         ZZnZHW9GOcGlQrHSiHia/wLmFli+vrHWIkwsA8Na35gIko19ICGNRxOz4rHwy8ulEjUw
+         RYIA==
+X-Gm-Message-State: AJcUukcWVCtS2imGamO3GU3Owdqb6nUPuWNOapsVUV540Vk/CXrZHh1v
+        c7KUd74UE7UK4Br9pnG3yE59u7t2EnctjFAPpmTXw1KNsb857A==
+X-Google-Smtp-Source: ALg8bN5sN9RS7HF2ahBdwLocfi0QQVptzA6Oc2lkKzwbEbDT+H/wQtzJIZPi+R/NcvJ+ve6cj+XzOicPSf+VpQayR6o=
+X-Received: by 2002:a6b:fa0e:: with SMTP id p14mr28348097ioh.271.1546438121224;
+ Wed, 02 Jan 2019 06:08:41 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CAJZ5v0hw_=Odpok=6qWVWAfJ0wG7Z8NjwzMCpaFgxYnEAreKcg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <1542702858-4318-1-git-send-email-wanpengli@tencent.com>
+ <442fc8ca-f92c-eded-9ede-c800a03bf39a@redhat.com> <CACT4Y+Z_wqpUoLDdTdAoSHSXEYRR8PFpGOzLC0kS4Y52c3QmPw@mail.gmail.com>
+ <CAHk-=whZ3_T9b=pac=H1tvdjgX0vjE7FDsC=LfQYDmiY5Aq_kg@mail.gmail.com>
+ <CACT4Y+YRs3HLf7-0AhMPMuvHGvKHge_7R5Qo6Q9H1A2w1fQ39A@mail.gmail.com> <CAHk-=wjS8MG+xcHgjx-BTcAdyh7fugbHQkdJFcwBk=6QEGVKnw@mail.gmail.com>
+In-Reply-To: <CAHk-=wjS8MG+xcHgjx-BTcAdyh7fugbHQkdJFcwBk=6QEGVKnw@mail.gmail.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Wed, 2 Jan 2019 15:08:29 +0100
+Message-ID: <CACT4Y+Y8pMfxyWgsM2roX8DpDUFMigiR90aY7SMTAQCTcz7SHw@mail.gmail.com>
+Subject: Re: [PATCH] KVM: X86: Fix scan ioapic use-before-initialization
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Wanpeng Li <kernellwp@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        dledford@redhat.com, KVM list <kvm@vger.kernel.org>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Wei Wu <ww9210@gmail.com>, Kostya Serebryany <kcc@google.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        syzkaller <syzkaller@googlegroups.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Chris Mason <clm@fb.com>, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@google.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Olof Johansson <olofj@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Theodore Tso <tytso@google.com>, Tim.Bird@sony.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 31/12/18 11:40 AM, Rafael J. Wysocki wrote:
-> On Sun, Dec 30, 2018 at 7:57 PM Sinan Kaya <Okaya@kernel.org> wrote:
->>
->> On Wed, Dec 26, 2018 at 12:41 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
->>>
->>> On Mon, Dec 24, 2018 at 12:26 AM Sinan Kaya <okaya@kernel.org> wrote:
->>>>
->>>> Select IOSF_MBI only when PCI is set.
->>>>
->>>> Signed-off-by: Sinan Kaya <okaya@kernel.org>
->>>> ---
->>>>  drivers/mmc/host/Kconfig | 2 +-
->>>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>>
->>>> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
->>>> index e26b8145efb3..4c5f037b246d 100644
->>>> --- a/drivers/mmc/host/Kconfig
->>>> +++ b/drivers/mmc/host/Kconfig
->>>> @@ -117,7 +117,7 @@ config MMC_RICOH_MMC
->>>>  config MMC_SDHCI_ACPI
->>>>         tristate "SDHCI support for ACPI enumerated SDHCI controllers"
->>>>         depends on MMC_SDHCI && ACPI
->>>
->>> It should depend on PCI as well, shouldn't it?
->>>
->>
->> I don't think so. The PCI dependency is at IOSF_MBI code so code
->> should select IOSF_MBI only when x86 and pci is defined as below.
->>
->> This driver does not depend on PCI.
-> 
-> Are you sure?
-> 
-> Do you know any systems in which to use it without PCI?
-> 
+On Fri, Dec 28, 2018 at 10:09 PM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Fri, Dec 28, 2018 at 1:43 AM Dmitry Vyukov <dvyukov@google.com> wrote:
+> >
+> > > Nobody reads the kernel mailing list directly - there's just too much traffic.
+> >
+> > As the result bug reports and patches got lots and this is bad and it
+> > would be useful to stop it from happening and there are known ways for
+> > this.
+>
+> Well, let me be a  bit more specific: you will find that people read
+> the very _targeted_ mailing lists, because they not only tend to be
+> more specific to some particular interest, but also aren't the flood
+> of hundreds of emails a day.
+>
+> And don't get me wrong: I'm not saying that lkml is useless. Not at
+> all. It's just that it's really more of an archival model than a
+> "people read it" - so you send your emails to a group of people, and
+> then you cc lkml so that when that group gets expanded people can be
+> pointed at the whole thread. Or, obviously, so that commit messages
+> etc can point to discussion.
+>
+> But that does mean that any lkml cc shouldn't be expected to cause a
+> reaction in itself. It's about other things.
+>
+> > syzbot not doing bisection is not the root cause of this
+>
+> Root case? No. But if you do bisection, it means that you can now
+> target things much better. So then it's not lkml and "random
+> collection of maintainers", but a much more targeted group.
+>
+> And that targeted group also ends up being a lot more receptive to it.
+>
+> Again, look at the raw syzbot email and the email by Wanpeng Li. Yes,
+> the syzbot email did bring in a reasonable set of people just based on
+> the oops (I think it did "get_mainainter" on kvm_ioapic_scan_entry()).
+> But Wangpeng ended up sending it to the *particular* people who were
+> directly responsible.
+>
+> > 2. syzbot reports are not worse then average human reports, frequently better.
+>
+> No, they really aren't.
+>
+> They are better in a *technical* sense, but they are also very much
+> obviously automated, which makes the target people take them much less
+> seriously.
+>
+> When you see lots of syzbot emails, and there are lots of more or less
+> random recipients that may or may not be correct, what's the natural
+> reaction to that?
+>
+> Look up "bystander effect".
+>
+> > 3. Bisection is useful, but not important in most cases.
+>
+> No.
+>
+> Exactly because of the problem syzbot has. It's too scatter-shot.
+> People clearly ignore it, because people feel it's not _their_ issue.
+>
+> The advantage of bisection is that it makes the problem much more
+> specific. Right now, you'll find that many developers ignore syzbot
+> simply because it's not worth their time to chase down whether it's
+> even their problem.
+>
+> See what I'm saying?
+>
+> It's the whole "data vs information" issue. Particularly when cc'ing
+> maintainers, who get hundreds of emails a day, you need to convince
+> them that this email is _relevant_.
 
-Qualcomm use it and I don't know if those systems have PCI.
-AMD use it but probably also have PCI.  And yes Intel systems (just BYT and
-CHT IIRC) that use this driver will always have PCI.
+I see what you are saying and I agree that bisection results will make
+reports better in some cases. But I mean a more general problem.
+
+Say you reported a bug, and it happened so that you missed that single
+right person in CC because something, whatever, can happen, right?
+With the current process it will be a coin flip if your report will be
+routed to the right person or lost. And it's not that you personally
+care a lot about this particular bug, it just happened that you
+noticed it and wanted to be a good samaritan. So you will not keep
+track of it on a post-note on your monitor and won't ping later. But
+the bug can be bad and either cause security problems later, or reach
+release and break things in the field and then require 1000x more work
+to port the fix to all downstream forks.
+
+Or, we heavily rely on end users for testing. End users are not kernel
+developers and can't be generally expected to do pre-triage and proper
+routing. Losing these valuable reports is bad because only small
+fraction of users report anything to projects and this can also affect
+user trust, if you see that your reports are not acted on, you don't
+report next time.
+
+Even if we take syzbot, it won't be able to bisect all the time for
+multiple reasons:
+ - some bugs don't have reproducers (but still very real and sometimes
+manageable to fix)
+ - kernel is build/boot broken sometimes for prolonged periods
+ - some old bugs are bisected to introduction of the debugging tool
+that detects the bug
+ - some crashes can be too flaky for reliable bisection
+ - some reproducers won't work on older kernels, yet the bug is there
+ - ...
+So it's will be nice to have bisection results when they are
+available, but it does not feel like it should be the only guarantee
+of a bug report not being lost.
+
+Moreover, you can see in the examples I referenced above that they
+were delivered to the right people, but then still lost because there
+is nothing in the kernel development process that would prevent loses.
+
+Moreover, replying on a small set of private emails generally creates
+problems wrt bus-factor and vacations. It would be useful if anybody
+could see what are the open bugs for rdma_cm subsystem at any point in
+time.
