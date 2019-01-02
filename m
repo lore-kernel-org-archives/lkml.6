@@ -2,25 +2,25 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B667C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 20:05:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 986B4C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 20:06:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D9A420836
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 20:05:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 742C1218DE
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 20:06:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729879AbfABUFo (ORCPT
+        id S1729891AbfABUGQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 15:05:44 -0500
-Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:57232 "EHLO
-        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725984AbfABUFn (ORCPT
+        Wed, 2 Jan 2019 15:06:16 -0500
+Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:40659 "EHLO
+        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725984AbfABUGP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 15:05:43 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R591e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04420;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0THOz2-._1546459534;
+        Wed, 2 Jan 2019 15:06:15 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01353;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0THOz2-._1546459534;
 Received: from e19h19392.et15sqa.tbsite.net(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0THOz2-._1546459534)
           by smtp.aliyun-inc.com(127.0.0.1);
           Thu, 03 Jan 2019 04:05:41 +0800
@@ -28,40 +28,74 @@ From:   Yang Shi <yang.shi@linux.alibaba.com>
 To:     mhocko@suse.com, hannes@cmpxchg.org, akpm@linux-foundation.org
 Cc:     yang.shi@linux.alibaba.com, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 0/3] mm: memcontrol: delayed force empty
-Date:   Thu,  3 Jan 2019 04:05:30 +0800
-Message-Id: <1546459533-36247-1-git-send-email-yang.shi@linux.alibaba.com>
+Subject: [PATCH 2/3] mm: memcontrol: do not try to do swap when force empty
+Date:   Thu,  3 Jan 2019 04:05:32 +0800
+Message-Id: <1546459533-36247-3-git-send-email-yang.shi@linux.alibaba.com>
 X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1546459533-36247-1-git-send-email-yang.shi@linux.alibaba.com>
+References: <1546459533-36247-1-git-send-email-yang.shi@linux.alibaba.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The typical usecase of force empty is to try to reclaim as much as
+possible memory before offlining a memcg.  Since there should be no
+attached tasks to offlining memcg, the tasks anonymous pages would have
+already been freed or uncharged.  Even though anonymous pages get
+swapped out, but they still get charged to swap space.  So, it sounds
+pointless to do swap for force empty.
 
-Currently, force empty reclaims memory synchronously when writing to
-memory.force_empty.  It may take some time to return and the afterwards
-operations are blocked by it.  Although it can be interrupted by signal,
-it still seems suboptimal.
+I tried to dig into the history of this, it was introduced by
+commit 8c7c6e34a125 ("memcg: mem+swap controller core"), but there is
+not any clue about why it was done so at the first place.
 
-Now css offline is handled by worker, and the typical usecase of force
-empty is before memcg offline.  So, handling force empty in css offline
-sounds reasonable.
+The below simple test script shows slight file cache reclaim improvement
+when swap is on.
 
-The user may write into any value to memory.force_empty, but I'm
-supposed the most used value should be 0 and 1.  To not break existing
-applications, writing 0 or 1 still do force empty synchronously, any
-other value will tell kernel to do force empty in css offline worker.
+echo 3 > /proc/sys/vm/drop_caches
+mkdir /sys/fs/cgroup/memory/test
+echo 30 > /sys/fs/cgroup/memory/test/memory.swappiness
+echo $$ >/sys/fs/cgroup/memory/test/cgroup.procs
+cat /proc/meminfo | grep ^Cached|awk -F" " '{print $2}'
+dd if=/dev/zero of=/mnt/test bs=1M count=1024
+ping localhost > /dev/null &
+echo 1 > /sys/fs/cgroup/memory/test/memory.force_empty
+killall ping
+echo $$ >/sys/fs/cgroup/memory/cgroup.procs
+cat /proc/meminfo | grep ^Cached|awk -F" " '{print $2}'
+rmdir /sys/fs/cgroup/memory/test
+cat /proc/meminfo | grep ^Cached|awk -F" " '{print $2}'
 
-Patch #1: Fix some obsolete information about force_empty in the document
-Patch #2: A minor improvement to skip swap for force_empty
-Patch #3: Implement delayed force_empty
+The number of page cache is:
+			w/o		w/
+before force empty    1088792        1088784
+after force empty     41492          39428
+reclaimed	      1047300        1049356
 
-Yang Shi (3):
-      doc: memcontrol: fix the obsolete content about force empty
-      mm: memcontrol: do not try to do swap when force empty
-      mm: memcontrol: delay force empty to css offline
+Without doing swap, force empty can reclaim 2MB more memory in 1GB page
+cache.
 
- Documentation/cgroup-v1/memory.txt | 15 ++++++++++-----
- include/linux/memcontrol.h         |  2 ++
- mm/memcontrol.c                    | 20 +++++++++++++++++++-
- 3 files changed, 31 insertions(+), 6 deletions(-)
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+---
+ mm/memcontrol.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index 6e1469b..bbf39b5 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -2872,7 +2872,7 @@ static int mem_cgroup_force_empty(struct mem_cgroup *memcg)
+ 			return -EINTR;
+ 
+ 		progress = try_to_free_mem_cgroup_pages(memcg, 1,
+-							GFP_KERNEL, true);
++							GFP_KERNEL, false);
+ 		if (!progress) {
+ 			nr_retries--;
+ 			/* maybe some writeback is necessary */
+-- 
+1.8.3.1
+
