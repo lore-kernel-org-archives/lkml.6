@@ -2,91 +2,134 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7460FC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 15:59:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61027C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 16:01:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 438602080A
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 15:59:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546444775;
-	bh=GJc6KIQNf8Pv1+LUIizRnJvPNeDEl8nFCqM4JTmp/zU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=BjPGokWjQMwaCy4DNEN+cAWJozo4D/66QFasc1DBpNrS2O8jt2/jIiM+gsp6Br0yJ
-	 5cJZjXXbZXcGM97JK0hUJacX+NVUM36Vk7QvPkMC1cFVjCJ+0yf8lNz1MRUdTOg0DD
-	 0h0Wnq2+jbM54OGmYjt4ph4JkxO03q81OOAzEnfI=
+	by mail.kernel.org (Postfix) with ESMTP id 2CF66218FC
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 16:01:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lJ1SbOCQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729808AbfABP7e (ORCPT
+        id S1729931AbfABQBf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 10:59:34 -0500
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:45574 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729119AbfABP7b (ORCPT
+        Wed, 2 Jan 2019 11:01:35 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:46384 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729042AbfABQBe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 10:59:31 -0500
-Received: by mail-yw1-f68.google.com with SMTP id d190so12167763ywd.12;
-        Wed, 02 Jan 2019 07:59:30 -0800 (PST)
+        Wed, 2 Jan 2019 11:01:34 -0500
+Received: by mail-io1-f68.google.com with SMTP id v10so24824848ios.13
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 08:01:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=KEm4etM4eth7Ri6QC0Qy/Ny7yfGhtJOfLTX5Wxxna5k=;
-        b=sRHxOSdaBaFi473jP/zE8RO9engV9JPOtZIuRliV1TWd0k54Fw+0C5nRZdb0NGQpTI
-         mowTKqB2k2/1KNRAYO12wMiaZu4d78283qupOjiq6OcJ4GU4aX4Sn5XvIx07YvUwnxfg
-         iT8ug0uyks3nHXzPxufcBj9VrxQNK6S0jJutD3Uq8xY48yJUPaVLFbyVvLBeJrZliWUA
-         1PBductC3wEaNMfo/jAt66ZqkHGMcjNx5gtd6TGb7EJHxjg5vFzmKEiK7TTg0d/sYlaM
-         hYKFmuSw2ozLN/1n6ic7PhVfroD6T92C3wkzPWGnEjgfsA03atxNto6K3CukhScLs6al
-         aoVg==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MsVRfe43oyzUo0Yy9DI1Z23iK9Sm0kuPZkg3XZE1K0s=;
+        b=lJ1SbOCQmCiSje2wR9gDYU1HImajNSDmeWnXTZO5rCoBsAlIhL4aDeULEZHby+kCZt
+         Dy7MEnhOAlOmcrdzKNRaCiaQFjh+90KMFzwgkHcPcgP0vVE6+k/Ekmadn3AxXZsfpo74
+         W1jpRUgSVXtIdhdK+XjvwIGgBqxCVbFQMV3tUFTXzqTjEpWLQukp6dkO1vI0IhiUwy0K
+         j2AkiHfDOSen9OICBmdzi2Nrj2KO03eQ+XJcRQUzxCVa87quMvaBrEOvlAn0xUXqZziV
+         EUDoESsy1dyF/Xy2ETa3z9veco5gNMNIbOmJnmCg9052AChJeJ1NnNEbIrqgD+cSZqyi
+         /6Kg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=KEm4etM4eth7Ri6QC0Qy/Ny7yfGhtJOfLTX5Wxxna5k=;
-        b=PVw15p96Sj3APhs7pQBenc2GWesHIhLeLE60Nh6A7ZxQA2QCkoULtEliYsrPWPGU+w
-         CGW7tQ58uxC2z3xdJqqzr+qsB6LU/E9WYIlpE+eCTiwT6lSoNjDRhbEogmrFBDsknypR
-         G++G6Bu6ZEsoQuH2L6QbTPRPqWENVjWxnfKWAiWfEkSfczAhYh8a56o6TK/GtWEb2FHZ
-         BmA8oHF2AW7i5lRlYmvi3dw7eBAU+uD1Xdt4i4Xe95gRklr4Hq9PtwQgjSPzTjI4LUnn
-         2E3T1o5jvJr/r6B7j9Pf+Eqbx2SSlOE0n1pamOzs5VuXwVHV+z+ekpxRiJ7DRwU3gY1v
-         MuNA==
-X-Gm-Message-State: AA+aEWYgdVlzOCt30Y3sXIl9tEGY59+Hdbh9gwSroircXcP3xsgndrl5
-        IpYkcaJhzc6ciXwgkNnwOxo=
-X-Google-Smtp-Source: AFSGD/U5RK14IhPpEa+Evj4RPFjYA0hD645oUXuq+AypuCIR80KZDnBZCVg4PNDItZh1tKrC2GsO8A==
-X-Received: by 2002:a81:2b04:: with SMTP id r4mr45856882ywr.511.1546444770354;
-        Wed, 02 Jan 2019 07:59:30 -0800 (PST)
-Received: from localhost ([2620:10d:c091:200::6:f03d])
-        by smtp.gmail.com with ESMTPSA id q185sm19612505ywe.87.2019.01.02.07.59.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 02 Jan 2019 07:59:29 -0800 (PST)
-Date:   Wed, 2 Jan 2019 07:59:28 -0800
-From:   Tejun Heo <tj@kernel.org>
-To:     Otto Sabart <ottosabart@seberm.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] doc: cgroup: add missing literal block
-Message-ID: <20190102155928.GP2509588@devbig004.ftw2.facebook.com>
-References: <20181230190155.GA15155@personal>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MsVRfe43oyzUo0Yy9DI1Z23iK9Sm0kuPZkg3XZE1K0s=;
+        b=rww7bdf8yOoyiXY5LuFNU+qkiJs/gWu9ovuLQdiwNHmtS+C2F7ONyXHlz0x8AsFTQK
+         cBfjqb3dgqm4REwIZ/tXRzCyddjFJ/4AC5ZbdkQg2OWs7QNsoyqGjJo2FR/PT5P3Dvty
+         r3XSG6ChO4DyUE821kdqSTk/MbrUMqKDhtW0u9mHGd/TluBCmoFx0tVH71yM9JO4Cbax
+         UIic4+e1PHD80PXi7jE/UfwDrDbhOwZ/B9lCRlUYGT8ryROjwpkFKp5Z6fl5WEYqX+AG
+         qXUvW4mDo1DBKYbI4F+rCrzHxgdeVFjztOV1gTV7slLjlx8NLHbyDhUfgvLHJ6gImiHp
+         dFJA==
+X-Gm-Message-State: AJcUukfJkEI3nxd1ZsGaIWBfVh8j8CZ9dR1GI1TsP2X4eABqVtUIqPZs
+        Uvq0v2B4xYpz5CvEu09P9sLQLpFvOdYtf3urIVtgHY9xFMCXHQ==
+X-Google-Smtp-Source: ALg8bN5HLgXn+wb+8Pq1yMVD3WdxS30aST5R0S/BK5ebSCAS1pFN7ptXkkqcqVeJcWYGFT/TRkHUdHcnYC68YJmJM1U=
+X-Received: by 2002:a5d:8491:: with SMTP id t17mr30920702iom.11.1546444891786;
+ Wed, 02 Jan 2019 08:01:31 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181230190155.GA15155@personal>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+References: <0000000000000f35c6057e780d36@google.com> <CACT4Y+ZECp8Ymq=0QUNfwmfpQvWkBpoMgyUCuz0M=peehEeCHw@mail.gmail.com>
+ <010001680f42f192-82b4e12e-1565-4ee0-ae1f-1e98974906aa-000000@email.amazonses.com>
+In-Reply-To: <010001680f42f192-82b4e12e-1565-4ee0-ae1f-1e98974906aa-000000@email.amazonses.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Wed, 2 Jan 2019 17:01:20 +0100
+Message-ID: <CACT4Y+Z8M+ODKobZYzWBbPv_y_Y2xNBfuUuX7iVceeLap2Yq3g@mail.gmail.com>
+Subject: Re: BUG: unable to handle kernel NULL pointer dereference in setup_kmem_cache_node
+To:     Christopher Lameter <cl@linux.com>
+Cc:     syzbot <syzbot+d6ed4ec679652b4fd4e4@syzkaller.appspotmail.com>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        David Miller <davem@davemloft.net>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        netdev <netdev@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        v9fs-developer@lists.sourceforge.net,
+        Linux-MM <linux-mm@kvack.org>, Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 30, 2018 at 08:01:55PM +0100, Otto Sabart wrote:
-> This patch fixes multiple build warnings:
-> "WARNING: Block quote ends without a blank line; unexpected unindent."
-> 
-> Signed-off-by: Otto Sabart <ottosabart@seberm.com>
+On Wed, Jan 2, 2019 at 4:51 PM Christopher Lameter <cl@linux.com> wrote:
+>
+> On Wed, 2 Jan 2019, Dmitry Vyukov wrote:
+>
+> > Am I missing something or __alloc_alien_cache misses check for
+> > kmalloc_node result?
+> >
+> > static struct alien_cache *__alloc_alien_cache(int node, int entries,
+> >                                                 int batch, gfp_t gfp)
+> > {
+> >         size_t memsize = sizeof(void *) * entries + sizeof(struct alien_cache);
+> >         struct alien_cache *alc = NULL;
+> >
+> >         alc = kmalloc_node(memsize, gfp, node);
+> >         init_arraycache(&alc->ac, entries, batch);
+> >         spin_lock_init(&alc->lock);
+> >         return alc;
+> > }
+> >
+>
+>
+> True _alloc_alien_cache() needs to check for NULL
+>
+>
+> From: Christoph Lameter <cl@linux.com>
+> Subject: slab: Alien caches must not be initialized if the allocation of the alien cache failed
+>
+> Callers of __alloc_alien() check for NULL.
+> We must do the same check in __alloc_alien_cache to avoid NULL pointer dereferences
+> on allocation failures.
+>
+> Signed-off-by: Christoph Lameter <cl@linux.com>
 
-Applied to cgroup/for-4.22.
+Please add:
+Reported-by: syzbot+d6ed4ec679652b4fd4e4@syzkaller.appspotmail.com
 
-Thanks.
-
--- 
-tejun
+> Index: linux/mm/slab.c
+> ===================================================================
+> --- linux.orig/mm/slab.c
+> +++ linux/mm/slab.c
+> @@ -666,8 +666,10 @@ static struct alien_cache *__alloc_alien
+>         struct alien_cache *alc = NULL;
+>
+>         alc = kmalloc_node(memsize, gfp, node);
+> -       init_arraycache(&alc->ac, entries, batch);
+> -       spin_lock_init(&alc->lock);
+> +       if (alc) {
+> +               init_arraycache(&alc->ac, entries, batch);
+> +               spin_lock_init(&alc->lock);
+> +       }
+>         return alc;
+>  }
+>
