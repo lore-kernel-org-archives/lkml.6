@@ -2,127 +2,146 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6516FC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:28:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09967C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:31:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D82521871
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:28:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="n0Y/Wd4F"
+	by mail.kernel.org (Postfix) with ESMTP id C30A0218CD
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:31:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729465AbfABK2r (ORCPT
+        id S1728287AbfABKbF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 05:28:47 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:48922 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726772AbfABK2q (ORCPT
+        Wed, 2 Jan 2019 05:31:05 -0500
+Received: from mail-it1-f199.google.com ([209.85.166.199]:40146 "EHLO
+        mail-it1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726670AbfABKbF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 05:28:46 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x02AJ3cd162598;
-        Wed, 2 Jan 2019 10:28:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=fxXZeFmf/hUwfiqSPA4f8xhJ3/kqz5vs9+XKAQOe/z4=;
- b=n0Y/Wd4Fl33fMyic2LaD7ni5/1EpXhMfy5FiuXHKERQgfId/NRX6MFZxOeL+nlUiVGbT
- k3OVeg/chXwMSI175kSxkTa2sQBrLMM17CTZh4m0GYaCfC71Gyh6kNy3sNOH0ykXTDbA
- e95NBpWl0nglBUbPtpAIymWLcuB45sRgVYtuQ4gwoajtlC7aduAFSyf1weA1UW6tQ50o
- BqoFBa4FglVHbGqm+d8+Qza9gO4WCIFrQ4Oo6dzuWeAAkxFBR5N0mXVhoRNvdf7uWfUh
- ysbT23GE2Es/B9lRBXV9y8k5nHjHDdq3OqofQoQkM363qLu6yjl05AGg3Va/H0Biw17z qg== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by aserp2130.oracle.com with ESMTP id 2pnxee1kbm-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 02 Jan 2019 10:28:35 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x02ASYeo028972
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 2 Jan 2019 10:28:34 GMT
-Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x02ASWMs011298;
-        Wed, 2 Jan 2019 10:28:33 GMT
-Received: from kadam (/197.157.0.49)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 02 Jan 2019 02:28:32 -0800
-Date:   Wed, 2 Jan 2019 13:28:14 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Kangjie Lu <kjlu@umn.edu>
-Cc:     devel@driverdev.osuosl.org, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, pakki001@umn.edu,
-        Colin Ian King <colin.king@canonical.com>,
-        Aymen Qader <qader.aymen@gmail.com>
-Subject: Re: [PATCH] rts5208: fix a missing check of the status of
- sd_init_power
-Message-ID: <20190102102814.GF3781@kadam>
-References: <20181225083334.68473-1-kjlu@umn.edu>
+        Wed, 2 Jan 2019 05:31:05 -0500
+Received: by mail-it1-f199.google.com with SMTP id 135so35677998itk.5
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 02:31:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=NVqSBQFFNxfWmjALEBkB0QX5+yqmf84HzRKtmC4AMmA=;
+        b=drB56NMG+mS+K4JUgRhiqzjTDU0Kzefde7rE4v+B/9Q0aR4JRdqsz7SINMWFdrMWZY
+         wYnYH0VvnlmyimlqrOHqNLzf/QMH90REMuTlwXjTgZUBiiE0G7pdtv3CX31h7kZE0rLD
+         j3nbO/3S5Mfh5o2Ep9UuaCluGN21txGoBrsK/J1wktzDTiRdoyOyd/MiAgDzlwQKodiS
+         TqrLKTwh1UlQUMyFuH5rKwJF+x3SVLOMsdd79xJ14/ZKXaItQ8HGgQsgQ9j5a5W8JDrr
+         F7ZpfALueKVGInr7bVg/KmXrBXvSkDPAEciEyylsr2pIwasf9xxrw35PfWQa/zNxtdLt
+         zsdQ==
+X-Gm-Message-State: AA+aEWb7Hg/q5/Kt/Exuhs0gFWZES77Rp7z8Jij9SWt5MFflVCp+KRvN
+        9RvJoNgAOWFqxknM0l4XbS8zkJHP3MK6XIu0BdzR/mgsN0vn
+X-Google-Smtp-Source: AFSGD/UX+V8xg95Iz9Do55RvrJH3QB/a2pBgG0RW3+eafg4SbRePjmDOxTBJmImHkq7TMaN0X28KqmOa34lpA+Jba2yuCCmvd6TF
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181225083334.68473-1-kjlu@umn.edu>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9123 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1901020094
+X-Received: by 2002:a24:f986:: with SMTP id l128mr31821922ith.5.1546425064197;
+ Wed, 02 Jan 2019 02:31:04 -0800 (PST)
+Date:   Wed, 02 Jan 2019 02:31:04 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000009f94c1057e772431@google.com>
+Subject: WARNING in hsr_forward_skb
+From:   syzbot <syzbot+fdce8f2a8903f3ba0e6b@syzkaller.appspotmail.com>
+To:     arvid.brodin@alten.se, davem@davemloft.net,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 25, 2018 at 02:33:32AM -0600, Kangjie Lu wrote:
-> sd_init_power() could fail. The fix inserts a check of its status. If it
-> fails, returns STATUS_FAIL.
-> 
-> Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-> ---
->  drivers/staging/rts5208/sd.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/rts5208/sd.c b/drivers/staging/rts5208/sd.c
-> index ff1a9aa152ce..8c3fd885a4f3 100644
-> --- a/drivers/staging/rts5208/sd.c
-> +++ b/drivers/staging/rts5208/sd.c
-> @@ -2352,7 +2352,9 @@ static int reset_sd(struct rtsx_chip *chip)
->  				break;
->  			}
->  
-> -			sd_init_power(chip);
-> +			retval = sd_init_power(chip);
-> +			if (retval != STATUS_SUCCESS)
-> +				goto status_fail;
+Hello,
 
-Are you able to test this?
+syzbot found the following crash on:
 
-I don't think you appreciate the risk of applying this patch.  We are
-taking code which succeeds and making it fail.  That's a risky thing.
-The benefit is just that it makes a static analysis tool happy?
+HEAD commit:    195303136f19 Merge tag 'kconfig-v4.21-2' of git://git.kern..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=10abf757400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5e7dc790609552d7
+dashboard link: https://syzkaller.appspot.com/bug?extid=fdce8f2a8903f3ba0e6b
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15f6d1fd400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17290fdd400000
 
-It would be different if the benefit were that it improves security or
-prevents a crash.  Or if you could test it.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+fdce8f2a8903f3ba0e6b@syzkaller.appspotmail.com
 
-This is the reset_sd() function.  It always feels a bit hacky to me to
-even have a reset function.  It basically means you know you have messed
-up but you don't know where or how so let's just try scrub everything
-and go back to the start.  Maybe the driver is trying to work around a
-firmware bug.  I often find bugs in reset functions which show they have
-not been tested...  It's so tricky for me to do a cost benefit analysis
-here, but I sort of think we should leave the code as-is.
+IPv6: ADDRCONF(NETDEV_CHANGE): hsr0: link becomes ready
+IPv6: ADDRCONF(NETDEV_UP): vxcan1: link is not ready
+8021q: adding VLAN 0 to HW filter on device batadv0
+------------[ cut here ]------------
+HSR: VLAN not yet supported
+WARNING: CPU: 0 PID: 8203 at net/hsr/hsr_forward.c:336 hsr_fill_frame_info  
+net/hsr/hsr_forward.c:336 [inline]
+WARNING: CPU: 0 PID: 8203 at net/hsr/hsr_forward.c:336  
+hsr_forward_skb+0x2196/0x28a0 net/hsr/hsr_forward.c:370
+Kernel panic - not syncing: panic_on_warn set ...
+CPU: 0 PID: 8203 Comm: syz-executor112 Not tainted 4.20.0+ #175
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1d3/0x2c6 lib/dump_stack.c:113
+  panic+0x2ad/0x55f kernel/panic.c:189
+  __warn.cold.8+0x20/0x52 kernel/panic.c:544
+  report_bug+0x254/0x2d0 lib/bug.c:186
+  fixup_bug arch/x86/kernel/traps.c:178 [inline]
+  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:271
+  do_invalid_op+0x36/0x40 arch/x86/kernel/traps.c:290
+  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:973
+RIP: 0010:hsr_fill_frame_info net/hsr/hsr_forward.c:336 [inline]
+RIP: 0010:hsr_forward_skb+0x2196/0x28a0 net/hsr/hsr_forward.c:370
+Code: e7 e8 9e 2a ff ff e9 8f f3 ff ff 48 89 85 b0 fe ff ff e8 8d d5 95 f9  
+48 c7 c7 a0 0e fa 88 c6 05 25 bc 4a 02 01 e8 0a 1b 5f f9 <0f> 0b 48 8b 85  
+a8 fe ff ff 48 b9 00 00 00 00 00 fc ff df 48 89 c2
+RSP: 0018:ffff8880a6ae6b28 EFLAGS: 00010282
+RAX: 0000000000000000 RBX: ffff88808486b580 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffffffff81683f55 RDI: 0000000000000006
+RBP: ffff8880a6ae6cb8 R08: ffff8880a8b28100 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+R13: ffff88808e274400 R14: ffff88808486b636 R15: ffff8880a6ae6c90
+  hsr_dev_xmit+0x71/0xa0 net/hsr/hsr_device.c:243
+  __netdev_start_xmit include/linux/netdevice.h:4382 [inline]
+  netdev_start_xmit include/linux/netdevice.h:4391 [inline]
+  xmit_one net/core/dev.c:3278 [inline]
+  dev_hard_start_xmit+0x286/0xc80 net/core/dev.c:3294
+  __dev_queue_xmit+0x2f62/0x3ac0 net/core/dev.c:3864
+  dev_queue_xmit+0x17/0x20 net/core/dev.c:3897
+  packet_snd net/packet/af_packet.c:2932 [inline]
+  packet_sendmsg+0x298a/0x6ad0 net/packet/af_packet.c:2957
+  sock_sendmsg_nosec net/socket.c:621 [inline]
+  sock_sendmsg+0xd5/0x120 net/socket.c:631
+  ___sys_sendmsg+0x51d/0x930 net/socket.c:2116
+  __sys_sendmmsg+0x246/0x6d0 net/socket.c:2211
+  __do_sys_sendmmsg net/socket.c:2240 [inline]
+  __se_sys_sendmmsg net/socket.c:2237 [inline]
+  __x64_sys_sendmmsg+0x9d/0x100 net/socket.c:2237
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x4418a9
+Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 bb 10 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007ffdeaf8c9e8 EFLAGS: 00000213 ORIG_RAX: 0000000000000133
+RAX: ffffffffffffffda RBX: 0000000000000002 RCX: 00000000004418a9
+RDX: 0000000000000300 RSI: 0000000020008a80 RDI: 0000000000000003
+RBP: 0000000000000003 R08: 0000000001bbbbbb R09: 0000000001bbbbbb
+R10: 0000000000000000 R11: 0000000000000213 R12: 00007ffdeaf8ca30
+R13: 00007ffdeaf8ca20 R14: 0000000000000000 R15: 0000000000000000
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
-It's frustrating because the static analysis tool is probably right, but
-maybe the code only works because two bugs cancel each other out?  We
-can't know without testing.
 
-In a more ideal world we would do the static analysis on patches before
-they are applied and refuse to apply them until the maintainer explains
-why the function is not checked.
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-regards,
-dan carpenter
-
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
