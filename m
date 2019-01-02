@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D526C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 14:11:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F3E5C43444
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 14:11:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37DC5218FC
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 14:11:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DCD2B218CD
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 14:11:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729711AbfABOLE (ORCPT
+        id S1729733AbfABOLF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 09:11:04 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:9274 "EHLO
+        Wed, 2 Jan 2019 09:11:05 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:12335 "EHLO
         mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729067AbfABOKf (ORCPT
+        with ESMTP id S1728983AbfABOKc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 09:10:35 -0500
-X-UUID: 25e44eb602514f53bf918fff357437a8-20190102
-X-UUID: 25e44eb602514f53bf918fff357437a8-20190102
-Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw02.mediatek.com
+        Wed, 2 Jan 2019 09:10:32 -0500
+X-UUID: 230062ad104c4f09b58bfb842d54505e-20190102
+X-UUID: 230062ad104c4f09b58bfb842d54505e-20190102
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
         (envelope-from <henryc.chen@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1262923212; Wed, 02 Jan 2019 22:10:28 +0800
+        with ESMTP id 1737905816; Wed, 02 Jan 2019 22:10:28 +0800
 Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
+ mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
  15.0.1395.4; Wed, 2 Jan 2019 22:10:26 +0800
 Received: from mtkslt205.mediatek.inc (10.21.15.75) by mtkcas09.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
@@ -47,87 +47,158 @@ CC:     Mark Rutland <mark.rutland@arm.com>,
         <linux-mediatek@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>,
         Henry Chen <henryc.chen@mediatek.com>
-Subject: [RFC RESEND PATCH 1/7] dt-bindings: soc: Add DVFSRC driver bindings
-Date:   Wed, 2 Jan 2019 22:09:52 +0800
-Message-ID: <1546438198-1677-2-git-send-email-henryc.chen@mediatek.com>
+Subject: [RFC RESEND PATCH 3/7] soc: mediatek: add support for the performance state
+Date:   Wed, 2 Jan 2019 22:09:54 +0800
+Message-ID: <1546438198-1677-4-git-send-email-henryc.chen@mediatek.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1546438198-1677-1-git-send-email-henryc.chen@mediatek.com>
 References: <1546438198-1677-1-git-send-email-henryc.chen@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-TM-SNTS-SMTP: 218B0A421E84B4284B0CE4A8316AB19826A2E0BC71E3BCB0664419FF9E97905C2000:8
+X-TM-SNTS-SMTP: 5C466D51986E1AC154E56F047E4429BF8A93C06EC63D993862788E22D55C0FEB2000:8
 X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Document the binding for enabling DVFSRC on MediaTek SoC.
+Support power domain performance state, add header file for scp event.
 
 Signed-off-by: Henry Chen <henryc.chen@mediatek.com>
 ---
- .../devicetree/bindings/soc/mediatek/dvfsrc.txt    | 26 ++++++++++++++++++++++
- include/dt-bindings/soc/mtk,dvfsrc.h               | 18 +++++++++++++++
- 2 files changed, 44 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/soc/mediatek/dvfsrc.txt
- create mode 100644 include/dt-bindings/soc/mtk,dvfsrc.h
+ drivers/soc/mediatek/mtk-scpsys.c | 60 +++++++++++++++++++++++++++++++++++++++
+ drivers/soc/mediatek/mtk-scpsys.h | 22 ++++++++++++++
+ 2 files changed, 82 insertions(+)
+ create mode 100644 drivers/soc/mediatek/mtk-scpsys.h
 
-diff --git a/Documentation/devicetree/bindings/soc/mediatek/dvfsrc.txt b/Documentation/devicetree/bindings/soc/mediatek/dvfsrc.txt
+diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
+index 58d84fe..90102ae 100644
+--- a/drivers/soc/mediatek/mtk-scpsys.c
++++ b/drivers/soc/mediatek/mtk-scpsys.c
+@@ -11,7 +11,9 @@
+ #include <linux/of_device.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm_domain.h>
++#include <linux/pm_opp.h>
+ #include <linux/regulator/consumer.h>
++#include <linux/slab.h>
+ #include <linux/soc/mediatek/infracfg.h>
+ #include <linux/soc/mediatek/scpsys-ext.h>
+ 
+@@ -22,6 +24,7 @@
+ #include <dt-bindings/power/mt7623a-power.h>
+ #include <dt-bindings/power/mt8173-power.h>
+ #include <dt-bindings/power/mt8183-power.h>
++#include "mtk-scpsys.h"
+ 
+ #define MTK_POLL_DELAY_US   10
+ #define MTK_POLL_TIMEOUT    (jiffies_to_usecs(HZ))
+@@ -187,6 +190,18 @@ struct scp_soc_data {
+ 	bool bus_prot_reg_update;
+ };
+ 
++BLOCKING_NOTIFIER_HEAD(scpsys_notifier_list);
++
++int register_scpsys_notifier(struct notifier_block *nb)
++{
++	return blocking_notifier_chain_register(&scpsys_notifier_list, nb);
++}
++
++int unregister_scpsys_notifier(struct notifier_block *nb)
++{
++	return blocking_notifier_chain_unregister(&scpsys_notifier_list, nb);
++}
++
+ static int scpsys_domain_is_on(struct scp_domain *scpd)
+ {
+ 	struct scp *scp = scpd->scp;
+@@ -536,6 +551,48 @@ static void init_clks(struct platform_device *pdev, struct clk **clk)
+ 		clk[i] = devm_clk_get(&pdev->dev, clk_names[i]);
+ }
+ 
++static int mtk_pd_set_performance(struct generic_pm_domain *genpd,
++				  unsigned int state)
++{
++	int i;
++	struct scp_domain *scpd =
++		container_of(genpd, struct scp_domain, genpd);
++	struct scp_event_data scpe;
++	struct scp *scp = scpd->scp;
++	struct genpd_onecell_data *pd_data = &scp->pd_data;
++
++	for (i = 0; i < pd_data->num_domains; i++) {
++		if (genpd == pd_data->domains[i]) {
++			dev_dbg(scp->dev, "%d. %s = %d\n",
++				i, genpd->name, state);
++			break;
++		}
++	}
++
++	scpe.event_type = MTK_SCPSYS_PSTATE;
++	scpe.genpd = genpd;
++	scpe.domain_id = i;
++	blocking_notifier_call_chain(&scpsys_notifier_list, state, &scpe);
++
++	return 0;
++}
++
++static unsigned int mtk_pd_get_performance(struct generic_pm_domain *genpd,
++					   struct dev_pm_opp *opp)
++{
++	struct device_node *np;
++	unsigned int state;
++
++	np = dev_pm_opp_get_of_node(opp);
++
++	if (of_property_read_u32(np, "mtk,level", &state))
++		return 0;
++
++	of_node_put(np);
++
++	return state;
++}
++
+ static struct scp *init_scp(struct platform_device *pdev,
+ 			const struct scp_domain_data *scp_domain_data, int num,
+ 			const struct scp_ctrl_reg *scp_ctrl_reg,
+@@ -659,6 +716,9 @@ static struct scp *init_scp(struct platform_device *pdev,
+ 		genpd->power_on = scpsys_power_on;
+ 		if (MTK_SCPD_CAPS(scpd, MTK_SCPD_ACTIVE_WAKEUP))
+ 			genpd->flags |= GENPD_FLAG_ACTIVE_WAKEUP;
++
++		genpd->set_performance_state = mtk_pd_set_performance;
++		genpd->opp_to_performance_state = mtk_pd_get_performance;
+ 	}
+ 
+ 	return scp;
+diff --git a/drivers/soc/mediatek/mtk-scpsys.h b/drivers/soc/mediatek/mtk-scpsys.h
 new file mode 100644
-index 0000000..402c885
+index 0000000..c1e8325
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/soc/mediatek/dvfsrc.txt
-@@ -0,0 +1,26 @@
-+MediaTek DVFSRC Driver
-+
-+The Dynamic Voltage and Frequency Scaling Resource Collector (DVFSRC) is a
-+HW module which is used to collect all the requests from both software and
-+hardware and turn into the decision of minimum operating voltage and minimum
-+DRAM frequency to fulfill those requests.
-+
-+Required Properties:
-+- compatible: Should be one of the following
-+	- "mediatek,mt8183-dvfsrc": For MT8183 SoC
-+- reg: Address range of the DVFSRC unit
-+- dram_type: Refer to <include/dt-bindings/soc/mtk,dvfsrc.h> for the
-+	different dram type support.
-+- clock-names: Must include the following entries:
-+	"dvfsrc": DVFSRC module clock
-+- clocks: Must contain an entry for each entry in clock-names.
-+
-+Example:
-+
-+	dvfsrc_top@10012000 {
-+		compatible = "mediatek,mt8183-dvfsrc";
-+		reg = <0 0x10012000 0 0x1000>;
-+		clocks = <&infracfg CLK_INFRA_DVFSRC>;
-+		clock-names = "dvfsrc";
-+		dram_type = <MT8183_DVFSRC_OPP_LP4>;
-+	};
-diff --git a/include/dt-bindings/soc/mtk,dvfsrc.h b/include/dt-bindings/soc/mtk,dvfsrc.h
-new file mode 100644
-index 0000000..60b3497
---- /dev/null
-+++ b/include/dt-bindings/soc/mtk,dvfsrc.h
-@@ -0,0 +1,18 @@
++++ b/drivers/soc/mediatek/mtk-scpsys.h
+@@ -0,0 +1,22 @@
 +/* SPDX-License-Identifier: GPL-2.0
 + *
 + * Copyright (c) 2018 MediaTek Inc.
 + */
 +
-+#ifndef _DT_BINDINGS_POWER_MTK_DVFSRC_H
-+#define _DT_BINDINGS_POWER_MTK_DVFSRC_H
++#ifndef __MTK_SCPSYS_H__
++#define __MTK_SCPSYS_H__
 +
-+#define MT8183_DVFSRC_OPP_LP4	0
-+#define MT8183_DVFSRC_OPP_LP4X	1
-+#define MT8183_DVFSRC_OPP_LP3	2
++struct scp_event_data {
++	int event_type;
++	int domain_id;
++	struct generic_pm_domain *genpd;
++};
 +
-+#define MT8183_DVFSRC_LEVEL_1	1
-+#define MT8183_DVFSRC_LEVEL_2	2
-+#define MT8183_DVFSRC_LEVEL_3	3
-+#define MT8183_DVFSRC_LEVEL_4	4
++enum scp_event_type {
++	MTK_SCPSYS_PSTATE,
++};
 +
-+#endif /* _DT_BINDINGS_POWER_MTK_DVFSRC_H */
++int register_scpsys_notifier(struct notifier_block *nb);
++int unregister_scpsys_notifier(struct notifier_block *nb);
++
++#endif /* __MTK_SCPSYS_H__ */
 -- 
 1.9.1
 
