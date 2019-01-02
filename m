@@ -2,200 +2,194 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13C11C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 01:42:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BD68C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 01:43:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C67112171F
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 01:42:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DF1AD208E3
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 01:43:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=memeware.net header.i=@memeware.net header.b="fkVpp/0J"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Lopqunwu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728311AbfABBmF (ORCPT
+        id S1728379AbfABBmo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 1 Jan 2019 20:42:05 -0500
-Received: from cock.li ([185.100.85.212]:39854 "EHLO cock.li"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727935AbfABBmF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Jan 2019 20:42:05 -0500
+        Tue, 1 Jan 2019 20:42:44 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:50794 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727806AbfABBmn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Jan 2019 20:42:43 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x021YMVC009235;
+        Wed, 2 Jan 2019 01:42:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=82cQUolvA5dyGeWtg4YU+neFztLWSZNFGYOSdTHtYyc=;
+ b=Lopqunwua84iIIGtBtELCK6nvX9Wn6pdM5M3R6koeAmLLJJF6pbNCiekdx1ylFMkr8aJ
+ QfZS1mGiXQw4xC1l2dwDT17Y6Y7I2oelQct14DUglXV9bQI3h6lsbqhx9ZNM3INan86W
+ Ji/TjMjiaeURsiWSpUnJbBeNw4/f5V474yalDiycgAXurWB4dtPggROJS61UqCC8mXVn
+ 33RMxzFv8aRW/XtauIkuV12j2o8tU+uXHBQnTq7p0DLejzl6/SoBP6YEj8MelOxwE+qf
+ KiDJxppAb7wp8b+DLdDAga61EMIG57ul5UKcq2yhmPtbGkgNG8jYVkqKrXkbh3sJTjip mw== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by aserp2130.oracle.com with ESMTP id 2pnxee07t0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 02 Jan 2019 01:42:38 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x021gbFu020408
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 2 Jan 2019 01:42:38 GMT
+Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x021gbf0013006;
+        Wed, 2 Jan 2019 01:42:37 GMT
+Received: from [10.182.71.8] (/10.182.71.8)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 01 Jan 2019 17:42:37 -0800
+Subject: Re: [PATCH] net/mlx4_en: ensure rx_desc updating reaches HW before
+ prod db updating
+To:     Tariq Toukan <tariqt@mellanox.com>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     "junxiao.bi@oracle.com" <junxiao.bi@oracle.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Saeed Mahameed <saeedm@mellanox.com>
+References: <1515728542-3060-1-git-send-email-jianchao.w.wang@oracle.com>
+ <20180112163247.GB15974@ziepe.ca> <1515775567.131759.42.camel@gmail.com>
+ <a40e44f4-106b-1075-8f92-f7741508372c@oracle.com>
+ <af562737-4a3e-0429-1fd6-fc25c3e3f867@mellanox.com>
+ <fea0aa1c-b68e-9485-3826-2dfad7824911@oracle.com>
+ <53b1ac4d-a294-eb98-149e-65d7954243da@oracle.com>
+ <1516376999.3606.39.camel@gmail.com>
+ <dfc02a48-7d2a-56da-dc4e-d90a9fcc559c@mellanox.com>
+ <339a7156-9ef1-1f3c-30b8-3cc3558d124e@mellanox.com>
+ <c8b0955b-a3fc-afe2-2c67-e655ca2ee6f6@oracle.com>
+ <532b4d71-e2eb-35f3-894e-1c3288e7bc3f@oracle.com>
+ <1516852543.3715.43.camel@gmail.com>
+ <89066a75-43db-0f62-f171-70b0abaa8ea0@oracle.com>
+ <918db4ec-8c3c-aafa-4be6-0e00a99632e2@mellanox.com>
+ <c60ee78e-3cee-c188-7259-e7ad393e6bae@oracle.com>
+ <d9883261-e93e-400a-757c-3a81d8b6aca1@mellanox.com>
+From:   "jianchao.wang" <jianchao.w.wang@oracle.com>
+Message-ID: <61230e99-9b16-e1f2-93cf-637f0280f4df@oracle.com>
+Date:   Wed, 2 Jan 2019 09:43:56 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=memeware.net; s=mail;
-        t=1546393319; bh=+gj0rib5ZCjwymcYqC8hKiGMzA1RG70N0+cDiXFax4M=;
-        h=Date:From:To:Cc:Subject:From;
-        b=fkVpp/0JyTX+1rElsaec+gd0TlQ07JRX04W/pgRu43+fz4f4Tsc5OenHKDnXX6Fxb
-         j1m5+2amFZzQX8BPzcf4Z4OuPZX4VOMcLo3QGv/DIlYT0q8CZS2FMh/m3wd87Jf8nM
-         giIH+4Kx5ttxgLMp/SnXgaEkfrLZcz1VZ3ReudTwIRX/ib5cFNQEl3qeitP1i9Dx26
-         n6PTfogTRpZSn7Xp3mmC9/4Xa2lNfE5vrJpjTkHcCUJEfBWrXQ5NmLt/0yjnxezlxt
-         2lvZ9YUCqpEHmBqzBDa08eSShsQZF5rPvNAZhtITrw0/+iE4O7hQR8a9+Zlk5ldIZo
-         4cQuRMjuO92yA==
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+In-Reply-To: <d9883261-e93e-400a-757c-3a81d8b6aca1@mellanox.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Date:   Wed, 02 Jan 2019 01:41:58 +0000
-From:   vsnsdualce@memeware.net
-To:     linux-kernel@vger.kernel.org, gentoo-user@lists.gentoo.org,
-        ubuntu-users@lists.ubuntu.com, debian-user@lists.debian.org
-Cc:     freebsd-women@freebsd.org, freebsd-chat@freebsd.org,
-        misc@openbsd.org
-Subject: knifeshack (Linux Property rights)
-Message-ID: <5887db663842c078851e7795512bca45@memeware.net>
-X-Sender: vsnsdualce@memeware.net
-User-Agent: Roundcube Webmail/1.3.6
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9123 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1901020012
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Let's say you had an old knife shack. Called Knife Shack InC. (you
-ain't incorporated, you just call it that, looks nice on the sign). On
-an old dusty road, telephone pole bout ready to fall down next typhoon
-hit. Behind yo knoif shack there is quite a body of water, now it's
-murky, but it is infact quite deep. An old sink hole, now filled
-beyond filling with the dandruff of the ages. No outlets, so the water
-just pools and infiltrates the surrounding properties.
 
-You own this little piece of the world, owned it for a few
-generations, bought it off of the old landlords when they were selling
-mineral rights and then decided to get rid of the rest too.
 
-They went up north. A reverse carpet-bagging situation.
+On 12/31/18 12:27 AM, Tariq Toukan wrote:
+> 
+> 
+> On 1/27/2018 2:41 PM, jianchao.wang wrote:
+>> Hi Tariq
+>>
+>> Thanks for your kindly response.
+>> That's really appreciated.
+>>
+>> On 01/25/2018 05:54 PM, Tariq Toukan wrote:
+>>>
+>>>
+>>> On 25/01/2018 8:25 AM, jianchao.wang wrote:
+>>>> Hi Eric
+>>>>
+>>>> Thanks for you kindly response and suggestion.
+>>>> That's really appreciated.
+>>>>
+>>>> Jianchao
+>>>>
+>>>> On 01/25/2018 11:55 AM, Eric Dumazet wrote:
+>>>>> On Thu, 2018-01-25 at 11:27 +0800, jianchao.wang wrote:
+>>>>>> Hi Tariq
+>>>>>>
+>>>>>> On 01/22/2018 10:12 AM, jianchao.wang wrote:
+>>>>>>>>> On 19/01/2018 5:49 PM, Eric Dumazet wrote:
+>>>>>>>>>> On Fri, 2018-01-19 at 23:16 +0800, jianchao.wang wrote:
+>>>>>>>>>>> Hi Tariq
+>>>>>>>>>>>
+>>>>>>>>>>> Very sad that the crash was reproduced again after applied the patch.
+>>>>>>>>
+>>>>>>>> Memory barriers vary for different Archs, can you please share more details regarding arch and repro steps?
+>>>>>>> The hardware is HP ProLiant DL380 Gen9/ProLiant DL380 Gen9, BIOS P89 12/27/2015
+>>>>>>> The xen is installed. The crash occurred in DOM0.
+>>>>>>> Regarding to the repro steps, it is a customer's test which does heavy disk I/O over NFS storage without any guest.
+>>>>>>>
+>>>>>>
+>>>>>> What is the finial suggestion on this ?
+>>>>>> If use wmb there, is the performance pulled down ?
+>>>
+>>> I want to evaluate this effect.
+>>> I agree with Eric, expected impact is restricted, especially after batching the allocations.>
+>>>>>
+>>>>> Since https://urldefense.proofpoint.com/v2/url?u=https-3A__git.kernel.org_pub_scm_linux_kernel_git_davem_net-2Dnext.git_commit_-3Fid-3Ddad42c3038a59d27fced28ee4ec1d4a891b28155&d=DwICaQ&c=RoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65eapI_JnE&r=7WdAxUBeiTUTCy8v-7zXyr4qk7sx26ATvfo6QSTvZyQ&m=c0oI8duFkyFBILMQYDsqRApHQrOlLY_2uGiz_utcd7s&s=E4_XKmSI0B63qB0DLQ1EX_fj1bOP78ZdeYADBf33B-k&e=
+>>>>>
+>>>>> we batch allocations, so mlx4_en_refill_rx_buffers() is not called that often.
+>>>>>
+>>>>> I doubt the additional wmb() will have serious impact there.
+>>>>>
+>>>
+>>> I will test the effect (it'll be beginning of next week).
+>>> I'll update so we can make a more confident decision.
+>>>
+>> I have also sent patches with wmb and batching allocations to customer and let them check whether the performance is impacted.
+>> And update here asap when get feedback.
+>>
+>>> Thanks,
+>>> Tariq
+>>>
+> 
+> Hi Jianchao,
+> 
+> I am interested to push this bug fix.
+> Do you want me to submit, or do it yourself?
+> Can you elaborate regarding the arch with the repro?
+> 
+> This is the patch I suggest:
+> 
+> --- a/drivers/net/ethernet/mellanox/mlx4/en_rx.c
+> +++ b/drivers/net/ethernet/mellanox/mlx4/en_rx.c
+> @@ -161,6 +161,8 @@ static bool mlx4_en_is_ring_empty(const struct 
+> mlx4_en_rx_ring *ring)
+> 
+>   static inline void mlx4_en_update_rx_prod_db(struct mlx4_en_rx_ring *ring)
+>   {
+> +       /* ensure rx_desc updating reaches HW before prod db updating */
+> +       wmb();
+>          *ring->wqres.db.db = cpu_to_be32(ring->prod & 0xffff);
+>   }
+> 
 
-You don't have much. You have a house on another piece of property,
-quite aways up the road, and this shack, and this sinkhole. You
-actually are quite the property owner, but it ain't worth shit. That's
-what erryone tell you anyhow.
+Hi Tariq
 
-The old big house been turned into an old folks home a decaded ago,
-shame, it's a piece of shit like your property now - least that's what
-everyone say.
+Happy new year !
 
-Pope's on TV, old fan from the 50s still working, You could get a flat
-screen but the power supplies can't handle the brown outs here, old TV
-still works fine, you use it like a radio anyway.
+The customer provided confused test result for us.
+The fix cannot fix their issue.
 
-Guy comes into your fish shack. You ain't never seen him in your life,
-you tell yourself. You know him however, he lives somewhat close,
-comes in from time to time, looks around, he in a suit, he never buys
-from you anything, he has a reputation, suits getting dusty, the
-pinstripes are wider than that which the people on TV wear.
+And we finally find a upstream fix
+5d70bd5c98d0e655bde2aae2b5251bdd44df5e71
+(net/mlx4_en: fix potential use-after-free with dma_unmap_page)
+and killed the issue during Oct 2018. That's really a long way.
 
-He comes up to you. You're playing with a knife of yours, spinning it
-on it's tip. It's a fish skinning knife with a gutting hook on the
-back. It is quite a large one. The blade is a full 15 inches, thick,
-you could work on the sand sharks with this, if you ever took the hour
-and ahalf drive down to the beach.
+Please go ahead with this patch.
 
-You have a sign on your counter: "We's generous".
-
-Sometimes people ask you what that means.
-
-The man in the suit approaches you: first time for everthing.
-
-S: "Ay, I'd like that knife"
-
-You tell him it isn't for sale.
-
-S: "I ain neva said I thoughts it was, whass 'Wes generous' mean anyhow"
-
-You tell him that you will lend him the knife if he wishes.
-
-S: "Aight"
-
-He takes possession of the knife.
-
-He's a fisher he says.
-
-The man in the striped suit leaves.
-
-Months go by. You see the man sometimes, he tells you how the knife
-you licensed to him is getting great use, he fishes alot you see.
-
-He then inquires about that murky seemingly bottomless sinkhole out
-back. He wishes to be-able to dump some fishing refuse in it.
-
-S: "We's generous, right?"
-
-You grant him license to travel over your land to the sinkhole and
-dump the fishing refuse into the sinkhole.
-
-Time passes.
-
-You notice your knife has become more resplendent.
-
-Each time the stripped suited man, this fisher, catches a fish, it
-seems, he is in the habit of tacking a red five pointed star from
-Russia onto the handle. Each time the man comes into your shack you
-notice that there are more and more red stars, additionally, between
-the stars is now a dark red lacquer. It looks quite stunning, a battle
-worn cleaver; shouting it's victory against countless ensnared aquatic
-beings.
-
-Time, again, passes.
-
-Two police officers show up. Not the state troopers who sometimes come
-by the shop, no these are from one of the towns.
-
-P1: "You sell guttin knives here"
-
-You respond in the affirmative.
-
-P1: "You ever sold a rather large red gutting knife, tack handled"
-
-He seems to be getting agitated.
-You say no, but you have licensed a fisher to use a knife you own, and
-while it was not originally tack-handled, nor red, now it would indeed
-match such a description.
-
-P1: "You fking piece of shit, you get us back that knife or you are
-going down as an accomplice, you understand that you coal bla.."
-
-The second police man interrupts him.
-
-They start to head out.
-
-The second police man informs you that they will be by the store three
-days from now, as well as one week from now. To please reassert
-possession of the knife in that time.
-
-A month goes by and they do not come.
-
-Three months later you are arrested and interrogated in the harshest
-possible terms. You wonder if you can father children anymore.
-
-You are informed that the prosecutor has agreed to prosecute you as an
-accomplice, however if you come into possession of the knife, they may
-reconsider.
-
-Soon thereafter the suited man appears in your store.
-
-You tell him that you are ending the license you had extended to him,
-regarding both the knife and the permission to dump in the sinkhole.
-
-He contends that the knife is irrevocable:
-He relys upon the knife to execute his job of fishing.
-Furthermore he has put tacks in the knife, and if he were to return
-the knife to you his tack work would go to waste from his point of view.
-Additionally he tells you that he also relys on your extended license
-to dump the fishing refuse into the sinkhole for his fishing business
-and thus that license is irrevocable aswell.
-
-You desperately plead with him and yell "Give me back my fking knife!".
-
-He laughs and leaves.
-
-You are arrested and tried as an accomplice, your assets are seized
-under civil forfeiture as property used in the commission of crime.
-
-The suited man who was the fisher is tried in asbtentia for
-Conversion, amongst other rather more serious charges.
-
-As of right: the knife is yours, and you had every right to rescind
-the gratuitous license you granted regarding it. The fisher never
-payed you anything for use of the knife, nor of your land. He cannot
-hold you to your "bargain".
-
-The man was a fisher of men.
-
+Thanks
+Jianchao
