@@ -2,111 +2,92 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA6BAC43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 10:36:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98CDDC43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 10:38:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A755620815
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 10:36:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F1D920815
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 10:38:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="fxqeFdiH";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="LmK8hWuV"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jVm+bgmD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730998AbfACKgV (ORCPT
+        id S1730919AbfACKie (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 05:36:21 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:57578 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729765AbfACKgV (ORCPT
+        Thu, 3 Jan 2019 05:38:34 -0500
+Received: from mail-pg1-f170.google.com ([209.85.215.170]:38908 "EHLO
+        mail-pg1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728566AbfACKid (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 05:36:21 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id DEA766081C; Thu,  3 Jan 2019 10:36:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1546511780;
-        bh=IrdkuAoYKmOW+z4EWTpsqu3PQ6R58t6j98t1LvVpJSo=;
-        h=From:To:Cc:Subject:Date:From;
-        b=fxqeFdiH5ZT5SBp5r5eyXjbR9uNuY/wGQOQghxDmYg9JAS0ljIYy/rOjmxvp0o9uG
-         JcfMfGMavbnorjWyG5kuBx7R3fDpTMeoPplB4bHMercyQM5MwMOIdELMF4y6JmDpyW
-         ad68t6Y/h9gjHOMbAk3On50Wno6sazUFQLtAk1Qg=
-Received: from mgautam-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: mgautam@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 2FE6A6030E;
-        Thu,  3 Jan 2019 10:36:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1546511777;
-        bh=IrdkuAoYKmOW+z4EWTpsqu3PQ6R58t6j98t1LvVpJSo=;
-        h=From:To:Cc:Subject:Date:From;
-        b=LmK8hWuVgwYoP4hhVbTkbFgiMk8cqrJaqEPXyCKng6ZNrSlaZhZO08C1Wmri2t0H/
-         zTLVs5BSAjdCw/SeHdodiYPlofhObu/6vjHrO3spjO1Zk8AVFj+7DTxGw5mlhjmfTB
-         X6U4C0h8U4lzTLTAEsRPdBmAZDyq+Py9lGRgZInM=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2FE6A6030E
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=mgautam@codeaurora.org
-From:   Manu Gautam <mgautam@codeaurora.org>
-To:     Andy Gross <andy.gross@linaro.org>
-Cc:     Vivek Gautam <vivek.gautam@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org,
-        Manu Gautam <mgautam@codeaurora.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-soc@vger.kernel.org (open list:ARM/QUALCOMM SUPPORT),
-        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE BINDINGS), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v1] arm64: dts: qcom: msm8996: Disable USB2 PHY suspend by core
-Date:   Thu,  3 Jan 2019 16:05:38 +0530
-Message-Id: <20190103103538.30970-1-mgautam@codeaurora.org>
-X-Mailer: git-send-email 2.19.0
+        Thu, 3 Jan 2019 05:38:33 -0500
+Received: by mail-pg1-f170.google.com with SMTP id g189so15850313pgc.5
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 02:38:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=zbJC8oznvoWlhWC1pdmFRtt84rPSKGXbCP0A/gGjpLY=;
+        b=jVm+bgmDw+dMhdoqMW4nTn1bbyppO7s5apbhgDvoy4u2rDv4nET1hVcFCDzazmk0Ts
+         YyuW0w9spf6ELgA7dO5g7kxrmK50h60Salr0EcZq5OAXftKt+21SJACjyqLCMfemRciv
+         +aMKZe7UdXa+Y90qryB73mjl5VxJPozqxf7v0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=zbJC8oznvoWlhWC1pdmFRtt84rPSKGXbCP0A/gGjpLY=;
+        b=mLILrgz+Iu7Nm05Axdes4lBIZOwatZSREE07yi6iiCBbC3APAeehfbklQxDWyVTuZQ
+         4pzxReaFsaFcEwEghDj+mB02MAeyr6LKIrqzLuiEbRGhMOFWyqacY9jVT22wQJYZ7BRE
+         fioqC/PUOTgrdwtGOLT8Cy7weow1AuDTr9WXAfP3awySampJcaX7edB6DHG76boAhqor
+         93MucJY7pAlVKY6drZSwAQAeRFmoW1ZkYI/ZOyEjRkCzp/Iw8hILrJIWmkBQ+VBv2ilK
+         JPydncjWj9/0vxK/AMgJqBtWUBKRhz+0ExDrzyU0aUOyhXHD3WyZMuaU+fT8gmEM64J0
+         xNDg==
+X-Gm-Message-State: AJcUukfRdv5N0SbioYooTlpufbgwUNHahp2tC6MYVaP/zoT7NQhxMl+4
+        MpF9bJ6RT5ArY7xqPCLxZpBYFA==
+X-Google-Smtp-Source: ALg8bN6CHJAkHgaAlhEiwu88S/eCCydcTHMQAfmZ6bSjP28JKKRLh5FaVVLyxD4tGs2EKknfqhLvww==
+X-Received: by 2002:a63:d047:: with SMTP id s7mr44317100pgi.311.1546511912918;
+        Thu, 03 Jan 2019 02:38:32 -0800 (PST)
+Received: from localhost ([122.166.131.155])
+        by smtp.gmail.com with ESMTPSA id o4sm85031729pgs.12.2019.01.03.02.38.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 03 Jan 2019 02:38:32 -0800 (PST)
+Date:   Thu, 3 Jan 2019 16:08:29 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Sudeep Holla <sudeep.holla@arm.com>
+Cc:     Valentin Schneider <valentin.schneider@arm.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        LAK <linux-arm-kernel@lists.infradead.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>, nm@ti.com,
+        sboyd@kernel.org, Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Douglas Raillard <Douglas.Raillard@arm.com>
+Subject: Re: [BUG] dev_pm_opp refcount issue on Arm Juno r0
+Message-ID: <20190103103829.2bqxhkpihp4r7x22@vireshk-i7>
+References: <a2a42913-04e0-e6fc-d9ee-a2e355ac22c9@arm.com>
+ <20190103070514.o6yaqvpxouazosnn@vireshk-i7>
+ <20190103103318.GA23511@e107155-lin>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190103103318.GA23511@e107155-lin>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-QUSB2 PHY on msm8996 doesn't work well when autosuspend by
-dwc3 core using USB2PHYCFG register is enabled. One of the
-issue seen is that PHY driver reports PLL lock failure and
-fails phy_init() if dwc3 core has USB2 PHY suspend enabled.
-Fix this by using quirks to disable USB2 PHY LPM/suspend and
-dwc3 core already takes care of explicitly suspending PHY
-during suspend if quirks are specified.
+On 03-01-19, 10:33, Sudeep Holla wrote:
+> As you already state the checks are unnecessary, if we drop them we don't need
+> to add any firmware specific callbacks. I am thinking if it makes sense to
+> add a generic helper function to remove the OPPs from a device. If we have
+> that any driver needing that can use it. The main reason I think helper is
+> useful is that we need exactly same fix for SCMI driver too.
+> 
+> Thoughts ?
 
-Signed-off-by: Manu Gautam <mgautam@codeaurora.org>
----
- arch/arm64/boot/dts/qcom/msm8996.dtsi | 4 ++++
- 1 file changed, 4 insertions(+)
+Okay, will do that and fix both the drivers as well.
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-index b29fe80d7288..1f14ca35afc2 100644
---- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-@@ -911,6 +911,8 @@
- 				interrupts = <0 138 IRQ_TYPE_LEVEL_HIGH>;
- 				phys = <&hsusb_phy2>;
- 				phy-names = "usb2-phy";
-+				snps,dis_u2_susphy_quirk;
-+				snps,dis_enblslpm_quirk;
- 			};
- 		};
- 
-@@ -940,6 +942,8 @@
- 				interrupts = <0 131 IRQ_TYPE_LEVEL_HIGH>;
- 				phys = <&hsusb_phy1>, <&ssusb_phy_0>;
- 				phy-names = "usb2-phy", "usb3-phy";
-+				snps,dis_u2_susphy_quirk;
-+				snps,dis_enblslpm_quirk;
- 			};
- 		};
- 
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+viresh
