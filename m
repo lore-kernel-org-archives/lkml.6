@@ -2,98 +2,99 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=0.1 required=3.0 tests=DKIM_ADSP_ALL,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C55FC43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 13:37:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D29D1C43612
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 13:38:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6953321872
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 13:37:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A93AF2073D
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 13:38:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730324AbfACNh1 (ORCPT
+        id S1730576AbfACNii convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 08:37:27 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:53620 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728233AbfACNhZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 08:37:25 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9E083C057F34;
-        Thu,  3 Jan 2019 13:37:25 +0000 (UTC)
-Received: from treble (ovpn-122-188.rdu2.redhat.com [10.10.122.188])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 726795D75E;
-        Thu,  3 Jan 2019 13:37:22 +0000 (UTC)
-Date:   Thu, 3 Jan 2019 07:37:20 -0600
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>,
-        Jason Baron <jbaron@akamai.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jessica Yu <jeyu@kernel.org>
-Subject: Re: [PATCH v14 07/11] livepatch: Add atomic replace
-Message-ID: <20190103133720.3d57kssgvvg44zjt@treble>
-References: <20181129094431.7801-1-pmladek@suse.com>
- <20181129094431.7801-8-pmladek@suse.com>
- <20181213225528.ies3kxjjtzl6dmd3@treble>
- <20181217152741.2i2trzjk5rmofgc3@pathway.suse.cz>
- <20190103124740.s3mpgmjw4no4qr6f@pathway.suse.cz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190103124740.s3mpgmjw4no4qr6f@pathway.suse.cz>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Thu, 03 Jan 2019 13:37:25 +0000 (UTC)
+        Thu, 3 Jan 2019 08:38:38 -0500
+Received: from sender-of-o53.zoho.com ([135.84.80.218]:21757 "EHLO
+        sender-of-o53.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730102AbfACNii (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Jan 2019 08:38:38 -0500
+ARC-Seal: i=1; a=rsa-sha256; t=1546522697; cv=none; 
+        d=zoho.com; s=zohoarc; 
+        b=dR0+n8WIwuNQ7WzdfP1eTsWVgGEv8YzIT2x3jiyCAcRM5imd2zYi138IVczv26cSOEs5KLBCXsFItjfYGCVRl3u68+QxLUZMp6T3duCzfQCv7Bq43Ceq1ZvaFu3r6nVlzkHd1OuevYMRXXXfj/DUHbviv8gL6OdZUOzOVaRG2KQ=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
+        t=1546522697; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To:ARC-Authentication-Results; 
+        bh=dvuEDzWO0WXxXzRD9kR72QfwNmGN+ZF5CdWEgJMFAHs=; 
+        b=oCSdRitnYXw9n0RpV0BIb8rm957OE3ArO/sUziX/eKPKupzK+nG+ryUAIj6u99erKF6LWHZy9FqaIwFSdJCpdJNO8kSHsaKWg56BEmCixQS1saAp+hjVL882hsCO+vr/J+JE6wmcy81hgWVg2uL3/MPbFL031uaPI8Tu7uEyaDo=
+ARC-Authentication-Results: i=1; mx.zoho.com;
+        dkim=pass  header.i=mniewoehner.de;
+        spf=pass  smtp.mailfrom=linux@mniewoehner.de;
+        dmarc=pass header.from=<linux@mniewoehner.de> header.from=<linux@mniewoehner.de>
+Received: from z3r0 (31.187.91.78 [31.187.91.78]) by mx.zohomail.com
+        with SMTPS id 1546522696206674.9908771612716; Thu, 3 Jan 2019 05:38:16 -0800 (PST)
+Message-ID: <6c1bf9815bfcb5d2bc0cfedfc49c7feda0173dc9.camel@mniewoehner.de>
+Subject: Re: tpm_tis TPM2.0 not detected on cold boot
+From:   Michael =?ISO-8859-1?Q?Niew=F6hner?= <linux@mniewoehner.de>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        peterhuewe@gmx.de, jgg@ziepe.ca, arnd@arndb.de,
+        linux-integrity@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Ken Goldman <kgold@linux.ibm.com>
+In-Reply-To: <20190103132737.GD10491@linux.intel.com>
+References: <ef7e773b01a5e6153b84628f74fc67092a2f9b0e.camel@gmail.com>
+         <1f281756bb1f041e55be8dd090670a1a7b1d1c94.camel@mniewoehner.de>
+         <1545519232.3940.115.camel@linux.ibm.com>
+         <e7ec38d7cade9aa76384aa2781eab307d2cd5a7b.camel@mniewoehner.de>
+         <20190103132737.GD10491@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Date:   Thu, 03 Jan 2019 14:38:11 +0100
+Mime-Version: 1.0
+User-Agent: Evolution 3.30.3 
+Content-Transfer-Encoding: 8BIT
+X-ZohoMailClient: External
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 03, 2019 at 01:47:40PM +0100, Petr Mladek wrote:
-> On Mon 2018-12-17 16:27:41, Petr Mladek wrote:
-> > On Thu 2018-12-13 16:55:28, Josh Poimboeuf wrote:
-> > > On Thu, Nov 29, 2018 at 10:44:27AM +0100, Petr Mladek wrote:
-> > > Side note, it would probably be useful to have a klp_for_each_patch()
-> > > helper.
+On Thu, 2019-01-03 at 15:27 +0200, Jarkko Sakkinen wrote:
+> On Sun, Dec 23, 2018 at 12:55:12PM +0100, Michael Niewöhner wrote:
+> > There is another issue but I don't know if both are related. Maybe that's
+> > just a
+> > timing issue...
 > > 
-> > Will do.
+> > root@debian:~# dd if=/dev/hwrng bs=1 count=1
+> > dd: error reading '/dev/hwrng': Operation not permitted
+> > 0+0 records in
+> > 0+0 records out
+> > 0 bytes copied, 0.755958 s, 0.0 kB/s
+> > root@debian:~# dd if=/dev/hwrng bs=1 count=1 | xxd; dd if=/dev/hwrng bs=1
+> > count=1 | xxd
+> > dd: error reading '/dev/hwrng': Operation not permitted
+> > 0+0 records in
+> > 0+0 records out
+> > 0 bytes copied, 0.755697 s, 0.0 kB/s
+> > 1+0 records in
+> > 1+0 records out
+> > 00000000: 52                                       R
+> > 1 byte copied, 0.0106268 s, 0.1 kB/s
+> > 
+> > 
+> > Michael
 > 
-> Hmm, there are two possibilities:
+> What does /sys/devices/virtual/misc/hw_random/rng_current show?
 > 
-> 1) #define klp_for_each_patch(patch)	\
-> 	list_for_each_entry(patch, &klp_patches, list)
+> Did run commands as a sanity check on my laptop and seem to work.
 > 
-> 2) #define klp_for_each_patch(patches, patch)	\
-> 	list_for_each_entry(patch, &patches, list)
-> 
-> Problems:
-> 
-> 1st variant would need to declare klp_patches in
-> include/linux/livepatch.h. Josh did not like even
-> kernel/livepatch/core.h.
-> 
-> 2nd variant looks ugly to me.
-> 
-> 
-> Alternative solution would be to move all klp_for_each*()
-> definitions from include/linux/livepatch.h to kernel/livepatch/core.h.
-> But there might be some users. I wonder if we use these
-> macros when preparing the cumulative patches.
-> 
-> 
-> As any solution looks controversial, I would prefer to postpone this change
-> after this patchset is accepted.
+> /Jarkko
 
-I would vote #1, and just put it in core.c next to the klp_patches
-definition.
+rng_current says "tpm-rng-0", which should be correct
 
-But it's fine with me if you want to postpone it.
 
--- 
-Josh
+Michael
+
+
