@@ -4,46 +4,45 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.0 required=3.0
 	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 165FFC43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 13:15:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EE0DC43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 13:16:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E05F321479
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 13:15:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 659DF21479
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 13:16:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731086AbfACNPa (ORCPT
+        id S1731116AbfACNQE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 08:15:30 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:35057 "EHLO
+        Thu, 3 Jan 2019 08:16:04 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:57527 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727175AbfACNPa (ORCPT
+        with ESMTP id S1730514AbfACNQE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 08:15:30 -0500
+        Thu, 3 Jan 2019 08:16:04 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x03DFJWg1384458
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x03DFsDC1384493
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 3 Jan 2019 05:15:19 -0800
+        Thu, 3 Jan 2019 05:15:54 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x03DFJul1384455;
-        Thu, 3 Jan 2019 05:15:19 -0800
-Date:   Thu, 3 Jan 2019 05:15:19 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x03DFsPg1384490;
+        Thu, 3 Jan 2019 05:15:54 -0800
+Date:   Thu, 3 Jan 2019 05:15:54 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-qjkds7bnk7v7fk2xhqsb0a4v@git.kernel.org>
-Cc:     jolsa@kernel.org, tglx@linutronix.de, adrian.hunter@intel.com,
-        namhyung@kernel.org, acme@redhat.com, hpa@zytor.com,
-        linux-kernel@vger.kernel.org, mingo@kernel.org,
-        wangnan0@huawei.com, lclaudio@redhat.com
-Reply-To: lclaudio@redhat.com, mingo@kernel.org, wangnan0@huawei.com,
-          adrian.hunter@intel.com, namhyung@kernel.org, jolsa@kernel.org,
-          tglx@linutronix.de, acme@redhat.com,
-          linux-kernel@vger.kernel.org, hpa@zytor.com
+Message-ID: <tip-3vrm9b55tdhzn8sw9qazh4z5@git.kernel.org>
+Cc:     namhyung@kernel.org, lclaudio@redhat.com, tglx@linutronix.de,
+        acme@redhat.com, linux-kernel@vger.kernel.org, mingo@kernel.org,
+        wangnan0@huawei.com, jolsa@kernel.org, adrian.hunter@intel.com,
+        hpa@zytor.com
+Reply-To: linux-kernel@vger.kernel.org, acme@redhat.com,
+          lclaudio@redhat.com, tglx@linutronix.de, namhyung@kernel.org,
+          adrian.hunter@intel.com, hpa@zytor.com, jolsa@kernel.org,
+          wangnan0@huawei.com, mingo@kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf trace: Store the major number for a file
- when storing its pathname
-Git-Commit-ID: 4bcc4cff6a10e5287d4dd3e73b6b4689f9a0c570
+Subject: [tip:perf/urgent] tools headers uapi: Grab a copy of usbdevice_fs.h
+Git-Commit-ID: 2bd71d11a86e8419a33a131d194fd735a8f74400
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -57,58 +56,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  4bcc4cff6a10e5287d4dd3e73b6b4689f9a0c570
-Gitweb:     https://git.kernel.org/tip/4bcc4cff6a10e5287d4dd3e73b6b4689f9a0c570
+Commit-ID:  2bd71d11a86e8419a33a131d194fd735a8f74400
+Gitweb:     https://git.kernel.org/tip/2bd71d11a86e8419a33a131d194fd735a8f74400
 Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Thu, 27 Dec 2018 13:32:59 -0300
+AuthorDate: Thu, 27 Dec 2018 14:18:13 -0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Fri, 28 Dec 2018 16:33:04 -0300
 
-perf trace: Store the major number for a file when storing its pathname
+tools headers uapi: Grab a copy of usbdevice_fs.h
 
-We keep a table for the fds to map them back to pathnames when showing
-'fd' based APIs such as write(), store as well the major number for the
-device the path is in, to use in things like choosing the right ioctl
-'cmd' beautifier.
+Will be used to generate the string table for the USBDEVFS_ prefixed
+ioctl commands.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-qjkds7bnk7v7fk2xhqsb0a4v@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-3vrm9b55tdhzn8sw9qazh4z5@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-trace.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ {include => tools/include}/uapi/linux/usbdevice_fs.h | 0
+ tools/perf/check-headers.sh                          | 1 +
+ 2 files changed, 1 insertion(+)
 
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index 41ab524e128b..4b03f66b1735 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -60,6 +60,7 @@
- #include <linux/stringify.h>
- #include <linux/time64.h>
- #include <fcntl.h>
-+#include <sys/sysmacros.h>
- 
- #include "sane_ctype.h"
- 
-@@ -959,6 +960,7 @@ static size_t fprintf_duration(unsigned long t, bool calculated, FILE *fp)
- 
- struct file {
- 	char *pathname;
-+	int  dev_maj;
- };
- 
- /**
-@@ -1068,6 +1070,9 @@ static int trace__set_fd_pathname(struct thread *thread, int fd, const char *pat
- 	struct file *file = thread_trace__files_entry(ttrace, fd);
- 
- 	if (file != NULL) {
-+		struct stat st;
-+		if (stat(pathname, &st) == 0)
-+			file->dev_maj = major(st.st_rdev);
- 		file->pathname = strdup(pathname);
- 		if (file->pathname)
- 			return 0;
+diff --git a/include/uapi/linux/usbdevice_fs.h b/tools/include/uapi/linux/usbdevice_fs.h
+similarity index 100%
+copy from include/uapi/linux/usbdevice_fs.h
+copy to tools/include/uapi/linux/usbdevice_fs.h
+diff --git a/tools/perf/check-headers.sh b/tools/perf/check-headers.sh
+index 8e811ea0cf85..6cb98f8570a2 100755
+--- a/tools/perf/check-headers.sh
++++ b/tools/perf/check-headers.sh
+@@ -14,6 +14,7 @@ include/uapi/linux/perf_event.h
+ include/uapi/linux/prctl.h
+ include/uapi/linux/sched.h
+ include/uapi/linux/stat.h
++include/uapi/linux/usbdevice_fs.h
+ include/uapi/linux/vhost.h
+ include/uapi/sound/asound.h
+ include/linux/bits.h
