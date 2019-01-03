@@ -2,288 +2,199 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CFF5C43444
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 09:27:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A117BC43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 09:30:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8D2A21019
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 09:27:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 675C920883
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 09:30:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546507812;
+	bh=c8UlAL0HywmzXBeyUvA7XHXwnqHiC7Q7AScqu01u6S0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=vI0dy4CH1jhzk9WgAqTwVQjZMrlI5gI1BY1RUkSVm1zuRtn4l7NMYX8tIes4Xa44s
+	 6kAI6920L/vGHG6RobvqeOOKva2AUb+OgiOiKr/Badji+oJIdQKuv2YM0Th4R/NAUT
+	 dSmf9Xp4VkLa2ELu59brCxaTPUt1J1JCPCH5VkqM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730466AbfACJ07 (ORCPT
+        id S1729859AbfACJaL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 04:26:59 -0500
-Received: from mx2.suse.de ([195.135.220.15]:43582 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726152AbfACJ07 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 04:26:59 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 8B68FACC8;
-        Thu,  3 Jan 2019 09:26:55 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 523F21E1588; Thu,  3 Jan 2019 10:26:54 +0100 (CET)
-Date:   Thu, 3 Jan 2019 10:26:54 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Jerome Glisse <jglisse@redhat.com>
-Cc:     Jan Kara <jack@suse.cz>, John Hubbard <jhubbard@nvidia.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        John Hubbard <john.hubbard@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>, tom@talpey.com,
-        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
-        Christoph Hellwig <hch@infradead.org>,
-        Christopher Lameter <cl@linux.com>,
-        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Michal Hocko <mhocko@kernel.org>, mike.marciniszyn@intel.com,
-        rcampbell@nvidia.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
-Message-ID: <20190103092654.GA31370@quack2.suse.cz>
-References: <20181212214641.GB29416@dastard>
- <20181214154321.GF8896@quack2.suse.cz>
- <20181216215819.GC10644@dastard>
- <20181217181148.GA3341@redhat.com>
- <20181217183443.GO10600@bombadil.infradead.org>
- <20181218093017.GB18032@quack2.suse.cz>
- <9f43d124-2386-7bfd-d90b-4d0417f51ccd@nvidia.com>
- <20181219020723.GD4347@redhat.com>
- <20181219110856.GA18345@quack2.suse.cz>
- <20190103015533.GA15619@redhat.com>
+        Thu, 3 Jan 2019 04:30:11 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:39991 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726152AbfACJaK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Jan 2019 04:30:10 -0500
+Received: by mail-ot1-f65.google.com with SMTP id s5so28889495oth.7
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 01:30:10 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GbOPGJ3IJDcBrfRMPKv/jkAuNaYdqSWYsR7bgi+yrfw=;
+        b=KnFM4Gg0TPGgQasu3oa5FSQe4C7cFfqNl8c6peQz7Esq4SJmtfeGMhxnXDaPLTtfE+
+         a57RjJ7ibzltKIVQBGnB5BwnCXdKEYixtLYsNjxeQInYkL63DYJGArVULvXOJlDpAwK5
+         D7gna5QlopFPa4vR2bjj60JRArIi8S62uEisLNizoYN8DqvVKFJcDnH1yWaTn2nj797f
+         8kIYvsPDKIukiMvzxoSzF35H+W1+Giuo5pBW0hQ6XD3/9ATCMpQXwccZjAETdg+5FC3Z
+         r8Sm4BZx+3tY2e4rf9ZgDf76CzEwhRp8n5Tla940bvsWkVD/zGKwpRYXj+9zrokLJwT6
+         Iulg==
+X-Gm-Message-State: AJcUukfh2/AxX5GSOt18j3mYGg+2MBqh2RbgExkL70hSqjEEsPKsPII4
+        P13onwecLs7mWh71QVU/4Jvc6HHg8CRZhYHcExU=
+X-Google-Smtp-Source: ALg8bN5Lt2ZpimpKtORUiB8U0JrHyQgwqEgaTKtLPq8ygwM212PbjXsm8Z85LkZ1Nc+IRSCm/uSR6R5WJo1yfc0fI7c=
+X-Received: by 2002:a9d:7f0d:: with SMTP id j13mr30873358otq.119.1546507809667;
+ Thu, 03 Jan 2019 01:30:09 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190103015533.GA15619@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190102005704.GC17624@shao2-debian> <CAHk-=wh2sparb1qw4h5QTCR+YF7xsssLgZtNtthRA6QiJjKfbA@mail.gmail.com>
+ <CAJZ5v0hXEqtaiV56sGCOd1VzsRETkS39YiLV-OfnFWiZH4tcAQ@mail.gmail.com> <20190103092622.GA6262@kroah.com>
+In-Reply-To: <20190103092622.GA6262@kroah.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Thu, 3 Jan 2019 10:29:58 +0100
+Message-ID: <CAJZ5v0jQP-hYHva4xoTxgf815DTSp4MBnF__XPt3cViWF5=zcQ@mail.gmail.com>
+Subject: Re: [LKP] [mtd] c4dfa25ab3: kernel_BUG_at_fs/sysfs/file.c
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        kernel test robot <rong.a.chen@intel.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
+        Richard Weinberger <richard@nod.at>,
+        Alban Bedel <albeu@free.fr>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        LKML <linux-kernel@vger.kernel.org>, LKP <lkp@01.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 02-01-19 20:55:33, Jerome Glisse wrote:
-> On Wed, Dec 19, 2018 at 12:08:56PM +0100, Jan Kara wrote:
-> > On Tue 18-12-18 21:07:24, Jerome Glisse wrote:
-> > > On Tue, Dec 18, 2018 at 03:29:34PM -0800, John Hubbard wrote:
-> > > > OK, so let's take another look at Jerome's _mapcount idea all by itself (using
-> > > > *only* the tracking pinned pages aspect), given that it is the lightest weight
-> > > > solution for that.  
-> > > > 
-> > > > So as I understand it, this would use page->_mapcount to store both the real
-> > > > mapcount, and the dma pinned count (simply added together), but only do so for
-> > > > file-backed (non-anonymous) pages:
-> > > > 
-> > > > 
-> > > > __get_user_pages()
-> > > > {
-> > > > 	...
-> > > > 	get_page(page);
-> > > > 
-> > > > 	if (!PageAnon)
-> > > > 		atomic_inc(page->_mapcount);
-> > > > 	...
-> > > > }
-> > > > 
-> > > > put_user_page(struct page *page)
-> > > > {
-> > > > 	...
-> > > > 	if (!PageAnon)
-> > > > 		atomic_dec(&page->_mapcount);
-> > > > 
-> > > > 	put_page(page);
-> > > > 	...
-> > > > }
-> > > > 
-> > > > ...and then in the various consumers of the DMA pinned count, we use page_mapped(page)
-> > > > to see if any mapcount remains, and if so, we treat it as DMA pinned. Is that what you 
-> > > > had in mind?
-> > > 
-> > > Mostly, with the extra two observations:
-> > >     [1] We only need to know the pin count when a write back kicks in
-> > >     [2] We need to protect GUP code with wait_for_write_back() in case
-> > >         GUP is racing with a write back that might not the see the
-> > >         elevated mapcount in time.
-> > > 
-> > > So for [2]
-> > > 
-> > > __get_user_pages()
-> > > {
-> > >     get_page(page);
-> > > 
-> > >     if (!PageAnon) {
-> > >         atomic_inc(page->_mapcount);
-> > > +       if (PageWriteback(page)) {
-> > > +           // Assume we are racing and curent write back will not see
-> > > +           // the elevated mapcount so wait for current write back and
-> > > +           // force page fault
-> > > +           wait_on_page_writeback(page);
-> > > +           // force slow path that will fault again
-> > > +       }
-> > >     }
-> > > }
-> > 
-> > This is not needed AFAICT. __get_user_pages() gets page reference (and it
-> > should also increment page->_mapcount) under PTE lock. So at that point we
-> > are sure we have writeable PTE nobody can change. So page_mkclean() has to
-> > block on PTE lock to make PTE read-only and only after going through all
-> > PTEs like this, it can check page->_mapcount. So the PTE lock provides
-> > enough synchronization.
-> > 
-> > > For [1] only needing pin count during write back turns page_mkclean into
-> > > the perfect spot to check for that so:
-> > > 
-> > > int page_mkclean(struct page *page)
-> > > {
-> > >     int cleaned = 0;
-> > > +   int real_mapcount = 0;
-> > >     struct address_space *mapping;
-> > >     struct rmap_walk_control rwc = {
-> > >         .arg = (void *)&cleaned,
-> > >         .rmap_one = page_mkclean_one,
-> > >         .invalid_vma = invalid_mkclean_vma,
-> > > +       .mapcount = &real_mapcount,
-> > >     };
-> > > 
-> > >     BUG_ON(!PageLocked(page));
-> > > 
-> > >     if (!page_mapped(page))
-> > >         return 0;
-> > > 
-> > >     mapping = page_mapping(page);
-> > >     if (!mapping)
-> > >         return 0;
-> > > 
-> > >     // rmap_walk need to change to count mapping and return value
-> > >     // in .mapcount easy one
-> > >     rmap_walk(page, &rwc);
-> > > 
-> > >     // Big fat comment to explain what is going on
-> > > +   if ((page_mapcount(page) - real_mapcount) > 0) {
-> > > +       SetPageDMAPined(page);
-> > > +   } else {
-> > > +       ClearPageDMAPined(page);
-> > > +   }
-> > 
-> > This is the detail I'm not sure about: Why cannot rmap_walk_file() race
-> > with e.g. zap_pte_range() which decrements page->_mapcount and thus the
-> > check we do in page_mkclean() is wrong?
-> > 
-> 
-> Ok so i found a solution for that. First GUP must wait for racing
-> write back. If GUP see a valid write-able PTE and the page has
-> write back flag set then it must back of as if the PTE was not
-> valid to force fault. It is just a race with page_mkclean and we
-> want ordering between the two. Note this is not strictly needed
-> so we can relax that but i believe this ordering is better to do
-> in GUP rather then having each single user of GUP test for this
-> to avoid the race.
-> 
-> GUP increase mapcount only after checking that it is not racing
-> with writeback it also set a page flag (SetPageDMAPined(page)).
-> 
-> When clearing a write-able pte we set a special entry inside the
-> page table (might need a new special swap type for this) and change
-> page_mkclean_one() to clear to 0 those special entry.
-> 
-> 
-> Now page_mkclean:
-> 
-> int page_mkclean(struct page *page)
-> {
->     int cleaned = 0;
-> +   int real_mapcount = 0;
->     struct address_space *mapping;
->     struct rmap_walk_control rwc = {
->         .arg = (void *)&cleaned,
->         .rmap_one = page_mkclean_one,
->         .invalid_vma = invalid_mkclean_vma,
-> +       .mapcount = &real_mapcount,
->     };
-> +   int mapcount1, mapcount2;
-> 
->     BUG_ON(!PageLocked(page));
-> 
->     if (!page_mapped(page))
->         return 0;
-> 
->     mapping = page_mapping(page);
->     if (!mapping)
->         return 0;
-> 
-> +   mapcount1 = page_mapcount(page);
->     // rmap_walk need to change to count mapping and return value
->     // in .mapcount easy one
->     rmap_walk(page, &rwc);
+On Thu, Jan 3, 2019 at 10:26 AM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Wed, Jan 02, 2019 at 10:44:50PM +0100, Rafael J. Wysocki wrote:
+> > On Wed, Jan 2, 2019 at 8:53 PM Linus Torvalds
+> > <torvalds@linux-foundation.org> wrote:
+> >
+> > [cut]
+> >
+> > > Greg, Rafael: it does strike me that the "BUG_ON()" in
+> > > sysfs_create_file_ns() could easily have been a
+> > >
+> > >         if (WARN_ON(..))
+> > >                 return -EINVAL;
+> > >
+> > > which would have made the machine boot and probably make things easier
+> > > for normal users to report. The kernel test robot doesn't care, but
+> > > non-booting kernels are usually not nice to debug or report for normal
+> > > human beings..
+> >
+> > I agree.
+> >
+> > This isn't a good enough reason to crash the kernel IMO.
+>
+> I agree too.
+>
+> Here's a patch for this, I'll queue it up after -rc1 is out.  Rafael,
+> look good to you?
 
-So what prevents GUP_fast() to grab reference here and the test below would
-think the page is not pinned? Or do you assume that every page_mkclean()
-call will be protected by PageWriteback (currently it is not) so that
-GUP_fast() blocks / bails out?
+Yes, it does.
 
-But I think that detecting pinned pages with small false positive rate is
-OK. The extra page bouncing will cost some performance but if it is rare,
-then we are OK. So I think we can go for the simple version of detecting
-pinned pages as you mentioned in some earlier email. We just have to be
-sure there are no false negatives.
+Please feel free to add
 
-								Honza
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-> +   if (PageDMAPined(page)) {
-> +       int rc2;
-> +
-> +       if (mapcount1 == real_count) {
-> +           /* Page is no longer pin, no zap pte race */
-> +           ClearPageDMAPined(page);
-> +           goto out;
-> +       }
-> +       /* No new mapping of the page so mp1 < rc is illegal. */
-> +       VM_BUG_ON(mapcount1 < real_count);
-> +       /* Page might be pin. */
-> +       mapcount2 = page_mapcount(page);
-> +       if (mapcount2 > real_count) {
-> +           /* Page is pin for sure. */
-> +           goto out;
-> +       }
-> +       /* We had a race with zap pte we need to rewalk again. */
-> +       rc2 = real_mapcount;
-> +       real_mapcount = 0;
-> +       rwc.rmap_one = page_pin_one;
-> +       rmap_walk(page, &rwc);
-> +       if (mapcount2 <= (real_count + rc2)) {
-> +           /* Page is no longer pin */
-> +           ClearPageDMAPined(page);
-> +       }
-> +       /* At this point the page pin flag reflect pin status of the page */
-> +   }
-> +
-> +out:
->     ...
-> }
-> 
-> The page_pin_one() function count the number of special PTE entry so
-> which match the count of pte that have been zapped since the first
-> reverse map walk.
-> 
-> So worst case a page that was pin by a GUP would need 2 reverse map
-> walk during page_mkclean(). Moreover this is only needed if we race
-> with something that clear pte. I believe this is an acceptable worst
-> case. I will work on some RFC patchset next week (once i am down with
-> email catch up).
-> 
-> 
-> I do not think i made mistake here, i have been torturing my mind
-> trying to think of any race scenario and i believe it holds to any
-> racing zap and page_mkclean()
-> 
-> Cheers,
-> Jérôme
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+to it.
+
+>
+> --------------
+>
+> From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Subject: [PATCH] sysfs: convert BUG_ON to WARN_ON
+>
+> It's rude to crash the system just because the developer did something
+> wrong, as it prevents them from usually even seeing what went wrong.
+>
+> So convert the few BUG_ON() calls that have snuck into the sysfs code
+> over the years to WARN_ON() to make it more "friendly".  All of these
+> are able to be recovered from, so it makes no sense to crash.
+>
+> Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
+> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> ---
+>  fs/sysfs/dir.c     | 3 ++-
+>  fs/sysfs/file.c    | 6 ++++--
+>  fs/sysfs/group.c   | 3 ++-
+>  fs/sysfs/symlink.c | 3 ++-
+>  4 files changed, 10 insertions(+), 5 deletions(-)
+>
+> diff --git a/fs/sysfs/dir.c b/fs/sysfs/dir.c
+> index feeae8081c22..aa85f2874a9f 100644
+> --- a/fs/sysfs/dir.c
+> +++ b/fs/sysfs/dir.c
+> @@ -43,7 +43,8 @@ int sysfs_create_dir_ns(struct kobject *kobj, const void *ns)
+>         kuid_t uid;
+>         kgid_t gid;
+>
+> -       BUG_ON(!kobj);
+> +       if (WARN_ON(!kobj))
+> +               return -EINVAL;
+>
+>         if (kobj->parent)
+>                 parent = kobj->parent->sd;
+> diff --git a/fs/sysfs/file.c b/fs/sysfs/file.c
+> index bb71db63c99c..51398457fe00 100644
+> --- a/fs/sysfs/file.c
+> +++ b/fs/sysfs/file.c
+> @@ -325,7 +325,8 @@ int sysfs_create_file_ns(struct kobject *kobj, const struct attribute *attr,
+>         kuid_t uid;
+>         kgid_t gid;
+>
+> -       BUG_ON(!kobj || !kobj->sd || !attr);
+> +       if (WARN_ON(!kobj || !kobj->sd || !attr))
+> +               return -EINVAL;
+>
+>         kobject_get_ownership(kobj, &uid, &gid);
+>         return sysfs_add_file_mode_ns(kobj->sd, attr, false, attr->mode,
+> @@ -537,7 +538,8 @@ int sysfs_create_bin_file(struct kobject *kobj,
+>         kuid_t uid;
+>         kgid_t gid;
+>
+> -       BUG_ON(!kobj || !kobj->sd || !attr);
+> +       if (WARN_ON(!kobj || !kobj->sd || !attr))
+> +               return -EINVAL;
+>
+>         kobject_get_ownership(kobj, &uid, &gid);
+>         return sysfs_add_file_mode_ns(kobj->sd, &attr->attr, true,
+> diff --git a/fs/sysfs/group.c b/fs/sysfs/group.c
+> index 1eb2d6307663..57038604d4a8 100644
+> --- a/fs/sysfs/group.c
+> +++ b/fs/sysfs/group.c
+> @@ -112,7 +112,8 @@ static int internal_create_group(struct kobject *kobj, int update,
+>         kgid_t gid;
+>         int error;
+>
+> -       BUG_ON(!kobj || (!update && !kobj->sd));
+> +       if (WARN_ON(!kobj || (!update && !kobj->sd)))
+> +               return -EINVAL;
+>
+>         /* Updates may happen before the object has been instantiated */
+>         if (unlikely(update && !kobj->sd))
+> diff --git a/fs/sysfs/symlink.c b/fs/sysfs/symlink.c
+> index 215c225b2ca1..c4deecc80f67 100644
+> --- a/fs/sysfs/symlink.c
+> +++ b/fs/sysfs/symlink.c
+> @@ -23,7 +23,8 @@ static int sysfs_do_create_link_sd(struct kernfs_node *parent,
+>  {
+>         struct kernfs_node *kn, *target = NULL;
+>
+> -       BUG_ON(!name || !parent);
+> +       if (WARN_ON(!name || !parent))
+> +               return -EINVAL;
+>
+>         /*
+>          * We don't own @target_kobj and it may be removed at any time.
+> --
