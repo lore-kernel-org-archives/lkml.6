@@ -2,100 +2,115 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79D6BC43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 16:46:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B841C43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 16:46:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46E082070D
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 16:46:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546533962;
-	bh=MUkG8lx7WG71msV7qWWuDuPNRWeryiP0dzLzoKmcGqE=;
-	h=Date:From:To:Cc:Subject:List-ID:From;
-	b=jmpD/9qmucwnJjTrIZ4jCF6k9vhLoNe3YwjgThWUJnVt1lSY493pzUgN+1/cKYc5O
-	 wjbXTNEk70kFhGs2T5kti7DsH2ZnaAD+X5tNM3kKgO344O/0nUnFDNJF6Auixo0KQm
-	 t7lWxA404zCk6MhVWcdpH+lKx4qMkt4pj9xYQJA4=
+	by mail.kernel.org (Postfix) with ESMTP id 74375208E3
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 16:46:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732377AbfACQqB (ORCPT
+        id S1731639AbfACQq5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 11:46:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34592 "EHLO mail.kernel.org"
+        Thu, 3 Jan 2019 11:46:57 -0500
+Received: from foss.arm.com ([217.140.101.70]:52884 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730629AbfACQqA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 11:46:00 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D3C402070D;
-        Thu,  3 Jan 2019 16:45:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546533960;
-        bh=MUkG8lx7WG71msV7qWWuDuPNRWeryiP0dzLzoKmcGqE=;
-        h=Date:From:To:Cc:Subject:From;
-        b=vFroVv7pC1uX1Wp2267GUXeaD4dklwnnb3qjX5yGMeIFYWU9/e6dZUHb4UqoKImG3
-         hQrPELM18PPWRm9PjzGJ54GYCq3jJP9V5WZkoOFsthkXR9+BK9C4Mtpq93EA8N7NxW
-         ooo1J129+3VDurFGpgOYM6kV3au0+KVJ/EoIE31g=
-Date:   Thu, 3 Jan 2019 17:45:58 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Michal Simek <monstr@monstr.eu>
-Cc:     Rob Herring <robh@kernel.org>, linux-kernel@vger.kernel.org
-Subject: [PATCH] microblaze: no need to check return value of debugfs_create
- functions
-Message-ID: <20190103164558.GA14675@kroah.com>
+        id S1728159AbfACQq5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Jan 2019 11:46:57 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3904415AD;
+        Thu,  3 Jan 2019 08:46:56 -0800 (PST)
+Received: from [192.168.100.243] (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D27263F5D4;
+        Thu,  3 Jan 2019 08:46:54 -0800 (PST)
+Subject: Re: [PATCH v2 1/7] sysfs/cpu: Add "Unknown" vulnerability state
+To:     Dave Martin <Dave.Martin@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com,
+        mlangsdo@redhat.com,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        suzuki.poulose@arm.com, marc.zyngier@arm.com,
+        catalin.marinas@arm.com, Dave Hansen <dave.hansen@intel.com>,
+        julien.thierry@arm.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, steven.price@arm.com,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        ykaukab@suse.de, Thomas Gleixner <tglx@linutronix.de>,
+        shankerd@codeaurora.org
+References: <20190103004921.1928921-1-jeremy.linton@arm.com>
+ <20190103004921.1928921-2-jeremy.linton@arm.com>
+ <20190103163740.GC3529@e103592.cambridge.arm.com>
+From:   Jeremy Linton <jeremy.linton@arm.com>
+Message-ID: <db5968e6-609b-1a1f-464d-436327dd1738@arm.com>
+Date:   Thu, 3 Jan 2019 10:46:53 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.11.1 (2018-12-01)
+In-Reply-To: <20190103163740.GC3529@e103592.cambridge.arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When calling debugfs functions, there is no need to ever check the
-return value.  The function can work or not, but the code logic should
-never do something different based on this.
+Hi,
 
-Cc: Michal Simek <monstr@monstr.eu>
-Cc: Rob Herring <robh@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/microblaze/kernel/setup.c | 13 ++-----------
- 1 file changed, 2 insertions(+), 11 deletions(-)
+On 01/03/2019 10:37 AM, Dave Martin wrote:
+> On Wed, Jan 02, 2019 at 06:49:15PM -0600, Jeremy Linton wrote:
+>> There is a lot of variation in the Arm ecosystem. Because of this,
+>> there exist possible cases where the kernel cannot authoritatively
+>> determine if a machine is vulnerable.
+>>
+>> Rather than guess the vulnerability status in cases where
+>> the mitigation is disabled or the firmware isn't responding
+>> correctly, we need to display an "Unknown" state.
+>>
+>> Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
+>> Cc: Thomas Gleixner <tglx@linutronix.de>
+>> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>> Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>> Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+>> Cc: Peter Zijlstra <peterz@infradead.org>
+>> Cc: Dave Hansen <dave.hansen@intel.com>
+>> Cc: Borislav Petkov <bp@alien8.de>
+>> Cc: David Woodhouse <dwmw@amazon.co.uk>
+>> ---
+>>   Documentation/ABI/testing/sysfs-devices-system-cpu | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/Documentation/ABI/testing/sysfs-devices-system-cpu b/Documentation/ABI/testing/sysfs-devices-system-cpu
+>> index 9605dbd4b5b5..876103fddfa4 100644
+>> --- a/Documentation/ABI/testing/sysfs-devices-system-cpu
+>> +++ b/Documentation/ABI/testing/sysfs-devices-system-cpu
+>> @@ -495,6 +495,7 @@ Description:	Information about CPU vulnerabilities
+>>   		"Not affected"	  CPU is not affected by the vulnerability
+>>   		"Vulnerable"	  CPU is affected and no mitigation in effect
+>>   		"Mitigation: $M"  CPU is affected and mitigation $M is in effect
+>> +		"Unknown"    	  The kernel is unable to make a determination
+> 
+> Do some of the "Unknown" cases arise from the vulnerability detection
+> code being compiled out of the kernel?
+>
 
-diff --git a/arch/microblaze/kernel/setup.c b/arch/microblaze/kernel/setup.c
-index bbd6968ce55b..522a0c5d9c59 100644
---- a/arch/microblaze/kernel/setup.c
-+++ b/arch/microblaze/kernel/setup.c
-@@ -192,23 +192,14 @@ struct dentry *of_debugfs_root;
- static int microblaze_debugfs_init(void)
- {
- 	of_debugfs_root = debugfs_create_dir("microblaze", NULL);
--
--	return of_debugfs_root == NULL;
-+	return 0;
- }
- arch_initcall(microblaze_debugfs_init);
- 
- # ifdef CONFIG_MMU
- static int __init debugfs_tlb(void)
- {
--	struct dentry *d;
--
--	if (!of_debugfs_root)
--		return -ENODEV;
--
--	d = debugfs_create_u32("tlb_skip", S_IRUGO, of_debugfs_root, &tlb_skip);
--	if (!d)
--		return -ENOMEM;
--
-+	debugfs_create_u32("tlb_skip", S_IRUGO, of_debugfs_root, &tlb_skip);
- 	return 0;
- }
- device_initcall(debugfs_tlb);
--- 
-2.20.1
+Yes,
 
+> I wonder whether at least the detection support should be mandatory.
+> sysfs is not very useful as a standard vulnerability reporting interface
+> unless we make best efforts to always populate it with real information. >
+> 
+> Also, does "Unknown" convey anything beyond what is indicated by the
+> sysfs entry being omitted altogether?
+
+I'm not sure about this one. I tend to think the "unknown" case 
+encourages users that really want an answer to dig deeper and call their 
+hardware/os/whoever to get an answer. I would tend to think that if the 
+entry is missing it would tend to encourage the behavior that Greg KH 
+mentions where the user assumes "hey the system doesn't have a sysfs 
+entry for $VUNLERABILITY, that probably means that its not possible on 
+the architecture".
