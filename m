@@ -2,146 +2,137 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B227C43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 23:30:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F57AC43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 23:34:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED9F82184B
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 23:30:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Y7cxGGBq"
+	by mail.kernel.org (Postfix) with ESMTP id 17561217F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 23:34:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728775AbfACXaV (ORCPT
+        id S1728797AbfACXea (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 18:30:21 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:40203 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727148AbfACXaT (ORCPT
+        Thu, 3 Jan 2019 18:34:30 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:56836 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727148AbfACXe3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 18:30:19 -0500
-Received: by mail-pl1-f194.google.com with SMTP id u18so16538199plq.7
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 15:30:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=YZdiLFz27MwzAJATkQ5G6PPb/2nW68MQTnuMbzyBzeg=;
-        b=Y7cxGGBqd0T8C/+HxXAVoJlI4P08lOXEl3hB9pBbzIc4ghMCCxMppDtOzAHDbxTCsj
-         DJCQ8k9E+GUwm4xnLFnDd+W8e/SsQ9ttcPZC+X+iwjhmsm/Oa4O0AA8rdONuCBhLc3ED
-         APiUsOpPr9D9B/9lGEE7zywMj/DA1fugeHPrs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=YZdiLFz27MwzAJATkQ5G6PPb/2nW68MQTnuMbzyBzeg=;
-        b=QyEEc1OxEA5eysIiv0aAVb1SPT3/EgExhf2iJzqPMyLHtSBm+qnZB12+9sI/U72X0W
-         Jee9yuL3v4MhgNT2v+LpIRC5JygeoIzkmHSYMC5F+D5ynrUGdHPMjABaSzAQ5TjVUkLJ
-         O/hQbsnood+L45UetYwiulVMdPxAz8VQDD5D6le46gcTdz22oRwI3+WhON9DwQvXFaRf
-         vohvfJe0tD+rlg4ga9fqrjOf/ZiDvA8ohrWF27uuB3fMyVKvEZ7Fg0bd7d/P/3oWEgUS
-         1MqvYP8AV2s8UxDCzmoR0TerFm5qtpejOBM8Wk/1hrpHMoCtsh0GiXa74yB+j89GfH2j
-         CZGQ==
-X-Gm-Message-State: AJcUukfa0ApTNNIMsKLxuohSnZuvA039+8e/Rc3Xp4UKGlHU7jFnHb6t
-        Dyo6XZ4/8bBFVCoQjlbNNoShmQ==
-X-Google-Smtp-Source: ALg8bN63fz09CIUDYjT97rQ2I+nayCIJqZI9i94UUcqtYf7QTLN9GoTldaNbpmIsOSkdEdL0/Idl2A==
-X-Received: by 2002:a17:902:d697:: with SMTP id v23mr7472476ply.261.1546558219090;
-        Thu, 03 Jan 2019 15:30:19 -0800 (PST)
-Received: from google.com ([2620:15c:202:1:534:b7c0:a63c:460c])
-        by smtp.gmail.com with ESMTPSA id b202sm115419460pfb.88.2019.01.03.15.30.17
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 03 Jan 2019 15:30:17 -0800 (PST)
-Date:   Thu, 3 Jan 2019 15:30:15 -0800
-From:   Brian Norris <briannorris@chromium.org>
-To:     Sibi Sankar <sibis@codeaurora.org>
-Cc:     bjorn.andersson@linaro.org, david.brown@linaro.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org,
-        akdwived@codeaurora.org, clew@codeaurora.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm-owner@vger.kernel.org,
-        ohad@wizery.com, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: remoteproc: qcom: Add firmware
- bindings for Q6V5
-Message-ID: <20190103233014.GA181833@google.com>
-References: <20181228044819.5697-1-sibis@codeaurora.org>
- <20181228044819.5697-2-sibis@codeaurora.org>
+        Thu, 3 Jan 2019 18:34:29 -0500
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 73223808E3; Fri,  4 Jan 2019 00:34:21 +0100 (CET)
+Date:   Fri, 4 Jan 2019 00:34:25 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Vesa =?iso-8859-1?B?SuTkc2tlbORpbmVu?= <dachaac@gmail.com>
+Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Dan Murphy <dmurphy@ti.com>, robh+dt@kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-leds@vger.kernel.org
+Subject: Re: [PATCH 2/2] leds: lp5024: Add the LP5024/18 RGB LED driver
+Message-ID: <20190103233425.GA10071@amd>
+References: <20181219193455.GA21159@amd>
+ <8740cfd6-a6b5-ad27-313b-984a9febf18a@ti.com>
+ <20181219201047.GA23448@amd>
+ <fd624cc1-9997-1cd5-c5cc-62e6897997cf@ti.com>
+ <54f28115-0a7d-8e9c-3bec-6e91fb3981ec@gmail.com>
+ <cd90f179-6c16-823f-496f-27f141e9c322@ti.com>
+ <a72c11c0-949b-bdbc-df2c-4490e04a1065@gmail.com>
+ <986b5105-2fdb-bd25-7c8a-ca8fd1ade821@gmail.com>
+ <7f205102-e854-f1cb-cc03-1307d1cddc87@gmail.com>
+ <c9f8965a-90f4-b456-8225-c70694c9f071@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="xHFwDpU9dbj6ez1V"
 Content-Disposition: inline
-In-Reply-To: <20181228044819.5697-2-sibis@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <c9f8965a-90f4-b456-8225-c70694c9f071@gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sibi,
 
-On Fri, Dec 28, 2018 at 10:18:18AM +0530, Sibi Sankar wrote:
-> Add optional "firmware-name" bindings for Q6V5 MSS and PAS based
-> remoteprocs. For Q6V5 MSS/PAS the two/one relative firmware
-> paths/path are to be listed respectively. Fallback to the default
-> images for mba/modem for Q6V5 MSS or the default Hexagon image
-> for Q6V5 PAS if the "firmware-name" binding is not present.
-> 
-> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
-> ---
->  Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt | 6 ++++++
->  Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt | 7 +++++++
->  2 files changed, 13 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
-> index 9c0cff3a5ed8..60ee0f73071a 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
-> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
-> @@ -27,6 +27,12 @@ on the Qualcomm ADSP Hexagon core.
->  	Value type: <stringlist>
->  	Definition: must be "wdog", "fatal", "ready", "handover", "stop-ack"
->  
-> +- firmware-name:
-> +	Usage: optional
-> +	Value type: <string>
-> +	Definition: must list the relative firmware image path for the
-> +		    Hexagon Core.
+--xHFwDpU9dbj6ez1V
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Relative to what? I still think it's a terrible idea that your driver
-looks for files at the top-level /lib/firmware/ directory, but now
-you're leaking this into the device tree. This should at a bare minimum
-be namespaced to something like the qcom/ sub-directory. But ideally,
-the driver would automatically be deriving a further sub-directory of
-qcom/ based on the chipset or something, and then the only thing you'd
-describe here is some kind of variant string -- something akin to
-ath10k's qcom,ath10k-calibration-variant (see
-Documentation/devicetree/bindings/net/wireless/qcom,ath10k.txt), which
-doesn't require a full path-name or any hierarchy.
+Hi!
 
-Brian
+> >Regarding led_scale_color_elements() - I checked it in GIMP and
+> >the results are not satisfactory when increasing brightness.
+> >Even if we managed to fix it, the result would not be guaranteed
+> >to be the same across all devices.
+>=20
+> No and they will never be the same. I was told by our hardware expert that
+> it is rather impossible to get linearly behaving LED control without spec=
+ial
+> curve fitting trimmed for particular hardware and LED component in use. A=
+nd
+> if you go and change LED component/vendor it would need to be "calibrated"
+> again if such accuracy would be required. Also LEDs age and that has also
+> effect on this.
 
-> +
->  - clocks:
->  	Usage: required
->  	Value type: <prop-encoded-array>
-> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-> index 9ff5b0309417..3a99e7379d8c 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-> @@ -36,6 +36,13 @@ on the Qualcomm Hexagon core.
->  	Value type: <stringlist>
->  	Definition: must be "wdog", "fatal", "ready", "handover", "stop-ack"
->  
-> +- firmware-name:
-> +	Usage: optional
-> +	Value type: <stringlist>
-> +	Definition: must list the relative firmware image paths for mba and
-> +		    modem. They are used for booting and authenticating the
-> +		    Hexagon core.
-> +
->  - clocks:
->  	Usage: required
->  	Value type: <phandle>
-> -- 
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project
-> 
+Well, it is not possible to "perfectly" calibrate LCD monitors,
+either. Yet, color tables make sense for them.
+
+And we should aim for the same thing.
+
+And yes, it may mean re-doing calibration when vendor changes. And it
+will mean some math and some understanding of colors.
+
+And... LEDs are linear-enough as it is. That is not a problem. But RGB
+does _not_ expect linear response. That's why colors are _way_ off currentl=
+y.
+
+> >I have another proposal, being a mix of what has been discussed so far:
+> >
+> > =A0=A0 RGB LED class will expose following files:
+> > =A0=A0 a) available by default:
+> > =A0=A0=A0=A0 - red, green, blue
+> > =A0=A0=A0=A0=A0=A0 Writing any of these file will result in writing cor=
+responding
+> > =A0=A0=A0=A0=A0=A0 device register.
+>=20
+> Problem with this is that we are basically back at square one and one can=
+not
+> do "atomic" color change with this.
+>=20
+> In order to set or activate new values one would need "load values" file =
+or
+> such that when writing to it would activate new values. However it becomes
+> quite clumsy interface at that point as you need to handle multiple writes
+> to multiple files and makes those operations rather slow.
+
+If you don't like the interface, create an shared library. It may be
+neccessary, anyway, for the color operations.
+
+You say it is "rather slow" to change all 3 colors. How long does it
+take, and how long do you need it to take?
+
+> Then we have color presets left that could kinda solve the issue on setti=
+ng
+> the color to fixed values atomically.
+
+Lets not design crazy interface "because sysfs writing is too
+slow". Hint: it is not.=20
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--xHFwDpU9dbj6ez1V
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlwunAEACgkQMOfwapXb+vLRIQCguTxCUuv5V7XSTdfCv8d8jXOB
+ragAmgJsbRIsDrQtdqSdsH6lkkdK0vK8
+=2YYv
+-----END PGP SIGNATURE-----
+
+--xHFwDpU9dbj6ez1V--
