@@ -2,289 +2,136 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4CFBC43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 15:00:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0272C43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 15:00:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B06572070D
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 15:00:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 88F8B2070D
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 15:00:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732074AbfACPAr (ORCPT
+        id S1732089AbfACPAu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 3 Jan 2019 10:00:50 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:41022 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1732068AbfACPAr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 3 Jan 2019 10:00:47 -0500
-Received: from mx2.suse.de ([195.135.220.15]:33002 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732015AbfACPAj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 10:00:39 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 151BFADE2;
-        Thu,  3 Jan 2019 15:00:37 +0000 (UTC)
-From:   Roman Penyaev <rpenyaev@suse.de>
-Cc:     Roman Penyaev <rpenyaev@suse.de>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Davidlohr Bueso <dbueso@suse.de>,
-        Jason Baron <jbaron@akamai.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] perf bench: Add epoll-wait-mp1c benchmark calling epoll_wait(2)
-Date:   Thu,  3 Jan 2019 16:00:30 +0100
-Message-Id: <20190103150030.17030-3-rpenyaev@suse.de>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190103150030.17030-1-rpenyaev@suse.de>
-References: <20190103150030.17030-1-rpenyaev@suse.de>
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x03F0FPZ023981
+        for <linux-kernel@vger.kernel.org>; Thu, 3 Jan 2019 10:00:46 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2pskrr2x9y-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 10:00:46 -0500
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
+        Thu, 3 Jan 2019 15:00:42 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 3 Jan 2019 15:00:38 -0000
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x03F0bNR1573280
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 3 Jan 2019 15:00:37 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1042E42049;
+        Thu,  3 Jan 2019 15:00:37 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A80654203F;
+        Thu,  3 Jan 2019 15:00:36 +0000 (GMT)
+Received: from [9.152.224.140] (unknown [9.152.224.140])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu,  3 Jan 2019 15:00:36 +0000 (GMT)
+Reply-To: pmorel@linux.ibm.com
+Subject: Re: [PATCH v5 12/15] KVM: s390: do not restore IAM immediately before
+ SIE entry
+To:     Michael Mueller <mimu@linux.ibm.com>,
+        KVM Mailing List <kvm@vger.kernel.org>
+Cc:     Linux-S390 Mailing List <linux-s390@vger.kernel.org>,
+        linux-kernel@vger.kernel.org,
+        kvm390-list@tuxmaker.boeblingen.de.ibm.com,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Halil Pasic <pasic@linux.ibm.com>
+References: <20181219191756.57973-1-mimu@linux.ibm.com>
+ <20181219191756.57973-13-mimu@linux.ibm.com>
+From:   Pierre Morel <pmorel@linux.ibm.com>
+Date:   Thu, 3 Jan 2019 16:00:36 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
+In-Reply-To: <20181219191756.57973-13-mimu@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+X-TM-AS-GCONF: 00
+x-cbid: 19010315-4275-0000-0000-000002F926F8
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19010315-4276-0000-0000-00003807272F
+Message-Id: <5b427ccb-b0b4-f411-a9fc-6b8f8a60b734@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-03_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=897 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901030133
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The intention of this benchmark is to measure events delivery
-bandwidth: N threads produce events and 1 thread consumes events
-calling epoll_wait(2).
+On 19/12/2018 20:17, Michael Mueller wrote:
+> The IAM shall no be restored when deliverable interruptions are
+> delivered to vcpus by means of the PSW swap mechanism. That would
+> trigger the GIB alert millicode although we know that SIE will be
+> able to handle the pending interruption on entry.
+> 
+> Signed-off-by: Michael Mueller <mimu@linux.ibm.com>
+> ---
+>   arch/s390/kvm/interrupt.c | 8 ++++----
+>   1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/s390/kvm/interrupt.c b/arch/s390/kvm/interrupt.c
+> index 8307717e3caf..48a93f5e5333 100644
+> --- a/arch/s390/kvm/interrupt.c
+> +++ b/arch/s390/kvm/interrupt.c
+> @@ -328,11 +328,11 @@ static unsigned long disable_iscs(struct kvm_vcpu *vcpu,
+>   	return active_mask;
+>   }
+>   
+> -static unsigned long deliverable_irqs(struct kvm_vcpu *vcpu)
+> +static unsigned long deliverable_irqs(struct kvm_vcpu *vcpu, u16 irq_flags)
+>   {
+>   	unsigned long active_mask;
+>   
+> -	active_mask = pending_irqs(vcpu, IRQ_MASK_ALL);
+> +	active_mask = pending_irqs(vcpu, irq_flags);
+>   	if (!active_mask)
+>   		return 0;
+>   
+> @@ -1090,7 +1090,7 @@ int kvm_s390_ext_call_pending(struct kvm_vcpu *vcpu)
+>   
+>   int kvm_s390_vcpu_has_irq(struct kvm_vcpu *vcpu, int exclude_stop)
+>   {
+> -	if (deliverable_irqs(vcpu))
+> +	if (deliverable_irqs(vcpu, IRQ_MASK_ALL | IRQ_FLAG_IAM))
 
-Benchmark does measurements for 8, 16, 32, 64 and 128 threads in
-a loop.
+Why do we need to restore IAM here?
 
-This one differs from epoll-wait-1pmc in that it produces events
-from many threads and consumes from one, thus mp1c (many producers
-1 consumer).
 
-Signed-off-by: Roman Penyaev <rpenyaev@suse.de>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Davidlohr Bueso <dbueso@suse.de>
-Cc: Jason Baron <jbaron@akamai.com>
-Cc: linux-kernel@vger.kernel.org
----
- tools/perf/bench/Build             |   1 +
- tools/perf/bench/bench.h           |   1 +
- tools/perf/bench/epoll-wait-mp1c.c | 175 +++++++++++++++++++++++++++++
- tools/perf/builtin-bench.c         |   1 +
- 4 files changed, 178 insertions(+)
- create mode 100644 tools/perf/bench/epoll-wait-mp1c.c
 
-diff --git a/tools/perf/bench/Build b/tools/perf/bench/Build
-index ef07fc40bc35..570df3f475b8 100644
---- a/tools/perf/bench/Build
-+++ b/tools/perf/bench/Build
-@@ -8,6 +8,7 @@ perf-y += futex-requeue.o
- perf-y += futex-lock-pi.o
- 
- perf-y += epoll-wait-1pmc.o
-+perf-y += epoll-wait-mp1c.o
- perf-y += epoll-ctl.o
- 
- perf-$(CONFIG_X86_64) += mem-memcpy-x86-64-lib.o
-diff --git a/tools/perf/bench/bench.h b/tools/perf/bench/bench.h
-index fb9782624644..2ee7e7256e23 100644
---- a/tools/perf/bench/bench.h
-+++ b/tools/perf/bench/bench.h
-@@ -39,6 +39,7 @@ int bench_futex_requeue(int argc, const char **argv);
- int bench_futex_lock_pi(int argc, const char **argv);
- 
- int bench_epoll_wait_1pmc(int argc, const char **argv);
-+int bench_epoll_wait_mp1c(int argc, const char **argv);
- int bench_epoll_ctl(int argc, const char **argv);
- 
- #define BENCH_FORMAT_DEFAULT_STR	"default"
-diff --git a/tools/perf/bench/epoll-wait-mp1c.c b/tools/perf/bench/epoll-wait-mp1c.c
-new file mode 100644
-index 000000000000..44b06ae86e5b
---- /dev/null
-+++ b/tools/perf/bench/epoll-wait-mp1c.c
-@@ -0,0 +1,175 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#ifdef HAVE_EVENTFD
-+/*
-+ * Copyright (C) 2019 Roman Penyaev
-+ *
-+ * This program benchmarks bandwidth of events delivered from many threads
-+ * (many producers) to a single consumer, which monitors for events calling
-+ * epoll_wait(2).
-+ */
-+
-+#include <string.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <time.h>
-+#include <assert.h>
-+#include <sys/epoll.h>
-+#include <sys/eventfd.h>
-+#include <unistd.h>
-+#include <pthread.h>
-+#include <errno.h>
-+#include <err.h>
-+#include <linux/kernel.h> /* For ARRAY_SIZE only */
-+#include "bench.h"
-+#include "cpumap.h"
-+
-+#define ITERS     1000000ull
-+
-+struct thread_ctx {
-+	pthread_t thread;
-+	int efd;
-+};
-+
-+static volatile unsigned int thr_ready;
-+static volatile unsigned int start;
-+
-+static inline unsigned long long nsecs(void)
-+{
-+	struct timespec ts = {0, 0};
-+
-+	clock_gettime(CLOCK_MONOTONIC, &ts);
-+	return ((unsigned long long)ts.tv_sec * 1000000000ull) + ts.tv_nsec;
-+}
-+
-+static void *thread_work(void *arg)
-+{
-+	struct thread_ctx *ctx = arg;
-+	uint64_t ucnt = 1;
-+	unsigned int i;
-+	int rc;
-+
-+	__atomic_add_fetch(&thr_ready, 1, __ATOMIC_RELAXED);
-+
-+	while (!start)
-+		;
-+
-+	for (i = 0; i < ITERS; i++) {
-+		rc = write(ctx->efd, &ucnt, sizeof(ucnt));
-+		assert(rc == sizeof(ucnt));
-+	}
-+
-+	return NULL;
-+}
-+
-+static int do_bench(struct cpu_map *cpu, unsigned int nthreads)
-+{
-+	struct epoll_event ev, events[nthreads];
-+	struct thread_ctx threads[nthreads];
-+	pthread_attr_t thrattr;
-+	struct thread_ctx *ctx;
-+	int rc, epfd, nfds;
-+	cpu_set_t cpuset;
-+	unsigned int i;
-+
-+	unsigned long long epoll_calls = 0, epoll_nsecs;
-+	unsigned long long ucnt, ucnt_sum = 0;
-+
-+	epfd = epoll_create1(0);
-+	if (epfd < 0)
-+		err(EXIT_FAILURE, "epoll_create1");
-+
-+	for (i = 0; i < nthreads; i++) {
-+		ctx = &threads[i];
-+
-+		ctx->efd = eventfd(0, EFD_NONBLOCK);
-+		if (ctx->efd < 0)
-+			err(EXIT_FAILURE, "eventfd");
-+
-+		ev.events = EPOLLIN;
-+		ev.data.ptr = ctx;
-+		rc = epoll_ctl(epfd, EPOLL_CTL_ADD, ctx->efd, &ev);
-+		if (rc)
-+			err(EXIT_FAILURE, "epoll_ctl");
-+
-+		CPU_ZERO(&cpuset);
-+		CPU_SET(cpu->map[i % cpu->nr], &cpuset);
-+
-+		pthread_attr_init(&thrattr);
-+		rc = pthread_attr_setaffinity_np(&thrattr, sizeof(cpu_set_t),
-+						 &cpuset);
-+		if (rc) {
-+			errno = rc;
-+			err(EXIT_FAILURE, "pthread_attr_setaffinity_np");
-+		}
-+
-+		rc = pthread_create(&ctx->thread, &thrattr, thread_work, ctx);
-+		if (rc) {
-+			errno = rc;
-+			err(EXIT_FAILURE, "pthread_create");
-+		}
-+	}
-+
-+	while (thr_ready == nthreads)
-+		;
-+
-+	/* Signal start for all threads */
-+	start = 1;
-+
-+	epoll_nsecs = nsecs();
-+	while (1) {
-+		nfds = epoll_wait(epfd, events, nthreads, -1);
-+		if (nfds < 0)
-+			err(EXIT_FAILURE, "epoll_wait");
-+
-+		epoll_calls++;
-+
-+		for (i = 0; i < (unsigned int)nfds; ++i) {
-+			ctx = events[i].data.ptr;
-+			rc = read(ctx->efd, &ucnt, sizeof(ucnt));
-+			assert(rc == sizeof(ucnt));
-+			ucnt_sum += ucnt;
-+			if (ucnt_sum == nthreads * ITERS)
-+				goto end;
-+		}
-+	}
-+end:
-+	epoll_nsecs = nsecs() - epoll_nsecs;
-+
-+	for (i = 0; i < nthreads; i++) {
-+		ctx = &threads[i];
-+		pthread_join(ctx->thread, NULL);
-+		close(ctx->efd);
-+	}
-+	close(epfd);
-+
-+	printf("%7d   %8lld     %8lld\n",
-+		   nthreads,
-+		   ITERS*nthreads/(epoll_nsecs/1000/1000),
-+		   epoll_nsecs/1000/1000);
-+
-+	return 0;
-+}
-+
-+int bench_epoll_wait_mp1c(int argc, const char **argv)
-+{
-+	unsigned int i, nthreads_arr[] = {8, 16, 32, 64, 128};
-+	struct cpu_map *cpu;
-+
-+	(void)argc; (void)argv;
-+
-+	cpu = cpu_map__new(NULL);
-+	if (!cpu) {
-+		errno = ENOMEM;
-+		err(EXIT_FAILURE, "cpu_map__new");
-+	}
-+
-+	printf("threads  events/ms  run-time ms\n");
-+	for (i = 0; i < ARRAY_SIZE(nthreads_arr); i++)
-+		do_bench(cpu, nthreads_arr[i]);
-+
-+	cpu_map__put(cpu);
-+
-+	return 0;
-+}
-+
-+#endif // HAVE_EVENTFD
-diff --git a/tools/perf/builtin-bench.c b/tools/perf/builtin-bench.c
-index 6926b5a5eebf..4426b7afadf3 100644
---- a/tools/perf/builtin-bench.c
-+++ b/tools/perf/builtin-bench.c
-@@ -71,6 +71,7 @@ static struct bench futex_benchmarks[] = {
- #ifdef HAVE_EVENTFD
- static struct bench epoll_benchmarks[] = {
- 	{ "wait-1pmc",	"Benchmark epoll concurrent epoll_waits",       bench_epoll_wait_1pmc	},
-+	{ "wait-mp1c",	"Benchmark epoll events delivery bandwidth",    bench_epoll_wait_mp1c	},
- 	{ "ctl",	"Benchmark epoll concurrent epoll_ctls",        bench_epoll_ctl		},
- 	{ "all",	"Run all futex benchmarks",			NULL			},
- 	{ NULL,		NULL,						NULL			}
 -- 
-2.19.1
+Pierre Morel
+Linux/KVM/QEMU in Böblingen - Germany
 
