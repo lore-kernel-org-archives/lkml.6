@@ -6,124 +6,163 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DBE2C43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 10:45:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6237C43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 10:51:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 028682073D
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 10:45:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A22CE2073D
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 10:51:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731061AbfACKpa (ORCPT
+        id S1731065AbfACKv6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 05:45:30 -0500
-Received: from mail-ua1-f67.google.com ([209.85.222.67]:46639 "EHLO
-        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727515AbfACKp3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 05:45:29 -0500
-Received: by mail-ua1-f67.google.com with SMTP id v24so10779962uap.13;
-        Thu, 03 Jan 2019 02:45:28 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=T6b5bnPCnQXCsVXcWoxqB9zy7YX5yza5nymdDa8uLzg=;
-        b=UDCDuxH5L1yWMBrNT4EAuvtO/rObLUxiWlEJb9imiLFjiAH8HcuwaQFjREH49QVf8a
-         AJQtpe3N3fupwxZBidXbrwajOoshGlxMI+xrtt4jT24tdmKwhjslwzlU3xn3GNZyKTNR
-         1zTWdGcqwuI1kKtmq2CPnZQl4sGGsdda5JXDhJdMvKICielGIDK8gGIPf7IKY+kvX4vK
-         qGPc9VvJUNVFt/tbxnewkD75GoHzfWHjAEvX/68Dc8CmcFVpy1kkGt4NvdFvmleIwZSD
-         dybTMaEAngOsTJUVoOPZOzf7Y/rWT1NrBfzcspJrsBuP0/Pwlg58UozSMqjYXfbe3uPF
-         PHnQ==
-X-Gm-Message-State: AJcUukfGn2bvYYrl8Jf/oxcitFmf78NktEspaDmUoYTXpu4tYogzU6up
-        Xf8BZ76PzEHpRy384F0VKmT2zRZgayDY2vJmnjVBvjJ4
-X-Google-Smtp-Source: ALg8bN5CZUyzxXxvFgW7HK19+ZDpO11uCTH6n8E2iwBXfLsR6Tvw/x/eFgNMZ/RPNDgJhLcPcKZXSySbCF5m5EGfj/4=
-X-Received: by 2002:ab0:7251:: with SMTP id d17mr18113701uap.0.1546512328415;
- Thu, 03 Jan 2019 02:45:28 -0800 (PST)
+        Thu, 3 Jan 2019 05:51:58 -0500
+Received: from foss.arm.com ([217.140.101.70]:46918 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726618AbfACKv5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Jan 2019 05:51:57 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 100FF80D;
+        Thu,  3 Jan 2019 02:51:57 -0800 (PST)
+Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BFD253F5D4;
+        Thu,  3 Jan 2019 02:51:54 -0800 (PST)
+Subject: Re: [PATCH v3 3/3] arm64: Early boot time stamps
+To:     Pavel Tatashin <pasha.tatashin@soleen.com>,
+        catalin.marinas@arm.com, will.deacon@arm.com,
+        akpm@linux-foundation.org, rppt@linux.vnet.ibm.com,
+        mhocko@suse.com, ard.biesheuvel@linaro.org, andrew.murray@arm.com,
+        james.morse@arm.com, sboyd@kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20181226164509.22916-1-pasha.tatashin@soleen.com>
+ <20181226164509.22916-4-pasha.tatashin@soleen.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: ARM Ltd
+Message-ID: <9fe670d4-d799-c05f-297e-437eda1d2072@arm.com>
+Date:   Thu, 3 Jan 2019 10:51:53 +0000
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-References: <1546442319-20461-1-git-send-email-firoz.khan@linaro.org> <1546442319-20461-2-git-send-email-firoz.khan@linaro.org>
-In-Reply-To: <1546442319-20461-2-git-send-email-firoz.khan@linaro.org>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 3 Jan 2019 11:45:17 +0100
-Message-ID: <CAMuHMdXD5PpF0VswotPP=DQUZ6Rcx0jUq1Czo_WFdGAUrkddyw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] m68k: remove nargs from __SYSCALL
-To:     Firoz Khan <firoz.khan@linaro.org>
-Cc:     linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        marcin.juszkiewicz@linaro.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181226164509.22916-4-pasha.tatashin@soleen.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Firoz,
+Hi Pavel,
 
-Thanks for your patch!
-
-On Wed, Jan 2, 2019 at 4:19 PM Firoz Khan <firoz.khan@linaro.org> wrote:
-> The __SYSCALL macro's arguments are system call number,
-> system call entry name and number of arguments for the
-
-name,
-
-> system call.
->
-> Argument- nargs in __SYSCALL(nr, entry, nargs) is neither
-
-Argument nargs
-
-> calculated nor used anywhere. So it would be better to
-> keep the implementaion as  __SYSCALL(nr, entry). This will
-
-implementation
-
-> unifies the implementation with some other architetures
-
-unify
-architectures
-
-> too.
->
-> Signed-off-by: Firoz Khan <firoz.khan@linaro.org>
+On 26/12/2018 16:45, Pavel Tatashin wrote:
+> Allow printk time stamps/sched_clock() to be available from the early
+> boot.
+> 
+> Signed-off-by: Pavel Tatashin <pasha.tatashin@soleen.com>
 > ---
->  arch/m68k/kernel/syscalls/syscalltbl.sh | 4 ++--
->  arch/m68k/kernel/syscalltable.S         | 2 +-
->  2 files changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/arch/m68k/kernel/syscalls/syscalltbl.sh b/arch/m68k/kernel/syscalls/syscalltbl.sh
-> index 85d78d9..904b8e6 100644
-> --- a/arch/m68k/kernel/syscalls/syscalltbl.sh
-> +++ b/arch/m68k/kernel/syscalls/syscalltbl.sh
-> @@ -13,10 +13,10 @@ emit() {
->         t_entry="$3"
->
->         while [ $t_nxt -lt $t_nr ]; do
-> -               printf "__SYSCALL(%s, sys_ni_syscall, )\n" "${t_nxt}"
-> +               printf "__SYSCALL(%s,sys_ni_syscall)\n" "${t_nxt}"
+>  arch/arm64/kernel/setup.c | 25 +++++++++++++++++++++++++
+>  1 file changed, 25 insertions(+)
+> 
+> diff --git a/arch/arm64/kernel/setup.c b/arch/arm64/kernel/setup.c
+> index 4b0e1231625c..28126facc4ed 100644
+> --- a/arch/arm64/kernel/setup.c
+> +++ b/arch/arm64/kernel/setup.c
+> @@ -40,6 +40,7 @@
+>  #include <linux/efi.h>
+>  #include <linux/psci.h>
+>  #include <linux/sched/task.h>
+> +#include <linux/sched_clock.h>
+>  #include <linux/mm.h>
+>  
+>  #include <asm/acpi.h>
+> @@ -279,8 +280,32 @@ arch_initcall(reserve_memblock_reserved_regions);
+>  
+>  u64 __cpu_logical_map[NR_CPUS] = { [0 ... NR_CPUS-1] = INVALID_HWID };
+>  
+> +/*
+> + * Get time stamps available early in boot, useful to identify boot time issues
+> + * from the early boot.
+> + */
+> +static __init void sched_clock_early_init(void)
+> +{
+> +	u64 (*read_time)(void) = arch_counter_get_cntvct;
+> +	u64 freq = arch_timer_get_cntfrq();
+> +
+> +	/*
+> +	 * The arm64 boot protocol mandates that CNTFRQ_EL0 reflects
+> +	 * the timer frequency. To avoid breakage on misconfigured
+> +	 * systems, do not register the early sched_clock if the
+> +	 * programmed value if zero. Other random values will just
+> +	 * result in random output.
+> +	 */
+> +	if (!freq)
+> +		return;
+> +
+> +	sched_clock_register(read_time, ARCH_TIMER_NBITS, freq);
+> +}
+> +
+>  void __init setup_arch(char **cmdline_p)
+>  {
+> +	sched_clock_early_init();
+> +
+>  	init_mm.start_code = (unsigned long) _text;
+>  	init_mm.end_code   = (unsigned long) _etext;
+>  	init_mm.end_data   = (unsigned long) _edata;
+> 
 
-Please keep the space after the comma.
+I still think this approach is flawed. You provide the kernel with a
+potentially broken sched_clock that may jump back and forth until the
+workaround kicks in. Nobody expects this.
 
->                 t_nxt=$((t_nxt+1))
->         done
-> -       printf "__SYSCALL(%s, %s, )\n" "${t_nxt}" "${t_entry}"
-> +       printf "__SYSCALL(%s,%s)\n" "${t_nxt}" "${t_entry}"
+Instead, I'd suggest you allow for a something other than local_clock()
+to be used for the time stamping until a properly working sched_clock
+gets registered.
 
-Idem ditto.
+This way, you'll only impact the timestamps when running on a broken system.
 
-Gr{oetje,eeting}s,
+Thanks,
 
-                        Geert
-
+	M.
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Jazz is not dead. It just smells funny...
