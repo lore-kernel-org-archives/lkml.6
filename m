@@ -2,83 +2,69 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DATE_IN_FUTURE_06_12,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB95BC43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 02:53:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BA7BC43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 03:05:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91B7820833
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 02:53:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA72320879
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 03:05:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546484704;
+	bh=RLbHI34J0YgLbn374kaeXeNUOrzyupgNKBFNndfVyN8=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
+	b=j6RaewiMvyaY7aRMlukleqg6eXxxWOw+g3YgGkc56+nsuaDGeCsIY8FNmFGPo5kCH
+	 VgH5Vn6fTzwbEUR6GOpA5Ze9gZbqMvxTRlYK7PipvADy/jbe/NDzsAU3u/EUMwNwpi
+	 02U3Jdb1fdN0l74hgNAQ8/S+BMyQ+XccWoYPXhq0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729219AbfACCxm (ORCPT
+        id S1727175AbfACDFD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 21:53:42 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:37603 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728132AbfACCxm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 21:53:42 -0500
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id BA0306DAADF18;
-        Thu,  3 Jan 2019 10:53:39 +0800 (CST)
-Received: from huawei.com (10.175.104.208) by DGGEMS408-HUB.china.huawei.com
- (10.3.19.208) with Microsoft SMTP Server id 14.3.408.0; Thu, 3 Jan 2019
- 10:53:30 +0800
-From:   liujian <liujian56@huawei.com>
-To:     <gregkh@linuxfoundation.org>
-CC:     <xiubli@redhat.com>, <liujian56@huawei.com>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2] driver: uio: fix possible memory leak in uio_open
-Date:   Thu, 3 Jan 2019 20:54:21 +0800
-Message-ID: <1546520061-312904-1-git-send-email-liujian56@huawei.com>
-X-Mailer: git-send-email 2.7.4
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.104.208]
-X-CFilter-Loop: Reflected
+        Wed, 2 Jan 2019 22:05:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38424 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726163AbfACDFD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Jan 2019 22:05:03 -0500
+Subject: Re: [GIT PULL] Mailbox changes for v4.21
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1546484702;
+        bh=RLbHI34J0YgLbn374kaeXeNUOrzyupgNKBFNndfVyN8=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=omLfQ9RwQHlK8BCgMuqH5EWgLXxp0nBlqn+hE+MrXhTUK0jMmpH2qqTGBl1sTTDr/
+         E/6cX1uYWD5Tik84XD217W1Uesexrt29DDxvdA/EUmYpZZ5SMz7rAu29+xsM3Kh1gm
+         3ZvhpRkbLsyMEa5XVAaajOoqRGGO/1lwIN3+eUOo=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <CABb+yY1ZO8pCuN4o3ja-Lyr0G6CVSUJfotcJcEmfJ9MHEAneSA@mail.gmail.com>
+References: <CABb+yY1ZO8pCuN4o3ja-Lyr0G6CVSUJfotcJcEmfJ9MHEAneSA@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CABb+yY1ZO8pCuN4o3ja-Lyr0G6CVSUJfotcJcEmfJ9MHEAneSA@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.linaro.org/landing-teams/working/fujitsu/integration.git
+ tags/mailbox-v4.21
+X-PR-Tracked-Commit-Id: d69e11648e486ee0f21cb246f687b083f0d4e124
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 35ddb06a467538434b4139fbf5c02a2ef073162a
+Message-Id: <20190103030502.10885.28248.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
+Date:   Thu, 03 Jan 2019 03:05:02 +0000
+To:     Jassi Brar <jassisinghbrar@gmail.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-v1->v2:
-rename the "err_infoopen" to "err_idev_info"
+The pull request you sent on Tue, 1 Jan 2019 23:34:36 -0600:
 
-Fixes: 57c5f4df0a5a ("uio: fix crash after the device is unregistered")
-Signed-off-by: liujian <liujian56@huawei.com>
----
- drivers/uio/uio.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+> git://git.linaro.org/landing-teams/working/fujitsu/integration.git tags/mailbox-v4.21
 
-diff --git a/drivers/uio/uio.c b/drivers/uio/uio.c
-index 5c10fc7..aab3520 100644
---- a/drivers/uio/uio.c
-+++ b/drivers/uio/uio.c
-@@ -496,18 +496,19 @@ static int uio_open(struct inode *inode, struct file *filep)
- 	if (!idev->info) {
- 		mutex_unlock(&idev->info_lock);
- 		ret = -EINVAL;
--		goto err_alloc_listener;
-+		goto err_idev_info;
- 	}
- 
- 	if (idev->info && idev->info->open)
- 		ret = idev->info->open(idev->info, inode);
- 	mutex_unlock(&idev->info_lock);
- 	if (ret)
--		goto err_infoopen;
-+		goto err_idev_info;
- 
- 	return 0;
- 
--err_infoopen:
-+err_idev_info:
-+	filep->private_data = NULL;
- 	kfree(listener);
- 
- err_alloc_listener:
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/35ddb06a467538434b4139fbf5c02a2ef073162a
+
+Thank you!
+
 -- 
-2.7.4
-
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
