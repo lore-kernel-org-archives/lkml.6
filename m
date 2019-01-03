@@ -2,122 +2,109 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB8E5C43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 19:30:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 988BBC43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 19:30:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88123217F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 19:30:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F1C7217F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 19:30:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727291AbfACTaJ (ORCPT
+        id S1727312AbfACTav (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 14:30:09 -0500
-Received: from sauhun.de ([88.99.104.3]:55308 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726813AbfACTaJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 14:30:09 -0500
-Received: from localhost (p54B3379A.dip0.t-ipconnect.de [84.179.55.154])
-        by pokefinder.org (Postfix) with ESMTPSA id 4C01D2E3614;
-        Thu,  3 Jan 2019 20:30:07 +0100 (CET)
-Date:   Thu, 3 Jan 2019 20:30:06 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Yi Zeng <yizeng@asrmicro.com>
-Cc:     linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] i2c: dev: prevent adapter retries being set as minus
- value
-Message-ID: <20190103193006.2ekn4ugibm73nfcy@ninjato>
-References: <1545384726-12463-1-git-send-email-yizeng@asrmicro.com>
+        Thu, 3 Jan 2019 14:30:51 -0500
+Received: from mout.kundenserver.de ([212.227.126.187]:47217 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726813AbfACTau (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Jan 2019 14:30:50 -0500
+Received: from oxbsltgw35.schlund.de ([212.227.220.134]) by
+ mrelayeu.kundenserver.de (mreue011 [213.165.67.97]) with ESMTPSA (Nemesis) id
+ 1M1q8m-1gcwpb3SFE-002GgX; Thu, 03 Jan 2019 20:30:07 +0100
+Date:   Thu, 3 Jan 2019 20:30:06 +0100 (CET)
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+To:     Jeremy Linton <jeremy.linton@arm.com>,
+        Dave Martin <Dave.Martin@arm.com>
+Cc:     mark.rutland@arm.com, julien.thierry@arm.com, mlangsdo@redhat.com,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        suzuki.poulose@arm.com, marc.zyngier@arm.com,
+        catalin.marinas@arm.com,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        will.deacon@arm.com, linux-kernel@vger.kernel.org,
+        steven.price@arm.com, shankerd@codeaurora.org,
+        Dave Hansen <dave.hansen@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        ykaukab@suse.de, Thomas Gleixner <tglx@linutronix.de>,
+        linux-arm-kernel@lists.infradead.org
+Message-ID: <1951199845.271163.1546543806398@email.ionos.de>
+In-Reply-To: <db5968e6-609b-1a1f-464d-436327dd1738@arm.com>
+References: <20190103004921.1928921-1-jeremy.linton@arm.com>
+ <20190103004921.1928921-2-jeremy.linton@arm.com>
+ <20190103163740.GC3529@e103592.cambridge.arm.com>
+ <db5968e6-609b-1a1f-464d-436327dd1738@arm.com>
+Subject: Re: [PATCH v2 1/7] sysfs/cpu: Add "Unknown" vulnerability state
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="fqvrkkyrqslvon2x"
-Content-Disposition: inline
-In-Reply-To: <1545384726-12463-1-git-send-email-yizeng@asrmicro.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+Importance: Medium
+X-Mailer: Open-Xchange Mailer v7.8.4-Rev47
+X-Originating-Client: open-xchange-appsuite
+X-Provags-ID: V03:K1:yKSS8p5egjlaMhfhDeQJPIdcmGhd5xl+oENISsah/WG0MujPa2h
+ LiJMMCQfW6PJ7Eqb6eOi9GIn0PtuqJuNzQe+lzjg8s7o+Kxv+fchFK4zeE5rWaRNBXs3WHb
+ twJVYOfDA8BNqd0LJCGuflSdsIvfhsrOAq2FzC0PW4K3DmSrH1AmZd51HDxqM5ItLJGjsKm
+ igvqWwly+YzfdmD1huaQA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:pW995/OWosI=:4S/PKYyQXhoWhzTuLBtOvm
+ 4i82PGUuiX8qrxniqMs0zyhWzTTXvBZV5beXckYtn9X9/DM9caKtF1mMCXcQr95kDuosZj/HQ
+ VyWTe7QGvbKjziZXFvxdgq/xDtgjczTeN5LTiy4zvOsfvZ9Pq7h9YhTb5hX2UI99b6BevZ9I2
+ 8eIbuQ/GWIFaaky/macSzOPqoNj/tqG+wfCrdDRZCqFpL+N16YjLR0umKQIfkntKYipLJCeDz
+ z8WH51ps2dNVU6rZFxWSDPnVJ99JEmqvEFnKkre+i31wC4qxTelrxn1aDKE/hCGtKQl0bykNj
+ C+Em/5Z+fY0q5ov33Jm7qyyatgXvO2EXy33zgs/64Hb/3wt0fdnFVAsHq9d6jIT45wuVbBAeV
+ TivN1+XinOOAe5N1z3JcvReq5UzMtRNmhOwldRVG5GCp6CeUwNwMWW2qQQmabI5MVGc7/5qlZ
+ 81K1ZaT73S5GynEZEAdlDgQn+cEApsAj5b7+CGb5zfFh8HsJIOf0Fld8H+Pdh2GTS1hM+mI55
+ f0arSTJ2RdG2WOPqA8sRLkkKuB2q1IgL1f0Bp2w9AH/P1vRhBxwJfZLTsRAykwAxnIqfqyp/3
+ 1I8VlEKdXcsTSMuq1E45tuVSQjHozQmd+zC27LmR9TZY7ki5AcdQTM3nvavy3OaBe647NSPtT
+ 9WNJBjhnLIo8ifxd5PVT9IIuWVcjdXAkArcpCGXON4KGZT1FJvPJ32VrLqqRhs5/afdf0gypP
+ qRIP3DFW3j565ctOIw6cr6y31zGnwkcjUbhPFsrWdf4SC1jjEeg4MWNARRo=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Jeremy,
 
---fqvrkkyrqslvon2x
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Jeremy Linton <jeremy.linton@arm.com> hat am 3. Januar 2019 um 17:46 geschrieben:
+> 
+> 
+> Hi,
+> 
+> On 01/03/2019 10:37 AM, Dave Martin wrote:
+> > On Wed, Jan 02, 2019 at 06:49:15PM -0600, Jeremy Linton wrote:
+> >> There is a lot of variation in the Arm ecosystem. Because of this,
+> >> there exist possible cases where the kernel cannot authoritatively
+> >> determine if a machine is vulnerable.
+> >>
+> >> Rather than guess the vulnerability status in cases where
+> >> the mitigation is disabled or the firmware isn't responding
+> >> correctly, we need to display an "Unknown" state.
+> >>
 
-Hi Yi Zeng,
+i applied your patch series on linux-next-20190103. On my Raspberry Pi 3B+ (defconfig) i'm getting this from sysfs:
 
-On Fri, Dec 21, 2018 at 05:32:06PM +0800, Yi Zeng wrote:
-> If set adapter->retries to minus value from user space via ioctl,
-> will make __i2c_transfer and __i2c_smbus_xfer jump the calling to
-> adapter->algo->master_xfer and adapter->algo->smbus_xfer that
-> registered by the underlying bus drivers, and return value 0 to
-> all the callers. The bus driver will never be accessed anymore by
-> all users, besides, the users may still get successful return value
-> with no any error or information log print out.
+l1tf:Not affected
+meltdown:Not affected
+spec_store_bypass:Unknown
+spectre_v1:Mitigation: __user pointer sanitization
+spectre_v2:Unknown
 
-Thanks! The issue you observed is correct. It also applies to
-I2C_TIMEOUT. Would you mind fixing it there as well?
+AFAIK it has 4 Cortex-A53 cores (no PSCI firmware), so shouldn't be affected.
 
-> Signed-off-by: Yi Zeng <yizeng@asrmicro.com>
-> ---
->  drivers/i2c/i2c-dev.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
->=20
-> diff --git a/drivers/i2c/i2c-dev.c b/drivers/i2c/i2c-dev.c
-> index 1aca742..c349f58 100644
-> --- a/drivers/i2c/i2c-dev.c
-> +++ b/drivers/i2c/i2c-dev.c
-> @@ -470,6 +470,14 @@ static long i2cdev_ioctl(struct file *file, unsigned=
- int cmd, unsigned long arg)
->  					  data_arg.data);
->  	}
->  	case I2C_RETRIES:
-> +		/*
-> +		 * The adapter->retries is defined as int type, and as
-> +		 * the upper limit for times of i2c transfer retry when
-> +		 * get -EAGAIN, it should not be set as minus value.
-> +		 */
+How can this be fixed?
 
-I usually like comments explaining the situiation. However, here I think
-it is pretty clear that the code does just sanity checks. So, I think we
-can drop it.
-
-> +		if ((int)arg < 0)
-> +			return -EINVAL;
-
-Minor nit: I'd think this is a little more readable
-
-	if (arg > INT_MAX)
-			return -EINVAL
-
-But I have no strong opinion here.
-
-Kind regards,
-
-   Wolfram
-
-
---fqvrkkyrqslvon2x
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlwuYroACgkQFA3kzBSg
-KbaNNRAAqRMn4n+no9XQWb8yZWMPEex6lmgx1JuvggwO45QXv9xBBNLYpcjJJp3o
-YLRMAtV5NV7FTaJcHhBSXujOYp46aXS1a2Z8haQYSeHd6HhAmoWu5EcXLvpa+QIs
-30inN579nScs98BYhbKUuFE/gDpdBixku++tfAT+/bOZNL5sYW4ZYG2cV+7EFows
-Ak2n89L+ZGVv9rpt9m3jszdiAZukDuGzPLv6EtNIFDOAqVnGxUsyrR3M2DrBN6Lq
-pxu96LWy5X5AfGeQiRYSpt+E+1z09OmaJd7DU1EzK4t8SfHtfexBdnAYrbz/dvDo
-nJryQpFB1AznSoVuO3xMlm24qrKKgmapHviJVJ3AvmtACPuGPER0ae6czofyBS1x
-nJrL2Xnp0MS2vrLqkI71i6MD/tWJUukdKM4umwk4dYXGWr9jVysf097v7BrOzJvT
-lhy5xxf0sgCOGp8uWJP/P/Q/DzggkY7x+EO+25Poqgkjw8FN1QKFzxMdlUdyBiyK
-YjT1DDqn/7MQAE3fYCHj/8HDdZDiN1xIeZcpaTbcarlqMb3qi87VsGIdsPwVMZAV
-lY5n9LKvgBYsapE7V5tlSE18/hukrRVpnfTd65sfkeW6eWrM7Vp++d7MgqisJFf/
-OLXYw72vMw3IH5Rcz4ro9n7MYk5Rpu84L/1sP8cCeYU7Ab0nHAM=
-=1e5m
------END PGP SIGNATURE-----
-
---fqvrkkyrqslvon2x--
+Thanks
+Stefan
