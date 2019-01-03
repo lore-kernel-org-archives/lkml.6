@@ -2,89 +2,102 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 252EEC43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 15:32:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD5C5C43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 15:34:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6637208E3
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 15:32:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546529536;
-	bh=1PBUnyFFnT+ckceflGEs0gnLLS0Z22bGDdZnxh5jlzo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=bLLztqfjoyhpEA7mbuL6GzevItgqlE9/lJ0/1AqNxhEpRFAv4xdtbIqR3Z/Fx/3pa
-	 yv4tz3gC6t9G0Q7YjeQnAKHYUrM2UnWOm0gHjdfEkPLC8/HykCuE1lwYxAseCLtphJ
-	 ZPEc2sHe99d2wAfBhzoykQYW8bOjETPnm4h/VakQ=
+	by mail.kernel.org (Postfix) with ESMTP id 87C13208E3
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 15:34:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RWmQwwVt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731422AbfACPcP (ORCPT
+        id S1731474AbfACPe4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 10:32:15 -0500
-Received: from mx2.suse.de ([195.135.220.15]:37036 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730901AbfACPcO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 10:32:14 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 83A58AF1B;
-        Thu,  3 Jan 2019 15:32:12 +0000 (UTC)
-Date:   Thu, 3 Jan 2019 16:32:09 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Will Drewry <wad@chromium.org>,
-        Marcos Paulo de Souza <marcos.souza.org@gmail.com>,
-        David Windsor <dave@nullcore.net>,
-        Roman Gushchin <guro@fb.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Rik van Riel <riel@surriel.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH -next] mm: Mark 'stack_vm_area' with __maybe_unused
-Message-ID: <20190103153209.GT31793@dhcp22.suse.cz>
-References: <1545965190-2381-1-git-send-email-yuehaibing@huawei.com>
- <20181228085804.GR16738@dhcp22.suse.cz>
- <20190102105531.GI3781@kadam>
- <ae41ee4b-4e3f-d39b-1ad8-40d0096b713d@huawei.com>
+        Thu, 3 Jan 2019 10:34:56 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:39497 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730813AbfACPe4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Jan 2019 10:34:56 -0500
+Received: by mail-io1-f65.google.com with SMTP id k7so27256114iob.6
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 07:34:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rzcrO/DDIabG61fKvh3m/tBm+wvoA5YtgUbBVcpXEbQ=;
+        b=RWmQwwVtIponRV1jmDO5ilD3V8yH+FO7Ud4zkAKjiW2v3WnC5OYkSVz4hW38UbNk01
+         UPJ1nlYFTxc1V4LCEy7rL/JNdQcTNpOV998m4Ct3B/LQqECUfTzdLoPd/MDm6LiRb9OH
+         5EVKJpovvgxBwiXqeA8uTjHLKQFDFVkT0uqM+urny4clmWGf5NgREz7xNyOqWYZS1niR
+         sOL18UeltCqrHHpNjH2aPLAU0ldLGhdizKQi60aH3tPIvqGgXO7VfK/EdU/ThWzR5BYN
+         +98RqrmBiLdh0iLOs4Y4/7NdLU0KfeEuv9MkuIUdXD99IOKcloDcC96x+dPnv3Toewng
+         C70A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rzcrO/DDIabG61fKvh3m/tBm+wvoA5YtgUbBVcpXEbQ=;
+        b=heU8F8dbwJ5kC/OKeZN5pbwFSQesvga5Qc8U1tCRuI1U/8PGELNQfftnuydtsKXLnL
+         Yv2Nb0xYyPmneydTndL2PCdAkYijF1zmBr3VD4ypOUd4mATkggDaCZcLDy9gnJvQH2jh
+         ZfZ1uJErjmu76YKr+YvAFMF31rW0kL6A77NTOnAYvaO2wW4XxfR5X0OC221omQ1W+8nQ
+         sbRttyAsL2a60T9Wgr8wKXehxDCYmxgCTFSqrvzDOsJT7yqR7CBLMONtnhtHGBD3cUE1
+         tnguAIc56pWto1+PZtfQyJB3yg6t8Vys8gNEMHRq6RUjhhLYfYWT8MEtFu61/arVVldX
+         tDew==
+X-Gm-Message-State: AJcUukevrQiLxwPu3zNnaBlLrg9ahpIaaadiVz8C/pRrMNJiObPWLKpv
+        mcEPt0Qa5TNnQynEUarVBRR9S86thjEXVcDoBV47UA==
+X-Google-Smtp-Source: ALg8bN60kACinhCtNuJ2AqklHh6+gZhYiwxOFxMFSURhcticxssMVq96kSpdrLBPW0sw0QsRDzCVM7wic+CkaQajyk0=
+X-Received: by 2002:a6b:9355:: with SMTP id v82mr34641809iod.40.1546529695287;
+ Thu, 03 Jan 2019 07:34:55 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ae41ee4b-4e3f-d39b-1ad8-40d0096b713d@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1545816338-1171-1-git-send-email-wei.w.wang@intel.com>
+ <1545816338-1171-5-git-send-email-wei.w.wang@intel.com> <CALMp9eRPvxPCnAnWr8+U98PzZLQ8LzeBRMyPk0qROKBzSzSnRQ@mail.gmail.com>
+ <5C2DB81F.3000906@intel.com>
+In-Reply-To: <5C2DB81F.3000906@intel.com>
+From:   Jim Mattson <jmattson@google.com>
+Date:   Thu, 3 Jan 2019 07:34:44 -0800
+Message-ID: <CALMp9eR0rkF-DuOWyB16q5r8y9DrefsMd1h4GfDkA8nmpWjMEg@mail.gmail.com>
+Subject: Re: [PATCH v4 04/10] KVM/x86: intel_pmu_lbr_enable
+To:     Wei Wang <wei.w.wang@intel.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        kvm list <kvm@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Kan Liang <kan.liang@intel.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        like.xu@intel.com, Jann Horn <jannh@google.com>,
+        arei.gonglei@huawei.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 02-01-19 19:40:15, YueHaibing wrote:
-> On 2019/1/2 18:55, Dan Carpenter wrote:
-> > On Fri, Dec 28, 2018 at 09:58:04AM +0100, Michal Hocko wrote:
-> >> On Fri 28-12-18 02:46:30, YueHaibing wrote:
-> >>> Fixes gcc '-Wunused-but-set-variable' warning when
-> >>> CONFIG_VMAP_STACK is not set:
-> >>
-> >> Isn't this warning disabled? I can see the following
-> >> # These warnings generated too much noise in a regular build.
-> >> # Use make W=1 to enable them (see scripts/Makefile.extrawarn)
-> >> KBUILD_CFLAGS += -Wno-unused-but-set-variable
-> >>
-> >> in the main makefile. IMHO this warning doesn't really give us much.
-> >>
-> > 
-> > It would be nice to enable that warning.  YueHaibing and Colin King have
-> > been whittling away at the problematic code...
-> > 
-> > YueHaibing, how many of these warnings do we have remaining on an
-> > allmodoconfig?
-> 
-> about 1300+
+On Wed, Jan 2, 2019 at 11:16 PM Wei Wang <wei.w.wang@intel.com> wrote:
+>
+> On 01/03/2019 07:26 AM, Jim Mattson wrote:
+> > On Wed, Dec 26, 2018 at 2:01 AM Wei Wang <wei.w.wang@intel.com> wrote:
+> >> The lbr stack is architecturally specific, for example, SKX has 32 lbr
+> >> stack entries while HSW has 16 entries, so a HSW guest running on a SKX
+> >> machine may not get accurate perf results. Currently, we forbid the
+> >> guest lbr enabling when the guest and host see different lbr stack
+> >> entries.
+> > How do you handle live migration?
+>
+> This feature is gated by the QEMU "lbr=true" option.
+> So if the lbr fails to work on the destination machine,
+> the destination side QEMU wouldn't be able to boot,
+> and migration will not happen.
 
-This is way too much. Is any of them actually pointing to a real bug?
+Yes, but then what happens?
 
--- 
-Michal Hocko
-SUSE Labs
+Fast forward to, say, 2021. You're decommissioning all Broadwell
+servers in your data center. You have to migrate the running VMs off
+of those Broadwell systems onto newer hardware. But, with the current
+implementation, the migration cannot happen. So, what do you do? I
+suppose you just never enable the feature in the first place. Right?
