@@ -2,115 +2,101 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1212C43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 07:39:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D058FC43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 07:41:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 886E620896
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 07:39:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="s2fDpQo3"
+	by mail.kernel.org (Postfix) with ESMTP id 9E04A2073D
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 07:41:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730128AbfACHjA (ORCPT
+        id S1730144AbfACHlI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 02:39:00 -0500
-Received: from mail-oi1-f171.google.com ([209.85.167.171]:38836 "EHLO
-        mail-oi1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726671AbfACHi7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 02:38:59 -0500
-Received: by mail-oi1-f171.google.com with SMTP id a77so27034837oii.5;
-        Wed, 02 Jan 2019 23:38:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=7lh/cFAa2ByrsjVrl6PN/Vh/mb45ecVTmVFRCuC3WiE=;
-        b=s2fDpQo3kSbm3U+HaUeQgko70CWG4s9aAHC7w/HCF/qHUHEReur3ngZwhO3vuj7fGi
-         aj70IAX2F3UcFWRIFsq2LTkG8gkjtg7HjGFeaNp1lbopccA56Bn1cDOLNmETuH5l2KZW
-         xjJBkTHPw9HNvdFhhaDk+gyQZYAttI0LusX4qlt2jgFLpqX3CAM+PDzfKKNHOxZ+uZdC
-         fkBAIN+tQ+VbT0ddSqkARW3o1PrHq91Gk2n4r2MQnvCaxoGKVT1K36N0Ic9Ik0hGpqTQ
-         BD9VazmugrKrRa+TQwZQ7TPPkRAQNpIxVo7aRXr0f7onw0NRRDHFD90Dot6XnNWdL9KZ
-         XCyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=7lh/cFAa2ByrsjVrl6PN/Vh/mb45ecVTmVFRCuC3WiE=;
-        b=Vh3TFxj1GtUB3oUGFbef1mRp0lVQKVQOrZbAQQXFUYj3r1OKKCGJuFKIHWCYyUXuaO
-         G5z0o6MKKyB6rwe9vneUDJnxV8MZRlK3Q7Lx+NgKJxRphdJjR8Wr8FhJFYsFkPSlXZcx
-         rQOhGnasFr7amFk3Dipw0loG6tPLQ/bCKMVat2BWAWCmuzDulysS6xPTQ/eEUIGLe1eS
-         j14Yehhg39KRDV8liZVJGkSzf5UAB9nuh/dKzV1UhG6LncScmWyIysFeP1DYNInsJJjb
-         /CPoPXLdbWu7byRxfMZuY+M5YkEF9akA7rwl1U5Dhd/8hSVGU/0RJqVOB92Ih2k8+l1U
-         Zcmg==
-X-Gm-Message-State: AJcUukcH6JOq+hMWb7Fg8rFS9eIM+avgm9woaYtafqZKyC7PSLbNN0OP
-        NemCxG6rPxtfLql5G7FP2rGVOkGtSUwZ8SeStmBb50CA
-X-Google-Smtp-Source: AFSGD/Wt39WIvjnt85JI6jHcpHe+fHnq+iRaDp1H7w+K0KFTdq1C3O3H145IMmYyD+FDJM4KFosDS7h7mo9Ho/8S3hc=
-X-Received: by 2002:aca:ec55:: with SMTP id k82mr29703015oih.55.1546501138763;
- Wed, 02 Jan 2019 23:38:58 -0800 (PST)
+        Thu, 3 Jan 2019 02:41:08 -0500
+Received: from mga09.intel.com ([134.134.136.24]:62937 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726671AbfACHlI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Jan 2019 02:41:08 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Jan 2019 23:41:07 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,434,1539673200"; 
+   d="scan'208";a="264052827"
+Received: from yhuang-dev.sh.intel.com (HELO yhuang-dev) ([10.239.13.10])
+  by orsmga004.jf.intel.com with ESMTP; 02 Jan 2019 23:41:06 -0800
+From:   "Huang\, Ying" <ying.huang@intel.com>
+To:     Yang Shi <yang.shi@linux.alibaba.com>
+Cc:     <tim.c.chen@intel.com>, <minchan@kernel.org>,
+        <akpm@linux-foundation.org>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [v4 PATCH 2/2] mm: swap: add comment for swap_vma_readahead
+References: <1546145375-793-1-git-send-email-yang.shi@linux.alibaba.com>
+        <1546145375-793-2-git-send-email-yang.shi@linux.alibaba.com>
+Date:   Thu, 03 Jan 2019 15:41:05 +0800
+In-Reply-To: <1546145375-793-2-git-send-email-yang.shi@linux.alibaba.com>
+        (Yang Shi's message of "Sun, 30 Dec 2018 12:49:35 +0800")
+Message-ID: <875zv6w5m6.fsf@yhuang-dev.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
 MIME-Version: 1.0
-References: <398a74fa-6566-8d0d-6434-e68ff3763656@kernel.dk> <af940531-2535-2777-8c09-e9d1e6c16e82@suse.com>
-In-Reply-To: <af940531-2535-2777-8c09-e9d1e6c16e82@suse.com>
-From:   Jinpu Wang <jinpuwang@gmail.com>
-Date:   Thu, 3 Jan 2019 08:38:46 +0100
-Message-ID: <CAD9gYJ+725cU_n1EMzQ7hyaf_HrKJajL2oiJp8RZmwQ1Lhmt5g@mail.gmail.com>
-Subject: Re: Shaohua Li
-To:     Guoqing Jiang <gqjiang@suse.com>, Jens Axboe <axboe@kernel.dk>
-Cc:     linux-raid <linux-raid@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=ascii
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Guoqing Jiang <gqjiang@suse.com> =E4=BA=8E2019=E5=B9=B41=E6=9C=883=E6=97=A5=
-=E5=91=A8=E5=9B=9B =E4=B8=8A=E5=8D=884:16=E5=86=99=E9=81=93=EF=BC=9A
->
->
->
-> On 1/3/19 1:13 AM, Jens Axboe wrote:
-> > Hi,
-> >
-> > I've got some very sad news to share with you - over Christmas, Shaohua
-> > Li passed away after battling cancer for most of last year.
->
-> It is really a sad news and a big lost for the community consider Shaohua=
-'s
-> great contribution!
+Yang Shi <yang.shi@linux.alibaba.com> writes:
 
-It's really a sad news, Shaohua is one of the best Chinese Linux Hackers.
+> swap_vma_readahead()'s comment is missed, just add it.
 >
-> > As you know, Shaohua acted as the maintainer for md. He remained
-> > dedicated to that through the difficult times. With his passing, we
-> > obviously have a void that needs to be filled.
+> Cc: Huang Ying <ying.huang@intel.com>
+> Cc: Tim Chen <tim.c.chen@intel.com>
+> Cc: Minchan Kim <minchan@kernel.org>
+> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+> ---
+>  mm/swap_state.c | 17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
 >
-> It is better if there is a small team to maintain md in future since nobo=
-dy
-> have broad/deep knowledge as Neil or Shaohua, also people in the team
-> can cover/backup each other, see [1].
+> diff --git a/mm/swap_state.c b/mm/swap_state.c
+> index 78d500e..dd8f698 100644
+> --- a/mm/swap_state.c
+> +++ b/mm/swap_state.c
+> @@ -698,6 +698,23 @@ static void swap_ra_info(struct vm_fault *vmf,
+>  	pte_unmap(orig_pte);
+>  }
+>  
+> +/**
+> + * swap_vm_readahead - swap in pages in hope we need them soon
 
-Agree!
->
-> > For now, I'll act as interim maintainer for md until we can find a good
-> > permanent solution. I'll queue up reviewed patches in a separate branch=
-,
-> > in the block tree, and help review fixes. I'm subscribed to linux-raid,
-> > but please do CC me as well.
->
-> Thanks, I think there are some patches in shli/md/for-next which supposed
-> to be merge to 4.21, could you please help to merge them to your branch?
-> And I suppose you will send a patch to CREDITS for Shaohua.
-+1
->
-> [1]. https://lkml.org/lkml/2015/12/21/9
->
-> Regards,
-> Guoqing
-Regards,
-Jack Wang
+s/swap_vm_readahead/swap_vma_readahead/
+
+> + * @entry: swap entry of this memory
+> + * @gfp_mask: memory allocation flags
+> + * @vmf: fault information
+> + *
+> + * Returns the struct page for entry and addr, after queueing swapin.
+> + *
+> + * Primitive swap readahead code. We simply read in a few pages whoes
+> + * virtual addresses are around the fault address in the same vma.
+> + *
+> + * This has been extended to use the NUMA policies from the mm triggering
+> + * the readahead.
+
+What is this?  I know you copy it from swap_cluster_readahead(), but we
+have only one mm for vma readahead.
+
+> + * Caller must hold down_read on the vma->vm_mm if vmf->vma is not NULL.
+
+Better to make it explicit that your are talking about mmap_sem?
+
+Best Regards,
+Huang, Ying
+
+> + *
+> + */
+>  static struct page *swap_vma_readahead(swp_entry_t fentry, gfp_t gfp_mask,
+>  				       struct vm_fault *vmf)
+>  {
