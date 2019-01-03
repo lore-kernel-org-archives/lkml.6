@@ -2,264 +2,152 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 477A8C43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 09:50:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C980C43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 09:52:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10D18206BB
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 09:50:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B76502171F
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 09:52:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546509162;
+	bh=zAJe8qw0kH7ieiXcKIkW+IZNr3Pr6z73VoUbDcaqAAc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=lBBJp2hlohRS0RpUiinWed0su7hZass6RzPVke5ofG7TKxLQ5Ek1kBgyjO09qMgjJ
+	 nXtsEc3SXkWe+PNlZW62o7aeSZrJvz7o01LU1WuLHTP+LeUe3a/y07TJBq6WnLk1jU
+	 mYmsw5cCrMtjk3NR90ZPrCaDPzvjkV/3O43sDhwE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730577AbfACJuH (ORCPT
+        id S1730590AbfACJwl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 04:50:07 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:51852 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727041AbfACJuG (ORCPT
+        Thu, 3 Jan 2019 04:52:41 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:44270 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729819AbfACJwl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 04:50:06 -0500
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x039nQtt146141
-        for <linux-kernel@vger.kernel.org>; Thu, 3 Jan 2019 04:50:05 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2psd1w6tev-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 04:50:04 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
-        Thu, 3 Jan 2019 09:50:03 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 3 Jan 2019 09:50:00 -0000
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x039nwOe8913268
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 3 Jan 2019 09:49:59 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D12E842041;
-        Thu,  3 Jan 2019 09:49:58 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6C3E442047;
-        Thu,  3 Jan 2019 09:49:58 +0000 (GMT)
-Received: from [9.152.224.140] (unknown [9.152.224.140])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu,  3 Jan 2019 09:49:58 +0000 (GMT)
-Reply-To: pmorel@linux.ibm.com
-Subject: Re: [PATCH v5 08/15] KVM: s390: add the GIB and its related life-cyle
- functions
-To:     Michael Mueller <mimu@linux.ibm.com>,
-        KVM Mailing List <kvm@vger.kernel.org>
-Cc:     Linux-S390 Mailing List <linux-s390@vger.kernel.org>,
-        linux-kernel@vger.kernel.org,
-        kvm390-list@tuxmaker.boeblingen.de.ibm.com,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Halil Pasic <pasic@linux.ibm.com>
-References: <20181219191756.57973-1-mimu@linux.ibm.com>
- <20181219191756.57973-9-mimu@linux.ibm.com>
-From:   Pierre Morel <pmorel@linux.ibm.com>
-Date:   Thu, 3 Jan 2019 10:49:58 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 3 Jan 2019 04:52:41 -0500
+Received: by mail-ot1-f67.google.com with SMTP id f18so28906940otl.11;
+        Thu, 03 Jan 2019 01:52:39 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=N7hJmE6M6okWD63zwDFmJVqMqwljZ5A1UenhsuRVPzM=;
+        b=I66E0uRL2bITnblPTaqS1m7nqdG6qdpGkaTVziDEi/qL+0ktYGDkrTzue1i+WSgnWH
+         imIo7NWCDQIOcqL8FHHnkRZO/58WIkb37zdOjoy8+TiLZq8GFOuy0xzq+zxEfQUTf68f
+         XLW5iO0t+OBhz+tReKbluktyZFe9i8Vmfa3lHcftS7Wkh0i2QMbgotzoxhIh+Cl1X8lW
+         9OFjZXRo7I1IYA/IaNKUqaKJG3T+DP8fdfFAt75WRSbBillWZ7yk/Kf5X7TdSrNfyQOe
+         NrLwV0a6gFrF0OQGYG6vWgy2D97kY+VVny/pFPVth/3Ce6YQZsnJPVl7YfpcsPKvO8xG
+         Si/g==
+X-Gm-Message-State: AJcUukeG2nd97+uxw+SxmMdn6a6dkZP3YcR553g5AbE1u6i7lvKxBqoO
+        W1xAlu286FxkXJ2TkQC7eql/NjSCqCOPaV/oQAk=
+X-Google-Smtp-Source: ALg8bN6hfxHK6Q7FajLCDBvCLd7vYv5OF99dObIbG9wgkZdUQORgPD3BmgjNkRg+rOfnwXaD5OtO/GO56uVF8O9hxIY=
+X-Received: by 2002:a9d:60b:: with SMTP id 11mr31247795otn.200.1546509159295;
+ Thu, 03 Jan 2019 01:52:39 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181219191756.57973-9-mimu@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19010309-0016-0000-0000-0000023EE7A4
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19010309-0017-0000-0000-00003297EFBB
-Message-Id: <c244a27a-2d54-0b22-7df4-71f584aed6c0@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-03_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901030087
+References: <20190102181038.4418-1-okaya@kernel.org> <CAK9iUCPWQ=9EgnUFo8BHraEgFwHs3FdbegPLwhT-KHD=r2WBkQ@mail.gmail.com>
+ <8c69f8d0-6a95-0011-ff87-8ac9236a992d@linux.intel.com> <5797826.UxqLOWUXRU@localhost.localdomain>
+In-Reply-To: <5797826.UxqLOWUXRU@localhost.localdomain>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Thu, 3 Jan 2019 10:52:28 +0100
+Message-ID: <CAJZ5v0j=i_YN7szXLV8cKLp2XmoqUTQR6EJhRJhWFJzenhzM9Q@mail.gmail.com>
+Subject: Re: [alsa-devel] [PATCH v5 08/11] ASoC: Intel: atom: Make PCI
+ dependency explicit
+To:     Chandan Rajendra <chandan@linux.ibm.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc:     Sinan Kaya <Okaya@kernel.org>,
+        "moderated list:INTEL ASoC DRIVERS" <alsa-devel@alsa-project.org>,
+        Mark Brown <broonie@kernel.org>,
+        Jie Yang <yang.jie@linux.intel.com>,
+        Takashi Iwai <tiwai@suse.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        ACPI Devel Mailing List <linux-acpi@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Chandan Rajendra <chandan@linux.vnet.ibm.com>,
+        "Ted Ts'o" <tytso@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19/12/2018 20:17, Michael Mueller wrote:
-> The Guest Information Block (GIB) links the GISA of all guests
-> that have adapter interrupts pending. These interrupts cannot be
-> delivered because no vcpu of these guests is currently running in
-> SIE context. Instead, a GIB alert is issued on the host to schedule
-> these guests to run.
+On Thu, Jan 3, 2019 at 5:08 AM Chandan Rajendra <chandan@linux.ibm.com> wrote:
+>
+> On Thursday, January 3, 2019 5:20:27 AM IST Pierre-Louis Bossart wrote:
+> >
+> > On 1/2/19 4:58 PM, Sinan Kaya wrote:
+> > > On Wed, Jan 2, 2019 at 10:50 PM Pierre-Louis Bossart
+> > > <pierre-louis.bossart@linux.intel.com> wrote:
+> > >>
+> > >>> This is pointing to a kconfig issue on ia64 arch.
+> > >>>
+> > >>> arch/ia64/Kconfig:128:error: recursive dependency detected!
+> > >>> arch/ia64/Kconfig:128:    choice <choice> contains symbol IA64_HP_SIM
+> > >>> arch/ia64/Kconfig:202:    symbol IA64_HP_SIM is part of choice PM
+> > >>>
+> > >>> IA64_HP_SIM is both a choice and is selected.
+> > >>>
+> > >>> I did allyesconfig and disabled PCI afterwards to find all the issues
+> > >>> on this patchset.
+> > >> Are you saying there's a newer series that fixes this issue for both
+> > >> allyesconfig and allmodconfig?
+> > >>
+> > >> if yes, then we're good.
+> > >
+> > > No, I haven't fixed ia64 kconfig issue. That's somebody else's job. I
+> > > used allyesconfig to find out all compilation issues on x86 arch to
+> > > come up with this patchset.
+> >
+> > Nothing makes me cringe more than "somebody else's job" statements. In
+> > this case, there is obviously a correlation with your ACPI changes since
+> > the circular dependency happens because of the ACPI symbol.
+> >
+> > arch/ia64/Kconfig:126:error: recursive dependency detected!
+> > arch/ia64/Kconfig:126:    choice <choice> contains symbol IA64_HP_SIM
+> > arch/ia64/Kconfig:200:    symbol IA64_HP_SIM is part of choice PM
+> > kernel/power/Kconfig:144:    symbol PM is selected by PM_SLEEP
+> > kernel/power/Kconfig:104:    symbol PM_SLEEP depends on HIBERNATE_CALLBACKS
+> > kernel/power/Kconfig:31:    symbol HIBERNATE_CALLBACKS is selected by
+> > HIBERNATION
+> > kernel/power/Kconfig:34:    symbol HIBERNATION depends on SWAP
+> > init/Kconfig:250:    symbol SWAP depends on BLOCK
+> > block/Kconfig:5:    symbol BLOCK is selected by UBIFS_FS
+> > fs/ubifs/Kconfig:1:    symbol UBIFS_FS depends on MISC_FILESYSTEMS
+> > fs/Kconfig:220:    symbol MISC_FILESYSTEMS is selected by ACPI_APEI
+> > drivers/acpi/apei/Kconfig:8:    symbol ACPI_APEI depends on ACPI
+> > drivers/acpi/Kconfig:9:    symbol ACPI depends on ARCH_SUPPORTS_ACPI
+> > <<<< LOOK HERE
+> > drivers/acpi/Kconfig:6:    symbol ARCH_SUPPORTS_ACPI is selected by
+> > IA64_HP_SIM
+> > arch/ia64/Kconfig:200:    symbol IA64_HP_SIM is part of choice <choice>
+> >
+> > At any rate, a 3 mn git bisect tells me the circular dependency is
+> > exposed by this change:
+> >
+> > f3fd6cd74fedf99b6060f75df00943fda13b65f2 is the first bad commit
+> > commit f3fd6cd74fedf99b6060f75df00943fda13b65f2
+> > Author: Chandan Rajendra <chandan@linux.vnet.ibm.com>
+> > Date:   Sat Dec 8 12:21:38 2018 +0530
+> >
+> >      fscrypt: remove filesystem specific build config option
+> >
+> >      In order to have a common code base for fscrypt "post read" processing
+> >      for all filesystems which support encryption, this commit removes
+> >      filesystem specific build config option (e.g.
+> > CONFIG_EXT4_FS_ENCRYPTION)
+> >      and replaces it with a build option (i.e. CONFIG_FS_ENCRYPTION) whose
+> >      value affects all the filesystems making use of fscrypt.
+> >
+> >      Signed-off-by: Chandan Rajendra <chandan@linux.vnet.ibm.com>
+> >      Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+> >
+>
+> FWIW, The patch at https://patchwork.kernel.org/patch/10725883/ fixes this
+> problem by removing "select BLOCK if FS_ENCRYPTION" from fs/ubifs/Kconfig.
 
-IMHO "Instead" is not exact.
-The GIB alert is always issued on adapter interrupt if IAM is set even 
-if the guest is running in SIE context.
+OK
 
-I would prefer to rephrase to something like:
-"If enabled, a GIB alert is issued on the host..." ?
-
-
-Reviewed-by: Pierre Morel<pmorel@linux.ibm.com>
-
-
-> 
-> This mechanism allows to process adapter interrupts for currently
-> not running guests.
-> 
-> The GIB is created during host initialization and associated with
-> the Adapter Interruption Facility in case an Adapter Interruption
-> Virtualization Facility is available.
-> 
-> The GIB initialization and thus the activation of the related code
-> will be done in an upcoming patch of this series.
-> 
-> Signed-off-by: Michael Mueller <mimu@linux.ibm.com>
-> Reviewed-by: Janosch Frank <frankja@linux.ibm.com>
-> Reviewed-by: Christian Borntraeger <borntraeger@de.ibm.com>
-> ---
->   arch/s390/include/asm/kvm_host.h | 10 +++++++++
->   arch/s390/kvm/interrupt.c        | 44 ++++++++++++++++++++++++++++++++++++++++
->   arch/s390/kvm/kvm-s390.c         |  1 +
->   arch/s390/kvm/kvm-s390.h         |  2 ++
->   4 files changed, 57 insertions(+)
-> 
-> diff --git a/arch/s390/include/asm/kvm_host.h b/arch/s390/include/asm/kvm_host.h
-> index d5d24889c3bc..537e5e59f27e 100644
-> --- a/arch/s390/include/asm/kvm_host.h
-> +++ b/arch/s390/include/asm/kvm_host.h
-> @@ -785,6 +785,15 @@ struct kvm_s390_gisa {
->   	};
->   };
->   
-> +struct kvm_s390_gib {
-> +	u32 alert_list_origin;
-> +	u32 reserved01;
-> +	u8:5;
-> +	u8  nisc:3;
-> +	u8  reserved03[3];
-> +	u32 reserved04[5];
-> +};
-> +
->   /*
->    * sie_page2 has to be allocated as DMA because fac_list, crycb and
->    * gisa need 31bit addresses in the sie control block.
-> @@ -838,6 +847,7 @@ struct kvm_arch{
->   	/* subset of available cpu features enabled by user space */
->   	DECLARE_BITMAP(cpu_feat, KVM_S390_VM_CPU_FEAT_NR_BITS);
->   	struct kvm_s390_gisa *gisa;
-> +	int gib_in_use;
->   };
->   
->   #define KVM_HVA_ERR_BAD		(-1UL)
-> diff --git a/arch/s390/kvm/interrupt.c b/arch/s390/kvm/interrupt.c
-> index 9b1fa39b6f90..5a54360cecfe 100644
-> --- a/arch/s390/kvm/interrupt.c
-> +++ b/arch/s390/kvm/interrupt.c
-> @@ -7,6 +7,9 @@
->    *    Author(s): Carsten Otte <cotte@de.ibm.com>
->    */
->   
-> +#define KMSG_COMPONENT "kvm-s390"
-> +#define pr_fmt(fmt) KMSG_COMPONENT ": " fmt
-> +
->   #include <linux/interrupt.h>
->   #include <linux/kvm_host.h>
->   #include <linux/hrtimer.h>
-> @@ -38,6 +41,8 @@
->   #define IRQ_MASK_ALL      (IRQ_FLAG_LOCAL | IRQ_FLAG_FLOATING | IRQ_FLAG_GISA)
->   #define IRQ_MASK_NO_GISA  (IRQ_MASK_ALL & ~IRQ_FLAG_GISA)
->   
-> +static struct kvm_s390_gib *gib;
-> +
->   /* handle external calls via sigp interpretation facility */
->   static int sca_ext_call_pending(struct kvm_vcpu *vcpu, int *src_id)
->   {
-> @@ -2913,6 +2918,7 @@ void kvm_s390_gisa_init(struct kvm *kvm)
->   		return;
->   	kvm->arch.gisa = &kvm->arch.sie_page2->gisa;
->   	nullify_gisa(kvm->arch.gisa);
-> +	kvm->arch.gib_in_use = !!gib;
->   	VM_EVENT(kvm, 3, "gisa 0x%pK initialized", kvm->arch.gisa);
->   }
->   
-> @@ -2922,3 +2928,41 @@ void kvm_s390_gisa_destroy(struct kvm *kvm)
->   		return;
->   	kvm->arch.gisa = NULL;
->   }
-> +
-> +void kvm_s390_gib_destroy(void)
-> +{
-> +	if (!gib)
-> +		return;
-> +	chsc_sgib(0);
-> +	free_page((unsigned long)gib);
-> +	gib = NULL;
-> +}
-> +
-> +int kvm_s390_gib_init(u8 nisc)
-> +{
-> +	int rc = 0;
-> +
-> +	if (!css_general_characteristics.aiv) {
-> +		KVM_EVENT(3, "%s", "gib not initialized, no AIV facility");
-> +		goto out;
-> +	}
-> +
-> +	gib = (struct kvm_s390_gib *)get_zeroed_page(GFP_KERNEL | GFP_DMA);
-> +	if (!gib) {
-> +		rc = -ENOMEM;
-> +		goto out;
-> +	}
-> +
-> +	gib->nisc = nisc;
-> +	if (chsc_sgib((u32)(u64)gib)) {
-> +		pr_err("Associating the GIB with the AIV facility failed\n");
-> +		free_page((unsigned long)gib);
-> +		gib = NULL;
-> +		rc = -EIO;
-> +		goto out;
-> +	}
-> +
-> +	KVM_EVENT(3, "gib 0x%pK (nisc=%d) initialized", gib, gib->nisc);
-> +out:
-> +	return rc;
-> +}
-> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
-> index d8d8e0788157..7bc24e16a31d 100644
-> --- a/arch/s390/kvm/kvm-s390.c
-> +++ b/arch/s390/kvm/kvm-s390.c
-> @@ -445,6 +445,7 @@ int kvm_arch_init(void *opaque)
->   
->   void kvm_arch_exit(void)
->   {
-> +	kvm_s390_gib_destroy();
->   	debug_unregister(kvm_s390_dbf);
->   }
->   
-> diff --git a/arch/s390/kvm/kvm-s390.h b/arch/s390/kvm/kvm-s390.h
-> index 1f6e36cdce0d..1a79105b0e9f 100644
-> --- a/arch/s390/kvm/kvm-s390.h
-> +++ b/arch/s390/kvm/kvm-s390.h
-> @@ -381,6 +381,8 @@ int kvm_s390_get_irq_state(struct kvm_vcpu *vcpu,
->   void kvm_s390_gisa_init(struct kvm *kvm);
->   void kvm_s390_gisa_clear(struct kvm *kvm);
->   void kvm_s390_gisa_destroy(struct kvm *kvm);
-> +int kvm_s390_gib_init(u8 nisc);
-> +void kvm_s390_gib_destroy(void);
->   
->   /* implemented in guestdbg.c */
->   void kvm_s390_backup_guest_per_regs(struct kvm_vcpu *vcpu);
-> 
-
-
--- 
-Pierre Morel
-Linux/KVM/QEMU in Böblingen - Germany
-
+Pierre-Louis, can you check if this patch makes the issue go away for
+you, please?
