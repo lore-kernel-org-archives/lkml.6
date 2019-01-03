@@ -2,115 +2,84 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ABEBC43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 17:17:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E64BDC43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 17:18:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCA24217F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 17:17:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546535824;
-	bh=W7Wiltv5gCLIUwsnevB3rRn0lr2jwTqaPd8I/6WmpVk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=dFsVIbzopQ5sOziODSXI6w1uupyzhhO08YSDyiezfthACXGT7Xhwo4WfTd92y4480
-	 VXhjgy0ZJdu7qSJl8Vc3ctAcPowCXjIGrqwuJdvdrgQcXozbfhSUcgvtu8+cRl+lgZ
-	 B0IDBFYTOoEkW48MxUmE/mYW/EWJh3p2uN+OCQJ8=
+	by mail.kernel.org (Postfix) with ESMTP id C060E2073D
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 17:18:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732535AbfACRRD (ORCPT
+        id S1732547AbfACRSj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 12:17:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51882 "EHLO mail.kernel.org"
+        Thu, 3 Jan 2019 12:18:39 -0500
+Received: from mga12.intel.com ([192.55.52.136]:28137 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730554AbfACRRD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 12:17:03 -0500
-Received: from gmail.com (unknown [104.132.1.77])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4E7892073D;
-        Thu,  3 Jan 2019 17:17:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546535822;
-        bh=W7Wiltv5gCLIUwsnevB3rRn0lr2jwTqaPd8I/6WmpVk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=IYVvmgopgiHQa6Y48PXGBAZOhaXzhx9G9qY9BlpzkQAmvFjTO0uBcTsvrVglf9hN+
-         cAbkBO9Ajn1vcYtWU0AcV10yE2MbYGUPgbSUEc1cu9Mu5tFl+/MVt0uyN+KFr3lX5n
-         M4l04VhcRHxYgrVFrN9KEjIDFmSyckVtPiwi9kdM=
-Date:   Thu, 3 Jan 2019 09:17:00 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Aaro Koskinen <aaro.koskinen@iki.fi>,
-        David Howells <dhowells@redhat.com>
-Cc:     "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        linux-fscrypt@vger.kernel.org, linux-kernel@vger.kernel.org,
-        keyrings@vger.kernel.org
-Subject: Re: Bug report: unaligned access with ext4 encryption
-Message-ID: <20190103171659.GA208343@gmail.com>
-References: <20181230162906.GI27785@darkstar.musicnaut.iki.fi>
+        id S1730864AbfACRSj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Jan 2019 12:18:39 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jan 2019 09:18:38 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,435,1539673200"; 
+   d="scan'208";a="113926122"
+Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.137])
+  by fmsmga008.fm.intel.com with ESMTP; 03 Jan 2019 09:18:37 -0800
+Received: by tassilo.localdomain (Postfix, from userid 1000)
+        id ABC33301B2E; Thu,  3 Jan 2019 09:18:38 -0800 (PST)
+Date:   Thu, 3 Jan 2019 09:18:38 -0800
+From:   Andi Kleen <ak@linux.intel.com>
+To:     Jim Mattson <jmattson@google.com>
+Cc:     Wei Wang <wei.w.wang@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kvm list <kvm@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Kan Liang <kan.liang@intel.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        like.xu@intel.com, Jann Horn <jannh@google.com>,
+        arei.gonglei@huawei.com
+Subject: Re: [PATCH v4 04/10] KVM/x86: intel_pmu_lbr_enable
+Message-ID: <20190103171838.GB6118@tassilo.jf.intel.com>
+References: <1545816338-1171-1-git-send-email-wei.w.wang@intel.com>
+ <1545816338-1171-5-git-send-email-wei.w.wang@intel.com>
+ <CALMp9eRPvxPCnAnWr8+U98PzZLQ8LzeBRMyPk0qROKBzSzSnRQ@mail.gmail.com>
+ <5C2DB81F.3000906@intel.com>
+ <CALMp9eR0rkF-DuOWyB16q5r8y9DrefsMd1h4GfDkA8nmpWjMEg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181230162906.GI27785@darkstar.musicnaut.iki.fi>
+In-Reply-To: <CALMp9eR0rkF-DuOWyB16q5r8y9DrefsMd1h4GfDkA8nmpWjMEg@mail.gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 30, 2018 at 06:29:06PM +0200, Aaro Koskinen wrote:
-> Hi,
+> Yes, but then what happens?
 > 
-> When using ext4 encryption on SPARC, there's plenty of dmesg noise about
-> unaligned access:
-> 
-> [  167.269526] Kernel unaligned access at TPC[5497a0] find_and_lock_process_key+0x80/0x120
-> [  167.270152] Kernel unaligned access at TPC[5497a0] find_and_lock_process_key+0x80/0x120
-> [  181.087451] log_unaligned: 5 callbacks suppressed
-> [  181.087511] Kernel unaligned access at TPC[5497a0] find_and_lock_process_key+0x80/0x120
-> [  181.092435] Kernel unaligned access at TPC[5497a0] find_and_lock_process_key+0x80/0x120
-> [  181.095816] Kernel unaligned access at TPC[5497a0] find_and_lock_process_key+0x80/0x120
-> 
-> And also seen on an ARM machine:
-> 
-> $ cat /proc/cpu/alignment
-> User:           0
-> System:         1028193 (find_and_lock_process_key+0x84/0x10c)
-> Skipped:        0
-> Half:           0
-> Word:           1028193
-> DWord:          0
-> Multi:          0
-> User faults:    0 (ignored)
-> 
-> Looks like user_key_payload layout is not optimal when data address
-> is used for fscrypt_key... I tried the below change and got rid of the
-> messages. Not sure what the proper fix should be?
-> 
-> A.
-> 
-> diff --git a/include/keys/user-type.h b/include/keys/user-type.h
-> index e098cbe27db5..6495ffcfe510 100644
-> --- a/include/keys/user-type.h
-> +++ b/include/keys/user-type.h
-> @@ -31,7 +31,7 @@
->  struct user_key_payload {
->  	struct rcu_head	rcu;		/* RCU destructor */
->  	unsigned short	datalen;	/* length of this data */
-> -	char		data[0];	/* actual data */
-> +	char data[0] __aligned(4);	/* actual data */
->  };
->  
->  extern struct key_type key_type_user;
-> 
+> Fast forward to, say, 2021. You're decommissioning all Broadwell
+> servers in your data center. You have to migrate the running VMs off
+> of those Broadwell systems onto newer hardware. But, with the current
+> implementation, the migration cannot happen. So, what do you do? I
+> suppose you just never enable the feature in the first place. Right?
 
-Hi Aaro, thanks for the bug report!  I think you're on the right track; it makes
-much more sense to have the keyrings subsystem store the payload with better
-alignment, than to work around the 2-byte alignment in fscrypt.
+There would in theory ways to handle this.
 
-But how about '__aligned(__alignof__(u64))' instead?  4 bytes may not be enough.
+LBRs are normally not required for running correctly, they're not like
+instructions, so it would be actually quite reasonable to just return 0 
+and ignore writes for incompatible machines for them. Your profilers might
+return some bogus data, but that is normally acceptable.
 
-David, what do you think?
+In some cases it might be also possible to emulate LBRs of
+different types, but I don't think it would be worth the effort.
+ 
+Yes, but the patches don't do this, so right now you should only enable it when
+all systems in your migration pool have compatible LBRs.
 
-- Eric
+-Andi
