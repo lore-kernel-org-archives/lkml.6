@@ -2,96 +2,108 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 953F3C43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 04:48:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 175D3C43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 04:48:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 677852070C
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 04:48:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DAE6D2070C
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 04:48:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="DlebsdW5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729445AbfACEsj (ORCPT
+        id S1729501AbfACEs4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 23:48:39 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:57032 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729358AbfACEsj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 23:48:39 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E49F8804F6;
-        Thu,  3 Jan 2019 04:48:38 +0000 (UTC)
-Received: from [10.72.12.82] (ovpn-12-82.pek2.redhat.com [10.72.12.82])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6C5195D9C5;
-        Thu,  3 Jan 2019 04:48:37 +0000 (UTC)
-Subject: Re: [PATCH v3] driver: uio: fix possible memory leak in uio_open
-To:     liujian <liujian56@huawei.com>, gregkh@linuxfoundation.org
-Cc:     linux-kernel@vger.kernel.org
-References: <1546525702-11264-1-git-send-email-liujian56@huawei.com>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <eed703d7-094f-4e6a-2948-e3ff82fad93d@redhat.com>
-Date:   Thu, 3 Jan 2019 12:48:32 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Wed, 2 Jan 2019 23:48:56 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:41360 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729358AbfACEsz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Jan 2019 23:48:55 -0500
+Received: by mail-pl1-f193.google.com with SMTP id u6so15381717plm.8
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 20:48:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=wD3XC5clJgBcb8qj6+QFlJOKL54hcbtfhGqHXTkeYKQ=;
+        b=DlebsdW5lff+RPbGDS2SLByu/C1tjDsxWGxidpo1iP89m+Wnjz9mYRADF390OWvb1w
+         O/JyjlVafxkMq240QYceRnXncgvmZNNM7/qrOsaGahRQxKIV+MhiQyJ0CYvmUkxF5bXm
+         f+Lv7vyy0k2KjKUUm2Vl4VnHs2JsR6dgrmd2U=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=wD3XC5clJgBcb8qj6+QFlJOKL54hcbtfhGqHXTkeYKQ=;
+        b=t0AgVSOOrcVTnW2/NnWE7Jmer3qV173z4qLpVam2tzc1HfrhSj1d0ypL3T9EAxjJmB
+         E3QQNyGXfQpbTR8F7QSs7GbtRGJv/65UzITWD2ZB7LQvjebgblRgXIm1ntkfTpqtKXA/
+         lH9HgcYnJXnIVHdYWVAO7cGqJ5uzpJKvqUOyFjlWlnLhrV1kJvsp/Sn78z8NsWekYHCd
+         0+SJ+tvPEb1XIvY566sP3Ueg6SH1gAs/ns3lwsg9WTE6EYhx6puv6Z3HF1T4Hm0TkAgL
+         /KLVmBpK3w3yljEp67We5Te1NnfZd6psS4ZVx8fGc8LYVEY6mzgQFKipSkqedZA9Hw/i
+         DoeQ==
+X-Gm-Message-State: AJcUukcfisN/7Gj78bTQhQ8ANIbW1dASBz65VxDeCCdjtG007rJHgIx9
+        2MMsGDKdWo2qUxDLJ5r6HsSx7g==
+X-Google-Smtp-Source: ALg8bN7eRV8ClXNiBKmZQLflSwaRLxDf6g9zcU0iaIq0tFuz7/SxTF3erLWkUgrBUsyblij6npzmjg==
+X-Received: by 2002:a17:902:1008:: with SMTP id b8mr44348614pla.252.1546490934801;
+        Wed, 02 Jan 2019 20:48:54 -0800 (PST)
+Received: from localhost ([122.166.131.155])
+        by smtp.gmail.com with ESMTPSA id h134sm108167206pfe.27.2019.01.02.20.48.53
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 02 Jan 2019 20:48:54 -0800 (PST)
+Date:   Thu, 3 Jan 2019 10:18:52 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Henry Chen <henryc.chen@mediatek.com>
+Cc:     Viresh Kumar <vireshk@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Fan Chen <fan.chen@mediatek.com>,
+        Weiyi Lu <weiyi.lu@mediatek.com>,
+        James Liao <jamesjj.liao@mediatek.com>,
+        Kees Cook <keescook@chromium.org>, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC RESEND PATCH 0/7] Add driver for dvfsrc and add support for
+ active state of scpsys on mt8183
+Message-ID: <20190103044852.l7sxfqeqnxx2xbp5@vireshk-i7>
+References: <1546438198-1677-1-git-send-email-henryc.chen@mediatek.com>
 MIME-Version: 1.0
-In-Reply-To: <1546525702-11264-1-git-send-email-liujian56@huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Thu, 03 Jan 2019 04:48:39 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1546438198-1677-1-git-send-email-henryc.chen@mediatek.com>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/1/3 22:28, liujian wrote:
-> Fixes: 57c5f4df0a5a ("uio: fix crash after the device is unregistered")
-> Signed-off-by: liujian <liujian56@huawei.com>
-> ---
-> v1->v2:
-> rename the "err_infoopen" to "err_idev_info"
-> v2->3:
-> put the extra info after the "--"
+On 02-01-19, 22:09, Henry Chen wrote:
+> The patchsets add support for MediaTek hardware module named DVFSRC
+> (dynamic voltage and frequency scaling resource collector). The DVFSRC is
+> a HW module which is used to collect all the requests from both software
+> and hardware and turn into the decision of minimum operating voltage and
+> minimum DRAM frequency to fulfill those requests.
+> 
+> So, This series is to implement the dvfsrc driver to collect all the
+> requests of operating voltage or DRAM bandwidth from other device drivers
+> likes GPU/Camera through 2 frameworks basically:
+> 
+> 1. PM_QOS_MEMORY_BANDWIDTH from PM QOS: to aggregate the bandwidth
+>    requirements from different clients
+> 2. Active state management of power domains[1]: to handle the operating
+>    voltage opp requirement from different power domains
 
-Looks good to me.
+Honestly speaking I wasn't sure if anyone apart from Qcom will ever use this
+feature when I wrote it first and I am quite surprised and happy to see your
+patches.
+
+They are mostly very neat and clean patches and I don't have complaints with
+most of them. Lets see what comments others provide on them.
 
 Thanks.
-BRs
 
-
->   drivers/uio/uio.c | 7 ++++---
->   1 file changed, 4 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/uio/uio.c b/drivers/uio/uio.c
-> index 5c10fc7..aab3520 100644
-> --- a/drivers/uio/uio.c
-> +++ b/drivers/uio/uio.c
-> @@ -496,18 +496,19 @@ static int uio_open(struct inode *inode, struct file *filep)
->   	if (!idev->info) {
->   		mutex_unlock(&idev->info_lock);
->   		ret = -EINVAL;
-> -		goto err_alloc_listener;
-> +		goto err_idev_info;
->   	}
->   
->   	if (idev->info && idev->info->open)
->   		ret = idev->info->open(idev->info, inode);
->   	mutex_unlock(&idev->info_lock);
->   	if (ret)
-> -		goto err_infoopen;
-> +		goto err_idev_info;
->   
->   	return 0;
->   
-> -err_infoopen:
-> +err_idev_info:
-> +	filep->private_data = NULL;
->   	kfree(listener);
->   
->   err_alloc_listener:
-
-
+-- 
+viresh
