@@ -2,131 +2,88 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE45AC43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 15:52:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 256B0C43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 15:56:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BDF1920815
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 15:52:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E898220815
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 15:56:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731164AbfACPwb (ORCPT
+        id S1731723AbfACP44 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 10:52:31 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:51926 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727699AbfACPwb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 10:52:31 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 81BE215AD;
-        Thu,  3 Jan 2019 07:52:30 -0800 (PST)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 4CE983F575;
-        Thu,  3 Jan 2019 07:52:30 -0800 (PST)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 74F001AE0BD1; Thu,  3 Jan 2019 15:52:30 +0000 (GMT)
-Date:   Thu, 3 Jan 2019 15:52:30 +0000
-From:   Will Deacon <will.deacon@arm.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Andrey Konovalov <andreyknvl@google.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christoph Lameter <cl@linux.com>,
+        Thu, 3 Jan 2019 10:56:56 -0500
+Received: from mout.kundenserver.de ([212.227.126.130]:46071 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731091AbfACP4z (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Jan 2019 10:56:55 -0500
+Received: from [192.168.178.52] ([109.104.40.230]) by mrelayeu.kundenserver.de
+ (mreue011 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1MxE5Y-1hYHNZ3h16-00xZ5C; Thu, 03 Jan 2019 16:56:17 +0100
+Subject: Re: [PATCH v4 0/5] BCM2835 PM driver
+To:     Eric Anholt <eric@anholt.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+        Guenter Roeck <linux@roeck-us.net>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Lee Jones <lee.jones@linaro.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Dave Martin <dave.martin@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Paul Lawrence <paullawrence@google.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        kasan-dev@googlegroups.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sparse@vger.kernel.org, linux-mm@kvack.org,
-        linux-kbuild@vger.kernel.org, Kostya Serebryany <kcc@google.com>,
-        Evgeniy Stepanov <eugenis@google.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Jann Horn <jannh@google.com>,
-        Mark Brand <markbrand@google.com>,
-        Chintan Pandya <cpandya@codeaurora.org>,
-        Vishwath Mohan <vishwath@google.com>
-Subject: Re: [PATCH v2 1/3] kasan, arm64: use ARCH_SLAB_MINALIGN instead of
- manual aligning
-Message-ID: <20190103155230.GA10070@edgewater-inn.cambridge.arm.com>
-References: <cover.1546450432.git.andreyknvl@google.com>
- <b16c90197bb2c06c780e6e981c40345e03fda465.1546450432.git.andreyknvl@google.com>
- <20190102121436.5c2b72d1b0ec49affadc9692@linux-foundation.org>
+        Rob Herring <robh+dt@kernel.org>
+Cc:     linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com
+References: <20181212235150.6491-1-eric@anholt.net>
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+Message-ID: <7dde45e2-8e26-5051-dea6-da3566bb5e0e@i2se.com>
+Date:   Thu, 3 Jan 2019 16:56:15 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190102121436.5c2b72d1b0ec49affadc9692@linux-foundation.org>
-User-Agent: Mutt/1.11.1+30 (d10eec459b35) ()
+In-Reply-To: <20181212235150.6491-1-eric@anholt.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: de-DE
+X-Provags-ID: V03:K1:nnCIVsHC5iQW+EBjhvSdfBl3uDHf7k1up7g8vU4rhY1V658Se90
+ jQzeKkmHMIU11fvB86ZH74oan5vrgDmqytYEXar8w+CGSObUf96HMFxZM7pdUdheMjpEaC9
+ ickBHMvuzDOCfMmPz50Tq49N8emvE1mqvI44R2uKhBSnJo481QvJummr9JDObcAPKNsy9fx
+ OHJWIabsJk0hlsRhKUULw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:3DqAjtG1nc8=:bOi76EcKcmABfiCfyGOlqN
+ RbAy5h+XDnhsCFrT7I3mlIG1KY8ewrb6N+8O81gTVTvsD8ksmGbu+up3eSoRUNO5kKWmy7ahj
+ FZam5RHj1SwJDtBsB6efk5C/zqySKp1Ol7vG8ionZY8YSWFsRppNeDkwH0zxzPpNeYnMAspad
+ dR6kBAR8y+Hm+so+x6mKarY5Z7gyPApd3bgemHL51AzAS7V5Y7ti9EuaNXBEPc/sgS/oQcVoj
+ wm4q4Z1IPDahKQkRScN4qyxeYaib7sdEBy05Vqd8+GEmXVVmGKmaWKgWU3yyKXNtsEFWqKb1q
+ oIBeMs6g7j8c3UYym+X1mMXE9YPgIX/wV0c2OShLw/g/TUZeuo7GcMi3GG+PctBM3TsGNfjPY
+ QKM2aCmssolmDWJga5glF+UtuE1wMC3cDxHmTeBEaQ+4Ep9cQ/jp1qQLQhaFzuq2XBvIijoEy
+ geYlHKN8myMGZO8s/+Ryd6kgGFftce04tNoL60F/MlAClwp3RCGWCfqq8SOos8Qu2oUM/Fbjx
+ xZQu/8pxev5JlyQAlfPPtikdxygHdy5Beme5w8PDxxvfVkJezWd52SUJFSQJQhM4Doovh/hjN
+ rmtsNAH7+yosI+qu1lyJEUMb2qXHRIkOasr3pcpS40JQc0TVZrHFKp+xot6Ns2Kjq7edk6o+W
+ SmC6Tajj7+0ITkj04VVRrV1OQnQQ32zlGugtzaPAJPELgXOtBikYpKajrw99CU19dI2FFK5ni
+ VwrjT44HfnrviCVKDtnFG9OPd8vRPz73XKp7XE2cBe4j60n47+iyTV4YuQM=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 02, 2019 at 12:14:36PM -0800, Andrew Morton wrote:
-> On Wed,  2 Jan 2019 18:36:06 +0100 Andrey Konovalov <andreyknvl@google.com> wrote:
-> 
-> > Instead of changing cache->align to be aligned to KASAN_SHADOW_SCALE_SIZE
-> > in kasan_cache_create() we can reuse the ARCH_SLAB_MINALIGN macro.
-> > 
-> > ...
-> >
-> > --- a/arch/arm64/include/asm/kasan.h
-> > +++ b/arch/arm64/include/asm/kasan.h
-> > @@ -36,6 +36,10 @@
-> >  #define KASAN_SHADOW_OFFSET     (KASAN_SHADOW_END - (1ULL << \
-> >  					(64 - KASAN_SHADOW_SCALE_SHIFT)))
-> >  
-> > +#ifdef CONFIG_KASAN_SW_TAGS
-> > +#define ARCH_SLAB_MINALIGN	(1ULL << KASAN_SHADOW_SCALE_SHIFT)
-> > +#endif
-> > +
-> >  void kasan_init(void);
-> >  void kasan_copy_shadow(pgd_t *pgdir);
-> >  asmlinkage void kasan_early_init(void);
-> > diff --git a/include/linux/slab.h b/include/linux/slab.h
-> > index 11b45f7ae405..d87f913ab4e8 100644
-> > --- a/include/linux/slab.h
-> > +++ b/include/linux/slab.h
-> > @@ -16,6 +16,7 @@
-> >  #include <linux/overflow.h>
-> >  #include <linux/types.h>
-> >  #include <linux/workqueue.h>
-> > +#include <linux/kasan.h>
-> >  
-> 
-> This still seems unadvisable.  Like other architectures, arm defines
-> ARCH_SLAB_MINALIGN in arch/arm/include/asm/cache.h. 
-> arch/arm/include/asm64/cache.h doesn't define ARCH_SLAB_MINALIGN
-> afaict.
-> 
-> If arch/arm/include/asm64/cache.h later gets a definition of
-> ARCH_SLAB_MINALIGN then we again face the risk that different .c files
-> will see different values of ARCH_SLAB_MINALIGN depending on which
-> headers they include.
-> 
-> So what to say about this?  The architecture's ARCH_SLAB_MINALIGN
-> should be defined in the architecture's cache.h, end of story.  Not in
-> slab.h, not in kasan.h.
+Hi Eric,
 
-Agreed. Also, as far as I can tell, this patch isn't actually a fix (unlike
-the other two in this series) so it should be harmless to drop it for now.
+Am 13.12.2018 um 00:51 schrieb Eric Anholt:
+> v4 adds the system-power-controller node to the binding as requested
+> by Stefan.  No driver changes are added to make the power controller
+> behavior optional yet, since it's really unrelated to this series.
+>
+apologize for my late reply. This whole series is
 
-Will
+Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
+
+I would take care of the power controller behavior with an incremental 
+patch.
+
+Should i also make patches to add the driver to the relevant defconfigs 
+(bcm2835, multi_v7, arm64)?
+
+Thanks
+Stefan
+
