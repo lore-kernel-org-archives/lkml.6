@@ -2,89 +2,189 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6723C43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 11:50:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CF43C43444
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 11:51:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E8D221479
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 11:50:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 13F6F21479
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 11:51:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546516280;
+	bh=5e8TcBgEVqT1VyEWEWrdHtKdZEkqWwaKHnFnPIu78no=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=aRcaMyeTLbQV+EeUCEB0vO8ZFgW9sJ+iCI2ubTLKRKS+QDQVIzqnXuB+yWtrEFVn7
+	 tV0YOZY60lItgj2agH4ICGu1nS0Tt2CgS92UjgV4JsfoJ1qKNNuEgl3QoiqHprbYNs
+	 5o/qan8n+ag/hw0dFLoqqEJaygiXdkNQ42+ckQzk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730725AbfACLuW (ORCPT
+        id S1730510AbfACLvS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 06:50:22 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:47858 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726345AbfACLuV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 06:50:21 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E8DAFA78;
-        Thu,  3 Jan 2019 03:50:20 -0800 (PST)
-Received: from e103592.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8EC5E3F5D4;
-        Thu,  3 Jan 2019 03:50:19 -0800 (PST)
-Date:   Thu, 3 Jan 2019 11:50:12 +0000
-From:   Dave Martin <Dave.Martin@arm.com>
-To:     Pi-Hsun Shih <pihsun@chromium.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        "moderated list:ARM64 PORT AARCH64 ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH] arm64: Mirror arm for small unimplemented compat syscalls
-Message-ID: <20190103114959.GA3529@e103592.cambridge.arm.com>
-References: <20190103074550.217421-1-pihsun@chromium.org>
+        Thu, 3 Jan 2019 06:51:18 -0500
+Received: from mx2.suse.de ([195.135.220.15]:60618 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726345AbfACLvS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Jan 2019 06:51:18 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D3B4CACAE;
+        Thu,  3 Jan 2019 11:51:15 +0000 (UTC)
+Date:   Thu, 3 Jan 2019 12:51:14 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Qian Cai <cai@lca.pw>
+Cc:     akpm@linux-foundation.org, Pavel.Tatashin@microsoft.com,
+        mingo@kernel.org, hpa@zytor.com, mgorman@techsingularity.net,
+        iamjoonsoo.kim@lge.com, yang.shi@linaro.org, tglx@linutronix.de,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] mm/page_owner: fix for deferred struct page init
+Message-ID: <20190103115114.GL31793@dhcp22.suse.cz>
+References: <20181220185031.43146-1-cai@lca.pw>
+ <20181220203156.43441-1-cai@lca.pw>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190103074550.217421-1-pihsun@chromium.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20181220203156.43441-1-cai@lca.pw>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 03, 2019 at 03:45:47PM +0800, Pi-Hsun Shih wrote:
-> For syscall number smaller than 0xf0000, arm calls sys_ni_syscall
-> instead of arm_syscall in arch/arm/kernel/entry-common.S, which returns
-> -ENOSYS instead of raising SIGILL. Mirror this behavior for compat
-> syscalls in arm64.
+On Thu 20-12-18 15:31:56, Qian Cai wrote:
+> When booting a system with "page_owner=on",
 > 
-> Fixes: 532826f3712b607 ("arm64: Mirror arm for unimplemented compat
-> syscalls")
-> Signed-off-by: Pi-Hsun Shih <pihsun@chromium.org>
+> start_kernel
+>   page_ext_init
+>     invoke_init_callbacks
+>       init_section_page_ext
+>         init_page_owner
+>           init_early_allocated_pages
+>             init_zones_in_node
+>               init_pages_in_zone
+>                 lookup_page_ext
+>                   page_to_nid
+> 
+> The issue here is that page_to_nid() will not work since some page
+> flags have no node information until later in page_alloc_init_late() due
+> to DEFERRED_STRUCT_PAGE_INIT. Hence, it could trigger an out-of-bounds
+> access with an invalid nid.
+> 
+> [    8.666047] UBSAN: Undefined behaviour in ./include/linux/mm.h:1104:50
+> [    8.672603] index 7 is out of range for type 'zone [5]'
+> 
+> Also, kernel will panic since flags were poisoned earlier with,
+> 
+> CONFIG_DEBUG_VM_PGFLAGS=y
+> CONFIG_NODE_NOT_IN_PAGE_FLAGS=n
+> 
+> start_kernel
+>   setup_arch
+>     pagetable_init
+>       paging_init
+>         sparse_init
+>           sparse_init_nid
+>             memblock_alloc_try_nid_raw
+> 
+> Although later it tries to set page flags for pages in reserved bootmem
+> regions,
+> 
+> mm_init
+>   mem_init
+>     memblock_free_all
+>       free_low_memory_core_early
+>         reserve_bootmem_region
+> 
+> there could still have some freed pages from the page allocator but yet
+> to be initialized due to DEFERRED_STRUCT_PAGE_INIT. It have already been
+> dealt with a bit in page_ext_init().
+> 
+> * Take into account DEFERRED_STRUCT_PAGE_INIT.
+> */
+> if (early_pfn_to_nid(pfn) != nid)
+> 	continue;
+> 
+> However, it did not handle it well in init_pages_in_zone() which end up
+> calling page_to_nid().
+> 
+> [   11.917212] page:ffffea0004200000 is uninitialized and poisoned
+> [   11.917220] raw: ffffffffffffffff ffffffffffffffff ffffffffffffffff
+> ffffffffffffffff
+> [   11.921745] raw: ffffffffffffffff ffffffffffffffff ffffffffffffffff
+> ffffffffffffffff
+> [   11.924523] page dumped because: VM_BUG_ON_PAGE(PagePoisoned(p))
+> [   11.926498] page_owner info is not active (free page?)
+> [   12.329560] kernel BUG at include/linux/mm.h:990!
+> [   12.337632] RIP: 0010:init_page_owner+0x486/0x520
+> 
+> Since there is no other routines depend on page_ext_init() in
+> start_kernel(), just move it after page_alloc_init_late() to ensure that
+> there is no deferred pages need to de dealt with. If deselected
+> DEFERRED_STRUCT_PAGE_INIT, it is still better to call page_ext_init()
+> earlier, so page owner could catch more early page allocation call
+> sites. This gives us a good compromise between catching good and bad
+> call sites (See the v1 patch [1]) in case of DEFERRED_STRUCT_PAGE_INIT.
+> 
+> [1] https://lore.kernel.org/lkml/20181220060303.38686-1-cai@lca.pw/
+> 
+> Fixes: fe53ca54270 (mm: use early_pfn_to_nid in page_ext_init)
+> Suggested-by: Michal Hocko <mhocko@kernel.org>
+> Signed-off-by: Qian Cai <cai@lca.pw>
 > ---
->  arch/arm64/kernel/syscall.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/arch/arm64/kernel/syscall.c b/arch/arm64/kernel/syscall.c
-> index 8f3371415642ad..95fd8c7ec8a171 100644
-> --- a/arch/arm64/kernel/syscall.c
-> +++ b/arch/arm64/kernel/syscall.c
-> @@ -21,7 +21,7 @@ asmlinkage long do_ni_syscall(struct pt_regs *regs)
->  {
->  #ifdef CONFIG_COMPAT
->  	long ret;
-> -	if (is_compat_task()) {
-> +	if (is_compat_task() && regs->regs[7] >= __ARM_NR_COMPAT_BASE) {
+> v3: still call page_ext_init() earlier if DEFERRED_STRUCT_PAGE_INIT=n.
+> 
+> v2: postpone page_ext_init() to after page_alloc_init_late().
+> 
+>  init/main.c   | 5 +++++
+>  mm/page_ext.c | 3 +--
+>  2 files changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/init/main.c b/init/main.c
+> index 2b7b7fe173c9..5d9904370f76 100644
+> --- a/init/main.c
+> +++ b/init/main.c
+> @@ -696,7 +696,9 @@ asmlinkage __visible void __init start_kernel(void)
+>  		initrd_start = 0;
+>  	}
+>  #endif
+> +#ifndef CONFIG_DEFERRED_STRUCT_PAGE_INIT
+>  	page_ext_init();
+> +#endif
+>  	kmemleak_init();
+>  	setup_per_cpu_pageset();
+>  	numa_policy_init();
+> @@ -1147,6 +1149,9 @@ static noinline void __init kernel_init_freeable(void)
+>  	sched_init_smp();
+>  
+>  	page_alloc_init_late();
+> +#ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
+> +	page_ext_init();
+> +#endif
+>  
+>  	do_basic_setup();
 
-compat_arm_syscall() ignores all bits r7 except for bits [15:0].
+Is this really necessary? Why cannot we simply postpone page_ext_init
+unconditioanally?
 
-So, doesn't this mean that 0xf0000, 0x100000, 0x110000 will all do the
-same thing now?  (Previously to your patch, 0xe0000, 0xd0000 etc. would
-also match in this code I've misunderstood something.)
+>  
+> diff --git a/mm/page_ext.c b/mm/page_ext.c
+> index ae44f7adbe07..d76fd51e312a 100644
+> --- a/mm/page_ext.c
+> +++ b/mm/page_ext.c
+> @@ -399,9 +399,8 @@ void __init page_ext_init(void)
+>  			 * -------------pfn-------------->
+>  			 * N0 | N1 | N2 | N0 | N1 | N2|....
+>  			 *
+> -			 * Take into account DEFERRED_STRUCT_PAGE_INIT.
+>  			 */
+> -			if (early_pfn_to_nid(pfn) != nid)
+> +			if (pfn_to_nid(pfn) != nid)
+>  				continue;
+>  			if (init_section_page_ext(pfn, nid))
+>  				goto oom;
 
-The gating check in arch/arm/kernel/trapc.s:arm_syscall() is
-
-	if ((no >> 16) != (__ARM_NR_BASE>> 16))
-
-I would expect that arm64 needs a similar check somewhere.  Is the check
-already present?  I may have missed it.
-
-
-Cheers
----Dave
+Also this doesn't seem to be related, right?
+-- 
+Michal Hocko
+SUSE Labs
