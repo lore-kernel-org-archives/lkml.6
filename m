@@ -3,85 +3,131 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D84DC43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 16:28:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9964C43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 16:33:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37D4D20815
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 16:28:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BCFF7206A3
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 16:33:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732250AbfACQ2e (ORCPT
+        id S1732286AbfACQdZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 11:28:34 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:58046 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730795AbfACQ2c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 11:28:32 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BF5E319C301;
-        Thu,  3 Jan 2019 16:28:32 +0000 (UTC)
-Received: from redhat.com (ovpn-120-148.rdu2.redhat.com [10.10.120.148])
-        by smtp.corp.redhat.com (Postfix) with SMTP id C21DF1001F3C;
-        Thu,  3 Jan 2019 16:28:28 +0000 (UTC)
-Date:   Thu, 3 Jan 2019 11:28:28 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Cornelia Huck <cohuck@redhat.com>
-Cc:     Jason Wang <jasowang@redhat.com>,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, virtio-dev@lists.oasis-open.org,
-        Wei Wang <wei.w.wang@intel.com>,
-        Halil Pasic <pasic@linux.ibm.com>
-Subject: Re: [PATCH 2/2] virtio: document virtio_config_ops restrictions
-Message-ID: <20190103112627-mutt-send-email-mst@kernel.org>
-References: <20190103160804.21438-1-cohuck@redhat.com>
- <20190103160804.21438-3-cohuck@redhat.com>
+        Thu, 3 Jan 2019 11:33:25 -0500
+Received: from mail.netline.ch ([148.251.143.178]:44530 "EHLO
+        netline-mail3.netline.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731235AbfACQdZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Jan 2019 11:33:25 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by netline-mail3.netline.ch (Postfix) with ESMTP id E8B1F2A605C;
+        Thu,  3 Jan 2019 17:33:21 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at netline-mail3.netline.ch
+Received: from netline-mail3.netline.ch ([127.0.0.1])
+        by localhost (netline-mail3.netline.ch [127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id tanty6CqaGaW; Thu,  3 Jan 2019 17:33:21 +0100 (CET)
+Received: from thor (39.1.199.178.dynamic.wline.res.cust.swisscom.ch [178.199.1.39])
+        by netline-mail3.netline.ch (Postfix) with ESMTPSA id 5DE8B2A605A;
+        Thu,  3 Jan 2019 17:33:20 +0100 (CET)
+Received: from localhost ([::1])
+        by thor with esmtp (Exim 4.92-RC3)
+        (envelope-from <michel@daenzer.net>)
+        id 1gf5vr-0006T3-VU; Thu, 03 Jan 2019 17:33:19 +0100
+Subject: Re: [PATCH v5 1/2] drm/amd: validate user pitch alignment
+To:     Yu Zhao <yuzhao@google.com>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>
+Cc:     David Zhou <David1.Zhou@amd.com>,
+        Daniel Stone <daniels@collabora.com>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        amd-gfx@lists.freedesktop.org, Samuel Li <Samuel.Li@amd.com>,
+        Junwei Zhang <Jerry.Zhang@amd.com>, stable@vger.kernel.org,
+        Harry Wentland <harry.wentland@amd.com>
+References: <20181223215239.173339-2-yuzhao@google.com>
+ <20181230010021.196990-1-yuzhao@google.com>
+From:   =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>
+Openpgp: preference=signencrypt
+Autocrypt: addr=michel@daenzer.net; prefer-encrypt=mutual; keydata=
+ mQGiBDsehS8RBACbsIQEX31aYSIuEKxEnEX82ezMR8z3LG8ktv1KjyNErUX9Pt7AUC7W3W0b
+ LUhu8Le8S2va6hi7GfSAifl0ih3k6Bv1Itzgnd+7ZmSrvCN8yGJaHNQfAevAuEboIb+MaVHo
+ 9EMJj4ikOcRZCmQWw7evu/D9uQdtkCnRY9iJiAGxbwCguBHtpoGMxDOINCr5UU6qt+m4O+UD
+ /355ohBBzzyh49lTj0kTFKr0Ozd20G2FbcqHgfFL1dc1MPyigej2gLga2osu2QY0ObvAGkOu
+ WBi3LTY8Zs8uqFGDC4ZAwMPoFy3yzu3ne6T7d/68rJil0QcdQjzzHi6ekqHuhst4a+/+D23h
+ Za8MJBEcdOhRhsaDVGAJSFEQB1qLBACOs0xN+XblejO35gsDSVVk8s+FUUw3TSWJBfZa3Imp
+ V2U2tBO4qck+wqbHNfdnU/crrsHahjzBjvk8Up7VoY8oT+z03sal2vXEonS279xN2B92Tttr
+ AgwosujguFO/7tvzymWC76rDEwue8TsADE11ErjwaBTs8ZXfnN/uAANgPLQjTWljaGVsIERh
+ ZW56ZXIgPG1pY2hlbEBkYWVuemVyLm5ldD6IXgQTEQIAHgUCQFXxJgIbAwYLCQgHAwIDFQID
+ AxYCAQIeAQIXgAAKCRBaga+OatuyAIrPAJ9ykonXI3oQcX83N2qzCEStLNW47gCeLWm/QiPY
+ jqtGUnnSbyuTQfIySkK5AQ0EOx6FRRAEAJZkcvklPwJCgNiw37p0GShKmFGGqf/a3xZZEpjI
+ qNxzshFRFneZze4f5LhzbX1/vIm5+ZXsEWympJfZzyCmYPw86QcFxyZflkAxHx9LeD+89Elx
+ bw6wT0CcLvSv8ROfU1m8YhGbV6g2zWyLD0/naQGVb8e4FhVKGNY2EEbHgFBrAAMGA/0VktFO
+ CxFBdzLQ17RCTwCJ3xpyP4qsLJH0yCoA26rH2zE2RzByhrTFTYZzbFEid3ddGiHOBEL+bO+2
+ GNtfiYKmbTkj1tMZJ8L6huKONaVrASFzLvZa2dlc2zja9ZSksKmge5BOTKWgbyepEc5qxSju
+ YsYrX5xfLgTZC5abhhztpYhGBBgRAgAGBQI7HoVFAAoJEFqBr45q27IAlscAn2Ufk2d6/3p4
+ Cuyz/NX7KpL2dQ8WAJ9UD5JEakhfofed8PSqOM7jOO3LCA==
+Message-ID: <75d5f1d6-b259-6944-6ee0-8cc68cb1af0e@daenzer.net>
+Date:   Thu, 3 Jan 2019 17:33:19 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190103160804.21438-3-cohuck@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Thu, 03 Jan 2019 16:28:32 +0000 (UTC)
+In-Reply-To: <20181230010021.196990-1-yuzhao@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-CA
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 03, 2019 at 05:08:04PM +0100, Cornelia Huck wrote:
-> Some transports (e.g. virtio-ccw) implement virtio operations that
-> seem to be a simple read/write as something more involved that
-> cannot be done from an atomic context.
+On 2018-12-30 2:00 a.m., Yu Zhao wrote:
+> Userspace may request pitch alignment that is not supported by GPU.
+> Some requests 32, but GPU ignores it and uses default 64 when cpp is
+> 4. If GEM object is allocated based on the smaller alignment, GPU
+> DMA will go out of bound.
 > 
-> Give at least a hint about that.
-> 
-> Signed-off-by: Cornelia Huck <cohuck@redhat.com>
+> Cc: stable@vger.kernel.org # v4.2+
+> Signed-off-by: Yu Zhao <yuzhao@google.com>
 > ---
->  include/linux/virtio_config.h | 5 +++++
->  1 file changed, 5 insertions(+)
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_display.c | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
 > 
-> diff --git a/include/linux/virtio_config.h b/include/linux/virtio_config.h
-> index 7087ef946ba7..987b6491b946 100644
-> --- a/include/linux/virtio_config.h
-> +++ b/include/linux/virtio_config.h
-> @@ -12,6 +12,11 @@ struct irq_affinity;
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
+> index 15ce7e681d67..16af80ccd0a0 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
+> @@ -527,6 +527,22 @@ amdgpu_display_user_framebuffer_create(struct drm_device *dev,
+>  	struct drm_gem_object *obj;
+>  	struct amdgpu_framebuffer *amdgpu_fb;
+>  	int ret;
+> +	struct amdgpu_device *adev = dev->dev_private;
+> +	int cpp = drm_format_plane_cpp(mode_cmd->pixel_format, 0);
+> +	int pitch = mode_cmd->pitches[0] / cpp;
+> +
+> +	if (pitch < mode_cmd->width) {
+> +		DRM_DEBUG_KMS("Expecting pitch(%d)/cpp(%d) >= width(%d)\n",
+> +			      mode_cmd->pitches[0], cpp, mode_cmd->width);
+> +		return ERR_PTR(-EINVAL);
+> +	}
+
+This should possibly be tested in drm_internal_framebuffer_create instead.
+
+
+> +	pitch = amdgpu_align_pitch(adev, pitch, cpp, false);
+> +	if (mode_cmd->pitches[0] != pitch) {
+> +		DRM_DEBUG_KMS("Invalid pitch: expecting %d but got %d\n",
+> +			      pitch, mode_cmd->pitches[0]);
+> +		return ERR_PTR(-EINVAL);
+> +	}
 >  
->  /**
->   * virtio_config_ops - operations for configuring a virtio device
-> + * Note: Do not assume that a transport implements all of the operations
-> + *       getting/setting a value as a simple read/write! Generally speaking,
-> + *       any of @get/@set, @get_status/@set_status, or @get_features/
-> + *       @finalize_features are NOT safe to be called from an atomic
-> + *       context.
->   * @get: read the value of a configuration field
->   *	vdev: the virtio_device
->   *	offset: the offset of the configuration field
+>  	obj = drm_gem_object_lookup(file_priv, mode_cmd->handles[0]);
+>  	if (obj ==  NULL) {
+> 
 
-Then might_sleep in virtio_cread/virtio_cwrite and
-friends would be appropriate? I guess we'll need to fix
-balloon first.
+Apart from the above, the v5 series looks good to me.
 
-> -- 
-> 2.17.2
+
+-- 
+Earthling Michel Dänzer               |               http://www.amd.com
+Libre software enthusiast             |             Mesa and X developer
