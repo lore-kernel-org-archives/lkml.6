@@ -2,89 +2,242 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D955C43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 20:35:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEF1FC43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 20:38:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A64B21479
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 20:35:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ULyj4kvi"
+	by mail.kernel.org (Postfix) with ESMTP id 7AEF521479
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 20:38:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727935AbfACUfB (ORCPT
+        id S1726347AbfACUij (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 15:35:01 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:55077 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725986AbfACUfA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 15:35:00 -0500
-Received: by mail-wm1-f68.google.com with SMTP id a62so30353501wmh.4
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 12:34:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=DVQP9Si65CDhY5e0rJnF5Ch9hzreUmDte/QPQ6tm0Nc=;
-        b=ULyj4kviKHrh4ICShGCNngSdy94+/SsVhUSoAtwKo2sirP0Pq5187ar9Zucb+i0bln
-         IsxNSbLzshQLVjXQNUWkDLKKqtYabsG/jyC3ABcOfY71czBbnDnXfbQPrp3zzkDjY7zW
-         h7FnbMEdVA496nXdab9xMKkCcG1FxrQGeRWgM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=DVQP9Si65CDhY5e0rJnF5Ch9hzreUmDte/QPQ6tm0Nc=;
-        b=AbyURERbSXvVal/K2AfBOe6u3Y3kDRQZdrrYe/zgr1yIutkET+/0uAmp+lLmhXKWjf
-         PdbFBmFR3y9m0OKacFvv+6N4XZr8jFJukEV37HdrE+i6+RT9TslMMv2zNTisCyz3n6Qg
-         rU02wEtffhZbknzjpOAdYY7SQ3kRMHlat/Alrl2G0gbJwPB1SPzUtLF3fDXMgHJ5AMly
-         NgmlnxqwjzeKVLBZNzWp27DmqzQ4MvpSFh8XL5YW2WhJuhv+ng1OMqZQCsGxMqqnEwXT
-         VOl7se8cW5fxUTDGDR+zEUinYxua2tCPvcL0GLADZ/gvKnn+AwAyFxTPzjl+hkvNa+Vy
-         olBw==
-X-Gm-Message-State: AA+aEWYKUtvvnr41KuC+YIk9rHobyRvITJHIJGEXNm5Be2Sn5Bihrb5L
-        UhJDpnD+kzRJo2EOwU85Qa+cOw==
-X-Google-Smtp-Source: AFSGD/Wayh9oW+9o2J8QIf0tR62Y3cd1/Y850iDl54dv2JgYIBi/KZabvAbFzO4CvWn6np06nhvADA==
-X-Received: by 2002:a1c:b607:: with SMTP id g7mr40981127wmf.97.1546547699145;
-        Thu, 03 Jan 2019 12:34:59 -0800 (PST)
-Received: from localhost.localdomain (92.red-83-34-185.dynamicip.rima-tde.net. [83.34.185.92])
-        by smtp.gmail.com with ESMTPSA id 14sm83635500wmv.36.2019.01.03.12.34.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 03 Jan 2019 12:34:58 -0800 (PST)
-From:   Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-To:     jorge.ramirez-ortiz@linaro.org, andy.gross@linaro.org,
-        david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc:     linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        bjorn.andersson@linaro.org, vinod.koul@linaro.org
-Subject: [PATCH] arm64: dts: qcom: qcs404: sdcc1: enable HS400
-Date:   Thu,  3 Jan 2019 21:34:55 +0100
-Message-Id: <1546547695-15345-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
-X-Mailer: git-send-email 2.7.4
+        Thu, 3 Jan 2019 15:38:39 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:41008 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725996AbfACUij (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Jan 2019 15:38:39 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 07D907EBCB;
+        Thu,  3 Jan 2019 20:38:38 +0000 (UTC)
+Received: from madcap2.tricolour.ca (ovpn-112-10.phx2.redhat.com [10.3.112.10])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id DDCBC5D9D1;
+        Thu,  3 Jan 2019 20:38:21 +0000 (UTC)
+Date:   Thu, 3 Jan 2019 15:38:19 -0500
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        linux-audit@redhat.com, linux-kernel@vger.kernel.org,
+        ebiederm@xmission.com, luto@kernel.org, dhowells@redhat.com,
+        viro@zeniv.linux.org.uk, simo@redhat.com,
+        Eric Paris <eparis@parisplace.org>,
+        Serge Hallyn <serge@hallyn.com>
+Subject: Re: [PATCH ghak90 (was ghak32) V4 01/10] audit: collect audit task
+ parameters
+Message-ID: <20190103203819.4qhtkq3ffao5brv3@madcap2.tricolour.ca>
+References: <cover.1533065887.git.rgb@redhat.com>
+ <8e617ab568df28a66dfbe3284452de186b42fb0f.1533065887.git.rgb@redhat.com>
+ <CAHC9VhQFqs1SyvximK+8XJG5Fk3p9WsWhEV5sY6kksN9tc6eKw@mail.gmail.com>
+ <20181101220724.ggkqyf5kjv7lhabx@madcap2.tricolour.ca>
+ <CAHC9VhRU-Qss41CnV3mE32tXmZ3FQpy++t4yPUkh9CjuAzxYCA@mail.gmail.com>
+ <20190103202938.ntdfqdmyrr7stzh2@madcap2.tricolour.ca>
+ <CAHC9VhQTQuRnkF-8sJxwDvKbxJHvs5uLWsvLvL085SgyPiqLHQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhQTQuRnkF-8sJxwDvKbxJHvs5uLWsvLvL085SgyPiqLHQ@mail.gmail.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Thu, 03 Jan 2019 20:38:38 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The controller can support EXT_CSD_CARD_TYPE_HS400_1_8V cards.
+On 2019-01-03 15:33, Paul Moore wrote:
+> On Thu, Jan 3, 2019 at 3:29 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > I'm not sure what's going on here, but it looks like HTML-encoded reply
+> > quoting making the quoted text very difficult to read.  All the previous
+> > ">" have been converted to the HTML "&gt;" encoding.  Your most recent
+> > reply text looks mostly fine.
+> 
+> Not sure what happened either, I suspect gmail did something odd when
+> I saved them as drafts, but it has never done that before.  FWIW, I
+> generally batch up individual review comments for complex patchsets as
+> one often needs to review the entire set first before commenting.
+> 
+> The most recent reply to patch 0/10 wasn't saved as a draft before sending.
 
-Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
----
- arch/arm64/boot/dts/qcom/qcs404-evb.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+Yeah, I noticed the last one was fine and wondered why it was different.
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi b/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi
-index a39924e..2c2c9b0 100644
---- a/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi
-+++ b/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi
-@@ -127,6 +127,7 @@
- 	status = "ok";
- 
- 	mmc-ddr-1_8v;
-+	mmc-hs400-1_8v;
- 	bus-width = <8>;
- 	non-removable;
- 
--- 
-2.7.4
+/me <3 mutt...
 
+> > On 2019-01-03 15:10, Paul Moore wrote:
+> > > On Thu, Nov 1, 2018 at 6:07 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > &gt; On 2018-10-19 19:15, Paul Moore wrote:
+> > > &gt; &gt; On Sun, Aug 5, 2018 at 4:32 AM Richard Guy Briggs
+> > > <rgb@redhat.com> wrote:
+> > > &gt; &gt; &gt; The audit-related parameters in struct task_struct
+> > > should ideally be
+> > > &gt; &gt; &gt; collected together and accessed through a standard audit API.
+> > > &gt; &gt; &gt;
+> > > &gt; &gt; &gt; Collect the existing loginuid, sessionid and
+> > > audit_context together in a
+> > > &gt; &gt; &gt; new struct audit_task_info called "audit" in struct task_struct.
+> > > &gt; &gt; &gt;
+> > > &gt; &gt; &gt; Use kmem_cache to manage this pool of memory.
+> > > &gt; &gt; &gt; Un-inline audit_free() to be able to always recover that memory.
+> > > &gt; &gt; &gt;
+> > > &gt; &gt; &gt; See: https://github.com/linux-audit/audit-kernel/issues/81
+> > > &gt; &gt; &gt;
+> > > &gt; &gt; &gt; Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > > &gt; &gt; &gt; ---
+> > > &gt; &gt; &gt;  include/linux/audit.h | 34 ++++++++++++++++++++++++----------
+> > > &gt; &gt; &gt;  include/linux/sched.h |  5 +----
+> > > &gt; &gt; &gt;  init/init_task.c      |  3 +--
+> > > &gt; &gt; &gt;  init/main.c           |  2 ++
+> > > &gt; &gt; &gt;  kernel/auditsc.c      | 51
+> > > ++++++++++++++++++++++++++++++++++++++++++---------
+> > > &gt; &gt; &gt;  kernel/fork.c         |  4 +++-
+> > > &gt; &gt; &gt;  6 files changed, 73 insertions(+), 26 deletions(-)
+> > > &gt; &gt;
+> > > &gt; &gt; ...
+> > > &gt; &gt;
+> > > &gt; &gt; &gt; diff --git a/include/linux/sched.h b/include/linux/sched.h
+> > > &gt; &gt; &gt; index 87bf02d..e117272 100644
+> > > &gt; &gt; &gt; --- a/include/linux/sched.h
+> > > &gt; &gt; &gt; +++ b/include/linux/sched.h
+> > > &gt; &gt; &gt; @@ -873,10 +872,8 @@ struct task_struct {
+> > > &gt; &gt; &gt;
+> > > &gt; &gt; &gt;         struct callback_head            *task_works;
+> > > &gt; &gt; &gt;
+> > > &gt; &gt; &gt; -       struct audit_context            *audit_context;
+> > > &gt; &gt; &gt;  #ifdef CONFIG_AUDITSYSCALL
+> > > &gt; &gt; &gt; -       kuid_t                          loginuid;
+> > > &gt; &gt; &gt; -       unsigned int                    sessionid;
+> > > &gt; &gt; &gt; +       struct audit_task_info          *audit;
+> > > &gt; &gt; &gt;  #endif
+> > > &gt; &gt; &gt;         struct seccomp                  seccomp;
+> > > &gt; &gt;
+> > > &gt; &gt; Prior to this patch audit_context was available regardless of
+> > > &gt; &gt; CONFIG_AUDITSYSCALL, after this patch the corresponding audit_context
+> > > &gt; &gt; is only available when CONFIG_AUDITSYSCALL is defined.
+> > > &gt;
+> > > &gt; This was intentional since audit_context is not used when AUDITSYSCALL is
+> > > &gt; disabled.  audit_alloc() was stubbed in that case to return 0.
+> > > audit_context()
+> > > &gt; returned NULL.
+> > > &gt;
+> > > &gt; The fact that audit_context was still present in struct task_struct was an
+> > > &gt; oversight in the two patches already accepted:
+> > > &gt;         ("audit: use inline function to get audit context")
+> > > &gt;         ("audit: use inline function to get audit context")
+> > > &gt; that failed to hide or remove it from struct task_struct when it
+> > > was no longer
+> > > &gt; relevant.
+> > >
+> > > Okay, in that case let's pull this out and fix this separately from
+> > > the audit container ID patchset.
+> > >
+> > > &gt; On further digging, loginuid and sessionid (and
+> > > audit_log_session_info) should
+> > > &gt; be part of CONFIG_AUDIT scope and not CONFIG_AUDITSYSCALL since
+> > > it is used in
+> > > &gt; CONFIG_CHANGE, ANOM_LINK, FEATURE_CHANGE(, INTEGRITY_RULE), none
+> > > of which are
+> > > &gt; otherwise dependent on AUDITSYSCALL.
+> > >
+> > > This looks like something else we should fix independently from this patchset.
+> > >
+> > > &gt; Looking ahead, contid should be treated like loginuid and
+> > > sessionid, which are
+> > > &gt; currently only available when syscall auditting is.
+> > >
+> > > That seems reasonable.  Eventually it would be great if we got rid of
+> > > CONFIG_AUDITSYSCALL, but that is a separate issue, and something that
+> > > is going to require work from the different arch/ABI folks to ensure
+> > > everything is working properly.
+> > >
+> > > &gt; Converting records from standalone to syscall and checking
+> > > audit_dummy_context
+> > > &gt; changes the nature of CONFIG_AUDIT/!CONFIG_AUDITSYSCALL separation.
+> > > &gt; eg: ANOM_LINK accompanied by PATH record (which needed CWD addition to be
+> > > &gt; complete anyways)
+> > > &gt;
+> > > &gt; &gt; &gt; diff --git a/init/main.c b/init/main.c
+> > > &gt; &gt; &gt; index 3b4ada1..6aba171 100644
+> > > &gt; &gt; &gt; --- a/init/main.c
+> > > &gt; &gt; &gt; +++ b/init/main.c
+> > > &gt; &gt; &gt; @@ -92,6 +92,7 @@
+> > > &gt; &gt; &gt;  #include <linux rodata_test.h="">
+> > > &gt; &gt; &gt;  #include <linux jump_label.h="">
+> > > &gt; &gt; &gt;  #include <linux mem_encrypt.h="">
+> > > &gt; &gt; &gt; +#include <linux audit.h="">
+> > > &gt; &gt; &gt;
+> > > &gt; &gt; &gt;  #include <asm io.h="">
+> > > &gt; &gt; &gt;  #include <asm bugs.h="">
+> > > &gt; &gt; &gt; @@ -721,6 +722,7 @@ asmlinkage __visible void __init
+> > > start_kernel(void)
+> > > &gt; &gt; &gt;         nsfs_init();
+> > > &gt; &gt; &gt;         cpuset_init();
+> > > &gt; &gt; &gt;         cgroup_init();
+> > > &gt; &gt; &gt; +       audit_task_init();
+> > > &gt; &gt; &gt;         taskstats_init_early();
+> > > &gt; &gt; &gt;         delayacct_init();
+> > > &gt; &gt;
+> > > &gt; &gt; It seems like we would need either init_struct_audit or
+> > > &gt; &gt; audit_task_init(), but not both, yes?
+> > > &gt;
+> > > &gt; One sets initial values of init task via an included struct,
+> > > other makes a call
+> > > &gt; to create the kmem cache.  Both seem appropriate to me unless we move the
+> > > &gt; initialization from a struct to assignments in audit_task_init(),
+> > > but I'm not
+> > > &gt; that comfortable separating the audit init values from the rest of the
+> > > &gt; task_struct init task initializers (though there are other
+> > > subsystems that need
+> > > &gt; to do so dynamically).
+> > >
+> > > My original thinking was focused on the use of init_struct_audit as an
+> > > initializer when audit_task_init() was already creating a kmem_cache
+> > > pool and a zero'd/init'd audit_task_info could be obtained via the
+> > > usual kmem_cache functions.  Alternatively, although I don't believe
+> > > it would be recommended for this case, would be to use
+> > > init_struct_audit as an init helper if we included the audit_task_info
+> > > struct directly in the task_struct, as opposed to a pointer.  What I
+> > > missed was the simple fact that you're only using init_struct_audit
+> > > for the init_task, which pretty much makes my original question rather
+> > > silly :)
+> > >
+> > > --
+> > > paul moore
+> > > www.paul-moore.com
+> >
+> > - RGB
+> >
+> > --
+> > Richard Guy Briggs <rgb@redhat.com>
+> > Sr. S/W Engineer, Kernel Security, Base Operating Systems
+> > Remote, Ottawa, Red Hat Canada
+> > IRC: rgb, SunRaycer
+> > Voice: +1.647.777.2635, Internal: (81) 32635
+> 
+> 
+> 
+> -- 
+> paul moore
+> www.paul-moore.com
+
+- RGB
+
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
