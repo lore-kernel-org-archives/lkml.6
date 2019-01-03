@@ -2,110 +2,226 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2292C43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 23:50:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FC32C43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 23:51:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F47B21874
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 23:50:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 63EDF21479
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 23:51:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="LGza2vWX"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="aNgrI9KO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726468AbfACXut (ORCPT
+        id S1726724AbfACXvI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 18:50:49 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:39806 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726135AbfACXut (ORCPT
+        Thu, 3 Jan 2019 18:51:08 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:45008 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726490AbfACXvI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 18:50:49 -0500
-Received: by mail-pl1-f194.google.com with SMTP id 101so16567089pld.6
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 15:50:48 -0800 (PST)
+        Thu, 3 Jan 2019 18:51:08 -0500
+Received: by mail-pf1-f195.google.com with SMTP id u6so17375464pfh.11
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 15:51:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=sP8rwTZwCQNqk6WbMpo3Rzykb4VpkSWtxKB0rRPwXo8=;
-        b=LGza2vWXbohPt8Pw+wdRGJHW1MiDy6nsPoZHpITcdmMYXatR7mk3rEbTgBhhvJNUME
-         88BODb14uvTpc2fQRO7vt1vLc0oVX2jTAxrwN1JT4rJqlge1rJ1rm2UgyNb/PkUolNpM
-         BffJlax+gl6HWWp4uF0ieqCSyNw/v53piDvEs=
+        bh=saMLBDa1yVhaDCuniObQZq2BWACV/iRztOiZRWNzN0E=;
+        b=aNgrI9KO/0alhiKiQipDGrav+3Owzq3DY+M5iLrDItyglPHPg2Kpr7YDrxKhrekm1j
+         nFbmK0oO8AN4IcEox1FG2zaa+FKl1T+ZTSdMZGbBHw0PEQdvbgHu82s8mQAlPSYxtEv2
+         46XG574p4jGLkV3ERB57cODDgOkexvfFXO3CI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=sP8rwTZwCQNqk6WbMpo3Rzykb4VpkSWtxKB0rRPwXo8=;
-        b=HerPPwgbVJMSFYGw1YlJB1738/FBzwpTiwnODL9slw6tBGM9gfM2Gnqa2VKO4CTzEY
-         CLdbyPcM7crbGZqDl342O8t3n9g7XqEa5ifXxwc395c3Du246rdtocjrf0EX+KAmcr9h
-         m8fhCfS9u2wGtQg6w15+dNoEu/sWR6dDokX+GXnOrlSXoCO4l/Ji4sx6PhZFQK1EgibZ
-         jERpq+ZsEi/L1AXYyIU3ZM/nPFIEwiwYZhT8PX/1KhmtWfwG873B6Wkz6YlYFaA/+xV1
-         iITZtChOATP+KuObqeNi91XAaCmIZSBkbQ4Xcaczb/MXmvnLG83ZP/TMCQSzxSX4UIYt
-         FUDw==
-X-Gm-Message-State: AJcUukdn7fATj3k/FxovqY9n3owiVIzmI/TH2pjO9AGQBOH1bZW3RKjz
-        HoAJJ+LDgRGnw+ICfc/K3FKGhw==
-X-Google-Smtp-Source: ALg8bN5Or1i9IsblxGJRvjsW6ReX3naAJBPSdLYexclmqjtK819iMcCq1QGHTOnszS7ZKi3no8XOrA==
-X-Received: by 2002:a17:902:a9c4:: with SMTP id b4mr48806592plr.298.1546559448544;
-        Thu, 03 Jan 2019 15:50:48 -0800 (PST)
-Received: from google.com ([2620:15c:202:1:534:b7c0:a63c:460c])
-        by smtp.gmail.com with ESMTPSA id q187sm95851528pfq.128.2019.01.03.15.50.46
+        bh=saMLBDa1yVhaDCuniObQZq2BWACV/iRztOiZRWNzN0E=;
+        b=kOolEz4N7qWmVfb5KfJ96OVtf2+XMVTfoCF+LtmFtyaSAUOYJJz/pinaj4BwcT9uaK
+         9naRzUL5cdRKSMrk1B/o1HQSKU73AY+C+CYAcOM3y5PqhPESgExwaQJiL1ot/WSbE3YI
+         c0dMdmYZef9T3C8phPWX0wxjhCYto7DeeDiqWrAi7Sv1jbDfP1w3ybhAn815Bf6+mzrb
+         so69ARemxGkCk35Jpp5HJ3HVckvCzt0mJmnwFxRyhgDYQKVoYwQNcruwO1Hbc8sZKl7e
+         YLRZDXcWhQSxHyyyEIdZZfH0AtkS4jY+t4kglJPZDVBVPN2t0Ztsxc1OvZZr7cIBq5kl
+         0T4A==
+X-Gm-Message-State: AJcUukeNk3sh01lTWC5UejKL5xj4vCsdbLLAu+AUesHz/P7cblfeRmco
+        vJfUWb/YaAljsRRVPJ479c+FZw==
+X-Google-Smtp-Source: ALg8bN6dT/eY/ZhBlZIMU+kHzIdiNdrmzTaR6tP8Q/DFTXfQzbOThR1xJINEmhXqSxc21TwKfOy31A==
+X-Received: by 2002:a63:c451:: with SMTP id m17mr18613708pgg.27.1546559467180;
+        Thu, 03 Jan 2019 15:51:07 -0800 (PST)
+Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id n7sm100508362pff.36.2019.01.03.15.51.05
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 03 Jan 2019 15:50:47 -0800 (PST)
-Date:   Thu, 3 Jan 2019 15:50:45 -0800
-From:   Brian Norris <briannorris@chromium.org>
-To:     Sibi Sankar <sibis@codeaurora.org>
-Cc:     bjorn.andersson@linaro.org, david.brown@linaro.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org,
-        akdwived@codeaurora.org, clew@codeaurora.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm-owner@vger.kernel.org,
-        ohad@wizery.com, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: remoteproc: qcom: Add firmware
- bindings for Q6V5
-Message-ID: <20190103235043.GA195759@google.com>
-References: <20181228044819.5697-1-sibis@codeaurora.org>
- <20181228044819.5697-2-sibis@codeaurora.org>
- <20190103233014.GA181833@google.com>
+        Thu, 03 Jan 2019 15:51:06 -0800 (PST)
+Date:   Thu, 3 Jan 2019 15:50:02 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Rohit kumar <rohitkr@codeaurora.org>
+Cc:     dianders@chromium.org, andy.gross@linaro.org,
+        david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, plai@codeaurora.org,
+        bgoswami@codeaurora.org, srinivas.kandagatla@linaro.org,
+        linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH 2/2] arm64: dts: qcom: sdm845: Add Q6V5 ADSP node
+Message-ID: <20190103235002.GI31596@builder>
+References: <1545313174-13481-1-git-send-email-rohitkr@codeaurora.org>
+ <1545313174-13481-3-git-send-email-rohitkr@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190103233014.GA181833@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1545313174-13481-3-git-send-email-rohitkr@codeaurora.org>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 03, 2019 at 03:30:14PM -0800, Brian Norris wrote:
-> On Fri, Dec 28, 2018 at 10:18:18AM +0530, Sibi Sankar wrote:
-> > +- firmware-name:
-> > +	Usage: optional
-> > +	Value type: <string>
-> > +	Definition: must list the relative firmware image path for the
-> > +		    Hexagon Core.
+On Thu 20 Dec 05:39 PST 2018, Rohit kumar wrote:
+
+> This patch adds Q6V5 ADSP remoteproc node for SDM845 SoCs.
 > 
-> Relative to what? I still think it's a terrible idea that your driver
-> looks for files at the top-level /lib/firmware/ directory, but now
-> you're leaking this into the device tree. This should at a bare minimum
-> be namespaced to something like the qcom/ sub-directory. But ideally,
-> the driver would automatically be deriving a further sub-directory of
-> qcom/ based on the chipset or something, and then the only thing you'd
-> describe here is some kind of variant string -- something akin to
-> ath10k's qcom,ath10k-calibration-variant (see
-> Documentation/devicetree/bindings/net/wireless/qcom,ath10k.txt), which
-> doesn't require a full path-name or any hierarchy.
 
-Oh, I see Rob actually recommended this binding in v1, and it's (sort
-of) in use by a few other drivers. Is it really expected that we put
-arbitrary pathnames in device tree? None of the binding documentation
-seems very specific to me, and their implementations *do* allow
-arbitrary text. As it stands today, this is a great recipe for name
-collision -- e.g., how the driver today suggests "modem.XYZ" names; is
-Qualcomm really the only one out there making modems? :D
+Thanks Rohit, nice to see these things on the list!
 
-So my natural instinct is to avoid this. But if that's what everybody
-wants...
+> Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
+> ---
+>  arch/arm64/boot/dts/qcom/sdm845.dtsi | 96 +++++++++++++++++++++++++++++++++++-
+>  1 file changed, 95 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> index c0a012f..dfeb3cf 100644
+> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> @@ -13,6 +13,9 @@
+>  #include <dt-bindings/reset/qcom,sdm845-aoss.h>
+>  #include <dt-bindings/soc/qcom,rpmh-rsc.h>
+>  #include <dt-bindings/clock/qcom,gcc-sdm845.h>
+> +#include <dt-bindings/soc/qcom,apr.h>
+> +#include <dt-bindings/sound/qcom,q6afe.h>
+> +#include <dt-bindings/sound/qcom,q6asm.h>
+>  
+>  / {
+>  	interrupt-parent = <&intc>;
+> @@ -1691,7 +1694,98 @@
+>  				status = "disabled";
+>  			};
+>  		};
+> -	};
+> +
+> +		adsp_pil: remoteproc@17300000 {
 
-Brian
+Please sort nodes by address, then name.
+
+> +			compatible = "qcom,sdm845-adsp-pil";
+> +
+> +			reg = <0x17300000 0x410>;
+> +			reg-names = "qdsp6ss";
+
+reg-names was dropped from the binding (iirc), please omit it here.
+
+> +
+> +			interrupts-extended = <&intc 0 162 IRQ_TYPE_EDGE_RISING>,
+
+s/0/GIC_SPI/
+
+> +				<&adsp_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
+> +				<&adsp_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
+> +				<&adsp_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
+> +				<&adsp_smp2p_in 3 IRQ_TYPE_EDGE_RISING>;
+> +			interrupt-names = "wdog", "fatal", "ready",
+> +					  "handover", "stop-ack";
+> +
+> +			clocks = <&rpmhcc RPMH_CXO_CLK>,
+> +				 <&gcc GCC_LPASS_SWAY_CLK>,
+> +				 <&lpasscc LPASS_Q6SS_AHBS_AON_CLK>,
+> +				 <&lpasscc LPASS_Q6SS_AHBM_AON_CLK>,
+> +				 <&lpasscc LPASS_QDSP6SS_XO_CLK>,
+> +				 <&lpasscc LPASS_QDSP6SS_SLEEP_CLK>,
+> +				 <&lpasscc LPASS_QDSP6SS_CORE_CLK>;
+> +
+> +			clock-names = "xo", "sway_cbcr", "lpass_ahbs_aon_cbcr",
+> +				      "lpass_ahbm_aon_cbcr", "qdsp6ss_xo",
+> +				      "qdsp6ss_sleep", "qdsp6ss_core";
+> +
+> +			resets = <&pdc_reset PDC_AUDIO_SYNC_RESET>,
+> +				 <&aoss_reset AOSS_CC_LPASS_RESTART>;
+> +			reset-names = "pdc_sync", "cc_lpass";
+> +
+> +			qcom,halt-regs = <&tcsr_mutex_regs 0x22000>;
+> +
+> +			memory-region = <&pil_adsp_mem>;
+> +
+> +			qcom,smem-states = <&adsp_smp2p_out 0>;
+> +			qcom,smem-state-names = "stop";
+> +
+> +			glink-edge {
+
+So we will end up duplicating these between the PAS based and non-PAS
+based remoteprocs. I don't have a better idea right now, but this
+deserves some thought.
+
+> +				compatible = "qcom,glink-smem";
+> +				interrupts = <0 156 IRQ_TYPE_EDGE_RISING>;
+
+s/0/GIC_SPI/
+
+> +
+> +				label = "lpass";
+> +				qcom,remote-pid = <2>;
+> +				mboxes = <&apss_shared 8>;
+> +				mbox-names = "adsp_smem";
+
+mbox-names is not a documented property, please omit it.
+
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +				apr@4 {
+> +					compatible = "qcom,apr-v2";
+> +					qcom,glink-channels = "apr_audio_svc";
+> +					reg = <APR_DOMAIN_ADSP>;
+> +					#address-cells = <1>;
+> +					#size-cells = <0>;
+> +					q6core {
+> +						compatible = "qcom,q6core";
+> +						reg = <APR_SVC_ADSP_CORE>;
+> +					};
+> +
+> +					q6afe {
+> +						compatible = "qcom,q6afe";
+> +						reg = <APR_SVC_AFE>;
+> +						q6afedai: afedais {
+> +							compatible = "qcom,q6afe-dais";
+> +							#sound-dai-cells = <1>;
+> +							#address-cells = <1>;
+> +							#size-cells = <0>;
+> +						};
+> +					};
+> +
+> +					q6asm {
+> +						compatible = "qcom,q6asm";
+> +						reg = <APR_SVC_ASM>;
+> +						q6asmdai: asmdai{
+> +							compatible = "qcom,q6asm-dais";
+> +							iommus = <&apps_smmu 0x1821 0x0>;
+> +							#sound-dai-cells = <1>;
+> +						};
+> +					};
+> +
+> +					q6adm {
+> +						compatible = "qcom,q6adm";
+> +						reg = <APR_SVC_ADM>;
+> +						q6routing: routing {
+> +							compatible = "qcom,q6adm-routing";
+> +							#sound-dai-cells = <0>;
+> +						};
+> +					};
+> +				};
+> +			};
+> +			status = "disabled";
+
+Properties must come before subnodes.
+
+> +		};
+
+Regards,
+Bjorn
