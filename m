@@ -2,74 +2,67 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D751CC43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 02:38:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1619FC43612
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 02:40:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A70342073F
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 02:38:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB14B20879
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 02:40:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546483204;
+	bh=V3lmIwnYMYmXb2MQ/oVB4bNar0I7SDO+/W8cs3vwJZE=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
+	b=TJhqCsdiXtsaTKGKdOF5zFwMbFvQNlWIr93rErsihPN8ViIpF+aUluJt7QFJK46T6
+	 l5rVnToc3n+w/fpLpczElbz1vko+KC/A/PJYYo7qSlWdpEVrmx3XPGWf23nwdAEZNZ
+	 dC+oketSrmn3rS2v22RYdQ4+TUW4PDsoyprFrxhM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729032AbfACCiZ (ORCPT
+        id S1726827AbfACCkD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 21:38:25 -0500
-Received: from smtp2.provo.novell.com ([137.65.250.81]:38346 "EHLO
-        smtp2.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726382AbfACCiZ (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
-        Wed, 2 Jan 2019 21:38:25 -0500
-Received: from linux-fcij.suse (prv-ext-foundry1int.gns.novell.com [137.65.251.240])
-        by smtp2.provo.novell.com with ESMTP (TLS encrypted); Wed, 02 Jan 2019 19:38:20 -0700
-Subject: Re: Shaohua Li
-To:     Jens Axboe <axboe@kernel.dk>, linux-raid@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <398a74fa-6566-8d0d-6434-e68ff3763656@kernel.dk>
-From:   Guoqing Jiang <gqjiang@suse.com>
-Message-ID: <af940531-2535-2777-8c09-e9d1e6c16e82@suse.com>
-Date:   Thu, 3 Jan 2019 10:38:15 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
-MIME-Version: 1.0
-In-Reply-To: <398a74fa-6566-8d0d-6434-e68ff3763656@kernel.dk>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        Wed, 2 Jan 2019 21:40:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43724 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726356AbfACCkD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Jan 2019 21:40:03 -0500
+Subject: Re: [GIT PULL] nfsd
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1546483202;
+        bh=V3lmIwnYMYmXb2MQ/oVB4bNar0I7SDO+/W8cs3vwJZE=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=aYZh186TAtfifD7UwK9qM4mQuW83vS5K0h1UMcWh8rl/jaJrJsg8bnHRKC+u2CRK+
+         Hn53rtNxKRK3OIoJarjOd92QzDiDy4MX8EFYUNO92kAoKNrctiWyBh8q5UgNEIa3Zg
+         4CIdxpGWHFnJVmDg5Xr/+QlIWAPRpzKg6vgAnG94=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20190102204307.GA28209@fieldses.org>
+References: <20190102204307.GA28209@fieldses.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20190102204307.GA28209@fieldses.org>
+X-PR-Tracked-Remote: git://linux-nfs.org/~bfields/linux.git tags/nfsd-4.21
+X-PR-Tracked-Commit-Id: 0ad30ff67bd3e82da8c1dc4d74b88aca846dbbd9
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: e45428a436765fcd154d461a2739b5640916dc00
+Message-Id: <20190103024002.21791.85009.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
+Date:   Thu, 03 Jan 2019 02:40:02 +0000
+To:     bfields@fieldses.org (J. Bruce Fields)
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The pull request you sent on Wed, 2 Jan 2019 15:43:07 -0500:
 
+> git://linux-nfs.org/~bfields/linux.git tags/nfsd-4.21
 
-On 1/3/19 1:13 AM, Jens Axboe wrote:
-> Hi,
->
-> I've got some very sad news to share with you - over Christmas, Shaohua
-> Li passed away after battling cancer for most of last year.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/e45428a436765fcd154d461a2739b5640916dc00
 
-It is really a sad news and a big lost for the community consider Shaohua's
-great contribution!
+Thank you!
 
-> As you know, Shaohua acted as the maintainer for md. He remained
-> dedicated to that through the difficult times. With his passing, we
-> obviously have a void that needs to be filled.
-
-It is better if there is a small team to maintain md in future since nobody
-have broad/deep knowledge as Neil or Shaohua, also people in the team
-can cover/backup each other, see [1].
-
-> For now, I'll act as interim maintainer for md until we can find a good
-> permanent solution. I'll queue up reviewed patches in a separate branch,
-> in the block tree, and help review fixes. I'm subscribed to linux-raid,
-> but please do CC me as well.
-
-Thanks, I think there are some patches in shli/md/for-next which supposed
-to be merge to 4.21, could you please help to merge them to your branch?
-And I suppose you will send a patch to CREDITS for Shaohua.
-
-[1]. https://lkml.org/lkml/2015/12/21/9
-
-Regards,
-Guoqing
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
