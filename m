@@ -2,152 +2,143 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ED17C43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 22:57:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 442CDC43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 22:57:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 232F5218D3
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 22:57:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546556230;
-	bh=sVYZSZnSZtHY9vTnHtjEpk8aBl6O5BQi9VAoiasp9aA=;
-	h=Subject:Cc:To:In-Reply-To:From:References:Date:List-ID:From;
-	b=PVNS55I+e8IsNn56iJHjdwUDakDXv7lFsy+yZgPRjK+k/wQ28nlpeG1RTXwwd9XIZ
-	 h6zGfE97W+tH/pxtUfj7TJmdc2ZOrcukO/dIt++chxKoaHQI6REmlSlZOl9aKle2VI
-	 GjFuvLYIeD9VcLH4cSEwU42EdyByFmYTnbIesYGE=
+	by mail.kernel.org (Postfix) with ESMTP id 1B39F21872
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 22:57:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726241AbfACW5J (ORCPT
+        id S1726289AbfACW5R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 17:57:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45748 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726122AbfACW5I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 17:57:08 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9FFBC21479;
-        Thu,  3 Jan 2019 22:57:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546556227;
-        bh=sVYZSZnSZtHY9vTnHtjEpk8aBl6O5BQi9VAoiasp9aA=;
-        h=Subject:Cc:To:In-Reply-To:From:References:Date:From;
-        b=Z9TTGFEE74nC8MmHYmkPzvzDaE078+CdpAopt+L+1lEx9PHiXuxmCkdvCdbO5A/rD
-         oadF2rmkcQT5V/W6SlbCQDiYof5Q0t1KEOH4SHioxEgg/umOyVle4FJZyByGSxfIG2
-         YH7MbaWB1ZpSDh+EO9ZgDANrSRPjHK7HI24ACDAs=
-Content-Type: text/plain; charset="utf-8"
+        Thu, 3 Jan 2019 17:57:17 -0500
+Received: from outbound-smtp04.blacknight.com ([81.17.249.35]:58180 "EHLO
+        outbound-smtp04.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726234AbfACW5Q (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Jan 2019 17:57:16 -0500
+Received: from mail.blacknight.com (pemlinmail01.blacknight.ie [81.17.254.10])
+        by outbound-smtp04.blacknight.com (Postfix) with ESMTPS id E9B8198A44
+        for <linux-kernel@vger.kernel.org>; Thu,  3 Jan 2019 22:57:13 +0000 (UTC)
+Received: (qmail 14609 invoked from network); 3 Jan 2019 22:57:13 -0000
+Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[37.228.229.96])
+  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 3 Jan 2019 22:57:13 -0000
+Date:   Thu, 3 Jan 2019 22:57:12 +0000
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Qian Cai <cai@lca.pw>, Dmitry Vyukov <dvyukov@google.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        syzbot <syzbot+93d94a001cfbce9e60e1@syzkaller.appspotmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>, linux@dominikbrodowski.net,
+        Michal Hocko <mhocko@suse.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Subject: [PATCH] mm, page_alloc: Do not wake kswapd with zone lock held
+Message-ID: <20190103225712.GJ31517@techsingularity.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [RFC RESEND PATCH 3/7] soc: mediatek: add support for the performance state
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Fan Chen <fan.chen@mediatek.com>,
-        Weiyi Lu <weiyi.lu@mediatek.com>,
-        James Liao <jamesjj.liao@mediatek.com>,
-        Kees Cook <keescook@chromium.org>, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Henry Chen <henryc.chen@mediatek.com>
-To:     Henry Chen <henryc.chen@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Viresh Kumar <vireshk@kernel.org>
-In-Reply-To: <1546438198-1677-4-git-send-email-henryc.chen@mediatek.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-User-Agent: alot/0.8
-References: <1546438198-1677-1-git-send-email-henryc.chen@mediatek.com> <1546438198-1677-4-git-send-email-henryc.chen@mediatek.com>
-Message-ID: <154655622671.15366.9695869469694306752@swboyd.mtv.corp.google.com>
-Date:   Thu, 03 Jan 2019 14:57:06 -0800
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Henry Chen (2019-01-02 06:09:54)
-> @@ -187,6 +190,18 @@ struct scp_soc_data {
->         bool bus_prot_reg_update;
->  };
-> =20
-> +BLOCKING_NOTIFIER_HEAD(scpsys_notifier_list);
+syzbot reported the following regression in the latest merge window
+and it was confirmed by Qian Cai that a similar bug was visible from a
+different context.
 
-static?
+======================================================
+WARNING: possible circular locking dependency detected
+4.20.0+ #297 Not tainted
+------------------------------------------------------
+syz-executor0/8529 is trying to acquire lock:
+000000005e7fb829 (&pgdat->kswapd_wait){....}, at:
+__wake_up_common_lock+0x19e/0x330 kernel/sched/wait.c:120
 
-> +
-> +int register_scpsys_notifier(struct notifier_block *nb)
-> +{
-> +       return blocking_notifier_chain_register(&scpsys_notifier_list, nb=
-);
-> +}
-> +
-> +int unregister_scpsys_notifier(struct notifier_block *nb)
-> +{
-> +       return blocking_notifier_chain_unregister(&scpsys_notifier_list, =
-nb);
-> +}
+but task is already holding lock:
+000000009bb7bae0 (&(&zone->lock)->rlock){-.-.}, at: spin_lock
+include/linux/spinlock.h:329 [inline]
+000000009bb7bae0 (&(&zone->lock)->rlock){-.-.}, at: rmqueue_bulk
+mm/page_alloc.c:2548 [inline]
+000000009bb7bae0 (&(&zone->lock)->rlock){-.-.}, at: __rmqueue_pcplist
+mm/page_alloc.c:3021 [inline]
+000000009bb7bae0 (&(&zone->lock)->rlock){-.-.}, at: rmqueue_pcplist
+mm/page_alloc.c:3050 [inline]
+000000009bb7bae0 (&(&zone->lock)->rlock){-.-.}, at: rmqueue
+mm/page_alloc.c:3072 [inline]
+000000009bb7bae0 (&(&zone->lock)->rlock){-.-.}, at:
+get_page_from_freelist+0x1bae/0x52a0 mm/page_alloc.c:3491
 
-What is the notifier for?
+It appears to be a false positive in that the only way the lock
+ordering should be inverted is if kswapd is waking itself and the
+wakeup allocates debugging objects which should already be allocated
+if it's kswapd doing the waking. Nevertheless, the possibility exists
+and so it's best to avoid the problem.
 
-> +
->  static int scpsys_domain_is_on(struct scp_domain *scpd)
->  {
->         struct scp *scp =3D scpd->scp;
-> @@ -536,6 +551,48 @@ static void init_clks(struct platform_device *pdev, =
-struct clk **clk)
->                 clk[i] =3D devm_clk_get(&pdev->dev, clk_names[i]);
->  }
-> =20
-> +static int mtk_pd_set_performance(struct generic_pm_domain *genpd,
-> +                                 unsigned int state)
-> +{
-> +       int i;
-> +       struct scp_domain *scpd =3D
-> +               container_of(genpd, struct scp_domain, genpd);
-> +       struct scp_event_data scpe;
-> +       struct scp *scp =3D scpd->scp;
-> +       struct genpd_onecell_data *pd_data =3D &scp->pd_data;
-> +
-> +       for (i =3D 0; i < pd_data->num_domains; i++) {
-> +               if (genpd =3D=3D pd_data->domains[i]) {
-> +                       dev_dbg(scp->dev, "%d. %s =3D %d\n",
-> +                               i, genpd->name, state);
-> +                       break;
-> +               }
-> +       }
-> +
-> +       scpe.event_type =3D MTK_SCPSYS_PSTATE;
-> +       scpe.genpd =3D genpd;
-> +       scpe.domain_id =3D i;
-> +       blocking_notifier_call_chain(&scpsys_notifier_list, state, &scpe);
-> +
-> +       return 0;
-> +}
-> +
-> +static unsigned int mtk_pd_get_performance(struct generic_pm_domain *gen=
-pd,
-> +                                          struct dev_pm_opp *opp)
-> +{
-> +       struct device_node *np;
-> +       unsigned int state;
-> +
-> +       np =3D dev_pm_opp_get_of_node(opp);
-> +
-> +       if (of_property_read_u32(np, "mtk,level", &state))
-> +               return 0;
-> +
-> +       of_node_put(np);
+This patch flags a zone as needing a kswapd using the, surprisingly,
+unused zone flag field. The flag is read without the lock held to
+do the wakeup. It's possible that the flag setting context is not
+the same as the flag clearing context or for small races to occur.
+However, each race possibility is harmless and there is no visible
+degredation in fragmentation treatment.
 
-The generic API that Rajendra is adding I guess will become even more
-generic by assuming some sort of property like 'opp-level' or
-'performance-state' that is just some raw number.
+While zone->flag could have continued to be unused, there is potential
+for moving some existing fields into the flags field instead. Particularly
+read-mostly ones like zone->initialized and zone->contiguous.
 
-> +
-> +       return state;
-> +}
-> +
->  static struct scp *init_scp(struct platform_device *pdev,
->                         const struct scp_domain_data *scp_domain_data, in=
-t num,
->                         const struct scp_ctrl_reg *scp_ctrl_reg,
+Reported-by: syzbot+93d94a001cfbce9e60e1@syzkaller.appspotmail.com
+Tested-by: Qian Cai <cai@lca.pw>
+Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
+---
+ include/linux/mmzone.h | 6 ++++++
+ mm/page_alloc.c        | 8 +++++++-
+ 2 files changed, 13 insertions(+), 1 deletion(-)
+
+diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+index cc4a507d7ca4..842f9189537b 100644
+--- a/include/linux/mmzone.h
++++ b/include/linux/mmzone.h
+@@ -520,6 +520,12 @@ enum pgdat_flags {
+ 	PGDAT_RECLAIM_LOCKED,		/* prevents concurrent reclaim */
+ };
+ 
++enum zone_flags {
++	ZONE_BOOSTED_WATERMARK,		/* zone recently boosted watermarks.
++					 * Cleared when kswapd is woken.
++					 */
++};
++
+ static inline unsigned long zone_managed_pages(struct zone *zone)
+ {
+ 	return (unsigned long)atomic_long_read(&zone->managed_pages);
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index cde5dac6229a..d295c9bc01a8 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -2214,7 +2214,7 @@ static void steal_suitable_fallback(struct zone *zone, struct page *page,
+ 	 */
+ 	boost_watermark(zone);
+ 	if (alloc_flags & ALLOC_KSWAPD)
+-		wakeup_kswapd(zone, 0, 0, zone_idx(zone));
++		set_bit(ZONE_BOOSTED_WATERMARK, &zone->flags);
+ 
+ 	/* We are not allowed to try stealing from the whole block */
+ 	if (!whole_block)
+@@ -3102,6 +3102,12 @@ struct page *rmqueue(struct zone *preferred_zone,
+ 	local_irq_restore(flags);
+ 
+ out:
++	/* Separate test+clear to avoid unnecessary atomics */
++	if (test_bit(ZONE_BOOSTED_WATERMARK, &zone->flags)) {
++		clear_bit(ZONE_BOOSTED_WATERMARK, &zone->flags);
++		wakeup_kswapd(zone, 0, 0, zone_idx(zone));
++	}
++
+ 	VM_BUG_ON_PAGE(page && bad_range(zone, page), page);
+ 	return page;
+ 
