@@ -6,43 +6,46 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90EACC43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 05:28:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 268D2C43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 05:30:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 560622070C
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 05:28:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E45D42070C
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 05:30:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=memeware.net header.i=@memeware.net header.b="Of8uXJQy"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=memeware.net header.i=@memeware.net header.b="keIfRRKe"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728593AbfACF2O (ORCPT
+        id S1727419AbfACFaP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 00:28:14 -0500
-Received: from cock.li ([185.100.85.212]:57620 "EHLO cock.li"
+        Thu, 3 Jan 2019 00:30:15 -0500
+Received: from cock.li ([185.100.85.212]:59900 "EHLO cock.li"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727604AbfACF2O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 00:28:14 -0500
+        id S1726003AbfACFaP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Jan 2019 00:30:15 -0500
 MIME-Version: 1.0
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=memeware.net; s=mail;
-        t=1546493291; bh=UTjq/lclmVwzMpHSk7g+kPP4uISK+8hcIxy78mguBBA=;
-        h=Date:From:To:Cc:Subject:From;
-        b=Of8uXJQyOp4HYFgGCSUpV9CzfO69QyNxv709jz0Bh25JBc70sJbKmFDzxMF8LTGpJ
-         Bw2bABXJn2jHXw+PL8wA+8MwAMZWTt7DJQ1j8JdUAP0WwFSAxYWf1YGWlNpvo5sFsk
-         XSnQYr3dxzwLajOr1ywDyXN0iWiLinz7oTueCzmMcrEciuYLkekw5dKZlzxfBffLWg
-         6n/LQOx2VpydJs+hB4w5MrAqsiRFN66E5JdbU/znmP5fXHpY9vrJUGZRx1sOO4BhKG
-         VfuxzTTQtW3seE9szyx2TRJXP47DY4G6BPO10sP8GXXperMwQSXTzQ10aY1y6vhdjG
-         WiWbic49ikKKw==
+        t=1546493412; bh=bX7JE50TLgppdEVHo9RwAjyzaPOBkQGLxnNxYEY+PsY=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=keIfRRKeGuPWcCLTkcSjTWxDcT5EKW3FcSU2C7F0GWnJAWt7ohJRlFnG7HNs3THQC
+         L6bsfLDKvRb1xRVSLECSUqB5+MwIMbgYMy41vkh3ZiPvQj355Xue4TVdUYPMQVjslJ
+         0dF5bVQcOXBTiLZG4kg4BS/bbB4xbXHHnCKWsyVTrRi8En8sfXLnKHC3EHsMUfwBeU
+         8V7SSbOBTzrAIOBldOdwSW5EqC/pclAj0Y1LeC6YeZOTVHdeM8ALAAXHvvpR/GiTjq
+         49KkxmolBRZFVnR/pEMsyoH8V06xj+sAbb1vOKTTrQ9/1q3gtpofkb7uVyKc0JlaO1
+         n9GpI/O4kLQvw==
 Content-Type: text/plain; charset=US-ASCII;
  format=flowed
 Content-Transfer-Encoding: 7bit
-Date:   Thu, 03 Jan 2019 05:28:09 +0000
+Date:   Thu, 03 Jan 2019 05:30:11 +0000
 From:   vsnsdualce@memeware.net
-To:     linux-kernel@vger.kernel.org, gentoo-user@lists.gentoo.org,
-        ubuntu-users@lists.ubuntu.com, debian-user@lists.debian.org
-Cc:     freebsd-women@freebsd.org, freebsd-chat@freebsd.org,
-        misc@openbsd.org, debian-user@lists.debian.org
-Subject: (as you know) The FSF require contributors to their projects to
- assign ownership of the works to them...
-Message-ID: <bc331d7b0e7dc5ff6a82759a1da02d50@memeware.net>
+To:     Mike Galbraith <efault@gmx.de>
+Cc:     linux-kernel@vger.kernel.org, gentoo-user@lists.gentoo.org,
+        ubuntu-users@lists.ubuntu.com, debian-user@lists.debian.org,
+        freebsd-women@freebsd.org, freebsd-chat@freebsd.org,
+        misc@openbsd.org
+Subject: Re: knifeshack (Linux Property rights)
+In-Reply-To: <1546396372.7355.6.camel@gmx.de>
+References: <5887db663842c078851e7795512bca45@memeware.net>
+ <1546396372.7355.6.camel@gmx.de>
+Message-ID: <87da42403d33f5a48bc87317dbd3bf6d@memeware.net>
 X-Sender: vsnsdualce@memeware.net
 User-Agent: Roundcube Webmail/1.3.6
 Sender: linux-kernel-owner@vger.kernel.org
@@ -50,10 +53,12 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A license without an attached interest is revocable by the owner of the 
-property.
+On 2019-01-02 02:32, Mike Galbraith wrote:
+> Take your medication.
 
-The FSF require contributors to their projects to assign ownership of 
-the works to them: For the FSF the license is not enough.
+Don't like the story? Why what is wrong with it.
 
-Put two and two together.
+Was it the entrance, the middle, or the conclusion?
+
+It simply explains licensing in a way you might find helpful, as it 
+relates to linux.
