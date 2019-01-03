@@ -3,120 +3,114 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 449AAC43612
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 20:32:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81DB9C43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 20:32:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C86621871
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 20:32:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 56C782184B
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 20:32:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727845AbfACUcB (ORCPT
+        id S1727858AbfACUct (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 15:32:01 -0500
-Received: from mx2.suse.de ([195.135.220.15]:51522 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726036AbfACUcB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 15:32:01 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 1D16BAE92;
-        Thu,  3 Jan 2019 20:31:59 +0000 (UTC)
+        Thu, 3 Jan 2019 15:32:49 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:56688 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726036AbfACUcs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Jan 2019 15:32:48 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 063DBEBD;
+        Thu,  3 Jan 2019 12:32:48 -0800 (PST)
+Received: from [192.168.100.243] (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9AE393F575;
+        Thu,  3 Jan 2019 12:32:46 -0800 (PST)
+Subject: Re: [PATCH v2 1/7] sysfs/cpu: Add "Unknown" vulnerability state
+To:     Stefan Wahren <stefan.wahren@i2se.com>,
+        Dave Martin <Dave.Martin@arm.com>
+Cc:     mark.rutland@arm.com, julien.thierry@arm.com, mlangsdo@redhat.com,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        suzuki.poulose@arm.com, marc.zyngier@arm.com,
+        catalin.marinas@arm.com,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        will.deacon@arm.com, linux-kernel@vger.kernel.org,
+        steven.price@arm.com, shankerd@codeaurora.org,
+        Dave Hansen <dave.hansen@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        ykaukab@suse.de, Thomas Gleixner <tglx@linutronix.de>,
+        linux-arm-kernel@lists.infradead.org
+References: <20190103004921.1928921-1-jeremy.linton@arm.com>
+ <20190103004921.1928921-2-jeremy.linton@arm.com>
+ <20190103163740.GC3529@e103592.cambridge.arm.com>
+ <db5968e6-609b-1a1f-464d-436327dd1738@arm.com>
+ <1951199845.271163.1546543806398@email.ionos.de>
+From:   Jeremy Linton <jeremy.linton@arm.com>
+Message-ID: <5818faa8-e820-7aee-5aaa-42ced65d6f9d@arm.com>
+Date:   Thu, 3 Jan 2019 14:32:44 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+In-Reply-To: <1951199845.271163.1546543806398@email.ionos.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Date:   Thu, 03 Jan 2019 21:31:58 +0100
-From:   Roman Penyaev <rpenyaev@suse.de>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Joe Perches <joe@perches.com>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH 1/3] mm/vmalloc: fix size check for
- remap_vmalloc_range_partial()
-In-Reply-To: <20190103194054.GB31793@dhcp22.suse.cz>
-References: <20190103145954.16942-1-rpenyaev@suse.de>
- <20190103145954.16942-2-rpenyaev@suse.de>
- <20190103151357.GR31793@dhcp22.suse.cz>
- <dba7cb2c2882e034c8c99b09a432313a@suse.de>
- <20190103194054.GB31793@dhcp22.suse.cz>
-Message-ID: <5502b64d6c508f5432386d2cfe999844@suse.de>
-X-Sender: rpenyaev@suse.de
-User-Agent: Roundcube Webmail
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-01-03 20:40, Michal Hocko wrote:
-> On Thu 03-01-19 20:27:26, Roman Penyaev wrote:
->> On 2019-01-03 16:13, Michal Hocko wrote:
->> > On Thu 03-01-19 15:59:52, Roman Penyaev wrote:
->> > > area->size can include adjacent guard page but get_vm_area_size()
->> > > returns actual size of the area.
->> > >
->> > > This fixes possible kernel crash when userspace tries to map area
->> > > on 1 page bigger: size check passes but the following
->> > > vmalloc_to_page()
->> > > returns NULL on last guard (non-existing) page.
->> >
->> > Can this actually happen? I am not really familiar with all the callers
->> > of this API but VM_NO_GUARD is not really used wildly in the kernel.
->> 
->> Exactly, by default (VM_NO_GUARD is not set) each area has guard page,
->> thus the area->size will be bigger.  The bug is not reproduced if
->> VM_NO_GUARD is set.
->> 
->> > All I can see is kasan na arm64 which doesn't really seem to use it
->> > for vmalloc.
->> >
->> > So is the problem real or this is a mere cleanup?
->> 
->> This is the real problem, try this hunk for any file descriptor which
->> provides
->> mapping, or say modify epoll as example:
+Hi,
+
+On 01/03/2019 01:30 PM, Stefan Wahren wrote:
+> Hi Jeremy,
 > 
-> OK, my response was more confusing than I intended. I meant to say. Is
-> there any in kernel code that would allow the bug have had in mind?
-> In other words can userspace trick any existing code?
+>> Jeremy Linton <jeremy.linton@arm.com> hat am 3. Januar 2019 um 17:46 geschrieben:
+>>
+>>
+>> Hi,
+>>
+>> On 01/03/2019 10:37 AM, Dave Martin wrote:
+>>> On Wed, Jan 02, 2019 at 06:49:15PM -0600, Jeremy Linton wrote:
+>>>> There is a lot of variation in the Arm ecosystem. Because of this,
+>>>> there exist possible cases where the kernel cannot authoritatively
+>>>> determine if a machine is vulnerable.
+>>>>
+>>>> Rather than guess the vulnerability status in cases where
+>>>> the mitigation is disabled or the firmware isn't responding
+>>>> correctly, we need to display an "Unknown" state.
+>>>>
+> 
+> i applied your patch series on linux-next-20190103. On my Raspberry Pi 3B+ (defconfig) i'm getting this from sysfs:
+> 
+> l1tf:Not affected
+> meltdown:Not affected
+> spec_store_bypass:Unknown
+> spectre_v1:Mitigation: __user pointer sanitization
+> spectre_v2:Unknown
+> 
+> AFAIK it has 4 Cortex-A53 cores (no PSCI firmware), so shouldn't be affected.
 
-In theory any existing caller of remap_vmalloc_range() which does
-not have an explicit size check should trigger an oops, e.g. this is
-a good candidate:
+So, for spec_store_bypass, as you noted your getting hit by the lack of 
+psci/smccc to report the ssb state, and this patch is just reflecting that.
 
-*** drivers/media/usb/stkwebcam/stk-webcam.c:
-v4l_stk_mmap[789]              ret = remap_vmalloc_range(vma, 
-sbuf->buffer, 0);
-
-According to the code no explicit size check, should be easy to 
-reproduce:
-mmap the frame buffer and you are done.
-
-Other callers are not so easy to follow. But wait, here is another 
-example:
-
-(drivers/video/fbdev/core/fbmem.c)
-static int
-fb_mmap(struct file *file, struct vm_area_struct * vma)
-         ...
-    	res = fb->fb_mmap(info, vma);
-
-(drivers/video/fbdev/vfb.c)
-static int vfb_mmap(struct fb_info *info,
-		    struct vm_area_struct *vma)
-{
-	return remap_vmalloc_range(vma, (void *)info->fix.smem_start, 
-vma->vm_pgoff);
-}
-
-No checks, naked calls, should be also the candidate.
-
-
---
-Roman
+In the case of spectrev2 it may be correct to blame this patch set 
+because its displaying "unknown" since your core isn't in the black 
+list, and your core isn't new enough to have the csv2 bit indicating its 
+not vulnerable. In this case if we do away with the unknown state, we 
+should probably depend entirely on the black list and simply display 
+"Not affected" if the core isn't listed. (meaning we may report cores 
+not affected when they are missing from the blacklist).
 
 
+> How can this be fixed?
+
+For ssb, the correct answer is probably fix the firmware, but given the 
+situation, its likely this kind of machine is going to force an 
+additional MIDR list to report the state correctly. Maybe Will or 
+someone can chime in here?
+
+For spectrev2, wait for another version of this patch.
 
