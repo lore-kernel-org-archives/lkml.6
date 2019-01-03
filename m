@@ -2,130 +2,148 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D804AC43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 21:14:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1EF9C43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 21:15:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A364921479
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 21:14:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546550092;
-	bh=ccciDNEgpCNid3FhDBnKNOjiebGCvlaWC4kPMMov8bk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=1DKMUgTxnsUYAvLVYwq9r4vyq08JPJJDwLXuPNl3AwKh4Qkm0M3TDifrmhMb2AvYT
-	 o/mHYMZWmWWNTjXiBfnq048M583Mtsu8L/2z5KG3oL8RA6bJlA2s926cHeRB2NY/Z4
-	 877VT5EJctRV41E+smAHuexRWORDT9sSd0t+NV8A=
+	by mail.kernel.org (Postfix) with ESMTP id 9EF7B21479
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 21:15:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C7ub41lg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727441AbfACVOv (ORCPT
+        id S1727596AbfACVPs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 16:14:51 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:52709 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726041AbfACVOv (ORCPT
+        Thu, 3 Jan 2019 16:15:48 -0500
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:38705 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726041AbfACVPs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 16:14:51 -0500
-Received: by mail-it1-f196.google.com with SMTP id g76so47176569itg.2;
-        Thu, 03 Jan 2019 13:14:50 -0800 (PST)
+        Thu, 3 Jan 2019 16:15:48 -0500
+Received: by mail-yb1-f195.google.com with SMTP id x9so4991003ybj.5
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 13:15:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=SyBYLPw2/2zwS3YTuZCUVEH+kVTNfgI6zETlsjimHIo=;
+        b=C7ub41lg7LwquGwKceXYsYj3WSgI0y/V036FnJNUxnMUfDHnSZAIgYp/CRQVC7nyVK
+         oGRJJlwAZP/Ah4ETJmE6824jo8RN3xTYEnq+b+sut2Y8xJOKR93s1DvnD08IBiZF77Pm
+         0MRJnf5NJg4D0oPybduDEfjFDvyt7rLJoPeckqk/7V17Aw8JhxgN7AfkOdOLBV85DR1L
+         UO+EMWJqOeZA80bwt75HbPBGDBBpL/oiqJe1wHUqI4pjH7FV1tBovf/bWmbq6q7CjLsL
+         u1+cAZLSmB2sT+z+261AQMH3Sw+ErEfqoVTL3v164HorcRw0xPDXhYGkL4g3gOW/07+F
+         RM7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=RFJv2pEtzMnCmHqpwbHFcL8CG7J04WnCqNMgo/+qLPk=;
-        b=VqgC8l4Lp2U8eSvCt0nQySWOkOGXowmJhaN89x4xGOpgmHnWTn9QQGYxUsI+cLRum/
-         zd34mS0a8d8M/5AGFeAzMEqyjYZGgC0NDn0OstqUQN774J7DpEG/sSKlJbQV/4qEcSY7
-         NXY0dQ0ilfzMSx4GYfRH07tPawNZ3YwK7y8g6E7JvyW2/eyTybPIMMWJeE9Zip5ncOGq
-         Z3u0AguQ4qhCoASUn50YSCzOA0BslcFnCym1wzGABHQAbrh7MnSIbWgprcsarWK97KL7
-         yXx6pHXu+b9P4YG6FUCXUCCLq6DvlKpsAtSLok8Qrpwi0Hck+97ANtDWixsQG2HKF8OR
-         bBHg==
-X-Gm-Message-State: AA+aEWZPobu29LhyKacZSkRRgajD7IH828KGvQZ+9USpPBzlrf2lGsMZ
-        PRK43FhKi3/lAojmM/jYYQ==
-X-Google-Smtp-Source: AFSGD/UCiBXdQyBzaX30++tCxEnw5Oh61kbQIcMtaE22/WZG+KWgHmzQwzOsJa5YAxDjoZNpxMFPIA==
-X-Received: by 2002:a02:910a:: with SMTP id a10mr34057589jag.116.1546550089548;
-        Thu, 03 Jan 2019 13:14:49 -0800 (PST)
-Received: from localhost ([24.51.61.172])
-        by smtp.gmail.com with ESMTPSA id f13sm25041184iol.82.2019.01.03.13.14.48
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 03 Jan 2019 13:14:48 -0800 (PST)
-Date:   Thu, 3 Jan 2019 15:14:47 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Tomer Maimon <tmaimon77@gmail.com>
-Cc:     jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
-        pmeerw@pmeerw.net, mark.rutland@arm.com, yuenn@google.com,
-        venture@google.com, brendanhiggins@google.com,
-        avifishman70@gmail.com, joel@jms.id.au, linux-iio@vger.kernel.org,
-        openbmc@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v1 1/2] dt-binding: iio: add NPCM ADC documentation
-Message-ID: <20190103211447.GA4618@bogus>
-References: <20181224164755.286932-1-tmaimon77@gmail.com>
- <20181224164755.286932-2-tmaimon77@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=SyBYLPw2/2zwS3YTuZCUVEH+kVTNfgI6zETlsjimHIo=;
+        b=MDAvtCkGlJZsDnh7yG2wArxepQFHufVlZZeM/Dy3VVZKHp7SOZbW8QhFBS+nMt08Oc
+         /OxDNyn9QthZuQsX7Cm092QF3OOyFaIG0G7Rr8KDwon16bz2etKSbdRvm3QC7rOtjPJT
+         RqPw/YkALgKxtLGDu9ZHIiz2iexbpismbQlM2Pz89rfuCI+u+43ZAxNIgVTczwTzxwRT
+         W1tTyjBeVUO3EBJykkxe9dM2Wr36zxqF9o+f+K9MTyqkEDbIe6xMTMxQUuloypJws5uW
+         KYWUxHN+9ugUghdfUdUpfx2wkubFWo1ZM4+nTTNWxCD2BYxZU56y09u87iz5BXlKl1cA
+         FEtQ==
+X-Gm-Message-State: AJcUukdSlAQS/vyCY3bhrKp5neAc7uVAMe3OYGSL/yv6tLSUlJooY2IX
+        o7WV0lQ94318VaLjsXtSr1rxyfjdRC0=
+X-Google-Smtp-Source: ALg8bN78/2lZTPLHcwu+oVz9O4BcNmv6267FIrwI0xFPzUCziXkhpsIfOO/62Z/h8fciSSzGZYisOg==
+X-Received: by 2002:a25:4255:: with SMTP id p82mr34003550yba.46.1546550146447;
+        Thu, 03 Jan 2019 13:15:46 -0800 (PST)
+Received: from mail-yw1-f43.google.com (mail-yw1-f43.google.com. [209.85.161.43])
+        by smtp.gmail.com with ESMTPSA id n16sm23278760ywn.31.2019.01.03.13.15.44
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 03 Jan 2019 13:15:45 -0800 (PST)
+Received: by mail-yw1-f43.google.com with SMTP id t13so13760534ywe.13
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 13:15:44 -0800 (PST)
+X-Received: by 2002:a81:9184:: with SMTP id i126mr50104769ywg.371.1546550144403;
+ Thu, 03 Jan 2019 13:15:44 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181224164755.286932-2-tmaimon77@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <000000000000513fb7057e8d7013@google.com> <f2e566ac-5c4c-11ae-d436-ebb3522a2195@gmail.com>
+ <20190103210743.6518841e@redhat.com>
+In-Reply-To: <20190103210743.6518841e@redhat.com>
+From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Date:   Thu, 3 Jan 2019 15:15:06 -0600
+X-Gmail-Original-Message-ID: <CA+FuTScFwA3F44MvbaWrOYJ2EYgdKAmoMzEGjOLcz3ZPVQLLDA@mail.gmail.com>
+Message-ID: <CA+FuTScFwA3F44MvbaWrOYJ2EYgdKAmoMzEGjOLcz3ZPVQLLDA@mail.gmail.com>
+Subject: Re: kernel panic: stack is corrupted in udp4_lib_lookup2
+To:     Stefano Brivio <sbrivio@redhat.com>
+Cc:     Eric Dumazet <eric.dumazet@gmail.com>,
+        syzbot <syzbot+4ad25edc7a33e4ab91e0@syzkaller.appspotmail.com>,
+        David Miller <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Network Development <netdev@vger.kernel.org>,
+        syzkaller-bugs@googlegroups.com,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 24, 2018 at 06:47:54PM +0200, Tomer Maimon wrote:
-> Added device tree binding documentation for Nuvoton BMC
-> NPCM Analog-to-Digital Converter(ADC).
-> 
-> Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
-> ---
->  .../bindings/iio/adc/nuvoton,npcm-adc.txt          | 35 ++++++++++++++++++++++
->  1 file changed, 35 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/adc/nuvoton,npcm-adc.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/adc/nuvoton,npcm-adc.txt b/Documentation/devicetree/bindings/iio/adc/nuvoton,npcm-adc.txt
-> new file mode 100644
-> index 000000000000..6f0843d837cc
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/adc/nuvoton,npcm-adc.txt
-> @@ -0,0 +1,35 @@
-> +Nuvoton NPCM Analog to Digital Converter (ADC)
-> +
-> +The NPCM ADC is a 10-bit converter for eight channel inputs.
-> +
-> +Required properties:
-> +- compatible	: "nuvoton,npcm750-adc" for the NPCM7XX BMC.
-> +- reg			: specifies physical base address and size of the registers.
-> +- interrupts	: Contain the ADC interrupt with flags for falling edge.
-> +
-> +Optional properties:
-> +- clocks		: phandle of ADC reference clock, in case the clock is not
-> +				  added the ADC will use the default ADC sample rate.
-> +- vref-supply	: The regulator supply ADC reference voltage, in case the
-> +				  vref-supply is not added the ADC will use internal voltage
-> +				  reference.
-> +
-> +Required Node in the NPCM7xx BMC:
-> +An additional register is present in the NPCM7xx SOC which is
-> +assumed to be in the same device tree, with and marked as
-> +compatible with "nuvoton,npcm750-rst".
-> +
-> +Example:
-> +
-> +adc: adc@f000c000 {
-> +	compatible = "nuvoton,npcm750-adc";
-> +	reg = <0xf000c000 0x8>;
-> +	interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>;
-> +	clocks = <&clk NPCM7XX_CLK_ADC>;
-> +};
-> +
-> +rst: rst@f0801000 {
+On Thu, Jan 3, 2019 at 2:07 PM Stefano Brivio <sbrivio@redhat.com> wrote:
+>
+> On Thu, 3 Jan 2019 12:01:29 -0800
+> Eric Dumazet <eric.dumazet@gmail.com> wrote:
+>
+> > On 01/03/2019 05:07 AM, syzbot wrote:
+> > > Hello,
+> > >
+> > > syzbot found the following crash on:
+> > >
+> > > HEAD commit:    195303136f19 Merge tag 'kconfig-v4.21-2' of git://git.kern..
+> > > git tree:       upstream
+> > > console output: https://syzkaller.appspot.com/x/log.txt?x=12245d8f400000
+> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=5e7dc790609552d7
+> > > dashboard link: https://syzkaller.appspot.com/bug?extid=4ad25edc7a33e4ab91e0
+> > > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> > >
+> > > Unfortunately, I don't have any reproducer for this crash yet.
+> > >
+> > > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > > Reported-by: syzbot+4ad25edc7a33e4ab91e0@syzkaller.appspotmail.com
+> > >
+> > > protocol 88fb is buggy, dev hsr_slave_1
+> > > protocol 88fb is buggy, dev hsr_slave_0
+> > > protocol 88fb is buggy, dev hsr_slave_1
+> > > FAT-fs (loop0): invalid media value (0x00)
+> > > FAT-fs (loop0): Can't find a valid FAT filesystem
+> > > Kernel panic - not syncing: stack-protector: Kernel stack is corrupted in: udp4_lib_lookup2+0x7ea/0x7f0 net/ipv4/udp.c:455
+> > > CPU: 1 PID: 17960 Comm: syz-executor2 Not tainted 4.20.0+ #176
+> > > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+> > > Call Trace:
+> > > Kernel Offset: disabled
+> > > Rebooting in 86400 seconds..
+> > >
+> > >
+> > > ---
+> > > This bug is generated by a bot. It may contain errors.
+> > > See https://goo.gl/tpsmEJ for more information about syzbot.
+> > > syzbot engineers can be reached at syzkaller@googlegroups.com.
+> > >
+> > > syzbot will keep track of this bug report. See:
+> > > https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with syzbot.
+> >
+> > Maybe commit 11789039da536fea96c98a40c2b441decf2e7323
+> > Author: Stefano Brivio <sbrivio@redhat.com>
+> > Date:   Tue Dec 18 00:13:17 2018 +0100
+> >
+> >     fou: Prevent unbounded recursion in GUE error handler
+> >
+> > Forgot to deal with IPv6 ?
+>
+> Damn, yes. :( Thanks both for pointing that out, patch coming.
+>
+> Still, I can't be sure this is the same issue.
 
-Why is this node here?
+syzbot generated stack traces with
 
-> +	compatible = "nuvoton,npcm750-rst", "syscon",
-> +	"simple-mfd";
-> +	reg = <0xf0801000 0x6C>;
-> +};
-> -- 
-> 2.14.1
-> 
+[  183.517380]  udpv6_err+0x46/0x60
+[  183.520739]  ? __udp6_lib_err+0x1890/0x1890
+[  183.525054]  gue6_err_proto_handler+0x199/0x280
+
+so it is quite likely
