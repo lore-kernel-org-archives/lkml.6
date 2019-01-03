@@ -2,80 +2,115 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BE54C43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 00:21:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8746DC43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 00:31:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B98AC2171F
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 00:21:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2EEA520879
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 00:31:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="OMqhhboM"
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="UmCqKHAH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728294AbfACAVb (ORCPT
+        id S1728823AbfACAbR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 19:21:31 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:51684 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726213AbfACAVa (ORCPT
+        Wed, 2 Jan 2019 19:31:17 -0500
+Received: from conssluserg-01.nifty.com ([210.131.2.80]:64661 "EHLO
+        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728186AbfACAbR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 19:21:30 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=OQOpxZv95FP2XBOu61CyGnmRm4Xc+rHoB1dn4/6ZEI8=; b=OMqhhboM/P06ByKNvuIKuLIVND
-        d1+GPBi17b3OquyFB7EWJYUpBjNu6APWsEl4/C3wqr+i41knmwuPdrkOr1/RDMqx983GYn19L6VBi
-        sQPD3D1bWwInHA3todiDvqjDtBcRmcmTwRoAx5a9UA5aKHTA6Fcb/ckvz+xcOcyNJcRYRS2IamrTu
-        3uFJUZujpgHoKfBscNHtlSTegac1Qq6E4Sf1vvsMeZMe45221KqKEOeWPbLNlSNxgxNqmNwEbHcEw
-        eHPCsXP60PidkM9UFBBSaqCesex7Gzn9nVcS1x0mUxviGLxTGEUn4mEwDCwWko8uZoAoE1WPnI/MW
-        T5jcQCDQ==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1geqlL-0000n5-3N; Thu, 03 Jan 2019 00:21:27 +0000
-Date:   Wed, 2 Jan 2019 16:21:26 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-mm@kvack.org, linux-xfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        Jan Kara <jack@suse.cz>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>
-Subject: [PATCH] Initialise mmu_notifier_range correctly
-Message-ID: <20190103002126.GM6310@bombadil.infradead.org>
+        Wed, 2 Jan 2019 19:31:17 -0500
+Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176]) (authenticated)
+        by conssluserg-01.nifty.com with ESMTP id x030UmVG024409;
+        Thu, 3 Jan 2019 09:30:49 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com x030UmVG024409
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1546475449;
+        bh=wJNJlQ1cK2mWGUFA6G3MmhHeuNvOBH/uigqL79XWvgw=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=UmCqKHAHnfixgC2REEgdauZdM84NVsTVil6kRGMV6W7YJQi6Vpc3TgMhWSbF+ZVaY
+         hdQPA98L6xaPp986eF2PEcZS3Cbxjl0/8YWvyUeW+n7vZ7xVqSgNPpO8ZadsXoqsla
+         2YhfeDyk55XV0qriy7RzunlXcXpeeXSCFIcmCwEhvoOckGuaXyZ/0iS/k6NeileKF3
+         LxCq1ejPtLD+Sf88kc4Zvjg9f9TEjqYBYUgPYcljN/NdI6TzP0aFaf3cP89Tas4QEF
+         UkOROdVYxiwmUQjwahfHXwEJbEIGcS+lVrEH8hWzeP57EMFtFN/A+D3iXgujecMwwd
+         VQs/L+I6FcpZA==
+X-Nifty-SrcIP: [209.85.221.176]
+Received: by mail-vk1-f176.google.com with SMTP id y14so6941729vky.9;
+        Wed, 02 Jan 2019 16:30:49 -0800 (PST)
+X-Gm-Message-State: AJcUukemC/eZ8Kxml5BbQ/7wLeVYA0JEDLvRAURvjcBc7KXztKzgkSoC
+        LxE1tWq7FSUvouzhlqMc/CmP+DVTuiifepQS6JA=
+X-Google-Smtp-Source: ALg8bN5H3sUJicOP3MkVl66MnFVZMFVO0475RHOVGj0xrEs+aZkoTZchHmAGOfNJY9cqH131f6nqcriUDLqB94N75O4=
+X-Received: by 2002:a1f:9350:: with SMTP id v77mr15597424vkd.64.1546475448072;
+ Wed, 02 Jan 2019 16:30:48 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.2 (2017-12-15)
+References: <1546173360-25573-1-git-send-email-minipli@googlemail.com>
+In-Reply-To: <1546173360-25573-1-git-send-email-minipli@googlemail.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Thu, 3 Jan 2019 09:30:12 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATr9N=e26QQ=ks7ub-YhDPX5tfy7LY41m5oLSXpLLxxLw@mail.gmail.com>
+Message-ID: <CAK7LNATr9N=e26QQ=ks7ub-YhDPX5tfy7LY41m5oLSXpLLxxLw@mail.gmail.com>
+Subject: Re: [PATCH] kallsyms: lower alignment on ARM
+To:     Mathias Krause <minipli@googlemail.com>
+Cc:     linux-arch <linux-arch@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sun, Dec 30, 2018 at 9:37 PM Mathias Krause <minipli@googlemail.com> wrote:
+>
+> As mentioned in the info pages of gas, the '.align' pseudo op's
+> interpretation of the alignment value is architecture specific.
+> It might either be a byte value or taken to the power of two.
+>
+> On ARM it's actually the latter which leads to unnecessary large
+> alignments of 16 bytes for 32 bit builds or 256 bytes for 64 bit
+> builds.
+>
+> Fix this by switching to '.balign' instead which is consistent
+> across all architectures.
+>
+> Signed-off-by: Mathias Krause <minipli@googlemail.com>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will.deacon@arm.com>
 
-One of the paths in follow_pte_pmd() initialised the mmu_notifier_range
-incorrectly.
 
-Signed-off-by: Matthew Wilcox <willy@infradead.org>
-Fixes: ac46d4f3c432 ("mm/mmu_notifier: use structure for invalidate_range_start/end calls v2")
-Tested-by: Dave Chinner <dchinner@redhat.com>
+Applied to linux-kbuild.
+Thanks!
 
-diff --git a/mm/memory.c b/mm/memory.c
-index 2dd2f9ab57f4..21a650368be0 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -4078,8 +4078,8 @@ static int __follow_pte_pmd(struct mm_struct *mm, unsigned long address,
- 		goto out;
- 
- 	if (range) {
--		range->start = address & PAGE_MASK;
--		range->end = range->start + PAGE_SIZE;
-+		mmu_notifier_range_init(range, mm, address & PAGE_MASK,
-+				     (address & PAGE_MASK) + PAGE_SIZE);
- 		mmu_notifier_invalidate_range_start(range);
- 	}
- 	ptep = pte_offset_map_lock(mm, pmd, address, ptlp);
+
+> ---
+>  scripts/kallsyms.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/scripts/kallsyms.c b/scripts/kallsyms.c
+> index 109a1af7e444..77cebad0474e 100644
+> --- a/scripts/kallsyms.c
+> +++ b/scripts/kallsyms.c
+> @@ -334,10 +334,10 @@ static void write_src(void)
+>         printf("#include <asm/types.h>\n");
+>         printf("#if BITS_PER_LONG == 64\n");
+>         printf("#define PTR .quad\n");
+> -       printf("#define ALGN .align 8\n");
+> +       printf("#define ALGN .balign 8\n");
+>         printf("#else\n");
+>         printf("#define PTR .long\n");
+> -       printf("#define ALGN .align 4\n");
+> +       printf("#define ALGN .balign 4\n");
+>         printf("#endif\n");
+>
+>         printf("\t.section .rodata, \"a\"\n");
+> --
+> 2.19.2
+>
+
+
+-- 
+Best Regards
+Masahiro Yamada
