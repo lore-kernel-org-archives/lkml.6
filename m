@@ -2,95 +2,101 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F6B0C43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 19:23:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A296C43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 19:24:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3FA121872
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 19:23:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546543424;
-	bh=xvncojBUe26ihPmTV38uurQuIpybNKstjbPx4KplcEI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=xGG8jHI1ZgJarfzAP7MQB8qMqWu1zHfx0UuGtNN77VO8MQRJFB64B3/Vw4YbIgtXZ
-	 ttBIPfimlBpU5dC4ln7J0Uc5b1BQLjHOK5r/T6EBLFNTnB1KiVEm3k5IaMyGPIFZeq
-	 dvZmpyDahVnE3fTuXbf1js/41BPs5+c0s1goWnwE=
+	by mail.kernel.org (Postfix) with ESMTP id 44559208E3
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 19:24:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Vct3TbRD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727129AbfACTXn (ORCPT
+        id S1727176AbfACTYO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 14:23:43 -0500
-Received: from mx2.suse.de ([195.135.220.15]:43646 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727099AbfACTXm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 14:23:42 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D3600AFA5;
-        Thu,  3 Jan 2019 19:23:40 +0000 (UTC)
-Date:   Thu, 3 Jan 2019 20:23:39 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Yang Shi <yang.shi@linux.alibaba.com>
-Cc:     hannes@cmpxchg.org, akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 0/3] mm: memcontrol: delayed force empty
-Message-ID: <20190103192339.GA31793@dhcp22.suse.cz>
-References: <1546459533-36247-1-git-send-email-yang.shi@linux.alibaba.com>
- <20190103101215.GH31793@dhcp22.suse.cz>
- <b3ad06ed-f620-7aa0-5697-a1bbe2d7bfe1@linux.alibaba.com>
- <20190103181329.GW31793@dhcp22.suse.cz>
- <6f43e926-3bb5-20d1-2e39-1d30bf7ad375@linux.alibaba.com>
- <20190103185333.GX31793@dhcp22.suse.cz>
- <d610c665-890f-3bf0-1e2a-437150b6ddfb@linux.alibaba.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d610c665-890f-3bf0-1e2a-437150b6ddfb@linux.alibaba.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 3 Jan 2019 14:24:14 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:45446 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726784AbfACTYN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Jan 2019 14:24:13 -0500
+Received: by mail-pf1-f194.google.com with SMTP id g62so17106562pfd.12
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 11:24:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=WE0zw+tXRmMImNTsNS2inSEnAMFg2bLezjCGkdLaiFc=;
+        b=Vct3TbRDFdQzVGvvFQkqoY496Jue38ZwHLQjzVcoMrkwNr2JMRXDGoJaETa6wpipoE
+         8Nghcw920M2cy0589otpMSAtMbWpTj2Ki6c9c+73dq3KqcGvud+0xXT8O+DyCNbZF57Q
+         QkNYevHr4Ml6iqG/3l+J2NZOvwkCzQNJG+3sM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=WE0zw+tXRmMImNTsNS2inSEnAMFg2bLezjCGkdLaiFc=;
+        b=irv8hJyir2SG+GwFio/qEYllq4HMCmDWht961p9OXsX4d0xu9d3MEq4aasxcOp48Xz
+         /YmNelzpcrD0A3DVjF0Slfs9HyCZdjf+AlA6IZUc8NxOen5alURSxBejgbavqSd+cT7K
+         qTENL3kul+5klo4BNxkM1kTjkeT0bqpmdZqQDGpSFhaU/NcL9fiRWC4UqLnOSEH5wZn5
+         JE4/QKp3JsuFUhrXpplZhU0wVvDwqypgWNwPHgdis27uj70odwjhly3Iovu+YpMoieNL
+         iue5cnWVnBQGbRcg+F+gV+GzrEoAKrGw2L1Fg+EnKM+ysUm2b8OSsmi9MKnkSkZUzw9Y
+         7l1g==
+X-Gm-Message-State: AA+aEWYJyQOzZVnhFzxsBu5QnnlGzbBxa8t5plpje9tVX/HgOykvIvN9
+        LwdEtZV6Fg8bMOrUxV3pgMrs/BLGK14=
+X-Google-Smtp-Source: AFSGD/XV25lmWKp7kPG1wmCi4JG+1Fn2BhvKl7appWWVNWLBtGxLytDETjHThSZkhkXgr4VpVI5Vfg==
+X-Received: by 2002:a62:1289:: with SMTP id 9mr50013199pfs.102.1546543451758;
+        Thu, 03 Jan 2019 11:24:11 -0800 (PST)
+Received: from localhost.localdomain ([2601:1c2:680:1319:4e72:b9ff:fe99:466a])
+        by smtp.gmail.com with ESMTPSA id n21sm80807415pfg.84.2019.01.03.11.24.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 03 Jan 2019 11:24:10 -0800 (PST)
+From:   John Stultz <john.stultz@linaro.org>
+To:     lkml <linux-kernel@vger.kernel.org>
+Cc:     John Stultz <john.stultz@linaro.org>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Ryan Grachek <ryan@edited.us>, Wei Xu <xuwei5@hisilicon.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Subject: [PATCH] arm64: dts: hikey: Add DMA entries for Bluetooth UART
+Date:   Thu,  3 Jan 2019 11:24:07 -0800
+Message-Id: <1546543447-825-1-git-send-email-john.stultz@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 03-01-19 11:10:00, Yang Shi wrote:
-> 
-> 
-> On 1/3/19 10:53 AM, Michal Hocko wrote:
-> > On Thu 03-01-19 10:40:54, Yang Shi wrote:
-> > > 
-> > > On 1/3/19 10:13 AM, Michal Hocko wrote:
-[...]
-> > > > Is there any reason for your scripts to be strictly sequential here? In
-> > > > other words why cannot you offload those expensive operations to a
-> > > > detached context in _userspace_?
-> > > I would say it has not to be strictly sequential. The above script is just
-> > > an example to illustrate the pattern. But, sometimes it may hit such pattern
-> > > due to the complicated cluster scheduling and container scheduling in the
-> > > production environment, for example the creation process might be scheduled
-> > > to the same CPU which is doing force_empty. I have to say I don't know too
-> > > much about the internals of the container scheduling.
-> > In that case I do not see a strong reason to implement the offloding
-> > into the kernel. It is an additional code and semantic to maintain.
-> 
-> Yes, it does introduce some additional code and semantic, but IMHO, it is
-> quite simple and very straight forward, isn't it? Just utilize the existing
-> css offline worker. And, that a couple of lines of code do improve some
-> throughput issues for some real usecases.
+Add dma0 references for bluetooth uart to enable dma
+for bt transfers.
 
-I do not really care it is few LOC. It is more important that it is
-conflating force_empty into offlining logic. There was a good reason to
-remove reparenting/emptying the memcg during the offline. Considering
-that you can offload force_empty from userspace trivially then I do not
-see any reason to implement it in the kernel.
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Ryan Grachek <ryan@edited.us>
+Cc: Wei Xu <xuwei5@hisilicon.com>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: devicetree@vger.kernel.org
+Signed-off-by: John Stultz <john.stultz@linaro.org>
+Change-Id: I85d36cc492a5f392cde214b144b19469e951585a
+---
+ arch/arm64/boot/dts/hisilicon/hi6220.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> > I think it is more important to discuss whether we want to introduce
-> > force_empty in cgroup v2.
-> 
-> We would prefer have it in v2 as well.
-
-Then bring this up in a separate email thread please.
+diff --git a/arch/arm64/boot/dts/hisilicon/hi6220.dtsi b/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
+index aec9e37..fa15a08 100644
+--- a/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
++++ b/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
+@@ -319,6 +319,8 @@
+ 			clock-names = "uartclk", "apb_pclk";
+ 			pinctrl-names = "default";
+ 			pinctrl-0 = <&uart1_pmx_func &uart1_cfg_func1 &uart1_cfg_func2>;
++			dmas = <&dma0 8 &dma0 9>;
++			dma-names = "rx", "tx";
+ 			status = "disabled";
+ 		};
+ 
 -- 
-Michal Hocko
-SUSE Labs
+2.7.4
+
