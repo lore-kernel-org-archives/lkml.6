@@ -2,104 +2,115 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10FCBC43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 07:37:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1212C43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 07:39:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB95A2073D
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 07:37:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 886E620896
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 07:39:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="s2fDpQo3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730097AbfACHhC (ORCPT
+        id S1730128AbfACHjA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 02:37:02 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57734 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726036AbfACHhB (ORCPT
+        Thu, 3 Jan 2019 02:39:00 -0500
+Received: from mail-oi1-f171.google.com ([209.85.167.171]:38836 "EHLO
+        mail-oi1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726671AbfACHi7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 02:37:01 -0500
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x037Xvas038387
-        for <linux-kernel@vger.kernel.org>; Thu, 3 Jan 2019 02:37:00 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2psdtngp2p-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 02:36:59 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
-        Thu, 3 Jan 2019 07:36:58 -0000
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 3 Jan 2019 07:36:55 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x037asvY37683312
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 3 Jan 2019 07:36:54 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7E96D4C04A;
-        Thu,  3 Jan 2019 07:36:54 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 43EC24C046;
-        Thu,  3 Jan 2019 07:36:54 +0000 (GMT)
-Received: from osiris (unknown [9.152.212.95])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Thu,  3 Jan 2019 07:36:54 +0000 (GMT)
-Date:   Thu, 3 Jan 2019 08:36:52 +0100
-From:   Heiko Carstens <heiko.carstens@de.ibm.com>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     linux-kbuild@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Michal Marek <michal.lkml@markovi.net>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
-Subject: Re: [PATCH] kbuild: use assignment instead of define ... endef for
- filechk_* rules
-References: <1546478214-20394-1-git-send-email-yamada.masahiro@socionext.com>
+        Thu, 3 Jan 2019 02:38:59 -0500
+Received: by mail-oi1-f171.google.com with SMTP id a77so27034837oii.5;
+        Wed, 02 Jan 2019 23:38:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=7lh/cFAa2ByrsjVrl6PN/Vh/mb45ecVTmVFRCuC3WiE=;
+        b=s2fDpQo3kSbm3U+HaUeQgko70CWG4s9aAHC7w/HCF/qHUHEReur3ngZwhO3vuj7fGi
+         aj70IAX2F3UcFWRIFsq2LTkG8gkjtg7HjGFeaNp1lbopccA56Bn1cDOLNmETuH5l2KZW
+         xjJBkTHPw9HNvdFhhaDk+gyQZYAttI0LusX4qlt2jgFLpqX3CAM+PDzfKKNHOxZ+uZdC
+         fkBAIN+tQ+VbT0ddSqkARW3o1PrHq91Gk2n4r2MQnvCaxoGKVT1K36N0Ic9Ik0hGpqTQ
+         BD9VazmugrKrRa+TQwZQ7TPPkRAQNpIxVo7aRXr0f7onw0NRRDHFD90Dot6XnNWdL9KZ
+         XCyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=7lh/cFAa2ByrsjVrl6PN/Vh/mb45ecVTmVFRCuC3WiE=;
+        b=Vh3TFxj1GtUB3oUGFbef1mRp0lVQKVQOrZbAQQXFUYj3r1OKKCGJuFKIHWCYyUXuaO
+         G5z0o6MKKyB6rwe9vneUDJnxV8MZRlK3Q7Lx+NgKJxRphdJjR8Wr8FhJFYsFkPSlXZcx
+         rQOhGnasFr7amFk3Dipw0loG6tPLQ/bCKMVat2BWAWCmuzDulysS6xPTQ/eEUIGLe1eS
+         j14Yehhg39KRDV8liZVJGkSzf5UAB9nuh/dKzV1UhG6LncScmWyIysFeP1DYNInsJJjb
+         /CPoPXLdbWu7byRxfMZuY+M5YkEF9akA7rwl1U5Dhd/8hSVGU/0RJqVOB92Ih2k8+l1U
+         Zcmg==
+X-Gm-Message-State: AJcUukcH6JOq+hMWb7Fg8rFS9eIM+avgm9woaYtafqZKyC7PSLbNN0OP
+        NemCxG6rPxtfLql5G7FP2rGVOkGtSUwZ8SeStmBb50CA
+X-Google-Smtp-Source: AFSGD/Wt39WIvjnt85JI6jHcpHe+fHnq+iRaDp1H7w+K0KFTdq1C3O3H145IMmYyD+FDJM4KFosDS7h7mo9Ho/8S3hc=
+X-Received: by 2002:aca:ec55:: with SMTP id k82mr29703015oih.55.1546501138763;
+ Wed, 02 Jan 2019 23:38:58 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <1546478214-20394-1-git-send-email-yamada.masahiro@socionext.com>
-X-TM-AS-GCONF: 00
-x-cbid: 19010307-0016-0000-0000-0000023EDB57
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19010307-0017-0000-0000-00003297E2DF
-Message-Id: <20190103073652.GA3957@osiris>
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 8bit
-Content-Disposition: inline
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-03_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=636 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901030068
+References: <398a74fa-6566-8d0d-6434-e68ff3763656@kernel.dk> <af940531-2535-2777-8c09-e9d1e6c16e82@suse.com>
+In-Reply-To: <af940531-2535-2777-8c09-e9d1e6c16e82@suse.com>
+From:   Jinpu Wang <jinpuwang@gmail.com>
+Date:   Thu, 3 Jan 2019 08:38:46 +0100
+Message-ID: <CAD9gYJ+725cU_n1EMzQ7hyaf_HrKJajL2oiJp8RZmwQ1Lhmt5g@mail.gmail.com>
+Subject: Re: Shaohua Li
+To:     Guoqing Jiang <gqjiang@suse.com>, Jens Axboe <axboe@kernel.dk>
+Cc:     linux-raid <linux-raid@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 03, 2019 at 10:16:54AM +0900, Masahiro Yamada wrote:
-> You do not have to use define ... endef for filechk_* rules.
-> 
-> For simple cases, the use of assignment looks cleaner, IMHO.
-> 
-> I updated the usage for scripts/Kbuild.include in case somebody
-> misunderstands the 'define ... endif' is the requirement.
-> 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
-> 
->  Kbuild                             |  4 +---
->  Makefile                           |  3 +--
->  arch/s390/kernel/syscalls/Makefile | 12 +++---------
->  arch/s390/tools/Makefile           |  7 ++-----
->  scripts/Kbuild.include             |  8 ++++----
->  scripts/kconfig/Makefile           |  4 +---
->  6 files changed, 12 insertions(+), 26 deletions(-)
+Guoqing Jiang <gqjiang@suse.com> =E4=BA=8E2019=E5=B9=B41=E6=9C=883=E6=97=A5=
+=E5=91=A8=E5=9B=9B =E4=B8=8A=E5=8D=884:16=E5=86=99=E9=81=93=EF=BC=9A
+>
+>
+>
+> On 1/3/19 1:13 AM, Jens Axboe wrote:
+> > Hi,
+> >
+> > I've got some very sad news to share with you - over Christmas, Shaohua
+> > Li passed away after battling cancer for most of last year.
+>
+> It is really a sad news and a big lost for the community consider Shaohua=
+'s
+> great contribution!
 
-For the s390 bits:
-Acked-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+It's really a sad news, Shaohua is one of the best Chinese Linux Hackers.
+>
+> > As you know, Shaohua acted as the maintainer for md. He remained
+> > dedicated to that through the difficult times. With his passing, we
+> > obviously have a void that needs to be filled.
+>
+> It is better if there is a small team to maintain md in future since nobo=
+dy
+> have broad/deep knowledge as Neil or Shaohua, also people in the team
+> can cover/backup each other, see [1].
 
+Agree!
+>
+> > For now, I'll act as interim maintainer for md until we can find a good
+> > permanent solution. I'll queue up reviewed patches in a separate branch=
+,
+> > in the block tree, and help review fixes. I'm subscribed to linux-raid,
+> > but please do CC me as well.
+>
+> Thanks, I think there are some patches in shli/md/for-next which supposed
+> to be merge to 4.21, could you please help to merge them to your branch?
+> And I suppose you will send a patch to CREDITS for Shaohua.
++1
+>
+> [1]. https://lkml.org/lkml/2015/12/21/9
+>
+> Regards,
+> Guoqing
+Regards,
+Jack Wang
