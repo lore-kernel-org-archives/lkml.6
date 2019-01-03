@@ -7,24 +7,24 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42CF1C43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 21:48:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70FD1C43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 21:48:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EAA320815
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 21:48:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3311620815
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 21:48:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="TYA9x5Pb"
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="yJXIoeis"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728131AbfACVsG (ORCPT
+        id S1728174AbfACVsP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 16:48:06 -0500
-Received: from mail.kmu-office.ch ([178.209.48.109]:54156 "EHLO
+        Thu, 3 Jan 2019 16:48:15 -0500
+Received: from mail.kmu-office.ch ([178.209.48.109]:54134 "EHLO
         mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728105AbfACVsG (ORCPT
+        with ESMTP id S1728104AbfACVsG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 3 Jan 2019 16:48:06 -0500
 Received: from zyt.lan (unknown [IPv6:2a02:169:3465::564])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id CA7F05C0DDF;
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id B08DB5C0DDD;
         Thu,  3 Jan 2019 22:48:04 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
         t=1546552084;
@@ -32,10 +32,10 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
          to:to:cc:cc:mime-version:mime-version:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=51xr4xYeiDI4RYE/PzJ1r3c7j9DrlQRWm/NtP3kFLMo=;
-        b=TYA9x5Pbx82LwyMAxfQFwLLbyerlqWRVh6xzfBxrmlh0atGvPW3XcVQsq/y2JumNzAfNWt
-        CrI/k3g0KviFz4yPmJ3bpS5PPO4RCqSgg0m7bnXUT6HvQx1fSYo3Ic+rj6rd+oeRLah9yI
-        75rzeDJ1Tv2q5z8ZZMuV7DxF6z7B57s=
+        bh=Nm4UmKZymvFz3g4I1uxh32+ZhB2G26RZTf6BIquMT90=;
+        b=yJXIoeisnxddINmwN39ZHj+JAuzeVDTn1UH/6K4YvXOHmGagmySEJzLiI2ct+79pOmhNQL
+        NkN7J/DQx+puP8yB+g1pCUlAX6PgQ/MdJLWwlim5nkRVIjagqg+u7U6ZOdP2wO4jKhxD1D
+        Gys+/LYDKwV5j0ns1P6pbVvBlQhc9Z0=
 From:   Stefan Agner <stefan@agner.ch>
 To:     linux@armlinux.org.uk
 Cc:     ndesaulniers@google.com, natechancellor@gmail.com, arnd@arndb.de,
@@ -44,9 +44,9 @@ Cc:     ndesaulniers@google.com, natechancellor@gmail.com, arnd@arndb.de,
         julien.thierry@arm.com, mark.rutland@arm.com,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Stefan Agner <stefan@agner.ch>
-Subject: [PATCH v2 3/3] ARM: spinlock: use unified assembler language syntax
-Date:   Thu,  3 Jan 2019 22:48:15 +0100
-Message-Id: <ad0fbab91f337ec99e3a2a3d60886a785da34366.1546551693.git.stefan@agner.ch>
+Subject: [PATCH v2 2/3] ARM: uaccess: use unified assembler language syntax
+Date:   Thu,  3 Jan 2019 22:48:14 +0100
+Message-Id: <5ef2acc655abfbe8bfa2cd30ecc5c2286b8fdfa3.1546551693.git.stefan@agner.ch>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <cover.1546551693.git.stefan@agner.ch>
 References: <cover.1546551693.git.stefan@agner.ch>
@@ -70,27 +70,23 @@ Changes since v1:
 - Explicitly use unified syntax for inline assembly
 
 
- arch/arm/include/asm/spinlock.h | 3 ++-
+ arch/arm/include/asm/uaccess.h | 3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/include/asm/spinlock.h b/arch/arm/include/asm/spinlock.h
-index 099c78fcf62d..8f009e788ad4 100644
---- a/arch/arm/include/asm/spinlock.h
-+++ b/arch/arm/include/asm/spinlock.h
-@@ -210,11 +210,12 @@ static inline void arch_read_lock(arch_rwlock_t *rw)
- 
- 	prefetchw(&rw->lock);
- 	__asm__ __volatile__(
-+"	.syntax unified\n"
- "1:	ldrex	%0, [%2]\n"
- "	adds	%0, %0, #1\n"
- "	strexpl	%1, %0, [%2]\n"
- 	WFE("mi")
--"	rsbpls	%0, %1, #0\n"
-+"	rsbspl	%0, %1, #0\n"
- "	bmi	1b"
- 	: "=&r" (tmp), "=&r" (tmp2)
- 	: "r" (&rw->lock)
+diff --git a/arch/arm/include/asm/uaccess.h b/arch/arm/include/asm/uaccess.h
+index 6390a40f16e7..a50f9b4e2574 100644
+--- a/arch/arm/include/asm/uaccess.h
++++ b/arch/arm/include/asm/uaccess.h
+@@ -86,7 +86,8 @@ static inline void set_fs(mm_segment_t fs)
+ #define __range_ok(addr, size) ({ \
+ 	unsigned long flag, roksum; \
+ 	__chk_user_ptr(addr);	\
+-	__asm__("adds %1, %2, %3; sbcccs %1, %1, %0; movcc %0, #0" \
++	__asm__(".syntax unified\n" \
++		"adds %1, %2, %3; sbcscc %1, %1, %0; movcc %0, #0" \
+ 		: "=&r" (flag), "=&r" (roksum) \
+ 		: "r" (addr), "Ir" (size), "0" (current_thread_info()->addr_limit) \
+ 		: "cc"); \
 -- 
 2.20.1
 
