@@ -3,31 +3,33 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18A72C43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 18:54:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFAC3C43444
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 18:57:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9236217F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 18:54:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BEEA421479
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 18:57:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726606AbfACSyT (ORCPT
+        id S1726686AbfACS51 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 13:54:19 -0500
-Received: from mga03.intel.com ([134.134.136.65]:46654 "EHLO mga03.intel.com"
+        Thu, 3 Jan 2019 13:57:27 -0500
+Received: from mga02.intel.com ([134.134.136.20]:9348 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726154AbfACSyS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 13:54:18 -0500
+        id S1726564AbfACS50 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Jan 2019 13:57:26 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jan 2019 10:54:17 -0800
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jan 2019 10:57:25 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,436,1539673200"; 
-   d="scan'208";a="103711319"
+   d="scan'208";a="103711870"
 Received: from tramchan-mobl1.amr.corp.intel.com (HELO [10.254.42.108]) ([10.254.42.108])
-  by orsmga007.jf.intel.com with ESMTP; 03 Jan 2019 10:54:16 -0800
-Subject: Re: [PATCH 1/2] x86/pkeys: properly copy pkey state at fork()
+  by orsmga007.jf.intel.com with ESMTP; 03 Jan 2019 10:57:24 -0800
+Subject: Re: [PATCH 2/2] x86/selftests/pkeys: fork() to check for state being
+ preserved
 To:     Sasha Levin <sashal@kernel.org>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         linux-kernel@vger.kernel.org
@@ -38,9 +40,10 @@ Cc:     tglx@linutronix.de, Ingo Molnar <mingo@redhat.com>,
         Michael Ellerman <mpe@ellerman.id.au>,
         Will Deacon <will.deacon@arm.com>,
         Andy Lutomirski <luto@kernel.org>,
-        Joerg Roedel <jroedel@suse.de>, stable@vger.kernel.org
-References: <20190102215655.7A69518C@viggo.jf.intel.com>
- <20190103135224.1BC7A21479@mail.kernel.org>
+        Joerg Roedel <jroedel@suse.de>, stable@vger.kernel.org,
+        Shuah Khan <shuahkh@osg.samsung.com>
+References: <20190102215657.585704B7@viggo.jf.intel.com>
+ <20190103135225.4929F217D9@mail.kernel.org>
 From:   Dave Hansen <dave.hansen@intel.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=dave.hansen@intel.com; keydata=
@@ -86,12 +89,12 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
  hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
  vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
-Message-ID: <8f509b82-4b1f-d70c-4f44-48d8194469ee@intel.com>
-Date:   Thu, 3 Jan 2019 10:54:16 -0800
+Message-ID: <0c10a3c9-67a7-c404-da0f-d9df079fdd23@intel.com>
+Date:   Thu, 3 Jan 2019 10:57:24 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20190103135224.1BC7A21479@mail.kernel.org>
+In-Reply-To: <20190103135225.4929F217D9@mail.kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -101,29 +104,21 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 1/3/19 5:52 AM, Sasha Levin wrote:
-> This commit has been processed because it contains a "Fixes:" tag,
-> fixing commit: e8c24d3a23a4 x86/pkeys: Allocation/free syscalls.
+> This commit has been processed because it contains a -stable tag.
+> The stable tag indicates that it's relevant for the following trees: all
 > 
-> The bot has tested the following trees: v4.20.0, v4.19.13, v4.14.91, v4.9.148, 
+> The bot has tested the following trees: v4.20.0, v4.19.13, v4.14.91, v4.9.148, v4.4.169, v3.18.131, 
 > 
 > v4.20.0: Build OK!
 > v4.19.13: Build OK!
 > v4.14.91: Build OK!
 > v4.9.148: Failed to apply! Possible dependencies:
->     c10e83f598d0 ("arch, mm: Allow arch_dup_mmap() to fail")
-> 
-> 
-> How should we proceed with this patch?
+>     f50b4878329a ("x86/pkeys/selftests: Fix pkey exhaustion test off-by-one")
 
-The 4.9 version of arch_dup_mmap() does not contain the
-ldt_dup_context() line.  We just need to add arch_dup_pkeys(), like so:
+Protection keys was merged in 4.8.  We can ignore any of the selftests
+changes before that.
 
- void arch_dup_mmap(struct mm_struct *oldmm,
-                                 struct mm_struct *mm)
- {
-+       arch_dup_pkeys(oldmm, mm);
-        paravirt_arch_dup_mmap(oldmm, mm);
- }
-
-Should be a pretty simple merge.  We can basically ignore the
-ldt_dup_context() changes.
+But, it looks like the 4.9 selftests are a bit behind mainline.
+Probably because I didn't cc stable@ on f50b4878329a.  I don't have a
+strong opinion as to how up-to-date we want to keep the -stable
+selftests.  Shua, is there a usual way that folks do this?
