@@ -2,150 +2,137 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73351C43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 21:29:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6929AC43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 21:33:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D3F2217F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 21:29:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 25651217F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 21:33:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="J85VsFqy"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jaXlM75I"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727910AbfACV3J (ORCPT
+        id S1727982AbfACVdM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 16:29:09 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:40786 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727433AbfACV3J (ORCPT
+        Thu, 3 Jan 2019 16:33:12 -0500
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:39556 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727942AbfACVdM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 16:29:09 -0500
-Received: by mail-ed1-f67.google.com with SMTP id g22so30159520edr.7
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 13:29:07 -0800 (PST)
+        Thu, 3 Jan 2019 16:33:12 -0500
+Received: by mail-ua1-f67.google.com with SMTP id c12so11403005uas.6
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 13:33:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google;
+        d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=tHdsUEewYXSe8Kadix+ZY90aufWKaK0mZq33dBRtvTk=;
-        b=J85VsFqy45Pa1s5bDdQGYYTinaa8O5I3TNHJY1b3i6V2dLg1x4RXAyrngOqZu6GpVL
-         hBSl2n5q3NPPeoQjc64kD8Itv48U1Fx8RHvfNkowg1IYiQ83s0010ogtg43f45rKpkya
-         OEllt4ReHX4CUWRCEJvXLsnOl9+8PWbZjcNrI+P4m8LiPpRcpMIYtQYvMKS6p9byy1uM
-         JiwgD3irlXBIlPjJwwe3N/C/f2JVUwC2mOOjP30cOwNhKtKT3lsNN+RBf0jpBnGscRG+
-         GpT1lfMHMhNGKXAoaS6uhNVsLlbzIIhSHdiHv5xi9IDnrO91nuzbqlfoMQu6HmXTDYZh
-         2mVA==
+        bh=hRdhXbAsuNg1Aq90NHt2icvWZc4/LaxBRWRFkVibi80=;
+        b=jaXlM75IMQPRGV2NwZfFifOVgF9ct7F3py/oDVehhJx61PzEon4Fcb2QghfpsirQpM
+         xGh1Tym4VdtxMyhPYXjdI/DYc4hSRdFtKpjC6EKYFYQ+8R4Qe+KmUW6J5xcSL48BQf05
+         PzLFKpDnN97VWxgSOO+HUdDMDPiEyq26Rj2+I=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=tHdsUEewYXSe8Kadix+ZY90aufWKaK0mZq33dBRtvTk=;
-        b=KhWVi0Vod0PmCM2TwdnvRZJONOnui/Yp05/M52+JS4GazR0axtXtIxeMIzfZE0brCv
-         XXmQns8fZ7LF+bHfY/o/WFTHVbNRnLvk6XLR1aqrsJFUqHQo0gwRk1zKwZK9ys6N1Zzn
-         0vVp/iWAyywgmF9d7gZKS/3zXLFyJstuvQES8q1LJAKOBgNwJx3ccBCyQvK3Bn8Xwvma
-         jsXCJm+ywnSOdjByR4Ku51I2wyE6JN9m2/o/l7uH+DwB5VK5ptHxP19SOp2nq7sS7B1v
-         pp4la8SQMcRfgFooNL3qONtvPxyTG2jBUMO+hRbuM55ieNxWrqPo8zAqT4rFxUL8SdCu
-         FLiw==
-X-Gm-Message-State: AA+aEWZHNTWOCAisdnXREclEKPEnC28UG/gMY2RZoPiYA2OWGQ3kJQOx
-        jdtJ5fLzqeasfWFWnyEMud9eWFT0gvP2Uvnp4SvhxQ==
-X-Google-Smtp-Source: AFSGD/UAy6mDIL1Xqh/aXd8Q5xdYAsoRC3tnN68i2/F35kQpcAB1L6/6kwIuwRxBn8aqHAtQj6AfnknAuMopt15U1QA=
-X-Received: by 2002:a50:9a42:: with SMTP id o60mr45166776edb.180.1546550947080;
- Thu, 03 Jan 2019 13:29:07 -0800 (PST)
+        bh=hRdhXbAsuNg1Aq90NHt2icvWZc4/LaxBRWRFkVibi80=;
+        b=gbaxlWNk9PkKq+16FCSwz0lINUrWxv/G1LO6VD9TCOF9MsQlx8ledH/K96chdtsDau
+         XbTX9K/B6N4r2nbcqaZyDqsv6Qady7KHruBGvYbnSFx51t5GBqAPVyexgdyJQm6z3t2Y
+         Y2getVrgd86uq7WEdMRhWcZlhr9VZz5RO+alWRbLnpmm4ievjkh9swRxpx0CpoQavh0/
+         p5k1/cUTyyATBL8KCPX6MTJbLvGnDCt/Ge0T/rEQ9T5aF2MlAIoQQ6um1iXjh/kEOsUM
+         Lu/jZexo163tSMnpPH7rP6w6z1rl5rdKQDKsng7FL7rRPz3curECwyykTcQ/ctpwjxyr
+         71ng==
+X-Gm-Message-State: AJcUukeh8jGI1XadZklWXE+DSMwe6wtHcuBV0CQf5WBVOI2s3wVlh/sd
+        gul9VLxyClOhmsv22iPU+hxWqLHV77Lfq76y4AX3Ng==
+X-Google-Smtp-Source: ALg8bN5NkbkO9tYoEuTdpj293GY/U5b40mMrfrC3ezDIED1PONNxYJYygwxA9EDQbVMC4qlpE11fAKkCoid7G6Qffvg=
+X-Received: by 2002:ab0:3484:: with SMTP id c4mr18290931uar.39.1546551190827;
+ Thu, 03 Jan 2019 13:33:10 -0800 (PST)
 MIME-Version: 1.0
-References: <20180719205545.16512-1-pasha.tatashin@oracle.com>
- <20180719205545.16512-24-pasha.tatashin@oracle.com> <20181106054212.GA31768@nautica>
- <95c3920e-bf80-0c7e-7854-01a1c3189c23@oracle.com> <20190102202032.GA1034@eldamar.local>
-In-Reply-To: <20190102202032.GA1034@eldamar.local>
-From:   Pavel Tatashin <pasha.tatashin@soleen.com>
-Date:   Thu, 3 Jan 2019 16:28:56 -0500
-Message-ID: <CA+CK2bC70pnL0Wimb0xt99J4nNfi8W3zuUHgAk-jsPuOP9jpHA@mail.gmail.com>
-Subject: Re: [PATCH v15 23/26] sched: early boot clock
-To:     Salvatore Bonaccorso <carnil@debian.org>
-Cc:     Steven Sistare <steven.sistare@oracle.com>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Pavel Tatashin <pavel.tatashin@microsoft.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        linux@armlinux.org.uk, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, john.stultz@linaro.org,
-        sboyd@codeaurora.org, x86@kernel.org,
-        LKML <linux-kernel@vger.kernel.org>, mingo@redhat.com,
-        Thomas Gleixner <tglx@linutronix.de>, hpa@zytor.com,
-        douly.fnst@cn.fujitsu.com, Peter Zijlstra <peterz@infradead.org>,
-        prarit@redhat.com, feng.tang@intel.com, pmladek@suse.com,
-        gnomes@lxorguk.ukuu.org.uk, linux-s390@vger.kernel.org,
-        boris.ostrovsky@oracle.com, jgross@suse.com, pbonzini@redhat.com,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
-        qemu-devel@nongnu.org
+References: <6ccac7db-3ab7-e396-90be-8681a8ee336b@web.de> <CALAqxLXz_s6B=NzSp17Lj6xMTYybEsMh4jDR8COXnWQCnFTrsw@mail.gmail.com>
+In-Reply-To: <CALAqxLXz_s6B=NzSp17Lj6xMTYybEsMh4jDR8COXnWQCnFTrsw@mail.gmail.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Thu, 3 Jan 2019 22:32:35 +0100
+Message-ID: <CAPDyKFrY58-x3SsUwhfrLvf=hayhdjQZJWqUpmegArmnEsWATg@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: hikey: Give wifi some time after power-on
+To:     John Stultz <john.stultz@linaro.org>,
+        Jan Kiszka <jan.kiszka@web.de>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Wei Xu <xuwei5@hisilicon.com>, Ryan Grachek <ryan@edited.us>,
+        linux-wireless@vger.kernel.org, "Reizer, Eyal" <eyalr@ti.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        KISHON VIJAY ABRAHAM <kishon@ti.com>,
+        "Mishol, Guy" <guym@ti.com>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Ricardo Salveti <rsalveti@rsalveti.net>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Could you please send the config file and qemu arguments that were
-used to reproduce this problem.
-
-Thank you,
-Pasha
-
-On Wed, Jan 2, 2019 at 3:20 PM Salvatore Bonaccorso <carnil@debian.org> wrote:
+On Wed, 2 Jan 2019 at 23:21, John Stultz <john.stultz@linaro.org> wrote:
 >
-> Hi,
+> Adding a few folks to cc from the thread here:
+> https://patchwork.kernel.org/patch/10734021/
 >
-> On Tue, Nov 06, 2018 at 06:35:36AM -0500, Steven Sistare wrote:
-> > Pavel has a new email address, cc'd - steve
+> As this sounds like a very similar issue.
+> thanks
+> -john
+
+John, thanks for looping me in.
+
+>
+> On Sun, Dec 30, 2018 at 3:38 AM Jan Kiszka <jan.kiszka@web.de> wrote:
 > >
-> > On 11/6/2018 12:42 AM, Dominique Martinet wrote:
-> > > (added various kvm/virtualization lists in Cc as well as qemu as I don't
-> > > know who's "wrong" here)
-> > >
-> > > Pavel Tatashin wrote on Thu, Jul 19, 2018:
-> > >> Allow sched_clock() to be used before schec_clock_init() is called.
-> > >> This provides with a way to get early boot timestamps on machines with
-> > >> unstable clocks.
-> > >
-> > > This isn't something I understand, but bisect tells me this patch
-> > > (landed as 857baa87b64 ("sched/clock: Enable sched clock early")) makes
-> > > a VM running with kvmclock take a step in uptime/printk timer early in
-> > > boot sequence as illustrated below. The step seems to be related to the
-> > > amount of time the host was suspended while qemu was running before the
-> > > reboot.
-> > >
-> > > $ dmesg
-> > > ...
-> > > [    0.000000] SMBIOS 2.8 present.
-> > > [    0.000000] DMI: QEMU Standard PC (i440FX + PIIX, 1996), BIOS ?-20180724_192412-buildhw-07.phx2.fedoraproject.org-1.fc29 04/01/2014
-> > > [    0.000000] Hypervisor detected: KVM
-> > > [    0.000000] kvm-clock: Using msrs 4b564d01 and 4b564d00
-> > > [283120.529821] kvm-clock: cpu 0, msr 321a8001, primary cpu clock
-> > > [283120.529822] clocksource: kvm-clock: mask: 0xffffffffffffffff max_cycles: 0x1cd42e4dffb, max_idle_ns: 881590591483 ns
-> > > [283120.529824] tsc: Detected 2592.000 MHz processor
-> > > ...
-> > >
-> > > (The VM is x86_64 on x86_64, I can provide my .config on request but
-> > > don't think it's related)
-> > >
-> > >
-> > > It's rather annoying for me as I often reboot VMs and rely on the
-> > > 'uptime' command to check if I did just reboot or not as I have the
-> > > attention span of a goldfish; I'd rather not have to find something else
-> > > to check if I did just reboot or not.
-> > >
-> > > Note that if the qemu process is restarted, there is no offset anymore.
-> > >
-> > > I unfortunately just did that so cannot say with confidence (putting my
-> > > laptop to sleep for 30s only led to a 2s offset and I do not want to
-> > > wait longer right now), but it looks like the clock is still mostly
-> > > correct after reboot after disabling my VM's ntp client. Will infirm
-> > > that tomorrow if I was wrong.
-> > >
-> > >
-> > > Happy to try to help fixing this in any way, as written above the quote
-> > > I'm not even actually sure who is wrong here.
->
-> A user in Debian reported the same/similar issue (with 4.19.13):
->
-> https://bugs.debian.org/918036
->
-> Regards,
-> Salvatore
+> > From: Jan Kiszka <jan.kiszka@siemens.com>
+> >
+> > Somewhere along recent changes to power control of the wl1835, power-on
+> > became very unreliable on the hikey, failing like this:
+> >
+> > wl1271_sdio: probe of mmc2:0001:1 failed with error -16
+> > wl1271_sdio: probe of mmc2:0001:2 failed with error -16
+> >
+> > After playing with some dt parameters and comparing to other users of
+> > this chip, it turned out we need some power-on delay to make things
+> > stable again. In contrast to those other users which define 200 ms, the
+> > hikey is already very happy with 1 ms.
+
+According to the discussions we had so far, this doesn't sound like
+the correct solution.
+
+I am intending to post patch soon, however, I am not sure exactly what
+solution to pick yet. I will keep you on cc - and of course I
+appreciate if you could help to test.
+
+Kind regards
+Uffe
+
+> >
+> > Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+> > ---
+> >
+> > Tested with 4.19 and linus/master.
+> >
+> >   arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts | 1 +
+> >   1 file changed, 1 insertion(+)
+> >
+> > diff --git a/arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts
+> > b/arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts
+> > index f4964bee6a1a..1e771bf201b9 100644
+> > --- a/arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts
+> > +++ b/arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts
+> > @@ -118,6 +118,7 @@
+> >                 reset-gpios = <&gpio0 5 GPIO_ACTIVE_LOW>;
+> >                 clocks = <&pmic>;
+> >                 clock-names = "ext_clock";
+> > +               post-power-on-delay-ms = <1>;
+> >                 power-off-delay-us = <10>;
+> >         };
+> >
+> > --
+> > 2.16.4
