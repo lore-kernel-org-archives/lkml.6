@@ -2,148 +2,123 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A87AC43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 23:16:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3AB2C43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 23:17:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7FBC208E3
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 23:16:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kolivas-org.20150623.gappssmtp.com header.i=@kolivas-org.20150623.gappssmtp.com header.b="0dhz8+tW"
+	by mail.kernel.org (Postfix) with ESMTP id 7378C208E3
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 23:17:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546557447;
+	bh=8+1K/65q8YIsxT57Dj8PaUPLu/getQfSgRRydgJ0sYY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=xPbBuGadT8Gf6a2q4ipvLHP2hWVP5GVNyDgTsIGyoMr7OOjCRnP1Q58f8Ssi7RG+Z
+	 p/yhh5ot7vj1z4Z6kXZF5sDY1uuBTEPibfvEsBzOSUl32ds7/TL2FgG1mzudQ0+f8q
+	 rVQWxoBEOLf+oC8qatjB9EfN3SAxUcM6Bqh/KI60=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726915AbfACXQz (ORCPT
+        id S1726989AbfACXR0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 18:16:55 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:51392 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726835AbfACXQz (ORCPT
+        Thu, 3 Jan 2019 18:17:26 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:41336 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726792AbfACXR0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 18:16:55 -0500
-Received: by mail-it1-f196.google.com with SMTP id w18so47655179ite.1
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 15:16:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kolivas-org.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=gqPG/2FkWa5IrnD0rf3tmDqk7Rwj+xBM62Kj2sLGdME=;
-        b=0dhz8+tWEI1gx7ESudnKeE6i0I1H3BoxC2WVkclBam0MuSAs8HJoiObLLcFwwG/UNq
-         6npf3/6b04N2Do0/s72TwuHI3FslbwZwf2Z0V+JOriQVUYlS4/taQjx7PvhE2CmBr20S
-         MX9R5+muQDDNgcSnu0bZBfLRF8Uyb9kLmp6sbLGfeoFykd9kjIhaFLHplAtiIWxZMrZw
-         j3qQdb/li/vQ0G2MOeagdtuMbwGzX03t4mk0u2uuCft5nBppM5AP2M3zYehrJuluwtvs
-         kYe8NHde/ZnpxdktWipQLJu9vLh5HeRNnAxrgmNEczItA9vfVquOpAq1/oER3UX+EQZf
-         rB9A==
+        Thu, 3 Jan 2019 18:17:26 -0500
+Received: by mail-io1-f68.google.com with SMTP id s22so28292971ioc.8;
+        Thu, 03 Jan 2019 15:17:24 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gqPG/2FkWa5IrnD0rf3tmDqk7Rwj+xBM62Kj2sLGdME=;
-        b=gD9saROyAmJFhnnVdkdPKaieVMFY1V5xpyN278eR4Ovn0jEgAIR90SxSZb8JWlLLL8
-         s/xHACRFmPaeGVmppRKEHRQ64UFru1tEv4PyIGFPYj+vTnkI1nAt99tVSaohMB35iech
-         B5HiZXE8zZ+u/p4IahoKFViTP7skpVXeDfLwzZnA0iQAgZzaUjhICvPO4EPu5F3U2EYq
-         NCZPrbfinJ9QbAq04DiB8J340Ze5l8WHjah2YI2YOgisbJFyTkKeApS3+ga9pP4ZKLoc
-         27ZwD93CCTrJf/o7w8YexFSqALZFbysz1O5s0REAkhGa3XjB9wxqxb6Ek2wvQppltWh7
-         5JbQ==
-X-Gm-Message-State: AJcUukcsUMDM2lg94rPuaP+N3J08bCQCj3E6ocq5v3q/uxHZxxIZr+Xn
-        YIwjb/lsFjfRAjx3xxZx8ODmcF6Dnt+hySDtKILyeA==
-X-Google-Smtp-Source: ALg8bN7lDJHMEEz9DbIckCO6766QsfsKQu2BzeLO/d3YKdzRRfC0icA9HMrH7fAd0XJm+4AGFz+CUI8psXsCJU5gmkM=
-X-Received: by 2002:a24:2842:: with SMTP id h63mr12899925ith.58.1546557413548;
- Thu, 03 Jan 2019 15:16:53 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=4JIcbvjrZmcvoDvGz4q9vihXqUpjv7JgO3AxNDPJtnQ=;
+        b=Cco/m2rBgKxKt8LOhU9ExkGhfl/N1YxzEraTyiATH6sbSy8QWxhsrh/WCFeOGfCtKe
+         DS4GooMrSemUysyNtKfN5Y2mbcPA7Q0PYB2WdoI+3C2WNOK4cDoMlRK+eBpdt5ikt4M7
+         CHWZ5AsUqA0SJnWezYKnXjHfugWBPFUi1e02taHxIGSZyPKesfVNFwRBwQ5m1uJ+SJJV
+         Oc/BMTizUs61vcDVX6G/YvpVEhlK0xbDl75bJfFOIVrxPZ0d8dLQ8lkS6AygdmB27MDu
+         5LN9Rm9XnkcJrEbSxBRjs5FqFLF8ynwjR4kskr/3qDLRVvzg37+jAe4PO4F6HxdogKpY
+         8DoQ==
+X-Gm-Message-State: AJcUukfpOBWuHU7gbBUdlqUXs7VqQPd3TruSp2neLjWbTWylKRerjKZB
+        gJ1NiXEpcGus6tTkPzmrfw==
+X-Google-Smtp-Source: ALg8bN4IeHDJUp9viaThDIRN53a8vKbQuwUlWNqHSXFO6QbsDLCuVGcQIXAjHM+aUZNT8RlP7GHzmw==
+X-Received: by 2002:a5d:9518:: with SMTP id d24mr22117091iom.280.1546557444057;
+        Thu, 03 Jan 2019 15:17:24 -0800 (PST)
+Received: from localhost ([24.51.61.172])
+        by smtp.gmail.com with ESMTPSA id j129sm24122918itb.41.2019.01.03.15.17.22
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 03 Jan 2019 15:17:23 -0800 (PST)
+Date:   Thu, 3 Jan 2019 17:17:22 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Yunfei Dong <yunfei.dong@mediatek.com>
+Cc:     Tiffany Lin <tiffany.lin@mediatek.com>,
+        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        Qianqian Yan <qianqian.yan@mediatek.com>
+Subject: Re: [PATCH 1/3] media: dt-bindings: media: Fix MTK document for
+ vcodec
+Message-ID: <20190103231722.GA22018@bogus>
+References: <1545978785-31375-1-git-send-email-yunfei.dong@mediatek.com>
 MIME-Version: 1.0
-References: <CABqErrECNH+gRiZXM+z=igjAw895e7KLeV6H0EKvMkW0UsVvJw@mail.gmail.com>
- <s5hsgy96fiu.wl-tiwai@suse.de>
-In-Reply-To: <s5hsgy96fiu.wl-tiwai@suse.de>
-From:   Con Kolivas <kernel@kolivas.org>
-Date:   Fri, 4 Jan 2019 10:16:42 +1100
-Message-ID: <CABqErrHKFshAMBPHJp2vmGFE6k1GL1oDMSMbDRcBJNfUSxt9KQ@mail.gmail.com>
-Subject: Re: ALSA:usb audio Higher sample rates on usb audio no longer working.
-To:     Takashi Iwai <tiwai@suse.de>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        alsa-devel@alsa-project.org, saranya.gopal@intel.com,
-        felipe.balbi@linux.intel.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1545978785-31375-1-git-send-email-yunfei.dong@mediatek.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Iwai-san.
+On Fri, Dec 28, 2018 at 02:33:03PM +0800, Yunfei Dong wrote:
+> Fix MTK binding document for MT8173 dtsi changed in order
+> to use standard CCF interface.
+> MT8173 SoC from Mediatek.
 
-Added some relevant CCs.
+A better subject would be "add 'assigned-clocks' to vcodec examples".
 
-On Fri, 4 Jan 2019 at 00:23, Takashi Iwai <tiwai@suse.de> wrote:
->
-> On Thu, 03 Jan 2019 12:43:54 +0100,
-> Con Kolivas wrote:
-> >
-> > Upon switching from 4.19.0 to 4.20.0, pulseaudio started complaining
-> > that sinks that previously worked are no longer supported.
-> >
-> > On 4.19.0 trying 24 bit 88200, 176400, and 192000 I get the following
-> > output from pulse.
-> > resampler.c: Forcing resampler 'copy', because of fixed, identical
-> > sample rates.sink-input.c: Created input 15 "Playback Stream" on
-> > alsa_output.usb-DSPeaker_Anti-Mode_X4-00.iec958-stereo with sample
-> > spec float32le 2ch 176400Hz and channel map front-left,front-right
-> >
-> > Switching to 4.20 gives me:
-> > alsa-sink.c: Sink does not support sample rate of 176400 Hz
-> > and
-> > alsa-sink.c: Sink does not support sample rate of 88200 Hz
-> > and
-> > alsa-sink.c: Sink does not support sample rate of 192000 Hz
-> >
-> > Sample rates of 44100, 48000, and 96000 work fine, but 88200, 176400,
-> > and 192000 no longer work
-> >
-> > Switching back to 4.19 immediately fixes the issue.
-> >
-> >
-> > I tried looking through the alsa changelogs but there were too many to
-> > give an obvious culprit, and haven't had time to do a git bisect. If
-> > there's an obvious choice patch to back out I'd be grateful for the
-> > heads up.
->
-> Hm, through a quick glance, there hasn't been any relevant changes in
-> USB-audio part (sound/usb/*).  Also, the changes in sound/core/* are
-> irrelevant with your problem.
->
-> So I have no idea what went wrong.  The bisection, or at least,
-> narrowing down the commits would be helpful.
-
-I've done a git bisect and found the offending commit:
-
-commit f13912d3f014a7f2fa5c35d25ee8c3f96bda6272 (refs/bisect/bad)
-Author: Saranya Gopal <saranya.gopal@intel.com>
-Date:   Wed Sep 12 08:46:26 2018 +0530
-
-    usbcore: Select UAC3 configuration for audio if present
-
-    USB audio class 3.0 specification introduced many significant
-    changes like
-     - new power domains, support for LPM/L1
-     - new cluster descriptor
-     - new high capability and class-specific string descriptors
-     - BADD profiles
-     - ... and many other things (check spec from link below:
-    http://www.usb.org/developers/docs/devclass_docs/USB_Audio_v3.0.zip)
-
-    Now that UAC3 is supported in linux, choose UAC3
-    configuration for audio if the device supports it.
-    Selecting this configuration will enable the system to
-    save power by leveraging the new power domains and LPM L1
-    capability and also support new codec types and data formats
-    for consumer audio applications.
-
-    Signed-off-by: Saranya Gopal <saranya.gopal@intel.com>
-    Reviewed-by: Felipe Balbi <felipe.balbi@linux.intel.com>
-    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
-Reverting this patch fixes the problem for me.
-
-Hope this helps.
-
-Thanks,
-Con
+> 
+> Signed-off-by: Yunfei Dong <yunfei.dong@mediatek.com>
+> Signed-off-by: Qianqian Yan <qianqian.yan@mediatek.com>
+> ---
+>  .../devicetree/bindings/media/mediatek-vcodec.txt   | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/media/mediatek-vcodec.txt b/Documentation/devicetree/bindings/media/mediatek-vcodec.txt
+> index 2a615d84a682..b6b5dde6abd8 100644
+> --- a/Documentation/devicetree/bindings/media/mediatek-vcodec.txt
+> +++ b/Documentation/devicetree/bindings/media/mediatek-vcodec.txt
+> @@ -66,6 +66,15 @@ vcodec_dec: vcodec@16000000 {
+>                    "vencpll",
+>                    "venc_lt_sel",
+>                    "vdec_bus_clk_src";
+> +    assigned-clocks = <&topckgen CLK_TOP_VENC_LT_SEL>,
+> +                      <&topckgen CLK_TOP_CCI400_SEL>,
+> +                      <&topckgen CLK_TOP_VDEC_SEL>,
+> +                      <&apmixedsys CLK_APMIXED_VCODECPLL>,
+> +                      <&apmixedsys CLK_APMIXED_VENCPLL>;
+> +    assigned-clock-parents = <&topckgen CLK_TOP_VCODECPLL_370P5>,
+> +                             <&topckgen CLK_TOP_UNIVPLL_D2>,
+> +                             <&topckgen CLK_TOP_VCODECPLL>;
+> +    assigned-clock-rates = <0>, <0>, <0>, <1482000000>, <800000000>;
+>    };
+>  
+>    vcodec_enc: vcodec@18002000 {
+> @@ -105,4 +114,8 @@ vcodec_dec: vcodec@16000000 {
+>                    "venc_sel",
+>                    "venc_lt_sel_src",
+>                    "venc_lt_sel";
+> +    assigned-clocks = <&topckgen CLK_TOP_VENC_SEL>,
+> +                      <&topckgen CLK_TOP_VENC_LT_SEL>;
+> +    assigned-clock-parents = <&topckgen CLK_TOP_VENCPLL_D2>,
+> +                             <&topckgen CLK_TOP_UNIVPLL1_D2>;
+>    };
+> -- 
+> 2.19.1
+> 
