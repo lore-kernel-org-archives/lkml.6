@@ -2,124 +2,146 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6653AC43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 23:30:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B227C43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 23:30:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2AD042184B
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 23:30:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546558210;
-	bh=BDwlvmRDLvPAcFZk63HU0X0XcnUsSn+Lb1Gx9m7iqSE=;
-	h=Subject:Cc:To:In-Reply-To:From:References:Date:List-ID:From;
-	b=FoenGont0h0+qauU6qgEq5HJcZ+ciSGxs9JOMJY5frJR9oPw0QlYo4lEhcFJvU4dA
-	 ocxGmn20p1iQPto/V+lRCKDK3BNUVgW/ks1MXq6NVbz4fxsee5bQi09t+CuxNNO6vo
-	 r1KWUvmLKzi5W4JtalxzqmyN+/jX50TNqAIdFgnE=
+	by mail.kernel.org (Postfix) with ESMTP id ED9F82184B
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 23:30:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Y7cxGGBq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728728AbfACXaJ (ORCPT
+        id S1728775AbfACXaV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 18:30:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57954 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727148AbfACXaI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 18:30:08 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6BCC0217F5;
-        Thu,  3 Jan 2019 23:30:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546558207;
-        bh=BDwlvmRDLvPAcFZk63HU0X0XcnUsSn+Lb1Gx9m7iqSE=;
-        h=Subject:Cc:To:In-Reply-To:From:References:Date:From;
-        b=MhR6FEcSYzUWYs9BiuILDnrCG7/LIF3lgYCdVlGQvocDvYpMq2IH8q+TYixuMXtFd
-         /zYjGWxI7NVNMHCvIKTDf5tDEB7hfl56EpGXydXcbdx4VMzeD2fwhETqlQdpeguCgR
-         TNDgG8fzp9a5LULUexKYkOUjNIIIEvuGrK0PuBd4=
-Content-Type: text/plain; charset="utf-8"
+        Thu, 3 Jan 2019 18:30:21 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:40203 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727148AbfACXaT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Jan 2019 18:30:19 -0500
+Received: by mail-pl1-f194.google.com with SMTP id u18so16538199plq.7
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 15:30:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=YZdiLFz27MwzAJATkQ5G6PPb/2nW68MQTnuMbzyBzeg=;
+        b=Y7cxGGBqd0T8C/+HxXAVoJlI4P08lOXEl3hB9pBbzIc4ghMCCxMppDtOzAHDbxTCsj
+         DJCQ8k9E+GUwm4xnLFnDd+W8e/SsQ9ttcPZC+X+iwjhmsm/Oa4O0AA8rdONuCBhLc3ED
+         APiUsOpPr9D9B/9lGEE7zywMj/DA1fugeHPrs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=YZdiLFz27MwzAJATkQ5G6PPb/2nW68MQTnuMbzyBzeg=;
+        b=QyEEc1OxEA5eysIiv0aAVb1SPT3/EgExhf2iJzqPMyLHtSBm+qnZB12+9sI/U72X0W
+         Jee9yuL3v4MhgNT2v+LpIRC5JygeoIzkmHSYMC5F+D5ynrUGdHPMjABaSzAQ5TjVUkLJ
+         O/hQbsnood+L45UetYwiulVMdPxAz8VQDD5D6le46gcTdz22oRwI3+WhON9DwQvXFaRf
+         vohvfJe0tD+rlg4ga9fqrjOf/ZiDvA8ohrWF27uuB3fMyVKvEZ7Fg0bd7d/P/3oWEgUS
+         1MqvYP8AV2s8UxDCzmoR0TerFm5qtpejOBM8Wk/1hrpHMoCtsh0GiXa74yB+j89GfH2j
+         CZGQ==
+X-Gm-Message-State: AJcUukfa0ApTNNIMsKLxuohSnZuvA039+8e/Rc3Xp4UKGlHU7jFnHb6t
+        Dyo6XZ4/8bBFVCoQjlbNNoShmQ==
+X-Google-Smtp-Source: ALg8bN63fz09CIUDYjT97rQ2I+nayCIJqZI9i94UUcqtYf7QTLN9GoTldaNbpmIsOSkdEdL0/Idl2A==
+X-Received: by 2002:a17:902:d697:: with SMTP id v23mr7472476ply.261.1546558219090;
+        Thu, 03 Jan 2019 15:30:19 -0800 (PST)
+Received: from google.com ([2620:15c:202:1:534:b7c0:a63c:460c])
+        by smtp.gmail.com with ESMTPSA id b202sm115419460pfb.88.2019.01.03.15.30.17
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 03 Jan 2019 15:30:17 -0800 (PST)
+Date:   Thu, 3 Jan 2019 15:30:15 -0800
+From:   Brian Norris <briannorris@chromium.org>
+To:     Sibi Sankar <sibis@codeaurora.org>
+Cc:     bjorn.andersson@linaro.org, david.brown@linaro.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org,
+        akdwived@codeaurora.org, clew@codeaurora.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm-owner@vger.kernel.org,
+        ohad@wizery.com, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: remoteproc: qcom: Add firmware
+ bindings for Q6V5
+Message-ID: <20190103233014.GA181833@google.com>
+References: <20181228044819.5697-1-sibis@codeaurora.org>
+ <20181228044819.5697-2-sibis@codeaurora.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 2/2] phy: qualcomm: usb: Add Super-Speed PHY driver
-Cc:     linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, shawn.guo@linaro.org,
-        vkoul@kernel.org
-To:     Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>,
-        gregkh@linuxfoundation.org, kishon@ti.com, mark.rutland@arm.com,
-        robh+dt@kernel.org
-In-Reply-To: <2f38642e-27a0-0fd7-928e-8e782d0bc7c6@linaro.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-User-Agent: alot/0.8
-References: <1544176558-7946-1-git-send-email-jorge.ramirez-ortiz@linaro.org> <1544176558-7946-3-git-send-email-jorge.ramirez-ortiz@linaro.org> <154533779333.79149.17234544366247143930@swboyd.mtv.corp.google.com> <2f38642e-27a0-0fd7-928e-8e782d0bc7c6@linaro.org>
-Message-ID: <154655820653.15366.12989225525562032193@swboyd.mtv.corp.google.com>
-Date:   Thu, 03 Jan 2019 15:30:06 -0800
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181228044819.5697-2-sibis@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Jorge Ramirez (2018-12-26 09:53:08)
-> On 12/20/18 21:29, Stephen Boyd wrote:
-> > Quoting Jorge Ramirez-Ortiz (2018-12-07 01:55:58)
-> >=20
-> >> +       struct regulator *vdda1p8;
-> >> +       struct regulator *vbus;
-> >> +       struct regulator *vdd;
-> >> +       unsigned int vdd_levels[LEVEL_NUM];
-> >> +};
-> >> +
-> >> +static inline void qcom_ssphy_updatel(void __iomem *addr, u32 mask, u=
-32 val)
-> >> +{
-> >> +       writel((readl(addr) & ~mask) | val, addr);
-> >> +}
-> >> +
-> >> +static int qcom_ssphy_config_vdd(struct ssphy_priv *priv,
-> >> +                                enum phy_vdd_level level)
-> >> +{
-> >> +       return regulator_set_voltage(priv->vdd,
-> >> +                                    priv->vdd_levels[level],
-> >> +                                    priv->vdd_levels[LEVEL_MAX]);
-> >=20
-> > regulator_set_voltage(reg, 0, max) is very suspicious. It's voltage
-> > corners where the voltages are known?
->=20
-> sorry I dont understand the question
->=20
-> this regulator on the ss phy wold be
-> vreg_l3_1p05: l3 {
->                 regulator-min-microvolt =3D <976000>;
->                 regulator-max-microvolt =3D <1160000>;
+Hi Sibi,
 
-Is this also the CX or MX voltage for the SoC? There would be a pin like
-VDDCX or VDDMX on the SoC part that is connected to this regulator if
-that's the case. Because you have "LEVEL" in the code it makes it sounds
-like it's voltage corners here so I suspect this is mapping into the
-voltage corner stuff that qcom has.
+On Fri, Dec 28, 2018 at 10:18:18AM +0530, Sibi Sankar wrote:
+> Add optional "firmware-name" bindings for Q6V5 MSS and PAS based
+> remoteprocs. For Q6V5 MSS/PAS the two/one relative firmware
+> paths/path are to be listed respectively. Fallback to the default
+> images for mba/modem for Q6V5 MSS or the default Hexagon image
+> for Q6V5 PAS if the "firmware-name" binding is not present.
+> 
+> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+> ---
+>  Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt | 6 ++++++
+>  Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt | 7 +++++++
+>  2 files changed, 13 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
+> index 9c0cff3a5ed8..60ee0f73071a 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
+> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
+> @@ -27,6 +27,12 @@ on the Qualcomm ADSP Hexagon core.
+>  	Value type: <stringlist>
+>  	Definition: must be "wdog", "fatal", "ready", "handover", "stop-ack"
+>  
+> +- firmware-name:
+> +	Usage: optional
+> +	Value type: <string>
+> +	Definition: must list the relative firmware image path for the
+> +		    Hexagon Core.
 
-> };
-> >=20
-> >> +}
-> >> +
-> >> +static int qcom_ssphy_ldo_enable(struct ssphy_priv *priv)
-> >> +{
-> >> +       int ret;
-> >> +
-> >> +       ret =3D regulator_set_load(priv->vdda1p8, 23000);
-> >=20
-> > Do you need to do this? Why can't the regulator be in high power mode
-> > all the time and then go low power when it's disabled?
->=20
-> this regulator is shared with the usb hs phy and each (ss/hs) have=20
-> different load requirements. why would it be wrong for the ss phy to=20
-> announce its needs (which will differ from those of the hs phy)?
+Relative to what? I still think it's a terrible idea that your driver
+looks for files at the top-level /lib/firmware/ directory, but now
+you're leaking this into the device tree. This should at a bare minimum
+be namespaced to something like the qcom/ sub-directory. But ideally,
+the driver would automatically be deriving a further sub-directory of
+qcom/ based on the chipset or something, and then the only thing you'd
+describe here is some kind of variant string -- something akin to
+ath10k's qcom,ath10k-calibration-variant (see
+Documentation/devicetree/bindings/net/wireless/qcom,ath10k.txt), which
+doesn't require a full path-name or any hierarchy.
 
-Yes they have different load requirements, but in the end I would guess
-they always push the regulator into high power mode when the device is
-active and drop the load requirement when it's inactive. If it matches
-the enable state of the regulator then there isn't much need for setting
-a load explicitly besides stating that when the regulator is on it
-should be in high power mode and when it's off it should be in low power
-mode and off.
+Brian
 
+> +
+>  - clocks:
+>  	Usage: required
+>  	Value type: <prop-encoded-array>
+> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
+> index 9ff5b0309417..3a99e7379d8c 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
+> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
+> @@ -36,6 +36,13 @@ on the Qualcomm Hexagon core.
+>  	Value type: <stringlist>
+>  	Definition: must be "wdog", "fatal", "ready", "handover", "stop-ack"
+>  
+> +- firmware-name:
+> +	Usage: optional
+> +	Value type: <stringlist>
+> +	Definition: must list the relative firmware image paths for mba and
+> +		    modem. They are used for booting and authenticating the
+> +		    Hexagon core.
+> +
+>  - clocks:
+>  	Usage: required
+>  	Value type: <phandle>
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+> 
