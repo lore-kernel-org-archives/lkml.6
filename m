@@ -2,100 +2,77 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DBB9C43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 11:55:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57FA8C43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 11:56:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E52E21479
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 11:55:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XL2Ztvit"
+	by mail.kernel.org (Postfix) with ESMTP id 2F4B821479
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 11:56:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730477AbfACLzd (ORCPT
+        id S1730628AbfACL4J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 06:55:33 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:38981 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728474AbfACLzc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 06:55:32 -0500
-Received: by mail-it1-f193.google.com with SMTP id a6so42360222itl.4
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 03:55:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=jxqOfRECq1Xyc6645A19FQ0lYLd4E+5dBQ5nZTmkHBw=;
-        b=XL2ZtvitKnWPZSUt76irYOnGHshCsJrpgZ2ejSNbn2aTC1X4GDQ1UgInEyQkyeDZg/
-         EyG3lnRoL/GTIW0qzhwP0M3qfKyD5EbL/2UNd8RVzAj02rsoNDOmeF20u04QNHDTlqXJ
-         ty/Xpg6GfkcA2lVAIdu6XPmM7Nz6DWYkVk/KQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jxqOfRECq1Xyc6645A19FQ0lYLd4E+5dBQ5nZTmkHBw=;
-        b=OeiZDcLQLSaWyuIJLhcLO35Rodn44nP8vSYCm5XnJSqu1AuwSzGM4P/JeIfRhZymCO
-         6ZETGsWdLrHUJbP43GkOcQm1x9+H+imayFEDO0JDEkVX+KXd3Ksyw3EIWbref5eTCrYq
-         vZVrbT80q+E1s1UDj6YO5XzD1OOJdI1XrDvVXVzQT8uXMnHPV5WjsLIlpHINezq/fE9D
-         VOPIadg3BHhcPlKI/cmZrAyuxw597wRddMvcqEmHmDMDGvSj2FyhHctMbOsib2i5W/YU
-         DVqInJjOGTnwGTvov2zWlzIIuG/7vDBCgZIsyyritqwBwmiIixXUTHoW66c7/UVHYhUx
-         KweQ==
-X-Gm-Message-State: AA+aEWbNiF0lIG24XN/II5OyaMIIJZxh4POANZv+zb5KADCc824MhM7N
-        2iFKqrJbI1RUfMGaylIIZQ+YD4AcoAMW+tCLEAmblg==
-X-Google-Smtp-Source: AFSGD/Ucy4uSzLdkwv68Z48AJBP6cB/p9k57FCC/nChiXbUq+pogS+0ihN0S/Pjrx8hDfGIqnIdQ0cjMENaeM/f8Vps=
-X-Received: by 2002:a02:f42:: with SMTP id h63mr31746615jad.133.1546516531286;
- Thu, 03 Jan 2019 03:55:31 -0800 (PST)
+        Thu, 3 Jan 2019 06:56:09 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:17078 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728474AbfACL4I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Jan 2019 06:56:08 -0500
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 28A3FB6F09603;
+        Thu,  3 Jan 2019 19:56:05 +0800 (CST)
+Received: from localhost.localdomain (10.67.212.75) by
+ DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
+ 14.3.408.0; Thu, 3 Jan 2019 19:55:58 +0800
+From:   John Garry <john.garry@huawei.com>
+To:     <xuwei5@huawei.com>
+CC:     <arm@kernel.org>, <linuxarm@huawei.com>,
+        <linux-kernel@vger.kernel.org>, John Garry <john.garry@huawei.com>
+Subject: [PATCH] HISI LPC: Don't fail probe for unrecognised child devices
+Date:   Thu, 3 Jan 2019 19:57:02 +0800
+Message-ID: <1546516622-46343-1-git-send-email-john.garry@huawei.com>
+X-Mailer: git-send-email 2.8.1
 MIME-Version: 1.0
-References: <1546439331-18646-1-git-send-email-firoz.khan@linaro.org> <CALxhOnjz3Qd-a0OWMDV9ShfPOUB8gNB5Ltp9HGZi01mauaxkuw@mail.gmail.com>
-In-Reply-To: <CALxhOnjz3Qd-a0OWMDV9ShfPOUB8gNB5Ltp9HGZi01mauaxkuw@mail.gmail.com>
-From:   Firoz Khan <firoz.khan@linaro.org>
-Date:   Thu, 3 Jan 2019 17:25:20 +0530
-Message-ID: <CALxhOni1b0hS1a7EHFBkzcCx9cT-Z+jy4azrLcFveu6KG944jg@mail.gmail.com>
-Subject: Re: [PATCH] scripts: unify system call table generation scripts
-To:     Paul Burton <paul.burton@mips.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Tony Luck <tony.luck@intel.com>, Helge Deller <deller@gmx.de>,
-        Satheesh Rajendran <sathnaga@linux.vnet.ibm.com>,
-        Michal Simek <monstr@monstr.eu>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Richard Henderson <rth@twiddle.net>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>
-Cc:     y2038 Mailman List <y2038@lists.linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.67.212.75]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Geert,
+Currently for ACPI-based FW we fail the probe for an unrecognised child
+HID.
 
-On Thu, 3 Jan 2019 at 17:04, Firoz Khan <firoz.khan@linaro.org> wrote:
-> > +fileguard=_UAPI_ASM_`basename "$out" | sed \
->
-> Currently, all but MIPS have the architecture name included in
-> the file guard.  Shouldn't that be retained?
+However, there is FW in the field with LPC child devices having fake HIDs,
+namely "IPI0002", which was an IPMI device invented to support the
+initial out-of-tree LPC host driver, different from the final mainline
+version.
 
-I was planning to do something similar to this:
--fileguard=_UAPI_ASM_`basename "$out" | sed \
-+fileguard=_UAPI_ASM_${ARCH}_`basename "$out" | sed \
+To provide compatibility support for these dodgy FWs, just discard the
+unrecognised HIDs instead of failing the probe altogether.
 
-But later I thought, the generated file will present inside arch
-directory (eg: arch/m68k/include/generated/uapi/asm/unistd.h).
-So Is that required to mention the architecture name in the file
-guard as it is generated inside the respective arch directory?
+Tested-by: Zengruan Ye <yezengruan@huawei.com>
+Signed-off-by: John Garry <john.garry@huawei.com>
 
-Thanks
-Firoz
+diff --git a/drivers/bus/hisi_lpc.c b/drivers/bus/hisi_lpc.c
+index d5f8545..19d7b6f 100644
+--- a/drivers/bus/hisi_lpc.c
++++ b/drivers/bus/hisi_lpc.c
+@@ -522,10 +522,9 @@ static int hisi_lpc_acpi_probe(struct device *hostdev)
+ 
+ 		if (!found) {
+ 			dev_warn(hostdev,
+-				 "could not find cell for child device (%s)\n",
++				 "could not find cell for child device (%s), discarding\n",
+ 				 hid);
+-			ret = -ENODEV;
+-			goto fail;
++			continue;
+ 		}
+ 
+ 		pdev = platform_device_alloc(cell->name, PLATFORM_DEVID_AUTO);
+-- 
+1.9.1
+
