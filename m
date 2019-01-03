@@ -2,70 +2,85 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5922BC43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 03:05:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 525EDC43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 03:06:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 275DE204EC
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 03:05:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546484737;
-	bh=FSuN6BMEZ/TrV2jVBK39ueO2fTEUPTGTj/LcPFM1BvY=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=tup9U9X1WXRDgivhL7Lst1gtl8WJq8xYF7FEm6F4Et7OveKjbqAl2LtIdi8cBzCU6
-	 Xd4MmoiTvL5LQ/iEc1hNvh26dGCbIRG4VPK5YhhU2tfROMWOoq81m0+myHuwPyh1Ty
-	 y+dg8/luSNl7MAqabRV4y5sXLhF9j7DRt910GQi8=
+	by mail.kernel.org (Postfix) with ESMTP id 27A11204EC
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 03:06:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730003AbfACDFg (ORCPT
+        id S1730033AbfACDGG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 22:05:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38462 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726163AbfACDFE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 22:05:04 -0500
-Subject: Re: [GIT PULL] Device properties framework fixes for v4.21-rc1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546484703;
-        bh=FSuN6BMEZ/TrV2jVBK39ueO2fTEUPTGTj/LcPFM1BvY=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=L61vHVnLvZROrhYKTs54RUxJcNF5vWu4TeZVtX13aGQiiYhv6P10K+vljpt0EpBRu
-         JdhwGpzbMYHV+RWeR8mCC4+t1aAJdFCszCeF4KpHdAgmktKOkqyNSOptNy36ufJmku
-         oLPILdejaf2WksPhfifX2WKdjxORKb8bjYYv4Hl8=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <CAJZ5v0h9Xj-gqYfkJFoEyVoFQKm1hBKboPtcvmPzE0OYTLu0sA@mail.gmail.com>
-References: <CAJZ5v0h9Xj-gqYfkJFoEyVoFQKm1hBKboPtcvmPzE0OYTLu0sA@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAJZ5v0h9Xj-gqYfkJFoEyVoFQKm1hBKboPtcvmPzE0OYTLu0sA@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git
- devprop-4.21-rc1-2
-X-PR-Tracked-Commit-Id: f4747b9c68b8864cac32cddc45fdcfdfafb3397c
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 01766d27d265afe7e93a8aa033afae5635d5aba0
-Message-Id: <20190103030503.10885.25071.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
-Date:   Thu, 03 Jan 2019 03:05:03 +0000
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+        Wed, 2 Jan 2019 22:06:06 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:17077 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726163AbfACDGG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Jan 2019 22:06:06 -0500
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 194326D4456A5;
+        Thu,  3 Jan 2019 11:06:02 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS409-HUB.china.huawei.com (10.3.19.209) with Microsoft SMTP Server id
+ 14.3.408.0; Thu, 3 Jan 2019 11:05:53 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>,
+        "Anton Ivanov" <anton.ivanov@cambridgegreys.com>,
+        YueHaibing <yuehaibing@huawei.com>
+CC:     <linux-um@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+Subject: [PATCH -next] um: Remove duplicated include from vector_user.c
+Date:   Thu, 3 Jan 2019 03:12:41 +0000
+Message-ID: <1546485161-142907-1-git-send-email-yuehaibing@huawei.com>
+X-Mailer: git-send-email 1.8.3.1
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Wed, 2 Jan 2019 11:33:42 +0100:
+Remove duplicated include.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git devprop-4.21-rc1-2
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ arch/um/drivers/vector_user.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/01766d27d265afe7e93a8aa033afae5635d5aba0
+diff --git a/arch/um/drivers/vector_user.c b/arch/um/drivers/vector_user.c
+index d2c17dd..b3f7b3c 100644
+--- a/arch/um/drivers/vector_user.c
++++ b/arch/um/drivers/vector_user.c
+@@ -16,14 +16,12 @@
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <fcntl.h>
+-#include <sys/types.h>
+ #include <sys/socket.h>
+ #include <net/ethernet.h>
+ #include <netinet/ip.h>
+ #include <netinet/ether.h>
+ #include <linux/if_ether.h>
+ #include <linux/if_packet.h>
+-#include <sys/socket.h>
+ #include <sys/wait.h>
+ #include <sys/uio.h>
+ #include <linux/virtio_net.h>
+@@ -31,7 +29,6 @@
+ #include <stdlib.h>
+ #include <os.h>
+ #include <um_malloc.h>
+-#include <sys/uio.h>
+ #include "vector_user.h"
+ 
+ #define ID_GRE 0
 
-Thank you!
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+
+
+
