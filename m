@@ -2,152 +2,136 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1DF9C43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 22:28:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E457BC43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 22:29:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 991BA208E3
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 22:28:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD93821871
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 22:29:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KhgsL8G9"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZQKO+rbU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728544AbfACW2L (ORCPT
+        id S1728572AbfACW3k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 17:28:11 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:33975 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727196AbfACW2L (ORCPT
+        Thu, 3 Jan 2019 17:29:40 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:44745 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728554AbfACW3j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 17:28:11 -0500
-Received: by mail-lf1-f68.google.com with SMTP id p6so24286302lfc.1
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 14:28:09 -0800 (PST)
+        Thu, 3 Jan 2019 17:29:39 -0500
+Received: by mail-pl1-f193.google.com with SMTP id e11so16479836plt.11
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 14:29:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zBX/RExnDCFm1z5Pxexihn//AmAS6OkGW3Qjjb4LKE4=;
-        b=KhgsL8G9ARvwOsnLNXnfDSAoxnT8ZQeUl9aP9R3VX7vFOsvx+LNPt+rN4PbEoR7oFm
-         vGminG/94NKYkSHZ89VvWMF4cLAjAM7ZDzmLmbZ8aShIheDWyKVbyWWYXnBM520GR3X+
-         FOlgTIrd3bVbUk17XIhs75/O5ERhO6ASxhx5unWtE3phDRIutK2qd3AhkGo2U6J6J8Zu
-         2Kzb4huLu4VtCciFiGNuNcmSYaMuWhpZC8qaur0tO7+Yr3i/UF0xQIz3Q3v2CMdh6TZU
-         r8xWqCKMMzQXgR1MUiXb0WSQwtay5VWwsM4yVIaTp2cqXSK/LsUeE3rKCnfLf7umUHGA
-         tDIA==
+        d=gmail.com; s=20161025;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=8g45Lc608M9zq172pNSs7s584pqeIrrRrUw6vSURTIY=;
+        b=ZQKO+rbUGwMr4e9B07O3gfx6bI3sI5hsY105L/bN5rKwb0fGyOzxtTRBnKABulM1hS
+         OBvENTJ6EQ9tC5Q+/cX0k62ESHjIu05ah1QYwprsNmpdejqK2weEap1vYzKt2HoRlGVP
+         D6lrURYQkAUek8cg+q9W8kVIF7uPnFznCkMkiDXu1tNTTGNQxe+S3jBMgQGKSNkH43tA
+         +t3VuGMp2BfKeIDCgAlvYkAD/7Ag7LSCe/mDmff68GCfolO5mLj+UFZOLBT+09bEnS+y
+         8KFXyDybtFVDA0Z5NKkFsD1m5WR3DW2R0BGpFudg5mHMPXj6nzf9/mo2u8gSlpIWaF9l
+         0XcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zBX/RExnDCFm1z5Pxexihn//AmAS6OkGW3Qjjb4LKE4=;
-        b=k2cpGvHplnNj9wglllT4rdh8rpJ9Te7+2dYmEER7lNjb/cRi9khASdYPEMIE0DCv59
-         XWxjUgBuQThtC1DLvApTrbEthzP+mKxJk4sqjwZLpk4iUErWI326vLNKihtR1oWeiC4l
-         ds5T/TQ95dKiX4Z5JqrXF7uUcOox8/eKBnsQ63Y6wTN8xqBgqrkhCN6ZrUaK6FY2JTR1
-         iHeFYRWyVZIKSQtW/nmjoAvpnnkzR9HjzKFBYmCqL4wz9l06rIZDySB/zQVNe4CRzz5z
-         gxYoy2qaPm3jpBZPlTXj7UgICscQdCDDiDk1OEW0KBsuxq5AlFuIrIXCIeKNl/hZRytz
-         2+ew==
-X-Gm-Message-State: AA+aEWZ/hL6zIeaq+L5pAZE51gwUDbO97F3LzI4oCbmWMXKF5Iercdyf
-        f7vmYk8m1SIA9G6d+7Yt2D7Zk2AWz87javJ6MQdalw==
-X-Google-Smtp-Source: AFSGD/VdbEANahE7GmsnwOz21FYnTsB5Cq3dqk8OXDJYJRs9NGyXnBm6iabmtEalnl3vN7+6+DD2olrU3cg5j3cdU1U=
-X-Received: by 2002:a19:1bd2:: with SMTP id b201mr23381848lfb.136.1546554487815;
- Thu, 03 Jan 2019 14:28:07 -0800 (PST)
-MIME-Version: 1.0
-References: <20181223143550.10672-1-christian@brauner.io> <20181223143550.10672-2-christian@brauner.io>
- <CAHRSSEythiuV6HH9c-q5TwU=tDyZ-K5gjgF+uYZmd6pmAJTovw@mail.gmail.com>
- <20190103203418.rpx3wcs3ozncpnhu@brauner.io> <CAHRSSEz9pJY1gs5VuWs-R4dmWgME4ocQkVGcNvpX1TVUWpdE0w@mail.gmail.com>
- <20190103220841.ycoavsqcbauayypl@brauner.io>
-In-Reply-To: <20190103220841.ycoavsqcbauayypl@brauner.io>
-From:   Todd Kjos <tkjos@google.com>
-Date:   Thu, 3 Jan 2019 14:27:56 -0800
-Message-ID: <CAHRSSEwQ67_fO0X+6Gq-MrnN3EWD8ZhOLH=nxwaEUcgQGKEqRA@mail.gmail.com>
-Subject: Re: [PATCH v1 2/2] binderfs: reserve devices for initial mount
-To:     Christian Brauner <christian@brauner.io>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Todd Kjos <tkjos@android.com>,
-        "open list:ANDROID DRIVERS" <devel@driverdev.osuosl.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>,
-        Martijn Coenen <maco@android.com>, joel@joelfernandes.org
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=8g45Lc608M9zq172pNSs7s584pqeIrrRrUw6vSURTIY=;
+        b=n7J2XWqmQVxH62hWTuoWXv8GMAoFBtfQL4T2vGf0VROTBmzaaaPhkW2kHxaKR6FbuF
+         1KXBbYjbz5gsEjZlGIEcbIJTJP6Gi92cyqS1dCtvVdIOp+dEKiNJ1jzNeO636y8DkTTO
+         afaM0915B95XwzIv14h7jgos4830SiVf9mjCI79pVay+iajLrl0PZIkGP9CCugnsmc5u
+         Aaq7rNVsH/TooEJoZ8aDEPZ04qqaCmvxpx5L0cIfp5IsZhjkRjjzH343SuRSXS6wNF3h
+         sZxGQvE21JqtP9nldZwEIDW8c++xTgbdTPLAlWI4769OLt7bM1CQX4ZHpzmHHxzGC8UL
+         sRoA==
+X-Gm-Message-State: AJcUukfvb7grnrDu4mJDNVd3jEJWra0EH0zcLAw1Q3lNTZmMgAzZOzpO
+        zUDB9f6S4yUl/sOzWeWgK6g=
+X-Google-Smtp-Source: ALg8bN7C8xyP+PRYkoJK7WGxKfn9jTNGspaBXs1vhQE9fmsXewIXugWIpq8lG5sHvdKHGzEkW1sZiA==
+X-Received: by 2002:a17:902:780c:: with SMTP id p12mr47485187pll.197.1546554578771;
+        Thu, 03 Jan 2019 14:29:38 -0800 (PST)
+Received: from [10.2.13.140] ([208.91.2.1])
+        by smtp.gmail.com with ESMTPSA id m65sm98838734pfg.180.2019.01.03.14.29.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 03 Jan 2019 14:29:38 -0800 (PST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
+Subject: Re: [RFC v2 1/6] x86: introduce kernel restartable sequence
+From:   Nadav Amit <nadav.amit@gmail.com>
+In-Reply-To: <87va35e61a.fsf@linux.intel.com>
+Date:   Thu, 3 Jan 2019 14:29:36 -0800
+Cc:     Ingo Molnar <mingo@redhat.com>, Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Edward Cree <ecree@solarflare.com>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        David Woodhouse <dwmw@amazon.co.uk>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <263A441C-F062-491F-9E95-F00FA2092A99@gmail.com>
+References: <20181231072112.21051-1-namit@vmware.com>
+ <20181231072112.21051-2-namit@vmware.com> <87va35e61a.fsf@linux.intel.com>
+To:     Andi Kleen <ak@linux.intel.com>
+X-Mailer: Apple Mail (2.3445.102.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 3, 2019 at 2:08 PM Christian Brauner <christian@brauner.io> wrote:
->
-> On Thu, Jan 03, 2019 at 01:47:13PM -0800, Todd Kjos wrote:
-> > On Thu, Jan 3, 2019 at 12:34 PM Christian Brauner <christian@brauner.io> wrote:
-> > >
-> > > On Thu, Jan 03, 2019 at 12:25:24PM -0800, Todd Kjos wrote:
-> > > > On Sun, Dec 23, 2018 at 6:36 AM Christian Brauner <christian@brauner.io> wrote:
-> > > > >
-> > > > > The binderfs instance in the initial ipc namespace will always have a
-> > > > > reserve of 4 binder devices unless explicitly capped by specifying a lower
-> > > > > value via the "max" mount option.
-> > > > > This ensures when binder devices are removed (on accident or on purpose)
-> > > > > they can always be recreated without risking that all minor numbers have
-> > > > > already been used up.
-> > > > >
-> > > > > Cc: Todd Kjos <tkjos@google.com>
-> > > > > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > > > > Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
-> > > > > ---
-> > > > > v1:
-> > > > > - patch introduced
-> > > > > v0:
-> > > > > - patch not present
-> > > > > ---
-> > > > >  drivers/android/binderfs.c | 7 ++++++-
-> > > > >  1 file changed, 6 insertions(+), 1 deletion(-)
-> > > > >
-> > > > > diff --git a/drivers/android/binderfs.c b/drivers/android/binderfs.c
-> > > > > index 873adda064ac..aa635c7ea727 100644
-> > > > > --- a/drivers/android/binderfs.c
-> > > > > +++ b/drivers/android/binderfs.c
-> > > > > @@ -40,6 +40,8 @@
-> > > > >  #define INODE_OFFSET 3
-> > > > >  #define INTSTRLEN 21
-> > > > >  #define BINDERFS_MAX_MINOR (1U << MINORBITS)
-> > > > > +/* Ensure that the initial ipc namespace always has a devices available. */
-> > > > > +#define BINDERFS_MAX_MINOR_CAPPED (BINDERFS_MAX_MINOR - 4)
-> > > >
-> > > > Why do you ever need more minors per instance than the number of
-> > > > devices listed in CONFIG_ANDROID_BINDER_DEVICES?
-> > >
-> > > Are you asking asking why this is 4 and not 3? In that case we should
-> > > probably parse CONFIG_ANDROID_BINDER_DEVICES once at init time and then
-> > > reserve that many binder devices. Thoughts?
-> >
-> > I'm asking why CONFIG_ANDROID_BINDER_DEVICES isn't the source of truth
-> > for the number of devices (it normally specifies 3 devices, but could
-> > be different). I can't think of a reason why you'd want
-> > CONFIG_MAX_MINOR_CAPPED to be different than the number of devices
-> > indicated by CONFIG_ANDROID_BINDER_DEVICES and having it specified in
-> > two places seems error prone.
->
-> I'm not following. The CONFIG_MAX_MINOR_CAPPED and
-> CONFIG_ANDROID_BINDER_DEVICES do not have a relation to each other just
-> like binder devices requested in CONFIG_ANDROID_BINDER_DEVICES do not
-> have a relation to binderfs binder devices as was requested for this
-> patchset.
-> I also don't know what you mean "appear in two places".
->
-> The fact is, binderfs binder devices are independent of binderfs binder
-> devices. So it is perfectly reasonable for someone to say
-> CONFIG_ANDROID_BINDER_DEVICES="" and *only* rely on binderfs itself.
-> Which absolutely need to be possible.
-> What I want in such scenarios is that people always have a number of
-> binderfs binder devices guaranteed to be available in the binderfs mount
-> in the initial ipc namespace no matter how many devices are allocated in
-> non-initial ipc namespace binderfs mounts. That's why allo non-initial
-> ipc namespace binderfs mounts will use the CONFIG_MAX_MINOR_CAPPED macro
-> which guarantees that there's number of devices reserved for the
-> binderfs instance in the initial ipc namespace.
+> On Jan 3, 2019, at 2:21 PM, Andi Kleen <ak@linux.intel.com> wrote:
+>=20
+> Nadav Amit <namit@vmware.com> writes:
+>=20
+> I see another poor man's attempt to reinvent TSX.
+>=20
+>> It is sometimes beneficial to have a restartable sequence - very few
+>> instructions which if they are preempted jump to a predefined point.
+>>=20
+>> To provide such functionality on x86-64, we use an empty REX-prefix
+>> (opcode 0x40) as an indication for instruction in such a sequence. =
+Before
+>> calling the schedule IRQ routine, if the "magic" prefix is found, we
+>> call a routine to adjust the instruction pointer.  It is expected =
+that
+>> this opcode is not in common use.
+>=20
+> You cannot just assume something like that. x86 is a constantly
+> evolving architecture. The prefix might well have meaning at
+> some point.
+>=20
+> Before doing something like that you would need to ask the CPU
+> vendors to reserve the sequence you're using for software use.
 
-Yes, you are right. Cobwebs from vacation -- I confused this with the
-previous non-binderfs implementation that was posted that did use
-CONFIG_ANDROID_BINDER_DEVICES to instantiate the devices in all
-containers. In binderfs, that is only used for the initial (default)
-devices.
+Ok=E2=80=A6 I=E2=80=99ll try to think about another solution. Just note =
+that this is just
+used as a hint to avoid unnecessary lookups. (IOW, nothing will break if =
+the
+prefix is used.)
+
+> You're doing the equivalent of patching a private system call
+> into your own kernel without working with upstream, don't do that.
+
+I don=E2=80=99t understand this comment though. Can you please explain?
+
+> Better to find some other solution to do the restart.
+> How about simply using a per cpu variable? That should be cheaper
+> anyways.
+
+The problem is that the per-cpu variable needs to be updated after the =
+call
+is executed, when we are already not in the context of the =
+=E2=80=9Cinjected=E2=80=9D code.
+I can increase it before the call, and decrease it after return - but =
+this
+can create (in theory) long periods in which the code is =
+=E2=80=9Cunpatchable=E2=80=9D,
+increase the code size and slow performance.
+
+Anyhow, I=E2=80=99ll give more thought. Ideas are welcomed.
+
