@@ -2,89 +2,101 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54F4DC43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 11:34:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CF62C43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 11:35:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18D4220578
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 11:34:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D3072073D
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 11:35:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="J4c8QWv3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731149AbfACLek (ORCPT
+        id S1731163AbfACLfK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 06:34:40 -0500
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:46672 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726814AbfACLej (ORCPT
+        Thu, 3 Jan 2019 06:35:10 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:35764 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729827AbfACLfJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 06:34:39 -0500
-Received: by mail-vs1-f68.google.com with SMTP id n10so20550255vso.13;
-        Thu, 03 Jan 2019 03:34:37 -0800 (PST)
+        Thu, 3 Jan 2019 06:35:09 -0500
+Received: by mail-it1-f196.google.com with SMTP id p197so42306127itp.0
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 03:35:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=OlErxfKTv2SbJMpGLa1PyKEj4C9pXXCOHh54jBDCiZ4=;
+        b=J4c8QWv3iz4G9g60Hx1iVunp81ed/7dBzqmFS/WbL2mZQuMfTW1f6uTzx2BSKn6/5W
+         n8Lt7DG3dET5TslNSw5ry/CfpDuZacYBVjz+XuC/z7/FUbIaTYPJlk979oc0RJ1QRXcC
+         c5cT9XWxvfbLVRg10qmXGXfOnVkPcsH8CyUFM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=yGEN9n6vpOtSoS5EptpZmrhAbVElhR+k177Mo1KISio=;
-        b=AJEfledgGD5h/197bpUXEA2oW/MqMtrcVpIYnqI6rSgaztz3PdKMAcswKWT51iiOwO
-         tXRcPT5Nt26gR+NMcDRqIdlbhW/CJ47CEAaOMluf2EhM+4T9997O5xZrboVBSnSsAkox
-         cSw5yUm9WY1MPk99LLTsvk9yowTVxnwNGeD2Wg07BMtBnJbyy8Z2oHoSd3gZKiwcuP4J
-         G3XNPGSh2WZvCXBrJ72/NoBwR2zq/asMO4w5tDeNznkM9cmydzpkU/9GQkabLIY9JWWe
-         5UaeYEQQyB2oVZj6AC0jCwup5A/3kZS/GBH1IAJEu12CFZvXoh29bZIij5+kmIGGZLsk
-         2SBA==
-X-Gm-Message-State: AA+aEWarke/IDCtPK0TRsOIswosgSkoCPwAKOVZs8DtGDhyJxS9Pw2V4
-        21EDCIO5FMYgX1uN6HWEOwtDBwP41UWu3i6MCDSDSrUF
-X-Google-Smtp-Source: AFSGD/UAoNwD8W5NalAoT9nsmVFfQLvFKt+lClljdO67LLPDwOsiCMoSkeRLiPXC8PAKFCTcVz7p/6YkCwNGhAoVmKw=
-X-Received: by 2002:a67:c202:: with SMTP id i2mr17067774vsj.11.1546515277324;
- Thu, 03 Jan 2019 03:34:37 -0800 (PST)
+        bh=OlErxfKTv2SbJMpGLa1PyKEj4C9pXXCOHh54jBDCiZ4=;
+        b=D7Mx4jCrl6MSbksHlRwCcWRMaFTIViaBorV9B0yWHaWAF+w8Fnmbt/wwC9BGtlAeMk
+         FnJ2A4eNgOpySbXdJ9Jl3PPvc/08ybqhMC77npyX2avyef4wfZbXyZb4fPCK46Ut9QGO
+         AxSnEHPoN9XO1W9VP2/I/BROmBVqCXduuxxNXCt/c/SGeLGId59LKt7GDwuL7q6mtSvM
+         U/9ZBhX28/QptlbyyANFc2iztoEl98N9DbGDW8ZJIxAoJ9s4Nf/2xBIIaMXT/eypxn+p
+         Q030ctPtj3/LTsRHmbv58d60qAsXOeWSS1koEqA1DlVKAvJEqWoSwQYGY2FohftrQcVA
+         bbTQ==
+X-Gm-Message-State: AJcUukcBR3/S+EpziOArRtEIblDmNrSnS5/WkbAdiTiNp3PG4u79ijf2
+        26UalZz09MD2za2K+VcGV0hZyUdIePCFi88F3oJbaQ==
+X-Google-Smtp-Source: ALg8bN7GkuLB0uQfOE93mYlFJ/kAf0cTBwK4aDv/iNWrXH2uieTVRhki811Va2dHisk9Pjdom0JKeKx/KnCoMi1HuLw=
+X-Received: by 2002:a24:f14d:: with SMTP id q13mr28307916iti.166.1546515308589;
+ Thu, 03 Jan 2019 03:35:08 -0800 (PST)
 MIME-Version: 1.0
 References: <1546439331-18646-1-git-send-email-firoz.khan@linaro.org>
 In-Reply-To: <1546439331-18646-1-git-send-email-firoz.khan@linaro.org>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 3 Jan 2019 12:34:25 +0100
-Message-ID: <CAMuHMdUS5rSmPaA75JEc-D0CKH5DkX6dfzu8n0CYy5O_JVAycg@mail.gmail.com>
+From:   Firoz Khan <firoz.khan@linaro.org>
+Date:   Thu, 3 Jan 2019 17:04:57 +0530
+Message-ID: <CALxhOnjz3Qd-a0OWMDV9ShfPOUB8gNB5Ltp9HGZi01mauaxkuw@mail.gmail.com>
 Subject: Re: [PATCH] scripts: unify system call table generation scripts
-To:     Firoz Khan <firoz.khan@linaro.org>
-Cc:     Paul Burton <paul.burton@mips.com>,
+To:     Paul Burton <paul.burton@mips.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Philippe Ombredanne <pombredanne@nexb.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Kate Stewart <kstewart@linuxfoundation.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Tony Luck <tony.luck@intel.com>, Helge Deller <deller@gmx.de>,
+        Satheesh Rajendran <sathnaga@linux.vnet.ibm.com>,
+        Michal Simek <monstr@monstr.eu>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Richard Henderson <rth@twiddle.net>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>
+Cc:     y2038 Mailman List <y2038@lists.linaro.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux-Arch <linux-arch@vger.kernel.org>,
         Arnd Bergmann <arnd@arndb.de>,
         Deepa Dinamani <deepa.kernel@gmail.com>,
-        marcin.juszkiewicz@linaro.org
+        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Firoz,
+++ adding more folks I closely worked with :)
 
-Thanks for your patch!
 
-On Wed, Jan 2, 2019 at 3:30 PM Firoz Khan <firoz.khan@linaro.org> wrote:
+On Wed, 2 Jan 2019 at 19:59, Firoz Khan <firoz.khan@linaro.org> wrote:
+>
 > System call table generation support is provided for
 > alpha, ia64, m68k, microblaze, mips, parisc, powerpc,
 > sh, sparc and xtensa architectures. The implementat-
 > ions are almost similar across all the above archte-
 > ctures.
-
-architectures
-
 >
 > In order to reduce the source code across all the
 > above architectures, create common ".sh" files and
 > keep it in the common directory, script/.
 >
 > This will be a generic scripts which can use for all
-
-be generic scripts which can be used for all of
-
 > the above architectures.
 >
 > Signed-off-by: Firoz Khan <firoz.khan@linaro.org>
@@ -113,10 +125,6 @@ be generic scripts which can be used for all of
 > +offset="$5"
 > +
 > +fileguard=_UAPI_ASM_`basename "$out" | sed \
-
-Currently, all but MIPS have the architecture name included in
-the file guard.  Shouldn't that be retained?
-
 > +       -e 'y/abcdefghijklmnopqrstuvwxyz/ABCDEFGHIJKLMNOPQRSTUVWXYZ/' \
 > +       -e 's/[^A-Z0-9_]/_/g' -e 's/__/_/g'`
 > +grep -E "^[0-9A-Fa-fXx]+[[:space:]]+${my_abis}" "$in" | sort -n | (
@@ -143,10 +151,6 @@ the file guard.  Shouldn't that be retained?
 > +       printf "\n"
 > +       printf "#endif /* %s */" "${fileguard}"
 > +       printf "\n"
-
-I think this "\n" should be integrated into the previous printf,
-as it terminates the previous output line.
-
 > +) > "$out"
 > diff --git a/scripts/syscallnr.sh b/scripts/syscallnr.sh
 > new file mode 100644
@@ -164,9 +168,6 @@ as it terminates the previous output line.
 > +offset="$5"
 > +
 > +fileguard=_UAPI_ASM_`basename "$out" | sed \
-
-Don't you want the architecture name in the file guard here, too?
-
 > +       -e 'y/abcdefghijklmnopqrstuvwxyz/ABCDEFGHIJKLMNOPQRSTUVWXYZ/' \
 > +       -e 's/[^A-Z0-9_]/_/g' -e 's/__/_/g'`
 > +grep -E "^[0-9A-Fa-fXx]+[[:space:]]+${my_abis}" "$in" | sort -n | (
@@ -211,16 +212,9 @@ Don't you want the architecture name in the file guard here, too?
 > +
 > +       while [ $t_nxt -lt $t_nr ]; do
 > +               printf "__SYSCALL(%s,sys_ni_syscall)\n" "${t_nxt}"
-
-Please add a space after the comma.
-
 > +               t_nxt=$((t_nxt+1))
 > +       done
 > +       printf "__SYSCALL(%s,%s)\n" "${t_nxt}" "${t_entry}"
-
-Idem ditto.
-
-
 > +}
 > +
 > +grep -E "^[0-9A-Fa-fXx]+[[:space:]]+${my_abis}" "$in" | sort -n | (
@@ -242,16 +236,3 @@ Idem ditto.
 > --
 > 1.9.1
 >
-
-
---
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
