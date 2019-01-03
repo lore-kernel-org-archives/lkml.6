@@ -2,164 +2,123 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43A80C43444
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 18:46:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEFD8C43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 18:47:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08613217F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 18:46:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GoUxsewU"
+	by mail.kernel.org (Postfix) with ESMTP id B10A92184B
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 18:47:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546541233;
+	bh=g2HH9JarLGmtyTiZKCPjZu7qVyP+a9isFYubhO4rW0I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=0uZOlCFzfjK0O4ROVUw9zXQIL0xq3GUJ4Eaf/HRhxAVvx9vRQGUq0o+/wiE6HoQvY
+	 ULBGwjdcW9dukQhtCNwUeTf2tWf1i2gqSnXLE0L9AGGc7ecAE+mzb5QNsFaH6RBfIx
+	 /rEwPMKBEPjzuNh171dQuOmF//jzc2ep0NYP0eRM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726460AbfACSqd (ORCPT
+        id S1726494AbfACSrM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 13:46:33 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:43339 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726238AbfACSqc (ORCPT
+        Thu, 3 Jan 2019 13:47:12 -0500
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:38462 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726163AbfACSrM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 13:46:32 -0500
-Received: by mail-pf1-f193.google.com with SMTP id w73so17058402pfk.10
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 10:46:31 -0800 (PST)
+        Thu, 3 Jan 2019 13:47:12 -0500
+Received: by mail-yw1-f68.google.com with SMTP id d190so12467258ywb.5;
+        Thu, 03 Jan 2019 10:47:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=MgzV5dTndps76ADDi/niLj9jnEoksetg/kN5EQSE/zM=;
-        b=GoUxsewUnTYsCM77AWfGlQfTgMINGlA35HpX38hrx1dskXw4mI65zWLT8zB5BYj6e8
-         dWsAYaoSKabJNGNo9wQ7kiRDOy+0ey1nWiWJLIWcYQN0z+K9h3DYz2J59oKlX+nzSTTa
-         aT57NflI4m5PdSfbXZIhK5emMEoGtqL0F3zjVt4kHv7srAa90A8KpUyo/X4pRSfnHe45
-         mAT04CkeOtEEc/W2zJ2MdjjmkeoXPYwO94z4+bpJzerWLi7x1dNRRviz0FSvXA89Biog
-         sYyO53jbmfC2HT0on1mg+NJMYZHuZQNJAPTRUv2ZWXjRpBcxKkAu8FFYEp88Z0s/Fqyd
-         5EJA==
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=c4bOgmdZh/nJPyrF+8x/aLXpuypken7zoGySe9tnJ9I=;
+        b=BbF+StVcAsbKYa+YESUcgLIXbzs+ceCqm+J3Pyi9Rw9nhq40x+scqvRmm5u4ZFP1A2
+         iCXCQZ2qkpz9BVM/5DXLS08lhGlVMnOpJHl/YxDE8aR9IAh4qxsoaGVeWbS3SDI0Yygg
+         GQtrMYby6BZlCM0Ql7Lf/uwr2vaIDXerVzTjJsOagXsqCMnqGqL1pE6z6WHMAq+69Ueh
+         GONVQ5bPh3+F5eWCyaX/P+sEA2wb29Abvid0MvhmWMKzjFs1I4ySQVSbheZ0KpJ31qVU
+         tPEWIWypQ+ZjGi62cFprpsww5zBVZGCwsBENlgMubuNWYph/x1DDwaGq0P13ZCd6fGib
+         dzOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=MgzV5dTndps76ADDi/niLj9jnEoksetg/kN5EQSE/zM=;
-        b=ewWhN91P2bhwN3zMo+92ksRXsvq9JiiYLJgsezyHRSp3qqwp7MdrIvIYuJ4dWeXbiN
-         h1l5Hdf2RIp1GrZs+N3PMEvvCIFGLV3CBDK9exd6UzRaM/S9P3F8JIRZU20meVcRkOfR
-         Nm41JNiUIEDznVw98nJzyVeObhjedMw+tZDqX/oSw5TZNbPjp0s+MAvmTf2q8MT7ks5e
-         j6qTyOtm+pivieaRjaxIycDCkukW6iYPy+HeXAV+JJNiP6OvzzEGiLHSCI5ALcFBGCXj
-         JYyOS0ssY3v30yaCh4dmrLlmElxwiTfI5jibnmDa4TY2HypXifsS7cep5nzL+Af+lAwN
-         Btvg==
-X-Gm-Message-State: AJcUukcD8uK01UnG3t2Mg7BRf/DIs60Zhr3Y8OBC6eTiNtGmlBMhMzpD
-        bV0A1HJfmMcal83BbM3WQjQOgOykK5vHsmUy9yChLw==
-X-Google-Smtp-Source: ALg8bN5SinAEs0gYR2nS6mwrBbNs6CaZLdp3j4CHwOgZ9jildDr4wOzb2uxGWuD9JrGMv17tlykPD+ZozUjLDh+fs1c=
-X-Received: by 2002:a65:560e:: with SMTP id l14mr18036989pgs.168.1546541191326;
- Thu, 03 Jan 2019 10:46:31 -0800 (PST)
-MIME-Version: 1.0
-References: <cover.1546450432.git.andreyknvl@google.com> <b16c90197bb2c06c780e6e981c40345e03fda465.1546450432.git.andreyknvl@google.com>
- <20190102121436.5c2b72d1b0ec49affadc9692@linux-foundation.org>
-In-Reply-To: <20190102121436.5c2b72d1b0ec49affadc9692@linux-foundation.org>
-From:   Andrey Konovalov <andreyknvl@google.com>
-Date:   Thu, 3 Jan 2019 19:46:20 +0100
-Message-ID: <CAAeHK+yE38g0dSbL7LiVPSgECgdcJ5w7+kwaiBaRYr5YkHtbjQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] kasan, arm64: use ARCH_SLAB_MINALIGN instead of
- manual aligning
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Christoph Lameter <cl@linux.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Dave Martin <dave.martin@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Paul Lawrence <paullawrence@google.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=c4bOgmdZh/nJPyrF+8x/aLXpuypken7zoGySe9tnJ9I=;
+        b=hSUuTM7GvCJWAihPuZpRO79Z3oITKEDMg8Sn1aclvg9ReYre46K8K1IJ+fHz6UpSvf
+         2WY0IEyRv/eRNMZSKNny08AR2XR2p5FhyT/ViDrQo5t3d9bew+Va/zGsKiOSC7my9XXc
+         /Mm/xMBkdWElNTfMfHsoZBUqU9PjeQAJDaPACRW1ySg/u3r06jCCOtTwsVp0vBINMRrf
+         kVM8BNw2IW1RXnr1BN2HmNNClrfEycqTQczgAnnP+3NoesKORYkcJTsFKJ2qG0scKCGf
+         NHo2cD+3P/d8HIh7xNtRBABNY/e4NHjwzmZi0KFronB+x1YpVYktLDx6+TETHM3u/yVG
+         8Wyw==
+X-Gm-Message-State: AA+aEWZe1Cw41JI6hA/VnQMTENmNuWXJsTxIm/I9nH7juTrDFQvQNerS
+        j/U7p9rx01lLk6Lo9DzCjtw=
+X-Google-Smtp-Source: AFSGD/XhmAMrMT2qThEcz39tCOTv4k+G229egTs4UbvqWK5EfmjvUHIfyley5dtHnW7qT3bNMGE8Xg==
+X-Received: by 2002:a81:ad49:: with SMTP id l9mr48990106ywk.260.1546541229988;
+        Thu, 03 Jan 2019 10:47:09 -0800 (PST)
+Received: from localhost ([2620:10d:c091:200::7:f935])
+        by smtp.gmail.com with ESMTPSA id o124sm15374839ywe.75.2019.01.03.10.47.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 03 Jan 2019 10:47:08 -0800 (PST)
+Date:   Thu, 3 Jan 2019 10:47:06 -0800
+From:   Tejun Heo <tj@kernel.org>
+To:     Mike Rapoport <rppt@linux.ibm.com>
+Cc:     Baoquan He <bhe@redhat.com>, Pingfan Liu <kernelfans@gmail.com>,
+        linux-acpi@vger.kernel.org, linux-mm@kvack.org,
+        kexec@lists.infradead.org, Tang Chen <tangchen@cn.fujitsu.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-sparse@vger.kernel.org,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Kostya Serebryany <kcc@google.com>,
-        Evgeniy Stepanov <eugenis@google.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Jann Horn <jannh@google.com>,
-        Mark Brand <markbrand@google.com>,
-        Chintan Pandya <cpandya@codeaurora.org>,
-        Vishwath Mohan <vishwath@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Michal Hocko <mhocko@suse.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Yaowei Bai <baiyaowei@cmss.chinamobile.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Daniel Vacek <neelx@redhat.com>,
+        Mathieu Malaterre <malat@debian.org>,
+        Stefan Agner <stefan@agner.ch>, Dave Young <dyoung@redhat.com>,
+        yinghai@kernel.org, vgoyal@redhat.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv3 1/2] mm/memblock: extend the limit inferior of
+ bottom-up after parsing hotplug attr
+Message-ID: <20190103184706.GU2509588@devbig004.ftw2.facebook.com>
+References: <1545966002-3075-1-git-send-email-kernelfans@gmail.com>
+ <1545966002-3075-2-git-send-email-kernelfans@gmail.com>
+ <20181231084018.GA28478@rapoport-lnx>
+ <CAFgQCTvQnj7zReFvH_gmfVJdPXE325o+z4Xx76fupvsLR_7H2A@mail.gmail.com>
+ <20190102092749.GA22664@rapoport-lnx>
+ <20190102101804.GD1990@MiWiFi-R3L-srv>
+ <20190102170537.GA3591@rapoport-lnx>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190102170537.GA3591@rapoport-lnx>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 2, 2019 at 9:14 PM Andrew Morton <akpm@linux-foundation.org> wrote:
->
-> On Wed,  2 Jan 2019 18:36:06 +0100 Andrey Konovalov <andreyknvl@google.com> wrote:
->
-> > Instead of changing cache->align to be aligned to KASAN_SHADOW_SCALE_SIZE
-> > in kasan_cache_create() we can reuse the ARCH_SLAB_MINALIGN macro.
-> >
-> > ...
-> >
-> > --- a/arch/arm64/include/asm/kasan.h
-> > +++ b/arch/arm64/include/asm/kasan.h
-> > @@ -36,6 +36,10 @@
-> >  #define KASAN_SHADOW_OFFSET     (KASAN_SHADOW_END - (1ULL << \
-> >                                       (64 - KASAN_SHADOW_SCALE_SHIFT)))
-> >
-> > +#ifdef CONFIG_KASAN_SW_TAGS
-> > +#define ARCH_SLAB_MINALIGN   (1ULL << KASAN_SHADOW_SCALE_SHIFT)
-> > +#endif
-> > +
-> >  void kasan_init(void);
-> >  void kasan_copy_shadow(pgd_t *pgdir);
-> >  asmlinkage void kasan_early_init(void);
-> > diff --git a/include/linux/slab.h b/include/linux/slab.h
-> > index 11b45f7ae405..d87f913ab4e8 100644
-> > --- a/include/linux/slab.h
-> > +++ b/include/linux/slab.h
-> > @@ -16,6 +16,7 @@
-> >  #include <linux/overflow.h>
-> >  #include <linux/types.h>
-> >  #include <linux/workqueue.h>
-> > +#include <linux/kasan.h>
-> >
->
-> This still seems unadvisable.  Like other architectures, arm defines
-> ARCH_SLAB_MINALIGN in arch/arm/include/asm/cache.h.
-> arch/arm/include/asm64/cache.h doesn't define ARCH_SLAB_MINALIGN
-> afaict.
->
-> If arch/arm/include/asm64/cache.h later gets a definition of
-> ARCH_SLAB_MINALIGN then we again face the risk that different .c files
-> will see different values of ARCH_SLAB_MINALIGN depending on which
-> headers they include.
->
-> So what to say about this?  The architecture's ARCH_SLAB_MINALIGN
-> should be defined in the architecture's cache.h, end of story.  Not in
-> slab.h, not in kasan.h.
+Hello,
 
-Done in v3, thanks!
+On Wed, Jan 02, 2019 at 07:05:38PM +0200, Mike Rapoport wrote:
+> I agree that currently the bottom-up allocation after the kernel text has
+> issues with KASLR. But this issues are not necessarily related to the
+> memory hotplug. Even with a single memory node, a bottom-up allocation will
+> fail if KASLR would put the kernel near the end of node0.
+> 
+> What I am trying to understand is whether there is a fundamental reason to
+> prevent allocations from [0, kernel_start)?
+> 
+> Maybe Tejun can recall why he suggested to start bottom-up allocations from
+> kernel_end.
 
->
->
-> --
-> You received this message because you are subscribed to the Google Groups "kasan-dev" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to kasan-dev+unsubscribe@googlegroups.com.
-> To post to this group, send email to kasan-dev@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/kasan-dev/20190102121436.5c2b72d1b0ec49affadc9692%40linux-foundation.org.
-> For more options, visit https://groups.google.com/d/optout.
+That's from 79442ed189ac ("mm/memblock.c: introduce bottom-up
+allocation mode").  I wasn't involved in that patch, so no idea why
+the restrictions were added, but FWIW it doesn't seem necessary to me.
+
+Thanks.
+
+-- 
+tejun
