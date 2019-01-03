@@ -2,58 +2,59 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBEE6C43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 14:22:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 424A9C43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 14:22:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2E6920815
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 14:22:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 124FD20815
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 14:22:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T86KhqWp"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e+HWVfa3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730862AbfACOWd (ORCPT
+        id S1731872AbfACOWg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 09:22:33 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:45620 "EHLO
+        Thu, 3 Jan 2019 09:22:36 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:37605 "EHLO
         mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726258AbfACOWd (ORCPT
+        with ESMTP id S1726258AbfACOWe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 09:22:33 -0500
-Received: by mail-lj1-f194.google.com with SMTP id s5-v6so29803249ljd.12
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 06:22:32 -0800 (PST)
+        Thu, 3 Jan 2019 09:22:34 -0500
+Received: by mail-lj1-f194.google.com with SMTP id t18-v6so29825251ljd.4
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 06:22:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=f6iOq0POHj82kuJ9vOuksRhtjIgtyuat0RT8EdWn87M=;
-        b=T86KhqWp+RQ0FJ4yUD/lMVNq9HnPyhAZJrxZ7PjpPxduvZMaRQg+XUmImC59e/0cz+
-         AkaqbPwuzPdGzuuVTmWyE7KCilsEe0VORV/0dbPbWblBqeH4tQd6mE17CMf2ErsDNOHw
-         ZTa18JewfgO5f89d1jw3O5PGY7cFigf6OrudyKbEoqwGtMcl6IBguaZUQ+Hpf8O9T4Rd
-         KSFHYIyfEO/JFsOtsPJ5WM7y6TnQiMCmSltumYNBuMUsY3gTMZhUDrbmsh8Q6ORXg6H2
-         SJt3jcd3kF9ffWnKdy9hNu6GAQ7t3iVMT7Z+wsIpFPYlFCOJ6MX146WCosoFPYqotX5j
-         XEyw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=ssv6BkHkmIpFCTqBy2LTU9LUeIInJoLd32GH+CfwWhs=;
+        b=e+HWVfa3PL55xx5EF1eIIOluacFaR6jo0mr53G3qBkSFeXDQ154XLjSvh5wOPS5uz8
+         pFwzfMljHnbKio7LKzAPybraydJyKA03IFw6jGyLVp7yhk/1hENfdk7BL/VuArlAcEnI
+         5sUhe6knELbDjqVZo9iaT924+dKEiAH6dCEdjTjoixwGeFcxdBsH3mOlzS7kw0gnQXhI
+         mDLWe9V+/uky/m92Fb3+XpSvQkDrxIE8NSQVCjHv1duFpeT/Aic6NZg0JTHx6SmbJuzk
+         6zIbL2ladU36itGM/yxih1qsxRZVS5VztZfvtIKz6G5wnZUc+z40dDaS4/ihjU0DTTfp
+         k1/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=f6iOq0POHj82kuJ9vOuksRhtjIgtyuat0RT8EdWn87M=;
-        b=sLrl3da7kaIuqGnkXjfZnsbVFvDjqheiEaFLBwpYz5brOuaERo9ZJ29bv/xAIv7JYg
-         JrCIGmA7QmpXW7ORf5xwmc8joTEIK9K+vzO4UgVdL8J1JGy5MFAZPhy069zOoLRT7Etj
-         eN7aGCsjQ4Qwn6Us31rsa7XLMlR4kEu25Ose/yhqKBXNtjgSAXZMvaRAtdL6J0/cAjWM
-         3MaD0pEKljR9guaJAxKPB0otqjMghuq49lUWAK8fC5ZwXry4lW6lq/IEwoWvk1itDky2
-         xg6C79lYmRmPRbKXduKcg1H2APOT89dlUPK8cf+W1yn5v6FXPbJAS91FYVVEcgYBPZfb
-         anCw==
-X-Gm-Message-State: AJcUukfJsca0EWBBbTCcjHf10QuiXe8zFa3gnCKwORLT4GQk564P64FJ
-        nN59m2qA/HvnATLya0a6nn6I9LD717zXgA==
-X-Google-Smtp-Source: ALg8bN7yn2PFzXoUoKHzjvxwxQQkCMPA8WLRFMUOk1gLnwDJNRTSpNXFm7n5RdAc99ZVKhlC/mOOCg==
-X-Received: by 2002:a2e:4a19:: with SMTP id x25-v6mr25958077lja.19.1546525351199;
-        Thu, 03 Jan 2019 06:22:31 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=ssv6BkHkmIpFCTqBy2LTU9LUeIInJoLd32GH+CfwWhs=;
+        b=HyccZNuwRvMXqoyHqNtTyvDUvDTv7Tmtgijh/4PfU1/BFNht83qvMrSrnqCwWBBqVY
+         bdV2Skf3Q9unv3poZGoj1m5xTzVgabU+o022DF87o4eBdqJU/BPG6LT6WrU1bApISxQ8
+         5HciXRGfOg3VLsqdtCy3MYK5YDs1brZ0mmcf0p5jxLm9LPTDzAA6BOGA/E3v4MGnyHuR
+         L+5nPLsllBL4HUIM92ArHm4RaBI0ZDFtfW9cLebDotWB3Yh3UiUuGsg7a7Y2MMDL8fD2
+         l2peQ4JjjbhGGpJYnlE1RJONcCEBRQI8hieAJVwoGHn6cI7rNzJjXCX43wNBnRqRftcB
+         THHw==
+X-Gm-Message-State: AJcUuke/QtC4vpZHBjz2TY9JuITpO4cN+4b7hlD1638auUETjB4C3dYp
+        BCkpGJAgxck7rcRc2YW1Jq8=
+X-Google-Smtp-Source: ALg8bN4ewekoLlYdfq5wN4BApo8S7pATw+y9U7s+PEyoChINuZwuQH2YanF+4bsjQvi4Nc4sbnrLyg==
+X-Received: by 2002:a2e:1241:: with SMTP id t62-v6mr23157355lje.171.1546525353100;
+        Thu, 03 Jan 2019 06:22:33 -0800 (PST)
 Received: from localhost.localdomain ([37.212.195.0])
-        by smtp.gmail.com with ESMTPSA id b25sm10594690lfa.96.2019.01.03.06.22.29
+        by smtp.gmail.com with ESMTPSA id b25sm10594690lfa.96.2019.01.03.06.22.31
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 03 Jan 2019 06:22:30 -0800 (PST)
+        Thu, 03 Jan 2019 06:22:32 -0800 (PST)
 From:   "Uladzislau Rezki (Sony)" <urezki@gmail.com>
 To:     Andrew Morton <akpm@linux-foundation.org>,
         Michal Hocko <mhocko@suse.com>,
@@ -64,55 +65,50 @@ Cc:     LKML <linux-kernel@vger.kernel.org>,
         Oleksiy Avramchenko <oleksiy.avramchenko@sonymobile.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         "Uladzislau Rezki (Sony)" <urezki@gmail.com>
-Subject: [RFC PATCH v4 0/3] test driver to analyse vmalloc allocator
-Date:   Thu,  3 Jan 2019 15:21:05 +0100
-Message-Id: <20190103142108.20744-1-urezki@gmail.com>
+Subject: [RFC PATCH 1/3] vmalloc: export __vmalloc_node_range for CONFIG_TEST_VMALLOC_MODULE
+Date:   Thu,  3 Jan 2019 15:21:06 +0100
+Message-Id: <20190103142108.20744-2-urezki@gmail.com>
 X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20190103142108.20744-1-urezki@gmail.com>
+References: <20190103142108.20744-1-urezki@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello.
+Export __vmaloc_node_range() function if CONFIG_TEST_VMALLOC_MODULE is
+enabled. Some test cases in vmalloc test suite module require and make
+use of that function. Please note, that it is not supposed to be used
+for other purposes.
 
-This is v4. I think it is ready to go with, unless there are extra requests
-or comments.
+We need it only for performance analysis, stressing and stability check
+of vmalloc allocator.
 
-Changes in v4:
-    - Since the test can take time, switch to wait_for_completion_timeout()
-      with HZ sleep interval to prevent triggering of the trace about hung
-      task;
-    - Fix clean apply for v4.20 kernel.
+Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+---
+ mm/vmalloc.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-Changes in v3:
-    - Export __vmalloc_node_range() with _GPL-only prefix;
-    - Add skip cases if the test can not be executed in current environment.
-      That is kselftest framework requirement.
-
-Changes in v2:
-    - Code cleanup to make it more simple;
-    - Now __vmalloc_node_range() is exported if CONFIG_TEST_VMALLOC_MODULE=m
-    - Integrate vmalloc test suite into tools/testing/selftests/vm
-
-I think it is ready to go with, unless there are more requests or comments.
-
-Thank you in advance.
-
-Uladzislau Rezki (Sony) (3):
-  vmalloc: export __vmalloc_node_range for CONFIG_TEST_VMALLOC_MODULE
-  vmalloc: add test driver to analyse vmalloc allocator
-  selftests/vm: add script helper for CONFIG_TEST_VMALLOC_MODULE
-
- lib/Kconfig.debug                          |  12 +
- lib/Makefile                               |   1 +
- lib/test_vmalloc.c                         | 548 +++++++++++++++++++++++++++++
- mm/vmalloc.c                               |   9 +
- tools/testing/selftests/vm/run_vmtests     |  16 +
- tools/testing/selftests/vm/test_vmalloc.sh | 176 +++++++++
- 6 files changed, 762 insertions(+)
- create mode 100644 lib/test_vmalloc.c
- create mode 100755 tools/testing/selftests/vm/test_vmalloc.sh
-
+diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+index 97d4b25d0373..1c512fff8a56 100644
+--- a/mm/vmalloc.c
++++ b/mm/vmalloc.c
+@@ -1768,6 +1768,15 @@ void *__vmalloc_node_range(unsigned long size, unsigned long align,
+ 	return NULL;
+ }
+ 
++/*
++ * This is only for performance analysis of vmalloc and stress purpose.
++ * It is required by vmalloc test module, therefore do not use it other
++ * than that.
++ */
++#ifdef CONFIG_TEST_VMALLOC_MODULE
++EXPORT_SYMBOL_GPL(__vmalloc_node_range);
++#endif
++
+ /**
+  *	__vmalloc_node  -  allocate virtually contiguous memory
+  *	@size:		allocation size
 -- 
 2.11.0
 
