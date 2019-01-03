@@ -7,45 +7,43 @@ X-Spam-Status: No, score=-12.0 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDC0EC43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 13:19:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB0F8C43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 13:20:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92FF521479
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 13:19:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 93B5A2070C
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 13:20:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731264AbfACNTh (ORCPT
+        id S1731282AbfACNUS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 08:19:37 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:51723 "EHLO
+        Thu, 3 Jan 2019 08:20:18 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:39875 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728573AbfACNTh (ORCPT
+        with ESMTP id S1727175AbfACNUS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 08:19:37 -0500
+        Thu, 3 Jan 2019 08:20:18 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x03DJS3S1384913
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x03DK5dA1385008
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 3 Jan 2019 05:19:28 -0800
+        Thu, 3 Jan 2019 05:20:05 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x03DJSdn1384910;
-        Thu, 3 Jan 2019 05:19:28 -0800
-Date:   Thu, 3 Jan 2019 05:19:28 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x03DK5JK1385004;
+        Thu, 3 Jan 2019 05:20:05 -0800
+Date:   Thu, 3 Jan 2019 05:20:05 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
-Message-ID: <tip-c4a75bb9488a9f7b3c7e79017609529d1aa5deab@git.kernel.org>
-Cc:     peterz@infradead.org, jolsa@kernel.org, tglx@linutronix.de,
-        acme@redhat.com, alexander.shishkin@linux.intel.com,
-        mingo@kernel.org, jmario@redhat.com, hpa@zytor.com,
-        namhyung@kernel.org, linux-kernel@vger.kernel.org
-Reply-To: peterz@infradead.org, jolsa@kernel.org, tglx@linutronix.de,
-          alexander.shishkin@linux.intel.com, acme@redhat.com,
-          mingo@kernel.org, jmario@redhat.com, hpa@zytor.com,
-          namhyung@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20181228101820.28010-2-jolsa@kernel.org>
-References: <20181228101820.28010-2-jolsa@kernel.org>
+Message-ID: <tip-f1770e3ca4ec10ce43825de2f855a1831c711195@git.kernel.org>
+Cc:     acme@redhat.com, jolsa@kernel.org, mingo@kernel.org,
+        len.brown@intel.com, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, herton@redhat.com, hpa@zytor.com
+Reply-To: hpa@zytor.com, linux-kernel@vger.kernel.org, herton@redhat.com,
+          tglx@linutronix.de, len.brown@intel.com, jolsa@kernel.org,
+          mingo@kernel.org, acme@redhat.com
+In-Reply-To: <20181212102537.25902-2-jolsa@kernel.org>
+References: <20181212102537.25902-2-jolsa@kernel.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf c2c: Increase the HITM ratio limit for
- displayed cachelines
-Git-Commit-ID: c4a75bb9488a9f7b3c7e79017609529d1aa5deab
+Subject: [tip:perf/urgent] tools power x86_energy_perf_policy: Override
+ CFLAGS assignments and add LDFLAGS to build command
+Git-Commit-ID: f1770e3ca4ec10ce43825de2f855a1831c711195
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -59,41 +57,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  c4a75bb9488a9f7b3c7e79017609529d1aa5deab
-Gitweb:     https://git.kernel.org/tip/c4a75bb9488a9f7b3c7e79017609529d1aa5deab
+Commit-ID:  f1770e3ca4ec10ce43825de2f855a1831c711195
+Gitweb:     https://git.kernel.org/tip/f1770e3ca4ec10ce43825de2f855a1831c711195
 Author:     Jiri Olsa <jolsa@kernel.org>
-AuthorDate: Fri, 28 Dec 2018 11:18:20 +0100
+AuthorDate: Fri, 12 Oct 2018 07:20:16 -0400
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Fri, 28 Dec 2018 16:33:07 -0300
 
-perf c2c: Increase the HITM ratio limit for displayed cachelines
+tools power x86_energy_perf_policy: Override CFLAGS assignments and add LDFLAGS to build command
 
-The cachelines being reported are the ones with percentages all the way
-down to 0.05%.  That makes for very long output files. Raising that to
-0.1%.  The user can always specify --show-all if they want all the
-cachelines with hits.
+So user could specify outside CFLAGS/LDFLAGS values.
 
-Suggested-by: Joe Mario <jmario@redhat.com>
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20181228101820.28010-2-jolsa@kernel.org
+Cc: Herton Krzesinski <herton@redhat.com>
+Cc: Len Brown <len.brown@intel.com>
+Link: https://lkml.kernel.org/r/20181212102537.25902-2-jolsa@kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-c2c.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/power/x86/x86_energy_perf_policy/Makefile | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/tools/perf/builtin-c2c.c b/tools/perf/builtin-c2c.c
-index 964f3f5ef420..d340d2e42776 100644
---- a/tools/perf/builtin-c2c.c
-+++ b/tools/perf/builtin-c2c.c
-@@ -1878,7 +1878,7 @@ static int c2c_hists__reinit(struct c2c_hists *c2c_hists,
- 	return hpp_list__parse(&c2c_hists->list, output, sort);
- }
+diff --git a/tools/power/x86/x86_energy_perf_policy/Makefile b/tools/power/x86/x86_energy_perf_policy/Makefile
+index f4534fb8b951..ae7a0e09b722 100644
+--- a/tools/power/x86/x86_energy_perf_policy/Makefile
++++ b/tools/power/x86/x86_energy_perf_policy/Makefile
+@@ -9,12 +9,12 @@ ifeq ("$(origin O)", "command line")
+ endif
  
--#define DISPLAY_LINE_LIMIT  0.0005
-+#define DISPLAY_LINE_LIMIT  0.001
+ x86_energy_perf_policy : x86_energy_perf_policy.c
+-CFLAGS +=	-Wall
+-CFLAGS +=	-DMSRHEADER='"../../../../arch/x86/include/asm/msr-index.h"'
++override CFLAGS +=	-Wall
++override CFLAGS +=	-DMSRHEADER='"../../../../arch/x86/include/asm/msr-index.h"'
  
- static bool he__display(struct hist_entry *he, struct c2c_stats *stats)
- {
+ %: %.c
+ 	@mkdir -p $(BUILD_OUTPUT)
+-	$(CC) $(CFLAGS) $< -o $(BUILD_OUTPUT)/$@
++	$(CC) $(CFLAGS) $< -o $(BUILD_OUTPUT)/$@ $(LDFLAGS)
+ 
+ .PHONY : clean
+ clean :
