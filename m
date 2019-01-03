@@ -2,97 +2,87 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A2C1C43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 12:43:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDAF2C43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 12:44:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F68A2070D
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 12:43:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 87EA92070D
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 12:44:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546519430;
-	bh=lansdoA9jFvFNRt/mnWPdEuWNekRSictCiQEJEQ7I6k=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=t8tzEC4+RFu5lxbxVIi0T6SKH/3Rs1TsfuTi4T2ce9yBhxw3QNSe/fESKQYb7rva+
-	 BWjCnb6WDw7w/yYKjG9IX8unvO+7zF/1A3zOrfxCIKcwLXqKME5bUpynAMdJGACalF
-	 PvZxTbJBf2FHlV449dIW0P8APIqPDcPkEUWm1PTI=
+	s=default; t=1546519488;
+	bh=FUmgK9raiCEkli8W4lOTS/z7Q7G/lBw57SxGp0klolQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=SJoiAHQh1be2iQOFK5M0oj95HMdFVPsWrFgCmQA8ljwWTYKxGBj78GfM1tyVB1pzw
+	 lH/sEECDYSy5D4ZixJb6MR+xV8XfSZXqJReF2oO6DuzaUVWQr6PucMY9oyAMdZKjsZ
+	 lbGEDjKXHueYiil0znsrYkQx2EWtbbICkjSL5sNY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731191AbfACMnq (ORCPT
+        id S1731261AbfACMoA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 07:43:46 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:42886 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730512AbfACMnq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 07:43:46 -0500
-Received: by mail-ot1-f68.google.com with SMTP id v23so29242984otk.9;
-        Thu, 03 Jan 2019 04:43:44 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xYSZcH3/WYQznPv18NCvqGGJcupQOOH7azjNyvKj1Lg=;
-        b=KosgccjCiD81BVi2drp09f9a68SK4EbpmNmZMCfBglEz6kW6GyUljqtwSDD+R1MDl3
-         OVz9NfYEMbBpKJJ2SP/GyP3BSxSU3ofyu2wL3zT1TVRsrzOg8kAhLRwj6CVQTZqxmjW/
-         LQCxt+HanV+mtiYu1YnPtCpAFGUAWiu2QY/th6z6mQKlIImNNBiQOGPGryNrLd60R68X
-         OpdWTHLQSiXtLZmghr253OC3El2e7EzKNj/iQDGEnR0T3A8uNJi2210nxgqWmqKl7E17
-         8flV/ItL7VDBtEDcF8/telJgbNGrwffxm6NpzfX4dTsxgSdGDIw4a0McdL2CtJgq/2Mu
-         SP1g==
-X-Gm-Message-State: AJcUukf38EYkMj14CS1sFil6PDOp0bAHP16zOL3nVjLPx09dA7wjRp8f
-        WfIuIbDGszCNuGBGLnlck+QZxXkQ4SL8L+RXcrE=
-X-Google-Smtp-Source: ALg8bN50MihDz+hz2zhcU8pGGnP9kifjpGFJTlYFVLX54NrqlMQYeEsbDVVVgibNIYVoneg1HoelH925mzRwemsC4XM=
-X-Received: by 2002:a9d:5e8c:: with SMTP id f12mr35066862otl.343.1546519424149;
- Thu, 03 Jan 2019 04:43:44 -0800 (PST)
+        Thu, 3 Jan 2019 07:44:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40356 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730459AbfACMn7 (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Thu, 3 Jan 2019 07:43:59 -0500
+Received: from quaco.ghostprotocols.net (unknown [187.65.17.133])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 82A7C2070D;
+        Thu,  3 Jan 2019 12:43:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1546519438;
+        bh=FUmgK9raiCEkli8W4lOTS/z7Q7G/lBw57SxGp0klolQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=EyOTOIC/tYDKMyCldhkIJRb+8a0NgaMhvtRaF1xcppQ+QPQSovSU5C2W/IOYPFBjz
+         KVpElW0fJrWZcsRceacKmhOTEaKbS2I2HUMKGx4yoZ8Egwo99lC1YvN5Le7LRlDoAu
+         tccX2QCU1j262Bu07naxYUOdkUxn8iDF9RrhUS30=
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 0F1FE40493; Thu,  3 Jan 2019 09:43:56 -0300 (-03)
+Date:   Thu, 3 Jan 2019 09:43:56 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     Jin Yao <yao.jin@linux.intel.com>, jolsa@kernel.org,
+        peterz@infradead.org, mingo@redhat.com,
+        alexander.shishkin@linux.intel.com, Linux-kernel@vger.kernel.org,
+        ak@linux.intel.com, kan.liang@intel.com, yao.jin@intel.com
+Subject: Re: [PATCH] perf stat: Fix endless wait for child process
+Message-ID: <20190103124356.GA32598@kernel.org>
+References: <1546501245-4512-1-git-send-email-yao.jin@linux.intel.com>
+ <20190103111205.GA26933@krava>
 MIME-Version: 1.0
-References: <20190102181038.4418-1-okaya@kernel.org> <20190102181038.4418-9-okaya@kernel.org>
- <20190103123352.GQ1846@sirena.org.uk>
-In-Reply-To: <20190103123352.GQ1846@sirena.org.uk>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 3 Jan 2019 13:43:32 +0100
-Message-ID: <CAJZ5v0gZk-ft7Z+oRx+wxeoD2gEuuN-k52C-QqJNXUORHOa2HQ@mail.gmail.com>
-Subject: Re: [PATCH v5 08/11] ASoC: Intel: atom: Make PCI dependency explicit
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Sinan Kaya <okaya@kernel.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        Jie Yang <yang.jie@linux.intel.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        "moderated list:INTEL ASoC DRIVERS" <alsa-devel@alsa-project.org>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190103111205.GA26933@krava>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 3, 2019 at 1:34 PM Mark Brown <broonie@kernel.org> wrote:
->
-> On Wed, Jan 02, 2019 at 06:10:35PM +0000, Sinan Kaya wrote:
->
-> > After 'commit 5d32a66541c4 ("PCI/ACPI: Allow ACPI to be built without
-> > CONFIG_PCI set")' dependencies on CONFIG_PCI that previously were
-> > satisfied implicitly through dependencies on CONFIG_ACPI have to be
-> > specified directly. This code relies on IOSF_MBI and IOSF_MBI depends
-> > on PCI. For this reason, add a direct dependency on CONFIG_PCI to the
-> > IOSF_MBI driver.
->
-> I still don't understand what's going on with dependencies here and
-> still don't have the cover letter or anything :( .  As far as I can tell
-> the above commit is in Linus' tree so I'd expect I can just apply it
-> directly
+Em Thu, Jan 03, 2019 at 12:12:05PM +0100, Jiri Olsa escreveu:
+> On Thu, Jan 03, 2019 at 03:40:45PM +0800, Jin Yao wrote:
+> > We hit a perf stat issue by using following script.
+> > 
+> >   #!/bin/bash
+> > 
+> >   sleep 1000 &
+> >   exec perf stat -a -e cycles -I1000 -- sleep 5
+> > 
+> > Since "perf stat" is launched by exec, so the "sleep 1000" would be
+> > the child process of "perf stat". The wait4() will not return because
+> > it's waiting for the child process "sleep 1000" to be end. So perf
+> > stat doesn't return even 5s passed.
+> > 
+> > This patch lets the perf stat return when the specified child process
+> > is end (in this case, specified child process is "sleep 5").
+> > 
+> > Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
+> 
+> Reviewed-by: Jiri Olsa <jolsa@kernel.org>
 
-Yes, you can.
+Thanks, tested and applied.
 
-> but you were saying that this needs to go via some other tree
-> so I'm a bit confused as to what's going on here.
-
-I guess Sinan wanted it to go in via the ACPI tree like 5d32a66541c4,
-but that of course isn't necessary.
-
-If you want to pick up anything from this series, please do.  I will
-pick up what's left. :-)
+- Arnaldo
