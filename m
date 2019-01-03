@@ -2,276 +2,121 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6F14C43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 01:55:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96FBBC43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 01:56:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 786A12073F
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 01:55:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5EE622073F
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 01:56:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="O+as1x8B"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726888AbfACBzl (ORCPT
+        id S1727118AbfACB4x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 20:55:41 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:52974 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726146AbfACBzl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 20:55:41 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id EBAAE2DACC3;
-        Thu,  3 Jan 2019 01:55:39 +0000 (UTC)
-Received: from redhat.com (ovpn-123-62.rdu2.redhat.com [10.10.123.62])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 24A825D9C9;
-        Thu,  3 Jan 2019 01:55:35 +0000 (UTC)
-Date:   Wed, 2 Jan 2019 20:55:33 -0500
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     John Hubbard <jhubbard@nvidia.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        John Hubbard <john.hubbard@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>, tom@talpey.com,
-        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
-        Christoph Hellwig <hch@infradead.org>,
-        Christopher Lameter <cl@linux.com>,
-        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Michal Hocko <mhocko@kernel.org>, mike.marciniszyn@intel.com,
-        rcampbell@nvidia.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
-Message-ID: <20190103015533.GA15619@redhat.com>
-References: <20181212150319.GA3432@redhat.com>
- <20181212214641.GB29416@dastard>
- <20181214154321.GF8896@quack2.suse.cz>
- <20181216215819.GC10644@dastard>
- <20181217181148.GA3341@redhat.com>
- <20181217183443.GO10600@bombadil.infradead.org>
- <20181218093017.GB18032@quack2.suse.cz>
- <9f43d124-2386-7bfd-d90b-4d0417f51ccd@nvidia.com>
- <20181219020723.GD4347@redhat.com>
- <20181219110856.GA18345@quack2.suse.cz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181219110856.GA18345@quack2.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Thu, 03 Jan 2019 01:55:40 +0000 (UTC)
+        Wed, 2 Jan 2019 20:56:53 -0500
+Received: from mail-oi1-f202.google.com ([209.85.167.202]:57033 "EHLO
+        mail-oi1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726167AbfACB4w (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Jan 2019 20:56:52 -0500
+Received: by mail-oi1-f202.google.com with SMTP id a62so22917135oii.23
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 17:56:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=1IEdvSxiiyqFy6UrKVLcrWtjX6CPPhzM2L/LFrcQXhk=;
+        b=O+as1x8BbL64S+CFz8r+7ZJq91aRp0KbfX1lcq5FkGxOGbsxhQ/zxsFmi1Vy0Kb5a/
+         pJTBwBiURN4IGInYblKKXGfNVjIv4kEhu+kWwCP2Jg244NAdsqt60xBSklLEp9SYFr4R
+         XdCHOT9vtQWN03lKDw0YI5Fz8Rf10w7b2rmdLTc9IMOaMxtwMZW9ckjBFAo5TAU8wt+X
+         4rysTKaL+ue20yJQZUSBvY1yRsWOLVyzNwde48PuQT/YG/Dhf4F0Sid4n+Pa7c5kYf1j
+         qqthVXOSIztPgmDX3ULfduwZkMJxp1KYbknVGEBC315bSoc+XPy4dsrTeU7FDQe82/P3
+         hW0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=1IEdvSxiiyqFy6UrKVLcrWtjX6CPPhzM2L/LFrcQXhk=;
+        b=s9OULA1kR7jmjvSEY2jYDXgmlcDbgbmppDkGw1G4SMGXwcFN5Y36LThepz3nDeEDkO
+         74SNyPHofzGa/UTC2IXtSTrU7WiQ4FuqHH7Zii050PqaXELxvWd2UUCU1OQoPPbgtEp3
+         E6nVaq9OFFAbazCFXuv+D7se3kYAvuaJM+ZPAXcTDM5l1adC/DCk4NlES4pwEP9H4dcP
+         uuApywz3WVsvd3UmeYfU7w4UjFf1EhS0dRcnCNKIEcooMV4q5nv7+e9vH3NuIGrGID+X
+         Uq9plC9O+Y8Ow3sS6v8KvTLr3K/ZhX/f4u8zdPepOY4wMk/mJs3p/wfmsM35GaEaXGAt
+         oSgg==
+X-Gm-Message-State: AJcUukcKqtAAVcAfbJ5sIfpfohlX4KIsxSJody5NrX8oTUkCayJMSUah
+        5Cmw+NxM4ROwPW8NAorpJ//T7mC3JRsutQ==
+X-Google-Smtp-Source: ALg8bN7jWozz13OWzQ+A70JtrRj6cJutBJTH/Gxv95lL+kAkhPL0oDZrRFq/MSfDf+Hs9Q3mRcp4KIw+BwcCqg==
+X-Received: by 2002:a9d:ba8:: with SMTP id 37mr34172518oth.31.1546480611663;
+ Wed, 02 Jan 2019 17:56:51 -0800 (PST)
+Date:   Wed,  2 Jan 2019 17:56:38 -0800
+Message-Id: <20190103015638.205424-1-shakeelb@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.20.1.415.g653613c723-goog
+Subject: [PATCH] memcg: schedule high reclaim for remote memcgs on high_work
+From:   Shakeel Butt <shakeelb@google.com>
+To:     Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-mm@kvack.org, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Shakeel Butt <shakeelb@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 19, 2018 at 12:08:56PM +0100, Jan Kara wrote:
-> On Tue 18-12-18 21:07:24, Jerome Glisse wrote:
-> > On Tue, Dec 18, 2018 at 03:29:34PM -0800, John Hubbard wrote:
-> > > OK, so let's take another look at Jerome's _mapcount idea all by itself (using
-> > > *only* the tracking pinned pages aspect), given that it is the lightest weight
-> > > solution for that.  
-> > > 
-> > > So as I understand it, this would use page->_mapcount to store both the real
-> > > mapcount, and the dma pinned count (simply added together), but only do so for
-> > > file-backed (non-anonymous) pages:
-> > > 
-> > > 
-> > > __get_user_pages()
-> > > {
-> > > 	...
-> > > 	get_page(page);
-> > > 
-> > > 	if (!PageAnon)
-> > > 		atomic_inc(page->_mapcount);
-> > > 	...
-> > > }
-> > > 
-> > > put_user_page(struct page *page)
-> > > {
-> > > 	...
-> > > 	if (!PageAnon)
-> > > 		atomic_dec(&page->_mapcount);
-> > > 
-> > > 	put_page(page);
-> > > 	...
-> > > }
-> > > 
-> > > ...and then in the various consumers of the DMA pinned count, we use page_mapped(page)
-> > > to see if any mapcount remains, and if so, we treat it as DMA pinned. Is that what you 
-> > > had in mind?
-> > 
-> > Mostly, with the extra two observations:
-> >     [1] We only need to know the pin count when a write back kicks in
-> >     [2] We need to protect GUP code with wait_for_write_back() in case
-> >         GUP is racing with a write back that might not the see the
-> >         elevated mapcount in time.
-> > 
-> > So for [2]
-> > 
-> > __get_user_pages()
-> > {
-> >     get_page(page);
-> > 
-> >     if (!PageAnon) {
-> >         atomic_inc(page->_mapcount);
-> > +       if (PageWriteback(page)) {
-> > +           // Assume we are racing and curent write back will not see
-> > +           // the elevated mapcount so wait for current write back and
-> > +           // force page fault
-> > +           wait_on_page_writeback(page);
-> > +           // force slow path that will fault again
-> > +       }
-> >     }
-> > }
-> 
-> This is not needed AFAICT. __get_user_pages() gets page reference (and it
-> should also increment page->_mapcount) under PTE lock. So at that point we
-> are sure we have writeable PTE nobody can change. So page_mkclean() has to
-> block on PTE lock to make PTE read-only and only after going through all
-> PTEs like this, it can check page->_mapcount. So the PTE lock provides
-> enough synchronization.
-> 
-> > For [1] only needing pin count during write back turns page_mkclean into
-> > the perfect spot to check for that so:
-> > 
-> > int page_mkclean(struct page *page)
-> > {
-> >     int cleaned = 0;
-> > +   int real_mapcount = 0;
-> >     struct address_space *mapping;
-> >     struct rmap_walk_control rwc = {
-> >         .arg = (void *)&cleaned,
-> >         .rmap_one = page_mkclean_one,
-> >         .invalid_vma = invalid_mkclean_vma,
-> > +       .mapcount = &real_mapcount,
-> >     };
-> > 
-> >     BUG_ON(!PageLocked(page));
-> > 
-> >     if (!page_mapped(page))
-> >         return 0;
-> > 
-> >     mapping = page_mapping(page);
-> >     if (!mapping)
-> >         return 0;
-> > 
-> >     // rmap_walk need to change to count mapping and return value
-> >     // in .mapcount easy one
-> >     rmap_walk(page, &rwc);
-> > 
-> >     // Big fat comment to explain what is going on
-> > +   if ((page_mapcount(page) - real_mapcount) > 0) {
-> > +       SetPageDMAPined(page);
-> > +   } else {
-> > +       ClearPageDMAPined(page);
-> > +   }
-> 
-> This is the detail I'm not sure about: Why cannot rmap_walk_file() race
-> with e.g. zap_pte_range() which decrements page->_mapcount and thus the
-> check we do in page_mkclean() is wrong?
-> 
+If a memcg is over high limit, memory reclaim is scheduled to run on
+return-to-userland. However it is assumed that the memcg is the current
+process's memcg. With remote memcg charging for kmem or swapping in a
+page charged to remote memcg, current process can trigger reclaim on
+remote memcg. So, schduling reclaim on return-to-userland for remote
+memcgs will ignore the high reclaim altogether. So, punt the high
+reclaim of remote memcgs to high_work.
 
-Ok so i found a solution for that. First GUP must wait for racing
-write back. If GUP see a valid write-able PTE and the page has
-write back flag set then it must back of as if the PTE was not
-valid to force fault. It is just a race with page_mkclean and we
-want ordering between the two. Note this is not strictly needed
-so we can relax that but i believe this ordering is better to do
-in GUP rather then having each single user of GUP test for this
-to avoid the race.
+Signed-off-by: Shakeel Butt <shakeelb@google.com>
+---
+ mm/memcontrol.c | 20 ++++++++++++--------
+ 1 file changed, 12 insertions(+), 8 deletions(-)
 
-GUP increase mapcount only after checking that it is not racing
-with writeback it also set a page flag (SetPageDMAPined(page)).
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index e9db1160ccbc..47439c84667a 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -2302,19 +2302,23 @@ static int try_charge(struct mem_cgroup *memcg, gfp_t gfp_mask,
+ 	 * reclaim on returning to userland.  We can perform reclaim here
+ 	 * if __GFP_RECLAIM but let's always punt for simplicity and so that
+ 	 * GFP_KERNEL can consistently be used during reclaim.  @memcg is
+-	 * not recorded as it most likely matches current's and won't
+-	 * change in the meantime.  As high limit is checked again before
+-	 * reclaim, the cost of mismatch is negligible.
++	 * not recorded as the return-to-userland high reclaim will only reclaim
++	 * from current's memcg (or its ancestor). For other memcgs we punt them
++	 * to work queue.
+ 	 */
+ 	do {
+ 		if (page_counter_read(&memcg->memory) > memcg->high) {
+-			/* Don't bother a random interrupted task */
+-			if (in_interrupt()) {
++			/*
++			 * Don't bother a random interrupted task or if the
++			 * memcg is not current's memcg's ancestor.
++			 */
++			if (in_interrupt() ||
++			    !mm_match_cgroup(current->mm, memcg)) {
+ 				schedule_work(&memcg->high_work);
+-				break;
++			} else {
++				current->memcg_nr_pages_over_high += batch;
++				set_notify_resume(current);
+ 			}
+-			current->memcg_nr_pages_over_high += batch;
+-			set_notify_resume(current);
+ 			break;
+ 		}
+ 	} while ((memcg = parent_mem_cgroup(memcg)));
+-- 
+2.20.1.415.g653613c723-goog
 
-When clearing a write-able pte we set a special entry inside the
-page table (might need a new special swap type for this) and change
-page_mkclean_one() to clear to 0 those special entry.
-
-
-Now page_mkclean:
-
-int page_mkclean(struct page *page)
-{
-    int cleaned = 0;
-+   int real_mapcount = 0;
-    struct address_space *mapping;
-    struct rmap_walk_control rwc = {
-        .arg = (void *)&cleaned,
-        .rmap_one = page_mkclean_one,
-        .invalid_vma = invalid_mkclean_vma,
-+       .mapcount = &real_mapcount,
-    };
-+   int mapcount1, mapcount2;
-
-    BUG_ON(!PageLocked(page));
-
-    if (!page_mapped(page))
-        return 0;
-
-    mapping = page_mapping(page);
-    if (!mapping)
-        return 0;
-
-+   mapcount1 = page_mapcount(page);
-
-    // rmap_walk need to change to count mapping and return value
-    // in .mapcount easy one
-    rmap_walk(page, &rwc);
-
-+   if (PageDMAPined(page)) {
-+       int rc2;
-+
-+       if (mapcount1 == real_count) {
-+           /* Page is no longer pin, no zap pte race */
-+           ClearPageDMAPined(page);
-+           goto out;
-+       }
-+       /* No new mapping of the page so mp1 < rc is illegal. */
-+       VM_BUG_ON(mapcount1 < real_count);
-+       /* Page might be pin. */
-+       mapcount2 = page_mapcount(page);
-+       if (mapcount2 > real_count) {
-+           /* Page is pin for sure. */
-+           goto out;
-+       }
-+       /* We had a race with zap pte we need to rewalk again. */
-+       rc2 = real_mapcount;
-+       real_mapcount = 0;
-+       rwc.rmap_one = page_pin_one;
-+       rmap_walk(page, &rwc);
-+       if (mapcount2 <= (real_count + rc2)) {
-+           /* Page is no longer pin */
-+           ClearPageDMAPined(page);
-+       }
-+       /* At this point the page pin flag reflect pin status of the page */
-+   }
-+
-+out:
-    ...
-}
-
-The page_pin_one() function count the number of special PTE entry so
-which match the count of pte that have been zapped since the first
-reverse map walk.
-
-So worst case a page that was pin by a GUP would need 2 reverse map
-walk during page_mkclean(). Moreover this is only needed if we race
-with something that clear pte. I believe this is an acceptable worst
-case. I will work on some RFC patchset next week (once i am down with
-email catch up).
-
-
-I do not think i made mistake here, i have been torturing my mind
-trying to think of any race scenario and i believe it holds to any
-racing zap and page_mkclean()
-
-Cheers,
-Jérôme
