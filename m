@@ -2,94 +2,229 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F311C43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 20:53:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DA17C43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 20:58:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26084217F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 20:53:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 04A1A2184B
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 20:58:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="J/1pEAYo"
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="OMBHAIB6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726731AbfACUxV (ORCPT
+        id S1726376AbfACU6Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 15:53:21 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:43655 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726003AbfACUxV (ORCPT
+        Thu, 3 Jan 2019 15:58:25 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:33486 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726009AbfACU6Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 15:53:21 -0500
-Received: by mail-lf1-f68.google.com with SMTP id u18so24062811lff.10
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 12:53:18 -0800 (PST)
+        Thu, 3 Jan 2019 15:58:25 -0500
+Received: by mail-pf1-f196.google.com with SMTP id c123so17225559pfb.0
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 12:58:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=mDNrvkxxd60+K6Wwm2FMQyhVxIavAJa512uq74mBQUA=;
-        b=J/1pEAYoYy9n0QcxVBradL1P4NBR4Jn93gvg2ZoKIsLfcKzQNhdGEdt+zIdkExkT4U
-         RZVoplZvjmjAGPwWdavkBNqpu/uKd8V/OAiQ9xuw9KgQGFT6MLJsAYFo7iFkup6ZZK8n
-         fa5kPQ/5SRAGEbEPGmtu7hxgWJdXxLNh+ffis=
+        d=broadcom.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=xj1FOSiudFmalrR2wY+7f+uAqQy/CjMmPlp0FFA3l0M=;
+        b=OMBHAIB6sKrg5Wh8YPS0s0BQxv9a0QXzMSOMibK/+V3kfALVC9ws1C9tCtjr7KaVqc
+         s1OyS5LYa7dPewCZjYfJQFlUVA0end2U83Aw5w3qQ7ecLZd5qPq+X+hmMk9pn0wfOmVo
+         Ej1rgeZFByXMhXylBs7C3GfXGbDb8hN0gI8UI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mDNrvkxxd60+K6Wwm2FMQyhVxIavAJa512uq74mBQUA=;
-        b=FffWk9dNGaoBICcEnzXfQG5ZFk0KvX+nsr3i2YxSCbvKv9MJlVLSfTQ4gbLKnmImPI
-         XTTYuugpnjlc9q5jEvVNOvyJqVWeImpNv7Rkxx+0HLzw6G8g0K77FO9z5uU5zMPcc36+
-         PUcTHYGCGQnWNWQdu290fkgOMwNzRT6Dhn+fLLk2nduFJP5DjQrbiRXjJMBjOSuJtOjy
-         E0DBpbP/bo1qjP4pK62n04LvHHxmV7EvhYxam5yL+5cjd5VUTkARu014F4KN+svl1kBp
-         KYqL34IT9FV7C0ngPyYPB0KfnYotttUl8C57X8m+ilrsXGFQYkHcU+y2O8nNP06Jc6e/
-         mVHQ==
-X-Gm-Message-State: AA+aEWY9u7SGm2dSntUrTjYgsJ7siH521ruIBE/XWe6Zt4QUPdaHZ0b8
-        8GlerSzTe18NL3Sa58ZlKtNLskHe+lA=
-X-Google-Smtp-Source: AFSGD/VkKYgh2QoubQIafcix+aCPBO7QihQ6/iMYgzg9PlHfYM2xHytsgjDVKMcjtxqMgQyi3XW3Wg==
-X-Received: by 2002:a19:f510:: with SMTP id j16mr23003204lfb.35.1546548797748;
-        Thu, 03 Jan 2019 12:53:17 -0800 (PST)
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com. [209.85.208.169])
-        by smtp.gmail.com with ESMTPSA id h203sm10886171lfe.44.2019.01.03.12.53.16
-        for <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=xj1FOSiudFmalrR2wY+7f+uAqQy/CjMmPlp0FFA3l0M=;
+        b=FrnsHbxRdyh/Hb5ow7z0x1lNvibIhI46GGrQMcPunwvFBcKEvhDoyfIu+4hjK7segs
+         EmnUBcidaZx8guXBE7FVy9bv7sSiYmKBFD0naXvwepDoMatP8LNRgQlvmbVZEvf0ozBD
+         OIJSIANttNQmVApdX3Nvj9AAuNmmHekXnOaa5X55hXQkQwJ33iUx7Ch3BbXal3pkRrrB
+         u8+fBtbt1VzykAfH4/sBrg86eL5R2Z7zA4XnAoR6nQFI8g1jyfi2t7LP8wcSgcwrgvqu
+         iwednH+UnaSHQgL7tURtse56o9uWI+5FEdO6vhX7su8HIfOb5ttg826JkOvSIwPqXTnP
+         JGdg==
+X-Gm-Message-State: AJcUukfCL+5G0P0Zf+B7812aJIhmvz7pYCBeXfVGRe0k3TR56sliFRbO
+        N7w+vY5XbE72yXqG8EohB7vCmw==
+X-Google-Smtp-Source: ALg8bN7Bdwai9QkfHzEJ+w6G963g9rSvoBDqxQkFmCytuBbKXHObFgrK3gp6sTnjTj/euhQVjL3Jzg==
+X-Received: by 2002:a63:1e56:: with SMTP id p22mr18300531pgm.126.1546549103506;
+        Thu, 03 Jan 2019 12:58:23 -0800 (PST)
+Received: from [10.136.8.252] ([192.19.228.250])
+        by smtp.gmail.com with ESMTPSA id g185sm77373916pfc.174.2019.01.03.12.58.20
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 03 Jan 2019 12:53:17 -0800 (PST)
-Received: by mail-lj1-f169.google.com with SMTP id s5-v6so30783335ljd.12
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 12:53:16 -0800 (PST)
-X-Received: by 2002:a2e:9c7:: with SMTP id 190-v6mr20707080ljj.120.1546548796500;
- Thu, 03 Jan 2019 12:53:16 -0800 (PST)
+        Thu, 03 Jan 2019 12:58:22 -0800 (PST)
+Subject: Re: [PATCH 1/6] PCI: iproc: Update iProc PCI binding for INTx support
+To:     Arnd Bergmann <arnd@arndb.de>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
+        linux-pci <linux-pci@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+References: <1527631130-20045-1-git-send-email-ray.jui@broadcom.com>
+ <1527631130-20045-2-git-send-email-ray.jui@broadcom.com>
+ <CAL_Jsq+ac6dmHKS6m0h5N3bv=VseKVL8XLU5K7j1Rn=mgFNLsA@mail.gmail.com>
+ <20180918134152.GA31440@e107981-ln.cambridge.arm.com>
+ <CAK8P3a3cWHK=DNCFn+p_NjSyXhoLQw07EVedVf5-UFdz4V4OPA@mail.gmail.com>
+ <20180925105027.GA29857@red-moon>
+ <CAK8P3a2nn9+8NEz8MqD_oVS9O+pb8L9ookVVkukDJXtNNRYk7g@mail.gmail.com>
+From:   Ray Jui <ray.jui@broadcom.com>
+Message-ID: <cdeb8270-0583-4ff9-4d34-94e467d05595@broadcom.com>
+Date:   Thu, 3 Jan 2019 12:58:18 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <02d3ecd37f9390e7b8a7be8ec0e1cafb7fdbed26.camel@netapp.com>
- <CAHk-=whZkaZn1UQLad6v9vmfx8+BB3m8cvT0wcKdtg=k=FDbGw@mail.gmail.com>
- <87bm4yl4th.fsf@notabene.neil.brown.name> <55e9d0eb47662f2d6c308eba8b9a84fbba978ac8.camel@hammerspace.com>
-In-Reply-To: <55e9d0eb47662f2d6c308eba8b9a84fbba978ac8.camel@hammerspace.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 3 Jan 2019 12:53:00 -0800
-X-Gmail-Original-Message-ID: <CAHk-=whVxZ54i9uhXkWoaP+K1y4wu0J5z7d_mZ=-Zcpi5UhZww@mail.gmail.com>
-Message-ID: <CAHk-=whVxZ54i9uhXkWoaP+K1y4wu0J5z7d_mZ=-Zcpi5UhZww@mail.gmail.com>
-Subject: Re: [GIT PULL] Please pull NFS client updates for 4.21
-To:     Trond Myklebust <trondmy@hammerspace.com>
-Cc:     "Anna.Schumaker@netapp.com" <Anna.Schumaker@netapp.com>,
-        "neilb@suse.com" <neilb@suse.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAK8P3a2nn9+8NEz8MqD_oVS9O+pb8L9ookVVkukDJXtNNRYk7g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 2, 2019 at 10:10 PM Trond Myklebust <trondmy@hammerspace.com> wrote:
->
-> The values being compared are in cred_fscmp() are all of type kuid_t or
-> kgid_t so that means they have already been mapped from the user
-> namespace into the kernel uid/gid space.
 
-Ok, "everything happens in init_ns" is I guess a very valid argument.
 
-It might be good to perhaps show that in the name (and maybe even a
-comment), but as long as it's only really used for nfs I guess it
-isn't a big deal.
+On 9/25/2018 3:55 AM, Arnd Bergmann wrote:
+> On Tue, Sep 25, 2018 at 12:49 PM Lorenzo Pieralisi
+> <lorenzo.pieralisi@arm.com> wrote:
+>>
+>> On Mon, Sep 24, 2018 at 10:53:13PM +0200, Arnd Bergmann wrote:
+>>> On Tue, Sep 18, 2018 at 3:42 PM Lorenzo Pieralisi
+>>> <lorenzo.pieralisi@arm.com> wrote:
+>>>>
+>>>> On Mon, Jun 04, 2018 at 09:17:49AM -0500, Rob Herring wrote:
+>>>>> +Arnd
+>>>>>
+>>>>> On Tue, May 29, 2018 at 4:58 PM, Ray Jui <ray.jui@broadcom.com> wrote:
+>>>>>> Update the iProc PCIe binding document for better modeling of the legacy
+>>>>>> interrupt (INTx) support
+>>>>>>
+>>>>>> Signed-off-by: Ray Jui <ray.jui@broadcom.com>
+>>>>>> ---
+>>>>>>  .../devicetree/bindings/pci/brcm,iproc-pcie.txt    | 31 +++++++++++++++++-----
+>>>>>>  1 file changed, 24 insertions(+), 7 deletions(-)
+>>>>>>
+>>>>>> diff --git a/Documentation/devicetree/bindings/pci/brcm,iproc-pcie.txt b/Documentation/devicetree/bindings/pci/brcm,iproc-pcie.txt
+>>>>>> index b8e48b4..7ea24dc 100644
+>>>>>> --- a/Documentation/devicetree/bindings/pci/brcm,iproc-pcie.txt
+>>>>>> +++ b/Documentation/devicetree/bindings/pci/brcm,iproc-pcie.txt
+>>>>>> @@ -13,9 +13,6 @@ controller, used in Stingray
+>>>>>>    PAXB-based root complex is used for external endpoint devices. PAXC-based
+>>>>>>  root complex is connected to emulated endpoint devices internal to the ASIC
+>>>>>>  - reg: base address and length of the PCIe controller I/O register space
+>>>>>> -- #interrupt-cells: set to <1>
+>>>>>> -- interrupt-map-mask and interrupt-map, standard PCI properties to define the
+>>>>>> -  mapping of the PCIe interface to interrupt numbers
+>>>>>>  - linux,pci-domain: PCI domain ID. Should be unique for each host controller
+>>>>>>  - bus-range: PCI bus numbers covered
+>>>>>>  - #address-cells: set to <3>
+>>>>>> @@ -41,6 +38,16 @@ Required:
+>>>>>>  - brcm,pcie-ob-axi-offset: The offset from the AXI address to the internal
+>>>>>>  address used by the iProc PCIe core (not the PCIe address)
+>>>>>>
+>>>>>> +Legacy interrupt (INTx) support (optional):
+>>>>>> +
+>>>>>> +Note INTx is for PAXB only.
+>>>>>> +
+>>>>>> +- interrupt-controller: claims itself as an interrupt controller for INTx
+>>>>>> +- #interrupt-cells: set to <1>
+>>>>>> +- interrupt-map-mask and interrupt-map, standard PCI properties to define
+>>>>>> +the mapping of the PCIe interface to interrupt numbers
+>>>>>> +- interrupts: interrupt line wired to the generic GIC for INTx support
+>>>>>> +
+>>>>>>  MSI support (optional):
+>>>>>>
+>>>>>>  For older platforms without MSI integrated in the GIC, iProc PCIe core provides
+>>>>>> @@ -77,9 +84,14 @@ Example:
+>>>>>>                 compatible = "brcm,iproc-pcie";
+>>>>>>                 reg = <0x18012000 0x1000>;
+>>>>>>
+>>>>>> +               interrupt-controller;
+>>>>>>                 #interrupt-cells = <1>;
+>>>>>> -               interrupt-map-mask = <0 0 0 0>;
+>>>>>> -               interrupt-map = <0 0 0 0 &gic GIC_SPI 100 IRQ_TYPE_NONE>;
+>>>>>> +               interrupt-map-mask = <0 0 0 7>;
+>>>>>> +               interrupt-map = <0 0 0 1 &pcie0 1>,
+>>>>>
+>>>>> Are you sure this works? The irq parsing code will ignore
+>>>>> interrupt-map if interrupt-controller is found. In other words, you
+>>>>> should have one or the other, but not both.
+>>>>>
+>>>>> Maybe it happens to work because "pcie0" is this node and your irq
+>>>>> numbers are the same.
+>>>>>
+>>>>> Arnd, any thoughts on this?
+>>>>
+>>>> To start with, I think the destination IRQ number is wrong, what the
+>>>> mappings actually do is mapping the PCI interrupt line (ie #INTA, #INTB,
+>>>> #INTC, #INTD) to input {0,1,2,3} of the PCI host bridge (pseudo)
+>>>> interrupt controller.
+>>>>
+>>>> I really want to clean this up since currently there are different
+>>>> DT bindings defining this in different ways which resulted in
+>>>> non-consistent kernel code.
+>>>>
+>>>> AFAICS, the Aardvark PCIe controller bindings define the mapping
+>>>> as I expect:
+>>>>
+>>>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/pci/aardvark-pci.txt?h=v4.19-rc4
+>>>>
+>>>> but I would like to get Rob and Arnd viewpoint on this so that
+>>>> we can close this topic once for all.
+>>>
+>>> It seems ambiguous at best, as Rob suggested it may only
+>>> work by accident. Since there is only one upstream interrupt,
+>>> could we simply list <GIC_SPI 100 IRQ_TYPE_NONE> as
+>>> the destination for any IntX?
+>>
+>> I think that would not be correct from an HW description standpoint
+>> since there is some logic in the host bridge that behaves as an
+>> interrupt controller (eg registers to ack/mask IRQs).
+>>
+>> AFAICS the aardvark (it is an example) bindings below should be correct,
+>> with an interrupt controller node within the PCI host bridge:
+>>
+>>         pcie0: pcie@d0070000 {
+>>                 compatible = "marvell,armada-3700-pcie";
+>>                 device_type = "pci";
+>>                 reg = <0 0xd0070000 0 0x20000>;
+>>                 #address-cells = <3>;
+>>                 #size-cells = <2>;
+>>                 bus-range = <0x00 0xff>;
+>>                 interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
+>>                 #interrupt-cells = <1>;
+>>                 msi-controller;
+>>                 msi-parent = <&pcie0>;
+>>                 ranges = <0x82000000 0 0xe8000000   0 0xe8000000 0 0x1000000 /* Port 0 MEM */
+>>                           0x81000000 0 0xe9000000   0 0xe9000000 0 0x10000>; /* Port 0 IO*/
+>>                 interrupt-map-mask = <0 0 0 7>;
+>>                 interrupt-map = <0 0 0 1 &pcie_intc 0>,
+>>                                 <0 0 0 2 &pcie_intc 1>,
+>>                                 <0 0 0 3 &pcie_intc 2>,
+>>                                 <0 0 0 4 &pcie_intc 3>;
+>>                 pcie_intc: interrupt-controller {
+>>                         interrupt-controller;
+>>                         #interrupt-cells = <1>;
+>>                 };
+>>         };
+>>
+>> Thoughts ?
+> 
+> Yes, I think that's better. We probably still need to move the
+> interrupts, msi-controller, msi-parent and interrupt-parent
+> properties into the child node.
 
-Thanks,
+Okay thanks for all the feedback. In my case, I think I just to need
+create a dummy 'intc' subnode under the pcie node and declare it as a
+(dummy) interrupt controller).
 
-             Linus
+I'll make the change in my next revision.
+
+> 
+>         Arnd
+> 
