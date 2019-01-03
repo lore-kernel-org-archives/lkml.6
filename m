@@ -2,143 +2,83 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 442CDC43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 22:57:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E860BC43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 22:58:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B39F21872
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 22:57:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B413821479
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 22:58:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546556290;
+	bh=3shS789VK2Mi5kUOfioYdVgHaYMEpjl7TptRxbDkTBc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=ufrMgYbnFVy3IuLyd1kMUEJ/1j60gvSQpDgNWB+skBO/pHkRvYnHRNVAXXo8MYEpp
+	 KxfP+JWOdPb5+ufiucYgs0yrxR7/0pvZUG2WQk/IQvs3eIYy5G3AKFH2DHWrhYIiLt
+	 DsKOsCMBBbtOlMf91BU5jrvMD46DIrOpg+YFKYRY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726289AbfACW5R (ORCPT
+        id S1726396AbfACW6J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 17:57:17 -0500
-Received: from outbound-smtp04.blacknight.com ([81.17.249.35]:58180 "EHLO
-        outbound-smtp04.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726234AbfACW5Q (ORCPT
+        Thu, 3 Jan 2019 17:58:09 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:52117 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726125AbfACW6J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 17:57:16 -0500
-Received: from mail.blacknight.com (pemlinmail01.blacknight.ie [81.17.254.10])
-        by outbound-smtp04.blacknight.com (Postfix) with ESMTPS id E9B8198A44
-        for <linux-kernel@vger.kernel.org>; Thu,  3 Jan 2019 22:57:13 +0000 (UTC)
-Received: (qmail 14609 invoked from network); 3 Jan 2019 22:57:13 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[37.228.229.96])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 3 Jan 2019 22:57:13 -0000
-Date:   Thu, 3 Jan 2019 22:57:12 +0000
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Qian Cai <cai@lca.pw>, Dmitry Vyukov <dvyukov@google.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        syzbot <syzbot+93d94a001cfbce9e60e1@syzkaller.appspotmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>, linux@dominikbrodowski.net,
-        Michal Hocko <mhocko@suse.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Subject: [PATCH] mm, page_alloc: Do not wake kswapd with zone lock held
-Message-ID: <20190103225712.GJ31517@techsingularity.net>
+        Thu, 3 Jan 2019 17:58:09 -0500
+Received: by mail-it1-f193.google.com with SMTP id w18so47596986ite.1;
+        Thu, 03 Jan 2019 14:58:08 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=/il+xr623PEYdFYItFXWIq2twAOe1+oGIS+GU5/qFhY=;
+        b=hnDzqNUJHJWOfAFQLkmddvX25KQwMOkUJcucfoTCiAFQBFixMfRPXFGKPdOquYNRxq
+         89LXz9OhQxIUTxm5fs/M5LS+Uy52w7edAhjclG9QSqL/RXKAh2PIf45NCrgPSaJn5Ose
+         pogrirQVkSs56dCKOWM+ZWdAdQZc6pgCoTCo0/v+1xGctgGeu3xCHRkOVAg3E9kLjmpX
+         7xGBZARowXvfMUVZOvo//8MIEUhwOh+vD2Qr5d4VrTHmP3pNvHTHamHKKbBdf7tx3wrE
+         YCWnCFOD2vQKDSwBsjanIiPJ7Ut1ErlAjO8GDJqSlo2YC8HOjFW0ovtW6TN87g+xD9Up
+         VrpQ==
+X-Gm-Message-State: AJcUukdzR7512FY+FoeHAKrxqBDAqelTHAxlWf+SVcec7L0TyohlGvWC
+        4NRLkLIZjb3jyA5eyYyrBQ==
+X-Google-Smtp-Source: AFSGD/VP+4MSWuOy/4QXTSpTYNaVPGffAQa3kEHvIj/ag3/aNrxhjQ/koGqBMC/aBmmQVtAvB9RyMg==
+X-Received: by 2002:a24:1490:: with SMTP id 138mr37808782itg.101.1546556288145;
+        Thu, 03 Jan 2019 14:58:08 -0800 (PST)
+Received: from localhost ([24.51.61.172])
+        by smtp.gmail.com with ESMTPSA id b73sm6658519itd.0.2019.01.03.14.58.07
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 03 Jan 2019 14:58:07 -0800 (PST)
+Date:   Thu, 3 Jan 2019 16:58:06 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Andreas Kemnade <andreas@kemnade.info>
+Cc:     jdelvare@suse.com, linux@roeck-us.net, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux-hwmon@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andreas Kemnade <andreas@kemnade.info>
+Subject: Re: [PATCH 2/2] devicetree: hwmon: Add bindings documentation for
+ HIH6130
+Message-ID: <20190103225806.GA15255@bogus>
+References: <20181227151349.29753-1-andreas@kemnade.info>
+ <20181227151349.29753-3-andreas@kemnade.info>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20181227151349.29753-3-andreas@kemnade.info>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot reported the following regression in the latest merge window
-and it was confirmed by Qian Cai that a similar bug was visible from a
-different context.
+On Thu, 27 Dec 2018 16:13:49 +0100, Andreas Kemnade wrote:
+> Add bindings documentation for HIH6130 driver.
+> 
+> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> ---
+>  Documentation/devicetree/bindings/hwmon/hih6130.txt | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/hwmon/hih6130.txt
+> 
 
-======================================================
-WARNING: possible circular locking dependency detected
-4.20.0+ #297 Not tainted
-------------------------------------------------------
-syz-executor0/8529 is trying to acquire lock:
-000000005e7fb829 (&pgdat->kswapd_wait){....}, at:
-__wake_up_common_lock+0x19e/0x330 kernel/sched/wait.c:120
-
-but task is already holding lock:
-000000009bb7bae0 (&(&zone->lock)->rlock){-.-.}, at: spin_lock
-include/linux/spinlock.h:329 [inline]
-000000009bb7bae0 (&(&zone->lock)->rlock){-.-.}, at: rmqueue_bulk
-mm/page_alloc.c:2548 [inline]
-000000009bb7bae0 (&(&zone->lock)->rlock){-.-.}, at: __rmqueue_pcplist
-mm/page_alloc.c:3021 [inline]
-000000009bb7bae0 (&(&zone->lock)->rlock){-.-.}, at: rmqueue_pcplist
-mm/page_alloc.c:3050 [inline]
-000000009bb7bae0 (&(&zone->lock)->rlock){-.-.}, at: rmqueue
-mm/page_alloc.c:3072 [inline]
-000000009bb7bae0 (&(&zone->lock)->rlock){-.-.}, at:
-get_page_from_freelist+0x1bae/0x52a0 mm/page_alloc.c:3491
-
-It appears to be a false positive in that the only way the lock
-ordering should be inverted is if kswapd is waking itself and the
-wakeup allocates debugging objects which should already be allocated
-if it's kswapd doing the waking. Nevertheless, the possibility exists
-and so it's best to avoid the problem.
-
-This patch flags a zone as needing a kswapd using the, surprisingly,
-unused zone flag field. The flag is read without the lock held to
-do the wakeup. It's possible that the flag setting context is not
-the same as the flag clearing context or for small races to occur.
-However, each race possibility is harmless and there is no visible
-degredation in fragmentation treatment.
-
-While zone->flag could have continued to be unused, there is potential
-for moving some existing fields into the flags field instead. Particularly
-read-mostly ones like zone->initialized and zone->contiguous.
-
-Reported-by: syzbot+93d94a001cfbce9e60e1@syzkaller.appspotmail.com
-Tested-by: Qian Cai <cai@lca.pw>
-Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
----
- include/linux/mmzone.h | 6 ++++++
- mm/page_alloc.c        | 8 +++++++-
- 2 files changed, 13 insertions(+), 1 deletion(-)
-
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index cc4a507d7ca4..842f9189537b 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -520,6 +520,12 @@ enum pgdat_flags {
- 	PGDAT_RECLAIM_LOCKED,		/* prevents concurrent reclaim */
- };
- 
-+enum zone_flags {
-+	ZONE_BOOSTED_WATERMARK,		/* zone recently boosted watermarks.
-+					 * Cleared when kswapd is woken.
-+					 */
-+};
-+
- static inline unsigned long zone_managed_pages(struct zone *zone)
- {
- 	return (unsigned long)atomic_long_read(&zone->managed_pages);
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index cde5dac6229a..d295c9bc01a8 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -2214,7 +2214,7 @@ static void steal_suitable_fallback(struct zone *zone, struct page *page,
- 	 */
- 	boost_watermark(zone);
- 	if (alloc_flags & ALLOC_KSWAPD)
--		wakeup_kswapd(zone, 0, 0, zone_idx(zone));
-+		set_bit(ZONE_BOOSTED_WATERMARK, &zone->flags);
- 
- 	/* We are not allowed to try stealing from the whole block */
- 	if (!whole_block)
-@@ -3102,6 +3102,12 @@ struct page *rmqueue(struct zone *preferred_zone,
- 	local_irq_restore(flags);
- 
- out:
-+	/* Separate test+clear to avoid unnecessary atomics */
-+	if (test_bit(ZONE_BOOSTED_WATERMARK, &zone->flags)) {
-+		clear_bit(ZONE_BOOSTED_WATERMARK, &zone->flags);
-+		wakeup_kswapd(zone, 0, 0, zone_idx(zone));
-+	}
-+
- 	VM_BUG_ON_PAGE(page && bad_range(zone, page), page);
- 	return page;
- 
+Reviewed-by: Rob Herring <robh@kernel.org>
