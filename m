@@ -2,579 +2,274 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8D5BC43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 23:08:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40AD3C43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 23:10:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88EE521871
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 23:08:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA2D921871
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 23:10:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="TW4JtqNz"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="YNK291+R"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726686AbfACXIg (ORCPT
+        id S1726773AbfACXKf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 18:08:36 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:40661 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725919AbfACXIg (ORCPT
+        Thu, 3 Jan 2019 18:10:35 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:34223 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726549AbfACXKe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 18:08:36 -0500
-Received: by mail-pl1-f194.google.com with SMTP id u18so16517452plq.7
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 15:08:35 -0800 (PST)
+        Thu, 3 Jan 2019 18:10:34 -0500
+Received: by mail-pg1-f195.google.com with SMTP id j10so16630172pga.1
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 15:10:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:content-transfer-encoding:subject:cc:to:in-reply-to
-         :from:user-agent:references:message-id:date;
-        bh=7UdCHbE859jwPfcwXHGD+QhI1MzB5DLi1gzzamVRw4s=;
-        b=TW4JtqNz84nNXPzgdvUQnTLmfJ6B6Ql1y+gF7j6twmnPjNiuNFwbS1gzGyLCHyXOzh
-         BOhNi+xdwBrQlQzAaLSfr88s9/zPpTjWKU5ny2zLKiXyBK//M6x4/tPPLMraYhlGhjWP
-         iITIMlpvXpycTpMXJNHXQqFNCLa51o2sB2tbQ=
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=bgPlSEX1NNlfds0XlPeP6KfkO5xHPBhjSe4RYyLZb2k=;
+        b=YNK291+Rb3VtbdQC5ujxx6Z6dPBtlJYgod0Kgn7D6/f3dKMYlZ14aEZg6ZeeO8ugy4
+         bY/FIpEdvtzX4yDPssElSogdgM1+wQZTK+9T/33Np6QjJ9IbPJZ9glpdyW8yfg1JKYmC
+         IO263aDrkiZ0zr5zh6exyJnhHALeBI8kVrE+M=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding:subject
-         :cc:to:in-reply-to:from:user-agent:references:message-id:date;
-        bh=7UdCHbE859jwPfcwXHGD+QhI1MzB5DLi1gzzamVRw4s=;
-        b=XG0WDdXSbCW2+oUBkbpQU1OxZ6SxrAXw5+X4AefLrsliI4SZ51VVf+k21n2SFZkc15
-         lPmm5F7tiZw1o0caVt4ChIH2riE0ztDzmcR7rRE2cHF4i8YjpGRoeYzn18H1h7CDZujw
-         3bL6v9/EsPYDJcKSslJmkP5CQx70fyJ5ug4h5WwGsQA50iTsy9h2CO57dRGwnsZWsdjT
-         QNTS3N+83IYQnhT4P5Xp1LdnB8mkJd0i0kbEx4sWiWUdrv+vKUUNW7YOwh9R8lfaMzse
-         Uuk6aEhRRZbsPgT6dwKzh1vGPVfNlvh8/x/R20homtoqY+aQFQ1F+LzHPKuXOoVqZkHV
-         nf7g==
-X-Gm-Message-State: AJcUukdMd+VwRGqzipDEHN5WvKROsw9GM/dI8BGXMliwWigZWcxNz50V
-        qwBn32ieMkg2/2pQCv847DROPA==
-X-Google-Smtp-Source: ALg8bN589W2xiR+UUwdV62VA5H+pBaYIS7eBvnaS1DBZ8kLIwy3zeoANfd3xgu+0Mc+YCFCb0uRX7A==
-X-Received: by 2002:a17:902:24e7:: with SMTP id l36mr48801036plg.61.1546556915272;
-        Thu, 03 Jan 2019 15:08:35 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id 125sm100811360pfd.124.2019.01.03.15.08.34
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=bgPlSEX1NNlfds0XlPeP6KfkO5xHPBhjSe4RYyLZb2k=;
+        b=nrj+e2ejN8zeci+KO+ZVTDDFHa6isYil1sIoSwtBdupi7A5qVEAaZdDWKbuoknmzHA
+         3+oRYT72rNM6yAZQ2SZWRGBzDN88o1YPHT8keitzx6aJt+1ePqWEnXEMXjV+WQ/JjXOf
+         OnCXZ1s6DjygGdLTNcqKHas08n1YkEo2S/5TYVcmNdk+7LbIokFS99nBlz7w4hwDW5rL
+         q+QvOiP/5HOyV4V7t3v8lC4UKT/iMT1pSpWo4f6REPW/6i5WYwuuxPV4uJWKTzgAcuUU
+         TcTHpclj/fMM/p7XV6HFJ0mbBpZIiRDkL2/j1e+8psHNEPUS0WrD8hiE1KX8/rXVpcCZ
+         8M7A==
+X-Gm-Message-State: AJcUukdWkXXV6jgcNhRpcZkURNM4jFnmrkFpozo/uE6Ej5ob0A/kbxMe
+        mmQJUazMzQB9VjB777SSumpSSw==
+X-Google-Smtp-Source: AFSGD/VzUsLYNRfhern4Ej+auXbABbEa4q9EtHebPz1Q3pUb53N6UNtYAEGf6a/jiKI2f5H5lgUezA==
+X-Received: by 2002:a62:c302:: with SMTP id v2mr50507921pfg.155.1546557033364;
+        Thu, 03 Jan 2019 15:10:33 -0800 (PST)
+Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id l184sm85622488pfc.112.2019.01.03.15.10.31
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 03 Jan 2019 15:08:34 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
+        Thu, 03 Jan 2019 15:10:32 -0800 (PST)
+Date:   Thu, 3 Jan 2019 15:09:28 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Sibi Sankar <sibis@codeaurora.org>
+Cc:     david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        andy.gross@linaro.org, briannorris@chromium.org,
+        akdwived@codeaurora.org, clew@codeaurora.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm-owner@vger.kernel.org,
+        ohad@wizery.com, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] remoteproc: qcom: Add support for parsing fw dt
+ bindings
+Message-ID: <20190103230928.GF31596@builder>
+References: <20181228044819.5697-1-sibis@codeaurora.org>
+ <20181228044819.5697-3-sibis@codeaurora.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [RFC RESEND PATCH 6/7] soc: mediatek: add MT8183 dvfsrc support
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Fan Chen <fan.chen@mediatek.com>,
-        Weiyi Lu <weiyi.lu@mediatek.com>,
-        James Liao <jamesjj.liao@mediatek.com>,
-        Kees Cook <keescook@chromium.org>, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Henry Chen <henryc.chen@mediatek.com>
-To:     Henry Chen <henryc.chen@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Viresh Kumar <vireshk@kernel.org>
-In-Reply-To: <1546438198-1677-7-git-send-email-henryc.chen@mediatek.com>
-From:   Stephen Boyd <swboyd@chromium.org>
-User-Agent: alot/0.8
-References: <1546438198-1677-1-git-send-email-henryc.chen@mediatek.com> <1546438198-1677-7-git-send-email-henryc.chen@mediatek.com>
-Message-ID: <154655691363.15366.15223653253336032554@swboyd.mtv.corp.google.com>
-Date:   Thu, 03 Jan 2019 15:08:33 -0800
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181228044819.5697-3-sibis@codeaurora.org>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Henry Chen (2019-01-02 06:09:57)
-> diff --git a/drivers/soc/mediatek/Kconfig b/drivers/soc/mediatek/Kconfig
-> index a7d0667..f956f03 100644
-> --- a/drivers/soc/mediatek/Kconfig
-> +++ b/drivers/soc/mediatek/Kconfig
-> @@ -12,6 +12,21 @@ config MTK_INFRACFG
->           INFRACFG controller contains various infrastructure registers n=
-ot
->           directly associated to any device.
-> =20
-> +config MTK_DVFSRC
-> +       bool "MediaTek DVFSRC Support"
-> +       depends on ARCH_MEDIATEK
-> +       default ARCH_MEDIATEK
-> +       select REGMAP
+On Thu 27 Dec 20:48 PST 2018, Sibi Sankar wrote:
 
-Why?
+> Add support for parsing "firmware-name" dt bindings which specifies
+> the relative paths of mba/modem/pas image as strings. Fallback to
+> the default paths for mba/modem/pas image on -EINVAL.
+> 
+> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
 
-> +       select MTK_INFRACFG
-> +       select PM_GENERIC_DOMAINS if PM
+Thanks Sibi, just some minor style issues I would prefer to have fixed.
 
-It doesn't depend on it?
+I picked patch 1, so no need to resend that.
 
-> +       depends on MTK_SCPSYS
-> +       help
-> +         Say yes here to add support for the MediaTek DVFSRC found
+> ---
+>  drivers/remoteproc/qcom_q6v5_mss.c | 46 +++++++++++++++++++++++-------
+>  drivers/remoteproc/qcom_q6v5_pas.c | 11 ++++++-
+>  2 files changed, 46 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
+> index 01be7314e176..c75179006e24 100644
+> --- a/drivers/remoteproc/qcom_q6v5_mss.c
+> +++ b/drivers/remoteproc/qcom_q6v5_mss.c
+> @@ -188,6 +188,7 @@ struct q6v5 {
+>  	bool has_alt_reset;
+>  	int mpss_perm;
+>  	int mba_perm;
+> +	const char *hexagon_mdt_image;
+>  	int version;
+>  };
+>  
+> @@ -860,17 +861,27 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+>  	phys_addr_t min_addr = PHYS_ADDR_MAX;
+>  	phys_addr_t max_addr = 0;
+>  	bool relocate = false;
+> -	char seg_name[10];
+> +	char *fw_name;
+> +	size_t fw_name_len;
+>  	ssize_t offset;
+>  	size_t size = 0;
+>  	void *ptr;
+>  	int ret;
+>  	int i;
+>  
+> -	ret = request_firmware(&fw, "modem.mdt", qproc->dev);
+> +	fw_name_len = strlen(qproc->hexagon_mdt_image);
+> +	if (fw_name_len <= 4)
+> +		return -EINVAL;
+> +
+> +	fw_name = kstrdup(qproc->hexagon_mdt_image, GFP_KERNEL);
+> +	if (!fw_name)
+> +		return -ENOMEM;
+> +
+> +	ret = request_firmware(&fw, qproc->hexagon_mdt_image, qproc->dev);
 
-Maybe you can spell out what the DVFSRC acronym means?
+Use fw_name here.
 
-> +         on different MediaTek SoCs. The DVFSRC is a proprietary
-> +         hardware which is used to collect all the requests from
-> +         system and turn into the decision of minimum Vcore voltage
-> +         and minimum DRAM frequency to fulfill those requests.
-> +
->  config MTK_PMIC_WRAP
->         tristate "MediaTek PMIC Wrapper Support"
->         depends on RESET_CONTROLLER
-> diff --git a/drivers/soc/mediatek/Makefile b/drivers/soc/mediatek/Makefile
-> index 9dc6670..5c010b9 100644
-> --- a/drivers/soc/mediatek/Makefile
-> +++ b/drivers/soc/mediatek/Makefile
-> @@ -1,3 +1,4 @@
-> +obj-$(CONFIG_MTK_DVFSRC) +=3D mtk-dvfsrc.o
->  obj-$(CONFIG_MTK_INFRACFG) +=3D mtk-infracfg.o mtk-scpsys-ext.o
->  obj-$(CONFIG_MTK_PMIC_WRAP) +=3D mtk-pmic-wrap.o
->  obj-$(CONFIG_MTK_SCPSYS) +=3D mtk-scpsys.o
-> diff --git a/drivers/soc/mediatek/mtk-dvfsrc.c b/drivers/soc/mediatek/mtk=
--dvfsrc.c
-> new file mode 100644
-> index 0000000..af462a3
-> --- /dev/null
-> +++ b/drivers/soc/mediatek/mtk-dvfsrc.c
-> @@ -0,0 +1,473 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) 2018 MediaTek Inc.
-> + */
-> +#include <linux/arm-smccc.h>
-> +#include <linux/clk.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/io.h>
-> +#include <linux/irq.h>
+>  	if (ret < 0) {
+> -		dev_err(qproc->dev, "unable to load modem.mdt\n");
+> -		return ret;
+> +		dev_err(qproc->dev, "unable to load %s\n",
+> +			qproc->hexagon_mdt_image);
+> +		goto out;
+>  	}
+>  
+>  	/* Initialize the RMB validator */
+> @@ -918,10 +929,12 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+>  		ptr = qproc->mpss_region + offset;
+>  
+>  		if (phdr->p_filesz) {
+> -			snprintf(seg_name, sizeof(seg_name), "modem.b%02d", i);
+> -			ret = request_firmware(&seg_fw, seg_name, qproc->dev);
+> +			snprintf(fw_name + fw_name_len - 3, fw_name_len,
+> +				 "b%02d", i);
+> +			ret = request_firmware(&seg_fw, fw_name, qproc->dev);
+>  			if (ret) {
+> -				dev_err(qproc->dev, "failed to load %s\n", seg_name);
+> +				dev_err(qproc->dev, "failed to load %s\n",
+> +					fw_name);
 
-Presumably both interrupt.h and irq.h aren't needed.
+Follow my lead and break the 80-char limit.
 
-> +#include <linux/delay.h>
-> +#include <linux/kthread.h>
-
-Is this used?
-
-> +#include <linux/module.h>
-> +#include <linux/notifier.h>
-> +#include <linux/of_device.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/pm_qos.h>
-> +#include <linux/slab.h>
-> +#include <linux/spinlock.h>
-
-Is this used?
-
-> +#include <soc/mediatek/mtk_sip.h>
-> +#include <dt-bindings/power/mt8183-power.h>
-> +#include <dt-bindings/soc/mtk,dvfsrc.h>
-> +#include "mtk-scpsys.h"
-> +
-> +#define DVFSRC_IDLE            0x00
-> +#define DVFSRC_GET_TARGET_LEVEL(x)     (((x) >> 0) & 0x0000ffff)
-> +#define DVFSRC_GET_CURRENT_LEVEL(x)    (((x) >> 16) & 0x0000ffff)
-> +
-> +/* macro for irq */
-> +#define DVFSRC_IRQ_TIMEOUT_EN          BIT(1)
-> +
-> +struct dvfsrc_opp {
-> +       int vcore_opp;
-> +       int dram_opp;
-> +};
-> +
-> +struct dvfsrc_domain {
-> +       int id;
-> +       int state;
-
-Does id or state need to be signed? Perhaps unsigned or u32 is better?
-
-> +};
-> +
-> +struct mtk_dvfsrc;
-> +struct dvfsrc_soc_data {
-> +       const int *regs;
-> +       int num_opp;
-> +       int num_domains;
-> +       int dram_sft;
-> +       int vcore_sft;
-> +       const struct dvfsrc_opp **opps;
-> +       struct dvfsrc_domain *domains;
-> +       void (*init_soc)(struct mtk_dvfsrc *dvfsrc);
-> +       int (*get_target_level)(struct mtk_dvfsrc *dvfsrc);
-> +       int (*get_current_level)(struct mtk_dvfsrc *dvfsrc);
-> +};
-> +
-> +struct mtk_dvfsrc {
-> +       struct device *dev;
-> +       struct clk *clk_dvfsrc;
-> +       const struct dvfsrc_soc_data *dvd;
-> +       int dram_type;
-> +       int irq;
-> +       void __iomem *regs;
-> +       struct mutex lock;      /* generic mutex for dvfsrc driver */
-
-That's not a very useful comment. Please make it useful or remove it.
-
-> +
-> +       struct notifier_block qos_notifier;
-> +       struct notifier_block scpsys_notifier;
-> +};
-> +
-> +static u32 dvfsrc_read(struct mtk_dvfsrc *dvfs, u32 offset)
-> +{
-> +       return readl(dvfs->regs + dvfs->dvd->regs[offset]);
-> +}
-> +
-> +static void dvfsrc_write(struct mtk_dvfsrc *dvfs, u32 offset, u32 val)
-> +{
-> +       writel(val, dvfs->regs + dvfs->dvd->regs[offset]);
-> +}
-> +
-[...]
-> +
-> +static bool dvfsrc_is_idle(struct mtk_dvfsrc *dvfsrc)
-> +{
-> +       int val =3D 0;
-> +
-> +       if (dvfsrc->dvd->get_target_level)
-> +               val =3D dvfsrc->dvd->get_target_level(dvfsrc);
-> +
-> +       return val =3D=3D DVFSRC_IDLE;
-> +}
-> +
-> +static int dvfsrc_wait_for_state(struct mtk_dvfsrc *dvfsrc,
-> +                                bool (*fp)(struct mtk_dvfsrc *))
-
-It's always dvfsrc_is_idle though, so why pass it as an argument?
-
-> +{
-> +       unsigned long timeout;
-> +
-> +       timeout =3D jiffies + usecs_to_jiffies(1000);
-> +
-> +       do {
-> +               if (fp(dvfsrc))
-> +                       return 0;
-> +       } while (!time_after(jiffies, timeout));
-> +
-> +       return -ETIMEDOUT;
-> +}
-> +
-> +static void mtk_dvfsrc_mt8183_init(struct mtk_dvfsrc *dvfsrc)
-> +{
-> +       struct arm_smccc_res res;
-> +
-> +       mutex_lock(&dvfsrc->lock);
-> +
-> +       arm_smccc_smc(MTK_SIP_SPM, MTK_SIP_SPM_DVFSRC_INIT, 0, 0, 0, 0, 0=
-, 0,
-> +                     &res);
-
-What if that fails?
-
-> +
-> +       dvfsrc_write(dvfsrc, DVFSRC_LEVEL_LABEL_0_1, 0x00100000);
-> +
-> +       dvfsrc_write(dvfsrc, DVFSRC_LEVEL_LABEL_2_3, 0x00210011);
-> +       dvfsrc_write(dvfsrc, DVFSRC_LEVEL_LABEL_4_5, 0x01100100);
-> +       dvfsrc_write(dvfsrc, DVFSRC_LEVEL_LABEL_6_7, 0x01210111);
-> +       dvfsrc_write(dvfsrc, DVFSRC_LEVEL_LABEL_8_9, 0x02100200);
-> +       dvfsrc_write(dvfsrc, DVFSRC_LEVEL_LABEL_10_11, 0x02210211);
-> +       dvfsrc_write(dvfsrc, DVFSRC_LEVEL_LABEL_12_13, 0x03210321);
-> +       dvfsrc_write(dvfsrc, DVFSRC_LEVEL_LABEL_14_15, 0x03210321);
-> +
-> +       /* EMI/VCORE HRT, MD2SPM, BW setting */
-> +       dvfsrc_write(dvfsrc, DVFSRC_EMI_QOS0, 0x32);
-> +       dvfsrc_write(dvfsrc, DVFSRC_EMI_QOS1, 0x66);
-> +       dvfsrc_write(dvfsrc, DVFSRC_EMI_MD2SPM0, 0x80F8);
-> +       dvfsrc_write(dvfsrc, DVFSRC_EMI_MD2SPM1, 0x0);
-> +       dvfsrc_write(dvfsrc, DVFSRC_VCORE_MD2SPM0, 0x80C0);
-> +
-> +       dvfsrc_write(dvfsrc, DVFSRC_RSRV_1, 0x0000001C);
-> +       dvfsrc_write(dvfsrc, DVFSRC_TIMEOUT_NEXTREQ, 0x00000013);
-> +       dvfsrc_write(dvfsrc, DVFSRC_INT_EN, 0x2);
-> +
-> +       dvfsrc_write(dvfsrc, DVFSRC_EMI_REQUEST, 0x00290209);
-> +       dvfsrc_write(dvfsrc, DVFSRC_EMI_REQUEST2, 0);
-> +
-> +       dvfsrc_write(dvfsrc, DVFSRC_VCORE_REQUEST, 0x00150000);
-> +
-> +       dvfsrc_write(dvfsrc, DVFSRC_QOS_EN, 0x0000407F);
-> +       dvfsrc_write(dvfsrc, DVFSRC_EMI_REQUEST3, 0x09000000);
-> +
-> +       dvfsrc_write(dvfsrc, DVFSRC_FORCE, 0x00400000);
-> +       dvfsrc_write(dvfsrc, DVFSRC_BASIC_CONTROL, 0x0000C07B);
-> +       dvfsrc_write(dvfsrc, DVFSRC_BASIC_CONTROL, 0x0000017B);
-> +
-> +       dvfsrc_write(dvfsrc, DVFSRC_VCORE_REQUEST,
-> +                    (dvfsrc_read(dvfsrc, DVFSRC_VCORE_REQUEST)
-> +                    & ~(0x3 << 20)));
-> +       dvfsrc_write(dvfsrc, DVFSRC_EMI_REQUEST,
-> +                    (dvfsrc_read(dvfsrc, DVFSRC_EMI_REQUEST)
-> +                    & ~(0x3 << 20)));
-
-Use some local variables so you don't read inside a write and make long
-lines.
-
-> +
-> +       mutex_unlock(&dvfsrc->lock);
-> +}
-> +
-> +static int mt8183_get_target_level(struct mtk_dvfsrc *dvfsrc)
-> +{
-> +       return DVFSRC_GET_TARGET_LEVEL(dvfsrc_read(dvfsrc, DVFSRC_LEVEL));
-> +}
-> +
-> +static int mt8183_get_current_level(struct mtk_dvfsrc *dvfsrc)
-> +{
-> +       return DVFSRC_GET_CURRENT_LEVEL(dvfsrc_read(dvfsrc, DVFSRC_LEVEL)=
-);
-> +}
-> +
-> +static int get_cur_performance_level(struct mtk_dvfsrc *dvfsrc)
-> +{
-> +       int bit =3D 0;
-> +
-> +       if (dvfsrc->dvd->get_current_level)
-> +               bit =3D dvfsrc->dvd->get_current_level(dvfsrc);
-> +
-> +       return ffs(bit);
-> +}
-> +
-> +static int pm_qos_memory_bw_notify(struct notifier_block *b,
-> +                                  unsigned long bw, void *v)
-> +{
-> +       struct mtk_dvfsrc *dvfsrc;
-> +
-> +       dvfsrc =3D container_of(b, struct mtk_dvfsrc, qos_notifier);
-> +       mutex_lock(&dvfsrc->lock);
-> +
-> +       dev_dbg(dvfsrc->dev, "data: 0x%lx\n", bw);
-> +       dvfsrc_write(dvfsrc, DVFSRC_SW_BW_0, bw / 100);
-> +
-> +       mutex_unlock(&dvfsrc->lock);
-> +
-> +       return NOTIFY_OK;
-> +}
-> +
-> +static int dvfsrc_set_performace(struct notifier_block *b,
-> +                                unsigned long l, void *v)
-> +{
-> +       int i, val, highest =3D 0, vcore_opp =3D 0, dram_opp =3D 0;
-> +       struct mtk_dvfsrc *dvfsrc;
-> +       struct scp_event_data *sc =3D v;
-> +       struct dvfsrc_domain *d;
-> +
-> +       if (sc->event_type !=3D MTK_SCPSYS_PSTATE)
-> +               return 0;
-> +
-> +       dvfsrc =3D container_of(b, struct mtk_dvfsrc, scpsys_notifier);
-> +
-> +       mutex_lock(&dvfsrc->lock);
-> +       d =3D dvfsrc->dvd->domains;
-> +
-> +       if (l > dvfsrc->dvd->num_opp || l <=3D 0) {
-
-How can l be < 0? It's unsigned.
-
-> +               dev_err(dvfsrc->dev, "pstate out of range =3D %ld\n", l);
-> +               goto out;
-> +       }
-> +
-> +       for (i =3D 0, highest =3D 0; i < dvfsrc->dvd->num_domains - 1; i+=
-+, d++) {
-> +               if (sc->domain_id =3D=3D d->id)
-> +                       d->state =3D l;
-> +               if (d->state > highest)
-> +                       highest =3D d->state;
-> +       }
-> +
-> +       if (highest =3D=3D 0) {
-> +               dev_err(dvfsrc->dev, "domain not match\n");
-> +               goto out;
-> +       }
-> +
-> +       /* translate pstate to dvfsrc level, and set it to DVFSRC HW */
-> +       vcore_opp =3D
-> +               dvfsrc->dvd->opps[dvfsrc->dram_type][highest - 1].vcore_o=
-pp;
-> +       dram_opp =3D dvfsrc->dvd->opps[dvfsrc->dram_type][highest - 1].dr=
-am_opp;
-
-Maybe make a local variable for
-
-	dvfsrc->dvd->opps[dvfsrc->dram_type][highest - 1]
-
-so you don't have to read that more than once.
-
-> +
-> +       if (dvfsrc_wait_for_state(dvfsrc, dvfsrc_is_idle)) {
-> +               dev_warn(dvfsrc->dev, "[%s] wait idle, last: %d -> %d\n",
-> +                        __func__, dvfsrc_read(dvfsrc, DVFSRC_LEVEL),
-> +               dvfsrc_read(dvfsrc, DVFSRC_LAST));
-> +               goto out;
-> +       }
-> +
-> +       dvfsrc_write(dvfsrc, DVFSRC_SW_REQ,
-> +                    dram_opp << dvfsrc->dvd->dram_sft |
-> +                    vcore_opp << dvfsrc->dvd->vcore_sft);
-> +
-> +       if (dvfsrc_wait_for_state(dvfsrc, dvfsrc_is_idle)) {
-> +               dev_warn(dvfsrc->dev, "[%s] wait idle, last: %d -> %d\n",
-> +                        __func__, dvfsrc_read(dvfsrc, DVFSRC_LEVEL),
-> +                        dvfsrc_read(dvfsrc, DVFSRC_LAST));
-> +               goto out;
-> +       }
-> +
-> +       val =3D get_cur_performance_level(dvfsrc);
-> +       if (val < highest) {
-> +               dev_err(dvfsrc->dev, "current: %d < hightest: %x\n",
-> +                       highest, val);
-> +       }
+>  				goto release_firmware;
+>  			}
+>  
+> @@ -960,6 +973,8 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+>  
+>  release_firmware:
+>  	release_firmware(fw);
 > +out:
-> +       mutex_unlock(&dvfsrc->lock);
+> +	kfree(fw_name);
+>  
+>  	return ret < 0 ? ret : 0;
+>  }
+> @@ -1075,9 +1090,10 @@ static int qcom_q6v5_register_dump_segments(struct rproc *rproc,
+>  	unsigned long i;
+>  	int ret;
+>  
+> -	ret = request_firmware(&fw, "modem.mdt", qproc->dev);
+> +	ret = request_firmware(&fw, qproc->hexagon_mdt_image, qproc->dev);
+>  	if (ret < 0) {
+> -		dev_err(qproc->dev, "unable to load modem.mdt\n");
+> +		dev_err(qproc->dev, "unable to load %s\n",
+> +			qproc->hexagon_mdt_image);
+>  		return ret;
+>  	}
+>  
+> @@ -1253,6 +1269,8 @@ static int q6v5_probe(struct platform_device *pdev)
+>  	const struct rproc_hexagon_res *desc;
+>  	struct q6v5 *qproc;
+>  	struct rproc *rproc;
+> +	const char *mba_image;
+> +	const char *fw_name[2];
+>  	int ret;
+>  
+>  	desc = of_device_get_match_data(&pdev->dev);
+> @@ -1262,8 +1280,15 @@ static int q6v5_probe(struct platform_device *pdev)
+>  	if (desc->need_mem_protection && !qcom_scm_is_available())
+>  		return -EPROBE_DEFER;
+>  
+> +	ret = of_property_read_string_array(pdev->dev.of_node, "firmware-name",
+> +					    fw_name, 2);
+> +	if (ret != -EINVAL && ret != 2)
+> +		return ret > 0 ? -EINVAL : ret;
 > +
-> +       return 0;
-> +}
-> +
-> +static void pstate_notifier_register(struct mtk_dvfsrc *dvfsrc)
-> +{
-> +       dvfsrc->scpsys_notifier.notifier_call =3D dvfsrc_set_performace;
-> +       register_scpsys_notifier(&dvfsrc->scpsys_notifier);
-> +}
-> +
-> +static void pm_qos_notifier_register(struct mtk_dvfsrc *dvfsrc)
-> +{
-> +       dvfsrc->qos_notifier.notifier_call =3D pm_qos_memory_bw_notify;
-> +       pm_qos_add_notifier(PM_QOS_MEMORY_BANDWIDTH, &dvfsrc->qos_notifie=
-r);
-> +}
-> +
-> +static irqreturn_t mtk_dvfsrc_interrupt(int irq, void *dev_id)
-> +{
-> +       u32 val;
-> +       struct mtk_dvfsrc *dvfsrc =3D dev_id;
-> +
-> +       val =3D dvfsrc_read(dvfsrc, DVFSRC_INT);
-> +       dvfsrc_write(dvfsrc, DVFSRC_INT_CLR, val);
-> +       dvfsrc_write(dvfsrc, DVFSRC_INT_CLR, 0x0);
-> +       if (val & DVFSRC_IRQ_TIMEOUT_EN)
-> +               dev_warn(dvfsrc->dev, "timeout at spm =3D %x", val);
-> +
+> +	mba_image = (ret != 2) ? desc->hexagon_mba_image : fw_name[0];
 
-Do you need to handle the irq at all? It looks like you are cleaning up
-something and then complaining if there's a timeout, but otherwise
-nothing goes on so perhaps the irq can just be ignored and nobody will
-be the wiser?
+Use the fact that of_property_read_string_index() leaves the output
+parameter untouched if it doesn't succeed in parsing the property.
 
-> +       return IRQ_HANDLED;
-> +}
-> +
-> +static int mtk_dvfsrc_probe(struct platform_device *pdev)
-> +{
-> +       struct resource *res;
-> +       struct mtk_dvfsrc *dvfsrc;
-> +       int ret;
-> +
-> +       dvfsrc =3D devm_kzalloc(&pdev->dev, sizeof(*dvfsrc), GFP_KERNEL);
-> +       if (!dvfsrc)
-> +               return -ENOMEM;
-> +
-> +       dvfsrc->dvd =3D of_device_get_match_data(&pdev->dev);
-> +       dvfsrc->dev =3D &pdev->dev;
-> +
-> +       res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +       dvfsrc->regs =3D devm_ioremap_resource(&pdev->dev, res);
-> +       if (IS_ERR(dvfsrc->regs))
-> +               return PTR_ERR(dvfsrc->regs);
-> +
-> +       dvfsrc->clk_dvfsrc =3D devm_clk_get(dvfsrc->dev, "dvfsrc");
-> +       if (IS_ERR(dvfsrc->clk_dvfsrc)) {
-> +               dev_err(dvfsrc->dev, "failed to get clock: %ld\n",
-> +                       PTR_ERR(dvfsrc->clk_dvfsrc));
-> +               return PTR_ERR(dvfsrc->clk_dvfsrc);
-> +       }
-> +
-> +       ret =3D clk_prepare_enable(dvfsrc->clk_dvfsrc);
-> +       if (ret)
-> +               return ret;
-> +
-> +       ret =3D of_property_read_u32(dvfsrc->dev->of_node, "dram_type",
-> +                                  &dvfsrc->dram_type);
-> +       if (ret) {
-> +               dev_err(dvfsrc->dev, "failed to get dram_type: %d\n", ret=
-);
-> +               clk_disable_unprepare(dvfsrc->clk_dvfsrc);
+I.e. do:
 
-Why do you need to enable the clk before reading a DT property? Do that
-first and then enable the clk so you don't have to unwind it here?
+mba_image = desc->hexagon_mba_image;
+ret = of_property_read_string_index(pdev->dev.of_node, "firmware-name",
+				    0, &mba_image);
+if (ret < 0 && ret != -EINVAL)
+	fail();
 
-> +               return ret;
-> +       }
-> +
-> +       dvfsrc->irq =3D platform_get_irq(pdev, 0);
-> +       ret =3D request_irq(dvfsrc->irq, mtk_dvfsrc_interrupt
-> +               , IRQF_TRIGGER_HIGH, "dvfsrc", dvfsrc);
+and
 
-Nitpick: This is oddly placed comma.
-
-> +       if (ret)
-> +               dev_dbg(dvfsrc->dev, "interrupt not use\n");
-> +
-> +       mutex_init(&dvfsrc->lock);
-> +       if (dvfsrc->dvd->init_soc)
-> +               dvfsrc->dvd->init_soc(dvfsrc);
-> +
-> +       pstate_notifier_register(dvfsrc);
-> +       pm_qos_notifier_register(dvfsrc);
-> +       platform_set_drvdata(pdev, dvfsrc);
-
-Probably should assign the platform data before anything can use it,
-including notifiers?
+qproc->hexagon_mdt_image = "modem.mdt";
+ret = of_property_read_string_index(pdev->dev.of_node, "firmware-name",
+				    1, &qproc->hexagon_mdt_image);
+if (ret < 0 && ret != -EINVAL)
+	fail();
 
 > +
-> +       return 0;
-> +}
+>  	rproc = rproc_alloc(&pdev->dev, pdev->name, &q6v5_ops,
+> -			    desc->hexagon_mba_image, sizeof(*qproc));
+> +			    mba_image, sizeof(*qproc));
+>  	if (!rproc) {
+>  		dev_err(&pdev->dev, "failed to allocate rproc\n");
+>  		return -ENOMEM;
+> @@ -1272,6 +1297,7 @@ static int q6v5_probe(struct platform_device *pdev)
+>  	qproc = (struct q6v5 *)rproc->priv;
+>  	qproc->dev = &pdev->dev;
+>  	qproc->rproc = rproc;
+> +	qproc->hexagon_mdt_image = (ret != 2) ? "modem.mdt" : fw_name[1];
+>  	platform_set_drvdata(pdev, qproc);
+>  
+>  	ret = q6v5_init_mem(qproc, pdev);
+> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+> index b1e63fcd5fdf..141c7da29e9a 100644
+> --- a/drivers/remoteproc/qcom_q6v5_pas.c
+> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
+> @@ -258,6 +258,8 @@ static int adsp_probe(struct platform_device *pdev)
+>  	const struct adsp_data *desc;
+>  	struct qcom_adsp *adsp;
+>  	struct rproc *rproc;
+> +	const char *fw_name;
+> +	const char *of_fw_name;
+>  	int ret;
+>  
+>  	desc = of_device_get_match_data(&pdev->dev);
+> @@ -267,8 +269,15 @@ static int adsp_probe(struct platform_device *pdev)
+>  	if (!qcom_scm_is_available())
+>  		return -EPROBE_DEFER;
+>  
+> +	ret = of_property_read_string(pdev->dev.of_node, "firmware-name",
+> +				      &of_fw_name);
+> +	if (ret && ret != -EINVAL)
+> +		return ret;
 > +
-> +static const struct dvfsrc_opp dvfsrc_opp_mt8183_lp4[] =3D {
-> +       {0, 0}, {1, 0}, {1, 1}, {1, 2},
-> +};
-> +
-> +static const struct dvfsrc_opp dvfsrc_opp_mt8183_1p3[] =3D {
-> +       {0, 0}, {0, 1}, {1, 1}, {1, 2},
-> +};
-> +
-> +static const struct dvfsrc_opp *dvfsrc_opp_mt8183[] =3D {
-> +       [MT8183_DVFSRC_OPP_LP4] =3D dvfsrc_opp_mt8183_lp4,
-> +       [MT8183_DVFSRC_OPP_LP4X] =3D dvfsrc_opp_mt8183_1p3,
-> +       [MT8183_DVFSRC_OPP_LP3] =3D dvfsrc_opp_mt8183_1p3,
-> +};
-> +
-> +static struct dvfsrc_domain dvfsrc_domains_mt8183[] =3D {
-> +       {MT8183_POWER_DOMAIN_MFG_ASYNC, 0},
+> +	fw_name = ret ? desc->firmware_name : of_fw_name;
 
-Nitpick: Put a space around { and }
+As above, please use the fact that the last parameter of
+of_property_read_string() doesn't modify the output if it fails.
 
-> +       {MT8183_POWER_DOMAIN_MFG, 0},
-> +       {MT8183_POWER_DOMAIN_CAM, 0},
-> +       {MT8183_POWER_DOMAIN_DISP, 0},
-> +       {MT8183_POWER_DOMAIN_ISP, 0},
-> +       {MT8183_POWER_DOMAIN_VDEC, 0},
-> +       {MT8183_POWER_DOMAIN_VENC, 0},
-> +};
 > +
-> +static const struct dvfsrc_soc_data mt8183_data =3D {
-> +       .opps =3D dvfsrc_opp_mt8183,
-> +       .num_opp =3D ARRAY_SIZE(dvfsrc_opp_mt8183_lp4),
-> +       .regs =3D mt8183_regs,
-> +       .domains =3D dvfsrc_domains_mt8183,
-> +       .num_domains =3D ARRAY_SIZE(dvfsrc_domains_mt8183),
-> +       .init_soc =3D mtk_dvfsrc_mt8183_init,
-> +       .get_target_level =3D mt8183_get_target_level,
-> +       .get_current_level =3D mt8183_get_current_level,
-> +       .dram_sft =3D 0,
-> +       .vcore_sft =3D 2,
-> +};
-> +
-> +static int mtk_dvfsrc_remove(struct platform_device *pdev)
-> +{
-> +       return 0;
-> +}
+>  	rproc = rproc_alloc(&pdev->dev, pdev->name, &adsp_ops,
+> -			    desc->firmware_name, sizeof(*adsp));
+> +			    fw_name, sizeof(*adsp));
+>  	if (!rproc) {
+>  		dev_err(&pdev->dev, "unable to allocate remoteproc\n");
+>  		return -ENOMEM;
 
-You can just leave it out if it does nothing.
-
+Regards,
+Bjorn
