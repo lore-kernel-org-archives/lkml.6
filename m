@@ -2,71 +2,85 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DATE_IN_FUTURE_06_12,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F003C43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 04:26:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC893C43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 04:27:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CFF320883
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 04:26:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7CBFC2073D
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 04:27:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729301AbfACE0t (ORCPT
+        id S1728655AbfACE1h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 23:26:49 -0500
-Received: from gate.crashing.org ([63.228.1.57]:47006 "EHLO gate.crashing.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726129AbfACE0t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 23:26:49 -0500
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id x034QTgZ013652;
-        Wed, 2 Jan 2019 22:26:31 -0600
-Message-ID: <a2aae05948a2c58f512e7393822e0768209069e2.camel@kernel.crashing.org>
-Subject: Re: [PATCH] fsi:fsi-sbefifo: Fix possible concurrency
- use-after-free bugs in sbefifo_user_release
-From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To:     David Howells <dhowells@redhat.com>,
-        Jia-Ju Bai <baijiaju1990@gmail.com>
-Cc:     joel@jms.id.au, eajames@linux.vnet.ibm.com, andrew@aj.id.au,
-        linux-kernel@vger.kernel.org
-Date:   Thu, 03 Jan 2019 15:26:28 +1100
-In-Reply-To: <fd0a4a0da544908204d8558895d469c6d87b6743.camel@kernel.crashing.org>
-References: <20181226135618.12784-1-baijiaju1990@gmail.com>
-         <26864.1546421693@warthog.procyon.org.uk>
-         <fd0a4a0da544908204d8558895d469c6d87b6743.camel@kernel.crashing.org>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.2 (3.30.2-2.fc29) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Wed, 2 Jan 2019 23:27:37 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:40590 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726129AbfACE1g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Jan 2019 23:27:36 -0500
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id CB3D4D42E5F6A;
+        Thu,  3 Jan 2019 12:27:33 +0800 (CST)
+Received: from huawei.com (10.175.104.208) by DGGEMS401-HUB.china.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server id 14.3.408.0; Thu, 3 Jan 2019
+ 12:27:24 +0800
+From:   liujian <liujian56@huawei.com>
+To:     <gregkh@linuxfoundation.org>
+CC:     <xiubli@redhat.com>, <liujian56@huawei.com>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v3] driver: uio: fix possible memory leak in uio_open
+Date:   Thu, 3 Jan 2019 22:28:22 +0800
+Message-ID: <1546525702-11264-1-git-send-email-liujian56@huawei.com>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.175.104.208]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-01-03 at 14:27 +1100, Benjamin Herrenschmidt wrote:
-> On Wed, 2019-01-02 at 09:34 +0000, David Howells wrote:
-> > Jia-Ju Bai <baijiaju1990@gmail.com> wrote:
-> > 
-> > > +	mutex_lock(&user->file_lock);
-> > >  	sbefifo_release_command(user);
-> > >  	free_page((unsigned long)user->cmd_page);
-> > > +	mutex_unlock(&user->file_lock);
-> > 
-> > It shouldn't be necessary to do the free_page() call inside the locked
-> > section.
-> 
-> True. However, I didn't realize read/write could be concurrent with
-> release so we have another problem.
-> 
-> I assume when release is called, no new read/write can be issued, I am
-> correct ? So all we have to protect against is a read/write that has
-> started prior to release being called, right ?
+Fixes: 57c5f4df0a5a ("uio: fix crash after the device is unregistered")
+Signed-off-by: liujian <liujian56@huawei.com>
+---
+v1->v2:
+rename the "err_infoopen" to "err_idev_info"
+v2->3:
+put the extra info after the "--"
 
-Hrm... looking briefly at the vfs, read/write are wrapped in
-fdget/fdput, so release shouldn't happen concurrently or am I missing
-something here ?
+ drivers/uio/uio.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-Cheers,
-Ben.
-
+diff --git a/drivers/uio/uio.c b/drivers/uio/uio.c
+index 5c10fc7..aab3520 100644
+--- a/drivers/uio/uio.c
++++ b/drivers/uio/uio.c
+@@ -496,18 +496,19 @@ static int uio_open(struct inode *inode, struct file *filep)
+ 	if (!idev->info) {
+ 		mutex_unlock(&idev->info_lock);
+ 		ret = -EINVAL;
+-		goto err_alloc_listener;
++		goto err_idev_info;
+ 	}
+ 
+ 	if (idev->info && idev->info->open)
+ 		ret = idev->info->open(idev->info, inode);
+ 	mutex_unlock(&idev->info_lock);
+ 	if (ret)
+-		goto err_infoopen;
++		goto err_idev_info;
+ 
+ 	return 0;
+ 
+-err_infoopen:
++err_idev_info:
++	filep->private_data = NULL;
+ 	kfree(listener);
+ 
+ err_alloc_listener:
+-- 
+2.7.4
 
