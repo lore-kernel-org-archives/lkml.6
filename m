@@ -2,118 +2,116 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8BC3C43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 13:10:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8252C43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 13:11:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 789B62070C
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 13:10:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 949D0217D9
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 13:11:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546521084;
+	bh=4j3MsaLKM866eRO56+lwzET+Zudxn5tiJ2gwONI5xxU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=ttUzffkHK6UZtPL/IPnDqvEx7yrxWfkWZKprX5Yynxjdr1JD7/mMce5k+LTTOOshN
+	 YUP7Kk1kzHyf85zGWxgj1ysmd2t04Mp8AvXTk4Ic6R7HztwfX+JcNCNhmQ+M1Sqz6W
+	 ar7ztNMyLvGGmzzYjfG7tbkTxOWp8J4J4JR+DVaE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730664AbfACNKw (ORCPT
+        id S1730789AbfACNLX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 08:10:52 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:58303 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729765AbfACNKv (ORCPT
+        Thu, 3 Jan 2019 08:11:23 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:36424 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730675AbfACNLX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 08:10:51 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x03DAfQ11383733
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 3 Jan 2019 05:10:41 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x03DAfYK1383730;
-        Thu, 3 Jan 2019 05:10:41 -0800
-Date:   Thu, 3 Jan 2019 05:10:41 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-nt49d6iqle80cw8f529ovaqi@git.kernel.org>
-Cc:     linux-kernel@vger.kernel.org, acme@redhat.com, hpa@zytor.com,
-        mingo@kernel.org, wangnan0@huawei.com, jolsa@kernel.org,
-        tglx@linutronix.de, adrian.hunter@intel.com, namhyung@kernel.org,
-        lclaudio@redhat.com
-Reply-To: acme@redhat.com, linux-kernel@vger.kernel.org, hpa@zytor.com,
-          jolsa@kernel.org, mingo@kernel.org, wangnan0@huawei.com,
-          tglx@linutronix.de, adrian.hunter@intel.com, lclaudio@redhat.com,
-          namhyung@kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf beauty mmap: PROT_WRITE should come before
- PROT_EXEC
-Git-Commit-ID: 5ce29d522e9b8cdc158329a8539bcd6206fc5bf4
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Thu, 3 Jan 2019 08:11:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=2eDQ4bVlRXsycjE1X7GXc2V755O1XKU4dZz7BmFpzFQ=; b=HyxSUxL4s0MPbKNA2zXoUDV+r
+        veeKbBiwt0yi6GoGczL0K9YF7Rf/AtrXLrRwquQ8hyVUaDn9//03f7mfWVeDNo66dQuL/TP+Y4Qwm
+        1MdbzBQV6vupMk/oCCk6YOZlQmESUePWRHuFjGzEu6eMq3WNH6tAgUs7Wm+U9Fk1TgayM=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=finisterre.ee.mobilebroadband)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gf2le-0005YZ-8R; Thu, 03 Jan 2019 13:10:34 +0000
+Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
+        id 3AB6D440080; Thu,  3 Jan 2019 13:10:33 +0000 (GMT)
+Date:   Thu, 3 Jan 2019 13:10:33 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Yizhuo <yzhai003@ucr.edu>
+Cc:     csong@cs.ucr.edu, zhiyunq@cs.ucr.edu,
+        Bard Liao <bardliao@realtek.com>,
+        Oder Chiou <oder_chiou@realtek.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] In function rt274_i2c_probe(), if the regmap_read fails.
+ The variable "val" could leave uninitialized but used in if statement.
+Message-ID: <20190103131033.GU1846@sirena.org.uk>
+References: <20190103023839.15314-1-yzhai003@ucr.edu>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="1YSLKY9nNiKnepPi"
 Content-Disposition: inline
+In-Reply-To: <20190103023839.15314-1-yzhai003@ucr.edu>
+X-Cookie: knowledge, n.:
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  5ce29d522e9b8cdc158329a8539bcd6206fc5bf4
-Gitweb:     https://git.kernel.org/tip/5ce29d522e9b8cdc158329a8539bcd6206fc5bf4
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Wed, 19 Dec 2018 10:10:51 -0300
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Fri, 21 Dec 2018 09:42:46 -0300
 
-perf beauty mmap: PROT_WRITE should come before PROT_EXEC
+--1YSLKY9nNiKnepPi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-To match strace output:
+On Wed, Jan 02, 2019 at 06:38:39PM -0800, Yizhuo wrote:
 
-  # cat mmap.c
-  #include <sys/mman.h>
+>  	int ret;
+> -	unsigned int val;
+> +	unsigned int val =3D ~0;
+> =20
 
-  int main(void)
-  {
-	  mmap(0, 4096, PROT_READ|PROT_WRITE|PROT_EXEC, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
-	  return 0;
-  }
-  # strace -e mmap ./mmap |& grep -v ^+++
-  mmap(NULL, 103484, PROT_READ, MAP_PRIVATE, 3, 0) = 0x7f5bae400000
-  mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f5bae3fe000
-  mmap(NULL, 3889792, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7f5bade40000
-  mmap(0x7f5bae1ec000, 24576, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x1ac000) = 0x7f5bae1ec000
-  mmap(0x7f5bae1f2000, 14976, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0x7f5bae1f2000
-  mmap(NULL, 4096, PROT_READ|PROT_WRITE|PROT_EXEC, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f5bae419000
-  # trace -e mmap ./mmap |& grep -v ^+++
-  mmap(NULL, 103484, PROT_READ, MAP_PRIVATE, 3, 0) = 0x7f6646c25000
-  mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS) = 0x7f6646c23000
-  mmap(NULL, 3889792, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7f6646665000
-  mmap(0x7f6646a11000, 24576, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x1ac000) = 0x7f6646a11000
-  mmap(0x7f6646a17000, 14976, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS) = 0x7f6646a17000
-  mmap(NULL, 4096, PROT_READ|PROT_WRITE|PROT_EXEC, MAP_PRIVATE|MAP_ANONYMOUS) = 0x7f6646c3e000
-  #
+This just shuts warnings up which may mask further problem, it is better
+to just leave it and fix the users.
 
-Reported-by: Namhyung Kim <namhyung@kernel.org>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-nt49d6iqle80cw8f529ovaqi@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/trace/beauty/mmap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> -	regmap_read(rt274->regmap,
+> +	ret =3D regmap_read(rt274->regmap,
+>  		RT274_GET_PARAM(AC_NODE_ROOT, AC_PAR_VENDOR_ID), &val);
+> -	if (val !=3D RT274_VENDOR_ID) {
+> +	if (ret || val !=3D RT274_VENDOR_ID) {
+>  		dev_err(&i2c->dev,
+>  			"Device with ID register %#x is not rt274\n", val);
+>  		return -ENODEV;
 
-diff --git a/tools/perf/trace/beauty/mmap.c b/tools/perf/trace/beauty/mmap.c
-index eb31089790e3..859a8a9db2c6 100644
---- a/tools/perf/trace/beauty/mmap.c
-+++ b/tools/perf/trace/beauty/mmap.c
-@@ -18,8 +18,8 @@ static size_t syscall_arg__scnprintf_mmap_prot(char *bf, size_t size,
- 	}
- 
- 	P_MMAP_PROT(READ);
--	P_MMAP_PROT(EXEC);
- 	P_MMAP_PROT(WRITE);
-+	P_MMAP_PROT(EXEC);
- 	P_MMAP_PROT(SEM);
- 	P_MMAP_PROT(GROWSDOWN);
- 	P_MMAP_PROT(GROWSUP);
+If the read returned an error we should pass back the error code we got
+=66rom it, not mask it with another error code.  This is especially true
+here where the error message would be very misleading if there's a
+problem with I/O.
+
+--1YSLKY9nNiKnepPi
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlwuCcgACgkQJNaLcl1U
+h9ATcQf/eBbwaS5qgEtEK51OPB3FNB6vrxxUk5HGFZqdFxZQVgcz3XNeMEDhcccS
+cKGpg1ksiEpLIog6GK6KmLkHrfiA8aWoHhkuDGxMnogfySqU9qA3V8LbQoBGAh56
+x3tnhky9Iuyj+Wcj0WKw00dsBlDxrorF3z9297WkFsopR3J7Sd7OHZjQFYopthin
+mhAuUkwTfP1QQDANxH3AciBZwA8CJQQ+XqB/ORavzZqWfi8znP9NnN+fdOuHzqWK
+qbzU2aLsWFiGzfOxFUjyJTWSr0UlgKTE8YpORTWNsSQhYTchJLnwAqStlaFW00VA
+Dczuw8DOS8aDFgHNENAmUUhiSv0KpQ==
+=D6U7
+-----END PGP SIGNATURE-----
+
+--1YSLKY9nNiKnepPi--
