@@ -2,153 +2,93 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 039BBC43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 09:54:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C97CC43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 09:54:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4F6F206BB
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 09:54:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D99C920815
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 09:54:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="USsG6LCu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730605AbfACJye (ORCPT
+        id S1730628AbfACJyv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 04:54:34 -0500
-Received: from mail-ua1-f67.google.com ([209.85.222.67]:38494 "EHLO
-        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728395AbfACJye (ORCPT
+        Thu, 3 Jan 2019 04:54:51 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:50922 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728395AbfACJyv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 04:54:34 -0500
-Received: by mail-ua1-f67.google.com with SMTP id p9so10756021uaa.5;
-        Thu, 03 Jan 2019 01:54:32 -0800 (PST)
+        Thu, 3 Jan 2019 04:54:51 -0500
+Received: by mail-it1-f195.google.com with SMTP id z7so44549922iti.0
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 01:54:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=from:references:in-reply-to:mime-version:thread-index:date
+         :message-id:subject:to:cc;
+        bh=WEqdKr8/L5aOSsQRzzaUeZuizRwrzbajRX/gzpiU8sw=;
+        b=USsG6LCu3cihaIo8iF+BHZq+z2MWr23j6aZbcMb5P6OX4b4LzWoAj5bwKKhGCJIEV4
+         mt8LYcDbkB3xUmai4udfX+V5iuDlc8jQ+69vcwbwQpvEhg5PTCoCpc96lmTCyT6Vqpyb
+         qSB0D4x9L2ggppGTcLYgKR500SgQ+XkKaU5Jg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=577VQS6j+fTTVv7jnDHtcmjgEzFTlkuBpYmnldnAxuw=;
-        b=j8/MuJ+ksT/MmkfWy9e84Q9IQe2PAUyoUR/Qatpxcahgd7RM3vl4UekgkkcNSVqVbJ
-         Sjv3HIPGoBj8T5STD6zHYYfZMJf426c9xmwAQKSg3TiTN9LxzcVluxWkozyyT28+ZocC
-         hbiwBprQqi/jx/aNX2vUJmbX6ak1DdTuemV/jtHxLxc36lEeqAosL9PR7c98fKMADhyR
-         kLjjQ0S2hhlewAecrHzSdgTeUr5x+Kmd/x29n4LhxzM2NX9cIDzfvG1OEPBltcx8aa5p
-         O+T5ktbuNK/maNGQc6445REk05TEC7QU7pKQnMnSgnKUsYXjEzgUf7zfra1mCrECRpDS
-         Y7YA==
-X-Gm-Message-State: AJcUukdZfWqqUTwplzVKUNM2QZ0vSM6I78u/YUFIG1pZh3dr/yCbOJQh
-        stpZRAdI6rEGoIKmAm/v2j7ORuLbuT9LSrUzEEw=
-X-Google-Smtp-Source: ALg8bN456ncdV7JtqPCWoSgqVRLHKhFLL0/sbX+FQOWWsou7LNwXjKV/ccwanfZFW/QeByL1i+CsO5bShXe6kHy16Oc=
-X-Received: by 2002:ab0:216:: with SMTP id 22mr17415887uas.28.1546509271890;
- Thu, 03 Jan 2019 01:54:31 -0800 (PST)
+        h=x-gm-message-state:from:references:in-reply-to:mime-version
+         :thread-index:date:message-id:subject:to:cc;
+        bh=WEqdKr8/L5aOSsQRzzaUeZuizRwrzbajRX/gzpiU8sw=;
+        b=Df9lylM9Ng6Z24mh2SH9FI3ICURdpW2wMXDRJupNfZ22nLPbVT85dnEVE+4poILT3y
+         Prjk1q3hMyrFBYoh0JKVqy4fOYPO8Vs24IgNlItdT6trZuly8LqkXvaBrfId/d+Um0hM
+         QMgegaoWoTRHC+++O8kUSEn6X+y5OisGbVc7fo/wnK5FBYB93owP8f8ibjKl+lxnOtyv
+         pTR0YwaBtrTYp8QIdgCkMM7Bi6zYR6oMeGp4DSkUbPUYe2z8R8EQwnRkm+3VlmeK/iPx
+         IjpMbDcxjkA5AkwkbCk9jm0vYyfSVwkztXezT2hgJRTRPbL7BTi1KhXa1FU4EIHM44DC
+         Z8pA==
+X-Gm-Message-State: AA+aEWYY6mUwJZ1Wrqz/Ag5ZCsOx/fTicIKC1oztPvH0xphxiPLDfp8f
+        LvcG40AjRL/k3mA8lbw74E/feQe00LmNmjIaEwPq+A==
+X-Google-Smtp-Source: ALg8bN5GTL3TYO1fVOBWDOUQqDhFqdkKdauRNmFGkXNPYOW2isjPmCLfmywBztxnwRyVC1aqfbjlZMxGTN32TI6i1oc=
+X-Received: by 2002:a24:f8c2:: with SMTP id a185mr24972546ith.145.1546509290252;
+ Thu, 03 Jan 2019 01:54:50 -0800 (PST)
+From:   Murali Krishna Policharla <murali.policharla@broadcom.com>
+References: <1546324934-17555-1-git-send-email-murali.policharla@broadcom.com>
+ <20190101083450.GA17613@lunn.ch> <30ecb54251911d28c50b61299b0f8d3d@mail.gmail.com>
+ <20190101232443.GA22737@lunn.ch> <b6ff97415cd415614393e35793972ccc@mail.gmail.com>
+ <20190102131657.GE22737@lunn.ch>
+In-Reply-To: <20190102131657.GE22737@lunn.ch>
 MIME-Version: 1.0
-References: <git-mailbomb-linux-master-a3a53b7603798fd875e2afbba7e2b9ba6b19c7c7@kernel.org>
-In-Reply-To: <git-mailbomb-linux-master-a3a53b7603798fd875e2afbba7e2b9ba6b19c7c7@kernel.org>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 3 Jan 2019 10:54:20 +0100
-Message-ID: <CAMuHMdUh3yjrs91976G_eB2DDtnsN4Vy3qj2LmtpTgZFdpyW7Q@mail.gmail.com>
-Subject: cifs large stack allocations
-To:     Paulo Alcantara <palcantara@suse.de>,
-        Steve French <sfrench@samba.org>
-Cc:     linux-cifs@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+X-Mailer: Microsoft Outlook 14.0
+Thread-Index: AQDi+mxIHKhl/yIiH43SW54sVYgmegFJi9UIATpxsa4CXZKPHQFMCl3oAiIRtJqnPh74gA==
+Date:   Thu, 3 Jan 2019 15:24:48 +0530
+Message-ID: <50f99989b763da1cd630e0abf3ed940a@mail.gmail.com>
+Subject: RE: [PATCH] net: core: Fix to store new mtu setting in netdevice.
+To:     Andrew Lunn <andrew@lunn.ch>
+Cc:     Heiner Kallweit <hkallweit1@gmail.com>, davem@davemloft.net,
+        amritha.nambiar@intel.com, ecree@solarflare.com,
+        ktkhai@virtuozzo.com, alexander.h.duyck@intel.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Paulo,
-
-On Wed, Jan 2, 2019 at 10:24 PM Linux Kernel Mailing List
-<linux-kernel@vger.kernel.org> wrote:
-> Commit:     a3a53b7603798fd875e2afbba7e2b9ba6b19c7c7
-> Parent:     23324407143dd923660378fd9b40b9a711972269
-> Refname:    refs/heads/master
-> Web:        https://git.kernel.org/torvalds/c/a3a53b7603798fd875e2afbba7e2b9ba6b19c7c7
-> Author:     Paulo Alcantara <palcantara@suse.de>
-> AuthorDate: Wed Nov 14 17:20:31 2018 -0200
-> Committer:  Steve French <stfrench@microsoft.com>
-> CommitDate: Fri Dec 28 10:13:11 2018 -0600
+> Hi Andrew/Heiner
 >
->     cifs: Add support for failover in smb2_reconnect()
->
->     After a successful failover in cifs_reconnect(), the smb2_reconnect()
->     function will make sure to reconnect every tcon to new target server.
->
->     For SMB2+.
->
->     Signed-off-by: Paulo Alcantara <palcantara@suse.de>
->     Signed-off-by: Aurelien Aptel <aaptel@suse.com>
->     Signed-off-by: Steve French <stfrench@microsoft.com>
+>                                        Thanks for the feedback. This
+patch
+> fixes a case where ndo_change_mtu function is provided but the callback
+> function is not storing mtu to netdevice structure.
 
-> --- a/fs/cifs/smb2pdu.c
-> +++ b/fs/cifs/smb2pdu.c
+> Hi Murali
 
-> @@ -152,6 +155,77 @@ out:
->         return;
->  }
->
-> +#ifdef CONFIG_CIFS_DFS_UPCALL
-> +static int __smb2_reconnect(const struct nls_table *nlsc,
-> +                           struct cifs_tcon *tcon)
-> +{
-> +       int rc;
-> +       struct dfs_cache_tgt_list tl;
-> +       struct dfs_cache_tgt_iterator *it = NULL;
-> +       char tree[MAX_TREE_SIZE + 1];
+> At the moment, any driver which implements ndo_change_mtu MUST set
+> ndev->mtu. It is a nice clean definition, easy for any driver write to
+> understand.
 
-warning: the frame size of 1316 bytes is larger than 1024 bytes
-[-Wframe-larger-than=]
+Hi Andrew
+                       Since drivers implementing ndo_change_mtu callback
+function are following this approach. Will go with the existing approach
+and modify the ndo_change_mtu callback function that I will be adding to
+store mtu to netdevice structure.
 
-MAX_TREE_SIZE = 1284
-
-On Wed, Jan 2, 2019 at 10:24 PM Linux Kernel Mailing List
-<linux-kernel@vger.kernel.org> wrote:
->
-> Commit:     08744015492fec5a30ab8e2779601ae2b1a5e431
-> Parent:     a3a53b7603798fd875e2afbba7e2b9ba6b19c7c7
-> Refname:    refs/heads/master
-> Web:        https://git.kernel.org/torvalds/c/08744015492fec5a30ab8e2779601ae2b1a5e431
-> Author:     Paulo Alcantara <palcantara@suse.de>
-> AuthorDate: Wed Nov 14 17:24:29 2018 -0200
-> Committer:  Steve French <stfrench@microsoft.com>
-> CommitDate: Fri Dec 28 10:13:11 2018 -0600
->
->     cifs: Add support for failover in cifs_reconnect_tcon()
->
->     After a successful failover, the cifs_reconnect_tcon() function will
->     make sure to reconnect every tcon to new target server.
->
->     Same as previous commit but for SMB1 codepath.
->
->     Signed-off-by: Paulo Alcantara <palcantara@suse.de>
->     Reviewed-by: Aurelien Aptel <aaptel@suse.com>
->     Signed-off-by: Steve French <stfrench@microsoft.com>
-
-> --- a/fs/cifs/cifssmb.c
-> +++ b/fs/cifs/cifssmb.c
-
-> @@ -118,6 +121,77 @@ cifs_mark_open_files_invalid(struct cifs_tcon *tcon)
->          */
->  }
->
-> +#ifdef CONFIG_CIFS_DFS_UPCALL
-> +static int __cifs_reconnect_tcon(const struct nls_table *nlsc,
-> +                                struct cifs_tcon *tcon)
-> +{
-> +       int rc;
-> +       struct dfs_cache_tgt_list tl;
-> +       struct dfs_cache_tgt_iterator *it = NULL;
-> +       char tree[MAX_TREE_SIZE + 1];
-
-warning: the frame size of 1316 bytes is larger than 1024 bytes
-[-Wframe-larger-than=]
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thanks
+Murali
