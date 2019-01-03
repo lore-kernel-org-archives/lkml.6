@@ -2,100 +2,113 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE503C43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 19:34:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B115DC43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 19:39:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32A1720675
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 19:34:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 746D6218D8
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 19:39:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dKeCskrg"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HPmc4QGX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727399AbfACTe2 (ORCPT
+        id S1727423AbfACTjp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 14:34:28 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:46666 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727264AbfACTe1 (ORCPT
+        Thu, 3 Jan 2019 14:39:45 -0500
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:34748 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727264AbfACTjo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 14:34:27 -0500
-Received: by mail-pl1-f193.google.com with SMTP id t13so16299444ply.13
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 11:34:27 -0800 (PST)
+        Thu, 3 Jan 2019 14:39:44 -0500
+Received: by mail-yw1-f66.google.com with SMTP id g75so13689673ywb.1
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 11:39:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=/rhSO4GaFBAsaZDukGcMw3ZBgE3dIWcCiR5XFvWF0B0=;
-        b=dKeCskrgznL9tYzicg808oKovT2QS7QYIt8C2LjnbK9SNK1Q6V8Lhlsx0t2T0mPpmu
-         JX85tDuGlimlhgCtbHmzdGXy9+S1yoY+BMyS7pjhFFesV3Gm0KmDAXcTR9MUGC4VwmSu
-         pHXbBekc9zCOkXJefBpLg5WYNIM3ptrH3B80ser4o/4SvGU1WasqWVSPDcqnnP1ZKBSk
-         976/wixB/XnP1Ee6OJBzRixtXPIrTd9SIlN7drO7/ZiZ7acNzbOK93lpMsXfmDjH1/Uk
-         Pbyt9JNZUeQ+1ZJuIZ/z0qMr4KDmhhIyj0/nPVO/m4qYqpdeglt+q5IYuByMdX95xMDt
-         3guA==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=eX3yXZ7poOrczyc60mCQA8UF8b3coP7tz1/VQkwG49c=;
+        b=HPmc4QGX1+/qrlWZ3bRk2xKlD5Chv1XTrejF0X/wwWdvr3QQFlCf55gl4MXAIPpm7T
+         YTGvQ/4bdZ20UbCGvXFTL3uA5i8uZSUGTN5DGII1iof3JhcBNvDGdZyFPD0yYEdcPQbu
+         g6HcdjthGETEYnnhjuBYUY9FNFYTznNI+mfN0wZX73NN1KxeryqPBCCVcF7R9ld+6wCq
+         N5BkzoFKwZB1k1u5HFZRwtz2SoKNnM66xLPR/9vlhWODsxJAyUbDpvX0Nq4rF/eLxD0T
+         UsyY2qqtXN+WV2tVLFU4twOe24iXlYwoPmnxd5IzH9AX8SQVmEDhNRLYDcg0M8v8PHHP
+         TSHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=/rhSO4GaFBAsaZDukGcMw3ZBgE3dIWcCiR5XFvWF0B0=;
-        b=suQKT47lX3OtY0pfZPiKytlVnDa+WUaYkKsLPckDRg29/DfaotpA8qE0CphVuTaCaa
-         gREeqS+4ZT8AslokBhvzUILe7bRBcStg1ecUFlA1tWWw1jbnZIqwKkQ6rXs9AH1Acx1N
-         2oNAv69UTZP1jDq78xrq6eveB3xWnF8RHcKEFC9Y3Sn0JZfo5CFlbVIjAUGDI1q4Pn9D
-         2/13rwYIGNzC7JWEHWRgV8AstrSY2PUkOkON4S3Mar8XzIknwVTpA+uGP1S4toUXV/8T
-         5LZbVmJP9Rut6rnHhhwJ/xskVPbyYsrbl34tKkp9cSjLRCBzNyyWk+Ha6Aq4nVUVwMte
-         l+Jw==
-X-Gm-Message-State: AJcUukd/4oD4ipVPJeL3ar+4yDyQmw7lGuWSVNXiWoXhPDDXsl+pKObB
-        BVnj68y/cB28WPqIn4QQC7g=
-X-Google-Smtp-Source: ALg8bN5gFA2C5VPQyBPXEv5j8wS+lPUMkCISJErOhhZUYe0T3pGA8CBtXN/j7/MVCBaF4mS/9YNTCw==
-X-Received: by 2002:a17:902:74cc:: with SMTP id f12mr48566926plt.134.1546544066815;
-        Thu, 03 Jan 2019 11:34:26 -0800 (PST)
-Received: from Ideapad-330S ([49.206.12.66])
-        by smtp.gmail.com with ESMTPSA id g28sm97585788pfd.100.2019.01.03.11.34.25
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 03 Jan 2019 11:34:26 -0800 (PST)
-Date:   Fri, 4 Jan 2019 01:04:21 +0530
-From:   b-ak <anur.bhargav@gmail.com>
-To:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ASoC: tlv320aic32x4: Kernel OOPS while entering DAPM
- standby mode
-Message-ID: <20190103193421.GB18413@Ideapad-330S>
-References: <20190102170633.GA9724@Ideapad-330S>
- <20190103124554.GS1846@sirena.org.uk>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=eX3yXZ7poOrczyc60mCQA8UF8b3coP7tz1/VQkwG49c=;
+        b=nkJmFpbRo4/cYTARE1SF7rsPqcRxaDOLa5oXpAbMN/IVK8zLcHUNIlyvNVTPXLJMpR
+         tw/z4figQdYyz7SjAMBa0kjIA9Og73YbogAWMGtDahMvR01RS2+O86E5M6DcG1pIS9/y
+         scCGx5nVwSa2vJlfx7Hym6iIAMLxjnaUDJnHGlm7WJvuicae2iyibSAtpusI1ASrmKr8
+         dQZpTr/I/9mFVfZyE6Jxv0SZ8Q6jLIhnvSnkh2Uihq+109uTl/nXI78qQhytJFJIzi2E
+         J8trisA388rhSFnAkLiQ/xU/tDHoeyh7b9u1UoQ4Ig0S5Gt7dsHXmG/8L1hv1wHuBf5Q
+         fB1A==
+X-Gm-Message-State: AA+aEWYvhPY1sit+p6K9tsGLGs23f4vuZzBMnYyl7gXc24NECLMP5cun
+        4RuYRxdsdh3zldQ56G5hhfDLMrr0q2k=
+X-Google-Smtp-Source: AFSGD/V1b5a2CbQ69ke2EeEjlvY9l6qNz+/7/aJIy6uWgK9ji416pWDt3d5wh+6oFrQ/UBh8DZufww==
+X-Received: by 2002:a81:4412:: with SMTP id r18mr48751153ywa.204.1546544382607;
+        Thu, 03 Jan 2019 11:39:42 -0800 (PST)
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com. [209.85.219.176])
+        by smtp.gmail.com with ESMTPSA id x4sm44941841ywj.80.2019.01.03.11.39.41
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 03 Jan 2019 11:39:41 -0800 (PST)
+Received: by mail-yb1-f176.google.com with SMTP id j10so10824007ybj.8
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 11:39:41 -0800 (PST)
+X-Received: by 2002:a25:b08b:: with SMTP id f11mr37222777ybj.236.1546544380862;
+ Thu, 03 Jan 2019 11:39:40 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190103124554.GS1846@sirena.org.uk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <000000000000513fb7057e8d7013@google.com>
+In-Reply-To: <000000000000513fb7057e8d7013@google.com>
+From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Date:   Thu, 3 Jan 2019 13:39:02 -0600
+X-Gmail-Original-Message-ID: <CA+FuTSfnaL3asZg6oDdwk2J741Cf9fbVxGrB_2jdXgOwvvk+tA@mail.gmail.com>
+Message-ID: <CA+FuTSfnaL3asZg6oDdwk2J741Cf9fbVxGrB_2jdXgOwvvk+tA@mail.gmail.com>
+Subject: Re: kernel panic: stack is corrupted in udp4_lib_lookup2
+To:     syzbot <syzbot+4ad25edc7a33e4ab91e0@syzkaller.appspotmail.com>
+Cc:     David Miller <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Network Development <netdev@vger.kernel.org>,
+        syzkaller-bugs@googlegroups.com,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, sbrivio@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 03, 2019 at 12:45:54PM +0000, Mark Brown wrote:
-> On Wed, Jan 02, 2019 at 10:36:33PM +0530, b-ak wrote:
-> > During the bootup of the kernel, as soon as the DAPM framework kicks in
-> > it pushes the codec into standy mode.
-> > 
-> > The existing TVL320AIC32x4 codec driver doesn't prepare the clock in
-> > the probe function.
-> > This leads to an OOPS when the DAPM tries to put it into standy by calling
-> > clk_disable_unprepare()
-> > 
-> > This patch fixes that problem.
-> 
-> This isn't the best way of fixing this because it makes it look like
-> there's a missing disable in the removal process.  What would be better
-> would be to do what other drivers do and check to see what state we're
-> transitioning from before we disable the clock in set_bias_level().  See
-> drivers like wm8903.c for examples.
+On Thu, Jan 3, 2019 at 7:07 AM syzbot
+<syzbot+4ad25edc7a33e4ab91e0@syzkaller.appspotmail.com> wrote:
+>
+> Hello,
+>
+> syzbot found the following crash on:
+>
+> HEAD commit:    195303136f19 Merge tag 'kconfig-v4.21-2' of git://git.kern..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=12245d8f400000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=5e7dc790609552d7
+> dashboard link: https://syzkaller.appspot.com/bug?extid=4ad25edc7a33e4ab91e0
+> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+>
+> Unfortunately, I don't have any reproducer for this crash yet.
+>
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+4ad25edc7a33e4ab91e0@syzkaller.appspotmail.com
+>
+> protocol 88fb is buggy, dev hsr_slave_1
+> protocol 88fb is buggy, dev hsr_slave_0
+> protocol 88fb is buggy, dev hsr_slave_1
+> FAT-fs (loop0): invalid media value (0x00)
+> FAT-fs (loop0): Can't find a valid FAT filesystem
+> Kernel panic - not syncing: stack-protector: Kernel stack is corrupted in:
 
-Hello Mark,
+This sounds similar to the stack corruption fixed recently in commit
+e7cc082455cb ("udp: Support for error handlers of tunnels ...").
 
-I will test the change and update the patch.
-
-Thanks,
-Bhargav
-
+That fix is for ipv4 gue_err(). ipv6 gue6_err() probably needs the same.
