@@ -2,67 +2,103 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECFC5C43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 10:26:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D975C43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 10:26:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BCAF520815
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 10:26:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 492A720815
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 10:26:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="G7QSqxF8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730921AbfACK0R (ORCPT
+        id S1730934AbfACK0f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 05:26:17 -0500
-Received: from mga09.intel.com ([134.134.136.24]:12320 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726618AbfACK0R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 05:26:17 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jan 2019 02:26:16 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,434,1539673200"; 
-   d="scan'208";a="122992002"
-Received: from unknown (HELO [10.239.13.114]) ([10.239.13.114])
-  by FMSMGA003.fm.intel.com with ESMTP; 03 Jan 2019 02:26:15 -0800
-Message-ID: <5C2DE48D.4090105@intel.com>
-Date:   Thu, 03 Jan 2019 18:31:41 +0800
-From:   Wei Wang <wei.w.wang@intel.com>
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Thunderbird/31.7.0
+        Thu, 3 Jan 2019 05:26:35 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:32899 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726618AbfACK0e (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Jan 2019 05:26:34 -0500
+Received: by mail-lf1-f67.google.com with SMTP id i26so22868470lfc.0
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 02:26:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=lCkmiAP8S9ZZbT+z0TEDeb0o/vMWXpH9gtHQdazv0rU=;
+        b=G7QSqxF8SqHHMPGUtd/z7WfsCVzoDqmtFXT9FFGqTYsKNautb68on7RtQQ5/1TOGKG
+         2MZB5lrt5MruasVZYAuc4yQZmBBvoOEsYw7iueDTwIumea+JIXmWM0ZgiQ0mCjdJORKA
+         DpGwD9eGKkH9pxyY1Q5DzH4AZf9BhwLYW6Gm0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=lCkmiAP8S9ZZbT+z0TEDeb0o/vMWXpH9gtHQdazv0rU=;
+        b=KczBDU1jLG9vtNb9OkjX3VLcZxEi0lgsWhB2nFjGwIqdxwQd2XZ47RywgjTCZGeB5C
+         90xYpWYxENvxdCOXsmmFdcR5iLL5j/V/kBqyyVCC4PrFt/J7MaX7xskw75xjEp30qrCJ
+         JeiaYzzwpMwiBH7KG6t2D/bLYwYKHYFo5FHpDULpkJ1NlK/b9PPBBRBP4500kE19YWpr
+         QHgGE2e4/SeXW90scK1oqY/UkN5i4a4w8oCKCg6xnxbpa2HbkEIelLaio1JisWH4QN3C
+         cwu1ZHkn/RjcQc2rthZ8waG4SsOSJOZlZRIENxg9KFIlrhedWSV0KLERoEwKyllavCp0
+         uhqA==
+X-Gm-Message-State: AA+aEWZXLGaHiJJS1iJ7S04yMAkCKp2OOvRJT+lqnAOpvhq0H0370sVn
+        4pt2KvRHwfUN5+BFO0rlZGGJng==
+X-Google-Smtp-Source: AFSGD/XsFefdqT/onE5fDpCzeMRCfT+1/LCB3vEWYLSsUYFnAP5bdWiLxzEUIPAHI/dbGwSbG/gctw==
+X-Received: by 2002:a19:9904:: with SMTP id b4mr22249540lfe.95.1546511191435;
+        Thu, 03 Jan 2019 02:26:31 -0800 (PST)
+Received: from linux.local (c-ae7b71d5.014-348-6c756e10.bbcust.telenor.se. [213.113.123.174])
+        by smtp.gmail.com with ESMTPSA id e5-v6sm11571859ljj.91.2019.01.03.02.26.30
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 03 Jan 2019 02:26:30 -0800 (PST)
+From:   Linus Walleij <linus.walleij@linaro.org>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Richard Fitzgerald <rf@opensource.cirrus.com>
+Subject: [PATCH] irqchip: madera: Drop GPIO includes
+Date:   Thu,  3 Jan 2019 11:26:23 +0100
+Message-Id: <20190103102623.29685-1-linus.walleij@linaro.org>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-To:     Cornelia Huck <cohuck@redhat.com>
-CC:     virtio-dev@lists.oasis-open.org, linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
-        mst@redhat.com, borntraeger@de.ibm.com, pbonzini@redhat.com,
-        dgilbert@redhat.com, pasic@linux.ibm.com
-Subject: Re: [PATCH v1 1/2] virtio-balloon: tweak config_changed implementation
-References: <1546493462-32244-1-git-send-email-wei.w.wang@intel.com>        <1546493462-32244-2-git-send-email-wei.w.wang@intel.com> <20190103104018.33eeaa29.cohuck@redhat.com>
-In-Reply-To: <20190103104018.33eeaa29.cohuck@redhat.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/03/2019 05:40 PM, Cornelia Huck wrote:
-> On Thu,  3 Jan 2019 13:31:01 +0800
-> Wei Wang <wei.w.wang@intel.com> wrote:
->
->> virtio-ccw has deadlock issues with reading config registers inside the
-> s/config registers/the config space/ ?
+This irqchip does not use anything GPIO-related so drop
+the GPIO includes.
 
-Sounds good.
+Cc: Richard Fitzgerald <rf@opensource.cirrus.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/irqchip/irq-madera.c | 2 --
+ 1 file changed, 2 deletions(-)
 
->
->> interrupt context, so we tweak the virtballoon_changed implementation
->> by moving the config read operations into the related workqueue contexts.
-> Also credit Christian with a Reported-by:?
+diff --git a/drivers/irqchip/irq-madera.c b/drivers/irqchip/irq-madera.c
+index e9256dee1a45..8b81271c823c 100644
+--- a/drivers/irqchip/irq-madera.c
++++ b/drivers/irqchip/irq-madera.c
+@@ -7,7 +7,6 @@
+  */
+ 
+ #include <linux/module.h>
+-#include <linux/gpio.h>
+ #include <linux/interrupt.h>
+ #include <linux/irq.h>
+ #include <linux/irqdomain.h>
+@@ -16,7 +15,6 @@
+ #include <linux/slab.h>
+ #include <linux/of.h>
+ #include <linux/of_device.h>
+-#include <linux/of_gpio.h>
+ #include <linux/of_irq.h>
+ #include <linux/irqchip/irq-madera.h>
+ #include <linux/mfd/madera/core.h>
+-- 
+2.19.2
 
-Yes, definitely. Sorry for missing that.
-
-Best,
-Wei
