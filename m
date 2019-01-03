@@ -2,120 +2,164 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2613C43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 18:46:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43A80C43444
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 18:46:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BCFBD21874
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 18:46:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546541169;
-	bh=feEzb5DmN/tcbVN7HizVbAa2zKmf011KYyDHrWocAPY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=vi1+yu+AVksEM0NO/sFYVbv5hHrmxXgLeB2wVP9pw3qUIWN5egBjCRQ2M7YnBMQ8r
-	 sXYpZ3K1wMQ4xfLzRfiPaJaQzg+uRiJB5aSiwZcN9j5Xgda9zMnMSBjJBsTbpAENxw
-	 GmTU64VrcfFUf0PctIZ/ejA4htaFJNuAlsK3Wz7E=
+	by mail.kernel.org (Postfix) with ESMTP id 08613217F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 18:46:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GoUxsewU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726418AbfACSqJ (ORCPT
+        id S1726460AbfACSqd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 13:46:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38782 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726332AbfACSqI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 13:46:08 -0500
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 714AF2184B;
-        Thu,  3 Jan 2019 18:46:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546541167;
-        bh=feEzb5DmN/tcbVN7HizVbAa2zKmf011KYyDHrWocAPY=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=DcKWQg92TvgrrnqKTYo9AlDequCxuKMlLuLItgL7ixQ/FLd62HxyfdTVOnW13nQwZ
-         dgyL8VI0WdZSFLQcKoU8guNMxWaTzbavFI/RCTMbaI9WeQIJ7U4z5Y+nTDrQ4yyZXE
-         5aQwtdpBdvAEqqOVRTtvrUPD2u2NFrMleyFbYcKs=
-Received: by mail-qk1-f176.google.com with SMTP id d15so5738989qkj.0;
-        Thu, 03 Jan 2019 10:46:07 -0800 (PST)
-X-Gm-Message-State: AJcUuke2MG1ysOildv1nzoX0DZNbi5BZQfNOsZzEt2/g3tRfPbFc+MM9
-        jQ/kIryq1lQx0abS4iApYbwbCrGfiknJWbF8mg==
-X-Google-Smtp-Source: ALg8bN55c9+ff84kzOyNUJ4aDSEn/x7T5GqMB7sVKtPRLc//csJ/sfkg77+ctfOHiIjv0vOjYNUIy5dwIWvxbvA4uvA=
-X-Received: by 2002:ae9:ef14:: with SMTP id d20mr45626127qkg.147.1546541166685;
- Thu, 03 Jan 2019 10:46:06 -0800 (PST)
+        Thu, 3 Jan 2019 13:46:33 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:43339 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726238AbfACSqc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Jan 2019 13:46:32 -0500
+Received: by mail-pf1-f193.google.com with SMTP id w73so17058402pfk.10
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 10:46:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MgzV5dTndps76ADDi/niLj9jnEoksetg/kN5EQSE/zM=;
+        b=GoUxsewUnTYsCM77AWfGlQfTgMINGlA35HpX38hrx1dskXw4mI65zWLT8zB5BYj6e8
+         dWsAYaoSKabJNGNo9wQ7kiRDOy+0ey1nWiWJLIWcYQN0z+K9h3DYz2J59oKlX+nzSTTa
+         aT57NflI4m5PdSfbXZIhK5emMEoGtqL0F3zjVt4kHv7srAa90A8KpUyo/X4pRSfnHe45
+         mAT04CkeOtEEc/W2zJ2MdjjmkeoXPYwO94z4+bpJzerWLi7x1dNRRviz0FSvXA89Biog
+         sYyO53jbmfC2HT0on1mg+NJMYZHuZQNJAPTRUv2ZWXjRpBcxKkAu8FFYEp88Z0s/Fqyd
+         5EJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MgzV5dTndps76ADDi/niLj9jnEoksetg/kN5EQSE/zM=;
+        b=ewWhN91P2bhwN3zMo+92ksRXsvq9JiiYLJgsezyHRSp3qqwp7MdrIvIYuJ4dWeXbiN
+         h1l5Hdf2RIp1GrZs+N3PMEvvCIFGLV3CBDK9exd6UzRaM/S9P3F8JIRZU20meVcRkOfR
+         Nm41JNiUIEDznVw98nJzyVeObhjedMw+tZDqX/oSw5TZNbPjp0s+MAvmTf2q8MT7ks5e
+         j6qTyOtm+pivieaRjaxIycDCkukW6iYPy+HeXAV+JJNiP6OvzzEGiLHSCI5ALcFBGCXj
+         JYyOS0ssY3v30yaCh4dmrLlmElxwiTfI5jibnmDa4TY2HypXifsS7cep5nzL+Af+lAwN
+         Btvg==
+X-Gm-Message-State: AJcUukcD8uK01UnG3t2Mg7BRf/DIs60Zhr3Y8OBC6eTiNtGmlBMhMzpD
+        bV0A1HJfmMcal83BbM3WQjQOgOykK5vHsmUy9yChLw==
+X-Google-Smtp-Source: ALg8bN5SinAEs0gYR2nS6mwrBbNs6CaZLdp3j4CHwOgZ9jildDr4wOzb2uxGWuD9JrGMv17tlykPD+ZozUjLDh+fs1c=
+X-Received: by 2002:a65:560e:: with SMTP id l14mr18036989pgs.168.1546541191326;
+ Thu, 03 Jan 2019 10:46:31 -0800 (PST)
 MIME-Version: 1.0
-References: <1546438198-1677-1-git-send-email-henryc.chen@mediatek.com> <1546438198-1677-3-git-send-email-henryc.chen@mediatek.com>
-In-Reply-To: <1546438198-1677-3-git-send-email-henryc.chen@mediatek.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Thu, 3 Jan 2019 12:45:54 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJXFAEdSaexA3p62u8f3RsVA1vfNsOLu4aetB-iLb9qFg@mail.gmail.com>
-Message-ID: <CAL_JsqJXFAEdSaexA3p62u8f3RsVA1vfNsOLu4aetB-iLb9qFg@mail.gmail.com>
-Subject: Re: [RFC RESEND PATCH 2/7] dt-bindings: soc: Add opp table on scpsys bindings
-To:     Henry Chen <henryc.chen@mediatek.com>
-Cc:     Viresh Kumar <vireshk@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
+References: <cover.1546450432.git.andreyknvl@google.com> <b16c90197bb2c06c780e6e981c40345e03fda465.1546450432.git.andreyknvl@google.com>
+ <20190102121436.5c2b72d1b0ec49affadc9692@linux-foundation.org>
+In-Reply-To: <20190102121436.5c2b72d1b0ec49affadc9692@linux-foundation.org>
+From:   Andrey Konovalov <andreyknvl@google.com>
+Date:   Thu, 3 Jan 2019 19:46:20 +0100
+Message-ID: <CAAeHK+yE38g0dSbL7LiVPSgECgdcJ5w7+kwaiBaRYr5YkHtbjQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] kasan, arm64: use ARCH_SLAB_MINALIGN instead of
+ manual aligning
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Christoph Lameter <cl@linux.com>,
         Mark Rutland <mark.rutland@arm.com>,
-        Fan Chen <fan.chen@mediatek.com>,
-        Weiyi Lu <weiyi.lu@mediatek.com>,
-        James Liao <jamesjj.liao@mediatek.com>,
-        Kees Cook <keescook@chromium.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-mediatek@lists.infradead.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Dave Martin <dave.martin@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Paul Lawrence <paullawrence@google.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-sparse@vger.kernel.org,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Kostya Serebryany <kcc@google.com>,
+        Evgeniy Stepanov <eugenis@google.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Jann Horn <jannh@google.com>,
+        Mark Brand <markbrand@google.com>,
+        Chintan Pandya <cpandya@codeaurora.org>,
+        Vishwath Mohan <vishwath@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 2, 2019 at 8:10 AM Henry Chen <henryc.chen@mediatek.com> wrote:
+On Wed, Jan 2, 2019 at 9:14 PM Andrew Morton <akpm@linux-foundation.org> wrote:
 >
-> Add opp table on scpsys dt-bindings for Mediatek SoC.
+> On Wed,  2 Jan 2019 18:36:06 +0100 Andrey Konovalov <andreyknvl@google.com> wrote:
 >
-> Signed-off-by: Henry Chen <henryc.chen@mediatek.com>
-> ---
->  Documentation/devicetree/bindings/opp/mtk-opp.txt  | 24 +++++++++++++
->  .../devicetree/bindings/soc/mediatek/scpsys.txt    | 42 ++++++++++++++++++++++
->  2 files changed, 66 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/opp/mtk-opp.txt
+> > Instead of changing cache->align to be aligned to KASAN_SHADOW_SCALE_SIZE
+> > in kasan_cache_create() we can reuse the ARCH_SLAB_MINALIGN macro.
+> >
+> > ...
+> >
+> > --- a/arch/arm64/include/asm/kasan.h
+> > +++ b/arch/arm64/include/asm/kasan.h
+> > @@ -36,6 +36,10 @@
+> >  #define KASAN_SHADOW_OFFSET     (KASAN_SHADOW_END - (1ULL << \
+> >                                       (64 - KASAN_SHADOW_SCALE_SHIFT)))
+> >
+> > +#ifdef CONFIG_KASAN_SW_TAGS
+> > +#define ARCH_SLAB_MINALIGN   (1ULL << KASAN_SHADOW_SCALE_SHIFT)
+> > +#endif
+> > +
+> >  void kasan_init(void);
+> >  void kasan_copy_shadow(pgd_t *pgdir);
+> >  asmlinkage void kasan_early_init(void);
+> > diff --git a/include/linux/slab.h b/include/linux/slab.h
+> > index 11b45f7ae405..d87f913ab4e8 100644
+> > --- a/include/linux/slab.h
+> > +++ b/include/linux/slab.h
+> > @@ -16,6 +16,7 @@
+> >  #include <linux/overflow.h>
+> >  #include <linux/types.h>
+> >  #include <linux/workqueue.h>
+> > +#include <linux/kasan.h>
+> >
 >
-> diff --git a/Documentation/devicetree/bindings/opp/mtk-opp.txt b/Documentation/devicetree/bindings/opp/mtk-opp.txt
-> new file mode 100644
-> index 0000000..036be1c
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/opp/mtk-opp.txt
-> @@ -0,0 +1,24 @@
-> +Mediatek OPP bindings to descibe OPP nodes with level values
-> +
-> +OPP tables for devices on Mediatek platforms require an additional
-> +platform specific level value to be specified.
-> +This value is passed on to the mediatek Power Management Unit by the
-> +CPU, which then takes the necessary actions to set a voltage rail
-> +to an appropriate voltage based on the value passed.
-> +
-> +The bindings are based on top of the operating-points-v2 bindings
-> +described in Documentation/devicetree/bindings/opp/opp.txt
-> +Additional properties are described below.
-> +
-> +* OPP Table Node
-> +
-> +Required properties:
-> +- compatible: Allow OPPs to express their compatibility. It should be:
-> +  "operating-points-v2-mtk-level"
-> +
-> +* OPP Node
-> +
-> +Required properties:
-> +- mtk,level: On Mediatek platforms an OPP node can describe a positive value
-> +representing a level that's communicated with a our power management hardware
-> +which then translates it into a certain voltage on a voltage rail.
+> This still seems unadvisable.  Like other architectures, arm defines
+> ARCH_SLAB_MINALIGN in arch/arm/include/asm/cache.h.
+> arch/arm/include/asm64/cache.h doesn't define ARCH_SLAB_MINALIGN
+> afaict.
+>
+> If arch/arm/include/asm64/cache.h later gets a definition of
+> ARCH_SLAB_MINALIGN then we again face the risk that different .c files
+> will see different values of ARCH_SLAB_MINALIGN depending on which
+> headers they include.
+>
+> So what to say about this?  The architecture's ARCH_SLAB_MINALIGN
+> should be defined in the architecture's cache.h, end of story.  Not in
+> slab.h, not in kasan.h.
 
-Work with the Qcom folks and create a common level property.
+Done in v3, thanks!
 
-Rob
+>
+>
+> --
+> You received this message because you are subscribed to the Google Groups "kasan-dev" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to kasan-dev+unsubscribe@googlegroups.com.
+> To post to this group, send email to kasan-dev@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/kasan-dev/20190102121436.5c2b72d1b0ec49affadc9692%40linux-foundation.org.
+> For more options, visit https://groups.google.com/d/optout.
