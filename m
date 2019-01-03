@@ -2,116 +2,232 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8252C43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 13:11:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7920BC43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 13:11:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 949D0217D9
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 13:11:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546521084;
-	bh=4j3MsaLKM866eRO56+lwzET+Zudxn5tiJ2gwONI5xxU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=ttUzffkHK6UZtPL/IPnDqvEx7yrxWfkWZKprX5Yynxjdr1JD7/mMce5k+LTTOOshN
-	 YUP7Kk1kzHyf85zGWxgj1ysmd2t04Mp8AvXTk4Ic6R7HztwfX+JcNCNhmQ+M1Sqz6W
-	 ar7ztNMyLvGGmzzYjfG7tbkTxOWp8J4J4JR+DVaE=
+	by mail.kernel.org (Postfix) with ESMTP id 453962070C
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 13:11:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730789AbfACNLX (ORCPT
+        id S1730815AbfACNLi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 08:11:23 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:36424 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730675AbfACNLX (ORCPT
+        Thu, 3 Jan 2019 08:11:38 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:60421 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728474AbfACNLh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 08:11:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=2eDQ4bVlRXsycjE1X7GXc2V755O1XKU4dZz7BmFpzFQ=; b=HyxSUxL4s0MPbKNA2zXoUDV+r
-        veeKbBiwt0yi6GoGczL0K9YF7Rf/AtrXLrRwquQ8hyVUaDn9//03f7mfWVeDNo66dQuL/TP+Y4Qwm
-        1MdbzBQV6vupMk/oCCk6YOZlQmESUePWRHuFjGzEu6eMq3WNH6tAgUs7Wm+U9Fk1TgayM=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=finisterre.ee.mobilebroadband)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gf2le-0005YZ-8R; Thu, 03 Jan 2019 13:10:34 +0000
-Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id 3AB6D440080; Thu,  3 Jan 2019 13:10:33 +0000 (GMT)
-Date:   Thu, 3 Jan 2019 13:10:33 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Yizhuo <yzhai003@ucr.edu>
-Cc:     csong@cs.ucr.edu, zhiyunq@cs.ucr.edu,
-        Bard Liao <bardliao@realtek.com>,
-        Oder Chiou <oder_chiou@realtek.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] In function rt274_i2c_probe(), if the regmap_read fails.
- The variable "val" could leave uninitialized but used in if statement.
-Message-ID: <20190103131033.GU1846@sirena.org.uk>
-References: <20190103023839.15314-1-yzhai003@ucr.edu>
+        Thu, 3 Jan 2019 08:11:37 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x03DBGbZ1383761
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 3 Jan 2019 05:11:16 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x03DBGX61383758;
+        Thu, 3 Jan 2019 05:11:16 -0800
+Date:   Thu, 3 Jan 2019 05:11:16 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Stanislav Fomichev <tipbot@zytor.com>
+Message-ID: <tip-14541b1e7e723859ff2c75c6fc10cdbbec6b8c34@git.kernel.org>
+Cc:     mathieu.poirier@linaro.org, alexander.shishkin@linux.intel.com,
+        acme@redhat.com, mingo@kernel.org, sdf@google.com,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        namhyung@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        hpa@zytor.com
+Reply-To: linux-kernel@vger.kernel.org, sdf@google.com, tglx@linutronix.de,
+          namhyung@kernel.org, hpa@zytor.com, peterz@infradead.org,
+          jolsa@kernel.org, mathieu.poirier@linaro.org,
+          alexander.shishkin@linux.intel.com, acme@redhat.com,
+          mingo@kernel.org
+In-Reply-To: <4dfc634cfcfb236883971b5107cf3c28ec8a31be.1542328222.git.sdf@google.com>
+References: <4dfc634cfcfb236883971b5107cf3c28ec8a31be.1542328222.git.sdf@google.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/urgent] perf build: Don't unconditionally link the libbfd
+ feature test to -liberty and -lz
+Git-Commit-ID: 14541b1e7e723859ff2c75c6fc10cdbbec6b8c34
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="1YSLKY9nNiKnepPi"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20190103023839.15314-1-yzhai003@ucr.edu>
-X-Cookie: knowledge, n.:
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Commit-ID:  14541b1e7e723859ff2c75c6fc10cdbbec6b8c34
+Gitweb:     https://git.kernel.org/tip/14541b1e7e723859ff2c75c6fc10cdbbec6b8c34
+Author:     Stanislav Fomichev <sdf@google.com>
+AuthorDate: Thu, 15 Nov 2018 16:32:01 -0800
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Fri, 21 Dec 2018 09:42:46 -0300
 
---1YSLKY9nNiKnepPi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+perf build: Don't unconditionally link the libbfd feature test to -liberty and -lz
 
-On Wed, Jan 02, 2019 at 06:38:39PM -0800, Yizhuo wrote:
+Current libbfd feature test unconditionally links against -liberty and -lz.
+While it's required on some systems (e.g. opensuse), it's completely
+unnecessary on the others, where only -lbdf is sufficient (debian).
+This patch streamlines (and renames) the following feature checks:
 
->  	int ret;
-> -	unsigned int val;
-> +	unsigned int val =3D ~0;
-> =20
+feature-libbfd           - only link against -lbfd (debian),
+                           see commit 2cf9040714f3 ("perf tools: Fix bfd
+			   dependency libraries detection")
+feature-libbfd-liberty   - link against -lbfd and -liberty
+feature-libbfd-liberty-z - link against -lbfd, -liberty and -lz (opensuse),
+                           see commit 280e7c48c3b8 ("perf tools: fix BFD
+			   detection on opensuse")
 
-This just shuts warnings up which may mask further problem, it is better
-to just leave it and fix the users.
+(feature-liberty{,-z} were renamed to feature-libbfd-liberty{,z}
+for clarity)
 
-> -	regmap_read(rt274->regmap,
-> +	ret =3D regmap_read(rt274->regmap,
->  		RT274_GET_PARAM(AC_NODE_ROOT, AC_PAR_VENDOR_ID), &val);
-> -	if (val !=3D RT274_VENDOR_ID) {
-> +	if (ret || val !=3D RT274_VENDOR_ID) {
->  		dev_err(&i2c->dev,
->  			"Device with ID register %#x is not rt274\n", val);
->  		return -ENODEV;
+The main motivation is to fix this feature test for bpftool which is
+currently broken on debian (libbfd feature shows OFF, but we still
+unconditionally link against -lbfd and it works).
 
-If the read returned an error we should pass back the error code we got
-=66rom it, not mask it with another error code.  This is especially true
-here where the error message would be very misleading if there's a
-problem with I/O.
+Tested on debian with only -lbfd installed (without -liberty); I'd
+appreciate if somebody on the other systems can test this new detection
+method.
 
---1YSLKY9nNiKnepPi
-Content-Type: application/pgp-signature; name="signature.asc"
+Signed-off-by: Stanislav Fomichev <sdf@google.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/4dfc634cfcfb236883971b5107cf3c28ec8a31be.1542328222.git.sdf@google.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/build/Makefile.feature |  4 ++--
+ tools/build/feature/Makefile | 10 +++++-----
+ tools/perf/Makefile.config   | 44 +++++++++++++++++++++++---------------------
+ 3 files changed, 30 insertions(+), 28 deletions(-)
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlwuCcgACgkQJNaLcl1U
-h9ATcQf/eBbwaS5qgEtEK51OPB3FNB6vrxxUk5HGFZqdFxZQVgcz3XNeMEDhcccS
-cKGpg1ksiEpLIog6GK6KmLkHrfiA8aWoHhkuDGxMnogfySqU9qA3V8LbQoBGAh56
-x3tnhky9Iuyj+Wcj0WKw00dsBlDxrorF3z9297WkFsopR3J7Sd7OHZjQFYopthin
-mhAuUkwTfP1QQDANxH3AciBZwA8CJQQ+XqB/ORavzZqWfi8znP9NnN+fdOuHzqWK
-qbzU2aLsWFiGzfOxFUjyJTWSr0UlgKTE8YpORTWNsSQhYTchJLnwAqStlaFW00VA
-Dczuw8DOS8aDFgHNENAmUUhiSv0KpQ==
-=D6U7
------END PGP SIGNATURE-----
-
---1YSLKY9nNiKnepPi--
+diff --git a/tools/build/Makefile.feature b/tools/build/Makefile.feature
+index d47b8f73e2e7..5467c6bf9ceb 100644
+--- a/tools/build/Makefile.feature
++++ b/tools/build/Makefile.feature
+@@ -82,8 +82,8 @@ FEATURE_TESTS_EXTRA :=                  \
+          cplus-demangle                 \
+          hello                          \
+          libbabeltrace                  \
+-         liberty                        \
+-         liberty-z                      \
++         libbfd-liberty                 \
++         libbfd-liberty-z               \
+          libunwind-debug-frame          \
+          libunwind-debug-frame-arm      \
+          libunwind-debug-frame-aarch64  \
+diff --git a/tools/build/feature/Makefile b/tools/build/feature/Makefile
+index 2dbcc0d00f52..7ceb4441b627 100644
+--- a/tools/build/feature/Makefile
++++ b/tools/build/feature/Makefile
+@@ -17,8 +17,8 @@ FILES=                                          \
+          test-libbfd.bin                        \
+          test-disassembler-four-args.bin        \
+          test-reallocarray.bin			\
+-         test-liberty.bin                       \
+-         test-liberty-z.bin                     \
++         test-libbfd-liberty.bin                \
++         test-libbfd-liberty-z.bin              \
+          test-cplus-demangle.bin                \
+          test-libelf.bin                        \
+          test-libelf-getphdrnum.bin             \
+@@ -210,7 +210,7 @@ $(OUTPUT)test-libpython-version.bin:
+ 	$(BUILD)
+ 
+ $(OUTPUT)test-libbfd.bin:
+-	$(BUILD) -DPACKAGE='"perf"' -lbfd -lz -liberty -ldl
++	$(BUILD) -DPACKAGE='"perf"' -lbfd -ldl
+ 
+ $(OUTPUT)test-disassembler-four-args.bin:
+ 	$(BUILD) -DPACKAGE='"perf"' -lbfd -lopcodes
+@@ -218,10 +218,10 @@ $(OUTPUT)test-disassembler-four-args.bin:
+ $(OUTPUT)test-reallocarray.bin:
+ 	$(BUILD)
+ 
+-$(OUTPUT)test-liberty.bin:
++$(OUTPUT)test-libbfd-liberty.bin:
+ 	$(CC) $(CFLAGS) -Wall -Werror -o $@ test-libbfd.c -DPACKAGE='"perf"' $(LDFLAGS) -lbfd -ldl -liberty
+ 
+-$(OUTPUT)test-liberty-z.bin:
++$(OUTPUT)test-libbfd-liberty-z.bin:
+ 	$(CC) $(CFLAGS) -Wall -Werror -o $@ test-libbfd.c -DPACKAGE='"perf"' $(LDFLAGS) -lbfd -ldl -liberty -lz
+ 
+ $(OUTPUT)test-cplus-demangle.bin:
+diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+index 07c1857c3d7a..b441c88cafa1 100644
+--- a/tools/perf/Makefile.config
++++ b/tools/perf/Makefile.config
+@@ -702,18 +702,20 @@ endif
+ 
+ ifeq ($(feature-libbfd), 1)
+   EXTLIBS += -lbfd
++else
++  # we are on a system that requires -liberty and (maybe) -lz
++  # to link against -lbfd; test each case individually here
+ 
+   # call all detections now so we get correct
+   # status in VF output
+-  $(call feature_check,liberty)
+-  $(call feature_check,liberty-z)
+-  $(call feature_check,cplus-demangle)
++  $(call feature_check,libbfd-liberty)
++  $(call feature_check,libbfd-liberty-z)
+ 
+-  ifeq ($(feature-liberty), 1)
+-    EXTLIBS += -liberty
++  ifeq ($(feature-libbfd-liberty), 1)
++    EXTLIBS += -lbfd -liberty
+   else
+-    ifeq ($(feature-liberty-z), 1)
+-      EXTLIBS += -liberty -lz
++    ifeq ($(feature-libbfd-liberty-z), 1)
++      EXTLIBS += -lbfd -liberty -lz
+     endif
+   endif
+ endif
+@@ -723,24 +725,24 @@ ifdef NO_DEMANGLE
+ else
+   ifdef HAVE_CPLUS_DEMANGLE_SUPPORT
+     EXTLIBS += -liberty
+-    CFLAGS += -DHAVE_CPLUS_DEMANGLE_SUPPORT
+   else
+-    ifneq ($(feature-libbfd), 1)
+-      ifneq ($(feature-liberty), 1)
+-        ifneq ($(feature-liberty-z), 1)
+-          # we dont have neither HAVE_CPLUS_DEMANGLE_SUPPORT
+-          # or any of 'bfd iberty z' trinity
+-          ifeq ($(feature-cplus-demangle), 1)
+-            EXTLIBS += -liberty
+-            CFLAGS += -DHAVE_CPLUS_DEMANGLE_SUPPORT
+-          else
+-            msg := $(warning No bfd.h/libbfd found, please install binutils-dev[el]/zlib-static/libiberty-dev to gain symbol demangling)
+-            CFLAGS += -DNO_DEMANGLE
+-          endif
+-        endif
++    ifeq ($(filter -liberty,$(EXTLIBS)),)
++      $(call feature_check,cplus-demangle)
++
++      # we dont have neither HAVE_CPLUS_DEMANGLE_SUPPORT
++      # or any of 'bfd iberty z' trinity
++      ifeq ($(feature-cplus-demangle), 1)
++        EXTLIBS += -liberty
++      else
++        msg := $(warning No bfd.h/libbfd found, please install binutils-dev[el]/zlib-static/libiberty-dev to gain symbol demangling)
++        CFLAGS += -DNO_DEMANGLE
+       endif
+     endif
+   endif
++
++  ifneq ($(filter -liberty,$(EXTLIBS)),)
++    CFLAGS += -DHAVE_CPLUS_DEMANGLE_SUPPORT
++  endif
+ endif
+ 
+ ifneq ($(filter -lbfd,$(EXTLIBS)),)
