@@ -2,121 +2,97 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F687C43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 00:36:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB5D0C43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 00:37:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1C5120685
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 00:36:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 822D3206A3
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 00:37:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="trUrQ4d0"
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="OmK2D4oj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728848AbfACAgc (ORCPT
+        id S1729055AbfACAhv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 19:36:32 -0500
-Received: from conssluserg-04.nifty.com ([210.131.2.83]:19857 "EHLO
-        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727237AbfACAgb (ORCPT
+        Wed, 2 Jan 2019 19:37:51 -0500
+Received: from conssluserg-05.nifty.com ([210.131.2.90]:31982 "EHLO
+        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727237AbfACAhu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 19:36:31 -0500
-Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181]) (authenticated)
-        by conssluserg-04.nifty.com with ESMTP id x030aPQj019720;
-        Thu, 3 Jan 2019 09:36:26 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com x030aPQj019720
+        Wed, 2 Jan 2019 19:37:50 -0500
+Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41]) (authenticated)
+        by conssluserg-05.nifty.com with ESMTP id x030bMVd010621
+        for <linux-kernel@vger.kernel.org>; Thu, 3 Jan 2019 09:37:23 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com x030bMVd010621
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1546475786;
-        bh=mJlYWSiWeqCZq2fJPK7I50b08OCqBiH7PgNOiO8M/9g=;
+        s=dec2015msa; t=1546475843;
+        bh=uh5ps1utDJ5VURqXSy7MiMM7oi88HSxDEhMn5YEqpcg=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=trUrQ4d0GJhO3Ji00o7ysJnLg6IbdIjv2lH9K+fNm6Eb/JfGraqu85JH4j6bzHl2m
-         03VekhKiMkvrMdhyPGYNohhgmp1GL1btms/aqNntGR8lgQDMl1mXwi38cgt5csr2ZL
-         bR+LmhnkzW2aBblu2vFFN47lk1y8k7IkjAnKqWXbbQ02Ii1q7+NA0tL/g1PKSieA0x
-         eW8n9yEj7GxC4V5AjKzyOYDnSbuC4YA8EMEsodcLQ9oYAmdVhXhsL1IXMc+a7lfPbQ
-         ZTPu6riAnPWyy/IoqC04dxkNapSh5wlaMrZi3M6aTY5B6klUt8TQCiP4N4jOTmi2Mh
-         2SB5SHKN4Mjnw==
-X-Nifty-SrcIP: [209.85.221.181]
-Received: by mail-vk1-f181.google.com with SMTP id 197so6948821vkf.4;
-        Wed, 02 Jan 2019 16:36:26 -0800 (PST)
-X-Gm-Message-State: AJcUukcqB7dWDGG4eXS6ksvNAXaP1JRzVn1bGrQDp6upF5v/Sw8LiXV+
-        a+1nEOjmmUY0Bkdy9yCxKvP0w3uYqX6chpQmvzQ=
-X-Google-Smtp-Source: ALg8bN5FKddHcrGWono5UpsMPLqZ5N1NpHGJZCSJ3hQLIGkLGFV1mgyHFxVQz3xse4vncUMh7jRcVM6IwDWcKpScUP8=
-X-Received: by 2002:a1f:27d7:: with SMTP id n206mr17035556vkn.0.1546475785253;
- Wed, 02 Jan 2019 16:36:25 -0800 (PST)
+        b=OmK2D4ojmOEZySLzC2s19fMtnMomOZHYHlrNHBtYwmkUGOhR/LX0HKNqJwlMwwQw5
+         Jy1CRlefZWzIlLahuyLSIEH/ob3vzrXGBpfApi1LXKly6BE/bI9aq4zMyDMU0hP0X0
+         nBiRNgCpmahF1Td5IfNXQp56w+dokP/YzJgm2spOcdPLxsP6np/nRyl3prQLBxE5i5
+         149q2CQ1TvSz05M8UA+UcHGu8wtZdTykcpXQ+5ZT54B5b9md+iYa5xxvVHLgVWte7B
+         dffb17s9Zf1OteK0+Gvomf0eW7Zhb38lFddapTElz8mGtdY9haeYQKJbE2t4v3UWT2
+         J6nt9OEE6lsMQ==
+X-Nifty-SrcIP: [209.85.217.41]
+Received: by mail-vs1-f41.google.com with SMTP id e7so19908392vsc.2
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 16:37:23 -0800 (PST)
+X-Gm-Message-State: AA+aEWb7uikP2jarOhZAHeNzMgpmXVFQevVSXsknCjh1Qn2Ij0cUihF1
+        zBo7RFpHkdcyw+S25dDipDKLhlLcB8a+6rgnZFQ=
+X-Google-Smtp-Source: AFSGD/UTiJtmkFFED6ECJa92YHrcO7lom/+MwsxZDPUi3K9TzCXIvjKXbJlevqzTu+evCim7JDHCX92ZYRppc3stfuE=
+X-Received: by 2002:a67:f1c2:: with SMTP id v2mr18204744vsm.181.1546475842146;
+ Wed, 02 Jan 2019 16:37:22 -0800 (PST)
 MIME-Version: 1.0
-References: <CA+icZUU=1S0Xg3+zWNU-60eknfWyL2kjEPm2BNNTK8Eu-tkTEg@mail.gmail.com>
-In-Reply-To: <CA+icZUU=1S0Xg3+zWNU-60eknfWyL2kjEPm2BNNTK8Eu-tkTEg@mail.gmail.com>
+References: <1544976205-18762-1-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1544976205-18762-1-git-send-email-yamada.masahiro@socionext.com>
 From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Thu, 3 Jan 2019 09:35:49 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASWScb7Qt0kmV8RyBdix2GPA24gv=eRNYVWu5dGGePbfQ@mail.gmail.com>
-Message-ID: <CAK7LNASWScb7Qt0kmV8RyBdix2GPA24gv=eRNYVWu5dGGePbfQ@mail.gmail.com>
-Subject: Re: jump_label: move 'asm goto' support test to Kconfig
-To:     Sedat Dilek <sedat.dilek@gmail.com>
-Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        linux-xtensa@linux-xtensa.org,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        X86 ML <x86@kernel.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        sparclinux <sparclinux@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 3 Jan 2019 09:36:46 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATsp7Jez3eZxM8Zv642=YS0N8cWPN4XY9CRbD2dXDK3tg@mail.gmail.com>
+Message-ID: <CAK7LNATsp7Jez3eZxM8Zv642=YS0N8cWPN4XY9CRbD2dXDK3tg@mail.gmail.com>
+Subject: Re: [PATCH] csky: remove meaningless header-y
+To:     Guo Ren <guoren@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 2, 2019 at 9:14 PM Sedat Dilek <sedat.dilek@gmail.com> wrote:
+On Mon, Dec 17, 2018 at 1:07 AM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
 >
-> Hi,
+> Since commit fcc8487d477a ("uapi: export all headers under uapi
+> directories"), header-y is meaningless because headers under uapi
+> are all exported.
 >
-> I was not aware that CONFIG_JUMP_LABEL Kconfig setting depends on the
-> support of asm-goto.
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
+
+Applied to linux-kbuild.
+
+
+
+>  arch/csky/include/uapi/asm/Kbuild | 2 --
+>  1 file changed, 2 deletions(-)
 >
-> Currently, I am doing experiments with clang-7 and a snapshot of
-> clang-8 on Linux/x86.
-> These compilers have no asm-goto support.
+> diff --git a/arch/csky/include/uapi/asm/Kbuild b/arch/csky/include/uapi/asm/Kbuild
+> index e02fd44e..7449fde 100644
+> --- a/arch/csky/include/uapi/asm/Kbuild
+> +++ b/arch/csky/include/uapi/asm/Kbuild
+> @@ -1,7 +1,5 @@
+>  include include/uapi/asm-generic/Kbuild.asm
 >
-> What is your recommendation for Linux >= v4.20?
-> I am asking as it is possible to set CONFIG_JUMP_LABEL=y when
-> compiling with clang - which has no effect.
-> This is confusing.
+> -header-y += cachectl.h
+> -
+>  generic-y += auxvec.h
+>  generic-y += param.h
+>  generic-y += bpf_perf_event.h
+> --
+> 2.7.4
 >
-> Thanks, this patch makes things clearer and protects users from
-> setting "wrong" in the sense of non-functional settings.
->
-> I have tested this against recent Linus tree where kbuild/kconfig Git
-> pulls were latest commits.
->
-> Tested-by: Sedat Dilek <sedat.dilek@gmail.com> [ x86 with LLVM/Clang
-> v7 and v8 (snapshot) ]
-
-
-Which part was tested?
-
-x86 kernel cannot be compiled with Clang
-since it lacks the asm-goto support.
-
-
-$ make CC=clang
-Compiler lacks asm-goto support.
-arch/x86/Makefile:293: recipe for target 'checkbin' failed
-make: *** [checkbin] Error 1
-
-
-
-
 
 
 -- 
