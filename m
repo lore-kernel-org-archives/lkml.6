@@ -2,109 +2,111 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FFCBC43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 17:04:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1956C43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 17:05:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D44C32070D
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 17:04:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FnFhqWjJ"
+	by mail.kernel.org (Postfix) with ESMTP id 9F55D2070D
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 17:05:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732486AbfACREM (ORCPT
+        id S1732494AbfACRFW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 12:04:12 -0500
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:33907 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730870AbfACREL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 12:04:11 -0500
-Received: by mail-yw1-f68.google.com with SMTP id g75so13507582ywb.1
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 09:04:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bOa5IQ+9QpakIS1qQWCjI383Pmf9DvpNGSYurftvPLs=;
-        b=FnFhqWjJI8jMOGKfyG9SvTYBEw33RyGJef4mSM4iaKIcKQpGeKmA2CDVKj3xhplRFi
-         PgxKW6LfkpIpRv6rDBCti1i4synkulMgENYelJloscl7kSZNxnFreycbr6dY69oUCBAy
-         I3+lPz96ak5UtS8LVPPnDlG9z6h8hk9SfbaMkoZ6MZEwC4rYhpW5XMES9MQCHrAxdVgX
-         XiZvHyB8dkr263E4XpfPFLvrdSQ0wn1nSxkMF5yMCvDmh9M+aK9T/DR7I1oXy5bbHehL
-         +jPjGI2fg2qtCH8eFpoEG6V4wVmxZpxoS+K2QQ9j3/Os5s9fVzVIueifyLLzgYAUbIUi
-         IwzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bOa5IQ+9QpakIS1qQWCjI383Pmf9DvpNGSYurftvPLs=;
-        b=r/Vs3GFfqMMTPxrnh39vGLwDBwMHKwBjrBLAzp5VMWCRtIo/h666aNTIhi/uhjoAz8
-         rAGetENfLomBTWgbu2uagqvJ2siRwxrtFOU8hlzpE4aQcaLOqL7GXH5KNAtLQwpJ8nwG
-         Vq3NPDjki/FdIZPev/V0yn+oYEC8CNLc5aptHFPdyS/FP6WJ3F0MeFx8DWYVrznIWmd6
-         B9EsmBIFrO5eEk5JnZrnMeFVCyNnwFpsytxSWNA9cBq7GXfY2c5tY5tBx+Sm1iMUWYC+
-         0UKj5bBlv04x0fUjHH6lUFLTGGLxTq98ezI5E5r+c5d9RbPTxWAtsVim8s5TFgvOKG+D
-         R6xQ==
-X-Gm-Message-State: AA+aEWZF3pDCgrGodFJE3Yrx1c97YwAA3WMtl7zT3l396/1pMKLFbSl6
-        +E3FEJ9fvBPtsz0YAdOLlU+LZAzb2sBlo56u0UEdng==
-X-Google-Smtp-Source: AFSGD/W+8mJUletzYTpjEW3nYTKShDIMhSRtP1a2XGBUvlkFyAAT6bvtIfXSCb2cTn7KnXkl7XEDN6M07o2J+7DI9Uk=
-X-Received: by 2002:a81:30d6:: with SMTP id w205mr49736002yww.27.1546535049481;
- Thu, 03 Jan 2019 09:04:09 -0800 (PST)
+        Thu, 3 Jan 2019 12:05:22 -0500
+Received: from foss.arm.com ([217.140.101.70]:53250 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730870AbfACRFW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Jan 2019 12:05:22 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A5A8615AD;
+        Thu,  3 Jan 2019 09:05:21 -0800 (PST)
+Received: from [10.1.196.105] (eglon.cambridge.arm.com [10.1.196.105])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6B8AB3F5D4;
+        Thu,  3 Jan 2019 09:05:20 -0800 (PST)
+Subject: Re: [PATCH 1/3] arm64: kprobes: Move extable address check into
+ arch_prepare_kprobe()
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Pratyush Anand <panand@redhat.com>,
+        "David A . Long" <dave.long@linaro.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <154502881646.30629.9938335052821665530.stgit@devbox>
+ <154502884653.30629.3172839440883293817.stgit@devbox>
+From:   James Morse <james.morse@arm.com>
+Message-ID: <aec51c10-d744-df0f-1216-d3372e779cb1@arm.com>
+Date:   Thu, 3 Jan 2019 17:05:18 +0000
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-References: <1546459533-36247-1-git-send-email-yang.shi@linux.alibaba.com>
- <1546459533-36247-3-git-send-email-yang.shi@linux.alibaba.com>
- <CALvZod7X6FOMnZT48Q9Joh_nha6NMXntL3XqMDqRYFZ1ULgh=w@mail.gmail.com> <763b97f5-ea9c-e3e6-7fd9-0ab42cf09ca8@linux.alibaba.com>
-In-Reply-To: <763b97f5-ea9c-e3e6-7fd9-0ab42cf09ca8@linux.alibaba.com>
-From:   Shakeel Butt <shakeelb@google.com>
-Date:   Thu, 3 Jan 2019 09:03:58 -0800
-Message-ID: <CALvZod5cZ60VkrxuO8o9dnSOhGmNt21o+NoS5Qy1Mh3-k6suyw@mail.gmail.com>
-Subject: Re: [PATCH 2/3] mm: memcontrol: do not try to do swap when force empty
-To:     Yang Shi <yang.shi@linux.alibaba.com>
-Cc:     Michal Hocko <mhocko@suse.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <154502884653.30629.3172839440883293817.stgit@devbox>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 3, 2019 at 8:57 AM Yang Shi <yang.shi@linux.alibaba.com> wrote:
->
->
->
-> On 1/2/19 1:45 PM, Shakeel Butt wrote:
-> > On Wed, Jan 2, 2019 at 12:06 PM Yang Shi <yang.shi@linux.alibaba.com> wrote:
-> >> The typical usecase of force empty is to try to reclaim as much as
-> >> possible memory before offlining a memcg.  Since there should be no
-> >> attached tasks to offlining memcg, the tasks anonymous pages would have
-> >> already been freed or uncharged.
-> > Anon pages can come from tmpfs files as well.
->
-> Yes, but they are charged to swap space as regular anon pages.
->
+Hi!
 
-The point was the lifetime of tmpfs anon pages are not tied to any
-task. Even though there aren't any task attached to a memcg, the tmpfs
-anon pages will remain charged. Other than that, the old anon pages of
-a task which have migrated away might still be charged to the old
-memcg (if move_charge_at_immigrate is not set).
+On 17/12/2018 06:40, Masami Hiramatsu wrote:
+> Move extable address check into arch_prepare_kprobe() from
+> arch_within_kprobe_blacklist().
 
-> >
-> >> Even though anonymous pages get
-> >> swapped out, but they still get charged to swap space.  So, it sounds
-> >> pointless to do swap for force empty.
-> >>
-> > I understand that force_empty is typically used before rmdir'ing a
-> > memcg but it might be used differently by some users. We use this
-> > interface to test memory reclaim behavior (anon and file).
->
-> Thanks for sharing your usecase. So, you uses this for test only?
->
+I'm trying to work out the pattern for what should go in the blacklist, and what
+should be rejected by the arch code.
 
-Yes.
+It seems address-ranges should be blacklisted as the contents don't matter.
+easy-example: the idmap text.
 
-Shakeel
+The arch code should also reject instructions that can't be probed from
+arch_prepare_kprobe(). easy-example: exclusive load or store.
+
+
+> Please do not blacklisting instructions on exception_table,
+> since it is a kind of architectural unsupported instruction.
+
+This doesn't fit the pattern, ... what should it be?
+
+The instructions in the exception_table don't matter, its the address that
+indicates there is a fixup for page-faults that occur here. We don't need to
+look at the instruction to determine this, why can't we treated these as a
+blacklisted range?
+
+
+Thanks,
+
+James
+
+
+> diff --git a/arch/arm64/kernel/probes/kprobes.c b/arch/arm64/kernel/probes/kprobes.c
+> index 2a5b338b2542..b2d4b7428ebc 100644
+> --- a/arch/arm64/kernel/probes/kprobes.c
+> +++ b/arch/arm64/kernel/probes/kprobes.c
+> @@ -102,6 +102,10 @@ int __kprobes arch_prepare_kprobe(struct kprobe *p)
+>  
+>  	if (in_exception_text(probe_addr))
+>  		return -EINVAL;
+> +
+> +	if (search_exception_tables(probe_addr))
+> +		return -EINVAL;
+> +
+>  	if (probe_addr >= (unsigned long) __start_rodata &&
+>  	    probe_addr <= (unsigned long) __end_rodata)
+>  		return -EINVAL;
+> @@ -477,8 +481,7 @@ bool arch_within_kprobe_blacklist(unsigned long addr)
+>  	    (addr >= (unsigned long)__entry_text_start &&
+>  	    addr < (unsigned long)__entry_text_end) ||
+>  	    (addr >= (unsigned long)__idmap_text_start &&
+> -	    addr < (unsigned long)__idmap_text_end) ||
+> -	    !!search_exception_tables(addr))
+> +	    addr < (unsigned long)__idmap_text_end))
+>  		return true;
+>  
+>  	if (!is_kernel_in_hyp_mode()) {
+> 
+
