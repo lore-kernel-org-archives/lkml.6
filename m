@@ -2,76 +2,314 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CABA4C43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 03:27:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CF87C43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 03:27:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F9AC20656
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 03:27:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7ECB2073F
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 03:27:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="j0O+6fuT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728416AbfACD07 (ORCPT
+        id S1728582AbfACD1V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 22:26:59 -0500
-Received: from hermes.aosc.io ([199.195.250.187]:54781 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726036AbfACD07 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 22:26:59 -0500
-Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
-        by hermes.aosc.io (Postfix) with ESMTPSA id 9EB7915E6BB;
-        Thu,  3 Jan 2019 03:26:55 +0000 (UTC)
-From:   Icenowy Zheng <icenowy@aosc.io>
-To:     Alan Stern <stern@rowland.harvard.edu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, usb-storage@lists.one-eyed-alien.net,
-        linux-kernel@vger.kernel.org
-Cc:     Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v2 2/2] USB: storage: add quirk for SMI SM3350
-Date:   Thu,  3 Jan 2019 11:26:18 +0800
-Message-Id: <20190103032618.9237-3-icenowy@aosc.io>
-In-Reply-To: <20190103032618.9237-1-icenowy@aosc.io>
-References: <20190103032618.9237-1-icenowy@aosc.io>
+        Wed, 2 Jan 2019 22:27:21 -0500
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:5494 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726036AbfACD1U (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Jan 2019 22:27:20 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c2d81080000>; Wed, 02 Jan 2019 19:27:04 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Wed, 02 Jan 2019 19:27:18 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Wed, 02 Jan 2019 19:27:18 -0800
+Received: from [10.110.48.28] (10.124.1.5) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 3 Jan
+ 2019 03:27:18 +0000
+Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
+To:     Jerome Glisse <jglisse@redhat.com>, Jan Kara <jack@suse.cz>
+CC:     Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        John Hubbard <john.hubbard@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>, <tom@talpey.com>,
+        Al Viro <viro@zeniv.linux.org.uk>, <benve@cisco.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Christopher Lameter <cl@linux.com>,
+        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Michal Hocko <mhocko@kernel.org>, <mike.marciniszyn@intel.com>,
+        <rcampbell@nvidia.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <20181212150319.GA3432@redhat.com>
+ <20181212214641.GB29416@dastard> <20181214154321.GF8896@quack2.suse.cz>
+ <20181216215819.GC10644@dastard> <20181217181148.GA3341@redhat.com>
+ <20181217183443.GO10600@bombadil.infradead.org>
+ <20181218093017.GB18032@quack2.suse.cz>
+ <9f43d124-2386-7bfd-d90b-4d0417f51ccd@nvidia.com>
+ <20181219020723.GD4347@redhat.com> <20181219110856.GA18345@quack2.suse.cz>
+ <20190103015533.GA15619@redhat.com>
+X-Nvconfidentiality: public
+From:   John Hubbard <jhubbard@nvidia.com>
+Message-ID: <8ea4ebe9-bb4f-67e2-c7cb-7404598b7c7e@nvidia.com>
+Date:   Wed, 2 Jan 2019 19:27:17 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
+MIME-Version: 1.0
+In-Reply-To: <20190103015533.GA15619@redhat.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US-large
+Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1546486025; bh=eqE4Z26zsNcQAJgC7bD2Jo1r09N+BCQVCnR1yuSDr4M=;
+        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=j0O+6fuTPoDzwrxY0DZeiwLr1x/T/S8vi6gCBA/gvq7Qhs5wk6hsXzaJw2Vz4DGmP
+         jJVhpmBtiPWpJovLDMc+OBWmrauRSZfb9X8FqYIM8NYVHaNTr9GfukcugOjz3bO7+z
+         sMGVpjAGj3nfhXQSADF+fnLOGwo7TMp4T23GTCCMv8T/qKqMsvq4DqzlCvm1UGztt4
+         Ni0xH7bY89+5O/o7X8y3TSUiNj8ryuiEaSNVlXfPYxBGb6sD10yTlzr2GxOV1iUHBA
+         Ttwt1Pwv8p2/VGl58AA3ssVvRPxUTtntntmBKptG+maTIo49oTogfniplNSwrK3gPh
+         glGaQxOqpYOoQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The SMI SM3350 USB-UFS bridge controller cannot handle long sense request
-correctly and will make the chip refuse to do read/write when requested
-long sense.
+On 1/2/19 5:55 PM, Jerome Glisse wrote:
+> On Wed, Dec 19, 2018 at 12:08:56PM +0100, Jan Kara wrote:
+>> On Tue 18-12-18 21:07:24, Jerome Glisse wrote:
+>>> On Tue, Dec 18, 2018 at 03:29:34PM -0800, John Hubbard wrote:
+>>>> OK, so let's take another look at Jerome's _mapcount idea all by itsel=
+f (using
+>>>> *only* the tracking pinned pages aspect), given that it is the lightes=
+t weight
+>>>> solution for that. =20
+>>>>
+>>>> So as I understand it, this would use page->_mapcount to store both th=
+e real
+>>>> mapcount, and the dma pinned count (simply added together), but only d=
+o so for
+>>>> file-backed (non-anonymous) pages:
+>>>>
+>>>>
+>>>> __get_user_pages()
+>>>> {
+>>>> 	...
+>>>> 	get_page(page);
+>>>>
+>>>> 	if (!PageAnon)
+>>>> 		atomic_inc(page->_mapcount);
+>>>> 	...
+>>>> }
+>>>>
+>>>> put_user_page(struct page *page)
+>>>> {
+>>>> 	...
+>>>> 	if (!PageAnon)
+>>>> 		atomic_dec(&page->_mapcount);
+>>>>
+>>>> 	put_page(page);
+>>>> 	...
+>>>> }
+>>>>
+>>>> ...and then in the various consumers of the DMA pinned count, we use p=
+age_mapped(page)
+>>>> to see if any mapcount remains, and if so, we treat it as DMA pinned. =
+Is that what you=20
+>>>> had in mind?
+>>>
+>>> Mostly, with the extra two observations:
+>>>     [1] We only need to know the pin count when a write back kicks in
+>>>     [2] We need to protect GUP code with wait_for_write_back() in case
+>>>         GUP is racing with a write back that might not the see the
+>>>         elevated mapcount in time.
+>>>
+>>> So for [2]
+>>>
+>>> __get_user_pages()
+>>> {
+>>>     get_page(page);
+>>>
+>>>     if (!PageAnon) {
+>>>         atomic_inc(page->_mapcount);
+>>> +       if (PageWriteback(page)) {
+>>> +           // Assume we are racing and curent write back will not see
+>>> +           // the elevated mapcount so wait for current write back and
+>>> +           // force page fault
+>>> +           wait_on_page_writeback(page);
+>>> +           // force slow path that will fault again
+>>> +       }
+>>>     }
+>>> }
+>>
+>> This is not needed AFAICT. __get_user_pages() gets page reference (and i=
+t
+>> should also increment page->_mapcount) under PTE lock. So at that point =
+we
+>> are sure we have writeable PTE nobody can change. So page_mkclean() has =
+to
+>> block on PTE lock to make PTE read-only and only after going through all
+>> PTEs like this, it can check page->_mapcount. So the PTE lock provides
+>> enough synchronization.
+>>
+>>> For [1] only needing pin count during write back turns page_mkclean int=
+o
+>>> the perfect spot to check for that so:
+>>>
+>>> int page_mkclean(struct page *page)
+>>> {
+>>>     int cleaned =3D 0;
+>>> +   int real_mapcount =3D 0;
+>>>     struct address_space *mapping;
+>>>     struct rmap_walk_control rwc =3D {
+>>>         .arg =3D (void *)&cleaned,
+>>>         .rmap_one =3D page_mkclean_one,
+>>>         .invalid_vma =3D invalid_mkclean_vma,
+>>> +       .mapcount =3D &real_mapcount,
+>>>     };
+>>>
+>>>     BUG_ON(!PageLocked(page));
+>>>
+>>>     if (!page_mapped(page))
+>>>         return 0;
+>>>
+>>>     mapping =3D page_mapping(page);
+>>>     if (!mapping)
+>>>         return 0;
+>>>
+>>>     // rmap_walk need to change to count mapping and return value
+>>>     // in .mapcount easy one
+>>>     rmap_walk(page, &rwc);
+>>>
+>>>     // Big fat comment to explain what is going on
+>>> +   if ((page_mapcount(page) - real_mapcount) > 0) {
+>>> +       SetPageDMAPined(page);
+>>> +   } else {
+>>> +       ClearPageDMAPined(page);
+>>> +   }
+>>
+>> This is the detail I'm not sure about: Why cannot rmap_walk_file() race
+>> with e.g. zap_pte_range() which decrements page->_mapcount and thus the
+>> check we do in page_mkclean() is wrong?
+>>
+>=20
+> Ok so i found a solution for that. First GUP must wait for racing
+> write back. If GUP see a valid write-able PTE and the page has
+> write back flag set then it must back of as if the PTE was not
+> valid to force fault. It is just a race with page_mkclean and we
+> want ordering between the two. Note this is not strictly needed
+> so we can relax that but i believe this ordering is better to do
+> in GUP rather then having each single user of GUP test for this
+> to avoid the race.
+>=20
+> GUP increase mapcount only after checking that it is not racing
+> with writeback it also set a page flag (SetPageDMAPined(page)).
+>=20
+> When clearing a write-able pte we set a special entry inside the
+> page table (might need a new special swap type for this) and change
+> page_mkclean_one() to clear to 0 those special entry.
+>=20
+>=20
+> Now page_mkclean:
+>=20
+> int page_mkclean(struct page *page)
+> {
+>     int cleaned =3D 0;
+> +   int real_mapcount =3D 0;
+>     struct address_space *mapping;
+>     struct rmap_walk_control rwc =3D {
+>         .arg =3D (void *)&cleaned,
+>         .rmap_one =3D page_mkclean_one,
+>         .invalid_vma =3D invalid_mkclean_vma,
+> +       .mapcount =3D &real_mapcount,
+>     };
+> +   int mapcount1, mapcount2;
+>=20
+>     BUG_ON(!PageLocked(page));
+>=20
+>     if (!page_mapped(page))
+>         return 0;
+>=20
+>     mapping =3D page_mapping(page);
+>     if (!mapping)
+>         return 0;
+>=20
+> +   mapcount1 =3D page_mapcount(page);
+>=20
+>     // rmap_walk need to change to count mapping and return value
+>     // in .mapcount easy one
+>     rmap_walk(page, &rwc);
+>=20
+> +   if (PageDMAPined(page)) {
+> +       int rc2;
+> +
+> +       if (mapcount1 =3D=3D real_count) {
+> +           /* Page is no longer pin, no zap pte race */
+> +           ClearPageDMAPined(page);
+> +           goto out;
+> +       }
+> +       /* No new mapping of the page so mp1 < rc is illegal. */
+> +       VM_BUG_ON(mapcount1 < real_count);
+> +       /* Page might be pin. */
+> +       mapcount2 =3D page_mapcount(page);
+> +       if (mapcount2 > real_count) {
+> +           /* Page is pin for sure. */
+> +           goto out;
+> +       }
+> +       /* We had a race with zap pte we need to rewalk again. */
+> +       rc2 =3D real_mapcount;
+> +       real_mapcount =3D 0;
+> +       rwc.rmap_one =3D page_pin_one;
+> +       rmap_walk(page, &rwc);
+> +       if (mapcount2 <=3D (real_count + rc2)) {
+> +           /* Page is no longer pin */
+> +           ClearPageDMAPined(page);
+> +       }
+> +       /* At this point the page pin flag reflect pin status of the page=
+ */
 
-Add a bad sense quirk for it.
+Until...what? In other words, what is providing synchronization here?
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
- drivers/usb/storage/unusual_devs.h | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+thanks,
+--=20
+John Hubbard
+NVIDIA
 
-diff --git a/drivers/usb/storage/unusual_devs.h b/drivers/usb/storage/unusual_devs.h
-index f7f83b21dc74..ea0d27a94afe 100644
---- a/drivers/usb/storage/unusual_devs.h
-+++ b/drivers/usb/storage/unusual_devs.h
-@@ -1265,6 +1265,18 @@ UNUSUAL_DEV( 0x090c, 0x1132, 0x0000, 0xffff,
- 		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
- 		US_FL_FIX_CAPACITY ),
- 
-+/*
-+ * Reported by Icenowy Zheng <icenowy@aosc.io>
-+ * The SMI SM3350 USB-UFS bridge controller will enter a wrong state
-+ * that do not process read/write command if a long sense is requested,
-+ * so force to use 18-byte sense.
-+ */
-+UNUSUAL_DEV(  0x090c, 0x3350, 0x0000, 0xffff,
-+		"SMI",
-+		"SM3350 UFS-to-USB-Mass-Storage bridge",
-+		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
-+		US_FL_BAD_SENSE ),
-+
- /*
-  * Reported by Paul Hartman <paul.hartman+linux@gmail.com>
-  * This card reader returns "Illegal Request, Logical Block Address
--- 
-2.18.1
-
+> +   }
+> +
+> +out:
+>     ...
+> }
+>=20
+> The page_pin_one() function count the number of special PTE entry so
+> which match the count of pte that have been zapped since the first
+> reverse map walk.
+>=20
+> So worst case a page that was pin by a GUP would need 2 reverse map
+> walk during page_mkclean(). Moreover this is only needed if we race
+> with something that clear pte. I believe this is an acceptable worst
+> case. I will work on some RFC patchset next week (once i am down with
+> email catch up).
+>=20
+>=20
+> I do not think i made mistake here, i have been torturing my mind
+> trying to think of any race scenario and i believe it holds to any
+> racing zap and page_mkclean()
+>=20
+> Cheers,
+> J=C3=A9r=C3=B4me
+>=20
