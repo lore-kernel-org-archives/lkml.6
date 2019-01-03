@@ -2,212 +2,109 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01EAFC43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 20:29:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7D0BC43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 20:31:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C04FA21479
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 20:29:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BC56221479
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 20:31:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727813AbfACU3v (ORCPT
+        id S1727823AbfACUbN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 15:29:51 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:57630 "EHLO mx1.redhat.com"
+        Thu, 3 Jan 2019 15:31:13 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:48208 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726036AbfACU3v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 15:29:51 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        id S1726036AbfACUbN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Jan 2019 15:31:13 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2F6572D0FDC;
-        Thu,  3 Jan 2019 20:29:50 +0000 (UTC)
-Received: from madcap2.tricolour.ca (ovpn-112-10.phx2.redhat.com [10.3.112.10])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 284BD60C47;
-        Thu,  3 Jan 2019 20:29:40 +0000 (UTC)
-Date:   Thu, 3 Jan 2019 15:29:38 -0500
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        linux-audit@redhat.com, linux-kernel@vger.kernel.org,
-        ebiederm@xmission.com, luto@kernel.org, dhowells@redhat.com,
-        viro@zeniv.linux.org.uk, simo@redhat.com,
-        Eric Paris <eparis@parisplace.org>,
-        Serge Hallyn <serge@hallyn.com>
-Subject: Re: [PATCH ghak90 (was ghak32) V4 01/10] audit: collect audit task
- parameters
-Message-ID: <20190103202938.ntdfqdmyrr7stzh2@madcap2.tricolour.ca>
-References: <cover.1533065887.git.rgb@redhat.com>
- <8e617ab568df28a66dfbe3284452de186b42fb0f.1533065887.git.rgb@redhat.com>
- <CAHC9VhQFqs1SyvximK+8XJG5Fk3p9WsWhEV5sY6kksN9tc6eKw@mail.gmail.com>
- <20181101220724.ggkqyf5kjv7lhabx@madcap2.tricolour.ca>
- <CAHC9VhRU-Qss41CnV3mE32tXmZ3FQpy++t4yPUkh9CjuAzxYCA@mail.gmail.com>
+        by mx1.redhat.com (Postfix) with ESMTPS id E1657C059B8C;
+        Thu,  3 Jan 2019 20:31:12 +0000 (UTC)
+Received: from treble (ovpn-125-50.rdu2.redhat.com [10.10.125.50])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4390D1001F41;
+        Thu,  3 Jan 2019 20:31:11 +0000 (UTC)
+Date:   Thu, 3 Jan 2019 14:31:09 -0600
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Nadav Amit <namit@vmware.com>
+Cc:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Edward Cree <ecree@solarflare.com>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: Re: [RFC v2 0/6] x86: dynamic indirect branch promotion
+Message-ID: <20190103203109.cdck5kwck5gnkko7@treble>
+References: <20181231072112.21051-1-namit@vmware.com>
+ <CALCETrW_52zEv1kHa7AdhF4PUGvyX4VyHqig1bFAJM_3VAXn=A@mail.gmail.com>
+ <A7D88101-837A-4FD2-B397-019D1845A418@vmware.com>
+ <20190103181057.lflra4lkoaeg2btv@treble>
+ <7FA580EA-9DEA-4813-8832-F1BE034A857C@vmware.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAHC9VhRU-Qss41CnV3mE32tXmZ3FQpy++t4yPUkh9CjuAzxYCA@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7FA580EA-9DEA-4813-8832-F1BE034A857C@vmware.com>
 User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Thu, 03 Jan 2019 20:29:50 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Thu, 03 Jan 2019 20:31:13 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I'm not sure what's going on here, but it looks like HTML-encoded reply
-quoting making the quoted text very difficult to read.  All the previous
-">" have been converted to the HTML "&gt;" encoding.  Your most recent
-reply text looks mostly fine.
+On Thu, Jan 03, 2019 at 06:30:08PM +0000, Nadav Amit wrote:
+> > On Jan 3, 2019, at 10:10 AM, Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+> > 
+> > On Mon, Dec 31, 2018 at 07:53:06PM +0000, Nadav Amit wrote:
+> >>> On Dec 31, 2018, at 11:51 AM, Andy Lutomirski <luto@kernel.org> wrote:
+> >>> 
+> >>> On Sun, Dec 30, 2018 at 11:20 PM Nadav Amit <namit@vmware.com> wrote:
+> >>>> This is a revised version of optpolines (formerly named retpolines) for
+> >>>> dynamic indirect branch promotion in order to reduce retpoline overheads
+> >>>> [1].
+> >>> 
+> >>> Some of your changelogs still call them "relpolines".
+> >>> 
+> >>> I have a crazy suggestion: maybe don't give them a cute name at all?
+> >>> Where it's actually necessary to name them (like in a config option),
+> >>> use a description like CONFIG_DYNAMIC_DEVIRTUALIZATION or
+> >>> CONFIG_PATCH_INDIRECT_CALLS or something.
+> > 
+> > Cute or not, naming is important.
+> > 
+> > If you want a description instead of a name, it will be a challenge to
+> > describe it in 2-3 words.
+> > 
+> > I have no idea what "dynamic devirtualization" means.
+> > 
+> > "Patch indirect calls" doesn't fully describe it either (and could be
+> > easily confused with static calls and some other approaches).
+> > 
+> >> I’m totally fine with that (don’t turn me into a "marketing” guy). It was
+> >> just a way to refer to the mechanism. I need more feedback about the more
+> >> fundamental issues to go on.
+> > 
+> > Naming isn't marketing.  It's a real issue: it affects both usability
+> > and code readability.
+> 
+> Well, allow me to be on the fence not this one.
+> 
+> I look for the path of least resistance. I think it would be easiest if I
+> first manage to make Josh’s static calls to be less intrusive. For that, I
+> try to add in the GCC plugin an attribute to annotate the function pointers
+> whose calls should be promoted. However, I don’t manage to get the
+> declaration from the call instruction's rtx. If anyone has a pointer on how
+> it can be done, that’s would be very helpful.
 
-On 2019-01-03 15:10, Paul Moore wrote:
-> On Thu, Nov 1, 2018 at 6:07 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> &gt; On 2018-10-19 19:15, Paul Moore wrote:
-> &gt; &gt; On Sun, Aug 5, 2018 at 4:32 AM Richard Guy Briggs
-> <rgb@redhat.com> wrote:
-> &gt; &gt; &gt; The audit-related parameters in struct task_struct
-> should ideally be
-> &gt; &gt; &gt; collected together and accessed through a standard audit API.
-> &gt; &gt; &gt;
-> &gt; &gt; &gt; Collect the existing loginuid, sessionid and
-> audit_context together in a
-> &gt; &gt; &gt; new struct audit_task_info called "audit" in struct task_struct.
-> &gt; &gt; &gt;
-> &gt; &gt; &gt; Use kmem_cache to manage this pool of memory.
-> &gt; &gt; &gt; Un-inline audit_free() to be able to always recover that memory.
-> &gt; &gt; &gt;
-> &gt; &gt; &gt; See: https://github.com/linux-audit/audit-kernel/issues/81
-> &gt; &gt; &gt;
-> &gt; &gt; &gt; Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> &gt; &gt; &gt; ---
-> &gt; &gt; &gt;  include/linux/audit.h | 34 ++++++++++++++++++++++++----------
-> &gt; &gt; &gt;  include/linux/sched.h |  5 +----
-> &gt; &gt; &gt;  init/init_task.c      |  3 +--
-> &gt; &gt; &gt;  init/main.c           |  2 ++
-> &gt; &gt; &gt;  kernel/auditsc.c      | 51
-> ++++++++++++++++++++++++++++++++++++++++++---------
-> &gt; &gt; &gt;  kernel/fork.c         |  4 +++-
-> &gt; &gt; &gt;  6 files changed, 73 insertions(+), 26 deletions(-)
-> &gt; &gt;
-> &gt; &gt; ...
-> &gt; &gt;
-> &gt; &gt; &gt; diff --git a/include/linux/sched.h b/include/linux/sched.h
-> &gt; &gt; &gt; index 87bf02d..e117272 100644
-> &gt; &gt; &gt; --- a/include/linux/sched.h
-> &gt; &gt; &gt; +++ b/include/linux/sched.h
-> &gt; &gt; &gt; @@ -873,10 +872,8 @@ struct task_struct {
-> &gt; &gt; &gt;
-> &gt; &gt; &gt;         struct callback_head            *task_works;
-> &gt; &gt; &gt;
-> &gt; &gt; &gt; -       struct audit_context            *audit_context;
-> &gt; &gt; &gt;  #ifdef CONFIG_AUDITSYSCALL
-> &gt; &gt; &gt; -       kuid_t                          loginuid;
-> &gt; &gt; &gt; -       unsigned int                    sessionid;
-> &gt; &gt; &gt; +       struct audit_task_info          *audit;
-> &gt; &gt; &gt;  #endif
-> &gt; &gt; &gt;         struct seccomp                  seccomp;
-> &gt; &gt;
-> &gt; &gt; Prior to this patch audit_context was available regardless of
-> &gt; &gt; CONFIG_AUDITSYSCALL, after this patch the corresponding audit_context
-> &gt; &gt; is only available when CONFIG_AUDITSYSCALL is defined.
-> &gt;
-> &gt; This was intentional since audit_context is not used when AUDITSYSCALL is
-> &gt; disabled.  audit_alloc() was stubbed in that case to return 0.
-> audit_context()
-> &gt; returned NULL.
-> &gt;
-> &gt; The fact that audit_context was still present in struct task_struct was an
-> &gt; oversight in the two patches already accepted:
-> &gt;         ("audit: use inline function to get audit context")
-> &gt;         ("audit: use inline function to get audit context")
-> &gt; that failed to hide or remove it from struct task_struct when it
-> was no longer
-> &gt; relevant.
-> 
-> Okay, in that case let's pull this out and fix this separately from
-> the audit container ID patchset.
-> 
-> &gt; On further digging, loginuid and sessionid (and
-> audit_log_session_info) should
-> &gt; be part of CONFIG_AUDIT scope and not CONFIG_AUDITSYSCALL since
-> it is used in
-> &gt; CONFIG_CHANGE, ANOM_LINK, FEATURE_CHANGE(, INTEGRITY_RULE), none
-> of which are
-> &gt; otherwise dependent on AUDITSYSCALL.
-> 
-> This looks like something else we should fix independently from this patchset.
-> 
-> &gt; Looking ahead, contid should be treated like loginuid and
-> sessionid, which are
-> &gt; currently only available when syscall auditting is.
-> 
-> That seems reasonable.  Eventually it would be great if we got rid of
-> CONFIG_AUDITSYSCALL, but that is a separate issue, and something that
-> is going to require work from the different arch/ABI folks to ensure
-> everything is working properly.
-> 
-> &gt; Converting records from standalone to syscall and checking
-> audit_dummy_context
-> &gt; changes the nature of CONFIG_AUDIT/!CONFIG_AUDITSYSCALL separation.
-> &gt; eg: ANOM_LINK accompanied by PATH record (which needed CWD addition to be
-> &gt; complete anyways)
-> &gt;
-> &gt; &gt; &gt; diff --git a/init/main.c b/init/main.c
-> &gt; &gt; &gt; index 3b4ada1..6aba171 100644
-> &gt; &gt; &gt; --- a/init/main.c
-> &gt; &gt; &gt; +++ b/init/main.c
-> &gt; &gt; &gt; @@ -92,6 +92,7 @@
-> &gt; &gt; &gt;  #include <linux rodata_test.h="">
-> &gt; &gt; &gt;  #include <linux jump_label.h="">
-> &gt; &gt; &gt;  #include <linux mem_encrypt.h="">
-> &gt; &gt; &gt; +#include <linux audit.h="">
-> &gt; &gt; &gt;
-> &gt; &gt; &gt;  #include <asm io.h="">
-> &gt; &gt; &gt;  #include <asm bugs.h="">
-> &gt; &gt; &gt; @@ -721,6 +722,7 @@ asmlinkage __visible void __init
-> start_kernel(void)
-> &gt; &gt; &gt;         nsfs_init();
-> &gt; &gt; &gt;         cpuset_init();
-> &gt; &gt; &gt;         cgroup_init();
-> &gt; &gt; &gt; +       audit_task_init();
-> &gt; &gt; &gt;         taskstats_init_early();
-> &gt; &gt; &gt;         delayacct_init();
-> &gt; &gt;
-> &gt; &gt; It seems like we would need either init_struct_audit or
-> &gt; &gt; audit_task_init(), but not both, yes?
-> &gt;
-> &gt; One sets initial values of init task via an included struct,
-> other makes a call
-> &gt; to create the kmem cache.  Both seem appropriate to me unless we move the
-> &gt; initialization from a struct to assignments in audit_task_init(),
-> but I'm not
-> &gt; that comfortable separating the audit init values from the rest of the
-> &gt; task_struct init task initializers (though there are other
-> subsystems that need
-> &gt; to do so dynamically).
-> 
-> My original thinking was focused on the use of init_struct_audit as an
-> initializer when audit_task_init() was already creating a kmem_cache
-> pool and a zero'd/init'd audit_task_info could be obtained via the
-> usual kmem_cache functions.  Alternatively, although I don't believe
-> it would be recommended for this case, would be to use
-> init_struct_audit as an init helper if we included the audit_task_info
-> struct directly in the task_struct, as opposed to a pointer.  What I
-> missed was the simple fact that you're only using init_struct_audit
-> for the init_task, which pretty much makes my original question rather
-> silly :)
-> 
-> --
-> paul moore
-> www.paul-moore.com
+Ok.  FYI, I'll be posting v3 in the next few days or so.
 
-- RGB
-
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+-- 
+Josh
