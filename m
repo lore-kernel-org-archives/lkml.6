@@ -2,84 +2,150 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57E26C43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 09:03:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B6C8C43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 09:05:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17C6420815
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 09:03:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 007A720815
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 09:05:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d0EmgRl3"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZjxfD8Iy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729770AbfACJDs (ORCPT
+        id S1729810AbfACJFC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 04:03:48 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:39599 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726214AbfACJDr (ORCPT
+        Thu, 3 Jan 2019 04:05:02 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:54728 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728546AbfACJFC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 04:03:47 -0500
-Received: by mail-lf1-f68.google.com with SMTP id n18so22691306lfh.6
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 01:03:46 -0800 (PST)
+        Thu, 3 Jan 2019 04:05:02 -0500
+Received: by mail-it1-f194.google.com with SMTP id i145so44363507ita.4
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 01:05:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=WIAFsRlkMLQngnhOYIAcYMV9q2zsRAFHE1eq2X2ttbA=;
-        b=d0EmgRl3mcGwXoS8o3q2cNCCwyBQWynpjCgnJTPZxYYOHtppbroi2t/oZK4z8GhKyF
-         CJVnbYo+REY6uM9EZcm1V505tKhAHY+Vg0XOtVYA4wL0VozR1OUsqVZOxzn1JcXFJlBW
-         IIyZ4U7IGXrmsnwyHCYn67vQhP3K4VLEcX4euQCZ5YHQMjkO2edsO7Q1ohP7SMl70arR
-         jj1jc5mZl+ZyFKMlwUlRkVgOThv8HG4sfCNCnJmLnF8adYfiaN+Ncz+6LahatOpEZbnF
-         En0dQ6lNtrHYarB2y36eA0Wxi4fhRxlhyezXIf3dDebI3v4+WQ3xTGO02kEfpjNWvBDs
-         X2Dg==
+         :cc;
+        bh=4aZoFYaINGL7pTaVqfSrKOmWw9hdsGePz6tgKZ2uWxY=;
+        b=ZjxfD8IyYGCExepiHX8hKBG15pr4PgawwZoPPf7SsJXOojydvRzQNfLRHEh0YMpSD6
+         mE7wgfinQEQJZ80QeA3hi0kQUOHe/bNmQtA9JvnXEe8PDhHRwuIDbUMK95CMfQC51GUi
+         /te2NOkL7lh7Vr7jcdDvnvHgduvW40utgfOn325+oMAK9q6gFcWiH/oJkCxCm0WfyAy0
+         9gueVwfHxF/rKZ5Kz1QUQJS8UkdvmuB9+Mmq9cy0Tgnlw/ANb1ZSN3ZgEBYGnT31WOVy
+         V8j765pSZI7m8LyBOSBw29d8cd/fsjjjGc/vn3jLqaiwEVJuOjBEqmMBhQjqH+1n1ZtX
+         j+EA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=WIAFsRlkMLQngnhOYIAcYMV9q2zsRAFHE1eq2X2ttbA=;
-        b=FSjA4Y+I6+EcdbVUzQVxQpTWx/wbT8KfjTQ3zhcmshYGC6EfZkdRJCmdDh1wgXBy90
-         Pb3grgHPPtpOlZ2eJuKhvAhXxfb9jANVZsgGvpDf/hXRiBTHx4VuMYEHpGbKdVhRKNx5
-         gizQ5RjFJxwHVU0ypvnZSm0vjrb6WyeYBRq4ap2N2EwVD6APe2WbUB6KAa2L/tQeGFL+
-         T/+QYtA0Bi1QmwJGX+YVQKcnlXz8M+L32OLK4ue+9hjvJbG+vk3NROUhxt2BXUMF18Ls
-         VHZ2qHt0Ud8bF2bK8bkCFx3tEX2qeo62bWL4PsR5x87CwzMv9Cn+/YmtTw7t1rihSM/Z
-         GKzw==
-X-Gm-Message-State: AA+aEWZVKj5NYxeLoYKghiPrea/sbcnbh72U/V16vLwedGfgokptF1vC
-        FYExCmGK9ceq6ZrloO81vC1cR8d5kXE9R/jbq/8fKuDw
-X-Google-Smtp-Source: AFSGD/XuoDTi+T3M01lLt+jxPWJvgjuSOLbMj71DVv5qEo8uLwMZcDa5KhrOCz9mGBRQSHFO4gY180S51O8h9rqqFho=
-X-Received: by 2002:a19:3b9c:: with SMTP id d28mr24708724lfl.30.1546506225518;
- Thu, 03 Jan 2019 01:03:45 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=4aZoFYaINGL7pTaVqfSrKOmWw9hdsGePz6tgKZ2uWxY=;
+        b=ViQkRP8dxqHhebt0vKUMUF//bjU7Y/Gp40ef5CTV+It24PYWEAZ9CbxZO6kJE62/oC
+         k6uSJCgH8xvUthtkUVj9A782l5VnPoRmgv//7YMYcwaVOPUUz9+4OzkSwlDNH4MNfPN4
+         R1ey+6a016Fsxx1rdpUHBRcUh4jaQQ9d9+p4BUsTlfCHaKSGrle5+oYycXvvrESEYfZq
+         noq7IQuKmhDdwjGpgYNBJA06s3uXsgfCfzaU3tKH86g7urRUlvs86EPspkTLF3GfzuQw
+         1FgZoNo2nBSqzJJztQnCqT72lSMXEmnd0kFMVrO0FnPDa2vUUhtOfAVIIc9BCf6aQNtT
+         ymxw==
+X-Gm-Message-State: AJcUukeJlWiN3GjvohQFXy1ngVI90NYyW4ZuYCAsps0z+Yt3YncxBqtp
+        ZAIxgMyfsf9FYwEZKNSVlPDquCCwHVtW8QH/mnWTYg==
+X-Google-Smtp-Source: ALg8bN6k4E646mZdy71LIAzgelVkqYiQ7Xxmx0/yCvuhOnZ2sm279Suj/H49jw69ylVA3D96z3HYYqKs5Kg8Elyg3Pg=
+X-Received: by 2002:a24:6511:: with SMTP id u17mr7968458itb.12.1546506300844;
+ Thu, 03 Jan 2019 01:05:00 -0800 (PST)
 MIME-Version: 1.0
-References: <5887db663842c078851e7795512bca45@memeware.net>
- <1546396372.7355.6.camel@gmx.de> <a87c86d5c14d8b377a736d8537edfe80@memeware.net>
-In-Reply-To: <a87c86d5c14d8b377a736d8537edfe80@memeware.net>
-From:   Ivan Ivanov <qmastery16@gmail.com>
-Date:   Thu, 3 Jan 2019 12:03:30 +0300
-Message-ID: <CAAaskFDi3nMDEi4=q_HChjYDHfkJq3ROnPWpCcX1+ZvopyYAnA@mail.gmail.com>
-Subject: Re: knifeshack (Linux Property rights) -- Why dislike short story?
-To:     vsnsdualce@memeware.net
-Cc:     Mike Galbraith <efault@gmx.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        freebsd-women@freebsd.org, freebsd-chat@freebsd.org,
-        misc@openbsd.org
+References: <000000000000f56975057e374c46@google.com> <fea9b565-06e4-fbb5-7e92-efd133a7028c@linux.intel.com>
+In-Reply-To: <fea9b565-06e4-fbb5-7e92-efd133a7028c@linux.intel.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Thu, 3 Jan 2019 10:04:49 +0100
+Message-ID: <CACT4Y+bKqXknE--kTngznowLaY1b9h5oGWdWBR8w=nHv8F90AQ@mail.gmail.com>
+Subject: Re: WARNING: lock held when returning to user space in set_property_atomic
+To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Cc:     syzbot <syzbot+6ea337c427f5083ebdf2@syzkaller.appspotmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        DRI <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>, maxime.ripard@bootlin.com,
+        sean@poorly.run, syzkaller-bugs <syzkaller-bugs@googlegroups.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-maybe Mike Galbraith is one of those SJWs who took over the Linux
-kernel and slowly taking over the rest of opensource projects. We must
-REESIST !
+On Thu, Jan 3, 2019 at 9:55 AM Maarten Lankhorst
+<maarten.lankhorst@linux.intel.com> wrote:
+>
+> Op 30-12-2018 om 07:21 schreef syzbot:
+> > Hello,
+> >
+> > syzbot found the following crash on:
+> >
+> > HEAD commit:    903b77c63167 Merge tag 'linux-kselftest-4.21-rc1' of git:/..
+> > git tree:       upstream
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=12d0f553400000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=53a2f2aa0b1f7606
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=6ea337c427f5083ebdf2
+> > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=120d906f400000
+> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1024673b400000
+> >
+> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > Reported-by: syzbot+6ea337c427f5083ebdf2@syzkaller.appspotmail.com
+> >
+> > RBP: 00007ffe369ca7a0 R08: 0000000000000001 R09: 00000000004009ce
+> > R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000005
+> > R13: ffffffffffffffff R14: 0000000000000000 R15: 0000000000000000
+> >
+> > ================================================
+> > WARNING: lock held when returning to user space!
+> > 4.20.0+ #174 Not tainted
+> > ------------------------------------------------
+> > syz-executor556/8153 is leaving the kernel with locks still held!
+> > 1 lock held by syz-executor556/8153:
+> >  #0: 000000005100c85c (crtc_ww_class_acquire){+.+.}, at: set_property_atomic+0xb3/0x330 drivers/gpu/drm/drm_mode_object.c:462
+> >
+> >
+> > ---
+> > This bug is generated by a bot. It may contain errors.
+> > See https://goo.gl/tpsmEJ for more information about syzbot.
+> > syzbot engineers can be reached at syzkaller@googlegroups.com.
+> >
+> > syzbot will keep track of this bug report. See:
+> > https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with syzbot.
+> > syzbot can test patches for this bug, for details see:
+> > https://goo.gl/tpsmEJ#testing-patches
+>
+> Just guessing..
+>
+> Does this help?
 
-=D1=87=D1=82, 3 =D1=8F=D0=BD=D0=B2. 2019 =D0=B3. =D0=B2 11:51, <vsnsdualce@=
-memeware.net>:
+Hi Maarten,
+
+Please either test or ask syzbot to test:
+https://github.com/google/syzkaller/blob/master/docs/syzbot.md#testing-patches
+
+> -----
+> diff --git a/drivers/gpu/drm/drm_mode_object.c b/drivers/gpu/drm/drm_mode_object.c
+> index cd9bc0ce9be0..004191d01772 100644
+> --- a/drivers/gpu/drm/drm_mode_object.c
+> +++ b/drivers/gpu/drm/drm_mode_object.c
+> @@ -459,11 +459,11 @@ static int set_property_atomic(struct drm_mode_object *obj,
+>         struct drm_modeset_acquire_ctx ctx;
+>         int ret;
 >
-> On 2019-01-02 02:32, Mike Galbraith wrote:
-> > Take your medication.
+> -       drm_modeset_acquire_init(&ctx, 0);
+> -
+>         state = drm_atomic_state_alloc(dev);
+>         if (!state)
+>                 return -ENOMEM;
+> +
+> +       drm_modeset_acquire_init(&ctx, 0);
+>         state->acquire_ctx = &ctx;
+>  retry:
+>         if (prop == state->dev->mode_config.dpms_property) {
 >
-> Why don't you like my short story?
+> --
+> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/fea9b565-06e4-fbb5-7e92-efd133a7028c%40linux.intel.com.
+> For more options, visit https://groups.google.com/d/optout.
