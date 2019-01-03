@@ -2,101 +2,81 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D058FC43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 07:41:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98584C43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 07:42:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E04A2073D
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 07:41:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D05420896
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 07:42:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730144AbfACHlI (ORCPT
+        id S1730163AbfACHmU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 02:41:08 -0500
-Received: from mga09.intel.com ([134.134.136.24]:62937 "EHLO mga09.intel.com"
+        Thu, 3 Jan 2019 02:42:20 -0500
+Received: from mga03.intel.com ([134.134.136.65]:47003 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726671AbfACHlI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 02:41:08 -0500
+        id S1726671AbfACHmU (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Thu, 3 Jan 2019 02:42:20 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Jan 2019 23:41:07 -0800
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Jan 2019 23:42:17 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,434,1539673200"; 
-   d="scan'208";a="264052827"
-Received: from yhuang-dev.sh.intel.com (HELO yhuang-dev) ([10.239.13.10])
-  by orsmga004.jf.intel.com with ESMTP; 02 Jan 2019 23:41:06 -0800
-From:   "Huang\, Ying" <ying.huang@intel.com>
-To:     Yang Shi <yang.shi@linux.alibaba.com>
-Cc:     <tim.c.chen@intel.com>, <minchan@kernel.org>,
-        <akpm@linux-foundation.org>, <linux-mm@kvack.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [v4 PATCH 2/2] mm: swap: add comment for swap_vma_readahead
-References: <1546145375-793-1-git-send-email-yang.shi@linux.alibaba.com>
-        <1546145375-793-2-git-send-email-yang.shi@linux.alibaba.com>
-Date:   Thu, 03 Jan 2019 15:41:05 +0800
-In-Reply-To: <1546145375-793-2-git-send-email-yang.shi@linux.alibaba.com>
-        (Yang Shi's message of "Sun, 30 Dec 2018 12:49:35 +0800")
-Message-ID: <875zv6w5m6.fsf@yhuang-dev.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+   d="scan'208";a="122960980"
+Received: from skl.sh.intel.com ([10.239.159.132])
+  by FMSMGA003.fm.intel.com with ESMTP; 02 Jan 2019 23:42:17 -0800
+From:   Jin Yao <yao.jin@linux.intel.com>
+To:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com
+Cc:     Linux-kernel@vger.kernel.org, ak@linux.intel.com,
+        kan.liang@intel.com, yao.jin@intel.com,
+        Jin Yao <yao.jin@linux.intel.com>
+Subject: [PATCH] perf stat: Fix endless wait for child process
+Date:   Thu,  3 Jan 2019 15:40:45 +0800
+Message-Id: <1546501245-4512-1-git-send-email-yao.jin@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Yang Shi <yang.shi@linux.alibaba.com> writes:
+We hit a perf stat issue by using following script.
 
-> swap_vma_readahead()'s comment is missed, just add it.
->
-> Cc: Huang Ying <ying.huang@intel.com>
-> Cc: Tim Chen <tim.c.chen@intel.com>
-> Cc: Minchan Kim <minchan@kernel.org>
-> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
-> ---
->  mm/swap_state.c | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
->
-> diff --git a/mm/swap_state.c b/mm/swap_state.c
-> index 78d500e..dd8f698 100644
-> --- a/mm/swap_state.c
-> +++ b/mm/swap_state.c
-> @@ -698,6 +698,23 @@ static void swap_ra_info(struct vm_fault *vmf,
->  	pte_unmap(orig_pte);
->  }
->  
-> +/**
-> + * swap_vm_readahead - swap in pages in hope we need them soon
+  #!/bin/bash
 
-s/swap_vm_readahead/swap_vma_readahead/
+  sleep 1000 &
+  exec perf stat -a -e cycles -I1000 -- sleep 5
 
-> + * @entry: swap entry of this memory
-> + * @gfp_mask: memory allocation flags
-> + * @vmf: fault information
-> + *
-> + * Returns the struct page for entry and addr, after queueing swapin.
-> + *
-> + * Primitive swap readahead code. We simply read in a few pages whoes
-> + * virtual addresses are around the fault address in the same vma.
-> + *
-> + * This has been extended to use the NUMA policies from the mm triggering
-> + * the readahead.
+Since "perf stat" is launched by exec, so the "sleep 1000" would be
+the child process of "perf stat". The wait4() will not return because
+it's waiting for the child process "sleep 1000" to be end. So perf
+stat doesn't return even 5s passed.
 
-What is this?  I know you copy it from swap_cluster_readahead(), but we
-have only one mm for vma readahead.
+This patch lets the perf stat return when the specified child process
+is end (in this case, specified child process is "sleep 5").
 
-> + * Caller must hold down_read on the vma->vm_mm if vmf->vma is not NULL.
+Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
+---
+ tools/perf/builtin-stat.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Better to make it explicit that your are talking about mmap_sem?
+diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+index 1410d66..63a3afc 100644
+--- a/tools/perf/builtin-stat.c
++++ b/tools/perf/builtin-stat.c
+@@ -561,7 +561,8 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
+ 					break;
+ 			}
+ 		}
+-		wait4(child_pid, &status, 0, &stat_config.ru_data);
++		if (child_pid != -1)
++			wait4(child_pid, &status, 0, &stat_config.ru_data);
+ 
+ 		if (workload_exec_errno) {
+ 			const char *emsg = str_error_r(workload_exec_errno, msg, sizeof(msg));
+-- 
+2.7.4
 
-Best Regards,
-Huang, Ying
-
-> + *
-> + */
->  static struct page *swap_vma_readahead(swp_entry_t fentry, gfp_t gfp_mask,
->  				       struct vm_fault *vmf)
->  {
