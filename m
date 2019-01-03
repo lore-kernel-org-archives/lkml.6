@@ -2,126 +2,102 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 713EBC43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 19:58:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A827C43613
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 19:59:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33428208E3
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 19:58:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="edYGbBxI"
+	by mail.kernel.org (Postfix) with ESMTP id D14D82184B
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 19:59:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546545574;
+	bh=bjxzTDqoBMtnYfhdZ0DCHNC7/RXXlUexsivg2rek8K0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=BsVLpJ4CSqrom/k3j7Tb2YDd3oiEuzHYJ6fVp4L6UyVZ8yD4OIHjlpL97/qh/KpC3
+	 xr106eNbzfMNyhI5fvggmlrT/UGLsicITM3W/ogC/tAtXbw/rWJkcPrxAM3xMAnKqM
+	 P2uH0e8Ies8SzK1l6NYcOwfVoTAvJajwsXjgTSwA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726254AbfACT6j (ORCPT
+        id S1727465AbfACT7e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 14:58:39 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:35378 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726100AbfACT6i (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 14:58:38 -0500
-Received: by mail-ed1-f67.google.com with SMTP id x30so30046346edx.2
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 11:58:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=mcaOkKaskc6pwuQXJbemK24OWy2Us/5/O+TjG5KW5ms=;
-        b=edYGbBxI+LMizHUYdh8fZKynCLVGzV1OSF+8jWzxiXXjFj71lRYLBHOc00m9+XJuCO
-         HQFg1gYrklQauyIxTab68Q1Fp06Y721LjkckUusjXgCPeHJv9vj2N//s5xk355QENyB2
-         fZC9lzfLX32K4g+kMGIl06WOSj4fTFW+ezgPfQG10eEk6Cj9ybeM4lfcb10X8/PmVclj
-         R9X1QDBtTYLUwZnpKtHOmGEd9JZUSM4CC/tlQ63lxHcGlA2e+aBOhTK/hOGD+ZQd7Ox+
-         zSg/Ag8tN47GT3TS4JV4rxDj3HfuWl3Vzv1s6oLHejdaavRrHRumYVYBNViRnIin1s/u
-         nBHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mcaOkKaskc6pwuQXJbemK24OWy2Us/5/O+TjG5KW5ms=;
-        b=Lsqnrna5Lq+CIBWEql//xAD37oUCEeVwYtIOkJDuWLDjmT/MB1+EXR5TMgo7bZY/h1
-         1TO62OW+T8fcjy+pmLdqeg9okGCpRJQrogGErehOv0jwwbBQaebYqNvaRgRpDVZ/hE4x
-         l3zxRwmGkvAaHoPbmcT04SI5STMB5FVAnxHGrgMJc4+YzDKp+zZWqKWJZCbIfHBYvRtX
-         TUxYGkOakXe0WK2yx1H+sk5QGIGN7cahHAjTbH1NM7ZEP3oMd4xLvIJvYPZzFtRUJhTZ
-         +5mNSSWiqNj2N81uhEiwEU+A72t0XVtOTGh+zTHvfQ6H5uGTcad8mYMUiZBwtypwL2MR
-         7bFQ==
-X-Gm-Message-State: AA+aEWYApA+xkXkEHL04HbRNWMi4+XqjoHzaVuoTiraFzB19jVkkJTqQ
-        OJx7Q67QELAjqRW0pMzR7TdgkaO0zQkJwAYiPOKw5AVcej1p7Q==
-X-Google-Smtp-Source: AFSGD/UjNghA7YS+jJdakehZdTH9Y+Xlm+kl+Y5hKRMZ9S43IPNy6YGYTOt0AqNUP5ryWeSqY9EWtgeqVaj+n0ILux8=
-X-Received: by 2002:a50:9a42:: with SMTP id o60mr44986597edb.180.1546545516064;
- Thu, 03 Jan 2019 11:58:36 -0800 (PST)
+        Thu, 3 Jan 2019 14:59:34 -0500
+Received: from mx2.suse.de ([195.135.220.15]:48026 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726036AbfACT7d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Jan 2019 14:59:33 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 0B599AFB2;
+        Thu,  3 Jan 2019 19:59:32 +0000 (UTC)
+Date:   Thu, 3 Jan 2019 20:59:30 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Roman Penyaev <rpenyaev@suse.de>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Joe Perches <joe@perches.com>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 1/3] mm/vmalloc: fix size check for
+ remap_vmalloc_range_partial()
+Message-ID: <20190103195930.GC31793@dhcp22.suse.cz>
+References: <20190103145954.16942-1-rpenyaev@suse.de>
+ <20190103145954.16942-2-rpenyaev@suse.de>
 MIME-Version: 1.0
-References: <20181226164509.22916-1-pasha.tatashin@soleen.com>
- <20181226164509.22916-4-pasha.tatashin@soleen.com> <9fe670d4-d799-c05f-297e-437eda1d2072@arm.com>
-In-Reply-To: <9fe670d4-d799-c05f-297e-437eda1d2072@arm.com>
-From:   Pavel Tatashin <pasha.tatashin@soleen.com>
-Date:   Thu, 3 Jan 2019 14:58:25 -0500
-Message-ID: <CA+CK2bA_006YGu3dtJM24pN1ZGgcJZnF2oEeWKkq3QBrcCbB6Q@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] arm64: Early boot time stamps
-To:     Marc Zyngier <marc.zyngier@arm.com>
-Cc:     catalin.marinas@arm.com, Will Deacon <will.deacon@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        rppt@linux.vnet.ibm.com, Michal Hocko <mhocko@suse.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        andrew.murray@arm.com, james.morse@arm.com, sboyd@kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190103145954.16942-2-rpenyaev@suse.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> I still think this approach is flawed. You provide the kernel with a
-> potentially broken sched_clock that may jump back and forth until the
-> workaround kicks in. Nobody expects this.
->
-> Instead, I'd suggest you allow for a something other than local_clock()
-> to be used for the time stamping until a properly working sched_clock
-> gets registered.
->
-> This way, you'll only impact the timestamps when running on a broken system.
+On Thu 03-01-19 15:59:52, Roman Penyaev wrote:
+> area->size can include adjacent guard page but get_vm_area_size()
+> returns actual size of the area.
+> 
+> This fixes possible kernel crash when userspace tries to map area
+> on 1 page bigger: size check passes but the following vmalloc_to_page()
+> returns NULL on last guard (non-existing) page.
+> 
+> Signed-off-by: Roman Penyaev <rpenyaev@suse.de>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Michal Hocko <mhocko@suse.com>
+> Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
+> Cc: Joe Perches <joe@perches.com>
+> Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>
+> Cc: linux-mm@kvack.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: stable@vger.kernel.org
 
-I think, given that on other platforms sched_clock() is already used
-early, it is not a good idea to invent a different clock just for time
-stamps.
+Forgot to add
+Acked-by: Michal Hocko <mhocko@suse.com>
+Although I am not really sure the stable backport is really needed as I
+haven't seen any explicit example of a buggy kernel code to trigger the
+issue.
 
-We could limit arm64 approach only for chips where cntvct_el0 is
-working: i.e. frequency is known, and the clock is stable, meaning
-cannot go backward. Perhaps we would start early clock a little later,
-but at least it will be available for the sane chips. The only
-question, where during boot time this is known.
+> ---
+>  mm/vmalloc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> index 871e41c55e23..2cd24186ba84 100644
+> --- a/mm/vmalloc.c
+> +++ b/mm/vmalloc.c
+> @@ -2248,7 +2248,7 @@ int remap_vmalloc_range_partial(struct vm_area_struct *vma, unsigned long uaddr,
+>  	if (!(area->flags & VM_USERMAP))
+>  		return -EINVAL;
+>  
+> -	if (kaddr + size > area->addr + area->size)
+> +	if (kaddr + size > area->addr + get_vm_area_size(area))
+>  		return -EINVAL;
+>  
+>  	do {
+> -- 
+> 2.19.1
 
-Another approach is to modify sched_clock() in
-kernel/time/sched_clock.c to never return backward value during boot.
-
-1. Rename  current implementation of sched_clock() to sched_clock_raw()
-2. New sched_clock() would look like this:
-
-u64 sched_clock(void)
-{
-   if (static_branch(early_unstable_clock))
-      return sched_clock_unstable();
-   else
-      return sched_clock_raw();
-}
-
-3. sched_clock_unstable() would look like this:
-
-u64 sched_clock_unstable(void)
-{
-again:
-  static u64 old_clock;
-  u64 new_clock = sched_clock_raw();
-  static u64 old_clock_read =   READ_ONCE(old_clock);
-  /* It is ok if time does not progress, but don't allow to go backward */
-  if (new_clock < old_clock_read)
-    return old_clock_read;
-   /* update the old_clock value */
-   if (cmpxchg64(&old_clock, old_clock_read, new_clock) != old_clock_read)
-      goto again;
-   return new_clock;
-}
-
-Pasha
+-- 
+Michal Hocko
+SUSE Labs
