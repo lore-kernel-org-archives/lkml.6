@@ -2,103 +2,134 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D8DDC43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 17:52:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E26CC43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 17:55:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4811220815
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 17:52:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B1CC217F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 17:55:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546538102;
+	bh=cx5/aIyE2OjbGfKc9XcMI2kcZJltMo12tCbM1unRiHY=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:List-ID:From;
+	b=Vn00kjahbAYCgyDcgBHqflZgQo+Q1LFX6iI74f5OB9Ix2PUVAavFVqp86gEIVb2yv
+	 wvZvtqAyNhD7hPXo/QlSkeUlkoe0GRSSmdjpS8ex6pjT2O3ohuk6pSK2F45wObWt2/
+	 i/gNOCwh3dzOUI0SYiQTgofKSpg5RocA3YYr3ycI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731989AbfACRws (ORCPT
+        id S1732631AbfACRzB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 12:52:48 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54030 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728424AbfACRwr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 12:52:47 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 23DD715AD;
-        Thu,  3 Jan 2019 09:52:47 -0800 (PST)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id E4D823F5D4;
-        Thu,  3 Jan 2019 09:52:46 -0800 (PST)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 210571AE0BD1; Thu,  3 Jan 2019 17:52:47 +0000 (GMT)
-Date:   Thu, 3 Jan 2019 17:52:47 +0000
-From:   Will Deacon <will.deacon@arm.com>
-To:     Dave Martin <Dave.Martin@arm.com>
-Cc:     Pi-Hsun Shih <pihsun@chromium.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        "moderated list:ARM64 PORT AARCH64 ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH] arm64: Mirror arm for small unimplemented compat syscalls
-Message-ID: <20190103175246.GB10221@edgewater-inn.cambridge.arm.com>
-References: <20190103074550.217421-1-pihsun@chromium.org>
- <20190103114959.GA3529@e103592.cambridge.arm.com>
- <20190103165144.GA10221@edgewater-inn.cambridge.arm.com>
+        Thu, 3 Jan 2019 12:55:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43448 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728424AbfACRzA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Jan 2019 12:55:00 -0500
+Received: from localhost (c-67-164-102-47.hsd1.ca.comcast.net [67.164.102.47])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 698D620815;
+        Thu,  3 Jan 2019 17:54:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1546538100;
+        bh=cx5/aIyE2OjbGfKc9XcMI2kcZJltMo12tCbM1unRiHY=;
+        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+        b=1m08ovSSQIXloyX2c8U3SeEdGNaHUFKt7FFxukBWLjeho1DsoEAYseOk00tSk6UAh
+         wTSQtgwka4s6sw2bdm+sX9Ia+FOqy3GrxMpUtRc0apsZhGjVGDC8qVNvKISVoRFyMh
+         LeeUoOTNV5QLrZVYeuWUhDjIQoIDymxyzDY1SouA=
+Date:   Thu, 3 Jan 2019 09:54:58 -0800 (PST)
+From:   Stefano Stabellini <sstabellini@kernel.org>
+X-X-Sender: sstabellini@sstabellini-ThinkPad-X260
+To:     Huaisheng Ye <yehs2007@zoho.com>
+cc:     hch@lst.de, konrad.wilk@oracle.com, boris.ostrovsky@oracle.com,
+        jgross@suse.com, sstabellini@kernel.org, m.szyprowski@samsung.com,
+        robin.murphy@arm.com, linux-kernel@vger.kernel.org,
+        chengnt@lenovo.com, xen-devel@lists.xenproject.org,
+        iommu@lists.linux-foundation.org, Huaisheng Ye <yehs1@lenovo.com>
+Subject: Re: [PATCH] dma-mapping: remove unused attrs parameter to
+ dma_common_get_sgtable
+In-Reply-To: <20190103082908.9988-1-yehs2007@zoho.com>
+Message-ID: <alpine.DEB.2.10.1901030954240.800@sstabellini-ThinkPad-X260>
+References: <20190103082908.9988-1-yehs2007@zoho.com>
+User-Agent: Alpine 2.10 (DEB 1266 2009-07-14)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190103165144.GA10221@edgewater-inn.cambridge.arm.com>
-User-Agent: Mutt/1.11.1+30 (d10eec459b35) ()
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 03, 2019 at 04:51:44PM +0000, Will Deacon wrote:
-> On Thu, Jan 03, 2019 at 11:50:12AM +0000, Dave Martin wrote:
-> > On Thu, Jan 03, 2019 at 03:45:47PM +0800, Pi-Hsun Shih wrote:
-> > > For syscall number smaller than 0xf0000, arm calls sys_ni_syscall
-> > > instead of arm_syscall in arch/arm/kernel/entry-common.S, which returns
-> > > -ENOSYS instead of raising SIGILL. Mirror this behavior for compat
-> > > syscalls in arm64.
-> > > 
-> > > Fixes: 532826f3712b607 ("arm64: Mirror arm for unimplemented compat
-> > > syscalls")
-> > > Signed-off-by: Pi-Hsun Shih <pihsun@chromium.org>
-> > > ---
-> > >  arch/arm64/kernel/syscall.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > diff --git a/arch/arm64/kernel/syscall.c b/arch/arm64/kernel/syscall.c
-> > > index 8f3371415642ad..95fd8c7ec8a171 100644
-> > > --- a/arch/arm64/kernel/syscall.c
-> > > +++ b/arch/arm64/kernel/syscall.c
-> > > @@ -21,7 +21,7 @@ asmlinkage long do_ni_syscall(struct pt_regs *regs)
-> > >  {
-> > >  #ifdef CONFIG_COMPAT
-> > >  	long ret;
-> > > -	if (is_compat_task()) {
-> > > +	if (is_compat_task() && regs->regs[7] >= __ARM_NR_COMPAT_BASE) {
-> > 
-> > compat_arm_syscall() ignores all bits r7 except for bits [15:0].
-> > 
-> > So, doesn't this mean that 0xf0000, 0x100000, 0x110000 will all do the
-> > same thing now?  (Previously to your patch, 0xe0000, 0xd0000 etc. would
-> > also match in this code I've misunderstood something.)
-> > 
-> > The gating check in arch/arm/kernel/trapc.s:arm_syscall() is
-> > 
-> > 	if ((no >> 16) != (__ARM_NR_BASE>> 16))
-> > 
-> > I would expect that arm64 needs a similar check somewhere.  Is the check
-> > already present?  I may have missed it.
+On Thu, 3 Jan 2019, Huaisheng Ye wrote:
+> From: Huaisheng Ye <yehs1@lenovo.com>
 > 
-> When not using OABI, __ARM_NR_BASE is zero, so I think the 32-bit semantics
-> for non-OABI are:
+> dma_common_get_sgtable has parameter attrs which is not used at all.
+> Remove it.
 > 
-> 	0       - 399		: Invoke syscall via syscall table
-> 	400     - 0xeffff	: -ENOSYS (to be allocated in future)
-> 	0xf0000 - 0xfffff	: Private syscall or -ENOSYS if not allocated
-> 	> 0xfffff		: SIGILL
+> Signed-off-by: Huaisheng Ye <yehs1@lenovo.com>
 
-Bah, 0xfffff should be 0xf07ff in the last two lines here.
+Acked-by: Stefano Stabellini <sstabellini@kernel.org>
 
-Will
+FYI the patch doesn't apply cleanly to master.
+
+
+> ---
+>  drivers/xen/swiotlb-xen.c   | 2 +-
+>  include/linux/dma-mapping.h | 5 ++---
+>  kernel/dma/mapping.c        | 3 +--
+>  3 files changed, 4 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/xen/swiotlb-xen.c b/drivers/xen/swiotlb-xen.c
+> index 2a7f545..2dc17a5 100644
+> --- a/drivers/xen/swiotlb-xen.c
+> +++ b/drivers/xen/swiotlb-xen.c
+> @@ -697,7 +697,7 @@ static void xen_swiotlb_unmap_page(struct device *hwdev, dma_addr_t dev_addr,
+>  							   handle, size, attrs);
+>  	}
+>  #endif
+> -	return dma_common_get_sgtable(dev, sgt, cpu_addr, handle, size, attrs);
+> +	return dma_common_get_sgtable(dev, sgt, cpu_addr, handle, size);
+>  }
+>  
+>  static int xen_swiotlb_mapping_error(struct device *dev, dma_addr_t dma_addr)
+> diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
+> index d327bdd..bbfad44 100644
+> --- a/include/linux/dma-mapping.h
+> +++ b/include/linux/dma-mapping.h
+> @@ -483,7 +483,7 @@ void *dma_common_pages_remap(struct page **pages, size_t size,
+>  
+>  int
+>  dma_common_get_sgtable(struct device *dev, struct sg_table *sgt, void *cpu_addr,
+> -		dma_addr_t dma_addr, size_t size, unsigned long attrs);
+> +		dma_addr_t dma_addr, size_t size);
+>  
+>  static inline int
+>  dma_get_sgtable_attrs(struct device *dev, struct sg_table *sgt, void *cpu_addr,
+> @@ -495,8 +495,7 @@ void *dma_common_pages_remap(struct page **pages, size_t size,
+>  	if (ops->get_sgtable)
+>  		return ops->get_sgtable(dev, sgt, cpu_addr, dma_addr, size,
+>  					attrs);
+> -	return dma_common_get_sgtable(dev, sgt, cpu_addr, dma_addr, size,
+> -			attrs);
+> +	return dma_common_get_sgtable(dev, sgt, cpu_addr, dma_addr, size);
+>  }
+>  
+>  #define dma_get_sgtable(d, t, v, h, s) dma_get_sgtable_attrs(d, t, v, h, s, 0)
+> diff --git a/kernel/dma/mapping.c b/kernel/dma/mapping.c
+> index 58dec7a..6b33f10 100644
+> --- a/kernel/dma/mapping.c
+> +++ b/kernel/dma/mapping.c
+> @@ -202,8 +202,7 @@ void dmam_release_declared_memory(struct device *dev)
+>   * Create scatter-list for the already allocated DMA buffer.
+>   */
+>  int dma_common_get_sgtable(struct device *dev, struct sg_table *sgt,
+> -		 void *cpu_addr, dma_addr_t dma_addr, size_t size,
+> -		 unsigned long attrs)
+> +		 void *cpu_addr, dma_addr_t dma_addr, size_t size)
+>  {
+>  	struct page *page;
+>  	int ret;
+> -- 
+> 1.8.3.1
+> 
+> 
