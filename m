@@ -2,137 +2,124 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6929AC43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 21:33:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F0C3C43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 21:40:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25651217F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 21:33:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jaXlM75I"
+	by mail.kernel.org (Postfix) with ESMTP id 2DEC42184B
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 21:40:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727982AbfACVdM (ORCPT
+        id S1728011AbfACVko (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 16:33:12 -0500
-Received: from mail-ua1-f67.google.com ([209.85.222.67]:39556 "EHLO
-        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727942AbfACVdM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 16:33:12 -0500
-Received: by mail-ua1-f67.google.com with SMTP id c12so11403005uas.6
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 13:33:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hRdhXbAsuNg1Aq90NHt2icvWZc4/LaxBRWRFkVibi80=;
-        b=jaXlM75IMQPRGV2NwZfFifOVgF9ct7F3py/oDVehhJx61PzEon4Fcb2QghfpsirQpM
-         xGh1Tym4VdtxMyhPYXjdI/DYc4hSRdFtKpjC6EKYFYQ+8R4Qe+KmUW6J5xcSL48BQf05
-         PzLFKpDnN97VWxgSOO+HUdDMDPiEyq26Rj2+I=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hRdhXbAsuNg1Aq90NHt2icvWZc4/LaxBRWRFkVibi80=;
-        b=gbaxlWNk9PkKq+16FCSwz0lINUrWxv/G1LO6VD9TCOF9MsQlx8ledH/K96chdtsDau
-         XbTX9K/B6N4r2nbcqaZyDqsv6Qady7KHruBGvYbnSFx51t5GBqAPVyexgdyJQm6z3t2Y
-         Y2getVrgd86uq7WEdMRhWcZlhr9VZz5RO+alWRbLnpmm4ievjkh9swRxpx0CpoQavh0/
-         p5k1/cUTyyATBL8KCPX6MTJbLvGnDCt/Ge0T/rEQ9T5aF2MlAIoQQ6um1iXjh/kEOsUM
-         Lu/jZexo163tSMnpPH7rP6w6z1rl5rdKQDKsng7FL7rRPz3curECwyykTcQ/ctpwjxyr
-         71ng==
-X-Gm-Message-State: AJcUukeh8jGI1XadZklWXE+DSMwe6wtHcuBV0CQf5WBVOI2s3wVlh/sd
-        gul9VLxyClOhmsv22iPU+hxWqLHV77Lfq76y4AX3Ng==
-X-Google-Smtp-Source: ALg8bN5NkbkO9tYoEuTdpj293GY/U5b40mMrfrC3ezDIED1PONNxYJYygwxA9EDQbVMC4qlpE11fAKkCoid7G6Qffvg=
-X-Received: by 2002:ab0:3484:: with SMTP id c4mr18290931uar.39.1546551190827;
- Thu, 03 Jan 2019 13:33:10 -0800 (PST)
-MIME-Version: 1.0
-References: <6ccac7db-3ab7-e396-90be-8681a8ee336b@web.de> <CALAqxLXz_s6B=NzSp17Lj6xMTYybEsMh4jDR8COXnWQCnFTrsw@mail.gmail.com>
-In-Reply-To: <CALAqxLXz_s6B=NzSp17Lj6xMTYybEsMh4jDR8COXnWQCnFTrsw@mail.gmail.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu, 3 Jan 2019 22:32:35 +0100
-Message-ID: <CAPDyKFrY58-x3SsUwhfrLvf=hayhdjQZJWqUpmegArmnEsWATg@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: hikey: Give wifi some time after power-on
-To:     John Stultz <john.stultz@linaro.org>,
-        Jan Kiszka <jan.kiszka@web.de>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Wei Xu <xuwei5@hisilicon.com>, Ryan Grachek <ryan@edited.us>,
-        linux-wireless@vger.kernel.org, "Reizer, Eyal" <eyalr@ti.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        KISHON VIJAY ABRAHAM <kishon@ti.com>,
-        "Mishol, Guy" <guym@ti.com>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Ricardo Salveti <rsalveti@rsalveti.net>
+        Thu, 3 Jan 2019 16:40:44 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:56832 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727243AbfACVkn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Jan 2019 16:40:43 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 205F0C7C27;
+        Thu,  3 Jan 2019 21:40:43 +0000 (UTC)
+Received: from emilne (unknown [10.18.25.205])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1D98B60C47;
+        Thu,  3 Jan 2019 21:40:41 +0000 (UTC)
+Message-ID: <6152b478ea77dacf57eef6f758ba795f756cd3da.camel@redhat.com>
+Subject: Re: [PATCH] scsi: associate bio write hint with WRITE CDB
+From:   "Ewan D. Milne" <emilne@redhat.com>
+To:     dgilbert@interlog.com, Randall Huang <ihhuang@abmail.org>,
+        Christoph Hellwig <hch@infradead.org>
+Cc:     huangrandall@google.com, jejb@linux.vnet.ibm.com,
+        martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Thu, 03 Jan 2019 16:40:41 -0500
+In-Reply-To: <e5bc96cd-1b48-3b7e-706f-4cbbd1a040a4@interlog.com>
+References: <20181226041504.66283-1-huangrandall@google.com>
+         <20190103075133.GA5141@infradead.org> <20190103094755.GA96532@google.com>
+         <e5bc96cd-1b48-3b7e-706f-4cbbd1a040a4@interlog.com>
 Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Thu, 03 Jan 2019 21:40:43 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2 Jan 2019 at 23:21, John Stultz <john.stultz@linaro.org> wrote:
->
-> Adding a few folks to cc from the thread here:
-> https://patchwork.kernel.org/patch/10734021/
->
-> As this sounds like a very similar issue.
-> thanks
-> -john
+On Thu, 2019-01-03 at 16:00 -0500, Douglas Gilbert wrote:
+> On 2019-01-03 4:47 a.m., Randall Huang wrote:
+> > On Wed, Jan 02, 2019 at 11:51:33PM -0800, Christoph Hellwig wrote:
+> > > On Wed, Dec 26, 2018 at 12:15:04PM +0800, Randall Huang wrote:
+> > > > In SPC-3, WRITE(10)/(16) support grouping function.
+> > > > Let's associate bio write hint with group number for
+> > > > enabling StreamID or Turbo Write feature.
+> > > > 
+> > > > Signed-off-by: Randall Huang <huangrandall@google.com>
+> > > > ---
+> > > >   drivers/scsi/sd.c | 14 ++++++++++++--
+> > > >   1 file changed, 12 insertions(+), 2 deletions(-)
+> > > > 
+> > > > diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+> > > > index 4b49cb67617e..28bfa9ed2b54 100644
+> > > > --- a/drivers/scsi/sd.c
+> > > > +++ b/drivers/scsi/sd.c
+> > > > @@ -1201,7 +1201,12 @@ static int sd_setup_read_write_cmnd(struct scsi_cmnd *SCpnt)
+> > > >   		SCpnt->cmnd[11] = (unsigned char) (this_count >> 16) & 0xff;
+> > > >   		SCpnt->cmnd[12] = (unsigned char) (this_count >> 8) & 0xff;
+> > > >   		SCpnt->cmnd[13] = (unsigned char) this_count & 0xff;
+> > > > -		SCpnt->cmnd[14] = SCpnt->cmnd[15] = 0;
+> > > > +		if (rq_data_dir(rq) == WRITE) {
+> > > > +			SCpnt->cmnd[14] = rq->bio->bi_write_hint & 0x3f;
+> > > > +		} else {
+> > > > +			SCpnt->cmnd[14] = 0;
+> > > > +		}
+> > > 
+> > > No need for braces here.
+> > 
+> > Already send a new version
+> > > 
+> > > But what I'm more worried about is devices not recognizing the feature
+> > > throwing up on the field.  Can you check what SBC version first
+> > > references these or come up with some other decently smart conditional?
+> > 
+> > My reference is SCSI Block Commands – 3 (SBC-3) Revision 25.
+> > Section 5.32 WRITE (10) and 5.34 WRITE (16)
+> > 
+> > > Maybe Martin has a good idea, too.
+> 
+> That is the GROUP NUMBER field. Also found in READ(16) at the same
+> location within its cdb. The proposed code deserves at least an
+> explanatory comment.
+> 
+> Since it is relatively recent, perhaps the above should only be done iff:
+>     - the REPORT SUPPORTED OPERATION CODES (RSOC) command is supported, and
+>     - in the RSOC entry for WRITE(16), the CDB USAGE DATA field (a bit mask)
+>       indicates the GROUP NUMBER field is supported
+> 
+> That check can be done once, at disk attachment time where there is already
+> code to fetch RSOC.
+> 
+> 
+> Is there a bi_read_hint ? If not then the bi_write_hint should also be applied
+> to READ(16). Makes that variable naming look pretty silly though.
+> 
+> Doug Gilbert
+> 
 
-John, thanks for looping me in.
+SBC-5 says that support for the grouping function is indicated by the
+GROUP_SUP bit in the Extended Inquiry VPD page (86h).  I'm not sure how
+many devices actually support that page though.  Probably most don't.
 
->
-> On Sun, Dec 30, 2018 at 3:38 AM Jan Kiszka <jan.kiszka@web.de> wrote:
-> >
-> > From: Jan Kiszka <jan.kiszka@siemens.com>
-> >
-> > Somewhere along recent changes to power control of the wl1835, power-on
-> > became very unreliable on the hikey, failing like this:
-> >
-> > wl1271_sdio: probe of mmc2:0001:1 failed with error -16
-> > wl1271_sdio: probe of mmc2:0001:2 failed with error -16
-> >
-> > After playing with some dt parameters and comparing to other users of
-> > this chip, it turned out we need some power-on delay to make things
-> > stable again. In contrast to those other users which define 200 ms, the
-> > hikey is already very happy with 1 ms.
+What devices actually DO support the grouping and do something with it?
 
-According to the discussions we had so far, this doesn't sound like
-the correct solution.
+We'd probably need a blacklist flag to turn this off and/or some code in
+the error path to discontinue setting the field if the device returns
+INVALID FIELD IN CDB or something, like we do for disabling discard
+commands if they don't actually work in sd_done().
 
-I am intending to post patch soon, however, I am not sure exactly what
-solution to pick yet. I will keep you on cc - and of course I
-appreciate if you could help to test.
+-Ewan
 
-Kind regards
-Uffe
-
-> >
-> > Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-> > ---
-> >
-> > Tested with 4.19 and linus/master.
-> >
-> >   arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts | 1 +
-> >   1 file changed, 1 insertion(+)
-> >
-> > diff --git a/arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts
-> > b/arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts
-> > index f4964bee6a1a..1e771bf201b9 100644
-> > --- a/arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts
-> > +++ b/arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts
-> > @@ -118,6 +118,7 @@
-> >                 reset-gpios = <&gpio0 5 GPIO_ACTIVE_LOW>;
-> >                 clocks = <&pmic>;
-> >                 clock-names = "ext_clock";
-> > +               post-power-on-delay-ms = <1>;
-> >                 power-off-delay-us = <10>;
-> >         };
-> >
-> > --
-> > 2.16.4
