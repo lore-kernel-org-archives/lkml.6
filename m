@@ -2,146 +2,124 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6797EC43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 23:21:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6653AC43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 23:30:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35C83208E3
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 23:21:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2AD042184B
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 23:30:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546557713;
-	bh=jMX6hBn7lyEgk/xOHL3IQCbLi4Xk9tjufATanvk5uGc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=J03Do+LmcxAOA/sOEtrxGU9fEpEGPzjm2V674WKlzYqUfcCCY4nN1nlO+SzqT28RW
-	 CNKeQRzlX/tAIYkyaEW9D9FwHc/uwpwpBvybzs9EkholYUsM3WxCKK8A88s/mkDxp+
-	 bZPIaR2jICzzgGbb+c2M/txVAEj2lqUl5YrBevhM=
+	s=default; t=1546558210;
+	bh=BDwlvmRDLvPAcFZk63HU0X0XcnUsSn+Lb1Gx9m7iqSE=;
+	h=Subject:Cc:To:In-Reply-To:From:References:Date:List-ID:From;
+	b=FoenGont0h0+qauU6qgEq5HJcZ+ciSGxs9JOMJY5frJR9oPw0QlYo4lEhcFJvU4dA
+	 ocxGmn20p1iQPto/V+lRCKDK3BNUVgW/ks1MXq6NVbz4fxsee5bQi09t+CuxNNO6vo
+	 r1KWUvmLKzi5W4JtalxzqmyN+/jX50TNqAIdFgnE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727204AbfACXVw (ORCPT
+        id S1728728AbfACXaJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 18:21:52 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:42232 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725931AbfACXVw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 18:21:52 -0500
-Received: by mail-io1-f67.google.com with SMTP id x6so28279775ioa.9;
-        Thu, 03 Jan 2019 15:21:51 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=t0GSUHJkdf7A98ACvSRb5N0KlJsjQDdljT+v5mzWcng=;
-        b=k4dVlIbcak0MK/JIOBSNQsuguvUKmMpUMU3aYW2iYIAvWUUK3iitskXyuOfUWfAfR2
-         vzpY2+p4ch7QIDqtvteoWPvoA424rmhJQlkroTRsCUqyI+X/pruSXufGTWH2AxUA6Rw8
-         cB+lzQT8BKODdYK4yNVd1ycNm8lxgsTNfUK6LRO7FYfu4Gjondg5QhM0KcAn8Pa/EvWy
-         xLNL4GbUlRWwaaL/etIAdxqwUT183aZb9viMYp0ZwU4Z2jroF1zle9xyF3GlozkSSlnq
-         dlm1bFiJOWJdNJ77lo7g+UluRlbnNT9OwiGD89UPJ6waNn862HpjYn7H4tsaiIz5dGsh
-         +biw==
-X-Gm-Message-State: AJcUukdbzi+/izqn38257Law2ue86+621OHQxtZ8m/bHTD2NHfR8yRwx
-        +Zi9aKNnmk4QbSzlnUKDag==
-X-Google-Smtp-Source: ALg8bN7nGzB2+t8W/4kEM9c+6HojlLRCiPxYeSafGIb7MY6yUqAZBvlpojBV+l7ABQlR/Ae+nmWsGA==
-X-Received: by 2002:a6b:5a14:: with SMTP id o20mr32580034iob.206.1546557710707;
-        Thu, 03 Jan 2019 15:21:50 -0800 (PST)
-Received: from localhost ([24.51.61.172])
-        by smtp.gmail.com with ESMTPSA id e141sm24917821itc.40.2019.01.03.15.21.49
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 03 Jan 2019 15:21:50 -0800 (PST)
-Date:   Thu, 3 Jan 2019 17:21:44 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     h00249924 <hutenghui@huawei.com>
-Cc:     dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        suzhuangluan@hisilicon.com, kongfei@hisilicon.com,
-        liyuequan@hisilicon.com, cash.qianli@hisilicon.com,
-        huangli295@hisilicon.com, hantanglei@huawei.com,
-        wangyoulin1@hisilicon.com, ninggaoyu@hisilicon.com,
-        hanxiaolong3@hisilicon.com,
-        Youlin Wang <wwx575822@notesmail.huawei.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH 2/3] dmaengine: Extend the k3dma driver binding
-Message-ID: <20190103232144.GA17431@bogus>
-References: <1545978983-124360-1-git-send-email-hutenghui@huawei.com>
- <1545978983-124360-2-git-send-email-hutenghui@huawei.com>
+        Thu, 3 Jan 2019 18:30:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57954 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727148AbfACXaI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Jan 2019 18:30:08 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6BCC0217F5;
+        Thu,  3 Jan 2019 23:30:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1546558207;
+        bh=BDwlvmRDLvPAcFZk63HU0X0XcnUsSn+Lb1Gx9m7iqSE=;
+        h=Subject:Cc:To:In-Reply-To:From:References:Date:From;
+        b=MhR6FEcSYzUWYs9BiuILDnrCG7/LIF3lgYCdVlGQvocDvYpMq2IH8q+TYixuMXtFd
+         /zYjGWxI7NVNMHCvIKTDf5tDEB7hfl56EpGXydXcbdx4VMzeD2fwhETqlQdpeguCgR
+         TNDgG8fzp9a5LULUexKYkOUjNIIIEvuGrK0PuBd4=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1545978983-124360-2-git-send-email-hutenghui@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 2/2] phy: qualcomm: usb: Add Super-Speed PHY driver
+Cc:     linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, shawn.guo@linaro.org,
+        vkoul@kernel.org
+To:     Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>,
+        gregkh@linuxfoundation.org, kishon@ti.com, mark.rutland@arm.com,
+        robh+dt@kernel.org
+In-Reply-To: <2f38642e-27a0-0fd7-928e-8e782d0bc7c6@linaro.org>
+From:   Stephen Boyd <sboyd@kernel.org>
+User-Agent: alot/0.8
+References: <1544176558-7946-1-git-send-email-jorge.ramirez-ortiz@linaro.org> <1544176558-7946-3-git-send-email-jorge.ramirez-ortiz@linaro.org> <154533779333.79149.17234544366247143930@swboyd.mtv.corp.google.com> <2f38642e-27a0-0fd7-928e-8e782d0bc7c6@linaro.org>
+Message-ID: <154655820653.15366.12989225525562032193@swboyd.mtv.corp.google.com>
+Date:   Thu, 03 Jan 2019 15:30:06 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 28, 2018 at 02:36:22PM +0800, h00249924 wrote:
-> From: Youlin Wang <wwx575822@notesmail.huawei.com>
-> 
-> Extend the k3dma driver binding to support hisi-asp hardware variants.
-> 
-> Signed-off-by: Youlin Wang <wwx575822@notesmail.huawei.com>
-> Signed-off-by: Tanglei Han <hantanglei@huawei.com>
-> Cc: Vinod Koul <vkoul@kernel.org>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> ---
->  Documentation/devicetree/bindings/dma/k3dma.txt | 33 ++++++++++++++++++++++++-
->  1 file changed, 32 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/dma/k3dma.txt b/Documentation/devicetree/bindings/dma/k3dma.txt
-> index 4945aea..cd21b82 100644
-> --- a/Documentation/devicetree/bindings/dma/k3dma.txt
-> +++ b/Documentation/devicetree/bindings/dma/k3dma.txt
-> @@ -3,7 +3,9 @@
->  See dma.txt first
->  
->  Required properties:
-> -- compatible: Should be "hisilicon,k3-dma-1.0"
-> +- compatible: Must be one of
-> +-		"hisilicon,k3-dma-1.0"
-> +-		"hisilicon,hisi-pcm-asp-dma-1.0"
->  - reg: Should contain DMA registers location and length.
->  - interrupts: Should contain one interrupt shared by all channel
->  - #dma-cells: see dma.txt, should be 1, para number
-> @@ -43,3 +45,32 @@ For example, i2c0 read channel request line is 18, while write channel use 19
->  			dma-names = "rx", "tx";
->  		};
->  
-> +
-> +
-> +
-> +Controller:
+Quoting Jorge Ramirez (2018-12-26 09:53:08)
+> On 12/20/18 21:29, Stephen Boyd wrote:
+> > Quoting Jorge Ramirez-Ortiz (2018-12-07 01:55:58)
+> >=20
+> >> +       struct regulator *vdda1p8;
+> >> +       struct regulator *vbus;
+> >> +       struct regulator *vdd;
+> >> +       unsigned int vdd_levels[LEVEL_NUM];
+> >> +};
+> >> +
+> >> +static inline void qcom_ssphy_updatel(void __iomem *addr, u32 mask, u=
+32 val)
+> >> +{
+> >> +       writel((readl(addr) & ~mask) | val, addr);
+> >> +}
+> >> +
+> >> +static int qcom_ssphy_config_vdd(struct ssphy_priv *priv,
+> >> +                                enum phy_vdd_level level)
+> >> +{
+> >> +       return regulator_set_voltage(priv->vdd,
+> >> +                                    priv->vdd_levels[level],
+> >> +                                    priv->vdd_levels[LEVEL_MAX]);
+> >=20
+> > regulator_set_voltage(reg, 0, max) is very suspicious. It's voltage
+> > corners where the voltages are known?
+>=20
+> sorry I dont understand the question
+>=20
+> this regulator on the ss phy wold be
+> vreg_l3_1p05: l3 {
+>                 regulator-min-microvolt =3D <976000>;
+>                 regulator-max-microvolt =3D <1160000>;
 
-Why is a new example needed just for a new compatible string?
+Is this also the CX or MX voltage for the SoC? There would be a pin like
+VDDCX or VDDMX on the SoC part that is connected to this regulator if
+that's the case. Because you have "LEVEL" in the code it makes it sounds
+like it's voltage corners here so I suspect this is mapping into the
+voltage corner stuff that qcom has.
 
-> +		asp_dmac: asp_dmac@E804B000 {
-> +			compatible = "hisilicon,hisi-pcm-asp-dma-1.0";
-> +			reg = <0x0 0xe804b000 0x0 0x1000>;
-> +			#dma-cells = <1>;
-> +			dma-channels = <16>;
-> +			dma-requests = <32>;
-> +			dma-min-chan = <0>;
-> +			dma-used-chans = <0xFFFE>;
-> +			dma-share;
-> +			interrupts = <0 216 4>;
-> +			interrupt-names = "asp_dma_irq";
-> +			status = "ok";
-> +		};
-> +
-> +Client:
-> +		i2s2: hisi_i2s {
-> +			compatible = "hisilicon,hisi-i2s";
-> +			reg = <0x0 0xe804f800 0x0 0x400>,
-> +				<0x0 0xe804e000 0x0 0x400>;
-> +			pinctrl-names = "default";
-> +			pinctrl-0 = <&i2s2_pmx_func &i2s2_cfg_func>;
-> +			dmas = <&asp_dmac 18 &asp_dmac 19>;
-> +			dma-names = "rx", "tx";
-> +			#sound-dai-cells = <0>;
-> +		};
-> -- 
-> 1.9.1
-> 
+> };
+> >=20
+> >> +}
+> >> +
+> >> +static int qcom_ssphy_ldo_enable(struct ssphy_priv *priv)
+> >> +{
+> >> +       int ret;
+> >> +
+> >> +       ret =3D regulator_set_load(priv->vdda1p8, 23000);
+> >=20
+> > Do you need to do this? Why can't the regulator be in high power mode
+> > all the time and then go low power when it's disabled?
+>=20
+> this regulator is shared with the usb hs phy and each (ss/hs) have=20
+> different load requirements. why would it be wrong for the ss phy to=20
+> announce its needs (which will differ from those of the hs phy)?
+
+Yes they have different load requirements, but in the end I would guess
+they always push the regulator into high power mode when the device is
+active and drop the load requirement when it's inactive. If it matches
+the enable state of the regulator then there isn't much need for setting
+a load explicitly besides stating that when the regulator is on it
+should be in high power mode and when it's off it should be in low power
+mode and off.
+
