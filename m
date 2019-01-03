@@ -2,176 +2,152 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F57EC43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 22:54:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ED17C43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 22:57:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E69B721479
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 22:54:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 232F5218D3
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 22:57:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546556076;
-	bh=1gUjY9BZjRTRbmp7iSzVzBJKVBQ2LYhd6TRyCJz9QsM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=Q/SBg/Peihpt66YBnA4c2ZyX+1ZggTXB20ytHNyM3u+kOFOmy127RhC7abDMAIAqf
-	 oBdrRN5JboW5fqbIi4mmyhn71Tjf/icvZFlZQdYugk8yGms2F0/e6ibx/Emg6IfSep
-	 coa1AcOdcYMOgAIgOaB/zha8e8FDDelYTmfbVJmI=
+	s=default; t=1546556230;
+	bh=sVYZSZnSZtHY9vTnHtjEpk8aBl6O5BQi9VAoiasp9aA=;
+	h=Subject:Cc:To:In-Reply-To:From:References:Date:List-ID:From;
+	b=PVNS55I+e8IsNn56iJHjdwUDakDXv7lFsy+yZgPRjK+k/wQ28nlpeG1RTXwwd9XIZ
+	 h6zGfE97W+tH/pxtUfj7TJmdc2ZOrcukO/dIt++chxKoaHQI6REmlSlZOl9aKle2VI
+	 GjFuvLYIeD9VcLH4cSEwU42EdyByFmYTnbIesYGE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728750AbfACWyf (ORCPT
+        id S1726241AbfACW5J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 17:54:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45478 "EHLO mail.kernel.org"
+        Thu, 3 Jan 2019 17:57:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45748 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726088AbfACWye (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 17:54:34 -0500
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1726122AbfACW5I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Jan 2019 17:57:08 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1F8BF21479;
-        Thu,  3 Jan 2019 22:54:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9FFBC21479;
+        Thu,  3 Jan 2019 22:57:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546556073;
-        bh=1gUjY9BZjRTRbmp7iSzVzBJKVBQ2LYhd6TRyCJz9QsM=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=MN8zygtMTxrwiOr+MO4URY22EuAYdLMFD04ps4mJ8KA6LyYr3A1wSfghicUJeIR1b
-         wkyruPwXjEk6DqHU213zBsXzl2cIiALnK5h1k90BjoKi3Z/o2tHINe0HaP0aDKXqTR
-         uSPVhXs2godGMqmBZSU5rBkot8Ay/Suq8ztusD+4=
-Received: by mail-qk1-f171.google.com with SMTP id 189so20582042qkj.8;
-        Thu, 03 Jan 2019 14:54:33 -0800 (PST)
-X-Gm-Message-State: AJcUukeK7ThLTWzeL4q1mKJGnRUWKDbNdkPgJoLv51l3pMw5U42owd4m
-        MGjukaap/vmGRT/UO8AFmwKJaPJ3rt0TMpst/g==
-X-Google-Smtp-Source: ALg8bN5m6v9H/I4NQUee5O8gyS7jB37kPxSC9DSxW8g42WmQLn7hSJ0PKamZOTpOPWLhJGvESVaiqy+Fwl9TfWgSoN8=
-X-Received: by 2002:a37:7682:: with SMTP id r124mr46179392qkc.79.1546556072321;
- Thu, 03 Jan 2019 14:54:32 -0800 (PST)
+        s=default; t=1546556227;
+        bh=sVYZSZnSZtHY9vTnHtjEpk8aBl6O5BQi9VAoiasp9aA=;
+        h=Subject:Cc:To:In-Reply-To:From:References:Date:From;
+        b=Z9TTGFEE74nC8MmHYmkPzvzDaE078+CdpAopt+L+1lEx9PHiXuxmCkdvCdbO5A/rD
+         oadF2rmkcQT5V/W6SlbCQDiYof5Q0t1KEOH4SHioxEgg/umOyVle4FJZyByGSxfIG2
+         YH7MbaWB1ZpSDh+EO9ZgDANrSRPjHK7HI24ACDAs=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20181221013409.14324-1-f.fainelli@gmail.com> <20181221013409.14324-2-f.fainelli@gmail.com>
- <20190103174117.GA6613@bogus> <2a54c2cf-5595-ade5-fb29-40e8b6d3133e@gmail.com>
- <20190103191915.GB6613@bogus> <bcfe4df0-8928-90e2-6460-1391320af9be@gmail.com>
-In-Reply-To: <bcfe4df0-8928-90e2-6460-1391320af9be@gmail.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Thu, 3 Jan 2019 16:54:20 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqKpFYnnAY-feAeJ-Va5yS7JH34FOzvBmTi4gMV=kjbCVQ@mail.gmail.com>
-Message-ID: <CAL_JsqKpFYnnAY-feAeJ-Va5yS7JH34FOzvBmTi4gMV=kjbCVQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: reset: Add document for Broadcom STB
- reset controller
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Gregory Fong <gregory.0xf0@gmail.com>,
-        "maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE" 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "moderated list:BROADCOM BCM7XXX ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [RFC RESEND PATCH 3/7] soc: mediatek: add support for the performance state
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Fan Chen <fan.chen@mediatek.com>,
+        Weiyi Lu <weiyi.lu@mediatek.com>,
+        James Liao <jamesjj.liao@mediatek.com>,
+        Kees Cook <keescook@chromium.org>, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Henry Chen <henryc.chen@mediatek.com>
+To:     Henry Chen <henryc.chen@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Viresh Kumar <vireshk@kernel.org>
+In-Reply-To: <1546438198-1677-4-git-send-email-henryc.chen@mediatek.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+User-Agent: alot/0.8
+References: <1546438198-1677-1-git-send-email-henryc.chen@mediatek.com> <1546438198-1677-4-git-send-email-henryc.chen@mediatek.com>
+Message-ID: <154655622671.15366.9695869469694306752@swboyd.mtv.corp.google.com>
+Date:   Thu, 03 Jan 2019 14:57:06 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 3, 2019 at 1:31 PM Florian Fainelli <f.fainelli@gmail.com> wrote:
->
-> On 1/3/19 11:19 AM, Rob Herring wrote:
-> > On Thu, Jan 03, 2019 at 10:53:25AM -0800, Florian Fainelli wrote:
-> >> On 1/3/19 9:41 AM, Rob Herring wrote:
-> >>> On Thu, Dec 20, 2018 at 05:34:08PM -0800, Florian Fainelli wrote:
-> >>>> Add a binding document for the Broadcom STB reset controller, also known
-> >>>> as SW_INIT-style reset controller.
-> >>>>
-> >>>> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-> >>>> ---
-> >>>>  .../devicetree/bindings/reset/brcm,reset.txt  | 27 +++++++++++++++++++
-> >>>>  1 file changed, 27 insertions(+)
-> >>>>  create mode 100644 Documentation/devicetree/bindings/reset/brcm,reset.txt
-> >>>>
-> >>>> diff --git a/Documentation/devicetree/bindings/reset/brcm,reset.txt b/Documentation/devicetree/bindings/reset/brcm,reset.txt
-> >>>> new file mode 100644
-> >>>> index 000000000000..6e5341b4f891
-> >>>> --- /dev/null
-> >>>> +++ b/Documentation/devicetree/bindings/reset/brcm,reset.txt
-> >>>> @@ -0,0 +1,27 @@
-> >>>> +Broadcom STB SW_INIT-style reset controller
-> >>>> +===========================================
-> >>>> +
-> >>>> +Broadcom STB SoCs have a SW_INIT-style reset controller with separate
-> >>>> +SET/CLEAR/STATUS registers and possibly multiple banks, each of 32 bit
-> >>>> +reset lines.
-> >>>> +
-> >>>> +Please also refer to reset.txt in this directory for common reset
-> >>>> +controller binding usage.
-> >>>> +
-> >>>> +Required properties:
-> >>>> +- compatible: should be brcm,brcmstb-reset
-> >>>> +- reg: register base and length
-> >>>> +- #reset-cells: must be set to 1
-> >>>> +
-> >>>> +Example:
-> >>>> +
-> >>>> +  reset: reset-controller@8404318 {
-> >>>> +          compatible = "brcm,brcmstb-reset";
-> >>>> +          reg = <0x8404318 0x30>;
-> >>>
-> >>> Based on this address, should this be a sub-node of something else? Or
-> >>> not even a sub-node and just make the parent be a reset provider?
-> >>
-> >> The reset controller is part of a larger "sundry" node which has a
-> >> collection of functionality, from pinmux/pinctrl, reset controller,
-> >> spare bits, chicken bits, anything the designers forgot to put somewhere
-> >> else and decided to put there.
-> >>
-> >> If there is one thing consistent though is that given a set of 32-bit
-> >> register groups, they have a self contained functionality such that you
-> >> can break up the larger "sundry" space into smaller sub-blocks which
-> >> have one an only one functionality. Do you think this warrants a
-> >> different representation in Device Tree?
-> >
-> > With pinctrl in the mix, you're going to need sub-nodes anyways. So just
-> > define what this is a sub-node of.
->
-> pinctrl is not necessarily something I want the kernel to control, since
-> we have a high level scripting language without our bootloader that
-> makes sure pinctrl is properly configured from early boot on all the way
-> to the kernel, and preserved across suspend/resume states.
-> pinctrl-single does work, and was occasionally used. Everything else is
-> typically muxes that the kernel does not need to touch/see/be aware of.
+Quoting Henry Chen (2019-01-02 06:09:54)
+> @@ -187,6 +190,18 @@ struct scp_soc_data {
+>         bool bus_prot_reg_update;
+>  };
+> =20
+> +BLOCKING_NOTIFIER_HEAD(scpsys_notifier_list);
 
-That's good. I'd rather see more platforms do that rather than have
-the kernel handle it. OTOH, bootloaders often use DT too, so maybe who
-handles pin muxing is irrelevant.
+static?
 
-> > Also, I'd prefer to have complete example for the "sundry" node and
-> > child nodes than partial examples spread across the tree.
->
-> I am afraid I can't provide that example because the sundry node is
-> really changing from chip to chip, and there is a gazillion of things in
-> there that the kernel typically does not even touch, like
-> pinmuxing/pinctrl, various mux selections etc. I could provide the
-> following example if that is what you are requesting?:
->
->
-> sun-top-ctrl: simple-bus@8404000 {
->         compatible = "brcm,brcmstb-sun-top-ctrl", "simple-bus";
->         reg = <0x8404000 0x708>;
->
->         reset: reset-controller@318 {
->                 compatible = "brcm,brcmstb-reset";
->                 reg = <0x318 0x30>;
->                 #reset-cells = <1>;
->         };
-> };
->
-> Would that be what you expect to see?
+> +
+> +int register_scpsys_notifier(struct notifier_block *nb)
+> +{
+> +       return blocking_notifier_chain_register(&scpsys_notifier_list, nb=
+);
+> +}
+> +
+> +int unregister_scpsys_notifier(struct notifier_block *nb)
+> +{
+> +       return blocking_notifier_chain_unregister(&scpsys_notifier_list, =
+nb);
+> +}
 
-The problem is with this alone, you should just move #reset-cells to
-the parent and remove the child node. That's all you really need from
-a DT perspective. But if this is really a separate block that's reused
-from chip to chip, then a separate node is fine. Typically in these
-situations, I just can't tell whether it's that or just the
-convenience of creating nodes for every kernel driver.
+What is the notifier for?
 
-Rob
+> +
+>  static int scpsys_domain_is_on(struct scp_domain *scpd)
+>  {
+>         struct scp *scp =3D scpd->scp;
+> @@ -536,6 +551,48 @@ static void init_clks(struct platform_device *pdev, =
+struct clk **clk)
+>                 clk[i] =3D devm_clk_get(&pdev->dev, clk_names[i]);
+>  }
+> =20
+> +static int mtk_pd_set_performance(struct generic_pm_domain *genpd,
+> +                                 unsigned int state)
+> +{
+> +       int i;
+> +       struct scp_domain *scpd =3D
+> +               container_of(genpd, struct scp_domain, genpd);
+> +       struct scp_event_data scpe;
+> +       struct scp *scp =3D scpd->scp;
+> +       struct genpd_onecell_data *pd_data =3D &scp->pd_data;
+> +
+> +       for (i =3D 0; i < pd_data->num_domains; i++) {
+> +               if (genpd =3D=3D pd_data->domains[i]) {
+> +                       dev_dbg(scp->dev, "%d. %s =3D %d\n",
+> +                               i, genpd->name, state);
+> +                       break;
+> +               }
+> +       }
+> +
+> +       scpe.event_type =3D MTK_SCPSYS_PSTATE;
+> +       scpe.genpd =3D genpd;
+> +       scpe.domain_id =3D i;
+> +       blocking_notifier_call_chain(&scpsys_notifier_list, state, &scpe);
+> +
+> +       return 0;
+> +}
+> +
+> +static unsigned int mtk_pd_get_performance(struct generic_pm_domain *gen=
+pd,
+> +                                          struct dev_pm_opp *opp)
+> +{
+> +       struct device_node *np;
+> +       unsigned int state;
+> +
+> +       np =3D dev_pm_opp_get_of_node(opp);
+> +
+> +       if (of_property_read_u32(np, "mtk,level", &state))
+> +               return 0;
+> +
+> +       of_node_put(np);
+
+The generic API that Rajendra is adding I guess will become even more
+generic by assuming some sort of property like 'opp-level' or
+'performance-state' that is just some raw number.
+
+> +
+> +       return state;
+> +}
+> +
+>  static struct scp *init_scp(struct platform_device *pdev,
+>                         const struct scp_domain_data *scp_domain_data, in=
+t num,
+>                         const struct scp_ctrl_reg *scp_ctrl_reg,
