@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F0FDC43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 15:11:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2358BC43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 15:11:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D390020815
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 15:11:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DF53320815
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 15:11:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="Ltx6QoPU"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="L+sKfSVo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732174AbfACPLq (ORCPT
+        id S1731508AbfACPLW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 10:11:46 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:44155 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731468AbfACPLW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 3 Jan 2019 10:11:22 -0500
-Received: by mail-wr1-f65.google.com with SMTP id z5so33864644wrt.11
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 07:11:21 -0800 (PST)
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:38514 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728199AbfACPLU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Jan 2019 10:11:20 -0500
+Received: by mail-wm1-f66.google.com with SMTP id m22so30720988wml.3
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 07:11:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=9YQ2TzxTUSfp2DIUx4vV2/rZOoYPnNHF0DkPFTWj6gs=;
-        b=Ltx6QoPU8u/ClrcHN8/KYiqxZk7gJ6gSAVVoZtKSfUJ5PPR8x5pJ0bswRjV6iXKD/O
-         elTmtLVJLACcjZwaQjInwyvb+lb0jTm3j1CFd8LQC4gShxVaqWgCr3wtQ30Co/skrR+Y
-         e9EREm1CmhUtWgGLXItXdYtn83TYXxm0pO6p1+JyoWl2mrx+Ff+SS1Y+qccZ+6T70g2B
-         lZLzmex1GsBrZdmESBHRSl9P+WNV94uzeMrc/2DTuriapZJEwoTI/Yql48TFjGfU3hTq
-         2jZ0HSim1Vmgwd1ZNykpn6WrW1rxaYUXyOM47KE4Z2erJoXVaaPH6us8xESBFCkIYTDY
-         XtPw==
+        bh=UWJWZZulgERjeASm5OPhNm8DDTWU4vIOyd+OG5AXAec=;
+        b=L+sKfSVoSFpnR2cCgGPWnhqAIvti6WS54mBOHrTm6N22eM/XWKvnmszR28T5tMhgmD
+         i/BzdyANsf8hldO3/FlO9l/ItkyMXOFsYTldmeordPlCMlexNlZKOP9gaGW4nnYH7jGP
+         z7b1Sp26yhjG+C1DG2NxGsGlO6ajXuewy8EfYVi2V2u0CVXupESTQMCclFAqxWyL9B1m
+         Hf3pyqSuf/zDW6cMZgiJtAJ/Ynj9Ixe7jRCxIzTK0tPKRzDD5HQJ98h3CKKZwHKwlnaJ
+         bV7ULddFW1aWAdT5zZveRIG/4qHPJNeXtp90+3cEELToejm0vZ5UoqU2pCaZro92i9eM
+         AWiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=9YQ2TzxTUSfp2DIUx4vV2/rZOoYPnNHF0DkPFTWj6gs=;
-        b=dKjvUb4Rd0YSixw4c1NOL1NhG+HNpAL9xrBjN/93WkXxZqbN0ycE/AL3/0Ayz7JRzi
-         8gW88ToWB0/X0vnR+/F+u9GHdiA6ynu5Vlw29yaJwdk14p5K8uizqhT6fbVZcrpF/fci
-         G8vUXvjazPzwfYKcKYZ/bFtX9AT+O+497pdLovZqVfTBbmjEMfvPZVzdppT+cSirFsEL
-         Q7kdvmn5KiJ4wE3COe1jckCnDwEdiPqsSVRwmprEQ25iUT8URdFYU3tBNlfxkR/0N8gW
-         Fv6M/0nuuPlJUACoIftr+ZcEQEB4bpR/pDnC9KLQ4wy3eIIKaMTOS3MIrPTvcj8aEsLB
-         ZyYg==
-X-Gm-Message-State: AJcUukfVAhU9/mBrCrydxf2qp/A9l6hYCW8p3+RKO6jMd47Z6JWoU93W
-        mJNiC+m3c+vvIhNVeGQYz6kasw==
-X-Google-Smtp-Source: ALg8bN6lsWuJBPaMucgfyH1x9LfnTyfJbLdWwp8Hpy1I171Vf/C8ksE+M2IyGZjj4GmTbmG8k3cXUQ==
-X-Received: by 2002:adf:dc4e:: with SMTP id m14mr42352116wrj.107.1546528280732;
-        Thu, 03 Jan 2019 07:11:20 -0800 (PST)
+        bh=UWJWZZulgERjeASm5OPhNm8DDTWU4vIOyd+OG5AXAec=;
+        b=jGE7v97PcgGtTW2fVlArruZ7bZlYhVibUtE0HXsu1z6qwyt+HYIJUJPr0NvDO4y/C6
+         0STg4bvmwbAVLNwOicfEPwMANLflhnqGFVk0vlZKHptN4+iquHOCEvncr/FUVtoOvuaa
+         NE9Q8J9MGaOzmliUJfx8SELTfponkzhAn+8EPUbpyK73FFvVQ9zxHrFijIbSsH5Qcv0C
+         DTgHG3agphSYE9UqtS6XIha/OYw3jazqsiNPAsxTf/91epSP0naY6WK6nYNETtSio3Qc
+         lcWqfO/AReFAAFSEQ2VauKsWejLw2MHvNzw5cYM+f+oTSGvnf/IJsEXijmZnx4Qy/JZw
+         Uwgg==
+X-Gm-Message-State: AA+aEWZ0DAGoCzRE+A4TxiPS/Z4qolRuyP7JDfroffttqD2/tnqAVi8W
+        ojVaNcqDF1Uy55hUAhM9HWF2sA==
+X-Google-Smtp-Source: ALg8bN6PCUvz/cxT6+XRAoazQ4VYiP/T5jYo4SZ3HPxrIpV5+BxkbEed1Vjf1Xd0mzn52R8Lovx2wg==
+X-Received: by 2002:a1c:a895:: with SMTP id r143mr36694420wme.95.1546528278238;
+        Thu, 03 Jan 2019 07:11:18 -0800 (PST)
 Received: from debian-brgl.baylibre.local (astlambert-681-1-88-79.w90-86.abo.wanadoo.fr. [90.86.3.79])
-        by smtp.gmail.com with ESMTPSA id n5sm45620707wrr.94.2019.01.03.07.11.19
+        by smtp.gmail.com with ESMTPSA id n5sm45620707wrr.94.2019.01.03.07.11.16
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 03 Jan 2019 07:11:20 -0800 (PST)
+        Thu, 03 Jan 2019 07:11:17 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
@@ -63,9 +63,9 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         stable@vger.kernel.org
-Subject: [PATCH 4/5] ARM: davinci: dm644x-evm: fix label names in GPIO lookup entries
-Date:   Thu,  3 Jan 2019 16:11:03 +0100
-Message-Id: <20190103151104.11839-5-brgl@bgdev.pl>
+Subject: [PATCH 2/5] ARM: davinci: da850-evm: fix label names in GPIO lookup entries
+Date:   Thu,  3 Jan 2019 16:11:01 +0100
+Message-Id: <20190103151104.11839-3-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190103151104.11839-1-brgl@bgdev.pl>
 References: <20190103151104.11839-1-brgl@bgdev.pl>
@@ -86,23 +86,23 @@ Fixes: 587f7a694f01 ("gpio: davinci: Use dev name for label and automatic base s
 Cc: stable@vger.kernel.org
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- arch/arm/mach-davinci/board-dm644x-evm.c | 4 ++--
+ arch/arm/mach-davinci/board-da850-evm.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/mach-davinci/board-dm644x-evm.c b/arch/arm/mach-davinci/board-dm644x-evm.c
-index e1428115067f..b80c4ee76217 100644
---- a/arch/arm/mach-davinci/board-dm644x-evm.c
-+++ b/arch/arm/mach-davinci/board-dm644x-evm.c
-@@ -660,9 +660,9 @@ static struct i2c_board_info __initdata i2c_info[] =  {
- static struct gpiod_lookup_table i2c_recovery_gpiod_table = {
- 	.dev_id = "i2c_davinci.1",
+diff --git a/arch/arm/mach-davinci/board-da850-evm.c b/arch/arm/mach-davinci/board-da850-evm.c
+index 6a29baf0a289..44bca048dfd0 100644
+--- a/arch/arm/mach-davinci/board-da850-evm.c
++++ b/arch/arm/mach-davinci/board-da850-evm.c
+@@ -805,9 +805,9 @@ static struct gpiod_lookup_table mmc_gpios_table = {
+ 	.dev_id = "da830-mmc.0",
  	.table = {
--		GPIO_LOOKUP("davinci_gpio.0", DM644X_I2C_SDA_PIN, "sda",
-+		GPIO_LOOKUP("davinci_gpio", DM644X_I2C_SDA_PIN, "sda",
- 			    GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN),
--		GPIO_LOOKUP("davinci_gpio.0", DM644X_I2C_SCL_PIN, "scl",
-+		GPIO_LOOKUP("davinci_gpio", DM644X_I2C_SCL_PIN, "scl",
- 			    GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN),
+ 		/* gpio chip 2 contains gpio range 64-95 */
+-		GPIO_LOOKUP("davinci_gpio.0", DA850_MMCSD_CD_PIN, "cd",
++		GPIO_LOOKUP("davinci_gpio", DA850_MMCSD_CD_PIN, "cd",
+ 			    GPIO_ACTIVE_LOW),
+-		GPIO_LOOKUP("davinci_gpio.0", DA850_MMCSD_WP_PIN, "wp",
++		GPIO_LOOKUP("davinci_gpio", DA850_MMCSD_WP_PIN, "wp",
+ 			    GPIO_ACTIVE_HIGH),
  	},
  };
 -- 
