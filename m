@@ -2,112 +2,118 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1A16C43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 09:16:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E000C43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 09:19:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AAE162073D
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 09:16:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F42052073D
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 09:19:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="C2pWtDep"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qZbt0Yzi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729982AbfACJQL (ORCPT
+        id S1730112AbfACJTo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 04:16:11 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:35618 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727888AbfACJQL (ORCPT
+        Thu, 3 Jan 2019 04:19:44 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:33302 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728477AbfACJTn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 04:16:11 -0500
-Received: by mail-wr1-f65.google.com with SMTP id 96so32932125wrb.2
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 01:16:10 -0800 (PST)
+        Thu, 3 Jan 2019 04:19:43 -0500
+Received: by mail-pg1-f194.google.com with SMTP id z11so15773524pgu.0;
+        Thu, 03 Jan 2019 01:19:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ktfmb/swmrFc338pd362DALxj/Fjlo/hTcPE4UjWSQQ=;
-        b=C2pWtDepfEGB2Eb/4zpmkpGkAhulK7muBfmYzlWmgBH9V3/ZepEnF5MgyqVLzI1XaI
-         UVY3vlvThcTxpm2nDNGWGOE5H72aJT+OyDfxF8aHJzgg1xVoeN+n9MuT3ipZu7JaKcWJ
-         nCbgc895CkUUtDHZXEWrboAq3ESHztULwLpDQ=
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=eM/fiTic0aMaCgmTxDx4WWLLOVwwI2n4rkkI5hGKZoY=;
+        b=qZbt0YziqBGM9Bym8j59Wats+tCkFokKuP3LuLua4aufkYtybz6FXZSxNvegwepYFv
+         V8YPQsiaUw19idRQYMvLQEWK478ol7VANBZ+vGfWOxVoz8/sAHb2uyzyuhqBJWs4g7Zc
+         /Fv33xVa2H8b9RhpHpA2LFDQvDvk4AerUukOkb11b0j5XEsiulq3TlR07bdqCyy7a1Yq
+         Zcy0XMTExxuh/cbBDolsAWu91/ysv5xc+AP6Hxv+TIQHx/Hi2YD4lefpZGzF0ykNxN/Q
+         yFVdey1npTNI1JDPPa6AT2kfw6NO7ndk8VtY4SZ6yzmWiUQeoW8HBSPpqt+xgz9qIjCC
+         b+7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ktfmb/swmrFc338pd362DALxj/Fjlo/hTcPE4UjWSQQ=;
-        b=B0UxvZ405+tddroDjLbjeQwMYRjVk6/+Bq8RBbGlfAjBO1FAuCWj97uz4n8KfD1nPx
-         aOiu8bmK3AN9jlI+Fiy+k1NrKu/VE4gy2dPh0JwzLoWxeYBN84mnr4yLpC23kwESzjeV
-         HhYaftHWuRHqRzR7amopShHZlbIH5NwNMeRCsK06RVx5gd9aOpHykqzJipGlhPh0WI4q
-         juwlTNLkNegMToOavK1k59sYID3TZHaGXKV0PQzwy3bkVcxTWvPVkdncj+vUDmHRSphB
-         zXw09J1TNvpRym0xZSY4t/0aaOYjeEdl9f8xcrQGiXBDVRWYNT8ORDDhhR8gysSICJkQ
-         vOMg==
-X-Gm-Message-State: AJcUukeUIbopNHPmDXkxvnZvulWKj9lf7QveqwaUgw0sw/UuxF8DK5XE
-        FmgNidUx3bTLTMULz+jBH5kOvg==
-X-Google-Smtp-Source: ALg8bN4EC710abf4BFkEUaeh4rXPzpNlBryqjRLFNDXeHOqme1tjZuoU6tdcSLx7I5rm29PGTjzYqw==
-X-Received: by 2002:adf:9123:: with SMTP id j32mr43131579wrj.122.1546506969480;
-        Thu, 03 Jan 2019 01:16:09 -0800 (PST)
-Received: from apalos (athedsl-4482683.home.otenet.gr. [94.71.50.131])
-        by smtp.gmail.com with ESMTPSA id r12sm52593514wrq.3.2019.01.03.01.16.07
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=eM/fiTic0aMaCgmTxDx4WWLLOVwwI2n4rkkI5hGKZoY=;
+        b=NRrG6PdHpENqovCMxSbVOHrCjuVrBVNTL//JrQcM3CHlcoIkArfBDzAWsiD5D/DyyR
+         2uXm+qnzvu287SJ/SvMTcv/w4tkl5Vg+twPraxXIPMUv+vBFPFJ02km75sSmt2vv3LkY
+         faO8cblwRx07IGYGhrN36vFvcnD+UT/5QCy8ksDP+YG4y/1OfISrSpQvpqxdBn4atWkS
+         aSyKgnNIhOZIKmHqnuztqE7QvB+MfGaMH77Uz712+sxBPhdqFxlAkdNvEYFPvScoPpoW
+         Cr+J6OGOIaJg3mMZi2+ofIcNJqUqTkFyxzvl1itXIB6mj/TIhXiFpXpM6/HsvIeu2Lix
+         2pMA==
+X-Gm-Message-State: AJcUukepOY6LwWaNJq56ijK38j32Z6KU63jGI+qglReYy/35g8V7obZo
+        28VsiRmUizDIZ96/izK95F6ld/FV
+X-Google-Smtp-Source: ALg8bN6ue8WZXUxPhH/e80BTSHSgsnRiujlK/Zhp++VLUbZtAZJKKvMt0GNtsSbf/qYbryhose7Kog==
+X-Received: by 2002:a63:3204:: with SMTP id y4mr16317953pgy.41.1546507181871;
+        Thu, 03 Jan 2019 01:19:41 -0800 (PST)
+Received: from huangrandall.ntc.corp.google.com ([2401:fa00:fc:1:6924:4b22:cf4b:bbca])
+        by smtp.gmail.com with ESMTPSA id w5sm72046135pfn.89.2019.01.03.01.19.40
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 03 Jan 2019 01:16:08 -0800 (PST)
-Date:   Thu, 3 Jan 2019 11:16:05 +0200
-From:   Ilias Apalodimas <ilias.apalodimas@linaro.org>
-To:     Vinicius Costa Gomes <vinicius.gomes@intel.com>
-Cc:     PO LIU <po.liu@nxp.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "haustad@cisco.com" <haustad@cisco.com>,
-        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        Mingkai Hu <mingkai.hu@nxp.com>, Roy Zang <roy.zang@nxp.com>
-Subject: Re: [PATCH] net: tsn: add an netlink interface between kernel and
- application layer
-Message-ID: <20190103091605.GA4597@apalos>
-References: <1545968772-7237-1-git-send-email-Po.Liu@nxp.com>
- <1545968945-7290-1-git-send-email-Po.Liu@nxp.com>
- <87r2e14fgr.fsf@intel.com>
- <VI1PR04MB51359EB3614797A89185C9D292B00@VI1PR04MB5135.eurprd04.prod.outlook.com>
- <87k1jm51ey.fsf@intel.com>
+        Thu, 03 Jan 2019 01:19:41 -0800 (PST)
+From:   Randall Huang <ihhuang@abmail.org>
+X-Google-Original-From: Randall Huang <huangrandall@google.com>
+To:     jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     huangrandall@google.com
+Subject: [PATCH] scsi: associate bio write hint with WRITE CDB
+Date:   Thu,  3 Jan 2019 17:19:35 +0800
+Message-Id: <20190103091935.380-1-huangrandall@google.com>
+X-Mailer: git-send-email 2.20.1.415.g653613c723-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87k1jm51ey.fsf@intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Po,
+In SPC-3, WRITE(10)/(16) support grouping function.
+Let's associate bio write hint with group number for
+enabling StreamID or Turbo Write feature.
 
-> > Hi Vinicius,
-> >
-> > Thank you very much for your feedback.
-> >
-> > I know the CBS is used to be most important part of AVB. And qdiscs is good tool to configure qos. 
-> >
-> > But as you know, the TSN family is a cluster of protocols and much extending the AVB. The protocols have different  functionalities and they may have more than hundred  parameters. For example NXP ls1028a support Qbv/Qci/Qbu/Qav and also the 8021CB (not included in this patch yet).
-> >
-> > Some protocols target to configure the traffic class(like Qav CBS).
-> > Some to config the port(like Qbv). But some for the whole ethernet
-> > controller(like Qci, the control entries for the whole controller,
-> > which input ports and which output ports).
-> 
-> Reading your email, now I understand your point a little better. You are
-> interested in multi-port devices. I admit that I am not too familiar
-> with how multi-port devices are exposed in Linux, I was only focused on
-> the end-station use cases, until now.
+Bug: 120900381
+Change-Id: I565c8e0c1d10e17a23e73f2a02c1adbd198b04b3
+Signed-off-by: Randall Huang <huangrandall@google.com>
+---
+ drivers/scsi/sd.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-Have you considered a switchdev-based driver for multi-port devices?
-What you ask of TSN configuration is currently doable with switch switchdev for
-VLANs and other similar networking functionality. 
+diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+index 4b49cb67617e..831c0c81ffb9 100644
+--- a/drivers/scsi/sd.c
++++ b/drivers/scsi/sd.c
+@@ -1201,7 +1201,11 @@ static int sd_setup_read_write_cmnd(struct scsi_cmnd *SCpnt)
+ 		SCpnt->cmnd[11] = (unsigned char) (this_count >> 16) & 0xff;
+ 		SCpnt->cmnd[12] = (unsigned char) (this_count >> 8) & 0xff;
+ 		SCpnt->cmnd[13] = (unsigned char) this_count & 0xff;
+-		SCpnt->cmnd[14] = SCpnt->cmnd[15] = 0;
++		if (rq_data_dir(rq) == WRITE) {
++			SCpnt->cmnd[14] = rq->bio->bi_write_hint & 0x3f;
++		} else
++			SCpnt->cmnd[14] = 0;
++		SCpnt->cmnd[15] = 0;
+ 	} else if ((this_count > 0xff) || (block > 0x1fffff) ||
+ 		   scsi_device_protection(SCpnt->device) ||
+ 		   SCpnt->device->use_10_for_rw) {
+@@ -1211,9 +1215,13 @@ static int sd_setup_read_write_cmnd(struct scsi_cmnd *SCpnt)
+ 		SCpnt->cmnd[3] = (unsigned char) (block >> 16) & 0xff;
+ 		SCpnt->cmnd[4] = (unsigned char) (block >> 8) & 0xff;
+ 		SCpnt->cmnd[5] = (unsigned char) block & 0xff;
+-		SCpnt->cmnd[6] = SCpnt->cmnd[9] = 0;
++		if (rq_data_dir(rq) == WRITE) {
++			SCpnt->cmnd[6] = rq->bio->bi_write_hint & 0x1f;
++		} else
++			SCpnt->cmnd[6] = 0;
+ 		SCpnt->cmnd[7] = (unsigned char) (this_count >> 8) & 0xff;
+ 		SCpnt->cmnd[8] = (unsigned char) this_count & 0xff;
++		SCpnt->cmnd[9] = 0;
+ 	} else {
+ 		if (unlikely(rq->cmd_flags & REQ_FUA)) {
+ 			/*
+-- 
+2.20.1.415.g653613c723-goog
 
-Instead of rewriting this from scratch, we not extend the currect TC and
-switchdev functionality for that ?
-
-
-Regards
-/Ilias
