@@ -2,118 +2,457 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEA69C43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 12:49:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0185AC43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 13:05:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E68F2070D
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 12:49:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546519740;
-	bh=5drIvO2xOtSEKAf4lzHzfrt78RsBRSr0WiV0KSIXjYY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=b9V8rFha/hqKkVDW6U12FZlIK5LwHrIhPiS9lM4lfKka3KYwU2dOV4ZcJhGgSdLY9
-	 Ir38o9U3gV1HjGUjl5z7Oaps4R/eDIkyqYxjADWCz5erAfKW4MqsyO13L0k/Hu1Ae8
-	 1Igx23QlR42rsC4JeTxKFoFXoEedulkDkjoAWzzM=
+	by mail.kernel.org (Postfix) with ESMTP id A320920815
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 13:05:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="fQH1XMX4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731390AbfACMqi (ORCPT
+        id S1729605AbfACNFE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 07:46:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41974 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730833AbfACMqg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 07:46:36 -0500
-Received: from quaco.ghostprotocols.net (unknown [187.65.17.133])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D5CD3217D9;
-        Thu,  3 Jan 2019 12:46:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546519595;
-        bh=5drIvO2xOtSEKAf4lzHzfrt78RsBRSr0WiV0KSIXjYY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yLn6u+g+NAWJi854seeDwiSD89pCR5gUUcmGcZyKQGpD+b61G/19SoJXFnNxhTuV6
-         1Gt1MfVT7JbpWJiP66eNpkfPklgPWmScoOkkZF8oxpqSBOp0x12REd7rDIuWXcKgdR
-         v9d7F1190N32CJNYn3eqLJqR9LKobs2j+4WJ2DoY=
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
-        =?UTF-8?q?Ond=C5=99ej=20Lyson=C4=9Bk?= <olysonek@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        =?UTF-8?q?Jaroslav=20=C5=A0karvada?= <jskarvad@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 06/29] perf python: Do not force closing original perf descriptor in evlist.get_pollfd()
-Date:   Thu,  3 Jan 2019 09:45:46 -0300
-Message-Id: <20190103124609.29672-7-acme@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190103124609.29672-1-acme@kernel.org>
-References: <20190103124609.29672-1-acme@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Thu, 3 Jan 2019 08:05:04 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:42732 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727021AbfACNFE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Jan 2019 08:05:04 -0500
+Received: by mail-pl1-f195.google.com with SMTP id y1so15898154plp.9
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 05:05:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=EPRvPUjIBmYwPka1G/ix7NriRNoR5BiYPSjX8XrPsOM=;
+        b=fQH1XMX4e+tW79g3RSO7i/vVOn/9USx+g4dlSWjiHLzJTumjVj2RCd3GlUjhy5SHm7
+         HXHDtEe6mWBhDSfth59ofXzc3s7S9gZcgxTgegPpSK9zdYH/9EttN71GtqFe/7fhy6M0
+         kNztjoTjBjuEHqWoWc9j5ZFZUoqhRN64T9Xgs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=EPRvPUjIBmYwPka1G/ix7NriRNoR5BiYPSjX8XrPsOM=;
+        b=BoHB3ywucDThux9mtTDwOH9FgNsVnAYmuz/FcvtdgyG0/G5QOmvYX1E6pB3N3J3Qk7
+         GkSGehLth0YbNq2Jqr2Gp1Z4P2VnlqYF8EkyY95MMRyPu+yaCU7ZQR91cQitR80TeKTB
+         oWYqw7TIxZXJqOTGtp90UfFPgG0lB7cBOJchjsOZydg4nYFyoPALk7NP5jp9Q9+CJjwE
+         gZyW5hCUTyHwKbhZNVaO1zSrRbQl3Fr6vebyE8LgOa1RZlW/LTpsWrJSWfxmEbp1wDlF
+         gO5Q8c/Q31yoXvErv6LymNYe0+qCHUgu1BvXC3fCG93xehdedWaD1zjhxCQ3CEnabSjr
+         uQoA==
+X-Gm-Message-State: AJcUukfJB39SuWOupoo0xWwyZY7iKdJhQXTX+YJ0mdGdN92Mby++zusm
+        qNBhSFM7AuEbkOFDiA0NIkqhrw==
+X-Google-Smtp-Source: ALg8bN4ikKHGThY4/HxuW3SfkD/ytvOgfQ6qbVVDYLjvCILyJYfPyiwLoY9J+ABcPAvNMxmq7DuunA==
+X-Received: by 2002:a17:902:6b49:: with SMTP id g9mr46034526plt.98.1546520702479;
+        Thu, 03 Jan 2019 05:05:02 -0800 (PST)
+Received: from qualcomm-HP-ZBook-14-G2.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com. [103.229.18.19])
+        by smtp.gmail.com with ESMTPSA id f32sm69371221pgf.80.2019.01.03.05.04.58
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 03 Jan 2019 05:05:01 -0800 (PST)
+From:   Firoz Khan <firoz.khan@linaro.org>
+To:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>
+Cc:     y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, deepa.kernel@gmail.com,
+        marcin.juszkiewicz@linaro.org, firoz.khan@linaro.org
+Subject: [PATCH] scripts/syscalls: add system call table file for asm-generic
+Date:   Thu,  3 Jan 2019 18:34:41 +0530
+Message-Id: <1546520681-24453-1-git-send-email-firoz.khan@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiri Olsa <jolsa@kernel.org>
+Add system call table file - syscall.tbl which can be use by
+the system call table generation script to generate the equi-
+valent file for asm-generic/unistd.h for architectures which
+include the same file.
 
-Ondřej reported that when compiled with python3, the python extension
-regresses in evlist.get_pollfd function behaviour.
+The system call table generation script will use syscall.tbl
+file as input to generate the uapi and kapi header files.
+Added some extra abi to make the syscall.tbl file generic and
+can be use the same file for architectures which include the
+file asm-generic/unistd.h.
 
-The evlist.get_pollfd function creates file objects from evlist's fds
-and returns them in a list. The python3 version also sets them to 'close
-the original descriptor' when the object dies (is closed), by passing
-True via the 'closefd' arg in the PyFile_FromFd call.
+This patch is depends on:
+ https://lore.kernel.org/lkml/1546439331-18646-1-git-send-email-firoz.khan@linaro.org/
 
-The python's closefd doc says:
-
-  If closefd is False, the underlying file descriptor will be kept open
-  when the file is closed.
-
-That's why the following line in python3 closes all evlist fds:
-
-  evlist.get_pollfd()
-
-the returned list is immediately destroyed and that takes down the
-original events fds.
-
-Passing closefd as False to PyFile_FromFd to fix this.
-
-Reported-by: Ondřej Lysoněk <olysonek@redhat.com>
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jaroslav Škarvada <jskarvad@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Fixes: 66dfdff03d19 ("perf tools: Add Python 3 support")
-Link: http://lkml.kernel.org/r/20181226112121.5285-1-jolsa@kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Firoz Khan <firoz.khan@linaro.org>
 ---
- tools/perf/util/python.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ scripts/syscalls/syscall.tbl | 358 +++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 358 insertions(+)
+ create mode 100644 scripts/syscalls/syscall.tbl
 
-diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
-index 47628e85c5eb..dda0ac978b1e 100644
---- a/tools/perf/util/python.c
-+++ b/tools/perf/util/python.c
-@@ -939,7 +939,8 @@ static PyObject *pyrf_evlist__get_pollfd(struct pyrf_evlist *pevlist,
- 
- 		file = PyFile_FromFile(fp, "perf", "r", NULL);
- #else
--		file = PyFile_FromFd(evlist->pollfd.entries[i].fd, "perf", "r", -1, NULL, NULL, NULL, 1);
-+		file = PyFile_FromFd(evlist->pollfd.entries[i].fd, "perf", "r", -1,
-+				     NULL, NULL, NULL, 0);
- #endif
- 		if (file == NULL)
- 			goto free_list;
+diff --git a/scripts/syscalls/syscall.tbl b/scripts/syscalls/syscall.tbl
+new file mode 100644
+index 0000000..9ab09d3
+--- /dev/null
++++ b/scripts/syscalls/syscall.tbl
+@@ -0,0 +1,358 @@
++# SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note
++#
++# system call numbers and entry vectors for asm-generic
++#
++# The format is:
++# <number> <abi> <name> <entry point> <compat entry point>
++#
++# The <abi> is always "common" for this file.
++#
++0	common	io_setup			sys_io_setup			compat_sys_io_setup
++1	common	io_destroy			sys_io_destroy
++2	common	io_submit			sys_io_submit			compat_sys_io_submit
++3	common	io_cancel			sys_io_cancel
++4	common	io_getevents			sys_io_getevents		compat_sys_io_getevents
++# fs/xattr.c
++5	common	setxattr			sys_setxattr
++6	common	lsetxattr			sys_lsetxattr
++7	common	fsetxattr			sys_fsetxattr
++8	common	getxattr			sys_getxattr
++9	common	lgetxattr			sys_lgetxattr
++10	common	fgetxattr			sys_fgetxattr
++11	common	listxattr			sys_listxattr
++12	common	llistxattr			sys_llistxattr
++13	common	flistxattr			sys_flistxattr
++14	common	removexattr			sys_removexattr
++15	common	lremovexattr			sys_lremovexattr
++16	common	fremovexattr			sys_fremovexattr
++# fs/dcache.c
++17	common	getcwd				sys_getcwd
++# fs/cookies.c
++18	common	lookup_dcookie			sys_lookup_dcookie		compat_sys_lookup_dcookie
++# fs/eventfd.c
++19	common	eventfd2			sys_eventfd2
++# fs/eventpoll.c
++20	common	epoll_create1			sys_epoll_create1
++21	common	epoll_ctl			sys_epoll_ctl
++22	common	epoll_pwait			sys_epoll_pwait			compat_sys_epoll_pwait
++# fs/fcntl.c
++23	common	dup				sys_dup
++24	common	dup3				sys_dup3
++25	32	fcntl64				sys_fcntl64			compat_sys_fcntl64
++25	64	fcntl				sys_fcntl
++# fs/inotify_user.c
++26	common	inotify_init1			sys_inotify_init1
++27	common	inotify_add_watch		sys_inotify_add_watch
++28	common	inotify_rm_watch		sys_inotify_rm_watch
++# fs/ioctl.c
++29	common	ioctl				sys_ioctl			compat_sys_ioctl
++# fs/ioprio.c
++30	common	ioprio_set			sys_ioprio_set
++31	common	ioprio_get			sys_ioprio_get
++# fs/locks.c
++32	common	flock				sys_flock
++# fs/namei.c
++33	common	mknodat				sys_mknodat
++34	common	mkdirat				sys_mkdirat
++35	common	unlinkat			sys_unlinkat
++36	common	symlinkat			sys_symlinkat
++37	common	linkat				sys_linkat
++38	rename	renameat			sys_renameat
++# fs/namespace.c
++39	common	umount2				sys_umount
++40	common	mount				sys_mount			compat_sys_mount
++41	common	pivot_root			sys_pivot_root
++# fs/nfsctl.c
++42	common	nfsservctl			sys_ni_syscall
++# fs/open.c
++43	32	statfs64			sys_statfs64			compat_sys_statfs64
++43	64	statfs				sys_statfs
++44	32	fstatfs64			sys_fstatfs64			compat_sys_fstatfs64
++44	64	fstatfs				sys_fstatfs
++45	32	truncate64			sys_truncate64			compat_sys_truncate64
++45	64	truncate			sys_truncate
++46	32	ftruncate64			sys_ftruncate64			compat_sys_ftruncate64
++46	64	ftruncate			sys_ftruncate
++47	common	fallocate			sys_fallocate			compat_sys_fallocate
++48	common	faccessat			sys_faccessat
++49	common	chdir				sys_chdir
++50	common	fchdir				sys_fchdir
++51	common	chroot				sys_chroot
++52	common	fchmod				sys_fchmod
++53	common	fchmodat			sys_fchmodat
++54	common	fchownat			sys_fchownat
++55	common	fchown				sys_fchown
++56	common	openat				sys_openat			compat_sys_openat
++57	common	close				sys_close
++58	common	vhangup				sys_vhangup
++# fs/pipe.c
++59	common	pipe2				sys_pipe2
++# fs/quota.c
++60	common	quotactl			sys_quotactl
++# fs/readdir.c
++61	common	getdents64			sys_getdents64
++# fs/read_write.c
++62	32	llseek				sys_llseek
++62	64	lseek				sys_lseek
++63	common	read				sys_read
++64	common	write				sys_write
++65	common	readv				sys_readv			compat_sys_readv
++66	common	writev				sys_writev			compat_sys_writev
++67	common	pread64				sys_pread64			compat_sys_pread64
++68	common	pwrite64			sys_pwrite64			compat_sys_pwrite64
++69	common	preadv				sys_preadv			compat_sys_preadv
++70	common	pwritev				sys_pwritev			compat_sys_pwritev
++# fs/sendfile.c
++71	32	sendfile64			sys_sendfile64
++71	64	sendfile			sys_sendfile64
++# fs/select.c
++72	common	pselect6			sys_pselect6			compat_sys_pselect6
++73	common	ppoll				sys_ppoll			compat_sys_ppoll
++# fs/signalfd.c
++74	common	signalfd4			sys_signalfd4			compat_sys_signalfd4
++# fs/splice.c
++75	common	vmsplice			sys_vmsplice			compat_sys_vmsplice
++76	common	splice				sys_splice
++77	common	tee				sys_tee
++# fs/stat.c
++78	common	readlinkat			sys_readlinkat
++79	stat64	fstatat64			sys_fstatat64
++79	nwstat	newfstatat			sys_newfstatat
++80	stat64	fstat64				sys_fstat64
++80	nwstat	fstat				sys_newfstat
++# fs/sync.c
++81	common	sync				sys_sync
++82	common	fsync				sys_fsync
++83	common	fdatasync			sys_fdatasync
++84	common	sync_file_range			sys_sync_file_range		compat_sys_sync_file_range
++# fs/timerfd.c
++85	common	timerfd_create			sys_timerfd_create
++86	common	timerfd_settime			sys_timerfd_settime		compat_sys_timerfd_settime
++87	common	timerfd_gettime			sys_timerfd_gettime		compat_sys_timerfd_gettime
++# fs/utimes.c
++88	common	utimensat			sys_utimensat			compat_sys_utimensat
++# kernel/acct.c
++89	common	acct				sys_acct
++# kernel/capability.c
++90	common	capget				sys_capget
++91	common	capset				sys_capset
++# kernel/exec_domain.c
++92	common	personality			sys_personality
++# kernel/exit.c
++93	common	exit				sys_exit
++94	common	exit_group			sys_exit_group
++95	common	waitid				sys_waitid			compat_sys_waitid
++# kernel/fork.c
++96	common	set_tid_address			sys_set_tid_address
++97	common	unshare				sys_unshare
++# kernel/futex.c
++98	common	futex				sys_futex			compat_sys_futex
++99	common	set_robust_list			sys_set_robust_list		compat_sys_set_robust_list
++100	common	get_robust_list			sys_get_robust_list		compat_sys_get_robust_list
++# kernel/hrtimer.c
++101	common	nanosleep			sys_nanosleep			compat_sys_nanosleep
++# kernel/itimer.c
++102	common	getitimer			sys_getitimer			compat_sys_getitimer
++103	common	setitimer			sys_setitimer			compat_sys_setitimer
++# kernel/kexec.c
++104	common	kexec_load			sys_kexec_load			compat_sys_kexec_load
++# kernel/module.c
++105	common	init_module			sys_init_module
++106	common	delete_module			sys_delete_module
++# kernel/posix-timers.c
++107	common	timer_create			sys_timer_create		compat_sys_timer_create
++108	common	timer_gettime			sys_timer_gettime		compat_sys_timer_gettime
++109	common	timer_getoverrun		sys_timer_getoverrun
++110	common	timer_settime			sys_timer_settime		compat_sys_timer_settime
++111	common	timer_delete			sys_timer_delete
++112	common	clock_settime			sys_clock_settime		compat_sys_clock_settime
++113	common	clock_gettime			sys_clock_gettime		compat_sys_clock_gettime
++114	common	clock_getres			sys_clock_getres		compat_sys_clock_getres
++115	common	clock_nanosleep			sys_clock_nanosleep		compat_sys_clock_nanosleep
++# kernel/printk.c
++116	common	syslog				sys_syslog
++# kernel/ptrace.c
++117	common	ptrace				sys_ptrace
++# kernel/sched/core.c
++118	common	sched_setparam			sys_sched_setparam
++119	common	sched_setscheduler		sys_sched_setscheduler
++120	common	sched_getscheduler		sys_sched_getscheduler
++121	common	sched_getparam			sys_sched_getparam
++122	common	sched_setaffinity		sys_sched_setaffinity		compat_sys_sched_setaffinity
++123	common	sched_getaffinity		sys_sched_getaffinity		compat_sys_sched_getaffinity
++124	common	sched_yield			sys_sched_yield
++125	common	sched_get_priority_max		sys_sched_get_priority_max
++126	common	sched_get_priority_min		sys_sched_get_priority_min
++127	common	sched_rr_get_interval		sys_sched_rr_get_interval	compat_sys_sched_rr_get_interval
++# kernel/signal.c
++128	common	restart_syscall			sys_restart_syscall
++129	common	kill				sys_kill
++130	common	tkill				sys_tkill
++131	common	tgkill				sys_tgkill
++132	common	sigaltstack			sys_sigaltstack			compat_sys_sigaltstack
++133	common	rt_sigsuspend			sys_rt_sigsuspend		compat_sys_rt_sigsuspend
++134	common	rt_sigaction			sys_rt_sigaction		compat_sys_rt_sigaction
++135	common	rt_sigprocmask			sys_rt_sigprocmask		compat_sys_rt_sigprocmask
++136	common	rt_sigpending			sys_rt_sigpending		compat_sys_rt_sigpending
++137	common	rt_sigtimedwait			sys_rt_sigtimedwait		compat_sys_rt_sigtimedwait
++138	common	rt_sigqueueinfo			sys_rt_sigqueueinfo		compat_sys_rt_sigqueueinfo
++139	common	rt_sigreturn			sys_rt_sigreturn		compat_sys_rt_sigreturn
++# kernel/sys.c
++140	common	setpriority			sys_setpriority
++141	common	getpriority			sys_getpriority
++142	common	reboot				sys_reboot
++143	common	setregid			sys_setregid
++144	common	setgid				sys_setgid
++145	common	setreuid			sys_setreuid
++146	common	setuid				sys_setuid
++147	common	setresuid			sys_setresuid
++148	common	getresuid			sys_getresuid
++149	common	setresgid			sys_setresgid
++150	common	getresgid			sys_getresgid
++151	common	setfsuid			sys_setfsuid
++152	common	setfsgid			sys_setfsgid
++153	common	times				sys_times			compat_sys_times
++154	common	setpgid				sys_setpgid
++155	common	getpgid				sys_getpgid
++156	common	getsid				sys_getsid
++157	common	setsid				sys_setsid
++158	common	getgroups			sys_getgroups
++159	common	setgroups			sys_setgroups
++160	common	uname				sys_newuname
++161	common	sethostname			sys_sethostname
++162	common	setdomainname			sys_setdomainname
++163	common	getrlimit			sys_getrlimit			compat_sys_getrlimit
++164	common	setrlimit			sys_setrlimit			compat_sys_setrlimit
++165	common	getrusage			sys_getrusage			compat_sys_getrusage
++166	common	umask				sys_umask
++167	common	prctl				sys_prctl
++168	common	getcpu				sys_getcpu
++169	common	gettimeofday			sys_gettimeofday		compat_sys_gettimeofday
++# kernel/time.c
++170	common	settimeofday			sys_settimeofday		compat_sys_settimeofday
++171	common	adjtimex			sys_adjtimex			compat_sys_adjtimex
++# kernel/timer.c
++172	common	getpid				sys_getpid
++173	common	getppid				sys_getppid
++174	common	getuid				sys_getuid
++175	common	geteuid				sys_geteuid
++176	common	getgid				sys_getgid
++177	common	getegid				sys_getegid
++178	common	gettid				sys_gettid
++179	common	sysinfo				sys_sysinfo			compat_sys_sysinfo
++# ipc/mqueue.c
++180	common	mq_open				sys_mq_open			compat_sys_mq_open
++181	common	mq_unlink			sys_mq_unlink
++182	common	mq_timedsend			sys_mq_timedsend		compat_sys_mq_timedsend
++183	common	mq_timedreceive			sys_mq_timedreceive		compat_sys_mq_timedreceive
++184	common	mq_notify			sys_mq_notify			compat_sys_mq_notify
++185	common	mq_getsetattr			sys_mq_getsetattr		compat_sys_mq_getsetattr
++# ipc/msg.c
++186	common	msgget				sys_msgget
++187	common	msgctl				sys_msgctl			compat_sys_msgctl
++188	common	msgrcv				sys_msgrcv			compat_sys_msgrcv
++189	common	msgsnd				sys_msgsnd			compat_sys_msgsnd
++# ipc/sem.c
++190	common	semget				sys_semget
++191	common	semctl				sys_semctl			compat_sys_semctl
++192	common	semtimedop			sys_semtimedop			compat_sys_semtimedop
++193	common	semop				sys_semop
++# ipc/shm.c
++194	common	shmget				sys_shmget
++195	common	shmctl				sys_shmctl			compat_sys_shmctl
++196	common	shmat				sys_shmat			compat_sys_shmat
++197	common	shmdt				sys_shmdt
++# net/socket.c
++198	common	socket				sys_socket
++199	common	socketpair			sys_socketpair
++200	common	bind				sys_bind
++201	common	listen				sys_listen
++202	common	accept				sys_accept
++203	common	connect				sys_connect
++204	common	getsockname			sys_getsockname
++205	common	getpeername			sys_getpeername
++206	common	sendto				sys_sendto
++207	common	recvfrom			sys_recvfrom			compat_sys_recvfrom
++208	common	setsockopt			sys_setsockopt			compat_sys_setsockopt
++209	common	getsockopt			sys_getsockopt			compat_sys_getsockopt
++210	common	shutdown			sys_shutdown
++211	common	sendmsg				sys_sendmsg			compat_sys_sendmsg
++212	common	recvmsg				sys_recvmsg			compat_sys_recvmsg
++# mm/filemap.c
++213	common	readahead			sys_readahead			compat_sys_readahead
++# mm/nommu.c, also with MMU
++214	common	brk				sys_brk
++215	common	munmap				sys_munmap
++216	common	mremap				sys_mremap
++# security/keys/keyctl.c
++217	common	add_key				sys_add_key
++218	common	request_key			sys_request_key
++219	common	keyctl				sys_keyctl			compat_sys_keyctl
++# arch/example/kernel/sys_example.c
++220	common	clone				sys_clone
++221	common	execve				sys_execve			compat_sys_execve
++222	32	mmap2				sys_mmap2
++222	64	mmap				sys_mmap
++# mm/fadvise.c
++223	32	fadvise64_64			sys_fadvise64_64		compat_sys_fadvise64_64
++223	64	fadvise64			sys_fadvise64_64
++224	mmu	swapon				sys_swapon
++225	mmu	swapoff				sys_swapoff
++226	mmu	mprotect			sys_mprotect
++227	mmu	msync				sys_msync
++228	mmu	mlock				sys_mlock
++229	mmu	munlock				sys_munlock
++230	mmu	mlockall			sys_mlockall
++231	mmu	munlockall			sys_munlockall
++232	mmu	mincore				sys_mincore
++233	mmu	madvise				sys_madvise
++234	mmu	remap_file_pages		sys_remap_file_pages
++235	mmu	mbind				sys_mbind			compat_sys_mbind
++236	mmu	get_mempolicy			sys_get_mempolicy		compat_sys_get_mempolicy
++237	mmu	set_mempolicy			sys_set_mempolicy		compat_sys_set_mempolicy
++238	mmu	migrate_pages			sys_migrate_pages		compat_sys_migrate_pages
++239	mmu	move_pages			sys_move_pages			compat_sys_move_pages
++240	common	rt_tgsigqueueinfo		sys_rt_tgsigqueueinfo		compat_sys_rt_tgsigqueueinfo
++241	common	perf_event_open			sys_perf_event_open
++242	common	accept4				sys_accept4
++243	common	recvmmsg			sys_recvmmsg			compat_sys_recvmmsg
++244	cachef	cacheflush			sys_cacheflush			compat_sys_cacheflush
++244 	archsp	arch_specific_syscall		sys_arch_specific_syscall0
++245 	archsp	arch_specific_syscall1		sys_arch_specific_syscall1
++246	archsp	arch_specific_syscall2		sys_arch_specific_syscall2
++247	archsp	arch_specific_syscall3		sys_arch_specific_syscall3
++248	archsp	arch_specific_syscall4		sys_arch_specific_syscall4
++260	common	wait4				sys_wait4			compat_sys_wait4
++261	common	prlimit64			sys_prlimit64
++262	common	fanotify_init			sys_fanotify_init
++263	common	fanotify_mark			sys_fanotify_mark
++264	common	name_to_handle_at		sys_name_to_handle_at
++265	common	open_by_handle_at		sys_open_by_handle_at		compat_sys_open_by_handle_at
++266	common	clock_adjtime			sys_clock_adjtime		compat_sys_clock_adjtime
++267	common	syncfs				sys_syncfs
++268	common	setns				sys_setns
++269	common	sendmmsg			sys_sendmmsg			compat_sys_sendmmsg
++270	common	process_vm_readv		sys_process_vm_readv		compat_sys_process_vm_readv
++271	common	process_vm_writev		sys_process_vm_writev		compat_sys_process_vm_writev
++272	common	kcmp				sys_kcmp
++273	common	finit_module			sys_finit_module
++274	common	sched_setattr			sys_sched_setattr
++275	common	sched_getattr			sys_sched_getattr
++276	common	renameat2			sys_renameat2
++277	common	seccomp				sys_seccomp
++278	common	getrandom			sys_getrandom
++279	common	memfd_create			sys_memfd_create
++280	common	bpf				sys_bpf
++281	common	execveat			sys_execveat			compat_sys_execveat
++282	common	userfaultfd			sys_userfaultfd
++283	common	membarrier			sys_membarrier
++284	common	mlock2				sys_mlock2
++285	common	copy_file_range			sys_copy_file_range
++286	common	preadv2				sys_preadv2			compat_sys_preadv2
++287	common	pwritev2			sys_pwritev2			compat_sys_pwritev2
++288	common	pkey_mprotect			sys_pkey_mprotect
++289	common	pkey_alloc			sys_pkey_alloc
++290	common	pkey_free			sys_pkey_free
++291	common	statx				sys_statx
++292	common	io_pgetevents			sys_io_pgetevents		compat_sys_io_pgetevents
++293	common	rseq				sys_rseq
 -- 
-2.19.2
+1.9.1
 
