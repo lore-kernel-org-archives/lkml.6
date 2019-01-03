@@ -2,188 +2,262 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EFFAC43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 01:17:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5819DC43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 01:24:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D952820833
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 01:17:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="1MGepT/8"
+	by mail.kernel.org (Postfix) with ESMTP id 0490B20856
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 01:24:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546478676;
+	bh=kq+hIszbR/m2T7IAa5wvLkv6lvdepkyvseqzgXeWsNo=;
+	h=Subject:From:To:Date:In-Reply-To:References:List-ID:From;
+	b=xxz6TiThKZWPw3zE6vGEumk9xFRTuzg0dBnNiLJykHl5uAWp84drchW9cX5trD9Mq
+	 BA0AzpxXfzYnXW5c2zfDvxNITuO84ZkinezAlJXMCnKYeFAPBCk4dRFkHGklwUVQ4O
+	 CZrnUD2CElrbpKW/gzXdKkk0VEpKgVxiDsuIWM6U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726849AbfACBRR (ORCPT
+        id S1727118AbfACBYe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 20:17:17 -0500
-Received: from conuserg-09.nifty.com ([210.131.2.76]:41567 "EHLO
-        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726049AbfACBRR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 20:17:17 -0500
-Received: from grover.tkatk1.zaq.ne.jp (zaqdadce369.zaq.ne.jp [218.220.227.105]) (authenticated)
-        by conuserg-09.nifty.com with ESMTP id x031GwhQ001151;
-        Thu, 3 Jan 2019 10:16:59 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com x031GwhQ001151
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1546478219;
-        bh=xVvKr37H6GF6qKmnraYMODxr3+soLJC30kP+XSvBu4Q=;
-        h=From:To:Cc:Subject:Date:From;
-        b=1MGepT/8KHk3KqffyGYPE2najb5nDsMpBt7isiihHrq+xnl+c/xVPMhPSAR4yX4Bn
-         FkFoJ7PZUqTEWINgptEMTZKLnaJ/wpw7PqsvzvhQcBbO0Fn6qfHznDdkeRmYuDMdWm
-         xxz64L0WsdM8/Ltc4agi1Ks+v/ZHQolGOHAEhv0thmzqpP8v+A9c31Wg1dX75Y5d09
-         bpX+P5RFGqWTgpzzhS2Nurhy2F05YPozHNWnZdrZLIqUghW6kJ5WP4ovFJQjFBtK+M
-         5QMeCIoRdefUWcjLKfE2FoEMcUO0H0qn03PlgI7mJQXIQWX40UmD1cmZNvKd1XymRA
-         QZeoHtVRgwlDg==
-X-Nifty-SrcIP: [218.220.227.105]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     linux-kbuild@vger.kernel.org
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-s390@vger.kernel.org,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        linux-kernel@vger.kernel.org,
-        Michal Marek <michal.lkml@markovi.net>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
-Subject: [PATCH] kbuild: use assignment instead of define ... endef for filechk_* rules
-Date:   Thu,  3 Jan 2019 10:16:54 +0900
-Message-Id: <1546478214-20394-1-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
+        Wed, 2 Jan 2019 20:24:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45106 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726049AbfACBYe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Jan 2019 20:24:34 -0500
+Received: from tleilax.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2EEBA20833;
+        Thu,  3 Jan 2019 01:24:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1546478673;
+        bh=kq+hIszbR/m2T7IAa5wvLkv6lvdepkyvseqzgXeWsNo=;
+        h=Subject:From:To:Date:In-Reply-To:References:From;
+        b=AyHa6jH78mcDAzm+P5IpyofaKdzpT6YRfz56DyW9VXSO4OsexZAZ85VRF44N3Mpw4
+         HdW0zBzNQU/fRoF+IA+idGzASJ9Zm5+DYHCErlxOu96Qz86A7KY5w0HrzAwsUKMAbn
+         UsXZqu9tjrf+44Bm5w9KAeZWBrWXwBm2nzBoVP7o=
+Message-ID: <8d7fe24b342147349b820742bbcd3ab07864a2d7.camel@kernel.org>
+Subject: Re: KASAN: use-after-free Read in posix_lock_inode
+From:   Jeff Layton <jlayton@kernel.org>
+To:     NeilBrown <neilb@suse.com>,
+        syzbot <syzbot+239d99847eb49ecb3899@syzkaller.appspotmail.com>,
+        bfields@fieldses.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+Date:   Wed, 02 Jan 2019 20:24:30 -0500
+In-Reply-To: <87pnteli87.fsf@notabene.neil.brown.name>
+References: <000000000000a415f5057e772463@google.com>
+         <1baebb04848c3f7f429235f1f1608f61c3e2438e.camel@kernel.org>
+         <87pnteli87.fsf@notabene.neil.brown.name>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.3 (3.30.3-1.fc29) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-You do not have to use define ... endef for filechk_* rules.
+On Thu, 2019-01-03 at 11:04 +1100, NeilBrown wrote:
+> On Wed, Jan 02 2019, Jeff Layton wrote:
+> 
+> > On Wed, 2019-01-02 at 02:31 -0800, syzbot wrote:
+> > > Hello,
+> > > 
+> > > syzbot found the following crash on:
+> > > 
+> > > HEAD commit:    e1ef035d272e Merge tag 'armsoc-defconfig' of git://git.ker..
+> > > git tree:       upstream
+> > > console output: https://syzkaller.appspot.com/x/log.txt?x=16bb4c4b400000
+> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=9c6a26e22579190b
+> > > dashboard link: https://syzkaller.appspot.com/bug?extid=239d99847eb49ecb3899
+> > > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=128aa377400000
+> > > 
+> > > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > > Reported-by: syzbot+239d99847eb49ecb3899@syzkaller.appspotmail.com
+> > > 
+> > > IPv6: ADDRCONF(NETDEV_UP): vxcan1: link is not ready
+> > > IPv6: ADDRCONF(NETDEV_UP): vxcan1: link is not ready
+> > > 8021q: adding VLAN 0 to HW filter on device batadv0
+> > > 8021q: adding VLAN 0 to HW filter on device batadv0
+> > > ==================================================================
+> > > BUG: KASAN: use-after-free in what_owner_is_waiting_for fs/locks.c:1000  
+> > > [inline]
+> > > BUG: KASAN: use-after-free in posix_locks_deadlock fs/locks.c:1023 [inline]
+> > > BUG: KASAN: use-after-free in posix_lock_inode+0x1f9e/0x2750 fs/locks.c:1163
+> > > Read of size 8 at addr ffff88808791b000 by task syz-executor2/10100
+> > > 
+> > > CPU: 1 PID: 10100 Comm: syz-executor2 Not tainted 4.20.0+ #3
+> > > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+> > > Google 01/01/2011
+> > > Call Trace:
+> > >   __dump_stack lib/dump_stack.c:77 [inline]
+> > >   dump_stack+0x1db/0x2d0 lib/dump_stack.c:113
+> > >   print_address_description.cold+0x7c/0x20d mm/kasan/report.c:187
+> > >   kasan_report.cold+0x1b/0x40 mm/kasan/report.c:317
+> > >   __asan_report_load8_noabort+0x14/0x20 mm/kasan/generic_report.c:135
+> > >   what_owner_is_waiting_for fs/locks.c:1000 [inline]
+> > >   posix_locks_deadlock fs/locks.c:1023 [inline]
+> > >   posix_lock_inode+0x1f9e/0x2750 fs/locks.c:1163
+> > >   posix_lock_file fs/locks.c:1346 [inline]
+> > >   vfs_lock_file fs/locks.c:2314 [inline]
+> > >   vfs_lock_file+0xc7/0xf0 fs/locks.c:2309
+> > >   do_lock_file_wait.part.0+0xe5/0x260 fs/locks.c:2328
+> > >   do_lock_file_wait fs/locks.c:2324 [inline]
+> > >   fcntl_setlk+0x2f1/0xfe0 fs/locks.c:2413
+> > >   do_fcntl+0x843/0x12b0 fs/fcntl.c:370
+> > >   __do_sys_fcntl fs/fcntl.c:463 [inline]
+> > >   __se_sys_fcntl fs/fcntl.c:448 [inline]
+> > >   __x64_sys_fcntl+0x16d/0x1e0 fs/fcntl.c:448
+> > >   do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
+> > >   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> > > RIP: 0033:0x457ec9
+> > > Code: 6d b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+> > > 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+> > > ff 0f 83 3b b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+> > > RSP: 002b:00007f58bbb50c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000048
+> > > RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457ec9
+> > > RDX: 0000000020000140 RSI: 0000000000000007 RDI: 0000000000000003
+> > > RBP: 000000000073bf00 R08: 0000000000000000 R09: 0000000000000000
+> > > R10: 0000000000000000 R11: 0000000000000246 R12: 00007f58bbb516d4
+> > > R13: 00000000004be5f0 R14: 00000000004ceab0 R15: 00000000ffffffff
+> > > 
+> > > Allocated by task 10100:
+> > >   save_stack+0x45/0xd0 mm/kasan/common.c:73
+> > >   set_track mm/kasan/common.c:85 [inline]
+> > >   kasan_kmalloc mm/kasan/common.c:482 [inline]
+> > >   kasan_kmalloc+0xcf/0xe0 mm/kasan/common.c:455
+> > >   kasan_slab_alloc+0xf/0x20 mm/kasan/common.c:397
+> > >   kmem_cache_alloc+0x12d/0x710 mm/slab.c:3541
+> > >   kmem_cache_zalloc include/linux/slab.h:730 [inline]
+> > >   locks_alloc_lock+0x8e/0x2f0 fs/locks.c:344
+> > >   fcntl_setlk+0xa9/0xfe0 fs/locks.c:2362
+> > >   do_fcntl+0x843/0x12b0 fs/fcntl.c:370
+> > >   __do_sys_fcntl fs/fcntl.c:463 [inline]
+> > >   __se_sys_fcntl fs/fcntl.c:448 [inline]
+> > >   __x64_sys_fcntl+0x16d/0x1e0 fs/fcntl.c:448
+> > >   do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
+> > >   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> > > 
+> > > Freed by task 10100:
+> > >   save_stack+0x45/0xd0 mm/kasan/common.c:73
+> > >   set_track mm/kasan/common.c:85 [inline]
+> > >   __kasan_slab_free+0x102/0x150 mm/kasan/common.c:444
+> > >   kasan_slab_free+0xe/0x10 mm/kasan/common.c:452
+> > >   __cache_free mm/slab.c:3485 [inline]
+> > >   kmem_cache_free+0x86/0x260 mm/slab.c:3747
+> > >   locks_free_lock+0x27a/0x3f0 fs/locks.c:381
+> > >   fcntl_setlk+0x7b5/0xfe0 fs/locks.c:2439
+> > >   do_fcntl+0x843/0x12b0 fs/fcntl.c:370
+> > >   __do_sys_fcntl fs/fcntl.c:463 [inline]
+> > >   __se_sys_fcntl fs/fcntl.c:448 [inline]
+> > >   __x64_sys_fcntl+0x16d/0x1e0 fs/fcntl.c:448
+> > >   do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
+> > >   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> > > 
+> > > The buggy address belongs to the object at ffff88808791b000
+> > >   which belongs to the cache file_lock_cache of size 264
+> > > The buggy address is located 0 bytes inside of
+> > >   264-byte region [ffff88808791b000, ffff88808791b108)
+> > > The buggy address belongs to the page:
+> > > page:ffffea00021e46c0 count:1 mapcount:0 mapping:ffff8880aa16a1c0 index:0x0
+> > > flags: 0x1fffc0000000200(slab)
+> > > raw: 01fffc0000000200 ffffea0002333508 ffffea00021d76c8 ffff8880aa16a1c0
+> > > raw: 0000000000000000 ffff88808791b000 000000010000000c 0000000000000000
+> > > page dumped because: kasan: bad access detected
+> > > 
+> > > Memory state around the buggy address:
+> > >   ffff88808791af00: fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc fc
+> > >   ffff88808791af80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> > > > ffff88808791b000: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> > >                     ^
+> > >   ffff88808791b080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> > >   ffff88808791b100: fb fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb
+> > > ==================================================================
+> > > 
+> > > 
+> > > 
+> > 
+> > The interesting bit is that the crash, alloc and free all seem to have
+> > occurred in the same kernel task (PID 10100).
+> > 
+> > Here's the loop in what_owner_is_waiting_for():
+> > 
+> > ----------------8<------------------
+> >         hash_for_each_possible(blocked_hash, fl, fl_link, posix_owner_key(block_fl)) {
+> >                 if (posix_same_owner(fl, block_fl)) {                           
+> >                         while (fl->fl_blocker)            <<<<<< CRASH HERE                           
+> >                                 fl = fl->fl_blocker;                            
+> >                         return fl;                                              
+> >                 }                                                               
+> >         }        
+> > ----------------8<------------------
+> > 
+> > So fl got freed while we were walking down the chain of blocked locks.
+> > At a quick glance, I'm now wondering whether the lockless optimization
+> > to avoid the blocked_lock_lock in locks_delete_block is actually ok.
+> > 
+> > Neil, any thoughts?
+> 
+> The repro didn't trigger for me, but code inspection suggested I should
+> invest in brown paper bags.
+> 
+> Note that while this patch clearly fixes a bug, and I suspect it is
+> the cause of this report, I cannot confirm with testing as I cannot
+> trigger the bug.  I enabled KASAN and ran "qemu -smp 4" to no avail.
+> 
+> Thanks,
+> NeilBrown
+> 
+> From: NeilBrown <neilb@suse.com>
+> Date: Thu, 3 Jan 2019 10:59:50 +1100
+> Subject: [PATCH] locks: fix error in locks_move_blocks()
+> 
+> After moving all requests from
+>    fl->fl_blocked_requests
+> to
+>    new->fl_blocked_requests
+> 
+> it is nonsensical to do anything to all the remaining elements, there
+> aren't any.
+> This should do something to all the requests that have been
+> moved - for simplicity, it does it to all requests in the target
+> list.
+> Setting "f->fl_blocker = new" to all members of
+> new->fl_blocked_requests is "obviously correct" as it preserves
+> the invariant of the linkage among requests.
+> 
+> Reported-by: syzbot+239d99847eb49ecb3899@syzkaller.appspotmail.com
+> Fixes: 5946c4319ebb ("fs/locks: allow a lock request to block other requests.")
+> Signed-off-by: NeilBrown <neilb@suse.com>
+> ---
+>  fs/locks.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/locks.c b/fs/locks.c
+> index f0b24d98f36b..ff6af2c32601 100644
+> --- a/fs/locks.c
+> +++ b/fs/locks.c
+> @@ -453,7 +453,7 @@ static void locks_move_blocks(struct file_lock *new, struct file_lock *fl)
+>  		return;
+>  	spin_lock(&blocked_lock_lock);
+>  	list_splice_init(&fl->fl_blocked_requests, &new->fl_blocked_requests);
+> -	list_for_each_entry(f, &fl->fl_blocked_requests, fl_blocked_member)
+> +	list_for_each_entry(f, &new->fl_blocked_requests, fl_blocked_member)
+>  		f->fl_blocker = new;
+>  	spin_unlock(&blocked_lock_lock);
+>  }
 
-For simple cases, the use of assignment looks cleaner, IMHO.
+Thanks Neil,
 
-I updated the usage for scripts/Kbuild.include in case somebody
-misunderstands the 'define ... endif' is the requirement.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
-
- Kbuild                             |  4 +---
- Makefile                           |  3 +--
- arch/s390/kernel/syscalls/Makefile | 12 +++---------
- arch/s390/tools/Makefile           |  7 ++-----
- scripts/Kbuild.include             |  8 ++++----
- scripts/kconfig/Makefile           |  4 +---
- 6 files changed, 12 insertions(+), 26 deletions(-)
-
-diff --git a/Kbuild b/Kbuild
-index 06b801e..65db5be 100644
---- a/Kbuild
-+++ b/Kbuild
-@@ -26,9 +26,7 @@ timeconst-file := include/generated/timeconst.h
- 
- targets += $(timeconst-file)
- 
--define filechk_gentimeconst
--	echo $(CONFIG_HZ) | bc -q $<
--endef
-+filechk_gentimeconst = echo $(CONFIG_HZ) | bc -q $<
- 
- $(timeconst-file): kernel/time/timeconst.bc FORCE
- 	$(call filechk,gentimeconst)
-diff --git a/Makefile b/Makefile
-index 62c9890..39355d1 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1041,9 +1041,8 @@ PHONY += $(vmlinux-dirs)
- $(vmlinux-dirs): prepare
- 	$(Q)$(MAKE) $(build)=$@ need-builtin=1
- 
--define filechk_kernel.release
-+filechk_kernel.release = \
- 	echo "$(KERNELVERSION)$$($(CONFIG_SHELL) $(srctree)/scripts/setlocalversion $(srctree))"
--endef
- 
- # Store (new) KERNELRELEASE string in include/config/kernel.release
- include/config/kernel.release: $(srctree)/Makefile FORCE
-diff --git a/arch/s390/kernel/syscalls/Makefile b/arch/s390/kernel/syscalls/Makefile
-index 4d929ed..b98f250 100644
---- a/arch/s390/kernel/syscalls/Makefile
-+++ b/arch/s390/kernel/syscalls/Makefile
-@@ -24,17 +24,11 @@ uapi:	$(uapi-hdrs-y)
- _dummy := $(shell [ -d '$(uapi)' ] || mkdir -p '$(uapi)') \
- 	  $(shell [ -d '$(kapi)' ] || mkdir -p '$(kapi)')
- 
--define filechk_syshdr
--	$(CONFIG_SHELL) '$(systbl)' -H -a $(syshdr_abi_$(basetarget)) -f "$2" < $<
--endef
-+filechk_syshdr = $(CONFIG_SHELL) '$(systbl)' -H -a $(syshdr_abi_$(basetarget)) -f "$2" < $<
- 
--define filechk_sysnr
--	$(CONFIG_SHELL) '$(systbl)' -N -a $(sysnr_abi_$(basetarget)) < $<
--endef
-+filechk_sysnr = $(CONFIG_SHELL) '$(systbl)' -N -a $(sysnr_abi_$(basetarget)) < $<
- 
--define filechk_syscalls
--	$(CONFIG_SHELL) '$(systbl)' -S < $<
--endef
-+filechk_syscalls = $(CONFIG_SHELL) '$(systbl)' -S < $<
- 
- syshdr_abi_unistd_32 := common,32
- $(uapi)/unistd_32.h: $(syscall) FORCE
-diff --git a/arch/s390/tools/Makefile b/arch/s390/tools/Makefile
-index cf4846a..2342b84 100644
---- a/arch/s390/tools/Makefile
-+++ b/arch/s390/tools/Makefile
-@@ -20,13 +20,10 @@ HOSTCFLAGS_gen_opcode_table.o += -Wall $(LINUXINCLUDE)
- # Ensure output directory exists
- _dummy := $(shell [ -d '$(kapi)' ] || mkdir -p '$(kapi)')
- 
--define filechk_facility-defs.h
--	$(obj)/gen_facilities
--endef
-+filechk_facility-defs.h = $(obj)/gen_facilities
- 
--define filechk_dis-defs.h
-+filechk_dis-defs.h = \
- 	$(obj)/gen_opcode_table < $(srctree)/arch/$(ARCH)/tools/opcodes.txt
--endef
- 
- $(kapi)/facility-defs.h: $(obj)/gen_facilities FORCE
- 	$(call filechk,facility-defs.h)
-diff --git a/scripts/Kbuild.include b/scripts/Kbuild.include
-index 74a3fe7..525bff6 100644
---- a/scripts/Kbuild.include
-+++ b/scripts/Kbuild.include
-@@ -41,11 +41,11 @@ kecho := $($(quiet)kecho)
- ###
- # filechk is used to check if the content of a generated file is updated.
- # Sample usage:
--# define filechk_sample
--#	echo $KERNELRELEASE
--# endef
--# version.h : Makefile
-+#
-+# filechk_sample = echo $(KERNELRELEASE)
-+# version.h: FORCE
- #	$(call filechk,sample)
-+#
- # The rule defined shall write to stdout the content of the new file.
- # The existing file will be compared with the new one.
- # - If no file exist it is created
-diff --git a/scripts/kconfig/Makefile b/scripts/kconfig/Makefile
-index ec204fa..679e62e 100644
---- a/scripts/kconfig/Makefile
-+++ b/scripts/kconfig/Makefile
-@@ -201,9 +201,7 @@ HOSTCFLAGS_gconf.o  = $(shell . $(obj)/.gconf-cfg && echo $$cflags)
- $(obj)/gconf.o: $(obj)/.gconf-cfg
- 
- # check if necessary packages are available, and configure build flags
--define filechk_conf_cfg
--	$(CONFIG_SHELL) $<
--endef
-+filechk_conf_cfg = $(CONFIG_SHELL) $<
- 
- $(obj)/.%conf-cfg: $(src)/%conf-cfg.sh FORCE
- 	$(call filechk,conf_cfg)
+The VM I was using seemed to reproduce this pretty readily, and the
+patch does seem to fix it. I've gone ahead and added it to -next for
+now, and will plan to pass it on to Linus in the next few days after
+I've tested it a bit more.
 -- 
-2.7.4
+Jeff Layton <jlayton@kernel.org>
 
