@@ -7,43 +7,43 @@ X-Spam-Status: No, score=-12.0 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEA44C43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 13:10:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8BC3C43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 13:10:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8CF72070C
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 13:10:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 789B62070C
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 13:10:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730508AbfACNK0 (ORCPT
+        id S1730664AbfACNKw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 08:10:26 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:43323 "EHLO
+        Thu, 3 Jan 2019 08:10:52 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:58303 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727067AbfACNK0 (ORCPT
+        with ESMTP id S1729765AbfACNKv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 08:10:26 -0500
+        Thu, 3 Jan 2019 08:10:51 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x03DA6F21383676
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x03DAfQ11383733
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 3 Jan 2019 05:10:06 -0800
+        Thu, 3 Jan 2019 05:10:41 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x03DA5Lx1383668;
-        Thu, 3 Jan 2019 05:10:05 -0800
-Date:   Thu, 3 Jan 2019 05:10:05 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x03DAfYK1383730;
+        Thu, 3 Jan 2019 05:10:41 -0800
+Date:   Thu, 3 Jan 2019 05:10:41 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-3ft5rjdl05wgz2pwpx2z8btu@git.kernel.org>
-Cc:     wangnan0@huawei.com, hpa@zytor.com, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, adrian.hunter@intel.com,
-        lclaudio@redhat.com, acme@redhat.com, namhyung@kernel.org,
-        jolsa@kernel.org, tglx@linutronix.de
-Reply-To: jolsa@kernel.org, tglx@linutronix.de, lclaudio@redhat.com,
-          acme@redhat.com, namhyung@kernel.org, adrian.hunter@intel.com,
-          linux-kernel@vger.kernel.org, mingo@kernel.org, hpa@zytor.com,
-          wangnan0@huawei.com
+Message-ID: <tip-nt49d6iqle80cw8f529ovaqi@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, acme@redhat.com, hpa@zytor.com,
+        mingo@kernel.org, wangnan0@huawei.com, jolsa@kernel.org,
+        tglx@linutronix.de, adrian.hunter@intel.com, namhyung@kernel.org,
+        lclaudio@redhat.com
+Reply-To: acme@redhat.com, linux-kernel@vger.kernel.org, hpa@zytor.com,
+          jolsa@kernel.org, mingo@kernel.org, wangnan0@huawei.com,
+          tglx@linutronix.de, adrian.hunter@intel.com, lclaudio@redhat.com,
+          namhyung@kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf trace: Check if the
- raw_syscalls:sys_{enter,exit} are setup before setting tp filter
-Git-Commit-ID: f76214f93783f9f902954cf6e57fd818c4bffe29
+Subject: [tip:perf/urgent] perf beauty mmap: PROT_WRITE should come before
+ PROT_EXEC
+Git-Commit-ID: 5ce29d522e9b8cdc158329a8539bcd6206fc5bf4
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -57,52 +57,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  f76214f93783f9f902954cf6e57fd818c4bffe29
-Gitweb:     https://git.kernel.org/tip/f76214f93783f9f902954cf6e57fd818c4bffe29
+Commit-ID:  5ce29d522e9b8cdc158329a8539bcd6206fc5bf4
+Gitweb:     https://git.kernel.org/tip/5ce29d522e9b8cdc158329a8539bcd6206fc5bf4
 Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Wed, 19 Dec 2018 10:01:20 -0300
+AuthorDate: Wed, 19 Dec 2018 10:10:51 -0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Fri, 21 Dec 2018 09:42:46 -0300
 
-perf trace: Check if the raw_syscalls:sys_{enter,exit} are setup before setting tp filter
+perf beauty mmap: PROT_WRITE should come before PROT_EXEC
 
-While updating 'perf trace' on an machine with an old precompiled
-augmented_raw_syscalls.o that didn't setup the syscall map the new 'perf
-trace' codebase notices the augmented_raw_syscalls.o eBPF event, decides
-to use it instead of the old raw_syscalls:sys_{enter,exit} method, but
-then because we don't have the syscall map tries to set the tracepoint
-filter on the sys_{enter,exit} evsels, that are NULL, segfaulting.
+To match strace output:
 
-Make the code more robust by checking it those tracepoints have
-their respective evsels in place before trying to set the tp filter.
+  # cat mmap.c
+  #include <sys/mman.h>
 
-With this we still get everything to work, just not setting up the
-syscall filters, which is better than a segfault. Now to update the
-precompiled augmented_raw_syscalls.o and continue development :-)
+  int main(void)
+  {
+	  mmap(0, 4096, PROT_READ|PROT_WRITE|PROT_EXEC, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
+	  return 0;
+  }
+  # strace -e mmap ./mmap |& grep -v ^+++
+  mmap(NULL, 103484, PROT_READ, MAP_PRIVATE, 3, 0) = 0x7f5bae400000
+  mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f5bae3fe000
+  mmap(NULL, 3889792, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7f5bade40000
+  mmap(0x7f5bae1ec000, 24576, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x1ac000) = 0x7f5bae1ec000
+  mmap(0x7f5bae1f2000, 14976, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0x7f5bae1f2000
+  mmap(NULL, 4096, PROT_READ|PROT_WRITE|PROT_EXEC, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f5bae419000
+  # trace -e mmap ./mmap |& grep -v ^+++
+  mmap(NULL, 103484, PROT_READ, MAP_PRIVATE, 3, 0) = 0x7f6646c25000
+  mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS) = 0x7f6646c23000
+  mmap(NULL, 3889792, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7f6646665000
+  mmap(0x7f6646a11000, 24576, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x1ac000) = 0x7f6646a11000
+  mmap(0x7f6646a17000, 14976, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS) = 0x7f6646a17000
+  mmap(NULL, 4096, PROT_READ|PROT_WRITE|PROT_EXEC, MAP_PRIVATE|MAP_ANONYMOUS) = 0x7f6646c3e000
+  #
 
+Reported-by: Namhyung Kim <namhyung@kernel.org>
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-3ft5rjdl05wgz2pwpx2z8btu@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-nt49d6iqle80cw8f529ovaqi@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-trace.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ tools/perf/trace/beauty/mmap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index ebde59e61133..6689c1a114fe 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -2686,7 +2686,9 @@ static int trace__set_ev_qualifier_filter(struct trace *trace)
- {
- 	if (trace->syscalls.map)
- 		return trace__set_ev_qualifier_bpf_filter(trace);
--	return trace__set_ev_qualifier_tp_filter(trace);
-+	if (trace->syscalls.events.sys_enter)
-+		return trace__set_ev_qualifier_tp_filter(trace);
-+	return 0;
- }
+diff --git a/tools/perf/trace/beauty/mmap.c b/tools/perf/trace/beauty/mmap.c
+index eb31089790e3..859a8a9db2c6 100644
+--- a/tools/perf/trace/beauty/mmap.c
++++ b/tools/perf/trace/beauty/mmap.c
+@@ -18,8 +18,8 @@ static size_t syscall_arg__scnprintf_mmap_prot(char *bf, size_t size,
+ 	}
  
- static int bpf_map__set_filter_pids(struct bpf_map *map __maybe_unused,
+ 	P_MMAP_PROT(READ);
+-	P_MMAP_PROT(EXEC);
+ 	P_MMAP_PROT(WRITE);
++	P_MMAP_PROT(EXEC);
+ 	P_MMAP_PROT(SEM);
+ 	P_MMAP_PROT(GROWSDOWN);
+ 	P_MMAP_PROT(GROWSUP);
