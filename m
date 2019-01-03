@@ -6,23 +6,23 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 522CAC43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 15:00:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FB6CC43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 15:00:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B4D820815
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 15:00:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4072B2070D
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 15:00:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732008AbfACPA3 (ORCPT
+        id S1731285AbfACPA2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 10:00:29 -0500
-Received: from mx2.suse.de ([195.135.220.15]:32846 "EHLO mx1.suse.de"
+        Thu, 3 Jan 2019 10:00:28 -0500
+Received: from mx2.suse.de ([195.135.220.15]:32868 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730737AbfACPAT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1730747AbfACPAT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 3 Jan 2019 10:00:19 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B7A05ADBD;
-        Thu,  3 Jan 2019 15:00:17 +0000 (UTC)
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 0E690ADE2;
+        Thu,  3 Jan 2019 15:00:18 +0000 (UTC)
 From:   Roman Penyaev <rpenyaev@suse.de>
 Cc:     Roman Penyaev <rpenyaev@suse.de>,
         Andrew Morton <akpm@linux-foundation.org>,
@@ -30,10 +30,10 @@ Cc:     Roman Penyaev <rpenyaev@suse.de>,
         Andrey Ryabinin <aryabinin@virtuozzo.com>,
         Joe Perches <joe@perches.com>,
         "Luis R. Rodriguez" <mcgrof@kernel.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: [PATCH 1/3] mm/vmalloc: fix size check for remap_vmalloc_range_partial()
-Date:   Thu,  3 Jan 2019 15:59:52 +0100
-Message-Id: <20190103145954.16942-2-rpenyaev@suse.de>
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 2/3] mm/vmalloc: do not call kmemleak_free() on not yet accounted memory
+Date:   Thu,  3 Jan 2019 15:59:53 +0100
+Message-Id: <20190103145954.16942-3-rpenyaev@suse.de>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190103145954.16942-1-rpenyaev@suse.de>
 References: <20190103145954.16942-1-rpenyaev@suse.de>
@@ -45,12 +45,8 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-area->size can include adjacent guard page but get_vm_area_size()
-returns actual size of the area.
-
-This fixes possible kernel crash when userspace tries to map area
-on 1 page bigger: size check passes but the following vmalloc_to_page()
-returns NULL on last guard (non-existing) page.
+__vmalloc_area_node() calls vfree() on error path, which in turn calls
+kmemleak_free(), but area is not yet accounted by kmemleak_vmalloc().
 
 Signed-off-by: Roman Penyaev <rpenyaev@suse.de>
 Cc: Andrew Morton <akpm@linux-foundation.org>
@@ -60,24 +56,51 @@ Cc: Joe Perches <joe@perches.com>
 Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>
 Cc: linux-mm@kvack.org
 Cc: linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org
 ---
- mm/vmalloc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ mm/vmalloc.c | 16 +++++++++++-----
+ 1 file changed, 11 insertions(+), 5 deletions(-)
 
 diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index 871e41c55e23..2cd24186ba84 100644
+index 2cd24186ba84..dc6a62bca503 100644
 --- a/mm/vmalloc.c
 +++ b/mm/vmalloc.c
-@@ -2248,7 +2248,7 @@ int remap_vmalloc_range_partial(struct vm_area_struct *vma, unsigned long uaddr,
- 	if (!(area->flags & VM_USERMAP))
- 		return -EINVAL;
+@@ -1565,6 +1565,14 @@ void vfree_atomic(const void *addr)
+ 	__vfree_deferred(addr);
+ }
  
--	if (kaddr + size > area->addr + area->size)
-+	if (kaddr + size > area->addr + get_vm_area_size(area))
- 		return -EINVAL;
++static void __vfree(const void *addr)
++{
++	if (unlikely(in_interrupt()))
++		__vfree_deferred(addr);
++	else
++		__vunmap(addr, 1);
++}
++
+ /**
+  *	vfree  -  release memory allocated by vmalloc()
+  *	@addr:		memory base address
+@@ -1591,10 +1599,8 @@ void vfree(const void *addr)
  
- 	do {
+ 	if (!addr)
+ 		return;
+-	if (unlikely(in_interrupt()))
+-		__vfree_deferred(addr);
+-	else
+-		__vunmap(addr, 1);
++
++	__vfree(addr);
+ }
+ EXPORT_SYMBOL(vfree);
+ 
+@@ -1709,7 +1715,7 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
+ 	warn_alloc(gfp_mask, NULL,
+ 			  "vmalloc: allocation failure, allocated %ld of %ld bytes",
+ 			  (area->nr_pages*PAGE_SIZE), area->size);
+-	vfree(area->addr);
++	__vfree(area->addr);
+ 	return NULL;
+ }
+ 
 -- 
 2.19.1
 
