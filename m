@@ -2,119 +2,129 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C361C43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 17:41:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95C55C43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 17:41:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3ECCD208E3
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 17:41:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546537287;
-	bh=+UYRW9v45SJoPxQSkfwmJgmlzpJ4vpuw9nqSM/BkuIY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=yVJDzt5YA6G0N7drylPkQdTusF5PSpvzGXrj+sfcmD1gI86hEvB2Wzo1O0JYRU/DL
-	 p/Ng570tKexGfl+Ouo6/gGJ/HVr23r6C7Gqx4AQXuQinCzBQcasOlRi4A6dwtSnR1f
-	 2m/42FvnnXYSmaraOoSTaICzKn2NFlvmB28xf658=
+	by mail.kernel.org (Postfix) with ESMTP id 6D032218D2
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 17:41:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731921AbfACRl0 (ORCPT
+        id S1732628AbfACRlk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 12:41:26 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:54527 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731865AbfACRlZ (ORCPT
+        Thu, 3 Jan 2019 12:41:40 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:59225 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731873AbfACRli (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 12:41:25 -0500
-Received: by mail-it1-f193.google.com with SMTP id i145so46286944ita.4;
-        Thu, 03 Jan 2019 09:41:24 -0800 (PST)
+        Thu, 3 Jan 2019 12:41:38 -0500
+Received: from mail-oi1-f198.google.com ([209.85.167.198])
+        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <dann.frazier@canonical.com>)
+        id 1gf6zv-0006Kw-Mv
+        for linux-kernel@vger.kernel.org; Thu, 03 Jan 2019 17:41:35 +0000
+Received: by mail-oi1-f198.google.com with SMTP id b18so24340106oii.1
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 09:41:35 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=XgtY3ON4bBMzyuiNr7dfPpNVT+C5KIh9dO8CbrGw7tk=;
-        b=S2cj9SxBvbx51dS4EpTBE57RjisNPFQsEm+RtsUXLlXtb9TZwC3wNyG8sDoPThGG5d
-         jsJh2U4OdAhxzckZh4moS3Q1P/LxMj/1zJxStWxK6gd7Lex6uY3v+U/hcMeG9EHipIRj
-         FU1m7tDzC1miwIXYahcLp0ElFk2SpiFYSKeFZBeoa7sGAGoHicBJwOr8IMPI4SZpOvw5
-         PkvekJbXjFl2uTSrGeYfu3vhPivTKwKd7CWvRNS/w/F7nwGRBipmYU1dPsbXqU8uE8qo
-         gA9jI2joJ93rLobg9ANYJNQI0iKYI+1hKGSM6c8r2sS3/7pDz2yjh3iyEuEcGrHoDfWC
-         7o7Q==
-X-Gm-Message-State: AA+aEWY12f8nSxe26Fl8qnHs3HU2eN23poA9I/Qzyz94FEj/qWMGEMlh
-        MD/m7Avt14bKcbxFQeRJnQ==
-X-Google-Smtp-Source: AFSGD/V9b5yqNsHDxHuE9KElWPtdLZDxaY7MyTLeweez3j5H2PftNm0IWXF0oxxaHSQNzRuuliNPtg==
-X-Received: by 2002:a24:16cc:: with SMTP id a195mr31184772ita.38.1546537284031;
-        Thu, 03 Jan 2019 09:41:24 -0800 (PST)
-Received: from localhost ([24.51.61.172])
-        by smtp.gmail.com with ESMTPSA id h13sm6088944ioq.72.2019.01.03.09.41.23
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=sGb4XEzPZIAF9ImqYSs/+Ejn6NkMQw4KrWZyezAgmes=;
+        b=fbCOiC1mFpG33Rt4reUB3nCyfZ7KEiJ0LX4V7I5v63DZPFmvRr9dQsezM24WgvoSwd
+         CeN4EIwDlithL6zM6g0vnGUENt5hRT0iAdi7LQnETpKqeLCRjTkRNriL3wtPqW39YsNp
+         kLtPEfpA7tJKdaQvQNlHsXpoVtZnlPGMzrSsLA0rtzW/cUOL7FRxWq7EfKq7O2XRj5KY
+         oh7LwY46Xf6uxqFCoQ7TIRNFzOxpejZGlKHtHMPrykmVAuuIhT3k3FQNzIVWKk9MOFUc
+         IKPrl9yo4phV3YpKTOABjtljQ3e/nmUDBiQwfxizcHv0HbEs4q30x9D1YkNogkWRMOgF
+         WpzQ==
+X-Gm-Message-State: AJcUukcwEeWXJhseoxx2Ft6/10IGhugw0bvpr/Kh/WCaOx+TgxK8lVbn
+        mQvksF6L9Ypsl8F5Uh91DxxH+m66gwcZC77cRTBhpudG1eruRxfTc4rVr3rAhsIfVfzjkLZzwbQ
+        fbZsLprAN4/iUgWO9gJKySpDIBsqdwwsoHTl25HMbNQ==
+X-Received: by 2002:a05:6830:114a:: with SMTP id x10mr10337843otq.89.1546537294466;
+        Thu, 03 Jan 2019 09:41:34 -0800 (PST)
+X-Google-Smtp-Source: ALg8bN7cUiUQXXlzX2K3LQ13k2+WEtlkk5xlsL+nVowP/+YhGs7at2WMkDUwQhWsTYVa/fqxOMnZqQ==
+X-Received: by 2002:a05:6830:114a:: with SMTP id x10mr10337823otq.89.1546537294131;
+        Thu, 03 Jan 2019 09:41:34 -0800 (PST)
+Received: from xps13.canonical.com (c-107-2-141-103.hsd1.co.comcast.net. [107.2.141.103])
+        by smtp.gmail.com with ESMTPSA id d66sm27518730oia.29.2019.01.03.09.41.33
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 03 Jan 2019 09:41:23 -0800 (PST)
-Date:   Thu, 3 Jan 2019 11:41:17 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     p.zabel@pengutronix.de, linux-kernel@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Gregory Fong <gregory.0xf0@gmail.com>,
-        "maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE" 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "moderated list:BROADCOM BCM7XXX ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 1/2] dt-bindings: reset: Add document for Broadcom STB
- reset controller
-Message-ID: <20190103174117.GA6613@bogus>
-References: <20181221013409.14324-1-f.fainelli@gmail.com>
- <20181221013409.14324-2-f.fainelli@gmail.com>
+        Thu, 03 Jan 2019 09:41:33 -0800 (PST)
+Date:   Thu, 3 Jan 2019 10:41:32 -0700
+From:   dann frazier <dann.frazier@canonical.com>
+To:     "lipeng (Y)" <lipeng321@huawei.com>
+Cc:     Salil Mehta <salil.mehta@huawei.com>, davem@davemloft.net,
+        yisen.zhuang@huawei.com, mehta.salil@opnsrc.net,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linuxarm@huawei.com
+Subject: Re: [PATCH net-next] net: hns3: Config NIC port speed same as that
+ of optical module
+Message-ID: <20190103174132.GA19859@xps13.dannf>
+References: <20181126184300.24964-1-salil.mehta@huawei.com>
+ <20190101012205.GA22494@xps13.dannf>
+ <aadad75b-a3fe-8bf1-77ce-14d3375ce4fd@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20181221013409.14324-2-f.fainelli@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aadad75b-a3fe-8bf1-77ce-14d3375ce4fd@huawei.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 20, 2018 at 05:34:08PM -0800, Florian Fainelli wrote:
-> Add a binding document for the Broadcom STB reset controller, also known
-> as SW_INIT-style reset controller.
+On Wed, Jan 02, 2019 at 08:45:36PM +0800, lipeng (Y) wrote:
 > 
-> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-> ---
->  .../devicetree/bindings/reset/brcm,reset.txt  | 27 +++++++++++++++++++
->  1 file changed, 27 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/reset/brcm,reset.txt
 > 
-> diff --git a/Documentation/devicetree/bindings/reset/brcm,reset.txt b/Documentation/devicetree/bindings/reset/brcm,reset.txt
-> new file mode 100644
-> index 000000000000..6e5341b4f891
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/reset/brcm,reset.txt
-> @@ -0,0 +1,27 @@
-> +Broadcom STB SW_INIT-style reset controller
-> +===========================================
-> +
-> +Broadcom STB SoCs have a SW_INIT-style reset controller with separate
-> +SET/CLEAR/STATUS registers and possibly multiple banks, each of 32 bit
-> +reset lines.
-> +
-> +Please also refer to reset.txt in this directory for common reset
-> +controller binding usage.
-> +
-> +Required properties:
-> +- compatible: should be brcm,brcmstb-reset
-> +- reg: register base and length
-> +- #reset-cells: must be set to 1
-> +
-> +Example:
-> +
-> +	reset: reset-controller@8404318 {
-> +		compatible = "brcm,brcmstb-reset";
-> +		reg = <0x8404318 0x30>;
+> On 2019/1/1 9:22, dann frazier wrote:
+> > On Mon, Nov 26, 2018 at 06:43:00PM +0000, Salil Mehta wrote:
+> > > From: Peng Li <lipeng321@huawei.com>
+> > > 
+> > > Port 0/1 of HiP08 supports 10G and 25G. This patch adds a
+> > > change to configure NIC port speed same as that of  optical
+> > > module(SFP/QFSP). Driver gets the optical module speed and
+> > > sets NIC port speed accordingly.
+> > Hi,
+> > 
+> > I'm getting the following errors in dmesg about every 1s on a D06:
+> > 
+> > [  766.761823] hns3 0000:bd:00.0: get sfp speed failed -5
+> > [  767.785823] hns3 0000:bd:00.0: get sfp speed failed -5
+> > [  768.809820] hns3 0000:bd:00.0: get sfp speed failed -5
+> > [  769.833818] hns3 0000:bd:00.0: get sfp speed failed -5
+> > 
+> > Reverting this patch fixes the issue.
+> > 
+> >   -dann
+> Hi,dann,
+> 
+> Thanks for your test and report.
+> 
+> This patch needs to match new fireware verison ,
+> And  it  does some work to  be Compatible with older versions.
 
-Based on this address, should this be a sub-node of something else? Or 
-not even a sub-node and just make the parent be a reset provider?
+I did upgrade to the latest available firmware (20181213-b20), but the
+problem persisted. Maybe the necessary firmware is not yet released?
 
-Rob
+> Can you show me more information？
+> can you  use "ethtool -i ethx" to get the fireware version ,
+> and shows me  some other message about hns3?
+
+Sure: 
+
+$ sudo ethtool -i enp125s0f2
+driver: hns3
+version: 4.20.0+ SMP mod_unload aarch64
+firmware-version: 0xb0311019
+expansion-rom-version: 
+bus-info: 0000:7d:00.2
+supports-statistics: yes
+supports-test: yes
+supports-eeprom-access: no
+supports-register-dump: yes
+supports-priv-flags: no
+
+  -dann
