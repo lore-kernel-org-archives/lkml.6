@@ -2,279 +2,103 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CC13C43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 16:12:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6326C43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 16:13:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43F11208E3
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 16:12:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VWoBuwQy"
+	by mail.kernel.org (Postfix) with ESMTP id 860E1217D9
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 16:13:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546532037;
+	bh=TIQatImfXkjQTEboaAOgvQZYQrJ7cd5ujTi7x+odJ8Y=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=DCt/xaBDlPP1hMMNb7mcFkO9z4v2nPpEBgItGPrEAno7V96WXKIVAmnPq5Jym48J8
+	 oSGE2RQPGyqL7dVAdWomU3OisGk24XKfSJs7xZ/igWSup2fq+FF/7vY0VONrVsaUDH
+	 sjY4Z9cDtK6ZSO6c5R/mtjTy0E3TBcJgm6NaRJm8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732188AbfACQMR (ORCPT
+        id S1732200AbfACQN4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 11:12:17 -0500
-Received: from mail-vs1-f74.google.com ([209.85.217.74]:49055 "EHLO
-        mail-vs1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730998AbfACQMQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 11:12:16 -0500
-Received: by mail-vs1-f74.google.com with SMTP id w22so20039115vsj.15
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 08:12:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=98ssgJgNVrdcIWbb0R8XUTymywCcz8Wk3LA2x5SCzNQ=;
-        b=VWoBuwQyVsQNAjbV/UhX5Q61Ii1KQDsZkenC3siRY4CxuJIq+T3Eys1CuFctGjP00y
-         4qETN8//DhdIX7O1O7vYv1M6K1yCNT9RZFVbt+P9AM7rIWNKooI/bu1rwAhrYWfqhMAm
-         vCOB4ZOjNrBGkKLz7y40gQM2FgAUpHPpR2VNFcWH5ldbMbqNrXdbIU4yCxZXttKy/t8V
-         t/JdfHNRhdObxG+j13qybvwPyJNhglbZPS3klGpPShV/O4fGrujQXcwj4aW+nHBh+oWL
-         3lHjonoJ7lWIDZVSjA9AuQN/JRVMaGIsjPThTPsrtRPW4NZkrz4VkEWq1ABHANd6Qfug
-         HNrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=98ssgJgNVrdcIWbb0R8XUTymywCcz8Wk3LA2x5SCzNQ=;
-        b=Jv8wph2pbNv5M9qej4j01jbR3R3+/3YXX4+kz5m1owwWl6VHN1RFfwlfBHMlpn6eb9
-         eUTNo6avUsMGX1CYiHpXbtKI4Im8UPBpOEKYhSPQQ13C/6hHAw2qr3ilvjFHskW9KUPj
-         +VwHWXyJe9+sjhzxESjImCQM9kfdYFBX5S3xQgYSZuj6eF5uW0j+GE1aooJbFPw5HDe6
-         iuznxy2LtVLjFpXQ3ya/w/VQL1rzVBHXRRU0jHDv1So6IyGG2kNFFncdUB8QShNAhxAm
-         YzS55t2fcvGPVLUXh13hr1UZtYr/RlYbejTL52ai4ASt3dZ7IS7SKKEVI8gALn9pVmly
-         x4pg==
-X-Gm-Message-State: AA+aEWYSe4nyP6+/Br9KT8m+SX5OSuU0KiNtXEucpUNuLHe5zIdBQ6Kt
-        xdAZqIxrPNKKruZe2dLXVH2BaNtF1SboPA==
-X-Google-Smtp-Source: AFSGD/W6n1AearGbzHf48QnJay0a3HH+E/jICjjtnhfPzmZRWHCyQLMsbXZVx2T1PveMuvSR84GrSdoF9Na/5A==
-X-Received: by 2002:a67:460f:: with SMTP id t15mr41082505vsa.0.1546531935105;
- Thu, 03 Jan 2019 08:12:15 -0800 (PST)
-Date:   Thu,  3 Jan 2019 08:12:03 -0800
-Message-Id: <20190103161203.162375-1-shakeelb@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.20.1.415.g653613c723-goog
-Subject: [PATCH v2] memcg: localize memcg_kmem_enabled() check
-From:   Shakeel Butt <shakeelb@google.com>
-To:     Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Roman Gushchin <guro@fb.com>
-Cc:     linux-mm@kvack.org, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Shakeel Butt <shakeelb@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 3 Jan 2019 11:13:56 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:52562 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732152AbfACQN4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Jan 2019 11:13:56 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0D2B27FD44;
+        Thu,  3 Jan 2019 16:13:55 +0000 (UTC)
+Received: from krava.brq.redhat.com (unknown [10.43.17.222])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7760B5D9C5;
+        Thu,  3 Jan 2019 16:13:51 +0000 (UTC)
+From:   Jiri Olsa <jolsa@kernel.org>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Hartmut Knaack <knaack.h@gmx.de>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Len Brown <len.brown@intel.com>,
+        Markus Mayer <mmayer@broadcom.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Renninger <trenn@suse.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>
+Subject: [PATCHv3 0/2] tools: Various build flags fixes
+Date:   Thu,  3 Jan 2019 17:13:48 +0100
+Message-Id: <20190103161350.11446-1-jolsa@kernel.org>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Thu, 03 Jan 2019 16:13:55 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move the memcg_kmem_enabled() checks into memcg kmem charge/uncharge
-functions, so, the users don't have to explicitly check that condition.
-This is purely code cleanup patch without any functional change. Only
-the order of checks in memcg_charge_slab() can potentially be changed
-but the functionally it will be same. This should not matter as
-memcg_charge_slab() is not in the hot path.
+hi,
+while hardening some of the tools rpm, we noticed we
+can't pass build flags to some of them. 
 
-Signed-off-by: Shakeel Butt <shakeelb@google.com>
+Sending separate tools fixes for what we found. It's
+mostly override for CFLAGS and adding LDFLAGS to the
+build commands.
+
+Any additional reviews would be great.. ;-)
+
+v3 changes:
+  - 4 more patches accepted, still 2 to go
+  - rebased on top of Arnaldo's perf/core
+
+v2 changes:
+  - 4 patches already accepted, still 6 to go
+  - adding more people to cc
+
+Also available in here:
+  git://git.kernel.org/pub/scm/linux/kernel/git/jolsa/perf.git
+  tools/flags_v3
+
+thanks,
+jirka
+
+
+Cc: Hartmut Knaack <knaack.h@gmx.de>
+Cc: Jonathan Cameron <jic23@kernel.org>
+Cc: Lars-Peter Clausen <lars@metafoo.de>
+Cc: Len Brown <len.brown@intel.com>
+Cc: Markus Mayer <mmayer@broadcom.com>
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: Len Brown <len.brown@intel.com>
+Cc: Thomas Renninger <trenn@suse.com>
+Cc: Zhang Rui <rui.zhang@intel.com>
 ---
-Changelog since v1:
-- Fixed the build when CONFIG_MEMCG is not set
+Jiri Olsa (2):
+      tools thermal tmon: Use -O3 instead of -O1 if available
+      tools iio: Override CFLAGS assignments
 
- fs/pipe.c                  |  3 +--
- include/linux/memcontrol.h | 37 +++++++++++++++++++++++++++++++++----
- mm/memcontrol.c            | 16 ++++++++--------
- mm/page_alloc.c            |  4 ++--
- mm/slab.h                  |  4 ----
- 5 files changed, 44 insertions(+), 20 deletions(-)
-
-diff --git a/fs/pipe.c b/fs/pipe.c
-index bdc5d3c0977d..51d5fd8840ab 100644
---- a/fs/pipe.c
-+++ b/fs/pipe.c
-@@ -140,8 +140,7 @@ static int anon_pipe_buf_steal(struct pipe_inode_info *pipe,
- 	struct page *page = buf->page;
- 
- 	if (page_count(page) == 1) {
--		if (memcg_kmem_enabled())
--			memcg_kmem_uncharge(page, 0);
-+		memcg_kmem_uncharge(page, 0);
- 		__SetPageLocked(page);
- 		return 0;
- 	}
-diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-index 83ae11cbd12c..b0eb29ea0d9c 100644
---- a/include/linux/memcontrol.h
-+++ b/include/linux/memcontrol.h
-@@ -1273,12 +1273,12 @@ static inline bool mem_cgroup_under_socket_pressure(struct mem_cgroup *memcg)
- 
- struct kmem_cache *memcg_kmem_get_cache(struct kmem_cache *cachep);
- void memcg_kmem_put_cache(struct kmem_cache *cachep);
--int memcg_kmem_charge_memcg(struct page *page, gfp_t gfp, int order,
--			    struct mem_cgroup *memcg);
- 
- #ifdef CONFIG_MEMCG_KMEM
--int memcg_kmem_charge(struct page *page, gfp_t gfp, int order);
--void memcg_kmem_uncharge(struct page *page, int order);
-+int __memcg_kmem_charge(struct page *page, gfp_t gfp, int order);
-+void __memcg_kmem_uncharge(struct page *page, int order);
-+int __memcg_kmem_charge_memcg(struct page *page, gfp_t gfp, int order,
-+			      struct mem_cgroup *memcg);
- 
- extern struct static_key_false memcg_kmem_enabled_key;
- extern struct workqueue_struct *memcg_kmem_cache_wq;
-@@ -1300,6 +1300,26 @@ static inline bool memcg_kmem_enabled(void)
- 	return static_branch_unlikely(&memcg_kmem_enabled_key);
- }
- 
-+static inline int memcg_kmem_charge(struct page *page, gfp_t gfp, int order)
-+{
-+	if (memcg_kmem_enabled())
-+		return __memcg_kmem_charge(page, gfp, order);
-+	return 0;
-+}
-+
-+static inline void memcg_kmem_uncharge(struct page *page, int order)
-+{
-+	if (memcg_kmem_enabled())
-+		__memcg_kmem_uncharge(page, order);
-+}
-+
-+static inline int memcg_kmem_charge_memcg(struct page *page, gfp_t gfp,
-+					  int order, struct mem_cgroup *memcg)
-+{
-+	if (memcg_kmem_enabled())
-+		return __memcg_kmem_charge_memcg(page, gfp, order, memcg);
-+	return 0;
-+}
- /*
-  * helper for accessing a memcg's index. It will be used as an index in the
-  * child cache array in kmem_cache, and also to derive its name. This function
-@@ -1325,6 +1345,15 @@ static inline void memcg_kmem_uncharge(struct page *page, int order)
- {
- }
- 
-+static inline int __memcg_kmem_charge(struct page *page, gfp_t gfp, int order)
-+{
-+	return 0;
-+}
-+
-+static inline void __memcg_kmem_uncharge(struct page *page, int order)
-+{
-+}
-+
- #define for_each_memcg_cache_index(_idx)	\
- 	for (; NULL; )
- 
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 4afd5971f2d4..e8ca09920d71 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -2557,7 +2557,7 @@ void memcg_kmem_put_cache(struct kmem_cache *cachep)
- }
- 
- /**
-- * memcg_kmem_charge_memcg: charge a kmem page
-+ * __memcg_kmem_charge_memcg: charge a kmem page
-  * @page: page to charge
-  * @gfp: reclaim mode
-  * @order: allocation order
-@@ -2565,7 +2565,7 @@ void memcg_kmem_put_cache(struct kmem_cache *cachep)
-  *
-  * Returns 0 on success, an error code on failure.
-  */
--int memcg_kmem_charge_memcg(struct page *page, gfp_t gfp, int order,
-+int __memcg_kmem_charge_memcg(struct page *page, gfp_t gfp, int order,
- 			    struct mem_cgroup *memcg)
- {
- 	unsigned int nr_pages = 1 << order;
-@@ -2588,24 +2588,24 @@ int memcg_kmem_charge_memcg(struct page *page, gfp_t gfp, int order,
- }
- 
- /**
-- * memcg_kmem_charge: charge a kmem page to the current memory cgroup
-+ * __memcg_kmem_charge: charge a kmem page to the current memory cgroup
-  * @page: page to charge
-  * @gfp: reclaim mode
-  * @order: allocation order
-  *
-  * Returns 0 on success, an error code on failure.
-  */
--int memcg_kmem_charge(struct page *page, gfp_t gfp, int order)
-+int __memcg_kmem_charge(struct page *page, gfp_t gfp, int order)
- {
- 	struct mem_cgroup *memcg;
- 	int ret = 0;
- 
--	if (mem_cgroup_disabled() || memcg_kmem_bypass())
-+	if (memcg_kmem_bypass())
- 		return 0;
- 
- 	memcg = get_mem_cgroup_from_current();
- 	if (!mem_cgroup_is_root(memcg)) {
--		ret = memcg_kmem_charge_memcg(page, gfp, order, memcg);
-+		ret = __memcg_kmem_charge_memcg(page, gfp, order, memcg);
- 		if (!ret)
- 			__SetPageKmemcg(page);
- 	}
-@@ -2613,11 +2613,11 @@ int memcg_kmem_charge(struct page *page, gfp_t gfp, int order)
- 	return ret;
- }
- /**
-- * memcg_kmem_uncharge: uncharge a kmem page
-+ * __memcg_kmem_uncharge: uncharge a kmem page
-  * @page: page to uncharge
-  * @order: allocation order
-  */
--void memcg_kmem_uncharge(struct page *page, int order)
-+void __memcg_kmem_uncharge(struct page *page, int order)
- {
- 	struct mem_cgroup *memcg = page->mem_cgroup;
- 	unsigned int nr_pages = 1 << order;
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 0634fbdef078..d65c337d2257 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -1053,7 +1053,7 @@ static __always_inline bool free_pages_prepare(struct page *page,
- 	if (PageMappingFlags(page))
- 		page->mapping = NULL;
- 	if (memcg_kmem_enabled() && PageKmemcg(page))
--		memcg_kmem_uncharge(page, order);
-+		__memcg_kmem_uncharge(page, order);
- 	if (check_free)
- 		bad += free_pages_check(page);
- 	if (bad)
-@@ -4667,7 +4667,7 @@ __alloc_pages_nodemask(gfp_t gfp_mask, unsigned int order, int preferred_nid,
- 
- out:
- 	if (memcg_kmem_enabled() && (gfp_mask & __GFP_ACCOUNT) && page &&
--	    unlikely(memcg_kmem_charge(page, gfp_mask, order) != 0)) {
-+	    unlikely(__memcg_kmem_charge(page, gfp_mask, order) != 0)) {
- 		__free_pages(page, order);
- 		page = NULL;
- 	}
-diff --git a/mm/slab.h b/mm/slab.h
-index 4190c24ef0e9..cde51d7f631f 100644
---- a/mm/slab.h
-+++ b/mm/slab.h
-@@ -276,8 +276,6 @@ static __always_inline int memcg_charge_slab(struct page *page,
- 					     gfp_t gfp, int order,
- 					     struct kmem_cache *s)
- {
--	if (!memcg_kmem_enabled())
--		return 0;
- 	if (is_root_cache(s))
- 		return 0;
- 	return memcg_kmem_charge_memcg(page, gfp, order, s->memcg_params.memcg);
-@@ -286,8 +284,6 @@ static __always_inline int memcg_charge_slab(struct page *page,
- static __always_inline void memcg_uncharge_slab(struct page *page, int order,
- 						struct kmem_cache *s)
- {
--	if (!memcg_kmem_enabled())
--		return;
- 	memcg_kmem_uncharge(page, order);
- }
- 
--- 
-2.20.1.415.g653613c723-goog
-
+ tools/iio/Makefile          | 2 +-
+ tools/thermal/tmon/Makefile | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
