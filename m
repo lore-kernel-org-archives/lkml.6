@@ -2,84 +2,269 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B2EEC43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 19:05:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA72FC43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 19:06:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D24A21479
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 19:05:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C1DC21479
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 19:06:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FHTkfCTS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726815AbfACTFz (ORCPT
+        id S1726836AbfACTGG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 14:05:55 -0500
-Received: from sauhun.de ([88.99.104.3]:55134 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726564AbfACTFy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 14:05:54 -0500
-Received: from localhost (p54B3379A.dip0.t-ipconnect.de [84.179.55.154])
-        by pokefinder.org (Postfix) with ESMTPSA id D87952E3614;
-        Thu,  3 Jan 2019 20:05:52 +0100 (CET)
-Date:   Thu, 3 Jan 2019 20:05:52 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com, talho@nvidia.com,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-i2c@vger.kernel.org
-Subject: Re: [PATCH V3] i2c: tegra: Fix Maximum transfer size
-Message-ID: <20190103190552.tspqarvalqxlz7yu@ninjato>
-References: <1546472423-31366-1-git-send-email-skomatineni@nvidia.com>
+        Thu, 3 Jan 2019 14:06:06 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:45158 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726787AbfACTGG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Jan 2019 14:06:06 -0500
+Received: by mail-pf1-f196.google.com with SMTP id g62so17085398pfd.12
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 11:06:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ewomomMsXpO5qGfU4Cug+z/PUAqOj7a9mC8x323VzVI=;
+        b=FHTkfCTS5eSl7qGDWDaZMA9cBl/BCz+Yccc3LARiyr/uKROkxhn5GCIaLsjgSczfUk
+         cToOUdbIDFzaH7aMr1HZOBAAeFYPMmN59pbFdTEss/CTQ6zCMEKVnZbeUJseNxpY4jQl
+         4KWtjXXlyVvppCyuBb5GLTcNiabJGTPsbDNIY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ewomomMsXpO5qGfU4Cug+z/PUAqOj7a9mC8x323VzVI=;
+        b=q/cuNmypZvy6S3wX70AtXknse2jKO7hvl2fKSURs8kcEcA65h4ljQGmuJ5PysjBQEz
+         gyb1KNJ6rnzZVOYLaxak2HvHVYUcdA8qSF+ELVzijGaVRukiEWZT1lQFoQQ0ilcDJ3/T
+         VTPAxB9KI7fHBcgtrX3I+tT1yGGgrMegdLDpqKyuikdEvvKZsSa7noj/gqUp7+Zp2syD
+         JjG/UgfRNQZqWX2sm7Gc0hwVtGZfrPH8fppqavtF3godbbxnkjDoy7EZSWrPXCvD3fx6
+         gpnCAd2nOQofZtLDV0BAKnXOA+UI/j0xAbxXHY0XFJV4B+0SPR6bSbph69xAOCAb+ZB/
+         biiw==
+X-Gm-Message-State: AJcUukeBD/ZVIcGC7hn/nPh8b97RxaD2IYt8kGFjQrG2Lm64xlZRhQpT
+        tXkGcy1wKmxiEqC+wlVfdg45SISFaitx0g==
+X-Google-Smtp-Source: ALg8bN6M/Cz7Y9fVHD++AD118PWidXjlIaJaqP1W8lbxvQougbc1V1cIVzAN+kV+bKRmztCMh21EqQ==
+X-Received: by 2002:a63:9d05:: with SMTP id i5mr16702212pgd.98.1546542363794;
+        Thu, 03 Jan 2019 11:06:03 -0800 (PST)
+Received: from smtp.gmail.com ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id z127sm87830202pfb.80.2019.01.03.11.06.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 03 Jan 2019 11:06:03 -0800 (PST)
+From:   Stephen Boyd <swboyd@chromium.org>
+To:     Rob Clark <robdclark@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        Sean Paul <seanpaul@chromium.org>,
+        Jordan Crouse <jcrouse@codeaurora.org>,
+        Jayant Shekhar <jshekhar@codeaurora.org>,
+        Rajesh Yadav <ryadav@codeaurora.org>,
+        Jeykumar Sankaran <jsanka@codeaurora.org>
+Subject: [PATCH] drm/msm/dpu: Convert to a chained irq chip
+Date:   Thu,  3 Jan 2019 11:06:02 -0800
+Message-Id: <20190103190602.92612-1-swboyd@chromium.org>
+X-Mailer: git-send-email 2.20.1.415.g653613c723-goog
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="xvcagbsjzare2ch3"
-Content-Disposition: inline
-In-Reply-To: <1546472423-31366-1-git-send-email-skomatineni@nvidia.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Devices that make up DPU, i.e. graphics card, request their interrupts
+from this "virtual" interrupt chip. The interrupt chip builds upon a GIC
+SPI interrupt that raises high when any of the interrupts in the DPU's
+irq status register are triggered. From the kernel's perspective this is
+a chained irq chip, so requesting a flow handler for the GIC SPI and
+then calling generic IRQ handling code from that irq handler is not
+completely proper. It's better to convert this to a chained irq so that
+the GIC SPI irq doesn't appear in /proc/interrupts, can't have CPU
+affinity changed, and won't be accounted for with irq stats. Doing this
+also silences a recursive lockdep warning because we can specify a
+different lock class for the chained interrupts, silencing a warning
+that is easy to see with 'threadirqs' on the kernel commandline.
 
---xvcagbsjzare2ch3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+ WARNING: inconsistent lock state
+ 4.19.10 #76 Tainted: G        W
+ --------------------------------
+ inconsistent {IN-HARDIRQ-W} -> {HARDIRQ-ON-W} usage.
+ irq/40-dpu_mdss/203 [HC0[0]:SC0[2]:HE1:SE0] takes:
+ 0000000053ea9021 (&irq_desc_lock_class){?.-.}, at: handle_level_irq+0x34/0x26c
+ {IN-HARDIRQ-W} state was registered at:
+   lock_acquire+0x244/0x360
+   _raw_spin_lock+0x64/0xa0
+   handle_fasteoi_irq+0x54/0x2ec
+   generic_handle_irq+0x44/0x5c
+   __handle_domain_irq+0x9c/0x11c
+   gic_handle_irq+0x208/0x260
+   el1_irq+0xb4/0x130
+   arch_cpu_idle+0x178/0x3cc
+   default_idle_call+0x3c/0x54
+   do_idle+0x1a8/0x3dc
+   cpu_startup_entry+0x24/0x28
+   rest_init+0x240/0x270
+   start_kernel+0x5a8/0x6bc
+ irq event stamp: 18
+ hardirqs last  enabled at (17): [<ffffff9042385e80>] _raw_spin_unlock_irq+0x40/0xc0
+ hardirqs last disabled at (16): [<ffffff904237a1f4>] __schedule+0x20c/0x1bbc
+ softirqs last  enabled at (0): [<ffffff9040f318d0>] copy_process+0xb50/0x3964
+ softirqs last disabled at (18): [<ffffff9041036364>] local_bh_disable+0x8/0x20
 
-On Wed, Jan 02, 2019 at 03:40:23PM -0800, Sowjanya Komatineni wrote:
-> Tegra194 supports maximum 64K Bytes transfer per packet.
-> Tegra186 and prior supports maximum 4K Bytes transfer per packet.
->=20
-> This patch fixes this payload difference between Tegra194 and prior
-> tegra chipsets using separate i2c_adapter_quirks.
->=20
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+ other info that might help us debug this:
+  Possible unsafe locking scenario:
 
-  CC      drivers/i2c/busses/i2c-tegra.o
-drivers/i2c/busses/i2c-tegra.c:171: warning: Function parameter or member '=
-quirks' not described in 'tegra_i2c_hw_feature'
+        CPU0
+        ----
+   lock(&irq_desc_lock_class);
+   <Interrupt>
+     lock(&irq_desc_lock_class);
 
+  *** DEADLOCK ***
 
---xvcagbsjzare2ch3
-Content-Type: application/pgp-signature; name="signature.asc"
+ no locks held by irq/40-dpu_mdss/203.
 
------BEGIN PGP SIGNATURE-----
+ stack backtrace:
+ CPU: 0 PID: 203 Comm: irq/40-dpu_mdss Tainted: G        W         4.19.10 #76
+ Call trace:
+  dump_backtrace+0x0/0x2f8
+  show_stack+0x20/0x2c
+  __dump_stack+0x20/0x28
+  dump_stack+0xcc/0x10c
+  mark_lock+0xbe0/0xe24
+  __lock_acquire+0x4cc/0x2708
+  lock_acquire+0x244/0x360
+  _raw_spin_lock+0x64/0xa0
+  handle_level_irq+0x34/0x26c
+  generic_handle_irq+0x44/0x5c
+  dpu_mdss_irq+0x64/0xec
+  irq_forced_thread_fn+0x58/0x9c
+  irq_thread+0x120/0x1dc
+  kthread+0x248/0x260
+  ret_from_fork+0x10/0x18
+ ------------[ cut here ]------------
+ irq 169 handler irq_default_primary_handler+0x0/0x18 enabled interrupts
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlwuXRAACgkQFA3kzBSg
-KbYMHA/+LnD+R8d8bIvoJv5o1QHm/gDf8I5+0TUCFWzj0TLrn4cvN1OM0k6O0O0K
-CB/uCvCdKvpDKxMxXPC+v8TdzVK9EYJyPrS9LeXaPYHTxGuTzsiy6MPhpO4ScPWc
-ELpQILlgXoU+ShA06eKcgp35rmEySZQiedKuGv/U927TbZO13glHLizFhwfRVpBl
-XmWg3Hdiqljt816BLWupSI7kLt16bdbdgzEz2nPA1JzjKtsn0zimDQd7rcDuIkOw
-iCP8TmlkNE6CGrcA94mi1V+EWIWjBZ0ajYoc1rMoEA80O0gKgZRwxUpupY9YCioV
-mlp8fcvc34A2iw6q9hXcjr0ZPwTMTp56JwxpQqa97Yd9haaoZ7d4pXsTMTSQAOZK
-I7c4T6K5pM4Tmdp2doqa7/tAdU4VOGIMUAxqjh/BDQqb5B+/afV/RziYKX0NXf4m
-u3B00hfmogXLE/Lx5TxL08hROVCjV507jHcqwszrW07OkAfafz/D4BZfAmFERYh5
-P7zJIoJyvbDDhXzqfw7BuNsujJep7bv41GpTASHtnnYyk2MOXJk9OSZkUc2xpsXC
-ISvO3WFQnfW1+YUYFzdt/ODFOjgYwkk5RF4+76VrNUKz6aWFZfybnowXvBpg+61j
-3Ub6NhuA6IQPyqL8KhtXyqTItQrmOToDL9mduWq4ehXdCwbLhnM=
-=v9r4
------END PGP SIGNATURE-----
+Cc: Sean Paul <seanpaul@chromium.org>
+Cc: Jordan Crouse <jcrouse@codeaurora.org>
+Cc: Jayant Shekhar <jshekhar@codeaurora.org>
+Cc: Rajesh Yadav <ryadav@codeaurora.org>
+Cc: Jeykumar Sankaran <jsanka@codeaurora.org>
+Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+---
 
---xvcagbsjzare2ch3--
+ drivers/gpu/drm/msm/disp/dpu1/dpu_mdss.c | 36 ++++++++++++++----------
+ 1 file changed, 21 insertions(+), 15 deletions(-)
+
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_mdss.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_mdss.c
+index cb307a2abf06..7316b4ab1b85 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_mdss.c
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_mdss.c
+@@ -23,11 +23,14 @@ struct dpu_mdss {
+ 	struct dpu_irq_controller irq_controller;
+ };
+ 
+-static irqreturn_t dpu_mdss_irq(int irq, void *arg)
++static void dpu_mdss_irq(struct irq_desc *desc)
+ {
+-	struct dpu_mdss *dpu_mdss = arg;
++	struct dpu_mdss *dpu_mdss = irq_desc_get_handler_data(desc);
++	struct irq_chip *chip = irq_desc_get_chip(desc);
+ 	u32 interrupts;
+ 
++	chained_irq_enter(chip, desc);
++
+ 	interrupts = readl_relaxed(dpu_mdss->mmio + HW_INTR_STATUS);
+ 
+ 	while (interrupts) {
+@@ -39,20 +42,20 @@ static irqreturn_t dpu_mdss_irq(int irq, void *arg)
+ 					   hwirq);
+ 		if (mapping == 0) {
+ 			DRM_ERROR("couldn't find irq mapping for %lu\n", hwirq);
+-			return IRQ_NONE;
++			break;
+ 		}
+ 
+ 		rc = generic_handle_irq(mapping);
+ 		if (rc < 0) {
+ 			DRM_ERROR("handle irq fail: irq=%lu mapping=%u rc=%d\n",
+ 				  hwirq, mapping, rc);
+-			return IRQ_NONE;
++			break;
+ 		}
+ 
+ 		interrupts &= ~(1 << hwirq);
+ 	}
+ 
+-	return IRQ_HANDLED;
++	chained_irq_exit(chip, desc);
+ }
+ 
+ static void dpu_mdss_irq_mask(struct irq_data *irqd)
+@@ -83,16 +86,16 @@ static struct irq_chip dpu_mdss_irq_chip = {
+ 	.irq_unmask = dpu_mdss_irq_unmask,
+ };
+ 
++static struct lock_class_key dpu_mdss_lock_key, dpu_mdss_request_key;
++
+ static int dpu_mdss_irqdomain_map(struct irq_domain *domain,
+ 		unsigned int irq, irq_hw_number_t hwirq)
+ {
+ 	struct dpu_mdss *dpu_mdss = domain->host_data;
+-	int ret;
+ 
++	irq_set_lockdep_class(irq, &dpu_mdss_lock_key, &dpu_mdss_request_key);
+ 	irq_set_chip_and_handler(irq, &dpu_mdss_irq_chip, handle_level_irq);
+-	ret = irq_set_chip_data(irq, dpu_mdss);
+-
+-	return ret;
++	return irq_set_chip_data(irq, dpu_mdss);
+ }
+ 
+ static const struct irq_domain_ops dpu_mdss_irqdomain_ops = {
+@@ -159,11 +162,13 @@ static void dpu_mdss_destroy(struct drm_device *dev)
+ 	struct msm_drm_private *priv = dev->dev_private;
+ 	struct dpu_mdss *dpu_mdss = to_dpu_mdss(priv->mdss);
+ 	struct dss_module_power *mp = &dpu_mdss->mp;
++	int irq;
+ 
+ 	pm_runtime_suspend(dev->dev);
+ 	pm_runtime_disable(dev->dev);
+ 	_dpu_mdss_irq_domain_fini(dpu_mdss);
+-	free_irq(platform_get_irq(pdev, 0), dpu_mdss);
++	irq = platform_get_irq(pdev, 0);
++	irq_set_chained_handler_and_data(irq, NULL, NULL);
+ 	msm_dss_put_clk(mp->clk_config, mp->num_clk);
+ 	devm_kfree(&pdev->dev, mp->clk_config);
+ 
+@@ -187,6 +192,7 @@ int dpu_mdss_init(struct drm_device *dev)
+ 	struct dpu_mdss *dpu_mdss;
+ 	struct dss_module_power *mp;
+ 	int ret = 0;
++	int irq;
+ 
+ 	dpu_mdss = devm_kzalloc(dev->dev, sizeof(*dpu_mdss), GFP_KERNEL);
+ 	if (!dpu_mdss)
+@@ -219,12 +225,12 @@ int dpu_mdss_init(struct drm_device *dev)
+ 	if (ret)
+ 		goto irq_domain_error;
+ 
+-	ret = request_irq(platform_get_irq(pdev, 0),
+-			dpu_mdss_irq, 0, "dpu_mdss_isr", dpu_mdss);
+-	if (ret) {
+-		DPU_ERROR("failed to init irq: %d\n", ret);
++	irq = platform_get_irq(pdev, 0);
++	if (irq < 0)
+ 		goto irq_error;
+-	}
++
++	irq_set_chained_handler_and_data(irq, dpu_mdss_irq,
++					 dpu_mdss);
+ 
+ 	pm_runtime_enable(dev->dev);
+ 
+-- 
+Sent by a computer through tubes
+
