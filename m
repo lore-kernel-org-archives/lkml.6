@@ -7,43 +7,43 @@ X-Spam-Status: No, score=-12.0 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32AA2C43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 13:24:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 633C0C43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 13:25:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F41E32070C
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 13:24:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37EF22070C
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 13:25:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731688AbfACNYw (ORCPT
+        id S1731691AbfACNZ0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 08:24:52 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:40339 "EHLO
+        Thu, 3 Jan 2019 08:25:26 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:52357 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730107AbfACNYv (ORCPT
+        with ESMTP id S1730107AbfACNZZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 08:24:51 -0500
+        Thu, 3 Jan 2019 08:25:25 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x03DOiT01387268
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x03DPJs11387360
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 3 Jan 2019 05:24:44 -0800
+        Thu, 3 Jan 2019 05:25:19 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x03DOidq1387265;
-        Thu, 3 Jan 2019 05:24:44 -0800
-Date:   Thu, 3 Jan 2019 05:24:44 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x03DPJGi1387357;
+        Thu, 3 Jan 2019 05:25:19 -0800
+Date:   Thu, 3 Jan 2019 05:25:19 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Adrian Hunter <tipbot@zytor.com>
-Message-ID: <tip-2e9e8688763ff80f032d9a78c3b4b951fb6dd7a4@git.kernel.org>
-Cc:     acme@redhat.com, jolsa@kernel.org, linux-kernel@vger.kernel.org,
-        adrian.hunter@intel.com, mingo@kernel.org, tglx@linutronix.de,
-        hpa@zytor.com
-Reply-To: mingo@kernel.org, tglx@linutronix.de, adrian.hunter@intel.com,
-          linux-kernel@vger.kernel.org, hpa@zytor.com, acme@redhat.com,
+Message-ID: <tip-139f42f3b3b495e61bb2cfef40e1dd5e845e3052@git.kernel.org>
+Cc:     adrian.hunter@intel.com, tglx@linutronix.de, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, acme@redhat.com, hpa@zytor.com,
+        jolsa@kernel.org
+Reply-To: adrian.hunter@intel.com, tglx@linutronix.de, mingo@kernel.org,
+          linux-kernel@vger.kernel.org, acme@redhat.com, hpa@zytor.com,
           jolsa@kernel.org
-In-Reply-To: <20181221120620.9659-6-adrian.hunter@intel.com>
-References: <20181221120620.9659-6-adrian.hunter@intel.com>
+In-Reply-To: <20181221120620.9659-7-adrian.hunter@intel.com>
+References: <20181221120620.9659-7-adrian.hunter@intel.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf thread-stack: Factor out
- thread_stack__init()
-Git-Commit-ID: 2e9e8688763ff80f032d9a78c3b4b951fb6dd7a4
+Subject: [tip:perf/urgent] perf thread-stack: Allocate an array of thread
+ stacks
+Git-Commit-ID: 139f42f3b3b495e61bb2cfef40e1dd5e845e3052
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -57,71 +57,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  2e9e8688763ff80f032d9a78c3b4b951fb6dd7a4
-Gitweb:     https://git.kernel.org/tip/2e9e8688763ff80f032d9a78c3b4b951fb6dd7a4
+Commit-ID:  139f42f3b3b495e61bb2cfef40e1dd5e845e3052
+Gitweb:     https://git.kernel.org/tip/139f42f3b3b495e61bb2cfef40e1dd5e845e3052
 Author:     Adrian Hunter <adrian.hunter@intel.com>
-AuthorDate: Fri, 21 Dec 2018 14:06:17 +0200
+AuthorDate: Fri, 21 Dec 2018 14:06:18 +0200
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Wed, 2 Jan 2019 10:53:41 -0300
+CommitDate: Wed, 2 Jan 2019 10:55:55 -0300
 
-perf thread-stack: Factor out thread_stack__init()
+perf thread-stack: Allocate an array of thread stacks
 
 In preparation for fixing thread stack processing for the idle task,
-factor out thread_stack__init().
+allocate an array of thread stacks.
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 Acked-by: Jiri Olsa <jolsa@kernel.org>
-Link: http://lkml.kernel.org/r/20181221120620.9659-6-adrian.hunter@intel.com
+Link: http://lkml.kernel.org/r/20181221120620.9659-7-adrian.hunter@intel.com
+[ No need to check for NULL when calling zfree(), noticed by Jiri Olsa ]
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/thread-stack.c | 26 +++++++++++++++++++-------
- 1 file changed, 19 insertions(+), 7 deletions(-)
+ tools/perf/util/thread-stack.c | 29 +++++++++++++++++------------
+ 1 file changed, 17 insertions(+), 12 deletions(-)
 
 diff --git a/tools/perf/util/thread-stack.c b/tools/perf/util/thread-stack.c
-index a5f7b9d8fc23..03770af9e5cd 100644
+index 03770af9e5cd..248ed3945bec 100644
 --- a/tools/perf/util/thread-stack.c
 +++ b/tools/perf/util/thread-stack.c
-@@ -93,6 +93,24 @@ static int thread_stack__grow(struct thread_stack *ts)
- 	return 0;
- }
- 
-+static int thread_stack__init(struct thread_stack *ts, struct thread *thread,
-+			      struct call_return_processor *crp)
-+{
-+	int err;
-+
-+	err = thread_stack__grow(ts);
-+	if (err)
-+		return err;
-+
-+	if (thread->mg && thread->mg->machine)
-+		ts->kernel_start = machine__kernel_start(thread->mg->machine);
-+	else
-+		ts->kernel_start = 1ULL << 63;
-+	ts->crp = crp;
-+
-+	return 0;
-+}
-+
+@@ -114,20 +114,25 @@ static int thread_stack__init(struct thread_stack *ts, struct thread *thread,
  static struct thread_stack *thread_stack__new(struct thread *thread,
  					      struct call_return_processor *crp)
  {
-@@ -104,17 +122,11 @@ static struct thread_stack *thread_stack__new(struct thread *thread,
- 
- 	ts->arr_sz = 1;
- 
--	if (thread_stack__grow(ts)) {
-+	if (thread_stack__init(ts, thread, crp)) {
- 		free(ts);
- 		return NULL;
+-	struct thread_stack *ts;
+-
+-	ts = zalloc(sizeof(struct thread_stack));
+-	if (!ts)
+-		return NULL;
+-
+-	ts->arr_sz = 1;
+-
+-	if (thread_stack__init(ts, thread, crp)) {
+-		free(ts);
+-		return NULL;
++	struct thread_stack *ts = thread->ts, *new_ts;
++	unsigned int old_sz = ts ? ts->arr_sz : 0;
++	unsigned int new_sz = 1;
++
++	if (!ts || new_sz > old_sz) {
++		new_ts = calloc(new_sz, sizeof(*ts));
++		if (!new_ts)
++			return NULL;
++		if (ts)
++			memcpy(new_ts, ts, old_sz * sizeof(*ts));
++		new_ts->arr_sz = new_sz;
++		zfree(&thread->ts);
++		thread->ts = new_ts;
++		ts = new_ts;
  	}
  
--	if (thread->mg && thread->mg->machine)
--		ts->kernel_start = machine__kernel_start(thread->mg->machine);
--	else
--		ts->kernel_start = 1ULL << 63;
--	ts->crp = crp;
--
- 	thread->ts = ts;
+-	thread->ts = ts;
++	if (!ts->stack &&
++	    thread_stack__init(ts, thread, crp))
++		return NULL;
  
  	return ts;
+ }
