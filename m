@@ -2,107 +2,279 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D426C43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 16:12:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CC13C43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 16:12:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30A29217D9
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 16:12:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 43F11208E3
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 16:12:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JaE2w7ST"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VWoBuwQy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730891AbfACQMD (ORCPT
+        id S1732188AbfACQMR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 11:12:03 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:36871 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726760AbfACQMC (ORCPT
+        Thu, 3 Jan 2019 11:12:17 -0500
+Received: from mail-vs1-f74.google.com ([209.85.217.74]:49055 "EHLO
+        mail-vs1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730998AbfACQMQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 11:12:02 -0500
-Received: by mail-pg1-f194.google.com with SMTP id c25so16194677pgb.4
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 08:12:02 -0800 (PST)
+        Thu, 3 Jan 2019 11:12:16 -0500
+Received: by mail-vs1-f74.google.com with SMTP id w22so20039115vsj.15
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 08:12:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:content-transfer-encoding:subject:cc:to:in-reply-to
-         :from:user-agent:references:message-id:date;
-        bh=j51rfX6wnYKjcDiMwHcW7yVFPbV8mnVTvkI9KgLgShg=;
-        b=JaE2w7ST29UZmkZPVI7AxzMfWlORWEFj7Rd0JibNoV9y8F25kf/RD/lSTOMuegYsah
-         /oq6PHK09n0aG5VE3ql7HIN9riu5GdCcf1RLLN8pggvnPyXhi1+ZAhlkCx2BQDNExQa0
-         0PhZT4080ztEB7d531xZAC8Ba/DE+gxzNYTyM=
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=98ssgJgNVrdcIWbb0R8XUTymywCcz8Wk3LA2x5SCzNQ=;
+        b=VWoBuwQyVsQNAjbV/UhX5Q61Ii1KQDsZkenC3siRY4CxuJIq+T3Eys1CuFctGjP00y
+         4qETN8//DhdIX7O1O7vYv1M6K1yCNT9RZFVbt+P9AM7rIWNKooI/bu1rwAhrYWfqhMAm
+         vCOB4ZOjNrBGkKLz7y40gQM2FgAUpHPpR2VNFcWH5ldbMbqNrXdbIU4yCxZXttKy/t8V
+         t/JdfHNRhdObxG+j13qybvwPyJNhglbZPS3klGpPShV/O4fGrujQXcwj4aW+nHBh+oWL
+         3lHjonoJ7lWIDZVSjA9AuQN/JRVMaGIsjPThTPsrtRPW4NZkrz4VkEWq1ABHANd6Qfug
+         HNrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding:subject
-         :cc:to:in-reply-to:from:user-agent:references:message-id:date;
-        bh=j51rfX6wnYKjcDiMwHcW7yVFPbV8mnVTvkI9KgLgShg=;
-        b=cidT3fmPx90+Co2N9dbJJsWlvZci7EHHB2H0DD8GxM82fnNC109lwCl7aNR8y/EQts
-         TCuEMALc/mWvaPs/5y5gi6nc+DXTpA4o1kT6LnEvQEowjxeG8/5CrbNs8DR/e7dhoP3x
-         7fhUWj2suQvC5P2y/fH09UfOpt//65C1AW5cN5tBRTedS5foZNF6olYmwc/B7bCMTB9H
-         rcJNNrkE6P6fEcA2hAp3LvxpDe/goA5W41eAO5fiqrtdKDGdG/z8KDD2kYbo0N5ePJkD
-         YkNCfVJVfJu5yrUMOt/YRiDKZayaWUSigEgWxXg4WK2X7rfmD1p+gmH7gzPIIrcTnCct
-         jICQ==
-X-Gm-Message-State: AA+aEWYaCKizd/Y6X5Let9H7D+wL10699Ly4FXVFVdP+o7975N85XrI6
-        LK+lJYBSXPcphfflgGAizp0yew==
-X-Google-Smtp-Source: AFSGD/XuCw0hsJkDC3j5+y0kOHh6FU6j34xxri+Ugu+SPl23SgyHan9DK0b2+89V6ZVsmGdX+ZlFoQ==
-X-Received: by 2002:a62:1112:: with SMTP id z18mr48399261pfi.173.1546531921854;
-        Thu, 03 Jan 2019 08:12:01 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id v5sm93011023pgn.5.2019.01.03.08.12.00
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 03 Jan 2019 08:12:01 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v3] driver core: platform: Add an error message to platform_get_irq*()
-Cc:     Rob Herring <robh@kernel.org>, Andrzej Hajda <a.hajda@samsung.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Mark Brown <broonie@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        javierm@redhat.com,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-In-Reply-To: <CAJZ5v0iL_Fq0RUbLjMj9WBitDw2amNV_ybirkiPbuYb0zroGAg@mail.gmail.com>
-From:   Stephen Boyd <swboyd@chromium.org>
-User-Agent: alot/0.8
-References: <CABGGisxcHWwhUcQML7XmriK_DLFGjmud3cKt8yp+K4G2CAL=9Q@mail.gmail.com> <20190102185106.56913-1-swboyd@chromium.org> <CAJZ5v0iL_Fq0RUbLjMj9WBitDw2amNV_ybirkiPbuYb0zroGAg@mail.gmail.com>
-Message-ID: <154653191998.15366.14229484132412159772@swboyd.mtv.corp.google.com>
-Date:   Thu, 03 Jan 2019 08:11:59 -0800
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=98ssgJgNVrdcIWbb0R8XUTymywCcz8Wk3LA2x5SCzNQ=;
+        b=Jv8wph2pbNv5M9qej4j01jbR3R3+/3YXX4+kz5m1owwWl6VHN1RFfwlfBHMlpn6eb9
+         eUTNo6avUsMGX1CYiHpXbtKI4Im8UPBpOEKYhSPQQ13C/6hHAw2qr3ilvjFHskW9KUPj
+         +VwHWXyJe9+sjhzxESjImCQM9kfdYFBX5S3xQgYSZuj6eF5uW0j+GE1aooJbFPw5HDe6
+         iuznxy2LtVLjFpXQ3ya/w/VQL1rzVBHXRRU0jHDv1So6IyGG2kNFFncdUB8QShNAhxAm
+         YzS55t2fcvGPVLUXh13hr1UZtYr/RlYbejTL52ai4ASt3dZ7IS7SKKEVI8gALn9pVmly
+         x4pg==
+X-Gm-Message-State: AA+aEWYSe4nyP6+/Br9KT8m+SX5OSuU0KiNtXEucpUNuLHe5zIdBQ6Kt
+        xdAZqIxrPNKKruZe2dLXVH2BaNtF1SboPA==
+X-Google-Smtp-Source: AFSGD/W6n1AearGbzHf48QnJay0a3HH+E/jICjjtnhfPzmZRWHCyQLMsbXZVx2T1PveMuvSR84GrSdoF9Na/5A==
+X-Received: by 2002:a67:460f:: with SMTP id t15mr41082505vsa.0.1546531935105;
+ Thu, 03 Jan 2019 08:12:15 -0800 (PST)
+Date:   Thu,  3 Jan 2019 08:12:03 -0800
+Message-Id: <20190103161203.162375-1-shakeelb@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.20.1.415.g653613c723-goog
+Subject: [PATCH v2] memcg: localize memcg_kmem_enabled() check
+From:   Shakeel Butt <shakeelb@google.com>
+To:     Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Roman Gushchin <guro@fb.com>
+Cc:     linux-mm@kvack.org, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Shakeel Butt <shakeelb@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Rafael J. Wysocki (2019-01-03 01:40:26)
-> On Wed, Jan 2, 2019 at 7:51 PM Stephen Boyd <swboyd@chromium.org> wrote:
-> > @@ -130,6 +125,22 @@ int platform_get_irq(struct platform_device *dev, =
-unsigned int num)
-> >         return r ? r->start : -ENXIO;
-> >  #endif
-> >  }
-> > +
-> > +/**
-> > + * platform_get_irq - get an IRQ for a device
-> > + * @dev: platform device
-> > + * @num: IRQ number index
-> > + */
-> > +int platform_get_irq(struct platform_device *dev, unsigned int num)
-> > +{
-> > +       int ret;
-> > +
-> > +       ret =3D __platform_get_irq(dev, num);
-> > +       if (ret < 0 && ret !=3D -EPROBE_DEFER)
-> > +               dev_err(&dev->dev, "IRQ index %u not found\n", num);
->=20
-> Why don't you log the error code too?
->=20
+Move the memcg_kmem_enabled() checks into memcg kmem charge/uncharge
+functions, so, the users don't have to explicitly check that condition.
+This is purely code cleanup patch without any functional change. Only
+the order of checks in memcg_charge_slab() can potentially be changed
+but the functionally it will be same. This should not matter as
+memcg_charge_slab() is not in the hot path.
 
-I don't see much benefit to seeing -ENXIO or -EINVAL printed here, so I
-left out the error code.
+Signed-off-by: Shakeel Butt <shakeelb@google.com>
+---
+Changelog since v1:
+- Fixed the build when CONFIG_MEMCG is not set
+
+ fs/pipe.c                  |  3 +--
+ include/linux/memcontrol.h | 37 +++++++++++++++++++++++++++++++++----
+ mm/memcontrol.c            | 16 ++++++++--------
+ mm/page_alloc.c            |  4 ++--
+ mm/slab.h                  |  4 ----
+ 5 files changed, 44 insertions(+), 20 deletions(-)
+
+diff --git a/fs/pipe.c b/fs/pipe.c
+index bdc5d3c0977d..51d5fd8840ab 100644
+--- a/fs/pipe.c
++++ b/fs/pipe.c
+@@ -140,8 +140,7 @@ static int anon_pipe_buf_steal(struct pipe_inode_info *pipe,
+ 	struct page *page = buf->page;
+ 
+ 	if (page_count(page) == 1) {
+-		if (memcg_kmem_enabled())
+-			memcg_kmem_uncharge(page, 0);
++		memcg_kmem_uncharge(page, 0);
+ 		__SetPageLocked(page);
+ 		return 0;
+ 	}
+diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+index 83ae11cbd12c..b0eb29ea0d9c 100644
+--- a/include/linux/memcontrol.h
++++ b/include/linux/memcontrol.h
+@@ -1273,12 +1273,12 @@ static inline bool mem_cgroup_under_socket_pressure(struct mem_cgroup *memcg)
+ 
+ struct kmem_cache *memcg_kmem_get_cache(struct kmem_cache *cachep);
+ void memcg_kmem_put_cache(struct kmem_cache *cachep);
+-int memcg_kmem_charge_memcg(struct page *page, gfp_t gfp, int order,
+-			    struct mem_cgroup *memcg);
+ 
+ #ifdef CONFIG_MEMCG_KMEM
+-int memcg_kmem_charge(struct page *page, gfp_t gfp, int order);
+-void memcg_kmem_uncharge(struct page *page, int order);
++int __memcg_kmem_charge(struct page *page, gfp_t gfp, int order);
++void __memcg_kmem_uncharge(struct page *page, int order);
++int __memcg_kmem_charge_memcg(struct page *page, gfp_t gfp, int order,
++			      struct mem_cgroup *memcg);
+ 
+ extern struct static_key_false memcg_kmem_enabled_key;
+ extern struct workqueue_struct *memcg_kmem_cache_wq;
+@@ -1300,6 +1300,26 @@ static inline bool memcg_kmem_enabled(void)
+ 	return static_branch_unlikely(&memcg_kmem_enabled_key);
+ }
+ 
++static inline int memcg_kmem_charge(struct page *page, gfp_t gfp, int order)
++{
++	if (memcg_kmem_enabled())
++		return __memcg_kmem_charge(page, gfp, order);
++	return 0;
++}
++
++static inline void memcg_kmem_uncharge(struct page *page, int order)
++{
++	if (memcg_kmem_enabled())
++		__memcg_kmem_uncharge(page, order);
++}
++
++static inline int memcg_kmem_charge_memcg(struct page *page, gfp_t gfp,
++					  int order, struct mem_cgroup *memcg)
++{
++	if (memcg_kmem_enabled())
++		return __memcg_kmem_charge_memcg(page, gfp, order, memcg);
++	return 0;
++}
+ /*
+  * helper for accessing a memcg's index. It will be used as an index in the
+  * child cache array in kmem_cache, and also to derive its name. This function
+@@ -1325,6 +1345,15 @@ static inline void memcg_kmem_uncharge(struct page *page, int order)
+ {
+ }
+ 
++static inline int __memcg_kmem_charge(struct page *page, gfp_t gfp, int order)
++{
++	return 0;
++}
++
++static inline void __memcg_kmem_uncharge(struct page *page, int order)
++{
++}
++
+ #define for_each_memcg_cache_index(_idx)	\
+ 	for (; NULL; )
+ 
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index 4afd5971f2d4..e8ca09920d71 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -2557,7 +2557,7 @@ void memcg_kmem_put_cache(struct kmem_cache *cachep)
+ }
+ 
+ /**
+- * memcg_kmem_charge_memcg: charge a kmem page
++ * __memcg_kmem_charge_memcg: charge a kmem page
+  * @page: page to charge
+  * @gfp: reclaim mode
+  * @order: allocation order
+@@ -2565,7 +2565,7 @@ void memcg_kmem_put_cache(struct kmem_cache *cachep)
+  *
+  * Returns 0 on success, an error code on failure.
+  */
+-int memcg_kmem_charge_memcg(struct page *page, gfp_t gfp, int order,
++int __memcg_kmem_charge_memcg(struct page *page, gfp_t gfp, int order,
+ 			    struct mem_cgroup *memcg)
+ {
+ 	unsigned int nr_pages = 1 << order;
+@@ -2588,24 +2588,24 @@ int memcg_kmem_charge_memcg(struct page *page, gfp_t gfp, int order,
+ }
+ 
+ /**
+- * memcg_kmem_charge: charge a kmem page to the current memory cgroup
++ * __memcg_kmem_charge: charge a kmem page to the current memory cgroup
+  * @page: page to charge
+  * @gfp: reclaim mode
+  * @order: allocation order
+  *
+  * Returns 0 on success, an error code on failure.
+  */
+-int memcg_kmem_charge(struct page *page, gfp_t gfp, int order)
++int __memcg_kmem_charge(struct page *page, gfp_t gfp, int order)
+ {
+ 	struct mem_cgroup *memcg;
+ 	int ret = 0;
+ 
+-	if (mem_cgroup_disabled() || memcg_kmem_bypass())
++	if (memcg_kmem_bypass())
+ 		return 0;
+ 
+ 	memcg = get_mem_cgroup_from_current();
+ 	if (!mem_cgroup_is_root(memcg)) {
+-		ret = memcg_kmem_charge_memcg(page, gfp, order, memcg);
++		ret = __memcg_kmem_charge_memcg(page, gfp, order, memcg);
+ 		if (!ret)
+ 			__SetPageKmemcg(page);
+ 	}
+@@ -2613,11 +2613,11 @@ int memcg_kmem_charge(struct page *page, gfp_t gfp, int order)
+ 	return ret;
+ }
+ /**
+- * memcg_kmem_uncharge: uncharge a kmem page
++ * __memcg_kmem_uncharge: uncharge a kmem page
+  * @page: page to uncharge
+  * @order: allocation order
+  */
+-void memcg_kmem_uncharge(struct page *page, int order)
++void __memcg_kmem_uncharge(struct page *page, int order)
+ {
+ 	struct mem_cgroup *memcg = page->mem_cgroup;
+ 	unsigned int nr_pages = 1 << order;
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 0634fbdef078..d65c337d2257 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -1053,7 +1053,7 @@ static __always_inline bool free_pages_prepare(struct page *page,
+ 	if (PageMappingFlags(page))
+ 		page->mapping = NULL;
+ 	if (memcg_kmem_enabled() && PageKmemcg(page))
+-		memcg_kmem_uncharge(page, order);
++		__memcg_kmem_uncharge(page, order);
+ 	if (check_free)
+ 		bad += free_pages_check(page);
+ 	if (bad)
+@@ -4667,7 +4667,7 @@ __alloc_pages_nodemask(gfp_t gfp_mask, unsigned int order, int preferred_nid,
+ 
+ out:
+ 	if (memcg_kmem_enabled() && (gfp_mask & __GFP_ACCOUNT) && page &&
+-	    unlikely(memcg_kmem_charge(page, gfp_mask, order) != 0)) {
++	    unlikely(__memcg_kmem_charge(page, gfp_mask, order) != 0)) {
+ 		__free_pages(page, order);
+ 		page = NULL;
+ 	}
+diff --git a/mm/slab.h b/mm/slab.h
+index 4190c24ef0e9..cde51d7f631f 100644
+--- a/mm/slab.h
++++ b/mm/slab.h
+@@ -276,8 +276,6 @@ static __always_inline int memcg_charge_slab(struct page *page,
+ 					     gfp_t gfp, int order,
+ 					     struct kmem_cache *s)
+ {
+-	if (!memcg_kmem_enabled())
+-		return 0;
+ 	if (is_root_cache(s))
+ 		return 0;
+ 	return memcg_kmem_charge_memcg(page, gfp, order, s->memcg_params.memcg);
+@@ -286,8 +284,6 @@ static __always_inline int memcg_charge_slab(struct page *page,
+ static __always_inline void memcg_uncharge_slab(struct page *page, int order,
+ 						struct kmem_cache *s)
+ {
+-	if (!memcg_kmem_enabled())
+-		return;
+ 	memcg_kmem_uncharge(page, order);
+ }
+ 
+-- 
+2.20.1.415.g653613c723-goog
 
