@@ -2,97 +2,78 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63627C43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 09:30:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25674C43444
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 09:32:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 381E520883
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 09:30:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE7C821019
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 09:32:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546507925;
+	bh=yinMsv5fbA3tVu+bujFnkgPhBEVGk6j/t0S0fTCPMoI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=VJHIErpAMdwoAIy5/NSd2xGinODhkUM5oj4bxEgxO3rYFkzeQAeRrOXnMQ1y1C4UO
+	 PAEAbTudL6cB2ToXC91Sf61lHJiR8vAR5Avc5I6WTcQuaSLPcuyzcb7GYFMTaNO1qk
+	 VQKVBzY9OBt97d/vYfEegyjWP0gTOF4+rZMlg8lw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730477AbfACJaV (ORCPT
+        id S1730491AbfACJcE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 04:30:21 -0500
-Received: from mga09.intel.com ([134.134.136.24]:7737 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726152AbfACJaU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 04:30:20 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jan 2019 01:30:19 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,434,1539673200"; 
-   d="scan'208";a="103594391"
-Received: from rfried-ivm1.ger.corp.intel.com (HELO [10.185.130.184]) ([10.185.130.184])
-  by orsmga007.jf.intel.com with ESMTP; 03 Jan 2019 01:30:17 -0800
-Subject: Re: RFC: gpio: mmio: add support for 3 direction regs
-To:     Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        linux-gpio@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, vladimir.kondratiev@linux.intel.com
-References: <32edfd70-95dc-26a1-2ea6-143344cb2384@linux.intel.com>
- <ca7c1b99-4166-652b-aa53-8272aa66eb73@mentor.com>
- <28205214-d395-1c17-51ee-970300b6a14e@linux.intel.com>
- <6f609cb3-b294-0e66-a68f-73ad7ee4ac9a@mentor.com>
-From:   "Fried, Ramon" <ramon.fried@linux.intel.com>
-Message-ID: <8ead668a-2a1a-916a-585b-ac9830fdf490@linux.intel.com>
-Date:   Thu, 3 Jan 2019 11:30:16 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+        Thu, 3 Jan 2019 04:32:04 -0500
+Received: from mx2.suse.de ([195.135.220.15]:44016 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726152AbfACJcE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Jan 2019 04:32:04 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 95914AE18;
+        Thu,  3 Jan 2019 09:32:02 +0000 (UTC)
+Date:   Thu, 3 Jan 2019 10:32:01 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Qian Cai <cai@lca.pw>
+Cc:     catalin.marinas@arm.com, akpm@linux-foundation.org, cl@linux.com,
+        penberg@kernel.org, rientjes@google.com, iamjoonsoo.kim@lge.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] kmemleak: survive in a low-memory situation
+Message-ID: <20190103093201.GB31793@dhcp22.suse.cz>
+References: <20190102165931.GB6584@arrakis.emea.arm.com>
+ <20190102180619.12392-1-cai@lca.pw>
 MIME-Version: 1.0
-In-Reply-To: <6f609cb3-b294-0e66-a68f-73ad7ee4ac9a@mentor.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190102180619.12392-1-cai@lca.pw>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed 02-01-19 13:06:19, Qian Cai wrote:
+[...]
+> diff --git a/mm/kmemleak.c b/mm/kmemleak.c
+> index f9d9dc250428..9e1aa3b7df75 100644
+> --- a/mm/kmemleak.c
+> +++ b/mm/kmemleak.c
+> @@ -576,6 +576,16 @@ static struct kmemleak_object *create_object(unsigned long ptr, size_t size,
+>  	struct rb_node **link, *rb_parent;
+>  
+>  	object = kmem_cache_alloc(object_cache, gfp_kmemleak_mask(gfp));
+> +#ifdef CONFIG_PREEMPT_COUNT
+> +	if (!object) {
+> +		/* last-ditch effort in a low-memory situation */
+> +		if (irqs_disabled() || is_idle_task(current) || in_atomic())
+> +			gfp = GFP_ATOMIC;
+> +		else
+> +			gfp = gfp_kmemleak_mask(gfp) | __GFP_DIRECT_RECLAIM;
+> +		object = kmem_cache_alloc(object_cache, gfp);
+> +	}
+> +#endif
 
-On 1/3/2019 10:59, Vladimir Zapolskiy wrote:
-> On 01/03/2019 10:51 AM, Fried, Ramon wrote:
->> On 1/3/2019 10:07, Vladimir Zapolskiy wrote:
->>> Hi Ramon,
->>>
->>> On 01/03/2019 09:36 AM, Fried, Ramon wrote:
->>>> Hi.
->>>>
->>>> I'm working on a driver for STA2X11 GPIO controller who seems to fit
->>>> best to the generic mmio driver,
->>> I hope you have seen the existing driver drivers/gpio/gpio-sta2x11.c
->> I surely did. we have the same IP in our soc but it was changed a lot
->> internally, don't want to litter the original.
->>>> the only problem I have is with the dir register case. The STA2X11
->>>> has 3 registers for dir, one for data, one for set and one for
->>>> clear. The generic-mmio driver has support for this fashion for the
->>>> dat & set & clear registers but not for dirout/dirin registers.
->>>>
->>>> I wonder if support for this is generic enough to deserve a patch, if
->>>> so I'm willing to quickly add this support, if not, adding a flag
->>>> such as below, will allow partly using the generic mmio driver only
->>>> for set/get and the direction can be handled outside the driver.
->>>>
->>> If gpio-mmio fits well, then it might be simpler to set a flag
->>> BGPIOF_UNREADABLE_REG_DIR, then call bgpio_init() and then overwrite
->>> .direction_input, .direction_output and .get_direction callbacks,
->>> as a reference you can take a look at gpio-74xx-mmio.c
->> Nice.
->> That's an option I didn't think of, better than setting the flag.
->> what about adding the generic support ?
-> Setting a GPIO direction over three different registers doesn't sound
-> as a suitable candidate for generalization, also your particular
-> implementation is partial, relies on external platform/driver code
-> to preset the directions and it does not allow to change direction
-> in runtime, so just renounce the idea.
-
-Alrighty then, will overwrite the direction CBs.
-
-Thanks.
-
->
-> --
-> Best wishes,
-> Vladimir
+I do not get it. How can this possibly help when gfp_kmemleak_mask()
+adds __GFP_NOFAIL modifier to the given gfp mask? Or is this not the
+case anymore in some tree?
+-- 
+Michal Hocko
+SUSE Labs
