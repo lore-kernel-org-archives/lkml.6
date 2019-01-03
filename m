@@ -7,43 +7,43 @@ X-Spam-Status: No, score=-12.0 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10CEBC43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 13:16:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCD47C43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 13:17:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3F982070C
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 13:16:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 932DC20656
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 13:17:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731142AbfACNQp (ORCPT
+        id S1731167AbfACNRO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 08:16:45 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:54195 "EHLO
+        Thu, 3 Jan 2019 08:17:14 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:35267 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730511AbfACNQo (ORCPT
+        with ESMTP id S1728573AbfACNRO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 08:16:44 -0500
+        Thu, 3 Jan 2019 08:17:14 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x03DGUxM1384542
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x03DH4lr1384568
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 3 Jan 2019 05:16:30 -0800
+        Thu, 3 Jan 2019 05:17:04 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x03DGTxl1384539;
-        Thu, 3 Jan 2019 05:16:29 -0800
-Date:   Thu, 3 Jan 2019 05:16:29 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x03DH4DN1384565;
+        Thu, 3 Jan 2019 05:17:04 -0800
+Date:   Thu, 3 Jan 2019 05:17:04 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-neq1lrji5k4ku0rktn7ytnri@git.kernel.org>
-Cc:     tglx@linutronix.de, namhyung@kernel.org, jolsa@kernel.org,
-        acme@redhat.com, hpa@zytor.com, adrian.hunter@intel.com,
-        mingo@kernel.org, wangnan0@huawei.com, lclaudio@redhat.com,
-        linux-kernel@vger.kernel.org
-Reply-To: tglx@linutronix.de, hpa@zytor.com, acme@redhat.com,
-          jolsa@kernel.org, adrian.hunter@intel.com, namhyung@kernel.org,
-          wangnan0@huawei.com, mingo@kernel.org,
-          linux-kernel@vger.kernel.org, lclaudio@redhat.com
+Message-ID: <tip-hkam6lt1g806l0p4b7buif3n@git.kernel.org>
+Cc:     lclaudio@redhat.com, adrian.hunter@intel.com, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, namhyung@kernel.org,
+        tglx@linutronix.de, jolsa@kernel.org, wangnan0@huawei.com,
+        acme@redhat.com, hpa@zytor.com
+Reply-To: jolsa@kernel.org, tglx@linutronix.de,
+          linux-kernel@vger.kernel.org, namhyung@kernel.org,
+          wangnan0@huawei.com, hpa@zytor.com, acme@redhat.com,
+          lclaudio@redhat.com, mingo@kernel.org, adrian.hunter@intel.com
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf beauty ioctl: Add generator for USBDEVFS_
- ioctl commands
-Git-Commit-ID: 870c3f40dc78edec6437a2ced03976b66eeacf49
+Subject: [tip:perf/urgent] perf trace: Wire up ioctl's USBDEBFS_ cmd table
+ generator
+Git-Commit-ID: 86cf4c659c9ae1609262699caa4b2c3ab7fefa9b
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -57,18 +57,18 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  870c3f40dc78edec6437a2ced03976b66eeacf49
-Gitweb:     https://git.kernel.org/tip/870c3f40dc78edec6437a2ced03976b66eeacf49
+Commit-ID:  86cf4c659c9ae1609262699caa4b2c3ab7fefa9b
+Gitweb:     https://git.kernel.org/tip/86cf4c659c9ae1609262699caa4b2c3ab7fefa9b
 Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Thu, 27 Dec 2018 14:27:35 -0300
+AuthorDate: Thu, 27 Dec 2018 15:10:34 -0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Fri, 28 Dec 2018 16:33:04 -0300
+CommitDate: Fri, 28 Dec 2018 16:33:05 -0300
 
-perf beauty ioctl: Add generator for USBDEVFS_ ioctl commands
+perf trace: Wire up ioctl's USBDEBFS_ cmd table generator
 
-Will be associated with fds with the right device major.
+That ends up generating this:
 
-  $ tools/perf/trace/beauty/usbdevfs_ioctl.sh
+  [acme@quaco perf]$ cat /tmp/build/perf/trace/beauty/generated/ioctl/usbdevfs_ioctl_array.c
   static const char *usbdevfs_ioctl_cmds[] = {
 	[0] = "CONTROL",
 	[10] = "SUBMITURB",
@@ -81,6 +81,7 @@ Will be associated with fds with the right device major.
 	[17] = "CONNECTINFO",
 	[18] = "IOCTL",
 	[19] = "HUB_PORTINFO",
+	[2] = "BULK",
 	[20] = "RESET",
 	[21] = "CLEAR_HALT",
 	[22] = "DISCONNECT",
@@ -91,10 +92,9 @@ Will be associated with fds with the right device major.
 	[27] = "DISCONNECT_CLAIM",
 	[28] = "ALLOC_STREAMS",
 	[29] = "FREE_STREAMS",
-	[2] = "BULK",
+	[3] = "RESETEP",
 	[30] = "DROP_PRIVILEGES",
 	[31] = "GET_SPEED",
-	[3] = "RESETEP",
 	[4] = "SETINTERFACE",
 	[5] = "SETCONFIGURATION",
 	[8] = "GETDRIVER",
@@ -113,43 +113,47 @@ Will be associated with fds with the right device major.
   #endif
   $
 
-Leaving the '32' variants commented, later we can try to support those
-as well, from some other hint (maybe something about the thread issuing
-the ioctls) and from the _IOC_SIZE(cmd).
-
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-neq1lrji5k4ku0rktn7ytnri@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-hkam6lt1g806l0p4b7buif3n@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/trace/beauty/usbdevfs_ioctl.sh | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ tools/perf/Makefile.perf | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/tools/perf/trace/beauty/usbdevfs_ioctl.sh b/tools/perf/trace/beauty/usbdevfs_ioctl.sh
-new file mode 100755
-index 000000000000..930b80f422e8
---- /dev/null
-+++ b/tools/perf/trace/beauty/usbdevfs_ioctl.sh
-@@ -0,0 +1,19 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: LGPL-2.1
+diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
+index bd23e3f30895..ff29c3372ec3 100644
+--- a/tools/perf/Makefile.perf
++++ b/tools/perf/Makefile.perf
+@@ -497,6 +497,12 @@ prctl_option_tbl := $(srctree)/tools/perf/trace/beauty/prctl_option.sh
+ $(prctl_option_array): $(prctl_hdr_dir)/prctl.h $(prctl_option_tbl)
+ 	$(Q)$(SHELL) '$(prctl_option_tbl)' $(prctl_hdr_dir) > $@
+ 
++usbdevfs_ioctl_array := $(beauty_ioctl_outdir)/usbdevfs_ioctl_array.c
++usbdevfs_ioctl_tbl := $(srctree)/tools/perf/trace/beauty/usbdevfs_ioctl.sh
 +
-+[ $# -eq 1 ] && header_dir=$1 || header_dir=tools/include/uapi/linux/
++$(usbdevfs_ioctl_array): $(linux_uapi_dir)/usbdevice_fs.h $(usbdevfs_ioctl_tbl)
++	$(Q)$(SHELL) '$(usbdevfs_ioctl_tbl)' $(linux_uapi_dir) > $@
 +
-+printf "static const char *usbdevfs_ioctl_cmds[] = {\n"
-+regex="^#[[:space:]]*define[[:space:]]+USBDEVFS_(\w+)[[:space:]]+_IO[WR]{0,2}\([[:space:]]*'U'[[:space:]]*,[[:space:]]*([[:digit:]]+).*"
-+egrep $regex ${header_dir}/usbdevice_fs.h | egrep -v 'USBDEVFS_\w+32[[:space:]]' | \
-+	sed -r "s/$regex/\2 \1/g"	| \
-+	sort | xargs printf "\t[%s] = \"%s\",\n"
-+printf "};\n\n"
-+printf "#if 0\n"
-+printf "static const char *usbdevfs_ioctl_32_cmds[] = {\n"
-+regex="^#[[:space:]]*define[[:space:]]+USBDEVFS_(\w+)[[:space:]]+_IO[WR]{0,2}\([[:space:]]*'U'[[:space:]]*,[[:space:]]*([[:digit:]]+).*"
-+egrep $regex ${header_dir}/usbdevice_fs.h | egrep 'USBDEVFS_\w+32[[:space:]]' | \
-+	sed -r "s/$regex/\2 \1/g"	| \
-+	sort | xargs printf "\t[%s] = \"%s\",\n"
-+printf "};\n"
-+printf "#endif\n"
+ x86_arch_prctl_code_array := $(beauty_outdir)/x86_arch_prctl_code_array.c
+ x86_arch_prctl_code_tbl := $(srctree)/tools/perf/trace/beauty/x86_arch_prctl.sh
+ 
+@@ -624,6 +630,7 @@ prepare: $(OUTPUT)PERF-VERSION-FILE $(OUTPUT)common-cmds.h archheaders $(drm_ioc
+ 	$(mount_flags_array) \
+ 	$(perf_ioctl_array) \
+ 	$(prctl_option_array) \
++	$(usbdevfs_ioctl_array) \
+ 	$(x86_arch_prctl_code_array) \
+ 	$(rename_flags_array) \
+ 	$(arch_errno_name_array)
+@@ -923,6 +930,7 @@ clean:: $(LIBTRACEEVENT)-clean $(LIBAPI)-clean $(LIBBPF)-clean $(LIBSUBCMD)-clea
+ 		$(OUTPUT)$(vhost_virtio_ioctl_array) \
+ 		$(OUTPUT)$(perf_ioctl_array) \
+ 		$(OUTPUT)$(prctl_option_array) \
++		$(OUTPUT)$(usbdevfs_ioctl_array) \
+ 		$(OUTPUT)$(x86_arch_prctl_code_array) \
+ 		$(OUTPUT)$(rename_flags_array) \
+ 		$(OUTPUT)$(arch_errno_name_array)
