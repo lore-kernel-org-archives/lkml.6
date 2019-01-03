@@ -1,173 +1,100 @@
-Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
+Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C60ACC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 23:51:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CD40C43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 00:02:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CEDF20879
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 23:51:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2766120856
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 00:02:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IOCjtxOp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730109AbfABXv4 (ORCPT
+        id S1726857AbfACAC1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 18:51:56 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:47877 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727714AbfABXv4 (ORCPT
+        Wed, 2 Jan 2019 19:02:27 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:34655 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725871AbfACAC1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 18:51:56 -0500
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 194A28076A; Thu,  3 Jan 2019 00:51:48 +0100 (CET)
-Date:   Thu, 3 Jan 2019 00:51:52 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Thomas Gleixner <tglx@linutronix.de>, corbet@lwn.net
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Tony Luck <tony.luck@intel.com>,
-        Salvatore Bonaccorso <carnil@debian.org>,
-        linux-doc@vger.kernel.org
-Subject: [patch] Fix up l1ft documentation was Re: Taking a break - time to
- look back
-Message-ID: <20190102235152.GA24163@amd>
-References: <alpine.DEB.2.21.1812200022580.1651@nanos.tec.linutronix.de>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="6TrnltStXW4iwmi0"
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1812200022580.1651@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Wed, 2 Jan 2019 19:02:27 -0500
+Received: by mail-pg1-f194.google.com with SMTP id j10so15232275pga.1
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 16:02:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=XegKRqQNwELnHOVCfSkZODWxzEPM42Lqqg4XgBJw9IM=;
+        b=IOCjtxOpeyUXTnR49867Q0wNXdVYqfK/qnMpT9rsXIx+oKbQe67XlpdHG8QYwL1l5T
+         MKyJuyE9hEtZhbjbp8gb3NRir70pHA1JtEVCLn0yB8hm+w0tkfWAJvL9o7j7s0m95cg3
+         wdCa+r/tDzSbZXJ01/f0JaGnOGlbI06xxYwUY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=XegKRqQNwELnHOVCfSkZODWxzEPM42Lqqg4XgBJw9IM=;
+        b=LRESRYMktBKZPdShb5vBITZwN1YtkhapZNLId2pWSco3RK6MdG2jovD0LWOIv634HH
+         Xft4YXSdCK06HfcotKh2i0HO1Vmhgl4z6gBbZnp2k3K468rurNumCdE2tgxgvKtlaOoU
+         4lYkFnJoKgHn7WULF62w9BRdCV91IDIteOvy3bTPGH82SAGlF1rTTJxaQmZo8pmFijOn
+         No8aEQSC+eIk3Uln55xu799ejSlNd4L4qcbKH3xhyBs27RvgYBwHTyMB57DIOm45SevT
+         Eytn9PWj70crBo8CfLyUnihjs+kiLeOLrlUhGdyQpAukJCJayC5X+iRqxu0lIdT701MT
+         Lzcg==
+X-Gm-Message-State: AJcUukfh5DRSxJA6zG2i+bPmuznBYrJ3PyJd32zwpAnPEoZBwrekUWDR
+        NBwi3WJMUNZ9gN5tOr5RtThMeg==
+X-Google-Smtp-Source: ALg8bN7Qy7Int0Wh0u5MAq9VM1IwQjO52o+Xo7I3h0ywe9OYVZskiOfvR8zWKxCHfVYPA+qbdHLV/Q==
+X-Received: by 2002:a63:4665:: with SMTP id v37mr15454615pgk.425.1546473746517;
+        Wed, 02 Jan 2019 16:02:26 -0800 (PST)
+Received: from evgreen2.mtv.corp.google.com ([2620:15c:202:201:ffda:7716:9afc:1301])
+        by smtp.gmail.com with ESMTPSA id u6sm60291199pgr.79.2019.01.02.16.02.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 02 Jan 2019 16:02:25 -0800 (PST)
+From:   Evan Green <evgreen@chromium.org>
+To:     Andy Gross <andy.gross@linaro.org>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Brian Norris <briannorris@chromium.org>,
+        Ben Chan <benchan@chromium.org>,
+        Evan Green <evgreen@chromium.org>,
+        linux-arm-msm@vger.kernel.org,
+        David Brown <david.brown@linaro.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/2] soc: qcom: rmtfs-mem: Support non-root rmtfs daemons
+Date:   Wed,  2 Jan 2019 16:02:11 -0800
+Message-Id: <20190103000213.230652-1-evgreen@chromium.org>
+X-Mailer: git-send-email 2.18.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This series contains minor fixes needed to better support running an
+rmtfs daemon from an unprivileged process:
+ - Enable uevents on the child character device by adding a struct
+class to the parent. I needed these so that I could change the
+ownership of /dev/qcom_rmtfs_mem1, and drove myself crazy trying to
+understand why my udev rules never fired.
+ - Enable access to phys_addr and size sysfs attributes. The daemon
+needs to read these, and they don't really contain anything sensitive,
+so expose them.
 
---6TrnltStXW4iwmi0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I still need CAP_NET_ADMIN to be able to bind to the right qrtr port,
+but at least with these changes I can run as a different user, and drop
+all other privileges.
 
-Hi!
+Changes in v3:
+- Removed spurious whitespace changes (Brian, Bjorn)
 
-> The next round of speculation-related issues including the scary L1TF
-> hardware bug was a way more "pleasant" experience to work on. While for
-> obvious reasons the mitigation development happened behind closed doors in
-> a smaller group of people, we were at least able to collaborate in a way
-> which is somehow close to what we are used to.
+Changes in v2:
+- Moved class registration/deregistration into init/exit routines (Brian)
 
-Ok, I guess L1TF was a lot of fun, and there was not time for a good
-documentation.
+Evan Green (2):
+  soc: qcom: rmtfs-mem: Add class to enable uevents
+  soc: qcom: rmtfs-mem: Make sysfs attributes world-readable
 
-There's admin guide that is written as an advertisment, and
-unfortunately is slightly "inaccurate" at places (to the point of
-lying).
+ drivers/soc/qcom/rmtfs_mem.c | 32 ++++++++++++++++++++++++--------
+ 1 file changed, 24 insertions(+), 8 deletions(-)
 
-Plus, I believe it should go to x86/ directory, as this is really
-Intel issue, and not anything ARM (or RISC-V) people need to
-know. (But we already have some urls in printk messages that may need
-fixing up..?)
+-- 
+2.18.1
 
-Signed-off-by: Pavel Machek <pavel@ucw.cz>
-
-diff --git a/Documentation/admin-guide/l1tf.rst b/Documentation/admin-guide=
-/l1tf.rst
-index b85dd80..05c5422 100644
---- a/Documentation/admin-guide/l1tf.rst
-+++ b/Documentation/admin-guide/l1tf.rst
-@@ -1,10 +1,11 @@
- L1TF - L1 Terminal Fault
- =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-=20
--L1 Terminal Fault is a hardware vulnerability which allows unprivileged
--speculative access to data which is available in the Level 1 Data Cache
--when the page table entry controlling the virtual address, which is used
--for the access, has the Present bit cleared or other reserved bits set.
-+L1 Terminal Fault is a hardware vulnerability on most recent Intel x86
-+CPUs which allows unprivileged speculative access to data which is
-+available in the Level 1 Data Cache when the page table entry
-+controlling the virtual address, which is used for the access, has the
-+Present bit cleared or other reserved bits set.
-=20
- Affected processors
- -------------------
-@@ -76,12 +77,14 @@ Attack scenarios
-    deterministic and more practical.
-=20
-    The Linux kernel contains a mitigation for this attack vector, PTE
--   inversion, which is permanently enabled and has no performance
--   impact. The kernel ensures that the address bits of PTEs, which are not
--   marked present, never point to cacheable physical memory space.
-+   inversion, which is permanently enabled and has no measurable
-+   performance impact in most configurations. The kernel ensures that
-+   the address bits of PTEs, which are not marked present, never point
-+   to cacheable physical memory space. On x86-32, this physical memory
-+   needs to be limited to 2GiB to make mitigation effective.
-=20
--   A system with an up to date kernel is protected against attacks from
--   malicious user space applications.
-+   Mitigation is present in kernels v4.19 and newer, and in
-+   recent -stable kernels.
-=20
- 2. Malicious guest in a virtual machine
- ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-@@ -405,6 +408,9 @@ time with the option "l1tf=3D". The valid arguments for=
- this option are:
-=20
-   off		Disables hypervisor mitigations and doesn't emit any
- 		warnings.
-+		It also drops the swap size and available RAM limit restrictions
-+		on both hypervisor and bare metal.
-+
-   =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-=20
- The default is 'flush'. For details about L1D flushing see :ref:`l1d_flush=
-`.
-@@ -576,7 +582,8 @@ Default mitigations
-   The kernel default mitigations for vulnerable processors are:
-=20
-   - PTE inversion to protect against malicious user space. This is done
--    unconditionally and cannot be controlled.
-+    unconditionally and cannot be controlled. The swap storage is limited
-+    to ~16TB.
-=20
-   - L1D conditional flushing on VMENTER when EPT is enabled for
-     a guest.
-
-
-
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---6TrnltStXW4iwmi0
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlwtTpgACgkQMOfwapXb+vJ8fQCdHMi3YPJwrHWpdUjNLAOYoB8Z
-1YMAoJzLEAcJKiMpg8+/1DNH5wceGAUQ
-=wFSl
------END PGP SIGNATURE-----
-
---6TrnltStXW4iwmi0--
