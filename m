@@ -3,49 +3,69 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0699EC43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 19:52:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C26DC43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 19:52:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D093E2064C
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 19:52:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E34C2184B
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 19:52:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726041AbfACTwN (ORCPT
+        id S1727641AbfACTwl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 14:52:13 -0500
-Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:35099 "EHLO
-        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725931AbfACTwN (ORCPT
+        Thu, 3 Jan 2019 14:52:41 -0500
+Received: from gateway21.websitewelcome.com ([192.185.45.147]:41173 "EHLO
+        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725871AbfACTwk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 14:52:13 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04391;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0THTuRZ0_1546544973;
-Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0THTuRZ0_1546544973)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 04 Jan 2019 03:49:36 +0800
-Subject: Re: [RFC PATCH 0/3] mm: memcontrol: delayed force empty
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     hannes@cmpxchg.org, akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <1546459533-36247-1-git-send-email-yang.shi@linux.alibaba.com>
- <20190103101215.GH31793@dhcp22.suse.cz>
- <b3ad06ed-f620-7aa0-5697-a1bbe2d7bfe1@linux.alibaba.com>
- <20190103181329.GW31793@dhcp22.suse.cz>
- <6f43e926-3bb5-20d1-2e39-1d30bf7ad375@linux.alibaba.com>
- <20190103185333.GX31793@dhcp22.suse.cz>
- <d610c665-890f-3bf0-1e2a-437150b6ddfb@linux.alibaba.com>
- <20190103192339.GA31793@dhcp22.suse.cz>
-From:   Yang Shi <yang.shi@linux.alibaba.com>
-Message-ID: <88b4d986-0b3c-cbf0-65ad-95f3e8ccd870@linux.alibaba.com>
-Date:   Thu, 3 Jan 2019 11:49:32 -0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.7.0
+        Thu, 3 Jan 2019 14:52:40 -0500
+Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
+        by gateway21.websitewelcome.com (Postfix) with ESMTP id 931B3400CE57B
+        for <linux-kernel@vger.kernel.org>; Thu,  3 Jan 2019 13:52:39 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id f92lgwfys4FKpf92lgP8Mn; Thu, 03 Jan 2019 13:52:39 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.78.104] (port=46544 helo=[192.168.1.76])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gf92l-001Xwc-84; Thu, 03 Jan 2019 13:52:39 -0600
+Subject: Re: [PATCH] drm/amdgpu_vm: fix boolean expressions
+To:     "Kuehling, Felix" <Felix.Kuehling@amd.com>
+Cc:     "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20190103173418.GA18739@embeddedor>
+ <08f2d5c0-0e97-f44e-c07d-6a8cdfd277bb@amd.com>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Message-ID: <84e1befb-3cce-f85a-2b90-71f42c445eda@embeddedor.com>
+Date:   Thu, 3 Jan 2019 13:52:33 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20190103192339.GA31793@dhcp22.suse.cz>
+In-Reply-To: <08f2d5c0-0e97-f44e-c07d-6a8cdfd277bb@amd.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.78.104
+X-Source-L: No
+X-Exim-ID: 1gf92l-001Xwc-84
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.76]) [189.250.78.104]:46544
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 15
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -53,51 +73,24 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 1/3/19 11:23 AM, Michal Hocko wrote:
-> On Thu 03-01-19 11:10:00, Yang Shi wrote:
+On 1/3/19 1:17 PM, Kuehling, Felix wrote:
+> On 2019-01-03 12:34 p.m., Gustavo A. R. Silva wrote:
+>> Fix boolean expressions by using logical AND operator '&&'
+>> instead of bitwise operator '&'.
 >>
->> On 1/3/19 10:53 AM, Michal Hocko wrote:
->>> On Thu 03-01-19 10:40:54, Yang Shi wrote:
->>>> On 1/3/19 10:13 AM, Michal Hocko wrote:
-> [...]
->>>>> Is there any reason for your scripts to be strictly sequential here? In
->>>>> other words why cannot you offload those expensive operations to a
->>>>> detached context in _userspace_?
->>>> I would say it has not to be strictly sequential. The above script is just
->>>> an example to illustrate the pattern. But, sometimes it may hit such pattern
->>>> due to the complicated cluster scheduling and container scheduling in the
->>>> production environment, for example the creation process might be scheduled
->>>> to the same CPU which is doing force_empty. I have to say I don't know too
->>>> much about the internals of the container scheduling.
->>> In that case I do not see a strong reason to implement the offloding
->>> into the kernel. It is an additional code and semantic to maintain.
->> Yes, it does introduce some additional code and semantic, but IMHO, it is
->> quite simple and very straight forward, isn't it? Just utilize the existing
->> css offline worker. And, that a couple of lines of code do improve some
->> throughput issues for some real usecases.
-> I do not really care it is few LOC. It is more important that it is
-> conflating force_empty into offlining logic. There was a good reason to
-> remove reparenting/emptying the memcg during the offline. Considering
-> that you can offload force_empty from userspace trivially then I do not
-> see any reason to implement it in the kernel.
+>> This issue was detected with the help of Coccinelle.
+>>
+>> Fixes: c8c5e569c5b0 ("drm/amdgpu: Consolidate visible vs. real vram check v2.")
+> Actually, this bug goes back further, to 9a4b7d4c769e ("drm/amdgpu: Add
+> vm context module param").
+> 
 
-Er, I may not articulate in the earlier email, force_empty can not be 
-offloaded from userspace *trivially*. IOWs the container scheduler may 
-unexpectedly overcommit something due to the stall of synchronous force 
-empty, which can't be figured out by userspace before it actually 
-happens. The scheduler doesn't know how long force_empty would take. If 
-the force_empty could be offloaded by kernel, it would make scheduler's 
-life much easier. This is not something userspace could do.
+You're right. I'll fix that and send v2 shortly. I'll add your RB.
 
->
->>> I think it is more important to discuss whether we want to introduce
->>> force_empty in cgroup v2.
->> We would prefer have it in v2 as well.
-> Then bring this up in a separate email thread please.
+> Anyway, the patch is Reviewed-by: Felix Kuehling <Felix.Kuehling@amd.com>
+> 
 
-Sure. Will prepare the patches later.
-
-Thanks,
-Yang
-
+Thanks
+--
+Gustavo
 
