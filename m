@@ -2,102 +2,108 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A827C43613
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 19:59:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2A2BC43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 20:00:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D14D82184B
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 19:59:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546545574;
-	bh=bjxzTDqoBMtnYfhdZ0DCHNC7/RXXlUexsivg2rek8K0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=BsVLpJ4CSqrom/k3j7Tb2YDd3oiEuzHYJ6fVp4L6UyVZ8yD4OIHjlpL97/qh/KpC3
-	 xr106eNbzfMNyhI5fvggmlrT/UGLsicITM3W/ogC/tAtXbw/rWJkcPrxAM3xMAnKqM
-	 P2uH0e8Ies8SzK1l6NYcOwfVoTAvJajwsXjgTSwA=
+	by mail.kernel.org (Postfix) with ESMTP id B64202184B
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 20:00:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727465AbfACT7e (ORCPT
+        id S1727651AbfACUA0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 14:59:34 -0500
-Received: from mx2.suse.de ([195.135.220.15]:48026 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726036AbfACT7d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 14:59:33 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 0B599AFB2;
-        Thu,  3 Jan 2019 19:59:32 +0000 (UTC)
-Date:   Thu, 3 Jan 2019 20:59:30 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Roman Penyaev <rpenyaev@suse.de>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Joe Perches <joe@perches.com>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH 1/3] mm/vmalloc: fix size check for
- remap_vmalloc_range_partial()
-Message-ID: <20190103195930.GC31793@dhcp22.suse.cz>
-References: <20190103145954.16942-1-rpenyaev@suse.de>
- <20190103145954.16942-2-rpenyaev@suse.de>
+        Thu, 3 Jan 2019 15:00:26 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:44640 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726036AbfACUA0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Jan 2019 15:00:26 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5BEB676533;
+        Thu,  3 Jan 2019 20:00:25 +0000 (UTC)
+Received: from localhost (ovpn-200-16.brq.redhat.com [10.40.200.16])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 773181001947;
+        Thu,  3 Jan 2019 20:00:21 +0000 (UTC)
+Date:   Thu, 3 Jan 2019 21:00:15 +0100
+From:   Stefano Brivio <sbrivio@redhat.com>
+To:     Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Cc:     syzbot <syzbot+4ad25edc7a33e4ab91e0@syzkaller.appspotmail.com>,
+        David Miller <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Network Development <netdev@vger.kernel.org>,
+        syzkaller-bugs@googlegroups.com,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        Dmitry Vyukov <dvyukov@google.com>
+Subject: Re: kernel panic: stack is corrupted in udp4_lib_lookup2
+Message-ID: <20190103210015.56917c3b@redhat.com>
+In-Reply-To: <CAF=yD-L_ZfYDi5874LU54=iJD52P27EabTmHGqXS6t71y7Orxg@mail.gmail.com>
+References: <000000000000513fb7057e8d7013@google.com>
+        <CA+FuTSfnaL3asZg6oDdwk2J741Cf9fbVxGrB_2jdXgOwvvk+tA@mail.gmail.com>
+        <CAF=yD-L_ZfYDi5874LU54=iJD52P27EabTmHGqXS6t71y7Orxg@mail.gmail.com>
+Organization: Red Hat
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190103145954.16942-2-rpenyaev@suse.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Thu, 03 Jan 2019 20:00:26 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 03-01-19 15:59:52, Roman Penyaev wrote:
-> area->size can include adjacent guard page but get_vm_area_size()
-> returns actual size of the area.
-> 
-> This fixes possible kernel crash when userspace tries to map area
-> on 1 page bigger: size check passes but the following vmalloc_to_page()
-> returns NULL on last guard (non-existing) page.
-> 
-> Signed-off-by: Roman Penyaev <rpenyaev@suse.de>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
-> Cc: Joe Perches <joe@perches.com>
-> Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>
-> Cc: linux-mm@kvack.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: stable@vger.kernel.org
+Hi Willem,
 
-Forgot to add
-Acked-by: Michal Hocko <mhocko@suse.com>
-Although I am not really sure the stable backport is really needed as I
-haven't seen any explicit example of a buggy kernel code to trigger the
-issue.
+On Thu, 3 Jan 2019 13:41:43 -0600
+Willem de Bruijn <willemdebruijn.kernel@gmail.com> wrote:
 
-> ---
->  mm/vmalloc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> On Thu, Jan 3, 2019 at 1:39 PM Willem de Bruijn
+> <willemdebruijn.kernel@gmail.com> wrote:
+> >
+> > On Thu, Jan 3, 2019 at 7:07 AM syzbot
+> > <syzbot+4ad25edc7a33e4ab91e0@syzkaller.appspotmail.com> wrote:  
+> > >
+> > > Hello,
+> > >
+> > > syzbot found the following crash on:
+> > >
+> > > HEAD commit:    195303136f19 Merge tag 'kconfig-v4.21-2' of git://git.kern..
+> > > git tree:       upstream
+> > > console output: https://syzkaller.appspot.com/x/log.txt?x=12245d8f400000
+> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=5e7dc790609552d7
+> > > dashboard link: https://syzkaller.appspot.com/bug?extid=4ad25edc7a33e4ab91e0
+> > > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> > >
+> > > Unfortunately, I don't have any reproducer for this crash yet.
+> > >
+> > > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > > Reported-by: syzbot+4ad25edc7a33e4ab91e0@syzkaller.appspotmail.com
+> > >
+> > > protocol 88fb is buggy, dev hsr_slave_1
+> > > protocol 88fb is buggy, dev hsr_slave_0
+> > > protocol 88fb is buggy, dev hsr_slave_1
+> > > FAT-fs (loop0): invalid media value (0x00)
+> > > FAT-fs (loop0): Can't find a valid FAT filesystem
+> > > Kernel panic - not syncing: stack-protector: Kernel stack is corrupted in:  
+> >
+> > This sounds similar to the stack corruption fixed recently in commit
+> > e7cc082455cb ("udp: Support for error handlers of tunnels ...").
+> >
+> > That fix is for ipv4 gue_err(). ipv6 gue6_err() probably needs the same.  
 > 
-> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> index 871e41c55e23..2cd24186ba84 100644
-> --- a/mm/vmalloc.c
-> +++ b/mm/vmalloc.c
-> @@ -2248,7 +2248,7 @@ int remap_vmalloc_range_partial(struct vm_area_struct *vma, unsigned long uaddr,
->  	if (!(area->flags & VM_USERMAP))
->  		return -EINVAL;
->  
-> -	if (kaddr + size > area->addr + area->size)
-> +	if (kaddr + size > area->addr + get_vm_area_size(area))
->  		return -EINVAL;
->  
->  	do {
-> -- 
-> 2.19.1
+> Correction. The fix is 11789039da ("fou: prevent unbounded recursion
+> in GUE error handler")
+
+Yes, I looked into this, the fix for that issue is on the tree tested by
+syzbot, and I think this is unrelated, also because KASan should say
+something before we hit that.
+
+By the way, do you happen to know if I objects from kernels tested by
+syzbot are stored anywhere? It would be helpful to know for sure what's
+at udp4_lib_lookup2+0x7ea.
 
 -- 
-Michal Hocko
-SUSE Labs
+Stefano
