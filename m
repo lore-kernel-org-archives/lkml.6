@@ -2,274 +2,126 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80C1DC43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 17:36:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F380C43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 17:39:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45F622176F
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 17:36:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 70AA6208E3
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 17:39:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="McPRLS3X"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731747AbfACRga (ORCPT
+        id S1730932AbfACRjC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 12:36:30 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:52874 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729390AbfACRg3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 12:36:29 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 867E36380D;
-        Thu,  3 Jan 2019 17:36:29 +0000 (UTC)
-Received: from madcap2.tricolour.ca (ovpn-112-10.phx2.redhat.com [10.3.112.10])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 991CC1001F4A;
-        Thu,  3 Jan 2019 17:36:16 +0000 (UTC)
-Date:   Thu, 3 Jan 2019 12:36:13 -0500
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        luto@kernel.org, carlos@redhat.com, viro@zeniv.linux.org.uk,
-        dhowells@redhat.com, simo@redhat.com, eparis@parisplace.org,
-        serge@hallyn.com, ebiederm@xmission.com
-Subject: Re: [PATCH ghak90 (was ghak32) V4 00/10] audit: implement container
- identifier
-Message-ID: <20190103173613.jb5kukysslozytwg@madcap2.tricolour.ca>
-References: <cover.1533065887.git.rgb@redhat.com>
- <20190103161525.GA6551@roeck-us.net>
+        Thu, 3 Jan 2019 12:39:02 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:45234 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726529AbfACRjB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Jan 2019 12:39:01 -0500
+Received: by mail-qt1-f196.google.com with SMTP id e5so37658740qtr.12
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 09:39:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=t587UVBNuyCfC65rluFxhGYOCOvc+9jmgCEFxsusKXE=;
+        b=McPRLS3X3VCsSiua7V2KNrMtoTLz2XY/nkWYn05efOWTVGTdJ7tHUrjZv9pWlNCgT4
+         as0frn8IctYNU765sYCblwGTIuy5Dnf0AIzwZePPb9d058WRTIrSdaE+4PoXnuZLQrJk
+         ZtsEn9af29HBPNHGWx818plJZDOlfmaBA3vHNDpeiZacMk35WsNU/XG7ZD9Tc04P9WK/
+         bvivzhwa08dYek0EWTh/uLRhSW3nzXuZAG/gdQ+SwCOZYMIJdl4rO8JOAbJnFSBvdAAt
+         hxCaUVPF7lUP530h47/XC/E0wCerfIkqk/Je862NTldcsMXl3lgxoIsPz77hGjoVrZIW
+         UY8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=t587UVBNuyCfC65rluFxhGYOCOvc+9jmgCEFxsusKXE=;
+        b=Bp00HGr4kqWoqnMfmDJLFFqjhvK/0E/tG7KeswP0ObBJe6kO3vs2LORXfAqEEvxLSg
+         07znFiGuiPLWTxd1Xe75iSaP8yRTIRpTg6r98mQhVqWc5HXdno70GsaYliji7uI5zU8s
+         D5AvcH3w+r9srbioQ4ZWiWrJJvyg0yq+3yL6gQisn5MGS1J8+g3eUXh+1ApNh2vpGMAX
+         JSaN/89N2GK8ksRLEX5fMGJbz20RhTNHVjw5+EHvfNATZ9D1qVoO8pcvcCSTuzkOOljF
+         +V/4EvHaNGrtcRV3o/YJ0Vo/CXgAW+c0hAaY0ZFnxUTHGpyJYgIhnb7Oapxyycjvh65B
+         KHyA==
+X-Gm-Message-State: AA+aEWadYeqE6YTwMzZx1YvXDQpGqEd5iXpqnp57cR5ncPPwqKjlzTJJ
+        S7Mt0ac0TXjN7SMSaXCAy8mWb5W+mFxYZw==
+X-Google-Smtp-Source: ALg8bN4QYUT+Ovq5tSP422xDXuAb7BdTcIDF0hn2xhGxa1SH2NpZTDTNsmUu9bEfmoW1CTqFRXVzMQ==
+X-Received: by 2002:ac8:7518:: with SMTP id u24mr47525948qtq.75.1546537140440;
+        Thu, 03 Jan 2019 09:39:00 -0800 (PST)
+Received: from ovpn-120-55.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id s46sm28228803qtc.63.2019.01.03.09.38.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 03 Jan 2019 09:39:00 -0800 (PST)
+Subject: Re: [PATCH v3] mm/page_owner: fix for deferred struct page init
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     akpm@linux-foundation.org, Pavel.Tatashin@microsoft.com,
+        mingo@kernel.org, hpa@zytor.com, mgorman@techsingularity.net,
+        iamjoonsoo.kim@lge.com, yang.shi@linaro.org, tglx@linutronix.de,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20181220185031.43146-1-cai@lca.pw>
+ <20181220203156.43441-1-cai@lca.pw> <20190103115114.GL31793@dhcp22.suse.cz>
+ <e3ff1455-06cc-063e-24f0-3b525c345b84@lca.pw>
+ <20190103165927.GU31793@dhcp22.suse.cz>
+From:   Qian Cai <cai@lca.pw>
+Message-ID: <5d8f3a98-a954-c8ab-83d9-2f94c614f268@lca.pw>
+Date:   Thu, 3 Jan 2019 12:38:59 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.3.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190103161525.GA6551@roeck-us.net>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Thu, 03 Jan 2019 17:36:29 +0000 (UTC)
+In-Reply-To: <20190103165927.GU31793@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-01-03 08:15, Guenter Roeck wrote:
-> Hi,
+On 1/3/19 11:59 AM, Michal Hocko wrote:
+>> As mentioned above, "If deselected DEFERRED_STRUCT_PAGE_INIT, it is still better
+>> to call page_ext_init() earlier, so page owner could catch more early page
+>> allocation call sites."
 > 
-> On Tue, Jul 31, 2018 at 04:07:35PM -0400, Richard Guy Briggs wrote:
-> > Implement kernel audit container identifier.
+> Do you have any numbers to show how many allocation are we losing that
+> way? In other words, do we care enough to create an ugly code?
+
+Well, I don't have any numbers, but I read that Joonsoo did not really like to
+defer page_ext_init() unconditionally.
+
+"because deferring page_ext_init() would make page owner which uses page_ext
+miss some early page allocation callsites. Although it already miss some early
+page allocation callsites, we don't need to miss more."
+
+https://lore.kernel.org/lkml/20160524053714.GB32186@js1304-P5Q-DELUXE/
+
+>>>> diff --git a/mm/page_ext.c b/mm/page_ext.c
+>>>> index ae44f7adbe07..d76fd51e312a 100644
+>>>> --- a/mm/page_ext.c
+>>>> +++ b/mm/page_ext.c
+>>>> @@ -399,9 +399,8 @@ void __init page_ext_init(void)
+>>>>  			 * -------------pfn-------------->
+>>>>  			 * N0 | N1 | N2 | N0 | N1 | N2|....
+>>>>  			 *
+>>>> -			 * Take into account DEFERRED_STRUCT_PAGE_INIT.
+>>>>  			 */
+>>>> -			if (early_pfn_to_nid(pfn) != nid)
+>>>> +			if (pfn_to_nid(pfn) != nid)
+>>>>  				continue;
+>>>>  			if (init_section_page_ext(pfn, nid))
+>>>>  				goto oom;
+>>>
+>>> Also this doesn't seem to be related, right?
+>>
+>> No, it is related. Because of this patch, page_ext_init() is called after all
+>> the memory has already been initialized,
+>> so no longer necessary to call early_pfn_to_nid().
 > 
-> I don't see a follow-up submission of this patch series. Has it been abandoned,
-> or do I use the wrong search terms ?
+> Yes, but it looks like a follow up cleanup/optimization to me.
 
-Guenter, thanks for your interest in this patchset.  I haven't
-abandoned it.  I've pushed some updates to my own (ill-publicized)
-public git repo.  This effort has been going on more than 5 years with 8
-previous revisions trying to document task namespaces and deciding that
-was insufficient.
-
-For this patchset I waited 11.5 weeks (80 days, Jules Verne anyone?)
-before the primary intended maintainer did the first review, then I
-responded within 2 weeks with further questions and a followup patch
-proposal and then waited another 8 weeks for any response before adding
-another query for that followup patch proposal review at which point I
-got a rude answer saying I had disappointed and exhausted the
-maintainer's goodwill with some hints at how to proceed just before new
-year's.
-
-I'd be delighted with other upstream review to get other angles and to
-take some of the load and responsibility off the primary maintainer.
-
-I expect to submit a v5 within a week without having had those questions
-directly answered, but with some ideas of what to check and verify
-before I resubmit.  Most of the changes have been sitting in that branch
-for two months, already rebased one kernel version and will need
-updating again.
-
-> Thanks,
-> Guenter
-> 
-> > This patchset is a fourth based on the proposal document (V3)
-> > posted:
-> > 	https://www.redhat.com/archives/linux-audit/2018-January/msg00014.html
-> > 
-> > The first patch is the last patch from ghak81 that is included here as a
-> > convenience.
-> > 
-> > The second patch implements the proc fs write to set the audit container
-> > identifier of a process, emitting an AUDIT_CONTAINER_OP record to announce the
-> > registration of that audit container identifier on that process.  This patch
-> > requires userspace support for record acceptance and proper type
-> > display.
-> > 
-> > The third implements the auxiliary record AUDIT_CONTAINER if an
-> > audit container identifier is identifiable with an event.  This patch
-> > requires userspace support for proper type display.
-> > 
-> > The 4th adds signal and ptrace support.
-> > 
-> > The 5th creates a local audit context to be able to bind a standalone
-> > record with a locally created auxiliary record.
-> > 
-> > The 6th patch adds audit container identifier records to the tty
-> > standalone record.
-> > 
-> > The 7th adds audit container identifier filtering to the exit,
-> > exclude and user lists.  This patch adds the AUDIT_CONTID field and
-> > requires auditctl userspace support for the --contid option.
-> > 
-> > The 8th adds network namespace audit container identifier labelling
-> > based on member tasks' audit container identifier labels.
-> > 
-> > The 9th adds audit container identifier support to standalone netfilter
-> > records that don't have a task context and lists each container to which
-> > that net namespace belongs.
-> > 
-> > The 10th implements reading the audit container identifier from the proc
-> > filesystem for debugging.  This patch isn't planned for upstream
-> > inclusion.
-> > 
-> > 
-> > Example: Set an audit container identifier of 123456 to the "sleep" task:
-> > 
-> >   sleep 2&  
-> >   child=$!
-> >   echo 123456 > /proc/$child/audit_containerid; echo $?
-> >   ausearch -ts recent -m container
-> >   echo child:$child contid:$( cat /proc/$child/audit_containerid)
-> > 
-> > This should produce a record such as:
-> > 
-> >   type=CONTAINER_OP msg=audit(2018-06-06 12:39:29.636:26949) : op=set opid=2209 old-contid=18446744073709551615 contid=123456 pid=628 auid=root uid=root tty=ttyS0 ses=1 subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 comm=bash exe=/usr/bin/bash res=yes 
-> > 
-> > 
-> > Example: Set a filter on an audit container identifier 123459 on /tmp/tmpcontainerid:
-> > 
-> >   contid=123459
-> >   key=tmpcontainerid
-> >   auditctl -a exit,always -F dir=/tmp -F perm=wa -F contid=$contid -F key=$key
-> >   perl -e "sleep 1; open(my \$tmpfile, '>', \"/tmp/$key\"); close(\$tmpfile);" &
-> >   child=$!
-> >   echo $contid > /proc/$child/audit_containerid
-> >   sleep 2
-> >   ausearch -i -ts recent -k $key
-> >   auditctl -d exit,always -F dir=/tmp -F perm=wa -F contid=$contid -F key=$key
-> >   rm -f /tmp/$key
-> > 
-> > This should produce an event such as:
-> > 
-> >   type=CONTAINER msg=audit(2018-06-06 12:46:31.707:26953) : op=task contid=123459 
-> >   type=PROCTITLE msg=audit(2018-06-06 12:46:31.707:26953) : proctitle=perl -e sleep 1; open(my $tmpfile, '>', "/tmp/tmpcontainerid"); close($tmpfile); 
-> >   type=PATH msg=audit(2018-06-06 12:46:31.707:26953) : item=1 name=/tmp/tmpcontainerid inode=25656 dev=00:26 mode=file,644 ouid=root ogid=root rdev=00:00 obj=unconfined_u:object_r:user_tmp_t:s0 nametype=CREATE cap_fp=none cap_fi=none cap_fe=0 cap_fver=0 
-> >   type=PATH msg=audit(2018-06-06 12:46:31.707:26953) : item=0 name=/tmp/ inode=8985 dev=00:26 mode=dir,sticky,777 ouid=root ogid=root rdev=00:00 obj=system_u:object_r:tmp_t:s0 nametype=PARENT cap_fp=none cap_fi=none cap_fe=0 cap_fver=0 
-> >   type=CWD msg=audit(2018-06-06 12:46:31.707:26953) : cwd=/root 
-> >   type=SYSCALL msg=audit(2018-06-06 12:46:31.707:26953) : arch=x86_64 syscall=openat success=yes exit=3 a0=0xffffffffffffff9c a1=0x5621f2b81900 a2=O_WRONLY|O_CREAT|O_TRUNC a3=0x1b6 items=2 ppid=628 pid=2232 auid=root uid=root gid=root euid=root suid=root fsuid=root egid=root sgid=root fsgid=root tty=ttyS0 ses=1 comm=perl exe=/usr/bin/perl subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key=tmpcontainerid 
-> > 
-> > 
-> > Includes: https://github.com/linux-audit/audit-kernel/issues/81
-> > See: https://github.com/linux-audit/audit-kernel/issues/90
-> > See: https://github.com/linux-audit/audit-userspace/issues/40
-> > See: https://github.com/linux-audit/audit-testsuite/issues/64
-> > See: https://github.com/linux-audit/audit-kernel/wiki/RFE-Audit-Container-ID
-> > 
-> > Changelog:
-> > 
-> > v4
-> > - preface set with ghak81:"collect audit task parameters"
-> > - add shallyn and sgrubb acks
-> > - rename feature bitmap macro
-> > - rename cid_valid() to audit_contid_valid()
-> > - rename AUDIT_CONTAINER_ID to AUDIT_CONTAINER_OP
-> > - delete audit_get_contid_list() from headers
-> > - move work into inner if, delete "found"
-> > - change netns contid list function names
-> > - move exports for audit_log_contid audit_alloc_local audit_free_context to non-syscall patch
-> > - list contids CSV
-> > - pass in gfp flags to audit_alloc_local() (fix audit_alloc_context callers)
-> > - use "local" in lieu of abusing in_syscall for auditsc_get_stamp()
-> > - read_lock(&tasklist_lock) around children and thread check
-> > - task_lock(tsk) should be taken before first check of tsk->audit
-> > - add spin lock to contid list in aunet
-> > - restrict /proc read to CAP_AUDIT_CONTROL
-> > - remove set again prohibition and inherited flag
-> > - delete contidion spelling fix from patchset, send to netdev/linux-wireless
-> > 
-> > v3
-> > - switched from containerid in task_struct to audit_task_info (depends on ghak81)
-> > - drop INVALID_CID in favour of only AUDIT_CID_UNSET
-> > - check for !audit_task_info, throw -ENOPROTOOPT on set
-> > - changed -EPERM to -EEXIST for parent check
-> > - return AUDIT_CID_UNSET if !audit_enabled
-> > - squash child/thread check patch into AUDIT_CONTAINER_ID patch
-> > - changed -EPERM to -EBUSY for child check
-> > - separate child and thread checks, use -EALREADY for latter
-> > - move addition of op= from ptrace/signal patch to AUDIT_CONTAINER patch
-> > - fix && to || bashism in ptrace/signal patch
-> > - uninline and export function for audit_free_context()
-> > - drop CONFIG_CHANGE, FEATURE_CHANGE, ANOM_ABEND, ANOM_SECCOMP patches
-> > - move audit_enabled check (xt_AUDIT)
-> > - switched from containerid list in struct net to net_generic's struct audit_net
-> > - move containerid list iteration into audit (xt_AUDIT)
-> > - create function to move namespace switch into audit
-> > - switched /proc/PID/ entry from containerid to audit_containerid
-> > - call kzalloc with GFP_ATOMIC on in_atomic() in audit_alloc_context()
-> > - call kzalloc with GFP_ATOMIC on in_atomic() in audit_log_container_info()
-> > - use xt_net(par) instead of sock_net(skb->sk) to get net
-> > - switched record and field names: initial CONTAINER_ID, aux CONTAINER, field CONTID
-> > - allow to set own contid
-> > - open code audit_set_containerid
-> > - add contid inherited flag
-> > - ccontainerid and pcontainerid eliminated due to inherited flag
-> > - change name of container list funcitons
-> > - rename containerid to contid
-> > - convert initial container record to syscall aux
-> > - fix spelling mistake of contidion in net/rfkill/core.c to avoid contid name collision
-> > 
-> > v2
-> > - add check for children and threads
-> > - add network namespace container identifier list
-> > - add NETFILTER_PKT audit container identifier logging
-> > - patch description and documentation clean-up and example
-> > - reap unused ppid
-> > 
-> > Richard Guy Briggs (10):
-> >   audit: collect audit task parameters
-> >   audit: add container id
-> >   audit: log container info of syscalls
-> >   audit: add containerid support for ptrace and signals
-> >   audit: add support for non-syscall auxiliary records
-> >   audit: add containerid support for tty_audit
-> >   audit: add containerid filtering
-> >   audit: add support for containerid to network namespaces
-> >   audit: NETFILTER_PKT: record each container ID associated with a netNS
-> >   debug audit: read container ID of a process
-> > 
-> >  drivers/tty/tty_audit.c    |   5 +-
-> >  fs/proc/base.c             |  56 ++++++++++++++
-> >  include/linux/audit.h      |  95 ++++++++++++++++++++---
-> >  include/linux/sched.h      |   5 +-
-> >  include/uapi/linux/audit.h |   8 +-
-> >  init/init_task.c           |   3 +-
-> >  init/main.c                |   2 +
-> >  kernel/audit.c             | 137 +++++++++++++++++++++++++++++++++
-> >  kernel/audit.h             |   4 +
-> >  kernel/auditfilter.c       |  47 ++++++++++++
-> >  kernel/auditsc.c           | 183 ++++++++++++++++++++++++++++++++++++++++-----
-> >  kernel/fork.c              |   4 +-
-> >  kernel/nsproxy.c           |   4 +
-> >  net/netfilter/xt_AUDIT.c   |  12 ++-
-> >  14 files changed, 526 insertions(+), 39 deletions(-)
-> > 
-> > -- 
-> > 1.8.3.1
-> > 
-
-- RGB
-
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+That early_pfn_to_nid() was introduced in fe53ca54270 (mm: use early_pfn_to_nid
+in page_ext_init) which also messed up the order of page_ext_init() in
+start_kernel(), so this patch basically revert that commit.
