@@ -2,116 +2,264 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	FSL_HELO_FAKE,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF8D9C43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 09:48:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 477A8C43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 09:50:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A516206BB
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 09:48:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DMu9Eeip"
+	by mail.kernel.org (Postfix) with ESMTP id 10D18206BB
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 09:50:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730573AbfACJsF (ORCPT
+        id S1730577AbfACJuH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 04:48:05 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:35766 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726592AbfACJsF (ORCPT
+        Thu, 3 Jan 2019 04:50:07 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:51852 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727041AbfACJuG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 04:48:05 -0500
-Received: by mail-wm1-f67.google.com with SMTP id t200so17815140wmt.0;
-        Thu, 03 Jan 2019 01:48:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=LQwgSl+CgOa/5Y27xidea06XhW+iIQrwCz51od71/yw=;
-        b=DMu9Eeip5oFqGAHsDUEGb/ebt/S+s1GFNY8pdooyUzvm1XDidrkSBxLTyFGfZkmgtK
-         H8brnaUsD9yZ2UNLfmEZp81WaOAk4UgLAPVJcewRejNnMxs97rYu7lTxRZIWwdGLV2xY
-         wzTlbE9CU0Xm2zrtBWMnnvmFA/2/k9S7D/ekIyv3VNCtUAn8AxTv3vJoUj0rgueACoro
-         Ks5Ww2ZJHhlnHgWppiIScWuJeCqX5M5MfmePEApKG8R3FubPx1zRdpG7yqBsAjIa3Yah
-         puC1gAGIw/cpqw5MyvJvICUnA7QCIHE+mB0M5mfrYElpDdxqEx5w0V+VyS5p+KqOSwBP
-         vOcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=LQwgSl+CgOa/5Y27xidea06XhW+iIQrwCz51od71/yw=;
-        b=ZN8Dwnn/eUna4V01cOmNHQlEbUfLWmuNKcBHWNmdvoyEzaHbieBuudVxITBv7SkCRo
-         aVNik0Zgl5l1n4CpGv9GLnrZhWz7sDF5fBRBdyMwNknrBGS56bRzRdd5Wstc8tz3WAE9
-         9Umf4I+GQ5f/zYax4rz+Yr05ZyWUR9cdSyAlEtH33vcmOZgBZcxceJ9+YBzKbKcQbYBB
-         07E6r9MstsUpa/dn2VS4pVllxwODU2ZphO6GmPBKXTs5Dwj8rvDwkhlJN7UIpDE1TB1Z
-         5fIX3PeVONgwTl8k7KO3IR68tFp6mAPs1FZGaHYV2kvI0k8twJ2LUVpN6iW0MFZbffFg
-         16xg==
-X-Gm-Message-State: AA+aEWadgfPV4EBbz+oXw5Oz1mytoulfpB5syizxfO8zRuI4PkafufT1
-        TCXKcKwIHE06XG8XwHqRZSM=
-X-Google-Smtp-Source: AFSGD/XBoSWqzmPTDR4CynSumNyWtd67qD5+WeoBtHD5p0xlFNjx1fc+v7P1QmZO5BivpzWEy5VEUw==
-X-Received: by 2002:a1c:2902:: with SMTP id p2mr37198500wmp.19.1546508882199;
-        Thu, 03 Jan 2019 01:48:02 -0800 (PST)
-Received: from google.com ([2401:fa00:fc:1:6924:4b22:cf4b:bbca])
-        by smtp.gmail.com with ESMTPSA id o81sm87935462wmd.10.2019.01.03.01.47.59
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 03 Jan 2019 01:48:01 -0800 (PST)
-Date:   Thu, 3 Jan 2019 17:47:55 +0800
-From:   Randall Huang <ihhuang@abmail.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     huangrandall@google.com, jejb@linux.vnet.ibm.com,
-        martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] scsi: associate bio write hint with WRITE CDB
-Message-ID: <20190103094755.GA96532@google.com>
-References: <20181226041504.66283-1-huangrandall@google.com>
- <20190103075133.GA5141@infradead.org>
+        Thu, 3 Jan 2019 04:50:06 -0500
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x039nQtt146141
+        for <linux-kernel@vger.kernel.org>; Thu, 3 Jan 2019 04:50:05 -0500
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2psd1w6tev-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 04:50:04 -0500
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
+        Thu, 3 Jan 2019 09:50:03 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 3 Jan 2019 09:50:00 -0000
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x039nwOe8913268
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 3 Jan 2019 09:49:59 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D12E842041;
+        Thu,  3 Jan 2019 09:49:58 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6C3E442047;
+        Thu,  3 Jan 2019 09:49:58 +0000 (GMT)
+Received: from [9.152.224.140] (unknown [9.152.224.140])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu,  3 Jan 2019 09:49:58 +0000 (GMT)
+Reply-To: pmorel@linux.ibm.com
+Subject: Re: [PATCH v5 08/15] KVM: s390: add the GIB and its related life-cyle
+ functions
+To:     Michael Mueller <mimu@linux.ibm.com>,
+        KVM Mailing List <kvm@vger.kernel.org>
+Cc:     Linux-S390 Mailing List <linux-s390@vger.kernel.org>,
+        linux-kernel@vger.kernel.org,
+        kvm390-list@tuxmaker.boeblingen.de.ibm.com,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Halil Pasic <pasic@linux.ibm.com>
+References: <20181219191756.57973-1-mimu@linux.ibm.com>
+ <20181219191756.57973-9-mimu@linux.ibm.com>
+From:   Pierre Morel <pmorel@linux.ibm.com>
+Date:   Thu, 3 Jan 2019 10:49:58 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+In-Reply-To: <20181219191756.57973-9-mimu@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190103075133.GA5141@infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-TM-AS-GCONF: 00
+x-cbid: 19010309-0016-0000-0000-0000023EE7A4
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19010309-0017-0000-0000-00003297EFBB
+Message-Id: <c244a27a-2d54-0b22-7df4-71f584aed6c0@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-03_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901030087
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 02, 2019 at 11:51:33PM -0800, Christoph Hellwig wrote:
-> On Wed, Dec 26, 2018 at 12:15:04PM +0800, Randall Huang wrote:
-> > In SPC-3, WRITE(10)/(16) support grouping function.
-> > Let's associate bio write hint with group number for
-> > enabling StreamID or Turbo Write feature.
-> > 
-> > Signed-off-by: Randall Huang <huangrandall@google.com>
-> > ---
-> >  drivers/scsi/sd.c | 14 ++++++++++++--
-> >  1 file changed, 12 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
-> > index 4b49cb67617e..28bfa9ed2b54 100644
-> > --- a/drivers/scsi/sd.c
-> > +++ b/drivers/scsi/sd.c
-> > @@ -1201,7 +1201,12 @@ static int sd_setup_read_write_cmnd(struct scsi_cmnd *SCpnt)
-> >  		SCpnt->cmnd[11] = (unsigned char) (this_count >> 16) & 0xff;
-> >  		SCpnt->cmnd[12] = (unsigned char) (this_count >> 8) & 0xff;
-> >  		SCpnt->cmnd[13] = (unsigned char) this_count & 0xff;
-> > -		SCpnt->cmnd[14] = SCpnt->cmnd[15] = 0;
-> > +		if (rq_data_dir(rq) == WRITE) {
-> > +			SCpnt->cmnd[14] = rq->bio->bi_write_hint & 0x3f;
-> > +		} else {
-> > +			SCpnt->cmnd[14] = 0;
-> > +		}
-> 
-> No need for braces here.
-Already send a new version
-> 
-> But what I'm more worried about is devices not recognizing the feature
-> throwing up on the field.  Can you check what SBC version first
-> references these or come up with some other decently smart conditional?
-My reference is SCSI Block Commands – 3 (SBC-3) Revision 25.
-Section 5.32 WRITE (10) and 5.34 WRITE (16)
+On 19/12/2018 20:17, Michael Mueller wrote:
+> The Guest Information Block (GIB) links the GISA of all guests
+> that have adapter interrupts pending. These interrupts cannot be
+> delivered because no vcpu of these guests is currently running in
+> SIE context. Instead, a GIB alert is issued on the host to schedule
+> these guests to run.
 
-> Maybe Martin has a good idea, too.
+IMHO "Instead" is not exact.
+The GIB alert is always issued on adapter interrupt if IAM is set even 
+if the guest is running in SIE context.
+
+I would prefer to rephrase to something like:
+"If enabled, a GIB alert is issued on the host..." ?
+
+
+Reviewed-by: Pierre Morel<pmorel@linux.ibm.com>
+
+
+> 
+> This mechanism allows to process adapter interrupts for currently
+> not running guests.
+> 
+> The GIB is created during host initialization and associated with
+> the Adapter Interruption Facility in case an Adapter Interruption
+> Virtualization Facility is available.
+> 
+> The GIB initialization and thus the activation of the related code
+> will be done in an upcoming patch of this series.
+> 
+> Signed-off-by: Michael Mueller <mimu@linux.ibm.com>
+> Reviewed-by: Janosch Frank <frankja@linux.ibm.com>
+> Reviewed-by: Christian Borntraeger <borntraeger@de.ibm.com>
+> ---
+>   arch/s390/include/asm/kvm_host.h | 10 +++++++++
+>   arch/s390/kvm/interrupt.c        | 44 ++++++++++++++++++++++++++++++++++++++++
+>   arch/s390/kvm/kvm-s390.c         |  1 +
+>   arch/s390/kvm/kvm-s390.h         |  2 ++
+>   4 files changed, 57 insertions(+)
+> 
+> diff --git a/arch/s390/include/asm/kvm_host.h b/arch/s390/include/asm/kvm_host.h
+> index d5d24889c3bc..537e5e59f27e 100644
+> --- a/arch/s390/include/asm/kvm_host.h
+> +++ b/arch/s390/include/asm/kvm_host.h
+> @@ -785,6 +785,15 @@ struct kvm_s390_gisa {
+>   	};
+>   };
+>   
+> +struct kvm_s390_gib {
+> +	u32 alert_list_origin;
+> +	u32 reserved01;
+> +	u8:5;
+> +	u8  nisc:3;
+> +	u8  reserved03[3];
+> +	u32 reserved04[5];
+> +};
+> +
+>   /*
+>    * sie_page2 has to be allocated as DMA because fac_list, crycb and
+>    * gisa need 31bit addresses in the sie control block.
+> @@ -838,6 +847,7 @@ struct kvm_arch{
+>   	/* subset of available cpu features enabled by user space */
+>   	DECLARE_BITMAP(cpu_feat, KVM_S390_VM_CPU_FEAT_NR_BITS);
+>   	struct kvm_s390_gisa *gisa;
+> +	int gib_in_use;
+>   };
+>   
+>   #define KVM_HVA_ERR_BAD		(-1UL)
+> diff --git a/arch/s390/kvm/interrupt.c b/arch/s390/kvm/interrupt.c
+> index 9b1fa39b6f90..5a54360cecfe 100644
+> --- a/arch/s390/kvm/interrupt.c
+> +++ b/arch/s390/kvm/interrupt.c
+> @@ -7,6 +7,9 @@
+>    *    Author(s): Carsten Otte <cotte@de.ibm.com>
+>    */
+>   
+> +#define KMSG_COMPONENT "kvm-s390"
+> +#define pr_fmt(fmt) KMSG_COMPONENT ": " fmt
+> +
+>   #include <linux/interrupt.h>
+>   #include <linux/kvm_host.h>
+>   #include <linux/hrtimer.h>
+> @@ -38,6 +41,8 @@
+>   #define IRQ_MASK_ALL      (IRQ_FLAG_LOCAL | IRQ_FLAG_FLOATING | IRQ_FLAG_GISA)
+>   #define IRQ_MASK_NO_GISA  (IRQ_MASK_ALL & ~IRQ_FLAG_GISA)
+>   
+> +static struct kvm_s390_gib *gib;
+> +
+>   /* handle external calls via sigp interpretation facility */
+>   static int sca_ext_call_pending(struct kvm_vcpu *vcpu, int *src_id)
+>   {
+> @@ -2913,6 +2918,7 @@ void kvm_s390_gisa_init(struct kvm *kvm)
+>   		return;
+>   	kvm->arch.gisa = &kvm->arch.sie_page2->gisa;
+>   	nullify_gisa(kvm->arch.gisa);
+> +	kvm->arch.gib_in_use = !!gib;
+>   	VM_EVENT(kvm, 3, "gisa 0x%pK initialized", kvm->arch.gisa);
+>   }
+>   
+> @@ -2922,3 +2928,41 @@ void kvm_s390_gisa_destroy(struct kvm *kvm)
+>   		return;
+>   	kvm->arch.gisa = NULL;
+>   }
+> +
+> +void kvm_s390_gib_destroy(void)
+> +{
+> +	if (!gib)
+> +		return;
+> +	chsc_sgib(0);
+> +	free_page((unsigned long)gib);
+> +	gib = NULL;
+> +}
+> +
+> +int kvm_s390_gib_init(u8 nisc)
+> +{
+> +	int rc = 0;
+> +
+> +	if (!css_general_characteristics.aiv) {
+> +		KVM_EVENT(3, "%s", "gib not initialized, no AIV facility");
+> +		goto out;
+> +	}
+> +
+> +	gib = (struct kvm_s390_gib *)get_zeroed_page(GFP_KERNEL | GFP_DMA);
+> +	if (!gib) {
+> +		rc = -ENOMEM;
+> +		goto out;
+> +	}
+> +
+> +	gib->nisc = nisc;
+> +	if (chsc_sgib((u32)(u64)gib)) {
+> +		pr_err("Associating the GIB with the AIV facility failed\n");
+> +		free_page((unsigned long)gib);
+> +		gib = NULL;
+> +		rc = -EIO;
+> +		goto out;
+> +	}
+> +
+> +	KVM_EVENT(3, "gib 0x%pK (nisc=%d) initialized", gib, gib->nisc);
+> +out:
+> +	return rc;
+> +}
+> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
+> index d8d8e0788157..7bc24e16a31d 100644
+> --- a/arch/s390/kvm/kvm-s390.c
+> +++ b/arch/s390/kvm/kvm-s390.c
+> @@ -445,6 +445,7 @@ int kvm_arch_init(void *opaque)
+>   
+>   void kvm_arch_exit(void)
+>   {
+> +	kvm_s390_gib_destroy();
+>   	debug_unregister(kvm_s390_dbf);
+>   }
+>   
+> diff --git a/arch/s390/kvm/kvm-s390.h b/arch/s390/kvm/kvm-s390.h
+> index 1f6e36cdce0d..1a79105b0e9f 100644
+> --- a/arch/s390/kvm/kvm-s390.h
+> +++ b/arch/s390/kvm/kvm-s390.h
+> @@ -381,6 +381,8 @@ int kvm_s390_get_irq_state(struct kvm_vcpu *vcpu,
+>   void kvm_s390_gisa_init(struct kvm *kvm);
+>   void kvm_s390_gisa_clear(struct kvm *kvm);
+>   void kvm_s390_gisa_destroy(struct kvm *kvm);
+> +int kvm_s390_gib_init(u8 nisc);
+> +void kvm_s390_gib_destroy(void);
+>   
+>   /* implemented in guestdbg.c */
+>   void kvm_s390_backup_guest_per_regs(struct kvm_vcpu *vcpu);
+> 
+
+
+-- 
+Pierre Morel
+Linux/KVM/QEMU in Böblingen - Germany
+
