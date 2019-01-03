@@ -2,88 +2,71 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B84AFC43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 09:39:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C22B9C43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 09:40:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83A0B21479
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 09:39:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546508342;
-	bh=tIuOwBoDNPFBYczIQ+f0QpEYcT8fDPEDg7wsSAJAs6I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=AFT2wIBwTkE89Y4D/A1dlvXNP4ChYCYU/J70ayti9EOJ3JrAoLMEJ1YRo8yT31tgb
-	 R3nHSsOsLkWOmag8xaJ14LWUAztz9M9booniwwD1DqQu8+LOZFT3VlTs51vtGrwxbs
-	 weO20auWfxYlLXzYglRr4eFDQYv12IfqihowSnkM=
+	by mail.kernel.org (Postfix) with ESMTP id 96BCA21019
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 09:40:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730526AbfACJjB (ORCPT
+        id S1730543AbfACJkX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 04:39:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45794 "EHLO mail.kernel.org"
+        Thu, 3 Jan 2019 04:40:23 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:54610 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726152AbfACJjB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 04:39:01 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726152AbfACJkX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Jan 2019 04:40:23 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0D8B221019;
-        Thu,  3 Jan 2019 09:39:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546508340;
-        bh=tIuOwBoDNPFBYczIQ+f0QpEYcT8fDPEDg7wsSAJAs6I=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=r75D68V+JMNpKK7qdQJyRlNEY4d3Sn/iZ9LMQQzQtTOPlGM2penXmKnJMxgiK+TtX
-         XFBM9g7yaTwT7SAzXEt6KS6TgKliSKONEM1uzwED1ZTnPdeBq4mYp3K4uWEQLg04B5
-         HgSJVUysJDX3P8JCd/CAorgPyjYvPk4Peq2nz2Z0=
-Date:   Thu, 3 Jan 2019 10:38:58 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Jeremy Linton <jeremy.linton@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com,
-        will.deacon@arm.com, marc.zyngier@arm.com, suzuki.poulose@arm.com,
-        dave.martin@arm.com, shankerd@codeaurora.org, mark.rutland@arm.com,
-        linux-kernel@vger.kernel.org, ykaukab@suse.de,
-        julien.thierry@arm.com, mlangsdo@redhat.com, steven.price@arm.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Borislav Petkov <bp@alien8.de>,
-        David Woodhouse <dwmw@amazon.co.uk>
-Subject: Re: [PATCH v2 1/7] sysfs/cpu: Add "Unknown" vulnerability state
-Message-ID: <20190103093858.GA10794@kroah.com>
-References: <20190103004921.1928921-1-jeremy.linton@arm.com>
- <20190103004921.1928921-2-jeremy.linton@arm.com>
+        by mx1.redhat.com (Postfix) with ESMTPS id B07A1AC614;
+        Thu,  3 Jan 2019 09:40:22 +0000 (UTC)
+Received: from gondolin (dhcp-192-187.str.redhat.com [10.33.192.187])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id DF12360C47;
+        Thu,  3 Jan 2019 09:40:20 +0000 (UTC)
+Date:   Thu, 3 Jan 2019 10:40:18 +0100
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     Wei Wang <wei.w.wang@intel.com>
+Cc:     virtio-dev@lists.oasis-open.org, linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
+        mst@redhat.com, borntraeger@de.ibm.com, pbonzini@redhat.com,
+        dgilbert@redhat.com, pasic@linux.ibm.com
+Subject: Re: [PATCH v1 1/2] virtio-balloon: tweak config_changed
+ implementation
+Message-ID: <20190103104018.33eeaa29.cohuck@redhat.com>
+In-Reply-To: <1546493462-32244-2-git-send-email-wei.w.wang@intel.com>
+References: <1546493462-32244-1-git-send-email-wei.w.wang@intel.com>
+        <1546493462-32244-2-git-send-email-wei.w.wang@intel.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190103004921.1928921-2-jeremy.linton@arm.com>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Thu, 03 Jan 2019 09:40:23 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 02, 2019 at 06:49:15PM -0600, Jeremy Linton wrote:
-> There is a lot of variation in the Arm ecosystem. Because of this,
-> there exist possible cases where the kernel cannot authoritatively
-> determine if a machine is vulnerable.
+On Thu,  3 Jan 2019 13:31:01 +0800
+Wei Wang <wei.w.wang@intel.com> wrote:
 
-Really?  Why not?  What keeps you from "knowing" this?  Can't the
-developer of the chip tell you?
+> virtio-ccw has deadlock issues with reading config registers inside the
 
-> Rather than guess the vulnerability status in cases where
-> the mitigation is disabled or the firmware isn't responding
-> correctly, we need to display an "Unknown" state.
+s/config registers/the config space/ ?
 
-Shouldn't "Unknown" really be the same thing as "Vulnerable"?  A user
-should treat it the same way, "Unknown" makes it feel like "maybe I can
-just ignore this and hope I really am safe", which is not a good idea at
-all.
+> interrupt context, so we tweak the virtballoon_changed implementation
+> by moving the config read operations into the related workqueue contexts.
 
-thanks,
+Also credit Christian with a Reported-by:?
 
-greg k-h
+> 
+> Signed-off-by: Wei Wang <wei.w.wang@intel.com>
+> ---
+>  drivers/virtio/virtio_balloon.c | 54 ++++++++++++++++++++---------------------
+>  1 file changed, 26 insertions(+), 28 deletions(-)
+
+Reviewed-by: Cornelia Huck <cohuck@redhat.com>
