@@ -2,129 +2,138 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_LOCAL_NOVOWEL,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3063CC43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 22:41:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A540FC43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 22:44:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9DB6208E3
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 22:41:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6830121479
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 22:44:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QtQ6EHfx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728587AbfACWl2 convert rfc822-to-8bit (ORCPT
+        id S1728639AbfACWov (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 17:41:28 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34226 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728480AbfACWl1 (ORCPT
+        Thu, 3 Jan 2019 17:44:51 -0500
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:35321 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728419AbfACWou (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 17:41:27 -0500
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x03McbpG092066
-        for <linux-kernel@vger.kernel.org>; Thu, 3 Jan 2019 17:41:26 -0500
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2pspsu37k9-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 17:41:26 -0500
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
-        Thu, 3 Jan 2019 22:41:23 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 3 Jan 2019 22:41:20 -0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x03MfJRJ31916200
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 3 Jan 2019 22:41:20 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DEEC2A4082;
-        Thu,  3 Jan 2019 22:41:19 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8B09CA4095;
-        Thu,  3 Jan 2019 22:41:19 +0000 (GMT)
-Received: from osiris (unknown [9.145.28.170])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Thu,  3 Jan 2019 22:41:19 +0000 (GMT)
-Date:   Thu, 3 Jan 2019 23:41:18 +0100
-From:   Heiko Carstens <heiko.carstens@de.ibm.com>
-To:     Martin Lau <kafai@fb.com>
-Cc:     Eugene Syromyatnikov <evgsyr@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        Yonghong Song <yhs@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        "Dmitry V. Levin" <ldv@altlinux.org>
-Subject: Re: "bpf: Improve the info.func_info and info.func_info_rec_size
- behavior" breaks strace self tests
-References: <20190103114613.GB3957@osiris>
- <20190103191158.yu4cjkb3wd3zvpqk@kafai-mbp>
+        Thu, 3 Jan 2019 17:44:50 -0500
+Received: by mail-yw1-f65.google.com with SMTP id h32so13875355ywk.2;
+        Thu, 03 Jan 2019 14:44:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=dKFfDtyw0jobwE9IpFeHnlj2yY9oKEKBvvvLjdeRxj4=;
+        b=QtQ6EHfx+ee/NcNzvKvsiYN5dl/PLMrYR6isRV4w4YN9O7Tktw8s4Fr+PK3R5jGYtf
+         XPLx1oniPgdbtil+qG93cDLA9bv5aZd2QTTiPeruk4g9VRrtQGFH4ZZJbcAdh5I/R7D0
+         PJRW2XVqLmldFDl0TXT1SRSQE+7JRIlNFIZqOhBIUcoai+iX8EyTtVGGT68DoZ425Q3J
+         bKeCj+dYa7240uxBdTV+yiHA9x6QJse8fyeM+a6F2v0vvP1p7gteNu3IlzCo5LZ/9GM5
+         fMYEDtAb8OjE5Jdh+94XnOFpE0E+GdmGEUu8uDmEbcuMEPnCeTf4gZD6ed7OsT6g4qSP
+         SLug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dKFfDtyw0jobwE9IpFeHnlj2yY9oKEKBvvvLjdeRxj4=;
+        b=bhq2f716LLzFcy8SBNToRtlFrykPMrMXHcZBbJ5NQGVP4zLGiD/B67EtrhON6z0snL
+         oYAnhbp/Xc56H7i+SW35Tjz0SP+8JfQ10bysQuOWgeBfCbTrri9zt8egCIPCU0zNFXJb
+         oOTKyHb10ZNUB6Ucir+62InZCfBrBPCnS9JzdW7Rlt7a52OG5gW6jQb90PHX8gSFWFnJ
+         7o3FpuLTFYDMOi3i/uuSz6kJAmFpqogB8s1N+aGFaam60f5VdLkFVSDyVOhKBmLO5WB3
+         TNJVq9yGfMqOaz8WPi4yIIM7d2z87yvh2dQQrMmQgkqVjP/RPEfaWzWaTJh/KJTYwg7l
+         CjIA==
+X-Gm-Message-State: AA+aEWbqDX0pnFO0Th219PHYj2f1jLji6M+CO7XxOQZPQj/eMIlLUaT/
+        4Oe/VgIKW9zW0ZolPwL1fB6zPdQK0pa79AB7v+w=
+X-Google-Smtp-Source: AFSGD/Uygz1kpdunO9nD9f1K1Z6mb+fiq0pe0NyETPesgZfVyuDL9L7b8qkrMAQ5wGzdZvPUXEAe5usJ03HOcN8jfF4=
+X-Received: by 2002:a0d:ea81:: with SMTP id t123mr50202557ywe.496.1546555488803;
+ Thu, 03 Jan 2019 14:44:48 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190103191158.yu4cjkb3wd3zvpqk@kafai-mbp>
-X-TM-AS-GCONF: 00
-x-cbid: 19010322-0012-0000-0000-000002E16816
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19010322-0013-0000-0000-0000211868C8
-Message-Id: <20190103224118.GA4491@osiris>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Content-Disposition: inline
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-03_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901030192
+References: <1546442912-20818-1-git-send-email-firoz.khan@linaro.org> <1546442912-20818-3-git-send-email-firoz.khan@linaro.org>
+In-Reply-To: <1546442912-20818-3-git-send-email-firoz.khan@linaro.org>
+From:   Max Filippov <jcmvbkbc@gmail.com>
+Date:   Thu, 3 Jan 2019 14:44:37 -0800
+Message-ID: <CAMo8Bf+qK=k33boeNOeL69sLC3e-M07QK9ErhYm-byuQ2UnVnw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] xtensa: generate uapi header and syscall table header files
+To:     Firoz Khan <firoz.khan@linaro.org>
+Cc:     Chris Zankel <chris@zankel.net>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        linux-xtensa@linux-xtensa.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        y2038@lists.linaro.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux-Arch <linux-arch@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        marcin.juszkiewicz@linaro.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 03, 2019 at 07:12:05PM +0000, Martin Lau wrote:
-> On Thu, Jan 03, 2019 at 12:46:13PM +0100, Heiko Carstens wrote:
-> > Hello,
-> > 
-> > the kernel commit 7337224fc150 ("bpf: Improve the info.func_info and
-> > info.func_info_rec_size behavior") breaks one of strace's self tests:
-> > 
-> > FAIL: bpf-obj_get_info_by_fd-prog-v.gen
-> The strace's bpf-obj_get_info_by_fd-prog-v test did fail.  However,
-> I failed to see how 7337224fc150 broke it.  How do you trace down to
-> commit 7337224fc150 and can you share your test output?
-> 
-> The failure I can reproduce is EFAULT.  It should have been failing
-> as early as "nr_jited_ksyms" is added to "struct bpf_prog_info"
-> in linux/bpf.h.
+Hi Firoz,
 
-Ah, sorry(!), I forgot to mention an important detail: the test
-failure happens only if executed as normal (non-root) user.
+On Wed, Jan 2, 2019 at 7:29 AM Firoz Khan <firoz.khan@linaro.org> wrote:
+> Unified system call table generation script must be run to
+> generate unistd_32.h and syscall_table.h files. This patch
+> will have changes which will invokes the script.
+>
+> This patch will generate unistd_32.h and syscall_table.h
+> files by the syscall table generation script invoked by
+> xtensa/Makefile and the generated files against the removed
+> files must be identical.
+>
+> The generated uapi header file will be included in uapi/-
+> asm/unistd.h and generated system call table header file
+> will be included by kernel/syscall.c file.
+>
+> Signed-off-by: Firoz Khan <firoz.khan@linaro.org>
+> ---
+>  arch/xtensa/kernel/syscalls/Makefile      | 11 ++++++++--
+>  arch/xtensa/kernel/syscalls/syscallhdr.sh | 36 -------------------------------
+>  arch/xtensa/kernel/syscalls/syscalltbl.sh | 32 ---------------------------
+>  3 files changed, 9 insertions(+), 70 deletions(-)
+>  delete mode 100644 arch/xtensa/kernel/syscalls/syscallhdr.sh
+>  delete mode 100644 arch/xtensa/kernel/syscalls/syscalltbl.sh
+>
+> diff --git a/arch/xtensa/kernel/syscalls/Makefile b/arch/xtensa/kernel/syscalls/Makefile
+> index 659faef..75c7421 100644
+> --- a/arch/xtensa/kernel/syscalls/Makefile
+> +++ b/arch/xtensa/kernel/syscalls/Makefile
+> @@ -6,8 +6,9 @@ _dummy := $(shell [ -d '$(uapi)' ] || mkdir -p '$(uapi)')       \
+>           $(shell [ -d '$(kapi)' ] || mkdir -p '$(kapi)')
+>
+>  syscall := $(srctree)/$(src)/syscall.tbl
+> -syshdr := $(srctree)/$(src)/syscallhdr.sh
+> -systbl := $(srctree)/$(src)/syscalltbl.sh
+> +syshdr := $(srctree)/scripts/syscallhdr.sh
+> +sysnr := $(srctree)/scripts/syscallnr.sh
+> +systbl := $(srctree)/scripts/syscalltbl.sh
+>
+>  quiet_cmd_syshdr = SYSHDR  $@
+>        cmd_syshdr = $(CONFIG_SHELL) '$(syshdr)' '$<' '$@'       \
+> @@ -15,6 +16,12 @@ quiet_cmd_syshdr = SYSHDR  $@
+>                    '$(syshdr_pfx_$(basetarget))'                \
+>                    '$(syshdr_offset_$(basetarget))'
+>
+> +quiet_cmd_sysnr = SYSNR  $@
+> +      cmd_sysnr = $(CONFIG_SHELL) '$(sysnr)' '$<' '$@'         \
+> +                 '$(sysnr_abis_$(basetarget))'                 \
+> +                 '$(sysnr_pfx_$(basetarget))'                  \
+> +                 '$(sysnr_offset_$(basetarget))'
+> +
 
-With 7337224fc150 ("bpf: Improve the info.func_info and
-info.func_info_rec_size behavior") the failure happens. With commit
-30da46b5dc3a ("tools: bpftool: add a command to dump the trace pipe")
-it passes; which is one commit earlier.
+This patch seems to do more than it says in the description.
+Perhaps adding cmd_sysnr needs a separate patch with its
+own description?
 
-FAIL: bpf-obj_get_info_by_fd-prog-v.gen
-=======================================
-
---- exp	2019-01-03 23:31:49.576949303 +0100
-+++ log	2019-01-03 23:31:49.576949303 +0100
-@@ -1,8 +1,8 @@
- bpf(BPF_MAP_CREATE, {map_type=BPF_MAP_TYPE_ARRAY, key_size=4, value_size=8, max_entries=1, map_flags=0, inner_map_fd=0</dev/null>, map_name="test_map", map_ifindex=0}, 48) = 3<anon_inode:bpf-map>
- bpf(BPF_PROG_LOAD, {prog_type=BPF_PROG_TYPE_SOCKET_FILTER, insn_cnt=9, insns=[{code=BPF_ALU64|BPF_K|BPF_MOV, dst_reg=BPF_REG_1, src_reg=BPF_REG_0, off=0, imm=0}, {code=BPF_STX|BPF_W|BPF_MEM, dst_reg=BPF_REG_10, src_reg=BPF_REG_1, off=-4, imm=0}, {code=BPF_ALU64|BPF_X|BPF_MOV, dst_reg=BPF_REG_2, src_reg=BPF_REG_10, off=0, imm=0}, {code=BPF_ALU64|BPF_K|BPF_ADD, dst_reg=BPF_REG_2, src_reg=BPF_REG_0, off=0, imm=0xfffffffc}, {code=BPF_LD|BPF_DW|BPF_IMM, dst_reg=BPF_REG_1, src_reg=BPF_REG_1, off=0, imm=0x3}, {code=BPF_LD|BPF_W|BPF_IMM, dst_reg=BPF_REG_0, src_reg=BPF_REG_0, off=0, imm=0}, {code=BPF_JMP|BPF_K|BPF_CALL, dst_reg=BPF_REG_0, src_reg=BPF_REG_0, off=0, imm=0x1}, {code=BPF_ALU64|BPF_K|BPF_MOV, dst_reg=BPF_REG_0, src_reg=BPF_REG_0, off=0, imm=0}, {code=BPF_JMP|BPF_K|BPF_EXIT, dst_reg=BPF_REG_0, src_reg=BPF_REG_0, off=0, imm=0}], license="BSD", log_level=42, log_size=4096, log_buf="", kern_version=KERNEL_VERSION(57005, 192, 222), prog_flags=0, prog_name="test_prog", prog_ifindex=0, 
- expected_attach_type=BPF_CGROUP_INET_INGRESS}, 72) = 4<anon_inode:bpf-prog>
- bpf(BPF_OBJ_GET_INFO_BY_FD, {info={bpf_fd=3<anon_inode:bpf-map>, info_len=128 => 80, info={type=BPF_MAP_TYPE_ARRAY, id=15, key_size=4, value_size=8, max_entries=1, map_flags=0, name="test_map", ifindex=0, netns_dev=makedev(0, 0), netns_ino=0}}}, 16) = 0
--bpf(BPF_OBJ_GET_INFO_BY_FD, {info={bpf_fd=4<anon_inode:bpf-prog>, info_len=168 => 152, info={type=BPF_PROG_TYPE_SOCKET_FILTER, id=8, tag="\xde\x90\x83\x18\xfb\x16\xd8\x9c", jited_prog_len=0, jited_prog_insns=NULL, xlated_prog_len=0, xlated_prog_insns=NULL, load_time=28281352029, created_by_uid=1000, nr_map_ids=0 => 1, map_ids=NULL, name="test_prog", ifindex=0, netns_dev=makedev(0, 0), netns_ino=0}}}, 16) = 0
--bpf(BPF_OBJ_GET_INFO_BY_FD, {info={bpf_fd=4<anon_inode:bpf-prog>, info_len=152, info={type=BPF_PROG_TYPE_SOCKET_FILTER, id=8, tag="\xde\x90\x83\x18\xfb\x16\xd8\x9c", jited_prog_len=0, jited_prog_insns=NULL, xlated_prog_len=336, xlated_prog_insns=0x3ff8d6f7000, load_time=28281352029, created_by_uid=1000, nr_map_ids=2, map_ids=0x3ff8d6f1000, name="test_prog", ifindex=0, netns_dev=makedev(0, 0), netns_ino=0}}}, 16) = -1 EFAULT (Bad address)
--bpf(BPF_OBJ_GET_INFO_BY_FD, {info={bpf_fd=4<anon_inode:bpf-prog>, info_len=152, info={type=BPF_PROG_TYPE_SOCKET_FILTER, id=8, tag="\xde\x90\x83\x18\xfb\x16\xd8\x9c", jited_prog_len=0, jited_prog_insns=NULL, xlated_prog_len=0, xlated_prog_insns=[], load_time=28281352029, created_by_uid=1000, nr_map_ids=0 => 1, map_ids=[], name="test_prog", ifindex=0, netns_dev=makedev(0, 0), netns_ino=0}}}, 16) = 0
--bpf(BPF_OBJ_GET_INFO_BY_FD, {info={bpf_fd=4<anon_inode:bpf-prog>, info_len=152, info={type=BPF_PROG_TYPE_SOCKET_FILTER, id=8, tag="\xde\x90\x83\x18\xfb\x16\xd8\x9c", jited_prog_len=0, jited_prog_insns=NULL, xlated_prog_len=0, xlated_prog_insns=[], load_time=28281352029, created_by_uid=1000, nr_map_ids=2 => 1, map_ids=[15], name="test_prog", ifindex=0, netns_dev=makedev(0, 0), netns_ino=0}}}, 16) = 0
-+bpf(BPF_OBJ_GET_INFO_BY_FD, {info={bpf_fd=4<anon_inode:bpf-prog>, info_len=168 => 152, info={type=BPF_PROG_TYPE_SOCKET_FILTER, id=8, tag="\xde\x90\x83\x18\xfb\x16\xd8\x9c", jited_prog_len=0, jited_prog_insns=NULL, xlated_prog_len=0, xlated_prog_insns=NULL, load_time=28281352029, created_by_uid=1000, nr_map_ids=0 => 1, map_ids=NULL, name="test_prog", ifindex=0, netns_dev=makedev(0, 0), netns_ino=0, /* bytes 104..151 */ "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x08\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"}}}, 16) = 0
-+bpf(BPF_OBJ_GET_INFO_BY_FD, {info={bpf_fd=4<anon_inode:bpf-prog>, info_len=152, info={type=BPF_PROG_TYPE_SOCKET_FILTER, id=8, tag="\xde\x90\x83\x18\xfb\x16\xd8\x9c", jited_prog_len=0, jited_prog_insns=NULL, xlated_prog_len=336, xlated_prog_insns=0x3ff8d6f7000, load_time=28281352029, created_by_uid=1000, nr_map_ids=2, map_ids=0x3ff8d6f1000, name="test_prog", ifindex=0, netns_dev=makedev(0, 0), netns_ino=0, /* bytes 104..151 */ "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x08\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"}}}, 16) = -1 EFAULT (Bad address)
-+bpf(BPF_OBJ_GET_INFO_BY_FD, {info={bpf_fd=4<anon_inode:bpf-prog>, info_len=152, info={type=BPF_PROG_TYPE_SOCKET_FILTER, id=8, tag="\xde\x90\x83\x18\xfb\x16\xd8\x9c", jited_prog_len=0, jited_prog_insns=NULL, xlated_prog_len=0, xlated_prog_insns=[], load_time=28281352029, created_by_uid=1000, nr_map_ids=0 => 1, map_ids=[], name="test_prog", ifindex=0, netns_dev=makedev(0, 0), netns_ino=0, /* bytes 104..151 */ "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x08\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"}}}, 16) = 0
-+bpf(BPF_OBJ_GET_INFO_BY_FD, {info={bpf_fd=4<anon_inode:bpf-prog>, info_len=152, info={type=BPF_PROG_TYPE_SOCKET_FILTER, id=8, tag="\xde\x90\x83\x18\xfb\x16\xd8\x9c", jited_prog_len=0, jited_prog_insns=NULL, xlated_prog_len=0, xlated_prog_insns=[], load_time=28281352029, created_by_uid=1000, nr_map_ids=2 => 1, map_ids=[15], name="test_prog", ifindex=0, netns_dev=makedev(0, 0), netns_ino=0, /* bytes 104..151 */ "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x08\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"}}}, 16) = 0
- +++ exited with 0 +++
-bpf-obj_get_info_by_fd-prog-v.gen.test: failed test: ../../strace -a20 -y -v -e trace=bpf ../bpf-obj_get_info_by_fd-prog-v output mismatch
-FAIL bpf-obj_get_info_by_fd-prog-v.gen.test (exit status: 1)
-
+-- 
+Thanks.
+-- Max
