@@ -2,163 +2,120 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92F6BC43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 03:29:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E53D9C43444
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 03:32:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5524D20896
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 03:29:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546486148;
-	bh=Jug9QSBgCxluRLcEXDHuyKV9gRbvhSZmRoeeWPwP5OA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=b+5SsrnlM13ds/U3iqIn0wqBARBsW/JAcR+4NGqKI0/wvSWoXA4RqDg4V7VciO+wb
-	 Wr9W0GlcyhEtwHa6SaLPcKEPc0iLaw7IhNNBd+9rtSYFkXPaAJOnILuyXiVxGfyDgM
-	 zr7Gt/QBud0tP/RjLzCZTMe1rHrzCl4g0acH68sA=
+	by mail.kernel.org (Postfix) with ESMTP id B5ABC20883
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 03:32:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="nPztcu9i"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728858AbfACD3H (ORCPT
+        id S1727296AbfACDcK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 22:29:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58226 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727113AbfACD3H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 22:29:07 -0500
-Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4C7CD2171F;
-        Thu,  3 Jan 2019 03:29:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546486145;
-        bh=Jug9QSBgCxluRLcEXDHuyKV9gRbvhSZmRoeeWPwP5OA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=AsKh+CQ8pxD/nI4TOakaR1P6jUftCo2oczKnXBzAYKPKTCFWnM+8Up+oTBbxJtG0x
-         LM89vz0rDR7xge6o9lBE5Vx2CE2SREyuJetX/BCj9DF71EkMa2WQJ2AU97iQ4XQFf6
-         0rkt2NsNqROjLoszTrjitUirKno5z2qosJW0MYvk=
-Received: by mail-ot1-f48.google.com with SMTP id w25so28343629otm.13;
-        Wed, 02 Jan 2019 19:29:05 -0800 (PST)
-X-Gm-Message-State: AJcUukcZCs/PuVtuk7TRunyppJET+4Hit5PsmpxrvN3vaHkY6846ET07
-        3q9e1zZ1jpTJa2ZOHtsEB07uIak6HP3Boxajj0A=
-X-Google-Smtp-Source: ALg8bN6kVQ5y/adP7ZFalWVDcOmwuKqZiYTQGE+y2HO40kXn7/GcF97pzZULK5ZP7pnwNG2uzy8YE5GuWQFPcdi/BfE=
-X-Received: by 2002:a9d:784a:: with SMTP id c10mr33212634otm.175.1546486144513;
- Wed, 02 Jan 2019 19:29:04 -0800 (PST)
+        Wed, 2 Jan 2019 22:32:10 -0500
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:3020 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726170AbfACDcJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Jan 2019 22:32:09 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c2d822e0000>; Wed, 02 Jan 2019 19:31:58 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Wed, 02 Jan 2019 19:32:09 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Wed, 02 Jan 2019 19:32:09 -0800
+Received: from [10.110.48.28] (10.124.1.5) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 3 Jan
+ 2019 03:32:08 +0000
+Subject: Re: [PATCH] Initialise mmu_notifier_range correctly
+To:     Jerome Glisse <jglisse@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>
+CC:     Andrew Morton <akpm@linux-foundation.org>, <linux-mm@kvack.org>,
+        <linux-xfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        Jan Kara <jack@suse.cz>
+References: <20190103002126.GM6310@bombadil.infradead.org>
+ <20190103015654.GB15619@redhat.com>
+From:   John Hubbard <jhubbard@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <785af237-eb67-c304-595d-9080a2f48102@nvidia.com>
+Date:   Wed, 2 Jan 2019 19:32:08 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-References: <20190102181038.4418-1-okaya@kernel.org> <20190102181038.4418-9-okaya@kernel.org>
- <57ed1d94-7f89-20e8-3289-7ef7efd18c20@linux.intel.com> <CAK9iUCNMAuDOh_CM-bTE1xT5FePfYbq7W+0R4KF1KbqskuJ8FA@mail.gmail.com>
- <a9ccf7e1-4752-6bf5-2621-15b21a80c2ca@linux.intel.com> <CAK9iUCPWQ=9EgnUFo8BHraEgFwHs3FdbegPLwhT-KHD=r2WBkQ@mail.gmail.com>
- <8c69f8d0-6a95-0011-ff87-8ac9236a992d@linux.intel.com>
-In-Reply-To: <8c69f8d0-6a95-0011-ff87-8ac9236a992d@linux.intel.com>
-From:   Sinan Kaya <Okaya@kernel.org>
-Date:   Thu, 3 Jan 2019 03:28:52 +0000
-X-Gmail-Original-Message-ID: <CAK9iUCNGUE82MLposxdLjqgq_710Mk7nVKnABw3P7A9VJiG=yA@mail.gmail.com>
-Message-ID: <CAK9iUCNGUE82MLposxdLjqgq_710Mk7nVKnABw3P7A9VJiG=yA@mail.gmail.com>
-Subject: Re: [alsa-devel] [PATCH v5 08/11] ASoC: Intel: atom: Make PCI
- dependency explicit
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc:     "moderated list:INTEL ASoC DRIVERS" <alsa-devel@alsa-project.org>,
-        Mark Brown <broonie@kernel.org>,
-        Jie Yang <yang.jie@linux.intel.com>,
-        Takashi Iwai <tiwai@suse.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        ACPI Devel Mailing List <linux-acpi@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Chandan Rajendra <chandan@linux.vnet.ibm.com>,
-        tony.luck@intel.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190103015654.GB15619@redhat.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US-large
+Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1546486318; bh=23NzuESLX1gHN0Nzk+EsR1um0acr983rL396yItHNfI=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=nPztcu9il8NZDtfyeEOyH4zSOpluLu/Wj6wMjRgmg5AumTi9LkGUMgzlGWL1OmjJP
+         WaE0Nl17kWvy16F2SA866kRcXxnURgonyLa8dse0PnhhoLedb0kXay7C+e0TJ2i1q+
+         YIam9Xb3f3hGHRPEKT+uaBXzcFJajl6K3HsGGoMkmKp0+DQkgkFIV0n0gzW0iEasmF
+         ZeWgwlXuy7GMDH+JxyPxPyiRrNn7IiNNfjuH3JxS3jzTRcPY8it6yPZDfwjC7fz6kA
+         rjGroFNajnI6gh/uVqm26higWUdqCNQjeoTuDFzvfu1KjYVvqdxzMH43HCE6xbLBx6
+         ArdVNwPHUpjvg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+Tony
+On 1/2/19 5:56 PM, Jerome Glisse wrote:
+> On Wed, Jan 02, 2019 at 04:21:26PM -0800, Matthew Wilcox wrote:
+>>
+>> One of the paths in follow_pte_pmd() initialised the mmu_notifier_range
+>> incorrectly.
+>>
+>> Signed-off-by: Matthew Wilcox <willy@infradead.org>
+>> Fixes: ac46d4f3c432 ("mm/mmu_notifier: use structure for invalidate_rang=
+e_start/end calls v2")
+>> Tested-by: Dave Chinner <dchinner@redhat.com>
+>=20
+> Reviewed-by: J=C3=A9r=C3=B4me Glisse <jglisse@redhat.com>
+>=20
+>>
+>> diff --git a/mm/memory.c b/mm/memory.c
+>> index 2dd2f9ab57f4..21a650368be0 100644
+>> --- a/mm/memory.c
+>> +++ b/mm/memory.c
+>> @@ -4078,8 +4078,8 @@ static int __follow_pte_pmd(struct mm_struct *mm, =
+unsigned long address,
+>>  		goto out;
+>> =20
+>>  	if (range) {
+>> -		range->start =3D address & PAGE_MASK;
+>> -		range->end =3D range->start + PAGE_SIZE;
+>> +		mmu_notifier_range_init(range, mm, address & PAGE_MASK,
+>> +				     (address & PAGE_MASK) + PAGE_SIZE);
+>>  		mmu_notifier_invalidate_range_start(range);
+>>  	}
+>>  	ptep =3D pte_offset_map_lock(mm, pmd, address, ptlp);
+>=20
 
-On Wed, Jan 2, 2019 at 11:50 PM Pierre-Louis Bossart
-<pierre-louis.bossart@linux.intel.com> wrote:
->
->
-> On 1/2/19 4:58 PM, Sinan Kaya wrote:
-> > On Wed, Jan 2, 2019 at 10:50 PM Pierre-Louis Bossart
-> > <pierre-louis.bossart@linux.intel.com> wrote:
-> >>
-> >>> This is pointing to a kconfig issue on ia64 arch.
-> >>>
-> >>> arch/ia64/Kconfig:128:error: recursive dependency detected!
-> >>> arch/ia64/Kconfig:128:    choice <choice> contains symbol IA64_HP_SIM
-> >>> arch/ia64/Kconfig:202:    symbol IA64_HP_SIM is part of choice PM
-> >>>
-> >>> IA64_HP_SIM is both a choice and is selected.
-> >>>
-> >>> I did allyesconfig and disabled PCI afterwards to find all the issues
-> >>> on this patchset.
-> >> Are you saying there's a newer series that fixes this issue for both
-> >> allyesconfig and allmodconfig?
-> >>
-> >> if yes, then we're good.
-> >
-> > No, I haven't fixed ia64 kconfig issue. That's somebody else's job. I
-> > used allyesconfig to find out all compilation issues on x86 arch to
-> > come up with this patchset.
->
-> Nothing makes me cringe more than "somebody else's job" statements. In
-> this case, there is obviously a correlation with your ACPI changes since
-> the circular dependency happens because of the ACPI symbol.
->
+Looks correct to me, as well.
 
-I agree that it needs to be fixed. I am not convinced that the issue
-is related to my change.
-Your log is pointing to an inconsistency in ia64 kconfig.
+Having the range struct declared in separate places from the mmu_notifier_r=
+ange_init()
+calls is not great. But I'm not sure I see a way to make it significantly c=
+leaner, given
+that __follow_pte_pmd uses the range pointer as a way to decide to issue th=
+e mmn calls.
 
-> arch/ia64/Kconfig:126:error: recursive dependency detected!
-> arch/ia64/Kconfig:126:    choice <choice> contains symbol IA64_HP_SIM
-> arch/ia64/Kconfig:200:    symbol IA64_HP_SIM is part of choice PM
-> kernel/power/Kconfig:144:    symbol PM is selected by PM_SLEEP
-> kernel/power/Kconfig:104:    symbol PM_SLEEP depends on HIBERNATE_CALLBACKS
-> kernel/power/Kconfig:31:    symbol HIBERNATE_CALLBACKS is selected by
-> HIBERNATION
-> kernel/power/Kconfig:34:    symbol HIBERNATION depends on SWAP
-> init/Kconfig:250:    symbol SWAP depends on BLOCK
-> block/Kconfig:5:    symbol BLOCK is selected by UBIFS_FS
-> fs/ubifs/Kconfig:1:    symbol UBIFS_FS depends on MISC_FILESYSTEMS
-> fs/Kconfig:220:    symbol MISC_FILESYSTEMS is selected by ACPI_APEI
-> drivers/acpi/apei/Kconfig:8:    symbol ACPI_APEI depends on ACPI
-> drivers/acpi/Kconfig:9:    symbol ACPI depends on ARCH_SUPPORTS_ACPI
-> <<<< LOOK HERE
 
-I am still having hard time seeing how this issue is exposed by
-removing PCI dependency from ACPi.
-
-Rafael, Tony:
-
-can you help me?
-
-> drivers/acpi/Kconfig:6:    symbol ARCH_SUPPORTS_ACPI is selected by
-> IA64_HP_SIM
-> arch/ia64/Kconfig:200:    symbol IA64_HP_SIM is part of choice <choice>
->
-> At any rate, a 3 mn git bisect tells me the circular dependency is
-> exposed by this change:
->
-> f3fd6cd74fedf99b6060f75df00943fda13b65f2 is the first bad commit
-> commit f3fd6cd74fedf99b6060f75df00943fda13b65f2
-> Author: Chandan Rajendra <chandan@linux.vnet.ibm.com>
-> Date:   Sat Dec 8 12:21:38 2018 +0530
->
->      fscrypt: remove filesystem specific build config option
->
->      In order to have a common code base for fscrypt "post read" processing
->      for all filesystems which support encryption, this commit removes
->      filesystem specific build config option (e.g.
-> CONFIG_EXT4_FS_ENCRYPTION)
->      and replaces it with a build option (i.e. CONFIG_FS_ENCRYPTION) whose
->      value affects all the filesystems making use of fscrypt.
->
->      Signed-off-by: Chandan Rajendra <chandan@linux.vnet.ibm.com>
->      Signed-off-by: Theodore Ts'o <tytso@mit.edu>
->
-> -Pierre
->
->
+thanks,
+--=20
+John Hubbard
+NVIDIA
