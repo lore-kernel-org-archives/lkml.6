@@ -6,159 +6,122 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8F13C43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 19:53:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 713EBC43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 19:58:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B509B21479
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 19:53:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 33428208E3
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 19:58:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="k6DUtDqm"
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="edYGbBxI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727642AbfACTxu (ORCPT
+        id S1726254AbfACT6j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 14:53:50 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:43965 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725871AbfACTxu (ORCPT
+        Thu, 3 Jan 2019 14:58:39 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:35378 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726100AbfACT6i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 14:53:50 -0500
-Received: by mail-qt1-f196.google.com with SMTP id i7so38150283qtj.10
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 11:53:49 -0800 (PST)
+        Thu, 3 Jan 2019 14:58:38 -0500
+Received: by mail-ed1-f67.google.com with SMTP id x30so30046346edx.2
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 11:58:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=4ABbHuvjg/ka3xs9hPRvpRI7tYmpTxdAVsQmtjKOnVQ=;
-        b=k6DUtDqmtLPSPc7a1MVq1EGvLXlzSk4jaUZJqpsPElFRxm1WDE8AM05A9okmHLOujV
-         0AzXPtsBxRqZHyujX4tVNWwOy1i9g2UliUSzYxM4/ehVtWvpAn7Ot8YZJB/zEJOfvZJ6
-         uajS4PyYOFDh3VM/Nj3cT5s9I0V359fWorc+O/XVmMxOic98SnZnBJq7pNV67gI5yxxU
-         jp+fhlLGiw68lhZ/AeBQP7/ElMem4wIey8+a5INN/k4mmr/mwTYTiGbc9fzUem5aquMS
-         PqjIl+hW86b4bWdmwlxyGoy7usPKsEDLPUViwLbUlLZMAhFD768mHL3j4cTvdSM0Uhaa
-         DIwA==
+        d=soleen.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mcaOkKaskc6pwuQXJbemK24OWy2Us/5/O+TjG5KW5ms=;
+        b=edYGbBxI+LMizHUYdh8fZKynCLVGzV1OSF+8jWzxiXXjFj71lRYLBHOc00m9+XJuCO
+         HQFg1gYrklQauyIxTab68Q1Fp06Y721LjkckUusjXgCPeHJv9vj2N//s5xk355QENyB2
+         fZC9lzfLX32K4g+kMGIl06WOSj4fTFW+ezgPfQG10eEk6Cj9ybeM4lfcb10X8/PmVclj
+         R9X1QDBtTYLUwZnpKtHOmGEd9JZUSM4CC/tlQ63lxHcGlA2e+aBOhTK/hOGD+ZQd7Ox+
+         zSg/Ag8tN47GT3TS4JV4rxDj3HfuWl3Vzv1s6oLHejdaavRrHRumYVYBNViRnIin1s/u
+         nBHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=4ABbHuvjg/ka3xs9hPRvpRI7tYmpTxdAVsQmtjKOnVQ=;
-        b=tVMAh/S3XeivUkL2egUu03c7lo7H4wgkhcDhrIjkTeBJISOkn6cIGn5XFY4YjIB57g
-         naDpj4GqNn/LgVOb3Px1iQ2P0KuJBbwbWIF6devWe24GTPkFaJe48rDeYDIexTmJTnae
-         Te2a0SbTXM+zB7clDKeGYA0ZJc38fdTL+gYrC0+Q1FER1SFCOkdNDpQemGTCC9YnKtiY
-         iyUxfVh0kQOvjHlAR+1wMJdPr7OPo8lJEozM3ztoj+QDLti9BBKu4iTn16GzES+WCGn1
-         oP7v9a6ZNIbwpdygcWqDwG0FDdSqq7gt500HmM6IcalcXb+fYqudD4S/8r1kE96lrVqj
-         s54w==
-X-Gm-Message-State: AJcUukckxVvPmbvsHk/UNF3J2rEqPMI7q6FCbQuEPBpAk/KgwhMAJ3WQ
-        UI2cUj+Eu6LPFR+qvD4idl7qvtg8i1AB+A==
-X-Google-Smtp-Source: ALg8bN4Lq1MMGzYbhRFVd8lpUqz0cmNyQ5W+S17t9TO07vYDmo/XqyozZBcowAvDvWcD4NBr/O+9kg==
-X-Received: by 2002:a0c:d2f7:: with SMTP id x52mr47643166qvh.35.1546545229352;
-        Thu, 03 Jan 2019 11:53:49 -0800 (PST)
-Received: from ovpn-120-55.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id a2sm4156779qkk.4.2019.01.03.11.53.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 03 Jan 2019 11:53:48 -0800 (PST)
-Subject: Re: [PATCH v3] mm/page_owner: fix for deferred struct page init
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     akpm@linux-foundation.org, Pavel.Tatashin@microsoft.com,
-        mingo@kernel.org, mgorman@techsingularity.net,
-        iamjoonsoo.kim@lge.com, tglx@linutronix.de, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <20181220185031.43146-1-cai@lca.pw>
- <20181220203156.43441-1-cai@lca.pw> <20190103115114.GL31793@dhcp22.suse.cz>
- <e3ff1455-06cc-063e-24f0-3b525c345b84@lca.pw>
- <20190103165927.GU31793@dhcp22.suse.cz>
- <5d8f3a98-a954-c8ab-83d9-2f94c614f268@lca.pw>
- <20190103190715.GZ31793@dhcp22.suse.cz>
-From:   Qian Cai <cai@lca.pw>
-Message-ID: <62e96e34-7ea9-491a-b5b6-4828da980d48@lca.pw>
-Date:   Thu, 3 Jan 2019 14:53:47 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.3.3
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mcaOkKaskc6pwuQXJbemK24OWy2Us/5/O+TjG5KW5ms=;
+        b=Lsqnrna5Lq+CIBWEql//xAD37oUCEeVwYtIOkJDuWLDjmT/MB1+EXR5TMgo7bZY/h1
+         1TO62OW+T8fcjy+pmLdqeg9okGCpRJQrogGErehOv0jwwbBQaebYqNvaRgRpDVZ/hE4x
+         l3zxRwmGkvAaHoPbmcT04SI5STMB5FVAnxHGrgMJc4+YzDKp+zZWqKWJZCbIfHBYvRtX
+         TUxYGkOakXe0WK2yx1H+sk5QGIGN7cahHAjTbH1NM7ZEP3oMd4xLvIJvYPZzFtRUJhTZ
+         +5mNSSWiqNj2N81uhEiwEU+A72t0XVtOTGh+zTHvfQ6H5uGTcad8mYMUiZBwtypwL2MR
+         7bFQ==
+X-Gm-Message-State: AA+aEWYApA+xkXkEHL04HbRNWMi4+XqjoHzaVuoTiraFzB19jVkkJTqQ
+        OJx7Q67QELAjqRW0pMzR7TdgkaO0zQkJwAYiPOKw5AVcej1p7Q==
+X-Google-Smtp-Source: AFSGD/UjNghA7YS+jJdakehZdTH9Y+Xlm+kl+Y5hKRMZ9S43IPNy6YGYTOt0AqNUP5ryWeSqY9EWtgeqVaj+n0ILux8=
+X-Received: by 2002:a50:9a42:: with SMTP id o60mr44986597edb.180.1546545516064;
+ Thu, 03 Jan 2019 11:58:36 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190103190715.GZ31793@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20181226164509.22916-1-pasha.tatashin@soleen.com>
+ <20181226164509.22916-4-pasha.tatashin@soleen.com> <9fe670d4-d799-c05f-297e-437eda1d2072@arm.com>
+In-Reply-To: <9fe670d4-d799-c05f-297e-437eda1d2072@arm.com>
+From:   Pavel Tatashin <pasha.tatashin@soleen.com>
+Date:   Thu, 3 Jan 2019 14:58:25 -0500
+Message-ID: <CA+CK2bA_006YGu3dtJM24pN1ZGgcJZnF2oEeWKkq3QBrcCbB6Q@mail.gmail.com>
+Subject: Re: [PATCH v3 3/3] arm64: Early boot time stamps
+To:     Marc Zyngier <marc.zyngier@arm.com>
+Cc:     catalin.marinas@arm.com, Will Deacon <will.deacon@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        rppt@linux.vnet.ibm.com, Michal Hocko <mhocko@suse.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        andrew.murray@arm.com, james.morse@arm.com, sboyd@kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/3/19 2:07 PM, Michal Hocko wrote> So can we make the revert with an
-explanation that the patch was wrong?
-> If we want to make hacks to catch more objects to be tracked then it
-> would be great to have some numbers in hands.
+> I still think this approach is flawed. You provide the kernel with a
+> potentially broken sched_clock that may jump back and forth until the
+> workaround kicks in. Nobody expects this.
+>
+> Instead, I'd suggest you allow for a something other than local_clock()
+> to be used for the time stamping until a properly working sched_clock
+> gets registered.
+>
+> This way, you'll only impact the timestamps when running on a broken system.
 
-Well, those numbers are subject to change depends on future start_kernel()
-order. Right now, there are many functions could be caught earlier by page owner.
+I think, given that on other platforms sched_clock() is already used
+early, it is not a good idea to invent a different clock just for time
+stamps.
 
-	kmemleak_init();
-	debug_objects_mem_init();
-	setup_per_cpu_pageset();
-	numa_policy_init();
-	acpi_early_init();
-	if (late_time_init)
-		late_time_init();
-	sched_clock_init();
-	calibrate_delay();
-	pid_idr_init();
-	anon_vma_init();
-#ifdef CONFIG_X86
-	if (efi_enabled(EFI_RUNTIME_SERVICES))
-		efi_enter_virtual_mode();
-#endif
-	thread_stack_cache_init();
-	cred_init();
-	fork_init();
-	proc_caches_init();
-	uts_ns_init();
-	buffer_init();
-	key_init();
-	security_init();
-	dbg_late_init();
-	vfs_caches_init();
-	pagecache_init();
-	signals_init();
-	seq_file_init();
-	proc_root_init();
-	nsfs_init();
-	cpuset_init();
-	cgroup_init();
-	taskstats_init_early();
-	delayacct_init();
+We could limit arm64 approach only for chips where cntvct_el0 is
+working: i.e. frequency is known, and the clock is stable, meaning
+cannot go backward. Perhaps we would start early clock a little later,
+but at least it will be available for the sane chips. The only
+question, where during boot time this is known.
 
-	check_bugs();
+Another approach is to modify sched_clock() in
+kernel/time/sched_clock.c to never return backward value during boot.
 
-	acpi_subsystem_init();
-	arch_post_acpi_subsys_init();
-	sfi_init_late();
+1. Rename  current implementation of sched_clock() to sched_clock_raw()
+2. New sched_clock() would look like this:
 
-	if (efi_enabled(EFI_RUNTIME_SERVICES)) {
-		efi_free_boot_services();
+u64 sched_clock(void)
+{
+   if (static_branch(early_unstable_clock))
+      return sched_clock_unstable();
+   else
+      return sched_clock_raw();
+}
 
-	rcu_scheduler_starting();
-	/*
-	 * Wait until kthreadd is all set-up.
-	 */
-	wait_for_completion(&kthreadd_done);
+3. sched_clock_unstable() would look like this:
 
-	/* Now the scheduler is fully set up and can do blocking allocations */
-	gfp_allowed_mask = __GFP_BITS_MASK;
+u64 sched_clock_unstable(void)
+{
+again:
+  static u64 old_clock;
+  u64 new_clock = sched_clock_raw();
+  static u64 old_clock_read =   READ_ONCE(old_clock);
+  /* It is ok if time does not progress, but don't allow to go backward */
+  if (new_clock < old_clock_read)
+    return old_clock_read;
+   /* update the old_clock value */
+   if (cmpxchg64(&old_clock, old_clock_read, new_clock) != old_clock_read)
+      goto again;
+   return new_clock;
+}
 
-	/*
-	 * init can allocate pages on any node
-	 */
-	set_mems_allowed(node_states[N_MEMORY]);
-
-	cad_pid = task_pid(current);
-
-	smp_prepare_cpus(setup_max_cpus);
-
-	workqueue_init();
-
-	init_mm_internals();
-
-	do_pre_smp_initcalls();
-	lockup_detector_init();
-
-	smp_init();
-	sched_init_smp();
+Pasha
