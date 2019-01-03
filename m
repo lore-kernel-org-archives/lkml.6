@@ -2,84 +2,95 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCA71C43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 19:23:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F6B0C43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 19:23:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A883A2184B
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 19:23:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F3FA121872
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 19:23:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546543393;
-	bh=9fuiE71CnIetHavAkmTxkUmfId+EMcOpCFsQ7MDkh8Y=;
+	s=default; t=1546543424;
+	bh=xvncojBUe26ihPmTV38uurQuIpybNKstjbPx4KplcEI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=0juRn5VMvkwJpRrAaCD5ujofO3Czefko8hxPoOtNjUdVwuBLXJAJywKpDTiP8hfKt
-	 0Fdo1yK0xSx/3sK0zVQPPcehLwUHm7EhrfSwTA92tn+ZaMefKT/T/Ho22DQKAcsf9M
-	 ySBPA/NOrI851HDfBI/1iLz/k4aLt6uPPVbQc9xQ=
+	b=xGG8jHI1ZgJarfzAP7MQB8qMqWu1zHfx0UuGtNN77VO8MQRJFB64B3/Vw4YbIgtXZ
+	 ttBIPfimlBpU5dC4ln7J0Uc5b1BQLjHOK5r/T6EBLFNTnB1KiVEm3k5IaMyGPIFZeq
+	 dvZmpyDahVnE3fTuXbf1js/41BPs5+c0s1goWnwE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727097AbfACTXM (ORCPT
+        id S1727129AbfACTXn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 14:23:12 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:33597 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726500AbfACTXL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 14:23:11 -0500
-Received: by mail-io1-f65.google.com with SMTP id t24so27858022ioi.0;
-        Thu, 03 Jan 2019 11:23:11 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=hKMN0hpq+/jcMTDWf2h/27DjjkDxdUwdk8lzBZytIUw=;
-        b=n0TOBG2fQ50kx/XYdyadF5+6DdulpCUApFSlykUK6X2GRQhj0spZeRPxeqc07WhJo9
-         3pgB6GGVgOWWmiaXIVgS6FBDr0UNS/mZvNJOknW5Ch4SPTdVBT5s+4izuaJzp24UhQyf
-         WuzbI/RPQSEYIzfL6wQN7mnciJivoE1Shq7zzEmYSfHdtYjcLYCedwDRgb5WYiiaQ1tF
-         GS8usdGEMq9RfqXyKZEVmhtGQtYbC62Qk3F+4RnGJbrtVHupYogIFOWUcJucnWDsEL2M
-         TXCd/9DPadXCe/dzdsJEamXT8NRRvkQcfZV4guLUcLn/Plq6eq6JX5wEqr6igEaZmSKp
-         sl4w==
-X-Gm-Message-State: AJcUukcSQCkpeIBPWt0QcdpqXX6vJ9FVFWNykgRNkjNhuqi1dXeq6+Hx
-        9TMv2qzMabPLqhzYlxlpu6XVsO4=
-X-Google-Smtp-Source: ALg8bN6BttsupZdvN37T3bb/h0KSkrF5elEJYocxKlK0oVXXXNr3JhXqksYU4Z6Pzs0W8HnugDLC5g==
-X-Received: by 2002:a5e:860a:: with SMTP id z10mr31702177ioj.35.1546543390492;
-        Thu, 03 Jan 2019 11:23:10 -0800 (PST)
-Received: from localhost ([24.51.61.172])
-        by smtp.gmail.com with ESMTPSA id 196sm22186871itu.33.2019.01.03.11.23.09
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 03 Jan 2019 11:23:09 -0800 (PST)
-Date:   Thu, 3 Jan 2019 13:23:09 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     qii wang <qii.wang@mediatek.com>
-Cc:     wsa@the-dreams.de, linux-i2c@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        srv_heupstream@mediatek.com, leilk.liu@mediatek.com,
-        qii.wang@mediatek.com, ryder.lee@mediatek.com
-Subject: Re: [PATCH 5/6] dt-bindings: i2c: Add Mediatek MT8183 i2c binding
-Message-ID: <20190103192309.GA18564@bogus>
-References: <1545397111-24183-1-git-send-email-qii.wang@mediatek.com>
- <1545397111-24183-6-git-send-email-qii.wang@mediatek.com>
+        Thu, 3 Jan 2019 14:23:43 -0500
+Received: from mx2.suse.de ([195.135.220.15]:43646 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727099AbfACTXm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Jan 2019 14:23:42 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D3600AFA5;
+        Thu,  3 Jan 2019 19:23:40 +0000 (UTC)
+Date:   Thu, 3 Jan 2019 20:23:39 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Yang Shi <yang.shi@linux.alibaba.com>
+Cc:     hannes@cmpxchg.org, akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 0/3] mm: memcontrol: delayed force empty
+Message-ID: <20190103192339.GA31793@dhcp22.suse.cz>
+References: <1546459533-36247-1-git-send-email-yang.shi@linux.alibaba.com>
+ <20190103101215.GH31793@dhcp22.suse.cz>
+ <b3ad06ed-f620-7aa0-5697-a1bbe2d7bfe1@linux.alibaba.com>
+ <20190103181329.GW31793@dhcp22.suse.cz>
+ <6f43e926-3bb5-20d1-2e39-1d30bf7ad375@linux.alibaba.com>
+ <20190103185333.GX31793@dhcp22.suse.cz>
+ <d610c665-890f-3bf0-1e2a-437150b6ddfb@linux.alibaba.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1545397111-24183-6-git-send-email-qii.wang@mediatek.com>
+In-Reply-To: <d610c665-890f-3bf0-1e2a-437150b6ddfb@linux.alibaba.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 21 Dec 2018 20:58:30 +0800, qii wang wrote:
-> Add MT8183 i2c binding to binding file. Compare to 2712 i2c
-> controller, MT8183 has different registers, offsets, clock,
-> and multi-user function.
+On Thu 03-01-19 11:10:00, Yang Shi wrote:
 > 
-> Signed-off-by: qii wang <qii.wang@mediatek.com>
-> ---
->  Documentation/devicetree/bindings/i2c/i2c-mtk.txt |    6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
 > 
+> On 1/3/19 10:53 AM, Michal Hocko wrote:
+> > On Thu 03-01-19 10:40:54, Yang Shi wrote:
+> > > 
+> > > On 1/3/19 10:13 AM, Michal Hocko wrote:
+[...]
+> > > > Is there any reason for your scripts to be strictly sequential here? In
+> > > > other words why cannot you offload those expensive operations to a
+> > > > detached context in _userspace_?
+> > > I would say it has not to be strictly sequential. The above script is just
+> > > an example to illustrate the pattern. But, sometimes it may hit such pattern
+> > > due to the complicated cluster scheduling and container scheduling in the
+> > > production environment, for example the creation process might be scheduled
+> > > to the same CPU which is doing force_empty. I have to say I don't know too
+> > > much about the internals of the container scheduling.
+> > In that case I do not see a strong reason to implement the offloding
+> > into the kernel. It is an additional code and semantic to maintain.
+> 
+> Yes, it does introduce some additional code and semantic, but IMHO, it is
+> quite simple and very straight forward, isn't it? Just utilize the existing
+> css offline worker. And, that a couple of lines of code do improve some
+> throughput issues for some real usecases.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+I do not really care it is few LOC. It is more important that it is
+conflating force_empty into offlining logic. There was a good reason to
+remove reparenting/emptying the memcg during the offline. Considering
+that you can offload force_empty from userspace trivially then I do not
+see any reason to implement it in the kernel.
+
+> > I think it is more important to discuss whether we want to introduce
+> > force_empty in cgroup v2.
+> 
+> We would prefer have it in v2 as well.
+
+Then bring this up in a separate email thread please.
+-- 
+Michal Hocko
+SUSE Labs
