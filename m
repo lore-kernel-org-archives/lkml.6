@@ -2,303 +2,130 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C0BFC43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 14:22:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1B59C43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 14:23:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1043520815
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 14:22:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B5BB3217D9
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 14:23:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FgXnFROF"
+	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="vqXzi80G"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731902AbfACOWo (ORCPT
+        id S1731918AbfACOW7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 09:22:44 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:44611 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731031AbfACOWk (ORCPT
+        Thu, 3 Jan 2019 09:22:59 -0500
+Received: from smtp-fw-2101.amazon.com ([72.21.196.25]:23024 "EHLO
+        smtp-fw-2101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730973AbfACOW6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 09:22:40 -0500
-Received: by mail-lj1-f196.google.com with SMTP id k19-v6so29806486lji.11
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 06:22:38 -0800 (PST)
+        Thu, 3 Jan 2019 09:22:58 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=KGoHN334DZNkqWv2smL0AGypDg5avCRm0FTt0IHsxCg=;
-        b=FgXnFROF2uw5rUs18+D159AuX48O8b00qTHM3dz0lrZAa1rbwI7PiZCJ1yoSul7UCd
-         XMbsEJsTx5VDoT5670LhhPnf8AWKVe0cfNg3Y7Q3YWMz8xoAGkJ4qbYJhGyBo7J3n6d/
-         /BVTHQnZNZNCGdizso4JPLXTJE00INLjXw79x80sUYNUUluRl7eJwEcboIOFXPXhczX9
-         +ysMm+cOZiVJr2Di7GmWjFBiv3dDTrnytTKS2bR9vRmzNLZFp/Sp/2ap3KoTZ5VD1p9m
-         7SzNsxYqQaVGCrepXCboSFeg3gJ9u3HHowf+Zba2DMXjIxLcg6O8NHjNLr0yAILYwmAw
-         wi+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=KGoHN334DZNkqWv2smL0AGypDg5avCRm0FTt0IHsxCg=;
-        b=oGQMWFCAgXD11NZ2dp5euitXWeMIiYTVl5B5NhPsFNQHxVgAOX61KiAPhbfFAn8W2K
-         mx0B4ufqmIGhEGg3YCAyDsJuEGVvCVGNGF+g3+O/Li3P3qwk0zmPjxS6eJryrxNyP9+A
-         DU9tUogemZoyl45f10Lu/jJ1SElHlfjCBnOXih4jS1RWXRs3G/G88G85092XcU8q1Rhh
-         S78BQCVCvR4HNSOJUmUhymuJOvjWvajA20QPL0T9ZetWNruAxQkzrynKbwIGgOcjKAFz
-         AAdBdEpeItjsNtQv5DlcPfwin4GbsvBre9FsCPY1yMHuT57CZzKeZsoJeGxA3IE4/8jF
-         Q46Q==
-X-Gm-Message-State: AJcUukfM9IsERiyyfI65ZkoshRqUvpDUYVRw1kCkPPXXPT8WccUkdteK
-        Aa4G/kpALqLAbqbWVZFpSuo=
-X-Google-Smtp-Source: AFSGD/VlHsOjo4kT1Htw31QucG73s9as9B/mjMeVAQu9hdC+qKe3PonCTrE6ghy6ar9qEsEa94uBsg==
-X-Received: by 2002:a2e:744:: with SMTP id i4-v6mr26451587ljd.140.1546525357638;
-        Thu, 03 Jan 2019 06:22:37 -0800 (PST)
-Received: from localhost.localdomain ([37.212.195.0])
-        by smtp.gmail.com with ESMTPSA id b25sm10594690lfa.96.2019.01.03.06.22.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 03 Jan 2019 06:22:37 -0800 (PST)
-From:   "Uladzislau Rezki (Sony)" <urezki@gmail.com>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Kees Cook <keescook@chromium.org>,
-        Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
-        Shuah Khan <shuah@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Oleksiy Avramchenko <oleksiy.avramchenko@sonymobile.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Uladzislau Rezki (Sony)" <urezki@gmail.com>
-Subject: [RFC PATCH 3/3] selftests/vm: add script helper for CONFIG_TEST_VMALLOC_MODULE
-Date:   Thu,  3 Jan 2019 15:21:08 +0100
-Message-Id: <20190103142108.20744-4-urezki@gmail.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20190103142108.20744-1-urezki@gmail.com>
-References: <20190103142108.20744-1-urezki@gmail.com>
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
+  t=1546525377; x=1578061377;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:mime-version:
+   content-transfer-encoding;
+  bh=lDWpza8izP6JIy79ZwQhnTO5YT+PBiEqanbfTet6ikU=;
+  b=vqXzi80G6gbyltGhEqi1I2IKr0bpxdNPCu7ZTq6o738QqjVF2HlPy4fh
+   LUTaZ3vmHPYP8xf727HNG3eUydHAe7VYFLlEdDFywqWgJ1UwvfdyRTT7G
+   Zi5UyPrB28qdEXVG5xmTMRgJ0n1lFgkzwiD6nuRkBZnoYUeUXsyT7b5r8
+   A=;
+X-IronPort-AV: E=Sophos;i="5.56,253,1539648000"; 
+   d="scan'208";a="711243941"
+Received: from iad6-co-svc-p1-lb1-vlan2.amazon.com (HELO email-inbound-relay-1e-62350142.us-east-1.amazon.com) ([10.124.125.2])
+  by smtp-border-fw-out-2101.iad2.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 03 Jan 2019 14:22:55 +0000
+Received: from EX13MTAUEA001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan2.iad.amazon.com [10.40.159.162])
+        by email-inbound-relay-1e-62350142.us-east-1.amazon.com (8.14.7/8.14.7) with ESMTP id x03EMr0X035327
+        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
+        Thu, 3 Jan 2019 14:22:54 GMT
+Received: from EX13D01EUB004.ant.amazon.com (10.43.166.180) by
+ EX13MTAUEA001.ant.amazon.com (10.43.61.243) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Thu, 3 Jan 2019 14:22:53 +0000
+Received: from EX13D01EUB003.ant.amazon.com (10.43.166.248) by
+ EX13D01EUB004.ant.amazon.com (10.43.166.180) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Thu, 3 Jan 2019 14:22:52 +0000
+Received: from EX13D01EUB003.ant.amazon.com ([10.43.166.248]) by
+ EX13D01EUB003.ant.amazon.com ([10.43.166.248]) with mapi id 15.00.1367.000;
+ Thu, 3 Jan 2019 14:22:52 +0000
+From:   "Raslan, KarimAllah" <karahmed@amazon.de>
+To:     "jmattson@google.com" <jmattson@google.com>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>
+Subject: Re: [PATCH v4 02/14] X86/nVMX: handle_vmptrld: Copy the VMCS12
+ directly from guest memory
+Thread-Topic: [PATCH v4 02/14] X86/nVMX: handle_vmptrld: Copy the VMCS12
+ directly from guest memory
+Thread-Index: AQHUiur4YqH4TBA7MEeCfI/G20dAJKVwyXcAgBiiCACAFF5KAA==
+Date:   Thu, 3 Jan 2019 14:22:52 +0000
+Message-ID: <1546525372.11779.11.camel@amazon.de>
+References: <1543829467-18025-1-git-send-email-karahmed@amazon.de>
+         <1543829467-18025-3-git-send-email-karahmed@amazon.de>
+         <CALMp9eSX99cd3-XCCJOySVPXwxt=fx0zOczzq0ictDFNU1rqNw@mail.gmail.com>
+         <8a2a3b3d-b16c-890c-e6cd-69fbfc06506a@redhat.com>
+In-Reply-To: <8a2a3b3d-b16c-890c-e6cd-69fbfc06506a@redhat.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.43.164.227]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <695688FC0A71D349BBD596FBCF191D86@amazon.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the test script for the kernel test driver to analyse vmalloc
-allocator for benchmarking and stressing purposes. It is just a kernel
-module loader. You can specify and pass different parameters in order
-to investigate allocations behaviour. See "usage" output for more
-details.
-
-Also add basic vmalloc smoke test to the "run_vmtests" suite.
-
-Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
----
- tools/testing/selftests/vm/run_vmtests     |  16 +++
- tools/testing/selftests/vm/test_vmalloc.sh | 176 +++++++++++++++++++++++++++++
- 2 files changed, 192 insertions(+)
- create mode 100755 tools/testing/selftests/vm/test_vmalloc.sh
-
-diff --git a/tools/testing/selftests/vm/run_vmtests b/tools/testing/selftests/vm/run_vmtests
-index 584a91ae4a8f..951c507a27f7 100755
---- a/tools/testing/selftests/vm/run_vmtests
-+++ b/tools/testing/selftests/vm/run_vmtests
-@@ -211,4 +211,20 @@ else
-     echo "[PASS]"
- fi
- 
-+echo "------------------------------------"
-+echo "running vmalloc stability smoke test"
-+echo "------------------------------------"
-+./test_vmalloc.sh smoke
-+ret_val=$?
-+
-+if [ $ret_val -eq 0 ]; then
-+	echo "[PASS]"
-+elif [ $ret_val -eq $ksft_skip ]; then
-+	 echo "[SKIP]"
-+	 exitcode=$ksft_skip
-+else
-+	echo "[FAIL]"
-+	exitcode=1
-+fi
-+
- exit $exitcode
-diff --git a/tools/testing/selftests/vm/test_vmalloc.sh b/tools/testing/selftests/vm/test_vmalloc.sh
-new file mode 100755
-index 000000000000..06d2bb109f06
---- /dev/null
-+++ b/tools/testing/selftests/vm/test_vmalloc.sh
-@@ -0,0 +1,176 @@
-+#!/bin/bash
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# Copyright (C) 2018 Uladzislau Rezki (Sony) <urezki@gmail.com>
-+#
-+# This is a test script for the kernel test driver to analyse vmalloc
-+# allocator. Therefore it is just a kernel module loader. You can specify
-+# and pass different parameters in order to:
-+#     a) analyse performance of vmalloc allocations;
-+#     b) stressing and stability check of vmalloc subsystem.
-+
-+TEST_NAME="vmalloc"
-+DRIVER="test_${TEST_NAME}"
-+
-+# 1 if fails
-+exitcode=1
-+
-+# Kselftest framework requirement - SKIP code is 4.
-+ksft_skip=4
-+
-+#
-+# Static templates for performance, stressing and smoke tests.
-+# Also it is possible to pass any supported parameters manualy.
-+#
-+PERF_PARAM="single_cpu_test=1 sequential_test_order=1 test_repeat_count=3"
-+SMOKE_PARAM="single_cpu_test=1 test_loop_count=10000 test_repeat_count=10"
-+STRESS_PARAM="test_repeat_count=20"
-+
-+check_test_requirements()
-+{
-+	uid=$(id -u)
-+	if [ $uid -ne 0 ]; then
-+		echo "$0: Must be run as root"
-+		exit $ksft_skip
-+	fi
-+
-+	if ! which modprobe > /dev/null 2>&1; then
-+		echo "$0: You need modprobe installed"
-+		exit $ksft_skip
-+	fi
-+
-+	if ! modinfo $DRIVER > /dev/null 2>&1; then
-+		echo "$0: You must have the following enabled in your kernel:"
-+		echo "CONFIG_TEST_VMALLOC=m"
-+		exit $ksft_skip
-+	fi
-+}
-+
-+run_perfformance_check()
-+{
-+	echo "Run performance tests to evaluate how fast vmalloc allocation is."
-+	echo "It runs all test cases on one single CPU with sequential order."
-+
-+	modprobe $DRIVER $PERF_PARAM > /dev/null 2>&1
-+	echo "Done."
-+	echo "Ccheck the kernel message buffer to see the summary."
-+}
-+
-+run_stability_check()
-+{
-+	echo "Run stability tests. In order to stress vmalloc subsystem we run"
-+	echo "all available test cases on all available CPUs simultaneously."
-+	echo "It will take time, so be patient."
-+
-+	modprobe $DRIVER $STRESS_PARAM > /dev/null 2>&1
-+	echo "Done."
-+	echo "Check the kernel ring buffer to see the summary."
-+}
-+
-+run_smoke_check()
-+{
-+	echo "Run smoke test. Note, this test provides basic coverage."
-+	echo "Please check $0 output how it can be used"
-+	echo "for deep performance analysis as well as stress testing."
-+
-+	modprobe $DRIVER $SMOKE_PARAM > /dev/null 2>&1
-+	echo "Done."
-+	echo "Check the kernel ring buffer to see the summary."
-+}
-+
-+usage()
-+{
-+	echo -n "Usage: $0 [ performance ] | [ stress ] | | [ smoke ] | "
-+	echo "manual parameters"
-+	echo
-+	echo "Valid tests and parameters:"
-+	echo
-+	modinfo $DRIVER
-+	echo
-+	echo "Example usage:"
-+	echo
-+	echo "# Shows help message"
-+	echo "./${DRIVER}.sh"
-+	echo
-+	echo "# Runs 1 test(id_1), repeats it 5 times on all online CPUs"
-+	echo "./${DRIVER}.sh run_test_mask=1 test_repeat_count=5"
-+	echo
-+	echo -n "# Runs 4 tests(id_1|id_2|id_4|id_16) on one CPU with "
-+	echo "sequential order"
-+	echo -n "./${DRIVER}.sh single_cpu_test=1 sequential_test_order=1 "
-+	echo "run_test_mask=23"
-+	echo
-+	echo -n "# Runs all tests on all online CPUs, shuffled order, repeats "
-+	echo "20 times"
-+	echo "./${DRIVER}.sh test_repeat_count=20"
-+	echo
-+	echo "# Performance analysis"
-+	echo "./${DRIVER}.sh performance"
-+	echo
-+	echo "# Stress testing"
-+	echo "./${DRIVER}.sh stress"
-+	echo
-+	exit 0
-+}
-+
-+function validate_passed_args()
-+{
-+	VALID_ARGS=`modinfo $DRIVER | awk '/parm:/ {print $2}' | sed 's/:.*//'`
-+
-+	#
-+	# Something has been passed, check it.
-+	#
-+	for passed_arg in $@; do
-+		key=${passed_arg//=*/}
-+		val="${passed_arg:$((${#key}+1))}"
-+		valid=0
-+
-+		for valid_arg in $VALID_ARGS; do
-+			if [[ $key = $valid_arg ]] && [[ $val -gt 0 ]]; then
-+				valid=1
-+				break
-+			fi
-+		done
-+
-+		if [[ $valid -ne 1 ]]; then
-+			echo "Error: key or value is not correct: ${key} $val"
-+			exit $exitcode
-+		fi
-+	done
-+}
-+
-+function run_manual_check()
-+{
-+	#
-+	# Validate passed parameters. If there is wrong one,
-+	# the script exists and does not execute further.
-+	#
-+	validate_passed_args $@
-+
-+	echo "Run the test with following parameters: $@"
-+	modprobe $DRIVER $@ > /dev/null 2>&1
-+	echo "Done."
-+	echo "Check the kernel ring buffer to see the summary."
-+}
-+
-+function run_test()
-+{
-+	if [ $# -eq 0 ]; then
-+		usage
-+	else
-+		if [[ "$1" = "performance" ]]; then
-+			run_perfformance_check
-+		elif [[ "$1" = "stress" ]]; then
-+			run_stability_check
-+		elif [[ "$1" = "smoke" ]]; then
-+			run_smoke_check
-+		else
-+			run_manual_check $@
-+		fi
-+	fi
-+}
-+
-+check_test_requirements
-+run_test $@
-+
-+exit 0
--- 
-2.11.0
+T24gRnJpLCAyMDE4LTEyLTIxIGF0IDE2OjIwICswMTAwLCBQYW9sbyBCb256aW5pIHdyb3RlOg0K
+PiBPbiAwNi8xMi8xOCAwMDoxMCwgSmltIE1hdHRzb24gd3JvdGU6DQo+ID4gDQo+ID4gT24gTW9u
+LCBEZWMgMywgMjAxOCBhdCAxOjMxIEFNIEthcmltQWxsYWggQWhtZWQgPGthcmFobWVkQGFtYXpv
+bi5kZT4gd3JvdGU6DQo+ID4gPiANCj4gPiA+IA0KPiA+ID4gQ29weSB0aGUgVk1DUzEyIGRpcmVj
+dGx5IGZyb20gZ3Vlc3QgbWVtb3J5IGluc3RlYWQgb2YgdGhlIG1hcC0+Y29weS0+dW5tYXANCj4g
+PiA+IHNlcXVlbmNlLiBUaGlzIGFsc28gYXZvaWRzIHVzaW5nIGt2bV92Y3B1X2dwYV90b19wYWdl
+KCkgYW5kIGttYXAoKSB3aGljaA0KPiA+ID4gYXNzdW1lcyB0aGF0IHRoZXJlIGlzIGEgInN0cnVj
+dCBwYWdlIiBmb3IgZ3Vlc3QgbWVtb3J5Lg0KPiA+ID4gDQo+ID4gPiBTaWduZWQtb2ZmLWJ5OiBL
+YXJpbUFsbGFoIEFobWVkIDxrYXJhaG1lZEBhbWF6b24uZGU+DQo+ID4gPiAtLS0NCj4gPiA+IHYz
+IC0+IHY0Og0KPiA+ID4gLSBSZXR1cm4gVk1YRVJSX1ZNUFRSTERfSU5DT1JSRUNUX1ZNQ1NfUkVW
+SVNJT05fSUQgb24gZmFpbHVyZSAoam1hdHRzb25AKQ0KPiA+ID4gdjEgLT4gdjI6DQo+ID4gPiAt
+IE1hc3NhZ2UgY29tbWl0IG1lc3NhZ2UgYSBiaXQuDQo+ID4gPiAtLS0NCj4gPiA+ICBhcmNoL3g4
+Ni9rdm0vdm14LmMgfCAyNCArKysrKysrKysrKystLS0tLS0tLS0tLS0NCj4gPiA+ICAxIGZpbGUg
+Y2hhbmdlZCwgMTIgaW5zZXJ0aW9ucygrKSwgMTIgZGVsZXRpb25zKC0pDQo+ID4gPiANCj4gPiA+
+IGRpZmYgLS1naXQgYS9hcmNoL3g4Ni9rdm0vdm14LmMgYi9hcmNoL3g4Ni9rdm0vdm14LmMNCj4g
+PiA+IGluZGV4IGI4NGYyMzAuLjc1ODE3Y2IgMTAwNjQ0DQo+ID4gPiAtLS0gYS9hcmNoL3g4Ni9r
+dm0vdm14LmMNCj4gPiA+ICsrKyBiL2FyY2gveDg2L2t2bS92bXguYw0KPiA+ID4gQEAgLTkzMDEs
+MjAgKzkzMDEsMjIgQEAgc3RhdGljIGludCBoYW5kbGVfdm1wdHJsZChzdHJ1Y3Qga3ZtX3ZjcHUg
+KnZjcHUpDQo+ID4gPiAgICAgICAgICAgICAgICAgcmV0dXJuIDE7DQo+ID4gPiANCj4gPiA+ICAg
+ICAgICAgaWYgKHZteC0+bmVzdGVkLmN1cnJlbnRfdm1wdHIgIT0gdm1wdHIpIHsNCj4gPiA+IC0g
+ICAgICAgICAgICAgICBzdHJ1Y3Qgdm1jczEyICpuZXdfdm1jczEyOw0KPiA+ID4gLSAgICAgICAg
+ICAgICAgIHN0cnVjdCBwYWdlICpwYWdlOw0KPiA+ID4gLSAgICAgICAgICAgICAgIHBhZ2UgPSBr
+dm1fdmNwdV9ncGFfdG9fcGFnZSh2Y3B1LCB2bXB0cik7DQo+ID4gPiAtICAgICAgICAgICAgICAg
+aWYgKGlzX2Vycm9yX3BhZ2UocGFnZSkpDQo+ID4gPiAtICAgICAgICAgICAgICAgICAgICAgICBy
+ZXR1cm4gbmVzdGVkX3ZteF9mYWlsSW52YWxpZCh2Y3B1KTsNCj4gPiA+ICsgICAgICAgICAgICAg
+ICBzdHJ1Y3Qgdm1jczEyICpuZXdfdm1jczEyID0gKHN0cnVjdCB2bWNzMTIgKilfX2dldF9mcmVl
+X3BhZ2UoR0ZQX0tFUk5FTCk7DQo+ID4gPiArDQo+ID4gPiArICAgICAgICAgICAgICAgaWYgKCFu
+ZXdfdm1jczEyIHx8DQo+ID4gPiArICAgICAgICAgICAgICAgICAgIGt2bV9yZWFkX2d1ZXN0KHZj
+cHUtPmt2bSwgdm1wdHIsIG5ld192bWNzMTIsDQo+ID4gPiArICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgIHNpemVvZigqbmV3X3ZtY3MxMikpKSB7DQo+ID4gDQo+ID4gSXNuJ3QgdGhp
+cyBhIGxvdCBzbG93ZXIgdGhhbiBrbWFwKCkgd2hlbiB0aGVyZSBpcyBhIHN0cnVjdCBwYWdlPw0K
+PiANCj4gSXQgd291bGRuJ3QgYmUgc2xvd2VyIGlmIGhlIHJlYWQgZGlyZWN0bHkgaW50byBjYWNo
+ZWRfdm1jczEyLiAgSG93ZXZlciwNCj4gYXMgaXQgaXMgbm93LCBpdCdzIGRvaW5nIHR3byByZWFk
+cyBpbnN0ZWFkIG9mIG9uZS4gIEJ5IGRvaW5nIHRoaXMsIHRoZQ0KPiBFTk9NRU0gY2FzZSBhbHNv
+IGRpc2FwcGVhcnMuDQoNCkkgY2FuIG5vdCB1c2UgImNhY2hlZF92bWNzMTIiIGRpcmVjdGx5IGhl
+cmUgYmVjYXVzZSBpdHMgb2xkIGNvbnRlbnRzIHdpbGwgYmXCoA0KdXNlZCBmb3IgIm5lc3RlZF9y
+ZWxlYXNlX3ZtY3MxMiguLikiIGEgZmV3IGxpbmVzIGJlbG93IChpLmUuIGl0IHdpbGwgYmUgZmx1
+c2hlZMKgDQppbnRvIGd1ZXN0IG1lbW9yeSkuDQoNCkkgY2FuIGp1c3Qgc3dpdGNoIHRoaXMgdG8g
+dGhlIG5ldyBBUEkgaW50cm9kdWNlZCBhIGZldyBwYXRjaGVzIGxhdGVyIGFuZCB0aGF0wqANCndv
+dWxkIGhhdmUgdGhlIHNhbWUgc2VtYW50aWNzIGZvciBub3JtYWwgdXNlLWNhc2VzIGFzIGJlZm9y
+ZS4NCg0KPiANCj4gUGFvbG8NCgoKCkFtYXpvbiBEZXZlbG9wbWVudCBDZW50ZXIgR2VybWFueSBH
+bWJICktyYXVzZW5zdHIuIDM4CjEwMTE3IEJlcmxpbgpHZXNjaGFlZnRzZnVlaHJlcjogQ2hyaXN0
+aWFuIFNjaGxhZWdlciwgUmFsZiBIZXJicmljaApVc3QtSUQ6IERFIDI4OSAyMzcgODc5CkVpbmdl
+dHJhZ2VuIGFtIEFtdHNnZXJpY2h0IENoYXJsb3R0ZW5idXJnIEhSQiAxNDkxNzMgQgoK
 
