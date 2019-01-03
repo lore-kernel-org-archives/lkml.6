@@ -3,122 +3,99 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29D27C43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 18:25:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1B3CC43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 18:27:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E99992184B
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 18:25:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AEB2F20815
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 18:27:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546539949;
-	bh=PoJ0dnKj33jdwURMzFRuZUu1ihZ2k4zHEH0DZSL8UfA=;
+	s=default; t=1546540075;
+	bh=fpxd2g8yGu7xI5noWEvFmUrifHbuytJ96obkqpH4sRs=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=C92/o5xuZKBXTD9Ope581pdzdESxPHA3pptYG/ch8tlqx/1+tQ+ZInfeWbVjwXIh0
-	 f/Sc0YEtY+h7tCqrgjinaE18scbsAgDpbZYnRH0oGCxMWsQctSaz9ZCKkljc/0cZN9
-	 XdPGfdJuFvRfYp+96t1G2KVewy7NUMvUVL4x4zrY=
+	b=aijpPSBthkPUWJRNQOtfC+PxrQEfzgD1btXgfhf8hO7R9hIKNj16SYeF/qJ2ozPD1
+	 ud3njZcepgioydS3aE6o9aGc3+fmOZxUeggZEV9nrn4hyqCh3l49/YL93ejZgu/l0D
+	 JZLL2KkHJExqC+F34lqixydwfYr+4K1A8AE+4358=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731715AbfACSZs (ORCPT
+        id S1732075AbfACS1y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 13:25:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55120 "EHLO mail.kernel.org"
+        Thu, 3 Jan 2019 13:27:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55614 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727932AbfACSZr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 13:25:47 -0500
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+        id S1730506AbfACS1w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Jan 2019 13:27:52 -0500
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E99DC21871;
-        Thu,  3 Jan 2019 18:25:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1BCA92184B;
+        Thu,  3 Jan 2019 18:27:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546539946;
-        bh=PoJ0dnKj33jdwURMzFRuZUu1ihZ2k4zHEH0DZSL8UfA=;
+        s=default; t=1546540071;
+        bh=fpxd2g8yGu7xI5noWEvFmUrifHbuytJ96obkqpH4sRs=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=E6KoCmexVWS8cPtfyo/RfbdA4iPyy4gL2zDMhY8wQs8EEcpOSjgnq/r/y779BBnzc
-         v7ZWsPLbXpro7LVNuzNbAnRImv3GsPZZDvcmOqvU3s3LCw5JQADUbfehTh1sSrz6At
-         v2rOHVlBGSIkIpHRygar2e8ZEqSOLz/aIHoBSdJ4=
-Received: by mail-qk1-f174.google.com with SMTP id 68so20173933qke.9;
-        Thu, 03 Jan 2019 10:25:45 -0800 (PST)
-X-Gm-Message-State: AJcUukcDxJ2X+7DZ+FyhvKqOgFEIIgEzsDIGVady0sMz3XquzPZIEqko
-        gktPY28ylYU2NfHQrD60KpUXyTUcvxN3OIztjA==
-X-Google-Smtp-Source: ALg8bN6sJb/CC38IT+vKqJe9FwmTeB1yhwj9N6y6KEzQZGFM4rZifmB+Xf9BtX5VltXrDlJmwuS0fBbz9BrIGYx4qQs=
-X-Received: by 2002:a37:7682:: with SMTP id r124mr45419366qkc.79.1546539945110;
- Thu, 03 Jan 2019 10:25:45 -0800 (PST)
+        b=0NmAWKu+mvKTEpEz3Zv1oE47L55P82bwn6qvGsUJeHZv2WR9CvUFFHTJSciBlq/JU
+         jGlY0c8MHqw98wqbnsXeYK4Y0FyPv9cvUKEPmiWIZv3TZcD9wFIkQMNXRQ/BgaM16m
+         7dxsS0l4QWSgOmZeG557Pc3gGhrYTD+w1DjVdxEw=
+Received: by mail-qt1-f172.google.com with SMTP id i7so37865247qtj.10;
+        Thu, 03 Jan 2019 10:27:51 -0800 (PST)
+X-Gm-Message-State: AJcUukceBNtKWJYnE/+3xNE2nP5K7iMIZfBDKZVObk4+v+S7lR/4AUHJ
+        ivuLVgS0h1t9yi9f0GuqDHWyPyu8pwIIi2rLYQ==
+X-Google-Smtp-Source: ALg8bN4I8uEOgWuBV/Q46BjR9UpUotl4K5ogwo8Ujl9lcvRuFGgLAC5FdRVxWthtmGQ7BiwY8bQa0TCHy1smt9uujFE=
+X-Received: by 2002:a0c:9e05:: with SMTP id p5mr47142289qve.246.1546540070302;
+ Thu, 03 Jan 2019 10:27:50 -0800 (PST)
 MIME-Version: 1.0
-References: <1545150569-14897-1-git-send-email-viorel.suman@nxp.com>
- <CAGoOwPQvc5w05NOVsp6Qw-Ee3CJJCcaU2Dtzwbf+7bUe_kFEbA@mail.gmail.com> <1546531006.14398.83.camel@nxp.com>
-In-Reply-To: <1546531006.14398.83.camel@nxp.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Thu, 3 Jan 2019 12:25:33 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqLcBjRBV_zOoMGGB9gFVgk=4LSx80sFam1-9neDVjAYfQ@mail.gmail.com>
-Message-ID: <CAL_JsqLcBjRBV_zOoMGGB9gFVgk=4LSx80sFam1-9neDVjAYfQ@mail.gmail.com>
-Subject: Re: [RFC PATCH] ASoC: fsl: Add Audio Mixer CPU DAI driver
-To:     Viorel Suman <viorel.suman@nxp.com>
-Cc:     "nicoleotsuka@gmail.com" <nicoleotsuka@gmail.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "timur@kernel.org" <timur@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "Xiubo.Lee@gmail.com" <Xiubo.Lee@gmail.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "tiwai@suse.com" <tiwai@suse.com>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        "perex@perex.cz" <perex@perex.cz>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>
+References: <20181228154609.14846-1-pawel.mikolaj.chmiel@gmail.com>
+ <20181228154609.14846-6-pawel.mikolaj.chmiel@gmail.com> <20181228224707.GA7218@bogus>
+ <CAKdAkRQ6iO5bSUkSuPOUXMy46W1kENqg3ev=i+75459wfWAhfw@mail.gmail.com>
+In-Reply-To: <CAKdAkRQ6iO5bSUkSuPOUXMy46W1kENqg3ev=i+75459wfWAhfw@mail.gmail.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Thu, 3 Jan 2019 12:27:39 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqLoyQDzyhFvXn=DEucdh-9uwvrcXBK38izeGPdQsuv=Zw@mail.gmail.com>
+Message-ID: <CAL_JsqLoyQDzyhFvXn=DEucdh-9uwvrcXBK38izeGPdQsuv=Zw@mail.gmail.com>
+Subject: Re: [PATCH v2 5/7] Input: dt-bindings: tm2-touchkey: Document new
+ keycodes property
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        DTML <devicetree@vger.kernel.org>,
+        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>, xc-racer2@live.ca,
+        Simon Shields <simon@lineageos.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 3, 2019 at 9:59 AM Viorel Suman <viorel.suman@nxp.com> wrote:
+On Fri, Dec 28, 2018 at 4:52 PM Dmitry Torokhov
+<dmitry.torokhov@gmail.com> wrote:
 >
-> Hi Nicolin,
->
-> Thank you for your feedback, same here - just back from vacation.
->
-> On Jo, 2018-12-27 at 01:24 +0800, Nicolin Chen wrote:
-> > Hi Viorel,
+> On Fri, Dec 28, 2018 at 2:47 PM Rob Herring <robh@kernel.org> wrote:
 > >
-> > Sorry for the late response, having been on a long vacation.
-> >
-> > The code looks pretty clean. Just some small concerns/questions
-> > below.
-> >
-> > On Wed, Dec 19, 2018 at 12:30 AM Viorel Suman <viorel.suman@nxp.com>
-> > wrote:
+> > On Fri, 28 Dec 2018 16:46:07 +0100, =3D?UTF-8?q?Pawe=3DC5=3D82=3D20Chmi=
+el?=3D wrote:
+> > > From: Jonathan Bakker <xc-racer2@live.ca>
 > > >
+> > > Document new optional property for setting custom keycodes.
 > > >
-> > > This patch implements Audio Mixer CPU DAI driver for NXP iMX8 SOCs.
-> > > The Audio Mixer is a on-chip functional module that allows mixing
-> > > of
-> > > two audio streams into a single audio stream.
-> > >
-> > > Audio Mixer datasheet is available here:
-> > > https://www.nxp.com/docs/en/reference-manual/IMX8DQXPRM.pdf
-> > >
-> > > Signed-off-by: Viorel Suman <viorel.suman@nxp.com>
+> > > Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
+> > > Signed-off-by: Pawe=C5=82 Chmiel <pawel.mikolaj.chmiel@gmail.com>
 > > > ---
-> > >  .../devicetree/bindings/sound/fsl,amix.txt         |  45 ++
-> > >  sound/soc/fsl/Kconfig                              |   7 +
-> > >  sound/soc/fsl/Makefile                             |   3 +
-> > >  sound/soc/fsl/fsl_amix.c                           | 554
-> > > +++++++++++++++++++++
-> > >  sound/soc/fsl/fsl_amix.h                           | 101 ++++
-> > I aimn't against the naming here, but it seems to be AUDMIX in RM?
+> > > Changes from v1:
+> > >   - Because key codes could be bigger than 255, use ints for keycodes
+> > > ---
+> > >  .../devicetree/bindings/input/cypress,tm2-touchkey.txt        | 4 ++=
+++
+> > >  1 file changed, 4 insertions(+)
+> > >
 > >
-> > Would it be better to align with that? It's your decision though.
+> > Reviewed-by: Rob Herring <robh@kernel.org>
 >
-> To me "AUDMIX" sounds more like some RTL high level integration module,
-> I would prefer to keep it as it is if there is no strong reason to
-> rename it.
+> Shouldn't this be "linux,keycodes" though?
 
-At least for compatible string names, matching what's in the RM or RTL
-is more appropriate. Where does "AMIX" come from?
+Sigh, yes.
 
 Rob
