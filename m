@@ -2,114 +2,187 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-11.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E122EC43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 08:56:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCB80C43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 08:56:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B797120883
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 08:56:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A4F620883
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 08:56:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="LIJdsVzc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730412AbfACIz7 (ORCPT
+        id S1730429AbfACI4C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 03:55:59 -0500
-Received: from mga14.intel.com ([192.55.52.115]:44139 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730400AbfACIz4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 03:55:56 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jan 2019 00:55:56 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,434,1539673200"; 
-   d="scan'208";a="113827569"
-Received: from kpriedit-mobl.ger.corp.intel.com (HELO [10.252.54.192]) ([10.252.54.192])
-  by fmsmga008.fm.intel.com with ESMTP; 03 Jan 2019 00:55:54 -0800
-Subject: Re: WARNING: lock held when returning to user space in
- set_property_atomic
-To:     syzbot <syzbot+6ea337c427f5083ebdf2@syzkaller.appspotmail.com>,
-        airlied@linux.ie, daniel@ffwll.ch, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, maxime.ripard@bootlin.com,
-        sean@poorly.run, syzkaller-bugs@googlegroups.com
-References: <000000000000f56975057e374c46@google.com>
-From:   Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Message-ID: <fea9b565-06e4-fbb5-7e92-efd133a7028c@linux.intel.com>
-Date:   Thu, 3 Jan 2019 09:55:53 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
-MIME-Version: 1.0
-In-Reply-To: <000000000000f56975057e374c46@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+        Thu, 3 Jan 2019 03:56:02 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:45368 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730400AbfACI4A (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Jan 2019 03:56:00 -0500
+Received: by mail-pg1-f194.google.com with SMTP id y4so15717836pgc.12
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 00:55:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=nZ2W19+rOYu3Y/tMXOuNYWgMFRt3+zm/oa2zUyjqgVE=;
+        b=LIJdsVzcy32F0XTyRFCtIY0QFpFHl10cEQdnc2e0/kF33sgDrgM/FedZvRwXHy2bUQ
+         oPpsg6c1aWRaxexn/MPAfn/zrIGUloTNXHYEgM3B/RpwTP89jQUNJpAXXMqcadMIj7pa
+         AmUE2Qvsha03aG2CN4zrfoJb6xAzGxo0fSgxE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=nZ2W19+rOYu3Y/tMXOuNYWgMFRt3+zm/oa2zUyjqgVE=;
+        b=MQt6WaafPNy2NMsR8lamVHcrw4P1xWULxf8ua6WoXElefLIL/Ukx85NqS8XWyEA0xU
+         MoReWv1AcLTEmwxY8le1sTWo+Pvp1Bp+GaL/RXu46Uh0rUWV3E2f9bLqBqqt0TJKAM5f
+         a4AaWt4eKI61efOnSxMMR+KIT9+TBE3FM1v+T3GGIwMih9N/yUVr1NnZPxslOCFwWPfL
+         PRCpIPDsBizj2r2/8PrS31aS1Lej7AvWfoUNXU89/F7GlPfe59nXdwr3AANbshJBZT66
+         J1E+BsU8CX8obHMuNmet8KQmeEcrPHi2ee6kvxG8dCwakYB7op0XIIfk0RmI7bLC/AEF
+         x52A==
+X-Gm-Message-State: AJcUukesIzUgVRzMF8jnA+FDldQ9DzOyISlXy9DQFpuR7nS+IFz+NBVM
+        YN/IH8MxjM0e0NwBL92tR/+SRA==
+X-Google-Smtp-Source: ALg8bN7dulh4nCt7A0PaUMXjT8p04hcyqzLR9BS8C+//p3Qt7WS2knvHWYMjmvvp45rf+rA95GnzOg==
+X-Received: by 2002:a63:9306:: with SMTP id b6mr15622487pge.36.1546505759360;
+        Thu, 03 Jan 2019 00:55:59 -0800 (PST)
+Received: from mannams-OptiPlex-7010.dhcp.broadcom.net ([192.19.234.250])
+        by smtp.gmail.com with ESMTPSA id s190sm78189727pfb.103.2019.01.03.00.55.56
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 03 Jan 2019 00:55:58 -0800 (PST)
+From:   Srinath Mannam <srinath.mannam@broadcom.com>
+To:     daniel.lezcano@linaro.org, Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        Pramod Kumar <pramod.kumar@broadcom.com>,
+        Srinath Mannam <srinath.mannam@broadcom.com>
+Subject: [PATCH v6 3/3] arm64: dts: stingray: Add Stingray Thermal DT support.
+Date:   Thu,  3 Jan 2019 14:25:34 +0530
+Message-Id: <1546505734-24527-4-git-send-email-srinath.mannam@broadcom.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1546505734-24527-1-git-send-email-srinath.mannam@broadcom.com>
+References: <1546505734-24527-1-git-send-email-srinath.mannam@broadcom.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Op 30-12-2018 om 07:21 schreef syzbot:
-> Hello,
->
-> syzbot found the following crash on:
->
-> HEAD commit:    903b77c63167 Merge tag 'linux-kselftest-4.21-rc1' of git:/..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=12d0f553400000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=53a2f2aa0b1f7606
-> dashboard link: https://syzkaller.appspot.com/bug?extid=6ea337c427f5083ebdf2
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=120d906f400000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1024673b400000
->
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+6ea337c427f5083ebdf2@syzkaller.appspotmail.com
->
-> RBP: 00007ffe369ca7a0 R08: 0000000000000001 R09: 00000000004009ce
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000005
-> R13: ffffffffffffffff R14: 0000000000000000 R15: 0000000000000000
->
-> ================================================
-> WARNING: lock held when returning to user space!
-> 4.20.0+ #174 Not tainted
-> ------------------------------------------------
-> syz-executor556/8153 is leaving the kernel with locks still held!
-> 1 lock held by syz-executor556/8153:
->  #0: 000000005100c85c (crtc_ww_class_acquire){+.+.}, at: set_property_atomic+0xb3/0x330 drivers/gpu/drm/drm_mode_object.c:462
->
->
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with syzbot.
-> syzbot can test patches for this bug, for details see:
-> https://goo.gl/tpsmEJ#testing-patches
+From: Pramod Kumar <pramod.kumar@broadcom.com>
 
-Just guessing..
+Add DT nodes for thermal zones memory base address
+to read temperature.
 
-Does this help?
------
-diff --git a/drivers/gpu/drm/drm_mode_object.c b/drivers/gpu/drm/drm_mode_object.c
-index cd9bc0ce9be0..004191d01772 100644
---- a/drivers/gpu/drm/drm_mode_object.c
-+++ b/drivers/gpu/drm/drm_mode_object.c
-@@ -459,11 +459,11 @@ static int set_property_atomic(struct drm_mode_object *obj,
- 	struct drm_modeset_acquire_ctx ctx;
- 	int ret;
- 
--	drm_modeset_acquire_init(&ctx, 0);
--
- 	state = drm_atomic_state_alloc(dev);
- 	if (!state)
- 		return -ENOMEM;
+Signed-off-by: Pramod Kumar <pramod.kumar@broadcom.com>
+Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
+Reviewed-by: Ray Jui <ray.jui@broadcom.com>
+Reviewed-by: Scott Branden <scott.branden@broadcom.com>
+---
+ .../arm64/boot/dts/broadcom/stingray/stingray.dtsi | 89 ++++++++++++++++++++++
+ 1 file changed, 89 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
+index cfeaa85..4fd06ed 100644
+--- a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
++++ b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
+@@ -612,4 +612,93 @@
+ 			status = "disabled";
+ 		};
+ 	};
 +
-+	drm_modeset_acquire_init(&ctx, 0);
- 	state->acquire_ctx = &ctx;
- retry:
- 	if (prop == state->dev->mode_config.dpms_property) {
++	tmons {
++		compatible = "simple-bus";
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0x0 0x0 0x8f100000 0x100>;
++
++		tmon: tmon@0 {
++			compatible = "brcm,sr-thermal";
++			reg = <0x0 0x40>;
++			brcm,tmon-mask = <0x3f>;
++			#thermal-sensor-cells = <1>;
++		};
++	};
++
++	thermal-zones {
++		ihost0_thermal: ihost0-thermal {
++			polling-delay-passive = <0>;
++			polling-delay = <1000>;
++			thermal-sensors = <&tmon 0>;
++			trips {
++				cpu-crit {
++					temperature = <105000>;
++					hysteresis = <0>;
++					type = "critical";
++				};
++			};
++		};
++		ihost1_thermal: ihost1-thermal {
++			polling-delay-passive = <0>;
++			polling-delay = <1000>;
++			thermal-sensors = <&tmon 1>;
++			trips {
++				cpu-crit {
++					temperature = <105000>;
++					hysteresis = <0>;
++					type = "critical";
++				};
++			};
++		};
++		ihost2_thermal: ihost2-thermal {
++			polling-delay-passive = <0>;
++			polling-delay = <1000>;
++			thermal-sensors = <&tmon 2>;
++			trips {
++				cpu-crit {
++					temperature = <105000>;
++					hysteresis = <0>;
++					type = "critical";
++				};
++			};
++		};
++		ihost3_thermal: ihost3-thermal {
++			polling-delay-passive = <0>;
++			polling-delay = <1000>;
++			thermal-sensors = <&tmon 3>;
++			trips {
++				cpu-crit {
++					temperature = <105000>;
++					hysteresis = <0>;
++					type = "critical";
++				};
++			};
++		};
++		crmu_thermal: crmu-thermal {
++			polling-delay-passive = <0>;
++			polling-delay = <1000>;
++			thermal-sensors = <&tmon 4>;
++			trips {
++				cpu-crit {
++					temperature = <105000>;
++					hysteresis = <0>;
++					type = "critical";
++				};
++			};
++		};
++		nitro_thermal: nitro-thermal {
++			polling-delay-passive = <0>;
++			polling-delay = <1000>;
++			thermal-sensors = <&tmon 5>;
++			trips {
++				cpu-crit {
++					temperature = <105000>;
++					hysteresis = <0>;
++					type = "critical";
++				};
++			};
++		};
++	};
+ };
+-- 
+2.7.4
 
