@@ -6,46 +6,44 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 268D2C43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 05:30:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8DAAC43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 05:31:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E45D42070C
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 05:30:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B70D2070C
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 05:31:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=memeware.net header.i=@memeware.net header.b="keIfRRKe"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=memeware.net header.i=@memeware.net header.b="oLsyDn0s"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727419AbfACFaP (ORCPT
+        id S1729299AbfACFbS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 00:30:15 -0500
-Received: from cock.li ([185.100.85.212]:59900 "EHLO cock.li"
+        Thu, 3 Jan 2019 00:31:18 -0500
+Received: from cock.li ([185.100.85.212]:32922 "EHLO cock.li"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726003AbfACFaP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 00:30:15 -0500
+        id S1727308AbfACFbS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Jan 2019 00:31:18 -0500
 MIME-Version: 1.0
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=memeware.net; s=mail;
-        t=1546493412; bh=bX7JE50TLgppdEVHo9RwAjyzaPOBkQGLxnNxYEY+PsY=;
+        t=1546493475; bh=aDoWDVC//jKPaBmjpWvkPZymi2hgKCXPYRQVGjFnCuE=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=keIfRRKeGuPWcCLTkcSjTWxDcT5EKW3FcSU2C7F0GWnJAWt7ohJRlFnG7HNs3THQC
-         L6bsfLDKvRb1xRVSLECSUqB5+MwIMbgYMy41vkh3ZiPvQj355Xue4TVdUYPMQVjslJ
-         0dF5bVQcOXBTiLZG4kg4BS/bbB4xbXHHnCKWsyVTrRi8En8sfXLnKHC3EHsMUfwBeU
-         8V7SSbOBTzrAIOBldOdwSW5EqC/pclAj0Y1LeC6YeZOTVHdeM8ALAAXHvvpR/GiTjq
-         49KkxmolBRZFVnR/pEMsyoH8V06xj+sAbb1vOKTTrQ9/1q3gtpofkb7uVyKc0JlaO1
-         n9GpI/O4kLQvw==
+        b=oLsyDn0saXCOlLCwg9MJq56yh8MUJ05pmqUI16CBzCeWBptZ1NuMqF0Hlpe4KkMNa
+         k/5E5/dDU3stdI1B86A0u+dT6gQuGzpukYNRbs70ZECffhthXfCL2J/hIkqIVanmoc
+         r3Rg/zSNXbKyIxAFfPzGKnNRjSEHEaLnUufk25R9JQNgMZVOnvc3U39Ay85bCQg6LE
+         RD83g1GXVE7kAbPbCR5EoRpDLYJma5Q79Y6TQhfq0iubn4FwPIyl6CvPVR8YpWnEv7
+         Z1AxKcjHpL+sEKZ1WxT+YQFct1mvVf72GXBSJqCzZliLNkupPOPuU2Lh0FMKMrZ1az
+         8T/JuP5rW8qVg==
 Content-Type: text/plain; charset=US-ASCII;
  format=flowed
 Content-Transfer-Encoding: 7bit
-Date:   Thu, 03 Jan 2019 05:30:11 +0000
+Date:   Thu, 03 Jan 2019 05:31:14 +0000
 From:   vsnsdualce@memeware.net
 To:     Mike Galbraith <efault@gmx.de>
-Cc:     linux-kernel@vger.kernel.org, gentoo-user@lists.gentoo.org,
-        ubuntu-users@lists.ubuntu.com, debian-user@lists.debian.org,
-        freebsd-women@freebsd.org, freebsd-chat@freebsd.org,
-        misc@openbsd.org
-Subject: Re: knifeshack (Linux Property rights)
+Cc:     linux-kernel@vger.kernel.org, freebsd-women@freebsd.org,
+        freebsd-chat@freebsd.org, misc@openbsd.org
+Subject: Re: knifeshack (Linux Property rights) -- Why dislike short story?
 In-Reply-To: <1546396372.7355.6.camel@gmx.de>
 References: <5887db663842c078851e7795512bca45@memeware.net>
  <1546396372.7355.6.camel@gmx.de>
-Message-ID: <87da42403d33f5a48bc87317dbd3bf6d@memeware.net>
+Message-ID: <a87c86d5c14d8b377a736d8537edfe80@memeware.net>
 X-Sender: vsnsdualce@memeware.net
 User-Agent: Roundcube Webmail/1.3.6
 Sender: linux-kernel-owner@vger.kernel.org
@@ -56,9 +54,4 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 On 2019-01-02 02:32, Mike Galbraith wrote:
 > Take your medication.
 
-Don't like the story? Why what is wrong with it.
-
-Was it the entrance, the middle, or the conclusion?
-
-It simply explains licensing in a way you might find helpful, as it 
-relates to linux.
+Why don't you like my short story?
