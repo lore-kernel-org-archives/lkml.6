@@ -2,118 +2,115 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F3ABC43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 00:50:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E3BCC43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 01:00:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2762220815
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 00:50:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3268C21871
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 01:00:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="iR8MQG7Y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730314AbfACAuB (ORCPT
+        id S1727095AbfACBAv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 19:50:01 -0500
-Received: from foss.arm.com ([217.140.101.70]:39806 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730205AbfACAtf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 19:49:35 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9EC4E15AB;
-        Wed,  2 Jan 2019 16:49:34 -0800 (PST)
-Received: from beelzebub.austin.arm.com (beelzebub.austin.arm.com [10.118.12.119])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id C869B3F5AF;
-        Wed,  2 Jan 2019 16:49:33 -0800 (PST)
-From:   Jeremy Linton <jeremy.linton@arm.com>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     catalin.marinas@arm.com, will.deacon@arm.com, marc.zyngier@arm.com,
-        suzuki.poulose@arm.com, dave.martin@arm.com,
-        shankerd@codeaurora.org, mark.rutland@arm.com,
-        linux-kernel@vger.kernel.org, ykaukab@suse.de,
-        julien.thierry@arm.com, mlangsdo@redhat.com, steven.price@arm.com,
-        Jeremy Linton <jeremy.linton@arm.com>
-Subject: [PATCH v2 3/7] arm64: add sysfs vulnerability show for meltdown
-Date:   Wed,  2 Jan 2019 18:49:17 -0600
-Message-Id: <20190103004921.1928921-4-jeremy.linton@arm.com>
-X-Mailer: git-send-email 2.17.2
-In-Reply-To: <20190103004921.1928921-1-jeremy.linton@arm.com>
-References: <20190103004921.1928921-1-jeremy.linton@arm.com>
+        Wed, 2 Jan 2019 20:00:51 -0500
+Received: from conssluserg-05.nifty.com ([210.131.2.90]:57376 "EHLO
+        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726210AbfACBAu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Jan 2019 20:00:50 -0500
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48]) (authenticated)
+        by conssluserg-05.nifty.com with ESMTP id x0310dmi018991
+        for <linux-kernel@vger.kernel.org>; Thu, 3 Jan 2019 10:00:40 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com x0310dmi018991
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1546477240;
+        bh=X2sWuKEkNZ7gLbWG5LbdTXRuaic0LVSffH4BwabE+/0=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=iR8MQG7YxPnsW8Kpok8Ksu10iP0s0X40+waqO1UwQ13TmD6g+W6fbUKiGzfhgEN9R
+         UNN77nWmztsKww812iQ+UXycil2pJWFnkOTx8zgYIhbxnHM013uZ4xGWylcroMfGCN
+         rJk7iQTpUei05TBNP87uqTL6EH65sllONdlNdQuldhhSjRQeo4h5q5VIafacsDywZC
+         x85bvLimLLJqMLrd6+0mktcfxw970vRbdLxdKc/zAH9OI7oRtXTXV2F6MCMbu7O/lx
+         n6PF8U8KDztoe1g7idhlAXeq3vEWpNeVQDi76ZSgXItjpLo57YOWoV2pgpzaEDq1vm
+         kQM1dndA9OvXg==
+X-Nifty-SrcIP: [209.85.217.48]
+Received: by mail-vs1-f48.google.com with SMTP id y27so19954666vsi.1
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 17:00:40 -0800 (PST)
+X-Gm-Message-State: AA+aEWbi9pw92JkMo1H+wU942N6btiY4AMl3Jt7VmxJYDgPLc6VGJO9Q
+        OyrKDEZcJm/8VzFsfBa1y8EWfQkDj9fBYcRAguU=
+X-Google-Smtp-Source: AFSGD/UjyPMlg9f0e2ZcvBMDjk0BvFh+6xV6rLXAaM2Qy1h9eCnbSNr++FsHxoMS82SPAZw3UwusZFoD8gxth5y4z8c=
+X-Received: by 2002:a67:a858:: with SMTP id r85mr18057872vse.215.1546477239055;
+ Wed, 02 Jan 2019 17:00:39 -0800 (PST)
+MIME-Version: 1.0
+References: <1544976205-18762-1-git-send-email-yamada.masahiro@socionext.com> <CAK7LNATsp7Jez3eZxM8Zv642=YS0N8cWPN4XY9CRbD2dXDK3tg@mail.gmail.com>
+In-Reply-To: <CAK7LNATsp7Jez3eZxM8Zv642=YS0N8cWPN4XY9CRbD2dXDK3tg@mail.gmail.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Thu, 3 Jan 2019 10:00:02 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQN+vDAXv5=n38ozdko=-eB+efq=jsp9_f7VaHUDD0arA@mail.gmail.com>
+Message-ID: <CAK7LNAQN+vDAXv5=n38ozdko=-eB+efq=jsp9_f7VaHUDD0arA@mail.gmail.com>
+Subject: Re: [PATCH] csky: remove meaningless header-y
+To:     Guo Ren <guoren@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a simple state machine which will track whether
-all the online cores in a machine are vulnerable.
+On Thu, Jan 3, 2019 at 9:36 AM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+>
+> On Mon, Dec 17, 2018 at 1:07 AM Masahiro Yamada
+> <yamada.masahiro@socionext.com> wrote:
+> >
+> > Since commit fcc8487d477a ("uapi: export all headers under uapi
+> > directories"), header-y is meaningless because headers under uapi
+> > are all exported.
+> >
+> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> > ---
+>
+> Applied to linux-kbuild.
 
-Once that is done we have a fairly authoritative view
-of the machine vulnerability, which allows us to make a
-judgment about machine safety if it hasn't been mitigated.
 
-Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
----
- arch/arm64/kernel/cpufeature.c | 29 ++++++++++++++++++++++++-----
- 1 file changed, 24 insertions(+), 5 deletions(-)
+I take it back.
 
-diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-index ab784d7a0083..1f64cbff8456 100644
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -944,6 +944,9 @@ has_useable_cnp(const struct arm64_cpu_capabilities *entry, int scope)
- 	return has_cpuid_feature(entry, scope);
- }
- 
-+/* default value is invalid until unmap_kernel_at_el0() runs */
-+static bool __meltdown_safe = true;
-+
- #ifdef CONFIG_UNMAP_KERNEL_AT_EL0
- static int __kpti_forced; /* 0: not forced, >0: forced on, <0: forced off */
- 
-@@ -972,6 +975,12 @@ static bool unmap_kernel_at_el0(const struct arm64_cpu_capabilities *entry,
- {
- 	char const *str = "command line option";
- 
-+	bool meltdown_safe = is_cpu_meltdown_safe() ||
-+		has_cpuid_feature(entry, scope);
-+
-+	if (!meltdown_safe)
-+		__meltdown_safe = false;
-+
- 	/*
- 	 * For reasons that aren't entirely clear, enabling KPTI on Cavium
- 	 * ThunderX leads to apparent I-cache corruption of kernel text, which
-@@ -993,11 +1002,7 @@ static bool unmap_kernel_at_el0(const struct arm64_cpu_capabilities *entry,
- 	if (IS_ENABLED(CONFIG_RANDOMIZE_BASE))
- 		return true;
- 
--	if (is_cpu_meltdown_safe())
--		return false;
--
--	/* Defer to CPU feature registers */
--	return !has_cpuid_feature(entry, scope);
-+	return !meltdown_safe;
- }
- 
- static void
-@@ -2065,3 +2070,17 @@ static int __init enable_mrs_emulation(void)
- }
- 
- core_initcall(enable_mrs_emulation);
-+
-+#ifdef CONFIG_GENERIC_CPU_VULNERABILITIES
-+ssize_t cpu_show_meltdown(struct device *dev, struct device_attribute *attr,
-+		char *buf)
-+{
-+	if (arm64_kernel_unmapped_at_el0())
-+		return sprintf(buf, "Mitigation: KPTI\n");
-+
-+	if (IS_ENABLED(CONFIG_UNMAP_KERNEL_AT_EL0) && __meltdown_safe)
-+		return sprintf(buf, "Not affected\n");
-+
-+	return sprintf(buf, "Unknown\n");
-+}
-+#endif
+I found Guo Ren had already applied it.
+
+
+
+
+>
+> >  arch/csky/include/uapi/asm/Kbuild | 2 --
+> >  1 file changed, 2 deletions(-)
+> >
+> > diff --git a/arch/csky/include/uapi/asm/Kbuild b/arch/csky/include/uapi/asm/Kbuild
+> > index e02fd44e..7449fde 100644
+> > --- a/arch/csky/include/uapi/asm/Kbuild
+> > +++ b/arch/csky/include/uapi/asm/Kbuild
+> > @@ -1,7 +1,5 @@
+> >  include include/uapi/asm-generic/Kbuild.asm
+> >
+> > -header-y += cachectl.h
+> > -
+> >  generic-y += auxvec.h
+> >  generic-y += param.h
+> >  generic-y += bpf_perf_event.h
+> > --
+> > 2.7.4
+> >
+>
+>
+> --
+> Best Regards
+> Masahiro Yamada
+
+
+
 -- 
-2.17.2
-
+Best Regards
+Masahiro Yamada
