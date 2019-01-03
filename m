@@ -3,224 +3,456 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E9AAC43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 16:38:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01AB5C43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 16:39:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C878220815
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 16:38:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0A902073D
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 16:39:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="LisEPkzP"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JYTvaJAb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732329AbfACQig (ORCPT
+        id S1730801AbfACQjU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 11:38:36 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:45704 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729598AbfACQig (ORCPT
+        Thu, 3 Jan 2019 11:39:20 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:44977 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726618AbfACQjU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 11:38:36 -0500
-Received: by mail-qk1-f194.google.com with SMTP id y78so19961475qka.12
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 08:38:34 -0800 (PST)
+        Thu, 3 Jan 2019 11:39:20 -0500
+Received: by mail-qk1-f196.google.com with SMTP id o8so3589512qkk.11
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 08:39:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=A4aQNIK++2OFjzVt2CQOMYWozqdUG8deKPHsV2CVouU=;
-        b=LisEPkzPle9cP9gPNnD8SiFxWD5vORfaZZ9dYAj2ITTrPCjgwLcWzxSnyLNkFSWTag
-         6ND4FuaHHQGNj87ZNjf5900I2aPsRE2L64AoOXI3METUFxzSn+ymy6HwO5fy8VWq16rd
-         H4IBjdyGBHlG4i7/nZsNytNYFPK/KVjmuQIeSowErcEMbxkAk+EutBeN7N47luMvD1xY
-         SmrqojVg1la4KymSJpTAVcRzH/e1xF2/ZxEWDJWjCnF6noenWeJve5ILEL6WJpbj4YxK
-         G+mcQ5H5wf72CUvDFYilNI5wskSrWvo2JSapg/w7+2Oy5F5GDE0+7Y6DIKswAx6GQmjd
-         +vtQ==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=kOFN+YmKtrQtU4XCjTbjnZ3th3gQ5PBX2qIvBxq53iM=;
+        b=JYTvaJAbnmFAQqLT0vzhYaRgCDp/Js0EeOueivNffxa2RLTukPvDp1p7FOiqfS4FWm
+         04KVosvcWWkYDntCcanh6L5BMMoDuEgjgi6LLJgggaYWaG0UGkju0Eb1VrdzvelR9r2z
+         JhQrltR4X1+xlCB61MbEwVTNP+cV1EjADieu+33r1xlr561rWUW8Ij03iBQQizcrzx6g
+         VqrozHNGnCJKbYnJuo4FeSR8BmrxCYFna0VmwHqGpNOc9lUyviHpqTodBquypEV86i1q
+         1TwhMjMC00sWMrYF+0n31OI31GNBkK4KE+2CpOShBLPaW+eSZvyfdknNelXE2yICwT5f
+         JDZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=A4aQNIK++2OFjzVt2CQOMYWozqdUG8deKPHsV2CVouU=;
-        b=ZHj2hzFzSTjHQQxwQ8m3cmeZVg//L7WQFIrpUsiJ5XrcXAalr9kg7ePyqk7njFZK7b
-         W7TekENl6GNbh80zJHNAfC6GuAsg2F4pNY1GSnPZOuYGLpFlsKs/iE8L7QI9vf3WKREN
-         uCuiCYl8D/2bFB2TEehtE0jPHTUWJ6NFwd/WyTH9L9YQA5DXowTH2B+sR205P8Jcj85d
-         Izok/zVu7jtzBNc/j0tNGZheh3T1U5ATDMCe87iq2RHyUJelH3zEThuYso2x/RQfS05r
-         kVsnGzgVO/+caAc8NQYyqSUyg7CAVDOxxqW0lkgQVm/n5xWT0TAnxj9dW2pPvDeGjMke
-         Ll/g==
-X-Gm-Message-State: AJcUukcaCEZBlusvolUADlm7dbJjpDN9FwU/3ggzWSq0wlgztcTxNp2d
-        zv+don02oNxIKfSAQkei2uC1K2hCzAniNg==
-X-Google-Smtp-Source: ALg8bN54XBdvFb+IKxUGdmh0GL7y5FDHvl25/kff9Myi4hjBpsqcZpfwQ30W5dyAFFXCclhXkXYTMg==
-X-Received: by 2002:a37:2cc2:: with SMTP id s185mr43606878qkh.74.1546533513568;
-        Thu, 03 Jan 2019 08:38:33 -0800 (PST)
-Received: from ovpn-120-55.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id g23sm30605821qta.24.2019.01.03.08.38.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 03 Jan 2019 08:38:33 -0800 (PST)
-Subject: Re: [PATCH v3] mm/page_owner: fix for deferred struct page init
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     akpm@linux-foundation.org, Pavel.Tatashin@microsoft.com,
-        mingo@kernel.org, hpa@zytor.com, mgorman@techsingularity.net,
-        iamjoonsoo.kim@lge.com, yang.shi@linaro.org, tglx@linutronix.de,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20181220185031.43146-1-cai@lca.pw>
- <20181220203156.43441-1-cai@lca.pw> <20190103115114.GL31793@dhcp22.suse.cz>
-From:   Qian Cai <cai@lca.pw>
-Message-ID: <e3ff1455-06cc-063e-24f0-3b525c345b84@lca.pw>
-Date:   Thu, 3 Jan 2019 11:38:31 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.3.3
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kOFN+YmKtrQtU4XCjTbjnZ3th3gQ5PBX2qIvBxq53iM=;
+        b=reRQZu4ZtEl9gtTnLPZbKf5I54tK94HEBgUuibn/OUkyCmWoUPAz/bd9+lkUizmZR5
+         k14S+IBHq8Zm5AyNFkW3bIde841PuHU14NpwUAiNx5PHM0CRn04JkUNpYovC3CRzuIZw
+         dZ7ANV7ySDPGsdMRCOCa6nbkQvSp+Ft3UAJ3kPn6z5TozqKdbNm4MjbPAcIccb8qYvQg
+         H3vyf/1EPRtRJ+Jv8IzIFImUKni3ZwoyKotEupdh77UHAfub24L0/xNa9fe7gHdQ66L+
+         +TDM5P1dIFgoiX5EiSTyFpcBHGcF5QMPKygFsoFynYb9Ju3IMXvn7Z2ZbKD6F+dtgNgT
+         dq9Q==
+X-Gm-Message-State: AJcUukcR7tSGhWZSXYuj7AQ13TxNiRu0XyOOdyEbElZwVX5YGHuhr/hL
+        GGIRfwweQY0VQ4Zop8zhI+MmKgjFiJYzt3It70A=
+X-Google-Smtp-Source: ALg8bN7hNsjfsn+WnvePhsXUYlIeRz8Ndj0ruHWwoN8dKoWEkhg0WV3RmCl+WZAj4FmBil7BGqGzELMq/dgmK33tpEM=
+X-Received: by 2002:a37:6442:: with SMTP id y63mr44991655qkb.119.1546533558458;
+ Thu, 03 Jan 2019 08:39:18 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190103115114.GL31793@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20181226075330.82462-1-pihsun@chromium.org> <20181226075330.82462-6-pihsun@chromium.org>
+ <CAFqH_52NcK932VYjbzTXCuiFip9Wed2UjtfTWs3aFH+6YqPNiQ@mail.gmail.com> <CABXOdTd9J6=M_-sx0us13++g2NLi_HcJDBOrqnDn6EjHoyvN=Q@mail.gmail.com>
+In-Reply-To: <CABXOdTd9J6=M_-sx0us13++g2NLi_HcJDBOrqnDn6EjHoyvN=Q@mail.gmail.com>
+From:   Enric Balletbo Serra <eballetbo@gmail.com>
+Date:   Thu, 3 Jan 2019 17:39:07 +0100
+Message-ID: <CAFqH_52pxpXdKLjy52SDEeuozdO2TmN1dpegqx_oCjp6kwd07A@mail.gmail.com>
+Subject: Re: [RFC,5/5] mfd: cros_ec: add EC host command support using rpmsg.
+To:     Guenter Roeck <groeck@google.com>
+Cc:     Pi-Hsun Shih <pihsun@chromium.org>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Benson Leung <bleung@chromium.org>,
+        Olof Johansson <olof@lixom.net>,
+        open list <linux-kernel@vger.kernel.org>,
+        Guenter Roeck <groeck@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/3/19 6:51 AM, Michal Hocko wrote:
-> On Thu 20-12-18 15:31:56, Qian Cai wrote:
->> When booting a system with "page_owner=on",
->>
->> start_kernel
->>   page_ext_init
->>     invoke_init_callbacks
->>       init_section_page_ext
->>         init_page_owner
->>           init_early_allocated_pages
->>             init_zones_in_node
->>               init_pages_in_zone
->>                 lookup_page_ext
->>                   page_to_nid
->>
->> The issue here is that page_to_nid() will not work since some page
->> flags have no node information until later in page_alloc_init_late() due
->> to DEFERRED_STRUCT_PAGE_INIT. Hence, it could trigger an out-of-bounds
->> access with an invalid nid.
->>
->> [    8.666047] UBSAN: Undefined behaviour in ./include/linux/mm.h:1104:50
->> [    8.672603] index 7 is out of range for type 'zone [5]'
->>
->> Also, kernel will panic since flags were poisoned earlier with,
->>
->> CONFIG_DEBUG_VM_PGFLAGS=y
->> CONFIG_NODE_NOT_IN_PAGE_FLAGS=n
->>
->> start_kernel
->>   setup_arch
->>     pagetable_init
->>       paging_init
->>         sparse_init
->>           sparse_init_nid
->>             memblock_alloc_try_nid_raw
->>
->> Although later it tries to set page flags for pages in reserved bootmem
->> regions,
->>
->> mm_init
->>   mem_init
->>     memblock_free_all
->>       free_low_memory_core_early
->>         reserve_bootmem_region
->>
->> there could still have some freed pages from the page allocator but yet
->> to be initialized due to DEFERRED_STRUCT_PAGE_INIT. It have already been
->> dealt with a bit in page_ext_init().
->>
->> * Take into account DEFERRED_STRUCT_PAGE_INIT.
->> */
->> if (early_pfn_to_nid(pfn) != nid)
->> 	continue;
->>
->> However, it did not handle it well in init_pages_in_zone() which end up
->> calling page_to_nid().
->>
->> [   11.917212] page:ffffea0004200000 is uninitialized and poisoned
->> [   11.917220] raw: ffffffffffffffff ffffffffffffffff ffffffffffffffff
->> ffffffffffffffff
->> [   11.921745] raw: ffffffffffffffff ffffffffffffffff ffffffffffffffff
->> ffffffffffffffff
->> [   11.924523] page dumped because: VM_BUG_ON_PAGE(PagePoisoned(p))
->> [   11.926498] page_owner info is not active (free page?)
->> [   12.329560] kernel BUG at include/linux/mm.h:990!
->> [   12.337632] RIP: 0010:init_page_owner+0x486/0x520
->>
->> Since there is no other routines depend on page_ext_init() in
->> start_kernel(), just move it after page_alloc_init_late() to ensure that
->> there is no deferred pages need to de dealt with. If deselected
->> DEFERRED_STRUCT_PAGE_INIT, it is still better to call page_ext_init()
->> earlier, so page owner could catch more early page allocation call
->> sites. This gives us a good compromise between catching good and bad
->> call sites (See the v1 patch [1]) in case of DEFERRED_STRUCT_PAGE_INIT.
->>
->> [1] https://lore.kernel.org/lkml/20181220060303.38686-1-cai@lca.pw/
->>
->> Fixes: fe53ca54270 (mm: use early_pfn_to_nid in page_ext_init)
->> Suggested-by: Michal Hocko <mhocko@kernel.org>
->> Signed-off-by: Qian Cai <cai@lca.pw>
->> ---
->>
->> v3: still call page_ext_init() earlier if DEFERRED_STRUCT_PAGE_INIT=n.
->>
->> v2: postpone page_ext_init() to after page_alloc_init_late().
->>
->>  init/main.c   | 5 +++++
->>  mm/page_ext.c | 3 +--
->>  2 files changed, 6 insertions(+), 2 deletions(-)
->>
->> diff --git a/init/main.c b/init/main.c
->> index 2b7b7fe173c9..5d9904370f76 100644
->> --- a/init/main.c
->> +++ b/init/main.c
->> @@ -696,7 +696,9 @@ asmlinkage __visible void __init start_kernel(void)
->>  		initrd_start = 0;
->>  	}
->>  #endif
->> +#ifndef CONFIG_DEFERRED_STRUCT_PAGE_INIT
->>  	page_ext_init();
->> +#endif
->>  	kmemleak_init();
->>  	setup_per_cpu_pageset();
->>  	numa_policy_init();
->> @@ -1147,6 +1149,9 @@ static noinline void __init kernel_init_freeable(void)
->>  	sched_init_smp();
->>  
->>  	page_alloc_init_late();
->> +#ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
->> +	page_ext_init();
->> +#endif
->>  
->>  	do_basic_setup();
-> 
-> Is this really necessary? Why cannot we simply postpone page_ext_init
-> unconditioanally?
+Hi Guenter,
 
-As mentioned above, "If deselected DEFERRED_STRUCT_PAGE_INIT, it is still better
-to call page_ext_init() earlier, so page owner could catch more early page
-allocation call sites."
+Missatge de Guenter Roeck <groeck@google.com> del dia dj., 3 de gen.
+2019 a les 17:08:
+>
+> On Thu, Jan 3, 2019 at 8:06 AM Enric Balletbo Serra <eballetbo@gmail.com> wrote:
+> >
+> > Hi,
+> >
+> > Many thanks for sending this. Please, add Guenter and me for next
+> > versions, we are interested in it, thanks :)
+> >
+> > Missatge de Pi-Hsun Shih <pihsun@chromium.org> del dia dc., 26 de des.
+> > 2018 a les 8:57:
+> > >
+> > > Add EC host command support through rpmsg.
+> > >
+> > > Signed-off-by: Pi-Hsun Shih <pihsun@chromium.org>
+> > > ---
+> > >  drivers/mfd/cros_ec_dev.c               |   9 ++
+> > >  drivers/platform/chrome/Kconfig         |   8 ++
+> > >  drivers/platform/chrome/Makefile        |   1 +
+> > >  drivers/platform/chrome/cros_ec_rpmsg.c | 164 ++++++++++++++++++++++++
+> > >  include/linux/mfd/cros_ec.h             |   1 +
+> > >  include/linux/mfd/cros_ec_commands.h    |   2 +
+> > >  6 files changed, 185 insertions(+)
+> > >  create mode 100644 drivers/platform/chrome/cros_ec_rpmsg.c
+> > >
+> > > diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
+> > > index 2d0fee488c5aa8..67983853413d07 100644
+> > > --- a/drivers/mfd/cros_ec_dev.c
+> > > +++ b/drivers/mfd/cros_ec_dev.c
+> > > @@ -414,6 +414,15 @@ static int ec_device_probe(struct platform_device *pdev)
+> > >         device_initialize(&ec->class_dev);
+> > >         cdev_init(&ec->cdev, &fops);
+> > >
+> > > +       if (cros_ec_check_features(ec, EC_FEATURE_SCP)) {
+> > > +               dev_info(dev, "SCP detected.\n");
+> > > +               /*
+> > > +                * Help userspace differentiating ECs from SCP,
+> > > +                * regardless of the probing order.
+> > > +                */
+> > > +               ec_platform->ec_name = CROS_EC_DEV_SCP_NAME;
+> > > +       }
+> > > +
+> >
+> > Why userspace should know that this is an SCP? From the userspace
+> > point of view shouldn't be this transparent, we don't do distinctions
+> > when the transport layer is i2c, spi or lpc, and I think that the
+> > cros_ec_rpmsg driver is a cros-ec transport layer, like these. So, I
+> > think that this is not needed.
+> >
+> > >         /*
+> > >          * Add the class device
+> > >          * Link to the character device for creating the /dev entry
+> > > diff --git a/drivers/platform/chrome/Kconfig b/drivers/platform/chrome/Kconfig
+> > > index 16b1615958aa2d..b03d68eb732177 100644
+> > > --- a/drivers/platform/chrome/Kconfig
+> > > +++ b/drivers/platform/chrome/Kconfig
+> > > @@ -72,6 +72,14 @@ config CROS_EC_SPI
+> > >           response time cannot be guaranteed, we support ignoring
+> > >           'pre-amble' bytes before the response actually starts.
+> > >
+> > > +config CROS_EC_RPMSG
+> > > +       tristate "ChromeOS Embedded Controller (rpmsg)"
+> > > +       depends on MFD_CROS_EC && RPMSG
+> >
+> > I think that this driver is DT-only, && OF ?
+> >
+> > > +       help
+> > > +         If you say Y here, you get support for talking to the ChromeOS EC
+> > > +         through rpmsg. This uses a simple byte-level protocol with a
+> > > +         checksum.
+> > > +
+> > >  config CROS_EC_LPC
+> > >          tristate "ChromeOS Embedded Controller (LPC)"
+> > >          depends on MFD_CROS_EC && ACPI && (X86 || COMPILE_TEST)
+> > > diff --git a/drivers/platform/chrome/Makefile b/drivers/platform/chrome/Makefile
+> > > index cd591bf872bbe9..3e3190af2b50f4 100644
+> > > --- a/drivers/platform/chrome/Makefile
+> > > +++ b/drivers/platform/chrome/Makefile
+> > > @@ -8,6 +8,7 @@ cros_ec_ctl-objs                        := cros_ec_sysfs.o cros_ec_lightbar.o \
+> > >  obj-$(CONFIG_CROS_EC_CTL)              += cros_ec_ctl.o
+> > >  obj-$(CONFIG_CROS_EC_I2C)              += cros_ec_i2c.o
+> > >  obj-$(CONFIG_CROS_EC_SPI)              += cros_ec_spi.o
+> > > +obj-$(CONFIG_CROS_EC_RPMSG)            += cros_ec_rpmsg.o
+> > >  cros_ec_lpcs-objs                      := cros_ec_lpc.o cros_ec_lpc_reg.o
+> > >  cros_ec_lpcs-$(CONFIG_CROS_EC_LPC_MEC) += cros_ec_lpc_mec.o
+> > >  obj-$(CONFIG_CROS_EC_LPC)              += cros_ec_lpcs.o
+> > > diff --git a/drivers/platform/chrome/cros_ec_rpmsg.c b/drivers/platform/chrome/cros_ec_rpmsg.c
+> > > new file mode 100644
+> > > index 00000000000000..f123ca6d1c029c
+> > > --- /dev/null
+> > > +++ b/drivers/platform/chrome/cros_ec_rpmsg.c
+> > > @@ -0,0 +1,164 @@
+> > > +// SPDX-License-Identifier: GPL-2.0
+> > > +//
+> > > +// Copyright 2018 Google LLC.
+> > > +
+> > > +#include <linux/delay.h>
+> > > +#include <linux/kernel.h>
+> > > +#include <linux/module.h>
+> > > +#include <linux/mfd/cros_ec.h>
+> > > +#include <linux/mfd/cros_ec_commands.h>
+> > > +#include <linux/of.h>
+> > > +#include <linux/platform_device.h>
+> > > +#include <linux/rpmsg.h>
+> > > +#include <linux/slab.h>
+> > > +
+> > > +/**
+> > > + * cros_ec_cmd_xfer_rpmsg - Transfer a message over rpmsg and receive the reply
+> > > + *
+> > > + * This is only used for old EC proto version, and is not supported for this
+> > > + * driver.
+> > > + *
+> > > + * @ec_dev: ChromeOS EC device
+> > > + * @ec_msg: Message to transfer
+> > > + */
+> > > +static int cros_ec_cmd_xfer_rpmsg(struct cros_ec_device *ec_dev,
+> > > +                                 struct cros_ec_command *ec_msg)
+> > > +{
+> > > +       return -EINVAL;
+> > > +}
+> > > +
+> > > +/**
+> > > + * cros_ec_pkt_xfer_rpmsg - Transfer a packet over rpmsg and receive the reply
+> > > + *
+> > > + * @ec_dev: ChromeOS EC device
+> > > + * @ec_msg: Message to transfer
+> > > + */
+> > > +static int cros_ec_pkt_xfer_rpmsg(struct cros_ec_device *ec_dev,
+> > > +                                 struct cros_ec_command *ec_msg)
+> > > +{
+> > > +       struct ec_host_response *response;
+> > > +       struct rpmsg_device *rpdev = ec_dev->priv;
+> > > +       int len;
+> > > +       u8 sum;
+> > > +       int ret;
+> > > +       int i;
+> > > +
+> > > +       ec_msg->result = 0;
+> > > +       len = cros_ec_prepare_tx(ec_dev, ec_msg);
+> > > +       dev_dbg(ec_dev->dev, "prepared, len=%d\n", len);
+> > > +
+> > > +       // TODO: This currently relies on that mtk_rpmsg send actually blocks
+> > > +       // until ack. Should do the wait here instead.
+> >
+> > Use standard C style comments.
+> >
+> > > +       ret = rpmsg_send(rpdev->ept, ec_dev->dout, len);
+> > > +
+> >
+> > Remove that empty  line.
+> >
+> > > +       if (ret) {
+> > > +               dev_err(ec_dev->dev, "rpmsg send failed\n");
+> > > +               return ret;
+> > > +       }
+> > > +
+> > > +       /* check response error code */
+> > > +       response = (struct ec_host_response *)ec_dev->din;
+> > > +       ec_msg->result = response->result;
+> > > +
+> > > +       ret = cros_ec_check_result(ec_dev, ec_msg);
+> > > +       if (ret)
+> > > +               goto exit;
+> > > +
+> > > +       if (response->data_len > ec_msg->insize) {
+> > > +               dev_err(ec_dev->dev, "packet too long (%d bytes, expected %d)",
+> > > +                       response->data_len, ec_msg->insize);
+> > > +               ret = -EMSGSIZE;
+> > > +               goto exit;
+> > > +       }
+> > > +
+> > > +       /* copy response packet payload and compute checksum */
+> > > +       memcpy(ec_msg->data, ec_dev->din + sizeof(*response),
+> > > +              response->data_len);
+> > > +
+> > > +       sum = 0;
+> > > +       for (i = 0; i < sizeof(*response) + response->data_len; i++)
+> > > +               sum += ec_dev->din[i];
+> > > +
+> > > +       if (sum) {
+> > > +               dev_err(ec_dev->dev, "bad packet checksum, calculated %x\n",
+> > > +                       sum);
+> > > +               ret = -EBADMSG;
+> > > +               goto exit;
+> > > +       }
+> > > +
+> > > +       ret = response->data_len;
+> > > +exit:
+> > > +       if (ec_msg->command == EC_CMD_REBOOT_EC)
+> > > +               msleep(EC_REBOOT_DELAY_MS);
+> >
+> > Can you explain why this sleep is needed?
+> >
+> > > +
+> > > +       return ret;
+> > > +}
+> > > +
+> > > +static int cros_ec_rpmsg_callback(struct rpmsg_device *rpdev, void *data,
+> > > +                                 int len, void *priv, u32 src)
+> > > +{
+> > > +       struct cros_ec_device *ec_dev = dev_get_drvdata(&rpdev->dev);
+> > > +
+> > > +       if (len > ec_dev->din_size) {
+> > > +               dev_warn(ec_dev->dev,
+> > > +                        "ipi received length %d > din_size, truncating", len);
+> > > +               len = ec_dev->din_size;
+> > > +       }
+> > > +
+> > > +       memcpy(ec_dev->din, data, len);
+> > > +
+> > > +       return 0;
+> > > +}
+> > > +
+> > > +static int cros_ec_rpmsg_probe(struct rpmsg_device *rpdev)
+> > > +{
+> > > +       struct device *dev = &rpdev->dev;
+> > > +
+> > Remove that empty line
+> >
+> > > +       struct cros_ec_device *ec_dev;
+> > > +       int ret;
+> > > +
+> > > +       ec_dev = devm_kzalloc(dev, sizeof(*ec_dev), GFP_KERNEL);
+> > > +       if (!ec_dev)
+> > > +               return -ENOMEM;
+> > > +
+> > > +       ec_dev->dev = dev;
+> > > +       ec_dev->priv = rpdev;
+> > > +       ec_dev->cmd_xfer = cros_ec_cmd_xfer_rpmsg;
+> > > +       ec_dev->pkt_xfer = cros_ec_pkt_xfer_rpmsg;
+> > > +       ec_dev->phys_name = dev_name(&rpdev->dev);
+> > > +       ec_dev->din_size = sizeof(struct ec_host_response) +
+> > > +                          sizeof(struct ec_response_get_protocol_info);
+> > > +       ec_dev->dout_size = sizeof(struct ec_host_request);
+> > > +       dev_set_drvdata(dev, ec_dev);
+> > > +
+> > > +       ret = cros_ec_register(ec_dev);
+> > > +       if (ret)
+> >
+> > I'd add an error message here
+> >
+> >   dev_err(dev, "cannot register EC\n"
+> >
+> > > +               return ret;
+> > > +
+> > > +       return 0;
+> > > +}
+> > > +
+> > > +static void cros_ec_rpmsg_remove(struct rpmsg_device *rpdev)
+> >
+> > This function will not be needed after apply [1]. I would recommend
+> > base your patches on top of [2]
+> >
+> > [1] https://lkml.org/lkml/2018/12/12/672
+> > [2] https://lkml.org/lkml/2018/12/12/679
+> >
+> > > +{
+> > > +       struct cros_ec_device *ec_dev = dev_get_drvdata(&rpdev->dev);
+> > > +
+> > > +       cros_ec_remove(ec_dev);
+> > > +}
+> > > +
+> >
+> > How this driver is instantiated?
+> >
+> > I expect something like this here (like the other transport layers)
+> >
+> > static const struct of_device_id cros_ec_rpmsg_of_match[] = {
+> >         { .compatible = "google,cros-ec-rpmsg", },
+> >         { }
+> > };
+> > MODULE_DEVICE_TABLE(of, cros_ec_rpmsg_of_match);
+> >
+> > And the DT containing the compatible = "google,cros-ec-rpmsg" like the
+> > other cros-ec transport layers.
+> >
+> > > +static const struct rpmsg_device_id cros_ec_rpmsg_device_id[] = {
+> > > +       { .name = "cros-ec-rpmsg", },
+> > > +       { /* sentinel */ },
+> >
+> > I got convinced that the '/* sentinel */' comment doesn't means
+> > anything, so use { } only here, remove the comment and the last comma
+> > (there is nothing to separate)
+> > +      { }
+> >
+> > > +};
+> > > +
+> > > +static struct rpmsg_driver cros_ec_driver_rpmsg = {
+> > > +       .drv.name       = KBUILD_MODNAME,
+> >
+> > And something like this here
+> >         .drv = {
+> >                 .name   = "cros-ec-rpmsg",
+> >                 .of_match_table = cros_ec_rpmsg_of_match,
+> >         },
+> >
+> > > +       .id_table       = cros_ec_rpmsg_device_id,
+> > > +       .probe          = cros_ec_rpmsg_probe,
+> > > +       .remove         = cros_ec_rpmsg_remove,
+> > > +       .callback       = cros_ec_rpmsg_callback,
+> > > +};
+> > > +
+> > > +module_rpmsg_driver(cros_ec_driver_rpmsg);
+> > > +
+> > > +MODULE_LICENSE("GPL v2");
+> > > +MODULE_DESCRIPTION("ChromeOS EC multi function device (rpmsg)");
+> > > diff --git a/include/linux/mfd/cros_ec.h b/include/linux/mfd/cros_ec.h
+> > > index de8b588c8776da..fd297cf8f97295 100644
+> > > --- a/include/linux/mfd/cros_ec.h
+> > > +++ b/include/linux/mfd/cros_ec.h
+> > > @@ -24,6 +24,7 @@
+> > >
+> > >  #define CROS_EC_DEV_NAME "cros_ec"
+> > >  #define CROS_EC_DEV_PD_NAME "cros_pd"
+> > > +#define CROS_EC_DEV_SCP_NAME "cros_scp"
+> >
+> > I think this definition is not needed.
+> >
+> > >
+> > >  /*
+> > >   * The EC is unresponsive for a time after a reboot command.  Add a
+> > > diff --git a/include/linux/mfd/cros_ec_commands.h b/include/linux/mfd/cros_ec_commands.h
+> > > index fc91082d4c357b..3e5da6e93b2f42 100644
+> > > --- a/include/linux/mfd/cros_ec_commands.h
+> > > +++ b/include/linux/mfd/cros_ec_commands.h
+> > > @@ -856,6 +856,8 @@ enum ec_feature_code {
+> > >         EC_FEATURE_RTC = 27,
+> > >         /* EC supports CEC commands */
+> > >         EC_FEATURE_CEC = 35,
+> > > +       /* The MCU exposes a SCP */
+> > > +       EC_FEATURE_SCP = 39,
+> >
+> > Same here, I think this is not needed.
+>
+> It might be needed for instantiation, ie instantiate only if the
+> feature is supported.
+>
 
-> 
->>  
->> diff --git a/mm/page_ext.c b/mm/page_ext.c
->> index ae44f7adbe07..d76fd51e312a 100644
->> --- a/mm/page_ext.c
->> +++ b/mm/page_ext.c
->> @@ -399,9 +399,8 @@ void __init page_ext_init(void)
->>  			 * -------------pfn-------------->
->>  			 * N0 | N1 | N2 | N0 | N1 | N2|....
->>  			 *
->> -			 * Take into account DEFERRED_STRUCT_PAGE_INIT.
->>  			 */
->> -			if (early_pfn_to_nid(pfn) != nid)
->> +			if (pfn_to_nid(pfn) != nid)
->>  				continue;
->>  			if (init_section_page_ext(pfn, nid))
->>  				goto oom;
-> 
-> Also this doesn't seem to be related, right?
+Actually, in this code, this is only used to change the EC name (and
+as I commented above I think is not really needed). If I understand
+correctly the purpose of these patches is to be able to talk with the
+SCP via remoteproc. The SCP is a small Cortex M4 within MT8183
+processor that will run the EC codebase. So, the remoteproc message
+driver looks more a transport driver (like the cros-ec-spi/i2c/lpc)
+than a subdev driver to me. So I'd expect this be instantiated via DT
+like the other transport layers, i.e.
 
-No, it is related. Because of this patch, page_ext_init() is called after all
-the memory has already been initialized,
-so no longer necessary to call early_pfn_to_nid().
+        cros-ec@0 {
+                compatible = "google,cros-ec-spi";
+        };
+
+or
+
+        cros-ec@ef {
+                compatible = "google,cros-ec-i2c";
+        };
+
+or
+        cros-ec {
+                compatible = "google,cros-ec-rpmsg";
+        };
+
+If I am not wrong we don't have an EC_FEATURE_SPI or EC_FEATURE_I2C,
+so I think will be better instantiate in the same way?
+
+Thanks,
+ Enric
+
+> Guenter
+>
+> > >  };
+> > >
+> > >  #define EC_FEATURE_MASK_0(event_code) (1UL << (event_code % 32))
+> > > --
+> > > 2.20.1.415.g653613c723-goog
+> > >
+> >
+> > Thanks,
+> >   Enric
