@@ -2,225 +2,276 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E768EC43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 01:48:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6F14C43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 01:55:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6CBA2073F
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 01:48:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cuSHDsRk"
+	by mail.kernel.org (Postfix) with ESMTP id 786A12073F
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 01:55:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726799AbfACBsk (ORCPT
+        id S1726888AbfACBzl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 20:48:40 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:35153 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726058AbfACBsk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 20:48:40 -0500
-Received: by mail-qt1-f195.google.com with SMTP id v11so35501389qtc.2
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 17:48:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=thFpa+W1SI63LvDKRAZVs5xIhfA77m2jO3Zt+q2EF4g=;
-        b=cuSHDsRk/Yv120LPqBJbDTt4+9A/tCprKfqL1CZtDwCyovp4Vi5EMjnjGgJ6jD6C1J
-         ysFnFqkcKMoQOEzLgfttRStGKky0n8KtEO8jPVy8j6/rervGaRMeEi8BCJAZPctIqj7j
-         5MoY8VY1rGhhGDVgxYAi5NeDk7tknj9o62h3I=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=thFpa+W1SI63LvDKRAZVs5xIhfA77m2jO3Zt+q2EF4g=;
-        b=sQ3DIsAH1NsMLUh+1aAoYLOnZ8pygd8u6suQvgeNoi9oC9Zm14edkHXV2lZj7jBrnM
-         DMD9xluDnWXAmZD8X0f3EZsHaW7mwihYdKxcI8XrtBKY4QdKczNstrZ3A2r0VgbcbL9S
-         GL3NNKDMZxRWLleGc/n6sWk11WwGNk0iyN03ImxEUS9zce0Je5Gy7+qwMfGrezVnW4r8
-         K8D4c57ev54L30yNyxRsxjyCxpC0ho98BQ8KkDwzfRaFK+JZ4MUJZ1qUgE8COtAS80uL
-         daieJk/fngx612WBKiI2RtZHmFSXW8cpxnsUPitvh62O2wcTdNmHEvBcn4sJNmthAG6Y
-         TnJA==
-X-Gm-Message-State: AA+aEWb0PQlPGZs9SCKF1xX7jS5packe6mHjzb+2wmz3yrRYy27kkDxD
-        tgwLzCn6N4Uoz1ik039sZJejxT1N7ZUyK773rQ+rcQ==
-X-Google-Smtp-Source: AFSGD/WowvwcXJ+98Oxcta0ir5GKsF1yrXzyQRT9SR1VSLVZwWAoxDVDM5y2Ly/78yncDrq8Zk1FPWqy1wYrHGtTinA=
-X-Received: by 2002:ac8:6b18:: with SMTP id w24mr45047408qts.144.1546480118762;
- Wed, 02 Jan 2019 17:48:38 -0800 (PST)
+        Wed, 2 Jan 2019 20:55:41 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:52974 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726146AbfACBzl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Jan 2019 20:55:41 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id EBAAE2DACC3;
+        Thu,  3 Jan 2019 01:55:39 +0000 (UTC)
+Received: from redhat.com (ovpn-123-62.rdu2.redhat.com [10.10.123.62])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 24A825D9C9;
+        Thu,  3 Jan 2019 01:55:35 +0000 (UTC)
+Date:   Wed, 2 Jan 2019 20:55:33 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     John Hubbard <jhubbard@nvidia.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        John Hubbard <john.hubbard@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>, tom@talpey.com,
+        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
+        Christoph Hellwig <hch@infradead.org>,
+        Christopher Lameter <cl@linux.com>,
+        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Michal Hocko <mhocko@kernel.org>, mike.marciniszyn@intel.com,
+        rcampbell@nvidia.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
+Message-ID: <20190103015533.GA15619@redhat.com>
+References: <20181212150319.GA3432@redhat.com>
+ <20181212214641.GB29416@dastard>
+ <20181214154321.GF8896@quack2.suse.cz>
+ <20181216215819.GC10644@dastard>
+ <20181217181148.GA3341@redhat.com>
+ <20181217183443.GO10600@bombadil.infradead.org>
+ <20181218093017.GB18032@quack2.suse.cz>
+ <9f43d124-2386-7bfd-d90b-4d0417f51ccd@nvidia.com>
+ <20181219020723.GD4347@redhat.com>
+ <20181219110856.GA18345@quack2.suse.cz>
 MIME-Version: 1.0
-References: <1546436644-19234-1-git-send-email-henryc.chen@mediatek.com> <1546436644-19234-4-git-send-email-henryc.chen@mediatek.com>
-In-Reply-To: <1546436644-19234-4-git-send-email-henryc.chen@mediatek.com>
-From:   Nicolas Boichat <drinkcat@chromium.org>
-Date:   Thu, 3 Jan 2019 09:48:27 +0800
-Message-ID: <CANMq1KCNSRv36L7mFNDEwFEdHm+q8cYz7GmfQZJQSGboe36vKQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 3/7] soc: mediatek: add support for the performance state
-To:     Henry Chen <henryc.chen@mediatek.com>
-Cc:     Viresh Kumar <vireshk@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Fan Chen <fan.chen@mediatek.com>,
-        Weiyi Lu <weiyi.lu@mediatek.com>,
-        James Liao <jamesjj.liao@mediatek.com>,
-        Kees Cook <keescook@chromium.org>, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        linux-mediatek@lists.infradead.org,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181219110856.GA18345@quack2.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Thu, 03 Jan 2019 01:55:40 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 2, 2019 at 10:01 PM Henry Chen <henryc.chen@mediatek.com> wrote:
->
-> Support power domain performance state, add header file for scp event.
->
-> Signed-off-by: Henry Chen <henryc.chen@mediatek.com>
-> ---
->  drivers/soc/mediatek/mtk-scpsys.c | 60 +++++++++++++++++++++++++++++++++++++++
->  drivers/soc/mediatek/mtk-scpsys.h | 22 ++++++++++++++
->  2 files changed, 82 insertions(+)
->  create mode 100644 drivers/soc/mediatek/mtk-scpsys.h
->
-> diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
-> index 58d84fe..90102ae 100644
-> --- a/drivers/soc/mediatek/mtk-scpsys.c
-> +++ b/drivers/soc/mediatek/mtk-scpsys.c
-> @@ -11,7 +11,9 @@
->  #include <linux/of_device.h>
->  #include <linux/platform_device.h>
->  #include <linux/pm_domain.h>
-> +#include <linux/pm_opp.h>
->  #include <linux/regulator/consumer.h>
-> +#include <linux/slab.h>
->  #include <linux/soc/mediatek/infracfg.h>
->  #include <linux/soc/mediatek/scpsys-ext.h>
->
-> @@ -22,6 +24,7 @@
->  #include <dt-bindings/power/mt7623a-power.h>
->  #include <dt-bindings/power/mt8173-power.h>
->  #include <dt-bindings/power/mt8183-power.h>
-> +#include "mtk-scpsys.h"
->
->  #define MTK_POLL_DELAY_US   10
->  #define MTK_POLL_TIMEOUT    (jiffies_to_usecs(HZ))
-> @@ -187,6 +190,18 @@ struct scp_soc_data {
->         bool bus_prot_reg_update;
->  };
->
-> +BLOCKING_NOTIFIER_HEAD(scpsys_notifier_list);
-> +
-> +int register_scpsys_notifier(struct notifier_block *nb)
-> +{
-> +       return blocking_notifier_chain_register(&scpsys_notifier_list, nb);
-> +}
-> +
-> +int unregister_scpsys_notifier(struct notifier_block *nb)
-> +{
-> +       return blocking_notifier_chain_unregister(&scpsys_notifier_list, nb);
-> +}
-> +
->  static int scpsys_domain_is_on(struct scp_domain *scpd)
->  {
->         struct scp *scp = scpd->scp;
-> @@ -536,6 +551,48 @@ static void init_clks(struct platform_device *pdev, struct clk **clk)
->                 clk[i] = devm_clk_get(&pdev->dev, clk_names[i]);
->  }
->
-> +static int mtk_pd_set_performance(struct generic_pm_domain *genpd,
-> +                                 unsigned int state)
-> +{
-> +       int i;
-> +       struct scp_domain *scpd =
-> +               container_of(genpd, struct scp_domain, genpd);
+On Wed, Dec 19, 2018 at 12:08:56PM +0100, Jan Kara wrote:
+> On Tue 18-12-18 21:07:24, Jerome Glisse wrote:
+> > On Tue, Dec 18, 2018 at 03:29:34PM -0800, John Hubbard wrote:
+> > > OK, so let's take another look at Jerome's _mapcount idea all by itself (using
+> > > *only* the tracking pinned pages aspect), given that it is the lightest weight
+> > > solution for that.  
+> > > 
+> > > So as I understand it, this would use page->_mapcount to store both the real
+> > > mapcount, and the dma pinned count (simply added together), but only do so for
+> > > file-backed (non-anonymous) pages:
+> > > 
+> > > 
+> > > __get_user_pages()
+> > > {
+> > > 	...
+> > > 	get_page(page);
+> > > 
+> > > 	if (!PageAnon)
+> > > 		atomic_inc(page->_mapcount);
+> > > 	...
+> > > }
+> > > 
+> > > put_user_page(struct page *page)
+> > > {
+> > > 	...
+> > > 	if (!PageAnon)
+> > > 		atomic_dec(&page->_mapcount);
+> > > 
+> > > 	put_page(page);
+> > > 	...
+> > > }
+> > > 
+> > > ...and then in the various consumers of the DMA pinned count, we use page_mapped(page)
+> > > to see if any mapcount remains, and if so, we treat it as DMA pinned. Is that what you 
+> > > had in mind?
+> > 
+> > Mostly, with the extra two observations:
+> >     [1] We only need to know the pin count when a write back kicks in
+> >     [2] We need to protect GUP code with wait_for_write_back() in case
+> >         GUP is racing with a write back that might not the see the
+> >         elevated mapcount in time.
+> > 
+> > So for [2]
+> > 
+> > __get_user_pages()
+> > {
+> >     get_page(page);
+> > 
+> >     if (!PageAnon) {
+> >         atomic_inc(page->_mapcount);
+> > +       if (PageWriteback(page)) {
+> > +           // Assume we are racing and curent write back will not see
+> > +           // the elevated mapcount so wait for current write back and
+> > +           // force page fault
+> > +           wait_on_page_writeback(page);
+> > +           // force slow path that will fault again
+> > +       }
+> >     }
+> > }
+> 
+> This is not needed AFAICT. __get_user_pages() gets page reference (and it
+> should also increment page->_mapcount) under PTE lock. So at that point we
+> are sure we have writeable PTE nobody can change. So page_mkclean() has to
+> block on PTE lock to make PTE read-only and only after going through all
+> PTEs like this, it can check page->_mapcount. So the PTE lock provides
+> enough synchronization.
+> 
+> > For [1] only needing pin count during write back turns page_mkclean into
+> > the perfect spot to check for that so:
+> > 
+> > int page_mkclean(struct page *page)
+> > {
+> >     int cleaned = 0;
+> > +   int real_mapcount = 0;
+> >     struct address_space *mapping;
+> >     struct rmap_walk_control rwc = {
+> >         .arg = (void *)&cleaned,
+> >         .rmap_one = page_mkclean_one,
+> >         .invalid_vma = invalid_mkclean_vma,
+> > +       .mapcount = &real_mapcount,
+> >     };
+> > 
+> >     BUG_ON(!PageLocked(page));
+> > 
+> >     if (!page_mapped(page))
+> >         return 0;
+> > 
+> >     mapping = page_mapping(page);
+> >     if (!mapping)
+> >         return 0;
+> > 
+> >     // rmap_walk need to change to count mapping and return value
+> >     // in .mapcount easy one
+> >     rmap_walk(page, &rwc);
+> > 
+> >     // Big fat comment to explain what is going on
+> > +   if ((page_mapcount(page) - real_mapcount) > 0) {
+> > +       SetPageDMAPined(page);
+> > +   } else {
+> > +       ClearPageDMAPined(page);
+> > +   }
+> 
+> This is the detail I'm not sure about: Why cannot rmap_walk_file() race
+> with e.g. zap_pte_range() which decrements page->_mapcount and thus the
+> check we do in page_mkclean() is wrong?
+> 
 
-nit: This (just) fits in 80 chars.
+Ok so i found a solution for that. First GUP must wait for racing
+write back. If GUP see a valid write-able PTE and the page has
+write back flag set then it must back of as if the PTE was not
+valid to force fault. It is just a race with page_mkclean and we
+want ordering between the two. Note this is not strictly needed
+so we can relax that but i believe this ordering is better to do
+in GUP rather then having each single user of GUP test for this
+to avoid the race.
 
-> +       struct scp_event_data scpe;
-> +       struct scp *scp = scpd->scp;
-> +       struct genpd_onecell_data *pd_data = &scp->pd_data;
-> +
-> +       for (i = 0; i < pd_data->num_domains; i++) {
-> +               if (genpd == pd_data->domains[i]) {
-> +                       dev_dbg(scp->dev, "%d. %s = %d\n",
-> +                               i, genpd->name, state);
-> +                       break;
-> +               }
-> +       }
+GUP increase mapcount only after checking that it is not racing
+with writeback it also set a page flag (SetPageDMAPined(page)).
 
-Do we need a sanity check here, if i == pd_data->num_domains?
+When clearing a write-able pte we set a special entry inside the
+page table (might need a new special swap type for this) and change
+page_mkclean_one() to clear to 0 those special entry.
 
-> +
-> +       scpe.event_type = MTK_SCPSYS_PSTATE;
-> +       scpe.genpd = genpd;
-> +       scpe.domain_id = i;
-> +       blocking_notifier_call_chain(&scpsys_notifier_list, state, &scpe);
-> +
-> +       return 0;
-> +}
-> +
-> +static unsigned int mtk_pd_get_performance(struct generic_pm_domain *genpd,
-> +                                          struct dev_pm_opp *opp)
-> +{
-> +       struct device_node *np;
-> +       unsigned int state;
-> +
-> +       np = dev_pm_opp_get_of_node(opp);
-> +
-> +       if (of_property_read_u32(np, "mtk,level", &state))
-> +               return 0;
-> +
-> +       of_node_put(np);
-> +
-> +       return state;
-> +}
-> +
->  static struct scp *init_scp(struct platform_device *pdev,
->                         const struct scp_domain_data *scp_domain_data, int num,
->                         const struct scp_ctrl_reg *scp_ctrl_reg,
-> @@ -659,6 +716,9 @@ static struct scp *init_scp(struct platform_device *pdev,
->                 genpd->power_on = scpsys_power_on;
->                 if (MTK_SCPD_CAPS(scpd, MTK_SCPD_ACTIVE_WAKEUP))
->                         genpd->flags |= GENPD_FLAG_ACTIVE_WAKEUP;
-> +
-> +               genpd->set_performance_state = mtk_pd_set_performance;
-> +               genpd->opp_to_performance_state = mtk_pd_get_performance;
->         }
->
->         return scp;
-> diff --git a/drivers/soc/mediatek/mtk-scpsys.h b/drivers/soc/mediatek/mtk-scpsys.h
-> new file mode 100644
-> index 0000000..c1e8325
-> --- /dev/null
-> +++ b/drivers/soc/mediatek/mtk-scpsys.h
-> @@ -0,0 +1,22 @@
-> +/* SPDX-License-Identifier: GPL-2.0
-> + *
-> + * Copyright (c) 2018 MediaTek Inc.
-> + */
-> +
-> +#ifndef __MTK_SCPSYS_H__
-> +#define __MTK_SCPSYS_H__
-> +
-> +struct scp_event_data {
-> +       int event_type;
-> +       int domain_id;
-> +       struct generic_pm_domain *genpd;
-> +};
-> +
-> +enum scp_event_type {
-> +       MTK_SCPSYS_PSTATE,
-> +};
-> +
-> +int register_scpsys_notifier(struct notifier_block *nb);
-> +int unregister_scpsys_notifier(struct notifier_block *nb);
-> +
-> +#endif /* __MTK_SCPSYS_H__ */
-> --
-> 1.9.1
->
+
+Now page_mkclean:
+
+int page_mkclean(struct page *page)
+{
+    int cleaned = 0;
++   int real_mapcount = 0;
+    struct address_space *mapping;
+    struct rmap_walk_control rwc = {
+        .arg = (void *)&cleaned,
+        .rmap_one = page_mkclean_one,
+        .invalid_vma = invalid_mkclean_vma,
++       .mapcount = &real_mapcount,
+    };
++   int mapcount1, mapcount2;
+
+    BUG_ON(!PageLocked(page));
+
+    if (!page_mapped(page))
+        return 0;
+
+    mapping = page_mapping(page);
+    if (!mapping)
+        return 0;
+
++   mapcount1 = page_mapcount(page);
+
+    // rmap_walk need to change to count mapping and return value
+    // in .mapcount easy one
+    rmap_walk(page, &rwc);
+
++   if (PageDMAPined(page)) {
++       int rc2;
++
++       if (mapcount1 == real_count) {
++           /* Page is no longer pin, no zap pte race */
++           ClearPageDMAPined(page);
++           goto out;
++       }
++       /* No new mapping of the page so mp1 < rc is illegal. */
++       VM_BUG_ON(mapcount1 < real_count);
++       /* Page might be pin. */
++       mapcount2 = page_mapcount(page);
++       if (mapcount2 > real_count) {
++           /* Page is pin for sure. */
++           goto out;
++       }
++       /* We had a race with zap pte we need to rewalk again. */
++       rc2 = real_mapcount;
++       real_mapcount = 0;
++       rwc.rmap_one = page_pin_one;
++       rmap_walk(page, &rwc);
++       if (mapcount2 <= (real_count + rc2)) {
++           /* Page is no longer pin */
++           ClearPageDMAPined(page);
++       }
++       /* At this point the page pin flag reflect pin status of the page */
++   }
++
++out:
+    ...
+}
+
+The page_pin_one() function count the number of special PTE entry so
+which match the count of pte that have been zapped since the first
+reverse map walk.
+
+So worst case a page that was pin by a GUP would need 2 reverse map
+walk during page_mkclean(). Moreover this is only needed if we race
+with something that clear pte. I believe this is an acceptable worst
+case. I will work on some RFC patchset next week (once i am down with
+email catch up).
+
+
+I do not think i made mistake here, i have been torturing my mind
+trying to think of any race scenario and i believe it holds to any
+racing zap and page_mkclean()
+
+Cheers,
+Jérôme
