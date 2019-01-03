@@ -2,125 +2,98 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36FCAC43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 15:08:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98656C43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 15:11:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0534620815
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 15:08:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5DFD72070D
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 15:11:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="NuGRglHn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731406AbfACPIz (ORCPT
+        id S1731448AbfACPLS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 10:08:55 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:40724 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730456AbfACPIy (ORCPT
+        Thu, 3 Jan 2019 10:11:18 -0500
+Received: from mail-wm1-f44.google.com ([209.85.128.44]:37426 "EHLO
+        mail-wm1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728199AbfACPLR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 10:08:54 -0500
-Received: by mail-qk1-f194.google.com with SMTP id y16so19798642qki.7
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 07:08:54 -0800 (PST)
+        Thu, 3 Jan 2019 10:11:17 -0500
+Received: by mail-wm1-f44.google.com with SMTP id g67so30560361wmd.2
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 07:11:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=0dcQ3/dkLOl44sCSWYzCMKpCPVjooWzOO9eRJkxMTew=;
+        b=NuGRglHn/0Lqr/u9OI54BSv4S+ZG70CQ1chHvduL/azRJwwNXqtex+qwncXRAttU1J
+         iYhIBVCT0MCE8VYwOs83y6NZityicqpTyAJZ4KeZd3JsPeMUJ5DEVpHqIJ/CLGWCUT+l
+         Mu63kZmgfLXn3l9/hQtV1+/99jB5/n+KCFmn87nK8lXNoe0K612Kd//YokcgmsCmP6+u
+         f/Vt5gukHL/8KMd17XLxZI4ihmczkIusRfXgFZaVuZicYlMFaGktxgkYksqQ/N4hpunu
+         oCi2cuaOWv0CS3cxc9WBlXbxxXLtITcSxdn2lQWEnqzZ6zL2BKwOWxQBH8dA8aVx3SxW
+         oK4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=yp3OyJCmLoJ2H9VEVePmDoxN+orEhnrhYzUQ3YvPNGM=;
-        b=n5ZYblW13jhU02yWcOqtL8gQ4F0nPLTMECkHij0O7QPEWe0NEGGjc3QeP0hCnDEf9t
-         sbE5nmzlf7ocnFqVmPu2/Aov6t+Oo2VtLYtYoDCCVxEsdLyQBcCkTYihx3w1MVxvU41n
-         IRjLM0DE7MWDq1kebud9iOAxQKgcT5nfY66VfUz+5I5YVXeDVwRiSR9tqzgIeum5Hj/a
-         GMhJ3zl2mZAMBCcO//cMOy6HKDjyXvehvgvbaTAusp3t79aY0QZkj+rlPxUMZR75apkD
-         vwHIt7wKzZsqLJlQQxI0aMTPUC8MnVfuw5l3f32wCOpWOkNN5ZiXFkEdy9+/Csakp/Tm
-         A7RQ==
-X-Gm-Message-State: AJcUuke8O+UATlIw76V7xVWRdVduJDXa7U/anbB4AUS/D0whvId7I1ua
-        CB16f75Qh6e2uKBwktvk1ZFob7GWA4w=
-X-Google-Smtp-Source: ALg8bN6wedrH7aopOg0rY9fC3TCYh7ikLXX50kMd1dXgjTd4cXY3bi5lwBtlFL6XLqZw6aMwqJqxRw==
-X-Received: by 2002:a37:9a89:: with SMTP id c131mr44688047qke.173.1546528133347;
-        Thu, 03 Jan 2019 07:08:53 -0800 (PST)
-Received: from ?IPv6:2601:602:9800:dae6::814b? ([2601:602:9800:dae6::814b])
-        by smtp.gmail.com with ESMTPSA id n72sm27421211qki.26.2019.01.03.07.08.52
+        bh=0dcQ3/dkLOl44sCSWYzCMKpCPVjooWzOO9eRJkxMTew=;
+        b=Bwa6v4+uVKxMiB+1hf3M0A84y/yqmRttDm9Ht4fxC9lXb5rCvY1hbidCRJFkvqczh+
+         knYc6qMAPkkx603pI3fBZOoZFivHI631DYOuPNNH+DY8DfS5dHgbTwiudvmKdu5sfAFe
+         MxJNN2JNHaiZN2k1PNAeztRCm/aPpET+4ZqUz/5cmzGdh6rfVABt9wViLDjt67/Goc9g
+         x0/5qf3i00XB5WF/aW5PQVvi1WJ7KAngFFB18lpCogLcvu2XxnKFQlxtlMxvyDUiykrL
+         cYLxAE01IOHYvXPRSDiIP5u1E2PiE9SGtfQlgJ4/og7CqccVt2ZwUrymkF4k7+nCvVli
+         8NEg==
+X-Gm-Message-State: AJcUukct9OJA5rRCrfUr/8qkDiRI0hEly24YWOqmYcf7Gl7tjrSWI8qn
+        SDotMiJG8psmXWrGx5+vK1xmuw==
+X-Google-Smtp-Source: ALg8bN4i09QkBsAAx0LQZbXnP4FHe48ktuHU/6boZLMztuOfPv0oP4tv5IUgR3XlS+2/iN9GSu/HWg==
+X-Received: by 2002:a1c:99ce:: with SMTP id b197mr40218807wme.75.1546528275898;
+        Thu, 03 Jan 2019 07:11:15 -0800 (PST)
+Received: from debian-brgl.baylibre.local (astlambert-681-1-88-79.w90-86.abo.wanadoo.fr. [90.86.3.79])
+        by smtp.gmail.com with ESMTPSA id n5sm45620707wrr.94.2019.01.03.07.11.14
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 03 Jan 2019 07:08:52 -0800 (PST)
-Subject: Re: compilation failure with CONFIG_VFIO_PCI_NVLINK2
-To:     Alexey Kardashevskiy <aik@ozlabs.ru>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     kvm@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <28d0ba1d-b116-178a-d6d0-8a8b569c7c02@redhat.com>
- <e74e0922-af2e-dac4-2260-8589afa2426b@ozlabs.ru>
-From:   Laura Abbott <labbott@redhat.com>
-Message-ID: <2e4484ae-06b7-0de3-db8e-3a6989fac1f7@redhat.com>
-Date:   Thu, 3 Jan 2019 07:08:51 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Thu, 03 Jan 2019 07:11:15 -0800 (PST)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        "Andrew F . Davis" <afd@ti.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH 0/5] ARM: davinci: fix label names in GPIO lookup entries
+Date:   Thu,  3 Jan 2019 16:10:59 +0100
+Message-Id: <20190103151104.11839-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-In-Reply-To: <e74e0922-af2e-dac4-2260-8589afa2426b@ozlabs.ru>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/3/19 5:49 AM, Alexey Kardashevskiy wrote:
-> 
-> 
-> On 03/01/2019 03:37, Laura Abbott wrote:
->> Hi,
->>
->> I got a compilation failure when building with CONFIG_VFIO_PCI_NVLINK2
->> enabled:
->>
->> + make -s 'HOSTCFLAGS=-O2 -g -pipe -Wall -Werror=format-security
->> -Wp,-D_FORTIFY_SOURCE=2 -Wp,-D_GLIBCXX_ASSERTIONS -fexceptions
->> -fstack-protector-strong -grecord-gcc-switches
->> -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1
->> -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1 -m64 -mcpu=power8
->> -mtune=power8 -fasynchronous-unwind-tables -fstack-clash-protection'
->> 'HOSTLDFLAGS=-Wl,-z,relro -Wl,--as-needed  -Wl,-z,now
->> -specs=/usr/lib/rpm/redhat/redhat-hardened-ld -Wl,--build-id=uuid'
->> ARCH=powerpc -j4 modules
->> BUILDSTDERR: In file included from drivers/vfio/pci/trace.h:102,
->> BUILDSTDERR:                  from drivers/vfio/pci/vfio_pci_nvlink2.c:29:
->> BUILDSTDERR: ./include/trace/define_trace.h:89:42: fatal error:
->> ./trace.h: No such file or directory
->> BUILDSTDERR:  #include TRACE_INCLUDE(TRACE_INCLUDE_FILE)
->> BUILDSTDERR:                                           ^
->> BUILDSTDERR: compilation terminated.
->> BUILDSTDERR: make[3]: *** [scripts/Makefile.build:277:
->> drivers/vfio/pci/vfio_pci_nvlink2.o] Error 1
->> BUILDSTDERR: make[2]: *** [scripts/Makefile.build:492: drivers/vfio/pci]
->> Error 2
->> BUILDSTDERR: make[1]: *** [scripts/Makefile.build:492: drivers/vfio]
->> Error 2
->> BUILDSTDERR: make: *** [Makefile:1053: drivers] Error 2
->> BUILDSTDERR: make: *** Waiting for unfinished jobs....
->>
->> I don't know enough about ftrace building to make a guess here.
->> Config is attacked.
-> 
-> What gcc is this and what is the exact sha1 of the tree? gcc8 prints
-> other error with your config in drivers/scsi/esas2r/esas2r_ioctl.c but
-> not this one so I am curious.
-> 
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-gcc (GCC) 8.2.1 20181215 (Red Hat 8.2.1-6)
+Hi Sekhar,
 
-sha 8e143b90e4d45cca3dc53760d3cfab988bc74571
+I noticed some more breakage resulting from commit 587f7a694f01 ("gpio:
+davinci: Use dev name for label and automatic base selection"). This
+series fixes GPIO lookups in legacy mode for DaVinci.
 
->>
->> Also, would it be possible to switch this option from def_bool to
->> bool? I can't turn it off directly when it's def_bool.
-> 
-> Why? Honestly I'd rather fix the compile error.
-> 
-> 
+Bartosz Golaszewski (5):
+  ARM: davinci: da830-evm: fix label names in GPIO lookup entries
+  ARM: davinci: da850-evm: fix label names in GPIO lookup entries
+  ARM: davinci: dm355-evm: fix label names in GPIO lookup entries
+  ARM: davinci: dm644x-evm: fix label names in GPIO lookup entries
+  ARM: davinci: omapl138-hawk: fix label names in GPIO lookup entries
 
-It's not just about this error, there may be other situations where
-it would be good to have this turned off.
+ arch/arm/mach-davinci/board-da830-evm.c     | 4 ++--
+ arch/arm/mach-davinci/board-da850-evm.c     | 4 ++--
+ arch/arm/mach-davinci/board-dm355-evm.c     | 4 ++--
+ arch/arm/mach-davinci/board-dm644x-evm.c    | 4 ++--
+ arch/arm/mach-davinci/board-omapl138-hawk.c | 4 ++--
+ 5 files changed, 10 insertions(+), 10 deletions(-)
 
-Thanks,
-Luara
+-- 
+2.19.1
+
