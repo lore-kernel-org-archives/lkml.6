@@ -2,191 +2,119 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF5A8C43444
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 17:41:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C361C43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 17:41:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C3D12176F
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 17:41:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3ECCD208E3
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 17:41:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546537287;
+	bh=+UYRW9v45SJoPxQSkfwmJgmlzpJ4vpuw9nqSM/BkuIY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=yVJDzt5YA6G0N7drylPkQdTusF5PSpvzGXrj+sfcmD1gI86hEvB2Wzo1O0JYRU/DL
+	 p/Ng570tKexGfl+Ouo6/gGJ/HVr23r6C7Gqx4AQXuQinCzBQcasOlRi4A6dwtSnR1f
+	 2m/42FvnnXYSmaraOoSTaICzKn2NFlvmB28xf658=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731847AbfACRlK (ORCPT
+        id S1731921AbfACRl0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 12:41:10 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:33543 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728782AbfACRlK (ORCPT
+        Thu, 3 Jan 2019 12:41:26 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:54527 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731865AbfACRlZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 12:41:10 -0500
-Received: by mail-pl1-f194.google.com with SMTP id z23so16200605plo.0;
-        Thu, 03 Jan 2019 09:41:09 -0800 (PST)
+        Thu, 3 Jan 2019 12:41:25 -0500
+Received: by mail-it1-f193.google.com with SMTP id i145so46286944ita.4;
+        Thu, 03 Jan 2019 09:41:24 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=ieuarke/oV/UnSBEv3TcuZvMHIFmRjHzDOpH+7Z5E2w=;
-        b=ZqRvtxabRB5DYv4H3EIH7YWmVqjrV7+0Avemsdrq3uvDEwu4q2aAaFr80VH2ISqUUf
-         JYIBHWRHUTQ/9s9TQceScu+cJQJS6Iiti/TxIE98x1EWmD35u2Py4wxIDAOzmjtfE+/6
-         qJVOXQleHYxTEkfxeN9bC1oZW2X0QEHmakE1pNodl1N9qYue/DeRhr+leXyK5CyiFQS0
-         QcMIVmwKFVd3Gb0r7UbSSbHlAOmNjkF5QzoYeIYOGr+3c98ykUGvCODgBASEJ1pbDqsk
-         0rg0JFwMFmeLJk4aIIA53sEjiWnyDUWY7vty5wTS7XrM9FXecbSKGapjXMtAqY9DwRZs
-         fZ1A==
-X-Gm-Message-State: AJcUukf3zds7O4aUNJfL9rvh/fLnBNDwar4WMHNCM+5gO4Pn2npEQwl2
-        bgPSRtzZFLYAgu0sqPq+i38=
-X-Google-Smtp-Source: ALg8bN78OVqeOXr3hDuiUGzoiOI3g8QG6pzvdfONpyGLhiOWQpiXcM6/CyFSB7rUxwqjN53rdfnBRQ==
-X-Received: by 2002:a17:902:20c8:: with SMTP id v8mr48508956plg.319.1546537269057;
-        Thu, 03 Jan 2019 09:41:09 -0800 (PST)
-Received: from ?IPv6:2620:15c:2cd:203:5cdc:422c:7b28:ebb5? ([2620:15c:2cd:203:5cdc:422c:7b28:ebb5])
-        by smtp.gmail.com with ESMTPSA id i1sm84743848pgb.46.2019.01.03.09.41.07
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=XgtY3ON4bBMzyuiNr7dfPpNVT+C5KIh9dO8CbrGw7tk=;
+        b=S2cj9SxBvbx51dS4EpTBE57RjisNPFQsEm+RtsUXLlXtb9TZwC3wNyG8sDoPThGG5d
+         jsJh2U4OdAhxzckZh4moS3Q1P/LxMj/1zJxStWxK6gd7Lex6uY3v+U/hcMeG9EHipIRj
+         FU1m7tDzC1miwIXYahcLp0ElFk2SpiFYSKeFZBeoa7sGAGoHicBJwOr8IMPI4SZpOvw5
+         PkvekJbXjFl2uTSrGeYfu3vhPivTKwKd7CWvRNS/w/F7nwGRBipmYU1dPsbXqU8uE8qo
+         gA9jI2joJ93rLobg9ANYJNQI0iKYI+1hKGSM6c8r2sS3/7pDz2yjh3iyEuEcGrHoDfWC
+         7o7Q==
+X-Gm-Message-State: AA+aEWY12f8nSxe26Fl8qnHs3HU2eN23poA9I/Qzyz94FEj/qWMGEMlh
+        MD/m7Avt14bKcbxFQeRJnQ==
+X-Google-Smtp-Source: AFSGD/V9b5yqNsHDxHuE9KElWPtdLZDxaY7MyTLeweez3j5H2PftNm0IWXF0oxxaHSQNzRuuliNPtg==
+X-Received: by 2002:a24:16cc:: with SMTP id a195mr31184772ita.38.1546537284031;
+        Thu, 03 Jan 2019 09:41:24 -0800 (PST)
+Received: from localhost ([24.51.61.172])
+        by smtp.gmail.com with ESMTPSA id h13sm6088944ioq.72.2019.01.03.09.41.23
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 03 Jan 2019 09:41:08 -0800 (PST)
-Message-ID: <1546537266.163063.16.camel@acm.org>
-Subject: Re: [PATCH net-next] svcrdma: Fix an uninitialized variable false
- warning
-From:   Bart Van Assche <bvanassche@acm.org>
-To:     Chuck Lever <chuck.lever@oracle.com>,
-        YueHaibing <yuehaibing@huawei.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Bruce Fields <bfields@fieldses.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Date:   Thu, 03 Jan 2019 09:41:06 -0800
-In-Reply-To: <282B8BD1-FE2A-4FE4-9520-144ACF5CB74C@oracle.com>
-References: <20181220094921.3396-1-yuehaibing@huawei.com>
-         <282B8BD1-FE2A-4FE4-9520-144ACF5CB74C@oracle.com>
-Content-Type: text/plain; charset="UTF-7"
-X-Mailer: Evolution 3.26.2-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Thu, 03 Jan 2019 09:41:23 -0800 (PST)
+Date:   Thu, 3 Jan 2019 11:41:17 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     p.zabel@pengutronix.de, linux-kernel@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Gregory Fong <gregory.0xf0@gmail.com>,
+        "maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE" 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "moderated list:BROADCOM BCM7XXX ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 1/2] dt-bindings: reset: Add document for Broadcom STB
+ reset controller
+Message-ID: <20190103174117.GA6613@bogus>
+References: <20181221013409.14324-1-f.fainelli@gmail.com>
+ <20181221013409.14324-2-f.fainelli@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181221013409.14324-2-f.fainelli@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-12-28 at 10:36 -0500, Chuck Lever wrote:
-+AD4 +AD4 On Dec 20, 2018, at 4:49 AM, YueHaibing +ADw-yuehaibing+AEA-huawei.com+AD4 wrote:
-+AD4 +AD4 
-+AD4 +AD4 smatch warning this:
-+AD4 +AD4 net/sunrpc/xprtrdma/svc+AF8-rdma+AF8-rw.c:351 svc+AF8-rdma+AF8-post+AF8-chunk+AF8-ctxt() error: uninitialized symbol 'bad+AF8-wr'
-+AD4 +AD4 net/sunrpc/xprtrdma/verbs.c:1569 rpcrdma+AF8-post+AF8-recvs() error: uninitialized symbol 'bad+AF8-wr'
-+AD4 +AD4 
-+AD4 +AD4 'bad+AF8-wr' is initialized in ib+AF8-post+AF8-send. But smatch
-+AD4 +AD4 doesn't know that and warns this.
-+AD4 +AD4 
-+AD4 +AD4 Signed-off-by: YueHaibing +ADw-yuehaibing+AEA-huawei.com+AD4
-+AD4 +AD4 ---
-+AD4 +AD4 net/sunrpc/xprtrdma/svc+AF8-rdma+AF8-rw.c +AHw 2 +--
-+AD4 +AD4 net/sunrpc/xprtrdma/verbs.c       +AHw 2 +--
-+AD4 +AD4 2 files changed, 2 insertions(+-), 2 deletions(-)
-+AD4 +AD4 
-+AD4 +AD4 diff --git a/net/sunrpc/xprtrdma/svc+AF8-rdma+AF8-rw.c b/net/sunrpc/xprtrdma/svc+AF8-rdma+AF8-rw.c
-+AD4 +AD4 index dc19517..0954b25 100644
-+AD4 +AD4 --- a/net/sunrpc/xprtrdma/svc+AF8-rdma+AF8-rw.c
-+AD4 +AD4 +-+-+- b/net/sunrpc/xprtrdma/svc+AF8-rdma+AF8-rw.c
-+AD4 +AD4 +AEAAQA -308,7 +-308,7 +AEAAQA static int svc+AF8-rdma+AF8-post+AF8-chunk+AF8-ctxt(struct svc+AF8-rdma+AF8-chunk+AF8-ctxt +ACo-cc)
-+AD4 +AD4 	struct svcxprt+AF8-rdma +ACo-rdma +AD0 cc-+AD4-cc+AF8-rdma+ADs
-+AD4 +AD4 	struct svc+AF8-xprt +ACo-xprt +AD0 +ACY-rdma-+AD4-sc+AF8-xprt+ADs
-+AD4 +AD4 	struct ib+AF8-send+AF8-wr +ACo-first+AF8-wr+ADs
-+AD4 +AD4 -	const struct ib+AF8-send+AF8-wr +ACo-bad+AF8-wr+ADs
-+AD4 +AD4 +-	const struct ib+AF8-send+AF8-wr +ACo-bad+AF8-wr +AD0 NULL+ADs
-+AD4 +AD4 	struct list+AF8-head +ACo-tmp+ADs
-+AD4 +AD4 	struct ib+AF8-cqe +ACo-cqe+ADs
-+AD4 +AD4 	int ret+ADs
-+AD4 +AD4 diff --git a/net/sunrpc/xprtrdma/verbs.c b/net/sunrpc/xprtrdma/verbs.c
-+AD4 +AD4 index 3ddba94..37be70f 100644
-+AD4 +AD4 --- a/net/sunrpc/xprtrdma/verbs.c
-+AD4 +AD4 +-+-+- b/net/sunrpc/xprtrdma/verbs.c
-+AD4 +AD4 +AEAAQA -1518,7 +-1518,7 +AEAAQA void
-+AD4 +AD4 rpcrdma+AF8-post+AF8-recvs(struct rpcrdma+AF8-xprt +ACo-r+AF8-xprt, bool temp)
-+AD4 +AD4 +AHs
-+AD4 +AD4 	struct rpcrdma+AF8-buffer +ACo-buf +AD0 +ACY-r+AF8-xprt-+AD4-rx+AF8-buf+ADs
-+AD4 +AD4 -	struct ib+AF8-recv+AF8-wr +ACo-wr, +ACo-bad+AF8-wr+ADs
-+AD4 +AD4 +-	struct ib+AF8-recv+AF8-wr +ACo-wr, +ACo-bad+AF8-wr +AD0 NULL+ADs
-+AD4 +AD4 	int needed, count, rc+ADs
-+AD4 +AD4 
-+AD4 +AD4 	rc +AD0 0+ADs
-+AD4 +AD4 -- 
-+AD4 +AD4 2.7.0
-+AD4 
-+AD4 Does this need
-+AD4 
-+AD4 Fixes: d34ac5cd3a73 (+ACI-RDMA, core and ULPs: Declare ib+AF8-post+AF8-send() and ib+AF8-post+AF8-recv() arguments const+ACI)  ???
-+AD4 
-+AD4 Bart, any comments?
+On Thu, Dec 20, 2018 at 05:34:08PM -0800, Florian Fainelli wrote:
+> Add a binding document for the Broadcom STB reset controller, also known
+> as SW_INIT-style reset controller.
+> 
+> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+> ---
+>  .../devicetree/bindings/reset/brcm,reset.txt  | 27 +++++++++++++++++++
+>  1 file changed, 27 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/reset/brcm,reset.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/reset/brcm,reset.txt b/Documentation/devicetree/bindings/reset/brcm,reset.txt
+> new file mode 100644
+> index 000000000000..6e5341b4f891
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/reset/brcm,reset.txt
+> @@ -0,0 +1,27 @@
+> +Broadcom STB SW_INIT-style reset controller
+> +===========================================
+> +
+> +Broadcom STB SoCs have a SW_INIT-style reset controller with separate
+> +SET/CLEAR/STATUS registers and possibly multiple banks, each of 32 bit
+> +reset lines.
+> +
+> +Please also refer to reset.txt in this directory for common reset
+> +controller binding usage.
+> +
+> +Required properties:
+> +- compatible: should be brcm,brcmstb-reset
+> +- reg: register base and length
+> +- #reset-cells: must be set to 1
+> +
+> +Example:
+> +
+> +	reset: reset-controller@8404318 {
+> +		compatible = "brcm,brcmstb-reset";
+> +		reg = <0x8404318 0x30>;
 
-Hi Chuck,
+Based on this address, should this be a sub-node of something else? Or 
+not even a sub-node and just make the parent be a reset provider?
 
-My understanding is that the +ACI-Fixes:+ACI tag should only be used for patches
-that fix bugs. Since this patch addresses a false positive warning reported
-by smatch I think that it would be misleading to use the +ACI-Fixes:+ACI tag.
-Before proceeding with this patch, I think that smatch should be improved.
-The following patch namely was not sufficient to suppress the xprtrdma
-warning reported by smatch:
-
-diff --git a/include/rdma/ib+AF8-verbs.h b/include/rdma/ib+AF8-verbs.h
-index a3ceed3a040a..498eaa245d1a 100644
---- a/include/rdma/ib+AF8-verbs.h
-+-+-+- b/include/rdma/ib+AF8-verbs.h
-+AEAAQA -3327,9 +-3327,16 +AEAAQA static inline int ib+AF8-post+AF8-srq+AF8-recv(struct ib+AF8-srq +ACo-srq,
- 				   const struct ib+AF8-recv+AF8-wr +ACoAKg-bad+AF8-recv+AF8-wr)
- +AHs
- 	const struct ib+AF8-recv+AF8-wr +ACo-dummy+ADs
--
--	return srq-+AD4-device-+AD4-ops.post+AF8-srq+AF8-recv(srq, recv+AF8-wr,
--					      bad+AF8-recv+AF8-wr ? : +ACY-dummy)+ADs
-+-	int ret+ADs
-+-
-+-	ret +AD0 srq-+AD4-device-+AD4-ops.post+AF8-srq+AF8-recv(srq, recv+AF8-wr,
-+-					     bad+AF8-recv+AF8-wr ? : +ACY-dummy)+ADs
-+-+ACM-ifdef +AF8AXw-CHECKER+AF8AXw
-+-	/+ACo Tell static analyzers that +ACo-bad+AF8-send+AF8-wr is initialized if ret +ACEAPQ 0 +ACo-/
-+-	if (ret +ACYAJg bad+AF8-send+AF8-wr)
-+-		+ACo-bad+AF8-send+AF8-wr +AD0 +ACo-bad+AF8-send+AF8-wr+ADs
-+-+ACM-endif
-+-	return ret+ADs
- +AH0
- 
- /+ACoAKg
-+AEAAQA -3431,8 +-3438,15 +AEAAQA static inline int ib+AF8-post+AF8-send(struct ib+AF8-qp +ACo-qp,
- 			       const struct ib+AF8-send+AF8-wr +ACoAKg-bad+AF8-send+AF8-wr)
- +AHs
- 	const struct ib+AF8-send+AF8-wr +ACo-dummy+ADs
-+-	int ret+ADs
- 
--	return qp-+AD4-device-+AD4-ops.post+AF8-send(qp, send+AF8-wr, bad+AF8-send+AF8-wr ? : +ACY-dummy)+ADs
-+-	ret +AD0 qp-+AD4-device-+AD4-ops.post+AF8-send(qp, send+AF8-wr, bad+AF8-send+AF8-wr ? : +ACY-dummy)+ADs
-+-+ACM-ifdef +AF8AXw-CHECKER+AF8AXw
-+-	/+ACo Tell static analyzers that +ACo-bad+AF8-send+AF8-wr is initialized if ret +ACEAPQ 0 +ACo-/
-+-	if (ret +ACYAJg bad+AF8-send+AF8-wr)
-+-		+ACo-bad+AF8-send+AF8-wr +AD0 +ACo-bad+AF8-send+AF8-wr+ADs
-+-+ACM-endif
-+-	return ret+ADs
- +AH0
- 
- /+ACoAKg
-+AEAAQA -3448,8 +-3462,15 +AEAAQA static inline int ib+AF8-post+AF8-recv(struct ib+AF8-qp +ACo-qp,
- 			       const struct ib+AF8-recv+AF8-wr +ACoAKg-bad+AF8-recv+AF8-wr)
- +AHs
- 	const struct ib+AF8-recv+AF8-wr +ACo-dummy+ADs
-+-	int ret+ADs
- 
--	return qp-+AD4-device-+AD4-ops.post+AF8-recv(qp, recv+AF8-wr, bad+AF8-recv+AF8-wr ? : +ACY-dummy)+ADs
-+-	ret +AD0 qp-+AD4-device-+AD4-ops.post+AF8-recv(qp, recv+AF8-wr, bad+AF8-recv+AF8-wr ? : +ACY-dummy)+ADs
-+-+ACM-ifdef +AF8AXw-CHECKER+AF8AXw
-+-	/+ACo Tell static analyzers that +ACo-bad+AF8-send+AF8-wr is initialized if ret +ACEAPQ 0 +ACo-/
-+-	if (ret +ACYAJg bad+AF8-send+AF8-wr)
-+-		+ACo-bad+AF8-send+AF8-wr +AD0 +ACo-bad+AF8-send+AF8-wr+ADs
-+-+ACM-endif
-+-	return ret+ADs
- +AH0
- 
- struct ib+AF8-cq +ACoAXwBf-ib+AF8-alloc+AF8-cq(struct ib+AF8-device +ACo-dev, void +ACo-private,
-
-Bart.
+Rob
