@@ -2,155 +2,69 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA5F6C43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 10:10:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 987F6C43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 10:12:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9174A2073D
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 10:10:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3697820815
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 10:12:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=iluvatar.ai header.i=@iluvatar.ai header.b="sXHsJIDk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730752AbfACKKs (ORCPT
+        id S1730760AbfACKMQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 05:10:48 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:52843 "EHLO mail.bootlin.com"
+        Thu, 3 Jan 2019 05:12:16 -0500
+Received: from owa.iluvatar.ai ([103.91.158.24]:40795 "EHLO owa.iluvatar.ai"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726779AbfACKKr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 05:10:47 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 5732E207AD; Thu,  3 Jan 2019 11:10:46 +0100 (CET)
-Received: from aptenodytes (aaubervilliers-681-1-29-148.w90-88.abo.wanadoo.fr [90.88.149.148])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 0BF5E2074D;
-        Thu,  3 Jan 2019 11:10:36 +0100 (CET)
-Message-ID: <fc3c7771e4cc25227d97be02efe11173c1350482.camel@bootlin.com>
-Subject: Re: [PATCH v4 00/22] drm/sun4i: Support for linear and tiled YUV
- formats with the frontend
-From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-To:     dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <sean@poorly.run>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-sunxi@googlegroups.com, Daniel Vetter <daniel@ffwll.ch>
-Date:   Thu, 03 Jan 2019 11:10:36 +0100
-In-Reply-To: <20181205083703.21488-1-paul.kocialkowski@bootlin.com>
-References: <20181205083703.21488-1-paul.kocialkowski@bootlin.com>
-Organization: Bootlin
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.3 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1728530AbfACKMQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Jan 2019 05:12:16 -0500
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+DKIM-Signature: v=1; a=rsa-sha256; d=iluvatar.ai; s=key_2018;
+        c=relaxed/relaxed; t=1546510320; h=from:subject:to:date:message-id;
+        bh=iq2hEaWVE4xd0CcujXJRJx7YjVxyGPAoFoRO5dQc5SY=;
+        b=sXHsJIDkep19VXw1uzZi4aI+7N9KzMsGbN6+OExMoxdrJ78a703NaaMmeXG6/yN7LOMgY5r3sI1
+        XmBOfXO8h524J2dSR15q3H00Y99bMsRZ6riiVbAbtEZDMM38W1qxc0g+lOE0BYTQbfwGm6TpM4MMl
+        meaomEL9aJP+7m/viRg=
+Received: from hsj-Precision-5520 (10.101.1.99) by
+ S-10-101-1-102.iluvatar.local (10.101.1.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1415.2; Thu, 3 Jan 2019 18:12:00 +0800
+Date:   Thu, 3 Jan 2019 18:11:59 +0800
+From:   Huang Shijie <sjhuang@iluvatar.ai>
+To:     Christoph Hellwig <hch@infradead.org>
+CC:     <akpm@linux-foundation.org>, <sfr@canb.auug.org.au>,
+        <alexey.skidanov@intel.com>, <linux-kernel@vger.kernel.org>,
+        <shijie8@gmail.com>
+Subject: Re: [PATCH 2/2] lib/genalloc.c: export symbol addr_in_gen_pool
+Message-ID: <20190103101159.GA8656@hsj-Precision-5520>
+References: <20181224070622.22197-1-sjhuang@iluvatar.ai>
+ <20181224070622.22197-2-sjhuang@iluvatar.ai>
+ <20190103075550.GA11147@infradead.org>
+MIME-Version: 1.0
+In-Reply-To: <20190103075550.GA11147@infradead.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Originating-IP: [10.101.1.99]
+X-ClientProxiedBy: S-10-101-1-102.iluvatar.local (10.101.1.102) To
+ S-10-101-1-102.iluvatar.local (10.101.1.102)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-12-05 at 09:36 +0100, Paul Kocialkowski wrote:
-> This series implements support for YUV formats using the display engine
-> frontend in the sun4i DRM driver, with various fixes along the way.
-> Scaling is supported for every format handled by the frontend.
+On Wed, Jan 02, 2019 at 11:55:50PM -0800, Christoph Hellwig wrote:
+> On Mon, Dec 24, 2018 at 03:06:22PM +0800, Huang Shijie wrote:
+> > We may use the addr_in_gen_pool() in the driver module.
+> > So export the addr_in_gen_pool for the compiling.
 > 
-> The tiling mode used by the VPU on Allwinner platforms is also supported
-> by this series and a dedicated fourcc modifier is introduced, along with
-> a specific ioctl for allocating tiled buffers.
-> 
-> New common fourcc helpers are also introduced in this series, especially
-> related to YUV formats.
+> Please send this along with the driver that plans to use it.
+The driver is still under develop with the FPGA, and our hardware chip maybe
+tape out at next year.
 
-This series should be about ready for merge for the sun4i parts, but
-I'd like to get some feedback regarding the new helpers introduced to
-drm_fourcc (patches 1/ and 2/) as well as the introduction of the
-Allwinner tiling definitions (patch 11/).
+Thanks
+Huang Shijie
 
-Does anyone have any objection or suggestion regarding these patches or
-can we go ahead and merge them along with the remaining driver patches
-in this series?
-
-Cheers,
-
-Paul
-
-> This was tested on the A33 and A20 platforms and all supported features
-> work properly on both. Framebuffer offsets and source positions are not
-> supported at this point.
-> 
-> Changes since v3:
-> * Made the BT.601 CSC coefficients common;
-> * Moved the tiling mode comment next to the associated macro;
-> * Added collected Acked-by tags.
-> 
-> Changes since v2:
-> * Removed DRM format helpers taking the format fourcc;
-> * Passed the DRM format info structure when needed instead of iterating
->   through the list;
-> * Removed the sun4i-specific ioctl for allocating tiled buffers, which
->   will be rebranded as a generic one in an upcoming patch;
-> * Improved comment for X1 tiled offset and simplified its calculation;
-> * Corrected author email and added SoB where needed;
-> * Rebased on latest drm-misc next.
-> 
-> Changes since v1:
-> * Extended source selected cleanup to both YUV and video channels;
-> * Split and reworded comment about backend scaling;
-> * Sorted newly-introduced lists alphabetically;
-> * Simplified functions to check if a format is supported;
-> * Reworked frontend selection logic as discussed;
-> * Made YUV helpers common, with fourcc and drm_info fashions;
-> * Changed the CREATE_TILED ioctl flags to match the CREATE_DUMB ioctl;
-> * Reworked YUV dimensions calculations to use drm_format_info;
-> * Dropped MB32 part in modifier to match V4L2 definition name;
-> * Improved the description of the tiling modifier;
-> * Avoided splitting CSC coefficients to avoid introducing a new module;
-> * Fixed building the driver as modules;
-> * Various code simplifications and cleanups;
-> * Split commits into logical changes.
-> 
-> Maxime Ripard (5):
->   drm/sun4i: Move access control before setting the register as
->     documented
->   drm/sun4i: frontend: Add a quirk structure
->   drm/sun4i: Set the coef_rdy bit right after the coef have been set
->   drm/sun4i: Make COEF_RDY conditional
->   drm/sun4i: frontend: Move the FIR filter phases to our quirks
-> 
-> Paul Kocialkowski (17):
->   drm/fourcc: Add format info helpers for checking YUV planes
->     disposition
->   drm/fourcc: Add format info helpers for checking YUV sub-sampling
->   drm/sun4i: backend: Use explicit fourcc helpers for packed YUV422
->     check
->   drm/sun4i: frontend: Pass DRM format info to input format helpers
->   drm/sun4i: frontend: Determine input format based on colorspace
->   drm/sun4i: Move the BT.601 CSC coefficients to the frontend
->   drm/sun4i: frontend: Configure and enable YUV to RGB CSC when needed
->   drm/sun4i: frontend: Add support for packed YUV422 input formats
->   drm/sun4i: frontend: Add support for semi-planar YUV input formats
->   drm/sun4i: frontend: Add support for planar YUV input formats
->   drm/fourcc: Add definitions for Allwinner vendor and VPU tiled format
->   drm/sun4i: frontend: Add support for tiled YUV input mode
->     configuration
->   drm/sun4i: Add buffer stride and offset configuration for tiling mode
->   drm/sun4i: frontend: Add and use helper for checking tiling support
->   drm/sun4i: layer: Add tiled modifier support and helper
->   drm/sun4i: drv: Allow framebuffer modifiers in mode config
->   drm/sun4i: frontend: Add A20-specific device-tree compatible and
->     quirks
-> 
->  drivers/gpu/drm/sun4i/sun4i_backend.c  |  25 +-
->  drivers/gpu/drm/sun4i/sun4i_drv.c      |   1 +
->  drivers/gpu/drm/sun4i/sun4i_frontend.c | 346 ++++++++++++++++++++++---
->  drivers/gpu/drm/sun4i/sun4i_frontend.h |  52 ++++
->  drivers/gpu/drm/sun4i/sun4i_layer.c    |  28 +-
->  include/drm/drm_fourcc.h               | 117 +++++++++
->  include/uapi/drm/drm_fourcc.h          |  16 ++
->  7 files changed, 530 insertions(+), 55 deletions(-)
-> 
--- 
-Paul Kocialkowski, Bootlin (formerly Free Electrons)
-Embedded Linux and kernel engineering
-https://bootlin.com
 
