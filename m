@@ -2,71 +2,79 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61A20C43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 08:05:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4384C43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 08:07:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27F3720883
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 08:05:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dm+4VPqy"
+	by mail.kernel.org (Postfix) with ESMTP id BAF7B20883
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 08:07:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729376AbfACIFV (ORCPT
+        id S1729747AbfACIHU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 03:05:21 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:41286 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726575AbfACIFU (ORCPT
+        Thu, 3 Jan 2019 03:07:20 -0500
+Received: from relay1.mentorg.com ([192.94.38.131]:33972 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726112AbfACIHU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 03:05:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=nOckVns+kiW/76IMyM6PpxivuXXEqTn34twSBRWcBH0=; b=dm+4VPqyMSZujqu62FPF7duuc
-        F3UNiNGV6DUDCP5ad/zkkd3k1AExFgntsoE04Als5sekbJhtE9og0MA9JLuf9WMiprUhX9aWF+oMM
-        1MA4axOyMYemldRkUlFnyEtqM2WcPIHeL0zpGQ1OEQefcSHy5rcybg4Kx4PXzFsYmF/N4uUgI69CT
-        Rp0xbw63qjJ29DKi+eqg1KPApMLo2gVtzqwl8R/Tb4LuPENJrMrA+NExnNKqZ0A2VYgPxFLxXtweR
-        27KIAJdLs9gNTHh7yL6UPVn4hcvk14pbt4AG64y6b7qDNqm/Hk51KQFNMBbw229SIn9ZsSmnlYaxt
-        7G41Auk3A==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gey0A-0007lb-4a; Thu, 03 Jan 2019 08:05:14 +0000
-Date:   Thu, 3 Jan 2019 00:05:14 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Finn Thain <fthain@telegraphics.com.au>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v8 22/25] powerpc: Remove CONFIG_GENERIC_NVRAM and adopt
- CONFIG_HAVE_ARCH_NVRAM_OPS
-Message-ID: <20190103080514.GC11147@infradead.org>
-References: <cover.1545784679.git.fthain@telegraphics.com.au>
- <22b3299016531a7a05c9c45b36d43565c794e67d.1545784679.git.fthain@telegraphics.com.au>
+        Thu, 3 Jan 2019 03:07:20 -0500
+Received: from nat-ies.mentorg.com ([192.94.31.2] helo=SVR-IES-MBX-04.mgc.mentorg.com)
+        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
+        id 1gey28-0001XP-Hl from Vladimir_Zapolskiy@mentor.com ; Thu, 03 Jan 2019 00:07:16 -0800
+Received: from [137.202.108.130] (137.202.0.90) by
+ SVR-IES-MBX-04.mgc.mentorg.com (139.181.222.4) with Microsoft SMTP Server
+ (TLS) id 15.0.1320.4; Thu, 3 Jan 2019 08:07:12 +0000
+Subject: Re: RFC: gpio: mmio: add support for 3 direction regs
+To:     "Fried, Ramon" <ramon.fried@linux.intel.com>,
+        <linus.walleij@linaro.org>, <bgolaszewski@baylibre.com>,
+        <linux-gpio@vger.kernel.org>
+References: <32edfd70-95dc-26a1-2ea6-143344cb2384@linux.intel.com>
+CC:     <linux-kernel@vger.kernel.org>,
+        <vladimir.kondratiev@linux.intel.com>
+From:   Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Message-ID: <ca7c1b99-4166-652b-aa53-8272aa66eb73@mentor.com>
+Date:   Thu, 3 Jan 2019 10:07:11 +0200
+User-Agent: Mozilla/5.0 (X11; Linux i686; rv:45.0) Gecko/20100101
+ Icedove/45.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <22b3299016531a7a05c9c45b36d43565c794e67d.1545784679.git.fthain@telegraphics.com.au>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <32edfd70-95dc-26a1-2ea6-143344cb2384@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [137.202.0.90]
+X-ClientProxiedBy: SVR-IES-MBX-08.mgc.mentorg.com (139.181.222.8) To
+ SVR-IES-MBX-04.mgc.mentorg.com (139.181.222.4)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->  # All PPC32s use generic nvram driver through ppc_md
-> -config GENERIC_NVRAM
-> +config HAVE_ARCH_NVRAM_OPS
->  	bool
->  	default y if PPC32
+Hi Ramon,
 
-Symbols like this really should be defined in common code, and then
-just selected by the users.
+On 01/03/2019 09:36 AM, Fried, Ramon wrote:
+> Hi.
+> 
+> I'm working on a driver for STA2X11 GPIO controller who seems to fit
+> best to the generic mmio driver,
+
+I hope you have seen the existing driver drivers/gpio/gpio-sta2x11.c
+
+> the only problem I have is with the dir register case. The STA2X11
+> has 3 registers for dir, one for data, one for set and one for
+> clear. The generic-mmio driver has support for this fashion for the
+> dat & set & clear registers but not for dirout/dirin registers.
+> 
+> I wonder if support for this is generic enough to deserve a patch, if
+> so I'm willing to quickly add this support, if not, adding a flag
+> such as below, will allow partly using the generic mmio driver only
+> for set/get and the direction can be handled outside the driver.
+> 
+
+If gpio-mmio fits well, then it might be simpler to set a flag
+BGPIOF_UNREADABLE_REG_DIR, then call bgpio_init() and then overwrite
+.direction_input, .direction_output and .get_direction callbacks,
+as a reference you can take a look at gpio-74xx-mmio.c
+
+--
+Best wishes,
+Vladimir
