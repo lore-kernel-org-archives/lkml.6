@@ -7,44 +7,43 @@ X-Spam-Status: No, score=-12.0 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ABA5C43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 13:22:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B62AC43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 13:22:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FB382070C
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 13:22:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1298B2070C
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 13:22:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731419AbfACNWc (ORCPT
+        id S1731459AbfACNWf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 08:22:32 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:60405 "EHLO
+        Thu, 3 Jan 2019 08:22:35 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:53095 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727067AbfACNWb (ORCPT
+        with ESMTP id S1727067AbfACNWd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 08:22:31 -0500
+        Thu, 3 Jan 2019 08:22:33 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x03DLnvc1385315
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x03DMO1T1385341
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 3 Jan 2019 05:21:49 -0800
+        Thu, 3 Jan 2019 05:22:24 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x03DLnFY1385312;
-        Thu, 3 Jan 2019 05:21:49 -0800
-Date:   Thu, 3 Jan 2019 05:21:49 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x03DMOiv1385338;
+        Thu, 3 Jan 2019 05:22:24 -0800
+Date:   Thu, 3 Jan 2019 05:22:24 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
-Message-ID: <tip-4ccc98a48958da9f89beb71c66a4e05468727951@git.kernel.org>
-Cc:     jolsa@kernel.org, mingo@kernel.org, tglx@linutronix.de,
-        andriy.shevchenko@linux.intel.com, jic23@kernel.org,
-        lars@metafoo.de, acme@redhat.com, herton@redhat.com,
-        linux-kernel@vger.kernel.org, hpa@zytor.com, knaack.h@gmx.de
-Reply-To: lars@metafoo.de, acme@redhat.com, herton@redhat.com,
-          jolsa@kernel.org, mingo@kernel.org, jic23@kernel.org,
-          tglx@linutronix.de, andriy.shevchenko@linux.intel.com,
-          linux-kernel@vger.kernel.org, hpa@zytor.com, knaack.h@gmx.de
-In-Reply-To: <20181212102537.25902-7-jolsa@kernel.org>
-References: <20181212102537.25902-7-jolsa@kernel.org>
+From:   tip-bot for Adrian Hunter <tipbot@zytor.com>
+Message-ID: <tip-03b32cb2810814756095dbd91fce0c77617d096b@git.kernel.org>
+Cc:     tglx@linutronix.de, acme@redhat.com, mingo@kernel.org,
+        hpa@zytor.com, linux-kernel@vger.kernel.org,
+        adrian.hunter@intel.com, jolsa@kernel.org
+Reply-To: adrian.hunter@intel.com, linux-kernel@vger.kernel.org,
+          jolsa@kernel.org, acme@redhat.com, mingo@kernel.org,
+          tglx@linutronix.de, hpa@zytor.com
+In-Reply-To: <20181221120620.9659-2-adrian.hunter@intel.com>
+References: <20181221120620.9659-2-adrian.hunter@intel.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] tools gpio: Allow overriding CFLAGS
-Git-Commit-ID: 4ccc98a48958da9f89beb71c66a4e05468727951
+Subject: [tip:perf/urgent] perf thread-stack: Simplify some code in
+ thread_stack__process()
+Git-Commit-ID: 03b32cb2810814756095dbd91fce0c77617d096b
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -58,39 +57,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  4ccc98a48958da9f89beb71c66a4e05468727951
-Gitweb:     https://git.kernel.org/tip/4ccc98a48958da9f89beb71c66a4e05468727951
-Author:     Jiri Olsa <jolsa@kernel.org>
-AuthorDate: Wed, 12 Dec 2018 11:25:37 +0100
+Commit-ID:  03b32cb2810814756095dbd91fce0c77617d096b
+Gitweb:     https://git.kernel.org/tip/03b32cb2810814756095dbd91fce0c77617d096b
+Author:     Adrian Hunter <adrian.hunter@intel.com>
+AuthorDate: Fri, 21 Dec 2018 14:06:13 +0200
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Fri, 28 Dec 2018 16:33:08 -0300
+CommitDate: Wed, 2 Jan 2019 10:42:45 -0300
 
-tools gpio: Allow overriding CFLAGS
+perf thread-stack: Simplify some code in thread_stack__process()
 
-So that the user can specify outside CFLAGS values.
+In preparation for fixing thread stack processing for the idle task,
+simplify some code in thread_stack__process().
 
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Hartmut Knaack <knaack.h@gmx.de> <knaack.h@gmx.de>
-Cc: Herton Krzesinski <herton@redhat.com>
-Cc: Jonathan Cameron <jic23@kernel.org>
-Cc: Lars-Peter Clausen <lars@metafoo.de>
-Link: http://lkml.kernel.org/r/20181212102537.25902-7-jolsa@kernel.org
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Link: http://lkml.kernel.org/r/20181221120620.9659-2-adrian.hunter@intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/gpio/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/util/thread-stack.c | 18 +++++++-----------
+ 1 file changed, 7 insertions(+), 11 deletions(-)
 
-diff --git a/tools/gpio/Makefile b/tools/gpio/Makefile
-index 240eda014b37..6ecdd1067826 100644
---- a/tools/gpio/Makefile
-+++ b/tools/gpio/Makefile
-@@ -12,7 +12,7 @@ endif
- # (this improves performance and avoids hard-to-debug behaviour);
- MAKEFLAGS += -r
+diff --git a/tools/perf/util/thread-stack.c b/tools/perf/util/thread-stack.c
+index 61a4286a74dc..115dc4b27a1b 100644
+--- a/tools/perf/util/thread-stack.c
++++ b/tools/perf/util/thread-stack.c
+@@ -593,17 +593,13 @@ int thread_stack__process(struct thread *thread, struct comm *comm,
+ 	struct thread_stack *ts = thread->ts;
+ 	int err = 0;
  
--CFLAGS += -O2 -Wall -g -D_GNU_SOURCE -I$(OUTPUT)include
-+override CFLAGS += -O2 -Wall -g -D_GNU_SOURCE -I$(OUTPUT)include
- 
- ALL_TARGETS := lsgpio gpio-hammer gpio-event-mon
- ALL_PROGRAMS := $(patsubst %,$(OUTPUT)%,$(ALL_TARGETS))
+-	if (ts) {
+-		if (!ts->crp) {
+-			/* Supersede thread_stack__event() */
+-			thread_stack__free(thread);
+-			thread->ts = thread_stack__new(thread, crp);
+-			if (!thread->ts)
+-				return -ENOMEM;
+-			ts = thread->ts;
+-			ts->comm = comm;
+-		}
+-	} else {
++	if (ts && !ts->crp) {
++		/* Supersede thread_stack__event() */
++		thread_stack__free(thread);
++		ts = NULL;
++	}
++
++	if (!ts) {
+ 		thread->ts = thread_stack__new(thread, crp);
+ 		if (!thread->ts)
+ 			return -ENOMEM;
