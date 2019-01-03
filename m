@@ -2,174 +2,103 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D03DEC43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 17:52:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D8DDC43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 17:52:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9847520815
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 17:52:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cjzrpj/S"
+	by mail.kernel.org (Postfix) with ESMTP id 4811220815
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 17:52:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731945AbfACRwG (ORCPT
+        id S1731989AbfACRws (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 12:52:06 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:33486 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728424AbfACRwG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 12:52:06 -0500
-Received: by mail-pf1-f193.google.com with SMTP id c123so17019747pfb.0
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 09:52:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=yDz7QBjISpr2/aHFIwizHIIDXcaqwxB6hC8+SZOWP/0=;
-        b=Cjzrpj/SYRCh77oTd6unz6v1o1fRXQfyDrIOTXXGHsRmNKEDp/hUYK8KVi1Xq9FC39
-         PIfEDvMIJAxFdvKxHuGifLOTwmKCoKkGpeuW+NGac5CXAZSwxvZM80PB1aU0N0YlAafI
-         1YU/HZVAy60g4jA/JEaJVh5vxXcLjEPfUVnjdPm7rINY1F5uvVookWMW+DcyWjEjKZj9
-         NRjttIeig7ENxJwrYjN0Ge3qlMoZ/WRW5cPCIxRmhQZ22YfjHvErrSb2UpxmcVFenJfj
-         OnbMdh8AcotpfI4NwHK88hA16PXY08AN88x8nhBtx9iefwc3Ll5YU5+ElGQ3qzudL65C
-         bx9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=yDz7QBjISpr2/aHFIwizHIIDXcaqwxB6hC8+SZOWP/0=;
-        b=THT6cKD2iVz8CiffBVQqJTFNLh2gwbaNjC+S78eh72yQtCBKnnwMf/KWDwybfvqxyQ
-         QEojyNCkl/T8/PcrOX81nyVoRyLds4prjaqpgGBL/mPr/lylUEEP5C96nhNtK6zdF2hI
-         0RGRFqMHWhmu3aiSjlz6UAxDdZN6L5K0jC1KehT+3M3xP6BbO7LG0vdSz/lV4pVTDBZi
-         PSZ1AZSHIsaC0QwLfbZdxd3GH9V/YBUaVxNppwSD/dge/eVrZF/TWOanakM8Jpvw9FDm
-         J1apWCKZrZPpsQOcdRHeiFMdMeO3G0ctOk7b/mXyIlnzqjJU9iDw8C5bL2as1LfspxkI
-         17Ig==
-X-Gm-Message-State: AJcUukfhoO67dK9XKOwnDDTAwaBXvPR5jJ4l2FLRD21xBFmBss01bPkQ
-        7R7ilBTHXQvVtUx0n1OX/S72NORG8/yL7DSAl9RHEu1i
-X-Google-Smtp-Source: ALg8bN417ey2bSZMnQ9ofltp8fY8ruvdXELY6WXzIGlzq45Sx9FiS/M15kB2PoE+rOp5PU5bAj79EfG9rb2eOgP6ON0=
-X-Received: by 2002:a63:fe0a:: with SMTP id p10mr17680040pgh.265.1546537925039;
- Thu, 03 Jan 2019 09:52:05 -0800 (PST)
+        Thu, 3 Jan 2019 12:52:48 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54030 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728424AbfACRwr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Jan 2019 12:52:47 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 23DD715AD;
+        Thu,  3 Jan 2019 09:52:47 -0800 (PST)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id E4D823F5D4;
+        Thu,  3 Jan 2019 09:52:46 -0800 (PST)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id 210571AE0BD1; Thu,  3 Jan 2019 17:52:47 +0000 (GMT)
+Date:   Thu, 3 Jan 2019 17:52:47 +0000
+From:   Will Deacon <will.deacon@arm.com>
+To:     Dave Martin <Dave.Martin@arm.com>
+Cc:     Pi-Hsun Shih <pihsun@chromium.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        "moderated list:ARM64 PORT AARCH64 ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH] arm64: Mirror arm for small unimplemented compat syscalls
+Message-ID: <20190103175246.GB10221@edgewater-inn.cambridge.arm.com>
+References: <20190103074550.217421-1-pihsun@chromium.org>
+ <20190103114959.GA3529@e103592.cambridge.arm.com>
+ <20190103165144.GA10221@edgewater-inn.cambridge.arm.com>
 MIME-Version: 1.0
-References: <CABGGisxcHWwhUcQML7XmriK_DLFGjmud3cKt8yp+K4G2CAL=9Q@mail.gmail.com>
- <20190102185106.56913-1-swboyd@chromium.org>
-In-Reply-To: <20190102185106.56913-1-swboyd@chromium.org>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Thu, 3 Jan 2019 19:51:53 +0200
-Message-ID: <CAHp75VcRD__AhOM0sZjuNwsPGe-1_Cnreo+CSWgPrykFg_we1w@mail.gmail.com>
-Subject: Re: [PATCH v3] driver core: platform: Add an error message to platform_get_irq*()
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     Rob Herring <robh@kernel.org>, Andrzej Hajda <a.hajda@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Mark Brown <broonie@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Javier Martinez Canillas <javierm@redhat.com>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190103165144.GA10221@edgewater-inn.cambridge.arm.com>
+User-Agent: Mutt/1.11.1+30 (d10eec459b35) ()
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 2, 2019 at 8:51 PM Stephen Boyd <swboyd@chromium.org> wrote:
->
-> A grep of the kernel shows that many drivers print an error message if
-> they fail to get the irq they're looking for. Furthermore, those drivers
-> all decide to print the device name, or not, and the irq they were
-> requesting, or not, etc. Let's consolidate all these error messages into
-> the API itself, allowing us to get rid of the error messages in each
-> driver.
->
+On Thu, Jan 03, 2019 at 04:51:44PM +0000, Will Deacon wrote:
+> On Thu, Jan 03, 2019 at 11:50:12AM +0000, Dave Martin wrote:
+> > On Thu, Jan 03, 2019 at 03:45:47PM +0800, Pi-Hsun Shih wrote:
+> > > For syscall number smaller than 0xf0000, arm calls sys_ni_syscall
+> > > instead of arm_syscall in arch/arm/kernel/entry-common.S, which returns
+> > > -ENOSYS instead of raising SIGILL. Mirror this behavior for compat
+> > > syscalls in arm64.
+> > > 
+> > > Fixes: 532826f3712b607 ("arm64: Mirror arm for unimplemented compat
+> > > syscalls")
+> > > Signed-off-by: Pi-Hsun Shih <pihsun@chromium.org>
+> > > ---
+> > >  arch/arm64/kernel/syscall.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > 
+> > > diff --git a/arch/arm64/kernel/syscall.c b/arch/arm64/kernel/syscall.c
+> > > index 8f3371415642ad..95fd8c7ec8a171 100644
+> > > --- a/arch/arm64/kernel/syscall.c
+> > > +++ b/arch/arm64/kernel/syscall.c
+> > > @@ -21,7 +21,7 @@ asmlinkage long do_ni_syscall(struct pt_regs *regs)
+> > >  {
+> > >  #ifdef CONFIG_COMPAT
+> > >  	long ret;
+> > > -	if (is_compat_task()) {
+> > > +	if (is_compat_task() && regs->regs[7] >= __ARM_NR_COMPAT_BASE) {
+> > 
+> > compat_arm_syscall() ignores all bits r7 except for bits [15:0].
+> > 
+> > So, doesn't this mean that 0xf0000, 0x100000, 0x110000 will all do the
+> > same thing now?  (Previously to your patch, 0xe0000, 0xd0000 etc. would
+> > also match in this code I've misunderstood something.)
+> > 
+> > The gating check in arch/arm/kernel/trapc.s:arm_syscall() is
+> > 
+> > 	if ((no >> 16) != (__ARM_NR_BASE>> 16))
+> > 
+> > I would expect that arm64 needs a similar check somewhere.  Is the check
+> > already present?  I may have missed it.
+> 
+> When not using OABI, __ARM_NR_BASE is zero, so I think the 32-bit semantics
+> for non-OABI are:
+> 
+> 	0       - 399		: Invoke syscall via syscall table
+> 	400     - 0xeffff	: -ENOSYS (to be allocated in future)
+> 	0xf0000 - 0xfffff	: Private syscall or -ENOSYS if not allocated
+> 	> 0xfffff		: SIGILL
 
-Thanks,
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Bah, 0xfffff should be 0xf07ff in the last two lines here.
 
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-> ---
->
-> Changes from v2:
->  * Don't refactor platform_get_irq(), just wrap it
->
-> Changes from v1:
->  * Update error text to indicate irq index instead of IRQn, use %u
->
->  drivers/base/platform.c | 31 +++++++++++++++++++++++--------
->  1 file changed, 23 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/base/platform.c b/drivers/base/platform.c
-> index 1c958eb33ef4..388461306dd4 100644
-> --- a/drivers/base/platform.c
-> +++ b/drivers/base/platform.c
-> @@ -79,12 +79,7 @@ struct resource *platform_get_resource(struct platform_device *dev,
->  }
->  EXPORT_SYMBOL_GPL(platform_get_resource);
->
-> -/**
-> - * platform_get_irq - get an IRQ for a device
-> - * @dev: platform device
-> - * @num: IRQ number index
-> - */
-> -int platform_get_irq(struct platform_device *dev, unsigned int num)
-> +static int __platform_get_irq(struct platform_device *dev, unsigned int num)
->  {
->  #ifdef CONFIG_SPARC
->         /* sparc does not have irqs represented as IORESOURCE_IRQ resources */
-> @@ -130,6 +125,22 @@ int platform_get_irq(struct platform_device *dev, unsigned int num)
->         return r ? r->start : -ENXIO;
->  #endif
->  }
-> +
-> +/**
-> + * platform_get_irq - get an IRQ for a device
-> + * @dev: platform device
-> + * @num: IRQ number index
-> + */
-> +int platform_get_irq(struct platform_device *dev, unsigned int num)
-> +{
-> +       int ret;
-> +
-> +       ret = __platform_get_irq(dev, num);
-> +       if (ret < 0 && ret != -EPROBE_DEFER)
-> +               dev_err(&dev->dev, "IRQ index %u not found\n", num);
-> +
-> +       return ret;
-> +}
->  EXPORT_SYMBOL_GPL(platform_get_irq);
->
->  /**
-> @@ -142,7 +153,7 @@ int platform_irq_count(struct platform_device *dev)
->  {
->         int ret, nr = 0;
->
-> -       while ((ret = platform_get_irq(dev, nr)) >= 0)
-> +       while ((ret = __platform_get_irq(dev, nr)) >= 0)
->                 nr++;
->
->         if (ret == -EPROBE_DEFER)
-> @@ -195,7 +206,11 @@ int platform_get_irq_byname(struct platform_device *dev, const char *name)
->         }
->
->         r = platform_get_resource_byname(dev, IORESOURCE_IRQ, name);
-> -       return r ? r->start : -ENXIO;
-> +       if (r)
-> +               return r->start;
-> +
-> +       dev_err(&dev->dev, "IRQ %s not found\n", name);
-> +       return -ENXIO;
->  }
->  EXPORT_SYMBOL_GPL(platform_get_irq_byname);
->
-> --
-> Sent by a computer through tubes
->
-
-
--- 
-With Best Regards,
-Andy Shevchenko
+Will
