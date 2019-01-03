@@ -6,62 +6,64 @@ X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B95A0C43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 03:05:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C566C43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 03:05:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8571B21874
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 03:05:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE6A2204EC
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 03:05:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546484706;
-	bh=hRv43Mht2MjfJo6tENSO33a9Ywb1dnYnQTQE+0MTUdc=;
+	s=default; t=1546484710;
+	bh=KU/xKgY6WMyQQJShUKlQpNlSeDLwGoAuQ//hVXVXEFk=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=Mi9IUXhYX6P+Uqc4hBeZK9Tql8o/7959lI0V8HNJpLd238YnPdC/xDxp4S80W0725
-	 6WGQSLIrs62HBakcAVP67hEUvd7/Ndx9QImrdc5ioosR76D2V1BgN5PMbpaA7WldoG
-	 wXE8vetn2QV3aSn1sNkbE2JE1p6WJVSGXuUzR6Ro=
+	b=11OH9a2oMIUX8eA9bo1lapbFltLyDrzeUKdagloWXOzPZZ+1kq5WHfz1sspQsQCUc
+	 Rbnk1mH2/tuC/N3RTVtJKqobYPFjTOhngReyBDi+bK5H9thqF8WjulxHmDiOuMHaWb
+	 qz8diib1dJWHBP23Q5h3oS1FDp8bYMiuWkFz+esI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729142AbfACDFF (ORCPT
+        id S1729867AbfACDFK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 22:05:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38442 "EHLO mail.kernel.org"
+        Wed, 2 Jan 2019 22:05:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38462 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726210AbfACDFD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 22:05:03 -0500
-Subject: Re: [GIT PULL] s390 patches for the 4.21 merge window
+        id S1728645AbfACDFF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Jan 2019 22:05:05 -0500
+Subject: Re: [PULL] virtio, vhost: features, fixes, cleanups
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546484703;
-        bh=hRv43Mht2MjfJo6tENSO33a9Ywb1dnYnQTQE+0MTUdc=;
+        s=default; t=1546484704;
+        bh=KU/xKgY6WMyQQJShUKlQpNlSeDLwGoAuQ//hVXVXEFk=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=wx+0AQjsdi6nNivimbg+mCz4n0t6bannvry6TrYA4savpPoyXsRO1UZ+MDNrA4Jmj
-         IA0yGIAvYv48gW56D9N4ysYpjh3CqXAUa6zlOOUkZFEVxGIX+VHoUnM+scRH9hsUy1
-         0PCTldZjwLISec3bZm4ZMgR2cuq8AZhKMk1EQ0ro=
+        b=ylitfz4tp2oQXdtZmCPVKjbm5eSgmUvIVrlKWHhZuFPJfi1u3dzdecdPzm/j96C5n
+         r2ouBHzZxDeD9dclT+S48H5HlNjgQIHXW6qHrd3onK5OeQvk8jA2cDlI0PzOPY+lQp
+         opecJ7LXLfXlfclMOmTYu/v+z+GKYHVPmtcu1LWQ=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190102084354.335d2272@mschwideX1>
-References: <20190102084354.335d2272@mschwideX1>
+In-Reply-To: <20190102162323-mutt-send-email-mst@kernel.org>
+References: <20190102162323-mutt-send-email-mst@kernel.org>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190102084354.335d2272@mschwideX1>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git tags/s390-4.21-1
-X-PR-Tracked-Commit-Id: ec10574d00da0d8b6ec9d0099410aae8aad4695a
+X-PR-Tracked-Message-Id: <20190102162323-mutt-send-email-mst@kernel.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost.git tags/for_linus
+X-PR-Tracked-Commit-Id: a691ffb46edd7cb12a17ff0965ab59dbc95f48de
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 04a17edeca524b71dbb5be41a7002d247fbf34c0
-Message-Id: <20190103030503.10885.59291.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
-Date:   Thu, 03 Jan 2019 03:05:03 +0000
-To:     Martin Schwidefsky <schwidefsky@de.ibm.com>
+X-PR-Merge-Commit-Id: d548e65904ae43b0637d200a2441fc94e0589c30
+Message-Id: <20190103030504.10885.56728.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
+Date:   Thu, 03 Jan 2019 03:05:04 +0000
+To:     "Michael S. Tsirkin" <mst@redhat.com>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>
+        kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        changpeng.liu@intel.com, dongli.zhang@oracle.com,
+        dverkamp@chromium.org, jasowang@redhat.com, mst@redhat.com,
+        pbonzini@redhat.com, stefanha@redhat.com, wangyan122@huawei.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Wed, 2 Jan 2019 08:43:54 +0100:
+The pull request you sent on Wed, 2 Jan 2019 16:23:23 -0500:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git tags/s390-4.21-1
+> git://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost.git tags/for_linus
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/04a17edeca524b71dbb5be41a7002d247fbf34c0
+https://git.kernel.org/torvalds/c/d548e65904ae43b0637d200a2441fc94e0589c30
 
 Thank you!
 
