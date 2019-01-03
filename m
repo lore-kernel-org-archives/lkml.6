@@ -2,126 +2,95 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F380C43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 17:39:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 251ECC43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 17:39:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70AA6208E3
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 17:39:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="McPRLS3X"
+	by mail.kernel.org (Postfix) with ESMTP id E132D208E3
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 17:39:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546537151;
+	bh=6DZzW66VVPYYwKb351IgdGl4LhNRguOE3nUFacZsWeU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=yLp0uoqN4t7qH45jh9FPRB5OrCF4eiI3k5eO0+LzHc77yVSbajcdr8jgAD3zkaRUP
+	 B+W7k62j1RrwBLQPHCG1G2/2U0HlPiHH6/XHY7x9l1PTuZBG8jw0wvhnk7UCqzenlz
+	 SF3uF2KE6Ei6GDlScoCRPvxnHAk/VLQYzsOykxnM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730932AbfACRjC (ORCPT
+        id S1731824AbfACRjK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 12:39:02 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:45234 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726529AbfACRjB (ORCPT
+        Thu, 3 Jan 2019 12:39:10 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:41628 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730952AbfACRjI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 12:39:01 -0500
-Received: by mail-qt1-f196.google.com with SMTP id e5so37658740qtr.12
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 09:39:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=t587UVBNuyCfC65rluFxhGYOCOvc+9jmgCEFxsusKXE=;
-        b=McPRLS3X3VCsSiua7V2KNrMtoTLz2XY/nkWYn05efOWTVGTdJ7tHUrjZv9pWlNCgT4
-         as0frn8IctYNU765sYCblwGTIuy5Dnf0AIzwZePPb9d058WRTIrSdaE+4PoXnuZLQrJk
-         ZtsEn9af29HBPNHGWx818plJZDOlfmaBA3vHNDpeiZacMk35WsNU/XG7ZD9Tc04P9WK/
-         bvivzhwa08dYek0EWTh/uLRhSW3nzXuZAG/gdQ+SwCOZYMIJdl4rO8JOAbJnFSBvdAAt
-         hxCaUVPF7lUP530h47/XC/E0wCerfIkqk/Je862NTldcsMXl3lgxoIsPz77hGjoVrZIW
-         UY8g==
+        Thu, 3 Jan 2019 12:39:08 -0500
+Received: by mail-oi1-f195.google.com with SMTP id j21so28297779oii.8
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 09:39:06 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=t587UVBNuyCfC65rluFxhGYOCOvc+9jmgCEFxsusKXE=;
-        b=Bp00HGr4kqWoqnMfmDJLFFqjhvK/0E/tG7KeswP0ObBJe6kO3vs2LORXfAqEEvxLSg
-         07znFiGuiPLWTxd1Xe75iSaP8yRTIRpTg6r98mQhVqWc5HXdno70GsaYliji7uI5zU8s
-         D5AvcH3w+r9srbioQ4ZWiWrJJvyg0yq+3yL6gQisn5MGS1J8+g3eUXh+1ApNh2vpGMAX
-         JSaN/89N2GK8ksRLEX5fMGJbz20RhTNHVjw5+EHvfNATZ9D1qVoO8pcvcCSTuzkOOljF
-         +V/4EvHaNGrtcRV3o/YJ0Vo/CXgAW+c0hAaY0ZFnxUTHGpyJYgIhnb7Oapxyycjvh65B
-         KHyA==
-X-Gm-Message-State: AA+aEWadYeqE6YTwMzZx1YvXDQpGqEd5iXpqnp57cR5ncPPwqKjlzTJJ
-        S7Mt0ac0TXjN7SMSaXCAy8mWb5W+mFxYZw==
-X-Google-Smtp-Source: ALg8bN4QYUT+Ovq5tSP422xDXuAb7BdTcIDF0hn2xhGxa1SH2NpZTDTNsmUu9bEfmoW1CTqFRXVzMQ==
-X-Received: by 2002:ac8:7518:: with SMTP id u24mr47525948qtq.75.1546537140440;
-        Thu, 03 Jan 2019 09:39:00 -0800 (PST)
-Received: from ovpn-120-55.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id s46sm28228803qtc.63.2019.01.03.09.38.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 03 Jan 2019 09:39:00 -0800 (PST)
-Subject: Re: [PATCH v3] mm/page_owner: fix for deferred struct page init
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     akpm@linux-foundation.org, Pavel.Tatashin@microsoft.com,
-        mingo@kernel.org, hpa@zytor.com, mgorman@techsingularity.net,
-        iamjoonsoo.kim@lge.com, yang.shi@linaro.org, tglx@linutronix.de,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20181220185031.43146-1-cai@lca.pw>
- <20181220203156.43441-1-cai@lca.pw> <20190103115114.GL31793@dhcp22.suse.cz>
- <e3ff1455-06cc-063e-24f0-3b525c345b84@lca.pw>
- <20190103165927.GU31793@dhcp22.suse.cz>
-From:   Qian Cai <cai@lca.pw>
-Message-ID: <5d8f3a98-a954-c8ab-83d9-2f94c614f268@lca.pw>
-Date:   Thu, 3 Jan 2019 12:38:59 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.3.3
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6DZzW66VVPYYwKb351IgdGl4LhNRguOE3nUFacZsWeU=;
+        b=mcm8OqJcro+0QRRSV/mNmAKEIkg16D/5QgTycukMzTot8v0dZIDZdMuqQtdfmpjAjg
+         XZmUcZ1XOwfQUjuh3HDJLL5mLqBVTBLkCA7WtKFrsq3P4vbUQ7zdz1zGvDKF8xdWZulI
+         LBy+hs/Vqxt6EnwUV8/AA8j9fzVXRPwDfN9l2rdY2/sR5N314pQmnAy+QGLgaHg9OfW6
+         s4bb1D01TteILJt2cnOS0rFHk86UR0GLE7tYKLnAFlFixagPK5luKWpxVwGZBBUSwfUO
+         8Xfs253asZB8pLhReueu/YtCWOZONsQLhp3j2pJ/qWW8Pf+bBR+uDuZDXmPo5ExybKRx
+         wjnw==
+X-Gm-Message-State: AA+aEWZyjVnGbzsKfZTBiLhCZwRiMRAPzCTBCL4lIFrkncohtMNq0KjY
+        9ydaiuJeis88Yo8nqhdpemR+SBMTz0sKzLH9bBk=
+X-Google-Smtp-Source: AFSGD/UD4eLUSYW8g1hpqewFWE2ZnhqNgvnUEyJetkcbPYNbBLNt6H2GhhBH0q6UiJABrf+9L6Et7H9vdjIZNiUTTgU=
+X-Received: by 2002:aca:195:: with SMTP id 143mr30684057oib.322.1546537146567;
+ Thu, 03 Jan 2019 09:39:06 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190103165927.GU31793@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <CABGGisxcHWwhUcQML7XmriK_DLFGjmud3cKt8yp+K4G2CAL=9Q@mail.gmail.com>
+ <20190102185106.56913-1-swboyd@chromium.org> <CAJZ5v0iL_Fq0RUbLjMj9WBitDw2amNV_ybirkiPbuYb0zroGAg@mail.gmail.com>
+ <154653191998.15366.14229484132412159772@swboyd.mtv.corp.google.com>
+ <CAJZ5v0hwhuerPoizdYjqNkdymxubOweZ3JhPiXRUcrNtByz_=Q@mail.gmail.com> <154653631992.15366.980047163353936345@swboyd.mtv.corp.google.com>
+In-Reply-To: <154653631992.15366.980047163353936345@swboyd.mtv.corp.google.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Thu, 3 Jan 2019 18:38:55 +0100
+Message-ID: <CAJZ5v0jj13UgkM+7ad8-17W_4cdOJw61FMyvshBAcybzaiea5A@mail.gmail.com>
+Subject: Re: [PATCH v3] driver core: platform: Add an error message to platform_get_irq*()
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Mark Brown <broonie@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        javierm@redhat.com,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/3/19 11:59 AM, Michal Hocko wrote:
->> As mentioned above, "If deselected DEFERRED_STRUCT_PAGE_INIT, it is still better
->> to call page_ext_init() earlier, so page owner could catch more early page
->> allocation call sites."
-> 
-> Do you have any numbers to show how many allocation are we losing that
-> way? In other words, do we care enough to create an ugly code?
+On Thu, Jan 3, 2019 at 6:25 PM Stephen Boyd <swboyd@chromium.org> wrote:
+>
+> Quoting Rafael J. Wysocki (2019-01-03 09:22:56)
+> > On Thu, Jan 3, 2019 at 5:12 PM Stephen Boyd <swboyd@chromium.org> wrote:
+> > >
+> > > I don't see much benefit to seeing -ENXIO or -EINVAL printed here, so I
+> > > left out the error code.
+> >
+> > OK, so the value of the message is to tell the user that some driver
+> > asked for an invalid IRQ, right?
+>
+> Yes.
 
-Well, I don't have any numbers, but I read that Joonsoo did not really like to
-defer page_ext_init() unconditionally.
+OK
 
-"because deferring page_ext_init() would make page owner which uses page_ext
-miss some early page allocation callsites. Although it already miss some early
-page allocation callsites, we don't need to miss more."
+This can help to reduce code duplication a bit, so
 
-https://lore.kernel.org/lkml/20160524053714.GB32186@js1304-P5Q-DELUXE/
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
->>>> diff --git a/mm/page_ext.c b/mm/page_ext.c
->>>> index ae44f7adbe07..d76fd51e312a 100644
->>>> --- a/mm/page_ext.c
->>>> +++ b/mm/page_ext.c
->>>> @@ -399,9 +399,8 @@ void __init page_ext_init(void)
->>>>  			 * -------------pfn-------------->
->>>>  			 * N0 | N1 | N2 | N0 | N1 | N2|....
->>>>  			 *
->>>> -			 * Take into account DEFERRED_STRUCT_PAGE_INIT.
->>>>  			 */
->>>> -			if (early_pfn_to_nid(pfn) != nid)
->>>> +			if (pfn_to_nid(pfn) != nid)
->>>>  				continue;
->>>>  			if (init_section_page_ext(pfn, nid))
->>>>  				goto oom;
->>>
->>> Also this doesn't seem to be related, right?
->>
->> No, it is related. Because of this patch, page_ext_init() is called after all
->> the memory has already been initialized,
->> so no longer necessary to call early_pfn_to_nid().
-> 
-> Yes, but it looks like a follow up cleanup/optimization to me.
-
-That early_pfn_to_nid() was introduced in fe53ca54270 (mm: use early_pfn_to_nid
-in page_ext_init) which also messed up the order of page_ext_init() in
-start_kernel(), so this patch basically revert that commit.
+for the v3.
