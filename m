@@ -2,172 +2,309 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1DE3C43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 21:19:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDD83C43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 21:21:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81C632184B
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 21:19:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="CupanXzS"
+	by mail.kernel.org (Postfix) with ESMTP id 9DFA02184B
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 21:21:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727744AbfACVTf (ORCPT
+        id S1727803AbfACVVj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 16:19:35 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:35788 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727713AbfACVTe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 16:19:34 -0500
-Received: by mail-pl1-f195.google.com with SMTP id p8so16424297plo.2
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 13:19:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:content-transfer-encoding:subject:cc:to:in-reply-to
-         :from:user-agent:references:message-id:date;
-        bh=xVgIvqBLxtUuAr9V9fm1GjndM8iSA6uw8jisBjx+3Xs=;
-        b=CupanXzSWpE4ukFfspPLI3CpraEG49S19t0LLFt9FzRVAfMl5J39695HowN9GUEFUg
-         F/UGn8Xh/My+MN3jfWTdEXwO/qvoE8Ykym5jUxXwBcSgNX+FgWjwMdYh1IMVlrtki4OJ
-         mQggz5QSZ8/ogZdmiONlRX55mDx9hMBfK4780=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding:subject
-         :cc:to:in-reply-to:from:user-agent:references:message-id:date;
-        bh=xVgIvqBLxtUuAr9V9fm1GjndM8iSA6uw8jisBjx+3Xs=;
-        b=KEHE9B/vOVc6oJ0rc6QdaOVl6OHI6XU6m1GVHffgyRIsBxEVaD9PxEp3gluOvXmROG
-         EsfJ+5FpXVfACE7dGqT5Bpirgqg48ILdnGq+9uzHFtDVxxbj+uR6DKQt6UYE4I3rkxtQ
-         zqhAKCsy9IAlF65XzcWV9258Q+cfMd8FRYalGhbe1gKvjsqCF9ZQH4aj1Qtl7qBgdLoX
-         azTblEY6IqSqInid2bZjWix91673U4ZlXaP2sFndhdlgNwkQqJj1U1PtJmrb+OxTopDU
-         IrQjlRbI6gwdLjJrp4ebfQZQ3CZvmEpDIPzZIu6qVkZEKMBSUVssERpT/eNOPj8IbjLb
-         /XjQ==
-X-Gm-Message-State: AJcUukdDtW2E2otwmhSyN7Ka7JxmmOuQaJa6y9wrBYuFkWcEOFNXfFHD
-        YLADJQdGGCQ63lBPY8LdRPkofw==
-X-Google-Smtp-Source: ALg8bN6RGw4l6+1tWm+FCG6pwfZEjT3ISR0sX05GZnK7OtvMDF3LqufijEwvyc9VPL8x6L6/5BskCQ==
-X-Received: by 2002:a17:902:a83:: with SMTP id 3mr45750604plp.276.1546550373863;
-        Thu, 03 Jan 2019 13:19:33 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id g26sm73563691pfh.61.2019.01.03.13.19.32
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 03 Jan 2019 13:19:33 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
+        Thu, 3 Jan 2019 16:21:39 -0500
+Received: from mga09.intel.com ([134.134.136.24]:12955 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727713AbfACVVj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Jan 2019 16:21:39 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jan 2019 13:21:07 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,436,1539673200"; 
+   d="gz'50?scan'50,208,50";a="132752287"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by fmsmga004.fm.intel.com with ESMTP; 03 Jan 2019 13:21:06 -0800
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1gfAQL-000H2c-UO; Fri, 04 Jan 2019 05:21:05 +0800
+Date:   Fri, 4 Jan 2019 05:20:37 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     kbuild-all@01.org, linux-kernel@vger.kernel.org
+Subject: make[2]: *** No rule to make target 'arch/sh/boot/dts/.dtb.o',
+ needed by 'arch/sh/boot/dts/built-in.a'.
+Message-ID: <201901040520.02Q0dtKr%fengguang.wu@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH RFC 3/5] dt-bindings: Add PDC timer bindings for Qualcomm SoCs
-Cc:     rnayak@codeaurora.org, bjorn.andersson@linaro.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        evgreen@chromium.org, dianders@chromium.org, mka@chromium.org,
-        ilina@codeaurora.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-To:     Raju P L S S S N <rplsssn@codeaurora.org>, andy.gross@linaro.org,
-        david.brown@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org
-In-Reply-To: <b97937a0-68ff-ded7-d63b-680981818114@codeaurora.org>
-From:   Stephen Boyd <swboyd@chromium.org>
-User-Agent: alot/0.8
-References: <20181221115946.10095-1-rplsssn@codeaurora.org> <20181221115946.10095-4-rplsssn@codeaurora.org> <154546438942.179992.14851496143150245966@swboyd.mtv.corp.google.com> <504cae51-0f35-beb8-496b-a335863a9071@codeaurora.org> <154603310752.179992.9262815873457262616@swboyd.mtv.corp.google.com> <b97937a0-68ff-ded7-d63b-680981818114@codeaurora.org>
-Message-ID: <154655037205.15366.7302521016277534390@swboyd.mtv.corp.google.com>
-Date:   Thu, 03 Jan 2019 13:19:32 -0800
+Content-Type: multipart/mixed; boundary="M9NhX3UHpAaciwkO"
+Content-Disposition: inline
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Raju P L S S S N (2019-01-03 04:22:58)
->=20
-> On 12/29/2018 3:08 AM, Stephen Boyd wrote:
-> > Quoting Raju P L S S S N (2018-12-26 01:44:43)
-> >>
-> >> There are two RSC devices in SoC one for application processor subsyst=
-em
-> >> & other display subsystem. Both RSC contain registers for PDC timers
-> >> (one for each subsystem).
-> >=20
-> > When is the timer programmed on the display subsystem's RSC? It's hard
-> > to give advice without all the information.
->=20
-> For display subsystem RSC, hardware sleep solver takes care of timer=20
-> programming for wakeup when the subsystem goes to Power collapse.
 
-So the display subsystem doesn't need to program their PDC in their RSC
-from software?
+--M9NhX3UHpAaciwkO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> >=20
-> > I would think that it would make sense for the application processor's
-> > RSC timer to be programmed from the broadcast timer mechanism in the
-> > kernel so that timers during idle work and suspend turns off the timer
-> > appropriately with a shutdown hook. I guess the PDC can't tell you the
-> > time though? It looks like a shadow (and limited) version of the ARM
-> > architected MMIO timer that we already program for the broadcast timer
-> > mechanism. Is that because even the MMIO timer can't wakeup the system
-> > in deep idle?  Assuming that's true, it means the ARM MMIO timer can't
-> > always be used as the system wide broadcast mechanism because we need to
-> > augment it with the PDC timer to get the actual wakeup.
-> >=20
->=20
-> Yes. this is correct.
->=20
-> > Maybe we should be adding hooks into the broadcast timer mechanism to
-> > program this wakeup event hardware in addition to the ARM MMIO timer. Or
-> > we should stop using the ARM MMIO timer on these systems and read the
-> > system register based physical time in the RSC timer driver and register
-> > this 64-bit PDC register as the broadcast timer. So the time reading
-> > would be through sysreg and the wakeup programming would be done by
-> > writing the PDC timer. The assumption would be that we have access to
-> > the physical time registers (which sounds like the assumption we have to
-> > make).
->=20
-> There are no physical timer registers available in RSC for this purpose.
->=20
-> >=20
-> > Do we get an interrupt somewhere from the RSC hardware when the timer
-> > fires? Or does that just cause a system wakeup event without any pending
-> > irq and then another irq (like the ARM architected timer) just happens
-> > to be pending around the same time? If we get an interrupt somehow then
-> > I would prefer to drop the ARM MMIO timer and do this hybrid broadcast
-> > timer approach.
->=20
-> There is no interrupt for PDC timeout. It just causes system wakeup=20
-> without a pending irq. ARM MMIO is necessary for irq.
+Hi Masahiro,
 
-Does that system wakeup cause the CPUs to be enabled? So the sysreg
-based timer in the CPU would start working? Or does it only make the
-system come out of a deep enough idle state to make an always on domain
-work that only contains the MMIO based ARM architected timer?
+FYI, the error/warning still remains.
 
-I'd hope that each RSC's PDC timer wakes up the owner of the RSC so that
-we can use the sysreg based timers and ignore the MMIO based timers
-here. This isn't a very important distinction to make though, so if you
-have to use the MMIO timers then it just means some extra DT things need
-to be done to relate the MMIO timers with the RSC that has the timer
-that needs to be programmed too.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   645ff1e8e704c4f33ab1fcd3c87f95cb9b6d7144
+commit: 8e9b61b293d98f878cf1e6d1ae164e41c0219959 kbuild: move .SECONDARY special target to Kbuild.include
+date:   5 weeks ago
+config: sh-j2_defconfig (attached as .config)
+compiler: sh4-linux-gnu-gcc (Debian 7.2.0-11) 7.2.0
+reproduce:
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        git checkout 8e9b61b293d98f878cf1e6d1ae164e41c0219959
+        # save the attached .config to linux build tree
+        GCC_VERSION=7.2.0 make.cross ARCH=sh 
 
-Either way we would need a way to either hook the ARM architected timer
-driver in the kernel, or reimplement the bit of code needed to implement
-the clockevent based on the ARM architected timer that programs the ARM
-timer and the PDC timer together.
+All errors (new ones prefixed by >>):
 
->=20
-> >=20
-> > How the RSC is used in general by other devices, like display, is not
-> > clear to me. We don't have a "wakeup event" framework in the kernel that
-> > device drivers like the display driver can grab a reference to and
-> > program some system wide wakeup for. That sounds like something new that
-> > could be handled entirely in the display driver with direct register
-> > writes, or it could be some qcom specific API/framework that eventually
-> > calls down into the same RSC driver that knows what offsets to write
-> > into in the display RSC's register space, or it could be an entirely
-> > generic framework like clk or regulator frameworks that could be used by
-> > anything. BTW, are we using the display RSC yet?
-> >=20
->=20
-> Only display subsystem RSC is programmed along with CPU RSC in Linux.=20
-> display RSC instance is not present in upstream but it is present in=20
-> downstream and used for resource communication purpose only.
+>> make[2]: *** No rule to make target 'arch/sh/boot/dts/.dtb.o', needed by 'arch/sh/boot/dts/built-in.a'.
+   make[2]: Target '__build' not remade because of errors.
 
-From the comment above it sounds like the display RSC handles the wakeup
-programming in hardware? So there isn't a need to add a 'wakeup event'
-framework or anything like that. Please correct me if I'm wrong.
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
 
+--M9NhX3UHpAaciwkO
+Content-Type: application/gzip
+Content-Disposition: attachment; filename=".config.gz"
+Content-Transfer-Encoding: base64
+
+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
+
+--M9NhX3UHpAaciwkO--
