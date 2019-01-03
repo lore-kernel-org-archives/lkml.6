@@ -6,50 +6,47 @@ X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AAC4C43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 10:43:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB3F6C43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 10:44:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDD4D2073D
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 10:43:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A24821479
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 10:44:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731011AbfACKnE (ORCPT
+        id S1731042AbfACKoJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 05:43:04 -0500
-Received: from mail-io1-f72.google.com ([209.85.166.72]:55482 "EHLO
+        Thu, 3 Jan 2019 05:44:09 -0500
+Received: from mail-io1-f72.google.com ([209.85.166.72]:36814 "EHLO
         mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727465AbfACKnE (ORCPT
+        with ESMTP id S1730297AbfACKoF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 05:43:04 -0500
-Received: by mail-io1-f72.google.com with SMTP id s5so11783693iom.22
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 02:43:03 -0800 (PST)
+        Thu, 3 Jan 2019 05:44:05 -0500
+Received: by mail-io1-f72.google.com with SMTP id t13so33408320ioi.3
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 02:44:04 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=V0j99+Hub4s7kRPs6RBQ8vZCsSukjPrjXf95nSYp5co=;
-        b=Q0mb2eYccrfIemovXkwPNEqNlI/uB3NqpGqrVoaeqSqwv6OPRliUpgsejRjPRJA0Wr
-         B5pRIsjKjOxsThcoj8rngWh67afA+Y9FGfejvmAwnXBt3Hf07RIMnCO7a1IZCppD+47c
-         a/i9RY5zwfNfY02/Yy0pZvTqzclv+i7nnkB3xgZBFZY27QrMmq2os5ITBpop8GnJ0qwG
-         drjh9Abu+129zNsi1zi0gr0X9qXcUY7GMpHuGkf/Ifrujk7yVATbCpQiCeBRLaCg9sgC
-         AHhbcqtocJnFqpX30QWG+B4PNe2A75B3SKWQX5P4cBOmNR/GAOvZcseAJMrhhrXIkz3j
-         PF/w==
-X-Gm-Message-State: AA+aEWYRfKGNbSJG60zmeQw6UI9lNumO5ZdJG+hV50C6iua2Rt+KSQUU
-        s2VgWjWrXruSOdhViD4H88oLMOTXWR03r/+oKs8ccEsBy5bb
-X-Google-Smtp-Source: AFSGD/VPDITGcFF58V1KD9Ffb6MQMte+tc5QCezBsbFMXPMInydGetzkh/mMrq+AEj8BGXWvlZ4HOfBbOZLubYijH0oVmdZjn72i
+        bh=h/VrBy31+nSbG93PRhauf+aPsuS8aw7WvkglIi70vh0=;
+        b=JH8BhBvvvgogf5iFur/dZrYR9OVbGLHZlOFZNvQhdQvO6EY100McxTwQOCh3Y11DXA
+         7HOcilkvjC/RYl67MBVcdQlSAhwH7Cn6Vmv1odech/HlRihYE5XxOL8k6oaHhHQQQKIV
+         V17bTzbw46Q274nBSQaQzM8a2iaCL34OJa5EFH1Ntr8GLaMVE/D5T6ELYNkqCC/QKJdJ
+         SRVVjAgq61pGBA/zyD6w9s6UGQNsKmGRxU8jJsJ8LektMo8uz+5Xy0zksTSm7mOH22AH
+         N/3Zam1pfkCdYGDdhr9/cbgbkdP3aIQEjjrYaK9hmGHmNXyrHwcnkXSIsiXqEyZ4T1YX
+         e6uA==
+X-Gm-Message-State: AA+aEWb+XdNY6d58+AmK/+8JGwNDFYGTnWK2Of4tJROiAUrDcpuzaMa8
+        jwtiH8zcOk8+9KCRWMh/rEH1StNjW8BSHqlO8C8kATxWzlSj
+X-Google-Smtp-Source: AFSGD/WQomjQ/xz/B3HyHpZRRc9c3Q/D31Go6p/ZPK4JQjALltcCtfHhDtbCcciAzuodtCtL1aPavNRoLXpHfTPJlWjKlRcZCPsw
 MIME-Version: 1.0
-X-Received: by 2002:a02:b5e5:: with SMTP id y34mr36739548jaj.21.1546512182878;
- Thu, 03 Jan 2019 02:43:02 -0800 (PST)
-Date:   Thu, 03 Jan 2019 02:43:02 -0800
+X-Received: by 2002:a24:594f:: with SMTP id p76mr35374670itb.10.1546512244563;
+ Thu, 03 Jan 2019 02:44:04 -0800 (PST)
+Date:   Thu, 03 Jan 2019 02:44:04 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000004d2e19057e8b6d78@google.com>
-Subject: kernel BUG at mm/huge_memory.c:LINE!
-From:   syzbot <syzbot+8e075128f7db8555391a@syzkaller.appspotmail.com>
-To:     akpm@linux-foundation.org, aneesh.kumar@linux.vnet.ibm.com,
-        hughd@google.com, jglisse@redhat.com, khlebnikov@yandex-team.ru,
-        kirill.shutemov@linux.intel.com, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, mhocko@suse.com, rientjes@google.com,
-        syzkaller-bugs@googlegroups.com, vbabka@suse.cz,
-        willy@infradead.org
+Message-ID: <000000000000fa6a2c057e8b7064@google.com>
+Subject: general protection fault in prepare_to_wait
+From:   syzbot <syzbot+55f9d3e51d49e20b2ce5@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, linux-hams@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        ralf@linux-mips.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -60,98 +57,87 @@ Hello,
 
 syzbot found the following crash on:
 
-HEAD commit:    4cd1b60def51 Add linux-next specific files for 20190102
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=147760d3400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e8ea56601353001c
-dashboard link: https://syzkaller.appspot.com/bug?extid=8e075128f7db8555391a
+HEAD commit:    e888402789b9 net: hns3: call hns3_nic_net_open() while doi..
+git tree:       net
+console output: https://syzkaller.appspot.com/x/log.txt?x=11876fb3400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b6c41ffa3d657353
+dashboard link: https://syzkaller.appspot.com/bug?extid=55f9d3e51d49e20b2ce5
 compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
 
 Unfortunately, I don't have any reproducer for this crash yet.
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+8e075128f7db8555391a@syzkaller.appspotmail.com
+Reported-by: syzbot+55f9d3e51d49e20b2ce5@syzkaller.appspotmail.com
 
-raw: 01fffc000009000d dead000000000100 dead000000000200 ffff88809a33f5b1
-raw: 0000000000020000 0000000000000000 0000020000000000 ffff888095368000
-page dumped because: VM_BUG_ON_PAGE(compound_mapcount(head))
-page->mem_cgroup:ffff888095368000
-------------[ cut here ]------------
-kernel BUG at mm/huge_memory.c:2683!
-invalid opcode: 0000 [#1] PREEMPT SMP KASAN
-CPU: 0 PID: 1551 Comm: kswapd0 Not tainted 4.20.0-next-20190102 #3
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] PREEMPT SMP KASAN
+CPU: 0 PID: 22808 Comm: syz-executor4 Not tainted 4.20.0+ #4
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
-RIP: 0010:split_huge_page_to_list+0x2161/0x2ac0 mm/huge_memory.c:2683
-Code: ff e8 33 35 b8 ff 48 8b 85 10 fc ff ff 4c 8d 70 ff e9 1e ea ff ff e8  
-1e 35 b8 ff 48 c7 c6 a0 a3 54 88 4c 89 ef e8 0f 15 ea ff <0f> 0b 48 89 85  
-10 fc ff ff e8 01 35 b8 ff 48 8b 85 10 fc ff ff 4c
-RSP: 0018:ffff8880a5f36de8 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: ffff8880a5f371d8 RCX: 0000000000000000
-RDX: ffffed1014be6d6e RSI: ffffffff81b3831e RDI: ffffed1014be6dae
-RBP: ffff8880a5f37200 R08: 0000000000000021 R09: ffffed1015cc5021
-R10: ffffed1015cc5020 R11: ffff8880ae628107 R12: ffffea0000e80080
-R13: ffffea0000e80000 R14: 00000000fffffffe R15: 01fffc000009000d
-FS:  0000000000000000(0000) GS:ffff8880ae600000(0000) knlGS:0000000000000000
+RIP: 0010:__lock_acquire+0x904/0x4a30 kernel/locking/lockdep.c:3215
+Code: 28 00 00 00 0f 85 32 29 00 00 48 8d 65 d8 5b 41 5c 41 5d 41 5e 41 5f  
+5d c3 48 b8 00 00 00 00 00 fc ff df 4c 89 da 48 c1 ea 03 <80> 3c 02 00 0f  
+85 2d 2c 00 00 49 81 3b e0 a3 9a 8a 0f 84 09 f8 ff
+RSP: 0018:ffff8880903ff6a0 EFLAGS: 00010006
+RAX: dffffc0000000000 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: 0000000000000003 RSI: 0000000000000000 RDI: 0000000000000018
+RBP: ffff8880903ff928 R08: 0000000000000001 R09: 0000000000000001
+R10: 0000000000000001 R11: 0000000000000018 R12: ffff8880a0410200
+R13: 0000000000000001 R14: 0000000000000001 R15: 0000000000000000
+FS:  00007f56c8420700(0000) GS:ffff8880ae600000(0000) knlGS:0000000000000000
 CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020003030 CR3: 0000000219267000 CR4: 00000000001426f0
+CR2: 00007f7c92bf84a0 CR3: 00000000931da000 CR4: 00000000001406f0
 DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+kobject: 'loop1' (00000000563158a3): kobject_uevent_env
 DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+kobject: 'loop1' (00000000563158a3): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
 Call Trace:
-  split_huge_page include/linux/huge_mm.h:148 [inline]
-  deferred_split_scan+0xa47/0x11d0 mm/huge_memory.c:2820
-  do_shrink_slab+0x4e5/0xd30 mm/vmscan.c:561
-  shrink_slab mm/vmscan.c:710 [inline]
-  shrink_slab+0x6bb/0x8c0 mm/vmscan.c:690
-  shrink_node+0x61a/0x17e0 mm/vmscan.c:2776
-  kswapd_shrink_node mm/vmscan.c:3535 [inline]
-  balance_pgdat+0xb00/0x18b0 mm/vmscan.c:3693
-  kswapd+0x839/0x1330 mm/vmscan.c:3948
-  kthread+0x357/0x430 kernel/kthread.c:246
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
-Modules linked in:
-kobject: 'loop1' (000000002d2ad2ad): kobject_uevent_env
-kobject: 'loop1' (000000002d2ad2ad): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop3' (000000003c94a079): kobject_uevent_env
-kobject: 'loop3' (000000003c94a079): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'loop5' (0000000000e89d9d): kobject_uevent_env
-kobject: 'loop5' (0000000000e89d9d): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'loop2' (000000001a685ee7): kobject_uevent_env
-kobject: 'loop2' (000000001a685ee7): fill_kobj_path: path  
+kobject: 'loop2' (000000007e06da14): kobject_uevent_env
+kobject: 'loop2' (000000007e06da14): fill_kobj_path: path  
 = '/devices/virtual/block/loop2'
-kobject: 'loop3' (000000003c94a079): kobject_uevent_env
-kobject: 'loop3' (000000003c94a079): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
----[ end trace a543f5c1741fca97 ]---
-kobject: 'loop0' (00000000aa59ea1f): kobject_uevent_env
-RIP: 0010:split_huge_page_to_list+0x2161/0x2ac0 mm/huge_memory.c:2683
-Code: ff e8 33 35 b8 ff 48 8b 85 10 fc ff ff 4c 8d 70 ff e9 1e ea ff ff e8  
-1e 35 b8 ff 48 c7 c6 a0 a3 54 88 4c 89 ef e8 0f 15 ea ff <0f> 0b 48 89 85  
-10 fc ff ff e8 01 35 b8 ff 48 8b 85 10 fc ff ff 4c
-kobject: 'loop0' (00000000aa59ea1f): fill_kobj_path: path  
-= '/devices/virtual/block/loop0'
-RSP: 0018:ffff8880a5f36de8 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: ffff8880a5f371d8 RCX: 0000000000000000
-RDX: ffffed1014be6d6e RSI: ffffffff81b3831e RDI: ffffed1014be6dae
-RBP: ffff8880a5f37200 R08: 0000000000000021 R09: ffffed1015cc5021
-netlink: 'syz-executor0': attribute type 22 has an invalid length.
-R10: ffffed1015cc5020 R11: ffff8880ae628107 R12: ffffea0000e80080
-R13: ffffea0000e80000 R14: 00000000fffffffe R15: 01fffc000009000d
-FS:  0000000000000000(0000) GS:ffff8880ae700000(0000) knlGS:0000000000000000
-kobject: 'loop1' (000000002d2ad2ad): kobject_uevent_env
-kobject: 'loop1' (000000002d2ad2ad): fill_kobj_path: path  
+  lock_acquire+0x1db/0x570 kernel/locking/lockdep.c:3841
+  __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+  _raw_spin_lock_irqsave+0x95/0xcd kernel/locking/spinlock.c:152
+  prepare_to_wait+0xa7/0x420 kernel/sched/wait.c:230
+  nr_accept+0x31f/0xa20 net/netrom/af_netrom.c:796
+kobject: 'loop1' (00000000563158a3): kobject_uevent_env
+  __sys_accept4+0x3a9/0x840 net/socket.c:1590
+kobject: 'loop1' (00000000563158a3): fill_kobj_path: path  
 = '/devices/virtual/block/loop1'
+  __do_sys_accept net/socket.c:1631 [inline]
+  __se_sys_accept net/socket.c:1628 [inline]
+  __x64_sys_accept+0x75/0xb0 net/socket.c:1628
+  do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x457ec9
+Code: 6d b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 3b b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f56c841fc78 EFLAGS: 00000246 ORIG_RAX: 000000000000002b
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457ec9
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000005
+RBP: 000000000073c0e0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f56c84206d4
+R13: 00000000004bdcb6 R14: 00000000004cdac0 R15: 00000000ffffffff
+Modules linked in:
+---[ end trace 950cf3f0884cbe4a ]---
+RIP: 0010:__lock_acquire+0x904/0x4a30 kernel/locking/lockdep.c:3215
+Code: 28 00 00 00 0f 85 32 29 00 00 48 8d 65 d8 5b 41 5c 41 5d 41 5e 41 5f  
+5d c3 48 b8 00 00 00 00 00 fc ff df 4c 89 da 48 c1 ea 03 <80> 3c 02 00 0f  
+85 2d 2c 00 00 49 81 3b e0 a3 9a 8a 0f 84 09 f8 ff
+RSP: 0018:ffff8880903ff6a0 EFLAGS: 00010006
+RAX: dffffc0000000000 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: 0000000000000003 RSI: 0000000000000000 RDI: 0000000000000018
+RBP: ffff8880903ff928 R08: 0000000000000001 R09: 0000000000000001
+R10: 0000000000000001 R11: 0000000000000018 R12: ffff8880a0410200
+R13: 0000000000000001 R14: 0000000000000001 R15: 0000000000000000
+FS:  00007f56c8420700(0000) GS:ffff8880ae600000(0000) knlGS:0000000000000000
 CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000004efb18 CR3: 00000000702a7000 CR4: 00000000001426e0
-kobject: 'loop5' (0000000000e89d9d): kobject_uevent_env
+CR2: 00007f7c92bf84a0 CR3: 00000000931da000 CR4: 00000000001406f0
 DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-kobject: 'loop5' (0000000000e89d9d): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
 DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-kobject: 'loop3' (000000003c94a079): kobject_uevent_env
 
 
 ---
