@@ -7,46 +7,49 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21385C43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 10:13:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 279DEC43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 10:13:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E50B020815
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 10:13:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EADD920815
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 10:13:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="bHUKZAUi"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="oVNg2pT1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730848AbfACKN0 (ORCPT
+        id S1730839AbfACKNX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 05:13:26 -0500
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:1195 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730826AbfACKNV (ORCPT
+        Thu, 3 Jan 2019 05:13:23 -0500
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:19171 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730818AbfACKNT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 05:13:21 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c2de02c0000>; Thu, 03 Jan 2019 02:13:00 -0800
+        Thu, 3 Jan 2019 05:13:19 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c2de0340000>; Thu, 03 Jan 2019 02:13:08 -0800
 Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 03 Jan 2019 02:13:20 -0800
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Thu, 03 Jan 2019 02:13:18 -0800
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 03 Jan 2019 02:13:20 -0800
-Received: from HQMAIL102.nvidia.com (172.18.146.10) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 3 Jan
- 2019 10:13:20 +0000
-Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL102.nvidia.com
- (172.18.146.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
- Transport; Thu, 3 Jan 2019 10:13:20 +0000
+        by hqpgpgate102.nvidia.com on Thu, 03 Jan 2019 02:13:18 -0800
+Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL108.nvidia.com
+ (172.18.146.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 3 Jan
+ 2019 10:13:18 +0000
+Received: from HQMAIL106.nvidia.com (172.18.146.12) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 3 Jan
+ 2019 10:13:18 +0000
+Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL106.nvidia.com
+ (172.18.146.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
+ Transport; Thu, 3 Jan 2019 10:13:18 +0000
 Received: from niwei-ubuntu.nvidia.com (Not Verified[10.19.225.182]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5c2de03e0003>; Thu, 03 Jan 2019 02:13:20 -0800
+        id <B5c2de03c0000>; Thu, 03 Jan 2019 02:13:17 -0800
 From:   Wei Ni <wni@nvidia.com>
 To:     <daniel.lezcano@linaro.org>, <edubezval@gmail.com>
 CC:     <thierry.reding@gmail.com>, <linux-tegra@vger.kernel.org>,
         <rui.zhang@intel.com>, <srikars@nvidia.com>,
         <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
         Wei Ni <wni@nvidia.com>
-Subject: [PATCH v7 3/3] thermal: tegra: add get_trend ops
-Date:   Thu, 3 Jan 2019 18:12:49 +0800
-Message-ID: <1546510369-28491-4-git-send-email-wni@nvidia.com>
+Subject: [PATCH v7 2/3] thermal: tegra: fix memory allocation
+Date:   Thu, 3 Jan 2019 18:12:48 +0800
+Message-ID: <1546510369-28491-3-git-send-email-wni@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1546510369-28491-1-git-send-email-wni@nvidia.com>
 References: <1546510369-28491-1-git-send-email-wni@nvidia.com>
@@ -54,77 +57,43 @@ X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1546510381; bh=CPv8clNO3ZkTySxTbU/rChZf1+SNxEeg9i6YGatXaZw=;
+        t=1546510388; bh=mfJ0UbyhFDpIIbPv2Zct+34m55gu5ZXsTwWqKRVEna8=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:X-NVConfidentiality:MIME-Version:
          Content-Type;
-        b=bHUKZAUiOLwV8wL+3nha1uH5bprfPrPZsauoz6AKkxr3bYP/Sog6CKzA+mVILs/A0
-         t4KE427Hxc82QXiFc3oRZF34tnabtK2X90Rnrjor1PzAnWa6ZiuTHBscHCBa4sp1Zx
-         v+yRbwRbcR18tbJwkNCb77UKybQmkw/NbqBNl595ujCV6jWJqBKDqMdy5R0/9BQlG7
-         Lgpjj55WLqH21ltdZenXDpV7ooN8xCwwmqaVCeELghBGHIVqN0fFxlpXlN9d/e1tEe
-         nZSQ+gu/WC6ReSgpPPkUqhNys4FbRGN68q9iOXXARFoADxxfBccCWhoQEWWp1PibE/
-         d3h7Ogk93veHw==
+        b=oVNg2pT1J632G8rVfJ+MxWHEU1dzZBQfnyfiGiRwsvbrhaIPRPpdBzFaTQA59yJHZ
+         JUiU9h9bgKTWh417xFOuDF/zImwxRpT7pI8BMGwEnMeKq5TC48dRr6T3ToPiAK1JvV
+         uy4uERyrJJqopk1oqY3XPuYltjR5sz2rXSUeqzH1d5P2n7iQ7b1RRWUusA3/VpX9RQ
+         8XW1Rywcg7zXc5oY1CGnpe2OA4Sbcc/FEPjNkD0OM4aW9Othggn3zu605Av/PcFTfl
+         DFYIqnvSP3hOra2S9GDC6pfsGMQ9ULxJmeAmJVPJL8RcCA09fpvRxOubr08rZev9Wu
+         aI6Nefs8cGAWQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for get_trend ops that allows soctherm
-sensors to be used with the step-wise governor.
+Fix memory allocation to store the pointers to
+thermal_zone_device.
 
 Signed-off-by: Wei Ni <wni@nvidia.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/thermal/tegra/soctherm.c | 34 ++++++++++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+ drivers/thermal/tegra/soctherm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
-index fd2703c0cfc5..864205af104b 100644
+index f07de8258e93..fd2703c0cfc5 100644
 --- a/drivers/thermal/tegra/soctherm.c
 +++ b/drivers/thermal/tegra/soctherm.c
-@@ -488,9 +488,43 @@ static int tegra_thermctl_set_trip_temp(void *data, int trip, int temp)
- 	return 0;
- }
+@@ -1339,7 +1339,7 @@ static int tegra_soctherm_probe(struct platform_device *pdev)
+ 	}
  
-+static int tegra_thermctl_get_trend(void *data, int trip,
-+				    enum thermal_trend *trend)
-+{
-+	struct tegra_thermctl_zone *zone = data;
-+	struct thermal_zone_device *tz = zone->tz;
-+	int trip_temp, temp, last_temp, ret;
-+
-+	if (!tz)
-+		return -EINVAL;
-+
-+	ret = tz->ops->get_trip_temp(zone->tz, trip, &trip_temp);
-+	if (ret)
-+		return ret;
-+
-+	mutex_lock(&tz->lock);
-+	temp = tz->temperature;
-+	last_temp = tz->last_temperature;
-+	mutex_unlock(&tz->lock);
-+
-+	if (temp > trip_temp) {
-+		if (temp >= last_temp)
-+			*trend = THERMAL_TREND_RAISING;
-+		else
-+			*trend = THERMAL_TREND_STABLE;
-+	} else if (temp < trip_temp) {
-+		*trend = THERMAL_TREND_DROPPING;
-+	} else {
-+		*trend = THERMAL_TREND_STABLE;
-+	}
-+
-+	return 0;
-+}
-+
- static const struct thermal_zone_of_device_ops tegra_of_thermal_ops = {
- 	.get_temp = tegra_thermctl_get_temp,
- 	.set_trip_temp = tegra_thermctl_set_trip_temp,
-+	.get_trend = tegra_thermctl_get_trend,
- };
- 
- static int get_hot_temp(struct thermal_zone_device *tz, int *trip, int *temp)
+ 	tegra->thermctl_tzs = devm_kcalloc(&pdev->dev,
+-					   soc->num_ttgs, sizeof(*z),
++					   soc->num_ttgs, sizeof(z),
+ 					   GFP_KERNEL);
+ 	if (!tegra->thermctl_tzs)
+ 		return -ENOMEM;
 -- 
 2.7.4
 
