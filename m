@@ -2,118 +2,166 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E000C43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 09:19:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B37FBC43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 09:26:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F42052073D
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 09:19:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qZbt0Yzi"
+	by mail.kernel.org (Postfix) with ESMTP id 7268F217D9
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 09:26:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546507570;
+	bh=wxXDTShdm4qwEQIkjtLHocHu0dVntFaDLK6WjOavtDE=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=BewsbDj8mtyLsJAprb0LhJ9Smq+zOFu9i97AsMlUDrbUg0w+37oaehJzOwh70WtYu
+	 ieQxKm6L3lsl+p2BTA6EAkiruOT84li2NeRiBJBsFJXkNQOO6l2EPEoQs60Zio+r1j
+	 iGhTiqB0aki/iciCfXT16kLp+h7EOUYejyR2Ewc0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730112AbfACJTo (ORCPT
+        id S1730154AbfACJ0J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 04:19:44 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:33302 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728477AbfACJTn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 04:19:43 -0500
-Received: by mail-pg1-f194.google.com with SMTP id z11so15773524pgu.0;
-        Thu, 03 Jan 2019 01:19:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=eM/fiTic0aMaCgmTxDx4WWLLOVwwI2n4rkkI5hGKZoY=;
-        b=qZbt0YziqBGM9Bym8j59Wats+tCkFokKuP3LuLua4aufkYtybz6FXZSxNvegwepYFv
-         V8YPQsiaUw19idRQYMvLQEWK478ol7VANBZ+vGfWOxVoz8/sAHb2uyzyuhqBJWs4g7Zc
-         /Fv33xVa2H8b9RhpHpA2LFDQvDvk4AerUukOkb11b0j5XEsiulq3TlR07bdqCyy7a1Yq
-         Zcy0XMTExxuh/cbBDolsAWu91/ysv5xc+AP6Hxv+TIQHx/Hi2YD4lefpZGzF0ykNxN/Q
-         yFVdey1npTNI1JDPPa6AT2kfw6NO7ndk8VtY4SZ6yzmWiUQeoW8HBSPpqt+xgz9qIjCC
-         b+7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :mime-version:content-transfer-encoding;
-        bh=eM/fiTic0aMaCgmTxDx4WWLLOVwwI2n4rkkI5hGKZoY=;
-        b=NRrG6PdHpENqovCMxSbVOHrCjuVrBVNTL//JrQcM3CHlcoIkArfBDzAWsiD5D/DyyR
-         2uXm+qnzvu287SJ/SvMTcv/w4tkl5Vg+twPraxXIPMUv+vBFPFJ02km75sSmt2vv3LkY
-         faO8cblwRx07IGYGhrN36vFvcnD+UT/5QCy8ksDP+YG4y/1OfISrSpQvpqxdBn4atWkS
-         aSyKgnNIhOZIKmHqnuztqE7QvB+MfGaMH77Uz712+sxBPhdqFxlAkdNvEYFPvScoPpoW
-         Cr+J6OGOIaJg3mMZi2+ofIcNJqUqTkFyxzvl1itXIB6mj/TIhXiFpXpM6/HsvIeu2Lix
-         2pMA==
-X-Gm-Message-State: AJcUukepOY6LwWaNJq56ijK38j32Z6KU63jGI+qglReYy/35g8V7obZo
-        28VsiRmUizDIZ96/izK95F6ld/FV
-X-Google-Smtp-Source: ALg8bN6ue8WZXUxPhH/e80BTSHSgsnRiujlK/Zhp++VLUbZtAZJKKvMt0GNtsSbf/qYbryhose7Kog==
-X-Received: by 2002:a63:3204:: with SMTP id y4mr16317953pgy.41.1546507181871;
-        Thu, 03 Jan 2019 01:19:41 -0800 (PST)
-Received: from huangrandall.ntc.corp.google.com ([2401:fa00:fc:1:6924:4b22:cf4b:bbca])
-        by smtp.gmail.com with ESMTPSA id w5sm72046135pfn.89.2019.01.03.01.19.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 03 Jan 2019 01:19:41 -0800 (PST)
-From:   Randall Huang <ihhuang@abmail.org>
-X-Google-Original-From: Randall Huang <huangrandall@google.com>
-To:     jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     huangrandall@google.com
-Subject: [PATCH] scsi: associate bio write hint with WRITE CDB
-Date:   Thu,  3 Jan 2019 17:19:35 +0800
-Message-Id: <20190103091935.380-1-huangrandall@google.com>
-X-Mailer: git-send-email 2.20.1.415.g653613c723-goog
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Thu, 3 Jan 2019 04:26:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40230 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727175AbfACJ0J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Jan 2019 04:26:09 -0500
+Received: from localhost.localdomain (23.83.240.247.16clouds.com [23.83.240.247])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8DB892073D;
+        Thu,  3 Jan 2019 09:26:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1546507568;
+        bh=wxXDTShdm4qwEQIkjtLHocHu0dVntFaDLK6WjOavtDE=;
+        h=From:To:Cc:Subject:Date:From;
+        b=wfbbD/l/+1De+B4ncVnNXJNxmTYTd4ipj5w2H16TPCsdsZLWFKNxg/FWxFCMNszBa
+         C6aVTEkykDU/Du+VIVn0MT2mYT9z3IduHL/xmjuqM/qlw7SM9k6dHkjXbhxbGAv7Qj
+         3o2y1kxpmsbkUqT34w1h8ZVzdu/l/RXslzHh2dpM=
+From:   guoren@kernel.org
+To:     torvalds@linux-foundation.org
+Cc:     arnd@arndb.de, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, ren_guo@c-sky.com
+Subject: [GIT PULL] csky patches for the 4.21 merge window
+Date:   Thu,  3 Jan 2019 17:26:00 +0800
+Message-Id: <1546507560-2486-1-git-send-email-guoren@kernel.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In SPC-3, WRITE(10)/(16) support grouping function.
-Let's associate bio write hint with group number for
-enabling StreamID or Turbo Write feature.
+Hi Linus,
 
-Bug: 120900381
-Change-Id: I565c8e0c1d10e17a23e73f2a02c1adbd198b04b3
-Signed-off-by: Randall Huang <huangrandall@google.com>
----
- drivers/scsi/sd.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+The following changes since commit 7566ec393f4161572ba6f11ad5171fd5d59b0fbd:
 
-diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
-index 4b49cb67617e..831c0c81ffb9 100644
---- a/drivers/scsi/sd.c
-+++ b/drivers/scsi/sd.c
-@@ -1201,7 +1201,11 @@ static int sd_setup_read_write_cmnd(struct scsi_cmnd *SCpnt)
- 		SCpnt->cmnd[11] = (unsigned char) (this_count >> 16) & 0xff;
- 		SCpnt->cmnd[12] = (unsigned char) (this_count >> 8) & 0xff;
- 		SCpnt->cmnd[13] = (unsigned char) this_count & 0xff;
--		SCpnt->cmnd[14] = SCpnt->cmnd[15] = 0;
-+		if (rq_data_dir(rq) == WRITE) {
-+			SCpnt->cmnd[14] = rq->bio->bi_write_hint & 0x3f;
-+		} else
-+			SCpnt->cmnd[14] = 0;
-+		SCpnt->cmnd[15] = 0;
- 	} else if ((this_count > 0xff) || (block > 0x1fffff) ||
- 		   scsi_device_protection(SCpnt->device) ||
- 		   SCpnt->device->use_10_for_rw) {
-@@ -1211,9 +1215,13 @@ static int sd_setup_read_write_cmnd(struct scsi_cmnd *SCpnt)
- 		SCpnt->cmnd[3] = (unsigned char) (block >> 16) & 0xff;
- 		SCpnt->cmnd[4] = (unsigned char) (block >> 8) & 0xff;
- 		SCpnt->cmnd[5] = (unsigned char) block & 0xff;
--		SCpnt->cmnd[6] = SCpnt->cmnd[9] = 0;
-+		if (rq_data_dir(rq) == WRITE) {
-+			SCpnt->cmnd[6] = rq->bio->bi_write_hint & 0x1f;
-+		} else
-+			SCpnt->cmnd[6] = 0;
- 		SCpnt->cmnd[7] = (unsigned char) (this_count >> 8) & 0xff;
- 		SCpnt->cmnd[8] = (unsigned char) this_count & 0xff;
-+		SCpnt->cmnd[9] = 0;
- 	} else {
- 		if (unlikely(rq->cmd_flags & REQ_FUA)) {
- 			/*
--- 
-2.20.1.415.g653613c723-goog
+  Linux 4.20-rc7 (2018-12-16 15:46:55 -0800)
 
+are available in the git repository at:
+
+  git@github.com:c-sky/csky-linux.git tags/csky-for-linus-4.21
+
+for you to fetch changes up to f50fd2d8524c15b08da9e7e9d84752f0f1be7172:
+
+  csky: Add perf support for C-SKY (2019-01-02 22:17:11 +0800)
+
+----------------------------------------------------------------
+arch/csky patches for 4.21-rc1
+
+Here is the arch/csky patch set for the 4.21-rc1 merge window.
+Contianed in here is some features (cpu_hotplug, basic ftrace,
+basic perf ...) and some bugfixes.
+
+Features:
+ - Add CPU-hotplug support for SMP
+ - Add ftrace with function trace and function graph trace
+ - Add Perf support
+ - Add EM_CSKY_OLD 39
+ - optimize kernel panic print.
+ - remove syscall_exit_work
+
+Bugfixes:
+ - fixup abiv2 mmap(... O_SYNC) failed.
+ - fixup gdb coredump error.
+ - fixup remove vdsp implement for kernel.
+ - fixup qemu fail to bootup sometimes.
+ - fixup ftrace call-graph panic
+ - fixup leak device tree node reference
+ - fixup remove meaningless header-y
+ - fixup save hi,lo,dspcr regs in switch_stack.
+ - fixup unused members in processor.h
+
+----------------------------------------------------------------
+Dmitry V. Levin (2):
+      elf-em.h: add EM_CSKY
+      csky: define syscall_get_arch()
+
+Guo Ren (15):
+      csky: fixup abiv2 mmap(... O_SYNC) failed.
+      csky: bugfix gdb coredump error.
+      csky: fixup remove vdsp implement for kernel.
+      csky: remove syscall_exit_work
+      csky: fixup save hi,lo,dspcr regs in switch_stack.
+      clocksource/drivers/c-sky: fixup qemu fail to bootup sometimes.
+      csky: CPU-hotplug supported for SMP
+      csky: stacktrace supported.
+      csky: optimize kernel panic print.
+      csky: remove unused members in processor.h
+      csky: basic ftrace supported
+      csky: ftrace call graph supported.
+      clocksource/drivers/c-sky: fixup ftrace call-graph panic
+      csky: Add EM_CSKY_OLD 39
+      csky: Add perf support for C-SKY
+
+Masahiro Yamada (1):
+      csky: remove meaningless header-y
+
+Yangtao Li (1):
+      csky: Don't leak device tree node reference
+
+ arch/csky/Kconfig                        |   30 +-
+ arch/csky/Makefile                       |    4 +
+ arch/csky/abiv1/inc/abi/pgtable-bits.h   |    1 +
+ arch/csky/abiv1/inc/abi/switch_context.h |   17 +
+ arch/csky/abiv2/Makefile                 |    1 +
+ arch/csky/abiv2/inc/abi/entry.h          |   28 +-
+ arch/csky/abiv2/inc/abi/pgtable-bits.h   |    2 +-
+ arch/csky/abiv2/inc/abi/switch_context.h |   32 +
+ arch/csky/abiv2/mcount.S                 |  124 ++++
+ arch/csky/abiv2/memcpy.S                 |    8 +-
+ arch/csky/include/asm/elf.h              |   13 +-
+ arch/csky/include/asm/ftrace.h           |   13 +
+ arch/csky/include/asm/perf_event.h       |    7 +
+ arch/csky/include/asm/processor.h        |   15 +-
+ arch/csky/include/asm/smp.h              |    4 +
+ arch/csky/include/asm/syscall.h          |    7 +
+ arch/csky/include/asm/thread_info.h      |    4 +
+ arch/csky/include/uapi/asm/Kbuild        |    2 -
+ arch/csky/include/uapi/asm/ptrace.h      |   39 +-
+ arch/csky/kernel/Makefile                |    7 +
+ arch/csky/kernel/asm-offsets.c           |    3 -
+ arch/csky/kernel/dumpstack.c             |   59 +-
+ arch/csky/kernel/entry.S                 |   50 +-
+ arch/csky/kernel/ftrace.c                |   50 ++
+ arch/csky/kernel/perf_event.c            | 1031 ++++++++++++++++++++++++++++++
+ arch/csky/kernel/process.c               |   29 +-
+ arch/csky/kernel/ptrace.c                |   42 +-
+ arch/csky/kernel/signal.c                |    2 -
+ arch/csky/kernel/smp.c                   |   73 ++-
+ arch/csky/kernel/stacktrace.c            |   57 ++
+ arch/csky/kernel/traps.c                 |    6 -
+ arch/csky/mm/fault.c                     |    7 +-
+ arch/csky/mm/ioremap.c                   |    2 +-
+ drivers/clocksource/timer-mp-csky.c      |    6 +-
+ include/uapi/linux/audit.h               |    1 +
+ include/uapi/linux/elf-em.h              |    1 +
+ 36 files changed, 1555 insertions(+), 222 deletions(-)
+ create mode 100644 arch/csky/abiv1/inc/abi/switch_context.h
+ create mode 100644 arch/csky/abiv2/inc/abi/switch_context.h
+ create mode 100644 arch/csky/abiv2/mcount.S
+ create mode 100644 arch/csky/include/asm/ftrace.h
+ create mode 100644 arch/csky/include/asm/perf_event.h
+ create mode 100644 arch/csky/kernel/ftrace.c
+ create mode 100644 arch/csky/kernel/perf_event.c
+ create mode 100644 arch/csky/kernel/stacktrace.c
