@@ -2,97 +2,117 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4283C43612
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 15:04:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F4BCC43444
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 15:05:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 908422070D
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 15:04:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2713B20815
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 15:05:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730469AbfACPEk (ORCPT
+        id S1730560AbfACPFZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 10:04:40 -0500
-Received: from mga17.intel.com ([192.55.52.151]:11522 "EHLO mga17.intel.com"
+        Thu, 3 Jan 2019 10:05:25 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:54234 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726259AbfACPEk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 10:04:40 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jan 2019 07:04:39 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,435,1539673200"; 
-   d="scan'208";a="132664067"
-Received: from tmuluk-mobl4.ger.corp.intel.com (HELO localhost) ([10.249.254.238])
-  by fmsmga004.fm.intel.com with ESMTP; 03 Jan 2019 07:04:35 -0800
-Date:   Thu, 3 Jan 2019 17:04:34 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Michael =?iso-8859-1?Q?Niew=F6hner?= <linux@mniewoehner.de>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        peterhuewe@gmx.de, jgg@ziepe.ca, arnd@arndb.de,
-        linux-integrity@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Ken Goldman <kgold@linux.ibm.com>
-Subject: Re: tpm_tis TPM2.0 not detected on cold boot
-Message-ID: <20190103150434.GC17015@linux.intel.com>
-References: <ef7e773b01a5e6153b84628f74fc67092a2f9b0e.camel@gmail.com>
- <1f281756bb1f041e55be8dd090670a1a7b1d1c94.camel@mniewoehner.de>
- <1545519232.3940.115.camel@linux.ibm.com>
- <e7ec38d7cade9aa76384aa2781eab307d2cd5a7b.camel@mniewoehner.de>
- <20190103132737.GD10491@linux.intel.com>
- <6c1bf9815bfcb5d2bc0cfedfc49c7feda0173dc9.camel@mniewoehner.de>
+        id S1726259AbfACPFZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Jan 2019 10:05:25 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9730085363;
+        Thu,  3 Jan 2019 15:05:24 +0000 (UTC)
+Received: from redhat.com (ovpn-123-124.rdu2.redhat.com [10.10.123.124])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7A3AA5D6A6;
+        Thu,  3 Jan 2019 15:05:23 +0000 (UTC)
+Date:   Thu, 3 Jan 2019 10:05:21 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH] Initialise mmu_notifier_range correctly
+Message-ID: <20190103150521.GF3395@redhat.com>
+References: <20190103002126.GM6310@bombadil.infradead.org>
+ <20190103143116.GB3395@redhat.com>
+ <20190103144313.GR6310@bombadil.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <6c1bf9815bfcb5d2bc0cfedfc49c7feda0173dc9.camel@mniewoehner.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20190103144313.GR6310@bombadil.infradead.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Thu, 03 Jan 2019 15:05:25 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 03, 2019 at 02:38:11PM +0100, Michael Niewöhner wrote:
-> On Thu, 2019-01-03 at 15:27 +0200, Jarkko Sakkinen wrote:
-> > On Sun, Dec 23, 2018 at 12:55:12PM +0100, Michael Niewöhner wrote:
-> > > There is another issue but I don't know if both are related. Maybe that's
-> > > just a
-> > > timing issue...
+On Thu, Jan 03, 2019 at 06:43:13AM -0800, Matthew Wilcox wrote:
+> On Thu, Jan 03, 2019 at 09:31:16AM -0500, Jerome Glisse wrote:
+> > On Wed, Jan 02, 2019 at 04:21:26PM -0800, Matthew Wilcox wrote:
 > > > 
-> > > root@debian:~# dd if=/dev/hwrng bs=1 count=1
-> > > dd: error reading '/dev/hwrng': Operation not permitted
-> > > 0+0 records in
-> > > 0+0 records out
-> > > 0 bytes copied, 0.755958 s, 0.0 kB/s
-> > > root@debian:~# dd if=/dev/hwrng bs=1 count=1 | xxd; dd if=/dev/hwrng bs=1
-> > > count=1 | xxd
-> > > dd: error reading '/dev/hwrng': Operation not permitted
-> > > 0+0 records in
-> > > 0+0 records out
-> > > 0 bytes copied, 0.755697 s, 0.0 kB/s
-> > > 1+0 records in
-> > > 1+0 records out
-> > > 00000000: 52                                       R
-> > > 1 byte copied, 0.0106268 s, 0.1 kB/s
+> > > One of the paths in follow_pte_pmd() initialised the mmu_notifier_range
+> > > incorrectly.
 > > > 
-> > > 
-> > > Michael
+> > > Signed-off-by: Matthew Wilcox <willy@infradead.org>
+> > > Fixes: ac46d4f3c432 ("mm/mmu_notifier: use structure for invalidate_range_start/end calls v2")
+> > > Tested-by: Dave Chinner <dchinner@redhat.com>
 > > 
-> > What does /sys/devices/virtual/misc/hw_random/rng_current show?
-> > 
-> > Did run commands as a sanity check on my laptop and seem to work.
-> > 
-> > /Jarkko
+> > Actually now that i have read the code again this is not ok to
+> > do so. The caller of follow_pte_pmd() will call range_init and
+> > follow pmd will only update the range address. So existing code
+> > is ok.
 > 
-> rng_current says "tpm-rng-0", which should be correct
+> I think you need to re-read your own patch.
+> 
+> `git show ac46d4f3c43241ffa23d5bf36153a0830c0e02cc`
+> 
+> @@ -4058,10 +4059,10 @@ static int __follow_pte_pmd(struct mm_struct *mm, unsigned long address,
+>                 if (!pmdpp)
+>                         goto out;
+>  
+> -               if (start && end) {
+> -                       *start = address & PMD_MASK;
+> -                       *end = *start + PMD_SIZE;
+> -                       mmu_notifier_invalidate_range_start(mm, *start, *end);
+> +               if (range) {
+> +                       mmu_notifier_range_init(range, mm, address & PMD_MASK,
+> +                                            (address & PMD_MASK) + PMD_SIZE);
+> +                       mmu_notifier_invalidate_range_start(range);
+> 
+> ... so it's fine to call range_init() *here*.
+> 
+> @@ -4069,17 +4070,17 @@ static int __follow_pte_pmd(struct mm_struct *mm, unsign
+> ed long address,
+> [...]
+>         if (pmd_none(*pmd) || unlikely(pmd_bad(*pmd)))
+>                 goto out;
+>  
+> -       if (start && end) {
+> -               *start = address & PAGE_MASK;
+> -               *end = *start + PAGE_SIZE;
+> -               mmu_notifier_invalidate_range_start(mm, *start, *end);
+> +       if (range) {
+> +               range->start = address & PAGE_MASK;
+> +               range->end = range->start + PAGE_SIZE;
+> +               mmu_notifier_invalidate_range_start(range);
+> 
+> ... but then *not* here later in the same function?  You're not making
+> any sense.
 
-Is /dev/tpm0 accessible and usable?
+Ok i see that the patch that add the reason why mmu notifier is
+call have been drop. So yes using range_init in follow_pte_pmd
+is fine. With that other patch the reasons is set by the caller
+of follow_pte_pmd and using range_init would have overwritten
+it.
 
-/Jarkko
+So this patch is fine for current tree. Sorry i was thinking with
+the other patch included in mind.
+
+Cheers,
+Jérôme
