@@ -2,95 +2,125 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED905C43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 21:46:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31195C43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 21:47:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C237121872
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 21:46:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E946020815
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 21:47:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="D1FcUMlz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728075AbfACVqg (ORCPT
+        id S1728102AbfACVr1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 16:46:36 -0500
-Received: from sauhun.de ([88.99.104.3]:56000 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728023AbfACVqf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 16:46:35 -0500
-Received: from localhost (p54B3379A.dip0.t-ipconnect.de [84.179.55.154])
-        by pokefinder.org (Postfix) with ESMTPSA id 797DD2E3614;
-        Thu,  3 Jan 2019 22:46:33 +0100 (CET)
-Date:   Thu, 3 Jan 2019 22:46:32 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc:     "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Timo Alho <talho@nvidia.com>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
-Subject: Re: [PATCH V3] i2c: tegra: Fix Maximum transfer size
-Message-ID: <20190103214632.GA1421@kunai>
-References: <1546472423-31366-1-git-send-email-skomatineni@nvidia.com>
- <20190103190552.tspqarvalqxlz7yu@ninjato>
- <BN7PR12MB28368BFA8C7DB877316960EFC28D0@BN7PR12MB2836.namprd12.prod.outlook.com>
+        Thu, 3 Jan 2019 16:47:27 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:42464 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726497AbfACVr1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Jan 2019 16:47:27 -0500
+Received: by mail-lf1-f65.google.com with SMTP id l10so24154860lfh.9
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 13:47:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MBD08zhzvB5LPpY9Ov/nSfzl5lVGnHKkJkBcitpK6ns=;
+        b=D1FcUMlzknJw786isRsWTyTCe16h1FbeYRq2c0+cq5Lft5XSoArVihacusKcqL57Jt
+         5FUdHRDjT4vgrq6LMT6WqyjpS3AQMJTHgE/o3NCfbzrQjbBVDMw+3Y9RxFBUnEeygGbi
+         ksUbDNKq4qPVw1L1gcRBKol1Aralqg2VRws5qnx821RljKyX1e43DjO1K+Wj3fiRUOxc
+         CkRfUT6xDk75NL90AH2zYX0wusaOBFO682pkO2nbxWNV5f2Mc0yVw86d5WbTo7NdSnCP
+         9RJHJDtHQq5ZXqeZwwACKKQ+56sIFe/wAfk3x9KdJgQXdJCHriigPyO1ndYFfL2H5j4y
+         UsBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MBD08zhzvB5LPpY9Ov/nSfzl5lVGnHKkJkBcitpK6ns=;
+        b=CacKMaaihMIT3Noukjz3IextoaQ1GmlfrSNKYnF2wbuB2dY1034wv/EbEDFd5aJRA9
+         nU06VAD6QmZfih1f8QKTQ/WZ35fThaR5inujVQ4wPOZr2fUwM47JNoHH81uydzOqHpRf
+         Tnga8Dx0Rwkf2/hPgUZqvzW2W5iDr69pkK7kgc2IG20UNdJOga2AZtkVb80dHqeRSHvV
+         7Yz1VRW+LP+R+6cUJd3+fF5E1F1DNoQLwE+FNyw16heysnut+gkGbQKSDvm9qoah1up1
+         mO+QkvUEMQAYghnF30YvdOjGY0ACFyIHgc3iaHTYgtOzAMOV61FGOJj5dvTHRGua3gms
+         UMAQ==
+X-Gm-Message-State: AA+aEWZvn2KytktjKHF6DIY8xrBPnXbJBEk9REFnLijf2yBRUbLH2vOT
+        NQgK1KMYEDwobxU3zFYGqaxMcpKwjZWGAeGUer1VUQ==
+X-Google-Smtp-Source: AFSGD/Ub/R1YQXoXphmFuX3hdl6CiouXG3e0LOcjUi/kRhmmRMj7CLlG+Jqm6fInrENgq+jt7uKa8x+jROAcqGYPSzY=
+X-Received: by 2002:a19:280f:: with SMTP id o15mr23553334lfo.0.1546552045011;
+ Thu, 03 Jan 2019 13:47:25 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="d6Gm4EdcadzBjdND"
-Content-Disposition: inline
-In-Reply-To: <BN7PR12MB28368BFA8C7DB877316960EFC28D0@BN7PR12MB2836.namprd12.prod.outlook.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181223143550.10672-1-christian@brauner.io> <20181223143550.10672-2-christian@brauner.io>
+ <CAHRSSEythiuV6HH9c-q5TwU=tDyZ-K5gjgF+uYZmd6pmAJTovw@mail.gmail.com> <20190103203418.rpx3wcs3ozncpnhu@brauner.io>
+In-Reply-To: <20190103203418.rpx3wcs3ozncpnhu@brauner.io>
+From:   Todd Kjos <tkjos@google.com>
+Date:   Thu, 3 Jan 2019 13:47:13 -0800
+Message-ID: <CAHRSSEz9pJY1gs5VuWs-R4dmWgME4ocQkVGcNvpX1TVUWpdE0w@mail.gmail.com>
+Subject: Re: [PATCH v1 2/2] binderfs: reserve devices for initial mount
+To:     Christian Brauner <christian@brauner.io>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Todd Kjos <tkjos@android.com>,
+        "open list:ANDROID DRIVERS" <devel@driverdev.osuosl.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>,
+        Martijn Coenen <maco@android.com>, joel@joelfernandes.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---d6Gm4EdcadzBjdND
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Jan 03, 2019 at 07:47:21PM +0000, Sowjanya Komatineni wrote:
->=20
-> >> Tegra194 supports maximum 64K Bytes transfer per packet.
-> >> Tegra186 and prior supports maximum 4K Bytes transfer per packet.
-> >>=20
-> >> This patch fixes this payload difference between Tegra194 and prior=20
-> >> tegra chipsets using separate i2c_adapter_quirks.
-> >>=20
-> >> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+On Thu, Jan 3, 2019 at 12:34 PM Christian Brauner <christian@brauner.io> wrote:
+>
+> On Thu, Jan 03, 2019 at 12:25:24PM -0800, Todd Kjos wrote:
+> > On Sun, Dec 23, 2018 at 6:36 AM Christian Brauner <christian@brauner.io> wrote:
+> > >
+> > > The binderfs instance in the initial ipc namespace will always have a
+> > > reserve of 4 binder devices unless explicitly capped by specifying a lower
+> > > value via the "max" mount option.
+> > > This ensures when binder devices are removed (on accident or on purpose)
+> > > they can always be recreated without risking that all minor numbers have
+> > > already been used up.
+> > >
+> > > Cc: Todd Kjos <tkjos@google.com>
+> > > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > > Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+> > > ---
+> > > v1:
+> > > - patch introduced
+> > > v0:
+> > > - patch not present
+> > > ---
+> > >  drivers/android/binderfs.c | 7 ++++++-
+> > >  1 file changed, 6 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/android/binderfs.c b/drivers/android/binderfs.c
+> > > index 873adda064ac..aa635c7ea727 100644
+> > > --- a/drivers/android/binderfs.c
+> > > +++ b/drivers/android/binderfs.c
+> > > @@ -40,6 +40,8 @@
+> > >  #define INODE_OFFSET 3
+> > >  #define INTSTRLEN 21
+> > >  #define BINDERFS_MAX_MINOR (1U << MINORBITS)
+> > > +/* Ensure that the initial ipc namespace always has a devices available. */
+> > > +#define BINDERFS_MAX_MINOR_CAPPED (BINDERFS_MAX_MINOR - 4)
 > >
-> >  CC      drivers/i2c/busses/i2c-tegra.o
-> >drivers/i2c/busses/i2c-tegra.c:171: warning: Function parameter or membe=
-r 'quirks' not described in >'tegra_i2c_hw_feature'
-> >
-> Somehow I don't see this warning. Do I need to document somewhere on quir=
-ks member of tegra_i2c_hw_feature?
+> > Why do you ever need more minors per instance than the number of
+> > devices listed in CONFIG_ANDROID_BINDER_DEVICES?
+>
+> Are you asking asking why this is 4 and not 3? In that case we should
+> probably parse CONFIG_ANDROID_BINDER_DEVICES once at init time and then
+> reserve that many binder devices. Thoughts?
 
-Yes, the kerneldoc above tegra_i2c_hw_feature.
+I'm asking why CONFIG_ANDROID_BINDER_DEVICES isn't the source of truth
+for the number of devices (it normally specifies 3 devices, but could
+be different). I can't think of a reason why you'd want
+CONFIG_MAX_MINOR_CAPPED to be different than the number of devices
+indicated by CONFIG_ANDROID_BINDER_DEVICES and having it specified in
+two places seems error prone.
 
-
---d6Gm4EdcadzBjdND
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlwugrQACgkQFA3kzBSg
-KbbH1g//fPjvfw/VUoPuMWLpl9d3iJM9BOz6z3jzVyyCALiiDByFc0UbiXkkae4o
-nf+RDEpYtP1Pa6UTIG0mB8TA3bN7suZ+piOmfVah7Y/rgQ2dsP0nY2Vp+u52Vudj
-e4U+N9YsGb+UmVEMGgxhx94JW8q3Szvkq0b2Som78gQnWWkpmyI6NX35HWrLe7Rq
-4Ic0iPb9TGZlys5J984hiRHIrW9Mcm0Ojffv9+YGrdlPiv57C8o0c5Jr+ERsOKo+
-8/5wBAerRwI6oUBvamHKwFowgyrkzyLtnTDPssjQ7MafpUuele/svTloTSPI+WIv
-QSWqMjgIxO87sHOwxQAaSFJzQmjJGWTjNOOsAl5782YNaXz8Y9Njux/TmTK3bcN4
-UrpAwNl7wxNp33A+KOHcgI5UWyZ4eHAQxGkFPfUZPO+fsxbKSdllIsN/hNG5u3S0
-bPC3Agn0kmsqqiTW/g19TgmPqq4QjujHVaMjnTUwKHQykfUtKKpsu72GAAx/MWc8
-9bV3seS6I+hv0Cbu0K1yqLTvu18z3vZVHBqVo8aWkEUH9cQHZZ+/Hv7lm5WnNCEQ
-STMRM4Kfy0tZbFUgJtfM1DZi1J1WR4clf10964mXBBdFK1fPwhC9THwzcZvashab
-sBHNHPhBrbtJ6hr1d4pQXBC6zCnYo8F2Hatpj5F3vW2yRsiuv/Y=
-=7KxF
------END PGP SIGNATURE-----
-
---d6Gm4EdcadzBjdND--
+>
+> Christian
