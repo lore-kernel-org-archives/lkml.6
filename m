@@ -2,244 +2,122 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF814C43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 20:33:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAB82C43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 20:34:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A824621479
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 20:33:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 68E652184B
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 20:34:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="MFuyzPNV"
+	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="SDM1Fo5Z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727901AbfACUdn (ORCPT
+        id S1727922AbfACUeY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 15:33:43 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:36971 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727135AbfACUdn (ORCPT
+        Thu, 3 Jan 2019 15:34:24 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:38476 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727135AbfACUeY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 15:33:43 -0500
-Received: by mail-lf1-f66.google.com with SMTP id y11so24029692lfj.4
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 12:33:41 -0800 (PST)
+        Thu, 3 Jan 2019 15:34:24 -0500
+Received: by mail-wm1-f68.google.com with SMTP id m22so31567284wml.3
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 12:34:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=STBznJ51hORXRw3l0r2gVzOItu5NdIiGnEyqWm80mCo=;
-        b=MFuyzPNVlI7ePOKBvSC7oKP1QIDOf4fN/tHsn1OARMri/xLopr8L7C90E5aoRJyYNg
-         pxPSXZXly5dbILki3L7qzA8He15MlNyJqiSC9dhFh+41VLmw6H5FJtgOKbI8qiDYhzHQ
-         wMzEfzavLm1UO0OE4NU4MLSNCIVa4SIwtdktWbdE6aFU5i4Me9G4ty+G6UPVBjl6QfYA
-         eVTs4cPrahX4eI4CgSxwHAejGKXmCZSdFwzkOn64o6km870xe9VBN37kQoJq+9w2z3cz
-         CZWISykWDja3TRF/9SISlXy23MDoWj6XQtnbr65DlmbqVjSf+ibL+MUg7pmHd9m1TM6T
-         mikA==
+        d=brauner.io; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=B1C4nMN8mcad579t2R30nMwuMSX28nSWg0EOCATgRKs=;
+        b=SDM1Fo5ZhGAoyS1gGQSYKy+weqLP9FVwVk6poRRZ71V+jLzEJDFz5mXC7RPe4MPd/j
+         C46J5EwI6LtYzByu4S3NimkQtgeVldtCe7uCGirWu0+S6pJT+DTBr+gxM3PyaaoDi3EX
+         uOYfIav6DtcrDe6oSFj7ujnpV8qsal5MOjM5DPwg2AwXdc/LTUL3Ms1AVpffdcBykZ7x
+         CzdR1ijxmgLyosjbhSmaFRZBsFT3RVXSPjCEE1Q4EAD9CVSvRsl5txoLU1sYQ71AS5ni
+         VmBa14AvZGMNZwViL/h10A9/pV4JJxHfu9EoJgOY49rf5vzFNXNEyC4syY0yydd/IofV
+         WVMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=STBznJ51hORXRw3l0r2gVzOItu5NdIiGnEyqWm80mCo=;
-        b=pzWJ/a0J+Ha/Tcm8bV73hGkCclL9DmDIzlnC/2aT9rz3gla1iUnW3A2wKQLMh1GWx9
-         Mz7vfH+TMHCj+JBtY4aq37+pPsuSWLPBCfJB+fhdskrW1FAjOFVrupWYqv9pIL7THAxg
-         JwkCpIuSv9nojrIy9Onm1Z0v236OBftdnuRZc7K+kcXF2kobrgfx4RqpPp/3gZqfVmXI
-         tpkgRLT9SlAdB3Q6ZGIDn+7OZqV5nKb//NNyfvD4ATdZjPQFBPo6gKQpvBvmdZGlUZzL
-         9a2RMraJsVKhnzcJ+qSzaVhZP7IHMFYdMmTT0D2sQgP3DybA/g3GcUqNBs0BDEBDwa/q
-         lFhA==
-X-Gm-Message-State: AA+aEWa0CsnihecFwDOP6m6tL8Cu7a9slS3ATD8GdPzblwyrqw7Aen6X
-        FpQlgC27eAAcl6osJsmEdAAYGWg+ZGa/YTTpWZ6J
-X-Google-Smtp-Source: AFSGD/VjcdX5XGFXoHdBBp6W3SNV11vEXt5eqKiLgM+cAQw6EHA6nqI2wZQ4KQOqC1JiYavBw+2zbD4ZA48YV2ieayU=
-X-Received: by 2002:a19:a7c1:: with SMTP id q184mr22879535lfe.4.1546547619848;
- Thu, 03 Jan 2019 12:33:39 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=B1C4nMN8mcad579t2R30nMwuMSX28nSWg0EOCATgRKs=;
+        b=U/2PmT66RbE0Ivkg19rXF4mPsQEr0Y+0Qhnklgqn7owIu5hAOshVYsopCwDsAhrHME
+         TnmJKZX1MmMgkx6EZotT7G9HEgeWt9zcwmCq+GJI+7JGP3EssbO05NnYdb4i23kBCufD
+         IVlNlU6MMOeprnQh80R3difrG4NPANatKgY0FHM0bnZeIhWijkmEzSa5mjggJWMTq4Qy
+         kdqm5CyvmstKyZoumkX5DnW1IP8ZVtCr6l6ObI6Jei2UJvmgNPKnvCb44Bzsdj6bWfnI
+         /AfGRNTnBD4Lkl2YDVP7SmfyPHMWMpS2Nu5aFV40HJDendN+orN7WK5PsBzPWvAegYLK
+         PV9A==
+X-Gm-Message-State: AJcUukcZHF5xY7i+aXM/7U9nX/g9YZSmBjOjEQSV/oUYNUB1mgjAgMBv
+        TFHatoNIZDpYaVJ0X47eYCLNww==
+X-Google-Smtp-Source: AFSGD/X0UDdnkx+Y1CSsvVM0bCBh+0h780O8BWobpjVErjocKH6M02ykenmxsoM6NF8NQStXpb6xwA==
+X-Received: by 2002:a1c:544f:: with SMTP id p15mr38544365wmi.37.1546547661355;
+        Thu, 03 Jan 2019 12:34:21 -0800 (PST)
+Received: from brauner.io (p200300EA6F0B706E700BB2FADE8A175D.dip0.t-ipconnect.de. [2003:ea:6f0b:706e:700b:b2fa:de8a:175d])
+        by smtp.gmail.com with ESMTPSA id l6sm42408454wrv.70.2019.01.03.12.34.20
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 03 Jan 2019 12:34:20 -0800 (PST)
+Date:   Thu, 3 Jan 2019 21:34:19 +0100
+From:   Christian Brauner <christian@brauner.io>
+To:     Todd Kjos <tkjos@google.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Todd Kjos <tkjos@android.com>,
+        "open list:ANDROID DRIVERS" <devel@driverdev.osuosl.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Arve =?utf-8?B?SGrDuG5uZXbDpWc=?= <arve@android.com>,
+        Martijn Coenen <maco@android.com>, joel@joelfernandes.org
+Subject: Re: [PATCH v1 2/2] binderfs: reserve devices for initial mount
+Message-ID: <20190103203418.rpx3wcs3ozncpnhu@brauner.io>
+References: <20181223143550.10672-1-christian@brauner.io>
+ <20181223143550.10672-2-christian@brauner.io>
+ <CAHRSSEythiuV6HH9c-q5TwU=tDyZ-K5gjgF+uYZmd6pmAJTovw@mail.gmail.com>
 MIME-Version: 1.0
-References: <cover.1533065887.git.rgb@redhat.com> <8e617ab568df28a66dfbe3284452de186b42fb0f.1533065887.git.rgb@redhat.com>
- <CAHC9VhQFqs1SyvximK+8XJG5Fk3p9WsWhEV5sY6kksN9tc6eKw@mail.gmail.com>
- <20181101220724.ggkqyf5kjv7lhabx@madcap2.tricolour.ca> <CAHC9VhRU-Qss41CnV3mE32tXmZ3FQpy++t4yPUkh9CjuAzxYCA@mail.gmail.com>
- <20190103202938.ntdfqdmyrr7stzh2@madcap2.tricolour.ca>
-In-Reply-To: <20190103202938.ntdfqdmyrr7stzh2@madcap2.tricolour.ca>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 3 Jan 2019 15:33:28 -0500
-Message-ID: <CAHC9VhQTQuRnkF-8sJxwDvKbxJHvs5uLWsvLvL085SgyPiqLHQ@mail.gmail.com>
-Subject: Re: [PATCH ghak90 (was ghak32) V4 01/10] audit: collect audit task parameters
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        linux-audit@redhat.com, linux-kernel@vger.kernel.org,
-        ebiederm@xmission.com, luto@kernel.org, dhowells@redhat.com,
-        viro@zeniv.linux.org.uk, simo@redhat.com,
-        Eric Paris <eparis@parisplace.org>,
-        Serge Hallyn <serge@hallyn.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAHRSSEythiuV6HH9c-q5TwU=tDyZ-K5gjgF+uYZmd6pmAJTovw@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 3, 2019 at 3:29 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> I'm not sure what's going on here, but it looks like HTML-encoded reply
-> quoting making the quoted text very difficult to read.  All the previous
-> ">" have been converted to the HTML "&gt;" encoding.  Your most recent
-> reply text looks mostly fine.
+On Thu, Jan 03, 2019 at 12:25:24PM -0800, Todd Kjos wrote:
+> On Sun, Dec 23, 2018 at 6:36 AM Christian Brauner <christian@brauner.io> wrote:
+> >
+> > The binderfs instance in the initial ipc namespace will always have a
+> > reserve of 4 binder devices unless explicitly capped by specifying a lower
+> > value via the "max" mount option.
+> > This ensures when binder devices are removed (on accident or on purpose)
+> > they can always be recreated without risking that all minor numbers have
+> > already been used up.
+> >
+> > Cc: Todd Kjos <tkjos@google.com>
+> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+> > ---
+> > v1:
+> > - patch introduced
+> > v0:
+> > - patch not present
+> > ---
+> >  drivers/android/binderfs.c | 7 ++++++-
+> >  1 file changed, 6 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/android/binderfs.c b/drivers/android/binderfs.c
+> > index 873adda064ac..aa635c7ea727 100644
+> > --- a/drivers/android/binderfs.c
+> > +++ b/drivers/android/binderfs.c
+> > @@ -40,6 +40,8 @@
+> >  #define INODE_OFFSET 3
+> >  #define INTSTRLEN 21
+> >  #define BINDERFS_MAX_MINOR (1U << MINORBITS)
+> > +/* Ensure that the initial ipc namespace always has a devices available. */
+> > +#define BINDERFS_MAX_MINOR_CAPPED (BINDERFS_MAX_MINOR - 4)
+> 
+> Why do you ever need more minors per instance than the number of
+> devices listed in CONFIG_ANDROID_BINDER_DEVICES?
 
-Not sure what happened either, I suspect gmail did something odd when
-I saved them as drafts, but it has never done that before.  FWIW, I
-generally batch up individual review comments for complex patchsets as
-one often needs to review the entire set first before commenting.
+Are you asking asking why this is 4 and not 3? In that case we should
+probably parse CONFIG_ANDROID_BINDER_DEVICES once at init time and then
+reserve that many binder devices. Thoughts?
 
-The most recent reply to patch 0/10 wasn't saved as a draft before sending.
-
-> On 2019-01-03 15:10, Paul Moore wrote:
-> > On Thu, Nov 1, 2018 at 6:07 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > &gt; On 2018-10-19 19:15, Paul Moore wrote:
-> > &gt; &gt; On Sun, Aug 5, 2018 at 4:32 AM Richard Guy Briggs
-> > <rgb@redhat.com> wrote:
-> > &gt; &gt; &gt; The audit-related parameters in struct task_struct
-> > should ideally be
-> > &gt; &gt; &gt; collected together and accessed through a standard audit API.
-> > &gt; &gt; &gt;
-> > &gt; &gt; &gt; Collect the existing loginuid, sessionid and
-> > audit_context together in a
-> > &gt; &gt; &gt; new struct audit_task_info called "audit" in struct task_struct.
-> > &gt; &gt; &gt;
-> > &gt; &gt; &gt; Use kmem_cache to manage this pool of memory.
-> > &gt; &gt; &gt; Un-inline audit_free() to be able to always recover that memory.
-> > &gt; &gt; &gt;
-> > &gt; &gt; &gt; See: https://github.com/linux-audit/audit-kernel/issues/81
-> > &gt; &gt; &gt;
-> > &gt; &gt; &gt; Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > &gt; &gt; &gt; ---
-> > &gt; &gt; &gt;  include/linux/audit.h | 34 ++++++++++++++++++++++++----------
-> > &gt; &gt; &gt;  include/linux/sched.h |  5 +----
-> > &gt; &gt; &gt;  init/init_task.c      |  3 +--
-> > &gt; &gt; &gt;  init/main.c           |  2 ++
-> > &gt; &gt; &gt;  kernel/auditsc.c      | 51
-> > ++++++++++++++++++++++++++++++++++++++++++---------
-> > &gt; &gt; &gt;  kernel/fork.c         |  4 +++-
-> > &gt; &gt; &gt;  6 files changed, 73 insertions(+), 26 deletions(-)
-> > &gt; &gt;
-> > &gt; &gt; ...
-> > &gt; &gt;
-> > &gt; &gt; &gt; diff --git a/include/linux/sched.h b/include/linux/sched.h
-> > &gt; &gt; &gt; index 87bf02d..e117272 100644
-> > &gt; &gt; &gt; --- a/include/linux/sched.h
-> > &gt; &gt; &gt; +++ b/include/linux/sched.h
-> > &gt; &gt; &gt; @@ -873,10 +872,8 @@ struct task_struct {
-> > &gt; &gt; &gt;
-> > &gt; &gt; &gt;         struct callback_head            *task_works;
-> > &gt; &gt; &gt;
-> > &gt; &gt; &gt; -       struct audit_context            *audit_context;
-> > &gt; &gt; &gt;  #ifdef CONFIG_AUDITSYSCALL
-> > &gt; &gt; &gt; -       kuid_t                          loginuid;
-> > &gt; &gt; &gt; -       unsigned int                    sessionid;
-> > &gt; &gt; &gt; +       struct audit_task_info          *audit;
-> > &gt; &gt; &gt;  #endif
-> > &gt; &gt; &gt;         struct seccomp                  seccomp;
-> > &gt; &gt;
-> > &gt; &gt; Prior to this patch audit_context was available regardless of
-> > &gt; &gt; CONFIG_AUDITSYSCALL, after this patch the corresponding audit_context
-> > &gt; &gt; is only available when CONFIG_AUDITSYSCALL is defined.
-> > &gt;
-> > &gt; This was intentional since audit_context is not used when AUDITSYSCALL is
-> > &gt; disabled.  audit_alloc() was stubbed in that case to return 0.
-> > audit_context()
-> > &gt; returned NULL.
-> > &gt;
-> > &gt; The fact that audit_context was still present in struct task_struct was an
-> > &gt; oversight in the two patches already accepted:
-> > &gt;         ("audit: use inline function to get audit context")
-> > &gt;         ("audit: use inline function to get audit context")
-> > &gt; that failed to hide or remove it from struct task_struct when it
-> > was no longer
-> > &gt; relevant.
-> >
-> > Okay, in that case let's pull this out and fix this separately from
-> > the audit container ID patchset.
-> >
-> > &gt; On further digging, loginuid and sessionid (and
-> > audit_log_session_info) should
-> > &gt; be part of CONFIG_AUDIT scope and not CONFIG_AUDITSYSCALL since
-> > it is used in
-> > &gt; CONFIG_CHANGE, ANOM_LINK, FEATURE_CHANGE(, INTEGRITY_RULE), none
-> > of which are
-> > &gt; otherwise dependent on AUDITSYSCALL.
-> >
-> > This looks like something else we should fix independently from this patchset.
-> >
-> > &gt; Looking ahead, contid should be treated like loginuid and
-> > sessionid, which are
-> > &gt; currently only available when syscall auditting is.
-> >
-> > That seems reasonable.  Eventually it would be great if we got rid of
-> > CONFIG_AUDITSYSCALL, but that is a separate issue, and something that
-> > is going to require work from the different arch/ABI folks to ensure
-> > everything is working properly.
-> >
-> > &gt; Converting records from standalone to syscall and checking
-> > audit_dummy_context
-> > &gt; changes the nature of CONFIG_AUDIT/!CONFIG_AUDITSYSCALL separation.
-> > &gt; eg: ANOM_LINK accompanied by PATH record (which needed CWD addition to be
-> > &gt; complete anyways)
-> > &gt;
-> > &gt; &gt; &gt; diff --git a/init/main.c b/init/main.c
-> > &gt; &gt; &gt; index 3b4ada1..6aba171 100644
-> > &gt; &gt; &gt; --- a/init/main.c
-> > &gt; &gt; &gt; +++ b/init/main.c
-> > &gt; &gt; &gt; @@ -92,6 +92,7 @@
-> > &gt; &gt; &gt;  #include <linux rodata_test.h="">
-> > &gt; &gt; &gt;  #include <linux jump_label.h="">
-> > &gt; &gt; &gt;  #include <linux mem_encrypt.h="">
-> > &gt; &gt; &gt; +#include <linux audit.h="">
-> > &gt; &gt; &gt;
-> > &gt; &gt; &gt;  #include <asm io.h="">
-> > &gt; &gt; &gt;  #include <asm bugs.h="">
-> > &gt; &gt; &gt; @@ -721,6 +722,7 @@ asmlinkage __visible void __init
-> > start_kernel(void)
-> > &gt; &gt; &gt;         nsfs_init();
-> > &gt; &gt; &gt;         cpuset_init();
-> > &gt; &gt; &gt;         cgroup_init();
-> > &gt; &gt; &gt; +       audit_task_init();
-> > &gt; &gt; &gt;         taskstats_init_early();
-> > &gt; &gt; &gt;         delayacct_init();
-> > &gt; &gt;
-> > &gt; &gt; It seems like we would need either init_struct_audit or
-> > &gt; &gt; audit_task_init(), but not both, yes?
-> > &gt;
-> > &gt; One sets initial values of init task via an included struct,
-> > other makes a call
-> > &gt; to create the kmem cache.  Both seem appropriate to me unless we move the
-> > &gt; initialization from a struct to assignments in audit_task_init(),
-> > but I'm not
-> > &gt; that comfortable separating the audit init values from the rest of the
-> > &gt; task_struct init task initializers (though there are other
-> > subsystems that need
-> > &gt; to do so dynamically).
-> >
-> > My original thinking was focused on the use of init_struct_audit as an
-> > initializer when audit_task_init() was already creating a kmem_cache
-> > pool and a zero'd/init'd audit_task_info could be obtained via the
-> > usual kmem_cache functions.  Alternatively, although I don't believe
-> > it would be recommended for this case, would be to use
-> > init_struct_audit as an init helper if we included the audit_task_info
-> > struct directly in the task_struct, as opposed to a pointer.  What I
-> > missed was the simple fact that you're only using init_struct_audit
-> > for the init_task, which pretty much makes my original question rather
-> > silly :)
-> >
-> > --
-> > paul moore
-> > www.paul-moore.com
->
-> - RGB
->
-> --
-> Richard Guy Briggs <rgb@redhat.com>
-> Sr. S/W Engineer, Kernel Security, Base Operating Systems
-> Remote, Ottawa, Red Hat Canada
-> IRC: rgb, SunRaycer
-> Voice: +1.647.777.2635, Internal: (81) 32635
-
-
-
--- 
-paul moore
-www.paul-moore.com
+Christian
