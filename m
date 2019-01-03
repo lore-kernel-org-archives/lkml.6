@@ -2,87 +2,150 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6BBEC43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 21:22:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73351C43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 21:29:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A017121479
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 21:22:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D3F2217F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 21:29:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ZctG/Xcl"
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="J85VsFqy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727859AbfACVWS (ORCPT
+        id S1727910AbfACV3J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 16:22:18 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:44801 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727820AbfACVWR (ORCPT
+        Thu, 3 Jan 2019 16:29:09 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:40786 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727433AbfACV3J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 16:22:17 -0500
-Received: by mail-pf1-f193.google.com with SMTP id u6so17227544pfh.11
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 13:22:17 -0800 (PST)
+        Thu, 3 Jan 2019 16:29:09 -0500
+Received: by mail-ed1-f67.google.com with SMTP id g22so30159520edr.7
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 13:29:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:content-transfer-encoding:subject:cc:to:in-reply-to
-         :from:user-agent:references:message-id:date;
-        bh=2GrbhEjMXkwitqpsbKbAygt68MVpKcPqBE9ZY2HM9LY=;
-        b=ZctG/XclDlRJNXLiHD9KvmkWKkyOc0+IBwiqdZBJNhy8A3nUp0rS6EgrU+O8tX+nRt
-         AZ55s9LPsEmSs4zjqmj63jF6M9zPWu9yg2W0Xe2g3fns8NLbKpkTW/WB1pvx9r+QD+qX
-         mZ+ksmhT3gD50HLYT5avhkcmA8vlMoF0diS0c=
+        d=soleen.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=tHdsUEewYXSe8Kadix+ZY90aufWKaK0mZq33dBRtvTk=;
+        b=J85VsFqy45Pa1s5bDdQGYYTinaa8O5I3TNHJY1b3i6V2dLg1x4RXAyrngOqZu6GpVL
+         hBSl2n5q3NPPeoQjc64kD8Itv48U1Fx8RHvfNkowg1IYiQ83s0010ogtg43f45rKpkya
+         OEllt4ReHX4CUWRCEJvXLsnOl9+8PWbZjcNrI+P4m8LiPpRcpMIYtQYvMKS6p9byy1uM
+         JiwgD3irlXBIlPjJwwe3N/C/f2JVUwC2mOOjP30cOwNhKtKT3lsNN+RBf0jpBnGscRG+
+         GpT1lfMHMhNGKXAoaS6uhNVsLlbzIIhSHdiHv5xi9IDnrO91nuzbqlfoMQu6HmXTDYZh
+         2mVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding:subject
-         :cc:to:in-reply-to:from:user-agent:references:message-id:date;
-        bh=2GrbhEjMXkwitqpsbKbAygt68MVpKcPqBE9ZY2HM9LY=;
-        b=l2Dz0N/ENmxokZGSRFEH11nkBhj2QkPzzQBc+xKUuP06Ik2ffRBytVQ5MGtqEQn+JY
-         o/A4KYzYThm++TwtVK0MV2OIDzrE8i950BaYM3MrMlGfocMlXLtsi4zQyISICISiK/pw
-         E73IHpXeIteKk9iJEidDsWJuFpmxaveGuuL6Ph+BRwO6tT15+hMiv6yw2yK0rFoTbgKW
-         doTKQ/OQEEJFo67CDRtm4n9aBSuO+6fszxQFdLXdUnl/7uk29wvRgEmURhc3yErPkO1/
-         Hz0PqXh5lSiPId1CRNaHd+PlsziWfxC6uira28iu7OT5oEXK2G1RYW5aL+8oLMA5bRHR
-         TrNQ==
-X-Gm-Message-State: AJcUukd57+tX2jO/FQQ3ku6gfXOKVHNuUtCWcoDwaV4jmUaXUsJAfSeD
-        ExfqEpD+mRG6djDFZzx9Jh/h3A==
-X-Google-Smtp-Source: ALg8bN7QFZNUzLTGzuRab3N3Bbpz8ET5nsJzudSq/I/7LHT6EXxOv9zz/bawoPoFj/LrBINFSl1Rmw==
-X-Received: by 2002:a63:3c58:: with SMTP id i24mr30043174pgn.284.1546550536786;
-        Thu, 03 Jan 2019 13:22:16 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id i184sm78639497pfc.41.2019.01.03.13.22.16
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 03 Jan 2019 13:22:16 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=tHdsUEewYXSe8Kadix+ZY90aufWKaK0mZq33dBRtvTk=;
+        b=KhWVi0Vod0PmCM2TwdnvRZJONOnui/Yp05/M52+JS4GazR0axtXtIxeMIzfZE0brCv
+         XXmQns8fZ7LF+bHfY/o/WFTHVbNRnLvk6XLR1aqrsJFUqHQo0gwRk1zKwZK9ys6N1Zzn
+         0vVp/iWAyywgmF9d7gZKS/3zXLFyJstuvQES8q1LJAKOBgNwJx3ccBCyQvK3Bn8Xwvma
+         jsXCJm+ywnSOdjByR4Ku51I2wyE6JN9m2/o/l7uH+DwB5VK5ptHxP19SOp2nq7sS7B1v
+         pp4la8SQMcRfgFooNL3qONtvPxyTG2jBUMO+hRbuM55ieNxWrqPo8zAqT4rFxUL8SdCu
+         FLiw==
+X-Gm-Message-State: AA+aEWZHNTWOCAisdnXREclEKPEnC28UG/gMY2RZoPiYA2OWGQ3kJQOx
+        jdtJ5fLzqeasfWFWnyEMud9eWFT0gvP2Uvnp4SvhxQ==
+X-Google-Smtp-Source: AFSGD/UAy6mDIL1Xqh/aXd8Q5xdYAsoRC3tnN68i2/F35kQpcAB1L6/6kwIuwRxBn8aqHAtQj6AfnknAuMopt15U1QA=
+X-Received: by 2002:a50:9a42:: with SMTP id o60mr45166776edb.180.1546550947080;
+ Thu, 03 Jan 2019 13:29:07 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 4/4] tty: serial: qcom_geni_serial: Use u32 for register variables
-Cc:     Evan Green <evgreen@chromium.org>,
-        Doug Anderson <dianders@chromium.org>,
-        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-        Ryan Case <ryandcase@chromium.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Ryan Case <ryandcase@chromium.org>
-In-Reply-To: <20190102213636.40866-5-ryandcase@chromium.org>
-From:   Stephen Boyd <swboyd@chromium.org>
-User-Agent: alot/0.8
-References: <20190102213636.40866-1-ryandcase@chromium.org> <20190102213636.40866-5-ryandcase@chromium.org>
-Message-ID: <154655053537.15366.12329201016969398011@swboyd.mtv.corp.google.com>
-Date:   Thu, 03 Jan 2019 13:22:15 -0800
+References: <20180719205545.16512-1-pasha.tatashin@oracle.com>
+ <20180719205545.16512-24-pasha.tatashin@oracle.com> <20181106054212.GA31768@nautica>
+ <95c3920e-bf80-0c7e-7854-01a1c3189c23@oracle.com> <20190102202032.GA1034@eldamar.local>
+In-Reply-To: <20190102202032.GA1034@eldamar.local>
+From:   Pavel Tatashin <pasha.tatashin@soleen.com>
+Date:   Thu, 3 Jan 2019 16:28:56 -0500
+Message-ID: <CA+CK2bC70pnL0Wimb0xt99J4nNfi8W3zuUHgAk-jsPuOP9jpHA@mail.gmail.com>
+Subject: Re: [PATCH v15 23/26] sched: early boot clock
+To:     Salvatore Bonaccorso <carnil@debian.org>
+Cc:     Steven Sistare <steven.sistare@oracle.com>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Pavel Tatashin <pavel.tatashin@microsoft.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        linux@armlinux.org.uk, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, john.stultz@linaro.org,
+        sboyd@codeaurora.org, x86@kernel.org,
+        LKML <linux-kernel@vger.kernel.org>, mingo@redhat.com,
+        Thomas Gleixner <tglx@linutronix.de>, hpa@zytor.com,
+        douly.fnst@cn.fujitsu.com, Peter Zijlstra <peterz@infradead.org>,
+        prarit@redhat.com, feng.tang@intel.com, pmladek@suse.com,
+        gnomes@lxorguk.ukuu.org.uk, linux-s390@vger.kernel.org,
+        boris.ostrovsky@oracle.com, jgross@suse.com, pbonzini@redhat.com,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
+        qemu-devel@nongnu.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Ryan Case (2019-01-02 13:36:36)
-> Signed-off-by: Ryan Case <ryandcase@chromium.org>
-> ---
+Could you please send the config file and qemu arguments that were
+used to reproduce this problem.
 
-It'd be nice to have any sort of commit text here with the motivation
-for the change (code clarity is my motivation).
+Thank you,
+Pasha
 
-Besides that nitpick
-
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
-
+On Wed, Jan 2, 2019 at 3:20 PM Salvatore Bonaccorso <carnil@debian.org> wrote:
+>
+> Hi,
+>
+> On Tue, Nov 06, 2018 at 06:35:36AM -0500, Steven Sistare wrote:
+> > Pavel has a new email address, cc'd - steve
+> >
+> > On 11/6/2018 12:42 AM, Dominique Martinet wrote:
+> > > (added various kvm/virtualization lists in Cc as well as qemu as I don't
+> > > know who's "wrong" here)
+> > >
+> > > Pavel Tatashin wrote on Thu, Jul 19, 2018:
+> > >> Allow sched_clock() to be used before schec_clock_init() is called.
+> > >> This provides with a way to get early boot timestamps on machines with
+> > >> unstable clocks.
+> > >
+> > > This isn't something I understand, but bisect tells me this patch
+> > > (landed as 857baa87b64 ("sched/clock: Enable sched clock early")) makes
+> > > a VM running with kvmclock take a step in uptime/printk timer early in
+> > > boot sequence as illustrated below. The step seems to be related to the
+> > > amount of time the host was suspended while qemu was running before the
+> > > reboot.
+> > >
+> > > $ dmesg
+> > > ...
+> > > [    0.000000] SMBIOS 2.8 present.
+> > > [    0.000000] DMI: QEMU Standard PC (i440FX + PIIX, 1996), BIOS ?-20180724_192412-buildhw-07.phx2.fedoraproject.org-1.fc29 04/01/2014
+> > > [    0.000000] Hypervisor detected: KVM
+> > > [    0.000000] kvm-clock: Using msrs 4b564d01 and 4b564d00
+> > > [283120.529821] kvm-clock: cpu 0, msr 321a8001, primary cpu clock
+> > > [283120.529822] clocksource: kvm-clock: mask: 0xffffffffffffffff max_cycles: 0x1cd42e4dffb, max_idle_ns: 881590591483 ns
+> > > [283120.529824] tsc: Detected 2592.000 MHz processor
+> > > ...
+> > >
+> > > (The VM is x86_64 on x86_64, I can provide my .config on request but
+> > > don't think it's related)
+> > >
+> > >
+> > > It's rather annoying for me as I often reboot VMs and rely on the
+> > > 'uptime' command to check if I did just reboot or not as I have the
+> > > attention span of a goldfish; I'd rather not have to find something else
+> > > to check if I did just reboot or not.
+> > >
+> > > Note that if the qemu process is restarted, there is no offset anymore.
+> > >
+> > > I unfortunately just did that so cannot say with confidence (putting my
+> > > laptop to sleep for 30s only led to a 2s offset and I do not want to
+> > > wait longer right now), but it looks like the clock is still mostly
+> > > correct after reboot after disabling my VM's ntp client. Will infirm
+> > > that tomorrow if I was wrong.
+> > >
+> > >
+> > > Happy to try to help fixing this in any way, as written above the quote
+> > > I'm not even actually sure who is wrong here.
+>
+> A user in Debian reported the same/similar issue (with 4.19.13):
+>
+> https://bugs.debian.org/918036
+>
+> Regards,
+> Salvatore
