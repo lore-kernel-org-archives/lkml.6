@@ -2,242 +2,369 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEF1FC43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 20:38:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEF72C43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 20:44:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7AEF521479
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 20:38:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 889EE217F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 20:44:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726347AbfACUij (ORCPT
+        id S1726749AbfACUoj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 15:38:39 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:41008 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725996AbfACUij (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 15:38:39 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 07D907EBCB;
-        Thu,  3 Jan 2019 20:38:38 +0000 (UTC)
-Received: from madcap2.tricolour.ca (ovpn-112-10.phx2.redhat.com [10.3.112.10])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id DDCBC5D9D1;
-        Thu,  3 Jan 2019 20:38:21 +0000 (UTC)
-Date:   Thu, 3 Jan 2019 15:38:19 -0500
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        linux-audit@redhat.com, linux-kernel@vger.kernel.org,
-        ebiederm@xmission.com, luto@kernel.org, dhowells@redhat.com,
-        viro@zeniv.linux.org.uk, simo@redhat.com,
-        Eric Paris <eparis@parisplace.org>,
-        Serge Hallyn <serge@hallyn.com>
-Subject: Re: [PATCH ghak90 (was ghak32) V4 01/10] audit: collect audit task
- parameters
-Message-ID: <20190103203819.4qhtkq3ffao5brv3@madcap2.tricolour.ca>
-References: <cover.1533065887.git.rgb@redhat.com>
- <8e617ab568df28a66dfbe3284452de186b42fb0f.1533065887.git.rgb@redhat.com>
- <CAHC9VhQFqs1SyvximK+8XJG5Fk3p9WsWhEV5sY6kksN9tc6eKw@mail.gmail.com>
- <20181101220724.ggkqyf5kjv7lhabx@madcap2.tricolour.ca>
- <CAHC9VhRU-Qss41CnV3mE32tXmZ3FQpy++t4yPUkh9CjuAzxYCA@mail.gmail.com>
- <20190103202938.ntdfqdmyrr7stzh2@madcap2.tricolour.ca>
- <CAHC9VhQTQuRnkF-8sJxwDvKbxJHvs5uLWsvLvL085SgyPiqLHQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhQTQuRnkF-8sJxwDvKbxJHvs5uLWsvLvL085SgyPiqLHQ@mail.gmail.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Thu, 03 Jan 2019 20:38:38 +0000 (UTC)
+        Thu, 3 Jan 2019 15:44:39 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:37160 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726376AbfACUoj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Jan 2019 15:44:39 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: ezequiel)
+        with ESMTPSA id 34E1527DD58
+Message-ID: <2158b458c240874e5c974a2cae374c3fbf682e48.camel@collabora.com>
+Subject: Re: [RFC AFBC 03/12] drm/afbc: Add AFBC modifier usage documentation
+From:   Ezequiel Garcia <ezequiel@collabora.com>
+To:     Ayan Halder <Ayan.Halder@arm.com>,
+        Liviu Dudau <Liviu.Dudau@arm.com>,
+        Brian Starkey <Brian.Starkey@arm.com>,
+        "malidp@foss.arm.com" <malidp@foss.arm.com>,
+        "airlied@linux.ie" <airlied@linux.ie>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "maxime.ripard@bootlin.com" <maxime.ripard@bootlin.com>,
+        "sean@poorly.run" <sean@poorly.run>,
+        "maarten.lankhorst@linux.intel.com" 
+        <maarten.lankhorst@linux.intel.com>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+Cc:     nd <nd@arm.com>
+Date:   Thu, 03 Jan 2019 17:44:26 -0300
+In-Reply-To: <1543836703-8491-4-git-send-email-ayan.halder@arm.com>
+References: <1543836703-8491-1-git-send-email-ayan.halder@arm.com>
+         <1543836703-8491-4-git-send-email-ayan.halder@arm.com>
+Organization: Collabora
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.3-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-01-03 15:33, Paul Moore wrote:
-> On Thu, Jan 3, 2019 at 3:29 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > I'm not sure what's going on here, but it looks like HTML-encoded reply
-> > quoting making the quoted text very difficult to read.  All the previous
-> > ">" have been converted to the HTML "&gt;" encoding.  Your most recent
-> > reply text looks mostly fine.
-> 
-> Not sure what happened either, I suspect gmail did something odd when
-> I saved them as drafts, but it has never done that before.  FWIW, I
-> generally batch up individual review comments for complex patchsets as
-> one often needs to review the entire set first before commenting.
-> 
-> The most recent reply to patch 0/10 wasn't saved as a draft before sending.
+Hi Liviu,
 
-Yeah, I noticed the last one was fine and wondered why it was different.
-
-/me <3 mutt...
-
-> > On 2019-01-03 15:10, Paul Moore wrote:
-> > > On Thu, Nov 1, 2018 at 6:07 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > &gt; On 2018-10-19 19:15, Paul Moore wrote:
-> > > &gt; &gt; On Sun, Aug 5, 2018 at 4:32 AM Richard Guy Briggs
-> > > <rgb@redhat.com> wrote:
-> > > &gt; &gt; &gt; The audit-related parameters in struct task_struct
-> > > should ideally be
-> > > &gt; &gt; &gt; collected together and accessed through a standard audit API.
-> > > &gt; &gt; &gt;
-> > > &gt; &gt; &gt; Collect the existing loginuid, sessionid and
-> > > audit_context together in a
-> > > &gt; &gt; &gt; new struct audit_task_info called "audit" in struct task_struct.
-> > > &gt; &gt; &gt;
-> > > &gt; &gt; &gt; Use kmem_cache to manage this pool of memory.
-> > > &gt; &gt; &gt; Un-inline audit_free() to be able to always recover that memory.
-> > > &gt; &gt; &gt;
-> > > &gt; &gt; &gt; See: https://github.com/linux-audit/audit-kernel/issues/81
-> > > &gt; &gt; &gt;
-> > > &gt; &gt; &gt; Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > > &gt; &gt; &gt; ---
-> > > &gt; &gt; &gt;  include/linux/audit.h | 34 ++++++++++++++++++++++++----------
-> > > &gt; &gt; &gt;  include/linux/sched.h |  5 +----
-> > > &gt; &gt; &gt;  init/init_task.c      |  3 +--
-> > > &gt; &gt; &gt;  init/main.c           |  2 ++
-> > > &gt; &gt; &gt;  kernel/auditsc.c      | 51
-> > > ++++++++++++++++++++++++++++++++++++++++++---------
-> > > &gt; &gt; &gt;  kernel/fork.c         |  4 +++-
-> > > &gt; &gt; &gt;  6 files changed, 73 insertions(+), 26 deletions(-)
-> > > &gt; &gt;
-> > > &gt; &gt; ...
-> > > &gt; &gt;
-> > > &gt; &gt; &gt; diff --git a/include/linux/sched.h b/include/linux/sched.h
-> > > &gt; &gt; &gt; index 87bf02d..e117272 100644
-> > > &gt; &gt; &gt; --- a/include/linux/sched.h
-> > > &gt; &gt; &gt; +++ b/include/linux/sched.h
-> > > &gt; &gt; &gt; @@ -873,10 +872,8 @@ struct task_struct {
-> > > &gt; &gt; &gt;
-> > > &gt; &gt; &gt;         struct callback_head            *task_works;
-> > > &gt; &gt; &gt;
-> > > &gt; &gt; &gt; -       struct audit_context            *audit_context;
-> > > &gt; &gt; &gt;  #ifdef CONFIG_AUDITSYSCALL
-> > > &gt; &gt; &gt; -       kuid_t                          loginuid;
-> > > &gt; &gt; &gt; -       unsigned int                    sessionid;
-> > > &gt; &gt; &gt; +       struct audit_task_info          *audit;
-> > > &gt; &gt; &gt;  #endif
-> > > &gt; &gt; &gt;         struct seccomp                  seccomp;
-> > > &gt; &gt;
-> > > &gt; &gt; Prior to this patch audit_context was available regardless of
-> > > &gt; &gt; CONFIG_AUDITSYSCALL, after this patch the corresponding audit_context
-> > > &gt; &gt; is only available when CONFIG_AUDITSYSCALL is defined.
-> > > &gt;
-> > > &gt; This was intentional since audit_context is not used when AUDITSYSCALL is
-> > > &gt; disabled.  audit_alloc() was stubbed in that case to return 0.
-> > > audit_context()
-> > > &gt; returned NULL.
-> > > &gt;
-> > > &gt; The fact that audit_context was still present in struct task_struct was an
-> > > &gt; oversight in the two patches already accepted:
-> > > &gt;         ("audit: use inline function to get audit context")
-> > > &gt;         ("audit: use inline function to get audit context")
-> > > &gt; that failed to hide or remove it from struct task_struct when it
-> > > was no longer
-> > > &gt; relevant.
-> > >
-> > > Okay, in that case let's pull this out and fix this separately from
-> > > the audit container ID patchset.
-> > >
-> > > &gt; On further digging, loginuid and sessionid (and
-> > > audit_log_session_info) should
-> > > &gt; be part of CONFIG_AUDIT scope and not CONFIG_AUDITSYSCALL since
-> > > it is used in
-> > > &gt; CONFIG_CHANGE, ANOM_LINK, FEATURE_CHANGE(, INTEGRITY_RULE), none
-> > > of which are
-> > > &gt; otherwise dependent on AUDITSYSCALL.
-> > >
-> > > This looks like something else we should fix independently from this patchset.
-> > >
-> > > &gt; Looking ahead, contid should be treated like loginuid and
-> > > sessionid, which are
-> > > &gt; currently only available when syscall auditting is.
-> > >
-> > > That seems reasonable.  Eventually it would be great if we got rid of
-> > > CONFIG_AUDITSYSCALL, but that is a separate issue, and something that
-> > > is going to require work from the different arch/ABI folks to ensure
-> > > everything is working properly.
-> > >
-> > > &gt; Converting records from standalone to syscall and checking
-> > > audit_dummy_context
-> > > &gt; changes the nature of CONFIG_AUDIT/!CONFIG_AUDITSYSCALL separation.
-> > > &gt; eg: ANOM_LINK accompanied by PATH record (which needed CWD addition to be
-> > > &gt; complete anyways)
-> > > &gt;
-> > > &gt; &gt; &gt; diff --git a/init/main.c b/init/main.c
-> > > &gt; &gt; &gt; index 3b4ada1..6aba171 100644
-> > > &gt; &gt; &gt; --- a/init/main.c
-> > > &gt; &gt; &gt; +++ b/init/main.c
-> > > &gt; &gt; &gt; @@ -92,6 +92,7 @@
-> > > &gt; &gt; &gt;  #include <linux rodata_test.h="">
-> > > &gt; &gt; &gt;  #include <linux jump_label.h="">
-> > > &gt; &gt; &gt;  #include <linux mem_encrypt.h="">
-> > > &gt; &gt; &gt; +#include <linux audit.h="">
-> > > &gt; &gt; &gt;
-> > > &gt; &gt; &gt;  #include <asm io.h="">
-> > > &gt; &gt; &gt;  #include <asm bugs.h="">
-> > > &gt; &gt; &gt; @@ -721,6 +722,7 @@ asmlinkage __visible void __init
-> > > start_kernel(void)
-> > > &gt; &gt; &gt;         nsfs_init();
-> > > &gt; &gt; &gt;         cpuset_init();
-> > > &gt; &gt; &gt;         cgroup_init();
-> > > &gt; &gt; &gt; +       audit_task_init();
-> > > &gt; &gt; &gt;         taskstats_init_early();
-> > > &gt; &gt; &gt;         delayacct_init();
-> > > &gt; &gt;
-> > > &gt; &gt; It seems like we would need either init_struct_audit or
-> > > &gt; &gt; audit_task_init(), but not both, yes?
-> > > &gt;
-> > > &gt; One sets initial values of init task via an included struct,
-> > > other makes a call
-> > > &gt; to create the kmem cache.  Both seem appropriate to me unless we move the
-> > > &gt; initialization from a struct to assignments in audit_task_init(),
-> > > but I'm not
-> > > &gt; that comfortable separating the audit init values from the rest of the
-> > > &gt; task_struct init task initializers (though there are other
-> > > subsystems that need
-> > > &gt; to do so dynamically).
-> > >
-> > > My original thinking was focused on the use of init_struct_audit as an
-> > > initializer when audit_task_init() was already creating a kmem_cache
-> > > pool and a zero'd/init'd audit_task_info could be obtained via the
-> > > usual kmem_cache functions.  Alternatively, although I don't believe
-> > > it would be recommended for this case, would be to use
-> > > init_struct_audit as an init helper if we included the audit_task_info
-> > > struct directly in the task_struct, as opposed to a pointer.  What I
-> > > missed was the simple fact that you're only using init_struct_audit
-> > > for the init_task, which pretty much makes my original question rather
-> > > silly :)
-> > >
-> > > --
-> > > paul moore
-> > > www.paul-moore.com
-> >
-> > - RGB
-> >
-> > --
-> > Richard Guy Briggs <rgb@redhat.com>
-> > Sr. S/W Engineer, Kernel Security, Base Operating Systems
-> > Remote, Ottawa, Red Hat Canada
-> > IRC: rgb, SunRaycer
-> > Voice: +1.647.777.2635, Internal: (81) 32635
+On Mon, 2018-12-03 at 11:31 +0000, Ayan Halder wrote:
+> From: Brian Starkey <brian.starkey@arm.com>
 > 
+> AFBC is a flexible, proprietary, lossless compression protocol and
+> format, with a number of defined DRM format modifiers. To facilitate
+> consistency and compatibility between different AFBC producers and
+> consumers, document the expectations for usage of the AFBC DRM format
+> modifiers in a new .rst chapter.
 > 
+> Signed-off-by: Brian Starkey <brian.starkey@arm.com>
+> Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
+> ---
+
+I can't find this commit anywhere. Did you decide to reject
+this or perhaps it just fell thru the cracks?
+
+Thanks!
+Ezequiel
+
+
+>  Documentation/gpu/afbc.rst    | 233 ++++++++++++++++++++++++++++++++++++++++++
+>  Documentation/gpu/drivers.rst |   1 +
+>  MAINTAINERS                   |   1 +
+>  include/uapi/drm/drm_fourcc.h |   3 +
+>  4 files changed, 238 insertions(+)
+>  create mode 100644 Documentation/gpu/afbc.rst
 > 
-> -- 
-> paul moore
-> www.paul-moore.com
+> diff --git a/Documentation/gpu/afbc.rst b/Documentation/gpu/afbc.rst
+> new file mode 100644
+> index 0000000..922d955
+> --- /dev/null
+> +++ b/Documentation/gpu/afbc.rst
+> @@ -0,0 +1,233 @@
+> +===================================
+> + Arm Framebuffer Compression (AFBC)
+> +===================================
+> +
+> +AFBC is a proprietary lossless image compression protocol and format.
+> +It provides fine-grained random access and minimizes the amount of
+> +data transferred between IP blocks.
+> +
+> +AFBC can be enabled on drivers which support it via use of the AFBC
+> +format modifiers defined in drm_fourcc.h. See DRM_FORMAT_MOD_ARM_AFBC(*).
+> +
+> +All users of the AFBC modifiers must follow the usage guidelines laid
+> +out in this document, to ensure compatibility across different AFBC
+> +producers and consumers.
+> +
+> +Components and Ordering
+> +=======================
+> +
+> +AFBC streams can contain several components - where a component
+> +corresponds to a color channel (i.e. R, G, B, X, A, Y, Cb, Cr).
+> +The assignment of input/output color channels must be consistent
+> +between the encoder and the decoder for correct operation, otherwise
+> +the consumer will interpret the decoded data incorrectly.
+> +
+> +Furthermore, when the lossless colorspace transform is used
+> +(AFBC_FORMAT_MOD_YTR, which should be enabled for RGB buffers for
+> +maximum compression efficiency), the component order must be:
+> +
+> + * Component 0: R
+> + * Component 1: G
+> + * Component 2: B
+> +
+> +The component ordering is communicated via the fourcc code in the
+> +fourcc:modifier pair. In general, component '0' is considered to
+> +reside in the least-significant bits of the corresponding linear
+> +format. For example, COMP(bits):
+> +
+> + * DRM_FORMAT_ABGR8888
+> +
+> +   * Component 0: R(8)
+> +   * Component 1: G(8)
+> +   * Component 2: B(8)
+> +   * Component 3: A(8)
+> +
+> + * DRM_FORMAT_BGR888
+> +
+> +   * Component 0: R(8)
+> +   * Component 1: G(8)
+> +   * Component 2: B(8)
+> +
+> + * DRM_FORMAT_YUYV
+> +
+> +   * Component 0: Y(8)
+> +   * Component 1: Cb(8, 2x1 subsampled)
+> +   * Component 2: Cr(8, 2x1 subsampled)
+> +
+> +In AFBC, 'X' components are not treated any differently from any other
+> +component. Therefore, an AFBC buffer with fourcc DRM_FORMAT_XBGR8888
+> +encodes with 4 components, like so:
+> +
+> + * DRM_FORMAT_XBGR8888
+> +
+> +   * Component 0: R(8)
+> +   * Component 1: G(8)
+> +   * Component 2: B(8)
+> +   * Component 3: X(8)
+> +
+> +Please note, however, that the inclusion of a "wasted" 'X' channel is
+> +bad for compression efficiency, and so it's recommended to avoid
+> +formats containing 'X' bits. If a fourth component is
+> +required/expected by the encoder/decoder, then it is recommended to
+> +instead use an equivalent format with alpha, setting all alpha bits to
+> +'1'. If there is no requirement for a fourth component, then a format
+> +which doesn't include alpha can be used, e.g. DRM_FORMAT_BGR888.
+> +
+> +Number of Planes
+> +================
+> +
+> +Formats which are typically multi-planar in linear layouts (e.g. YUV
+> +420), can be encoded into one, or multiple, AFBC planes. As with
+> +component order, the encoder and decoder must agree about the number
+> +of planes in order to correctly decode the buffer. The fourcc code is
+> +used to determine the number of encoded planes in an AFBC buffer,
+> +matching the number of planes for the linear (unmodified) format.
+> +Within each plane, the component ordering also follows the fourcc
+> +code:
+> +
+> +For example:
+> +
+> + * DRM_FORMAT_YUYV: nplanes = 1
+> +
+> +   * Plane 0:
+> +
+> +     * Component 0: Y(8)
+> +     * Component 1: Cb(8, 2x1 subsampled)
+> +     * Component 2: Cr(8, 2x1 subsampled)
+> +
+> + * DRM_FORMAT_NV12: nplanes = 2
+> +
+> +   * Plane 0:
+> +
+> +     * Component 0: Y(8)
+> +
+> +   * Plane 1:
+> +
+> +     * Component 0: Cb(8, 2x1 subsampled)
+> +     * Component 1: Cr(8, 2x1 subsampled)
+> +
+> +Cross-device interoperability
+> +=============================
+> +
+> +For maximum compatibility across devices, the table below defines
+> +canonical formats for use between AFBC-enabled devices. Formats which
+> +are listed here must be used exactly as specified when using the AFBC
+> +modifiers. Formats which are not listed should be avoided.
+> +
+> +.. flat-table:: AFBC formats
+> +
+> +   * - Fourcc code
+> +     - Description
+> +     - Planes/Components
+> +
+> +   * - DRM_FORMAT_ABGR2101010
+> +     - 10-bit per component RGB, with 2-bit alpha
+> +     - Plane 0: 4 components
+> +              * Component 0: R(10)
+> +              * Component 1: G(10)
+> +              * Component 2: B(10)
+> +              * Component 3: A(2)
+> +
+> +   * - DRM_FORMAT_ABGR8888
+> +     - 8-bit per component RGB, with 8-bit alpha
+> +     - Plane 0: 4 components
+> +              * Component 0: R(8)
+> +              * Component 1: G(8)
+> +              * Component 2: B(8)
+> +              * Component 3: A(8)
+> +
+> +   * - DRM_FORMAT_BGR888
+> +     - 8-bit per component RGB
+> +     - Plane 0: 3 components
+> +              * Component 0: R(8)
+> +              * Component 1: G(8)
+> +              * Component 2: B(8)
+> +
+> +   * - DRM_FORMAT_BGR565
+> +     - 5/6-bit per component RGB
+> +     - Plane 0: 3 components
+> +              * Component 0: R(5)
+> +              * Component 1: G(6)
+> +              * Component 2: B(5)
+> +
+> +   * - DRM_FORMAT_ABGR1555
+> +     - 5-bit per component RGB, with 1-bit alpha
+> +     - Plane 0: 4 components
+> +              * Component 0: R(5)
+> +              * Component 1: G(5)
+> +              * Component 2: B(5)
+> +              * Component 3: A(1)
+> +
+> +   * - DRM_FORMAT_VUY888
+> +     - 8-bit per component YCbCr 444, single plane
+> +     - Plane 0: 3 components
+> +              * Component 0: Y(8)
+> +              * Component 1: Cb(8)
+> +              * Component 2: Cr(8)
+> +
+> +   * - DRM_FORMAT_VUY101010
+> +     - 10-bit per component YCbCr 444, single plane
+> +     - Plane 0: 3 components
+> +              * Component 0: Y(10)
+> +              * Component 1: Cb(10)
+> +              * Component 2: Cr(10)
+> +
+> +   * - DRM_FORMAT_YUYV
+> +     - 8-bit per component YCbCr 422, single plane
+> +     - Plane 0: 3 components
+> +              * Component 0: Y(8)
+> +              * Component 1: Cb(8, 2x1 subsampled)
+> +              * Component 2: Cr(8, 2x1 subsampled)
+> +
+> +   * - DRM_FORMAT_NV16
+> +     - 8-bit per component YCbCr 422, two plane
+> +     - Plane 0: 1 component
+> +              * Component 0: Y(8)
+> +       Plane 1: 2 components
+> +              * Component 0: Cb(8, 2x1 subsampled)
+> +              * Component 1: Cr(8, 2x1 subsampled)
+> +
+> +   * - DRM_FORMAT_Y210
+> +     - 10-bit per component YCbCr 422, single plane
+> +     - Plane 0: 3 components
+> +              * Component 0: Y(10)
+> +              * Component 1: Cb(10, 2x1 subsampled)
+> +              * Component 2: Cr(10, 2x1 subsampled)
+> +
+> +   * - DRM_FORMAT_P210
+> +     - 10-bit per component YCbCr 422, two plane
+> +     - Plane 0: 1 component
+> +              * Component 0: Y(10)
+> +       Plane 1: 2 components
+> +              * Component 0: Cb(10, 2x1 subsampled)
+> +              * Component 1: Cr(10, 2x1 subsampled)
+> +
+> +   * - DRM_FORMAT_YUV420_8BIT
+> +     - 8-bit per component YCbCr 420, single plane
+> +     - Plane 0: 3 components
+> +              * Component 0: Y(8)
+> +              * Component 1: Cb(8, 2x2 subsampled)
+> +              * Component 2: Cr(8, 2x2 subsampled)
+> +
+> +   * - DRM_FORMAT_YUV420_10BIT
+> +     - 10-bit per component YCbCr 420, single plane
+> +     - Plane 0: 3 components
+> +              * Component 0: Y(10)
+> +              * Component 1: Cb(10, 2x2 subsampled)
+> +              * Component 2: Cr(10, 2x2 subsampled)
+> +
+> +   * - DRM_FORMAT_NV12
+> +     - 8-bit per component YCbCr 420, two plane
+> +     - Plane 0: 1 component
+> +              * Component 0: Y(8)
+> +       Plane 1: 2 components
+> +              * Component 0: Cb(8, 2x2 subsampled)
+> +              * Component 1: Cr(8, 2x2 subsampled)
+> +
+> +   * - DRM_FORMAT_P010
+> +     - 10-bit per component YCbCr 420, two plane
+> +     - Plane 0: 1 component
+> +              * Component 0: Y(10)
+> +       Plane 1: 2 components
+> +              * Component 0: Cb(10, 2x2 subsampled)
+> +              * Component 1: Cr(10, 2x2 subsampled)
+> diff --git a/Documentation/gpu/drivers.rst b/Documentation/gpu/drivers.rst
+> index 7c16721..c176b34 100644
+> --- a/Documentation/gpu/drivers.rst
+> +++ b/Documentation/gpu/drivers.rst
+> @@ -17,6 +17,7 @@ GPU Driver Documentation
+>     vkms
+>     bridge/dw-hdmi
+>     xen-front
+> +   afbc
+>  
+>  .. only::  subproject and html
+>  
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 254b7b2..aef18e3 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -1131,6 +1131,7 @@ M:	Mali DP Maintainers <malidp@foss.arm.com>
+>  S:	Supported
+>  F:	drivers/gpu/drm/arm/
+>  F:	Documentation/devicetree/bindings/display/arm,malidp.txt
+> +F:	Documentation/gpu/afbc.rst
+>  
+>  ARM MFM AND FLOPPY DRIVERS
+>  M:	Ian Molton <spyro@f2s.com>
+> diff --git a/include/uapi/drm/drm_fourcc.h b/include/uapi/drm/drm_fourcc.h
+> index 75c4b5a..0adde4d 100644
+> --- a/include/uapi/drm/drm_fourcc.h
+> +++ b/include/uapi/drm/drm_fourcc.h
+> @@ -597,6 +597,9 @@ extern "C" {
+>   * AFBC has several features which may be supported and/or used, which are
+>   * represented using bits in the modifier. Not all combinations are valid,
+>   * and different devices or use-cases may support different combinations.
+> + *
+> + * Further information on the use of AFBC modifiers can be found in
+> + * Documentation/gpu/afbc.rst
+>   */
+>  #define DRM_FORMAT_MOD_ARM_AFBC(__afbc_mode)	fourcc_mod_code(ARM, __afbc_mode)
+>  
 
-- RGB
 
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
