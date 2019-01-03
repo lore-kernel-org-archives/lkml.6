@@ -2,75 +2,89 @@ Return-Path: <SRS0=wzyR=PL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2F1BC43387
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 08:17:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64B4CC43387
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 08:28:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 755C02073D
-	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 08:17:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UhFFZBYE"
+	by mail.kernel.org (Postfix) with ESMTP id 312AB2073D
+	for <linux-kernel@archiver.kernel.org>; Thu,  3 Jan 2019 08:28:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730020AbfACIRt (ORCPT
+        id S1730159AbfACI2s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 03:17:49 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:43824 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726191AbfACIRs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 03:17:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=K6FJvJsAoOiPTYolO1rCSFj1BDyQuVK55bUwtTEO1EE=; b=UhFFZBYE3cTjuMU2z1atnPeGD
-        HOjHFA6llExHoXujNpVzx+EXPXohTSlPI6ccxzy03qCiZn6TtR0fDiGnapGL644vBXcxnGXY1ThV2
-        rRBdrzSzdoQuhAQOo0tfpO+RvA+MvvSBG8KSHy5ltWdeMFLZ2F5Dgfln3JQmlNRnanvL5L4UZwHBf
-        iFmqqCItx+Q6KLpF9PlUyff2DZ9heb6U//VjG5FNsTm7UM/6my6oL6YAUhB0S0SdfkqtLMyWIOXwd
-        lSgf4f4+eTxmZVmrtCoE3FqSEJjvylorSAPh5bj/QDwjx1VN22l29G1YG/19VV3yl7nQsQYuR0Vn7
-        waf2o29QA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1geyBK-0003dv-I2; Thu, 03 Jan 2019 08:16:46 +0000
-Date:   Thu, 3 Jan 2019 00:16:46 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Sam Ravnborg <sam@ravnborg.org>
-Cc:     Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>,
-        David Lechner <david@lechnology.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v2 07/14] drm: move EXPORT_SYMBOL_FOR_TESTS_ONLY to
- drm_util.h
-Message-ID: <20190103081646.GB31320@infradead.org>
-References: <20181230174838.32330-8-sam@ravnborg.org>
+        Thu, 3 Jan 2019 03:28:48 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:36580 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726191AbfACI2s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Jan 2019 03:28:48 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9C0A07CFA3;
+        Thu,  3 Jan 2019 08:28:47 +0000 (UTC)
+Received: from localhost.localdomain (ovpn-8-25.pek2.redhat.com [10.72.8.25])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id AF20B600C4;
+        Thu,  3 Jan 2019 08:28:44 +0000 (UTC)
+Subject: Re: Shaohua Li
+To:     Guoqing Jiang <gqjiang@suse.com>, Jens Axboe <axboe@kernel.dk>,
+        linux-raid@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <398a74fa-6566-8d0d-6434-e68ff3763656@kernel.dk>
+ <af940531-2535-2777-8c09-e9d1e6c16e82@suse.com>
+From:   Xiao Ni <xni@redhat.com>
+Message-ID: <97912c52-ba6c-f532-d55b-9b0ae1316c61@redhat.com>
+Date:   Thu, 3 Jan 2019 16:28:42 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181230174838.32330-8-sam@ravnborg.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <af940531-2535-2777-8c09-e9d1e6c16e82@suse.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Thu, 03 Jan 2019 08:28:47 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 30, 2018 at 06:48:31PM +0100, Sam Ravnborg wrote:
-> +/*
-> + * Use EXPORT_SYMBOL_FOR_TESTS_ONLY() for functions that shall
-> + * only be visible for drmselftests.
-> + */
-> +#if defined(CONFIG_DRM_DEBUG_SELFTEST_MODULE)
-> +#define EXPORT_SYMBOL_FOR_TESTS_ONLY(x) EXPORT_SYMBOL(x)
-> +#else
-> +#define EXPORT_SYMBOL_FOR_TESTS_ONLY(x)
-> +#endif
 
-Btw, why isn't this an EXPORT_SYMBOL_GPL if it is only for internal
-tests?
+
+On 01/03/2019 10:38 AM, Guoqing Jiang wrote:
+>
+>
+> On 1/3/19 1:13 AM, Jens Axboe wrote:
+>> Hi,
+>>
+>> I've got some very sad news to share with you - over Christmas, Shaohua
+>> Li passed away after battling cancer for most of last year.
+>
+> It is really a sad news and a big lost for the community consider 
+> Shaohua's
+> great contribution!
+
+It's very sad to hear about this. I'm still reading his patches and docs.
+>
+>> As you know, Shaohua acted as the maintainer for md. He remained
+>> dedicated to that through the difficult times. With his passing, we
+>> obviously have a void that needs to be filled.
+>
+> It is better if there is a small team to maintain md in future since 
+> nobody
+> have broad/deep knowledge as Neil or Shaohua, also people in the team
+> can cover/backup each other, see [1].
+>
+>> For now, I'll act as interim maintainer for md until we can find a good
+>> permanent solution. I'll queue up reviewed patches in a separate branch,
+>> in the block tree, and help review fixes. I'm subscribed to linux-raid,
+>> but please do CC me as well.
+>
+> Thanks, I think there are some patches in shli/md/for-next which supposed
+> to be merge to 4.21, could you please help to merge them to your branch?
+> And I suppose you will send a patch to CREDITS for Shaohua.
+
++1
+
+Regards
+Xiao
