@@ -2,88 +2,127 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B135C43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 12:54:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEA48C43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 12:54:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 452DA208E3
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 12:54:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A47E121874
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 12:54:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728548AbfADMyk (ORCPT
+        id S1728564AbfADMyp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 07:54:40 -0500
-Received: from outbound-smtp04.blacknight.com ([81.17.249.35]:58519 "EHLO
-        outbound-smtp04.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726344AbfADMyj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 07:54:39 -0500
-Received: from mail.blacknight.com (pemlinmail03.blacknight.ie [81.17.254.16])
-        by outbound-smtp04.blacknight.com (Postfix) with ESMTPS id 06EB8988BA
-        for <linux-kernel@vger.kernel.org>; Fri,  4 Jan 2019 12:54:37 +0000 (UTC)
-Received: (qmail 12608 invoked from network); 4 Jan 2019 12:54:36 -0000
-Received: from unknown (HELO stampy.163woodhaven.lan) (mgorman@techsingularity.net@[37.228.229.96])
-  by 81.17.254.9 with ESMTPA; 4 Jan 2019 12:54:36 -0000
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Linux-MM <linux-mm@kvack.org>
-Cc:     David Rientjes <rientjes@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Vlastimil Babka <vbabka@suse.cz>, ying.huang@intel.com,
-        kirill@shutemov.name, Andrew Morton <akpm@linux-foundation.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Mel Gorman <mgorman@techsingularity.net>
-Subject: [PATCH 25/25] mm, compaction: Do not direct compact remote memory
-Date:   Fri,  4 Jan 2019 12:50:11 +0000
-Message-Id: <20190104125011.16071-26-mgorman@techsingularity.net>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20190104125011.16071-1-mgorman@techsingularity.net>
-References: <20190104125011.16071-1-mgorman@techsingularity.net>
+        Fri, 4 Jan 2019 07:54:45 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:51744 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726344AbfADMyp (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 07:54:45 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D5A06C068BF8;
+        Fri,  4 Jan 2019 12:54:44 +0000 (UTC)
+Received: from krava (unknown [10.43.17.222])
+        by smtp.corp.redhat.com (Postfix) with SMTP id B883D608C6;
+        Fri,  4 Jan 2019 12:54:42 +0000 (UTC)
+Date:   Fri, 4 Jan 2019 13:54:41 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Jin Yao <yao.jin@linux.intel.com>
+Cc:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com,
+        Linux-kernel@vger.kernel.org, ak@linux.intel.com,
+        kan.liang@intel.com, yao.jin@intel.com
+Subject: Re: [PATCH] perf stat: Poll for monitored tasks being alive in fork
+ mode
+Message-ID: <20190104125441.GF5481@krava>
+References: <1546568897-16123-1-git-send-email-yao.jin@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1546568897-16123-1-git-send-email-yao.jin@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Fri, 04 Jan 2019 12:54:45 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remote compaction is expensive and possibly counter-productive. Locality
-is expected to often have better performance characteristics than remote
-high-order pages. For small allocations, it's expected that locality is
-generally required or fallbacks are possible. For larger allocations such
-as THP, they are forbidden at the time of writing but if __GFP_THISNODE
-is ever removed, then it would still be preferable to fallback to small
-local base pages over remote THP in the general case. kcompactd is still
-woken via kswapd so compaction happens eventually.
+On Fri, Jan 04, 2019 at 10:28:17AM +0800, Jin Yao wrote:
+> Following test shows the stat keeps running even if no longer
+> task to monitor (mgen exits at ~5s).
+> 
+> perf stat -e cycles -p `pgrep mgen` -I1000 -- sleep 10
+>             time             counts unit events
+>      1.000148916      1,308,365,864      cycles
+>      2.000379171      1,297,269,875      cycles
+>      3.000556719      1,297,187,078      cycles
+>      4.000914241        761,261,827      cycles
+>      5.001306091      <not counted>      cycles
+>      6.001676881      <not counted>      cycles
+>      7.002046336      <not counted>      cycles
+>      8.002405651      <not counted>      cycles
+>      9.002766625      <not counted>      cycles
+>     10.001395827      <not counted>      cycles
+> 
+> We'd better finish stat immediately if there's no longer task to
+> monitor.
+> 
+> After:
+> 
+> perf stat -e cycles -p `pgrep mgen` -I1000 -- sleep 10
+>             time             counts unit events
+>      1.000180062      1,236,592,661      cycles
+>      2.000421539      1,223,733,572      cycles
+>      3.000609910      1,297,047,663      cycles
+>      4.000807545      1,297,215,816      cycles
+>      5.001001578      1,297,208,032      cycles
+>      6.001390345        582,343,659      cycles
+> sleep: Terminated
+> 
+> Now the stat exits immediately when the monitored tasks ends.
+> 
+> Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
+> ---
+>  tools/perf/builtin-stat.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+> index 63a3afc..71f3bc8 100644
+> --- a/tools/perf/builtin-stat.c
+> +++ b/tools/perf/builtin-stat.c
+> @@ -553,6 +553,13 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
+>  
+>  		if (interval || timeout) {
+>  			while (!waitpid(child_pid, &status, WNOHANG)) {
+> +				if (!is_target_alive(&target,
+> +					evsel_list->threads) &&
+> +					(child_pid != -1)) {
 
-While this patch potentially has both positive and negative effects,
-it is best to avoid the possibility of remote compaction given the cost
-relative to any potential benefit.
+do we need that child_pid check? we just returned from waitpid
+so we should be ok.. we just make the race window smaller
 
-Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
----
- mm/compaction.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+could we just do:
 
-diff --git a/mm/compaction.c b/mm/compaction.c
-index ae70be023b21..cc17f0c01811 100644
---- a/mm/compaction.c
-+++ b/mm/compaction.c
-@@ -2348,6 +2348,16 @@ enum compact_result try_to_compact_pages(gfp_t gfp_mask, unsigned int order,
- 			continue;
- 		}
- 
-+		/*
-+		 * Do not compact remote memory. It's expensive and high-order
-+		 * small allocations are expected to prefer or require local
-+		 * memory. Similarly, larger requests such as THP can fallback
-+		 * to base pages in preference to remote huge pages if
-+		 * __GFP_THISNODE is not specified
-+		 */
-+		if (zone_to_nid(zone) != zone_to_nid(ac->preferred_zoneref->zone))
-+			continue;
-+
- 		status = compact_zone_order(zone, order, gfp_mask, prio,
- 				alloc_flags, ac_classzone_idx(ac), capture);
- 		rc = max(status, rc);
--- 
-2.16.4
+				if (!is_target_alive(&target, evsel_list->threads)) {
+					kill(child_pid, SIGTERM);
+					break;
+				}
 
+also I'm not sure we should do this only under new option,
+as it might break people's scripts.. thoughts?
+
+jirka
+
+> +					kill(child_pid, SIGTERM);
+> +					break;
+> +				}
+> +
+>  				nanosleep(&ts, NULL);
+>  				if (timeout)
+>  					break;
+> -- 
+> 2.7.4
+> 
