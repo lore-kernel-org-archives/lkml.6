@@ -1,112 +1,113 @@
 Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	FSL_HELO_FAKE,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11B55C43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 05:23:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7E98C4363B
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 05:33:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9DFE2070D
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 05:23:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 966082184B
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 05:33:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pad8KbEU"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="nCOclVH4";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="aS7nstyn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726459AbfADFXB (ORCPT
+        id S1726660AbfADFdR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 00:23:01 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:34513 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726000AbfADFXB (ORCPT
+        Fri, 4 Jan 2019 00:33:17 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:49046 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726080AbfADFdQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 00:23:01 -0500
-Received: by mail-wr1-f66.google.com with SMTP id j2so35678572wrw.1;
-        Thu, 03 Jan 2019 21:22:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=wZGxGpHvNGZ/vjEcXF5ZcR+wHaQzCOAH1JLHCYtcK9s=;
-        b=pad8KbEU7eu6ykvKXqF46s6E4OKSPQdoD33tGbtX3qTVLJhpUKmjq33zQPenABBZbc
-         9aK3An6BHNzE9YZc1x56qeJPnUR5LEhRhNX/sWAtJb9Dqnh6nIcjXq09GIGBPYCrJSjI
-         zjMp5XajsCssHSVmrPU/oXHTstcqO7a1ugMvwWea/Av/qyLyIM4CDdntZQtKOYYMEebn
-         C3IVzGUWTCw4JVyhXLA+AjBc+gPCCwjTX1HVRCnOX+1bkBis8V9A7AZoCylyN5Rfh53/
-         P6eFDoXXxad7Bh5h6Qn8aKuJUS7ukwpvt4dNgPLsC81rQgezjTGAKL4ESSpmliuMMG8d
-         SsbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=wZGxGpHvNGZ/vjEcXF5ZcR+wHaQzCOAH1JLHCYtcK9s=;
-        b=DPhM4oaGsT8NMI59CjJqVuctqPfWiWMuNQ1dx7tI0x2uwwgalVLbsldczL6P8GxTIU
-         C9cL2m3HfmSC8ll2bdhmiSJFJ19Mu3gJQW8cbrhiRupqKUZu/sRpvfAZHYfOhU3K8AUw
-         gE2vgE4qXo7acik28pU1YBO6Qv1+NorXw6iEucSiOxYsqBgQB8ENpdLYUdpC73EvdIMz
-         0eCh1Lz0gRpG7FiBpzTSdsbBkYElX2gvpAy+ya6tsSA6jM4UJUtHn2ONpzNaQlJ6yCuf
-         IKfB0oatRu3zgnoKo1oPX9y0R3KUQT9dOT3K5QAebdhgknYrvoY4OLF265iUYvPebxwo
-         jw0g==
-X-Gm-Message-State: AJcUukeO1v2mibo8KMlcKKe+qYQBBfjmpU1GGcucIvKq171YtlACtfw7
-        H+N4JzOF4kJyQNm7ctSfm8Q=
-X-Google-Smtp-Source: ALg8bN52W2XeCTOUE/OITjOGr0BAFctnMm6ExkVTPBSIBrM1Zu9eS/nzGbbhlwupZ/28g5T79cAGNg==
-X-Received: by 2002:adf:e08c:: with SMTP id c12mr40976396wri.199.1546579378932;
-        Thu, 03 Jan 2019 21:22:58 -0800 (PST)
-Received: from google.com ([2401:fa00:fc:1:6924:4b22:cf4b:bbca])
-        by smtp.gmail.com with ESMTPSA id a62sm159909wmf.47.2019.01.03.21.22.55
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 03 Jan 2019 21:22:58 -0800 (PST)
-Date:   Fri, 4 Jan 2019 13:22:51 +0800
-From:   Randall Huang <ihhuang@abmail.org>
-To:     "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     jejb@linux.vnet.ibm.com, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, huangrandall@google.com
-Subject: Re: [PATCH] scsi: associate bio write hint with WRITE CDB
-Message-ID: <20190104052251.GA205256@google.com>
-References: <20181226041504.66283-1-huangrandall@google.com>
- <20190103075133.GA5141@infradead.org>
- <20190103094755.GA96532@google.com>
- <e5bc96cd-1b48-3b7e-706f-4cbbd1a040a4@interlog.com>
- <6152b478ea77dacf57eef6f758ba795f756cd3da.camel@redhat.com>
- <yq1ef9t81fh.fsf@oracle.com>
+        Fri, 4 Jan 2019 00:33:16 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 2D8E6602FC; Fri,  4 Jan 2019 05:33:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1546579995;
+        bh=QfVDK0arXJGcMqczJKialiExv6QEPIjm00eAICy65tM=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=nCOclVH4NqMf0jncIMg8xna1LeYRD1OO4i3yUnWqZMx3cLeRMpPnWQRBKAn6UBFhV
+         03cL22W5l/6rWZj5MBgNgIzGabspD5sqE2S1w/SAkwRgxzApKeG1aw44pJlbVGRCCC
+         H5xH6phGBFlbIAhl9FR0w/8kzk07FcJFMdr7S9lI=
+Received: from [10.79.129.4] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: rnayak@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id AF36760364;
+        Fri,  4 Jan 2019 05:33:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1546579994;
+        bh=QfVDK0arXJGcMqczJKialiExv6QEPIjm00eAICy65tM=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=aS7nstynPOwykpEwuJYVJKNkNpBKbHLNkngoX5xonHYDPNstBbvK7j51mUQ1sTlRT
+         3GNJpVe3tYQyQPPSV8cNPS8vLbhup8z2pNIaSJvfordrtkblo/EzoyibwpZeiQad+m
+         ay7IFy1XUTTeeny8YyK9IK0bdtWfP6yyJoNjzxa8=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AF36760364
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
+Subject: Re: [PATCH v8 01/10] dt-bindings: opp: Introduce qcom-opp bindings
+To:     Rob Herring <robh@kernel.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        David Collins <collinsd@codeaurora.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        devicetree@vger.kernel.org,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20181221085622.25573-1-rnayak@codeaurora.org>
+ <20181221085622.25573-2-rnayak@codeaurora.org>
+ <CAL_Jsq+d=38WZ90i=HbUAQvNFvH-qLJEvw_H-g8kQegdw75FZA@mail.gmail.com>
+From:   Rajendra Nayak <rnayak@codeaurora.org>
+Message-ID: <5696a7ff-86ef-d751-525e-ff5e296b9b60@codeaurora.org>
+Date:   Fri, 4 Jan 2019 11:03:09 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <yq1ef9t81fh.fsf@oracle.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAL_Jsq+d=38WZ90i=HbUAQvNFvH-qLJEvw_H-g8kQegdw75FZA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 03, 2019 at 11:57:38PM -0500, Martin K. Petersen wrote:
+
+
+On 1/4/2019 12:13 AM, Rob Herring wrote:
+> On Fri, Dec 21, 2018 at 2:56 AM Rajendra Nayak <rnayak@codeaurora.org> wrote:
+>>
+>> On Qualcomm Technologies, Inc. platforms, an OPP node needs
+>> to describe an additional level/corner value that is then communicated
+>> to a remote microprocessor by the CPU, which then takes some
+>> actions (like adjusting voltage values across various rails)
+>> based on the value passed.
+>>
+>> Describe these bindings in the qcom-opp bindings document.
+>>
+>> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+>> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+>> Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+>> Reviewed-by: Rob Herring <robh@kernel.org>
 > 
-> Ewan,
+> And rescinded...
 > 
-> > SBC-5 says that support for the grouping function is indicated by the
-> > GROUP_SUP bit in the Extended Inquiry VPD page (86h).  I'm not sure
-> > how many devices actually support that page though.  Probably most
-> > don't.
+> [...]
 > 
-> Several devices support it, albeit for various different purposes. It's
-> one of these wonderful features whose interpretation was left outside
-> the scope of the spec for a long time.
+>> +Required properties:
+>> +- qcom,level: On Qualcomm platforms an OPP node can describe a positive value
+>> +representing a corner/level that's communicated with a remote microprocessor
+>> +(usually called the RPM) which then translates it into a certain voltage on
+>> +a voltage rail.
 > 
-> So even though we absolutely and positively need to make setting GROUP
-> NUMBER conditional on GROUP_SUP being reported, we also need additional
-> information from the storage about how the field should be interpreted.
+> Now we have Mediatek adding mtk,level...[1]
 > 
-> The official way to report hinting is for the device to implement the IO
-> Advice Hints Grouping mode page. I wrote some code to support that but
-> no vendors that I know of ended up actually shipping an implementation.
-> A few implemented my older I/O class proposal but didn't ship that
-> either despite really convincing performance results.
-> 
-> If Randall has access to a device which implements hinting, I'd love to
-> know more.
-I am working on Android phone.
-The idea is to enable write hint for Turbo write UFS feature.
-Turbo write feature in UFS 3.x is under discussion in JEDEC JC-64. 
-This patch is the under-lying framework for supporting this feature.
-> 
-> -- 
-> Martin K. Petersen	Oracle Linux Engineering
+> Create something common. Just 'opp-level' perhaps.
+
+Sure Rob, I will resubmit with something more generic so it can
+be used across SoC vendors.
