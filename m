@@ -7,43 +7,43 @@ X-Spam-Status: No, score=-14.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29E36C43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 17:08:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6D38C43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 17:08:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1C7A218D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 17:08:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8ADAE218D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 17:08:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546621721;
-	bh=zR/CUkkZyN6m/uYCImEhY7M+n5J2xLOcVLIP3AtiBo8=;
+	s=default; t=1546621726;
+	bh=BPj0J1BiSeJgM8zRFGw+k8daP0vn2z24ikffowNPjRA=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=1M5/HqTkbL32finlZtTJ/pSZZOQp/lp5IiH1FIWQQbOJCO7RsiTz9JBbgxCss7Awu
-	 LBAsX+mSW5dI2fjMhqsZX4LOS7drMxFfknxstEm4tRehK5yGedUUYhHaB6ui88ECRR
-	 JbCqQ/7Kg2ZnzoH1CTig9aFwbn2k+g8Rzbd0LL+I=
+	b=PeXEeZEgy7f6yt3W6EdFa9/YIi1rwdWxOOoxEqDFKREw+bAvBd5PNc9/C8yjWIGqi
+	 YcAwsdmPtinojDlMN1USkovlQa8+9sxCyhc0QioMNnT6r9XK8hPvlUwtZatSYzhG9S
+	 AQyoJg0G+JrdRjnAfPZ/OywRGXIbJ4/FBDfPl10I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728540AbfADRIj (ORCPT
+        id S1728588AbfADRIp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 12:08:39 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:57792 "EHLO
+        Fri, 4 Jan 2019 12:08:45 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:57866 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726315AbfADRIj (ORCPT
+        with ESMTP id S1726315AbfADRIm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 12:08:39 -0500
+        Fri, 4 Jan 2019 12:08:42 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=aOtoosd4+lraNWrm4UzXbozQUEiWpsK/L4DGakb1hcw=; b=AhxFYaRFbm2c
-        8KD6rc0tuxKETWiEykZghs3cZp8NnlG5Dic7mIG+QkirnpACRZvbO8FBFAAS6KKR9vU+k1RKv3ByV
-        D7p+yG4M7hk38V2jqLhHzdlj6b6uO4PErhLy5trgEh6ottCKHOj8j7pcnxK0FB9A0YOi+PmnarqmT
-        ZCZj0=;
+        List-Archive; bh=d5yBQl7GhItGpxXtDdgJRkDb4DwgtP4xIKZU27aqlr0=; b=m5+/aLn66F/8
+        +R2U/FHXGlGj/xlaEkYYWjJRybMSdo+up51vrEHJeOq08uJkyJuug/XDCMhWBm1bLwSOCZ4uOay6v
+        7VwP2cPparliHxAAFXZFozfD+xaT+eL9Vc7iO8rRl5IHZC1ZjBIpg72f2x1fv71RxgTLREH1uLU1n
+        /MXhw=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gfSxV-0001mn-V4; Fri, 04 Jan 2019 17:08:34 +0000
+        id 1gfSxZ-0001n3-HC; Fri, 04 Jan 2019 17:08:37 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 7CCF011270A3; Fri,  4 Jan 2019 17:08:33 +0000 (GMT)
+        id 2F15511270A3; Fri,  4 Jan 2019 17:08:37 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
 To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
 Cc:     Mark Brown <broonie@kernel.org>, broonie@kernel.org,
@@ -51,11 +51,11 @@ Cc:     Mark Brown <broonie@kernel.org>, broonie@kernel.org,
         alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
         jsarha@ti.com, robh+dt@kernel.org, misael.lopez@ti.com,
         alsa-devel@alsa-project.org
-Subject: Applied "ASoC: ti: davinci-mcasp: Add support for GPIO mode of the pins" to the asoc tree
-In-Reply-To:  <20190103140552.29809-4-peter.ujfalusi@ti.com>
+Subject: Applied "ASoC: ti: davinci-mcasp: Move context save/restore to runtime_pm callbacks" to the asoc tree
+In-Reply-To:  <20190103140552.29809-2-peter.ujfalusi@ti.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190104170833.7CCF011270A3@debutante.sirena.org.uk>
-Date:   Fri,  4 Jan 2019 17:08:33 +0000 (GMT)
+Message-Id: <20190104170837.2F15511270A3@debutante.sirena.org.uk>
+Date:   Fri,  4 Jan 2019 17:08:37 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -63,7 +63,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: ti: davinci-mcasp: Add support for GPIO mode of the pins
+   ASoC: ti: davinci-mcasp: Move context save/restore to runtime_pm callbacks
 
 has been applied to the asoc tree at
 
@@ -88,227 +88,201 @@ to this mail.
 Thanks,
 Mark
 
-From 540f1ba7b3a5596827a3bfeaae9c5e754347c933 Mon Sep 17 00:00:00 2001
+From 6175471755075d256c1c654151fc1cad183c1e33 Mon Sep 17 00:00:00 2001
 From: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Date: Thu, 3 Jan 2019 16:05:52 +0200
-Subject: [PATCH] ASoC: ti: davinci-mcasp: Add support for GPIO mode of the
- pins
+Date: Thu, 3 Jan 2019 16:05:50 +0200
+Subject: [PATCH] ASoC: ti: davinci-mcasp: Move context save/restore to
+ runtime_pm callbacks
 
-All McASP pin can be configured as GPIO.
-Add gpiochip support for McASP and only enable it when the
-gpio-controller is present in the DT node.
+McASP can loose it's context when runtime_pm is disabled.
+Save and restore the context when suspending and resuming the device.
 
 Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/ti/davinci-mcasp.c | 159 ++++++++++++++++++++++++++++++++++-
- 1 file changed, 156 insertions(+), 3 deletions(-)
+ sound/soc/ti/davinci-mcasp.c | 136 +++++++++++++++++------------------
+ 1 file changed, 64 insertions(+), 72 deletions(-)
 
 diff --git a/sound/soc/ti/davinci-mcasp.c b/sound/soc/ti/davinci-mcasp.c
-index a6a470a76900..a3a67a8f0f54 100644
+index eeda6d5565bc..a10fcb5963c6 100644
 --- a/sound/soc/ti/davinci-mcasp.c
 +++ b/sound/soc/ti/davinci-mcasp.c
-@@ -29,6 +29,7 @@
- #include <linux/platform_data/davinci_asp.h>
- #include <linux/math64.h>
- #include <linux/bitmap.h>
-+#include <linux/gpio/driver.h>
- 
- #include <sound/asoundef.h>
- #include <sound/core.h>
-@@ -54,6 +55,7 @@ static u32 context_regs[] = {
- 	DAVINCI_MCASP_AHCLKXCTL_REG,
- 	DAVINCI_MCASP_AHCLKRCTL_REG,
- 	DAVINCI_MCASP_PDIR_REG,
-+	DAVINCI_MCASP_PFUNC_REG,
- 	DAVINCI_MCASP_RXMASK_REG,
- 	DAVINCI_MCASP_TXMASK_REG,
- 	DAVINCI_MCASP_RXTDM_REG,
-@@ -108,6 +110,10 @@ struct davinci_mcasp {
+@@ -108,7 +108,7 @@ struct davinci_mcasp {
  	/* Used for comstraint setting on the second stream */
  	u32	channels;
  
-+#ifdef CONFIG_GPIOLIB
-+	struct gpio_chip gpio_chip;
-+#endif
-+
- #ifdef CONFIG_PM
+-#ifdef CONFIG_PM_SLEEP
++#ifdef CONFIG_PM
  	struct davinci_mcasp_context context;
  #endif
-@@ -818,9 +824,6 @@ static int mcasp_common_hw_param(struct davinci_mcasp *mcasp, int stream,
- 	if (mcasp->version < MCASP_VERSION_3)
- 		mcasp_set_bits(mcasp, DAVINCI_MCASP_PWREMUMGT_REG, MCASP_SOFT);
  
--	/* All PINS as McASP */
--	mcasp_set_reg(mcasp, DAVINCI_MCASP_PFUNC_REG, 0x00000000);
--
- 	if (stream == SNDRV_PCM_STREAM_PLAYBACK) {
- 		mcasp_set_reg(mcasp, DAVINCI_MCASP_TXSTAT_REG, 0xFFFFFFFF);
- 		mcasp_clr_bits(mcasp, DAVINCI_MCASP_XEVTCTL_REG, TXDATADMADIS);
-@@ -1845,6 +1848,147 @@ static u32 davinci_mcasp_rxdma_offset(struct davinci_mcasp_pdata *pdata)
- 	return offset;
+@@ -1486,74 +1486,6 @@ static int davinci_mcasp_dai_probe(struct snd_soc_dai *dai)
+ 	return 0;
  }
  
-+#ifdef CONFIG_GPIOLIB
-+static int davinci_mcasp_gpio_request(struct gpio_chip *chip, unsigned offset)
+-#ifdef CONFIG_PM_SLEEP
+-static int davinci_mcasp_suspend(struct snd_soc_dai *dai)
+-{
+-	struct davinci_mcasp *mcasp = snd_soc_dai_get_drvdata(dai);
+-	struct davinci_mcasp_context *context = &mcasp->context;
+-	u32 reg;
+-	int i;
+-
+-	context->pm_state = pm_runtime_active(mcasp->dev);
+-	if (!context->pm_state)
+-		pm_runtime_get_sync(mcasp->dev);
+-
+-	for (i = 0; i < ARRAY_SIZE(context_regs); i++)
+-		context->config_regs[i] = mcasp_get_reg(mcasp, context_regs[i]);
+-
+-	if (mcasp->txnumevt) {
+-		reg = mcasp->fifo_base + MCASP_WFIFOCTL_OFFSET;
+-		context->afifo_regs[0] = mcasp_get_reg(mcasp, reg);
+-	}
+-	if (mcasp->rxnumevt) {
+-		reg = mcasp->fifo_base + MCASP_RFIFOCTL_OFFSET;
+-		context->afifo_regs[1] = mcasp_get_reg(mcasp, reg);
+-	}
+-
+-	for (i = 0; i < mcasp->num_serializer; i++)
+-		context->xrsr_regs[i] = mcasp_get_reg(mcasp,
+-						DAVINCI_MCASP_XRSRCTL_REG(i));
+-
+-	pm_runtime_put_sync(mcasp->dev);
+-
+-	return 0;
+-}
+-
+-static int davinci_mcasp_resume(struct snd_soc_dai *dai)
+-{
+-	struct davinci_mcasp *mcasp = snd_soc_dai_get_drvdata(dai);
+-	struct davinci_mcasp_context *context = &mcasp->context;
+-	u32 reg;
+-	int i;
+-
+-	pm_runtime_get_sync(mcasp->dev);
+-
+-	for (i = 0; i < ARRAY_SIZE(context_regs); i++)
+-		mcasp_set_reg(mcasp, context_regs[i], context->config_regs[i]);
+-
+-	if (mcasp->txnumevt) {
+-		reg = mcasp->fifo_base + MCASP_WFIFOCTL_OFFSET;
+-		mcasp_set_reg(mcasp, reg, context->afifo_regs[0]);
+-	}
+-	if (mcasp->rxnumevt) {
+-		reg = mcasp->fifo_base + MCASP_RFIFOCTL_OFFSET;
+-		mcasp_set_reg(mcasp, reg, context->afifo_regs[1]);
+-	}
+-
+-	for (i = 0; i < mcasp->num_serializer; i++)
+-		mcasp_set_reg(mcasp, DAVINCI_MCASP_XRSRCTL_REG(i),
+-			      context->xrsr_regs[i]);
+-
+-	if (!context->pm_state)
+-		pm_runtime_put_sync(mcasp->dev);
+-
+-	return 0;
+-}
+-#else
+-#define davinci_mcasp_suspend NULL
+-#define davinci_mcasp_resume NULL
+-#endif
+-
+ #define DAVINCI_MCASP_RATES	SNDRV_PCM_RATE_8000_192000
+ 
+ #define DAVINCI_MCASP_PCM_FMTS (SNDRV_PCM_FMTBIT_S8 | \
+@@ -1571,8 +1503,6 @@ static struct snd_soc_dai_driver davinci_mcasp_dai[] = {
+ 	{
+ 		.name		= "davinci-mcasp.0",
+ 		.probe		= davinci_mcasp_dai_probe,
+-		.suspend	= davinci_mcasp_suspend,
+-		.resume		= davinci_mcasp_resume,
+ 		.playback	= {
+ 			.channels_min	= 1,
+ 			.channels_max	= 32 * 16,
+@@ -1976,7 +1906,7 @@ static int davinci_mcasp_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	mcasp->num_serializer = pdata->num_serializer;
+-#ifdef CONFIG_PM_SLEEP
++#ifdef CONFIG_PM
+ 	mcasp->context.xrsr_regs = devm_kcalloc(&pdev->dev,
+ 					mcasp->num_serializer, sizeof(u32),
+ 					GFP_KERNEL);
+@@ -2196,11 +2126,73 @@ static int davinci_mcasp_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++#ifdef CONFIG_PM
++static int davinci_mcasp_runtime_suspend(struct device *dev)
 +{
-+	struct davinci_mcasp *mcasp = gpiochip_get_data(chip);
++	struct davinci_mcasp *mcasp = dev_get_drvdata(dev);
++	struct davinci_mcasp_context *context = &mcasp->context;
++	u32 reg;
++	int i;
 +
-+	if (mcasp->num_serializer && offset < mcasp->num_serializer &&
-+	    mcasp->serial_dir[offset] != INACTIVE_MODE) {
-+		dev_err(mcasp->dev, "AXR%u pin is  used for audio\n", offset);
-+		return -EBUSY;
++	for (i = 0; i < ARRAY_SIZE(context_regs); i++)
++		context->config_regs[i] = mcasp_get_reg(mcasp, context_regs[i]);
++
++	if (mcasp->txnumevt) {
++		reg = mcasp->fifo_base + MCASP_WFIFOCTL_OFFSET;
++		context->afifo_regs[0] = mcasp_get_reg(mcasp, reg);
++	}
++	if (mcasp->rxnumevt) {
++		reg = mcasp->fifo_base + MCASP_RFIFOCTL_OFFSET;
++		context->afifo_regs[1] = mcasp_get_reg(mcasp, reg);
 +	}
 +
-+	/* Do not change the PIN yet */
-+
-+	return pm_runtime_get_sync(mcasp->dev);
-+}
-+
-+static void davinci_mcasp_gpio_free(struct gpio_chip *chip, unsigned offset)
-+{
-+	struct davinci_mcasp *mcasp = gpiochip_get_data(chip);
-+
-+	/* Set the direction to input */
-+	mcasp_clr_bits(mcasp, DAVINCI_MCASP_PDIR_REG, BIT(offset));
-+
-+	/* Set the pin as McASP pin */
-+	mcasp_clr_bits(mcasp, DAVINCI_MCASP_PFUNC_REG, BIT(offset));
-+
-+	pm_runtime_put_sync(mcasp->dev);
-+}
-+
-+static int davinci_mcasp_gpio_direction_out(struct gpio_chip *chip,
-+					    unsigned offset, int value)
-+{
-+	struct davinci_mcasp *mcasp = gpiochip_get_data(chip);
-+	u32 val;
-+
-+	if (value)
-+		mcasp_set_bits(mcasp, DAVINCI_MCASP_PDOUT_REG, BIT(offset));
-+	else
-+		mcasp_clr_bits(mcasp, DAVINCI_MCASP_PDOUT_REG, BIT(offset));
-+
-+	val = mcasp_get_reg(mcasp, DAVINCI_MCASP_PFUNC_REG);
-+	if (!(val & BIT(offset))) {
-+		/* Set the pin as GPIO pin */
-+		mcasp_set_bits(mcasp, DAVINCI_MCASP_PFUNC_REG, BIT(offset));
-+
-+		/* Set the direction to output */
-+		mcasp_set_bits(mcasp, DAVINCI_MCASP_PDIR_REG, BIT(offset));
-+	}
++	for (i = 0; i < mcasp->num_serializer; i++)
++		context->xrsr_regs[i] = mcasp_get_reg(mcasp,
++						DAVINCI_MCASP_XRSRCTL_REG(i));
 +
 +	return 0;
 +}
 +
-+static void davinci_mcasp_gpio_set(struct gpio_chip *chip, unsigned offset,
-+				  int value)
++static int davinci_mcasp_runtime_resume(struct device *dev)
 +{
-+	struct davinci_mcasp *mcasp = gpiochip_get_data(chip);
++	struct davinci_mcasp *mcasp = dev_get_drvdata(dev);
++	struct davinci_mcasp_context *context = &mcasp->context;
++	u32 reg;
++	int i;
 +
-+	if (value)
-+		mcasp_set_bits(mcasp, DAVINCI_MCASP_PDOUT_REG, BIT(offset));
-+	else
-+		mcasp_clr_bits(mcasp, DAVINCI_MCASP_PDOUT_REG, BIT(offset));
-+}
++	for (i = 0; i < ARRAY_SIZE(context_regs); i++)
++		mcasp_set_reg(mcasp, context_regs[i], context->config_regs[i]);
 +
-+static int davinci_mcasp_gpio_direction_in(struct gpio_chip *chip,
-+					   unsigned offset)
-+{
-+	struct davinci_mcasp *mcasp = gpiochip_get_data(chip);
-+	u32 val;
-+
-+	val = mcasp_get_reg(mcasp, DAVINCI_MCASP_PFUNC_REG);
-+	if (!(val & BIT(offset))) {
-+		/* Set the direction to input */
-+		mcasp_clr_bits(mcasp, DAVINCI_MCASP_PDIR_REG, BIT(offset));
-+
-+		/* Set the pin as GPIO pin */
-+		mcasp_set_bits(mcasp, DAVINCI_MCASP_PFUNC_REG, BIT(offset));
++	if (mcasp->txnumevt) {
++		reg = mcasp->fifo_base + MCASP_WFIFOCTL_OFFSET;
++		mcasp_set_reg(mcasp, reg, context->afifo_regs[0]);
++	}
++	if (mcasp->rxnumevt) {
++		reg = mcasp->fifo_base + MCASP_RFIFOCTL_OFFSET;
++		mcasp_set_reg(mcasp, reg, context->afifo_regs[1]);
 +	}
 +
-+	return 0;
-+}
-+
-+static int davinci_mcasp_gpio_get(struct gpio_chip *chip, unsigned offset)
-+{
-+	struct davinci_mcasp *mcasp = gpiochip_get_data(chip);
-+	u32 val;
-+
-+	val = mcasp_get_reg(mcasp, DAVINCI_MCASP_PDSET_REG);
-+	if (val & BIT(offset))
-+		return 1;
++	for (i = 0; i < mcasp->num_serializer; i++)
++		mcasp_set_reg(mcasp, DAVINCI_MCASP_XRSRCTL_REG(i),
++			      context->xrsr_regs[i]);
 +
 +	return 0;
 +}
 +
-+static int davinci_mcasp_gpio_get_direction(struct gpio_chip *chip,
-+					    unsigned offset)
-+{
-+	struct davinci_mcasp *mcasp = gpiochip_get_data(chip);
-+	u32 val;
-+
-+	val = mcasp_get_reg(mcasp, DAVINCI_MCASP_PDIR_REG);
-+	if (val & BIT(offset))
-+		return 0;
-+
-+	return 1;
-+}
-+
-+static const struct gpio_chip davinci_mcasp_template_chip = {
-+	.owner			= THIS_MODULE,
-+	.request		= davinci_mcasp_gpio_request,
-+	.free			= davinci_mcasp_gpio_free,
-+	.direction_output	= davinci_mcasp_gpio_direction_out,
-+	.set			= davinci_mcasp_gpio_set,
-+	.direction_input	= davinci_mcasp_gpio_direction_in,
-+	.get			= davinci_mcasp_gpio_get,
-+	.get_direction		= davinci_mcasp_gpio_get_direction,
-+	.base			= -1,
-+	.ngpio			= 32,
-+};
-+
-+static int davinci_mcasp_init_gpiochip(struct davinci_mcasp *mcasp)
-+{
-+	if (!of_property_read_bool(mcasp->dev->of_node, "gpio-controller"))
-+		return 0;
-+
-+	mcasp->gpio_chip = davinci_mcasp_template_chip;
-+	mcasp->gpio_chip.label = dev_name(mcasp->dev);
-+	mcasp->gpio_chip.parent = mcasp->dev;
-+#ifdef CONFIG_OF_GPIO
-+	mcasp->gpio_chip.of_node = mcasp->dev->of_node;
 +#endif
 +
-+	return devm_gpiochip_add_data(mcasp->dev, &mcasp->gpio_chip, mcasp);
-+}
++static const struct dev_pm_ops davinci_mcasp_pm_ops = {
++	SET_RUNTIME_PM_OPS(davinci_mcasp_runtime_suspend,
++			   davinci_mcasp_runtime_resume,
++			   NULL)
++};
 +
-+#else /* CONFIG_GPIOLIB */
-+static inline int davinci_mcasp_init_gpiochip(struct davinci_mcasp *mcasp)
-+{
-+	return 0;
-+}
-+#endif /* CONFIG_GPIOLIB */
-+
- static int davinci_mcasp_probe(struct platform_device *pdev)
- {
- 	struct snd_dmaengine_dai_dma_data *dma_data;
-@@ -2069,6 +2213,15 @@ static int davinci_mcasp_probe(struct platform_device *pdev)
- 
- 	mcasp_reparent_fck(pdev);
- 
-+	/* All PINS as McASP */
-+	pm_runtime_get_sync(mcasp->dev);
-+	mcasp_set_reg(mcasp, DAVINCI_MCASP_PFUNC_REG, 0x00000000);
-+	pm_runtime_put(mcasp->dev);
-+
-+	ret = davinci_mcasp_init_gpiochip(mcasp);
-+	if (ret)
-+		goto err;
-+
- 	ret = devm_snd_soc_register_component(&pdev->dev,
- 					&davinci_mcasp_component,
- 					&davinci_mcasp_dai[pdata->op_mode], 1);
+ static struct platform_driver davinci_mcasp_driver = {
+ 	.probe		= davinci_mcasp_probe,
+ 	.remove		= davinci_mcasp_remove,
+ 	.driver		= {
+ 		.name	= "davinci-mcasp",
++		.pm     = &davinci_mcasp_pm_ops,
+ 		.of_match_table = mcasp_dt_ids,
+ 	},
+ };
 -- 
 2.20.1
 
