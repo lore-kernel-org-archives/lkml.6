@@ -2,146 +2,162 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1539AC43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 16:40:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1AEFC43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 16:40:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C762E21874
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 16:40:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AAA4D218FE
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 16:40:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=vanguardiasur-com-ar.20150623.gappssmtp.com header.i=@vanguardiasur-com-ar.20150623.gappssmtp.com header.b="YC2NDNh6"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FdWBrnnk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727192AbfADQki (ORCPT
+        id S1727435AbfADQkr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 11:40:38 -0500
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:33735 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726053AbfADQki (ORCPT
+        Fri, 4 Jan 2019 11:40:47 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:46713 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726715AbfADQkr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 11:40:38 -0500
-Received: by mail-vs1-f68.google.com with SMTP id p74so23026184vsc.0
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Jan 2019 08:40:37 -0800 (PST)
+        Fri, 4 Jan 2019 11:40:47 -0500
+Received: by mail-pl1-f196.google.com with SMTP id t13so17645774ply.13
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Jan 2019 08:40:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=vanguardiasur-com-ar.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=yt25EvumAxGBXY77K0QUdaShW7J/la+GpdwlOdqECMk=;
-        b=YC2NDNh6Z7e+SWDV/xAu9CWk6F5xYYWQrLajC8zjCRaZLFX9DQikC/h4ODU+jt+3jY
-         O36rE6TWRvJPSX/kAUZnWMOPyWr7Ngnjc/QgH7TwhAhXYqaZ7DE6hsb8MpX56HXbENle
-         Wt0Bv/5RbRBZSqmitFMl1NgH4wf31rIJ73MoOljOdc0+cdmckCdsknAVDIjzbmo62Uku
-         nK1kJyOrCCiiC05lXtHN5TrUsEPKOtXRRV9CvYLvHEre3cDuzv9vPyCcwhdAQL4VNWJy
-         EcytYBbR/R7bWbWu12J0EhH5X0Y+2/RQScS+PmSDMnsEwJgh6cpqVvVMIegRIw0jjIlV
-         rWEA==
+        d=gmail.com; s=20161025;
+        h=date:from:to:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=z36PibCGIMhXSvZ2wXmkDKSfkCKPppo96OJXliwX/2M=;
+        b=FdWBrnnkmFdRHVV7YLdV5OBhjA9PsG02+d0hvQtqj7mkGMsXp5shCvbWE2qyf/ki1A
+         2EgDYuDJBp7uatgGJYYfPED5zU733HifSOF/qbvXbtMDd8cZbWBsTLP3XOguR3kl9UNm
+         cguCYDlXhw6RqrlD/Il6fbPG6dapV94jHX9B9/SnKGeuI9p2LuwPRkKK9D3oOUEVatfZ
+         tGTEYSfUWwzq/CRi4chdt8jjZ5k9rwvdS6TeSp6b8Fukm6wlOwNv5nTibrRA0YICMe8P
+         rOya4Md0DVIyV6XSdh/xn/P/ZjPDXxMDiTlo8p8+UuNZA7QRsnj5AyCzMjM2i5Bcm9ve
+         eg6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=yt25EvumAxGBXY77K0QUdaShW7J/la+GpdwlOdqECMk=;
-        b=GkoStkhzE/SGi0/bFCOo2f7A+BRkt+o8MoIV19PhmKlrZOoQBDhnyTM/UAPBvRQ30z
-         /X4qxIi1kMbp0DBSxURsY912uPdlf1iT0Q3sezASFW3jhX2tmE13fllG7PEP5jGUxWE/
-         BFoZBk4fQD1fxqiqY9iUsaOpV9Yyn/LgwJl16gtq7Lg3XO1iOwBescvv3fP0DRgmRrxW
-         c3xxB+NBTveYmWYZsgfqCig7o2uwlRlhjA6o/hkzILfiHhZb7k6k1UZKdYdmzkD+u9K7
-         eDysq/J50i+PYzLo8sTidSvR4huFMoma5es7IRvh60n/JRUASQ/DPLsLiOD8nneiF27f
-         1r+Q==
-X-Gm-Message-State: AA+aEWb4R4Sxt3gXH7unmz079Anh2mLE9Nk5tw+4/FhK1e8c8upD+0AI
-        lmgfxLuhDOUQBGCZMsoHodZHfar5iP9pqQFj8sdnRA==
-X-Google-Smtp-Source: AFSGD/Wf2Bis0AvG/ZIo/SscZRqoNUyMt8qH8cwL8i+oad74jYPRs+sCc9cRA0ISn0QQW2c7VpVJm1qt7ZFlZ6UDmYo=
-X-Received: by 2002:a67:ff02:: with SMTP id v2mr20876316vsp.176.1546620036715;
- Fri, 04 Jan 2019 08:40:36 -0800 (PST)
+        h=x-gm-message-state:date:from:to:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=z36PibCGIMhXSvZ2wXmkDKSfkCKPppo96OJXliwX/2M=;
+        b=oyqgoLvIaYoGqQa1nSeIR7f2iUH3EEqiOZ1fC0UyTcleHcA3pgTVgv+EbxY+TH0CjP
+         A3p2+x0XE0Yr5Ua0dM/2IXLyvMi/lR2G/KtTh72EXnhILp98YtlHfedB8+ONsZvR4x4r
+         H9yP292NHU6DWTLdG+dDtqiUA74b9Gi3QM4Em4+EIv+Re3WfLh8xUnL91JYQS+XXpJNC
+         vMVmfikde8HZWVC6QRQaoBBfQv8vgnmQRky4NZG0fR8RguaZD20y82CaHYe8eJJ2gWPG
+         ha4IF5J+9Afgl2T+I29d13AKNXiX1ewzYpyNeef6UCIXZPjNsEALxNK3rNwizRWg1OuC
+         GLiw==
+X-Gm-Message-State: AJcUukdGDykxC+lz/WRw1uqDPWPEu+WgOOrrzr0e8ByVqLPmMEKET13T
+        seF3lY/ofMTDNHE4LRtfxTmT9aEwAFI=
+X-Google-Smtp-Source: ALg8bN4Sknhj9C78NfZneWPY6+lhtT+2rCcQExYD/u/VcnLGw/mkqVCiIKYEFoUiJVc/zU0hyPwq2Q==
+X-Received: by 2002:a17:902:b40d:: with SMTP id x13mr52449078plr.237.1546620046358;
+        Fri, 04 Jan 2019 08:40:46 -0800 (PST)
+Received: from Ideapad-330S ([49.206.14.132])
+        by smtp.gmail.com with ESMTPSA id o8sm115136162pfa.42.2019.01.04.08.40.44
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 04 Jan 2019 08:40:45 -0800 (PST)
+Date:   Fri, 4 Jan 2019 22:10:40 +0530
+From:   b-ak <anur.bhargav@gmail.com>
+To:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ASoC: tlv320aic32x4: Kernel OOPS while entering DAPM
+ standby mode
+Message-ID: <20190104164040.GA10873@Ideapad-330S>
+References: <20190102170633.GA9724@Ideapad-330S>
+ <20190103124554.GS1846@sirena.org.uk>
+ <20190103193421.GB18413@Ideapad-330S>
 MIME-Version: 1.0
-References: <20190103200146.GA26442@embeddedor>
-In-Reply-To: <20190103200146.GA26442@embeddedor>
-From:   Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
-Date:   Fri, 4 Jan 2019 13:40:24 -0300
-Message-ID: <CAAEAJfA_1tLk0nk-WOtwdpF3W70keyaT=YPQHzXo5+nvWiZR=A@mail.gmail.com>
-Subject: Re: [PATCH v2] drm/amdgpu_vm: fix boolean expressions
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Felix Kuehling <Felix.Kuehling@amd.com>,
-        Harish Kasiviswanathan <Harish.Kasiviswanathan@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/mixed; boundary="0F1p//8PRICkK4MW"
+Content-Disposition: inline
+In-Reply-To: <20190103193421.GB18413@Ideapad-330S>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hey Gustavo,
 
-On Thu, 3 Jan 2019 at 17:25, Gustavo A. R. Silva <gustavo@embeddedor.com> w=
-rote:
->
-> Fix boolean expressions by using logical AND operator '&&'
-> instead of bitwise operator '&'.
->
-> This issue was detected with the help of Coccinelle.
->
-> Fixes: 9a4b7d4c769e ("drm/amdgpu: Add vm context module param")
-> Cc: stable@vger.kernel.org
-> Reviewed-by: Felix Kuehling <Felix.Kuehling@amd.com>
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
-> Changes in v2:
->  - Update Fixes tag.
->
+--0F1p//8PRICkK4MW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-This just fixes a user warning that would be wrongly reported, but
-doesn't fix any other issue.
+On Fri, Jan 04, 2019 at 01:04:21AM +0530, b-ak wrote:
+> On Thu, Jan 03, 2019 at 12:45:54PM +0000, Mark Brown wrote:
+> > On Wed, Jan 02, 2019 at 10:36:33PM +0530, b-ak wrote:
+> > > During the bootup of the kernel, as soon as the DAPM framework kicks in
+> > > it pushes the codec into standy mode.
+> > > 
+> > > The existing TVL320AIC32x4 codec driver doesn't prepare the clock in
+> > > the probe function.
+> > > This leads to an OOPS when the DAPM tries to put it into standy by calling
+> > > clk_disable_unprepare()
+> > > 
+> > > This patch fixes that problem.
+> > 
+> > This isn't the best way of fixing this because it makes it look like
+> > there's a missing disable in the removal process.  What would be better
+> > would be to do what other drivers do and check to see what state we're
+> > transitioning from before we disable the clock in set_bias_level().  See
+> > drivers like wm8903.c for examples.
+> 
+> Hello Mark,
+> 
+> I will test the change and update the patch.
+> 
+> Thanks,
+> Bhargav
+> 
 
-Why stable?
+Hi Mark,
 
-Thanks,
-Eze
+I have updated the patch with the changes.
 
->  drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c b/drivers/gpu/drm/amd=
-/amdgpu/amdgpu_vm.c
-> index e73d152659a2..4cc0d1079935 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
-> @@ -3006,7 +3006,7 @@ int amdgpu_vm_init(struct amdgpu_device *adev, stru=
-ct amdgpu_vm *vm,
->         }
->         DRM_DEBUG_DRIVER("VM update mode is %s\n",
->                          vm->use_cpu_for_update ? "CPU" : "SDMA");
-> -       WARN_ONCE((vm->use_cpu_for_update & !amdgpu_gmc_vram_full_visible=
-(&adev->gmc)),
-> +       WARN_ONCE((vm->use_cpu_for_update && !amdgpu_gmc_vram_full_visibl=
-e(&adev->gmc)),
->                   "CPU update of VM recommended only for large BAR system=
-\n");
->         vm->last_update =3D NULL;
->
-> @@ -3136,7 +3136,7 @@ int amdgpu_vm_make_compute(struct amdgpu_device *ad=
-ev, struct amdgpu_vm *vm, uns
->         vm->pte_support_ats =3D pte_support_ats;
->         DRM_DEBUG_DRIVER("VM update mode is %s\n",
->                          vm->use_cpu_for_update ? "CPU" : "SDMA");
-> -       WARN_ONCE((vm->use_cpu_for_update & !amdgpu_gmc_vram_full_visible=
-(&adev->gmc)),
-> +       WARN_ONCE((vm->use_cpu_for_update && !amdgpu_gmc_vram_full_visibl=
-e(&adev->gmc)),
->                   "CPU update of VM recommended only for large BAR system=
-\n");
->
->         if (vm->pasid) {
-> --
-> 2.20.1
->
+Regards,
+Bhargav
 
 
---=20
-Ezequiel Garc=C3=ADa, VanguardiaSur
-www.vanguardiasur.com.ar
+--0F1p//8PRICkK4MW
+Content-Type: text/x-diff; charset=us-ascii
+Content-Disposition: attachment; filename="0001-ASoC-tlv320aic32x4-Kernel-OOPS-while-entering-DAPM-s.patch"
+
+From 5c0530506bd6d167db4f40d5af5bb82b14debad5 Mon Sep 17 00:00:00 2001
+From: b-ak <anur.bhargav@gmail.com>
+Date: Tue, 1 Jan 2019 22:52:40 +0530
+Subject: [PATCH] ASoC: tlv320aic32x4: Kernel OOPS while entering DAPM standby
+ mode
+
+During the bootup of the kernel, the DAPM bias level is in the OFF
+state. As soon as the DAPM framework kicks in it pushes the codec
+into STANDBY state.
+
+The probe function doesn't prepare the clock, and STANDBY state
+does a clk_disable_unprepare() without checking the previous state.
+This leads to an OOPS.
+
+Not transitioning from an OFF state to the STANDBY state fixes the
+problem.
+
+Signed-off-by: b-ak <anur.bhargav@gmail.com>
+---
+ sound/soc/codecs/tlv320aic32x4.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/sound/soc/codecs/tlv320aic32x4.c b/sound/soc/codecs/tlv320aic32x4.c
+index e2b5a11b16d1..395f892776cd 100644
+--- a/sound/soc/codecs/tlv320aic32x4.c
++++ b/sound/soc/codecs/tlv320aic32x4.c
+@@ -822,6 +822,10 @@ static int aic32x4_set_bias_level(struct snd_soc_component *component,
+ 	case SND_SOC_BIAS_PREPARE:
+ 		break;
+ 	case SND_SOC_BIAS_STANDBY:
++		/* Initial cold start */
++		if (snd_soc_codec_get_bias_level(codec) == SND_SOC_BIAS_OFF)
++			break;
++
+ 		/* Switch off BCLK_N Divider */
+ 		snd_soc_component_update_bits(component, AIC32X4_BCLKN,
+ 				    AIC32X4_BCLKEN, 0);
+-- 
+2.19.1
+
+
+--0F1p//8PRICkK4MW--
