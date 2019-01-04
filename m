@@ -2,126 +2,607 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE682C43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 12:42:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68737C43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 12:43:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56E6221872
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 12:42:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 23BCA208E3
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 12:43:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=be.atlascopco.com header.i=@be.atlascopco.com header.b="Rr9MuQLk"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uCSoDSWt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727103AbfADMmc (ORCPT
+        id S1727223AbfADMnS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 07:42:32 -0500
-Received: from mail-eopbgr140048.outbound.protection.outlook.com ([40.107.14.48]:54055
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726218AbfADMmb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 07:42:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=be.atlascopco.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LDE6OfRsU23/j/i8XxmU1M/sh6zL6FgB2GAMBEpUYqk=;
- b=Rr9MuQLk5ue0ZtzvQU3YYPPQF9n7T9cNcU6GQSirSJljOaQI/jSUoLP1Q8jJJk3cN7FofCf6Zo2RvFt2B/IjWhg8Tjoww0odSBG+X4kAnZD+bIkQ5PQQTe6dAQAm6S+U/qbjE5oFBjBW34dfahSkfR+3ilcG64OsFBqHqUzamsE=
-Received: from AM0PR03MB4804.eurprd03.prod.outlook.com (20.178.21.77) by
- AM0PR03MB3683.eurprd03.prod.outlook.com (52.134.81.146) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1495.6; Fri, 4 Jan 2019 12:42:27 +0000
-Received: from AM0PR03MB4804.eurprd03.prod.outlook.com
- ([fe80::8c3d:1937:13d1:2034]) by AM0PR03MB4804.eurprd03.prod.outlook.com
- ([fe80::8c3d:1937:13d1:2034%3]) with mapi id 15.20.1495.005; Fri, 4 Jan 2019
- 12:42:27 +0000
-From:   Tom Putzeys <tom.putzeys@be.atlascopco.com>
-To:     "mingo@redhat.com" <mingo@redhat.com>,
-        "peterz@infradead.org" <peterz@infradead.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: CFS scheduler: spin_lock usage causes dead lock when
- smp_apic_timer_interrupt occurs
-Thread-Topic: CFS scheduler: spin_lock usage causes dead lock when
- smp_apic_timer_interrupt occurs
-Thread-Index: AQHUpCmA0rZUkh1AuUGWaL1Zt68HeKWfDRDJ
-Date:   Fri, 4 Jan 2019 12:42:27 +0000
-Message-ID: <AM0PR03MB4804FA468B7A006AEEA8592ABB8E0@AM0PR03MB4804.eurprd03.prod.outlook.com>
-References: <AM0PR03MB480425D5999E0D08DAB30204BB8E0@AM0PR03MB4804.eurprd03.prod.outlook.com>
-In-Reply-To: <AM0PR03MB480425D5999E0D08DAB30204BB8E0@AM0PR03MB4804.eurprd03.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=tom.putzeys@be.atlascopco.com; 
-x-originating-ip: [165.225.88.61]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM0PR03MB3683;6:ZopUOaeFZf81t3cAKQ3mvpkbv56PK/bd9+oCwCAxfhzHWDvp6ZW2fmFBaUK8u5WTJEnLpd4KnJ4k9lX+xHgtK9o1rO/qCnlfdOr6DaliiKmMTgW1R40RCx0xuCZb7N+DpprbJbwvugbNrdZV3pM5F7C+L1tiXNyjaNxYMnbO6N8hZqA/zDhwJ8br8fCX7+zfwsU4rIIck2hjUHgf6FnncahU2QoBhWBfXjoHSFZ6Bm2qfrkdcUOBhvpYeKJ/iX/I1GuJQf3GHknVjj+5CsCC+oQyhj0azr+b5rIZTnm9KEFXkxBfv25BXdqbngsnklf4xi42++h07B3y3XdrPtmpGYnqsRWFaLe0qQs/ODckBb6cys0HNLkP3W16LS+1p/bEcFQKEog9LkYctehuHAjUQWk14yswb7EE740NpGXjgWRwHCv8uzW2eXOHTQyLj0IvLsRuZlRwczb6BWZ6lIGWkg==;5:2I+KGzDhTMvQimwNI4rLFkNDddt6umBSOuhZhu5qUWZuOPW+N5/GhS+0xMUcGIzguk2i7PVa7OxVK2QJ6AemgLy1IV9A/AYygVilUrHqtL/rz/LwdXYX1O+PQx7EcQhiDzso/s7OMiEkfqVI/DdHslv71XnPQidgBa9cXu8qOB+Lf78zodtkYKsCB9CELcJ+UM72jJMut5MuMZgteX9VqA==;7:bbFzygNR5VsO3hgN+NWrv3J5NGwfCUtGwbyfiDaTAaeA+hKqu6fr4IBKAJyhssrX0CUy88vfvAogfea8F3CPhTKowCUu0hbc+GyMytTaSKuf4BimUsvL4vVl+SUW/zqPwHWb2Lg4x1stGumk6nx2DA==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 6026474d-ab08-4151-2198-08d6724215c1
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR03MB3683;
-x-ms-traffictypediagnostic: AM0PR03MB3683:
-x-microsoft-antispam-prvs: <AM0PR03MB368384CEE4B1DBBBB0D733EDBB8E0@AM0PR03MB3683.eurprd03.prod.outlook.com>
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(908002)(999002)(5005026)(6040522)(8220060)(2401047)(8121501046)(3231475)(944501520)(52105112)(3002001)(10201501046)(93006095)(93001095)(6055026)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123560045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:AM0PR03MB3683;BCL:0;PCL:0;RULEID:;SRVR:AM0PR03MB3683;
-x-forefront-prvs: 0907F58A24
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(396003)(366004)(136003)(346002)(376002)(189003)(199004)(81156014)(81166006)(186003)(8676002)(68736007)(33656002)(3846002)(14454004)(8936002)(2940100002)(6116002)(93156006)(105586002)(97736004)(66066001)(4326008)(478600001)(106356001)(25786009)(7736002)(305945005)(71190400001)(486006)(6306002)(71200400001)(9686003)(55016002)(44832011)(53936002)(11346002)(446003)(476003)(7696005)(5660300001)(86362001)(26005)(55236004)(2501003)(102836004)(76176011)(2906002)(110136005)(74316002)(256004)(14444005)(6506007)(966005)(316002)(99286004)(6436002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR03MB3683;H:AM0PR03MB4804.eurprd03.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:0;
-received-spf: None (protection.outlook.com: be.atlascopco.com does not
- designate permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: tN57Mb587XAd8OiZcL0UVgo2uvILeEatX2Ez+NnF8t2w+90Dfa3bZCEF0z1j4DBRQNyn/uoftbYSRWWYDlZVs3NL6OgnbsV6ehvW2veHfe/eYPOdNswqFPGmEhxy1jrozvaDJEkbXja3vR++6Ka7VxodxJ9tFHZrUXmG4ve553B5BveUctN1V1BGzd4fddmKkMmRkEcQgJg8G6rMEU0uqy+Mi4HXNbabGmVzwdwq6HUantpGbbtgxmspCUgyAo3sT3uKcfux4BUZRdhawT2Bb4/pq8YFj15jVj+m7J+nVecT2ZPCR06w9rCtlMmxInG6
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Fri, 4 Jan 2019 07:43:18 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:35118 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726218AbfADMnR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 07:43:17 -0500
+Received: by mail-pg1-f193.google.com with SMTP id s198so17480227pgs.2;
+        Fri, 04 Jan 2019 04:43:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=k7Ae9Gp3hmkTJbXoou1IGK5GNuzjk/zbC4Ak4ywdLrY=;
+        b=uCSoDSWtmQOJlVTf/1lghw54omGqG7iG37ohR2YYnN2K9c2w1an4jbLHm90Og6wvlt
+         LVGP6pgm3xpafi01BNOdYmtfv7537cYXpJHl3RNOLsnxkcqFDlR4CyYNGDZXQ0JGSjtG
+         oHHvZYMXpNPBV53NfZN2NOUch8/DZZEHNOG3GsF+NlnIz3M5Sgf/RpwD/uhbAFR+4gZz
+         i2y/zX79Rcgj7P8PdC7/W7yxiTx2Eymd6VTA11qbF9bsSnUV+QvenZ/VOY0aMCa73OHU
+         H55BQlY12oaxnEWPK2+pdvR2eDrKBz98TCbYfcX67QvWWUBU9asY8EFvXeqDIHyiGh7C
+         15pg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=k7Ae9Gp3hmkTJbXoou1IGK5GNuzjk/zbC4Ak4ywdLrY=;
+        b=uhCoXamGYYo2NNWBofwGMizO/gbF3jShP2+D6gcAGxuxVNi4zf7F+j7mqegnVkrELJ
+         aMpKKTWbe98VaTi9VozOrBM3XCVYS6Ze8ThjzHtkgDsOsY4DdhS9PFmHsVZzwvUJzdJV
+         2xyqK0YLdb4C+mNqb2zjQjoUonpLDqU/uaaLNViKbrWAhcuvz5BP2aT0iRwIMltafrkq
+         uA2HGCMysfXGOGsw6MQsCFAtQqHasQeTMgg6UJBH7gJl3+tx7szuEP/KCHfvi08GPAGd
+         s5F751PsJQdLKIA1if0l1fzRtt9WC64fvfKnViUASIwthKHIwvQX0wLVV3CcSf5LA5cx
+         dxeA==
+X-Gm-Message-State: AJcUuke6D5eXGccj2AaBL3uCuNAhN2yQJDnwst7ScKKz4j0e7aVrRclS
+        KMVcFLbGIHUJQSpRXlcBRNr6p4AXBBx7BKDi
+X-Google-Smtp-Source: ALg8bN4Uyy+ibrbPc5cdUr7CwJ3ZP93Geq+zlxlAFtm7qlSailzEsscw9O+pftST/I36G7Dve78Y6A==
+X-Received: by 2002:a63:ac1a:: with SMTP id v26mr1564725pge.293.1546605796027;
+        Fri, 04 Jan 2019 04:43:16 -0800 (PST)
+Received: from [10.8.8.190] ([89.238.186.237])
+        by smtp.gmail.com with ESMTPSA id m3sm71820847pgl.69.2019.01.04.04.43.06
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 04 Jan 2019 04:43:15 -0800 (PST)
+Subject: Re: [PATCH RFC lora-next 2/4] net: lora: sx1301: add minimal to get
+ AGC working prior to tx work
+To:     =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
+Cc:     starnight@g.ncu.edu.tw, jiri@resnulli.us,
+        linux-lpwan@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
+        Ben Whitten <ben.whitten@lairdtech.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org
+References: <20181219155616.9547-1-ben.whitten@lairdtech.com>
+ <20181219155616.9547-3-ben.whitten@lairdtech.com>
+ <8484168b-46bd-afae-6541-5a4b1db26557@suse.de>
+From:   Ben Whitten <ben.whitten@gmail.com>
+Message-ID: <73275872-d130-bdee-7d75-8b3f83ba4cfd@gmail.com>
+Date:   Fri, 4 Jan 2019 21:42:59 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-X-OriginatorOrg: be.atlascopco.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6026474d-ab08-4151-2198-08d6724215c1
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Jan 2019 12:42:27.7179
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 556e6b1f-b49d-4278-8baf-db06eeefc8e9
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR03MB3683
+In-Reply-To: <8484168b-46bd-afae-6541-5a4b1db26557@suse.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Ingo and Peter,
 
-I would like to report a possible bug in the CFS scheduler causing a dead l=
-ock.=A0
 
-We suspect this bug to have caused intermittent yet highly-persistent syste=
-m freezes on our quad-core SMP systems.
+On 29/12/2018 09:58, Andreas Färber wrote:
+> Hi Ben,
+> 
+> Am 19.12.18 um 16:56 schrieb Ben Whitten:
+>> As part of initialisation when opening the lora device after loading
+>> the AGC firmware we need to satisfy its startup procedure which involves
+>> a few steps;
+>>
+>> Loading a 16 entry lookup table.
+>> For this I have hard coded the laird ETSI certified table for use on the
+>> RG186-M2 (EU) cards, this will need investigation on how other devices
+>> load calibration data.
+> 
+> Isn't calibration performed before this firmware is initialized? I left
+> out reading the values back from firmware previously, but that should
+> get implemented. In the userspace implementation, do you get these from
+> a config file or did you modify the reference code to hardcode them?
 
-We noticed the problem on 4.1.17 preempt-rt but we suspect the problematic =
-code is not linked to the preempt-rt patch and is also present in the lates=
-t 4.20 kernel.
+The calibration you refer to is the IQ offset calibration, as far as
+I can tell this is a separate thing from the power table the chip uses.
+In the user space implementation these values are placed in the config
+file.
 
-The problem concerns the use of spin_lock to lock cfs_b in a situation wher=
-e the spin lock is used in an interrupt handler:
--  __run_hrtimer (in kernel/time/hrtimer.c) calls fn(timer) with IRQ's enab=
-led. This can call sched_cfs_period_timer() (in kernel/sched/fair.c) which =
-locks cfs_b.=A0
-- the hard IRQ smp_apic_timer_interrupt can then occur. It can call ttwu_qu=
-eue() which grabs the spin lock for its CPU run queue and can then try to e=
-nqueue a task via the CFS scheduler.
-- this can call check_enqueue_throttle() which can call assign_cfs_rq_runti=
-me() which tries to obtain the cfs_b lock. It is now blocked.
+> 
+> If these are different calibration values from the ones returned by
+> firmware, then a DT property would be an easy way to get
+> hardware-specific data into the driver. However, same as with your clk
+> config, that makes us dependent on DT, which we shouldn't be for ACPI
+> and USB. If we consider it configuration data rather than an immutable
+> fact, then we would need a netlink command to set them.
 
-The cfs_b lock uses spin_lock and so was not intended for use inside a hard=
- irq but the CFS scheduler does just that when it uses a hrtimer_interrupt =
-to wake up and enqueue work. Our initial impression is that  the cfs_b need=
-s to be locked using spin_lock_irqsave.
+Perhaps we can provide both mechanisms, a DT power table and a mechanism
+to set via netlink prior to opening the interface.
+As these power settings are hardware dependent and certified for our
+card by FCC and ETSI I would prefer to include in DT.
 
-My colleague Mike Pearce has submitted a bug report on Bugzilla 3 weeks ago=
-: https://bugzilla.kernel.org/show_bug.cgi?id=3D201993
+> 
+> In any case, we have some other vendors on this list, so hopefully
+> someone can comment. :)
+> 
+>>
+>> Selecting the correct channel to transmit on.
+>> Currently always 0 for the reference design.
+> 
+> Similarly: DT or netlink depending on whether fixed, and fall back to 0
+> as default.
 
-We would appreciate any feedback.
+Agreed, so on the DT would it be appropriate to have a handle in the
+sx1301 node with a link to the radio which can transmit, eg.
 
-Kind regards,
+tx = <&radio0 0>;
 
-Tom
+Allowing for both to be transmitters if that if a hardware choice.
 
-     =
+> 
+>>
+>> Then ending the AGC init procedure and seeing that it has come up.
+>>
+>> Signed-off-by: Ben Whitten <ben.whitten@lairdtech.com>
+>> ---
+>>   drivers/net/lora/sx1301.c | 254 +++++++++++++++++++++++++++++++++++++-
+>>   drivers/net/lora/sx1301.h |  16 +++
+>>   2 files changed, 268 insertions(+), 2 deletions(-)
+> 
+> Many thanks for working on this! Some nits inline.
+> 
+>> diff --git a/drivers/net/lora/sx1301.c b/drivers/net/lora/sx1301.c
+>> index e75df93b96d8..0c7b6d0b31af 100644
+>> --- a/drivers/net/lora/sx1301.c
+>> +++ b/drivers/net/lora/sx1301.c
+>> @@ -24,6 +24,121 @@
+>>   
+>>   #include "sx1301.h"
+>>   
+>> +static struct sx1301_tx_gain_lut tx_gain_lut[] = {
+>> +	{
+>> +		.dig_gain = 0,
+>> +		.pa_gain = 0,
+>> +		.dac_gain = 3,
+>> +		.mix_gain = 8,
+>> +		.rf_power = -3,
+>> +	},
+>> +	{
+>> +		.dig_gain = 0,
+>> +		.pa_gain = 0,
+>> +		.dac_gain = 3,
+>> +		.mix_gain = 9,
+>> +		.rf_power = 0,
+>> +	},
+>> +	{
+>> +		.dig_gain = 0,
+>> +		.pa_gain = 0,
+>> +		.dac_gain = 3,
+>> +		.mix_gain = 12,
+>> +		.rf_power = 3,
+>> +	},
+>> +	{
+>> +		.dig_gain = 0,
+>> +		.pa_gain = 0,
+>> +		.dac_gain = 3,
+>> +		.mix_gain = 13,
+>> +		.rf_power = 4,
+>> +	},
+>> +	{
+>> +		.dig_gain = 0,
+>> +		.pa_gain = 1,
+>> +		.dac_gain = 3,
+>> +		.mix_gain = 8,
+>> +		.rf_power = 6,
+>> +	},
+>> +	{
+>> +		.dig_gain = 0,
+>> +		.pa_gain = 1,
+>> +		.dac_gain = 3,
+>> +		.mix_gain = 9,
+>> +		.rf_power = 9,
+>> +	},
+>> +	{
+>> +		.dig_gain = 0,
+>> +		.pa_gain = 1,
+>> +		.dac_gain = 3,
+>> +		.mix_gain = 10,
+>> +		.rf_power = 10,
+>> +	},
+>> +	{
+>> +		.dig_gain = 0,
+>> +		.pa_gain = 1,
+>> +		.dac_gain = 3,
+>> +		.mix_gain = 11,
+>> +		.rf_power = 12,
+>> +	},
+>> +	{
+>> +		.dig_gain = 0,
+>> +		.pa_gain = 1,
+>> +		.dac_gain = 3,
+>> +		.mix_gain = 12,
+>> +		.rf_power = 13,
+>> +	},
+>> +	{
+>> +		.dig_gain = 0,
+>> +		.pa_gain = 1,
+>> +		.dac_gain = 3,
+>> +		.mix_gain = 13,
+>> +		.rf_power = 14,
+>> +	},
+>> +	{
+>> +		.dig_gain = 0,
+>> +		.pa_gain = 1,
+>> +		.dac_gain = 3,
+>> +		.mix_gain = 15,
+>> +		.rf_power = 16,
+>> +	},
+>> +	{
+>> +		.dig_gain = 0,
+>> +		.pa_gain = 2,
+>> +		.dac_gain = 3,
+>> +		.mix_gain = 10,
+>> +		.rf_power = 19,
+>> +	},
+>> +	{
+>> +		.dig_gain = 0,
+>> +		.pa_gain = 2,
+>> +		.dac_gain = 3,
+>> +		.mix_gain = 11,
+>> +		.rf_power = 21,
+>> +	},
+>> +	{
+>> +		.dig_gain = 0,
+>> +		.pa_gain = 2,
+>> +		.dac_gain = 3,
+>> +		.mix_gain = 12,
+>> +		.rf_power = 22,
+>> +	},
+>> +	{
+>> +		.dig_gain = 0,
+>> +		.pa_gain = 2,
+>> +		.dac_gain = 3,
+>> +		.mix_gain = 13,
+>> +		.rf_power = 24,
+>> +	},
+>> +	{
+>> +		.dig_gain = 0,
+>> +		.pa_gain = 2,
+>> +		.dac_gain = 3,
+>> +		.mix_gain = 14,
+>> +		.rf_power = 25,
+>> +	},
+>> +};
+>> +
+>>   static const struct regmap_range_cfg sx1301_regmap_ranges[] = {
+>>   	{
+>>   		.name = "Pages",
+>> @@ -184,6 +299,34 @@ static int sx1301_load_firmware(struct sx1301_priv *priv, int mcu,
+>>   	return 0;
+>>   }
+>>   
+>> +static int sx1301_agc_transaction(struct sx1301_priv *priv, unsigned int val,
+>> +				  unsigned int *status)
+>> +{
+>> +	int ret;
+>> +
+>> +	ret = regmap_write(priv->regmap, SX1301_CHRS, SX1301_AGC_CMD_WAIT);
+>> +	if (ret) {
+>> +		dev_err(priv->dev, "AGC transaction start failed\n");
+>> +		return ret;
+>> +	}
+>> +	usleep_range(1000, 2000);
+>> +
+>> +	ret = regmap_write(priv->regmap, SX1301_CHRS, val);
+>> +	if (ret) {
+>> +		dev_err(priv->dev, "AGC transaction value failed\n");
+>> +		return ret;
+>> +	}
+>> +	usleep_range(1000, 2000);
+> 
+> Looks like CHRS needs some regmap annotation as e.g. volatile?
+> 
+>> +
+>> +	ret = regmap_read(priv->regmap, SX1301_AGCSTS, status);
+>> +	if (ret) {
+>> +		dev_err(priv->dev, "AGC status read failed\n");
+>> +		return ret;
+>> +	}
+> 
+> Ditto for AGCSTS.
+> Otherwise we won't be able to enable caching and field access will
+> always be less performant than the previous code.
+
+Agreed, will do.
+
+> 
+>> +
+>> +	return 0;
+>> +}
+>> +
+>>   static int sx1301_agc_calibrate(struct sx1301_priv *priv)
+>>   {
+>>   	const struct firmware *fw;
+>> @@ -356,9 +499,53 @@ static int sx1301_load_all_firmware(struct sx1301_priv *priv)
+>>   		return -ENXIO;
+>>   	}
+>>   
+>> -	return 0;
+>> +	return ret;
+> 
+> Accidental change?
+
+Whoops yes.
+
+> 
+>>   }
+>>   
+>> +static int sx1301_load_tx_gain_lut(struct sx1301_priv *priv)
+>> +{
+>> +	struct sx1301_tx_gain_lut *lut = priv->tx_gain_lut;
+>> +	unsigned int val, status;
+>> +	int ret, i;
+>> +
+>> +	/* HACK use internal gain table in the short term */
+>> +	lut = tx_gain_lut;
+>> +	priv->tx_gain_lut_size = ARRAY_SIZE(tx_gain_lut);
+>> +
+>> +	for (i = 0; i < priv->tx_gain_lut_size; i++) {
+>> +		val = lut->mix_gain + (lut->dac_gain << 4) +
+>> +			(lut->pa_gain << 6);
+> 
+> Looks like we're writing to a bitfield? Please use constants for the
+> shifts then (maybe add masks, too?), and I'd rather reverse the order.
+
+Yes its a bit field, just needs to be written at once. Will do.
+
+> 
+>> +
+>> +		ret = sx1301_agc_transaction(priv, val, &status);
+>> +		if (ret) {
+>> +			dev_err(priv->dev, "AGC LUT load failed\n");
+>> +			return ret;
+>> +		}
+>> +		if (status != (0x30 + i)) {
+>> +			dev_err(priv->dev,
+>> +				"AGC firmware LUT init error: 0x%02X\n", val);
+> 
+> Continuing from 1/4, please avoid wasting the first like that.
+> Also I think x is more common than X?
+
+Sure thing.
+
+> 
+>> +			return -ENXIO;
+>> +		}
+>> +		lut++;
+>> +	}
+>> +
+>> +	/* Abort the transaction if there are less then 16 entries */
+>> +	if (priv->tx_gain_lut_size < SX1301_TX_GAIN_LUT_MAX) {
+>> +		ret = sx1301_agc_transaction(priv, SX1301_AGC_CMD_ABORT, &val);
+>> +		if (ret) {
+>> +			dev_err(priv->dev, "AGC LUT abort failed\n");
+>> +			return ret;
+>> +		}
+>> +		if (val != 0x30) {
+> 
+> Any insights into the magic number that would allow for a constant?
+
+No insights to the meaning of the bits, may just be a success constant.
+
+> 
+>> +			dev_err(priv->dev,
+>> +				"AGC firmware LUT abort error: 0x%02X\n", val);
+>> +			return -ENXIO;
+>> +		}
+>> +	}
+>> +
+>> +	return ret;
+>> +};
+>> +
+>>   static netdev_tx_t sx130x_loradev_start_xmit(struct sk_buff *skb,
+>>   					     struct net_device *netdev)
+>>   {
+>> @@ -378,6 +565,7 @@ static int sx130x_loradev_open(struct net_device *netdev)
+>>   {
+>>   	struct sx1301_priv *priv = netdev_priv(netdev);
+>>   	int ret;
+>> +	unsigned int val;
+> 
+> I'd prefer to switch those two lines, as you and I have done elsewhere.
+
+Sure will do.
+
+> 
+>>   
+>>   	netdev_dbg(netdev, "%s", __func__);
+>>   
+>> @@ -416,12 +604,74 @@ static int sx130x_loradev_open(struct net_device *netdev)
+>>   	if (ret)
+>>   		return ret;
+>>   
+>> -	/* TODO */
+>> +	/* TODO Load constant adjustments, patches */
+>> +
+>> +	/* TODO Frequency time drift */
+>> +
+>> +	/* TODO Configure lora multi demods, bitfield of active */
+>> +
+>> +	/* TODO Load concenrator multi channel frequencies */
+> 
+> concentrator
+> 
+>> +
+>> +	/* TODO enale to correlator on enabled frequenies */
+> 
+> enale?
+> frequencies
+> 
+>> +
+>> +	/* TODO PPMi, and modem enable */
+>>   
+>>   	ret = sx1301_load_all_firmware(priv);
+>>   	if (ret)
+>>   		return ret;
+>>   
+>> +	usleep_range(1000, 2000);
+>> +
+>> +	ret = regmap_read(priv->regmap, SX1301_AGCSTS, &val);
+>> +	if (ret) {
+>> +		dev_err(priv->dev, "AGC status read failed\n");
+>> +		return ret;
+>> +	}
+>> +	if (val != 0x10) {
+> 
+> Magic number
+> 
+>> +		dev_err(priv->dev, "AGC firmware init failure: 0x%02X\n", val);
+>> +		return -ENXIO;
+>> +	}
+>> +
+>> +	ret = sx1301_load_tx_gain_lut(priv);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	/* Load Tx freq MSBs
+>> +	 * Always 3 if f > 768 for SX1257 or f > 384 for SX1255
+>> +	 */
+> 
+> That comment style seems rather uncommon.
+
+An artifact of checkpatch, which wants no blank lines at the start of a 
+comment block.
+
+> What about SX1258?
+> Mark it as TODO/HACK or use a variable below?
+
+Variable sounds good populated from a case of tx radio types.
+Note we may have a problem if we try and use a radio outside of this 
+band as we may have to reinitialize the AGC to get this value in.
+
+> 
+>> +	ret = sx1301_agc_transaction(priv, 3, &val);
+>> +	if (ret) {
+>> +		dev_err(priv->dev, "AGC Tx MSBs load failed\n");
+>> +		return ret;
+>> +	}
+>> +	if (val != 0x33) {
+> 
+> Magic number
+
+Looks like a success message | loaded value. I'll add that.
+
+> 
+>> +		dev_err(priv->dev, "AGC firmware Tx MSBs error: 0x%02X\n", val);
+>> +		return -ENXIO;
+>> +	}
+>> +
+>> +	/* Load chan_select firmware option */
+>> +	ret = sx1301_agc_transaction(priv, 0, &val);
+> 
+> I'm guessing this is the mentioned hardcoded channel? I.e., radio A is
+> selected? Are there any hardware properties involved here (DT) or is
+> that a pure configuration choice (netlink)?
+
+I believe this is the transmit choice so it is bound by hardware, if 
+there is a board with two radios in the TX chain then it should be 
+select-able which one to transmit. Though I'm not sure how common that 
+use case will be.
+
+> 
+>> +	if (ret) {
+>> +		dev_err(priv->dev, "AGC chan select failed\n");
+>> +		return ret;
+>> +	}
+>> +	if (val != 0x30) {
+>> +		dev_err(priv->dev,
+>> +			"AGC firmware chan select error: 0x%02X", val);
+>> +		return -ENXIO;
+>> +	}
+>> +
+>> +	/* End AGC firmware init and check status */
+>> +	ret = sx1301_agc_transaction(priv, 0, &val);
+>> +	if (ret) {
+>> +		dev_err(priv->dev, "AGC radio select failed\n");
+>> +		return ret;
+>> +	}
+>> +	if (val != 0x40) {
+>> +		dev_err(priv->dev, "AGC firmware init error: 0x%02X", val);
+>> +		return -ENXIO;
+>> +	}
+> 
+> Could you move all that new code into an sx130x_agc_init() helper
+> function please?
+
+Yep will do.
+
+> 
+> Are those operations all reentrant, or do we need code for _close, too?
+
+I don't know if there is any shutdown procedure, I think on any open it 
+needs to reinitialize.
+
+> 
+> We should also think about locking a sequence of operations, like I did
+> for sx1276 iirc.
+
+I see you have just sent up a patch with that.
+
+> 
+>> +
+>>   	ret = open_loradev(netdev);
+>>   	if (ret)
+>>   		return ret;
+>> diff --git a/drivers/net/lora/sx1301.h b/drivers/net/lora/sx1301.h
+>> index dd2b7da94fcc..04c9af64c181 100644
+>> --- a/drivers/net/lora/sx1301.h
+>> +++ b/drivers/net/lora/sx1301.h
+>> @@ -20,6 +20,11 @@
+>>   #define SX1301_MCU_AGC_FW_VERSION 4
+>>   #define SX1301_MCU_AGC_CAL_FW_VERSION 2
+>>   
+>> +#define SX1301_AGC_CMD_WAIT 16
+>> +#define SX1301_AGC_CMD_ABORT 17
+> 
+> This would seem a good place for the status codes, too?
+
+Yep
+
+> 
+>> +
+>> +#define SX1301_TX_GAIN_LUT_MAX 16
+>> +
+>>   /* Page independent */
+>>   #define SX1301_PAGE     0x00
+>>   #define SX1301_VER      0x01
+>> @@ -105,6 +110,14 @@ static const struct reg_field sx1301_regmap_fields[] = {
+>>   		REG_FIELD(SX1301_EMERGENCY_FORCE_HOST_CTRL, 0, 0),
+>>   };
+>>   
+>> +struct sx1301_tx_gain_lut {
+>> +	unsigned int	dig_gain;
+>> +	unsigned int	pa_gain;
+>> +	unsigned int	dac_gain;
+>> +	unsigned int	mix_gain;
+>> +	int		rf_power; /* dBm measured at board connector */
+>> +};
+>> +
+>>   struct sx1301_priv {
+>>   	struct lora_dev_priv lora;
+>>   	struct device		*dev;
+>> @@ -112,6 +125,9 @@ struct sx1301_priv {
+>>   	struct gpio_desc *rst_gpio;
+>>   	struct regmap		*regmap;
+>>   	struct regmap_field *regmap_fields[ARRAY_SIZE(sx1301_regmap_fields)];
+>> +
+>> +	struct sx1301_tx_gain_lut tx_gain_lut[SX1301_TX_GAIN_LUT_MAX];
+>> +	u8 tx_gain_lut_size;
+>>   };
+>>   
+>>   int __init sx130x_radio_init(void);
+
+
+Thanks!
+Ben Whitten
