@@ -2,118 +2,127 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 346E7C43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 02:26:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8545EC43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 02:28:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE5E52184B
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 02:26:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ssbc8c61"
+	by mail.kernel.org (Postfix) with ESMTP id 5AFB8217F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 02:28:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726515AbfADC0e (ORCPT
+        id S1726563AbfADC2b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 21:26:34 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:44686 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726437AbfADC0e (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 21:26:34 -0500
-Received: by mail-pf1-f196.google.com with SMTP id u6so17536241pfh.11
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 18:26:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=t6FXvHIoL5V6ieq/6gT4KVrc2DPo1EeQkePL34Ostbg=;
-        b=Ssbc8c611j+YmWU6sLtBHTxqO1NqcHVz8Gg4no8nU286aGYMR6odZcfwQl37rRd2kQ
-         v80GiiCSNArWNoDZAYPlnH0VGKKldcU/V0JMaRdKyMHKO88Ia/MOrg9G53TyhNs29TU3
-         TeWxkORHWGKx9bDbwSQBsbIajsuNFwqPc02JrmdN/qBAqjn+qe7eASBofBoHw6hFhkKY
-         EGHWcpXzxFkg+BzxA0DeZxijzK4UBIZvffCC5zWOJrmiVLpRdgpaD/xbGlwN84X6Qkgw
-         HSchPANIMmXs4gvOG3LwCujYdmRnVtRxaMrqTauOCfWVbXkuMMAHlKVYNFoeF6ArRSgw
-         L/Og==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=t6FXvHIoL5V6ieq/6gT4KVrc2DPo1EeQkePL34Ostbg=;
-        b=Xh49BlbmAEgOpBp2VWHNeGC53FH1/hZV9R5afyo6FIVLayiZpxJmC88hpHLzQtFUZx
-         dNbyIlG5vgPrOhfB96vUvzDUyQpEqImjjsMvTP+/dSPyclYBUV8gbeBWNpwcpFgPkLTm
-         R5/eHRzAiw8MqLi4b60F4f85Gs4Q7QQYlz7jKokoptm7DRYj9FisZpEVYP1FpOXFmD/M
-         ybS5ZfLcL1B2rqxW5GRLa7iQ2zm0pa3/9HSKeNyAG1xTvcagJJyYH2yiGgr2KGxDKkzl
-         W+FEsAghZsJpux3bOdP+93NUAF/2cMB3xh3VeN/9cBMTjFdX7+BEBNT0Z5M7MCThiaaj
-         FyxQ==
-X-Gm-Message-State: AJcUukeSpIxjhWEKJzHJ/ktPomulCzZJLKnEsE06YctW80a5xScKVXAZ
-        a9orU/AisI8BjB9LlXvNtmE8SyZj
-X-Google-Smtp-Source: ALg8bN7/XMRPb6DvwJSM5HxtW7XJfMVWgBHcAfbTdNyMDmq0mnmIvi4+JdgjWJOm/jaeITsR2iZOzA==
-X-Received: by 2002:a65:4b82:: with SMTP id t2mr110706pgq.189.1546568793497;
-        Thu, 03 Jan 2019 18:26:33 -0800 (PST)
-Received: from ?IPv6:2402:f000:1:1501:200:5efe:166.111.71.49? ([2402:f000:1:1501:200:5efe:a66f:4731])
-        by smtp.gmail.com with ESMTPSA id g26sm74036839pfh.61.2019.01.03.18.26.31
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 03 Jan 2019 18:26:33 -0800 (PST)
-Subject: Re: [PATCH] fsi:fsi-sbefifo: Fix possible concurrency use-after-free
- bugs in sbefifo_user_release
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        dhowells@redhat.com, joel@jms.id.au, eajames@linux.vnet.ibm.com,
-        andrew@aj.id.au
-Cc:     linux-kernel@vger.kernel.org
-References: <20181226135618.12784-1-baijiaju1990@gmail.com>
- <0adee96b58a533bc8c5927039e96b5ed77c9bbad.camel@kernel.crashing.org>
-From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-Message-ID: <798fbb98-0cba-07f8-2165-180c63012e95@gmail.com>
-Date:   Fri, 4 Jan 2019 10:26:20 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Thu, 3 Jan 2019 21:28:31 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:59688 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726163AbfADC2b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Jan 2019 21:28:31 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4B81258E27;
+        Fri,  4 Jan 2019 02:28:31 +0000 (UTC)
+Received: from localhost.localdomain (ovpn-12-85.pek2.redhat.com [10.72.12.85])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 47D595C223;
+        Fri,  4 Jan 2019 02:28:23 +0000 (UTC)
+Subject: Re: [PATCH 1/2 v4] kdump: add the vmcoreinfo documentation
+To:     Kazuhito Hagio <k-hagio@ab.jp.nec.com>
+Cc:     "bhe@redhat.com" <bhe@redhat.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "kexec@lists.infradead.org" <kexec@lists.infradead.org>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "bp@alien8.de" <bp@alien8.de>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "dyoung@redhat.com" <dyoung@redhat.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20181220054044.30738-1-lijiang@redhat.com>
+ <20181220054044.30738-2-lijiang@redhat.com>
+ <4AE2DC15AC0B8543882A74EA0D43DBEC035656E1@BPXM09GP.gisp.nec.co.jp>
+From:   lijiang <lijiang@redhat.com>
+Message-ID: <bf26e868-9dfd-5344-df56-df8ff0442df0@redhat.com>
+Date:   Fri, 4 Jan 2019 10:28:20 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <0adee96b58a533bc8c5927039e96b5ed77c9bbad.camel@kernel.crashing.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <4AE2DC15AC0B8543882A74EA0D43DBEC035656E1@BPXM09GP.gisp.nec.co.jp>
+Content-Type: text/plain; charset=iso-2022-jp
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Fri, 04 Jan 2019 02:28:31 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+在 2019年01月04日 03:28, Kazuhito Hagio 写道:
+> Hi Lianbo,
+> 
+> -----Original Message-----
+>> +=======================
+>> +What is the VMCOREINFO?
+>> +=======================
+>> +
+>> +VMCOREINFO is a special ELF note section. It contains various
+>> +information from the kernel like structure size, page size, symbol
+>> +values, field offsets, etc. These data are packed into an ELF note
+>> +section and used by user-space tools like crash and makedumpfile to
+>> +analyze a kernel's memory layout.
+>> +
+>> +To dump the VMCOREINFO contents, one can do:
+>> +
+>> +# makedumpfile -g VMCOREINFO -x vmlinux
+> 
+> again, this command does not dump the VMCOREINFO in ELF note section.
+> It converts the vmlinux's debug infomation into a VMCOREINFO-like data.
+> So I don't think this command is suitable to introduce here.
+> 
 
+Thank you, Kazu.
 
-On 2019/1/4 8:47, Benjamin Herrenschmidt wrote:
-> On Wed, 2018-12-26 at 21:56 +0800, Jia-Ju Bai wrote:
->> In drivers/fsi/fsi-sbefifo.c, the functions sbefifo_user_release(),
->> sbefifo_user_read() and sbefifo_user_write() may be concurrently executed.
-> So after refreshing my mind, looking at the code and talking with Al, I
-> really dont' see what race you are trying to fix here.
->
-> read/write should never be concurrent with release for a given file and
-> the stuff we are protecting here is local to the file instance.
->
-> Do you have an actual problem you observed ?
->
+As you mentioned, makedumpfile in 'devel' branch can print VMCOREINFO in /proc/kcore,
+can i add the following command to this document?
 
-Thanks for the reply.
+#makedumpfile --mem-usage /proc/kcore -D
 
-In fact, this report is found by a static tool written by myself, 
-instead of real execution.
-My tool found that in some drivers, for the structure "struct 
-file_operations", the code in intetrfaces ".read" , "write" and 
-".release" are protected by the same lock.
-The functions kcs_bmc_read(), kcs_bmc_write() and kcs_bmc_release() are 
-examples.
-Thus, my tool inferred that the intetrfaces ".read" , "write" and 
-".release" of "struct file_operations" can be concurrently executed, and 
-generated this report.
-I manually checked this report, but I was not very sure of it, so I 
-marked it as a "possible bug" and reported it.
+>> +PG_lru|PG_private|PG_swapcache|PG_swapbacked|PG_slab|
+>> +PG_hwpoision|PG_head_mask
+>> +-----------------------------------------------------
+>> +
+>> +Page attributes. These flags are used to filter free pages.
+> 
+> Some of these are not used to filter *free* pages, so
+> 
+> ... used to filter various unnecessary pages.
+> 
 
- From your message, now I know my report is false, and ".read" , "write" 
-cannot be concurrently executed with ".release" for a given file.
-Sorry for my false report, and thanks for your message.
+Great. I will modify it in next post.
 
+And also merge the 'PG_buddy' and 'PG_offline'  into the PG_* flag here.
 
-Best wishes,
-Jia-Ju Bai
+Many thanks.
+
+Lianbo
+
+>> +PAGE_BUDDY_MAPCOUNT_VALUE or ~PG_buddy
+>> +--------------------------------------
+> 
+> then, this can be merged into the one above?
+> 
+>> +======
+>> +x86_64
+>> +======
+> ...
+>> +PAGE_OFFLINE_MAPCOUNT_VALUE(~PG_offline)
+>> +----------------------------------------
+> 
+> This looks not only for x86_64, and also can be merged into
+> the PG_* flags?
+> 
+> Thank you for your effort!
+> Kazu
+> 
+> 
