@@ -2,142 +2,113 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC059C43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 12:48:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECEDAC43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 12:48:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E645208E3
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 12:48:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MKDbmTc9"
+	by mail.kernel.org (Postfix) with ESMTP id C399B208E3
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 12:48:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727303AbfADMsa (ORCPT
+        id S1727414AbfADMsh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 07:48:30 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:38968 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725913AbfADMsa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 07:48:30 -0500
-Received: by mail-pg1-f194.google.com with SMTP id w6so17486269pgl.6;
-        Fri, 04 Jan 2019 04:48:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=RV+GgAS/Pr2cUU2iYuBAkonPM6k8Ugrxg2d/emVMNcs=;
-        b=MKDbmTc9vuv01Glg9+nobJQhJBUj98TI/Ki0ovdoVjhXeq6+hrzBmdOwRSCBbvUDzM
-         gpkNsLBGOc8SzfjF25rXaE8M4tGj1cxx0ZMuUUtMayNhkI+BoFwx4tkh9uLF9LtuwI5H
-         g/7shyG1i5T2OzpG4nKAinEhsIJ9Dyo+BpwpDkkjQLAs2aJx7veftC7ijFU3cdxWDa/C
-         ggp9dbFE4cqnyqE3/5KgeQSzkCfi7VfjdWfoWbFBtfum/ccfO7IbmQesDCt489yC+m6D
-         NnQlkLD5VfmJG8ZRgiz8Vjxy4Ggxgy1iKTM2DVQF4E6obPHTees/kzRAO/d0jjNhDhrS
-         wzqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RV+GgAS/Pr2cUU2iYuBAkonPM6k8Ugrxg2d/emVMNcs=;
-        b=IwkYxB3dHNbNXiwJ0sxHGmMbVoI1gj1P08xRxCYjUlPNtZJmIXhiCyXJAE9y8jwZq5
-         xfwE3WIW+54f1iafug2kX6BWDeW3uiXZdVMtGqftzJAyJJNWkrFvuY7/Pq16CvwsrpOU
-         7uK77hVo1I5E68YyFePG7JFtfer2+7p0JeGXYmFBrE3OlOZeDxhy0tu99TKdRQ72GVJe
-         +Xe8Q5P7BgJN2x58QfP5feM5HI3YwlJpAwow9jciDwAIXjBuA9diO3HgXg2s5mMnK3Y1
-         sx3fE5eFbve6IwFsZhX2Jzv+oTuHQNpQMQpuPn7VpbB5xwkW84nlBdU7+OgS2pD0o6We
-         zXdQ==
-X-Gm-Message-State: AA+aEWYx4sVLT2hEGClDVXwqRiW7uvvLu3VvQjfNS85qL5nOL7EaP5F/
-        1JLqo4TspIq1cAbK0alcNrOVT1/t2EXsPtrCVdU=
-X-Google-Smtp-Source: AFSGD/W3DywctE2EYC3hnOBaCT/J5jHvxBMCjmEN2aP8PPpMLSBikXwIRGqKjf//CUbYbH+f2WqU+SBScLjE1D+1/eM=
-X-Received: by 2002:a62:43c1:: with SMTP id l62mr53223487pfi.22.1546606107989;
- Fri, 04 Jan 2019 04:48:27 -0800 (PST)
+        Fri, 4 Jan 2019 07:48:37 -0500
+Received: from mail-oln040092069033.outbound.protection.outlook.com ([40.92.69.33]:11440
+        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725913AbfADMsf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 07:48:35 -0500
+Received: from HE1EUR02FT009.eop-EUR02.prod.protection.outlook.com
+ (10.152.10.60) by HE1EUR02HT080.eop-EUR02.prod.protection.outlook.com
+ (10.152.11.87) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1471.13; Fri, 4 Jan
+ 2019 12:48:32 +0000
+Received: from DB7PR07MB5353.eurprd07.prod.outlook.com (10.152.10.52) by
+ HE1EUR02FT009.mail.protection.outlook.com (10.152.10.103) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.1471.13 via Frontend Transport; Fri, 4 Jan 2019 12:48:32 +0000
+Received: from DB7PR07MB5353.eurprd07.prod.outlook.com
+ ([fe80::e1f9:8635:f629:eb8e]) by DB7PR07MB5353.eurprd07.prod.outlook.com
+ ([fe80::e1f9:8635:f629:eb8e%4]) with mapi id 15.20.1516.000; Fri, 4 Jan 2019
+ 12:48:31 +0000
+From:   Bernd Edlinger <bernd.edlinger@hotmail.de>
+To:     Ping-Ke Shih <pkshih@realtek.com>,
+        Larry Finger <Larry.Finger@lwfinger.net>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: [PATCH 0/4] rtlwifi: Fix issues with rtl8723ae
+Thread-Topic: [PATCH 0/4] rtlwifi: Fix issues with rtl8723ae
+Thread-Index: AQHUpCvMg4MWqNxywE621z+Jdf/AFQ==
+Date:   Fri, 4 Jan 2019 12:48:31 +0000
+Message-ID: <DB7PR07MB5353B3268997A3B1A56970A9E48E0@DB7PR07MB5353.eurprd07.prod.outlook.com>
+Accept-Language: en-US, en-GB, de-DE
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: AM5PR0201CA0011.eurprd02.prod.outlook.com
+ (2603:10a6:203:3d::21) To DB7PR07MB5353.eurprd07.prod.outlook.com
+ (2603:10a6:10:6e::26)
+x-incomingtopheadermarker: OriginalChecksum:1B54264B180A203E01A1FBAEEB98D30374BB930A10A02F9C581C65F8D3A33D1C;UpperCasedChecksum:CDF22793460A466D47AF062618B82DDFFE4B3F13425CDD43F101E5BDC1D5CF34;SizeAsReceived:8723;Count:62
+x-ms-exchange-messagesentrepresentingtype: 1
+x-tmn:  [ZAAJYT/6/kmuRUMhQPwfCUXKMi+p0Nee]
+x-microsoft-original-message-id: <e89c247e-6ef3-fabf-2924-936d5b07eac8@hotmail.de>
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;HE1EUR02HT080;6:ivSc8uocwlUwbGy4z4+Lx0c72WirNKFq62FTmSDn++rx1HVoDx4F5YPxDF9v829lyMAV6fY21vNjbjpFNFSwdZXOy/uTSo6i+2EU38s0yISwezFycFdwJkDVKa7bmWVCph2k73M51fLb4MJ3goVA4wCIM8xLFAtisQmJFwFrBPFp9+Anay1sdI5FjRKOo7zf0N10cpMnrPYlI+5JVpChcbb9odeLQBpZBpabJaHVbWQ6iCtdGRV82N7PDrTksYyR9HmGI8l6Mmk4DNkAHxHdYavRfEZV1fmasdRvfs0osVfPOfOF/hZ6Cmr9iVBEuTpXbua+EL/UOAKt1VIr9sPyOBPdRcUsM5O2/Dj7rLB/2CwF0iIoNkUiJPvDM+lW+sC1wkTPUVfmq96LDfLvKnxLb11Ce2eiOeTn/N7M7dXP0iwlxTYGTHUEkiGtBqefCmgG6MlmAuoPfMJPXZEMTFIqxA==;5:wFIyTAm+yZMVkJnLUINva0GIslhCwT2nkmlX+ek6HmGs2eUoIL9uHDmJfnKwA7kVzMsP0JuEYOYLEXPRigGQ9PJv34wKqbppHu9OKxaA4BqKLYZWZX0Q+VL7SoAblYSlZSlVUy8o0cJAtHty7NEYNpaqT0qUVpkN+HrecRQnVso=;7:k1a6wdP6pZdPG0ABgBHUVMI/gnsB31SnnGtqH6TbcEvpSU4shHnGeaI6kwOJgsrv8W5VBFRZu9Uv/UmEQAJ+ampiFr6H4Y9lEFKsN4Jx5C1YGgCqpqywSK8Ai9goLeVW2fW1hQgYfDon2afSSua8ng==
+x-incomingheadercount: 62
+x-eopattributedmessage: 0
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(20181119063)(201702061078)(5061506573)(5061507331)(1603103135)(2017031320274)(2017031323274)(2017031324274)(2017031322404)(1601125500)(1603101475)(1701031045);SRVR:HE1EUR02HT080;
+x-ms-traffictypediagnostic: HE1EUR02HT080:
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(4566010)(82015058);SRVR:HE1EUR02HT080;BCL:0;PCL:0;RULEID:;SRVR:HE1EUR02HT080;
+x-microsoft-antispam-message-info: mE7zwk5wdz5MLqSs3GbaMDzEa2g5M54yYbKIH+0GV+GpBcE1ADr5DytcK2uDdHB7
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <0B47C024F1AE384CA3FCE7F9EEDCC0BA@eurprd07.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <5bf56248.1c69fb81.21a6e.5a72@mx.google.com> <CAJr6mf11gp9iV=NiFEFyo7kSZfCfMsEySdijem_PhMFEAwqucA@mail.gmail.com>
- <CAJr6mf2kr4BmCWZU0=EwXURWUZWRHHLifi_2aiUrJSCjnWusZg@mail.gmail.com>
-In-Reply-To: <CAJr6mf2kr4BmCWZU0=EwXURWUZWRHHLifi_2aiUrJSCjnWusZg@mail.gmail.com>
-From:   Sabyasachi Gupta <sabyasachi.linux@gmail.com>
-Date:   Fri, 4 Jan 2019 18:18:16 +0530
-Message-ID: <CAJr6mf29hJft=rurUK8EJRQ1MS_3_MXb7f-zX0vyXUrQNLcWYA@mail.gmail.com>
-Subject: Re: [PATCH] scsi/mvsas/mv_init.c: Use dma_zalloc_coherent
-To:     jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
-        jthumshirn@suse.de
-Cc:     Souptick Joarder <jrdr.linux@gmail.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Brajeswar Ghosh <brajeswar.linux@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: d4d70346-2c10-4f39-8c00-e767963926d9
+X-MS-Exchange-CrossTenant-Network-Message-Id: ab45de1a-c15d-4f4a-3e70-08d67242ee43
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: d4d70346-2c10-4f39-8c00-e767963926d9
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Jan 2019 12:48:30.5452
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Internet
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1EUR02HT080
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 19, 2018 at 6:49 PM Sabyasachi Gupta
-<sabyasachi.linux@gmail.com> wrote:
->
-> On Sat, Dec 1, 2018 at 6:40 PM Sabyasachi Gupta
-> <sabyasachi.linux@gmail.com> wrote:
-> >
-> > On Wed, Nov 21, 2018 at 7:18 PM Sabyasachi Gupta
-> > <sabyasachi.linux@gmail.com> wrote:
-> > >
-> > > Replace dma_alloc_coherent + memset with dma_zalloc_coherent
-> > >
-> > > Signed-off-by: Sabyasachi Gupta <sabyasachi.linux@gmail.com>
-> >
-> > Any comment on this patch?
->
-> Any comment on this patch?
-
-Any comment on this patch?
-
->
-> >
-> > > ---
-> > >  drivers/scsi/mvsas/mv_init.c | 12 ++++--------
-> > >  1 file changed, 4 insertions(+), 8 deletions(-)
-> > >
-> > > diff --git a/drivers/scsi/mvsas/mv_init.c b/drivers/scsi/mvsas/mv_init.c
-> > > index 3ac3437..495bddb 100644
-> > > --- a/drivers/scsi/mvsas/mv_init.c
-> > > +++ b/drivers/scsi/mvsas/mv_init.c
-> > > @@ -253,33 +253,29 @@ static int mvs_alloc(struct mvs_info *mvi, struct Scsi_Host *shost)
-> > >         /*
-> > >          * alloc and init our DMA areas
-> > >          */
-> > > -       mvi->tx = dma_alloc_coherent(mvi->dev,
-> > > +       mvi->tx = dma_zalloc_coherent(mvi->dev,
-> > >                                      sizeof(*mvi->tx) * MVS_CHIP_SLOT_SZ,
-> > >                                      &mvi->tx_dma, GFP_KERNEL);
-> > >         if (!mvi->tx)
-> > >                 goto err_out;
-> > > -       memset(mvi->tx, 0, sizeof(*mvi->tx) * MVS_CHIP_SLOT_SZ);
-> > > -       mvi->rx_fis = dma_alloc_coherent(mvi->dev, MVS_RX_FISL_SZ,
-> > > +       mvi->rx_fis = dma_zalloc_coherent(mvi->dev, MVS_RX_FISL_SZ,
-> > >                                          &mvi->rx_fis_dma, GFP_KERNEL);
-> > >         if (!mvi->rx_fis)
-> > >                 goto err_out;
-> > > -       memset(mvi->rx_fis, 0, MVS_RX_FISL_SZ);
-> > >
-> > > -       mvi->rx = dma_alloc_coherent(mvi->dev,
-> > > +       mvi->rx = dma_zalloc_coherent(mvi->dev,
-> > >                                      sizeof(*mvi->rx) * (MVS_RX_RING_SZ + 1),
-> > >                                      &mvi->rx_dma, GFP_KERNEL);
-> > >         if (!mvi->rx)
-> > >                 goto err_out;
-> > > -       memset(mvi->rx, 0, sizeof(*mvi->rx) * (MVS_RX_RING_SZ + 1));
-> > >         mvi->rx[0] = cpu_to_le32(0xfff);
-> > >         mvi->rx_cons = 0xfff;
-> > >
-> > > -       mvi->slot = dma_alloc_coherent(mvi->dev,
-> > > +       mvi->slot = dma_zalloc_coherent(mvi->dev,
-> > >                                        sizeof(*mvi->slot) * slot_nr,
-> > >                                        &mvi->slot_dma, GFP_KERNEL);
-> > >         if (!mvi->slot)
-> > >                 goto err_out;
-> > > -       memset(mvi->slot, 0, sizeof(*mvi->slot) * slot_nr);
-> > >
-> > >         mvi->bulk_buffer = dma_alloc_coherent(mvi->dev,
-> > >                                        TRASH_BUCKET_SIZE,
-> > > --
-> > > 2.7.4
-> > >
+Q3VycmVudGx5IHRoZSBydGw4NzIzYWUgZHJpdmVyIGlzIGJyb2tlbiAoc2luY2UgdjQuNykuDQoN
+CkNvbm5lY3Rpb24gdG8gQVAgaXMgbG9zdCB2ZXJ5IG9mdGVuLCBlc3BlY2lhbGx5IHdoZW4NCnRo
+ZSBzaWduYWwgbGV2ZWwgaXMgbm90IHZlcnkgZ29vZC4NCg0KVGhlIG1haW4gaXNzdWUgaXMgdGhl
+IHBvd2VyIHNhdmUgbW9kZSBpcyBiYXNpY2FsbHkNCm5vdCB3b3JraW5nLCBhbmQgc2VlbXMgdG8g
+dHJpZ2dlciBhIGZpcm13YXJlIGJ1Zy4NClNvIEkgaGFkIHRvIHJlbW92ZSB0aGF0IGNvZGUuDQoN
+CldoaWxlIGRlYnVnZ2luZyB0aGUgZHJpdmVyIEkgZm91bmQgYSBjb3VwbGUgcmVsYXRlZCBpc3N1
+ZXMsDQpmb3IgaW5zdGFuY2UgdGhhdCB0aGUgc2lnbmFsIGxldmVsIGluIGRtLnVuZGVjX3NtX3B3
+ZGINCmlzIG5vIGxvbmdlciBhY2N1cmF0ZSAobWF5IGJlIGV2ZW4gbXVjaCB0b28gaGlnaCkgd2hl
+biBubyBtb3JlDQpwYWNrZXRzIGFyZSByZWNlaXZlZCwgYW5kIGl0IGluY3JlYXNlcyB0aGUgbGlr
+ZWxpaG9vZCB0byByZWNlaXZlDQpzb21ldGhpbmcgaWYgdGhlIGlucHV0IGdhaW4gaXMgc2V0IHRv
+IG1heGltdW0uDQoNClRoZSBwYXRjaCB3YXMgdGVzdGVkIHdpdGggdGhlIHJ0bDg3MjNhZSBQQ0kg
+Y2FyZCBpbiBteSBsYXB0b3ANCmFnYWluc3QgYSBGUklUWiFCb3ggNzU5MCBBUCAtLSB0aGUgV2lG
+aSBjb25uZWN0aW9uIHdvcmtzIG5vdw0KdmVyeSByZWxpYWJsZSBmb3IgbWUuDQoNCg0KQmVybmQg
+RWRsaW5nZXIgKDQpOg0KICAgcnRsd2lmaTogcnRsODcyM2FlOiBUYWtlIHRoZSBGVyBMUFMgbW9k
+ZSBoYW5kbGluZyBvdXQNCiAgIHJ0bHdpZmk6IHJ0bDg3MjNhZTogRG9uJ3QgdXNlIGRtLnVuZGVj
+X3NtX3B3ZGIgZm9yIGlucHV0IGdhaW4gY29udHJvbA0KICAgICAgICB3aGVuIG5vIGJlYWNvbiB3
+YXMgcmVjZWl2ZWQgaW4gdGhlIGNvbm5lY3RlZCBzdGF0ZS4NCiAgIHJ0bHdpZmk6IHJ0bDg3MjNh
+ZTogUmUtaW50cm9kdWNlDQogICAgIHJ0bDg3MjNlX2RtX3JlZnJlc2hfcmF0ZV9hZGFwdGl2ZV9t
+YXNrDQogICBydGx3aWZpOiBNb3ZlIHRoZSBjbGVhcmluZyBvZiBydGxwcml2LT5saW5rX2luZm8u
+bnVtX3J4X2lucGVyaW9kIGluDQogICAgICBydGxfd2F0Y2hkb2dfd3FfY2FsbGJhY2sgYSBmZXcg
+bGluZXMgZG93bi4NCg0KICBkcml2ZXJzL25ldC93aXJlbGVzcy9yZWFsdGVrL3J0bHdpZmkvYmFz
+ZS5jICAgICAgICB8ICA0ICstDQogIGRyaXZlcnMvbmV0L3dpcmVsZXNzL3JlYWx0ZWsvcnRsd2lm
+aS9jb3JlLmMgICAgICAgIHwgIDIgKw0KICAuLi4vbmV0L3dpcmVsZXNzL3JlYWx0ZWsvcnRsd2lm
+aS9ydGw4NzIzYWUvZG0uYyAgICB8IDk1ICsrKysrKysrKysrKysrKysrKysrKy0NCiAgLi4uL25l
+dC93aXJlbGVzcy9yZWFsdGVrL3J0bHdpZmkvcnRsODcyM2FlL2Z3LmMgICAgfCAyMCAtLS0tLQ0K
+ICAuLi4vbmV0L3dpcmVsZXNzL3JlYWx0ZWsvcnRsd2lmaS9ydGw4NzIzYWUvZncuaCAgICB8ICAx
+IC0NCiAgLi4uL25ldC93aXJlbGVzcy9yZWFsdGVrL3J0bHdpZmkvcnRsODcyM2FlL2h3LmMgICAg
+fCA1NiArLS0tLS0tLS0tLS0tDQogIDYgZmlsZXMgY2hhbmdlZCwgOTggaW5zZXJ0aW9ucygrKSwg
+ODAgZGVsZXRpb25zKC0pDQoNCi0tIA0KMS45LjENCg==
