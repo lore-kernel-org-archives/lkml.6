@@ -2,127 +2,103 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8545EC43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 02:28:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06C23C43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 02:29:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5AFB8217F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 02:28:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE9D621874
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 02:29:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726563AbfADC2b (ORCPT
+        id S1726572AbfADC3v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 21:28:31 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:59688 "EHLO mx1.redhat.com"
+        Thu, 3 Jan 2019 21:29:51 -0500
+Received: from mga18.intel.com ([134.134.136.126]:63283 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726163AbfADC2b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 21:28:31 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4B81258E27;
-        Fri,  4 Jan 2019 02:28:31 +0000 (UTC)
-Received: from localhost.localdomain (ovpn-12-85.pek2.redhat.com [10.72.12.85])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 47D595C223;
-        Fri,  4 Jan 2019 02:28:23 +0000 (UTC)
-Subject: Re: [PATCH 1/2 v4] kdump: add the vmcoreinfo documentation
-To:     Kazuhito Hagio <k-hagio@ab.jp.nec.com>
-Cc:     "bhe@redhat.com" <bhe@redhat.com>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "kexec@lists.infradead.org" <kexec@lists.infradead.org>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "bp@alien8.de" <bp@alien8.de>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "dyoung@redhat.com" <dyoung@redhat.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20181220054044.30738-1-lijiang@redhat.com>
- <20181220054044.30738-2-lijiang@redhat.com>
- <4AE2DC15AC0B8543882A74EA0D43DBEC035656E1@BPXM09GP.gisp.nec.co.jp>
-From:   lijiang <lijiang@redhat.com>
-Message-ID: <bf26e868-9dfd-5344-df56-df8ff0442df0@redhat.com>
-Date:   Fri, 4 Jan 2019 10:28:20 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <4AE2DC15AC0B8543882A74EA0D43DBEC035656E1@BPXM09GP.gisp.nec.co.jp>
-Content-Type: text/plain; charset=iso-2022-jp
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Fri, 04 Jan 2019 02:28:31 +0000 (UTC)
+        id S1726036AbfADC3v (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Thu, 3 Jan 2019 21:29:51 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jan 2019 18:29:51 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,437,1539673200"; 
+   d="scan'208";a="106835509"
+Received: from skl.sh.intel.com ([10.239.159.132])
+  by orsmga008.jf.intel.com with ESMTP; 03 Jan 2019 18:29:49 -0800
+From:   Jin Yao <yao.jin@linux.intel.com>
+To:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com
+Cc:     Linux-kernel@vger.kernel.org, ak@linux.intel.com,
+        kan.liang@intel.com, yao.jin@intel.com,
+        Jin Yao <yao.jin@linux.intel.com>
+Subject: [PATCH] perf stat: Poll for monitored tasks being alive in fork mode
+Date:   Fri,  4 Jan 2019 10:28:17 +0800
+Message-Id: <1546568897-16123-1-git-send-email-yao.jin@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-在 2019年01月04日 03:28, Kazuhito Hagio 写道:
-> Hi Lianbo,
-> 
-> -----Original Message-----
->> +=======================
->> +What is the VMCOREINFO?
->> +=======================
->> +
->> +VMCOREINFO is a special ELF note section. It contains various
->> +information from the kernel like structure size, page size, symbol
->> +values, field offsets, etc. These data are packed into an ELF note
->> +section and used by user-space tools like crash and makedumpfile to
->> +analyze a kernel's memory layout.
->> +
->> +To dump the VMCOREINFO contents, one can do:
->> +
->> +# makedumpfile -g VMCOREINFO -x vmlinux
-> 
-> again, this command does not dump the VMCOREINFO in ELF note section.
-> It converts the vmlinux's debug infomation into a VMCOREINFO-like data.
-> So I don't think this command is suitable to introduce here.
-> 
+Following test shows the stat keeps running even if no longer
+task to monitor (mgen exits at ~5s).
 
-Thank you, Kazu.
+perf stat -e cycles -p `pgrep mgen` -I1000 -- sleep 10
+            time             counts unit events
+     1.000148916      1,308,365,864      cycles
+     2.000379171      1,297,269,875      cycles
+     3.000556719      1,297,187,078      cycles
+     4.000914241        761,261,827      cycles
+     5.001306091      <not counted>      cycles
+     6.001676881      <not counted>      cycles
+     7.002046336      <not counted>      cycles
+     8.002405651      <not counted>      cycles
+     9.002766625      <not counted>      cycles
+    10.001395827      <not counted>      cycles
 
-As you mentioned, makedumpfile in 'devel' branch can print VMCOREINFO in /proc/kcore,
-can i add the following command to this document?
+We'd better finish stat immediately if there's no longer task to
+monitor.
 
-#makedumpfile --mem-usage /proc/kcore -D
+After:
 
->> +PG_lru|PG_private|PG_swapcache|PG_swapbacked|PG_slab|
->> +PG_hwpoision|PG_head_mask
->> +-----------------------------------------------------
->> +
->> +Page attributes. These flags are used to filter free pages.
-> 
-> Some of these are not used to filter *free* pages, so
-> 
-> ... used to filter various unnecessary pages.
-> 
+perf stat -e cycles -p `pgrep mgen` -I1000 -- sleep 10
+            time             counts unit events
+     1.000180062      1,236,592,661      cycles
+     2.000421539      1,223,733,572      cycles
+     3.000609910      1,297,047,663      cycles
+     4.000807545      1,297,215,816      cycles
+     5.001001578      1,297,208,032      cycles
+     6.001390345        582,343,659      cycles
+sleep: Terminated
 
-Great. I will modify it in next post.
+Now the stat exits immediately when the monitored tasks ends.
 
-And also merge the 'PG_buddy' and 'PG_offline'  into the PG_* flag here.
+Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
+---
+ tools/perf/builtin-stat.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-Many thanks.
+diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+index 63a3afc..71f3bc8 100644
+--- a/tools/perf/builtin-stat.c
++++ b/tools/perf/builtin-stat.c
+@@ -553,6 +553,13 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
+ 
+ 		if (interval || timeout) {
+ 			while (!waitpid(child_pid, &status, WNOHANG)) {
++				if (!is_target_alive(&target,
++					evsel_list->threads) &&
++					(child_pid != -1)) {
++					kill(child_pid, SIGTERM);
++					break;
++				}
++
+ 				nanosleep(&ts, NULL);
+ 				if (timeout)
+ 					break;
+-- 
+2.7.4
 
-Lianbo
-
->> +PAGE_BUDDY_MAPCOUNT_VALUE or ~PG_buddy
->> +--------------------------------------
-> 
-> then, this can be merged into the one above?
-> 
->> +======
->> +x86_64
->> +======
-> ...
->> +PAGE_OFFLINE_MAPCOUNT_VALUE(~PG_offline)
->> +----------------------------------------
-> 
-> This looks not only for x86_64, and also can be merged into
-> the PG_* flags?
-> 
-> Thank you for your effort!
-> Kazu
-> 
-> 
