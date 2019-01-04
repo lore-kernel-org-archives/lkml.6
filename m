@@ -2,316 +2,158 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB9B1C43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 05:02:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59C06C43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 05:03:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B68882087F
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 05:02:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 27D92218A4
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 05:03:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="mRrwnXbY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726289AbfADFCY (ORCPT
+        id S1726301AbfADFDu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 00:02:24 -0500
-Received: from alexa-out-blr-02.qualcomm.com ([103.229.18.198]:2991 "EHLO
-        alexa-out-blr.qualcomm.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726069AbfADFCY (ORCPT
+        Fri, 4 Jan 2019 00:03:50 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:37271 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725945AbfADFDt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 00:02:24 -0500
-X-IronPort-AV: E=Sophos;i="5.56,437,1539628200"; 
-   d="scan'208";a="294417"
-Received: from ironmsg04-blr.qualcomm.com ([10.86.208.133])
-  by alexa-out-blr.qualcomm.com with ESMTP/TLS/AES256-SHA; 04 Jan 2019 10:31:40 +0530
-X-IronPort-AV: E=McAfee;i="5900,7806,9125"; a="3115117"
-Received: from blr-ubuntu-104.ap.qualcomm.com (HELO blr-ubuntu-104.qualcomm.com) ([10.79.40.64])
-  by ironmsg04-blr.qualcomm.com with ESMTP; 04 Jan 2019 10:31:39 +0530
-Received: by blr-ubuntu-104.qualcomm.com (Postfix, from userid 346745)
-        id CB10F39AE; Fri,  4 Jan 2019 10:31:38 +0530 (IST)
-From:   Arun KS <arunks@codeaurora.org>
-To:     arunks.linux@gmail.com, akpm@linux-foundation.org,
-        mhocko@kernel.org, vbabka@suse.cz, osalvador@suse.de,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Cc:     getarunks@gmail.com, Arun KS <arunks@codeaurora.org>
-Subject: [PATCH v7] mm/page_alloc.c: memory_hotplug: free pages as higher order
-Date:   Fri,  4 Jan 2019 10:31:16 +0530
-Message-Id: <1546578076-31716-1-git-send-email-arunks@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Fri, 4 Jan 2019 00:03:49 -0500
+Received: by mail-lf1-f65.google.com with SMTP id y11so24640989lfj.4
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 21:03:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ME8F7/tqwkC++IqaY030+2nSR1n7tVYolNeJJkHOFS0=;
+        b=mRrwnXbY8e7eSM48aQWr+T73VJGKd+TdYS5JiGUbyljYGwQx6REQYm+mXQy60vckpZ
+         5t2WVruQEvBhf9IOlH0LNd2eMIYkOXmpUs1cjTNP5fVECYxEQSaJCxNSN2lskHqfXqaC
+         LFy5ve9P7xibp3ZlCD/bzZpzO7CXOI40z93vZE0qrkuYHlPqH8/5rvtTeyjdbttdWF83
+         zCxlfCQeRoo94cvz1R5L/GXseYFex7OjB5+9bqzz0HJjVB+CqD2pYW3MxzyiHL1Qw5cr
+         lqZDH5k8vTcAdObpRkby8ma6eubhui4DKbkkq5UJkSxGpGJuBdcAdyqWquE/P/IlKvPw
+         H3NQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ME8F7/tqwkC++IqaY030+2nSR1n7tVYolNeJJkHOFS0=;
+        b=MOP7FITe1q/WL9ag0xqKsiIK4dQHtUxVrvzu3TeWPzv2v3If/TiY6pctRPXvKgz9+8
+         uKDQrjCK+qe8nT0E7xGJUHYMCixu9HLhgEDw3D1ktbnvUHBvOmWtz6ZTR2Stqi+n30mB
+         qBBWCXg+pnGRvTXfUKhCJg5pJ25TNUt4uq7sN0r6ew0lWQ9rd0n4j2km5CJ95tUIuSWh
+         i/xwr9JbZDdEdlqxTfArmP5aJdISvg9aVt/L4iOeJGgUSNlX75hfVQrByCY5AO918V0D
+         4F0pOimrY5SDf0w8bJJboGIFqarjUsinlONmc3/QVk/OpxJpB/MfpuZHmZj6vcakap7y
+         o9RA==
+X-Gm-Message-State: AA+aEWbtyALC5zIEUzIII32AeAemnqATw9uxCdHz+AaqkhmFjU8HWqdp
+        wFGm7DfM12iz0WJfkiA9UPhRjMWNO8DqI4HdlLngwA==
+X-Google-Smtp-Source: AFSGD/XVc8l1UaVv+9WkdEg9eh4e2kv068Vx1cZdYWGGzuMQnEOGTUw/GsYnrwe6hI/K5HicSehK75FS2hrAzqTMyjI=
+X-Received: by 2002:a19:739d:: with SMTP id h29mr26642446lfk.85.1546578227465;
+ Thu, 03 Jan 2019 21:03:47 -0800 (PST)
+MIME-Version: 1.0
+References: <1544768442-12530-1-git-send-email-yash.shah@sifive.com>
+ <1544768442-12530-2-git-send-email-yash.shah@sifive.com> <20181218172031.GA7272@bogus>
+In-Reply-To: <20181218172031.GA7272@bogus>
+From:   Yash Shah <yash.shah@sifive.com>
+Date:   Fri, 4 Jan 2019 10:33:36 +0530
+Message-ID: <CAJ2_jOEy-0DmkzoOwezUf3+gHV3CTu04CqG1tiw5=iX-AO8xZg@mail.gmail.com>
+Subject: Re: [RFC v2 1/2] pwm: sifive: Add DT documentation for SiFive PWM Controller
+To:     Rob Herring <robh@kernel.org>
+Cc:     Palmer Dabbelt <palmer@sifive.com>, linux-pwm@vger.kernel.org,
+        linux-riscv@lists.infradead.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        mark.rutland@arm.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Sachin Ghadi <sachin.ghadi@sifive.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When freeing pages are done with higher order, time spent on coalescing
-pages by buddy allocator can be reduced.  With section size of 256MB, hot
-add latency of a single section shows improvement from 50-60 ms to less
-than 1 ms, hence improving the hot add latency by 60 times.  Modify
-external providers of online callback to align with the change.
+On Tue, Dec 18, 2018 at 10:50 PM Rob Herring <robh@kernel.org> wrote:
+>
+> On Fri, Dec 14, 2018 at 11:50:41AM +0530, Yash Shah wrote:
+> > DT documentation for PWM controller added with updated compatible
+> > string.
+> >
+> > Signed-off-by: Wesley W. Terpstra <wesley@sifive.com>
+> > [Atish: Compatible string update]
+> > Signed-off-by: Atish Patra <atish.patra@wdc.com>
+> > Signed-off-by: Yash Shah <yash.shah@sifive.com>
+> > ---
+> >  .../devicetree/bindings/pwm/pwm-sifive.txt         | 44 ++++++++++++++++++++++
+> >  1 file changed, 44 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/pwm/pwm-sifive.txt
+> >
+> > diff --git a/Documentation/devicetree/bindings/pwm/pwm-sifive.txt b/Documentation/devicetree/bindings/pwm/pwm-sifive.txt
+> > new file mode 100644
+> > index 0000000..250d8ee
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/pwm/pwm-sifive.txt
+> > @@ -0,0 +1,44 @@
+> > +SiFive PWM controller
+> > +
+> > +Unlike most other PWM controllers, the SiFive PWM controller currently only
+> > +supports one period for all channels in the PWM. This is set globally in DTS.
+> > +The period also has significant restrictions on the values it can achieve,
+> > +which the driver rounds to the nearest achievable frequency.
+> > +
+> > +Required properties:
+> > +- compatible: should be something similar to "sifive,<chip>-pwm" for
+> > +           the PWM as integrated on a particular chip, and
+> > +           "sifive,pwm<version>" for the general PWM IP block
+> > +           programming model. Supported compatible strings are:
+> > +           "sifive,fu540-c000-pwm" for the SiFive PWM v0 as
+> > +           integrated onto the SiFive FU540 chip, and "sifive,pwm0"
+> > +           for the SiFive PWM v0 IP block with no chip integration
+> > +           tweaks.
+>
+> This should reference the common doc Paul has written and not re-explain
+> the versioning scheme again.
 
-Signed-off-by: Arun KS <arunks@codeaurora.org>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Reviewed-by: Oscar Salvador <osalvador@suse.de>
----
-Changes since v6:
-- Rebased to 4.20
-- Changelog updated.
-- No improvement seen on arm64, hence removed removal of prefetch.
+Ok sure.
 
-Changes since v5:
-- Rebased to 4.20-rc1.
-- Changelog updated.
+>
+> > +- reg: physical base address and length of the controller's registers
+> > +- clocks: The frequency the controller runs at
+> > +- #pwm-cells: Should be 2.
+> > +  The first cell is the PWM channel number
+> > +  The second cell is the PWM polarity
+> > +- sifive,approx-period: the driver will get as close to this period as it can
+>
+> Needs a unit suffix as defined in property-units.txt
 
-Changes since v4:
-- As suggested by Michal Hocko,
-- Simplify logic in online_pages_block() by using get_order().
-- Seperate out removal of prefetch from __free_pages_core().
+Will be done.
 
-Changes since v3:
-- Renamed _free_pages_boot_core -> __free_pages_core.
-- Removed prefetch from __free_pages_core.
-- Removed xen_online_page().
+>
+> > +- interrupts: one interrupt per PWM channel
+> > +
+> > +PWM RTL that corresponds to the IP block version numbers can be found
+> > +here:
+> > +
+> > +https://github.com/sifive/sifive-blocks/tree/master/src/main/scala/devices/pwm
+> > +
+> > +Further information on the format of the IP
+> > +block-specific version numbers can be found in
+> > +Documentation/devicetree/bindings/sifive/sifive-blocks-ip-versioning.txt
+> > +
+> > +Examples:
+> > +
+> > +pwm:  pwm@10020000 {
+> > +     compatible = "sifive,fu540-c000-pwm","sifive,pwm0";
+> > +     reg = <0x0 0x10020000 0x0 0x1000>;
+> > +     clocks = <&tlclk>;
+> > +     interrupt-parent = <&plic>;
+> > +     interrupts = <42 43 44 45>;
+> > +     #pwm-cells = <2>;
+> > +     sifive,approx-period = <1000000>;
+> > +};
+> > --
+> > 1.9.1
+> >
 
-Changes since v2:
-- Reuse code from __free_pages_boot_core().
-
-Changes since v1:
-- Removed prefetch().
-
-Changes since RFC:
-- Rebase.
-- As suggested by Michal Hocko remove pages_per_block.
-- Modifed external providers of online_page_callback.
-
-v6: https://lore.kernel.org/patchwork/patch/1007253/
-v5: https://lore.kernel.org/patchwork/patch/995739/
-v4: https://lore.kernel.org/patchwork/patch/995111/
-v3: https://lore.kernel.org/patchwork/patch/992348/
-v2: https://lore.kernel.org/patchwork/patch/991363/
-v1: https://lore.kernel.org/patchwork/patch/989445/
-RFC: https://lore.kernel.org/patchwork/patch/984754/
-
----
- drivers/hv/hv_balloon.c        |  6 ++++--
- drivers/xen/balloon.c          | 23 +++++++++++++++--------
- include/linux/memory_hotplug.h |  2 +-
- mm/internal.h                  |  1 +
- mm/memory_hotplug.c            | 42 ++++++++++++++++++++++++++++++------------
- mm/page_alloc.c                |  8 ++++----
- 6 files changed, 55 insertions(+), 27 deletions(-)
-
-diff --git a/drivers/hv/hv_balloon.c b/drivers/hv/hv_balloon.c
-index 5301fef..211f3fe 100644
---- a/drivers/hv/hv_balloon.c
-+++ b/drivers/hv/hv_balloon.c
-@@ -771,7 +771,7 @@ static void hv_mem_hot_add(unsigned long start, unsigned long size,
- 	}
- }
- 
--static void hv_online_page(struct page *pg)
-+static int hv_online_page(struct page *pg, unsigned int order)
- {
- 	struct hv_hotadd_state *has;
- 	unsigned long flags;
-@@ -783,10 +783,12 @@ static void hv_online_page(struct page *pg)
- 		if ((pfn < has->start_pfn) || (pfn >= has->end_pfn))
- 			continue;
- 
--		hv_page_online_one(has, pg);
-+		hv_bring_pgs_online(has, pfn, (1UL << order));
- 		break;
- 	}
- 	spin_unlock_irqrestore(&dm_device.ha_lock, flags);
-+
-+	return 0;
- }
- 
- static int pfn_covered(unsigned long start_pfn, unsigned long pfn_cnt)
-diff --git a/drivers/xen/balloon.c b/drivers/xen/balloon.c
-index ceb5048..95f888f 100644
---- a/drivers/xen/balloon.c
-+++ b/drivers/xen/balloon.c
-@@ -345,8 +345,8 @@ static enum bp_state reserve_additional_memory(void)
- 
- 	/*
- 	 * add_memory_resource() will call online_pages() which in its turn
--	 * will call xen_online_page() callback causing deadlock if we don't
--	 * release balloon_mutex here. Unlocking here is safe because the
-+	 * will call xen_bring_pgs_online() callback causing deadlock if we
-+	 * don't release balloon_mutex here. Unlocking here is safe because the
- 	 * callers drop the mutex before trying again.
- 	 */
- 	mutex_unlock(&balloon_mutex);
-@@ -369,15 +369,22 @@ static enum bp_state reserve_additional_memory(void)
- 	return BP_ECANCELED;
- }
- 
--static void xen_online_page(struct page *page)
-+static int xen_bring_pgs_online(struct page *pg, unsigned int order)
- {
--	__online_page_set_limits(page);
-+	unsigned long i, size = (1 << order);
-+	unsigned long start_pfn = page_to_pfn(pg);
-+	struct page *p;
- 
-+	pr_debug("Online %lu pages starting at pfn 0x%lx\n", size, start_pfn);
- 	mutex_lock(&balloon_mutex);
--
--	__balloon_append(page);
--
-+	for (i = 0; i < size; i++) {
-+		p = pfn_to_page(start_pfn + i);
-+		__online_page_set_limits(p);
-+		__balloon_append(p);
-+	}
- 	mutex_unlock(&balloon_mutex);
-+
-+	return 0;
- }
- 
- static int xen_memory_notifier(struct notifier_block *nb, unsigned long val, void *v)
-@@ -702,7 +709,7 @@ static int __init balloon_init(void)
- 	balloon_stats.max_retry_count = RETRY_UNLIMITED;
- 
- #ifdef CONFIG_XEN_BALLOON_MEMORY_HOTPLUG
--	set_online_page_callback(&xen_online_page);
-+	set_online_page_callback(&xen_bring_pgs_online);
- 	register_memory_notifier(&xen_memory_nb);
- 	register_sysctl_table(xen_root);
- #endif
-diff --git a/include/linux/memory_hotplug.h b/include/linux/memory_hotplug.h
-index 07da5c6..d56bfba 100644
---- a/include/linux/memory_hotplug.h
-+++ b/include/linux/memory_hotplug.h
-@@ -87,7 +87,7 @@ extern int test_pages_in_a_zone(unsigned long start_pfn, unsigned long end_pfn,
- 	unsigned long *valid_start, unsigned long *valid_end);
- extern void __offline_isolated_pages(unsigned long, unsigned long);
- 
--typedef void (*online_page_callback_t)(struct page *page);
-+typedef int (*online_page_callback_t)(struct page *page, unsigned int order);
- 
- extern int set_online_page_callback(online_page_callback_t callback);
- extern int restore_online_page_callback(online_page_callback_t callback);
-diff --git a/mm/internal.h b/mm/internal.h
-index f4a7bb0..536bc2a 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -163,6 +163,7 @@ static inline struct page *pageblock_pfn_to_page(unsigned long start_pfn,
- extern int __isolate_free_page(struct page *page, unsigned int order);
- extern void memblock_free_pages(struct page *page, unsigned long pfn,
- 					unsigned int order);
-+extern void __free_pages_core(struct page *page, unsigned int order);
- extern void prep_compound_page(struct page *page, unsigned int order);
- extern void post_alloc_hook(struct page *page, unsigned int order,
- 					gfp_t gfp_flags);
-diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index b9a667d..0ea0eb1 100644
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@ -47,7 +47,7 @@
-  * and restore_online_page_callback() for generic callback restore.
-  */
- 
--static void generic_online_page(struct page *page);
-+static int generic_online_page(struct page *page, unsigned int order);
- 
- static online_page_callback_t online_page_callback = generic_online_page;
- static DEFINE_MUTEX(online_page_callback_lock);
-@@ -656,26 +656,44 @@ void __online_page_free(struct page *page)
- }
- EXPORT_SYMBOL_GPL(__online_page_free);
- 
--static void generic_online_page(struct page *page)
-+static int generic_online_page(struct page *page, unsigned int order)
- {
--	__online_page_set_limits(page);
--	__online_page_increment_counters(page);
--	__online_page_free(page);
-+	__free_pages_core(page, order);
-+	totalram_pages_add(1UL << order);
-+#ifdef CONFIG_HIGHMEM
-+	if (PageHighMem(page))
-+		totalhigh_pages_add(1UL << order);
-+#endif
-+	return 0;
-+}
-+
-+static int online_pages_blocks(unsigned long start, unsigned long nr_pages)
-+{
-+	unsigned long end = start + nr_pages;
-+	int order, ret, onlined_pages = 0;
-+
-+	while (start < end) {
-+		order = min(MAX_ORDER - 1,
-+			get_order(PFN_PHYS(end) - PFN_PHYS(start)));
-+
-+		ret = (*online_page_callback)(pfn_to_page(start), order);
-+		if (!ret)
-+			onlined_pages += (1UL << order);
-+		else if (ret > 0)
-+			onlined_pages += ret;
-+
-+		start += (1UL << order);
-+	}
-+	return onlined_pages;
- }
- 
- static int online_pages_range(unsigned long start_pfn, unsigned long nr_pages,
- 			void *arg)
- {
--	unsigned long i;
- 	unsigned long onlined_pages = *(unsigned long *)arg;
--	struct page *page;
- 
- 	if (PageReserved(pfn_to_page(start_pfn)))
--		for (i = 0; i < nr_pages; i++) {
--			page = pfn_to_page(start_pfn + i);
--			(*online_page_callback)(page);
--			onlined_pages++;
--		}
-+		onlined_pages = online_pages_blocks(start_pfn, nr_pages);
- 
- 	online_mem_sections(start_pfn, start_pfn + nr_pages);
- 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index cde5dac..f51a920 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -1303,7 +1303,7 @@ static void __free_pages_ok(struct page *page, unsigned int order)
- 	local_irq_restore(flags);
- }
- 
--static void __init __free_pages_boot_core(struct page *page, unsigned int order)
-+void __free_pages_core(struct page *page, unsigned int order)
- {
- 	unsigned int nr_pages = 1 << order;
- 	struct page *p = page;
-@@ -1382,7 +1382,7 @@ void __init memblock_free_pages(struct page *page, unsigned long pfn,
- {
- 	if (early_page_uninitialised(pfn))
- 		return;
--	return __free_pages_boot_core(page, order);
-+	__free_pages_core(page, order);
- }
- 
- /*
-@@ -1472,14 +1472,14 @@ static void __init deferred_free_range(unsigned long pfn,
- 	if (nr_pages == pageblock_nr_pages &&
- 	    (pfn & (pageblock_nr_pages - 1)) == 0) {
- 		set_pageblock_migratetype(page, MIGRATE_MOVABLE);
--		__free_pages_boot_core(page, pageblock_order);
-+		__free_pages_core(page, pageblock_order);
- 		return;
- 	}
- 
- 	for (i = 0; i < nr_pages; i++, page++, pfn++) {
- 		if ((pfn & (pageblock_nr_pages - 1)) == 0)
- 			set_pageblock_migratetype(page, MIGRATE_MOVABLE);
--		__free_pages_boot_core(page, 0);
-+		__free_pages_core(page, 0);
- 	}
- }
- 
--- 
-1.9.1
-
+Thanks for the comments!
