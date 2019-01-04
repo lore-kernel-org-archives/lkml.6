@@ -2,257 +2,83 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35E9AC43612
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 09:13:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 814F1C43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 09:15:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF856217F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 09:13:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546593225;
-	bh=kRhrn0GqHvLVBSyJaj2/l/wYC/wLT07POAcDWSryzu4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=W0jVfLxHQKVgkXYKTUaDSN6IyPYnSBEOpmFZIne2/HVVnSGdro6WmjXvKj08Cui2I
-	 trtNfq1sV7DNpf+rWXZ5sPGsYTobnI1UUz18GcLOD4/BIjJotO3RtohPtQswqlS86h
-	 oi+QqGqCfgA9fuSmxe78cE4I2BxWujl5LiOl316E=
+	by mail.kernel.org (Postfix) with ESMTP id 4CB4F21871
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 09:15:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727325AbfADJNo (ORCPT
+        id S1727330AbfADJPf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 04:13:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56824 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726169AbfADJNn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 04:13:43 -0500
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7BE3F218D8;
-        Fri,  4 Jan 2019 09:13:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546593221;
-        bh=kRhrn0GqHvLVBSyJaj2/l/wYC/wLT07POAcDWSryzu4=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=IliswcbsjSqTWCHPatLUuVbKCXo5vhEEY0TibX2RTwfD8uPoCiVYFRCBdojgy0iaS
-         hx+JCXeT/PWzB6M0wGAaDsQDbzwwSDkT9c8ZKZQTrg8kJ5wXXVFHl+8p8vjhWQ6ypW
-         Kiu0oKNOxsoS5q5C0LcDWuMay1u9Q7wcG54f/zqA=
-Received: by mail-wm1-f41.google.com with SMTP id g67so556556wmd.2;
-        Fri, 04 Jan 2019 01:13:41 -0800 (PST)
-X-Gm-Message-State: AJcUuke6MZF02NJTZDeVxlN64rUxYXrl9Sy+jiOWDNibhnRhf7XwICtz
-        ms+NrG3IOKxVG2dt5RpySSW14JYI7ojnCEeor5w=
-X-Google-Smtp-Source: ALg8bN4sm7mDJpejChjSCdMCz9hr08Pid6kmIZPlBlHIYCujFFWyDbvMA1J3GH9hcqX2oL5yR76D5auxwGJecMtuSFg=
-X-Received: by 2002:a1c:2e43:: with SMTP id u64mr751976wmu.52.1546593219832;
- Fri, 04 Jan 2019 01:13:39 -0800 (PST)
+        Fri, 4 Jan 2019 04:15:35 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38348 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725913AbfADJPf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 04:15:35 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A7036EBD;
+        Fri,  4 Jan 2019 01:15:34 -0800 (PST)
+Received: from queper01-lin (queper01-lin.cambridge.arm.com [10.1.195.48])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 709283F575;
+        Fri,  4 Jan 2019 01:15:33 -0800 (PST)
+Date:   Fri, 4 Jan 2019 09:15:28 +0000
+From:   Quentin Perret <quentin.perret@arm.com>
+To:     Valentin Schneider <valentin.schneider@arm.com>
+Cc:     linux-kernel@vger.kernel.org, mingo@redhat.com,
+        peterz@infradead.org, morten.rasmussen@arm.com,
+        Dietmar.Eggemann@arm.com
+Subject: Re: [PATCH] sched/fair: Remove unneeded prototype of capacity_of()
+Message-ID: <20190104091526.uxnw3bic6xydvbh6@queper01-lin>
+References: <20190102135549.6929-1-valentin.schneider@arm.com>
 MIME-Version: 1.0
-References: <1545984581-25843-1-git-send-email-erin.lo@mediatek.com>
- <1545984581-25843-6-git-send-email-erin.lo@mediatek.com> <20181228220405.GA8739@bogus>
- <1546585723.21915.7.camel@mhfsdcap03>
-In-Reply-To: <1546585723.21915.7.camel@mhfsdcap03>
-From:   Sean Wang <sean.wang@kernel.org>
-Date:   Fri, 4 Jan 2019 01:14:33 -0800
-X-Gmail-Original-Message-ID: <CAGp9LzoAyZqC53eo4JKcouu=pNgsGm9FFm1GaxbH1Jc1OD8Bvw@mail.gmail.com>
-Message-ID: <CAGp9LzoAyZqC53eo4JKcouu=pNgsGm9FFm1GaxbH1Jc1OD8Bvw@mail.gmail.com>
-Subject: Re: [PATCH v5 5/6] dt-bindings: pinctrl: mt8183: add binding document
-To:     Zhiyong Tao <zhiyong.tao@mediatek.com>
-Cc:     Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Jason Cooper <jason@lakedaemon.net>,
-        srv_heupstream <srv_heupstream@mediatek.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        =?UTF-8?B?RXJpbiBMbyAo576F6ZuF6b2hKQ==?= <erin.lo@mediatek.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
-        =?UTF-8?B?TWFycyBDaGVuZyAo6YSt5qOu5Y+LKQ==?= 
-        <Mars.Cheng@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        =?UTF-8?B?WWluZ2pvZSBDaGVuICjpmbPoi7HmtLIp?= 
-        <Yingjoe.Chen@mediatek.com>, Thomas Gleixner <tglx@linutronix.de>,
-        =?UTF-8?B?RWRkaWUgSHVhbmcgKOm7g+aZuuWCkSk=?= 
-        <eddie.huang@mediatek.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190102135549.6929-1-valentin.schneider@arm.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 3, 2019 at 11:09 PM Zhiyong Tao <zhiyong.tao@mediatek.com> wrote:
->
-> On Sat, 2018-12-29 at 06:04 +0800, Rob Herring wrote:
-> > On Fri, Dec 28, 2018 at 04:09:40PM +0800, Erin Lo wrote:
-> > > From: Zhiyong Tao <zhiyong.tao@mediatek.com>
-> > >
-> > > The commit adds mt8183 compatible node in binding document.
-> > >
-> > > Signed-off-by: Zhiyong Tao <zhiyong.tao@mediatek.com>
-> > > Signed-off-by: Erin Lo <erin.lo@mediatek.com>
-> > > ---
-> > >  .../devicetree/bindings/pinctrl/pinctrl-mt8183.txt | 110 +++++++++++++++++++++
-> > >  1 file changed, 110 insertions(+)
-> > >  create mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-mt8183.txt
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8183.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8183.txt
-> > > new file mode 100644
-> > > index 0000000..7b5285e
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8183.txt
-> > > @@ -0,0 +1,110 @@
-> > > +* Mediatek MT8183 Pin Controller
-> > > +
-> > > +The Mediatek's Pin controller is used to control SoC pins.
-> > > +
-> > > +Required properties:
-> > > +- compatible: value should be one of the following.
-> > > +   "mediatek,mt8183-pinctrl", compatible with mt8183 pinctrl.
-> > > +- gpio-controller : Marks the device node as a gpio controller.
-> > > +- #gpio-cells: number of cells in GPIO specifier. Since the generic GPIO
-> > > +  binding is used, the amount of cells must be specified as 2. See the below
-> > > +  mentioned gpio binding representation for description of particular cells.
-> > > +- gpio-ranges : gpio valid number range.
-> > > +
-> > > +   Eg: <&pio 6 0>
-> > > +   <[phandle of the gpio controller node]
-> > > +   [line number within the gpio controller]
-> > > +   [flags]>
-> > > +
-> > > +   Values for gpio specifier:
-> > > +   - Line number: is a value between 0 to 202.
-> > > +   - Flags:  bit field of flags, as defined in <dt-bindings/gpio/gpio.h>.
-> > > +            Only the following flags are supported:
-> > > +            0 - GPIO_ACTIVE_HIGH
-> > > +            1 - GPIO_ACTIVE_LOW
-> > > +
-> > > +Optional properties:
-> > > +- reg: physicall address base for gpio base registers.
-> >
-> > s/physicall/physical/
-> >
-> > reg should never be optional.
-> >
-> > Need to say how many reg entries.
->
-> ==> Thanks for your suggestion. We will change 'reg' to Required
-> properties and add the reg entries in next version.
-> >
-> > > +- reg-names: gpio base registers name.
-> >
-> > Need to say what are the names. However, I don't find the names in the
-> > example all that useful, so I'd just drop it.
->
-> ==> we will add the reg-names in next version.
-> They are used in the sample code, such as:
-> > +             reg-names = "iocfg0", "iocfg1", "iocfg2",
-> > > +                       "iocfg3", "iocfg4", "iocfg5",
-> > > +                       "iocfg6", "iocfg7", "iocfg8";
->
-> >
-> > > +- interrupt-controller: Marks the device node as an interrupt controller
-> > > +- #interrupt-cells: Should be two.
-> > > +- interrupts : The interrupt outputs from the controller.
-> > > +
-> > > +Please refer to pinctrl-bindings.txt in this directory for details of the
-> > > +common pinctrl bindings used by client devices.
-> > > +
-> > > +Subnode format
-> > > +A pinctrl node should contain at least one subnodes representing the
-> > > +pinctrl groups available on the machine. Each subnode will list the
-> > > +pins it needs, and how they should be configured, with regard to muxer
-> > > +configuration, pullups, drive strength, input enable/disable and input schmitt.
-> > > +
-> > > +    node {
-> > > +   pinmux = <PIN_NUMBER_PINMUX>;
-> > > +   GENERIC_PINCONFIG;
-> > > +    };
-> > > +
-> > > +Required properties:
-> > > +- pinmux: integer array, represents gpio pin number and mux setting.
-> > > +    Supported pin number and mux varies for different SoCs, and are defined
-> > > +    as macros in boot/dts/<soc>-pinfunc.h directly.
-> > > +
-> > > +Optional properties:
-> > > +- GENERIC_PINCONFIG: is the generic pinconfig options to use, bias-disable,
-> > > +    bias-pull-down, bias-pull-up, input-enable, input-disable, output-low, output-high,
-> > > +    input-schmitt-enable, input-schmitt-disable and drive-strength are valid.
-> > > +
-> > > +    Some special pins have extra pull up strength, there are R0 and R1 pull-up
-> > > +    resistors available, but for user, it's only need to set R1R0 as 00, 01, 10 or 11.
-> > > +    So when config mediatek,pull-up-adv or mediatek,pull-down-adv,
-> > > +    it support arguments for those special pins.
-> > > +
-> > > +    When config drive-strength, it can support some arguments, such as
-> > > +    MTK_DRIVE_4mA, MTK_DRIVE_6mA, etc. See dt-bindings/pinctrl/mt65xx.h.
-> > > +
+Hi Valentin,
 
-One point we can fix more is the drive-strength already is supported
-as the generic one, not need to depend on a dedicated header file.
+On Wednesday 02 Jan 2019 at 13:55:49 (+0000), Valentin Schneider wrote:
+> The prototype of that function was already hoisted up in
+> 
+>   commit 3b1baa6496e6 ("sched/fair: Add 'group_misfit_task' load-balance type")
+> 
+> but that seems to have been missed.
 
-> > > +Examples:
-> > > +
-> > > +#include "mt8183-pinfunc.h"
-> > > +
-> > > +...
-> > > +{
-> > > +   pio: pinctrl@10005000 {
-> > > +           compatible = "mediatek,mt8183-pinctrl";
-> > > +           reg = <0 0x10005000 0 0x1000>,
-> > > +                 <0 0x11F20000 0 0x1000>,
-> > > +                 <0 0x11E80000 0 0x1000>,
-> > > +                 <0 0x11E70000 0 0x1000>,
-> > > +                 <0 0x11E90000 0 0x1000>,
-> > > +                 <0 0x11D30000 0 0x1000>,
-> > > +                 <0 0x11D20000 0 0x1000>,
-> > > +                 <0 0x11C50000 0 0x1000>,
-> > > +                 <0 0x11F30000 0 0x1000>;
-> > > +           reg-names = "iocfg0", "iocfg1", "iocfg2",
-> > > +                       "iocfg3", "iocfg4", "iocfg5",
-> > > +                       "iocfg6", "iocfg7", "iocfg8";
-> > > +           gpio-controller;
-> > > +           #gpio-cells = <2>;
-> > > +           gpio-ranges = <&pio 0 0 192>;
-> > > +           interrupt-controller;
-> > > +           interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
-> > > +           interrupt-parent = <&gic>;
-> > > +           #interrupt-cells = <2>;
-> > > +
-> > > +           i2c0_pins_a: i2c0@0 {
-> >
-> > unit-address without reg property is not valid.
->
-> ==> we will change "i2c0_pins_a: i2c0@0" to "i2c0_pins_a: i2c0" in the
-> next version.
-> >
-> > > +                   pins1 {
-> > > +                           pinmux = <PINMUX_GPIO48__FUNC_SCL5>,
-> > > +                                    <PINMUX_GPIO49__FUNC_SDA5>;
-> > > +                           mediatek,pull-up-adv = <11>;
-> > > +                   };
-> > > +           };
-> > > +
-> > > +           i2c1_pins_a: i2c1@0 {
-> > > +                   pins {
-> > > +                           pinmux = <PINMUX_GPIO50__FUNC_SCL3>,
-> > > +                                    <PINMUX_GPIO51__FUNC_SDA3>;
-> > > +                           mediatek,pull-down-adv = <10>;
-> > > +                   };
-> > > +           };
-> > > +           ...
-> > > +   };
-> > > +};
-> > > --
-> > > 1.9.1
-> > >
->
->
->
-> _______________________________________________
-> Linux-mediatek mailing list
-> Linux-mediatek@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-mediatek
+Indeed, I missed that one :/
+
+> Get rid of the extra prototype.
+> 
+> Fixes: 2802bf3cd936 ("sched/fair: Add over-utilization/tipping point indicator")
+> Signed-off-by: Valentin Schneider <valentin.schneider@arm.com>
+> ---
+>  kernel/sched/fair.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 6483834f1278..6d653947a829 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -5083,7 +5083,6 @@ static inline void hrtick_update(struct rq *rq)
+>  
+>  #ifdef CONFIG_SMP
+>  static inline unsigned long cpu_util(int cpu);
+> -static unsigned long capacity_of(int cpu);
+>  
+>  static inline bool cpu_overutilized(int cpu)
+>  {
+> --
+> 2.20.1
+
+Acked-by: Quentin Perret <quentin.perret@arm.com>
+
+Thanks for cleaning this up,
+Quentin
