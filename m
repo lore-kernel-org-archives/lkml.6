@@ -2,85 +2,99 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFE7FC43612
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 10:40:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41016C43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 10:41:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 986CA206C0
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 10:40:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EEFCD206C0
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 10:41:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727551AbfADKkM (ORCPT
+        id S1727604AbfADKlz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 05:40:12 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39788 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726028AbfADKkL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 05:40:11 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E78EB15AD;
-        Fri,  4 Jan 2019 02:40:10 -0800 (PST)
-Received: from [10.1.194.37] (e113632-lin.cambridge.arm.com [10.1.194.37])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CE0B03F575;
-        Fri,  4 Jan 2019 02:40:08 -0800 (PST)
-Subject: Re: [PATCH] cpufreq: scpi/scmi: Fix freeing of dynamic OPPs
-To:     Viresh Kumar <viresh.kumar@linaro.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        quentin.perret@arm.com, dietmar.eggemann@arm.com,
-        Douglas.Raillard@arm.com, "4 . 20" <stable@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <a2a42913-04e0-e6fc-d9ee-a2e355ac22c9@arm.com>
- <7dddbeabb434225d9b3d02600ea4a2313622ca26.1546594910.git.viresh.kumar@linaro.org>
-From:   Valentin Schneider <valentin.schneider@arm.com>
-Message-ID: <96b57b5b-7c6f-2118-05a0-8a568d7cb245@arm.com>
-Date:   Fri, 4 Jan 2019 10:40:07 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 4 Jan 2019 05:41:55 -0500
+Received: from wes1-so1-b.wedos.net ([46.28.106.43]:45860 "EHLO
+        wes1-so1.wedos.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726028AbfADKlz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 05:41:55 -0500
+Received: from localhost (ip4-46-39-182-135.cust.nbox.cz [46.39.182.135])
+        by wes1-so1.wedos.net (Postfix) with ESMTPSA id 43WLv43Tpbz6by;
+        Fri,  4 Jan 2019 11:41:52 +0100 (CET)
+Date:   Fri, 4 Jan 2019 11:41:49 +0100
+From:   Otto Sabart <ottosabart@seberm.com>
+To:     "David S. Miller" <davem@davemloft.net>,
+        Jonathan Corbet <corbet@lwn.net>
+Cc:     linux-doc@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 0/5] doc: network: integrate offload documents into doc tree
+Message-ID: <cover.1546553515.git.ottosabart@seberm.com>
 MIME-Version: 1.0
-In-Reply-To: <7dddbeabb434225d9b3d02600ea4a2313622ca26.1546594910.git.viresh.kumar@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="TB36FDmn/VVEgNH/"
+Content-Disposition: inline
+X-PGP-Key: http://seberm.com/pubkey.asc
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-On 04/01/2019 09:44, Viresh Kumar wrote:
-> Since the commit 2a4eb7358aba ("OPP: Don't remove dynamic OPPs from
-> _dev_pm_opp_remove_table()"), dynamically created OPP aren't
-> automatically removed anymore by dev_pm_opp_cpumask_remove_table(). This
-> affects the scpi and scmi cpufreq drivers which no longer free OPPs on
-> failures or on invocations of the policy->exit() callback.
-> 
-> Create a generic OPP helper dev_pm_opp_remove_all_dynamic() which can be
-> called from these drivers instead of dev_pm_opp_cpumask_remove_table().
-> 
-> In dev_pm_opp_remove_all_dynamic(), we need to make sure that the
-> opp_list isn't getting accessed simultaneously from other parts of the
-> OPP core while the helper is freeing dynamic OPPs, i.e. we can't drop
-> the opp_table->lock while traversing through the OPP list. And to
-> accomplish that, this patch also creates _opp_kref_release_unlocked()
-> which can be called from this new helper with the opp_table lock already
-> held.
-> 
-> Cc: 4.20 <stable@vger.kernel.org> # v4.20
-> Reported-by: Valentin Schneider <valentin.schneider@arm.com>
-> Fixes: 2a4eb7358aba ("OPP: Don't remove dynamic OPPs from _dev_pm_opp_remove_table()")
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+--TB36FDmn/VVEgNH/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Gave it a spin on my Juno, and I don't see the refcount warning anymore so:
+This series of patches integrates checksum-offloads and
+segmentation-offloads documents into documentation tree.
 
-Tested-by: Valentin Schneider <valentin.schneider@arm.com>
+These patches do not change semantics of these documents. There are only
+changes which are needed for successful integration into documentation
+tree generated by Sphinx.
 
-Thanks for having a look at this.
+Otto Sabart (5):
+  doc: networking: prepare offload documents for conversion into RST
+  doc: networking: convert offload files into RST
+  doc: networking: update references to files describing offloads
+  doc: networking: shorten the main title in offloads documents
+  doc: networking: add offload documents into main index file
 
-[...]
+ .../networking/checksum-offloads.rst          | 143 ++++++++++++++++++
+ .../networking/checksum-offloads.txt          | 122 ---------------
+ Documentation/networking/index.rst            |   2 +
+ ...offloads.txt =3D> segmentation-offloads.rst} |  48 +++---
+ include/linux/skbuff.h                        |   2 +-
+ 5 files changed, 177 insertions(+), 140 deletions(-)
+ create mode 100644 Documentation/networking/checksum-offloads.rst
+ delete mode 100644 Documentation/networking/checksum-offloads.txt
+ rename Documentation/networking/{segmentation-offloads.txt =3D> segmentati=
+on-offloads.rst} (88%)
+
+--=20
+2.17.2
+
+
+--TB36FDmn/VVEgNH/
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEb6VOpv2s03VHGoilgjuumfi+HjwFAlwvOGQACgkQgjuumfi+
+Hjw4KRAAo3AbM3vfTDDvUNDBQL5ZuQ+N8GpCtS95VPBTGDCAFa6XqtoIGaZzDO/z
+pOsg0Bfqfya1p/jo5HDgwygPazAY4uHoJEtcDDeDtYf87HzWu74VeGD+o8oNfm88
+SBw1xGpF8hixRK8pTNTNLJwuc8jdCdEMygcZg5vcgj5OckW5U+8lniaCsyWEnMp6
+0rpvPCYdtzH+3xkRljm0hxhBzOTu41XH1e1GF5CrT6cvvSrsWjSGFVnI1o1aLSEQ
+Bl/hP92XQ1Oyj+NTNJr6ozpw3T8gWeW94lvwPcVreZUDR+2E4GKwYPHI9g+BiKoo
+9qL6o4PmRVbA+qDWUXdqB10ohN1cJh+3xjN6OQvPTie34e/U03AHYPWPNiyUSgHd
+BgKJoF31C16tx1W8im2GUfvdXuIW1jjs1bP8GdQteRhpmjxDZYrSkl4I0qCis0xK
+aQNtwepCFwgvNVsFdrdx147CIha3zcTZzY946sQJjEbezEqmPwJgKaWRGxcia4lD
++LTgTNQQCDAkbhe77D+YmFfrpTnUBwf7jQqmpzDp+w9h62p7hGxnoytXNa+B4E/N
+saJtY5xBxyA41Rh0hxA6/3yex869+9GyRYirNuzwAEvtrNj0W09sZjk8KLTizn9V
+sQ4739IJz154ePiPHUO+HZheEDl2chVnVyZ3Kbd+05PfrE4LDDw=
+=9mBw
+-----END PGP SIGNATURE-----
+
+--TB36FDmn/VVEgNH/--
