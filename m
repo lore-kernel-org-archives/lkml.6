@@ -2,141 +2,82 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A62AC43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 17:14:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E5ACC43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 17:15:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 603D8218D3
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 17:14:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1761C218E0
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 17:15:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=aruba.it header.i=@aruba.it header.b="BxLeBr1I"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728097AbfADROe (ORCPT
+        id S1728111AbfADRPM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 12:14:34 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:41288 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726256AbfADROd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 12:14:33 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id F201281DE2;
-        Fri,  4 Jan 2019 17:14:32 +0000 (UTC)
-Received: from localhost (ovpn-200-16.brq.redhat.com [10.40.200.16])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 91CC8101F97D;
-        Fri,  4 Jan 2019 17:14:29 +0000 (UTC)
-Date:   Fri, 4 Jan 2019 18:14:24 +0100
-From:   Stefano Brivio <sbrivio@redhat.com>
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        syzbot <syzbot+4ad25edc7a33e4ab91e0@syzkaller.appspotmail.com>,
-        David Miller <davem@davemloft.net>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
-Subject: Re: kernel panic: stack is corrupted in udp4_lib_lookup2
-Message-ID: <20190104181424.5ad4b1de@redhat.com>
-In-Reply-To: <CACT4Y+bRLOVCx9Z=vCMspjzGrcnNFqNGWxDwiwYZbw2LTh__FA@mail.gmail.com>
-References: <000000000000513fb7057e8d7013@google.com>
-        <f2e566ac-5c4c-11ae-d436-ebb3522a2195@gmail.com>
-        <20190103210743.6518841e@redhat.com>
-        <CA+FuTScFwA3F44MvbaWrOYJ2EYgdKAmoMzEGjOLcz3ZPVQLLDA@mail.gmail.com>
-        <20190103225404.66b0ec9f@redhat.com>
-        <CACT4Y+aAofhchOpKTjLGGkQb5PAa74Uyp7kowdSoAwt130ZpAg@mail.gmail.com>
-        <20190104115435.478b4b4a@redhat.com>
-        <CACT4Y+bRLOVCx9Z=vCMspjzGrcnNFqNGWxDwiwYZbw2LTh__FA@mail.gmail.com>
-Organization: Red Hat
+        Fri, 4 Jan 2019 12:15:12 -0500
+Received: from smtpcmd13146.aruba.it ([62.149.156.146]:43806 "EHLO
+        smtpcmd13146.aruba.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726271AbfADRPL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 12:15:11 -0500
+Received: from [192.168.188.46] ([93.34.66.13])
+        by smtpcmd13.ad.aruba.it with bizsmtp
+        id LH811z00A0H9oKh01H83D3; Fri, 04 Jan 2019 18:08:10 +0100
+Subject: Re: [PATCH v14 2/3] dt-bindings: pps: pps-gpio PPS ECHO
+ implementation
+To:     Tom Burkart <tom@aussec.com>,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>
+Cc:     devicetree@vger.kernel.org, Ricardo Martins <rasm@fe.up.pt>,
+        James Nuss <jamesnuss@nanometrics.ca>,
+        Lukas Senger <lukas@fridolin.com>
+References: <20181230083333.27210-1-tom@aussec.com>
+ <20181230083333.27210-2-tom@aussec.com>
+ <20181230083333.27210-3-tom@aussec.com>
+From:   Rodolfo Giometti <giometti@enneenne.com>
+Message-ID: <e23a0bfc-ab47-bdc1-7d32-d04ea5a250fd@enneenne.com>
+Date:   Fri, 4 Jan 2019 18:08:00 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20181230083333.27210-3-tom@aussec.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Fri, 04 Jan 2019 17:14:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aruba.it; s=a1;
+        t=1546621690; bh=G23zYhk5x5GC05r6XonOoArESJjzrtlQyyJVKwLFimM=;
+        h=Subject:To:From:Date:MIME-Version:Content-Type;
+        b=BxLeBr1Iku69/nzMbEG87czKJXSdI0W/NvK040Nfv70qvZZvc42+Bw1TWq3eKmbFz
+         tR/EuIWYgTtNV2EN4KkQLYF09cX638KbdutK/DL4EnWYkCXE3fLAIFcOy20OzR7GCp
+         YDphJSrByORJSi/uzL2EdN2D/DD7jTTaKItBsdA7SNqWBUppMXInruVSe+9epxDB9V
+         jVfcw9eAEUYpytGL35uzIEkHjiFFhlC5EcVk1d5+V/7uIWo1TZM/KOEFv/upYz2INo
+         s750DnuOYErGkYCakt9r6V6C9IRWnNDXW64Kt3fgyhZHMhkvBznT+Fe23g4FiA2U5J
+         QbC2LSlOFeWgQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 4 Jan 2019 12:05:04 +0100
-Dmitry Vyukov <dvyukov@google.com> wrote:
-
-> On Fri, Jan 4, 2019 at 11:54 AM Stefano Brivio <sbrivio@redhat.com> wrote:
-> >
-> > On Fri, 4 Jan 2019 11:32:12 +0100
-> > Dmitry Vyukov <dvyukov@google.com> wrote:
-> >  
-> > > On Thu, Jan 3, 2019 at 10:54 PM Stefano Brivio <sbrivio@redhat.com> wrote:  
-> > > >
-> > > > On Thu, 3 Jan 2019 15:15:06 -0600
-> > > > Willem de Bruijn <willemdebruijn.kernel@gmail.com> wrote:
-> > > >  
-> > > > > syzbot generated stack traces with
-> > > > >
-> > > > > [  183.517380]  udpv6_err+0x46/0x60
-> > > > > [  183.520739]  ? __udp6_lib_err+0x1890/0x1890
-> > > > > [  183.525054]  gue6_err_proto_handler+0x199/0x280  
-> > > >
-> > > > Where? I can't find that in any logs linked from the dashboard at
-> > > > https://syzkaller.appspot.com/bug?extid=4ad25edc7a33e4ab91e0 :(  
-> > >
-> > > Stefano, there are these 4 bugs reported that have similarly looking
-> > > reproducers involving udp sockets and that crash modes that looks like
-> > > stack corruption/overflow:
-> > >
-> > > https://syzkaller.appspot.com/bug?extid=14005fa30c9a07192934
-> > > https://syzkaller.appspot.com/bug?extid=d14090007dc9ba5fa9b7
-> > > https://syzkaller.appspot.com/bug?extid=137ed32ec9a6d5b0d5fe
-> > > https://syzkaller.appspot.com/bug?id=d5bc3e0c66d200d72216ab343a67c4327e4a3452
-> > >
-> > > Are these the same bug as this?  
-> >
-> > Judging from the reproducers for the first three, they seem to be.  
+On 30/12/2018 09:33, Tom Burkart wrote:
+> This patch implements the device tree binding changes required for the
+> pps echo functionality for pps-gpio, that sysfs claims is available
+> already.
 > 
-> OK, then I will mark them as dups of this one.
+> This patch was originally written by Lukas Senger as part of a masters
+> thesis project and modified for inclusion into the linux kernel by Tom
+> Burkart.
 
-syzbot just finished the tests I requested and couldn't reproduce the
-first three issues with the fix I posted (fou6: Prevent unbounded
-recursion in GUE error handler).
+I think this patch it's OK but I'm asking to myself if it should be merged with 
+next one... logically it describes what patch 3/3 does so why do we keep them 
+separated?
 
-This should prove they are in fact the same issue.
+Ciao,
 
-> > I
-> > guess I can trigger tests also for those by sending a (sharp)syz
-> > test ... e-mail with the patch to the Reported-by: addresses, right?  
-> 
-> Correct.
-> These should be on LKML, but as you noted you can just add the syzbot
-> email with tag to TO/CC. That email is available in the Reported-by
-> tag (and also shown on the dashboard).
-
-Okay, thanks for confirming.
-
-> > And the three reports you pointed out from the pile of corrupted
-> > reports also seem to match, others look unrelated.  
-> 
-> I've added these as tests:
-> 
-> https://github.com/google/syzkaller/blob/master/pkg/report/testdata/linux/report/341
-> https://github.com/google/syzkaller/blob/master/pkg/report/testdata/linux/report/342
-> https://github.com/google/syzkaller/blob/master/pkg/report/testdata/linux/report/343
-> https://github.com/google/syzkaller/blob/master/pkg/report/testdata/linux/report/344
-> 
-> Will try to figure out how to distinguish them from true corrupted
-> reports. Usually when Call Trace does not have any frames, it's a sign
-> of a corrupted report, and in other crashes we see the same report but
-> with a stack trace. But some stack-corruption-related reliably don't
-> have stack traces (not corrupted). But then some other
-> stack-corruption-related crashes do have stack traces, and for these
-> no stack trace again means a corrupted kernel output. Amusingly this
-> is one of the most complex parts of syzkaller.
-
-I'm not sure how complicated that would be, but what about some metric
-based on valid symbol names being reported?
+Rodolfo
 
 -- 
-Stefano
-
+GNU/Linux Solutions                  e-mail: giometti@enneenne.com
+Linux Device Driver                          giometti@linux.it
+Embedded Systems                     phone:  +39 349 2432127
+UNIX programming                     skype:  rodolfo.giometti
