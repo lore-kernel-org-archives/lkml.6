@@ -2,69 +2,115 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02121C43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 17:59:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1BABC43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 18:02:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1EA0218D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 17:59:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 82FD3218D3
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 18:02:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727809AbfADR7o (ORCPT
+        id S1727439AbfADSCZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 12:59:44 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:48634 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725958AbfADR7o (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 12:59:44 -0500
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1gfTl0-0004md-6G; Fri, 04 Jan 2019 17:59:42 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Bin Liu <b-liu@ti.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] USB: musb: fix indentation issue on a return statement
-Date:   Fri,  4 Jan 2019 17:59:41 +0000
-Message-Id: <20190104175941.9669-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.19.1
+        Fri, 4 Jan 2019 13:02:25 -0500
+Received: from foss.arm.com ([217.140.101.70]:47982 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725958AbfADSCW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 13:02:22 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D4CCDEBD;
+        Fri,  4 Jan 2019 10:02:21 -0800 (PST)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 955E83F5D4;
+        Fri,  4 Jan 2019 10:02:18 -0800 (PST)
+Date:   Fri, 4 Jan 2019 18:02:16 +0000
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Marc Zyngier <marc.zyngier@arm.com>,
+        Kristina Martsenko <kristina.martsenko@arm.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Adam Wallis <awallis@codeaurora.org>,
+        Amit Kachhap <amit.kachhap@arm.com>,
+        Andrew Jones <drjones@redhat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave P Martin <dave.martin@arm.com>,
+        Jacob Bramley <jacob.bramley@arm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>,
+        Richard Henderson <richard.henderson@linaro.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 07/13] arm64: add basic pointer authentication support
+Message-ID: <20190104180215.GB7157@lakrids.cambridge.arm.com>
+References: <20181207183931.4285-1-kristina.martsenko@arm.com>
+ <20181207183931.4285-8-kristina.martsenko@arm.com>
+ <20190103202901.GA21564@amd>
+ <681a2835-1a70-f3c3-3534-7b4cf6139cac@arm.com>
+ <20190104093340.GA28150@amd>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190104093340.GA28150@amd>
+User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Fri, Jan 04, 2019 at 10:33:40AM +0100, Pavel Machek wrote:
+> On Fri 2019-01-04 09:21:30, Marc Zyngier wrote:
+> > On 03/01/2019 20:29, Pavel Machek wrote:
+> > > On Fri 2018-12-07 18:39:25, Kristina Martsenko wrote:
+> > >> From: Mark Rutland <mark.rutland@arm.com>
+> > >> 
+> > >> This patch adds basic support for pointer authentication,
+> > >> allowing userspace to make use of APIAKey, APIBKey, APDAKey,
+> > >> APDBKey, and APGAKey. The kernel maintains key values for each
+> > >> process (shared by all threads within), which are initialised to
+> > >> random values at exec()
+> > > time.
+> > > 
+> > > ...
+> > > 
+> > >> +/* + * We give each process its own keys, which are shared by
+> > >> all threads. The keys + * are inherited upon fork(), and
+> > >> reinitialised upon exec*(). + */ +struct ptrauth_keys { +	struct
+> > >> ptrauth_key apia; +	struct ptrauth_key apib; +	struct ptrauth_key
+> > >> apda; +	struct ptrauth_key apdb; +	struct ptrauth_key apga; +};
+> > > 
+> > > intstruction_a, data_a, generic_a? Should be easier to understand
+> > > than "apdb" ...
+> > 
+> > ... until you realize that these names do match the documentation,
+> > which makes it even easier to understand how the code uses the
+> > architecture.
+> 
+> See how not even the commit log matches the documentation then?
 
-A return statement is indented one level too far, fix this by removing
-a tab.
+The commit message exactly matches the documentation, as it refers to:
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/usb/musb/musb_host.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+	APIAKey, APIBKey, APDAKey, APDBKey, and APGAKey
 
-diff --git a/drivers/usb/musb/musb_host.c b/drivers/usb/musb/musb_host.c
-index b59ce9ad14ce..0b1eb15b6b08 100644
---- a/drivers/usb/musb/musb_host.c
-+++ b/drivers/usb/musb/musb_host.c
-@@ -1283,7 +1283,7 @@ void musb_host_tx(struct musb *musb, u8 epnum)
- 					MUSB_TXCSR_H_WZC_BITS
- 					| MUSB_TXCSR_TXPKTRDY);
- 		}
--			return;
-+		return;
- 	}
- 
- done:
--- 
-2.19.1
+... which are the architected names for those registers, in all the
+documentation.
 
+Searching "apga" in the ARM ARM finds all of the relevant information on
+APGAKey_EL1. Searching "generic_a" finds precisely nothing, as it's a
+term which you invented, that no-one else has previously used.
+
+Likewise for the other key names.
+
+> Naming something "apdb" is just bad... Just because the documentation
+> is evil does not mean it should be followed...
+
+It is in no way evil to use the documented names for things.
+
+It is unhelpful to make up terminology that no-one else uses.
+
+Mark.
