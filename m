@@ -2,97 +2,105 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ACF5C43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 17:37:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E44AC43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 17:37:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29F67218CD
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 17:37:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4938D218FE
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 17:37:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727760AbfADRhC convert rfc822-to-8bit (ORCPT
+        id S1728473AbfADRhj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 12:37:02 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:6467 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725958AbfADRhB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 12:37:01 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 43WX621Whcz9v25c;
-        Fri,  4 Jan 2019 18:36:58 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id 0iC6j55v_-A8; Fri,  4 Jan 2019 18:36:58 +0100 (CET)
-Received: from vm-hermes.si.c-s.fr (vm-hermes.si.c-s.fr [192.168.25.253])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 43WX620ydVz9v25b;
-        Fri,  4 Jan 2019 18:36:58 +0100 (CET)
-Received: by vm-hermes.si.c-s.fr (Postfix, from userid 33)
-        id AFDFFD4E; Fri,  4 Jan 2019 18:36:59 +0100 (CET)
-Received: from 37.165.122.65 ([37.165.122.65]) by messagerie.si.c-s.fr
- (Horde Framework) with HTTP; Fri, 04 Jan 2019 18:36:59 +0100
-Date:   Fri, 04 Jan 2019 18:36:59 +0100
-Message-ID: <20190104183659.Horde.Xco_Q-bqCSSJoWwerf1bVw4@messagerie.si.c-s.fr>
-From:   LEROY Christophe <christophe.leroy@c-s.fr>
-To:     sparclinux@vger.kernel.org, Mathieu Malaterre <malat@debian.org>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: Re: [PATCH] Remove 'type' argument from access_ok() function
-In-Reply-To: <20190104092758.4378-1-malat@debian.org>
-User-Agent: Internet Messaging Program (IMP) H5 (6.2.3)
-Content-Type: text/plain; charset=UTF-8; format=flowed; DelSp=Yes
+        Fri, 4 Jan 2019 12:37:39 -0500
+Received: from gateway23.websitewelcome.com ([192.185.50.185]:49091 "EHLO
+        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725958AbfADRhj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 12:37:39 -0500
+Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
+        by gateway23.websitewelcome.com (Postfix) with ESMTP id F21351AF6C
+        for <linux-kernel@vger.kernel.org>; Fri,  4 Jan 2019 11:37:38 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id fTPeglqhFdnCefTPegschB; Fri, 04 Jan 2019 11:37:38 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.130.205] (port=35296 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gfTPe-000SB1-7D; Fri, 04 Jan 2019 11:37:38 -0600
+Date:   Fri, 4 Jan 2019 11:37:33 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] pinctrl: mcp23s08: use struct_size() in devm_kzalloc()
+Message-ID: <20190104173733.GA29979@embeddedor>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.130.205
+X-Source-L: No
+X-Exim-ID: 1gfTPe-000SB1-7D
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.130.205]:35296
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 33
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mathieu Malaterre <malat@debian.org> a écrit :
+One of the more common cases of allocation size calculations is finding
+the size of a structure that has a zero-sized array at the end, along
+with memory for some number of elements for that array. For example:
 
-> In commit 05a4ab823983 ("powerpc/uaccess: fix warning/error with
-> access_ok()") an attempt was made to remove a warning by referencing the
-> variable `type`, however in commit 96d4f267e40f ("Remove 'type' argument
-> from access_ok() function") the variable `type` has been removed.
->
-> Revert commit 05a4ab823983 ("powerpc/uaccess: fix warning/error with
-> access_ok()") to fix the following compilation error:
->
->   arch/powerpc/include/asm/uaccess.h:66:32: error: ‘type’ undeclared  
-> (first use in this function)
->
-> Signed-off-by: Mathieu Malaterre <malat@debian.org>
+struct foo {
+    int stuff;
+    void *entry[];
+};
 
-Should you add a Fixes:  96d4f267e40f ?
+instance = devm_kzalloc(dev, sizeof(struct foo) + sizeof(void *) * count, GFP_KERNEL);
 
-Note that sparc arch will have the same issue.
+Instead of leaving these open-coded and prone to type mistakes, we can
+now use the new struct_size() helper:
 
-Christophe
+instance = devm_kzalloc(dev, struct_size(instance, entry, count), GFP_KERNEL);
 
-> ---
->  arch/powerpc/include/asm/uaccess.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/powerpc/include/asm/uaccess.h  
-> b/arch/powerpc/include/asm/uaccess.h
-> index b31bf45eebd4..5f0c98e511a0 100644
-> --- a/arch/powerpc/include/asm/uaccess.h
-> +++ b/arch/powerpc/include/asm/uaccess.h
-> @@ -63,7 +63,7 @@ static inline int __access_ok(unsigned long addr,  
-> unsigned long size,
->  #endif
->
->  #define access_ok(addr, size)		\
-> -	(__chk_user_ptr(addr), (void)(type),		\
-> +	(__chk_user_ptr(addr),			\
->  	 __access_ok((__force unsigned long)(addr), (size), get_fs()))
->
->  /*
-> --
-> 2.19.2
+This code was detected with the help of Coccinelle.
 
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/pinctrl/pinctrl-mcp23s08.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/pinctrl/pinctrl-mcp23s08.c b/drivers/pinctrl/pinctrl-mcp23s08.c
+index b03481ef99a1..6b4def13df8f 100644
+--- a/drivers/pinctrl/pinctrl-mcp23s08.c
++++ b/drivers/pinctrl/pinctrl-mcp23s08.c
+@@ -1139,8 +1139,7 @@ static int mcp23s08_probe(struct spi_device *spi)
+ 		return -ENODEV;
+ 
+ 	data = devm_kzalloc(&spi->dev,
+-			    sizeof(*data) + chips * sizeof(struct mcp23s08),
+-			    GFP_KERNEL);
++			    struct_size(data, chip, chips), GFP_KERNEL);
+ 	if (!data)
+ 		return -ENOMEM;
+ 
+-- 
+2.20.1
 
