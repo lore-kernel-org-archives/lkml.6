@@ -2,102 +2,102 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E118C43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 10:31:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F212C43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 10:32:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 253CD20652
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 10:31:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C48B206BB
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 10:32:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Hc81N4aP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727192AbfADKba (ORCPT
+        id S1727341AbfADKcZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 05:31:30 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:45494 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726134AbfADKba (ORCPT
+        Fri, 4 Jan 2019 05:32:25 -0500
+Received: from mail-it1-f177.google.com ([209.85.166.177]:35055 "EHLO
+        mail-it1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725913AbfADKcY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 05:31:30 -0500
-Received: by mail-lj1-f194.google.com with SMTP id s5-v6so32036869ljd.12
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Jan 2019 02:31:29 -0800 (PST)
+        Fri, 4 Jan 2019 05:32:24 -0500
+Received: by mail-it1-f177.google.com with SMTP id p197so991104itp.0
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Jan 2019 02:32:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=kJ/yfDmBuHnO+ny/3gz+6yKNZoIKZ4geGslJZE7/HDc=;
+        b=Hc81N4aPRSL5BP2i73Q9Qh5rOpNKWvIbjC1eFxdqhb7CrT55gnMzZpVvA8nthiul+L
+         1OVZ31hY24eKNlOzzVYXGmnlZS++kuD0EabLf+ToSatKk2lbm46XLx+SC5CJIv2KmtA5
+         o0Qd0QzxQkvZGpaIeKTzFB3h1P51fEW8ogJiTNQFk5lggewM7gziRcBV1M3FuPZ3teSw
+         UY4LXluTL+G2b++GXFqhPOTR8HL4OSjr+zT7jUYehjYZkkA3m6mmgdEouwIxVmqjghtI
+         djnQn+8ur/12oHiR+gOJeoJDHQ7hoJXdvK10RMXqQP9W83InOSuCzkpUG5Pjrj9tO4ux
+         Ig8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=lM5pvkUWtdBGBf295DNJav2rv4tKoFpjI+CoLPP6ETU=;
-        b=YcvOz8cWXWZ59BQQpgoFDbPyeRr3o6oFXzozhWQ0lg7G5nXgADiH2x+3EhCuBJyqpI
-         Ac0nqVZDu8V9aUK5WCK+GpfsqieHYnB/MiXCxb85TZTzMLpJGye+M+cxk4nXGszIu94e
-         FMTKj2Pe8qM8OD0OlJjQ3zcAm+S+qwRpBxl6hoal9cpIr+b6c6FuSYEwqFC61UrKgKoM
-         6REA1IUfw1VXrxIsOa7cA0s/URxhtGbCK+pTcpvkYJXa8kn5fHQ4M4J/Bx1mk7a9x4za
-         oZemrF9kwXVnBL3h7LzsPVstHqeFkn+OxIoNA5VD3+CXxySH/5zB0Ha7G9mQrzLL11Gd
-         wPjA==
-X-Gm-Message-State: AJcUukf6vml6F4uqnYRdDxcwps3keOK9VB4RHHrnTW1Fjyg5SPkn+iZ/
-        h4Z/Dcz/OgD6urvodZDzFgM=
-X-Google-Smtp-Source: ALg8bN5zeEU2IJ4m1rxVsYAojZCMYA9sVGIESrXhq6ransrAluBkTywJpkcZcjzceV4yFgdvmXIRLw==
-X-Received: by 2002:a2e:612:: with SMTP id 18-v6mr27757671ljg.125.1546597888308;
-        Fri, 04 Jan 2019 02:31:28 -0800 (PST)
-Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id y24-v6sm12217917ljd.20.2019.01.04.02.31.27
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 04 Jan 2019 02:31:27 -0800 (PST)
-Date:   Fri, 4 Jan 2019 12:31:15 +0200
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     mazziesaccount@gmail.com, matti.vaittinen@fi.rohmeurope.com,
-        mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
-Cc:     broonie@kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org,
-        linux-kernel@vger.kernel.org, geert@linux-m68k.org,
-        ckeepax@opensource.cirrus.com
-Subject: [PATCH] regmap: regmap-irq: Make irq-type callbak optional
-Message-ID: <20190104103115.GA10043@localhost.localdomain>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kJ/yfDmBuHnO+ny/3gz+6yKNZoIKZ4geGslJZE7/HDc=;
+        b=dKyUwrd44EOAcQiRHrNzoMtJAUSw1ZaPlVPnRvu328+eNT3Yij12nllLAVbBs+njs7
+         qvvPBOsRkYtCX3gabbwFRdt4UGYUic6CdlYwaJoUlKVp6E+IKw287a7GiNbjPi2EYTKm
+         8fxBKSaPNggh3m+PASrLkc+tvRm+qAPX8DXZasHz1vUNI2RbzBTib6Qrs8QwsQa9FA1m
+         4YqEhka/6sidfoB8Foc3eH6i9UZW+RNLT6Vou0cPMDAtmhMKUSo/JiIYxP/5upckYqZI
+         bIOB1IrAYdSdKOSk0OlMrKlZaXpu3Gl34boXfvEZkyjYQ/cG1z3BPCxMF/BVkD3ikErA
+         nGHA==
+X-Gm-Message-State: AA+aEWbplbwEN80sLa5VNecp5LcllyAlz3xuWTQE1W98c83l1AUsK14z
+        hF6xfciZgg4tBv4Kvg91dklEnWuMidk0JtG8wofZ7w==
+X-Google-Smtp-Source: AFSGD/VUXOmDDH5enYML2voV6ZmKeOdQIur9FVf0W9Ax2YDQ3kCO9uuHsm/AiTWLdQya7SQnKtBjQBWfVDMEMmca3bI=
+X-Received: by 2002:a02:8904:: with SMTP id o4mr33246713jaj.35.1546597943666;
+ Fri, 04 Jan 2019 02:32:23 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.2 (2017-12-15)
+References: <000000000000513fb7057e8d7013@google.com> <f2e566ac-5c4c-11ae-d436-ebb3522a2195@gmail.com>
+ <20190103210743.6518841e@redhat.com> <CA+FuTScFwA3F44MvbaWrOYJ2EYgdKAmoMzEGjOLcz3ZPVQLLDA@mail.gmail.com>
+ <20190103225404.66b0ec9f@redhat.com>
+In-Reply-To: <20190103225404.66b0ec9f@redhat.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Fri, 4 Jan 2019 11:32:12 +0100
+Message-ID: <CACT4Y+aAofhchOpKTjLGGkQb5PAa74Uyp7kowdSoAwt130ZpAg@mail.gmail.com>
+Subject: Re: kernel panic: stack is corrupted in udp4_lib_lookup2
+To:     Stefano Brivio <sbrivio@redhat.com>
+Cc:     Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        syzbot <syzbot+4ad25edc7a33e4ab91e0@syzkaller.appspotmail.com>,
+        David Miller <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Network Development <netdev@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Do not register type setting callback if HW does not support
-setting the irq type. IRQ core can then handle cases where
-type setting is not supported and no regmap-irq specific handling
-is required.
+On Thu, Jan 3, 2019 at 10:54 PM Stefano Brivio <sbrivio@redhat.com> wrote:
+>
+> On Thu, 3 Jan 2019 15:15:06 -0600
+> Willem de Bruijn <willemdebruijn.kernel@gmail.com> wrote:
+>
+> > syzbot generated stack traces with
+> >
+> > [  183.517380]  udpv6_err+0x46/0x60
+> > [  183.520739]  ? __udp6_lib_err+0x1890/0x1890
+> > [  183.525054]  gue6_err_proto_handler+0x199/0x280
+>
+> Where? I can't find that in any logs linked from the dashboard at
+> https://syzkaller.appspot.com/bug?extid=4ad25edc7a33e4ab91e0 :(
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
----
- drivers/base/regmap/regmap-irq.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Stefano, there are these 4 bugs reported that have similarly looking
+reproducers involving udp sockets and that crash modes that looks like
+stack corruption/overflow:
 
-diff --git a/drivers/base/regmap/regmap-irq.c b/drivers/base/regmap/regmap-irq.c
-index d2d0014b0d23..a387ee499b5c 100644
---- a/drivers/base/regmap/regmap-irq.c
-+++ b/drivers/base/regmap/regmap-irq.c
-@@ -322,7 +322,6 @@ static const struct irq_chip regmap_irq_chip = {
- 	.irq_bus_sync_unlock	= regmap_irq_sync_unlock,
- 	.irq_disable		= regmap_irq_disable,
- 	.irq_enable		= regmap_irq_enable,
--	.irq_set_type		= regmap_irq_set_type,
- 	.irq_set_wake		= regmap_irq_set_wake,
- };
- 
-@@ -560,6 +559,9 @@ int regmap_add_irq_chip(struct regmap *map, int irq, int irq_flags,
- 	d->chip = chip;
- 	d->irq_base = irq_base;
- 
-+	if (num_type_reg)
-+		d->irq_chip.irq_set_type = regmap_irq_set_type;
-+
- 	if (chip->irq_reg_stride)
- 		d->irq_reg_stride = chip->irq_reg_stride;
- 	else
--- 
-2.14.3
+https://syzkaller.appspot.com/bug?extid=14005fa30c9a07192934
+https://syzkaller.appspot.com/bug?extid=d14090007dc9ba5fa9b7
+https://syzkaller.appspot.com/bug?extid=137ed32ec9a6d5b0d5fe
+https://syzkaller.appspot.com/bug?id=d5bc3e0c66d200d72216ab343a67c4327e4a3452
 
-
--- 
-Matti Vaittinen
-ROHM Semiconductors
-
-~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
+Are these the same bug as this?
