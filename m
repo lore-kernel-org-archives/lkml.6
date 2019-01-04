@@ -2,112 +2,110 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9A00C43444
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 04:26:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E5CBC43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 04:36:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A91B921871
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 04:26:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 589E32070D
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 04:36:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="emoMlOLu"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="dhTZzBBS";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Ifxqf/Ls"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726592AbfADE0j (ORCPT
+        id S1726691AbfADEgc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 23:26:39 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:40491 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726069AbfADE0i (ORCPT
+        Thu, 3 Jan 2019 23:36:32 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:49614 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726069AbfADEgb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 23:26:38 -0500
-Received: by mail-pl1-f193.google.com with SMTP id u18so16847396plq.7;
-        Thu, 03 Jan 2019 20:26:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=YAFjuamF01SdWSKq6DMQw5rJG64gFLf+Cnk41ioq/qE=;
-        b=emoMlOLuAXa1qkK/ItiYZlwbLkVFJ3RO7Sm8JsyWMv45iLBA11bqA2pn15FMVFsqdE
-         Y34p0k8D+IIU3Eu2ptizl7nnj91Ps6rU5f4JJ9zXfxhVj8Q81yBzBTtneH7BuKhUL2gF
-         qFQNsUkmeUYgQTvCwjG33n04vHiywl0f+uIa5VRGwEDiyvVWZcqp0lfIEgs6jK1qdFRj
-         P57ZGdU7itSAzLK3krYR7+HNNi9VOt0xeVlfvy3MrcdUMghua+WrY3nEeeHjW2EZeLA7
-         wkFFkbrSPFlOroysSk5MwTDsCAcV/4FULLfE0l7WjT24b3pAyFwOenrZkN19nB3dex8v
-         lHCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=YAFjuamF01SdWSKq6DMQw5rJG64gFLf+Cnk41ioq/qE=;
-        b=ky0GV8sP+zDK5ZTHq6senEtkVKc/OHFzISc3eFBBOB0huBgpJ0KgrYG71I+8JayyuI
-         GIX6hBGeGo5/q2Jg9uC+BEsRGuJUiO8V/GVs6ZBQ+NeOebYVb3lagU6KECqaoqoKVv0u
-         OVHNfYnnm2ujD4ZmmlkFKrVlUEKoSO+n9iin+ygugSWRpeO/ZF0PRK4DJ7gxbW6dhDME
-         7vVee8gqFwaGItJ1krTk5dUEggR5WcWooy7Fq7uBqlXgYoXZtxy1Ls80XCnZIvF4MMJZ
-         ksp4Oj56K8Ezx9CxAP8UH62CMIc5IzuOexAnTa59m9MNsJmsafu/puGywsLcywnS+NPD
-         MAFg==
-X-Gm-Message-State: AJcUukeilEiFz2W53F/VJM3vTQiaCfwaedRAL2Vv3SRdBgYs/Z/NvhYz
-        zp/KwwvHfP2H6zPWXy1kUtA=
-X-Google-Smtp-Source: ALg8bN6pQtPliKoiP7SFHcQ2X2MdxPVXcAALcPLeHXmHeuDe3lTTDz7dZLLZubgaY6/m1PvezXxPBQ==
-X-Received: by 2002:a17:902:a50a:: with SMTP id s10mr47188130plq.278.1546575998060;
-        Thu, 03 Jan 2019 20:26:38 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id b9sm81426202pfi.118.2019.01.03.20.26.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 03 Jan 2019 20:26:37 -0800 (PST)
-Date:   Thu, 3 Jan 2019 20:26:36 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Andreas Kemnade <andreas@kemnade.info>
-Cc:     jdelvare@suse.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] devicetree: hwmon: Add bindings documentation for
- HIH6130
-Message-ID: <20190104042636.GA22831@roeck-us.net>
-References: <20181227151349.29753-1-andreas@kemnade.info>
- <20181227151349.29753-3-andreas@kemnade.info>
+        Thu, 3 Jan 2019 23:36:31 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 0F7A36081B; Fri,  4 Jan 2019 04:36:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1546576591;
+        bh=RYOW/qCGQpntWPgVHutM3M2OLfqc3DGsfVw2wfqPafA=;
+        h=Subject:To:References:From:Date:In-Reply-To:From;
+        b=dhTZzBBSLHsTIZtWtVSk/z/U66YBcMbWdEx1boHUd+XAaYiCbfb7GGz9NvZARllRA
+         3EH0rKqKlt7noQjKG+exU1xV3A65NKk8Gbk1ulncmu55hC4Tu/GysHQliEfWZlMIOv
+         n4rm4j7/fm3af11e9tJ3vKM3c2zQ50SdIeYGqgAU=
+Received: from [10.204.110.203] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: rohitkr@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3F43C6071B;
+        Fri,  4 Jan 2019 04:36:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1546576589;
+        bh=RYOW/qCGQpntWPgVHutM3M2OLfqc3DGsfVw2wfqPafA=;
+        h=Subject:To:References:From:Date:In-Reply-To:From;
+        b=Ifxqf/LsiBLuPkvHJWDBDaqia+hMnjHM56hcNDyuv+y9ltNEhjBCb7J27Lmg4ysAw
+         zufZzuXXBqrFAxPD9RrphfyCvSPf8u1wEdwFtPNzFqpbqHpho3bEdpga9naxcu7aHz
+         Wqv8f5H1pGJTAe6R699mlcP6S4AoJlDjS+HLX2/o=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3F43C6071B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rohitkr@codeaurora.org
+Subject: Re: [PATCH 2/2] remoteproc: q6v5_adsp: Remove voting for lpass_aon
+ clock
+To:     ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        plai@codeaurora.org, bgoswami@codeaurora.org
+References: <1543562950-23997-1-git-send-email-rohitkr@codeaurora.org>
+ <1543562950-23997-3-git-send-email-rohitkr@codeaurora.org>
+From:   Rohit Kumar <rohitkr@codeaurora.org>
+Message-ID: <f6f9b4a2-6205-0ba5-9a3a-b34bd814d303@codeaurora.org>
+Date:   Fri, 4 Jan 2019 10:06:24 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181227151349.29753-3-andreas@kemnade.info>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <1543562950-23997-3-git-send-email-rohitkr@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 27, 2018 at 04:13:49PM +0100, Andreas Kemnade wrote:
-> Add bindings documentation for HIH6130 driver.
-> 
-> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-> Reviewed-by: Rob Herring <robh@kernel.org>
+Hello Bjorn,
 
-Applied to hwmon-next.
+Can you please review this patch series too.
+
+LPASS_AON clock support is already removed from lpass clock driver.
+
 
 Thanks,
-Guenter
 
+Rohit
+
+On 11/30/2018 12:59 PM, Rohit kumar wrote:
+> Lpass_aon clock is on by default. Remove it from lpass
+> clock list to avoid voting for it.
+>
+> Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
 > ---
->  Documentation/devicetree/bindings/hwmon/hih6130.txt | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/hwmon/hih6130.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/hwmon/hih6130.txt b/Documentation/devicetree/bindings/hwmon/hih6130.txt
-> new file mode 100644
-> index 000000000000..2c43837af4c2
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/hwmon/hih6130.txt
-> @@ -0,0 +1,12 @@
-> +Honeywell Humidicon HIH-6130 humidity/temperature sensor
-> +--------------------------------------------------------
-> +
-> +Requires node properties:
-> +- compatible : "honeywell,hi6130"
-> +- reg : the I2C address of the device. This is 0x27.
-> +
-> +Example:
-> +	hih6130@27 {
-> +		compatible = "honeywell,hih6130";
-> +		reg = <0x27>;
-> +	};
+>   drivers/remoteproc/qcom_q6v5_adsp.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qcom_q6v5_adsp.c
+> index 79374d1..4829173 100644
+> --- a/drivers/remoteproc/qcom_q6v5_adsp.c
+> +++ b/drivers/remoteproc/qcom_q6v5_adsp.c
+> @@ -48,7 +48,7 @@
+>   
+>   /* list of clocks required by ADSP PIL */
+>   static const char * const adsp_clk_id[] = {
+> -	"sway_cbcr", "lpass_aon", "lpass_ahbs_aon_cbcr", "lpass_ahbm_aon_cbcr",
+> +	"sway_cbcr", "lpass_ahbs_aon_cbcr", "lpass_ahbm_aon_cbcr",
+>   	"qdsp6ss_xo", "qdsp6ss_sleep", "qdsp6ss_core",
+>   };
+>   
+
+-- 
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the Linux Foundation.
+
