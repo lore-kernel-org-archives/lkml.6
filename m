@@ -2,136 +2,85 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB354C43612
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 10:36:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFE7FC43612
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 10:40:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 814A021874
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 10:36:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="wYO4tnt4"
+	by mail.kernel.org (Postfix) with ESMTP id 986CA206C0
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 10:40:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727519AbfADKgb (ORCPT
+        id S1727551AbfADKkM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 05:36:31 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:43620 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726578AbfADKgb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 05:36:31 -0500
-Received: by mail-ed1-f65.google.com with SMTP id f9so31363361eds.10
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Jan 2019 02:36:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=JHFNuMXhkn6JkJ1AKiIggGsFpzQjYAkfcc/Ferbgp8c=;
-        b=wYO4tnt4oVtFuZ/8hNXbLIzMeg//elvWv198r9sy05dgozlppbsgOuznFIBU3LWQWq
-         9m/cSlry3A8WgYWbLEfqHOYI5ZcDjTY8uMsKC9mLgmTNLeVbNrQM8tkuziHPYes6ygrK
-         GMQxR9OXJnawCDGj8PmUcaG4+O6a1kMhNn2fsdEFBXmp40WKI5NKsWCpWuogV0P2uSGK
-         b2vIZZ++K4kYBGa1FFYLTVp7qZ3Crwo4CLOGoTliY4v6d3MpDg8ZLuH6EwhS18ZE76q4
-         QaBGW/dgnuPtjXLsNmUud5qzNwY3m5AEPlrVMlvFh30VDJdioI9aMjpzSte5ciIWRQtW
-         YJXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=JHFNuMXhkn6JkJ1AKiIggGsFpzQjYAkfcc/Ferbgp8c=;
-        b=rJCTb4z6L5BpS28dpkm5fNhuDmBg5BwFT0emLXwykz/Wt64htvGnow90jfkJ9hVZYK
-         hnu0p6ACgow8L2it2eFR1VM/49ycAsj7iZ5K0TQh3zXrIDz6tiJkFcd0S5hk1r/zdo3a
-         aMm7WW6fKsUpBU9H7FZRjJx7Sp/lziprwQZGuA9o25Vo1pB1oSaX1fKqqae1uT8M3sEn
-         rkAEn1Q0CP5cpLtnGOhtG4NeY+8eqT80AJ1kUwOcMa4FkxZ2/dYC4WbnTgMJ9yn5Rx+B
-         DkIRX13kCv7wo2r8tvDHL446rO4pz0/KSxiGBMvqqNLfXdpgGQO/NXOSYVnjSb1TeThG
-         iMYg==
-X-Gm-Message-State: AA+aEWb8vhEv3meRtC03ROGmMjyu9Yw6afHvIWxGDQC6hwSVvnwQc76O
-        NHLiUH4xuuN8lxxWA6NE/DUpvg==
-X-Google-Smtp-Source: AFSGD/VvaoF8MdqU8dVOeRVOWhaidMnHRUttyz5/5YctzrIGOdrD/9PZzK9ocQNULODyRbvytyw95A==
-X-Received: by 2002:a50:8fe4:: with SMTP id y91mr45134491edy.231.1546598189508;
-        Fri, 04 Jan 2019 02:36:29 -0800 (PST)
-Received: from Red ([2a01:cb1d:147:7200:2e56:dcff:fed2:c6d6])
-        by smtp.googlemail.com with ESMTPSA id f6sm27533591ede.53.2019.01.04.02.36.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 04 Jan 2019 02:36:28 -0800 (PST)
-Date:   Fri, 4 Jan 2019 11:36:26 +0100
-From:   LABBE Corentin <clabbe@baylibre.com>
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc:     bhelgaas@google.com, khilman@baylibre.com,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org
-Subject: Re: [PATCH] PCI: amlogic: fix build failure due to missing
- linux/gpio/consumer.h header
-Message-ID: <20190104103626.GA8448@Red>
-References: <1546592917-27846-1-git-send-email-clabbe@baylibre.com>
- <20190104103015.GA3738@red-moon>
+        Fri, 4 Jan 2019 05:40:12 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39788 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726028AbfADKkL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 05:40:11 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E78EB15AD;
+        Fri,  4 Jan 2019 02:40:10 -0800 (PST)
+Received: from [10.1.194.37] (e113632-lin.cambridge.arm.com [10.1.194.37])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CE0B03F575;
+        Fri,  4 Jan 2019 02:40:08 -0800 (PST)
+Subject: Re: [PATCH] cpufreq: scpi/scmi: Fix freeing of dynamic OPPs
+To:     Viresh Kumar <viresh.kumar@linaro.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-pm@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        quentin.perret@arm.com, dietmar.eggemann@arm.com,
+        Douglas.Raillard@arm.com, "4 . 20" <stable@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <a2a42913-04e0-e6fc-d9ee-a2e355ac22c9@arm.com>
+ <7dddbeabb434225d9b3d02600ea4a2313622ca26.1546594910.git.viresh.kumar@linaro.org>
+From:   Valentin Schneider <valentin.schneider@arm.com>
+Message-ID: <96b57b5b-7c6f-2118-05a0-8a568d7cb245@arm.com>
+Date:   Fri, 4 Jan 2019 10:40:07 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
+In-Reply-To: <7dddbeabb434225d9b3d02600ea4a2313622ca26.1546594910.git.viresh.kumar@linaro.org>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190104103015.GA3738@red-moon>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 04, 2019 at 10:30:25AM +0000, Lorenzo Pieralisi wrote:
-> On Fri, Jan 04, 2019 at 09:08:37AM +0000, Corentin Labbe wrote:
-> > When building on x86, I got the following build failure:
-> 
-> Hi,
-> 
-> what tree are you testing on and which config ?
+Hi,
 
-I use the next-20190102 tree
-The config can be found at http://kernel.montjoie.ovh/configs/x86
-
-Regards
-
+On 04/01/2019 09:44, Viresh Kumar wrote:
+> Since the commit 2a4eb7358aba ("OPP: Don't remove dynamic OPPs from
+> _dev_pm_opp_remove_table()"), dynamically created OPP aren't
+> automatically removed anymore by dev_pm_opp_cpumask_remove_table(). This
+> affects the scpi and scmi cpufreq drivers which no longer free OPPs on
+> failures or on invocations of the policy->exit() callback.
 > 
-> Thanks,
-> Lorenzo
+> Create a generic OPP helper dev_pm_opp_remove_all_dynamic() which can be
+> called from these drivers instead of dev_pm_opp_cpumask_remove_table().
 > 
-> > drivers/pci/controller/dwc/pci-meson.c: In function ‘meson_pcie_assert_reset’:
-> > drivers/pci/controller/dwc/pci-meson.c:290:2: error: implicit declaration of function ‘gpiod_set_value_cansleep’; did you mean ‘gpio_set_value_cansleep’? [-Werror=implicit-function-declaration]
-> >   gpiod_set_value_cansleep(mp->reset_gpio, 0);
-> >   ^~~~~~~~~~~~~~~~~~~~~~~~
-> >   gpio_set_value_cansleep
-> > drivers/pci/controller/dwc/pci-meson.c: In function ‘meson_pcie_probe’:
-> > drivers/pci/controller/dwc/pci-meson.c:540:19: error: implicit declaration of function ‘devm_gpiod_get’; did you mean ‘devm_gpio_free’? [-Werror=implicit-function-declaration]
-> >   mp->reset_gpio = devm_gpiod_get(dev, "reset", GPIOD_OUT_LOW);
-> >                    ^~~~~~~~~~~~~~
-> >                    devm_gpio_free
-> > drivers/pci/controller/dwc/pci-meson.c:540:48: error: ‘GPIOD_OUT_LOW’ undeclared (first use in this function); did you mean ‘GPIOF_INIT_LOW’?
-> >   mp->reset_gpio = devm_gpiod_get(dev, "reset", GPIOD_OUT_LOW);
-> >                                                 ^~~~~~~~~~~~~
-> >                                                 GPIOF_INIT_LOW
-> > 
-> > This is due to the missing linux/gpio/consumer.h header
-> > 
-> > Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
-> > ---
-> >  drivers/pci/controller/dwc/pci-meson.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/drivers/pci/controller/dwc/pci-meson.c b/drivers/pci/controller/dwc/pci-meson.c
-> > index 241ebe0c4505..e35e9eaa50ee 100644
-> > --- a/drivers/pci/controller/dwc/pci-meson.c
-> > +++ b/drivers/pci/controller/dwc/pci-meson.c
-> > @@ -8,6 +8,7 @@
-> >  
-> >  #include <linux/clk.h>
-> >  #include <linux/delay.h>
-> > +#include <linux/gpio/consumer.h>
-> >  #include <linux/of_device.h>
-> >  #include <linux/of_gpio.h>
-> >  #include <linux/pci.h>
-> > -- 
-> > 2.19.2
-> > 
+> In dev_pm_opp_remove_all_dynamic(), we need to make sure that the
+> opp_list isn't getting accessed simultaneously from other parts of the
+> OPP core while the helper is freeing dynamic OPPs, i.e. we can't drop
+> the opp_table->lock while traversing through the OPP list. And to
+> accomplish that, this patch also creates _opp_kref_release_unlocked()
+> which can be called from this new helper with the opp_table lock already
+> held.
+> 
+> Cc: 4.20 <stable@vger.kernel.org> # v4.20
+> Reported-by: Valentin Schneider <valentin.schneider@arm.com>
+> Fixes: 2a4eb7358aba ("OPP: Don't remove dynamic OPPs from _dev_pm_opp_remove_table()")
+> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+
+Gave it a spin on my Juno, and I don't see the refcount warning anymore so:
+
+Tested-by: Valentin Schneider <valentin.schneider@arm.com>
+
+Thanks for having a look at this.
+
+[...]
