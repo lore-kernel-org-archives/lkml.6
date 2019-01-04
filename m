@@ -2,109 +2,97 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60A57C43612
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 17:34:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ACF5C43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 17:37:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 342F9218CD
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 17:34:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 29F67218CD
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 17:37:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727215AbfADRet (ORCPT
+        id S1727760AbfADRhC convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 12:34:49 -0500
-Received: from verein.lst.de ([213.95.11.211]:40889 "EHLO newverein.lst.de"
+        Fri, 4 Jan 2019 12:37:02 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:6467 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725958AbfADRet (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 12:34:49 -0500
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id 1D0EB68D93; Fri,  4 Jan 2019 18:34:47 +0100 (CET)
-Date:   Fri, 4 Jan 2019 18:34:47 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     Liviu Dudau <liviu@dudau.co.uk>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Robin Murphy <robin.murphy@arm.com>, linux-pci@vger.kernel.org,
-        LAKML <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [REGRESSION, BISECTED] pci: nvme device with HMB fails on arm64
-Message-ID: <20190104173446.GA24554@lst.de>
-References: <20190104125735.GF20342@bart.dudau.co.uk>
+        id S1725958AbfADRhB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 12:37:01 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 43WX621Whcz9v25c;
+        Fri,  4 Jan 2019 18:36:58 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id 0iC6j55v_-A8; Fri,  4 Jan 2019 18:36:58 +0100 (CET)
+Received: from vm-hermes.si.c-s.fr (vm-hermes.si.c-s.fr [192.168.25.253])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 43WX620ydVz9v25b;
+        Fri,  4 Jan 2019 18:36:58 +0100 (CET)
+Received: by vm-hermes.si.c-s.fr (Postfix, from userid 33)
+        id AFDFFD4E; Fri,  4 Jan 2019 18:36:59 +0100 (CET)
+Received: from 37.165.122.65 ([37.165.122.65]) by messagerie.si.c-s.fr
+ (Horde Framework) with HTTP; Fri, 04 Jan 2019 18:36:59 +0100
+Date:   Fri, 04 Jan 2019 18:36:59 +0100
+Message-ID: <20190104183659.Horde.Xco_Q-bqCSSJoWwerf1bVw4@messagerie.si.c-s.fr>
+From:   LEROY Christophe <christophe.leroy@c-s.fr>
+To:     sparclinux@vger.kernel.org, Mathieu Malaterre <malat@debian.org>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: Re: [PATCH] Remove 'type' argument from access_ok() function
+In-Reply-To: <20190104092758.4378-1-malat@debian.org>
+User-Agent: Internet Messaging Program (IMP) H5 (6.2.3)
+Content-Type: text/plain; charset=UTF-8; format=flowed; DelSp=Yes
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190104125735.GF20342@bart.dudau.co.uk>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Liviu,
+Mathieu Malaterre <malat@debian.org> a écrit :
 
-please try the patch below.  Note that this is in top of mainline,
-as the commit you found already needed another fixup, which has
-made it to Linus already.
+> In commit 05a4ab823983 ("powerpc/uaccess: fix warning/error with
+> access_ok()") an attempt was made to remove a warning by referencing the
+> variable `type`, however in commit 96d4f267e40f ("Remove 'type' argument
+> from access_ok() function") the variable `type` has been removed.
+>
+> Revert commit 05a4ab823983 ("powerpc/uaccess: fix warning/error with
+> access_ok()") to fix the following compilation error:
+>
+>   arch/powerpc/include/asm/uaccess.h:66:32: error: ‘type’ undeclared  
+> (first use in this function)
+>
+> Signed-off-by: Mathieu Malaterre <malat@debian.org>
 
---
-From a959cc1a8ee00dcb274922f9d74f6ed632709047 Mon Sep 17 00:00:00 2001
-From: Christoph Hellwig <hch@lst.de>
-Date: Fri, 4 Jan 2019 18:31:48 +0100
-Subject: dma-direct: fix DMA_ATTR_NO_KERNEL_MAPPING for remapped allocations
+Should you add a Fixes:  96d4f267e40f ?
 
-We need to return a dma_addr_t even if we don't have a kernel mapping.
-Do so by consolidating the phys_to_dma call in a single place and jump
-to it from all the branches that return successfully.
+Note that sparc arch will have the same issue.
 
-Fixes: bfd56cd60521 ("dma-mapping: support highmem in the generic remap allocator")
-Reported-by: Liviu Dudau <liviu@dudau.co.uk
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- kernel/dma/remap.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+Christophe
 
-diff --git a/kernel/dma/remap.c b/kernel/dma/remap.c
-index 18cc09fc27b9..7a723194ecbe 100644
---- a/kernel/dma/remap.c
-+++ b/kernel/dma/remap.c
-@@ -204,8 +204,7 @@ void *arch_dma_alloc(struct device *dev, size_t size, dma_addr_t *dma_handle,
- 		ret = dma_alloc_from_pool(size, &page, flags);
- 		if (!ret)
- 			return NULL;
--		*dma_handle = phys_to_dma(dev, page_to_phys(page));
--		return ret;
-+		goto done;
- 	}
- 
- 	page = __dma_direct_alloc_pages(dev, size, dma_handle, flags, attrs);
-@@ -215,8 +214,10 @@ void *arch_dma_alloc(struct device *dev, size_t size, dma_addr_t *dma_handle,
- 	/* remove any dirty cache lines on the kernel alias */
- 	arch_dma_prep_coherent(page, size);
- 
--	if (attrs & DMA_ATTR_NO_KERNEL_MAPPING)
--		return page; /* opaque cookie */
-+	if (attrs & DMA_ATTR_NO_KERNEL_MAPPING) {
-+		ret = page; /* opaque cookie */
-+		goto done;
-+	}
- 
- 	/* create a coherent mapping */
- 	ret = dma_common_contiguous_remap(page, size, VM_USERMAP,
-@@ -227,9 +228,9 @@ void *arch_dma_alloc(struct device *dev, size_t size, dma_addr_t *dma_handle,
- 		return ret;
- 	}
- 
--	*dma_handle = phys_to_dma(dev, page_to_phys(page));
- 	memset(ret, 0, size);
--
-+done:
-+	*dma_handle = phys_to_dma(dev, page_to_phys(page));
- 	return ret;
- }
- 
--- 
-2.20.1
+> ---
+>  arch/powerpc/include/asm/uaccess.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/powerpc/include/asm/uaccess.h  
+> b/arch/powerpc/include/asm/uaccess.h
+> index b31bf45eebd4..5f0c98e511a0 100644
+> --- a/arch/powerpc/include/asm/uaccess.h
+> +++ b/arch/powerpc/include/asm/uaccess.h
+> @@ -63,7 +63,7 @@ static inline int __access_ok(unsigned long addr,  
+> unsigned long size,
+>  #endif
+>
+>  #define access_ok(addr, size)		\
+> -	(__chk_user_ptr(addr), (void)(type),		\
+> +	(__chk_user_ptr(addr),			\
+>  	 __access_ok((__force unsigned long)(addr), (size), get_fs()))
+>
+>  /*
+> --
+> 2.19.2
+
 
