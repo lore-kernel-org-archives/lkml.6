@@ -6,167 +6,81 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38982C43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 16:01:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CC88C43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 16:01:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 128C421871
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 16:01:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 02CFA21871
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 16:01:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728381AbfADQBE (ORCPT
+        id S1728419AbfADQBc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 11:01:04 -0500
-Received: from mail1.bemta24.messagelabs.com ([67.219.250.113]:14321 "EHLO
-        mail1.bemta24.messagelabs.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727192AbfADQBC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 11:01:02 -0500
-Received: from [67.219.250.197] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
-        by server-2.bemta.az-b.us-west-2.aws.symcld.net id 1C/4A-21206-C338F2C5; Fri, 04 Jan 2019 16:01:00 +0000
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrOIsWRWlGSWpSXmKPExsXi5LtOQNemWT/
-  GoG8Bk8XhRS8YLb5+u81ucfPTN1aLy7vmsDmweOycdZfd49e2NSwenzfJBTBHsWbmJeVXJLBm
-  TDt8ir3gpVjF26cNjA2MD4S6GLk4hARWMUosen2bHcLZwiix7vR/IIeTg01AR2LK/sMsILaIg
-  LjEtSNnweLMApUSz35vZgOxhQVsJX5Nm8EKYrMIqEjcfrCGCcTmFXCT2LjoN5gtISAncfNcJz
-  OIzSngLrHv0zRGEFsIqObjjw9sEPWCEidnPmGBmC8hcfDFC2aIGmWJLSsuMELMUZBYe+A80wR
-  G/llIWmYhaVnAyLSK0SKpKDM9oyQ3MTNH19DAQNfQ0EjX0NhE19DSQC+xSjdJr7RYtzy1uETX
-  SC+xvFivuDI3OSdFLy+1ZBMjMIBTCtr27WB8sTz9EKMkB5OSKG8as36MEF9SfkplRmJxRnxRa
-  U5q8SFGGQ4OJQnemY1AOcGi1PTUirTMHGAswaQlOHiURHhvg6R5iwsSc4sz0yFSpxgVpcR5zz
-  YAJQRAEhmleXBtsPi9xCgrJczLyMDAIMRTkFqUm1mCKv+KUZyDUUmYdxPIFJ7MvBK46a+AFjM
-  BLTaR0AFZXJKIkJJqYGwKeCX+sCFh5sPuUOVV02TfXww0tlvIJabert276qRi4GX/Y2/0Z1+b
-  dy1ufpmnjpfs880xaszXI44Ws+/YJ7a0TfrFRj6n9u9vPf5XsPREvroUwP/BLieCR03g8SufC
-  bmLz/1uX/JuSlBn7PG7C7vrAz0V5veweE6Nj5y37DSX61KDWQ//WSixFGckGmoxFxUnAgC7Q8
-  tX2gIAAA==
-X-Env-Sender: Alex.Gonzalez@digi.com
-X-Msg-Ref: server-6.tower-345.messagelabs.com!1546617658!6169452!1
-X-Originating-IP: [66.77.174.16]
-X-SYMC-ESS-Client-Auth: outbound-route-from=pass
-X-StarScan-Received: 
-X-StarScan-Version: 9.14.24; banners=-,-,-
-X-VirusChecked: Checked
-Received: (qmail 3039 invoked from network); 4 Jan 2019 16:00:59 -0000
-Received: from owa.digi.com (HELO MCL-VMS-XCH01.digi.com) (66.77.174.16)
-  by server-6.tower-345.messagelabs.com with DHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 4 Jan 2019 16:00:59 -0000
-Received: from MTK-SMS-XCH01.digi.com (10.10.8.195) by MCL-VMS-XCH01.digi.com
- (10.5.8.49) with Microsoft SMTP Server (TLS) id 14.3.408.0; Fri, 4 Jan 2019
- 10:00:58 -0600
-Received: from log-linux-hp-agonzal.digi.com (10.101.2.214) by
- MTK-SMS-XCH01.digi.com (10.10.8.195) with Microsoft SMTP Server (TLS) id
- 14.3.408.0; Fri, 4 Jan 2019 10:00:58 -0600
-From:   Alex Gonzalez <alex.gonzalez@digi.com>
-To:     <hadess@hadess.net>
-CC:     <dmitry.torokhov@gmail.com>, <linux-input@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <alex.gonzalez@digi.com>
-Subject: [PATCH] Input: goodix - decouple irq and reset lines
-Date:   Fri, 4 Jan 2019 17:00:48 +0100
-Message-ID: <1546617648-23445-2-git-send-email-alex.gonzalez@digi.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1546617648-23445-1-git-send-email-alex.gonzalez@digi.com>
-References: <1546617648-23445-1-git-send-email-alex.gonzalez@digi.com>
+        Fri, 4 Jan 2019 11:01:32 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:35486 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727022AbfADQBc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 11:01:32 -0500
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 6490D36796A41;
+        Sat,  5 Jan 2019 00:01:28 +0800 (CST)
+Received: from localhost.localdomain (10.67.212.75) by
+ DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
+ 14.3.408.0; Sat, 5 Jan 2019 00:00:25 +0800
+From:   John Garry <john.garry@huawei.com>
+To:     <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>
+CC:     <yanaijie@huawei.com>, <linuxarm@huawei.com>,
+        <linux-kernel@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
+        John Garry <john.garry@huawei.com>
+Subject: [PATCH 2/3] scsi: libsas: Check SMP PHY control function result
+Date:   Sat, 5 Jan 2019 00:01:27 +0800
+Message-ID: <1546617688-240623-3-git-send-email-john.garry@huawei.com>
+X-Mailer: git-send-email 2.8.1
+In-Reply-To: <1546617688-240623-1-git-send-email-john.garry@huawei.com>
+References: <1546617688-240623-1-git-send-email-john.garry@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.101.2.214]
+X-Originating-IP: [10.67.212.75]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Goodix touch controller allows the use of two optional GPIOs (RESET
-and INT) to reset the touch controller, select the I2C address of the
-device and exit the device from sleep mode.
+Currently the SMP PHY control execution result is checked, however the
+function result for the command is not.
 
-The current implementation requires both GPIOs to be provided, however,
-it is possible to provide only the INT line and not to have the RESET line
-available but pulled-up.
+As such, we may be missing all potential errors, like SMP FUNCTION FAILED,
+INVALID REQUEST FRAME LENGTH, etc., meaning the PHY control request has
+failed.
 
-Designs that only provide the INT line are able to operate the touch on
-the default I2C address but will not be able to reset the touch via
-software or place the device in sleep mode.
+In some scenarios we need to ensure the function result is accepted, so
+add a check for this.
 
-Signed-off-by: Alex Gonzalez <alex.gonzalez@digi.com>
+Tested-by: Jian Luo <luojian5@huawei.com>
+Signed-off-by: John Garry <john.garry@huawei.com>
 ---
- drivers/input/touchscreen/goodix.c | 59 ++++++++++++++++++++------------------
- 1 file changed, 31 insertions(+), 28 deletions(-)
+ drivers/scsi/libsas/sas_expander.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/input/touchscreen/goodix.c b/drivers/input/touchscreen/goodix.c
-index f2d9c2c41885..8d96b0b771b6 100644
---- a/drivers/input/touchscreen/goodix.c
-+++ b/drivers/input/touchscreen/goodix.c
-@@ -484,34 +484,39 @@ static int goodix_reset(struct goodix_ts_data *ts)
- {
- 	int error;
- 
--	/* begin select I2C slave addr */
--	error = gpiod_direction_output(ts->gpiod_rst, 0);
--	if (error)
--		return error;
-+	if (ts->gpiod_rst) {
-+		/* begin select I2C slave addr */
-+		error = gpiod_direction_output(ts->gpiod_rst, 0);
-+		if (error)
-+			return error;
- 
--	msleep(20);				/* T2: > 10ms */
-+		msleep(20);				/* T2: > 10ms */
- 
--	/* HIGH: 0x28/0x29, LOW: 0xBA/0xBB */
--	error = gpiod_direction_output(ts->gpiod_int, ts->client->addr == 0x14);
--	if (error)
--		return error;
-+		/* HIGH: 0x28/0x29, LOW: 0xBA/0xBB */
-+		error = gpiod_direction_output(ts->gpiod_int,
-+				ts->client->addr == 0x14);
-+		if (error)
-+			return error;
- 
--	usleep_range(100, 2000);		/* T3: > 100us */
-+		usleep_range(100, 2000);		/* T3: > 100us */
- 
--	error = gpiod_direction_output(ts->gpiod_rst, 1);
--	if (error)
--		return error;
-+		error = gpiod_direction_output(ts->gpiod_rst, 1);
-+		if (error)
-+			return error;
- 
--	usleep_range(6000, 10000);		/* T4: > 5ms */
-+		usleep_range(6000, 10000);		/* T4: > 5ms */
- 
--	/* end select I2C slave addr */
--	error = gpiod_direction_input(ts->gpiod_rst);
--	if (error)
--		return error;
-+		/* end select I2C slave addr */
-+		error = gpiod_direction_input(ts->gpiod_rst);
-+		if (error)
-+			return error;
-+	}
- 
--	error = goodix_int_sync(ts);
--	if (error)
--		return error;
-+	if (ts->gpiod_int) {
-+		error = goodix_int_sync(ts);
-+		if (error)
-+			return error;
-+	}
- 
- 	return 0;
- }
-@@ -786,13 +791,11 @@ static int goodix_ts_probe(struct i2c_client *client,
- 	if (error)
- 		return error;
- 
--	if (ts->gpiod_int && ts->gpiod_rst) {
--		/* reset the controller */
--		error = goodix_reset(ts);
--		if (error) {
--			dev_err(&client->dev, "Controller reset failed.\n");
--			return error;
--		}
-+	/* reset the controller */
-+	error = goodix_reset(ts);
-+	if (error) {
-+		dev_err(&client->dev, "Controller reset failed.\n");
-+		return error;
+diff --git a/drivers/scsi/libsas/sas_expander.c b/drivers/scsi/libsas/sas_expander.c
+index 17eb418..8817b8e 100644
+--- a/drivers/scsi/libsas/sas_expander.c
++++ b/drivers/scsi/libsas/sas_expander.c
+@@ -614,7 +614,14 @@ int sas_smp_phy_control(struct domain_device *dev, int phy_id,
  	}
  
- 	error = goodix_i2c_test(client);
+ 	res = smp_execute_task(dev, pc_req, PC_REQ_SIZE, pc_resp,PC_RESP_SIZE);
+-
++	if (res) {
++		pr_err("ex %016llx phy%02d PHY control failed: %d\n",
++		       SAS_ADDR(dev->sas_addr), phy_id, res);
++	} else if (pc_resp[2] != SMP_RESP_FUNC_ACC) {
++		pr_err("ex %016llx phy%02d PHY control failed: function result 0x%x\n",
++		       SAS_ADDR(dev->sas_addr), phy_id, pc_resp[2]);
++		res = pc_resp[2];
++	}
+ 	kfree(pc_resp);
+ 	kfree(pc_req);
+ 	return res;
+-- 
+1.9.1
+
