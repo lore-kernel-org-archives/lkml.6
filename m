@@ -2,164 +2,129 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AA6EC43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 16:04:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6112AC43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 16:10:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63D76218CD
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 16:04:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 29B8D218CD
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 16:10:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546618224;
+	bh=nTaQpQiBruavmbR2hIkJLXAjgq+PPgj4FZEDF94KIlY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=gWkge2IUMvdSOJ7cKqPMERg0xL4eWZpxd2zrykPHn72XY4LaCOEDNCJfyHvhxo2sQ
+	 7XXeMlTvbpUWo5uWsIIOImS3nqEkTjxp6ayQV20fbz6vNiuX1KVj1nX6PS6fRGF5lc
+	 qAtwudrnn+LdHO1+gPRbqZLKVAMkpy4cQj9UN+q0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726642AbfADQEf (ORCPT
+        id S1726680AbfADQKX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 11:04:35 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:17115 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726053AbfADQEe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 11:04:34 -0500
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id A022DDF777DD;
-        Sat,  5 Jan 2019 00:04:30 +0800 (CST)
-Received: from [127.0.0.1] (10.202.226.43) by DGGEMS404-HUB.china.huawei.com
- (10.3.19.204) with Microsoft SMTP Server id 14.3.408.0; Sat, 5 Jan 2019
- 00:04:30 +0800
-Subject: Re: [PATCH] scsi/mvsas/mv_init.c: Use dma_zalloc_coherent
-To:     Sabyasachi Gupta <sabyasachi.linux@gmail.com>
-References: <5bf56248.1c69fb81.21a6e.5a72@mx.google.com>
- <CAJr6mf11gp9iV=NiFEFyo7kSZfCfMsEySdijem_PhMFEAwqucA@mail.gmail.com>
- <CAJr6mf2kr4BmCWZU0=EwXURWUZWRHHLifi_2aiUrJSCjnWusZg@mail.gmail.com>
- <CAJr6mf29hJft=rurUK8EJRQ1MS_3_MXb7f-zX0vyXUrQNLcWYA@mail.gmail.com>
- <ff090818-2f5f-1fa0-2eff-6988e1660345@huawei.com>
- <CAJr6mf1ebw16j0AZSDDxnK2t_=8wdzZBm=X_3DW=zP+XRbRFsw@mail.gmail.com>
-CC:     <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>,
-        <jthumshirn@suse.de>, Souptick Joarder <jrdr.linux@gmail.com>,
-        <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Brajeswar Ghosh <brajeswar.linux@gmail.com>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <8af8ef0a-add1-1010-6ef3-7e5c6ff51aa9@huawei.com>
-Date:   Fri, 4 Jan 2019 16:04:24 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+        Fri, 4 Jan 2019 11:10:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49810 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726296AbfADQKW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 11:10:22 -0500
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C808B218DE;
+        Fri,  4 Jan 2019 16:10:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1546618221;
+        bh=nTaQpQiBruavmbR2hIkJLXAjgq+PPgj4FZEDF94KIlY=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=0tv2VeBhlHZB/BbkHehKV0Y7n42458FeIXLdR6tX+jzAn4S3FBCCjXqqUGai95NnV
+         sILVNdHRdUa1jwzJ2cn9YxOZiuS2Eriyyv4Cnhh6qLsNwGkRd3oz/DiQCnpZNf+SgX
+         CIx89nWQVJuKLqy7vgMxr079AT+qkiOk3l7wmq4k=
+Received: by mail-qt1-f178.google.com with SMTP id n32so40775464qte.11;
+        Fri, 04 Jan 2019 08:10:21 -0800 (PST)
+X-Gm-Message-State: AJcUukeM020lUNeBy+BOAV4IazhOQ3q8k3t63+O0JnRerSeNuqiHb5CA
+        gNkAqSwcTbJasd4HrIUPFmDHwxBsg5ykneFSCA==
+X-Google-Smtp-Source: ALg8bN7FQZhVmdiK/UO10+dik3k6PM7Pw9UzxPOGWYBkjuzr/JOTDnai0t523prqpoz9264Q4x8sKdQAd/wfYWSCGiQ=
+X-Received: by 2002:a0c:9e05:: with SMTP id p5mr50455640qve.246.1546618220971;
+ Fri, 04 Jan 2019 08:10:20 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CAJr6mf1ebw16j0AZSDDxnK2t_=8wdzZBm=X_3DW=zP+XRbRFsw@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.43]
-X-CFilter-Loop: Reflected
+References: <1545896066-897-1-git-send-email-min.guo@mediatek.com>
+ <1545896066-897-2-git-send-email-min.guo@mediatek.com> <20190103221414.GA14639@bogus>
+ <1546570807.585.31.camel@mhfsdcap03>
+In-Reply-To: <1546570807.585.31.camel@mhfsdcap03>
+From:   Rob Herring <robh@kernel.org>
+Date:   Fri, 4 Jan 2019 10:10:09 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqK5x8=b6gXfBStZwHbq4zvuCuHCLAwsSqFEMJtSffC3BQ@mail.gmail.com>
+Message-ID: <CAL_JsqK5x8=b6gXfBStZwHbq4zvuCuHCLAwsSqFEMJtSffC3BQ@mail.gmail.com>
+Subject: Re: [PATCH 1/4] dt-bindings: usb: musb: Add support for MediaTek musb controller
+To:     Min Guo <min.guo@mediatek.com>
+Cc:     Bin Liu <b-liu@ti.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        Linux USB List <linux-usb@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/01/2019 15:11, Sabyasachi Gupta wrote:
-> On Fri, Jan 4, 2019 at 6:43 PM John Garry <john.garry@huawei.com> wrote:
->>
->> On 04/01/2019 12:48, Sabyasachi Gupta wrote:
->>> On Wed, Dec 19, 2018 at 6:49 PM Sabyasachi Gupta
->>> <sabyasachi.linux@gmail.com> wrote:
->>>>
->>>> On Sat, Dec 1, 2018 at 6:40 PM Sabyasachi Gupta
->>>> <sabyasachi.linux@gmail.com> wrote:
->>>>>
->>>>> On Wed, Nov 21, 2018 at 7:18 PM Sabyasachi Gupta
->>>>> <sabyasachi.linux@gmail.com> wrote:
->>>>>>
->>>>>> Replace dma_alloc_coherent + memset with dma_zalloc_coherent
->>>>>>
->>
->> If you're going to make this change, then how about change these to the
->> managed version, so that we can avoid the explicit free'ing at driver
->> removal?
+On Thu, Jan 3, 2019 at 9:00 PM Min Guo <min.guo@mediatek.com> wrote:
 >
-> I can't get it
+> On Thu, 2019-01-03 at 16:14 -0600, Rob Herring wrote:
+> > On Thu, Dec 27, 2018 at 03:34:23PM +0800, min.guo@mediatek.com wrote:
+> > > From: Min Guo <min.guo@mediatek.com>
+> > >
+> > > This adds support for MediaTek musb controller in
+> > > host, peripheral and otg mode
 
-Please see dmam_alloc_coherent(). You can set __GFP_ZERO in the gfp 
-argument to memset(0).
+[...]
 
-I would say that this is a more useful change.
+> > > + - interrupts      : interrupt used by musb controller
+> > > + - interrupt-names : must be "mc"
+> >
+> > -names is pointless when there is only one.
+> The MUSB core driver has two interrupts, one is for MAC, another for DMA,
+> but on MTK platform, there is only a MAC interrupt, here following the binding
+> of MUSB core driver.
 
->
->>
->>>>>> Signed-off-by: Sabyasachi Gupta <sabyasachi.linux@gmail.com>
->>>>>
->>>>> Any comment on this patch?
->>>>
->>>> Any comment on this patch?
->>>
->>> Any comment on this patch?
->>>
->>>>
->>>>>
->>>>>> ---
->>>>>>  drivers/scsi/mvsas/mv_init.c | 12 ++++--------
->>>>>>  1 file changed, 4 insertions(+), 8 deletions(-)
->>>>>>
->>>>>> diff --git a/drivers/scsi/mvsas/mv_init.c b/drivers/scsi/mvsas/mv_init.c
->>>>>> index 3ac3437..495bddb 100644
->>>>>> --- a/drivers/scsi/mvsas/mv_init.c
->>>>>> +++ b/drivers/scsi/mvsas/mv_init.c
->>>>>> @@ -253,33 +253,29 @@ static int mvs_alloc(struct mvs_info *mvi, struct Scsi_Host *shost)
->>>>>>         /*
->>>>>>          * alloc and init our DMA areas
->>>>>>          */
->>>>>> -       mvi->tx = dma_alloc_coherent(mvi->dev,
->>>>>> +       mvi->tx = dma_zalloc_coherent(mvi->dev,
->>>>>>                                      sizeof(*mvi->tx) * MVS_CHIP_SLOT_SZ,
->>>>>>                                      &mvi->tx_dma, GFP_KERNEL);
->>
->> I'm guessing that this does not pass checkpatch with --strict option.
->>
->> Thanks,
->> John
->
-> I have not not checked with --strict option
+You should probably be listing the same interrupt number twice if 2
+interrupts are combined.
 
-It may warn that you're not maintaining alignment.
+> > > +Optional properties:
+> > > + - extcon : external connector for VBUS and IDPIN changes detection,
+> > > +   needed when supports dual-role mode.
+> >
+> > Don't use extcon for new bindings. The usb-connector binding should be
+> > used instead.
+> This is used to detect the changes of the IDPIN and VBUS, the change
+> events are provided by other drivers, such as extcon-usb-gpio.c, and
+> then switch MUSB controller to host or device mode, but the
+> usb-connector can't detect these changes.
 
->
->>
->>>>>>         if (!mvi->tx)
->>>>>>                 goto err_out;
->>>>>> -       memset(mvi->tx, 0, sizeof(*mvi->tx) * MVS_CHIP_SLOT_SZ);
->>>>>> -       mvi->rx_fis = dma_alloc_coherent(mvi->dev, MVS_RX_FISL_SZ,
->>>>>> +       mvi->rx_fis = dma_zalloc_coherent(mvi->dev, MVS_RX_FISL_SZ,
->>>>>>                                          &mvi->rx_fis_dma, GFP_KERNEL);
->>>>>>         if (!mvi->rx_fis)
->>>>>>                 goto err_out;
->>>>>> -       memset(mvi->rx_fis, 0, MVS_RX_FISL_SZ);
->>>>>>
->>>>>> -       mvi->rx = dma_alloc_coherent(mvi->dev,
->>>>>> +       mvi->rx = dma_zalloc_coherent(mvi->dev,
->>>>>>                                      sizeof(*mvi->rx) * (MVS_RX_RING_SZ + 1),
->>>>>>                                      &mvi->rx_dma, GFP_KERNEL);
->>>>>>         if (!mvi->rx)
->>>>>>                 goto err_out;
->>>>>> -       memset(mvi->rx, 0, sizeof(*mvi->rx) * (MVS_RX_RING_SZ + 1));
->>>>>>         mvi->rx[0] = cpu_to_le32(0xfff);
->>>>>>         mvi->rx_cons = 0xfff;
->>>>>>
->>>>>> -       mvi->slot = dma_alloc_coherent(mvi->dev,
->>>>>> +       mvi->slot = dma_zalloc_coherent(mvi->dev,
->>>>>>                                        sizeof(*mvi->slot) * slot_nr,
->>>>>>                                        &mvi->slot_dma, GFP_KERNEL);
->>>>>>         if (!mvi->slot)
->>>>>>                 goto err_out;
->>>>>> -       memset(mvi->slot, 0, sizeof(*mvi->slot) * slot_nr);
->>>>>>
->>>>>>         mvi->bulk_buffer = dma_alloc_coherent(mvi->dev,
->>>>>>                                        TRASH_BUCKET_SIZE,
->>>>>> --
->>>>>> 2.7.4
->>>>>>
->>>
->>> .
->>>
->>
->>
->
-> .
->
+To repeat, do not use extcon binding for new bindings. It is poorly
+designed as it reflects extcon driver needs, not a description of the
+hardware. If you have ID on GPIO, then that belongs in a usb-connector
+node because that GPIO goes to the connector. For Vbus, you should
+have a vbus-supply in the connector and use a gpio-regulator if it is
+GPIO controlled.
 
+> > > + - vbus-supply : reference to the VBUS regulator, needed when supports
+> > > +   dual-role mode.
+> >
+> > The controller is powered from Vbus? Probably not. This belongs in the
+> > connector or maybe the phy (if the phy is powered from Vbus).
+> The Vbus is used to provide 5V voltage to the connected device when the
+> controller works as host mode.
 
+I know what Vbus is. Unless Vbus is providing power to the host
+controller, putting the Vbus supply in the controller node is not a
+accurate representation of the hardware.
+
+Rob
