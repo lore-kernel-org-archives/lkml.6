@@ -2,135 +2,168 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB3ABC43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 15:09:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13C67C43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 15:11:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFB042087F
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 15:09:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3BF321871
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 15:11:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gcyKwfDH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727094AbfADPJq (ORCPT
+        id S1727127AbfADPLt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 10:09:46 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46664 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726117AbfADPJq (ORCPT
+        Fri, 4 Jan 2019 10:11:49 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:41585 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725939AbfADPLt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 10:09:46 -0500
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x04F99Wa087439
-        for <linux-kernel@vger.kernel.org>; Fri, 4 Jan 2019 10:09:44 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2pt93jtfuh-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Jan 2019 10:09:44 -0500
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Fri, 4 Jan 2019 15:09:41 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 4 Jan 2019 15:09:35 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x04F9Yrr62062808
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 4 Jan 2019 15:09:34 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id ED4F94C04E;
-        Fri,  4 Jan 2019 15:09:33 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DED674C059;
-        Fri,  4 Jan 2019 15:09:31 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.205.69])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Fri,  4 Jan 2019 15:09:31 +0000 (GMT)
-Date:   Fri, 4 Jan 2019 17:09:29 +0200
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Tejun Heo <tj@kernel.org>
-Cc:     Baoquan He <bhe@redhat.com>, Pingfan Liu <kernelfans@gmail.com>,
-        linux-acpi@vger.kernel.org, linux-mm@kvack.org,
-        kexec@lists.infradead.org, Tang Chen <tangchen@cn.fujitsu.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Yaowei Bai <baiyaowei@cmss.chinamobile.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Daniel Vacek <neelx@redhat.com>,
-        Mathieu Malaterre <malat@debian.org>,
-        Stefan Agner <stefan@agner.ch>, Dave Young <dyoung@redhat.com>,
-        yinghai@kernel.org, vgoyal@redhat.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv3 1/2] mm/memblock: extend the limit inferior of
- bottom-up after parsing hotplug attr
-References: <1545966002-3075-1-git-send-email-kernelfans@gmail.com>
- <1545966002-3075-2-git-send-email-kernelfans@gmail.com>
- <20181231084018.GA28478@rapoport-lnx>
- <CAFgQCTvQnj7zReFvH_gmfVJdPXE325o+z4Xx76fupvsLR_7H2A@mail.gmail.com>
- <20190102092749.GA22664@rapoport-lnx>
- <20190102101804.GD1990@MiWiFi-R3L-srv>
- <20190102170537.GA3591@rapoport-lnx>
- <20190103184706.GU2509588@devbig004.ftw2.facebook.com>
+        Fri, 4 Jan 2019 10:11:49 -0500
+Received: by mail-pg1-f195.google.com with SMTP id m1so17629003pgq.8;
+        Fri, 04 Jan 2019 07:11:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Ykevx0nGBspU04Q/rzgX0xdKqM8eDjaERaoZK6Fzxc4=;
+        b=gcyKwfDHMUdiYLkN76Vq5KQHFAqX1PKOS8RAbhwWn3Wju4xdYmSnHzfwmQFYTaUtZE
+         4n0xTtfGnSm9i3T5ARh5ZYJPgwpC1qYIn7m+PfMlFeDX3tKN3s1AGPSYPtCx+N+J2Ek6
+         Cp03WRRWhC0aA5m5vjsOnj8UqkHTdMmt23RsZ1ftAFZdQ6p9QRSr0AR6716H1/nvHc4D
+         acWEB36phx7pQLEjJemnWH9mZgGepJAvzP3TupPGz+w1TWd0bcGQS+kJVz0PeH0p42OJ
+         iHuzoOGDG5LjVJgIp93EaZc7ZzrOjxWI2MSufAO+L6yRU33Qv2YhHDCXiYx7uzUushaY
+         LQQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Ykevx0nGBspU04Q/rzgX0xdKqM8eDjaERaoZK6Fzxc4=;
+        b=HplIDKhHVTzt9BMGD9resPfjlNWpXBL4ng4mMTRTndclxKEGj8bqStDTyuaRWHL3S+
+         7XLtSKE9Mt8srzbHYSItUakiV8jtUGoIInII47n3CtfQX6J0V32PQAely4a+7DiFO76M
+         GbKkkO6sfjqBJDs81lL3oBdtaEd7DxdCtlYGxcPTelIE2a2OnASviRp/Jqgt1kW1wRD9
+         WEmy72QIL3VS3dTR89FvNKMkhDzHSvBplUojzaA+SOA3FMdmctEP0xHQXhOaY5/RsiFI
+         8WO37iY2mUTkYuDqwATa9jmTjKRL5TP6vD+g4BBnAjyMaoqjwheCnQtM9bF/ueyVj63d
+         nBpg==
+X-Gm-Message-State: AJcUukcQVFyiC9f12pU8L+qPszp7laMJ2zUxZrsVMlqOa5+eGgiCQldF
+        R7UlPzjfwSzmVtuVzt50nlD+CORM9xkaoZp8Vhk=
+X-Google-Smtp-Source: ALg8bN6srmYHGQZWn438RqfNivarEq5KUnBbkqIsyQOgABlCFzCv+4z6KMwDi1aXTSVgL62NhliDpm8pwmDJoo6KTOo=
+X-Received: by 2002:a63:4d66:: with SMTP id n38mr49362239pgl.270.1546614707675;
+ Fri, 04 Jan 2019 07:11:47 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190103184706.GU2509588@devbig004.ftw2.facebook.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 19010415-0020-0000-0000-00000300F2DE
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19010415-0021-0000-0000-00002151F7D2
-Message-Id: <20190104150929.GA32252@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-04_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=710 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901040133
+References: <5bf56248.1c69fb81.21a6e.5a72@mx.google.com> <CAJr6mf11gp9iV=NiFEFyo7kSZfCfMsEySdijem_PhMFEAwqucA@mail.gmail.com>
+ <CAJr6mf2kr4BmCWZU0=EwXURWUZWRHHLifi_2aiUrJSCjnWusZg@mail.gmail.com>
+ <CAJr6mf29hJft=rurUK8EJRQ1MS_3_MXb7f-zX0vyXUrQNLcWYA@mail.gmail.com> <ff090818-2f5f-1fa0-2eff-6988e1660345@huawei.com>
+In-Reply-To: <ff090818-2f5f-1fa0-2eff-6988e1660345@huawei.com>
+From:   Sabyasachi Gupta <sabyasachi.linux@gmail.com>
+Date:   Fri, 4 Jan 2019 20:41:36 +0530
+Message-ID: <CAJr6mf1ebw16j0AZSDDxnK2t_=8wdzZBm=X_3DW=zP+XRbRFsw@mail.gmail.com>
+Subject: Re: [PATCH] scsi/mvsas/mv_init.c: Use dma_zalloc_coherent
+To:     John Garry <john.garry@huawei.com>
+Cc:     jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
+        jthumshirn@suse.de, Souptick Joarder <jrdr.linux@gmail.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Brajeswar Ghosh <brajeswar.linux@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 03, 2019 at 10:47:06AM -0800, Tejun Heo wrote:
-> Hello,
-> 
-> On Wed, Jan 02, 2019 at 07:05:38PM +0200, Mike Rapoport wrote:
-> > I agree that currently the bottom-up allocation after the kernel text has
-> > issues with KASLR. But this issues are not necessarily related to the
-> > memory hotplug. Even with a single memory node, a bottom-up allocation will
-> > fail if KASLR would put the kernel near the end of node0.
-> > 
-> > What I am trying to understand is whether there is a fundamental reason to
-> > prevent allocations from [0, kernel_start)?
-> > 
-> > Maybe Tejun can recall why he suggested to start bottom-up allocations from
-> > kernel_end.
-> 
-> That's from 79442ed189ac ("mm/memblock.c: introduce bottom-up
-> allocation mode").  I wasn't involved in that patch, so no idea why
-> the restrictions were added, but FWIW it doesn't seem necessary to me.
+On Fri, Jan 4, 2019 at 6:43 PM John Garry <john.garry@huawei.com> wrote:
+>
+> On 04/01/2019 12:48, Sabyasachi Gupta wrote:
+> > On Wed, Dec 19, 2018 at 6:49 PM Sabyasachi Gupta
+> > <sabyasachi.linux@gmail.com> wrote:
+> >>
+> >> On Sat, Dec 1, 2018 at 6:40 PM Sabyasachi Gupta
+> >> <sabyasachi.linux@gmail.com> wrote:
+> >>>
+> >>> On Wed, Nov 21, 2018 at 7:18 PM Sabyasachi Gupta
+> >>> <sabyasachi.linux@gmail.com> wrote:
+> >>>>
+> >>>> Replace dma_alloc_coherent + memset with dma_zalloc_coherent
+> >>>>
+>
+> If you're going to make this change, then how about change these to the
+> managed version, so that we can avoid the explicit free'ing at driver
+> removal?
 
-I should have added the reference [1] at the first place :)
-Thanks!
+I can't get it
 
-[1] https://lore.kernel.org/lkml/20130904192215.GG26609@mtj.dyndns.org/
- 
-> Thanks.
-> 
-> -- 
-> tejun
-> 
+>
+> >>>> Signed-off-by: Sabyasachi Gupta <sabyasachi.linux@gmail.com>
+> >>>
+> >>> Any comment on this patch?
+> >>
+> >> Any comment on this patch?
+> >
+> > Any comment on this patch?
+> >
+> >>
+> >>>
+> >>>> ---
+> >>>>  drivers/scsi/mvsas/mv_init.c | 12 ++++--------
+> >>>>  1 file changed, 4 insertions(+), 8 deletions(-)
+> >>>>
+> >>>> diff --git a/drivers/scsi/mvsas/mv_init.c b/drivers/scsi/mvsas/mv_init.c
+> >>>> index 3ac3437..495bddb 100644
+> >>>> --- a/drivers/scsi/mvsas/mv_init.c
+> >>>> +++ b/drivers/scsi/mvsas/mv_init.c
+> >>>> @@ -253,33 +253,29 @@ static int mvs_alloc(struct mvs_info *mvi, struct Scsi_Host *shost)
+> >>>>         /*
+> >>>>          * alloc and init our DMA areas
+> >>>>          */
+> >>>> -       mvi->tx = dma_alloc_coherent(mvi->dev,
+> >>>> +       mvi->tx = dma_zalloc_coherent(mvi->dev,
+> >>>>                                      sizeof(*mvi->tx) * MVS_CHIP_SLOT_SZ,
+> >>>>                                      &mvi->tx_dma, GFP_KERNEL);
+>
+> I'm guessing that this does not pass checkpatch with --strict option.
+>
+> Thanks,
+> John
 
--- 
-Sincerely yours,
-Mike.
+I have not not checked with --strict option
 
+>
+> >>>>         if (!mvi->tx)
+> >>>>                 goto err_out;
+> >>>> -       memset(mvi->tx, 0, sizeof(*mvi->tx) * MVS_CHIP_SLOT_SZ);
+> >>>> -       mvi->rx_fis = dma_alloc_coherent(mvi->dev, MVS_RX_FISL_SZ,
+> >>>> +       mvi->rx_fis = dma_zalloc_coherent(mvi->dev, MVS_RX_FISL_SZ,
+> >>>>                                          &mvi->rx_fis_dma, GFP_KERNEL);
+> >>>>         if (!mvi->rx_fis)
+> >>>>                 goto err_out;
+> >>>> -       memset(mvi->rx_fis, 0, MVS_RX_FISL_SZ);
+> >>>>
+> >>>> -       mvi->rx = dma_alloc_coherent(mvi->dev,
+> >>>> +       mvi->rx = dma_zalloc_coherent(mvi->dev,
+> >>>>                                      sizeof(*mvi->rx) * (MVS_RX_RING_SZ + 1),
+> >>>>                                      &mvi->rx_dma, GFP_KERNEL);
+> >>>>         if (!mvi->rx)
+> >>>>                 goto err_out;
+> >>>> -       memset(mvi->rx, 0, sizeof(*mvi->rx) * (MVS_RX_RING_SZ + 1));
+> >>>>         mvi->rx[0] = cpu_to_le32(0xfff);
+> >>>>         mvi->rx_cons = 0xfff;
+> >>>>
+> >>>> -       mvi->slot = dma_alloc_coherent(mvi->dev,
+> >>>> +       mvi->slot = dma_zalloc_coherent(mvi->dev,
+> >>>>                                        sizeof(*mvi->slot) * slot_nr,
+> >>>>                                        &mvi->slot_dma, GFP_KERNEL);
+> >>>>         if (!mvi->slot)
+> >>>>                 goto err_out;
+> >>>> -       memset(mvi->slot, 0, sizeof(*mvi->slot) * slot_nr);
+> >>>>
+> >>>>         mvi->bulk_buffer = dma_alloc_coherent(mvi->dev,
+> >>>>                                        TRASH_BUCKET_SIZE,
+> >>>> --
+> >>>> 2.7.4
+> >>>>
+> >
+> > .
+> >
+>
+>
