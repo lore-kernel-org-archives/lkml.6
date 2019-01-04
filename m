@@ -2,133 +2,251 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.9 required=3.0 tests=DKIM_ADSP_ALL,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4130CC43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 15:25:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA4BEC43612
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 15:29:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DD3721872
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 15:25:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="dNTfuQ8c"
+	by mail.kernel.org (Postfix) with ESMTP id B074B21872
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 15:29:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727638AbfADPZQ (ORCPT
+        id S1727439AbfADP26 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 10:25:16 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:45193 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725939AbfADPZP (ORCPT
+        Fri, 4 Jan 2019 10:28:58 -0500
+Received: from sender-of-o53.zoho.com ([135.84.80.218]:21812 "EHLO
+        sender-of-o53.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725939AbfADP26 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 10:25:15 -0500
-Received: by mail-qt1-f195.google.com with SMTP id e5so40655937qtr.12
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Jan 2019 07:25:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=IYOcWXy0F9YBGiJA1eHhgaL7fYNPhHeIoXVhFk3hkWE=;
-        b=dNTfuQ8cShnB7GnuBaHSQe74JJFr+HwzmNJrJDXbzszwTvyhLtVk+bm2yUrnRKGgw0
-         f4t9kXxt/nF9MkW/q/0VqIm4cGyPmYbFMBGKeyJk4+nwu9SsRPPt+1PZQcanSTwBT8hp
-         76tlKMolRmoxeS887AAc53eHVYLpK0kx8bY5xcsukwPaijoilOnTyGzmDm8vjroHUrvD
-         Rojc7F6FBu3nZTU/6LLQUD15gRgZYsZ6OmlCJHGZrJugQe1lgX1vSVH+ucqP3BJ2cgnC
-         jSzJUpyHUtgxXRgPYk+ZuUujTvWRvuvFMVif1D9dIXdqz7I7ejyry4Qu8RV83ga6gWVV
-         R2cw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=IYOcWXy0F9YBGiJA1eHhgaL7fYNPhHeIoXVhFk3hkWE=;
-        b=FVN5TAiiKv3lUMDYbC1tEiVSKceiGdtYoGudtSe7dtjm0AjWECj2u+9xu36LgYRg8F
-         O/6CJhZme+q2YcTY+cuvJu5GnLRLv1osPDF0ouUABoiGQylwi8OooOytfVPDw1BBZ+Uh
-         hKgt6bj8gavAMXferuWCDYbTAsCnprTZA/ZoDtIv0oT+tOJfYXx9UD7RnNbR6mpVQZ5f
-         Uc/usN4KbaCpLpx74Nmxs4ouEMmSJo4fO0QXyd9+LMApUIKLyYaKjSWXsFpKEs2sZm/R
-         eCDyx/4iH05+1JVBwLrEgwMySusAFWY9lWIkqzvFk1giPrQyqp8K01xFzUrns6BPIfHm
-         WUVw==
-X-Gm-Message-State: AA+aEWa+G+JiYcedSUJI/CVZvYdXVV15CVLved7fxc2zvuozEL1MwkQj
-        BsnWDk+jqNRq2V/oxdD7BKmcavk6FXGExQ==
-X-Google-Smtp-Source: AFSGD/VVTEEFI/OLWjeTx1zUUjg6kADZkqBH6tDmWLFKZnnumqyJGR9vKkALDOkxhzCkQwOgkSjvfQ==
-X-Received: by 2002:ac8:354e:: with SMTP id z14mr50798788qtb.272.1546615513838;
-        Fri, 04 Jan 2019 07:25:13 -0800 (PST)
-Received: from ovpn-120-55.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id w15sm31376181qta.16.2019.01.04.07.25.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 04 Jan 2019 07:25:13 -0800 (PST)
-Subject: Re: [PATCH v3] mm/page_owner: fix for deferred struct page init
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     akpm@linux-foundation.org, Pavel.Tatashin@microsoft.com,
-        mingo@kernel.org, mgorman@techsingularity.net,
-        iamjoonsoo.kim@lge.com, tglx@linutronix.de, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <20190103115114.GL31793@dhcp22.suse.cz>
- <e3ff1455-06cc-063e-24f0-3b525c345b84@lca.pw>
- <20190103165927.GU31793@dhcp22.suse.cz>
- <5d8f3a98-a954-c8ab-83d9-2f94c614f268@lca.pw>
- <20190103190715.GZ31793@dhcp22.suse.cz>
- <62e96e34-7ea9-491a-b5b6-4828da980d48@lca.pw>
- <20190103202235.GE31793@dhcp22.suse.cz>
- <a5666d82-b7ad-4b90-5f4e-fd22afc3e1dc@lca.pw>
- <20190104130906.GO31793@dhcp22.suse.cz>
- <e4ad9d12-387d-1cc6-f404-cae6d43ccf80@lca.pw>
- <20190104151737.GT31793@dhcp22.suse.cz>
-From:   Qian Cai <cai@lca.pw>
-Message-ID: <c8faf7eb-d23f-4ef7-3432-0acc7165f883@lca.pw>
-Date:   Fri, 4 Jan 2019 10:25:12 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.3.3
-MIME-Version: 1.0
-In-Reply-To: <20190104151737.GT31793@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Fri, 4 Jan 2019 10:28:58 -0500
+ARC-Seal: i=1; a=rsa-sha256; t=1546615713; cv=none; 
+        d=zoho.com; s=zohoarc; 
+        b=Qm4fQ9iehurKHb+4Iugw+Rw0w5XTBPdrAdUekqKP1xrnNVV4FkxdR9NrkAoAlnNnOxiZoku/Z98VO9ZviDnYW3lsev2QtwP/NjrOrve7qx7m/aICbpdOFVd7p2ZqqhkhPAZdVDoqVlZKWwUY+GT+wGQ92+VwzBwfCWIRI0tD7/c=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
+        t=1546615713; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To:ARC-Authentication-Results; 
+        bh=bLK48qKyjF5EgCddFBpN6JZnbFWOG0HBXb7DnW33j4Q=; 
+        b=aIAk/trQks9iJiskDu6SzEGxvw1gHcJz04wQGKt4BLesJVY2zkPcaltCsvqG07dQLZ0JqWkUQKGUOWpv+Bhrg0TFKLDxVHr1Z5jjz9c+p+ehFRVxF3zbnTr3xmmwbJx7wBx7NjZDIAX78c7XNNCN1aZmB//b3Dl8c1BApPwd6Is=
+ARC-Authentication-Results: i=1; mx.zoho.com;
+        dkim=pass  header.i=mniewoehner.de;
+        spf=pass  smtp.mailfrom=linux@mniewoehner.de;
+        dmarc=pass header.from=<linux@mniewoehner.de> header.from=<linux@mniewoehner.de>
+Received: from z3r0 (31.187.91.78 [31.187.91.78]) by mx.zohomail.com
+        with SMTPS id 15466157088771015.2099884845039; Fri, 4 Jan 2019 07:28:28 -0800 (PST)
+Message-ID: <5ee514be264361a8f1ed4a4ad823ad72dd7dce23.camel@mniewoehner.de>
+Subject: Re: tpm_tis TPM2.0 not detected on cold boot
+From:   Michael =?ISO-8859-1?Q?Niew=F6hner?= <linux@mniewoehner.de>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        peterhuewe@gmx.de, jgg@ziepe.ca, arnd@arndb.de,
+        linux-integrity@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Ken Goldman <kgold@linux.ibm.com>
+In-Reply-To: <c1f5f53cdaaaad6cc80c2b10172a69f0301d3e0e.camel@mniewoehner.de>
+References: <ef7e773b01a5e6153b84628f74fc67092a2f9b0e.camel@gmail.com>
+         <1f281756bb1f041e55be8dd090670a1a7b1d1c94.camel@mniewoehner.de>
+         <1545519232.3940.115.camel@linux.ibm.com>
+         <e7ec38d7cade9aa76384aa2781eab307d2cd5a7b.camel@mniewoehner.de>
+         <20190103132737.GD10491@linux.intel.com>
+         <6c1bf9815bfcb5d2bc0cfedfc49c7feda0173dc9.camel@mniewoehner.de>
+         <20190103150434.GC17015@linux.intel.com>
+         <5aa2fc082b6b0657574918b025005ad569da6412.camel@mniewoehner.de>
+         <c1f5f53cdaaaad6cc80c2b10172a69f0301d3e0e.camel@mniewoehner.de>
+Content-Type: text/plain; charset="UTF-8"
+Date:   Fri, 04 Jan 2019 16:28:24 +0100
+Mime-Version: 1.0
+User-Agent: Evolution 3.30.3 
+Content-Transfer-Encoding: 8BIT
+X-ZohoMailClient: External
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/4/19 10:17 AM, Michal Hocko wrote:
-> On Fri 04-01-19 10:01:40, Qian Cai wrote:
->> On 1/4/19 8:09 AM, Michal Hocko wrote:
->>>> Here is the number without DEFERRED_STRUCT_PAGE_INIT.
->>>>
->>>> == page_ext_init() after page_alloc_init_late() ==
->>>> Node 0, zone DMA: page owner found early allocated 0 pages
->>>> Node 0, zone DMA32: page owner found early allocated 7009 pages
->>>> Node 0, zone Normal: page owner found early allocated 85827 pages
->>>> Node 4, zone Normal: page owner found early allocated 75063 pages
->>>>
->>>> == page_ext_init() before kmemleak_init() ==
->>>> Node 0, zone DMA: page owner found early allocated 0 pages
->>>> Node 0, zone DMA32: page owner found early allocated 6654 pages
->>>> Node 0, zone Normal: page owner found early allocated 41907 pages
->>>> Node 4, zone Normal: page owner found early allocated 41356 pages
->>>>
->>>> So, it told us that it will miss tens of thousands of early page allocation call
->>>> sites.
->>>
->>> This is an answer for the first part of the question (how much). The
->>> second is _do_we_care_?
->>
->> Well, the purpose of this simple "ugly" ifdef is to avoid a regression for the
->> existing page_owner users with DEFERRED_STRUCT_PAGE_INIT deselected that would
->> start to miss tens of thousands early page allocation call sites.
+On Fri, 2019-01-04 at 12:58 +0100, Michael Niewöhner wrote:
+> On Thu, 2019-01-03 at 16:47 +0100, Michael Niewöhner wrote:
+> > On Thu, 2019-01-03 at 17:04 +0200, Jarkko Sakkinen wrote:
+> > > On Thu, Jan 03, 2019 at 02:38:11PM +0100, Michael Niewöhner wrote:
+> > > > On Thu, 2019-01-03 at 15:27 +0200, Jarkko Sakkinen wrote:
+> > > > > On Sun, Dec 23, 2018 at 12:55:12PM +0100, Michael Niewöhner wrote:
+> > > > > > There is another issue but I don't know if both are related. Maybe
+> > > > > > that's
+> > > > > > just a
+> > > > > > timing issue...
+> > > > > > 
+> > > > > > root@debian:~# dd if=/dev/hwrng bs=1 count=1
+> > > > > > dd: error reading '/dev/hwrng': Operation not permitted
+> > > > > > 0+0 records in
+> > > > > > 0+0 records out
+> > > > > > 0 bytes copied, 0.755958 s, 0.0 kB/s
+> > > > > > root@debian:~# dd if=/dev/hwrng bs=1 count=1 | xxd; dd if=/dev/hwrng
+> > > > > > bs=1
+> > > > > > count=1 | xxd
+> > > > > > dd: error reading '/dev/hwrng': Operation not permitted
+> > > > > > 0+0 records in
+> > > > > > 0+0 records out
+> > > > > > 0 bytes copied, 0.755697 s, 0.0 kB/s
+> > > > > > 1+0 records in
+> > > > > > 1+0 records out
+> > > > > > 00000000: 52                                       R
+> > > > > > 1 byte copied, 0.0106268 s, 0.1 kB/s
+> > > > > > 
+> > > > > > 
+> > > > > > Michael
+> > > > > 
+> > > > > What does /sys/devices/virtual/misc/hw_random/rng_current show?
+> > > > > 
+> > > > > Did run commands as a sanity check on my laptop and seem to work.
+> > > > > 
+> > > > > /Jarkko
+> > > > 
+> > > > rng_current says "tpm-rng-0", which should be correct
+> > > 
+> > > Is /dev/tpm0 accessible and usable?
+> > > 
+> > > /Jarkko
+> > 
+> > No, it does not seem to work:
+> > 
+> > root@debian:~# tpm_version                                     
+> > Tspi_Context_Connect failed: 0x00003011 - layer=tsp, code=0011 (17),
+> > Communication failure
+> > root@debian:~# tcsd -f
+> > TCSD TDDL ioctl: (25) Inappropriate ioctl for device
+> > TCSD TDDL Falling back to Read/Write device support.
+> > TCSD TDDL ERROR: write to device /dev/tpm0 failed: Operation not permitted
+> > TCSD TCS ERROR: TCS GetCapability failed with result = 0x1087
+> > root@debian:~# stat /dev/tpm0
+> >   File: /dev/tpm0
+> >   Size: 0         	Blocks: 0          IO Block: 4096   character special
+> > file
+> > Device: 6h/6d	Inode: 1114        Links: 1     Device type: a,e0
+> > Access: (0600/crw-------)  Uid: (  104/     tss)   Gid: (  112/     tss)
+> > Access: 2019-01-03 16:39:20.627635333 +0100
+> > Modify: 2019-01-03 16:39:20.627635333 +0100
+> > Change: 2019-01-03 16:39:20.627635333 +0100
+> >  Birth: -
+> > 
+> > Michael
 > 
-> I am pretty sure we will hear about that when that happens. And act
-> accordingly.
+> I have done some more tests with tpm2-tests from 
+> https://github.com/jethrogb/tpm2-utils.
+> These are my results:
 > 
->> The other option I can think of to not hurt your eyes is to rewrite the whole
->> page_ext_init(), init_page_owner(), init_debug_guardpage() to use all early
->> functions, so it can work in both with DEFERRED_STRUCT_PAGE_INIT=y and without.
->> However, I have a hard-time to convince myself it is a sensible thing to do.
 > 
-> Or simply make the page_owner initialization only touch the already
-> initialized memory. Have you explored that option as well?
+> (initramfs) ./tpm2-test /dev/tpm0 vendor_tpm_type
+> Error on write(fd,(char*)&tpm_cmd,sizeof(tpm_cmd)): Operation not permitted
+> 
+> (initramfs) ./tpm2-test /dev/tpm0 vendor_tpm_type; ./tpm2-test /dev/tpm0
+> vendor_
+> tpm_type
+> Error on write(fd,(char*)&tpm_cmd,sizeof(tpm_cmd)): Operation not permitted
+> �   
+> nitramfs) 
+> 
+> -> Same symptom like with dd if=/dev/tpm....
+> 
+> 
+> Trying to read the firmware version:
+> 
+> (initramfs) (./tpm2-test /dev/tpm0 vendor_string_1; ./tpm2-test /dev/tpm0
+> firmwa
+> re_version_1;) 2>/dev/null | hexdump -C
+> 00000000  80 01 00 00 00 1b 00 00  00 00 01 00 00 00 06 00  |................|
+> 00000010  00 00 01 00 00 01 0b 00  01 00 03                 |...........|
+> 0000001b
+> 
+> (initramfs) (./tpm2-test /dev/tpm0 vendor_string_1; ./tpm2-test /dev/tpm0
+> firmwa
+> re_version_2;) 2>/dev/null | hexdump -C
+> 00000000  80 01 00 00 00 1b 00 00  00 00 01 00 00 00 06 00  |................|
+> 00000010  00 00 01 00 00 01 0c 00  02 00 08                 |...........|
+> 0000001b
+> 
+> -> This version numbers are correct, 1.3.2.8 indeed is the current flashed
+> firmware.
+> 
+> 
+> Get the vendor strings:
+> 
+> (initramfs) (./tpm2-test /dev/tpm0 vendor_string_1; ./tpm2-test /dev/tpm0
+> vendor
+> _string_1;) 2>/dev/null | xxd
+> 00000000: 8001 0000 001b 0000 0000 0100 0000 0600  ................
+> 00000010: 0000 0100 0001 0672 6c73 00              .......rls.
+> (initramfs) (./tpm2-test /dev/tpm0 vendor_string_1; ./tpm2-test /dev/tpm0
+> vendor
+> _string_2;) 2>/dev/null | xxd
+> 00000000: 8001 0000 001b 0000 0000 0100 0000 0600  ................
+> 00000010: 0000 0100 0001 074e 5043 54              .......NPCT
+> (initramfs) (./tpm2-test /dev/tpm0 vendor_string_1; ./tpm2-test /dev/tpm0
+> vendor
+> _string_3;) 2>/dev/null | xxd
+> 00000000: 8001 0000 001b 0000 0000 0100 0000 0600  ................
+> 00000010: 0000 0100 0001 0820 0000 00              ....... ...
+> (initramfs) (./tpm2-test /dev/tpm0 vendor_string_1; ./tpm2-test /dev/tpm0
+> vendor
+> _string_4;) 2>/dev/null | xxd
+> 00000000: 8001 0000 001b 0000 0000 0100 0000 0600  ................
+> 00000010: 0000 0100 0001 0920 0000 00              ....... ...
+> 
+> Well, NPCT is correct...
+> 
+> 
+> 
+> Michael
 
-Yes, a proof-of-concept version is v1 where ends up with more ifdefs due to
-dealing with all the low-level details,
+Oh damn. I wasn not aware that trousers/tcsd does only support TPM<=1.2.
+Instead of trousers I now tested tpm2-tools and tss2.
+Guess what? Same symptoms... This is definitely some sort of timing issue...
 
-https://lore.kernel.org/lkml/20181220060303.38686-1-cai@lca.pw/
+
+root@debian:~# tpm2_nvlist 
+ERROR:tcti:src/util/io.c:102:write_all() failed to write to fd 3: Operation not
+permitted 
+ERROR:tcti:src/tss2-tcti/tcti-device.c:86:tcti_device_transmit() wrong number of
+bytes written. Expected 22, wrote 0. 
+ERROR: GetCapability:Get NV Index list Error. TPM Error:0xa000a
+ERROR: Unable to run tpm2_nvlist
+root@debian:~# tpm2_nvlist; tpm2_nvlist
+ERROR:tcti:src/util/io.c:102:write_all() failed to write to fd 3: Operation not
+permitted 
+ERROR:tcti:src/tss2-tcti/tcti-device.c:86:tcti_device_transmit() wrong number of
+bytes written. Expected 22, wrote 0. 
+ERROR: GetCapability:Get NV Index list Error. TPM Error:0xa000a
+ERROR: Unable to run tpm2_nvlist
+0x1800001:
+  hash algorithm:
+    friendly: sha256
+    value: 0xB
+  attributes:
+    friendly:
+authwrite|policydelete|writelocked|writedefine|authread|no_da|written|platformcr
+eate
+    value: 0x42C0462
+  size: 70
+........
+
+root@debian:~# tpm2_pcrlist
+ERROR:tcti:src/util/io.c:102:write_all() failed to write to fd 3: Operation not
+permitted 
+ERROR:tcti:src/tss2-tcti/tcti-device.c:86:tcti_device_transmit() wrong number of
+bytes written. Expected 22, wrote 0. 
+ERROR: GetCapability: Get PCR allocation status Error. TPM Error:0xa000a......
+ERROR: Unable to run tpm2_pcrlist
+root@debian:~# tpm2_pcrlist; tpm2_pcrlist 
+sha1 :
+  0  : 1ebb2be3b7103a09b5caeeb5827c1242cd6632ec
+  1  : 425e833da73cb511150d6ffcf6fac64e9a6feb58
+  2  : b2a83b0ebf2f8374299a5b2bdfc31ea955ad7236
+  3  : b2a83b0ebf2f8374299a5b2bdfc31ea955ad7236
+  4  : d13c141b174afbb568773adf1f39940a2df47c7d
+  5  : 756a3647403ab141ec2c1ac7325854f4a93f6efd
+......
+
+
+Michael
 
 
