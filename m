@@ -2,123 +2,1475 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C34F7C43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 10:33:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67867C43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 10:35:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9711D20675
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 10:33:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 03E2720675
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 10:35:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="L3OngBqE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727498AbfADKdJ (ORCPT
+        id S1727192AbfADKfI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 05:33:09 -0500
-Received: from a.mx.secunet.com ([62.96.220.36]:35464 "EHLO a.mx.secunet.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725913AbfADKdJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 05:33:09 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by a.mx.secunet.com (Postfix) with ESMTP id 7967B201BB;
-        Fri,  4 Jan 2019 11:33:07 +0100 (CET)
-X-Virus-Scanned: by secunet
-Received: from a.mx.secunet.com ([127.0.0.1])
-        by localhost (a.mx.secunet.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id P4A5vkdBQM0m; Fri,  4 Jan 2019 11:33:07 +0100 (CET)
-Received: from mail-essen-01.secunet.de (mail-essen-01.secunet.de [10.53.40.204])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by a.mx.secunet.com (Postfix) with ESMTPS id 08269201B3;
-        Fri,  4 Jan 2019 11:33:07 +0100 (CET)
-Received: from gauss2.secunet.de (10.182.7.193) by mail-essen-01.secunet.de
- (10.53.40.204) with Microsoft SMTP Server id 14.3.408.0; Fri, 4 Jan 2019
- 11:33:06 +0100
-Received: by gauss2.secunet.de (Postfix, from userid 1000)      id 6A1C03180594;
- Fri,  4 Jan 2019 11:33:06 +0100 (CET)
-Date:   Fri, 4 Jan 2019 11:33:06 +0100
-From:   Steffen Klassert <steffen.klassert@secunet.com>
-To:     "Su Yanjun <suyj.fnst@cn.fujitsu.com>" <suyj.fnst@cn.fujitsu.com>
-CC:     <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
-        <kuznet@ms2.inr.ac.ru>, <yoshfuji@linux-ipv6.org>,
-        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <suyanjun218@gmail.com>
-Subject: Re: [PATCH] vti4: Fix a ipip packet processing bug in 'IPCOMP'
- virtual tunnel
-Message-ID: <20190104103306.GH3581@gauss3.secunet.de>
-References: <1546519721-30837-1-git-send-email-suyj.fnst@cn.fujitsu.com>
- <20190104074333.GE3581@gauss3.secunet.de>
- <a289564b-c33a-d2fb-dab2-31e15695844f@cn.fujitsu.com>
+        Fri, 4 Jan 2019 05:35:08 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:46470 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726097AbfADKfH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 05:35:07 -0500
+Received: by mail-io1-f65.google.com with SMTP id v10so29197463ios.13
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Jan 2019 02:35:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=RqC4so2vSMV/s7uJcctsQT38r/kCxA/ltCI3MeDaH6c=;
+        b=L3OngBqEERnIOxUvgi22LWKMxiCBFaQoyckksFJlKlGIVZjLqZLB2WskFF5Wl0QopV
+         CiNu8HpDD4XluBOabf/3g/2WWfHIFhxYwBJ4OTqSZOH3+hwoxxnuiGHqDTGESp3c1duc
+         HpBLOXsfMVVXI+sox/tDsU8tBBr2tLhii6W1QBtN5Pw2P+ofvc5GJI9fZ1xpsv1YVXiR
+         nWyJCJNf+BgknH0X9V6NmY6Nuv17XVMEUYoAfzhzoxA35SDIbgTJBlADLUeUC2vBMUZi
+         EI9MuE9HlOtcs1e+eEvoQ0M4FACyRTGs5aiLPN+Dkm95okvqwfJBsdHCtaTWHho2B7gH
+         E4ZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=RqC4so2vSMV/s7uJcctsQT38r/kCxA/ltCI3MeDaH6c=;
+        b=pgiqya73hQ2sUOE2Glsk1hDUzRRmkStry4it0KbplVsil7DV5cgVXsuSLOfMJr8FPH
+         gH38R0wYUaiJ9fFhcGRapalbVS/lVAZEaC9oa7cCeKozk5wDjpiKiH1zDHS2uDH+Jnlb
+         KepdCjlDKUYt6NcHjF/H/fEiAlFGbBKcrm+FAK2y0B0D/vS8RvU4jYfxigUcBpBlfm/k
+         oRF6edSKCDZ4erMWsY46mp9r6aVfUyfPr0UFt1us2SatO3LvHrcIkOB4b2Jt4xL7mob7
+         TRYHOFxtuv3Dtv/WgVM16lXSuLKiC82uMDZY3zoCtrEdXHqaBhTyVCxeXQHqhOdlipwD
+         +6Lw==
+X-Gm-Message-State: AJcUukdcjWtZTCDKHTHm8KWKmT0YntFoRSNAMduxoYHBL+bMoe5jI79I
+        7u6zwRSv/j5k2L0ur4Wb0gsLbj2anMo49Xg+9U1uFw==
+X-Google-Smtp-Source: ALg8bN6Ge0sv3YHlsi27zPRUy9FM+LrQ3wW05XuIcmsxljk7/7F7nNV3gCTGxQ3tEBnZ+Trjis0IbVGNUJ4v80ZBm1Y=
+X-Received: by 2002:a5d:9456:: with SMTP id x22mr9180178ior.282.1546598103292;
+ Fri, 04 Jan 2019 02:35:03 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <a289564b-c33a-d2fb-dab2-31e15695844f@cn.fujitsu.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-G-Data-MailSecurity-for-Exchange-State: 0
-X-G-Data-MailSecurity-for-Exchange-Error: 0
-X-G-Data-MailSecurity-for-Exchange-Sender: 23
-X-G-Data-MailSecurity-for-Exchange-Server: d65e63f7-5c15-413f-8f63-c0d707471c93
-X-EXCLAIMER-MD-CONFIG: 2c86f778-e09b-4440-8b15-867914633a10
-X-G-Data-MailSecurity-for-Exchange-Guid: 99C4CCE0-3E3B-4737-8154-B7440C709B11
+References: <000000000000513fb7057e8d7013@google.com> <f2e566ac-5c4c-11ae-d436-ebb3522a2195@gmail.com>
+ <20190103210743.6518841e@redhat.com> <CA+FuTScFwA3F44MvbaWrOYJ2EYgdKAmoMzEGjOLcz3ZPVQLLDA@mail.gmail.com>
+ <20190103225404.66b0ec9f@redhat.com> <CACT4Y+aAofhchOpKTjLGGkQb5PAa74Uyp7kowdSoAwt130ZpAg@mail.gmail.com>
+In-Reply-To: <CACT4Y+aAofhchOpKTjLGGkQb5PAa74Uyp7kowdSoAwt130ZpAg@mail.gmail.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Fri, 4 Jan 2019 11:34:51 +0100
+Message-ID: <CACT4Y+YcYbjjk1TiMe8cS4o62a_t9fvauUReotUu4g=azAuepQ@mail.gmail.com>
+Subject: Re: kernel panic: stack is corrupted in udp4_lib_lookup2
+To:     Stefano Brivio <sbrivio@redhat.com>
+Cc:     Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        syzbot <syzbot+4ad25edc7a33e4ab91e0@syzkaller.appspotmail.com>,
+        David Miller <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Network Development <netdev@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 04, 2019 at 04:42:05PM +0800, Su Yanjun <suyj.fnst@cn.fujitsu.com> wrote:
-> On 1/4/2019 3:43 PM, Steffen Klassert wrote:
-> 
-> > On Thu, Jan 03, 2019 at 07:48:41AM -0500, Su Yanjun wrote:
-> > > Recently we run a network test over ipcomp virtual tunnel.We find that
-> > > if a ipv4 packet needs fragment, then the peer can't receive
-> > > it.
-> > > 
-> > > We deep into the code and find that when packet need fragment the smaller
-> > > fragment will be encapsulated by ipip not ipcomp. So when the ipip packet
-> > > goes into xfrm, it's skb->dev is not properly set. The ipv4 reassembly code
-> > > always set skb'dev to the last fragment's dev. After ipv4 defrag processing,
-> > > when the kernel rp_filter parameter is set, the skb will be drop by -EXDEV
-> > > error.
-> > Why not just leaving rp_filter disabled or in 'loose mode' if you use ipcomp?
-> In my option rp_filter should not affect the ip_vti functionality.
-> The root cause is the origin tunnel code doesn't update skb->dev.
-> vti only cares about ipcomp, esp, ah packets.
-> > > This patch adds compatible support for the ipip process in ipcomp virtual tunnel.
-> > > 
-> > > Signed-off-by: Su Yanjun <suyj.fnst@cn.fujitsu.com>
-> > > ---
-> > >   net/ipv4/ip_vti.c | 25 ++++++++++++++++++++++++-
-> > >   1 file changed, 24 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/net/ipv4/ip_vti.c b/net/ipv4/ip_vti.c
-> > > index de31b30..63de2f6 100644
-> > > --- a/net/ipv4/ip_vti.c
-> > > +++ b/net/ipv4/ip_vti.c
-> > > @@ -65,6 +65,9 @@ static int vti_input(struct sk_buff *skb, int nexthdr, __be32 spi,
-> > >   		XFRM_TUNNEL_SKB_CB(skb)->tunnel.ip4 = tunnel;
-> > > +		if (iph->protocol == IPPROTO_IPIP)
-> > > +			skb->dev = tunnel->dev;
-> > > +
-> > >   		return xfrm_input(skb, nexthdr, spi, encap_type);
-> > >   	}
-> > > @@ -76,10 +79,15 @@ static int vti_input(struct sk_buff *skb, int nexthdr, __be32 spi,
-> > >   static int vti_rcv(struct sk_buff *skb)
-> > >   {
-> > > +	__be32 spi = 0;
-> > > +	
-> > >   	XFRM_SPI_SKB_CB(skb)->family = AF_INET;
-> > >   	XFRM_SPI_SKB_CB(skb)->daddroff = offsetof(struct iphdr, daddr);
-> > > +	
-> > > +	if (ip_hdr(skb)->protocol == IPPROTO_IPIP)
-> > > +		spi = ip_hdr(skb)->saddr;
-> > > -	return vti_input(skb, ip_hdr(skb)->protocol, 0, 0);
-> > > +	return vti_input(skb, ip_hdr(skb)->protocol, spi, 0);
-> > You use the src address as spi, how is this supposed to work?
-> > 
-> This code derives from xfrm4_tunnel and i just want the vti can handle ipip
-> packet as xfrm4 tunnel does.
+On Fri, Jan 4, 2019 at 11:32 AM Dmitry Vyukov <dvyukov@google.com> wrote:
+>
+> On Thu, Jan 3, 2019 at 10:54 PM Stefano Brivio <sbrivio@redhat.com> wrote=
+:
+> >
+> > On Thu, 3 Jan 2019 15:15:06 -0600
+> > Willem de Bruijn <willemdebruijn.kernel@gmail.com> wrote:
+> >
+> > > syzbot generated stack traces with
+> > >
+> > > [  183.517380]  udpv6_err+0x46/0x60
+> > > [  183.520739]  ? __udp6_lib_err+0x1890/0x1890
+> > > [  183.525054]  gue6_err_proto_handler+0x199/0x280
+> >
+> > Where? I can't find that in any logs linked from the dashboard at
+> > https://syzkaller.appspot.com/bug?extid=3D4ad25edc7a33e4ab91e0 :(
 
-Ok, I see what it is. ipcomp needs an extra SA to handle the 'not
-compressed' packets. This SA uses the src address as the spi.
+We are ignoring too many bug reports and don't have a formal bug
+triage process, so unsurprisingly lots get
+lost/unnoticed/unconnected/etc.
 
-So this is ok, but please add separate handlers for this case.
+I've looked at the pile of corrupted reports:
+https://syzkaller.appspot.com/bug?id=3Dd5bc3e0c66d200d72216ab343a67c4327e4a=
+3452
+and spotted these 4 that look relevant:
+
+[ 1431.820738] ------------[ cut here ]------------
+[ 1431.825561] do_IRQ(): syz-executor3 has overflown the kernel stack
+(cur:ffff888053700000,sp:ffff8880ac1651b8,irq stk
+top-bottom:ffff8880ae600080-ffff8880ae608000,exception stk
+top-bottom:fffffe0000006080-fffffe0000010000,ip:udp6_lib_lookup2+0x622/0xb2=
+0)
+[ 1431.848168] WARNING: CPU: 0 PID: 14788 at
+arch/x86/kernel/irq_64.c:61 handle_irq+0x2cb/0x3d8
+[ 1431.848178] Kernel panic - not syncing: panic_on_warn set ...
+[ 1431.862633] CPU: 0 PID: 14788 Comm: syz-executor3 Not tainted 4.20.0+ #6
+[ 1431.869494] Hardware name: Google Google Compute Engine/Google
+Compute Engine, BIOS Google 01/01/2011
+[ 1431.878863] Call Trace:
+[ 1431.882758] Kernel Offset: disabled
+[ 1431.886385] Rebooting in 86400 seconds..
+
+[  343.370355] ------------[ cut here ]------------
+[  343.375254] do_IRQ(): syz-executor1 has overflown the kernel stack
+(cur:ffff88806e810000,sp:ffff8880ac8e0c80,irq stk
+top-bottom:ffff8880ae600080-ffff8880ae608000,exception stk
+top-bottom:fffffe0000006080-fffffe0000010000,ip:__sanitizer_cov_trace_pc+0x=
+8/0x50)
+[  343.398335] WARNING: CPU: 0 PID: 17088 at
+arch/x86/kernel/irq_64.c:61 handle_irq+0x2cb/0x3d8
+[  343.398345] Kernel panic - not syncing: panic_on_warn set ...
+[  343.412823] CPU: 0 PID: 17088 Comm: syz-executor1 Not tainted 4.20.0+ #6
+[  343.419670] Hardware name: Google Google Compute Engine/Google
+Compute Engine, BIOS Google 01/01/2011
+[  343.429024] Call Trace:
+[  343.433016] Kernel Offset: disabled
+[  343.436648] Rebooting in 86400 seconds..
+
+[  183.310893] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+[  183.318584] BUG: KASAN: stack-out-of-bounds in
+debug_lockdep_rcu_enabled.part.0+0x50/0x60
+[  183.326896] Read of size 4 at addr ffff8880a9eb8cbc by task
+8=EF=BF=BD=EB=A9=80=EF=BF=BD=EF=BF=BD=EF=BF=BDd/1/356348210
+[  183.334536]
+[  183.336165] CPU: 1 PID: 356348210 Comm: 8=EF=BF=BD=EB=A9=80=EF=BF=BD=EF=
+=BF=BD=EF=BF=BDd/1 Not tainted 4.20.0+ #2
+[  183.343169] Hardware name: Google Google Compute Engine/Google
+Compute Engine, BIOS Google 01/01/2011
+[  183.352518] Call Trace:
+[  183.355108]  dump_stack+0x1db/0x2d0
+[  183.358743]  ? dump_stack_print_info.cold+0x20/0x20
+[  183.364297]  ? debug_lockdep_rcu_enabled.part.0+0x50/0x60
+[  183.369835]  print_address_description.cold+0x7c/0x20d
+[  183.375117]  ? debug_lockdep_rcu_enabled.part.0+0x50/0x60
+[  183.380654]  kasan_report.cold+0x8c/0x2ba
+[  183.384811]  ? gue6_err_proto_handler+0x280/0x280
+[  183.389651]  __asan_report_load4_noabort+0x14/0x20
+[  183.394589]  debug_lockdep_rcu_enabled.part.0+0x50/0x60
+[  183.399146] list_add corruption. next->prev should be prev
+(ffff8880ae72d8d8), but was ffff8880a9eb8600. (next=3Dffff8880a9eb84f0).
+[  183.411727]  debug_lockdep_rcu_enabled+0x71/0xa0
+[  183.416475]  __udp6_lib_err+0xbc9/0x1890
+[  183.420537]  ? udp6_lib_lookup+0xa0/0xa0
+[  183.424595]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  183.430126]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  183.435658]  ? check_preemption_disabled+0x48/0x290
+[  183.440668]  ? gue6_err_proto_handler+0x280/0x280
+[  183.445505]  ? rcu_lockdep_current_cpu_online+0x1aa/0x220
+[  183.451033]  ? rcu_pm_notify+0xd0/0xd0
+[  183.454912]  udpv6_err+0x46/0x60
+[  183.458277]  ? __udp6_lib_err+0x1890/0x1890
+[  183.462593]  gue6_err_proto_handler+0x199/0x280
+[  183.467252]  ? gre_rcv+0x1600/0x1600
+[  183.470971]  ? check_preemption_disabled+0x48/0x290
+[  183.475983]  gue6_err+0x4c1/0x6b0
+[  183.479435]  ? gue6_err_proto_handler+0x280/0x280
+[  183.484287]  __udp6_lib_err+0xc40/0x1890
+[  183.488352]  ? udp6_lib_lookup+0xa0/0xa0
+[  183.492411]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  183.497941]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  183.503472]  ? check_preemption_disabled+0x48/0x290
+[  183.508483]  ? gue6_err_proto_handler+0x280/0x280
+[  183.513320]  ? __lock_is_held+0xb6/0x140
+[  183.517380]  udpv6_err+0x46/0x60
+[  183.520739]  ? __udp6_lib_err+0x1890/0x1890
+[  183.525054]  gue6_err_proto_handler+0x199/0x280
+[  183.529719]  ? gre_rcv+0x1600/0x1600
+[  183.533429]  ? check_preemption_disabled+0x48/0x290
+[  183.538459]  gue6_err+0x4c1/0x6b0
+[  183.541915]  ? gue6_err_proto_handler+0x280/0x280
+[  183.546749]  __udp6_lib_err+0xc40/0x1890
+[  183.550815]  ? udp6_lib_lookup+0xa0/0xa0
+[  183.554875]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  183.560405]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  183.565937]  ? check_preemption_disabled+0x48/0x290
+[  183.570945]  ? gue6_err_proto_handler+0x280/0x280
+[  183.575787]  ? __lock_is_held+0xb6/0x140
+[  183.579842]  udpv6_err+0x46/0x60
+[  183.583233]  ? __udp6_lib_err+0x1890/0x1890
+[  183.587547]  gue6_err_proto_handler+0x199/0x280
+[  183.592217]  ? gre_rcv+0x1600/0x1600
+[  183.595927]  ? check_preemption_disabled+0x48/0x290
+[  183.600942]  gue6_err+0x4c1/0x6b0
+[  183.604397]  ? gue6_err_proto_handler+0x280/0x280
+[  183.609232]  __udp6_lib_err+0xc40/0x1890
+[  183.613306]  ? udp6_lib_lookup+0xa0/0xa0
+[  183.617366]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  183.622902]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  183.628436]  ? check_preemption_disabled+0x48/0x290
+[  183.633450]  ? gue6_err_proto_handler+0x280/0x280
+[  183.638292]  ? __lock_is_held+0xb6/0x140
+[  183.642351]  udpv6_err+0x46/0x60
+[  183.645709]  ? __udp6_lib_err+0x1890/0x1890
+[  183.650024]  gue6_err_proto_handler+0x199/0x280
+[  183.654686]  ? gre_rcv+0x1600/0x1600
+[  183.658395]  ? check_preemption_disabled+0x48/0x290
+[  183.663406]  gue6_err+0x4c1/0x6b0
+[  183.666860]  ? gue6_err_proto_handler+0x280/0x280
+[  183.671699]  __udp6_lib_err+0xc40/0x1890
+[  183.675762]  ? udp6_lib_lookup+0xa0/0xa0
+[  183.679832]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  183.685387]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  183.690926]  ? check_preemption_disabled+0x48/0x290
+[  183.695946]  ? gue6_err_proto_handler+0x280/0x280
+[  183.700795]  ? __lock_is_held+0xb6/0x140
+[  183.704853]  udpv6_err+0x46/0x60
+[  183.708212]  ? __udp6_lib_err+0x1890/0x1890
+[  183.712532]  gue6_err_proto_handler+0x199/0x280
+[  183.717194]  ? gre_rcv+0x1600/0x1600
+[  183.720904]  ? check_preemption_disabled+0x48/0x290
+[  183.725916]  gue6_err+0x4c1/0x6b0
+[  183.729370]  ? gue6_err_proto_handler+0x280/0x280
+[  183.734207]  __udp6_lib_err+0xc40/0x1890
+[  183.738276]  ? udp6_lib_lookup+0xa0/0xa0
+[  183.742335]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  183.747871]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  183.753404]  ? check_preemption_disabled+0x48/0x290
+[  183.758416]  ? gue6_err_proto_handler+0x280/0x280
+[  183.763255]  ? __lock_is_held+0xb6/0x140
+[  183.767322]  udpv6_err+0x46/0x60
+[  183.770697]  ? __udp6_lib_err+0x1890/0x1890
+[  183.775022]  gue6_err_proto_handler+0x199/0x280
+[  183.779683]  ? gre_rcv+0x1600/0x1600
+[  183.783397]  ? check_preemption_disabled+0x48/0x290
+[  183.788414]  gue6_err+0x4c1/0x6b0
+[  183.791865]  ? gue6_err_proto_handler+0x280/0x280
+[  183.796702]  __udp6_lib_err+0xc40/0x1890
+[  183.800763]  ? udp6_lib_lookup+0xa0/0xa0
+[  183.804830]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  183.810360]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  183.815894]  ? check_preemption_disabled+0x48/0x290
+[  183.820906]  ? gue6_err_proto_handler+0x280/0x280
+[  183.825748]  ? __lock_is_held+0xb6/0x140
+[  183.829808]  udpv6_err+0x46/0x60
+[  183.833172]  ? __udp6_lib_err+0x1890/0x1890
+[  183.837495]  gue6_err_proto_handler+0x199/0x280
+[  183.842155]  ? gre_rcv+0x1600/0x1600
+[  183.845863]  ? check_preemption_disabled+0x48/0x290
+[  183.850874]  gue6_err+0x4c1/0x6b0
+[  183.854327]  ? gue6_err_proto_handler+0x280/0x280
+[  183.859166]  __udp6_lib_err+0xc40/0x1890
+[  183.863229]  ? udp6_lib_lookup+0xa0/0xa0
+[  183.867293]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  183.872825]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  183.878365]  ? check_preemption_disabled+0x48/0x290
+[  183.883381]  ? gue6_err_proto_handler+0x280/0x280
+[  183.888219]  ? __lock_is_held+0xb6/0x140
+[  183.892296]  udpv6_err+0x46/0x60
+[  183.895662]  ? __udp6_lib_err+0x1890/0x1890
+[  183.899979]  gue6_err_proto_handler+0x199/0x280
+[  183.904639]  ? gre_rcv+0x1600/0x1600
+[  183.908347]  ? check_preemption_disabled+0x48/0x290
+[  183.913362]  gue6_err+0x4c1/0x6b0
+[  183.916822]  ? gue6_err_proto_handler+0x280/0x280
+[  183.921656]  __udp6_lib_err+0xc40/0x1890
+[  183.925718]  ? udp6_lib_lookup+0xa0/0xa0
+[  183.929784]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  183.935322]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  183.940857]  ? check_preemption_disabled+0x48/0x290
+[  183.945866]  ? gue6_err_proto_handler+0x280/0x280
+[  183.950702]  ? __lock_is_held+0xb6/0x140
+[  183.954758]  udpv6_err+0x46/0x60
+[  183.958121]  ? __udp6_lib_err+0x1890/0x1890
+[  183.962438]  gue6_err_proto_handler+0x199/0x280
+[  183.967103]  ? gre_rcv+0x1600/0x1600
+[  183.970814]  ? check_preemption_disabled+0x48/0x290
+[  183.975823]  gue6_err+0x4c1/0x6b0
+[  183.979279]  ? gue6_err_proto_handler+0x280/0x280
+[  183.984115]  __udp6_lib_err+0xc40/0x1890
+[  183.988181]  ? udp6_lib_lookup+0xa0/0xa0
+[  183.992243]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  183.997789]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  184.003323]  ? check_preemption_disabled+0x48/0x290
+[  184.008345]  ? gue6_err_proto_handler+0x280/0x280
+[  184.013187]  ? __lock_is_held+0xb6/0x140
+[  184.017243]  udpv6_err+0x46/0x60
+[  184.020612]  ? __udp6_lib_err+0x1890/0x1890
+[  184.024929]  gue6_err_proto_handler+0x199/0x280
+[  184.029592]  ? gre_rcv+0x1600/0x1600
+[  184.033303]  ? check_preemption_disabled+0x48/0x290
+[  184.038319]  gue6_err+0x4c1/0x6b0
+[  184.041768]  ? gue6_err_proto_handler+0x280/0x280
+[  184.046611]  __udp6_lib_err+0xc40/0x1890
+[  184.050675]  ? udp6_lib_lookup+0xa0/0xa0
+[  184.054735]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  184.060273]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  184.065810]  ? check_preemption_disabled+0x48/0x290
+[  184.070822]  ? gue6_err_proto_handler+0x280/0x280
+[  184.075660]  ? __lock_is_held+0xb6/0x140
+[  184.079780]  udpv6_err+0x46/0x60
+[  184.083145]  ? __udp6_lib_err+0x1890/0x1890
+[  184.087464]  gue6_err_proto_handler+0x199/0x280
+[  184.092131]  ? gre_rcv+0x1600/0x1600
+[  184.095838]  ? check_preemption_disabled+0x48/0x290
+[  184.100851]  gue6_err+0x4c1/0x6b0
+[  184.104315]  ? gue6_err_proto_handler+0x280/0x280
+[  184.109154]  __udp6_lib_err+0xc40/0x1890
+[  184.113212]  ? udp6_lib_lookup+0xa0/0xa0
+[  184.117278]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  184.122812]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  184.128344]  ? check_preemption_disabled+0x48/0x290
+[  184.133358]  ? gue6_err_proto_handler+0x280/0x280
+[  184.138192]  ? __lock_is_held+0xb6/0x140
+[  184.142248]  udpv6_err+0x46/0x60
+[  184.145618]  ? __udp6_lib_err+0x1890/0x1890
+[  184.149940]  gue6_err_proto_handler+0x199/0x280
+[  184.154602]  ? gre_rcv+0x1600/0x1600
+[  184.158313]  ? check_preemption_disabled+0x48/0x290
+[  184.163328]  gue6_err+0x4c1/0x6b0
+[  184.166782]  ? gue6_err_proto_handler+0x280/0x280
+[  184.171618]  __udp6_lib_err+0xc40/0x1890
+[  184.175681]  ? udp6_lib_lookup+0xa0/0xa0
+[  184.179740]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  184.185278]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  184.190815]  ? check_preemption_disabled+0x48/0x290
+[  184.195828]  ? gue6_err_proto_handler+0x280/0x280
+[  184.200680]  ? __lock_is_held+0xb6/0x140
+[  184.204740]  udpv6_err+0x46/0x60
+[  184.208101]  ? __udp6_lib_err+0x1890/0x1890
+[  184.212438]  gue6_err_proto_handler+0x199/0x280
+[  184.217098]  ? gre_rcv+0x1600/0x1600
+[  184.220808]  ? check_preemption_disabled+0x48/0x290
+[  184.225821]  gue6_err+0x4c1/0x6b0
+[  184.229445]  ? gue6_err_proto_handler+0x280/0x280
+[  184.234286]  __udp6_lib_err+0xc40/0x1890
+[  184.238348]  ? udp6_lib_lookup+0xa0/0xa0
+[  184.242404]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  184.247935]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  184.253467]  ? check_preemption_disabled+0x48/0x290
+[  184.258480]  ? gue6_err_proto_handler+0x280/0x280
+[  184.263326]  ? __lock_is_held+0xb6/0x140
+[  184.267381]  udpv6_err+0x46/0x60
+[  184.270743]  ? __udp6_lib_err+0x1890/0x1890
+[  184.275059]  gue6_err_proto_handler+0x199/0x280
+[  184.279725]  ? gre_rcv+0x1600/0x1600
+[  184.283439]  ? check_preemption_disabled+0x48/0x290
+[  184.288452]  gue6_err+0x4c1/0x6b0
+[  184.291902]  ? gue6_err_proto_handler+0x280/0x280
+[  184.296739]  __udp6_lib_err+0xc40/0x1890
+[  184.300808]  ? udp6_lib_lookup+0xa0/0xa0
+[  184.304954]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  184.310487]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  184.316020]  ? check_preemption_disabled+0x48/0x290
+[  184.321033]  ? gue6_err_proto_handler+0x280/0x280
+[  184.325870]  ? __lock_is_held+0xb6/0x140
+[  184.329927]  udpv6_err+0x46/0x60
+[  184.333307]  ? __udp6_lib_err+0x1890/0x1890
+[  184.337622]  gue6_err_proto_handler+0x199/0x280
+[  184.342294]  ? gre_rcv+0x1600/0x1600
+[  184.346008]  ? check_preemption_disabled+0x48/0x290
+[  184.351044]  gue6_err+0x4c1/0x6b0
+[  184.354498]  ? gue6_err_proto_handler+0x280/0x280
+[  184.359340]  __udp6_lib_err+0xc40/0x1890
+[  184.363405]  ? udp6_lib_lookup+0xa0/0xa0
+[  184.367464]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  184.372994]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  184.378529]  ? check_preemption_disabled+0x48/0x290
+[  184.383543]  ? gue6_err_proto_handler+0x280/0x280
+[  184.388385]  ? __lock_is_held+0xb6/0x140
+[  184.392445]  udpv6_err+0x46/0x60
+[  184.395806]  ? __udp6_lib_err+0x1890/0x1890
+[  184.400120]  gue6_err_proto_handler+0x199/0x280
+[  184.404788]  ? gre_rcv+0x1600/0x1600
+[  184.408502]  ? check_preemption_disabled+0x48/0x290
+[  184.413512]  gue6_err+0x4c1/0x6b0
+[  184.417062]  ? gue6_err_proto_handler+0x280/0x280
+[  184.421903]  __udp6_lib_err+0xc40/0x1890
+[  184.425962]  ? udp6_lib_lookup+0xa0/0xa0
+[  184.430021]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  184.435552]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  184.441085]  ? check_preemption_disabled+0x48/0x290
+[  184.446095]  ? gue6_err_proto_handler+0x280/0x280
+[  184.450934]  ? __lock_is_held+0xb6/0x140
+[  184.454992]  udpv6_err+0x46/0x60
+[  184.458361]  ? __udp6_lib_err+0x1890/0x1890
+[  184.462854]  gue6_err_proto_handler+0x199/0x280
+[  184.467516]  ? gre_rcv+0x1600/0x1600
+[  184.471228]  ? check_preemption_disabled+0x48/0x290
+[  184.476241]  gue6_err+0x4c1/0x6b0
+[  184.479698]  ? gue6_err_proto_handler+0x280/0x280
+[  184.484535]  __udp6_lib_err+0xc40/0x1890
+[  184.488600]  ? udp6_lib_lookup+0xa0/0xa0
+[  184.492661]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  184.498192]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  184.503724]  ? check_preemption_disabled+0x48/0x290
+[  184.508740]  ? gue6_err_proto_handler+0x280/0x280
+[  184.513575]  ? __lock_is_held+0xb6/0x140
+[  184.517632]  udpv6_err+0x46/0x60
+[  184.520991]  ? __udp6_lib_err+0x1890/0x1890
+[  184.525307]  gue6_err_proto_handler+0x199/0x280
+[  184.529968]  ? gre_rcv+0x1600/0x1600
+[  184.533678]  ? check_preemption_disabled+0x48/0x290
+[  184.538696]  gue6_err+0x4c1/0x6b0
+[  184.542148]  ? gue6_err_proto_handler+0x280/0x280
+[  184.546989]  __udp6_lib_err+0xc40/0x1890
+[  184.551053]  ? udp6_lib_lookup+0xa0/0xa0
+[  184.555112]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  184.560642]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  184.566174]  ? check_preemption_disabled+0x48/0x290
+[  184.571182]  ? gue6_err_proto_handler+0x280/0x280
+[  184.576019]  ? __lock_is_held+0xb6/0x140
+[  184.580076]  udpv6_err+0x46/0x60
+[  184.583435]  ? __udp6_lib_err+0x1890/0x1890
+[  184.587754]  gue6_err_proto_handler+0x199/0x280
+[  184.592420]  ? gre_rcv+0x1600/0x1600
+[  184.596136]  ? check_preemption_disabled+0x48/0x290
+[  184.601150]  gue6_err+0x4c1/0x6b0
+[  184.604609]  ? gue6_err_proto_handler+0x280/0x280
+[  184.609444]  __udp6_lib_err+0xc40/0x1890
+[  184.613504]  ? udp6_lib_lookup+0xa0/0xa0
+[  184.617564]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  184.623094]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  184.628628]  ? check_preemption_disabled+0x48/0x290
+[  184.633643]  ? gue6_err_proto_handler+0x280/0x280
+[  184.638481]  ? __lock_is_held+0xb6/0x140
+[  184.642537]  udpv6_err+0x46/0x60
+[  184.645897]  ? __udp6_lib_err+0x1890/0x1890
+[  184.650212]  gue6_err_proto_handler+0x199/0x280
+[  184.654875]  ? gre_rcv+0x1600/0x1600
+[  184.658583]  ? check_preemption_disabled+0x48/0x290
+[  184.663593]  gue6_err+0x4c1/0x6b0
+[  184.667043]  ? gue6_err_proto_handler+0x280/0x280
+[  184.671882]  __udp6_lib_err+0xc40/0x1890
+[  184.675949]  ? udp6_lib_lookup+0xa0/0xa0
+[  184.680098]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  184.685637]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  184.691177]  ? check_preemption_disabled+0x48/0x290
+[  184.696189]  ? gue6_err_proto_handler+0x280/0x280
+[  184.701040]  ? __lock_is_held+0xb6/0x140
+[  184.705096]  udpv6_err+0x46/0x60
+[  184.708460]  ? __udp6_lib_err+0x1890/0x1890
+[  184.712783]  gue6_err_proto_handler+0x199/0x280
+[  184.717450]  ? gre_rcv+0x1600/0x1600
+[  184.721158]  ? check_preemption_disabled+0x48/0x290
+[  184.726174]  gue6_err+0x4c1/0x6b0
+[  184.729623]  ? gue6_err_proto_handler+0x280/0x280
+[  184.734460]  __udp6_lib_err+0xc40/0x1890
+[  184.738530]  ? udp6_lib_lookup+0xa0/0xa0
+[  184.742603]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  184.748133]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  184.753667]  ? check_preemption_disabled+0x48/0x290
+[  184.758679]  ? gue6_err_proto_handler+0x280/0x280
+[  184.763517]  ? __lock_is_held+0xb6/0x140
+[  184.767575]  udpv6_err+0x46/0x60
+[  184.770937]  ? __udp6_lib_err+0x1890/0x1890
+[  184.775256]  gue6_err_proto_handler+0x199/0x280
+[  184.779926]  ? gre_rcv+0x1600/0x1600
+[  184.783634]  ? check_preemption_disabled+0x48/0x290
+[  184.788649]  gue6_err+0x4c1/0x6b0
+[  184.792099]  ? gue6_err_proto_handler+0x280/0x280
+[  184.796934]  __udp6_lib_err+0xc40/0x1890
+[  184.800993]  ? udp6_lib_lookup+0xa0/0xa0
+[  184.805056]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  184.810585]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  184.816116]  ? check_preemption_disabled+0x48/0x290
+[  184.821125]  ? gue6_err_proto_handler+0x280/0x280
+[  184.825963]  ? __lock_is_held+0xb6/0x140
+[  184.830020]  udpv6_err+0x46/0x60
+[  184.833391]  ? __udp6_lib_err+0x1890/0x1890
+[  184.837713]  gue6_err_proto_handler+0x199/0x280
+[  184.842376]  ? gre_rcv+0x1600/0x1600
+[  184.846084]  ? check_preemption_disabled+0x48/0x290
+[  184.851096]  gue6_err+0x4c1/0x6b0
+[  184.854546]  ? gue6_err_proto_handler+0x280/0x280
+[  184.859381]  __udp6_lib_err+0xc40/0x1890
+[  184.863441]  ? udp6_lib_lookup+0xa0/0xa0
+[  184.867501]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  184.873082]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  184.878623]  ? check_preemption_disabled+0x48/0x290
+[  184.883638]  ? gue6_err_proto_handler+0x280/0x280
+[  184.888481]  ? __lock_is_held+0xb6/0x140
+[  184.892541]  udpv6_err+0x46/0x60
+[  184.895913]  ? __udp6_lib_err+0x1890/0x1890
+[  184.900231]  gue6_err_proto_handler+0x199/0x280
+[  184.904896]  ? gre_rcv+0x1600/0x1600
+[  184.908608]  ? check_preemption_disabled+0x48/0x290
+[  184.913710]  gue6_err+0x4c1/0x6b0
+[  184.917160]  ? gue6_err_proto_handler+0x280/0x280
+[  184.921999]  __udp6_lib_err+0xc40/0x1890
+[  184.926064]  ? udp6_lib_lookup+0xa0/0xa0
+[  184.930302]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  184.935839]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  184.941382]  ? check_preemption_disabled+0x48/0x290
+[  184.946393]  ? gue6_err_proto_handler+0x280/0x280
+[  184.951230]  ? __lock_is_held+0xb6/0x140
+[  184.955289]  udpv6_err+0x46/0x60
+[  184.958651]  ? __udp6_lib_err+0x1890/0x1890
+[  184.963317]  gue6_err_proto_handler+0x199/0x280
+[  184.967981]  ? gre_rcv+0x1600/0x1600
+[  184.971702]  ? check_preemption_disabled+0x48/0x290
+[  184.976712]  gue6_err+0x4c1/0x6b0
+[  184.980165]  ? gue6_err_proto_handler+0x280/0x280
+[  184.985001]  __udp6_lib_err+0xc40/0x1890
+[  184.989059]  ? udp6_lib_lookup+0xa0/0xa0
+[  184.993125]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  184.998659]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  185.004195]  ? check_preemption_disabled+0x48/0x290
+[  185.009205]  ? gue6_err_proto_handler+0x280/0x280
+[  185.014042]  ? __lock_is_held+0xb6/0x140
+[  185.018100]  udpv6_err+0x46/0x60
+[  185.021461]  ? __udp6_lib_err+0x1890/0x1890
+[  185.025781]  gue6_err_proto_handler+0x199/0x280
+[  185.030444]  ? gre_rcv+0x1600/0x1600
+[  185.034156]  ? check_preemption_disabled+0x48/0x290
+[  185.039168]  gue6_err+0x4c1/0x6b0
+[  185.042615]  ? gue6_err_proto_handler+0x280/0x280
+[  185.047448]  __udp6_lib_err+0xc40/0x1890
+[  185.051511]  ? udp6_lib_lookup+0xa0/0xa0
+[  185.055573]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  185.061103]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  185.066638]  ? check_preemption_disabled+0x48/0x290
+[  185.071650]  ? gue6_err_proto_handler+0x280/0x280
+[  185.076494]  ? __lock_is_held+0xb6/0x140
+[  185.080549]  udpv6_err+0x46/0x60
+[  185.083912]  ? __udp6_lib_err+0x1890/0x1890
+[  185.088226]  gue6_err_proto_handler+0x199/0x280
+[  185.092887]  ? gre_rcv+0x1600/0x1600
+[  185.096600]  ? check_preemption_disabled+0x48/0x290
+[  185.101611]  gue6_err+0x4c1/0x6b0
+[  185.105063]  ? gue6_err_proto_handler+0x280/0x280
+[  185.109904]  __udp6_lib_err+0xc40/0x1890
+[  185.113971]  ? udp6_lib_lookup+0xa0/0xa0
+[  185.118029]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  185.123561]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  185.129180]  ? check_preemption_disabled+0x48/0x290
+[  185.134193]  ? gue6_err_proto_handler+0x280/0x280
+[  185.139031]  ? __lock_is_held+0xb6/0x140
+[  185.143091]  udpv6_err+0x46/0x60
+[  185.146450]  ? __udp6_lib_err+0x1890/0x1890
+[  185.150766]  gue6_err_proto_handler+0x199/0x280
+[  185.155435]  ? gre_rcv+0x1600/0x1600
+[  185.159146]  ? check_preemption_disabled+0x48/0x290
+[  185.164157]  gue6_err+0x4c1/0x6b0
+[  185.167612]  ? gue6_err_proto_handler+0x280/0x280
+[  185.172451]  __udp6_lib_err+0xc40/0x1890
+[  185.176523]  ? udp6_lib_lookup+0xa0/0xa0
+[  185.180583]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  185.186118]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  185.191656]  ? check_preemption_disabled+0x48/0x290
+[  185.196670]  ? gue6_err_proto_handler+0x280/0x280
+[  185.201510]  ? __lock_is_held+0xb6/0x140
+[  185.205568]  udpv6_err+0x46/0x60
+[  185.208933]  ? __udp6_lib_err+0x1890/0x1890
+[  185.213250]  gue6_err_proto_handler+0x199/0x280
+[  185.218007]  ? gre_rcv+0x1600/0x1600
+[  185.221714]  ? check_preemption_disabled+0x48/0x290
+[  185.226725]  gue6_err+0x4c1/0x6b0
+[  185.230175]  ? gue6_err_proto_handler+0x280/0x280
+[  185.235011]  __udp6_lib_err+0xc40/0x1890
+[  185.239072]  ? udp6_lib_lookup+0xa0/0xa0
+[  185.243129]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  185.248666]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  185.254199]  ? check_preemption_disabled+0x48/0x290
+[  185.259208]  ? gue6_err_proto_handler+0x280/0x280
+[  185.264045]  ? __lock_is_held+0xb6/0x140
+[  185.268100]  udpv6_err+0x46/0x60
+[  185.271463]  ? __udp6_lib_err+0x1890/0x1890
+[  185.275784]  gue6_err_proto_handler+0x199/0x280
+[  185.280449]  ? gre_rcv+0x1600/0x1600
+[  185.284158]  ? check_preemption_disabled+0x48/0x290
+[  185.289173]  gue6_err+0x4c1/0x6b0
+[  185.292623]  ? gue6_err_proto_handler+0x280/0x280
+[  185.297457]  __udp6_lib_err+0xc40/0x1890
+[  185.301521]  ? udp6_lib_lookup+0xa0/0xa0
+[  185.305580]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  185.311115]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  185.316646]  ? check_preemption_disabled+0x48/0x290
+[  185.321659]  ? gue6_err_proto_handler+0x280/0x280
+[  185.326496]  ? __lock_is_held+0xb6/0x140
+[  185.330552]  udpv6_err+0x46/0x60
+[  185.333915]  ? __udp6_lib_err+0x1890/0x1890
+[  185.338234]  gue6_err_proto_handler+0x199/0x280
+[  185.342895]  ? gre_rcv+0x1600/0x1600
+[  185.346608]  ? check_preemption_disabled+0x48/0x290
+[  185.351622]  gue6_err+0x4c1/0x6b0
+[  185.355071]  ? gue6_err_proto_handler+0x280/0x280
+[  185.360368]  __udp6_lib_err+0xc40/0x1890
+[  185.364430]  ? udp6_lib_lookup+0xa0/0xa0
+[  185.368492]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  185.374027]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  185.379572]  ? check_preemption_disabled+0x48/0x290
+[  185.384586]  ? gue6_err_proto_handler+0x280/0x280
+[  185.389423]  ? __lock_is_held+0xb6/0x140
+[  185.393478]  udpv6_err+0x46/0x60
+[  185.396844]  ? __udp6_lib_err+0x1890/0x1890
+[  185.401157]  gue6_err_proto_handler+0x199/0x280
+[  185.405818]  ? gre_rcv+0x1600/0x1600
+[  185.409527]  ? check_preemption_disabled+0x48/0x290
+[  185.414537]  gue6_err+0x4c1/0x6b0
+[  185.417987]  ? gue6_err_proto_handler+0x280/0x280
+[  185.422827]  __udp6_lib_err+0xc40/0x1890
+[  185.426886]  ? udp6_lib_lookup+0xa0/0xa0
+[  185.430945]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  185.436474]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  185.442005]  ? check_preemption_disabled+0x48/0x290
+[  185.447017]  ? gue6_err_proto_handler+0x280/0x280
+[  185.451856]  ? __lock_is_held+0xb6/0x140
+[  185.455915]  udpv6_err+0x46/0x60
+[  185.459281]  ? __udp6_lib_err+0x1890/0x1890
+[  185.463608]  gue6_err_proto_handler+0x199/0x280
+[  185.468282]  ? gre_rcv+0x1600/0x1600
+[  185.471991]  ? check_preemption_disabled+0x48/0x290
+[  185.477001]  gue6_err+0x4c1/0x6b0
+[  185.480450]  ? gue6_err_proto_handler+0x280/0x280
+[  185.485295]  __udp6_lib_err+0xc40/0x1890
+[  185.489371]  ? udp6_lib_lookup+0xa0/0xa0
+[  185.493430]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  185.498966]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  185.504504]  ? check_preemption_disabled+0x48/0x290
+[  185.509513]  ? gue6_err_proto_handler+0x280/0x280
+[  185.514352]  ? __lock_is_held+0xb6/0x140
+[  185.518407]  udpv6_err+0x46/0x60
+[  185.521769]  ? __udp6_lib_err+0x1890/0x1890
+[  185.526092]  gue6_err_proto_handler+0x199/0x280
+[  185.530753]  ? gre_rcv+0x1600/0x1600
+[  185.534468]  ? check_preemption_disabled+0x48/0x290
+[  185.539484]  gue6_err+0x4c1/0x6b0
+[  185.542935]  ? gue6_err_proto_handler+0x280/0x280
+[  185.547775]  __udp6_lib_err+0xc40/0x1890
+[  185.551840]  ? udp6_lib_lookup+0xa0/0xa0
+[  185.555897]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  185.561427]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  185.566963]  ? check_preemption_disabled+0x48/0x290
+[  185.571978]  ? gue6_err_proto_handler+0x280/0x280
+[  185.576817]  ? __lock_is_held+0xb6/0x140
+[  185.580874]  udpv6_err+0x46/0x60
+[  185.584260]  ? __udp6_lib_err+0x1890/0x1890
+[  185.588588]  gue6_err_proto_handler+0x199/0x280
+[  185.593254]  ? gre_rcv+0x1600/0x1600
+[  185.596981]  ? check_preemption_disabled+0x48/0x290
+[  185.601995]  gue6_err+0x4c1/0x6b0
+[  185.605447]  ? gue6_err_proto_handler+0x280/0x280
+[  185.610287]  __udp6_lib_err+0xc40/0x1890
+[  185.614347]  ? udp6_lib_lookup+0xa0/0xa0
+[  185.618414]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  185.623945]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  185.629480]  ? check_preemption_disabled+0x48/0x290
+[  185.634498]  ? gue6_err_proto_handler+0x280/0x280
+[  185.639343]  ? __lock_is_held+0xb6/0x140
+[  185.643401]  udpv6_err+0x46/0x60
+[  185.646765]  ? __udp6_lib_err+0x1890/0x1890
+[  185.651084]  gue6_err_proto_handler+0x199/0x280
+[  185.655746]  ? gre_rcv+0x1600/0x1600
+[  185.659455]  ? check_preemption_disabled+0x48/0x290
+[  185.664469]  gue6_err+0x4c1/0x6b0
+[  185.667927]  ? gue6_err_proto_handler+0x280/0x280
+[  185.672761]  __udp6_lib_err+0xc40/0x1890
+[  185.676824]  ? udp6_lib_lookup+0xa0/0xa0
+[  185.680884]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  185.686432]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  185.691970]  ? check_preemption_disabled+0x48/0x290
+[  185.696986]  ? gue6_err_proto_handler+0x280/0x280
+[  185.701822]  ? __lock_is_held+0xb6/0x140
+[  185.705879]  udpv6_err+0x46/0x60
+[  185.709238]  ? __udp6_lib_err+0x1890/0x1890
+[  185.713560]  gue6_err_proto_handler+0x199/0x280
+[  185.718232]  ? gre_rcv+0x1600/0x1600
+[  185.721943]  ? check_preemption_disabled+0x48/0x290
+[  185.726958]  gue6_err+0x4c1/0x6b0
+[  185.730410]  ? gue6_err_proto_handler+0x280/0x280
+[  185.735260]  __udp6_lib_err+0xc40/0x1890
+[  185.739333]  ? udp6_lib_lookup+0xa0/0xa0
+[  185.743391]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  185.748923]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  185.754458]  ? check_preemption_disabled+0x48/0x290
+[  185.759467]  ? gue6_err_proto_handler+0x280/0x280
+[  185.764305]  ? __lock_is_held+0xb6/0x140
+[  185.768369]  udpv6_err+0x46/0x60
+[  185.771733]  ? __udp6_lib_err+0x1890/0x1890
+[  185.776054]  gue6_err_proto_handler+0x199/0x280
+[  185.780714]  ? gre_rcv+0x1600/0x1600
+[  185.784423]  ? check_preemption_disabled+0x48/0x290
+[  185.789437]  gue6_err+0x4c1/0x6b0
+[  185.792888]  ? gue6_err_proto_handler+0x280/0x280
+[  185.797722]  __udp6_lib_err+0xc40/0x1890
+[  185.801787]  ? udp6_lib_lookup+0xa0/0xa0
+[  185.805850]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  185.811379]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  185.816913]  ? check_preemption_disabled+0x48/0x290
+[  185.821925]  ? gue6_err_proto_handler+0x280/0x280
+[  185.826760]  ? __lock_is_held+0xb6/0x140
+[  185.830822]  udpv6_err+0x46/0x60
+[  185.834182]  ? __udp6_lib_err+0x1890/0x1890
+[  185.838499]  gue6_err_proto_handler+0x199/0x280
+[  185.843162]  ? gre_rcv+0x1600/0x1600
+[  185.846873]  ? check_preemption_disabled+0x48/0x290
+[  185.851887]  gue6_err+0x4c1/0x6b0
+[  185.855336]  ? gue6_err_proto_handler+0x280/0x280
+[  185.860171]  __udp6_lib_err+0xc40/0x1890
+[  185.864241]  ? udp6_lib_lookup+0xa0/0xa0
+[  185.868305]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  185.873839]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  185.879376]  ? check_preemption_disabled+0x48/0x290
+[  185.884387]  ? gue6_err_proto_handler+0x280/0x280
+[  185.889226]  ? __lock_is_held+0xb6/0x140
+[  185.893289]  udpv6_err+0x46/0x60
+[  185.896653]  ? __udp6_lib_err+0x1890/0x1890
+[  185.900971]  gue6_err_proto_handler+0x199/0x280
+[  185.905631]  ? gre_rcv+0x1600/0x1600
+[  185.909343]  ? check_preemption_disabled+0x48/0x290
+[  185.914353]  gue6_err+0x4c1/0x6b0
+[  185.917810]  ? gue6_err_proto_handler+0x280/0x280
+[  185.922649]  __udp6_lib_err+0xc40/0x1890
+[  185.926702] WARNING: kernel stack frame pointer at 000000002d9ae6ff
+in 8=EF=BF=BD=EB=A9=80=EF=BF=BD=EF=BF=BD=EF=BF=BDd/1:-1444181576 has bad va=
+lue 000000000e9dbdea
+[  185.926711] unwind stack type:0 next_sp:          (null) mask:0x2 graph_=
+idx:0
+[  185.926730]  ? udp6_lib_lookup+0xa0/0xa0
+[  185.949462]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  185.954994]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[  185.960529]  ? check_preemption_disabled+0x48/0x290
+[  185.965537]  ? gue6_err_proto_handler+0x280/0x280
+[  185.970372]  ? __lock_is_held+0xb6/0x140
+[  185.974420]
+[  185.976035] Allocated by task 2850786496:
+[  185.976366] ------------[ cut here ]------------
+[  185.980180] ------------[ cut here ]------------
+[  185.985010] kernel BUG at lib/list_debug.c:23!
+[  185.989761] Bad or missing usercopy whitelist? Kernel memory
+overwrite attempt detected to SLAB object 'task_struct' (offset 520,
+size 1)!
+[  185.994332] invalid opcode: 0000 [#1] PREEMPT SMP KASAN
+[  186.007010] ------------[ cut here ]------------
+[  186.012239] CPU: 0 PID: 10177 Comm: syz-executor4 Not tainted 4.20.0+ #2
+[  186.016967] kernel BUG at mm/slab.c:4425!
+[  186.027921] Hardware name: Google Google Compute Engine/Google
+Compute Engine, BIOS Google 01/01/2011
+[  186.037293] RIP: 0010:__list_add_valid.cold+0xf/0x3c
+[  186.042392] Code: 32 fe eb d5 4c 89 e7 e8 9a a8 32 fe eb a3 4c 89
+f7 e8 90 a8 32 fe e9 56 ff ff ff 4c 89 e1 48 c7 c7 20 6e 81 88 e8 f0
+f3 d5 fd <0f> 0b 48 89 f2 4c 89 e1 4c 89 ee 48 c7 c7 60 6f 81 88 e8 d9
+f3 d5
+[  186.061301] RSP: 0018:ffff888066e672b8 EFLAGS: 00010082
+[  186.066657] RAX: 0000000000000075 RBX: ffff8880a782a280 RCX: 00000000000=
+00000
+[  186.073921] RDX: 0000000000000000 RSI: ffffffff8167d4d6 RDI: ffffed100cd=
+cce49
+[  186.081187] RBP: ffff888066e672d0 R08: 0000000000000075 R09: ffffed1015c=
+c5021
+[  186.088448] R10: ffffed1015cc5020 R11: ffff8880ae628107 R12: ffff8880a9e=
+b84f0
+[  186.095708] R13: ffff8880671ee370 R14: ffff888066e67358 R15: ffff8880671=
+ee370
+[  186.102977] FS:  000000000236d940(0000) GS:ffff8880ae600000(0000)
+knlGS:0000000000000000
+[  186.111197] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  186.117072] CR2: 0000001b2d84c000 CR3: 00000000a4767000 CR4: 00000000001=
+406f0
+[  186.124341] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 00000000000=
+00000
+[  186.131603] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 00000000000=
+00400
+[  186.138865] Call Trace:
+[  186.141541]  ? __cpu_to_node+0x7e/0xa0
+[  186.145428]  account_entity_enqueue+0x3a0/0x660
+[  186.150093]  ? cpu_load_update+0x360/0x360
+[  186.154325]  ? mark_held_locks+0x100/0x100
+[  186.158563]  enqueue_entity+0x276/0x20b0
+[  186.162621]  ? kasan_check_read+0x11/0x20
+[  186.166768]  ? rcu_dynticks_curr_cpu_in_eqs+0xa2/0x170
+[  186.172041]  ? put_prev_task_fair+0x80/0x80
+[  186.176365]  ? add_lock_to_list.isra.0+0x450/0x450
+[  186.181313]  ? activate_task+0x1f8/0x470
+[  186.185368]  ? find_held_lock+0x35/0x120
+[  186.189425]  ? activate_task+0x1f8/0x470
+[  186.193497]  enqueue_task_fair+0x237/0x10c0
+[  186.197816]  ? lock_downgrade+0x910/0x910
+[  186.201958]  ? sched_clock_cpu+0x1b/0x1b0
+[  186.206101]  ? enqueue_entity+0x20b0/0x20b0
+[  186.210423]  ? record_times+0x1e/0x580
+[  186.214312]  ? psi_task_change+0x36a/0x590
+[  186.218543]  ? __lock_is_held+0xb6/0x140
+[  186.222605]  activate_task+0x11d/0x470
+[  186.226492]  ttwu_do_activate+0xd4/0x1f0
+[  186.231031]  try_to_wake_up+0x997/0x1480
+[  186.235086]  ? __lock_is_held+0xb6/0x140
+[  186.239147]  ? migrate_swap_stop+0x920/0x920
+[  186.243553]  ? futex_wake+0x62c/0x7b0
+[  186.247348]  ? fixup_owner+0x250/0x250
+[  186.251233]  ? kasan_check_read+0x11/0x20
+[  186.255381]  ? do_raw_spin_unlock+0xa0/0x330
+[  186.259786]  ? do_raw_spin_trylock+0x270/0x270
+[  186.264372]  wake_up_q+0x99/0x100
+[  186.267822]  futex_wake+0x638/0x7b0
+[  186.271451]  ? get_futex_key+0x2050/0x2050
+[  186.275687]  ? vm_mmap+0xc0/0xc0
+[  186.279058]  do_futex+0x371/0x2910
+[  186.282599]  ? __might_fault+0x1e0/0x1e0
+[  186.286658]  ? _raw_spin_unlock+0x2d/0x50
+[  186.290806]  ? exit_robust_list+0x290/0x290
+[  186.295124]  ? add_lock_to_list.isra.0+0x450/0x450
+[  186.300051]  ? vmf_insert_mixed_mkwrite+0x40/0x40
+[  186.304891]  ? check_preemption_disabled+0x48/0x290
+[  186.309924]  ? __do_page_fault+0x610/0xd60
+[  186.314157]  ? find_held_lock+0x35/0x120
+[  186.318215]  ? __do_page_fault+0x610/0xd60
+[  186.322450]  ? lock_downgrade+0x910/0x910
+[  186.326597]  ? rcu_dynticks_curr_cpu_in_eqs+0xa2/0x170
+[  186.331871]  ? rcu_read_unlock_special+0x380/0x380
+[  186.336798]  ? __sanitizer_cov_trace_const_cmp8+0x18/0x20
+[  186.342333]  ? check_preemption_disabled+0x48/0x290
+[  186.347349]  ? kasan_check_write+0x14/0x20
+[  186.351578]  ? up_read+0x212/0x2b0
+[  186.355121]  __x64_sys_futex+0x462/0x670
+[  186.359181]  ? do_syscall_64+0x8c/0x800
+[  186.363152]  ? do_futex+0x2910/0x2910
+[  186.366947]  ? entry_SYSCALL_64_after_hwframe+0x49/0xbe
+[  186.372309]  ? trace_hardirqs_off_caller+0x300/0x300
+[  186.377407]  ? trace_hardirqs_on_thunk+0x1a/0x1c
+[  186.382163]  do_syscall_64+0x1a3/0x800
+[  186.386049]  ? syscall_return_slowpath+0x5f0/0x5f0
+[  186.390975]  ? prepare_exit_to_usermode+0x232/0x3b0
+[  186.395990]  ? trace_hardirqs_off_thunk+0x1a/0x1c
+[  186.400836]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+[  186.406023] RIP: 0033:0x457ec9
+[  186.409211] Code: 6d b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66
+90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24
+08 0f 05 <48> 3d 01 f0 ff ff 0f 83 3b b7 fb ff c3 66 2e 0f 1f 84 00 00
+00 00
+[  186.428104] RSP: 002b:00007ffd39515428 EFLAGS: 00000246 ORIG_RAX:
+00000000000000ca
+[  186.435803] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00000000004=
+57ec9
+[  186.443066] RDX: 0000000000000000 RSI: 0000000000000081 RDI: 00000000007=
+3bf08
+[  186.450332] RBP: 000000000073bf00 R08: 0000000000740060 R09: 00000000000=
+00000
+[  186.457593] R10: 00007ffd395154e0 R11: 0000000000000246 R12: 00000000000=
+00003
+[  186.464854] R13: 00000000000008a8 R14: 000000000073bf0c R15: 00000000007=
+3bf0c
+[  186.472120] Modules linked in:
+[  186.475311]
+[  186.475318] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D
+[  186.475324] WARNING: possible circular locking dependency detected
+[  186.475327] 4.20.0+ #2 Not tainted
+[  186.475333] ------------------------------------------------------
+[  186.475339] syz-executor4/10177 is trying to acquire lock:
+[  186.475342] 000000001b475371 ((console_sem).lock){-.-.}, at:
+down_trylock+0x13/0x70
+[  186.475358]
+[  186.475362] but task is already holding lock:
+[  186.475366] 000000003ded2b74 (&rq->lock){-.-.}, at:
+try_to_wake_up+0x933/0x1480
+[  186.475381]
+[  186.475386] which lock already depends on the new lock.
+[  186.475389]
+[  186.475391]
+[  186.475397] the existing dependency chain (in reverse order) is:
+[  186.475399]
+[  186.475402] -> #2 (&rq->lock){-.-.}:
+[  186.475417]        _raw_spin_lock+0x2f/0x40
+[  186.475421]        task_fork_fair+0xb5/0x7a0
+[  186.475425]        sched_fork+0x437/0xb90
+[  186.475430]        copy_process+0x1ff6/0x8730
+[  186.475434]        _do_fork+0x1a9/0x1170
+[  186.475438]        kernel_thread+0x34/0x40
+[  186.475442]        rest_init+0x28/0x37b
+[  186.475446]        arch_call_rest_init+0xe/0x1b
+[  186.475451]        start_kernel+0x882/0x8bd
+[  186.475455]        x86_64_start_reservations+0x29/0x2b
+[  186.475460]        x86_64_start_kernel+0x77/0x7b
+[  186.475465]        secondary_startup_64+0xa4/0xb0
+[  186.475467]
+[  186.475470] -> #1 (&p->pi_lock){-.-.}:
+[  186.475485]        _raw_spin_lock_irqsave+0x95/0xcd
+[  186.475489]        try_to_wake_up+0xb9/0x1480
+[  186.475494]        wake_up_process+0x10/0x20
+[  186.475498]        __up.isra.0+0x1c0/0x2a0
+[  186.475502]        up+0x13e/0x1c0
+[  186.475506]        __up_console_sem+0xb7/0x1c0
+[  186.475510]        console_unlock+0x778/0x11e0
+[  186.475514]        vprintk_emit+0x370/0x960
+[  186.475519]        vprintk_default+0x28/0x30
+[  186.475523]        vprintk_func+0x7e/0x189
+[  186.475527]        printk+0xba/0xed
+[  186.475531]        kobject_uevent_env+0x96/0x102b
+[  186.475536]        reg_query_database+0x27b/0x400
+[  186.475540]        reg_process_hint+0x1b3/0xf50
+[  186.475545]        reg_todo+0x468/0xc00
+[  186.475549]        process_one_work+0xd0c/0x1ce0
+[  186.475554]        worker_thread+0x143/0x14a0
+[  186.475558]        kthread+0x357/0x430
+[  186.475562]        ret_from_fork+0x3a/0x50
+[  186.475564]
+[  186.475567] -> #0 ((console_sem).lock){-.-.}:
+[  186.475582]        lock_acquire+0x1db/0x570
+[  186.475587]        _raw_spin_lock_irqsave+0x95/0xcd
+[  186.475591]        down_trylock+0x13/0x70
+[  186.475596]        __down_trylock_console_sem+0xa8/0x210
+[  186.475600]        console_trylock+0x15/0xa0
+[  186.475604]        vprintk_emit+0x351/0x960
+[  186.475608]        vprintk_default+0x28/0x30
+[  186.475613]        vprintk_func+0x7e/0x189
+[  186.475617]        printk+0xba/0xed
+[  186.475621]        __list_add_valid.cold+0xf/0x3c
+[  186.475626]        account_entity_enqueue+0x3a0/0x660
+[  186.475631]        enqueue_entity+0x276/0x20b0
+[  186.475635]        enqueue_task_fair+0x237/0x10c0
+[  186.475640]        activate_task+0x11d/0x470
+[  186.475644]        ttwu_do_activate+0xd4/0x1f0
+[  186.475648]        try_to_wake_up+0x997/0x1480
+[  186.475652]        wake_up_q+0x99/0x100
+[  186.475657]        futex_wake+0x638/0x7b0
+[  186.475661]        do_futex+0x371/0x2910
+[  186.475665]        __x64_sys_futex+0x462/0x670
+[  186.475669]        do_syscall_64+0x1a3/0x800
+[  186.475675]        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+[  186.475677]
+[  186.475682] other info that might help us debug this:
+[  186.475685]
+[  186.475688] Chain exists of:
+[  186.475690]   (console_sem).lock --> &p->pi_lock --> &rq->lock
+[  186.475710]
+[  186.475714]  Possible unsafe locking scenario:
+[  186.475717]
+[  186.475721]        CPU0                    CPU1
+[  186.475726]        ----                    ----
+[  186.475728]   lock(&rq->lock);
+[  186.475738]                                lock(&p->pi_lock);
+[  186.475748]                                lock(&rq->lock);
+[  186.475757]   lock((console_sem).lock);
+[  186.475765]
+[  186.475769]  *** DEADLOCK ***
+[  186.475771]
+[  186.475776] 2 locks held by syz-executor4/10177:
+[  186.475778]  #0: 0000000098a2bf53 (&p->pi_lock){-.-.}, at:
+try_to_wake_up+0xb9/0x1480
+[  186.475796]  #1: 000000003ded2b74 (&rq->lock){-.-.}, at:
+try_to_wake_up+0x933/0x1480
+[  186.475814]
+[  186.475817] stack backtrace:
+[  186.475823] CPU: 0 PID: 10177 Comm: syz-executor4 Not tainted 4.20.0+ #2
+[  186.475831] Hardware name: Google Google Compute Engine/Google
+Compute Engine, BIOS Google 01/01/2011
+[  186.475834] Call Trace:
+[  186.475838]  dump_stack+0x1db/0x2d0
+[  186.475843]  ? dump_stack_print_info.cold+0x20/0x20
+[  186.475848]  ? print_stack_trace+0x77/0xb0
+[  186.475852]  ? vprintk_func+0x86/0x189
+[  186.475857]  print_circular_bug.isra.0.cold+0x1cc/0x28f
+[  186.475862]  __lock_acquire+0x3014/0x4a30
+[  186.475866]  ? mark_held_locks+0x100/0x100
+[  186.475871]  ? pointer_string+0x14e/0x1b0
+[  186.475875]  ? number+0xc80/0xc80
+[  186.475879]  ? rcu_softirq_qs+0x20/0x20
+[  186.475884]  ? pointer+0x177/0x900
+[  186.475889]  ? __sanitizer_cov_trace_const_cmp1+0x1a/0x20
+[  186.475894]  ? add_lock_to_list.isra.0+0x450/0x450
+[  186.475898]  ? pvclock_read_flags+0x160/0x160
+[  186.475903]  lock_acquire+0x1db/0x570
+[  186.475907]  ? down_trylock+0x13/0x70
+[  186.475911]  ? lock_release+0xc40/0xc40
+[  186.475916]  ? trace_hardirqs_on_caller+0x310/0x310
+[  186.475921]  ? trace_hardirqs_off+0xb8/0x310
+[  186.475925]  _raw_spin_lock_irqsave+0x95/0xcd
+[  186.475930]  ? down_trylock+0x13/0x70
+[  186.475934]  ? vprintk_emit+0x351/0x960
+[  186.475938]  down_trylock+0x13/0x70
+[  186.475942]  ? vprintk_emit+0x351/0x960
+[  186.475947]  __down_trylock_console_sem+0xa8/0x210
+[  186.475952]  console_trylock+0x15/0xa0
+[  186.475956]  vprintk_emit+0x351/0x960
+[  186.475960]  ? wake_up_klogd+0x180/0x180
+[  186.475965]  ? attach_entity_load_avg+0x810/0x810
+[  186.475970]  ? add_lock_to_list.isra.0+0x450/0x450
+[  186.475974]  vprintk_default+0x28/0x30
+[  186.475978]  vprintk_func+0x7e/0x189
+[  186.475982]  printk+0xba/0xed
+[  186.475987]  ? kmsg_dump_rewind_nolock+0xe4/0xe4
+[  186.475991]  __list_add_valid.cold+0xf/0x3c
+[  186.475996]  ? __cpu_to_node+0x7e/0xa0
+[  186.476000]  account_entity_enqueue+0x3a0/0x660
+[  186.476005]  ? cpu_load_update+0x360/0x360
+[  186.476009]  ? mark_held_locks+0x100/0x100
+[  186.476014]  enqueue_entity+0x276/0x20b0
+[  186.476018]  ? kasan_check_read+0x11/0x20
+[  186.476023]  ? rcu_dynticks_curr_cpu_in_eqs+0xa2/0x170
+[  186.476028]  ? put_prev_task_fair+0x80/0x80
+[  186.476033]  ? add_lock_to_list.isra.0+0x450/0x450
+[  186.476037]  ? activate_task+0x1f8/0x470
+[  186.476041]  ? find_held_lock+0x35/0x120
+[  186.476046]  ? activate_task+0x1f8/0x470
+[  186.476050]  enqueue_task_fair+0x237/0x10c0
+[  186.476055]  ? lock_downgrade+0x910/0x910
+[  186.476059]  ? sched_clock_cpu+0x1b/0x1b0
+[  186.476064]  ? enqueue_entity+0x20b0/0x20b0
+[  186.476068]  ? record_times+0x1e/0x580
+[  186.476072]  ? psi_task_change+0x36a/0x590
+[  186.476077]  ? __lock_is_held+0xb6/0x140
+[  186.476081]  activate_task+0x11d/0x470
+[  186.476086]  ttwu_do_activate+0xd4/0x1f0
+[  186.476090]  try_to_wake_up+0x997/0x1480
+[  186.476094]  ? __lock_is_held+0xb6/0x140
+[  186.476099]  ? migrate_swap_stop+0x920/0x920
+[  186.476103]  ? futex_wake+0x62c/0x7b0
+[  186.476108]  ? fixup_owner+0x250/0x250
+[  186.476112]  ? kasan_check_read+0x11/0x20
+[  186.476117]  ? do_raw_spin_unlock+0xa0/0x330
+[  186.476121]  ? do_raw_spin_trylock+0x270/0x270
+[  186.476126]  wake_up_q+0x99/0x100
+[  186.476130]  futex_wake+0x638/0x7b0
+[  186.476134]  ? get_futex_key+0x2050/0x2050
+[  186.476138]  ? vm_mmap+0xc0/0xc0
+[  186.476142]  do_futex+0x371/0x2910
+[  186.476147]  ? __might_fault+0x1e0/0x1e0
+[  186.476151]  ? _raw_spin_unlock+0x2d/0x50
+[  186.476156]  ? exit_robust_list+0x290/0x290
+[  186.476161]  ? add_lock_to_list.isra.0+0x450/0x450
+[  186.476165]  ? vmf_insert_mixed_mkwrite+0x40/0x40
+[  186.476170]  ? check_preemption_disabled+0x48/0x290
+[  186.476175]  ? __do_page_fault+0x610/0xd60
+[  186.476179]  ? find_held_lock+0x35/0x120
+[  186.476184]  ? __do_page_fault+0x610/0xd60
+[  186.476188]  ? lock_downgrade+0x910/0x910
+[  186.476193]  ? rcu_dynticks_curr_cpu_in_eqs+0xa2/0x170
+[  186.476198]  ? rcu_read_unlock_special+0x380/0x380
+[  186.476203]  ? __sanitizer_cov_trace_const_cmp8+0x18/0x20
+[  186.476208]  ? check_preemption_disabled+0x48/0x290
+[  186.476213]  ? kasan_check_write+0x14/0x20
+[  186.476217]  ? up_read+0x212/0x2b0
+[  186.476221]  __x64_sys_futex+0x462/0x670
+[  186.476225]  ? do_syscall_64+0x8c/0x800
+[  186.476230]  ? do_futex+0x2910/0x2910
+[  186.476235]  ? entry_SYSCALL_64_after_hwframe+0x49/0xbe
+[  186.476240]  ? trace_hardirqs_off_caller+0x300/0x300
+[  186.476245]  ? trace_hardirqs_on_thunk+0x1a/0x1c
+[  186.476249]  do_syscall_64+0x1a3/0x800
+[  186.476254]  ? syscall_return_slowpath+0x5f0/0x5f0
+[  186.476259]  ? prepare_exit_to_usermode+0x232/0x3b0
+[  186.476264]  ? trace_hardirqs_off_thunk+0x1a/0x1c
+[  186.476282]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+[  186.476289] RIP: 0033:0x457ec9
+[  186.476302] Code: 6d b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66
+90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24
+08 0f 05 <48> 3d 01 f0 ff ff 0f 83 3b b7 fb ff c3 66 2e 0f 1f 84 00 00
+00 00
+[  186.476307] RSP: 002b:00007ffd39515428 EFLAGS: 00000246 ORIG_RAX:
+00000000000000ca
+[  186.476318] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00000000004=
+57ec9
+[  186.476324] RDX: 0000000000000000 RSI: 0000000000000081 RDI: 00000000007=
+3bf08
+[  186.476331] RBP: 000000000073bf00 R08: 0000000000740060 R09: 00000000000=
+00000
+[  186.476337] R10: 00007ffd395154e0 R11: 0000000000000246 R12: 00000000000=
+00003
+[  186.476343] R13: 00000000000008a8 R14: 000000000073bf0c R15: 00000000007=
+3bf0c
+[  187.375458] ---[ end trace f645f233383c1140 ]---
+[  187.375470] invalid opcode: 0000 [#2] PREEMPT SMP KASAN
+[  187.375486] CPU: 1 PID: -1986900112 Comm: =EF=BF=BD5=EF=BF=BD=EF=BF=BD=
+=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD  Tainted: G
+D           4.20.0+ #2
+[  187.380228] RIP: 0010:__list_add_valid.cold+0xf/0x3c
+[  187.385571] Hardware name: Google Google Compute Engine/Google
+Compute Engine, BIOS Google 01/01/2011
+[  187.393956] Code: 32 fe eb d5 4c 89 e7 e8 9a a8 32 fe eb a3 4c 89
+f7 e8 90 a8 32 fe e9 56 ff ff ff 4c 89 e1 48 c7 c7 20 6e 81 88 e8 f0
+f3 d5 fd <0f> 0b 48 89 f2 4c 89 e1 4c 89 ee 48 c7 c7 60 6f 81 88 e8 d9
+f3 d5
+[  187.399044] RIP: 0010:__check_heap_object+0xa5/0xb3
+[  187.408392] RSP: 0018:ffff888066e672b8 EFLAGS: 00010082
+[  187.427298] Code: 2b 48 c7 c7 55 c1 3b 89 e8 98 5e 0a 00 5d c3 41
+8b 91 04 01 00 00 48 29 c7 48 39 d7 77 bd 48 01 d0 48 29 c8 4c 39 c0
+72 b2 c3 <0f> 0b 48 c7 c7 55 c1 3b 89 e8 f7 66 0a 00 44 89 e9 48 c7 c7
+10 c2
+[  187.432304] RAX: 0000000000000075 RBX: ffff8880a782a280 RCX: 00000000000=
+00000
+[  187.437656] RSP: 0018:ffff8880a9eb8100 EFLAGS: 00010093
+[  187.456540] RDX: 0000000000000000 RSI: ffffffff8167d4d6 RDI: ffffed100cd=
+cce49
+[  187.463884] RAX: 00000000000a57eb RBX: 1ffff110153d7026 RCX: 00000000000=
+0000c
+[  187.469230] RBP: ffff888066e672d0 R08: 0000000000000075 R09: ffffed1015c=
+c5021
+[  187.476484] RDX: ffff8880a9eb8440 RSI: 0000000000000000 RDI: ffff8880a9e=
+b8260
+[  187.483735] R10: ffffed1015cc5020 R11: ffff8880ae628107 R12: ffff8880a9e=
+b84f0
+[  187.490987] RBP: ffff8880a9eb81f8 R08: 0000000000000002 R09: ffff88821bc=
+404c0
+[  187.498240] R13: ffff8880671ee370 R14: ffff888066e67358 R15: ffff8880671=
+ee370
+[  187.505494] R10: 000000004afd6979 R11: 0000000000000001 R12: ffff8880a9e=
+b8260
+[  187.512797] FS:  000000000236d940(0000) GS:ffff8880ae600000(0000)
+knlGS:0000000000000000
+[  187.520048] R13: 0000000000000002 R14: 0000000000000001 R15: ffff8880a9e=
+b8262
+[  187.527309] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  187.535519] FS:  0000000000000000(0000) GS:ffff8880ae700000(0000)
+knlGS:0000000000000000
+[  187.542769] CR2: 0000001b2d84c000 CR3: 00000000a4767000 CR4: 00000000001=
+406f0
+[  187.548632] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  187.548642] CR2: ffffffff8cf08860 CR3: 00000000a4767000 CR4: 00000000001=
+406e0
+[  187.556852] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 00000000000=
+00000
+[  187.564107] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 00000000000=
+00000
+[  187.569970] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 00000000000=
+00400
+[  187.577219] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 00000000000=
+00400
+[  187.584468] Kernel panic - not syncing: Fatal exception
+[  187.591737] Call Trace:
+[  187.614152] Modules linked in:
+[  187.617343] ---[ end trace f645f233383c1141 ]---
+[  187.622113] RIP: 0010:__list_add_valid.cold+0xf/0x3c
+[  187.627208] Code: 32 fe eb d5 4c 89 e7 e8 9a a8 32 fe eb a3 4c 89
+f7 e8 90 a8 32 fe e9 56 ff ff ff 4c 89 e1 48 c7 c7 20 6e 81 88 e8 f0
+f3 d5 fd <0f> 0b 48 89 f2 4c 89 e1 4c 89 ee 48 c7 c7 60 6f 81 88 e8 d9
+f3 d5
+[  187.646097] RSP: 0018:ffff888066e672b8 EFLAGS: 00010082
+[  187.651452] RAX: 0000000000000075 RBX: ffff8880a782a280 RCX: 00000000000=
+00000
+[  187.658714] RDX: 0000000000000000 RSI: ffffffff8167d4d6 RDI: ffffed100cd=
+cce49
+[  187.665977] RBP: ffff888066e672d0 R08: 0000000000000075 R09: ffffed1015c=
+c5021
+[  187.673235] R10: ffffed1015cc5020 R11: ffff8880ae628107 R12: ffff8880a9e=
+b84f0
+[  187.680498] R13: ffff8880671ee370 R14: ffff888066e67358 R15: ffff8880671=
+ee370
+[  187.687760] FS:  0000000000000000(0000) GS:ffff8880ae700000(0000)
+knlGS:0000000000000000
+[  187.695986] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  187.701855] CR2: ffffffff8cf08860 CR3: 00000000a4767000 CR4: 00000000001=
+406e0
+[  187.709117] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 00000000000=
+00000
+[  187.716379] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 00000000000=
+00400
+[  188.722461] Shutting down cpus with NMI
+[  188.727397] Kernel Offset: disabled
+[  188.731017] Rebooting in 86400 seconds..
+
+
+
+[  760.482711] BUG: stack guard page was hit at 00000000397c6d92
+(stack is 00000000a0f6b86a..000000000e6f9570)
+[  760.492602] kernel stack overflow (double-fault): 0000 [#1] PREEMPT SMP
+[  760.499326] CPU: 0 PID: 9 Comm: ksoftirqd/0 Not tainted 4.20.0+ #5
+[  760.505609] Hardware name: Google Google Compute Engine/Google
+Compute Engine, BIOS Google 01/01/2011
+[  760.514965] RIP: 0010:__udp6_lib_lookup+0x1d/0x3f0
+[  760.519862] Code: 31 d5 c1 ca 08 41 29 d5 e9 1c fd ff ff 55 48 89
+e5 41 57 41 89 d7 41 56 41 55 49 89 fd 41 54 49 89 cc 53 44 89 c3 48
+83 ec 20 <48> 89 75 c8 66 c1 c3 08 44 89 4d d0 e8 12 3e 75 fe 45 8b b5
+78 06
+[  760.538734] RSP: 0018:ffffc90000ca7fe8 EFLAGS: 00010286
+[  760.544064] RAX: ffff8881f1822e70 RBX: 000000000000f7c2 RCX: ffff8881f18=
+22e50
+[  760.551318] RDX: 0000000000000000 RSI: ffff8881f1822e60 RDI: ffff8881e44=
+e6140
+[  760.558557] RBP: ffffc90000ca8030 R08: 000000000000f7c2 R09: 00000000000=
+00004
+[  760.565806] R10: 0000000000000000 R11: ffff8881f1822e48 R12: ffff8881f18=
+22e50
+[  760.573059] R13: ffff8881e44e6140 R14: 0000000000000003 R15: 00000000000=
+00000
+[  760.580300] FS:  0000000000000000(0000) GS:ffff888218200000(0000)
+knlGS:0000000000000000
+[  760.588495] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  760.594372] CR2: ffffc90000ca7fd8 CR3: 000000020d5a2000 CR4: 00000000001=
+426f0
+[  760.601612] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 00000000000=
+00000
+[  760.608870] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 00000000000=
+00400
+[  760.616110] Call Trace:
+[  760.618683]  ? __udp6_lib_err+0xcb/0x640
+[  760.622716]  ? udplitev6_err+0x46/0x60
+[  760.626573]  ? gue6_err+0x105/0x270
+[  760.630170]  ? udp_lib_close+0x20/0x20
+[  760.634027]  ? ip6erspan_tunnel_xmit+0xdc0/0xdc0
+[  760.638753]  ? __udp6_lib_err+0x3b8/0x640
+[  760.642872]  ? udplitev6_err+0x46/0x60
+[  760.646729]  ? gue6_err+0x105/0x270
+[  760.650338]  ? udp_lib_close+0x20/0x20
+[  760.654196]  ? ip6erspan_tunnel_xmit+0xdc0/0xdc0
+[  760.658918]  ? __udp6_lib_err+0x3b8/0x640
+[  760.663052]  ? udplitev6_err+0x46/0x60
+[  760.666907]  ? gue6_err+0x105/0x270
+[  760.670501]  ? udp_lib_close+0x20/0x20
+[  760.674355]  ? ip6erspan_tunnel_xmit+0xdc0/0xdc0
+[  760.679077]  ? __udp6_lib_err+0x3b8/0x640
+[  760.683193]  ? udplitev6_err+0x46/0x60
+[  760.687049]  ? gue6_err+0x105/0x270
+[  760.690658]  ? udp_lib_close+0x20/0x20
+[  760.694512]  ? ip6erspan_tunnel_xmit+0xdc0/0xdc0
+[  760.699249]  ? __udp6_lib_err+0x3b8/0x640
+[  760.703383]  ? udplitev6_err+0x46/0x60
+[  760.707256]  ? gue6_err+0x105/0x270
+[  760.710879]  ? udp_lib_close+0x20/0x20
+[  760.714846]  ? ip6erspan_tunnel_xmit+0xdc0/0xdc0
+[  760.719572]  ? __udp6_lib_err+0x3b8/0x640
+[  760.723692]  ? udplitev6_err+0x46/0x60
+[  760.727550]  ? gue6_err+0x105/0x270
+[  760.731144]  ? udp_lib_close+0x20/0x20
+[  760.735003]  ? ip6erspan_tunnel_xmit+0xdc0/0xdc0
+[  760.739731]  ? __udp6_lib_err+0x3b8/0x640
+[  760.743851]  ? udplitev6_err+0x46/0x60
+[  760.747711]  ? gue6_err+0x105/0x270
+[  760.751309]  ? udp_lib_close+0x20/0x20
+[  760.755169]  ? ip6erspan_tunnel_xmit+0xdc0/0xdc0
+[  760.759898]  ? __udp6_lib_err+0x3b8/0x640
+[  760.764019]  ? udplitev6_err+0x46/0x60
+[  760.767875]  ? gue6_err+0x105/0x270
+[  760.771473]  ? udp_lib_close+0x20/0x20
+[  760.775335]  ? ip6erspan_tunnel_xmit+0xdc0/0xdc0
+[  760.780196]  ? __udp6_lib_err+0x3b8/0x640
+[  760.784314]  ? udplitev6_err+0x46/0x60
+[  760.788172]  ? gue6_err+0x105/0x270
+[  760.791780]  ? udp_lib_close+0x20/0x20
+[  760.795637]  ? ip6erspan_tunnel_xmit+0xdc0/0xdc0
+[  760.800363]  ? __udp6_lib_err+0x3b8/0x640
+[  760.804486]  ? udplitev6_err+0x46/0x60
+[  760.808343]  ? gue6_err+0x105/0x270
+[  760.811943]  ? udp_lib_close+0x20/0x20
+[  760.815799]  ? ip6erspan_tunnel_xmit+0xdc0/0xdc0
+[  760.820523]  ? __udp6_lib_err+0x3b8/0x640
+[  760.824643]  ? udplitev6_err+0x46/0x60
+[  760.828497]  ? gue6_err+0x105/0x270
+[  760.832105]  ? udp_lib_close+0x20/0x20
+[  760.835962]  ? ip6erspan_tunnel_xmit+0xdc0/0xdc0
+[  760.840687]  ? __udp6_lib_err+0x3b8/0x640
+[  760.844942]  ? udplitev6_err+0x46/0x60
+[  760.848818]  ? gue6_err+0x105/0x270
+[  760.852414]  ? udp_lib_close+0x20/0x20
+[  760.856269]  ? ip6erspan_tunnel_xmit+0xdc0/0xdc0
+[  760.861008]  ? __udp6_lib_err+0x3b8/0x640
+[  760.865133]  ? udplitev6_err+0x46/0x60
+[  760.868989]  ? gue6_err+0x105/0x270
+[  760.872584]  ? udp_lib_close+0x20/0x20
+[  760.876440]  ? ip6erspan_tunnel_xmit+0xdc0/0xdc0
+[  760.881174]  ? __udp6_lib_err+0x3b8/0x640
+[  760.885290]  ? udplitev6_err+0x46/0x60
+[  760.889148]  ? gue6_err+0x105/0x270
+[  760.892742]  ? udp_lib_close+0x20/0x20
+[  760.896611]  ? ip6erspan_tunnel_xmit+0xdc0/0xdc0
+[  760.901337]  ? __udp6_lib_err+0x3b8/0x640
+[  760.905464]  ? udplitev6_err+0x46/0x60
+[  760.909316]  ? gue6_err+0x105/0x270
+[  760.912912]  ? udp_lib_close+0x20/0x20
+[  760.916770]  ? ip6erspan_tunnel_xmit+0xdc0/0xdc0
+[  760.921494]  ? __udp6_lib_err+0x3b8/0x640
+[  760.925626]  ? udplitev6_err+0x46/0x60
+[  760.929497]  ? gue6_err+0x105/0x270
+[  760.933123]  ? udp_lib_close+0x20/0x20
+[  760.936977]  ? ip6erspan_tunnel_xmit+0xdc0/0xdc0
+[  760.941703]  ? __udp6_lib_err+0x3b8/0x640
+[  760.945820]  ? udplitev6_err+0x46/0x60
+[  760.949675]  ? gue6_err+0x105/0x270
+[  760.953269]  ? udp_lib_close+0x20/0x20
+[  760.957127]  ? ip6erspan_tunnel_xmit+0xdc0/0xdc0
+[  760.961855]  ? __udp6_lib_err+0x3b8/0x640
+[  760.965981]  ? udplitev6_err+0x46/0x60
+[  760.969836]  ? gue6_err+0x105/0x270
+[  760.973430]  ? udp_lib_close+0x20/0x20
+[  760.977295]  ? ip6erspan_tunnel_xmit+0xdc0/0xdc0
+[  760.982063]  ? __udp6_lib_err+0x3b8/0x640
+[  760.986181]  ? udplitev6_err+0x46/0x60
+[  760.990037]  ? gue6_err+0x105/0x270
+[  760.993633]  ? udp_lib_close+0x20/0x20
+[  760.997487]  ? ip6erspan_tunnel_xmit+0xdc0/0xdc0
+[  761.002211]  ? __udp6_lib_err+0x3b8/0x640
+[  761.006325]  ? udplitev6_err+0x46/0x60
+[  761.010197]  ? gue6_err+0x105/0x270
+[  761.013807]  ? udp_lib_close+0x20/0x20
+[  761.017678]  ? ip6erspan_tunnel_xmit+0xdc0/0xdc0
+[  761.022405]  ? __udp6_lib_err+0x3b8/0x640
+[  761.026526]  ? udplitev6_err+0x46/0x60
+[  761.030382]  ? gue6_err+0x105/0x270
+[  761.033980]  ? udp_lib_close+0x20/0x20
+[  761.037839]  ? ip6erspan_tunnel_xmit+0xdc0/0xdc0
+[  761.042566]  ? __udp6_lib_err+0x3b8/0x640
+[  761.046688]  ? udplitev6_err+0x46/0x60
+[  761.050548]  ? gue6_err+0x105/0x270
+[  761.054150]  ? udp_lib_close+0x20/0x20
+[  761.058013]  ? ip6erspan_tunnel_xmit+0xdc0/0xdc0
+[  761.062744]  ? __udp6_lib_err+0x3b8/0x640
+[  761.066866]  ? udplitev6_err+0x46/0x60
+[  761.070728]  ? gue6_err+0x105/0x270
+[  761.074326]  ? udp_lib_close+0x20/0x20
+[  761.078186]  ? ip6erspan_tunnel_xmit+0xdc0/0xdc0
+[  761.082914]  ? __udp6_lib_err+0x3b8/0x640
+[  761.087036]  ? udplitev6_err+0x46/0x60
+[  761.090894]  ? gue6_err+0x105/0x270
+[  761.094495]  ? udp_lib_close+0x20/0x20
+[  761.098355]  ? ip6erspan_tunnel_xmit+0xdc0/0xdc0
+[  761.103083]  ? __udp6_lib_err+0x3b8/0x640
+[  761.107207]  ? udplitev6_err+0x46/0x60
+[  761.111068]  ? gue6_err+0x105/0x270
+[  761.114667]  ? udp_lib_close+0x20/0x20
+[  761.118540]  ? ip6erspan_tunnel_xmit+0xdc0/0xdc0
+[  761.123266]  ? __udp6_lib_err+0x3b8/0x640
+[  761.127386]  ? udplitev6_err+0x46/0x60
+[  761.131240]  ? gue6_err+0x105/0x270
+[  761.134838]  ? udp_lib_close+0x20/0x20
+[  761.138691]  ? ip6erspan_tunnel_xmit+0xdc0/0xdc0
+[  761.143419]  ? __udp6_lib_err+0x3b8/0x640
+[  761.147550]  ? udplitev6_err+0x46/0x60
+[  761.151405]  ? gue6_err+0x105/0x270
+[  761.155000]  ? udp_lib_close+0x20/0x20
+[  761.158856]  ? ip6erspan_tunnel_xmit+0xdc0/0xdc0
+[  761.163577]  ? __udp6_lib_err+0x3b8/0x640
+[  761.167693]  ? udplitev6_err+0x46/0x60
+[  761.171548]  ? gue6_err+0x105/0x270
+[  761.175157]  ? udp_lib_close+0x20/0x20
+[  761.179012]  ? ip6erspan_tunnel_xmit+0xdc0/0xdc0
+[  761.183734]  ? __udp6_lib_err+0x3b8/0x640
+[  761.187863]  ? udplitev6_err+0x46/0x60
+[  761.191717]  ? gue6_err+0x105/0x270
+[  761.195322]  ? udp_lib_close+0x20/0x20
+[  761.199180]  ? ip6erspan_tunnel_xmit+0xdc0/0xdc0
+[  761.203937]  ? __udp6_lib_err+0x3b8/0x640
+[  761.208111]  ? udplitev6_err+0x46/0x60
+[  761.211970]  ? gue6_err+0x105/0x270
+[  761.215568]  ? udp_lib_close+0x20/0x20
+[  761.219423]  ? ip6erspan_tunnel_xmit+0xdc0/0xdc0
+[  761.224156]  ? __udp6_lib_err+0x3b8/0x640
+[  761.228285]  ? udplitev6_err+0x46/0x60
+[  761.232143]  ? gue6_err+0x105/0x270
+[  761.235753]  ? udp_lib_close+0x20/0x20
+[  761.239613]  ? ip6erspan_tunnel_xmit+0xdc0/0xdc0
+[  761.244370]  ? __udp6_lib_err+0x3b8/0x640
+[  761.248493]  ? udplitev6_err+0x46/0x60
+[  761.252351]  ? gue6_err+0x105/0x270
+[  761.255948]  ? udp_lib_close+0x20/0x20
+[  761.259805]  ? ip6erspan_tunnel_xmit+0xdc0/0xdc0
+[  761.264545]  ? __udp6_lib_err+0x3b8/0x640
+[  761.268665]  ? udplitev6_err+0x46/0x60
+[  761.272521]  ? gue6_err+0x105/0x270
+[  761.276121]  ? udp_lib_close+0x20/0x20
+[  761.279978]  ? ip6erspan_tunnel_xmit+0xdc0/0xdc0
+[  761.284703]  ? __udp6_lib_err+0x3b8/0x640
+[  761.288821]  ? udplitev6_err+0x46/0x60
+[  761.292677]  ? gue6_err+0x105/0x270
+[  761.296275]  ? udp_lib_close+0x20/0x20
+[  761.300129]  ? ip6erspan_tunnel_xmit+0xdc0/0xdc0
+[  761.304853]  ? __udp6_lib_err+0x3b8/0x640
+[  761.308970]  ? udplitev6_err+0x46/0x60
+[  761.312826]  ? gue6_err+0x105/0x270
+[  761.316421]  ? udp_lib_close+0x20/0x20
+[  761.320277]  ? ip6erspan_tunnel_xmit+0xdc0/0xdc0
+[  761.324998]  ? __udp6_lib_err+0x3b8/0x640
+[  761.329118]  ? udplitev6_err+0x46/0x60
+[  761.332972]  ? gue6_err+0x105/0x270
+[  761.336568]  ? udp_lib_close+0x20/0x20
+[  761.340423]  ? ip6erspan_tunnel_xmit+0xdc0/0xdc0
+[  761.345144]  ? __udp6_lib_err+0x3b8/0x640
+[  761.349258]  ? udplitev6_err+0x46/0x60
+[  761.353111]  ? gue6_err+0x105/0x270
+[  761.356704]  ? udp_lib_close+0x20/0x20
+[  761.360559]  ? ip6erspan_tunnel_xmit+0xdc0/0xdc0
+[  761.365284]  ? __udp6_lib_err+0x3b8/0x640
+[  761.369416]  ? udplitev6_err+0x46/0x60
+[  761.373283]  ? gue6_err+0x105/0x270
+[  761.376880]  ? udp_lib_close+0x20/0x20
+[  761.380752]  ? ip6erspan_tunnel_xmit+0xdc0/0xdc0
+[  761.385491]  ? __udp6_lib_err+0x3b8/0x640
+[  761.389606]  ? udplitev6_err+0x46/0x60
+[  761.393465]  ? gue6_err+0x105/0x270
+[  761.397063]  ? udp_lib_close+0x20/0x20
+[  761.400919]  ? ip6erspan_tunnel_xmit+0xdc0/0xdc0
+[  761.405656]  ? __udp6_lib_err+0x3b8/0x640
+[  761.409773]  ? udplitev6_err+0x46/0x60
+[  761.413629]  ? gue6_err+0x105/0x270
+[  761.417221]  ? udp_lib_close+0x20/0x20
+[  761.421093]  ? ip6erspan_tunnel_xmit+0xdc0/0xdc0
+[  761.425818]  ? __udp6_lib_err+0x3b8/0x640
+[  761.429936]  ? udplitev6_err+0x46/0x60
+[  761.433792]  ? gue6_err+0x105/0x270
+[  761.437388]  ? udp_lib_close+0x20/0x20
+[  761.441252]  ? ip6erspan_tunnel_xmit+0xdc0/0xdc0
+[  761.445980]  ? __udp6_lib_err+0x3b8/0x640
+[  761.450095]  ? udplitev6_err+0x46/0x60
+[  761.453950]  ? gue6_err+0x105/0x270
+[  761.457562]  ? udp_lib_close+0x20/0x20
+[  761.461420]  ? ip6erspan_tunnel_xmit+0xdc0/0xdc0
+[  761.466142]  ? __udp6_lib_err+0x3b8/0x640
+[  761.470261]  ? udplitev6_err+0x46/0x60
+[  761.474114]  ? gue6_err+0x105/0x270
+[  761.477709]  ? udp_lib_close+0x20/0x20
+[  761.481573]  ? ip6erspan_tunnel_xmit+0xdc0/0xdc0
+[  761.486298]  ? __udp6_lib_err+0x3b8/0x640
+[  761.490433]  ? udplitev6_err+0x46/0x60
+[  761.494298]  ? gue6_err+0x105/0x270
+[  761.497904]  ? udp_lib_close+0x20/0x20
+[  761.501758]  ? ip6erspan_tunnel_xmit+0xdc0/0xdc0
+[  761.506482]  ? __udp6_lib_err+0x3b8/0x640
+[  761.510601]  ? udplitev6_err+0x46/0x60
+[  761.514463]  ? gue6_err+0x105/0x270
+[  761.518060]  ? udp_lib_close+0x20/0x20
+[  761.521919]  ? ip6erspan_tunnel_xmit+0xdc0/0xdc0
+[  761.526644]  ? __udp6_lib_err+0x3b8/0x640
+[  761.530763]  ? udpv6_err+0x46/0x60
+[  761.534272]  ? icmpv6_notify+0xfa/0x240
+[  761.538216]  ? __udp6_lib_err+0x640/0x640
+[  761.542333]  ? icmpv6_rcv+0x344/0x6c0
+[  761.546103]  ? ip6_protocol_deliver_rcu+0x108/0x6e0
+[  761.551089]  ? ip6_input_finish+0x27/0x40
+[  761.555205]  ? ip6_input+0xe8/0x100
+[  761.558801]  ? ip6_protocol_deliver_rcu+0x6e0/0x6e0
+[  761.563803]  ? ip6_rcv_finish+0x6e/0xd0
+[  761.567749]  ? ipv6_rcv+0x10e/0x120
+[  761.571347]  ? ip6_sublist_rcv+0x430/0x430
+[  761.575556]  ? __netif_receive_skb_one_core+0x6f/0xa0
+[  761.580715]  ? __netif_receive_skb+0x2a/0x90
+[  761.585094]  ? process_backlog+0xfc/0x240
+[  761.589213]  ? net_rx_action+0x1c4/0x550
+[  761.593247]  ? __do_softirq+0x11a/0x369
+[  761.597206]  ? run_ksoftirqd+0x46/0x60
+[  761.601064]  ? smpboot_thread_fn+0x210/0x2f0
+[  761.605450]  ? kthread+0x141/0x160
+[  761.608968]  ? sort_range+0x30/0x30
+[  761.612566]  ? kthread_destroy_worker+0x80/0x80
+[  761.617202]  ? ret_from_fork+0x35/0x40
+[  761.621057] Modules linked in:
+[  761.624224] ---[ end trace f413988f088810d6 ]---
+[  761.628966] RIP: 0010:__udp6_lib_lookup+0x1d/0x3f0
+[  761.633878] Code: 31 d5 c1 ca 08 41 29 d5 e9 1c fd ff ff 55 48 89
+e5 41 57 41 89 d7 41 56 41 55 49 89 fd 41 54 49 89 cc 53 44 89 c3 48
+83 ec 20 <48> 89 75 c8 66 c1 c3 08 44 89 4d d0 e8 12 3e 75 fe 45 8b b5
+78 06
+[  761.652748] RSP: 0018:ffffc90000ca7fe8 EFLAGS: 00010286
+[  761.658077] RAX: ffff8881f1822e70 RBX: 000000000000f7c2 RCX: ffff8881f18=
+22e50
+[  761.665317] RDX: 0000000000000000 RSI: ffff8881f1822e60 RDI: ffff8881e44=
+e6140
+[  761.672555] RBP: ffffc90000ca8030 R08: 000000000000f7c2 R09: 00000000000=
+00004
+[  761.679806] R10: 0000000000000000 R11: ffff8881f1822e48 R12: ffff8881f18=
+22e50
+[  761.687050] R13: ffff8881e44e6140 R14: 0000000000000003 R15: 00000000000=
+00000
+[  761.694289] FS:  0000000000000000(0000) GS:ffff888218200000(0000)
+knlGS:0000000000000000
+[  761.702513] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  761.708362] CR2: ffffc90000ca7fd8 CR3: 000000020d5a2000 CR4: 00000000001=
+426f0
+[  761.715605] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 00000000000=
+00000
+[  761.722848] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 00000000000=
+00400
+[  761.730101] Kernel panic - not syncing: Fatal exception in interrupt
+[  761.737598] Kernel Offset: disabled
+[  761.741222] Rebooting in 86400 seconds..
