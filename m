@@ -2,333 +2,896 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C64EC43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 01:53:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A918DC43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 02:13:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0BC0C217F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 01:53:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D5262184B
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 02:13:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ArNeWamr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726145AbfADBxD (ORCPT
+        id S1726237AbfADCNh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 20:53:03 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:39111 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725879AbfADBxC (ORCPT
+        Thu, 3 Jan 2019 21:13:37 -0500
+Received: from mail-oi1-f201.google.com ([209.85.167.201]:52466 "EHLO
+        mail-oi1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726093AbfADCNg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 20:53:02 -0500
-Received: by mail-qt1-f193.google.com with SMTP id u47so34387767qtj.6
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 17:53:00 -0800 (PST)
+        Thu, 3 Jan 2019 21:13:36 -0500
+Received: by mail-oi1-f201.google.com with SMTP id w80so25003791oiw.19
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 18:13:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=35bnT2ZAZabhrUcQBuBTULz4PAvaZiHzjzbEo8NBf7o=;
+        b=ArNeWamr/2xFxtjVyVq7xeMzyzIe/wU6OAoC2cm5uq9KZxSXmEzF78cqOpdalDpi4S
+         zq5NsmbXb85wj7/JHsY1skbJaH0Dc4aCZRU5k+MGqgyjQs7Z4KDbnwWzdfsMClvFIGX3
+         LM26b8YDjBq8lRoQAagl+dn65NiAGsEMMm6J7xJeks1T2WCoFVSNBrtuUsNLVbUeuVb4
+         tFGwDpK2BelxABJXfybut5/9vLa4lYrDezA1V9edldHWUaoxtgzDrpCvFbtJIeKeZeRD
+         tqsFEr2kby3EYdD+NBysnDhxixyNadAbmNyEemvM/zIZ/UcQAHLIxpETWQgt3eX8VcWP
+         8HBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=zSadeRyo8ZWieUhJ4H9kk44LLYxK9xtQ50kWRQi9Muw=;
-        b=qLzV6YCORM97adJn3oY3PsL/fPuoZlJWqjQITkxLrgVMxwvWp54zKlG5eHuObKl1T7
-         5bpSFhkNKMVHPmQB6rPjduyMG+134F6x53UtdPsDYh6wNRqA5CSI26mE1lCiD12p0p58
-         QJkYFuV2OOA8zKLgGX/E4ur/NEifZhQYOqNjk+dV8XyIDbIYorYOpYneMkXiDEYdY6j4
-         99AHSBMnXuImzKjvjQYjo/dLG8VJlfjmA7ye5FerdNnbZJVcjuSg7tjCITeb0LScRofS
-         jeo8x8HeOKSfSrFFRLf/LUZRlnXFJAyRaSV9pZjfhCU48ssJ0SbdIdI9rvUG538/g+Mu
-         5AxQ==
-X-Gm-Message-State: AJcUukeEV4Dw2eZUuXSNNk+dFaWvJnY18fzPGL434hiCZMJ8JnZa7L85
-        xFr+l6adkIlEjpQu0hgcpNB6hozqmtk=
-X-Google-Smtp-Source: ALg8bN76pT24z47rFLpmScu7SX1N3L2/uKjLwpq9gOKlH1zsXxxibAB1PeoqKM3xhYqoQ9+9M1NxDQ==
-X-Received: by 2002:aed:31a3:: with SMTP id 32mr46086650qth.234.1546566779841;
-        Thu, 03 Jan 2019 17:52:59 -0800 (PST)
-Received: from ?IPv6:2601:602:9800:dae6::814b? ([2601:602:9800:dae6::814b])
-        by smtp.gmail.com with ESMTPSA id o34sm24634085qte.4.2019.01.03.17.52.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 03 Jan 2019 17:52:59 -0800 (PST)
-Subject: Re: [PATCH] staging: android: ion: add buffer flag update ioctl
-To:     "Zengtao (B)" <prime.zeng@hisilicon.com>,
-        "sumit.semwal@linaro.org" <sumit.semwal@linaro.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        =?UTF-8?Q?Arve_Hj=c3=b8nnev=c3=a5g?= <arve@android.com>,
-        Todd Kjos <tkjos@android.com>,
-        Martijn Coenen <maco@android.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <1545239943-15414-1-git-send-email-prime.zeng@hisilicon.com>
- <b0cc8d05-b313-9433-4e48-d0d39aa1858b@redhat.com>
- <678F3D1BB717D949B966B68EAEB446ED24E2926A@dggemm526-mbx.china.huawei.com>
- <786ad55f-4651-56ce-cd5c-ca02f7ac4093@redhat.com>
- <678F3D1BB717D949B966B68EAEB446ED24E2B495@dggemm526-mbx.china.huawei.com>
- <58278bab-413c-ef5e-3074-5afbcc1b86de@redhat.com>
- <678F3D1BB717D949B966B68EAEB446ED24E31270@dggemm526-mbx.china.huawei.com>
-From:   Laura Abbott <labbott@redhat.com>
-Message-ID: <e547f9ce-64ff-74e5-e0c8-dbf3f013fe74@redhat.com>
-Date:   Thu, 3 Jan 2019 17:52:57 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
-MIME-Version: 1.0
-In-Reply-To: <678F3D1BB717D949B966B68EAEB446ED24E31270@dggemm526-mbx.china.huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=35bnT2ZAZabhrUcQBuBTULz4PAvaZiHzjzbEo8NBf7o=;
+        b=bcYutZ2PZHOK89bCD3Kqk+vnYYU/Ac+H3T8ep7pA0j3EaxpRm+SbpB0q8xbXnMzBIP
+         Ey/TFrRrz5sQk6jme8mCcib6O8r/2tsqys8itlM8t60H9ujohEdEzf6PBYzmRicV4Qrr
+         qHdGpZ11M7EshP9T8wJavN68/fMW+VsP1PFLtrA/2nKeFF3hLXideMnwMNUrsxXV3LT4
+         Nrvest+ST8Y25d1zQKPO18dyXRB7elWfUzQgcPNmfb1V8MCzOkAMT3y+O2MzzXgLai8Q
+         edTlxLNqrAHWqENWJcpmvqrUSOdgVBClQf5/JfowaWgZfS9RaUf6m8d/oFsqh0I/g4PE
+         YEbg==
+X-Gm-Message-State: AJcUukfiKFSR/7XDmtuRVuQqOe2JiU6GuGGUSMB3AbMqVMMoK6A+eISb
+        vWnC2ydrLoRbmlBHQRr8q3ggXu1/
+X-Google-Smtp-Source: ALg8bN6lF4Wk3Vqm52jQAoGh5c2XidQHtCBoQwJS7aSBd1PpSyJPhW84LCUgpkV+IQ2lrqFQevB1ngds
+X-Received: by 2002:a9d:6049:: with SMTP id v9mr37241770otj.25.1546568015268;
+ Thu, 03 Jan 2019 18:13:35 -0800 (PST)
+Date:   Thu,  3 Jan 2019 18:13:11 -0800
+Message-Id: <20190104021311.38194-1-rkir@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.20.1.415.g653613c723-goog
+Subject: [PATCH] drivers: misc: goldfish_address_space: add a driver
+From:   rkir@google.com
+To:     gregkh@linuxfoundation.org
+Cc:     linux-kernel@vger.kernel.org, Roman Kiryanov <rkir@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/3/19 5:42 PM, Zengtao (B) wrote:
->> -----Original Message-----
->> From: Laura Abbott [mailto:labbott@redhat.com]
->> Sent: Thursday, January 03, 2019 6:31 AM
->> To: Zengtao (B) <prime.zeng@hisilicon.com>; sumit.semwal@linaro.org
->> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>; Arve Hjønnevåg
->> <arve@android.com>; Todd Kjos <tkjos@android.com>; Martijn Coenen
->> <maco@android.com>; Joel Fernandes <joel@joelfernandes.org>;
->> devel@driverdev.osuosl.org; dri-devel@lists.freedesktop.org;
->> linaro-mm-sig@lists.linaro.org; linux-kernel@vger.kernel.org
->> Subject: Re: [PATCH] staging: android: ion: add buffer flag update ioctl
->>
->> On 12/23/18 6:47 PM, Zengtao (B) wrote:
->>> Hi laura:
->>>
->>>> -----Original Message-----
->>>> From: Laura Abbott [mailto:labbott@redhat.com]
->>>> Sent: Friday, December 21, 2018 4:50 AM
->>>> To: Zengtao (B) <prime.zeng@hisilicon.com>;
->> sumit.semwal@linaro.org
->>>> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>; Arve
->> Hjønnevåg
->>>> <arve@android.com>; Todd Kjos <tkjos@android.com>; Martijn
->> Coenen
->>>> <maco@android.com>; Joel Fernandes <joel@joelfernandes.org>;
->>>> devel@driverdev.osuosl.org; dri-devel@lists.freedesktop.org;
->>>> linaro-mm-sig@lists.linaro.org; linux-kernel@vger.kernel.org
->>>> Subject: Re: [PATCH] staging: android: ion: add buffer flag update
->>>> ioctl
->>>>
->>>> On 12/19/18 5:39 PM, Zengtao (B) wrote:
->>>>> Hi laura:
->>>>>
->>>>>> -----Original Message-----
->>>>>> From: Laura Abbott [mailto:labbott@redhat.com]
->>>>>> Sent: Thursday, December 20, 2018 2:10 AM
->>>>>> To: Zengtao (B) <prime.zeng@hisilicon.com>;
->>>> sumit.semwal@linaro.org
->>>>>> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>; Arve
->>>> Hjønnevåg
->>>>>> <arve@android.com>; Todd Kjos <tkjos@android.com>; Martijn
->>>> Coenen
->>>>>> <maco@android.com>; Joel Fernandes <joel@joelfernandes.org>;
->>>>>> devel@driverdev.osuosl.org; dri-devel@lists.freedesktop.org;
->>>>>> linaro-mm-sig@lists.linaro.org; linux-kernel@vger.kernel.org
->>>>>> Subject: Re: [PATCH] staging: android: ion: add buffer flag update
->>>>>> ioctl
->>>>>>
->>>>>> On 12/19/18 9:19 AM, Zeng Tao wrote:
->>>>>>> In some usecases, the buffer cached attribute is not determined at
->>>>>>> allocation time, it's determined just before the real cpu mapping.
->>>>>>> And from the memory view of point, a buffer should not have the
->>>>>> cached
->>>>>>> attribute util is really mapped by the cpu. So in this patch, we
->>>>>>> introduced the new ioctl command to target the requirement.
->>>>>>>
->>>>>>
->>>>>> This is racy and error prone. Can you explain more what problem
->> you
->>>>>> are trying to solve?
->>>>>
->>>>> My use case is like this:
->>>>> 1.  There are two process A and B, A takes case of ion buffer
->>>>> allocation,
->>>> and
->>>>>     pass the buffer fd to B, then B maps and uses it.
->>>>> 2.  Process B need to map the buffer with different cached attribute
->>>>> for different use case, for example, if the buffer is used for pure
->>>>> software algorithm, then we need to map it as cached, otherwise
->>>>> non-cached, and B needs to deal with both cases.
->>>>> And unfortunately the mmap syscall takes no cached flags and we
->>>>> can't decide the cache attribute when we are doing the mmap, so I
->>>>> introduce new the ioctl even though I think the solution is not as
->> good.
->>>>>
->>>>>
->>>>
->>>> Thanks for the explanation, this was about the use case I expected.
->>>> I'm pretty sure I had this exact problem once upon a time and we
->>>> didn't come up with a solution. I'd still like to get rid of uncached
->>>> buffers in general and just use cached buffers (see
->>>> http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/201
->>>> 8-N
->>>> ovember/128842.html)
->>>> What's your usecase for uncached buffers?
->>>
->>> Some buffers are only used by HW, in this case, we tend to use
->> uncached buffers.
->>> But sometimes the SW need to read few buffer contents for debug
->>> purpose and no synchronization is needed.
->>>
->>
->> If this is primarily for debug, that's not really a compelling reason to
->> support uncached buffers. It's incredibly difficult to do uncached buffers
->> correctly I'd rather spend effort on making the cached use cases work
->> better.
->>
-> No, not only for debug, I meant if the buffers are uncached, the SW will only mmap
-> them for debug or even don't need to mmap them.
-> So for the two kinds of buffers:
-> 1.  uncached: only the HW need to access it, the SW don't need to mmap it or just for debug.
-> 2.  cached: both the HW and the SW need to access it.
-> The ION is designed as a generalized memory manager, I think we should cover as many
-> requirements as we can in the ION design, so I 'd rather that we keep the uncached support.
-> And I don’t quite understand the difficulty you mentioned to support the uncached buffers, would
-> you explain a little more about it.
-> 
+From: Roman Kiryanov <rkir@google.com>
 
-We end up with aliasing problems. Each kernel page still has a cached
-mapping so it's very difficult to keep the two mappings in sync.
-https://lore.kernel.org/lkml/20181120164636.jcw7li2uaa3cmwc3@DESKTOP-E1NTVVP.localdomain/
-This thread does a better job of explaining the problem and the
-objections to uncached buffers.
+A driver for the Goldfish Android emulator that occupies
+address space to use it with the memory sharing device
+on the QEMU side. The memory sharding device allocates
+subranges and populate them with actual RAM.
+This allows sharing host's memory with the guest.
 
-And if the software never touches the buffer, why does it
-matter if the buffer is uncached?
+Signed-off-by: Roman Kiryanov <rkir@google.com>
+---
+ drivers/misc/Kconfig                          |   9 +
+ drivers/misc/Makefile                         |   1 +
+ drivers/misc/goldfish_address_space.c         | 742 ++++++++++++++++++
+ .../linux/goldfish/goldfish_address_space.h   |  27 +
+ 4 files changed, 779 insertions(+)
+ create mode 100644 drivers/misc/goldfish_address_space.c
+ create mode 100644 include/uapi/linux/goldfish/goldfish_address_space.h
 
-Laura
-
-> Thanks
-> Zengtao
-> 
->>
->>>>
->>>>>>
->>>>>>> Signed-off-by: Zeng Tao <prime.zeng@hisilicon.com>
->>>>>>> ---
->>>>>>>      drivers/staging/android/ion/ion-ioctl.c |  4 ++++
->>>>>>>      drivers/staging/android/ion/ion.c       | 17
->>>> +++++++++++++++++
->>>>>>>      drivers/staging/android/ion/ion.h       |  1 +
->>>>>>>      drivers/staging/android/uapi/ion.h      | 22
->>>>>> ++++++++++++++++++++++
->>>>>>>      4 files changed, 44 insertions(+)
->>>>>>>
->>>>>>> diff --git a/drivers/staging/android/ion/ion-ioctl.c
->>>>>>> b/drivers/staging/android/ion/ion-ioctl.c
->>>>>>> index a8d3cc4..60bb702 100644
->>>>>>> --- a/drivers/staging/android/ion/ion-ioctl.c
->>>>>>> +++ b/drivers/staging/android/ion/ion-ioctl.c
->>>>>>> @@ -12,6 +12,7 @@
->>>>>>>
->>>>>>>      union ion_ioctl_arg {
->>>>>>>      	struct ion_allocation_data allocation;
->>>>>>> +	struct ion_buffer_flag_data update;
->>>>>>>      	struct ion_heap_query query;
->>>>>>>      };
->>>>>>>
->>>>>>> @@ -83,6 +84,9 @@ long ion_ioctl(struct file *filp, unsigned int
->>>>>>> cmd, unsigned long arg)
->>>>>>>
->>>>>>>      		break;
->>>>>>>      	}
->>>>>>> +	case ION_IOC_BUFFER_UPDATE:
->>>>>>> +		ret = ion_buffer_update(data.update.fd, data.update.flags);
->>>>>>> +		break;
->>>>>>>      	case ION_IOC_HEAP_QUERY:
->>>>>>>      		ret = ion_query_heaps(&data.query);
->>>>>>>      		break;
->>>>>>> diff --git a/drivers/staging/android/ion/ion.c
->>>>>>> b/drivers/staging/android/ion/ion.c
->>>>>>> index 9907332..f1404dc 100644
->>>>>>> --- a/drivers/staging/android/ion/ion.c
->>>>>>> +++ b/drivers/staging/android/ion/ion.c
->>>>>>> @@ -436,6 +436,23 @@ int ion_alloc(size_t len, unsigned int
->>>>>> heap_id_mask, unsigned int flags)
->>>>>>>      	return fd;
->>>>>>>      }
->>>>>>>
->>>>>>> +int ion_buffer_update(unsigned int fd, unsigned int flags) {
->>>>>>> +	struct dma_buf *dmabuf;
->>>>>>> +	struct ion_buffer *buffer;
->>>>>>> +
->>>>>>> +	dmabuf = dma_buf_get(fd);
->>>>>>> +
->>>>>>> +	if (!dmabuf)
->>>>>>> +		return -EINVAL;
->>>>>>> +
->>>>>>> +	buffer = dmabuf->priv;
->>>>>>> +	buffer->flags = flags;
->>>>>>> +	dma_buf_put(dmabuf);
->>>>>>> +
->>>>>>> +	return 0;
->>>>>>> +}
->>>>>>> +
->>>>>>>      int ion_query_heaps(struct ion_heap_query *query)
->>>>>>>      {
->>>>>>>      	struct ion_device *dev = internal_dev; diff --git
->>>>>>> a/drivers/staging/android/ion/ion.h
->>>>>>> b/drivers/staging/android/ion/ion.h
->>>>>>> index c006fc1..99bf9ab 100644
->>>>>>> --- a/drivers/staging/android/ion/ion.h
->>>>>>> +++ b/drivers/staging/android/ion/ion.h
->>>>>>> @@ -199,6 +199,7 @@ int ion_heap_pages_zero(struct page
->> *page,
->>>>>> size_t size, pgprot_t pgprot);
->>>>>>>      int ion_alloc(size_t len,
->>>>>>>      	      unsigned int heap_id_mask,
->>>>>>>      	      unsigned int flags);
->>>>>>> +int ion_buffer_update(unsigned int fd, unsigned int flags);
->>>>>>>
->>>>>>>      /**
->>>>>>>       * ion_heap_init_shrinker
->>>>>>> diff --git a/drivers/staging/android/uapi/ion.h
->>>>>>> b/drivers/staging/android/uapi/ion.h
->>>>>>> index 5d70098..99753fc 100644
->>>>>>> --- a/drivers/staging/android/uapi/ion.h
->>>>>>> +++ b/drivers/staging/android/uapi/ion.h
->>>>>>> @@ -74,6 +74,20 @@ struct ion_allocation_data {
->>>>>>>      	__u32 unused;
->>>>>>>      };
->>>>>>>
->>>>>>> +/**
->>>>>>> + * struct ion_buffer_flag_data - metadata passed from userspace
->>>>>>> +for update
->>>>>>> + * buffer flags
->>>>>>> + * @fd:			file descriptor of the buffer
->>>>>>> + * @flags:		flags passed to the buffer
->>>>>>> + *
->>>>>>> + * Provided by userspace as an argument to the ioctl  */
->>>>>>> +
->>>>>>> +struct ion_buffer_flag_data {
->>>>>>> +	__u32 fd;
->>>>>>> +	__u32 flags;
->>>>>>> +}
->>>>>>> +
->>>>>>>      #define MAX_HEAP_NAME			32
->>>>>>>
->>>>>>>      /**
->>>>>>> @@ -116,6 +130,14 @@ struct ion_heap_query {
->>>>>>>      				      struct ion_allocation_data)
->>>>>>>
->>>>>>>      /**
->>>>>>> + * DOC: ION_IOC_BUFFER_UPDATE - update the specified ion
->> buffer
->>>>>> flags
->>>>>>> + *
->>>>>>> + * Takes an ion_buffer_flag_data structure and returns the result
->>>>>>> +of the
->>>>>>> + * buffer flag update operation.
->>>>>>> + */
->>>>>>> +#define ION_IOC_BUFFER_UPDATE	_IOWR(ION_IOC_MAGIC, 1, \
->>>>>>> +				      struct ion_buffer_flag_data)
->>>>>>> +/**
->>>>>>>       * DOC: ION_IOC_HEAP_QUERY - information about available
->>>> heaps
->>>>>>>       *
->>>>>>>       * Takes an ion_heap_query structure and populates
->> information
->>>>>> about
->>>>>>>
->>>>>
->>>
-> 
+diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
+index f417b06e11c5..66518bbe4217 100644
+--- a/drivers/misc/Kconfig
++++ b/drivers/misc/Kconfig
+@@ -521,6 +521,15 @@ config PVPANIC
+ 	  a paravirtualized device provided by QEMU; it lets a virtual machine
+ 	  (guest) communicate panic events to the host.
+ 
++config GOLDFISH_ADDRESS_SPACE
++	tristate "A Goldfish driver that talks to the memory sharing device in QEMU"
++	depends on PCI
++	depends on GOLDFISH
++	help
++	  A Goldfish driver that allocates address space ranges in the guest to
++	  populate them later in the host. This allows sharing host's memory
++	  with the guest.
++
+ source "drivers/misc/c2port/Kconfig"
+ source "drivers/misc/eeprom/Kconfig"
+ source "drivers/misc/cb710/Kconfig"
+diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
+index e39ccbbc1b3a..11c9f9d7d3a1 100644
+--- a/drivers/misc/Makefile
++++ b/drivers/misc/Makefile
+@@ -59,3 +59,4 @@ obj-$(CONFIG_PCI_ENDPOINT_TEST)	+= pci_endpoint_test.o
+ obj-$(CONFIG_OCXL)		+= ocxl/
+ obj-y				+= cardreader/
+ obj-$(CONFIG_PVPANIC)   	+= pvpanic.o
++obj-$(CONFIG_GOLDFISH_ADDRESS_SPACE) += goldfish_address_space.o
+diff --git a/drivers/misc/goldfish_address_space.c b/drivers/misc/goldfish_address_space.c
+new file mode 100644
+index 000000000000..3605adcdaf2e
+--- /dev/null
++++ b/drivers/misc/goldfish_address_space.c
+@@ -0,0 +1,742 @@
++// SPDX-License-Identifier: GPL-2.0
++
++#include <linux/init.h>
++#include <linux/module.h>
++#include <linux/kernel.h>
++#include <linux/wait.h>
++#include <linux/fs.h>
++#include <linux/io.h>
++#include <linux/uaccess.h>
++#include <linux/miscdevice.h>
++
++#include <linux/device.h>
++#include <linux/pci_regs.h>
++#include <linux/pci_ids.h>
++#include <linux/pci.h>
++
++#include <uapi/linux/goldfish/goldfish_address_space.h>
++
++MODULE_DESCRIPTION("A driver for the Goldfish Android emulator that occupies "
++		   "address space to use it with the memory sharing device "
++		   "on the QEMU side. The memory sharding device allocates "
++		   "subranges and populate them with actual RAM. "
++		   "This allows sharing host's memory with the guest.");
++MODULE_AUTHOR("Roman Kiryanov <rkir@google.com>");
++MODULE_LICENSE("GPL v2");
++
++enum as_register_id {
++	AS_REGISTER_COMMAND = 0,
++	AS_REGISTER_STATUS = 4,
++	AS_REGISTER_GUEST_PAGE_SIZE = 8,
++	AS_REGISTER_BLOCK_SIZE_LOW = 12,
++	AS_REGISTER_BLOCK_SIZE_HIGH = 16,
++	AS_REGISTER_BLOCK_OFFSET_LOW = 20,
++	AS_REGISTER_BLOCK_OFFSET_HIGH = 24,
++};
++
++enum as_command_id {
++	AS_COMMAND_ALLOCATE_BLOCK = 1,
++	AS_COMMAND_DEALLOCATE_BLOCK = 2,
++};
++
++#define AS_PCI_VENDOR_ID	0x607D
++#define AS_PCI_DEVICE_ID	0xF153
++#define AS_MAGIC_U32		(AS_PCI_VENDOR_ID << 16 | AS_PCI_DEVICE_ID)
++#define AS_ALLOCATED_BLOCKS_INITIAL_CAPACITY 32
++
++enum as_pci_bar_id {
++	AS_PCI_CONTROL_BAR_ID = 0,
++	AS_PCI_AREA_BAR_ID = 1,
++};
++
++struct as_driver_state;
++
++struct as_device_state {
++	u32	magic;
++
++	struct miscdevice	miscdevice;
++	struct pci_dev		*dev;
++	struct as_driver_state	*driver_state;
++
++	void __iomem		*io_registers;
++
++	void			*address_area;	/* to claim the address space */
++
++	/* physical address to allocate from */
++	unsigned long		address_area_phys_address;
++
++	struct mutex		registers_lock;	/* protects registers */
++
++	wait_queue_head_t	wake_queue;	/* to wait for the hardware */
++
++	int			hw_done;	/* to say hw is done */
++};
++
++struct as_driver_state {
++	struct as_device_state *device_state;
++	struct pci_driver pci;
++};
++
++struct as_block {
++	u64 offset;
++	u64 size;
++};
++
++struct as_allocated_blocks {
++	struct as_device_state *state;
++
++	struct as_block *blocks;  /* a dynamic array of allocated blocks */
++	int blocks_size;
++	int blocks_capacity;
++	struct mutex blocks_lock; /* protects operations with blocks */
++};
++
++static void __iomem *as_register_address(void __iomem *base,
++					 int offset)
++{
++	return ((char __iomem *)base) + offset;
++}
++
++static void as_write_register(void __iomem *registers,
++			      int offset,
++			      u32 value)
++{
++	writel(value, as_register_address(registers, offset));
++}
++
++static u32 as_read_register(void __iomem *registers, int offset)
++{
++	return readl(as_register_address(registers, offset));
++}
++
++static int
++as_talk_to_hardware(struct as_device_state *state, enum as_command_id cmd)
++{
++	state->hw_done = 0;
++	as_write_register(state->io_registers, AS_REGISTER_COMMAND, cmd);
++	wait_event(state->wake_queue, state->hw_done);
++	return -as_read_register(state->io_registers,
++				 AS_REGISTER_STATUS);
++}
++
++static long
++as_ioctl_allocate_block_locked_impl(struct as_device_state *state,
++				    u64 *size, u64 *offset)
++{
++	long res;
++
++	as_write_register(state->io_registers,
++			  AS_REGISTER_BLOCK_SIZE_LOW,
++			  lower_32_bits(*size));
++	as_write_register(state->io_registers,
++			  AS_REGISTER_BLOCK_SIZE_HIGH,
++			  upper_32_bits(*size));
++
++	res = as_talk_to_hardware(state, AS_COMMAND_ALLOCATE_BLOCK);
++	if (!res) {
++		u64 low = as_read_register(state->io_registers,
++					   AS_REGISTER_BLOCK_OFFSET_LOW);
++		u64 high = as_read_register(state->io_registers,
++					    AS_REGISTER_BLOCK_OFFSET_HIGH);
++		*offset = low | (high << 32);
++
++		low = as_read_register(state->io_registers,
++				       AS_REGISTER_BLOCK_SIZE_LOW);
++		high = as_read_register(state->io_registers,
++					AS_REGISTER_BLOCK_SIZE_HIGH);
++		*size = low | (high << 32);
++	}
++
++	return res;
++}
++
++static long
++as_ioctl_unallocate_block_locked_impl(struct as_device_state *state, u64 offset)
++{
++	as_write_register(state->io_registers,
++			  AS_REGISTER_BLOCK_OFFSET_LOW,
++			  lower_32_bits(offset));
++	as_write_register(state->io_registers,
++			  AS_REGISTER_BLOCK_OFFSET_HIGH,
++			  upper_32_bits(offset));
++
++	return as_talk_to_hardware(state, AS_COMMAND_DEALLOCATE_BLOCK);
++}
++
++static int as_blocks_grow_capacity(int old_capacity)
++{
++	WARN_ON(old_capacity < 0);
++
++	return old_capacity + old_capacity;
++}
++
++static int
++as_blocks_insert(struct as_allocated_blocks *allocated_blocks,
++		 u64 offset,
++		 u64 size)
++{
++	int blocks_size;
++
++	if (mutex_lock_interruptible(&allocated_blocks->blocks_lock))
++		return -ERESTARTSYS;
++
++	blocks_size = allocated_blocks->blocks_size;
++
++	WARN_ON(allocated_blocks->blocks_capacity < 1);
++	WARN_ON(allocated_blocks->blocks_capacity <
++		allocated_blocks->blocks_size);
++	WARN_ON(!allocated_blocks->blocks);
++
++	if (allocated_blocks->blocks_capacity == blocks_size) {
++		int new_capacity =
++			as_blocks_grow_capacity(
++				allocated_blocks->blocks_capacity);
++		struct as_block *new_blocks =
++			kcalloc(new_capacity,
++				sizeof(allocated_blocks->blocks[0]),
++				GFP_KERNEL);
++
++		if (!new_blocks) {
++			mutex_unlock(&allocated_blocks->blocks_lock);
++			return -ENOMEM;
++		}
++
++		memcpy(new_blocks, allocated_blocks->blocks,
++		       blocks_size * sizeof(allocated_blocks->blocks[0]));
++
++		kfree(allocated_blocks->blocks);
++		allocated_blocks->blocks = new_blocks;
++		allocated_blocks->blocks_capacity = new_capacity;
++	}
++
++	WARN_ON(blocks_size >= allocated_blocks->blocks_capacity);
++
++	allocated_blocks->blocks[blocks_size] =
++		(struct as_block){ .offset = offset, .size = size };
++	allocated_blocks->blocks_size = blocks_size + 1;
++
++	mutex_unlock(&allocated_blocks->blocks_lock);
++	return 0;
++}
++
++static int
++as_blocks_remove(struct as_allocated_blocks *allocated_blocks, u64 offset)
++{
++	long res = -ENXIO;
++	struct as_block *blocks;
++	int blocks_size;
++	int i;
++
++	if (mutex_lock_interruptible(&allocated_blocks->blocks_lock))
++		return -ERESTARTSYS;
++
++	blocks = allocated_blocks->blocks;
++	WARN_ON(!blocks);
++
++	blocks_size = allocated_blocks->blocks_size;
++	WARN_ON(blocks_size < 0);
++
++	for (i = 0; i < blocks_size; ++i) {
++		if (offset == blocks[i].offset) {
++			int last = blocks_size - 1;
++
++			if (last > i)
++				blocks[i] = blocks[last];
++
++			--allocated_blocks->blocks_size;
++			res = 0;
++			break;
++		}
++	}
++
++	mutex_unlock(&allocated_blocks->blocks_lock);
++	return res;
++}
++
++static int
++as_blocks_check_if_mine(struct as_allocated_blocks *allocated_blocks,
++			u64 offset,
++			u64 size)
++{
++	int res = -ENXIO;
++	struct as_block *block;
++	int blocks_size;
++
++	if (mutex_lock_interruptible(&allocated_blocks->blocks_lock))
++		return -ERESTARTSYS;
++
++	block = allocated_blocks->blocks;
++	WARN_ON(!block);
++
++	blocks_size = allocated_blocks->blocks_size;
++	WARN_ON(blocks_size < 0);
++
++	for (; blocks_size > 0; --blocks_size, ++block) {
++		if (block->offset == offset) {
++			res = (block->size >= size) ? 0 : -EPERM;
++			break;
++		}
++	}
++
++	mutex_unlock(&allocated_blocks->blocks_lock);
++	return res;
++}
++
++static int as_open(struct inode *inode, struct file *filp)
++{
++	struct as_allocated_blocks *allocated_blocks;
++
++	allocated_blocks = kzalloc(sizeof(*allocated_blocks), GFP_KERNEL);
++	if (!allocated_blocks)
++		return -ENOMEM;
++
++	allocated_blocks->state =
++		container_of(filp->private_data,
++			     struct as_device_state,
++			     miscdevice);
++
++	allocated_blocks->blocks =
++		kcalloc(AS_ALLOCATED_BLOCKS_INITIAL_CAPACITY,
++			sizeof(allocated_blocks->blocks[0]),
++			GFP_KERNEL);
++	if (!allocated_blocks->blocks) {
++		kfree(allocated_blocks);
++		return -ENOMEM;
++	}
++
++	allocated_blocks->blocks_size = 0;
++	allocated_blocks->blocks_capacity =
++		AS_ALLOCATED_BLOCKS_INITIAL_CAPACITY;
++	mutex_init(&allocated_blocks->blocks_lock);
++
++	filp->private_data = allocated_blocks;
++	return 0;
++}
++
++static int as_release(struct inode *inode, struct file *filp)
++{
++	struct as_allocated_blocks *allocated_blocks = filp->private_data;
++	struct as_device_state *state;
++	int blocks_size;
++	int i;
++
++	WARN_ON(!allocated_blocks);
++	WARN_ON(!allocated_blocks->state);
++	WARN_ON(!allocated_blocks->blocks);
++	WARN_ON(allocated_blocks->blocks_size < 0);
++
++	state = allocated_blocks->state;
++	blocks_size = allocated_blocks->blocks_size;
++
++	if (mutex_lock_interruptible(&state->registers_lock))
++		return -ERESTARTSYS;
++
++	for (i = 0; i < blocks_size; ++i) {
++		WARN_ON(as_ioctl_unallocate_block_locked_impl(
++			state, allocated_blocks->blocks[i].offset));
++	}
++
++	mutex_unlock(&state->registers_lock);
++
++	kfree(allocated_blocks->blocks);
++	kfree(allocated_blocks);
++	return 0;
++}
++
++static int as_mmap_impl(struct as_device_state *state,
++			size_t size,
++			struct vm_area_struct *vma)
++{
++	unsigned long pfn = (state->address_area_phys_address >> PAGE_SHIFT) +
++		vma->vm_pgoff;
++
++	return remap_pfn_range(vma,
++			       vma->vm_start,
++			       pfn,
++			       size,
++			       vma->vm_page_prot);
++}
++
++static int as_mmap(struct file *filp, struct vm_area_struct *vma)
++{
++	struct as_allocated_blocks *allocated_blocks = filp->private_data;
++	size_t size = PAGE_ALIGN(vma->vm_end - vma->vm_start);
++	int res;
++
++	WARN_ON(!allocated_blocks);
++
++	res = as_blocks_check_if_mine(allocated_blocks,
++				      vma->vm_pgoff << PAGE_SHIFT,
++				      size);
++
++	if (res)
++		return res;
++	else
++		return as_mmap_impl(allocated_blocks->state, size, vma);
++}
++
++static long as_ioctl_allocate_block_impl(
++	struct as_device_state *state,
++	struct goldfish_address_space_allocate_block *request)
++{
++	long res;
++
++	if (mutex_lock_interruptible(&state->registers_lock))
++		return -ERESTARTSYS;
++
++	res = as_ioctl_allocate_block_locked_impl(state,
++						  &request->size,
++						  &request->offset);
++	if (!res) {
++		request->phys_addr =
++			state->address_area_phys_address + request->offset;
++	}
++
++	mutex_unlock(&state->registers_lock);
++	return res;
++}
++
++static void
++as_ioctl_unallocate_block_impl(struct as_device_state *state, u64 offset)
++{
++	mutex_lock(&state->registers_lock);
++	WARN_ON(as_ioctl_unallocate_block_locked_impl(state, offset));
++	mutex_unlock(&state->registers_lock);
++}
++
++static long
++as_ioctl_allocate_block(struct as_allocated_blocks *allocated_blocks,
++			void __user *ptr)
++{
++	long res;
++	struct as_device_state *state = allocated_blocks->state;
++	struct goldfish_address_space_allocate_block request;
++
++	if (copy_from_user(&request, ptr, sizeof(request)))
++		return -EFAULT;
++
++	res = as_ioctl_allocate_block_impl(state, &request);
++	if (!res) {
++		res = as_blocks_insert(allocated_blocks,
++				       request.offset,
++				       request.size);
++
++		if (res) {
++			as_ioctl_unallocate_block_impl(state, request.offset);
++		} else if (copy_to_user(ptr, &request, sizeof(request))) {
++			as_ioctl_unallocate_block_impl(state, request.offset);
++			res = -EFAULT;
++		}
++	}
++
++	return res;
++}
++
++static long
++as_ioctl_unallocate_block(struct as_allocated_blocks *allocated_blocks,
++			  void __user *ptr)
++{
++	long res;
++	u64 offset;
++
++	if (copy_from_user(&offset, ptr, sizeof(offset)))
++		return -EFAULT;
++
++	res = as_blocks_remove(allocated_blocks, offset);
++	if (!res)
++		as_ioctl_unallocate_block_impl(allocated_blocks->state, offset);
++
++	return res;
++}
++
++static long as_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
++{
++	struct as_allocated_blocks *allocated_blocks = filp->private_data;
++
++	switch (cmd) {
++	case GOLDFISH_ADDRESS_SPACE_IOCTL_ALLOCATE_BLOCK:
++		return as_ioctl_allocate_block(allocated_blocks,
++					       (void __user *)arg);
++
++	case GOLDFISH_ADDRESS_SPACE_IOCTL_DEALLOCATE_BLOCK:
++		return as_ioctl_unallocate_block(allocated_blocks,
++						 (void __user *)arg);
++
++	default:
++		return -ENOTTY;
++	}
++}
++
++static const struct file_operations userspace_file_operations = {
++	.owner = THIS_MODULE,
++	.open = as_open,
++	.release = as_release,
++	.mmap = as_mmap,
++	.unlocked_ioctl = as_ioctl,
++	.compat_ioctl = as_ioctl,
++};
++
++static void __iomem __must_check *ioremap_pci_bar(struct pci_dev *dev,
++						  int bar_id)
++{
++	void __iomem *io;
++	unsigned long size = pci_resource_len(dev, bar_id);
++
++	if (!size)
++		return IOMEM_ERR_PTR(-ENXIO);
++
++	io = ioremap(pci_resource_start(dev, bar_id), size);
++	if (!io)
++		return IOMEM_ERR_PTR(-ENOMEM);
++
++	return io;
++}
++
++static void __must_check *memremap_pci_bar(struct pci_dev *dev,
++					   int bar_id,
++					   unsigned long flags)
++{
++	void *mem;
++	unsigned long size = pci_resource_len(dev, bar_id);
++
++	if (!size)
++		return ERR_PTR(-ENXIO);
++
++	mem = memremap(pci_resource_start(dev, bar_id), size, flags);
++	if (!mem)
++		return ERR_PTR(-ENOMEM);
++
++	return mem;
++}
++
++static void as_clear_device(struct as_device_state *state)
++{
++	struct as_driver_state *driver_state = state->driver_state;
++
++	WARN_ON(!driver_state->device_state);
++	driver_state->device_state = NULL;
++}
++
++static irqreturn_t __must_check as_interrupt_impl(struct as_device_state *state)
++{
++	state->hw_done = 1;
++	wake_up_interruptible(&state->wake_queue);
++	return IRQ_HANDLED;
++}
++
++static irqreturn_t as_interrupt(int irq, void *dev_id)
++{
++	struct as_device_state *state = dev_id;
++
++	return (state->magic == AS_MAGIC_U32)
++		? as_interrupt_impl(state) : IRQ_NONE;
++}
++
++static void fill_miscdevice(struct miscdevice *miscdev)
++{
++	memset(miscdev, 0, sizeof(*miscdev));
++
++	miscdev->minor = MISC_DYNAMIC_MINOR;
++	miscdev->name = GOLDFISH_ADDRESS_SPACE_DEVICE_NAME;
++	miscdev->fops = &userspace_file_operations;
++}
++
++static int __must_check
++create_as_device(struct pci_dev *dev,
++		 const struct pci_device_id *id,
++		 struct as_driver_state *driver_state)
++{
++	int res;
++	struct as_device_state *state;
++
++	state = kzalloc(sizeof(*state), GFP_KERNEL);
++	if (!state)
++		return -ENOMEM;
++
++	res = pci_request_region(dev,
++				 AS_PCI_CONTROL_BAR_ID,
++				 "Address space control");
++	if (res) {
++		pr_err("(bn 0x%X, sn 0x%X) failed to allocate PCI resource for BAR%d",
++		       dev->bus->number,
++		       dev->devfn,
++		       AS_PCI_CONTROL_BAR_ID);
++		goto out_free_device_state;
++	}
++
++	res = pci_request_region(dev,
++				 AS_PCI_AREA_BAR_ID,
++				 "Address space area");
++	if (res) {
++		pr_err("(bn 0x%X, sn 0x%X) failed to allocate PCI resource for BAR%d",
++		       dev->bus->number,
++		       dev->devfn,
++		       AS_PCI_AREA_BAR_ID);
++		goto out_release_control_bar;
++	}
++
++	fill_miscdevice(&state->miscdevice);
++	res = misc_register(&state->miscdevice);
++	if (res)
++		goto out_release_area_bar;
++
++	state->io_registers = ioremap_pci_bar(dev,
++					      AS_PCI_CONTROL_BAR_ID);
++	if (IS_ERR(state->io_registers)) {
++		res = PTR_ERR(state->io_registers);
++		goto out_misc_deregister;
++	}
++
++	state->address_area = memremap_pci_bar(dev,
++					       AS_PCI_AREA_BAR_ID,
++					       MEMREMAP_WB);
++	if (IS_ERR(state->address_area)) {
++		res = PTR_ERR(state->address_area);
++		goto out_iounmap;
++	}
++
++	state->address_area_phys_address =
++		pci_resource_start(dev, AS_PCI_AREA_BAR_ID);
++
++	res = request_irq(dev->irq,
++			  as_interrupt, IRQF_SHARED,
++			  KBUILD_MODNAME, state);
++	if (res)
++		goto out_memunmap;
++
++	as_write_register(state->io_registers,
++			  AS_REGISTER_GUEST_PAGE_SIZE,
++			  PAGE_SIZE);
++
++	state->magic = AS_MAGIC_U32;
++	state->dev = dev;
++	state->driver_state = driver_state;
++	mutex_init(&state->registers_lock);
++	init_waitqueue_head(&state->wake_queue);
++
++	driver_state->device_state = state;
++
++	pci_set_drvdata(dev, state);
++	return 0;
++
++out_memunmap:
++	memunmap(state->address_area);
++out_iounmap:
++	iounmap(state->io_registers);
++out_misc_deregister:
++	misc_deregister(&state->miscdevice);
++out_release_area_bar:
++	pci_release_region(dev, AS_PCI_AREA_BAR_ID);
++out_release_control_bar:
++	pci_release_region(dev, AS_PCI_CONTROL_BAR_ID);
++out_free_device_state:
++	kzfree(state);
++
++	return res;
++}
++
++static void as_destroy_device(struct as_device_state *state)
++{
++	as_clear_device(state);
++	free_irq(state->dev->irq, state);
++	memunmap(state->address_area);
++	iounmap(state->io_registers);
++	misc_deregister(&state->miscdevice);
++	pci_release_region(state->dev, AS_PCI_AREA_BAR_ID);
++	pci_release_region(state->dev, AS_PCI_CONTROL_BAR_ID);
++	kfree(state);
++}
++
++static int __must_check as_pci_probe_impl(struct pci_dev *dev,
++					  const struct pci_device_id *id,
++					  struct as_driver_state *driver_state)
++{
++	int res;
++	u8 hardware_revision;
++
++	res = pci_enable_device(dev);
++	if (res)
++		return res;
++
++	res = pci_read_config_byte(dev, PCI_REVISION_ID, &hardware_revision);
++	if (res)
++		goto out_disable_pci;
++
++	switch (hardware_revision) {
++	case 1:
++		res = create_as_device(dev, id, driver_state);
++		break;
++
++	default:
++		res = -ENODEV;
++		goto out_disable_pci;
++	}
++
++	return 0;
++
++out_disable_pci:
++	pci_disable_device(dev);
++
++	return res;
++}
++
++static void as_pci_remove(struct pci_dev *dev)
++{
++	struct as_device_state *state = pci_get_drvdata(dev);
++
++	as_destroy_device(state);
++	pci_disable_device(dev);
++}
++
++static const struct pci_device_id as_pci_tbl[] = {
++	{ PCI_DEVICE(AS_PCI_VENDOR_ID, AS_PCI_DEVICE_ID), },
++	{ }
++};
++MODULE_DEVICE_TABLE(pci, as_pci_tbl);
++
++static int as_pci_probe(struct pci_dev *dev, const struct pci_device_id *id);
++
++static void __init fill_pci_driver(struct pci_driver *pci)
++{
++	pci->name = GOLDFISH_ADDRESS_SPACE_DEVICE_NAME;
++	pci->id_table = as_pci_tbl;
++	pci->probe = &as_pci_probe;
++	pci->remove = &as_pci_remove;
++	pci->shutdown = &as_pci_remove;
++}
++
++static int __must_check __init init_as_impl(struct as_driver_state *state)
++{
++	state->device_state = NULL;
++	fill_pci_driver(&state->pci);
++
++	return pci_register_driver(&state->pci);
++}
++
++static void __exit exit_as_impl(struct as_driver_state *state)
++{
++	WARN_ON(state->device_state);
++
++	pci_unregister_driver(&state->pci);
++}
++
++static struct as_driver_state g_driver_state;
++
++static int as_pci_probe(struct pci_dev *dev, const struct pci_device_id *id)
++{
++	return as_pci_probe_impl(dev, id, &g_driver_state);
++}
++
++static int __init init_address_space(void)
++{
++	memset(&g_driver_state, 0, sizeof(g_driver_state));
++	return init_as_impl(&g_driver_state);
++}
++
++static void __exit exit_address_space(void)
++{
++	exit_as_impl(&g_driver_state);
++}
++
++module_init(init_address_space);
++module_exit(exit_address_space);
+diff --git a/include/uapi/linux/goldfish/goldfish_address_space.h b/include/uapi/linux/goldfish/goldfish_address_space.h
+new file mode 100644
+index 000000000000..b1d11f95a4e1
+--- /dev/null
++++ b/include/uapi/linux/goldfish/goldfish_address_space.h
+@@ -0,0 +1,27 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef UAPI_GOLDFISH_ADDRESS_SPACE_H
++#define UAPI_GOLDFISH_ADDRESS_SPACE_H
++
++#include <linux/types.h>
++
++#define GOLDFISH_ADDRESS_SPACE_DEVICE_NAME	"goldfish_address_space"
++
++struct goldfish_address_space_allocate_block {
++	__u64 size;
++	__u64 offset;
++	__u64 phys_addr;
++};
++
++#define GOLDFISH_ADDRESS_SPACE_IOCTL_MAGIC	'G'
++
++#define GOLDFISH_ADDRESS_SPACE_IOCTL_OP(OP, T)	\
++	_IOWR(GOLDFISH_ADDRESS_SPACE_IOCTL_MAGIC, OP, T)
++
++#define GOLDFISH_ADDRESS_SPACE_IOCTL_ALLOCATE_BLOCK \
++	GOLDFISH_ADDRESS_SPACE_IOCTL_OP(10, \
++		struct goldfish_address_space_allocate_block)
++
++#define GOLDFISH_ADDRESS_SPACE_IOCTL_DEALLOCATE_BLOCK \
++	GOLDFISH_ADDRESS_SPACE_IOCTL_OP(11, __u64)
++
++#endif /* UAPI_GOLDFISH_ADDRESS_SPACE_H */
+-- 
+2.20.1.415.g653613c723-goog
 
