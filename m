@@ -2,139 +2,97 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55F8FC43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 16:49:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 838D9C43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 16:49:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D6BB218CD
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 16:49:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 51B55218CD
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 16:49:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="VtDzKUWy";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="VtDzKUWy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726488AbfADQtF (ORCPT
+        id S1726894AbfADQtn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 11:49:05 -0500
-Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:60715 "EHLO
-        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726053AbfADQtE (ORCPT
+        Fri, 4 Jan 2019 11:49:43 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:59224 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726201AbfADQtm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 11:49:04 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07487;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0THXcS8M_1546620389;
-Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0THXcS8M_1546620389)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Sat, 05 Jan 2019 00:46:31 +0800
-Subject: Re: [RFC PATCH 0/3] mm: memcontrol: delayed force empty
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     hannes@cmpxchg.org, akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <20190103101215.GH31793@dhcp22.suse.cz>
- <b3ad06ed-f620-7aa0-5697-a1bbe2d7bfe1@linux.alibaba.com>
- <20190103181329.GW31793@dhcp22.suse.cz>
- <6f43e926-3bb5-20d1-2e39-1d30bf7ad375@linux.alibaba.com>
- <20190103185333.GX31793@dhcp22.suse.cz>
- <d610c665-890f-3bf0-1e2a-437150b6ddfb@linux.alibaba.com>
- <20190103192339.GA31793@dhcp22.suse.cz>
- <88b4d986-0b3c-cbf0-65ad-95f3e8ccd870@linux.alibaba.com>
- <20190103200111.GD31793@dhcp22.suse.cz>
- <146af1c6-4405-76c5-b253-c8fba11779bf@linux.alibaba.com>
- <20190104085547.GG31793@dhcp22.suse.cz>
-From:   Yang Shi <yang.shi@linux.alibaba.com>
-Message-ID: <5b377ce9-2eea-628a-4da7-fe6d6db88863@linux.alibaba.com>
-Date:   Fri, 4 Jan 2019 08:46:28 -0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20190104085547.GG31793@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        Fri, 4 Jan 2019 11:49:42 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id DE7A56030B; Fri,  4 Jan 2019 16:49:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1546620581;
+        bh=+MbjqoR51c+Gch68Ic50SHN5eOfORbYQiTJRX2fiWv4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=VtDzKUWyBqfUzzZ4ngswki+3vTLB/juz45lCfxlAMQrAN/YQKVJ7ynjJt7E/2t1st
+         3DTBKbf1sIWvCmA+ELe5MNDlFrpVucjquzaT11ryIhM/pY+PT76E0lgirWDxpiFfcb
+         SofTognvoWo52zfoLADnlIFg31MrMxaitmOtViFI=
+Received: from jhugo-perf-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jhugo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id C814660591;
+        Fri,  4 Jan 2019 16:49:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1546620581;
+        bh=+MbjqoR51c+Gch68Ic50SHN5eOfORbYQiTJRX2fiWv4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=VtDzKUWyBqfUzzZ4ngswki+3vTLB/juz45lCfxlAMQrAN/YQKVJ7ynjJt7E/2t1st
+         3DTBKbf1sIWvCmA+ELe5MNDlFrpVucjquzaT11ryIhM/pY+PT76E0lgirWDxpiFfcb
+         SofTognvoWo52zfoLADnlIFg31MrMxaitmOtViFI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C814660591
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
+From:   Jeffrey Hugo <jhugo@codeaurora.org>
+Cc:     bjorn.andersson@linaro.org, andy.gross@linaro.org,
+        david.brown@linaro.org, mturquette@baylibre.com, sboyd@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kishon@ti.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, devicetree@vger.kernel.org,
+        gregkh@linuxfoundation.org, balbi@kernel.org,
+        linux-usb@vger.kernel.org, Jeffrey Hugo <jhugo@codeaurora.org>
+Subject: [PATCH v1 0/6] MSM8998 basic USB support
+Date:   Fri,  4 Jan 2019 09:49:12 -0700
+Message-Id: <1546620552-2312-1-git-send-email-jhugo@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This series provides basic USB support for MSM8998.  Currently missing is
+wiring up the Type-C detection logic so that the controller can correctly
+switch between host and peripheral modes.  Work to implement that is
+ongoing, and expected to appear soon in followup patches.
 
+Jeffrey Hugo (6):
+  clk: qcom: Add missing freq for usb30_master_clk on 8998
+  clk: qcom: Skip halt checks on gcc_usb3_phy_pipe_clk for 8998
+  phy: qcom-qusb2: Add QUSB2 PHY support for msm8998
+  phy: qcom-qmp: Add QMP V3 USB3 PHY support for msm8998
+  usb: dwc3: qcom: Add support for MSM8998
+  arm64: dts: qcom: msm8998: Add USB-related nodes
 
-On 1/4/19 12:55 AM, Michal Hocko wrote:
-> On Thu 03-01-19 20:15:30, Yang Shi wrote:
->>
->> On 1/3/19 12:01 PM, Michal Hocko wrote:
->>> On Thu 03-01-19 11:49:32, Yang Shi wrote:
->>>> On 1/3/19 11:23 AM, Michal Hocko wrote:
->>>>> On Thu 03-01-19 11:10:00, Yang Shi wrote:
->>>>>> On 1/3/19 10:53 AM, Michal Hocko wrote:
->>>>>>> On Thu 03-01-19 10:40:54, Yang Shi wrote:
->>>>>>>> On 1/3/19 10:13 AM, Michal Hocko wrote:
->>>>> [...]
->>>>>>>>> Is there any reason for your scripts to be strictly sequential here? In
->>>>>>>>> other words why cannot you offload those expensive operations to a
->>>>>>>>> detached context in _userspace_?
->>>>>>>> I would say it has not to be strictly sequential. The above script is just
->>>>>>>> an example to illustrate the pattern. But, sometimes it may hit such pattern
->>>>>>>> due to the complicated cluster scheduling and container scheduling in the
->>>>>>>> production environment, for example the creation process might be scheduled
->>>>>>>> to the same CPU which is doing force_empty. I have to say I don't know too
->>>>>>>> much about the internals of the container scheduling.
->>>>>>> In that case I do not see a strong reason to implement the offloding
->>>>>>> into the kernel. It is an additional code and semantic to maintain.
->>>>>> Yes, it does introduce some additional code and semantic, but IMHO, it is
->>>>>> quite simple and very straight forward, isn't it? Just utilize the existing
->>>>>> css offline worker. And, that a couple of lines of code do improve some
->>>>>> throughput issues for some real usecases.
->>>>> I do not really care it is few LOC. It is more important that it is
->>>>> conflating force_empty into offlining logic. There was a good reason to
->>>>> remove reparenting/emptying the memcg during the offline. Considering
->>>>> that you can offload force_empty from userspace trivially then I do not
->>>>> see any reason to implement it in the kernel.
->>>> Er, I may not articulate in the earlier email, force_empty can not be
->>>> offloaded from userspace *trivially*. IOWs the container scheduler may
->>>> unexpectedly overcommit something due to the stall of synchronous force
->>>> empty, which can't be figured out by userspace before it actually happens.
->>>> The scheduler doesn't know how long force_empty would take. If the
->>>> force_empty could be offloaded by kernel, it would make scheduler's life
->>>> much easier. This is not something userspace could do.
->>> What exactly prevents
->>> (
->>> echo 1 > $memecg/force_empty
->>> rmdir $memcg
->>> ) &
->>>
->>> so that this sequence doesn't really block anything?
->> We have "restarting the same name job" logic in our usecase (I'm not quite
->> sure why they do so). Basically, it means to create memcg with the exact
->> same name right after the old one is deleted, but may have different limit
->> or other settings. The creation has to wait for rmdir is done. Even though
->> rmdir is done in background like the above, the stall still exists since
->> rmdir simply is waiting for force_empty.
-> OK, I see. This is an important detail you didn't mention previously (or
-> at least I didn't understand it). One thing is still not clear to me.
+ .../devicetree/bindings/phy/qcom-qmp-phy.txt       |   5 +
+ .../devicetree/bindings/phy/qcom-qusb2-phy.txt     |   1 +
+ .../devicetree/bindings/usb/qcom,dwc3.txt          |   1 +
+ arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi          |  22 ++++
+ arch/arm64/boot/dts/qcom/msm8998.dtsi              |  90 +++++++++++++
+ drivers/clk/qcom/gcc-msm8998.c                     |   3 +-
+ drivers/phy/qualcomm/phy-qcom-qmp.c                | 142 +++++++++++++++++++++
+ drivers/phy/qualcomm/phy-qcom-qmp.h                |   4 +
+ drivers/phy/qualcomm/phy-qcom-qusb2.c              |  41 ++++++
+ drivers/usb/dwc3/dwc3-qcom.c                       |   1 +
+ 10 files changed, 309 insertions(+), 1 deletion(-)
 
-Sorry, I should articulated at the first place.
-
-> "Restarting the same job" sounds as if the memcg itself could be
-> recycled as well. You are saying that the setting might change but if
-> that is about limits then we should handle that just fine. Or what other
-> kind of setting changes that wouldn't work properly?
-
-We did try resize limit, but it may also incur costly direct reclaim to 
-block something. Other than this we also want to reset all the 
-counters/stats to get clearer and cleaner resource isolation since the 
-container may run different jobs although they use the same name.
-
->
-> If the recycling is not possible then I would suggest to not reuse
-> force_empty interface but add wipe_on_destruction or similar new knob
-> which would enforce reclaim on offlining. It seems we have several
-> people asking for something like that already.
-
-We did have a new knob in our in-house implementation, it just did 
-force_empty on offlining.
-
-So, you mean to have a new knob to just do force empty offlining, and 
-keep force_empty's behavior, right?
-
-Thanks,
-Yang
-
+-- 
+Qualcomm Datacenter Technologies as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
 
