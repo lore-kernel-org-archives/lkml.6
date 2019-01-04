@@ -2,141 +2,87 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F3E8C43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 15:57:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78076C43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 16:01:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D5CE21871
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 15:57:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 43FF921871
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 16:01:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728303AbfADP53 (ORCPT
+        id S1728353AbfADQA7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 10:57:29 -0500
-Received: from mga14.intel.com ([192.55.52.115]:18506 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727771AbfADP52 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 10:57:28 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jan 2019 07:57:28 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,439,1539673200"; 
-   d="scan'208";a="264427963"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga004.jf.intel.com with ESMTP; 04 Jan 2019 07:57:28 -0800
-Received: from [10.251.13.106] (kliang2-mobl1.ccr.corp.intel.com [10.251.13.106])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by linux.intel.com (Postfix) with ESMTPS id 084ED58056F;
-        Fri,  4 Jan 2019 07:57:26 -0800 (PST)
-Subject: Re: [PATCH v4 04/10] KVM/x86: intel_pmu_lbr_enable
-To:     Wei Wang <wei.w.wang@intel.com>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, pbonzini@redhat.com, ak@linux.intel.com,
-        peterz@infradead.org
-Cc:     kan.liang@intel.com, mingo@redhat.com, rkrcmar@redhat.com,
-        like.xu@intel.com, jannh@google.com, arei.gonglei@huawei.com
-References: <1545816338-1171-1-git-send-email-wei.w.wang@intel.com>
- <1545816338-1171-5-git-send-email-wei.w.wang@intel.com>
- <5a04d8ea-b788-6018-8b34-ebd528578916@linux.intel.com>
- <5C2F2E3E.7020306@intel.com>
-From:   "Liang, Kan" <kan.liang@linux.intel.com>
-Message-ID: <4e5cd929-8a28-461d-7f8f-79a2f9301b7c@linux.intel.com>
-Date:   Fri, 4 Jan 2019 10:57:24 -0500
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 4 Jan 2019 11:00:59 -0500
+Received: from mail1.bemta23.messagelabs.com ([67.219.246.5]:47700 "EHLO
+        mail1.bemta23.messagelabs.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727192AbfADQA6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 11:00:58 -0500
+Received: from [67.219.246.101] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
+        by server-5.bemta.az-b.us-east-1.aws.symcld.net id 68/D9-05658-8338F2C5; Fri, 04 Jan 2019 16:00:56 +0000
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrPIsWRWlGSWpSXmKPExsXi5LtOQNeiWT/
+  GYP9uLovDi14wWnz9dpvd4uanb6wWl3fNYXNg8dg56y67x69ta1g8Pm+SC2COYs3MS8qvSGDN
+  ODdnNlvBb9aKn5/2MzUw/mbpYuTiEBJYxShx9sYKRghnC6PE9dkP2bsYOTnYBHQkpuw/zAJii
+  wiIS1w7chYszixQKfHs92Y2EFtYwFbi17QZrCA2i4CKxOzXd8HivAJuEktv9oDZEgJyEjfPdT
+  JDxAUlTs58wgIxR0Li4IsXYHEhAWWJLSsuMELUK0isPXCeaQIj7ywkLbOQtCxgZFrFaJZUlJm
+  eUZKbmJmja2hgoGtoaKQLJC0s9RKrdJP0Sot1UxOLS3QN9RLLi/WKK3OTc1L08lJLNjECgzGl
+  gGHvDsZJy9MPMUpyMCmJ8qYx68cI8SXlp1RmJBZnxBeV5qQWH2KU4eBQkuCd2QiUEyxKTU+tS
+  MvMAcYFTFqCg0dJhPc2SJq3uCAxtzgzHSJ1itGYY9uZzhnMHG/m/pjBLMSSl5+XKiXOK94EVC
+  oAUppRmgc3CBavlxhlpYR5GRkYGIR4ClKLcjNLUOVfMYpzMCoJ834HWciTmVcCt+8V0ClMQKe
+  YSOiAnFKSiJCSamBcd3Ny01lJm6tekyN+1Lxh+3GN7/i/l/YZNz4rP8svOFfE4HjGwNAry15y
+  57MW/xcpDKL5b1tftL5WFwisPXi06b3P1BqJg6v2hOc/Z5h+21VnjcZdftay9Ig71QV9m5c85
+  Q4/8CFD/b5AYoRYYIaB85+giyZs3Z/XHfhp3/T2dLmMcvrKwLlKLMUZiYZazEXFiQAWUJPO0g
+  IAAA==
+X-Env-Sender: Alex.Gonzalez@digi.com
+X-Msg-Ref: server-16.tower-385.messagelabs.com!1546617655!6434161!2
+X-Originating-IP: [66.77.174.16]
+X-SYMC-ESS-Client-Auth: outbound-route-from=pass
+X-StarScan-Received: 
+X-StarScan-Version: 9.14.24; banners=-,-,-
+X-VirusChecked: Checked
+Received: (qmail 29104 invoked from network); 4 Jan 2019 16:00:56 -0000
+Received: from owa.digi.com (HELO MCL-VMS-XCH01.digi.com) (66.77.174.16)
+  by server-16.tower-385.messagelabs.com with DHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 4 Jan 2019 16:00:56 -0000
+Received: from MTK-SMS-XCH01.digi.com (10.10.8.195) by MCL-VMS-XCH01.digi.com
+ (10.5.8.49) with Microsoft SMTP Server (TLS) id 14.3.408.0; Fri, 4 Jan 2019
+ 10:00:55 -0600
+Received: from log-linux-hp-agonzal.digi.com (10.101.2.214) by
+ MTK-SMS-XCH01.digi.com (10.10.8.195) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Fri, 4 Jan 2019 10:00:54 -0600
+From:   Alex Gonzalez <alex.gonzalez@digi.com>
+To:     <hadess@hadess.net>
+CC:     <dmitry.torokhov@gmail.com>, <linux-input@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <alex.gonzalez@digi.com>
+Subject: [PATCH] Input: goodix - decouple irq and reset lines
+Date:   Fri, 4 Jan 2019 17:00:47 +0100
+Message-ID: <1546617648-23445-1-git-send-email-alex.gonzalez@digi.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <5C2F2E3E.7020306@intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.101.2.214]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The current implementation on the Goodix driver requires the two optional GPIOs
+(RESET and INT) to be provided.
 
+However, it is possible to designs the RESET line pulled-up and only provide
+the INT line. Such designs do not work with the current implementation.
 
-On 1/4/2019 4:58 AM, Wei Wang wrote:
-> On 01/03/2019 12:33 AM, Liang, Kan wrote:
->>
->>
->> On 12/26/2018 4:25 AM, Wei Wang wrote:
->>> +
->>> +    /*
->>> +     * It could be possible that people have vcpus of old model run on
->>> +     * physcal cpus of newer model, for example a BDW guest on a SKX
->>> +     * machine (but not possible to be the other way around).
->>> +     * The BDW guest may not get accurate results on a SKX machine 
->>> as it
->>> +     * only reads 16 entries of the lbr stack while there are 32 
->>> entries
->>> +     * of recordings. So we currently forbid the lbr enabling when the
->>> +     * vcpu and physical cpu see different lbr stack entries.
->>
->> I think it's not enough to only check number of entries. The LBR 
->> from/to MSRs may be different even the number of entries is the same, 
->> e.g SLM and KNL.
-> 
-> Yes, we could add the comparison of the FROM msrs.
-> 
->>
->>> +     */
->>> +    switch (vcpu_model) {
->>
->> That's a duplicate of intel_pmu_init(). I think it's better to factor 
->> out the common part if you want to check LBR MSRs and entries. Then we 
->> don't need to add the same codes in two different places when enabling 
->> new platforms.
->>
-> 
-> 
-> Yes, I thought about this, but intel_pmu_init() does a lot more things 
-> in each "Case xx". Any thought about how to factor them out?
->
+The patch attached allows for designs that only provide the INT line to have
+a functional touch on the default I2C address, even though some functionality
+like the sleep mode will not be available.
 
-I think we may only move the "switch (boot_cpu_data.x86_model) { ... }" 
-to a new function, e.g. __intel_pmu_init(int model, struct x86_pmu *x86_pmu)
+This has been tested on v4.20 with a gt911 based touch panel design that only
+provides the INT line.
 
-In __intel_pmu_init, if the model != boot_cpu_data.x86_model, you only 
-need to update x86_pmu.*. Just ignore global settings, e.g 
-hw_cache_event_ids, mem_attr, extra_attr etc.
+Alex Gonzalez (1):
+  Input: goodix - decouple irq and reset lines
 
-You may also need to introduce another new function to check if the LBR 
-is compatible with guest in lbr.c, e.g. bool 
-is_lbr_compatible_with_guest(int model).
+ drivers/input/touchscreen/goodix.c | 59 ++++++++++++++++++++------------------
+ 1 file changed, 31 insertions(+), 28 deletions(-)
 
-bool is_lbr_compatible_with_guest(int model) {
-	struct x86_pmu fake_x86_pmu;
-
-	if (boot_cpu_data.x86_model == model)
-		return true;
-
-	__intel_pmu_init(model, &fake_x86_pmu);
-
-	if ((x86_pmu.lbr_nr == fake_x86_pmu.lbr_nr) &&
-	    (x86_pmu.lbr_tos == fake_x86_pmu.lbr_tos) &&
-	    (x86_pmu.lbr_from == fake_x86_pmu.lbr_from))
-		return true;
-
-	return false;
-}
-
-> 
->> Actually, I think we may just support LBR for guest if it has the 
->> identical CPU model as host. It should be good enough for now.
->>
-> 
-> I actually tried this in the first place but it failed to work with the 
-> existing QEMU.
-> For example, when we specify "Broadwell" cpu from qemu, then qemu uses 
-> Broadwell core model,
-> but the physical machine I have is Broadwell X. This patch will support 
-> this case.
-
-I mean is it good enough if we only support "-cpu host"?
-
-Thanks,
-Kan
