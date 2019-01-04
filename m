@@ -2,145 +2,252 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E332CC43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 06:09:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8324AC43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 06:12:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B06982070D
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 06:09:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="Lx3AImuB"
+	by mail.kernel.org (Postfix) with ESMTP id 5982D2184B
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 06:12:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727159AbfADGJe (ORCPT
+        id S1727246AbfADGMC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 01:09:34 -0500
-Received: from mail.andi.de1.cc ([85.214.239.24]:48872 "EHLO
-        h2641619.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726093AbfADGJe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 01:09:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=kemnade.info; s=20180802; h=Content-Type:MIME-Version:References:
-        In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=MMHu5qSWKzbH6d+9YTsvMjYBmsHvFqy82shTKKhvaxM=; b=Lx3AImuBXmWlYqNdJwpuHUfL8
-        MqCQAWUQ2ACout8zgN4RJV5wa8in9Y22VmHJyKFuVxV4zNSgRgpXkQ8inYxjQFDRZK1X+PLS5sqBK
-        ATTEltLY58sLPRDvZnV4wZXGsUL4fNs0MGvOr5pMjfVHxJjbX34g7RI/q9A6+vBbPWMFc=;
-Received: from x590fed1b.dyn.telefonica.de ([89.15.237.27] helo=localhost)
-        by h2641619.stratoserver.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <andreas@kemnade.info>)
-        id 1gfIfg-0004r0-Ll; Fri, 04 Jan 2019 07:09:28 +0100
-Received: from [::1] (helo=localhost)
-        by eeepc with esmtp (Exim 4.89)
-        (envelope-from <andreas@kemnade.info>)
-        id 1gfIHE-00024D-1d; Fri, 04 Jan 2019 06:44:12 +0100
-Date:   Fri, 4 Jan 2019 06:44:03 +0100
-From:   Andreas Kemnade <andreas@kemnade.info>
-To:     Marcel Holtmann <marcel@holtmann.org>
-Cc:     Rob Herring <robh@kernel.org>, sebastian.reichel@collabora.com,
-        hns@goldelico.com, devicetree@vger.kernel.org,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-bluetooth@vger.kernel.org, letux-kernel@openphoenux.org
-Subject: Re: [Letux-kernel] [PATCH RFC] bluetooth: add uart h4 devices via
- serdev/devicetree
-Message-ID: <20190104064403.325771fd@kemnade.info>
-In-Reply-To: <09AFE47C-D188-4397-A2CD-C70FFAC3B677@holtmann.org>
-References: <20181110232034.17277-1-andreas@kemnade.info>
-        <20181111024648.7rt7rlhaqihtqecv@earth.universe>
-        <20181112215812.18ebca35@aktux>
-        <2C74C837-A6D3-47C9-BE59-CCA594289B94@goldelico.com>
-        <20181112222726.73m2oca7hankvcjs@earth.universe>
-        <CABGGisxsdv+BTd5-HMzF8asEcWtL5F4CMzmkrBCwK=NibvqjLQ@mail.gmail.com>
-        <20181113170128.0f59ef0e@kemnade.info>
-        <86A3A2E6-FC89-42FE-8410-9C8273EC9CF7@holtmann.org>
-        <20181116204601.4e1aa0de@kemnade.info>
-        <09AFE47C-D188-4397-A2CD-C70FFAC3B677@holtmann.org>
-X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; i686-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Hz5e=EICJcp5xVQUKJXvZ7j"; protocol="application/pgp-signature"
+        Fri, 4 Jan 2019 01:12:02 -0500
+Received: from mga03.intel.com ([134.134.136.65]:41224 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726093AbfADGMC (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 01:12:02 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jan 2019 22:12:01 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,437,1539673200"; 
+   d="scan'208";a="105418762"
+Received: from skl.sh.intel.com ([10.239.159.132])
+  by orsmga006.jf.intel.com with ESMTP; 03 Jan 2019 22:11:59 -0800
+From:   Jin Yao <yao.jin@linux.intel.com>
+To:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com
+Cc:     Linux-kernel@vger.kernel.org, ak@linux.intel.com,
+        kan.liang@intel.com, yao.jin@intel.com,
+        Jin Yao <yao.jin@linux.intel.com>
+Subject: [PATCH] perf report: Fix wrong iteration count
+Date:   Fri,  4 Jan 2019 14:10:30 +0800
+Message-Id: <1546582230-17507-1-git-send-email-yao.jin@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/Hz5e=EICJcp5xVQUKJXvZ7j
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+By calculating the removed loops, we can get the iteration count.
+But the iteration count could be reported incorrectly, reporting
+impossibly high counts. That's because previous code uses the
+number of removed LBR entries for the iteration count. That's
+not good. Fix this by increasing the iteration count when a loop
+is detected.
 
-Hi Marcel,
+When matching the chain, the iteration count would be added up,
+finally we need to compute the average value when printing out.
 
-On Fri, 16 Nov 2018 20:58:24 +0100
-Marcel Holtmann <marcel@holtmann.org> wrote:
+For example,
 
-> Hi Andreas,
->=20
-> >> Btw. I see nothing standing in the way of merging btuart.c driver and =
-then go from there. Either I dig this out and submit or someone else does.
-> >>  =20
-> > Do you mean this?
-> > https://patchwork.kernel.org/patch/10490651/ =20
->=20
-> yes, that one.
->=20
-Hmm, there seemed to be nothing in the pull requests regarding btuart.
-Did you change plans?
+perf report --branch-history --stdio --no-children
 
-commit 29d3c047b7038d7efce4f279e4d4165d69f6ccb9
-Merge: 5a862f86b8e8 1629db9c7534
-Author: David S. Miller <davem@davemloft.net>
-Date:   Wed Dec 19 08:41:45 2018 -0800
+Before:
 
-    Merge branch 'for-upstream' of git://git.kernel.org/pub/scm/linux/kerne=
-l/git/bluetooth/bluetooth-next
-   =20
-    Johan Hedberg says:
-   =20
-    =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-    pull request: bluetooth-next 2018-12-19
-   =20
-    Here's the main bluetooth-next pull request for 4.21:
-   =20
-     - Multiple fixes & improvements for Broadcom-based controllers
-     - New USB ID for an Intel controller
-     - Support for new Broadcom controller variants
-     - Use DEFINE_SHOW_ATTRIBUTE to simplify debugfs code
-     - Eliminate confusing "last event is not cmd complete" warning message
-     - Added vendor suspend/resume support for H:5 (3-Wire UART) controllers
-     - Various other smaller improvements & fixes
-   =20
-    Please let me know if there are any issues pulling. Thanks.
+---f2 +0
+   |
+   |--33.62%--f1 +9 (cycles:1)
+   |          f1 +0
+   |          main +22 (cycles:1)
+   |          main +17
+   |          main +38 (cycles:1)
+   |          main +27
+   |          f1 +26 (cycles:1)
+   |          f1 +24
+   |          f2 +27 (cycles:7)
+   |          f2 +0
+   |          f1 +19 (cycles:1)
+   |          f1 +14
+   |          f2 +27 (cycles:11)
+   |          f2 +0
+   |          f1 +9 (cycles:1 iter:2968 avg_cycles:3)
+   |          f1 +0
+   |          main +22 (cycles:1 iter:2968 avg_cycles:3)
+   |          main +17
+   |          main +38 (cycles:1 iter:2968 avg_cycles:3)
 
+2968 is an impossible high iteration count and avg_cycles is too small.
 
-Regards,
-Andreas
+After:
 
---Sig_/Hz5e=EICJcp5xVQUKJXvZ7j
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+---f2 +0
+   |
+   |--33.62%--f1 +9 (cycles:1)
+   |          f1 +0
+   |          main +22 (cycles:1)
+   |          main +17
+   |          main +38 (cycles:1)
+   |          main +27
+   |          f1 +26 (cycles:1)
+   |          f1 +24
+   |          f2 +27 (cycles:7)
+   |          f2 +0
+   |          f1 +19 (cycles:1)
+   |          f1 +14
+   |          f2 +27 (cycles:11)
+   |          f2 +0
+   |          f1 +9 (cycles:1 iter:1 avg_cycles:23)
+   |          f1 +0
+   |          main +22 (cycles:1 iter:1 avg_cycles:23)
+   |          main +17
+   |          main +38 (cycles:1 iter:1 avg_cycles:23)
 
------BEGIN PGP SIGNATURE-----
+avg_cycles:23 is the average cycles of this iteration.
 
-iQIzBAEBCAAdFiEE7sDbhY5mwNpwYgrAfb1qx03ikyQFAlwu8qMACgkQfb1qx03i
-kyQSEg/+Lo4Ruo+8/r63a7FWorKKYjnPMM9btjjHj0ggHDjZMgtHUk0JIkqB3BnV
-sZ0z7UkhDQ7k6C3ElagI4UdDqmdV4IG1GufdP7GhyoGwMA5aAEIvPDKiwnCcZZFr
-KjOAGMCFtZXxmu77bv976LcwJ1NqbwttgeI7068qPCTFBUqwJIcfY+s+o7e4o86V
-PEX1LeOlpo5BnKPb0o4DdoVckIqiPN9fjYJMUxkL5pZyRFwt1a2kD2mTurgeGAhJ
-I8yAXhQ4mNSehOtDM6UTOhaq7/IOcKjDn5E3O8Q9gvT0701ootLhLRO5PcdF5iNM
-kPOn/mN/So/+ZOwBuxDHYRbrZiarKyJ2u6xPD1acM1bul07Kv+fnzimbN5DQfoWi
-QYYcKp/80sIIqywr9BRCyIOJ4aaYng+y4CKWZv+yBGCgDLzDAlOEsQ62MwJsYZ2F
-v2h+suyqbNugt5Qghv6Wpdx6CXCDp0gglX1JuJGOr2DSvHZTaZY6WLbiNzKCR65R
-BQToXDw2/7wnsRKgu0jXjfWEs5PbOYLG5aj+Uc4PAMYi/8dmAdcXB63rzZFRIc9q
-aPXB5d8rLkpkxRcB2InCR7noamh6Q626wCx8/4vqVxdXIXN7van0PxD4U78GXuDj
-7U7IYLr+mKKG+lgtvJ+jZKlHcUkoo2fYdRjHbvVJdf7BBcvjxVE=
-=JeaL
------END PGP SIGNATURE-----
+Fixes: c4ee06251d42 ("perf report: Calculate the average cycles of iterations")
 
---Sig_/Hz5e=EICJcp5xVQUKJXvZ7j--
+Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
+---
+ tools/perf/util/callchain.c | 32 ++++++++++++++++++++------------
+ tools/perf/util/callchain.h |  1 +
+ tools/perf/util/machine.c   |  2 +-
+ 3 files changed, 22 insertions(+), 13 deletions(-)
+
+diff --git a/tools/perf/util/callchain.c b/tools/perf/util/callchain.c
+index 32ef7bd..dc2212e 100644
+--- a/tools/perf/util/callchain.c
++++ b/tools/perf/util/callchain.c
+@@ -766,6 +766,7 @@ static enum match_result match_chain(struct callchain_cursor_node *node,
+ 			cnode->cycles_count += node->branch_flags.cycles;
+ 			cnode->iter_count += node->nr_loop_iter;
+ 			cnode->iter_cycles += node->iter_cycles;
++			cnode->from_count++;
+ 		}
+ 	}
+ 
+@@ -1345,10 +1346,10 @@ static int branch_to_str(char *bf, int bfsize,
+ static int branch_from_str(char *bf, int bfsize,
+ 			   u64 branch_count,
+ 			   u64 cycles_count, u64 iter_count,
+-			   u64 iter_cycles)
++			   u64 iter_cycles, u64 from_count)
+ {
+ 	int printed = 0, i = 0;
+-	u64 cycles;
++	u64 cycles, v = 0;
+ 
+ 	cycles = cycles_count / branch_count;
+ 	if (cycles) {
+@@ -1357,14 +1358,16 @@ static int branch_from_str(char *bf, int bfsize,
+ 				bf + printed, bfsize - printed);
+ 	}
+ 
+-	if (iter_count) {
+-		printed += count_pri64_printf(i++, "iter",
+-				iter_count,
+-				bf + printed, bfsize - printed);
++	if (iter_count && from_count) {
++		v = iter_count / from_count;
++		if (v) {
++			printed += count_pri64_printf(i++, "iter",
++					v, bf + printed, bfsize - printed);
+ 
+-		printed += count_pri64_printf(i++, "avg_cycles",
+-				iter_cycles / iter_count,
+-				bf + printed, bfsize - printed);
++			printed += count_pri64_printf(i++, "avg_cycles",
++					iter_cycles / iter_count,
++					bf + printed, bfsize - printed);
++		}
+ 	}
+ 
+ 	if (i)
+@@ -1377,6 +1380,7 @@ static int counts_str_build(char *bf, int bfsize,
+ 			     u64 branch_count, u64 predicted_count,
+ 			     u64 abort_count, u64 cycles_count,
+ 			     u64 iter_count, u64 iter_cycles,
++			     u64 from_count,
+ 			     struct branch_type_stat *brtype_stat)
+ {
+ 	int printed;
+@@ -1389,7 +1393,8 @@ static int counts_str_build(char *bf, int bfsize,
+ 				predicted_count, abort_count, brtype_stat);
+ 	} else {
+ 		printed = branch_from_str(bf, bfsize, branch_count,
+-				cycles_count, iter_count, iter_cycles);
++				cycles_count, iter_count, iter_cycles,
++				from_count);
+ 	}
+ 
+ 	if (!printed)
+@@ -1402,13 +1407,14 @@ static int callchain_counts_printf(FILE *fp, char *bf, int bfsize,
+ 				   u64 branch_count, u64 predicted_count,
+ 				   u64 abort_count, u64 cycles_count,
+ 				   u64 iter_count, u64 iter_cycles,
++				   u64 from_count,
+ 				   struct branch_type_stat *brtype_stat)
+ {
+ 	char str[256];
+ 
+ 	counts_str_build(str, sizeof(str), branch_count,
+ 			 predicted_count, abort_count, cycles_count,
+-			 iter_count, iter_cycles, brtype_stat);
++			 iter_count, iter_cycles, from_count, brtype_stat);
+ 
+ 	if (fp)
+ 		return fprintf(fp, "%s", str);
+@@ -1422,6 +1428,7 @@ int callchain_list_counts__printf_value(struct callchain_list *clist,
+ 	u64 branch_count, predicted_count;
+ 	u64 abort_count, cycles_count;
+ 	u64 iter_count, iter_cycles;
++	u64 from_count;
+ 
+ 	branch_count = clist->branch_count;
+ 	predicted_count = clist->predicted_count;
+@@ -1429,11 +1436,12 @@ int callchain_list_counts__printf_value(struct callchain_list *clist,
+ 	cycles_count = clist->cycles_count;
+ 	iter_count = clist->iter_count;
+ 	iter_cycles = clist->iter_cycles;
++	from_count = clist->from_count;
+ 
+ 	return callchain_counts_printf(fp, bf, bfsize, branch_count,
+ 				       predicted_count, abort_count,
+ 				       cycles_count, iter_count, iter_cycles,
+-				       &clist->brtype_stat);
++				       from_count, &clist->brtype_stat);
+ }
+ 
+ static void free_callchain_node(struct callchain_node *node)
+diff --git a/tools/perf/util/callchain.h b/tools/perf/util/callchain.h
+index 154560b..99d38ac 100644
+--- a/tools/perf/util/callchain.h
++++ b/tools/perf/util/callchain.h
+@@ -118,6 +118,7 @@ struct callchain_list {
+ 		bool		has_children;
+ 	};
+ 	u64			branch_count;
++	u64			from_count;
+ 	u64			predicted_count;
+ 	u64			abort_count;
+ 	u64			cycles_count;
+diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
+index 6fcb3bc..143f705 100644
+--- a/tools/perf/util/machine.c
++++ b/tools/perf/util/machine.c
+@@ -2005,7 +2005,7 @@ static void save_iterations(struct iterations *iter,
+ {
+ 	int i;
+ 
+-	iter->nr_loop_iter = nr;
++	iter->nr_loop_iter++;
+ 	iter->cycles = 0;
+ 
+ 	for (i = 0; i < nr; i++)
+-- 
+2.7.4
+
