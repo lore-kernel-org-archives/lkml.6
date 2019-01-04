@@ -2,180 +2,152 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37EF3C43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 00:12:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CD3AC43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 00:19:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 078A9217F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 00:12:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D828F217F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 00:19:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Yw01xC3e"
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="Xl2Jxpxi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729061AbfADAMx (ORCPT
+        id S1727310AbfADATN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 19:12:53 -0500
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:1085 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727174AbfADAMx (ORCPT
+        Thu, 3 Jan 2019 19:19:13 -0500
+Received: from conuserg-10.nifty.com ([210.131.2.77]:33094 "EHLO
+        conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726034AbfADATN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 19:12:53 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c2ea4ee0000>; Thu, 03 Jan 2019 16:12:30 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Thu, 03 Jan 2019 16:12:50 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Thu, 03 Jan 2019 16:12:50 -0800
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL106.nvidia.com
- (172.18.146.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 4 Jan
- 2019 00:12:50 +0000
-Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 4 Jan
- 2019 00:12:49 +0000
-Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
- Transport; Fri, 4 Jan 2019 00:12:50 +0000
-Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.103.52]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5c2ea5010000>; Thu, 03 Jan 2019 16:12:49 -0800
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <talho@nvidia.com>
-CC:     <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-i2c@vger.kernel.org>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH V4] i2c: tegra: Fix Maximum transfer size
-Date:   Thu, 3 Jan 2019 16:12:47 -0800
-Message-ID: <1546560767-9559-1-git-send-email-skomatineni@nvidia.com>
+        Thu, 3 Jan 2019 19:19:13 -0500
+Received: from grover.tkatk1.zaq.ne.jp (zaqdadce369.zaq.ne.jp [218.220.227.105]) (authenticated)
+        by conuserg-10.nifty.com with ESMTP id x040Ijxk017309;
+        Fri, 4 Jan 2019 09:18:45 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com x040Ijxk017309
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1546561126;
+        bh=IaD/HolgSGMUeGhnmpsyJZDiXgKRDX2gM/yw9Qup5i8=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Xl2JxpxisNF6Imk/pq54MMqSBlX/6Z6plo4qk/hUSdPSDpIL5/pUtMGCEUYEr8Bfu
+         kqw5SIAJmZ9wQFYdrwKH50EyxdZ/FEKiOKzWt90pqHJYBypJMb0Rhmwk86XGuxfp1S
+         VTVdE1zWuXs3pU5HbucW58RT4I9S+X0kV4Fa3cTGiwzFqsOJHXP6RUYbBHW/Li27kC
+         jw1EpUDIC5oI4WtfxBbcafBDxlEJXKIi4nURhzvWBghvwFAjzidyUUMpHA4oAVOHF7
+         STcTVSOBH6yoRMakE4eLDrzRlHSC1y39UoBMHb79KWYQyArwIZ8NRnnO4Ww4Q1hQA5
+         w992o92rQo1kQ==
+X-Nifty-SrcIP: [218.220.227.105]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] arm64: replace arm64-obj-* in Makefile with obj-*
+Date:   Fri,  4 Jan 2019 09:18:41 +0900
+Message-Id: <1546561121-23086-1-git-send-email-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.7.4
-X-NVConfidentiality: public
-MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1546560750; bh=NQMMHVzU5xuL/fD/1HbKDWFVKExLhP4LgibR5gydzDE=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         X-NVConfidentiality:MIME-Version:Content-Type;
-        b=Yw01xC3eA0Nxl3dTtJyDN0Dg8w6l9wyrEajLXOPPW3+Lnxyc5sLzusGwZD26R2Gdx
-         yux23f2+WH2L0aBg2BMvMzFQEBzErrd6aIIaeAiwKwO5vIj1dpRGMRPMGOzg4qHQC8
-         CQik+TQc4cMmHudC9/TXciETO+ooWZJCto2Tc1G34uxxP+NDZf3xEl3/8Qvj7wjeKR
-         ZsmF4NzYEHxhlpv4jnNpZLCAGL9tlE/XBSymoOq3APpqb5YjmMXeseXNrwvY/wvCkm
-         fqYSYSX38dIFadtKeL2aLer3qcUljkjda2hL36gU9STEnIPJaGI87vV9lYJVoqPKbH
-         6FQZqECIPb+XQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tegra194 supports maximum 64K Bytes transfer per packet.
-Tegra186 and prior supports maximum 4K Bytes transfer per packet.
+Use the standard obj-$(CONFIG_...) syntex. The behavior is still the
+same.
 
-This patch fixes this payload difference between Tegra194 and prior
-tegra chipsets using separate i2c_adapter_quirks.
-
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
- drivers/i2c/busses/i2c-tegra.c | 16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 437294ea2f0a..a01834fb2ce6 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -154,6 +154,8 @@ enum msg_end_type {
-  * @clk_divisor_std_fast_mode: Clock divisor in standard/fast mode. It is
-  *		applicable if there is no fast clock source i.e. single clock
-  *		source.
-+ * @quirks: i2c adapter quirks for limiting write/read transfer size and not
-+ *		allowing 0 length transfers.
-  */
+Changes in v2:
+  - Rebase
+
+ arch/arm64/kernel/Makefile | 61 +++++++++++++++++++++++-----------------------
+ 1 file changed, 30 insertions(+), 31 deletions(-)
+
+diff --git a/arch/arm64/kernel/Makefile b/arch/arm64/kernel/Makefile
+index df08d73..cd434d0 100644
+--- a/arch/arm64/kernel/Makefile
++++ b/arch/arm64/kernel/Makefile
+@@ -12,7 +12,7 @@ CFLAGS_REMOVE_insn.o = -pg
+ CFLAGS_REMOVE_return_address.o = -pg
  
- struct tegra_i2c_hw_feature {
-@@ -167,6 +169,7 @@ struct tegra_i2c_hw_feature {
- 	bool has_multi_master_mode;
- 	bool has_slcg_override_reg;
- 	bool has_mst_fifo;
-+	const struct i2c_adapter_quirks *quirks;
- };
+ # Object file lists.
+-arm64-obj-y		:= debug-monitors.o entry.o irq.o fpsimd.o		\
++obj-y			:= debug-monitors.o entry.o irq.o fpsimd.o		\
+ 			   entry-fpsimd.o process.o ptrace.o setup.o signal.o	\
+ 			   sys.o stacktrace.o time.o traps.o io.o vdso.o	\
+ 			   hyp-stub.o psci.o cpu_ops.o insn.o	\
+@@ -27,41 +27,40 @@ OBJCOPYFLAGS := --prefix-symbols=__efistub_
+ $(obj)/%.stub.o: $(obj)/%.o FORCE
+ 	$(call if_changed,objcopy)
  
- /**
-@@ -833,6 +836,10 @@ static const struct i2c_adapter_quirks tegra_i2c_quirks = {
- 	.max_write_len = 4096,
- };
+-arm64-obj-$(CONFIG_COMPAT)		+= sys32.o kuser32.o signal32.o 	\
++obj-$(CONFIG_COMPAT)			+= sys32.o kuser32.o signal32.o 	\
+ 					   sys_compat.o
+-arm64-obj-$(CONFIG_FUNCTION_TRACER)	+= ftrace.o entry-ftrace.o
+-arm64-obj-$(CONFIG_MODULES)		+= module.o
+-arm64-obj-$(CONFIG_ARM64_MODULE_PLTS)	+= module-plts.o
+-arm64-obj-$(CONFIG_PERF_EVENTS)		+= perf_regs.o perf_callchain.o
+-arm64-obj-$(CONFIG_HW_PERF_EVENTS)	+= perf_event.o
+-arm64-obj-$(CONFIG_HAVE_HW_BREAKPOINT)	+= hw_breakpoint.o
+-arm64-obj-$(CONFIG_CPU_PM)		+= sleep.o suspend.o
+-arm64-obj-$(CONFIG_CPU_IDLE)		+= cpuidle.o
+-arm64-obj-$(CONFIG_JUMP_LABEL)		+= jump_label.o
+-arm64-obj-$(CONFIG_KGDB)		+= kgdb.o
+-arm64-obj-$(CONFIG_EFI)			+= efi.o efi-entry.stub.o		\
++obj-$(CONFIG_FUNCTION_TRACER)		+= ftrace.o entry-ftrace.o
++obj-$(CONFIG_MODULES)			+= module.o
++obj-$(CONFIG_ARM64_MODULE_PLTS)		+= module-plts.o
++obj-$(CONFIG_PERF_EVENTS)		+= perf_regs.o perf_callchain.o
++obj-$(CONFIG_HW_PERF_EVENTS)		+= perf_event.o
++obj-$(CONFIG_HAVE_HW_BREAKPOINT)	+= hw_breakpoint.o
++obj-$(CONFIG_CPU_PM)			+= sleep.o suspend.o
++obj-$(CONFIG_CPU_IDLE)			+= cpuidle.o
++obj-$(CONFIG_JUMP_LABEL)		+= jump_label.o
++obj-$(CONFIG_KGDB)			+= kgdb.o
++obj-$(CONFIG_EFI)			+= efi.o efi-entry.stub.o		\
+ 					   efi-rt-wrapper.o
+-arm64-obj-$(CONFIG_PCI)			+= pci.o
+-arm64-obj-$(CONFIG_ARMV8_DEPRECATED)	+= armv8_deprecated.o
+-arm64-obj-$(CONFIG_ACPI)		+= acpi.o
+-arm64-obj-$(CONFIG_ACPI_NUMA)		+= acpi_numa.o
+-arm64-obj-$(CONFIG_ARM64_ACPI_PARKING_PROTOCOL)	+= acpi_parking_protocol.o
+-arm64-obj-$(CONFIG_PARAVIRT)		+= paravirt.o
+-arm64-obj-$(CONFIG_RANDOMIZE_BASE)	+= kaslr.o
+-arm64-obj-$(CONFIG_HIBERNATION)		+= hibernate.o hibernate-asm.o
+-arm64-obj-$(CONFIG_KEXEC_CORE)		+= machine_kexec.o relocate_kernel.o	\
++obj-$(CONFIG_PCI)			+= pci.o
++obj-$(CONFIG_ARMV8_DEPRECATED)		+= armv8_deprecated.o
++obj-$(CONFIG_ACPI)			+= acpi.o
++obj-$(CONFIG_ACPI_NUMA)			+= acpi_numa.o
++obj-$(CONFIG_ARM64_ACPI_PARKING_PROTOCOL)	+= acpi_parking_protocol.o
++obj-$(CONFIG_PARAVIRT)			+= paravirt.o
++obj-$(CONFIG_RANDOMIZE_BASE)		+= kaslr.o
++obj-$(CONFIG_HIBERNATION)		+= hibernate.o hibernate-asm.o
++obj-$(CONFIG_KEXEC_CORE)		+= machine_kexec.o relocate_kernel.o	\
+ 					   cpu-reset.o
+-arm64-obj-$(CONFIG_KEXEC_FILE)		+= machine_kexec_file.o kexec_image.o
+-arm64-obj-$(CONFIG_ARM64_RELOC_TEST)	+= arm64-reloc-test.o
++obj-$(CONFIG_KEXEC_FILE)		+= machine_kexec_file.o kexec_image.o
++obj-$(CONFIG_ARM64_RELOC_TEST)		+= arm64-reloc-test.o
+ arm64-reloc-test-y := reloc_test_core.o reloc_test_syms.o
+-arm64-obj-$(CONFIG_CRASH_DUMP)		+= crash_dump.o
+-arm64-obj-$(CONFIG_CRASH_CORE)		+= crash_core.o
+-arm64-obj-$(CONFIG_ARM_SDE_INTERFACE)	+= sdei.o
+-arm64-obj-$(CONFIG_ARM64_SSBD)		+= ssbd.o
+-arm64-obj-$(CONFIG_ARM64_PTR_AUTH)	+= pointer_auth.o
++obj-$(CONFIG_CRASH_DUMP)		+= crash_dump.o
++obj-$(CONFIG_CRASH_CORE)		+= crash_core.o
++obj-$(CONFIG_ARM_SDE_INTERFACE)		+= sdei.o
++obj-$(CONFIG_ARM64_SSBD)		+= ssbd.o
++obj-$(CONFIG_ARM64_PTR_AUTH)		+= pointer_auth.o
  
-+static const struct i2c_adapter_quirks tegra194_i2c_quirks = {
-+	.flags = I2C_AQ_NO_ZERO_LEN,
-+};
-+
- static const struct tegra_i2c_hw_feature tegra20_i2c_hw = {
- 	.has_continue_xfer_support = false,
- 	.has_per_pkt_xfer_complete_irq = false,
-@@ -844,6 +851,7 @@ static const struct tegra_i2c_hw_feature tegra20_i2c_hw = {
- 	.has_multi_master_mode = false,
- 	.has_slcg_override_reg = false,
- 	.has_mst_fifo = false,
-+	.quirks = &tegra_i2c_quirks,
- };
- 
- static const struct tegra_i2c_hw_feature tegra30_i2c_hw = {
-@@ -857,6 +865,7 @@ static const struct tegra_i2c_hw_feature tegra30_i2c_hw = {
- 	.has_multi_master_mode = false,
- 	.has_slcg_override_reg = false,
- 	.has_mst_fifo = false,
-+	.quirks = &tegra_i2c_quirks,
- };
- 
- static const struct tegra_i2c_hw_feature tegra114_i2c_hw = {
-@@ -870,6 +879,7 @@ static const struct tegra_i2c_hw_feature tegra114_i2c_hw = {
- 	.has_multi_master_mode = false,
- 	.has_slcg_override_reg = false,
- 	.has_mst_fifo = false,
-+	.quirks = &tegra_i2c_quirks,
- };
- 
- static const struct tegra_i2c_hw_feature tegra124_i2c_hw = {
-@@ -883,6 +893,7 @@ static const struct tegra_i2c_hw_feature tegra124_i2c_hw = {
- 	.has_multi_master_mode = false,
- 	.has_slcg_override_reg = true,
- 	.has_mst_fifo = false,
-+	.quirks = &tegra_i2c_quirks,
- };
- 
- static const struct tegra_i2c_hw_feature tegra210_i2c_hw = {
-@@ -896,6 +907,7 @@ static const struct tegra_i2c_hw_feature tegra210_i2c_hw = {
- 	.has_multi_master_mode = true,
- 	.has_slcg_override_reg = true,
- 	.has_mst_fifo = false,
-+	.quirks = &tegra_i2c_quirks,
- };
- 
- static const struct tegra_i2c_hw_feature tegra194_i2c_hw = {
-@@ -909,6 +921,7 @@ static const struct tegra_i2c_hw_feature tegra194_i2c_hw = {
- 	.has_multi_master_mode = true,
- 	.has_slcg_override_reg = true,
- 	.has_mst_fifo = true,
-+	.quirks = &tegra194_i2c_quirks,
- };
- 
- /* Match table for of_platform binding */
-@@ -960,7 +973,6 @@ static int tegra_i2c_probe(struct platform_device *pdev)
- 	i2c_dev->base = base;
- 	i2c_dev->div_clk = div_clk;
- 	i2c_dev->adapter.algo = &tegra_i2c_algo;
--	i2c_dev->adapter.quirks = &tegra_i2c_quirks;
- 	i2c_dev->irq = irq;
- 	i2c_dev->cont_id = pdev->id;
- 	i2c_dev->dev = &pdev->dev;
-@@ -976,6 +988,8 @@ static int tegra_i2c_probe(struct platform_device *pdev)
- 	i2c_dev->hw = of_device_get_match_data(&pdev->dev);
- 	i2c_dev->is_dvc = of_device_is_compatible(pdev->dev.of_node,
- 						  "nvidia,tegra20-i2c-dvc");
-+	i2c_dev->adapter.quirks = i2c_dev->hw->quirks;
-+
- 	init_completion(&i2c_dev->msg_complete);
- 	spin_lock_init(&i2c_dev->xfer_lock);
+-obj-y					+= $(arm64-obj-y) vdso/ probes/
+-obj-m					+= $(arm64-obj-m)
++obj-y					+= vdso/ probes/
+ head-y					:= head.o
+ extra-y					+= $(head-y) vmlinux.lds
  
 -- 
 2.7.4
