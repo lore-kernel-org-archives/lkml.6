@@ -2,106 +2,175 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD2BAC43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 04:58:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7B75C43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 05:00:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C29E2087F
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 04:58:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8EBF221874
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 05:00:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="EXQysMYJ"
+	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="pr/Ux1y2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726189AbfADE6D (ORCPT
+        id S1726270AbfADFAz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 23:58:03 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:40618 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725919AbfADE6C (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 23:58:02 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x044sRDu077447;
-        Fri, 4 Jan 2019 04:57:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : references : date : in-reply-to : message-id : mime-version :
- content-type; s=corp-2018-07-02;
- bh=0mQERALhTrEsrDYr9dcg0ectth3nEciBiWRbWNi54Fc=;
- b=EXQysMYJhQ48JjOnNMZl73p5NTdhOydgjRzoafRktdtPNm2blbW4VDp2lmw0zhTWY5nx
- xvHIq4QlJELIltBF+20OGhaHxpcFCR1WjD06K6VJf/vWxWmSttvFO8W16lj7QOsfJ3XK
- d5ZEL6kx5vSjiLAIKfobhJTD3wTF0Dhcc8nXVfdT8XvUqLcvJ1C4YwiBjfRxagqGuFrq
- VUIG6klEnumxvPg5ale8+itIM3gZJdVSn19Vb07RnctdFOkgpgWsUJTwSFHBAVmFT1E2
- Vvu3S4OWeBWRpm6T6+vsy993TYG0aaXH8OSBT7X8ykasdjMJ1TnpE2axQu6+ePX5VmvE AQ== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2120.oracle.com with ESMTP id 2pp1jra9wr-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 04 Jan 2019 04:57:46 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x044vjl6032351
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 4 Jan 2019 04:57:45 GMT
-Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x044vf8i030947;
-        Fri, 4 Jan 2019 04:57:41 GMT
-Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 03 Jan 2019 20:57:41 -0800
-To:     "Ewan D. Milne" <emilne@redhat.com>
-Cc:     dgilbert@interlog.com, Randall Huang <ihhuang@abmail.org>,
-        Christoph Hellwig <hch@infradead.org>, huangrandall@google.com,
-        jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] scsi: associate bio write hint with WRITE CDB
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <20181226041504.66283-1-huangrandall@google.com>
-        <20190103075133.GA5141@infradead.org>
-        <20190103094755.GA96532@google.com>
-        <e5bc96cd-1b48-3b7e-706f-4cbbd1a040a4@interlog.com>
-        <6152b478ea77dacf57eef6f758ba795f756cd3da.camel@redhat.com>
-Date:   Thu, 03 Jan 2019 23:57:38 -0500
-In-Reply-To: <6152b478ea77dacf57eef6f758ba795f756cd3da.camel@redhat.com> (Ewan
-        D. Milne's message of "Thu, 03 Jan 2019 16:40:41 -0500")
-Message-ID: <yq1ef9t81fh.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Fri, 4 Jan 2019 00:00:55 -0500
+Received: from mail-eopbgr00056.outbound.protection.outlook.com ([40.107.0.56]:36294
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725919AbfADFAz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 00:00:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4Lj/kMCE58EOX+p61ezZjiUfpkbkWIwIfZNGZ2zeAmE=;
+ b=pr/Ux1y2eKH6YHFzyIN9HBPV7ODi4ZUnP7PKF9Yqs6U57Dd7lTS9E4+TjTl9TNKosvZK7I7wEG5JLrLeFWzSSl6Ib+pOKgROij+ntitYGYzhKJedTiDf1EdRd4HiJgu9FjN6Va8kf/xkYZpWcTaQbUqiXj0rCqkVJVYTtmUbFk4=
+Received: from AM4PR0501MB2179.eurprd05.prod.outlook.com (10.165.82.10) by
+ AM4PR0501MB2705.eurprd05.prod.outlook.com (10.172.215.142) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1495.6; Fri, 4 Jan 2019 05:00:11 +0000
+Received: from AM4PR0501MB2179.eurprd05.prod.outlook.com
+ ([fe80::88a5:f979:5400:adf]) by AM4PR0501MB2179.eurprd05.prod.outlook.com
+ ([fe80::88a5:f979:5400:adf%5]) with mapi id 15.20.1495.005; Fri, 4 Jan 2019
+ 05:00:11 +0000
+From:   Jason Gunthorpe <jgg@mellanox.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Doug Ledford <dledford@redhat.com>
+CC:     "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] Please pull RDMA subsystem changes
+Thread-Topic: [GIT PULL] Please pull RDMA subsystem changes
+Thread-Index: AQHUo+peroIC9bX/gUqW1YMgp8su9g==
+Date:   Fri, 4 Jan 2019 05:00:10 +0000
+Message-ID: <20190104050001.GA26256@ziepe.ca>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: yes
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: CO2PR04CA0006.namprd04.prod.outlook.com
+ (2603:10b6:102:1::16) To AM4PR0501MB2179.eurprd05.prod.outlook.com
+ (2603:10a6:200:52::10)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=jgg@mellanox.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [174.3.196.123]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM4PR0501MB2705;6:G+Kt58/EWTBc01qrgLb/ItrhFtmI0Zk9XGSzeMmIuNIXabfXzHI0yGTJYMJAx86G8CQC0dJuueW6MGKRjt2yT7x4+ZVMc2Rtb69F59eZmimRxAf6oIlrWVLvNutjk038LHSp2MH/bNnlJwgzsiu1QzsWfi79YCNyE77NLMFzCoYOsqzvqvaeY5NBBSzvXSZDN7QaBYnt/Lcdzc3rVXMBJf+Lfxs56MiJADisCtrXrj+x/uHjdgg1wYj+A7I1cjrMLDujh8cpX+kFA+SjJha+fhe0v0d5fTndg9gnye+040pGHd4db6tqlsEQSFAHgW/0bvikQvudpS16swLw7ldKQL4+1J8X5YOwjm6dDjSarPh46jxJAMy1ZpqyunpEHObn5x6FtgHdxUeUE7HGM0Fgxy959aA2s0XJYUfHxBrIylkVQMUDEF+Hji9XfJ540uekOQhGEkA5nsCC9HFgghisOQ==;5:QQAF57taOOfFQdZtTGdQU4R6rYgDprYboGHY3HEU7jQdDlVqQjPhij2S85taTi1GS71vswDA4NfiMhAGeXFj2AP/SGmnGAYw/Mskc1zlnitXAek99FGWASniZXDzANfpLF6doh5JdVIJl14lKSgh/6OuIPKtZ/+waxQ4Xx8bgk8PSrk4dZpD2Qqsb8wqb272e4/tojwMgsaUDF4qvN8keA==;7:gXAeRM/pwsHKXaA+q40N1wxsAsCqth2/PbyoKsQy8iP0OfrUQHKNJLF13V1vF32Pjb4SB3icJ+WPP+yUZXACxBPdrRJ9FHmCfYYi3LANYTFdLxc65GedkSGKCeI++5jCc1f3SGknuVbBuOEPL5CQQQ==
+x-ms-office365-filtering-correlation-id: 31aad066-29d2-402c-c0b2-08d6720180e7
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(49563074)(7193020);SRVR:AM4PR0501MB2705;
+x-ms-traffictypediagnostic: AM4PR0501MB2705:
+x-microsoft-antispam-prvs: <AM4PR0501MB2705DECFE236B9EA404F1323CF8E0@AM4PR0501MB2705.eurprd05.prod.outlook.com>
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(908002)(999002)(5005026)(102415395)(6040522)(8220060)(2401047)(8121501046)(10201501046)(3231475)(944501520)(4983020)(52105112)(3002001)(93006095)(93001095)(6055026)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:AM4PR0501MB2705;BCL:0;PCL:0;RULEID:;SRVR:AM4PR0501MB2705;
+x-forefront-prvs: 0907F58A24
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(376002)(346002)(366004)(39860400002)(136003)(189003)(199004)(305945005)(7736002)(36756003)(99936001)(97736004)(68736007)(86362001)(1076003)(478600001)(66066001)(14444005)(256004)(14454004)(316002)(54906003)(110136005)(81156014)(486006)(99286004)(5660300001)(81166006)(8936002)(4001150100001)(106356001)(105586002)(2906002)(6436002)(71190400001)(71200400001)(6486002)(386003)(6506007)(6512007)(53936002)(476003)(9686003)(186003)(33896004)(4326008)(26005)(33656002)(102836004)(25786009)(6116002)(8676002)(52116002)(3846002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM4PR0501MB2705;H:AM4PR0501MB2179.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: mellanox.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: o07inxE9gV+DAXpBwTWbi1R81JmfgNDVpbX3zBzcZ5yKOg2W1VCNmy9jGGHBnqq7Xi8jeMXm9sujcAN2Yhf0sVD6DIWrT91/ffteVVt2+df6sIRpRwLBgmZLvRYW+lydXE6nzTITTF7ZQOLVYl+XNpXArCHWVCPcCRnFxUxTzcsWeKkl8O0yWTnsFErcM6N6wjIA8YlkCiLtppU8X3bYFP0lcwNkWsf+YK4V3GhSxDcAzA4bVuSqBO6NNvnH4BAKophW2L+mCjZTUu3Bp9Zuzs+e7gDzn/gFE/6zOhQgIWTBiJ6LZXMgrG+RGoZnG4qs
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="+QahgC5+KEYLbs62"
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9125 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=677
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1901040043
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 31aad066-29d2-402c-c0b2-08d6720180e7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Jan 2019 05:00:10.2709
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM4PR0501MB2705
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+--+QahgC5+KEYLbs62
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Ewan,
+Hi Linus,
 
-> SBC-5 says that support for the grouping function is indicated by the
-> GROUP_SUP bit in the Extended Inquiry VPD page (86h).  I'm not sure
-> how many devices actually support that page though.  Probably most
-> don't.
+Second merge window pull request
 
-Several devices support it, albeit for various different purposes. It's
-one of these wonderful features whose interpretation was left outside
-the scope of the spec for a long time.
+This could also be applied after rc1. It is a small collection of fixes posted
+over the holiday break. The merge error with advise_mr is worth fixing right
+away so the other, more minor, things are coming along for the ride.
 
-So even though we absolutely and positively need to make setting GROUP
-NUMBER conditional on GROUP_SUP being reported, we also need additional
-information from the storage about how the field should be interpreted.
+The following changes since commit 5d24ae67a961c51beb255a28c9c417d9710247c2:
 
-The official way to report hinting is for the device to implement the IO
-Advice Hints Grouping mode page. I wrote some code to support that but
-no vendors that I know of ended up actually shipping an implementation.
-A few implemented my older I/O class proposal but didn't ship that
-either despite really convincing performance results.
+  Merge tag 'for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma (2018-12-28 14:57:10 -0800)
 
-If Randall has access to a device which implements hinting, I'd love to
-know more.
+are available in the Git repository at:
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+  git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git tags/for-linus
+
+for you to fetch changes up to 9c6260de505b63638dd86fcc33849b17f6146d94:
+
+  infiniband/qedr: Potential null ptr dereference of qp (2019-01-02 16:08:38 -0700)
+
+----------------------------------------------------------------
+4.21 merge window 2nd pull request
+
+Over the break a few defects were found, so this is a -rc style pull
+request of various small things that have been posted.
+
+- An attempt to shorten RCU grace period driven delays showed crashes
+  during heavier testing, and has been entirely reverted
+
+- A missed merge/rebase error between the advise_mr and ib_device_ops
+  series
+
+- Some small static analysis driven fixes from Julia and Aditya
+
+- Missed ability to create a XRC_INI in the devx verbs interop series
+
+----------------------------------------------------------------
+Aditya Pakki (2):
+      infiniband: bnxt_re: qplib: Check the return value of send_message
+      infiniband/qedr: Potential null ptr dereference of qp
+
+Julia Lawall (1):
+      IB/ipoib: drop useless LIST_HEAD
+
+Leon Romanovsky (1):
+      Revert "IB/mlx5: Fix long EEH recover time with NVMe offloads"
+
+Moni Shoua (1):
+      IB/core: Add advise_mr to the list of known ops
+
+Yishai Hadas (1):
+      IB/mlx5: Allow XRC INI usage via verbs in DEVX context
+
+ drivers/infiniband/core/device.c         |  1 +
+ drivers/infiniband/hw/bnxt_re/qplib_sp.c |  5 ++---
+ drivers/infiniband/hw/mlx5/mr.c          | 19 +++----------------
+ drivers/infiniband/hw/mlx5/qp.c          |  3 ++-
+ drivers/infiniband/hw/qedr/qedr_iw_cm.c  |  2 ++
+ drivers/infiniband/ulp/ipoib/ipoib_ib.c  |  1 -
+ 6 files changed, 10 insertions(+), 21 deletions(-)
+
+--+QahgC5+KEYLbs62
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEfB7FMLh+8QxL+6i3OG33FX4gmxoFAlwu6E8ACgkQOG33FX4g
+mxpEQg/+M3QO0bU1gpZ70aKTJyL2oyOlqI/gJm/8FFkwVzJEIyk0v1fXv/1jgdDm
+fYuhW4HH9dRrDAhckrJYtAvZpmBd62aVbGWwB0e7TZzPRYNpo4b2z2oWVsiMBKb6
+SZTFk2VkRCgbCTo0zPAv4+kKOBGjQ7k1CMCcBWyrPL0sMGdlqOhb89bBqHSTmEAw
+bjHP/5GDjoOH81+S3udQ6XlMkrCBa8szoPPWdzqIsXP5qkXkUejSB4wcp2HA/0TL
+5O0uRE1Mkmx4FfS6+iHUdxEiuVsAzsMHXjuX4WHmnH1MOPxJadCG89zwUwraCj1q
+O3WnZNBiKc1787iYBZtMgh0KrqGy9OAcJmMicsSqQXSTZBDpceRGxC5vJptrwBDC
+j1Bc9qfJIob3hARtxslc/LWHR/GjIBlxg6rMUd2GUHG//bljYp+pbPsVKdT7M0VA
+PkWvHh7n/yrrsiqWQoCpsB9gYKZaBbnR3JOxP3ELw2WCv2eu2curoM4n9Z+3FXYn
+FVOFIhtx/j8rgJsUbR+da3//PoiPaUJcAXAXl3R8qJ5wwwJfK2lZk0aQjbiq+X7M
+3RO6voSKEJdh75Imyc21lbHfOfj8B+vQ+qpWbAv47gNDNAu1HzrOAo/5HastXLmx
+pek8HFzLshDXEa60YC+R4KZ4vTFfwNNfuZEQk4yXENV7vNVE3b0=
+=TqX7
+-----END PGP SIGNATURE-----
+
+--+QahgC5+KEYLbs62--
