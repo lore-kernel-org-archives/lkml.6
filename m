@@ -2,413 +2,289 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73487C43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 03:44:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D07D0C43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 03:50:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25DF42070D
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 03:44:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 812DC2070D
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 03:50:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=gibson.dropbear.id.au header.i=@gibson.dropbear.id.au header.b="e1nv23m0"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="P0bbI3uS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727284AbfADDoL (ORCPT
+        id S1727308AbfADDuN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 22:44:11 -0500
-Received: from ozlabs.org ([203.11.71.1]:42585 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726189AbfADDoK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 22:44:10 -0500
-Received: by ozlabs.org (Postfix, from userid 1007)
-        id 43W9d13MyTz9s7T; Fri,  4 Jan 2019 14:44:05 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=gibson.dropbear.id.au; s=201602; t=1546573445;
-        bh=7aY2rFY8cjOP7ZeLbW4LA8TDxByv8nYiJTtt0sS8TMY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=e1nv23m0GZ2KQ2Ehs+ALo/fKczdN/m+3cmExW38IL0ou5owWlf5HxIw2NdRJwZnof
-         WqiyOH4XZvWJVix8v8srFJA200NEJQsQ0W9dINd0JU3JYsfBgunXCHCDFFSakFGPO4
-         stfY8UZbU8B8tbp4kLTW+6tX4OVPJpK6+xBaicN8=
-Date:   Fri, 4 Jan 2019 14:44:01 +1100
-From:   David Gibson <david@gibson.dropbear.id.au>
-To:     Leon Romanovsky <leon@kernel.org>
-Cc:     davem@davemloft.net, saeedm@mellanox.com, ogerlitz@mellanox.com,
-        tariqt@mellanox.com, bhelgaas@google.com,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        netdev@vger.kernel.org, alex.williamson@redhat.com,
-        linux-pci@vger.kernel.org, linux-rdma@vger.kernel.org,
-        sbest@redhat.com, paulus@samba.org, benh@kernel.crashing.org
-Subject: Re: [PATCH] PCI: Add no-D3 quirk for Mellanox ConnectX-[45]
-Message-ID: <20190104034401.GA2801@umbus.fritz.box>
-References: <20181206041951.22413-1-david@gibson.dropbear.id.au>
- <20181206064509.GM15544@mtr-leonro.mtl.com>
+        Thu, 3 Jan 2019 22:50:13 -0500
+Received: from mail-eopbgr20077.outbound.protection.outlook.com ([40.107.2.77]:60032
+        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726189AbfADDuN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Jan 2019 22:50:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jtKiM8POtEDI8hTYHz7BpFeCwY+fgV1JdvcIW1VuCrU=;
+ b=P0bbI3uSSUfIwmVZ9wR6dA20LwxPICsmKDCGx58qavpTRjgCNeSRZmps/phuAzds6KpIf3Y3QambGGiFX1TSb7bOeHX8G0ptBO722XAbuFqmulXJ94+ijmK8I0KAI1r1lV/PBU8Qg93G7rnobcSA1sbLCRuslKiGI8XePNx8NCk=
+Received: from AM0PR04MB4211.eurprd04.prod.outlook.com (52.134.126.21) by
+ AM0PR04MB5412.eurprd04.prod.outlook.com (20.178.114.146) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1495.7; Fri, 4 Jan 2019 03:50:06 +0000
+Received: from AM0PR04MB4211.eurprd04.prod.outlook.com
+ ([fe80::c4d2:7dfd:4576:bdd5]) by AM0PR04MB4211.eurprd04.prod.outlook.com
+ ([fe80::c4d2:7dfd:4576:bdd5%5]) with mapi id 15.20.1495.005; Fri, 4 Jan 2019
+ 03:50:06 +0000
+From:   Aisheng Dong <aisheng.dong@nxp.com>
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+CC:     "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "dongas86@gmail.com" <dongas86@gmail.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
+        "khilman@kernel.org" <khilman@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: RE: [RFC PATCH 1/1] PM / Domains: Add multi PM domains support for
+ attach_dev
+Thread-Topic: [RFC PATCH 1/1] PM / Domains: Add multi PM domains support for
+ attach_dev
+Thread-Index: AQHUngerKaedheUOE0OdzOpUuVXDP6WUSj8AgAD3l8CABpO7AIAASp8ggAH1SoCAAGfykA==
+Date:   Fri, 4 Jan 2019 03:50:06 +0000
+Message-ID: <AM0PR04MB4211C13768DD0D9543B6A59F808E0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+References: <1545930550-9906-1-git-send-email-aisheng.dong@nxp.com>
+ <CAPDyKFrP8HOum_4S0-4Bx+sYbTNSyctv3rQDB78zozeNWOuv=A@mail.gmail.com>
+ <AM0PR04MB42117D773477A408462D19D180B00@AM0PR04MB4211.eurprd04.prod.outlook.com>
+ <CAPDyKFq4eji_FVKrRJ2k=c1iKuVP_3aERspy6vpXQzeFdBYt9w@mail.gmail.com>
+ <AM0PR04MB421124AE755C01CEEC0CF31D808C0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+ <CAPDyKFodySv0A9ESDWwpJU=FQeyZ3FpOG0BMVBPxfgxd3oLWDw@mail.gmail.com>
+In-Reply-To: <CAPDyKFodySv0A9ESDWwpJU=FQeyZ3FpOG0BMVBPxfgxd3oLWDw@mail.gmail.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM0PR04MB5412;6:K6Aa4KizXaAM4c3cPVv+YfPUXxXhT4Od+FP5iAM+ZNrVkXaRmXrmnsVseIds9Ano/Lk7OxX0vB3ssb/WkThmDa9aRY2WWrhatstL/Bqi18p9E1GEir4FL6Gr6YD5Fods10r1SKM27Iu660qBZRaL6NHtmTdyR7uSyIC4MsY/wxV7T7xXgJEzhVffKIuR9YWgrw++UlfT590AbIUUgHspGy0b2bBCIE2G13t+c5PkjITLM9R3gqjGbB6EDcLW+5cfHQv/CDKKDX3b9UpVRcCF7PYNY5c4u07HcMhbRDVEFFsVinNBMTIGhheu05ex6F2euBHI7dalYMkcOsPAuLbrSb+5oYU6jstYifim0YaMiWnK7QhfrZgVBAHZgj4elDmtEt1qzq6PHFTL7rnPP0b7gw02GGnE8cKAuqI0Y/iEjPkGvFFaAoH/8v5UOy8oaTA3UxvyGe7S+de8y0NDpNW11w==;5:WPJsXvxA9z+oAq0PUpj1keVwZNh04pVSZ30ZC8ckjobcq10QoRVLpfPXejDgzg9nUhHyc6b8sqpP7JvP8QtV5d9y+QH8lkKX5QlauWZiM5o4RLgl5+/YQrqkm5zF78orU6827/2xEh49fL7bhil264gs+DWgv3aunBcUj8ru2hVNsk8qs2rbhKyJqq5ahZkf7WOa64S9q/XDOn7Yh5aOog==;7:Dl8vNliIDI2iSf34HSS7vR4ldb1HYbM5UPDRhipJ51tmQ0/IOchNWhfR8nymIrvpj3rNNp9j3Q3HtmJiDaZneJsgAXpC8MVBYuJTUWuEw5UYZ/8b9kRqCinMcK4yvEJRWp1p3yHb2F2L+LBRsjOt0A==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: a1e388db-a3fe-49c9-f6f9-08d671f7b709
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB5412;
+x-ms-traffictypediagnostic: AM0PR04MB5412:
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=aisheng.dong@nxp.com; 
+x-microsoft-antispam-prvs: <AM0PR04MB5412FE35E6E3B6382691F9E3808E0@AM0PR04MB5412.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(908002)(999002)(5005026)(6040522)(8220060)(2401047)(8121501046)(93006095)(93001095)(3002001)(3231475)(944501520)(52105112)(10201501046)(6055026)(6041310)(20161123564045)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:AM0PR04MB5412;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB5412;
+x-forefront-prvs: 0907F58A24
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(396003)(39860400002)(376002)(136003)(346002)(13464003)(54534003)(189003)(199004)(52314003)(51914003)(102836004)(76176011)(55016002)(6506007)(478600001)(6246003)(9686003)(97736004)(8676002)(4326008)(81166006)(81156014)(53936002)(7696005)(8936002)(7736002)(68736007)(25786009)(446003)(74316002)(11346002)(305945005)(476003)(93886005)(14454004)(99286004)(7416002)(86362001)(54906003)(316002)(486006)(3846002)(6116002)(5024004)(256004)(14444005)(6436002)(66066001)(229853002)(5660300001)(105586002)(186003)(217873002)(71190400001)(71200400001)(39060400002)(26005)(44832011)(106356001)(33656002)(6916009)(2906002)(21314003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5412;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 6F+FM3jGlR7ZiFEBSIfUX90E56Wa6NGjUs7Zh5aTyEpOshNP/aa4eC1Cw7VYiQJU/iIHwgHZQunS0NiEP9W2AdQGnODvSW5CBkX9ZnzLqpuAG95Q8bYPmLxRE+mHqNazxo2Lmczz7QMsPfg6bgRZx3QxebTwZ09dld7a++xFUjs3CVJnGIgWZ7Re4NTMhWqlDNeYAUP568DFVIYzlFQqCjxL06uFVrw+whmDd9r3B9wTDzCerWxx3k03IdBJOF3fvjv9+WFK8LBrRqQNciGuxv/8ROZv0H296Kl40ewCzbi1fsdrnFKmUgwL2W8/Wxt5
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="7AUc2qLy4jB3hD7Z"
-Content-Disposition: inline
-In-Reply-To: <20181206064509.GM15544@mtr-leonro.mtl.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a1e388db-a3fe-49c9-f6f9-08d671f7b709
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Jan 2019 03:50:06.0547
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5412
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---7AUc2qLy4jB3hD7Z
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Dec 06, 2018 at 08:45:09AM +0200, Leon Romanovsky wrote:
-> On Thu, Dec 06, 2018 at 03:19:51PM +1100, David Gibson wrote:
-> > Mellanox ConnectX-5 IB cards (MT27800) seem to cause a call trace when
-> > unbound from their regular driver and attached to vfio-pci in order to =
-pass
-> > them through to a guest.
-> >
-> > This goes away if the disable_idle_d3 option is used, so it looks like a
-> > problem with the hardware handling D3 state.  To fix that more permanen=
-tly,
-> > use a device quirk to disable D3 state for these devices.
-> >
-> > We do this by renaming the existing quirk_no_ata_d3() more generally and
-> > attaching it to the ConnectX-[45] devices (0x15b3:0x1013).
-> >
-> > Signed-off-by: David Gibson <david@gibson.dropbear.id.au>
-> > ---
-> >  drivers/pci/quirks.c | 17 +++++++++++------
-> >  1 file changed, 11 insertions(+), 6 deletions(-)
-> >
->=20
-> Hi David,
->=20
-> Thank for your patch,
->=20
-> I would like to reproduce the calltrace before moving forward,
-> but have trouble to reproduce the original issue.
->=20
-> I'm working with vfio-pci and CX-4/5 cards on daily basis,
-> tried manually enter into D3 state now, and it worked for me.
-
-Interesting.  I've investigated this further, though I don't have as
-many new clues as I'd like.  The problem occurs reliably, at least on
-one particular type of machine (a POWER8 "Garrison" with ConnectX-4).
-I don't yet know if it occurs with other machines, I'm having trouble
-getting access to other machines with a suitable card.  I didn't
-manage to reproduce it on a different POWER8 machine with a
-ConnectX-5, but I don't know if it's the difference in machine or
-difference in card revision that's important.
-
-So possibilities that occur to me:
-  * It's something specific about how the vfio-pci driver uses D3
-    state - have you tried rebinding your device to vfio-pci?
-  * It's something specific about POWER, either the kernel or the PCI
-    bridge hardware
-  * It's something specific about this particular type of machine
-
-> Can you please post your full calltrace, and "lspci -s PCI_ID -vv"
-> output?
-
-[root@ibm-p8-garrison-01 ~]# lspci -vv -s 0008:01:00
-0008:01:00.0 Infiniband controller: Mellanox Technologies MT27700 Family [C=
-onnectX-4]
-	Subsystem: IBM Device 04f1
-	Physical Slot: Slot1
-	Control: I/O- Mem+ BusMaster- SpecCycle- MemWINV- VGASnoop- ParErr+ Steppi=
-ng- SERR+ FastB2B- DisINTx-
-	Status: Cap+ 66MHz- UDF- FastB2B- ParErr- DEVSEL=3Dfast >TAbort- <TAbort- =
-<MAbort- >SERR- <PERR- INTx-
-	Interrupt: pin A routed to IRQ 473
-	NUMA node: 1
-	Region 0: Memory at 240000000000 (64-bit, prefetchable) [size=3D512M]
-	Capabilities: [60] Express (v2) Endpoint, MSI 00
-		DevCap:	MaxPayload 512 bytes, PhantFunc 0, Latency L0s unlimited, L1 unli=
-mited
-			ExtTag+ AttnBtn- AttnInd- PwrInd- RBE+ FLReset+ SlotPowerLimit 0.000W
-		DevCtl:	Report errors: Correctable- Non-Fatal+ Fatal+ Unsupported+
-			RlxdOrd+ ExtTag+ PhantFunc- AuxPwr- NoSnoop+ FLReset-
-			MaxPayload 512 bytes, MaxReadReq 512 bytes
-		DevSta:	CorrErr- UncorrErr- FatalErr- UnsuppReq- AuxPwr- TransPend-
-		LnkCap:	Port #0, Speed 8GT/s, Width x16, ASPM not supported
-			ClockPM- Surprise- LLActRep- BwNot- ASPMOptComp+
-		LnkCtl:	ASPM Disabled; RCB 64 bytes Disabled- CommClk-
-			ExtSynch- ClockPM- AutWidDis- BWInt- AutBWInt-
-		LnkSta:	Speed 8GT/s, Width x16, TrErr- Train- SlotClk+ DLActive- BWMgmt- =
-ABWMgmt-
-		DevCap2: Completion Timeout: Range ABCD, TimeoutDis+, LTR-, OBFF Not Supp=
-orted
-			 AtomicOpsCap: 32bit- 64bit- 128bitCAS-
-		DevCtl2: Completion Timeout: 50us to 50ms, TimeoutDis+, LTR-, OBFF Disabl=
-ed
-			 AtomicOpsCtl: ReqEn-
-		LnkCtl2: Target Link Speed: 2.5GT/s, EnterCompliance- SpeedDis-
-			 Transmit Margin: Normal Operating Range, EnterModifiedCompliance- Compl=
-ianceSOS-
-			 Compliance De-emphasis: -6dB
-		LnkSta2: Current De-emphasis Level: -6dB, EqualizationComplete+, Equaliza=
-tionPhase1+
-			 EqualizationPhase2+, EqualizationPhase3+, LinkEqualizationRequest-
-	Capabilities: [48] Vital Product Data
-		Product Name: 2-port 100Gb EDR IB PCIe x16 Adapter  =20
-		Read-only fields:
-			[PN] Part number: 00WT039
-			[EC] Engineering changes: P40057
-			[FN] Unknown: 30 30 57 54 30 37 35
-			[SN] Serial number: YA50YF58P080
-			[FC] Unknown: 45 43 33 46
-			[CC] Unknown: 32 43 45 41
-			[VK] Vendor specific: ipzSeries
-			[MN] Manufacture ID: 532X4590060204=20
-			[Z0] Unknown: 49 42 4d 32 31 39 30 31 31 30 30 33 32
-			[RV] Reserved: checksum good, 0 byte(s) reserved
-		End
-	Capabilities: [9c] MSI-X: Enable- Count=3D128 Masked-
-		Vector table: BAR=3D0 offset=3D00002000
-		PBA: BAR=3D0 offset=3D00003000
-	Capabilities: [c0] Vendor Specific Information: Len=3D18 <?>
-	Capabilities: [40] Power Management version 3
-		Flags: PMEClk- DSI- D1- D2- AuxCurrent=3D0mA PME(D0-,D1-,D2-,D3hot-,D3col=
-d-)
-		Status: D0 NoSoftRst+ PME-Enable- DSel=3D0 DScale=3D0 PME-
-	Capabilities: [100 v1] Device Serial Number ba-da-ce-55-de-ad-ca-fe
-	Capabilities: [110 v1] Advanced Error Reporting
-		UESta:	DLP- SDES- TLP- FCP- CmpltTO- CmpltAbrt- UnxCmplt- RxOF- MalfTLP- =
-ECRC- UnsupReq- ACSViol-
-		UEMsk:	DLP- SDES- TLP- FCP- CmpltTO- CmpltAbrt- UnxCmplt- RxOF- MalfTLP- =
-ECRC- UnsupReq- ACSViol-
-		UESvrt:	DLP+ SDES- TLP- FCP+ CmpltTO- CmpltAbrt- UnxCmplt- RxOF+ MalfTLP+=
- ECRC- UnsupReq- ACSViol-
-		CESta:	RxErr- BadTLP- BadDLLP- Rollover- Timeout- NonFatalErr-
-		CEMsk:	RxErr- BadTLP- BadDLLP- Rollover- Timeout- NonFatalErr+
-		AERCap:	First Error Pointer: 04, ECRCGenCap+ ECRCGenEn+ ECRCChkCap+ ECRCC=
-hkEn+
-			MultHdrRecCap- MultHdrRecEn- TLPPfxPres- HdrLogCap-
-		HeaderLog: 00000000 00000000 00000000 00000000
-	Capabilities: [170 v1] Alternative Routing-ID Interpretation (ARI)
-		ARICap:	MFVC- ACS-, Next Function: 1
-		ARICtl:	MFVC- ACS-, Function Group: 0
-	Capabilities: [1c0 v1] #19
-	Kernel driver in use: vfio-pci
-	Kernel modules: mlx5_core
-
-0008:01:00.1 Infiniband controller: Mellanox Technologies MT27700 Family [C=
-onnectX-4]
-	Subsystem: IBM Device 04f1
-	Physical Slot: Slot1
-	Control: I/O- Mem+ BusMaster- SpecCycle- MemWINV- VGASnoop- ParErr+ Steppi=
-ng- SERR+ FastB2B- DisINTx-
-	Status: Cap+ 66MHz- UDF- FastB2B- ParErr- DEVSEL=3Dfast >TAbort- <TAbort- =
-<MAbort- >SERR- <PERR- INTx-
-	Interrupt: pin A routed to IRQ 473
-	NUMA node: 1
-	Region 0: Memory at 240020000000 (64-bit, prefetchable) [size=3D512M]
-	Capabilities: [60] Express (v2) Endpoint, MSI 00
-		DevCap:	MaxPayload 512 bytes, PhantFunc 0, Latency L0s unlimited, L1 unli=
-mited
-			ExtTag+ AttnBtn- AttnInd- PwrInd- RBE+ FLReset+ SlotPowerLimit 0.000W
-		DevCtl:	Report errors: Correctable- Non-Fatal+ Fatal+ Unsupported+
-			RlxdOrd+ ExtTag+ PhantFunc- AuxPwr- NoSnoop+ FLReset-
-			MaxPayload 512 bytes, MaxReadReq 512 bytes
-		DevSta:	CorrErr- UncorrErr- FatalErr- UnsuppReq- AuxPwr- TransPend-
-		LnkCap:	Port #0, Speed 8GT/s, Width x16, ASPM not supported
-			ClockPM- Surprise- LLActRep- BwNot- ASPMOptComp+
-		LnkCtl:	ASPM Disabled; RCB 64 bytes Disabled- CommClk-
-			ExtSynch- ClockPM- AutWidDis- BWInt- AutBWInt-
-		LnkSta:	Speed 8GT/s, Width x16, TrErr- Train- SlotClk+ DLActive- BWMgmt- =
-ABWMgmt-
-		DevCap2: Completion Timeout: Range ABCD, TimeoutDis+, LTR-, OBFF Not Supp=
-orted
-			 AtomicOpsCap: 32bit- 64bit- 128bitCAS-
-		DevCtl2: Completion Timeout: 50us to 50ms, TimeoutDis+, LTR-, OBFF Disabl=
-ed
-			 AtomicOpsCtl: ReqEn-
-		LnkSta2: Current De-emphasis Level: -6dB, EqualizationComplete-, Equaliza=
-tionPhase1-
-			 EqualizationPhase2-, EqualizationPhase3-, LinkEqualizationRequest-
-	Capabilities: [48] Vital Product Data
-		Product Name: 2-port 100Gb EDR IB PCIe x16 Adapter  =20
-		Read-only fields:
-			[PN] Part number: 00WT039
-			[EC] Engineering changes: P40057
-			[FN] Unknown: 30 30 57 54 30 37 35
-			[SN] Serial number: YA50YF58P080
-			[FC] Unknown: 45 43 33 46
-			[CC] Unknown: 32 43 45 41
-			[VK] Vendor specific: ipzSeries
-			[MN] Manufacture ID: 532X4590060204=20
-			[Z0] Unknown: 49 42 4d 32 31 39 30 31 31 30 30 33 32
-			[RV] Reserved: checksum good, 0 byte(s) reserved
-		End
-	Capabilities: [9c] MSI-X: Enable- Count=3D128 Masked-
-		Vector table: BAR=3D0 offset=3D00002000
-		PBA: BAR=3D0 offset=3D00003000
-	Capabilities: [c0] Vendor Specific Information: Len=3D18 <?>
-	Capabilities: [40] Power Management version 3
-		Flags: PMEClk- DSI- D1- D2- AuxCurrent=3D0mA PME(D0-,D1-,D2-,D3hot-,D3col=
-d-)
-		Status: D0 NoSoftRst+ PME-Enable- DSel=3D0 DScale=3D0 PME-
-	Capabilities: [100 v1] Device Serial Number ba-da-ce-55-de-ad-ca-fe
-	Capabilities: [110 v1] Advanced Error Reporting
-		UESta:	DLP- SDES- TLP- FCP- CmpltTO- CmpltAbrt- UnxCmplt- RxOF- MalfTLP- =
-ECRC- UnsupReq- ACSViol-
-		UEMsk:	DLP- SDES- TLP- FCP- CmpltTO- CmpltAbrt- UnxCmplt- RxOF- MalfTLP- =
-ECRC- UnsupReq- ACSViol-
-		UESvrt:	DLP+ SDES- TLP- FCP+ CmpltTO- CmpltAbrt- UnxCmplt- RxOF+ MalfTLP+=
- ECRC- UnsupReq- ACSViol-
-		CESta:	RxErr- BadTLP- BadDLLP- Rollover- Timeout- NonFatalErr-
-		CEMsk:	RxErr- BadTLP- BadDLLP- Rollover- Timeout- NonFatalErr+
-		AERCap:	First Error Pointer: 04, ECRCGenCap+ ECRCGenEn+ ECRCChkCap+ ECRCC=
-hkEn+
-			MultHdrRecCap- MultHdrRecEn- TLPPfxPres- HdrLogCap-
-		HeaderLog: 00000000 00000000 00000000 00000000
-	Capabilities: [170 v1] Alternative Routing-ID Interpretation (ARI)
-		ARICap:	MFVC- ACS-, Next Function: 0
-		ARICtl:	MFVC- ACS-, Function Group: 0
-	Kernel driver in use: vfio-pci
-	Kernel modules: mlx5_core
-
-
-The problem is manifesting as an EEH failure (a POWER specific error
-reporting system similar in intent to AER but entirely different in
-implementation).  That's in turn causing the device to be reset and
-the call trace from there.  There are bugs in the EEH recovery that
-we're pursuing elsewhere, but the problem at issue here is why we're
-tripping a hardware reported failure in the first place.
-
-Given that, the trace probably isn't very meaningful (it's from the
-recovery path, not the mlx or vfio driver), but fwiw:
-
-[  132.573829] EEH: PHB#8 failure detected, location: N/A
-[  132.573944] CPU: 64 PID: 397 Comm: kworker/64:0 Kdump: loaded Not tainte=
-d 4.18.0-57.el8.ppc64le #1
-[  132.574052] Workqueue: events work_for_cpu_fn
-[  132.574083] Call Trace:
-[  132.574100] [c0000037f54d38c0] [c000000000c9ceec] dump_stack+0xb0/0xf4 (=
-unreliable)
-[  132.574147] [c0000037f54d3900] [c000000000042664] eeh_dev_check_failure+=
-0x524/0x5f0
-[  132.574300] [c0000037f54d39a0] [c0000000000bf108] pnv_pci_read_config+0x=
-148/0x180
-[  132.574348] [c0000037f54d39e0] [c000000000731694] pci_read_config_word+0=
-xa4/0x130
-[  132.574393] [c0000037f54d3a40] [c00000000073aa18] pci_raw_set_power_stat=
-e+0xf8/0x300
-[  132.574438] [c0000037f54d3ad0] [c000000000743450] pci_set_power_state+0x=
-60/0x250
-[  132.574486] [c0000037f54d3b10] [d000000013561e4c] vfio_pci_probe+0x184/0=
-x270 [vfio_pci]
-[  132.574531] [c0000037f54d3bb0] [c00000000074bb3c] local_pci_probe+0x6c/0=
-x140
-[  132.574577] [c0000037f54d3c40] [c00000000015aa18] work_for_cpu_fn+0x38/0=
-x60
-[  132.574615] [c0000037f54d3c70] [c00000000015fb84] process_one_work+0x2f4=
-/0x5b0
-[  132.574660] [c0000037f54d3d10] [c000000000161190] worker_thread+0x330/0x=
-760
-[  132.574803] [c0000037f54d3dc0] [c00000000016a4fc] kthread+0x1ac/0x1c0
-[  132.574842] [c0000037f54d3e30] [c00000000000b75c] ret_from_kernel_thread=
-+0x5c/0x80
-[  132.574894] EEH: Detected error on PHB#8
-[  132.574926] EEH: This PCI device has failed 1 times in the last hour and=
- will be permanently disabled after 5 failures.
-[  132.574981] EEH: Notify device drivers to shutdown
-[  132.575011] EEH: Beginning: 'error_detected(IO frozen)'
-[  132.575040] EEH: PE#fe (PCI 0008:00:00.0): no driver
-[  132.575193] EEH: PE#0 (PCI 0008:01:00.0): Invoking vfio-pci->error_detec=
-ted(IO frozen)
-[  132.575253] EEH: PE#0 (PCI 0008:01:00.0): vfio-pci driver reports: 'can =
-recover'
-[  132.575514] EEH: PE#0 (PCI 0008:01:00.1): Invoking vfio-pci->error_detec=
-ted(IO frozen)
-[  132.575592] EEH: PE#0 (PCI 0008:01:00.1): vfio-pci driver reports: 'can =
-recover'
-[  132.575634] EEH: Finished:'error_detected(IO frozen)' with aggregate rec=
-overy state:'can recover'
-[  132.575684] EEH: Collect temporary log
-[  132.575706] PHB3 PHB#8 Diag-data (Version: 1)
-[  132.575734] brdgCtl:     0000ffff
-[  132.575756] RootSts:     ffffffff ffffffff ffffffff ffffffff 0000ffff
-[  132.575790] RootErrSts:  ffffffff ffffffff ffffffff
-[  132.575933] RootErrLog:  ffffffff ffffffff ffffffff ffffffff
-[  132.575973] RootErrLog1: ffffffff 0000000000000000 0000000000000000
-[  132.576014] nFir:        0000808000000000 0030006e00000000 0000800000000=
-000
-[  132.576048] PhbSts:      0000001800000000 0000001800000000
-[  132.576076] Lem:         0000020000080000 42498e367f502eae 0000000000080=
-000
-[  132.576111] OutErr:      0000002000000000 0000002000000000 0000000000000=
-000 0000000000000000
-[  132.576159] InAErr:      0000000020000000 0000000020000000 8080000000000=
-000 0000000000000000
-[  132.576327] EEH: Reset without hotplug activity
-[  132.606003] vfio-pci 0008:01:00.0: Refused to change power state, curren=
-tly in D3
-[  132.606062] iommu: Removing device 0008:01:00.0 from group 0
-[  132.636000] vfio-pci 0008:01:00.1: Refused to change power state, curren=
-tly in D3
-[  132.636057] iommu: Removing device 0008:01:00.1 from group 0
-[  137.196696] EEH: Sleep 5s ahead of partial hotplug
-[  142.236046] pci 0008:01:00.0: [15b3:1013] type 00 class 0x020700
-[  142.236156] pci 0008:01:00.0: reg 0x10: [mem 0x240000000000-0x24001fffff=
-ff 64bit pref]
-[  142.236932] pci 0008:01:00.1: [15b3:1013] type 00 class 0x020700
-[  142.237030] pci 0008:01:00.1: reg 0x10: [mem 0x240020000000-0x24003fffff=
-ff 64bit pref]
-[  142.238763] pci 0008:00:00.0: BAR 14: assigned [mem 0x3fe200000000-0x3fe=
-23fffffff]
-[  142.238940] pci 0008:01:00.0: BAR 0: assigned [mem 0x240000000000-0x2400=
-1fffffff 64bit pref]
-[  142.239021] pci 0008:01:00.1: BAR 0: assigned [mem 0x240020000000-0x2400=
-3fffffff 64bit pref]
-[  142.239112] pci 0008:01:00.0: Can't enable device memory
-[  142.239417] mlx5_core 0008:01:00.0: Cannot enable PCI device, aborting
-[  142.239476] mlx5_core 0008:01:00.0: mlx5_pci_init failed with error code=
- -22
-[  142.239539] mlx5_core: probe of 0008:01:00.0 failed with error -22
-[  142.239590] vfio-pci: probe of 0008:01:00.0 failed with error -22
-[  142.239631] pci 0008:01:00.1: Can't enable device memory
-[  142.241612] mlx5_core 0008:01:00.1: Cannot enable PCI device, aborting
-[  142.241654] mlx5_core 0008:01:00.1: mlx5_pci_init failed with error code=
- -22
-[  142.241716] mlx5_core: probe of 0008:01:00.1 failed with error -22
-[  142.241762] vfio-pci: probe of 0008:01:00.1 failed with error -22
-[  142.241800] EEH: Notify device drivers the completion of reset
-[  142.241835] EEH: Beginning: 'slot_reset'
-[  142.241856] EEH: PE#fe (PCI 0008:00:00.0): no driver
-[  142.241884] EEH: Finished:'slot_reset' with aggregate recovery state:'no=
-ne'
-[  142.241918] EEH: Notify device driver to resume
-[  142.241947] EEH: Beginning: 'resume'
-[  142.241968] EEH: PE#fe (PCI 0008:00:00.0): no driver
-[  142.241996] EEH: Finished:'resume'
-[  142.241996] EEH: Recovery successful.
-
---=20
-David Gibson			| I'll have my music baroque, and my code
-david AT gibson.dropbear.id.au	| minimalist, thank you.  NOT _the_ _other_
-				| _way_ _around_!
-http://www.ozlabs.org/~dgibson
-
---7AUc2qLy4jB3hD7Z
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEdfRlhq5hpmzETofcbDjKyiDZs5IFAlwu1n4ACgkQbDjKyiDZ
-s5JX9Q/8CA/rISAhvU4Eq8gRDp77ckrWfRTHTZ4TRQx0KbHhpL7JrEMHDWopU3D3
-iLLefExzSFMVEnbhyxrdHUE/lcDBQcnw7cJ/6C415///1m6rWbRrOasf7QGxflid
-wfRfZBYHO+qHss5LuTzbxp3V3dMRUHe97f0vL45LIY533OkiKwxJWn+Mty6wYX1Q
-4MP4CjWZArZt7yImxBi1Pco/FPJekU9DsyuQ8I0IdDJiUOIi3RiYx5QZt+TrZahK
-XLnL001L7gvw8cbdoColwT4fLXRndge1wRQRtfoJwqerHhkL+HpR5pnxkR6v7zPb
-NuCkhF/4FdvgRiK9cgBMMW26WwZGMu1lXQfz0yH7j4txBr1BeBSVy898HJxFgbHP
-R+8i5/NwnJHtSCv1H9kBvmvydY1nwxMaQx0YUM6mRsw5PiKgfn09Bv8AtHB+4zvU
-jSibfAlJWTobkchhw+TcNyL28tSvi6DPqiAmJhJayOpEtlInWTKOQVLBhoWftXRT
-AQyu2pZ6WxKhp6KlG+cM9at5V+TuNHMueLHbg1OTlFkUja6ll+J377tYVpM+Yais
-kUBfD0M2sEkz/FsQw9gJ1ppeSpB7jMs9We3TeWyAujRxYZaDrgVnIv6qSwZU4YWQ
-f9cQn1boZ/yWex2LXGUGnaYzfa/6AIRJESoKZciPBVQ/h5fn//g=
-=Dv4q
------END PGP SIGNATURE-----
-
---7AUc2qLy4jB3hD7Z--
+PiBGcm9tOiBVbGYgSGFuc3NvbiBbbWFpbHRvOnVsZi5oYW5zc29uQGxpbmFyby5vcmddDQo+IFNl
+bnQ6IEZyaWRheSwgSmFudWFyeSA0LCAyMDE5IDU6MTEgQU0NCj4gT24gV2VkLCAyIEphbiAyMDE5
+IGF0IDE3OjI5LCBBaXNoZW5nIERvbmcgPGFpc2hlbmcuZG9uZ0BueHAuY29tPiB3cm90ZToNCj4g
+Pg0KPiA+ID4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gPiA+IEZyb206IFVsZiBIYW5z
+c29uIFttYWlsdG86dWxmLmhhbnNzb25AbGluYXJvLm9yZ10NCj4gPiA+IFNlbnQ6IFdlZG5lc2Rh
+eSwgSmFudWFyeSAyLCAyMDE5IDY6NDkgUE0NCj4gPiA+DQo+ID4gPiBPbiBTYXQsIDI5IERlYyAy
+MDE4IGF0IDA3OjQzLCBBaXNoZW5nIERvbmcgPGFpc2hlbmcuZG9uZ0BueHAuY29tPg0KPiB3cm90
+ZToNCj4gPiA+ID4NCj4gPiA+ID4gPiBGcm9tOiBVbGYgSGFuc3NvbiBbbWFpbHRvOnVsZi5oYW5z
+c29uQGxpbmFyby5vcmddDQo+ID4gPiA+ID4gU2VudDogRnJpZGF5LCBEZWNlbWJlciAyOCwgMjAx
+OCAxMTozNyBQTQ0KPiA+ID4gPiA+DQo+ID4gPiA+ID4gT24gVGh1LCAyNyBEZWMgMjAxOCBhdCAx
+ODoxNCwgQWlzaGVuZyBEb25nDQo+ID4gPiA+ID4gPGFpc2hlbmcuZG9uZ0BueHAuY29tPg0KPiA+
+ID4gPiA+IHdyb3RlOg0KPiA+ID4gPiA+ID4NCj4gPiA+ID4gPiA+IEN1cnJlbnRseSBhdHRhY2hf
+ZGV2KCkgaW4gcG93ZXIgZG9tYWluIGluZnJhc3RydWN0dXJlIHN0aWxsDQo+ID4gPiA+ID4gPiBk
+b2VzIG5vdCBzdXBwb3J0IG11bHRpIGRvbWFpbnMgY2FzZSBhcyB0aGUgc3RydWN0IGRldmljZSAq
+ZGV2DQo+ID4gPiA+ID4gPiBwYXNzZWQgZG93biBmcm9tDQo+ID4gPiA+ID4gPiBnZW5wZF9kZXZf
+cG1fYXR0YWNoX2J5X2lkKCkgaXMgYSB2aXJ0dWFsIFBEIGRldmljZSwgaXQgZG9lcw0KPiA+ID4g
+PiA+ID4gbm90IGhlbHAgZm9yIHBhcnNpbmcgdGhlIHJlYWwgZGV2aWNlIGluZm9ybWF0aW9uIGZy
+b20gZGV2aWNlIHRyZWUsIGUuZy4NCj4gPiA+ID4gPiA+IERldmljZS9Qb3dlciBJRHMsIENsb2Nr
+cyBhbmQgaXQncyB1bndhcmUgb2Ygd2hpY2ggcmVhbCBwb3dlcg0KPiA+ID4gPiA+ID4gZG9tYWlu
+IHRoZSBkZXZpY2Ugc2hvdWxkIGF0dGFjaC4NCj4gPiA+ID4gPg0KPiA+ID4gPiA+IFRoYW5rcyBm
+b3Igd29ya2luZyBvbiB0aGlzIQ0KPiA+ID4gPiA+DQo+ID4gPiA+ID4gSSB3b3VsZCBhcHByZWNp
+YXRlIGlmIHRoZSBjaGFuZ2Vsb2cgY291bGQgY2xhcmlmeSB0aGUgcHJvYmxlbSBhIGJpdC4NCj4g
+PiA+ID4gPiBQZXJoYXBzIHNvbWV0aGluZyBhbG9uZyB0aGUgbGluZXMgb2YgdGhlIGJlbG93Lg0K
+PiA+ID4gPiA+DQo+ID4gPiA+DQo+ID4gPiA+IFNvdW5kcyBnb29kIHRvIG1lLg0KPiA+ID4gPiBJ
+IHdpbGwgYWRkIHRoZW0gaW4gY29tbWl0IG1lc3NhZ2UuDQo+ID4gPiA+IFRoYW5rcyBmb3IgdGhl
+IHN1Z2dlc3Rpb24uDQo+ID4gPiA+DQo+ID4gPiA+ID4gIkEgZ2VucGQgcHJvdmlkZXIncyAtPmF0
+dGFjaF9kZXYoKSBjYWxsYmFjayBtYXkgYmUgaW52b2tlZCB3aXRoDQo+ID4gPiA+ID4gYSBzbyBj
+YWxsZWQgdmlydHVhbCBkZXZpY2UsIHdoaWNoIGlzIGNyZWF0ZWQgYnkgZ2VucGQsIGF0IHRoZQ0K
+PiA+ID4gPiA+IHBvaW50IHdoZW4gYSBkZXZpY2UgaXMgYmVpbmcgYXR0YWNoZWQgdG8gb25lIG9m
+IGl0cw0KPiA+ID4gPiA+IGNvcnJlc3BvbmRpbmcgbXVsdGlwbGUgUE0NCj4gPiA+IGRvbWFpbnMu
+DQo+ID4gPiA+ID4NCj4gPiA+ID4gPiBJbiB0aGVzZSBjYXNlcywgdGhlIGdlbnBkIHByb3ZpZGVy
+IGZhaWxzIHRvIGxvb2sgdXAgYW55DQo+ID4gPiA+ID4gcmVzb3VyY2UsIGJ5IGENCj4gPiA+ID4g
+PiBjbGtfZ2V0KCkgZm9yIGV4YW1wbGUsIGZvciB0aGUgdmlydHVhbCBkZXZpY2UgaW4gcXVlc3Rp
+b24uIFRoaXMNCj4gPiA+ID4gPiBpcyBiZWNhdXNlLCB0aGUgdmlydHVhbCBkZXZpY2UgdGhhdCB3
+YXMgY3JlYXRlZCBieSBnZW5wZCwgZG9lcw0KPiA+ID4gPiA+IG5vdCBoYXZlIHRoZSB2aXJ0X2Rl
+di0+b2Zfbm9kZSBhc3NpZ25lZC4iDQo+ID4gPiA+ID4NCj4gPiA+ID4gPiA+DQo+ID4gPiA+ID4g
+PiBFeHRlbmQgdGhlIGZyYW1ld29yayBhIGJpdCB0byBzdG9yZSB0aGUgbXVsdGkgUE0gZG9tYWlu
+cw0KPiA+ID4gPiA+ID4gaW5mb3JtYXRpb24gaW4gcGVyLWRldmljZSBzdHJ1Y3QgZ2VuZXJpY19w
+bV9kb21haW5fZGF0YSwgdGhlbg0KPiA+ID4gPiA+ID4gcG93ZXIgZG9tYWluIGRyaXZlciBjb3Vs
+ZCByZXRyaWV2ZSBpdCBmb3IgbmVjZXNzYXJ5IG9wZXJhdGlvbnMNCj4gPiA+ID4gPiA+IGR1cmlu
+Zw0KPiA+ID4gYXR0YWNoX2RldigpLg0KPiA+ID4gPiA+ID4NCj4gPiA+ID4gPiA+IFR3byBuZXcg
+QVBJcyBnZW5wZF9pc19tcGRfZGV2aWNlKCkgYW5kIGRldl9ncGRfbXBkX2RhdGEoKSBhcmUNCj4g
+PiA+ID4gPiA+IGFsc28gaW50cm9kdWNlZCB0byBlYXNlIHRoZSBkcml2ZXIgb3BlcmF0aW9uLg0K
+PiA+ID4gPiA+ID4NCj4gPiA+ID4gPiA+IENjOiAiUmFmYWVsIEouIFd5c29ja2kiIDxyandAcmp3
+eXNvY2tpLm5ldD4NCj4gPiA+ID4gPiA+IENjOiBLZXZpbiBIaWxtYW4gPGtoaWxtYW5Aa2VybmVs
+Lm9yZz4NCj4gPiA+ID4gPiA+IENjOiBVbGYgSGFuc3NvbiA8dWxmLmhhbnNzb25AbGluYXJvLm9y
+Zz4NCj4gPiA+ID4gPiA+IENjOiBHcmVnIEtyb2FoLUhhcnRtYW4gPGdyZWdraEBsaW51eGZvdW5k
+YXRpb24ub3JnPg0KPiA+ID4gPiA+ID4gU2lnbmVkLW9mZi1ieTogRG9uZyBBaXNoZW5nIDxhaXNo
+ZW5nLmRvbmdAbnhwLmNvbT4NCj4gPiA+ID4gPiA+IC0tLQ0KPiA+ID4gPiA+ID4gVGhpcyBwYXRj
+aCBpcyBhIGZvbGxvdy11cCB3b3JrIG9mIHRoZSBlYXJsaWVyIGRpc2N1c3Npb24gd2l0aA0KPiA+
+ID4gPiA+ID4gVWxmIEhhbnNzb24gYWJvdXQgdGhlIG11bHRpIFBNIGRvbWFpbnMgc3VwcG9ydCBm
+b3IgdGhlDQo+ID4gPiA+ID4gPiBhdHRhY2hfZGV2KCkgZnVuY3Rpb24NCj4gPiA+ID4gPiBbMV0u
+DQo+ID4gPiA+ID4gPiBBZnRlciBhIGJpdCBtb3JlIHRoaW5raW5nLCB0aGlzIGlzIGEgbGVzcyBp
+bnRydXNpdmUNCj4gPiA+ID4gPiA+IGltcGxlbWVudGF0aW9uIHdpdGggdGhlIG1pbmludW0gaW1w
+YWN0IG9uIHRoZSBleGlzdCBmdW5jdGlvbg0KPiA+ID4gPiA+ID4gZGVmaW5pdGlvbnMgYW5kIGNh
+bGxpbmcNCj4gPiA+ID4gPiBmb2xsb3dzLg0KPiA+ID4gPiA+ID4gT25lIGtub3duIGxpdHRsZSBk
+cmF3YmFjayBpcyB0aGF0IHdlIGhhdmUgdG8gdXNlIHRoZSBkZXZpY2UNCj4gPiA+ID4gPiA+IGRy
+aXZlciBwcml2YXRlIGRhdGEgKGRldmljZS5kcnZkYXRhKSB0byBwYXNzIGRvd24gdGhlIG11bHRp
+DQo+ID4gPiA+ID4gPiBkb21haW5zIGluZm9ybWF0aW9uIGluIGEgZWFybGllciB0aW1lLiBIb3dl
+dmVyLCBhcyBtdWx0aSBQRA0KPiA+ID4gPiA+ID4gZGV2aWNlcyBhcmUgY3JlYXRlZCBieSBkb21h
+aW4gZnJhbWV3b3JrLCB0aGlzIHNlZW1zIHRvIGJlIHNhZmUNCj4gPiA+ID4gPiA+IHRvIHVzZSBp
+dCBpbiBkb21haW4gY29yZSBjb2RlIGFzIGRldmljZSBkcml2ZXIgaXMgbm90IGxpa2VseSBnb2lu
+ZyB0byB1c2UNCj4gaXQuDQo+ID4gPiA+ID4gPiBBbnl3YXksIGlmIGFueSBiZXR0ZXIgaWRlYXMs
+IHBsZWFzZSBsZXQgbWUga25vdy4NCj4gPiA+ID4gPiA+DQo+ID4gPiA+ID4gPiBXaXRoIHRoZSB0
+d28gbmV3IEFQSXMsIHRoZSB1c2luZyBjYW4gYmUgc2ltcGx5IGFzOg0KPiA+ID4gPiA+ID4gc3Rh
+dGljIGludCB4eHhfYXR0YWNoX2RldihzdHJ1Y3QgZ2VuZXJpY19wbV9kb21haW4gKmRvbWFpbiwN
+Cj4gPiA+ID4gPiA+ICAgICAgICAgICAgICAgICAgICAgICAgICAgc3RydWN0IGRldmljZSAqZGV2
+KSB7DQo+ID4gPiA+ID4gPiAgICAgICAgIC4uLg0KPiA+ID4gPiA+ID4gICAgICAgICBpZiAoZ2Vu
+cGRfaXNfbXBkX2RldmljZShkZXYpKSB7DQo+ID4gPiA+ID4gPiAgICAgICAgICAgICAgICAgbXBk
+X2RhdGEgPSBkZXZfZ3BkX21wZF9kYXRhKGRldik7DQo+ID4gPiA+ID4gPiAgICAgICAgICAgICAg
+ICAgbnAgPSBtcGRfZGF0YS0+cGFyZW50LT5vZl9ub2RlOw0KPiA+ID4gPiA+ID4gICAgICAgICAg
+ICAgICAgIGlkeCA9IG1wZF9kYXRhLT5pbmRleDsNCj4gPiA+ID4gPiA+ICAgICAgICAgICAgICAg
+ICAvL2R0cyBwYXJzaW5nDQo+ID4gPiA+ID4gPiAgICAgICAgICAgICAgICAgLi4uDQo+ID4gPiA+
+ID4gPiAgICAgICAgIH0NCj4gPiA+ID4gPiA+ICAgICAgICAgLi4uDQo+ID4gPiA+ID4NCj4gPiA+
+ID4gPiBJIHRoaW5rIHdlIGNhbiBtYWtlIHRoaXMgYSBsb3QgbGVzcyBjb21wbGljYXRlZC4gSnVz
+dCBhc3NpZ24NCj4gPiA+ID4gPiB2aXJ0X2Rldi0+b2Zfbm9kZSA9IG9mX25vZGVfZ2V0KGRldi0+
+b2Zfbm9kZSksIHNvbWV3aGVyZSBpbg0KPiA+ID4gPiA+IGdlbnBkX2Rldl9wbV9hdHRhY2hfYnlf
+aWQoKSBhbmQgYmVmb3JlIGNhbGxpbmcNCj4gPiA+IF9fZ2VucGRfZGV2X3BtX2F0dGFjaCgpLg0K
+PiA+ID4gPiA+DQo+ID4gPiA+ID4gRG9pbmcgdGhhdCwgd291bGQgbWVhbiB0aGUgZ2VucGQgcHJv
+dmlkZXIncyAtPmF0dGFjaF9kZXYoKQ0KPiA+ID4gPiA+IGNhbGxiYWNrLCBkb24ndCBoYXZlIHRv
+IGRpc3Rpbmd1aXNoIGJldHdlZW4gdmlydHVhbCBhbmQgbm9uLXZpcnR1YWwNCj4gZGV2aWNlcy4N
+Cj4gPiA+ID4gPiBJbnN0ZWFkIHRoZXkgc2hvdWxkIGJlIGFibGUgdG8gbG9vayB1cCByZXNvdXJj
+ZXMgaW4gdGhlIHNhbWUgd2F5DQo+ID4gPiA+ID4gYXMgdGhleSBkaWQgYmVmb3JlLg0KPiA+ID4g
+PiA+DQo+ID4gPiA+DQo+ID4gPiA+IFllcywgdGhhdCBzZWVtcyBsaWtlIGEgc21hcnQgd2F5Lg0K
+PiA+ID4gPiBCdXQgdGhlcmUncyBzdGlsbCBhIHJlbWFpbiBwcm9ibGVtIHRoYXQgaG93IGFib3V0
+IHRoZSBkb21haW4gaW5kZXgNCj4gPiA+ID4gaW5mb3JtYXRpb24gbmVlZGVkIGZvciBhdHRhY2hf
+ZGV2KCk/DQo+ID4gPiA+DQo+ID4gPg0KPiA+ID4gV2hhdCBkbyB5b3UgbWVhbiBieSBkb21haW4g
+aW5kZXg/DQo+ID4gPg0KPiA+DQo+ID4gQXMgd2UncmUgdXNpbmcgbXVsdGkgcG93ZXIgZG9tYWlu
+cyBpbiBEZXZpY2V0cmVlLCBhdHRhY2hfZGV2KCkgbmVlZHMNCj4gPiB0byBrbm93IHdoaWNoIHBv
+d2VyIGRvbWFpbiB0aGUgZGV2aWNlIGlzIGdvaW5nIHRvIGF0dGFjaC4NCj4gPiBlLmcuDQo+ID4g
+c2RoYzE6IG1tY0A1YjAxMDAwMCB7DQo+ID4gICAgICAgICBjb21wYXRpYmxlID0gImZzbCxpbXg4
+cXhwLXVzZGhjIiwgImZzbCxpbXg3ZC11c2RoYyI7DQo+ID4gICAgICAgICBwb3dlci1kb21haW5z
+ID0gPCZwZCBJTVhfU0NfUl9TREhDXzA+LCA8JnBkDQo+IElNWF9TQ19SX1NESENfMT47ICAgLy8g
+Zm9yIHRlc3Qgb25seQ0KPiA+ICAgICAgICAgLi4uDQo+ID4gfTsNCj4gPiBUaGVuIGF0dGFjaF9k
+ZXYoKSBjYW4gcGFyc2UgdGhlIGNvcnJlY3QgInJlc291cmNlIGlkIiAoZS5nLg0KPiA+IElNWF9T
+Q19SX1NESENfMSkgZnJvbSBkZXZpY2UgdHJlZSBBbmQgc3RvcmUgaXQgaW4gcGVyLWRldmljZSBz
+dHJ1Y3QNCj4gZ2VuZXJpY19wbV9kb21haW5fZGF0YSBmb3IgbGF0ZXIgc3RhcnQoKS9zdG9wKCkg
+dXNpbmcuDQo+IA0KPiBJIHNlZSwgdGhhbmtzIGZvciBjbGFyaWZ5aW5nLg0KPiANCj4gU2VlbSBs
+aWtlLCB3ZSBoYXZlIHR3byBvcHRpb25zIHRvIG1ha2UgdGhpcyB3b3JrLg0KPiANCj4gMS4gTGV0
+IGdlbnBkIHByZS1zdG9yZSB0aGUgaW5kZXggaW4gYSB0aGUgcGVyIGRldmljZSBnZW5lcmljX3Bt
+X2RvbWFpbl9kYXRhDQo+IHdoaWxlIGRvaW5nIHRoZSBhdHRhY2ggYW5kIGJlZm9yZSBjYWxsaW5n
+IHRoZQ0KPiAtPmF0dGFjaF9kZXYoKSBjYWxsYmFjay4gVGhpcyB3b3VsZCBtYWtlIHNlbnNlLCBp
+ZiB3ZSBjb25zaWRlciB0aGlzIHRvDQo+IGJlIGEgY29tbW9uIHRoaW5nLg0KPiANCj4gMi4gUHJv
+dmlkZSB0aGUgaW5kZXggYXMgYW4gYWRkaXRpb25hbCBuZXcgaW4tcGFyYW1ldGVyIHRvIHRoZQ0K
+PiAtPmF0dGFjaF9kZXYoKSBjYWxsYmFjay4gVGhpcyByZXF1aXJlcyBhIHRyZWUgd2lkZSBjaGFu
+Z2UgYXMgaXQgbWVhbnMNCj4gd2UgbmVlZCB0byB1cGRhdGUgZXhpc3RpbmcgY29kZSB1c2luZyB0
+aGUgLT5hdHRhY2hfZGV2KCkgY2FsbGJhY2suDQo+IA0KPiBJIHdvdWxkIHByb2JhYmx5IHRyeSAx
+KSBmaXJzdCB0byBzZWUgaG93IHRoZSBjb2RlIHdvdWxkIGxvb2sgbGlrZSBhbmQgdGhlbiBmYWxs
+DQo+IGJhY2sgdG8gMikuIFdoYXQgZG8geW91IHRoaW5rPw0KPiANCg0KWWVzLCBJIGFncmVlIHdp
+dGggeW91Lg0KVGhpcyBwYXRjaCBpcyBleGFjdGx5IGRvaW5nIDEuDQoNCkZvciB5b3VyIGZvcm1l
+ciBzdWdnZXN0aW9uOg0KIiBKdXN0IGFzc2lnbiB2aXJ0X2Rldi0+b2Zfbm9kZSA9IG9mX25vZGVf
+Z2V0KGRldi0+b2Zfbm9kZSksIHNvbWV3aGVyZSBpbg0KZ2VucGRfZGV2X3BtX2F0dGFjaF9ieV9p
+ZCgpIGFuZCBiZWZvcmUgY2FsbGluZyBfX2dlbnBkX2Rldl9wbV9hdHRhY2goKS4NCkRvaW5nIHRo
+YXQsIHdvdWxkIG1lYW4gdGhlIGdlbnBkIHByb3ZpZGVyJ3MgLT5hdHRhY2hfZGV2KCkgY2FsbGJh
+Y2ssDQpkb24ndCBoYXZlIHRvIGRpc3Rpbmd1aXNoIGJldHdlZW4gdmlydHVhbCBhbmQgbm9uLXZp
+cnR1YWwgZGV2aWNlcyINCg0KQXMgdGhpcyBjYW4gb25seSBzb2x2ZSBwYXNzaW5nIHRoZSByZWFs
+IGRldmljZSBub2RlIGlzc3VlIGFuZCB3ZSBzdGlsbCBuZWVkDQpwcmUtc3RvcmUgdGhlIGluZGV4
+IGluIGEgdGhlIHBlciBkZXZpY2UgZ2VuZXJpY19wbV9kb21haW5fZGF0YSBhbmQgdGhlbg0KZGlz
+dGluZ3Vpc2ggaWYgaXQncyBtdWx0aSBwb3dlciBkb21haW4gdmlydHVhbCBkZXZpY2VzIGluIGF0
+dGFjaF9kZXYoKSwgc28NCkknbSBub3Qgc3VyZSBpZiBpdCdzIHN0aWxsIHF1aXRlIG5lY2Vzc2Fy
+eSB0byBkbyB0aGF0IHdheSBieSBhc3NpZ25pbmcNCiJ2aXJ0X2Rldi0+b2Zfbm9kZSA9IG9mX25v
+ZGVfZ2V0KGRldi0+b2Zfbm9kZSkgYmVmb3JlIGF0dGFjaCIuDQpQcm9iYWJseSBhZnRlciBmdWxs
+eSBzd2l0Y2ggdG8gb3B0aW9uIDIsIHRoZW4gd2UgY2FuIGRvIGl0IHRvIGZ1bGx5IGRyb3AgdGhl
+IHVzaW5nDQpvZiBwZXIgZGV2aWNlIGdlbmVyaWNfcG1fZG9tYWluX2RhdGEgdG8gbWFrZSBpdCB0
+cmFuc3BhcmVudCB0byBhdHRhY2hfZGV2KCkNCnVzZXJzLg0KDQpTbyBub3cgdGhlIG9wdGlvbnMg
+bWF5IGJlOg0KMS4gUHJlLXN0b3JlIGJvdGggZGV2aWNlIG5vZGUgYW5kIGRvbWFpbiBpbmRleCBp
+biBnZW5lcmljX3BtX2RvbWFpbl9kYXRhIGJlZm9yZQ0KICBDYWxsaW5nIGF0dGFjaF9kZXYoKS4g
+VGhpcyBpcyBleGFjdGx5IHRoaXMgcGF0Y2ggZG9lcy4gDQoyLiBQcmUtc3RvcmUgb25seSBkb21h
+aW4gaW5kZXggaW4gZ2VuZXJpY19wbV9kb21haW5fZGF0YS4gRm9yIGRldmljZSBub2RlLCBhc3Np
+Z25pbmcNCiAgInZpcnRfZGV2LT5vZl9ub2RlID0gb2Zfbm9kZV9nZXQoZGV2LT5vZl9ub2RlKSBi
+ZWZvcmUgYXR0YWNoLg0KMy4gQ2hhbmdlIGF0dGFjaF9kZXYoKSB0byBwYXNzaW5nIGRvbWFpbiBp
+bmRleCBhbmQgYXNzaWduaW5nDQogICJ2aXJ0X2Rldi0+b2Zfbm9kZSA9IG9mX25vZGVfZ2V0KGRl
+di0+b2Zfbm9kZSkgYmVmb3JlIGF0dGFjaC4NCg0KQ2FuIHlvdSBwbGVhc2UgdGVsbCB3aGF0J3Mg
+eW91ciBwcmVmZXI/DQoNCklmIHlvdSdyZSBva2F5IHdpdGggMSwgY2FuIHlvdSBwbGVhc2UgcmV2
+aWV3IGlmIHRoaXMgcGF0Y2ggaXMgb2sgdG8geW91Pw0KDQpPciB3ZSBkaXJlY3RseSBjaGFuZ2Ug
+dG8gMyB3aGljaCBpcyBmdWxseSB0cmFuc3BhcmVudCB0byB1c2Vycw0KKHVzZXJzIGRvbid0IG5l
+ZWQgdG8gZGlzdGluZ3Vpc2ggd2hldGhlciBpdCdzIG11bHRpIHBkIGRldmljZXMpLg0KZS5nLg0K
+c2F2aW5nIGdlbnBkX2lzX21wZF9kZXZpY2UoKSBhbmQgZGV2X2dwZF9tcGRfZGF0YSgpIGluIHRo
+aXMgcGF0Y2guDQoNClJlZ2FyZHMNCkRvbmcgQWlzaGVuZw0KDQo+ID4NCj4gPiA+IFRoZSAtPmF0
+dGFjaF9kZXYoKSBpcyBnaXZlbiBib3RoIHRoZSBkZXZpY2UgYW5kIHRoZSBnZW5wZCBpbg0KPiA+
+ID4gcXVlc3Rpb24gYXMgaW4tcGFyYW1ldGVycy4gQ291bGQgeW91IHN0b3JlIHRoZSBkb21haW4g
+aW5kZXggYXMgcGFydCBvZg0KPiB5b3VyIGdlbnBkIHN0cnVjdD8NCj4gPiA+IE5vPw0KPiA+ID4N
+Cj4gPg0KPiA+IEFGQUlDVCBuby4NCj4gPiBXaXRoIHRoZSBvbmx5IGRldmljZSBhbmQgdGhlIGdl
+bnBkIGFzIGluLXBhcmFtZXRlcnMsIHRoZQ0KPiA+IC0+YXR0YWNoX2RldigpIGRvbid0IGtub3cg
+d2hpY2ggcG93ZXIgZG9tYWluIHRvIHRvIHBhcnNlIGZyb20gZGV2aWNlIHRyZWUuDQo+ID4gVGh1
+cyBubyB3YXkgdG8gc3RvcmUgaXQgaW4gZ2VucGQgc3RydWN0Lg0KPiANCj4gQXMgc3RhdGVkLCB5
+b3UgYXJlIHJpZ2h0IQ0KPiANCj4gPg0KPiA+ID4gSWYgeW91IGFyZSB0YWxraW5nIGFib3V0IHVz
+aW5nIHRoZSAicG93ZXItZG9tYWlucyIgc3BlY2lmaWVyIGZyb20NCj4gPiA+IHRoZSBEVCBub2Rl
+IG9mIHRoZSBkZXZpY2UsIHRoYXQgc2hvdWxkIHRoZW4gd29yaywgc2ltaWxhciB0byBhcyBiZWVu
+DQo+ID4gPiBkb25lDQo+ID4gPiBpbjoNCj4gPiA+DQo+ID4gPiBkcml2ZXJzL3NvYy90aS90aV9z
+Y2lfcG1fZG9tYWlucy5jDQo+ID4gPiB0aV9zY2lfcGRfYXR0YWNoX2RldigpDQo+ID4gPg0KPiA+
+DQo+ID4gVEkgYWN0dWFsbHkgZG9lcyBub3QgdXNlIG11bHRpIFBNIGRvbWFpbnMuIFNvIHRoZXkg
+Y2FuIGFsd2F5cyBwYXJzZQ0KPiA+IHRoZSBmaXJzdCBwb3dlciBkb21haW5zIHRvIGdldCB0aGUg
+Y29ycmVjdCAicmVzb3VyY2UgaWQiIC8gcG93ZXIgaWQuLg0KPiA+DQo+ID4gd2R0OiB3ZHRAMDIy
+NTAwMDAgew0KPiA+ICAgICAgICAgY29tcGF0aWJsZSA9ICJ0aSxrZXlzdG9uZS13ZHQiLCAidGks
+ZGF2aW5jaS13ZHQiOw0KPiA+ICAgICAgICAgcG93ZXItZG9tYWlucyA9IDwmazJnX3BkcyAweDIy
+PjsgfTsNCj4gPg0KPiA+IHN0YXRpYyBpbnQgdGlfc2NpX3BkX2F0dGFjaF9kZXYoc3RydWN0IGdl
+bmVyaWNfcG1fZG9tYWluICpkb21haW4sDQo+ID4gICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICBzdHJ1Y3QgZGV2aWNlICpkZXYpIHsNCj4gPiAgICAgICAgIC4uLg0KPiA+ICAgICAgICAg
+ICAgICAgICAvLyB0aGUgaW5kZXggaXMgYWx3YXlzIDANCj4gPiAgICAgICAgIHJldCA9IG9mX3Bh
+cnNlX3BoYW5kbGVfd2l0aF9hcmdzKG5wLCAicG93ZXItZG9tYWlucyIsDQo+ID4gICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAiI3Bvd2VyLWRvbWFpbi1jZWxscyIsIDAs
+DQo+ICZwZF9hcmdzKTsNCj4gPiAgICAgICAgIGlkeCA9IHBkX2FyZ3MuYXJnc1swXTsNCj4gPiAg
+ICAgICAgIC4uLg0KPiA+IH0NCj4gPg0KPiA+ID4gWW91IG1heSBhbHNvIHByb3ZpZGUgeW91ciBv
+d24geGxhdGUgY2FsbGJhY2sgZm9yIHlvdXIgZ2VucGQNCj4gPiA+IHByb3ZpZGVyLCBsaWtlIHdo
+YXQgaXMgZG9uZSBpbiBkcml2ZXJzL3NvYy90ZWdyYS9wb3dlcmdhdGUtYnBtcC4gLSBpZiB0aGF0
+DQo+IGhlbHBzIT8NCj4gPiA+DQo+ID4NCj4gPiBJJ20gYWZyYWlkIG5vLg0KPiA+IFBlciBvdXIg
+ZWFybGllciBkaXNjdXNzaW9uLCB3ZSdyZSBnb2luZyB0byB1c2UgYSBzaW5nbGUgZ2xvYmFsIHBv
+d2VyDQo+ID4gZG9tYWluIChUZWdyYSBpcyBub3QpIGFuZCBpbXBsZW1lbnQgdGhlIC0+YXR0YWNo
+fGRldGFjaF9kZXYoKSBjYWxsYmFjaw0KPiA+IGZvciB0aGUgZ2VucGQgYW5kIHVzZSB0aGUgcmVn
+dWxhciBvZl9nZW5wZF9hZGRfcHJvdmlkZXJfc2ltcGxlKCkuDQo+ID4NCj4gPiBGcm9tIHdpdGhp
+biB0aGUgLT5hdHRhY2hfZGV2KCksIHdlIGNvdWxkIGdldCB0aGUgT0Ygbm9kZSBmb3IgdGhlDQo+
+ID4gZGV2aWNlIHRoYXQgaXMgYmVpbmcgYXR0YWNoZWQgYW5kIHRoZW4gcGFyc2UgdGhlIHBvd2Vy
+LWRvbWFpbiBjZWxsDQo+IGNvbnRhaW5pbmcgdGhlICJyZXNvdXJjZSBpZCINCj4gPiBhbmQgc3Rv
+cmUgdGhhdCBpbiB0aGUgcGVyIGRldmljZSBzdHJ1Y3QgZ2VuZXJpY19wbV9kb21haW5fZGF0YSAo
+d2UNCj4gPiBoYXZlIHZvaWQgcG9pbnRlciB0aGVyZSBmb3Igc3RvcmluZyB0aGVzZSBraW5kIG9m
+IHRoaW5ncykuDQo+ID4NCj4gPiBBZGRpdGlvbmFsbHksIHdlIG5lZWQgaW1wbGVtZW50IHRoZSAt
+PnN0b3AoKSBhbmQgLT5zdGFydCgpIGNhbGxiYWNrcw0KPiA+IG9mIGdlbnBkLCB3aGljaCBpcyB3
+aGVyZSB3ZSAicG93ZXIgb24vb2ZmIiBkZXZpY2VzLCByYXRoZXIgdGhhbiB1c2luZw0KPiA+IHRo
+ZQ0KPiA+IC0+cG93ZXJfb258b2ZmKCkgY2FsbGJhY2tzLg0KPiA+DQo+ID4gTm93IHRoZSBwcm9i
+bGVtIGlzIGN1cnJlbnQgYXR0YWNoX2RldigpIGhhcyBubyBpZGVhIHRvIHBhcnNlIHRoZQ0KPiA+
+IGNvcnJlY3QgcG93ZXIgZG9tYWluIGNvbnRhaW5pbmcgdGhlICJyZXNvdXJjZSBpZCIuDQo+ID4g
+VGhhdCdzIHdoeSBJIHN0b3JlZCBpdCBpbiBwZXItZGV2aWNlIHN0cnVjdCBnZW5lcmljX3BtX2Rv
+bWFpbl9kYXRhDQo+ID4gYmVmb3JlIGNhbGxpbmcNCj4gPiBhdHRhY2hfZGV2KCkgaW4gdGhpcyBw
+YXRjaCBpbXBsZW1lbnRhdGlvbi4NCj4gPg0KPiA+IEFueSBpZGVhcz8NCj4gDQo+IEFnYWluLCB0
+aGFua3MgZm9yIGNsYXJpZnlpbmchDQo+IA0KPiBTZWUgbXkgaWRlYXMgYWJvdmUuDQo+IA0KPiBL
+aW5kIHJlZ2FyZHMNCj4gVWZmZQ0K
