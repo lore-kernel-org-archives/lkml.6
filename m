@@ -6,67 +6,66 @@ X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
 	SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C334EC43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 05:54:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA38DC43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 05:54:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 848302087F
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 05:54:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A954A21871
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 05:54:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="RTdHA5eg"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Uy7bcXt6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726757AbfADFy3 (ORCPT
+        id S1726801AbfADFyr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 00:54:29 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:35866 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726093AbfADFy3 (ORCPT
+        Fri, 4 Jan 2019 00:54:47 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:50714 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726093AbfADFyq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 00:54:29 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x045rjFQ116367;
-        Fri, 4 Jan 2019 05:54:20 GMT
+        Fri, 4 Jan 2019 00:54:46 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x045rXsQ157267;
+        Fri, 4 Jan 2019 05:54:41 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
  from : references : date : in-reply-to : message-id : mime-version :
  content-type; s=corp-2018-07-02;
- bh=UDvk/PYOn1HQzMW6Vz5YPwg+wE6thHGEQoQhoUP/IXQ=;
- b=RTdHA5egKcPvzwjJOFGwGxgipVg6zlUqzY5UlHHpV2cpY+nzgT2h4WB1T3lxcJ1nZjef
- Z4y13av7sCXNE2XDfSLRJrPOaJkE0ggGQNtCHdi5x2SRyxCrks8ZWgDBSlp+R/SQPgCU
- EM1LOTtrIasST2t9PA6VOrmMe1IGoWviVFLyspaKhl60WkneKa3ZBSCSBqCx8n6PvEi6
- Xcs1RiJsBIN8EPHl8IdPKGDG9Yf+9RCdN02KV1aHLgwHC/bRJyiAqlMngfot0DKl3AMy
- FWlDY0tiE0vPK1aCTY6L+7WVEQWSbwbUbnJxp3zzBcoNg0jpdqAJrRX0byoEqA5uH5H3 ZA== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2120.oracle.com with ESMTP id 2pp1jrae53-1
+ bh=o2lK/OvwVBOtTVbc2KTWkUsVg2IXA079LsYp/iSwQoo=;
+ b=Uy7bcXt6eEC7dwTcRM/x1JVOP695ouy3UJv7f0HcAI1CJ8/F1nDO0EllYR8HAxd+5H5T
+ 0nl5NmHj27Fc77O2LCueuFwwoECia9evH/MeSYdH6eJd17OrhcLB1lUN6PXRQrRP3D2Z
+ e7Q9ZQoNV4KJ/q78AwiX8hoelTt404CUoae4cICdC0CWUgE3DXdj/+2d3oiNULzvxTO/
+ Z5vXGyveTKWp7pFLTgfJXcqg1l+VJG6z6vwRfTdgHZ1V2tEfv9l652122qLj8E+2Sm8h
+ qXbq+8nW8UuZDNfzyeM3sN7zVbJqDDiulTj9wNN4CqGe8b4hrje+bMkfx4FdnjlTMeer 4A== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2130.oracle.com with ESMTP id 2pp0bu2hew-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 04 Jan 2019 05:54:20 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x045sDdF026768
+        Fri, 04 Jan 2019 05:54:40 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x045sekA023983
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 4 Jan 2019 05:54:13 GMT
+        Fri, 4 Jan 2019 05:54:40 GMT
 Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x045sAL0027509;
-        Fri, 4 Jan 2019 05:54:11 GMT
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x045sdoI024989;
+        Fri, 4 Jan 2019 05:54:39 GMT
 Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 03 Jan 2019 21:54:10 -0800
-To:     Ching Huang <ching2048@areca.com.tw>
-Cc:     martin.petersen@oracle.com, James.Bottomley@HansenPartnership.com,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dan.carpenter@oracle.com, hch@infradead.org,
-        colin.king@canonical.com
-Subject: Re: [PATCH 0/12] scsi: arcmsr: update for ccb structure address can above 4GB
+        with ESMTP ; Thu, 03 Jan 2019 21:54:39 -0800
+To:     John Garry <john.garry@huawei.com>
+Cc:     <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>,
+        <linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>,
+        <linux-scsi@vger.kernel.org>
+Subject: Re: [PATCH 0/8] hisi_sas: debugfs support
 From:   "Martin K. Petersen" <martin.petersen@oracle.com>
 Organization: Oracle Corporation
-References: <1545207461.4457.10.camel@Centos6.3-64>
-Date:   Fri, 04 Jan 2019 00:54:06 -0500
-In-Reply-To: <1545207461.4457.10.camel@Centos6.3-64> (Ching Huang's message of
-        "Wed, 19 Dec 2018 16:17:41 +0800")
-Message-ID: <yq11s5t7ytd.fsf@oracle.com>
+References: <1545235006-151716-1-git-send-email-john.garry@huawei.com>
+Date:   Fri, 04 Jan 2019 00:54:37 -0500
+In-Reply-To: <1545235006-151716-1-git-send-email-john.garry@huawei.com> (John
+        Garry's message of "Wed, 19 Dec 2018 23:56:38 +0800")
+Message-ID: <yq1wonl6k82.fsf@oracle.com>
 User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9125 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=981
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=499
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1810050000 definitions=main-1901040052
 Sender: linux-kernel-owner@vger.kernel.org
@@ -75,27 +74,18 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-Ching,
+John,
 
-> This patch series are against to mkp's 4.21/scsi-queue.
+> This patchset adds debugfs support for capturing driver state for
+> particular times when the HW has malfunctioned (and we must reset the HW).
 >
-> 1. Rename acb structure member roundup_ccbsize to ioqueue_size
-> 2. Rename arcmsr_free_mu to arcmsr_free_io_queue
-> 3. Merge arcmsr_alloc_io_queue to arcmsr_alloc_ccb_pool
-> 4. Update arcmsr_alloc_ccb_pool for ccb buffer address above 4GB
-> 5. Update codes for ACB_ADAPTER_TYPE_A in case of ccb address above 4GB
-> 6. Update codes for ACB_ADAPTER_TYPE_B in case of ccb address above 4GB
-> 7. Update codes for ACB_ADAPTER_TYPE_C in case of ccb address above 4GB
-> 8. Update codes for ACB_ADAPTER_TYPE_D in case of ccb address above 4GB
-> 9. Add an option of set dma_mask_64 for ACB_ADAPTER_TYPE_A
-> 10.Separate 'set dma mask' as a function
-> 11.Fix suspend/resume of ACB_ADAPTER_TYPE_B
-> 12.Update driver version to v1.40.00.10-20181217
+> Every controller HW version has had bugs. These bugs have been very
+> painful to debug. One useful tool to debug these is being able to capture
+> and export HW registers and driver control structures at point of failure.
+>
+> This feature has been maintained out-of-tree for some time, so add it now.
 
 Applied to 4.22/scsi-queue, thanks!
-
-Your email threading ended up funny. Patchwork treated your submission
-as several distinct patch series.
 
 -- 
 Martin K. Petersen	Oracle Linux Engineering
