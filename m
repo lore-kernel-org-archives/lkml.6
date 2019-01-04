@@ -2,201 +2,149 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E18CEC43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 17:50:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11E36C43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 17:50:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE2F221872
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 17:50:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D1C75218E0
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 17:50:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="NHA8UPSF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729047AbfADRur (ORCPT
+        id S1729030AbfADRup (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 12:50:47 -0500
-Received: from foss.arm.com ([217.140.101.70]:47364 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728998AbfADRum (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 12:50:42 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B8336EBD;
-        Fri,  4 Jan 2019 09:50:41 -0800 (PST)
-Received: from [10.1.196.105] (eglon.cambridge.arm.com [10.1.196.105])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1355C3F5D4;
-        Fri,  4 Jan 2019 09:50:39 -0800 (PST)
-Subject: Re: [PATCH v4 1/6] arm64/kvm: preserve host HCR_EL2 value
-To:     Amit Daniel Kachhap <amit.kachhap@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Kristina Martsenko <kristina.martsenko@arm.com>,
-        kvmarm@lists.cs.columbia.edu,
-        Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>,
-        Dave Martin <Dave.Martin@arm.com>, linux-kernel@vger.kernel.org
-References: <1545119810-12182-1-git-send-email-amit.kachhap@arm.com>
- <1545119810-12182-2-git-send-email-amit.kachhap@arm.com>
-From:   James Morse <james.morse@arm.com>
-Message-ID: <47a81c5b-1b1b-2c87-8c90-af5ef63d1364@arm.com>
-Date:   Fri, 4 Jan 2019 17:50:38 +0000
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Fri, 4 Jan 2019 12:50:45 -0500
+Received: from mail-eopbgr40044.outbound.protection.outlook.com ([40.107.4.44]:52110
+        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727786AbfADRul (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 12:50:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/ycRanE1PLC28Kv5AjRGhHR3Ni2r+ij468A0lieghZk=;
+ b=NHA8UPSF2+ZoOxhqQVzh0zhtVPBEywzudQqivaNOwd02JlpUBsDPWk5vjE7NYK8ocThuwjpp0liJy2WFRJG7haASUltdtaJwBej7wzdHdXJE7Z6FzQVc5CkJrK8iDAxsqvLqp5voINJjwYfK9FGbY52rjHrqZHOLYruEEGu/m1k=
+Received: from VI1PR0402MB2800.eurprd04.prod.outlook.com (10.172.255.18) by
+ VI1PR0402MB3389.eurprd04.prod.outlook.com (52.134.1.149) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1471.20; Fri, 4 Jan 2019 17:50:37 +0000
+Received: from VI1PR0402MB2800.eurprd04.prod.outlook.com
+ ([fe80::95a2:5df5:8d7b:22e9]) by VI1PR0402MB2800.eurprd04.prod.outlook.com
+ ([fe80::95a2:5df5:8d7b:22e9%7]) with mapi id 15.20.1495.005; Fri, 4 Jan 2019
+ 17:50:37 +0000
+From:   Ioana Ciornei <ioana.ciornei@nxp.com>
+To:     Rob Herring <robh@kernel.org>
+CC:     Leo Li <leoyang.li@nxp.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Roy Pledge <roy.pledge@nxp.com>,
+        Ioana Ciocoi Radulescu <ruxandra.radulescu@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 2/3] Documentation: DT: Add entry for DPAA2 console
+Thread-Topic: [PATCH 2/3] Documentation: DT: Add entry for DPAA2 console
+Thread-Index: AQHUmUIzLDDB55qxuECeWDzF4+LHLKWeFHgAgAFZMBA=
+Date:   Fri, 4 Jan 2019 17:50:37 +0000
+Message-ID: <VI1PR0402MB280090CC66E990AD6E82F52FE08E0@VI1PR0402MB2800.eurprd04.prod.outlook.com>
+References: <1545406240-3061-1-git-send-email-ioana.ciornei@nxp.com>
+ <1545406240-3061-3-git-send-email-ioana.ciornei@nxp.com>
+ <20190103203250.GA18731@bogus>
+In-Reply-To: <20190103203250.GA18731@bogus>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [86.34.165.90]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR0402MB3389;6:ygxncry4yY4OR9JzpbzbqjgZxtjgZ/s5fTwgKAYYKsavNT7RriJN2qdxRHCAZ4rGgxPFtfxWCd4P7Qy7MlsSugbLth6jwsDBRSU+EKlFwvFJrb2uNykmKVkp8LTMu+emVW1fF/m+bCi+phlU7GzDVUZ7xNj57SDmdaJuzLifiG8T1Vm/1sGfNl9hAQh2KT8yDjZCZn3670uHJXZffxbG26Sl4kR2BbEw40sStPLSr3X3kzSC2KrfnSooWsh6bJKesgy2GDA//xyINaiXfLrNYObLvONSpI7XdHNGvy/r+XIg4F4OsC96CLfoec9x8tWRM1eiew3LXL8IQcWERIC0pdhE0HOItkXOHOEqrF9n5YgiAZe/hiRt0Cp7jBrHgiwm8VTV4eBJ1ygatCgrADeffq7ka2M0yXZRcEeTw+tHEoRE4vbYfTGPcZ+RmcM1IOW1UjMVqUxTkLuJFWTqI3KvVA==;5:ooVnbf8T2EdYVejegfI+Paz097TrrQUWVVOSshcZOePRgWq4FFZj8sJDFjWeJUARk8548EBNkRPM6ZoVnzja39v19nst1uWix4nIVcC0N1xUHLebtnGPUAMxK+gyBHauxdNMfmED8Kaj3LU8hCx1YnrRG+t6P2WXIMayKuvW108=;7:bJqM7BNbk+HStP1jjIdwM/kZkc973Bd8xw0r+ZalhM+NpsS+n/D/DUYENAMY2TQ//AbmMffF1i2epBmde9+ljvf6XkZOKIbfy9Q6hRnStpoKiHxrULnJSLYjyrEHPhAvOGMpR/y32Ggscs9KNjNWvA==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: d579e93b-544b-4446-664c-08d6726d2262
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR0402MB3389;
+x-ms-traffictypediagnostic: VI1PR0402MB3389:
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=ioana.ciornei@nxp.com; 
+x-microsoft-antispam-prvs: <VI1PR0402MB3389AB9060FABCD0AAD7E3F5E08E0@VI1PR0402MB3389.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(908002)(999002)(5005026)(6040522)(8220060)(2401047)(8121501046)(10201501046)(3002001)(93006095)(93001095)(3231475)(944501520)(52105112)(6055026)(6041310)(20161123564045)(20161123560045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:VI1PR0402MB3389;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0402MB3389;
+x-forefront-prvs: 0907F58A24
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(346002)(376002)(39860400002)(396003)(366004)(199004)(189003)(106356001)(316002)(478600001)(54906003)(71190400001)(71200400001)(14454004)(6116002)(66066001)(105586002)(7736002)(305945005)(3846002)(68736007)(256004)(486006)(25786009)(5660300001)(9686003)(6916009)(44832011)(74316002)(97736004)(7696005)(2906002)(76176011)(6436002)(4326008)(86362001)(33656002)(99286004)(446003)(476003)(6246003)(229853002)(102836004)(26005)(6506007)(186003)(53936002)(11346002)(81166006)(81156014)(8676002)(55016002)(8936002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB3389;H:VI1PR0402MB2800.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: WpDelCzYVOvF1nOEtm+Pp2RjCHhzxzltFXXhcSk0MeXSmlWkpskDhqII76iCoxRvrBA4tq+17Rtwf6W+Dk+xLPgfAbJjmb+huQH7tWffWhVUEwvndYzBJXWjxxSqGIc/cN0GYXSTK/HSU7z4TWgie1r3q6lscKA6vr+YMDllGgmvBs/CD7MR9n9q7cn4d0lkQ7XpNivZ+r1CbzvTeU+HQJEZ4bOsnuF/gK96jnxoxSgp7comn5MvmYPXX0uW2Q5v6VtuvN0p8ToHrm9ChtjH+gbG8HX6OFtM6+Mth348OUQAH66cpQ0ztPX4cTt087Jd
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-In-Reply-To: <1545119810-12182-2-git-send-email-amit.kachhap@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d579e93b-544b-4446-664c-08d6726d2262
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Jan 2019 17:50:37.2028
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3389
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Amit,
+> Subject: Re: [PATCH 2/3] Documentation: DT: Add entry for DPAA2 console
+>=20
+> On Fri, Dec 21, 2018 at 03:31:11PM +0000, Ioana Ciornei wrote:
+> > This patch adds a devicetree binding documentation for FSL's DPAA2
+> > console.
+> >
+> > Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
+> > ---
+> >  Documentation/devicetree/bindings/misc/dpaa2-console.txt | 11
+> +++++++++++
+> >  MAINTAINERS                                              |  1 +
+> >  2 files changed, 12 insertions(+)
+> >  create mode 100644
+> > Documentation/devicetree/bindings/misc/dpaa2-console.txt
+> >
+> > diff --git a/Documentation/devicetree/bindings/misc/dpaa2-console.txt
+> > b/Documentation/devicetree/bindings/misc/dpaa2-console.txt
+> > new file mode 100644
+> > index 0000000..f4e16b1
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/misc/dpaa2-console.txt
+> > @@ -0,0 +1,11 @@
+> > +DPAA2 console support
+> > +
+> > +Required properties:
+> > +
+> > +    - compatible
+> > +        Value type: <string>
+> > +        Definition: Must be "dpaa2-console".
+> > +    - reg
+> > +        Value type: <prop-encoded-array>
+> > +        Definition: A standard property.  Specifies the region where t=
+he MCFBA
+> > +                    (MC firmware base address) register can be found.
+>=20
+> What's the relationship between MCFBA and the console?
 
-On 18/12/2018 07:56, Amit Daniel Kachhap wrote:
-> When restoring HCR_EL2 for the host, KVM uses HCR_HOST_VHE_FLAGS, which
-> is a constant value. This works today, as the host HCR_EL2 value is
-> always the same, but this will get in the way of supporting extensions
-> that require HCR_EL2 bits to be set conditionally for the host.
-> 
-> To allow such features to work without KVM having to explicitly handle
-> every possible host feature combination, this patch has KVM save/restore
-> the host HCR when switching to/from a guest HCR. The saving of the
-> register is done once during cpu hypervisor initialization state and is
-> just restored after switch from guest.
-> 
-> For fetching HCR_EL2 during kvm initilisation, a hyp call is made using
+The console is basically a log buffer of the MC firmware, and is found at a=
+ known offset compared to the firmware image's runtime base address.
 
-(initialisation)
+> The binding should describe the h/w block or firmware interface not the f=
+eature you want to
+> implement. Are there other functions provided by the MC firmware?
 
+The MC firmware manages all hardware resources related to networking or any=
+ other accelerators.
+Any interaction with the firmware is made through commands put in memory ma=
+pped regions.
+The fsl-mc bus driver is the one that already manages this interaction with=
+ the MC.
 
-> kvm_call_hyp and is helpful in NHVE case.
-> 
-> For the hyp TLB maintenance code, __tlb_switch_to_host_vhe() is updated
-> to toggle the TGE bit with a RMW sequence, as we already do in
-> __tlb_switch_to_guest_vhe().
+Ioana
 
-
-> diff --git a/arch/arm64/include/asm/kvm_asm.h b/arch/arm64/include/asm/kvm_asm.h
-> index aea01a0..25ac9fa 100644
-> --- a/arch/arm64/include/asm/kvm_asm.h
-> +++ b/arch/arm64/include/asm/kvm_asm.h
-> @@ -73,6 +73,8 @@ extern void __vgic_v3_init_lrs(void);
->  
->  extern u32 __kvm_get_mdcr_el2(void);
->  
-> +extern u64 __read_hyp_hcr_el2(void);
-
-How come this isn't __kvm_get_hcr_el2() like mdcr?
-
-
-> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
-> index 52fbc82..1b9eed9 100644
-> --- a/arch/arm64/include/asm/kvm_host.h
-> +++ b/arch/arm64/include/asm/kvm_host.h
-> @@ -196,13 +196,17 @@ enum vcpu_sysreg {
->  
->  #define NR_COPRO_REGS	(NR_SYS_REGS * 2)
->  
-> +struct kvm_cpu_init_host_regs {
-> +	u64 hcr_el2;
-> +};
-> +
->  struct kvm_cpu_context {
->  	struct kvm_regs	gp_regs;
->  	union {
->  		u64 sys_regs[NR_SYS_REGS];
->  		u32 copro[NR_COPRO_REGS];
->  	};
-> -
-> +	struct kvm_cpu_init_host_regs init_regs;
->  	struct kvm_vcpu *__hyp_running_vcpu;
->  };
-
-Hmm, so we grow every vcpu's struct kvm_cpu_context with some host-only registers...
-
-
-> @@ -211,7 +215,7 @@ typedef struct kvm_cpu_context kvm_cpu_context_t;
->  struct kvm_vcpu_arch {
->  	struct kvm_cpu_context ctxt;
->  
-> -	/* HYP configuration */
-> +	/* Guest HYP configuration */
->  	u64 hcr_el2;
->  	u32 mdcr_el2;
-
-... but they aren't actually host-only.
-
-
-I think it would be tidier to move these two into struct kvm_cpu_context (not as
-some init_host state), as both host and vcpu's have these values.
-You could then add the mdcr_el2 stashing to your __cpu_copy_host_registers()
-too. This way they both work in the same way, otherwise one is per-cpu, the
-other is in a special bit of only the host's kvm_cpu_context.
-
-
-> diff --git a/arch/arm64/kvm/hyp/switch.c b/arch/arm64/kvm/hyp/switch.c
-> index f6e02cc..85a2a5c 100644
-> --- a/arch/arm64/kvm/hyp/switch.c
-> +++ b/arch/arm64/kvm/hyp/switch.c
-> @@ -139,15 +139,15 @@ static void __hyp_text __activate_traps(struct kvm_vcpu *vcpu)
->  		__activate_traps_nvhe(vcpu);
->  }
->  
-> -static void deactivate_traps_vhe(void)
-> +static void deactivate_traps_vhe(struct kvm_cpu_context *host_ctxt)
->  {
->  	extern char vectors[];	/* kernel exception vectors */
-> -	write_sysreg(HCR_HOST_VHE_FLAGS, hcr_el2);
-> +	write_sysreg(host_ctxt->init_regs.hcr_el2, hcr_el2);
->  	write_sysreg(CPACR_EL1_DEFAULT, cpacr_el1);
->  	write_sysreg(vectors, vbar_el1);
->  }
->  
-> -static void __hyp_text __deactivate_traps_nvhe(void)
-> +static void __hyp_text __deactivate_traps_nvhe(struct kvm_cpu_context *host_ctxt)
->  {
->  	u64 mdcr_el2 = read_sysreg(mdcr_el2);
->  
-> @@ -157,12 +157,15 @@ static void __hyp_text __deactivate_traps_nvhe(void)
->  	mdcr_el2 |= MDCR_EL2_E2PB_MASK << MDCR_EL2_E2PB_SHIFT;
->  
->  	write_sysreg(mdcr_el2, mdcr_el2);
-
-Strangely we try to rebuild the host's mdcr value here. If we had the host mdcr
-value in host_ctxt we could restore it directly.
-
-
-> -	write_sysreg(HCR_HOST_NVHE_FLAGS, hcr_el2);
-> +	write_sysreg(host_ctxt->init_regs.hcr_el2, hcr_el2);
->  	write_sysreg(CPTR_EL2_DEFAULT, cptr_el2);
->  }
-
->  static void __hyp_text __deactivate_traps(struct kvm_vcpu *vcpu)
->  {
-> +	struct kvm_cpu_context *host_ctxt;
-> +
-> +	host_ctxt = vcpu->arch.host_cpu_context;
->  	/*
->  	 * If we pended a virtual abort, preserve it until it gets
->  	 * cleared. See D1.14.3 (Virtual Interrupts) for details, but
-> @@ -173,9 +176,9 @@ static void __hyp_text __deactivate_traps(struct kvm_vcpu *vcpu)
->  		vcpu->arch.hcr_el2 = read_sysreg(hcr_el2);
->  
->  	if (has_vhe())
-> -		deactivate_traps_vhe();
-> +		deactivate_traps_vhe(host_ctxt);
->  	else
-> -		__deactivate_traps_nvhe();
-> +		__deactivate_traps_nvhe(host_ctxt);
->  }
-
-(Alternatively each of these deactivate_traps() calls could retrieve the
-host_ctxt directly as its a per-cpu variable, but as we have the struct vcpu
-here, this is probably better.)
-
-
-Thanks,
-
-James
+>=20
+> Rob
