@@ -2,104 +2,94 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DATE_IN_FUTURE_06_12,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+X-Spam-Status: No, score=-11.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5393C43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 04:18:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08E27C43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 04:19:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F6462184B
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 04:18:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C836321871
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 04:19:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546575588;
+	bh=SBQDwlOi/G6k1eUOiDde2puI7AVinMZsxhf5cirSruk=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=Rs160qNN0an6jRzQBFf7mZmwOhhScRLxZlaubeVR+72EypNySXdCfLpkHuthuIyDz
+	 UL9rpleyY9MiiWuTkLhBXK4iLSPV/TyBQxMtG30W9mjuLNhQmKzvDGC5bHsQJS3eLd
+	 m6pOFI/qlcv3gn+F8UNVoA9mnyA8Zd4IQfX2ejL0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727464AbfADES2 (ORCPT
+        id S1727492AbfADETr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 23:18:28 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:16676 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726389AbfADES2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 23:18:28 -0500
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 81536AA141AA7;
-        Fri,  4 Jan 2019 12:18:21 +0800 (CST)
-Received: from huawei.com (10.175.104.208) by DGGEMS414-HUB.china.huawei.com
- (10.3.19.214) with Microsoft SMTP Server id 14.3.408.0; Fri, 4 Jan 2019
- 12:18:14 +0800
-From:   liujian <liujian56@huawei.com>
-To:     <gregkh@linuxfoundation.org>
-CC:     <liujian56@huawei.com>, <michal.simek@xilinx.com>,
-        <hamish.martin@alliedtelesis.co.nz>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2] driver: uio: fix possible memory leak and use-after-free in __uio_register_device
-Date:   Fri, 4 Jan 2019 22:19:08 +0800
-Message-ID: <1546611548-205765-1-git-send-email-liujian56@huawei.com>
-X-Mailer: git-send-email 2.7.4
+        Thu, 3 Jan 2019 23:19:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55962 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726389AbfADETr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Jan 2019 23:19:47 -0500
+Received: from localhost (unknown [104.132.1.71])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B99032184B;
+        Fri,  4 Jan 2019 04:19:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1546575586;
+        bh=SBQDwlOi/G6k1eUOiDde2puI7AVinMZsxhf5cirSruk=;
+        h=From:To:Cc:Subject:Date:From;
+        b=BXS3uh1OFaXqlPDv2PPEMK/++OZ28quC2arB8QCIJDRV9VO/7usbbZvDj7qZK3bk8
+         L019FoIMyszUMDpsjQQss3Y5Ft9j9OzJ9zDkGfOvYmGonLoXw/rHWikg5uB9a/eoBm
+         U2wjjnK8xr39ByP9y2h87VnAhJES2X3ICLcbczQQ=
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net
+Cc:     Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH] f2fs: export pin_file flag to user
+Date:   Thu,  3 Jan 2019 20:19:45 -0800
+Message-Id: <20190104041945.31802-1-jaegeuk@kernel.org>
+X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.104.208]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-'idev' is malloced in __uio_register_device() and leak free it before
-leaving from the uio_get_minor() error handing case, it will cause
-memory leak.
+This exports pin_file status to user.
 
-Also, in uio_dev_add_attributes() error handing case, idev is used after
-device_unregister(), in which 'idev' has been released, touch idev cause
-use-after-free.
-
-Fixes: a93e7b331568 ("uio: Prevent device destruction while fds are open")
-Fixes: e6789cd3dfb5 ("uio: Simplify uio error path by using devres
-functions")
-Signed-off-by: liujian <liujian56@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
-v1->v2:
-change git log and fix code
+ fs/f2fs/f2fs.h | 3 ++-
+ fs/f2fs/file.c | 2 ++
+ 2 files changed, 4 insertions(+), 1 deletion(-)
 
- drivers/uio/uio.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/uio/uio.c b/drivers/uio/uio.c
-index 1313422..be2a943 100644
---- a/drivers/uio/uio.c
-+++ b/drivers/uio/uio.c
-@@ -940,9 +940,12 @@ int __uio_register_device(struct module *owner,
- 	atomic_set(&idev->event, 0);
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 12fabd6735dd..036fd62010c1 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -2303,9 +2303,10 @@ static inline void f2fs_change_bit(unsigned int nr, char *addr)
+ #define F2FS_EOFBLOCKS_FL		0x00400000 /* Blocks allocated beyond EOF */
+ #define F2FS_INLINE_DATA_FL		0x10000000 /* Inode has inline data. */
+ #define F2FS_PROJINHERIT_FL		0x20000000 /* Create with parents projid */
++#define F2FS_PIN_FILE_FL		0x40000000 /* pin_file status */
+ #define F2FS_RESERVED_FL		0x80000000 /* reserved for ext4 lib */
  
- 	ret = uio_get_minor(idev);
--	if (ret)
-+	if (ret) {
-+		kfree(idev);
- 		return ret;
-+	}
+-#define F2FS_FL_USER_VISIBLE		0x304BDFFF /* User visible flags */
++#define F2FS_FL_USER_VISIBLE		0x704BDFFF /* User visible flags */
+ #define F2FS_FL_USER_MODIFIABLE		0x204BC0FF /* User modifiable flags */
  
-+	device_initialize(&idev->dev);
- 	idev->dev.devt = MKDEV(uio_major, idev->minor);
- 	idev->dev.class = &uio_class;
- 	idev->dev.parent = parent;
-@@ -953,7 +956,7 @@ int __uio_register_device(struct module *owner,
- 	if (ret)
- 		goto err_device_create;
+ /* Flags we can manipulate with through F2FS_IOC_FSSETXATTR */
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index ae2b45e75847..eb099f1ee937 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -1651,6 +1651,8 @@ static int f2fs_ioc_getflags(struct file *filp, unsigned long arg)
+ 		flags |= F2FS_ENCRYPT_FL;
+ 	if (f2fs_has_inline_data(inode) || f2fs_has_inline_dentry(inode))
+ 		flags |= F2FS_INLINE_DATA_FL;
++	if (is_inode_flag_set(inode, FI_PIN_FILE))
++		flags |= F2FS_PIN_FILE_FL;
  
--	ret = device_register(&idev->dev);
-+	ret = device_add(&idev->dev);
- 	if (ret)
- 		goto err_device_create;
+ 	flags &= F2FS_FL_USER_VISIBLE;
  
-@@ -985,9 +988,10 @@ int __uio_register_device(struct module *owner,
- err_request_irq:
- 	uio_dev_del_attributes(idev);
- err_uio_dev_add_attributes:
--	device_unregister(&idev->dev);
-+	device_del(&idev->dev);
- err_device_create:
- 	uio_free_minor(idev);
-+	put_device(&idev->dev);
- 	return ret;
- }
- EXPORT_SYMBOL_GPL(__uio_register_device);
 -- 
-2.7.4
+2.19.0.605.g01d371f741-goog
 
