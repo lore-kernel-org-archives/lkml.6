@@ -2,156 +2,170 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 776B2C43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 20:42:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 829C7C43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 20:43:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4590921872
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 20:42:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="c6YoJrhI"
+	by mail.kernel.org (Postfix) with ESMTP id 57249218E2
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 20:43:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726135AbfADUmw (ORCPT
+        id S1726150AbfADUn6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 15:42:52 -0500
-Received: from mx1.ucr.edu ([138.23.248.2]:24975 "EHLO mx1.ucr.edu"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725958AbfADUmv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 15:42:51 -0500
-X-Greylist: delayed 885 seconds by postgrey-1.27 at vger.kernel.org; Fri, 04 Jan 2019 15:42:51 EST
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=ucr.edu; i=@ucr.edu; q=dns/txt; s=selector3;
-  t=1546634571; x=1578170571;
-  h=from:to:cc:subject:date:message-id;
-  bh=dVeo+lqbfDbwmjZVwas2MgBddAFiC9twLCj5ra9dt9k=;
-  b=c6YoJrhIsFCPFDsSoDyKbtgVKfc1cmUkOtI7/eeo1Gyuk+8Hstkhe3Nf
-   PNL/CPIWtshVJpySUC5VTtW2sC3PpiLz1eZ6qzOwjoFXushSz8UbDcxnv
-   9v80PiEGvqG9bstpYT8Ngpk/2+9tVmhPwdWduMb9Nhoq+98r+k8t/srT4
-   xxDh4gzTZIeKJ/syH9mL1ZNFirxSLW0GjruyIBcBWIxdAff/XLcQH8ddm
-   97POFHPeUtKOVdXWVZ6WjgokA0UqHkPg7DFYPI7+KoOAuDvpYp5VmM+Sj
-   3rMcy+Ot1KuUVLPuH/ozZvcW/x1PELi0nNW48P+7jm4zCS1x/q+QHUFOw
-   A==;
-IronPort-PHdr: =?us-ascii?q?9a23=3Aw7izihIN8uc4j6eNYdmcpTZWNBhigK39O0sv0rFi?=
- =?us-ascii?q?tYgRIv7xwZ3uMQTl6Ol3ixeRBMOHs6IC07KempujcFRI2YyGvnEGfc4EfD4+ou?=
- =?us-ascii?q?JSoTYdBtWYA1bwNv/gYn9yNs1DUFh44yPzahANS47xaFLIv3K98yMZFAnhOgpp?=
- =?us-ascii?q?POT1HZPZg9iq2+yo9JDffwZFiCChbb9uMR67sRjfus4KjIV4N60/0AHJonxGe+?=
- =?us-ascii?q?RXwWNnO1eelAvi68mz4ZBu7T1et+ou+MBcX6r6eb84TaFDAzQ9L281/szrugLd?=
- =?us-ascii?q?QgaJ+3ART38ZkhtMAwjC8RH6QpL8uTb0u+ZhxCWXO9D9QKsqUjq+8ahkVB7oiD?=
- =?us-ascii?q?8GNzEn9mHXltdwh79frB64uhBz35LYbISTOfp7f6PdZsgaRWtHXsZeSidPHJqy?=
- =?us-ascii?q?ZJYBD+oAI+lYq5TyrEYKoRawGQWgAeXiwSJKiHDrx603y+QvHx/b0gIuHNwAt2?=
- =?us-ascii?q?/ZoMnpOKoITey41rXEwSnFYvhL2Tn98o/IchU5rP6OXLJxcMrRyVQoFwjYiViR?=
- =?us-ascii?q?qY3kPzOP2eQMr2SX8+RtWPmyi2E7sQF9uCagydoxioTQgI8e11PK9T1hzYorOd?=
- =?us-ascii?q?G1TFR3bN2kHZdKqS2WKoR7Ttk/T2xsuis20qAKtJ+/cSQQ1pgqyR7SZ+aZf4WJ?=
- =?us-ascii?q?+B7uVumcLDFlj3x/Yr2/nQy98U24x+35Ucm7zUhFozJektnJqnANzxvT6tWbSv?=
- =?us-ascii?q?dl/keuxzKP1wfL5+FBO080lK7bJ4c5wr40i5YfqErDEjLylUj0lqOWeUIk+u+n?=
- =?us-ascii?q?6+TjfLrqvIOTN4hxig3mM6QunNKwAfggPwQQQ2SW/f6w2b7j8EHjXrlGk/I7nr?=
- =?us-ascii?q?PEvJ3eJ8kXvqu5DBVU0oYn5Ra/FTCm0NEAkHgHLVNFeAiIj4n1N13SLv31Fuq/?=
- =?us-ascii?q?jEi2kDtx2f/JI6DhDo3XLnffiLfhYap960lExQo3zNBf4Y9UC74YLPLwREDxrt?=
- =?us-ascii?q?rYAQE9MwGv3ebnB8ty1pkEVWKMHKCZKqXSvkGM5u41JOmMfoAV637TMf8gss/v?=
- =?us-ascii?q?n38knhdJbLup1JpPMCuQA/98ZUiVfCy/0Z86DW4Ws19mH6TRg1qYXGsWOC6/?=
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2CvAACMwS9ch8XWVdFjHQEBBQEHBQGBU?=
- =?us-ascii?q?QgBCwGEAw+MGV+LCVABAQaKWBhshVOCb4R+gXsBCgEBLIRAggIiNAkNAQMBAQI?=
- =?us-ascii?q?BAQIBEwEBAQgNCQgpL4I6KYJfNlKBFQEFATVbgkcBgXQNm0I8jBUziFUBB4FMC?=
- =?us-ascii?q?QEIh2yEQYEPgQeDbohSgkMCgSoBAQGKG4UekHABBgIBgVyBOY5LJIMihlyHawE?=
- =?us-ascii?q?tmWECBAIEBQIFDyGBJYIOTSWBbAqBRIInDgkSjiweM4EHiWEB?=
-X-IPAS-Result: =?us-ascii?q?A2CvAACMwS9ch8XWVdFjHQEBBQEHBQGBUQgBCwGEAw+MGV+?=
- =?us-ascii?q?LCVABAQaKWBhshVOCb4R+gXsBCgEBLIRAggIiNAkNAQMBAQIBAQIBEwEBAQgNC?=
- =?us-ascii?q?QgpL4I6KYJfNlKBFQEFATVbgkcBgXQNm0I8jBUziFUBB4FMCQEIh2yEQYEPgQe?=
- =?us-ascii?q?DbohSgkMCgSoBAQGKG4UekHABBgIBgVyBOY5LJIMihlyHawEtmWECBAIEBQIFD?=
- =?us-ascii?q?yGBJYIOTSWBbAqBRIInDgkSjiweM4EHiWEB?=
-X-IronPort-AV: E=Sophos;i="5.56,439,1539673200"; 
-   d="scan'208";a="1051515945"
-Received: from mail-pl1-f197.google.com ([209.85.214.197])
-  by smtp1.ucr.edu with ESMTP/TLS/AES128-GCM-SHA256; 04 Jan 2019 12:27:33 -0800
-Received: by mail-pl1-f197.google.com with SMTP id t10so27824049plo.13
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Jan 2019 12:27:33 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=KIRoQOlFmlmxA8eKEGFEBWnDpcFgN9v4YUYbB67RaLE=;
-        b=ltDS/dYvwJoSdaHEKZtTneEKMYIxHPRZuBdjEauHYv5c1rmiTMSirO0hBdJdA27pLU
-         fG3nPFJPxpYVqfErIU/EvP4xJT7GoYpCI9uPBhl4YN08la8vBzKOmHF55zOw4oeByqE+
-         L2/eGt4gQDxGNko2apN0ouLvQ+XvFyfzbOGBRrsrK65xDDkH6sGBj6HhYvyPUQUMi6lM
-         SD2O/HWn9A0JQdQ0vLv8tHVos074bL+lKyuGehYBZcmdNquRauT35MfzZpsOMKn1VtRz
-         PGx6vsqp3uO/BdjrcrDkelSnrPx024QbPeucm0E9/rATHdjxhtHzaOXP2pgrCWMaD9jy
-         98Ow==
-X-Gm-Message-State: AA+aEWa76XMcof0cHXnCgpK3FvpZrTWS1QhRkBVHVFzSWsAJDmgAGyxC
-        26MI59/rt6EqpPyIi4O8fpNoukfjAAlpEo0KlcYGod3SxayrJl2/GQFG99GTULNcfQF4cMc+do4
-        DaKu1cfxa5cnlhhOVIoZ0gZL/lw==
-X-Received: by 2002:aa7:8045:: with SMTP id y5mr53236006pfm.62.1546633652826;
-        Fri, 04 Jan 2019 12:27:32 -0800 (PST)
-X-Google-Smtp-Source: AFSGD/W03SynDHQ7y9cEWoVQUJakgQvJ8HKSIcPJakWCKASa8I69A1aWyyaXh3EHx3P+oMn518anoA==
-X-Received: by 2002:aa7:8045:: with SMTP id y5mr53235987pfm.62.1546633652339;
-        Fri, 04 Jan 2019 12:27:32 -0800 (PST)
-Received: from Yizhuo.cs.ucr.edu (yizhuo.cs.ucr.edu. [169.235.26.74])
-        by smtp.googlemail.com with ESMTPSA id t3sm70447440pgv.31.2019.01.04.12.27.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 04 Jan 2019 12:27:31 -0800 (PST)
-From:   Yizhuo <yzhai003@ucr.edu>
-Cc:     csong@cs.ucr.edu, zhiyunq@cs.ucr.edu, Yizhuo <yzhai003@ucr.edu>,
-        Bard Liao <bardliao@realtek.com>,
-        Oder Chiou <oder_chiou@realtek.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] ASoC: rt274: Variable "buf" in function rt274_jack_detect() could be uninitialized
-Date:   Fri,  4 Jan 2019 12:27:08 -0800
-Message-Id: <20190104202708.14759-1-yzhai003@ucr.edu>
-X-Mailer: git-send-email 2.17.1
-To:     unlisted-recipients:; (no To-header on input)
+        Fri, 4 Jan 2019 15:43:58 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:59377 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725958AbfADUn6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 15:43:58 -0500
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id EE234808B8; Fri,  4 Jan 2019 21:43:48 +0100 (CET)
+Date:   Fri, 4 Jan 2019 21:43:53 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Vesa =?iso-8859-1?B?SuTkc2tlbORpbmVu?= <dachaac@gmail.com>
+Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Dan Murphy <dmurphy@ti.com>, robh+dt@kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-leds@vger.kernel.org
+Subject: Re: [PATCH 2/2] leds: lp5024: Add the LP5024/18 RGB LED driver
+Message-ID: <20190104204353.GB2931@amd>
+References: <20181219201047.GA23448@amd>
+ <fd624cc1-9997-1cd5-c5cc-62e6897997cf@ti.com>
+ <54f28115-0a7d-8e9c-3bec-6e91fb3981ec@gmail.com>
+ <cd90f179-6c16-823f-496f-27f141e9c322@ti.com>
+ <a72c11c0-949b-bdbc-df2c-4490e04a1065@gmail.com>
+ <986b5105-2fdb-bd25-7c8a-ca8fd1ade821@gmail.com>
+ <7f205102-e854-f1cb-cc03-1307d1cddc87@gmail.com>
+ <c9f8965a-90f4-b456-8225-c70694c9f071@gmail.com>
+ <20190103233425.GA10071@amd>
+ <e99036ea-ffb6-83ab-726b-824e2557d161@gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="b5gNqxB1S1yM7hjW"
+Content-Disposition: inline
+In-Reply-To: <e99036ea-ffb6-83ab-726b-824e2557d161@gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In function rt274_jack_detect(), local variable "buf" could
-be uninitialized if function regmap_read() returns -EINVAL.
-However, it will be used to calculate "hp" and "mic" and
-make their value unpredictable while those value are used
-in the caller. This is potentially unsafe.
 
-Signed-off-by: Yizhuo <yzhai003@ucr.edu>
----
- sound/soc/codecs/rt274.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+--b5gNqxB1S1yM7hjW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/sound/soc/codecs/rt274.c b/sound/soc/codecs/rt274.c
-index cd048df76232..a2c1a6df8df6 100644
---- a/sound/soc/codecs/rt274.c
-+++ b/sound/soc/codecs/rt274.c
-@@ -353,6 +353,7 @@ static void rt274_index_sync(struct snd_soc_codec *codec)
- static int rt274_jack_detect(struct rt274_priv *rt274, bool *hp, bool *mic)
- {
- 	unsigned int buf;
-+	int ret = 0;
- 
- 	*hp = false;
- 	*mic = false;
-@@ -360,9 +361,15 @@ static int rt274_jack_detect(struct rt274_priv *rt274, bool *hp, bool *mic)
- 	if (!rt274->codec)
- 		return -EINVAL;
- 
--	regmap_read(rt274->regmap, RT274_GET_HP_SENSE, &buf);
-+	ret = regmap_read(rt274->regmap, RT274_GET_HP_SENSE, &buf);
-+	if (ret)
-+		return ret;
-+
- 	*hp = buf & 0x80000000;
--	regmap_read(rt274->regmap, RT274_GET_MIC_SENSE, &buf);
-+	ret = regmap_read(rt274->regmap, RT274_GET_MIC_SENSE, &buf);
-+	if (ret)
-+		return ret;
-+
- 	*mic = buf & 0x80000000;
- 
- 	pr_debug("*hp = %d *mic = %d\n", *hp, *mic);
--- 
-2.17.1
+Hi!
 
+> >And... LEDs are linear-enough as it is. That is not a problem. But RGB
+> >does _not_ expect linear response. That's why colors are _way_ off curre=
+ntly.
+>=20
+> Example what I was given was some LEDs are off for let's say 20% of PWM
+> linearity and then there is non-linear curve for PWM value vs. intensity
+> (this was in context of white LCD backlight).
+
+Well, we'll do non-linear curve calibration if we have to.=20
+
+> As such I have nothing against adding support for HSL or other color space
+> based brightness calculations. It might just need to be configurable what
+> kind of mode is being used based on hardware solution in place. HSL seem =
+to
+> need a bit of fixed point math. Got floating point version working already
+> but that does not work with kernel space so one needs to adapt it to fixed
+> point.
+
+First, we need _some_ kind of solution. Then we can decide kernel
+vs. library. We can do floats in kernel too, if really required.
+
+> One problem here is to figure out is if user configures some color -- is =
+it
+> configured with 100% brightness eg. Should one calculate RGB->HSL and then
+> scale L with brightness and calculate RGB back for setting color -- or do=
+es
+> it mean replacing L with brightness value?
+
+I don't understand the question here.
+
+> Additional problem is then if you have let's say yellow LED color element
+> there. How would one scale that then? Linear is of course easy. If you ne=
+ed
+> to configure this to some color space then how does one define the color =
+in
+> device tree so that such color space conversion is possible? One possible
+> solution is to calibrate the curve (like what you do with LCD calibration)
+> and then just assume brightness as linear brightness value in that
+> case.
+
+Calibrated curves would be nice...
+
+For leds, you should be able to list the wavelength, right?
+
+> Or if you have multi-color LED with red and green but no other color
+> elements. How does brightness scaling work with this one?
+
+I'd ignore that for now.
+
+> >You say it is "rather slow" to change all 3 colors. How long does it
+> >take, and how long do you need it to take?
+>=20
+> Some times in embedded linux systems you can see "stalls" in operation of=
+ an
+> application flow eg. time is spent in different places. I believe "slowes=
+t"
+> CPU with embedded linux we are using is Atmel's AT91 series (ARM9) and
+> executing code in there can at times be a bit time consuming.
+>=20
+> I have seen delays like 18ms in TI's AM335x CPU series (Cortex-A8) and not
+> even too high load situations (eg. breaking some serial protocols because=
+ of
+> breaks in transmission in-between transfer without being a problem in
+> application code as such). It is completely different story when there is=
+ a
+> bit of load in system or some special situation in the kernel/OS.
+>=20
+> Running high priority thread for configuring LEDs to avoid problems sounds
+> like a wrong solution.
+>=20
+> Co-worker of mine tried multi-color LED brightness sliding from user space
+> with current PWM led driver and it was visible from eye that it was not
+> timed smoothly.
+
+Ok, 18msec is _way_ higher than sysfs overhead (like 400x?). If you
+have slow i2c or something, then you'll get fun stuff, no matter what
+the kernel<->user interface.
+
+> For PWM controlled multi-color LEDs we don't yet have a solution. We need
+> configurable color kernel based blinking.
+
+> If we could figure out acceptable solution for color transition problem t=
+hen
+> I suppose all parties would be happy?
+
+If you can get LEDs to display the colors in similar way monitors do,
+that will be major step forward. Then we can design the rest, or maybe
+ressurect the HSV patch.
+
+									Pavel
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--b5gNqxB1S1yM7hjW
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlwvxYkACgkQMOfwapXb+vLJyACfVIxWUSZNjTS1skHNlO9AeGs6
+GvQAn0V5zaq+uqu9zEDVdxxoZQh9Ujcp
+=g1uI
+-----END PGP SIGNATURE-----
+
+--b5gNqxB1S1yM7hjW--
