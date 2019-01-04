@@ -6,69 +6,69 @@ X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
 	SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB04FC43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 06:01:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCB72C43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 06:02:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8320D218CD
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 06:01:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A6C592070D
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 06:02:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="CXK6r4iU"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="HI5hkMD4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726951AbfADGBt (ORCPT
+        id S1727000AbfADGCu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 01:01:49 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:42802 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725913AbfADGBt (ORCPT
+        Fri, 4 Jan 2019 01:02:50 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:58346 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725913AbfADGCu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 01:01:49 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x045rcJN116340;
-        Fri, 4 Jan 2019 06:01:36 GMT
+        Fri, 4 Jan 2019 01:02:50 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x045sw2t157847;
+        Fri, 4 Jan 2019 06:02:35 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : in-reply-to : references : date : message-id : mime-version :
+ from : references : date : in-reply-to : message-id : mime-version :
  content-type; s=corp-2018-07-02;
- bh=nolOXNMAY3l934LznxtS7RtI0A0OPNy0UX2h2+5zBXM=;
- b=CXK6r4iUp/FtFnNsCgPKWnjaUalt2wr4S8e/5eHXTN4wER8+r0rotLOZuBxcAElsNE8s
- mPVHAno72kEJ/77ZIKVdGc5cwF6deVdgzgibrqvIqbOY8BdTEHowdajSM1lLjgjjkemd
- Ora+jyg67WPRI4Vcgva0vbFHiDFhdG5ZLKR4jGPSrMCe/mQCUqcro3ei3N19YXOERRYG
- dA+9z3YlSbuaPRxbkcJqfNTtr7SpMfCU51xgjSF7ckFVylcEFNMVgdj5VvUgXykd8dfD
- Oam0k5xVRbr3FSnyAB4X40nNr7nL+8TkUTgEzFxYvwV8WoOZNPzzOs0YDU+QAizntttH 6g== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2120.oracle.com with ESMTP id 2pp1jraewq-1
+ bh=voBQmesZdOUKLP9Fz5cxScsO/iyTXASRfosoyjWFxNQ=;
+ b=HI5hkMD4eD69Z4EEbsB6V5X5lJjjcQydz01XLyGJuHXGS5HDhAWb20fiGyJUBRRiShgC
+ 3I4r6TXTrNCKDI62T2Iyoatpn2tAl0gBxlmyvB0w4+PpV6/n4YruIu915zmRvVexpfyD
+ diQVkmMaV348cc7s2W6b2qrgqJz0o1tTA/sS6xTuRv05QzcmoDUY1R1NmVBwTAyDTD8n
+ l4EMaOf9oMy8PG7cZNjpOVy2K2TAmWDwBmg/eU1WgwzLsq7Y05sox7WWf3nnEgk/7/bF
+ 2gXpAExzUTjefSJvx2Dgu/F07/gW6mgc1EgbU51+/ts+TJvsPdmykqhJmkDXTQZqWeqx PQ== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2130.oracle.com with ESMTP id 2pp0bu2jb7-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 04 Jan 2019 06:01:36 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x0461ZLY010133
+        Fri, 04 Jan 2019 06:02:34 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x0462Ycf026010
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 4 Jan 2019 06:01:35 GMT
-Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x0461Ull018109;
-        Fri, 4 Jan 2019 06:01:31 GMT
+        Fri, 4 Jan 2019 06:02:34 GMT
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0462XoN028915;
+        Fri, 4 Jan 2019 06:02:33 GMT
 Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 03 Jan 2019 22:01:30 -0800
-To:     Julia Lawall <Julia.Lawall@lip6.fr>
-Cc:     Jack Wang <jinpu.wang@profitbricks.com>,
-        kernel-janitors@vger.kernel.org, lindar_liu@usish.com,
+        with ESMTP ; Thu, 03 Jan 2019 22:02:33 -0800
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Mahesh Rajashekhara <mahesh.rajashekhara@microsemi.com>,
+        Don Brace <don.brace@microsemi.com>,
         "James E.J. Bottomley" <jejb@linux.ibm.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6/8] scsi: pm80xx: reduce indentation
+        esc.storagedev@microsemi.com, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] scsi: smartpqi_init: fix boolean expression in pqi_device_remove_start
 From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-In-Reply-To: <1546185195-25676-7-git-send-email-Julia.Lawall@lip6.fr> (Julia
-        Lawall's message of "Sun, 30 Dec 2018 16:53:13 +0100")
 Organization: Oracle Corporation
-References: <1546185195-25676-1-git-send-email-Julia.Lawall@lip6.fr>
-        <1546185195-25676-7-git-send-email-Julia.Lawall@lip6.fr>
+References: <20190103164744.GA16360@embeddedor>
+Date:   Fri, 04 Jan 2019 01:02:31 -0500
+In-Reply-To: <20190103164744.GA16360@embeddedor> (Gustavo A. R. Silva's
+        message of "Thu, 3 Jan 2019 10:47:44 -0600")
+Message-ID: <yq1imz56juw.fsf@oracle.com>
 User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
-Date:   Fri, 04 Jan 2019 01:01:27 -0500
-Message-ID: <yq1r2dt6jwo.fsf@oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9125 signatures=668680
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=450
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=637
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1810050000 definitions=main-1901040052
 Sender: linux-kernel-owner@vger.kernel.org
@@ -77,10 +77,10 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-Julia,
+Gustavo,
 
-> Delete tab aligning a statement with the right hand side of a
-> preceding assignment rather than the left hand side.
+> Fix boolean expression by using logical AND operator '&&' instead of
+> bitwise operator '&'.
 
 Applied to 4.21/scsi-fixes, thanks!
 
