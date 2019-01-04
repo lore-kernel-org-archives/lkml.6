@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B1A7C43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 13:47:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD07FC43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 13:48:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1425E21872
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 13:47:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8788F21872
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 13:48:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728363AbfADNrt (ORCPT
+        id S1728374AbfADNsK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 08:47:49 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:47962 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725939AbfADNrq (ORCPT
+        Fri, 4 Jan 2019 08:48:10 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:48321 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725939AbfADNsK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 08:47:46 -0500
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x04DegDK021634;
-        Fri, 4 Jan 2019 14:47:34 +0100
+        Fri, 4 Jan 2019 08:48:10 -0500
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x04DfFqi026812;
+        Fri, 4 Jan 2019 14:47:59 +0100
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2psx6mtsf0-1
+        by mx08-00178001.pphosted.com with ESMTP id 2pnxxc0v9n-1
         (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Fri, 04 Jan 2019 14:47:34 +0100
+        Fri, 04 Jan 2019 14:47:59 +0100
 Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 3531438;
-        Fri,  4 Jan 2019 13:47:33 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas21.st.com [10.75.90.44])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 0F600530D;
-        Fri,  4 Jan 2019 13:47:33 +0000 (GMT)
-Received: from SAFEX1HUBCAS23.st.com (10.75.90.47) by SAFEX1HUBCAS21.st.com
- (10.75.90.44) with Microsoft SMTP Server (TLS) id 14.3.361.1; Fri, 4 Jan 2019
- 14:47:32 +0100
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 6A49438;
+        Fri,  4 Jan 2019 13:47:58 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas24.st.com [10.75.90.94])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 54037530D;
+        Fri,  4 Jan 2019 13:47:58 +0000 (GMT)
+Received: from SAFEX1HUBCAS23.st.com (10.75.90.47) by Safex1hubcas24.st.com
+ (10.75.90.94) with Microsoft SMTP Server (TLS) id 14.3.361.1; Fri, 4 Jan 2019
+ 14:47:57 +0100
 Received: from localhost (10.129.4.161) by webmail-ga.st.com (10.75.90.48)
- with Microsoft SMTP Server (TLS) id 14.3.361.1; Fri, 4 Jan 2019 14:47:32
+ with Microsoft SMTP Server (TLS) id 14.3.361.1; Fri, 4 Jan 2019 14:47:57
  +0100
 From:   Fabien Dessenne <fabien.dessenne@st.com>
 To:     Jassi Brar <jassisinghbrar@gmail.com>,
@@ -49,12 +49,12 @@ To:     Jassi Brar <jassisinghbrar@gmail.com>,
 CC:     Benjamin Gaignard <benjamin.gaignard@st.com>,
         Arnaud Pouliquen <arnaud.pouliquen@st.com>,
         Ludovic Barre <ludovic.barre@st.com>
-Subject: [PATCH 2/2] mailbox: mailbox-test: fix null pointer if no mmio
-Date:   Fri, 4 Jan 2019 14:47:16 +0100
-Message-ID: <1546609637-6411-2-git-send-email-fabien.dessenne@st.com>
+Subject: [PATCH 2/2] mailbox: stm32-ipcc: remove useless device_init_wakeup call
+Date:   Fri, 4 Jan 2019 14:47:48 +0100
+Message-ID: <1546609668-6488-2-git-send-email-fabien.dessenne@st.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1546609637-6411-1-git-send-email-fabien.dessenne@st.com>
-References: <1546609637-6411-1-git-send-email-fabien.dessenne@st.com>
+In-Reply-To: <1546609668-6488-1-git-send-email-fabien.dessenne@st.com>
+References: <1546609668-6488-1-git-send-email-fabien.dessenne@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.129.4.161]
@@ -65,49 +65,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix null pointer issue if resource_size is called with no ioresource.
+If the "wakeup-source" property does not exist there is no need to call
+device_init_wakeup("false") at probe.
 
-Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
 Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
 ---
- drivers/mailbox/mailbox-test.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ drivers/mailbox/stm32-ipcc.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/mailbox/mailbox-test.c b/drivers/mailbox/mailbox-test.c
-index 4e2bfba..4e4ac4b 100644
---- a/drivers/mailbox/mailbox-test.c
-+++ b/drivers/mailbox/mailbox-test.c
-@@ -363,22 +363,24 @@ static int mbox_test_probe(struct platform_device *pdev)
+diff --git a/drivers/mailbox/stm32-ipcc.c b/drivers/mailbox/stm32-ipcc.c
+index 7ca8a14..210fe50 100644
+--- a/drivers/mailbox/stm32-ipcc.c
++++ b/drivers/mailbox/stm32-ipcc.c
+@@ -276,8 +276,6 @@ static int stm32_ipcc_probe(struct platform_device *pdev)
+ 			dev_err(dev, "Failed to set wake up irq\n");
+ 			goto err_init_wkp;
+ 		}
+-	} else {
+-		device_init_wakeup(dev, false);
+ 	}
  
- 	/* It's okay for MMIO to be NULL */
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	size = resource_size(res);
- 	tdev->tx_mmio = devm_ioremap_resource(&pdev->dev, res);
--	if (PTR_ERR(tdev->tx_mmio) == -EBUSY)
-+	if (PTR_ERR(tdev->tx_mmio) == -EBUSY) {
- 		/* if reserved area in SRAM, try just ioremap */
-+		size = resource_size(res);
- 		tdev->tx_mmio = devm_ioremap(&pdev->dev, res->start, size);
--	else if (IS_ERR(tdev->tx_mmio))
-+	} else if (IS_ERR(tdev->tx_mmio)) {
- 		tdev->tx_mmio = NULL;
-+	}
- 
- 	/* If specified, second reg entry is Rx MMIO */
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
--	size = resource_size(res);
- 	tdev->rx_mmio = devm_ioremap_resource(&pdev->dev, res);
--	if (PTR_ERR(tdev->rx_mmio) == -EBUSY)
-+	if (PTR_ERR(tdev->rx_mmio) == -EBUSY) {
-+		size = resource_size(res);
- 		tdev->rx_mmio = devm_ioremap(&pdev->dev, res->start, size);
--	else if (IS_ERR(tdev->rx_mmio))
-+	} else if (IS_ERR(tdev->rx_mmio)) {
- 		tdev->rx_mmio = tdev->tx_mmio;
-+	}
- 
- 	tdev->tx_channel = mbox_test_request_channel(pdev, "tx");
- 	tdev->rx_channel = mbox_test_request_channel(pdev, "rx");
+ 	/* mailbox controller */
 -- 
 2.7.4
 
