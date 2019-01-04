@@ -2,225 +2,119 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 873CCC43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 17:32:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0690DC43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 17:33:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E9EF218D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 17:32:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="pZ2ShQFM"
+	by mail.kernel.org (Postfix) with ESMTP id CD70E218D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 17:33:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546623184;
+	bh=6UJumnS8wZ3Fe5ZJrXjNWL1o0unjWmWWV3ERjneOztM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=xa5GYS9lC5Jt0qeej7oafNt5EYinPUssouiaRCkWa6jBmbR/ddiprML/68QYlmoo1
+	 2QN0ph6OAYD5KFuTWQw/V+beeoXLuGzvBLgsl+w/qMj1mtQtCqYCPor0GG3TGyb7Gx
+	 /X28Cj/ydKztXm+FKOXDwcoS0sZMUPTNlg+hKnLA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728290AbfADRcf (ORCPT
+        id S1728465AbfADRdE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 12:32:35 -0500
-Received: from mail-eopbgr720079.outbound.protection.outlook.com ([40.107.72.79]:47424
-        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728306AbfADRcc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 12:32:32 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=eFRfFmCLMVulcxSbymnpCGC2Fqk6rIadKRIq3soeXn0=;
- b=pZ2ShQFMdv9nVU7PKD0R1Pvmsjp18ygOxRuM/Y/caaiT4zwbLiadE5soR07ahIkRTb5N4YsadB9DUQwT6iEyyYUBaMPqcbuJXRDnPbOi2cQ6yIOBwAW9TMVOEjdwoaLh09/UJGeBQcf7Y9qDLh+jlqEldCZxcesnNsVNpgDT3KU=
-Received: from MN2PR12MB3631.namprd12.prod.outlook.com (20.178.243.19) by
- MN2PR12MB3357.namprd12.prod.outlook.com (20.178.241.217) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1495.7; Fri, 4 Jan 2019 17:32:23 +0000
-Received: from MN2PR12MB3631.namprd12.prod.outlook.com
- ([fe80::1da6:b950:a28e:dae2]) by MN2PR12MB3631.namprd12.prod.outlook.com
- ([fe80::1da6:b950:a28e:dae2%5]) with mapi id 15.20.1495.005; Fri, 4 Jan 2019
- 17:32:23 +0000
-From:   "Lendacky, Thomas" <Thomas.Lendacky@amd.com>
-To:     Borislav Petkov <bp@alien8.de>, Paul Menzel <pmenzel@molgen.mpg.de>
-CC:     "x86@kernel.org" <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: General protection fault in `switch_mm_irqs_off()`
-Thread-Topic: General protection fault in `switch_mm_irqs_off()`
-Thread-Index: AQHUo629ixN4vswCO0W5h+67CHfr8qWfDkCAgAAz5gCAAB1iAA==
-Date:   Fri, 4 Jan 2019 17:32:23 +0000
-Message-ID: <96a42a11-55e4-d4b2-f8d5-c12f4ef90548@amd.com>
-References: <784ab00e-ed72-c1bc-bc0c-31264deb7726@molgen.mpg.de>
- <65b3aa5c-c11b-6435-5761-3f1489f18ce5@molgen.mpg.de>
- <20190104154710.GA18252@nazgul.tnic>
-In-Reply-To: <20190104154710.GA18252@nazgul.tnic>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: SN4PR0501CA0146.namprd05.prod.outlook.com
- (2603:10b6:803:2c::24) To MN2PR12MB3631.namprd12.prod.outlook.com
- (2603:10b6:208:cc::19)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Thomas.Lendacky@amd.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [165.204.77.1]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MN2PR12MB3357;20:98yRHoTWrwaMTojg+5tP1Ow1t/EDao50cI27JINKQvmw5buA9oV9WX3+YciEoxFv7VE76FiPLjAXqFTX9cmYl3tR87i9J/8msq8XzASBoN2VFWGuTCXqy7MPg5XO5eLJfDSWjLrorJ423Lf3BowzSUHVCjyv4tR6SXP7H9418bh2z7xkmCqn5L2vYMc5HKKUx17PBGGe88dnDkY6cQ+pBfIVRU1zA/LlS4PmNP7bpXTdHr48NTyMUv//nYvVyTk0
-x-ms-office365-filtering-correlation-id: d85b795b-e82c-46c9-8016-08d6726a966d
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600109)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:MN2PR12MB3357;
-x-ms-traffictypediagnostic: MN2PR12MB3357:
-x-microsoft-antispam-prvs: <MN2PR12MB3357A49AABE5961168B56FFCEC8E0@MN2PR12MB3357.namprd12.prod.outlook.com>
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(908002)(999002)(5005026)(6040522)(8220060)(2401047)(8121501046)(10201501046)(93006095)(93001095)(3231475)(944501520)(52105112)(3002001)(6055026)(6041310)(20161123562045)(20161123560045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:MN2PR12MB3357;BCL:0;PCL:0;RULEID:;SRVR:MN2PR12MB3357;
-x-forefront-prvs: 0907F58A24
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(366004)(346002)(136003)(396003)(39860400002)(199004)(189003)(53936002)(31696002)(478600001)(6486002)(4326008)(72206003)(86362001)(575784001)(5660300001)(229853002)(71200400001)(71190400001)(6246003)(256004)(97736004)(446003)(5024004)(14444005)(11346002)(6436002)(14454004)(66066001)(68736007)(6512007)(99286004)(6506007)(6116002)(7736002)(76176011)(486006)(102836004)(186003)(45080400002)(305945005)(52116002)(2616005)(105586002)(36756003)(26005)(106356001)(25786009)(54906003)(8676002)(316002)(2906002)(31686004)(110136005)(8936002)(81166006)(386003)(53546011)(81156014)(476003)(3846002)(81973001);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR12MB3357;H:MN2PR12MB3631.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: NURv+4GBcGSMPIlUghRaIzMinfCN3rXTqFhCw3Cv/QnI9b0p0iPoR6dgfibuFYZh6CaABKeBhgSq/Ao7lgBR2g03hY7X8muQOG+T9IbhBh6BdJxjg414olak+1PpVZ5vqTlVc3mLEHEi5Y8w0WIrXJ5vWbFsumRynr5JHO3CRAC+/IhNueRY2wg9jaE0ftvwCFpG7g4QbHswoY1yYjUAMn43HR8ABOmFKQdUazqgyMVTJjOEEjhAjyQRTpcCzTP5IpChOW6+yxZj3G7hzQscY8DRO7Ewf9m2Jt1JMRi/3OZL1lhriNq8ttV4L6nrRCRy
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <62020E693E52AC419DB8C27177C2CF90@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Fri, 4 Jan 2019 12:33:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59772 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727230AbfADRdD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 12:33:03 -0500
+Received: from localhost (unknown [49.207.53.230])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3376B218CD;
+        Fri,  4 Jan 2019 17:32:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1546623183;
+        bh=6UJumnS8wZ3Fe5ZJrXjNWL1o0unjWmWWV3ERjneOztM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=sYjr0eoyctmXnqT7inJ+xRVrFuH5V5Qot4uwYa2XL0UZHQow0bKUPgdsuSQRyqYBR
+         aB40YSogckNRsXnulpGFUCsLNjy60IID3g8MVy+7nOLEWrIb9Z3moVtTPZR8eMKOkS
+         23RWushw2Suirl0UrDHw6g8KVon4rJtZ5jq4kZwM=
+Date:   Fri, 4 Jan 2019 23:01:11 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Shunyong Yang <shunyong.yang@hxt-semitech.com>
+Cc:     okaya@kernel.org, andy.gross@linaro.org, david.brown@linaro.org,
+        dan.j.williams@intel.com, dmaengine@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Joey Zheng <yu.zheng@hxt-semitech.com>
+Subject: Re: [PATCH 2/2] dmaengine: qcom_hidma: assign channel cookie
+ correctly
+Message-ID: <20190104173111.GS13372@vkoul-mobl.Dlink>
+References: <81c9fe2de4b5dac1d5b974f5305e35bf1cf5d127.1544156508.git.shunyong.yang@hxt-semitech.com>
+ <ea6c6317dabffdcfa28cdb391b50edce98ce875d.1544156508.git.shunyong.yang@hxt-semitech.com>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d85b795b-e82c-46c9-8016-08d6726a966d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Jan 2019 17:32:23.8624
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB3357
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ea6c6317dabffdcfa28cdb391b50edce98ce875d.1544156508.git.shunyong.yang@hxt-semitech.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMS80LzE5IDk6NDcgQU0sIEJvcmlzbGF2IFBldGtvdiB3cm90ZToNCj4gT24gRnJpLCBKYW4g
-MDQsIDIwMTkgYXQgMDE6NDE6MjVQTSArMDEwMCwgUGF1bCBNZW56ZWwgd3JvdGU6DQo+PiBEZWFy
-IExpbnV4IGZvbGtzLA0KPj4NCj4+DQo+PiBPbiAwMS8wMy8xOSAyMjo0NSwgUGF1bCBNZW56ZWwg
-d3JvdGU6DQo+Pg0KPj4+IE9uIHRoZSBzZXJ2ZXIgYm9hcmQgQXN1cyBLR1BFLUQxNiB3aXRoIEFN
-RCBPcHRlcm9uIDYyNzggcHJvY2Vzc29yIHVwZGF0aW5nIHRoZSBtaWNyb2NvZGUgdXBkYXRlIGlu
-IHRoZSBmaXJtd2FyZSBmcm9tIDB4MDYwMDA2MmUgdG8gMHgwNjAwMDYzZSBzZWVtcyB0byBjYXVz
-ZSBhIGdlbmVyYWwgcHJvdGVjdGlvbiBmYXVsdCB3aXRoIExpbnV4IDQuMTQuODcgYW5kIDQuMjAt
-cmM3Lg0KPj4+DQo+Pj4+IDQ2Ljg1OTogW8KgwqDCoCA3LjU3MzI0MF0gbWljcm9jb2RlOiBDUFUz
-MTogcGF0Y2hfbGV2ZWw9MHgwNjAwMDYzZQ0KPj4+PiA0Ni44NTk6IFvCoMKgwqAgNy41Nzg1MDdd
-IG1pY3JvY29kZTogTWljcm9jb2RlIFVwZGF0ZSBEcml2ZXI6IHYyLjIuDQo+Pj4+IDQ2Ljg2MDog
-W8KgwqDCoCA3LjU3ODUzOV0gc2NoZWRfY2xvY2s6IE1hcmtpbmcgc3RhYmxlICg2NTEwMDU0NzQ1
-LCAxMDY4NDQ0NjU5KS0+KDc5OTk4NzY3NzMsIC00MjEzNzczNjkpDQo+Pj4+IDQ2Ljg2MDogW8Kg
-wqDCoCA3LjU5MzAxM10gcmVnaXN0ZXJlZCB0YXNrc3RhdHMgdmVyc2lvbiAxDQo+Pj4+IDQ2Ljg2
-MTogW8KgwqDCoCA3LjU5ODA5MV0gcnRjX2Ntb3MgMDA6MDA6IHNldHRpbmcgc3lzdGVtIGNsb2Nr
-IHRvIDIwMDAtMDEtMDEgMDg6MDE6NTEgVVRDICg5NDY3MTM3MTEpDQo+Pj4+IDQ2Ljg2MjogW8Kg
-wqDCoCA3LjYwNjU3NV0gQUxTQSBkZXZpY2UgbGlzdDoNCj4+Pj4gNDYuODYyOiBbwqDCoMKgIDcu
-NjA5ODAyXcKgwqAgTm8gc291bmRjYXJkcyBmb3VuZC4NCj4+Pj4gNDYuODY1OiBbwqDCoMKgIDcu
-NjE1ODg3XSBGcmVlaW5nIHVudXNlZCBrZXJuZWwgaW1hZ2UgbWVtb3J5OiAxNTY0Sw0KPj4+PiA0
-Ni44NzE6IFvCoMKgwqAgNy42MjcwNzNdIFdyaXRlIHByb3RlY3RpbmcgdGhlIGtlcm5lbCByZWFk
-LW9ubHkgZGF0YTogMjA0ODBrDQo+Pj4+IDQ2Ljg3MjogW8KgwqDCoCA3LjYzNDM2Nl0gRnJlZWlu
-ZyB1bnVzZWQga2VybmVsIGltYWdlIG1lbW9yeTogMjAxNksNCj4+Pj4gNDYuODczOiBbwqDCoMKg
-IDcuNjQwMjk3XSBGcmVlaW5nIHVudXNlZCBrZXJuZWwgaW1hZ2UgbWVtb3J5OiA1ODRLDQo+Pj4+
-IDQ2Ljg3NDogW8KgwqDCoCA3LjY0NTUyMV0gUnVuIC9pbml0IGFzIGluaXQgcHJvY2Vzcw0KPj4+
-PiA0Ni44Nzc6IFvCoMKgwqAgNy42NTIyNjJdIGdlbmVyYWwgcHJvdGVjdGlvbiBmYXVsdDogMDAw
-MCBbIzFdIFNNUCBOT1BUSQ0KPj4+PiA0Ni44Nzc6IFvCoMKgwqAgNy42NTc5MzFdIENQVTogMTgg
-UElEOiAwIENvbW06IHN3YXBwZXIvMTggTm90IHRhaW50ZWQgNC4yMC4wLXJjNy5teDY0LjIzNyAj
-MQ0KPj4+PiA0Ni44Nzc6IFvCoMKgwqAgNy42NjU1MTRdIEhhcmR3YXJlIG5hbWU6IEFTVVMgS0dQ
-RS1EMTYvS0dQRS1EMTYsIEJJT1MgNC45LTEwMy1nNjM3YmVmMjAzNyAwMS8wMi8yMDE5DQo+Pj4+
-IDQ2Ljg3ODogW8KgwqDCoCA3LjY3MzgwNF0gUklQOiAwMDEwOnN3aXRjaF9tbV9pcnFzX29mZisw
-eGIyLzB4NjQwDQo+Pj4+IDQ2Ljg3ODogW8KgwqDCoCA3LjY3ODk0OF0gQ29kZTogNDggYzEgZWYg
-MDkgODMgZTcgMDEgNDggMDkgYzcgNjUgNDggOGIgMDUgOGUgMzQgZmMgN2UgNDggMzkgYzcgNzQg
-MTUgNDggMDkgZjggYTggMDEgNzQgMGUgYjkgNDkgMDAgMDAgMDAgYjggMDEgMDAgMDAgMDAgMzEg
-ZDIgPDBmPiAzMCA2NSA0OCA4OSAzZCA2YyAzNCBmYyA3ZSA4YiAwNSA5YSBlZiBhNyAwMSA4NSBj
-MCAwZiA4ZiA0MSAwNA0KPj4+PiA0Ni44Nzk6IFvCoMKgwqAgNy42OTgzOTRdIFJTUDogMDAxODpm
-ZmZmYzkwMDA2MzQzZTIwIEVGTEFHUzogMDAwMTAwNDYNCj4+Pj4gNDYuODc5OiBbwqDCoMKgIDcu
-NzAzODQ0XSBSQVg6IDAwMDAwMDAwMDAwMDAwMDEgUkJYOiBmZmZmODg5ODFjYTBiODAwIFJDWDog
-MDAwMDAwMDAwMDAwMDA0OQ0KPj4+PiA0Ni44Nzk6IFvCoMKgwqAgNy43MTEyMzhdIFJEWDogMDAw
-MDAwMDAwMDAwMDAwMCBSU0k6IGZmZmY4ODk4MWI4N2NmODAgUkRJOiBmZmZmODg5ODFjYTBiODAw
-DQo+Pj4+IDQ2Ljg4MDogW8KgwqDCoCA3LjcxODY2NV0gUkJQOiBmZmZmYzkwMDA2MzQzZTcwIFIw
-ODogMDAwMDAwMDFjODFiZWMwMCBSMDk6IDAwMDAwMDAwMDAwMDAwMDANCj4+Pj4gNDYuODgwOiBb
-wqDCoMKgIDcuNzI2MDkyXSBSMTA6IGZmZmZjOTAwMDYzNDNlODggUjExOiAwMDAwMDAwMDAwMDAw
-MDAwIFIxMjogZmZmZmZmZmY4MjQ3OWI0MA0KPj4+PiA0Ni44ODA6IFvCoMKgwqAgNy43MzM0OTRd
-IFIxMzogMDAwMDAwMDAwMDAwMDAwMCBSMTQ6IDAwMDAwMDAwMDAwMDAwMTIgUjE1OiBmZmZmODg5
-ODFkZDUwMDgwDQo+Pj4+IDQ2Ljg4MTogW8KgwqDCoCA3Ljc0MDg1M10gRlM6wqAgMDAwMDAwMDAw
-MDAwMDAwMCgwMDAwKSBHUzpmZmZmODg5ODFmYTgwMDAwKDAwMDApIGtubEdTOjAwMDAwMDAwMDAw
-MDAwMDANCj4+Pj4gNDYuODgxOiBbwqDCoMKgIDcuNzQ5MzE4XSBDUzrCoCAwMDEwIERTOiAwMDAw
-IEVTOiAwMDAwIENSMDogMDAwMDAwMDA4MDA1MDAzMw0KPj4+PiA0Ni44ODE6IFvCoMKgwqAgNy43
-NTUyODFdIENSMjogMDAwMDAwMDAwMDAwMDAwMCBDUjM6IDAwMDAwMDAwMDI0MGEwMDAgQ1I0OiAw
-MDAwMDAwMDAwMDQwNmUwDQo+Pj4+IDQ2Ljg4MTogW8KgwqDCoCA3Ljc2Mjc2MV0gQ2FsbCBUcmFj
-ZToNCj4+Pj4gNDYuODgxOiBbwqDCoMKgIDcuNzY1MzY5XcKgID8gX19zY2hlZHVsZSsweDFiOS8w
-eDdiMA0KPj4+PiA0Ni44ODI6IFvCoMKgwqAgNy43NjkyNTNdwqAgX19zY2hlZHVsZSsweDFiOS8w
-eDdiMA0KPj4+PiA0Ni44ODI6IFvCoMKgwqAgNy43NzI5MzBdwqAgc2NoZWR1bGVfaWRsZSsweDFl
-LzB4NDANCj4+Pj4gNDYuODgyOiBbwqDCoMKgIDcuNzc2NzQ0XcKgIGRvX2lkbGUrMHgxNDYvMHgy
-MDANCj4+Pj4gNDYuODgyOiBbwqDCoMKgIDcuNzgwMTgxXcKgIGNwdV9zdGFydHVwX2VudHJ5KzB4
-MTkvMHgyMA0KPj4+PiA0Ni44ODM6IFvCoMKgwqAgNy43ODQyNzRdwqAgc3RhcnRfc2Vjb25kYXJ5
-KzB4MTgzLzB4MWIwDQo+Pj4+IDQ2Ljg4MzogW8KgwqDCoCA3Ljc4ODQwOV3CoCBzZWNvbmRhcnlf
-c3RhcnR1cF82NCsweGE0LzB4YjANCj4+Pj4gNDYuODgzOiBbwqDCoMKgIDcuNzkyNzY2XSBNb2R1
-bGVzIGxpbmtlZCBpbjoNCj4+Pj4gNDYuODgzOiBbwqDCoMKgIDcuNzk2MTA1XSAtLS1bIGVuZCB0
-cmFjZSBhNDIzZTM2M2ZlMWVjZjY3IF0tLS0NCj4+Pj4gNDYuODg0OiBbwqDCoMKgIDcuODAwOTM5
-XSBSSVA6IDAwMTA6c3dpdGNoX21tX2lycXNfb2ZmKzB4YjIvMHg2NDANCj4+Pj4gNDYuODg0OiBb
-wqDCoMKgIDcuODA2MDQ4XSBDb2RlOiA0OCBjMSBlZiAwOSA4MyBlNyAwMSA0OCAwOSBjNyA2NSA0
-OCA4YiAwNSA4ZSAzNCBmYyA3ZSA0OCAzOSBjNyA3NCAxNSA0OCAwOSBmOCBhOCAwMSA3NCAwZSBi
-OSA0OSAwMCAwMCAwMCBiOCAwMSAwMCAwMCAwMCAzMSBkMiA8MGY+IDMwIDY1IDQ4IDg5IDNkIDZj
-IDM0IGZjIDdlIDhiIDA1IDlhIGVmIGE3IDAxIDg1IGMwIDBmIDhmIDQxIDA0DQo+Pj4+IDQ2Ljg4
-NDogW8KgwqDCoCA3LjgyNTQ0MF0gUlNQOiAwMDE4OmZmZmZjOTAwMDYzNDNlMjAgRUZMQUdTOiAw
-MDAxMDA0Ng0KPj4+PiA0Ni44ODU6IFvCoMKgwqAgNy44MzA4NTVdIFJBWDogMDAwMDAwMDAwMDAw
-MDAwMSBSQlg6IGZmZmY4ODk4MWNhMGI4MDAgUkNYOiAwMDAwMDAwMDAwMDAwMDQ5DQo+Pj4+IDQ2
-Ljg4NTogW8KgwqDCoCA3LjgzODIzMF0gUkRYOiAwMDAwMDAwMDAwMDAwMDAwIFJTSTogZmZmZjg4
-OTgxYjg3Y2Y4MCBSREk6IGZmZmY4ODk4MWNhMGI4MDANCj4+Pj4gNDYuODg1OiBbwqDCoMKgIDcu
-ODQ1NjE0XSBSQlA6IGZmZmZjOTAwMDYzNDNlNzAgUjA4OiAwMDAwMDAwMWM4MWJlYzAwIFIwOTog
-MDAwMDAwMDAwMDAwMDAwMA0KPj4+PiA0Ni44ODY6IFvCoMKgwqAgNy44NTMwNDddIFIxMDogZmZm
-ZmM5MDAwNjM0M2U4OCBSMTE6IDAwMDAwMDAwMDAwMDAwMDAgUjEyOiBmZmZmZmZmZjgyNDc5YjQw
-DQo+Pj4+IDQ2Ljg4NjogW8KgwqDCoCA3Ljg2MDQyN10gUjEzOiAwMDAwMDAwMDAwMDAwMDAwIFIx
-NDogMDAwMDAwMDAwMDAwMDAxMiBSMTU6IGZmZmY4ODk4MWRkNTAwODANCj4+Pj4gNDYuODg2OiBb
-wqDCoMKgIDcuODY3ODYyXSBGUzrCoCAwMDAwMDAwMDAwMDAwMDAwKDAwMDApIEdTOmZmZmY4ODk4
-MWZhODAwMDAoMDAwMCkga25sR1M6MDAwMDAwMDAwMDAwMDAwMA0KPj4+PiA0Ni44ODY6IFvCoMKg
-wqAgNy44NzYzMjBdIENTOsKgIDAwMTAgRFM6IDAwMDAgRVM6IDAwMDAgQ1IwOiAwMDAwMDAwMDgw
-MDUwMDMzDQo+Pj4+IDQ2Ljg4NzogW8KgwqDCoCA3Ljg4MjM1MV0gQ1IyOiAwMDAwMDAwMDAwMDAw
-MDAwIENSMzogMDAwMDAwMDAwMjQwYTAwMCBDUjQ6IDAwMDAwMDAwMDAwNDA2ZTANCj4+Pj4gNDYu
-ODg3OiBbwqDCoMKgIDcuODg5NzQ2XSBLZXJuZWwgcGFuaWMgLSBub3Qgc3luY2luZzogQXR0ZW1w
-dGVkIHRvIGtpbGwgdGhlIGlkbGUgdGFzayENCj4+Pj4gNDYuODg4OiBbwqDCoMKgIDcuODk2OTA3
-XSBLZXJuZWwgT2Zmc2V0OiBkaXNhYmxlZA0KPj4+PiA0Ni44ODg6IFvCoMKgwqAgNy45MDA1NThd
-IC0tLVsgZW5kIEtlcm5lbCBwYW5pYyAtIG5vdCBzeW5jaW5nOiBBdHRlbXB0ZWQgdG8ga2lsbCB0
-aGUgaWRsZSB0YXNrISBdLS0tDQo+Pj4NCj4+PiBQbGVhc2UgZmluZCB0aGUgd2hvbGUgbG9nLCBp
-bmNsdWRpbmcgdGhlIGNvcmVib290IG1lc3NhZ2VzLCBhdHRhY2hlZC4gVGhlIHRpbWUgc3RhbXBz
-IGluIHRoZSBiZWdpbm5pbmcgYXJlIGZyb20gdGhlIHNjcmlwdCBgcmVhZHNlcmlhbC5weWAgZnJv
-bSB0aGUgU2VhQklPUyByZXBvc2l0b3J5Lg0KPj4+DQo+Pj4gRG8geW91IGhhdmUgYW4gaWRlYSB3
-aGF0IGlzIGdvaW5nIG9uLCBhbmQgaG93IHRvIGZpeCBpdD8NCj4+DQo+PiBEZWNvZGluZyB0aGUg
-Y29kZSwgZ2l2ZSB0aGUgb3V0cHV0IGJlbG93Lg0KPj4NCj4+IGBgYA0KPj4gJCBzY3JpcHRzL2Rl
-Y29kZWNvZGUgPCAvZGV2L3NobS90ZXN0LmxvZw0KPj4gWyA3LjgwNjA0OF0gQ29kZTogNDggYzEg
-ZWYgMDkgODMgZTcgMDEgNDggMDkgYzcgNjUgNDggOGIgMDUgOGUgMzQgZmMgN2UgNDggMzkgYzcg
-NzQgMTUgNDggMDkgZjggYTggMDEgNzQgMGUgYjkgNDkgMDAgMDAgMDAgYjggMDEgMDAgMDAgMDAg
-MzEgZDIgPDBmPiAzMCA2NSA0OCA4OSAzZCA2YyAzNCBmYyA3ZSA4YiAwNSA5YSBlZiBhNyAwMSA4
-NSBjMCAwZiA4ZiA0MSAwNA0KPj4gQWxsIGNvZGUNCj4+ID09PT09PT09DQo+PiAgICAgMDoJNDgg
-YzEgZWYgMDkgICAgICAgICAgCXNociAgICAkMHg5LCVyZGkNCj4+ICAgICA0Ogk4MyBlNyAwMSAg
-ICAgICAgICAgICAJYW5kICAgICQweDEsJWVkaQ0KPj4gICAgIDc6CTQ4IDA5IGM3ICAgICAgICAg
-ICAgIAlvciAgICAgJXJheCwlcmRpDQo+PiAgICAgYToJNjUgNDggOGIgMDUgOGUgMzQgZmMgCW1v
-diAgICAlZ3M6MHg3ZWZjMzQ4ZSglcmlwKSwlcmF4ICAgICAgICAjIDB4N2VmYzM0YTANCj4+ICAg
-IDExOgk3ZQ0KPj4gICAgMTI6CTQ4IDM5IGM3ICAgICAgICAgICAgIAljbXAgICAgJXJheCwlcmRp
-DQo+PiAgICAxNToJNzQgMTUgICAgICAgICAgICAgICAgCWplICAgICAweDJjDQo+PiAgICAxNzoJ
-NDggMDkgZjggICAgICAgICAgICAgCW9yICAgICAlcmRpLCVyYXgNCj4+ICAgIDFhOglhOCAwMSAg
-ICAgICAgICAgICAgICAJdGVzdCAgICQweDEsJWFsDQo+PiAgICAxYzoJNzQgMGUgICAgICAgICAg
-ICAgICAgCWplICAgICAweDJjDQo+PiAgICAxZToJYjkgNDkgMDAgMDAgMDAgICAgICAgCW1vdiAg
-ICAkMHg0OSwlZWN4DQo+PiAgICAyMzoJYjggMDEgMDAgMDAgMDAgICAgICAgCW1vdiAgICAkMHgx
-LCVlYXgNCj4+ICAgIDI4OgkzMSBkMiAgICAgICAgICAgICAgICAJeG9yICAgICVlZHgsJWVkeA0K
-Pj4gICAgMmE6KgkwZiAzMCAgICAgICAgICAgICAgICAJd3Jtc3IgIAkJPC0tIHRyYXBwaW5nIGlu
-c3RydWN0aW9uDQo+PiAgICAyYzoJNjUgNDggODkgM2QgNmMgMzQgZmMgCW1vdiAgICAlcmRpLCVn
-czoweDdlZmMzNDZjKCVyaXApICAgICAgICAjIDB4N2VmYzM0YTANCj4+ICAgIDMzOgk3ZQ0KPj4g
-ICAgMzQ6CThiIDA1IDlhIGVmIGE3IDAxICAgIAltb3YgICAgMHgxYTdlZjlhKCVyaXApLCVlYXgg
-ICAgICAgICMgMHgxYTdlZmQ0DQo+PiAgICAzYToJODUgYzAgICAgICAgICAgICAgICAgCXRlc3Qg
-ICAlZWF4LCVlYXgNCj4+ICAgIDNjOgkwZiAgICAgICAgICAgICAgICAgICAJLmJ5dGUgMHhmDQo+
-PiAgICAzZDoJOGYgNDEgMDQgICAgICAgICAgICAgCXBvcHEgICAweDQoJXJjeCkNCj4+DQo+PiBD
-b2RlIHN0YXJ0aW5nIHdpdGggdGhlIGZhdWx0aW5nIGluc3RydWN0aW9uDQo+PiA9PT09PT09PT09
-PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09DQo+PiAgICAgMDoJMGYgMzAgICAgICAg
-ICAgICAgICAgCXdybXNyDQo+PiAgICAgMjoJNjUgNDggODkgM2QgNmMgMzQgZmMgCW1vdiAgICAl
-cmRpLCVnczoweDdlZmMzNDZjKCVyaXApICAgICAgICAjIDB4N2VmYzM0NzYNCj4+ICAgICA5Ogk3
-ZQ0KPj4gICAgIGE6CThiIDA1IDlhIGVmIGE3IDAxICAgIAltb3YgICAgMHgxYTdlZjlhKCVyaXAp
-LCVlYXggICAgICAgICMgMHgxYTdlZmFhDQo+PiAgICAxMDoJODUgYzAgICAgICAgICAgICAgICAg
-CXRlc3QgICAlZWF4LCVlYXgNCj4+ICAgIDEyOgkwZiAgICAgICAgICAgICAgICAgICAJLmJ5dGUg
-MHhmDQo+PiAgICAxMzoJOGYgNDEgMDQgICAgICAgICAgICAgCXBvcHEgICAweDQoJXJjeCkNCj4+
-IGBgYA0KPj4NCj4+IFNvIHRoZSBwcm9ibGVtIGlzIHdpdGggdGhlIGluc3RydWN0aW9uICp3cm1z
-ciogWzFdLg0KPj4NCj4+IFRoZSBjb250ZW50IG9mIEVDWCwgd2hpY2ggYWNjb3JkaW5nIHRvIFsx
-XSBpcyB3cml0dGVuIHRvLCBpcyBub3QNCj4+IGluIHRoZSBsb2dzIHRob3VnaCwgYXMgZmFyIGFz
-IEkgY2FuIHNlZS4NCj4gDQo+IE9mIGNvdXJzZSBpdCBpczoNCj4gDQo+PiAgICAxZToJYjkgNDkg
-MDAgMDAgMDAgICAgICAgCW1vdiAgICAkMHg0OSwlZWN4DQo+IA0KPiB3aGljaCBpcyBzdHJhbmdl
-Lg0KPiANCj4gVG9tLCBpcyBwYXRjaF9sZXZlbD0weDA2MDAwNjNlIG9uIEJEIHN1cHBvc2VkIHRv
-ICNHUCB3aGVuIHdyaXRpbmcNCj4gTVNSX0lBMzJfUFJFRF9DTUQuLi4NCg0KTm8sIHRoYXQgcGF0
-Y2ggbGV2ZWwgc2hvdWxkIGJlIGdvb2QgZm9yIHdyaXRpbmcgdGhhdCBNU1IgYXMgZmFyIGFzIEkn
-bQ0KYXdhcmUuDQoNCkp1c3QgdG8gYmUgY2xlYXIsIHdhcyB0aGUgdWNvZGUgdXBkYXRlZCB0aHJv
-dWdoIHRoZSBCSU9TL2Zpcm13YXJlIG9yDQpvbiBMaW51eCBib290IHRocm91Z2ggdGhlIGZpcm13
-YXJlIGxvYWRlcj8gIEFuZCBJIHNhdyBKaXJpJ3MgcmVxdWVzdA0KZm9yIG1vcmUgaW5mbywgc28g
-SSdsbCBsb29rIGZvciB0aGF0LCBhbHNvLg0KDQpUaGFua3MsDQpUb20NCg0KPiANCj4gVGh4Lg0K
-PiANCg==
+On 07-12-18, 12:29, Shunyong Yang wrote:
+> When dma_cookie_complete() is called in hidma_process_completed(),
+> dma_cookie_status() will return DMA_COMPLETE in hidma_tx_status(). Then,
+> hidma_txn_is_success() will be called to use channel cookie
+> mchan->last_success to do additional DMA status check. Current code
+> assigns mchan->last_success after dma_cookie_complete(). This causes
+> a race condition of dma_cookie_status() returns DMA_COMPLETE before
+> mchan->last_success is assigned correctly. The race will cause
+> hidma_tx_status() return DMA_ERROR but the transaction is actually a
+> success. Moreover, in async_tx case, it will cause a timeout panic
+> in async_tx_quiesce().
+> 
+>  Kernel panic - not syncing: async_tx_quiesce: DMA error waiting for
+>  transaction
+>  ...
+>  Call trace:
+>  [<ffff000008089994>] dump_backtrace+0x0/0x1f4
+>  [<ffff000008089bac>] show_stack+0x24/0x2c
+>  [<ffff00000891e198>] dump_stack+0x84/0xa8
+>  [<ffff0000080da544>] panic+0x12c/0x29c
+>  [<ffff0000045d0334>] async_tx_quiesce+0xa4/0xc8 [async_tx]
+>  [<ffff0000045d03c8>] async_trigger_callback+0x70/0x1c0 [async_tx]
+>  [<ffff0000048b7d74>] raid_run_ops+0x86c/0x1540 [raid456]
+>  [<ffff0000048bd084>] handle_stripe+0x5e8/0x1c7c [raid456]
+>  [<ffff0000048be9ec>] handle_active_stripes.isra.45+0x2d4/0x550 [raid456]
+>  [<ffff0000048beff4>] raid5d+0x38c/0x5d0 [raid456]
+>  [<ffff000008736538>] md_thread+0x108/0x168
+>  [<ffff0000080fb1cc>] kthread+0x10c/0x138
+>  [<ffff000008084d34>] ret_from_fork+0x10/0x18
+> 
+> Cc: Joey Zheng <yu.zheng@hxt-semitech.com>
+> Signed-off-by: Shunyong Yang <shunyong.yang@hxt-semitech.com>
+> ---
+>  drivers/dma/qcom/hidma.c | 16 ++++++++--------
+>  1 file changed, 8 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/dma/qcom/hidma.c b/drivers/dma/qcom/hidma.c
+> index 9d639ed1955a..aa88bcceda20 100644
+> --- a/drivers/dma/qcom/hidma.c
+> +++ b/drivers/dma/qcom/hidma.c
+> @@ -138,24 +138,24 @@ static void hidma_process_completed(struct hidma_chan *mchan)
+>  		desc = &mdesc->desc;
+>  		last_cookie = desc->cookie;
+>  
+> +		llstat = hidma_ll_status(mdma->lldev, mdesc->tre_ch);
+> +
+>  		spin_lock_irqsave(&mchan->lock, irqflags);
+> +		if (llstat == DMA_COMPLETE) {
+> +			mchan->last_success = last_cookie;
+> +			result.result = DMA_TRANS_NOERROR;
+> +		} else
+> +			result.result = DMA_TRANS_ABORTED;
+
+Coding style mandates that else should also have braces, please fix that
+
+-- 
+~Vinod
