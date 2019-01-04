@@ -3,171 +3,145 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33C92C43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 03:00:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0F09C43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 03:04:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A4142184B
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 03:00:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A47A32184B
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 03:04:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726795AbfADDAV (ORCPT
+        id S1726820AbfADDET (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 22:00:21 -0500
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:2405 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726418AbfADDAU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 22:00:20 -0500
-X-UUID: 2861622142994ba8a73c956defbc61bf-20190104
-X-UUID: 2861622142994ba8a73c956defbc61bf-20190104
-Received: from mtkcas36.mediatek.inc [(172.27.4.250)] by mailgw01.mediatek.com
-        (envelope-from <min.guo@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 1293402557; Fri, 04 Jan 2019 11:00:10 +0800
-Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS31N2.mediatek.inc
- (172.27.4.87) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 4 Jan
- 2019 11:00:08 +0800
-Received: from [10.17.3.153] (10.17.3.153) by MTKCAS32.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Fri, 4 Jan 2019 11:00:07 +0800
-Message-ID: <1546570807.585.31.camel@mhfsdcap03>
-Subject: Re: [PATCH 1/4] dt-bindings: usb: musb: Add support for MediaTek
- musb controller
-From:   Min Guo <min.guo@mediatek.com>
-To:     Rob Herring <robh@kernel.org>
-CC:     Bin Liu <b-liu@ti.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        <chunfeng.yun@mediatek.com>, <linux-usb@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>
-Date:   Fri, 4 Jan 2019 11:00:07 +0800
-In-Reply-To: <20190103221414.GA14639@bogus>
-References: <1545896066-897-1-git-send-email-min.guo@mediatek.com>
-         <1545896066-897-2-git-send-email-min.guo@mediatek.com>
-         <20190103221414.GA14639@bogus>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Thu, 3 Jan 2019 22:04:19 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:43864 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726418AbfADDET (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Jan 2019 22:04:19 -0500
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 098B4E08D0429;
+        Fri,  4 Jan 2019 11:04:15 +0800 (CST)
+Received: from [127.0.0.1] (10.134.22.195) by DGGEMS412-HUB.china.huawei.com
+ (10.3.19.212) with Microsoft SMTP Server id 14.3.408.0; Fri, 4 Jan 2019
+ 11:04:07 +0800
+Subject: Re: [PATCH 1/2] f2fs-dev: support multi-device direct IO
+To:     sunqiuyang <sunqiuyang@huawei.com>, <linux-kernel@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>
+References: <20190102090659.7974-1-sunqiuyang@huawei.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <d38a6442-cb0e-2e77-62e6-31c9e71fb636@huawei.com>
+Date:   Fri, 4 Jan 2019 11:04:06 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-MTK:  N
+In-Reply-To: <20190102090659.7974-1-sunqiuyang@huawei.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-01-03 at 16:14 -0600, Rob Herring wrote:
-> On Thu, Dec 27, 2018 at 03:34:23PM +0800, min.guo@mediatek.com wrote:
-> > From: Min Guo <min.guo@mediatek.com>
-> > 
-> > This adds support for MediaTek musb controller in
-> > host, peripheral and otg mode
-> > 
-> > Signed-off-by: Min Guo <min.guo@mediatek.com>
-> > ---
-> >  .../devicetree/bindings/usb/mediatek,musb.txt      | 49 ++++++++++++++++++++++
-> >  1 file changed, 49 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/usb/mediatek,musb.txt
-> > 
-> > diff --git a/Documentation/devicetree/bindings/usb/mediatek,musb.txt b/Documentation/devicetree/bindings/usb/mediatek,musb.txt
-> > new file mode 100644
-> > index 0000000..e899c9b
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/usb/mediatek,musb.txt
-> > @@ -0,0 +1,49 @@
-> > +MediaTek musb DRC/OTG controller
-> > +-------------------------------------------
-> > +
-> > +Required properties:
-> > + - compatible      : should be "mediatek,<soc-model>-musb",
-> > +   "mediatek,mtk-musb", soc-model is the name of SoC, such as
-> > +   mt2701, when using "mediatek,mtk-musb" compatible string, you
-> > +   need SoC specific ones in addition, one of:
-> > +   - "mediatek,mt2701-musb"
+On 2019/1/2 17:06, sunqiuyang wrote:
+> From: Qiuyang Sun <sunqiuyang@huawei.com>
 > 
-> This isn't very clear. Just drop the <soc-model and enumerate the SoCs:
+> The physical blocks in struct f2fs_map_blocks must be in the same device.
 > 
-> compatible: should be one of:
->     "mediatek,mt2701-musb"
->     ...
->   followed by "mediatek,mtk-musb"
-I will modify it in the next patch.
-
-> > + - reg             : specifies physical base address and size of
-> > +   the registers
-> > + - interrupts      : interrupt used by musb controller
-> > + - interrupt-names : must be "mc"
+> Signed-off-by: Qiuyang Sun <sunqiuyang@huawei.com>
+> ---
+>  fs/f2fs/data.c | 20 +++++++++++++++++++-
+>  fs/f2fs/f2fs.h |  2 --
+>  2 files changed, 19 insertions(+), 3 deletions(-)
 > 
-> -names is pointless when there is only one.
-The MUSB core driver has two interrupts, one is for MAC, another for DMA,
-but on MTK platform, there is only a MAC interrupt, here following the binding
-of MUSB core driver.
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index e5cd3fd..7a6369e 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -1076,6 +1076,8 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
+>  	struct extent_info ei = {0,0,0};
+>  	block_t blkaddr;
+>  	unsigned int start_pgofs;
+> +	int devi;
+> +	block_t end_blk;
+>  
+>  	if (!maxblocks)
+>  		return 0;
+> @@ -1207,8 +1209,15 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
+>  
+>  		map->m_pblk = blkaddr;
+>  		map->m_len = 1;
+> +
+> +		if (sbi->s_ndevs && blkaddr != NEW_ADDR &&
+> +							blkaddr != NULL_ADDR) {
 
-> > + - phys            : PHY specifier for the OTG phy
-> > + - phy-names       : should be "usb2-phy"
+int devi;
+
+devi = f2fs_target_device_index(sbi, blkaddr);
+
+> +			devi = f2fs_target_device_index(sbi, blkaddr);
+> +			end_blk = FDEV(devi).end_blk;
+> +		}
+>  	} else if ((map->m_pblk != NEW_ADDR &&
+> -			blkaddr == (map->m_pblk + ofs)) ||
+> +			blkaddr == (map->m_pblk + ofs) &&
+> +			(!sbi->s_ndevs || blkaddr <= end_blk)) ||
+>  			(map->m_pblk == NEW_ADDR && blkaddr == NEW_ADDR) ||
+>  			flag == F2FS_GET_BLOCK_PRE_DIO) {
+>  		ofs++;
+> @@ -1322,6 +1331,8 @@ static int __get_data_block(struct inode *inode, sector_t iblock,
+>  {
+>  	struct f2fs_map_blocks map;
+>  	int err;
+> +	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+> +	int devi;
+>  
+>  	map.m_lblk = iblock;
+>  	map.m_len = bh->b_size >> inode->i_blkbits;
+> @@ -1333,6 +1344,13 @@ static int __get_data_block(struct inode *inode, sector_t iblock,
+>  	err = f2fs_map_blocks(inode, &map, create, flag);
+>  	if (!err) {
+>  		map_bh(bh, inode->i_sb, map.m_pblk);
+> +		if (sbi->s_ndevs) {
+
+struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+int devi;
+
+> +			devi = f2fs_target_device_index(sbi, map.m_pblk);
+> +			if (devi) {
+
+Is it possible that devi == 0?
+
+> +				bh->b_bdev = FDEV(devi).bdev;
+> +				bh->b_blocknr -= FDEV(devi).start_blk;
+> +			}
+> +		}
+>  		bh->b_state = (bh->b_state & ~F2FS_MAP_FLAGS) | map.m_flags;
+>  		bh->b_size = (u64)map.m_len << inode->i_blkbits;
+
+For the write IO, we need to call update_device_state() to set dirty flag
+in current device, in order to trigger flush command on right device during
+fsync/fdatasync.
+
+Thanks,
+
+>  	}
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index eeede26..b311471 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -3595,8 +3595,6 @@ static inline bool f2fs_force_buffered_io(struct inode *inode,
+>  
+>  	if (f2fs_post_read_required(inode))
+>  		return true;
+> -	if (sbi->s_ndevs)
+> -		return true;
+>  	/*
+>  	 * for blkzoned device, fallback direct IO to buffered IO, so
+>  	 * all IOs can be serialized by log-structured write.
 > 
-> Same here.
-I will modify it in the next patch.
-
-> > + - dr_mode         : should be one of "host", "peripheral" or "otg",
-> > +   refer to usb/generic.txt
-> > + - clocks          : a list of phandle + clock-specifier pairs, one for
-> > +   each entry in clock-names
-> > + - clock-names     : must contain "main","mcu","univpll"
-> 
-> space needed after each comma.
-I will modify it in the next patch.
-
-> > +   for clocks of controller
-> > +
-> > +Optional properties:
-> > + - extcon : external connector for VBUS and IDPIN changes detection,
-> > +   needed when supports dual-role mode.
-> 
-> Don't use extcon for new bindings. The usb-connector binding should be 
-> used instead.
-This is used to detect the changes of the IDPIN and VBUS, the change
-events are provided by other drivers, such as extcon-usb-gpio.c, and
-then switch MUSB controller to host or device mode, but the
-usb-connector can't detect these changes.
-
-> > + - vbus-supply : reference to the VBUS regulator, needed when supports
-> > +   dual-role mode.
-> 
-> The controller is powered from Vbus? Probably not. This belongs in the 
-> connector or maybe the phy (if the phy is powered from Vbus).
-The Vbus is used to provide 5V voltage to the connected device when the
-controller works as host mode.
-
-> > + - power-domains   : a phandle to USB power domain node to control USB's
-> > +   MTCMOS
-> > +
-> > +Example:
-> > +
-> > +usb2: usb@11200000 {
-> > +	compatible = "mediatek,mt2701-musb";
-> > +		"mediatek,mtk-musb";
-> > +	reg = <0 0x11200000 0 0x1000>;
-> > +	interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_LOW>;
-> > +	interrupt-names = "mc";
-> > +	phys = <&u2port2 PHY_TYPE_USB2>;
-> > +	phy-names = "usb2-phy";
-> > +	vbus-supply = <&usb_vbus>;
-> > +	extcon = <&extcon_usb>;
-> > +	dr_mode = "otg";
-> > +	clocks = <&pericfg CLK_PERI_USB0>,
-> > +		 <&pericfg CLK_PERI_USB0_MCU>,
-> > +		 <&pericfg CLK_PERI_USB_SLV>;
-> > +	clock-names = "main","mcu","univpll";
-> > +	power-domains = <&scpsys MT2701_POWER_DOMAIN_IFR_MSC>;
-> > +};
-> > -- 
-> > 1.9.1
-> > 
-
 
