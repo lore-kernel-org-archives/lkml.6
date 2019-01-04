@@ -2,110 +2,156 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE06CC43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 12:59:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51F50C43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 13:01:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFE162070C
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 12:59:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 156A32070C
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 13:01:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="p+LY4srb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727330AbfADM75 (ORCPT
+        id S1727642AbfADNB0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 07:59:57 -0500
-Received: from ozlabs.org ([203.11.71.1]:50927 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726069AbfADM75 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 07:59:57 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43WPyL5KDNz9rxp;
-        Fri,  4 Jan 2019 23:59:54 +1100 (AEDT)
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     chunkeey@gmail.com, diana.craciun@nxp.com,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        malat@debian.org
-Subject: [GIT PULL] Please pull powerpc/linux.git powerpc-4.21-2 tag
-Date:   Sat, 05 Jan 2019 00:00:03 +1100
-Message-ID: <87ftu8y3vw.fsf@concordia.ellerman.id.au>
+        Fri, 4 Jan 2019 08:01:26 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:35382 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726069AbfADNB0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 08:01:26 -0500
+Received: by mail-it1-f194.google.com with SMTP id p197so1411048itp.0
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Jan 2019 05:01:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=AlDCeVyQcFtZxOeauQhgqrGJnnhrVwiDh6IRjnmb770=;
+        b=p+LY4srb4yFiAoFUH8bl088vqz6RJqT7VjEeA0Pp1X5rRC3TNY6A1tJT0nlW/uXXrN
+         w/zBKZhmXhGXL8tbvCSX+C5qICclPaC1TIzkcvW3reTsnCpGu2totOjVTZm60u38+Nh4
+         NX2sI282T2IWwKqya5SJ17rrU3dVthV4LOPQXKq/RLcHxuV+9D4+qwxg3bFgieyxoCk0
+         tb3PvTnHrLrtD+BOHAr50Zver17T9Mpk30vZLoGqcJCAqdJKEnnaNzhD+HV+OKgn2sLN
+         B/S7AKvGeydC26AH8pDDW2K7dRWXugK6DALaCsTP/Zev2qHkUcyE8o70W3YnWdwQW23F
+         m8mA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=AlDCeVyQcFtZxOeauQhgqrGJnnhrVwiDh6IRjnmb770=;
+        b=klxqybdqTlU3V7lWVMeLPZdTR7EciujekVhAZYMUSSTtQxf/rO91R+tsAlBNTS++Mo
+         bqN2Omnco7vwXoRQ5xeRkgzIu3enU/dHE23fENcKBhDu8tP1ig9bp++4NL98j/JF1I6c
+         9ugJ/R6hxXK9kgimJvszanAdhyBIw1QQPOw/K77DR3G1SPvXWDONnsATRBiYUa5I6KdT
+         QM0o0g5JFsniu0EdPZgB7qosrVCQGnuxFl56Gx4YI7dtDtACSCyyfuI/U7Ax5gtcDZ8i
+         G/CtWscBMU5hPUw7IMR41eKBa7N+hTwlYG9vbYQn84JPm1aOvI8CiDDKKuEumfNkt7/H
+         INtw==
+X-Gm-Message-State: AA+aEWYhdK6MbssNyp2uUDMdlX4lGdPvR6R/fjCU7Bbml/jYb1+mwAPT
+        HfwI3M3rKmZ+FV1NCWT6kAOmNJvcwrXvJQq/3FrHzA==
+X-Google-Smtp-Source: AFSGD/UTIizBJeSKE7mLJy9XvTcT+ISo1PBCWYRc0lr4G5ESYRuEF+gF07tNN40ShOk61oBg+YTwTJHpgScf7vDkwbI=
+X-Received: by 2002:a02:ac8c:: with SMTP id x12mr31670906jan.72.1546606884961;
+ Fri, 04 Jan 2019 05:01:24 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <CACT4Y+Z37Th9884Y_bqWxbPQZi3aKR9eKMBU8WhA=KF78qxfCA@mail.gmail.com>
+ <201804262241.GFB12906.LVOHMOQFJSOFFt@I-love.SAKURA.ne.jp>
+ <CACT4Y+a4HhuopcBmXepugO0W98BhcvHk9f3ekf=zMDEpG0pyzg@mail.gmail.com>
+ <201805160559.DAE56781.VFSOMFJOHOQLtF@I-love.SAKURA.ne.jp>
+ <CACT4Y+ZGEiSEUOFRZZ832KMiKy7zBz-iXjkE2_z8Zes_LTxn6g@mail.gmail.com> <201805170150.JHD52118.LtOFSHMJFQFOOV@I-love.SAKURA.ne.jp>
+In-Reply-To: <201805170150.JHD52118.LtOFSHMJFQFOOV@I-love.SAKURA.ne.jp>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Fri, 4 Jan 2019 14:01:13 +0100
+Message-ID: <CACT4Y+ZkuVR2eVW+BqMT=_4rCs=6dbK950qbstNFDk40e7UrmA@mail.gmail.com>
+Subject: Re: Column for keywords?
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     syzkaller <syzkaller@googlegroups.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+On Wed, May 16, 2018 at 6:50 PM Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+>
+> Dmitry Vyukov wrote:
+> > On Tue, May 15, 2018 at 10:59 PM, Tetsuo Handa
+> > <penguin-kernel@i-love.sakura.ne.jp> wrote:
+> > > Dmitry Vyukov wrote:
+> > >> I've filed https://github.com/google/syzkaller/issues/608 to not lose
+> > >> track of this.
+> > >
+> > > Thanks. Since the time lag between a patch was proposed and that patch is
+> > > applied to a git tree tends to become long, duplicated works like
+> > > https://www.spinics.net/lists/linux-fsdevel/msg125240.html and
+> > > http://lkml.kernel.org/r/964a8b27-cd69-357c-fe78-76b066056201@I-love.SAKURA.ne.jp
+> > > are already occurring.
+> >
+> > This is bad.
+> >
+> > > Therefore, it is important that the state of the bug (e.g.
+> > > bisected, cause identified, patch proposed) is visible from the table.
+> >
+> > What do you think about the last section of:
+> > https://groups.google.com/d/msg/syzkaller-bugs/nw7BIW9V2wk/NE0P_Au4AQAJ
+> > there is already a way to say "there is a pending fix for this".
+>
+> That lacks a way to annotate "there is a pending fix for this, but the fix
+> is not yet applied to any git tree". I mean not only "git trees which syzbot
+> is checking" but also "git trees which are publicly visible".
+>
+> (Also, if we can later correct the patch using "#syz fix:" in case the patch
+> title was renamed, it is not clear how to specify multiple patches using
+> "#syz fix:" when a patch which meant to fix the reported problem contained
+> a regression or was incomplete and thus fixup patch followed shortly. An
+> example is commit 5f3e3b85cc0a5eae and commit ef95a90ae6f4f219 in
+> "WARNING: kmalloc bug in memdup_user (2)". I've tried
+>
+>   #syz fix: RDMA/ucma: Correct option size check using optlen
+>   #syz fix: RDMA/ucma: ucma_context reference leak in error path
+>
+> but only the former patch was recorded.)
+>
+> >
+> > But one problem with manual tagging is how to make everybody update
+> > these tags. If only few people do it, it can still lead to duplicate
+> > work. And it's not syzbot-specific. Can happen with just any bug
+> > report on kernel mailing lists. Traditionally it's solved with bug
+> > tracking systems and assigning bugs when a developer starts working on
+> > it. But kernel does not have a working bug tracker.
+> >
+> > One simple thing we can do is make syzbot poll more trees to discover
+> > Reported-by tags faster. This will automatically update status on
+> > dashboard to "fix pending". I've filed
+> > https://github.com/google/syzkaller/issues/610 for this. Ideally, we
+> > would intercept all mailed patches, but it's hard with kernel
+> > development process because there is no system that tracks all pending
+> > patches.
+> >
+>
+> The problem is that the pending fix won't be applied to any git tree.
+> It depends on when reviewers and maintainers can find time for
+> reviewing/committing the fix. Scanning all git trees unlikely helps.
+>
+>   the criteria is that you are "reasonably sure that the commit will
+>   reach upstream under this title", for whatever reason
+>
+> won't apply to not yet reviewed patches. What I want is a way to specify
+> "a patch was proposed but the patch is not yet reviewed/tested/applied".
+>
+> Generally, progresses are not recorded frequently enough to avoid duplicated
+> works. I want to check not only "fix pending" stage but also e.g. "problem
+> guessed", "bisected", "cause identified", "patch proposed", "patch reviewed"
+> stages from the top page's table.
 
-Hi Linus,
-
-Please pull some powerpc fixes for 4.21:
-
-The following changes since commit 96d4f267e40f9509e8a66e2b39e8b95655617693:
-
-  Remove 'type' argument from access_ok() function (2019-01-03 18:57:57 -0800)
-
-are available in the git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git tags/powerpc-4.21-2
-
-for you to fetch changes up to 074400a7be61250d9f0ccec07d5c35ffec4d8d22:
-
-  powerpc: Drop use of 'type' from access_ok() (2019-01-04 23:07:59 +1100)
-
-- ------------------------------------------------------------------
-powerpc fixes for 4.21 #2
-
-A fix for the recent access_ok() change, which broke the build. We recently
-added a use of type in order to squash a warning elsewhere about type being
-unused.
-
-A handful of other minor build fixes, and one defconfig update.
-
-Thanks to:
-  Christian Lamparter, Christophe Leroy, Diana Craciun, Mathieu Malaterre.
-
-- ------------------------------------------------------------------
-Christian Lamparter (1):
-      powerpc/4xx/ocm: Fix compilation error due to PAGE_KERNEL usage
-
-Diana Craciun (1):
-      powerpc/fsl: Fixed warning: orphan section `__btb_flush_fixup'
-
-Mathieu Malaterre (1):
-      powerpc: Drop use of 'type' from access_ok()
-
-Michael Ellerman (4):
-      powerpc/4xx/ocm: Fix phys_addr_t printf warnings
-      powerpc/configs: Add PPC4xx_OCM to ppc40x_defconfig
-      KVM: PPC: Book3S HV: radix: Fix uninitialized var build error
-      Merge branch 'master' into fixes
-
-
- arch/powerpc/configs/ppc40x_defconfig  |  1 +
- arch/powerpc/include/asm/uaccess.h     |  2 +-
- arch/powerpc/kernel/head_booke.h       | 18 ++++++++++++------
- arch/powerpc/kvm/book3s_64_mmu_radix.c |  2 +-
- arch/powerpc/platforms/4xx/ocm.c       | 10 +++++-----
- 5 files changed, 20 insertions(+), 13 deletions(-)
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJcL1eOAAoJEFHr6jzI4aWA86wP/3V5zlUNtsyXpcCx60PNIMya
-6z6oWVKoM92nMIyfWuoxKBEbylSyixFSxOsKoiVJDyigW5WWNjsPQ1KOUD2OVn0V
-OQhj2aDXwUtxdlQ5dK0H9lodsUKUEw1/saqcgi2OS8iDDa8kJIEemDe29Omf5DyE
-U2RKl++nhAfK8BLfMRCAIqL+TVZq9Zy+zNwbVtsmj7lAlw+Csb4KV3YvlJ7b6pjD
-Ntm6O3X8sy7GtJdMpeBDOMTbWuvIQpefVH135jS1IjJZbrafZK6a4gQ9cs5mx68d
-+/nyzkcjy83eRGkv3QY5Y+vEa0wkFdBb6Nf0MH63xCPVYVjom6pRUGL+RPldi2GO
-bmieDXavlicX9y+BCQSKASTzNo2uR2heF31aCnr6bsOSeT8ZNGbIwgHuGGqrzN+8
-qLQb00hA0uKlbNgPpNoyYO5K3khntR348HfH0Uwlm3Nttvn1TEh87c9L19FcdlMw
-SlA6kpJ6328FkEv5FUPu7v7764dPgOQNImPKnsYdhbUxhHnDMx33LzsUEQQcYWpM
-3nsKQMW1yqMH2BG8u9LQtZErFanX+RNm81OsP38F8nvGe1RJkoq7R7MSooZ9tzs2
-Ymf8W+KNofKmXVAPh7AyKQzpy0a/sEqAXmtTPBf7bsdwU5PQB0+LMf0yzyZpEp2U
-3eFcseqDoO32ScDZQUYt
-=Y+yv
------END PGP SIGNATURE-----
+1. This sounds very much like general bug tracking system. We
+specifically didn't want to go down the slippery slope of implementing
+yet another bug tracking system.
+2. This problem is not specific to syzbot in any way (just like lost
+bug reports). Kernel developers waste time on duplicate work for other
+bug reports too.
+So I think (1) we need a bug tracking system, (2) use that system for
+syzbot to solve this local problem.
