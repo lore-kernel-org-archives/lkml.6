@@ -2,193 +2,217 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CDA9C43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 19:45:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53033C43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 19:49:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D9A4218D3
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 19:45:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F4A2218E2
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 19:49:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dBxpvQup"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qvdxlwwJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726076AbfADTpw (ORCPT
+        id S1726094AbfADTtN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 14:45:52 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:41309 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725930AbfADTpw (ORCPT
+        Fri, 4 Jan 2019 14:49:13 -0500
+Received: from mail-lj1-f176.google.com ([209.85.208.176]:37074 "EHLO
+        mail-lj1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725930AbfADTtM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 14:45:52 -0500
-Received: by mail-lf1-f65.google.com with SMTP id c16so26171121lfj.8;
-        Fri, 04 Jan 2019 11:45:49 -0800 (PST)
+        Fri, 4 Jan 2019 14:49:12 -0500
+Received: by mail-lj1-f176.google.com with SMTP id t18-v6so33338374ljd.4;
+        Fri, 04 Jan 2019 11:49:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=uH/wgimKjqrM5iFdQKXcIq0AYEGNEBqbrt33Xw4U+4s=;
-        b=dBxpvQupeOXqaO1+UsiqXqQ/Xi95kmOVBomcE/pidzH1jvn/dZlF2uLQAAPS/H9Bx+
-         g7MSn0x05x2mh8Mtmh9rWR7Gs4o3PONRHWnr81p+h4s4DTLogJ/xu7tAg3+hOXSvesnk
-         JzuR5bARhorAN12fcGRHryG/zVXe28hxb1L4dcbG2i2f82454IRFIBrKunVVs7p04bpX
-         ZR45W01U5PWYyQ0WTGUTXqsZlhrNqlmXaWNTRfLXHffo6h8NSDjBvdcWeoEsZF1fD5fV
-         O8KPdS2TWexDkLR1ah/xsZV9XmlFgdzMKa+y7tFyB4/deMBc6FGfH0vF9onSfS93SaGh
-         TrKQ==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=p630ZjgHiPDA3Dc87dRfef7i47wK7ls3bwvkClnRb6U=;
+        b=qvdxlwwJJGCL3pV+unO7sVfZNi4gIUdWJu/Ru4vMPwhYnWNoZftIv58WD2YravZJZl
+         2YMAbtqZ2pMJirQk+znRzKubYrjtk1TWoNbQW59D0DwU4tBGLr0Fr/n1Nr33bIvGQmkf
+         aBryesvArTKTl8i3QBVoCmiMhC1oMh4+U1fSXr2WF0wY2JGoP4GT96ss6RNiP8nYoHKQ
+         8Y+RKbXMaLMUT0uw4FajJ4ldig0nAFtyPc9UPTm39SXM154+4E9o6pLQ7OErWMtpdpTU
+         UELeqxa5oTqJLZsbS0KCxJ49LsEIkRq2Sq2iU9Jp2OKRMX0zCHBfpFWK8rp3XOB3Lrnw
+         SIJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=uH/wgimKjqrM5iFdQKXcIq0AYEGNEBqbrt33Xw4U+4s=;
-        b=lnOXbWilzNeaVPutaXwfix1WkiXsqlPvIHCRR6WWpQYYysPeTFTt/gp7Hz4rQyk1IR
-         tYJstSaU1fK+JKK/PZBBB9OaIuoPPqnVU2DVC1K2SwVyZd2pKT/7EH6vwIdRUvfa9cQo
-         dy5Tgw84Aw7pv3dLEQ8Fj0IWU5XGJPxC9P5LPSUfOaQLaiiNoL1DT4Fg42xCxuagjM66
-         Prhg4BTJoPs/FNWJLKz1tS7m6UXS2KqquesPbcOgqIo4H+QsJ0wa3vgPLDXL8A1l5wkG
-         bn95hqLr3ZN/CUtHovNnLx1rC09RvqBZ1THUVzW/1h38YoE9rEhQEf9KynldfYus4AW3
-         rjYA==
-X-Gm-Message-State: AA+aEWZomqM49nfy7pXTHL5m/8VjN5g/hkdTxW4wuwKE9bX10TNa3haB
-        j+8WDozIofu+FVJuvXAkmqjfaB0GNnmwMXdAndo=
-X-Google-Smtp-Source: AFSGD/V7pRb2QpZ/4Wbyvab3kBcV5IdxMjs0WJS/fhKBYIz9VgNVLpAWDWPSFBd+HhTHgFwx++xsfnWz6jOHEBk9fUI=
-X-Received: by 2002:a19:d90c:: with SMTP id q12mr25251387lfg.24.1546631149007;
- Fri, 04 Jan 2019 11:45:49 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=p630ZjgHiPDA3Dc87dRfef7i47wK7ls3bwvkClnRb6U=;
+        b=T/s8+tNeFsr6CZLrGpXPWZz63LzRTwZvrlxKi8I/yo/CoEMH9S2BKE64OtMJ7nIFIA
+         eav1ydaGcqdmZwndn/2ygMmPKmifRfF7vrKB5y+x/d0gRYHmSZwkfIk8oqpF4bAAVFhV
+         WlhdiEVR8/SrYPjgGhQ78CKvfKwbZUsVGcqYXdVfI3X627OrjIJlzcdQ706k10NyIVOR
+         Xu7crRxIyJN9SNrDRhxB6dPYKf/TayBHjvRx7X6ob2CuI+x4aYNjbKP3NAcYYX9lT+pF
+         jPKO5zK/WBOtsUQDbhsI99J99odcm7+XhFQsjNGIcs/cmrUoBdjPlNS6870+3CTRNufY
+         30nw==
+X-Gm-Message-State: AJcUukf4KGHfsYxURP+Xfq6J9N2mrnO1mfDg0YBvHrvloIoNqhojaudO
+        exI68KPVxlhV12oqna97Tv6o9eZQ2dk=
+X-Google-Smtp-Source: AFSGD/U4YGc6jo7UZ5cGQyC2VjGiSUo22RHPLC6PjpeZ13xQ4/+KYoJH035vH+9YHkcSUaqgyZo9zQ==
+X-Received: by 2002:a2e:8045:: with SMTP id p5-v6mr28657317ljg.87.1546631348647;
+        Fri, 04 Jan 2019 11:49:08 -0800 (PST)
+Received: from ?IPv6:2001:14ba:8017:3300:4da2:4604:cb6f:7dbe? (dtynxhycqzldylw7ss2-y-3.rev.dnainternet.fi. [2001:14ba:8017:3300:4da2:4604:cb6f:7dbe])
+        by smtp.googlemail.com with ESMTPSA id a127sm11366172lfe.73.2019.01.04.11.49.06
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 04 Jan 2019 11:49:07 -0800 (PST)
+Subject: Re: [PATCH 2/2] leds: lp5024: Add the LP5024/18 RGB LED driver
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Dan Murphy <dmurphy@ti.com>, robh+dt@kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-leds@vger.kernel.org
+References: <20181219193455.GA21159@amd>
+ <8740cfd6-a6b5-ad27-313b-984a9febf18a@ti.com> <20181219201047.GA23448@amd>
+ <fd624cc1-9997-1cd5-c5cc-62e6897997cf@ti.com>
+ <54f28115-0a7d-8e9c-3bec-6e91fb3981ec@gmail.com>
+ <cd90f179-6c16-823f-496f-27f141e9c322@ti.com>
+ <a72c11c0-949b-bdbc-df2c-4490e04a1065@gmail.com>
+ <986b5105-2fdb-bd25-7c8a-ca8fd1ade821@gmail.com>
+ <7f205102-e854-f1cb-cc03-1307d1cddc87@gmail.com>
+ <c9f8965a-90f4-b456-8225-c70694c9f071@gmail.com> <20190103233425.GA10071@amd>
+From:   =?UTF-8?B?VmVzYSBKw6TDpHNrZWzDpGluZW4=?= <dachaac@gmail.com>
+Message-ID: <e99036ea-ffb6-83ab-726b-824e2557d161@gmail.com>
+Date:   Fri, 4 Jan 2019 21:49:06 +0200
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.3.3
 MIME-Version: 1.0
-References: <5bf56248.1c69fb81.21a6e.5a72@mx.google.com> <CAJr6mf11gp9iV=NiFEFyo7kSZfCfMsEySdijem_PhMFEAwqucA@mail.gmail.com>
- <CAJr6mf2kr4BmCWZU0=EwXURWUZWRHHLifi_2aiUrJSCjnWusZg@mail.gmail.com>
- <CAJr6mf29hJft=rurUK8EJRQ1MS_3_MXb7f-zX0vyXUrQNLcWYA@mail.gmail.com>
- <ff090818-2f5f-1fa0-2eff-6988e1660345@huawei.com> <CAJr6mf1ebw16j0AZSDDxnK2t_=8wdzZBm=X_3DW=zP+XRbRFsw@mail.gmail.com>
- <8af8ef0a-add1-1010-6ef3-7e5c6ff51aa9@huawei.com>
-In-Reply-To: <8af8ef0a-add1-1010-6ef3-7e5c6ff51aa9@huawei.com>
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-Date:   Sat, 5 Jan 2019 01:19:39 +0530
-Message-ID: <CAFqt6zbZaOA9+SX8CwYobBN_3hhhWOWkcBJ_qdgEuELoOBU5=w@mail.gmail.com>
-Subject: Re: [PATCH] scsi/mvsas/mv_init.c: Use dma_zalloc_coherent
-To:     John Garry <john.garry@huawei.com>
-Cc:     Sabyasachi Gupta <sabyasachi.linux@gmail.com>,
-        James Bottomley <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        linux-scsi <linux-scsi@vger.kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Brajeswar Ghosh <brajeswar.linux@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190103233425.GA10071@amd>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 4, 2019 at 9:34 PM John Garry <john.garry@huawei.com> wrote:
->
-> On 04/01/2019 15:11, Sabyasachi Gupta wrote:
-> > On Fri, Jan 4, 2019 at 6:43 PM John Garry <john.garry@huawei.com> wrote:
-> >>
-> >> On 04/01/2019 12:48, Sabyasachi Gupta wrote:
-> >>> On Wed, Dec 19, 2018 at 6:49 PM Sabyasachi Gupta
-> >>> <sabyasachi.linux@gmail.com> wrote:
-> >>>>
-> >>>> On Sat, Dec 1, 2018 at 6:40 PM Sabyasachi Gupta
-> >>>> <sabyasachi.linux@gmail.com> wrote:
-> >>>>>
-> >>>>> On Wed, Nov 21, 2018 at 7:18 PM Sabyasachi Gupta
-> >>>>> <sabyasachi.linux@gmail.com> wrote:
-> >>>>>>
-> >>>>>> Replace dma_alloc_coherent + memset with dma_zalloc_coherent
-> >>>>>>
-> >>
-> >> If you're going to make this change, then how about change these to the
-> >> managed version, so that we can avoid the explicit free'ing at driver
-> >> removal?
-> >
-> > I can't get it
->
-> Please see dmam_alloc_coherent(). You can set __GFP_ZERO in the gfp
-> argument to memset(0).
+Hi Pavel,
 
-and dma_zalloc_coherent() did the same. So both are same right ? No ?
+On 04/01/2019 1.34, Pavel Machek wrote:
+> Hi!
+> 
+>>> Regarding led_scale_color_elements() - I checked it in GIMP and
+>>> the results are not satisfactory when increasing brightness.
+>>> Even if we managed to fix it, the result would not be guaranteed
+>>> to be the same across all devices.
+>>
+>> No and they will never be the same. I was told by our hardware expert that
+>> it is rather impossible to get linearly behaving LED control without special
+>> curve fitting trimmed for particular hardware and LED component in use. And
+>> if you go and change LED component/vendor it would need to be "calibrated"
+>> again if such accuracy would be required. Also LEDs age and that has also
+>> effect on this.
+> 
+> Well, it is not possible to "perfectly" calibrate LCD monitors,
+> either. Yet, color tables make sense for them.
+> 
+> And we should aim for the same thing.
+> 
+> And yes, it may mean re-doing calibration when vendor changes. And it
+> will mean some math and some understanding of colors.
+> 
+> And... LEDs are linear-enough as it is. That is not a problem. But RGB
+> does _not_ expect linear response. That's why colors are _way_ off currently.
 
->
-> I would say that this is a more useful change.
->
-> >
-> >>
-> >>>>>> Signed-off-by: Sabyasachi Gupta <sabyasachi.linux@gmail.com>
-> >>>>>
-> >>>>> Any comment on this patch?
-> >>>>
-> >>>> Any comment on this patch?
-> >>>
-> >>> Any comment on this patch?
-> >>>
-> >>>>
-> >>>>>
-> >>>>>> ---
-> >>>>>>  drivers/scsi/mvsas/mv_init.c | 12 ++++--------
-> >>>>>>  1 file changed, 4 insertions(+), 8 deletions(-)
-> >>>>>>
-> >>>>>> diff --git a/drivers/scsi/mvsas/mv_init.c b/drivers/scsi/mvsas/mv_init.c
-> >>>>>> index 3ac3437..495bddb 100644
-> >>>>>> --- a/drivers/scsi/mvsas/mv_init.c
-> >>>>>> +++ b/drivers/scsi/mvsas/mv_init.c
-> >>>>>> @@ -253,33 +253,29 @@ static int mvs_alloc(struct mvs_info *mvi, struct Scsi_Host *shost)
-> >>>>>>         /*
-> >>>>>>          * alloc and init our DMA areas
-> >>>>>>          */
-> >>>>>> -       mvi->tx = dma_alloc_coherent(mvi->dev,
-> >>>>>> +       mvi->tx = dma_zalloc_coherent(mvi->dev,
-> >>>>>>                                      sizeof(*mvi->tx) * MVS_CHIP_SLOT_SZ,
-> >>>>>>                                      &mvi->tx_dma, GFP_KERNEL);
-> >>
-> >> I'm guessing that this does not pass checkpatch with --strict option.
-> >>
-> >> Thanks,
-> >> John
-> >
-> > I have not not checked with --strict option
->
-> It may warn that you're not maintaining alignment.
->
-> >
-> >>
-> >>>>>>         if (!mvi->tx)
-> >>>>>>                 goto err_out;
-> >>>>>> -       memset(mvi->tx, 0, sizeof(*mvi->tx) * MVS_CHIP_SLOT_SZ);
-> >>>>>> -       mvi->rx_fis = dma_alloc_coherent(mvi->dev, MVS_RX_FISL_SZ,
-> >>>>>> +       mvi->rx_fis = dma_zalloc_coherent(mvi->dev, MVS_RX_FISL_SZ,
-> >>>>>>                                          &mvi->rx_fis_dma, GFP_KERNEL);
-> >>>>>>         if (!mvi->rx_fis)
-> >>>>>>                 goto err_out;
-> >>>>>> -       memset(mvi->rx_fis, 0, MVS_RX_FISL_SZ);
-> >>>>>>
-> >>>>>> -       mvi->rx = dma_alloc_coherent(mvi->dev,
-> >>>>>> +       mvi->rx = dma_zalloc_coherent(mvi->dev,
-> >>>>>>                                      sizeof(*mvi->rx) * (MVS_RX_RING_SZ + 1),
-> >>>>>>                                      &mvi->rx_dma, GFP_KERNEL);
-> >>>>>>         if (!mvi->rx)
-> >>>>>>                 goto err_out;
-> >>>>>> -       memset(mvi->rx, 0, sizeof(*mvi->rx) * (MVS_RX_RING_SZ + 1));
-> >>>>>>         mvi->rx[0] = cpu_to_le32(0xfff);
-> >>>>>>         mvi->rx_cons = 0xfff;
-> >>>>>>
-> >>>>>> -       mvi->slot = dma_alloc_coherent(mvi->dev,
-> >>>>>> +       mvi->slot = dma_zalloc_coherent(mvi->dev,
-> >>>>>>                                        sizeof(*mvi->slot) * slot_nr,
-> >>>>>>                                        &mvi->slot_dma, GFP_KERNEL);
-> >>>>>>         if (!mvi->slot)
-> >>>>>>                 goto err_out;
-> >>>>>> -       memset(mvi->slot, 0, sizeof(*mvi->slot) * slot_nr);
-> >>>>>>
-> >>>>>>         mvi->bulk_buffer = dma_alloc_coherent(mvi->dev,
-> >>>>>>                                        TRASH_BUCKET_SIZE,
-> >>>>>> --
-> >>>>>> 2.7.4
-> >>>>>>
-> >>>
-> >>> .
-> >>>
-> >>
-> >>
-> >
-> > .
-> >
->
->
+Example what I was given was some LEDs are off for let's say 20% of PWM 
+linearity and then there is non-linear curve for PWM value vs. intensity 
+(this was in context of white LCD backlight).
+
+One case where we currently are interested in linear intensity is LCD 
+background color. For that we have ramp defined in device tree. There 
+would probably be simple fix to get that curve fitting to work better 
+but let's keep that as another topic for now.
+
+I was thinking that if we get "calibration" curve support in PWM LED 
+brightness we could then just use that as one solution within kernel and 
+let LCD PWM brightness support use same functionality from LED 
+framework. (eg. LCD backlight would bind to PWM controlled mono color 
+LED node)
+
+Other case is that we need to dim LEDs in low light situations.
+
+As such I have nothing against adding support for HSL or other color 
+space based brightness calculations. It might just need to be 
+configurable what kind of mode is being used based on hardware solution 
+in place. HSL seem to need a bit of fixed point math. Got floating point 
+version working already but that does not work with kernel space so one 
+needs to adapt it to fixed point.
+
+One problem here is to figure out is if user configures some color -- is 
+it configured with 100% brightness eg. Should one calculate RGB->HSL and 
+then scale L with brightness and calculate RGB back for setting color -- 
+or does it mean replacing L with brightness value?
+
+Additional problem is then if you have let's say yellow LED color 
+element there. How would one scale that then? Linear is of course easy. 
+If you need to configure this to some color space then how does one 
+define the color in device tree so that such color space conversion is 
+possible? One possible solution is to calibrate the curve (like what you 
+do with LCD calibration) and then just assume brightness as linear 
+brightness value in that case.
+
+Or if you have multi-color LED with red and green but no other color 
+elements. How does brightness scaling work with this one?
+
+>>> I have another proposal, being a mix of what has been discussed so far:
+>>>
+>>>     RGB LED class will expose following files:
+>>>     a) available by default:
+>>>       - red, green, blue
+>>>         Writing any of these file will result in writing corresponding
+>>>         device register.
+>>
+>> Problem with this is that we are basically back at square one and one cannot
+>> do "atomic" color change with this.
+>>
+>> In order to set or activate new values one would need "load values" file or
+>> such that when writing to it would activate new values. However it becomes
+>> quite clumsy interface at that point as you need to handle multiple writes
+>> to multiple files and makes those operations rather slow.
+> 
+> If you don't like the interface, create an shared library. It may be
+> neccessary, anyway, for the color operations.
+> 
+> You say it is "rather slow" to change all 3 colors. How long does it
+> take, and how long do you need it to take?
+
+Some times in embedded linux systems you can see "stalls" in operation 
+of an application flow eg. time is spent in different places. I believe 
+"slowest" CPU with embedded linux we are using is Atmel's AT91 series 
+(ARM9) and executing code in there can at times be a bit time consuming.
+
+I have seen delays like 18ms in TI's AM335x CPU series (Cortex-A8) and 
+not even too high load situations (eg. breaking some serial protocols 
+because of breaks in transmission in-between transfer without being a 
+problem in application code as such). It is completely different story 
+when there is a bit of load in system or some special situation in the 
+kernel/OS.
+
+Running high priority thread for configuring LEDs to avoid problems 
+sounds like a wrong solution.
+
+Co-worker of mine tried multi-color LED brightness sliding from user 
+space with current PWM led driver and it was visible from eye that it 
+was not timed smoothly.
+
+For GPIO LED we decided to use out-of-tree solution for multi-color LEDs 
+because we didn't want to see wrong colors in LEDs or sliding colors. 
+For this we have color preset table in device tree and with it color 
+change is more or less atomic. And also it supports kernel based LED 
+blinking with whatever color you have configured there first.
+
+For PWM controlled multi-color LEDs we don't yet have a solution. We 
+need configurable color kernel based blinking.
+
+With Jacek's proposed interface one could do kernel based blinking if 
+brightness is simulated or calculated (if trigger's ON brightness can be 
+configured). Only problem I suppose is color transition from A to B 
+state and after that the blinking would work nicely as target color 
+would already be known by driver.
+
+If we could figure out acceptable solution for color transition problem 
+then I suppose all parties would be happy?
+
+Thanks,
+Vesa Jääskeläinen
