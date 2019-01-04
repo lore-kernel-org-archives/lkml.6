@@ -2,140 +2,156 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 288A8C43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 20:41:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 776B2C43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 20:42:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2739218D3
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 20:41:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4590921872
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 20:42:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IttU7/pD"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="c6YoJrhI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726101AbfADUli (ORCPT
+        id S1726135AbfADUmw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 15:41:38 -0500
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:35441 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725987AbfADUlh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 15:41:37 -0500
-Received: by mail-vs1-f66.google.com with SMTP id e7so23396364vsc.2
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Jan 2019 12:41:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=iYKZYw9pBbs+9M1bv1xHHmg2hwlGwpPr6KW4wutdFrE=;
-        b=IttU7/pDppjWUeGDwEevTCiWMCD6at5Wn5a61ygivQcrbCUb5THZTR4M2XvuD2IAeu
-         4tggkypMhz2mAe8NZCt6HYscdeddDLAwZYPvKUMxn5G1Pa/jJFlXYxmWzO+Z4Uvz048/
-         IEGh8EQx8i+DDTQ3QTpGzDz4e4p3094PqmekaIedFBTwVeIj5DpZrWF2GNUAoew1S6I2
-         TNkO70nI07rNN0417f6T7szhLDyI+yQbjwH1MftWjB8i/pzRpw1OkKQaX8wqGKgPZHxu
-         juyAsiQ+ucSXsrYTAaUbJxPl8QvQblrDfwBvY0ltgrAtCgcLgNeqzg8iUqYQgO/o75l0
-         n6Og==
+        Fri, 4 Jan 2019 15:42:52 -0500
+Received: from mx1.ucr.edu ([138.23.248.2]:24975 "EHLO mx1.ucr.edu"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725958AbfADUmv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 15:42:51 -0500
+X-Greylist: delayed 885 seconds by postgrey-1.27 at vger.kernel.org; Fri, 04 Jan 2019 15:42:51 EST
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=ucr.edu; i=@ucr.edu; q=dns/txt; s=selector3;
+  t=1546634571; x=1578170571;
+  h=from:to:cc:subject:date:message-id;
+  bh=dVeo+lqbfDbwmjZVwas2MgBddAFiC9twLCj5ra9dt9k=;
+  b=c6YoJrhIsFCPFDsSoDyKbtgVKfc1cmUkOtI7/eeo1Gyuk+8Hstkhe3Nf
+   PNL/CPIWtshVJpySUC5VTtW2sC3PpiLz1eZ6qzOwjoFXushSz8UbDcxnv
+   9v80PiEGvqG9bstpYT8Ngpk/2+9tVmhPwdWduMb9Nhoq+98r+k8t/srT4
+   xxDh4gzTZIeKJ/syH9mL1ZNFirxSLW0GjruyIBcBWIxdAff/XLcQH8ddm
+   97POFHPeUtKOVdXWVZ6WjgokA0UqHkPg7DFYPI7+KoOAuDvpYp5VmM+Sj
+   3rMcy+Ot1KuUVLPuH/ozZvcW/x1PELi0nNW48P+7jm4zCS1x/q+QHUFOw
+   A==;
+IronPort-PHdr: =?us-ascii?q?9a23=3Aw7izihIN8uc4j6eNYdmcpTZWNBhigK39O0sv0rFi?=
+ =?us-ascii?q?tYgRIv7xwZ3uMQTl6Ol3ixeRBMOHs6IC07KempujcFRI2YyGvnEGfc4EfD4+ou?=
+ =?us-ascii?q?JSoTYdBtWYA1bwNv/gYn9yNs1DUFh44yPzahANS47xaFLIv3K98yMZFAnhOgpp?=
+ =?us-ascii?q?POT1HZPZg9iq2+yo9JDffwZFiCChbb9uMR67sRjfus4KjIV4N60/0AHJonxGe+?=
+ =?us-ascii?q?RXwWNnO1eelAvi68mz4ZBu7T1et+ou+MBcX6r6eb84TaFDAzQ9L281/szrugLd?=
+ =?us-ascii?q?QgaJ+3ART38ZkhtMAwjC8RH6QpL8uTb0u+ZhxCWXO9D9QKsqUjq+8ahkVB7oiD?=
+ =?us-ascii?q?8GNzEn9mHXltdwh79frB64uhBz35LYbISTOfp7f6PdZsgaRWtHXsZeSidPHJqy?=
+ =?us-ascii?q?ZJYBD+oAI+lYq5TyrEYKoRawGQWgAeXiwSJKiHDrx603y+QvHx/b0gIuHNwAt2?=
+ =?us-ascii?q?/ZoMnpOKoITey41rXEwSnFYvhL2Tn98o/IchU5rP6OXLJxcMrRyVQoFwjYiViR?=
+ =?us-ascii?q?qY3kPzOP2eQMr2SX8+RtWPmyi2E7sQF9uCagydoxioTQgI8e11PK9T1hzYorOd?=
+ =?us-ascii?q?G1TFR3bN2kHZdKqS2WKoR7Ttk/T2xsuis20qAKtJ+/cSQQ1pgqyR7SZ+aZf4WJ?=
+ =?us-ascii?q?+B7uVumcLDFlj3x/Yr2/nQy98U24x+35Ucm7zUhFozJektnJqnANzxvT6tWbSv?=
+ =?us-ascii?q?dl/keuxzKP1wfL5+FBO080lK7bJ4c5wr40i5YfqErDEjLylUj0lqOWeUIk+u+n?=
+ =?us-ascii?q?6+TjfLrqvIOTN4hxig3mM6QunNKwAfggPwQQQ2SW/f6w2b7j8EHjXrlGk/I7nr?=
+ =?us-ascii?q?PEvJ3eJ8kXvqu5DBVU0oYn5Ra/FTCm0NEAkHgHLVNFeAiIj4n1N13SLv31Fuq/?=
+ =?us-ascii?q?jEi2kDtx2f/JI6DhDo3XLnffiLfhYap960lExQo3zNBf4Y9UC74YLPLwREDxrt?=
+ =?us-ascii?q?rYAQE9MwGv3ebnB8ty1pkEVWKMHKCZKqXSvkGM5u41JOmMfoAV637TMf8gss/v?=
+ =?us-ascii?q?n38knhdJbLup1JpPMCuQA/98ZUiVfCy/0Z86DW4Ws19mH6TRg1qYXGsWOC6/?=
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2CvAACMwS9ch8XWVdFjHQEBBQEHBQGBU?=
+ =?us-ascii?q?QgBCwGEAw+MGV+LCVABAQaKWBhshVOCb4R+gXsBCgEBLIRAggIiNAkNAQMBAQI?=
+ =?us-ascii?q?BAQIBEwEBAQgNCQgpL4I6KYJfNlKBFQEFATVbgkcBgXQNm0I8jBUziFUBB4FMC?=
+ =?us-ascii?q?QEIh2yEQYEPgQeDbohSgkMCgSoBAQGKG4UekHABBgIBgVyBOY5LJIMihlyHawE?=
+ =?us-ascii?q?tmWECBAIEBQIFDyGBJYIOTSWBbAqBRIInDgkSjiweM4EHiWEB?=
+X-IPAS-Result: =?us-ascii?q?A2CvAACMwS9ch8XWVdFjHQEBBQEHBQGBUQgBCwGEAw+MGV+?=
+ =?us-ascii?q?LCVABAQaKWBhshVOCb4R+gXsBCgEBLIRAggIiNAkNAQMBAQIBAQIBEwEBAQgNC?=
+ =?us-ascii?q?QgpL4I6KYJfNlKBFQEFATVbgkcBgXQNm0I8jBUziFUBB4FMCQEIh2yEQYEPgQe?=
+ =?us-ascii?q?DbohSgkMCgSoBAQGKG4UekHABBgIBgVyBOY5LJIMihlyHawEtmWECBAIEBQIFD?=
+ =?us-ascii?q?yGBJYIOTSWBbAqBRIInDgkSjiweM4EHiWEB?=
+X-IronPort-AV: E=Sophos;i="5.56,439,1539673200"; 
+   d="scan'208";a="1051515945"
+Received: from mail-pl1-f197.google.com ([209.85.214.197])
+  by smtp1.ucr.edu with ESMTP/TLS/AES128-GCM-SHA256; 04 Jan 2019 12:27:33 -0800
+Received: by mail-pl1-f197.google.com with SMTP id t10so27824049plo.13
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Jan 2019 12:27:33 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:content-transfer-encoding;
-        bh=iYKZYw9pBbs+9M1bv1xHHmg2hwlGwpPr6KW4wutdFrE=;
-        b=ggze9Yq/bKYvgh4xQKvQOii9e9rAVvxj5nCEysXYwczc0O6ZqV4IkEiJXKa7cVJkLy
-         3QGtYOKvqK4Xbwa3nIMjm5X9pEJoExUDaiXeVa5GyLGZAOuntUpZCSUh8dzyuJthc7hF
-         VYFVuKD6if454/oY5+EVn5ESsRaIyLI84tfUY2UT6qz38AWTejDifGSP5QRPPAYULoqG
-         3vVGUFeBJSRiSSwoKWuAKIgbKfW4+F/XiggU9J4ChCsg686Q9Obbyw78pw+Sr9Mj2Hmr
-         dCGeD6rkY+ItrpvxyhUE5Sxfq4fBjQjcugSrxESE9mDoX8i2Ags4RB4C5z2YlnEPMke2
-         yCOg==
-X-Gm-Message-State: AJcUukejahuTb0d32dhF2xFdOsN+KFOaPTnVrP94Yc9TiXKmguAAY2lz
-        SJfs+fAfixCpHgr0o56S/vg0SbHdV7sYwLfQr8usfw==
-X-Google-Smtp-Source: AFSGD/XTLTKwTXB+LqysC0tcuESde8OSg3gWakqcaTABLBlTWgLmo71793lxt8EbbftHWLh6dIwnsy7hvwlM6dmvpRU=
-X-Received: by 2002:a67:c104:: with SMTP id d4mr21961178vsj.171.1546634495753;
- Fri, 04 Jan 2019 12:41:35 -0800 (PST)
-MIME-Version: 1.0
-References: <20181219071420.GC2628@infradead.org> <20181219021953.GD31274@dastard>
- <20181219193005.GB6889@mit.edu> <20181219213552.GO6311@dastard>
- <20181220220158.GC2360@mit.edu> <20181221070447.GA21687@infradead.org>
- <20181221154714.GA26547@mit.edu> <CAHk-=wgdzWgoPSuHeVcqmGE1hB3Gan72r2_AhtC14e60=z45yg@mail.gmail.com>
- <20181222041712.GC26547@mit.edu> <20181223041007.GL10600@bombadil.infradead.org>
- <20181223044553.GG26547@mit.edu>
-In-Reply-To: <20181223044553.GG26547@mit.edu>
-From:   Daniel Colascione <dancol@google.com>
-Date:   Fri, 4 Jan 2019 12:41:24 -0800
-Message-ID: <CAKOZuesHHSRCzQEtGEQbm7v7j53hAjkJq-8Pgcyk+M40o-ia0g@mail.gmail.com>
-Subject: Re: [PATCH v2 01/12] fs-verity: add a documentation file
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Matthew Wilcox <willy@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        linux-fscrypt@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        linux-integrity@vger.kernel.org,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Victor Hsieh <victorhsieh@google.com>,
-        Chandan Rajendra <chandan@linux.vnet.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=KIRoQOlFmlmxA8eKEGFEBWnDpcFgN9v4YUYbB67RaLE=;
+        b=ltDS/dYvwJoSdaHEKZtTneEKMYIxHPRZuBdjEauHYv5c1rmiTMSirO0hBdJdA27pLU
+         fG3nPFJPxpYVqfErIU/EvP4xJT7GoYpCI9uPBhl4YN08la8vBzKOmHF55zOw4oeByqE+
+         L2/eGt4gQDxGNko2apN0ouLvQ+XvFyfzbOGBRrsrK65xDDkH6sGBj6HhYvyPUQUMi6lM
+         SD2O/HWn9A0JQdQ0vLv8tHVos074bL+lKyuGehYBZcmdNquRauT35MfzZpsOMKn1VtRz
+         PGx6vsqp3uO/BdjrcrDkelSnrPx024QbPeucm0E9/rATHdjxhtHzaOXP2pgrCWMaD9jy
+         98Ow==
+X-Gm-Message-State: AA+aEWa76XMcof0cHXnCgpK3FvpZrTWS1QhRkBVHVFzSWsAJDmgAGyxC
+        26MI59/rt6EqpPyIi4O8fpNoukfjAAlpEo0KlcYGod3SxayrJl2/GQFG99GTULNcfQF4cMc+do4
+        DaKu1cfxa5cnlhhOVIoZ0gZL/lw==
+X-Received: by 2002:aa7:8045:: with SMTP id y5mr53236006pfm.62.1546633652826;
+        Fri, 04 Jan 2019 12:27:32 -0800 (PST)
+X-Google-Smtp-Source: AFSGD/W03SynDHQ7y9cEWoVQUJakgQvJ8HKSIcPJakWCKASa8I69A1aWyyaXh3EHx3P+oMn518anoA==
+X-Received: by 2002:aa7:8045:: with SMTP id y5mr53235987pfm.62.1546633652339;
+        Fri, 04 Jan 2019 12:27:32 -0800 (PST)
+Received: from Yizhuo.cs.ucr.edu (yizhuo.cs.ucr.edu. [169.235.26.74])
+        by smtp.googlemail.com with ESMTPSA id t3sm70447440pgv.31.2019.01.04.12.27.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 04 Jan 2019 12:27:31 -0800 (PST)
+From:   Yizhuo <yzhai003@ucr.edu>
+Cc:     csong@cs.ucr.edu, zhiyunq@cs.ucr.edu, Yizhuo <yzhai003@ucr.edu>,
+        Bard Liao <bardliao@realtek.com>,
+        Oder Chiou <oder_chiou@realtek.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] ASoC: rt274: Variable "buf" in function rt274_jack_detect() could be uninitialized
+Date:   Fri,  4 Jan 2019 12:27:08 -0800
+Message-Id: <20190104202708.14759-1-yzhai003@ucr.edu>
+X-Mailer: git-send-email 2.17.1
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Dec 22, 2018 at 8:46 PM Theodore Y. Ts'o <tytso@mit.edu> wrote:
->
-> On Sat, Dec 22, 2018 at 08:10:07PM -0800, Matthew Wilcox wrote:
-> > Pretty much every file format has the ability to put arbitrary blocks
-> > of information into a file somewhere the tools which don't know about
-> > it will skip it.  For example, ZIP "includes an extra field facility
-> > within file headers, which can be used to store extra data not defined
-> > by existing ZIP specifications, and which allow compliant archivers tha=
-t
-> > do not recognize the fields to safely skip them. Header IDs 0=E2=80=933=
-1 are
-> > reserved for use by PKWARE. The remaining IDs can be used by third-part=
-y
-> > vendors for proprietary usage. " (Wikipedia)
-> >
-> > ELF, PNG, PDF and many other formats have the ability to put data
-> > _somewhere_.  It might not be at the tail of the file, but there's
-> > somewhere to do it.
-> >
-> > (I appreciate this isn't what Linus is asking for, but I'm pointing out
-> > that this is by no means as intractable as you make it sound.)
->
-> That design would require the fs-verity code to know the type of eacho
-> file, and where to find the in-band Merkle tree for each file type
-> that we wanted to support.  And if you wanted to use fs-verity to
-> protect a sudoers text configuration file (for example), we'd have to
-> teach sudo how to ignore the userspace visible Merkle tree.
+In function rt274_jack_detect(), local variable "buf" could
+be uninitialized if function regmap_read() returns -EINVAL.
+However, it will be used to calculate "hp" and "mic" and
+make their value unpredictable while those value are used
+in the caller. This is potentially unsafe.
 
-I'm pretty late to the game, but I just want to bring up one approach
-that I'm not sure people have previously considered. You can't put the
-verification blob in an xattr due to xattr size limits, but you *can*
-put a filename in an xattr. What if, at open time, fs-verity looked
-for a specially-named xattr attached to a file, resolved that name
-like a symlink target, opened the pointed-to file, and just used
-*that* as the authentication blob? It'd also be possible to teach
-unlink to delete the pointed-to file when the pointer file is deleted
---- sort of like a simple and stupid kind of data fork.
+Signed-off-by: Yizhuo <yzhai003@ucr.edu>
+---
+ sound/soc/codecs/rt274.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-For example, if you wanted to secure /usr/bin/emacs, you could set an
-security.fsverify.verification_file xattr (in the system namespace
-because the xattr has special semantics) to
-"/.verification-blobs/@usr@bin@emacs.hashtree" or something like that.
-Then, open(2) on /usr/bin/emacs would, internally to VFS, also open
-/.verification-blobs/@usr@bin@emacs.hashtree and read verification
-data from it, transparently to both users and the underlying
-filesystem. If someone deleted /usr/bin/emacs, VFS would automatically
-delete /.verification-blobs/@usr@bin@emacs.hashtree. If
-/.verification-blobs/@usr@bin@emacs.hashtree didn't exist at time of
-open(2) of /usr/bin/emacs, or couldn't be opened for whatever reason,
-the open(2) of /usr/bin/emacs would fail.
+diff --git a/sound/soc/codecs/rt274.c b/sound/soc/codecs/rt274.c
+index cd048df76232..a2c1a6df8df6 100644
+--- a/sound/soc/codecs/rt274.c
++++ b/sound/soc/codecs/rt274.c
+@@ -353,6 +353,7 @@ static void rt274_index_sync(struct snd_soc_codec *codec)
+ static int rt274_jack_detect(struct rt274_priv *rt274, bool *hp, bool *mic)
+ {
+ 	unsigned int buf;
++	int ret = 0;
+ 
+ 	*hp = false;
+ 	*mic = false;
+@@ -360,9 +361,15 @@ static int rt274_jack_detect(struct rt274_priv *rt274, bool *hp, bool *mic)
+ 	if (!rt274->codec)
+ 		return -EINVAL;
+ 
+-	regmap_read(rt274->regmap, RT274_GET_HP_SENSE, &buf);
++	ret = regmap_read(rt274->regmap, RT274_GET_HP_SENSE, &buf);
++	if (ret)
++		return ret;
++
+ 	*hp = buf & 0x80000000;
+-	regmap_read(rt274->regmap, RT274_GET_MIC_SENSE, &buf);
++	ret = regmap_read(rt274->regmap, RT274_GET_MIC_SENSE, &buf);
++	if (ret)
++		return ret;
++
+ 	*mic = buf & 0x80000000;
+ 
+ 	pr_debug("*hp = %d *mic = %d\n", *hp, *mic);
+-- 
+2.17.1
 
-ISTM that a scheme like this would give you some of the advantages of
-jumbo xattrs, but with much less implementation complexity. If
-someone's proposed something like this before, sorry for the noise.
