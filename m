@@ -2,130 +2,138 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC012C43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 17:50:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CEE6C43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 17:50:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C8C521872
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 17:50:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bs3tzkr/"
+	by mail.kernel.org (Postfix) with ESMTP id EA385218CD
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 17:50:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728908AbfADRuW (ORCPT
+        id S1728987AbfADRul (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 12:50:22 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:39312 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728869AbfADRuR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 12:50:17 -0500
-Received: by mail-pl1-f196.google.com with SMTP id 101so17734076pld.6;
-        Fri, 04 Jan 2019 09:50:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=UaA45DYiu1lBKpFMAL9ysyx77C82thANkIMXH/mfBAE=;
-        b=Bs3tzkr/uZcCHPaZu2HC5rYTi8GL2xZCuXOZqzuKLivxSlZKMduu5g57xFjts444WS
-         aLTTJjrYRcQxVpLNnfPQt6OAoisHm/NSpTJyfXH1d7PytSHs27GbyRNl8SujipOFhyjJ
-         NnYUlQHLxMA8ZgnFhxlLbO/haYwJFygVbnASjw7l9I68RaR3h5MyZOhTAKG4USmh1gRP
-         ygOOi61RG7LOGat1w7HY23N82Kqk/IV+4VnGyP6ZkLlIFadq7Wf6ag4EMlfirn8HPMh0
-         XbJe22qc5MXA1xr4f2TLR+/SemO5mZu9d9crmelJJTrHpoYR2hGIJ+Z8fYPjnxrQrxpe
-         mvPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=UaA45DYiu1lBKpFMAL9ysyx77C82thANkIMXH/mfBAE=;
-        b=gIbWFrZmzZ+asUTEYfQwq6V1nVU6NCLW12TkQVKIBtc3QwDg0Bf2b5nePJ6pe9tueE
-         FxN4k2d+FO0otan4syajXlPRPpm+jRoq7ia5WH5Cl2lB4a1SMvUwGucBF9VIQO9T0Uxj
-         jRHlzko+LVeinEy+9ObKLCe6klEhBL7XraQgLTnmNLq4rNndgfjaGnffqlLq+kpvNYWc
-         JMSYX5teA/FTSEPiKYBWxe8uaUITbH+VSgihm7WS7u3AunZtQiwhmq9r6afAG+9PASrN
-         ah8lh8n7Tbbr3B/J+NtIrmdpTWsSjQv/9cecm1VRQ8yW0oKjys7oGxiu0+J5Y45xPsRs
-         CT7A==
-X-Gm-Message-State: AJcUukfvcHW7BbjbKgmwsxIklTFRIEdVIQ0uGVdtmIG+mrZ8eCQsQ6Ew
-        fKuCXdRWt2UWZJ2I0KdFf0yg1DvEgU0=
-X-Google-Smtp-Source: ALg8bN6KeuZvj5+hH6fAqcxHS1bkhdDruLVrs8+ZmBPnURzylt69qWEgGUKtUB4UE4vpX1xHqF/LzA==
-X-Received: by 2002:a17:902:981:: with SMTP id 1mr50372962pln.142.1546624215901;
-        Fri, 04 Jan 2019 09:50:15 -0800 (PST)
-Received: from squirtle.lan (c-24-22-235-96.hsd1.wa.comcast.net. [24.22.235.96])
-        by smtp.gmail.com with ESMTPSA id i193sm100699632pgc.22.2019.01.04.09.50.14
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 04 Jan 2019 09:50:15 -0800 (PST)
-From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-To:     linux-pci@vger.kernel.org
-Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        "A.s. Dong" <aisheng.dong@nxp.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>, linux-imx@nxp.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 18/20] PCI: imx6: Remove magic numbers from imx6_pcie_establish_link()
-Date:   Fri,  4 Jan 2019 09:49:23 -0800
-Message-Id: <20190104174925.17153-19-andrew.smirnov@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190104174925.17153-1-andrew.smirnov@gmail.com>
-References: <20190104174925.17153-1-andrew.smirnov@gmail.com>
+        Fri, 4 Jan 2019 12:50:41 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:38082 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726363AbfADRuj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 12:50:39 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 998C42BE87;
+        Fri,  4 Jan 2019 17:50:38 +0000 (UTC)
+Received: from localhost (ovpn-200-16.brq.redhat.com [10.40.200.16])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 13A8160BE8;
+        Fri,  4 Jan 2019 17:50:34 +0000 (UTC)
+Date:   Fri, 4 Jan 2019 18:50:29 +0100
+From:   Stefano Brivio <sbrivio@redhat.com>
+To:     Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        syzbot <syzbot+4ad25edc7a33e4ab91e0@syzkaller.appspotmail.com>,
+        David Miller <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Network Development <netdev@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
+Subject: Re: kernel panic: stack is corrupted in udp4_lib_lookup2
+Message-ID: <20190104185029.759430e2@redhat.com>
+In-Reply-To: <CAF=yD-LdShBqHz1amBAAAA4w==0O+HfeWutfLi5K6LmWhK_x6Q@mail.gmail.com>
+References: <000000000000513fb7057e8d7013@google.com>
+        <f2e566ac-5c4c-11ae-d436-ebb3522a2195@gmail.com>
+        <20190103210743.6518841e@redhat.com>
+        <CA+FuTScFwA3F44MvbaWrOYJ2EYgdKAmoMzEGjOLcz3ZPVQLLDA@mail.gmail.com>
+        <20190103225404.66b0ec9f@redhat.com>
+        <CACT4Y+aAofhchOpKTjLGGkQb5PAa74Uyp7kowdSoAwt130ZpAg@mail.gmail.com>
+        <20190104115435.478b4b4a@redhat.com>
+        <CACT4Y+bRLOVCx9Z=vCMspjzGrcnNFqNGWxDwiwYZbw2LTh__FA@mail.gmail.com>
+        <20190104181424.5ad4b1de@redhat.com>
+        <CAF=yD-LdShBqHz1amBAAAA4w==0O+HfeWutfLi5K6LmWhK_x6Q@mail.gmail.com>
+Organization: Red Hat
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Fri, 04 Jan 2019 17:50:39 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Explicitly define PCIE_RC_LCSR_LINK_SPEED and remove magic numbers
-from imx6_pcie_establish_link(). No functional change intended.
+On Fri, 4 Jan 2019 12:24:18 -0500
+Willem de Bruijn <willemdebruijn.kernel@gmail.com> wrote:
 
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Fabio Estevam <fabio.estevam@nxp.com>
-Cc: Chris Healy <cphealy@gmail.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>
-Cc: Leonard Crestez <leonard.crestez@nxp.com>
-Cc: "A.s. Dong" <aisheng.dong@nxp.com>
-Cc: Richard Zhu <hongxing.zhu@nxp.com>
-Cc: linux-imx@nxp.com
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-pci@vger.kernel.org
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
----
- drivers/pci/controller/dwc/pci-imx6.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+> On Fri, Jan 4, 2019 at 12:14 PM Stefano Brivio <sbrivio@redhat.com> wrote:
+> >
+> > On Fri, 4 Jan 2019 12:05:04 +0100
+> > Dmitry Vyukov <dvyukov@google.com> wrote:
+> >  
+> > > On Fri, Jan 4, 2019 at 11:54 AM Stefano Brivio <sbrivio@redhat.com> wrote:  
+> > > >
+> > > > On Fri, 4 Jan 2019 11:32:12 +0100
+> > > > Dmitry Vyukov <dvyukov@google.com> wrote:
+> > > >  
+> > > > > On Thu, Jan 3, 2019 at 10:54 PM Stefano Brivio <sbrivio@redhat.com> wrote:  
+> > > > > >
+> > > > > > On Thu, 3 Jan 2019 15:15:06 -0600
+> > > > > > Willem de Bruijn <willemdebruijn.kernel@gmail.com> wrote:
+> > > > > >  
+> > > > > > > syzbot generated stack traces with
+> > > > > > >
+> > > > > > > [  183.517380]  udpv6_err+0x46/0x60
+> > > > > > > [  183.520739]  ? __udp6_lib_err+0x1890/0x1890
+> > > > > > > [  183.525054]  gue6_err_proto_handler+0x199/0x280  
+> > > > > >
+> > > > > > Where? I can't find that in any logs linked from the dashboard at
+> > > > > > https://syzkaller.appspot.com/bug?extid=4ad25edc7a33e4ab91e0 :(  
+> > > > >
+> > > > > Stefano, there are these 4 bugs reported that have similarly looking
+> > > > > reproducers involving udp sockets and that crash modes that looks like
+> > > > > stack corruption/overflow:
+> > > > >
+> > > > > https://syzkaller.appspot.com/bug?extid=14005fa30c9a07192934
+> > > > > https://syzkaller.appspot.com/bug?extid=d14090007dc9ba5fa9b7
+> > > > > https://syzkaller.appspot.com/bug?extid=137ed32ec9a6d5b0d5fe
+> > > > > https://syzkaller.appspot.com/bug?id=d5bc3e0c66d200d72216ab343a67c4327e4a3452
+> > > > >
+> > > > > Are these the same bug as this?  
+> > > >
+> > > > Judging from the reproducers for the first three, they seem to be.  
+> > >
+> > > OK, then I will mark them as dups of this one.  
+> >
+> > syzbot just finished the tests I requested and couldn't reproduce the
+> > first three issues with the fix I posted (fou6: Prevent unbounded
+> > recursion in GUE error handler).  
+> 
+> Thanks for preparing the fixes so quickly, Stefano.
+> 
+> I also noticed one trace that seemingly goes through an ip6erspan
+> tunnel as well as gue6.
+> 
+> [  760.618683]  ? __udp6_lib_err+0xcb/0x640
+> [  760.622716]  ? udplitev6_err+0x46/0x60
+> [  760.626573]  ? gue6_err+0x105/0x270
+> [  760.630170]  ? udp_lib_close+0x20/0x20
+> [  760.634027]  ? ip6erspan_tunnel_xmit+0xdc0/0xdc0
+> 
+> Without knowing the err_handler code too well: is it possible that
+> packets with an intermediate IPIP or other tunnel still bypass the
+> checks (which check for strictly UDP in GUE)?
 
-diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
-index d8aef9da476f..f2aca339e9b7 100644
---- a/drivers/pci/controller/dwc/pci-imx6.c
-+++ b/drivers/pci/controller/dwc/pci-imx6.c
-@@ -96,6 +96,7 @@ struct imx6_pcie {
- #define PCIE_RC_LCR_MAX_LINK_SPEEDS_MASK	0xf
- 
- #define PCIE_RC_LCSR				0x80
-+#define PCIE_RC_LCSR_LINK_SPEED			GENMASK(19, 16)
- 
- /* PCIe Port Logic registers (memory-mapped) */
- #define PL_OFFSET 0x700
-@@ -766,8 +767,9 @@ static int imx6_pcie_establish_link(struct imx6_pcie *imx6_pcie)
- 		dev_info(dev, "Link: Gen2 disabled\n");
- 	}
- 
--	tmp = dw_pcie_readl_dbi(pci, PCIE_RC_LCSR);
--	dev_info(dev, "Link up, Gen%i\n", (tmp >> 16) & 0xf);
-+	tmp = FIELD_GET(PCIE_RC_LCSR_LINK_SPEED,
-+			dw_pcie_readl_dbi(pci, PCIE_RC_LCSR));
-+	dev_info(dev, "Link up, Gen%i\n", tmp);
- 	return 0;
- 
- err_reset_phy:
+Yes, I also noticed that, and concluded it's not an issue, but thanks
+for pointing that out.
+
+Recursion can't happen there because other handlers don't forward the
+exception to the exception handler of the inner layer. For ERSPAN, e.g.,
+see ip6gre_err(): it "simply" looks up the tunnel and calls
+ip6_update_pmtu() and ip6_redirect().
+
+For FoU and GUE this is not possible as we don't maintain enough state
+to be reasonably sure the exception is legitimate.
+
 -- 
-2.20.1
-
+Stefano
