@@ -2,179 +2,100 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2C90C43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 05:10:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8B4CC43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 05:13:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A4B22087F
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 05:10:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 95DBD2070D
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 05:13:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="U2OKvrFD"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="EdVOXDvv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726363AbfADFKA (ORCPT
+        id S1726340AbfADFNQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 00:10:00 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:36453 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725988AbfADFKA (ORCPT
+        Fri, 4 Jan 2019 00:13:16 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:40174 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726000AbfADFNQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 00:10:00 -0500
-Received: by mail-lj1-f194.google.com with SMTP id g11-v6so31500359ljk.3
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 21:09:57 -0800 (PST)
+        Fri, 4 Jan 2019 00:13:16 -0500
+Received: by mail-io1-f66.google.com with SMTP id k2so6140142iog.7
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 21:13:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
+        d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=OWbEwfPubjq0NaWWAxIQeAnQxn47xm0j0nxY5ZbcMH0=;
-        b=U2OKvrFDbCh2BufZJKA7dzETG7GV7qnMAogiHwfSECrvA44C3wt+VzKcouhkef8HuX
-         9gXA4fgHSFE9aGTmsjX8anV2LAGJziR6q0bv0AWMqoh+snLVtr8o/8CW5UxE8n6NmF/L
-         83MwWdd8gCUMeobCl6GnWkKK1A/3C+fsc4pIaRrxrmtM3zQiVXWVS9CFTUr8VfE+x2j4
-         JRzdU6R8iR/V5Kd0Mc0pjkGRKfUSjCVLgN/v3u+SavqTN8XWMfR+gGLNZdo/5LnMSL0H
-         H7WJx1dXHN5804O4xPfbUlEvKu1+WBgU5j4O2yiBEFyjnyQz1zD0G6m+y7gPXvfImHOL
-         X50A==
+         :cc;
+        bh=VJ2dWvAZd/j8GEN5ilzz4Y3VeLyFvf8wQ3f62J8BmXY=;
+        b=EdVOXDvvPQVK2SUCY2OPKbnukYgilg3mJABHRTDu7rY9zgvWzBCbxDMcmTmdcR8T3+
+         J65uhzyg84dOHNqhAZiQTwxYVTLU7g2txtkHxgqZndKQpZ8z9gNt+gqne6OtlbGN7AP1
+         RntvzBNXj1h0jFL/EYQF/dtmD4o4DhMQA2nZs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=OWbEwfPubjq0NaWWAxIQeAnQxn47xm0j0nxY5ZbcMH0=;
-        b=cQ6TarpzYfDaQ91a5zOxwJvBYyVkFRXHqLY1nMdSlhp0momQkCgStFvaSe9en0vn0i
-         7PnDzCnh8BfCbSiSWYpHypUh9AGM5npmo26SKgjej1ZH7rGRTw2UkRuNVQi/ovMiXBgH
-         5d/8fuDfnR9QGauP1XO+LNolAgGpP3hcU/JwW83epehO8s6qRU+VHHv38GWZIx3F3tr3
-         tpF5hR+bvfoOQvVe2CjF60aem+QOGpv46h3KWZ7/MBiwpwWmpcvmdPJqfOHTA+8Q3a4g
-         76BGeB31hR7f7T0AqlFOIROdd44EPyZ4hSQaXmkJEcS0KiNWaJQooGBQYAdJulP9Sxcz
-         22Aw==
-X-Gm-Message-State: AJcUukcfXIS9+o27AqUAdlJNwPeIKdj00nPKF4DaqX0lW/00EMP//bgP
-        QX4KwkH6a/XCyLVdh35ukzfJByHcbZ8Vsrq0hwT2Hg==
-X-Google-Smtp-Source: ALg8bN4NX1q9qUFDJuRi1APhXoCbCHOOEDefs8t7aFX3ddJu5xWVbeWWV2/MnDcQMXltIY7TuVQ/1NRifcFSmOCiq50=
-X-Received: by 2002:a2e:8786:: with SMTP id n6-v6mr18777732lji.100.1546578596992;
- Thu, 03 Jan 2019 21:09:56 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=VJ2dWvAZd/j8GEN5ilzz4Y3VeLyFvf8wQ3f62J8BmXY=;
+        b=RVQk54wDkK2aF9MURrXXl9T+KiMB9RdUc/IEh89U5lNG/qK4qRIjzhywzvVDO0zUen
+         3E46X+JDlj49CH9cCe3B1rV0gdseWj5p4qA3X0WAdv2Rx1MGBbEpvfAZcU7reZR61Fy1
+         67L4fgSWtBe1V9PTI0aI5odTyd9Zeffp4JgJW8zjZhnteQDVC9ulJ7FX7HMCXQ5ZVhSB
+         +OIOx6W+sXNmCNAop92enoOD6gyqVxcoXCzPywmgH3ED5FiAKG9zUV7Abb1BvBICysA+
+         kSGqQfIwYCApmt50WqcPGG+qNgImSN2xItPjqMxsKQ80hMoSH2oZRRC1v5wLlXWWv1+5
+         QPzA==
+X-Gm-Message-State: AJcUukcSOfjKP+1iymVp/pEqdHf4OUD8RfOOLGtZB/bcTiGX0m8eb7iR
+        adPLEYsSwI2glQSTm8ynJ8xCtYK0psT1tqtdhY7KKw==
+X-Google-Smtp-Source: ALg8bN4TMXdIS6rjVGsr70Bmxx0JzEyg3BCcmqSt3aFWAwKDf/PZPYxyGKz83Fx/IZm6kO/Jzz8UJSDfApRSWZwHCEc=
+X-Received: by 2002:a6b:8f8d:: with SMTP id r135mr35229193iod.5.1546578795486;
+ Thu, 03 Jan 2019 21:13:15 -0800 (PST)
 MIME-Version: 1.0
-References: <1544768442-12530-1-git-send-email-yash.shah@sifive.com>
- <1544768442-12530-2-git-send-email-yash.shah@sifive.com> <20181217211624.5sj4n6pyartnd3fc@pengutronix.de>
-In-Reply-To: <20181217211624.5sj4n6pyartnd3fc@pengutronix.de>
-From:   Yash Shah <yash.shah@sifive.com>
-Date:   Fri, 4 Jan 2019 10:39:20 +0530
-Message-ID: <CAJ2_jOGBK6OtXe0UO6nYc1KPDVi39NtD8f+hUkpxROhzukPw7w@mail.gmail.com>
-Subject: Re: [RFC v2 1/2] pwm: sifive: Add DT documentation for SiFive PWM Controller
-To:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     Palmer Dabbelt <palmer@sifive.com>, linux-pwm@vger.kernel.org,
-        linux-riscv@lists.infradead.org,
-        Thierry Reding <thierry.reding@gmail.com>, robh+dt@kernel.org,
-        mark.rutland@arm.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Sachin Ghadi <sachin.ghadi@sifive.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>
+References: <1546442912-20818-1-git-send-email-firoz.khan@linaro.org>
+ <1546442912-20818-3-git-send-email-firoz.khan@linaro.org> <CAMo8Bf+qK=k33boeNOeL69sLC3e-M07QK9ErhYm-byuQ2UnVnw@mail.gmail.com>
+In-Reply-To: <CAMo8Bf+qK=k33boeNOeL69sLC3e-M07QK9ErhYm-byuQ2UnVnw@mail.gmail.com>
+From:   Firoz Khan <firoz.khan@linaro.org>
+Date:   Fri, 4 Jan 2019 10:43:04 +0530
+Message-ID: <CALxhOnhgAEeEFhL2fgjDSCBMJo7dF5jiuGKCXjWYjMJmHefMgA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] xtensa: generate uapi header and syscall table header files
+To:     Max Filippov <jcmvbkbc@gmail.com>
+Cc:     Chris Zankel <chris@zankel.net>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        linux-xtensa@linux-xtensa.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-Arch <linux-arch@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 18, 2018 at 2:46 AM Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@pengutronix.de> wrote:
->
-> On Fri, Dec 14, 2018 at 11:50:41AM +0530, Yash Shah wrote:
-> > DT documentation for PWM controller added with updated compatible
-> > string.
+Hi Max,
+
+Thanks for your feedback.
+
+On Fri, 4 Jan 2019 at 04:14, Max Filippov <jcmvbkbc@gmail.com> wrote:
 > >
-> > Signed-off-by: Wesley W. Terpstra <wesley@sifive.com>
-> > [Atish: Compatible string update]
-> > Signed-off-by: Atish Patra <atish.patra@wdc.com>
-> > Signed-off-by: Yash Shah <yash.shah@sifive.com>
-> > ---
-> >  .../devicetree/bindings/pwm/pwm-sifive.txt         | 44 ++++++++++++++=
-++++++++
-> >  1 file changed, 44 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/pwm/pwm-sifive.tx=
-t
-> >
-> > diff --git a/Documentation/devicetree/bindings/pwm/pwm-sifive.txt b/Doc=
-umentation/devicetree/bindings/pwm/pwm-sifive.txt
-> > new file mode 100644
-> > index 0000000..250d8ee
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/pwm/pwm-sifive.txt
-> > @@ -0,0 +1,44 @@
-> > +SiFive PWM controller
+> > +quiet_cmd_sysnr = SYSNR  $@
+> > +      cmd_sysnr = $(CONFIG_SHELL) '$(sysnr)' '$<' '$@'         \
+> > +                 '$(sysnr_abis_$(basetarget))'                 \
+> > +                 '$(sysnr_pfx_$(basetarget))'                  \
+> > +                 '$(sysnr_offset_$(basetarget))'
 > > +
-> > +Unlike most other PWM controllers, the SiFive PWM controller currently=
- only
-> > +supports one period for all channels in the PWM. This is set globally =
-in DTS.
-> > +The period also has significant restrictions on the values it can achi=
-eve,
-> > +which the driver rounds to the nearest achievable frequency.
-> > +
-> > +Required properties:
-> > +- compatible: should be something similar to "sifive,<chip>-pwm" for
-> > +           the PWM as integrated on a particular chip, and
-> > +           "sifive,pwm<version>" for the general PWM IP block
-> > +           programming model. Supported compatible strings are:
-> > +           "sifive,fu540-c000-pwm" for the SiFive PWM v0 as
-> > +           integrated onto the SiFive FU540 chip, and "sifive,pwm0"
-> > +           for the SiFive PWM v0 IP block with no chip integration
-> > +           tweaks.
-> > +- reg: physical base address and length of the controller's registers
-> > +- clocks: The frequency the controller runs at
 >
-> This is unusual and the example below lists a clock phandle (which is
-> the common thing), so I guess the description is just wrong.
+> This patch seems to do more than it says in the description.
+> Perhaps adding cmd_sysnr needs a separate patch with its
+> own description?
 
-You are right, I will correct the description.
+This build rule is unused now as I was tried to implement
+something else. Hopefully I'll remove the the above change
+in my v2.
 
->
-> > +- #pwm-cells: Should be 2.
-> > +  The first cell is the PWM channel number
-> > +  The second cell is the PWM polarity
-> > +- sifive,approx-period: the driver will get as close to this period as=
- it can
->
-> What is the unit? I'd drop "approx", that the driver might not be able
-> to exactly hit the specified period is (IMHO) obvious and doesn't need
-> to be mentioned in the property name.
-
-The unit is nanoseconds. Will add the unit suffix to the property name.
-
->
-> > +- interrupts: one interrupt per PWM channel
-> > +
-> > +PWM RTL that corresponds to the IP block version numbers can be found
-> > +here:
-> > +
-> > +https://github.com/sifive/sifive-blocks/tree/master/src/main/scala/dev=
-ices/pwm
-> > +
-> > +Further information on the format of the IP
-> > +block-specific version numbers can be found in
-> > +Documentation/devicetree/bindings/sifive/sifive-blocks-ip-versioning.t=
-xt
-> > +
-> > +Examples:
-> > +
-> > +pwm:  pwm@10020000 {
-> > +     compatible =3D "sifive,fu540-c000-pwm","sifive,pwm0";
-> > +     reg =3D <0x0 0x10020000 0x0 0x1000>;
-> > +     clocks =3D <&tlclk>;
-> > +     interrupt-parent =3D <&plic>;
-> > +     interrupts =3D <42 43 44 45>;
-> > +     #pwm-cells =3D <2>;
-> > +     sifive,approx-period =3D <1000000>;
-> > +};
->
-> Best regards
-> Uwe
-
-Thanks for the comments!
-
->
-> --
-> Pengutronix e.K.                           | Uwe Kleine-K=C3=B6nig       =
-     |
-> Industrial Linux Solutions                 | http://www.pengutronix.de/  =
-|
+Thanks
+Firoz
