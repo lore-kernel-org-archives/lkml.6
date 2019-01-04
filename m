@@ -2,109 +2,129 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35681C43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 21:41:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDE6AC43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 21:44:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02EBB218D3
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 21:41:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546638119;
-	bh=LztnY2qaiDP88JkN1oCLUEPd1IqtY9sxD3nse74VJ2k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=1GdGknpX5TY3VUEBsq187/q/bj6loGQ17Q0adCVZHNQWhV1PALNznmc/B/64fsbK0
-	 8U65WLyLnoYqBoeweL/gAVT+Edt93UYdaCjRSdq9iXcWopnii4ZHYgnPZ5JUZKNUAw
-	 sZb1qh8e5+Xm9riL9HiP6F/+gWhndf2O2Xmw2aBY=
+	by mail.kernel.org (Postfix) with ESMTP id BD5EF2087F
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 21:44:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726453AbfADVl6 (ORCPT
+        id S1726273AbfADVow (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 16:41:58 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37270 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726168AbfADVl5 (ORCPT
+        Fri, 4 Jan 2019 16:44:52 -0500
+Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:47833 "EHLO
+        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726094AbfADVow (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 16:41:57 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=bUFIOpkaPhj/lM0IunD6gd2bp13FnGJa9twvsCIq78Q=; b=D0CQLG6+tWW95WKpZIQMFYhpv
-        I5vg6LtePfMo28u9cexa6LpFbxE4C1ryCisUd8kgSOwb893spaBA2hf75gnD6hhdyMzDQkrfWkbLf
-        xk55stnqNIb9Av93R0D10aDEdA1fPwfhnQUtlS2SSDNqBzUsT2dIZ/56+1Iq/aEf+5xMo=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=finisterre.ee.mobilebroadband)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gfXDr-0002tE-B0; Fri, 04 Jan 2019 21:41:43 +0000
-Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id 58661440082; Fri,  4 Jan 2019 21:41:42 +0000 (GMT)
-Date:   Fri, 4 Jan 2019 21:41:42 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Ross Zwisler <zwisler@google.com>
-Cc:     linux-kernel@vger.kernel.org, Dylan Reid <dgreid@chromium.org>,
-        Bard Liao <bardliao@realtek.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Oder Chiou <oder_chiou@realtek.com>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
-        Hsinyu Chao <hychao@chromium.org>
-Subject: Re: [PATCH] ASoC: rt5677: use more of the volume range from DACs
-Message-ID: <20190104214142.GA2410@sirena.org.uk>
-References: <20181220232555.90030-1-zwisler@google.com>
- <20190104205132.GA106594@google.com>
+        Fri, 4 Jan 2019 16:44:52 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01451;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0THYCz9Q_1546638111;
+Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0THYCz9Q_1546638111)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Sat, 05 Jan 2019 05:42:06 +0800
+Subject: Re: [RFC PATCH 0/3] mm: memcontrol: delayed force empty
+To:     Greg Thelen <gthelen@google.com>, Michal Hocko <mhocko@kernel.org>
+Cc:     hannes@cmpxchg.org, akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <1546459533-36247-1-git-send-email-yang.shi@linux.alibaba.com>
+ <20190103101215.GH31793@dhcp22.suse.cz>
+ <b3ad06ed-f620-7aa0-5697-a1bbe2d7bfe1@linux.alibaba.com>
+ <20190103181329.GW31793@dhcp22.suse.cz>
+ <6f43e926-3bb5-20d1-2e39-1d30bf7ad375@linux.alibaba.com>
+ <20190103185333.GX31793@dhcp22.suse.cz>
+ <d610c665-890f-3bf0-1e2a-437150b6ddfb@linux.alibaba.com>
+ <20190103192339.GA31793@dhcp22.suse.cz>
+ <88b4d986-0b3c-cbf0-65ad-95f3e8ccd870@linux.alibaba.com>
+ <xr93y380xk9k.fsf@gthelen.svl.corp.google.com>
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <344793c0-f987-85a1-2a75-bc27083f52f4@linux.alibaba.com>
+Date:   Fri, 4 Jan 2019 13:41:50 -0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="RnlQjJ0d97Da+TV1"
-Content-Disposition: inline
-In-Reply-To: <20190104205132.GA106594@google.com>
-X-Cookie: Dyslexics have more fnu.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <xr93y380xk9k.fsf@gthelen.svl.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---RnlQjJ0d97Da+TV1
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jan 04, 2019 at 01:51:32PM -0700, Ross Zwisler wrote:
+On 1/4/19 12:03 PM, Greg Thelen wrote:
+> Yang Shi <yang.shi@linux.alibaba.com> wrote:
+>
+>> On 1/3/19 11:23 AM, Michal Hocko wrote:
+>>> On Thu 03-01-19 11:10:00, Yang Shi wrote:
+>>>> On 1/3/19 10:53 AM, Michal Hocko wrote:
+>>>>> On Thu 03-01-19 10:40:54, Yang Shi wrote:
+>>>>>> On 1/3/19 10:13 AM, Michal Hocko wrote:
+>>> [...]
+>>>>>>> Is there any reason for your scripts to be strictly sequential here? In
+>>>>>>> other words why cannot you offload those expensive operations to a
+>>>>>>> detached context in _userspace_?
+>>>>>> I would say it has not to be strictly sequential. The above script is just
+>>>>>> an example to illustrate the pattern. But, sometimes it may hit such pattern
+>>>>>> due to the complicated cluster scheduling and container scheduling in the
+>>>>>> production environment, for example the creation process might be scheduled
+>>>>>> to the same CPU which is doing force_empty. I have to say I don't know too
+>>>>>> much about the internals of the container scheduling.
+>>>>> In that case I do not see a strong reason to implement the offloding
+>>>>> into the kernel. It is an additional code and semantic to maintain.
+>>>> Yes, it does introduce some additional code and semantic, but IMHO, it is
+>>>> quite simple and very straight forward, isn't it? Just utilize the existing
+>>>> css offline worker. And, that a couple of lines of code do improve some
+>>>> throughput issues for some real usecases.
+>>> I do not really care it is few LOC. It is more important that it is
+>>> conflating force_empty into offlining logic. There was a good reason to
+>>> remove reparenting/emptying the memcg during the offline. Considering
+>>> that you can offload force_empty from userspace trivially then I do not
+>>> see any reason to implement it in the kernel.
+>> Er, I may not articulate in the earlier email, force_empty can not be
+>> offloaded from userspace *trivially*. IOWs the container scheduler may
+>> unexpectedly overcommit something due to the stall of synchronous force
+>> empty, which can't be figured out by userspace before it actually
+>> happens. The scheduler doesn't know how long force_empty would take. If
+>> the force_empty could be offloaded by kernel, it would make scheduler's
+>> life much easier. This is not something userspace could do.
+> If kernel workqueues are doing more work (i.e. force_empty processing),
+> then it seem like the time to offline could grow.  I'm not sure if
+> that's important.
 
-> Ping on this patch.
+Yes, it would grow. I'm not sure, but it seems fine with our workloads.
 
-Please don't send content free pings and please allow a reasonable time
-for review.  People get busy, go on holiday, attend conferences and so=20
-on so unless there is some reason for urgency (like critical bug fixes)
-please allow at least a couple of weeks for review.  If there have been
-review comments then people may be waiting for those to be addressed.
+The reclaim can be placed at the last step of offline, and it can be 
+interrupted by some signals, i.e. fatal signal in current code.
 
-Sending content free pings adds to the mail volume (if they are seen at
-all) which is often the problem and since they can't be reviewed
-directly if something has gone wrong you'll have to resend the patches
-anyway, so sending again is generally a better approach though there are
-some other maintainers who like them - if in doubt look at how patches
-for the subsystem are normally handled.
+>
+> I assume that if we make force_empty an async side effect of rmdir then
+> user space scheduler would not be unable to immediately assume the
+> rmdir'd container memory is available without subjecting a new container
+> to direct reclaim.  So it seems like user space would use a mechanism to
+> wait for reclaim: either the existing sync force_empty or polling
+> meminfo/etc waiting for free memory to appear.
 
---RnlQjJ0d97Da+TV1
-Content-Type: application/pgp-signature; name="signature.asc"
+Yes, it is expected side effect, the memory reclaim would happen in a 
+short while. In this series I keep sync reclaim behavior of force_empty 
+by checking the written value. Michal suggested a new knob do the 
+offline reclaim, and keep force_empty intact.
 
------BEGIN PGP SIGNATURE-----
+I think using which knob is user's discretion.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlwv0xMACgkQJNaLcl1U
-h9Ciigf/agQi1BddVaEe/9avDU1HhJQEyE77MZ4jJF8YbD8qrWrX/f5ehl2n/XrM
-HSrs2jxL1nqtS9h33HkfOZBoUJM6IN+MT+rhEWvircmI+iRtBcKVSWA1DhDbgpG2
-Rru4FReoN1B7cilVvI6YJoeT+Ey28wu9z6/eG43tLUwh3zlYEGQWMYaaC1anfB6o
-VTOeXSwNLoFQMbpNNXlDfJK5eKqPZV6M1lr4Gj/uSyWwdozfWZnk5EYLiETinCKr
-wzTcyFrZKTP+BkZ99037bIc6mtqBL+ljVDZPV7ROICuU6lc0YnsYgns1dWHmElGS
-e++y8JRkhaQ2oCd/MT0FYO0ephhLVg==
-=aebp
------END PGP SIGNATURE-----
+Thanks,
+Yang
 
---RnlQjJ0d97Da+TV1--
+>
+>>>>> I think it is more important to discuss whether we want to introduce
+>>>>> force_empty in cgroup v2.
+>>>> We would prefer have it in v2 as well.
+>>> Then bring this up in a separate email thread please.
+>> Sure. Will prepare the patches later.
+>>
+>> Thanks,
+>> Yang
+
