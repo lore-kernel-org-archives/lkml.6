@@ -2,150 +2,147 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9292DC43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 13:19:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AED7C43444
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 13:22:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6933B21871
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 13:19:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 42A3021874
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 13:22:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546608124;
+	bh=07qKDPH6BubwQ95awMkmE83Ca9861C7IG5T4Rfc5+n0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=k7LDq8ZKrQ/OE+T53CiPMGj8mwDyhyY9nfxV8Uiwx9HNt+Eix5VXPVOa19taDt/NZ
+	 /RbqYiJ4HtMBXeP6g4X7Z5PpUVxkO/4/WyEPNnB3cqmX6JkSu4vac63DY4WuKHy4YO
+	 Zl0WPXG9UJGvFLlzrmq3vCmegtpjhTDQQ0L//xbU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727912AbfADNTP (ORCPT
+        id S1727823AbfADNWC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 08:19:15 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:42430 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726069AbfADNTP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 08:19:15 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9A2FF42BD3;
-        Fri,  4 Jan 2019 13:19:14 +0000 (UTC)
-Received: from gondolin (dhcp-192-187.str.redhat.com [10.33.192.187])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4F843600D6;
-        Fri,  4 Jan 2019 13:19:09 +0000 (UTC)
-Date:   Fri, 4 Jan 2019 14:19:06 +0100
-From:   Cornelia Huck <cohuck@redhat.com>
-To:     Pierre Morel <pmorel@linux.ibm.com>
-Cc:     Michael Mueller <mimu@linux.ibm.com>,
-        KVM Mailing List <kvm@vger.kernel.org>,
-        Linux-S390 Mailing List <linux-s390@vger.kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Halil Pasic <pasic@linux.ibm.com>
-Subject: Re: [PATCH v5 10/15] KVM: s390: add functions to (un)register GISC
- with GISA
-Message-ID: <20190104141836.0ca98a77.cohuck@redhat.com>
-In-Reply-To: <bd1a6082-cb73-5ef7-f2b6-8cbd7d8c7136@linux.ibm.com>
-References: <20181219191756.57973-1-mimu@linux.ibm.com>
-        <20181219191756.57973-11-mimu@linux.ibm.com>
-        <bd1a6082-cb73-5ef7-f2b6-8cbd7d8c7136@linux.ibm.com>
-Organization: Red Hat GmbH
+        Fri, 4 Jan 2019 08:22:02 -0500
+Received: from mx2.suse.de ([195.135.220.15]:38204 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725913AbfADNWC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 08:22:02 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 0A035AE0B;
+        Fri,  4 Jan 2019 13:22:00 +0000 (UTC)
+Date:   Fri, 4 Jan 2019 14:21:58 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Shakeel Butt <shakeelb@google.com>
+Cc:     Florian Westphal <fw@strlen.de>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        Roopa Prabhu <roopa@cumulusnetworks.com>,
+        Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>, netfilter-devel@vger.kernel.org,
+        coreteam@netfilter.org, bridge@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzbot+7713f3aa67be76b1552c@syzkaller.appspotmail.com
+Subject: Re: [PATCH] netfilter: account ebt_table_info to kmemcg
+Message-ID: <20190104132158.GP31793@dhcp22.suse.cz>
+References: <20181229015524.222741-1-shakeelb@google.com>
+ <20181229073325.GZ16738@dhcp22.suse.cz>
+ <20181229095215.nbcijqacw5b6aho7@breakpoint.cc>
+ <20181229100615.GB16738@dhcp22.suse.cz>
+ <CALvZod7v-CC1XipLAerFj1Zp_M=qXZq6MzDL4pubJMTRCsMFNw@mail.gmail.com>
+ <20181230074513.GA22445@dhcp22.suse.cz>
+ <20181230080028.GB22445@dhcp22.suse.cz>
+ <CALvZod6Ty30uQjJF8KZf=RS5djULaLVggYv_1WFrKJWaYa6EHw@mail.gmail.com>
+ <20181231101158.GC22445@dhcp22.suse.cz>
+ <CALvZod4sQ7ZEwfEefoNUeso2Va255x0jNgwOVZSU-b7+CevQuQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Fri, 04 Jan 2019 13:19:14 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALvZod4sQ7ZEwfEefoNUeso2Va255x0jNgwOVZSU-b7+CevQuQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2 Jan 2019 18:29:00 +0100
-Pierre Morel <pmorel@linux.ibm.com> wrote:
-
-> On 19/12/2018 20:17, Michael Mueller wrote:
-> > Add the IAM (Interruption Alert Mask) to the architecture specific
-> > kvm struct. This mask in the GISA is used to define for which ISC
-> > a GIB alert can be issued.
-> > 
-> > The functions kvm_s390_gisc_register() and kvm_s390_gisc_unregister()
-> > are used to (un)register a GISC (guest ISC) with a virtual machine and
-> > its GISA.
-> > 
-> > Upon successful completion, kvm_s390_gisc_register() returns the
-> > ISC to be used for GIB alert interruptions. A negative return code
-> > indicates an error during registration.
-> > 
-> > Theses functions will be used by other adapter types like AP and PCI to
-> > request pass-through interruption support.
-> > 
-> > Signed-off-by: Michael Mueller <mimu@linux.ibm.com>
-> > ---
-> >   arch/s390/include/asm/kvm_host.h |  9 ++++++
-> >   arch/s390/kvm/interrupt.c        | 66 ++++++++++++++++++++++++++++++++++++++++
-> >   2 files changed, 75 insertions(+)
-> > 
-
-> > +int kvm_s390_gisc_register(struct kvm *kvm, u32 gisc)
-> > +{
-> > +	if (!kvm->arch.gib_in_use)
-> > +		return -ENODEV;
-> > +	if (gisc > MAX_ISC)
-> > +		return -ERANGE;
-> > +
-> > +	spin_lock(&kvm->arch.iam_ref_lock);
-> > +	if (kvm->arch.iam_ref_count[gisc] == 0)
-> > +		kvm->arch.iam |= 0x80 >> gisc;
-> > +	kvm->arch.iam_ref_count[gisc]++;
-> > +	if (kvm->arch.iam_ref_count[gisc] == 1)
-> > +		set_iam(kvm->arch.gisa, kvm->arch.iam);  
+On Thu 03-01-19 12:52:54, Shakeel Butt wrote:
+> On Mon, Dec 31, 2018 at 2:12 AM Michal Hocko <mhocko@kernel.org> wrote:
+> >
+> > On Sun 30-12-18 19:59:53, Shakeel Butt wrote:
+> > > On Sun, Dec 30, 2018 at 12:00 AM Michal Hocko <mhocko@kernel.org> wrote:
+> > > >
+> > > > On Sun 30-12-18 08:45:13, Michal Hocko wrote:
+> > > > > On Sat 29-12-18 11:34:29, Shakeel Butt wrote:
+> > > > > > On Sat, Dec 29, 2018 at 2:06 AM Michal Hocko <mhocko@kernel.org> wrote:
+> > > > > > >
+> > > > > > > On Sat 29-12-18 10:52:15, Florian Westphal wrote:
+> > > > > > > > Michal Hocko <mhocko@kernel.org> wrote:
+> > > > > > > > > On Fri 28-12-18 17:55:24, Shakeel Butt wrote:
+> > > > > > > > > > The [ip,ip6,arp]_tables use x_tables_info internally and the underlying
+> > > > > > > > > > memory is already accounted to kmemcg. Do the same for ebtables. The
+> > > > > > > > > > syzbot, by using setsockopt(EBT_SO_SET_ENTRIES), was able to OOM the
+> > > > > > > > > > whole system from a restricted memcg, a potential DoS.
+> > > > > > > > >
+> > > > > > > > > What is the lifetime of these objects? Are they bound to any process?
+> > > > > > > >
+> > > > > > > > No, they are not.
+> > > > > > > > They are free'd only when userspace requests it or the netns is
+> > > > > > > > destroyed.
+> > > > > > >
+> > > > > > > Then this is problematic, because the oom killer is not able to
+> > > > > > > guarantee the hard limit and so the excessive memory consumption cannot
+> > > > > > > be really contained. As a result the memcg will be basically useless
+> > > > > > > until somebody tears down the charged objects by other means. The memcg
+> > > > > > > oom killer will surely kill all the existing tasks in the cgroup and
+> > > > > > > this could somehow reduce the problem. Maybe this is sufficient for
+> > > > > > > some usecases but that should be properly analyzed and described in the
+> > > > > > > changelog.
+> > > > > > >
+> > > > > >
+> > > > > > Can you explain why you think the memcg hard limit will not be
+> > > > > > enforced? From what I understand, the memcg oom-killer will kill the
+> > > > > > allocating processes as you have mentioned. We do force charging for
+> > > > > > very limited conditions but here the memcg oom-killer will take care
+> > > > > > of
+> > > > >
+> > > > > I was talking about the force charge part. Depending on a specific
+> > > > > allocation and its life time this can gradually get us over hard limit
+> > > > > without any bound theoretically.
+> > > >
+> > > > Forgot to mention. Since b8c8a338f75e ("Revert "vmalloc: back off when
+> > > > the current task is killed"") there is no way to bail out from the
+> > > > vmalloc allocation loop so if the request is really large then the memcg
+> > > > oom will not help. Is that a problem here?
+> > > >
+> > >
+> > > Yes, I think it will be an issue here.
+> > >
+> > > > Maybe it is time to revisit fatal_signal_pending check.
+> > >
+> > > Yes, we will need something to handle the memcg OOM. I will think more
+> > > on that front or if you have any ideas, please do propose.
+> >
+> > I can see three options here:
+> >         - do not force charge on memcg oom or introduce a limited charge
+> >           overflow (reserves basically).
+> >         - revert the revert and reintroduce the fatal_signal_pending
+> >           check into vmalloc
+> >         - be more specific and check tsk_is_oom_victim in vmalloc and
+> >           fail
+> >
 > 
-> testing the set_iam return value?
-> Even it should be fine if the caller works correctly, this is done 
-> before GISA is ever used.
+> I think for the long term solution we might need something similar to
+> memcg oom reserves (1) but for quick fix I think we can do the
+> combination of (2) and (3).
 
-My feeling is that checking the return code is a good idea, even if it
-Should Never Fail(tm).
+Johannes argued that fatal_signal_pending is too general check for
+vmalloc. I would argue that we already break out of some operations on
+fatal signals. tsk_is_oom_victim is more subtle but much more targeted
+on the other hand.
 
-> 
-> > +	spin_unlock(&kvm->arch.iam_ref_lock);
-> > +
-> > +	return gib->nisc;
-> > +}
-> > +EXPORT_SYMBOL_GPL(kvm_s390_gisc_register);
-> > +
-> > +int kvm_s390_gisc_unregister(struct kvm *kvm, u32 gisc)
-> > +{
-> > +	int rc = 0;
-> > +
-> > +	if (!kvm->arch.gib_in_use)
-> > +		return -ENODEV;
-> > +	if (gisc > MAX_ISC)
-> > +		return -ERANGE;
-> > +
-> > +	spin_lock(&kvm->arch.iam_ref_lock);
-> > +	if (kvm->arch.iam_ref_count[gisc] == 0) {
-> > +		rc = -EINVAL;
-> > +		goto out;
-> > +	}
-> > +	kvm->arch.iam_ref_count[gisc]--;
-> > +	if (kvm->arch.iam_ref_count[gisc] == 0) {
-> > +		kvm->arch.iam &= ~(0x80 >> gisc);
-> > +		set_iam(kvm->arch.gisa, kvm->arch.iam);
-
-Any chance of this function failing here? If yes, would there be any
-implications?
-
-> > +	}
-> > +out:
-> > +	spin_unlock(&kvm->arch.iam_ref_lock);
-> > +
-> > +	return rc;
-> > +}
-> > +EXPORT_SYMBOL_GPL(kvm_s390_gisc_unregister);
-> > +
-> >   void kvm_s390_gib_destroy(void)
-> >   {
-> >   	if (!gib)
-> >   
-> 
-> 
-
+I do not have any strong preference to be honest but I agree that some
+limited reserves would be the best solution long term. I just do not
+have any idea how to scale those reserves to be meaningful.
+-- 
+Michal Hocko
+SUSE Labs
