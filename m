@@ -2,46 +2,71 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,FROM_EXCESS_BASE64,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAE20C43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 08:18:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1577CC43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 08:21:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9EF2C21871
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 08:18:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BAE6E21874
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 08:21:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=netrounds-com.20150623.gappssmtp.com header.i=@netrounds-com.20150623.gappssmtp.com header.b="DRAzfPJp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726955AbfADISm (ORCPT
+        id S1726994AbfADIV3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 03:18:42 -0500
-Received: from mx2.suse.de ([195.135.220.15]:57646 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726530AbfADISm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 03:18:42 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 17033AE04;
-        Fri,  4 Jan 2019 08:18:40 +0000 (UTC)
-Subject: Re: [PATCH] mm, page_alloc: Do not wake kswapd with zone lock held
-To:     Mel Gorman <mgorman@techsingularity.net>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Qian Cai <cai@lca.pw>, Dmitry Vyukov <dvyukov@google.com>,
-        syzbot <syzbot+93d94a001cfbce9e60e1@syzkaller.appspotmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>, linux@dominikbrodowski.net,
-        Michal Hocko <mhocko@suse.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-References: <20190103225712.GJ31517@techsingularity.net>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Message-ID: <51d17b9f-5c5b-5964-0943-668b679964cd@suse.cz>
-Date:   Fri, 4 Jan 2019 09:18:38 +0100
+        Fri, 4 Jan 2019 03:21:29 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:41292 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726328AbfADIV3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 03:21:29 -0500
+Received: by mail-lj1-f194.google.com with SMTP id k15-v6so31790440ljc.8
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Jan 2019 00:21:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=netrounds-com.20150623.gappssmtp.com; s=20150623;
+        h=to:cc:from:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=NILzrmkyTJ7/wvG7cfrJ73pNIAK5HV4ABnNyKOHh2gk=;
+        b=DRAzfPJpRzhfDxLIN4MerZWGroHrLFwgA5VJcKObqZU2HLuS/Fcx22lLO+0m+kT6VO
+         rU5DBpIM/xKb/tMHS8LOom2E4E4AYk9GfzG/5/2KXsAL6EyQBaJ6er61rDfZSsS+AuPT
+         2hm6/1WmGaTeRIfoBejFMc9eu/BpMllE/NFViEYGmZTWtZ6W2RjA4aR8m4+DW/kco77Z
+         Z599rgsyApXCP28KMLPFAGxKp8n55owulCqxbusdu9gbI1xqBoma0Pd9BOtDhiC0uL45
+         ajg94PJdbncQqBjsiIVWF3vBYJNUBUC/0pBpzA2qZZppjXhwYeU3lUR9A/yYPm1z7isp
+         Nc2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=NILzrmkyTJ7/wvG7cfrJ73pNIAK5HV4ABnNyKOHh2gk=;
+        b=fw6J+WPAE9JOaTyyFMbqOpsuO0EujNJ7yAX8VpBJpoD/R6I2jGAU52XhAxvdKYD3kP
+         1eoseYQBSyMfwHJoRFt2GBKw1fxL8BrFJFz67H9kCboSOprdh1oeydTQAZV4oYIXCuNd
+         jD7SNbXjkyWQex5p/iG0MMkMA0EDYTqpqNuV2UScnVXJY6O8rQ5VsYN6ftArmPwyeLqx
+         ps2HPLO8hs/+0Pg0+6nRSj9M8kJjV/v6qUhJ5lrv9Ng9khwYvRs0ILX3pfq4zw0ghrnO
+         yejwoBhOSRxWVifS9Ux7swm3ZG1coUPxq5SxTqY5C/8xbXvf433V++x28fWh7++zIYKz
+         JUoA==
+X-Gm-Message-State: AJcUukenBDfGMSNDmKMb55AAT5iVFFp3j2EIr0NyS233M4bWqZk9uATL
+        nLrHYGPcomoJDiL2gt11NWEooceRXqE=
+X-Google-Smtp-Source: ALg8bN66/+5ejZs2kmLVLGHle9nKZ81magjxhhvFzzCPRuV/k5lrhdOvXb1sCbiDX3wTv28dcdGKuw==
+X-Received: by 2002:a2e:841:: with SMTP id g1-v6mr31089572ljd.21.1546590085883;
+        Fri, 04 Jan 2019 00:21:25 -0800 (PST)
+Received: from [10.10.134.108] (31-186-192-122.static.chello.pl. [31.186.192.122])
+        by smtp.gmail.com with ESMTPSA id p19-v6sm12318755ljb.47.2019.01.04.00.21.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 04 Jan 2019 00:21:25 -0800 (PST)
+To:     adobriyan@gmail.com
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+From:   =?UTF-8?B?TWF0ZXVzeiBTdMSZcGllxYQ=?= 
+        <mateusz.stepien@netrounds.com>
+Subject: PROBLEM: Old content of /proc/net after switching network namespace
+Message-ID: <4749d3bd-eac9-2a3e-aa93-d76d2e015945@netrounds.com>
+Date:   Fri, 4 Jan 2019 09:21:23 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.3.3
 MIME-Version: 1.0
-In-Reply-To: <20190103225712.GJ31517@techsingularity.net>
-Content-Type: text/plain; charset=iso-8859-15
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -49,105 +74,124 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/3/19 11:57 PM, Mel Gorman wrote:
-> syzbot reported the following regression in the latest merge window
-> and it was confirmed by Qian Cai that a similar bug was visible from a
-> different context.
-> 
-> ======================================================
-> WARNING: possible circular locking dependency detected
-> 4.20.0+ #297 Not tainted
-> ------------------------------------------------------
-> syz-executor0/8529 is trying to acquire lock:
-> 000000005e7fb829 (&pgdat->kswapd_wait){....}, at:
-> __wake_up_common_lock+0x19e/0x330 kernel/sched/wait.c:120
-> 
-> but task is already holding lock:
-> 000000009bb7bae0 (&(&zone->lock)->rlock){-.-.}, at: spin_lock
-> include/linux/spinlock.h:329 [inline]
-> 000000009bb7bae0 (&(&zone->lock)->rlock){-.-.}, at: rmqueue_bulk
-> mm/page_alloc.c:2548 [inline]
-> 000000009bb7bae0 (&(&zone->lock)->rlock){-.-.}, at: __rmqueue_pcplist
-> mm/page_alloc.c:3021 [inline]
-> 000000009bb7bae0 (&(&zone->lock)->rlock){-.-.}, at: rmqueue_pcplist
-> mm/page_alloc.c:3050 [inline]
-> 000000009bb7bae0 (&(&zone->lock)->rlock){-.-.}, at: rmqueue
-> mm/page_alloc.c:3072 [inline]
-> 000000009bb7bae0 (&(&zone->lock)->rlock){-.-.}, at:
-> get_page_from_freelist+0x1bae/0x52a0 mm/page_alloc.c:3491
-> 
-> It appears to be a false positive in that the only way the lock
-> ordering should be inverted is if kswapd is waking itself and the
-> wakeup allocates debugging objects which should already be allocated
-> if it's kswapd doing the waking. Nevertheless, the possibility exists
-> and so it's best to avoid the problem.
-> 
-> This patch flags a zone as needing a kswapd using the, surprisingly,
-> unused zone flag field. The flag is read without the lock held to
-> do the wakeup. It's possible that the flag setting context is not
-> the same as the flag clearing context or for small races to occur.
-> However, each race possibility is harmless and there is no visible
-> degredation in fragmentation treatment.
-> 
-> While zone->flag could have continued to be unused, there is potential
-> for moving some existing fields into the flags field instead. Particularly
-> read-mostly ones like zone->initialized and zone->contiguous.
-> 
-> Reported-by: syzbot+93d94a001cfbce9e60e1@syzkaller.appspotmail.com
-> Tested-by: Qian Cai <cai@lca.pw>
-> Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
+Hello everyone,
 
-Fixes: 1c30844d2dfe ("mm: reclaim small amounts of memory when an
-external fragmentation event occurs")
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
+After changing network namespace using setns, the content of /proc/net 
+still represents the original namespace.
+It looks like procfs dentries are not invalidated in dcache properly 
+after the namespace switch.
+It happens only, when you read content of /proc/net before changing 
+namespace
+The problem is reproducible in 4.19.13 but not in 4.14.X.
+Bisecting the stable kernel tree shows that the commit
+https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?id=1da4d377f943fe4194ffb9fb9c26cc58fad4dd24 
+introduced the problem.
+Reverting mentioned commit resolves it.
 
-> ---
->  include/linux/mmzone.h | 6 ++++++
->  mm/page_alloc.c        | 8 +++++++-
->  2 files changed, 13 insertions(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-> index cc4a507d7ca4..842f9189537b 100644
-> --- a/include/linux/mmzone.h
-> +++ b/include/linux/mmzone.h
-> @@ -520,6 +520,12 @@ enum pgdat_flags {
->  	PGDAT_RECLAIM_LOCKED,		/* prevents concurrent reclaim */
->  };
->  
-> +enum zone_flags {
-> +	ZONE_BOOSTED_WATERMARK,		/* zone recently boosted watermarks.
-> +					 * Cleared when kswapd is woken.
-> +					 */
-> +};
-> +
->  static inline unsigned long zone_managed_pages(struct zone *zone)
->  {
->  	return (unsigned long)atomic_long_read(&zone->managed_pages);
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index cde5dac6229a..d295c9bc01a8 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -2214,7 +2214,7 @@ static void steal_suitable_fallback(struct zone *zone, struct page *page,
->  	 */
->  	boost_watermark(zone);
->  	if (alloc_flags & ALLOC_KSWAPD)
-> -		wakeup_kswapd(zone, 0, 0, zone_idx(zone));
-> +		set_bit(ZONE_BOOSTED_WATERMARK, &zone->flags);
->  
->  	/* We are not allowed to try stealing from the whole block */
->  	if (!whole_block)
-> @@ -3102,6 +3102,12 @@ struct page *rmqueue(struct zone *preferred_zone,
->  	local_irq_restore(flags);
->  
->  out:
-> +	/* Separate test+clear to avoid unnecessary atomics */
-> +	if (test_bit(ZONE_BOOSTED_WATERMARK, &zone->flags)) {
-> +		clear_bit(ZONE_BOOSTED_WATERMARK, &zone->flags);
-> +		wakeup_kswapd(zone, 0, 0, zone_idx(zone));
-> +	}
-> +
->  	VM_BUG_ON_PAGE(page && bad_range(zone, page), page);
->  	return page;
->  
-> 
+MCVE (slightly modified example from [man 2 setns]):
 
+#define _GNU_SOURCE
+#include <fcntl.h>
+#include <sched.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <stdio.h>
+
+#define errExit(msg)    do { perror(msg); exit(EXIT_FAILURE); \
+                         } while (0)
+
+void print_dev()
+{
+     int fd2;
+     fd2 = open("/proc/net/dev", O_RDONLY);
+     char buf[2048] = {0};
+     read(fd2, buf, 2048);
+     printf("%s", buf);
+     close(fd2);
+}
+int
+main(int argc, char *argv[])
+{
+     int fd;
+
+     printf("before namespace switch =========\n");
+     print_dev();
+     fd = open(argv[1], O_RDONLY); /* Get file descriptor for namespace */
+     if (fd == -1)
+         errExit("open");
+
+     if (setns(fd, 0) == -1)       /* Join that namespace */
+         errExit("setns");
+
+     printf("after namespace switch ++++++++++\n");
+     print_dev();
+     return 0;
+}
+
+
+Steps to reproduce (assuming we have an interface named enp0s9):
+
+ip netns add test
+ip link set dev enp0s9 netns test
+ip netns exec test sleep 30 &
+gcc -o mcve mcve.c # mcve.c contains above C code
+./mcve /proc/$(pidof sleep)/ns/net
+# before namespace switch =========
+# Inter-|   Receive                                                | 
+Transmit
+#  face |bytes    packets errs drop fifo frame compressed 
+multicast|bytes    packets errs drop fifo colls carrier compressed
+#     lo:       0       0    0    0    0     0          0         0 
+   0       0    0    0    0     0       0          0
+#    br0:       0       0    0    0    0     0          0         0 
+   0       0    0    0    0     0       0          0
+# enp0s3:  149625    1117    0    0    0     0          0         1 
+61664     485    0    0    0     0       0          0
+# docker0:       0       0    0    0    0     0          0         0 
+    0       0    0    0    0     0       0          0
+# enp0s8:   17086      60    0    0    0     0          0        29 
+1006      13    0    0    0     0       0          0
+# after namespace switch ++++++++++
+# Inter-|   Receive                                                | 
+Transmit
+#  face |bytes    packets errs drop fifo frame compressed 
+multicast|bytes    packets errs drop fifo colls carrier compressed
+#     lo:       0       0    0    0    0     0          0         0 
+   0       0    0    0    0     0       0          0
+#    br0:       0       0    0    0    0     0          0         0 
+   0       0    0    0    0     0       0          0
+# enp0s3:  150813    1135    0    0    0     0          0         1 
+64348     503    0    0    0     0       0          0
+# docker0:       0       0    0    0    0     0          0         0 
+    0       0    0    0    0     0       0          0
+# enp0s8:   17086      60    0    0    0     0          0        29 
+1006      13    0    0    0     0       0          0
+ip netns exec test cat /proc/net/dev
+## Should display
+# Inter-|   Receive                                                | 
+Transmit
+# face |bytes    packets errs drop fifo frame compressed multicast|bytes 
+    packets errs drop fifo colls carrier compressed
+#    lo:       0       0    0    0    0     0          0         0 
+  0       0    0    0    0     0       0          0
+# enp0s9:   10438      33    0    0    0     0          0        17 
+936      12    0    0    0     0       0          0
+
+output from awk -f scripts/ver_linux
+
+Linux test-agent 4.19.13 #1 SMP PREEMPT Thu Jan 3 12:03:20 UTC 2019 
+x86_64 GNU/Linux
+
+Util-linux          	2.29.2
+Mount               	2.29.2
+Module-init-tools   	23
+E2fsprogs           	1.43.4
+Linux C Library     	2.24
+Dynamic linker (ldd)	2.24
+Linux C++ Library   	6.0.22
+Procps              	3.3.12
+Net-tools           	2.10
+Sh-utils            	8.26
+Udev                	232
+Modules Loaded      	ahci ata_generic ata_piix crc32c_intel e1000 
+ehci_hcd ehci_pci i2c_core i2c_piix4 libahci serio_raw usb_common usbcore
