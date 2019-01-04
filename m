@@ -2,112 +2,98 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84AE4C43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 00:47:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B6DDC43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 00:48:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49A9C2184B
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 00:47:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 59FE72184B
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 00:48:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726847AbfADArH (ORCPT
+        id S1727127AbfADAsC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 19:47:07 -0500
-Received: from mga12.intel.com ([192.55.52.136]:5420 "EHLO mga12.intel.com"
+        Thu, 3 Jan 2019 19:48:02 -0500
+Received: from gate.crashing.org ([63.228.1.57]:58433 "EHLO gate.crashing.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726003AbfADArG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 19:47:06 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jan 2019 16:47:05 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,437,1539673200"; 
-   d="asc'?scan'208";a="123123136"
-Received: from jtkirshe-desk1.jf.intel.com ([134.134.177.96])
-  by orsmga002.jf.intel.com with ESMTP; 03 Jan 2019 16:47:05 -0800
-Message-ID: <7cee52e8e94f79cf684449e817ac8fb2efad6573.camel@intel.com>
-Subject: Re: [PATCH 3/8] i40e: increase indentation
-From:   Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-Reply-To: jeffrey.t.kirsher@intel.com
-To:     David Miller <davem@davemloft.net>
-Cc:     Julia.Lawall@lip6.fr, kernel-janitors@vger.kernel.org,
-        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Thu, 03 Jan 2019 16:47:04 -0800
-In-Reply-To: <20190103.163716.1927360927242144906.davem@davemloft.net>
-References: <1546185195-25676-1-git-send-email-Julia.Lawall@lip6.fr>
-         <1546185195-25676-4-git-send-email-Julia.Lawall@lip6.fr>
-         <2320c3ac2267d17ee9fc9ff3e3df60b7ca405590.camel@intel.com>
-         <20190103.163716.1927360927242144906.davem@davemloft.net>
-Organization: Intel
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-zP/iw+GMlNQc84qdQTty"
+        id S1726003AbfADAsB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Jan 2019 19:48:01 -0500
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id x040ldeW028655;
+        Thu, 3 Jan 2019 18:47:40 -0600
+Message-ID: <0adee96b58a533bc8c5927039e96b5ed77c9bbad.camel@kernel.crashing.org>
+Subject: Re: [PATCH] fsi:fsi-sbefifo: Fix possible concurrency
+ use-after-free bugs in sbefifo_user_release
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     Jia-Ju Bai <baijiaju1990@gmail.com>, dhowells@redhat.com,
+        joel@jms.id.au, eajames@linux.vnet.ibm.com, andrew@aj.id.au
+Cc:     linux-kernel@vger.kernel.org
+Date:   Fri, 04 Jan 2019 11:47:38 +1100
+In-Reply-To: <20181226135618.12784-1-baijiaju1990@gmail.com>
+References: <20181226135618.12784-1-baijiaju1990@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 User-Agent: Evolution 3.30.3 (3.30.3-1.fc29) 
 Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, 2018-12-26 at 21:56 +0800, Jia-Ju Bai wrote:
+> In drivers/fsi/fsi-sbefifo.c, the functions sbefifo_user_release(), 
+> sbefifo_user_read() and sbefifo_user_write() may be concurrently executed.
 
---=-zP/iw+GMlNQc84qdQTty
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+So after refreshing my mind, looking at the code and talking with Al, I
+really dont' see what race you are trying to fix here.
 
-On Thu, 2019-01-03 at 16:37 -0800, David Miller wrote:
-> From: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-> Date: Thu, 03 Jan 2019 15:58:10 -0800
->=20
-> > On Sun, 2018-12-30 at 16:53 +0100, Julia Lawall wrote:
-> > > Convert spaces to tabs to get correct alignment.
-> > >=20
-> > > Found with the help of Coccinelle.
-> > >=20
-> > > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> > >=20
-> > > ---
-> > >  drivers/net/ethernet/intel/i40e/i40e_main.c |    2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >=20
-> > Acked-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-> >=20
-> > Dave, since this is apart of a series, please feel free to commit
-> > this
-> > patch with the series.
->=20
-> It's kind of net-next material and therefore would need to be re-
-> submitted
-> anyways when net-next opens up.
->=20
-> Alternatively, Jeff, you can toss it into your -next tree.
+read/write should never be concurrent with release for a given file and
+the stuff we are protecting here is local to the file instance.
 
-Ok will do.
+Do you have an actual problem you observed ?
 
---=-zP/iw+GMlNQc84qdQTty
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
+Cheers,
+Ben.
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiTyZWz+nnTrOJ1LZ5W/vlVpL7c4FAlwurQgACgkQ5W/vlVpL
-7c5XFw//QHqoRMuaKBGyyk//SA4/4McnD1eHjSxVJWYBJmoVfiOl4ojHdIfiMD8A
-2KJlDO+jadAsQwR+qXJIDAhD4h7y/SrW/7g4E4y4sDdHuPd7XH+R5Z2QeSkTVlpZ
-CY2wTuHndf+dPknuQdw251XPY0ZKfNr16pLzcb7yBH1AE2FNOTxhLjlt5WPdoFRl
-Zle5fDMVnDSRYvO6vukzLHfJPbaMxYdTJix2xQJPwJDrfCiKYC8ViwcOL1DH2DCy
-yB4ObTMAbOQ3qsN7T1ldSKcDDNKa+sM3OVkwuzRuFpW40nOx1TN6itmqINcJmfeD
-+mvfSApUg1PQXZ0RCLfIM1GEAzwIPH67PLIE/d94TSkVXMhPmhdVqwwUVAtCOiag
-j0MRrJFWLS7h6V2OqGOfYa8MnaTGYc3TJychvvkllAj13FnSRkcr5vTtZwXU+d06
-uKSO43bCf6yHkcaqp8ym/JKVYggkZfgTPKU8s6kP3gF3Q1Vtu5QDf6j1Wb27NYB5
-5LmwwIm6r5u18T7/Bk5opsSl1BFfI+4txXpjzjCNuKcRPN5lcSAdVpNCmWpOW7wc
-yLWTCxmgtQFWAHSLkEjbiOrXYr3a5XWYfC2cvb6YVSnWPbv6vtZD9SSxG/zzdDsy
-QnsZIE/HQTYNM5Edkso9gwksJghpH5mNYegsTpE2sQvWRSQ5E2g=
-=bwOk
------END PGP SIGNATURE-----
-
---=-zP/iw+GMlNQc84qdQTty--
+> sbefifo_user_release()
+>   sbefifo_release_command()
+>     vfree(user->pending_cmd);
+> 
+> sbefifo_user_read()
+>   mutex_lock();
+>   rc = __sbefifo_submit(sbefifo, user->pending_cmd, ...);
+> 
+> sbefifo_user_write()
+>   mutex_lock();
+>   user->pending_cmd = user->cmd_page;
+>   user->pending_cmd = vmalloc(len);
+> 
+> Thus, possible concurrency use-after-free bugs may occur in
+> sbefifo_user_release().
+> 
+> To fix these bugs, the calls to mutex_lock() and mutex_unlock() are
+> added in sbefifo_user_release().
+> 
+> 
+> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+> ---
+>  drivers/fsi/fsi-sbefifo.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/fsi/fsi-sbefifo.c b/drivers/fsi/fsi-sbefifo.c
+> index d92f5b87c251..e278a9014b8f 100644
+> --- a/drivers/fsi/fsi-sbefifo.c
+> +++ b/drivers/fsi/fsi-sbefifo.c
+> @@ -900,8 +900,10 @@ static int sbefifo_user_release(struct inode *inode, struct file *file)
+>  	if (!user)
+>  		return -EINVAL;
+>  
+> +	mutex_lock(&user->file_lock);
+>  	sbefifo_release_command(user);
+>  	free_page((unsigned long)user->cmd_page);
+> +	mutex_unlock(&user->file_lock);
+>  	kfree(user);
+>  
+>  	return 0;
 
