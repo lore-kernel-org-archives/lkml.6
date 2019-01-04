@@ -2,160 +2,112 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30C95C43612
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 16:54:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6F89C43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 16:58:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01941218CD
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 16:54:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FXKYvmWr"
+	by mail.kernel.org (Postfix) with ESMTP id 7B2AC21872
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 16:58:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728321AbfADQyR (ORCPT
+        id S1728090AbfADQ6l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 11:54:17 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:42016 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728153AbfADQyB (ORCPT
+        Fri, 4 Jan 2019 11:58:41 -0500
+Received: from gateway23.websitewelcome.com ([192.185.49.60]:31900 "EHLO
+        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726303AbfADQ6l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 11:54:01 -0500
-Received: by mail-pf1-f193.google.com with SMTP id 64so18555739pfr.9;
-        Fri, 04 Jan 2019 08:54:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=4NEECKxkIUpvSN6zGsm7tNAQxLgNjozzJMg2Nudc0PU=;
-        b=FXKYvmWr1Bi/6TwoHJ6obTPz0e4w3xPKDDDv8Wd3Qr8JhMl3BoVsO1z3Z4R8C/VgOk
-         lUhdAglRAgvm2MpE77Ky1gCdZdIqm4Ag3OTfj79ii33uVa34k7RDFbIhCx3bnM4Pgjpa
-         RIYCLAuFbVcnH0x+7hxzbYFivboH0hT/tHjIh6K94CB7X6/+D/e60KZSLFv7dHeXJ7Mn
-         DEvccGftfQuX7FL/UqqQs8/Ufq9rbwO3W96hgPZLrpYBNpzV1d3DFO0x8Hbnvb2HGjmx
-         4MUZKEIUDCXQMow6Tdc1ORKBrzKeZ+houhlvjaBlnr90UhmTFzrLZFDSJGtzD9gyYJ+S
-         23Xw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=4NEECKxkIUpvSN6zGsm7tNAQxLgNjozzJMg2Nudc0PU=;
-        b=kem37P9WfhkJAp5v4L16KdCxZRi4xWmmNS6b9mWK+nuDa/R33YZ+Lz2yqXbQQm4BrW
-         555qjvqafSfRhM8k19JXlI1p4m1T460Vo232CLydb6XakZWUeBMRrmpKG1YzrNlNOaDa
-         9KqirilnaFXxaE/OGNh3MJAtDAO1ZqnD30oox4tMGJYAu8A4yxMifzC7zjQA65cxkMWI
-         IpPH5g9rJvl56DO9gybVzEypRXtwicrfRph4u2/HVvuDm0O0LjX4DCf0AkhxVaN5EQdz
-         jGt2+qTakQ9jfBMdLs3/Y58N5xpygj9FaOuTQbLR8J0nhRsg9dTXoh8YEafwuic5wy5C
-         Jfxw==
-X-Gm-Message-State: AA+aEWY7dJqOPPSxAcb946pZfQKWnm5D6umfIMP9ijwnNIk794+Dr8p8
-        7W8JNvYze6RYZU+EJKVKs5w=
-X-Google-Smtp-Source: ALg8bN4D1CKt/AUPshFmZDT16xoKhutjLiqIIIIVrU3y+rDCgyxP1DkOgi0g35bH153/z9gLjNpS5w==
-X-Received: by 2002:a62:870e:: with SMTP id i14mr54166502pfe.41.1546620840281;
-        Fri, 04 Jan 2019 08:54:00 -0800 (PST)
-Received: from squirtle.lan (c-24-22-235-96.hsd1.wa.comcast.net. [24.22.235.96])
-        by smtp.gmail.com with ESMTPSA id p67sm101900564pfg.44.2019.01.04.08.53.58
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 04 Jan 2019 08:53:59 -0800 (PST)
-From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Trent Piepho <tpiepho@impinj.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Chris Healy <cphealy@gmail.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        "A.s. Dong" <aisheng.dong@nxp.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>, linux-imx@nxp.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org
-Subject: [PATCH v4 2/4] PCI: imx6: Mark PHY functions as i.MX6 specific
-Date:   Fri,  4 Jan 2019 08:53:33 -0800
-Message-Id: <20190104165335.13205-3-andrew.smirnov@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190104165335.13205-1-andrew.smirnov@gmail.com>
-References: <20190104165335.13205-1-andrew.smirnov@gmail.com>
+        Fri, 4 Jan 2019 11:58:41 -0500
+Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
+        by gateway23.websitewelcome.com (Postfix) with ESMTP id 4740FCA24
+        for <linux-kernel@vger.kernel.org>; Fri,  4 Jan 2019 10:58:40 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id fSnwgSYo290onfSnwgxWId; Fri, 04 Jan 2019 10:58:40 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.130.205] (port=43414 helo=[192.168.43.131])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gfSnv-0004fh-EQ; Fri, 04 Jan 2019 10:58:39 -0600
+Subject: Re: [PATCH v2] drm/amdgpu_vm: fix boolean expressions
+To:     Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
+Cc:     Felix Kuehling <Felix.Kuehling@amd.com>,
+        Harish Kasiviswanathan <Harish.Kasiviswanathan@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20190103200146.GA26442@embeddedor>
+ <CAAEAJfA_1tLk0nk-WOtwdpF3W70keyaT=YPQHzXo5+nvWiZR=A@mail.gmail.com>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Message-ID: <040f2122-cd83-effb-3f1e-2c5755aece2a@embeddedor.com>
+Date:   Fri, 4 Jan 2019 10:58:28 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAAEAJfA_1tLk0nk-WOtwdpF3W70keyaT=YPQHzXo5+nvWiZR=A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.130.205
+X-Source-L: No
+X-Exim-ID: 1gfSnv-0004fh-EQ
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.43.131]) [189.250.130.205]:43414
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 15
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PCIE PHY IP block on i.MX7D differs from the one used on i.MX6 family,
-so none of the code in current implementation of imx6_setup_phy_mpll()
-is applicable.
+Hi Ezequiel,
 
-Tested-by: Trent Piepho <tpiepho@impinj.com>
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Fabio Estevam <fabio.estevam@nxp.com>
-Cc: Chris Healy <cphealy@gmail.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>
-Cc: Leonard Crestez <leonard.crestez@nxp.com>
-Cc: "A.s. Dong" <aisheng.dong@nxp.com>
-Cc: Richard Zhu <hongxing.zhu@nxp.com>
-Cc: linux-imx@nxp.com
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-pci@vger.kernel.org
----
- drivers/pci/controller/dwc/pci-imx6.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+On 1/4/19 10:40 AM, Ezequiel Garcia wrote:
+> Hey Gustavo,
+> 
+> On Thu, 3 Jan 2019 at 17:25, Gustavo A. R. Silva <gustavo@embeddedor.com> wrote:
+>>
+>> Fix boolean expressions by using logical AND operator '&&'
+>> instead of bitwise operator '&'.
+>>
+>> This issue was detected with the help of Coccinelle.
+>>
+>> Fixes: 9a4b7d4c769e ("drm/amdgpu: Add vm context module param")
+>> Cc: stable@vger.kernel.org
+>> Reviewed-by: Felix Kuehling <Felix.Kuehling@amd.com>
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+>> ---
+>> Changes in v2:
+>>   - Update Fixes tag.
+>>
+> 
+> This just fixes a user warning that would be wrongly reported, but
+> doesn't fix any other issue.
+> 
+> Why stable?
+> 
 
-diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
-index efff3d5e9162..c55d93c1187d 100644
---- a/drivers/pci/controller/dwc/pci-imx6.c
-+++ b/drivers/pci/controller/dwc/pci-imx6.c
-@@ -41,8 +41,11 @@ enum imx6_pcie_variants {
- 	IMX7D,
- };
- 
-+#define IMX6_PCIE_FLAG_IMX6_PHY			BIT(0)
-+
- struct imx6_pcie_drvdata {
- 	enum imx6_pcie_variants variant;
-+	u32 flags;
- };
- 
- struct imx6_pcie {
-@@ -256,6 +259,9 @@ static void imx6_pcie_reset_phy(struct imx6_pcie *imx6_pcie)
- {
- 	u32 tmp;
- 
-+	if (!(imx6_pcie->drvdata->flags & IMX6_PCIE_FLAG_IMX6_PHY))
-+		return;
-+
- 	pcie_phy_read(imx6_pcie, PHY_RX_OVRD_IN_LO, &tmp);
- 	tmp |= (PHY_RX_OVRD_IN_LO_RX_DATA_EN |
- 		PHY_RX_OVRD_IN_LO_RX_PLL_EN);
-@@ -573,6 +579,9 @@ static int imx6_setup_phy_mpll(struct imx6_pcie *imx6_pcie)
- 	int mult, div;
- 	u32 val;
- 
-+	if (!(imx6_pcie->drvdata->flags & IMX6_PCIE_FLAG_IMX6_PHY))
-+		return 0;
-+
- 	switch (phy_rate) {
- 	case 125000000:
- 		/*
-@@ -1088,12 +1097,15 @@ static void imx6_pcie_shutdown(struct platform_device *pdev)
- static const struct imx6_pcie_drvdata drvdata[] = {
- 	[IMX6Q] = {
- 		.variant = IMX6Q,
-+		.flags = IMX6_PCIE_FLAG_IMX6_PHY,
- 	},
- 	[IMX6SX] = {
- 		.variant = IMX6SX,
-+		.flags = IMX6_PCIE_FLAG_IMX6_PHY,
- 	},
- 	[IMX6QP] = {
- 		.variant = IMX6QP,
-+		.flags = IMX6_PCIE_FLAG_IMX6_PHY,
- 	},
- 	[IMX7D] = {
- 		.variant = IMX7D,
--- 
-2.20.1
+Yeah. In this case the tag can be removed.
 
+Happy new year.
+
+Thanks
+--
+Gustavo
