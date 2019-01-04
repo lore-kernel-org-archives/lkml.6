@@ -2,131 +2,117 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B119C43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 02:44:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DC5CC43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 02:49:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D44A220815
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 02:44:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546569895;
-	bh=Oq2Z4+RLU4p7bcwY/aGJ9Qt8mGq4rp82GVYBAs5zuDM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=qJtqfJYkV5oF/svhub1VOR9dlfdc7za9qjmF7uKGMx75Yb9ei46Hkn0ayG97q24Bh
-	 ipwfqFofuyiTGgupKXjBdO8yXo9GK/W5kkFrET7c72FHmeqWH4XhSNv/YVsAeydiMU
-	 4XrbmkErSbW7MayHCG3HU2Bq3IwmBKVKFtckMnNM=
+	by mail.kernel.org (Postfix) with ESMTP id E48BF21871
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 02:49:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726258AbfADCoz (ORCPT
+        id S1726376AbfADCtb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 21:44:55 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:55515 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725936AbfADCoy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 21:44:54 -0500
-Received: by mail-it1-f193.google.com with SMTP id m62so48096524ith.5;
-        Thu, 03 Jan 2019 18:44:53 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=diwqjDGc9sdTVKZvvVFpkAPDTc6C/pPT/CmD+S+0pW4=;
-        b=NixoIMQvLf62JN8HDCiE6pOkf/br1dv7yLD1DoxFLf3Rwdf4OEanGUvMHbcxsf6ytf
-         D8htd9wqHNBA8ucOMyOTP8BPgi5t5jmsCushS1mBh7jn6by1JxGLlhVKtCOrCEhaqAkw
-         i9c++giFHrTF8DDbdkiRSRJXdNtaXrVcwJWY/FL78sgpm5xTVQhc6odbpNwR6zVN77sw
-         EWI2qZGEad4ciKqA0YY7GLgKZv5ZKEPjK8er/NTtdB6tT/d8szJscSOL1ZvWd2KQqEMF
-         MmY/fNRXvEAcDQRKIb9yr2rXo93VzaaDrrcBbygSReHF5j3M7VzxNWx7dVTqaHD5JC7q
-         zneA==
-X-Gm-Message-State: AA+aEWbdFYAGnVhX8D/mNkWfxhwITcDbrGzN/lfeTAjc8ffcg4wN2A02
-        jBfC8I1YndTShIeBYXbt8Q==
-X-Google-Smtp-Source: AFSGD/VwTgD/i9VU363h8Jvg9qeDVGJUo50bCe453VNvk/mCwW8afZMeMMyUPIgKhSiNxv5I9q7pQQ==
-X-Received: by 2002:a24:f143:: with SMTP id q3mr33671999iti.42.1546569892534;
-        Thu, 03 Jan 2019 18:44:52 -0800 (PST)
-Received: from localhost ([24.51.61.172])
-        by smtp.gmail.com with ESMTPSA id f13sm25307757iol.82.2019.01.03.18.44.50
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 03 Jan 2019 18:44:51 -0800 (PST)
-Date:   Thu, 3 Jan 2019 20:44:49 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     h00249924 <hutenghui@huawei.com>
-Cc:     dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        suzhuangluan@hisilicon.com, kongfei@hisilicon.com,
-        liyuequan@hisilicon.com, cash.qianli@hisilicon.com,
-        huangli295@hisilicon.com, hantanglei@huawei.com,
-        wangyoulin1@hisilicon.com, ninggaoyu@hisilicon.com,
-        hanxiaolong3@hisilicon.com,
-        Youlin Wang <wwx575822@notesmail.huawei.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Wei Xu <xuwei5@hisilicon.com>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH 3/3] arm64: dts: hi3660: Add hisi asp dma device
-Message-ID: <20190104024449.GB17431@bogus>
-References: <1545978983-124360-1-git-send-email-hutenghui@huawei.com>
- <1545978983-124360-3-git-send-email-hutenghui@huawei.com>
+        Thu, 3 Jan 2019 21:49:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49794 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725936AbfADCta (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Jan 2019 21:49:30 -0500
+Received: from vmware.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C36BB20815;
+        Fri,  4 Jan 2019 02:49:29 +0000 (UTC)
+Date:   Thu, 3 Jan 2019 21:49:27 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     John Sperbeck <jsperbeck@google.com>
+Cc:     Wolfram Sang <wsa@the-dreams.de>, Ingo Molnar <mingo@redhat.com>,
+        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] i2c: core-smbus: don't trace smbus_reply data on errors
+Message-ID: <20190103214927.2bf947ca@vmware.local.home>
+In-Reply-To: <20190104004203.116155-1-jsperbeck@google.com>
+References: <20190104004203.116155-1-jsperbeck@google.com>
+X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1545978983-124360-3-git-send-email-hutenghui@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 28, 2018 at 02:36:23PM +0800, h00249924 wrote:
-> From: Youlin Wang <wwx575822@notesmail.huawei.com>
+On Thu,  3 Jan 2019 16:42:03 -0800
+John Sperbeck <jsperbeck@google.com> wrote:
+
+> If an smbus transfer fails, there's no guarantee that the output
+> buffer was written.  So, avoid copying from the output buffer when
+> tracing after an error.  This was 'mostly harmless', but would trip
+> up kasan checking if left-over cruft in byte 0 is a large length,
+> causing us to read from unwritten memory.
 > 
-> Signed-off-by: John Stultz <john.stultz@linaro.org>
-> Signed-off-by: Youlin Wang <wwx575822@notesmail.huawei.com>
-> Signed-off-by: Tanglei Han <hantanglei@huawei.com>
-> Cc: Wei Xu <xuwei5@hisilicon.com>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
+> Signed-off-by: John Sperbeck <jsperbeck@google.com>
 > ---
->  arch/arm64/boot/dts/hisilicon/hi3660.dtsi | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
+>  drivers/i2c/i2c-core-smbus.c |  2 +-
+>  include/trace/events/smbus.h | 10 +++++-----
+>  2 files changed, 6 insertions(+), 6 deletions(-)
 > 
-> diff --git a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
-> index f432b0a..5223e36 100644
-> --- a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
-> +++ b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
-> @@ -1122,5 +1122,19 @@
->  				};
->  			};
->  		};
-> +
-> +		asp_dmac: asp_dmac@E804B000 {
+> diff --git a/drivers/i2c/i2c-core-smbus.c b/drivers/i2c/i2c-core-smbus.c
+> index 9cd66cabb84f..132119112596 100644
+> --- a/drivers/i2c/i2c-core-smbus.c
+> +++ b/drivers/i2c/i2c-core-smbus.c
+> @@ -585,7 +585,7 @@ s32 __i2c_smbus_xfer(struct i2c_adapter *adapter, u16 addr,
+>  trace:
+>  	/* If enabled, the reply tracepoint is conditional on read_write. */
+>  	trace_smbus_reply(adapter, addr, flags, read_write,
+> -			  command, protocol, data);
+> +			  command, protocol, data, res);
+>  	trace_smbus_result(adapter, addr, flags, read_write,
+>  			   command, protocol, res);
+>  
+> diff --git a/include/trace/events/smbus.h b/include/trace/events/smbus.h
+> index d2fb6e1d3e10..b6376a7c7e74 100644
+> --- a/include/trace/events/smbus.h
+> +++ b/include/trace/events/smbus.h
+> @@ -138,8 +138,8 @@ TRACE_EVENT_CONDITION(smbus_reply,
+>  	TP_PROTO(const struct i2c_adapter *adap,
+>  		 u16 addr, unsigned short flags,
+>  		 char read_write, u8 command, int protocol,
+> -		 const union i2c_smbus_data *data),
+> -	TP_ARGS(adap, addr, flags, read_write, command, protocol, data),
+> +		 const union i2c_smbus_data *data, int res),
+> +	TP_ARGS(adap, addr, flags, read_write, command, protocol, data, res),
+>  	TP_CONDITION(read_write == I2C_SMBUS_READ),
 
-dma-controller@e804b000
+Hmm, instead of tracing nothing, as this is already a "conditional
+trace event", why not add to that condition:
 
-> +			compatible = "hisilicon,hisi-pcm-asp-dma-1.0";
-> +			reg = <0x0 0xe804b000 0x0 0x1000>;
-> +			#dma-cells = <1>;
-> +			dma-channels = <16>;
-> +			dma-requests = <32>;
-> +			dma-min-chan = <0>;
-> +			dma-used-chans = <0xFFFE>;
+	TP_CONDITION(res >= 0 && read_write == I2C_SMBUS_READ),
 
-Use lowercase hex.
+Unless you want to still trace some data on failure.
 
-But more importantly, as John mentioned, this and other properties 
-aren't documented.
+-- Steve
 
-> +			dma-share;
-> +			interrupts = <0 216 4>;
-> +			interrupt-names = "asp_dma_irq";
-> +			status = "ok";
+>  	TP_STRUCT__entry(
+>  		__field(int,	adapter_nr		)
+> @@ -159,16 +159,16 @@ TRACE_EVENT_CONDITION(smbus_reply,
+>  		switch (protocol) {
+>  		case I2C_SMBUS_BYTE:
+>  		case I2C_SMBUS_BYTE_DATA:
+> -			__entry->len = 1;
+> +			__entry->len = res < 0 ? 0 : 1;
+>  			goto copy;
+>  		case I2C_SMBUS_WORD_DATA:
+>  		case I2C_SMBUS_PROC_CALL:
+> -			__entry->len = 2;
+> +			__entry->len = res < 0 ? 0 : 2;
+>  			goto copy;
+>  		case I2C_SMBUS_BLOCK_DATA:
+>  		case I2C_SMBUS_BLOCK_PROC_CALL:
+>  		case I2C_SMBUS_I2C_BLOCK_DATA:
+> -			__entry->len = data->block[0] + 1;
+> +			__entry->len = res < 0 ? 0 : data->block[0] + 1;
+>  		copy:
+>  			memcpy(__entry->buf, data->block, __entry->len);
+>  			break;
 
-Don't need this.
-
-> +		};
->  	};
->  };
-> -- 
-> 1.9.1
-> 
