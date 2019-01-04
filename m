@@ -2,252 +2,98 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9525FC43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 09:52:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3528C43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 09:52:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 502492184B
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 09:52:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DoIq5wGM"
+	by mail.kernel.org (Postfix) with ESMTP id 947EE21874
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 09:52:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727939AbfADJwI (ORCPT
+        id S1727262AbfADJw6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 04:52:08 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:34745 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727894AbfADJwB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 04:52:01 -0500
-Received: by mail-it1-f194.google.com with SMTP id x124so943778itd.1
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Jan 2019 01:52:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=PxI7OgqkHvzZrSlRXshJHucgZ9qIFdibRiWWgaoh7w0=;
-        b=DoIq5wGMhxGgdj62h5XZdcrV8VRp/MZT0LIH4M7gOoD/c00nqhgDdWopk2OJW+zggH
-         TFlM7RIx5UE55WWfP9JgHgXDT6hTOkXzFE1yWyv+vLMSQnBK7SAXe3hJbfI/oAr+KBXl
-         81fjMjPaR5RkPIdK1kiHE+8XFJB2mafBr/vpBxIc+WtWR3ApGDvJyrTfwasusBtGwpIf
-         YYplyk7jD8DozDFKpUAROkCrDnxD1zTOJgF9GkBoaee8orl/KAEuk2+u7qCtNdSaeYlD
-         ZzU79ZvXR9L6Z80QjiQEcLNsQdwViPFY4LiRj+f4QPSpzrMkXoIRdpgPdggir13Yd2Ns
-         N7MA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PxI7OgqkHvzZrSlRXshJHucgZ9qIFdibRiWWgaoh7w0=;
-        b=CFuszGQuzetlgg0kBNJ5LMU3zkOMjrNyDYM8GwnAlVMXpk804i8tkImf0GPiqxptxb
-         swS/HqFtcEZv7idTAX4rSoA2EMs/kHp+TsLKG6U36qlVz5ruGuDQDRKtJWxxoz6fqV2N
-         7izZn2btoNWpIDjh8u3xaSVHDdUc50h7oGHOKAwZ/4T6fhI0AkWh/3pOwK3qP9OXM/jB
-         A0N0Zdop1MNChtgRD4qup6VAC2cFtuxhxsLGkcIFTfXn5KGLRqzRU0JpokaIH2+k0cw8
-         vSOd1ICd4C16lSjsiQv1wLJJvD0UClvl4ykPFc8VZ4ekQahQpOEJg1eiBfwaX1XnDbS4
-         oEfw==
-X-Gm-Message-State: AJcUukcRuj289k28vgiO9U5Go9A+6/M11I3X9mxOWPqoIheQE7DvmWU2
-        9Q6cP9aciyioHw3WC/w7q3Dfcpk9WevQNKNVfHSFxQ==
-X-Google-Smtp-Source: ALg8bN7La7vssdsBjy8X6DuAQ7tQADfpMs5ro+jvOMTE5h155joV60F/uGERgW5PIQhYhNxnTYfXIkp3UscWIuUCgwY=
-X-Received: by 2002:a02:97a2:: with SMTP id s31mr20779145jaj.82.1546595519897;
- Fri, 04 Jan 2019 01:51:59 -0800 (PST)
+        Fri, 4 Jan 2019 04:52:58 -0500
+Received: from mga09.intel.com ([134.134.136.24]:14329 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726257AbfADJw5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 04:52:57 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jan 2019 01:52:57 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,437,1539673200"; 
+   d="scan'208";a="288788820"
+Received: from unknown (HELO [10.239.13.114]) ([10.239.13.114])
+  by orsmga005.jf.intel.com with ESMTP; 04 Jan 2019 01:52:55 -0800
+Message-ID: <5C2F2E3E.7020306@intel.com>
+Date:   Fri, 04 Jan 2019 17:58:22 +0800
+From:   Wei Wang <wei.w.wang@intel.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Thunderbird/31.7.0
 MIME-Version: 1.0
-References: <000000000000a980e3057896e9df@google.com> <000000000000491298057e9ebf6e@google.com>
-In-Reply-To: <000000000000491298057e9ebf6e@google.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Fri, 4 Jan 2019 10:51:49 +0100
-Message-ID: <CACT4Y+Z=ufffBE+bs5Le4STyvdT_fJsNx6g4exw6Si2bCM165A@mail.gmail.com>
-Subject: Re: KASAN: use-after-free Read in kobject_put
-To:     syzbot <syzbot+fdc00003f4efff43bc5b@syzkaller.appspotmail.com>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        David Miller <davem@davemloft.net>,
-        linux-bluetooth <linux-bluetooth@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, rafael@kernel.org,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+To:     "Liang, Kan" <kan.liang@linux.intel.com>,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        pbonzini@redhat.com, ak@linux.intel.com, peterz@infradead.org
+CC:     kan.liang@intel.com, mingo@redhat.com, rkrcmar@redhat.com,
+        like.xu@intel.com, jannh@google.com, arei.gonglei@huawei.com
+Subject: Re: [PATCH v4 04/10] KVM/x86: intel_pmu_lbr_enable
+References: <1545816338-1171-1-git-send-email-wei.w.wang@intel.com> <1545816338-1171-5-git-send-email-wei.w.wang@intel.com> <5a04d8ea-b788-6018-8b34-ebd528578916@linux.intel.com>
+In-Reply-To: <5a04d8ea-b788-6018-8b34-ebd528578916@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 4, 2019 at 10:46 AM syzbot
-<syzbot+fdc00003f4efff43bc5b@syzkaller.appspotmail.com> wrote:
+On 01/03/2019 12:33 AM, Liang, Kan wrote:
 >
-> syzbot has found a reproducer for the following crash on:
 >
-> HEAD commit:    645ff1e8e704 Merge branch 'for-linus' of git://git.kernel...
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=172cee4b400000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=7308e68273924137
-> dashboard link: https://syzkaller.appspot.com/bug?extid=fdc00003f4efff43bc5b
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15d603e7400000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10786f77400000
+> On 12/26/2018 4:25 AM, Wei Wang wrote:
+>> +
+>> +    /*
+>> +     * It could be possible that people have vcpus of old model run on
+>> +     * physcal cpus of newer model, for example a BDW guest on a SKX
+>> +     * machine (but not possible to be the other way around).
+>> +     * The BDW guest may not get accurate results on a SKX machine 
+>> as it
+>> +     * only reads 16 entries of the lbr stack while there are 32 
+>> entries
+>> +     * of recordings. So we currently forbid the lbr enabling when the
+>> +     * vcpu and physical cpu see different lbr stack entries.
 >
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+fdc00003f4efff43bc5b@syzkaller.appspotmail.com
+> I think it's not enough to only check number of entries. The LBR 
+> from/to MSRs may be different even the number of entries is the same, 
+> e.g SLM and KNL.
 
-+bluetooth maintainers
+Yes, we could add the comparison of the FROM msrs.
 
-> ==================================================================
-> BUG: KASAN: use-after-free in kobject_put+0xca/0xe0 lib/kobject.c:704
-> Read of size 1 at addr ffff88808f9e9ecc by task syz-executor111/8699
 >
-> CPU: 1 PID: 8699 Comm: syz-executor111 Not tainted 4.20.0+ #8
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->   __dump_stack lib/dump_stack.c:77 [inline]
->   dump_stack+0x1db/0x2d0 lib/dump_stack.c:113
->   print_address_description.cold+0x7c/0x20d mm/kasan/report.c:187
->   kasan_report.cold+0x1b/0x40 mm/kasan/report.c:317
->   __asan_report_load1_noabort+0x14/0x20 mm/kasan/generic_report.c:132
->   kobject_put+0xca/0xe0 lib/kobject.c:704
->   put_device+0x20/0x30 drivers/base/core.c:2060
->   hci_free_dev+0x19/0x20 net/bluetooth/hci_core.c:3208
->   vhci_release+0x7e/0xf0 drivers/bluetooth/hci_vhci.c:355
->   __fput+0x3c5/0xb10 fs/file_table.c:278
->   ____fput+0x16/0x20 fs/file_table.c:309
->   task_work_run+0x1f4/0x2b0 kernel/task_work.c:113
->   tracehook_notify_resume include/linux/tracehook.h:188 [inline]
->   exit_to_usermode_loop+0x32a/0x3b0 arch/x86/entry/common.c:166
->   prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
->   syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
->   do_syscall_64+0x696/0x800 arch/x86/entry/common.c:293
->   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x4054f1
-> Code: 75 14 b8 03 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 94 17 00 00 c3 48
-> 83 ec 08 e8 6a fc ff ff 48 89 04 24 b8 03 00 00 00 0f 05 <48> 8b 3c 24 48
-> 89 c2 e8 b3 fc ff ff 48 89 d0 48 83 c4 08 48 3d 01
-> RSP: 002b:00007ffeb26e56e0 EFLAGS: 00000293 ORIG_RAX: 0000000000000003
-> RAX: 0000000000000000 RBX: 0000000000000004 RCX: 00000000004054f1
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000004
-> RBP: 0000000000000000 R08: 000000037ffffa00 R09: 0000000000000001
-> R10: 0000000000000001 R11: 0000000000000293 R12: 00000000006dbc2c
-> R13: 20c49ba5e353f7cf R14: 000000000000002d R15: 0000000000000005
+>> +     */
+>> +    switch (vcpu_model) {
 >
-> Allocated by task 8707:
->   save_stack+0x45/0xd0 mm/kasan/common.c:73
->   set_track mm/kasan/common.c:85 [inline]
->   kasan_kmalloc mm/kasan/common.c:482 [inline]
->   kasan_kmalloc+0xcf/0xe0 mm/kasan/common.c:455
->   kmem_cache_alloc_trace+0x151/0x760 mm/slab.c:3607
->   kmalloc include/linux/slab.h:545 [inline]
->   kzalloc include/linux/slab.h:740 [inline]
->   hci_alloc_dev+0x148/0x21a0 net/bluetooth/hci_core.c:3116
->   __vhci_create_device+0x101/0x5a0 drivers/bluetooth/hci_vhci.c:114
->   vhci_create_device drivers/bluetooth/hci_vhci.c:163 [inline]
->   vhci_get_user drivers/bluetooth/hci_vhci.c:219 [inline]
->   vhci_write+0x2d0/0x470 drivers/bluetooth/hci_vhci.c:299
->   call_write_iter include/linux/fs.h:1862 [inline]
->   new_sync_write fs/read_write.c:474 [inline]
->   __vfs_write+0x764/0xb40 fs/read_write.c:487
->   vfs_write+0x20c/0x580 fs/read_write.c:549
->   ksys_write+0x105/0x260 fs/read_write.c:598
->   __do_sys_write fs/read_write.c:610 [inline]
->   __se_sys_write fs/read_write.c:607 [inline]
->   __x64_sys_write+0x73/0xb0 fs/read_write.c:607
->   do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
->   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> That's a duplicate of intel_pmu_init(). I think it's better to factor 
+> out the common part if you want to check LBR MSRs and entries. Then we 
+> don't need to add the same codes in two different places when enabling 
+> new platforms.
 >
-> Freed by task 8699:
->   save_stack+0x45/0xd0 mm/kasan/common.c:73
->   set_track mm/kasan/common.c:85 [inline]
->   __kasan_slab_free+0x102/0x150 mm/kasan/common.c:444
->   kasan_slab_free+0xe/0x10 mm/kasan/common.c:452
->   __cache_free mm/slab.c:3485 [inline]
->   kfree+0xcf/0x230 mm/slab.c:3804
->   bt_host_release+0x19/0x30 net/bluetooth/hci_sysfs.c:86
->   device_release+0x7d/0x210 drivers/base/core.c:919
->   kobject_cleanup lib/kobject.c:662 [inline]
->   kobject_release lib/kobject.c:691 [inline]
->   kref_put include/linux/kref.h:67 [inline]
->   kobject_put.cold+0x28f/0x2ec lib/kobject.c:708
->   put_device+0x20/0x30 drivers/base/core.c:2060
->   hci_dev_put include/net/bluetooth/hci_core.h:1014 [inline]
->   hci_unregister_dev+0x716/0x980 net/bluetooth/hci_core.c:3379
->   vhci_release+0x76/0xf0 drivers/bluetooth/hci_vhci.c:354
->   __fput+0x3c5/0xb10 fs/file_table.c:278
->   ____fput+0x16/0x20 fs/file_table.c:309
->   task_work_run+0x1f4/0x2b0 kernel/task_work.c:113
->   tracehook_notify_resume include/linux/tracehook.h:188 [inline]
->   exit_to_usermode_loop+0x32a/0x3b0 arch/x86/entry/common.c:166
->   prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
->   syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
->   do_syscall_64+0x696/0x800 arch/x86/entry/common.c:293
->   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+
+Yes, I thought about this, but intel_pmu_init() does a lot more things 
+in each "Case xx". Any thought about how to factor them out?
+
+
+> Actually, I think we may just support LBR for guest if it has the 
+> identical CPU model as host. It should be good enough for now.
 >
-> The buggy address belongs to the object at ffff88808f9e8e00
->   which belongs to the cache kmalloc-8k of size 8192
-> The buggy address is located 4300 bytes inside of
->   8192-byte region [ffff88808f9e8e00, ffff88808f9eae00)
-> The buggy address belongs to the page:
-> page:ffffea00023e7a00 count:1 mapcount:0 mapping:ffff88812c3f2080 index:0x0
-> compound_mapcount: 0
-> flags: 0x1fffc0000010200(slab|head)
-> raw: 01fffc0000010200 ffffea00023e6808 ffffea00023e8408 ffff88812c3f2080
-> raw: 0000000000000000 ffff88808f9e8e00 0000000100000001 0000000000000000
-> page dumped because: kasan: bad access detected
-> kobject: 'rfkill468' (000000007192bbb6): kobject_cleanup, parent
-> (null)
->
-> Memory state around the buggy address:
->   ffff88808f9e9d80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->   ffff88808f9e9e00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> > ffff88808f9e9e80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->                                                ^
->   ffff88808f9e9f00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->   ffff88808f9e9f80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> ==================================================================
-> kobject: 'rfkill471' (00000000171c66a4): kobject_add_internal:
-> parent: 'hci2', set: 'devices'
-> kobject: 'rfkill471' (00000000171c66a4): kobject_uevent_env
-> kobject: 'hci6' (00000000cea6c5b0): fill_kobj_path: path
-> = '/devices/virtual/bluetooth/hci6'
-> kobject: 'hci5' (00000000d9130f82): kobject_uevent_env
-> kobject: 'rfkill468' (000000007192bbb6): calling ktype release
-> kobject: 'hci5' (00000000d9130f82): fill_kobj_path: path
-> = '/devices/virtual/bluetooth/hci5'
-> kobject: 'rfkill468': free name
-> kobject: 'rfkill471' (00000000171c66a4): fill_kobj_path: path
-> = '/devices/virtual/bluetooth/hci2/rfkill471'
-> kobject: 'hci1' (000000006eef9329): kobject_uevent_env
-> kobject: 'rfkill472' (000000003d2f7a84): kobject_add_internal:
-> parent: 'hci0', set: 'devices'
-> kobject: 'hci1' (000000006eef9329): fill_kobj_path: path
-> = '/devices/virtual/bluetooth/hci1'
-> kobject: 'rfkill469' (0000000043e5b34a): kobject_uevent_env
-> kobject: 'hci1' (000000006eef9329): kobject_cleanup, parent           (null)
-> kobject: 'rfkill469' (0000000043e5b34a): fill_kobj_path: path
-> = '/devices/virtual/bluetooth/hci3/rfkill469'
-> kobject: 'hci1' (000000006eef9329): calling ktype release
-> kobject: 'rfkill472' (000000003d2f7a84): kobject_uevent_env
-> kobject: 'rfkill470' (00000000155e553b): kobject_uevent_env
-> kobject: 'rfkill472' (000000003d2f7a84): fill_kobj_path: path
-> = '/devices/virtual/bluetooth/hci0/rfkill472'
-> kobject: 'rfkill470' (00000000155e553b): fill_kobj_path: path
-> = '/devices/virtual/bluetooth/hci4/rfkill470'
-> kobject: 'rfkill473' (0000000082665f74): kobject_add_internal:
-> parent: 'hci6', set: 'devices'
-> kobject: 'hci1': free name
-> kobject: 'rfkill473' (0000000082665f74): kobject_uevent_env
-> kobject: 'hci1' (00000000a68c12d6): kobject_add_internal:
-> parent: 'bluetooth', set: 'devices'
-> kobject: 'rfkill472' (000000003d2f7a84): kobject_uevent_env
-> kobject: 'hci1' (00000000a68c12d6): kobject_uevent_env
-> kobject: 'rfkill472' (000000003d2f7a84): fill_kobj_path: path
-> = '/devices/virtual/bluetooth/hci0/rfkill472'
-> kobject: 'hci1' (00000000a68c12d6): fill_kobj_path: path
-> = '/devices/virtual/bluetooth/hci1'
-> kobject: 'rfkill473' (0000000082665f74): fill_kobj_path: path
-> = '/devices/virtual/bluetooth/hci6/rfkill473'
->
-> --
-> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/000000000000491298057e9ebf6e%40google.com.
-> For more options, visit https://groups.google.com/d/optout.
+
+I actually tried this in the first place but it failed to work with the 
+existing QEMU.
+For example, when we specify "Broadwell" cpu from qemu, then qemu uses 
+Broadwell core model,
+but the physical machine I have is Broadwell X. This patch will support 
+this case.
+
+Best,
+Wei
