@@ -2,132 +2,241 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4999EC43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 09:01:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8306CC43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 09:05:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 002E62184B
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 09:01:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ODsjbh8R"
+	by mail.kernel.org (Postfix) with ESMTP id 454692184B
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 09:05:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727411AbfADJBX (ORCPT
+        id S1726983AbfADJFy convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 04:01:23 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:36883 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726169AbfADJBV (ORCPT
+        Fri, 4 Jan 2019 04:05:54 -0500
+Received: from mx01.hxt-semitech.com ([223.203.96.7]:46852 "EHLO
+        barracuda.hxt-semitech.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726227AbfADJFx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 04:01:21 -0500
-Received: by mail-io1-f66.google.com with SMTP id g8so17705968iok.4
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Jan 2019 01:01:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dL7DdFogTaGK/C1f0o7MPX4SYHIrTik8QeCp4BRs48Q=;
-        b=ODsjbh8Rv7doTXP1+40w8VPGhwmlUE1twPhFTk2fJCFTha3TK2nVjCYKLBBWl9iUG7
-         AmHF32YJk5uYWqXWOcWd7BLLspWp5OA20Q7mh0KiS6tu2JhVMuoBtn4bTVHqXrCH5a8i
-         /vfe/1SRrRZH+58G/FloATrO4meusvfSHFFPMLT4Cxq+q08D4ikrfmcej73+7zZz/1sZ
-         KxVwAHDevrPl8Imev9uq89QqLTPKh7Z2uy7olFl1gN2quDGhdXefnmQKG9uLzGC/4CtE
-         IXgF9Fy0Do8O2S5EhbUElO1JElsihFAiNPbvYiFrcVBzYc0n9+7SuMiFpRQjpw4/QS3r
-         CXRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dL7DdFogTaGK/C1f0o7MPX4SYHIrTik8QeCp4BRs48Q=;
-        b=qVhcgrgjyNVYqpvENpT7ebyc9zDfTj2kNL4DSdWULlL6aftMJA4KT+vX6uePGbUKo8
-         n7rn90gnGpf5LWKQad8CQ1PRR0v0JW9AHz1ywaeIbVX46e6eFq8Y8gaGR6LEd9zQ92mU
-         gnSY4DPhzybvb/Amss6+Sd/usRoHaTeH+tflsuRpuSDt34Z7pzqJgjMattG/wBLy1KK4
-         qcFTMotMV+rfE0/vJIJLBxX0sqMps/kybNEvlnyPGMghs6jvNGUIeAyNMu137T+mAOyj
-         fV/N5VcOqpcz+qWubWNtoJ0YMMH7h9v3UugqsKuY9GuOzBkSA2wWeCYMxCs10xZQ+jhf
-         JMpA==
-X-Gm-Message-State: AJcUukeA16ukRwpwoyajm04G+GVhw76Sl12AuI8eey4Lsz1inop765rr
-        9t4Jh5sPYabFdrPde6M8dkA5ujqtqIPLIBbyPsC1J9o5
-X-Google-Smtp-Source: ALg8bN5YBuk0c2WqfA87Fv5Qch5+e5KSZZVr/UkcHtGZRd8NMfIk0jBhFpk+I8JDLh8CtkSUvcPuk7kcElCuAdOkhcg=
-X-Received: by 2002:a5d:8491:: with SMTP id t17mr35528540iom.11.1546592480919;
- Fri, 04 Jan 2019 01:01:20 -0800 (PST)
+        Fri, 4 Jan 2019 04:05:53 -0500
+X-ASG-Debug-ID: 1546592732-093b7e2d8806e40001-xx1T2L
+Received: from HXTBJIDCEMVIW02.hxtcorp.net ([10.128.0.15]) by barracuda.hxt-semitech.com with ESMTP id oSRiYDxuaajOOtxM (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NO); Fri, 04 Jan 2019 17:05:32 +0800 (CST)
+X-Barracuda-Envelope-From: xiaoting.liu@hxt-semitech.com
+Received: from openbmc001.localdomain (10.5.21.169) by
+ HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 4 Jan 2019 17:05:28 +0800
+From:   Xiaoting Liu <xiaoting.liu@hxt-semitech.com>
+To:     <linux@roeck-us.net>, <jdelvare@suse.com>
+CC:     <openbmc@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
+        <linux-hwmon@vger.kernel.org>, <shunyong.yang@hxt-semitech.com>,
+        <dongsheng.wang@hxt-semitech.com>,
+        Xiaoting Liu <xiaoting.liu@hxt-semitech.com>
+Subject: [PATCH 4/4] pmbus (dps650ab): add power supply driver
+Date:   Fri, 4 Jan 2019 17:05:27 +0800
+X-ASG-Orig-Subj: [PATCH 4/4] pmbus (dps650ab): add power supply driver
+Message-ID: <e0ad8b6bb620f9fc2f818cbda66825c297f73d67.1546591275.git.xiaoting.liu@hxt-semitech.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <cover.1546591275.git.xiaoting.liu@hxt-semitech.com>
+References: <cover.1546591275.git.xiaoting.liu@hxt-semitech.com>
 MIME-Version: 1.0
-References: <1541484194-1493-1-git-send-email-arunks@codeaurora.org>
- <20181106140638.GN27423@dhcp22.suse.cz> <542cd3516b54d88d1bffede02c6045b8@codeaurora.org>
- <20181106200823.GT27423@dhcp22.suse.cz> <5e55c6e64a2bfd6eed855ea17a34788b@codeaurora.org>
- <40a4d5154fbd0006fbe55eb68703bb65@codeaurora.org> <20190104085801.GH31793@dhcp22.suse.cz>
-In-Reply-To: <20190104085801.GH31793@dhcp22.suse.cz>
-From:   Arun Sudhilal <getarunks@gmail.com>
-Date:   Fri, 4 Jan 2019 14:31:09 +0530
-Message-ID: <CABOM9ZpAEp_BMBcy-ywj0J33CNuMRwNeS9tUainOxRgPOndxfQ@mail.gmail.com>
-Subject: Re: [PATCH v6 1/2] memory_hotplug: Free pages as higher order
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Arun KS <arunks@codeaurora.org>,
-        "arunks.linux" <arunks.linux@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>, vbabka@suse.cz,
-        osalvador@suse.de, linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.5.21.169]
+X-ClientProxiedBy: HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15) To
+ HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15)
+Content-Transfer-Encoding: 8BIT
+X-Barracuda-Connect: UNKNOWN[10.128.0.15]
+X-Barracuda-Start-Time: 1546592732
+X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA384
+X-Barracuda-URL: https://192.168.50.101:443/cgi-mod/mark.cgi
+X-Barracuda-BRTS-Status: 1
+X-Virus-Scanned: by bsmtpd at hxt-semitech.com
+X-Barracuda-Bayes: INNOCENT GLOBAL 0.5000 1.0000 0.7500
+X-Barracuda-Spam-Score: 0.75
+X-Barracuda-Spam-Status: No, SCORE=0.75 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
+X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.65068
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------------------------
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 4, 2019 at 2:28 PM Michal Hocko <mhocko@kernel.org> wrote:
->
-> On Fri 04-01-19 10:35:58, Arun KS wrote:
-> > On 2018-11-07 11:51, Arun KS wrote:
-> > > On 2018-11-07 01:38, Michal Hocko wrote:
-> > > > On Tue 06-11-18 21:01:29, Arun KS wrote:
-> > > > > On 2018-11-06 19:36, Michal Hocko wrote:
-> > > > > > On Tue 06-11-18 11:33:13, Arun KS wrote:
-> > > > > > > When free pages are done with higher order, time spend on
-> > > > > > > coalescing pages by buddy allocator can be reduced. With
-> > > > > > > section size of 256MB, hot add latency of a single section
-> > > > > > > shows improvement from 50-60 ms to less than 1 ms, hence
-> > > > > > > improving the hot add latency by 60%. Modify external
-> > > > > > > providers of online callback to align with the change.
-> > > > > > >
-> > > > > > > This patch modifies totalram_pages, zone->managed_pages and
-> > > > > > > totalhigh_pages outside managed_page_count_lock. A follow up
-> > > > > > > series will be send to convert these variable to atomic to
-> > > > > > > avoid readers potentially seeing a store tear.
-> > > > > >
-> > > > > > Is there any reason to rush this through rather than wait for counters
-> > > > > > conversion first?
-> > > > >
-> > > > > Sure Michal.
-> > > > >
-> > > > > Conversion patch, https://patchwork.kernel.org/cover/10657217/
-> > > > > is currently
-> > > > > incremental to this patch.
-> > > >
-> > > > The ordering should be other way around. Because as things stand with
-> > > > this patch first it is possible to introduce a subtle race prone
-> > > > updates. As I've said I am skeptical the race would matter, really,
-> > > > but
-> > > > there is no real reason to risk for that. Especially when you have the
-> > > > other (first) half ready.
-> > >
-> > > Makes sense. I have rebased the preparatory patch on top of -rc1.
-> > > https://patchwork.kernel.org/patch/10670787/
-> >
-> > Hello Michal,
-> >
-> > Please review version 7 sent,
-> > https://lore.kernel.org/patchwork/patch/1028908/
->
-> I believe I have give my Acked-by to this version already, and v7 indeed
-> has it. Are there any relevant changes since v6 for me to do the review
-> again. If yes you should have dropped the Acked-by.
+The Delta dps650ab provides main power and standby power to server.
+dps650ab can be detected by MFR_ID and MFR_MODEL referring to
+manufacturer's feedback. This patch adds driver to moniter power
+supply status.
 
-No Michal. Patch is same. Only difference is this patch is re-based on
-top of preparatory patch.
-https://patchwork.kernel.org/patch/10670787/
+Signed-off-by: Xiaoting Liu <xiaoting.liu@hxt-semitech.com>
+---
+ drivers/hwmon/pmbus/Kconfig    |  10 +++++
+ drivers/hwmon/pmbus/Makefile   |   1 +
+ drivers/hwmon/pmbus/dps650ab.c | 100 +++++++++++++++++++++++++++++++++++++++++
+ drivers/hwmon/pmbus/pmbus.c    |   3 ++
+ 4 files changed, 114 insertions(+)
 
-Regards,
-Arun
+diff --git a/drivers/hwmon/pmbus/Kconfig b/drivers/hwmon/pmbus/Kconfig
+index 629cb45f8557..de4638396592 100644
+--- a/drivers/hwmon/pmbus/Kconfig
++++ b/drivers/hwmon/pmbus/Kconfig
+@@ -184,4 +184,14 @@ config SENSORS_ZL6100
+          This driver can also be built as a module. If so, the module will
+          be called zl6100.
 
-> --
-> Michal Hocko
-> SUSE Labs
++config SENSORS_DPS650AB
++       tristate "Delta DPS650AB"
++       default n
++       help
++         If you say yes here you get hardware monitoring support for the
++         Delta DPS650AB controller.
++
++         This driver can also be built as a module. If so, the module will
++         be called dps650ab.
++
+ endif # PMBUS
+diff --git a/drivers/hwmon/pmbus/Makefile b/drivers/hwmon/pmbus/Makefile
+index ea0e39518c21..414818230a26 100644
+--- a/drivers/hwmon/pmbus/Makefile
++++ b/drivers/hwmon/pmbus/Makefile
+@@ -21,3 +21,4 @@ obj-$(CONFIG_SENSORS_TPS53679)        += tps53679.o
+ obj-$(CONFIG_SENSORS_UCD9000)  += ucd9000.o
+ obj-$(CONFIG_SENSORS_UCD9200)  += ucd9200.o
+ obj-$(CONFIG_SENSORS_ZL6100)   += zl6100.o
++obj-$(CONFIG_SENSORS_DPS650AB) += dps650ab.o
+diff --git a/drivers/hwmon/pmbus/dps650ab.c b/drivers/hwmon/pmbus/dps650ab.c
+new file mode 100644
+index 000000000000..3c300e621f5a
+--- /dev/null
++++ b/drivers/hwmon/pmbus/dps650ab.c
+@@ -0,0 +1,100 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Hardware monitoring driver for DELTA DPS650AB
++ *
++ * Copyright (c) 2018 Huaxintong Semiconductor Technology Co., Ltd.
++ */
++
++#include <linux/err.h>
++#include <linux/i2c.h>
++#include <linux/init.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include "pmbus.h"
++
++#define DPS650AB_MFR_ID                        "DELTA"
++#define DPS650AB_MFR_MODEL             "DPS-650AB-16 A"
++
++static int dps650ab_probe(struct i2c_client *client,
++                        const struct i2c_device_id *id)
++{
++       struct pmbus_driver_info *info;
++       u8 buf[I2C_SMBUS_BLOCK_MAX];
++       int ret;
++
++       memset(buf, 0, I2C_SMBUS_BLOCK_MAX);
++
++       if (!i2c_check_functionality(client->adapter,
++                                    I2C_FUNC_SMBUS_READ_BYTE_DATA
++                               | I2C_FUNC_SMBUS_READ_WORD_DATA
++                               | I2C_FUNC_SMBUS_READ_BLOCK_DATA))
++               return -ENODEV;
++
++       ret = i2c_smbus_read_block_data(client, PMBUS_MFR_ID, buf);
++       if (ret < 0) {
++               dev_err(&client->dev, "Failed to read PMBUS_MFR_ID\n");
++               return ret;
++       }
++
++       if (strncmp(buf, DPS650AB_MFR_ID, strlen(DPS650AB_MFR_ID))) {
++               dev_err(&client->dev, "DPS650AB_MFR_ID unrecognised\n");
++               return -ENODEV;
++       }
++
++       ret = i2c_smbus_read_block_data(client, PMBUS_MFR_MODEL, buf);
++       if (ret < 0) {
++               dev_err(&client->dev, "Failed to read PMBUS_MFR_MODEL\n");
++               return ret;
++       }
++
++       if (strncmp(buf, DPS650AB_MFR_MODEL, strlen(DPS650AB_MFR_MODEL))) {
++               dev_err(&client->dev, "DPS650AB_MFR_MODEL unrecognised\n");
++               return -ENODEV;
++       }
++
++       info = devm_kzalloc(&client->dev, sizeof(*info), GFP_KERNEL);
++       if (!info)
++               return -ENOMEM;
++
++       info->pages = 1;
++       info->format[PSC_VOLTAGE_IN] = linear;
++       info->format[PSC_VOLTAGE_OUT] = linear;
++       info->format[PSC_CURRENT_IN] = linear;
++       info->format[PSC_CURRENT_OUT] = linear;
++       info->format[PSC_POWER] = linear;
++       info->format[PSC_TEMPERATURE] = linear;
++
++       info->func[0] = PMBUS_HAVE_VIN
++               | PMBUS_HAVE_IIN | PMBUS_HAVE_PIN
++               | PMBUS_HAVE_STATUS_INPUT
++               | PMBUS_HAVE_POUT | PMBUS_HAVE_FAN12
++               | PMBUS_HAVE_IOUT | PMBUS_HAVE_STATUS_IOUT
++               | PMBUS_HAVE_VOUT | PMBUS_HAVE_STATUS_VOUT
++               | PMBUS_HAVE_TEMP | PMBUS_HAVE_TEMP2
++               | PMBUS_HAVE_STATUS_TEMP;
++       info->func[1] = info->func[0];
++
++       return pmbus_do_probe(client, id, info);
++}
++
++static const struct i2c_device_id dps650ab_id[] = {
++       {"dps650ab", 1},
++       {}
++};
++
++MODULE_DEVICE_TABLE(i2c, dps650ab_id);
++
++static struct i2c_driver dps650ab_driver = {
++       .driver = {
++               .name   = "dps650ab",
++       },
++       .probe          = dps650ab_probe,
++       .remove         = pmbus_do_remove,
++       .id_table       = dps650ab_id,
++};
++
++module_i2c_driver(dps650ab_driver);
++
++MODULE_AUTHOR("Liuxiaoting <xiaoting.liu@hxt-semitech.com");
++MODULE_DESCRIPTION("PMBus driver for DPS650AB");
++MODULE_LICENSE("GPL v2");
+diff --git a/drivers/hwmon/pmbus/pmbus.c b/drivers/hwmon/pmbus/pmbus.c
+index aa4cf9636e99..930e8a3e2366 100644
+--- a/drivers/hwmon/pmbus/pmbus.c
++++ b/drivers/hwmon/pmbus/pmbus.c
+@@ -204,6 +204,8 @@ static int pmbus_probe(struct i2c_client *client,
+ static const struct pmbus_device_info sgd009_pmbus_info = {
+                                1, PMBUS_SKIP_STATUS_CHECK};
+ static const struct pmbus_device_info pmbus_info = {0, 0};
++static const struct pmbus_device_info dps650ab_pmbus_info = {
++                               1, PMBUS_SKIP_STATUS_CHECK};
+ /*
+  * Use driver_data to set the number of pages supported by the chip.
+  */
+@@ -227,6 +229,7 @@ static int pmbus_probe(struct i2c_client *client,
+        {"tps544c20", (kernel_ulong_t)&default_pmbus_info},
+        {"tps544c25", (kernel_ulong_t)&default_pmbus_info},
+        {"udt020", (kernel_ulong_t)&default_pmbus_info},
++       {"dps650ab", (kernel_ulong_t)&dps650ab_pmbus_info},
+        {}
+ };
+
+--
+1.8.3.1
+
+
+
+
+This email is intended only for the named addressee. It may contain information that is confidential/private, legally privileged, or copyright-protected, and you should handle it accordingly. If you are not the intended recipient, you do not have legal rights to retain, copy, or distribute this email or its contents, and should promptly delete the email and all electronic copies in your system; do not retain copies in any media. If you have received this email in error, please notify the sender promptly. Thank you.
+
+
