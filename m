@@ -2,155 +2,123 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2485C43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 06:55:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05E3BC43612
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 06:55:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 946E42070D
+	by mail.kernel.org (Postfix) with ESMTP id C460E21874
 	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 06:55:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NwDYf/9f"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=memeware.net header.i=@memeware.net header.b="XwoaZwd/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726462AbfADGy7 (ORCPT
+        id S1726569AbfADGzA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 4 Jan 2019 01:55:00 -0500
+Received: from cock.li ([185.100.85.212]:55278 "EHLO cock.li"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726246AbfADGy7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 4 Jan 2019 01:54:59 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:34757 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725919AbfADGy6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 01:54:58 -0500
-Received: by mail-pg1-f193.google.com with SMTP id j10so17100891pga.1;
-        Thu, 03 Jan 2019 22:54:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=HgIRH3ITFXhF8C3OSCxta0zkrzq8EfL6o1r8MfBFziY=;
-        b=NwDYf/9f9hLekWoiXIO0KjVgweq1iXQ8p1Yt68UvJw0UyQNNz3430YJ2enlPOsvBoB
-         ThTyggmxKqbM7ts4OeFWTzCcqRp5xq9SiFk4IoNG//YyH+ueKKFT/jzwrY0YaGJviKjS
-         RVH/JXIMdO9sjxxbeNkAUk7W8Lf/u7/q9xNEs4HQXvfSLDzltKitfC2qJ5IFFq3xJo09
-         YwhWH7CZtEOyMjNz1NnrBUWFWcCBemCH+8A+u7iwysIg5pSO9wnnppqDN9Kna7TQsdqc
-         Qbul1f7esOjh2gRK/5CW6ScpFldAesSe8Ax7dlaNzvt5sQd2gjpWCGXIiiPAB3+M7QGd
-         EQvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=HgIRH3ITFXhF8C3OSCxta0zkrzq8EfL6o1r8MfBFziY=;
-        b=RjFlXfjyRVtVgiIV55X6X+UKhCV/Ll+rd0NGf8/AZS75up0w5GxwpRytN3jE4Ybq9P
-         kYjGtf2ohhbsQXLvA2MZ2HMlQa1oyjc+E0F8Dty/xK5emhqq+eBPgMNQ6SwePhmNlMVL
-         /pAiq4Oo3ngNta91gBjt0PKDemlyX6U6xUtL0i951DOdMpGNNZ7hHol2goWeMEOVGhnW
-         f3WmHEJRxCF19VNTnKtzAJRCAhafSQaqXfNTeq/BRDZNC2+t0SUbyyEBTS8xggbK834x
-         NE6vGC764iqMul7FyZ9cOatjuty9CKAPzZrs08bEGjzWwwzfH0S9aA3vSxmaE9glVeKe
-         UtvQ==
-X-Gm-Message-State: AA+aEWaKrFNiMpHkYi0+k0GX9EcOn41Cd8wtuAbQZk6zTeP6pmQPqLRP
-        uBbpRUG9Y7eO5zWo338vMlxgqSH0ru0=
-X-Google-Smtp-Source: AFSGD/XUg+Qc8DhPiB4Pa2HomzTASDX5wXVHnl2Pj4SxX9/oH2F2BJb8LooiNToQAnNMk2I/zhS5og==
-X-Received: by 2002:aa7:8354:: with SMTP id z20mr50525961pfm.81.1546584897232;
-        Thu, 03 Jan 2019 22:54:57 -0800 (PST)
-Received: from myunghoj-Precision-5530 (cpe-76-176-3-80.san.res.rr.com. [76.176.3.80])
-        by smtp.gmail.com with ESMTPSA id w5sm75463057pfn.89.2019.01.03.22.54.56
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 03 Jan 2019 22:54:56 -0800 (PST)
-Date:   Thu, 3 Jan 2019 22:54:54 -0800
-From:   Myungho Jung <mhjungk@gmail.com>
-To:     Ursula Braun <ubraun@linux.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     linux-s390@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3] net/smc: fix TCP fallback socket release
-Message-ID: <20190104065452.GA11084@myunghoj-Precision-5530>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=memeware.net; s=mail;
+        t=1546584895; bh=BWVILXV5MmsXM2QopGeAHofKxgJdyYcSBsExF/QPlDc=;
+        h=Date:From:To:Cc:Subject:From;
+        b=XwoaZwd/at/Azd5CfOdrjogWshI8ZU0w2F34GVe42TBKHDB4sIIxfMUx/5WZZ9WFo
+         VJF4F9HnOAVqHZ2df9YUMhy/yXkmgePDwmFb8bl8mrlPPyGvHLPe01hm93v/IGhywn
+         zR1N0T1UzoV1g4DEUGRiPtZDQMjKmPNvK9eDDJ37g2zMJiGGeuEVFLJkvHKRccjx6S
+         DRr9X2opHjXBpQEabDBpNPZ2r801dvapNTlcgBeoTiNo08ZHI/3AzL74PEzDuRqt1O
+         rAXh+QzhpwfqadIAOWpkuPb3gdYebuVbUHyeNCEwqs4Lsd7YeA4UUUXMroooPbIrE1
+         rY3SL9T60hXGQ==
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Fri, 04 Jan 2019 06:54:54 +0000
+From:   vnsndalce@memeware.net
+To:     linux-kernel@vger.kernel.org, gentoo-user@lists.gentoo.org,
+        ubuntu-users@lists.ubuntu.com, debian-user@lists.debian.org
+Cc:     rms@gnu.org, freebsd-women@freebsd.org, freebsd-chat@freebsd.org,
+        misc@openbsd.org
+Subject: There is no rule "software distribution licenses are irrevocable"
+Message-ID: <fa043cc551361089c860b61928d2f569@memeware.net>
+X-Sender: vnsndalce@memeware.net
+User-Agent: Roundcube Webmail/1.3.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-clcsock can be released while kernel_accept() references it in TCP
-listen worker. Also, clcsock needs to wake up before released if TCP
-fallback is used and the clcsock is blocked by accept. Add a lock to
-safely release clcsock and call kernel_sock_shutdown() to wake up
-clcsock from accept in smc_release().
 
-Reported-by: syzbot+0bf2e01269f1274b4b03@syzkaller.appspotmail.com
-Reported-by: syzbot+e3132895630f957306bc@syzkaller.appspotmail.com
-Signed-off-by: Myungho Jung <mhjungk@gmail.com>
----
- net/smc/af_smc.c | 14 ++++++++++++--
- net/smc/smc.h    |  4 ++++
- 2 files changed, 16 insertions(+), 2 deletions(-)
 
-diff --git a/net/smc/af_smc.c b/net/smc/af_smc.c
-index 5fbaf1901571..82cb0e5634bc 100644
---- a/net/smc/af_smc.c
-+++ b/net/smc/af_smc.c
-@@ -147,8 +147,14 @@ static int smc_release(struct socket *sock)
- 		sk->sk_shutdown |= SHUTDOWN_MASK;
- 	}
- 	if (smc->clcsock) {
-+		if (smc->use_fallback && sk->sk_state == SMC_LISTEN) {
-+			/* wake up clcsock accept */
-+			rc = kernel_sock_shutdown(smc->clcsock, SHUT_RDWR);
-+		}
-+		mutex_lock(&smc->clcsock_release_lock);
- 		sock_release(smc->clcsock);
- 		smc->clcsock = NULL;
-+		mutex_unlock(&smc->clcsock_release_lock);
- 	}
- 	if (smc->use_fallback) {
- 		if (sk->sk_state != SMC_LISTEN && sk->sk_state != SMC_INIT)
-@@ -205,6 +211,7 @@ static struct sock *smc_sock_alloc(struct net *net, struct socket *sock,
- 	spin_lock_init(&smc->conn.send_lock);
- 	sk->sk_prot->hash(sk);
- 	sk_refcnt_debug_inc(sk);
-+	mutex_init(&smc->clcsock_release_lock);
- 
- 	return sk;
- }
-@@ -821,7 +828,7 @@ static int smc_clcsock_accept(struct smc_sock *lsmc, struct smc_sock **new_smc)
- 	struct socket *new_clcsock = NULL;
- 	struct sock *lsk = &lsmc->sk;
- 	struct sock *new_sk;
--	int rc;
-+	int rc = -EINVAL;
- 
- 	release_sock(lsk);
- 	new_sk = smc_sock_alloc(sock_net(lsk), NULL, lsk->sk_protocol);
-@@ -834,7 +841,10 @@ static int smc_clcsock_accept(struct smc_sock *lsmc, struct smc_sock **new_smc)
- 	}
- 	*new_smc = smc_sk(new_sk);
- 
--	rc = kernel_accept(lsmc->clcsock, &new_clcsock, 0);
-+	mutex_lock(&lsmc->clcsock_release_lock);
-+	if (lsmc->clcsock)
-+		rc = kernel_accept(lsmc->clcsock, &new_clcsock, 0);
-+	mutex_unlock(&lsmc->clcsock_release_lock);
- 	lock_sock(lsk);
- 	if  (rc < 0)
- 		lsk->sk_err = -rc;
-diff --git a/net/smc/smc.h b/net/smc/smc.h
-index 08786ace6010..5721416d0605 100644
---- a/net/smc/smc.h
-+++ b/net/smc/smc.h
-@@ -219,6 +219,10 @@ struct smc_sock {				/* smc sock container */
- 						 * started, waiting for unsent
- 						 * data to be sent
- 						 */
-+	struct mutex            clcsock_release_lock;
-+						/* protects clcsock of a listen
-+						 * socket
-+						 * */
- };
- 
- static inline struct smc_sock *smc_sk(const struct sock *sk)
--- 
-2.17.1
+>> 1016160
 
+> Everybody else in the SFConverancy and the LKML disagree, a software 
+> distribution license is non-revocable.
+
+Yes, and they are wrong.
+
+All the programmers in the LKML are indeed wrong in what they believe.
+
+The non-lawyer* at the SFConverancy is indeed wrong in what he believes 
+(They even had to hire outside counsel to draft their response, which 
+was full of weasel-words and non-statements)
+
+*https://en.wikipedia.org/wiki/Bradley_Kuhn#Academia_and_early_career
+
+The fact of the matter is, there is no rule "A software license is 
+irrevocable".
+
+The rule is, when stated simply: you get what you have paid for.
+
+If you contracted for a specific rule regarding revocation, and you 
+payed the grantor for that rule: that rule will apply between you and 
+him regarding the piece of property (unless it's against public policy 
+etc).
+
+If you did not pay for such, you cannot rely on such a "promise".
+
+That is why you THINK there is a "software licenses are irrevocable" 
+rule: because the cases on this issue involve commercial 1990s software. 
+In those cases the judges ruled that the company could not willy-nilly 
+revoke licenses because the customer had payed them for it: specifically 
+for the terms in the license: so since they were paid for the court held 
+the company to it's end of the bargain.
+
+Here there was no bargain: The linux coders simply have allowed you to 
+use their property without you giving them anything what-so-ever.
+
+That is the crux of the issue.
+
+That is why the FSF and others require copyright assignment for any and 
+all contributions of code that they will accept into their own code 
+base.
+
+If they did not the actual copyright owner, having been paid no 
+consideration for the license terms, can recall the property at any time 
+(rescind the permission: the license).
+
+That is absolutely the case with Linux.
+
+That is why the GPLv3 was drafted, that is why they are trying to have 
+the kernel programmers electronically assent to all these extra pledges 
+now.
+
+They want there to be some interest they can point to as reliance. Right 
+now there is NONE.
+
+And even then, even then, even if the programmers put out a piece of 
+code and said "I will not revoke this license".
+
+(Which they did not do in the GPLv2).
+
+How is it secured by you, Entity X? How is that promise something you 
+can reasonably rely upon? What have you given to Property Owner for that 
+promise? And did you come to a meeting of the minds regarding such?
+
+Nothing and no.
+
+You have no case whatsoever. You cannot bind the hand of the property 
+owner regarding his own property without giving him something that he 
+has asked you for: and you can't simply "give" him back his own property 
+as "consideration" either (since you have no prior-rights to it).
