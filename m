@@ -6,43 +6,41 @@ X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CDA3C43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 21:16:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 552CEC43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 21:22:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA0ED218D3
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 21:16:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 06CE42054F
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 21:22:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726229AbfADVQS (ORCPT
+        id S1726238AbfADVWN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 16:16:18 -0500
-Received: from gateway32.websitewelcome.com ([192.185.145.171]:45161 "EHLO
-        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725987AbfADVQR (ORCPT
+        Fri, 4 Jan 2019 16:22:13 -0500
+Received: from gateway33.websitewelcome.com ([192.185.146.97]:48919 "EHLO
+        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726015AbfADVWN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 16:16:17 -0500
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway32.websitewelcome.com (Postfix) with ESMTP id CE1AEC9610
-        for <linux-kernel@vger.kernel.org>; Fri,  4 Jan 2019 15:16:16 -0600 (CST)
+        Fri, 4 Jan 2019 16:22:13 -0500
+Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
+        by gateway33.websitewelcome.com (Postfix) with ESMTP id 6D9E5743F0A
+        for <linux-kernel@vger.kernel.org>; Fri,  4 Jan 2019 15:22:12 -0600 (CST)
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with SMTP
-        id fWpEgorEudnCefWpEgvbHs; Fri, 04 Jan 2019 15:16:16 -0600
+        id fWuyggp1WiQerfWuygjAxD; Fri, 04 Jan 2019 15:22:12 -0600
 X-Authority-Reason: nr=8
-Received: from [189.250.130.205] (port=41026 helo=embeddedor)
+Received: from [189.250.130.205] (port=41040 helo=embeddedor)
         by gator4166.hostgator.com with esmtpa (Exim 4.91)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1gfWpC-002snh-Q7; Fri, 04 Jan 2019 15:16:16 -0600
-Date:   Fri, 4 Jan 2019 15:16:12 -0600
+        id 1gfWux-002x5R-D2; Fri, 04 Jan 2019 15:22:11 -0600
+Date:   Fri, 4 Jan 2019 15:22:09 -0600
 From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Laxman Dewangan <ldewangan@nvidia.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
+To:     Matthew Wilcox <willy@infradead.org>,
+        Hannes Reinecke <hare@suse.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] dmaengine: tegra-apb: Use struct_size() in devm_kzalloc()
-Message-ID: <20190104211612.GA14300@embeddedor>
+Subject: [PATCH] scsi: advansys: use struct_size() in kzalloc()
+Message-ID: <20190104212209.GA15250@embeddedor>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -55,13 +53,13 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 189.250.130.205
 X-Source-L: No
-X-Exim-ID: 1gfWpC-002snh-Q7
+X-Exim-ID: 1gfWux-002x5R-D2
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.130.205]:41026
+X-Source-Sender: (embeddedor) [189.250.130.205]:41040
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 11
+X-Email-Count: 17
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -69,45 +67,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-One of the more common cases of allocation size calculations is finding
-the size of a structure that has a zero-sized array at the end, along
-with memory for some number of elements for that array. For example:
+One of the more common cases of allocation size calculations is finding the
+size of a structure that has a zero-sized array at the end, along with memory
+for some number of elements for that array. For example:
 
 struct foo {
     int stuff;
     void *entry[];
 };
 
-instance = devm_kzalloc(dev, sizeof(struct foo) + sizeof(void *) * count, GFP_KERNEL);
+instance = kzalloc(sizeof(struct foo) + sizeof(void *) * count, GFP_KERNEL);
 
-Instead of leaving these open-coded and prone to type mistakes, we can
-now use the new struct_size() helper:
+Instead of leaving these open-coded and prone to type mistakes, we can now
+use the new struct_size() helper:
 
-instance = devm_kzalloc(dev, struct_size(instance, entry, count), GFP_KERNEL);
+instance = kzalloc(struct_size(instance, entry, count), GFP_KERNEL);
 
 This code was detected with the help of Coccinelle.
 
 Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- drivers/dma/tegra20-apb-dma.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/scsi/advansys.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-index 9a558e30c461..697f316055cf 100644
---- a/drivers/dma/tegra20-apb-dma.c
-+++ b/drivers/dma/tegra20-apb-dma.c
-@@ -1319,8 +1319,9 @@ static int tegra_dma_probe(struct platform_device *pdev)
- 		return -ENODEV;
- 	}
+diff --git a/drivers/scsi/advansys.c b/drivers/scsi/advansys.c
+index d37584403c33..6c274e6e1c33 100644
+--- a/drivers/scsi/advansys.c
++++ b/drivers/scsi/advansys.c
+@@ -7576,8 +7576,8 @@ static int asc_build_req(struct asc_board *boardp, struct scsi_cmnd *scp,
+ 			return ASC_ERROR;
+ 		}
  
--	tdma = devm_kzalloc(&pdev->dev, sizeof(*tdma) + cdata->nr_channels *
--			sizeof(struct tegra_dma_channel), GFP_KERNEL);
-+	tdma = devm_kzalloc(&pdev->dev,
-+			    struct_size(tdma, channels, cdata->nr_channels),
-+			    GFP_KERNEL);
- 	if (!tdma)
- 		return -ENOMEM;
- 
+-		asc_sg_head = kzalloc(sizeof(asc_scsi_q->sg_head) +
+-			use_sg * sizeof(struct asc_sg_list), GFP_ATOMIC);
++		asc_sg_head = kzalloc(struct_size(asc_sg_head, sg_list, use_sg),
++				      GFP_ATOMIC);
+ 		if (!asc_sg_head) {
+ 			scsi_dma_unmap(scp);
+ 			scp->result = HOST_BYTE(DID_SOFT_ERROR);
 -- 
 2.20.1
 
