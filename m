@@ -2,254 +2,517 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DC35C43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 22:34:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F3E0C43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 22:36:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BB7D218D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 22:34:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0868221872
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 22:36:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="SASXcYiA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726295AbfADWeL (ORCPT
+        id S1726339AbfADWgn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 17:34:11 -0500
-Received: from mga07.intel.com ([134.134.136.100]:30169 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726094AbfADWeK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 17:34:10 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jan 2019 14:34:10 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,439,1539673200"; 
-   d="gz'50?scan'50,208,50";a="264504983"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by orsmga004.jf.intel.com with ESMTP; 04 Jan 2019 14:34:07 -0800
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1gfY2Z-000FRH-BJ; Sat, 05 Jan 2019 06:34:07 +0800
-Date:   Sat, 5 Jan 2019 06:33:13 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Dave Hansen <dave.hansen@linux.intel.com>
-Cc:     kbuild-all@01.org, dave.hansen@intel.com, x86@kernel.org,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH 3/5] mm: remove MPX hooks from generic code
-Message-ID: <201901050618.H86nOzMU%fengguang.wu@intel.com>
-References: <1546624183-26543-4-git-send-email-dave.hansen@linux.intel.com>
+        Fri, 4 Jan 2019 17:36:43 -0500
+Received: from mail-eopbgr50046.outbound.protection.outlook.com ([40.107.5.46]:2017
+        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726105AbfADWgm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 17:36:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hepfAqFn9qm1SvlLipTWqo1FDDITgPB/Dc0Xyx5U4Ok=;
+ b=SASXcYiA/NflEJyfWYFXrveZk6lyi85hZHVSr2F5i5lfPrDF9ps3wPFI4zI27Ep3QNoJaxS4SGFCflTTP37y6/YPmyiFJu/2xzgPYl0f6YAq93cz2yfiVbrkUTdFEIE9CX+XrfY4Q/n5TxnYNEDJoHwc/OB7VqW6azzwEEWdd20=
+Received: from AM4PR0501MB2179.eurprd05.prod.outlook.com (10.165.82.10) by
+ AM4PR0501MB2772.eurprd05.prod.outlook.com (10.172.216.16) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1495.6; Fri, 4 Jan 2019 22:35:43 +0000
+Received: from AM4PR0501MB2179.eurprd05.prod.outlook.com
+ ([fe80::88a5:f979:5400:adf]) by AM4PR0501MB2179.eurprd05.prod.outlook.com
+ ([fe80::88a5:f979:5400:adf%5]) with mapi id 15.20.1495.005; Fri, 4 Jan 2019
+ 22:35:43 +0000
+From:   Jason Gunthorpe <jgg@mellanox.com>
+To:     "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>
+CC:     Shiraz Saleem <shiraz.saleem@intel.com>,
+        Imre Deak <imre.deak@intel.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        Yong Zhi <yong.zhi@intel.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Bingbu Cao <bingbu.cao@intel.com>,
+        Tian Shu Qiu <tian.shu.qiu@intel.com>,
+        Jian Xu Zheng <jian.xu.zheng@intel.com>,
+        Sinclair Yeh <syeh@vmware.com>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+Subject: [PATCH] lib/scatterlist: Provide a DMA page iterator
+Thread-Topic: [PATCH] lib/scatterlist: Provide a DMA page iterator
+Thread-Index: AQHUpH3T+Rn6hCeN4kq6RDaSbJgsYA==
+Date:   Fri, 4 Jan 2019 22:35:43 +0000
+Message-ID: <20190104223531.GA1705@ziepe.ca>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: CO2PR05CA0102.namprd05.prod.outlook.com
+ (2603:10b6:104:1::28) To AM4PR0501MB2179.eurprd05.prod.outlook.com
+ (2603:10a6:200:52::10)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=jgg@mellanox.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [174.3.196.123]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM4PR0501MB2772;6:T+KWkjowF5jE7SSegfGmqnDwoFPyWSRS5Nn+2Ce9pDV5F71s4DkrdiWcK6IgCy0OR9M4shV43uMZy+dqXCVK2jBE91tPei0rvRbg1nxAS2Jidfo42C7G3b9Bnept+qSlhRIIfytskJb1Dhy3NXLoapp2/ApvtgwHszXM9xT8DO4SecnaFpIGNBChbU6AIEJjPO87znGE6CunSPltA/Kya5c3UKVTYN0zBzROI64LpaT9tBV0Eibyb4J3Kz9n5jTXWZBei7EF7uYi6+WMGeBSI+V70ggLlE35xyEQrR19XynbW6mjSbHDlLcdwHeCesijegqhQfmu9BfOnAM4RWZhnEjxrooJV0cTqSU3fEuePcGry4CybhZdVfalw5JSdWAhS9ZRyLwcUpPGi0i93HX1TmpTm8wRorx8XJqXCYR9LKQslWzpTFr0d0770sDiMUJ3IqD5i8fBvBNxjPd94RCtDw==;5:v6Mt9qhc7EsJ26DzaJK6t/gAToCQ3YwaHxA3TXFluQxAVa6/zvf4iz8xMGGYA1gWyFnMAEJ2KJwtLt9r5/OT4MvMbF9zFzDsO3gV7BE8YE6ZYYv1ZsEDNu0sCOBFUCklUhS+tsg1yflPtDc+Pk5AbvOxStxca5vcODyOAkNFf21RS3G0OMB/wkte7a77WT2uvIfx5JMX2P3FASUXRo5szQ==;7:rfGEqwzQN7tYH/XB118o6HhGMfGKFNrI28M44CKNQFszf6u46EvCJa0zFpUvxWeTzWib+QAiHXCz+n8BFJ0LyasRiBkG7w5RCTMR+ahgHgH2QKpmaLZEdMp2bpEcT2kDtnMnkZeGeRkYMC6VoIE2yQ==
+x-ms-office365-filtering-correlation-id: 7e9df72a-2771-4b6d-ec07-08d67294f603
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM4PR0501MB2772;
+x-ms-traffictypediagnostic: AM4PR0501MB2772:
+x-microsoft-antispam-prvs: <AM4PR0501MB27727F02A694ABB09E747A8FCF8E0@AM4PR0501MB2772.eurprd05.prod.outlook.com>
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(908002)(999002)(5005026)(6040522)(8220060)(2401047)(8121501046)(10201501046)(93006095)(93001095)(3231475)(944501520)(52105112)(3002001)(6055026)(6041310)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:AM4PR0501MB2772;BCL:0;PCL:0;RULEID:;SRVR:AM4PR0501MB2772;
+x-forefront-prvs: 0907F58A24
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(376002)(136003)(366004)(39860400002)(346002)(199004)(189003)(386003)(14454004)(256004)(36756003)(7416002)(1076003)(81166006)(81156014)(8676002)(8936002)(4744004)(33656002)(26005)(25786009)(186003)(6506007)(6436002)(99286004)(478600001)(102836004)(305945005)(33896004)(97736004)(105586002)(71190400001)(71200400001)(6116002)(3846002)(7736002)(2501003)(52116002)(476003)(106356001)(66066001)(86362001)(575784001)(486006)(68736007)(54906003)(316002)(6486002)(110136005)(2906002)(9686003)(6512007)(53936002)(5660300001)(4326008);DIR:OUT;SFP:1101;SCL:1;SRVR:AM4PR0501MB2772;H:AM4PR0501MB2179.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: mellanox.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 0xOb92iKbYDmJQgPeKAk9VfWiX+gbC6E13PFa+HiYnTMB0Z2PPW00Nk4zAM2jYuFxsDk8edrIRlbEtG9oN115QhWJNNsifUoDHjje9ePdF4toe73269XHD+owFlsNAK3bjqfFY3JTjJRmbxYRjcWE9dBdux5V858w+SLSVss14putwj/8yhpQJqW08sExCI6QqAskWyl5kdDfFkYzON8M9tMHfAIqqxrwJxxzHwB/NF9WXPrQfXbOEDtO/FEGy3G7nzdDctMjign8bYud2Ua5M28BYWbV7TU6zBSyj0JO9Sz2RPeK9m/nTnzf1qYBgbf
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <F99263AB32E56543B99CB6F9EEB8B483@eurprd05.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="k1lZvvs/B4yU6o8G"
-Content-Disposition: inline
-In-Reply-To: <1546624183-26543-4-git-send-email-dave.hansen@linux.intel.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7e9df72a-2771-4b6d-ec07-08d67294f603
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Jan 2019 22:35:42.7682
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM4PR0501MB2772
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Commit 2db76d7c3c6d ("lib/scatterlist: sg_page_iter: support sg lists w/o
+backing pages") introduced the sg_page_iter_dma_address() function without
+providing a way to use it in the general case. If the sg_dma_len is not
+equal to the dma_length callers cannot safely use the
+for_each_sg_page/sg_page_iter_dma_address combination.
 
---k1lZvvs/B4yU6o8G
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Resolve this API mistake by providing a DMA specific iterator,
+for_each_sg_dma_page(), that uses the right length so
+sg_page_iter_dma_address() works as expected with all sglists. A new
+iterator type is introduced to provide compile-time safety against wrongly
+mixing accessors and iterators.
 
-Hi Dave,
-
-I love your patch! Yet something to improve:
-
-[auto build test ERROR on linus/master]
-[also build test ERROR on v4.20 next-20190103]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-
-url:    https://github.com/0day-ci/linux/commits/Dave-Hansen/x86-mpx-remove-MPX-APIs/20190105-051028
-config: i386-tinyconfig (attached as .config)
-compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
-reproduce:
-        # save the attached .config to linux build tree
-        make ARCH=i386 
-
-Note: the linux-review/Dave-Hansen/x86-mpx-remove-MPX-APIs/20190105-051028 HEAD 34ce15ccc190201bc8c062e1559df2c1864902ef builds fine.
-      It only hurts bisectibility.
-
-All errors (new ones prefixed by >>):
-
-   arch/x86/kernel/setup.c: In function 'setup_arch':
->> arch/x86/kernel/setup.c:927:2: error: implicit declaration of function 'mpx_mm_init'; did you mean 'mem_init'? [-Werror=implicit-function-declaration]
-     mpx_mm_init(&init_mm);
-     ^~~~~~~~~~~
-     mem_init
-   cc1: some warnings being treated as errors
-
-vim +927 arch/x86/kernel/setup.c
-
-7465252ea arch/x86/kernel/setup_32.c Yinghai Lu          2008-06-23  911  
-42bbdb43b arch/x86/kernel/setup.c    Thomas Gleixner     2009-08-20  912  	x86_init.oem.arch_setup();
-2215e69d2 arch/x86/kernel/setup_32.c Huang, Ying         2008-01-30  913  
-419afdf53 arch/x86/kernel/setup.c    Bjorn Helgaas       2010-10-26  914  	iomem_resource.end = (1ULL << boot_cpu_data.x86_phys_bits) - 1;
-103e20630 arch/x86/kernel/setup.c    Ingo Molnar         2017-01-28  915  	e820__memory_setup();
-28bb22379 arch/x86/kernel/setup.c    Yinghai Lu          2008-06-30  916  	parse_setup_data();
-28bb22379 arch/x86/kernel/setup.c    Yinghai Lu          2008-06-30  917  
-^1da177e4 arch/i386/kernel/setup.c   Linus Torvalds      2005-04-16  918  	copy_edd();
-^1da177e4 arch/i386/kernel/setup.c   Linus Torvalds      2005-04-16  919  
-30c826451 arch/x86/kernel/setup_32.c H. Peter Anvin      2007-10-15  920  	if (!boot_params.hdr.root_flags)
-^1da177e4 arch/i386/kernel/setup.c   Linus Torvalds      2005-04-16  921  		root_mountflags &= ~MS_RDONLY;
-^1da177e4 arch/i386/kernel/setup.c   Linus Torvalds      2005-04-16  922  	init_mm.start_code = (unsigned long) _text;
-^1da177e4 arch/i386/kernel/setup.c   Linus Torvalds      2005-04-16  923  	init_mm.end_code = (unsigned long) _etext;
-^1da177e4 arch/i386/kernel/setup.c   Linus Torvalds      2005-04-16  924  	init_mm.end_data = (unsigned long) _edata;
-93dbda7cb arch/x86/kernel/setup.c    Jeremy Fitzhardinge 2009-02-26  925  	init_mm.brk = _brk_end;
-fe3d197f8 arch/x86/kernel/setup.c    Dave Hansen         2014-11-14  926  
-fe3d197f8 arch/x86/kernel/setup.c    Dave Hansen         2014-11-14 @927  	mpx_mm_init(&init_mm);
-^1da177e4 arch/i386/kernel/setup.c   Linus Torvalds      2005-04-16  928  
-4046d6e81 arch/x86/kernel/setup.c    Linus Torvalds      2016-04-14  929  	code_resource.start = __pa_symbol(_text);
-4046d6e81 arch/x86/kernel/setup.c    Linus Torvalds      2016-04-14  930  	code_resource.end = __pa_symbol(_etext)-1;
-4046d6e81 arch/x86/kernel/setup.c    Linus Torvalds      2016-04-14  931  	data_resource.start = __pa_symbol(_etext);
-4046d6e81 arch/x86/kernel/setup.c    Linus Torvalds      2016-04-14  932  	data_resource.end = __pa_symbol(_edata)-1;
-4046d6e81 arch/x86/kernel/setup.c    Linus Torvalds      2016-04-14  933  	bss_resource.start = __pa_symbol(__bss_start);
-4046d6e81 arch/x86/kernel/setup.c    Linus Torvalds      2016-04-14  934  	bss_resource.end = __pa_symbol(__bss_stop)-1;
-4046d6e81 arch/x86/kernel/setup.c    Linus Torvalds      2016-04-14  935  
-
-:::::: The code at line 927 was first introduced by commit
-:::::: fe3d197f84319d3bce379a9c0dc17b1f48ad358c x86, mpx: On-demand kernel allocation of bounds tables
-
-:::::: TO: Dave Hansen <dave.hansen@linux.intel.com>
-:::::: CC: Thomas Gleixner <tglx@linutronix.de>
-
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 ---
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+ drivers/gpu/drm/vmwgfx/vmwgfx_drv.h        | 26 ++++++++++--
+ drivers/gpu/drm/vmwgfx/vmwgfx_mob.c        | 26 +++++++-----
+ drivers/gpu/drm/vmwgfx/vmwgfx_ttm_buffer.c | 42 +++++++++++++------
+ drivers/media/pci/intel/ipu3/ipu3-cio2.c   |  4 +-
+ include/linux/scatterlist.h                | 49 ++++++++++++++++++----
+ lib/scatterlist.c                          | 26 ++++++++++++
+ 6 files changed, 134 insertions(+), 39 deletions(-)
 
---k1lZvvs/B4yU6o8G
-Content-Type: application/gzip
-Content-Disposition: attachment; filename=".config.gz"
-Content-Transfer-Encoding: base64
+I'd like to run this patch through the RDMA tree as we have another
+series in the works that wants to use the for_each_sg_dma_page() API.
 
-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
-B/XmBJXCWgAA
+The changes to vmwgfx make me nervous, it would be great if someone
+could test and ack them?
 
---k1lZvvs/B4yU6o8G--
+Changes since the RFC:
+- Rework vmwgfx too [CH]
+- Use a distinct type for the DMA page iterator [CH]
+- Do not have a #ifdef [CH]
+
+Thanks,
+Jason
+
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.h b/drivers/gpu/drm/vmwgfx/v=
+mwgfx_drv.h
+index 59f614225bcd72..3c6d71e13a9342 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.h
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.h
+@@ -297,7 +297,10 @@ struct vmw_sg_table {
+ struct vmw_piter {
+ 	struct page **pages;
+ 	const dma_addr_t *addrs;
+-	struct sg_page_iter iter;
++	union {
++		struct sg_page_iter iter;
++		struct sg_dma_page_iter dma_iter;
++	};
+ 	unsigned long i;
+ 	unsigned long num_pages;
+ 	bool (*next)(struct vmw_piter *);
+@@ -869,9 +872,24 @@ extern int vmw_bo_map_dma(struct ttm_buffer_object *bo=
+);
+ extern void vmw_bo_unmap_dma(struct ttm_buffer_object *bo);
+ extern const struct vmw_sg_table *
+ vmw_bo_sg_table(struct ttm_buffer_object *bo);
+-extern void vmw_piter_start(struct vmw_piter *viter,
+-			    const struct vmw_sg_table *vsgt,
+-			    unsigned long p_offs);
++void _vmw_piter_start(struct vmw_piter *viter, const struct vmw_sg_table *=
+vsgt,
++		      unsigned long p_offs, bool for_dma);
++
++/* Create a piter that can call vmw_piter_dma_addr() */
++static inline void vmw_piter_start(struct vmw_piter *viter,
++				   const struct vmw_sg_table *vsgt,
++				   unsigned long p_offs)
++{
++	_vmw_piter_start(viter, vsgt, p_offs, true);
++}
++
++/* Create a piter that can call vmw_piter_page() */
++static inline void vmw_piter_cpu_start(struct vmw_piter *viter,
++				   const struct vmw_sg_table *vsgt,
++				   unsigned long p_offs)
++{
++	_vmw_piter_start(viter, vsgt, p_offs, false);
++}
+=20
+ /**
+  * vmw_piter_next - Advance the iterator one page.
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_mob.c b/drivers/gpu/drm/vmwgfx/v=
+mwgfx_mob.c
+index 7ed179d30ec51f..a13788017ad608 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_mob.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_mob.c
+@@ -503,7 +503,8 @@ static void vmw_mob_assign_ppn(u32 **addr, dma_addr_t v=
+al)
+  */
+ static unsigned long vmw_mob_build_pt(struct vmw_piter *data_iter,
+ 				      unsigned long num_data_pages,
+-				      struct vmw_piter *pt_iter)
++				      struct vmw_piter *pt_iter_cpu,
++				      struct vmw_piter *pt_iter_dma)
+ {
+ 	unsigned long pt_size =3D num_data_pages * VMW_PPN_SIZE;
+ 	unsigned long num_pt_pages =3D DIV_ROUND_UP(pt_size, PAGE_SIZE);
+@@ -513,7 +514,7 @@ static unsigned long vmw_mob_build_pt(struct vmw_piter =
+*data_iter,
+ 	struct page *page;
+=20
+ 	for (pt_page =3D 0; pt_page < num_pt_pages; ++pt_page) {
+-		page =3D vmw_piter_page(pt_iter);
++		page =3D vmw_piter_page(pt_iter_cpu);
+=20
+ 		save_addr =3D addr =3D kmap_atomic(page);
+=20
+@@ -525,7 +526,8 @@ static unsigned long vmw_mob_build_pt(struct vmw_piter =
+*data_iter,
+ 			WARN_ON(!vmw_piter_next(data_iter));
+ 		}
+ 		kunmap_atomic(save_addr);
+-		vmw_piter_next(pt_iter);
++		vmw_piter_next(pt_iter_cpu);
++		vmw_piter_next(pt_iter_dma);
+ 	}
+=20
+ 	return num_pt_pages;
+@@ -547,29 +549,31 @@ static void vmw_mob_pt_setup(struct vmw_mob *mob,
+ {
+ 	unsigned long num_pt_pages =3D 0;
+ 	struct ttm_buffer_object *bo =3D mob->pt_bo;
+-	struct vmw_piter save_pt_iter;
+-	struct vmw_piter pt_iter;
++	struct vmw_piter pt_iter_cpu, pt_iter_dma;
+ 	const struct vmw_sg_table *vsgt;
++	dma_addr_t root_page =3D 0;
+ 	int ret;
+=20
+ 	ret =3D ttm_bo_reserve(bo, false, true, NULL);
+ 	BUG_ON(ret !=3D 0);
+=20
+ 	vsgt =3D vmw_bo_sg_table(bo);
+-	vmw_piter_start(&pt_iter, vsgt, 0);
+-	BUG_ON(!vmw_piter_next(&pt_iter));
++	vmw_piter_start(&pt_iter_dma, vsgt, 0);
++	vmw_piter_cpu_start(&pt_iter_cpu, vsgt, 0);
++	BUG_ON(!vmw_piter_next(&pt_iter_cpu));
++	BUG_ON(!vmw_piter_next(&pt_iter_dma));
+ 	mob->pt_level =3D 0;
+ 	while (likely(num_data_pages > 1)) {
+ 		++mob->pt_level;
+ 		BUG_ON(mob->pt_level > 2);
+-		save_pt_iter =3D pt_iter;
++		root_page =3D vmw_piter_dma_addr(&pt_iter_dma);
+ 		num_pt_pages =3D vmw_mob_build_pt(&data_iter, num_data_pages,
+-						&pt_iter);
+-		data_iter =3D save_pt_iter;
++						&pt_iter_cpu, &pt_iter_dma);
++		vmw_piter_start(&data_iter, vsgt, 0);
+ 		num_data_pages =3D num_pt_pages;
+ 	}
+=20
+-	mob->pt_root_page =3D vmw_piter_dma_addr(&save_pt_iter);
++	mob->pt_root_page =3D root_page;
+ 	ttm_bo_unreserve(bo);
+ }
+=20
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_ttm_buffer.c b/drivers/gpu/drm/v=
+mwgfx/vmwgfx_ttm_buffer.c
+index 31786b200afc47..db8f3e40a4facb 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_ttm_buffer.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_ttm_buffer.c
+@@ -269,6 +269,11 @@ static bool __vmw_piter_sg_next(struct vmw_piter *vite=
+r)
+ 	return __sg_page_iter_next(&viter->iter);
+ }
+=20
++static bool __vmw_piter_sg_dma_next(struct vmw_piter *viter)
++{
++	return __sg_page_iter_dma_next(&viter->dma_iter);
++}
++
+=20
+ /**
+  * Helper functions to return a pointer to the current page.
+@@ -309,9 +314,9 @@ static dma_addr_t __vmw_piter_dma_addr(struct vmw_piter=
+ *viter)
+ 	return viter->addrs[viter->i];
+ }
+=20
+-static dma_addr_t __vmw_piter_sg_addr(struct vmw_piter *viter)
++static dma_addr_t __vmw_piter_sg_dma_addr(struct vmw_piter *viter)
+ {
+-	return sg_page_iter_dma_address(&viter->iter);
++	return sg_page_iter_dma_address(&viter->dma_iter);
+ }
+=20
+=20
+@@ -325,32 +330,43 @@ static dma_addr_t __vmw_piter_sg_addr(struct vmw_pite=
+r *viter)
+  * the iterator doesn't point to a valid page after initialization; it has
+  * to be advanced one step first.
+  */
+-void vmw_piter_start(struct vmw_piter *viter, const struct vmw_sg_table *v=
+sgt,
+-		     unsigned long p_offset)
++void _vmw_piter_start(struct vmw_piter *viter, const struct vmw_sg_table *=
+vsgt,
++		      unsigned long p_offset, bool for_dma)
+ {
+ 	viter->i =3D p_offset - 1;
+ 	viter->num_pages =3D vsgt->num_pages;
+ 	switch (vsgt->mode) {
+ 	case vmw_dma_phys:
+ 		viter->next =3D &__vmw_piter_non_sg_next;
+-		viter->dma_address =3D &__vmw_piter_phys_addr;
+-		viter->page =3D &__vmw_piter_non_sg_page;
++		if (for_dma)
++			viter->dma_address =3D &__vmw_piter_phys_addr;
++		else
++			viter->page =3D &__vmw_piter_non_sg_page;
+ 		viter->pages =3D vsgt->pages;
+ 		break;
+ 	case vmw_dma_alloc_coherent:
+ 		viter->next =3D &__vmw_piter_non_sg_next;
+-		viter->dma_address =3D &__vmw_piter_dma_addr;
+-		viter->page =3D &__vmw_piter_non_sg_page;
++		if (for_dma)
++			viter->dma_address =3D &__vmw_piter_dma_addr;
++		else
++			viter->page =3D &__vmw_piter_non_sg_page;
+ 		viter->addrs =3D vsgt->addrs;
+ 		viter->pages =3D vsgt->pages;
+ 		break;
+ 	case vmw_dma_map_populate:
+ 	case vmw_dma_map_bind:
+-		viter->next =3D &__vmw_piter_sg_next;
+-		viter->dma_address =3D &__vmw_piter_sg_addr;
+-		viter->page =3D &__vmw_piter_sg_page;
+-		__sg_page_iter_start(&viter->iter, vsgt->sgt->sgl,
+-				     vsgt->sgt->orig_nents, p_offset);
++		if (for_dma) {
++			viter->next =3D &__vmw_piter_sg_dma_next;
++			viter->dma_address =3D &__vmw_piter_sg_dma_addr;
++			__sg_page_iter_start(&viter->dma_iter.base,
++					     vsgt->sgt->sgl,
++					     vsgt->sgt->orig_nents, p_offset);
++		} else {
++			viter->next =3D &__vmw_piter_sg_next;
++			viter->page =3D &__vmw_piter_sg_page;
++			__sg_page_iter_start(&viter->iter, vsgt->sgt->sgl,
++					     vsgt->sgt->orig_nents, p_offset);
++		}
+ 		break;
+ 	default:
+ 		BUG();
+diff --git a/drivers/media/pci/intel/ipu3/ipu3-cio2.c b/drivers/media/pci/i=
+ntel/ipu3/ipu3-cio2.c
+index 447baaebca4486..32b6c6c217a46c 100644
+--- a/drivers/media/pci/intel/ipu3/ipu3-cio2.c
++++ b/drivers/media/pci/intel/ipu3/ipu3-cio2.c
+@@ -846,7 +846,7 @@ static int cio2_vb2_buf_init(struct vb2_buffer *vb)
+ 	unsigned int pages =3D DIV_ROUND_UP(vb->planes[0].length, CIO2_PAGE_SIZE)=
+;
+ 	unsigned int lops =3D DIV_ROUND_UP(pages + 1, entries_per_page);
+ 	struct sg_table *sg;
+-	struct sg_page_iter sg_iter;
++	struct sg_dma_page_iter sg_iter;
+ 	int i, j;
+=20
+ 	if (lops <=3D 0 || lops > CIO2_MAX_LOPS) {
+@@ -873,7 +873,7 @@ static int cio2_vb2_buf_init(struct vb2_buffer *vb)
+ 		b->offset =3D sg->sgl->offset;
+=20
+ 	i =3D j =3D 0;
+-	for_each_sg_page(sg->sgl, &sg_iter, sg->nents, 0) {
++	for_each_sg_dma_page(sg->sgl, &sg_iter, sg->nents, 0) {
+ 		if (!pages--)
+ 			break;
+ 		b->lop[i][j] =3D sg_page_iter_dma_address(&sg_iter) >> PAGE_SHIFT;
+diff --git a/include/linux/scatterlist.h b/include/linux/scatterlist.h
+index 093aa57120b0cf..c0592284e18b97 100644
+--- a/include/linux/scatterlist.h
++++ b/include/linux/scatterlist.h
+@@ -339,12 +339,12 @@ int sg_alloc_table_chained(struct sg_table *table, in=
+t nents,
+ /*
+  * sg page iterator
+  *
+- * Iterates over sg entries page-by-page.  On each successful iteration,
+- * you can call sg_page_iter_page(@piter) and sg_page_iter_dma_address(@pi=
+ter)
+- * to get the current page and its dma address. @piter->sg will point to t=
+he
+- * sg holding this page and @piter->sg_pgoffset to the page's page offset
+- * within the sg. The iteration will stop either when a maximum number of =
+sg
+- * entries was reached or a terminating sg (sg_last(sg) =3D=3D true) was r=
+eached.
++ * Iterates over sg entries page-by-page.  On each successful iteration, y=
+ou
++ * can call sg_page_iter_page(@piter) to get the current page and its dma
++ * address. @piter->sg will point to the sg holding this page and
++ * @piter->sg_pgoffset to the page's page offset within the sg. The iterat=
+ion
++ * will stop either when a maximum number of sg entries was reached or a
++ * terminating sg (sg_last(sg) =3D=3D true) was reached.
+  */
+ struct sg_page_iter {
+ 	struct scatterlist	*sg;		/* sg holding the page */
+@@ -356,7 +356,19 @@ struct sg_page_iter {
+ 						 * next step */
+ };
+=20
++/*
++ * sg page iterator for DMA addresses
++ *
++ * This is the same as sg_page_iter however you can call
++ * sg_page_iter_dma_address(@dma_iter) to get the page's DMA
++ * address. sg_page_iter_page() cannot be called on this iterator.
++ */
++struct sg_dma_page_iter {
++	struct sg_page_iter base;
++};
++
+ bool __sg_page_iter_next(struct sg_page_iter *piter);
++bool __sg_page_iter_dma_next(struct sg_dma_page_iter *dma_iter);
+ void __sg_page_iter_start(struct sg_page_iter *piter,
+ 			  struct scatterlist *sglist, unsigned int nents,
+ 			  unsigned long pgoffset);
+@@ -372,11 +384,13 @@ static inline struct page *sg_page_iter_page(struct s=
+g_page_iter *piter)
+ /**
+  * sg_page_iter_dma_address - get the dma address of the current page held=
+ by
+  * the page iterator.
+- * @piter:	page iterator holding the page
++ * @dma_iter:	page iterator holding the page
+  */
+-static inline dma_addr_t sg_page_iter_dma_address(struct sg_page_iter *pit=
+er)
++static inline dma_addr_t
++sg_page_iter_dma_address(struct sg_dma_page_iter *dma_iter)
+ {
+-	return sg_dma_address(piter->sg) + (piter->sg_pgoffset << PAGE_SHIFT);
++	return sg_dma_address(dma_iter->base.sg) +
++	       (dma_iter->base.sg_pgoffset << PAGE_SHIFT);
+ }
+=20
+ /**
+@@ -385,11 +399,28 @@ static inline dma_addr_t sg_page_iter_dma_address(str=
+uct sg_page_iter *piter)
+  * @piter:	page iterator to hold current page, sg, sg_pgoffset
+  * @nents:	maximum number of sg entries to iterate over
+  * @pgoffset:	starting page offset
++ *
++ * Callers may use sg_page_iter_page() to get each page pointer.
+  */
+ #define for_each_sg_page(sglist, piter, nents, pgoffset)		   \
+ 	for (__sg_page_iter_start((piter), (sglist), (nents), (pgoffset)); \
+ 	     __sg_page_iter_next(piter);)
+=20
++/**
++ * for_each_sg_dma_page - iterate over the pages of the given sg list
++ * @sglist:	sglist to iterate over
++ * @dma_iter:	page iterator to hold current page
++ * @dma_nents:	maximum number of sg entries to iterate over, this is the v=
+alue
++ *              returned from dma_map_sg
++ * @pgoffset:	starting page offset
++ *
++ * Callers may use sg_page_iter_dma_address() to get each page's DMA addre=
+ss.
++ */
++#define for_each_sg_dma_page(sglist, dma_iter, dma_nents, pgoffset)       =
+     \
++	for (__sg_page_iter_start(&(dma_iter)->base, sglist, dma_nents,        \
++				  pgoffset);                                   \
++	     __sg_page_iter_dma_next(dma_iter);)
++
+ /*
+  * Mapping sg iterator
+  *
+diff --git a/lib/scatterlist.c b/lib/scatterlist.c
+index 7c6096a7170486..716a751be67357 100644
+--- a/lib/scatterlist.c
++++ b/lib/scatterlist.c
+@@ -625,6 +625,32 @@ bool __sg_page_iter_next(struct sg_page_iter *piter)
+ }
+ EXPORT_SYMBOL(__sg_page_iter_next);
+=20
++static int sg_dma_page_count(struct scatterlist *sg)
++{
++	return PAGE_ALIGN(sg->offset + sg_dma_len(sg)) >> PAGE_SHIFT;
++}
++
++bool __sg_page_iter_dma_next(struct sg_dma_page_iter *dma_iter)
++{
++	struct sg_page_iter *piter =3D &dma_iter->base;
++
++	if (!piter->__nents || !piter->sg)
++		return false;
++
++	piter->sg_pgoffset +=3D piter->__pg_advance;
++	piter->__pg_advance =3D 1;
++
++	while (piter->sg_pgoffset >=3D sg_dma_page_count(piter->sg)) {
++		piter->sg_pgoffset -=3D sg_dma_page_count(piter->sg);
++		piter->sg =3D sg_next(piter->sg);
++		if (!--piter->__nents || !piter->sg)
++			return false;
++	}
++
++	return true;
++}
++EXPORT_SYMBOL(__sg_page_iter_next);
++
+ /**
+  * sg_miter_start - start mapping iteration over a sg list
+  * @miter: sg mapping iter to be started
+--=20
+2.20.1
+
