@@ -2,170 +2,101 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 829C7C43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 20:43:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A034C43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 20:44:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57249218E2
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 20:43:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA118218FF
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 20:44:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546634692;
+	bh=Mii981Hesl6QbbzHdXP8lhR58X9wAbatmYZrH0QvsEk=;
+	h=Date:From:To:Subject:References:In-Reply-To:List-ID:From;
+	b=jbqMUXMGIO55bLHyGDm6/qb8164GaQlTfuhvqGrpoqwrkiKvPRjgwx5oXCR0SC9dr
+	 bzWxkjlwQO4Ii+dZ2BCeurZo7lGTZET242Wmx/SkTvueiasVtFUA7jXjfZBfeA8aq9
+	 OLT2v4MXCH7TRg36aopZE91+jJXJwTFde7UDSqPA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726150AbfADUn6 (ORCPT
+        id S1726193AbfADUov (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 15:43:58 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:59377 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725958AbfADUn6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 15:43:58 -0500
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id EE234808B8; Fri,  4 Jan 2019 21:43:48 +0100 (CET)
-Date:   Fri, 4 Jan 2019 21:43:53 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Vesa =?iso-8859-1?B?SuTkc2tlbORpbmVu?= <dachaac@gmail.com>
-Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Dan Murphy <dmurphy@ti.com>, robh+dt@kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-leds@vger.kernel.org
-Subject: Re: [PATCH 2/2] leds: lp5024: Add the LP5024/18 RGB LED driver
-Message-ID: <20190104204353.GB2931@amd>
-References: <20181219201047.GA23448@amd>
- <fd624cc1-9997-1cd5-c5cc-62e6897997cf@ti.com>
- <54f28115-0a7d-8e9c-3bec-6e91fb3981ec@gmail.com>
- <cd90f179-6c16-823f-496f-27f141e9c322@ti.com>
- <a72c11c0-949b-bdbc-df2c-4490e04a1065@gmail.com>
- <986b5105-2fdb-bd25-7c8a-ca8fd1ade821@gmail.com>
- <7f205102-e854-f1cb-cc03-1307d1cddc87@gmail.com>
- <c9f8965a-90f4-b456-8225-c70694c9f071@gmail.com>
- <20190103233425.GA10071@amd>
- <e99036ea-ffb6-83ab-726b-824e2557d161@gmail.com>
+        Fri, 4 Jan 2019 15:44:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53222 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726009AbfADUov (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 15:44:51 -0500
+Received: from localhost (unknown [104.132.1.71])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 75B0221872;
+        Fri,  4 Jan 2019 20:44:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1546634690;
+        bh=Mii981Hesl6QbbzHdXP8lhR58X9wAbatmYZrH0QvsEk=;
+        h=Date:From:To:Subject:References:In-Reply-To:From;
+        b=dXParMymsqrryZ9TbnC8whTm1tAd6Fyp1/cpEjp4s6TS27rNV3/eCMQvBW26cFE/S
+         JOJSyrkDaVoDc5jJ8Mlc/FKKIuEn6HAagS12VwoQpU3OMBuWdH5bmjnHemfMKJo2xj
+         plTF9A1EauJbEHh4GuhbEE2FChI14o3HnlX+B6CE=
+Date:   Fri, 4 Jan 2019 12:44:49 -0800
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [PATCH v2] f2fs: export FS_NOCOW_FL flag to user
+Message-ID: <20190104204449.GD57873@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20190104041945.31802-1-jaegeuk@kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="b5gNqxB1S1yM7hjW"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e99036ea-ffb6-83ab-726b-824e2557d161@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20190104041945.31802-1-jaegeuk@kernel.org>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This exports pin_file status to user.
 
---b5gNqxB1S1yM7hjW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+v2:
+ - use F2FS_NOCOW_FL (aka FS_NOCOW_FL)
 
-Hi!
+ fs/f2fs/f2fs.h | 3 ++-
+ fs/f2fs/file.c | 2 ++
+ 2 files changed, 4 insertions(+), 1 deletion(-)
 
-> >And... LEDs are linear-enough as it is. That is not a problem. But RGB
-> >does _not_ expect linear response. That's why colors are _way_ off curre=
-ntly.
->=20
-> Example what I was given was some LEDs are off for let's say 20% of PWM
-> linearity and then there is non-linear curve for PWM value vs. intensity
-> (this was in context of white LCD backlight).
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 12fabd6735dd..9286ec381453 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -2301,11 +2301,12 @@ static inline void f2fs_change_bit(unsigned int nr, char *addr)
+ #define F2FS_EXTENTS_FL			0x00080000 /* Inode uses extents */
+ #define F2FS_EA_INODE_FL	        0x00200000 /* Inode used for large EA */
+ #define F2FS_EOFBLOCKS_FL		0x00400000 /* Blocks allocated beyond EOF */
++#define F2FS_NOCOW_FL			0x00800000 /* Do not cow file */
+ #define F2FS_INLINE_DATA_FL		0x10000000 /* Inode has inline data. */
+ #define F2FS_PROJINHERIT_FL		0x20000000 /* Create with parents projid */
+ #define F2FS_RESERVED_FL		0x80000000 /* reserved for ext4 lib */
+ 
+-#define F2FS_FL_USER_VISIBLE		0x304BDFFF /* User visible flags */
++#define F2FS_FL_USER_VISIBLE		0x30CBDFFF /* User visible flags */
+ #define F2FS_FL_USER_MODIFIABLE		0x204BC0FF /* User modifiable flags */
+ 
+ /* Flags we can manipulate with through F2FS_IOC_FSSETXATTR */
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index ae2b45e75847..0d461321edfc 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -1651,6 +1651,8 @@ static int f2fs_ioc_getflags(struct file *filp, unsigned long arg)
+ 		flags |= F2FS_ENCRYPT_FL;
+ 	if (f2fs_has_inline_data(inode) || f2fs_has_inline_dentry(inode))
+ 		flags |= F2FS_INLINE_DATA_FL;
++	if (is_inode_flag_set(inode, FI_PIN_FILE))
++		flags |= F2FS_NOCOW_FL;
+ 
+ 	flags &= F2FS_FL_USER_VISIBLE;
+ 
+-- 
+2.19.0.605.g01d371f741-goog
 
-Well, we'll do non-linear curve calibration if we have to.=20
-
-> As such I have nothing against adding support for HSL or other color space
-> based brightness calculations. It might just need to be configurable what
-> kind of mode is being used based on hardware solution in place. HSL seem =
-to
-> need a bit of fixed point math. Got floating point version working already
-> but that does not work with kernel space so one needs to adapt it to fixed
-> point.
-
-First, we need _some_ kind of solution. Then we can decide kernel
-vs. library. We can do floats in kernel too, if really required.
-
-> One problem here is to figure out is if user configures some color -- is =
-it
-> configured with 100% brightness eg. Should one calculate RGB->HSL and then
-> scale L with brightness and calculate RGB back for setting color -- or do=
-es
-> it mean replacing L with brightness value?
-
-I don't understand the question here.
-
-> Additional problem is then if you have let's say yellow LED color element
-> there. How would one scale that then? Linear is of course easy. If you ne=
-ed
-> to configure this to some color space then how does one define the color =
-in
-> device tree so that such color space conversion is possible? One possible
-> solution is to calibrate the curve (like what you do with LCD calibration)
-> and then just assume brightness as linear brightness value in that
-> case.
-
-Calibrated curves would be nice...
-
-For leds, you should be able to list the wavelength, right?
-
-> Or if you have multi-color LED with red and green but no other color
-> elements. How does brightness scaling work with this one?
-
-I'd ignore that for now.
-
-> >You say it is "rather slow" to change all 3 colors. How long does it
-> >take, and how long do you need it to take?
->=20
-> Some times in embedded linux systems you can see "stalls" in operation of=
- an
-> application flow eg. time is spent in different places. I believe "slowes=
-t"
-> CPU with embedded linux we are using is Atmel's AT91 series (ARM9) and
-> executing code in there can at times be a bit time consuming.
->=20
-> I have seen delays like 18ms in TI's AM335x CPU series (Cortex-A8) and not
-> even too high load situations (eg. breaking some serial protocols because=
- of
-> breaks in transmission in-between transfer without being a problem in
-> application code as such). It is completely different story when there is=
- a
-> bit of load in system or some special situation in the kernel/OS.
->=20
-> Running high priority thread for configuring LEDs to avoid problems sounds
-> like a wrong solution.
->=20
-> Co-worker of mine tried multi-color LED brightness sliding from user space
-> with current PWM led driver and it was visible from eye that it was not
-> timed smoothly.
-
-Ok, 18msec is _way_ higher than sysfs overhead (like 400x?). If you
-have slow i2c or something, then you'll get fun stuff, no matter what
-the kernel<->user interface.
-
-> For PWM controlled multi-color LEDs we don't yet have a solution. We need
-> configurable color kernel based blinking.
-
-> If we could figure out acceptable solution for color transition problem t=
-hen
-> I suppose all parties would be happy?
-
-If you can get LEDs to display the colors in similar way monitors do,
-that will be major step forward. Then we can design the rest, or maybe
-ressurect the HSV patch.
-
-									Pavel
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---b5gNqxB1S1yM7hjW
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlwvxYkACgkQMOfwapXb+vLJyACfVIxWUSZNjTS1skHNlO9AeGs6
-GvQAn0V5zaq+uqu9zEDVdxxoZQh9Ujcp
-=g1uI
------END PGP SIGNATURE-----
-
---b5gNqxB1S1yM7hjW--
