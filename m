@@ -2,105 +2,77 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8936EC43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 07:33:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03A41C43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 07:35:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DF242184B
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 07:33:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CDD6A218E0
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 07:35:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725958AbfADHdg (ORCPT
+        id S1726460AbfADHfJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 02:33:36 -0500
-Received: from mga02.intel.com ([134.134.136.20]:39683 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726105AbfADHdg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 02:33:36 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jan 2019 23:33:35 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,437,1539673200"; 
-   d="scan'208";a="115385098"
-Received: from tiwuxiex-mobl.ccr.corp.intel.com (HELO wfg-t570.sh.intel.com) ([10.254.213.147])
-  by orsmga003.jf.intel.com with ESMTP; 03 Jan 2019 23:33:32 -0800
-Received: from wfg by wfg-t570.sh.intel.com with local (Exim 4.89)
-        (envelope-from <fengguang.wu@intel.com>)
-        id 1gfJz2-0001tF-2B; Fri, 04 Jan 2019 15:33:32 +0800
-Date:   Fri, 4 Jan 2019 15:33:32 +0800
-From:   Fengguang Wu <fengguang.wu@intel.com>
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller <syzkaller@googlegroups.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        "Li, Philip" <philip.li@intel.com>,
-        Huang Ying <ying.huang@intel.com>
-Subject: Re: [PATCH] printk: Add caller information to printk() output.
-Message-ID: <20190104073332.qxq2pi44xsmgokaq@wfg-t540p.sh.intel.com>
-References: <c5b5d660-d217-35f0-c4f1-7252367934d1@i-love.sakura.ne.jp>
- <e3f69846-ef08-c8f5-368f-4dada13c9970@i-love.sakura.ne.jp>
- <20181213121847.mwlr2vyv6qzclhk6@pathway.suse.cz>
- <20181213124255.GB3053@tigerII.localdomain>
- <20181217145452.3kev4rmo2l5lt2qy@pathway.suse.cz>
- <93f19e57-5051-c67d-9af4-b17624062d44@i-love.sakura.ne.jp>
- <20181218083911.qxvlqlwlb4eye72x@pathway.suse.cz>
- <20181218085833.GA460@jagdpanzerIV>
- <CACT4Y+ahbDb7F2B1-z5QxroZcqP+AEUfUi6Sa1ZHRpaCeVmZ=w@mail.gmail.com>
- <CACT4Y+ZKR7eib+ZtK-7mbCw6rD6KOeuWtjWtxAcnHEWnYqyjJw@mail.gmail.com>
+        Fri, 4 Jan 2019 02:35:09 -0500
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:39120 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726036AbfADHfI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 02:35:08 -0500
+X-IronPort-AV: E=Sophos;i="5.56,437,1539619200"; 
+   d="scan'208";a="51268127"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 04 Jan 2019 15:35:06 +0800
+Received: from G08CNEXCHPEKD02.g08.fujitsu.local (unknown [10.167.33.83])
+        by cn.fujitsu.com (Postfix) with ESMTP id 4FB134B7D66F;
+        Fri,  4 Jan 2019 15:35:06 +0800 (CST)
+Received: from [10.167.226.60] (10.167.226.60) by
+ G08CNEXCHPEKD02.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Fri, 4 Jan 2019 15:35:07 +0800
+From:   Cao jin <caoj.fnst@cn.fujitsu.com>
+Subject: question about reserve_bios_regions
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>
+CC:     <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Message-ID: <f8f1e21b-197b-78fc-dc03-606e98c7d783@cn.fujitsu.com>
+Date:   Fri, 4 Jan 2019 15:35:03 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <CACT4Y+ZKR7eib+ZtK-7mbCw6rD6KOeuWtjWtxAcnHEWnYqyjJw@mail.gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.167.226.60]
+X-yoursite-MailScanner-ID: 4FB134B7D66F.A9EE4
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: caoj.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 03, 2019 at 07:27:41PM +0100, Dmitry Vyukov wrote:
->On Wed, Jan 2, 2019 at 5:09 PM Dmitry Vyukov <dvyukov@google.com> wrote:
->>
->> On Tue, Dec 18, 2018 at 9:58 AM Sergey Senozhatsky
->> <sergey.senozhatsky.work@gmail.com> wrote:
->> >
->> > On (12/18/18 09:39), Petr Mladek wrote:
->> > >
->> > > Sergey, are you okay with this squashed patch, please?
->> > >
->> >
->> > Yeah. There are several minor nitpicks, but here is my
->> > Acked-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
->> >
->> >
->> > One final question - can syzbot folks confirm that the patch
->> > helps? Just curious.
->>
->> This slip through the cracks. Tetsuo pinged me and I am testing now.
->> Need to create a set of tests and update parsing code to handle this.
->
->I've pushed support for CONFIG_PRINTK_CALLER to syzkaller/syzbot:
->https://github.com/google/syzkaller/commit/7da2392541a49c3f17b2e7d24e04b84d72b965fb
->Let's see what happens. Limited local testing shows that it's working
->as intended and significatly improves quality of reports and ability
->to make sense out of kernel output.
->
->Tetsuo, thanks for your great persistence with this change!
->Sergey, Petr, thanks for reviews!
->
->+Fengguang, Kevin, maybe you will find this useful for 0-day/kernel-ci.
+Hi,
 
-Thanks! We'll try out CONFIG_PRINTK_CALLER.
+  I am looking into these code via find_trampoline_placement, and I have
+some questions still not clear after lots of investigation, hope to get
+some hints.
 
-Regards,
-Fengguang
+1. How is the value of BIOS_START_MIN(128k) determined? I don't find any
+clue about it until now.
+
+2. BIOS_START_MAX is define as 0x9f000U(636k), but both the comments say
+640k, is that a quirk or just typo?  I thought the 4k difference is the
+quirk, but later I guess the real quirk lies in latter judgment of :
+
+  if (ebda_start >= BIOS_START_MIN && ebda_start < bios_start)
+
+
+I have checked out commit edce21216a8: ("x86/boot: Reorganize and clean
+up the BIOS area reservation code"), still no clue.
+
+-- 
+Sincerely,
+Cao jin
+
+
