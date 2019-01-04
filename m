@@ -2,144 +2,110 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFD47C43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 14:18:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4073C43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 14:19:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE6E221871
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 14:18:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546611491;
-	bh=lvh/revn/Ntxo2/w0uYzO0T0Wis5FHhyYbshoEFusdA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=vbDR4gRkWYVZYynH5RdFlZ7UnSMNGwu7s9fwJkzhoGdX0TX8QU1OFC3FjlqmQr9AA
-	 cm4R8Sew4W3Q4XYngiHXX4a3LkhEBSjHBc30n0TktRn0n/wu2Ag5FLAhHP93AEgpJw
-	 5f0IRx0y6CeosH/izPMlIwuO2Vf+i3OPAZhR+D+E=
+	by mail.kernel.org (Postfix) with ESMTP id 9B7E521871
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 14:19:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727956AbfADOSL (ORCPT
+        id S1727330AbfADOTq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 09:18:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45024 "EHLO mail.kernel.org"
+        Fri, 4 Jan 2019 09:19:46 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:58402 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726928AbfADOSJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 09:18:09 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726069AbfADOTq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 09:19:46 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9751B208E3;
-        Fri,  4 Jan 2019 14:18:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546611488;
-        bh=lvh/revn/Ntxo2/w0uYzO0T0Wis5FHhyYbshoEFusdA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=cw1791UkRLdC77XIzT6wQ2JVvIaXhrvUyiwU9L/9hx37uh2B7kXX1YvTF+/CHAsl+
-         TGKnu8tUJomrgNk1hNtAm9TQrvhTzr05iqf5dwyoRlqcs670BcIFHbt7btVFajlI0x
-         OmAo+sGYGGpKBuB6RSYrGQ2iZ2ET2DiGzqW2yFko=
-Date:   Fri, 4 Jan 2019 15:18:05 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Dave Martin <Dave.Martin@arm.com>
-Cc:     Jeremy Linton <jeremy.linton@arm.com>, mark.rutland@arm.com,
-        David Woodhouse <dwmw@amazon.co.uk>, mlangsdo@redhat.com,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        suzuki.poulose@arm.com, marc.zyngier@arm.com,
-        catalin.marinas@arm.com, Dave Hansen <dave.hansen@intel.com>,
-        julien.thierry@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, steven.price@arm.com,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>, shankerd@codeaurora.org,
-        ykaukab@suse.de, Thomas Gleixner <tglx@linutronix.de>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 1/7] sysfs/cpu: Add "Unknown" vulnerability state
-Message-ID: <20190104141805.GA15939@kroah.com>
-References: <20190103004921.1928921-1-jeremy.linton@arm.com>
- <20190103004921.1928921-2-jeremy.linton@arm.com>
- <20190103093858.GA10794@kroah.com>
- <c9e08010-3ca0-cb03-e5ad-ab19342ff63b@arm.com>
- <20190103164831.GF14994@kroah.com>
- <20190104140832.GC3571@e103592.cambridge.arm.com>
+        by mx1.redhat.com (Postfix) with ESMTPS id D7CBDCD66C;
+        Fri,  4 Jan 2019 14:19:45 +0000 (UTC)
+Received: from vitty.brq.redhat.com (unknown [10.43.2.155])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 38F645D9C5;
+        Fri,  4 Jan 2019 14:19:44 +0000 (UTC)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     devel@linuxdriverproject.org
+Cc:     Sasha Levin <sashal@kernel.org>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        linux-kernel@vger.kernel.org, Dexuan Cui <decui@microsoft.com>
+Subject: [PATCH] hv_balloon: avoid touching uninitialized struct page during tail onlining
+Date:   Fri,  4 Jan 2019 15:19:42 +0100
+Message-Id: <20190104141942.19126-1-vkuznets@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190104140832.GC3571@e103592.cambridge.arm.com>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Fri, 04 Jan 2019 14:19:45 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 04, 2019 at 02:08:32PM +0000, Dave Martin wrote:
-> On Thu, Jan 03, 2019 at 05:48:31PM +0100, Greg Kroah-Hartman wrote:
-> > On Thu, Jan 03, 2019 at 10:38:16AM -0600, Jeremy Linton wrote:
-> > > On 01/03/2019 03:38 AM, Greg Kroah-Hartman wrote:
-> > > > On Wed, Jan 02, 2019 at 06:49:15PM -0600, Jeremy Linton wrote:
-> > > > > There is a lot of variation in the Arm ecosystem. Because of this,
-> > > > > there exist possible cases where the kernel cannot authoritatively
-> > > > > determine if a machine is vulnerable.
-> > > > 
-> > > > Really?  Why not?  What keeps you from "knowing" this?  Can't the
-> > > > developer of the chip tell you?
-> > > 
-> > > There tends to be a few cases, possibly incomplete white/black lists,
-> > 
-> > Then fix the lists :)
-> > 
-> > > firmware that isn't responding correctly, or the user didn't build in the
-> > > code to check the mitigation (possibly because its an embedded system and
-> > > they know its not vulnerable?).
-> > 
-> > If the firmware doesn't respond, that would imply it is vulnerable :)
-> > 
-> > And if the code isn't built in, again, it's vulnerable.
-> > 
-> > > I would hope that it is an exceptional case.
-> > 
-> > Then have the default be vulnerable, don't give people false hope.
-> > 
-> > > > > Rather than guess the vulnerability status in cases where
-> > > > > the mitigation is disabled or the firmware isn't responding
-> > > > > correctly, we need to display an "Unknown" state.
-> > > > 
-> > > > Shouldn't "Unknown" really be the same thing as "Vulnerable"?  A user
-> > > > should treat it the same way, "Unknown" makes it feel like "maybe I can
-> > > > just ignore this and hope I really am safe", which is not a good idea at
-> > > > all.
-> > > 
-> > > I tend to agree its not clear what to do with "unknown".
-> > > 
-> > > OTOH, I think there is a hesitation to declare something vulnerable when it
-> > > isn't. Meltdown for example, is fairly rare given that it currently only
-> > > affects a few arm parts, so declaring someone vulnerable when they likely
-> > > aren't is going to be just as difficult to explain.
-> > 
-> > If you know it is rare, then you know how to properly detect it so
-> > "unknown" is not needed, correct?
-> > 
-> > Again, "unknown" is not going to help anyone out here, please don't do
-> > it.
-> 
-> Thinking about it, "unknown" is actually the common case.
-> 
-> Kernels that predate the sysfs vulnerabilities interface effectively
-> report this for all vulnerabilities by omitting the sysfs entries
-> entirely.
-> 
-> Current kernels also don't know anything about future vulnerabilities
-> that may be added in sysfs later on (but which may nevertheless be
-> discovered subsequently to affect current hardware).
-> 
-> So, can we simply omit the sysfs entries for which we can't provide a
-> good answer?
+Hyper-V memory hotplug protocol has 2M granularity and in Linux x86 we use
+128M. To deal with it we implement partial section onlining by registering
+custom page onlining callback (hv_online_page()). Later, when more memory
+arrives we try to online the 'tail' (see hv_bring_pgs_online()).
 
-As you say, we already do this for older systems.
+It was found that in some cases this 'tail' onlining causes issues:
 
-But don't add new logic to explicitly not create the files just because
-we "can not figure it out".  For those systems, I would default to
-"vulnerable" as I think that's what we do today, right?
+ BUG: Bad page state in process kworker/0:2  pfn:109e3a
+ page:ffffe08344278e80 count:0 mapcount:1 mapping:0000000000000000 index:0x0
+ flags: 0xfffff80000000()
+ raw: 000fffff80000000 dead000000000100 dead000000000200 0000000000000000
+ raw: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ page dumped because: nonzero mapcount
+ ...
+ Workqueue: events hot_add_req [hv_balloon]
+ Call Trace:
+  dump_stack+0x5c/0x80
+  bad_page.cold.112+0x7f/0xb2
+  free_pcppages_bulk+0x4b8/0x690
+  free_unref_page+0x54/0x70
+  hv_page_online_one+0x5c/0x80 [hv_balloon]
+  hot_add_req.cold.24+0x182/0x835 [hv_balloon]
+  ...
 
-thanks,
-g
-reg k-h
+Turns out that we now have deferred struct page initialization for memory
+hotplug so e.g. memory_block_action() in drivers/base/memory.c does
+pages_correctly_probed() check and in that check it avoids inspecting
+struct pages and checks sections instead. But in Hyper-V balloon driver we
+do PageReserved(pfn_to_page()) check and this is now wrong.
+
+Switch to checking online_section_nr() instead.
+
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+---
+ drivers/hv/hv_balloon.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/hv/hv_balloon.c b/drivers/hv/hv_balloon.c
+index 5301fef16c31..7c6349a50ef1 100644
+--- a/drivers/hv/hv_balloon.c
++++ b/drivers/hv/hv_balloon.c
+@@ -888,12 +888,14 @@ static unsigned long handle_pg_range(unsigned long pg_start,
+ 			pfn_cnt -= pgs_ol;
+ 			/*
+ 			 * Check if the corresponding memory block is already
+-			 * online by checking its last previously backed page.
+-			 * In case it is we need to bring rest (which was not
+-			 * backed previously) online too.
++			 * online. It is possible to observe struct pages still
++			 * being uninitialized here so check section instead.
++			 * In case the section is online we need to bring the
++			 * rest of pfns (which were not backed previously)
++			 * online too.
+ 			 */
+ 			if (start_pfn > has->start_pfn &&
+-			    !PageReserved(pfn_to_page(start_pfn - 1)))
++			    online_section_nr(pfn_to_section_nr(start_pfn)))
+ 				hv_bring_pgs_online(has, start_pfn, pgs_ol);
+ 
+ 		}
+-- 
+2.20.1
+
