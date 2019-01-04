@@ -5,67 +5,70 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C687C43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 17:28:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E71CDC43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 17:29:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65855218D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 17:28:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C2E1C218CD
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 17:29:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728210AbfADR2F convert rfc822-to-8bit (ORCPT
+        id S1728293AbfADR31 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 12:28:05 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:48316 "EHLO mx1.redhat.com"
+        Fri, 4 Jan 2019 12:29:27 -0500
+Received: from mga05.intel.com ([192.55.52.43]:51557 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726760AbfADR2F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 12:28:05 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id DB6FF2D7FF;
-        Fri,  4 Jan 2019 17:28:04 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-244.rdu2.redhat.com [10.10.120.244])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 435EA101F97D;
-        Fri,  4 Jan 2019 17:28:03 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20190103171659.GA208343@gmail.com>
-References: <20190103171659.GA208343@gmail.com> <20181230162906.GI27785@darkstar.musicnaut.iki.fi>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     dhowells@redhat.com, Aaro Koskinen <aaro.koskinen@iki.fi>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        linux-fscrypt@vger.kernel.org, linux-kernel@vger.kernel.org,
-        keyrings@vger.kernel.org
-Subject: Re: Bug report: unaligned access with ext4 encryption
+        id S1726760AbfADR31 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 12:29:27 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jan 2019 09:29:27 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,439,1539673200"; 
+   d="scan'208";a="132983635"
+Received: from orsmsx102.amr.corp.intel.com ([10.22.225.129])
+  by fmsmga004.fm.intel.com with ESMTP; 04 Jan 2019 09:29:26 -0800
+Received: from orsmsx116.amr.corp.intel.com (10.22.240.14) by
+ ORSMSX102.amr.corp.intel.com (10.22.225.129) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Fri, 4 Jan 2019 09:29:26 -0800
+Received: from orsmsx110.amr.corp.intel.com ([169.254.10.158]) by
+ ORSMSX116.amr.corp.intel.com ([169.254.7.100]) with mapi id 14.03.0415.000;
+ Fri, 4 Jan 2019 09:29:26 -0800
+From:   "Luck, Tony" <tony.luck@intel.com>
+To:     =?utf-8?B?5buW5aiB6ZuE?= <liaoweixiong@allwinnertech.com>,
+        Kees Cook <keescook@chromium.org>,
+        Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [RFC v4 0/3] pstore/rom: new support logger for block devices
+Thread-Topic: [RFC v4 0/3] pstore/rom: new support logger for block devices
+Thread-Index: AQHUozhqO1w/2T4wnE2emvMOu7brUqWdyBJAgAFu2ICAACgTwA==
+Date:   Fri, 4 Jan 2019 17:29:25 +0000
+Message-ID: <3908561D78D1C84285E8C5FCA982C28F7D4BB657@ORSMSX110.amr.corp.intel.com>
+References: <1546501533-1855-1-git-send-email-liaoweixiong@allwinnertech.com>
+ <3908561D78D1C84285E8C5FCA982C28F7D4B623C@ORSMSX110.amr.corp.intel.com>
+ <e94cfa87-9f25-101e-708c-c116b90e8e45@allwinnertech.com>
+In-Reply-To: <e94cfa87-9f25-101e-708c-c116b90e8e45@allwinnertech.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMGExZTY5ODctNTBlNC00NzkxLTlmNzQtMDg3ZDE5ZjBjNjE5IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoic0NNa1RTdmh0bFk4WkUyS2FXMGpZWUxhaFwvdU9xY1lMdEIxVGg3WkFkSGpnTTdxbURSb2pLQzROTmtjSzNwWU0ifQ==
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.22.254.140]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <17390.1546622882.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: 8BIT
-Date:   Fri, 04 Jan 2019 17:28:02 +0000
-Message-ID: <17391.1546622882@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Fri, 04 Jan 2019 17:28:05 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Eric Biggers <ebiggers@kernel.org> wrote:
-
-> Hi Aaro, thanks for the bug report!  I think you're on the right track; it makes
-> much more sense to have the keyrings subsystem store the payload with better
-> alignment, than to work around the 2-byte alignment in fscrypt.
-> 
-> But how about '__aligned(__alignof__(u64))' instead?  4 bytes may not be enough.
-> 
-> David, what do you think?
-
-Does that even work?
-
-Might be better to just insert 6 bytes of padding with a comment, but yes I
-agree that it's probably better to align it to at least machine word size.
-
-David
+Pj4gSXQgbG9va3MgdG8gYmUgYSByZWFsbHkgZ29vZCBpZGVhLg0KPiBTaG91bGQgaSBhZGQgIkFj
+a2VkLWJ5IiBpbiBuZXh0IHZlcnNpb24gb2YgcGF0Y2g/DQoNCkkndmUgb25seSBsb29rZWQgYXQg
+dGhlIGNvbmNlcHQsIG5vdCBhdCB0aGUgY29kZSB5ZXQuIFNvIHRvbyBlYXJseSB0byBjb21taXQg
+dG8gYW4gIkFja2VkLWJ5Ig0KDQo+IEkgaGF2ZSBsaXR0bGUgZXhwZXJpZW5jZSBpbiBzZW5kaW5n
+IHBhdGNoIHRvIHVwc3RyZWFtIGxpbnV4Lg0KDQpZb3UgYXJlIGRvaW5nIGZpbmUgc28gZmFyLg0K
+DQotVG9ueQ0KIA0K
