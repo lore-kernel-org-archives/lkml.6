@@ -2,275 +2,222 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C7CCC43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 09:44:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBF86C43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 09:46:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20AFB218FF
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 09:44:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="j5NLY8yF"
+	by mail.kernel.org (Postfix) with ESMTP id AF4B42184B
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 09:46:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727794AbfADJot (ORCPT
+        id S1727827AbfADJqE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 04:44:49 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:35134 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725931AbfADJos (ORCPT
+        Fri, 4 Jan 2019 04:46:04 -0500
+Received: from mail-it1-f200.google.com ([209.85.166.200]:54233 "EHLO
+        mail-it1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727022AbfADJqE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 04:44:48 -0500
-Received: by mail-pl1-f194.google.com with SMTP id p8so17219624plo.2
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Jan 2019 01:44:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=1MG9cGxllvxcFxqe5/7vWOoA1Mh9LTZ2vq6D1pcTPoI=;
-        b=j5NLY8yFJNAfhdYLl5QwcLqQeYHDAz0znfBJy5meFTErqfVSUpbpEHcBhyjx+PEWOQ
-         QVtECS/uHnxSMKHGyk60CKDJoEip0ssV5dUVUa4j5xZQbYcmL7+OpcXPL03AGytijW8C
-         qAWY/RAyow6cs3p3W6OmMOFcQA6s2BiZ5jYqg=
+        Fri, 4 Jan 2019 04:46:04 -0500
+Received: by mail-it1-f200.google.com with SMTP id i12so549970ita.3
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Jan 2019 01:46:03 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=1MG9cGxllvxcFxqe5/7vWOoA1Mh9LTZ2vq6D1pcTPoI=;
-        b=MRY3xWrHnD3maydcG8axMupAE3EUa2SgcChdaEZDlnKJU0ImIh17QdLdG+U84ShxvB
-         023m2fi2DGxjrZ11k8DP5tLimj+H2QGhKyrPASQhoHmjaZcVJF9Tr9Pa91M5ENFKJt1L
-         AzI7n9vzzzozCZ3GBwwx0WKvETaVeGagbOtx8e3pqgpJfIMSnTChfS58xsariJA7UUWc
-         6LSA+m5VtdDtSk3EddPNGxVYG5x/I91uqaRlz6nf1cZcZAzh4visy2JoMx375XrkeqwJ
-         6nCnF8Tlqwcd7Q6Nvb3yx7A1gYP2HQ6QVcwUOziSJWU1sEKANSCzdZosMbp1kdrrjp2D
-         amzA==
-X-Gm-Message-State: AJcUukcV3/ETNhvLNAEMsJoIWz28nl47W2yF1HYFxc9oi8+KgnEHnr3T
-        fG1YrFYHA40RLLe/6AOMNCn0Tw==
-X-Google-Smtp-Source: ALg8bN7Qz0zqMgAdptul9ZPCkzU4LRNafsSXh5INPi6BjlWZ77mnMJqFOIsOXW52CKTFlGp+boRVSA==
-X-Received: by 2002:a17:902:e290:: with SMTP id cf16mr51346700plb.81.1546595087296;
-        Fri, 04 Jan 2019 01:44:47 -0800 (PST)
-Received: from localhost ([122.166.131.155])
-        by smtp.gmail.com with ESMTPSA id u126sm121771528pgb.2.2019.01.04.01.44.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 04 Jan 2019 01:44:46 -0800 (PST)
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Valentin Schneider <valentin.schneider@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        quentin.perret@arm.com, dietmar.eggemann@arm.com,
-        Douglas.Raillard@arm.com, "4 . 20" <stable@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] cpufreq: scpi/scmi: Fix freeing of dynamic OPPs
-Date:   Fri,  4 Jan 2019 15:14:33 +0530
-Message-Id: <7dddbeabb434225d9b3d02600ea4a2313622ca26.1546594910.git.viresh.kumar@linaro.org>
-X-Mailer: git-send-email 2.19.1.568.g152ad8e3369a
-In-Reply-To: <a2a42913-04e0-e6fc-d9ee-a2e355ac22c9@arm.com>
-References: <a2a42913-04e0-e6fc-d9ee-a2e355ac22c9@arm.com>
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=a3DMV1clYHpY3RXXWGtCPAX+8A23FuVFl51zxnc57NI=;
+        b=mP9UTNBJVVbgPzN1rZKkWoVzWJN06kljaiEHDOnbSUSAixrHH+5xZa/D6NIymaN7QP
+         hdH5RapNJAsiDCsEe3NgoRxYEFljOBeik8wuRzcohAk5cTb2FziZEAl4/BXPRpYxXAu/
+         JsWG4feK68HOZWViwTdQHISPo4+knTzP6EFKUU0ODzeFZg54C5LZ2nkWl0XsfJznP+8f
+         8nM37D+xLwrqyh0EWNQHJGVkQgrZPju9q6WKUYrAonN1nAMLiqbzXPbAZJ4vBAP4uYhE
+         TwdIcIuIZiHCgY9yrCUBgezFoyB2B8GOfaKGFJSvNI5lMtr1IAyb3FN8GOWqurz/C+LQ
+         Vbew==
+X-Gm-Message-State: AJcUukc/zFumtW52XWkFdBEb4bRxOsvZRMcKtH3gLh8E3dqIpT9pLUAk
+        k+PMHJIYDmdMe+Fj/FWbxlkCziznc6w/RWecYuG5KBr650Wb
+X-Google-Smtp-Source: ALg8bN5rMM7PO2deYAQIYpr8nEu1hDXnj0SJowJcuNkyKni9/yClHe0xml1ugnSRnpJWRSXpUtHgyvjIYWO+0Jv1ELxsKlHEm3sz
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a6b:680a:: with SMTP id d10mr30523857ioc.35.1546595162720;
+ Fri, 04 Jan 2019 01:46:02 -0800 (PST)
+Date:   Fri, 04 Jan 2019 01:46:02 -0800
+In-Reply-To: <000000000000a980e3057896e9df@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000491298057e9ebf6e@google.com>
+Subject: Re: KASAN: use-after-free Read in kobject_put
+From:   syzbot <syzbot+fdc00003f4efff43bc5b@syzkaller.appspotmail.com>
+To:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        rafael@kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since the commit 2a4eb7358aba ("OPP: Don't remove dynamic OPPs from
-_dev_pm_opp_remove_table()"), dynamically created OPP aren't
-automatically removed anymore by dev_pm_opp_cpumask_remove_table(). This
-affects the scpi and scmi cpufreq drivers which no longer free OPPs on
-failures or on invocations of the policy->exit() callback.
+syzbot has found a reproducer for the following crash on:
 
-Create a generic OPP helper dev_pm_opp_remove_all_dynamic() which can be
-called from these drivers instead of dev_pm_opp_cpumask_remove_table().
+HEAD commit:    645ff1e8e704 Merge branch 'for-linus' of git://git.kernel...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=172cee4b400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7308e68273924137
+dashboard link: https://syzkaller.appspot.com/bug?extid=fdc00003f4efff43bc5b
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15d603e7400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10786f77400000
 
-In dev_pm_opp_remove_all_dynamic(), we need to make sure that the
-opp_list isn't getting accessed simultaneously from other parts of the
-OPP core while the helper is freeing dynamic OPPs, i.e. we can't drop
-the opp_table->lock while traversing through the OPP list. And to
-accomplish that, this patch also creates _opp_kref_release_unlocked()
-which can be called from this new helper with the opp_table lock already
-held.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+fdc00003f4efff43bc5b@syzkaller.appspotmail.com
 
-Cc: 4.20 <stable@vger.kernel.org> # v4.20
-Reported-by: Valentin Schneider <valentin.schneider@arm.com>
-Fixes: 2a4eb7358aba ("OPP: Don't remove dynamic OPPs from _dev_pm_opp_remove_table()")
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
----
- drivers/cpufreq/scmi-cpufreq.c |  4 +--
- drivers/cpufreq/scpi-cpufreq.c |  4 +--
- drivers/opp/core.c             | 63 +++++++++++++++++++++++++++++++---
- include/linux/pm_opp.h         |  5 +++
- 4 files changed, 67 insertions(+), 9 deletions(-)
+==================================================================
+BUG: KASAN: use-after-free in kobject_put+0xca/0xe0 lib/kobject.c:704
+Read of size 1 at addr ffff88808f9e9ecc by task syz-executor111/8699
 
-diff --git a/drivers/cpufreq/scmi-cpufreq.c b/drivers/cpufreq/scmi-cpufreq.c
-index 50b1551ba894..c2e66528f5ee 100644
---- a/drivers/cpufreq/scmi-cpufreq.c
-+++ b/drivers/cpufreq/scmi-cpufreq.c
-@@ -176,7 +176,7 @@ static int scmi_cpufreq_init(struct cpufreq_policy *policy)
- out_free_priv:
- 	kfree(priv);
- out_free_opp:
--	dev_pm_opp_cpumask_remove_table(policy->cpus);
-+	dev_pm_opp_remove_all_dynamic(cpu_dev);
- 
- 	return ret;
- }
-@@ -188,7 +188,7 @@ static int scmi_cpufreq_exit(struct cpufreq_policy *policy)
- 	cpufreq_cooling_unregister(priv->cdev);
- 	dev_pm_opp_free_cpufreq_table(priv->cpu_dev, &policy->freq_table);
- 	kfree(priv);
--	dev_pm_opp_cpumask_remove_table(policy->related_cpus);
-+	dev_pm_opp_remove_all_dynamic(priv->cpu_dev);
- 
- 	return 0;
- }
-diff --git a/drivers/cpufreq/scpi-cpufreq.c b/drivers/cpufreq/scpi-cpufreq.c
-index 87a98ec77773..99449738faa4 100644
---- a/drivers/cpufreq/scpi-cpufreq.c
-+++ b/drivers/cpufreq/scpi-cpufreq.c
-@@ -177,7 +177,7 @@ static int scpi_cpufreq_init(struct cpufreq_policy *policy)
- out_free_priv:
- 	kfree(priv);
- out_free_opp:
--	dev_pm_opp_cpumask_remove_table(policy->cpus);
-+	dev_pm_opp_remove_all_dynamic(cpu_dev);
- 
- 	return ret;
- }
-@@ -190,7 +190,7 @@ static int scpi_cpufreq_exit(struct cpufreq_policy *policy)
- 	clk_put(priv->clk);
- 	dev_pm_opp_free_cpufreq_table(priv->cpu_dev, &policy->freq_table);
- 	kfree(priv);
--	dev_pm_opp_cpumask_remove_table(policy->related_cpus);
-+	dev_pm_opp_remove_all_dynamic(priv->cpu_dev);
- 
- 	return 0;
- }
-diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-index e5507add8f04..18f1639dbc4a 100644
---- a/drivers/opp/core.c
-+++ b/drivers/opp/core.c
-@@ -988,11 +988,9 @@ void _opp_free(struct dev_pm_opp *opp)
- 	kfree(opp);
- }
- 
--static void _opp_kref_release(struct kref *kref)
-+static void _opp_kref_release(struct dev_pm_opp *opp,
-+			      struct opp_table *opp_table)
- {
--	struct dev_pm_opp *opp = container_of(kref, struct dev_pm_opp, kref);
--	struct opp_table *opp_table = opp->opp_table;
--
- 	/*
- 	 * Notify the changes in the availability of the operable
- 	 * frequency/voltage list.
-@@ -1002,7 +1000,22 @@ static void _opp_kref_release(struct kref *kref)
- 	opp_debug_remove_one(opp);
- 	list_del(&opp->node);
- 	kfree(opp);
-+}
- 
-+static void _opp_kref_release_unlocked(struct kref *kref)
-+{
-+	struct dev_pm_opp *opp = container_of(kref, struct dev_pm_opp, kref);
-+	struct opp_table *opp_table = opp->opp_table;
-+
-+	_opp_kref_release(opp, opp_table);
-+}
-+
-+static void _opp_kref_release_locked(struct kref *kref)
-+{
-+	struct dev_pm_opp *opp = container_of(kref, struct dev_pm_opp, kref);
-+	struct opp_table *opp_table = opp->opp_table;
-+
-+	_opp_kref_release(opp, opp_table);
- 	mutex_unlock(&opp_table->lock);
- }
- 
-@@ -1013,10 +1026,16 @@ void dev_pm_opp_get(struct dev_pm_opp *opp)
- 
- void dev_pm_opp_put(struct dev_pm_opp *opp)
- {
--	kref_put_mutex(&opp->kref, _opp_kref_release, &opp->opp_table->lock);
-+	kref_put_mutex(&opp->kref, _opp_kref_release_locked,
-+		       &opp->opp_table->lock);
- }
- EXPORT_SYMBOL_GPL(dev_pm_opp_put);
- 
-+static void dev_pm_opp_put_unlocked(struct dev_pm_opp *opp)
-+{
-+	kref_put(&opp->kref, _opp_kref_release_unlocked);
-+}
-+
- /**
-  * dev_pm_opp_remove()  - Remove an OPP from OPP table
-  * @dev:	device for which we do this operation
-@@ -1060,6 +1079,40 @@ void dev_pm_opp_remove(struct device *dev, unsigned long freq)
- }
- EXPORT_SYMBOL_GPL(dev_pm_opp_remove);
- 
-+/**
-+ * dev_pm_opp_remove_all_dynamic() - Remove all dynamically created OPPs
-+ * @dev:	device for which we do this operation
-+ *
-+ * This function removes all dynamically created OPPs from the opp table.
-+ */
-+void dev_pm_opp_remove_all_dynamic(struct device *dev)
-+{
-+	struct opp_table *opp_table;
-+	struct dev_pm_opp *opp, *temp;
-+	int count = 0;
-+
-+	opp_table = _find_opp_table(dev);
-+	if (IS_ERR(opp_table))
-+		return;
-+
-+	mutex_lock(&opp_table->lock);
-+	list_for_each_entry_safe(opp, temp, &opp_table->opp_list, node) {
-+		if (opp->dynamic) {
-+			dev_pm_opp_put_unlocked(opp);
-+			count++;
-+		}
-+	}
-+	mutex_unlock(&opp_table->lock);
-+
-+	/* Drop the references taken by dev_pm_opp_add() */
-+	while (count--)
-+		dev_pm_opp_put_opp_table(opp_table);
-+
-+	/* Drop the reference taken by _find_opp_table() */
-+	dev_pm_opp_put_opp_table(opp_table);
-+}
-+EXPORT_SYMBOL_GPL(dev_pm_opp_remove_all_dynamic);
-+
- struct dev_pm_opp *_opp_allocate(struct opp_table *table)
- {
- 	struct dev_pm_opp *opp;
-diff --git a/include/linux/pm_opp.h b/include/linux/pm_opp.h
-index 0a2a88e5a383..b895f4e79868 100644
---- a/include/linux/pm_opp.h
-+++ b/include/linux/pm_opp.h
-@@ -108,6 +108,7 @@ void dev_pm_opp_put(struct dev_pm_opp *opp);
- int dev_pm_opp_add(struct device *dev, unsigned long freq,
- 		   unsigned long u_volt);
- void dev_pm_opp_remove(struct device *dev, unsigned long freq);
-+void dev_pm_opp_remove_all_dynamic(struct device *dev);
- 
- int dev_pm_opp_enable(struct device *dev, unsigned long freq);
- 
-@@ -217,6 +218,10 @@ static inline void dev_pm_opp_remove(struct device *dev, unsigned long freq)
- {
- }
- 
-+static inline void dev_pm_opp_remove_all_dynamic(struct device *dev)
-+{
-+}
-+
- static inline int dev_pm_opp_enable(struct device *dev, unsigned long freq)
- {
- 	return 0;
--- 
-2.19.1.568.g152ad8e3369a
+CPU: 1 PID: 8699 Comm: syz-executor111 Not tainted 4.20.0+ #8
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1db/0x2d0 lib/dump_stack.c:113
+  print_address_description.cold+0x7c/0x20d mm/kasan/report.c:187
+  kasan_report.cold+0x1b/0x40 mm/kasan/report.c:317
+  __asan_report_load1_noabort+0x14/0x20 mm/kasan/generic_report.c:132
+  kobject_put+0xca/0xe0 lib/kobject.c:704
+  put_device+0x20/0x30 drivers/base/core.c:2060
+  hci_free_dev+0x19/0x20 net/bluetooth/hci_core.c:3208
+  vhci_release+0x7e/0xf0 drivers/bluetooth/hci_vhci.c:355
+  __fput+0x3c5/0xb10 fs/file_table.c:278
+  ____fput+0x16/0x20 fs/file_table.c:309
+  task_work_run+0x1f4/0x2b0 kernel/task_work.c:113
+  tracehook_notify_resume include/linux/tracehook.h:188 [inline]
+  exit_to_usermode_loop+0x32a/0x3b0 arch/x86/entry/common.c:166
+  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
+  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
+  do_syscall_64+0x696/0x800 arch/x86/entry/common.c:293
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x4054f1
+Code: 75 14 b8 03 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 94 17 00 00 c3 48  
+83 ec 08 e8 6a fc ff ff 48 89 04 24 b8 03 00 00 00 0f 05 <48> 8b 3c 24 48  
+89 c2 e8 b3 fc ff ff 48 89 d0 48 83 c4 08 48 3d 01
+RSP: 002b:00007ffeb26e56e0 EFLAGS: 00000293 ORIG_RAX: 0000000000000003
+RAX: 0000000000000000 RBX: 0000000000000004 RCX: 00000000004054f1
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000004
+RBP: 0000000000000000 R08: 000000037ffffa00 R09: 0000000000000001
+R10: 0000000000000001 R11: 0000000000000293 R12: 00000000006dbc2c
+R13: 20c49ba5e353f7cf R14: 000000000000002d R15: 0000000000000005
+
+Allocated by task 8707:
+  save_stack+0x45/0xd0 mm/kasan/common.c:73
+  set_track mm/kasan/common.c:85 [inline]
+  kasan_kmalloc mm/kasan/common.c:482 [inline]
+  kasan_kmalloc+0xcf/0xe0 mm/kasan/common.c:455
+  kmem_cache_alloc_trace+0x151/0x760 mm/slab.c:3607
+  kmalloc include/linux/slab.h:545 [inline]
+  kzalloc include/linux/slab.h:740 [inline]
+  hci_alloc_dev+0x148/0x21a0 net/bluetooth/hci_core.c:3116
+  __vhci_create_device+0x101/0x5a0 drivers/bluetooth/hci_vhci.c:114
+  vhci_create_device drivers/bluetooth/hci_vhci.c:163 [inline]
+  vhci_get_user drivers/bluetooth/hci_vhci.c:219 [inline]
+  vhci_write+0x2d0/0x470 drivers/bluetooth/hci_vhci.c:299
+  call_write_iter include/linux/fs.h:1862 [inline]
+  new_sync_write fs/read_write.c:474 [inline]
+  __vfs_write+0x764/0xb40 fs/read_write.c:487
+  vfs_write+0x20c/0x580 fs/read_write.c:549
+  ksys_write+0x105/0x260 fs/read_write.c:598
+  __do_sys_write fs/read_write.c:610 [inline]
+  __se_sys_write fs/read_write.c:607 [inline]
+  __x64_sys_write+0x73/0xb0 fs/read_write.c:607
+  do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Freed by task 8699:
+  save_stack+0x45/0xd0 mm/kasan/common.c:73
+  set_track mm/kasan/common.c:85 [inline]
+  __kasan_slab_free+0x102/0x150 mm/kasan/common.c:444
+  kasan_slab_free+0xe/0x10 mm/kasan/common.c:452
+  __cache_free mm/slab.c:3485 [inline]
+  kfree+0xcf/0x230 mm/slab.c:3804
+  bt_host_release+0x19/0x30 net/bluetooth/hci_sysfs.c:86
+  device_release+0x7d/0x210 drivers/base/core.c:919
+  kobject_cleanup lib/kobject.c:662 [inline]
+  kobject_release lib/kobject.c:691 [inline]
+  kref_put include/linux/kref.h:67 [inline]
+  kobject_put.cold+0x28f/0x2ec lib/kobject.c:708
+  put_device+0x20/0x30 drivers/base/core.c:2060
+  hci_dev_put include/net/bluetooth/hci_core.h:1014 [inline]
+  hci_unregister_dev+0x716/0x980 net/bluetooth/hci_core.c:3379
+  vhci_release+0x76/0xf0 drivers/bluetooth/hci_vhci.c:354
+  __fput+0x3c5/0xb10 fs/file_table.c:278
+  ____fput+0x16/0x20 fs/file_table.c:309
+  task_work_run+0x1f4/0x2b0 kernel/task_work.c:113
+  tracehook_notify_resume include/linux/tracehook.h:188 [inline]
+  exit_to_usermode_loop+0x32a/0x3b0 arch/x86/entry/common.c:166
+  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
+  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
+  do_syscall_64+0x696/0x800 arch/x86/entry/common.c:293
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+The buggy address belongs to the object at ffff88808f9e8e00
+  which belongs to the cache kmalloc-8k of size 8192
+The buggy address is located 4300 bytes inside of
+  8192-byte region [ffff88808f9e8e00, ffff88808f9eae00)
+The buggy address belongs to the page:
+page:ffffea00023e7a00 count:1 mapcount:0 mapping:ffff88812c3f2080 index:0x0  
+compound_mapcount: 0
+flags: 0x1fffc0000010200(slab|head)
+raw: 01fffc0000010200 ffffea00023e6808 ffffea00023e8408 ffff88812c3f2080
+raw: 0000000000000000 ffff88808f9e8e00 0000000100000001 0000000000000000
+page dumped because: kasan: bad access detected
+kobject: 'rfkill468' (000000007192bbb6): kobject_cleanup, parent            
+(null)
+
+Memory state around the buggy address:
+  ffff88808f9e9d80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff88808f9e9e00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> ffff88808f9e9e80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                               ^
+  ffff88808f9e9f00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff88808f9e9f80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+kobject: 'rfkill471' (00000000171c66a4): kobject_add_internal:  
+parent: 'hci2', set: 'devices'
+kobject: 'rfkill471' (00000000171c66a4): kobject_uevent_env
+kobject: 'hci6' (00000000cea6c5b0): fill_kobj_path: path  
+= '/devices/virtual/bluetooth/hci6'
+kobject: 'hci5' (00000000d9130f82): kobject_uevent_env
+kobject: 'rfkill468' (000000007192bbb6): calling ktype release
+kobject: 'hci5' (00000000d9130f82): fill_kobj_path: path  
+= '/devices/virtual/bluetooth/hci5'
+kobject: 'rfkill468': free name
+kobject: 'rfkill471' (00000000171c66a4): fill_kobj_path: path  
+= '/devices/virtual/bluetooth/hci2/rfkill471'
+kobject: 'hci1' (000000006eef9329): kobject_uevent_env
+kobject: 'rfkill472' (000000003d2f7a84): kobject_add_internal:  
+parent: 'hci0', set: 'devices'
+kobject: 'hci1' (000000006eef9329): fill_kobj_path: path  
+= '/devices/virtual/bluetooth/hci1'
+kobject: 'rfkill469' (0000000043e5b34a): kobject_uevent_env
+kobject: 'hci1' (000000006eef9329): kobject_cleanup, parent           (null)
+kobject: 'rfkill469' (0000000043e5b34a): fill_kobj_path: path  
+= '/devices/virtual/bluetooth/hci3/rfkill469'
+kobject: 'hci1' (000000006eef9329): calling ktype release
+kobject: 'rfkill472' (000000003d2f7a84): kobject_uevent_env
+kobject: 'rfkill470' (00000000155e553b): kobject_uevent_env
+kobject: 'rfkill472' (000000003d2f7a84): fill_kobj_path: path  
+= '/devices/virtual/bluetooth/hci0/rfkill472'
+kobject: 'rfkill470' (00000000155e553b): fill_kobj_path: path  
+= '/devices/virtual/bluetooth/hci4/rfkill470'
+kobject: 'rfkill473' (0000000082665f74): kobject_add_internal:  
+parent: 'hci6', set: 'devices'
+kobject: 'hci1': free name
+kobject: 'rfkill473' (0000000082665f74): kobject_uevent_env
+kobject: 'hci1' (00000000a68c12d6): kobject_add_internal:  
+parent: 'bluetooth', set: 'devices'
+kobject: 'rfkill472' (000000003d2f7a84): kobject_uevent_env
+kobject: 'hci1' (00000000a68c12d6): kobject_uevent_env
+kobject: 'rfkill472' (000000003d2f7a84): fill_kobj_path: path  
+= '/devices/virtual/bluetooth/hci0/rfkill472'
+kobject: 'hci1' (00000000a68c12d6): fill_kobj_path: path  
+= '/devices/virtual/bluetooth/hci1'
+kobject: 'rfkill473' (0000000082665f74): fill_kobj_path: path  
+= '/devices/virtual/bluetooth/hci6/rfkill473'
 
