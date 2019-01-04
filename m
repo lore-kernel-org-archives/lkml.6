@@ -2,123 +2,237 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B58C2C43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 07:07:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3743C43444
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 07:08:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83FD42070D
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 07:07:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=memeware.net header.i=@memeware.net header.b="nvbRv484"
+	by mail.kernel.org (Postfix) with ESMTP id A16272070D
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 07:08:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726663AbfADHHu (ORCPT
+        id S1726740AbfADHI4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 02:07:50 -0500
-Received: from cock.li ([185.100.85.212]:38118 "EHLO cock.li"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726036AbfADHHu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 02:07:50 -0500
-MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=memeware.net; s=mail;
-        t=1546585666; bh=YFqZtHSmtT4lc+5T62+ferjBVVUiXvt83m4VquVu6wY=;
-        h=Date:From:To:Cc:Subject:From;
-        b=nvbRv484K5t1RFML/Xd2jCDBo8j164M0YUkfWvFuU+g+5c0I7ZwgPWyf5JbHtqYlx
-         SocfsBt5dRXF8iFuBHnOg0it6YvoTViLv3JMvixaXLoNJJMD67bS5adp+svUtnzVWW
-         iWOn4kYf+vFXrmIiavezu6ybHgQF1uedaPnF5b7/7k9ihbKYEudko976SKV9RAOi0x
-         QrkT2G8+IOVFrge+cR7T/BrjsLqfzsgwk4AUeoWkqUcGc7flaI7shb6VzzXXz9Ky/Q
-         hHLmMhgjQFW/MFXP4/TTcHAg0zab6iD2JDfPXWB60SxO4pQSfHqB26yOtKQ2+Zo29C
-         5t90z9VyNXtmg==
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+        Fri, 4 Jan 2019 02:08:56 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:23459 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726036AbfADHIz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 02:08:55 -0500
+X-UUID: 1e1f594ee1ae42e680fe2a7d13791dd3-20190104
+X-UUID: 1e1f594ee1ae42e680fe2a7d13791dd3-20190104
+Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw01.mediatek.com
+        (envelope-from <zhiyong.tao@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 664573029; Fri, 04 Jan 2019 15:08:45 +0800
+Received: from MTKCAS36.mediatek.inc (172.27.4.186) by mtkmbs08n1.mediatek.inc
+ (172.21.101.55) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 4 Jan
+ 2019 15:08:44 +0800
+Received: from [10.17.3.153] (10.17.3.153) by MTKCAS36.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 4 Jan 2019 15:08:43 +0800
+Message-ID: <1546585723.21915.7.camel@mhfsdcap03>
+Subject: Re: [PATCH v5 5/6] dt-bindings: pinctrl: mt8183: add binding
+ document
+From:   Zhiyong Tao <zhiyong.tao@mediatek.com>
+To:     Rob Herring <robh@kernel.org>
+CC:     Erin Lo =?UTF-8?Q?=28=E7=BE=85=E9=9B=85=E9=BD=A1=29?= 
+        <erin.lo@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>,
+        "Mark Rutland" <mark.rutland@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Jason Cooper" <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        srv_heupstream <srv_heupstream@mediatek.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Yingjoe Chen =?UTF-8?Q?=28=E9=99=B3=E8=8B=B1=E6=B4=B2=29?= 
+        <Yingjoe.Chen@mediatek.com>,
+        Mars Cheng =?UTF-8?Q?=28=E9=84=AD=E6=A3=AE=E5=8F=8B=29?= 
+        <Mars.Cheng@mediatek.com>,
+        Eddie Huang =?UTF-8?Q?=28=E9=BB=83=E6=99=BA=E5=82=91=29?= 
+        <eddie.huang@mediatek.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Date:   Fri, 4 Jan 2019 15:08:43 +0800
+In-Reply-To: <20181228220405.GA8739@bogus>
+References: <1545984581-25843-1-git-send-email-erin.lo@mediatek.com>
+         <1545984581-25843-6-git-send-email-erin.lo@mediatek.com>
+         <20181228220405.GA8739@bogus>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
 Content-Transfer-Encoding: 7bit
-Date:   Fri, 04 Jan 2019 07:07:45 +0000
-From:   vnsndalce@memeware.net
-To:     linux-kernel@vger.kernel.org, gentoo-user@lists.gentoo.org,
-        ubuntu-users@lists.ubuntu.com, debian-user@lists.debian.org
-Cc:     freebsd-women@freebsd.org, freebsd-chat@freebsd.org,
-        misc@openbsd.org, esr@thyrsus.com, gregkh@linuxfoundation.org,
-        rms@gnu.org, bruce@perens.com, bkuhn@sfconservancy.org,
-        editor@lwn.net, neil@brown.name, labbott@redhat.com,
-        torvalds@linux-foundation.org, moglen@columbia.edu
-Subject: The GPLv2 does not contain a no-revocation-by-grantor promise.
- (SFConservancy's Opinion Statement claiming otherwise is bullshit.)
-Message-ID: <98624aa4b45666cf761c6ad86c06906f@memeware.net>
-X-Sender: vnsndalce@memeware.net
-User-Agent: Roundcube Webmail/1.3.6
+MIME-Version: 1.0
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->> 1016132
+On Sat, 2018-12-29 at 06:04 +0800, Rob Herring wrote:
+> On Fri, Dec 28, 2018 at 04:09:40PM +0800, Erin Lo wrote:
+> > From: Zhiyong Tao <zhiyong.tao@mediatek.com>
+> > 
+> > The commit adds mt8183 compatible node in binding document.
+> > 
+> > Signed-off-by: Zhiyong Tao <zhiyong.tao@mediatek.com>
+> > Signed-off-by: Erin Lo <erin.lo@mediatek.com>
+> > ---
+> >  .../devicetree/bindings/pinctrl/pinctrl-mt8183.txt | 110 +++++++++++++++++++++
+> >  1 file changed, 110 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-mt8183.txt
+> > 
+> > diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8183.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8183.txt
+> > new file mode 100644
+> > index 0000000..7b5285e
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8183.txt
+> > @@ -0,0 +1,110 @@
+> > +* Mediatek MT8183 Pin Controller
+> > +
+> > +The Mediatek's Pin controller is used to control SoC pins.
+> > +
+> > +Required properties:
+> > +- compatible: value should be one of the following.
+> > +	"mediatek,mt8183-pinctrl", compatible with mt8183 pinctrl.
+> > +- gpio-controller : Marks the device node as a gpio controller.
+> > +- #gpio-cells: number of cells in GPIO specifier. Since the generic GPIO
+> > +  binding is used, the amount of cells must be specified as 2. See the below
+> > +  mentioned gpio binding representation for description of particular cells.
+> > +- gpio-ranges : gpio valid number range.
+> > +
+> > +	Eg: <&pio 6 0>
+> > +	<[phandle of the gpio controller node]
+> > +	[line number within the gpio controller]
+> > +	[flags]>
+> > +
+> > +	Values for gpio specifier:
+> > +	- Line number: is a value between 0 to 202.
+> > +	- Flags:  bit field of flags, as defined in <dt-bindings/gpio/gpio.h>.
+> > +            Only the following flags are supported:
+> > +            0 - GPIO_ACTIVE_HIGH
+> > +            1 - GPIO_ACTIVE_LOW
+> > +
+> > +Optional properties:
+> > +- reg: physicall address base for gpio base registers.
+> 
+> s/physicall/physical/
+> 
+> reg should never be optional. 
+> 
+> Need to say how many reg entries.
 
-I also refuted the SFConservancy's "debunking" within 5 hours, on the 
-LKML, of it's publishing its attempted defense of the GPLv2 (they were 
-trying to misconstrue a clause in the GPLv2 as a promise by the grantor 
-not to revoke, which it was not. A promise, even if it existed, the 
-taker didn't pay any consideration for nor forego a legal right etc, so 
-would even in that case be void), but everyone treats the issue as 
-settled now.
+==> Thanks for your suggestion. We will change 'reg' to Required
+properties and add the reg entries in next version.
+> 
+> > +- reg-names: gpio base registers name.
+> 
+> Need to say what are the names. However, I don't find the names in the 
+> example all that useful, so I'd just drop it.
 
-> (Said now more simply than initially:)
-
-> The clause you are referring to there is one that I have addressed 
-> previously.
+==> we will add the reg-names in next version.
+They are used in the sample code, such as:
+> +		reg-names = "iocfg0", "iocfg1", "iocfg2",
+> > +			    "iocfg3", "iocfg4", "iocfg5",
+> > +			    "iocfg6", "iocfg7", "iocfg8";
 
 > 
-
-> It states that if a licensee violates the license and suffers automatic 
-> revocation, that licensees down the chain do not automatically in-turn 
-> have their licenses revoked.
-
+> > +- interrupt-controller: Marks the device node as an interrupt controller
+> > +- #interrupt-cells: Should be two.
+> > +- interrupts : The interrupt outputs from the controller.
+> > +
+> > +Please refer to pinctrl-bindings.txt in this directory for details of the
+> > +common pinctrl bindings used by client devices.
+> > +
+> > +Subnode format
+> > +A pinctrl node should contain at least one subnodes representing the
+> > +pinctrl groups available on the machine. Each subnode will list the
+> > +pins it needs, and how they should be configured, with regard to muxer
+> > +configuration, pullups, drive strength, input enable/disable and input schmitt.
+> > +
+> > +    node {
+> > +	pinmux = <PIN_NUMBER_PINMUX>;
+> > +	GENERIC_PINCONFIG;
+> > +    };
+> > +
+> > +Required properties:
+> > +- pinmux: integer array, represents gpio pin number and mux setting.
+> > +    Supported pin number and mux varies for different SoCs, and are defined
+> > +    as macros in boot/dts/<soc>-pinfunc.h directly.
+> > +
+> > +Optional properties:
+> > +- GENERIC_PINCONFIG: is the generic pinconfig options to use, bias-disable,
+> > +    bias-pull-down, bias-pull-up, input-enable, input-disable, output-low, output-high,
+> > +    input-schmitt-enable, input-schmitt-disable and drive-strength are valid.
+> > +
+> > +    Some special pins have extra pull up strength, there are R0 and R1 pull-up
+> > +    resistors available, but for user, it's only need to set R1R0 as 00, 01, 10 or 11.
+> > +    So when config mediatek,pull-up-adv or mediatek,pull-down-adv,
+> > +    it support arguments for those special pins.
+> > +
+> > +    When config drive-strength, it can support some arguments, such as
+> > +    MTK_DRIVE_4mA, MTK_DRIVE_6mA, etc. See dt-bindings/pinctrl/mt65xx.h.
+> > +
+> > +Examples:
+> > +
+> > +#include "mt8183-pinfunc.h"
+> > +
+> > +...
+> > +{
+> > +	pio: pinctrl@10005000 {
+> > +		compatible = "mediatek,mt8183-pinctrl";
+> > +		reg = <0 0x10005000 0 0x1000>,
+> > +		      <0 0x11F20000 0 0x1000>,
+> > +		      <0 0x11E80000 0 0x1000>,
+> > +		      <0 0x11E70000 0 0x1000>,
+> > +		      <0 0x11E90000 0 0x1000>,
+> > +		      <0 0x11D30000 0 0x1000>,
+> > +		      <0 0x11D20000 0 0x1000>,
+> > +		      <0 0x11C50000 0 0x1000>,
+> > +		      <0 0x11F30000 0 0x1000>;
+> > +		reg-names = "iocfg0", "iocfg1", "iocfg2",
+> > +			    "iocfg3", "iocfg4", "iocfg5",
+> > +			    "iocfg6", "iocfg7", "iocfg8";
+> > +		gpio-controller;
+> > +		#gpio-cells = <2>;
+> > +		gpio-ranges = <&pio 0 0 192>;
+> > +		interrupt-controller;
+> > +		interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
+> > +		interrupt-parent = <&gic>;
+> > +		#interrupt-cells = <2>;
+> > +
+> > +		i2c0_pins_a: i2c0@0 {
 > 
+> unit-address without reg property is not valid.
 
-> No more, no less.
-
+==> we will change "i2c0_pins_a: i2c0@0" to "i2c0_pins_a: i2c0" in the
+next version.
 > 
+> > +			pins1 {
+> > +				pinmux = <PINMUX_GPIO48__FUNC_SCL5>,
+> > +					 <PINMUX_GPIO49__FUNC_SDA5>;
+> > +				mediatek,pull-up-adv = <11>;
+> > +			};
+> > +		};
+> > +
+> > +		i2c1_pins_a: i2c1@0 {
+> > +			pins {
+> > +				pinmux = <PINMUX_GPIO50__FUNC_SCL3>,
+> > +					 <PINMUX_GPIO51__FUNC_SDA3>;
+> > +				mediatek,pull-down-adv = <10>;
+> > +			};
+> > +		};
+> > +		...
+> > +	};
+> > +};
+> > -- 
+> > 1.9.1
+> > 
 
-> That clause is being cited as a "GPLv2 no revocation by grantor 
-> clause". It is not such a thing.
 
-> 
-
-> The SFConservancy etc never responded after I debunked their debunking.
-
-> 
-
-> There is no "no-backsies" clause in the GPLv2, and even if there was 
-> you did not pay for it.
-
-> 
-
-> The basis is very simple: you do not get what you do not pay something 
-> for.
-
-> 
-
-> YOU did not pay OWNER for his right to rescind. You didn't pay him 
-> anything. You just use his property.
-
-> 
-
-> He can say you can't anymore.
-
-However when I talk to other lawyers, professors at the school I went 
-to, they take it as a given that a license absent an interest is 
-revocable.
-
-When I talked to a relative who has worked in the legal field for 
-decades he has confirmed the same thing: even if there is a clause that 
-says the grantor will never revoke: if you didn't pay for it that clause 
-is likely void.
-
-The GPLv2 doesn't even contain such a clause (v3 explicitly adds such a 
-clause, aswell as a term-of-years the length of the copyright term), and 
-linux is licensed under version 2, not 3.
-
-And, again, most licensees did not pay those programmers, who still own 
-the copyright to their code, anything what-so-ever, so there is no 
-secured interest even if Linux was under version 3 (which it isn't).
