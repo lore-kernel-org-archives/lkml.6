@@ -2,110 +2,123 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4073C43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 14:19:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3723AC43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 14:20:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B7E521871
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 14:19:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0626721871
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 14:20:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RWC+u4cz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727330AbfADOTq (ORCPT
+        id S1728069AbfADOUN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 09:19:46 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:58402 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726069AbfADOTq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 09:19:46 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D7CBDCD66C;
-        Fri,  4 Jan 2019 14:19:45 +0000 (UTC)
-Received: from vitty.brq.redhat.com (unknown [10.43.2.155])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 38F645D9C5;
-        Fri,  4 Jan 2019 14:19:44 +0000 (UTC)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     devel@linuxdriverproject.org
-Cc:     Sasha Levin <sashal@kernel.org>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        linux-kernel@vger.kernel.org, Dexuan Cui <decui@microsoft.com>
-Subject: [PATCH] hv_balloon: avoid touching uninitialized struct page during tail onlining
-Date:   Fri,  4 Jan 2019 15:19:42 +0100
-Message-Id: <20190104141942.19126-1-vkuznets@redhat.com>
+        Fri, 4 Jan 2019 09:20:13 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:36942 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726069AbfADOUM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 09:20:12 -0500
+Received: by mail-pl1-f195.google.com with SMTP id b5so17515055plr.4;
+        Fri, 04 Jan 2019 06:20:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=IacLwmm/oMlG6zdGuy3u8YtKSQ7Iw+aSYb+u3XbNzVo=;
+        b=RWC+u4czUdQFGENOpNdwjhXB6a4rxiRXrFP3f60K1fse4+bLx5mnQ5NTSXLsj2ZVnf
+         gekzRlNa+1fFCwPODcaVZBwPcWKAgmiX+KLr5cxglaWVnMvcdM1iwXMhmXm90eZhPvxD
+         7Yy8fOk+TbQVO8kMYhQcBqKdAH31B6PSemq5pE2D8kUGK52bGjCZT9HOS5Ec9so6nKDv
+         OFKay6PDzfp/vPf/kqPgHyiquhOeavT62OMPLOIa2aSBIXLsVQ1ikQ3e7p+vDY2GBkqa
+         n6KmyoWkY/TWwi2U5wspEqReX8nIsGGaXRpfQ6OCzmJoG9asN1OmuzXuNMt/N9YjoTNq
+         Ir1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=IacLwmm/oMlG6zdGuy3u8YtKSQ7Iw+aSYb+u3XbNzVo=;
+        b=pe9WLllSwfX75dARAZUzJoqQUoIpyUG8W+NHTupItUvhXO9i/4P2KYriiNhOoTKdSp
+         sr5wvOLDuxr1B8AZIiFE9Z4xKv6UD2OpJZlymCUUvTQm0+VgOtUCCJNk0RWrP7Bd6ww5
+         SN2OO3OMgw5ac6wCL/uQ30kyigjSlb4V8kilYyEE43YtKYUntXPjpP1RZJ5o+pnWmP7w
+         Aaj8W7ry18zQeAOMo1Imtq0PTUBOGKzzTAbGv+C2FSmHjdhBxDR1MULJocywa22Im09v
+         bM47fairEOWNygyKmJfDGgTcWmyFIHctz+DR79PocmBBrpcTRxY8FnntTZgmERRkdLzD
+         5Beg==
+X-Gm-Message-State: AJcUukep6OhbHxGz9A8H6Nht8L1u0mGCo4wCxucVUWkj/pofB5ptubne
+        0MDY71RWyI4rS0Km2XiCbRuOdTLeerKBpOhA79D3abDQ
+X-Google-Smtp-Source: ALg8bN44vDZl4fv9tiEo8/sUpEWSBobN2+n0Zij9mEMHztNeRt+0+0XjHrCzj+7RIMDfHcJ3ztbSjst59Q0bS//zK5k=
+X-Received: by 2002:a17:902:4081:: with SMTP id c1mr51974557pld.87.1546611611913;
+ Fri, 04 Jan 2019 06:20:11 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Fri, 04 Jan 2019 14:19:45 +0000 (UTC)
+References: <20190102181038.4418-1-okaya@kernel.org> <20190102181038.4418-6-okaya@kernel.org>
+In-Reply-To: <20190102181038.4418-6-okaya@kernel.org>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Fri, 4 Jan 2019 16:20:00 +0200
+Message-ID: <CAHp75VfGe=rdN0JeLoHnPM0XuVunH5RvAmMEqbxFPWA7BmkzEw@mail.gmail.com>
+Subject: Re: [PATCH v5 05/11] platform/x86: intel_pmc: Make PCI dependency explicit
+To:     Sinan Kaya <okaya@kernel.org>,
+        Kuppuswamy Sathyanarayanan 
+        <sathyanarayanan.kupuswamy@linux.intel.com>,
+        "Krogerus, Heikki" <heikki.krogerus@linux.intel.com>
+Cc:     linux-next <linux-next@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hyper-V memory hotplug protocol has 2M granularity and in Linux x86 we use
-128M. To deal with it we implement partial section onlining by registering
-custom page onlining callback (hv_online_page()). Later, when more memory
-arrives we try to online the 'tail' (see hv_bring_pgs_online()).
+On Wed, Jan 2, 2019 at 8:10 PM Sinan Kaya <okaya@kernel.org> wrote:
+>
+> After 'commit 5d32a66541c4 ("PCI/ACPI: Allow ACPI to be built without
+> CONFIG_PCI set")' dependencies on CONFIG_PCI that previously were
+> satisfied implicitly through dependencies on CONFIG_ACPI have to be
+> specified directly. Code relies on PCI for execution. Specify this
+> in the Kconfig.
+>
 
-It was found that in some cases this 'tail' onlining causes issues:
+Unfortunately, this is not how it should be fixed.
 
- BUG: Bad page state in process kworker/0:2  pfn:109e3a
- page:ffffe08344278e80 count:0 mapcount:1 mapping:0000000000000000 index:0x0
- flags: 0xfffff80000000()
- raw: 000fffff80000000 dead000000000100 dead000000000200 0000000000000000
- raw: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
- page dumped because: nonzero mapcount
- ...
- Workqueue: events hot_add_req [hv_balloon]
- Call Trace:
-  dump_stack+0x5c/0x80
-  bad_page.cold.112+0x7f/0xb2
-  free_pcppages_bulk+0x4b8/0x690
-  free_unref_page+0x54/0x70
-  hv_page_online_one+0x5c/0x80 [hv_balloon]
-  hot_add_req.cold.24+0x182/0x835 [hv_balloon]
-  ...
+First of all, we (Heikki, Sathya, me =E2=80=94  all in Cc list) that this
+driver should be refactored and unified with intel_scu_ipc.
+Then, it has two drivers inside and PCI is just a glue for it which is
+optional. Thus, needs to be split accordingly.
 
-Turns out that we now have deferred struct page initialization for memory
-hotplug so e.g. memory_block_action() in drivers/base/memory.c does
-pages_correctly_probed() check and in that check it avoids inspecting
-struct pages and checks sections instead. But in Hyper-V balloon driver we
-do PageReserved(pfn_to_page()) check and this is now wrong.
+> Fixes: 5d32a66541c46 ("PCI/ACPI: Allow ACPI to be built without CONFIG_PC=
+I set")
+> Signed-off-by: Sinan Kaya <okaya@kernel.org>
+> ---
+>  drivers/platform/x86/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+> index b36ea14b41ad..7afb96cb1cd6 100644
+> --- a/drivers/platform/x86/Kconfig
+> +++ b/drivers/platform/x86/Kconfig
+> @@ -1174,7 +1174,7 @@ config INTEL_SMARTCONNECT
+>
+>  config INTEL_PMC_IPC
+>         tristate "Intel PMC IPC Driver"
+> -       depends on ACPI
+> +       depends on ACPI && PCI
+>         ---help---
+>         This driver provides support for PMC control on some Intel platfo=
+rms.
+>         The PMC is an ARC processor which defines IPC commands for commun=
+ication
+> --
+> 2.19.0
+>
 
-Switch to checking online_section_nr() instead.
 
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
----
- drivers/hv/hv_balloon.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/hv/hv_balloon.c b/drivers/hv/hv_balloon.c
-index 5301fef16c31..7c6349a50ef1 100644
---- a/drivers/hv/hv_balloon.c
-+++ b/drivers/hv/hv_balloon.c
-@@ -888,12 +888,14 @@ static unsigned long handle_pg_range(unsigned long pg_start,
- 			pfn_cnt -= pgs_ol;
- 			/*
- 			 * Check if the corresponding memory block is already
--			 * online by checking its last previously backed page.
--			 * In case it is we need to bring rest (which was not
--			 * backed previously) online too.
-+			 * online. It is possible to observe struct pages still
-+			 * being uninitialized here so check section instead.
-+			 * In case the section is online we need to bring the
-+			 * rest of pfns (which were not backed previously)
-+			 * online too.
- 			 */
- 			if (start_pfn > has->start_pfn &&
--			    !PageReserved(pfn_to_page(start_pfn - 1)))
-+			    online_section_nr(pfn_to_section_nr(start_pfn)))
- 				hv_bring_pgs_online(has, start_pfn, pgs_ol);
- 
- 		}
--- 
-2.20.1
-
+--=20
+With Best Regards,
+Andy Shevchenko
