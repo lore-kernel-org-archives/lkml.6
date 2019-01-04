@@ -2,98 +2,114 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A19CDC43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 13:50:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2A27C43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 13:57:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D76B2070C
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 13:50:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546609801;
-	bh=OO5Ohtwh+UG/WTQWEeJrGcad402h+SgeEjPcbRKZk6M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=NnuIrfbHKWAj9bwH44vprpGrATmyQ8QzH2ECKIBZfiZMP7SYxeL2YJTzdL/22Cebn
-	 /oPMt27XhE+tLMVCkQTORTBeldcw4e+JSdv+VTlWDLurPTHw3TJObmL9tjVRMQZXXb
-	 nBytuD50baeuQBrFPnn8VkFHCB/pC8TbZt/1DMyA=
+	by mail.kernel.org (Postfix) with ESMTP id 5D81821872
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 13:57:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=microgate-com.20150623.gappssmtp.com header.i=@microgate-com.20150623.gappssmtp.com header.b="z8/jTKN0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727376AbfADNuA (ORCPT
+        id S1727404AbfADN5l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 08:50:00 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:34222 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725939AbfADNt7 (ORCPT
+        Fri, 4 Jan 2019 08:57:41 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:33672 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726104AbfADN5k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 08:49:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=ZkU6YOgn2Jbae0n58vanftXAPvSvmX4NS8Sp9B25s1c=; b=vQeFlz/2D9QB3TwQnI4cm7woM
-        odsJ0QnF6MQCQwg06tICWTnzFmiL3B4Y5ZeultgbCOT0cWWVan8y6QL+jPhc2dZCladUmIPf7MInM
-        XaBqeeOLJ8+R34lqW9h2j0O04QLwZYra1zNAPSVuzCwWhlDrFwsBS32hd/JEPNTf7VBMs=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gfPqz-0001OS-Lr; Fri, 04 Jan 2019 13:49:37 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 1BDE711270A3; Fri,  4 Jan 2019 13:49:37 +0000 (GMT)
-Date:   Fri, 4 Jan 2019 13:49:37 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Yizhuo <yzhai003@ucr.edu>
-Cc:     csong@cs.ucr.edu, zhiyunq@cs.ucr.edu,
-        Bard Liao <bardliao@realtek.com>,
-        Oder Chiou <oder_chiou@realtek.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        Fri, 4 Jan 2019 08:57:40 -0500
+Received: by mail-pg1-f193.google.com with SMTP id z11so17568478pgu.0
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Jan 2019 05:57:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=microgate-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=6GatY1qq8uBZxaDgnriLSD2x+9I6S2u1c27WomB6MA4=;
+        b=z8/jTKN08wleF34QuwSxj9MSML6pWwmatGFzhpqwVA2tVRB7Xqq2amh4jDJKa6Oz2s
+         t7fojPD50Lzcdj9SoEUsQsXIl/FWFfDon9xF0fNnYXzVlvZioLzRB4p9eotH5mQ5AdL6
+         UDZoeICyKW8NpyIHb5NFafjNyVh5yChUsyx0TepZ5PWQ2spCma6dfAOC5lYJdRfZnovE
+         QkweX3Ru0cWtI0yuDGEriff9scev+sRhrrK9AnyDSj2v97miXtzsic8DnBAKEerjUlng
+         LzhlmDScz6S9BkFxACTdGO5aBgegOJ4FMjMO4BMOw65HpvyVmb+YnnVeQ2WC7QJ32Ga/
+         hzzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=6GatY1qq8uBZxaDgnriLSD2x+9I6S2u1c27WomB6MA4=;
+        b=RTmw2q7eue/fj3v4PEpBsxGRpjfUXndY3tnMROqOc0h5QyJhqBtSrgXeFqIZ8EXnXg
+         gC8wdt5AOL+0jYSmMfSPUtp6Edf9Tv2FafAESczbYXwTMqTdqQCso1Mpb2dL56sJp7YV
+         TigLCHW4YCDQPUbjhExHgaud9SY193zRXdnglCX3ivpHkNjeCDAAujFX9QVeijiv6qth
+         aZ2JIL5hsVMoehaoSEuP+vaGp2ZRfgq0qs5ZTPFH1s0RgUSTbvmALSWWgr42qXdoiymN
+         V5Zw3m5dkQB6+oxxIo/pJAJzcNlDzZbAl+gypo5UWoGy/cLortPaKhA5If/5kP0mN2aX
+         H0WQ==
+X-Gm-Message-State: AJcUukeOh1Aay+TSHdBHigWsY3To0uBQGrjmd3uJTodJk/iLOAMt+GLH
+        zTHIil42WaIYi1lE5PXqnIYYew==
+X-Google-Smtp-Source: ALg8bN6ETH/c2+tgMRB0hU0/Wx290/8H3fJjMQLQ8NqYYyL683GmSPZUOB+WQEa+WOqPdyxLSerFqQ==
+X-Received: by 2002:a63:9749:: with SMTP id d9mr20406220pgo.415.1546610259383;
+        Fri, 04 Jan 2019 05:57:39 -0800 (PST)
+Received: from [192.168.1.77] (c.208.53.119.160.static.broadstripe.net. [208.53.119.160])
+        by smtp.gmail.com with ESMTPSA id x19sm101426273pfk.14.2019.01.04.05.57.38
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 04 Jan 2019 05:57:38 -0800 (PST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
+Subject: Re: [PATCH] tty/n_hdlc: fix sleep in !TASK_RUNNING state warning
+From:   Paul Fulghum <paulkf@microgate.com>
+In-Reply-To: <0a70193b-488a-7607-4ad5-05ec6018587e@i-love.sakura.ne.jp>
+Date:   Fri, 4 Jan 2019 05:57:37 -0800
+Cc:     Jiri Slaby <jslaby@suse.cz>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alan Cox <alan@lxorguk.ukuu.org.uk>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Variable "val" in function rt274_i2c_probe() could be
- uninitialized
-Message-ID: <20190104134937.GB4140@sirena.org.uk>
-References: <20190103215912.6071-1-yzhai003@ucr.edu>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="0ntfKIWw70PvrIHh"
-Content-Disposition: inline
-In-Reply-To: <20190103215912.6071-1-yzhai003@ucr.edu>
-X-Cookie: An idle mind is worth two in the bush.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <348A9E34-49C4-4A08-BBA2-46D677F50534@microgate.com>
+References: <000000000000449587057e1e6f8b@google.com>
+ <49b3b189-a51f-6a97-0e1f-bc3f2c305299@I-love.SAKURA.ne.jp>
+ <FEBFE826-8D27-4A0B-86A5-BA559921CADC@microgate.com>
+ <cf9b7323-da1c-20cd-4d50-1080fbe52467@i-love.sakura.ne.jp>
+ <ba6de468-d36d-cd33-9a13-520102b676c6@suse.cz>
+ <98eec651-d1ab-48e5-309b-7e748981cfdd@i-love.sakura.ne.jp>
+ <434841F9-C2DF-4D73-9AFB-3BFADF325086@microgate.com>
+ <0a70193b-488a-7607-4ad5-05ec6018587e@i-love.sakura.ne.jp>
+To:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+X-Mailer: Apple Mail (2.3445.102.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---0ntfKIWw70PvrIHh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Thu, Jan 03, 2019 at 01:59:12PM -0800, Yizhuo wrote:
-> Inside function rt274_i2c_probe(), if regmap_read() function
-> returns -EINVAL, then local variable "val" leaves uninitialized
-> but used in if statement. This is potentially unsafe.
+> On Jan 4, 2019, at 2:23 AM, Tetsuo Handa =
+<penguin-kernel@I-love.SAKURA.ne.jp> wrote:
+>=20
+> But why not to clarify what are appropriate sanity checks?
+> ...
+> want a cleanup for scripts/checkpatch.pl .
 
-Please use subject lines matching the style for the subsystem.  This
-makes it easier for people to identify relevant patches.
 
---0ntfKIWw70PvrIHh
-Content-Type: application/pgp-signature; name="signature.asc"
+These are good goals. I avoid purely cosmetic patches. I do not object =
+to cosmetic patches from others that do not change behavior.
 
------BEGIN PGP SIGNATURE-----
+The checks that concern you deal with changing tty line disciplines. =
+Dealing with line discipline changes has been an ongoing issue since =
+n_hdlc was derived from other line disciplines 20 years ago, with major =
+overhauls along the way. It is complex: driver layers shifting during =
+operation while dealing properly with opens, closes, hangups, and =
+sleeping operations. Patches have been added to the latest unreleased =
+kernel to address line discipline changes, it is still evolving.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlwvZHAACgkQJNaLcl1U
-h9C6jwf+Keh0tNKg0i8mQ5uxEDQ1Lg7bBW+fmCUAddmRcYyHe3lllL3fuauZDonb
-84ms+X7TxqSJ3KR3sB1EnHb0xktJsPqkG1asj6WDdiLNteREWJyXqjH4f4cfXU+n
-hLJ3LBzfBm/rJWKBV4NqLz24MvS96nasql+VW2H1b9hjr9r5fmtJeqXEMwHHCF68
-dub9Yqwp1V/BWetT45o7PWQ//X5KqIa9nIxlTAzzCUGOzSwDNp4mCiN7nwDEQySW
-HAt611Inky8+BMHWxKdo8rwwqxNMwx011hu9mk/ZAEkHuRaySiD8Bb8zSULj9N2N
-NFS35byS6C4U22O1HUNHpoWuc2C+sw==
-=FRPy
------END PGP SIGNATURE-----
-
---0ntfKIWw70PvrIHh--
+Why are the existing line discipline checks in n_hdlc where they are? =
+Becasue that=E2=80=99s how they evolved from where they started to =
+accomodate these changes. There are not many and their function is =
+known: has the line discipline changed at that point? I know that is not =
+satisfying but coming up with a definitive comment saying a check is =
+absolutely required in one place and not in another requires more =
+insight into the long history of a moving target than I have. Without =
+that insight I would not alter existing checks in code that is not =
+causing problems.=
