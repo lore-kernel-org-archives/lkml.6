@@ -2,92 +2,83 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B2A3C43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 17:54:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AB13C43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 17:56:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E77E21872
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 17:54:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A52C218CD
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 17:56:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="IodDgUPX"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="eKgNahiL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726712AbfADRyZ (ORCPT
+        id S1726983AbfADR4o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 12:54:25 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:39695 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726282AbfADRyY (ORCPT
+        Fri, 4 Jan 2019 12:56:44 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:49662 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725958AbfADR4n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 12:54:24 -0500
-Received: by mail-lf1-f65.google.com with SMTP id n18so25972969lfh.6
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Jan 2019 09:54:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=XsVK1WRl7sYn7ta04iAyntHqwbf6VtSYGr1Ly5n6GNU=;
-        b=IodDgUPX5dda1krHX6/lVuNBp/uDtyBokKCNh+lxSTZvP6zPoqyGOLxgUYF1UhskPO
-         9G9g2vktSyeimEDKVHNnwNg3c7KauAA+po+wxydEQyDwOMhP6DuSrF+Rxj6Ag/q3fvKK
-         OwW7Pun5DbkAIuHthvbbURLNLdpWlZiT1ctn8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=XsVK1WRl7sYn7ta04iAyntHqwbf6VtSYGr1Ly5n6GNU=;
-        b=ndXlH0jO+zSn9U4zMEFihAxeTqUgFjwhecN8bo6za7N8g9M5bBvXcAqyTnoHObsdwq
-         v1TlEKYzkGU6++mJFXjsh80Q+xMnkXF01OyGY2t6LFxoDTrP4Uq+6Itn1DzmOh+Lva69
-         thNUONfYvAxHUARGwPcI6pcZtWj3T+3UvLVqmz0dJjhSaDXzX62owAwy1G6cGdQ1YbtH
-         AnLd19+RAetbnAMEY6+nZiQgEJNnxovsuMrCsXZTFZATW7J+9jLba8pTfTzDZ9Ul4w5T
-         Zf+HWY7p9BqHR+3kXC3g6sXB96HaEIWVU+OCRA3juFd8TNG3EOY8JjP9Fh3Uq8r4kDLg
-         xUFQ==
-X-Gm-Message-State: AA+aEWYu4jAvjYYibd/qdYEViLREB7zES2887ayb/pjINuUTuueGM1tc
-        UZIRTM1ilG5ZqhmLeDdYl6iHUhJKZ/M=
-X-Google-Smtp-Source: AFSGD/XGngCjrVghGwqw/IZlNzgMDZ/6JG1YjBS7xwWVUeFd3slZjts5gml/bnhti642aVDmi36MNw==
-X-Received: by 2002:a19:a302:: with SMTP id m2mr28129000lfe.108.1546624461835;
-        Fri, 04 Jan 2019 09:54:21 -0800 (PST)
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com. [209.85.167.48])
-        by smtp.gmail.com with ESMTPSA id 12-v6sm12380678ljf.96.2019.01.04.09.54.20
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 04 Jan 2019 09:54:21 -0800 (PST)
-Received: by mail-lf1-f48.google.com with SMTP id i26so26006013lfc.0
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Jan 2019 09:54:20 -0800 (PST)
-X-Received: by 2002:a19:4287:: with SMTP id p129mr27660722lfa.135.1546624460449;
- Fri, 04 Jan 2019 09:54:20 -0800 (PST)
+        Fri, 4 Jan 2019 12:56:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=cFhh/SpczrtPJ7xHqkNJnPu29+v6tO2n6e+8LLbs2lM=; b=eKgNahiLRd5ko5k90O/tS/8r6
+        19xDAFf87DSyh4c6+8kz+fh8Dlsy7JK1oX4TgfSsHLCSwXAGEc/2UHm3kMLOIzSdsXmpRM8DVz7di
+        yHTYM+hCWOmr2qj+yEVs5PVDX0vteRPunVSrc+Irq0zj6J4BRZwMcR2ynNSf5rEtowUDyVrlV0ECk
+        66CybBYhPLnlGKQEHl5M0+U4nlHpdwNd08VC2qrxT+0u/9yih7uExV+1ETQvSm/IUg0PEvw9FD20e
+        xc8OKN3zdrLIZXNw1MB9r7ZlMfPVtjV9BUh/LMfRRcWomOelDDlovJi53S3zY5oP6PcQR9903N9DR
+        cj+RmJj8A==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gfTi3-0002y7-Sj; Fri, 04 Jan 2019 17:56:39 +0000
+Date:   Fri, 4 Jan 2019 09:56:39 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Finn Thain <fthain@telegraphics.com.au>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v8 05/25] char/nvram: Adopt arch_nvram_ops
+Message-ID: <20190104175639.GA6347@infradead.org>
+References: <cover.1545784679.git.fthain@telegraphics.com.au>
+ <66ed571883695314ace53080df8f6dfb132a8b4d.1545784679.git.fthain@telegraphics.com.au>
+ <20190103080229.GB11147@infradead.org>
+ <alpine.LNX.2.21.1901040844380.658@nippy.intranet>
 MIME-Version: 1.0
-References: <20190104092758.4378-1-malat@debian.org>
-In-Reply-To: <20190104092758.4378-1-malat@debian.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 4 Jan 2019 09:54:04 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wi0zJk-1manLvbFCuCduYj0JF6EWWjs_9t8M+MVMSuMTQ@mail.gmail.com>
-Message-ID: <CAHk-=wi0zJk-1manLvbFCuCduYj0JF6EWWjs_9t8M+MVMSuMTQ@mail.gmail.com>
-Subject: Re: [PATCH] Remove 'type' argument from access_ok() function
-To:     Mathieu Malaterre <malat@debian.org>
-Cc:     Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        linuxppc-dev@lists.ozlabs.org,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.LNX.2.21.1901040844380.658@nippy.intranet>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 4, 2019 at 1:28 AM Mathieu Malaterre <malat@debian.org> wrote:
->
-> Revert commit 05a4ab823983 ("powerpc/uaccess: fix warning/error with
-> access_ok()") to fix the following compilation error:
+On Fri, Jan 04, 2019 at 09:08:13AM +1100, Finn Thain wrote:
+> On Thu, 3 Jan 2019, Christoph Hellwig wrote:
+> 
+> > > +
+> > > +const struct nvram_ops arch_nvram_ops = {
+> > > +	.read_byte      = nvram_read_byte,
+> > > +	.write_byte     = nvram_write_byte,
+> > > +	.get_size       = nvram_get_size,
+> > > +};
+> > > +EXPORT_SYMBOL(arch_nvram_ops);
+> > 
+> > I think something this internal should always be EXPORT_SYMBOL_GPL.
+> > 
+> 
+> By "internal" do you mean "not involving interests outside of the Linux 
+> Foundation"? TBH, I don't know who's affected.
 
-Gaah. I even *looked* at the powerpc use of 'type', but then when I
-was actually going through my manual editing I forgot all about it.
+Linux Foundation doesn't matter.
 
-So this wasn't a case of "the powerpc change was recent and clashed".
-This was purely a case of "Linus screwed up".
-
-Sorry.
-
-              Linus
+But as far as I can see you export the struct from arch code
+for nvram.ko to use them and no one else, which is clearly internal.
