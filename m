@@ -7,155 +7,121 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63B07C43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 21:35:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17575C43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 21:38:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E66F218D3
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 21:35:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF02E21872
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 21:38:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bhnCy0X0"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OKn8VhNl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726404AbfADVfR (ORCPT
+        id S1726270AbfADViF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 16:35:17 -0500
-Received: from mail-yb1-f193.google.com ([209.85.219.193]:40904 "EHLO
-        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726235AbfADVfP (ORCPT
+        Fri, 4 Jan 2019 16:38:05 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:46745 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726094AbfADViE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 16:35:15 -0500
-Received: by mail-yb1-f193.google.com with SMTP id x201so11443042ybg.7;
-        Fri, 04 Jan 2019 13:35:14 -0800 (PST)
+        Fri, 4 Jan 2019 16:38:04 -0500
+Received: by mail-lj1-f194.google.com with SMTP id v15-v6so33536956ljh.13;
+        Fri, 04 Jan 2019 13:38:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=SFR7md/vz2eTzydlUKTapKHn4O0AuD+6g4E3NDSRiOg=;
-        b=bhnCy0X0qp3xQ5OOSkg2LUDpg1zc5TkOco4F8xEVKpip+DJBHCNtlhNK7aOHlxRV3O
-         BuOlBEYXXwtEF1MAXkOoK8OyzVj8fAf60gLteJN0dZ6FEo8bNUTAtIVJm1RF9QN7yzYR
-         ACsQpRbr06Lam7nVsleDK1rSvYqTJ8nBazqnZFbt9Vxece7rX/X2zRNxg/UQ22XkSB3N
-         NTc/JXqhh9boFFhEWoE4kJRDkhnWszD46s6bOugQYkxlXQqKBa3JeFFrhf2Uk+7+aR38
-         Gg1bbiJFQjByEGutsi0GGhdaJ02T0oeTiqQqjDHIwv8ZBsyVYNGDaM7epX+QMd60Q5Wq
-         Offg==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=i/NSCxaveOuhHWFSvU56Hrhcl32v91VeK17YtFmf+iI=;
+        b=OKn8VhNlhSs1cCv0r5RGV/quCG0dPoXqhtQueAsWi4SegVGCZE3SoO5H0m4F+64Bzf
+         zB/FVB8gLyVx9rTVHcReu0ngkKQ9CT7zObzzo0Yv7o8vPgQgXDzWQqhzmnkTah0jHXzL
+         NwvnHYpUaLXJta2wkNJ+0PUR/8r/i78EO5oNQFQGQ6OlHcwVxX+E16fK4sPzxaduuIMO
+         HcpqpPsSrxHfT8gR+Ua7Z+S2vcJlHk7sUNyBKNEEZt2cI8psRsNKuo5cAVNAV+kRtN8d
+         ZIoQxi6Wu35MEwOd0h0qm+0hJWkOWKEfsJ5gwQbK8ghj5i0rGv2jgi02t4H8iJbEdgTv
+         +qiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=SFR7md/vz2eTzydlUKTapKHn4O0AuD+6g4E3NDSRiOg=;
-        b=YhoKTzed9L/xA5lauTWFlrPQmPrSMnix/wKWUI8HzCBgTBW2cR6+Qxldzbx0Uwtvmb
-         IIxJrcepNGsYaucQKqSbM3hMFBoANdCdUt3ZJWPNQ9D0ojgk/aouyzbjMeDHmi4MSSto
-         ZdFd5YYFMcLMHSBR8vYrXdf2ET/F44QRB9fTQ+l456axbFV8oK3+L5vrHgdHU90+Ben0
-         6gl8Cf6pcxjmfbkxNeSgDTnnv402ox6H3l/exuu5NWg82Yi997j0VyjJwkIYmTOE9oAn
-         KCwanfziGKd/CPqYGmefZmhyHbYglNR8CV0jX9QxYztH+86KxlqGmbpWr92haHxYxUMd
-         BeeQ==
-X-Gm-Message-State: AJcUukeGSWP6a8lYGKSRP26YWEFpLmt/G3jF2WZmxSbPbactDQWlOZmt
-        vEebn1oqc5Axm/pHy5yipm8U9UKS+94SwIdVZfE=
-X-Google-Smtp-Source: ALg8bN7mLei0ltNFK+iLywfs12e/H0IeXbeQ9c6mbgRV34qeJEPv9RPb0MF0RZKyNGT7Math8fiTMiDJC1D4SLqUXpI=
-X-Received: by 2002:a5b:44:: with SMTP id e4mr9311448ybp.401.1546637713458;
- Fri, 04 Jan 2019 13:35:13 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=i/NSCxaveOuhHWFSvU56Hrhcl32v91VeK17YtFmf+iI=;
+        b=esAR988nkHC8bn3x20NK43y27Tt3+G+fMaLAqY+JqDrNXiyqOxg601QhZYtY6yJhrr
+         x/HNacngT6pL2fF+POPBPYtQo7kJlOk1VENmRyZDupVocDZ1fm6FvT9oB3pxdnhpnsc5
+         QHGh7Qg8+Rt9m6vyrqcFFn03cedZiUYcBuY/Gj6NOGjbD92WrGbUonF5SegfrLi6bH/d
+         UIQ9J0pAaTlOavk58IhFvmEbVhFM082eUfKtfLNP0PPxOhKYXMcZ2/im52Xwj8xv1Ozf
+         mAF7/Wh6Kc29JnyvSX8gpHz43wpxgnBUPTJq+4YKW5vHNZDaA4QyFwvAWQVQQHMbTIDF
+         4uOg==
+X-Gm-Message-State: AJcUukcHCApYNmpmIGYE77s9iJLDc+URJhJ1aBZ9Jss1wKbgP03FL3zV
+        R3OSNW6FPx0fMRQPLPfIX91xaQnM
+X-Google-Smtp-Source: ALg8bN5cIPKca2QgdO1c9Nn23Zf6lBXCeDCy9uit4+yhfvfN6OYis75TjOPwWARf7K4kZpppbcScVA==
+X-Received: by 2002:a2e:4942:: with SMTP id b2-v6mr8154233ljd.168.1546637881849;
+        Fri, 04 Jan 2019 13:38:01 -0800 (PST)
+Received: from [192.168.1.18] (bgt246.neoplus.adsl.tpnet.pl. [83.28.83.246])
+        by smtp.gmail.com with ESMTPSA id r69sm11588556lfi.15.2019.01.04.13.38.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 04 Jan 2019 13:38:01 -0800 (PST)
+Subject: Re: [PATCH 2/2] leds: lp5024: Add the LP5024/18 RGB LED driver
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     =?UTF-8?B?VmVzYSBKw6TDpHNrZWzDpGluZW4=?= <dachaac@gmail.com>,
+        Dan Murphy <dmurphy@ti.com>, robh+dt@kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-leds@vger.kernel.org
+References: <8740cfd6-a6b5-ad27-313b-984a9febf18a@ti.com>
+ <20181219201047.GA23448@amd> <fd624cc1-9997-1cd5-c5cc-62e6897997cf@ti.com>
+ <54f28115-0a7d-8e9c-3bec-6e91fb3981ec@gmail.com>
+ <cd90f179-6c16-823f-496f-27f141e9c322@ti.com>
+ <a72c11c0-949b-bdbc-df2c-4490e04a1065@gmail.com>
+ <986b5105-2fdb-bd25-7c8a-ca8fd1ade821@gmail.com>
+ <7f205102-e854-f1cb-cc03-1307d1cddc87@gmail.com>
+ <c9f8965a-90f4-b456-8225-c70694c9f071@gmail.com>
+ <cf6c0025-36e7-197b-b27a-1f31fb45cc38@gmail.com> <20190104201256.GA2931@amd>
+From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Message-ID: <a4e3a782-de76-ba91-3727-4db69cf27c3a@gmail.com>
+Date:   Fri, 4 Jan 2019 22:37:58 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <CAE5jQCch70ZSmGZeA6RQxjXhL=LjgShdj_VZAGmqUzVRPSQBZw@mail.gmail.com>
- <CAO-hwJK29V7gT3WQXLvsM5qaQgRLsgm2HAnR81vtkrrQAsCuEg@mail.gmail.com>
- <CAEc3jaAf2Cd_1vS8Xo-VoJzJKxWJDNm++=eY+5G2dHa5Jo2gXg@mail.gmail.com> <CAE5jQCfPCSe3eCRnjt2WzF0-SVYY7yM=KuAYS5_p7Gz0CmQy4w@mail.gmail.com>
-In-Reply-To: <CAE5jQCfPCSe3eCRnjt2WzF0-SVYY7yM=KuAYS5_p7Gz0CmQy4w@mail.gmail.com>
-From:   Roderick Colenbrander <thunderbird2k@gmail.com>
-Date:   Fri, 4 Jan 2019 13:35:01 -0800
-Message-ID: <CAEc3jaA2Vk+C1iSHL89fTAz9fZBS7rVEdj8WOTW966Pt+MBcyA@mail.gmail.com>
-Subject: Re: NULL pointer dereference when writing fuzzed data to /dev/uhid
-To:     Anatoly Trosinenko <anatoly.trosinenko@gmail.com>
-Cc:     Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Jiri Kosina <jikos@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190104201256.GA2931@amd>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks, it seems the tests created a Buzz controller. It is
-sony_led_init (called from sony_input_configured), which calls
-hid_validate_values. It is hid_validate_values, which is unhappy due
-to obviously corrupted reports.
+On 1/4/19 9:12 PM, Pavel Machek wrote:
+> Hi!
+> 
+>>> I suppose if one would just make it an array of values (separated by
+>>> space) and then one file with string array of color element names and on
+>>> file with maximum value array it could be within those words.
+>>>
+>>> The it would be something like:
+>>>
+>>> $ echo "23 54 32" > color
+>>
+>> Go ahead, but first convince Pavel, and then Greg :-)
+>>
+>> I'd personally would not have much against, especially that the
+>> list of values will not grow for that one like in case of old patch set
+>> [0] where Pavel and Greg thwarted my similar attempt.
+> 
+> Oh, you can get this past Pavel (and probably Greg) -- if you have a
+> good reason. Performance is _not_ a good reason. You don't need to
+> change LED color 50000 times a second.
 
-I'm not too familiar with hid_validate_values, but it seems to access
-a bunch of data structures on the HID device. The code probably makes
-some assumptions. Fixing this issue requires some more sanity
-checking, if it is worth it.
+We would need to do some profiling here to check if the problem exists.
 
-Thanks,
-Roderick
+But, aside from that hypothetic issue, we need a solution for
+LEDn_BRIGHTNESS feature of lp5024, i.e. setting color intensity
+via a single register write. How would you propose to address that?
 
-On Fri, Jan 4, 2019 at 9:04 AM Anatoly Trosinenko
-<anatoly.trosinenko@gmail.com> wrote:
->
-> > Would you be able to share the sony.bin file?
-> Sent it in this message.
->
-> > Did you inject a particular device?
-> If you are asking me, then no, I blindly send fuzzed data with a
-> simple (but quite large and not very meaningful) header. That time it
-> just turned out to be Sony-like descriptor :)
->
-> Best regards
-> Anatoly
->
-> =D0=BF=D1=82, 4 =D1=8F=D0=BD=D0=B2. 2019 =D0=B3. =D0=B2 19:38, Roderick C=
-olenbrander <thunderbird2k@gmail.com>:
-> >
-> > > > For sony.bin:
-> > > >
-> > > > root@kvm-xfstests:~# cat /vtmp/sony.bin > /dev/uhid
-> > > > [   16.891931] sony 0003:054C:1000.0001: unknown main item tag 0x0
-> > > > [   16.892432] sony 0003:054C:1000.0001: unknown main item tag 0x0
-> > > > [   16.892894] sony 0003:054C:1000.0001: unknown main item tag 0x0
-> > > > [   16.893362] sony 0003:054C:1000.0001: unknown main item tag 0x0
-> > > > [   16.893844] sony 0003:054C:1000.0001: unknown main item tag 0x0
-> > > > [   16.895389] sony 0003:054C:1000.0001: unknown main item tag 0x0
-> > > > [   16.898165] sony 0003:054C:1000.0001: ignoring exceeding usage m=
-ax
-> > > > [   16.901190] sony 0003:054C:1000.0001: unknown main item tag 0x0
-> > > > [   16.903797] sony 0003:054C:1000.0001: unknown main item tag 0x0
-> > > > [   16.906401] sony 0003:054C:1000.0001: unknown main item tag 0x0
-> > > > [   16.908957] sony 0003:054C:1000.0001: unknown main item tag 0x0
-> > > > [   16.911449] sony 0003:054C:1000.0001: unknown main item tag 0x0
-> > > > [   16.913936] sony 0003:054C:1000.0001: unknown main item tag 0x1
-> > > > [   16.916551] sony 0003:054C:1000.0001: unknown main item tag 0x0
-> > > > [   16.918454] sony 0003:054C:1000.0001: unknown main item tag 0x0
-> > > > [   16.919743] sony 0003:054C:1000.0001: unknown main item tag 0x4
-> > > > [   16.920834] sony 0003:054C:1000.0001: unknown main item tag 0xe
-> > > > [   16.921904] sony 0003:054C:1000.0001: unknown main item tag 0xe
-> > > > [   16.923006] sony 0003:054C:1000.0001: unknown main item tag 0x0
-> > > > [   16.924082] sony 0003:054C:1000.0001: unknown main item tag 0x2
-> > > > [   16.925195] sony 0003:054C:1000.0001: unknown main item tag 0x0
-> > > > [   16.926289] sony 0003:054C:1000.0001: unknown main item tag 0x0
-> > > > [   16.927400] sony 0003:054C:1000.0001: unknown main item tag 0x0
-> > > > [   16.928546] BUG: unable to handle kernel NULL pointer dereferenc=
-e
-> > > > at 0000000000000028
-> > > > [   16.929951] #PF error: [normal kernel read fault]
-> > > > [   16.930884] PGD 800000007a52b067 P4D 800000007a52b067 PUD 0
-> > > > [   16.931836] Oops: 0000 [#1] SMP PTI
-> > > > [   16.932437] CPU: 0 PID: 5 Comm: kworker/0:0 Not tainted
-> > > > 4.20.0-xfstests-10979-g96d4f267e40 #1
-> > > > [   16.933752] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996=
-),
-> > > > BIOS 1.11.1-1ubuntu1 04/01/2014
-> > > > [   16.935372] Workqueue: events uhid_device_add_worker
-> > > > [   16.936321] RIP: 0010:hid_validate_values+0x48/0x110
-> > >
-> > > In a sense, it's good to have a fault there because this was added to
-> > > make sure we do not blindly accept any data. The fact that it doesn't
-> > > fail gracefully is a sign that there is something else.
-> > > Maybe Roderick could have a look?
-> > >
-> > > Cheers,
-> > > Benjamin
-> > >
-> >
-> > Sure I can have a look. Would you be able to share the sony.bin file?
-> > Did you inject a particular device? We do a lot of remapping and
-> > processing in hid-sony at startup. It is probably related to that.
-> >
-> > Thanks,
-> > Roderick
+> If you can demonstrate a reasonable design, where user selects color
+> from well-known RGB pallete and either kernel or library+kernel acts
+> to set that color on the LED, we can talk.
+> 
+> When user asks for white, it has to be white. Exact color temperature
+> does not matter. When user asks for pink, it has to be pink. Again,
+> exact color does not matter; different monitors display slightly
+> different colors, too
+-- 
+Best regards,
+Jacek Anaszewski
