@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 017F1C43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 12:51:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC9A5C43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 12:51:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4ECD208E3
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 12:51:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C751221872
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 12:51:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728161AbfADMvg (ORCPT
+        id S1728259AbfADMvq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 07:51:36 -0500
-Received: from outbound-smtp13.blacknight.com ([46.22.139.230]:41702 "EHLO
-        outbound-smtp13.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725958AbfADMvf (ORCPT
+        Fri, 4 Jan 2019 07:51:46 -0500
+Received: from outbound-smtp08.blacknight.com ([46.22.139.13]:47228 "EHLO
+        outbound-smtp08.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725958AbfADMvq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 07:51:35 -0500
-Received: from mail.blacknight.com (unknown [81.17.254.16])
-        by outbound-smtp13.blacknight.com (Postfix) with ESMTPS id 9F4F91C213C
-        for <linux-kernel@vger.kernel.org>; Fri,  4 Jan 2019 12:51:33 +0000 (GMT)
-Received: (qmail 613 invoked from network); 4 Jan 2019 12:51:33 -0000
+        Fri, 4 Jan 2019 07:51:46 -0500
+Received: from mail.blacknight.com (pemlinmail03.blacknight.ie [81.17.254.16])
+        by outbound-smtp08.blacknight.com (Postfix) with ESMTPS id CCD831C2189
+        for <linux-kernel@vger.kernel.org>; Fri,  4 Jan 2019 12:51:43 +0000 (GMT)
+Received: (qmail 1122 invoked from network); 4 Jan 2019 12:51:43 -0000
 Received: from unknown (HELO stampy.163woodhaven.lan) (mgorman@techsingularity.net@[37.228.229.96])
-  by 81.17.254.9 with ESMTPA; 4 Jan 2019 12:51:33 -0000
+  by 81.17.254.9 with ESMTPA; 4 Jan 2019 12:51:43 -0000
 From:   Mel Gorman <mgorman@techsingularity.net>
 To:     Linux-MM <linux-mm@kvack.org>
 Cc:     David Rientjes <rientjes@google.com>,
@@ -34,9 +34,9 @@ Cc:     David Rientjes <rientjes@google.com>,
         kirill@shutemov.name, Andrew Morton <akpm@linux-foundation.org>,
         Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
         Mel Gorman <mgorman@techsingularity.net>
-Subject: [PATCH 07/25] mm, migrate: Immediately fail migration of a page with no migration handler
-Date:   Fri,  4 Jan 2019 12:49:53 +0000
-Message-Id: <20190104125011.16071-8-mgorman@techsingularity.net>
+Subject: [PATCH 08/25] mm, compaction: Always finish scanning of a full pageblock
+Date:   Fri,  4 Jan 2019 12:49:54 +0000
+Message-Id: <20190104125011.16071-9-mgorman@techsingularity.net>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20190104125011.16071-1-mgorman@techsingularity.net>
 References: <20190104125011.16071-1-mgorman@techsingularity.net>
@@ -45,51 +45,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Pages with no migration handler use a fallback handler which sometimes
-works and sometimes persistently retries. A historical example was blockdev
-pages but there are others such as odd refcounting when page->private
-is used.  These are retried multiple times which is wasteful during
-compaction so this patch will fail migration faster unless the caller
-specifies MIGRATE_SYNC.
+When compaction is finishing, it uses a flag to ensure the pageblock
+is complete but it makes sense to always complete migration of a
+pageblock. Minimally, skip information is based on a pageblock and
+partially scanned pageblocks may incur more scanning in the future. The
+pageblock skip handling also becomes more strict later in the series and
+the hint is more useful if a complete pageblock was always scanned.
 
-This is not expected to help THP allocation success rates but it did
-reduce latencies very slightly in some cases.
-
-1-socket thpfioscale
-                                        4.20.0                 4.20.0
-                              noreserved-v2r15         failfast-v2r15
-Amean     fault-both-1         0.00 (   0.00%)        0.00 *   0.00%*
-Amean     fault-both-3      3839.67 (   0.00%)     3833.72 (   0.15%)
-Amean     fault-both-5      5177.47 (   0.00%)     4967.15 (   4.06%)
-Amean     fault-both-7      7245.03 (   0.00%)     7139.19 (   1.46%)
-Amean     fault-both-12    11534.89 (   0.00%)    11326.30 (   1.81%)
-Amean     fault-both-18    16241.10 (   0.00%)    16270.70 (  -0.18%)
-Amean     fault-both-24    19075.91 (   0.00%)    19839.65 (  -4.00%)
-Amean     fault-both-30    22712.11 (   0.00%)    21707.05 (   4.43%)
-Amean     fault-both-32    21692.92 (   0.00%)    21968.16 (  -1.27%)
-
-The 2-socket results are not materially different. Scan rates are similar
-as expected.
+The potentially impacts latency as more scanning is done but it's not a
+consistent win or loss as the scanning is not always a high percentage
+of the pageblock and sometimes it is offset by future reductions
+in scanning. Hence, the results are not presented this time due to a
+misleading mix of gains/losses without any clear pattern. However, full
+scanning of the pageblock is important for later patches.
 
 Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
 Acked-by: Vlastimil Babka <vbabka@suse.cz>
 ---
- mm/migrate.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ mm/compaction.c | 19 ++++++++-----------
+ mm/internal.h   |  1 -
+ 2 files changed, 8 insertions(+), 12 deletions(-)
 
-diff --git a/mm/migrate.c b/mm/migrate.c
-index 5d1839a9148d..547cc1f3f3bb 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -916,7 +916,7 @@ static int fallback_migrate_page(struct address_space *mapping,
- 	 */
- 	if (page_has_private(page) &&
- 	    !try_to_release_page(page, GFP_KERNEL))
--		return -EAGAIN;
-+		return mode == MIGRATE_SYNC ? -EAGAIN : -EBUSY;
+diff --git a/mm/compaction.c b/mm/compaction.c
+index 94d1e5b062ea..8bf2090231a3 100644
+--- a/mm/compaction.c
++++ b/mm/compaction.c
+@@ -1347,16 +1347,14 @@ static enum compact_result __compact_finished(struct compact_control *cc)
+ 	if (is_via_compact_memory(cc->order))
+ 		return COMPACT_CONTINUE;
  
- 	return migrate_page(mapping, newpage, page, mode);
- }
+-	if (cc->finishing_block) {
+-		/*
+-		 * We have finished the pageblock, but better check again that
+-		 * we really succeeded.
+-		 */
+-		if (IS_ALIGNED(cc->migrate_pfn, pageblock_nr_pages))
+-			cc->finishing_block = false;
+-		else
+-			return COMPACT_CONTINUE;
+-	}
++	/*
++	 * Always finish scanning a pageblock to reduce the possibility of
++	 * fallbacks in the future. This is particularly important when
++	 * migration source is unmovable/reclaimable but it's not worth
++	 * special casing.
++	 */
++	if (!IS_ALIGNED(cc->migrate_pfn, pageblock_nr_pages))
++		return COMPACT_CONTINUE;
+ 
+ 	/* Direct compactor: Is a suitable page free? */
+ 	for (order = cc->order; order < MAX_ORDER; order++) {
+@@ -1398,7 +1396,6 @@ static enum compact_result __compact_finished(struct compact_control *cc)
+ 				return COMPACT_SUCCESS;
+ 			}
+ 
+-			cc->finishing_block = true;
+ 			return COMPACT_CONTINUE;
+ 		}
+ 	}
+diff --git a/mm/internal.h b/mm/internal.h
+index c6f794ad21a9..edb4029f64c8 100644
+--- a/mm/internal.h
++++ b/mm/internal.h
+@@ -202,7 +202,6 @@ struct compact_control {
+ 	bool direct_compaction;		/* False from kcompactd or /proc/... */
+ 	bool whole_zone;		/* Whole zone should/has been scanned */
+ 	bool contended;			/* Signal lock or sched contention */
+-	bool finishing_block;		/* Finishing current pageblock */
+ };
+ 
+ unsigned long
 -- 
 2.16.4
 
