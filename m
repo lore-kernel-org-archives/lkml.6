@@ -6,36 +6,33 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23A5DC43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 11:21:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 470A3C43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 11:21:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE5752173B
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 11:21:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 09CD22173B
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 11:21:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728174AbfADLVu (ORCPT
+        id S1728130AbfADLVt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 06:21:50 -0500
-Received: from mx2.suse.de ([195.135.220.15]:52510 "EHLO mx1.suse.de"
+        Fri, 4 Jan 2019 06:21:49 -0500
+Received: from mx2.suse.de ([195.135.220.15]:52406 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727625AbfADLVs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 06:21:48 -0500
+        id S1726404AbfADLVq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 06:21:46 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 125B9AEEB;
-        Fri,  4 Jan 2019 11:21:46 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id 1F04BAE5F;
+        Fri,  4 Jan 2019 11:21:44 +0000 (UTC)
 From:   =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
 To:     linux-lpwan@lists.infradead.org, linux-serial@vger.kernel.org
 Cc:     linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>,
         Rob Herring <robh@kernel.org>,
         =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Oliver Neukum <oneukum@suse.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        netdev@vger.kernel.org
-Subject: [RFC lora-next 5/5] HACK: net: lora: sx130x: Add PicoCell gateway shim for cdc-acm
-Date:   Fri,  4 Jan 2019 12:21:31 +0100
-Message-Id: <20190104112131.14451-6-afaerber@suse.de>
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Subject: [PATCH lora-next 1/5] net: lora: sx130x: Factor out SPI specific parts
+Date:   Fri,  4 Jan 2019 12:21:27 +0100
+Message-Id: <20190104112131.14451-2-afaerber@suse.de>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20190104112131.14451-1-afaerber@suse.de>
 References: <20190104112131.14451-1-afaerber@suse.de>
@@ -47,402 +44,342 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ignore our device in cdc-acm probing and add a new driver for it,
-dispatching to cdc-acm for the actual implementation.
+Prepare for the picoGW by factoring code out into helpers using device
+rather than spi_device.
 
-WARNING: It is likely that this VID/PID is in use for unrelated devices.
-Only the Product string hints what this really is in current v0.2.1.
-Previous code v0.2.0 was using a Semtech VID/PID, but no card shipping
-with such firmware is known to me.
+While touching those lines, clean up the error output.
 
-While this may seem unorthodox, no internals of the driver are accessed,
-just the set of driver callbacks is duplicated as shim.
+Split the probe function in two, to allow derived drivers to insert code
+before the common probing code. This may need some more work.
 
-Use this shim construct to fake DT nodes for serdev on probe.
-For testing purposes these nodes do not have a parent yet.
-This results in two "Error -2 creating of_node link" warnings on probe.
-
-Cc: Johan Hovold <johan@kernel.org>
-Cc: Rob Herring <robh@kernel.org>
 Signed-off-by: Andreas Färber <afaerber@suse.de>
 ---
- drivers/net/lora/Makefile   |   2 +
- drivers/net/lora/picogw.c   | 337 ++++++++++++++++++++++++++++++++++++++++++++
- drivers/usb/class/cdc-acm.c |   4 +
- 3 files changed, 343 insertions(+)
- create mode 100644 drivers/net/lora/picogw.c
+ drivers/net/lora/sx130x.c   | 139 +++++++++++++++++++++++++++-----------------
+ include/linux/lora/sx130x.h |   7 +++
+ 2 files changed, 92 insertions(+), 54 deletions(-)
 
-diff --git a/drivers/net/lora/Makefile b/drivers/net/lora/Makefile
-index 5fef38abf5ed..bdcf7560dd65 100644
---- a/drivers/net/lora/Makefile
-+++ b/drivers/net/lora/Makefile
-@@ -27,6 +27,8 @@ lora-sx130x-y := sx130x.o
- lora-sx130x-y += sx130x_radio.o
- obj-$(CONFIG_LORA_SX130X) += lora-sx130x-picogw.o
- lora-sx130x-picogw-y := sx130x_picogw.o
-+obj-$(CONFIG_LORA_SX130X) += lora-picogw.o
-+lora-picogw-y := picogw.o
+diff --git a/drivers/net/lora/sx130x.c b/drivers/net/lora/sx130x.c
+index 9cae9cea195f..840052955874 100644
+--- a/drivers/net/lora/sx130x.c
++++ b/drivers/net/lora/sx130x.c
+@@ -133,7 +133,7 @@ static bool sx130x_readable_noinc_reg(struct device *dev, unsigned int reg)
+ 	}
+ }
  
- obj-$(CONFIG_LORA_USI) += lora-usi.o
- lora-usi-y := usi.o
-diff --git a/drivers/net/lora/picogw.c b/drivers/net/lora/picogw.c
-new file mode 100644
-index 000000000000..aa5b83d21bb3
---- /dev/null
-+++ b/drivers/net/lora/picogw.c
-@@ -0,0 +1,337 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * Semtech PicoCell gateway USB interface
-+ *
-+ * Copyright (c) 2018-2019 Andreas Färber
-+ */
-+
-+#define pr_fmt(fmt) "picocell: " fmt
-+
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/serial.h>
-+#include <linux/slab.h>
-+#include <linux/tty.h>
-+#include <linux/usb.h>
-+#include <linux/usb/cdc.h>
-+
-+#define PICO_VID 0x0483
-+#define PICO_PID 0x5740
-+
-+static struct usb_driver *picogw_get_acm_driver(struct usb_interface *iface)
-+{
-+	struct device_driver *drv;
-+
-+	drv = driver_find("cdc_acm", iface->dev.bus);
-+	if (!drv)
-+		return NULL;
-+
-+	return to_usb_driver(drv);
-+}
-+
-+static void picogw_kobj_release(struct kobject *kobj)
-+{
-+	struct device_node *node = container_of(kobj, struct device_node, kobj);
-+	struct property *prop;
-+
-+	prop = node->properties;
-+	while (prop) {
-+		struct property *next = prop->next;
-+		kfree(prop);
-+		prop = next;
-+	}
-+
-+	kfree(node);
-+}
-+
-+static struct kobj_type picogw_kobj_type = {
-+	.release = picogw_kobj_release,
-+};
-+
-+static u32 picogw_radio_a_reg = cpu_to_be32(0);
-+static u32 picogw_radio_b_reg = cpu_to_be32(1);
-+
-+static int picogw_fake_of_nodes(struct device *dev)
-+{
-+	struct device_node *node = NULL;
-+	struct device_node *child, *spi, *radio_a, *radio_b;
-+	struct property *prop;
-+
-+	node = kzalloc(sizeof(*node), GFP_KERNEL);
-+	if (!node)
-+		return -ENOMEM;
-+	node->name = "<NULL>";
-+	node->full_name = "usb0483,5740";
-+	node->type = "<NULL>";
-+	kobject_init(&node->kobj, &picogw_kobj_type);
-+	node->fwnode.ops = &of_fwnode_ops;
-+
-+	child = kzalloc(sizeof(*child), GFP_KERNEL);
-+	if (!child) {
-+		of_node_put(node);
-+		return -ENOMEM;
-+	}
-+	child->name = "lora";
-+	child->full_name = "lora";
-+	child->type = "<NULL>";
-+	child->parent = node;
-+	kobject_init(&child->kobj, &picogw_kobj_type);
-+	child->fwnode.ops = &of_fwnode_ops;
-+	node->child = child;
-+
-+	prop = kzalloc(sizeof(*prop), GFP_KERNEL);
-+	if (!prop) {
-+		of_node_put(child);
-+		of_node_put(node);
-+		return -ENOMEM;
-+	}
-+	prop->name = "compatible";
-+	prop->value = "semtech,lora-picocell";
-+	prop->length = 22;
-+	child->properties = prop;
-+
-+	spi = kzalloc(sizeof(*spi), GFP_KERNEL);
-+	if (!spi) {
-+		of_node_put(child);
-+		of_node_put(node);
-+		return -ENOMEM;
-+	}
-+	spi->name = "radio-spi";
-+	spi->full_name = "radio-spi";
-+	spi->type = "<NULL>";
-+	spi->parent = child;
-+	kobject_init(&spi->kobj, &picogw_kobj_type);
-+	spi->fwnode.ops = &of_fwnode_ops;
-+	child->child = spi;
-+
-+	radio_a = kzalloc(sizeof(*radio_a), GFP_KERNEL);
-+	if (!radio_a) {
-+		of_node_put(spi);
-+		of_node_put(child);
-+		of_node_put(node);
-+		return -ENOMEM;
-+	}
-+	radio_a->name = "lora@0";
-+	radio_a->full_name = "lora@0";
-+	radio_a->type = "<NULL>";
-+	radio_a->parent = spi;
-+	kobject_init(&radio_a->kobj, &picogw_kobj_type);
-+	radio_a->fwnode.ops = &of_fwnode_ops;
-+	spi->child = radio_a;
-+
-+	prop = kzalloc(sizeof(*prop), GFP_KERNEL);
-+	if (!prop) {
-+		of_node_put(radio_a);
-+		of_node_put(spi);
-+		of_node_put(child);
-+		of_node_put(node);
-+		return -ENOMEM;
-+	}
-+	prop->name = "compatible";
-+	prop->value = "semtech,sx1257";
-+	prop->length = 15;
-+	radio_a->properties = prop;
-+
-+	prop = kzalloc(sizeof(*prop), GFP_KERNEL);
-+	if (!prop) {
-+		of_node_put(radio_a);
-+		of_node_put(spi);
-+		of_node_put(child);
-+		of_node_put(node);
-+		return -ENOMEM;
-+	}
-+	prop->name = "reg";
-+	prop->value = &picogw_radio_a_reg;
-+	prop->length = 4;
-+	radio_a->properties->next = prop;
-+
-+	radio_b = kzalloc(sizeof(*radio_b), GFP_KERNEL);
-+	if (!radio_b) {
-+		of_node_put(radio_a);
-+		of_node_put(spi);
-+		of_node_put(child);
-+		of_node_put(node);
-+		return -ENOMEM;
-+	}
-+	radio_b->name = "lora@1";
-+	radio_b->full_name = "Lora@1";
-+	radio_b->type = "<NULL>";
-+	radio_b->parent = spi;
-+	kobject_init(&radio_b->kobj, &picogw_kobj_type);
-+	radio_b->fwnode.ops = &of_fwnode_ops;
-+	radio_a->sibling = radio_b;
-+
-+	prop = kzalloc(sizeof(*prop), GFP_KERNEL);
-+	if (!prop) {
-+		of_node_put(radio_b);
-+		of_node_put(radio_a);
-+		of_node_put(spi);
-+		of_node_put(child);
-+		of_node_put(node);
-+		return -ENOMEM;
-+	}
-+	prop->name = "compatible";
-+	prop->value = "semtech,sx1257";
-+	prop->length = 15;
-+	radio_b->properties = prop;
-+
-+	prop = kzalloc(sizeof(*prop), GFP_KERNEL);
-+	if (!prop) {
-+		of_node_put(radio_a);
-+		of_node_put(spi);
-+		of_node_put(child);
-+		of_node_put(node);
-+		return -ENOMEM;
-+	}
-+	prop->name = "reg";
-+	prop->value = &picogw_radio_b_reg;
-+	prop->length = 4;
-+	radio_b->properties->next = prop;
-+
-+	dev->of_node = node;
-+
+-static struct regmap_config sx130x_regmap_config = {
++const struct regmap_config sx130x_regmap_config = {
+ 	.reg_bits = 8,
+ 	.val_bits = 8,
+ 
+@@ -151,6 +151,7 @@ static struct regmap_config sx130x_regmap_config = {
+ 	.num_ranges = ARRAY_SIZE(sx130x_regmap_ranges),
+ 	.max_register = SX1301_MAX_REGISTER,
+ };
++EXPORT_SYMBOL_GPL(sx130x_regmap_config);
+ 
+ static int sx130x_field_write(struct sx130x_priv *priv,
+ 		enum sx130x_fields field_id, u8 val)
+@@ -537,110 +538,98 @@ static const struct net_device_ops sx130x_net_device_ops = {
+ 	.ndo_start_xmit = sx130x_loradev_start_xmit,
+ };
+ 
+-static int sx130x_probe(struct spi_device *spi)
++int sx130x_early_probe(struct regmap *regmap, struct gpio_desc *rst)
+ {
++	struct device *dev = regmap_get_device(regmap);
+ 	struct net_device *netdev;
+ 	struct sx130x_priv *priv;
+-	struct gpio_desc *rst;
+ 	int ret;
+ 	int i;
+-	unsigned int ver;
+-	unsigned int val;
+-
+-	rst = devm_gpiod_get_optional(&spi->dev, "reset", GPIOD_OUT_LOW);
+-	if (IS_ERR(rst)) {
+-		if (PTR_ERR(rst) != -EPROBE_DEFER)
+-			dev_err(&spi->dev, "Failed to obtain reset GPIO\n");
+-		return PTR_ERR(rst);
+-	}
+-
+-	gpiod_set_value_cansleep(rst, 1);
+-	msleep(100);
+-	gpiod_set_value_cansleep(rst, 0);
+-	msleep(100);
+-
+-	spi->bits_per_word = 8;
+-	spi_setup(spi);
+ 
+-	netdev = devm_alloc_loradev(&spi->dev, sizeof(*priv));
++	netdev = devm_alloc_loradev(dev, sizeof(*priv));
+ 	if (!netdev)
+ 		return -ENOMEM;
+ 
+ 	netdev->netdev_ops = &sx130x_net_device_ops;
+-	SET_NETDEV_DEV(netdev, &spi->dev);
++	SET_NETDEV_DEV(netdev, dev);
+ 
+ 	priv = netdev_priv(netdev);
++	priv->regmap = regmap;
+ 	priv->rst_gpio = rst;
+ 
+ 	mutex_init(&priv->io_lock);
+ 
+-	spi_set_drvdata(spi, netdev);
+-	priv->dev = &spi->dev;
+-
+-	priv->regmap = devm_regmap_init_spi(spi, &sx130x_regmap_config);
+-	if (IS_ERR(priv->regmap)) {
+-		ret = PTR_ERR(priv->regmap);
+-		dev_err(&spi->dev, "Regmap allocation failed: %d\n", ret);
+-		return ret;
+-	}
++	dev_set_drvdata(dev, netdev);
++	priv->dev = dev;
+ 
+ 	for (i = 0; i < ARRAY_SIZE(sx130x_regmap_fields); i++) {
+ 		const struct reg_field *reg_fields = sx130x_regmap_fields;
+ 
+-		priv->regmap_fields[i] = devm_regmap_field_alloc(&spi->dev,
++		priv->regmap_fields[i] = devm_regmap_field_alloc(dev,
+ 				priv->regmap,
+ 				reg_fields[i]);
+ 		if (IS_ERR(priv->regmap_fields[i])) {
+ 			ret = PTR_ERR(priv->regmap_fields[i]);
+-			dev_err(&spi->dev, "Cannot allocate regmap field: %d\n", ret);
++			dev_err(dev, "Cannot allocate regmap field (%d)\n", ret);
+ 			return ret;
+ 		}
+ 	}
 +	return 0;
 +}
++EXPORT_SYMBOL_GPL(sx130x_early_probe);
 +
-+static void picogw_cleanup_of_nodes(struct device *dev)
++int sx130x_probe(struct device *dev)
 +{
-+	if (dev->of_node->parent)
-+		return;
++	struct net_device *netdev = dev_get_drvdata(dev);
++	struct sx130x_priv *priv = netdev_priv(netdev);
++	unsigned int ver;
++	unsigned int val;
++	int ret;
+ 
+ 	ret = regmap_read(priv->regmap, SX1301_VER, &ver);
+ 	if (ret) {
+-		dev_err(&spi->dev, "version read failed\n");
++		dev_err(dev, "version read failed (%d)\n", ret);
+ 		return ret;
+ 	}
+ 
+ 	if (ver != SX1301_CHIP_VERSION) {
+-		dev_err(&spi->dev, "unexpected version: %u\n", ver);
++		dev_err(dev, "unexpected version: %u\n", ver);
+ 		return -ENXIO;
+ 	}
+ 
+ 	ret = regmap_write(priv->regmap, SX1301_PAGE, 0);
+ 	if (ret) {
+-		dev_err(&spi->dev, "page/reset write failed\n");
++		dev_err(dev, "page/reset write failed (%d)\n", ret);
+ 		return ret;
+ 	}
+ 
+ 	ret = sx130x_field_write(priv, F_SOFT_RESET, 1);
+ 	if (ret) {
+-		dev_err(&spi->dev, "soft reset failed\n");
++		dev_err(dev, "soft reset failed (%d)\n", ret);
+ 		return ret;
+ 	}
+ 
+ 	ret = sx130x_field_write(priv, F_GLOBAL_EN, 0);
+ 	if (ret) {
+-		dev_err(&spi->dev, "gate global clocks failed\n");
++		dev_err(dev, "gate global clocks failed (%d)\n", ret);
+ 		return ret;
+ 	}
+ 
+ 	ret = sx130x_field_write(priv, F_CLK32M_EN, 0);
+ 	if (ret) {
+-		dev_err(&spi->dev, "gate 32M clock failed\n");
++		dev_err(dev, "gate 32M clock failed (%d)\n", ret);
+ 		return ret;
+ 	}
+ 
+ 	ret = sx130x_field_write(priv, F_RADIO_A_EN, 1);
+ 	if (ret) {
+-		dev_err(&spi->dev, "radio a enable failed\n");
++		dev_err(dev, "radio A enable failed (%d)\n", ret);
+ 		return ret;
+ 	}
+ 
+ 	ret = sx130x_field_write(priv, F_RADIO_B_EN, 1);
+ 	if (ret) {
+-		dev_err(&spi->dev, "radio b enable failed\n");
++		dev_err(dev, "radio B enable failed (%d)\n", ret);
+ 		return ret;
+ 	}
+ 
+@@ -648,7 +637,7 @@ static int sx130x_probe(struct spi_device *spi)
+ 
+ 	ret = sx130x_field_write(priv, F_RADIO_RST, 1);
+ 	if (ret) {
+-		dev_err(&spi->dev, "radio asert reset failed\n");
++		dev_err(dev, "radio assert reset failed (%d)\n", ret);
+ 		return ret;
+ 	}
+ 
+@@ -656,13 +645,13 @@ static int sx130x_probe(struct spi_device *spi)
+ 
+ 	ret = sx130x_field_write(priv, F_RADIO_RST, 0);
+ 	if (ret) {
+-		dev_err(&spi->dev, "radio deasert reset failed\n");
++		dev_err(dev, "radio deassert reset failed (%d)\n", ret);
+ 		return ret;
+ 	}
+ 
+ 	/* radio */
+ 
+-	ret = devm_sx130x_register_radio_devices(&spi->dev);
++	ret = devm_sx130x_register_radio_devices(dev);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -672,7 +661,7 @@ static int sx130x_probe(struct spi_device *spi)
+ 
+ 	ret = regmap_read(priv->regmap, SX1301_GPMODE, &val);
+ 	if (ret) {
+-		dev_err(&spi->dev, "GPIO mode read failed\n");
++		dev_err(dev, "GPIO mode read failed (%d)\n", ret);
+ 		goto out;
+ 	}
+ 
+@@ -680,13 +669,13 @@ static int sx130x_probe(struct spi_device *spi)
+ 
+ 	ret = regmap_write(priv->regmap, SX1301_GPMODE, val);
+ 	if (ret) {
+-		dev_err(&spi->dev, "GPIO mode write failed\n");
++		dev_err(dev, "GPIO mode write failed (%d)\n", ret);
+ 		goto out;
+ 	}
+ 
+ 	ret = regmap_read(priv->regmap, SX1301_GPSO, &val);
+ 	if (ret) {
+-		dev_err(&spi->dev, "GPIO select output read failed\n");
++		dev_err(dev, "GPIO select output read failed (%d)\n", ret);
+ 		goto out;
+ 	}
+ 
+@@ -695,7 +684,7 @@ static int sx130x_probe(struct spi_device *spi)
+ 
+ 	ret = regmap_write(priv->regmap, SX1301_GPSO, val);
+ 	if (ret) {
+-		dev_err(&spi->dev, "GPIO select output write failed\n");
++		dev_err(dev, "GPIO select output write failed (%d)\n", ret);
+ 		goto out;
+ 	}
+ 
+@@ -705,24 +694,66 @@ static int sx130x_probe(struct spi_device *spi)
+ 	if (ret)
+ 		goto out;
+ 
+-	dev_info(&spi->dev, "SX1301 module probed\n");
++	dev_info(dev, "SX1301 module probed\n");
+ 
+ out:
+ 	mutex_unlock(&priv->io_lock);
+ 
+ 	return ret;
+ }
++EXPORT_SYMBOL_GPL(sx130x_probe);
+ 
+-static int sx130x_remove(struct spi_device *spi)
++int sx130x_remove(struct device *dev)
+ {
+-	struct net_device *netdev = spi_get_drvdata(spi);
++	struct net_device *netdev = dev_get_drvdata(dev);
+ 
+ 	unregister_loradev(netdev);
+ 
+-	dev_info(&spi->dev, "SX1301 module removed\n");
++	dev_info(dev, "SX1301 module removed\n");
+ 
+ 	return 0;
+ }
++EXPORT_SYMBOL_GPL(sx130x_remove);
 +
-+	of_node_put(dev->of_node->child->child->child->sibling); /* lora@1 */
-+	of_node_put(dev->of_node->child->child->child); /* lora@0 */
-+	of_node_put(dev->of_node->child->child); /* radio-spi*/
-+	of_node_put(dev->of_node->child); /* serdev */
-+	of_node_put(dev->of_node); /* usb */
-+	dev->of_node = NULL;
-+}
-+
-+static int picogw_probe(struct usb_interface *interface,
-+	const struct usb_device_id *id)
++static int sx130x_spi_probe(struct spi_device *spi)
 +{
-+	struct usb_driver *drv;
++	struct gpio_desc *rst;
++	struct regmap *regmap;
 +	int ret;
 +
-+	drv = picogw_get_acm_driver(interface);
-+	if (!drv) {
-+		dev_err(&interface->dev, "driver_find failed\n");
-+		return -EPROBE_DEFER;
++	rst = devm_gpiod_get_optional(&spi->dev, "reset", GPIOD_OUT_LOW);
++	if (IS_ERR(rst)) {
++		if (PTR_ERR(rst) != -EPROBE_DEFER)
++			dev_err(&spi->dev, "Failed to obtain reset GPIO\n");
++		return PTR_ERR(rst);
 +	}
 +
-+	if (!interface->dev.of_node) {
-+		dev_dbg(&interface->dev, "no of_node\n");
-+		ret = picogw_fake_of_nodes(&interface->dev);
-+		if (ret)
-+			return ret;
-+	}
++	gpiod_set_value_cansleep(rst, 1);
++	msleep(100);
++	gpiod_set_value_cansleep(rst, 0);
++	msleep(100);
 +
-+	ret = drv->probe(interface, id);
-+	if (ret) {
-+		picogw_cleanup_of_nodes(&interface->dev);
++	spi->bits_per_word = 8;
++	spi_setup(spi);
++
++	regmap = devm_regmap_init_spi(spi, &sx130x_regmap_config);
++	if (IS_ERR(regmap)) {
++		ret = PTR_ERR(regmap);
++		dev_err(&spi->dev, "Regmap allocation failed: %d\n", ret);
 +		return ret;
 +	}
 +
-+	return 0;
-+}
-+
-+static void picogw_disconnect(struct usb_interface *intf)
-+{
-+	struct usb_driver *drv = picogw_get_acm_driver(intf);
-+
-+	if (drv)
-+		drv->disconnect(intf);
-+	else
-+		dev_warn(&intf->dev, "%s: failed to get cdc_acm driver\n", __func__);
-+
-+	picogw_cleanup_of_nodes(&intf->dev);
-+}
-+
-+static int picogw_suspend(struct usb_interface *intf, pm_message_t message)
-+{
-+	struct usb_driver *drv = picogw_get_acm_driver(intf);
-+
-+	if (!drv) {
-+		dev_err(&intf->dev, "%s: failed to get cdc_acm driver\n", __func__);
-+		return -ENODEV;
-+	}
-+
-+	return drv->suspend(intf, message);
-+}
-+
-+static int picogw_resume(struct usb_interface *intf)
-+{
-+	struct usb_driver *drv = picogw_get_acm_driver(intf);
-+
-+	if (!drv) {
-+		dev_err(&intf->dev, "%s: failed to get cdc_acm driver\n", __func__);
-+		return -ENODEV;
-+	}
-+
-+	return drv->resume(intf);
-+}
-+
-+static int picogw_reset_resume(struct usb_interface *intf)
-+{
-+	struct usb_driver *drv = picogw_get_acm_driver(intf);
-+
-+	if (!drv) {
-+		dev_err(&intf->dev, "%s: failed to get cdc_acm driver\n", __func__);
-+		return -ENODEV;
-+	}
-+
-+	return drv->reset_resume(intf);
-+}
-+
-+static int picogw_pre_reset(struct usb_interface *intf)
-+{
-+	struct usb_driver *drv = picogw_get_acm_driver(intf);
-+
-+	if (!drv) {
-+		dev_err(&intf->dev, "%s: failed to get cdc_acm driver\n", __func__);
-+		return -ENODEV;
-+	}
-+
-+	return drv->pre_reset(intf);
-+}
-+
-+static const struct usb_device_id picogw_usb_id_table[] = {
-+	{ USB_DEVICE_AND_INTERFACE_INFO(PICO_VID, PICO_PID,
-+	  USB_CLASS_COMM, USB_CDC_SUBCLASS_ACM, USB_CDC_ACM_PROTO_AT_V25TER) },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(usb, picogw_usb_id_table);
-+
-+static struct usb_driver picogw_usb_driver = {
-+	.name = "lora-picogw-usb",
-+	.probe = picogw_probe,
-+	.disconnect = picogw_disconnect,
-+	.suspend = picogw_suspend,
-+	.resume = picogw_resume,
-+	.reset_resume = picogw_reset_resume,
-+	.pre_reset = picogw_pre_reset,
-+	.id_table = picogw_usb_id_table,
-+	.supports_autosuspend = 1,
-+	.disable_hub_initiated_lpm = 1,
-+};
-+
-+static int __init picogw_init(void)
-+{
-+	int ret;
-+
-+	ret = usb_register(&picogw_usb_driver);
-+	if (ret < 0){
-+		pr_err("usb_register failed (%d)\n", ret);
++	ret = sx130x_early_probe(regmap, rst);
++	if (ret)
 +		return ret;
-+	}
 +
-+	return 0;
++	return sx130x_probe(&spi->dev);
 +}
-+module_init(picogw_init);
 +
-+static void __exit picogw_exit(void)
++static int sx130x_spi_remove(struct spi_device *spi)
 +{
-+	usb_deregister(&picogw_usb_driver);
++	return sx130x_remove(&spi->dev);;
 +}
-+module_exit(picogw_exit);
-+
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/usb/class/cdc-acm.c b/drivers/usb/class/cdc-acm.c
-index c225a586c524..541c23b4fbfe 100644
---- a/drivers/usb/class/cdc-acm.c
-+++ b/drivers/usb/class/cdc-acm.c
-@@ -1865,6 +1865,10 @@ static const struct usb_device_id acm_ids[] = {
- 	.driver_info = IGNORE_DEVICE,
+ 
+ #ifdef CONFIG_OF
+ static const struct of_device_id sx130x_dt_ids[] = {
+@@ -737,8 +768,8 @@ static struct spi_driver sx130x_spi_driver = {
+ 		.name = "sx130x",
+ 		.of_match_table = of_match_ptr(sx130x_dt_ids),
  	},
+-	.probe = sx130x_probe,
+-	.remove = sx130x_remove,
++	.probe = sx130x_spi_probe,
++	.remove = sx130x_spi_remove,
+ };
  
-+	{ USB_DEVICE_AND_INTERFACE_INFO(0x0483, 0x5740,
-+		USB_CLASS_COMM, USB_CDC_SUBCLASS_ACM, USB_CDC_ACM_PROTO_AT_V25TER),
-+	.driver_info = IGNORE_DEVICE },
+ static int __init sx130x_init(void)
+diff --git a/include/linux/lora/sx130x.h b/include/linux/lora/sx130x.h
+index ac4e2e7ae18a..d6f027ef283f 100644
+--- a/include/linux/lora/sx130x.h
++++ b/include/linux/lora/sx130x.h
+@@ -9,9 +9,16 @@
+ #define LORA_SX130X_H
+ 
+ #include <linux/device.h>
++#include <linux/gpio/consumer.h>
+ #include <linux/module.h>
+ #include <linux/regmap.h>
+ 
++extern const struct regmap_config sx130x_regmap_config;
++int sx130x_early_probe(struct regmap *regmap, struct gpio_desc *rst);
++int sx130x_probe(struct device *dev);
++int sx130x_remove(struct device *dev);
 +
- 	/* control interfaces without any protocol set */
- 	{ USB_INTERFACE_INFO(USB_CLASS_COMM, USB_CDC_SUBCLASS_ACM,
- 		USB_CDC_PROTO_NONE) },
++
+ struct sx130x_radio_device {
+ 	struct device dev;
+ 	struct device *concentrator;
 -- 
 2.16.4
 
