@@ -2,142 +2,146 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90938C43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 15:35:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 638D4C43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 15:39:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5756621872
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 15:35:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="mmj7MDQL"
+	by mail.kernel.org (Postfix) with ESMTP id 32C1A21872
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 15:39:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727788AbfADPfq (ORCPT
+        id S1727352AbfADPjy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 10:35:46 -0500
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:12393 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725939AbfADPfq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 10:35:46 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c2f7d430002>; Fri, 04 Jan 2019 07:35:31 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Fri, 04 Jan 2019 07:35:45 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Fri, 04 Jan 2019 07:35:45 -0800
-Received: from HQMAIL104.nvidia.com (172.18.146.11) by HQMAIL108.nvidia.com
- (172.18.146.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 4 Jan
- 2019 15:35:45 +0000
-Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL104.nvidia.com
- (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
- Transport; Fri, 4 Jan 2019 15:35:45 +0000
-Received: from amhetre.nvidia.com (Not Verified[10.24.229.42]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5c2f7d4f0000>; Fri, 04 Jan 2019 07:35:45 -0800
-From:   Ashish Mhetre <amhetre@nvidia.com>
-To:     <vdumpa@nvidia.com>, <mcgrof@kernel.org>, <keescook@chromium.org>,
-        <linux-mm@kvack.org>
-CC:     <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <Snikam@nvidia.com>, Ashish Mhetre <amhetre@nvidia.com>
-Subject: [PATCH] mm: Expose lazy vfree pages to control via sysctl
-Date:   Fri, 4 Jan 2019 21:05:41 +0530
-Message-ID: <1546616141-486-1-git-send-email-amhetre@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-X-NVConfidentiality: public
-MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1546616131; bh=4R4q8oXPqNXWmbjw0o+m2JY9q8qMM6s7EEs/ePoMyR0=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         X-NVConfidentiality:MIME-Version:Content-Type;
-        b=mmj7MDQLasXZ5eBDuMNI1GNjQ83NexJDUotENXYFfQhRZiqj2C3qWkRAuo1PID1KR
-         2TNlI8waSpNYPSSe0/x7Vgk/7zawqgSVfi0x1oV5oU3VdsSkhIzNNdlkwk/BJnQ9K5
-         qcvAaOF/pUfDRCyf/92dZp/MS6nVOpixdCcFcmHCOXaFKrWHf4LZASkcBIRM1xcVEB
-         /w5oespn5VhwSDU0bgCP4K72tg24xlqXVIgEJCV66fxiUfrq3MGrIxg/RrVonhUXAW
-         GXAnoAXLwLX0WLbXJLSFIVL9BL1CxwGwKgfYdqK65l7OYbym+/a/7QwdI+q4Vl8jSD
-         jIORxwJ4mmPLA==
+        Fri, 4 Jan 2019 10:39:54 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:44702 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727038AbfADPjx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 10:39:53 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1F92715AD;
+        Fri,  4 Jan 2019 07:39:48 -0800 (PST)
+Received: from big-swifty.misterjones.org (big-swifty.cambridge.arm.com [10.1.36.144])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 025FA3F575;
+        Fri,  4 Jan 2019 07:39:36 -0800 (PST)
+Date:   Fri, 04 Jan 2019 15:39:22 +0000
+Message-ID: <86bm4wbff9.wl-marc.zyngier@arm.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+To:     Pavel Tatashin <pasha.tatashin@soleen.com>
+Cc:     catalin.marinas@arm.com, Will Deacon <will.deacon@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        rppt@linux.vnet.ibm.com, Michal Hocko <mhocko@suse.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        andrew.murray@arm.com, james.morse@arm.com, sboyd@kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 3/3] arm64: Early boot time stamps
+In-Reply-To: <CA+CK2bA_006YGu3dtJM24pN1ZGgcJZnF2oEeWKkq3QBrcCbB6Q@mail.gmail.com>
+References: <20181226164509.22916-1-pasha.tatashin@soleen.com>
+        <20181226164509.22916-4-pasha.tatashin@soleen.com>
+        <9fe670d4-d799-c05f-297e-437eda1d2072@arm.com>
+        <CA+CK2bA_006YGu3dtJM24pN1ZGgcJZnF2oEeWKkq3QBrcCbB6Q@mail.gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 EasyPG/1.0.0 Emacs/25.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+Organization: ARM Ltd
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hiroshi Doyu <hdoyu@nvidia.com>
+On Thu, 03 Jan 2019 19:58:25 +0000,
+Pavel Tatashin <pasha.tatashin@soleen.com> wrote:
+> 
+> > I still think this approach is flawed. You provide the kernel with a
+> > potentially broken sched_clock that may jump back and forth until the
+> > workaround kicks in. Nobody expects this.
+> >
+> > Instead, I'd suggest you allow for a something other than local_clock()
+> > to be used for the time stamping until a properly working sched_clock
+> > gets registered.
+> >
+> > This way, you'll only impact the timestamps when running on a broken system.
+> 
+> I think, given that on other platforms sched_clock() is already used
+> early, it is not a good idea to invent a different clock just for time
+> stamps.
 
-The purpose of lazy_max_pages is to gather virtual address space till it
-reaches the lazy_max_pages limit and then purge with a TLB flush and hence
-reduce the number of global TLB flushes.
-The default value of lazy_max_pages with one CPU is 32MB and with 4 CPUs it
-is 96MB i.e. for 4 cores, 96MB of vmalloc space will be gathered before it
-is purged with a TLB flush.
-This feature has shown random latency issues. For example, we have seen
-that the kernel thread for some camera application spent 30ms in
-__purge_vmap_area_lazy() with 4 CPUs.
-So, create "/proc/sys/lazy_vfree_pages" file to control lazy vfree pages.
-With this sysctl, the behaviour of lazy_vfree_pages can be controlled and
-the systems which can't tolerate latency issues can also disable it.
-This is one of the way through which lazy_vfree_pages can be controlled as
-proposed in this patch. The other possible solution would be to configure
-lazy_vfree_pages through kernel cmdline.
+Square pegs vs round holes. Mimicking other architectures isn't always
+the right thing to do when faced with a different problem. We put a
+lot of effort in working around timer errata for a good reason, and
+feeding the rest of the system bogus timing information doesn't sound
+great.
 
-Signed-off-by: Hiroshi Doyu <hdoyu@nvidia.com>
-Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
----
- kernel/sysctl.c | 8 ++++++++
- mm/vmalloc.c    | 5 ++++-
- 2 files changed, 12 insertions(+), 1 deletion(-)
+> We could limit arm64 approach only for chips where cntvct_el0 is
+> working: i.e. frequency is known, and the clock is stable, meaning
+> cannot go backward. Perhaps we would start early clock a little later,
+> but at least it will be available for the sane chips. The only
+> question, where during boot time this is known.
 
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 3ae223f..49523efc 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -111,6 +111,7 @@ extern int pid_max;
- extern int pid_max_min, pid_max_max;
- extern int percpu_pagelist_fraction;
- extern int latencytop_enabled;
-+extern int sysctl_lazy_vfree_pages;
- extern unsigned int sysctl_nr_open_min, sysctl_nr_open_max;
- #ifndef CONFIG_MMU
- extern int sysctl_nr_trim_pages;
-@@ -1251,6 +1252,13 @@ static struct ctl_table kern_table[] = {
- 
- static struct ctl_table vm_table[] = {
- 	{
-+		.procname	= "lazy_vfree_pages",
-+		.data		= &sysctl_lazy_vfree_pages,
-+		.maxlen		= sizeof(sysctl_lazy_vfree_pages),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec,
-+	},
-+	{
- 		.procname	= "overcommit_memory",
- 		.data		= &sysctl_overcommit_memory,
- 		.maxlen		= sizeof(sysctl_overcommit_memory),
-diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index 97d4b25..fa07966 100644
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@ -619,13 +619,16 @@ static void unmap_vmap_area(struct vmap_area *va)
-  * code, and it will be simple to change the scale factor if we find that it
-  * becomes a problem on bigger systems.
-  */
-+
-+int sysctl_lazy_vfree_pages = 32UL * 1024 * 1024 / PAGE_SIZE;
-+
- static unsigned long lazy_max_pages(void)
- {
- 	unsigned int log;
- 
- 	log = fls(num_online_cpus());
- 
--	return log * (32UL * 1024 * 1024 / PAGE_SIZE);
-+	return log * sysctl_lazy_vfree_pages;
- }
- 
- static atomic_t vmap_lazy_nr = ATOMIC_INIT(0);
+How do you propose we do that? Defective timers can be a property of
+the implementation, of the integration, or both. In any case, it
+requires firmware support (DT, ACPI). All that is only available quite
+late, and moving it earlier is not easily doable.
+
+> Another approach is to modify sched_clock() in
+> kernel/time/sched_clock.c to never return backward value during boot.
+> 
+> 1. Rename  current implementation of sched_clock() to sched_clock_raw()
+> 2. New sched_clock() would look like this:
+> 
+> u64 sched_clock(void)
+> {
+>    if (static_branch(early_unstable_clock))
+>       return sched_clock_unstable();
+>    else
+>       return sched_clock_raw();
+> }
+> 
+> 3. sched_clock_unstable() would look like this:
+> 
+> u64 sched_clock_unstable(void)
+> {
+> again:
+>   static u64 old_clock;
+>   u64 new_clock = sched_clock_raw();
+>   static u64 old_clock_read =   READ_ONCE(old_clock);
+>   /* It is ok if time does not progress, but don't allow to go backward */
+>   if (new_clock < old_clock_read)
+>     return old_clock_read;
+>    /* update the old_clock value */
+>    if (cmpxchg64(&old_clock, old_clock_read, new_clock) != old_clock_read)
+>       goto again;
+>    return new_clock;
+> }
+
+You now have an "unstable" clock that is only allowed to move forward,
+until you switch to the real one. And at handover time, anything can
+happen.
+
+It is one thing to allow for the time stamping to be imprecise. But
+imposing the same behaviour on other parts of the kernel that have so
+far relied on a strictly monotonic sched_clock feels like a bad idea.
+
+What I'm proposing is that we allow architectures to override the hard
+tie between local_clock/sched_clock and kernel log time stamping, with
+the default being of course what we have today. This gives a clean
+separation between the two when the architecture needs to delay the
+availability of sched_clock until implementation requirements are
+discovered. It also keep sched_clock simple and efficient.
+
+To illustrate what I'm trying to argue for, I've pushed out a couple
+of proof of concept patches here[1]. I've briefly tested them in a
+guest, and things seem to work OK.
+
+Thanks,
+
+	M.
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/maz/arm-platforms.git/log/?h=arm64/tsclock
+
 -- 
-2.7.4
-
+Jazz is not dead, it just smell funny.
