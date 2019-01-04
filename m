@@ -2,94 +2,107 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 925CCC43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 17:47:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C9EAC43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 17:48:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C2CF218E0
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 17:47:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546624022;
-	bh=DX9SVpw1a/H0h5G9P6YYsGTnS5rJGiARNv3EjPDdPy0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=WUwoL1yZOylJXg6PVBghw57tKU5SQ+/cbb/LFwDP2DB+UqGnAY24v4CjV+9gcSFnE
-	 kQSGEDL9cVJn21tM+bsz/PI14xx5091KRi/TKNIvzA7R6CVD+3xhEOFw28OrJA2QCu
-	 8nttaPfu0R7ZvYXiEl9hAz7EG2FH7WOmafDVAlac=
+	by mail.kernel.org (Postfix) with ESMTP id 078B821872
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 17:48:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727404AbfADRrB (ORCPT
+        id S1727642AbfADRs0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 12:47:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37394 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726309AbfADRrA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 12:47:00 -0500
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B2D20218E0;
-        Fri,  4 Jan 2019 17:46:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546624019;
-        bh=DX9SVpw1a/H0h5G9P6YYsGTnS5rJGiARNv3EjPDdPy0=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Zah8HQFAQuxJ+V/LrIcbB6iPEj+pAV7fwibz8LJM1xgptNPjZpxX242qQrPL/SDqp
-         kRtRy/nMKdiZVV7DKimMh9CfVuEyiemF7apb27P7W4PQ/pDl6piGLcWO7IbkzFtUtl
-         zaUrNjO6Ruk9S2nhZuY3MWHRTOMr0LM6jRe3g0qQ=
-Received: by mail-qk1-f179.google.com with SMTP id z18so5960025qkj.10;
-        Fri, 04 Jan 2019 09:46:59 -0800 (PST)
-X-Gm-Message-State: AJcUuke0M/7UVy7uwVtAepZYskqiCUQ66sUBeVjpcHOJjTXrdBXW4f/A
-        5MxEBWQJGrvmHNRmzW2NGFD9wjRuvZQ47iuN4A==
-X-Google-Smtp-Source: ALg8bN6lbN6IYt8HBU4h2chHQ+lI9e7YOem3Rwtx1bNujcBM644c/lYcoTmHl4NvCY8PPpoJsYEun8V1xQgJ1QzJyn8=
-X-Received: by 2002:a37:b646:: with SMTP id g67mr48718816qkf.326.1546624018937;
- Fri, 04 Jan 2019 09:46:58 -0800 (PST)
+        Fri, 4 Jan 2019 12:48:26 -0500
+Received: from gateway21.websitewelcome.com ([192.185.45.154]:44971 "EHLO
+        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726309AbfADRsZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 12:48:25 -0500
+Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
+        by gateway21.websitewelcome.com (Postfix) with ESMTP id 9DA18400DA0E8
+        for <linux-kernel@vger.kernel.org>; Fri,  4 Jan 2019 11:48:24 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id fTa4gTHmB90onfTa4gyEqN; Fri, 04 Jan 2019 11:48:24 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.130.205] (port=35476 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gfTa3-000YoP-Ji; Fri, 04 Jan 2019 11:48:24 -0600
+Date:   Fri, 4 Jan 2019 11:48:19 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>
+Cc:     linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] sc16is7xx: Use struct_size() in devm_kzalloc()
+Message-ID: <20190104174819.GA32645@embeddedor>
 MIME-Version: 1.0
-References: <1546595897-33291-1-git-send-email-clabbe@baylibre.com>
-In-Reply-To: <1546595897-33291-1-git-send-email-clabbe@baylibre.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Fri, 4 Jan 2019 11:46:47 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+Wo7kWTHg6f+HkTfq1=JN8r4iBrwSz9JRdJ0rhjyKSpg@mail.gmail.com>
-Message-ID: <CAL_Jsq+Wo7kWTHg6f+HkTfq1=JN8r4iBrwSz9JRdJ0rhjyKSpg@mail.gmail.com>
-Subject: Re: [PATCH] powerpc: build dtb even without COMPILE_TEST
-To:     Corentin Labbe <clabbe@baylibre.com>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@samba.org>, devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.130.205
+X-Source-L: No
+X-Exim-ID: 1gfTa3-000YoP-Ji
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.130.205]:35476
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 41
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 4, 2019 at 3:58 AM Corentin Labbe <clabbe@baylibre.com> wrote:
->
-> I wanted to test the virtex440-ml507 qemu machine and found that the dtb
-> for it was not builded.
+One of the more common cases of allocation size calculations is finding
+the size of a structure that has a zero-sized array at the end, along
+with memory for some number of elements for that array. For example:
 
-Just do:
+struct foo {
+    int stuff;
+    void *entry[];
+};
 
-make virtex440-ml507.dtb
+instance = devm_kzalloc(dev, sizeof(struct foo) + sizeof(void *) * count, GFP_KERNEL);
 
-> All powerpc DTB are only built when CONFIG_OF_ALL_DTBS is set which depend on
-> COMPILE_TEST.
-> But building DTB is not related to a "compile build test".
+Instead of leaving these open-coded and prone to type mistakes, we can
+now use the new struct_size() helper:
 
-But it is. We normally only build the dtbs for enabled platforms just
-like we only build platform/driver code for enabled platforms. It's
-hidden behind COMPILE_TEST so it only gets enabled for
-allmodconfig/allyesconfig builds.
+instance = devm_kzalloc(dev, struct_size(instance, entry, count), GFP_KERNEL);
 
-> So this patch made building of DTB independent of COMPILE_TEST (by
-> depending only on the PPC arch)
-> A better selection of which DTB to build could be done in the future
-> like that do the ARM arch.
+This code was detected with the help of Coccinelle.
 
-No reason you can't start that now for the platform you care about.
-You don't have to convert everyone.
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/tty/serial/sc16is7xx.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Rob
+diff --git a/drivers/tty/serial/sc16is7xx.c b/drivers/tty/serial/sc16is7xx.c
+index 268098681856..635178cf3eed 100644
+--- a/drivers/tty/serial/sc16is7xx.c
++++ b/drivers/tty/serial/sc16is7xx.c
+@@ -1187,9 +1187,7 @@ static int sc16is7xx_probe(struct device *dev,
+ 		return PTR_ERR(regmap);
+ 
+ 	/* Alloc port structure */
+-	s = devm_kzalloc(dev, sizeof(*s) +
+-			 sizeof(struct sc16is7xx_one) * devtype->nr_uart,
+-			 GFP_KERNEL);
++	s = devm_kzalloc(dev, struct_size(s, p, devtype->nr_uart), GFP_KERNEL);
+ 	if (!s) {
+ 		dev_err(dev, "Error allocating port structure\n");
+ 		return -ENOMEM;
+-- 
+2.20.1
+
