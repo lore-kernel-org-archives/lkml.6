@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3895C43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 12:51:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C698C43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 12:51:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7BAB4208E3
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 12:51:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 576C721872
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 12:51:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728178AbfADMvP (ORCPT
+        id S1728231AbfADMvZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 07:51:15 -0500
-Received: from outbound-smtp04.blacknight.com ([81.17.249.35]:35964 "EHLO
-        outbound-smtp04.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726494AbfADMvP (ORCPT
+        Fri, 4 Jan 2019 07:51:25 -0500
+Received: from outbound-smtp11.blacknight.com ([46.22.139.106]:35363 "EHLO
+        outbound-smtp11.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726053AbfADMvZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 07:51:15 -0500
+        Fri, 4 Jan 2019 07:51:25 -0500
 Received: from mail.blacknight.com (pemlinmail03.blacknight.ie [81.17.254.16])
-        by outbound-smtp04.blacknight.com (Postfix) with ESMTPS id 40DC7988BA
-        for <linux-kernel@vger.kernel.org>; Fri,  4 Jan 2019 12:51:13 +0000 (UTC)
-Received: (qmail 31909 invoked from network); 4 Jan 2019 12:51:13 -0000
+        by outbound-smtp11.blacknight.com (Postfix) with ESMTPS id 735231C2148
+        for <linux-kernel@vger.kernel.org>; Fri,  4 Jan 2019 12:51:23 +0000 (GMT)
+Received: (qmail 32386 invoked from network); 4 Jan 2019 12:51:23 -0000
 Received: from unknown (HELO stampy.163woodhaven.lan) (mgorman@techsingularity.net@[37.228.229.96])
-  by 81.17.254.9 with ESMTPA; 4 Jan 2019 12:51:13 -0000
+  by 81.17.254.9 with ESMTPA; 4 Jan 2019 12:51:23 -0000
 From:   Mel Gorman <mgorman@techsingularity.net>
 To:     Linux-MM <linux-mm@kvack.org>
 Cc:     David Rientjes <rientjes@google.com>,
@@ -34,9 +34,9 @@ Cc:     David Rientjes <rientjes@google.com>,
         kirill@shutemov.name, Andrew Morton <akpm@linux-foundation.org>,
         Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
         Mel Gorman <mgorman@techsingularity.net>
-Subject: [PATCH 05/25] mm, compaction: Rename map_pages to split_map_pages
-Date:   Fri,  4 Jan 2019 12:49:51 +0000
-Message-Id: <20190104125011.16071-6-mgorman@techsingularity.net>
+Subject: [PATCH 06/25] mm, compaction: Skip pageblocks with reserved pages
+Date:   Fri,  4 Jan 2019 12:49:52 +0000
+Message-Id: <20190104125011.16071-7-mgorman@techsingularity.net>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20190104125011.16071-1-mgorman@techsingularity.net>
 References: <20190104125011.16071-1-mgorman@techsingularity.net>
@@ -45,45 +45,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It's non-obvious that high-order free pages are split into order-0 pages
-from the function name. Fix it.
+Reserved pages are set at boot time, tend to be clustered and almost never
+become unreserved. When isolating pages for either migration sources or
+target, skip the entire pageblock is one PageReserved page is encountered
+on the grounds that it is highly probable the entire pageblock is reserved.
+
+The performance impact is relative to the number of reserved pages in
+the system and their location so it'll be variable but intuitively it
+should make sense. If the memblock allocator was ever changed to spread
+reserved pages throughout the address space then this patch would be
+impaired but it would also be considered a bug given that such a change
+would ruin fragmentation.
+
+On both 1-socket and 2-socket machines, scan rates are reduced slightly
+on workloads that intensively allocate THP while the system is fragmented.
 
 Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
 ---
- mm/compaction.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ mm/compaction.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
 diff --git a/mm/compaction.c b/mm/compaction.c
-index 7acb43f07303..3afa4e9188b6 100644
+index 3afa4e9188b6..94d1e5b062ea 100644
 --- a/mm/compaction.c
 +++ b/mm/compaction.c
-@@ -66,7 +66,7 @@ static unsigned long release_freepages(struct list_head *freelist)
- 	return high_pfn;
- }
+@@ -484,6 +484,15 @@ static unsigned long isolate_freepages_block(struct compact_control *cc,
+ 			goto isolate_fail;
+ 		}
  
--static void map_pages(struct list_head *list)
-+static void split_map_pages(struct list_head *list)
- {
- 	unsigned int i, order, nr_pages;
- 	struct page *page, *next;
-@@ -644,7 +644,7 @@ isolate_freepages_range(struct compact_control *cc,
- 	}
++		/*
++		 * A reserved page is never freed and tend to be clustered in
++		 * the same pageblock. Skip the block.
++		 */
++		if (PageReserved(page)) {
++			blockpfn = end_pfn;
++			break;
++		}
++
+ 		if (!PageBuddy(page))
+ 			goto isolate_fail;
  
- 	/* __isolate_free_page() does not map the pages */
--	map_pages(&freelist);
-+	split_map_pages(&freelist);
+@@ -827,6 +836,13 @@ isolate_migratepages_block(struct compact_control *cc, unsigned long low_pfn,
+ 					goto isolate_success;
+ 			}
  
- 	if (pfn < end_pfn) {
- 		/* Loop terminated early, cleanup. */
-@@ -1141,7 +1141,7 @@ static void isolate_freepages(struct compact_control *cc)
- 	}
++			/*
++			 * A reserved page is never freed and tend to be
++			 * clustered in the same pageblocks. Skip the block.
++			 */
++			if (PageReserved(page))
++				low_pfn = end_pfn;
++
+ 			goto isolate_fail;
+ 		}
  
- 	/* __isolate_free_page() does not map the pages */
--	map_pages(freelist);
-+	split_map_pages(freelist);
- 
- 	/*
- 	 * Record where the free scanner will restart next time. Either we
 -- 
 2.16.4
 
