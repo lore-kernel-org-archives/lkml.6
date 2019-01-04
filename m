@@ -2,140 +2,120 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_DIGITS,
-	FROM_LOCAL_HEX,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88B0AC43444
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 22:58:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14513C43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 23:00:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5ED6A218D3
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 22:58:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D604B218D3
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 23:00:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726313AbfADW6E (ORCPT
+        id S1726335AbfADXAV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 17:58:04 -0500
-Received: from mail-it1-f199.google.com ([209.85.166.199]:58947 "EHLO
-        mail-it1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726009AbfADW6E (ORCPT
+        Fri, 4 Jan 2019 18:00:21 -0500
+Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:58868 "EHLO
+        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726009AbfADXAV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 17:58:04 -0500
-Received: by mail-it1-f199.google.com with SMTP id p21so2056011itb.8
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Jan 2019 14:58:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=SeiH3J+aOSGkexNtniuPt8RsV+JvKhn/e9162U4u8M8=;
-        b=hI5phJS2Fa+rgx62mTD3RkL5Ibwh7GlCl08M3uuUsB0rezUy3MNsqokXt2wwnMKv6n
-         rIFR5D7st/iFTze84MlpdJcAq3R3e2Jo8qxOQTCKEciDlu4ltDmv6vuaZas5GKLgeQpa
-         6/LGxdwzWeDBevzGqwJCBXpLOvAodWmWmvbtrXQBoDSzQfH2OSoGjeneWs6A4MJAsZJL
-         TRcI7rPA6+FZ2nWAnMaCqYXzOZkK8oKkuM+ZTBvuj+0pNWsjX1zQcWsUYjkH1LDgCr1b
-         O+pffTqPo0rlYSKGtHlIFCOs7wv3lF6RQQtEYYJxKOppOaKufaUw3R3x8GZ0NFFXCRjf
-         1wFw==
-X-Gm-Message-State: AJcUuke5Ilv40ADZ+qYxYRtBmFt70qlRHxbG2xt5SrxH6PhSDtLplpcz
-        lj9Sd3hm/7FKYkvcYPvYyEaD96C4sWgEAhuKJ8q70oad/Zp4
-X-Google-Smtp-Source: ALg8bN5YnutGnfi2QnbRzhcX+IzuaIKLSffbG85A8hQfGU2wAoggEnBJ66zX5WCWzU1dmWPx5BygwQ4gXgDXi4kN+bfLo+axZkpb
+        Fri, 4 Jan 2019 18:00:21 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R331e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04391;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0THYbXGX_1546642654;
+Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0THYbXGX_1546642654)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Sat, 05 Jan 2019 06:57:36 +0800
+Subject: Re: [RFC PATCH 0/3] mm: memcontrol: delayed force empty
+To:     Greg Thelen <gthelen@google.com>, Michal Hocko <mhocko@kernel.org>
+Cc:     hannes@cmpxchg.org, akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <1546459533-36247-1-git-send-email-yang.shi@linux.alibaba.com>
+ <20190103101215.GH31793@dhcp22.suse.cz>
+ <b3ad06ed-f620-7aa0-5697-a1bbe2d7bfe1@linux.alibaba.com>
+ <20190103181329.GW31793@dhcp22.suse.cz>
+ <6f43e926-3bb5-20d1-2e39-1d30bf7ad375@linux.alibaba.com>
+ <20190103185333.GX31793@dhcp22.suse.cz>
+ <d610c665-890f-3bf0-1e2a-437150b6ddfb@linux.alibaba.com>
+ <20190103192339.GA31793@dhcp22.suse.cz>
+ <88b4d986-0b3c-cbf0-65ad-95f3e8ccd870@linux.alibaba.com>
+ <xr93y380xk9k.fsf@gthelen.svl.corp.google.com>
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <5d9579aa-cfdc-8254-bfd9-63c4e1bfa4c5@linux.alibaba.com>
+Date:   Fri, 4 Jan 2019 14:57:33 -0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-X-Received: by 2002:a24:5f93:: with SMTP id r141mr2423529itb.4.1546642682957;
- Fri, 04 Jan 2019 14:58:02 -0800 (PST)
-Date:   Fri, 04 Jan 2019 14:58:02 -0800
-In-Reply-To: <000000000000d0ce25057e75e2da@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000b65931057ea9cf82@google.com>
-Subject: Re: WARNING in mem_cgroup_update_lru_size
-From:   syzbot <syzbot+c950a368703778078dc8@syzkaller.appspotmail.com>
-To:     cgroups@vger.kernel.org, hannes@cmpxchg.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        mhocko@kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, vdavydov.dev@gmail.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <xr93y380xk9k.fsf@gthelen.svl.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has found a reproducer for the following crash on:
 
-HEAD commit:    96d4f267e40f Remove 'type' argument from access_ok() funct..
-git tree:       net
-console output: https://syzkaller.appspot.com/x/log.txt?x=160c9a80c00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7308e68273924137
-dashboard link: https://syzkaller.appspot.com/bug?extid=c950a368703778078dc8
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=125376bb400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=121d85ab400000
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+c950a368703778078dc8@syzkaller.appspotmail.com
+On 1/4/19 12:03 PM, Greg Thelen wrote:
+> Yang Shi <yang.shi@linux.alibaba.com> wrote:
+>
+>> On 1/3/19 11:23 AM, Michal Hocko wrote:
+>>> On Thu 03-01-19 11:10:00, Yang Shi wrote:
+>>>> On 1/3/19 10:53 AM, Michal Hocko wrote:
+>>>>> On Thu 03-01-19 10:40:54, Yang Shi wrote:
+>>>>>> On 1/3/19 10:13 AM, Michal Hocko wrote:
+>>> [...]
+>>>>>>> Is there any reason for your scripts to be strictly sequential here? In
+>>>>>>> other words why cannot you offload those expensive operations to a
+>>>>>>> detached context in _userspace_?
+>>>>>> I would say it has not to be strictly sequential. The above script is just
+>>>>>> an example to illustrate the pattern. But, sometimes it may hit such pattern
+>>>>>> due to the complicated cluster scheduling and container scheduling in the
+>>>>>> production environment, for example the creation process might be scheduled
+>>>>>> to the same CPU which is doing force_empty. I have to say I don't know too
+>>>>>> much about the internals of the container scheduling.
+>>>>> In that case I do not see a strong reason to implement the offloding
+>>>>> into the kernel. It is an additional code and semantic to maintain.
+>>>> Yes, it does introduce some additional code and semantic, but IMHO, it is
+>>>> quite simple and very straight forward, isn't it? Just utilize the existing
+>>>> css offline worker. And, that a couple of lines of code do improve some
+>>>> throughput issues for some real usecases.
+>>> I do not really care it is few LOC. It is more important that it is
+>>> conflating force_empty into offlining logic. There was a good reason to
+>>> remove reparenting/emptying the memcg during the offline. Considering
+>>> that you can offload force_empty from userspace trivially then I do not
+>>> see any reason to implement it in the kernel.
+>> Er, I may not articulate in the earlier email, force_empty can not be
+>> offloaded from userspace *trivially*. IOWs the container scheduler may
+>> unexpectedly overcommit something due to the stall of synchronous force
+>> empty, which can't be figured out by userspace before it actually
+>> happens. The scheduler doesn't know how long force_empty would take. If
+>> the force_empty could be offloaded by kernel, it would make scheduler's
+>> life much easier. This is not something userspace could do.
+> If kernel workqueues are doing more work (i.e. force_empty processing),
+> then it seem like the time to offline could grow.  I'm not sure if
+> that's important.
 
-------------[ cut here ]------------
-kasan: CONFIG_KASAN_INLINE enabled
-mem_cgroup_update_lru_size(00000000d6ca43c5, 1, 1): lru_size -2032898272
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-WARNING: CPU: 0 PID: 11430 at mm/memcontrol.c:1160  
-mem_cgroup_update_lru_size+0xb2/0xe0 mm/memcontrol.c:1160
-general protection fault: 0000 [#1] PREEMPT SMP KASAN
-Kernel panic - not syncing: panic_on_warn set ...
-CPU: 1 PID: 4 Comm:  Not tainted 4.20.0+ #8
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:__read_once_size include/linux/compiler.h:191 [inline]
-RIP: 0010:get_running_cputimer include/linux/sched/cputime.h:85 [inline]
-RIP: 0010:account_group_system_time include/linux/sched/cputime.h:149  
-[inline]
-RIP: 0010:account_system_index_time+0xe8/0x5f0 kernel/sched/cputime.c:168
-Code: 04 00 00 49 8b 84 24 00 07 00 00 48 ba 00 00 00 00 00 fc ff df 48 8d  
-b8 40 01 00 00 48 8d 88 28 01 00 00 48 89 fe 48 c1 ee 03 <0f> b6 14 16 48  
-89 fe 83 e6 07 40 38 f2 7f 08 84 d2 0f 85 93 03 00
-RSP: 0018:ffff8880ae707a80 EFLAGS: 00010006
-RAX: 0000000041b58ab3 RBX: 1ffff11015ce0f54 RCX: 0000000041b58bdb
-RDX: dffffc0000000000 RSI: 000000000836b17e RDI: 0000000041b58bf3
-RBP: ffff8880ae707b48 R08: ffff8880ae71f5f0 R09: ffffffff8a9a805d
-R10: ffffffff8a9a8050 R11: 0000000000000001 R12: ffff8880a94bc440
-R13: 0000000000981859 R14: 0000000000000003 R15: ffff8880ae707b20
-FS:  0000000000000000(0000) GS:ffff8880ae700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000006dae70 CR3: 0000000086205000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  <IRQ>
-  irqtime_account_process_tick.isra.0+0x3a2/0x490 kernel/sched/cputime.c:380
-  account_process_tick+0x27f/0x350 kernel/sched/cputime.c:483
-  update_process_times+0x25/0x80 kernel/time/timer.c:1633
-  tick_sched_handle+0xa2/0x190 kernel/time/tick-sched.c:161
-  tick_sched_timer+0x47/0x130 kernel/time/tick-sched.c:1271
-  __run_hrtimer kernel/time/hrtimer.c:1389 [inline]
-  __hrtimer_run_queues+0x3a7/0x1050 kernel/time/hrtimer.c:1451
-  hrtimer_interrupt+0x314/0x770 kernel/time/hrtimer.c:1509
-  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1035 [inline]
-  smp_apic_timer_interrupt+0x18d/0x760 arch/x86/kernel/apic/apic.c:1060
-  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:807
-  </IRQ>
-Modules linked in:
----[ end trace 42848964955b563b ]---
-RIP: 0010:__read_once_size include/linux/compiler.h:191 [inline]
-RIP: 0010:get_running_cputimer include/linux/sched/cputime.h:85 [inline]
-RIP: 0010:account_group_system_time include/linux/sched/cputime.h:149  
-[inline]
-RIP: 0010:account_system_index_time+0xe8/0x5f0 kernel/sched/cputime.c:168
-Code: 04 00 00 49 8b 84 24 00 07 00 00 48 ba 00 00 00 00 00 fc ff df 48 8d  
-b8 40 01 00 00 48 8d 88 28 01 00 00 48 89 fe 48 c1 ee 03 <0f> b6 14 16 48  
-89 fe 83 e6 07 40 38 f2 7f 08 84 d2 0f 85 93 03 00
-RSP: 0018:ffff8880ae707a80 EFLAGS: 00010006
-RAX: 0000000041b58ab3 RBX: 1ffff11015ce0f54 RCX: 0000000041b58bdb
-RDX: dffffc0000000000 RSI: 000000000836b17e RDI: 0000000041b58bf3
-RBP: ffff8880ae707b48 R08: ffff8880ae71f5f0 R09: ffffffff8a9a805d
-R10: ffffffff8a9a8050 R11: 0000000000000001 R12: ffff8880a94bc440
-R13: 0000000000981859 R14: 0000000000000003 R15: ffff8880ae707b20
-FS:  0000000000000000(0000) GS:ffff8880ae700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000006dae70 CR3: 0000000086205000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Shutting down cpus with NMI
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
+One thing I can think of is this may slow down the recycling of memcg 
+id. This may cause memcg id exhausted for some extreme workload. But, I 
+don't see this as a problem in our workload.
+
+Thanks,
+Yang
+
+>
+> I assume that if we make force_empty an async side effect of rmdir then
+> user space scheduler would not be unable to immediately assume the
+> rmdir'd container memory is available without subjecting a new container
+> to direct reclaim.  So it seems like user space would use a mechanism to
+> wait for reclaim: either the existing sync force_empty or polling
+> meminfo/etc waiting for free memory to appear.
+>
+>>>>> I think it is more important to discuss whether we want to introduce
+>>>>> force_empty in cgroup v2.
+>>>> We would prefer have it in v2 as well.
+>>> Then bring this up in a separate email thread please.
+>> Sure. Will prepare the patches later.
+>>
+>> Thanks,
+>> Yang
 
