@@ -2,59 +2,119 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95D04C43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 09:32:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05A45C43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 09:33:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FCF9217F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 09:32:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD94321871
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 09:33:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725958AbfADJc2 (ORCPT
+        id S1727551AbfADJdn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 04:32:28 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:60969 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727474AbfADJc1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 04:32:27 -0500
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id A2D98D4B4C144;
-        Fri,  4 Jan 2019 17:32:25 +0800 (CST)
-Received: from [127.0.0.1] (10.134.22.195) by DGGEMS403-HUB.china.huawei.com
- (10.3.19.203) with Microsoft SMTP Server id 14.3.408.0; Fri, 4 Jan 2019
- 17:32:23 +0800
-Subject: Re: [f2fs-dev] [PATCH 2/2] f2fs: don't access node/meta inode mapping
- after iput
-To:     Jaegeuk Kim <jaegeuk@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>
-References: <20190104042025.31982-1-jaegeuk@kernel.org>
- <20190104042025.31982-2-jaegeuk@kernel.org>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <1f89b87c-dd69-66c0-4d0b-ff9f5215c588@huawei.com>
-Date:   Fri, 4 Jan 2019 17:32:22 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 4 Jan 2019 04:33:43 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:41946 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726841AbfADJdn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 04:33:43 -0500
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 7895080961; Fri,  4 Jan 2019 10:33:36 +0100 (CET)
+Date:   Fri, 4 Jan 2019 10:33:40 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Marc Zyngier <marc.zyngier@arm.com>
+Cc:     Kristina Martsenko <kristina.martsenko@arm.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Adam Wallis <awallis@codeaurora.org>,
+        Amit Kachhap <amit.kachhap@arm.com>,
+        Andrew Jones <drjones@redhat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave P Martin <dave.martin@arm.com>,
+        Jacob Bramley <jacob.bramley@arm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>,
+        Richard Henderson <richard.henderson@linaro.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 07/13] arm64: add basic pointer authentication support
+Message-ID: <20190104093340.GA28150@amd>
+References: <20181207183931.4285-1-kristina.martsenko@arm.com>
+ <20181207183931.4285-8-kristina.martsenko@arm.com>
+ <20190103202901.GA21564@amd>
+ <681a2835-1a70-f3c3-3534-7b4cf6139cac@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <20190104042025.31982-2-jaegeuk@kernel.org>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="dDRMvlgZJXvWKvBx"
+Content-Disposition: inline
+In-Reply-To: <681a2835-1a70-f3c3-3534-7b4cf6139cac@arm.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/1/4 12:20, Jaegeuk Kim wrote:
-> This fixes wrong access of address spaces of node and meta inodes after iput.
-> 
-> Fixes: 60aa4d5536ab ("f2fs: fix use-after-free issue when accessing sbi->stat_info")
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+--dDRMvlgZJXvWKvBx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks,
+On Fri 2019-01-04 09:21:30, Marc Zyngier wrote:
+> On 03/01/2019 20:29, Pavel Machek wrote:
+> > On Fri 2018-12-07 18:39:25, Kristina Martsenko wrote:
+> >> From: Mark Rutland <mark.rutland@arm.com>
+> >>=20
+> >> This patch adds basic support for pointer authentication,
+> >> allowing userspace to make use of APIAKey, APIBKey, APDAKey,
+> >> APDBKey, and APGAKey. The kernel maintains key values for each
+> >> process (shared by all threads within), which are initialised to
+> >> random values at exec()
+> > time.
+> >=20
+> > ...
+> >=20
+> >> +/* + * We give each process its own keys, which are shared by
+> >> all threads. The keys + * are inherited upon fork(), and
+> >> reinitialised upon exec*(). + */ +struct ptrauth_keys { +	struct
+> >> ptrauth_key apia; +	struct ptrauth_key apib; +	struct ptrauth_key
+> >> apda; +	struct ptrauth_key apdb; +	struct ptrauth_key apga; +};
+> >=20
+> > intstruction_a, data_a, generic_a? Should be easier to understand
+> > than "apdb" ...
+>=20
+> ... until you realize that these names do match the documentation,
+> which makes it even easier to understand how the code uses the
+> architecture.
 
+See how not even the commit log matches the documentation then?
+
+Naming something "apdb" is just bad... Just because the documentation
+is evil does not mean it should be followed...
+
+								Pavel
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--dDRMvlgZJXvWKvBx
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlwvKHQACgkQMOfwapXb+vId1ACfZu1/2mlOKgYdetcH5OjGU8y2
+f8oAnjknOWchHLjiz4DjrU/M29jxFfKp
+=vyqJ
+-----END PGP SIGNATURE-----
+
+--dDRMvlgZJXvWKvBx--
