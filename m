@@ -2,79 +2,86 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D41E9C43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 17:43:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FC09C43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 17:44:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AAFFF218CD
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 17:43:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 704D721872
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 17:44:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oQrwc2ct"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728535AbfADRnw (ORCPT
+        id S1728588AbfADRoC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 12:43:52 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:48443 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727127AbfADRnw (ORCPT
+        Fri, 4 Jan 2019 12:44:02 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:47728 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726511AbfADRoC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 12:43:52 -0500
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1gfTVd-00044L-OH; Fri, 04 Jan 2019 17:43:49 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jia-Ju Bai <baijiaju1990@gmail.com>, linux-usb@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] usb: host: u132-hcd: fix a couple of indentation issues
-Date:   Fri,  4 Jan 2019 17:43:49 +0000
-Message-Id: <20190104174349.9318-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.19.1
+        Fri, 4 Jan 2019 12:44:02 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=K+r0Z+v02xjmU2y/PKLsxPYaN5hiG7cdr1EQnfCpDbQ=; b=oQrwc2ctnKcd+10xGSBfLoERB
+        ccXEEZgUA8zQbMbqhgdFfEeE7O7zE5eOwguJcCj7LuZErdmodsosqLV9OAPFOnOOPM2burH+Cw39L
+        WWA9qNR8fd4NMdYvJDs8edddd4yr6DR/9niZjYfSik3svnmQU3MV+xv44Gszrdosz5yls4FZjhiv9
+        NXGG8LEgw/q6hq5bOipfIp5/tTkelSqwtHXgY7IicL9rUAqPlCEthWyFDGw+sgvtLzlPZIcjQk8oj
+        cjCnolxDZLctlXx2xREpmDRE8TifQWKhiQbtDwUnMeR7OhjmKXKIfzWI3x4tjJxQeKneXarI+yxG3
+        bH1YiQLzA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gfTVi-0002SE-R8; Fri, 04 Jan 2019 17:43:54 +0000
+Date:   Fri, 4 Jan 2019 09:43:54 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Krishna Reddy <vdumpa@nvidia.com>, linux-mmc@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] mmc: sdhci: Properly set DMA mask
+Message-ID: <20190104174354.GA18110@infradead.org>
+References: <20190104104753.3383-1-thierry.reding@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190104104753.3383-1-thierry.reding@gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+> +	u64 dma_mask = dma_get_mask(dev);
 
-There are two statements that are indented incorrectly and need
-to be moved to a new line.  Fix these.
+This is not a driver API.  I think what you want is
+dma_get_required_mask to query the mask.  But in that case
+you still need to always actually set a mask in the driver as well.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/usb/host/u132-hcd.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+Something like this patch:
 
-diff --git a/drivers/usb/host/u132-hcd.c b/drivers/usb/host/u132-hcd.c
-index 5b8a3d9530c4..934584f0a20a 100644
---- a/drivers/usb/host/u132-hcd.c
-+++ b/drivers/usb/host/u132-hcd.c
-@@ -2477,7 +2477,8 @@ static int u132_endp_urb_dequeue(struct u132 *u132, struct u132_endp *endp,
- 				spin_unlock_irqrestore(&endp->queue_lock.slock,
- 					irqs);
- 				kfree(urbq);
--			} urb->error_count = 0;
-+			}
-+			urb->error_count = 0;
- 			usb_hcd_giveback_urb(hcd, urb, status);
- 			return 0;
- 		} else if (list_empty(&endp->urb_more)) {
-@@ -2982,7 +2983,8 @@ static int u132_remove(struct platform_device *pdev)
- 			while (rings-- > 0) {
- 				struct u132_ring *ring = &u132->ring[rings];
- 				u132_ring_cancel_work(u132, ring);
--			} while (endps-- > 0) {
-+			}
-+			while (endps-- > 0) {
- 				struct u132_endp *endp = u132->endp[endps];
- 				if (endp)
- 					u132_endp_cancel_work(u132, endp);
--- 
-2.19.1
-
+diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+index a22e11a65658..36c61778d8f3 100644
+--- a/drivers/mmc/host/sdhci.c
++++ b/drivers/mmc/host/sdhci.c
+@@ -3500,6 +3500,13 @@ static int sdhci_set_dma_mask(struct sdhci_host *host)
+ 	struct device *dev = mmc_dev(mmc);
+ 	int ret = -EINVAL;
+ 
++	/*
++	 * Systems that can't address more than 32-bits do not need to use
++	 * 64-bit addressing mode, even if the device supports it.
++	 */
++	if (dma_get_required_mask(dev) <= DMA_BIT_MASK(32))
++		host->flags &= ~SDHCI_USE_64_BIT_DMA;
++
+ 	if (host->quirks2 & SDHCI_QUIRK2_BROKEN_64_BIT_DMA)
+ 		host->flags &= ~SDHCI_USE_64_BIT_DMA;
+ 
