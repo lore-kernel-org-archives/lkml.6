@@ -2,138 +2,134 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CEE6C43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 17:50:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 154C6C43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 17:50:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA385218CD
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 17:50:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD0E6218CD
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 17:50:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="avaFwitL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728987AbfADRul (ORCPT
+        id S1729005AbfADRuo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 12:50:41 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:38082 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726363AbfADRuj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 12:50:39 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 998C42BE87;
-        Fri,  4 Jan 2019 17:50:38 +0000 (UTC)
-Received: from localhost (ovpn-200-16.brq.redhat.com [10.40.200.16])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 13A8160BE8;
-        Fri,  4 Jan 2019 17:50:34 +0000 (UTC)
-Date:   Fri, 4 Jan 2019 18:50:29 +0100
-From:   Stefano Brivio <sbrivio@redhat.com>
-To:     Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Cc:     Dmitry Vyukov <dvyukov@google.com>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        syzbot <syzbot+4ad25edc7a33e4ab91e0@syzkaller.appspotmail.com>,
-        David Miller <davem@davemloft.net>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
-Subject: Re: kernel panic: stack is corrupted in udp4_lib_lookup2
-Message-ID: <20190104185029.759430e2@redhat.com>
-In-Reply-To: <CAF=yD-LdShBqHz1amBAAAA4w==0O+HfeWutfLi5K6LmWhK_x6Q@mail.gmail.com>
-References: <000000000000513fb7057e8d7013@google.com>
-        <f2e566ac-5c4c-11ae-d436-ebb3522a2195@gmail.com>
-        <20190103210743.6518841e@redhat.com>
-        <CA+FuTScFwA3F44MvbaWrOYJ2EYgdKAmoMzEGjOLcz3ZPVQLLDA@mail.gmail.com>
-        <20190103225404.66b0ec9f@redhat.com>
-        <CACT4Y+aAofhchOpKTjLGGkQb5PAa74Uyp7kowdSoAwt130ZpAg@mail.gmail.com>
-        <20190104115435.478b4b4a@redhat.com>
-        <CACT4Y+bRLOVCx9Z=vCMspjzGrcnNFqNGWxDwiwYZbw2LTh__FA@mail.gmail.com>
-        <20190104181424.5ad4b1de@redhat.com>
-        <CAF=yD-LdShBqHz1amBAAAA4w==0O+HfeWutfLi5K6LmWhK_x6Q@mail.gmail.com>
-Organization: Red Hat
+        Fri, 4 Jan 2019 12:50:44 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:45379 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728887AbfADRuW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 12:50:22 -0500
+Received: by mail-pg1-f195.google.com with SMTP id y4so17767240pgc.12;
+        Fri, 04 Jan 2019 09:50:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=f2zFuyHm8nEdjnfJDmsDhZ6LWDdoDXqHHbGY0Z+L7BY=;
+        b=avaFwitLVqF1WLutZiOj/v4o0ynDRwJO+ElVicQxUpG98KuEEireOp+xpZrw0xZwQJ
+         ZRAGv4+qsLQgbVhAcF9uO9Y6gEaR+sZjErsYYABnmU8YLifDJOAr0VF8ER7QjkN25cZ4
+         Mo4/c65UDgYj6+LWmmHgXokUoyvTIQ3CTnH3FI41NV9oFMT85aFnVRe1VX8RVKjIOCNq
+         Tltk/1tpieU8sKkw+F7vxxDoUXpUaTcnEqq8g/doK3gfwhu84q4INt5Vns35qRcqHaQe
+         RvzwMLJL867FhnTHC8tW3P40eEa9/NFvtOeq1//QcNhDabh1qto0u2VZxjmCRGkSY690
+         BENQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=f2zFuyHm8nEdjnfJDmsDhZ6LWDdoDXqHHbGY0Z+L7BY=;
+        b=AVyke1iqSTlXwz1ftaK/iXsVKvwiAJtZIxywVTCjC+ipdFG+bPTupCy+CuxIkgCymw
+         bAtZ3ByqCjcDIZRpqSIf/gcs0Lz+3dqVimEYJk+9aK7HHgUXzj+Id0scKzeNxaySkJXw
+         cl+qlnvC/ujLqpdahzVNMYGWqLZSANT2qlrXxTZ5t1OkQorhXOtxpnalibi3tpczksea
+         k86xOKM5Bj1JQG/NkDmx2OnIe5KmHzvc4F3RohQUrWlWsaG29GXcEgXZqPjqESIo40W8
+         /LdQTA56Y/ohcuhaw3s4DMcjsQrrSm/cJ+e75VG3AwYEoOpDYL0FnphmY8Gf8slF6S5E
+         2ydQ==
+X-Gm-Message-State: AA+aEWYqcDD7i/njUlGk9lRYKqImFXjyPz4VboZyjUNmkwM2HlhIlWAb
+        IbVMBCZ9h/dLvi6mt5Tk3cVCVfPRscM=
+X-Google-Smtp-Source: AFSGD/UUBJh8pSGiYrD6XyoNobfobXZ/MOuQezUc5bLzOuCVreeYIfxnWKi2HmVlZZroiMi3VbEUZw==
+X-Received: by 2002:a62:3811:: with SMTP id f17mr54238299pfa.206.1546624221002;
+        Fri, 04 Jan 2019 09:50:21 -0800 (PST)
+Received: from squirtle.lan (c-24-22-235-96.hsd1.wa.comcast.net. [24.22.235.96])
+        by smtp.gmail.com with ESMTPSA id i193sm100699632pgc.22.2019.01.04.09.50.18
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 04 Jan 2019 09:50:20 -0800 (PST)
+From:   Andrey Smirnov <andrew.smirnov@gmail.com>
+To:     linux-pci@vger.kernel.org
+Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        "A.s. Dong" <aisheng.dong@nxp.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>, linux-imx@nxp.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Subject: [PATCH v2 20/20] PCI: dwc: Remove superfluous shifting in definitions
+Date:   Fri,  4 Jan 2019 09:49:25 -0800
+Message-Id: <20190104174925.17153-21-andrew.smirnov@gmail.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190104174925.17153-1-andrew.smirnov@gmail.com>
+References: <20190104174925.17153-1-andrew.smirnov@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Fri, 04 Jan 2019 17:50:39 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 4 Jan 2019 12:24:18 -0500
-Willem de Bruijn <willemdebruijn.kernel@gmail.com> wrote:
+Surrounding definitions no longer use explicit shift, so "<< 0" here
+serve no purpose. Remove them. No functional change intended.
 
-> On Fri, Jan 4, 2019 at 12:14 PM Stefano Brivio <sbrivio@redhat.com> wrote:
-> >
-> > On Fri, 4 Jan 2019 12:05:04 +0100
-> > Dmitry Vyukov <dvyukov@google.com> wrote:
-> >  
-> > > On Fri, Jan 4, 2019 at 11:54 AM Stefano Brivio <sbrivio@redhat.com> wrote:  
-> > > >
-> > > > On Fri, 4 Jan 2019 11:32:12 +0100
-> > > > Dmitry Vyukov <dvyukov@google.com> wrote:
-> > > >  
-> > > > > On Thu, Jan 3, 2019 at 10:54 PM Stefano Brivio <sbrivio@redhat.com> wrote:  
-> > > > > >
-> > > > > > On Thu, 3 Jan 2019 15:15:06 -0600
-> > > > > > Willem de Bruijn <willemdebruijn.kernel@gmail.com> wrote:
-> > > > > >  
-> > > > > > > syzbot generated stack traces with
-> > > > > > >
-> > > > > > > [  183.517380]  udpv6_err+0x46/0x60
-> > > > > > > [  183.520739]  ? __udp6_lib_err+0x1890/0x1890
-> > > > > > > [  183.525054]  gue6_err_proto_handler+0x199/0x280  
-> > > > > >
-> > > > > > Where? I can't find that in any logs linked from the dashboard at
-> > > > > > https://syzkaller.appspot.com/bug?extid=4ad25edc7a33e4ab91e0 :(  
-> > > > >
-> > > > > Stefano, there are these 4 bugs reported that have similarly looking
-> > > > > reproducers involving udp sockets and that crash modes that looks like
-> > > > > stack corruption/overflow:
-> > > > >
-> > > > > https://syzkaller.appspot.com/bug?extid=14005fa30c9a07192934
-> > > > > https://syzkaller.appspot.com/bug?extid=d14090007dc9ba5fa9b7
-> > > > > https://syzkaller.appspot.com/bug?extid=137ed32ec9a6d5b0d5fe
-> > > > > https://syzkaller.appspot.com/bug?id=d5bc3e0c66d200d72216ab343a67c4327e4a3452
-> > > > >
-> > > > > Are these the same bug as this?  
-> > > >
-> > > > Judging from the reproducers for the first three, they seem to be.  
-> > >
-> > > OK, then I will mark them as dups of this one.  
-> >
-> > syzbot just finished the tests I requested and couldn't reproduce the
-> > first three issues with the fix I posted (fou6: Prevent unbounded
-> > recursion in GUE error handler).  
-> 
-> Thanks for preparing the fixes so quickly, Stefano.
-> 
-> I also noticed one trace that seemingly goes through an ip6erspan
-> tunnel as well as gue6.
-> 
-> [  760.618683]  ? __udp6_lib_err+0xcb/0x640
-> [  760.622716]  ? udplitev6_err+0x46/0x60
-> [  760.626573]  ? gue6_err+0x105/0x270
-> [  760.630170]  ? udp_lib_close+0x20/0x20
-> [  760.634027]  ? ip6erspan_tunnel_xmit+0xdc0/0xdc0
-> 
-> Without knowing the err_handler code too well: is it possible that
-> packets with an intermediate IPIP or other tunnel still bypass the
-> checks (which check for strictly UDP in GUE)?
+Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>
+Cc: Chris Healy <cphealy@gmail.com>
+Cc: Lucas Stach <l.stach@pengutronix.de>
+Cc: Leonard Crestez <leonard.crestez@nxp.com>
+Cc: "A.s. Dong" <aisheng.dong@nxp.com>
+Cc: Richard Zhu <hongxing.zhu@nxp.com>
+Cc: linux-imx@nxp.com
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-pci@vger.kernel.org
+Acked-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+---
+ drivers/pci/controller/dwc/pcie-designware.h | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-Yes, I also noticed that, and concluded it's not an issue, but thanks
-for pointing that out.
-
-Recursion can't happen there because other handlers don't forward the
-exception to the exception handler of the inner layer. For ERSPAN, e.g.,
-see ip6gre_err(): it "simply" looks up the tunnel and calls
-ip6_update_pmtu() and ip6_redirect().
-
-For FoU and GUE this is not possible as we don't maintain enough state
-to be reasonably sure the exception is legitimate.
-
+diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
+index 0de653284fca..636689fd4ee7 100644
+--- a/drivers/pci/controller/dwc/pcie-designware.h
++++ b/drivers/pci/controller/dwc/pcie-designware.h
+@@ -63,14 +63,14 @@
+ #define PCIE_ATU_VIEWPORT		0x900
+ #define PCIE_ATU_REGION_INBOUND		BIT(31)
+ #define PCIE_ATU_REGION_OUTBOUND	0
+-#define PCIE_ATU_REGION_INDEX2		(0x2 << 0)
+-#define PCIE_ATU_REGION_INDEX1		(0x1 << 0)
+-#define PCIE_ATU_REGION_INDEX0		(0x0 << 0)
++#define PCIE_ATU_REGION_INDEX2		0x2
++#define PCIE_ATU_REGION_INDEX1		0x1
++#define PCIE_ATU_REGION_INDEX0		0x0
+ #define PCIE_ATU_CR1			0x904
+-#define PCIE_ATU_TYPE_MEM		(0x0 << 0)
+-#define PCIE_ATU_TYPE_IO		(0x2 << 0)
+-#define PCIE_ATU_TYPE_CFG0		(0x4 << 0)
+-#define PCIE_ATU_TYPE_CFG1		(0x5 << 0)
++#define PCIE_ATU_TYPE_MEM		0x0
++#define PCIE_ATU_TYPE_IO		0x2
++#define PCIE_ATU_TYPE_CFG0		0x4
++#define PCIE_ATU_TYPE_CFG1		0x5
+ #define PCIE_ATU_CR2			0x908
+ #define PCIE_ATU_ENABLE			BIT(31)
+ #define PCIE_ATU_BAR_MODE_ENABLE	BIT(30)
 -- 
-Stefano
+2.20.1
+
