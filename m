@@ -2,330 +2,192 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.9 required=3.0 tests=DKIM_ADSP_ALL,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37167C43387
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B068BC43613
 	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 11:58:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8F3D208E3
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 11:58:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7CAE2218D2
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 11:58:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728094AbfADLu3 (ORCPT
+        id S1728135AbfADL61 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 06:50:29 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:39795 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726601AbfADLu2 (ORCPT
+        Fri, 4 Jan 2019 06:58:27 -0500
+Received: from sender-of-o53.zoho.com ([135.84.80.218]:21833 "EHLO
+        sender-of-o53.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726409AbfADL61 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 06:50:28 -0500
-Received: by mail-wr1-f66.google.com with SMTP id t27so36368017wra.6
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Jan 2019 03:50:26 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=mBa4O8HH25rKQTAYFmi4qprAZBsz+M8QP/oL2TqoGis=;
-        b=WQa/YaSkb3pGZIspsN8XsZqeewDojLVS2Tqw9IyA8ttfm3W1QK8UHX2m2NdrV5aUIB
-         pNn74JExVe2B48JH3FmDDWbYvzoEEgiEFCc8KYITHuui95oDw4Bm//yiLzFKAyqi/brK
-         4UhGuqCLe1hhIACeMfta4i5vU1r7uyXj1ry1ruUyktP7jprXhzREUTSUYJwUcnJf/U35
-         OjfXQu/1Cx1YICn7C+SEw55yZjXtP0E5xp1ygFhO04iSLE9Us7n9l0WFifCVHO+NXXQ/
-         lydr6k5eIdKi0vVCz0Wpb2Oxcq8HHl5O6VD607u2hm3/ouIFQ8tAd6+0oYSnqWb8VAuL
-         K8uQ==
-X-Gm-Message-State: AJcUukdlBkDAMtxFlCGq3MWHkRCrbqgi5qkfQmNfiqqIQw9zPr8vI/Av
-        8tIaw4OozVUaecAdIlxz6mizr6eJpYs=
-X-Google-Smtp-Source: ALg8bN5ArPcYkhm7nji+3JbbScXCax1m+gQTRgoVoqEia2vEuRvHym/4Jj5vbpRAo9bkq/EKsWRPog==
-X-Received: by 2002:adf:e891:: with SMTP id d17mr47441715wrm.140.1546602625161;
-        Fri, 04 Jan 2019 03:50:25 -0800 (PST)
-Received: from mcroce-redhat.redhat.com (host177-2-dynamic.16-87-r.retail.telecomitalia.it. [87.16.2.177])
-        by smtp.gmail.com with ESMTPSA id j24sm49045909wrd.86.2019.01.04.03.50.23
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 04 Jan 2019 03:50:23 -0800 (PST)
-From:   Matteo Croce <mcroce@redhat.com>
-To:     LKML <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     kbuild test robot <lkp@intel.com>
-Subject: [PATCH v2] treewide: fix spelling mistake: "lenght" -> "length"
-Date:   Fri,  4 Jan 2019 12:50:22 +0100
-Message-Id: <20190104115022.13553-1-mcroce@redhat.com>
-X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Fri, 4 Jan 2019 06:58:27 -0500
+ARC-Seal: i=1; a=rsa-sha256; t=1546603087; cv=none; 
+        d=zoho.com; s=zohoarc; 
+        b=A+OtUU7dMPSMMawQ4BHkwQ7Ez7b5p0cWM37qIPJqMmyXp79NDUTMMKD1AX3rTzGuJ2QS1KNWYEkAXNsfMhskGa0Ry9kZrHTfbuWMvgin9Sr9uSzRSM6N197rzlQU/Uow8ja8xlkozqgZBEVj7ZUTD/MGzlQF+BcXF/m+k7METzA=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
+        t=1546603087; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To:ARC-Authentication-Results; 
+        bh=GWI9oG4e7XL1INJ/QGGbB9uycQHnhx01HWHk5nsFgqU=; 
+        b=RhCB8/K5cKawTExgKnB3MWk21msdr3MyE8cEzJJnE5jij549cS8clizRdYEMSMnCDFtPOmx3t/REmX4/bSq2g5++oJTNFE5mKS0prUlbEMzrKX0vMV1t2fMlgleVaImq+xPaVD5OIQwRb/BUl13Z9YznQfHzFRftR+AMfwDegFU=
+ARC-Authentication-Results: i=1; mx.zoho.com;
+        dkim=pass  header.i=mniewoehner.de;
+        spf=pass  smtp.mailfrom=linux@mniewoehner.de;
+        dmarc=pass header.from=<linux@mniewoehner.de> header.from=<linux@mniewoehner.de>
+Received: from z3r0 (31.187.91.78 [31.187.91.78]) by mx.zohomail.com
+        with SMTPS id 1546603084888666.6001938298234; Fri, 4 Jan 2019 03:58:04 -0800 (PST)
+Message-ID: <c1f5f53cdaaaad6cc80c2b10172a69f0301d3e0e.camel@mniewoehner.de>
+Subject: Re: tpm_tis TPM2.0 not detected on cold boot
+From:   Michael =?ISO-8859-1?Q?Niew=F6hner?= <linux@mniewoehner.de>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        peterhuewe@gmx.de, jgg@ziepe.ca, arnd@arndb.de,
+        linux-integrity@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Ken Goldman <kgold@linux.ibm.com>
+In-Reply-To: <5aa2fc082b6b0657574918b025005ad569da6412.camel@mniewoehner.de>
+References: <ef7e773b01a5e6153b84628f74fc67092a2f9b0e.camel@gmail.com>
+         <1f281756bb1f041e55be8dd090670a1a7b1d1c94.camel@mniewoehner.de>
+         <1545519232.3940.115.camel@linux.ibm.com>
+         <e7ec38d7cade9aa76384aa2781eab307d2cd5a7b.camel@mniewoehner.de>
+         <20190103132737.GD10491@linux.intel.com>
+         <6c1bf9815bfcb5d2bc0cfedfc49c7feda0173dc9.camel@mniewoehner.de>
+         <20190103150434.GC17015@linux.intel.com>
+         <5aa2fc082b6b0657574918b025005ad569da6412.camel@mniewoehner.de>
+Content-Type: text/plain; charset="UTF-8"
+Date:   Fri, 04 Jan 2019 12:58:00 +0100
+Mime-Version: 1.0
+User-Agent: Evolution 3.30.3 
+Content-Transfer-Encoding: 8BIT
+X-ZohoMailClient: External
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Not a big issue, but can be annoying when searching for the "length"
-keyword can't find the right code.
+On Thu, 2019-01-03 at 16:47 +0100, Michael Niewöhner wrote:
+> On Thu, 2019-01-03 at 17:04 +0200, Jarkko Sakkinen wrote:
+> > On Thu, Jan 03, 2019 at 02:38:11PM +0100, Michael Niewöhner wrote:
+> > > On Thu, 2019-01-03 at 15:27 +0200, Jarkko Sakkinen wrote:
+> > > > On Sun, Dec 23, 2018 at 12:55:12PM +0100, Michael Niewöhner wrote:
+> > > > > There is another issue but I don't know if both are related. Maybe
+> > > > > that's
+> > > > > just a
+> > > > > timing issue...
+> > > > > 
+> > > > > root@debian:~# dd if=/dev/hwrng bs=1 count=1
+> > > > > dd: error reading '/dev/hwrng': Operation not permitted
+> > > > > 0+0 records in
+> > > > > 0+0 records out
+> > > > > 0 bytes copied, 0.755958 s, 0.0 kB/s
+> > > > > root@debian:~# dd if=/dev/hwrng bs=1 count=1 | xxd; dd if=/dev/hwrng
+> > > > > bs=1
+> > > > > count=1 | xxd
+> > > > > dd: error reading '/dev/hwrng': Operation not permitted
+> > > > > 0+0 records in
+> > > > > 0+0 records out
+> > > > > 0 bytes copied, 0.755697 s, 0.0 kB/s
+> > > > > 1+0 records in
+> > > > > 1+0 records out
+> > > > > 00000000: 52                                       R
+> > > > > 1 byte copied, 0.0106268 s, 0.1 kB/s
+> > > > > 
+> > > > > 
+> > > > > Michael
+> > > > 
+> > > > What does /sys/devices/virtual/misc/hw_random/rng_current show?
+> > > > 
+> > > > Did run commands as a sanity check on my laptop and seem to work.
+> > > > 
+> > > > /Jarkko
+> > > 
+> > > rng_current says "tpm-rng-0", which should be correct
+> > 
+> > Is /dev/tpm0 accessible and usable?
+> > 
+> > /Jarkko
+> 
+> No, it does not seem to work:
+> 
+> root@debian:~# tpm_version                                     
+> Tspi_Context_Connect failed: 0x00003011 - layer=tsp, code=0011 (17),
+> Communication failure
+> root@debian:~# tcsd -f
+> TCSD TDDL ioctl: (25) Inappropriate ioctl for device
+> TCSD TDDL Falling back to Read/Write device support.
+> TCSD TDDL ERROR: write to device /dev/tpm0 failed: Operation not permitted
+> TCSD TCS ERROR: TCS GetCapability failed with result = 0x1087
+> root@debian:~# stat /dev/tpm0
+>   File: /dev/tpm0
+>   Size: 0         	Blocks: 0          IO Block: 4096   character special
+> file
+> Device: 6h/6d	Inode: 1114        Links: 1     Device type: a,e0
+> Access: (0600/crw-------)  Uid: (  104/     tss)   Gid: (  112/     tss)
+> Access: 2019-01-03 16:39:20.627635333 +0100
+> Modify: 2019-01-03 16:39:20.627635333 +0100
+> Change: 2019-01-03 16:39:20.627635333 +0100
+>  Birth: -
+> 
+> Michael
 
-Signed-off-by: Matteo Croce <mcroce@redhat.com>
----
- Documentation/devicetree/bindings/usb/s3c2410-usb.txt       | 2 +-
- arch/powerpc/include/asm/hvsi.h                             | 2 +-
- drivers/clk/samsung/clk.h                                   | 2 +-
- drivers/gpu/drm/amd/include/atombios.h                      | 2 +-
- drivers/gpu/drm/omapdrm/dss/hdmi4_core.c                    | 2 +-
- drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.h     | 2 +-
- drivers/net/wireless/broadcom/brcm80211/brcmfmac/firmware.c | 2 +-
- drivers/net/wireless/broadcom/brcm80211/brcmfmac/fweh.h     | 2 +-
- drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c      | 2 +-
- drivers/pinctrl/pinctrl-amd.c                               | 2 +-
- drivers/scsi/be2iscsi/be_cmds.c                             | 2 +-
- drivers/scsi/lpfc/lpfc_debugfs.c                            | 4 ++--
- drivers/staging/comedi/drivers/usbduxfast.c                 | 2 +-
- drivers/usb/gadget/udc/aspeed-vhub/epn.c                    | 2 +-
- drivers/video/fbdev/omap2/omapfb/dss/hdmi4_core.c           | 2 +-
- include/net/cfg80211.h                                      | 2 +-
- kernel/sysctl.c                                             | 2 +-
- sound/soc/qcom/qdsp6/q6asm.c                                | 2 +-
- 18 files changed, 19 insertions(+), 19 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/usb/s3c2410-usb.txt b/Documentation/devicetree/bindings/usb/s3c2410-usb.txt
-index e45b38ce2986..26c85afd0b53 100644
---- a/Documentation/devicetree/bindings/usb/s3c2410-usb.txt
-+++ b/Documentation/devicetree/bindings/usb/s3c2410-usb.txt
-@@ -4,7 +4,7 @@ OHCI
- 
- Required properties:
-  - compatible: should be "samsung,s3c2410-ohci" for USB host controller
-- - reg: address and lenght of the controller memory mapped region
-+ - reg: address and length of the controller memory mapped region
-  - interrupts: interrupt number for the USB OHCI controller
-  - clocks: Should reference the bus and host clocks
-  - clock-names: Should contain two strings
-diff --git a/arch/powerpc/include/asm/hvsi.h b/arch/powerpc/include/asm/hvsi.h
-index 3fdc54df63c9..464a7519ed64 100644
---- a/arch/powerpc/include/asm/hvsi.h
-+++ b/arch/powerpc/include/asm/hvsi.h
-@@ -64,7 +64,7 @@ struct hvsi_priv {
- 	unsigned int	inbuf_len;	/* data in input buffer */
- 	unsigned char	inbuf[HVSI_INBUF_SIZE];
- 	unsigned int	inbuf_cur;	/* Cursor in input buffer */
--	unsigned int	inbuf_pktlen;	/* packet lenght from cursor */
-+	unsigned int	inbuf_pktlen;	/* packet length from cursor */
- 	atomic_t	seqno;		/* packet sequence number */
- 	unsigned int	opened:1;	/* driver opened */
- 	unsigned int	established:1;	/* protocol established */
-diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
-index c3f309d7100d..9cfaca5fbcdb 100644
---- a/drivers/clk/samsung/clk.h
-+++ b/drivers/clk/samsung/clk.h
-@@ -26,7 +26,7 @@ struct samsung_clk_provider {
- 	void __iomem *reg_base;
- 	struct device *dev;
- 	spinlock_t lock;
--	/* clk_data must be the last entry due to variable lenght 'hws' array */
-+	/* clk_data must be the last entry due to variable length 'hws' array */
- 	struct clk_hw_onecell_data clk_data;
- };
- 
-diff --git a/drivers/gpu/drm/amd/include/atombios.h b/drivers/gpu/drm/amd/include/atombios.h
-index 7931502fa54f..8ba21747b40a 100644
---- a/drivers/gpu/drm/amd/include/atombios.h
-+++ b/drivers/gpu/drm/amd/include/atombios.h
-@@ -4106,7 +4106,7 @@ typedef struct  _ATOM_LCD_MODE_CONTROL_CAP
- typedef struct _ATOM_FAKE_EDID_PATCH_RECORD
- {
-   UCHAR ucRecordType;
--  UCHAR ucFakeEDIDLength;       // = 128 means EDID lenght is 128 bytes, otherwise the EDID length = ucFakeEDIDLength*128
-+  UCHAR ucFakeEDIDLength;       // = 128 means EDID length is 128 bytes, otherwise the EDID length = ucFakeEDIDLength*128
-   UCHAR ucFakeEDIDString[1];    // This actually has ucFakeEdidLength elements.
- } ATOM_FAKE_EDID_PATCH_RECORD;
- 
-diff --git a/drivers/gpu/drm/omapdrm/dss/hdmi4_core.c b/drivers/gpu/drm/omapdrm/dss/hdmi4_core.c
-index 813ba42f2753..e384b95ad857 100644
---- a/drivers/gpu/drm/omapdrm/dss/hdmi4_core.c
-+++ b/drivers/gpu/drm/omapdrm/dss/hdmi4_core.c
-@@ -708,7 +708,7 @@ int hdmi4_audio_config(struct hdmi_core_data *core, struct hdmi_wp_data *wp,
- 	else
- 		acore.i2s_cfg.justification = HDMI_AUDIO_JUSTIFY_RIGHT;
- 	/*
--	 * The I2S input word length is twice the lenght given in the IEC-60958
-+	 * The I2S input word length is twice the length given in the IEC-60958
- 	 * status word. If the word size is greater than
- 	 * 20 bits, increment by one.
- 	 */
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.h b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.h
-index dcf6e27cc16f..d8085ce579f4 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.h
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.h
-@@ -36,7 +36,7 @@
- #define BRCMF_DCMD_MEDLEN	1536
- #define BRCMF_DCMD_MAXLEN	8192
- 
--/* IOCTL from host to device are limited in lenght. A device can only handle
-+/* IOCTL from host to device are limited in length. A device can only handle
-  * ethernet frame size. This limitation is to be applied by protocol layer.
-  */
- #define BRCMF_TX_IOCTL_MAX_MSG_SIZE	(ETH_FRAME_LEN+ETH_FCS_LEN)
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/firmware.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/firmware.c
-index 14b948917a1a..cf1ddf988476 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/firmware.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/firmware.c
-@@ -47,7 +47,7 @@ enum nvram_parser_state {
-  * @state: current parser state.
-  * @data: input buffer being parsed.
-  * @nvram: output buffer with parse result.
-- * @nvram_len: lenght of parse result.
-+ * @nvram_len: length of parse result.
-  * @line: current line.
-  * @column: current column in line.
-  * @pos: byte offset in input buffer.
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fweh.h b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fweh.h
-index 816f80ea925b..31f3e8e83a21 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fweh.h
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fweh.h
-@@ -266,7 +266,7 @@ struct brcmf_event {
-  * @status: status information.
-  * @reason: reason code.
-  * @auth_type: authentication type.
-- * @datalen: lenght of event data buffer.
-+ * @datalen: length of event data buffer.
-  * @addr: ether address.
-  * @ifname: interface name.
-  * @ifidx: interface index.
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c
-index a4308c6e72d7..0b7d977510c8 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c
-@@ -508,7 +508,7 @@ static void brcmf_usb_rx_complete(struct urb *urb)
- 	skb = req->skb;
- 	req->skb = NULL;
- 
--	/* zero lenght packets indicate usb "failure". Do not refill */
-+	/* zero length packets indicate usb "failure". Do not refill */
- 	if (urb->status != 0 || !urb->actual_length) {
- 		brcmu_pkt_buf_free_skb(skb);
- 		brcmf_usb_enq(devinfo, &devinfo->rx_freeq, req, NULL);
-diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
-index 2a7d638978d8..6689995fa3aa 100644
---- a/drivers/pinctrl/pinctrl-amd.c
-+++ b/drivers/pinctrl/pinctrl-amd.c
-@@ -489,7 +489,7 @@ static int amd_gpio_irq_set_type(struct irq_data *d, unsigned int type)
- 	/*
- 	 * If WAKE_INT_MASTER_REG.MaskStsEn is set, a software write to the
- 	 * debounce registers of any GPIO will block wake/interrupt status
--	 * generation for *all* GPIOs for a lenght of time that depends on
-+	 * generation for *all* GPIOs for a length of time that depends on
- 	 * WAKE_INT_MASTER_REG.MaskStsLength[11:0].  During this period the
- 	 * INTERRUPT_ENABLE bit will read as 0.
- 	 *
-diff --git a/drivers/scsi/be2iscsi/be_cmds.c b/drivers/scsi/be2iscsi/be_cmds.c
-index 0a6972ee94d7..ea042c1fc70d 100644
---- a/drivers/scsi/be2iscsi/be_cmds.c
-+++ b/drivers/scsi/be2iscsi/be_cmds.c
-@@ -963,7 +963,7 @@ int beiscsi_cmd_q_destroy(struct be_ctrl_info *ctrl, struct be_queue_info *q,
-  * @ctrl: ptr to ctrl_info
-  * @cq: Completion Queue
-  * @dq: Default Queue
-- * @lenght: ring size
-+ * @length: ring size
-  * @entry_size: size of each entry in DEFQ
-  * @is_header: Header or Data DEFQ
-  * @ulp_num: Bind to which ULP
-diff --git a/drivers/scsi/lpfc/lpfc_debugfs.c b/drivers/scsi/lpfc/lpfc_debugfs.c
-index a58f0b3f03a9..ab18b83289ff 100644
---- a/drivers/scsi/lpfc/lpfc_debugfs.c
-+++ b/drivers/scsi/lpfc/lpfc_debugfs.c
-@@ -3969,7 +3969,7 @@ lpfc_idiag_queacc_write(struct file *file, const char __user *buf,
-  * lpfc_idiag_drbacc_read_reg - idiag debugfs read a doorbell register
-  * @phba: The pointer to hba structure.
-  * @pbuffer: The pointer to the buffer to copy the data to.
-- * @len: The lenght of bytes to copied.
-+ * @len: The length of bytes to copied.
-  * @drbregid: The id to doorbell registers.
-  *
-  * Description:
-@@ -4179,7 +4179,7 @@ lpfc_idiag_drbacc_write(struct file *file, const char __user *buf,
-  * lpfc_idiag_ctlacc_read_reg - idiag debugfs read a control registers
-  * @phba: The pointer to hba structure.
-  * @pbuffer: The pointer to the buffer to copy the data to.
-- * @len: The lenght of bytes to copied.
-+ * @len: The length of bytes to copied.
-  * @drbregid: The id to doorbell registers.
-  *
-  * Description:
-diff --git a/drivers/staging/comedi/drivers/usbduxfast.c b/drivers/staging/comedi/drivers/usbduxfast.c
-index e18c0723b760..0d54f394dbd2 100644
---- a/drivers/staging/comedi/drivers/usbduxfast.c
-+++ b/drivers/staging/comedi/drivers/usbduxfast.c
-@@ -61,7 +61,7 @@
- #define USBDUXFASTSUB_CPUCS	0xE600
- 
- /*
-- * max lenghth of the transfer-buffer for software upload
-+ * max length of the transfer-buffer for software upload
-  */
- #define TB_LEN	0x2000
- 
-diff --git a/drivers/usb/gadget/udc/aspeed-vhub/epn.c b/drivers/usb/gadget/udc/aspeed-vhub/epn.c
-index 4a28e3fbeb0b..83340f4fdc6e 100644
---- a/drivers/usb/gadget/udc/aspeed-vhub/epn.c
-+++ b/drivers/usb/gadget/udc/aspeed-vhub/epn.c
-@@ -120,7 +120,7 @@ static void ast_vhub_epn_handle_ack(struct ast_vhub_ep *ep)
- 	/* No current DMA ongoing */
- 	req->active = false;
- 
--	/* Grab lenght out of HW */
-+	/* Grab length out of HW */
- 	len = VHUB_EP_DMA_TX_SIZE(stat);
- 
- 	/* If not using DMA, copy data out if needed */
-diff --git a/drivers/video/fbdev/omap2/omapfb/dss/hdmi4_core.c b/drivers/video/fbdev/omap2/omapfb/dss/hdmi4_core.c
-index fa72e735dad2..d146793dd044 100644
---- a/drivers/video/fbdev/omap2/omapfb/dss/hdmi4_core.c
-+++ b/drivers/video/fbdev/omap2/omapfb/dss/hdmi4_core.c
-@@ -712,7 +712,7 @@ int hdmi4_audio_config(struct hdmi_core_data *core, struct hdmi_wp_data *wp,
- 	else
- 		acore.i2s_cfg.justification = HDMI_AUDIO_JUSTIFY_RIGHT;
- 	/*
--	 * The I2S input word length is twice the lenght given in the IEC-60958
-+	 * The I2S input word length is twice the length given in the IEC-60958
- 	 * status word. If the word size is greater than
- 	 * 20 bits, increment by one.
- 	 */
-diff --git a/include/net/cfg80211.h b/include/net/cfg80211.h
-index e0c41eb1c860..237839210a36 100644
---- a/include/net/cfg80211.h
-+++ b/include/net/cfg80211.h
-@@ -5568,7 +5568,7 @@ void cfg80211_ibss_joined(struct net_device *dev, const u8 *bssid,
-  * @dev: network device
-  * @macaddr: the MAC address of the new candidate
-  * @ie: information elements advertised by the peer candidate
-- * @ie_len: lenght of the information elements buffer
-+ * @ie_len: length of the information elements buffer
-  * @gfp: allocation flags
-  *
-  * This function notifies cfg80211 that the mesh peer candidate has been
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 1825f712e73b..6b2691f5d4c9 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -191,7 +191,7 @@ extern int no_unaligned_warning;
-  * 	file position 0 and the value must be fully contained in the buffer
-  * 	sent to the write syscall. If dealing with strings respect the file
-  * 	position, but restrict this to the max length of the buffer, anything
-- * 	passed the max lenght will be ignored. Multiple writes will append
-+ * 	passed the max length will be ignored. Multiple writes will append
-  * 	to the buffer.
-  *
-  * These write modes control how current file position affects the behavior of
-diff --git a/sound/soc/qcom/qdsp6/q6asm.c b/sound/soc/qcom/qdsp6/q6asm.c
-index 4f85cb19a309..e8141a33a55e 100644
---- a/sound/soc/qcom/qdsp6/q6asm.c
-+++ b/sound/soc/qcom/qdsp6/q6asm.c
-@@ -1194,7 +1194,7 @@ EXPORT_SYMBOL_GPL(q6asm_open_read);
-  * q6asm_write_async() - non blocking write
-  *
-  * @ac: audio client pointer
-- * @len: lenght in bytes
-+ * @len: length in bytes
-  * @msw_ts: timestamp msw
-  * @lsw_ts: timestamp lsw
-  * @wflags: flags associated with write
--- 
-2.20.1
+I have done some more tests with tpm2-tests from 
+https://github.com/jethrogb/tpm2-utils.
+These are my results:
+
+
+(initramfs) ./tpm2-test /dev/tpm0 vendor_tpm_type
+Error on write(fd,(char*)&tpm_cmd,sizeof(tpm_cmd)): Operation not permitted
+
+(initramfs) ./tpm2-test /dev/tpm0 vendor_tpm_type; ./tpm2-test /dev/tpm0 vendor_
+tpm_type
+Error on write(fd,(char*)&tpm_cmd,sizeof(tpm_cmd)): Operation not permitted
+�   
+nitramfs) 
+
+-> Same symptom like with dd if=/dev/tpm....
+
+
+Trying to read the firmware version:
+
+(initramfs) (./tpm2-test /dev/tpm0 vendor_string_1; ./tpm2-test /dev/tpm0 firmwa
+re_version_1;) 2>/dev/null | hexdump -C
+00000000  80 01 00 00 00 1b 00 00  00 00 01 00 00 00 06 00  |................|
+00000010  00 00 01 00 00 01 0b 00  01 00 03                 |...........|
+0000001b
+
+(initramfs) (./tpm2-test /dev/tpm0 vendor_string_1; ./tpm2-test /dev/tpm0 firmwa
+re_version_2;) 2>/dev/null | hexdump -C
+00000000  80 01 00 00 00 1b 00 00  00 00 01 00 00 00 06 00  |................|
+00000010  00 00 01 00 00 01 0c 00  02 00 08                 |...........|
+0000001b
+
+-> This version numbers are correct, 1.3.2.8 indeed is the current flashed
+firmware.
+
+
+Get the vendor strings:
+
+(initramfs) (./tpm2-test /dev/tpm0 vendor_string_1; ./tpm2-test /dev/tpm0 vendor
+_string_1;) 2>/dev/null | xxd
+00000000: 8001 0000 001b 0000 0000 0100 0000 0600  ................
+00000010: 0000 0100 0001 0672 6c73 00              .......rls.
+(initramfs) (./tpm2-test /dev/tpm0 vendor_string_1; ./tpm2-test /dev/tpm0 vendor
+_string_2;) 2>/dev/null | xxd
+00000000: 8001 0000 001b 0000 0000 0100 0000 0600  ................
+00000010: 0000 0100 0001 074e 5043 54              .......NPCT
+(initramfs) (./tpm2-test /dev/tpm0 vendor_string_1; ./tpm2-test /dev/tpm0 vendor
+_string_3;) 2>/dev/null | xxd
+00000000: 8001 0000 001b 0000 0000 0100 0000 0600  ................
+00000010: 0000 0100 0001 0820 0000 00              ....... ...
+(initramfs) (./tpm2-test /dev/tpm0 vendor_string_1; ./tpm2-test /dev/tpm0 vendor
+_string_4;) 2>/dev/null | xxd
+00000000: 8001 0000 001b 0000 0000 0100 0000 0600  ................
+00000010: 0000 0100 0001 0920 0000 00              ....... ...
+
+Well, NPCT is correct...
+
+
+
+Michael
+
 
