@@ -2,108 +2,90 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F269C43444
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 18:37:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C8B0C43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 18:38:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E1C2218F0
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 18:37:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 49932218DE
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 18:38:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727605AbfADSha (ORCPT
+        id S1726668AbfADSiD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 13:37:30 -0500
-Received: from gateway33.websitewelcome.com ([192.185.146.87]:46494 "EHLO
-        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726036AbfADSha (ORCPT
+        Fri, 4 Jan 2019 13:38:03 -0500
+Received: from smtprelay0019.hostedemail.com ([216.40.44.19]:59949 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726036AbfADSiC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 13:37:30 -0500
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway33.websitewelcome.com (Postfix) with ESMTP id D77958555B5
-        for <linux-kernel@vger.kernel.org>; Fri,  4 Jan 2019 12:37:29 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id fULZgmjDtdnCefULZgtUdL; Fri, 04 Jan 2019 12:37:29 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.130.205] (port=36800 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gfULZ-0014x6-4J; Fri, 04 Jan 2019 12:37:29 -0600
-Date:   Fri, 4 Jan 2019 12:37:26 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>
-Cc:     cgroups@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] mm: memcontrol: use struct_size() in kmalloc()
-Message-ID: <20190104183726.GA6374@embeddedor>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.130.205
-X-Source-L: No
-X-Exim-ID: 1gfULZ-0014x6-4J
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.130.205]:36800
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 41
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        Fri, 4 Jan 2019 13:38:02 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay05.hostedemail.com (Postfix) with ESMTP id 3F1EF1802FA29;
+        Fri,  4 Jan 2019 18:38:01 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: wish49_b837086a7342
+X-Filterd-Recvd-Size: 2433
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf09.hostedemail.com (Postfix) with ESMTPA;
+        Fri,  4 Jan 2019 18:37:59 +0000 (UTC)
+Message-ID: <ddbf72a52cd5b6c5e2cba2c6f301d12be651e220.camel@perches.com>
+Subject: Re: [PATCH 07/21] PCI: designware: Make use of IS_ALIGNED()
+From:   Joe Perches <joe@perches.com>
+To:     Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        "A.s. Dong" <aisheng.dong@nxp.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        "linux-imx@nxp.com" <linux-imx@nxp.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Date:   Fri, 04 Jan 2019 10:37:57 -0800
+In-Reply-To: <9b275993-c511-50d3-e18e-b421010c1bba@synopsys.com>
+References: <20181221072716.29017-1-andrew.smirnov@gmail.com>
+         <20181221072716.29017-8-andrew.smirnov@gmail.com>
+         <9b275993-c511-50d3-e18e-b421010c1bba@synopsys.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-One of the more common cases of allocation size calculations is finding
-the size of a structure that has a zero-sized array at the end, along
-with memory for some number of elements for that array. For example:
+On Wed, 2019-01-02 at 09:33 +0000, Gustavo Pimentel wrote:
+> On 21/12/2018 07:27, Andrey Smirnov wrote:
+> > Make the intent a bit more clear as well as get rid of explicit
+> > arithmetic by using IS_ALIGNED() to determine if "addr" is aligned to
+> > "size". No functional change intended.
+[]
+> > diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
+[]
+> > @@ -22,7 +22,7 @@
+> >  
+> >  int dw_pcie_read(void __iomem *addr, int size, u32 *val)
+> >  {
+> > -	if ((uintptr_t)addr & (size - 1)) {
+> > +	if (!IS_ALIGNED((uintptr_t)addr, size)) {
 
-struct foo {
-    int stuff;
-    void *entry[];
-};
+The (uintptr_t) cast could probably be removed as well.
 
-instance = kmalloc(sizeof(struct foo) + sizeof(void *) * count, GFP_KERNEL);
+> > @@ -43,7 +43,7 @@ int dw_pcie_read(void __iomem *addr, int size, u32 *val)
+> >  
+> >  int dw_pcie_write(void __iomem *addr, int size, u32 val)
+> >  {
+> > -	if ((uintptr_t)addr & (size - 1))
+> > +	if (!IS_ALIGNED((uintptr_t)addr, size))
+> >  		return PCIBIOS_BAD_REGISTER_NUMBER;
 
-Instead of leaving these open-coded and prone to type mistakes, we can
-now use the new struct_size() helper:
-
-instance = kmalloc(struct_size(instance, entry, count), GFP_KERNEL);
-
-This code was detected with the help of Coccinelle.
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- mm/memcontrol.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index af7f18b32389..ad256cf7da47 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -3626,8 +3626,7 @@ static int __mem_cgroup_usage_register_event(struct mem_cgroup *memcg,
- 	size = thresholds->primary ? thresholds->primary->size + 1 : 1;
- 
- 	/* Allocate memory for new array of thresholds */
--	new = kmalloc(sizeof(*new) + size * sizeof(struct mem_cgroup_threshold),
--			GFP_KERNEL);
-+	new = kmalloc(struct_size(new, entries, size), GFP_KERNEL);
- 	if (!new) {
- 		ret = -ENOMEM;
- 		goto unlock;
--- 
-2.20.1
+here too
 
