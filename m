@@ -2,86 +2,82 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F550C43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 22:05:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8959C43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 22:05:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D731F2087F
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 22:05:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9DEE7218FE
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 22:05:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726488AbfADWFv (ORCPT
+        id S1726521AbfADWF6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 17:05:51 -0500
-Received: from smtp07.smtpout.orange.fr ([80.12.242.129]:43014 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726217AbfADWFv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 17:05:51 -0500
-Received: from [192.168.1.12] ([90.126.241.217])
-        by mwinf5d66 with ME
-        id LN5l1z0024i89ZE03N5l9k; Fri, 04 Jan 2019 23:05:48 +0100
-X-ME-Helo: [192.168.1.12]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 04 Jan 2019 23:05:48 +0100
-X-ME-IP: 90.126.241.217
-Subject: Re: [PATCH] octeontx2-af: Fix a resource leak in an error handling
- path in 'cgx_probe()'
-To:     David Miller <davem@davemloft.net>
-Cc:     sgoutham@marvell.com, lcherian@marvell.com, gakula@marvell.com,
-        jerinj@marvell.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <20181229164222.15791-1-christophe.jaillet@wanadoo.fr>
- <20190104.124626.1177296586022194416.davem@davemloft.net>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Message-ID: <dd1f46d1-8ab7-260d-6e3c-e1ecdcc745d5@wanadoo.fr>
-Date:   Fri, 4 Jan 2019 23:05:45 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+        Fri, 4 Jan 2019 17:05:58 -0500
+Received: from shell.v3.sk ([90.176.6.54]:32894 "EHLO shell.v3.sk"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726100AbfADWF5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 17:05:57 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id A5BF1C83A7;
+        Fri,  4 Jan 2019 23:05:55 +0100 (CET)
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id K0n9-Aoxmilh; Fri,  4 Jan 2019 23:05:53 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 306D5CA5C7;
+        Fri,  4 Jan 2019 23:05:53 +0100 (CET)
+X-Virus-Scanned: amavisd-new at zimbra.v3.sk
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id 0-bYIbUtqfs2; Fri,  4 Jan 2019 23:05:52 +0100 (CET)
+Received: from nedofet.lan (ip-89-102-31-34.net.upcbroadband.cz [89.102.31.34])
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 51511C83A7;
+        Fri,  4 Jan 2019 23:05:52 +0100 (CET)
+From:   Lubomir Rintel <lkundrak@v3.sk>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Lubomir Rintel <lkundrak@v3.sk>
+Subject: [PATCH v2] clk: sysfs: fix invalid JSON in clk_dump
+Date:   Fri,  4 Jan 2019 23:05:49 +0100
+Message-Id: <20190104220549.24849-1-lkundrak@v3.sk>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-In-Reply-To: <20190104.124626.1177296586022194416.davem@davemloft.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Le 04/01/2019 à 21:46, David Miller a écrit :
-> From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> Date: Sat, 29 Dec 2018 17:42:22 +0100
->
->> If an error occurs after the call to 'pci_alloc_irq_vectors()', we must
->> call 'pci_free_irq_vectors()' in order to avoid a	resource leak.
->>
->> The same sequence is already in place in the corresponding 'cgx_remove()'
->> function.
->>
->> Fixes: 1463f382f58d ("octeontx2-af: Add support for CGX link management")
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> Applied and queued up for -stable.
->
-> Please fix the date and time on your computer, putting improper dates into
-> the email headers of your patch postings makes your patch appear out
-> of order in my patchwork queue.
->
-> Thank you.
->
-Hi,
+Add a missing comma.
 
-yes, I've spotted this time issue.
-For some reason my VM get out of synch when restored from a saved state.
-It was not the case before. It is likely due to an update of VirtualBox 
-(i.e. 5.x --> 6.0) performed a few days ago.
-Will try to give it a look.
+Fixes: 9fba738a53dd ("clk: add duty cycle support")
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 
-For now, I have to manually do some ntpdate to get the time/date 
-fixed... until the next save/restore of the VM.
+---
+Change since v1:
+- s/clk_jump/clk_dump/
 
-Sorry for the inconvenience.
+ drivers/clk/clk.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-CJ
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 75d13c0eff12..6ccdbedb02f3 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2779,7 +2779,7 @@ static void clk_dump_one(struct seq_file *s, struct=
+ clk_core *c, int level)
+ 	seq_printf(s, "\"protect_count\": %d,", c->protect_count);
+ 	seq_printf(s, "\"rate\": %lu,", clk_core_get_rate(c));
+ 	seq_printf(s, "\"accuracy\": %lu,", clk_core_get_accuracy(c));
+-	seq_printf(s, "\"phase\": %d", clk_core_get_phase(c));
++	seq_printf(s, "\"phase\": %d,", clk_core_get_phase(c));
+ 	seq_printf(s, "\"duty_cycle\": %u",
+ 		   clk_core_get_scaled_duty_cycle(c, 100000));
+ }
+--=20
+2.19.2
 
