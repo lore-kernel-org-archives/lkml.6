@@ -2,126 +2,190 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90830C43444
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 08:55:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35F20C43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 08:56:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 610B0206C0
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 08:55:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546592154;
-	bh=xVcWryZnuZuuR73dgPvRud7mlnNgwXv4kQ9m7GMrPTw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=B1BVhgng2Vxs3ljKJyfi/rXh7MqmEk4ByDVkg38z1EbvcsVWRiFfO0FOUU+bTprMd
-	 7tz3vYprYSeiM3UfXQaiSK6gHUumSRsknjMsFv+N/j+wod1S9Z7s6XKskpDAyQssIb
-	 xSoJlM3gcvdVf38f/WvFCniN3aderOOT98wGzsKY=
+	by mail.kernel.org (Postfix) with ESMTP id 04FAA206C0
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 08:56:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727758AbfADIzx (ORCPT
+        id S1727790AbfADI4F convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 03:55:53 -0500
-Received: from mx2.suse.de ([195.135.220.15]:33134 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726800AbfADIzv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 03:55:51 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 3A37AABAC;
-        Fri,  4 Jan 2019 08:55:49 +0000 (UTC)
-Date:   Fri, 4 Jan 2019 09:55:47 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Yang Shi <yang.shi@linux.alibaba.com>
-Cc:     hannes@cmpxchg.org, akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 0/3] mm: memcontrol: delayed force empty
-Message-ID: <20190104085547.GG31793@dhcp22.suse.cz>
-References: <20190103101215.GH31793@dhcp22.suse.cz>
- <b3ad06ed-f620-7aa0-5697-a1bbe2d7bfe1@linux.alibaba.com>
- <20190103181329.GW31793@dhcp22.suse.cz>
- <6f43e926-3bb5-20d1-2e39-1d30bf7ad375@linux.alibaba.com>
- <20190103185333.GX31793@dhcp22.suse.cz>
- <d610c665-890f-3bf0-1e2a-437150b6ddfb@linux.alibaba.com>
- <20190103192339.GA31793@dhcp22.suse.cz>
- <88b4d986-0b3c-cbf0-65ad-95f3e8ccd870@linux.alibaba.com>
- <20190103200111.GD31793@dhcp22.suse.cz>
- <146af1c6-4405-76c5-b253-c8fba11779bf@linux.alibaba.com>
+        Fri, 4 Jan 2019 03:56:05 -0500
+Received: from mx01.hxt-semitech.com ([223.203.96.7]:46675 "EHLO
+        barracuda.hxt-semitech.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727039AbfADI4E (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 03:56:04 -0500
+X-ASG-Debug-ID: 1546592159-093b7e2d8806ba0001-xx1T2L
+Received: from HXTBJIDCEMVIW02.hxtcorp.net ([10.128.0.15]) by barracuda.hxt-semitech.com with ESMTP id 898rFEhDEaL4TxcG (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NO); Fri, 04 Jan 2019 16:55:59 +0800 (CST)
+X-Barracuda-Envelope-From: xiaoting.liu@hxt-semitech.com
+Received: from openbmc001.localdomain (10.5.21.169) by
+ HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 4 Jan 2019 16:55:55 +0800
+From:   Xiaoting Liu <xiaoting.liu@hxt-semitech.com>
+To:     <linux@roeck-us.net>, <jdelvare@suse.com>
+CC:     <openbmc@lists.ozlabs.org>, <linux-hwmon@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Xiaoting Liu <xiaoting.liu@hxt-semitech.com>,
+        Shunyong Yang <shunyong.yang@hxt-semitech.com>
+Subject: [PATCH 1/4] pmbus: associate PMBUS_SKIP_STATUS_CHECK with driver_data
+Date:   Fri, 4 Jan 2019 16:55:51 +0800
+X-ASG-Orig-Subj: [PATCH 1/4] pmbus: associate PMBUS_SKIP_STATUS_CHECK with driver_data
+Message-ID: <680b4d5659971cc4f6e1a6878837c2ce49962a7c.1546591275.git.xiaoting.liu@hxt-semitech.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <cover.1546591275.git.xiaoting.liu@hxt-semitech.com>
+References: <cover.1546591275.git.xiaoting.liu@hxt-semitech.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <146af1c6-4405-76c5-b253-c8fba11779bf@linux.alibaba.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.5.21.169]
+X-ClientProxiedBy: HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15) To
+ HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15)
+Content-Transfer-Encoding: 8BIT
+X-Barracuda-Connect: UNKNOWN[10.128.0.15]
+X-Barracuda-Start-Time: 1546592159
+X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA384
+X-Barracuda-URL: https://192.168.50.101:443/cgi-mod/mark.cgi
+X-Virus-Scanned: by bsmtpd at hxt-semitech.com
+X-Barracuda-BRTS-Status: 1
+X-Barracuda-Bayes: INNOCENT GLOBAL 0.4997 1.0000 0.0000
+X-Barracuda-Spam-Score: 0.00
+X-Barracuda-Spam-Status: No, SCORE=0.00 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
+X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.65068
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------------------------
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 03-01-19 20:15:30, Yang Shi wrote:
-> 
-> 
-> On 1/3/19 12:01 PM, Michal Hocko wrote:
-> > On Thu 03-01-19 11:49:32, Yang Shi wrote:
-> > > 
-> > > On 1/3/19 11:23 AM, Michal Hocko wrote:
-> > > > On Thu 03-01-19 11:10:00, Yang Shi wrote:
-> > > > > On 1/3/19 10:53 AM, Michal Hocko wrote:
-> > > > > > On Thu 03-01-19 10:40:54, Yang Shi wrote:
-> > > > > > > On 1/3/19 10:13 AM, Michal Hocko wrote:
-> > > > [...]
-> > > > > > > > Is there any reason for your scripts to be strictly sequential here? In
-> > > > > > > > other words why cannot you offload those expensive operations to a
-> > > > > > > > detached context in _userspace_?
-> > > > > > > I would say it has not to be strictly sequential. The above script is just
-> > > > > > > an example to illustrate the pattern. But, sometimes it may hit such pattern
-> > > > > > > due to the complicated cluster scheduling and container scheduling in the
-> > > > > > > production environment, for example the creation process might be scheduled
-> > > > > > > to the same CPU which is doing force_empty. I have to say I don't know too
-> > > > > > > much about the internals of the container scheduling.
-> > > > > > In that case I do not see a strong reason to implement the offloding
-> > > > > > into the kernel. It is an additional code and semantic to maintain.
-> > > > > Yes, it does introduce some additional code and semantic, but IMHO, it is
-> > > > > quite simple and very straight forward, isn't it? Just utilize the existing
-> > > > > css offline worker. And, that a couple of lines of code do improve some
-> > > > > throughput issues for some real usecases.
-> > > > I do not really care it is few LOC. It is more important that it is
-> > > > conflating force_empty into offlining logic. There was a good reason to
-> > > > remove reparenting/emptying the memcg during the offline. Considering
-> > > > that you can offload force_empty from userspace trivially then I do not
-> > > > see any reason to implement it in the kernel.
-> > > Er, I may not articulate in the earlier email, force_empty can not be
-> > > offloaded from userspace *trivially*. IOWs the container scheduler may
-> > > unexpectedly overcommit something due to the stall of synchronous force
-> > > empty, which can't be figured out by userspace before it actually happens.
-> > > The scheduler doesn't know how long force_empty would take. If the
-> > > force_empty could be offloaded by kernel, it would make scheduler's life
-> > > much easier. This is not something userspace could do.
-> > What exactly prevents
-> > (
-> > echo 1 > $memecg/force_empty
-> > rmdir $memcg
-> > ) &
-> > 
-> > so that this sequence doesn't really block anything?
-> 
-> We have "restarting the same name job" logic in our usecase (I'm not quite
-> sure why they do so). Basically, it means to create memcg with the exact
-> same name right after the old one is deleted, but may have different limit
-> or other settings. The creation has to wait for rmdir is done. Even though
-> rmdir is done in background like the above, the stall still exists since
-> rmdir simply is waiting for force_empty.
+Current code compares device name with name in i2c_device_id to decide
+whether PMBUS_SKIP_STATUS_CHECK should be set in pmbus_platform_data,
+which makes adding new devices with PMBUS_SKIP_STATUS_CHECK should also
+modify code in pmbus_probe().
 
-OK, I see. This is an important detail you didn't mention previously (or
-at least I didn't understand it). One thing is still not clear to me.
-"Restarting the same job" sounds as if the memcg itself could be
-recycled as well. You are saying that the setting might change but if
-that is about limits then we should handle that just fine. Or what other
-kind of setting changes that wouldn't work properly?
+This patch adds pmbus_device_info to save pages and flags. Its pointer
+is put in driver_data of i2c_device_id, which makes adding new device
+more straightforward.
 
-If the recycling is not possible then I would suggest to not reuse
-force_empty interface but add wipe_on_destruction or similar new knob
-which would enforce reclaim on offlining. It seems we have several
-people asking for something like that already.
--- 
-Michal Hocko
-SUSE Labs
+Signed-off-by: Shunyong Yang <shunyong.yang@hxt-semitech.com>
+Signed-off-by: Xiaoting Liu <xiaoting.liu@hxt-semitech.com>
+---
+ drivers/hwmon/pmbus/pmbus.c | 54 +++++++++++++++++++++++++++------------------
+ include/linux/pmbus.h       |  5 +++++
+ 2 files changed, 37 insertions(+), 22 deletions(-)
+
+diff --git a/drivers/hwmon/pmbus/pmbus.c b/drivers/hwmon/pmbus/pmbus.c
+index 7688dab32f6e..aa4cf9636e99 100644
+--- a/drivers/hwmon/pmbus/pmbus.c
++++ b/drivers/hwmon/pmbus/pmbus.c
+@@ -172,13 +172,15 @@ static int pmbus_probe(struct i2c_client *client,
+        struct pmbus_driver_info *info;
+        struct pmbus_platform_data *pdata = NULL;
+        struct device *dev = &client->dev;
++       struct pmbus_device_info *device_info;
+
+        info = devm_kzalloc(dev, sizeof(struct pmbus_driver_info), GFP_KERNEL);
+        if (!info)
+                return -ENOMEM;
+
+-       if (!strcmp(id->name, "dps460") || !strcmp(id->name, "dps800") ||
+-           !strcmp(id->name, "sgd009")) {
++       device_info = (struct pmbus_device_info *)id->driver_data;
++
++       if (device_info->flags & PMBUS_SKIP_STATUS_CHECK) {
+                pdata = devm_kzalloc(dev, sizeof(struct pmbus_platform_data),
+                                     GFP_KERNEL);
+                if (!pdata)
+@@ -187,36 +189,44 @@ static int pmbus_probe(struct i2c_client *client,
+                pdata->flags = PMBUS_SKIP_STATUS_CHECK;
+        }
+
+-       info->pages = id->driver_data;
++       info->pages = device_info->pages;
+        info->identify = pmbus_identify;
+        dev->platform_data = pdata;
+
+        return pmbus_do_probe(client, id, info);
+ }
+
++static const struct pmbus_device_info default_pmbus_info = {1, 0};
++static const struct pmbus_device_info dps460_pmbus_info = {
++                               1, PMBUS_SKIP_STATUS_CHECK};
++static const struct pmbus_device_info dps800_pmbus_info = {
++                               1, PMBUS_SKIP_STATUS_CHECK};
++static const struct pmbus_device_info sgd009_pmbus_info = {
++                               1, PMBUS_SKIP_STATUS_CHECK};
++static const struct pmbus_device_info pmbus_info = {0, 0};
+ /*
+  * Use driver_data to set the number of pages supported by the chip.
+  */
+ static const struct i2c_device_id pmbus_id[] = {
+-       {"adp4000", 1},
+-       {"bmr453", 1},
+-       {"bmr454", 1},
+-       {"dps460", 1},
+-       {"dps800", 1},
+-       {"mdt040", 1},
+-       {"ncp4200", 1},
+-       {"ncp4208", 1},
+-       {"pdt003", 1},
+-       {"pdt006", 1},
+-       {"pdt012", 1},
+-       {"pmbus", 0},
+-       {"sgd009", 1},
+-       {"tps40400", 1},
+-       {"tps544b20", 1},
+-       {"tps544b25", 1},
+-       {"tps544c20", 1},
+-       {"tps544c25", 1},
+-       {"udt020", 1},
++       {"adp4000", (kernel_ulong_t)&default_pmbus_info},
++       {"bmr453", (kernel_ulong_t)&default_pmbus_info},
++       {"bmr454", (kernel_ulong_t)&default_pmbus_info},
++       {"dps460", (kernel_ulong_t)&dps460_pmbus_info},
++       {"dps800", (kernel_ulong_t)&dps800_pmbus_info},
++       {"mdt040", (kernel_ulong_t)&default_pmbus_info},
++       {"ncp4200", (kernel_ulong_t)&default_pmbus_info},
++       {"ncp4208", (kernel_ulong_t)&default_pmbus_info},
++       {"pdt003", (kernel_ulong_t)&default_pmbus_info},
++       {"pdt006", (kernel_ulong_t)&default_pmbus_info},
++       {"pdt012", (kernel_ulong_t)&default_pmbus_info},
++       {"pmbus", (kernel_ulong_t)&pmbus_info},
++       {"sgd009", (kernel_ulong_t)&sgd009_pmbus_info},
++       {"tps40400", (kernel_ulong_t)&default_pmbus_info},
++       {"tps544b20", (kernel_ulong_t)&default_pmbus_info},
++       {"tps544b25", (kernel_ulong_t)&default_pmbus_info},
++       {"tps544c20", (kernel_ulong_t)&default_pmbus_info},
++       {"tps544c25", (kernel_ulong_t)&default_pmbus_info},
++       {"udt020", (kernel_ulong_t)&default_pmbus_info},
+        {}
+ };
+
+diff --git a/include/linux/pmbus.h b/include/linux/pmbus.h
+index ee3c2aba2a8e..3c05edad7666 100644
+--- a/include/linux/pmbus.h
++++ b/include/linux/pmbus.h
+@@ -46,4 +46,9 @@ struct pmbus_platform_data {
+        struct regulator_init_data *reg_init_data;
+ };
+
++struct pmbus_device_info {
++       int pages;
++       u32 flags;
++};
++
+ #endif /* _PMBUS_H_ */
+--
+1.8.3.1
+
+
+
+
+This email is intended only for the named addressee. It may contain information that is confidential/private, legally privileged, or copyright-protected, and you should handle it accordingly. If you are not the intended recipient, you do not have legal rights to retain, copy, or distribute this email or its contents, and should promptly delete the email and all electronic copies in your system; do not retain copies in any media. If you have received this email in error, please notify the sender promptly. Thank you.
+
+
