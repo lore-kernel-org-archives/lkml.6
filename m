@@ -2,242 +2,140 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_DIGITS,
+	FROM_LOCAL_HEX,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF3A6C43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 22:51:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88B0AC43444
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 22:58:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A75552173B
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 22:51:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="X1PU8KsB"
+	by mail.kernel.org (Postfix) with ESMTP id 5ED6A218D3
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 22:58:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726298AbfADWvX (ORCPT
+        id S1726313AbfADW6E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 17:51:23 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:39987 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726009AbfADWvX (ORCPT
+        Fri, 4 Jan 2019 17:58:04 -0500
+Received: from mail-it1-f199.google.com ([209.85.166.199]:58947 "EHLO
+        mail-it1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726009AbfADW6E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 17:51:23 -0500
-Received: by mail-lf1-f66.google.com with SMTP id v5so26432576lfe.7
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Jan 2019 14:51:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :content-transfer-encoding:user-agent;
-        bh=yn+Vwugo+7tGMWoXuDezr+r9XD7XKmVUROF32R3gMkQ=;
-        b=X1PU8KsBgykY5expaDJx6NjrPlmGcOQ+iM7qfRVB783wnnQD+WQ0dYNMgDoH8dBPvj
-         bbUndw+grAfkb0+6NX0zlG1Yo3A6ot/MCplemKjSEWrm3FDppIhGcBiYUPOZoqxV2x86
-         pWTgs2KCTpbeSevfnwFpvCLHgaq+l42YPgJ+Z6YZ/K5hITo7HX0+5qONK62YC+RjfmAq
-         IDrXwyKUgaxt7hrGaqx9qkS6HgdJFsQCazPdVhz6FuqbSjNx8Jxdi8dWLO39EV5fH2nG
-         mN+H4OiYqW2J/4HMnJJDFWO9RMrdbGVmDGhBWqlZBa8ZadDl3f7iykpthPpZQKUKdR6s
-         H/Qg==
+        Fri, 4 Jan 2019 17:58:04 -0500
+Received: by mail-it1-f199.google.com with SMTP id p21so2056011itb.8
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Jan 2019 14:58:03 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:content-transfer-encoding:user-agent;
-        bh=yn+Vwugo+7tGMWoXuDezr+r9XD7XKmVUROF32R3gMkQ=;
-        b=LFjHc8XOdxOkgCRlI4Fr5JB1W4EPLS14HGUCEdeDg0B8sBGVROc2SJOqWy8AybxLhP
-         4uY79ARLoqdTlwyuNf2ZuYMOXUssrk5rRSYKCf2Szw9IskGJN3wEaC+/MDhOCm26H93e
-         CV1q24Ttf67dqCL+6aZArEo0kSxYv+PlTs5TPV3OFrgPrEf6IkVrt83KIggKQu3nJ3mx
-         ncGGFww8YdMn38I50XnOubwl8EODJuwDL46NzCAozCxSPGRZoxZDhQVVTH/bPv2bmzEa
-         TUMS8vV4suMurAcMCbmW9VBmB6j6JrAT88IauHhHxCH6C8wZDJpwJApnpE1ivxXCgwih
-         HQGA==
-X-Gm-Message-State: AA+aEWYI3r0N72pupP8x+5J8RwM2L5IK/8EgygoZ8h2o9jnLf1huNZH2
-        CBBdo7xWDbGNvpE+zVjgNFgn7NsiZOJyVQ==
-X-Google-Smtp-Source: AFSGD/VwJYMvhHvF8bRmn9KqyErVdzGk9jJ49FAVYgiEhSA7fAil56ywNo4hku0V2uGuStcsYDcWgA==
-X-Received: by 2002:a19:5ad0:: with SMTP id y77mr28301810lfk.109.1546642279911;
-        Fri, 04 Jan 2019 14:51:19 -0800 (PST)
-Received: from localhost (h85-30-9-151.cust.a3fiber.se. [85.30.9.151])
-        by smtp.gmail.com with ESMTPSA id y81-v6sm12743856lje.30.2019.01.04.14.51.17
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 04 Jan 2019 14:51:18 -0800 (PST)
-Date:   Fri, 4 Jan 2019 14:51:07 -0800
-From:   Olof Johansson <olof@lixom.net>
-To:     torvalds@linux-foundation.org
-Cc:     olof@lixom.net, arm@kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] ARM: SoC late updates
-Message-ID: <20190104225107.hkl2nzdfdewg3lbu@localhost>
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=SeiH3J+aOSGkexNtniuPt8RsV+JvKhn/e9162U4u8M8=;
+        b=hI5phJS2Fa+rgx62mTD3RkL5Ibwh7GlCl08M3uuUsB0rezUy3MNsqokXt2wwnMKv6n
+         rIFR5D7st/iFTze84MlpdJcAq3R3e2Jo8qxOQTCKEciDlu4ltDmv6vuaZas5GKLgeQpa
+         6/LGxdwzWeDBevzGqwJCBXpLOvAodWmWmvbtrXQBoDSzQfH2OSoGjeneWs6A4MJAsZJL
+         TRcI7rPA6+FZ2nWAnMaCqYXzOZkK8oKkuM+ZTBvuj+0pNWsjX1zQcWsUYjkH1LDgCr1b
+         O+pffTqPo0rlYSKGtHlIFCOs7wv3lF6RQQtEYYJxKOppOaKufaUw3R3x8GZ0NFFXCRjf
+         1wFw==
+X-Gm-Message-State: AJcUuke5Ilv40ADZ+qYxYRtBmFt70qlRHxbG2xt5SrxH6PhSDtLplpcz
+        lj9Sd3hm/7FKYkvcYPvYyEaD96C4sWgEAhuKJ8q70oad/Zp4
+X-Google-Smtp-Source: ALg8bN5YnutGnfi2QnbRzhcX+IzuaIKLSffbG85A8hQfGU2wAoggEnBJ66zX5WCWzU1dmWPx5BygwQ4gXgDXi4kN+bfLo+axZkpb
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-User-Agent: NeoMutt/20170113 (1.7.2)
+X-Received: by 2002:a24:5f93:: with SMTP id r141mr2423529itb.4.1546642682957;
+ Fri, 04 Jan 2019 14:58:02 -0800 (PST)
+Date:   Fri, 04 Jan 2019 14:58:02 -0800
+In-Reply-To: <000000000000d0ce25057e75e2da@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000b65931057ea9cf82@google.com>
+Subject: Re: WARNING in mem_cgroup_update_lru_size
+From:   syzbot <syzbot+c950a368703778078dc8@syzkaller.appspotmail.com>
+To:     cgroups@vger.kernel.org, hannes@cmpxchg.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        mhocko@kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, vdavydov.dev@gmail.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+syzbot has found a reproducer for the following crash on:
 
-As mentioned with the regular pull requests, here's a bit more material for
-this merge window. See below for details. 
+HEAD commit:    96d4f267e40f Remove 'type' argument from access_ok() funct..
+git tree:       net
+console output: https://syzkaller.appspot.com/x/log.txt?x=160c9a80c00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7308e68273924137
+dashboard link: https://syzkaller.appspot.com/bug?extid=c950a368703778078dc8
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=125376bb400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=121d85ab400000
 
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+c950a368703778078dc8@syzkaller.appspotmail.com
 
-Thanks!
+------------[ cut here ]------------
+kasan: CONFIG_KASAN_INLINE enabled
+mem_cgroup_update_lru_size(00000000d6ca43c5, 1, 1): lru_size -2032898272
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+WARNING: CPU: 0 PID: 11430 at mm/memcontrol.c:1160  
+mem_cgroup_update_lru_size+0xb2/0xe0 mm/memcontrol.c:1160
+general protection fault: 0000 [#1] PREEMPT SMP KASAN
+Kernel panic - not syncing: panic_on_warn set ...
+CPU: 1 PID: 4 Comm:  Not tainted 4.20.0+ #8
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:__read_once_size include/linux/compiler.h:191 [inline]
+RIP: 0010:get_running_cputimer include/linux/sched/cputime.h:85 [inline]
+RIP: 0010:account_group_system_time include/linux/sched/cputime.h:149  
+[inline]
+RIP: 0010:account_system_index_time+0xe8/0x5f0 kernel/sched/cputime.c:168
+Code: 04 00 00 49 8b 84 24 00 07 00 00 48 ba 00 00 00 00 00 fc ff df 48 8d  
+b8 40 01 00 00 48 8d 88 28 01 00 00 48 89 fe 48 c1 ee 03 <0f> b6 14 16 48  
+89 fe 83 e6 07 40 38 f2 7f 08 84 d2 0f 85 93 03 00
+RSP: 0018:ffff8880ae707a80 EFLAGS: 00010006
+RAX: 0000000041b58ab3 RBX: 1ffff11015ce0f54 RCX: 0000000041b58bdb
+RDX: dffffc0000000000 RSI: 000000000836b17e RDI: 0000000041b58bf3
+RBP: ffff8880ae707b48 R08: ffff8880ae71f5f0 R09: ffffffff8a9a805d
+R10: ffffffff8a9a8050 R11: 0000000000000001 R12: ffff8880a94bc440
+R13: 0000000000981859 R14: 0000000000000003 R15: ffff8880ae707b20
+FS:  0000000000000000(0000) GS:ffff8880ae700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000006dae70 CR3: 0000000086205000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  <IRQ>
+  irqtime_account_process_tick.isra.0+0x3a2/0x490 kernel/sched/cputime.c:380
+  account_process_tick+0x27f/0x350 kernel/sched/cputime.c:483
+  update_process_times+0x25/0x80 kernel/time/timer.c:1633
+  tick_sched_handle+0xa2/0x190 kernel/time/tick-sched.c:161
+  tick_sched_timer+0x47/0x130 kernel/time/tick-sched.c:1271
+  __run_hrtimer kernel/time/hrtimer.c:1389 [inline]
+  __hrtimer_run_queues+0x3a7/0x1050 kernel/time/hrtimer.c:1451
+  hrtimer_interrupt+0x314/0x770 kernel/time/hrtimer.c:1509
+  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1035 [inline]
+  smp_apic_timer_interrupt+0x18d/0x760 arch/x86/kernel/apic/apic.c:1060
+  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:807
+  </IRQ>
+Modules linked in:
+---[ end trace 42848964955b563b ]---
+RIP: 0010:__read_once_size include/linux/compiler.h:191 [inline]
+RIP: 0010:get_running_cputimer include/linux/sched/cputime.h:85 [inline]
+RIP: 0010:account_group_system_time include/linux/sched/cputime.h:149  
+[inline]
+RIP: 0010:account_system_index_time+0xe8/0x5f0 kernel/sched/cputime.c:168
+Code: 04 00 00 49 8b 84 24 00 07 00 00 48 ba 00 00 00 00 00 fc ff df 48 8d  
+b8 40 01 00 00 48 8d 88 28 01 00 00 48 89 fe 48 c1 ee 03 <0f> b6 14 16 48  
+89 fe 83 e6 07 40 38 f2 7f 08 84 d2 0f 85 93 03 00
+RSP: 0018:ffff8880ae707a80 EFLAGS: 00010006
+RAX: 0000000041b58ab3 RBX: 1ffff11015ce0f54 RCX: 0000000041b58bdb
+RDX: dffffc0000000000 RSI: 000000000836b17e RDI: 0000000041b58bf3
+RBP: ffff8880ae707b48 R08: ffff8880ae71f5f0 R09: ffffffff8a9a805d
+R10: ffffffff8a9a8050 R11: 0000000000000001 R12: ffff8880a94bc440
+R13: 0000000000981859 R14: 0000000000000003 R15: ffff8880ae707b20
+FS:  0000000000000000(0000) GS:ffff8880ae700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000006dae70 CR3: 0000000086205000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Shutting down cpus with NMI
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
--Olof
-
-
-A few updates that we merged late but are low risk for regressions for
-other platforms (and a few other straggling patches):
-
-- I mis-tagged the 'drivers' branch, and missed 3 patches. Merged in
-  here. They're for a driver for the PL353 SRAM controller and a build
-  fix for the qualcomm scm driver.
-- A new platform, RDA Micro RDA8810PL (Cortex-A5 w/ integrated Vivante
-  GPU, 256MB RAM, Wifi). This includes some acked platform-specific
-  drivers (serial, etc). This also include DTs for two boards with this
-  SoC, OrangePi 2G and OrangePi i86.
-- i.MX8 is another new platform (NXP, 4x Cortex-A53 + Cortex-M4, 4K
-  video playback offload). This is the first i.MX 64-bit SoC.
-- Some minor updates to Samsung boards (adding a few peripherals in DTs).
-- Small rework for SMP bootup on STi platforms.
-- A couple of TEE driver fixes.
-- A couple of new config options (bcm2835 thermal, Uniphier MDMAC)
-  enabled in defconfigs.
-
-----------------------------------------------------------------
-
-The following changes since commit 0b2c8f8b6b0c7530e2866c95862546d0da2057b0:
-
-  i915: fix missing user_access_end() in page fault exception case
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git tags/armsoc-late
-
-for you to fetch changes up to 00f8ccd0c95f4e604297057a5bccec86c0903d14:
-
-  Merge branch 'next/drivers' into next/late
-
-----------------------------------------------------------------
-
-Andreas Färber (4):
-      dt-bindings: Add RDA Micro vendor prefix
-      dt-bindings: arm: Document RDA8810PL and reference boards
-      ARM: Prepare RDA8810PL SoC
-      dt-bindings: serial: Document RDA Micro UART
-
-Arnd Bergmann (2):
-      Merge tag 'zynq-soc-for-v5.0' of https://github.com/Xilinx/linux-xlnx into next/drivers
-      Merge tag 'qcom-drivers-for-4.21-2' of git://git.kernel.org/.../agross/linux into next/drivers
-
-Baruch Siach (2):
-      arm64: dts: imx8mq: add watchdog devices
-      arm64: dts: imx8mq-evk: enable watchdog
-
-Jonathan Marek (1):
-      firmware: qcom: scm: fix compilation error when disabled
-
-Kamil Konieczny (1):
-      arm64: dts: exynos: Add IMEM clock controller to Exynos5433
-
-Lucas Stach (4):
-      arm64: add basic Kconfig symbols for i.MX8
-      arm64: add basic DTS for i.MX8MQ
-      arm64: add support for i.MX8M EVK board
-      MAINTAINERS: add i.MX8 DT path to i.MX architecture
-
-Manivannan Sadhasivam (7):
-      ARM: dts: Add devicetree for RDA8810PL SoC
-      ARM: dts: Add devicetree for OrangePi 2G IoT board
-      ARM: dts: Add devicetree for OrangePi i96 board
-      ARM: dts: rda8810pl: Add timer support
-      ARM: dts: rda8810pl: Add interrupt support for UART
-      tty: serial: Add RDA8810PL UART driver
-      MAINTAINERS: Add entry for RDA Micro SoC architecture
-
-Marek Szyprowski (1):
-      arm64: dts: exynos: Add Bluetooth chip to TM2(e) boards
-
-Masahiro Yamada (1):
-      ARM: multi_v7_defconfig: enable CONFIG_UNIPHIER_MDMAC
-
-Naga Sureshkumar Relli (2):
-      dt-bindings: memory: Add pl353 smc controller devicetree binding information
-      memory: pl353: Add driver for arm pl353 static memory controller
-
-Olof Johansson (7):
-      Merge tag 'tee-subsys-fix-for-4.21' of https://git.linaro.org/people/jens.wiklander/linux-tee into next/late
-      Merge tag 'tee-subsys-optee-for-4.21' of https://git.linaro.org/people/jens.wiklander/linux-tee into next/late
-      Merge tag 'imx8mq-4.21' of git://git.kernel.org/.../shawnguo/linux into next/late
-      Merge tag 'samsung-dt-4.21-2' of https://git.kernel.org/.../krzk/linux into next/late
-      Merge tag 'samsung-dt64-4.21-2' of https://git.kernel.org/.../krzk/linux into next/late
-      Merge tag 'sti-soc-for-v4.21-round1' of git://git.kernel.org/.../pchotard/sti into next/late
-      Merge branch 'next/drivers' into next/late
-
-Patrice Chotard (1):
-      ARM: sti: remove pen_release and boot_lock
-
-Shawn Guo (1):
-      Merge commit '1cf3817bf1f52e57b3f5eb0413ee0d7f0c2e9829' into imx8mq/dt
-
-Stefan Wahren (1):
-      arm64: defconfig: Re-enable bcm2835-thermal driver
-
-Victor Chong (1):
-      tee: optee: log message if dynamic shm is enabled
-
-Zhizhou Zhang (1):
-      tee: optee: avoid possible double list_del()
-
-
- Documentation/admin-guide/kernel-parameters.txt |   6 +
- Documentation/devicetree/bindings/arm/rda.txt   |  17 +
- .../bindings/memory-controllers/pl353-smc.txt   |  47 ++
- .../bindings/serial/rda,8810pl-uart.txt         |  17 +
- .../devicetree/bindings/vendor-prefixes.txt     |   1 +
- MAINTAINERS                                     |  15 +
- arch/arm/Kconfig                                |   2 +
- arch/arm/Makefile                               |   1 +
- arch/arm/boot/dts/Makefile                      |   3 +
- arch/arm/boot/dts/rda8810pl-orangepi-2g-iot.dts |  50 ++
- arch/arm/boot/dts/rda8810pl-orangepi-i96.dts    |  50 ++
- arch/arm/boot/dts/rda8810pl.dtsi                |  99 +++
- arch/arm/configs/multi_v7_defconfig             |   1 +
- arch/arm/mach-rda/Kconfig                       |   7 +
- arch/arm/mach-rda/Makefile                      |   1 +
- arch/arm/mach-sti/Makefile                      |   2 +-
- arch/arm/mach-sti/headsmp.S                     |  43 -
- arch/arm/mach-sti/platsmp.c                     |  88 +-
- arch/arm64/Kconfig.platforms                    |   8 +
- .../boot/dts/exynos/exynos5433-tm2-common.dtsi  |  14 +
- arch/arm64/boot/dts/exynos/exynos5433.dtsi      |  15 +
- arch/arm64/boot/dts/freescale/Makefile          |   2 +
- arch/arm64/boot/dts/freescale/imx8mq-evk.dts    | 303 +++++++
- arch/arm64/boot/dts/freescale/imx8mq-pinfunc.h  | 623 ++++++++++++++
- arch/arm64/boot/dts/freescale/imx8mq.dtsi       | 416 ++++++++++
- arch/arm64/configs/defconfig                    |   1 +
- drivers/memory/Kconfig                          |   9 +
- drivers/memory/Makefile                         |   1 +
- drivers/memory/pl353-smc.c                      | 463 +++++++++++
- drivers/tee/optee/core.c                        |   3 +
- drivers/tee/optee/supp.c                        |  13 +-
- drivers/tty/serial/Kconfig                      |  19 +
- drivers/tty/serial/Makefile                     |   1 +
- drivers/tty/serial/rda-uart.c                   | 831 +++++++++++++++++++
- include/linux/pl353-smc.h                       |  30 +
- include/linux/qcom_scm.h                        |   3 +
- include/uapi/linux/serial_core.h                |   3 +
- 37 files changed, 3084 insertions(+), 124 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/arm/rda.txt
- create mode 100644 Documentation/devicetree/bindings/memory-controllers/pl353-smc.txt
- create mode 100644 Documentation/devicetree/bindings/serial/rda,8810pl-uart.txt
- create mode 100644 arch/arm/boot/dts/rda8810pl-orangepi-2g-iot.dts
- create mode 100644 arch/arm/boot/dts/rda8810pl-orangepi-i96.dts
- create mode 100644 arch/arm/boot/dts/rda8810pl.dtsi
- create mode 100644 arch/arm/mach-rda/Kconfig
- create mode 100644 arch/arm/mach-rda/Makefile
- delete mode 100644 arch/arm/mach-sti/headsmp.S
- create mode 100644 arch/arm64/boot/dts/freescale/imx8mq-evk.dts
- create mode 100644 arch/arm64/boot/dts/freescale/imx8mq-pinfunc.h
- create mode 100644 arch/arm64/boot/dts/freescale/imx8mq.dtsi
- create mode 100644 drivers/memory/pl353-smc.c
- create mode 100644 drivers/tty/serial/rda-uart.c
- create mode 100644 include/linux/pl353-smc.h
