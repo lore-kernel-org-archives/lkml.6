@@ -2,175 +2,316 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7B75C43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 05:00:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB9B1C43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 05:02:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8EBF221874
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 05:00:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="pr/Ux1y2"
+	by mail.kernel.org (Postfix) with ESMTP id B68882087F
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 05:02:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726270AbfADFAz (ORCPT
+        id S1726289AbfADFCY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 00:00:55 -0500
-Received: from mail-eopbgr00056.outbound.protection.outlook.com ([40.107.0.56]:36294
-        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725919AbfADFAz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 00:00:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4Lj/kMCE58EOX+p61ezZjiUfpkbkWIwIfZNGZ2zeAmE=;
- b=pr/Ux1y2eKH6YHFzyIN9HBPV7ODi4ZUnP7PKF9Yqs6U57Dd7lTS9E4+TjTl9TNKosvZK7I7wEG5JLrLeFWzSSl6Ib+pOKgROij+ntitYGYzhKJedTiDf1EdRd4HiJgu9FjN6Va8kf/xkYZpWcTaQbUqiXj0rCqkVJVYTtmUbFk4=
-Received: from AM4PR0501MB2179.eurprd05.prod.outlook.com (10.165.82.10) by
- AM4PR0501MB2705.eurprd05.prod.outlook.com (10.172.215.142) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1495.6; Fri, 4 Jan 2019 05:00:11 +0000
-Received: from AM4PR0501MB2179.eurprd05.prod.outlook.com
- ([fe80::88a5:f979:5400:adf]) by AM4PR0501MB2179.eurprd05.prod.outlook.com
- ([fe80::88a5:f979:5400:adf%5]) with mapi id 15.20.1495.005; Fri, 4 Jan 2019
- 05:00:11 +0000
-From:   Jason Gunthorpe <jgg@mellanox.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Doug Ledford <dledford@redhat.com>
-CC:     "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] Please pull RDMA subsystem changes
-Thread-Topic: [GIT PULL] Please pull RDMA subsystem changes
-Thread-Index: AQHUo+peroIC9bX/gUqW1YMgp8su9g==
-Date:   Fri, 4 Jan 2019 05:00:10 +0000
-Message-ID: <20190104050001.GA26256@ziepe.ca>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: yes
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: CO2PR04CA0006.namprd04.prod.outlook.com
- (2603:10b6:102:1::16) To AM4PR0501MB2179.eurprd05.prod.outlook.com
- (2603:10a6:200:52::10)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=jgg@mellanox.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [174.3.196.123]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM4PR0501MB2705;6:G+Kt58/EWTBc01qrgLb/ItrhFtmI0Zk9XGSzeMmIuNIXabfXzHI0yGTJYMJAx86G8CQC0dJuueW6MGKRjt2yT7x4+ZVMc2Rtb69F59eZmimRxAf6oIlrWVLvNutjk038LHSp2MH/bNnlJwgzsiu1QzsWfi79YCNyE77NLMFzCoYOsqzvqvaeY5NBBSzvXSZDN7QaBYnt/Lcdzc3rVXMBJf+Lfxs56MiJADisCtrXrj+x/uHjdgg1wYj+A7I1cjrMLDujh8cpX+kFA+SjJha+fhe0v0d5fTndg9gnye+040pGHd4db6tqlsEQSFAHgW/0bvikQvudpS16swLw7ldKQL4+1J8X5YOwjm6dDjSarPh46jxJAMy1ZpqyunpEHObn5x6FtgHdxUeUE7HGM0Fgxy959aA2s0XJYUfHxBrIylkVQMUDEF+Hji9XfJ540uekOQhGEkA5nsCC9HFgghisOQ==;5:QQAF57taOOfFQdZtTGdQU4R6rYgDprYboGHY3HEU7jQdDlVqQjPhij2S85taTi1GS71vswDA4NfiMhAGeXFj2AP/SGmnGAYw/Mskc1zlnitXAek99FGWASniZXDzANfpLF6doh5JdVIJl14lKSgh/6OuIPKtZ/+waxQ4Xx8bgk8PSrk4dZpD2Qqsb8wqb272e4/tojwMgsaUDF4qvN8keA==;7:gXAeRM/pwsHKXaA+q40N1wxsAsCqth2/PbyoKsQy8iP0OfrUQHKNJLF13V1vF32Pjb4SB3icJ+WPP+yUZXACxBPdrRJ9FHmCfYYi3LANYTFdLxc65GedkSGKCeI++5jCc1f3SGknuVbBuOEPL5CQQQ==
-x-ms-office365-filtering-correlation-id: 31aad066-29d2-402c-c0b2-08d6720180e7
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(49563074)(7193020);SRVR:AM4PR0501MB2705;
-x-ms-traffictypediagnostic: AM4PR0501MB2705:
-x-microsoft-antispam-prvs: <AM4PR0501MB2705DECFE236B9EA404F1323CF8E0@AM4PR0501MB2705.eurprd05.prod.outlook.com>
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(908002)(999002)(5005026)(102415395)(6040522)(8220060)(2401047)(8121501046)(10201501046)(3231475)(944501520)(4983020)(52105112)(3002001)(93006095)(93001095)(6055026)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:AM4PR0501MB2705;BCL:0;PCL:0;RULEID:;SRVR:AM4PR0501MB2705;
-x-forefront-prvs: 0907F58A24
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(376002)(346002)(366004)(39860400002)(136003)(189003)(199004)(305945005)(7736002)(36756003)(99936001)(97736004)(68736007)(86362001)(1076003)(478600001)(66066001)(14444005)(256004)(14454004)(316002)(54906003)(110136005)(81156014)(486006)(99286004)(5660300001)(81166006)(8936002)(4001150100001)(106356001)(105586002)(2906002)(6436002)(71190400001)(71200400001)(6486002)(386003)(6506007)(6512007)(53936002)(476003)(9686003)(186003)(33896004)(4326008)(26005)(33656002)(102836004)(25786009)(6116002)(8676002)(52116002)(3846002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM4PR0501MB2705;H:AM4PR0501MB2179.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: mellanox.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: o07inxE9gV+DAXpBwTWbi1R81JmfgNDVpbX3zBzcZ5yKOg2W1VCNmy9jGGHBnqq7Xi8jeMXm9sujcAN2Yhf0sVD6DIWrT91/ffteVVt2+df6sIRpRwLBgmZLvRYW+lydXE6nzTITTF7ZQOLVYl+XNpXArCHWVCPcCRnFxUxTzcsWeKkl8O0yWTnsFErcM6N6wjIA8YlkCiLtppU8X3bYFP0lcwNkWsf+YK4V3GhSxDcAzA4bVuSqBO6NNvnH4BAKophW2L+mCjZTUu3Bp9Zuzs+e7gDzn/gFE/6zOhQgIWTBiJ6LZXMgrG+RGoZnG4qs
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="+QahgC5+KEYLbs62"
-MIME-Version: 1.0
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 31aad066-29d2-402c-c0b2-08d6720180e7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Jan 2019 05:00:10.2709
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM4PR0501MB2705
+        Fri, 4 Jan 2019 00:02:24 -0500
+Received: from alexa-out-blr-02.qualcomm.com ([103.229.18.198]:2991 "EHLO
+        alexa-out-blr.qualcomm.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726069AbfADFCY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 00:02:24 -0500
+X-IronPort-AV: E=Sophos;i="5.56,437,1539628200"; 
+   d="scan'208";a="294417"
+Received: from ironmsg04-blr.qualcomm.com ([10.86.208.133])
+  by alexa-out-blr.qualcomm.com with ESMTP/TLS/AES256-SHA; 04 Jan 2019 10:31:40 +0530
+X-IronPort-AV: E=McAfee;i="5900,7806,9125"; a="3115117"
+Received: from blr-ubuntu-104.ap.qualcomm.com (HELO blr-ubuntu-104.qualcomm.com) ([10.79.40.64])
+  by ironmsg04-blr.qualcomm.com with ESMTP; 04 Jan 2019 10:31:39 +0530
+Received: by blr-ubuntu-104.qualcomm.com (Postfix, from userid 346745)
+        id CB10F39AE; Fri,  4 Jan 2019 10:31:38 +0530 (IST)
+From:   Arun KS <arunks@codeaurora.org>
+To:     arunks.linux@gmail.com, akpm@linux-foundation.org,
+        mhocko@kernel.org, vbabka@suse.cz, osalvador@suse.de,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Cc:     getarunks@gmail.com, Arun KS <arunks@codeaurora.org>
+Subject: [PATCH v7] mm/page_alloc.c: memory_hotplug: free pages as higher order
+Date:   Fri,  4 Jan 2019 10:31:16 +0530
+Message-Id: <1546578076-31716-1-git-send-email-arunks@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---+QahgC5+KEYLbs62
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+When freeing pages are done with higher order, time spent on coalescing
+pages by buddy allocator can be reduced.  With section size of 256MB, hot
+add latency of a single section shows improvement from 50-60 ms to less
+than 1 ms, hence improving the hot add latency by 60 times.  Modify
+external providers of online callback to align with the change.
 
-Hi Linus,
+Signed-off-by: Arun KS <arunks@codeaurora.org>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Reviewed-by: Oscar Salvador <osalvador@suse.de>
+---
+Changes since v6:
+- Rebased to 4.20
+- Changelog updated.
+- No improvement seen on arm64, hence removed removal of prefetch.
 
-Second merge window pull request
+Changes since v5:
+- Rebased to 4.20-rc1.
+- Changelog updated.
 
-This could also be applied after rc1. It is a small collection of fixes posted
-over the holiday break. The merge error with advise_mr is worth fixing right
-away so the other, more minor, things are coming along for the ride.
+Changes since v4:
+- As suggested by Michal Hocko,
+- Simplify logic in online_pages_block() by using get_order().
+- Seperate out removal of prefetch from __free_pages_core().
 
-The following changes since commit 5d24ae67a961c51beb255a28c9c417d9710247c2:
+Changes since v3:
+- Renamed _free_pages_boot_core -> __free_pages_core.
+- Removed prefetch from __free_pages_core.
+- Removed xen_online_page().
 
-  Merge tag 'for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma (2018-12-28 14:57:10 -0800)
+Changes since v2:
+- Reuse code from __free_pages_boot_core().
 
-are available in the Git repository at:
+Changes since v1:
+- Removed prefetch().
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git tags/for-linus
+Changes since RFC:
+- Rebase.
+- As suggested by Michal Hocko remove pages_per_block.
+- Modifed external providers of online_page_callback.
 
-for you to fetch changes up to 9c6260de505b63638dd86fcc33849b17f6146d94:
+v6: https://lore.kernel.org/patchwork/patch/1007253/
+v5: https://lore.kernel.org/patchwork/patch/995739/
+v4: https://lore.kernel.org/patchwork/patch/995111/
+v3: https://lore.kernel.org/patchwork/patch/992348/
+v2: https://lore.kernel.org/patchwork/patch/991363/
+v1: https://lore.kernel.org/patchwork/patch/989445/
+RFC: https://lore.kernel.org/patchwork/patch/984754/
 
-  infiniband/qedr: Potential null ptr dereference of qp (2019-01-02 16:08:38 -0700)
+---
+ drivers/hv/hv_balloon.c        |  6 ++++--
+ drivers/xen/balloon.c          | 23 +++++++++++++++--------
+ include/linux/memory_hotplug.h |  2 +-
+ mm/internal.h                  |  1 +
+ mm/memory_hotplug.c            | 42 ++++++++++++++++++++++++++++++------------
+ mm/page_alloc.c                |  8 ++++----
+ 6 files changed, 55 insertions(+), 27 deletions(-)
 
-----------------------------------------------------------------
-4.21 merge window 2nd pull request
+diff --git a/drivers/hv/hv_balloon.c b/drivers/hv/hv_balloon.c
+index 5301fef..211f3fe 100644
+--- a/drivers/hv/hv_balloon.c
++++ b/drivers/hv/hv_balloon.c
+@@ -771,7 +771,7 @@ static void hv_mem_hot_add(unsigned long start, unsigned long size,
+ 	}
+ }
+ 
+-static void hv_online_page(struct page *pg)
++static int hv_online_page(struct page *pg, unsigned int order)
+ {
+ 	struct hv_hotadd_state *has;
+ 	unsigned long flags;
+@@ -783,10 +783,12 @@ static void hv_online_page(struct page *pg)
+ 		if ((pfn < has->start_pfn) || (pfn >= has->end_pfn))
+ 			continue;
+ 
+-		hv_page_online_one(has, pg);
++		hv_bring_pgs_online(has, pfn, (1UL << order));
+ 		break;
+ 	}
+ 	spin_unlock_irqrestore(&dm_device.ha_lock, flags);
++
++	return 0;
+ }
+ 
+ static int pfn_covered(unsigned long start_pfn, unsigned long pfn_cnt)
+diff --git a/drivers/xen/balloon.c b/drivers/xen/balloon.c
+index ceb5048..95f888f 100644
+--- a/drivers/xen/balloon.c
++++ b/drivers/xen/balloon.c
+@@ -345,8 +345,8 @@ static enum bp_state reserve_additional_memory(void)
+ 
+ 	/*
+ 	 * add_memory_resource() will call online_pages() which in its turn
+-	 * will call xen_online_page() callback causing deadlock if we don't
+-	 * release balloon_mutex here. Unlocking here is safe because the
++	 * will call xen_bring_pgs_online() callback causing deadlock if we
++	 * don't release balloon_mutex here. Unlocking here is safe because the
+ 	 * callers drop the mutex before trying again.
+ 	 */
+ 	mutex_unlock(&balloon_mutex);
+@@ -369,15 +369,22 @@ static enum bp_state reserve_additional_memory(void)
+ 	return BP_ECANCELED;
+ }
+ 
+-static void xen_online_page(struct page *page)
++static int xen_bring_pgs_online(struct page *pg, unsigned int order)
+ {
+-	__online_page_set_limits(page);
++	unsigned long i, size = (1 << order);
++	unsigned long start_pfn = page_to_pfn(pg);
++	struct page *p;
+ 
++	pr_debug("Online %lu pages starting at pfn 0x%lx\n", size, start_pfn);
+ 	mutex_lock(&balloon_mutex);
+-
+-	__balloon_append(page);
+-
++	for (i = 0; i < size; i++) {
++		p = pfn_to_page(start_pfn + i);
++		__online_page_set_limits(p);
++		__balloon_append(p);
++	}
+ 	mutex_unlock(&balloon_mutex);
++
++	return 0;
+ }
+ 
+ static int xen_memory_notifier(struct notifier_block *nb, unsigned long val, void *v)
+@@ -702,7 +709,7 @@ static int __init balloon_init(void)
+ 	balloon_stats.max_retry_count = RETRY_UNLIMITED;
+ 
+ #ifdef CONFIG_XEN_BALLOON_MEMORY_HOTPLUG
+-	set_online_page_callback(&xen_online_page);
++	set_online_page_callback(&xen_bring_pgs_online);
+ 	register_memory_notifier(&xen_memory_nb);
+ 	register_sysctl_table(xen_root);
+ #endif
+diff --git a/include/linux/memory_hotplug.h b/include/linux/memory_hotplug.h
+index 07da5c6..d56bfba 100644
+--- a/include/linux/memory_hotplug.h
++++ b/include/linux/memory_hotplug.h
+@@ -87,7 +87,7 @@ extern int test_pages_in_a_zone(unsigned long start_pfn, unsigned long end_pfn,
+ 	unsigned long *valid_start, unsigned long *valid_end);
+ extern void __offline_isolated_pages(unsigned long, unsigned long);
+ 
+-typedef void (*online_page_callback_t)(struct page *page);
++typedef int (*online_page_callback_t)(struct page *page, unsigned int order);
+ 
+ extern int set_online_page_callback(online_page_callback_t callback);
+ extern int restore_online_page_callback(online_page_callback_t callback);
+diff --git a/mm/internal.h b/mm/internal.h
+index f4a7bb0..536bc2a 100644
+--- a/mm/internal.h
++++ b/mm/internal.h
+@@ -163,6 +163,7 @@ static inline struct page *pageblock_pfn_to_page(unsigned long start_pfn,
+ extern int __isolate_free_page(struct page *page, unsigned int order);
+ extern void memblock_free_pages(struct page *page, unsigned long pfn,
+ 					unsigned int order);
++extern void __free_pages_core(struct page *page, unsigned int order);
+ extern void prep_compound_page(struct page *page, unsigned int order);
+ extern void post_alloc_hook(struct page *page, unsigned int order,
+ 					gfp_t gfp_flags);
+diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+index b9a667d..0ea0eb1 100644
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -47,7 +47,7 @@
+  * and restore_online_page_callback() for generic callback restore.
+  */
+ 
+-static void generic_online_page(struct page *page);
++static int generic_online_page(struct page *page, unsigned int order);
+ 
+ static online_page_callback_t online_page_callback = generic_online_page;
+ static DEFINE_MUTEX(online_page_callback_lock);
+@@ -656,26 +656,44 @@ void __online_page_free(struct page *page)
+ }
+ EXPORT_SYMBOL_GPL(__online_page_free);
+ 
+-static void generic_online_page(struct page *page)
++static int generic_online_page(struct page *page, unsigned int order)
+ {
+-	__online_page_set_limits(page);
+-	__online_page_increment_counters(page);
+-	__online_page_free(page);
++	__free_pages_core(page, order);
++	totalram_pages_add(1UL << order);
++#ifdef CONFIG_HIGHMEM
++	if (PageHighMem(page))
++		totalhigh_pages_add(1UL << order);
++#endif
++	return 0;
++}
++
++static int online_pages_blocks(unsigned long start, unsigned long nr_pages)
++{
++	unsigned long end = start + nr_pages;
++	int order, ret, onlined_pages = 0;
++
++	while (start < end) {
++		order = min(MAX_ORDER - 1,
++			get_order(PFN_PHYS(end) - PFN_PHYS(start)));
++
++		ret = (*online_page_callback)(pfn_to_page(start), order);
++		if (!ret)
++			onlined_pages += (1UL << order);
++		else if (ret > 0)
++			onlined_pages += ret;
++
++		start += (1UL << order);
++	}
++	return onlined_pages;
+ }
+ 
+ static int online_pages_range(unsigned long start_pfn, unsigned long nr_pages,
+ 			void *arg)
+ {
+-	unsigned long i;
+ 	unsigned long onlined_pages = *(unsigned long *)arg;
+-	struct page *page;
+ 
+ 	if (PageReserved(pfn_to_page(start_pfn)))
+-		for (i = 0; i < nr_pages; i++) {
+-			page = pfn_to_page(start_pfn + i);
+-			(*online_page_callback)(page);
+-			onlined_pages++;
+-		}
++		onlined_pages = online_pages_blocks(start_pfn, nr_pages);
+ 
+ 	online_mem_sections(start_pfn, start_pfn + nr_pages);
+ 
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index cde5dac..f51a920 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -1303,7 +1303,7 @@ static void __free_pages_ok(struct page *page, unsigned int order)
+ 	local_irq_restore(flags);
+ }
+ 
+-static void __init __free_pages_boot_core(struct page *page, unsigned int order)
++void __free_pages_core(struct page *page, unsigned int order)
+ {
+ 	unsigned int nr_pages = 1 << order;
+ 	struct page *p = page;
+@@ -1382,7 +1382,7 @@ void __init memblock_free_pages(struct page *page, unsigned long pfn,
+ {
+ 	if (early_page_uninitialised(pfn))
+ 		return;
+-	return __free_pages_boot_core(page, order);
++	__free_pages_core(page, order);
+ }
+ 
+ /*
+@@ -1472,14 +1472,14 @@ static void __init deferred_free_range(unsigned long pfn,
+ 	if (nr_pages == pageblock_nr_pages &&
+ 	    (pfn & (pageblock_nr_pages - 1)) == 0) {
+ 		set_pageblock_migratetype(page, MIGRATE_MOVABLE);
+-		__free_pages_boot_core(page, pageblock_order);
++		__free_pages_core(page, pageblock_order);
+ 		return;
+ 	}
+ 
+ 	for (i = 0; i < nr_pages; i++, page++, pfn++) {
+ 		if ((pfn & (pageblock_nr_pages - 1)) == 0)
+ 			set_pageblock_migratetype(page, MIGRATE_MOVABLE);
+-		__free_pages_boot_core(page, 0);
++		__free_pages_core(page, 0);
+ 	}
+ }
+ 
+-- 
+1.9.1
 
-Over the break a few defects were found, so this is a -rc style pull
-request of various small things that have been posted.
-
-- An attempt to shorten RCU grace period driven delays showed crashes
-  during heavier testing, and has been entirely reverted
-
-- A missed merge/rebase error between the advise_mr and ib_device_ops
-  series
-
-- Some small static analysis driven fixes from Julia and Aditya
-
-- Missed ability to create a XRC_INI in the devx verbs interop series
-
-----------------------------------------------------------------
-Aditya Pakki (2):
-      infiniband: bnxt_re: qplib: Check the return value of send_message
-      infiniband/qedr: Potential null ptr dereference of qp
-
-Julia Lawall (1):
-      IB/ipoib: drop useless LIST_HEAD
-
-Leon Romanovsky (1):
-      Revert "IB/mlx5: Fix long EEH recover time with NVMe offloads"
-
-Moni Shoua (1):
-      IB/core: Add advise_mr to the list of known ops
-
-Yishai Hadas (1):
-      IB/mlx5: Allow XRC INI usage via verbs in DEVX context
-
- drivers/infiniband/core/device.c         |  1 +
- drivers/infiniband/hw/bnxt_re/qplib_sp.c |  5 ++---
- drivers/infiniband/hw/mlx5/mr.c          | 19 +++----------------
- drivers/infiniband/hw/mlx5/qp.c          |  3 ++-
- drivers/infiniband/hw/qedr/qedr_iw_cm.c  |  2 ++
- drivers/infiniband/ulp/ipoib/ipoib_ib.c  |  1 -
- 6 files changed, 10 insertions(+), 21 deletions(-)
-
---+QahgC5+KEYLbs62
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEfB7FMLh+8QxL+6i3OG33FX4gmxoFAlwu6E8ACgkQOG33FX4g
-mxpEQg/+M3QO0bU1gpZ70aKTJyL2oyOlqI/gJm/8FFkwVzJEIyk0v1fXv/1jgdDm
-fYuhW4HH9dRrDAhckrJYtAvZpmBd62aVbGWwB0e7TZzPRYNpo4b2z2oWVsiMBKb6
-SZTFk2VkRCgbCTo0zPAv4+kKOBGjQ7k1CMCcBWyrPL0sMGdlqOhb89bBqHSTmEAw
-bjHP/5GDjoOH81+S3udQ6XlMkrCBa8szoPPWdzqIsXP5qkXkUejSB4wcp2HA/0TL
-5O0uRE1Mkmx4FfS6+iHUdxEiuVsAzsMHXjuX4WHmnH1MOPxJadCG89zwUwraCj1q
-O3WnZNBiKc1787iYBZtMgh0KrqGy9OAcJmMicsSqQXSTZBDpceRGxC5vJptrwBDC
-j1Bc9qfJIob3hARtxslc/LWHR/GjIBlxg6rMUd2GUHG//bljYp+pbPsVKdT7M0VA
-PkWvHh7n/yrrsiqWQoCpsB9gYKZaBbnR3JOxP3ELw2WCv2eu2curoM4n9Z+3FXYn
-FVOFIhtx/j8rgJsUbR+da3//PoiPaUJcAXAXl3R8qJ5wwwJfK2lZk0aQjbiq+X7M
-3RO6voSKEJdh75Imyc21lbHfOfj8B+vQ+qpWbAv47gNDNAu1HzrOAo/5HastXLmx
-pek8HFzLshDXEa60YC+R4KZ4vTFfwNNfuZEQk4yXENV7vNVE3b0=
-=TqX7
------END PGP SIGNATURE-----
-
---+QahgC5+KEYLbs62--
