@@ -2,111 +2,155 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9BECC43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 17:40:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4FBCC43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 17:42:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF8A7218CD
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 17:40:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A7200218CD
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 17:42:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="b9PjUlbt";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="IJR+G2sI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728498AbfADRkE (ORCPT
+        id S1728300AbfADRmF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 12:40:04 -0500
-Received: from gateway30.websitewelcome.com ([192.185.147.85]:19926 "EHLO
-        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725958AbfADRkE (ORCPT
+        Fri, 4 Jan 2019 12:42:05 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:39058 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727127AbfADRmF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 12:40:04 -0500
-X-Greylist: delayed 1269 seconds by postgrey-1.27 at vger.kernel.org; Fri, 04 Jan 2019 12:40:04 EST
-Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
-        by gateway30.websitewelcome.com (Postfix) with ESMTP id C8C6B36CE
-        for <linux-kernel@vger.kernel.org>; Fri,  4 Jan 2019 11:18:54 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id fT7WgdT3ciQerfT7Wgfr7E; Fri, 04 Jan 2019 11:18:54 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.130.205] (port=34900 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gfT7V-000GyY-Se; Fri, 04 Jan 2019 11:18:54 -0600
-Date:   Fri, 4 Jan 2019 11:18:51 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Russell King <linux@armlinux.org.uk>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH 2/2] ARM: integrator: impd1: use struct_size() in
- devm_kzalloc()
-Message-ID: <9005dbee894cfbada5e57d6ddda9fdf4d711b0a4.1546621488.git.gustavo@embeddedor.com>
-References: <cover.1546621488.git.gustavo@embeddedor.com>
+        Fri, 4 Jan 2019 12:42:05 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 323D4608C6; Fri,  4 Jan 2019 17:42:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1546623723;
+        bh=zca2SsK3nw3O37+eqanDCtOSt04ycSV0pycfbAUlwnI=;
+        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+        b=b9PjUlbtJ2QlUpybN3OBem5d0O9WUYXMoSAXC7N3zW0aG8y8p0QvKPdG0sjPvDZuZ
+         6DvTTFDO60kawEQT5yizdZ2UMpxQo/Se15zytYP1BWBEZ9ypfz6bTKIArK6Iy4QlDT
+         MWvPfUkzxZH+bTe73cwoD4ODg1Mq7in4blGePNz4=
+Received: from lmark-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: lmark@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 98AED6087F;
+        Fri,  4 Jan 2019 17:41:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1546623719;
+        bh=zca2SsK3nw3O37+eqanDCtOSt04ycSV0pycfbAUlwnI=;
+        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+        b=IJR+G2sINhxdvmzAbMxLh5+weluEm2lBDAh1E/lf9Nn1mcd4eG2m6y4CE7CbY3COG
+         iWM2tFd6tSd5LR2uu3JkcFczsFHpZY87BjkOYjPQBmk8x3k85PkDM92RBgfKwcZjtU
+         RLtUdx+niAyuKkPHzkKKoK3eK5XYvWlQ19Uhc42M=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 98AED6087F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=lmark@codeaurora.org
+Date:   Fri, 4 Jan 2019 09:41:57 -0800 (PST)
+From:   Liam Mark <lmark@codeaurora.org>
+X-X-Sender: lmark@lmark-linux.qualcomm.com
+To:     Alexey Skidanov <alexey.skidanov@intel.com>
+cc:     Laura Abbott <labbott@redhat.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, tkjos@android.com, rve@android.com,
+        linux-kernel@vger.kernel.org, maco@android.com,
+        sumit.semwal@linaro.org
+Subject: Re: [PATCH v3] staging: android: ion: Add implementation of dma_buf_vmap
+ and dma_buf_vunmap
+In-Reply-To: <3740948f-02be-cf7a-bc41-54b4fd195103@intel.com>
+Message-ID: <alpine.DEB.2.10.1901040940260.19175@lmark-linux.qualcomm.com>
+References: <1517400222-2854-1-git-send-email-alexey.skidanov@intel.com> <20180131130047.GA22917@kroah.com> <89be45dd-ac0e-4efb-2b21-e6c07b0cd66e@intel.com> <bf909d75-21a4-9d6d-2f72-887492821252@redhat.com> <7d836085-cd8d-300b-56be-e8db4ff37afc@intel.com>
+ <alpine.DEB.2.10.1812152119130.2951@lmark-linux.qualcomm.com> <67f288db-d9ea-2d45-ddcf-a15dbff316f5@intel.com> <alpine.DEB.2.10.1812171036080.23226@lmark-linux.qualcomm.com> <3740948f-02be-cf7a-bc41-54b4fd195103@intel.com>
+User-Agent: Alpine 2.10 (DEB 1266 2009-07-14)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1546621488.git.gustavo@embeddedor.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.130.205
-X-Source-L: No
-X-Exim-ID: 1gfT7V-000GyY-Se
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.130.205]:34900
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 12
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-One of the more common cases of allocation size calculations is finding
-the size of a structure that has a zero-sized array at the end, along
-with memory for some number of elements for that array. For example:
+On Tue, 18 Dec 2018, Alexey Skidanov wrote:
 
-struct foo {
-    int stuff;
-    void *entry[];
-};
+> >>> I was wondering if we could re-open the discussion on adding support to 
+> >>> ION for dma_buf_vmap.
+> >>> It seems like the patch was not taken as the reviewers wanted more 
+> >>> evidence of an upstream use case.
+> >>>
+> >>> Here would be my upstream usage argument for including dma_buf_vmap 
+> >>> support in ION.
+> >>>
+> >>> Currently all calls to ion_dma_buf_begin_cpu_access result in the creation 
+> >>> of a kernel mapping for the buffer, unfortunately the resulting call to 
+> >>> alloc_vmap_area can be quite expensive and this has caused a performance 
+> >>> regression for certain clients when they have moved to the new version of 
+> >>> ION.
+> >>>
+> >>> The kernel mapping is not actually needed in ion_dma_buf_begin_cpu_access, 
+> >>> and generally isn't needed by clients. So if we remove the creation of the 
+> >>> kernel mapping in ion_dma_buf_begin_cpu_access and only create it when 
+> >>> needed we can speed up the calls to ion_dma_buf_begin_cpu_access.
+> >>>
+> >>> An additional benefit of removing the creation of kernel mappings from 
+> >>> ion_dma_buf_begin_cpu_access is that it makes the ION code more secure.
+> >>> Currently a malicious client could call the DMA_BUF_IOCTL_SYNC IOCTL with 
+> >>> flags DMA_BUF_SYNC_END multiple times to cause the ION buffer kmap_cnt to 
+> >>> go negative which could lead to undesired behavior.
+> >>>
+> >>> One disadvantage of the above change is that a kernel mapping is not 
+> >>> already created when a client calls dma_buf_kmap. So the following 
+> >>> dma_buf_kmap contract can't be satisfied.
+> >>>
+> >>> /**
+> >>> * dma_buf_kmap - Map a page of the buffer object into kernel address 
+> >>> space. The
+> >>> * same restrictions as for kmap and friends apply.
+> >>> * @dmabuf:	[in]	buffer to map page from.
+> >>> * @page_num:	[in]	page in PAGE_SIZE units to map.
+> >>> *
+> >>> * This call must always succeed, any necessary preparations that might 
+> >>> fail
+> >>> * need to be done in begin_cpu_access.
+> >>> */
+> >>>
+> >>> But hopefully we can work around this by moving clients to dma_buf_vmap.
+> >> I think the problem is with the contract. We can't ensure that the call
+> >> is always succeeds regardless the implementation - any mapping might
+> >> fail. Probably this is why  *all* clients of dma_buf_kmap() check the
+> >> return value (so it's safe to return NULL in case of failure).
+> >>
+> > 
+> > I think currently the call to dma_buf_kmap will always succeed since the 
+> > DMA-Buf contract requires that the client first successfully call 
+> > dma_buf_begin_cpu_access(), and if dma_buf_begin_cpu_access() succeeds 
+> > then dma_buf_kmap will succeed.
+> > 
+> >> I would suggest to fix the contract and to keep the dma_buf_kmap()
+> >> support in ION.
+> > 
+> > I will leave it to the DMA-Buf maintainers as to whether they want to 
+> > change their contract.
+> > 
+> > Liam
+> > 
+> > Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> > a Linux Foundation Collaborative Project
+> > 
+> 
+> Ok. We need the list of the clients using the ION in the mainline tree.
+> 
 
-instance = devm_kzalloc(dev, sizeof(struct foo) + sizeof(void *) * count, GFP_KERNEL);
+Looks to me like the only functions which might be calling 
+dma_buf_kmap/dma_buf_kunmap on ION buffers are 
+tegra_bo_kmap/tegra_bo_kunmap, I assume Tegra is used in some Android 
+automotive products.
 
-Instead of leaving these open-coded and prone to type mistakes, we can
-now use the new struct_size() helper:
+Looks like these functions could be moved over to using 
+dma_buf_vmap/dma_buf_vunmap but it wouldn't be very clean and would add a 
+performance hit.
 
-instance = devm_kzalloc(dev, struct_size(instance, entry, count), GFP_KERNEL);
+Liam
 
-This code was detected with the help of Coccinelle.
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- arch/arm/mach-integrator/impd1.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm/mach-integrator/impd1.c b/arch/arm/mach-integrator/impd1.c
-index eb0149561be2..8ccf01af3817 100644
---- a/arch/arm/mach-integrator/impd1.c
-+++ b/arch/arm/mach-integrator/impd1.c
-@@ -389,8 +389,8 @@ static int __ref impd1_probe(struct lm_device *dev)
- 			char *chipname;
- 			char *mmciname;
- 
--			lookup = devm_kzalloc(&dev->dev,
--					      sizeof(*lookup) + 3 * sizeof(struct gpiod_lookup),
-+			lookup = devm_kzalloc(&dev->deva,
-+					      struct_size(lookup, table, 3),
- 					      GFP_KERNEL);
- 			if (!lookup)
- 				return -ENOMEM;
--- 
-2.20.1
-
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
