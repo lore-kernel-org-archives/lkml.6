@@ -6,57 +6,57 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 770CCC43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 06:14:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F070C43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 06:15:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A09221874
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 06:14:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C1BD21871
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 06:15:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="TNwyxTEv"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZGAMCUfp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726724AbfADGO0 (ORCPT
+        id S1726896AbfADGPk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 01:14:26 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:44377 "EHLO
+        Fri, 4 Jan 2019 01:15:40 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:37994 "EHLO
         mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726278AbfADGO0 (ORCPT
+        with ESMTP id S1726093AbfADGPj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 01:14:26 -0500
-Received: by mail-io1-f68.google.com with SMTP id r200so28790402iod.11
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 22:14:25 -0800 (PST)
+        Fri, 4 Jan 2019 01:15:39 -0500
+Received: by mail-io1-f68.google.com with SMTP id l14so28813407ioj.5
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 22:15:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=UwUAtZgw6D0Px0XPgR5mtdpPcEh8C/PJRFiqNBAkl4A=;
-        b=TNwyxTEvJ/ajyBOx1EAfgCEutyIv9rSle9BHLhLq51vy+dH5yfMcxM/10LKw2KlgkO
-         Mo9zG7z2TCHcQyD/z0KxYZV5q93fClosmEdBZ9ZHign3DcQsA8cbEptu1PZkS9hSjSFk
-         +Hnxz0L6h8rNJUApoa7TmlqMbaks2jKrFWVVU=
+        bh=ev6wCd3WGUDYy3CAfTM8jY1OontnBJ6vvtZ5PdfwR/0=;
+        b=ZGAMCUfptbhR+b8B0WZGiM12RZUcwnAXZJfirg8ykfqS/g7YD9FcqWFi/C09cFSCvK
+         /DmxeJk6kVyR2bsq0lBBr1Yfjjiq1VpVrbQzUNOEi5NBSQ5cGYhIl9pVFM4kyMwNmsHF
+         C9L2Nd1ZhptfzSBXz+pNlys/hh6lUNvHG5wW4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=UwUAtZgw6D0Px0XPgR5mtdpPcEh8C/PJRFiqNBAkl4A=;
-        b=aSNlfileckhagxblEPb2GWeEt1OE+akwbtn8qbYDPRmzkE9rV7qEuc13NYC2dSN8Tq
-         lyM1wIzFI+hlZWv/EAbrcKrPodKzjH55Sm4bDdiFWA1Tlu3RQCbvG9MPdgwOEGitEhV7
-         Cme27vCNCyyxcPcw+DeRgANy+D99o/ZePTxFYM4mvA5Tt6CtqhJdyiJKlYCGtSzDTfm7
-         s/6dQgJsbIfSWBWVr6QxdtK/zO7SO8l4q/drVvoC5Hax2ObBjMeIdkIVlaMJEzpAUz5b
-         UEGZE4o7YQtPVxs0pHHBXObqaVhutH2ukzj4QTqTAgn1lYz1jQ4AAFx1TKz47m72fxwI
-         Le2g==
-X-Gm-Message-State: AJcUukeknhDo9of24DGxzdiWom9uH0JI10bfvO/FNHpR6Wg1iHOTRrU6
-        TW7zc8bqUKI3tY5GlMyQHqTKSYEBtMdMTsT3mUvLgQ==
-X-Google-Smtp-Source: ALg8bN6rrV7yca8YNfgI0XrKZ4OX1vbvWcBCshyu3jJWAjJmg6Py7qE9TcutzfFnLAfvPurjNZwbpBAjhnv0MSCvOUY=
-X-Received: by 2002:a6b:4106:: with SMTP id n6mr35084764ioa.171.1546582464820;
- Thu, 03 Jan 2019 22:14:24 -0800 (PST)
+        bh=ev6wCd3WGUDYy3CAfTM8jY1OontnBJ6vvtZ5PdfwR/0=;
+        b=oY4XPmeXxUgC2xWzBx3GnDU0CbJMk8PtQAkmVnvLd8bQV2iBGsDe0MjehbK7FajKHD
+         UnxaacNhur9Kvp5T+N+GJ/RJsyqP61zG/sNjlFWC3skCQjE00MS4DGY6smZVaKd5KqMQ
+         j6AV9wY8p3FdvOCwkeYmz9xIdgWXS19ducJsyt3nhNqA/mPZl3KJCZ4r2ZNuad/aLLOJ
+         aosF9hqk6LrTN8k9MreKk9MD+X/qjSmApm5m5DLsm0LrWwRyp0JQLUD0BypEcI1yfTHQ
+         f24cMso1Lyb8Zy8ifsQwVdQwbUmp2E7A4IhhU2Go4L2e0vgK5wTjsKxvxNfcjdpl9Kjc
+         NEGA==
+X-Gm-Message-State: AJcUukdxM7Lu0XyMwbvZwIMtLtQvZ/5jfTvwEMbRcQuftJLQVCkqGIrP
+        hyqYCPSdyfc0L7pb1el95qznDXOBNPZQZ96iZhC2QQ==
+X-Google-Smtp-Source: ALg8bN4UHseyAHB9XxA4OANE1qq/dkl4oZNlgniVD2bWiLhPihfDZf2XsyhWhQALLFkT8ROr9gn20WHm8o5BRK6yp+M=
+X-Received: by 2002:a6b:6919:: with SMTP id e25mr2097325ioc.119.1546582538878;
+ Thu, 03 Jan 2019 22:15:38 -0800 (PST)
 MIME-Version: 1.0
 References: <1546442912-20818-1-git-send-email-firoz.khan@linaro.org>
- <1546442912-20818-2-git-send-email-firoz.khan@linaro.org> <CAMo8BfJcKGBytDQMFU7XO50uYZcwCftzsLkxLa6aDRPWJ0wW4Q@mail.gmail.com>
- <CALxhOnhy6nh3ycW5kBwqZ4o0EfoFm4MoCJ2453rDCRaX3Z-z7Q@mail.gmail.com> <CAMo8Bf+EJ+AaxfWGUcWMxsE=kpYD=-whAb0CxvdGYg+eK4bWpw@mail.gmail.com>
-In-Reply-To: <CAMo8Bf+EJ+AaxfWGUcWMxsE=kpYD=-whAb0CxvdGYg+eK4bWpw@mail.gmail.com>
+ <1546442912-20818-3-git-send-email-firoz.khan@linaro.org> <CAMo8Bf+qK=k33boeNOeL69sLC3e-M07QK9ErhYm-byuQ2UnVnw@mail.gmail.com>
+ <CALxhOnhgAEeEFhL2fgjDSCBMJo7dF5jiuGKCXjWYjMJmHefMgA@mail.gmail.com> <CAMo8BfJi-CLHHy1CWGZ_KhP2ddZxxHM+CafkjJRd=cC35aNF8g@mail.gmail.com>
+In-Reply-To: <CAMo8BfJi-CLHHy1CWGZ_KhP2ddZxxHM+CafkjJRd=cC35aNF8g@mail.gmail.com>
 From:   Firoz Khan <firoz.khan@linaro.org>
-Date:   Fri, 4 Jan 2019 11:44:13 +0530
-Message-ID: <CALxhOnhVKRC0faiQTNNeUP3rYtK7aUg1Sr758ScokrBnE55iHQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] xtensa: remove nargs from __SYSCALL
+Date:   Fri, 4 Jan 2019 11:45:27 +0530
+Message-ID: <CALxhOnjyHri6rmAs+toXYBb2toniFV7AYhoBR+-fOhOk1=Uh9w@mail.gmail.com>
+Subject: Re: [PATCH 2/2] xtensa: generate uapi header and syscall table header files
 To:     Max Filippov <jcmvbkbc@gmail.com>
 Cc:     Chris Zankel <chris@zankel.net>,
         Dominik Brodowski <linux@dominikbrodowski.net>,
@@ -79,31 +79,20 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi Max,
 
-On Fri, 4 Jan 2019 at 11:25, Max Filippov <jcmvbkbc@gmail.com> wrote:
-> On Thu, Jan 3, 2019 at 9:17 PM Firoz Khan <firoz.khan@linaro.org> wrote:
-> > On Fri, 4 Jan 2019 at 08:28, Max Filippov <jcmvbkbc@gmail.com> wrote:
-> > > On Wed, Jan 2, 2019 at 7:29 AM Firoz Khan <firoz.khan@linaro.org> wrote:
-> > This was intentional as I was trying compile other one architecture with the
-> > previous implementation, it was giving the error. So I modified without space
-> > after comma.
+On Fri, 4 Jan 2019 at 11:29, Max Filippov <jcmvbkbc@gmail.com> wrote:
 >
-> I have tested that presence or absence of space does not affect the build
-> for xtensa, and normally we put space after a comma, so I've mentioned that.
+> On Thu, Jan 3, 2019 at 9:13 PM Firoz Khan <firoz.khan@linaro.org> wrote:
+> > On Fri, 4 Jan 2019 at 04:14, Max Filippov <jcmvbkbc@gmail.com> wrote:
+> >
+> > This build rule is unused now as I was tried to implement
+> > something else. Hopefully I'll remove the the above change
+> > in my v2.
 >
-> Since this script is anyway removed in the next patch of the series it doesn't
-> really matter whether the spaces are present or not.
+> Then maybe there's a way to move all these macros to a common
+> makefile, as they seem to be fairly generic?
 
-Yes, you are right, there is no effect in xtensa but if I'm right
-there is a problem
-in powerpc architecture (not remembering exactly which arch) with this space
-after comma.
 
-BTW, the script from all architecture will be removed and keep it in
-scripts directory
-is our plan. So to satisfy powerpc (again I'm not sure which arch) I
-just did this
-change.
+Good idea! Sure, I'll look into it.
 
-Thanks for your feedback.
-
+Thanks
 Firoz
