@@ -2,102 +2,86 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0BDBC43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 22:05:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F550C43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 22:05:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5F792087F
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 22:05:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D731F2087F
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 22:05:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726433AbfADWFN (ORCPT
+        id S1726488AbfADWFv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 17:05:13 -0500
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:43212 "EHLO
-        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726105AbfADWFM (ORCPT
+        Fri, 4 Jan 2019 17:05:51 -0500
+Received: from smtp07.smtpout.orange.fr ([80.12.242.129]:43014 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726217AbfADWFv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 17:05:12 -0500
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by kvm5.telegraphics.com.au (Postfix) with ESMTP id 3770929D56;
-        Fri,  4 Jan 2019 17:05:09 -0500 (EST)
-Date:   Sat, 5 Jan 2019 09:05:33 +1100 (AEDT)
-From:   Finn Thain <fthain@telegraphics.com.au>
-To:     Christoph Hellwig <hch@infradead.org>
-cc:     Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v8 05/25] char/nvram: Adopt arch_nvram_ops
-In-Reply-To: <20190104175639.GA6347@infradead.org>
-Message-ID: <alpine.LNX.2.21.1901050855340.11@nippy.intranet>
-References: <cover.1545784679.git.fthain@telegraphics.com.au> <66ed571883695314ace53080df8f6dfb132a8b4d.1545784679.git.fthain@telegraphics.com.au> <20190103080229.GB11147@infradead.org> <alpine.LNX.2.21.1901040844380.658@nippy.intranet>
- <20190104175639.GA6347@infradead.org>
+        Fri, 4 Jan 2019 17:05:51 -0500
+Received: from [192.168.1.12] ([90.126.241.217])
+        by mwinf5d66 with ME
+        id LN5l1z0024i89ZE03N5l9k; Fri, 04 Jan 2019 23:05:48 +0100
+X-ME-Helo: [192.168.1.12]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 04 Jan 2019 23:05:48 +0100
+X-ME-IP: 90.126.241.217
+Subject: Re: [PATCH] octeontx2-af: Fix a resource leak in an error handling
+ path in 'cgx_probe()'
+To:     David Miller <davem@davemloft.net>
+Cc:     sgoutham@marvell.com, lcherian@marvell.com, gakula@marvell.com,
+        jerinj@marvell.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <20181229164222.15791-1-christophe.jaillet@wanadoo.fr>
+ <20190104.124626.1177296586022194416.davem@davemloft.net>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Message-ID: <dd1f46d1-8ab7-260d-6e3c-e1ecdcc745d5@wanadoo.fr>
+Date:   Fri, 4 Jan 2019 23:05:45 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20190104.124626.1177296586022194416.davem@davemloft.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 4 Jan 2019, Christoph Hellwig wrote:
+Le 04/01/2019 à 21:46, David Miller a écrit :
+> From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Date: Sat, 29 Dec 2018 17:42:22 +0100
+>
+>> If an error occurs after the call to 'pci_alloc_irq_vectors()', we must
+>> call 'pci_free_irq_vectors()' in order to avoid a	resource leak.
+>>
+>> The same sequence is already in place in the corresponding 'cgx_remove()'
+>> function.
+>>
+>> Fixes: 1463f382f58d ("octeontx2-af: Add support for CGX link management")
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Applied and queued up for -stable.
+>
+> Please fix the date and time on your computer, putting improper dates into
+> the email headers of your patch postings makes your patch appear out
+> of order in my patchwork queue.
+>
+> Thank you.
+>
+Hi,
 
-> On Fri, Jan 04, 2019 at 09:08:13AM +1100, Finn Thain wrote:
-> > On Thu, 3 Jan 2019, Christoph Hellwig wrote:
-> > 
-> > > > +
-> > > > +const struct nvram_ops arch_nvram_ops = {
-> > > > +	.read_byte      = nvram_read_byte,
-> > > > +	.write_byte     = nvram_write_byte,
-> > > > +	.get_size       = nvram_get_size,
-> > > > +};
-> > > > +EXPORT_SYMBOL(arch_nvram_ops);
-> > > 
-> > > I think something this internal should always be EXPORT_SYMBOL_GPL.
-> > > 
-> > 
-> > By "internal" do you mean "not involving interests outside of the Linux 
-> > Foundation"? TBH, I don't know who's affected.
-> 
-> Linux Foundation doesn't matter.
-> 
-> But as far as I can see you export the struct from arch code
-> for nvram.ko to use them and no one else, which is clearly internal.
-> 
+yes, I've spotted this time issue.
+For some reason my VM get out of synch when restored from a saved state.
+It was not the case before. It is likely due to an update of VirtualBox 
+(i.e. 5.x --> 6.0) performed a few days ago.
+Will try to give it a look.
 
-No, arch_nvram_ops is not "internal" in that sense. The struct is used 
-whereever the nvram_* exports are presently used:
+For now, I have to manually do some ntpdate to get the time/date 
+fixed... until the next save/restore of the VM.
 
-$ git grep -e "EXPORT_SYMBOL.*nvram" v4.20
-...
-v4.20:arch/powerpc/kernel/setup_32.c:EXPORT_SYMBOL(nvram_read_byte);
-v4.20:arch/powerpc/kernel/setup_32.c:EXPORT_SYMBOL(nvram_write_byte);
-v4.20:arch/powerpc/kernel/setup_32.c:EXPORT_SYMBOL(nvram_get_size);
-v4.20:arch/powerpc/kernel/setup_32.c:EXPORT_SYMBOL(nvram_sync);
-v4.20:drivers/char/nvram.c:EXPORT_SYMBOL(__nvram_read_byte);
-v4.20:drivers/char/nvram.c:EXPORT_SYMBOL(nvram_read_byte);
-v4.20:drivers/char/nvram.c:EXPORT_SYMBOL(__nvram_write_byte);
-v4.20:drivers/char/nvram.c:EXPORT_SYMBOL(nvram_write_byte);
-v4.20:drivers/char/nvram.c:EXPORT_SYMBOL(__nvram_check_checksum);
-v4.20:drivers/char/nvram.c:EXPORT_SYMBOL(nvram_check_checksum);
-...
-$ git grep -wle "nvram_read_byte|nvram_write_byte|nvram_get_size|nvram_sync|__nvram_read_byte|__nvram_write_byte|__nvram_check_checksum"
-arch/powerpc/include/asm/machdep.h
-arch/powerpc/include/asm/nvram.h
-arch/powerpc/kernel/setup_32.c
-arch/powerpc/platforms/powermac/nvram.c
-drivers/char/generic_nvram.c
-drivers/char/nvram.c
-drivers/platform/x86/thinkpad_acpi.c
-drivers/scsi/atari_scsi.c
-drivers/video/fbdev/controlfb.c
-drivers/video/fbdev/imsttfb.c
-drivers/video/fbdev/matrox/matroxfb_base.c
-drivers/video/fbdev/platinumfb.c
-drivers/video/fbdev/valkyriefb.c
-include/linux/nvram.h
-sound/ppc/awacs.c
-$ 
+Sorry for the inconvenience.
 
--- 
+CJ
+
