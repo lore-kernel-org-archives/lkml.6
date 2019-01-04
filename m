@@ -2,140 +2,148 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F044CC43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 11:05:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9296C43444
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 11:06:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9110206C0
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 11:05:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="im8xgItr"
+	by mail.kernel.org (Postfix) with ESMTP id B16EE2173B
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 11:06:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727577AbfADLFT (ORCPT
+        id S1727625AbfADLGr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 06:05:19 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:56111 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726028AbfADLFT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 06:05:19 -0500
-Received: by mail-it1-f194.google.com with SMTP id m62so1099027ith.5
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Jan 2019 03:05:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/uoWL0t0iMkvXvq5HcdVPIlDfpkDMSDIYS2Wnw4EHBM=;
-        b=im8xgItrHCINn5sJaxU1Yv98xg5jzvEAlhpvXTahtyU42hFD+gTSBDOEyt33DSFCUU
-         AMOX7EaSBnALuxrEY2xVs1dVl3qKD/MQLU2Pn7QtNnbXHM1n1qNYYzoFBRoxLHtGh9Gd
-         l6t/3mgRkZx5mskZu+HcgPg62mj0neUO2Sfm3zjj2eVFSE/11cDTF4DT7deepABPKgEt
-         DE28xbIYVzgaVw16E0Qb9Qn1ZpfOvxvFELirjWA6sGALcuj0nw4Jhtq/K1Avc06QvbON
-         b6jh4f19B4vqAYy0IeypfUXvhOn8/gLNHfSTefTFhG30xuDaoFrtx/OlDV5N4pr0rDsb
-         qD7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/uoWL0t0iMkvXvq5HcdVPIlDfpkDMSDIYS2Wnw4EHBM=;
-        b=sI+D28gIBRK4Sj14lArha97qtHlMO+5TbG2sAo1l1HnAd8cYaxylOBt+QywRAQKAS0
-         GaaBGfb1osuQwYDRoxNy1r3RrH3PFUt8dPmIXeWIBwJK5koUojDrOYP+L8PYbKUY01uq
-         Lmuia/OwoEcoMhQovIJXID0ekvIrQj200giY9N/Otzn+ismtFlOk8FdWGDV7YZvjpda/
-         m6DB/a0/EwVgpIyNM+WkeqTAm8FR37sdiO8yZcpmT/2kjo7Y5J46ujY++4Jblcx31izE
-         r7u0FJESTh0OBDPpnq3QMS3WLR/wrsZuX6XIVW9Ci1t7QpN3geUo9AbIzsPpdnC/GJhD
-         nutw==
-X-Gm-Message-State: AJcUuke33VAV4QkCTyVBYKPFC/qbTVZajAdJJO9iwluWOdZAqU5Kq4Ac
-        wxwlEobYAMXBxTwPJUCs+01NEkVTvWOPEWkmDlZKxA==
-X-Google-Smtp-Source: ALg8bN5u25mBKmaIRMindjeg7C2o3UAVmoIrf828AhcDIdYPDSHd/+ll2vtR5tGMfeTTv0y1hdThzjEEn3jO8Qk2pGU=
-X-Received: by 2002:a24:6511:: with SMTP id u17mr650010itb.12.1546599916677;
- Fri, 04 Jan 2019 03:05:16 -0800 (PST)
+        Fri, 4 Jan 2019 06:06:47 -0500
+Received: from mx2.suse.de ([195.135.220.15]:50922 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726404AbfADLGr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 06:06:47 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 71334AC4A;
+        Fri,  4 Jan 2019 11:06:45 +0000 (UTC)
 MIME-Version: 1.0
-References: <000000000000513fb7057e8d7013@google.com> <f2e566ac-5c4c-11ae-d436-ebb3522a2195@gmail.com>
- <20190103210743.6518841e@redhat.com> <CA+FuTScFwA3F44MvbaWrOYJ2EYgdKAmoMzEGjOLcz3ZPVQLLDA@mail.gmail.com>
- <20190103225404.66b0ec9f@redhat.com> <CACT4Y+aAofhchOpKTjLGGkQb5PAa74Uyp7kowdSoAwt130ZpAg@mail.gmail.com>
- <20190104115435.478b4b4a@redhat.com>
-In-Reply-To: <20190104115435.478b4b4a@redhat.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Fri, 4 Jan 2019 12:05:04 +0100
-Message-ID: <CACT4Y+bRLOVCx9Z=vCMspjzGrcnNFqNGWxDwiwYZbw2LTh__FA@mail.gmail.com>
-Subject: Re: kernel panic: stack is corrupted in udp4_lib_lookup2
-To:     Stefano Brivio <sbrivio@redhat.com>
-Cc:     Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        syzbot <syzbot+4ad25edc7a33e4ab91e0@syzkaller.appspotmail.com>,
-        David Miller <davem@davemloft.net>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Fri, 04 Jan 2019 12:06:44 +0100
+From:   Roman Penyaev <rpenyaev@suse.de>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Michal Hocko <mhocko@suse.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Joe Perches <joe@perches.com>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 1/3] mm/vmalloc: fix size check for
+ remap_vmalloc_range_partial()
+In-Reply-To: <20190103145954.16942-2-rpenyaev@suse.de>
+References: <20190103145954.16942-1-rpenyaev@suse.de>
+ <20190103145954.16942-2-rpenyaev@suse.de>
+Message-ID: <c41a065f04c89d0a1f0312b1b4fa7b1e@suse.de>
+X-Sender: rpenyaev@suse.de
+User-Agent: Roundcube Webmail
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 4, 2019 at 11:54 AM Stefano Brivio <sbrivio@redhat.com> wrote:
->
-> On Fri, 4 Jan 2019 11:32:12 +0100
-> Dmitry Vyukov <dvyukov@google.com> wrote:
->
-> > On Thu, Jan 3, 2019 at 10:54 PM Stefano Brivio <sbrivio@redhat.com> wrote:
-> > >
-> > > On Thu, 3 Jan 2019 15:15:06 -0600
-> > > Willem de Bruijn <willemdebruijn.kernel@gmail.com> wrote:
-> > >
-> > > > syzbot generated stack traces with
-> > > >
-> > > > [  183.517380]  udpv6_err+0x46/0x60
-> > > > [  183.520739]  ? __udp6_lib_err+0x1890/0x1890
-> > > > [  183.525054]  gue6_err_proto_handler+0x199/0x280
-> > >
-> > > Where? I can't find that in any logs linked from the dashboard at
-> > > https://syzkaller.appspot.com/bug?extid=4ad25edc7a33e4ab91e0 :(
-> >
-> > Stefano, there are these 4 bugs reported that have similarly looking
-> > reproducers involving udp sockets and that crash modes that looks like
-> > stack corruption/overflow:
-> >
-> > https://syzkaller.appspot.com/bug?extid=14005fa30c9a07192934
-> > https://syzkaller.appspot.com/bug?extid=d14090007dc9ba5fa9b7
-> > https://syzkaller.appspot.com/bug?extid=137ed32ec9a6d5b0d5fe
-> > https://syzkaller.appspot.com/bug?id=d5bc3e0c66d200d72216ab343a67c4327e4a3452
-> >
-> > Are these the same bug as this?
->
-> Judging from the reproducers for the first three, they seem to be.
+Hi Andrew,
 
-OK, then I will mark them as dups of this one.
+Could you please update the commit message with something as
+the following (I hope it will become a bit clearer now):
 
-> I
-> guess I can trigger tests also for those by sending a (sharp)syz
-> test ... e-mail with the patch to the Reported-by: addresses, right?
+-------------
+When VM_NO_GUARD is not set area->size includes adjacent guard page,
+thus for correct size checking get_vm_area_size() should be used,
+but not area->size.
 
-Correct.
-These should be on LKML, but as you noted you can just add the syzbot
-email with tag to TO/CC. That email is available in the Reported-by
-tag (and also shown on the dashboard).
+This fixes possible kernel oops when userspace tries to mmap an area
+on 1 page bigger than was allocated by vmalloc_user() call: the size
+check inside remap_vmalloc_range_partial() accounts non-existing
+guard page also, so check successfully passes but vmalloc_to_page()
+returns NULL (guard page does not physically exist).
 
-> And the three reports you pointed out from the pile of corrupted
-> reports also seem to match, others look unrelated.
+The following code pattern example should trigger an oops:
 
-I've added these as tests:
+  static int oops_mmap(struct file *file, struct vm_area_struct *vma)
+  {
+        void *mem;
 
-https://github.com/google/syzkaller/blob/master/pkg/report/testdata/linux/report/341
-https://github.com/google/syzkaller/blob/master/pkg/report/testdata/linux/report/342
-https://github.com/google/syzkaller/blob/master/pkg/report/testdata/linux/report/343
-https://github.com/google/syzkaller/blob/master/pkg/report/testdata/linux/report/344
+        mem = vmalloc_user(4096);
+        BUG_ON(!mem);
+        /* Do not care about mem leak */
 
-Will try to figure out how to distinguish them from true corrupted
-reports. Usually when Call Trace does not have any frames, it's a sign
-of a corrupted report, and in other crashes we see the same report but
-with a stack trace. But some stack-corruption-related reliably don't
-have stack traces (not corrupted). But then some other
-stack-corruption-related crashes do have stack traces, and for these
-no stack trace again means a corrupted kernel output. Amusingly this
-is one of the most complex parts of syzkaller.
+        return remap_vmalloc_range(vma, mem, 0);
+  }
+
+And userspace simply mmaps size + PAGE_SIZE:
+
+  mmap(NULL, 8192, PROT_WRITE|PROT_READ, MAP_PRIVATE, fd, 0);
+
+Possible candidates for oops which do not have any explicit size
+checks:
+
+   *** drivers/media/usb/stkwebcam/stk-webcam.c:
+   v4l_stk_mmap[789]   ret = remap_vmalloc_range(vma, sbuf->buffer, 0);
+
+Or the following one:
+
+   *** drivers/video/fbdev/core/fbmem.c
+   static int
+   fb_mmap(struct file *file, struct vm_area_struct * vma)
+        ...
+        res = fb->fb_mmap(info, vma);
+
+Where fb_mmap callback calls remap_vmalloc_range() directly without
+any explicit checks:
+
+   *** drivers/video/fbdev/vfb.c
+   static int vfb_mmap(struct fb_info *info,
+             struct vm_area_struct *vma)
+   {
+       return remap_vmalloc_range(vma, (void *)info->fix.smem_start, 
+vma->vm_pgoff);
+   }
+--------
+
+--
+Roman
+
+
+On 2019-01-03 15:59, Roman Penyaev wrote:
+> area->size can include adjacent guard page but get_vm_area_size()
+> returns actual size of the area.
+> 
+> This fixes possible kernel crash when userspace tries to map area
+> on 1 page bigger: size check passes but the following vmalloc_to_page()
+> returns NULL on last guard (non-existing) page.
+> 
+> Signed-off-by: Roman Penyaev <rpenyaev@suse.de>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Michal Hocko <mhocko@suse.com>
+> Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
+> Cc: Joe Perches <joe@perches.com>
+> Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>
+> Cc: linux-mm@kvack.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: stable@vger.kernel.org
+> ---
+>  mm/vmalloc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> index 871e41c55e23..2cd24186ba84 100644
+> --- a/mm/vmalloc.c
+> +++ b/mm/vmalloc.c
+> @@ -2248,7 +2248,7 @@ int remap_vmalloc_range_partial(struct
+> vm_area_struct *vma, unsigned long uaddr,
+>  	if (!(area->flags & VM_USERMAP))
+>  		return -EINVAL;
+> 
+> -	if (kaddr + size > area->addr + area->size)
+> +	if (kaddr + size > area->addr + get_vm_area_size(area))
+>  		return -EINVAL;
+> 
+>  	do {
+
