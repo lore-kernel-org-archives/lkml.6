@@ -2,110 +2,126 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00261C43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 08:55:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90830C43444
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 08:55:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3FF9206C0
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 08:55:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rM10repy"
+	by mail.kernel.org (Postfix) with ESMTP id 610B0206C0
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 08:55:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546592154;
+	bh=xVcWryZnuZuuR73dgPvRud7mlnNgwXv4kQ9m7GMrPTw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=B1BVhgng2Vxs3ljKJyfi/rXh7MqmEk4ByDVkg38z1EbvcsVWRiFfO0FOUU+bTprMd
+	 7tz3vYprYSeiM3UfXQaiSK6gHUumSRsknjMsFv+N/j+wod1S9Z7s6XKskpDAyQssIb
+	 xSoJlM3gcvdVf38f/WvFCniN3aderOOT98wGzsKY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727747AbfADIzm (ORCPT
+        id S1727758AbfADIzx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 03:55:42 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:37689 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727670AbfADIzj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 03:55:39 -0500
-Received: by mail-pf1-f196.google.com with SMTP id y126so17999622pfb.4;
-        Fri, 04 Jan 2019 00:55:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=bFhTxRoojn12l2v/yr4tpMYZ43n7CONVzFkfmruJPC4=;
-        b=rM10repyD4Y8kcaAjETDg1X0Bu+JhXLQo7cbDWx1hrA5ucTIzCisQdDHXPXEW3YmC6
-         Dy/1/PYVjvwOG3yOmAmghVexXTkBXomdTbwfMEKLdoeeqxbADR+1XxYbZaLPz9sV/2zP
-         vAyRxQSq338vFtvyc64w5EJxUPHWh5PyII0oOi1UqvjX1OV76erQvJtnIu1iX2qXzR0z
-         4hWxsOGZ1df656/DeY6cw8iLEU5qHIXTLLthKxvVEQSIGqmJu0mug0SAZcWBpZBy/vmw
-         qJKb21fNaCA2jjoesZ8A+Ms898MgN7NXyWh8Hnaw81sTt9FZeGbAiKK0rhudGJM3bpEc
-         cmBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=bFhTxRoojn12l2v/yr4tpMYZ43n7CONVzFkfmruJPC4=;
-        b=JlKZ1qhIbyy7XfBdvo5gKBjrsc441qReDQOWn+IpVrY7/shlOnghT4Wv2q84zlGbqB
-         h1luAwAyyhjI0dEzulr1lkj2HNFYwAL/q0CJM70otFCdXf4Sjy36lriBmB5ppI2x9uyL
-         zMrQdRSlEPcnL1ieDykn2xtLHwiJV0quZ5MnIc71Abu/cFxHOcI9X/JTTEP2NON3RtbZ
-         3ESkq+euUebcvSJiMHspwl2fFjaIGcTcCaYUTmGnbHYCZ8H/Pfeky7R3i6JdZAhO4EU+
-         0MKolqE+Pr1wUMCe+QkQO1cBDNODQi+7H5Z6uQwCWfIT42WfR/ipVRPdC1k2JL7lxOd0
-         v13w==
-X-Gm-Message-State: AA+aEWZp9I4soD+9iu7h7JFdRUO9Mm7UTJIk3wR0FII2TTeSkQTdaIti
-        dwUP+DKukA17mSUoDjD/ZsM=
-X-Google-Smtp-Source: AFSGD/WLbcK/sBL1vUFtY+st3cDiVTDCkscYZofl5pg01nGixnT8QCsj2JBsXfbZXiFRU4LU4JyZ2g==
-X-Received: by 2002:a62:61c3:: with SMTP id v186mr51896451pfb.55.1546592139149;
-        Fri, 04 Jan 2019 00:55:39 -0800 (PST)
-Received: from localhost.corp.microsoft.com ([2404:f801:9000:1a:d9bd:62c6:740b:9fc4])
-        by smtp.googlemail.com with ESMTPSA id i21sm99772145pgm.17.2019.01.04.00.55.35
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 04 Jan 2019 00:55:38 -0800 (PST)
-From:   lantianyu1986@gmail.com
-X-Google-Original-From: Tianyu.Lan@microsoft.com
-Cc:     Lan Tianyu <Tianyu.Lan@microsoft.com>, pbonzini@redhat.com,
-        rkrcmar@redhat.com, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, hpa@zytor.com, x86@kernel.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, michael.h.kelley@microsoft.com,
-        kys@microsoft.com, vkuznets@redhat.com, linux@armlinux.org.uk
-Subject: [PATCH 11/11] KVM/MMU: Flush tlb in the kvm_age_rmapp()
-Date:   Fri,  4 Jan 2019 16:54:05 +0800
-Message-Id: <20190104085405.40356-12-Tianyu.Lan@microsoft.com>
-X-Mailer: git-send-email 2.14.4
-In-Reply-To: <20190104085405.40356-1-Tianyu.Lan@microsoft.com>
-References: <20190104085405.40356-1-Tianyu.Lan@microsoft.com>
-To:     unlisted-recipients:; (no To-header on input)
+        Fri, 4 Jan 2019 03:55:53 -0500
+Received: from mx2.suse.de ([195.135.220.15]:33134 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726800AbfADIzv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 03:55:51 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 3A37AABAC;
+        Fri,  4 Jan 2019 08:55:49 +0000 (UTC)
+Date:   Fri, 4 Jan 2019 09:55:47 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Yang Shi <yang.shi@linux.alibaba.com>
+Cc:     hannes@cmpxchg.org, akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 0/3] mm: memcontrol: delayed force empty
+Message-ID: <20190104085547.GG31793@dhcp22.suse.cz>
+References: <20190103101215.GH31793@dhcp22.suse.cz>
+ <b3ad06ed-f620-7aa0-5697-a1bbe2d7bfe1@linux.alibaba.com>
+ <20190103181329.GW31793@dhcp22.suse.cz>
+ <6f43e926-3bb5-20d1-2e39-1d30bf7ad375@linux.alibaba.com>
+ <20190103185333.GX31793@dhcp22.suse.cz>
+ <d610c665-890f-3bf0-1e2a-437150b6ddfb@linux.alibaba.com>
+ <20190103192339.GA31793@dhcp22.suse.cz>
+ <88b4d986-0b3c-cbf0-65ad-95f3e8ccd870@linux.alibaba.com>
+ <20190103200111.GD31793@dhcp22.suse.cz>
+ <146af1c6-4405-76c5-b253-c8fba11779bf@linux.alibaba.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <146af1c6-4405-76c5-b253-c8fba11779bf@linux.alibaba.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lan Tianyu <Tianyu.Lan@microsoft.com>
+On Thu 03-01-19 20:15:30, Yang Shi wrote:
+> 
+> 
+> On 1/3/19 12:01 PM, Michal Hocko wrote:
+> > On Thu 03-01-19 11:49:32, Yang Shi wrote:
+> > > 
+> > > On 1/3/19 11:23 AM, Michal Hocko wrote:
+> > > > On Thu 03-01-19 11:10:00, Yang Shi wrote:
+> > > > > On 1/3/19 10:53 AM, Michal Hocko wrote:
+> > > > > > On Thu 03-01-19 10:40:54, Yang Shi wrote:
+> > > > > > > On 1/3/19 10:13 AM, Michal Hocko wrote:
+> > > > [...]
+> > > > > > > > Is there any reason for your scripts to be strictly sequential here? In
+> > > > > > > > other words why cannot you offload those expensive operations to a
+> > > > > > > > detached context in _userspace_?
+> > > > > > > I would say it has not to be strictly sequential. The above script is just
+> > > > > > > an example to illustrate the pattern. But, sometimes it may hit such pattern
+> > > > > > > due to the complicated cluster scheduling and container scheduling in the
+> > > > > > > production environment, for example the creation process might be scheduled
+> > > > > > > to the same CPU which is doing force_empty. I have to say I don't know too
+> > > > > > > much about the internals of the container scheduling.
+> > > > > > In that case I do not see a strong reason to implement the offloding
+> > > > > > into the kernel. It is an additional code and semantic to maintain.
+> > > > > Yes, it does introduce some additional code and semantic, but IMHO, it is
+> > > > > quite simple and very straight forward, isn't it? Just utilize the existing
+> > > > > css offline worker. And, that a couple of lines of code do improve some
+> > > > > throughput issues for some real usecases.
+> > > > I do not really care it is few LOC. It is more important that it is
+> > > > conflating force_empty into offlining logic. There was a good reason to
+> > > > remove reparenting/emptying the memcg during the offline. Considering
+> > > > that you can offload force_empty from userspace trivially then I do not
+> > > > see any reason to implement it in the kernel.
+> > > Er, I may not articulate in the earlier email, force_empty can not be
+> > > offloaded from userspace *trivially*. IOWs the container scheduler may
+> > > unexpectedly overcommit something due to the stall of synchronous force
+> > > empty, which can't be figured out by userspace before it actually happens.
+> > > The scheduler doesn't know how long force_empty would take. If the
+> > > force_empty could be offloaded by kernel, it would make scheduler's life
+> > > much easier. This is not something userspace could do.
+> > What exactly prevents
+> > (
+> > echo 1 > $memecg/force_empty
+> > rmdir $memcg
+> > ) &
+> > 
+> > so that this sequence doesn't really block anything?
+> 
+> We have "restarting the same name job" logic in our usecase (I'm not quite
+> sure why they do so). Basically, it means to create memcg with the exact
+> same name right after the old one is deleted, but may have different limit
+> or other settings. The creation has to wait for rmdir is done. Even though
+> rmdir is done in background like the above, the stall still exists since
+> rmdir simply is waiting for force_empty.
 
-This patch is to flush tlb in the kvm_age_rmapp() when tlb range flush
-is available and flush request is true.
+OK, I see. This is an important detail you didn't mention previously (or
+at least I didn't understand it). One thing is still not clear to me.
+"Restarting the same job" sounds as if the memcg itself could be
+recycled as well. You are saying that the setting might change but if
+that is about limits then we should handle that just fine. Or what other
+kind of setting changes that wouldn't work properly?
 
-Signed-off-by: Lan Tianyu <Tianyu.Lan@microsoft.com>
----
- arch/x86/kvm/mmu.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
-index a5728f51bf7d..bc402a72956a 100644
---- a/arch/x86/kvm/mmu.c
-+++ b/arch/x86/kvm/mmu.c
-@@ -1958,10 +1958,17 @@ static int kvm_age_rmapp(struct kvm *kvm, struct kvm_rmap_head *rmap_head,
- 	u64 *sptep;
- 	struct rmap_iterator uninitialized_var(iter);
- 	int young = 0;
-+	bool flush = (bool)data;
- 
- 	for_each_rmap_spte(rmap_head, &iter, sptep)
- 		young |= mmu_spte_age(sptep);
- 
-+	if (young && flush) {
-+		kvm_flush_remote_tlbs_with_address(kvm, gfn,
-+				KVM_PAGES_PER_HPAGE(level));
-+		young = 0;
-+	}
-+
- 	trace_kvm_age_page(gfn, level, slot, young);
- 	return young;
- }
+If the recycling is not possible then I would suggest to not reuse
+force_empty interface but add wipe_on_destruction or similar new knob
+which would enforce reclaim on offlining. It seems we have several
+people asking for something like that already.
 -- 
-2.14.4
-
+Michal Hocko
+SUSE Labs
