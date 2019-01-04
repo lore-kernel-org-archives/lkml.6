@@ -3,83 +3,110 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CCBAC43612
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 10:21:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E904C43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 10:23:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0894720874
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 10:21:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F59A20874
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 10:23:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726497AbfADKVm (ORCPT
+        id S1726667AbfADKXk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 05:21:42 -0500
-Received: from mx2.suse.de ([195.135.220.15]:45404 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725958AbfADKVl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 05:21:41 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 474E7AD7E;
-        Fri,  4 Jan 2019 10:21:40 +0000 (UTC)
+        Fri, 4 Jan 2019 05:23:40 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:55256 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725958AbfADKXj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 05:23:39 -0500
+Received: from fsav304.sakura.ne.jp (fsav304.sakura.ne.jp [153.120.85.135])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x04ANDj1066335;
+        Fri, 4 Jan 2019 19:23:13 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav304.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav304.sakura.ne.jp);
+ Fri, 04 Jan 2019 19:23:13 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav304.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x04ANDCq066328
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Fri, 4 Jan 2019 19:23:13 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH] tty/n_hdlc: fix sleep in !TASK_RUNNING state warning
+To:     Paul Fulghum <paulkf@microgate.com>
+Cc:     Jiri Slaby <jslaby@suse.cz>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alan Cox <alan@lxorguk.ukuu.org.uk>,
+        linux-kernel@vger.kernel.org
+References: <000000000000449587057e1e6f8b@google.com>
+ <49b3b189-a51f-6a97-0e1f-bc3f2c305299@I-love.SAKURA.ne.jp>
+ <FEBFE826-8D27-4A0B-86A5-BA559921CADC@microgate.com>
+ <cf9b7323-da1c-20cd-4d50-1080fbe52467@i-love.sakura.ne.jp>
+ <ba6de468-d36d-cd33-9a13-520102b676c6@suse.cz>
+ <98eec651-d1ab-48e5-309b-7e748981cfdd@i-love.sakura.ne.jp>
+ <434841F9-C2DF-4D73-9AFB-3BFADF325086@microgate.com>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <0a70193b-488a-7607-4ad5-05ec6018587e@i-love.sakura.ne.jp>
+Date:   Fri, 4 Jan 2019 19:23:14 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+In-Reply-To: <434841F9-C2DF-4D73-9AFB-3BFADF325086@microgate.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Date:   Fri, 04 Jan 2019 11:21:39 +0100
-From:   Roman Penyaev <rpenyaev@suse.de>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Joe Perches <joe@perches.com>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH 1/3] mm/vmalloc: fix size check for
- remap_vmalloc_range_partial()
-In-Reply-To: <20190104093808.GJ31793@dhcp22.suse.cz>
-References: <20190103145954.16942-1-rpenyaev@suse.de>
- <20190103145954.16942-2-rpenyaev@suse.de>
- <20190103151357.GR31793@dhcp22.suse.cz>
- <dba7cb2c2882e034c8c99b09a432313a@suse.de>
- <20190103194054.GB31793@dhcp22.suse.cz>
- <5502b64d6c508f5432386d2cfe999844@suse.de>
- <20190104093808.GJ31793@dhcp22.suse.cz>
-Message-ID: <4630dd7797fc7934f98c01ea789105a8@suse.de>
-X-Sender: rpenyaev@suse.de
-User-Agent: Roundcube Webmail
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-01-04 10:38, Michal Hocko wrote:
-
-[...]
-
->> >
->> > OK, my response was more confusing than I intended. I meant to say. Is
->> > there any in kernel code that would allow the bug have had in mind?
->> > In other words can userspace trick any existing code?
->> 
->> In theory any existing caller of remap_vmalloc_range() which does
->> not have an explicit size check should trigger an oops, e.g. this is
->> a good candidate:
->> 
->> *** drivers/media/usb/stkwebcam/stk-webcam.c:
->> v4l_stk_mmap[789]              ret = remap_vmalloc_range(vma, 
->> sbuf->buffer,
->> 0);
+On 2019/01/04 0:57, Paul Fulghum wrote:
+>> On Jan 3, 2019, at 3:32 AM, Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp> wrote:
+>>
+>> On 2019/01/03 18:09, Jiri Slaby wrote:
+>>> On 02. 01. 19, 16:04, Tetsuo Handa wrote:
+>>>> +	if (wait_event_interruptible(tty->read_wait,
+>>>> +	     (ret = -EIO, test_bit(TTY_OTHER_CLOSED, &tty->flags)) ||
+>>>> +	     (ret = 0, tty_hung_up_p(file)) ||
+>>>> +	     (rbuf = n_hdlc_buf_get(&n_hdlc->rx_buf_list)) != NULL ||
+>>>> +	     (ret = -EAGAIN, tty_io_nonblock(tty, file))))
+>>>> +		return -EINTR;
+>>>
+>>> Oh, that looks really ugly. Could you move all this to a function
+>>> returning a bool and taking &ret and &rbuf as parameters?
+>>>
+>>
+>> OK. Something like this?
 > 
-> Hmm, sbuf->buffer is allocated in stk_setup_siobuf to have
-> buf->v4lbuf.length. mmap callback maps this buffer to the vma size and
-> that is indeed not enforced to be <= length AFAICS. So you are right!
 > 
-> Can we have an example in the changelog please?
+> I agree with Jiri that placing all the conditional logic in a single expression is difficult to read.
+> 
+> But exchanging that many locals with a separate function defeats the original purpose of
+> simplifying code and this implementation changes the logic (write no
+> longer checks for line discipline changing under it during wait).
 
-You mean to resend this particular patch with the list of possible
-candidates for oops in a comment message?  Sure thing.
+Not only defeating the original purpose but also increasing object size.
 
---
-Roman
+> 
+> Converting to wait_event_interruptible where possible is a good goal but this instance
+> may be better left alone. The current structure mirrors the existing n_tty line discipline.
+
+But why not to clarify what are appropriate sanity checks?
+
+Currently, read side does not check "n_hdlc->magic != HDLC_MAGIC" case
+while write side does. If it is intended for catching memory corruption
+etc. then both sides should do the same thing.
+
+Currently, write side does not check "tty != n_hdlc->tty" case before
+schedule() while does after schedule(). If "tty != n_hdlc->tty" case
+can ever happen, what prevents n_hdlc_tty_write() from being called again
+after n_hdlc_tty_write() once returned with -EIO due to "tty != n_hdlc->tty"
+case? If it is intended for catching memory corruption etc. then both
+sides should check "tty != n_hdlc->tty" case.
+
+Current logic is unclear, in addition to want a cleanup for scripts/checkpatch.pl .
+
+  total: 158 errors, 95 warnings, 994 lines checked
 
