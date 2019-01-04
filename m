@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-11.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A07CC43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 10:09:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50E26C43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 10:09:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37BE321871
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 10:09:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2204521874
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 10:09:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546596563;
-	bh=DUf6A5AMf/0bIQBoQRnZoellWbsxem652QKrzQ+QNE0=;
+	s=default; t=1546596567;
+	bh=y3Yojy1kQ+otg+Hk+Q1N3iU/XnLq1/q/FnAB0oYxnjo=;
 	h=From:To:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Ym5J90C41qubUljfo7mACDKOtEJ9fz8rDwlovZCWmThq2gqyfVXZ+at46OyVXqHeo
-	 mq8fE+0RqIqt2k5pl4wSIb5PiDGQ6KFU81mUUDGsp/vuPNUMofyuKTAMkRFe2/sh7Z
-	 NYD0pu+JS/f8tVrKj5QKYLzyBlhtCgUnqdkm6OK0=
+	b=uTzPPPk9lgOIcWcEVX3Wn/M6rXiH7uc3PP2B6TCZvi9i5b4Oa2S6T4hYsgBZNgqBX
+	 UzPdDgny7zWhGbeY9B0/xS3dJYAYwacjYCfqN3lF15L0QwAmcwAwpuJ4XlM9m3PYMq
+	 B1o9p6z117WISXPc2apGyMfJl+y2Mcc0k4fFdqqA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728106AbfADKJR (ORCPT
+        id S1728151AbfADKJ0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 05:09:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57324 "EHLO mail.kernel.org"
+        Fri, 4 Jan 2019 05:09:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57438 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728069AbfADKJO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 05:09:14 -0500
+        id S1727993AbfADKJR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 05:09:17 -0500
 Received: from PC-kkoz.proceq.com (unknown [213.160.61.66])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8873A21872;
-        Fri,  4 Jan 2019 10:09:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2DB49218CD;
+        Fri,  4 Jan 2019 10:09:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546596553;
-        bh=DUf6A5AMf/0bIQBoQRnZoellWbsxem652QKrzQ+QNE0=;
+        s=default; t=1546596556;
+        bh=y3Yojy1kQ+otg+Hk+Q1N3iU/XnLq1/q/FnAB0oYxnjo=;
         h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=DO7OPO50s2wHyIL6hduaOEZbl9nenMbLfiL8taEcmR46y6Lr7viLDZ77AKlGEGmo/
-         KIPktKmEzYEmu818ScaudmyDVwRps+jXdxVn1pP/kF1QJ/8eqTWoBsesOFQp5ybEmT
-         tTU8o/RSEaIAThQLqgNebvZV0aFK1UZJ+/3s5QJg=
+        b=vPGEyOuULHXm7FLt4TEW1dnhza2ql1/1P9oBksXAKKvResLPmNzM9TMm33/t2jjM7
+         BgM94uLNlNXdxG1EmiKKMb2oNg8uFrsU+m0v2oue6ZAVSSpS09Tx+ZRacP9RhuK1GO
+         YnXk0dy6pvfaHyNbTZXpaJzHpsvUPbWTtSUfbA7E=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
         Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
@@ -45,9 +45,9 @@ To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
         Krzysztof Kozlowski <krzk@kernel.org>,
         linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
         devicetree@vger.kernel.org
-Subject: [PATCH v6 3/5] leds: trigger: pattern: Add pattern initialization from Device Tree
-Date:   Fri,  4 Jan 2019 11:08:42 +0100
-Message-Id: <1546596524-19863-4-git-send-email-krzk@kernel.org>
+Subject: [PATCH v6 5/5] leds: trigger: timer: Add initialization from Device Tree
+Date:   Fri,  4 Jan 2019 11:08:44 +0100
+Message-Id: <1546596524-19863-6-git-send-email-krzk@kernel.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1546596524-19863-1-git-send-email-krzk@kernel.org>
 References: <1546596524-19863-1-git-send-email-krzk@kernel.org>
@@ -56,160 +56,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allow initialization of pattern used in pattern trigger from Device Tree
-property.
+Allow initialization of delays used in timer trigger from Device
+Tree property.
 
-This is especially useful for embedded systems where the pattern trigger
-would be used to indicate the process of boot status in a nice,
-user-friendly blinking way.  This initialization pattern will be used
-till user-space is brought up and sets its own pattern, indicating the
-boot status is for example finished.
+This is especially useful for embedded systems where the trigger might
+be used early, before bringing up user-space.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/leds/trigger/ledtrig-pattern.c | 99 +++++++++++++++++++++++++++-------
- 1 file changed, 80 insertions(+), 19 deletions(-)
+ drivers/leds/trigger/ledtrig-timer.c | 34 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
 
-diff --git a/drivers/leds/trigger/ledtrig-pattern.c b/drivers/leds/trigger/ledtrig-pattern.c
-index 1870cf87afe1..718729c89440 100644
---- a/drivers/leds/trigger/ledtrig-pattern.c
-+++ b/drivers/leds/trigger/ledtrig-pattern.c
-@@ -220,22 +220,10 @@ static ssize_t pattern_trig_show_patterns(struct pattern_trig_data *data,
- 	return count;
- }
+diff --git a/drivers/leds/trigger/ledtrig-timer.c b/drivers/leds/trigger/ledtrig-timer.c
+index 7c14983781ee..ca898c1383be 100644
+--- a/drivers/leds/trigger/ledtrig-timer.c
++++ b/drivers/leds/trigger/ledtrig-timer.c
+@@ -15,6 +15,7 @@
+ #include <linux/init.h>
+ #include <linux/device.h>
+ #include <linux/ctype.h>
++#include <linux/slab.h>
+ #include <linux/leds.h>
  
--static ssize_t pattern_trig_store_patterns(struct led_classdev *led_cdev,
--					   const char *buf, size_t count,
--					   bool hw_pattern)
-+static int pattern_trig_store_patterns_string(struct pattern_trig_data *data,
-+					      const char *buf, size_t count)
- {
--	struct pattern_trig_data *data = led_cdev->trigger_data;
--	int ccount, cr, offset = 0, err = 0;
--
--	mutex_lock(&data->lock);
--
--	del_timer_sync(&data->timer);
--
--	if (data->is_hw_pattern)
--		led_cdev->pattern_clear(led_cdev);
--
--	data->is_hw_pattern = hw_pattern;
--	data->npatterns = 0;
-+	int ccount, cr, offset = 0;
- 
- 	while (offset < count - 1 && data->npatterns < MAX_PATTERNS) {
- 		cr = 0;
-@@ -244,14 +232,54 @@ static ssize_t pattern_trig_store_patterns(struct led_classdev *led_cdev,
- 				&data->patterns[data->npatterns].delta_t, &cr);
- 		if (ccount != 2) {
- 			data->npatterns = 0;
--			err = -EINVAL;
--			goto out;
-+			return -EINVAL;
- 		}
- 
- 		offset += cr;
- 		data->npatterns++;
- 	}
- 
-+	return 0;
-+}
-+
-+static int pattern_trig_store_patterns_int(struct pattern_trig_data *data,
-+					   const u32 *buf, size_t count)
-+{
-+	unsigned int i;
-+
-+	for (i = 0; i < count; i += 2) {
-+		data->patterns[data->npatterns].brightness = buf[i];
-+		data->patterns[data->npatterns].delta_t = buf[i + 1];
-+		data->npatterns++;
-+	}
-+
-+	return 0;
-+}
-+
-+static ssize_t pattern_trig_store_patterns(struct led_classdev *led_cdev,
-+					   const char *buf, const u32 *buf_int,
-+					   size_t count, bool hw_pattern)
-+{
-+	struct pattern_trig_data *data = led_cdev->trigger_data;
-+	int err = 0;
-+
-+	mutex_lock(&data->lock);
-+
-+	del_timer_sync(&data->timer);
-+
-+	if (data->is_hw_pattern)
-+		led_cdev->pattern_clear(led_cdev);
-+
-+	data->is_hw_pattern = hw_pattern;
-+	data->npatterns = 0;
-+
-+	if (buf)
-+		err = pattern_trig_store_patterns_string(data, buf, count);
-+	else
-+		err = pattern_trig_store_patterns_int(data, buf_int, count);
-+	if (err)
-+		goto out;
-+
- 	err = pattern_trig_start_pattern(led_cdev);
- 	if (err)
- 		data->npatterns = 0;
-@@ -275,7 +303,7 @@ static ssize_t pattern_store(struct device *dev, struct device_attribute *attr,
- {
- 	struct led_classdev *led_cdev = dev_get_drvdata(dev);
- 
--	return pattern_trig_store_patterns(led_cdev, buf, count, false);
-+	return pattern_trig_store_patterns(led_cdev, buf, NULL, count, false);
- }
- 
- static DEVICE_ATTR_RW(pattern);
-@@ -295,7 +323,7 @@ static ssize_t hw_pattern_store(struct device *dev,
- {
- 	struct led_classdev *led_cdev = dev_get_drvdata(dev);
- 
--	return pattern_trig_store_patterns(led_cdev, buf, count, true);
-+	return pattern_trig_store_patterns(led_cdev, buf, NULL, count, true);
- }
- 
- static DEVICE_ATTR_RW(hw_pattern);
-@@ -331,6 +359,30 @@ static const struct attribute_group *pattern_trig_groups[] = {
- 	NULL,
+ static ssize_t led_delay_on_show(struct device *dev,
+@@ -77,8 +78,41 @@ static struct attribute *timer_trig_attrs[] = {
  };
+ ATTRIBUTE_GROUPS(timer_trig);
  
 +static void pattern_init(struct led_classdev *led_cdev)
 +{
-+	unsigned int size = 0;
 +	u32 *pattern;
-+	int err;
++	unsigned int size = 0;
 +
 +	pattern = led_get_default_pattern(led_cdev, &size);
 +	if (!pattern)
 +		return;
 +
-+	if (size % 2) {
-+		dev_warn(led_cdev->dev, "Expected pattern of tuples\n");
++	if (size != 2) {
++		dev_warn(led_cdev->dev,
++			 "Expected 2 but got %u values for delays pattern\n",
++			 size);
 +		goto out;
 +	}
 +
-+	err = pattern_trig_store_patterns(led_cdev, NULL, pattern, size, false);
-+	if (err < 0)
-+		dev_warn(led_cdev->dev,
-+			 "Pattern initialization failed with error %d\n", err);
++	led_cdev->blink_delay_on = pattern[0];
++	led_cdev->blink_delay_off = pattern[1];
++	/* led_blink_set() called by caller */
 +
 +out:
 +	kfree(pattern);
 +}
 +
- static int pattern_trig_activate(struct led_classdev *led_cdev)
+ static int timer_trig_activate(struct led_classdev *led_cdev)
  {
- 	struct pattern_trig_data *data;
-@@ -354,6 +406,15 @@ static int pattern_trig_activate(struct led_classdev *led_cdev)
- 	timer_setup(&data->timer, pattern_trig_timer_function, 0);
- 	led_cdev->activated = true;
- 
 +	if (led_cdev->flags & LED_INIT_DEFAULT_TRIGGER) {
 +		pattern_init(led_cdev);
 +		/*
@@ -219,8 +118,8 @@ index 1870cf87afe1..718729c89440 100644
 +		led_cdev->flags &= ~LED_INIT_DEFAULT_TRIGGER;
 +	}
 +
- 	return 0;
- }
+ 	led_blink_set(led_cdev, &led_cdev->blink_delay_on,
+ 		      &led_cdev->blink_delay_off);
  
 -- 
 2.7.4
