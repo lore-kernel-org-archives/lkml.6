@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1265C43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 12:53:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54A54C43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 12:53:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7956B208E3
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 12:53:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 29CC021872
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 12:53:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728421AbfADMxS (ORCPT
+        id S1728448AbfADMx2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 07:53:18 -0500
-Received: from outbound-smtp11.blacknight.com ([46.22.139.106]:46207 "EHLO
-        outbound-smtp11.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726271AbfADMxR (ORCPT
+        Fri, 4 Jan 2019 07:53:28 -0500
+Received: from outbound-smtp12.blacknight.com ([46.22.139.17]:36713 "EHLO
+        outbound-smtp12.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726271AbfADMx1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 07:53:17 -0500
+        Fri, 4 Jan 2019 07:53:27 -0500
 Received: from mail.blacknight.com (pemlinmail03.blacknight.ie [81.17.254.16])
-        by outbound-smtp11.blacknight.com (Postfix) with ESMTPS id 83E6E1C1C34
-        for <linux-kernel@vger.kernel.org>; Fri,  4 Jan 2019 12:53:15 +0000 (GMT)
-Received: (qmail 6693 invoked from network); 4 Jan 2019 12:53:15 -0000
+        by outbound-smtp12.blacknight.com (Postfix) with ESMTPS id B4EF51C1CAE
+        for <linux-kernel@vger.kernel.org>; Fri,  4 Jan 2019 12:53:25 +0000 (GMT)
+Received: (qmail 7595 invoked from network); 4 Jan 2019 12:53:25 -0000
 Received: from unknown (HELO stampy.163woodhaven.lan) (mgorman@techsingularity.net@[37.228.229.96])
-  by 81.17.254.9 with ESMTPA; 4 Jan 2019 12:53:15 -0000
+  by 81.17.254.9 with ESMTPA; 4 Jan 2019 12:53:25 -0000
 From:   Mel Gorman <mgorman@techsingularity.net>
 To:     Linux-MM <linux-mm@kvack.org>
 Cc:     David Rientjes <rientjes@google.com>,
@@ -34,9 +34,9 @@ Cc:     David Rientjes <rientjes@google.com>,
         kirill@shutemov.name, Andrew Morton <akpm@linux-foundation.org>,
         Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
         Mel Gorman <mgorman@techsingularity.net>
-Subject: [PATCH 17/25] mm, compaction: Keep cached migration PFNs synced for unusable pageblocks
-Date:   Fri,  4 Jan 2019 12:50:03 +0000
-Message-Id: <20190104125011.16071-18-mgorman@techsingularity.net>
+Subject: [PATCH 18/25] mm, compaction: Rework compact_should_abort as compact_check_resched
+Date:   Fri,  4 Jan 2019 12:50:04 +0000
+Message-Id: <20190104125011.16071-19-mgorman@techsingularity.net>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20190104125011.16071-1-mgorman@techsingularity.net>
 References: <20190104125011.16071-1-mgorman@techsingularity.net>
@@ -45,74 +45,120 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Migrate has separate cached PFNs for ASYNC and SYNC* migration on the
-basis that some migrations will fail in ASYNC mode. However, if the cached
-PFNs match at the start of scanning and pageblocks are skipped due to
-having no isolation candidates, then the sync state does not matter.
-This patch keeps matching cached PFNs in sync until a pageblock with
-isolation candidates is found.
-
-The actual benefit is marginal given that the sync scanner following the
-async scanner will often skip a number of pageblocks but it's useless
-work. Any benefit depends heavily on whether the scanners restarted
-recently so overall the reduction in scan rates is a mere 2.8% which
-is borderline noise.
+With incremental changes, compact_should_abort no longer makes
+any documented sense. Rename to compact_check_resched and update the
+associated comments.  There is no benefit other than reducing redundant
+code and making the intent slightly clearer. It could potentially be
+merged with earlier patches but it just makes the review slightly
+harder.
 
 Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
 ---
- mm/compaction.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ mm/compaction.c | 61 ++++++++++++++++++++++-----------------------------------
+ 1 file changed, 23 insertions(+), 38 deletions(-)
 
 diff --git a/mm/compaction.c b/mm/compaction.c
-index 921720f7a416..be27e4fa1b40 100644
+index be27e4fa1b40..1a41a2dbff24 100644
 --- a/mm/compaction.c
 +++ b/mm/compaction.c
-@@ -1967,6 +1967,7 @@ static enum compact_result compact_zone(struct compact_control *cc)
- 	unsigned long end_pfn = zone_end_pfn(cc->zone);
- 	unsigned long last_migrated_pfn;
- 	const bool sync = cc->mode != MIGRATE_ASYNC;
-+	bool update_cached;
- 	unsigned long a, b, c;
+@@ -398,6 +398,21 @@ static bool compact_lock_irqsave(spinlock_t *lock, unsigned long *flags,
+ 	return true;
+ }
  
- 	cc->migratetype = gfpflags_to_migratetype(cc->gfp_mask);
-@@ -2019,6 +2020,17 @@ static enum compact_result compact_zone(struct compact_control *cc)
- 
- 	last_migrated_pfn = 0;
- 
-+	/*
-+	 * Migrate has separate cached PFNs for ASYNC and SYNC* migration on
-+	 * the basis that some migrations will fail in ASYNC mode. However,
-+	 * if the cached PFNs match and pageblocks are skipped due to having
-+	 * no isolation candidates, then the sync state does not matter.
-+	 * Until a pageblock with isolation candidates is found, keep the
-+	 * cached PFNs in sync to avoid revisiting the same blocks.
-+	 */
-+	update_cached = !sync &&
-+		cc->zone->compact_cached_migrate_pfn[0] == cc->zone->compact_cached_migrate_pfn[1];
++/*
++ * Aside from avoiding lock contention, compaction also periodically checks
++ * need_resched() and records async compaction as contended if necessary.
++ */
++static inline void compact_check_resched(struct compact_control *cc)
++{
++	/* async compaction aborts if contended */
++	if (need_resched()) {
++		if (cc->mode == MIGRATE_ASYNC)
++			cc->contended = true;
 +
- 	trace_mm_compaction_begin(start_pfn, cc->migrate_pfn,
- 				cc->free_pfn, end_pfn, sync);
- 
-@@ -2050,6 +2062,11 @@ static enum compact_result compact_zone(struct compact_control *cc)
- 			last_migrated_pfn = 0;
- 			goto out;
- 		case ISOLATE_NONE:
-+			if (update_cached) {
-+				cc->zone->compact_cached_migrate_pfn[1] =
-+					cc->zone->compact_cached_migrate_pfn[0];
-+			}
++		cond_resched();
++	}
++}
 +
- 			/*
- 			 * We haven't isolated and migrated anything, but
- 			 * there might still be unflushed migrations from
-@@ -2057,6 +2074,7 @@ static enum compact_result compact_zone(struct compact_control *cc)
- 			 */
- 			goto check_drain;
- 		case ISOLATE_SUCCESS:
-+			update_cached = false;
- 			last_migrated_pfn = start_pfn;
- 			;
- 		}
+ /*
+  * Compaction requires the taking of some coarse locks that are potentially
+  * very heavily contended. The lock should be periodically unlocked to avoid
+@@ -426,33 +441,7 @@ static bool compact_unlock_should_abort(spinlock_t *lock,
+ 		return true;
+ 	}
+ 
+-	if (need_resched()) {
+-		if (cc->mode == MIGRATE_ASYNC)
+-			cc->contended = true;
+-		cond_resched();
+-	}
+-
+-	return false;
+-}
+-
+-/*
+- * Aside from avoiding lock contention, compaction also periodically checks
+- * need_resched() and either schedules in sync compaction or aborts async
+- * compaction. This is similar to what compact_unlock_should_abort() does, but
+- * is used where no lock is concerned.
+- *
+- * Returns false when no scheduling was needed, or sync compaction scheduled.
+- * Returns true when async compaction should abort.
+- */
+-static inline bool compact_should_abort(struct compact_control *cc)
+-{
+-	/* async compaction aborts if contended */
+-	if (need_resched()) {
+-		if (cc->mode == MIGRATE_ASYNC)
+-			cc->contended = true;
+-
+-		cond_resched();
+-	}
++	compact_check_resched(cc);
+ 
+ 	return false;
+ }
+@@ -750,8 +739,7 @@ isolate_migratepages_block(struct compact_control *cc, unsigned long low_pfn,
+ 			return 0;
+ 	}
+ 
+-	if (compact_should_abort(cc))
+-		return 0;
++	compact_check_resched(cc);
+ 
+ 	if (cc->direct_compaction && (cc->mode == MIGRATE_ASYNC)) {
+ 		skip_on_failure = true;
+@@ -1374,12 +1362,10 @@ static void isolate_freepages(struct compact_control *cc)
+ 				isolate_start_pfn = block_start_pfn) {
+ 		/*
+ 		 * This can iterate a massively long zone without finding any
+-		 * suitable migration targets, so periodically check if we need
+-		 * to schedule, or even abort async compaction.
++		 * suitable migration targets, so periodically check resched.
+ 		 */
+-		if (!(block_start_pfn % (SWAP_CLUSTER_MAX * pageblock_nr_pages))
+-						&& compact_should_abort(cc))
+-			break;
++		if (!(block_start_pfn % (SWAP_CLUSTER_MAX * pageblock_nr_pages)))
++			compact_check_resched(cc);
+ 
+ 		page = pageblock_pfn_to_page(block_start_pfn, block_end_pfn,
+ 									zone);
+@@ -1673,11 +1659,10 @@ static isolate_migrate_t isolate_migratepages(struct zone *zone,
+ 		/*
+ 		 * This can potentially iterate a massively long zone with
+ 		 * many pageblocks unsuitable, so periodically check if we
+-		 * need to schedule, or even abort async compaction.
++		 * need to schedule.
+ 		 */
+-		if (!(low_pfn % (SWAP_CLUSTER_MAX * pageblock_nr_pages))
+-						&& compact_should_abort(cc))
+-			break;
++		if (!(low_pfn % (SWAP_CLUSTER_MAX * pageblock_nr_pages)))
++			compact_check_resched(cc);
+ 
+ 		page = pageblock_pfn_to_page(block_start_pfn, block_end_pfn,
+ 									zone);
 -- 
 2.16.4
 
