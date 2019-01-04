@@ -2,109 +2,81 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B0C2C43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 21:47:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0FFBC43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 21:47:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 105A12087F
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 21:47:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB1AB2087F
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 21:47:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726356AbfADVrI (ORCPT
+        id S1726428AbfADVrb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 16:47:08 -0500
-Received: from gateway34.websitewelcome.com ([192.185.148.222]:16233 "EHLO
-        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726094AbfADVrI (ORCPT
+        Fri, 4 Jan 2019 16:47:31 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:43774 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726154AbfADVrb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 16:47:08 -0500
-Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
-        by gateway34.websitewelcome.com (Postfix) with ESMTP id F23CD7A01
-        for <linux-kernel@vger.kernel.org>; Fri,  4 Jan 2019 15:47:07 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id fXJ5gY76t2qH7fXJ5gDn3i; Fri, 04 Jan 2019 15:47:07 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.130.205] (port=41276 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gfXJ5-003ENA-0U; Fri, 04 Jan 2019 15:47:07 -0600
-Date:   Fri, 4 Jan 2019 15:47:04 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] scsi: mvsas: use struct_size() in kzalloc()
-Message-ID: <20190104214704.GA22286@embeddedor>
+        Fri, 4 Jan 2019 16:47:31 -0500
+Received: by mail-wr1-f66.google.com with SMTP id r10so37737423wrs.10
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Jan 2019 13:47:30 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=++Y7dNmJN9/7rF+FGAjBU64OF/wTbh/TNZ6mMmg3qwU=;
+        b=sx75+PVr5JrOq6VcggbmAmejDEWBj/goZRzrt07kaOXBlL7X6yiuTkHkfCaTItZwOZ
+         VGA0zdlzANgk8+WR7rUbP6DAI07UWepwrEhngvShI9pm8fmX1pkpyKTVRuCTR2m9rGza
+         JpJeXCBq1fXpT956NJBjO5fDoiDBcX0mG9GRVjXW1P80n4ForvLnwwzvmNBqUenIbZMT
+         wLYaTEZqppX6bNB11NOlbtGJl5gC35mowNs9uKV17H8q7uGUkdjqsTH2oTSu345m/QZl
+         Z29qf/j1wSGE9rE9alMi3NZ2oGDJEe28lkPlqdium7JrgB1wIyY8SGA879WIkgzpnf20
+         9BXw==
+X-Gm-Message-State: AJcUukdc/7xnLXL3LMp9bldEhi73Y6o8tubjUm9jf6yKbOtXWQjECYvq
+        lnoR3MEICfvL9mYRbSEhfks4fw==
+X-Google-Smtp-Source: ALg8bN6FMdn+/zZu9nykoJ/EmpTszm0v1GNPO8jfBbLiFi7PrdzWsotFwDIVPq5adpzAK50RQiGsiQ==
+X-Received: by 2002:adf:a28d:: with SMTP id s13mr48076435wra.100.1546638449758;
+        Fri, 04 Jan 2019 13:47:29 -0800 (PST)
+Received: from mcroce-redhat.redhat.com (host177-2-dynamic.16-87-r.retail.telecomitalia.it. [87.16.2.177])
+        by smtp.gmail.com with ESMTPSA id z12sm43540987wrh.35.2019.01.04.13.47.28
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 04 Jan 2019 13:47:29 -0800 (PST)
+From:   Matteo Croce <mcroce@redhat.com>
+To:     Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH] kernel/sysctl.c: fix typo
+Date:   Fri,  4 Jan 2019 22:47:27 +0100
+Message-Id: <20190104214727.29431-1-mcroce@redhat.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.130.205
-X-Source-L: No
-X-Exim-ID: 1gfXJ5-003ENA-0U
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.130.205]:41276
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 40
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-One of the more common cases of allocation size calculations is finding the
-size of a structure that has a zero-sized array at the end, along with memory
-for some number of elements for that array. For example:
+Fix spelling mistake: "lenght" -> "length"
 
-struct foo {
-    int stuff;
-    void *entry[];
-};
-
-instance = kzalloc(sizeof(struct foo) + sizeof(void *) * count, GFP_KERNEL);
-
-Instead of leaving these open-coded and prone to type mistakes, we can now
-use the new struct_size() helper:
-
-instance = kzalloc(struct_size(instance, entry, count), GFP_KERNEL);
-
-This code was detected with the help of Coccinelle.
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Matteo Croce <mcroce@redhat.com>
 ---
- drivers/scsi/mvsas/mv_init.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ kernel/sysctl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/mvsas/mv_init.c b/drivers/scsi/mvsas/mv_init.c
-index 030d911ee374..cd6ba7ed0ab4 100644
---- a/drivers/scsi/mvsas/mv_init.c
-+++ b/drivers/scsi/mvsas/mv_init.c
-@@ -366,9 +366,9 @@ static struct mvs_info *mvs_pci_alloc(struct pci_dev *pdev,
- 	struct mvs_info *mvi = NULL;
- 	struct sas_ha_struct *sha = SHOST_TO_SAS_HA(shost);
- 
--	mvi = kzalloc(sizeof(*mvi) +
--		(1L << mvs_chips[ent->driver_data].slot_width) *
--		sizeof(struct mvs_slot_info), GFP_KERNEL);
-+	mvi = kzalloc(struct_size(mvi, slot_info,
-+		      (1L << mvs_chips[ent->driver_data].slot_width)),
-+		      GFP_KERNEL);
- 	if (!mvi)
- 		return NULL;
- 
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index 1825f712e73b..6b2691f5d4c9 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -191,7 +191,7 @@ extern int no_unaligned_warning;
+  * 	file position 0 and the value must be fully contained in the buffer
+  * 	sent to the write syscall. If dealing with strings respect the file
+  * 	position, but restrict this to the max length of the buffer, anything
+- * 	passed the max lenght will be ignored. Multiple writes will append
++ * 	passed the max length will be ignored. Multiple writes will append
+  * 	to the buffer.
+  *
+  * These write modes control how current file position affects the behavior of
 -- 
 2.20.1
 
