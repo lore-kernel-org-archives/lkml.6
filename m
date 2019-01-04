@@ -2,67 +2,98 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E99F9C43612
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 11:17:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09BF5C43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 11:18:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C323C208E3
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 11:17:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BEFB12173B
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 11:18:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="vQE5LbfJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727679AbfADLR3 (ORCPT
+        id S1727889AbfADLSk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 06:17:29 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:40360 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726981AbfADLR2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 06:17:28 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 62A4D15AD;
-        Fri,  4 Jan 2019 03:17:28 -0800 (PST)
-Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 06AA33F5D4;
-        Fri,  4 Jan 2019 03:17:26 -0800 (PST)
-Date:   Fri, 4 Jan 2019 11:17:21 +0000
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     LABBE Corentin <clabbe@baylibre.com>
-Cc:     bhelgaas@google.com, khilman@baylibre.com,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org
-Subject: Re: [PATCH] PCI: amlogic: fix build failure due to missing
- linux/gpio/consumer.h header
-Message-ID: <20190104111721.GA23713@e107981-ln.cambridge.arm.com>
-References: <1546592917-27846-1-git-send-email-clabbe@baylibre.com>
- <20190104103015.GA3738@red-moon>
- <20190104103626.GA8448@Red>
+        Fri, 4 Jan 2019 06:18:40 -0500
+Received: from forwardcorp1g.cmail.yandex.net ([87.250.241.190]:48548 "EHLO
+        forwardcorp1g.cmail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727651AbfADLSj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 06:18:39 -0500
+Received: from mxbackcorp1g.mail.yandex.net (mxbackcorp1g.mail.yandex.net [IPv6:2a02:6b8:0:1402::301])
+        by forwardcorp1g.cmail.yandex.net (Yandex) with ESMTP id C0CDE20EEA;
+        Fri,  4 Jan 2019 14:18:36 +0300 (MSK)
+Received: from smtpcorp1p.mail.yandex.net (smtpcorp1p.mail.yandex.net [2a02:6b8:0:1472:2741:0:8b6:10])
+        by mxbackcorp1g.mail.yandex.net (nwsmtp/Yandex) with ESMTP id 145WAE3PUy-IaMmxr8R;
+        Fri, 04 Jan 2019 14:18:36 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
+        t=1546600716; bh=7/OYKbl7jIHC4n1PbBuVzkuw772hxgHC3hVQ806mOoY=;
+        h=Subject:From:To:Date:Message-ID;
+        b=vQE5LbfJMLVQuoVsYzzu6QDFL5lpea0vgUHIwRtZ9HuONo2JPH1rMnipPNYqyD1WT
+         VFLZh40HXF0fFOwfLoRWOmr/84a2voRTbHytKNhwJXhD3dARYZHwcN+Dfrk3tIzkc7
+         6hGiTmZaUYMmuRBNpsIxYYgtKBc63Ile/IybxQhU=
+Authentication-Results: mxbackcorp1g.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
+Received: from dynamic-iva.dhcp.yndx.net (dynamic-iva.dhcp.yndx.net [2a02:6b8:b010:d002::1:46])
+        by smtpcorp1p.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id Latw1W4VQY-IakWFRrq;
+        Fri, 04 Jan 2019 14:18:36 +0300
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client certificate not present)
+Subject: [PATCH] scripts/decode_stacktrace.sh: handle RIP address with
+ segment
+From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org
+Date:   Fri, 04 Jan 2019 14:18:32 +0300
+Message-ID: <154660071227.52726.15645307951282727605.stgit@buzz>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190104103626.GA8448@Red>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 04, 2019 at 11:36:26AM +0100, LABBE Corentin wrote:
-> On Fri, Jan 04, 2019 at 10:30:25AM +0000, Lorenzo Pieralisi wrote:
-> > On Fri, Jan 04, 2019 at 09:08:37AM +0000, Corentin Labbe wrote:
-> > > When building on x86, I got the following build failure:
-> > 
-> > Hi,
-> > 
-> > what tree are you testing on and which config ?
-> 
-> I use the next-20190102 tree
-> The config can be found at http://kernel.montjoie.ovh/configs/x86
+decode line:
 
-Ok, right, it is a config that unfortunately the bots failed to test, I
-will pick this up and send it to Bjorn for -rc2 (given that the PCI tree
-is not in mainline yet).
+RIP: 0010:khugepaged+0x2a2/0x2280
 
-Thanks,
-Lorenzo
+into
+
+RIP: 0010:khugepaged (mm/khugepaged.c:1885)
+
+Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+---
+ scripts/decode_stacktrace.sh |    9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/scripts/decode_stacktrace.sh b/scripts/decode_stacktrace.sh
+index 98a7d63a723e..bcdd45df3f51 100755
+--- a/scripts/decode_stacktrace.sh
++++ b/scripts/decode_stacktrace.sh
+@@ -37,6 +37,13 @@ parse_symbol() {
+ 	symbol=${symbol#\(}
+ 	symbol=${symbol%\)}
+ 
++	# Strip segment
++	local segment
++	if [[ $symbol == *:* ]] ; then
++		segment=${symbol%%:*}:
++		symbol=${symbol#*:}
++	fi
++
+ 	# Strip the symbol name so that we could look it up
+ 	local name=${symbol%+*}
+ 
+@@ -84,7 +91,7 @@ parse_symbol() {
+ 	code=${code//$'\n'/' '}
+ 
+ 	# Replace old address with pretty line numbers
+-	symbol="$name ($code)"
++	symbol="$segment$name ($code)"
+ }
+ 
+ decode_code() {
+
