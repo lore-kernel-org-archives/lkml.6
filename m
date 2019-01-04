@@ -6,133 +6,139 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B954EC43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 09:21:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5C28C43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 09:26:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 871C1217F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 09:21:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C15621872
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 09:26:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727447AbfADJVj (ORCPT
+        id S1726841AbfADJ0Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 04:21:39 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38458 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726061AbfADJVi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 04:21:38 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AB150EBD;
-        Fri,  4 Jan 2019 01:21:34 -0800 (PST)
-Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8A1DD3F575;
-        Fri,  4 Jan 2019 01:21:31 -0800 (PST)
-Subject: Re: [PATCH v6 07/13] arm64: add basic pointer authentication support
-To:     Pavel Machek <pavel@ucw.cz>,
-        Kristina Martsenko <kristina.martsenko@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        Adam Wallis <awallis@codeaurora.org>,
-        Amit Kachhap <amit.kachhap@arm.com>,
-        Andrew Jones <drjones@redhat.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave P Martin <dave.martin@arm.com>,
-        Jacob Bramley <jacob.bramley@arm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>,
-        Richard Henderson <richard.henderson@linaro.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org
-References: <20181207183931.4285-1-kristina.martsenko@arm.com>
- <20181207183931.4285-8-kristina.martsenko@arm.com>
- <20190103202901.GA21564@amd>
-From:   Marc Zyngier <marc.zyngier@arm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: ARM Ltd
-Message-ID: <681a2835-1a70-f3c3-3534-7b4cf6139cac@arm.com>
-Date:   Fri, 4 Jan 2019 09:21:30 +0000
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Fri, 4 Jan 2019 04:26:24 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:35292 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726488AbfADJ0X (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 04:26:23 -0500
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x049QEFJ033617
+        for <linux-kernel@vger.kernel.org>; Fri, 4 Jan 2019 04:26:22 -0500
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2pt3ygamqj-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Jan 2019 04:26:17 -0500
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
+        Fri, 4 Jan 2019 09:25:31 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 4 Jan 2019 09:25:27 -0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x049PQ9D63504452
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 4 Jan 2019 09:25:26 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4CD5EAE051;
+        Fri,  4 Jan 2019 09:25:26 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 11CD9AE055;
+        Fri,  4 Jan 2019 09:25:26 +0000 (GMT)
+Received: from osiris (unknown [9.152.212.95])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Fri,  4 Jan 2019 09:25:26 +0000 (GMT)
+Date:   Fri, 4 Jan 2019 10:25:24 +0100
+From:   Heiko Carstens <heiko.carstens@de.ibm.com>
+To:     Martin Lau <kafai@fb.com>
+Cc:     Eugene Syromyatnikov <evgsyr@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Yonghong Song <yhs@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        "Dmitry V. Levin" <ldv@altlinux.org>
+Subject: Re: "bpf: Improve the info.func_info and info.func_info_rec_size
+ behavior" breaks strace self tests
+References: <20190103114613.GB3957@osiris>
+ <20190103191158.yu4cjkb3wd3zvpqk@kafai-mbp>
+ <20190103224118.GA4491@osiris>
+ <20190103235248.kxvhhwq4brcdxzps@kafai-mbp>
 MIME-Version: 1.0
-In-Reply-To: <20190103202901.GA21564@amd>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20190103235248.kxvhhwq4brcdxzps@kafai-mbp>
+X-TM-AS-GCONF: 00
+x-cbid: 19010409-0016-0000-0000-0000023FCBC3
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19010409-0017-0000-0000-00003299CFB1
+Message-Id: <20190104092524.GC4396@osiris>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-04_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901040084
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/01/2019 20:29, Pavel Machek wrote:
-> On Fri 2018-12-07 18:39:25, Kristina Martsenko wrote:
->> From: Mark Rutland <mark.rutland@arm.com>
->> 
->> This patch adds basic support for pointer authentication,
->> allowing userspace to make use of APIAKey, APIBKey, APDAKey,
->> APDBKey, and APGAKey. The kernel maintains key values for each
->> process (shared by all threads within), which are initialised to
->> random values at exec()
-> time.
-> 
-> ...
-> 
->> +/* + * We give each process its own keys, which are shared by
->> all threads. The keys + * are inherited upon fork(), and
->> reinitialised upon exec*(). + */ +struct ptrauth_keys { +	struct
->> ptrauth_key apia; +	struct ptrauth_key apib; +	struct ptrauth_key
->> apda; +	struct ptrauth_key apdb; +	struct ptrauth_key apga; +};
-> 
-> intstruction_a, data_a, generic_a? Should be easier to understand
-> than "apdb" ...
+On Thu, Jan 03, 2019 at 11:52:51PM +0000, Martin Lau wrote:
+> On Thu, Jan 03, 2019 at 11:41:18PM +0100, Heiko Carstens wrote:
+> > On Thu, Jan 03, 2019 at 07:12:05PM +0000, Martin Lau wrote:
+> > > On Thu, Jan 03, 2019 at 12:46:13PM +0100, Heiko Carstens wrote:
+> > > > Hello,
+> > > > 
+> > > > the kernel commit 7337224fc150 ("bpf: Improve the info.func_info and
+> > > > info.func_info_rec_size behavior") breaks one of strace's self tests:
+> > > > 
+> > > > FAIL: bpf-obj_get_info_by_fd-prog-v.gen
+...
+> I am running against linux-next.  I don't see how root and non-root affect
+> thing here.  I guess the test has been running without jit so far?
 
-... until you realize that these names do match the documentation,
-which makes it even easier to understand how the code uses the
-architecture.
+Yes, it was disabled. Enabling jit and adding your memset fix leads to
+what you report with 2) below.
 
-	M.
--- 
-Jazz is not dead. It just smells funny...
+> 1) root or not, if jit is enabled,
+>    without the memset() fix in the bpf-obj_get_info_by_fd.c in my last email,
+>    they all failed:
+>    [root@arch-fb-vm1 tests]# ./bpf-obj_get_info_by_fd-prog-v.gen.test
+>    BPF_OBJ_GET_INFO_BY_FD prog 2 failed: Bad address
+>    bpf-obj_get_info_by_fd-prog-v.gen.test: skipped test: ../bpf-obj_get_info_by_fd-prog-v exited with code 77
+> 
+>    Please fix this first.
+> 
+> 2) After having the memset fix:
+>    Root or not, for jited program, if I run
+>    ./bpf-obj_get_info_by_fd-prog-v.gen.test, they failed.  If I read the
+>    init.sh correclty, it fails because there is a diff between the
+>    ./bpf-obj_get_info_by_fd-prog-v stdout and the "strace -o log".  I think
+>    "strace -o log" only has the /* bytes 104..151 */ part if some bytes
+>    are non-zero?
+> 
+>    Regardless, the test program "bpf-obj_get_info_by_fd.c" is telling
+>    the kernel that the userspace "info" is in size 168 bytes.
+>    The kernel then tells as much details as possible about
+>    a bpf prog in "info".  I don't see a ABI breakage here.
+> 
+>    I believe the test just happens to work so far because it has been running
+>    without jit?
+> 
+>    If I run it with jit enabled:
+> -bpf(BPF_OBJ_GET_INFO_BY_FD, {info={bpf_fd=4<anon_inode:bpf-prog>, info_len=168, info={type=BPF_PROG_TYPE_SOCKET_FILTER, id=35, tag="\xda\xbf\x02\x07\xd1\x99\x24\x86", jited_prog_len=0 => 110, jited_prog_insns=NULL, xlated_prog_len=0 => 120, xlated_prog_insns=[], load_time=2476906063975, created_by_uid=0, nr_map_ids=0 => 1, map_ids=[], name="test_prog", ifindex=0, netns_dev=makedev(0, 0), netns_ino=0}}}, 16) = 0
+> -bpf(BPF_OBJ_GET_INFO_BY_FD, {info={bpf_fd=4<anon_inode:bpf-prog>, info_len=168, info={type=BPF_PROG_TYPE_SOCKET_FILTER, id=35, tag="\xda\xbf\x02\x07\xd1\x99\x24\x86", jited_prog_len=0 => 110, jited_prog_insns=NULL, xlated_prog_len=0 => 120, xlated_prog_insns=[], load_time=2476906063975, created_by_uid=0, nr_map_ids=2 => 1, map_ids=[36], name="test_prog", ifindex=0, netns_dev=makedev(0, 0), netns_ino=0}}}, 16) = 0
+> +bpf(BPF_OBJ_GET_INFO_BY_FD, {info={bpf_fd=4<anon_inode:bpf-prog>, info_len=168, info={type=BPF_PROG_TYPE_SOCKET_FILTER, id=35, tag="\xda\xbf\x02\x07\xd1\x99\x24\x86", jited_prog_len=0 => 110, jited_prog_insns=NULL, xlated_prog_len=0 => 120, xlated_prog_insns=[], load_time=2476906063975, created_by_uid=0, nr_map_ids=0 => 1, map_ids=[], name="test_prog", ifindex=0, netns_dev=makedev(0, 0), netns_ino=0, /* bytes 104..167 */ "\x01\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x08\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"}}}, 16) = 0
+> +bpf(BPF_OBJ_GET_INFO_BY_FD, {info={bpf_fd=4<anon_inode:bpf-prog>, info_len=168, info={type=BPF_PROG_TYPE_SOCKET_FILTER, id=35, tag="\xda\xbf\x02\x07\xd1\x99\x24\x86", jited_prog_len=0 => 110, jited_prog_insns=NULL, xlated_prog_len=0 => 120, xlated_prog_insns=[], load_time=2476906063975, created_by_uid=0, nr_map_ids=2 => 1, map_ids=[36], name="test_prog", ifindex=0, netns_dev=makedev(0, 0), netns_ino=0, /* bytes 104..167 */ "\x01\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x08\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"}}}, 16) = 0
+> 
+>   The diff comes in as early as byte 104-th which is the nr_jited_ksyms == 1.
+> 
+>   Please fix the test program.  A protential fix is in bpf-obj_get_info_by_fd.c
+>   to printf the non-zero "/* bytes 104..1xx */..." the same way as the
+>   "strace -o log" does.
+
+Thanks a lot for looking into this!
+Eugene, Dmitry will you take care of fixing this?
+
