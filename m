@@ -2,106 +2,85 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7857C43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 21:39:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32FAFC43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 21:41:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7785A21872
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 21:39:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EEDD821872
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 21:41:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726332AbfADVjS (ORCPT
+        id S1726388AbfADVl0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 16:39:18 -0500
-Received: from gateway22.websitewelcome.com ([192.185.47.79]:16052 "EHLO
-        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726149AbfADVjS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 16:39:18 -0500
-Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
-        by gateway22.websitewelcome.com (Postfix) with ESMTP id 91CF31E618
-        for <linux-kernel@vger.kernel.org>; Fri,  4 Jan 2019 15:39:17 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id fXBVgRLJBYTGMfXBVgDYCD; Fri, 04 Jan 2019 15:39:17 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.130.205] (port=41196 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gfXBU-00393l-6Q; Fri, 04 Jan 2019 15:39:16 -0600
-Date:   Fri, 4 Jan 2019 15:39:13 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>
-Cc:     linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] serial: max310x: Use struct_size() in devm_kzalloc()
-Message-ID: <20190104213913.GA21248@embeddedor>
+        Fri, 4 Jan 2019 16:41:26 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:48016 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726097AbfADVlZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 16:41:25 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id A7E86637FF;
+        Fri,  4 Jan 2019 21:41:25 +0000 (UTC)
+Received: from redhat.com (ovpn-124-210.rdu2.redhat.com [10.10.124.210])
+        by smtp.corp.redhat.com (Postfix) with SMTP id C66005D9C5;
+        Fri,  4 Jan 2019 21:41:24 +0000 (UTC)
+Date:   Fri, 4 Jan 2019 16:41:24 -0500
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        davem@davemloft.net
+Subject: Re: [RFC PATCH V3 0/5] Hi:
+Message-ID: <20190104163516-mutt-send-email-mst@kernel.org>
+References: <20181229124656.3900-1-jasowang@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.130.205
-X-Source-L: No
-X-Exim-ID: 1gfXBU-00393l-6Q
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.130.205]:41196
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 36
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <20181229124656.3900-1-jasowang@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Fri, 04 Jan 2019 21:41:25 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-One of the more common cases of allocation size calculations is finding
-the size of a structure that has a zero-sized array at the end, along
-with memory for some number of elements for that array. For example:
+On Sat, Dec 29, 2018 at 08:46:51PM +0800, Jason Wang wrote:
+> This series tries to access virtqueue metadata through kernel virtual
+> address instead of copy_user() friends since they had too much
+> overheads like checks, spec barriers or even hardware feature
+> toggling.
 
-struct foo {
-    int stuff;
-    void *entry[];
-};
 
-instance = devm_kzalloc(dev, sizeof(struct foo) + sizeof(void *) * count, GFP_KERNEL);
+I think it's a reasonable approach.
+However I need to look at whether and which mmu notifiers are invoked before
+writeback. Do you know?
 
-Instead of leaving these open-coded and prone to type mistakes, we can
-now use the new struct_size() helper:
-
-instance = devm_kzalloc(dev, struct_size(instance, entry, count), GFP_KERNEL);
-
-This code was detected with the help of Coccinelle.
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/tty/serial/max310x.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/tty/serial/max310x.c b/drivers/tty/serial/max310x.c
-index 4f479841769a..1d700a8ab517 100644
---- a/drivers/tty/serial/max310x.c
-+++ b/drivers/tty/serial/max310x.c
-@@ -1197,8 +1197,7 @@ static int max310x_probe(struct device *dev, struct max310x_devtype *devtype,
- 		return PTR_ERR(regmap);
- 
- 	/* Alloc port structure */
--	s = devm_kzalloc(dev, sizeof(*s) +
--			 sizeof(struct max310x_one) * devtype->nr, GFP_KERNEL);
-+	s = devm_kzalloc(dev, struct_size(s, p, devtype->nr), GFP_KERNEL);
- 	if (!s) {
- 		dev_err(dev, "Error allocating port structure\n");
- 		return -ENOMEM;
--- 
-2.20.1
-
+> Test shows about 24% improvement on TX PPS. It should benefit other
+> cases as well.
+> 
+> Changes from V2:
+> - fix buggy range overlapping check
+> - tear down MMU notifier during vhost ioctl to make sure invalidation
+>   request can read metadata userspace address and vq size without
+>   holding vq mutex.
+> Changes from V1:
+> - instead of pinning pages, use MMU notifier to invalidate vmaps and
+>   remap duing metadata prefetch
+> - fix build warning on MIPS
+> 
+> Jason Wang (5):
+>   vhost: generalize adding used elem
+>   vhost: fine grain userspace memory accessors
+>   vhost: rename vq_iotlb_prefetch() to vq_meta_prefetch()
+>   vhost: introduce helpers to get the size of metadata area
+>   vhost: access vq metadata through kernel virtual address
+> 
+>  drivers/vhost/net.c   |   4 +-
+>  drivers/vhost/vhost.c | 416 +++++++++++++++++++++++++++++++++++++-----
+>  drivers/vhost/vhost.h |  15 +-
+>  3 files changed, 384 insertions(+), 51 deletions(-)
+> 
+> -- 
+> 2.17.1
