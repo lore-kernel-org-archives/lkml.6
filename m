@@ -2,59 +2,69 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F959C43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 21:09:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42AFCC43612
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 21:09:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7E36218D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 21:09:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B1FC2087F
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 21:09:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726219AbfADVJ1 (ORCPT
+        id S1726248AbfADVJl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 16:09:27 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:48876 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726074AbfADVJ0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 16:09:26 -0500
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::cf9])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id BDBB214C5D370;
-        Fri,  4 Jan 2019 13:09:25 -0800 (PST)
-Date:   Fri, 04 Jan 2019 13:09:25 -0800 (PST)
-Message-Id: <20190104.130925.1584954929893535106.davem@davemloft.net>
-To:     xuechaojing@huawei.com
-Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        wulike1@huawei.com, chiqijun@huawei.com, fy.wang@huawei.com,
-        tony.qu@huawei.com, luoshaokai@huawei.com
-Subject: Re: [PATCH 1/1] net-next/hinic: replace
- disable_irq_nosync/enable_irq
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20190103230400.29738-1-xuechaojing@huawei.com>
-References: <20190103230400.29738-1-xuechaojing@huawei.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 04 Jan 2019 13:09:26 -0800 (PST)
+        Fri, 4 Jan 2019 16:09:41 -0500
+Received: from mga05.intel.com ([192.55.52.43]:6772 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726074AbfADVJk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 16:09:40 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jan 2019 13:09:40 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,439,1539673200"; 
+   d="scan'208";a="133026728"
+Received: from mbakkere-mobl.ger.corp.intel.com (HELO localhost) ([10.249.254.235])
+  by fmsmga004.fm.intel.com with ESMTP; 04 Jan 2019 13:09:37 -0800
+Date:   Fri, 4 Jan 2019 23:09:36 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Joey Pabalinas <joeypabalinas@gmail.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>
+Subject: Re: [PATCH] selftests: add TPM 2.0 tests
+Message-ID: <20190104210936.GA6582@linux.intel.com>
+References: <20181127221059.25966-1-jarkko.sakkinen@linux.intel.com>
+ <20181127224900.fpbqujcsqwgxpwyq@gmail.com>
+ <20181127225307.3wc3gd7zmfauie6i@gmail.com>
+ <20181127231348.GB26051@linux.intel.com>
+ <20181205003342.GA20846@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181205003342.GA20846@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xue Chaojing <xuechaojing@huawei.com>
-Date: Thu, 3 Jan 2019 23:04:00 +0000
-
-> In order to avoid frequent system interrupts when sending and
-> receiving packets. we replace disable_irq_nosync/enable_irq
-> with hinic_set_msix_state(), hinic_set_msix_state is used to
-> access memory mapped hinic devices.
+On Tue, Dec 04, 2018 at 04:33:42PM -0800, Jarkko Sakkinen wrote:
+> On Tue, Nov 27, 2018 at 03:13:48PM -0800, Jarkko Sakkinen wrote:
+> > Thank you! Would be good to have these merged to the kernel tree so that
+> > one can include both functionality and test case when needed to the
+> > patch set.
 > 
-> Signed-off-by: Xue Chaojing <xuechaojing@huawei.com>
+> Should I include this to v4.21 tpmdd PR?
 
-Please resubmit this when net-next opens back up.
+Still bit puzzled how to move this forward...
+
+/Jarkko
