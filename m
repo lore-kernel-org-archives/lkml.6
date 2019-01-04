@@ -3,29 +3,29 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E194AC43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 12:53:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1265C43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 12:53:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9A3B208E3
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 12:53:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7956B208E3
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 12:53:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728407AbfADMxJ (ORCPT
+        id S1728421AbfADMxS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 07:53:09 -0500
-Received: from outbound-smtp13.blacknight.com ([46.22.139.230]:50378 "EHLO
-        outbound-smtp13.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726328AbfADMxH (ORCPT
+        Fri, 4 Jan 2019 07:53:18 -0500
+Received: from outbound-smtp11.blacknight.com ([46.22.139.106]:46207 "EHLO
+        outbound-smtp11.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726271AbfADMxR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 07:53:07 -0500
-Received: from mail.blacknight.com (unknown [81.17.254.16])
-        by outbound-smtp13.blacknight.com (Postfix) with ESMTPS id 555D51C219E
-        for <linux-kernel@vger.kernel.org>; Fri,  4 Jan 2019 12:53:05 +0000 (GMT)
-Received: (qmail 6206 invoked from network); 4 Jan 2019 12:53:05 -0000
+        Fri, 4 Jan 2019 07:53:17 -0500
+Received: from mail.blacknight.com (pemlinmail03.blacknight.ie [81.17.254.16])
+        by outbound-smtp11.blacknight.com (Postfix) with ESMTPS id 83E6E1C1C34
+        for <linux-kernel@vger.kernel.org>; Fri,  4 Jan 2019 12:53:15 +0000 (GMT)
+Received: (qmail 6693 invoked from network); 4 Jan 2019 12:53:15 -0000
 Received: from unknown (HELO stampy.163woodhaven.lan) (mgorman@techsingularity.net@[37.228.229.96])
-  by 81.17.254.9 with ESMTPA; 4 Jan 2019 12:53:05 -0000
+  by 81.17.254.9 with ESMTPA; 4 Jan 2019 12:53:15 -0000
 From:   Mel Gorman <mgorman@techsingularity.net>
 To:     Linux-MM <linux-mm@kvack.org>
 Cc:     David Rientjes <rientjes@google.com>,
@@ -34,9 +34,9 @@ Cc:     David Rientjes <rientjes@google.com>,
         kirill@shutemov.name, Andrew Morton <akpm@linux-foundation.org>,
         Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
         Mel Gorman <mgorman@techsingularity.net>
-Subject: [PATCH 16/25] mm, compaction: Check early for huge pages encountered by the migration scanner
-Date:   Fri,  4 Jan 2019 12:50:02 +0000
-Message-Id: <20190104125011.16071-17-mgorman@techsingularity.net>
+Subject: [PATCH 17/25] mm, compaction: Keep cached migration PFNs synced for unusable pageblocks
+Date:   Fri,  4 Jan 2019 12:50:03 +0000
+Message-Id: <20190104125011.16071-18-mgorman@techsingularity.net>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20190104125011.16071-1-mgorman@techsingularity.net>
 References: <20190104125011.16071-1-mgorman@techsingularity.net>
@@ -45,62 +45,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When scanning for sources or targets, PageCompound is checked for huge
-pages as they can be skipped quickly but it happens relatively late after
-a lot of setup and checking. This patch short-cuts the check to make it
-earlier. It might still change when the lock is acquired but this has
-less overhead overall. The free scanner advances but the migration scanner
-does not. Typically the free scanner encounters more movable blocks that
-change state over the lifetime of the system and also tends to scan more
-aggressively as it's actively filling its portion of the physical address
-space with data. This could change in the future but for the moment,
-this worked better in practice and incurred fewer scan restarts.
+Migrate has separate cached PFNs for ASYNC and SYNC* migration on the
+basis that some migrations will fail in ASYNC mode. However, if the cached
+PFNs match at the start of scanning and pageblocks are skipped due to
+having no isolation candidates, then the sync state does not matter.
+This patch keeps matching cached PFNs in sync until a pageblock with
+isolation candidates is found.
 
-The impact on latency and allocation success rates is marginal but the
-free scan rates are reduced by 32% and system CPU usage is reduced by
-2.6%. The 2-socket results are not materially different.
+The actual benefit is marginal given that the sync scanner following the
+async scanner will often skip a number of pageblocks but it's useless
+work. Any benefit depends heavily on whether the scanners restarted
+recently so overall the reduction in scan rates is a mere 2.8% which
+is borderline noise.
 
 Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
 ---
- mm/compaction.c | 16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
+ mm/compaction.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
 diff --git a/mm/compaction.c b/mm/compaction.c
-index 608d274f9880..921720f7a416 100644
+index 921720f7a416..be27e4fa1b40 100644
 --- a/mm/compaction.c
 +++ b/mm/compaction.c
-@@ -1071,6 +1071,9 @@ static bool suitable_migration_source(struct compact_control *cc,
- {
- 	int block_mt;
+@@ -1967,6 +1967,7 @@ static enum compact_result compact_zone(struct compact_control *cc)
+ 	unsigned long end_pfn = zone_end_pfn(cc->zone);
+ 	unsigned long last_migrated_pfn;
+ 	const bool sync = cc->mode != MIGRATE_ASYNC;
++	bool update_cached;
+ 	unsigned long a, b, c;
  
-+	if (pageblock_skip_persistent(page))
-+		return false;
+ 	cc->migratetype = gfpflags_to_migratetype(cc->gfp_mask);
+@@ -2019,6 +2020,17 @@ static enum compact_result compact_zone(struct compact_control *cc)
+ 
+ 	last_migrated_pfn = 0;
+ 
++	/*
++	 * Migrate has separate cached PFNs for ASYNC and SYNC* migration on
++	 * the basis that some migrations will fail in ASYNC mode. However,
++	 * if the cached PFNs match and pageblocks are skipped due to having
++	 * no isolation candidates, then the sync state does not matter.
++	 * Until a pageblock with isolation candidates is found, keep the
++	 * cached PFNs in sync to avoid revisiting the same blocks.
++	 */
++	update_cached = !sync &&
++		cc->zone->compact_cached_migrate_pfn[0] == cc->zone->compact_cached_migrate_pfn[1];
 +
- 	if ((cc->mode != MIGRATE_ASYNC) || !cc->direct_compaction)
- 		return true;
+ 	trace_mm_compaction_begin(start_pfn, cc->migrate_pfn,
+ 				cc->free_pfn, end_pfn, sync);
  
-@@ -1693,12 +1696,17 @@ static isolate_migrate_t isolate_migratepages(struct zone *zone,
- 			continue;
- 
- 		/*
--		 * For async compaction, also only scan in MOVABLE blocks.
--		 * Async compaction is optimistic to see if the minimum amount
--		 * of work satisfies the allocation.
-+		 * For async compaction, also only scan in MOVABLE blocks
-+		 * without huge pages. Async compaction is optimistic to see
-+		 * if the minimum amount of work satisfies the allocation.
-+		 * The cached PFN is updated as it's possible that all
-+		 * remaining blocks between source and target are suitable
-+		 * and the compaction scanners fail to meet.
- 		 */
--		if (!suitable_migration_source(cc, page))
-+		if (!suitable_migration_source(cc, page)) {
-+			update_cached_migrate(cc, block_end_pfn);
- 			continue;
-+		}
- 
- 		/* Perform the isolation */
- 		low_pfn = isolate_migratepages_block(cc, low_pfn,
+@@ -2050,6 +2062,11 @@ static enum compact_result compact_zone(struct compact_control *cc)
+ 			last_migrated_pfn = 0;
+ 			goto out;
+ 		case ISOLATE_NONE:
++			if (update_cached) {
++				cc->zone->compact_cached_migrate_pfn[1] =
++					cc->zone->compact_cached_migrate_pfn[0];
++			}
++
+ 			/*
+ 			 * We haven't isolated and migrated anything, but
+ 			 * there might still be unflushed migrations from
+@@ -2057,6 +2074,7 @@ static enum compact_result compact_zone(struct compact_control *cc)
+ 			 */
+ 			goto check_drain;
+ 		case ISOLATE_SUCCESS:
++			update_cached = false;
+ 			last_migrated_pfn = start_pfn;
+ 			;
+ 		}
 -- 
 2.16.4
 
