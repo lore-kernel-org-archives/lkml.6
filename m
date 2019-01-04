@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21016C43444
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 12:51:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3895C43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 12:51:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC73A208E3
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 12:51:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7BAB4208E3
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 12:51:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728143AbfADMvF (ORCPT
+        id S1728178AbfADMvP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 07:51:05 -0500
-Received: from outbound-smtp26.blacknight.com ([81.17.249.194]:53326 "EHLO
-        outbound-smtp26.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726282AbfADMvE (ORCPT
+        Fri, 4 Jan 2019 07:51:15 -0500
+Received: from outbound-smtp04.blacknight.com ([81.17.249.35]:35964 "EHLO
+        outbound-smtp04.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726494AbfADMvP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 07:51:04 -0500
+        Fri, 4 Jan 2019 07:51:15 -0500
 Received: from mail.blacknight.com (pemlinmail03.blacknight.ie [81.17.254.16])
-        by outbound-smtp26.blacknight.com (Postfix) with ESMTPS id 06C91B87D9
-        for <linux-kernel@vger.kernel.org>; Fri,  4 Jan 2019 12:51:03 +0000 (GMT)
-Received: (qmail 31287 invoked from network); 4 Jan 2019 12:51:02 -0000
+        by outbound-smtp04.blacknight.com (Postfix) with ESMTPS id 40DC7988BA
+        for <linux-kernel@vger.kernel.org>; Fri,  4 Jan 2019 12:51:13 +0000 (UTC)
+Received: (qmail 31909 invoked from network); 4 Jan 2019 12:51:13 -0000
 Received: from unknown (HELO stampy.163woodhaven.lan) (mgorman@techsingularity.net@[37.228.229.96])
-  by 81.17.254.9 with ESMTPA; 4 Jan 2019 12:51:02 -0000
+  by 81.17.254.9 with ESMTPA; 4 Jan 2019 12:51:13 -0000
 From:   Mel Gorman <mgorman@techsingularity.net>
 To:     Linux-MM <linux-mm@kvack.org>
 Cc:     David Rientjes <rientjes@google.com>,
@@ -34,9 +34,9 @@ Cc:     David Rientjes <rientjes@google.com>,
         kirill@shutemov.name, Andrew Morton <akpm@linux-foundation.org>,
         Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
         Mel Gorman <mgorman@techsingularity.net>
-Subject: [PATCH 04/25] mm, compaction: Remove unnecessary zone parameter in some instances
-Date:   Fri,  4 Jan 2019 12:49:50 +0000
-Message-Id: <20190104125011.16071-5-mgorman@techsingularity.net>
+Subject: [PATCH 05/25] mm, compaction: Rename map_pages to split_map_pages
+Date:   Fri,  4 Jan 2019 12:49:51 +0000
+Message-Id: <20190104125011.16071-6-mgorman@techsingularity.net>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20190104125011.16071-1-mgorman@techsingularity.net>
 References: <20190104125011.16071-1-mgorman@techsingularity.net>
@@ -45,193 +45,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A zone parameter is passed into a number of top-level compaction functions
-despite the fact that it's already in cache_control. This is harmless but
-it did need an audit to check if zone actually ever changes meaningfully.
-This patches removes the parameter in a number of top-level functions. The
-change could be much deeper but this was enough to briefly clarify the
-flow.
-
-No functional change.
+It's non-obvious that high-order free pages are split into order-0 pages
+from the function name. Fix it.
 
 Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
 ---
- mm/compaction.c | 54 ++++++++++++++++++++++++++----------------------------
- 1 file changed, 26 insertions(+), 28 deletions(-)
+ mm/compaction.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/mm/compaction.c b/mm/compaction.c
-index fb4d9f52ed56..7acb43f07303 100644
+index 7acb43f07303..3afa4e9188b6 100644
 --- a/mm/compaction.c
 +++ b/mm/compaction.c
-@@ -1300,8 +1300,7 @@ static inline bool is_via_compact_memory(int order)
- 	return order == -1;
+@@ -66,7 +66,7 @@ static unsigned long release_freepages(struct list_head *freelist)
+ 	return high_pfn;
  }
  
--static enum compact_result __compact_finished(struct zone *zone,
--						struct compact_control *cc)
-+static enum compact_result __compact_finished(struct compact_control *cc)
+-static void map_pages(struct list_head *list)
++static void split_map_pages(struct list_head *list)
  {
- 	unsigned int order;
- 	const int migratetype = cc->migratetype;
-@@ -1312,7 +1311,7 @@ static enum compact_result __compact_finished(struct zone *zone,
- 	/* Compaction run completes if the migrate and free scanner meet */
- 	if (compact_scanners_met(cc)) {
- 		/* Let the next compaction start anew. */
--		reset_cached_positions(zone);
-+		reset_cached_positions(cc->zone);
- 
- 		/*
- 		 * Mark that the PG_migrate_skip information should be cleared
-@@ -1321,7 +1320,7 @@ static enum compact_result __compact_finished(struct zone *zone,
- 		 * based on an allocation request.
- 		 */
- 		if (cc->direct_compaction)
--			zone->compact_blockskip_flush = true;
-+			cc->zone->compact_blockskip_flush = true;
- 
- 		if (cc->whole_zone)
- 			return COMPACT_COMPLETE;
-@@ -1345,7 +1344,7 @@ static enum compact_result __compact_finished(struct zone *zone,
- 
- 	/* Direct compactor: Is a suitable page free? */
- 	for (order = cc->order; order < MAX_ORDER; order++) {
--		struct free_area *area = &zone->free_area[order];
-+		struct free_area *area = &cc->zone->free_area[order];
- 		bool can_steal;
- 
- 		/* Job done if page is free of the right migratetype */
-@@ -1391,13 +1390,12 @@ static enum compact_result __compact_finished(struct zone *zone,
- 	return COMPACT_NO_SUITABLE_PAGE;
- }
- 
--static enum compact_result compact_finished(struct zone *zone,
--			struct compact_control *cc)
-+static enum compact_result compact_finished(struct compact_control *cc)
- {
- 	int ret;
- 
--	ret = __compact_finished(zone, cc);
--	trace_mm_compaction_finished(zone, cc->order, ret);
-+	ret = __compact_finished(cc);
-+	trace_mm_compaction_finished(cc->zone, cc->order, ret);
- 	if (ret == COMPACT_NO_SUITABLE_PAGE)
- 		ret = COMPACT_CONTINUE;
- 
-@@ -1524,16 +1522,16 @@ bool compaction_zonelist_suitable(struct alloc_context *ac, int order,
- 	return false;
- }
- 
--static enum compact_result compact_zone(struct zone *zone, struct compact_control *cc)
-+static enum compact_result compact_zone(struct compact_control *cc)
- {
- 	enum compact_result ret;
--	unsigned long start_pfn = zone->zone_start_pfn;
--	unsigned long end_pfn = zone_end_pfn(zone);
-+	unsigned long start_pfn = cc->zone->zone_start_pfn;
-+	unsigned long end_pfn = zone_end_pfn(cc->zone);
- 	unsigned long last_migrated_pfn;
- 	const bool sync = cc->mode != MIGRATE_ASYNC;
- 
- 	cc->migratetype = gfpflags_to_migratetype(cc->gfp_mask);
--	ret = compaction_suitable(zone, cc->order, cc->alloc_flags,
-+	ret = compaction_suitable(cc->zone, cc->order, cc->alloc_flags,
- 							cc->classzone_idx);
- 	/* Compaction is likely to fail */
- 	if (ret == COMPACT_SUCCESS || ret == COMPACT_SKIPPED)
-@@ -1546,8 +1544,8 @@ static enum compact_result compact_zone(struct zone *zone, struct compact_contro
- 	 * Clear pageblock skip if there were failures recently and compaction
- 	 * is about to be retried after being deferred.
- 	 */
--	if (compaction_restarting(zone, cc->order))
--		__reset_isolation_suitable(zone);
-+	if (compaction_restarting(cc->zone, cc->order))
-+		__reset_isolation_suitable(cc->zone);
- 
- 	/*
- 	 * Setup to move all movable pages to the end of the zone. Used cached
-@@ -1559,16 +1557,16 @@ static enum compact_result compact_zone(struct zone *zone, struct compact_contro
- 		cc->migrate_pfn = start_pfn;
- 		cc->free_pfn = pageblock_start_pfn(end_pfn - 1);
- 	} else {
--		cc->migrate_pfn = zone->compact_cached_migrate_pfn[sync];
--		cc->free_pfn = zone->compact_cached_free_pfn;
-+		cc->migrate_pfn = cc->zone->compact_cached_migrate_pfn[sync];
-+		cc->free_pfn = cc->zone->compact_cached_free_pfn;
- 		if (cc->free_pfn < start_pfn || cc->free_pfn >= end_pfn) {
- 			cc->free_pfn = pageblock_start_pfn(end_pfn - 1);
--			zone->compact_cached_free_pfn = cc->free_pfn;
-+			cc->zone->compact_cached_free_pfn = cc->free_pfn;
- 		}
- 		if (cc->migrate_pfn < start_pfn || cc->migrate_pfn >= end_pfn) {
- 			cc->migrate_pfn = start_pfn;
--			zone->compact_cached_migrate_pfn[0] = cc->migrate_pfn;
--			zone->compact_cached_migrate_pfn[1] = cc->migrate_pfn;
-+			cc->zone->compact_cached_migrate_pfn[0] = cc->migrate_pfn;
-+			cc->zone->compact_cached_migrate_pfn[1] = cc->migrate_pfn;
- 		}
- 
- 		if (cc->migrate_pfn == start_pfn)
-@@ -1582,11 +1580,11 @@ static enum compact_result compact_zone(struct zone *zone, struct compact_contro
- 
- 	migrate_prep_local();
- 
--	while ((ret = compact_finished(zone, cc)) == COMPACT_CONTINUE) {
-+	while ((ret = compact_finished(cc)) == COMPACT_CONTINUE) {
- 		int err;
- 		unsigned long start_pfn = cc->migrate_pfn;
- 
--		switch (isolate_migratepages(zone, cc)) {
-+		switch (isolate_migratepages(cc->zone, cc)) {
- 		case ISOLATE_ABORT:
- 			ret = COMPACT_CONTENDED;
- 			putback_movable_pages(&cc->migratepages);
-@@ -1653,7 +1651,7 @@ static enum compact_result compact_zone(struct zone *zone, struct compact_contro
- 			if (last_migrated_pfn < current_block_start) {
- 				cpu = get_cpu();
- 				lru_add_drain_cpu(cpu);
--				drain_local_pages(zone);
-+				drain_local_pages(cc->zone);
- 				put_cpu();
- 				/* No more flushing until we migrate again */
- 				last_migrated_pfn = 0;
-@@ -1678,8 +1676,8 @@ static enum compact_result compact_zone(struct zone *zone, struct compact_contro
- 		 * Only go back, not forward. The cached pfn might have been
- 		 * already reset to zone end in compact_finished()
- 		 */
--		if (free_pfn > zone->compact_cached_free_pfn)
--			zone->compact_cached_free_pfn = free_pfn;
-+		if (free_pfn > cc->zone->compact_cached_free_pfn)
-+			cc->zone->compact_cached_free_pfn = free_pfn;
+ 	unsigned int i, order, nr_pages;
+ 	struct page *page, *next;
+@@ -644,7 +644,7 @@ isolate_freepages_range(struct compact_control *cc,
  	}
  
- 	count_compact_events(COMPACTMIGRATE_SCANNED, cc->total_migrate_scanned);
-@@ -1716,7 +1714,7 @@ static enum compact_result compact_zone_order(struct zone *zone, int order,
- 	INIT_LIST_HEAD(&cc.freepages);
- 	INIT_LIST_HEAD(&cc.migratepages);
+ 	/* __isolate_free_page() does not map the pages */
+-	map_pages(&freelist);
++	split_map_pages(&freelist);
  
--	ret = compact_zone(zone, &cc);
-+	ret = compact_zone(&cc);
+ 	if (pfn < end_pfn) {
+ 		/* Loop terminated early, cleanup. */
+@@ -1141,7 +1141,7 @@ static void isolate_freepages(struct compact_control *cc)
+ 	}
  
- 	VM_BUG_ON(!list_empty(&cc.freepages));
- 	VM_BUG_ON(!list_empty(&cc.migratepages));
-@@ -1834,7 +1832,7 @@ static void compact_node(int nid)
- 		INIT_LIST_HEAD(&cc.freepages);
- 		INIT_LIST_HEAD(&cc.migratepages);
+ 	/* __isolate_free_page() does not map the pages */
+-	map_pages(freelist);
++	split_map_pages(freelist);
  
--		compact_zone(zone, &cc);
-+		compact_zone(&cc);
- 
- 		VM_BUG_ON(!list_empty(&cc.freepages));
- 		VM_BUG_ON(!list_empty(&cc.migratepages));
-@@ -1976,7 +1974,7 @@ static void kcompactd_do_work(pg_data_t *pgdat)
- 
- 		if (kthread_should_stop())
- 			return;
--		status = compact_zone(zone, &cc);
-+		status = compact_zone(&cc);
- 
- 		if (status == COMPACT_SUCCESS) {
- 			compaction_defer_reset(zone, cc.order, false);
+ 	/*
+ 	 * Record where the free scanner will restart next time. Either we
 -- 
 2.16.4
 
