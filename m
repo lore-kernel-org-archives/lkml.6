@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2173C43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 13:47:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B1A7C43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 13:47:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 899D02070C
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 13:47:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1425E21872
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 13:47:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728324AbfADNrq (ORCPT
+        id S1728363AbfADNrt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 08:47:46 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:59342 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726380AbfADNrq (ORCPT
+        Fri, 4 Jan 2019 08:47:49 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:47962 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725939AbfADNrq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 4 Jan 2019 08:47:46 -0500
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x04DfW9t004402;
-        Fri, 4 Jan 2019 14:47:32 +0100
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x04DegDK021634;
+        Fri, 4 Jan 2019 14:47:34 +0100
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2pp0pm8m79-1
+        by mx07-00178001.pphosted.com with ESMTP id 2psx6mtsf0-1
         (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Fri, 04 Jan 2019 14:47:32 +0100
+        Fri, 04 Jan 2019 14:47:34 +0100
 Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id E445A34;
-        Fri,  4 Jan 2019 13:47:31 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas22.st.com [10.75.90.92])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id C3BE9530D;
-        Fri,  4 Jan 2019 13:47:31 +0000 (GMT)
-Received: from SAFEX1HUBCAS23.st.com (10.75.90.47) by Safex1hubcas22.st.com
- (10.75.90.92) with Microsoft SMTP Server (TLS) id 14.3.361.1; Fri, 4 Jan 2019
- 14:47:31 +0100
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 3531438;
+        Fri,  4 Jan 2019 13:47:33 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas21.st.com [10.75.90.44])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 0F600530D;
+        Fri,  4 Jan 2019 13:47:33 +0000 (GMT)
+Received: from SAFEX1HUBCAS23.st.com (10.75.90.47) by SAFEX1HUBCAS21.st.com
+ (10.75.90.44) with Microsoft SMTP Server (TLS) id 14.3.361.1; Fri, 4 Jan 2019
+ 14:47:32 +0100
 Received: from localhost (10.129.4.161) by webmail-ga.st.com (10.75.90.48)
- with Microsoft SMTP Server (TLS) id 14.3.361.1; Fri, 4 Jan 2019 14:47:31
+ with Microsoft SMTP Server (TLS) id 14.3.361.1; Fri, 4 Jan 2019 14:47:32
  +0100
 From:   Fabien Dessenne <fabien.dessenne@st.com>
 To:     Jassi Brar <jassisinghbrar@gmail.com>,
@@ -49,10 +49,12 @@ To:     Jassi Brar <jassisinghbrar@gmail.com>,
 CC:     Benjamin Gaignard <benjamin.gaignard@st.com>,
         Arnaud Pouliquen <arnaud.pouliquen@st.com>,
         Ludovic Barre <ludovic.barre@st.com>
-Subject: [PATCH 1/2] mailbox: mailbox-test: fix debugfs in multi-instances
-Date:   Fri, 4 Jan 2019 14:47:15 +0100
-Message-ID: <1546609637-6411-1-git-send-email-fabien.dessenne@st.com>
+Subject: [PATCH 2/2] mailbox: mailbox-test: fix null pointer if no mmio
+Date:   Fri, 4 Jan 2019 14:47:16 +0100
+Message-ID: <1546609637-6411-2-git-send-email-fabien.dessenne@st.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1546609637-6411-1-git-send-email-fabien.dessenne@st.com>
+References: <1546609637-6411-1-git-send-email-fabien.dessenne@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.129.4.161]
@@ -63,65 +65,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Create one debug entry directory per instance to support the multi
-instantiation.
+Fix null pointer issue if resource_size is called with no ioresource.
 
 Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
 Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
 ---
- drivers/mailbox/mailbox-test.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/mailbox/mailbox-test.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/mailbox/mailbox-test.c b/drivers/mailbox/mailbox-test.c
-index 58bfafc..4e2bfba 100644
+index 4e2bfba..4e4ac4b 100644
 --- a/drivers/mailbox/mailbox-test.c
 +++ b/drivers/mailbox/mailbox-test.c
-@@ -31,7 +31,6 @@
- 				 (MBOX_MAX_MSG_LEN / MBOX_BYTES_PER_LINE))
+@@ -363,22 +363,24 @@ static int mbox_test_probe(struct platform_device *pdev)
  
- static bool mbox_data_ready;
--static struct dentry *root_debugfs_dir;
+ 	/* It's okay for MMIO to be NULL */
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	size = resource_size(res);
+ 	tdev->tx_mmio = devm_ioremap_resource(&pdev->dev, res);
+-	if (PTR_ERR(tdev->tx_mmio) == -EBUSY)
++	if (PTR_ERR(tdev->tx_mmio) == -EBUSY) {
+ 		/* if reserved area in SRAM, try just ioremap */
++		size = resource_size(res);
+ 		tdev->tx_mmio = devm_ioremap(&pdev->dev, res->start, size);
+-	else if (IS_ERR(tdev->tx_mmio))
++	} else if (IS_ERR(tdev->tx_mmio)) {
+ 		tdev->tx_mmio = NULL;
++	}
  
- struct mbox_test_device {
- 	struct device		*dev;
-@@ -45,6 +44,7 @@ struct mbox_test_device {
- 	spinlock_t		lock;
- 	wait_queue_head_t	waitq;
- 	struct fasync_struct	*async_queue;
-+	struct dentry		*root_debugfs_dir;
- };
+ 	/* If specified, second reg entry is Rx MMIO */
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+-	size = resource_size(res);
+ 	tdev->rx_mmio = devm_ioremap_resource(&pdev->dev, res);
+-	if (PTR_ERR(tdev->rx_mmio) == -EBUSY)
++	if (PTR_ERR(tdev->rx_mmio) == -EBUSY) {
++		size = resource_size(res);
+ 		tdev->rx_mmio = devm_ioremap(&pdev->dev, res->start, size);
+-	else if (IS_ERR(tdev->rx_mmio))
++	} else if (IS_ERR(tdev->rx_mmio)) {
+ 		tdev->rx_mmio = tdev->tx_mmio;
++	}
  
- static ssize_t mbox_test_signal_write(struct file *filp,
-@@ -262,16 +262,16 @@ static int mbox_test_add_debugfs(struct platform_device *pdev,
- 	if (!debugfs_initialized())
- 		return 0;
- 
--	root_debugfs_dir = debugfs_create_dir("mailbox", NULL);
--	if (!root_debugfs_dir) {
-+	tdev->root_debugfs_dir = debugfs_create_dir(dev_name(&pdev->dev), NULL);
-+	if (!tdev->root_debugfs_dir) {
- 		dev_err(&pdev->dev, "Failed to create Mailbox debugfs\n");
- 		return -EINVAL;
- 	}
- 
--	debugfs_create_file("message", 0600, root_debugfs_dir,
-+	debugfs_create_file("message", 0600, tdev->root_debugfs_dir,
- 			    tdev, &mbox_test_message_ops);
- 
--	debugfs_create_file("signal", 0200, root_debugfs_dir,
-+	debugfs_create_file("signal", 0200, tdev->root_debugfs_dir,
- 			    tdev, &mbox_test_signal_ops);
- 
- 	return 0;
-@@ -416,7 +416,7 @@ static int mbox_test_remove(struct platform_device *pdev)
- {
- 	struct mbox_test_device *tdev = platform_get_drvdata(pdev);
- 
--	debugfs_remove_recursive(root_debugfs_dir);
-+	debugfs_remove_recursive(tdev->root_debugfs_dir);
- 
- 	if (tdev->tx_channel)
- 		mbox_free_channel(tdev->tx_channel);
+ 	tdev->tx_channel = mbox_test_request_channel(pdev, "tx");
+ 	tdev->rx_channel = mbox_test_request_channel(pdev, "rx");
 -- 
 2.7.4
 
