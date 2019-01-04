@@ -2,71 +2,91 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74FE2C43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 08:45:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BDB9C43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 08:45:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C35121872
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 08:45:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546591515;
-	bh=VHMwOTubUxcWCk7XL3rnch1R2SGmgfqQVR6tbzSbm9g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=XnNsoMWZOuC13raZA1AVTzL5zcHjsCzWuqVfAuoO1jJu2gnpUBK+BYqxz7FDPnOel
-	 FCKqKHq723gh+rN3Sz/LNSL61I5iIbe4XMQkXxLjrzcgeP2ib8oRrd94quWzyIrVs4
-	 JY5L5SWjpujh9iARO3/poQYyBpvCWjBXQkmvyusc=
+	by mail.kernel.org (Postfix) with ESMTP id 5230320665
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 08:45:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726653AbfADIpO (ORCPT
+        id S1726690AbfADIpe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 03:45:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44266 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725919AbfADIpO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 03:45:14 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0D80820665;
-        Fri,  4 Jan 2019 08:45:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546591513;
-        bh=VHMwOTubUxcWCk7XL3rnch1R2SGmgfqQVR6tbzSbm9g=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=A1BJrpgq5jJb+yndMN+hE+Q+y4mAOpycrQWCkCFh9wmdDAArcESRy57lCAok42rd/
-         DKUZujXH4X2L/3Av+GRWYEXZ43Ut49+qowQhyXRPw4ZMZ+tcvibvRNDhCwyipz/e2g
-         jNzGIFRelqSZm0ThqJIqKPJ6UbppW1Te7R2Ltob0=
-Date:   Fri, 4 Jan 2019 09:45:11 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Ryan Case <ryandcase@chromium.org>
-Cc:     Jiri Slaby <jslaby@suse.com>, Evan Green <evgreen@chromium.org>,
-        Doug Anderson <dianders@chromium.org>,
-        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-        Stephen Boyd <swboyd@chromium.org>
-Subject: Re: [PATCH 4/4] tty: serial: qcom_geni_serial: Use u32 for register
- variables
-Message-ID: <20190104084511.GA17997@kroah.com>
-References: <20190102213636.40866-1-ryandcase@chromium.org>
- <20190102213636.40866-5-ryandcase@chromium.org>
+        Fri, 4 Jan 2019 03:45:34 -0500
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:33322 "EHLO
+        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725913AbfADIpd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 03:45:33 -0500
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by kvm5.telegraphics.com.au (Postfix) with ESMTP id CADF728E5E;
+        Fri,  4 Jan 2019 03:45:27 -0500 (EST)
+Date:   Fri, 4 Jan 2019 19:45:58 +1100 (AEDT)
+From:   Finn Thain <fthain@telegraphics.com.au>
+To:     Arnd Bergmann <arnd@arndb.de>
+cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Subject: Re: [PATCH v8 24/25] powerpc: Adopt nvram module for PPC64
+In-Reply-To: <CAK8P3a3OD9ou=y+PaZ03v-ivW4A3fwwzA+aL+CoJDd_L2vTMLA@mail.gmail.com>
+Message-ID: <alpine.LNX.2.21.1901041850170.9@nippy.intranet>
+References: <cover.1545784679.git.fthain@telegraphics.com.au> <2fe2b8e6395aeacfafcbde590a50922d4e632189.1545784679.git.fthain@telegraphics.com.au> <CAK8P3a2p91XJfJuSCZqRLRgC-aP3LR1tMK2DDxTiSuD8_FOg8Q@mail.gmail.com> <alpine.LNX.2.21.1812301401220.215@nippy.intranet>
+ <CAK8P3a3OD9ou=y+PaZ03v-ivW4A3fwwzA+aL+CoJDd_L2vTMLA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190102213636.40866-5-ryandcase@chromium.org>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 02, 2019 at 01:36:36PM -0800, Ryan Case wrote:
-> Signed-off-by: Ryan Case <ryandcase@chromium.org>
-> ---
+On Mon, 31 Dec 2018, Arnd Bergmann wrote:
+
+> On Sun, Dec 30, 2018 at 4:29 AM Finn Thain <fthain@telegraphics.com.au> wrote:
+> >
+> > On Sat, 29 Dec 2018, Arnd Bergmann wrote:
+> >
+> > > With the current method, it does seem odd to have a single 
+> > > per-architecture instance of the exported structure containing 
+> > > function pointers. This doesn't give us the flexibility of having 
+> > > multiple copies in the kernel the way that ppc_md does, but it adds 
+> > > overhead compared to simply exporting the functions directly.
+> > >
+> >
+> > You're right, there is overhead here.
+> >
+> > With a bit of auditing, wrappers like the one you quoted (which merely 
+> > checks whether or not a ppc_md method is implemented) could surely be 
+> > avoided.
+> >
+> > The arch_nvram_ops methods are supposed to optional (that is, they are 
+> > allowed to be NULL).
+> >
+> > We could call exactly the same function pointers though either ppc_md 
+> > or arch_nvram_ops. That would avoid the double indirection.
 > 
->  drivers/tty/serial/qcom_geni_serial.c | 22 +++++++++++-----------
->  1 file changed, 11 insertions(+), 11 deletions(-)
+> I think you can have a 'const' structure in the __ro_after_init section, 
+> so without changing anything else, powerpc could just copy the function 
+> pointers from ppc_md into the arch_nvram_ops at early init time, which 
+> should ideally simplify your implementation as well.
+> 
 
-I can not take patches without any changelog text, sorry.
+Does this require removing the 'const' from the powerpc arch_nvram_ops 
+definition? That would mean removing the 'const' from the declaration in 
+nvram.h, which means removing 'const' for every other instance of that 
+struct too.
 
-greg k-h
+That's what happened when I tried removing the ppc_md.nvram_* methods 
+entirely and assigning the same function pointers to arch_nvram_ops 
+methods instead. Apparently all instances of arch_nvram_ops have to be 
+const or none of them. Otherwise gcc says, "error: conflicting type 
+qualifiers for 'arch_nvram_ops'".
+
+-- 
+
+>         Arnd
+> 
