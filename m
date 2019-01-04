@@ -2,71 +2,158 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5053DC43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 15:49:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2BF5C43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 15:51:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B6CB218CD
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 15:49:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546616966;
-	bh=vTbiuBlWy8oEFEO3CSJCQZaK/1TBaTw/SDjVJsn2SSI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=igE3eM4pJnrCPvQLvB8SAovuQhRZCZZi5x4RsN5WJ/I0aIH/F708/oqgBeHToOubm
-	 uDBJIjHG1MH0sxPDyOAmnUu8bsGnx8u2xl7CbXN99VAqTBjylBxMilFXJwfBACcVxW
-	 e8fyl2+BJZsWAL86oNBUsGtHaJbFi9UwYs1zg90I=
+	by mail.kernel.org (Postfix) with ESMTP id 9179221874
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 15:51:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728089AbfADPtZ (ORCPT
+        id S1728129AbfADPvF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 10:49:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37716 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726232AbfADPtY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 10:49:24 -0500
-Received: from localhost (unknown [171.76.109.220])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 50E7721874;
-        Fri,  4 Jan 2019 15:49:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546616964;
-        bh=vTbiuBlWy8oEFEO3CSJCQZaK/1TBaTw/SDjVJsn2SSI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=sytG6HuJuZjPjxmXOFAk3sqcH7v9rxW11+Jm1bSAirS3qR1nHnYJK1wRbloeI9IKi
-         pDwg8UiLTF/JFYBAOxcdCA4GBMjnekM0re84P7xBrvuFVAtk6WzIJSKByh5xLnNehj
-         oBpAIRsyejjIMmK673r3dm1p5EhQy/pq7WQfxpEQ=
-Date:   Fri, 4 Jan 2019 21:17:46 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        dmaengine@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [RESEND PATCH v1] dmaengine: stm32-dma: check FIFO error
- interrupt enable
-Message-ID: <20190104154746.GO13372@vkoul-mobl.Dlink>
-References: <1546510649-16744-1-git-send-email-pierre-yves.mordret@st.com>
+        Fri, 4 Jan 2019 10:51:05 -0500
+Received: from mail-it1-f198.google.com ([209.85.166.198]:38635 "EHLO
+        mail-it1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726232AbfADPvF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 10:51:05 -0500
+Received: by mail-it1-f198.google.com with SMTP id m128so1400878itd.3
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Jan 2019 07:51:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to
+         :content-transfer-encoding;
+        bh=E8nQP2f7QQS8SBbneumeuM2VpE+g2wm0a76yGGCQgMo=;
+        b=YIWfbWIEiT0AaBb9cCIfuNv+08x2sQ9ecc23uIRwPCG9fnZmzse9ZaDpADnP3MWrEA
+         jyDBUwwT3pvP030+iFVdZdq4HSUKFyCXWsKO6FDDeofS3f2ynrjBYfiJWz9WUJRMbcqx
+         Ij8RY/QQQDYR9qYKYNaZ8dUhqmGl2bkxzGfZYXq+yatTVKSepuGu3rveTAnCaRZo9som
+         hOogloxrA53w+yDmLQRjZAeYmcDFjTTtPuq1fyaYYM0PhlLOHkG4NCKdx9c2hUuQTwT5
+         OTsY0NynbUajrsVAt2Nyss1Phw/11B3N0zyeg78itQK8157NlDTroy82kBlEtKRwt/kx
+         mJZg==
+X-Gm-Message-State: AJcUukc8Nh3AOxAVqsRUxI7E3HWFdPq7J9Qap9HV2yD+zN8wdWoZZX0R
+        AIVgUrE9WF54g9Fv0iWlhwmks5hr4kR1QuyZ1IfOMLbv4In7
+X-Google-Smtp-Source: ALg8bN4dmYNexQX/BLUlwMlWkcithT0BeQ5GYeHi5PNHG7FwEt/MlOdgV7dAvDGHzFuJWUYiFiKnRQukcmEFxaOvnXlT5Hf+zgXt
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1546510649-16744-1-git-send-email-pierre-yves.mordret@st.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Received: by 2002:a5d:9b81:: with SMTP id r1mr4974821iom.38.1546617063695;
+ Fri, 04 Jan 2019 07:51:03 -0800 (PST)
+Date:   Fri, 04 Jan 2019 07:51:03 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000af6ec7057ea3d8df@google.com>
+Subject: KASAN: stack-out-of-bounds in update_curr
+From:   syzbot <syzbot+d959075ee873314ffb9c@syzkaller.appspotmail.com>
+To:     linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        tglx@linutronix.de
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03-01-19, 11:17, Pierre-Yves MORDRET wrote:
-> For avoiding false FIFO detection, check FIFO Error interrupt is
-> enabled prior raising any errors.
-> This will prevent having spurious FIFO error where it shouldn't.
-
-Applied, thanks
-
--- 
-~Vinod
+SGVsbG8sDQoNCnN5emJvdCBmb3VuZCB0aGUgZm9sbG93aW5nIGNyYXNoIG9uOg0KDQpIRUFEIGNv
+bW1pdDogICAgNjQ1ZmYxZThlNzA0IE1lcmdlIGJyYW5jaCAnZm9yLWxpbnVzJyBvZiBnaXQ6Ly9n
+aXQua2VybmVsLi4uDQpnaXQgdHJlZTogICAgICAgdXBzdHJlYW0NCmNvbnNvbGUgb3V0cHV0OiBo
+dHRwczovL3N5emthbGxlci5hcHBzcG90LmNvbS94L2xvZy50eHQ/eD0xMGI4YzU5YjQwMDAwMA0K
+a2VybmVsIGNvbmZpZzogIGh0dHBzOi8vc3l6a2FsbGVyLmFwcHNwb3QuY29tL3gvLmNvbmZpZz94
+PTIwMjcxZTE0YmMxYzg3ZjANCmRhc2hib2FyZCBsaW5rOiBodHRwczovL3N5emthbGxlci5hcHBz
+cG90LmNvbS9idWc/ZXh0aWQ9ZDk1OTA3NWVlODczMzE0ZmZiOWMNCmNvbXBpbGVyOiAgICAgICBn
+Y2MgKEdDQykgOS4wLjAgMjAxODEyMzEgKGV4cGVyaW1lbnRhbCkNCnN5eiByZXBybzogICAgICBo
+dHRwczovL3N5emthbGxlci5hcHBzcG90LmNvbS94L3JlcHJvLnN5ej94PTE1YjMyNDMwYzAwMDAw
+DQoNCklNUE9SVEFOVDogaWYgeW91IGZpeCB0aGUgYnVnLCBwbGVhc2UgYWRkIHRoZSBmb2xsb3dp
+bmcgdGFnIHRvIHRoZSBjb21taXQ6DQpSZXBvcnRlZC1ieTogc3l6Ym90K2Q5NTkwNzVlZTg3MzMx
+NGZmYjljQHN5emthbGxlci5hcHBzcG90bWFpbC5jb20NCg0KSVB2NjogQUREUkNPTkYoTkVUREVW
+X1VQKTogdnhjYW4xOiBsaW5rIGlzIG5vdCByZWFkeQ0KODAyMXE6IGFkZGluZyBWTEFOIDAgdG8g
+SFcgZmlsdGVyIG9uIGRldmljZSBiYXRhZHYwDQo9PT09PT09PT09PT09PT09PT09PT09PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0NCmthc2FuOiBDT05GSUdfS0FT
+QU5fSU5MSU5FIGVuYWJsZWQNCmthc2FuOiBHUEYgY291bGQgYmUgY2F1c2VkIGJ5IE5VTEwtcHRy
+IGRlcmVmIG9yIHVzZXIgbWVtb3J5IGFjY2Vzcw0KQlVHOiBLQVNBTjogc3RhY2stb3V0LW9mLWJv
+dW5kcyBpbiBjYWxjX2RlbHRhX2ZhaXIga2VybmVsL3NjaGVkL2ZhaXIuYzo2MjkgIA0KW2lubGlu
+ZV0NCkJVRzogS0FTQU46IHN0YWNrLW91dC1vZi1ib3VuZHMgaW4gdXBkYXRlX2N1cnIrMHg5OWQv
+MHhiYzAgIA0Ka2VybmVsL3NjaGVkL2ZhaXIuYzo4MjMNCmdlbmVyYWwgcHJvdGVjdGlvbiBmYXVs
+dDogMDAwMCBbIzFdIFBSRUVNUFQgU01QIEtBU0FODQpSZWFkIG9mIHNpemUgOCBhdCBhZGRyIGZm
+ZmY4ODgwYTk0YmU0YzAgYnkgdGFzayBzeXotZXhlY3V0b3IyLzgyNjQNCkNQVTogMSBQSUQ6IC0y
+MDE1MzMyNzI4IENvbW06IGUPIE5vdCB0YWludGVkIDQuMjAuMCsgIzcNCg0KSGFyZHdhcmUgbmFt
+ZTogR29vZ2xlIEdvb2dsZSBDb21wdXRlIEVuZ2luZS9Hb29nbGUgQ29tcHV0ZSBFbmdpbmUsIEJJ
+T1MgIA0KR29vZ2xlIDAxLzAxLzIwMTENCkNQVTogMCBQSUQ6IDgyNjQgQ29tbTogc3l6LWV4ZWN1
+dG9yMiBOb3QgdGFpbnRlZCA0LjIwLjArICM3DQpSSVA6IDAwMTA6bG9va3VwX29iamVjdCBsaWIv
+ZGVidWdvYmplY3RzLmM6MTU2IFtpbmxpbmVdDQpSSVA6IDAwMTA6ZGVidWdfb2JqZWN0X2RlYWN0
+aXZhdGUgbGliL2RlYnVnb2JqZWN0cy5jOjU0MiBbaW5saW5lXQ0KUklQOiAwMDEwOmRlYnVnX29i
+amVjdF9kZWFjdGl2YXRlKzB4MTZjLzB4NGIwIGxpYi9kZWJ1Z29iamVjdHMuYzo1MjkNCkhhcmR3
+YXJlIG5hbWU6IEdvb2dsZSBHb29nbGUgQ29tcHV0ZSBFbmdpbmUvR29vZ2xlIENvbXB1dGUgRW5n
+aW5lLCBCSU9TICANCkdvb2dsZSAwMS8wMS8yMDExDQpDb2RlOiBjMSBlYSAwMyA0MiA4MCAzYyAy
+YSAwMCAwZiA4NSA0OSAwMiAwMCAwMCA0ZCA4YiAyNCAyNCA0ZCA4NSBlNCAwZiA4NCAgDQpkMSAw
+MCAwMCAwMCA0OSA4ZCA3YyAyNCAxOCA4MyBjMyAwMSA0OCA4OSBmYSA0OCBjMSBlYSAwMyA8NDI+
+IDgwIDNjIDJhIDAwICANCjBmIDg1IGZhIDAxIDAwIDAwIDQ5IDNiIDRjIDI0IDE4IDc1IGMwIDQ5
+IDhkIDdjIDI0DQpDYWxsIFRyYWNlOg0KUlNQOiAwMDE4OmZmZmY4ODgwYWU3MDdiODAgRUZMQUdT
+OiAwMDAxMDAwMg0KICBfX2R1bXBfc3RhY2sgbGliL2R1bXBfc3RhY2suYzo3NyBbaW5saW5lXQ0K
+ICBkdW1wX3N0YWNrKzB4MWRiLzB4MmQwIGxpYi9kdW1wX3N0YWNrLmM6MTEzDQpSQVg6IDFmZmZm
+ZmZmZjE2ZDU2NzQgUkJYOiAwMDAwMDAwMDAwMDAwMDAzIFJDWDogZmZmZjg4ODBhZTcyNjYyMA0K
+UkRYOiAwMDAwMDAwMDAwMDAwMDBiIFJTSTogMDAwMDAwMDAwMDAwMDAwNCBSREk6IDAwMDAwMDAw
+MDAwMDAwNTgNClJCUDogZmZmZjg4ODBhZTcwN2M3MCBSMDg6IDFmZmZmMTEwMTVjZTBmNWMgUjA5
+OiBmZmZmZmZmZjg5OWFkMTYwDQpSMTA6IDAwMDAwMDAwMDAwMDAwODYgUjExOiAwMDAwMDAwMDAw
+MDAwMDAzIFIxMjogMDAwMDAwMDAwMDAwMDA0MA0KUjEzOiBkZmZmZmMwMDAwMDAwMDAwIFIxNDog
+MWZmZmYxMTAxNWNlMGY3NCBSMTU6IGZmZmZmZmZmOGI2YWIzYTgNCkZTOiAgMDAwMDAwMDAwMDAw
+MDAwMCgwMDAwKSBHUzpmZmZmODg4MGFlNzAwMDAwKDAwMDApIGtubEdTOjAwMDAwMDAwMDAwMDAw
+MDANCkNTOiAgMDAxMCBEUzogMDAwMCBFUzogMDAwMCBDUjA6IDAwMDAwMDAwODAwNTAwMzMNCkNS
+MjogMDAwMDAwMDAwMDAwMDA2OCBDUjM6IDAwMDAwMDAwN2Y0NzkwMDAgQ1I0OiAwMDAwMDAwMDAw
+MTQwNmUwDQogIHByaW50X2FkZHJlc3NfZGVzY3JpcHRpb24uY29sZCsweDdjLzB4MjBkIG1tL2th
+c2FuL3JlcG9ydC5jOjE4Nw0KRFIwOiAwMDAwMDAwMDAwMDAwMDAwIERSMTogMDAwMDAwMDAwMDAw
+MDAwMCBEUjI6IDAwMDAwMDAwMDAwMDAwMDANCkRSMzogMDAwMDAwMDAwMDAwMDAwMCBEUjY6IDAw
+MDAwMDAwZmZmZTBmZjAgRFI3OiAwMDAwMDAwMDAwMDAwNDAwDQpDYWxsIFRyYWNlOg0KICA8SVJR
+Pg0KICBrYXNhbl9yZXBvcnQuY29sZCsweDFiLzB4NDAgbW0va2FzYW4vcmVwb3J0LmM6MzE3DQog
+IF9fYXNhbl9yZXBvcnRfbG9hZDhfbm9hYm9ydCsweDE0LzB4MjAgbW0va2FzYW4vZ2VuZXJpY19y
+ZXBvcnQuYzoxMzUNCiAgY2FsY19kZWx0YV9mYWlyIGtlcm5lbC9zY2hlZC9mYWlyLmM6NjI5IFtp
+bmxpbmVdDQogIHVwZGF0ZV9jdXJyKzB4OTlkLzB4YmMwIGtlcm5lbC9zY2hlZC9mYWlyLmM6ODIz
+DQogIGRlYnVnX2hydGltZXJfZGVhY3RpdmF0ZSBrZXJuZWwvdGltZS9ocnRpbWVyLmM6NDEyIFtp
+bmxpbmVdDQogIGRlYnVnX2RlYWN0aXZhdGUga2VybmVsL3RpbWUvaHJ0aW1lci5jOjQ2MiBbaW5s
+aW5lXQ0KICBfX3J1bl9ocnRpbWVyIGtlcm5lbC90aW1lL2hydGltZXIuYzoxMzU5IFtpbmxpbmVd
+DQogIF9faHJ0aW1lcl9ydW5fcXVldWVzKzB4MjI1LzB4MTA1MCBrZXJuZWwvdGltZS9ocnRpbWVy
+LmM6MTQ1MQ0KICBlbnF1ZXVlX2VudGl0eSsweDNlNS8weDIwYjAga2VybmVsL3NjaGVkL2ZhaXIu
+YzozODgwDQogIGhydGltZXJfaW50ZXJydXB0KzB4MzE0LzB4NzcwIGtlcm5lbC90aW1lL2hydGlt
+ZXIuYzoxNTA5DQogIGxvY2FsX2FwaWNfdGltZXJfaW50ZXJydXB0IGFyY2gveDg2L2tlcm5lbC9h
+cGljL2FwaWMuYzoxMDM1IFtpbmxpbmVdDQogIHNtcF9hcGljX3RpbWVyX2ludGVycnVwdCsweDE4
+ZC8weDc2MCBhcmNoL3g4Ni9rZXJuZWwvYXBpYy9hcGljLmM6MTA2MA0KICBlbnF1ZXVlX3Rhc2tf
+ZmFpcisweDIzNy8weDEwYzAga2VybmVsL3NjaGVkL2ZhaXIuYzo1MTMzDQogIGFwaWNfdGltZXJf
+aW50ZXJydXB0KzB4Zi8weDIwIGFyY2gveDg2L2VudHJ5L2VudHJ5XzY0LlM6ODA3DQogIGVucXVl
+dWVfdGFzayBrZXJuZWwvc2NoZWQvY29yZS5jOjczMCBbaW5saW5lXQ0KICBhY3RpdmF0ZV90YXNr
+KzB4MTFkLzB4NDcwIGtlcm5lbC9zY2hlZC9jb3JlLmM6NzUxDQogIDwvSVJRPg0KICB0dHd1X2Fj
+dGl2YXRlIGtlcm5lbC9zY2hlZC9jb3JlLmM6MTY0MyBbaW5saW5lXQ0KICB0dHd1X2RvX2FjdGl2
+YXRlKzB4ZDQvMHgxZjAga2VybmVsL3NjaGVkL2NvcmUuYzoxNzAyDQpNb2R1bGVzIGxpbmtlZCBp
+bjoNCiAgdHR3dV9xdWV1ZSBrZXJuZWwvc2NoZWQvY29yZS5jOjE4NDcgW2lubGluZV0NCiAgdHJ5
+X3RvX3dha2VfdXArMHg5OTcvMHgxNDgwIGtlcm5lbC9zY2hlZC9jb3JlLmM6MjA1Nw0KLS0tWyBl
+bmQgdHJhY2UgNWE1YzA5OGU1MTE3MTk5OSBdLS0tDQpSSVA6IDAwMTA6bG9va3VwX29iamVjdCBs
+aWIvZGVidWdvYmplY3RzLmM6MTU2IFtpbmxpbmVdDQpSSVA6IDAwMTA6ZGVidWdfb2JqZWN0X2Rl
+YWN0aXZhdGUgbGliL2RlYnVnb2JqZWN0cy5jOjU0MiBbaW5saW5lXQ0KUklQOiAwMDEwOmRlYnVn
+X29iamVjdF9kZWFjdGl2YXRlKzB4MTZjLzB4NGIwIGxpYi9kZWJ1Z29iamVjdHMuYzo1MjkNCkNv
+ZGU6IGMxIGVhIDAzIDQyIDgwIDNjIDJhIDAwIDBmIDg1IDQ5IDAyIDAwIDAwIDRkIDhiIDI0IDI0
+IDRkIDg1IGU0IDBmIDg0ICANCmQxIDAwIDAwIDAwIDQ5IDhkIDdjIDI0IDE4IDgzIGMzIDAxIDQ4
+IDg5IGZhIDQ4IGMxIGVhIDAzIDw0Mj4gODAgM2MgMmEgMDAgIA0KMGYgODUgZmEgMDEgMDAgMDAg
+NDkgM2IgNGMgMjQgMTggNzUgYzAgNDkgOGQgN2MgMjQNClJTUDogMDAxODpmZmZmODg4MGFlNzA3
+YjgwIEVGTEFHUzogMDAwMTAwMDINClJBWDogMWZmZmZmZmZmMTZkNTY3NCBSQlg6IDAwMDAwMDAw
+MDAwMDAwMDMgUkNYOiBmZmZmODg4MGFlNzI2NjIwDQpSRFg6IDAwMDAwMDAwMDAwMDAwMGIgUlNJ
+OiAwMDAwMDAwMDAwMDAwMDA0IFJESTogMDAwMDAwMDAwMDAwMDA1OA0KICBkZWZhdWx0X3dha2Vf
+ZnVuY3Rpb24rMHgzMC8weDUwIGtlcm5lbC9zY2hlZC9jb3JlLmM6MzcxMA0KUkJQOiBmZmZmODg4
+MGFlNzA3YzcwIFIwODogMWZmZmYxMTAxNWNlMGY1YyBSMDk6IGZmZmZmZmZmODk5YWQxNjANClIx
+MDogMDAwMDAwMDAwMDAwMDA4NiBSMTE6IDAwMDAwMDAwMDAwMDAwMDMgUjEyOiAwMDAwMDAwMDAw
+MDAwMDQwDQogIF9fd2FrZV91cF9jb21tb24rMHgxZDMvMHg3ZDAga2VybmVsL3NjaGVkL3dhaXQu
+Yzo5Mg0KUjEzOiBkZmZmZmMwMDAwMDAwMDAwIFIxNDogMWZmZmYxMTAxNWNlMGY3NCBSMTU6IGZm
+ZmZmZmZmOGI2YWIzYTgNCkZTOiAgMDAwMDAwMDAwMDAwMDAwMCgwMDAwKSBHUzpmZmZmODg4MGFl
+NzAwMDAwKDAwMDApIGtubEdTOjAwMDAwMDAwMDAwMDAwMDANCkNTOiAgMDAxMCBEUzogMDAwMCBF
+UzogMDAwMCBDUjA6IDAwMDAwMDAwODAwNTAwMzMNCkNSMjogMDAwMDAwMDAwMDAwMDA2OCBDUjM6
+IDAwMDAwMDAwN2Y0NzkwMDAgQ1I0OiAwMDAwMDAwMDAwMTQwNmUwDQogIF9fd2FrZV91cF9sb2Nr
+ZWQrMHgxMS8weDIwIGtlcm5lbC9zY2hlZC93YWl0LmM6MTU0DQpEUjA6IDAwMDAwMDAwMDAwMDAw
+MDAgRFIxOiAwMDAwMDAwMDAwMDAwMDAwIERSMjogMDAwMDAwMDAwMDAwMDAwMA0KICBlcF9wb2xs
+X2NhbGxiYWNrKzB4M2M1LzB4MTBhMCBmcy9ldmVudHBvbGwuYzoxMjAwDQpEUjM6IDAwMDAwMDAw
+MDAwMDAwMDAgRFI2OiAwMDAwMDAwMGZmZmUwZmYwIERSNzogMDAwMDAwMDAwMDAwMDQwMA0KDQoN
+Ci0tLQ0KVGhpcyBidWcgaXMgZ2VuZXJhdGVkIGJ5IGEgYm90LiBJdCBtYXkgY29udGFpbiBlcnJv
+cnMuDQpTZWUgaHR0cHM6Ly9nb28uZ2wvdHBzbUVKIGZvciBtb3JlIGluZm9ybWF0aW9uIGFib3V0
+IHN5emJvdC4NCnN5emJvdCBlbmdpbmVlcnMgY2FuIGJlIHJlYWNoZWQgYXQgc3l6a2FsbGVyQGdv
+b2dsZWdyb3Vwcy5jb20uDQoNCnN5emJvdCB3aWxsIGtlZXAgdHJhY2sgb2YgdGhpcyBidWcgcmVw
+b3J0LiBTZWU6DQpodHRwczovL2dvby5nbC90cHNtRUojYnVnLXN0YXR1cy10cmFja2luZyBmb3Ig
+aG93IHRvIGNvbW11bmljYXRlIHdpdGggIA0Kc3l6Ym90Lg0Kc3l6Ym90IGNhbiB0ZXN0IHBhdGNo
+ZXMgZm9yIHRoaXMgYnVnLCBmb3IgZGV0YWlscyBzZWU6DQpodHRwczovL2dvby5nbC90cHNtRUoj
+dGVzdGluZy1wYXRjaGVzDQo=
