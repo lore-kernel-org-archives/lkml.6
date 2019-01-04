@@ -2,145 +2,333 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE983C43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 01:45:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C64EC43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 01:53:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C96F217F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 01:45:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=LenovoBeijing.onmicrosoft.com header.i=@LenovoBeijing.onmicrosoft.com header.b="gKxL8DUR"
+	by mail.kernel.org (Postfix) with ESMTP id 0BC0C217F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 01:53:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726337AbfADBpk (ORCPT
+        id S1726145AbfADBxD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 3 Jan 2019 20:45:40 -0500
-Received: from mail1.bemta23.messagelabs.com ([67.219.246.214]:38846 "EHLO
-        mail1.bemta23.messagelabs.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725919AbfADBpj (ORCPT
+        Thu, 3 Jan 2019 20:53:03 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:39111 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725879AbfADBxC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Jan 2019 20:45:39 -0500
-Received: from [67.219.246.198] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
-        by server-2.bemta.az-c.us-east-1.aws.symcld.net id 54/95-19134-0CABE2C5; Fri, 04 Jan 2019 01:45:36 +0000
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrJJsWRWlGSWpSXmKPExsWS8eIhk+6BXXo
-  xBpc6pSwuTm9lsVi5+iiTxYL91hZzbhpZLFv8lNHi8q45bBZrj9xltzj44Qmrxep18Rbft0xm
-  sthztIPZgdtjzbw1jB6bVnWyeUy+sZzR4/CHKyweu282sHl8fHqLxaNvyypGj/VbrrJ4fN4k5
-  3H+/j/2AK4o1sy8pPyKBNaMq5NusBRMZqnY9uoxewPjHuYuRi4OIYHnjBJte6cCOZxAzmFGid
-  fNASAJFoEVzBJPL61mg6jqY5Lo+vCJCaLqHqPEg0t5IDabgKbEyTfXwLpFBPQlNt1uZAdpYBZ
-  YxSLRPGcSI0hCWCBKYnlTGxtEUbTExzk3oBr0JH61LAGrYRFQkfi64jOYzSsQI/Fx1ix2EJtR
-  QFZi2qP7YIuZBcQl5k6bxQpiSwgISCzZc54ZwhaVePn4H1RcXqJ/dS8LhC0rcWl+NyPIQRICD
-  xkljlzbAtVgKHF85X5miMQhVolf29qgun0lrn+6xgKRuMAoseXKCjaIhJbEq7U3gc7gALKzJf
-  5eq4UIH2WWOPMCapuMxJkZG8BKhASSJNb+zgQxGQWCJN5tiYOokJNY1fsQqvoxk8SEbqsJjNq
-  zkLwGYetILNj9iQ3C1pZYtvA18yxwsAhKnJz5hGUBI8sqRtOkosz0jJLcxMwcXUMDA11DQyNd
-  U11jc73EKt1kvdJi3dTE4hJdQ73E8mK94src5JwUvbzUkk2MwGSYUsCquoNxfVf6IUZJDiYlU
-  V67BXoxQnxJ+SmVGYnFGfFFpTmpxYcYZTg4lCR4F+8EygkWpaanVqRl5gDTMkxagoNHSYS3bw
-  dQmre4IDG3ODMdInWKUZfjeOfXOcxCLHn5ealS4rw7QYoEQIoySvPgRsByxCVGWSlhXkYGBgY
-  hnoLUotzMElT5V4ziHIxKwrweIFN4MvNK4Da9AjqCCegIEwkdkCNKEhFSUg2M9fl/DgU/PTVh
-  2pr5C7ZmvU7w3L5c9/qSZXXBrbozLdNF/i/xM50lKxovHPOjkvPPW9PlUztmRfCYJMVP39HPe
-  fHBk/QuF6YE7pULFcQEpCdJurwwS2oSeiMd33vu7p3jFtZtciu/PNMp6Zw07RTLlyUfWaa8sF
-  O+/EvBZW+z79Lwq9v4k1oqlViKMxINtZiLihMB8MoJqwwEAAA=
-X-Env-Sender: yehs1@lenovo.com
-X-Msg-Ref: server-14.tower-406.messagelabs.com!1546566336!763868!1
-X-Originating-IP: [104.232.225.2]
-X-SYMC-ESS-Client-Auth: outbound-route-from=pass
-X-StarScan-Received: 
-X-StarScan-Version: 9.31.5; banners=-,-,-
-X-VirusChecked: Checked
-Received: (qmail 19538 invoked from network); 4 Jan 2019 01:45:36 -0000
-Received: from unknown (HELO maesmtp01.lenovo.com) (104.232.225.2)
-  by server-14.tower-406.messagelabs.com with DHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 4 Jan 2019 01:45:36 -0000
-Received: from USEXEDGE02.lenovo.com (unknown [10.62.65.5]) by maesmtp01.lenovo.com with smtp
-        (TLS: TLSv1/SSLv3,256bits,ECDHE-RSA-AES256-SHA384)
-         id 67bc_d82f_48958492_0c00_4d14_9213_3dd48ff9ea9e;
-        Fri, 04 Jan 2019 01:45:29 +0000
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (104.47.125.56)
- by USEXEDGE02.lenovo.com (10.62.65.5) with Microsoft SMTP Server (TLS) id
- 14.3.408.0; Thu, 3 Jan 2019 20:45:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=LenovoBeijing.onmicrosoft.com; s=selector1-lenovo-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BZ6MZS3mK3gug7UjYkQTcxeFkP4iShEfehqOvO75zT8=;
- b=gKxL8DURyZLDN6U1//dMO66a8jIM+0oJUoUIDt0mYrWUok8UoN8h2Ix06J6hOoi4pRB/dJ/KbBesPL3xp2LO615b8vOsx8kaC/B1mpi9nKsPn58/4Qe/xHeMU3eppQ69QmMIAQmCA04TcmGiDUSj1lxYO3l/OyigY3lxIaKXR/w=
-Received: from HK2PR03MB4418.apcprd03.prod.outlook.com (10.170.158.23) by
- HK2PR03MB0708.apcprd03.prod.outlook.com (10.161.187.11) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1495.6; Fri, 4 Jan 2019 01:45:26 +0000
-Received: from HK2PR03MB4418.apcprd03.prod.outlook.com
- ([fe80::f1ea:5177:e444:2c59]) by HK2PR03MB4418.apcprd03.prod.outlook.com
- ([fe80::f1ea:5177:e444:2c59%3]) with mapi id 15.20.1516.000; Fri, 4 Jan 2019
- 01:45:26 +0000
-From:   Huaisheng HS1 Ye <yehs1@lenovo.com>
-To:     Stefano Stabellini <sstabellini@kernel.org>
-CC:     "hch@lst.de" <hch@lst.de>,
-        "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>,
-        "boris.ostrovsky@oracle.com" <boris.ostrovsky@oracle.com>,
-        "jgross@suse.com" <jgross@suse.com>,
-        "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>,
-        "robin.murphy@arm.com" <robin.murphy@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        NingTing Cheng <chengnt@lenovo.com>,
-        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        Huaisheng Ye <yehs2007@zoho.com>
-Subject: Re: [PATCH] dma-mapping: remove unused attrs parameter to
- dma_common_get_sgtable
-Thread-Topic: [PATCH] dma-mapping: remove unused attrs parameter to
- dma_common_get_sgtable
-Thread-Index: AdSjzrit/UlQsw2kQdmtMubLMrGgbw==
-Date:   Fri, 4 Jan 2019 01:45:26 +0000
-Message-ID: <HK2PR03MB44183AC87F67594E93F31E75928E0@HK2PR03MB4418.apcprd03.prod.outlook.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [57.197.58.2]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;HK2PR03MB0708;20:NIvGyeKfXukuAtvZKOnl7jD2GpzfmdAYaMnBdV8FcX7uywlU14XdU7BxNtUx1/GMS6SY5ayl/T2kF27hMl9Sp5hVVKJKyOfKu5GyIojJZIMDH/UVDTv0+zvYamKbeuQ0M7iEwEzsgxq55p1bO3O06k7S3TFJ6hgGkMWX1OtOcLI=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10019020)(346002)(136003)(366004)(39850400004)(396003)(376002)(199004)(189003)(69234005)(81166006)(81156014)(54906003)(68736007)(8936002)(53936002)(9686003)(6246003)(97736004)(2906002)(99286004)(6116002)(7696005)(3846002)(305945005)(316002)(55016002)(8676002)(7736002)(14454004)(186003)(33656002)(66066001)(6506007)(486006)(86362001)(74316002)(256004)(7416002)(6916009)(478600001)(229853002)(476003)(71190400001)(71200400001)(102836004)(106356001)(6346003)(105586002)(6436002)(4326008)(5660300001)(25786009)(26005);DIR:OUT;SFP:1102;SCL:1;SRVR:HK2PR03MB0708;H:HK2PR03MB4418.apcprd03.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-ms-office365-filtering-correlation-id: 63e0b581-1bdc-4959-d7be-08d671e64ca1
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(2017052603328)(7153060)(7193020);SRVR:HK2PR03MB0708;
-x-ms-traffictypediagnostic: HK2PR03MB0708:
-x-microsoft-antispam-prvs: <HK2PR03MB07089FAF984070F1EE8E596B928E0@HK2PR03MB0708.apcprd03.prod.outlook.com>
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(3230021)(908002)(999002)(5005026)(6040522)(8220060)(2401047)(8121501046)(3231475)(944501520)(52105112)(93006095)(93001095)(10201501046)(3002001)(6041310)(20161123564045)(20161123560045)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:HK2PR03MB0708;BCL:0;PCL:0;RULEID:;SRVR:HK2PR03MB0708;
-x-forefront-prvs: 0907F58A24
-received-spf: None (protection.outlook.com: lenovo.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: zYUl+0WblIZ4LfXpbSRgbaFXSXF/JcRMqddjS1siW72jVucFD0zBM8LLvn0eb3TZQvHCW/CpL/KowuHLw18DWDxSBv5HnKSHLpzNJhftYfgDszzpRfs2umM1UrEdv+1xQ6LNhLxbzwelb4uMeMelErBEcfdheN7wsjMA15Yr8hYuSDVrl67usN5IvDXXAzZOYN2Sq+oQ9Ow33Vd5adC0xjNS2IhAnuv//oZZm6S8cC48Vq5bKQeHgEobA3Vimf7268RgN3b1Hc1+urgL6nvxWzUozfm4sKqjTvpFEXlIfcHPL9vFglvCfvAHBW6P4lkG
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Thu, 3 Jan 2019 20:53:02 -0500
+Received: by mail-qt1-f193.google.com with SMTP id u47so34387767qtj.6
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jan 2019 17:53:00 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=zSadeRyo8ZWieUhJ4H9kk44LLYxK9xtQ50kWRQi9Muw=;
+        b=qLzV6YCORM97adJn3oY3PsL/fPuoZlJWqjQITkxLrgVMxwvWp54zKlG5eHuObKl1T7
+         5bpSFhkNKMVHPmQB6rPjduyMG+134F6x53UtdPsDYh6wNRqA5CSI26mE1lCiD12p0p58
+         QJkYFuV2OOA8zKLgGX/E4ur/NEifZhQYOqNjk+dV8XyIDbIYorYOpYneMkXiDEYdY6j4
+         99AHSBMnXuImzKjvjQYjo/dLG8VJlfjmA7ye5FerdNnbZJVcjuSg7tjCITeb0LScRofS
+         jeo8x8HeOKSfSrFFRLf/LUZRlnXFJAyRaSV9pZjfhCU48ssJ0SbdIdI9rvUG538/g+Mu
+         5AxQ==
+X-Gm-Message-State: AJcUukeEV4Dw2eZUuXSNNk+dFaWvJnY18fzPGL434hiCZMJ8JnZa7L85
+        xFr+l6adkIlEjpQu0hgcpNB6hozqmtk=
+X-Google-Smtp-Source: ALg8bN76pT24z47rFLpmScu7SX1N3L2/uKjLwpq9gOKlH1zsXxxibAB1PeoqKM3xhYqoQ9+9M1NxDQ==
+X-Received: by 2002:aed:31a3:: with SMTP id 32mr46086650qth.234.1546566779841;
+        Thu, 03 Jan 2019 17:52:59 -0800 (PST)
+Received: from ?IPv6:2601:602:9800:dae6::814b? ([2601:602:9800:dae6::814b])
+        by smtp.gmail.com with ESMTPSA id o34sm24634085qte.4.2019.01.03.17.52.57
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 03 Jan 2019 17:52:59 -0800 (PST)
+Subject: Re: [PATCH] staging: android: ion: add buffer flag update ioctl
+To:     "Zengtao (B)" <prime.zeng@hisilicon.com>,
+        "sumit.semwal@linaro.org" <sumit.semwal@linaro.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        =?UTF-8?Q?Arve_Hj=c3=b8nnev=c3=a5g?= <arve@android.com>,
+        Todd Kjos <tkjos@android.com>,
+        Martijn Coenen <maco@android.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <1545239943-15414-1-git-send-email-prime.zeng@hisilicon.com>
+ <b0cc8d05-b313-9433-4e48-d0d39aa1858b@redhat.com>
+ <678F3D1BB717D949B966B68EAEB446ED24E2926A@dggemm526-mbx.china.huawei.com>
+ <786ad55f-4651-56ce-cd5c-ca02f7ac4093@redhat.com>
+ <678F3D1BB717D949B966B68EAEB446ED24E2B495@dggemm526-mbx.china.huawei.com>
+ <58278bab-413c-ef5e-3074-5afbcc1b86de@redhat.com>
+ <678F3D1BB717D949B966B68EAEB446ED24E31270@dggemm526-mbx.china.huawei.com>
+From:   Laura Abbott <labbott@redhat.com>
+Message-ID: <e547f9ce-64ff-74e5-e0c8-dbf3f013fe74@redhat.com>
+Date:   Thu, 3 Jan 2019 17:52:57 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 63e0b581-1bdc-4959-d7be-08d671e64ca1
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Jan 2019 01:45:26.0970
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 5c7d0b28-bdf8-410c-aa93-4df372b16203
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HK2PR03MB0708
+In-Reply-To: <678F3D1BB717D949B966B68EAEB446ED24E31270@dggemm526-mbx.china.huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stefano Stabellini <sstabellini@kernel.org>
-Sent: Friday, January 04, 2019 1:55 AM
-> On Thu, 3 Jan 2019, Huaisheng Ye wrote:
-> > From: Huaisheng Ye <yehs1@lenovo.com>
-> >
-> > dma_common_get_sgtable has parameter attrs which is not used at all.
-> > Remove it.
-> >
-> > Signed-off-by: Huaisheng Ye <yehs1@lenovo.com>
->=20
-> Acked-by: Stefano Stabellini <sstabellini@kernel.org>
->=20
-> FYI the patch doesn't apply cleanly to master.
+On 1/3/19 5:42 PM, Zengtao (B) wrote:
+>> -----Original Message-----
+>> From: Laura Abbott [mailto:labbott@redhat.com]
+>> Sent: Thursday, January 03, 2019 6:31 AM
+>> To: Zengtao (B) <prime.zeng@hisilicon.com>; sumit.semwal@linaro.org
+>> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>; Arve Hjønnevåg
+>> <arve@android.com>; Todd Kjos <tkjos@android.com>; Martijn Coenen
+>> <maco@android.com>; Joel Fernandes <joel@joelfernandes.org>;
+>> devel@driverdev.osuosl.org; dri-devel@lists.freedesktop.org;
+>> linaro-mm-sig@lists.linaro.org; linux-kernel@vger.kernel.org
+>> Subject: Re: [PATCH] staging: android: ion: add buffer flag update ioctl
+>>
+>> On 12/23/18 6:47 PM, Zengtao (B) wrote:
+>>> Hi laura:
+>>>
+>>>> -----Original Message-----
+>>>> From: Laura Abbott [mailto:labbott@redhat.com]
+>>>> Sent: Friday, December 21, 2018 4:50 AM
+>>>> To: Zengtao (B) <prime.zeng@hisilicon.com>;
+>> sumit.semwal@linaro.org
+>>>> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>; Arve
+>> Hjønnevåg
+>>>> <arve@android.com>; Todd Kjos <tkjos@android.com>; Martijn
+>> Coenen
+>>>> <maco@android.com>; Joel Fernandes <joel@joelfernandes.org>;
+>>>> devel@driverdev.osuosl.org; dri-devel@lists.freedesktop.org;
+>>>> linaro-mm-sig@lists.linaro.org; linux-kernel@vger.kernel.org
+>>>> Subject: Re: [PATCH] staging: android: ion: add buffer flag update
+>>>> ioctl
+>>>>
+>>>> On 12/19/18 5:39 PM, Zengtao (B) wrote:
+>>>>> Hi laura:
+>>>>>
+>>>>>> -----Original Message-----
+>>>>>> From: Laura Abbott [mailto:labbott@redhat.com]
+>>>>>> Sent: Thursday, December 20, 2018 2:10 AM
+>>>>>> To: Zengtao (B) <prime.zeng@hisilicon.com>;
+>>>> sumit.semwal@linaro.org
+>>>>>> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>; Arve
+>>>> Hjønnevåg
+>>>>>> <arve@android.com>; Todd Kjos <tkjos@android.com>; Martijn
+>>>> Coenen
+>>>>>> <maco@android.com>; Joel Fernandes <joel@joelfernandes.org>;
+>>>>>> devel@driverdev.osuosl.org; dri-devel@lists.freedesktop.org;
+>>>>>> linaro-mm-sig@lists.linaro.org; linux-kernel@vger.kernel.org
+>>>>>> Subject: Re: [PATCH] staging: android: ion: add buffer flag update
+>>>>>> ioctl
+>>>>>>
+>>>>>> On 12/19/18 9:19 AM, Zeng Tao wrote:
+>>>>>>> In some usecases, the buffer cached attribute is not determined at
+>>>>>>> allocation time, it's determined just before the real cpu mapping.
+>>>>>>> And from the memory view of point, a buffer should not have the
+>>>>>> cached
+>>>>>>> attribute util is really mapped by the cpu. So in this patch, we
+>>>>>>> introduced the new ioctl command to target the requirement.
+>>>>>>>
+>>>>>>
+>>>>>> This is racy and error prone. Can you explain more what problem
+>> you
+>>>>>> are trying to solve?
+>>>>>
+>>>>> My use case is like this:
+>>>>> 1.  There are two process A and B, A takes case of ion buffer
+>>>>> allocation,
+>>>> and
+>>>>>     pass the buffer fd to B, then B maps and uses it.
+>>>>> 2.  Process B need to map the buffer with different cached attribute
+>>>>> for different use case, for example, if the buffer is used for pure
+>>>>> software algorithm, then we need to map it as cached, otherwise
+>>>>> non-cached, and B needs to deal with both cases.
+>>>>> And unfortunately the mmap syscall takes no cached flags and we
+>>>>> can't decide the cache attribute when we are doing the mmap, so I
+>>>>> introduce new the ioctl even though I think the solution is not as
+>> good.
+>>>>>
+>>>>>
+>>>>
+>>>> Thanks for the explanation, this was about the use case I expected.
+>>>> I'm pretty sure I had this exact problem once upon a time and we
+>>>> didn't come up with a solution. I'd still like to get rid of uncached
+>>>> buffers in general and just use cached buffers (see
+>>>> http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/201
+>>>> 8-N
+>>>> ovember/128842.html)
+>>>> What's your usecase for uncached buffers?
+>>>
+>>> Some buffers are only used by HW, in this case, we tend to use
+>> uncached buffers.
+>>> But sometimes the SW need to read few buffer contents for debug
+>>> purpose and no synchronization is needed.
+>>>
+>>
+>> If this is primarily for debug, that's not really a compelling reason to
+>> support uncached buffers. It's incredibly difficult to do uncached buffers
+>> correctly I'd rather spend effort on making the cached use cases work
+>> better.
+>>
+> No, not only for debug, I meant if the buffers are uncached, the SW will only mmap
+> them for debug or even don't need to mmap them.
+> So for the two kinds of buffers:
+> 1.  uncached: only the HW need to access it, the SW don't need to mmap it or just for debug.
+> 2.  cached: both the HW and the SW need to access it.
+> The ION is designed as a generalized memory manager, I think we should cover as many
+> requirements as we can in the ION design, so I 'd rather that we keep the uncached support.
+> And I don’t quite understand the difficulty you mentioned to support the uncached buffers, would
+> you explain a little more about it.
+> 
 
-Got it, I will rebase it to branch master and resend the patch later.
+We end up with aliasing problems. Each kernel page still has a cached
+mapping so it's very difficult to keep the two mappings in sync.
+https://lore.kernel.org/lkml/20181120164636.jcw7li2uaa3cmwc3@DESKTOP-E1NTVVP.localdomain/
+This thread does a better job of explaining the problem and the
+objections to uncached buffers.
 
-Cheers,
-Huaisheng Ye=20
+And if the software never touches the buffer, why does it
+matter if the buffer is uncached?
+
+Laura
+
+> Thanks
+> Zengtao
+> 
+>>
+>>>>
+>>>>>>
+>>>>>>> Signed-off-by: Zeng Tao <prime.zeng@hisilicon.com>
+>>>>>>> ---
+>>>>>>>      drivers/staging/android/ion/ion-ioctl.c |  4 ++++
+>>>>>>>      drivers/staging/android/ion/ion.c       | 17
+>>>> +++++++++++++++++
+>>>>>>>      drivers/staging/android/ion/ion.h       |  1 +
+>>>>>>>      drivers/staging/android/uapi/ion.h      | 22
+>>>>>> ++++++++++++++++++++++
+>>>>>>>      4 files changed, 44 insertions(+)
+>>>>>>>
+>>>>>>> diff --git a/drivers/staging/android/ion/ion-ioctl.c
+>>>>>>> b/drivers/staging/android/ion/ion-ioctl.c
+>>>>>>> index a8d3cc4..60bb702 100644
+>>>>>>> --- a/drivers/staging/android/ion/ion-ioctl.c
+>>>>>>> +++ b/drivers/staging/android/ion/ion-ioctl.c
+>>>>>>> @@ -12,6 +12,7 @@
+>>>>>>>
+>>>>>>>      union ion_ioctl_arg {
+>>>>>>>      	struct ion_allocation_data allocation;
+>>>>>>> +	struct ion_buffer_flag_data update;
+>>>>>>>      	struct ion_heap_query query;
+>>>>>>>      };
+>>>>>>>
+>>>>>>> @@ -83,6 +84,9 @@ long ion_ioctl(struct file *filp, unsigned int
+>>>>>>> cmd, unsigned long arg)
+>>>>>>>
+>>>>>>>      		break;
+>>>>>>>      	}
+>>>>>>> +	case ION_IOC_BUFFER_UPDATE:
+>>>>>>> +		ret = ion_buffer_update(data.update.fd, data.update.flags);
+>>>>>>> +		break;
+>>>>>>>      	case ION_IOC_HEAP_QUERY:
+>>>>>>>      		ret = ion_query_heaps(&data.query);
+>>>>>>>      		break;
+>>>>>>> diff --git a/drivers/staging/android/ion/ion.c
+>>>>>>> b/drivers/staging/android/ion/ion.c
+>>>>>>> index 9907332..f1404dc 100644
+>>>>>>> --- a/drivers/staging/android/ion/ion.c
+>>>>>>> +++ b/drivers/staging/android/ion/ion.c
+>>>>>>> @@ -436,6 +436,23 @@ int ion_alloc(size_t len, unsigned int
+>>>>>> heap_id_mask, unsigned int flags)
+>>>>>>>      	return fd;
+>>>>>>>      }
+>>>>>>>
+>>>>>>> +int ion_buffer_update(unsigned int fd, unsigned int flags) {
+>>>>>>> +	struct dma_buf *dmabuf;
+>>>>>>> +	struct ion_buffer *buffer;
+>>>>>>> +
+>>>>>>> +	dmabuf = dma_buf_get(fd);
+>>>>>>> +
+>>>>>>> +	if (!dmabuf)
+>>>>>>> +		return -EINVAL;
+>>>>>>> +
+>>>>>>> +	buffer = dmabuf->priv;
+>>>>>>> +	buffer->flags = flags;
+>>>>>>> +	dma_buf_put(dmabuf);
+>>>>>>> +
+>>>>>>> +	return 0;
+>>>>>>> +}
+>>>>>>> +
+>>>>>>>      int ion_query_heaps(struct ion_heap_query *query)
+>>>>>>>      {
+>>>>>>>      	struct ion_device *dev = internal_dev; diff --git
+>>>>>>> a/drivers/staging/android/ion/ion.h
+>>>>>>> b/drivers/staging/android/ion/ion.h
+>>>>>>> index c006fc1..99bf9ab 100644
+>>>>>>> --- a/drivers/staging/android/ion/ion.h
+>>>>>>> +++ b/drivers/staging/android/ion/ion.h
+>>>>>>> @@ -199,6 +199,7 @@ int ion_heap_pages_zero(struct page
+>> *page,
+>>>>>> size_t size, pgprot_t pgprot);
+>>>>>>>      int ion_alloc(size_t len,
+>>>>>>>      	      unsigned int heap_id_mask,
+>>>>>>>      	      unsigned int flags);
+>>>>>>> +int ion_buffer_update(unsigned int fd, unsigned int flags);
+>>>>>>>
+>>>>>>>      /**
+>>>>>>>       * ion_heap_init_shrinker
+>>>>>>> diff --git a/drivers/staging/android/uapi/ion.h
+>>>>>>> b/drivers/staging/android/uapi/ion.h
+>>>>>>> index 5d70098..99753fc 100644
+>>>>>>> --- a/drivers/staging/android/uapi/ion.h
+>>>>>>> +++ b/drivers/staging/android/uapi/ion.h
+>>>>>>> @@ -74,6 +74,20 @@ struct ion_allocation_data {
+>>>>>>>      	__u32 unused;
+>>>>>>>      };
+>>>>>>>
+>>>>>>> +/**
+>>>>>>> + * struct ion_buffer_flag_data - metadata passed from userspace
+>>>>>>> +for update
+>>>>>>> + * buffer flags
+>>>>>>> + * @fd:			file descriptor of the buffer
+>>>>>>> + * @flags:		flags passed to the buffer
+>>>>>>> + *
+>>>>>>> + * Provided by userspace as an argument to the ioctl  */
+>>>>>>> +
+>>>>>>> +struct ion_buffer_flag_data {
+>>>>>>> +	__u32 fd;
+>>>>>>> +	__u32 flags;
+>>>>>>> +}
+>>>>>>> +
+>>>>>>>      #define MAX_HEAP_NAME			32
+>>>>>>>
+>>>>>>>      /**
+>>>>>>> @@ -116,6 +130,14 @@ struct ion_heap_query {
+>>>>>>>      				      struct ion_allocation_data)
+>>>>>>>
+>>>>>>>      /**
+>>>>>>> + * DOC: ION_IOC_BUFFER_UPDATE - update the specified ion
+>> buffer
+>>>>>> flags
+>>>>>>> + *
+>>>>>>> + * Takes an ion_buffer_flag_data structure and returns the result
+>>>>>>> +of the
+>>>>>>> + * buffer flag update operation.
+>>>>>>> + */
+>>>>>>> +#define ION_IOC_BUFFER_UPDATE	_IOWR(ION_IOC_MAGIC, 1, \
+>>>>>>> +				      struct ion_buffer_flag_data)
+>>>>>>> +/**
+>>>>>>>       * DOC: ION_IOC_HEAP_QUERY - information about available
+>>>> heaps
+>>>>>>>       *
+>>>>>>>       * Takes an ion_heap_query structure and populates
+>> information
+>>>>>> about
+>>>>>>>
+>>>>>
+>>>
+> 
+
