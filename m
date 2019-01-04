@@ -2,101 +2,101 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F022AC43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 13:27:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38DEFC43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 13:29:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B91FE218CD
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 13:27:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546608451;
-	bh=PDUOT9GqHNLgBUUCCinSABv67vhBVK/eeCRUaV6y1bg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=PI0DWsBPOp70Y4dAsl/pyiJU4sPMjxzpw9fyVkmu7M2ho5iRjvjg6OEQQFreR3wuJ
-	 GGsMcaAKFhqqO1eJuF2Q26eFXPAeQbxsX0ZnL2P2dgUuxcc6MabBE3lpQhwB5u0zjs
-	 6Ai8eUGyzJp7BCBbx0Y85wMoJQO4Dk+rtEq4K1ow=
+	by mail.kernel.org (Postfix) with ESMTP id 001A221872
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 13:29:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728177AbfADN1b (ORCPT
+        id S1728204AbfADN3k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 08:27:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51240 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726282AbfADN1a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 08:27:30 -0500
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DC8FD208E3;
-        Fri,  4 Jan 2019 13:27:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546608450;
-        bh=PDUOT9GqHNLgBUUCCinSABv67vhBVK/eeCRUaV6y1bg=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=T71C8CJxrdIlcnz1JTmX1ui6Acw+Vfqt5K8EhCxHe1/EeH6P8ruqo7LKF6g35yFg4
-         k47mpzHX8ZddoL12vDQ7CLVbEGYB6CTlpG6wZpnHK844aUwSigOCm0ZQS0rqHb1TAc
-         2AZXH95idY1X0yi4zsnWqP02EN1yBiTYxamCLK34=
-Received: by mail-lf1-f51.google.com with SMTP id c16so25411544lfj.8;
-        Fri, 04 Jan 2019 05:27:29 -0800 (PST)
-X-Gm-Message-State: AJcUukeKaUDvKh7cU2pKkA+oZi06E/qtv5oJ+XvQ3PmdJSS2R0EpoA11
-        kKE57WIeXuJ1AttQD5jAiL0AXArq63RqIEdluM8=
-X-Google-Smtp-Source: ALg8bN5HQLbkMfD/IuQ1ZhmsQdSY5/tEDnBNfnxC1PM6G42HUKAJJOSsGvY+9+kSSEbpBrTa2mvoBdPV42q/KXU0TUE=
-X-Received: by 2002:ac2:554b:: with SMTP id l11mr1112300lfk.92.1546608447997;
- Fri, 04 Jan 2019 05:27:27 -0800 (PST)
+        Fri, 4 Jan 2019 08:29:40 -0500
+Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:54730 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726282AbfADN3k (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 08:29:40 -0500
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+        by mx0a-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x04DTUUv031620;
+        Fri, 4 Jan 2019 07:29:30 -0600
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=rf@opensource.cirrus.com
+Received: from mail3.cirrus.com ([87.246.76.56])
+        by mx0a-001ae601.pphosted.com with ESMTP id 2pp7777tc5-1;
+        Fri, 04 Jan 2019 07:29:30 -0600
+Received: from EX17.ad.cirrus.com (ex17.ad.cirrus.com [172.20.9.81])
+        by mail3.cirrus.com (Postfix) with ESMTP id 82DFE611C8AC;
+        Fri,  4 Jan 2019 07:32:32 -0600 (CST)
+Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
+ (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Fri, 4 Jan 2019
+ 13:29:29 +0000
+Received: from [198.90.251.142] (edi-sw-dsktp006.ad.cirrus.com
+ [198.90.251.142])      by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id
+ x04DTSYM017654;        Fri, 4 Jan 2019 13:29:28 GMT
+Subject: Re: [PATCH] irqchip: madera: Drop GPIO includes
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <marc.zyngier@arm.com>
+CC:     <linux-kernel@vger.kernel.org>
+References: <20190103102623.29685-1-linus.walleij@linaro.org>
+From:   Richard Fitzgerald <rf@opensource.cirrus.com>
+Message-ID: <0e99200a-7a4f-17e7-aec6-a84dfed268ea@opensource.cirrus.com>
+Date:   Fri, 4 Jan 2019 13:29:28 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-References: <20190103201408.GA27754@embeddedor>
-In-Reply-To: <20190103201408.GA27754@embeddedor>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Fri, 4 Jan 2019 14:27:17 +0100
-X-Gmail-Original-Message-ID: <CAJKOXPcihzhU+K72p+B83kwXQECYgekSSjy3wZ9eaFi5qTnY_w@mail.gmail.com>
-Message-ID: <CAJKOXPcihzhU+K72p+B83kwXQECYgekSSjy3wZ9eaFi5qTnY_w@mail.gmail.com>
-Subject: Re: [PATCH] ARM: mach-s3c24xx: Fix boolean expressions in osiris_dvs_notify
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Ben Dooks <ben@simtec.co.uk>, Kukjin Kim <kgene@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190103102623.29685-1-linus.walleij@linaro.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=762 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1901040119
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 3 Jan 2019 at 21:46, Gustavo A. R. Silva <gustavo@embeddedor.com> wrote:
->
-> Fix boolean expressions by using logical AND operator '&&'
-> instead of bitwise operator '&'.
->
-> This issue was detected with the help of Coccinelle.
->
-> Fixes: 4fa084af28ca ("ARM: OSIRIS: DVS (Dynamic Voltage Scaling) supoort.")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+On 03/01/19 10:26, Linus Walleij wrote:
+> This irqchip does not use anything GPIO-related so drop
+> the GPIO includes.
+> 
+
+An older version did some stuff with GPIOs but when that code was removed
+this include obviously was forgotten.
+
+> Cc: Richard Fitzgerald <rf@opensource.cirrus.com>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 > ---
->  arch/arm/mach-s3c24xx/mach-osiris-dvs.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/arch/arm/mach-s3c24xx/mach-osiris-dvs.c b/arch/arm/mach-s3c24xx/mach-osiris-dvs.c
-> index 058ce73137e8..ccbd7b7965ca 100644
-> --- a/arch/arm/mach-s3c24xx/mach-osiris-dvs.c
-> +++ b/arch/arm/mach-s3c24xx/mach-osiris-dvs.c
-> @@ -65,16 +65,16 @@ static int osiris_dvs_notify(struct notifier_block *nb,
->
->         switch (val) {
->         case CPUFREQ_PRECHANGE:
-> -               if (old_dvs & !new_dvs ||
-> -                   cur_dvs & !new_dvs) {
-> +               if (old_dvs && !new_dvs ||
-> +                   cur_dvs && !new_dvs) {
+>   drivers/irqchip/irq-madera.c | 2 --
+>   1 file changed, 2 deletions(-)
+> 
+> diff --git a/drivers/irqchip/irq-madera.c b/drivers/irqchip/irq-madera.c
+> index e9256dee1a45..8b81271c823c 100644
+> --- a/drivers/irqchip/irq-madera.c
+> +++ b/drivers/irqchip/irq-madera.c
+> @@ -7,7 +7,6 @@
+>    */
+>   
+>   #include <linux/module.h>
+> -#include <linux/gpio.h>
+>   #include <linux/interrupt.h>
+>   #include <linux/irq.h>
+>   #include <linux/irqdomain.h>
+> @@ -16,7 +15,6 @@
+>   #include <linux/slab.h>
+>   #include <linux/of.h>
+>   #include <linux/of_device.h>
+> -#include <linux/of_gpio.h>
+>   #include <linux/of_irq.h>
+>   #include <linux/irqchip/irq-madera.h>
+>   #include <linux/mfd/madera/core.h>
+> 
 
-Technically the old code will work fine because all variables are
-bools (so 0 or 1). Therefore I am not sure whether this should be
-ported to stable.
-
-Anyway the patch is itself okay and I will take it after merge window. Thanks!
-
-Best regards,
-Krzysztof
+Acked-by: Richard Fitzgerald <rf@opensource.cirrus.com>
