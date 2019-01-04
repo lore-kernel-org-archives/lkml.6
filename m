@@ -2,148 +2,115 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17875C43612
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 17:52:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F972C43612
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 17:52:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF29721872
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 17:52:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oKAjY0PK"
+	by mail.kernel.org (Postfix) with ESMTP id 0011B21872
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 17:52:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546624327;
+	bh=+su/Qs+Cz0cYpN2qfT/2Jx3q5qizXMee64zZMYwRNDY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=WuFGH/W931NFes3oqrILzJ/4kUdRszBDjt8jKmM5cji23ju8SpYJRZVAyImmdNUpU
+	 iZ3YR7M/EbSh6++f43GAv0FosJNrGegbzHx4Eg4wQBi1F1Z4ESMoF1hINDdo84XPFT
+	 Z6j3c2oebGvaGbPe9aJKkam58woZuN4i/MqJB/OE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728488AbfADRtp (ORCPT
+        id S1728004AbfADRwG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 12:49:45 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:35682 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727883AbfADRtm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 12:49:42 -0500
-Received: by mail-pf1-f193.google.com with SMTP id z9so18624653pfi.2;
-        Fri, 04 Jan 2019 09:49:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=SKJa7zEhO/trHQqEjEW1IcZtpd/PYQwbclM+tRkTBpo=;
-        b=oKAjY0PKvzJmTqSAvtXWedrQvqbliB4L1vI4Hhc5nAPWIqnFLyUoscPOLjJIvzMusj
-         4vdIm1sPATs5dxmZryGBlgT1rclkEmznR08UXj1BblyRl3P8bNjQElqb/jyaSSBZzXok
-         ipoWetngUFR/b3oT9yLNp1UQYB9Ba7qUQB8ldTW+pU2dHJ0V9DNdAJavyz464ViB0qB5
-         RvTpZzPKPUoUSxwbDHNi2iH3FM6quo7QV/zd3UAJhHj4K5cF+hErydcWKT4YApELfhSD
-         0KlF/1jY5WiHsQPIBEht2JkAa2F0MLDKRNUNsbPFSffS26/BAvDxYFdY9oS4UXrU5uI/
-         PPWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=SKJa7zEhO/trHQqEjEW1IcZtpd/PYQwbclM+tRkTBpo=;
-        b=Yr7xs/u//WQc15dgDHlfeFwx30SiGRAmXPkmFEOeNq5kb7kl+ujtjrzMNNHk4b2K6a
-         7S1TiRxwdTLNS9+upo7+vMiFjaU3rxAPi1gKFznJHKtD4HYUXcHIbR8Yk7lv7N8+kr/o
-         IUQy7/dORHOYhRyeW2HgXQmv6S5YzuyK93UPSZdgIkqosnuCEIYs46k6R/tx2Z+URe/2
-         Nu71IyP8hN9mpGiuFcxSOxnl2A/afwZYq4eYbRm8Zp9LIOYjOOOsGpRRkO7XZlqRDlNG
-         5oMABNCKfFgOzExx3qoICOy/o6jPXUjVkoNg59rm/sYjTNNbGa40NbqQrd8THo1XMC/m
-         aDHA==
-X-Gm-Message-State: AJcUukfnmFcuE/CURy7zmM1/JaS9s552yVpLRYdaExRKinkoFqjkBXo0
-        Cruio/e/hAxQWAGgGL6sYp1GGnKJE/o=
-X-Google-Smtp-Source: ALg8bN5QBpDrJLeoSdKMrCQL9CbxLzeC6h/BT2qr3lg4ES+HltYQyU/0jZrnnT77QyM+EIwTAaS3KA==
-X-Received: by 2002:a63:a401:: with SMTP id c1mr2443713pgf.403.1546624181277;
-        Fri, 04 Jan 2019 09:49:41 -0800 (PST)
-Received: from squirtle.lan (c-24-22-235-96.hsd1.wa.comcast.net. [24.22.235.96])
-        by smtp.gmail.com with ESMTPSA id i193sm100699632pgc.22.2019.01.04.09.49.39
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 04 Jan 2019 09:49:40 -0800 (PST)
-From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-To:     linux-pci@vger.kernel.org
-Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        "A.s. Dong" <aisheng.dong@nxp.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>, linux-imx@nxp.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 01/20] PCI: imx6: Simplify imx7d_pcie_wait_for_phy_pll_lock()
-Date:   Fri,  4 Jan 2019 09:49:06 -0800
-Message-Id: <20190104174925.17153-2-andrew.smirnov@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190104174925.17153-1-andrew.smirnov@gmail.com>
-References: <20190104174925.17153-1-andrew.smirnov@gmail.com>
+        Fri, 4 Jan 2019 12:52:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40476 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726296AbfADRwF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 12:52:05 -0500
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 00C3A218F0;
+        Fri,  4 Jan 2019 17:52:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1546624324;
+        bh=+su/Qs+Cz0cYpN2qfT/2Jx3q5qizXMee64zZMYwRNDY=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=qbdZX4vOxsE6R2gKeCL5QY/yuke8CSeK63lwUf+fPp3IjSq3TrQnLRaSbYj5VozIW
+         KYrU8RCwwGFnM+b30xL3lhKmJ9RwnMFsxazdQxqoaqCd/WQ1J42fHyLdS3YRT3ZNxP
+         W4faCiAcjEUWOX9DqwZLOLcfFv3vtzwnJko+mXzc=
+Received: by mail-qt1-f180.google.com with SMTP id n32so41119115qte.11;
+        Fri, 04 Jan 2019 09:52:03 -0800 (PST)
+X-Gm-Message-State: AJcUukf+AYFX7KN5KW6GIaM9qFxCfXCKNOg32Az1Ng8FTmQctcrYPY8h
+        GBmmpfmUYBNgzf9Gm1tYN6gZfufNQbZobj2HVQ==
+X-Google-Smtp-Source: ALg8bN6A9gvdJDThaQyJEb2fcsKCnaiR7oYm2mjGYtl6z5WvAVM9xp8LskHUwx9Txu8y2EMxmGAhexuYuZ8/nBJ8+d0=
+X-Received: by 2002:a0c:c389:: with SMTP id o9mr51688167qvi.90.1546624323140;
+ Fri, 04 Jan 2019 09:52:03 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <1545994235-8309-1-git-send-email-lollivier@baylibre.com>
+In-Reply-To: <1545994235-8309-1-git-send-email-lollivier@baylibre.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Fri, 4 Jan 2019 11:51:51 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqLvSWF60eqLsXUcP5GL0ijgfE6XwvectiM1D1Y9LPpOkA@mail.gmail.com>
+Message-ID: <CAL_JsqLvSWF60eqLsXUcP5GL0ijgfE6XwvectiM1D1Y9LPpOkA@mail.gmail.com>
+Subject: Re: [PATCH 0/4] Add driver for globaltop GNSS receivers
+To:     Loys Ollivier <lollivier@baylibre.com>
+Cc:     devicetree@vger.kernel.org, Johan Hovold <johan@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        linux-amlogic@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make use of regmap_read_poll_timeout() to simplify
-imx7d_pcie_wait_for_phy_pll_lock(). No functional change intended.
+On Fri, Dec 28, 2018 at 4:51 AM Loys Ollivier <lollivier@baylibre.com> wrote:
+>
+> Hello !
+>
+> This patch series adds a new GNSS driver for the globaltop GNSS receivers.
+> These receivers transmits NMEA output sequence as soon as they have booted.
+> Power management can be done via the main supply and optional backup supply
+> as defined in the device tree.
+>
+> The driver has been tested using a GlobalTop pa6h chipset on a Libretech-cc
+> board using the expansion header. Changes made in the board device tree can
+> be found below for reference and testing.
+>
+> Loys
+>
+> Loys Ollivier (4):
+>   dt-bindings: Add vendor prefix for "GlobalTop Technology, Inc."
+>   dt-bindings: gnss: add gtop binding
+>   gnss: add gtop receiver type support
+>   gnss: add driver for globaltop receivers
+>
+>  Documentation/devicetree/bindings/gnss/gtop.txt    |  33 +++++
+>  .../devicetree/bindings/vendor-prefixes.txt        |   1 +
+>  drivers/gnss/Kconfig                               |  13 ++
+>  drivers/gnss/Makefile                              |   3 +
+>  drivers/gnss/core.c                                |   1 +
+>  drivers/gnss/gtop.c                                | 152 +++++++++++++++++++++
+>  include/linux/gnss.h                               |   1 +
+>  7 files changed, 204 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/gnss/gtop.txt
+>  create mode 100644 drivers/gnss/gtop.c
+>
+> ---
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
+> index 90a56af967a7..3b3d4dcc47aa 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
+> +++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
+> @@ -17,6 +17,7 @@
+>
+>         aliases {
+>                 serial0 = &uart_AO;
+> +               serial1 = &uart_A;
 
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Fabio Estevam <fabio.estevam@nxp.com>
-Cc: Chris Healy <cphealy@gmail.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>
-Cc: Leonard Crestez <leonard.crestez@nxp.com>
-Cc: "A.s. Dong" <aisheng.dong@nxp.com>
-Cc: Richard Zhu <hongxing.zhu@nxp.com>
-Cc: linux-imx@nxp.com
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-pci@vger.kernel.org
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
----
- drivers/pci/controller/dwc/pci-imx6.c | 21 +++++++--------------
- 1 file changed, 7 insertions(+), 14 deletions(-)
+You should not need this as the UART is not used as a tty. It could be
+that the serial driver requires aliases, but that should be fixed.
+There should be some examples of fixing this in other serial drivers.
 
-diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
-index 4380ee797c04..c73c7a6a4c55 100644
---- a/drivers/pci/controller/dwc/pci-imx6.c
-+++ b/drivers/pci/controller/dwc/pci-imx6.c
-@@ -86,9 +86,8 @@ struct imx6_pcie {
- };
- 
- /* Parameters for the waiting for PCIe PHY PLL to lock on i.MX7 */
--#define PHY_PLL_LOCK_WAIT_MAX_RETRIES	2000
--#define PHY_PLL_LOCK_WAIT_USLEEP_MIN	50
- #define PHY_PLL_LOCK_WAIT_USLEEP_MAX	200
-+#define PHY_PLL_LOCK_WAIT_TIMEOUT	(2000 * PHY_PLL_LOCK_WAIT_USLEEP_MAX)
- 
- /* PCIe Root Complex registers (memory-mapped) */
- #define PCIE_RC_LCR				0x7c
-@@ -459,20 +458,14 @@ static int imx6_pcie_enable_ref_clk(struct imx6_pcie *imx6_pcie)
- static void imx7d_pcie_wait_for_phy_pll_lock(struct imx6_pcie *imx6_pcie)
- {
- 	u32 val;
--	unsigned int retries;
- 	struct device *dev = imx6_pcie->pci->dev;
- 
--	for (retries = 0; retries < PHY_PLL_LOCK_WAIT_MAX_RETRIES; retries++) {
--		regmap_read(imx6_pcie->iomuxc_gpr, IOMUXC_GPR22, &val);
--
--		if (val & IMX7D_GPR22_PCIE_PHY_PLL_LOCKED)
--			return;
--
--		usleep_range(PHY_PLL_LOCK_WAIT_USLEEP_MIN,
--			     PHY_PLL_LOCK_WAIT_USLEEP_MAX);
--	}
--
--	dev_err(dev, "PCIe PLL lock timeout\n");
-+	if (regmap_read_poll_timeout(imx6_pcie->iomuxc_gpr,
-+				     IOMUXC_GPR22, val,
-+				     val & IMX7D_GPR22_PCIE_PHY_PLL_LOCKED,
-+				     PHY_PLL_LOCK_WAIT_USLEEP_MAX,
-+				     PHY_PLL_LOCK_WAIT_TIMEOUT))
-+		dev_err(dev, "PCIe PLL lock timeout\n");
- }
- 
- static void imx6_pcie_deassert_core_reset(struct imx6_pcie *imx6_pcie)
--- 
-2.20.1
-
+>                 ethernet0 = &ethmac;
+>         };
