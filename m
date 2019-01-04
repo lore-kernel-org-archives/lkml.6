@@ -2,118 +2,88 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD34BC43444
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 08:09:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2CE6C43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 08:15:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9EDCD21874
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 08:09:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B3C62184B
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 08:15:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="OYXvvAWw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726896AbfADIJM (ORCPT
+        id S1726915AbfADIPk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 03:09:12 -0500
-Received: from verein.lst.de ([213.95.11.211]:38433 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725931AbfADIJM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 03:09:12 -0500
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id A853368AFE; Fri,  4 Jan 2019 09:09:10 +0100 (CET)
-Date:   Fri, 4 Jan 2019 09:09:10 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     Tony Luck <tony.luck@gmail.com>
-Cc:     Christoph Hellwig <hch@lst.de>, iommu@lists.linux-foundation.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jesper Dangaard Brouer <brouer@redhat.com>,
-        Tariq Toukan <tariqt@mellanox.com>,
-        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-        Toke =?iso-8859-1?Q?H=F8iland-J=F8rgensen?= <toke@toke.dk>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Jonathan Derrick <jonathan.derrick@intel.com>,
-        linux-pci@vger.kernel.org,
-        "linux-ia64@vger.kernel.org" <linux-ia64@vger.kernel.org>,
-        X86-ML <x86@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 02/15] swiotlb: remove dma_mark_clean
-Message-ID: <20190104080910.GA15221@lst.de>
-References: <20181207190720.18517-1-hch@lst.de> <20181207190720.18517-3-hch@lst.de> <CA+8MBb+9prWYSmp25K-LMUv1_0eekvFqXhoj87CV9zcaXfMDGg@mail.gmail.com> <20190103072356.GA24163@lst.de> <CA+8MBbKXTRGLn1Wvpp1avQCZ186i5Cbo0puvSoNNuKO7_AcwZg@mail.gmail.com>
+        Fri, 4 Jan 2019 03:15:40 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:60884 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725931AbfADIPk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 03:15:40 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x048FPVx038962;
+        Fri, 4 Jan 2019 02:15:25 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1546589725;
+        bh=vbvrVJNwKIKhkHxnypRDchy5NV72bmiqD460jYFEfgI=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=OYXvvAWwi7XZLftbds86PBb2TUstTxD6l/O85mmwUlM+A/kqJ0K/hktZsHCqyqeqn
+         zWLhpa+9GTkODmz/RiNVdBe7CCqjQIWesFCmSIm0bCKqvU7GHOubGOc9ZYL3uPap1f
+         O/0/5cQwSofUH2mNGOFwCTE27dp1wQcSTcx8vSOE=
+Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x048FPtA062821
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 4 Jan 2019 02:15:25 -0600
+Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Fri, 4
+ Jan 2019 02:15:25 -0600
+Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Fri, 4 Jan 2019 02:15:25 -0600
+Received: from [172.24.190.172] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x048FMNr004915;
+        Fri, 4 Jan 2019 02:15:23 -0600
+Subject: Re: [PATCH 0/5] ARM: davinci: fix label names in GPIO lookup entries
+To:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Kevin Hilman <khilman@kernel.org>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, "Andrew F . Davis" <afd@ti.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20190103151104.11839-1-brgl@bgdev.pl>
+From:   Sekhar Nori <nsekhar@ti.com>
+Message-ID: <a404f59d-6abd-2711-1f4e-0824489a27ad@ti.com>
+Date:   Fri, 4 Jan 2019 13:45:22 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+8MBbKXTRGLn1Wvpp1avQCZ186i5Cbo0puvSoNNuKO7_AcwZg@mail.gmail.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20190103151104.11839-1-brgl@bgdev.pl>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-One more ifdef to rescue..
+Hi Bartosz,
 
-Btw, do you know why we only play these mark clean bits for swiotlb
-and not for the various iommus?
+On 03/01/19 8:40 PM, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> Hi Sekhar,
+> 
+> I noticed some more breakage resulting from commit 587f7a694f01 ("gpio:
+> davinci: Use dev name for label and automatic base selection"). This
+> series fixes GPIO lookups in legacy mode for DaVinci.
 
-Also do you have any good receipe to build an ia64 cross compiler on
-a recent Debian system?  Unlike most architectures Debian doesn't have
-a pre-built one, and the script from the kernel buіldbot doesn't work
-either unfortunately.
+Thanks for the fixes, look good to me. Will send them once v4.21-rc1
+comes out.
 
----
-From 3f5f3297aa989cf27b3fe10e2d010422332574b3 Mon Sep 17 00:00:00 2001
-From: Christoph Hellwig <hch@lst.de>
-Date: Fri, 4 Jan 2019 09:06:05 +0100
-Subject: ia64: fix compile without swiotlb
-
-Some non-generic ia64 configs don't build swiotlb, and thus should not
-pull in the generic non-coherent DMA infrastructure.
-
-Fixes: 68c608345c ("swiotlb: remove dma_mark_clean")
-Reported-by: Tony Luck <tony.luck@gmail.com>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- arch/ia64/Kconfig   | 2 +-
- arch/ia64/mm/init.c | 2 ++
- 2 files changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/arch/ia64/Kconfig b/arch/ia64/Kconfig
-index ccd56f5df8cd..8d7396bd1790 100644
---- a/arch/ia64/Kconfig
-+++ b/arch/ia64/Kconfig
-@@ -31,7 +31,7 @@ config IA64
- 	select HAVE_MEMBLOCK_NODE_MAP
- 	select HAVE_VIRT_CPU_ACCOUNTING
- 	select ARCH_HAS_DMA_COHERENT_TO_PFN if SWIOTLB
--	select ARCH_HAS_SYNC_DMA_FOR_CPU
-+	select ARCH_HAS_SYNC_DMA_FOR_CPU if SWIOTLB
- 	select VIRT_TO_BUS
- 	select ARCH_DISCARD_MEMBLOCK
- 	select GENERIC_IRQ_PROBE
-diff --git a/arch/ia64/mm/init.c b/arch/ia64/mm/init.c
-index 055382622f07..29d841525ca1 100644
---- a/arch/ia64/mm/init.c
-+++ b/arch/ia64/mm/init.c
-@@ -67,6 +67,7 @@ __ia64_sync_icache_dcache (pte_t pte)
- 	set_bit(PG_arch_1, &page->flags);	/* mark page as clean */
- }
- 
-+#ifdef CONFIG_SWIOTLB
- /*
-  * Since DMA is i-cache coherent, any (complete) pages that were written via
-  * DMA can be marked as "clean" so that lazy_mmu_prot_update() doesn't have to
-@@ -81,6 +82,7 @@ void arch_sync_dma_for_cpu(struct device *dev, phys_addr_t paddr,
- 		set_bit(PG_arch_1, &pfn_to_page(pfn)->flags);
- 	} while (++pfn <= PHYS_PFN(paddr + size - 1));
- }
-+#endif
- 
- inline void
- ia64_set_rbs_bot (void)
--- 
-2.20.1
-
+Thanks,
+Sekhar
