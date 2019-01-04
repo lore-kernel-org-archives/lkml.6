@@ -2,90 +2,107 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_LOCAL_NOVOWEL,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA38DC43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 05:54:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06B9CC43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 05:55:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A954A21871
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 05:54:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C11FA21874
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 05:55:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Uy7bcXt6"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T6nz7z+K"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726801AbfADFyr (ORCPT
+        id S1726886AbfADFzO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 00:54:47 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:50714 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726093AbfADFyq (ORCPT
+        Fri, 4 Jan 2019 00:55:14 -0500
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:46942 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726093AbfADFzN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 00:54:46 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x045rXsQ157267;
-        Fri, 4 Jan 2019 05:54:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : references : date : in-reply-to : message-id : mime-version :
- content-type; s=corp-2018-07-02;
- bh=o2lK/OvwVBOtTVbc2KTWkUsVg2IXA079LsYp/iSwQoo=;
- b=Uy7bcXt6eEC7dwTcRM/x1JVOP695ouy3UJv7f0HcAI1CJ8/F1nDO0EllYR8HAxd+5H5T
- 0nl5NmHj27Fc77O2LCueuFwwoECia9evH/MeSYdH6eJd17OrhcLB1lUN6PXRQrRP3D2Z
- e7Q9ZQoNV4KJ/q78AwiX8hoelTt404CUoae4cICdC0CWUgE3DXdj/+2d3oiNULzvxTO/
- Z5vXGyveTKWp7pFLTgfJXcqg1l+VJG6z6vwRfTdgHZ1V2tEfv9l652122qLj8E+2Sm8h
- qXbq+8nW8UuZDNfzyeM3sN7zVbJqDDiulTj9wNN4CqGe8b4hrje+bMkfx4FdnjlTMeer 4A== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2130.oracle.com with ESMTP id 2pp0bu2hew-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 04 Jan 2019 05:54:40 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x045sekA023983
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 4 Jan 2019 05:54:40 GMT
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x045sdoI024989;
-        Fri, 4 Jan 2019 05:54:39 GMT
-Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 03 Jan 2019 21:54:39 -0800
-To:     John Garry <john.garry@huawei.com>
-Cc:     <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>,
-        <linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>,
-        <linux-scsi@vger.kernel.org>
-Subject: Re: [PATCH 0/8] hisi_sas: debugfs support
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <1545235006-151716-1-git-send-email-john.garry@huawei.com>
-Date:   Fri, 04 Jan 2019 00:54:37 -0500
-In-Reply-To: <1545235006-151716-1-git-send-email-john.garry@huawei.com> (John
-        Garry's message of "Wed, 19 Dec 2018 23:56:38 +0800")
-Message-ID: <yq1wonl6k82.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Fri, 4 Jan 2019 00:55:13 -0500
+Received: by mail-yb1-f195.google.com with SMTP id n16so4052254ybg.13;
+        Thu, 03 Jan 2019 21:55:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qdaP/nEJvWZE6mz44L21i/YDinDzu56kaUMBg4e2Q0A=;
+        b=T6nz7z+KqWf37vh2S9aJ5ek6kGtyK4Uney7hivrnDCNh+s62gmj4hiVMgjil4PrFs1
+         z/WhNp3tr74ZduubdOV3FtmyuxcOdlY6Jz31IbO6qQMQBaTLCeeSeu1pIpz758Sb52i1
+         A3Kq0IDEqb+0mBrKmdHn0jS4GiQHOmhde/Cg1xwiM8seewyiBHf8xZFb6/kORSbA7jQo
+         OPjnQT6HbExVMdQQhgKoMCifXGmVQDkA1YKtjshrX7e9vLQmBRYjAE63OkmXsyuHMHP/
+         4+b8LFjtt9uSUwJHNwUITpKJkN4dqoOqFwZ6prPfdpEdg9RFY6LPExPNMwWZYGcArWF9
+         ztCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qdaP/nEJvWZE6mz44L21i/YDinDzu56kaUMBg4e2Q0A=;
+        b=BTcyjnCXyntD11mETXZUTon3d6O2PC+U8izTU3kYQ955HGoKJXcetfurOekV0s+AOW
+         vssnYBBwH9L5saAUdUyPomKYxjYUD4XN0qS/shYE6juTSECkw01pAH3jLv+EFvIQA9D1
+         c6dZZN5ZzST3TPlui2ONY2MqSdJkgoTnW3FH8ZUFkIAuJUpklfE9zLxOkJI5Np9sE07+
+         TQNMyAPUwuTVjkwQDGTe1IcbhiCIqdPml+I3F01nyRNt2JSw1O2BWat7f1cQaPiZdrFd
+         hECc43y3hohh3qyKmiAgsor/5FSe2JQnXQpL7acFlOKFb0K6lDO7xSPf0RX8HksEgRz8
+         8IFg==
+X-Gm-Message-State: AJcUukdV+the7LEFWw2j/KKou1HEQOK5r3gU+wZnCfZO/GY66pL6l+Qb
+        +xpHugdwfB3k4CHkgw9VgIe5UeJzJE6QakjY3+c=
+X-Google-Smtp-Source: ALg8bN6r8R+fi/vLTNOuFY6MqmU1KhL/NsuDv8ai9OAJTmoCaXnG+4t5QwsuKuXOhAhqeli0RbiqQhSckjs70MPIcto=
+X-Received: by 2002:a25:3504:: with SMTP id c4mr15023259yba.252.1546581312407;
+ Thu, 03 Jan 2019 21:55:12 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9125 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=499
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1901040052
+References: <1546442912-20818-1-git-send-email-firoz.khan@linaro.org>
+ <1546442912-20818-2-git-send-email-firoz.khan@linaro.org> <CAMo8BfJcKGBytDQMFU7XO50uYZcwCftzsLkxLa6aDRPWJ0wW4Q@mail.gmail.com>
+ <CALxhOnhy6nh3ycW5kBwqZ4o0EfoFm4MoCJ2453rDCRaX3Z-z7Q@mail.gmail.com>
+In-Reply-To: <CALxhOnhy6nh3ycW5kBwqZ4o0EfoFm4MoCJ2453rDCRaX3Z-z7Q@mail.gmail.com>
+From:   Max Filippov <jcmvbkbc@gmail.com>
+Date:   Thu, 3 Jan 2019 21:55:00 -0800
+Message-ID: <CAMo8Bf+EJ+AaxfWGUcWMxsE=kpYD=-whAb0CxvdGYg+eK4bWpw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] xtensa: remove nargs from __SYSCALL
+To:     Firoz Khan <firoz.khan@linaro.org>
+Cc:     Chris Zankel <chris@zankel.net>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        linux-xtensa@linux-xtensa.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-Arch <linux-arch@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-John,
-
-> This patchset adds debugfs support for capturing driver state for
-> particular times when the HW has malfunctioned (and we must reset the HW).
+On Thu, Jan 3, 2019 at 9:17 PM Firoz Khan <firoz.khan@linaro.org> wrote:
+> On Fri, 4 Jan 2019 at 08:28, Max Filippov <jcmvbkbc@gmail.com> wrote:
+> > On Wed, Jan 2, 2019 at 7:29 AM Firoz Khan <firoz.khan@linaro.org> wrote:
+> > >         while [ $t_nxt -lt $t_nr ]; do
+> > > -               printf "__SYSCALL(%s, sys_ni_syscall, )\n" "${t_nxt}"
+> > > +               printf "__SYSCALL(%s,sys_ni_syscall)\n" "${t_nxt}"
+> >
+> > Please add space after the comma.
 >
-> Every controller HW version has had bugs. These bugs have been very
-> painful to debug. One useful tool to debug these is being able to capture
-> and export HW registers and driver control structures at point of failure.
->
-> This feature has been maintained out-of-tree for some time, so add it now.
+> This was intentional as I was trying compile other one architecture with the
+> previous implementation, it was giving the error. So I modified without space
+> after comma.
 
-Applied to 4.22/scsi-queue, thanks!
+I have tested that presence or absence of space does not affect the build
+for xtensa, and normally we put space after a comma, so I've mentioned that.
+
+Since this script is anyway removed in the next patch of the series it doesn't
+really matter whether the spaces are present or not.
+
+So, with or without this change:
+Acked-by: Max Filippov <jcmvbkbc@gmail.com>
 
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+Thanks.
+-- Max
