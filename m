@@ -2,447 +2,393 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ADA0C43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 13:44:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5088FC43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 13:47:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04DE42070C
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 13:44:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 10CD320656
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 13:47:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="wKYz7c3r";
-	dkim=pass (1024-bit key) header.d=marvell.onmicrosoft.com header.i=@marvell.onmicrosoft.com header.b="ZyNpkczz"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bB3BgDEj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728244AbfADNoe (ORCPT
+        id S1728273AbfADNrT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 08:44:34 -0500
-Received: from mx0b-0016f401.pphosted.com ([67.231.156.173]:33020 "EHLO
-        mx0b-0016f401.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726616AbfADNod (ORCPT
+        Fri, 4 Jan 2019 08:47:19 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:40321 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725939AbfADNrS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 08:44:33 -0500
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
-        by mx0b-0016f401.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x04Dfhv9004643;
-        Fri, 4 Jan 2019 05:44:15 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=from : to : cc :
- subject : date : message-id : references : content-type :
- content-transfer-encoding : mime-version; s=pfpt0818;
- bh=NPH4xznB9ploF17IuG46MV5f22Kgn+He9qoJSUPa5v4=;
- b=wKYz7c3rPsjLuB9io1KveL17A26hnno2zmL9ie3PBSBJYRNCvwd8eTvhiDKXByo1rNNd
- AajkT760+AGApKjByuZzecPWPu7qCDMdC1ZQJ9T3xDTUlhAH2ezDPoRP7e12B9/BEH+v
- 8VJVoATTy8NMzDe5G5rmbD/J71jPuu727egCdP+zsVP1BHr12tA0Wd3/j+2PY3Mj8yZo
- sIuaOE3by0nOfa5N4Trh+cAeu6Qf7HLuIjJDcUQXfzX2YAKScYjqfCT2fmTMu4pOY+OW
- PS0J55XHG2N0h2NRBD5kaZ1frHBayuyFMHLXvsJXbgJT47/MMSgv3baeKTuEfD5p933L zw== 
-Received: from sc-exch01.marvell.com ([199.233.58.181])
-        by mx0b-0016f401.pphosted.com with ESMTP id 2pt5868p5t-2
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Fri, 04 Jan 2019 05:44:14 -0800
-Received: from SC-EXCH02.marvell.com (10.93.176.82) by SC-EXCH01.marvell.com
- (10.93.176.81) with Microsoft SMTP Server (TLS) id 15.0.1367.3; Fri, 4 Jan
- 2019 05:44:13 -0800
-Received: from NAM05-BY2-obe.outbound.protection.outlook.com (104.47.50.58) by
- SC-EXCH02.marvell.com (10.93.176.82) with Microsoft SMTP Server (TLS) id
- 15.0.1367.3 via Frontend Transport; Fri, 4 Jan 2019 05:44:13 -0800
+        Fri, 4 Jan 2019 08:47:18 -0500
+Received: by mail-lf1-f65.google.com with SMTP id v5so25431069lfe.7;
+        Fri, 04 Jan 2019 05:47:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=marvell.onmicrosoft.com; s=selector1-marvell-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NPH4xznB9ploF17IuG46MV5f22Kgn+He9qoJSUPa5v4=;
- b=ZyNpkczzNReshBVuPVT+c1jWMiZmdVqF/HPhv+zNhqJoN3idLG3z3i6LTBChj5MP+tjXwKdqSJKJsLEiuoACIQ61SqZDvU3gFyDzi1yPoERbKq4n5skTrmAIpCvsjX8T70kzXjGm3m32xYaDwuJ+tLw0ZD3c8do4qA4nn7VZ2TE=
-Received: from DM6PR18MB2460.namprd18.prod.outlook.com (20.179.104.155) by
- DM6PR18MB2524.namprd18.prod.outlook.com (20.179.105.140) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1495.6; Fri, 4 Jan 2019 13:44:12 +0000
-Received: from DM6PR18MB2460.namprd18.prod.outlook.com
- ([fe80::3c7d:da4:1834:1b92]) by DM6PR18MB2460.namprd18.prod.outlook.com
- ([fe80::3c7d:da4:1834:1b92%2]) with mapi id 15.20.1495.005; Fri, 4 Jan 2019
- 13:44:11 +0000
-From:   Shijith Thotton <sthotton@marvell.com>
-To:     Steve Sistare <steven.sistare@oracle.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "peterz@infradead.org" <peterz@infradead.org>
-CC:     "subhra.mazumdar@oracle.com" <subhra.mazumdar@oracle.com>,
-        "dhaval.giani@oracle.com" <dhaval.giani@oracle.com>,
-        "daniel.m.jordan@oracle.com" <daniel.m.jordan@oracle.com>,
-        "pavel.tatashin@microsoft.com" <pavel.tatashin@microsoft.com>,
-        "matt@codeblueprint.co.uk" <matt@codeblueprint.co.uk>,
-        "umgwanakikbuti@gmail.com" <umgwanakikbuti@gmail.com>,
-        "riel@redhat.com" <riel@redhat.com>,
-        "jbacik@fb.com" <jbacik@fb.com>,
-        "juri.lelli@redhat.com" <juri.lelli@redhat.com>,
-        "valentin.schneider@arm.com" <valentin.schneider@arm.com>,
-        "vincent.guittot@linaro.org" <vincent.guittot@linaro.org>,
-        "quentin.perret@arm.com" <quentin.perret@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jayachandran Chandrasekharan Nair <jnair@marvell.com>,
-        Ganapatrao Kulkarni <gkulkarni@marvell.com>
-Subject: Re: [PATCH v4 00/10] steal tasks to improve CPU utilization
-Thread-Topic: [PATCH v4 00/10] steal tasks to improve CPU utilization
-Thread-Index: AQHUpDOSZxJ32b3lhEuAP0n2vJQx6g==
-Date:   Fri, 4 Jan 2019 13:44:11 +0000
-Message-ID: <DM6PR18MB246030C5A36973675B7DF38ED98E0@DM6PR18MB2460.namprd18.prod.outlook.com>
-References: <1544131696-2888-1-git-send-email-steven.sistare@oracle.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [106.51.107.105]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM6PR18MB2524;20:IfXPuQlRKbcLtqcjA1XzynkV3X5+s5OfRAhXneLoJwwbbB9ZsvtTVz1QbhsOr6lQzHoQj8F2l26Bh9LLtjUQwhy3K3xcWPKAzEC7nv8Thqzd7ZfPe4IIfRhmRaA31aq6z1alZbjFsAZC4QjxG5Hx6ed1FT7pgwqI6FYbFutF1JA=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(136003)(346002)(396003)(366004)(39860400002)(376002)(199004)(189003)(4744004)(9456002)(6346003)(6436002)(74316002)(256004)(14444005)(71200400001)(5024004)(19627235002)(105586002)(229853002)(25786009)(446003)(478600001)(186003)(78486014)(68736007)(71190400001)(26005)(476003)(486006)(76176011)(3846002)(66066001)(7696005)(6116002)(53546011)(97736004)(7736002)(55236004)(102836004)(6506007)(8676002)(8936002)(81166006)(81156014)(305945005)(5660300001)(6246003)(53936002)(2906002)(2501003)(33656002)(316002)(7416002)(39060400002)(107886003)(55016002)(14454004)(54906003)(99286004)(106356001)(2201001)(9686003)(4326008)(86362001)(110136005);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR18MB2524;H:DM6PR18MB2460.namprd18.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-ms-office365-filtering-correlation-id: 6e083d15-ef6b-484e-de1e-08d6724ab575
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(2017052603328)(7153060)(7193020);SRVR:DM6PR18MB2524;
-x-ms-traffictypediagnostic: DM6PR18MB2524:
-x-microsoft-antispam-prvs: <DM6PR18MB252472B16D9321BF5A600EC3D98E0@DM6PR18MB2524.namprd18.prod.outlook.com>
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(908002)(999002)(5005026)(6040522)(8220060)(2401047)(8121501046)(3231475)(944501520)(52105112)(3002001)(93006095)(93001095)(10201501046)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123562045)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:DM6PR18MB2524;BCL:0;PCL:0;RULEID:;SRVR:DM6PR18MB2524;
-x-forefront-prvs: 0907F58A24
-received-spf: None (protection.outlook.com: marvell.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: KMIGq13MbXi8pM9+jGV1exaCxoF6fXQfDQIKey0gepb2ld6Ch75XPLxgOmBm3EYyNIHq7s20lyMIL88AO+mdJYXJlfIQjUZlFqW/K25kMBlo99iBn2+2u9IMVMfsGewNsGqSn2BKhVSFyI7RkVC/zScR66NTHCspg3XfhVdxAMRFLPxkNWkCk1jPjpoEXSJts7RvTo0hn7+xnJxkHRk9UPSEClctY3t8GCPFQ3bi/NWmYPNFI7YGT+fhmRpvgb53pkTtrXsx4A65ijSVgB1Hjb+pbBO5AHnFMY1J8GxW+KVMtkISSk9pvMTpzC0PcaMa
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=GAvkoIRXt8aXaoDK6Iin6R48/Wao2wwPJF2MIc6IMkI=;
+        b=bB3BgDEj518DRR1JrrFSWwlmFOGVup9clzk4dfgNSvDJebcpeozuvTHIo+xy1itxGM
+         X0D1RBesoqklTR4IfG8cGNO7zJwlwVm+bjR2CVT0vO5pRfu6lET2yG2lqx7JNErQQ97T
+         R6ScuusbSFALBifBpwOz9wdFG97gpcXwsOMeeLtIMTYF4kQxgB2Bz8iOzVFGVoLCG4li
+         f23dW2HU03xddcVDkrc6ckDwPmDpTe3T6E07HAnPB6FqOpKLUnBVHR/IpDvGkLCE5K0M
+         FosGAfhNxcluPNn73ONLN7K114f0ehzQFvc9aPlyzFa1kB6lqUzrXM5FUuUugGeMgHmC
+         Axzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=GAvkoIRXt8aXaoDK6Iin6R48/Wao2wwPJF2MIc6IMkI=;
+        b=icZX4hwRNsQ/fydCM3hsTWI/EoSKf+LgnCW9y/PQL6f55WmwDTmVDQjzgMcBbkwx+d
+         jYB+Ea9reOU58HbICPbSWdvLf6IS3LIZ3+1gupU6Vy3gCIcpN3apNW4Yvtew+o7/sbwA
+         v0PUJqdD8K/AlLw1W17pVtaUrr1fgpthGH//82A0Y+gIN4oWW8coLy6+grIUzbQYns1e
+         A24PpAdPDpaLEaLszDbuJ0OY11nqixREFwznGEi++T1AAa61W25GBJm3ZIzjyd1N0RnT
+         txCc4iOXQwPGG+hqpEuVaDz6MPngMGCRXcCWL9yxiY511IL1qaT07wXg8zPXO6Z8Ud3L
+         TdJw==
+X-Gm-Message-State: AJcUukcQDQA6ZjKL1/TcizSs0ZeIzz8z3V+UXVJWzmD7E54VwKzftCQX
+        VV0CK2jEuHAzRL7K+H+FJNcJoHU19GZHHfC0AHs=
+X-Google-Smtp-Source: ALg8bN6YFWoMyTXL91qfR7DfjRn0teMXLDpdd9S5+oFBNjxOyghOyFEHFDUkIoT8y0uYS3x7lRjuswgd1AP2ImcGjXQ=
+X-Received: by 2002:a19:40cc:: with SMTP id n195mr16674825lfa.40.1546609634823;
+ Fri, 04 Jan 2019 05:47:14 -0800 (PST)
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6e083d15-ef6b-484e-de1e-08d6724ab575
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Jan 2019 13:44:11.5332
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR18MB2524
-X-OriginatorOrg: marvell.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-04_05:,,
- signatures=0
-X-Proofpoint-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901040121
+References: <CAE5jQCch70ZSmGZeA6RQxjXhL=LjgShdj_VZAGmqUzVRPSQBZw@mail.gmail.com>
+ <CAO-hwJK29V7gT3WQXLvsM5qaQgRLsgm2HAnR81vtkrrQAsCuEg@mail.gmail.com>
+In-Reply-To: <CAO-hwJK29V7gT3WQXLvsM5qaQgRLsgm2HAnR81vtkrrQAsCuEg@mail.gmail.com>
+From:   Anatoly Trosinenko <anatoly.trosinenko@gmail.com>
+Date:   Fri, 4 Jan 2019 16:47:03 +0300
+Message-ID: <CAE5jQCe=+-CpGToU=5sXrTfv+nbHxpvZexS6BNstvGNGF2Uszw@mail.gmail.com>
+Subject: Re: NULL pointer dereference when writing fuzzed data to /dev/uhid
+To:     Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Cc:     Jiri Kosina <jikos@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        Roderick Colenbrander <thunderbird2k@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07-Dec-18 3:09 AM, Steve Sistare wrote:=0A=
-> =0A=
-> When a CPU has no more CFS tasks to run, and idle_balance() fails to=0A=
-> find a task, then attempt to steal a task from an overloaded CPU in the=
-=0A=
-> same LLC. Maintain and use a bitmap of overloaded CPUs to efficiently=0A=
-> identify candidates.  To minimize search time, steal the first migratable=
-=0A=
-> task that is found when the bitmap is traversed.  For fairness, search=0A=
-> for migratable tasks on an overloaded CPU in order of next to run.=0A=
-> =0A=
-> This simple stealing yields a higher CPU utilization than idle_balance()=
-=0A=
-> alone, because the search is cheap, so it may be called every time the CP=
-U=0A=
-> is about to go idle.  idle_balance() does more work because it searches=
-=0A=
-> widely for the busiest queue, so to limit its CPU consumption, it decline=
-s=0A=
-> to search if the system is too busy.  Simple stealing does not offload th=
-e=0A=
-> globally busiest queue, but it is much better than running nothing at all=
-.=0A=
-> =0A=
-> The bitmap of overloaded CPUs is a new type of sparse bitmap, designed to=
-=0A=
-> reduce cache contention vs the usual bitmap when many threads concurrentl=
-y=0A=
-> set, clear, and visit elements.=0A=
-> =0A=
-> Patch 1 defines the sparsemask type and its operations.=0A=
-> =0A=
-> Patches 2, 3, and 4 implement the bitmap of overloaded CPUs.=0A=
-> =0A=
-> Patches 5 and 6 refactor existing code for a cleaner merge of later=0A=
->    patches.=0A=
-> =0A=
-> Patches 7 and 8 implement task stealing using the overloaded CPUs bitmap.=
-=0A=
-> =0A=
-> Patch 9 disables stealing on systems with more than 2 NUMA nodes for the=
-=0A=
-> time being because of performance regressions that are not due to stealin=
-g=0A=
-> per-se.  See the patch description for details.=0A=
-> =0A=
-> Patch 10 adds schedstats for comparing the new behavior to the old, and=
-=0A=
->    provided as a convenience for developers only, not for integration.=0A=
-> =0A=
-> The patch series is based on kernel 4.20.0-rc1.  It compiles, boots, and=
-=0A=
-> runs with/without each of CONFIG_SCHED_SMT, CONFIG_SMP, CONFIG_SCHED_DEBU=
-G,=0A=
-> and CONFIG_PREEMPT.  It runs without error with CONFIG_DEBUG_PREEMPT +=0A=
-> CONFIG_SLUB_DEBUG + CONFIG_DEBUG_PAGEALLOC + CONFIG_DEBUG_MUTEXES +=0A=
-> CONFIG_DEBUG_SPINLOCK + CONFIG_DEBUG_ATOMIC_SLEEP.  CPU hot plug and CPU=
-=0A=
-> bandwidth control were tested.=0A=
-> =0A=
-> Stealing improves utilization with only a modest CPU overhead in schedule=
-r=0A=
-> code.  In the following experiment, hackbench is run with varying numbers=
-=0A=
-> of groups (40 tasks per group), and the delta in /proc/schedstat is shown=
-=0A=
-> for each run, averaged per CPU, augmented with these non-standard stats:=
-=0A=
-> =0A=
->    %find - percent of time spent in old and new functions that search for=
-=0A=
->      idle CPUs and tasks to steal and set the overloaded CPUs bitmap.=0A=
-> =0A=
->    steal - number of times a task is stolen from another CPU.=0A=
-> =0A=
-> X6-2: 1 socket * 10 cores * 2 hyperthreads =3D 20 CPUs=0A=
-> Intel(R) Xeon(R) CPU E5-2630 v4 @ 2.20GHz=0A=
-> hackbench <grps> process 100000=0A=
-> sched_wakeup_granularity_ns=3D15000000=0A=
-> =0A=
->    baseline=0A=
->    grps  time  %busy  slice   sched   idle     wake %find  steal=0A=
->    1    8.084  75.02   0.10  105476  46291    59183  0.31      0=0A=
->    2   13.892  85.33   0.10  190225  70958   119264  0.45      0=0A=
->    3   19.668  89.04   0.10  263896  87047   176850  0.49      0=0A=
->    4   25.279  91.28   0.10  322171  94691   227474  0.51      0=0A=
->    8   47.832  94.86   0.09  630636 144141   486322  0.56      0=0A=
-> =0A=
->    new=0A=
->    grps  time  %busy  slice   sched   idle     wake %find  steal  %speedu=
-p=0A=
->    1    5.938  96.80   0.24   31255   7190    24061  0.63   7433  36.1=0A=
->    2   11.491  99.23   0.16   74097   4578    69512  0.84  19463  20.9=0A=
->    3   16.987  99.66   0.15  115824   1985   113826  0.77  24707  15.8=0A=
->    4   22.504  99.80   0.14  167188   2385   164786  0.75  29353  12.3=0A=
->    8   44.441  99.86   0.11  389153   1616   387401  0.67  38190   7.6=0A=
-> =0A=
-> Elapsed time improves by 8 to 36%, and CPU busy utilization is up=0A=
-> by 5 to 22% hitting 99% for 2 or more groups (80 or more tasks).=0A=
-> The cost is at most 0.4% more find time.=0A=
-> =0A=
-> Additional performance results follow.  A negative "speedup" is a=0A=
-> regression.  Note: for all hackbench runs, sched_wakeup_granularity_ns=0A=
-> is set to 15 msec.  Otherwise, preemptions increase at higher loads and=
-=0A=
-> distort the comparison between baseline and new.=0A=
-> =0A=
-> ------------------ 1 Socket Results ------------------=0A=
-> =0A=
-> X6-2: 1 socket * 10 cores * 2 hyperthreads =3D 20 CPUs=0A=
-> Intel(R) Xeon(R) CPU E5-2630 v4 @ 2.20GHz=0A=
-> Average of 10 runs of: hackbench <groups> process 100000=0A=
-> =0A=
->              --- base --    --- new ---=0A=
->    groups    time %stdev    time %stdev  %speedup=0A=
->         1   8.008    0.1   5.905    0.2      35.6=0A=
->         2  13.814    0.2  11.438    0.1      20.7=0A=
->         3  19.488    0.2  16.919    0.1      15.1=0A=
->         4  25.059    0.1  22.409    0.1      11.8=0A=
->         8  47.478    0.1  44.221    0.1       7.3=0A=
-> =0A=
-> X6-2: 1 socket * 22 cores * 2 hyperthreads =3D 44 CPUs=0A=
-> Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz=0A=
-> Average of 10 runs of: hackbench <groups> process 100000=0A=
-> =0A=
->              --- base --    --- new ---=0A=
->    groups    time %stdev    time %stdev  %speedup=0A=
->         1   4.586    0.8   4.596    0.6      -0.3=0A=
->         2   7.693    0.2   5.775    1.3      33.2=0A=
->         3  10.442    0.3   8.288    0.3      25.9=0A=
->         4  13.087    0.2  11.057    0.1      18.3=0A=
->         8  24.145    0.2  22.076    0.3       9.3=0A=
->        16  43.779    0.1  41.741    0.2       4.8=0A=
-> =0A=
-> KVM 4-cpu=0A=
-> Intel(R) Xeon(R) CPU E5-2699 v3 @ 2.30GHz=0A=
-> tbench, average of 11 runs.=0A=
-> =0A=
->    clients    %speedup=0A=
->          1        16.2=0A=
->          2        11.7=0A=
->          4         9.9=0A=
->          8        12.8=0A=
->         16        13.7=0A=
-> =0A=
-> KVM 2-cpu=0A=
-> Intel(R) Xeon(R) CPU E5-2699 v3 @ 2.30GHz=0A=
-> =0A=
->    Benchmark                     %speedup=0A=
->    specjbb2015_critical_jops          5.7=0A=
->    mysql_sysb1.0.14_mutex_2          40.6=0A=
->    mysql_sysb1.0.14_oltp_2            3.9=0A=
-> =0A=
-> ------------------ 2 Socket Results ------------------=0A=
-> =0A=
-> X6-2: 2 sockets * 10 cores * 2 hyperthreads =3D 40 CPUs=0A=
-> Intel(R) Xeon(R) CPU E5-2630 v4 @ 2.20GHz=0A=
-> Average of 10 runs of: hackbench <groups> process 100000=0A=
-> =0A=
->              --- base --    --- new ---=0A=
->    groups    time %stdev    time %stdev  %speedup=0A=
->         1   7.945    0.2   7.219    8.7      10.0=0A=
->         2   8.444    0.4   6.689    1.5      26.2=0A=
->         3  12.100    1.1   9.962    2.0      21.4=0A=
->         4  15.001    0.4  13.109    1.1      14.4=0A=
->         8  27.960    0.2  26.127    0.3       7.0=0A=
-> =0A=
-> X6-2: 2 sockets * 22 cores * 2 hyperthreads =3D 88 CPUs=0A=
-> Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz=0A=
-> Average of 10 runs of: hackbench <groups> process 100000=0A=
-> =0A=
->              --- base --    --- new ---=0A=
->    groups    time %stdev    time %stdev  %speedup=0A=
->         1   5.826    5.4   5.840    5.0      -0.3=0A=
->         2   5.041    5.3   6.171   23.4     -18.4=0A=
->         3   6.839    2.1   6.324    3.8       8.1=0A=
->         4   8.177    0.6   7.318    3.6      11.7=0A=
->         8  14.429    0.7  13.966    1.3       3.3=0A=
->        16  26.401    0.3  25.149    1.5       4.9=0A=
-> =0A=
-> =0A=
-> X6-2: 2 sockets * 22 cores * 2 hyperthreads =3D 88 CPUs=0A=
-> Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz=0A=
-> Oracle database OLTP, logging disabled, NVRAM storage=0A=
-> =0A=
->    Customers   Users   %speedup=0A=
->      1200000      40       -1.2=0A=
->      2400000      80        2.7=0A=
->      3600000     120        8.9=0A=
->      4800000     160        4.4=0A=
->      6000000     200        3.0=0A=
-> =0A=
-> X6-2: 2 sockets * 14 cores * 2 hyperthreads =3D 56 CPUs=0A=
-> Intel(R) Xeon(R) CPU E5-2690 v4 @ 2.60GHz=0A=
-> Results from the Oracle "Performance PIT".=0A=
-> =0A=
->    Benchmark                                           %speedup=0A=
-> =0A=
->    mysql_sysb1.0.14_fileio_56_rndrd                        19.6=0A=
->    mysql_sysb1.0.14_fileio_56_seqrd                        12.1=0A=
->    mysql_sysb1.0.14_fileio_56_rndwr                         0.4=0A=
->    mysql_sysb1.0.14_fileio_56_seqrewr                      -0.3=0A=
-> =0A=
->    pgsql_sysb1.0.14_fileio_56_rndrd                        19.5=0A=
->    pgsql_sysb1.0.14_fileio_56_seqrd                         8.6=0A=
->    pgsql_sysb1.0.14_fileio_56_rndwr                         1.0=0A=
->    pgsql_sysb1.0.14_fileio_56_seqrewr                       0.5=0A=
-> =0A=
->    opatch_time_ASM_12.2.0.1.0_HP2M                          7.5=0A=
->    select-1_users-warm_asmm_ASM_12.2.0.1.0_HP2M             5.1=0A=
->    select-1_users_asmm_ASM_12.2.0.1.0_HP2M                  4.4=0A=
->    swingbenchv3_asmm_soebench_ASM_12.2.0.1.0_HP2M           5.8=0A=
-> =0A=
->    lm3_memlat_L2                                            4.8=0A=
->    lm3_memlat_L1                                            0.0=0A=
-> =0A=
->    ub_gcc_56CPUs-56copies_Pipe-based_Context_Switching     60.1=0A=
->    ub_gcc_56CPUs-56copies_Shell_Scripts_1_concurrent        5.2=0A=
->    ub_gcc_56CPUs-56copies_Shell_Scripts_8_concurrent       -3.0=0A=
->    ub_gcc_56CPUs-56copies_File_Copy_1024_bufsize_2000_maxblocks 2.4=0A=
-> =0A=
-> X5-2: 2 sockets * 18 cores * 2 hyperthreads =3D 72 CPUs=0A=
-> Intel(R) Xeon(R) CPU E5-2699 v3 @ 2.30GHz=0A=
-> =0A=
->    NAS_OMP=0A=
->    bench class   ncpu    %improved(Mops)=0A=
->    dc    B       72      1.3=0A=
->    is    C       72      0.9=0A=
->    is    D       72      0.7=0A=
-> =0A=
->    sysbench mysql, average of 24 runs=0A=
->            --- base ---     --- new ---=0A=
->    nthr   events  %stdev   events  %stdev %speedup=0A=
->       1    331.0    0.25    331.0    0.24     -0.1=0A=
->       2    661.3    0.22    661.8    0.22      0.0=0A=
->       4   1297.0    0.88   1300.5    0.82      0.2=0A=
->       8   2420.8    0.04   2420.5    0.04     -0.1=0A=
->      16   4826.3    0.07   4825.4    0.05     -0.1=0A=
->      32   8815.3    0.27   8830.2    0.18      0.1=0A=
->      64  12823.0    0.24  12823.6    0.26      0.0=0A=
-> =0A=
-> --------------------------------------------------------------=0A=
-> =0A=
-> Changes from v1 to v2:=0A=
->    - Remove stray find_time hunk from patch 5=0A=
->    - Fix "warning: label out defined but not used" for !CONFIG_SCHED_SMT=
-=0A=
->    - Set SCHED_STEAL_NODE_LIMIT_DEFAULT to 2=0A=
->    - Steal iff avg_idle exceeds the cost of stealing=0A=
-> =0A=
-> Changes from v2 to v3:=0A=
->    - Update series for kernel 4.20.  Context changes only.=0A=
-> =0A=
-> Changes from v3 to v4:=0A=
->    - Avoid 64-bit division on 32-bit processors in compute_skid()=0A=
->    - Replace IF_SMP with inline functions to set idle_stamp=0A=
->    - Push ZALLOC_MASK body into calling function=0A=
->    - Set rq->cfs_overload_cpus in update_top_cache_domain instead of=0A=
->      cpu_attach_domain=0A=
->    - Rewrite sparsemask iterator for complete inlining=0A=
->    - Cull and clean up sparsemask functions and moved all into=0A=
->      sched/sparsemask.h=0A=
-> =0A=
-> Steve Sistare (10):=0A=
->    sched: Provide sparsemask, a reduced contention bitmap=0A=
->    sched/topology: Provide hooks to allocate data shared per LLC=0A=
->    sched/topology: Provide cfs_overload_cpus bitmap=0A=
->    sched/fair: Dynamically update cfs_overload_cpus=0A=
->    sched/fair: Hoist idle_stamp up from idle_balance=0A=
->    sched/fair: Generalize the detach_task interface=0A=
->    sched/fair: Provide can_migrate_task_llc=0A=
->    sched/fair: Steal work from an overloaded CPU when CPU goes idle=0A=
->    sched/fair: disable stealing if too many NUMA nodes=0A=
->    sched/fair: Provide idle search schedstats=0A=
-> =0A=
->   include/linux/sched/topology.h |   1 +=0A=
->   kernel/sched/core.c            |  31 +++-=0A=
->   kernel/sched/fair.c            | 354 ++++++++++++++++++++++++++++++++++=
-+++----=0A=
->   kernel/sched/features.h        |   6 +=0A=
->   kernel/sched/sched.h           |  13 +-=0A=
->   kernel/sched/sparsemask.h      | 210 ++++++++++++++++++++++++=0A=
->   kernel/sched/stats.c           |  11 +-=0A=
->   kernel/sched/stats.h           |  13 ++=0A=
->   kernel/sched/topology.c        | 121 +++++++++++++-=0A=
->   9 files changed, 726 insertions(+), 34 deletions(-)=0A=
->   create mode 100644 kernel/sched/sparsemask.h=0A=
-> =0A=
-> --=0A=
-> 1.8.3.1=0A=
-> =0A=
-> =0A=
-=0A=
-Hi Steve,=0A=
-=0A=
-Tried your patchset on ThunderX2 with 2 nodes. Please find my observations =
-below.=0A=
-=0A=
-Hackbench was run on single node due to variance on 2 nodes and it showed=
-=0A=
-improvement under load.=0A=
-=0A=
-Single node hackbench numbers:=0A=
-group    old time       new time        steals          %change=0A=
-1        6.717           7.275           21              -8.31=0A=
-2        8.449           9.268           106             -9.69=0A=
-3        12.035          12.761          173071          -6.03=0A=
-4        14.648          9.787           595889           33.19=0A=
-8        22.513          18.329          2397394          18.58=0A=
-16       39.861          36.263          3949903          9.06=0A=
-=0A=
-column "new time" shows hackbench runtime in seconds with the patchset.=0A=
-=0A=
-Tried below benchmarks with 2 nodes, but no performance benefit/degradation=
- was=0A=
-observed on multiple runs.=0A=
-   - MySQL (read/write/PS etc with sysbench)=0A=
-   - HHVM running oss-performance benchmarks=0A=
-=0A=
-Shijith=0A=
+> I wanted to tell you that I started investigating the other private
+> report you sent us, but couldn't find the time to properly come with a
+> fix as the fuzzed data is hard to discriminate from valid data.
+
+Oops, I thought I was "over securing" these issues and everyone
+ignored them since I heard default policy here is to not send reports
+privately without a good reason, so I re-evaluated them and sent
+publicly...
+
+OTOH these ones seem to be not too severe: on the first glance they
+require a physical or root access, and even if they don't, *these
+ones* are only NULL dereferences.
+
+Best regards
+Anatoly
+
+=D0=BF=D1=82, 4 =D1=8F=D0=BD=D0=B2. 2019 =D0=B3. =D0=B2 16:25, Benjamin Tis=
+soires <benjamin.tissoires@redhat.com>:
+>
+> Hi Anatoly,
+>
+>
+> On Fri, Jan 4, 2019 at 1:32 PM Anatoly Trosinenko
+> <anatoly.trosinenko@gmail.com> wrote:
+> >
+> > Hello,
+> >
+> > When writing the attached file to /dev/uhid, a NULL dereference occurs
+> > in kernel. As I understand, the problem is not UHID-specific, but is
+> > related to HID subsystem.
+>
+> Thanks for the report.
+> I wanted to tell you that I started investigating the other private
+> report you sent us, but couldn't find the time to properly come with a
+> fix as the fuzzed data is hard to discriminate from valid data.
+>
+> A couple of notes though:
+> - writing to uhid needs to be done by root. Any distribution that
+> doesn't enforce that is doomed to have several security issues
+> - we could somehow reproduce those fuzzed data on a USB or Bluetooth
+> connection, but that would require physical access to the device, so
+> you are doomed also
+> - last IIRC, there was some attempts by the ChromeOS team to allow
+> access to the HID stack from the Chrome plugins, I don't know if this
+> is able to generate the issues.
+>
+> On the specifics reported here:
+>
+> >
+> > How to reproduce:
+> > 1) Checkout the fresh master branch of the Linux kernel (tested on
+> > commit 96d4f267e)
+> > 2) Compile it with the attached config (kvm-xfstests capable)
+> > 3) Take one of reproducers and execute
+> > cat /vtmp/repro > /dev/uhid
+> >
+> > What happens:
+> >
+> > For chicony.bin:
+> >
+> > root@kvm-xfstests:~# cat /vtmp/chicony.bin > /dev/uhid
+> > [   19.072703] BUG: unable to handle kernel NULL pointer dereference
+> > at 0000000000000002
+> > [   19.073371] #PF error: [normal kernel read fault]
+> > [   19.073755] PGD 8000000078b2c067 P4D 8000000078b2c067 PUD 0
+> > [   19.074223] Oops: 0000 [#1] SMP PTI
+> > [   19.074809] CPU: 0 PID: 5 Comm: kworker/0:0 Not tainted
+> > 4.20.0-xfstests-10979-g96d4f267e40 #1
+> > [   19.075965] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
+> > BIOS 1.11.1-1ubuntu1 04/01/2014
+> > [   19.077599] Workqueue: events uhid_device_add_worker
+> > [   19.078019] RIP: 0010:ch_switch12_report_fixup+0x13/0x70
+>
+> This driver expects the device to be connected on USB, and you are
+> triggering the oops because you are on uhid.
+> I am chasing the USB dependencies in most drivers, but this is a hard
+> task to do when I do not have access to the actual devices.
+>
+> I guess one way of fixing that is to add a check for the actual
+> transport driver during probe:
+> hid_is_using_ll_driver(hdev, &usb_hid_driver)
+>
+> Patches are welcome :)
+>
+> > [   19.078462] Code: 49 8b 00 3e 80 60 20 df b8 01 00 00 00 c3 66 0f
+> > 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 8b 8f 48 19 00 00 48 89 f0 48
+> > 8b 49 d8 <80> 79 02 01 74 01 c3 81 7f 3c 21 14 00 00 75 f6 83 3a 7f 76
+> > f1 80
+> > [   19.080103] RSP: 0018:ffffa1d880367c48 EFLAGS: 00010286
+> > [   19.080541] RAX: ffff9b653d27b180 RBX: ffff9b653a6fb948 RCX: 0000000=
+000000000
+> > [   19.081133] RDX: ffffa1d880367c5c RSI: ffff9b653d27b180 RDI: ffff9b6=
+53a6fa000
+> > [   19.081780] RBP: ffff9b653d27b180 R08: 000000064992eed0 R09: 0000000=
+000000000
+> > [   19.082409] R10: 0000000000000000 R11: 0000000000000000 R12: ffff9b6=
+53a6fa000
+> > [   19.083017] R13: ffffffff83f14510 R14: ffffffff83f14440 R15: 0000000=
+000000000
+> > [   19.083619] FS:  0000000000000000(0000) GS:ffff9b653fc00000(0000)
+> > knlGS:0000000000000000
+> > [   19.084362] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > [   19.085164] CR2: 0000000000000002 CR3: 00000000788b8004 CR4: 0000000=
+000360ef0
+> > [   19.085789] Call Trace:
+> > [   19.086011]  hid_open_report+0x81/0x2c0
+> > [   19.086341]  hid_device_probe+0x135/0x160
+> > [   19.086754]  ? __driver_attach+0x110/0x110
+> > [   19.087109]  really_probe+0xe0/0x390
+> > [   19.087411]  ? __driver_attach+0x110/0x110
+> > [   19.087782]  bus_for_each_drv+0x78/0xc0
+> > [   19.088134]  __device_attach+0xcc/0x130
+> > [   19.088477]  bus_probe_device+0x9f/0xb0
+> > [   19.088832]  device_add+0x422/0x680
+> > [   19.089144]  ? __debugfs_create_file+0xb5/0xf0
+> > [   19.089536]  hid_add_device+0xec/0x280
+> > [   19.089880]  uhid_device_add_worker+0x15/0x60
+> > [   19.090270]  process_one_work+0x238/0x5d0
+> > [   19.090627]  worker_thread+0x3d/0x390
+> > [   19.090959]  ? process_one_work+0x5d0/0x5d0
+> > [   19.091331]  kthread+0x121/0x140
+> > [   19.096732]  ? __kthread_create_on_node+0x1a0/0x1a0
+> > [   19.097164]  ret_from_fork+0x3a/0x50
+> > [   19.097483] CR2: 0000000000000002
+> > [   19.097779] ---[ end trace 1b547acaae113039 ]---
+> > [   19.098186] RIP: 0010:ch_switch12_report_fixup+0x13/0x70
+> > [   19.098621] Code: 49 8b 00 3e 80 60 20 df b8 01 00 00 00 c3 66 0f
+> > 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 8b 8f 48 19 00 00 48 89 f0 48
+> > 8b 49 d8 <80> 79 02 01 74 01 c3 81 7f 3c 21 14 00 00 75 f6 83 3a 7f 76
+> > f1 80
+> > [   19.100251] RSP: 0018:ffffa1d880367c48 EFLAGS: 00010286
+> > [   19.100707] RAX: ffff9b653d27b180 RBX: ffff9b653a6fb948 RCX: 0000000=
+000000000
+> > [   19.101321] RDX: ffffa1d880367c5c RSI: ffff9b653d27b180 RDI: ffff9b6=
+53a6fa000
+> > [   19.102448] RBP: ffff9b653d27b180 R08: 000000064992eed0 R09: 0000000=
+000000000
+> > [   19.103029] R10: 0000000000000000 R11: 0000000000000000 R12: ffff9b6=
+53a6fa000
+> > [   19.103601] R13: ffffffff83f14510 R14: ffffffff83f14440 R15: 0000000=
+000000000
+> > [   19.104173] FS:  0000000000000000(0000) GS:ffff9b653fc00000(0000)
+> > knlGS:0000000000000000
+> > [   19.104823] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > [   19.105289] CR2: 0000000000000002 CR3: 00000000788b8004 CR4: 0000000=
+000360ef0
+> > [   19.105864] BUG: sleeping function called from invalid context at
+> > include/linux/percpu-rwsem.h:34
+> > [   19.106578] in_atomic(): 0, irqs_disabled(): 1, pid: 5, name: kworke=
+r/0:0
+> > [   19.107671] INFO: lockdep is turned off.
+> > [   19.108384] irq event stamp: 3576
+> > [   19.108976] hardirqs last  enabled at (3575): [<ffffffff82e01ed5>]
+> > __kmalloc_track_caller+0x185/0x310
+> > [   19.112970] hardirqs last disabled at (3576): [<ffffffff82c015f4>]
+> > trace_hardirqs_off_thunk+0x1a/0x1c
+> > [   19.114557] softirqs last  enabled at (3504): [<ffffffff834002b1>]
+> > peernet2id+0x51/0x80
+> > [   19.115897] softirqs last disabled at (3502): [<ffffffff83400292>]
+> > peernet2id+0x32/0x80
+> > [   19.117319] CPU: 0 PID: 5 Comm: kworker/0:0 Tainted: G      D
+> >     4.20.0-xfstests-10979-g96d4f267e40 #1
+> > [   19.118739] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
+> > BIOS 1.11.1-1ubuntu1 04/01/2014
+> > [   19.120049] Workqueue: events uhid_device_add_worker
+> > [   19.120767] Call Trace:
+> > [   19.121127]  dump_stack+0x67/0x90
+> > [   19.121622]  ___might_sleep.cold.13+0x9f/0xaf
+> > [   19.122278]  exit_signals+0x1c/0x200
+> > [   19.122792]  do_exit+0xac/0xaf0
+> > [   19.123619]  ? process_one_work+0x5d0/0x5d0
+> > [   19.124520]  ? kthread+0x121/0x140
+> > [   19.125050]  rewind_stack_do_exit+0x17/0x20
+> >
+> > For sony.bin:
+> >
+> > root@kvm-xfstests:~# cat /vtmp/sony.bin > /dev/uhid
+> > [   16.891931] sony 0003:054C:1000.0001: unknown main item tag 0x0
+> > [   16.892432] sony 0003:054C:1000.0001: unknown main item tag 0x0
+> > [   16.892894] sony 0003:054C:1000.0001: unknown main item tag 0x0
+> > [   16.893362] sony 0003:054C:1000.0001: unknown main item tag 0x0
+> > [   16.893844] sony 0003:054C:1000.0001: unknown main item tag 0x0
+> > [   16.895389] sony 0003:054C:1000.0001: unknown main item tag 0x0
+> > [   16.898165] sony 0003:054C:1000.0001: ignoring exceeding usage max
+> > [   16.901190] sony 0003:054C:1000.0001: unknown main item tag 0x0
+> > [   16.903797] sony 0003:054C:1000.0001: unknown main item tag 0x0
+> > [   16.906401] sony 0003:054C:1000.0001: unknown main item tag 0x0
+> > [   16.908957] sony 0003:054C:1000.0001: unknown main item tag 0x0
+> > [   16.911449] sony 0003:054C:1000.0001: unknown main item tag 0x0
+> > [   16.913936] sony 0003:054C:1000.0001: unknown main item tag 0x1
+> > [   16.916551] sony 0003:054C:1000.0001: unknown main item tag 0x0
+> > [   16.918454] sony 0003:054C:1000.0001: unknown main item tag 0x0
+> > [   16.919743] sony 0003:054C:1000.0001: unknown main item tag 0x4
+> > [   16.920834] sony 0003:054C:1000.0001: unknown main item tag 0xe
+> > [   16.921904] sony 0003:054C:1000.0001: unknown main item tag 0xe
+> > [   16.923006] sony 0003:054C:1000.0001: unknown main item tag 0x0
+> > [   16.924082] sony 0003:054C:1000.0001: unknown main item tag 0x2
+> > [   16.925195] sony 0003:054C:1000.0001: unknown main item tag 0x0
+> > [   16.926289] sony 0003:054C:1000.0001: unknown main item tag 0x0
+> > [   16.927400] sony 0003:054C:1000.0001: unknown main item tag 0x0
+> > [   16.928546] BUG: unable to handle kernel NULL pointer dereference
+> > at 0000000000000028
+> > [   16.929951] #PF error: [normal kernel read fault]
+> > [   16.930884] PGD 800000007a52b067 P4D 800000007a52b067 PUD 0
+> > [   16.931836] Oops: 0000 [#1] SMP PTI
+> > [   16.932437] CPU: 0 PID: 5 Comm: kworker/0:0 Not tainted
+> > 4.20.0-xfstests-10979-g96d4f267e40 #1
+> > [   16.933752] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
+> > BIOS 1.11.1-1ubuntu1 04/01/2014
+> > [   16.935372] Workqueue: events uhid_device_add_worker
+> > [   16.936321] RIP: 0010:hid_validate_values+0x48/0x110
+>
+> In a sense, it's good to have a fault there because this was added to
+> make sure we do not blindly accept any data. The fact that it doesn't
+> fail gracefully is a sign that there is something else.
+> Maybe Roderick could have a look?
+>
+> Cheers,
+> Benjamin
+>
+> > [   16.937690] Code: 4c 69 ce 03 01 00 00 4a 8d 44 08 0c 48 8b 44 c7
+> > 08 48 85 c0 0f 84 a9 00 00 00 39 88 30 08 00 00 76 53 41 89 c9 4e 8b
+> > 4c c8 30 <45> 39 41 28 72 69 48 83 c4 08 c3 89 f6 48 69 c6 18 08 00 00
+> > 48 8b
+> > [   16.941067] RSP: 0018:ffffb2c880367ab0 EFLAGS: 00010286
+> > [   16.941935] RAX: ffff8d54b881c870 RBX: ffff8d54b881dd08 RCX: 0000000=
+000000000
+> > [   16.943203] RDX: 0000000000000000 RSI: 0000000000000001 RDI: ffff8d5=
+4b881c000
+> > [   16.945406] RBP: ffff8d54bacb3580 R08: 0000000000000007 R09: 0000000=
+000000000
+> > [   16.946590] R10: 0000000000000000 R11: ffff8d54b80293e6 R12: ffff8d5=
+4b881c000
+> > [   16.947668] R13: dead000000000100 R14: ffff8d54b881c000 R15: ffff8d5=
+4ba4fb818
+> > [   16.948765] FS:  0000000000000000(0000) GS:ffff8d54bfc00000(0000)
+> > knlGS:0000000000000000
+> > [   16.949838] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > [   16.950663] CR2: 0000000000000028 CR3: 000000007a4e8002 CR4: 0000000=
+000360ef0
+> > [   16.951513] Call Trace:
+> > [   16.951870]  sony_input_configured+0xd6d/0x1060
+> > [   16.952608]  ? kobject_set_name_vargs+0x6f/0x90
+> > [   16.953257]  ? dev_set_name+0x57/0x70
+> > [   16.953783]  ? init_timer_key+0xed/0x120
+> > [   16.954353]  hidinput_connect+0x2fb/0x89b
+> > [   16.954974]  hid_connect+0x2f3/0x370
+> > [   16.955489]  hid_hw_start+0x38/0x60
+> > [   16.956052]  sony_probe+0xba/0x160
+> > [   16.956541]  hid_device_probe+0xf7/0x160
+> > [   16.957103]  ? __driver_attach+0x110/0x110
+> > [   16.957689]  really_probe+0xe0/0x390
+> > [   16.958206]  ? __driver_attach+0x110/0x110
+> > [   16.958797]  bus_for_each_drv+0x78/0xc0
+> > [   16.959290]  __device_attach+0xcc/0x130
+> > [   16.959832]  bus_probe_device+0x9f/0xb0
+> > [   16.960407]  device_add+0x422/0x680
+> > [   16.960772]  ? __debugfs_create_file+0xb5/0xf0
+> > [   16.962459]  hid_add_device+0xec/0x280
+> > [   16.963517]  uhid_device_add_worker+0x15/0x60
+> > [   16.964304]  process_one_work+0x238/0x5d0
+> > [   16.965062]  worker_thread+0x3d/0x390
+> > [   16.965737]  ? process_one_work+0x5d0/0x5d0
+> > [   16.966499]  kthread+0x121/0x140
+> > [   16.967089]  ? __kthread_create_on_node+0x1a0/0x1a0
+> > [   16.967988]  ret_from_fork+0x3a/0x50
+> > [   16.968742] CR2: 0000000000000028
+> > [   16.969394] ---[ end trace bc79f619177a8c3e ]---
+> > [   16.970267] RIP: 0010:hid_validate_values+0x48/0x110
+> > [   16.971167] Code: 4c 69 ce 03 01 00 00 4a 8d 44 08 0c 48 8b 44 c7
+> > 08 48 85 c0 0f 84 a9 00 00 00 39 88 30 08 00 00 76 53 41 89 c9 4e 8b
+> > 4c c8 30 <45> 39 41 28 72 69 48 83 c4 08 c3 89 f6 48 69 c6 18 08 00 00
+> > 48 8b
+> > [   16.974023] RSP: 0018:ffffb2c880367ab0 EFLAGS: 00010286
+> > [   16.974805] RAX: ffff8d54b881c870 RBX: ffff8d54b881dd08 RCX: 0000000=
+000000000
+> > [   16.975925] RDX: 0000000000000000 RSI: 0000000000000001 RDI: ffff8d5=
+4b881c000
+> > [   16.977035] RBP: ffff8d54bacb3580 R08: 0000000000000007 R09: 0000000=
+000000000
+> > [   16.978269] R10: 0000000000000000 R11: ffff8d54b80293e6 R12: ffff8d5=
+4b881c000
+> > [   16.979446] R13: dead000000000100 R14: ffff8d54b881c000 R15: ffff8d5=
+4ba4fb818
+> > [   16.980503] FS:  0000000000000000(0000) GS:ffff8d54bfc00000(0000)
+> > knlGS:0000000000000000
+> > [   16.981675] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > [   16.982566] CR2: 0000000000000028 CR3: 000000007a4e8002 CR4: 0000000=
+000360ef0
+> > [   16.983712] BUG: sleeping function called from invalid context at
+> > include/linux/percpu-rwsem.h:34
+> > [   16.985362] in_atomic(): 0, irqs_disabled(): 1, pid: 5, name: kworke=
+r/0:0
+> > [   16.985947] INFO: lockdep is turned off.
+> > [   16.986296] irq event stamp: 4040
+> > [   16.986584] hardirqs last  enabled at (4039): [<ffffffffab201ed5>]
+> > __kmalloc_track_caller+0x185/0x310
+> > [   16.987354] hardirqs last disabled at (4040): [<ffffffffab0015f4>]
+> > trace_hardirqs_off_thunk+0x1a/0x1c
+> > [   16.988522] softirqs last  enabled at (3962): [<ffffffffabc0032f>]
+> > __do_softirq+0x32f/0x440
+> > [   16.989788] softirqs last disabled at (3955): [<ffffffffab0b32f6>]
+> > irq_exit+0xa6/0xe0
+> > [   16.992028] CPU: 0 PID: 5 Comm: kworker/0:0 Tainted: G      D
+> >     4.20.0-xfstests-10979-g96d4f267e40 #1
+> > [   16.993354] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
+> > BIOS 1.11.1-1ubuntu1 04/01/2014
+> > [   16.994960] Workqueue: events uhid_device_add_worker
+> > [   16.996048] Call Trace:
+> > [   16.996593]  dump_stack+0x67/0x90
+> > [   16.997203]  ___might_sleep.cold.13+0x9f/0xaf
+> > [   16.998004]  exit_signals+0x1c/0x200
+> > [   16.998660]  do_exit+0xac/0xaf0
+> > [   16.999232]  ? process_one_work+0x5d0/0x5d0
+> > [   16.999987]  ? kthread+0x121/0x140
+> > [   17.000709]  rewind_stack_do_exit+0x17/0x20
+> >
+> >
+> > Best regards
+> > Anatoly
