@@ -2,174 +2,155 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE25AC43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 08:54:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AD2AC43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 08:54:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 947CD21874
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 08:54:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nUohI3Aj"
+	by mail.kernel.org (Postfix) with ESMTP id 52D97206C0
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 08:54:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727284AbfADIyp (ORCPT
+        id S1727326AbfADIyt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 03:54:45 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:45596 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727220AbfADIyo (ORCPT
+        Fri, 4 Jan 2019 03:54:49 -0500
+Received: from smtp.ctxuk.citrix.com ([185.25.65.24]:58352 "EHLO
+        SMTP.EU.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727291AbfADIys (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 03:54:44 -0500
-Received: by mail-pg1-f196.google.com with SMTP id y4so17213298pgc.12;
-        Fri, 04 Jan 2019 00:54:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=sAXI9KUfdDUDhWP7B1nKmtj4xb/BMelYpMd0QbjlSBM=;
-        b=nUohI3AjWQx6ybvOgpH7SxHa8o5nsYzlNw8zm2CmuYood2//x0Ie4POL9QksnHBF2I
-         YUbLZhd1Rp+Pw6ZIBVPNdREu5ob8/NSLRq6m6/VDtSShPyah6oXk0qwJ6GERJPgXeO6u
-         EUrdYFIOaWou/NJf40/UaAiehOFsZxMS2TqrBcwpH33yZixYhEMZPtTbO+uZ+PPeOhxm
-         zlA1ylEHJ9eNnEnCg0PxAzkRvuMGjQSok91W0OHcF2QBzYWHJGfBB0JFkC9KNPbDKMby
-         Hmyv2RXoicnEdLehOZJWYCkBrWb+0Z28p/1rQQ6j0R0WDyLlpYjwaX0cBTOkQtA6E5YA
-         Z3Eg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=sAXI9KUfdDUDhWP7B1nKmtj4xb/BMelYpMd0QbjlSBM=;
-        b=Nh59qEzGcKlq0nvNuHu9ZT4LQP3maCBYFy5TZVQdg3zVIZ9pYQnTtRHL2ELUv1Rg5+
-         UpOQHTZFABkvZ88PJiHPQPDYt2mpRuWcYZtNo9ce7sFFv0fbXdpxW+N22QSG0g/QvtZa
-         Sl82v2aOIDbzC3VGMeOFWRbnGeEKioLfx+YbeDPlea6k1noprCuREYIVG+qVKinksbPp
-         CwJYzyp2UZIIaWPXWFsnRR9sxzpvhcb9ajhLN82JYBjRHPWHUdwDJSBy6olehOtJZg5i
-         SI7Uz0dxn74aOJHdkZPG1TIFnPN/ZhVvvtihqpwiGJwZ/oCHt745SKE7jXyvUjf//b2J
-         kqtA==
-X-Gm-Message-State: AJcUukdqZW2zTxYetvNW4y7HC4IyROPxwxel09gNVJZ2jeVsw7fcbSIk
-        xmGK1YgTiwVYUdkL/rAgUfw=
-X-Google-Smtp-Source: ALg8bN7Fz7+aq6w8K/s4ukB3gYF8YzqWG/pOgvQxWE6lOgsKscCNdev/1KgoCdAPP4uOC2Ddj7PWew==
-X-Received: by 2002:a63:e5c:: with SMTP id 28mr842672pgo.369.1546592082509;
-        Fri, 04 Jan 2019 00:54:42 -0800 (PST)
-Received: from localhost.corp.microsoft.com ([2404:f801:9000:1a:d9bd:62c6:740b:9fc4])
-        by smtp.googlemail.com with ESMTPSA id i21sm99772145pgm.17.2019.01.04.00.54.35
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 04 Jan 2019 00:54:41 -0800 (PST)
-From:   lantianyu1986@gmail.com
-X-Google-Original-From: Tianyu.Lan@microsoft.com
-Cc:     Lan Tianyu <Tianyu.Lan@microsoft.com>, christoffer.dall@arm.com,
-        marc.zyngier@arm.com, linux@armlinux.org.uk,
-        catalin.marinas@arm.com, will.deacon@arm.com, jhogan@kernel.org,
-        ralf@linux-mips.org, paul.burton@mips.com, paulus@ozlabs.org,
-        benh@kernel.crashing.org, mpe@ellerman.id.au, pbonzini@redhat.com,
-        rkrcmar@redhat.com, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, hpa@zytor.com, x86@kernel.org,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
-        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
-        kvm-ppc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        kvm@vger.kernel.org, michael.h.kelley@microsoft.com,
-        kys@microsoft.com, vkuznets@redhat.com
-Subject: [PATCH 3/11] KVM: Add spte's point in the struct kvm_mmu_page
-Date:   Fri,  4 Jan 2019 16:53:57 +0800
-Message-Id: <20190104085405.40356-4-Tianyu.Lan@microsoft.com>
-X-Mailer: git-send-email 2.14.4
-In-Reply-To: <20190104085405.40356-1-Tianyu.Lan@microsoft.com>
-References: <20190104085405.40356-1-Tianyu.Lan@microsoft.com>
-To:     unlisted-recipients:; (no To-header on input)
+        Fri, 4 Jan 2019 03:54:48 -0500
+X-IronPort-AV: E=Sophos;i="5.56,437,1539648000"; 
+   d="scan'208";a="84132450"
+From:   Paul Durrant <Paul.Durrant@citrix.com>
+To:     'Dongli Zhang' <dongli.zhang@oracle.com>,
+        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>,
+        Roger Pau Monne <roger.pau@citrix.com>,
+        "axboe@kernel.dk" <axboe@kernel.dk>
+Subject: RE: [PATCH v3 1/1] xen/blkback: rework connect_ring() to avoid
+ inconsistent xenstore 'ring-page-order' set by malicious blkfront
+Thread-Topic: [PATCH v3 1/1] xen/blkback: rework connect_ring() to avoid
+ inconsistent xenstore 'ring-page-order' set by malicious blkfront
+Thread-Index: AQHUo8zawIy3TZpueECGz8zbAfARkKWeymfQ
+Date:   Fri, 4 Jan 2019 08:54:44 +0000
+Message-ID: <d29d869a9ebb4755bf82e8ee0dd4d4dc@AMSPEX02CL03.citrite.net>
+References: <1545225782-31403-1-git-send-email-dongli.zhang@oracle.com>
+ <620a62e3-204d-b5f2-e76f-7277492c2fb7@oracle.com>
+In-Reply-To: <620a62e3-204d-b5f2-e76f-7277492c2fb7@oracle.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lan Tianyu <Tianyu.Lan@microsoft.com>
-
-It's necessary to check whether mmu page is last or large page when add
-mmu page into flush list. "spte" is needed for such check and so add
-spte point in the struct kvm_mmu_page.
-
-Signed-off-by: Lan Tianyu <Tianyu.Lan@microsoft.com>
----
- arch/x86/include/asm/kvm_host.h | 1 +
- arch/x86/kvm/mmu.c              | 5 +++++
- arch/x86/kvm/paging_tmpl.h      | 2 ++
- 3 files changed, 8 insertions(+)
-
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index 4660ce90de7f..78d2a6714c3b 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -332,6 +332,7 @@ struct kvm_mmu_page {
- 	int root_count;          /* Currently serving as active root */
- 	unsigned int unsync_children;
- 	struct kvm_rmap_head parent_ptes; /* rmap pointers to parent sptes */
-+	u64 *sptep;
- 
- 	/* The page is obsolete if mmu_valid_gen != kvm->arch.mmu_valid_gen.  */
- 	unsigned long mmu_valid_gen;
-diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
-index ce770b446238..068694fa2371 100644
---- a/arch/x86/kvm/mmu.c
-+++ b/arch/x86/kvm/mmu.c
-@@ -3160,6 +3160,7 @@ static int __direct_map(struct kvm_vcpu *vcpu, int write, int map_writable,
- 			pseudo_gfn = base_addr >> PAGE_SHIFT;
- 			sp = kvm_mmu_get_page(vcpu, pseudo_gfn, iterator.addr,
- 					      iterator.level - 1, 1, ACC_ALL);
-+			sp->sptep = iterator.sptep;
- 
- 			link_shadow_page(vcpu, iterator.sptep, sp);
- 		}
-@@ -3588,6 +3589,7 @@ static int mmu_alloc_direct_roots(struct kvm_vcpu *vcpu)
- 		sp = kvm_mmu_get_page(vcpu, 0, 0,
- 				vcpu->arch.mmu->shadow_root_level, 1, ACC_ALL);
- 		++sp->root_count;
-+		sp->sptep = NULL;
- 		spin_unlock(&vcpu->kvm->mmu_lock);
- 		vcpu->arch.mmu->root_hpa = __pa(sp->spt);
- 	} else if (vcpu->arch.mmu->shadow_root_level == PT32E_ROOT_LEVEL) {
-@@ -3604,6 +3606,7 @@ static int mmu_alloc_direct_roots(struct kvm_vcpu *vcpu)
- 					i << 30, PT32_ROOT_LEVEL, 1, ACC_ALL);
- 			root = __pa(sp->spt);
- 			++sp->root_count;
-+			sp->sptep = NULL;
- 			spin_unlock(&vcpu->kvm->mmu_lock);
- 			vcpu->arch.mmu->pae_root[i] = root | PT_PRESENT_MASK;
- 		}
-@@ -3644,6 +3647,7 @@ static int mmu_alloc_shadow_roots(struct kvm_vcpu *vcpu)
- 				vcpu->arch.mmu->shadow_root_level, 0, ACC_ALL);
- 		root = __pa(sp->spt);
- 		++sp->root_count;
-+		sp->sptep = NULL;
- 		spin_unlock(&vcpu->kvm->mmu_lock);
- 		vcpu->arch.mmu->root_hpa = root;
- 		return 0;
-@@ -3681,6 +3685,7 @@ static int mmu_alloc_shadow_roots(struct kvm_vcpu *vcpu)
- 				      0, ACC_ALL);
- 		root = __pa(sp->spt);
- 		++sp->root_count;
-+		sp->sptep = NULL;
- 		spin_unlock(&vcpu->kvm->mmu_lock);
- 
- 		vcpu->arch.mmu->pae_root[i] = root | pm_mask;
-diff --git a/arch/x86/kvm/paging_tmpl.h b/arch/x86/kvm/paging_tmpl.h
-index 6bdca39829bc..833e8855bbc9 100644
---- a/arch/x86/kvm/paging_tmpl.h
-+++ b/arch/x86/kvm/paging_tmpl.h
-@@ -633,6 +633,7 @@ static int FNAME(fetch)(struct kvm_vcpu *vcpu, gva_t addr,
- 			table_gfn = gw->table_gfn[it.level - 2];
- 			sp = kvm_mmu_get_page(vcpu, table_gfn, addr, it.level-1,
- 					      false, access);
-+			sp->sptep = it.sptep;
- 		}
- 
- 		/*
-@@ -663,6 +664,7 @@ static int FNAME(fetch)(struct kvm_vcpu *vcpu, gva_t addr,
- 
- 		sp = kvm_mmu_get_page(vcpu, direct_gfn, addr, it.level-1,
- 				      true, direct_access);
-+		sp->sptep = it.sptep;
- 		link_shadow_page(vcpu, it.sptep, sp);
- 	}
- 
--- 
-2.14.4
-
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBPbiAxMi8xOS8yMDE4IDA5OjIzIFBNLCBE
+b25nbGkgWmhhbmcgd3JvdGU6DQo+ID4gVGhlIHhlbnN0b3JlICdyaW5nLXBhZ2Utb3JkZXInIGlz
+IHVzZWQgZ2xvYmFsbHkgZm9yIGVhY2ggYmxrYmFjayBxdWV1ZQ0KPiBhbmQNCj4gPiB0aGVyZWZv
+cmUgc2hvdWxkIGJlIHJlYWQgZnJvbSB4ZW5zdG9yZSBvbmx5IG9uY2UuIEhvd2V2ZXIsIGl0IGlz
+DQo+IG9idGFpbmVkDQo+ID4gaW4gcmVhZF9wZXJfcmluZ19yZWZzKCkgd2hpY2ggbWlnaHQgYmUg
+Y2FsbGVkIG11bHRpcGxlIHRpbWVzIGR1cmluZyB0aGUNCj4gPiBpbml0aWFsaXphdGlvbiBvZiBl
+YWNoIGJsa2JhY2sgcXVldWUuDQo+ID4NCj4gPiBJZiB0aGUgYmxrZnJvbnQgaXMgbWFsaWNpb3Vz
+IGFuZCB0aGUgJ3JpbmctcGFnZS1vcmRlcicgaXMgc2V0IGluDQo+IGRpZmZlcmVudA0KPiA+IHZh
+bHVlIGJ5IGJsa2Zyb250IGV2ZXJ5IHRpbWUgYmVmb3JlIGJsa2JhY2sgcmVhZHMgaXQsIHRoaXMg
+bWF5IGVuZCB1cCBhdA0KPiA+IHRoZSAiV0FSTl9PTihpICE9IChYRU5fQkxLSUZfUkVRU19QRVJf
+UEFHRSAqIGJsa2lmLT5ucl9yaW5nX3BhZ2VzKSk7IiBpbg0KPiA+IHhlbl9ibGtpZl9kaXNjb25u
+ZWN0KCkgd2hlbiBmcm9udGVuZCBpcyBkZXN0cm95ZWQuDQo+ID4NCj4gPiBUaGlzIHBhdGNoIHJl
+d29ya3MgY29ubmVjdF9yaW5nKCkgdG8gcmVhZCB4ZW5zdG9yZSAncmluZy1wYWdlLW9yZGVyJw0K
+PiBvbmx5DQo+ID4gb25jZS4NCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IERvbmdsaSBaaGFuZyA8
+ZG9uZ2xpLnpoYW5nQG9yYWNsZS5jb20+DQo+ID4gLS0tDQo+ID4gQ2hhbmdlZCBzaW5jZSB2MToN
+Cj4gPiAgICogY2hhbmdlIHRoZSBvcmRlciBvZiB4ZW5zdG9yZSByZWFkIGluIHJlYWRfcGVyX3Jp
+bmdfcmVmcw0KPiA+ICAgKiB1c2UgeGVuYnVzX3JlYWRfdW5zaWduZWQoKSBpbiBjb25uZWN0X3Jp
+bmcoKQ0KPiA+DQo+ID4gQ2hhbmdlZCBzaW5jZSB2MjoNCj4gPiAgICogc2ltcGxpZnkgdGhlIGNv
+bmRpdGlvbiBjaGVjayBhcyAiKGVyciAhPSAxICYmIG5yX2dyZWZzID4gMSkiDQo+ID4gICAqIGF2
+b2lkIHNldHRpbmcgZXJyIGFzIC1FSU5WQUwgdG8gcmVtb3ZlIGV4dHJhIG9uZSBsaW5lIG9mIGNv
+ZGUNCj4gPg0KPiA+ICBkcml2ZXJzL2Jsb2NrL3hlbi1ibGtiYWNrL3hlbmJ1cy5jIHwgNzQgKysr
+KysrKysrKysrKysrKysrKysrLS0tLS0tLS0tLQ0KPiAtLS0tLS0tDQo+ID4gIDEgZmlsZSBjaGFu
+Z2VkLCA0MSBpbnNlcnRpb25zKCspLCAzMyBkZWxldGlvbnMoLSkNCj4gPg0KPiA+IGRpZmYgLS1n
+aXQgYS9kcml2ZXJzL2Jsb2NrL3hlbi1ibGtiYWNrL3hlbmJ1cy5jIGIvZHJpdmVycy9ibG9jay94
+ZW4tDQo+IGJsa2JhY2sveGVuYnVzLmMNCj4gPiBpbmRleCBhNGJjNzRlLi5kZmVhM2E0IDEwMDY0
+NA0KPiA+IC0tLSBhL2RyaXZlcnMvYmxvY2sveGVuLWJsa2JhY2sveGVuYnVzLmMNCj4gPiArKysg
+Yi9kcml2ZXJzL2Jsb2NrL3hlbi1ibGtiYWNrL3hlbmJ1cy5jDQo+ID4gQEAgLTkyNiw3ICs5MjYs
+NyBAQCBzdGF0aWMgaW50IHJlYWRfcGVyX3JpbmdfcmVmcyhzdHJ1Y3QgeGVuX2Jsa2lmX3JpbmcN
+Cj4gKnJpbmcsIGNvbnN0IGNoYXIgKmRpcikNCj4gPiAgCWludCBlcnIsIGksIGo7DQo+ID4gIAlz
+dHJ1Y3QgeGVuX2Jsa2lmICpibGtpZiA9IHJpbmctPmJsa2lmOw0KPiA+ICAJc3RydWN0IHhlbmJ1
+c19kZXZpY2UgKmRldiA9IGJsa2lmLT5iZS0+ZGV2Ow0KPiA+IC0JdW5zaWduZWQgaW50IHJpbmdf
+cGFnZV9vcmRlciwgbnJfZ3JlZnMsIGV2dGNobjsNCj4gPiArCXVuc2lnbmVkIGludCBucl9ncmVm
+cywgZXZ0Y2huOw0KPiA+DQo+ID4gIAllcnIgPSB4ZW5idXNfc2NhbmYoWEJUX05JTCwgZGlyLCAi
+ZXZlbnQtY2hhbm5lbCIsICIldSIsDQo+ID4gIAkJCSAgJmV2dGNobik7DQo+ID4gQEAgLTkzNiw0
+MyArOTM2LDM2IEBAIHN0YXRpYyBpbnQgcmVhZF9wZXJfcmluZ19yZWZzKHN0cnVjdA0KPiB4ZW5f
+YmxraWZfcmluZyAqcmluZywgY29uc3QgY2hhciAqZGlyKQ0KPiA+ICAJCXJldHVybiBlcnI7DQo+
+ID4gIAl9DQo+ID4NCj4gPiAtCWVyciA9IHhlbmJ1c19zY2FuZihYQlRfTklMLCBkZXYtPm90aGVy
+ZW5kLCAicmluZy1wYWdlLW9yZGVyIiwgIiV1IiwNCj4gPiAtCQkJICAmcmluZ19wYWdlX29yZGVy
+KTsNCj4gPiArCW5yX2dyZWZzID0gYmxraWYtPm5yX3JpbmdfcGFnZXM7DQo+ID4gKwlXQVJOX09O
+KCFucl9ncmVmcyk7DQoNCldoeSBub3QgZXhpdCBpZiAhbnJfZ3JlZnM/IFRoZXJlJ3Mgbm90aGlu
+ZyB1c2VmdWwgZm9yIHRoaXMgZnVuY3Rpb24gdG8gZG8gaW4gdGhhdCBjYXNlLg0KDQo+ID4gKw0K
+PiA+ICsJZm9yIChpID0gMDsgaSA8IG5yX2dyZWZzOyBpKyspIHsNCj4gPiArCQljaGFyIHJpbmdf
+cmVmX25hbWVbUklOR1JFRl9OQU1FX0xFTl07DQo+ID4gKw0KPiA+ICsJCXNucHJpbnRmKHJpbmdf
+cmVmX25hbWUsIFJJTkdSRUZfTkFNRV9MRU4sICJyaW5nLXJlZiV1IiwgaSk7DQo+ID4gKwkJZXJy
+ID0geGVuYnVzX3NjYW5mKFhCVF9OSUwsIGRpciwgcmluZ19yZWZfbmFtZSwNCj4gPiArCQkJCSAg
+ICIldSIsICZyaW5nX3JlZltpXSk7DQo+ID4gKw0KPiA+ICsJCWlmIChlcnIgIT0gMSAmJiBucl9n
+cmVmcyA+IDEpIHsNCj4gPiArCQkJeGVuYnVzX2Rldl9mYXRhbChkZXYsIGVyciwgInJlYWRpbmcg
+JXMvJXMiLA0KPiA+ICsJCQkJCSBkaXIsIHJpbmdfcmVmX25hbWUpOw0KPiA+ICsJCQlyZXR1cm4g
+LUVJTlZBTDsNCj4gPiArCQl9DQo+ID4gKw0KPiA+ICsJCWlmIChlcnIgIT0gMSkNCj4gPiArCQkJ
+YnJlYWs7DQoNClNlZW1zIG9kZCB0byB0ZXN0IChlcnIgIT0gMSkgdHdpY2UuIEknZCBwcmVmZXI6
+DQoNCmlmIChlcnIgIT0gMSkgew0KICAgIGlmIChucl9ncmVmcyA9PSAxKQ0KICAgICAgICBicmVh
+azsNCg0KICAgIDxmYXRhbCBlcnJvciBleGl0Pg0KfQ0KDQpFaXRoZXIgdGhhdCBvciBzaW1wbHkg
+YnJlYWsgaWYgZXJyICE9IDEgYW5kIHRoZW4uLi4NCg0KPiA+ICsJfQ0KPiA+ICsNCj4gPiAgCWlm
+IChlcnIgIT0gMSkgew0KDQouLi5hZGQgYSBjaGVjayBhbmQgZmF0YWwgZXJyb3IgZXhpdCBoZXJl
+IGlmIG5yX2dyZWZzICE9IDEuDQoNCj4gPiAtCQllcnIgPSB4ZW5idXNfc2NhbmYoWEJUX05JTCwg
+ZGlyLCAicmluZy1yZWYiLCAiJXUiLA0KPiAmcmluZ19yZWZbMF0pOw0KPiA+ICsJCVdBUk5fT04o
+bnJfZ3JlZnMgIT0gMSk7DQo+ID4gKw0KPiA+ICsJCWVyciA9IHhlbmJ1c19zY2FuZihYQlRfTklM
+LCBkaXIsICJyaW5nLXJlZiIsICIldSIsDQo+ID4gKwkJCQkgICAmcmluZ19yZWZbMF0pOw0KPiA+
+ICAJCWlmIChlcnIgIT0gMSkgew0KPiA+IC0JCQllcnIgPSAtRUlOVkFMOw0KPiA+ICAJCQl4ZW5i
+dXNfZGV2X2ZhdGFsKGRldiwgZXJyLCAicmVhZGluZyAlcy9yaW5nLXJlZiIsIGRpcik7DQo+ID4g
+LQkJCXJldHVybiBlcnI7DQo+ID4gLQkJfQ0KPiA+IC0JCW5yX2dyZWZzID0gMTsNCj4gPiAtCX0g
+ZWxzZSB7DQo+ID4gLQkJdW5zaWduZWQgaW50IGk7DQo+ID4gLQ0KPiA+IC0JCWlmIChyaW5nX3Bh
+Z2Vfb3JkZXIgPiB4ZW5fYmxraWZfbWF4X3Jpbmdfb3JkZXIpIHsNCj4gPiAtCQkJZXJyID0gLUVJ
+TlZBTDsNCj4gPiAtCQkJeGVuYnVzX2Rldl9mYXRhbChkZXYsIGVyciwgIiVzL3JlcXVlc3QgJWQg
+cmluZyBwYWdlDQo+IG9yZGVyIGV4Y2VlZCBtYXg6JWQiLA0KPiA+IC0JCQkJCSBkaXIsIHJpbmdf
+cGFnZV9vcmRlciwNCj4gPiAtCQkJCQkgeGVuX2Jsa2lmX21heF9yaW5nX29yZGVyKTsNCj4gPiAt
+CQkJcmV0dXJuIGVycjsNCj4gPiAtCQl9DQo+ID4gLQ0KPiA+IC0JCW5yX2dyZWZzID0gMSA8PCBy
+aW5nX3BhZ2Vfb3JkZXI7DQo+ID4gLQkJZm9yIChpID0gMDsgaSA8IG5yX2dyZWZzOyBpKyspIHsN
+Cj4gPiAtCQkJY2hhciByaW5nX3JlZl9uYW1lW1JJTkdSRUZfTkFNRV9MRU5dOw0KPiA+IC0NCj4g
+PiAtCQkJc25wcmludGYocmluZ19yZWZfbmFtZSwgUklOR1JFRl9OQU1FX0xFTiwgInJpbmctcmVm
+JXUiLA0KPiBpKTsNCj4gPiAtCQkJZXJyID0geGVuYnVzX3NjYW5mKFhCVF9OSUwsIGRpciwgcmlu
+Z19yZWZfbmFtZSwNCj4gPiAtCQkJCQkgICAiJXUiLCAmcmluZ19yZWZbaV0pOw0KPiA+IC0JCQlp
+ZiAoZXJyICE9IDEpIHsNCj4gPiAtCQkJCWVyciA9IC1FSU5WQUw7DQo+ID4gLQkJCQl4ZW5idXNf
+ZGV2X2ZhdGFsKGRldiwgZXJyLCAicmVhZGluZyAlcy8lcyIsDQo+ID4gLQkJCQkJCSBkaXIsIHJp
+bmdfcmVmX25hbWUpOw0KPiA+IC0JCQkJcmV0dXJuIGVycjsNCj4gPiAtCQkJfQ0KPiA+ICsJCQly
+ZXR1cm4gLUVJTlZBTDsNCj4gPiAgCQl9DQo+ID4gIAl9DQo+ID4gLQlibGtpZi0+bnJfcmluZ19w
+YWdlcyA9IG5yX2dyZWZzOw0KPiA+DQo+ID4gIAlmb3IgKGkgPSAwOyBpIDwgbnJfZ3JlZnMgKiBY
+RU5fQkxLSUZfUkVRU19QRVJfUEFHRTsgaSsrKSB7DQo+ID4gIAkJcmVxID0ga3phbGxvYyhzaXpl
+b2YoKnJlcSksIEdGUF9LRVJORUwpOw0KPiA+IEBAIC0xMDMwLDYgKzEwMjMsNyBAQCBzdGF0aWMg
+aW50IGNvbm5lY3RfcmluZyhzdHJ1Y3QgYmFja2VuZF9pbmZvICpiZSkNCj4gPiAgCXNpemVfdCB4
+c3BhdGhzaXplOw0KPiA+ICAJY29uc3Qgc2l6ZV90IHhlbnN0b3JlX3BhdGhfZXh0X3NpemUgPSAx
+MTsgLyogc3VmZmljaWVudCBmb3IgIi9xdWV1ZS0NCj4gTk5OIiAqLw0KPiA+ICAJdW5zaWduZWQg
+aW50IHJlcXVlc3RlZF9udW1fcXVldWVzID0gMDsNCj4gPiArCXVuc2lnbmVkIGludCByaW5nX3Bh
+Z2Vfb3JkZXI7DQo+ID4NCj4gPiAgCXByX2RlYnVnKCIlcyAlc1xuIiwgX19mdW5jX18sIGRldi0+
+b3RoZXJlbmQpOw0KPiA+DQo+ID4gQEAgLTEwNzUsNiArMTA2OSwyMCBAQCBzdGF0aWMgaW50IGNv
+bm5lY3RfcmluZyhzdHJ1Y3QgYmFja2VuZF9pbmZvICpiZSkNCj4gPiAgCQkgYmUtPmJsa2lmLT5u
+cl9yaW5ncywgYmUtPmJsa2lmLT5ibGtfcHJvdG9jb2wsIHByb3RvY29sLA0KPiA+ICAJCSBwZXJz
+X2dyYW50cyA/ICJwZXJzaXN0ZW50IGdyYW50cyIgOiAiIik7DQo+ID4NCj4gPiArCXJpbmdfcGFn
+ZV9vcmRlciA9IHhlbmJ1c19yZWFkX3Vuc2lnbmVkKGRldi0+b3RoZXJlbmQsDQo+ID4gKwkJCQkJ
+ICAgICAgICJyaW5nLXBhZ2Utb3JkZXIiLCAwKTsNCj4gPiArDQo+ID4gKwlpZiAocmluZ19wYWdl
+X29yZGVyID4geGVuX2Jsa2lmX21heF9yaW5nX29yZGVyKSB7DQo+ID4gKwkJZXJyID0gLUVJTlZB
+TDsNCj4gPiArCQl4ZW5idXNfZGV2X2ZhdGFsKGRldiwgZXJyLA0KPiA+ICsJCQkJICJyZXF1ZXN0
+ZWQgcmluZyBwYWdlIG9yZGVyICVkIGV4Y2VlZCBtYXg6JWQiLA0KPiA+ICsJCQkJIHJpbmdfcGFn
+ZV9vcmRlciwNCj4gPiArCQkJCSB4ZW5fYmxraWZfbWF4X3Jpbmdfb3JkZXIpOw0KPiA+ICsJCXJl
+dHVybiBlcnI7DQo+ID4gKwl9DQo+ID4gKw0KPiA+ICsJYmUtPmJsa2lmLT5ucl9yaW5nX3BhZ2Vz
+ID0gMSA8PCByaW5nX3BhZ2Vfb3JkZXI7DQo+ID4gKw0KDQpUaGF0J3Mgb25lIG1vcmUgYmUtPmJs
+a2lmLiBJIHRoaW5rIGl0J3Mgb3ZlcmR1ZSB0byBpbml0aWFsaXplIGEgJ2Jsa2lmJyBzdGFjayB2
+YXJpYWJsZSBpbiB0aGlzIGZ1bmN0aW9uIGFuZCB1c2UgdGhhdC4NCg0KICBQYXVsDQoNCj4gPiAg
+CWlmIChiZS0+YmxraWYtPm5yX3JpbmdzID09IDEpDQo+ID4gIAkJcmV0dXJuIHJlYWRfcGVyX3Jp
+bmdfcmVmcygmYmUtPmJsa2lmLT5yaW5nc1swXSwgZGV2LQ0KPiA+b3RoZXJlbmQpOw0KPiA+ICAJ
+ZWxzZSB7DQo+ID4NCg==
