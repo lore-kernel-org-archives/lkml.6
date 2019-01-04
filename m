@@ -2,171 +2,139 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9FE6C43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 16:42:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55F8FC43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 16:49:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E484218CD
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 16:42:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546620169;
-	bh=FOi3rGFSQPsBc3mMVnSE2i1zEXBdq4Kl9lZOZ/yfizk=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:List-ID:From;
-	b=X6rqm4/X7Ffx7RB3YKpYUqY7gsiX5YtYYM5qq7ATCpDvKLGmH54wy54qqt5EswZ+E
-	 wLWVy+GugTWX8DwICJw5bV1U2Esqij7ygTRaG370xpKQVKkzlcrhOUFmZC1E1mg0wM
-	 gmnNj2YkgQKU6F+ELaqpjgY8Fxp8PyU2X8kmFbf4=
+	by mail.kernel.org (Postfix) with ESMTP id 2D6BB218CD
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 16:49:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726899AbfADQms (ORCPT
+        id S1726488AbfADQtF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 11:42:48 -0500
-Received: from twin.jikos.cz ([91.219.245.39]:35669 "EHLO twin.jikos.cz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726282AbfADQms (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 11:42:48 -0500
-Received: from twin.jikos.cz (jikos@[127.0.0.1])
-        by twin.jikos.cz (8.13.6/8.13.6) with ESMTP id x04GgGfF020942
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Fri, 4 Jan 2019 17:42:17 +0100
-Received: from localhost (jikos@localhost)
-        by twin.jikos.cz (8.13.6/8.13.6/Submit) with ESMTP id x04GgFDx020935;
-        Fri, 4 Jan 2019 17:42:16 +0100
-X-Authentication-Warning: twin.jikos.cz: jikos owned process doing -bs
-Date:   Fri, 4 Jan 2019 17:42:15 +0100 (CET)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     Paul Menzel <pmenzel@molgen.mpg.de>
-cc:     x86@kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Thomas Lendacky <Thomas.Lendacky@amd.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>
-Subject: Re: General protection fault in `switch_mm_irqs_off()`
-In-Reply-To: <784ab00e-ed72-c1bc-bc0c-31264deb7726@molgen.mpg.de>
-Message-ID: <alpine.LRH.2.00.1901041737290.28043@gjva.wvxbf.pm>
-References: <784ab00e-ed72-c1bc-bc0c-31264deb7726@molgen.mpg.de>
-User-Agent: Alpine 2.00 (LRH 1167 2008-08-23)
+        Fri, 4 Jan 2019 11:49:05 -0500
+Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:60715 "EHLO
+        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726053AbfADQtE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 11:49:04 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07487;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0THXcS8M_1546620389;
+Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0THXcS8M_1546620389)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Sat, 05 Jan 2019 00:46:31 +0800
+Subject: Re: [RFC PATCH 0/3] mm: memcontrol: delayed force empty
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     hannes@cmpxchg.org, akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <20190103101215.GH31793@dhcp22.suse.cz>
+ <b3ad06ed-f620-7aa0-5697-a1bbe2d7bfe1@linux.alibaba.com>
+ <20190103181329.GW31793@dhcp22.suse.cz>
+ <6f43e926-3bb5-20d1-2e39-1d30bf7ad375@linux.alibaba.com>
+ <20190103185333.GX31793@dhcp22.suse.cz>
+ <d610c665-890f-3bf0-1e2a-437150b6ddfb@linux.alibaba.com>
+ <20190103192339.GA31793@dhcp22.suse.cz>
+ <88b4d986-0b3c-cbf0-65ad-95f3e8ccd870@linux.alibaba.com>
+ <20190103200111.GD31793@dhcp22.suse.cz>
+ <146af1c6-4405-76c5-b253-c8fba11779bf@linux.alibaba.com>
+ <20190104085547.GG31793@dhcp22.suse.cz>
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <5b377ce9-2eea-628a-4da7-fe6d6db88863@linux.alibaba.com>
+Date:   Fri, 4 Jan 2019 08:46:28 -0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+In-Reply-To: <20190104085547.GG31793@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-[ added some CCs ]
 
-On Thu, 3 Jan 2019, Paul Menzel wrote:
+On 1/4/19 12:55 AM, Michal Hocko wrote:
+> On Thu 03-01-19 20:15:30, Yang Shi wrote:
+>>
+>> On 1/3/19 12:01 PM, Michal Hocko wrote:
+>>> On Thu 03-01-19 11:49:32, Yang Shi wrote:
+>>>> On 1/3/19 11:23 AM, Michal Hocko wrote:
+>>>>> On Thu 03-01-19 11:10:00, Yang Shi wrote:
+>>>>>> On 1/3/19 10:53 AM, Michal Hocko wrote:
+>>>>>>> On Thu 03-01-19 10:40:54, Yang Shi wrote:
+>>>>>>>> On 1/3/19 10:13 AM, Michal Hocko wrote:
+>>>>> [...]
+>>>>>>>>> Is there any reason for your scripts to be strictly sequential here? In
+>>>>>>>>> other words why cannot you offload those expensive operations to a
+>>>>>>>>> detached context in _userspace_?
+>>>>>>>> I would say it has not to be strictly sequential. The above script is just
+>>>>>>>> an example to illustrate the pattern. But, sometimes it may hit such pattern
+>>>>>>>> due to the complicated cluster scheduling and container scheduling in the
+>>>>>>>> production environment, for example the creation process might be scheduled
+>>>>>>>> to the same CPU which is doing force_empty. I have to say I don't know too
+>>>>>>>> much about the internals of the container scheduling.
+>>>>>>> In that case I do not see a strong reason to implement the offloding
+>>>>>>> into the kernel. It is an additional code and semantic to maintain.
+>>>>>> Yes, it does introduce some additional code and semantic, but IMHO, it is
+>>>>>> quite simple and very straight forward, isn't it? Just utilize the existing
+>>>>>> css offline worker. And, that a couple of lines of code do improve some
+>>>>>> throughput issues for some real usecases.
+>>>>> I do not really care it is few LOC. It is more important that it is
+>>>>> conflating force_empty into offlining logic. There was a good reason to
+>>>>> remove reparenting/emptying the memcg during the offline. Considering
+>>>>> that you can offload force_empty from userspace trivially then I do not
+>>>>> see any reason to implement it in the kernel.
+>>>> Er, I may not articulate in the earlier email, force_empty can not be
+>>>> offloaded from userspace *trivially*. IOWs the container scheduler may
+>>>> unexpectedly overcommit something due to the stall of synchronous force
+>>>> empty, which can't be figured out by userspace before it actually happens.
+>>>> The scheduler doesn't know how long force_empty would take. If the
+>>>> force_empty could be offloaded by kernel, it would make scheduler's life
+>>>> much easier. This is not something userspace could do.
+>>> What exactly prevents
+>>> (
+>>> echo 1 > $memecg/force_empty
+>>> rmdir $memcg
+>>> ) &
+>>>
+>>> so that this sequence doesn't really block anything?
+>> We have "restarting the same name job" logic in our usecase (I'm not quite
+>> sure why they do so). Basically, it means to create memcg with the exact
+>> same name right after the old one is deleted, but may have different limit
+>> or other settings. The creation has to wait for rmdir is done. Even though
+>> rmdir is done in background like the above, the stall still exists since
+>> rmdir simply is waiting for force_empty.
+> OK, I see. This is an important detail you didn't mention previously (or
+> at least I didn't understand it). One thing is still not clear to me.
 
-> Dear Linux folks,
-> 
-> 
-> On the server board Asus KGPE-D16 with AMD Opteron 6278 processor updating the
-> microcode update in the firmware from 0x0600062e to 0x0600063e seems to cause
-> a general protection fault with Linux 4.14.87 and 4.20-rc7.
-> 
-> > 46.859: [    7.573240] microcode: CPU31: patch_level=0x0600063e
-> > 46.859: [    7.578507] microcode: Microcode Update Driver: v2.2.
-> > 46.860: [    7.578539] sched_clock: Marking stable (6510054745,
-> > 1068444659)->(7999876773, -421377369)
-> > 46.860: [    7.593013] registered taskstats version 1
-> > 46.861: [    7.598091] rtc_cmos 00:00: setting system clock to 2000-01-01
-> > 08:01:51 UTC (946713711)
-> > 46.862: [    7.606575] ALSA device list:
-> > 46.862: [    7.609802]   No soundcards found.
-> > 46.865: [    7.615887] Freeing unused kernel image memory: 1564K
-> > 46.871: [    7.627073] Write protecting the kernel read-only data: 20480k
-> > 46.872: [    7.634366] Freeing unused kernel image memory: 2016K
-> > 46.873: [    7.640297] Freeing unused kernel image memory: 584K
-> > 46.874: [    7.645521] Run /init as init process
-> > 46.877: [    7.652262] general protection fault: 0000 [#1] SMP NOPTI
-> > 46.877: [    7.657931] CPU: 18 PID: 0 Comm: swapper/18 Not tainted
-> > 4.20.0-rc7.mx64.237 #1
-> > 46.877: [    7.665514] Hardware name: ASUS KGPE-D16/KGPE-D16, BIOS
-> > 4.9-103-g637bef2037 01/02/2019
-> > 46.878: [    7.673804] RIP: 0010:switch_mm_irqs_off+0xb2/0x640
-> > 46.878: [    7.678948] Code: 48 c1 ef 09 83 e7 01 48 09 c7 65 48 8b 05 8e 34
-> > fc 7e 48 39 c7 74 15 48 09 f8 a8 01 74 0e b9 49 00 00 00 b8 01 00 00 00 31
-> > d2 <0f> 30 65 48 89 3d 6c 34 fc 7e 8b 05 9a ef a7 01 85 c0 0f 8f 41 04
-> > 46.879: [    7.698394] RSP: 0018:ffffc90006343e20 EFLAGS: 00010046
-> > 46.879: [    7.703844] RAX: 0000000000000001 RBX: ffff88981ca0b800 RCX:
-> > 0000000000000049
-> > 46.879: [    7.711238] RDX: 0000000000000000 RSI: ffff88981b87cf80 RDI:
-> > ffff88981ca0b800
-> > 46.880: [    7.718665] RBP: ffffc90006343e70 R08: 00000001c81bec00 R09:
-> > 0000000000000000
-> > 46.880: [    7.726092] R10: ffffc90006343e88 R11: 0000000000000000 R12:
-> > ffffffff82479b40
-> > 46.880: [    7.733494] R13: 0000000000000000 R14: 0000000000000012 R15:
-> > ffff88981dd50080
-> > 46.881: [    7.740853] FS:  0000000000000000(0000) GS:ffff88981fa80000(0000)
-> > knlGS:0000000000000000
-> > 46.881: [    7.749318] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > 46.881: [    7.755281] CR2: 0000000000000000 CR3: 000000000240a000 CR4:
-> > 00000000000406e0
-> > 46.881: [    7.762761] Call Trace:
-> > 46.881: [    7.765369]  ? __schedule+0x1b9/0x7b0
-> > 46.882: [    7.769253]  __schedule+0x1b9/0x7b0
-> > 46.882: [    7.772930]  schedule_idle+0x1e/0x40
-> > 46.882: [    7.776744]  do_idle+0x146/0x200
-> > 46.882: [    7.780181]  cpu_startup_entry+0x19/0x20
-> > 46.883: [    7.784274]  start_secondary+0x183/0x1b0
-> > 46.883: [    7.788409]  secondary_startup_64+0xa4/0xb0
-> > 46.883: [    7.792766] Modules linked in:
-> > 46.883: [    7.796105] ---[ end trace a423e363fe1ecf67 ]---
-> > 46.884: [    7.800939] RIP: 0010:switch_mm_irqs_off+0xb2/0x640
-> > 46.884: [    7.806048] Code: 48 c1 ef 09 83 e7 01 48 09 c7 65 48 8b 05 8e 34
-> > fc 7e 48 39 c7 74 15 48 09 f8 a8 01 74 0e b9 49 00 00 00 b8 01 00 00 00 31
-> > d2 <0f> 30 65 48 89 3d 6c 34 fc 7e 8b 05 9a ef a7 01 85 c0 0f 8f 41 04
+Sorry, I should articulated at the first place.
 
-So this faults when writing PRED_CMD_IBPB to MSR_IA32_PRED_CMD, but that 
-should be properly patched out on ucodes that don't support IBPB.
+> "Restarting the same job" sounds as if the memcg itself could be
+> recycled as well. You are saying that the setting might change but if
+> that is about limits then we should handle that just fine. Or what other
+> kind of setting changes that wouldn't work properly?
 
-This almost looks like the ucode you updated to would advertise IBPB 
-availability, but then fault when it's used.
+We did try resize limit, but it may also incur costly direct reclaim to 
+block something. Other than this we also want to reset all the 
+counters/stats to get clearer and cleaner resource isolation since the 
+container may run different jobs although they use the same name.
 
-I guess that booting with 'spectre_v2_user=off' makes the issue go away, 
-right?
+>
+> If the recycling is not possible then I would suggest to not reuse
+> force_empty interface but add wipe_on_destruction or similar new knob
+> which would enforce reclaim on offlining. It seems we have several
+> people asking for something like that already.
 
-What happens then if you manually wrmsr 0x1 to MSR 0x49 from userspace? 
-Could you please post /proc/cpuinfo from such a boot as well?
+We did have a new knob in our in-house implementation, it just did 
+force_empty on offlining.
 
-Leaving the rest of the original mail for reference.
+So, you mean to have a new knob to just do force empty offlining, and 
+keep force_empty's behavior, right?
 
-> > 46.884: [    7.825440] RSP: 0018:ffffc90006343e20 EFLAGS: 00010046
-> > 46.885: [    7.830855] RAX: 0000000000000001 RBX: ffff88981ca0b800 RCX:
-> > 0000000000000049
-> > 46.885: [    7.838230] RDX: 0000000000000000 RSI: ffff88981b87cf80 RDI:
-> > ffff88981ca0b800
-> > 46.885: [    7.845614] RBP: ffffc90006343e70 R08: 00000001c81bec00 R09:
-> > 0000000000000000
-> > 46.886: [    7.853047] R10: ffffc90006343e88 R11: 0000000000000000 R12:
-> > ffffffff82479b40
-> > 46.886: [    7.860427] R13: 0000000000000000 R14: 0000000000000012 R15:
-> > ffff88981dd50080
-> > 46.886: [    7.867862] FS:  0000000000000000(0000) GS:ffff88981fa80000(0000)
-> > knlGS:0000000000000000
-> > 46.886: [    7.876320] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > 46.887: [    7.882351] CR2: 0000000000000000 CR3: 000000000240a000 CR4:
-> > 00000000000406e0
-> > 46.887: [    7.889746] Kernel panic - not syncing: Attempted to kill the
-> > idle task!
-> > 46.888: [    7.896907] Kernel Offset: disabled
-> > 46.888: [    7.900558] ---[ end Kernel panic - not syncing: Attempted to
-> > kill the idle task! ]---
-> 
-> Please find the whole log, including the coreboot messages, attached. The time
-> stamps in the beginning are from the script `readserial.py` from the SeaBIOS
-> repository.
-> 
-> Do you have an idea what is going on, and how to fix it?
-> 
-> 
-> Kind regards,
-> 
-> Paul
-> 
+Thanks,
+Yang
 
--- 
-Jiri Kosina
-SUSE Labs
+
