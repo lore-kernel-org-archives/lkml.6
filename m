@@ -2,105 +2,131 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 603B4C43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 16:52:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 462CEC43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 16:52:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 301CC218CD
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 16:52:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 100BE218CD
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 16:52:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tOP0dIQx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728056AbfADQwI (ORCPT
+        id S1728102AbfADQwd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 11:52:08 -0500
-Received: from mga07.intel.com ([134.134.136.100]:64200 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726053AbfADQwH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 11:52:07 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jan 2019 08:52:07 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,439,1539673200"; 
-   d="scan'208";a="114175906"
-Received: from fmsmsx105.amr.corp.intel.com ([10.18.124.203])
-  by fmsmga008.fm.intel.com with ESMTP; 04 Jan 2019 08:52:08 -0800
-Received: from fmsmsx157.amr.corp.intel.com (10.18.116.73) by
- FMSMSX105.amr.corp.intel.com (10.18.124.203) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Fri, 4 Jan 2019 08:52:06 -0800
-Received: from bgsmsx152.gar.corp.intel.com (10.224.48.50) by
- FMSMSX157.amr.corp.intel.com (10.18.116.73) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Fri, 4 Jan 2019 08:52:06 -0800
-Received: from bgsmsx104.gar.corp.intel.com ([169.254.5.240]) by
- BGSMSX152.gar.corp.intel.com ([169.254.6.222]) with mapi id 14.03.0415.000;
- Fri, 4 Jan 2019 22:22:04 +0530
-From:   "Gopal, Saranya" <saranya.gopal@intel.com>
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Takashi Iwai <tiwai@suse.de>, Con Kolivas <kernel@kolivas.org>
-CC:     "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "felipe.balbi@linux.intel.com" <felipe.balbi@linux.intel.com>
-Subject: RE: [alsa-devel] ALSA:usb audio Higher sample rates on usb audio no
- longer working.
-Thread-Topic: [alsa-devel] ALSA:usb audio Higher sample rates on usb audio
- no longer working.
-Thread-Index: AQHUo7pxjIzhAGqnWUqc3nAThcUfcKWeSWaAgACV4ACAAGdFAA==
-Date:   Fri, 4 Jan 2019 16:52:03 +0000
-Message-ID: <C672AA6DAAC36042A98BAD0B0B25BDA94CB021CE@BGSMSX104.gar.corp.intel.com>
-References: <CABqErrECNH+gRiZXM+z=igjAw895e7KLeV6H0EKvMkW0UsVvJw@mail.gmail.com>
- <s5hsgy96fiu.wl-tiwai@suse.de>
- <CABqErrHKFshAMBPHJp2vmGFE6k1GL1oDMSMbDRcBJNfUSxt9KQ@mail.gmail.com>
- <s5hd0pdey4e.wl-tiwai@suse.de>
- <5c7b2c6b-5dcc-7170-f6e1-bf6021bbb72a@linux.intel.com>
-In-Reply-To: <5c7b2c6b-5dcc-7170-f6e1-bf6021bbb72a@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZDBkYWFiYjItZGU1ZS00OGI4LTlhNjAtZGQyZDlhZmMyZDg5IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoieW13V1h5RlhLdk5NTHJTTFBweHQ1aTBiSkNySkRSbnhRUnFTd3dYakhGVkdiODBFTEhlZ2h0YlwveVwvaGNSSERhIn0=
-x-originating-ip: [10.223.10.10]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Fri, 4 Jan 2019 11:52:33 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:33828 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726053AbfADQwc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 11:52:32 -0500
+Received: by mail-wm1-f67.google.com with SMTP id y185so1467205wmd.1
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Jan 2019 08:52:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=iWmSGX+IviZSWFczNs9vBardsrp7kVMhL6HgvLsTCtc=;
+        b=tOP0dIQxZGMJPsCcvRBLqe89fDds905AhYiu0lxITIIACdHQ6tUTYza2uwys6WTT0Q
+         pY0UsMWI2JS/fhOhOZvXrs90R5nWEMO1jWDyX4YIF4q5AV7kBy676Ir761ND7SLxLWtb
+         q/D7mtwzTyvzZpDkknFUC/LM+EU7DI6+TDy1M77PU0vqFA7sDvSZDzulXX2/nyEG/MbO
+         C1g8RH+kJbf3ckMa7Ho9Tmy1poPmqJXn81FaUzVCv1qw/tBWo8TFr4Vq9LTKOQFmqeU2
+         ffnRQSxOxkqn8PcUMXjMTh9ypkhhIF8fE6GZb5B3E+5mzRh+8vyKjnx2jIBVeBh8R8o4
+         CIuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=iWmSGX+IviZSWFczNs9vBardsrp7kVMhL6HgvLsTCtc=;
+        b=t5C32iXZp3nL8uhzwlnR/eW8YfocrHhMqvHz4BN5M8rZ8AdZYqVt2ksW627a/2CXPd
+         MRNsjb0BDAF/yFpupNtJYjFHOKpjdKlS2h8us5XGZomkzE29WPVKutqLas6GDYHGZ1VI
+         oqbpQ/rI+94gu8eZSFSqw5of3MfQmc0rCUjJgNjR6h46PZgDIAxwRqcaqeXNi9wa9ND5
+         e6iq9a+ZsAYvKtI/e99z/0ytzYqf/uIbIF6v13TSeK4TRs/mcrvuMljH57GYiD5kQOMl
+         zmHo4IJ4SS45ZsG4WWAANyFuRHYRv1HfiZBDOPIuHK6ihZYOIOzmLAUkZJhyQyDNR/RF
+         T4Yw==
+X-Gm-Message-State: AJcUukfNV9Zhv9SJMD5uzmn303PiO+ckqr4CxTt43O36r58ec8I+aJiq
+        GsvduxPGgdR7JdHXb9STNy5XSTcHu3xhEJ31uHA=
+X-Google-Smtp-Source: ALg8bN4ZAKombgblay0sRuT/nJULyATpn4P24l5aWyJrKWrdduEQQgio3K8UqFktmjPAuZNxlE9e9vC6Un5UTuyLqy8=
+X-Received: by 2002:a1c:6243:: with SMTP id w64mr1814496wmb.153.1546620750538;
+ Fri, 04 Jan 2019 08:52:30 -0800 (PST)
 MIME-Version: 1.0
+References: <20190103200146.GA26442@embeddedor>
+In-Reply-To: <20190103200146.GA26442@embeddedor>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Fri, 4 Jan 2019 11:52:18 -0500
+Message-ID: <CADnq5_PBuCFzqWLBeOd=hcOsnubiY=w8VkiV79pJmBSb+6yFQw@mail.gmail.com>
+Subject: Re: [PATCH v2] drm/amdgpu_vm: fix boolean expressions
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Felix Kuehling <Felix.Kuehling@amd.com>,
+        Harish Kasiviswanathan <Harish.Kasiviswanathan@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiA+IFsgQWRkaW5nIGxpbnV4LXVzYiBNTCB0byBDYywgYXMgaXQncyBhIGNvcmUgVVNCIGlzc3Vl
-IF0NCj4gPg0KPiA+IFNvIHRoZSBkZXZpY2Ugc2VlbXMgaW5jb3JyZWN0bHkgYWR2ZXJ0aXNpbmcg
-YXMgaWYgaXQgd2VyZSBzdXBwb3J0aW5nDQo+ID4gVUFDMyAtLSBhc3N1bWluZyB0aGUgZGV2aWNl
-IGlzIHN0aWxsIG5vdCBVQUMzLWNhcGFibGUuDQo+ID4NCj4gPiBJT1csIGl0J3MgYSBidWdneSBm
-aXJtd2FyZS4gIFdlIG5lZWQgc29tZSBibGFja2xpc3RpbmcsIG9yIHJldmVydCB0aGUNCj4gPiBj
-b21taXQgZm9yIG5vdywgdW5sZXNzIGFueSByZWFsIFVBQzMgZGV2aWNlIGNvbWVzIHVwIHRvIHRo
-ZSBtYXJrZXQuDQo+IA0KPiBJSVJDIGFuIFVBQzMtY2FwYWJsZSBkZXZpY2UgaXMgcmVxdWlyZWQg
-dG8gZXhwb3NlIGEgYmFja3dhcmRzLWNvbXBhdGlibGUNCj4gY29uZmlndXJhdGlvbiAoZWl0aGVy
-IFVBQzEgb3IgVUFDMikuIE1heWJlIGFuIGFkZGl0aW9uYWwgdGVzdCBjYW4gYmUNCj4gZG9uZSB0
-byBoYXJkZW4gdGhlIGRldGVjdGlvbiBzbyB0aGF0IFVBQzMgaXMgb25seSBjaG9zZW4gaWYgaW5k
-ZWVkIGENCj4gc2Vjb25kIGF1ZGlvIGNvbmZpZ3VyYXRpb24gaXMgcHJlc2VudCBhcyB3ZWxsLg0K
-PiANCj4gSSBhbHNvIHZhZ3VlbHkgcmVjYWxsIHRoZXJlIHdhcyB0YWxrIGFib3V0IGFkZGluZyBp
-bmZvcm1hdGlvbiBpbiB0aGUgQk9TDQo+IGRlc2NyaXB0b3IsIGJ1dCBJIGRvbid0IGtub3cgaWYg
-dGhpcyB3YXMgZXZlciBwdWJsaXNoZWQuDQo+IA0KPiAtUGllcnJlDQoNClRoZSBjdXJyZW50IGRl
-dGVjdGlvbiBsb2dpYyBpcyB0aGF0IFVBQzMgY29uZmlndXJhdGlvbiBpcyBjaG9zZW4gb25seSB3
-aGVuIGEgZGV2aWNlIGhhcyBhIGNvbmZpZ3VyYXRpb24gd2l0aCBhdWRpbyBpbnRlcmZhY2Ugc3Vw
-cG9ydGluZyBVQUMzIHByb3RvY29sLg0KQWRkaXRpb25hbGx5LCBpdCBhbHJlYWR5IG1ha2VzIHN1
-cmUgdGhhdCBVQUMzIGlzIHNlbGVjdGVkIG9ubHkgd2hlbiB0aGVyZSBpcyBtb3JlIHRoYW4gb25l
-IGNvbmZpZ3VyYXRpb24uDQpPdGhlcndpc2UsIHRoZSBmaXJzdCBjb25maWd1cmF0aW9uIGlzIGNo
-b3NlbiBieSBkZWZhdWx0LiBTbywgdGhlIHBhdGNoIGRvZXMgbm90IGFmZmVjdCBleGlzdGluZyBV
-QUMxIGFuZCBVQUMyIGRldmljZXMuDQpBcyBJd2FpIHNhaWQsIHRoaXMgaXNzdWUgc2VlbXMgdG8g
-YmUgYmVjYXVzZSBvZiBhIGJ1Z2d5IGZpcm13YXJlIHdoaWNoIHdyb25nbHkgYWR2ZXJ0aXNlcyBV
-QUMzLWNhcGFiaWxpdHkuDQpDb3VsZCB3ZSBhZGQgc29tZSBxdWlyayB0byBzZWxlY3QgYW5vdGhl
-ciBjb25maWd1cmF0aW9uIGZvciB0aGlzIHBhcnRpY3VsYXIgZGV2aWNlPw0KSSBzZWUgdGhhdCB0
-aGVyZSBpcyBhIHNpbWlsYXIgaW4gcXVpcmsgaW4gc291bmQvdXNiL3F1aXJrcy5jIChzbmRfdXNi
-X2Zhc3R0cmFja3Byb19ib290X3F1aXJrKSAuDQpDb3VsZCBzb21ldGhpbmcgbGlrZSB0aGF0IGJl
-IGRvbmUgZm9yIHRoaXMgcGFydGljdWxhciBkZXZpY2U/DQoNCkFuZCBzaW5jZSBJIHdhcyBub3Qg
-cGFydCBvZiB0aGUgaW5pdGlhbCBtYWlsIHRocmVhZCwgSSBtaWdodCBoYXZlIG1pc3NlZCBzb21l
-IGluZm9ybWF0aW9uLg0KQ291bGQgc29tZW9uZSBnaXZlIG1lIGxzdXNiIC12IG91dHB1dCBmb3Ig
-dGhpcyBVU0IgYXVkaW8gZGV2aWNlLg0KDQpUaGFua3MsDQpTYXJhbnlhDQoNCg0K
+On Thu, Jan 3, 2019 at 3:21 PM Gustavo A. R. Silva
+<gustavo@embeddedor.com> wrote:
+>
+> Fix boolean expressions by using logical AND operator '&&'
+> instead of bitwise operator '&'.
+>
+> This issue was detected with the help of Coccinelle.
+>
+> Fixes: 9a4b7d4c769e ("drm/amdgpu: Add vm context module param")
+> Cc: stable@vger.kernel.org
+> Reviewed-by: Felix Kuehling <Felix.Kuehling@amd.com>
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+
+Applied.  thanks!
+
+Alex
+
+> ---
+> Changes in v2:
+>  - Update Fixes tag.
+>
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
+> index e73d152659a2..4cc0d1079935 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
+> @@ -3006,7 +3006,7 @@ int amdgpu_vm_init(struct amdgpu_device *adev, struct amdgpu_vm *vm,
+>         }
+>         DRM_DEBUG_DRIVER("VM update mode is %s\n",
+>                          vm->use_cpu_for_update ? "CPU" : "SDMA");
+> -       WARN_ONCE((vm->use_cpu_for_update & !amdgpu_gmc_vram_full_visible(&adev->gmc)),
+> +       WARN_ONCE((vm->use_cpu_for_update && !amdgpu_gmc_vram_full_visible(&adev->gmc)),
+>                   "CPU update of VM recommended only for large BAR system\n");
+>         vm->last_update = NULL;
+>
+> @@ -3136,7 +3136,7 @@ int amdgpu_vm_make_compute(struct amdgpu_device *adev, struct amdgpu_vm *vm, uns
+>         vm->pte_support_ats = pte_support_ats;
+>         DRM_DEBUG_DRIVER("VM update mode is %s\n",
+>                          vm->use_cpu_for_update ? "CPU" : "SDMA");
+> -       WARN_ONCE((vm->use_cpu_for_update & !amdgpu_gmc_vram_full_visible(&adev->gmc)),
+> +       WARN_ONCE((vm->use_cpu_for_update && !amdgpu_gmc_vram_full_visible(&adev->gmc)),
+>                   "CPU update of VM recommended only for large BAR system\n");
+>
+>         if (vm->pasid) {
+> --
+> 2.20.1
+>
+> _______________________________________________
+> amd-gfx mailing list
+> amd-gfx@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
