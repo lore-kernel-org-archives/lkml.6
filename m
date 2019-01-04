@@ -2,165 +2,119 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E4D5C43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 12:49:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ADC2C43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 12:50:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D11A0208E3
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 12:49:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BCuP2NqE"
+	by mail.kernel.org (Postfix) with ESMTP id 203C6208E3
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 12:50:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727685AbfADMtr (ORCPT
+        id S1727790AbfADMuZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 07:49:47 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:45206 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726323AbfADMtr (ORCPT
+        Fri, 4 Jan 2019 07:50:25 -0500
+Received: from outbound-smtp08.blacknight.com ([46.22.139.13]:42643 "EHLO
+        outbound-smtp08.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726282AbfADMuZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 07:49:47 -0500
-Received: by mail-pl1-f196.google.com with SMTP id a14so17396552plm.12;
-        Fri, 04 Jan 2019 04:49:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=AycUfNSJycQhs83XV0Xsk3/MJF6stOLOivW4qLS2vBw=;
-        b=BCuP2NqEgiwxHKx7B2JvLiD2fOEEkSHGs8lTByP45e/an7L/V/BD7wBlWolZSG8aNr
-         Fz20ltIDDDzYBt0iyIl+wmmHBSnqkOaWZmfxvYtWvk27wmOCIS/aLjmLky3bmsTvwfJ2
-         1bz4RJKAIM6ErMN/bB6/ugrezfQChuKe1lFAMJ2BOE20CKCULrRI6PhjSbAus+LZcmY0
-         h4OOS1hTRHqOMRkviazUYZ2YSwl+qWL6kFwpeLcC8QZFVeZT/tZyTs7TFMe4lSm/Uksz
-         uJpf2D8Q3eEFV2MrwjZDhQa58DE1zUGp7VwADcO/ZiVS2gQjBUwMXNbz9Q+CpNHAstzp
-         LVJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=AycUfNSJycQhs83XV0Xsk3/MJF6stOLOivW4qLS2vBw=;
-        b=F/VcouJkXRajCj9ThiFaUGAAvfpGdUHK7DHTCYaD1VhNfI3MQjAXrSmLgrmCere4Cd
-         hxvPclG6ZbyDO3qE7w7ZXuiGux2zEvaynzbhPWfq3AVCqQmO7NxngimMUfpsSxFimTT+
-         pk7EjvVbor/19HSlZzmlUqZFYXzu/vwkUmSU6Qaq0qWhVfnClWnmCV81Rgu3SzYhLJg9
-         0MsJ2iFkMXqYyq1XkPDNmug8wor2o64sMKApoYKri89ZfXv5nQUbxcQWCIbeTSgaHqrh
-         gWY7gGNgmztrrXpQQgxpLOZRlfny5Sym0AvmWMIxJgENqZeJvjP6CPOkRC5Ov/BbMswh
-         XlUA==
-X-Gm-Message-State: AJcUukdq3v2CduaYSKpy9YsfKm6ueLKshaVAuOJular9OdO+bKjL00Mg
-        7HPLGktpOtCW03ctaTt4huY9J80KfNSW4XogLg4=
-X-Google-Smtp-Source: ALg8bN7TAeCcJtI//GgZLHMFhMl7eyL/LPHD8hB8lX9JOMUEQXsmBfP5294ymzZh3Omd31rKwgLi4fycsnQgPb7RZ00=
-X-Received: by 2002:a17:902:9f89:: with SMTP id g9mr51296219plq.214.1546606186008;
- Fri, 04 Jan 2019 04:49:46 -0800 (PST)
-MIME-Version: 1.0
-References: <5bf00de4.1c69fb81.7dd65.5785@mx.google.com> <CAJr6mf2Kvj0FJb2zf9FZUNEkyQtYZVbFNBwG+dH_LyhSDU92wg@mail.gmail.com>
- <CAJr6mf0ste8SLahS5Sy2aL9RidxJ_nf5hqeYFriDGtYpB2FUyg@mail.gmail.com>
-In-Reply-To: <CAJr6mf0ste8SLahS5Sy2aL9RidxJ_nf5hqeYFriDGtYpB2FUyg@mail.gmail.com>
-From:   Sabyasachi Gupta <sabyasachi.linux@gmail.com>
-Date:   Fri, 4 Jan 2019 18:19:34 +0530
-Message-ID: <CAJr6mf0CE8wcKxoEEhdrp+j7=-LBe4Ue0xjqfCfJGCg-kiYFoA@mail.gmail.com>
-Subject: Re: [PATCH] scsi/dpt_i2o.c: Use dma_zalloc_coherent
-To:     aacraid@microsemi.com, jejb@linux.vnet.ibm.com,
-        martin.petersen@oracle.com
-Cc:     Souptick Joarder <jrdr.linux@gmail.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Brajeswar Ghosh <brajeswar.linux@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 4 Jan 2019 07:50:25 -0500
+Received: from mail.blacknight.com (pemlinmail03.blacknight.ie [81.17.254.16])
+        by outbound-smtp08.blacknight.com (Postfix) with ESMTPS id 3E35C1C2154
+        for <linux-kernel@vger.kernel.org>; Fri,  4 Jan 2019 12:50:22 +0000 (GMT)
+Received: (qmail 28816 invoked from network); 4 Jan 2019 12:50:22 -0000
+Received: from unknown (HELO stampy.163woodhaven.lan) (mgorman@techsingularity.net@[37.228.229.96])
+  by 81.17.254.9 with ESMTPA; 4 Jan 2019 12:50:22 -0000
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     Linux-MM <linux-mm@kvack.org>
+Cc:     David Rientjes <rientjes@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Vlastimil Babka <vbabka@suse.cz>, ying.huang@intel.com,
+        kirill@shutemov.name, Andrew Morton <akpm@linux-foundation.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Mel Gorman <mgorman@techsingularity.net>
+Subject: [PATCH 00/25] Increase success rates and reduce latency of compaction v2
+Date:   Fri,  4 Jan 2019 12:49:46 +0000
+Message-Id: <20190104125011.16071-1-mgorman@techsingularity.net>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 19, 2018 at 6:41 PM Sabyasachi Gupta
-<sabyasachi.linux@gmail.com> wrote:
->
-> On Sat, Dec 1, 2018 at 6:45 PM Sabyasachi Gupta
-> <sabyasachi.linux@gmail.com> wrote:
-> >
-> > On Sat, Nov 17, 2018 at 6:17 PM Sabyasachi Gupta
-> > <sabyasachi.linux@gmail.com> wrote:
-> > >
-> > > Replaced dma_alloc_coherent + memset with dma_zalloc_coherent
-> > >
-> > > Signed-off-by: Sabyasachi Gupta <sabyasachi.linux@gmail.com>
-> >
-> > Any comment on this patch?
->
-> Any comment on this patch?
->
-Any comment on this patch?
+This series reduces scan rates and success rates of compaction, primarily
+by using the free lists to shorten scans, better controlling of skip
+information and whether multiple scanners can target the same block and
+capturing pageblocks before being stolen by parallel requests. The series
+is based on the 4.21/5.0 merge window after Andrew's tree had been merged.
+It's known to rebase cleanly.
 
-> >
-> > > ---
-> > >  drivers/scsi/dpt_i2o.c | 12 ++++--------
-> > >  1 file changed, 4 insertions(+), 8 deletions(-)
-> > >
-> > > diff --git a/drivers/scsi/dpt_i2o.c b/drivers/scsi/dpt_i2o.c
-> > > index 37de8fb..056383a 100644
-> > > --- a/drivers/scsi/dpt_i2o.c
-> > > +++ b/drivers/scsi/dpt_i2o.c
-> > > @@ -1370,13 +1370,12 @@ static s32 adpt_i2o_reset_hba(adpt_hba* pHba)
-> > >                 schedule_timeout_uninterruptible(1);
-> > >         } while (m == EMPTY_QUEUE);
-> > >
-> > > -       status = dma_alloc_coherent(&pHba->pDev->dev, 4, &addr, GFP_KERNEL);
-> > > +       status = dma_zalloc_coherent(&pHba->pDev->dev, 4, &addr, GFP_KERNEL);
-> > >         if(status == NULL) {
-> > >                 adpt_send_nop(pHba, m);
-> > >                 printk(KERN_ERR"IOP reset failed - no free memory.\n");
-> > >                 return -ENOMEM;
-> > >         }
-> > > -       memset(status,0,4);
-> > >
-> > >         msg[0]=EIGHT_WORD_MSG_SIZE|SGL_OFFSET_0;
-> > >         msg[1]=I2O_CMD_ADAPTER_RESET<<24|HOST_TID<<12|ADAPTER_TID;
-> > > @@ -2836,14 +2835,13 @@ static s32 adpt_i2o_init_outbound_q(adpt_hba* pHba)
-> > >
-> > >         msg=(u32 __iomem *)(pHba->msg_addr_virt+m);
-> > >
-> > > -       status = dma_alloc_coherent(&pHba->pDev->dev, 4, &addr, GFP_KERNEL);
-> > > +       status = dma_zalloc_coherent(&pHba->pDev->dev, 4, &addr, GFP_KERNEL);
-> > >         if (!status) {
-> > >                 adpt_send_nop(pHba, m);
-> > >                 printk(KERN_WARNING"%s: IOP reset failed - no free memory.\n",
-> > >                         pHba->name);
-> > >                 return -ENOMEM;
-> > >         }
-> > > -       memset(status, 0, 4);
-> > >
-> > >         writel(EIGHT_WORD_MSG_SIZE| SGL_OFFSET_6, &msg[0]);
-> > >         writel(I2O_CMD_OUTBOUND_INIT<<24 | HOST_TID<<12 | ADAPTER_TID, &msg[1]);
-> > > @@ -2890,14 +2888,13 @@ static s32 adpt_i2o_init_outbound_q(adpt_hba* pHba)
-> > >                         pHba->reply_pool, pHba->reply_pool_pa);
-> > >         }
-> > >
-> > > -       pHba->reply_pool = dma_alloc_coherent(&pHba->pDev->dev,
-> > > +       pHba->reply_pool = dma_zalloc_coherent(&pHba->pDev->dev,
-> > >                                 pHba->reply_fifo_size * REPLY_FRAME_SIZE * 4,
-> > >                                 &pHba->reply_pool_pa, GFP_KERNEL);
-> > >         if (!pHba->reply_pool) {
-> > >                 printk(KERN_ERR "%s: Could not allocate reply pool\n", pHba->name);
-> > >                 return -ENOMEM;
-> > >         }
-> > > -       memset(pHba->reply_pool, 0 , pHba->reply_fifo_size * REPLY_FRAME_SIZE * 4);
-> > >
-> > >         for(i = 0; i < pHba->reply_fifo_size; i++) {
-> > >                 writel(pHba->reply_pool_pa + (i * REPLY_FRAME_SIZE * 4),
-> > > @@ -3126,13 +3123,12 @@ static int adpt_i2o_build_sys_table(void)
-> > >         sys_tbl_len = sizeof(struct i2o_sys_tbl) +      // Header + IOPs
-> > >                                 (hba_count) * sizeof(struct i2o_sys_tbl_entry);
-> > >
-> > > -       sys_tbl = dma_alloc_coherent(&pHba->pDev->dev,
-> > > +       sys_tbl = dma_zalloc_coherent(&pHba->pDev->dev,
-> > >                                 sys_tbl_len, &sys_tbl_pa, GFP_KERNEL);
-> > >         if (!sys_tbl) {
-> > >                 printk(KERN_WARNING "SysTab Set failed. Out of memory.\n");
-> > >                 return -ENOMEM;
-> > >         }
-> > > -       memset(sys_tbl, 0, sys_tbl_len);
-> > >
-> > >         sys_tbl->num_entries = hba_count;
-> > >         sys_tbl->version = I2OVERSION;
-> > > --
-> > > 2.7.4
-> > >
+Primarily I'm using thpscale to measure the impact of the series. The
+benchmark creates a large file, maps it, faults it, punches holes in the
+mapping so that the virtual address space is fragmented and then tries
+to allocate THP. It re-executes for different numbers of threads. From a
+fragmentation perspective, the workload is relatively benign but it does
+stress compaction.
+
+The overall impact on latencies for a 1-socket machine is
+
+				      baseline		      patches
+Amean     fault-both-3      5362.80 (   0.00%)     4446.89 *  17.08%*
+Amean     fault-both-5      9488.75 (   0.00%)     5660.86 *  40.34%*
+Amean     fault-both-7     11909.86 (   0.00%)     8549.63 *  28.21%*
+Amean     fault-both-12    16185.09 (   0.00%)    11508.36 *  28.90%*
+Amean     fault-both-18    12057.72 (   0.00%)    19013.48 * -57.69%*
+Amean     fault-both-24    23939.95 (   0.00%)    19676.16 *  17.81%*
+Amean     fault-both-30    26606.14 (   0.00%)    27363.23 (  -2.85%)
+Amean     fault-both-32    31677.12 (   0.00%)    23154.09 *  26.91%*
+
+While there is a glitch at the 18-thread mark, it's known that the base
+page allocation latency was much lower and huge pages were taking
+longer -- partially due a high allocation success rate.
+
+The allocation success rates are much improved
+
+			 	 baseline		 patches
+Percentage huge-3        70.93 (   0.00%)       98.30 (  38.60%)
+Percentage huge-5        56.02 (   0.00%)       83.36 (  48.81%)
+Percentage huge-7        60.98 (   0.00%)       89.04 (  46.01%)
+Percentage huge-12       73.02 (   0.00%)       94.36 (  29.23%)
+Percentage huge-18       94.37 (   0.00%)       95.87 (   1.58%)
+Percentage huge-24       84.95 (   0.00%)       97.41 (  14.67%)
+Percentage huge-30       83.63 (   0.00%)       96.69 (  15.62%)
+Percentage huge-32       81.69 (   0.00%)       96.10 (  17.65%)
+
+That's a nearly perfect allocation success rate.
+
+The biggest impact is on the scan rates
+
+Compaction migrate scanned   106520811    26934599
+Compaction free scanned     4180735040    26584944
+
+The number of pages scanned for migration was reduced by 74% and the
+free scanner was reduced by 99.36%. So much less work in exchange
+for lower latency and better success rates.
+
+The series was also evaluated using a workload that heavily fragments
+memory but the benefits there are also significant, albeit not presented.
+
+It was commented that we should be rethinking scanning entirely and to
+a large extent I agree. However, to achieve that you need a lot of this
+series in place first so it's best to make the linear scanners as best
+as possible before ripping them out.
+
+ include/linux/compaction.h |    3 +-
+ include/linux/gfp.h        |    7 +-
+ include/linux/mmzone.h     |    2 +
+ include/linux/sched.h      |    4 +
+ kernel/sched/core.c        |    3 +
+ mm/compaction.c            | 1031 ++++++++++++++++++++++++++++++++++----------
+ mm/internal.h              |   23 +-
+ mm/migrate.c               |    2 +-
+ mm/page_alloc.c            |   70 ++-
+ 9 files changed, 908 insertions(+), 237 deletions(-)
+
+-- 
+2.16.4
+
