@@ -2,111 +2,102 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 819D2C43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 22:38:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 394E1C43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 22:42:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3401D21872
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 22:38:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="VYBUMhS7"
+	by mail.kernel.org (Postfix) with ESMTP id F2340218E0
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 22:42:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726350AbfADWiI (ORCPT
+        id S1726262AbfADWl7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 17:38:08 -0500
-Received: from mail-pg1-f175.google.com ([209.85.215.175]:39771 "EHLO
-        mail-pg1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726100AbfADWiH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 17:38:07 -0500
-Received: by mail-pg1-f175.google.com with SMTP id w6so18048643pgl.6
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Jan 2019 14:38:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=d7XGLgTv6bVwRjca0g0RRNVY/+V2FxcWF0DAtrcoGn4=;
-        b=VYBUMhS7GE2TKcSSwEnfd0j/nEin5TtbnhdSO/9m0QZ7dVsdLTleqNRW0sPc82B45R
-         w67f2zcscc/ThkVswZLama8A3PJyQxs1xKmPXAHjK8SSyKlU3+jmk4M1+6TIwrH0cm4T
-         1YEvvhyAW9J0kPkbYCjhWkX7Vc1QiKA7RfzX7xUc/Zpn+TtPlZYwHVjlWN8Nyefnzu3r
-         /sk/ECtaG60FgGE7l7eqqcTEM48O7ElXiTU3t9GPLqxT3b6HBJENKLKUMz16tS7C9kCB
-         Djz6NDWb6eLV4e0Ewnsel6nbiCGchhqiFvGB4zv2CSytgvig5LLBJ+isdGhRDkvM7NGd
-         5NWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=d7XGLgTv6bVwRjca0g0RRNVY/+V2FxcWF0DAtrcoGn4=;
-        b=kVc1S4Ct6YCUUAG+WSkbdSg65F84/IOjpW269pak/Uf9eu+QY2flbhP9kQRCDgaWlE
-         rs3djAeOYWqUVEQZN9lzCifBKjC19ZwrXNs0SjmV1FxyMvzaBrdxQtnJQl/4MvC5k2bN
-         WM/0BE0UXYbt7MdMUi6CiAaAFH0dM3236w2cTL7OQ5EKDQdA0UjEe7mOlY95/AXYCvA1
-         qM9VToK7vuCAGZhPtEpa8IVaYuTuKJ8EDQ8zMHg2yxx5SFxVKBCdeBX6S3ze1L3sB+hE
-         VEl4jIRm4Qm6YVAewXdd9XqbScQTBiNfCNYRTXdnPMKxqFJ4NyJdYkac0EICfxevGHMw
-         bdXg==
-X-Gm-Message-State: AJcUukcztPwQVx+YC4lKWdcBRNpZULdukVglnbm2qQnW/KfxR3oNtiuJ
-        PDo7Jp1CWEqwt8tCdTQwf4GuPg==
-X-Google-Smtp-Source: ALg8bN6R7A4pzzl/PxyGswMRo6PtCZWZKqLVw/x8h0wcmo16K66jS/E4NHcoUPoEuvfAkmC6utIV/w==
-X-Received: by 2002:a63:e84c:: with SMTP id a12mr3092732pgk.241.1546641486749;
-        Fri, 04 Jan 2019 14:38:06 -0800 (PST)
-Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
-        by smtp.gmail.com with ESMTPSA id f13sm83894610pfa.132.2019.01.04.14.38.05
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 04 Jan 2019 14:38:06 -0800 (PST)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1gfY6P-0000Vu-33; Fri, 04 Jan 2019 15:38:05 -0700
-Date:   Fri, 4 Jan 2019 15:38:05 -0700
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     "Marciniszyn, Mike" <mike.marciniszyn@intel.com>
-Cc:     YueHaibing <yuehaibing@huawei.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
-        "dledford@redhat.com" <dledford@redhat.com>
-Subject: Re: [PATCH -next] IB/qib: Add missing err handle for
- qib_user_sdma_rb_insert
-Message-ID: <20190104223805.GG28190@ziepe.ca>
-References: <20181221021938.13784-1-yuehaibing@huawei.com>
- <32E1700B9017364D9B60AED9960492BC70C11891@fmsmsx120.amr.corp.intel.com>
+        Fri, 4 Jan 2019 17:41:59 -0500
+Received: from verein.lst.de ([213.95.11.211]:42121 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726100AbfADWl7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 17:41:59 -0500
+Received: by newverein.lst.de (Postfix, from userid 107)
+        id 373A868DDC; Fri,  4 Jan 2019 23:41:58 +0100 (CET)
+Received: from lst.de (p5B33F989.dip0.t-ipconnect.de [91.51.249.137])
+        by newverein.lst.de (Postfix) with ESMTPSA id 91DA567358;
+        Fri,  4 Jan 2019 23:41:53 +0100 (CET)
+Date:   Fri, 4 Jan 2019 23:41:45 +0100
+From:   Torsten Duwe <duwe@lst.de>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Julien Thierry <julien.thierry@arm.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        Amit Daniel Kachhap <amit.kachhap@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        live-patching@vger.kernel.org
+Subject: Re: [PATCH v6] arm64: implement ftrace with regs
+Message-ID: <20190104224145.GA28236@lst.de>
+References: <20190104141053.360F768D93@newverein.lst.de>
+ <20190104175017.GA7157@lakrids.cambridge.arm.com>
+ <20190104130648.02657f3f@gandalf.local.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <32E1700B9017364D9B60AED9960492BC70C11891@fmsmsx120.amr.corp.intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190104130648.02657f3f@gandalf.local.home>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 04, 2019 at 06:39:50PM +0000, Marciniszyn, Mike wrote:
-> > diff --git a/drivers/infiniband/hw/qib/qib_user_sdma.c
-> > b/drivers/infiniband/hw/qib/qib_user_sdma.c
-> > index 31c523b..e87c0a7 100644
-> > +++ b/drivers/infiniband/hw/qib/qib_user_sdma.c
-> > @@ -237,6 +237,8 @@ qib_user_sdma_queue_create(struct device *dev,
-> > int unit, int ctxt, int sctxt)
+On Fri, Jan 04, 2019 at 01:06:48PM -0500, Steven Rostedt wrote:
+> On Fri, 4 Jan 2019 17:50:18 +0000
+> Mark Rutland <mark.rutland@arm.com> wrote:
+> 
+> > At Linux Plumbers, I had a conversation with Steve Rostedt, and we came
+> > to the conclusion that (withut heavyweight synchronization) patching two
+> > NOPs at runtime isn't safe, since a CPU might have executed the first
+> > NOP as a NOP before another CPU patches both instructions. So a CPU
+> > might execute:
 > > 
-> >  		ret = qib_user_sdma_rb_insert(&qib_user_sdma_rb_root,
-> >  					sdma_rb_node);
-> > +		if (ret == 0)
-> > +			goto err_rb;
-> >  	}
-> >  	pq->sdma_rb_node = sdma_rb_node;
+> > 	NOP
+> > 	BL	ftrace_regs_caller
 > > 
-> 
-> Thanks!
-> 
-> This patch is ok.
+> > ... rather than the expected:
+> > 
+> > 	MOV	X9, X30
+> > 	BL	ftrace_regs_caller
+> > 
+> > ... and therefore X9 contains some UNKNOWN value, rather than the
+> > original LR value.
 
-> The NULL returned from this routine will result in an error return up to PSM which will fail.
+I'm perfectly aware of that; an earlier version had barriers, attempting
+to avoid just that, which Mark(?) wrote weren't neccessary.
+
+But is this a realistic scenario? All function entries are aligned 8 bytes.
+Are there arm64 implementations out there that fetch only 4 bytes and
+give a chance to mess with the 2nd 4 bytes? You at arm.com should know, and
+I won't be surprised if the answer is a weird "yes". Or maybe it's just
+another erratum lurking somewhere...
+
+My point is: those 2 insn will _never_ be split by any alignment
+boundary > 8; does that mean anything, have you considered this?
+
+> > I wonder if we could solve that by patching the kernel at build-time, to
+> > add the MOV X9, X30 in place of the first NOP. If we were to do that, we
+> > could also update the addresses to pooint at the second NOP, simplifying
+> > the changes to the runtime code.
 > 
-> The bail branch will do the necessary cleanup, including freeing the
-> node that couldn't be added.
+> You can also patch it at boot up when there's only one CPU running, and
+> interrupts are disabled.
 
-How? sdma_rb_node is a stack variable that is not accessed during
-cleanup?
+May I remind about possible performance hits? Even the NOPs had a tiny impact
+on certain in-order implementations. I'd rather switch between the mov and
+a "b +2".
 
-Jason
+	Torsten
+
