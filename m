@@ -2,105 +2,141 @@ Return-Path: <SRS0=xVxK=PN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFBA8C43387
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 18:39:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1927C43387
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 18:48:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0A6A22306
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 18:39:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF77822307
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 18:48:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="d4JHDNlz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727054AbfAESjS (ORCPT
+        id S1726414AbfAESsU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 5 Jan 2019 13:39:18 -0500
-Received: from mail-oln040092071076.outbound.protection.outlook.com ([40.92.71.76]:4272
-        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726545AbfAESjQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 Jan 2019 13:39:16 -0500
-Received: from DB5EUR03FT031.eop-EUR03.prod.protection.outlook.com
- (10.152.20.56) by DB5EUR03HT051.eop-EUR03.prod.protection.outlook.com
- (10.152.21.9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1382.18; Sat, 5 Jan
- 2019 18:39:13 +0000
-Received: from DB7PR07MB5353.eurprd07.prod.outlook.com (10.152.20.60) by
- DB5EUR03FT031.mail.protection.outlook.com (10.152.20.142) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1382.18 via Frontend Transport; Sat, 5 Jan 2019 18:39:13 +0000
-Received: from DB7PR07MB5353.eurprd07.prod.outlook.com
- ([fe80::e1f9:8635:f629:eb8e]) by DB7PR07MB5353.eurprd07.prod.outlook.com
- ([fe80::e1f9:8635:f629:eb8e%4]) with mapi id 15.20.1516.010; Sat, 5 Jan 2019
- 18:39:13 +0000
-From:   Bernd Edlinger <bernd.edlinger@hotmail.de>
-To:     Ping-Ke Shih <pkshih@realtek.com>,
-        Larry Finger <Larry.Finger@lwfinger.net>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 4/4] rtlwifi: Move the clearing of
-Thread-Topic: [PATCH v2 4/4] rtlwifi: Move the clearing of
-Thread-Index: AQHUpSX0RodfXaIwKEq/N5uCNJLVdQ==
-Date:   Sat, 5 Jan 2019 18:39:13 +0000
-Message-ID: <DB7PR07MB53536D1078CD129E03B30A35E48F0@DB7PR07MB5353.eurprd07.prod.outlook.com>
-Accept-Language: en-US, en-GB, de-DE
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: AM6PR03CA0009.eurprd03.prod.outlook.com (2603:10a6:20b::22)
- To DB7PR07MB5353.eurprd07.prod.outlook.com (2603:10a6:10:6e::26)
-x-incomingtopheadermarker: OriginalChecksum:090A82C17E26A6D897C006561CED22CA66ACE93483F6E2E7EE6D8C730044CE54;UpperCasedChecksum:CE12346D27DB8BE5C4139591D9A9F184114F666CCE1759271BFB10BD66EEC96F;SizeAsReceived:8691;Count:62
-x-ms-exchange-messagesentrepresentingtype: 1
-x-tmn:  [hObIGLOXRf8iggZZK5Gqb1eyufWxwzdN]
-x-microsoft-original-message-id: <2be8fc73-51c2-48b7-1659-1de30b284563@hotmail.de>
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DB5EUR03HT051;6:gJgCd4IRrl6wy2w4LB23u2vsDxIc0zIK8rgj3EYVqrsdsazr7LbVOh293ArFCjVi4+yjdjinvz8tUNjkxjD8U5BYubujgjZ9YyXCjPgnqxConEv/UqKHFjOU6FBUnf6wj2iE7JSZt56jeFJkm9zALFKWckuQnV5kNdozv+FlDDvK7R/fNhIk8dHPAquchQiIlwR4MmsBEGv+Tx8GtCPE2QFGHRILau+ewGDEMpkShG5hEmmSTVjMrf3B1H1vfvTue+l9ekYGAhM+9a60Ivrz7czkCQ9N1jwidqLIg73CkVsCfINrysyc8tk0mUbVwyF6+vVKBJs7oIRSGDniVcDCpHWaEieODPQYtXGjGtp/lTvYKf4gMd4AjgyboL8/YG0Pb9XI9G0ZRXFDfw9Sqn65gZv7Nv8H3o0nhqze52qABDtKZLAnia4l4UwzNvCCN2iHnL+s2ghdp+QjHsYIeSwg1Q==;5:IeoQONhN7iPPEeBfVvlgrrDFRV93cAUJhFJihDMi9clfWwgAemqE3YfzQ+OQQlfNdsmDTQ7oUMw8i/JoCRtUwegMhC2YX/6qCsk/wD4IggDfrn9guPYKcapNE0l05UO22eSyI5cYZ7kllXHhsTv7Q7GSV16eE/gqltCfO7GhnTI=;7:b8VJuTd2PmQu8KOykcglyoX+ua9neo0FbidJJig8wzmdwwjejwXfp4lgGdy/BkGnN6BxAOnisT0e3R1afOHY2kVtAHk4Q6hrSU4ClPtYB46Dzq/+QfS5z1qBJQZejuupvVADhyRB4YfdHaXPmEKQaA==
-x-incomingheadercount: 62
-x-eopattributedmessage: 0
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(20181119063)(201702061078)(5061506573)(5061507331)(1603103135)(2017031320274)(2017031323274)(2017031324274)(2017031322404)(1601125500)(1603101475)(1701031045);SRVR:DB5EUR03HT051;
-x-ms-traffictypediagnostic: DB5EUR03HT051:
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(4566010)(82015058);SRVR:DB5EUR03HT051;BCL:0;PCL:0;RULEID:;SRVR:DB5EUR03HT051;
-x-microsoft-antispam-message-info: VU36SfuMqNEldXtCPjgvoLFDZvBZX8NrE+QFeH3kyzs8ZJoYazBcMF2Dn2iOImZu
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <266879AB98A84A41A65057C017D205D9@eurprd07.prod.outlook.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: d4d70346-2c10-4f39-8c00-e767963926d9
-X-MS-Exchange-CrossTenant-Network-Message-Id: d549f8df-c99b-4f9c-5c2d-08d6733d16d2
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: d4d70346-2c10-4f39-8c00-e767963926d9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Jan 2019 18:39:12.7900
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Internet
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB5EUR03HT051
+        Sat, 5 Jan 2019 13:48:20 -0500
+Received: from mta-p7.oit.umn.edu ([134.84.196.207]:51486 "EHLO
+        mta-p7.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726318AbfAESsT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 5 Jan 2019 13:48:19 -0500
+Received: from localhost (unknown [127.0.0.1])
+        by mta-p7.oit.umn.edu (Postfix) with ESMTP id 0A7F4A3D
+        for <linux-kernel@vger.kernel.org>; Sat,  5 Jan 2019 18:48:18 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at umn.edu
+Received: from mta-p7.oit.umn.edu ([127.0.0.1])
+        by localhost (mta-p7.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 1PWHaAJk12BW for <linux-kernel@vger.kernel.org>;
+        Sat,  5 Jan 2019 12:48:17 -0600 (CST)
+Received: from mail-it1-f200.google.com (mail-it1-f200.google.com [209.85.166.200])
+        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mta-p7.oit.umn.edu (Postfix) with ESMTPS id CF88FCB0
+        for <linux-kernel@vger.kernel.org>; Sat,  5 Jan 2019 12:48:17 -0600 (CST)
+Received: by mail-it1-f200.google.com with SMTP id p21so3655160itb.8
+        for <linux-kernel@vger.kernel.org>; Sat, 05 Jan 2019 10:48:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=umn.edu; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=+I8uhisP0a8qBAXn1b3pJWPTpTfCf9zrvPMtDhjc0SU=;
+        b=d4JHDNlzvODwwZ9BD1NMP5jwJwd010krAV1kYM/9NdcvIFKjOEe4RCePjpxUVFQl73
+         NVA914Ge6doC3NZPtOspCxtKSrvsraelS/qeXwsRVENP1q5ZvCX3sq+8PpFnEKB4fHZU
+         NOzhp5rj1dQ8JH4EL87w6GBhPDAnZN/3Xb6zY7HLn41ttiQ0+h1AWkAj/tLUMLQSMudh
+         oFyv+H2OJe3R9tQQn1mhHo5EZy/uUDBF+8OB0Z3zflgS425qSZu6CsnBpH+XxAek7HWz
+         s1RCulwOpqe3Y1QZbxG5l9hatCIIAm/EqbVFYnBaWTCF++cSgXObXxfygioy8Q9KGXjz
+         2qLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=+I8uhisP0a8qBAXn1b3pJWPTpTfCf9zrvPMtDhjc0SU=;
+        b=KuduFS51rdAOIpOTiu6xo4kn2GFc1h90VO/2jTMmpi3yKSh20mcyWqduuM/N5aN4nZ
+         VXcK5ViAm/DAFkdJCs3gABArc9qoDvGmxqvnd6wRq/XHDrHG1wVuJyDuyKZwMMgY85Zd
+         9J69z5pu77Ra019L6RC0G2EyN/BSpTyAun7Gbntt7vck75tm9HKYnDScPL9b4Nx0xZUu
+         OSt5Iy/jaAyV5xCoRaT0XBSDDtiyHMBDiExKyr7VoIQhGQihq0jHmpewLAg/yC4vTuDq
+         6jvV3pgjAJKibZDSsHIMNFAWxb6BUXVXBrHeLtosPKl+8jge9Udfy8bJjxylN8jSrfml
+         71tw==
+X-Gm-Message-State: AJcUuke/hxsa0u3hFndO5XRAYAsTNDjrema/Sk9W7V2YluexdkVuWjCx
+        MUWQhBN6xeH6AMaZeahGkrpdquZpFGPvUYGeNVO7N+w6wzCUQgHxdCzno6wgblT+on33kH71S0z
+        k3z79iJEXQOr1q1u7jL0UoN6G9cxS
+X-Received: by 2002:a24:e38f:: with SMTP id d137mr3626566ith.69.1546714097255;
+        Sat, 05 Jan 2019 10:48:17 -0800 (PST)
+X-Google-Smtp-Source: ALg8bN632Jr2ytc07frzmmrHPlyLR1+tuBYbQ97UrpW1nbQlbOz2Wll6U7E7i4NdjaFafXlpRLYLNA==
+X-Received: by 2002:a24:e38f:: with SMTP id d137mr3626557ith.69.1546714097015;
+        Sat, 05 Jan 2019 10:48:17 -0800 (PST)
+Received: from cs-u-syssec1.cs.umn.edu (cs-u-syssec1.cs.umn.edu. [134.84.121.78])
+        by smtp.gmail.com with ESMTPSA id m45sm2235474iti.10.2019.01.05.10.48.16
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 05 Jan 2019 10:48:16 -0800 (PST)
+From:   Aditya Pakki <pakki001@umn.edu>
+To:     pakki001@umn.edu
+Cc:     kjlu@umn.edu, Lee Jones <lee.jones@linaro.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] v2 bakclight: fix missing checks in ambient_light_zone_store
+Date:   Sat,  5 Jan 2019 12:48:07 -0600
+Message-Id: <20190105184807.4827-1-pakki001@umn.edu>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-IHJ0bHByaXYtPmxpbmtfaW5mby5udW1fcnhfaW5wZXJpb2QgaW4gcnRsX3dhdGNoZG9nX3dxX2Nh
-bGxiYWNrIGEgZmV3IGxpbmVzDQogZG93bg0KDQpUaGlzIGlzIG5lY2Vzc2FyeSBzaW5jZSBpdCBp
-cyBzdGlsbCB1c2VkIGluIHRoZSAiQVAgb2ZmIiBkZXRlY3Rpb24NCmNvZGUgYmxvY2suIE1vdmVk
-IGNsZWFyaW5nIG9mIHJ0bHByaXYtPmxpbmtfaW5mby5udW1fcnhfaW5wZXJpb2QNCmFzIHdlbGwg
-Zm9yIGNvbnNpc3RlbmN5Lg0KDQpTaWduZWQtb2ZmLWJ5OiBCZXJuZCBFZGxpbmdlciA8YmVybmQu
-ZWRsaW5nZXJAaG90bWFpbC5kZT4NCi0tLQ0KIGRyaXZlcnMvbmV0L3dpcmVsZXNzL3JlYWx0ZWsv
-cnRsd2lmaS9iYXNlLmMgfCA0ICsrLS0NCiAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCsp
-LCAyIGRlbGV0aW9ucygtKQ0KDQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9uZXQvd2lyZWxlc3MvcmVh
-bHRlay9ydGx3aWZpL2Jhc2UuYyBiL2RyaXZlcnMvbmV0L3dpcmVsZXNzL3JlYWx0ZWsvcnRsd2lm
-aS9iYXNlLmMNCmluZGV4IGVmOWI1MDIuLjdhYTY4ZmUgMTAwNjQ0DQotLS0gYS9kcml2ZXJzL25l
-dC93aXJlbGVzcy9yZWFsdGVrL3J0bHdpZmkvYmFzZS5jDQorKysgYi9kcml2ZXJzL25ldC93aXJl
-bGVzcy9yZWFsdGVrL3J0bHdpZmkvYmFzZS5jDQpAQCAtMjE3Miw4ICsyMTcyLDYgQEAgdm9pZCBy
-dGxfd2F0Y2hkb2dfd3FfY2FsbGJhY2sodm9pZCAqZGF0YSkNCiAJCTsNCiAJfQ0KIA0KLQlydGxw
-cml2LT5saW5rX2luZm8ubnVtX3J4X2lucGVyaW9kID0gMDsNCi0JcnRscHJpdi0+bGlua19pbmZv
-Lm51bV90eF9pbnBlcmlvZCA9IDA7DQogCWZvciAodGlkID0gMDsgdGlkIDw9IDc7IHRpZCsrKQ0K
-IAkJcnRscHJpdi0+bGlua19pbmZvLnRpZHR4X2lucGVyaW9kW3RpZF0gPSAwOw0KIA0KQEAgLTIy
-MzYsNiArMjIzNCw4IEBAIHZvaWQgcnRsX3dhdGNoZG9nX3dxX2NhbGxiYWNrKHZvaWQgKmRhdGEp
-DQogCQkJcnRscHJpdi0+YnRjb2V4aXN0LmJ0Y19pbmZvLmluXzR3YXkgPSBmYWxzZTsNCiAJfQ0K
-IA0KKwlydGxwcml2LT5saW5rX2luZm8ubnVtX3J4X2lucGVyaW9kID0gMDsNCisJcnRscHJpdi0+
-bGlua19pbmZvLm51bV90eF9pbnBlcmlvZCA9IDA7DQogCXJ0bHByaXYtPmxpbmtfaW5mby5iY25f
-cnhfaW5wZXJpb2QgPSAwOw0KIA0KIAkvKiA8Nj4gc2NhbiBsaXN0ICovDQotLSANCjEuOS4xDQo=
+In adp8870_bl_ambient_light_zone_store, set, clear, and write
+can return an error but are not checked. The fix adds a check for these
+cases and returns -1 to match the return type (ssize_t).
+
+Signed-off-by: Aditya Pakki <pakki001@umn.edu>
+---
+ drivers/video/backlight/adp8870_bl.c | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/video/backlight/adp8870_bl.c b/drivers/video/backlight/adp8870_bl.c
+index 8d50e0299578..56a640587a82 100644
+--- a/drivers/video/backlight/adp8870_bl.c
++++ b/drivers/video/backlight/adp8870_bl.c
+@@ -800,10 +800,14 @@ static ssize_t adp8870_bl_ambient_light_zone_store(struct device *dev,
+ 
+ 	if (val == 0) {
+ 		/* Enable automatic ambient light sensing */
+-		adp8870_set_bits(data->client, ADP8870_MDCR, CMP_AUTOEN);
++		ret = adp8870_set_bits(data->client, ADP8870_MDCR, CMP_AUTOEN);
++		if (ret < 0)
++			goto adp8870_bl_err;
+ 	} else if ((val > 0) && (val < 6)) {
+ 		/* Disable automatic ambient light sensing */
+-		adp8870_clr_bits(data->client, ADP8870_MDCR, CMP_AUTOEN);
++		ret = adp8870_clr_bits(data->client, ADP8870_MDCR, CMP_AUTOEN);
++		if (ret < 0)
++			goto adp8870_bl_err;
+ 
+ 		/* Set user supplied ambient light zone */
+ 		mutex_lock(&data->lock);
+@@ -811,12 +815,18 @@ static ssize_t adp8870_bl_ambient_light_zone_store(struct device *dev,
+ 		if (!ret) {
+ 			reg_val &= ~(CFGR_BLV_MASK << CFGR_BLV_SHIFT);
+ 			reg_val |= (val - 1) << CFGR_BLV_SHIFT;
+-			adp8870_write(data->client, ADP8870_CFGR, reg_val);
++			ret = adp8870_write(data->client, ADP8870_CFGR,
++						reg_val);
+ 		}
+ 		mutex_unlock(&data->lock);
++		if (ret < 0)
++			goto adp8870_bl_err;
+ 	}
+ 
+ 	return count;
++
++adp8870_bl_err:
++	return -1;
+ }
+ static DEVICE_ATTR(ambient_light_zone, 0664,
+ 		adp8870_bl_ambient_light_zone_show,
+-- 
+2.17.1
+
