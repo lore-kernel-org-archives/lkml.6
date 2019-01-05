@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD027C43387
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 02:04:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 315A0C43387
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 02:04:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5F07218DE
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 02:04:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 07207218EA
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 02:04:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726663AbfAECEG (ORCPT
+        id S1726679AbfAECEJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 21:04:06 -0500
+        Fri, 4 Jan 2019 21:04:09 -0500
 Received: from mga07.intel.com ([134.134.136.100]:49511 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726639AbfAECEC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 21:04:02 -0500
+        id S1726650AbfAECEE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 21:04:04 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jan 2019 18:04:02 -0800
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jan 2019 18:04:04 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,441,1539673200"; 
-   d="scan'208";a="307634753"
+   d="scan'208";a="307634770"
 Received: from kgandham-mobl1.amr.corp.intel.com (HELO pbossart-mobl3.intel.com) ([10.251.139.169])
-  by fmsmga006.fm.intel.com with ESMTP; 04 Jan 2019 18:04:00 -0800
+  by fmsmga006.fm.intel.com with ESMTP; 04 Jan 2019 18:04:02 -0800
 From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 To:     alsa-devel@alsa-project.org
 Cc:     tiwai@suse.de, broonie@kernel.org, liam.r.girdwood@linux.intel.com,
@@ -38,9 +38,9 @@ Cc:     tiwai@suse.de, broonie@kernel.org, liam.r.girdwood@linux.intel.com,
         Jaroslav Kysela <perex@perex.cz>,
         Takashi Iwai <tiwai@suse.com>,
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 11/21] ASoc: rt286: fix boolean tests
-Date:   Fri,  4 Jan 2019 20:02:39 -0600
-Message-Id: <20190105020249.8639-12-pierre-louis.bossart@linux.intel.com>
+Subject: [PATCH 12/21] ASoC: rt5640: fix boolean assignments
+Date:   Fri,  4 Jan 2019 20:02:40 -0600
+Message-Id: <20190105020249.8639-13-pierre-louis.bossart@linux.intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190105020249.8639-1-pierre-louis.bossart@linux.intel.com>
 References: <20190105020249.8639-1-pierre-louis.bossart@linux.intel.com>
@@ -50,46 +50,42 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Reported by Coccinelle:
-sound/soc/codecs/rt286.c:927:5-7: WARNING: Comparison to bool
-sound/soc/codecs/rt286.c:930:5-8: WARNING: Comparison to bool
-sound/soc/codecs/rt286.c:299:5-7: WARNING: Comparison to bool
-sound/soc/codecs/rt286.c:302:5-8: WARNING: Comparison to bool
+sound/soc/codecs/rt5640.c:980:2-17: WARNING: Assignment of bool to 0/1
+sound/soc/codecs/rt5640.c:984:2-17: WARNING: Assignment of bool to 0/1
+sound/soc/codecs/rt5640.c:2825:1-16: WARNING: Assignment of bool to 0/1
 
 Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 ---
- sound/soc/codecs/rt286.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ sound/soc/codecs/rt5640.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/sound/soc/codecs/rt286.c b/sound/soc/codecs/rt286.c
-index 0b0f748bffbe..c9457c247a03 100644
---- a/sound/soc/codecs/rt286.c
-+++ b/sound/soc/codecs/rt286.c
-@@ -296,10 +296,10 @@ static void rt286_jack_detect_work(struct work_struct *work)
+diff --git a/sound/soc/codecs/rt5640.c b/sound/soc/codecs/rt5640.c
+index fc530481a6e4..b3580ecadecf 100644
+--- a/sound/soc/codecs/rt5640.c
++++ b/sound/soc/codecs/rt5640.c
+@@ -977,11 +977,11 @@ static int rt5640_hp_event(struct snd_soc_dapm_widget *w,
+ 	switch (event) {
+ 	case SND_SOC_DAPM_POST_PMU:
+ 		rt5640_pmu_depop(component);
+-		rt5640->hp_mute = 0;
++		rt5640->hp_mute = false;
+ 		break;
  
- 	rt286_jack_detect(rt286, &hp, &mic);
+ 	case SND_SOC_DAPM_PRE_PMD:
+-		rt5640->hp_mute = 1;
++		rt5640->hp_mute = true;
+ 		msleep(70);
+ 		break;
  
--	if (hp == true)
-+	if (hp)
- 		status |= SND_JACK_HEADPHONE;
+@@ -2822,7 +2822,7 @@ static int rt5640_i2c_probe(struct i2c_client *i2c,
+ 	regmap_update_bits(rt5640->regmap, RT5640_DUMMY1,
+ 				RT5640_MCLK_DET, RT5640_MCLK_DET);
  
--	if (mic == true)
-+	if (mic)
- 		status |= SND_JACK_MICROPHONE;
- 
- 	snd_soc_jack_report(rt286->jack, status,
-@@ -924,10 +924,10 @@ static irqreturn_t rt286_irq(int irq, void *data)
- 	/* Clear IRQ */
- 	regmap_update_bits(rt286->regmap, RT286_IRQ_CTRL, 0x1, 0x1);
- 
--	if (hp == true)
-+	if (hp)
- 		status |= SND_JACK_HEADPHONE;
- 
--	if (mic == true)
-+	if (mic)
- 		status |= SND_JACK_MICROPHONE;
- 
- 	snd_soc_jack_report(rt286->jack, status,
+-	rt5640->hp_mute = 1;
++	rt5640->hp_mute = true;
+ 	rt5640->irq = i2c->irq;
+ 	INIT_DELAYED_WORK(&rt5640->bp_work, rt5640_button_press_work);
+ 	INIT_WORK(&rt5640->jack_work, rt5640_jack_work);
 -- 
 2.17.1
 
