@@ -2,111 +2,151 @@ Return-Path: <SRS0=xVxK=PN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85314C43387
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 04:53:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55F10C43387
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 04:53:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4784C21874
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 04:53:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 240D921874
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 04:53:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rPWtL22x"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="RHPjbDii"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726236AbfAEExF (ORCPT
+        id S1726255AbfAEExc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 23:53:05 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:52026 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726057AbfAEExE (ORCPT
+        Fri, 4 Jan 2019 23:53:32 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:45803 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726057AbfAEExb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 23:53:04 -0500
-Received: by mail-it1-f196.google.com with SMTP id w18so4395600ite.1
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Jan 2019 20:53:04 -0800 (PST)
+        Fri, 4 Jan 2019 23:53:31 -0500
+Received: by mail-pg1-f194.google.com with SMTP id y4so18304719pgc.12
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Jan 2019 20:53:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=oArCE7r/iquZmO+ZhvjUvMjIDHq7e0pvyq/5mlSzAas=;
-        b=rPWtL22xaeqGCs6FdExcr58WWsrNnExioA1v0quu1h+SQl0orbInQSSF23r7jGsUUY
-         34t2JyTtOyxyNVnqJlb7UFc679Gqxcxff9EUcnj5hIlp8iveUnox5x9AXO1lsGPR6g2Z
-         aG9uyWcSK9cwVNCBpJo4y770L1NR98cEfSSgo3z/kazzPxe9AW5rWj8jwj0J8wm66wh4
-         YC4zHnM9w1GXN/wgusqd6X5NzMsuB7tI/w2onw84+Y9BFzDd1CR5pxtkLMfhQpCPMGTl
-         WfZylZ6CB810sM9lLOcnlbSVDq2ChaLHTx9zhMEPpXL0O3KqKM0vWaNaNZytWN0L/92R
-         E8IA==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=2osYVWt+JIkdPaSyZ2ITOSzDCJlR6M9tonDWn/3T+44=;
+        b=RHPjbDii5Y+2bcbaPzOLgLe8nz7QpwrOtoD3xibM4BA4PY4YaR2fPDTpf6QZKn0cAb
+         91Kf29PvxrlyZcY52vHxnOa/ZSxV5Ot40i+sHYT6t7Mq38OxkGtnFGkBRMzMAlQoVYR9
+         m87aKPa9jhCB5HxP/9eMXMu3R0EnyC93edyoc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=oArCE7r/iquZmO+ZhvjUvMjIDHq7e0pvyq/5mlSzAas=;
-        b=MZjo99m6wuwiFi/7jbE5OKUssCIJCjrTixxO5olRcfHf+YEKqgz1yhnplN7LQ9difg
-         roevq1fLPZU00xjf/ihSUv5VWZeVpQj7iWAET/Cel0hVrT/4cnCM8bsqxPUxfsKhnmHS
-         J83x+tdrL7PJkcWd4whGzL0Wb8r11knyffsG3Iji9i90rKp2U3BZqASgz2KRQWnhmVXz
-         r5TrVQrZAvsGOs7XW2XPvt/a2j7+Wsat3eLQvNwWfQ11+QImPOSfEMUTSxxylVfmFy3S
-         075RwRTzH5JYLyX8Wv8FMf/SPXgEoeAYS9CTdeLBpy4QTK1nsZ82U3oFwr6ENJAXilDP
-         2gcA==
-X-Gm-Message-State: AA+aEWbZhW92uKaOZIsMCD+C/RAHP+p2Xlkf4+YjbHq8SNGjOt5pXela
-        t/L/xJAA6NwbL31I4UWc0QxHawcU1vFOnySOJ9shnkyF
-X-Google-Smtp-Source: AFSGD/VJwldMJ3Woj4oi7DTgGorzEKL+102FsP5siGrApBVZn4Sg6V/TyNelQnNp+0W4h+iipiec/yZXn1xKeyeTHJc=
-X-Received: by 2002:a02:1b1d:: with SMTP id l29mr36366178jad.98.1546663983944;
- Fri, 04 Jan 2019 20:53:03 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=2osYVWt+JIkdPaSyZ2ITOSzDCJlR6M9tonDWn/3T+44=;
+        b=GPmtSdLUESzQuDYO5yjfy4uhAB//Ef7tg95sBy2N2feSRd2HRc5oNp5C3m4RM97tBM
+         MOEAIw+9EzsZ51fiS4b7fX8fh1PfP/Y9lSa405trEGZDooHiMaDAKrS9fUrmcc8zU5r6
+         6CeViBOugbBkQri/jcu5KN2h+gvRzZUSLlwxoJXbcJi3WrUCKcXPVcq/KQfhzf1t29Ty
+         8qK7tejk8GId7/MRM05xGdtwuGtluw2ZCLVJHTZ3g3CcNCbWfxQQ1KcNsgVZddTg2qJG
+         96QmVBlhWdNtpPUYyb7vymu65mIJ1bWWTUtBMkDTPxMCijyDMGbUTX2g6sfU+9woQoxO
+         eNAA==
+X-Gm-Message-State: AJcUukdo7weGZbduIvgKwQZFLlCVjuA1IwKenzj9HqRAX8jkR4nllp0t
+        SHx+14kY3cbhzm6ldbm1/pvZ
+X-Google-Smtp-Source: ALg8bN5jQ9SFeO6MTzkQQnElXG2wHR1tc9vg3DP6qbqM4/x4smYVaKoELxYfzhSh+ulLJJuBzbUGjA==
+X-Received: by 2002:a63:4948:: with SMTP id y8mr3866500pgk.32.1546664009373;
+        Fri, 04 Jan 2019 20:53:29 -0800 (PST)
+Received: from Mani-XPS-13-9360 ([2405:204:72cb:a88d:406c:3ac8:e78f:4779])
+        by smtp.gmail.com with ESMTPSA id k63sm118688142pfc.76.2019.01.04.20.53.23
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 04 Jan 2019 20:53:28 -0800 (PST)
+Date:   Sat, 5 Jan 2019 10:23:20 +0530
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     John Stultz <john.stultz@linaro.org>
+Cc:     lkml <linux-kernel@vger.kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Tanglei Han <hantanglei@huawei.com>,
+        Zhuangluan Su <suzhuangluan@hisilicon.com>,
+        Ryan Grachek <ryan@edited.us>, dmaengine@vger.kernel.org,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
+Subject: Re: [PATCH 2/8 v2] Documentation: bindings: k3dma: Add binding for
+ dma-avail-chan
+Message-ID: <20190105045320.GA3761@Mani-XPS-13-9360>
+References: <1546635388-13795-1-git-send-email-john.stultz@linaro.org>
+ <1546635388-13795-3-git-send-email-john.stultz@linaro.org>
+ <20190105040030.GF2477@Mani-XPS-13-9360>
+ <CALAqxLUZ=6_tELtZPEjYwV+BNNBcZj4Z=dq9UyrRXuPhs_uGUw@mail.gmail.com>
 MIME-Version: 1.0
-References: <20181109095101.GA2558@hp-pavilion-15-notebook-pc-brajeswar>
- <CAFqtX7kfSuWkjYHPWsxRaYcsQRD4OtJVyUBAezZu3HQT4QjoYg@mail.gmail.com> <CAFqtX7k4dqpTqKwUmfLP__=pKXga5QBovnZMT7JNDk07A=pUBA@mail.gmail.com>
-In-Reply-To: <CAFqtX7k4dqpTqKwUmfLP__=pKXga5QBovnZMT7JNDk07A=pUBA@mail.gmail.com>
-From:   Brajeswar Ghosh <brajeswar.linux@gmail.com>
-Date:   Sat, 5 Jan 2019 10:22:52 +0530
-Message-ID: <CAFqtX7=aS56+=Gt9VCRjk5fc5XfpP9q7roPO7w3d6VKGBs4SYg@mail.gmail.com>
-Subject: Re: [PATCH] drivers/bus/fsl-mc/dpbp.c: Remove duplicate header
-To:     Stuart Yoder <stuyoder@gmail.com>, laurentiu.tudor@nxp.com
-Cc:     Souptick Joarder <jrdr.linux@gmail.com>,
-        linux-kernel@vger.kernel.org,
-        Sabyasachi Gupta <sabyasachi.linux@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALAqxLUZ=6_tELtZPEjYwV+BNNBcZj4Z=dq9UyrRXuPhs_uGUw@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 5, 2018 at 12:10 PM Brajeswar Ghosh
-<brajeswar.linux@gmail.com> wrote:
->
-> On Fri, Nov 16, 2018 at 8:47 PM Brajeswar Ghosh
-> <brajeswar.linux@gmail.com> wrote:
+On Fri, Jan 04, 2019 at 08:39:34PM -0800, John Stultz wrote:
+> On Fri, Jan 4, 2019 at 8:00 PM Manivannan Sadhasivam
+> <manivannan.sadhasivam@linaro.org> wrote:
 > >
-> > On Fri, Nov 9, 2018 at 3:21 PM Brajeswar Ghosh
-> > <brajeswar.linux@gmail.com> wrote:
+> > Hi John,
+> >
+> > On Fri, Jan 04, 2019 at 12:56:22PM -0800, John Stultz wrote:
+> > > Some dma channels can be reserved for secure mode or other
+> > > hardware on the SoC, so provide a binding for a bitmask
+> > > listing the available channels for the kernel to use.
 > > >
-> > > Remove linux/fsl/mc.h which is included more than once
-> > >
-> > > Signed-off-by: Brajeswar Ghosh <brajeswar.linux@gmail.com>
-> >
-> > Any comment on this patch?
->
-> Any comment on this patch?
-
-Any comment on this patch?
-
->
-> >
+> > > Cc: Vinod Koul <vkoul@kernel.org>
+> > > Cc: Rob Herring <robh+dt@kernel.org>
+> > > Cc: Mark Rutland <mark.rutland@arm.com>
+> > > Cc: Tanglei Han <hantanglei@huawei.com>
+> > > Cc: Zhuangluan Su <suzhuangluan@hisilicon.com>
+> > > Cc: Ryan Grachek <ryan@edited.us>
+> > > Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > > Cc: dmaengine@vger.kernel.org
+> > > Cc: devicetree@vger.kernel.org
+> > > Signed-off-by: John Stultz <john.stultz@linaro.org>
 > > > ---
-> > >  drivers/bus/fsl-mc/dpbp.c | 1 -
-> > >  1 file changed, 1 deletion(-)
+> > >  Documentation/devicetree/bindings/dma/k3dma.txt | 3 +++
+> > >  1 file changed, 3 insertions(+)
 > > >
-> > > diff --git a/drivers/bus/fsl-mc/dpbp.c b/drivers/bus/fsl-mc/dpbp.c
-> > > index 17e3c5d2f22e..9003cd3698a5 100644
-> > > --- a/drivers/bus/fsl-mc/dpbp.c
-> > > +++ b/drivers/bus/fsl-mc/dpbp.c
-> > > @@ -5,7 +5,6 @@
-> > >   */
-> > >  #include <linux/kernel.h>
-> > >  #include <linux/fsl/mc.h>
-> > > -#include <linux/fsl/mc.h>
+> > > diff --git a/Documentation/devicetree/bindings/dma/k3dma.txt b/Documentation/devicetree/bindings/dma/k3dma.txt
+> > > index 10a2f15..1c466c1 100644
+> > > --- a/Documentation/devicetree/bindings/dma/k3dma.txt
+> > > +++ b/Documentation/devicetree/bindings/dma/k3dma.txt
+> > > @@ -14,6 +14,9 @@ Required properties:
+> > >               have specific request line
+> > >  - clocks: clock required
 > > >
-> > >  #include "fsl-mc-private.h"
-> > >
-> > > --
-> > > 2.17.1
-> > >
+> > > +Optional properties:
+> > > +- dma-avail-chan: Bitmask of available physical channels
+> > > +
+> >
+> > This property looks too generic. Since this is specific to HiSi SoCs,
+> > this could be "hisi-dma-avail-chan"?
+> 
+> I'm fine to change it, but I'm not sure I fully understand the
+> rational. Can you help me understand?
+> Are device node-binding names supposed to have global scope? I assumed
+> the node property names are basically scoped to the entry?
+
+IIUC properties documented in subsystem binding (dma.txt in this case)
+will have global scope. Those which are not documented in this binding
+are specific to vendor IPs and should be prefixed with the vendor
+prefix (hisi in this case).
+
+> Further, having some dma channels be reserved doesn't seem to be too
+> unique a concept, so I'm not sure what we gain long term by prefixing
+> it?
+> 
+
+Right, but this brings up the point of having this functionality in
+generic DMA engine so that the DMA controller drivers need not handle.
+So either we should move this available channel check to DMA Engine
+and document the property in dma.txt so that other IPs can also use it
+or keep the functionality in K3 driver and use HiSi prefix for the
+property.
+
+But I'd like to hear Vinod/Rob's opinion on this!
+
+Thanks,
+Mani
+
+> thanks
+> -john
