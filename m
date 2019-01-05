@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92B38C43444
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 00:43:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50E7FC43387
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 00:47:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5EE3C21872
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 00:43:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A71621872
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 00:47:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="R/IYiBRY"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="odegTTO5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726239AbfAEAng (ORCPT
+        id S1726246AbfAEAr5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 19:43:36 -0500
-Received: from mail-yb1-f193.google.com ([209.85.219.193]:38734 "EHLO
-        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726074AbfAEAng (ORCPT
+        Fri, 4 Jan 2019 19:47:57 -0500
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:45310 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725862AbfAEAr4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 19:43:36 -0500
-Received: by mail-yb1-f193.google.com with SMTP id x9so6418648ybj.5
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Jan 2019 16:43:34 -0800 (PST)
+        Fri, 4 Jan 2019 19:47:56 -0500
+Received: by mail-yb1-f195.google.com with SMTP id q2so8413495ybd.12
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Jan 2019 16:47:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=snHqLQmz4nt+VNG034zl1FNOGYA7ZEBfLYfuKiNvzvE=;
-        b=R/IYiBRYG+40WnMu2AApy0CGvAWBAXw3LLoHJhw/4mdSbXpsJqLtNIo2TdL28mKP2R
-         jBdmt2yPvZH9c+sP9Gl0idk7S3bG7lO40H1TIFGD+FTiruxX2opueuOv4XNFU5saRzv6
-         YJveZFBkl9SohMJxX44nJJNQirz7B6bh5plb/jFTUS2APj2WQ6fgZbglZ0eBoSrY5nzy
-         LxTprWV6t7i/bDlhHN+Y5UfRIl3tcPTbtEuUh5OVRhboWUXx7sSz0YyB9dSSGqEE48au
-         qxhMzGAyXhNVFr5hPA2d5iy4YvNHf+LuEPa34dSo+Vaxr9uzcmEN1v44fCeWaZuPmRhb
-         AAwg==
+        bh=ZyHJGaj0o+e27UnST3Gc5WJRZ2smur2QRsLhOjYwUTA=;
+        b=odegTTO5L3tLhgD1pTSIn+axOi6LLINJHUTowFwpbsXmgGh5aA2AI2kMlojrr39Lzn
+         zSsjvpYS9+a/2T/3JBtK3Av1O+jKaaATel/du/rojEhS6dQMUEqcKJP6bIF3qpBrHhni
+         jpqDJM021XcVxKKBUMBBeC0x83FDnGQWF9z32ANjoy7E9ni55gnFK4FqEy3hSyOwunsF
+         ch4pFlM+BG0Fac7L5pglVwYmUTsohOway4mj+wG8ko8m48KQRBNfJpYha2ZnqmtwoeSV
+         4kGIj4wKg6TwZIo3e2L/OPQSYYZSOITf5RSO4mxzkWNtUdLxmJhrVnO+ZvUif/mJyFZo
+         sdTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=snHqLQmz4nt+VNG034zl1FNOGYA7ZEBfLYfuKiNvzvE=;
-        b=NgEAsU921yKYio6QM7lkMtvhazojctzdJxy9us3PLJ3YSCui44yMuEo7bro/IL+WlP
-         46Csqp2a1Qypy79oJkOe53u4Y7pSFRbHzuTzQTqf0aM6TFwxFUAMcx/OArV1qoqBhmUz
-         Je6vVnLAS8wlWNfBAP7WWz9L6FFGGT+FOndBZOVVaf9yHWVdxJDlEDV6+vGsUaNNs67x
-         z7LbP2Y7Ew8K8DCFbkrkWoESUYsfBNb8+QAiTFowqV9bw1xztKun4wyaT589W3EdKOfC
-         DQ1FxtS074K+c3WpN9rTESb6hfxeuPgIop0JQQDglI/0rGldzA3omscBaosJUDsFPNFj
-         J/Zg==
-X-Gm-Message-State: AJcUukcIC95rXj3jY2bqu4bc1oEPVB3uvxU0YBe7L5BT0i7IzrS9HcVV
-        gy6TLPFkSzpJOzad74tbqX1ivZYPOw5CxDFa9aikZsGOTkQ=
-X-Google-Smtp-Source: ALg8bN7TM7HkFVP1EabeeX+prME1evMFy5HlgmxrURWGtISoIJw7J0auA1L+qAdydzGRcW7HuUvxmpPE86nTUj9QCKk=
-X-Received: by 2002:a25:2743:: with SMTP id n64mr21202102ybn.164.1546649013690;
- Fri, 04 Jan 2019 16:43:33 -0800 (PST)
+        bh=ZyHJGaj0o+e27UnST3Gc5WJRZ2smur2QRsLhOjYwUTA=;
+        b=J54xP19GABPg3nIXuHaOgNQNeflFw0gDUCcP5iAwOYqDjINWiERUMV21CvMtBOj+jY
+         bXJqHZWpYNUBRlWObQ6ta5arQDEPib7bRh2YJlFLNPoyATg6j5Dw4uvqbQTXUANyC1+Z
+         O/Gr7Zctt9vqMWjIOyUXwSaOymVKOuDVrnhVI1G0YiGdI2Pt85/wByDZdhs4Q1uFpZaw
+         hlWv7wY9WCA3D0+eWzoA+T5ErSscCQznMxMdgs0jaR6OI9JL9OdH58wU615AouE6KDBi
+         KXx7KaMMgk2vAfBjfntMg/QgOMHIfTCil0RjLecUb6SSl9EHeAZsR2+Y/h+yelBgqxVM
+         cAvw==
+X-Gm-Message-State: AJcUukeLJx03ckCfM8PZdStpDbA4cUlgmHNJy1YI4FSbItDd0l1ymGlE
+        yfU0g6bDLoBZEA6z3MHjwaR9YDkk66klo+th8iGSjw==
+X-Google-Smtp-Source: ALg8bN671BeMyGFWenOeeKnzpzD5OPH9AKzrdoY9n0PLlkRXd6MtMp98kQ6arNqmV5IudASwyzzZfBRyUW+3f7pBkGo=
+X-Received: by 2002:a25:9247:: with SMTP id e7mr42417407ybo.496.1546649275027;
+ Fri, 04 Jan 2019 16:47:55 -0800 (PST)
 MIME-Version: 1.0
-References: <1546647560-40026-1-git-send-email-yang.shi@linux.alibaba.com> <1546647560-40026-3-git-send-email-yang.shi@linux.alibaba.com>
-In-Reply-To: <1546647560-40026-3-git-send-email-yang.shi@linux.alibaba.com>
+References: <1546647560-40026-1-git-send-email-yang.shi@linux.alibaba.com> <1546647560-40026-4-git-send-email-yang.shi@linux.alibaba.com>
+In-Reply-To: <1546647560-40026-4-git-send-email-yang.shi@linux.alibaba.com>
 From:   Shakeel Butt <shakeelb@google.com>
-Date:   Fri, 4 Jan 2019 16:43:22 -0800
-Message-ID: <CALvZod5Fh0K-JKGPH90c+ONBSTdwo7Z8fUyyAMen=ZDzPqTAXQ@mail.gmail.com>
-Subject: Re: [v2 PATCH 2/5] mm: memcontrol: do not try to do swap when force empty
+Date:   Fri, 4 Jan 2019 16:47:44 -0800
+Message-ID: <CALvZod4ea4fR2n1EdZ3HwB3O3iWDHw5nXRnPLKbR6mAuDkWuQA@mail.gmail.com>
+Subject: Re: [v2 PATCH 3/5] mm: memcontrol: introduce wipe_on_offline interface
 To:     Yang Shi <yang.shi@linux.alibaba.com>
 Cc:     Michal Hocko <mhocko@suse.com>,
         Johannes Weiner <hannes@cmpxchg.org>,
@@ -73,67 +73,139 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Fri, Jan 4, 2019 at 4:21 PM Yang Shi <yang.shi@linux.alibaba.com> wrote:
 >
-> The typical usecase of force empty is to try to reclaim as much as
-> possible memory before offlining a memcg.  Since there should be no
-> attached tasks to offlining memcg, the tasks anonymous pages would have
-> already been freed or uncharged.  Even though anonymous pages get
-> swapped out, but they still get charged to swap space.  So, it sounds
-> pointless to do swap for force empty.
+> We have some usecases which create and remove memcgs very frequently,
+> and the tasks in the memcg may just access the files which are unlikely
+> accessed by anyone else.  So, we prefer force_empty the memcg before
+> rmdir'ing it to reclaim the page cache so that they don't get
+> accumulated to incur unnecessary memory pressure.  Since the memory
+> pressure may incur direct reclaim to harm some latency sensitive
+> applications.
 >
-> I tried to dig into the history of this, it was introduced by
-> commit 8c7c6e34a125 ("memcg: mem+swap controller core"), but there is
-> not any clue about why it was done so at the first place.
+> Force empty would help out such usecase, however force empty reclaims
+> memory synchronously when writing to memory.force_empty.  It may take
+> some time to return and the afterwards operations are blocked by it.
+> Although this can be done in background, some usecases may need create
+> new memcg with the same name right after the old one is deleted.  So,
+> the creation might get blocked by the before reclaim/remove operation.
 >
-> The below simple test script shows slight file cache reclaim improvement
-> when swap is on.
+> Delaying memory reclaim in cgroup offline for such usecase sounds
+> reasonable.  Introduced a new interface, called wipe_on_offline for both
+> default and legacy hierarchy, which does memory reclaim in css offline
+> kworker.
 >
-> echo 3 > /proc/sys/vm/drop_caches
-> mkdir /sys/fs/cgroup/memory/test
-> echo 30 > /sys/fs/cgroup/memory/test/memory.swappiness
-> echo $$ >/sys/fs/cgroup/memory/test/cgroup.procs
-> cat /proc/meminfo | grep ^Cached|awk -F" " '{print $2}'
-> dd if=/dev/zero of=/mnt/test bs=1M count=1024
-> ping localhost > /dev/null &
-> echo 1 > /sys/fs/cgroup/memory/test/memory.force_empty
-> killall ping
-> echo $$ >/sys/fs/cgroup/memory/cgroup.procs
-> cat /proc/meminfo | grep ^Cached|awk -F" " '{print $2}'
-> rmdir /sys/fs/cgroup/memory/test
-> cat /proc/meminfo | grep ^Cached|awk -F" " '{print $2}'
+> Writing to 1 would enable it, writing 0 would disable it.
 >
-> The number of page cache is:
->                         w/o             w/
-> before force empty    1088792        1088784
-> after force empty     41492          39428
-> reclaimed             1047300        1049356
->
-> Without doing swap, force empty can reclaim 2MB more memory in 1GB page
-> cache.
->
-> Cc: Michal Hocko <mhocko@suse.com>
+> Suggested-by: Michal Hocko <mhocko@suse.com>
 > Cc: Johannes Weiner <hannes@cmpxchg.org>
 > Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
 > ---
->  mm/memcontrol.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  include/linux/memcontrol.h |  3 +++
+>  mm/memcontrol.c            | 49 ++++++++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 52 insertions(+)
 >
+> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+> index 83ae11c..2f1258a 100644
+> --- a/include/linux/memcontrol.h
+> +++ b/include/linux/memcontrol.h
+> @@ -311,6 +311,9 @@ struct mem_cgroup {
+>         struct list_head event_list;
+>         spinlock_t event_list_lock;
+>
+> +       /* Reclaim as much as possible memory in offline kworker */
+> +       bool wipe_on_offline;
+> +
+>         struct mem_cgroup_per_node *nodeinfo[0];
+>         /* WARNING: nodeinfo must be the last member here */
+>  };
 > diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index af7f18b..75208a2 100644
+> index 75208a2..5a13c6b 100644
 > --- a/mm/memcontrol.c
 > +++ b/mm/memcontrol.c
-> @@ -2895,7 +2895,7 @@ static int mem_cgroup_force_empty(struct mem_cgroup *memcg)
->                         return -EINTR;
+> @@ -2918,6 +2918,35 @@ static ssize_t mem_cgroup_force_empty_write(struct kernfs_open_file *of,
+>         return mem_cgroup_force_empty(memcg) ?: nbytes;
+>  }
 >
->                 progress = try_to_free_mem_cgroup_pages(memcg, 1,
-> -                                                       GFP_KERNEL, true);
-> +                                                       GFP_KERNEL, false);
+> +static int wipe_on_offline_show(struct seq_file *m, void *v)
+> +{
+> +       struct mem_cgroup *memcg = mem_cgroup_from_css(seq_css(m));
+> +
+> +       seq_printf(m, "%lu\n", (unsigned long)memcg->wipe_on_offline);
+> +
+> +       return 0;
+> +}
+> +
+> +static int wipe_on_offline_write(struct cgroup_subsys_state *css,
+> +                                struct cftype *cft, u64 val)
+> +{
+> +       int ret = 0;
+> +
+> +       struct mem_cgroup *memcg = mem_cgroup_from_css(css);
+> +
+> +       if (mem_cgroup_is_root(memcg))
+> +               return -EINVAL;
+> +
+> +       if (val == 0)
+> +               memcg->wipe_on_offline = false;
+> +       else if (val == 1)
+> +               memcg->wipe_on_offline = true;
+> +       else
+> +               ret = -EINVAL;
+> +
+> +       return ret;
+> +}
+> +
+>  static u64 mem_cgroup_hierarchy_read(struct cgroup_subsys_state *css,
+>                                      struct cftype *cft)
+>  {
+> @@ -4283,6 +4312,11 @@ static ssize_t memcg_write_event_control(struct kernfs_open_file *of,
+>                 .write = mem_cgroup_reset,
+>                 .read_u64 = mem_cgroup_read_u64,
+>         },
+> +       {
+> +               .name = "wipe_on_offline",
 
-I think we agreed not to change the behavior of force_empty. You can
-customize 'force_empty on wipe_on_offline' to not swapout.
+What about "force_empty_on_offline"?
 
->                 if (!progress) {
->                         nr_retries--;
->                         /* maybe some writeback is necessary */
+> +               .seq_show = wipe_on_offline_show,
+> +               .write_u64 = wipe_on_offline_write,
+> +       },
+>         { },    /* terminate */
+>  };
+>
+> @@ -4569,6 +4603,15 @@ static void mem_cgroup_css_offline(struct cgroup_subsys_state *css)
+>         page_counter_set_min(&memcg->memory, 0);
+>         page_counter_set_low(&memcg->memory, 0);
+>
+> +       /*
+> +        * Reclaim as much as possible memory when offlining.
+> +        *
+> +        * Do it after min/low is reset otherwise some memory might
+> +        * be protected by min/low.
+> +        */
+> +       if (memcg->wipe_on_offline)
+> +               mem_cgroup_force_empty(memcg);
+> +
+
+mem_cgroup_force_empty() also does drain_all_stock(), so, move
+drain_all_stock() in mem_cgroup_css_offline() to the else of 'if
+(memcg->wipe_on_offline)'.
+
+>         memcg_offline_kmem(memcg);
+>         wb_memcg_offline(memcg);
+>
+> @@ -5694,6 +5737,12 @@ static ssize_t memory_oom_group_write(struct kernfs_open_file *of,
+>                 .seq_show = memory_oom_group_show,
+>                 .write = memory_oom_group_write,
+>         },
+> +       {
+> +               .name = "wipe_on_offline",
+> +               .flags = CFTYPE_NOT_ON_ROOT,
+> +               .seq_show = wipe_on_offline_show,
+> +               .write_u64 = wipe_on_offline_write,
+> +       },
+>         { }     /* terminate */
+>  };
+>
 > --
 > 1.8.3.1
 >
