@@ -2,108 +2,121 @@ Return-Path: <SRS0=xVxK=PN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46E5CC43387
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 11:39:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA3FBC43387
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 11:53:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A61520645
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 11:39:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z8h5nhLd"
+	by mail.kernel.org (Postfix) with ESMTP id 82B852070D
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 11:53:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726241AbfAELj0 (ORCPT
+        id S1726227AbfAELxl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 5 Jan 2019 06:39:26 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:37672 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726108AbfAELjZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 Jan 2019 06:39:25 -0500
-Received: by mail-wm1-f67.google.com with SMTP id g67so3388607wmd.2;
-        Sat, 05 Jan 2019 03:39:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :content-transfer-encoding:user-agent;
-        bh=AzSmhYUNSNe5vSYv5BojS9K6e2rjC7kEkfqO4kLJ3Hg=;
-        b=Z8h5nhLdRomHqOuBqYvaqDIHnSF62hzTWRdgJ+6zI5Ub0UfD/YNMkeOlwwe11GNR+p
-         iAXhiimw7A+sdvwFerOzNHbs5xoQqGdOPiKCxl2jkHl8KM2ZRzXUdZySOT66iOIq99uc
-         VjD58awww+cNyCOEfLNwU9DNJBAWI0vaToxUS+c/aHY0T9CEr3T7/IueAWeqzG+3+Iaw
-         Poh438Uk0+IjQbyBTOAAanNz6l6rmcYsCEXPa+k+7oUkVStuVVKJ++sD1S9KirrazqQc
-         El3Apt3wV03fiG7GE121tqGD2KoOlGee12gmKbVTEoDJrJt8NhqEfXGjyN4flWwdDv0j
-         Y+EA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:content-transfer-encoding:user-agent;
-        bh=AzSmhYUNSNe5vSYv5BojS9K6e2rjC7kEkfqO4kLJ3Hg=;
-        b=sFAW2Dxnlc+Eg/ZY9/Hg5ualf4mi2JkWkJ8ZZcSpo+y9CgLSNmTiUb6asKLSMxmUcQ
-         9ZWhHWsY1yB01w1nIxUl6YjCuAPorNEJ7ekQtVaGIW7XEhKmbfkNnZk7ce7Szz+o6y6u
-         WqiZfDekOQAQ8nIf6dtLj6Z8+a3YQrqUorpjS+DcSTY0nLgz9reriyShdftf8meYqB+S
-         RzWSMDsdbkIi4lXhjKtX2SWXCC9qr93q66rM80BjWrAqnhXmQhu6Jj7TMALAeS7YHwog
-         W+HWyZqkVbwPkOprYdnCdT2tvHS6zksxAb3dAjhruYxewutbaWoqpnGNKMwS/a9NSbj/
-         WaxA==
-X-Gm-Message-State: AJcUukeTT4ERifnvfIyMjJmRScAVNqb6Lw0e4V2Frenn8G6ycRcEUdMu
-        URP4JGWaB9j/F1TL1M/9ecuzJAf0
-X-Google-Smtp-Source: ALg8bN5KACqfFY270YTH+di+vInq/ZEMjWL3YW8XItO1lm9FoxWTCYzYKwPKQzSc9VIs24I9VbN+Ww==
-X-Received: by 2002:a1c:d74a:: with SMTP id o71mr3885216wmg.73.1546688362815;
-        Sat, 05 Jan 2019 03:39:22 -0800 (PST)
-Received: from localhost.localdomain (178-143-129-241.dynamic.orange.sk. [178.143.129.241])
-        by smtp.gmail.com with ESMTPSA id g67sm5145933wmd.38.2019.01.05.03.39.21
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 05 Jan 2019 03:39:22 -0800 (PST)
-Date:   Sat, 5 Jan 2019 12:39:20 +0100
-From:   =?iso-8859-1?Q?J=FAlius?= Milan <jmilan.dev@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     devel@driverdev.osuosl.org, linux-wireless@vger.kernel.org,
-        gregkh@linuxfoundation.org, ajay.kathat@microchip.com,
-        adham.abozaeid@microchip.com
-Subject: [PATCH v3] staging: wilc1000: fix cast to restricted __le32
-Message-ID: <20190105113920.GA30908@localhost.localdomain>
+        Sat, 5 Jan 2019 06:53:41 -0500
+Received: from ozlabs.org ([203.11.71.1]:48353 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726100AbfAELxk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 5 Jan 2019 06:53:40 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43X0RP5xzNz9rxp;
+        Sat,  5 Jan 2019 22:53:37 +1100 (AEDT)
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     chunkeey@gmail.com, diana.craciun@nxp.com,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        malat@debian.org
+Subject: Re: [GIT PULL] Please pull powerpc/linux.git powerpc-4.21-2 tag
+In-Reply-To: <87ftu8y3vw.fsf@concordia.ellerman.id.au>
+References: <87ftu8y3vw.fsf@concordia.ellerman.id.au>
+Date:   Sat, 05 Jan 2019 22:53:56 +1100
+Message-ID: <877efjxquj.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes the following sparse warnings:
+Hi Linus,
 
-drivers/staging/wilc1000/host_interface.c:2360:30: warning:
- incorrect type in assignment (different base types)
-    expected restricted __le32 [addressable] [assigned] [usertype] frame_type
-    got restricted __le16 [usertype] <noident>
+Michael Ellerman <mpe@ellerman.id.au> writes:
+> -----BEGIN PGP SIGNED MESSAGE-----
+> Hash: SHA1
+>
+> Hi Linus,
+>
+> Please pull some powerpc fixes for 4.21:
+...
+>
+> for you to fetch changes up to 074400a7be61250d9f0ccec07d5c35ffec4d8d22:
+>
+>   powerpc: Drop use of 'type' from access_ok() (2019-01-04 23:07:59 +1100)
 
-Fixes: 147ccfd451024 ("staging: wilc1000: handle mgmt_frame_register ops from cfg82011 context")
-Signed-off-by: Július Milan <jmilan.dev@gmail.com>
----
- drivers/staging/wilc1000/host_interface.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I see you've fixed this in your tree already.
 
-v3:
-- nothing really changed since v1, v2, I just messed emails and then patch
-  format, sorry for that, it's my first patch :)
+If you want to skip this pull and avoid having two fixes for the
+access_ok() stuff in the history that would be fine by me.
 
-diff --git a/drivers/staging/wilc1000/host_interface.c b/drivers/staging/wilc1000/host_interface.c
-index 5dae6e7155d3..07c3d6293573 100644
---- a/drivers/staging/wilc1000/host_interface.c
-+++ b/drivers/staging/wilc1000/host_interface.c
-@@ -2357,7 +2357,7 @@ void wilc_frame_register(struct wilc_vif *vif, u16 frame_type, bool reg)
- 	default:
- 		break;
- 	}
--	reg_frame.frame_type = cpu_to_le16(frame_type);
-+	reg_frame.frame_type = cpu_to_le32(frame_type);
- 	result = wilc_send_config_pkt(vif, WILC_SET_CFG, &wid, 1,
- 				      wilc_get_vif_idx(vif));
- 	if (result)
--- 
-2.14.5
+The rest of this pull request is all very minor and could wait until
+next week, I could pull out the redundant access_ok() fix and generate a
+new tag later in the week.
 
+cheers
+
+
+> - ------------------------------------------------------------------
+> powerpc fixes for 4.21 #2
+>
+> A fix for the recent access_ok() change, which broke the build. We recently
+> added a use of type in order to squash a warning elsewhere about type being
+> unused.
+>
+> A handful of other minor build fixes, and one defconfig update.
+>
+> Thanks to:
+>   Christian Lamparter, Christophe Leroy, Diana Craciun, Mathieu Malaterre.
+>
+> - ------------------------------------------------------------------
+> Christian Lamparter (1):
+>       powerpc/4xx/ocm: Fix compilation error due to PAGE_KERNEL usage
+>
+> Diana Craciun (1):
+>       powerpc/fsl: Fixed warning: orphan section `__btb_flush_fixup'
+>
+> Mathieu Malaterre (1):
+>       powerpc: Drop use of 'type' from access_ok()
+>
+> Michael Ellerman (4):
+>       powerpc/4xx/ocm: Fix phys_addr_t printf warnings
+>       powerpc/configs: Add PPC4xx_OCM to ppc40x_defconfig
+>       KVM: PPC: Book3S HV: radix: Fix uninitialized var build error
+>       Merge branch 'master' into fixes
+>
+>
+>  arch/powerpc/configs/ppc40x_defconfig  |  1 +
+>  arch/powerpc/include/asm/uaccess.h     |  2 +-
+>  arch/powerpc/kernel/head_booke.h       | 18 ++++++++++++------
+>  arch/powerpc/kvm/book3s_64_mmu_radix.c |  2 +-
+>  arch/powerpc/platforms/4xx/ocm.c       | 10 +++++-----
+>  5 files changed, 20 insertions(+), 13 deletions(-)
+> -----BEGIN PGP SIGNATURE-----
+>
+> iQIcBAEBAgAGBQJcL1eOAAoJEFHr6jzI4aWA86wP/3V5zlUNtsyXpcCx60PNIMya
+> 6z6oWVKoM92nMIyfWuoxKBEbylSyixFSxOsKoiVJDyigW5WWNjsPQ1KOUD2OVn0V
+> OQhj2aDXwUtxdlQ5dK0H9lodsUKUEw1/saqcgi2OS8iDDa8kJIEemDe29Omf5DyE
+> U2RKl++nhAfK8BLfMRCAIqL+TVZq9Zy+zNwbVtsmj7lAlw+Csb4KV3YvlJ7b6pjD
+> Ntm6O3X8sy7GtJdMpeBDOMTbWuvIQpefVH135jS1IjJZbrafZK6a4gQ9cs5mx68d
+> +/nyzkcjy83eRGkv3QY5Y+vEa0wkFdBb6Nf0MH63xCPVYVjom6pRUGL+RPldi2GO
+> bmieDXavlicX9y+BCQSKASTzNo2uR2heF31aCnr6bsOSeT8ZNGbIwgHuGGqrzN+8
+> qLQb00hA0uKlbNgPpNoyYO5K3khntR348HfH0Uwlm3Nttvn1TEh87c9L19FcdlMw
+> SlA6kpJ6328FkEv5FUPu7v7764dPgOQNImPKnsYdhbUxhHnDMx33LzsUEQQcYWpM
+> 3nsKQMW1yqMH2BG8u9LQtZErFanX+RNm81OsP38F8nvGe1RJkoq7R7MSooZ9tzs2
+> Ymf8W+KNofKmXVAPh7AyKQzpy0a/sEqAXmtTPBf7bsdwU5PQB0+LMf0yzyZpEp2U
+> 3eFcseqDoO32ScDZQUYt
+> =Y+yv
+> -----END PGP SIGNATURE-----
