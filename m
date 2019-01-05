@@ -7,119 +7,106 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6B31C43387
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 15:32:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15DC6C43387
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 15:59:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87E16208E3
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 15:32:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB8D720868
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 15:58:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="XPkMKZj2"
+	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="jat6r0tZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726314AbfAEPcg (ORCPT
+        id S1726295AbfAEP66 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 5 Jan 2019 10:32:36 -0500
-Received: from mta-p5.oit.umn.edu ([134.84.196.205]:52196 "EHLO
-        mta-p5.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726238AbfAEPcg (ORCPT
+        Sat, 5 Jan 2019 10:58:58 -0500
+Received: from mta-p8.oit.umn.edu ([134.84.196.208]:43002 "EHLO
+        mta-p8.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726248AbfAEP66 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 Jan 2019 10:32:36 -0500
+        Sat, 5 Jan 2019 10:58:58 -0500
 Received: from localhost (unknown [127.0.0.1])
-        by mta-p5.oit.umn.edu (Postfix) with ESMTP id AF315D16
-        for <linux-kernel@vger.kernel.org>; Sat,  5 Jan 2019 15:32:34 +0000 (UTC)
+        by mta-p8.oit.umn.edu (Postfix) with ESMTP id A0FFA937
+        for <linux-kernel@vger.kernel.org>; Sat,  5 Jan 2019 15:58:56 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at umn.edu
-Received: from mta-p5.oit.umn.edu ([127.0.0.1])
-        by localhost (mta-p5.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id yd0ScdrFo1XK for <linux-kernel@vger.kernel.org>;
-        Sat,  5 Jan 2019 09:32:34 -0600 (CST)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+Received: from mta-p8.oit.umn.edu ([127.0.0.1])
+        by localhost (mta-p8.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id XBK-b5AVKHMa for <linux-kernel@vger.kernel.org>;
+        Sat,  5 Jan 2019 09:58:56 -0600 (CST)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
         (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mta-p5.oit.umn.edu (Postfix) with ESMTPS id 82067C3A
-        for <linux-kernel@vger.kernel.org>; Sat,  5 Jan 2019 09:32:34 -0600 (CST)
-Received: by mail-io1-f71.google.com with SMTP id s3so38421104iob.15
-        for <linux-kernel@vger.kernel.org>; Sat, 05 Jan 2019 07:32:34 -0800 (PST)
+        by mta-p8.oit.umn.edu (Postfix) with ESMTPS id 79FDA9F0
+        for <linux-kernel@vger.kernel.org>; Sat,  5 Jan 2019 09:58:56 -0600 (CST)
+Received: by mail-io1-f70.google.com with SMTP id h7so44895564iof.19
+        for <linux-kernel@vger.kernel.org>; Sat, 05 Jan 2019 07:58:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=umn.edu; s=google;
         h=from:to:cc:subject:date:message-id;
-        bh=sEZHiYH52u/jD2RMeuXA32RsiWKpbCNXS9d2zhsVsD0=;
-        b=XPkMKZj2uwwXdHOFV27FbndBvMQgORUcLU6Hg4RT9Nljdebop/eksMKfJesbQmKR6+
-         CaBZU4wYj1cCxfK0o2UKv6HfycFqIGcOQl6NTnopSOzSZ5VHCLi2qiej3nlp8wa8N4yL
-         4oXy7ZZ4irGhP7GN4e/w8SLhPwFq/LGyl0ggTLGLfpYR5LjKKk5CCGXAD8AlJx32cqk+
-         7RvcrjSr1zMrggHYiuUk56PKBJv40kXa+fXMas8VIi9dYlNUAXEoE/myssyeOfkv/Rdd
-         Afhvtw0hbw+FTA0Od7dXLcudjl4BL0FRE5LngAXILiY1rxpxXh9C6iGCz1A+gI1BaIak
-         OWsQ==
+        bh=X7enExX/vzh0gYwePm77rKq+5Vt7Z3N+wAAXZCYHOnU=;
+        b=jat6r0tZHwwhLCNVLS8I4sZ1pC0EfUzLjGD6TnDCJWtXZweG3DAi5upZGotcfDh6z7
+         +C5A9xEM8lCiSLTtgLFqMZ1gVaxyt6l8pH55KQfJSsEHjW1HqmsqAagTj4nSzr8rRL0C
+         8ILmtgftVs7ziNWMK7OrZsbHPDgscRZYOV6Xov+b/JGUxuHsoQ0EiuHENTeIOVywFhAE
+         D4PqJ6oDm07fbFnPu1IwxptTIh+z3FjxcpLDxAEi8nUnK9gxCySDPjxpNYBdWafO7nLK
+         GE9whJWJZnXE0p/69qgN/yWkop8H4Vj4mvoTEYDzWfGvPsCMSKf8NKYmitk7IEqC2lHP
+         Vs5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=sEZHiYH52u/jD2RMeuXA32RsiWKpbCNXS9d2zhsVsD0=;
-        b=QRT0VxfxqBB6+1wkQp/KFCig24UtZUAzUGtHyjQyMv3gfaMkwjovAM/V7+JFMGvuO+
-         f1r/8ELR5E47hPXdBo24GWx6WLAsjpkF843fep8Ck16JisGp9Z9ZekqhKtC0aQqgfoV+
-         e76BtVb6Eimj3orHX6Cpepj42uIcg9uHvl7jj429kZHddyKyFTlUPjw8T3GHoB9nJ/AS
-         REgvsJj85Cd83tbwqsa6qEDQ4RpQktWgTQXoBx4VGu++n7Pcl6sYAIiQgfNFCaZw869J
-         YJqvqVwvKqHK6J5dbMp6bezkTHbDN9uZ2kHDhSuA6FupwA3g7HhAAkTdeQRX4e3qat5V
-         wQ9A==
-X-Gm-Message-State: AJcUukcP3NoenD5nV1Uz9XQlt219O0grl6+jqYbJYMkd19NGieYUCifT
-        n7staob91LNy+AxU60a6BzNBYcSefGDwBiOntpyuMe6ZVP4qXt8rnAJldQTrrpbqalZJczcAH+H
-        XlOQHj9QuSZqnWQXsfUJHHdWdHeU5
-X-Received: by 2002:a24:81d4:: with SMTP id q203mr3770103itd.23.1546702354125;
-        Sat, 05 Jan 2019 07:32:34 -0800 (PST)
-X-Google-Smtp-Source: ALg8bN6oDonFdwQKXlaQeYDugC5CYJAC4Kx4zmTnTnpbrBJW6oxwd5BZgTfxzPEfGk7M3nLDq63hNg==
-X-Received: by 2002:a24:81d4:: with SMTP id q203mr3770086itd.23.1546702353915;
-        Sat, 05 Jan 2019 07:32:33 -0800 (PST)
+        bh=X7enExX/vzh0gYwePm77rKq+5Vt7Z3N+wAAXZCYHOnU=;
+        b=aZzP6+2z1PVDoVs2YO9pP7HC1GQxEXj139WJQS9dQ63LKG++uiN+GKS7RcVZdXRGDv
+         HPXOVn+dFvXwaHcE7N6o+Vx5w5bkBPvRR17T+WnTgNqo+u3yz68OKwApUwH2lQPxvQZC
+         N9Mgcstyc8qUj+oOZumNgEqdkGWIR3XLBpMK56zO0OF3sPappzfR6DFBv9g7YAfK+mW5
+         seGmRjzxlXmxEJYPwbHRTSJSMLF9Ke2WxNoVBeVPJXfCp81PnsICgz2nd1tzX1Wn9Qy+
+         vMRbC2lo/vRtJTXHfv3d6yVRNh9neJGSmYjEyMlSjYIc8wd+83lZgAcMrDaGczNWLkUG
+         GcOw==
+X-Gm-Message-State: AJcUukeGoZe/cjF7Bgy/szzZ7kieH/XtCzohcM6yylnhn4ZvPICsQBMC
+        z95YbGls/G3hY2mglVC7uEudSRcEDarQCZzbqIjf2YvNL9Sr3KC/Gu/4nD5J1tfEx56JJUZt3Gi
+        FhzKStC7UZyj42NtFQZNpSgmwvcgp
+X-Received: by 2002:a6b:39c6:: with SMTP id g189mr36392759ioa.255.1546703936035;
+        Sat, 05 Jan 2019 07:58:56 -0800 (PST)
+X-Google-Smtp-Source: ALg8bN55JOBb96GTCq/t/ov+xBcGR7rJB+6h1A++IOwdRoo9lv8K24ehQTdmr2itqN5hOSuJZ3/dXA==
+X-Received: by 2002:a6b:39c6:: with SMTP id g189mr36392750ioa.255.1546703935797;
+        Sat, 05 Jan 2019 07:58:55 -0800 (PST)
 Received: from cs-u-syssec1.cs.umn.edu (cs-u-syssec1.cs.umn.edu. [134.84.121.78])
-        by smtp.gmail.com with ESMTPSA id y12sm16765651ion.62.2019.01.05.07.32.32
+        by smtp.gmail.com with ESMTPSA id v189sm1991550itb.42.2019.01.05.07.58.55
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 05 Jan 2019 07:32:33 -0800 (PST)
+        Sat, 05 Jan 2019 07:58:55 -0800 (PST)
 From:   Aditya Pakki <pakki001@umn.edu>
 To:     pakki001@umn.edu
-Cc:     kjlu@umn.edu, Pablo Neira Ayuso <pablo@netfilter.org>,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        Florian Westphal <fw@strlen.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Stefano Brivio <sbrivio@redhat.com>,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] [v2] netfilter: ipset: fix a missing check of nla_parse
-Date:   Sat,  5 Jan 2019 09:31:49 -0600
-Message-Id: <20190105153150.2600-1-pakki001@umn.edu>
+Cc:     kjlu@umn.edu, Peter Chen <Peter.Chen@nxp.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] [V2] usb: chipidea: add a check for the availability of next child
+Date:   Sat,  5 Jan 2019 09:58:47 -0600
+Message-Id: <20190105155847.3091-1-pakki001@umn.edu>
 X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When nla_parse fails, we should not use the results (the first
-argument). The fix checks if it fails, and if so, returns its error code
-upstream.
+of_get_next_available_child returns NULL when no child nodes are found.
+The fix checks its return value instead of assuming a child is found.
 
 Signed-off-by: Aditya Pakki <pakki001@umn.edu>
 ---
- net/netfilter/ipset/ip_set_core.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ drivers/usb/chipidea/ci_hdrc_msm.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/net/netfilter/ipset/ip_set_core.c b/net/netfilter/ipset/ip_set_core.c
-index 45a257695bef..3ee0fda05a3b 100644
---- a/net/netfilter/ipset/ip_set_core.c
-+++ b/net/netfilter/ipset/ip_set_core.c
-@@ -1546,8 +1546,13 @@ call_ad(struct sock *ctnl, struct sk_buff *skb, struct ip_set *set,
- 		memcpy(&errmsg->msg, nlh, nlh->nlmsg_len);
- 		cmdattr = (void *)&errmsg->msg + min_len;
- 
--		nla_parse(cda, IPSET_ATTR_CMD_MAX, cmdattr,
--			  nlh->nlmsg_len - min_len, ip_set_adt_policy, NULL);
-+		ret = nla_parse(cda, IPSET_ATTR_CMD_MAX, cmdattr,
-+				nlh->nlmsg_len - min_len, ip_set_adt_policy,
-+				NULL);
-+		if (ret) {
-+			nlmsg_free(skb2);
-+			return ret;
+diff --git a/drivers/usb/chipidea/ci_hdrc_msm.c b/drivers/usb/chipidea/ci_hdrc_msm.c
+index 880009987460..813673eee815 100644
+--- a/drivers/usb/chipidea/ci_hdrc_msm.c
++++ b/drivers/usb/chipidea/ci_hdrc_msm.c
+@@ -250,6 +250,10 @@ static int ci_hdrc_msm_probe(struct platform_device *pdev)
+ 	ulpi_node = of_get_child_by_name(pdev->dev.of_node, "ulpi");
+ 	if (ulpi_node) {
+ 		phy_node = of_get_next_available_child(ulpi_node, NULL);
++		if (!phy_node) {
++			ret = -EINVAL;
++			goto err_mux;
 +		}
- 
- 		errline = nla_data(cda[IPSET_ATTR_LINENO]);
- 
+ 		ci->hsic = of_device_is_compatible(phy_node, "qcom,usb-hsic-phy");
+ 		of_node_put(phy_node);
+ 	}
 -- 
 2.17.1
 
