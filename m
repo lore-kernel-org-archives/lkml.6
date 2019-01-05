@@ -2,168 +2,146 @@ Return-Path: <SRS0=xVxK=PN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31962C43387
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 03:16:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BB57C43387
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 03:21:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F20802173B
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 03:16:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DEDD5218DE
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 03:21:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="a1aCxV8m"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726116AbfAEDQo (ORCPT
+        id S1726176AbfAEDV5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 22:16:44 -0500
-Received: from mga05.intel.com ([192.55.52.43]:35167 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726010AbfAEDQn (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 22:16:43 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jan 2019 19:16:43 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,441,1539673200"; 
-   d="scan'208";a="105643403"
-Received: from yjin15-mobl.ccr.corp.intel.com (HELO [10.254.215.18]) ([10.254.215.18])
-  by orsmga006.jf.intel.com with ESMTP; 04 Jan 2019 19:16:41 -0800
-Subject: Re: [PATCH] perf stat: Poll for monitored tasks being alive in fork
- mode
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com,
-        Linux-kernel@vger.kernel.org, ak@linux.intel.com,
-        kan.liang@intel.com, yao.jin@intel.com
-References: <1546568897-16123-1-git-send-email-yao.jin@linux.intel.com>
- <20190104125441.GF5481@krava>
-From:   "Jin, Yao" <yao.jin@linux.intel.com>
-Message-ID: <ec011f77-e08e-4471-4479-0cb0281fa79b@linux.intel.com>
-Date:   Sat, 5 Jan 2019 11:16:40 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
-MIME-Version: 1.0
-In-Reply-To: <20190104125441.GF5481@krava>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        Fri, 4 Jan 2019 22:21:57 -0500
+Received: from mail-eopbgr80053.outbound.protection.outlook.com ([40.107.8.53]:4287
+        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726010AbfAEDV4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 22:21:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Mc1zOtt3Xoj4RQckz1skKj2syqFLtDjzGRTfLCULYc4=;
+ b=a1aCxV8mVbr+N25VpAjwqsensr+qoZdnTNPoDg5X1cZDg8TO6S3HduVpmW3aeXl6HGJxLd/F8h92A7g2DXEDYCqTH0EQ0Ngmmw6oZFeGQggUXlF7rQhg/uhSQXntdo8TkDEIZovw21km2L6vxftFcsfGDNAq3yfs53PvKhpV2GE=
+Received: from AM4PR0501MB2179.eurprd05.prod.outlook.com (10.165.82.10) by
+ AM4PR0501MB2644.eurprd05.prod.outlook.com (10.172.215.18) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1495.6; Sat, 5 Jan 2019 03:21:50 +0000
+Received: from AM4PR0501MB2179.eurprd05.prod.outlook.com
+ ([fe80::88a5:f979:5400:adf]) by AM4PR0501MB2179.eurprd05.prod.outlook.com
+ ([fe80::88a5:f979:5400:adf%5]) with mapi id 15.20.1495.005; Sat, 5 Jan 2019
+ 03:21:50 +0000
+From:   Jason Gunthorpe <jgg@mellanox.com>
+To:     kbuild test robot <lkp@intel.com>
+CC:     "kbuild-all@01.org" <kbuild-all@01.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Shiraz Saleem <shiraz.saleem@intel.com>,
+        Imre Deak <imre.deak@intel.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        Yong Zhi <yong.zhi@intel.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Bingbu Cao <bingbu.cao@intel.com>,
+        Tian Shu Qiu <tian.shu.qiu@intel.com>,
+        Jian Xu Zheng <jian.xu.zheng@intel.com>,
+        Sinclair Yeh <syeh@vmware.com>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+Subject: Re: [PATCH] lib/scatterlist: Provide a DMA page iterator
+Thread-Topic: [PATCH] lib/scatterlist: Provide a DMA page iterator
+Thread-Index: AQHUpH3T+Rn6hCeN4kq6RDaSbJgsYKWf9imAgAAMaQA=
+Date:   Sat, 5 Jan 2019 03:21:50 +0000
+Message-ID: <20190105032142.GN28204@mellanox.com>
+References: <20190104223531.GA1705@ziepe.ca>
+ <201901051046.ew7HAHfl%fengguang.wu@intel.com>
+In-Reply-To: <201901051046.ew7HAHfl%fengguang.wu@intel.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: MWHPR06CA0033.namprd06.prod.outlook.com
+ (2603:10b6:301:39::46) To AM4PR0501MB2179.eurprd05.prod.outlook.com
+ (2603:10a6:200:52::10)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=jgg@mellanox.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [174.3.196.123]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM4PR0501MB2644;6:j9nAggkHe5xCZLf4j/916Sp9Iswu7BDXObmTPJs/IG0+q/igObqKVFolO4HGFtL1oXKaxb+/f6GCh8FeGGNKiKgGEF7lrBpVPG1Aw3yJGUy7N0daJTndQxqleEt3E9lGHkUg4dBxC7rJskXbwaLK+fNdRnlV8n81YVz/sL0J0QmlIdFdqrDtExZRRbOpy7ceCr9w9rKHeJs+GwfwpE5DmjiNaZ3v1eqpJ3R9WyFfUQPtcuZTMINrl2RWwpANuQizeVwK8t/s6CDiFNMPjO/PL+cUli9hnsEaFOtF0C8AkaVSEqxft8YeyaeKO3XwODDH0AdDmSEOcFUPg5XKNeOM0Cyq/by0k/CQ+JFz6o35I+lpWAFN4TvKBnPysLtiZxDw9ObOf0Xpisr2hD8FnvVy0kQc0oTHYzOUhIQ+OL/yRg4EGTSKGQBzJYVlQlkH6vM659WhVIu4F8jAY5Gt7QNE4g==;5:jbShPwqR1vLqyNPSkhStOpVXgUCcUiXOHMnz5Nl8TXKxB809xoQ4XqEvg/ZmHTCXnnfA/J++nkt0w0/mLEmPdWRSCo41YqSkfbKPiIdZs20WAH4hq4yHhnaF4+u6bOrGn5siieE8XoCFck1uuVTvlsLqd6/BRPhCdj8qST2v1VgAn6IPQ1kAClo2Zf/iUxX1KetA90XlHJGAt5ceu+vQpg==;7:BrDVDmEq0dLJzpU2F9JhubGqsX6TnT0bSQabHeWgfqYgz72F/9Q1V/Q6HeZv0gH3gW8+oLagUwLbu1NcMm4ZcpH3IEhEziBEmV4c0BYgxePhQaUrGUhUCGLmkei2WgRyA8YGyDHt986nzbjN1uTOfQ==
+x-ms-office365-filtering-correlation-id: 23021c34-6e8b-47f8-cc4f-08d672bcee5b
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM4PR0501MB2644;
+x-ms-traffictypediagnostic: AM4PR0501MB2644:
+x-microsoft-antispam-prvs: <AM4PR0501MB2644A7BA9D64FF0B48CB23B6CF8F0@AM4PR0501MB2644.eurprd05.prod.outlook.com>
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(908002)(999002)(5005026)(6040522)(8220060)(2401047)(8121501046)(10201501046)(3231475)(944501520)(52105112)(93006095)(93001095)(3002001)(6055026)(6041310)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:AM4PR0501MB2644;BCL:0;PCL:0;RULEID:;SRVR:AM4PR0501MB2644;
+x-forefront-prvs: 09086FB5C5
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(136003)(366004)(396003)(39860400002)(376002)(189003)(199004)(25786009)(54906003)(14454004)(386003)(6116002)(4326008)(52116002)(76176011)(53936002)(1076003)(3846002)(305945005)(71190400001)(476003)(8936002)(86362001)(486006)(71200400001)(11346002)(256004)(6506007)(316002)(6306002)(229853002)(97736004)(5024004)(6246003)(36756003)(966005)(6512007)(446003)(7736002)(102836004)(7416002)(33656002)(5660300001)(478600001)(6486002)(6436002)(66066001)(2616005)(81166006)(106356001)(81156014)(8676002)(26005)(6916009)(99286004)(186003)(68736007)(105586002)(2906002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM4PR0501MB2644;H:AM4PR0501MB2179.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: mellanox.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: rdN3Pa1IDFV1srMtu42dAc8n8minTyyOfLI6pI7qMrIn7ZnYVYdhG0UzHvueoDnLF5lntHOieGRjfWS7GJ7grQtpteQv3Ceq+cJAdBQ6Oxx1kEdB24cLjQn/M2KreBqCnb9oQ/E36T5yWb1HVEtnHgr2hpztS3C0i/SbRcwjwSmFz9cikzrxFmye0Xa4j/7pFqTf23tdHdAX5aeWkhNIxl7fRYgww7Xc1RHNQzyXaPN2n61MxMm6jrsxcaw63LM2fmwDVxjgOMjXapSRw/KsFHG9PneKxKcvTqSmj1gpkMK1r/m07fCH1GFrmjLRrGWX
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <82C95609B764554287F500BCF927501B@eurprd05.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 23021c34-6e8b-47f8-cc4f-08d672bcee5b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Jan 2019 03:21:49.7915
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM4PR0501MB2644
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sat, Jan 05, 2019 at 10:37:17AM +0800, kbuild test robot wrote:
+> Hi Jason,
+>=20
+> I love your patch! Yet something to improve:
+>=20
+> [auto build test ERROR on linus/master]
+> [also build test ERROR on v4.20 next-20190103]
+> [if your patch is applied to the wrong git tree, please drop us a note to=
+ help improve the system]
+>=20
+> url:    https://github.com/0day-ci/linux/commits/Jason-Gunthorpe/lib-scat=
+terlist-Provide-a-DMA-page-iterator/20190105-081739
+> config: x86_64-randconfig-x017-201900 (attached as .config)
+> compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
+> reproduce:
+>         # save the attached .config to linux build tree
+>         make ARCH=3Dx86_64=20
+>=20
+> All error/warnings (new ones prefixed by >>):
+>=20
+>    In file included from lib/scatterlist.c:9:0:
+> >> include/linux/export.h:81:20: error: redefinition of '__kstrtab___sg_p=
+age_iter_next'
+>      static const char __kstrtab_##sym[]    \
+>                        ^
+>    include/linux/export.h:120:25: note: in expansion of macro '___EXPORT_=
+SYMBOL'
+>     #define __EXPORT_SYMBOL ___EXPORT_SYMBOL
+>                             ^~~~~~~~~~~~~~~~
+>    include/linux/export.h:124:2: note: in expansion of macro '__EXPORT_SY=
+MBOL'
+>      __EXPORT_SYMBOL(sym, "")
+>      ^~~~~~~~~~~~~~~
+> >> lib/scatterlist.c:652:1: note: in expansion of macro 'EXPORT_SYMBOL'
+>     EXPORT_SYMBOL(__sg_page_iter_next);
+>     ^~~~~~~~~~~~~
 
+Woops, should be __sg_page_dma_iter_next.. Will resend after getting
+some feedback.
 
-On 1/4/2019 8:54 PM, Jiri Olsa wrote:
-> On Fri, Jan 04, 2019 at 10:28:17AM +0800, Jin Yao wrote:
->> Following test shows the stat keeps running even if no longer
->> task to monitor (mgen exits at ~5s).
->>
->> perf stat -e cycles -p `pgrep mgen` -I1000 -- sleep 10
->>              time             counts unit events
->>       1.000148916      1,308,365,864      cycles
->>       2.000379171      1,297,269,875      cycles
->>       3.000556719      1,297,187,078      cycles
->>       4.000914241        761,261,827      cycles
->>       5.001306091      <not counted>      cycles
->>       6.001676881      <not counted>      cycles
->>       7.002046336      <not counted>      cycles
->>       8.002405651      <not counted>      cycles
->>       9.002766625      <not counted>      cycles
->>      10.001395827      <not counted>      cycles
->>
->> We'd better finish stat immediately if there's no longer task to
->> monitor.
->>
->> After:
->>
->> perf stat -e cycles -p `pgrep mgen` -I1000 -- sleep 10
->>              time             counts unit events
->>       1.000180062      1,236,592,661      cycles
->>       2.000421539      1,223,733,572      cycles
->>       3.000609910      1,297,047,663      cycles
->>       4.000807545      1,297,215,816      cycles
->>       5.001001578      1,297,208,032      cycles
->>       6.001390345        582,343,659      cycles
->> sleep: Terminated
->>
->> Now the stat exits immediately when the monitored tasks ends.
->>
->> Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
->> ---
->>   tools/perf/builtin-stat.c | 7 +++++++
->>   1 file changed, 7 insertions(+)
->>
->> diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
->> index 63a3afc..71f3bc8 100644
->> --- a/tools/perf/builtin-stat.c
->> +++ b/tools/perf/builtin-stat.c
->> @@ -553,6 +553,13 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
->>   
->>   		if (interval || timeout) {
->>   			while (!waitpid(child_pid, &status, WNOHANG)) {
->> +				if (!is_target_alive(&target,
->> +					evsel_list->threads) &&
->> +					(child_pid != -1)) {
-> 
-> do we need that child_pid check? we just returned from waitpid
-> so we should be ok.. we just make the race window smaller
-> 
-> could we just do:
-> 
-> 				if (!is_target_alive(&target, evsel_list->threads)) {
-> 					kill(child_pid, SIGTERM);
-> 					break;
-> 				}
-> 
-
-I think this code should be OK and I have tested yet. I have a question 
-about the race condition, we really don't need a lock to protect the 
-child_pid?
-
-skip_signal()
-{
-	/*
-	 * render child_pid harmless
-	 * won't send SIGTERM to a random
-	 * process in case of race condition
-	 * and fast PID recycling
-	 */
-	child_pid = -1;
-}
-
-__run_perf_stat()
-{
-	....
-	kill(child_pid, SIGTERM);
-}
-
-If child_pid is set by -1 in a small window between checking of 
-child_pid and kill(), then kill(-1, SIGTERM) may happen. All processes 
-except the kill process itself and init would receive SIGTERM.
-
-Is this case possible?
-
-> also I'm not sure we should do this only under new option,
-> as it might break people's scripts.. thoughts?
-> 
-> jirka
-> 
-
-In current behavior, for non fork mode, if we terminate the monitored 
-task, the perf stat would return immediately. So I think this patch 
-should be OK.
-
-Thanks
-Jin Yao
-
->> +					kill(child_pid, SIGTERM);
->> +					break;
->> +				}
->> +
->>   				nanosleep(&ts, NULL);
->>   				if (timeout)
->>   					break;
->> -- 
->> 2.7.4
->>
+Jason
