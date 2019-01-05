@@ -6,61 +6,61 @@ X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B2DDC43444
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 20:20:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E705C43387
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 20:20:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8E4322342
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 20:20:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50A33222FE
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 20:20:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546719615;
-	bh=ycV8mFn1D5rPXS1M7KCg9sRlIHPxqjg0ZsVTe4r3sP0=;
+	s=default; t=1546719619;
+	bh=SCFwucDRfEVD0emuyQWH+fj0jhU4xg+/lAXSm8vkrEE=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=BONlAAv+t0TNqWwr2udGvUJ63GWJTFv2IypgmIeiE+U/KX2enx+7ziRnGcd70kqcc
-	 MrfegmyUvht5tVFFDqJwVsF1xUnFp02VilsVfhlrrYrEsJxKi5pQZcSvjxFZy04Wfx
-	 uQk/fq4zYJrILcVlmiRXMJ1yWHPiYo7rH900DAqM=
+	b=sVREXkYcCAtr+Wrh9HOoVAQSjSblP7oqHuPTCI/QCRBKDUeTt6euTOgr370uf8AG5
+	 z3+jVQYI8Whi52MTSERW0NJNDZyrLFAe8mCWFfbyVH2awk2wrhg9zChlWFrbC/fBW3
+	 ZpJlx1Y6sAiHCFDgUnYmyweXHJjoPucH6UgUbUNM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726394AbfAEUUP (ORCPT
+        id S1726419AbfAEUUS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 5 Jan 2019 15:20:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43362 "EHLO mail.kernel.org"
+        Sat, 5 Jan 2019 15:20:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43470 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726267AbfAEUUO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 Jan 2019 15:20:14 -0500
-Subject: Re: [GIT PULL] arm64: fixes for -rc1
+        id S1726267AbfAEUUR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 5 Jan 2019 15:20:17 -0500
+Subject: Re: [GIT PULL] ARM: SoC late updates
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546719610;
-        bh=ycV8mFn1D5rPXS1M7KCg9sRlIHPxqjg0ZsVTe4r3sP0=;
+        s=default; t=1546719616;
+        bh=SCFwucDRfEVD0emuyQWH+fj0jhU4xg+/lAXSm8vkrEE=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=x4E/YpxB5m7r/FhZ/9/dWsMDOSnvkzAsicyOUYuZMKykm175MF3bqvXLAnRI2bT2x
-         Nww1YqZr90ADsdyXAx9j+iirNTrH/Gdl1aqV8vauCJBFoh4rRBQ2zKULz8ebLNpS7t
-         nFIheBLuNJcOhnsetDo5tDLYhh8YA4Ate1acHeP0=
+        b=SavNC6LzGXuX046czZQ5DV5nTmXz+yCNlBQZX5DFYxoqXTz/8JfhRkYvQ3vrAnMnz
+         soVYAwnC7LFkGdWmMnDscxrR/iHYxxwSaAfagqH/Prx7CwxDVyiLe2pab+SvFzcKxH
+         mYvTS4niy1sG5ryZdlUP1NphaseyNh2xNO5AhlVY=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190104182427.GD6299@fuggles.cambridge.arm.com>
-References: <20190104182427.GD6299@fuggles.cambridge.arm.com>
+In-Reply-To: <20190104225107.hkl2nzdfdewg3lbu@localhost>
+References: <20190104225107.hkl2nzdfdewg3lbu@localhost>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190104182427.GD6299@fuggles.cambridge.arm.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git
- tags/arm64-fixes
-X-PR-Tracked-Commit-Id: 7e0b44e870cf265bb4a73fd25e0508c7363fcbd6
+X-PR-Tracked-Message-Id: <20190104225107.hkl2nzdfdewg3lbu@localhost>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git
+ tags/armsoc-late
+X-PR-Tracked-Commit-Id: 00f8ccd0c95f4e604297057a5bccec86c0903d14
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 078a5a4faf64fefaf13478a9091782432cad33fa
-Message-Id: <20190105202004.12651.2681.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
-Date:   Sat, 05 Jan 2019 20:20:04 +0000
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com
+X-PR-Merge-Commit-Id: b23b0ea3708c3dec599966fc856836aca48835b9
+Message-Id: <20190105202010.12651.61878.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
+Date:   Sat, 05 Jan 2019 20:20:10 +0000
+To:     Olof Johansson <olof@lixom.net>
+Cc:     torvalds@linux-foundation.org, olof@lixom.net, arm@kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri, 4 Jan 2019 18:24:27 +0000:
+The pull request you sent on Fri, 4 Jan 2019 14:51:07 -0800:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git tags/arm64-fixes
+> git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git tags/armsoc-late
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/078a5a4faf64fefaf13478a9091782432cad33fa
+https://git.kernel.org/torvalds/c/b23b0ea3708c3dec599966fc856836aca48835b9
 
 Thank you!
 
