@@ -2,155 +2,114 @@ Return-Path: <SRS0=xVxK=PN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25E6BC43387
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 02:38:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFA27C43387
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 02:44:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1A90218E0
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 02:38:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 86C8521871
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 02:44:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Y+Q6gOjv"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="em2JgGBf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726459AbfAECiz (ORCPT
+        id S1726405AbfAECom (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 21:38:55 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:47002 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726168AbfAECiz (ORCPT
+        Fri, 4 Jan 2019 21:44:42 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:40895 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726168AbfAECom (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 21:38:55 -0500
-Received: by mail-lj1-f193.google.com with SMTP id v15-v6so33906890ljh.13
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Jan 2019 18:38:54 -0800 (PST)
+        Fri, 4 Jan 2019 21:44:42 -0500
+Received: by mail-ot1-f66.google.com with SMTP id s5so33661203oth.7;
+        Fri, 04 Jan 2019 18:44:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7NLRTaKXeZBAHE+8yNC6vVh1WEsmDEUpOBA+cgiAy9w=;
-        b=Y+Q6gOjvZxT44yW+F9FeJqgHAwoX82ssrj2BJJpusTGzRzEN0VbWOq8N3Mpv+fQ4Oz
-         wLv8Hc5QieJYekxvZmH9WwymbSyETIsAYFvxwVI17dsSq8omdpxTHC2IcSlRLfummm6m
-         c8+EEtfmE27rctOynQ9huKWtDD+lntjTLxxgw=
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=XEfAOPwOwvz5aDgsUDXI7JNifWiyNQ7Lj3bB0oGspJ8=;
+        b=em2JgGBfnhDCXdYzW1yUwFduEvuL6gbOw/ux2aQhqytWtHbLXsIwBbVk4SmQqNLK+q
+         VoiMF+gtvuYNAb8VbxGtphxoupmdOEXmyc+h0q+gOh3bqo+BXg7wNR02NqrGxi21PX6z
+         JWb6bwl3bPh7gxybe27VcuC8wxYp0R+f7i5yjvaxuDiAr4238oF9WIFWUNxOv5xlfh7c
+         wmkMwX0X7qq9D1GJwYyFiXEbrP6VIELCJLrirDP8mkg5/KuH/ZI6tJlWw1J/sRNPBnVs
+         zxfgEU6xQDzafbqocgTk4dTtBvZl0dBpKTPbsf2ZJqR2nlGjJxiSDVxBbgcJSrZe5QMc
+         RuQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7NLRTaKXeZBAHE+8yNC6vVh1WEsmDEUpOBA+cgiAy9w=;
-        b=HPq4ma7E4/aT+YxV2rlN0aYygZUf5gL3dxHKMxaSR7Q20H/1rvdQ7oCvEuWs19JA34
-         b7MS70wLKM9NYyJHUffClA0+1o2/jVPzc+SdEgw2mixAv4aHPZeQ/n5sxdczJdusdIoe
-         v7GeSMTDrqRhAVbR8xi0shcRwW7EeOqQYFT8uB5Y5F2K6MibZlYN//D3/il5YKVWjpEF
-         3yWxuHlwQhk6GFRtmR7/JE4+7WfRD17OEIA71uLdqSOf9kx35XdpuoJ9/c12Z52c3saD
-         0LNa8AeYW9BwloPAzArb62u76qkLsOOIkrqrWJHT99NHLzQQ2AqZJFrPYn1pm/mFD3fP
-         7csg==
-X-Gm-Message-State: AJcUukfMEIgU6iy9MEdK5z31xvem+cr/fkX/TYK2o5GzeN8d4rM87QaI
-        d3PJsAaUt0BiSVeBZxGQUMgWuIgann0=
-X-Google-Smtp-Source: ALg8bN7cLbWvpE5LnLSdJBcyInSWr1C/3P1U05yOwIUVS4O5XRwDCo+PsoQyfQ0mpDRjSKxMGJKRHg==
-X-Received: by 2002:a2e:3e04:: with SMTP id l4-v6mr28820452lja.148.1546655932514;
-        Fri, 04 Jan 2019 18:38:52 -0800 (PST)
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com. [209.85.167.49])
-        by smtp.gmail.com with ESMTPSA id g15sm11376412lfb.1.2019.01.04.18.38.50
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 04 Jan 2019 18:38:51 -0800 (PST)
-Received: by mail-lf1-f49.google.com with SMTP id v5so26637773lfe.7
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Jan 2019 18:38:50 -0800 (PST)
-X-Received: by 2002:a19:3fcf:: with SMTP id m198mr25534359lfa.106.1546655930238;
- Fri, 04 Jan 2019 18:38:50 -0800 (PST)
+        h=x-gm-message-state:sender:subject:to:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=XEfAOPwOwvz5aDgsUDXI7JNifWiyNQ7Lj3bB0oGspJ8=;
+        b=Etjn7ozXWhLJI/nnds0SGAqVvr5ZVsbf/qDqYldpHttlMd3DTIZb4Ped2tCRdQop+F
+         iWuTwskIJN4BnwxOBRy0zOthb944t2SGsyXykL/elVlpbFjoEiqoOxqhFss7FIOt+t3R
+         W+mAyrVagk2a5b2MEk4WiWMAIp9/YWmvS9t8zPY/tSXYe9L857MVPzPwuVENZ/3ufpPU
+         +U+nEyjycJ+idrlXIZhEA8/5GVn0hfSRC7zABsp1C+mjav/shzCUhY0ZkP6sa3wbzrA0
+         7SWPcsYRbk69OSh9eRow4mkFsYqWY0qlCNuE5oaRAoLhjHiw+BN4MFGNbUYQ5m0GV39C
+         YWxw==
+X-Gm-Message-State: AJcUukc0hTsQLcBV1x3TpZHjWQB8t0i1yb/O9fjW0oA/oND5uZBHWILG
+        96gNW1l850Of4pMtv7AnqB/VCnYx
+X-Google-Smtp-Source: ALg8bN6FFM1b33L0OUKL3fCnq63QFnCWrETcLKlPvK6ubLAKP77ya/X4zxgJMhex3vceBpsOBImN2A==
+X-Received: by 2002:a9d:6c3:: with SMTP id 61mr39519217otx.314.1546656280230;
+        Fri, 04 Jan 2019 18:44:40 -0800 (PST)
+Received: from [192.168.1.102] (cpe-24-31-245-230.kc.res.rr.com. [24.31.245.230])
+        by smtp.gmail.com with ESMTPSA id k11sm28974152oib.35.2019.01.04.18.44.39
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Fri, 04 Jan 2019 18:44:39 -0800 (PST)
+Subject: Re: [PATCH 1/4] rtlwifi: rtl8723ae: Take the FW LPS mode handling out
+To:     Bernd Edlinger <bernd.edlinger@hotmail.de>,
+        Ping-Ke Shih <pkshih@realtek.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <DB7PR07MB5353320B147CD781B7993783E48E0@DB7PR07MB5353.eurprd07.prod.outlook.com>
+From:   Larry Finger <Larry.Finger@lwfinger.net>
+Message-ID: <f6406c9c-d095-6c9b-55af-0b2fd05c06bb@lwfinger.net>
+Date:   Fri, 4 Jan 2019 20:44:39 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-References: <02bfc577-32a5-66be-64bf-d476b7d447d2@kernel.dk>
- <20181121063609.GA109082@gmail.com> <48e27a3a-2bb2-ff41-3512-8aeb3fd59e57@kernel.dk>
- <26eff539-7de7-784c-0c88-f1d30753299d@redhat.com> <7ea44458b90b4d41a08ba9012818d273@AcuMS.aculab.com>
- <CAHk-=wjLNuNpHRfuVTb6awstC9OOmSb3S8aP51ufep-Th4dXKw@mail.gmail.com>
- <CALCETrW=hMZLUM_nPEEgUW9x9Bmhm2LZ6ZRDiRRguxVT=-_BWA@mail.gmail.com>
- <CAHk-=wiEUVpSU-GxpKDvN9wnH2yDxkJgE7Vqh46A+fmnvhubyw@mail.gmail.com>
- <cd11d9423c8b46ecbf97753f8317c294@AcuMS.aculab.com> <64fd67993af04579b5262c270a7a4694@AcuMS.aculab.com>
- <CAHk-=wj9DA-mH8jahuEPUWxO4EgbCcPRgdOJAQD58DBtCCrHcQ@mail.gmail.com> <a3ebeca68de1493f876467f57575be74@AcuMS.aculab.com>
-In-Reply-To: <a3ebeca68de1493f876467f57575be74@AcuMS.aculab.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 4 Jan 2019 18:38:34 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wiFoyd-L2f0sdyKDiBQ67b4VHjw9jO34ChYJxwqm1YhCA@mail.gmail.com>
-Message-ID: <CAHk-=wiFoyd-L2f0sdyKDiBQ67b4VHjw9jO34ChYJxwqm1YhCA@mail.gmail.com>
-Subject: Re: [PATCH] x86: only use ERMS for user copies for larger sizes
-To:     David Laight <David.Laight@aculab.com>
-Cc:     Andrew Lutomirski <luto@kernel.org>,
-        "dvlasenk@redhat.com" <dvlasenk@redhat.com>,
-        Jens Axboe <axboe@kernel.dk>, Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>,
-        Peter Anvin <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        "brgerst@gmail.com" <brgerst@gmail.com>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        "pabeni@redhat.com" <pabeni@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <DB7PR07MB5353320B147CD781B7993783E48E0@DB7PR07MB5353.eurprd07.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Coming back to this old thread, because I've spent most of the day
-resurrecting some of my old core x86 patches, and one of them was for
-the issue David Laight complained about: horrible memcpy_toio()
-performance.
+On 1/4/19 6:48 AM, Bernd Edlinger wrote:
+> This appears to trigger a firmware bug and causes severe
+> problems with rtl8723ae PCI devices.
+> 
+> When the power save mode is activated for longer periods
+> of time the firmware stops to receive any packets.
+> 
+> This problem was exposed by commit 873ffe154ae0 ("rtlwifi:
+> Fix logic error in enter/exit power-save mode").
+> 
+> Previously the power save mode was only active rarely and
+> only for a short time so that the problem was not noticeable.
+> 
+> Signed-off-by: Bernd Edlinger <bernd.edlinger@hotmail.de>
+> ---
 
-Yes, I should have done this before the merge window instead of at the
-end of it, but I didn't want to delay things for yet another release
-just because it fell through some cracks.
+While the Realtek firmware group has a chance to look for a bug, I would like 
+you to perform a couple of tests on the original code.
 
-Anyway, it would be lovely to hear whether memcpy_toio() now works
-reasonably. I just picked our very old legacy function for this, so it
-will do things in 32-bit chunks (even on x86-64), and I'm certainly
-open to somebody doing something smarter, but considering that nobody
-else seemed to show any interest in this at all, I just went
-"whatever, good enough".
+The driver has three module parameters that affect power save. The 'modinfo 
+rtl8723ae' command lists them as
 
-I tried to make it easy to improve on things if people want to.
+parm:   ips:Set to 0 to not use link power save (default 1) (bool)
+parm:   swlps:Set to 1 to use SW control power save (default 0) (bool)
+parm:   fwlps:Set to 1 to use FW control power save (default 1) (bool)
 
-The other ancient patch I resurrected was the old "use asm goto for
-put_user" which I've had in a private branch for the last almost three
-years.
+If you were to load rtl8723ae with 'ips=0', does it still fail?
+If you were to load the driver with 'swlps=1 fwlps=0', does it still fail?
 
-I've tried to test this (it turns out I had completely screwed up the
-32-bit case for put_user, for example), but I only have 64-bit user
-space, so the i386 build ended up being just about building and
-looking superficially at the code generation in a couple of places.
+Thanks for debugging this problem.
 
-More testing and comments appreciated.
+Larry
 
-Now I have no ancient patches in any branches, or any known pending
-issue. Except for all the pull requests that are piling up because I
-didn't do them today since I was spending time on my own patches.
-
-Oh well. There's always tomorrow.
-
-                    Linus
-
-On Mon, Nov 26, 2018 at 2:26 AM David Laight <David.Laight@aculab.com> wrote:
->
-> From: Linus Torvalds
-> > Sent: 23 November 2018 16:36
-> ...
-> > End result: we *used* to do this right. For the last eight years our
-> > "memcpy_{to,from}io()" has been entirely broken, and apparently even
-> > the people who noticed oddities like David, never reported it as
-> > breakage but instead just worked around it in drivers.
->
-> I've mentioned it several times...
->
-> Probably no one else noticed lots of single byte transfers while
-> testing a TLP monitor he was writing for an FPGA :-)
-> They are far too expensive to buy, and would never be connected
-> to the right system at the right time - so we (I) wrote one.
->
-> Unfortunately we don't really get to see what happens when the
-> link comes up (or rather doesn't come up). We only get the
-> LTSSM state transitions.
->
->         David
->
-> -
-> Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-> Registration No: 1397386 (Wales)
