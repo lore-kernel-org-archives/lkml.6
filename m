@@ -2,32 +2,33 @@ Return-Path: <SRS0=xVxK=PN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C3E5C43387
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 02:03:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFA24C43387
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 02:03:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0401421871
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 02:03:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A01521871
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 02:03:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726453AbfAECDl (ORCPT
+        id S1726485AbfAECDq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 21:03:41 -0500
+        Fri, 4 Jan 2019 21:03:46 -0500
 Received: from mga07.intel.com ([134.134.136.100]:49511 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725862AbfAECDk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 21:03:40 -0500
+        id S1726454AbfAECDo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 21:03:44 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jan 2019 18:03:40 -0800
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jan 2019 18:03:43 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,441,1539673200"; 
-   d="scan'208";a="307634693"
+   d="scan'208";a="307634698"
 Received: from kgandham-mobl1.amr.corp.intel.com (HELO pbossart-mobl3.intel.com) ([10.251.139.169])
-  by fmsmga006.fm.intel.com with ESMTP; 04 Jan 2019 18:03:38 -0800
+  by fmsmga006.fm.intel.com with ESMTP; 04 Jan 2019 18:03:41 -0800
 From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 To:     alsa-devel@alsa-project.org
 Cc:     tiwai@suse.de, broonie@kernel.org, liam.r.girdwood@linux.intel.com,
@@ -35,11 +36,15 @@ Cc:     tiwai@suse.de, broonie@kernel.org, liam.r.girdwood@linux.intel.com,
         Liam Girdwood <lgirdwood@gmail.com>,
         Jaroslav Kysela <perex@perex.cz>,
         Takashi Iwai <tiwai@suse.com>,
+        Bard Liao <bardliao@realtek.com>,
+        Oder Chiou <oder_chiou@realtek.com>,
+        Yangtao Li <tiny.windzz@gmail.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
         Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 03/21] ASoC: es8316: remove unused constant variables
-Date:   Fri,  4 Jan 2019 20:02:31 -0600
-Message-Id: <20190105020249.8639-4-pierre-louis.bossart@linux.intel.com>
+Subject: [PATCH 04/21] ASoC: codecs: fix kernel doc descriptions
+Date:   Fri,  4 Jan 2019 20:02:32 -0600
+Message-Id: <20190105020249.8639-5-pierre-louis.bossart@linux.intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190105020249.8639-1-pierre-louis.bossart@linux.intel.com>
 References: <20190105020249.8639-1-pierre-louis.bossart@linux.intel.com>
@@ -48,38 +53,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix warnings with W=1
-
-If these variables are useful this driver should be modified to expose
-them.
+Missing or spurious parameter descriptions. Fix warnings with W=1
 
 Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 ---
- sound/soc/codecs/es8316.c | 4 ----
- 1 file changed, 4 deletions(-)
+ sound/soc/codecs/nau8825.c | 1 +
+ sound/soc/codecs/rt5514.c  | 1 +
+ sound/soc/codecs/rt5677.c  | 8 ++++----
+ 3 files changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/sound/soc/codecs/es8316.c b/sound/soc/codecs/es8316.c
-index e97d12d578b0..b10c4d812958 100644
---- a/sound/soc/codecs/es8316.c
-+++ b/sound/soc/codecs/es8316.c
-@@ -159,8 +159,6 @@ static const char * const es8316_hpmux_texts[] = {
- 	"lin-rin with Boost and PGA"
- };
+diff --git a/sound/soc/codecs/nau8825.c b/sound/soc/codecs/nau8825.c
+index 7bbcbf5f05c8..47e65cf99879 100644
+--- a/sound/soc/codecs/nau8825.c
++++ b/sound/soc/codecs/nau8825.c
+@@ -351,6 +351,7 @@ static void nau8825_hpvol_ramp(struct nau8825 *nau8825,
+  * Computes log10 of a value; the result is round off to 3 decimal. This func-
+  * tion takes reference to dvb-math. The source code locates as the following.
+  * Linux/drivers/media/dvb-core/dvb_math.c
++ * @value:  input for log10
+  *
+  * return log10(value) * 1000
+  */
+diff --git a/sound/soc/codecs/rt5514.c b/sound/soc/codecs/rt5514.c
+index a67de68b6da6..f9ad6e36ab16 100644
+--- a/sound/soc/codecs/rt5514.c
++++ b/sound/soc/codecs/rt5514.c
+@@ -489,6 +489,7 @@ static const struct snd_kcontrol_new rt5514_sto2_dmic_mux =
+ /**
+  * rt5514_calc_dmic_clk - Calculate the frequency divider parameter of dmic.
+  *
++ * @component: only used for dev_warn
+  * @rate: base clock rate.
+  *
+  * Choose divider parameter that gives the highest possible DMIC frequency in
+diff --git a/sound/soc/codecs/rt5677.c b/sound/soc/codecs/rt5677.c
+index 9b7a1833d331..6fc70e441458 100644
+--- a/sound/soc/codecs/rt5677.c
++++ b/sound/soc/codecs/rt5677.c
+@@ -547,7 +547,7 @@ static bool rt5677_readable_register(struct device *dev, unsigned int reg)
+  * @rt5677: Private Data.
+  * @addr: Address index.
+  * @value: Address data.
+- *
++ * @opcode: opcode value
+  *
+  * Returns 0 for success or negative error code.
+  */
+@@ -602,7 +602,7 @@ static int rt5677_dsp_mode_i2c_write_addr(struct rt5677_priv *rt5677,
  
--static const unsigned int es8316_hpmux_values[] = { 0, 1, 2, 3 };
--
- static SOC_ENUM_SINGLE_DECL(es8316_left_hpmux_enum, ES8316_HPMIX_SEL,
- 	4, es8316_hpmux_texts);
+ /**
+  * rt5677_dsp_mode_i2c_read_addr - Read value from address on DSP mode.
+- * rt5677: Private Data.
++ * @rt5677: Private Data.
+  * @addr: Address index.
+  * @value: Address data.
+  *
+@@ -651,7 +651,7 @@ static int rt5677_dsp_mode_i2c_read_addr(
  
-@@ -191,8 +189,6 @@ static const char * const es8316_dacsrc_texts[] = {
- 	"RDATA TO LDAC, LDATA TO RDAC",
- };
+ /**
+  * rt5677_dsp_mode_i2c_write - Write register on DSP mode.
+- * rt5677: Private Data.
++ * @rt5677: Private Data.
+  * @reg: Register index.
+  * @value: Register data.
+  *
+@@ -667,7 +667,7 @@ static int rt5677_dsp_mode_i2c_write(struct rt5677_priv *rt5677,
  
--static const unsigned int es8316_dacsrc_values[] = { 0, 1, 2, 3 };
--
- static SOC_ENUM_SINGLE_DECL(es8316_dacsrc_mux_enum, ES8316_DAC_SET1,
- 	6, es8316_dacsrc_texts);
- 
+ /**
+  * rt5677_dsp_mode_i2c_read - Read register on DSP mode.
+- * @codec: SoC audio codec device.
++ * @rt5677: Private Data
+  * @reg: Register index.
+  * @value: Register data.
+  *
 -- 
 2.17.1
 
