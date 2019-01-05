@@ -4,69 +4,80 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38596C43387
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 14:34:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1368DC43387
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 14:35:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB36C20868
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 14:34:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC7412087F
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 14:35:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546698850;
-	bh=2Yt3aLQvhCwyZRK7UGozQ6BWvDaMWB8O3gC0gVbqeCE=;
+	s=default; t=1546698944;
+	bh=uoBB13R0SCbsoP4GZH+Zbs4CuqBNVabu3jUdeKyEBV0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=kISsMmNNdvTkGx3LlETx50QR27pfP5uWZhuZ5E111wGf9jR2qerkzpXWVMtvIwgHH
-	 C1g+Vh9vmiTT5tKlWiEW7crtoL9G2oVL4n0oGwIRcrSxShEb6Rm4Xsyf4FnrWOL9pp
-	 Ri9GHQjA7rBRRDQHDE5T1CtMsI4n7bnzkqxHi394=
+	b=YwqkawkcKpt8T9P7iXO0cfN9+NWYumAIk59sRQBnWCQJqsbzDtT6/hNqrskkDydX+
+	 mmX9Xu26NmybgjKqOsnZefILvOrjlb7AIoTUbOuWxCNBZ5s+MULA2Qbvb5ll98nmA/
+	 Bqg/+YMRtnZNfxuNuq5Rh2G04Ke1e6toX1hzfaz8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726267AbfAEOeJ (ORCPT
+        id S1726316AbfAEOfn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 5 Jan 2019 09:34:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51364 "EHLO mail.kernel.org"
+        Sat, 5 Jan 2019 09:35:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51856 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726200AbfAEOeI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 Jan 2019 09:34:08 -0500
+        id S1726200AbfAEOfn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 5 Jan 2019 09:35:43 -0500
 Received: from localhost (unknown [188.89.135.87])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 81C4C2070C;
-        Sat,  5 Jan 2019 14:34:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2D7042070C;
+        Sat,  5 Jan 2019 14:35:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546698848;
-        bh=2Yt3aLQvhCwyZRK7UGozQ6BWvDaMWB8O3gC0gVbqeCE=;
+        s=default; t=1546698942;
+        bh=uoBB13R0SCbsoP4GZH+Zbs4CuqBNVabu3jUdeKyEBV0=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=vpo4GHdyljJFUZACWWb4YfVT7EBPWGTlPOnwW5cmlWcJoj23msWl4rqNaCnh9DGwZ
-         TNwssq5yT9xCpsgYTUzjPwY+Wh2yISK2j0fmfJF00Ta8JQQJfa2zjIzWHBsGtnACQA
-         IPwPxwqFDvTorUiIRPoVf+8wskWKHPfm6dyaa7us=
-Date:   Sat, 5 Jan 2019 15:34:04 +0100
+        b=uqc+Johznnr9QjQYJZDy7QwM3Fh03CDzixgBnm7T4AT7ofJ6fV6nFAOiSFKTbAtSz
+         ubmBAA6yBfO6s2UCKu2gHxQUTgqNM8gK4fuxFLoQYwtxJomZe7ieKg+0izi1NncCAb
+         qy4ejvP8Eucyq+8iJzTm1Mv7uwrjAXXU024DY7Mg=
+Date:   Sat, 5 Jan 2019 15:35:39 +0100
 From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Roman Kiryanov <rkir@google.com>
-Cc:     linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drivers: misc: goldfish_address_space: add a driver
-Message-ID: <20190105143404.GB22044@kroah.com>
-References: <20190104021311.38194-1-rkir@google.com>
- <20190105085429.GB13941@kroah.com>
- <CAOGAQeoOTVMzufOvXf+f6SDJYfCWj7unU8oWExfq3WSj55o7CQ@mail.gmail.com>
+To:     saranya.gopal@intel.com
+Cc:     kernel@kolivas.org, pierre-louis.bossart@linux.intel.com,
+        alsa-devel@alsa-project.org, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org, tiwai@suse.de,
+        felipe.balbi@linux.intel.com
+Subject: Re: [PATCH] usbcore: Select only first configuration for non-UAC3
+ compliant devices
+Message-ID: <20190105143539.GC22044@kroah.com>
+References: <CABqErrHKFshAMBPHJp2vmGFE6k1GL1oDMSMbDRcBJNfUSxt9KQ@mail.gmail.com>
+ <1546696957-28294-1-git-send-email-saranya.gopal@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAOGAQeoOTVMzufOvXf+f6SDJYfCWj7unU8oWExfq3WSj55o7CQ@mail.gmail.com>
+In-Reply-To: <1546696957-28294-1-git-send-email-saranya.gopal@intel.com>
 User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jan 05, 2019 at 01:43:55AM -0800, Roman Kiryanov wrote:
-> > Why isn't this in drivers/platform/goldfish/ ?
+On Sat, Jan 05, 2019 at 07:32:37PM +0530, saranya.gopal@intel.com wrote:
+> From: Saranya Gopal <saranya.gopal@intel.com>
 > 
-> I was not sure where to put, but this driver is not a platform one, it
-> is a pci one.
+> In most of the UAC1 and UAC2 audio devices, the first
+> configuration is most often the best configuration.
+> However, with recent patch to support UAC3 configuration,
+> second configuration was unintentionally chosen for
+> some of the UAC1/2 devices that had more than one
+> configuration. This was because of the existing check
+> after the audio config check which selected any config
+> which had a non-vendor class. This patch fixes this issue.
+> 
+> Fixes: f13912d (Select UAC3 configuration for audio if present)
 
-You are controlling a "platform" device, the goldfish platform.  What
-makes this different from any of the other goldfish platform drivers in
-that directory other than you are triggering off of a virtual pci
-device?
+That should read:
+	Fixes: f13912d3f014 ("usbcore: Select UAC3 configuration for audio if present")
+
+Please use the full commit name and more sha1 numbers :)
 
 thanks,
 
