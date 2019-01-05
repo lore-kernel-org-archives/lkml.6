@@ -2,327 +2,136 @@ Return-Path: <SRS0=xVxK=PN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33CCEC43444
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 17:29:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CEA6C43444
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 17:35:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC8B2214D8
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 17:29:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F3D62087F
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 17:35:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546709391;
-	bh=/Gc1NF089ij9cSPRamzekmpWsDUwu32hdN1jCXRSfcg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=YS6Esfl0Gef8/4eigMGyU4GWaaNThRbG7f4ewnouAkFZkm/vkbO04HvdTeXWQh7qa
-	 OG8feI1WLTIrtZCEaaA7j1wGmumlLDqLa66QFAs/KQeVDok1OUWRgQwgU1RUjGCKal
-	 aEwwlE2Ex/4RUvov9s1c+9hrmVd2xodfyC3f/hbo=
+	s=default; t=1546709750;
+	bh=lZpZ+QaM4Q9G+eShAvVRuTC9Ny61XwJdnmA56GwadU8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=D/vSnOAZCdP3UlIsR+fElqkgJ95OOpXGmYBBIwOpixc8yOkPVTpdESPy/qucWHK8Q
+	 Ehmei1roUY/iLC9sVSis2JpaR9EBMNfls68OGjNluwov7nm/4FTTT/rUO679dcmX5x
+	 c8Uj5EZNut8kwuiyxaiuh4P2sA/hL6CEn8WMfrq0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726384AbfAER3u (ORCPT
+        id S1726395AbfAERft (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 5 Jan 2019 12:29:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53972 "EHLO mail.kernel.org"
+        Sat, 5 Jan 2019 12:35:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56912 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726252AbfAER3t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 Jan 2019 12:29:49 -0500
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        id S1726252AbfAERft (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 5 Jan 2019 12:35:49 -0500
+Received: from localhost (unknown [62.119.166.9])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A74F62087F;
-        Sat,  5 Jan 2019 17:29:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 818CA2087F;
+        Sat,  5 Jan 2019 17:35:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546709388;
-        bh=/Gc1NF089ij9cSPRamzekmpWsDUwu32hdN1jCXRSfcg=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=H75Tt4ul0btps8e8AbzBt/fzVW7tt6zKxhFvIj37vZg5n0rW74q86VKRL8DeKDq9i
-         zFtk7eUznSg6fU0+rwUNI7reOcp/D3wctEh983ge2+Wamj/v97hgjxJtACFM48uB8t
-         ZoFRcw0HxfyUq4m1Esm38rbpYLWSbIMWkCtkYHlo=
-Date:   Sat, 5 Jan 2019 17:29:42 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Anson Huang <anson.huang@nxp.com>
-Cc:     "knaack.h@gmx.de" <knaack.h@gmx.de>,
-        "lars@metafoo.de" <lars@metafoo.de>,
-        "pmeerw@pmeerw.net" <pmeerw@pmeerw.net>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "martink@posteo.de" <martink@posteo.de>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "gustavo@embeddedor.com" <gustavo@embeddedor.com>,
-        "rtresidd@electromag.com.au" <rtresidd@electromag.com.au>,
-        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH V6 2/2] iio: accell: mma8452: add vdd/vddio regulator
- operation support
-Message-ID: <20190105172942.2787d236@archlinux>
-In-Reply-To: <1545555462-16121-2-git-send-email-Anson.Huang@nxp.com>
-References: <1545555462-16121-1-git-send-email-Anson.Huang@nxp.com>
-        <1545555462-16121-2-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        s=default; t=1546709747;
+        bh=lZpZ+QaM4Q9G+eShAvVRuTC9Ny61XwJdnmA56GwadU8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=lPBB4e/YoysvATA56nwETTHWdTISlLbug7SHqo1OhELApvbRYrqM1aKVBmJThzFSR
+         0iGNBVSHb+EEfJQCVsnJLsdR1fV3ONfJ5aPt3PCEUoXGthRXblbf0kUgzYM6n0NdHQ
+         kL+DyV8iRBGL2IKt7jP35f8gTjFNrrQU12Y3gifM=
+Date:   Sat, 5 Jan 2019 18:35:33 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     kernel test robot <lkp@intel.com>
+Cc:     LKP <lkp@01.org>, linux-kernel@vger.kernel.org,
+        linux-block@vger.kernel.org
+Subject: Re: 047fb56f7e ("blk-mq: fix changelog"):  BUG: unable to handle
+ kernel NULL pointer dereference at 00000030
+Message-ID: <20190105173533.GA26461@kroah.com>
+References: <5c30e6f2.FK3oPXlyr6MtdG/V%lkp@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5c30e6f2.FK3oPXlyr6MtdG/V%lkp@intel.com>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 23 Dec 2018 09:02:32 +0000
-Anson Huang <anson.huang@nxp.com> wrote:
-
-> The accelerometer's power supply could be controllable on some
-> platforms, such as i.MX6Q-SABRESD board, the mma8451's power supplies
-> are controlled by a GPIO fixed regulator, need to make sure the
-> regulators are enabled before any communication with mma8451, this
-> patch adds vdd/vddio regulator operation support.
+On Sun, Jan 06, 2019 at 01:18:42AM +0800, kernel test robot wrote:
+> Greetings,
 > 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> Acked-by: Martin Kepplinger <martink@posteo.de>
-
-I'm fine with the general approach now, though I would like separate
-error handling for the two different regulators.
-
-Also, this has obviously changed a fair bit since Martin originally gave
-that Ack.  Martin, could you confirm you are still happy with the code?
-
-Thanks,
-
-Jonathan
-
-
-> ---
-> ChangeLog since V5:
->     - ONLY enable vdd/vddio regulators after both of them are aquired;
->     - Since the suspend/resume operations are same as runtime suspend/resume, so just use the
->       pm_runtime_force_suspend/resume for suspend/resuem callback to simply the code.
-> ---
->  drivers/iio/accel/mma8452.c | 99 +++++++++++++++++++++++++++++++++++----------
->  1 file changed, 77 insertions(+), 22 deletions(-)
+> 0day kernel testing robot got the below dmesg and the first bad commit is
 > 
-> diff --git a/drivers/iio/accel/mma8452.c b/drivers/iio/accel/mma8452.c
-> index 421a0a8..7519ed5 100644
-> --- a/drivers/iio/accel/mma8452.c
-> +++ b/drivers/iio/accel/mma8452.c
-> @@ -31,6 +31,7 @@
->  #include <linux/of_device.h>
->  #include <linux/of_irq.h>
->  #include <linux/pm_runtime.h>
-> +#include <linux/regulator/consumer.h>
->  
->  #define MMA8452_STATUS				0x00
->  #define  MMA8452_STATUS_DRDY			(BIT(2) | BIT(1) | BIT(0))
-> @@ -107,6 +108,8 @@ struct mma8452_data {
->  	u8 data_cfg;
->  	const struct mma_chip_info *chip_info;
->  	int sleep_val;
-> +	struct regulator *vdd_reg;
-> +	struct regulator *vddio_reg;
->  };
->  
->   /**
-> @@ -1534,9 +1537,33 @@ static int mma8452_probe(struct i2c_client *client,
->  	mutex_init(&data->lock);
->  	data->chip_info = match->data;
->  
-> +	data->vdd_reg = devm_regulator_get(&client->dev, "vdd");
-> +	data->vddio_reg = devm_regulator_get(&client->dev, "vddio");
-> +	if (IS_ERR(data->vdd_reg) || IS_ERR(data->vddio_reg)) {
-> +		if (PTR_ERR(data->vdd_reg) == -EPROBE_DEFER ||
-> +			PTR_ERR(data->vddio_reg) == -EPROBE_DEFER)
-> +			return -EPROBE_DEFER;
-> +
-> +		dev_err(&client->dev, "failed to get VDD/VDDIO regulator!\n");
-> +		return IS_ERR(data->vdd_reg) ?
-> +		       PTR_ERR(data->vdd_reg) : PTR_ERR(data->vddio_reg);
+> https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git debugfs_cleanup
+> 
+> commit 047fb56f7ecf53620d6e93fbcc8ca9166108d14c
+> Author:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> AuthorDate: Fri Jan 4 14:06:22 2019 +0100
+> Commit:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> CommitDate: Fri Jan 4 17:29:15 2019 +0100
+> 
+>     blk-mq: fix changelog
+> 
+> 464573328e  wireless: fix changelog
+> 047fb56f7e  blk-mq: fix changelog
+> 24aeb03f70  lib: WIP, break up
+> +------------------------------------------+------------+------------+------------+
+> |                                          | 464573328e | 047fb56f7e | 24aeb03f70 |
+> +------------------------------------------+------------+------------+------------+
+> | boot_successes                           | 33         | 0          | 0          |
+> | boot_failures                            | 0          | 13         | 19         |
+> | BUG:unable_to_handle_kernel              | 0          | 13         | 19         |
+> | Oops:#[##]                               | 0          | 13         | 19         |
+> | EIP:debugfs_create_files                 | 0          | 13         | 19         |
+> | Kernel_panic-not_syncing:Fatal_exception | 0          | 13         | 19         |
+> +------------------------------------------+------------+------------+------------+
+> 
+> [    1.939685] toshiba: not a supported Toshiba laptop
+> [    1.940314] platform pc8736x_gpio.0: NatSemi pc8736x GPIO Driver Initializing
+> [    1.941204] platform pc8736x_gpio.0: no device found
+> [    1.941848] nsc_gpio initializing
+> [    1.942249] Hangcheck: starting hangcheck timer 0.9.1 (tick is 180 seconds, margin is 60 seconds).
+> [    1.943923] BUG: unable to handle kernel NULL pointer dereference at 00000030
+> [    1.944889] #PF error: [normal kernel read fault]
+> [    1.945527] *pdpt = 0000000000000000 *pde = f000ff53f000ff53 
+> [    1.946287] Oops: 0000 [#1] SMP PTI
+> [    1.946760] CPU: 0 PID: 7 Comm: kworker/u4:0 Not tainted 4.20.0-11088-g047fb56 #1
+> [    1.947149] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
+> [    1.947149] Workqueue: events_unbound async_run_entry_fn
+> [    1.947149] EIP: debugfs_create_files+0x9/0x50
+> [    1.947149] Code: 00 e8 db 11 52 00 8b 16 8b 4e 04 8d 83 c0 03 00 00 e8 4b 24 da ff 5b 5e 5d c3 8d b4 26 00 00 00 00 55 89 e5 56 53 89 c6 89 cb <8b> 40 30 89 90 14 02 00 00 8b 01 85 c0 74 26 90 8d b4 26 00 00 00
+> [    1.947149] EAX: 00000000 EBX: 00000000 ECX: 00000000 EDX: da18f800
+> [    1.947149] ESI: 00000000 EDI: da18f800 EBP: c005de24 ESP: c005de1c
+> [    1.947149] DS: 007b ES: 007b FS: 00d8 GS: 0000 SS: 0068 EFLAGS: 00210246
+> [    1.947149] CR0: 80050033 CR2: 00000030 CR3: 01da4000 CR4: 003406f0
+> [    1.947149] DR0: 00000000 DR1: 00000000 DR2: 00000000 DR3: 00000000
+> [    1.947149] DR6: fffe0ff0 DR7: 00000400
+> [    1.947149] Call Trace:
+> [    1.947149]  blk_mq_debugfs_register_sched_hctx+0x2f/0x40
+> [    1.947149]  blk_mq_init_sched+0x156/0x1c0
+> [    1.947149]  elevator_init_mq+0x4b/0x80
+> [    1.947149]  blk_mq_init_allocated_queue+0x409/0x460
+> [    1.947149]  blk_mq_init_queue+0x23/0x60
+> [    1.947149]  blk_mq_init_sq_queue+0x77/0x90
+> [    1.947149]  floppy_async_init+0xc0/0xd2c
+> [    1.947149]  ? __lock_acquire+0x35/0x860
+> [    1.947149]  async_run_entry_fn+0x2e/0xf0
+> [    1.947149]  process_one_work+0x195/0x3c0
+> [    1.947149]  ? process_one_work+0x176/0x3c0
+> [    1.947149]  worker_thread+0x39/0x3d0
+> [    1.947149]  kthread+0xda/0x110
+> [    1.947149]  ? process_one_work+0x3c0/0x3c0
+> [    1.947149]  ? kthread_park+0xa0/0xa0
+> [    1.947149]  ret_from_fork+0x19/0x30
+> [    1.947149] Modules linked in:
+> [    1.947149] CR2: 0000000000000030
+> [    1.947149] ---[ end trace 34fc82d8056f573a ]---
+> [    1.947150] BUG: unable to handle kernel NULL pointer dereference at 00000030
 
-This is overly complex.  It'll be more lines of code, but I'd prefer
-you handle the two separately as the result will be more readable / less
-fragile.
+This is my fault, due to some debugfs patches I'm working on, it's not a
+block-specific issue at the moment.
 
-> +	}
-> +
-> +	ret = regulator_enable(data->vdd_reg);
-> +	if (ret) {
-> +		dev_err(&client->dev, "failed to enable VDD regulator!\n");
-> +		return ret;
-> +	}
-> +
-> +	ret = regulator_enable(data->vddio_reg);
-> +	if (ret) {
-> +		dev_err(&client->dev, "failed to enable VDDIO regulator!\n");
-> +		goto disable_regulator_vdd;
-> +	}
-> +
->  	ret = i2c_smbus_read_byte_data(client, MMA8452_WHO_AM_I);
->  	if (ret < 0)
-> -		return ret;
-> +		goto disable_regulators;
->  
->  	switch (ret) {
->  	case MMA8451_DEVICE_ID:
-> @@ -1549,7 +1576,8 @@ static int mma8452_probe(struct i2c_client *client,
->  			break;
->  		/* else: fall through */
->  	default:
-> -		return -ENODEV;
-> +		ret = -ENODEV;
-> +		goto disable_regulators;
->  	}
->  
->  	dev_info(&client->dev, "registering %s accelerometer; ID 0x%x\n",
-> @@ -1566,13 +1594,13 @@ static int mma8452_probe(struct i2c_client *client,
->  
->  	ret = mma8452_reset(client);
->  	if (ret < 0)
-> -		return ret;
-> +		goto disable_regulators;
->  
->  	data->data_cfg = MMA8452_DATA_CFG_FS_2G;
->  	ret = i2c_smbus_write_byte_data(client, MMA8452_DATA_CFG,
->  					data->data_cfg);
->  	if (ret < 0)
-> -		return ret;
-> +		goto disable_regulators;
->  
->  	/*
->  	 * By default set transient threshold to max to avoid events if
-> @@ -1581,7 +1609,7 @@ static int mma8452_probe(struct i2c_client *client,
->  	ret = i2c_smbus_write_byte_data(client, MMA8452_TRANSIENT_THS,
->  					MMA8452_TRANSIENT_THS_MASK);
->  	if (ret < 0)
-> -		return ret;
-> +		goto disable_regulators;
->  
->  	if (client->irq) {
->  		int irq2;
-> @@ -1595,7 +1623,7 @@ static int mma8452_probe(struct i2c_client *client,
->  						MMA8452_CTRL_REG5,
->  						data->chip_info->all_events);
->  			if (ret < 0)
-> -				return ret;
-> +				goto disable_regulators;
->  
->  			dev_dbg(&client->dev, "using interrupt line INT1\n");
->  		}
-> @@ -1604,11 +1632,11 @@ static int mma8452_probe(struct i2c_client *client,
->  					MMA8452_CTRL_REG4,
->  					data->chip_info->enabled_events);
->  		if (ret < 0)
-> -			return ret;
-> +			goto disable_regulators;
->  
->  		ret = mma8452_trigger_setup(indio_dev);
->  		if (ret < 0)
-> -			return ret;
-> +			goto disable_regulators;
->  	}
->  
->  	data->ctrl_reg1 = MMA8452_CTRL_ACTIVE |
-> @@ -1661,12 +1689,19 @@ static int mma8452_probe(struct i2c_client *client,
->  trigger_cleanup:
->  	mma8452_trigger_cleanup(indio_dev);
->  
-> +disable_regulators:
-> +	regulator_disable(data->vddio_reg);
-> +
-> +disable_regulator_vdd:
-> +	regulator_disable(data->vdd_reg);
-> +
->  	return ret;
->  }
->  
->  static int mma8452_remove(struct i2c_client *client)
->  {
->  	struct iio_dev *indio_dev = i2c_get_clientdata(client);
-> +	struct mma8452_data *data = iio_priv(indio_dev);
->  
->  	iio_device_unregister(indio_dev);
->  
-> @@ -1678,6 +1713,9 @@ static int mma8452_remove(struct i2c_client *client)
->  	mma8452_trigger_cleanup(indio_dev);
->  	mma8452_standby(iio_priv(indio_dev));
->  
-> +	regulator_disable(data->vddio_reg);
-> +	regulator_disable(data->vdd_reg);
-> +
->  	return 0;
->  }
->  
-> @@ -1696,6 +1734,18 @@ static int mma8452_runtime_suspend(struct device *dev)
->  		return -EAGAIN;
->  	}
->  
-> +	ret = regulator_disable(data->vddio_reg);
-> +	if (ret) {
-> +		dev_err(dev, "failed to disable VDDIO regulator\n");
-> +		return ret;
-> +	}
-> +
-> +	ret = regulator_disable(data->vdd_reg);
-> +	if (ret) {
-> +		dev_err(dev, "failed to disable VDD regulator\n");
-> +		return ret;
-> +	}
-> +
->  	return 0;
->  }
->  
-> @@ -1705,9 +1755,22 @@ static int mma8452_runtime_resume(struct device *dev)
->  	struct mma8452_data *data = iio_priv(indio_dev);
->  	int ret, sleep_val;
->  
-> +	ret = regulator_enable(data->vdd_reg);
-> +	if (ret) {
-> +		dev_err(dev, "failed to enable VDD regulator\n");
-> +		return ret;
-> +	}
-> +
-> +	ret = regulator_enable(data->vddio_reg);
-> +	if (ret) {
-> +		dev_err(dev, "failed to enable VDDIO regulator\n");
-> +		regulator_disable(data->vdd_reg);
-> +		return ret;
-> +	}
-> +
->  	ret = mma8452_active(data);
->  	if (ret < 0)
-> -		return ret;
-> +		goto runtime_resume_failed;
->  
->  	ret = mma8452_get_odr_index(data);
->  	sleep_val = 1000 / mma8452_samp_freq[ret][0];
-> @@ -1717,25 +1780,17 @@ static int mma8452_runtime_resume(struct device *dev)
->  		msleep_interruptible(sleep_val);
->  
->  	return 0;
-> -}
-> -#endif
->  
-> -#ifdef CONFIG_PM_SLEEP
-> -static int mma8452_suspend(struct device *dev)
-> -{
-> -	return mma8452_standby(iio_priv(i2c_get_clientdata(
-> -		to_i2c_client(dev))));
-> -}
-> +runtime_resume_failed:
-> +	regulator_disable(data->vddio_reg);
-> +	regulator_disable(data->vdd_reg);
->  
-> -static int mma8452_resume(struct device *dev)
-> -{
-> -	return mma8452_active(iio_priv(i2c_get_clientdata(
-> -		to_i2c_client(dev))));
-> +	return ret;
->  }
->  #endif
->  
->  static const struct dev_pm_ops mma8452_pm_ops = {
-> -	SET_SYSTEM_SLEEP_PM_OPS(mma8452_suspend, mma8452_resume)
-> +	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend, pm_runtime_force_resume)
->  	SET_RUNTIME_PM_OPS(mma8452_runtime_suspend,
->  			   mma8452_runtime_resume, NULL)
->  };
+sorry for the noise.
 
+greg k-h
