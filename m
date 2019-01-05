@@ -2,112 +2,107 @@ Return-Path: <SRS0=xVxK=PN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56F8FC43387
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 16:02:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8CD9C43387
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 16:04:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1906820868
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 16:02:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 925D120868
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 16:04:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WKTDZLzS"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b="L/JY6Ymz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726312AbfAEQC2 (ORCPT
+        id S1726332AbfAEQEA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 5 Jan 2019 11:02:28 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:39645 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726249AbfAEQC1 (ORCPT
+        Sat, 5 Jan 2019 11:04:00 -0500
+Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.80]:19133 "EHLO
+        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726236AbfAEQD7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 Jan 2019 11:02:27 -0500
-Received: by mail-oi1-f195.google.com with SMTP id i6so32680235oia.6;
-        Sat, 05 Jan 2019 08:02:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=8gau+ZTyFfmhuEvQgtmN7kJRLZQIRssOJ6EMgyNoPjI=;
-        b=WKTDZLzSnI5lwfxuxfabhGk6NQwX1xVi0CUQDE2Ujczfz8h4GOnzBK24T3cCJfS8QO
-         Yxhnsb0YFX72gP+LdYyFUx+zfAKuyOR5zyRD2yi8ld9GbdRwWvXMNA8iICX9Wynn+ibf
-         nqRXltUXdDazVqNnLuDQVpsKzbXm2dN6haBf/edWVUNkwkXysnCGCvdwBug+4l9xovcy
-         1o4Jac7sWePZNDpvNd0zzxuh+QTGwPRRoxPESE3P0eO7Epa0LfDv1UZBNeqi+TUBXj6s
-         66aoCbuvCGPhItT1lQbRnwdou8y1jkw4vAITNCtlHP43wRIrWSwQ+wquuhegRtOzLtlJ
-         QwFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=8gau+ZTyFfmhuEvQgtmN7kJRLZQIRssOJ6EMgyNoPjI=;
-        b=fuY1Ya3r4fEF3bSlDxsBVWLXR/3jMBDmLXj2K4avFiZhPLspMNL9V5o+xa7NbFA39S
-         EsgF3vQMSEpGqN9bw5ey6muvf6VT3Nwrfogy8WlJQbDrA+TRXFoTXT7HBmzhM86+fvEp
-         lyiw02+/ZsEHAvoklitmhaoKIWG+a4mVfgjiilFVRSvb9EI1OhL+YbQCb2UGS38EAnpT
-         uJV0yvXAbgcWaSBalrfO8xD1mYrBo51jxK/GG7oBMRnJy6TWqjtBPuFDOab95Ye0/+WR
-         SvOq2xbXADjGYOpSeoYzbfkIUX+s8OrzVn/GevI4bIkX2fS6KeQ6dAqkTn/WwZZF3l2X
-         eomQ==
-X-Gm-Message-State: AJcUukesq5gVVIm+hy7BD+OXaIfNNPrUhH/9VmLlxH+QTEj+FCRZeFn1
-        eXHoxa+cMG57PR/PWJVQbHk=
-X-Google-Smtp-Source: ALg8bN59LKy+c2RC4RQ0EWyPFT6NAL/M7K9y27AIZ6rvIX6fBdTyIzT7pJ6LH5S5GVjW0438ayXGjw==
-X-Received: by 2002:aca:2dc8:: with SMTP id t191mr3608262oit.235.1546704145501;
-        Sat, 05 Jan 2019 08:02:25 -0800 (PST)
-Received: from [192.168.1.102] (cpe-24-31-245-230.kc.res.rr.com. [24.31.245.230])
-        by smtp.gmail.com with ESMTPSA id e6sm29184569otp.68.2019.01.05.08.02.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 05 Jan 2019 08:02:24 -0800 (PST)
-Subject: Re: [PATCH v2] staging: wilc1000: fix cast to restricted __le32
-To:     =?UTF-8?Q?J=c3=balius_Milan?= <jmilan.dev@gmail.com>,
-        linux-kernel@vger.kernel.org
-Cc:     devel@driverdev.osuosl.org, linux-wireless@vger.kernel.org,
-        gregkh@linuxfoundation.org, ajay.kathat@microchip.com,
-        adham.abozaeid@microchip.com
-References: <20190105091025.GA28917@localhost.localdomain>
-From:   Larry Finger <Larry.Finger@lwfinger.net>
-Message-ID: <61a272a5-3c6f-4e69-2ce9-b7c58b427750@lwfinger.net>
-Date:   Sat, 5 Jan 2019 10:02:23 -0600
+        Sat, 5 Jan 2019 11:03:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1546704235;
+        s=strato-dkim-0002; d=xenosoft.de;
+        h=In-Reply-To:Date:Message-ID:References:Cc:To:From:Subject:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=pllP0jthKpovdES2C/baV4NuaIX0EypTt7j9mGnqdFg=;
+        b=L/JY6YmzXNxCZFl2XJftowHSgiEO0iImEw1S+i/lYuq1JNdn2J+M07Hq1kLN1xRph2
+        04C3ESofwPYwkLGLODjhc61sjWzMggcPgvsWZITijRjqmHQtXjsAGui9/E1VsCsoqhsX
+        ZbTq2rLBEk2+rjZ94m3e/G7VznAwmlV3+/8YiqKEpF4QyueL3lvSqxytg/NL2c5mHT6w
+        5WhTkePMJ5Tmxk/SgxTIhXyWXczxynNsW0eg2AiEHtsZSK+zqg3AowcjcsIzMvzwGT63
+        gS+71NW8B5AuD0P4nbkdn2jnB+WnkVH8oVe4OVxVjSJpM9SJQ1cV+fIb4jDc0nOXWuVb
+        Woxw==
+X-RZG-AUTH: ":L2QefEenb+UdBJSdRCXu93KJ1bmSGnhMdmOod1DhGM4l4Hio94KKxRySfLxnHfJ+Dkjp5G5MdirQj0WG7ClcjjWPPWGqT6Pby0eqStayQ2wW1g=="
+X-RZG-CLASS-ID: mo00
+Received: from [IPv6:2a02:8109:a400:162c:c0c9:30fb:db29:81fd]
+        by smtp.strato.de (RZmta 44.9 AUTH)
+        with ESMTPSA id t0203dv05G3r5TX
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Sat, 5 Jan 2019 17:03:53 +0100 (CET)
+Subject: Re: use generic DMA mapping code in powerpc V4
+From:   Christian Zigotzky <chzigotzky@xenosoft.de>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     linux-arch@vger.kernel.org,
+        Darren Stevens <darren@stevens-zone.net>,
+        linux-kernel@vger.kernel.org, Julian Margetson <runaway@candw.ms>,
+        linux-mm@kvack.org, iommu@lists.linux-foundation.org,
+        Paul Mackerras <paulus@samba.org>,
+        Olof Johansson <olof@lixom.net>, linuxppc-dev@lists.ozlabs.org
+References: <2242B4B2-6311-492E-BFF9-6740E36EC6D4@xenosoft.de>
+ <84558d7f-5a7f-5219-0c3a-045e6b4c494f@xenosoft.de>
+ <20181213091021.GA2106@lst.de>
+ <835bd119-081e-a5ea-1899-189d439c83d6@xenosoft.de>
+ <76bc684a-b4d2-1d26-f18d-f5c9ba65978c@xenosoft.de>
+ <20181213112511.GA4574@lst.de>
+ <e109de27-f4af-147d-dc0e-067c8bafb29b@xenosoft.de>
+ <ad5a5a8a-d232-d523-a6f7-e9377fc3857b@xenosoft.de>
+ <e60d6ca3-860c-f01d-8860-c5e022ec7179@xenosoft.de>
+ <008c981e-bdd2-21a7-f5f7-c57e4850ae9a@xenosoft.de>
+ <20190103073622.GA24323@lst.de>
+ <71A251A5-FA06-4019-B324-7AED32F7B714@xenosoft.de>
+Message-ID: <1b0c5c21-2761-d3a3-651b-3687bb6ae694@xenosoft.de>
+Date:   Sat, 5 Jan 2019 17:03:52 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <20190105091025.GA28917@localhost.localdomain>
+In-Reply-To: <71A251A5-FA06-4019-B324-7AED32F7B714@xenosoft.de>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+Content-Language: de-DE
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/5/19 3:10 AM, Július Milan wrote:
-> Fixes the following sparse warnings:
-> 
-> drivers/staging/wilc1000/host_interface.c:2360:30: warning:
->   incorrect type in assignment (different base types)
->      expected restricted __le32 [addressable] [assigned] [usertype] frame_type
->      got restricted __le16 [usertype] <noident>
-> 
-> Fixes: 147ccfd451024 ("staging: wilc1000: handle mgmt_frame_register ops from cfg82011 context")
-> Signed-off-by: Július Milan <jmilan.dev@gmail.com>
-> ---
->   drivers/staging/wilc1000/host_interface.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/wilc1000/host_interface.c b/drivers/staging/wilc1000/host_interface.c
-> index 5dae6e7155d3..07c3d6293573 100644
-> --- a/struct wilc_reg_frame
-> +++ b/drivers/staging/wilc1000/host_interface.c
-> @@ -2357,7 +2357,7 @@ void wilc_frame_register(struct wilc_vif *vif, u16 frame_type, bool reg)
->   	default:
->   		break;
->   	}
-> -	reg_frame.frame_type = cpu_to_le16(frame_type);
-> +	reg_frame.frame_type = cpu_to_le32(frame_type);
->   	result = wilc_send_config_pkt(vif, WILC_SET_CFG, &wid, 1,
->   				      wilc_get_vif_idx(vif));
->   	if (result)
+Next step: c446404b041130fbd9d1772d184f24715cf2362f (powerpc/dma: remove 
+dma_nommu_mmap_coherent)
 
-Before you send V3, are you sure this is the correct fix? As "frame_type" is 
-input as u16, it seems to me that the frame_type member of struct wilc_reg_frame 
-should be __le16, not __le32.
+git clone git://git.infradead.org/users/hch/misc.git -b powerpc-dma.6 a
 
-Larry
+git checkout c446404b041130fbd9d1772d184f24715cf2362f
+
+Output:
+
+Note: checking out 'c446404b041130fbd9d1772d184f24715cf2362f'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by performing another checkout.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -b with the checkout command again. Example:
+
+   git checkout -b <new-branch-name>
+
+HEAD is now at c446404... powerpc/dma: remove dma_nommu_mmap_coherent
+
+-----
+
+Link to the Git: 
+http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/powerpc-dma.6
+
+Result: PASEMI onboard ethernet works and the X5000 (P5020 board) boots.
+
+-- Christian
