@@ -2,114 +2,143 @@ Return-Path: <SRS0=xVxK=PN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE457C43387
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 01:49:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1738DC43387
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 01:54:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE7442173B
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 01:49:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF1342173B
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 01:54:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DcepZJFr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726337AbfAEBtu (ORCPT
+        id S1726282AbfAEByi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 20:49:50 -0500
-Received: from mx2.suse.de ([195.135.220.15]:41600 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725862AbfAEBtu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 20:49:50 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A1FF4ADF2;
-        Sat,  5 Jan 2019 01:49:47 +0000 (UTC)
-Subject: Re: [PATCH lora-next 3/5] net: lora: sx130x: Add PicoCell serdev
- driver
-To:     linux-lpwan@lists.infradead.org,
-        Ben Whitten <ben.whitten@gmail.com>
-Cc:     linux-serial@vger.kernel.org, Rob Herring <robh@kernel.org>,
-        devicetree@vger.kernel.org, netdev@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Johan Hovold <johan@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Mark Brown <broonie@kernel.org>
-References: <20190104112131.14451-1-afaerber@suse.de>
- <20190104112131.14451-4-afaerber@suse.de>
-From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=afaerber@suse.de; prefer-encrypt=mutual; keydata=
- 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
-Organization: SUSE Linux GmbH
-Message-ID: <9e449443-d063-0175-dfd1-ee42d26d27c4@suse.de>
-Date:   Sat, 5 Jan 2019 02:49:46 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Fri, 4 Jan 2019 20:54:38 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:41210 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725862AbfAEByh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 20:54:37 -0500
+Received: by mail-pf1-f194.google.com with SMTP id b7so19072300pfi.8
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Jan 2019 17:54:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Ik+cdxDc9QECPXpiHGct7yeImX1xxs5vHB/0mlBzmdk=;
+        b=DcepZJFrBJ3b6Al4QnH7xYdg4jIZjyj15F2wjqCNPoLlJEyqvTu3Fs+xGC63SAnXyG
+         IhYHT2mok2TjP5GoaGHULE4JxnQPbxt7Y7Rnl/POGeGAFayCMESBdAljp/elPEi2GcUF
+         yuLZMkbOeJ9YrnbAjglsgExy0Ey8mQEh08z+U=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Ik+cdxDc9QECPXpiHGct7yeImX1xxs5vHB/0mlBzmdk=;
+        b=fK6JibEyMoBb81ZjXUL++nXIgJBtX7adKz0uko9/ima2j6wcgmgUL8oR9YQlktU+VY
+         MbavFfimOku+7Vx0IchvD5hTPb9BMcMJUB2jES2OZkoEZ4sHGjB7uULceUtmEwCWlcy5
+         oaYgW/GLXfvVRWIWR49tjOJ6dlII0UJcLnBb8tgzpTJSmW7PGJMbWPQl2kkEJLmdqYvc
+         P3EgkzwsVXTqL3amWUyLdA+o9LK6nR7SLxdjHIhrf3J9kmUeJujo6b0i5EBUlLjmbt/A
+         qcErOTCslOgFHdUD+bXLJbBRosjLA5D/JU6fMtmksbn8QVXzBLxfjbxTxl60d01qGlBp
+         KGIg==
+X-Gm-Message-State: AJcUukeySEozRcTEdkxxZUbbW8u8rTtIX4p1tjwNsp/KMlUAI7evFn7o
+        OBDMXm6Z3dkbBbabOh54zy9Ljg==
+X-Google-Smtp-Source: ALg8bN5x5PXB5AZwqBRf6338kO/lqPWOVXWLL0AP8vQNQ+c0X4iDfaovk8vEGSEfywz/5pC9WGurkA==
+X-Received: by 2002:a65:4904:: with SMTP id p4mr3549861pgs.384.1546653276365;
+        Fri, 04 Jan 2019 17:54:36 -0800 (PST)
+Received: from google.com ([2620:15c:202:1:534:b7c0:a63c:460c])
+        by smtp.gmail.com with ESMTPSA id b7sm85023031pfa.52.2019.01.04.17.54.34
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 04 Jan 2019 17:54:34 -0800 (PST)
+Date:   Fri, 4 Jan 2019 17:54:32 -0800
+From:   Brian Norris <briannorris@chromium.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Sibi Sankar <sibis@codeaurora.org>, david.brown@linaro.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org,
+        akdwived@codeaurora.org, clew@codeaurora.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm-owner@vger.kernel.org,
+        ohad@wizery.com, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: remoteproc: qcom: Add firmware
+ bindings for Q6V5
+Message-ID: <20190105015430.GA67838@google.com>
+References: <20181228044819.5697-1-sibis@codeaurora.org>
+ <20181228044819.5697-2-sibis@codeaurora.org>
+ <20190103233014.GA181833@google.com>
+ <20190103235043.GA195759@google.com>
+ <20190104000145.GJ31596@builder>
+ <20190104001158.GA200069@google.com>
 MIME-Version: 1.0
-In-Reply-To: <20190104112131.14451-4-afaerber@suse.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190104001158.GA200069@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 04.01.19 um 12:21 schrieb Andreas Färber:
-> Currently there's still some bugs to be investigated, with communication
-> stalling on one device and another reading the radio versions wrong
-> (07 / 1f instead of 21, also observed on spi once).
+Hi again,
 
-Reproducable 100% on SPI by setting REGCACHE_RBTREE in sx130x.c.
+On Thu, Jan 03, 2019 at 04:11:58PM -0800, Brian Norris wrote:
+> On Thu, Jan 03, 2019 at 04:01:45PM -0800, Bjorn Andersson wrote:
+> > I share your concern about this, but I came to suggest this as the
+> > driver cares about platforms but the firmware is (often?)
+> > device/product-specific.
+> > 
+> > E.g. we will serve the MTP and Pixel 3 with the qcom,sdm845-adsp-pas
+> > compatible, but they are unlikely to run the same adsp firmware. This
+> > allows the individual dtb to specify which firmware the driver should
+> > use.
+> 
+> I understand this, but that still doesn't mean we should be suggesting
+> each DTB to clutter the top-level firmware search path, especially since
+> lazy people will probably just use "modem.mdt" and similar. That means
+> you no longer can ship the same rootfs that supports both QCOM and
+> <other> modems, if <other> modem also uses the same lazy format.
+> 
+> It seems like a much better practice to at least enforce a particular
+> prefix to things. e.g., the driver could assume:
+> 
+>   qcom/sdm845-adsp-pas/ (or if you must, just qcom/)
+> 
+> and your DTB only gets to add .../<your-string-here> to that path.
+> 
+> In case it isn't clear: I think it's also severely misguided that the
+> existing driver gets away with lines like
+> 
+> 	request_firmware(&fw, "modem.mdt", ...);
+> 
+> today ;)
 
-Since this serdev driver was using REGCACHE_NONE still and I don't spot
-a register missing as volatile either, I guess it may be a timing issue?
+To add to my thoughts, since I think maybe Sibi was a little unclear of
+my thoughts:
 
-My earlier locking patch is applied, to rule out any non-determinism in
-the register access order due to radio vs. concentrator interactions.
+One of my primary concerns with the existing approach is that it's
+basically a complete free-for-all. We should have some minimal standards
+(enforced in code) such that our DTB can never point us at something
+like /lib/firmware/<other-vendor>/foo.bin (or /lib/firmware/modem.mdt;
+or lots of other bad examples). This could probably be done simply by
+always prefixing 'qcom/' (I don't remember -- does request_firmware()
+follow '..'? e.g., 'firmware-name = "../bar/foo.bin"'.)
+
+As a bonus: it would be very nice if we can provide a little more
+structure by default, and avoid arbitrary hierarchy in the DTS. That's
+where I brought up ath10k's "variant" as an example; if we can use
+'compatible' to capture most of this particular Hexagon core's
+properties, then we only leave a single level of variability to the DTS.
+
+But I might be off-base with the "bonus" paragraph. So I'd also be
+somewhat happy with something much less ambitious, like just a built-in
+prefix ('qcom/').
+
+And you can also just ignore my thoughts entirely (and I'll be even less
+happy), since Rob did already provide his Reviewed-by ;) I mostly wanted
+to give food for thought, in the hopes that something in here would help
+improve this a bit.
 
 Regards,
-Andreas
-
--- 
-SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
+Brian
