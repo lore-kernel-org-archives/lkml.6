@@ -2,133 +2,62 @@ Return-Path: <SRS0=xVxK=PN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8A27C43444
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 19:57:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7714C43387
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 19:57:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4CFD21915
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 19:57:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 83C1121915
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 19:57:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726340AbfAET5i (ORCPT
+        id S1726344AbfAET5m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 5 Jan 2019 14:57:38 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:33497 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726267AbfAET5i (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 Jan 2019 14:57:38 -0500
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gfs4V-0007aT-7h; Sat, 05 Jan 2019 20:57:27 +0100
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gfs4T-0003Kv-SL; Sat, 05 Jan 2019 20:57:25 +0100
-Date:   Sat, 5 Jan 2019 20:57:25 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>, linux-pwm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v9 14/27] pwm: jz4740: Improve algorithm of clock
- calculation
-Message-ID: <20190105195725.cuxfge6zkpbt3cyk@pengutronix.de>
-References: <20181227181319.31095-1-paul@crapouillou.net>
- <20181227181319.31095-15-paul@crapouillou.net>
+        Sat, 5 Jan 2019 14:57:42 -0500
+Received: from mga14.intel.com ([192.55.52.115]:33432 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726318AbfAET5j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 5 Jan 2019 14:57:39 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Jan 2019 11:57:39 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,444,1539673200"; 
+   d="scan'208";a="133230013"
+Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
+  by fmsmga004.fm.intel.com with ESMTP; 05 Jan 2019 11:57:39 -0800
+Subject: [4.19-stable PATCH 0/2] dax: Don't access a freed inode
+From:   Dan Williams <dan.j.williams@intel.com>
+To:     stable@vger.kernel.org
+Cc:     Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        sashal@kernel.org, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org
+Date:   Sat, 05 Jan 2019 11:45:02 -0800
+Message-ID: <154671750268.249397.710993904552440547.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.18-2-gc94f
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181227181319.31095-15-paul@crapouillou.net>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 27, 2018 at 07:13:06PM +0100, Paul Cercueil wrote:
-> The previous algorithm hardcoded details about how the TCU clocks work.
-> The new algorithm will use clk_round_rate to find the perfect clock rate
-> for the PWM channel.
-> 
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> ---
-> 
-> Notes:
->      v9: New patch
-> 
->  drivers/pwm/pwm-jz4740.c | 26 +++++++++++++++-----------
->  1 file changed, 15 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/pwm/pwm-jz4740.c b/drivers/pwm/pwm-jz4740.c
-> index c6136bd4434b..dd80a2cf6528 100644
-> --- a/drivers/pwm/pwm-jz4740.c
-> +++ b/drivers/pwm/pwm-jz4740.c
-> @@ -110,23 +110,27 @@ static int jz4740_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
->  	struct jz4740_pwm_chip *jz4740 = to_jz4740(pwm->chip);
->  	struct clk *clk = jz4740->clks[pwm->hwpwm],
->  		   *parent_clk = clk_get_parent(clk);
-> -	unsigned long rate, period, duty;
-> +	unsigned long rate, new_rate, period, duty;
->  	unsigned long long tmp;
-> -	unsigned int prescaler = 0;
->  
->  	rate = clk_get_rate(parent_clk);
-> -	tmp = (unsigned long long)rate * state->period;
-> -	do_div(tmp, 1000000000);
-> -	period = tmp;
->  
-> -	while (period > 0xffff && prescaler < 6) {
-> -		period >>= 2;
-> -		rate >>= 2;
-> -		++prescaler;
-> +	for (;;) {
-> +		tmp = (unsigned long long)rate * state->period;
-> +		do_div(tmp, 1000000000);
+The original upstream fix, commit 55e56f06ed71 "dax: Don't access a freed
+inode", prompted an immediate cleanup request. Now that the cleanup has
+landed, commit d8a706414af4 "dax: Use non-exclusive wait in
+wait_entry_unlocked()", backport them both to -stable.
 
-NSEC_PER_SEC?
+---
 
-> +
-> +		if (tmp <= 0xffff)
-> +			break;
-> +
-> +		new_rate = clk_round_rate(clk, rate - 1);
-> +
-> +		if (new_rate < rate)
-> +			rate = new_rate;
-> +		else
-> +			return -EINVAL;
+Dan Williams (1):
+      dax: Use non-exclusive wait in wait_entry_unlocked()
 
-You are assuming stuff here about the parent clk which isn't guaranteed
-(AFAICT) by the clk framework: If you call clk_round_rate(clk, rate - 1)
-this might well return rate even if the clock could run slower than
-rate.
+Matthew Wilcox (1):
+      dax: Don't access a freed inode
 
-Wouldn't it make sense to start iterating with rate = 0xffff * 1e9 /
-period? Otherwise you get bad configurations if rate is considerable
-slower than necessary.
 
-Best regards
-Uwe
-
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+ fs/dax.c |   69 ++++++++++++++++++++++++++++----------------------------------
+ 1 file changed, 31 insertions(+), 38 deletions(-)
