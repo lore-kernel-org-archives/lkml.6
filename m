@@ -7,137 +7,114 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 006D5C43387
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 13:04:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A09FC43387
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 13:16:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 950BE20868
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 13:04:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4250E2070D
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 13:16:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="rjlhgQ7E"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="r+NpqmJK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726253AbfAENEC (ORCPT
+        id S1726254AbfAENQY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 5 Jan 2019 08:04:02 -0500
-Received: from mail-40135.protonmail.ch ([185.70.40.135]:24309 "EHLO
-        mail-40135.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726108AbfAENEC (ORCPT
+        Sat, 5 Jan 2019 08:16:24 -0500
+Received: from mail-lj1-f180.google.com ([209.85.208.180]:46717 "EHLO
+        mail-lj1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726203AbfAENQY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 Jan 2019 08:04:02 -0500
-Date:   Sat, 05 Jan 2019 13:03:53 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-        s=default; t=1546693437;
-        bh=DGYA7ysbIOLLALZW+sEEW1oBpoR0wIfI+WKzDdfGfUU=;
-        h=Date:To:From:Reply-To:Subject:Feedback-ID:From;
-        b=rjlhgQ7Epfmi71xoroAsohnYfDW6RL6g36zp0yFs+ks1WeNMhZLuWixeP6kzuqmFx
-         Ti15oXTgTfnOmO3U1XFsjqt79ucqUWTnl+hfuglvgxpfIGhI8d4vbuOK79mw5Z4NFt
-         zz97oglRqD+peHg6+3ge9Ty75Rte/PXX6jMBkPAc=
-To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-From:   =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <ywecrn@protonmail.com>
-Reply-To: =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <ywecrn@protonmail.com>
-Subject: Introducing Racoh Computer design suggestion/ Uxxuw For Fair Pay O-S
-Message-ID: <CrysKvLX8v4fe9VX-C9_uELY4gQi7dqM3H52ARNgBgoXirPJqc5rC52aQllzpYtJJyofKXXPkfaqtOjJQxkwQKo2w2-jrpp7AzUDs-16Ths=@protonmail.com>
-Feedback-ID: jE8CP55NmWCGfbi9g5qzrOGkxuwuSXpchSI6fmYzjd5UEveHXeJrmiWc0_sgJdqIHM8YAKf9EEyPwffaRmhZ0A==:Ext:ProtonMail
+        Sat, 5 Jan 2019 08:16:24 -0500
+Received: by mail-lj1-f180.google.com with SMTP id v15-v6so34579840ljh.13;
+        Sat, 05 Jan 2019 05:16:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=0MJ0iuKCYn0ZvnRPx3DFVYfWs6x1JIAmy6Ml4pmaTq0=;
+        b=r+NpqmJKiVYZtRnD6iBw+ht29mz3s7ZtAnTzrLn0dAF5wSbcrC/ciq8YTpiqK2VOjD
+         gJV3ON4f0bDP/v79Z2CSDS7vwbPYtFsU+M0THH4iclSHBqytunN+fgzKLHmqopgEdBmu
+         N5oJwbJKnEhIOzYYJcEy4bqeSqMqnr75X/f6Ljfpw5CrkNCbWvTw53KwXlW40fqcEzPt
+         lAkgc/U+5IKTOJeGwwy44BK46PsKdiHRVGXrH8jJTlaWpnvn7+ang8FDcMUtqjEUjoT2
+         c4J4+mtyA9G2ZaNsgYdoww+d7MbxIZ2zd7nGkohrFn9E2F5P/X6Rd8XeB57vDRx/SO4f
+         RhOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=0MJ0iuKCYn0ZvnRPx3DFVYfWs6x1JIAmy6Ml4pmaTq0=;
+        b=tEA6gHl4zh445W0wsMIsFrMSU6Jeo83xc3QRZ9nqM9cee2Sdc9/qrDuTNq2DE3QThB
+         NpwZ/p4/CDP7CcbitEgHRSFSLEn0VPXIK5YV7Dcb/pgIPvflDVvMU2z4Omp8bMMljYma
+         w4Psv2aw90cE/houBeKU15BjFiFbqOGeOPaOi3O1gWkmy2p3l5lSV27n2GGKn6ceaGfo
+         6MNt/8UPFfNdncjlLWU0oZwdqObERm6J2GhfIqwmomxS5shnKeLvgH6lEP412JZwefbR
+         Cen9O2OnJFoVRa2z1Cj7K63Gyt+F82YlrxbSDgxGKGpo9GXaKSKezmJIkByCQfCryCeJ
+         LbXQ==
+X-Gm-Message-State: AJcUukc2G6D//FZWlbVODg5egT2l51PB2tmJoJuBT9yYnW5hLPHP0AzF
+        wgQdjSvsyMcVvHNucdeWbZAKvd5v
+X-Google-Smtp-Source: AFSGD/X+0TWe/MPGSdQlQwbFOJiWoTKSDvsu2OlAZcHAx7JJE3msOEKbaOKObP8zIS6l4j3hoDBJSg==
+X-Received: by 2002:a2e:8596:: with SMTP id b22-v6mr31092433lji.122.1546694180926;
+        Sat, 05 Jan 2019 05:16:20 -0800 (PST)
+Received: from [192.168.1.18] (ciw155.neoplus.adsl.tpnet.pl. [83.31.46.155])
+        by smtp.gmail.com with ESMTPSA id h3sm11482325lfj.25.2019.01.05.05.16.18
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 05 Jan 2019 05:16:20 -0800 (PST)
+Subject: Re: [PATCH 2/2] leds: lp5024: Add the LP5024/18 RGB LED driver
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     =?UTF-8?B?VmVzYSBKw6TDpHNrZWzDpGluZW4=?= <dachaac@gmail.com>,
+        Dan Murphy <dmurphy@ti.com>, robh+dt@kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-leds@vger.kernel.org
+References: <cd90f179-6c16-823f-496f-27f141e9c322@ti.com>
+ <a72c11c0-949b-bdbc-df2c-4490e04a1065@gmail.com>
+ <986b5105-2fdb-bd25-7c8a-ca8fd1ade821@gmail.com>
+ <7f205102-e854-f1cb-cc03-1307d1cddc87@gmail.com>
+ <c9f8965a-90f4-b456-8225-c70694c9f071@gmail.com>
+ <cf6c0025-36e7-197b-b27a-1f31fb45cc38@gmail.com> <20190104201256.GA2931@amd>
+ <a4e3a782-de76-ba91-3727-4db69cf27c3a@gmail.com> <20190104220726.GA12395@amd>
+ <4cf79414-578e-eea7-4f46-fc8789206988@gmail.com> <20190105123146.GA16354@amd>
+From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Message-ID: <8044cdd9-b9b3-fddd-6106-184b906859e2@gmail.com>
+Date:   Sat, 5 Jan 2019 14:16:17 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190105123146.GA16354@amd>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I have been working on the philosophy behind Uxxuw For Fair O-S, in 2018. I=
-n 2019, I have philosophy v1.0 ready.
+On 1/5/19 1:31 PM, Pavel Machek wrote:
+>>> We will need to solve RGB leds somehow, hopefully this is solved with
+>>> it.
+>>
+>> When? With this attitude we will procrastinate it forever.
+>> It's been almost 3 years since first HSV patches.
+>>
+>> I proposed rough design of LED RGB class interface in [0].
+>> If you find it totally flawed, then please spot the problems.
+>> If not, let's improve it and implement.
+> 
+> That is fatally flawed, and inferior to the HSV patches, sorry...
 
-Computersystems start with I/O, with a high-level paradigm for input/output=
-. This to ease development.
+Please spot the problems.
 
-In our analysis we see problems with behaviour in Linux crowds, and this wa=
-s ofcourse originally adressed in monotheism. And many names related build =
-on conceptology in The Bible.
+> Grab yourself an RGB LED and play with it; you'll see what the
+> problems are. It is hard to explain colors over email...
 
-The Bible is regressed, influenced by psilocybin, and if we take that out, =
-we get The Quran, and standard judgement day faith.
+Video [0] gives some overview of lp5024 capabilities.
 
-Since transitioning concepts of faith can be difficult, we have also realiz=
-ed a z=C3=ABn-concept of The Divine, Uxxuw, which is the same one as "god" =
-if taken seriously, only without the trinitarian regression, and psilocybin=
- influence.
+I don't see any problems in exposing separate red,green,blue
+files and brightness for the devices with hardware support for
+that.
 
-And ofcourse computers are business dominated, and in business school, we l=
-earn a maximal salespoint, that in philosophy really is the same as Fair Pa=
-y principles, of labour party politics, and labour union efforts.
+I want to push things forward and I'm going to ask Dan
+to give this design a try.
 
-And this was originally a principle in monotheism - "Deal Justly" - Quran.
+[0] https://www.youtube.com/watch?v=qdt-alh8i6E
 
-And indeed making things about business and goods, will make things realiza=
-ble. Indeed the microeconomy of the net has already proven to be possible.
-
-And then all this must be moderated according to standard rules and languag=
-e, and that is monotheism, and The Quran, that is without any obscurity.
-
-One paradigm change is for instance in assembly. Rather than small abbrevia=
-tions, one may type out fuller instruction names, and have highlevel like s=
-yntax, and use this more. It seems C indeed mostly combats the masochism of=
- small abbrev language in ASM. While ofcourse the inner loop may use highle=
-vel and timer, and on Linux we find 90 to work the best, for optimizing the=
- inner loop.
-
-Another paradigm change is school shower and changingroom could be one cabi=
-net, and I think many of us will like this.
-
-Indeed a global Fair Pay OS, will result in a full technoeligthenment, and =
-technocracies, in the name of Uxxuw.
-
-Racoh Computer Design Specification:
- - Delyar: absolute, global online currency, decentralized and free from in=
-flation.
- - FPY Licence: intended for use in a system, where fair pay transactions a=
-re done, for use, maintenance and support. Free for poor.
- - Islam: Coherent philosophy, replacing The Bible, as background in earlie=
-r OSs (Unix), also with a z=C3=ABn-concept of The G=C3=B3dh, that works in =
-our culture, Uxxuw, that has decreed "deal justly", and is the background f=
-or its Fair Pay OS reasoning and labour party politics that are similar, an=
-d work union efforts, also using The Miriam Font, for script-like text accu=
-racy.
- - Ultimate Iterations Of Tech:
-  [1.] Screenmode: 4K (8k quadratic WR-GB subpixels) at 72.734 hz
-       standard, for minimal psychovisual noise, approximating reality
-       most.
-  [2.] Sound Output: One Pole Diode Filter DA converter, for
-       ultrahigh speed high-frequency 1-bit stream gibbsfree DA
-       conversion, for a nice -110dB noisefloor.
-  [3] O-S: Fair Pay oriented OS, with Low-jitter filesystem, and
-      networking with file attributes about re-use or not, published or
-      not, and royalties, in a standardized directory structure,
-      country/15.000 km2 region/author, with typical statistics.
-      This optimized serverload also with having publishing on client
-      instead of server.
-   [4.] CPU: Instruction set, may combine several instructions in
-       one clock, where it makes sense, for higher virtual frequency,
-       and for closer to high-level paradigm thinking. For instance, a
-       4pole filter (one input, one output), can be combined into a
-       one clock operation. JSR could take arguments. And
-       similary used functions, that has just one input, and one
-       output, can be done in one clock. And this could even be done
-       in parallel. (Particulary what needs ofcourse to be optimized
-       is the inner loop, beyond the HZ timer, which in our testing is
-       best at 90).
-   [5.] Gaming Mode: Fast Fantasymode (Reduced Rendering Surface)
-       For Games Gaming Mode: 1920x1080 rendering with 2x
-       multisampling antialiasing only,transparency multisampling also
-       on) for smoothing the edges just a bit, more gets blurry, and
-       2x anistotropic filtering, for round edges on zoomed textures
-       and "game profile", and also -0.1250 lod bias, for "game
-       profile". Negative lod bias allowed, high quality filtering,
-       and no trilinear optimization. Upscaled 3x by NN, and followed
-       by a median filter, for extrapolating a pseudo 3x res, and
-       resampled to 4K, with a bicubic (a=3D75) filter.
-
-Beneficience: We also ofcourse fully support 3d-printed clothing, houses an=
-d tools, taking centralized efforts and technology, to decentralized growth=
- places.
-
-Peace.
-Ywe C=C3=A6rlyn.
-
-https://www.youtube.com/channel/UCSdSEeyszGZx8fTaB692sew
+-- 
+Best regards,
+Jacek Anaszewski
