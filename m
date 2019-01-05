@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E224FC43612
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 07:29:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D3F7C43387
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 07:29:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFAC7208E3
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 07:29:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CAC3B208E3
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 07:29:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="EJZ0d7pU"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="VHuOaFBs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726286AbfAEH3c (ORCPT
+        id S1726324AbfAEH3l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 5 Jan 2019 02:29:32 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:36103 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726254AbfAEH3b (ORCPT
+        Sat, 5 Jan 2019 02:29:41 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:35951 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726289AbfAEH3h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 Jan 2019 02:29:31 -0500
-Received: by mail-pg1-f194.google.com with SMTP id n2so18443935pgm.3
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Jan 2019 23:29:30 -0800 (PST)
+        Sat, 5 Jan 2019 02:29:37 -0500
+Received: by mail-pl1-f196.google.com with SMTP id g9so18435918plo.3
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Jan 2019 23:29:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=ZLG0p6pOlEKJqG/ydnT1Alp81sx/m3rHMuhpQtuwbbQ=;
-        b=EJZ0d7pU3z4gJ3luqtxOqm0cnFR6Y/svP6seHeGrN6D5WenFUCJxOKk0VJGRiqC0bB
-         p7pssvPaglrTPqs6h3o7FM6BRLrQL5yM5PbDTgzI7TjyZIi+DUdkIhUxxvHiXXiWOez0
-         tmtExd9B9GDOVDttEHfFoS2oGg2IIVmEIGfFw=
+        bh=jxq8DubluUc6WyBU2XbyE9/uiwXvqfVs8mJ2HYI7f2c=;
+        b=VHuOaFBs6m56MPsVgJoQH34fibOL3Zi3mGtkpVTbS17Pa8mkMUWi5egWWl+72Mu+xp
+         pWR3cg3Z2rW4LrmMxHwlf4onnNEvIFpnQXoMIj9M2muqHGEaEUf+hPR10vcXxwXf7MIy
+         WIaCk3bd2zbje3P1ytAw1MHxgtUsqkyaBIrD8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=ZLG0p6pOlEKJqG/ydnT1Alp81sx/m3rHMuhpQtuwbbQ=;
-        b=ecQ0hqdc26FnxyePko6xUbjkS2GsqHt+zWdS7hsjhOE3JUPD69WHjBNPzFPs9RLxqe
-         sFzAnTU50p59m62+hoxJjOgNCvpL75mgFMwpJ0fwRH1J48x8c7WjkUjmnguiGB+vW0ly
-         dND0ETM+MiAflN7XigvlBvQi0Qs+8E9zN65IUNYmw4oAg2U823XvjRIZEFW+phTX+q7D
-         GZrc543EIrttN16wd3xsf4asFD37vIx+8Ess9SszQ3bbQexLvP9isfofdhdfqk09yvxH
-         u4UDGu2QdT1MDmZYiIIV0d2wHQU8mszyO00TjpHAqPHT0ci9EKWiduaO8vqpbz2hU8WM
-         hB4A==
-X-Gm-Message-State: AJcUukc2dcF5m3gXZdLDe5QJEm6a+pvgWNKZ/t35KUc2s7eyWZEso3uv
-        yXC1wra0iZk0c0vRCg1aWNhB
-X-Google-Smtp-Source: ALg8bN50gCEXbBa9oALpY2+83PONnRD9xIfyJUuHRcn8QixT5tbYVu/aCEF9gRtHJ+dXNUQY3SYgsg==
-X-Received: by 2002:a63:5723:: with SMTP id l35mr22381883pgb.228.1546673370470;
-        Fri, 04 Jan 2019 23:29:30 -0800 (PST)
+        bh=jxq8DubluUc6WyBU2XbyE9/uiwXvqfVs8mJ2HYI7f2c=;
+        b=mCYUfLah462ilb6y9aC/lJA59nF9qq/PSfSuNy7OfJf0wKi4vkx6wT7gRf8E3bhr5R
+         HUNuezf/KcGeQdK16k5+OFAkriqwWQlqsiFgGxG1ySFmuI4ATe9awkTD7pB4Bwsy0idI
+         Z1wGl0NS/jmvgF2BuixnAXQlAnfw0ctD1WdC1x1imzC0+blADrnvpgEXJEAx/Ne06sr3
+         gYmbYyPBP7gd96mi7GZNI/XqdjzsSMO6d0uPs1O+M4hhdV4V619JpbsHXJzv1jzqT34F
+         IkDPpzdijiH4keh253bJ4AA+wEg/4XrON2oN3bss65MTEcKFchJMAxIG5cLfVbo/KwMl
+         o1ZA==
+X-Gm-Message-State: AJcUukcezspwkGf3zDdghuzKFUf1v75rOVvGCF3+zc0WEd0dM7YjU5Ts
+        3phE1lI2rAkZcFmXLMcX0nxu
+X-Google-Smtp-Source: ALg8bN730/Kx7GMd6qrv8SI3exT0EqpbGMIc8Byq2ZtoR7ezU9tNjR+f9shWEDBiQumRMNDA80+Abw==
+X-Received: by 2002:a17:902:2868:: with SMTP id e95mr53921755plb.317.1546673377136;
+        Fri, 04 Jan 2019 23:29:37 -0800 (PST)
 Received: from localhost.localdomain ([2405:204:72cb:a88d:406c:3ac8:e78f:4779])
-        by smtp.gmail.com with ESMTPSA id k24sm90677367pfj.13.2019.01.04.23.29.24
+        by smtp.gmail.com with ESMTPSA id k24sm90677367pfj.13.2019.01.04.23.29.30
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 04 Jan 2019 23:29:29 -0800 (PST)
+        Fri, 04 Jan 2019 23:29:36 -0800 (PST)
 From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 To:     vinholikatti@gmail.com, jejb@linux.vnet.ibm.com,
         martin.petersen@oracle.com, liwei213@huawei.com, robh+dt@kernel.org
@@ -60,9 +60,9 @@ Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
         john.stultz@linaro.org, amit.kucheria@linaro.org,
         guodong.xu@linaro.org,
         Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v2 2/3] arm64: dts: hisilicon: hi3670: Add UFS controller support
-Date:   Sat,  5 Jan 2019 12:58:58 +0530
-Message-Id: <20190105072859.9134-3-manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v2 3/3] scsi: ufs: Add HI3670 SoC UFS driver support
+Date:   Sat,  5 Jan 2019 12:58:59 +0530
+Message-Id: <20190105072859.9134-4-manivannan.sadhasivam@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190105072859.9134-1-manivannan.sadhasivam@linaro.org>
 References: <20190105072859.9134-1-manivannan.sadhasivam@linaro.org>
@@ -71,42 +71,258 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add UFS controller support for HiSilicon HI3670 SoC.
+Add HI3670 SoC UFS driver support by extending the common ufs-hisi
+driver. One major difference between HI3660 ad HI3670 SoCs interms of
+UFS is the PHY. HI3670 has a 10nm variant PHY and hence this parameter is
+used to distinguish the configuration.
 
 Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 ---
- arch/arm64/boot/dts/hisilicon/hi3670.dtsi | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ drivers/scsi/ufs/ufs-hisi.c | 127 +++++++++++++++++++++++++++++-------
+ drivers/scsi/ufs/ufs-hisi.h |   4 ++
+ 2 files changed, 109 insertions(+), 22 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/hisilicon/hi3670.dtsi b/arch/arm64/boot/dts/hisilicon/hi3670.dtsi
-index 6ccdf5040ffd..285219dd657f 100644
---- a/arch/arm64/boot/dts/hisilicon/hi3670.dtsi
-+++ b/arch/arm64/boot/dts/hisilicon/hi3670.dtsi
-@@ -654,6 +654,24 @@
- 			clock-names = "apb_pclk";
- 		};
+diff --git a/drivers/scsi/ufs/ufs-hisi.c b/drivers/scsi/ufs/ufs-hisi.c
+index 452e19f8fb47..f2d3df357a97 100644
+--- a/drivers/scsi/ufs/ufs-hisi.c
++++ b/drivers/scsi/ufs/ufs-hisi.c
+@@ -66,7 +66,7 @@ static int ufs_hisi_check_hibern8(struct ufs_hba *hba)
+ 	return err;
+ }
  
-+		/* UFS */
-+		ufs: ufs@ff3c0000 {
-+			compatible = "hisilicon,hi3670-ufs", "jedec,ufs-2.1";
-+			/* 0: HCI standard */
-+			/* 1: UFS SYS CTRL */
-+			reg = <0x0 0xff3c0000 0x0 0x1000>,
-+				<0x0 0xff3e0000 0x0 0x1000>;
-+			interrupt-parent = <&gic>;
-+			interrupts = <GIC_SPI 278 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&crg_ctrl HI3670_CLK_GATE_UFSIO_REF>,
-+				<&crg_ctrl HI3670_CLK_GATE_UFS_SUBSYS>;
-+			clock-names = "ref_clk", "phy_clk";
-+			freq-table-hz = <0 0>, <0 0>;
-+			/* offset: 0x84; bit: 12 */
-+			resets = <&crg_rst 0x84 12>;
-+			reset-names = "rst";
-+		};
+-static void ufs_hi3660_clk_init(struct ufs_hba *hba)
++static void ufs_hisi_clk_init(struct ufs_hba *hba)
+ {
+ 	struct ufs_hisi_host *host = ufshcd_get_variant(hba);
+ 
+@@ -80,7 +80,7 @@ static void ufs_hi3660_clk_init(struct ufs_hba *hba)
+ 	ufs_sys_ctrl_set_bits(host, BIT_SYSCTRL_REF_CLOCK_EN, PHY_CLK_CTRL);
+ }
+ 
+-static void ufs_hi3660_soc_init(struct ufs_hba *hba)
++static void ufs_hisi_soc_init(struct ufs_hba *hba)
+ {
+ 	struct ufs_hisi_host *host = ufshcd_get_variant(hba);
+ 	u32 reg;
+@@ -139,6 +139,7 @@ static void ufs_hi3660_soc_init(struct ufs_hba *hba)
+ 
+ static int ufs_hisi_link_startup_pre_change(struct ufs_hba *hba)
+ {
++	struct ufs_hisi_host *host = ufshcd_get_variant(hba);
+ 	int err;
+ 	uint32_t value;
+ 	uint32_t reg;
+@@ -153,6 +154,14 @@ static int ufs_hisi_link_startup_pre_change(struct ufs_hba *hba)
+ 	ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0x8121, 0x0), 0x2D);
+ 	/* MPHY CBOVRCTRL3 */
+ 	ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0x8122, 0x0), 0x1);
 +
- 		/* SD */
- 		dwmmc1: dwmmc1@ff37f000 {
- 			compatible = "hisilicon,hi3670-dw-mshc";
++	if (host->caps & UFS_HISI_CAP_PHY10nm) {
++		/* MPHY CBOVRCTRL4 */
++		ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0x8127, 0x0), 0x98);
++		/* MPHY CBOVRCTRL5 */
++		ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0x8128, 0x0), 0x1);
++	}
++
+ 	/* Unipro VS_MphyCfgUpdt */
+ 	ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0xD085, 0x0), 0x1);
+ 	/* MPHY RXOVRCTRL4 rx0 */
+@@ -173,10 +182,21 @@ static int ufs_hisi_link_startup_pre_change(struct ufs_hba *hba)
+ 	ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0x8113, 0x0), 0x1);
+ 	ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0xD085, 0x0), 0x1);
+ 
+-	/* Tactive RX */
+-	ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0x008F, 0x4), 0x7);
+-	/* Tactive RX */
+-	ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0x008F, 0x5), 0x7);
++	if (host->caps & UFS_HISI_CAP_PHY10nm) {
++		/* RX_Hibern8Time_Capability*/
++		ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0x0092, 0x4), 0xA);
++		/* RX_Hibern8Time_Capability*/
++		ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0x0092, 0x5), 0xA);
++		/* RX_Min_ActivateTime */
++		ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0x008f, 0x4), 0xA);
++		/* RX_Min_ActivateTime*/
++		ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0x008f, 0x5), 0xA);
++	} else {
++		/* Tactive RX */
++		ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0x008F, 0x4), 0x7);
++		/* Tactive RX */
++		ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0x008F, 0x5), 0x7);
++	}
+ 
+ 	/* Gear3 Synclength */
+ 	ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0x0095, 0x4), 0x4F);
+@@ -208,7 +228,8 @@ static int ufs_hisi_link_startup_pre_change(struct ufs_hba *hba)
+ 	if (err)
+ 		dev_err(hba->dev, "ufs_hisi_check_hibern8 error\n");
+ 
+-	ufshcd_writel(hba, UFS_HCLKDIV_NORMAL_VALUE, UFS_REG_HCLKDIV);
++	if (!(host->caps & UFS_HISI_CAP_PHY10nm))
++		ufshcd_writel(hba, UFS_HCLKDIV_NORMAL_VALUE, UFS_REG_HCLKDIV);
+ 
+ 	/* disable auto H8 */
+ 	reg = ufshcd_readl(hba, REG_AUTO_HIBERNATE_IDLE_TIMER);
+@@ -253,7 +274,7 @@ static int ufs_hisi_link_startup_post_change(struct ufs_hba *hba)
+ 	return 0;
+ }
+ 
+-static int ufs_hi3660_link_startup_notify(struct ufs_hba *hba,
++static int ufs_hisi_link_startup_notify(struct ufs_hba *hba,
+ 					  enum ufs_notify_change_status status)
+ {
+ 	int err = 0;
+@@ -391,6 +412,28 @@ static void ufs_hisi_set_dev_cap(struct ufs_hisi_dev_params *hisi_param)
+ 
+ static void ufs_hisi_pwr_change_pre_change(struct ufs_hba *hba)
+ {
++	struct ufs_hisi_host *host = ufshcd_get_variant(hba);
++
++	if (host->caps & UFS_HISI_CAP_PHY10nm) {
++		/*
++		 * Boston platform need to set SaveConfigTime to 0x13,
++		 * and change sync length to maximum value
++		 */
++		/* VS_DebugSaveConfigTime */
++		ufshcd_dme_set(hba, UIC_ARG_MIB((u32)0xD0A0), 0x13);
++		/* g1 sync length */
++		ufshcd_dme_set(hba, UIC_ARG_MIB((u32)0x1552), 0x4f);
++		/* g2 sync length */
++		ufshcd_dme_set(hba, UIC_ARG_MIB((u32)0x1554), 0x4f);
++		/* g3 sync length */
++		ufshcd_dme_set(hba, UIC_ARG_MIB((u32)0x1556), 0x4f);
++		/* PA_Hibern8Time */
++		ufshcd_dme_set(hba, UIC_ARG_MIB((u32)0x15a7), 0xA);
++		/* PA_Tactivate */
++		ufshcd_dme_set(hba, UIC_ARG_MIB((u32)0x15a8), 0xA);
++		ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0xd085, 0x0), 0x01);
++	}
++
+ 	if (hba->dev_quirks & UFS_DEVICE_QUIRK_HOST_VS_DEBUGSAVECONFIGTIME) {
+ 		pr_info("ufs flash device must set VS_DebugSaveConfigTime 0x10\n");
+ 		/* VS_DebugSaveConfigTime */
+@@ -429,7 +472,7 @@ static void ufs_hisi_pwr_change_pre_change(struct ufs_hba *hba)
+ 	ufshcd_dme_set(hba, UIC_ARG_MIB(0xd046), 32767);
+ }
+ 
+-static int ufs_hi3660_pwr_change_notify(struct ufs_hba *hba,
++static int ufs_hisi_pwr_change_notify(struct ufs_hba *hba,
+ 				       enum ufs_notify_change_status status,
+ 				       struct ufs_pa_layer_attr *dev_max_params,
+ 				       struct ufs_pa_layer_attr *dev_req_params)
+@@ -567,25 +610,72 @@ static int ufs_hi3660_init(struct ufs_hba *hba)
+ 		return ret;
+ 	}
+ 
+-	ufs_hi3660_clk_init(hba);
++	ufs_hisi_clk_init(hba);
++
++	ufs_hisi_soc_init(hba);
++
++	return 0;
++}
++
++static int ufs_hi3670_init(struct ufs_hba *hba)
++{
++	int ret = 0;
++	struct device *dev = hba->dev;
++	struct ufs_hisi_host *host;
++
++	ret = ufs_hisi_init_common(hba);
++	if (ret) {
++		dev_err(dev, "%s: ufs common init fail\n", __func__);
++		return ret;
++	}
++
++	ufs_hisi_clk_init(hba);
++
++	ufs_hisi_soc_init(hba);
+ 
+-	ufs_hi3660_soc_init(hba);
++	/* Add cap for 10nm PHY variant on HI3670 SoC */
++	host = ufshcd_get_variant(hba);
++	host->caps |= UFS_HISI_CAP_PHY10nm;
+ 
+ 	return 0;
+ }
+ 
+-static struct ufs_hba_variant_ops ufs_hba_hisi_vops = {
++static struct ufs_hba_variant_ops ufs_hba_hi3660_vops = {
+ 	.name = "hi3660",
+ 	.init = ufs_hi3660_init,
+-	.link_startup_notify = ufs_hi3660_link_startup_notify,
+-	.pwr_change_notify = ufs_hi3660_pwr_change_notify,
++	.link_startup_notify = ufs_hisi_link_startup_notify,
++	.pwr_change_notify = ufs_hisi_pwr_change_notify,
+ 	.suspend = ufs_hisi_suspend,
+ 	.resume = ufs_hisi_resume,
+ };
+ 
++static struct ufs_hba_variant_ops ufs_hba_hi3670_vops = {
++	.name = "hi3670",
++	.init = ufs_hi3670_init,
++	.link_startup_notify = ufs_hisi_link_startup_notify,
++	.pwr_change_notify = ufs_hisi_pwr_change_notify,
++	.suspend = ufs_hisi_suspend,
++	.resume = ufs_hisi_resume,
++};
++
++static const struct of_device_id ufs_hisi_of_match[] = {
++	{ .compatible = "hisilicon,hi3660-ufs", .data = &ufs_hba_hi3660_vops },
++	{ .compatible = "hisilicon,hi3670-ufs", .data = &ufs_hba_hi3670_vops },
++	{},
++};
++
++MODULE_DEVICE_TABLE(of, ufs_hisi_of_match);
++
+ static int ufs_hisi_probe(struct platform_device *pdev)
+ {
+-	return ufshcd_pltfrm_init(pdev, &ufs_hba_hisi_vops);
++	const struct of_device_id *of_id;
++	struct ufs_hba_variant_ops *vops;
++	struct device *dev = &pdev->dev;
++
++	of_id = of_match_node(ufs_hisi_of_match, dev->of_node);
++	vops = (struct ufs_hba_variant_ops *)of_id->data;
++
++	return ufshcd_pltfrm_init(pdev, vops);
+ }
+ 
+ static int ufs_hisi_remove(struct platform_device *pdev)
+@@ -596,13 +686,6 @@ static int ufs_hisi_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-static const struct of_device_id ufs_hisi_of_match[] = {
+-	{ .compatible = "hisilicon,hi3660-ufs" },
+-	{},
+-};
+-
+-MODULE_DEVICE_TABLE(of, ufs_hisi_of_match);
+-
+ static const struct dev_pm_ops ufs_hisi_pm_ops = {
+ 	.suspend	= ufshcd_pltfrm_suspend,
+ 	.resume		= ufshcd_pltfrm_resume,
+diff --git a/drivers/scsi/ufs/ufs-hisi.h b/drivers/scsi/ufs/ufs-hisi.h
+index 3df9cd7acc29..667dfe39b57e 100644
+--- a/drivers/scsi/ufs/ufs-hisi.h
++++ b/drivers/scsi/ufs/ufs-hisi.h
+@@ -91,6 +91,9 @@ enum {
+ #define UFS_HISI_LIMIT_HS_RATE	PA_HS_MODE_B
+ #define UFS_HISI_LIMIT_DESIRED_MODE	FAST
+ 
++#define UFS_HISI_CAP_RESERVED		BIT(0)
++#define UFS_HISI_CAP_PHY10nm		BIT(1)
++
+ struct ufs_hisi_host {
+ 	struct ufs_hba *hba;
+ 	void __iomem *ufs_sys_ctrl;
+@@ -112,4 +115,5 @@ struct ufs_hisi_host {
+ 	ufs_sys_ctrl_writel((host),                                            \
+ 			    ((~(mask)) & (ufs_sys_ctrl_readl((host), (reg)))), \
+ 			    (reg))
++
+ #endif /* UFS_HISI_H_ */
 -- 
 2.17.1
 
