@@ -2,135 +2,147 @@ Return-Path: <SRS0=xVxK=PN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98F75C43387
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 17:51:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3A38C43387
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 17:51:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64438218E2
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 17:51:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="ITdm6f4f"
+	by mail.kernel.org (Postfix) with ESMTP id B17DE218E2
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 17:51:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546710693;
+	bh=yqVQEvMOZsZvvEswMo+hDEcfXbu20+aDs2m213ULL9s=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=xqmFz9CPd9jDn9fKCcKMFifpxbHP3SlK85gJ21jA2uph9Nduy1uZB/hRJmYtz1WTW
+	 mXCjt5oy5FefCJlzvfYcmW7ZVj6aowpJYJvdl2pm2XLMguFVp5ub2gauF5aVMi0PcJ
+	 aTASTpTzkdCY6SV4327/lWQ/9DwU58F32w5HJOgw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726467AbfAERvU (ORCPT
+        id S1726484AbfAERvc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 5 Jan 2019 12:51:20 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:46653 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726318AbfAERvT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 Jan 2019 12:51:19 -0500
-Received: by mail-pf1-f196.google.com with SMTP id c73so19784289pfe.13
-        for <linux-kernel@vger.kernel.org>; Sat, 05 Jan 2019 09:51:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=bmFtkiMzY0SjcGgWZDnXoB7lrhs+dKojhnWxuZ4Ulkg=;
-        b=ITdm6f4fW8QautoLRLSG1phMTMj2iuQLmLxDF+T0kN82TxeVV1j00miE0Oo3PslMCO
-         bQ6TrG8UQ73pjOcXA73iW8aR45Cz3HAKFz1BtvLEMpdNyFCiN+B0jqgWcVENVyqR4KFO
-         L5ovF35IgXPwJPIKg7TAaWZqEjbmpgkemK+oaQeTp+BUBv639FtVLUCnYThlsw7U4klp
-         jBo9vtXrHIXYU7FZLG3b2aIODlSkG9va85ecBLN7eFKCWvCc3DOsKnE+og9x/fEarDIu
-         XQEFOyMEksq4jWcLbKWF9i2JUj8D+iy3tHD47fDvNw0diAQaD4T/Ej+zYg/cHJeDKJ4J
-         fFkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=bmFtkiMzY0SjcGgWZDnXoB7lrhs+dKojhnWxuZ4Ulkg=;
-        b=W4cAuQtGIVoLVtneD6DYRujs0y8DIOLv/IRGbAMVgrN4O8W/KePhuGZvHVa+ZP+H8f
-         oOxdN4S8YvqFbOEE55cD10SU+YDLnC+MRfL/5cp1X1M3vncqX0v8hrdlQxF3VVfuKQZd
-         cboScwJtDmKaO2aQwc/2OK+DO5XwstdHR3mRqU3IpjM0hLIAE2ft+1rrtCcsIdJ66QrC
-         ceJ7rRNUVof+brUk9O0MLWCYfUbvykx8ZQTbQ6k8LoNIFhJpLsSAvEjIBtYAPTvEpNpu
-         fioDrNbx8E828Y4huvWlX4v/ktn96KGyhMNc7nebpJ99PCFGmwIx40AvK5f/Z8HVl8ze
-         dmXg==
-X-Gm-Message-State: AJcUukfzObj7L8r3U08X5Wdb4LIZXk77/yL5hhsA37U5UqKsvB71IM95
-        bboaJreH8kJyHlyvuE39AosXvQ==
-X-Google-Smtp-Source: ALg8bN5CWdV0l04sM6sKg6mHb4H5KfjJ+9BVYkv5JG/kj/c+dIa75hYcEg6kHnIsIdFDi+ZgYRVb9g==
-X-Received: by 2002:a63:1d59:: with SMTP id d25mr24839142pgm.180.1546710678704;
-        Sat, 05 Jan 2019 09:51:18 -0800 (PST)
-Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
-        by smtp.gmail.com with ESMTPSA id y71sm119832456pfi.123.2019.01.05.09.51.17
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 05 Jan 2019 09:51:17 -0800 (PST)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1gfq6P-00045X-0F; Sat, 05 Jan 2019 10:51:17 -0700
-Date:   Sat, 5 Jan 2019 10:51:16 -0700
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     David Gibson <david@gibson.dropbear.id.au>
-Cc:     Leon Romanovsky <leon@kernel.org>, davem@davemloft.net,
-        saeedm@mellanox.com, ogerlitz@mellanox.com, tariqt@mellanox.com,
-        bhelgaas@google.com, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
-        alex.williamson@redhat.com, linux-pci@vger.kernel.org,
-        linux-rdma@vger.kernel.org, sbest@redhat.com, paulus@samba.org,
-        benh@kernel.crashing.org
-Subject: Re: [PATCH] PCI: Add no-D3 quirk for Mellanox ConnectX-[45]
-Message-ID: <20190105175116.GB14238@ziepe.ca>
-References: <20181206041951.22413-1-david@gibson.dropbear.id.au>
- <20181206064509.GM15544@mtr-leonro.mtl.com>
- <20190104034401.GA2801@umbus.fritz.box>
+        Sat, 5 Jan 2019 12:51:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36558 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726344AbfAERvb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 5 Jan 2019 12:51:31 -0500
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CC60B218EA;
+        Sat,  5 Jan 2019 17:51:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1546710690;
+        bh=yqVQEvMOZsZvvEswMo+hDEcfXbu20+aDs2m213ULL9s=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=hGZi5bPJMpMSbpC3+fYocZxQMBf8nyMv1KZR+FypL7qFly1oau6ZV7oRSvteR/VwS
+         s6yRW89zOI9H/HGX3CBkzc0H50P19f8yKAlW3tdv3VSJsEASbLeLbyGfLsRhck/83N
+         fQZvKhcJ+XhtZW8G0qTWD59zfO0OeUq5/bVwBb1w=
+Date:   Sat, 5 Jan 2019 17:51:25 +0000
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Jeremy Fertic <jeremyfertic@gmail.com>
+Cc:     Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org,
+        Shreeya Patel <shreeya.patel23498@gmail.com>
+Subject: Re: [PATCH v2 1/4] staging: iio: adt7316: fix dac_bits assignment
+Message-ID: <20190105175125.6c3626a7@archlinux>
+In-Reply-To: <20181223045743.10716-2-jeremyfertic@gmail.com>
+References: <20181223045743.10716-1-jeremyfertic@gmail.com>
+        <20181223045743.10716-2-jeremyfertic@gmail.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190104034401.GA2801@umbus.fritz.box>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 04, 2019 at 02:44:01PM +1100, David Gibson wrote:
-> On Thu, Dec 06, 2018 at 08:45:09AM +0200, Leon Romanovsky wrote:
-> > On Thu, Dec 06, 2018 at 03:19:51PM +1100, David Gibson wrote:
-> > > Mellanox ConnectX-5 IB cards (MT27800) seem to cause a call trace when
-> > > unbound from their regular driver and attached to vfio-pci in order to pass
-> > > them through to a guest.
-> > >
-> > > This goes away if the disable_idle_d3 option is used, so it looks like a
-> > > problem with the hardware handling D3 state.  To fix that more permanently,
-> > > use a device quirk to disable D3 state for these devices.
-> > >
-> > > We do this by renaming the existing quirk_no_ata_d3() more generally and
-> > > attaching it to the ConnectX-[45] devices (0x15b3:0x1013).
-> > >
-> > > Signed-off-by: David Gibson <david@gibson.dropbear.id.au>
-> > >  drivers/pci/quirks.c | 17 +++++++++++------
-> > >  1 file changed, 11 insertions(+), 6 deletions(-)
-> > >
-> > 
-> > Hi David,
-> > 
-> > Thank for your patch,
-> > 
-> > I would like to reproduce the calltrace before moving forward,
-> > but have trouble to reproduce the original issue.
-> > 
-> > I'm working with vfio-pci and CX-4/5 cards on daily basis,
-> > tried manually enter into D3 state now, and it worked for me.
++ CC Shreeya who is working on the same driver.
+
+On Sat, 22 Dec 2018 21:57:40 -0700
+Jeremy Fertic <jeremyfertic@gmail.com> wrote:
+
+> The value of dac_bits is used in adt7316_show_DAC() and adt7316_store_DAC(),
+> and it should be either 8, 10, or 12 bits depending on the device in use. The
+> driver currently only assigns a value to dac_bits in
+> adt7316_store_da_high_resolution(). The purpose of the dac high resolution
+> option is not to change dac resolution for normal operation. Instead, it
+> is specific to an optional feature where one or two of the four dacs can
+> be set to output voltage proportional to temperature. If the user chooses
+> to set dac a and/or dac b to output voltage proportional to temperature,
+> the da_high_resolution attribute can optionally be enabled to use 10 bit
+> resolution rather than the default 8 bits. This is only available on the
+> 10 and 12 bit dac devices. If the user attempts to read or write dacs a
+> or b under these settings, the driver's current behaviour is to return an
+> error. Dacs c and d continue to operate normally under these conditions.
+> With the above in mind, remove the dac_bits assignments from this function
+> since the value of dac_bits as used in the driver is not dependent on this
+> dac high resolution option.
 > 
-> Interesting.  I've investigated this further, though I don't have as
-> many new clues as I'd like.  The problem occurs reliably, at least on
-> one particular type of machine (a POWER8 "Garrison" with ConnectX-4).
-> I don't yet know if it occurs with other machines, I'm having trouble
-> getting access to other machines with a suitable card.  I didn't
-> manage to reproduce it on a different POWER8 machine with a
-> ConnectX-5, but I don't know if it's the difference in machine or
-> difference in card revision that's important.
+> Since the dac_bits assignments discussed above are currently the only ones
+> in this driver, the default value of dac_bits is 0. This results in incorrect
+> calculations when the dacs are read or written in adt7316_show_DAC() and
+> adt7316_store_DAC(). To correct this, assign a value to dac_bits in
+> adt7316_probe() to ensure correct operation as soon as the device is
+> registered and available to userspace.
+> 
+> Fixes: 35f6b6b86ede ("staging: iio: new ADT7316/7/8 and ADT7516/7/9 driver")
+> Signed-off-by: Jeremy Fertic <jeremyfertic@gmail.com>
 
-Make sure the card has the latest firmware is always good advice..
+Applied to the togreg branch of iio.git and pushed out as testing for the
+autobuilders to play with.  The driver has been broken a long time and
+is undergoing a lot of churn at the moment, so I'm not going to rush
+this in even though it's a fix.
 
-> So possibilities that occur to me:
->   * It's something specific about how the vfio-pci driver uses D3
->     state - have you tried rebinding your device to vfio-pci?
->   * It's something specific about POWER, either the kernel or the PCI
->     bridge hardware
->   * It's something specific about this particular type of machine
+Thanks,
 
-Does the EEH indicate what happend to actually trigger it?
+Jonathan
+> ---
+>  drivers/staging/iio/addac/adt7316.c | 18 +++++++++---------
+>  1 file changed, 9 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/staging/iio/addac/adt7316.c b/drivers/staging/iio/addac/adt7316.c
+> index 9db49aa186bb..e17c1cb12c94 100644
+> --- a/drivers/staging/iio/addac/adt7316.c
+> +++ b/drivers/staging/iio/addac/adt7316.c
+> @@ -652,17 +652,10 @@ static ssize_t adt7316_store_da_high_resolution(struct device *dev,
+>  	u8 config3;
+>  	int ret;
+>  
+> -	chip->dac_bits = 8;
+> -
+> -	if (buf[0] == '1') {
+> +	if (buf[0] == '1')
+>  		config3 = chip->config3 | ADT7316_DA_HIGH_RESOLUTION;
+> -		if (chip->id == ID_ADT7316 || chip->id == ID_ADT7516)
+> -			chip->dac_bits = 12;
+> -		else if (chip->id == ID_ADT7317 || chip->id == ID_ADT7517)
+> -			chip->dac_bits = 10;
+> -	} else {
+> +	else
+>  		config3 = chip->config3 & (~ADT7316_DA_HIGH_RESOLUTION);
+> -	}
+>  
+>  	ret = chip->bus.write(chip->bus.client, ADT7316_CONFIG3, config3);
+>  	if (ret)
+> @@ -2145,6 +2138,13 @@ int adt7316_probe(struct device *dev, struct adt7316_bus *bus,
+>  	else
+>  		return -ENODEV;
+>  
+> +	if (chip->id == ID_ADT7316 || chip->id == ID_ADT7516)
+> +		chip->dac_bits = 12;
+> +	else if (chip->id == ID_ADT7317 || chip->id == ID_ADT7517)
+> +		chip->dac_bits = 10;
+> +	else
+> +		chip->dac_bits = 8;
+> +
+>  	chip->ldac_pin = devm_gpiod_get_optional(dev, "adi,ldac", GPIOD_OUT_LOW);
+>  	if (IS_ERR(chip->ldac_pin)) {
+>  		ret = PTR_ERR(chip->ldac_pin);
 
-Jason
