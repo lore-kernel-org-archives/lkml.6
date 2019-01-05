@@ -2,105 +2,139 @@ Return-Path: <SRS0=xVxK=PN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16B21C43387
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 05:47:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4EC4C43387
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 05:48:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE75121871
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 05:47:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 81D3221871
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 05:48:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="LJf6Tdgc"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="AGxP6l/d"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726238AbfAEFrj (ORCPT
+        id S1726255AbfAEFsv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 5 Jan 2019 00:47:39 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:42918 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726102AbfAEFrj (ORCPT
+        Sat, 5 Jan 2019 00:48:51 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:43647 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726229AbfAEFsv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 Jan 2019 00:47:39 -0500
-Received: by mail-qk1-f196.google.com with SMTP id 68so22702704qke.9
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Jan 2019 21:47:38 -0800 (PST)
+        Sat, 5 Jan 2019 00:48:51 -0500
+Received: by mail-pl1-f195.google.com with SMTP id gn14so18358248plb.10
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Jan 2019 21:48:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=6m7fySNpjdl7eoTvvjN4S8dxL+B3FXHosc+eNdoBz4A=;
-        b=LJf6TdgcY8QPZDIUSsTDFgpTtxRkr0Qkc+ZAeNHc1pCXKkWX9f3imfrby5pFq3RVQ4
-         pTUGfekMdIQPNX6Gd2ssV71ZBH4OFxnEnbq6RYdxulo/CXGPKNwr9O4VDML9BmOnjraH
-         jvnLeZrZbzdQsMeoRi1ZUr2f4ZzD0ZtE/WKEvBxPyGBmjmhUbluZ5rvRKvIYO5Obh/fE
-         mE3mbKOrj3+BjQMfM58gLxvXmDeMYq7z7kp0jH5tEx/uZBIxKwbiC9e2hxt5u7S6D2MV
-         LChnMJu7moQ0oHKp9rC118a27lB9bPPnMNisvRdbTx+HQKLdzRyOkHHNR/3y/YIKuhLF
-         esuQ==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=uexfj1ba8Xi/nr2rflBkPgGs4lOY5h+6bj3ePDdch0A=;
+        b=AGxP6l/duiK0YVI/uZxwLS9EDrsszKH0A2nwv2jgiPO8lPQ1G+htsPumxrSteylSgq
+         LEKWSIiqiXDiikbt+/EoFxh8VMWAicEkc9/s3An4ST6wWMsKk6J5+vp262Za81KEmVoF
+         1pyUdegPJyPavirjZqOK4PGs/eHKy0TDg6At4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=6m7fySNpjdl7eoTvvjN4S8dxL+B3FXHosc+eNdoBz4A=;
-        b=IrheK1mY9eye0cfU/NcpSghHhrAfwenO3brzg7Iks2EcMjuInxqVq+OTbB9o2ebRa2
-         Fv1fPWS+eEX0X78kwAuwO8a+f/Ibyia9jZKeQs7/rUxxWW7Pos2I6246HCIUjY23NPpC
-         RnK+TD00JQ/Ni+LyC1fG0kd8uvFnTvOOstz7bmh0rB76psB/tlSjZZVMuaejXMFbHXfM
-         Hr0VvrzP8qAHhh700Jr0rvJ5xnv9PIWvPm5Si44/LEISTlw6myWtZwO8Hb9ij5pTuS71
-         Lh8u6glD+Sl2A11WKXyJVVYrhcmJgdKa1NJJhsK0Kh2O61oWiwauP7GG1bL1n0ZijAm1
-         PfMw==
-X-Gm-Message-State: AJcUukdMkkz/aDCCUu9LG8Lz48WWlI5TvhVOdt8YkoBwbi5Pkh/ll372
-        J3S3ujzYWNcRciv1rFrEEdgpFw==
-X-Google-Smtp-Source: ALg8bN5L+wtOajHJzEC5RrnqTnaOKur6ODokvhAYq/L4QVDm00nWsw8IAbC/5MinkvWTRxPbLYaJDw==
-X-Received: by 2002:a37:4a87:: with SMTP id x129mr49437904qka.142.1546667258411;
-        Fri, 04 Jan 2019 21:47:38 -0800 (PST)
-Received: from ovpn-120-55.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id a192sm7126324qkg.63.2019.01.04.21.47.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 04 Jan 2019 21:47:37 -0800 (PST)
-From:   Qian Cai <cai@lca.pw>
-To:     akpm@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org, Qian Cai <cai@lca.pw>
-Subject: [PATCH] signal: allow the null signal in rt_sigqueueinfo()
-Date:   Sat,  5 Jan 2019 00:47:29 -0500
-Message-Id: <20190105054729.40397-1-cai@lca.pw>
-X-Mailer: git-send-email 2.17.2 (Apple Git-113)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=uexfj1ba8Xi/nr2rflBkPgGs4lOY5h+6bj3ePDdch0A=;
+        b=M2pqn0/DRJGNNFupYlWQ4zKnHjPcUDgaCVqgqQdIfqW9tw1ssN9LuBlQQC0u8Ue79n
+         tOJ5mVysixp/O7cFFJh/ylCP9gMbseu66MkCP9ecBJ+gp5tJSu9NXRBYWsaUuDUu6kUn
+         H69eGN+8yMiGSoVX72A6g7tJxgClBosLLPQzPpnlyoHbTJeM9mlCDPDVN0y/S4abetuD
+         BNj4JeOD0dGdBcbZJNBrN+VieVQ+6ip8zfIyv/DUd/aCeC29YdxRjUIMuR/j4oSFEdGL
+         0tjQDoYAXsHQDmtayrtwXKbq+rnHScTKBjoYGtCa3w4IvZhrtTpZZoz0cWhbsUGir9Ow
+         alnA==
+X-Gm-Message-State: AJcUukeTu+FBsP7IIXHpj4iOqBmIm7B/IxSD2iNlaPJv7xYjZrPR+dJP
+        Yj/sn7WhbVh73URuXiUWnFiR
+X-Google-Smtp-Source: ALg8bN5q9RYkhx2bUKUUZpchdmeDxN4m2X4feq+D3MAQLGqvWERZeHdqrkEPOnTbwFFTQSiaDkNfZQ==
+X-Received: by 2002:a17:902:112c:: with SMTP id d41mr51725229pla.144.1546667330139;
+        Fri, 04 Jan 2019 21:48:50 -0800 (PST)
+Received: from Mani-XPS-13-9360 ([2405:204:72cb:a88d:406c:3ac8:e78f:4779])
+        by smtp.gmail.com with ESMTPSA id b10sm90435115pfj.183.2019.01.04.21.48.44
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 04 Jan 2019 21:48:49 -0800 (PST)
+Date:   Sat, 5 Jan 2019 11:18:41 +0530
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     John Stultz <john.stultz@linaro.org>
+Cc:     lkml <linux-kernel@vger.kernel.org>,
+        Youlin Wang <wwx575822@notesmail.huawei.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Zhuangluan Su <suzhuangluan@hisilicon.com>,
+        Ryan Grachek <ryan@edited.us>, dmaengine@vger.kernel.org,
+        Tanglei Han <hantanglei@huawei.com>
+Subject: Re: [PATCH 3/8 v2] dma: k3dma: Upgrade k3dma driver to support
+ hisi_asp_dma hardware
+Message-ID: <20190105054841.GC3761@Mani-XPS-13-9360>
+References: <1546635388-13795-1-git-send-email-john.stultz@linaro.org>
+ <1546635388-13795-4-git-send-email-john.stultz@linaro.org>
+ <20190105034157.GB2477@Mani-XPS-13-9360>
+ <CALAqxLUAA95PBiSGrVNWkJT8r4GQQDRU9Q1LE=uFQLsDEeLZwA@mail.gmail.com>
+ <20190105053908.GB3761@Mani-XPS-13-9360>
+ <CALAqxLV35NGGR4xZ-yvqLDuEqzhKTBvjAjBU+xBnyiGSAycW7Q@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALAqxLV35NGGR4xZ-yvqLDuEqzhKTBvjAjBU+xBnyiGSAycW7Q@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Running the trinity fuzzer triggered this,
+On Fri, Jan 04, 2019 at 09:44:17PM -0800, John Stultz wrote:
+> On Fri, Jan 4, 2019 at 9:39 PM Manivannan Sadhasivam
+> <manivannan.sadhasivam@linaro.org> wrote:
+> >
+> > On Fri, Jan 04, 2019 at 09:22:46PM -0800, John Stultz wrote:
+> > > On Fri, Jan 4, 2019 at 7:42 PM Manivannan Sadhasivam
+> > > <manivannan.sadhasivam@linaro.org> wrote:
+> > > > On Fri, Jan 04, 2019 at 12:56:23PM -0800, John Stultz wrote:
+> > > > > From: Youlin Wang <wwx575822@notesmail.huawei.com>
+> > > > >
+> > > > > There is an new "hisi-pcm-asp-dma-1.0" device added in
+> > > > > "arch/arm64/boot/dts/hisilicon/hi3660.dtsi".
+> > > > > So we have to add a matching id in the driver file:
+> > > > >  .compatible = "hisilicon,hisi-pcm-asp-dma-1.0"
+> > > > >
+> > > > > And also hisi-pcm-asp dma device needs no setting to the clock.
+> > > > > So we skip this by adding and using soc data flags.
+> > > > >
+> > > > > After above this driver will support both k3 and hisi_asp dma hardware.
+> > > > >
+> > > >
+> > > > Small description about the hardware (ASP DMAC) would be really helpful.
+> > >
+> > > I've taken a shot at this (along with integrating your other feedback
+> > > - thanks again for the review!), though as I don't have direct
+> > > documentation, my knowledge is a bit second hand.
+> > >
+> > > See here:
+> > > https://git.linaro.org/people/john.stultz/android-dev.git/commit/?h=dev/hikey960-mainline-WIP&id=754a79facf1af0b59a7f8fd63050da12ebf5521e
+> > >
+> > > Let me know if you have suggestions for more specific changes!
+> >
+> > Description looks good to me. But looks like you are not protecting the
+> > other clk APIs like clk_prepare_enable and clk_disable_unprepare. Don't
+> > they fail when the relevant clk is not found?
+> 
+> No, those calls just return 0 if null clock is passed
+> 
+> int clk_prepare(struct clk *clk)
+> {
+>         if (!clk)
+>                 return 0;
+> ...
 
-UBSAN: Undefined behaviour in kernel/signal.c:2946:7
-shift exponent 4294967295 is too large for 64-bit type 'long unsigned
-int'
-[ 3752.406618]  dump_stack+0xe0/0x17a
-[ 3752.419817]  ubsan_epilogue+0xd/0x4e
-[ 3752.423429]  __ubsan_handle_shift_out_of_bounds+0x1d6/0x227
-[ 3752.447269]  known_siginfo_layout.cold.9+0x16/0x1b
-[ 3752.452105]  __copy_siginfo_from_user+0x4b/0x70
-[ 3752.466620]  do_syscall_64+0x164/0x7ea
-[ 3752.565030]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+Ah, okay. Didn't look into the definition.
 
-This is because signo is 0 from userspace, and then it ends up calling
-(1UL << -1) in sig_specific_sicodes(). Since the null signal (0) is
-allowed in the spec, just deal with it accordingly.
+So with the change in description,
 
-Signed-off-by: Qian Cai <cai@lca.pw>
----
- kernel/signal.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Acked-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-diff --git a/kernel/signal.c b/kernel/signal.c
-index e1d7ad8e6ab1..970bb36837a9 100644
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -2943,7 +2943,7 @@ static bool known_siginfo_layout(unsigned sig, int si_code)
- 	if (si_code == SI_KERNEL)
- 		return true;
- 	else if ((si_code > SI_USER)) {
--		if (sig_specific_sicodes(sig)) {
-+		if (sig && sig_specific_sicodes(sig)) {
- 			if (si_code <= sig_sicodes[sig].limit)
- 				return true;
- 		}
--- 
-2.17.2 (Apple Git-113)
+Thanks,
+Mani
 
+> 
+> thanks
+> -john
