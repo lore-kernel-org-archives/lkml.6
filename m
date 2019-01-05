@@ -6,39 +6,39 @@ X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C86A8C43612
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 17:55:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED29AC43612
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 17:57:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96406223DF
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 17:55:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C1FD621848
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 17:57:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546710918;
-	bh=ze70YVLrHSkambMqyHRknCK+tPO5y2Rm3lOFhnUerbk=;
+	s=default; t=1546711038;
+	bh=GZ4Rkh5ZX0K2TlPIydtaiDLNXVssN1alN0ZDZXn4NN0=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=NeiAPvQPCoN9LaAO4viQcPVftFFkvF5ABLtYdo3sWSPdKvaIRXg9S0MrO8FRzKk0h
-	 Vkux5Mk0VUkzzwh63as1KwGtElKrxUPLLybm3Iy3QqMLInqpoy/6zve3xycPmpsxsS
-	 RUUTPap8uvfQeC/9i7F43hLJWjb0ULRqaPzoc3Q8=
+	b=JjhtTTF0uTTJSsbxeP039WcFcx92i7SKrv2u+6AyBlUeKaaQARCDFm3/xSy2rwiOm
+	 TsPDeusP57Fx2lnwgKGzOHDlp/6h4xK3sbPylHp+w6Xc1fDjPut3IiE6JkvL7xTJFG
+	 1Mo9wPSmV7+jMtQFL3i7aivWiTvAvj7pAgjf1t84=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727081AbfAERzS (ORCPT
+        id S1727226AbfAER5S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 5 Jan 2019 12:55:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48234 "EHLO mail.kernel.org"
+        Sat, 5 Jan 2019 12:57:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51558 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727055AbfAERzQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 Jan 2019 12:55:16 -0500
+        id S1726441AbfAER5R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 5 Jan 2019 12:57:17 -0500
 Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9CA3222314;
-        Sat,  5 Jan 2019 17:55:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6B51A206B7;
+        Sat,  5 Jan 2019 17:57:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546710916;
-        bh=ze70YVLrHSkambMqyHRknCK+tPO5y2Rm3lOFhnUerbk=;
+        s=default; t=1546711037;
+        bh=GZ4Rkh5ZX0K2TlPIydtaiDLNXVssN1alN0ZDZXn4NN0=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=M6kqzt0OB4GtDInuhFF3oB2CWfTOGAeRSvzbwt1gfwUCCvk/Z7psSsyus7YDpQAi5
-         uz5Ob7T9UC0b5gUiBS+2Vj/YRMsVDwMq0BPS/0F780xZiYa8CPrS/2wFKGy7bT4Q55
-         GB3gHAhahMHPp+dDw85f6QGTVNr5L4WUKTjn132w=
-Date:   Sat, 5 Jan 2019 17:55:11 +0000
+        b=hHWpS6NqOP4T4ParZmdjRBVzEbLiBvMFexcrFy+KtLuFuIKHMyRlU20jClOdR61cd
+         W26UvVGIZ65SzuytfZhti04wB5S/UOq1a6+7/VJFYtYQhcUzPtuMrOUQKaXFSKFtYo
+         4sKlmURzJiiZWHmPJd9065ZGcGifNE42fhltALcI=
+Date:   Sat, 5 Jan 2019 17:57:12 +0000
 From:   Jonathan Cameron <jic23@kernel.org>
 To:     Jeremy Fertic <jeremyfertic@gmail.com>
 Cc:     Lars-Peter Clausen <lars@metafoo.de>,
@@ -49,12 +49,12 @@ Cc:     Lars-Peter Clausen <lars@metafoo.de>,
         linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
         linux-kernel@vger.kernel.org,
         Shreeya Patel <shreeya.patel23498@gmail.com>
-Subject: Re: [PATCH v2 3/4] staging: iio: adt7316: fix the dac read
+Subject: Re: [PATCH v2 4/4] staging: iio: adt7316: fix the dac write
  calculation
-Message-ID: <20190105175511.2edcb939@archlinux>
-In-Reply-To: <20181223045743.10716-4-jeremyfertic@gmail.com>
+Message-ID: <20190105175712.7e5075e1@archlinux>
+In-Reply-To: <20181223045743.10716-5-jeremyfertic@gmail.com>
 References: <20181223045743.10716-1-jeremyfertic@gmail.com>
-        <20181223045743.10716-4-jeremyfertic@gmail.com>
+        <20181223045743.10716-5-jeremyfertic@gmail.com>
 X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -64,61 +64,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 22 Dec 2018 21:57:42 -0700
+On Sat, 22 Dec 2018 21:57:43 -0700
 Jeremy Fertic <jeremyfertic@gmail.com> wrote:
 
-> The calculation of the current dac value is using the wrong bits of the
-> dac lsb register. Create two macros to shift the lsb register value into
-> lsb position, depending on whether the dac is 10 or 12 bit. Initialize
-> data to 0 so, with an 8 bit dac, the msb register value can be bitwise
-> ORed with data.
+> The lsb calculation is not masking the correct bits from the user input.
+> Subtract 1 from (1 << offset) to correctly set up the mask to be applied
+> to user input.
+> 
+> The lsb register stores its value starting at the bit 7 position.
+> adt7316_store_DAC() currently assumes the value is at the other end of the
+> register. Shift the lsb value before storing it in a new variable lsb_reg,
+> and write this variable to the lsb register.
 > 
 > Fixes: 35f6b6b86ede ("staging: iio: new ADT7316/7/8 and ADT7516/7/9 driver")
 > Signed-off-by: Jeremy Fertic <jeremyfertic@gmail.com>
-Applied to the togreg branch of iio.git and pushed out as testing for
-the autobuilders to play with it.
+Applied to the togreg branch fo iio.git and pushed out as testing for the
+autobuilders to play with it.
 
-Thanks,
+I cc'd Shreeya on all of these.   It would be helpful if you both cc'd
+the other one on any future series. Cross review also good given you are both
+working with this part!
+
+thanks,
 
 Jonathan
 
 > ---
->  drivers/staging/iio/addac/adt7316.c | 10 ++++++++--
->  1 file changed, 8 insertions(+), 2 deletions(-)
+>  drivers/staging/iio/addac/adt7316.c | 10 +++++++---
+>  1 file changed, 7 insertions(+), 3 deletions(-)
 > 
 > diff --git a/drivers/staging/iio/addac/adt7316.c b/drivers/staging/iio/addac/adt7316.c
-> index 80cc3420036b..d7f3d68e525b 100644
+> index d7f3d68e525b..6f7891b567b9 100644
 > --- a/drivers/staging/iio/addac/adt7316.c
 > +++ b/drivers/staging/iio/addac/adt7316.c
-> @@ -47,6 +47,8 @@
->  #define ADT7516_MSB_AIN3		0xA
->  #define ADT7516_MSB_AIN4		0xB
->  #define ADT7316_DA_DATA_BASE		0x10
-> +#define ADT7316_DA_10_BIT_LSB_SHIFT	6
-> +#define ADT7316_DA_12_BIT_LSB_SHIFT	4
->  #define ADT7316_DA_MSB_DATA_REGS	4
->  #define ADT7316_LSB_DAC_A		0x10
->  #define ADT7316_MSB_DAC_A		0x11
-> @@ -1392,7 +1394,7 @@ static IIO_DEVICE_ATTR(ex_analog_temp_offset, 0644,
->  static ssize_t adt7316_show_DAC(struct adt7316_chip_info *chip,
->  				int channel, char *buf)
+> @@ -1431,7 +1431,7 @@ static ssize_t adt7316_show_DAC(struct adt7316_chip_info *chip,
+>  static ssize_t adt7316_store_DAC(struct adt7316_chip_info *chip,
+>  				 int channel, const char *buf, size_t len)
 >  {
-> -	u16 data;
-> +	u16 data = 0;
->  	u8 msb, lsb, offset;
+> -	u8 msb, lsb, offset;
+> +	u8 msb, lsb, lsb_reg, offset;
+>  	u16 data;
 >  	int ret;
 >  
-> @@ -1417,7 +1419,11 @@ static ssize_t adt7316_show_DAC(struct adt7316_chip_info *chip,
->  	if (ret)
->  		return -EIO;
+> @@ -1449,9 +1449,13 @@ static ssize_t adt7316_store_DAC(struct adt7316_chip_info *chip,
+>  		return -EINVAL;
 >  
-> -	data = (msb << offset) + (lsb & ((1 << offset) - 1));
-> +	if (chip->dac_bits == 12)
-> +		data = lsb >> ADT7316_DA_12_BIT_LSB_SHIFT;
-> +	else if (chip->dac_bits == 10)
-> +		data = lsb >> ADT7316_DA_10_BIT_LSB_SHIFT;
-> +	data |= msb << offset;
->  
->  	return sprintf(buf, "%d\n", data);
->  }
+>  	if (chip->dac_bits > 8) {
+> -		lsb = data & (1 << offset);
+> +		lsb = data & ((1 << offset) - 1);
+> +		if (chip->dac_bits == 12)
+> +			lsb_reg = lsb << ADT7316_DA_12_BIT_LSB_SHIFT;
+> +		else
+> +			lsb_reg = lsb << ADT7316_DA_10_BIT_LSB_SHIFT;
+>  		ret = chip->bus.write(chip->bus.client,
+> -			ADT7316_DA_DATA_BASE + channel * 2, lsb);
+> +			ADT7316_DA_DATA_BASE + channel * 2, lsb_reg);
+>  		if (ret)
+>  			return -EIO;
+>  	}
 
