@@ -2,119 +2,115 @@ Return-Path: <SRS0=xVxK=PN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A62CC43387
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 16:13:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6CF6C43387
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 16:18:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF4FC2070B
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 16:13:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 944C72070C
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 16:18:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="iBjqCOFo"
+	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="oFL/GTEu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726388AbfAEQNe (ORCPT
+        id S1726304AbfAEQSU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 5 Jan 2019 11:13:34 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:40651 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726234AbfAEQNe (ORCPT
+        Sat, 5 Jan 2019 11:18:20 -0500
+Received: from mta-p8.oit.umn.edu ([134.84.196.208]:54186 "EHLO
+        mta-p8.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726236AbfAEQSU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 Jan 2019 11:13:34 -0500
-Received: by mail-qt1-f196.google.com with SMTP id k12so43541611qtf.7
-        for <linux-kernel@vger.kernel.org>; Sat, 05 Jan 2019 08:13:33 -0800 (PST)
+        Sat, 5 Jan 2019 11:18:20 -0500
+Received: from localhost (unknown [127.0.0.1])
+        by mta-p8.oit.umn.edu (Postfix) with ESMTP id 0AF47D57
+        for <linux-kernel@vger.kernel.org>; Sat,  5 Jan 2019 16:18:19 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at umn.edu
+Received: from mta-p8.oit.umn.edu ([127.0.0.1])
+        by localhost (mta-p8.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id cVBQqiZiEPKP for <linux-kernel@vger.kernel.org>;
+        Sat,  5 Jan 2019 10:18:18 -0600 (CST)
+Received: from mail-it1-f198.google.com (mail-it1-f198.google.com [209.85.166.198])
+        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mta-p8.oit.umn.edu (Postfix) with ESMTPS id D084BD24
+        for <linux-kernel@vger.kernel.org>; Sat,  5 Jan 2019 10:18:18 -0600 (CST)
+Received: by mail-it1-f198.google.com with SMTP id 128so4025610itw.8
+        for <linux-kernel@vger.kernel.org>; Sat, 05 Jan 2019 08:18:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=wJQD+3taV+2dRWcSlIQEBzhFTwRN7ox4H4SOm0Qzovw=;
-        b=iBjqCOFozSEyig3gjqV151FE6BJi1rXa1LokArmqdy3Ch48OVYicb/RHA1FKaS3aac
-         Vrx1Rw4rUblUPUu7BfyjwQp0yA5WGixKY1XoyhAj75K+5jHdUj1MaUF70ptI7fG54wfc
-         CR4p7ft9x5KviGXEUqm568EHrLYHmdZWt8YYs=
+        d=umn.edu; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=EdwU4yU1+pAyGU+TkYjcCsYXH7yf/ra9OzPs4lLX0H8=;
+        b=oFL/GTEuZ6hVcoboa8+2JvSIkWpK4m6Tyt4S2CiULpVFVe82HC5BV+ncWGr19+JWpI
+         1ET+9uCioZGmGpeXeaRhgQSvTKX05a3EQmTlpKDYq+bc1leA/2jzMY4BzEX4YCCIWsXH
+         YDur6sr8uU1LaKIEhd8bEsxAU8lsv/anDy1ACBXG2v7FoajQ9vYPkoaQX8cFDzz8bqW8
+         5DDMhd895chG9Qr1Ej5JknOxTiivW9YbKkLMHJsDrf8VVBwarCaegEHX7zOA8/B6rej3
+         f5bF19ePKYjDTNC+ntkzZvF6un8wSlu+RhQ1HbccWH1g6rXh5mOlrVDB8gFE4GEPCqOZ
+         oLrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=wJQD+3taV+2dRWcSlIQEBzhFTwRN7ox4H4SOm0Qzovw=;
-        b=HnfCxa/LbBwaAk8a2YZlIfjwD8Xfa4qMLodZYGTr0UEBtpAzGxlTQpbbrrtHJrs8BJ
-         Xb/uJ1fRidqDTeeeAojYKlEkPgAQ18fxC2k6nd8IZSGn4Z98DpgX80K7VnRQ+xoWrrfz
-         l4WeckYmyt7koRhq1Q8Ugblwn/HXgvvQ29dc3ZAF1MRsQnCoxPhlMV8RDpdovkT8vmQ0
-         bAM7F84GgUEq8sZb7EiR6CFmLXha8ZBdJSvC1VI9BqaBcUBtv7A5pPvNlw7lEf2xSCCx
-         RjcIt8W/oE/iaDbO3CMD2Doz7hs0Cub1NtxHMQedoHVofA+E9jnHMkSKIG45zrY4uZcT
-         IceA==
-X-Gm-Message-State: AA+aEWbhllWh9RsgMwHbYmDzOZ20xlBUbU7SjDXadCzhL3oz7ppsBU7l
-        5ffqjD5HlP73XzdcJ3jJ/SKwYw==
-X-Google-Smtp-Source: AFSGD/XfVuLl5QnAXyQyf/EkTyBh9c4XiLRnWbd6xX5742752HW3EiwVQ1Vx31lj4wg1NDfLXm4m+w==
-X-Received: by 2002:ac8:2b99:: with SMTP id m25mr53867090qtm.36.1546704813228;
-        Sat, 05 Jan 2019 08:13:33 -0800 (PST)
-Received: from xanadu.home (modemcable228.104-82-70.mc.videotron.ca. [70.82.104.228])
-        by smtp.gmail.com with ESMTPSA id q54sm31019163qtb.64.2019.01.05.08.13.31
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 05 Jan 2019 08:13:32 -0800 (PST)
-Date:   Sat, 5 Jan 2019 11:13:30 -0500 (EST)
-From:   Nicolas Pitre <nicolas.pitre@linaro.org>
-To:     Stefan Agner <stefan@agner.ch>
-cc:     linux@armlinux.org.uk, ndesaulniers@google.com,
-        natechancellor@gmail.com, arnd@arndb.de, ard.biesheuvel@linaro.org,
-        peterz@infradead.org, mingo@redhat.com, will.deacon@arm.com,
-        julien.thierry@arm.com, mark.rutland@arm.com,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 3/3] ARM: spinlock: use unified assembler language
- syntax
-In-Reply-To: <ad0fbab91f337ec99e3a2a3d60886a785da34366.1546551693.git.stefan@agner.ch>
-Message-ID: <nycvar.YSQ.7.76.1901051112560.1783@knanqh.ubzr>
-References: <cover.1546551693.git.stefan@agner.ch> <ad0fbab91f337ec99e3a2a3d60886a785da34366.1546551693.git.stefan@agner.ch>
-User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=EdwU4yU1+pAyGU+TkYjcCsYXH7yf/ra9OzPs4lLX0H8=;
+        b=QEfuZSyOjuwAyMiSMH6cqgWRm6vYXUIbGH2/lCYkB6e7aTVy4ww+RCq6Vejo38Vx7d
+         y/zCXsiPeBhtXc+rnmv75kKYTyf1tk+A/33ZkVgNQZGBP3KVayiWGceSPEd/q50hSGB4
+         hDYOoqAAFfh5pgNMgauhOorQzNPapNOCqCFej0TAP9rdIPbkPD4HNx2eXhQvNCEtCZKE
+         ZjU7CP1CIa2wN2bYEkxt1mGn5Q7qp9Srs1vdMVbLsV6Z4KTzM7Td3oMS9qYL3ZtIdzv5
+         XxtVrHB0KNmL+Fp9zW//FM0kOwgS+1A54Iy01eDhXsQUothe81Nwa12alAr8IR9M5f3s
+         0XNQ==
+X-Gm-Message-State: AJcUukecrJXjspLwSrrE9YNzlIoc8nE5VXomfz4isXracjr5uI+Bq+J6
+        8iA9MawrslSrNet5paVr9MhTOHDWk3F+w//ufnH55VdHeLCQTjt7efGNwXI32g88PfWFm1ZTV+T
+        gjf86fMWy1Ia8PVow5xdKRl8UkR4M
+X-Received: by 2002:a5e:d503:: with SMTP id e3mr26452370iom.291.1546705098416;
+        Sat, 05 Jan 2019 08:18:18 -0800 (PST)
+X-Google-Smtp-Source: ALg8bN7i0cmdF7jyKGNQRFI+4ADpWxtHT5m6Ol3cQJ/oY44LWoQ3qcqnz/6oXunmasEBtRrc0dtERg==
+X-Received: by 2002:a5e:d503:: with SMTP id e3mr26452360iom.291.1546705098167;
+        Sat, 05 Jan 2019 08:18:18 -0800 (PST)
+Received: from cs-u-syssec1.cs.umn.edu (cs-u-syssec1.cs.umn.edu. [134.84.121.78])
+        by smtp.gmail.com with ESMTPSA id m11sm2171199itb.24.2019.01.05.08.18.17
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 05 Jan 2019 08:18:17 -0800 (PST)
+From:   Aditya Pakki <pakki001@umn.edu>
+To:     pakki001@umn.edu
+Cc:     kjlu@umn.edu, Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Leon Romanovsky <leon@kernel.org>,
+        Parav Pandit <parav@mellanox.com>,
+        Daniel Jurgens <danielj@mellanox.com>,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] [V2] infiniband: fix a missing check of nla_put
+Date:   Sat,  5 Jan 2019 10:18:07 -0600
+Message-Id: <20190105161808.3496-1-pakki001@umn.edu>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 3 Jan 2019, Stefan Agner wrote:
+nla_put() may fail. The fix adds a check for its return value, and
+returns -EMSGSIZE if it fails, post canceling netlink msg.
 
-> Convert the conditional infix to a postfix to make sure this inline
-> assembly is unified syntax. Since gcc assumes non-unified syntax
-> when emitting ARM instructions, make sure to define the syntax as
-> unified.
-> 
-> This allows to use LLVM's integrated assembler.
+Signed-off-by: Aditya Pakki <pakki001@umn.edu>
+---
+ drivers/infiniband/core/addr.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-Same comment as for patch 2/3.
+diff --git a/drivers/infiniband/core/addr.c b/drivers/infiniband/core/addr.c
+index 0dce94e3c495..e847b34bacd1 100644
+--- a/drivers/infiniband/core/addr.c
++++ b/drivers/infiniband/core/addr.c
+@@ -178,7 +178,10 @@ static int ib_nl_ip_send_msg(struct rdma_dev_addr *dev_addr,
+ 	/* Construct the family header first */
+ 	header = skb_put(skb, NLMSG_ALIGN(sizeof(*header)));
+ 	header->ifindex = dev_addr->bound_dev_if;
+-	nla_put(skb, attrtype, size, daddr);
++	if (nla_put(skb, attrtype, size, daddr)) {
++		nlmsg_cancel(skb, nlh);
++		return -EMSGSIZE;
++	}
+ 
+ 	/* Repair the nlmsg header length */
+ 	nlmsg_end(skb, nlh);
+-- 
+2.17.1
 
-
-> 
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
-> ---
-> Changes since v1:
-> - Explicitly use unified syntax for inline assembly
-> 
-> 
->  arch/arm/include/asm/spinlock.h | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm/include/asm/spinlock.h b/arch/arm/include/asm/spinlock.h
-> index 099c78fcf62d..8f009e788ad4 100644
-> --- a/arch/arm/include/asm/spinlock.h
-> +++ b/arch/arm/include/asm/spinlock.h
-> @@ -210,11 +210,12 @@ static inline void arch_read_lock(arch_rwlock_t *rw)
->  
->  	prefetchw(&rw->lock);
->  	__asm__ __volatile__(
-> +"	.syntax unified\n"
->  "1:	ldrex	%0, [%2]\n"
->  "	adds	%0, %0, #1\n"
->  "	strexpl	%1, %0, [%2]\n"
->  	WFE("mi")
-> -"	rsbpls	%0, %1, #0\n"
-> +"	rsbspl	%0, %1, #0\n"
->  "	bmi	1b"
->  	: "=&r" (tmp), "=&r" (tmp2)
->  	: "r" (&rw->lock)
-> -- 
-> 2.20.1
-> 
-> 
