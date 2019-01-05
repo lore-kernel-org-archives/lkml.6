@@ -2,161 +2,910 @@ Return-Path: <SRS0=xVxK=PN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CADDC43387
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 17:59:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4E63C43444
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 18:22:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06864206B7
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 17:59:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="hvmzZ2LJ"
+	by mail.kernel.org (Postfix) with ESMTP id AC42F2237C
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 18:22:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546712552;
+	bh=iVdSydLDoZwHWGF0TT30M2f+Bp/KoDg7XmTFHrza5K4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=bW2gckeQGXwXnSGAKCxK7SQLNc45S7IKXEOmXePsFSi2kVctECZkZvySXDXdj1KqJ
+	 Ew6eSx+6xPdOtfIVg5W9dBWEkwD2kCteRQFM05YwdVHiD1PDibUpBXbNitIcgjEMQT
+	 teAyPkizckzwtmVJwopHhOAdeCQEBPhp9APlNeHo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726516AbfAER7O (ORCPT
+        id S1726490AbfAESWc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 5 Jan 2019 12:59:14 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:41566 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726490AbfAER7N (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 Jan 2019 12:59:13 -0500
-Received: by mail-pl1-f194.google.com with SMTP id u6so18875564plm.8
-        for <linux-kernel@vger.kernel.org>; Sat, 05 Jan 2019 09:59:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=2WFsovOrz+XQlVmJQCbgrpLMlA6JmvTuuh4sSWJ7pQ0=;
-        b=hvmzZ2LJqw3bR89HTHMAK0bPKd/sw2rXx2OsjqdoHOuEUxmWFVNivb60ZwVZmOC0hJ
-         ZvNMc/P0YhHoylDpsK4WMhEKsYHnDO8VFj5qCG4kTGwIrwcERDfsYND8GE1rIycHTtGA
-         hS/ibBePuvFxxDq46TlqSUlYs2kK/4v0VgcqY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=2WFsovOrz+XQlVmJQCbgrpLMlA6JmvTuuh4sSWJ7pQ0=;
-        b=PurVdd3lsTqmm6jRM+g0efe6I4OyxvjW6SrI1yDdW61JBemXFhC4MjuORibitQMkBl
-         u2eefm3w1Foj+q+HYmYUtmWrVrR0PFdeBcjISBzNfopwd0twPHD7AytLXeJwZpAnKhHd
-         poDNP0C/REUd7H6tT9Z8b0JhGeHjj9rOqTib5QiJexhya6Bp+NDbrnXijTGAr+BWEQ5s
-         Gh1KL88xZv4ZKs0oH+RX8RhvCtN4ZjiYOX77BptUG6B4s6lbrPS9MAONvascaaRbwHPp
-         WaoErgqwR/9WDxMSG8aaa9b2arJDZqRGx7n6aGM+tiu5I+ozpvSg/a1USIuFJ0HPGIRi
-         MKIw==
-X-Gm-Message-State: AJcUukdEwqwyi8ykN/IoEgFFy+rZpUQBqMGBPb1wdUd9ZbuML9DzDP7e
-        UkUpA+1RIgDg1OhPmVImw+Z9
-X-Google-Smtp-Source: ALg8bN6M7WPTCYcxgJJBLW0VgK8nR4RIPpoQLUdMWoknq81QqOp8+/t//wZf/FTkuhvwb0hZnY+1ow==
-X-Received: by 2002:a17:902:b90b:: with SMTP id bf11mr54668212plb.284.1546711152661;
-        Sat, 05 Jan 2019 09:59:12 -0800 (PST)
-Received: from Mani-XPS-13-9360 ([2405:204:730c:d904:406c:3ac8:e78f:4779])
-        by smtp.gmail.com with ESMTPSA id e65sm111842360pfc.74.2019.01.05.09.59.07
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 05 Jan 2019 09:59:12 -0800 (PST)
-Date:   Sat, 5 Jan 2019 23:29:04 +0530
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     Parthiban Nallathambi <pn@denx.de>
-Cc:     afaerber@suse.de, robh+dt@kernel.org, mark.rutland@arm.com,
-        wsa@the-dreams.de, linux-arm-kernel@lists.infradead.org,
-        linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux@cubietech.com,
-        thomas.liau@actions-semi.com, linux-actions@lists.infradead.org
-Subject: Re: [PATCH v3 4/4] arm64: dts: actions: s700-cubieboard7: Enable
- I2C0 and I2C1
-Message-ID: <20190105175904.GB32306@Mani-XPS-13-9360>
-References: <20181211080448.24007-1-pn@denx.de>
- <20181211080448.24007-5-pn@denx.de>
+        Sat, 5 Jan 2019 13:22:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35100 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726433AbfAESWb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 5 Jan 2019 13:22:31 -0500
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BCEE222371;
+        Sat,  5 Jan 2019 18:22:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1546712549;
+        bh=iVdSydLDoZwHWGF0TT30M2f+Bp/KoDg7XmTFHrza5K4=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=rxNpgYaas+m7Fwom/UGdAqUkhGrA+zGE4GuuHs6hbf7VUdduU3EysQDtWMHv1Ru08
+         PxMAwlA1SKog7labyUh8JJXIWDu8fVxH8Rn9/iXybOvi6qW3LlLwJQi85JowvpwXZs
+         +YOIzGfWLYgtEVd+k3Vm4cZpRzlYQzXHMfwUlLpY=
+Date:   Sat, 5 Jan 2019 18:22:24 +0000
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     indigo omega <indigoomega021@gmail.com>
+Cc:     lars@metafoo.de, Michael.Hennerich@analog.com, knaack.h@gmx.de,
+        pmeerw@pmeerw.net, gregkh@linuxfoundation.org,
+        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Staging: iio: ad7192: replaced bool in struct
+Message-ID: <20190105182224.5ebad16d@archlinux>
+In-Reply-To: <CAMW2b-maU7+WrwYnqqr7eUVw+S_MC9_do27ms-or8wWDapbqZA@mail.gmail.com>
+References: <CAMW2b-maU7+WrwYnqqr7eUVw+S_MC9_do27ms-or8wWDapbqZA@mail.gmail.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181211080448.24007-5-pn@denx.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 11, 2018 at 09:04:48AM +0100, Parthiban Nallathambi wrote:
-> Add pinctrl definitions for Actions Semiconductor S700 I2C controllers.
-> Pinctrl definitions are only available for I2C0, I2C1 and I2C2.
-> Enable I2C0 (PMIC), I2C1 (gyro, touchscreen) in cubieboard7.
-> 
-> Signed-off-by: Parthiban Nallathambi <pn@denx.de>
+On Sat, 22 Dec 2018 21:58:25 -0500
+indigo omega <indigoomega021@gmail.com> wrote:
 
-Applied to dt-next branch where I have been collecting patches for
-Andreas.
-
-Thanks,
-Mani
-
-> ---
->  .../boot/dts/actions/s700-cubieboard7.dts     | 53 +++++++++++++++++++
->  1 file changed, 53 insertions(+)
+>  Hello Jonathan,
 > 
-> diff --git a/arch/arm64/boot/dts/actions/s700-cubieboard7.dts b/arch/arm64/boot/dts/actions/s700-cubieboard7.dts
-> index 28f3f4a0f7f0..63e375cd9eb4 100644
-> --- a/arch/arm64/boot/dts/actions/s700-cubieboard7.dts
-> +++ b/arch/arm64/boot/dts/actions/s700-cubieboard7.dts
-> @@ -30,6 +30,59 @@
->  	};
->  };
->  
-> +&i2c0 {
-> +	status = "okay";
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&i2c0_default>;
-> +};
-> +
-> +&i2c1 {
-> +	status = "okay";
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&i2c1_default>;
-> +};
-> +
-> +&i2c2 {
-> +	status = "disabled";
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&i2c2_default>;
-> +};
-> +
-> +&pinctrl {
-> +	i2c0_default: i2c0_default {
-> +		pinmux {
-> +			groups = "i2c0_mfp";
-> +			function = "i2c0";
-> +		};
-> +		pinconf {
-> +			pins = "i2c0_sclk", "i2c0_sdata";
-> +			bias-pull-up;
-> +		};
-> +	};
-> +
-> +	i2c1_default: i2c1_default {
-> +		pinmux {
-> +			groups = "i2c1_dummy";
-> +			function = "i2c1";
-> +		};
-> +		pinconf {
-> +			pins = "i2c1_sclk", "i2c1_sdata";
-> +			bias-pull-up;
-> +		};
-> +	};
-> +
-> +	i2c2_default: i2c2_default {
-> +		pinmux {
-> +			groups = "i2c2_dummy";
-> +			function = "i2c2";
-> +		};
-> +		pinconf {
-> +			pins = "i2c2_sclk", "i2c2_sdata";
-> +			bias-pull-up;
-> +		};
-> +	};
-> +};
-> +
->  &timer {
->  	clocks = <&hosc>;
->  };
-> -- 
-> 2.17.2
+> I'd be happy to help cleanup this driver, and I'd greatly appreciate some
+> direction as to what needs to be done.
 > 
+> Thank you,
+> 
+> Amir Ghorbanian
+
+Sure, I'll give the current state a quick review...
+
+Major items are that it needs devicetree bindings instead of platform
+data and there are a few unusual sysfs interfaces that may need documenting.
+
+Comments inline.
+
+> /*
+>  * AD7190 AD7192 AD7193 AD7195 SPI ADC driver
+>  *
+>  * Copyright 2011-2015 Analog Devices Inc.
+>  *
+>  * Licensed under the GPL-2.
+>  */
+> 
+> #include <linux/interrupt.h>
+> #include <linux/device.h>
+> #include <linux/kernel.h>
+> #include <linux/slab.h>
+> #include <linux/sysfs.h>
+> #include <linux/spi/spi.h>
+> #include <linux/regulator/consumer.h>
+> #include <linux/err.h>
+> #include <linux/sched.h>
+> #include <linux/delay.h>
+> 
+> #include <linux/iio/iio.h>
+> #include <linux/iio/sysfs.h>
+> #include <linux/iio/buffer.h>
+> #include <linux/iio/trigger.h>
+> #include <linux/iio/trigger_consumer.h>
+> #include <linux/iio/triggered_buffer.h>
+> #include <linux/iio/adc/ad_sigma_delta.h>
+> 
+> #include "ad7192.h"
+> 
+> /* Registers */
+> #define AD7192_REG_COMM		0 /* Communications Register (WO, 8-bit) */
+> #define AD7192_REG_STAT		0 /* Status Register	     (RO, 8-bit) */
+> #define AD7192_REG_MODE		1 /* Mode Register	     (RW, 24-bit */
+> #define AD7192_REG_CONF		2 /* Configuration Register  (RW, 24-bit) */
+> #define AD7192_REG_DATA		3 /* Data Register	     (RO, 24/32-bit) */
+> #define AD7192_REG_ID		4 /* ID Register	     (RO, 8-bit) */
+> #define AD7192_REG_GPOCON	5 /* GPOCON Register	     (RO, 8-bit) */
+> #define AD7192_REG_OFFSET	6 /* Offset Register	     (RW, 16-bit */
+> 				  /* (AD7792)/24-bit (AD7192)) */
+> #define AD7192_REG_FULLSALE	7 /* Full-Scale Register */
+> 				  /* (RW, 16-bit (AD7792)/24-bit (AD7192)) */
+> 
+> /* Communications Register Bit Designations (AD7192_REG_COMM) */
+> #define AD7192_COMM_WEN		BIT(7) /* Write Enable */
+> #define AD7192_COMM_WRITE	0 /* Write Operation */
+> #define AD7192_COMM_READ	BIT(6) /* Read Operation */
+> #define AD7192_COMM_ADDR(x)	(((x) & 0x7) << 3) /* Register Address */
+> #define AD7192_COMM_CREAD	BIT(2) /* Continuous Read of Data Register */
+> 
+> /* Status Register Bit Designations (AD7192_REG_STAT) */
+> #define AD7192_STAT_RDY		BIT(7) /* Ready */
+> #define AD7192_STAT_ERR		BIT(6) /* Error (Overrange, Underrange) */
+> #define AD7192_STAT_NOREF	BIT(5) /* Error no external reference */
+> #define AD7192_STAT_PARITY	BIT(4) /* Parity */
+> #define AD7192_STAT_CH3		BIT(2) /* Channel 3 */
+> #define AD7192_STAT_CH2		BIT(1) /* Channel 2 */
+> #define AD7192_STAT_CH1		BIT(0) /* Channel 1 */
+> 
+> /* Mode Register Bit Designations (AD7192_REG_MODE) */
+> #define AD7192_MODE_SEL(x)	(((x) & 0x7) << 21) /* Operation Mode Select */
+> #define AD7192_MODE_SEL_MASK	(0x7 << 21) /* Operation Mode Select Mask */
+> #define AD7192_MODE_DAT_STA	BIT(20) /* Status Register transmission */
+> #define AD7192_MODE_CLKSRC(x)	(((x) & 0x3) << 18) /* Clock Source Select */
+> #define AD7192_MODE_SINC3	BIT(15) /* SINC3 Filter Select */
+> #define AD7192_MODE_ACX		BIT(14) /* AC excitation enable(AD7195 only)*/
+> #define AD7192_MODE_ENPAR	BIT(13) /* Parity Enable */
+> #define AD7192_MODE_CLKDIV	BIT(12) /* Clock divide by 2 (AD7190/2 only)*/
+> #define AD7192_MODE_SCYCLE	BIT(11) /* Single cycle conversion */
+> #define AD7192_MODE_REJ60	BIT(10) /* 50/60Hz notch filter */
+> #define AD7192_MODE_RATE(x)	((x) & 0x3FF) /* Filter Update Rate Select */
+> 
+> /* Mode Register: AD7192_MODE_SEL options */
+> #define AD7192_MODE_CONT		0 /* Continuous Conversion Mode */
+> #define AD7192_MODE_SINGLE		1 /* Single Conversion Mode */
+> #define AD7192_MODE_IDLE		2 /* Idle Mode */
+> #define AD7192_MODE_PWRDN		3 /* Power-Down Mode */
+> #define AD7192_MODE_CAL_INT_ZERO	4 /* Internal Zero-Scale Calibration */
+> #define AD7192_MODE_CAL_INT_FULL	5 /* Internal Full-Scale Calibration */
+> #define AD7192_MODE_CAL_SYS_ZERO	6 /* System Zero-Scale Calibration */
+> #define AD7192_MODE_CAL_SYS_FULL	7 /* System Full-Scale Calibration */
+> 
+> /* Mode Register: AD7192_MODE_CLKSRC options */
+> #define AD7192_CLK_EXT_MCLK1_2		0 /* External 4.92 MHz Clock connected*/
+> 					  /* from MCLK1 to MCLK2 */
+> #define AD7192_CLK_EXT_MCLK2		1 /* External Clock applied to MCLK2 */
+> #define AD7192_CLK_INT			2 /* Internal 4.92 MHz Clock not */
+> 					  /* available at the MCLK2 pin */
+> #define AD7192_CLK_INT_CO		3 /* Internal 4.92 MHz Clock available*/
+> 					  /* at the MCLK2 pin */
+> 
+> /* Configuration Register Bit Designations (AD7192_REG_CONF) */
+> 
+> #define AD7192_CONF_CHOP	BIT(23) /* CHOP enable */
+> #define AD7192_CONF_REFSEL	BIT(20) /* REFIN1/REFIN2 Reference Select */
+> #define AD7192_CONF_CHAN(x)	((x) << 8) /* Channel select */
+> #define AD7192_CONF_CHAN_MASK	(0x7FF << 8) /* Channel select mask */
+> #define AD7192_CONF_BURN	BIT(7) /* Burnout current enable */
+> #define AD7192_CONF_REFDET	BIT(6) /* Reference detect enable */
+> #define AD7192_CONF_BUF		BIT(4) /* Buffered Mode Enable */
+> #define AD7192_CONF_UNIPOLAR	BIT(3) /* Unipolar/Bipolar Enable */
+> #define AD7192_CONF_GAIN(x)	((x) & 0x7) /* Gain Select */
+> 
+> #define AD7192_CH_AIN1P_AIN2M	BIT(0) /* AIN1(+) - AIN2(-) */
+> #define AD7192_CH_AIN3P_AIN4M	BIT(1) /* AIN3(+) - AIN4(-) */
+> #define AD7192_CH_TEMP		BIT(2) /* Temp Sensor */
+> #define AD7192_CH_AIN2P_AIN2M	BIT(3) /* AIN2(+) - AIN2(-) */
+> #define AD7192_CH_AIN1		BIT(4) /* AIN1 - AINCOM */
+> #define AD7192_CH_AIN2		BIT(5) /* AIN2 - AINCOM */
+> #define AD7192_CH_AIN3		BIT(6) /* AIN3 - AINCOM */
+> #define AD7192_CH_AIN4		BIT(7) /* AIN4 - AINCOM */
+> 
+> #define AD7193_CH_AIN1P_AIN2M	0x000  /* AIN1(+) - AIN2(-) */
+> #define AD7193_CH_AIN3P_AIN4M	0x001  /* AIN3(+) - AIN4(-) */
+> #define AD7193_CH_AIN5P_AIN6M	0x002  /* AIN5(+) - AIN6(-) */
+> #define AD7193_CH_AIN7P_AIN8M	0x004  /* AIN7(+) - AIN8(-) */
+> #define AD7193_CH_TEMP		0x100 /* Temp senseor */
+> #define AD7193_CH_AIN2P_AIN2M	0x200 /* AIN2(+) - AIN2(-) */
+> #define AD7193_CH_AIN1		0x401 /* AIN1 - AINCOM */
+> #define AD7193_CH_AIN2		0x402 /* AIN2 - AINCOM */
+> #define AD7193_CH_AIN3		0x404 /* AIN3 - AINCOM */
+> #define AD7193_CH_AIN4		0x408 /* AIN4 - AINCOM */
+> #define AD7193_CH_AIN5		0x410 /* AIN5 - AINCOM */
+> #define AD7193_CH_AIN6		0x420 /* AIN6 - AINCOM */
+> #define AD7193_CH_AIN7		0x440 /* AIN7 - AINCOM */
+> #define AD7193_CH_AIN8		0x480 /* AIN7 - AINCOM */
+> #define AD7193_CH_AINCOM	0x600 /* AINCOM - AINCOM */
+> 
+> /* ID Register Bit Designations (AD7192_REG_ID) */
+> #define ID_AD7190		0x4
+> #define ID_AD7192		0x0
+> #define ID_AD7193		0x2
+> #define ID_AD7195		0x6
+> #define AD7192_ID_MASK		0x0F
+> 
+> /* GPOCON Register Bit Designations (AD7192_REG_GPOCON) */
+> #define AD7192_GPOCON_BPDSW	BIT(6) /* Bridge power-down switch enable */
+> #define AD7192_GPOCON_GP32EN	BIT(5) /* Digital Output P3 and P2 enable */
+> #define AD7192_GPOCON_GP10EN	BIT(4) /* Digital Output P1 and P0 enable */
+> #define AD7192_GPOCON_P3DAT	BIT(3) /* P3 state */
+> #define AD7192_GPOCON_P2DAT	BIT(2) /* P2 state */
+> #define AD7192_GPOCON_P1DAT	BIT(1) /* P1 state */
+> #define AD7192_GPOCON_P0DAT	BIT(0) /* P0 state */
+> 
+> #define AD7192_EXT_FREQ_MHZ_MIN	2457600
+> #define AD7192_EXT_FREQ_MHZ_MAX	5120000
+> #define AD7192_INT_FREQ_MHZ	4915200
+> 
+> /* NOTE:
+>  * The AD7190/2/5 features a dual use data out ready DOUT/RDY output.
+>  * In order to avoid contentions on the SPI bus, it's therefore necessary
+>  * to use spi bus locking.
+>  *
+>  * The DOUT/RDY output must also be wired to an interrupt capable GPIO.
+>  */
+> 
+> struct ad7192_state {
+> 	struct regulator		*avdd;
+> 	struct regulator		*dvdd;
+> 	u16				int_vref_mv;
+> 	u32				mclk;
+> 	u32				f_order;
+> 	u32				mode;
+> 	u32				conf;
+> 	u32				scale_avail[8][2];
+> 	u8				gpocon;
+> 	u8				devid;
+> 	struct mutex			lock;	/* protect sensor state */
+> 
+> 	struct ad_sigma_delta		sd;
+> };
+> 
+> static struct ad7192_state *ad_sigma_delta_to_ad7192(struct ad_sigma_delta *sd)
+> {
+> 	return container_of(sd, struct ad7192_state, sd);
+> }
+> 
+> static int ad7192_set_channel(struct ad_sigma_delta *sd, unsigned int channel)
+> {
+> 	struct ad7192_state *st = ad_sigma_delta_to_ad7192(sd);
+> 
+> 	st->conf &= ~AD7192_CONF_CHAN_MASK;
+> 	st->conf |= AD7192_CONF_CHAN(channel);
+> 
+> 	return ad_sd_write_reg(&st->sd, AD7192_REG_CONF, 3, st->conf);
+> }
+> 
+> static int ad7192_set_mode(struct ad_sigma_delta *sd,
+> 			   enum ad_sigma_delta_mode mode)
+> {
+> 	struct ad7192_state *st = ad_sigma_delta_to_ad7192(sd);
+> 
+> 	st->mode &= ~AD7192_MODE_SEL_MASK;
+> 	st->mode |= AD7192_MODE_SEL(mode);
+> 
+> 	return ad_sd_write_reg(&st->sd, AD7192_REG_MODE, 3, st->mode);
+> }
+> 
+> static const struct ad_sigma_delta_info ad7192_sigma_delta_info = {
+> 	.set_channel = ad7192_set_channel,
+> 	.set_mode = ad7192_set_mode,
+> 	.has_registers = true,
+> 	.addr_shift = 3,
+> 	.read_mask = BIT(6),
+> };
+> 
+> static const struct ad_sd_calib_data ad7192_calib_arr[8] = {
+> 	{AD7192_MODE_CAL_INT_ZERO, AD7192_CH_AIN1},
+> 	{AD7192_MODE_CAL_INT_FULL, AD7192_CH_AIN1},
+> 	{AD7192_MODE_CAL_INT_ZERO, AD7192_CH_AIN2},
+> 	{AD7192_MODE_CAL_INT_FULL, AD7192_CH_AIN2},
+> 	{AD7192_MODE_CAL_INT_ZERO, AD7192_CH_AIN3},
+> 	{AD7192_MODE_CAL_INT_FULL, AD7192_CH_AIN3},
+> 	{AD7192_MODE_CAL_INT_ZERO, AD7192_CH_AIN4},
+> 	{AD7192_MODE_CAL_INT_FULL, AD7192_CH_AIN4}
+> };
+> 
+> static int ad7192_calibrate_all(struct ad7192_state *st)
+> {
+> 		return ad_sd_calibrate_all(&st->sd, ad7192_calib_arr,
+> 				ARRAY_SIZE(ad7192_calib_arr));
+
+Odd indenting...
+
+> }
+> 
+> static inline bool ad7192_valid_external_frequency(u32 freq)
+> {
+> 	return (freq >= AD7192_EXT_FREQ_MHZ_MIN &&
+> 		freq <= AD7192_EXT_FREQ_MHZ_MAX);
+> }
+> 
+> static int ad7192_setup(struct ad7192_state *st,
+> 			const struct ad7192_platform_data *pdata)
+> {
+
+This needs to all be devicetree properties rather than platform data.
+
+> 	struct iio_dev *indio_dev = spi_get_drvdata(st->sd.spi);
+> 	unsigned long long scale_uv;
+> 	int i, ret, id;
+> 
+> 	/* reset the serial interface */
+> 	ret = ad_sd_reset(&st->sd, 48);
+> 	if (ret < 0)
+> 		goto out;
+> 	usleep_range(500, 1000); /* Wait for at least 500us */
+> 
+> 	/* write/read test for device presence */
+> 	ret = ad_sd_read_reg(&st->sd, AD7192_REG_ID, 1, &id);
+> 	if (ret)
+> 		goto out;
+> 
+> 	id &= AD7192_ID_MASK;
+> 
+> 	if (id != st->devid)
+> 		dev_warn(&st->sd.spi->dev, "device ID query failed (0x%X)\n",
+> 			 id);
+> 
+> 	switch (pdata->clock_source_sel) {
+
+So, this needs to use the DT clock binding.
+
+1) Clock is optional. If it's not provided, assumption is use internal.
+2) Manufacturer specific bidning to say without the clock is output or not.
+3) Clock provided, then external.  
+4) The Mclock1_2 vs mclock2 only sounds like whether it is a clock or a crystal.
+   Manufacturer specific binding should cover that.. It think we already have
+   some similar ones...
+
+> 	case AD7192_CLK_INT:
+> 	case AD7192_CLK_INT_CO:
+> 		st->mclk = AD7192_INT_FREQ_MHZ;
+> 		break;
+> 	case AD7192_CLK_EXT_MCLK1_2:
+> 	case AD7192_CLK_EXT_MCLK2:
+> 		if (ad7192_valid_external_frequency(pdata->ext_clk_hz)) {
+> 			st->mclk = pdata->ext_clk_hz;
+> 			break;
+> 		}
+> 		dev_err(&st->sd.spi->dev, "Invalid frequency setting %u\n",
+> 			pdata->ext_clk_hz);
+> 		ret = -EINVAL;
+> 		goto out;
+This code would be more readable if the condition was inverted.
+		if (!ad7192_valid_external_frequency(...))
+			return -EINVAL;
+		st->mclk
+
+Mind you we should replace this platform data stuff with devicetree anyway.
+
+
+> 	default:
+> 		ret = -EINVAL;
+> 		goto out;
+> 	}
+> 
+> 	st->mode = AD7192_MODE_SEL(AD7192_MODE_IDLE) |
+> 		AD7192_MODE_CLKSRC(pdata->clock_source_sel) |
+> 		AD7192_MODE_RATE(480);
+> 
+> 	st->conf = AD7192_CONF_GAIN(0);
+> 
+> 	if (pdata->rej60_en)
+> 		st->mode |= AD7192_MODE_REJ60;
+
+These probably all need to be manufacturer specific devicetree
+bindings.
+
+> 
+> 	if (pdata->sinc3_en)
+> 		st->mode |= AD7192_MODE_SINC3;
+> 
+> 	if (pdata->refin2_en && st->devid != ID_AD7195)
+> 		st->conf |= AD7192_CONF_REFSEL;
+> 
+> 	if (pdata->chop_en) {
+> 		st->conf |= AD7192_CONF_CHOP;
+> 		if (pdata->sinc3_en)
+> 			st->f_order = 3; /* SINC 3rd order */
+> 		else
+> 			st->f_order = 4; /* SINC 4th order */
+> 	} else {
+> 		st->f_order = 1;
+> 	}
+> 
+> 	if (pdata->buf_en)
+> 		st->conf |= AD7192_CONF_BUF;
+> 
+> 	if (pdata->unipolar_en)
+> 		st->conf |= AD7192_CONF_UNIPOLAR;
+> 
+> 	if (pdata->burnout_curr_en && pdata->buf_en && !pdata->chop_en) {
+> 		st->conf |= AD7192_CONF_BURN;
+> 	} else if (pdata->burnout_curr_en) {
+> 		dev_warn(&st->sd.spi->dev,
+> 			 "Can't enable burnout currents: see CHOP or buffer\n");
+> 	}
+> 
+> 	ret = ad_sd_write_reg(&st->sd, AD7192_REG_MODE, 3, st->mode);
+> 	if (ret)
+> 		goto out;
+> 
+> 	ret = ad_sd_write_reg(&st->sd, AD7192_REG_CONF, 3, st->conf);
+> 	if (ret)
+> 		goto out;
+> 
+> 	ret = ad7192_calibrate_all(st);
+> 	if (ret)
+> 		goto out;
+> 
+> 	/* Populate available ADC input ranges */
+> 	for (i = 0; i < ARRAY_SIZE(st->scale_avail); i++) {
+> 		scale_uv = ((u64)st->int_vref_mv * 100000000)
+> 			>> (indio_dev->channels[0].scan_type.realbits -
+> 			((st->conf & AD7192_CONF_UNIPOLAR) ? 0 : 1));
+> 		scale_uv >>= i;
+> 
+> 		st->scale_avail[i][1] = do_div(scale_uv, 100000000) * 10;
+> 		st->scale_avail[i][0] = scale_uv;
+> 	}
+> 
+> 	return 0;
+> out:
+> 	dev_err(&st->sd.spi->dev, "setup failed\n");
+> 	return ret;
+
+Report error and return directly wherever the error occurs.
+Gives more information and easier to read code.
+Some of the paths will result in two error messages currently which
+doesn't add anything.
+
+> }
+> 
+> static ssize_t
+> ad7192_show_scale_available(struct device *dev,
+> 			    struct device_attribute *attr, char *buf)
+> {
+> 	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
+> 	struct ad7192_state *st = iio_priv(indio_dev);
+> 	int i, len = 0;
+> 
+> 	for (i = 0; i < ARRAY_SIZE(st->scale_avail); i++)
+> 		len += sprintf(buf + len, "%d.%09u ", st->scale_avail[i][0],
+> 			       st->scale_avail[i][1]);
+> 
+> 	len += sprintf(buf + len, "\n");
+> 
+> 	return len;
+> }
+> 
+> static IIO_DEVICE_ATTR_NAMED(in_v_m_v_scale_available,
+> 			     in_voltage-voltage_scale_available,
+> 			     0444, ad7192_show_scale_available, NULL, 0);
+> 
+> static IIO_DEVICE_ATTR(in_voltage_scale_available, 0444,
+> 		       ad7192_show_scale_available, NULL, 0);
+> 
+> static ssize_t ad7192_show_ac_excitation(struct device *dev,
+> 					 struct device_attribute *attr,
+> 					 char *buf)
+> {
+> 	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
+> 	struct ad7192_state *st = iio_priv(indio_dev);
+> 
+> 	return sprintf(buf, "%d\n", !!(st->mode & AD7192_MODE_ACX));
+> }
+> 
+> static ssize_t ad7192_show_bridge_switch(struct device *dev,
+> 					 struct device_attribute *attr,
+> 					 char *buf)
+> {
+> 	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
+> 	struct ad7192_state *st = iio_priv(indio_dev);
+> 
+> 	return sprintf(buf, "%d\n", !!(st->gpocon & AD7192_GPOCON_BPDSW));
+> }
+> 
+> static ssize_t ad7192_set(struct device *dev,
+> 			  struct device_attribute *attr,
+> 			  const char *buf,
+> 			  size_t len)
+> {
+> 	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
+> 	struct ad7192_state *st = iio_priv(indio_dev);
+> 	struct iio_dev_attr *this_attr = to_iio_dev_attr(attr);
+> 	int ret;
+> 	bool val;
+> 
+> 	ret = strtobool(buf, &val);
+> 	if (ret < 0)
+> 		return ret;
+> 
+> 	ret = iio_device_claim_direct_mode(indio_dev);
+> 	if (ret)
+> 		return ret;
+> 
+> 	switch ((u32)this_attr->address) {
+
+There is little enough shared code really in the two different options here
+that I'd be inclined (for readability) to just have two different set
+functions.
+
+> 	case AD7192_REG_GPOCON:
+> 		if (val)
+> 			st->gpocon |= AD7192_GPOCON_BPDSW;
+> 		else
+> 			st->gpocon &= ~AD7192_GPOCON_BPDSW;
+
+> 
+> 		ad_sd_write_reg(&st->sd, AD7192_REG_GPOCON, 1, st->gpocon);
+> 		break;
+> 	case AD7192_REG_MODE:
+> 		if (val)
+> 			st->mode |= AD7192_MODE_ACX;
+> 		else
+> 			st->mode &= ~AD7192_MODE_ACX;
+> 
+> 		ad_sd_write_reg(&st->sd, AD7192_REG_MODE, 3, st->mode);
+> 		break;
+> 	default:
+> 		ret = -EINVAL;
+> 	}
+> 
+> 	iio_device_release_direct_mode(indio_dev);
+> 
+> 	return ret ? ret : len;
+> }
+> 
+> static IIO_DEVICE_ATTR(bridge_switch_en, 0644,
+> 		       ad7192_show_bridge_switch, ad7192_set,
+> 		       AD7192_REG_GPOCON);
+> 
+> static IIO_DEVICE_ATTR(ac_excitation_en, 0644,
+> 		       ad7192_show_ac_excitation, ad7192_set,
+> 		       AD7192_REG_MODE);
+> 
+> static struct attribute *ad7192_attributes[] = {
+> 	&iio_dev_attr_in_v_m_v_scale_available.dev_attr.attr,
+> 	&iio_dev_attr_in_voltage_scale_available.dev_attr.attr,
+> 	&iio_dev_attr_bridge_switch_en.dev_attr.attr,
+> 	&iio_dev_attr_ac_excitation_en.dev_attr.attr,
+
+The non standard elements in here are probably the main reason no one has
+yet taken this one out of staging...
+They are
+
+bridge_switch_en and ac_excitation_en
+
+
+We need to pin down and document the ABI fully in
+Documentation/ABI/testing/sysfs-bus-iio. 
+
+
+> 	NULL
+> };
+> 
+> static const struct attribute_group ad7192_attribute_group = {
+> 	.attrs = ad7192_attributes,
+> };
+> 
+> static struct attribute *ad7195_attributes[] = {
+> 	&iio_dev_attr_in_v_m_v_scale_available.dev_attr.attr,
+> 	&iio_dev_attr_in_voltage_scale_available.dev_attr.attr,
+> 	&iio_dev_attr_bridge_switch_en.dev_attr.attr,
+
+
+> 	NULL
+> };
+> 
+> static const struct attribute_group ad7195_attribute_group = {
+> 	.attrs = ad7195_attributes,
+> };
+> 
+> static unsigned int ad7192_get_temp_scale(bool unipolar)
+> {
+> 	return unipolar ? 2815 * 2 : 2815;
+> }
+> 
+> static int ad7192_read_raw(struct iio_dev *indio_dev,
+> 			   struct iio_chan_spec const *chan,
+> 			   int *val,
+> 			   int *val2,
+> 			   long m)
+> {
+> 	struct ad7192_state *st = iio_priv(indio_dev);
+> 	bool unipolar = !!(st->conf & AD7192_CONF_UNIPOLAR);
+> 
+> 	switch (m) {
+> 	case IIO_CHAN_INFO_RAW:
+> 		return ad_sigma_delta_single_conversion(indio_dev, chan, val);
+> 	case IIO_CHAN_INFO_SCALE:
+> 		switch (chan->type) {
+> 		case IIO_VOLTAGE:
+> 			mutex_lock(&st->lock);
+> 			*val = st->scale_avail[AD7192_CONF_GAIN(st->conf)][0];
+> 			*val2 = st->scale_avail[AD7192_CONF_GAIN(st->conf)][1];
+> 			mutex_unlock(&st->lock);
+> 			return IIO_VAL_INT_PLUS_NANO;
+> 		case IIO_TEMP:
+> 			*val = 0;
+> 			*val2 = 1000000000 / ad7192_get_temp_scale(unipolar);
+> 			return IIO_VAL_INT_PLUS_NANO;
+> 		default:
+> 			return -EINVAL;
+> 		}
+> 	case IIO_CHAN_INFO_OFFSET:
+> 		if (!unipolar)
+> 			*val = -(1 << (chan->scan_type.realbits - 1));
+> 		else
+> 			*val = 0;
+> 		/* Kelvin to Celsius */
+> 		if (chan->type == IIO_TEMP)
+> 			*val -= 273 * ad7192_get_temp_scale(unipolar);
+> 		return IIO_VAL_INT;
+> 	case IIO_CHAN_INFO_SAMP_FREQ:
+> 		*val = st->mclk /
+> 			(st->f_order * 1024 * AD7192_MODE_RATE(st->mode));
+> 		return IIO_VAL_INT;
+> 	}
+> 
+> 	return -EINVAL;
+> }
+> 
+> static int ad7192_write_raw(struct iio_dev *indio_dev,
+> 			    struct iio_chan_spec const *chan,
+> 			    int val,
+> 			    int val2,
+> 			    long mask)
+> {
+> 	struct ad7192_state *st = iio_priv(indio_dev);
+> 	int ret, i, div;
+> 	unsigned int tmp;
+> 
+> 	ret = iio_device_claim_direct_mode(indio_dev);
+> 	if (ret)
+> 		return ret;
+> 
+> 	switch (mask) {
+> 	case IIO_CHAN_INFO_SCALE:
+> 		ret = -EINVAL;
+> 		mutex_lock(&st->lock);
+> 		for (i = 0; i < ARRAY_SIZE(st->scale_avail); i++)
+> 			if (val2 == st->scale_avail[i][1]) {
+> 				ret = 0;
+> 				tmp = st->conf;
+> 				st->conf &= ~AD7192_CONF_GAIN(-1);
+> 				st->conf |= AD7192_CONF_GAIN(i);
+> 				if (tmp == st->conf)
+> 					break;
+> 				ad_sd_write_reg(&st->sd, AD7192_REG_CONF,
+> 						3, st->conf);
+> 				ad7192_calibrate_all(st);
+> 				break;
+> 			}
+> 		mutex_unlock(&st->lock);
+> 		break;
+> 	case IIO_CHAN_INFO_SAMP_FREQ:
+> 		if (!val) {
+> 			ret = -EINVAL;
+> 			break;
+> 		}
+> 
+> 		div = st->mclk / (val * st->f_order * 1024);
+> 		if (div < 1 || div > 1023) {
+> 			ret = -EINVAL;
+> 			break;
+> 		}
+> 
+> 		st->mode &= ~AD7192_MODE_RATE(-1);
+> 		st->mode |= AD7192_MODE_RATE(div);
+> 		ad_sd_write_reg(&st->sd, AD7192_REG_MODE, 3, st->mode);
+> 		break;
+> 	default:
+> 		ret = -EINVAL;
+> 	}
+> 
+> 	iio_device_release_direct_mode(indio_dev);
+> 
+> 	return ret;
+> }
+> 
+> static int ad7192_write_raw_get_fmt(struct iio_dev *indio_dev,
+> 				    struct iio_chan_spec const *chan,
+> 				    long mask)
+> {
+> 	switch (mask) {
+> 	case IIO_CHAN_INFO_SCALE:
+> 		return IIO_VAL_INT_PLUS_NANO;
+> 	case IIO_CHAN_INFO_SAMP_FREQ:
+> 		return IIO_VAL_INT;
+> 	default:
+> 		return -EINVAL;
+> 	}
+> }
+> 
+> static const struct iio_info ad7192_info = {
+> 	.read_raw = ad7192_read_raw,
+> 	.write_raw = ad7192_write_raw,
+> 	.write_raw_get_fmt = ad7192_write_raw_get_fmt,
+> 	.attrs = &ad7192_attribute_group,
+> 	.validate_trigger = ad_sd_validate_trigger,
+> };
+> 
+> static const struct iio_info ad7195_info = {
+> 	.read_raw = ad7192_read_raw,
+> 	.write_raw = ad7192_write_raw,
+> 	.write_raw_get_fmt = ad7192_write_raw_get_fmt,
+> 	.attrs = &ad7195_attribute_group,
+> 	.validate_trigger = ad_sd_validate_trigger,
+> };
+> 
+> static const struct iio_chan_spec ad7192_channels[] = {
+> 	AD_SD_DIFF_CHANNEL(0, 1, 2, AD7192_CH_AIN1P_AIN2M, 24, 32, 0),
+> 	AD_SD_DIFF_CHANNEL(1, 3, 4, AD7192_CH_AIN3P_AIN4M, 24, 32, 0),
+> 	AD_SD_TEMP_CHANNEL(2, AD7192_CH_TEMP, 24, 32, 0),
+> 	AD_SD_SHORTED_CHANNEL(3, 2, AD7192_CH_AIN2P_AIN2M, 24, 32, 0),
+> 	AD_SD_CHANNEL(4, 1, AD7192_CH_AIN1, 24, 32, 0),
+> 	AD_SD_CHANNEL(5, 2, AD7192_CH_AIN2, 24, 32, 0),
+> 	AD_SD_CHANNEL(6, 3, AD7192_CH_AIN3, 24, 32, 0),
+> 	AD_SD_CHANNEL(7, 4, AD7192_CH_AIN4, 24, 32, 0),
+> 	IIO_CHAN_SOFT_TIMESTAMP(8),
+> };
+> 
+> static const struct iio_chan_spec ad7193_channels[] = {
+> 	AD_SD_DIFF_CHANNEL(0, 1, 2, AD7193_CH_AIN1P_AIN2M, 24, 32, 0),
+> 	AD_SD_DIFF_CHANNEL(1, 3, 4, AD7193_CH_AIN3P_AIN4M, 24, 32, 0),
+> 	AD_SD_DIFF_CHANNEL(2, 5, 6, AD7193_CH_AIN5P_AIN6M, 24, 32, 0),
+> 	AD_SD_DIFF_CHANNEL(3, 7, 8, AD7193_CH_AIN7P_AIN8M, 24, 32, 0),
+> 	AD_SD_TEMP_CHANNEL(4, AD7193_CH_TEMP, 24, 32, 0),
+> 	AD_SD_SHORTED_CHANNEL(5, 2, AD7193_CH_AIN2P_AIN2M, 24, 32, 0),
+> 	AD_SD_CHANNEL(6, 1, AD7193_CH_AIN1, 24, 32, 0),
+> 	AD_SD_CHANNEL(7, 2, AD7193_CH_AIN2, 24, 32, 0),
+> 	AD_SD_CHANNEL(8, 3, AD7193_CH_AIN3, 24, 32, 0),
+> 	AD_SD_CHANNEL(9, 4, AD7193_CH_AIN4, 24, 32, 0),
+> 	AD_SD_CHANNEL(10, 5, AD7193_CH_AIN5, 24, 32, 0),
+> 	AD_SD_CHANNEL(11, 6, AD7193_CH_AIN6, 24, 32, 0),
+> 	AD_SD_CHANNEL(12, 7, AD7193_CH_AIN7, 24, 32, 0),
+> 	AD_SD_CHANNEL(13, 8, AD7193_CH_AIN8, 24, 32, 0),
+> 	IIO_CHAN_SOFT_TIMESTAMP(14),
+> };
+> 
+> static int ad7192_probe(struct spi_device *spi)
+> {
+> 	const struct ad7192_platform_data *pdata = dev_get_platdata(&spi->dev);
+> 	struct ad7192_state *st;
+> 	struct iio_dev *indio_dev;
+> 	int ret, voltage_uv = 0;
+> 
+> 	if (!pdata) {
+
+Probably best to just drop the platform data as there are no in kernel users of
+it and anyone who does want to use it will need to patch the code to get to
+the definition anyway.  They can just patch this back in..
+
+> 		dev_err(&spi->dev, "no platform data?\n");
+> 		return -ENODEV;
+> 	}
+> 
+> 	if (!spi->irq) {
+> 		dev_err(&spi->dev, "no IRQ?\n");
+> 		return -ENODEV;
+> 	}
+> 
+> 	indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*st));
+> 	if (!indio_dev)
+> 		return -ENOMEM;
+> 
+> 	st = iio_priv(indio_dev);
+> 
+> 	mutex_init(&st->lock);
+> 
+> 	st->avdd = devm_regulator_get(&spi->dev, "avdd");
+> 	if (IS_ERR(st->avdd))
+> 		return PTR_ERR(st->avdd);
+> 
+> 	ret = regulator_enable(st->avdd);
+> 	if (ret) {
+> 		dev_err(&spi->dev, "Failed to enable specified AVdd supply\n");
+> 		return ret;
+> 	}
+> 
+> 	st->dvdd = devm_regulator_get(&spi->dev, "dvdd");
+> 	if (IS_ERR(st->dvdd)) {
+> 		ret = PTR_ERR(st->dvdd);
+> 		goto error_disable_avdd;
+> 	}
+> 
+> 	ret = regulator_enable(st->dvdd);
+> 	if (ret) {
+> 		dev_err(&spi->dev, "Failed to enable specified DVdd supply\n");
+> 		goto error_disable_avdd;
+> 	}
+> 
+> 	voltage_uv = regulator_get_voltage(st->avdd);
+> 
+> 	if (pdata->vref_mv)
+> 		st->int_vref_mv = pdata->vref_mv;
+> 	else if (voltage_uv)
+> 		st->int_vref_mv = voltage_uv / 1000;
+> 	else
+> 		dev_warn(&spi->dev, "reference voltage undefined\n");
+
+For this device I would treat that as a problem with the device tree
+and error out if this happens.  It is effectively a broken devicetreee.
+We are basically checking for zero voltage here which doesn't make
+any sense either...
+
+
+> 
+> 	spi_set_drvdata(spi, indio_dev);
+> 	st->devid = spi_get_device_id(spi)->driver_data;
+> 	indio_dev->dev.parent = &spi->dev;
+> 	indio_dev->name = spi_get_device_id(spi)->name;
+> 	indio_dev->modes = INDIO_DIRECT_MODE;
+> 
+> 	switch (st->devid) {
+> 	case ID_AD7193:
+> 		indio_dev->channels = ad7193_channels;
+> 		indio_dev->num_channels = ARRAY_SIZE(ad7193_channels);
+> 		break;
+> 	default:
+> 		indio_dev->channels = ad7192_channels;
+> 		indio_dev->num_channels = ARRAY_SIZE(ad7192_channels);
+> 		break;
+> 	}
+> 
+> 	if (st->devid == ID_AD7195)
+> 		indio_dev->info = &ad7195_info;
+> 	else
+> 		indio_dev->info = &ad7192_info;
+> 
+> 	ad_sd_init(&st->sd, indio_dev, spi, &ad7192_sigma_delta_info);
+> 
+> 	ret = ad_sd_setup_buffer_and_trigger(indio_dev);
+> 	if (ret)
+> 		goto error_disable_dvdd;
+> 
+> 	ret = ad7192_setup(st, pdata);
+> 	if (ret)
+> 		goto error_remove_trigger;
+> 
+> 	ret = iio_device_register(indio_dev);
+> 	if (ret < 0)
+> 		goto error_remove_trigger;
+> 	return 0;
+> 
+> error_remove_trigger:
+> 	ad_sd_cleanup_buffer_and_trigger(indio_dev);
+> error_disable_dvdd:
+> 	regulator_disable(st->dvdd);
+> error_disable_avdd:
+> 	regulator_disable(st->avdd);
+> 
+> 	return ret;
+> }
+> 
+> static int ad7192_remove(struct spi_device *spi)
+> {
+> 	struct iio_dev *indio_dev = spi_get_drvdata(spi);
+> 	struct ad7192_state *st = iio_priv(indio_dev);
+> 
+> 	iio_device_unregister(indio_dev);
+> 	ad_sd_cleanup_buffer_and_trigger(indio_dev);
+> 
+> 	regulator_disable(st->dvdd);
+> 	regulator_disable(st->avdd);
+> 
+> 	return 0;
+> }
+> 
+> static const struct spi_device_id ad7192_id[] = {
+> 	{"ad7190", ID_AD7190},
+> 	{"ad7192", ID_AD7192},
+> 	{"ad7193", ID_AD7193},
+> 	{"ad7195", ID_AD7195},
+> 	{}
+> };
+> MODULE_DEVICE_TABLE(spi, ad7192_id);
+> 
+> static struct spi_driver ad7192_driver = {
+> 	.driver = {
+> 		.name	= "ad7192",
+> 	},
+> 	.probe		= ad7192_probe,
+> 	.remove		= ad7192_remove,
+> 	.id_table	= ad7192_id,
+> };
+> module_spi_driver(ad7192_driver);
+> 
+> MODULE_AUTHOR("Michael Hennerich <michael.hennerich@analog.com>");
+> MODULE_DESCRIPTION("Analog Devices AD7190, AD7192, AD7193, AD7195 ADC");
+> MODULE_LICENSE("GPL v2");
