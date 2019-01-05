@@ -2,50 +2,50 @@ Return-Path: <SRS0=xVxK=PN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDA00C43387
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 08:01:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8DA8C43387
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 08:01:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D2E42063F
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 08:01:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 85B6F21871
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 08:01:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WFZu1cWm"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CSq9IoeT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726252AbfAEIBR (ORCPT
+        id S1726279AbfAEIBU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 5 Jan 2019 03:01:17 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:48826 "EHLO
+        Sat, 5 Jan 2019 03:01:20 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:48834 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726102AbfAEIBR (ORCPT
+        with ESMTP id S1726102AbfAEIBT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 Jan 2019 03:01:17 -0500
+        Sat, 5 Jan 2019 03:01:19 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
         :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=EBqkxOFYhNdX5XYn7b07CtnfZUk/3dBB1w4bbLbpAc0=; b=WFZu1cWm+kvP+ksWgdufmu2sIa
-        R7oqWA5vt87pear/pSKSNabwH13qq67s7Fe171oGSsjLRuDLUvyei0cyADlgvxgYQS9T0AZaAEjOD
-        qYQXQlMKcd7Qet4HiwkO6Fw+G85+g0bpmGIk/dP07haN9kA984UFPIy7ErOofzDo+GuAUodOCwnOv
-        I8/2Z7zzypKzY4MIxTmvRhhKgAI6zmaWE4qW0j+k7cU++fke6gLcLtoV5PQ/mhwrmqVl2KP8HFl2V
-        I1x8h1+aXW+jIwAFiHZ5g3RyipBAGcAN99efK8s+ZpHpW+OcTVcdfZAu6Od6zqOUavi2I33q/Bst9
-        PdjPkplQ==;
+        bh=pdY7+J1zFjVI4F5NLSq2Xse777ie57ZXMaqkc6dWXhY=; b=CSq9IoeTI/9V3DjENlmz/TXZri
+        GV0BSCbACPV2zuwuHTmvCvR9u2XOw+mOL9UpksvbjpSbxllj/WNa9pFWZrshmi3twf73jDSrDKSkr
+        R6X4emLmuDnqQLlIq6Wz94jhVJC76t+kqWXfBPlAHvkNLHTKv/QaHB8QsovBAMwT1Qp+qPM5YEyCq
+        2SGmCmNs9nAcf8fQ8et6OB1+RNTKbdatMG5toa1Suxro1yVCLW/A+kN4j0pXvBF9mxOX4YVHXVX1e
+        REkPxCbjpu111cjIH7UOqKF/uj6yh3LWcGr7DyoWQuoxxltoEEMi3mLdx4tqYzol84GoiqAyHTsQe
+        tRs/KvXQ==;
 Received: from 089144213048.atnat0022.highway.a1.net ([89.144.213.48] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gfgtP-0000J4-Ax; Sat, 05 Jan 2019 08:01:15 +0000
+        id 1gfgtS-0000JI-2t; Sat, 05 Jan 2019 08:01:18 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     thellstrom@vmware.com
 Cc:     linux-graphics-maintainer@vmware.com,
         dri-devel@lists.freedesktop.org, iommu@lists.linux-foundation.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 1/4] drm/vmwgfx: remove CONFIG_X86 ifdefs
-Date:   Sat,  5 Jan 2019 09:01:05 +0100
-Message-Id: <20190105080108.14837-2-hch@lst.de>
+Subject: [PATCH 2/4] drm/vmwgfx: remove CONFIG_INTEL_IOMMU ifdefs
+Date:   Sat,  5 Jan 2019 09:01:06 +0100
+Message-Id: <20190105080108.14837-3-hch@lst.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190105080108.14837-1-hch@lst.de>
 References: <20190105080108.14837-1-hch@lst.de>
@@ -57,37 +57,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The driver depends on CONFIG_X86 so these are dead code.
+intel_iommu_enabled is defined as always false for !CONFIG_INTEL_IOMMU,
+so remove the ifdefs around it.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- drivers/gpu/drm/vmwgfx/vmwgfx_drv.c | 6 ------
- 1 file changed, 6 deletions(-)
+ drivers/gpu/drm/vmwgfx/vmwgfx_drv.c | 18 ------------------
+ 1 file changed, 18 deletions(-)
 
 diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
-index 25afb1d594e3..69e325b2d954 100644
+index 69e325b2d954..236052ad233c 100644
 --- a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
 +++ b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
-@@ -565,7 +565,6 @@ static int vmw_dma_select_mode(struct vmw_private *dev_priv)
- 		[vmw_dma_alloc_coherent] = "Using coherent TTM pages.",
- 		[vmw_dma_map_populate] = "Keeping DMA mappings.",
+@@ -567,12 +567,10 @@ static int vmw_dma_select_mode(struct vmw_private *dev_priv)
  		[vmw_dma_map_bind] = "Giving up DMA mappings early."};
--#ifdef CONFIG_X86
  	const struct dma_map_ops *dma_ops = get_dma_ops(dev_priv->dev->dev);
  
- #ifdef CONFIG_INTEL_IOMMU
-@@ -607,11 +606,6 @@ static int vmw_dma_select_mode(struct vmw_private *dev_priv)
- 	if (dev_priv->map_mode == vmw_dma_alloc_coherent)
- 		return -EINVAL;
+-#ifdef CONFIG_INTEL_IOMMU
+ 	if (intel_iommu_enabled) {
+ 		dev_priv->map_mode = vmw_dma_map_populate;
+ 		goto out_fixup;
+ 	}
+-#endif
+ 
+ 	if (!(vmw_force_iommu || vmw_force_coherent)) {
+ 		dev_priv->map_mode = vmw_dma_phys;
+@@ -589,9 +587,7 @@ static int vmw_dma_select_mode(struct vmw_private *dev_priv)
+ 		dev_priv->map_mode = vmw_dma_map_populate;
  #endif
--
--#else /* CONFIG_X86 */
--	dev_priv->map_mode = vmw_dma_map_populate;
--#endif /* CONFIG_X86 */
--
+ 
+-#ifdef CONFIG_INTEL_IOMMU
+ out_fixup:
+-#endif
+ 	if (dev_priv->map_mode == vmw_dma_map_populate &&
+ 	    vmw_restrict_iommu)
+ 		dev_priv->map_mode = vmw_dma_map_bind;
+@@ -599,13 +595,6 @@ static int vmw_dma_select_mode(struct vmw_private *dev_priv)
+ 	if (vmw_force_coherent)
+ 		dev_priv->map_mode = vmw_dma_alloc_coherent;
+ 
+-#if !defined(CONFIG_SWIOTLB) && !defined(CONFIG_INTEL_IOMMU)
+-	/*
+-	 * No coherent page pool
+-	 */
+-	if (dev_priv->map_mode == vmw_dma_alloc_coherent)
+-		return -EINVAL;
+-#endif
  	DRM_INFO("DMA map mode: %s\n", names[dev_priv->map_mode]);
  
  	return 0;
+@@ -619,7 +608,6 @@ static int vmw_dma_select_mode(struct vmw_private *dev_priv)
+  * With 32-bit we can only handle 32 bit PFNs. Optionally set that
+  * restriction also for 64-bit systems.
+  */
+-#ifdef CONFIG_INTEL_IOMMU
+ static int vmw_dma_masks(struct vmw_private *dev_priv)
+ {
+ 	struct drm_device *dev = dev_priv->dev;
+@@ -631,12 +619,6 @@ static int vmw_dma_masks(struct vmw_private *dev_priv)
+ 	}
+ 	return 0;
+ }
+-#else
+-static int vmw_dma_masks(struct vmw_private *dev_priv)
+-{
+-	return 0;
+-}
+-#endif
+ 
+ static int vmw_driver_load(struct drm_device *dev, unsigned long chipset)
+ {
 -- 
 2.20.1
 
