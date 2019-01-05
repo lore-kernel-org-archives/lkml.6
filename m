@@ -2,327 +2,125 @@ Return-Path: <SRS0=xVxK=PN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D3F7C43387
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 07:29:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDD3DC43387
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 07:36:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CAC3B208E3
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 07:29:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 995C5208E3
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 07:36:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="VHuOaFBs"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E9xpN1lY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726324AbfAEH3l (ORCPT
+        id S1726241AbfAEHgk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 5 Jan 2019 02:29:41 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:35951 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726289AbfAEH3h (ORCPT
+        Sat, 5 Jan 2019 02:36:40 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:43550 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726101AbfAEHgk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 Jan 2019 02:29:37 -0500
-Received: by mail-pl1-f196.google.com with SMTP id g9so18435918plo.3
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Jan 2019 23:29:37 -0800 (PST)
+        Sat, 5 Jan 2019 02:36:40 -0500
+Received: by mail-wr1-f65.google.com with SMTP id r10so38390839wrs.10;
+        Fri, 04 Jan 2019 23:36:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=jxq8DubluUc6WyBU2XbyE9/uiwXvqfVs8mJ2HYI7f2c=;
-        b=VHuOaFBs6m56MPsVgJoQH34fibOL3Zi3mGtkpVTbS17Pa8mkMUWi5egWWl+72Mu+xp
-         pWR3cg3Z2rW4LrmMxHwlf4onnNEvIFpnQXoMIj9M2muqHGEaEUf+hPR10vcXxwXf7MIy
-         WIaCk3bd2zbje3P1ytAw1MHxgtUsqkyaBIrD8=
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=3zIzCd9FLMIPQDxVpJpe04QlX8YVQiLj5UEU4B+o1K8=;
+        b=E9xpN1lYnKPO5j6HZ4eyt0Fn2bqXfe4/rJ5fpqvp4NFh+6rEkZq3s3+Uf08HOztiKs
+         sH8jPMr5+nFRweftd+iMIusFfIjnpuyE+lXAkyT7+nzCBirmX5IA5XapTN9sZS7oSIWX
+         +seuolWjEaoCYwwltxrprM/ydVEVdneCLuq6dW2DlnwYYczCZjtimHxy5B2o+mSxCyh5
+         rSPV4tYhh59t3SI1eM1UWZDJdvA4Ivze4xy9JZ9TIRLb0+JEVVVNsZEtrQFW0Z3yKGix
+         rRjd0epkS4TdsoDuGECqwPZr9uUjmUTE24SVeSnjRUAB2yprGni+LgAIJvnm+HUfG0Im
+         rCcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=jxq8DubluUc6WyBU2XbyE9/uiwXvqfVs8mJ2HYI7f2c=;
-        b=mCYUfLah462ilb6y9aC/lJA59nF9qq/PSfSuNy7OfJf0wKi4vkx6wT7gRf8E3bhr5R
-         HUNuezf/KcGeQdK16k5+OFAkriqwWQlqsiFgGxG1ySFmuI4ATe9awkTD7pB4Bwsy0idI
-         Z1wGl0NS/jmvgF2BuixnAXQlAnfw0ctD1WdC1x1imzC0+blADrnvpgEXJEAx/Ne06sr3
-         gYmbYyPBP7gd96mi7GZNI/XqdjzsSMO6d0uPs1O+M4hhdV4V619JpbsHXJzv1jzqT34F
-         IkDPpzdijiH4keh253bJ4AA+wEg/4XrON2oN3bss65MTEcKFchJMAxIG5cLfVbo/KwMl
-         o1ZA==
-X-Gm-Message-State: AJcUukcezspwkGf3zDdghuzKFUf1v75rOVvGCF3+zc0WEd0dM7YjU5Ts
-        3phE1lI2rAkZcFmXLMcX0nxu
-X-Google-Smtp-Source: ALg8bN730/Kx7GMd6qrv8SI3exT0EqpbGMIc8Byq2ZtoR7ezU9tNjR+f9shWEDBiQumRMNDA80+Abw==
-X-Received: by 2002:a17:902:2868:: with SMTP id e95mr53921755plb.317.1546673377136;
-        Fri, 04 Jan 2019 23:29:37 -0800 (PST)
-Received: from localhost.localdomain ([2405:204:72cb:a88d:406c:3ac8:e78f:4779])
-        by smtp.gmail.com with ESMTPSA id k24sm90677367pfj.13.2019.01.04.23.29.30
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=3zIzCd9FLMIPQDxVpJpe04QlX8YVQiLj5UEU4B+o1K8=;
+        b=jWYYfbS2E0i4zkgTIwIdcREDM/IHgQBnqfN7CSYCCo98WExOuLM5qgSNKcZ9XFDVPk
+         o4vyjFRHfmaf0JHrVFZV3VC0fA5dfy37/WVAk93/EEtt1ho7PftqxwUuHKKuX7gSGEnh
+         gWygNtc+i0dRKSrgXXSJHX0My1BUIQ2hEctr6kR5ujsEtIn3pQmS7h+HRWsVjyzqHpKG
+         ylGRqWVnuGK2fVDDcqQ4nJOOaMA5gVCBCTHyVuz5Wxdi3a6svIOL61ODNvRH3ZEpt83t
+         oKYlV2juzAp6wpPcf1a7OZxZ6qqAiYyQkKeDpqphSZIkteGExC4ZW76X6DyBgqS28QLY
+         misA==
+X-Gm-Message-State: AJcUukdmY+hs+3BomzVOiCrH/LtgluQEEnE3yOXZdaEGu2paSB+gjCJV
+        4W2ozykcz7LF5AKDvtMvswZsVHoTmfisWgnc
+X-Google-Smtp-Source: ALg8bN5ghhSisNrdrmlvHCvf7653eV43E3e4kvsLv3x4yOKvb5W7w83NdPP4UQMOinzh/OOqztnmGg==
+X-Received: by 2002:adf:cc91:: with SMTP id p17mr47511835wrj.118.1546673798087;
+        Fri, 04 Jan 2019 23:36:38 -0800 (PST)
+Received: from [10.8.8.190] ([89.238.186.237])
+        by smtp.gmail.com with ESMTPSA id o5sm3784958wmg.25.2019.01.04.23.36.33
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 04 Jan 2019 23:29:36 -0800 (PST)
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     vinholikatti@gmail.com, jejb@linux.vnet.ibm.com,
-        martin.petersen@oracle.com, liwei213@huawei.com, robh+dt@kernel.org
-Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        john.stultz@linaro.org, amit.kucheria@linaro.org,
-        guodong.xu@linaro.org,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v2 3/3] scsi: ufs: Add HI3670 SoC UFS driver support
-Date:   Sat,  5 Jan 2019 12:58:59 +0530
-Message-Id: <20190105072859.9134-4-manivannan.sadhasivam@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190105072859.9134-1-manivannan.sadhasivam@linaro.org>
-References: <20190105072859.9134-1-manivannan.sadhasivam@linaro.org>
+        Fri, 04 Jan 2019 23:36:37 -0800 (PST)
+Subject: Re: [PATCH RFC lora-next 1/4] net: lora: sx125x sx1301: correct style
+ warnings
+To:     =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
+Cc:     starnight@g.ncu.edu.tw, jiri@resnulli.us,
+        linux-lpwan@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
+        Ben Whitten <ben.whitten@lairdtech.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org
+References: <20181219155616.9547-1-ben.whitten@lairdtech.com>
+ <20181219155616.9547-2-ben.whitten@lairdtech.com>
+ <62a3e030-98eb-3e63-d193-092b319bd4b1@suse.de>
+From:   Ben Whitten <ben.whitten@gmail.com>
+Message-ID: <60a4e44a-fc63-4434-0986-1d63111623d1@gmail.com>
+Date:   Sat, 5 Jan 2019 16:36:28 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <62a3e030-98eb-3e63-d193-092b319bd4b1@suse.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add HI3670 SoC UFS driver support by extending the common ufs-hisi
-driver. One major difference between HI3660 ad HI3670 SoCs interms of
-UFS is the PHY. HI3670 has a 10nm variant PHY and hence this parameter is
-used to distinguish the configuration.
+Hi Andreas,
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- drivers/scsi/ufs/ufs-hisi.c | 127 +++++++++++++++++++++++++++++-------
- drivers/scsi/ufs/ufs-hisi.h |   4 ++
- 2 files changed, 109 insertions(+), 22 deletions(-)
+On 29/12/2018 09:05, Andreas Färber wrote:
+> Hi Ben,
+> 
+> Am 19.12.18 um 16:56 schrieb Ben Whitten:
+>> Checkpatch highlights some style issues which need to be addressed.
+>>
+>> Signed-off-by: Ben Whitten <ben.whitten@lairdtech.com>
+>> ---
+>>   drivers/net/lora/sx125x.c | 20 +++++++++------
+>>   drivers/net/lora/sx1301.c | 52 ++++++++++++++++++++++-----------------
+>>   drivers/net/lora/sx1301.h |  7 +++---
+>>   3 files changed, 45 insertions(+), 34 deletions(-)
+> 
+> Thanks for splitting this off from the functional changes. This will
+> need some more explanations and discussion. In particular the comment
+> changes look wrong to me. Also please don't butcher code just because
+> checkpatch.pl may warn about line length at this early stage.
 
-diff --git a/drivers/scsi/ufs/ufs-hisi.c b/drivers/scsi/ufs/ufs-hisi.c
-index 452e19f8fb47..f2d3df357a97 100644
---- a/drivers/scsi/ufs/ufs-hisi.c
-+++ b/drivers/scsi/ufs/ufs-hisi.c
-@@ -66,7 +66,7 @@ static int ufs_hisi_check_hibern8(struct ufs_hba *hba)
- 	return err;
- }
- 
--static void ufs_hi3660_clk_init(struct ufs_hba *hba)
-+static void ufs_hisi_clk_init(struct ufs_hba *hba)
- {
- 	struct ufs_hisi_host *host = ufshcd_get_variant(hba);
- 
-@@ -80,7 +80,7 @@ static void ufs_hi3660_clk_init(struct ufs_hba *hba)
- 	ufs_sys_ctrl_set_bits(host, BIT_SYSCTRL_REF_CLOCK_EN, PHY_CLK_CTRL);
- }
- 
--static void ufs_hi3660_soc_init(struct ufs_hba *hba)
-+static void ufs_hisi_soc_init(struct ufs_hba *hba)
- {
- 	struct ufs_hisi_host *host = ufshcd_get_variant(hba);
- 	u32 reg;
-@@ -139,6 +139,7 @@ static void ufs_hi3660_soc_init(struct ufs_hba *hba)
- 
- static int ufs_hisi_link_startup_pre_change(struct ufs_hba *hba)
- {
-+	struct ufs_hisi_host *host = ufshcd_get_variant(hba);
- 	int err;
- 	uint32_t value;
- 	uint32_t reg;
-@@ -153,6 +154,14 @@ static int ufs_hisi_link_startup_pre_change(struct ufs_hba *hba)
- 	ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0x8121, 0x0), 0x2D);
- 	/* MPHY CBOVRCTRL3 */
- 	ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0x8122, 0x0), 0x1);
-+
-+	if (host->caps & UFS_HISI_CAP_PHY10nm) {
-+		/* MPHY CBOVRCTRL4 */
-+		ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0x8127, 0x0), 0x98);
-+		/* MPHY CBOVRCTRL5 */
-+		ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0x8128, 0x0), 0x1);
-+	}
-+
- 	/* Unipro VS_MphyCfgUpdt */
- 	ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0xD085, 0x0), 0x1);
- 	/* MPHY RXOVRCTRL4 rx0 */
-@@ -173,10 +182,21 @@ static int ufs_hisi_link_startup_pre_change(struct ufs_hba *hba)
- 	ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0x8113, 0x0), 0x1);
- 	ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0xD085, 0x0), 0x1);
- 
--	/* Tactive RX */
--	ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0x008F, 0x4), 0x7);
--	/* Tactive RX */
--	ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0x008F, 0x5), 0x7);
-+	if (host->caps & UFS_HISI_CAP_PHY10nm) {
-+		/* RX_Hibern8Time_Capability*/
-+		ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0x0092, 0x4), 0xA);
-+		/* RX_Hibern8Time_Capability*/
-+		ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0x0092, 0x5), 0xA);
-+		/* RX_Min_ActivateTime */
-+		ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0x008f, 0x4), 0xA);
-+		/* RX_Min_ActivateTime*/
-+		ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0x008f, 0x5), 0xA);
-+	} else {
-+		/* Tactive RX */
-+		ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0x008F, 0x4), 0x7);
-+		/* Tactive RX */
-+		ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0x008F, 0x5), 0x7);
-+	}
- 
- 	/* Gear3 Synclength */
- 	ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0x0095, 0x4), 0x4F);
-@@ -208,7 +228,8 @@ static int ufs_hisi_link_startup_pre_change(struct ufs_hba *hba)
- 	if (err)
- 		dev_err(hba->dev, "ufs_hisi_check_hibern8 error\n");
- 
--	ufshcd_writel(hba, UFS_HCLKDIV_NORMAL_VALUE, UFS_REG_HCLKDIV);
-+	if (!(host->caps & UFS_HISI_CAP_PHY10nm))
-+		ufshcd_writel(hba, UFS_HCLKDIV_NORMAL_VALUE, UFS_REG_HCLKDIV);
- 
- 	/* disable auto H8 */
- 	reg = ufshcd_readl(hba, REG_AUTO_HIBERNATE_IDLE_TIMER);
-@@ -253,7 +274,7 @@ static int ufs_hisi_link_startup_post_change(struct ufs_hba *hba)
- 	return 0;
- }
- 
--static int ufs_hi3660_link_startup_notify(struct ufs_hba *hba,
-+static int ufs_hisi_link_startup_notify(struct ufs_hba *hba,
- 					  enum ufs_notify_change_status status)
- {
- 	int err = 0;
-@@ -391,6 +412,28 @@ static void ufs_hisi_set_dev_cap(struct ufs_hisi_dev_params *hisi_param)
- 
- static void ufs_hisi_pwr_change_pre_change(struct ufs_hba *hba)
- {
-+	struct ufs_hisi_host *host = ufshcd_get_variant(hba);
-+
-+	if (host->caps & UFS_HISI_CAP_PHY10nm) {
-+		/*
-+		 * Boston platform need to set SaveConfigTime to 0x13,
-+		 * and change sync length to maximum value
-+		 */
-+		/* VS_DebugSaveConfigTime */
-+		ufshcd_dme_set(hba, UIC_ARG_MIB((u32)0xD0A0), 0x13);
-+		/* g1 sync length */
-+		ufshcd_dme_set(hba, UIC_ARG_MIB((u32)0x1552), 0x4f);
-+		/* g2 sync length */
-+		ufshcd_dme_set(hba, UIC_ARG_MIB((u32)0x1554), 0x4f);
-+		/* g3 sync length */
-+		ufshcd_dme_set(hba, UIC_ARG_MIB((u32)0x1556), 0x4f);
-+		/* PA_Hibern8Time */
-+		ufshcd_dme_set(hba, UIC_ARG_MIB((u32)0x15a7), 0xA);
-+		/* PA_Tactivate */
-+		ufshcd_dme_set(hba, UIC_ARG_MIB((u32)0x15a8), 0xA);
-+		ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0xd085, 0x0), 0x01);
-+	}
-+
- 	if (hba->dev_quirks & UFS_DEVICE_QUIRK_HOST_VS_DEBUGSAVECONFIGTIME) {
- 		pr_info("ufs flash device must set VS_DebugSaveConfigTime 0x10\n");
- 		/* VS_DebugSaveConfigTime */
-@@ -429,7 +472,7 @@ static void ufs_hisi_pwr_change_pre_change(struct ufs_hba *hba)
- 	ufshcd_dme_set(hba, UIC_ARG_MIB(0xd046), 32767);
- }
- 
--static int ufs_hi3660_pwr_change_notify(struct ufs_hba *hba,
-+static int ufs_hisi_pwr_change_notify(struct ufs_hba *hba,
- 				       enum ufs_notify_change_status status,
- 				       struct ufs_pa_layer_attr *dev_max_params,
- 				       struct ufs_pa_layer_attr *dev_req_params)
-@@ -567,25 +610,72 @@ static int ufs_hi3660_init(struct ufs_hba *hba)
- 		return ret;
- 	}
- 
--	ufs_hi3660_clk_init(hba);
-+	ufs_hisi_clk_init(hba);
-+
-+	ufs_hisi_soc_init(hba);
-+
-+	return 0;
-+}
-+
-+static int ufs_hi3670_init(struct ufs_hba *hba)
-+{
-+	int ret = 0;
-+	struct device *dev = hba->dev;
-+	struct ufs_hisi_host *host;
-+
-+	ret = ufs_hisi_init_common(hba);
-+	if (ret) {
-+		dev_err(dev, "%s: ufs common init fail\n", __func__);
-+		return ret;
-+	}
-+
-+	ufs_hisi_clk_init(hba);
-+
-+	ufs_hisi_soc_init(hba);
- 
--	ufs_hi3660_soc_init(hba);
-+	/* Add cap for 10nm PHY variant on HI3670 SoC */
-+	host = ufshcd_get_variant(hba);
-+	host->caps |= UFS_HISI_CAP_PHY10nm;
- 
- 	return 0;
- }
- 
--static struct ufs_hba_variant_ops ufs_hba_hisi_vops = {
-+static struct ufs_hba_variant_ops ufs_hba_hi3660_vops = {
- 	.name = "hi3660",
- 	.init = ufs_hi3660_init,
--	.link_startup_notify = ufs_hi3660_link_startup_notify,
--	.pwr_change_notify = ufs_hi3660_pwr_change_notify,
-+	.link_startup_notify = ufs_hisi_link_startup_notify,
-+	.pwr_change_notify = ufs_hisi_pwr_change_notify,
- 	.suspend = ufs_hisi_suspend,
- 	.resume = ufs_hisi_resume,
- };
- 
-+static struct ufs_hba_variant_ops ufs_hba_hi3670_vops = {
-+	.name = "hi3670",
-+	.init = ufs_hi3670_init,
-+	.link_startup_notify = ufs_hisi_link_startup_notify,
-+	.pwr_change_notify = ufs_hisi_pwr_change_notify,
-+	.suspend = ufs_hisi_suspend,
-+	.resume = ufs_hisi_resume,
-+};
-+
-+static const struct of_device_id ufs_hisi_of_match[] = {
-+	{ .compatible = "hisilicon,hi3660-ufs", .data = &ufs_hba_hi3660_vops },
-+	{ .compatible = "hisilicon,hi3670-ufs", .data = &ufs_hba_hi3670_vops },
-+	{},
-+};
-+
-+MODULE_DEVICE_TABLE(of, ufs_hisi_of_match);
-+
- static int ufs_hisi_probe(struct platform_device *pdev)
- {
--	return ufshcd_pltfrm_init(pdev, &ufs_hba_hisi_vops);
-+	const struct of_device_id *of_id;
-+	struct ufs_hba_variant_ops *vops;
-+	struct device *dev = &pdev->dev;
-+
-+	of_id = of_match_node(ufs_hisi_of_match, dev->of_node);
-+	vops = (struct ufs_hba_variant_ops *)of_id->data;
-+
-+	return ufshcd_pltfrm_init(pdev, vops);
- }
- 
- static int ufs_hisi_remove(struct platform_device *pdev)
-@@ -596,13 +686,6 @@ static int ufs_hisi_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
--static const struct of_device_id ufs_hisi_of_match[] = {
--	{ .compatible = "hisilicon,hi3660-ufs" },
--	{},
--};
--
--MODULE_DEVICE_TABLE(of, ufs_hisi_of_match);
--
- static const struct dev_pm_ops ufs_hisi_pm_ops = {
- 	.suspend	= ufshcd_pltfrm_suspend,
- 	.resume		= ufshcd_pltfrm_resume,
-diff --git a/drivers/scsi/ufs/ufs-hisi.h b/drivers/scsi/ufs/ufs-hisi.h
-index 3df9cd7acc29..667dfe39b57e 100644
---- a/drivers/scsi/ufs/ufs-hisi.h
-+++ b/drivers/scsi/ufs/ufs-hisi.h
-@@ -91,6 +91,9 @@ enum {
- #define UFS_HISI_LIMIT_HS_RATE	PA_HS_MODE_B
- #define UFS_HISI_LIMIT_DESIRED_MODE	FAST
- 
-+#define UFS_HISI_CAP_RESERVED		BIT(0)
-+#define UFS_HISI_CAP_PHY10nm		BIT(1)
-+
- struct ufs_hisi_host {
- 	struct ufs_hba *hba;
- 	void __iomem *ufs_sys_ctrl;
-@@ -112,4 +115,5 @@ struct ufs_hisi_host {
- 	ufs_sys_ctrl_writel((host),                                            \
- 			    ((~(mask)) & (ufs_sys_ctrl_readl((host), (reg)))), \
- 			    (reg))
-+
- #endif /* UFS_HISI_H_ */
--- 
-2.17.1
+Yeh they seemed odd but checkpatch doesn't like a /* on a line by its 
+self it seems.
 
+> 
+> A good catch in there was the unsigned casts, which are no longer
+> necessary since the regmap conversion, so we should just squash that
+> into the earlier commits.
+> 
+> Note that I used to run checkpatch.pl as git commit hook:
+> http://blog.vmsplice.net/2011/03/how-to-automatically-run-checkpatchpl.html
+> But since some git update that started to break git rebase -i in case of
+> false positives (with rebase stopping and on trying to continue commits
+> unintentionally getting squashed), so I deactivated it again and don't
+> manually check each commit I stage anymore, in favor of slowly
+> completing implementations to a working point.
+
+Good to know, I'll avoid running it for the time and drop this from the v2
+
+Thanks!
+Ben Whitten
