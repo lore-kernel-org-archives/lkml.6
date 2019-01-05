@@ -2,247 +2,190 @@ Return-Path: <SRS0=xVxK=PN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0085CC43387
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 00:25:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5111AC43612
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 00:32:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2D9920874
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 00:25:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546647927;
-	bh=qsP+Llq3C8/U6fIc4Q5I6w4U4eUiSh7tO0xFNhqB4P4=;
-	h=Subject:Cc:To:In-Reply-To:From:References:Date:List-ID:From;
-	b=qJcBxQmmJw3kSn5KquA2hOs/GCfyGqQWL9Oo9DeCEGz6K269naFgT+q7/G0amy0uE
-	 rKXHWPRX7y/0QZPBbavk5qxSJgE6JY1E+WRPJaB6m/bSj/5tn8wytfp/ySJsXsduxz
-	 rb/AYzCTGvFs0UvbdyqrWpWK5apnfailG00vCZbw=
+	by mail.kernel.org (Postfix) with ESMTP id 25BA4208E3
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 00:32:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726251AbfAEAZ0 (ORCPT
+        id S1726266AbfAEAcW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 19:25:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40794 "EHLO mail.kernel.org"
+        Fri, 4 Jan 2019 19:32:22 -0500
+Received: from dliviu.plus.com ([80.229.23.120]:58940 "EHLO smtp.dudau.co.uk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725862AbfAEAZ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 19:25:26 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BD1F120874;
-        Sat,  5 Jan 2019 00:25:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546647924;
-        bh=qsP+Llq3C8/U6fIc4Q5I6w4U4eUiSh7tO0xFNhqB4P4=;
-        h=Subject:Cc:To:In-Reply-To:From:References:Date:From;
-        b=RwB0CvbjO2RUKlaa/HxDWYTIoHPROxnJYs2GYzT9tpUG2TXI4rhqxCrgSBGZ4F+mE
-         Pi3BRtTEuAOccMPmImJqMn+eUr9mK9/iA54E8N64CZeRfm/Yw8CmzyHr2lsGHcz1e9
-         A7JsIrA5vKr0peRuS9YBsrJcJo1/2LEFsKD/L3Pk=
-Content-Type: text/plain; charset="utf-8"
+        id S1726074AbfAEAcV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 19:32:21 -0500
+Received: from mail.dudau.co.uk (bart.dudau.co.uk [192.168.14.2])
+        by smtp.dudau.co.uk (Postfix) with SMTP id 31F1E40F840A;
+        Sat,  5 Jan 2019 00:32:19 +0000 (GMT)
+Received: by mail.dudau.co.uk (sSMTP sendmail emulation); Sat, 05 Jan 2019 00:32:19 +0000
+Date:   Sat, 5 Jan 2019 00:32:19 +0000
+From:   Liviu Dudau <liviu@dudau.co.uk>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Robin Murphy <robin.murphy@arm.com>, linux-pci@vger.kernel.org,
+        LAKML <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [REGRESSION, BISECTED] pci: nvme device with HMB fails on arm64
+Message-ID: <20190105003218.GG20342@bart.dudau.co.uk>
+References: <20190104125735.GF20342@bart.dudau.co.uk>
+ <20190104173446.GA24554@lst.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 1/3] spmi: pmic-arb: convert to v2 irq interfaces to support hierarchical IRQ chips
-Cc:     marc.zyngier@arm.com, shawnguo@kernel.org, dianders@chromium.org,
-        linux-gpio@vger.kernel.org, nicolas.dechesne@linaro.org,
-        niklas.cassel@linaro.org, david.brown@linaro.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-To:     Brian Masney <masneyb@onstation.org>, andy.gross@linaro.org,
-        bjorn.andersson@linaro.org, linus.walleij@linaro.org
-In-Reply-To: <20181229114755.8711-2-masneyb@onstation.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-User-Agent: alot/0.8
-References: <20181229114755.8711-1-masneyb@onstation.org> <20181229114755.8711-2-masneyb@onstation.org>
-Message-ID: <154664792383.15366.9346249356552958882@swboyd.mtv.corp.google.com>
-Date:   Fri, 04 Jan 2019 16:25:23 -0800
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190104173446.GA24554@lst.de>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Brian Masney (2018-12-29 03:47:53)
-> Convert the spmi-pmic-arb IRQ code to use the version 2 IRQ interface
-> in order to support hierarchical IRQ chips. Code was tested on a LG
-> Nexus 5 (hammerhead) phone.
+On Fri, Jan 04, 2019 at 06:34:47PM +0100, Christoph Hellwig wrote:
+> Hi Liviu,
 
-Can you add the motivation for this change here? Why should we care?
+Hi Christoph,
 
->=20
-> Signed-off-by: Brian Masney <masneyb@onstation.org>
+> 
+> please try the patch below.  Note that this is in top of mainline,
+> as the commit you found already needed another fixup, which has
+> made it to Linus already.
+
+This patch does fix the issue with NVMe HMBs. You can add my:
+
+Tested-by: Liviu Dudau <liviu@dudau.co.uk>
+
+Now I need to go and try to figure out why the rk_gmac-dwmac driver gives this warning:
+
+[   11.277363] ------------[ cut here ]------------
+[   11.277800] DMA-API: rk_gmac-dwmac fe300000.ethernet: device driver frees DMA memory with wrong function [device address=0x00000000e7c21c02] [size=342 bytes] [mapped as page] [unmapped as single]
+[   11.279348] WARNING: CPU: 0 PID: 0 at kernel/dma/debug.c:1085 check_unmap+0x720/0x840
+[   11.280037] Modules linked in: pcie_rockchip_host phy_rockchip_pcie rockchip realtek dwmac_rk stmmac_platform stmmac
+[   11.280989] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.20.0-10990-gda3599602d2f-dirty #1
+[   11.281708] Hardware name: FriendlyARM NanoPC-T4 (DT)
+[   11.282162] pstate: 80000085 (Nzcv daIf -PAN -UAO)
+[   11.282592] pc : check_unmap+0x720/0x840
+[   11.282947] lr : check_unmap+0x720/0x840
+[   11.283299] sp : ffff000010003b90
+[   11.283597] x29: ffff000010003b90 x28: ffff8000e7d74800
+[   11.284075] x27: ffff8000f66fe410 x26: ffff000010f33370
+[   11.284551] x25: 0000000000000000 x24: ffff0000111163d0
+[   11.285027] x23: ffff000010f33000 x22: ffff000010f0d818
+[   11.285504] x21: ffff000010003c48 x20: ffff00001110dd80
+[   11.285981] x19: ffff8000f6657090 x18: 0000000000000010
+[   11.286457] x17: 0000000000000001 x16: 0000000000000007
+[   11.286933] x15: ffffffffffffffff x14: 5d32306331326337
+[   11.287409] x13: 6530303030303030 x12: 3078303d73736572
+[   11.287886] x11: 6464612065636976 x10: 65645b206e6f6974
+[   11.288363] x9 : 636e756620676e6f x8 : 2073612064657070
+[   11.288840] x7 : 616d6e755b205d65 x6 : 00000000000001d4
+[   11.289316] x5 : 0000000000000001 x4 : 00008000e685f000
+[   11.289793] x3 : ffff8000f774deb8 x2 : 0000000000000007
+[   11.290269] x1 : d5f5206026126100 x0 : 0000000000000000
+[   11.290746] Call trace:
+[   11.290974]  check_unmap+0x720/0x840
+[   11.291301]  debug_dma_unmap_page+0xc4/0xd0
+[   11.291719]  stmmac_napi_poll+0x214/0x1088 [stmmac]
+[   11.292160]  net_rx_action+0x12c/0x3d0
+[   11.292502]  __do_softirq+0x1a0/0x438
+[   11.292835]  irq_exit+0xcc/0xe0
+[   11.293124]  __handle_domain_irq+0x9c/0x108
+[   11.293500]  gic_handle_irq+0xb8/0x15c
+[   11.293839]  el1_irq+0xb4/0x130
+[   11.294127]  cpuidle_enter_state+0xbc/0x508
+[   11.294504]  cpuidle_enter+0x34/0x48
+[   11.294830]  call_cpuidle+0x44/0x68
+[   11.295148]  do_idle+0x264/0x2a0
+[   11.295445]  cpu_startup_entry+0x28/0x30
+[   11.295802]  rest_init+0xd4/0xe0
+[   11.296101]  arch_call_rest_init+0x14/0x1c
+[   11.296471]  start_kernel+0x48c/0x4b4
+[   11.296800] ---[ end trace c63a0054785f45a3 ]---
+[   11.297213] DMA-API: Mapped at:
+[   11.297531]  stmmac_xmit+0x4b8/0x1168 [stmmac]
+[   11.297934]  dev_hard_start_xmit+0xac/0x290
+[   11.298313]  sch_direct_xmit+0x120/0x330
+[   11.298667]  __qdisc_run+0x140/0x6e8
+[   11.298994]  __dev_queue_xmit+0x48c/0x718
+
+
+I've seen you have provided some other net driver reporter with a patch to make dma_map_single_attrs use
+dma_map_page_attrs, which I have applied, but that doesn't remove the WARN() for me.
+
+
+Many thanks,
+
+Liviu
+
+> 
+> --
+> From a959cc1a8ee00dcb274922f9d74f6ed632709047 Mon Sep 17 00:00:00 2001
+> From: Christoph Hellwig <hch@lst.de>
+> Date: Fri, 4 Jan 2019 18:31:48 +0100
+> Subject: dma-direct: fix DMA_ATTR_NO_KERNEL_MAPPING for remapped allocations
+> 
+> We need to return a dma_addr_t even if we don't have a kernel mapping.
+> Do so by consolidating the phys_to_dma call in a single place and jump
+> to it from all the branches that return successfully.
+> 
+> Fixes: bfd56cd60521 ("dma-mapping: support highmem in the generic remap allocator")
+> Reported-by: Liviu Dudau <liviu@dudau.co.uk
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 > ---
->  drivers/spmi/spmi-pmic-arb.c | 91 +++++++++++++++++++++++++-----------
->  1 file changed, 64 insertions(+), 27 deletions(-)
->=20
-> diff --git a/drivers/spmi/spmi-pmic-arb.c b/drivers/spmi/spmi-pmic-arb.c
-> index 360b8218f322..c651d19f0623 100644
-> --- a/drivers/spmi/spmi-pmic-arb.c
-> +++ b/drivers/spmi/spmi-pmic-arb.c
-> @@ -666,7 +666,8 @@ static int qpnpint_get_irqchip_state(struct irq_data =
-*d,
->         return 0;
+>  kernel/dma/remap.c | 13 +++++++------
+>  1 file changed, 7 insertions(+), 6 deletions(-)
+> 
+> diff --git a/kernel/dma/remap.c b/kernel/dma/remap.c
+> index 18cc09fc27b9..7a723194ecbe 100644
+> --- a/kernel/dma/remap.c
+> +++ b/kernel/dma/remap.c
+> @@ -204,8 +204,7 @@ void *arch_dma_alloc(struct device *dev, size_t size, dma_addr_t *dma_handle,
+>  		ret = dma_alloc_from_pool(size, &page, flags);
+>  		if (!ret)
+>  			return NULL;
+> -		*dma_handle = phys_to_dma(dev, page_to_phys(page));
+> -		return ret;
+> +		goto done;
+>  	}
+>  
+>  	page = __dma_direct_alloc_pages(dev, size, dma_handle, flags, attrs);
+> @@ -215,8 +214,10 @@ void *arch_dma_alloc(struct device *dev, size_t size, dma_addr_t *dma_handle,
+>  	/* remove any dirty cache lines on the kernel alias */
+>  	arch_dma_prep_coherent(page, size);
+>  
+> -	if (attrs & DMA_ATTR_NO_KERNEL_MAPPING)
+> -		return page; /* opaque cookie */
+> +	if (attrs & DMA_ATTR_NO_KERNEL_MAPPING) {
+> +		ret = page; /* opaque cookie */
+> +		goto done;
+> +	}
+>  
+>  	/* create a coherent mapping */
+>  	ret = dma_common_contiguous_remap(page, size, VM_USERMAP,
+> @@ -227,9 +228,9 @@ void *arch_dma_alloc(struct device *dev, size_t size, dma_addr_t *dma_handle,
+>  		return ret;
+>  	}
+>  
+> -	*dma_handle = phys_to_dma(dev, page_to_phys(page));
+>  	memset(ret, 0, size);
+> -
+> +done:
+> +	*dma_handle = phys_to_dma(dev, page_to_phys(page));
+>  	return ret;
 >  }
-> =20
-> -static int qpnpint_irq_request_resources(struct irq_data *d)
-> +static int qpnpint_irq_domain_activate(struct irq_domain *domain,
-> +                                      struct irq_data *d, bool reserve)
->  {
->         struct spmi_pmic_arb *pmic_arb =3D irq_data_get_irq_chip_data(d);
->         u16 periph =3D hwirq_to_per(d->hwirq);
-> @@ -692,36 +693,37 @@ static struct irq_chip pmic_arb_irqchip =3D {
->         .irq_set_type   =3D qpnpint_irq_set_type,
->         .irq_set_wake   =3D qpnpint_irq_set_wake,
->         .irq_get_irqchip_state  =3D qpnpint_get_irqchip_state,
-> -       .irq_request_resources =3D qpnpint_irq_request_resources,
->         .flags          =3D IRQCHIP_MASK_ON_SUSPEND,
->  };
-> =20
-> -static int qpnpint_irq_domain_dt_translate(struct irq_domain *d,
-> -                                          struct device_node *controller,
-> -                                          const u32 *intspec,
-> -                                          unsigned int intsize,
-> -                                          unsigned long *out_hwirq,
-> -                                          unsigned int *out_type)
-> +static int qpnpint_irq_domain_translate(struct irq_domain *d,
-> +                                       struct irq_fwspec *fwspec,
-> +                                       unsigned long *out_hwirq,
-> +                                       unsigned int *out_type)
->  {
->         struct spmi_pmic_arb *pmic_arb =3D d->host_data;
->         u16 apid, ppid;
->         int rc;
-> =20
-> -       dev_dbg(&pmic_arb->spmic->dev, "intspec[0] 0x%1x intspec[1] 0x%02=
-x intspec[2] 0x%02x\n",
-> -               intspec[0], intspec[1], intspec[2]);
-> +       dev_dbg(&pmic_arb->spmic->dev,
-> +               "param[0] 0x%1x param[1] 0x%02x param[2] 0x%02x\n",
-> +               fwspec->param[0], fwspec->param[1], fwspec->param[2]);
-> =20
-> -       if (irq_domain_get_of_node(d) !=3D controller)
-> +       if (irq_domain_get_of_node(d) !=3D pmic_arb->spmic->dev.of_node)
->                 return -EINVAL;
-> -       if (intsize !=3D 4)
-> +       if (fwspec->param_count !=3D 4)
->                 return -EINVAL;
-> -       if (intspec[0] > 0xF || intspec[1] > 0xFF || intspec[2] > 0x7)
-> +       if (fwspec->param[0] > 0xF || fwspec->param[1] > 0xFF ||
-> +           fwspec->param[2] > 0x7)
->                 return -EINVAL;
-> =20
-> -       ppid =3D intspec[0] << 8 | intspec[1];
-> +       ppid =3D fwspec->param[0] << 8 | fwspec->param[1];
->         rc =3D pmic_arb->ver_ops->ppid_to_apid(pmic_arb, ppid);
->         if (rc < 0) {
-> -               dev_err(&pmic_arb->spmic->dev, "failed to xlate sid =3D %=
-#x, periph =3D %#x, irq =3D %u rc =3D %d\n",
-> -               intspec[0], intspec[1], intspec[2], rc);
-> +               dev_err(&pmic_arb->spmic->dev,
-> +                       "failed to xlate sid =3D %#x, periph =3D %#x, irq=
- =3D %u rc =3D %d\n",
-> +                       fwspec->param[0], fwspec->param[1], fwspec->param=
-[2],
+>  
+> -- 
+> 2.20.1
+> 
 
-Why not assign a u32 *intspec to fwspec->param and then not change many
-lines in this function? Reducing the diff is useful to avoid glossing
-over some mistake in variable renames.
-
-> +                       rc);
->                 return rc;
->         }
-> =20
-> @@ -732,25 +734,58 @@ static int qpnpint_irq_domain_dt_translate(struct i=
-rq_domain *d,
->         if (apid < pmic_arb->min_apid)
->                 pmic_arb->min_apid =3D apid;
-> =20
-> -       *out_hwirq =3D spec_to_hwirq(intspec[0], intspec[1], intspec[2], =
-apid);
-> -       *out_type  =3D intspec[3] & IRQ_TYPE_SENSE_MASK;
-> +       *out_hwirq =3D spec_to_hwirq(fwspec->param[0], fwspec->param[1],
-> +                                  fwspec->param[2], apid);
-> +       *out_type  =3D fwspec->param[3] & IRQ_TYPE_SENSE_MASK;
-> =20
->         dev_dbg(&pmic_arb->spmic->dev, "out_hwirq =3D %lu\n", *out_hwirq);
-> =20
->         return 0;
->  }
-> =20
-> -static int qpnpint_irq_domain_map(struct irq_domain *d,
-> -                                 unsigned int virq,
-> -                                 irq_hw_number_t hwirq)
-> +
-> +static void qpnpint_irq_domain_map(struct spmi_pmic_arb *pmic_arb,
-> +                                  struct irq_domain *domain, unsigned in=
-t virq,
-> +                                  irq_hw_number_t hwirq)
->  {
-> -       struct spmi_pmic_arb *pmic_arb =3D d->host_data;
-> +       unsigned int old_virq;
-> =20
->         dev_dbg(&pmic_arb->spmic->dev, "virq =3D %u, hwirq =3D %lu\n", vi=
-rq, hwirq);
-> =20
-> -       irq_set_chip_and_handler(virq, &pmic_arb_irqchip, handle_level_ir=
-q);
-> -       irq_set_chip_data(virq, d->host_data);
-> -       irq_set_noprobe(virq);
-> +       /*
-> +        * Check to see if the hwirq is already associated with another v=
-irq on
-> +        * this IRQ domain. If so, then disassociate it before associatin=
-g the
-> +        * hwirq with the new virq. IRQs are all initially setup without =
-an IRQ
-> +        * hierarchy when this driver is probed and when mfd/qcom-spmi-pm=
-ic.c is
-> +        * probed. Later in the boot process, an IRQ hierarchy is request=
-ed by
-> +        * pinctrl-spmi-gpio.c, and the same hwirq is now associated with=
- a new
-> +        * virq.
-
-Is that because we count the irqs in the pmic gpio driver? It looks like
-we should remove that code from the driver then and use the compatible
-string to figure out how many gpios are present. It will make this
-comment and disassociate code unnecessary, but unfortunately it will
-mean we have to add all the compatible strings to the pmic gpio driver
-just so we know how many gpios are there.
-
-> +        */
-> +       old_virq =3D irq_find_mapping(domain, hwirq);
-> +       if (old_virq)
-> +               irq_domain_disassociate(domain, old_virq);
-> +
-> +       irq_domain_set_info(domain, virq, hwirq, &pmic_arb_irqchip, pmic_=
-arb,
-> +                           handle_level_irq, NULL, NULL);
-> +}
-> +
-> +static int qpnpint_irq_domain_alloc(struct irq_domain *domain,
-> +                                   unsigned int virq, unsigned int nr_ir=
-qs,
-> +                                   void *data)
-> +{
-> +       struct spmi_pmic_arb *pmic_arb =3D domain->host_data;
-> +       struct irq_fwspec *fwspec =3D data;
-> +       irq_hw_number_t hwirq;
-> +       unsigned int type;
-> +       int ret, i;
-> +
-> +       ret =3D qpnpint_irq_domain_translate(domain, fwspec, &hwirq, &typ=
-e);
-> +       if (ret)
-> +               return ret;
-> +
-> +       for (i =3D 0; i < nr_irqs; i++)
-> +               qpnpint_irq_domain_map(pmic_arb, domain, virq + i, hwirq =
-+ i);
-> +
->         return 0;
->  }
-> =20
-
-Otherwise patch looks good to me. Thanks for working on this. Are you
-going to convert the ssbi master and gpio chip too?
-
+-- 
+           ________________________________________________________
+  ________|                                                        |_______
+  \       |  With enough courage, you can do without a reputation  |      /
+   \      |                                  -- Rhett Butler       |     /
+   /      |________________________________________________________|     \
+  /__________)                                                  (_________\
