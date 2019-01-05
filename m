@@ -2,133 +2,92 @@ Return-Path: <SRS0=xVxK=PN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5990C43387
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 01:32:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D5E8C43387
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 01:45:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B814218DE
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 01:32:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7662218EA
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 01:45:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=onstation.org header.i=@onstation.org header.b="Vl1ZsChj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726295AbfAEBc6 (ORCPT
+        id S1726248AbfAEBpG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 20:32:58 -0500
-Received: from mx2.suse.de ([195.135.220.15]:40414 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725862AbfAEBc6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 20:32:58 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id DE576AE83;
-        Sat,  5 Jan 2019 01:32:55 +0000 (UTC)
-Subject: Re: [PATCH lora-next 3/5] net: lora: sx130x: Add PicoCell serdev
- driver
-To:     linux-lpwan@lists.infradead.org, linux-serial@vger.kernel.org
-Cc:     Rob Herring <robh@kernel.org>, netdev@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Johan Hovold <johan@kernel.org>
-References: <20190104112131.14451-1-afaerber@suse.de>
- <20190104112131.14451-4-afaerber@suse.de>
-From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=afaerber@suse.de; prefer-encrypt=mutual; keydata=
- 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
-Organization: SUSE Linux GmbH
-Message-ID: <3792ea0c-2f31-8984-a1a6-b8a6f5c6eb8a@suse.de>
-Date:   Sat, 5 Jan 2019 02:32:54 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Fri, 4 Jan 2019 20:45:06 -0500
+Received: from onstation.org ([52.200.56.107]:41706 "EHLO onstation.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725862AbfAEBpF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 20:45:05 -0500
+Received: from localhost (c-98-239-145-235.hsd1.wv.comcast.net [98.239.145.235])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: masneyb)
+        by onstation.org (Postfix) with ESMTPSA id 0DB48152;
+        Sat,  5 Jan 2019 01:45:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=onstation.org;
+        s=default; t=1546652704;
+        bh=4Xtsesp5l6kcT3qPr6yojfUAhvIkHBr1Luh7aTZxYl8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Vl1ZsChjYXE/QYkUcDwDopOghcicgiQJZDiNYcVUm62lH5iOfy4KlLfnOCfaGJSBe
+         XXTTta4PIiU6BzaFnx8vyQRI/Rhyhx4mXqxbdUDCv/0440AErgJ7MgikOybNKWNTQ9
+         n7dcL7Ur3JYjYKDc7s8YMXvrTbh9t54OdDnR4suQ=
+Date:   Fri, 4 Jan 2019 20:45:03 -0500
+From:   Brian Masney <masneyb@onstation.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     andy.gross@linaro.org, bjorn.andersson@linaro.org,
+        linus.walleij@linaro.org, marc.zyngier@arm.com,
+        shawnguo@kernel.org, dianders@chromium.org,
+        linux-gpio@vger.kernel.org, nicolas.dechesne@linaro.org,
+        niklas.cassel@linaro.org, david.brown@linaro.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/3] spmi: pmic-arb: convert to v2 irq interfaces to
+ support hierarchical IRQ chips
+Message-ID: <20190105014503.GA32383@basecamp>
+References: <20181229114755.8711-1-masneyb@onstation.org>
+ <20181229114755.8711-2-masneyb@onstation.org>
+ <154664792383.15366.9346249356552958882@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
-In-Reply-To: <20190104112131.14451-4-afaerber@suse.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <154664792383.15366.9346249356552958882@swboyd.mtv.corp.google.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 04.01.19 um 12:21 schrieb Andreas Färber:
-> diff --git a/drivers/net/lora/sx130x_picogw.c b/drivers/net/lora/sx130x_picogw.c
-> new file mode 100644
-> index 000000000000..577f9fb71d46
-> --- /dev/null
-> +++ b/drivers/net/lora/sx130x_picogw.c
-[...]
-> +	serdev_device_set_baudrate(sdev, 115200);
-> +	serdev_device_set_parity(sdev, SERDEV_PARITY_NONE);
-> +	serdev_device_set_flow_control(sdev, true);
+On Fri, Jan 04, 2019 at 04:25:23PM -0800, Stephen Boyd wrote:
+> > +       /*
+> > +        * Check to see if the hwirq is already associated with another virq on
+> > +        * this IRQ domain. If so, then disassociate it before associating the
+> > +        * hwirq with the new virq. IRQs are all initially setup without an IRQ
+> > +        * hierarchy when this driver is probed and when mfd/qcom-spmi-pmic.c is
+> > +        * probed. Later in the boot process, an IRQ hierarchy is requested by
+> > +        * pinctrl-spmi-gpio.c, and the same hwirq is now associated with a new
+> > +        * virq.
+> 
+> Is that because we count the irqs in the pmic gpio driver?
 
-This should probably be false?
+Yes.
 
-https://github.com/Lora-net/picoGW_hal/blob/master/libloragw/src/loragw_com_linux.c#L65
+The call to devm_of_platform_populate() in drivers/mfd/qcom-spmi-pmic.c
+also triggers this condition. I'll experiment with this some more this
+weekend.
 
-tty.c_iflag &= ~(IXON | IXOFF | IXANY | ICRNL);
-...
-tty.c_oflag &= ~(IXON | IXOFF | IXANY | ICRNL);
+> Otherwise patch looks good to me. Thanks for working on this. Are you
+> going to convert the ssbi master and gpio chip too?
 
-Nothing that looks like RTS/CTS anywhere, which appears to be what the
-serdev implementation is switching with the above function.
+Yes, I will do that work as well once this patch series is accepted.
+I currently don't have the hardware to test it, but I'm willing to pick
+up a cheap device on ebay. Any suggestions for something that boots a
+mainline kernel with the ssbi? It looks like the Sony Xperia Z phone is
+one of the supported devices.
 
-However, both true and false appeared to work equally so far.
+Thanks for your review on the other patches. It all makes sense.
 
-
-With one particular USB device I get the following warning/error,
-seemingly independent of whether I enable flow control above or not:
-
-[68640.481454] lora-picogw-usb 4-1:1.0: failed to set dtr/rts
-
-(imagine s/lora-picogw-usb/cdc_acm/ - cf. cdc-acm.c:acm_port_dtr_rts())
-
-Looks like a firmware/hardware issue to me, since it appeared with the
-original cdc_acm driver on reboot, plus across reset, ports and hosts.
-
-Regards,
-Andreas
-
--- 
-SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
+Brian
