@@ -2,103 +2,89 @@ Return-Path: <SRS0=xVxK=PN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A01EDC43387
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 00:33:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54709C43387
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 00:34:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7692621871
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 00:33:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 10C10218DE
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 00:34:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZQeE9bd+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726310AbfAEAdk (ORCPT
+        id S1726339AbfAEAez (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 19:33:40 -0500
-Received: from mga11.intel.com ([192.55.52.93]:43548 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725862AbfAEAdk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 19:33:40 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jan 2019 16:33:40 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,440,1539673200"; 
-   d="scan'208";a="307618368"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
-  by fmsmga006.fm.intel.com with ESMTP; 04 Jan 2019 16:33:39 -0800
-Date:   Fri, 4 Jan 2019 16:33:39 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     Jason Wang <jasowang@redhat.com>, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, davem@davemloft.net
-Subject: Re: [RFC PATCH V3 1/5] vhost: generalize adding used elem
-Message-ID: <20190105003339.GE11288@linux.intel.com>
-References: <20181229124656.3900-1-jasowang@redhat.com>
- <20181229124656.3900-2-jasowang@redhat.com>
- <20190104162857-mutt-send-email-mst@kernel.org>
+        Fri, 4 Jan 2019 19:34:55 -0500
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:34353 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726094AbfAEAez (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 19:34:55 -0500
+Received: by mail-ua1-f66.google.com with SMTP id c24so12555153uak.1
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Jan 2019 16:34:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:sender:from:date:message-id
+         :subject:to:cc;
+        bh=5X2ykSD+Z2E9Z3yOJY41ClW0eBg2tNrdIffr/IeHYSk=;
+        b=ZQeE9bd+1Ir0v7sB/94OsGPlfzaB9byWBmfOfQ0GF+ERI+OKd0cYMn2J9mj07fHx+L
+         kRrjCobC4iUWP+h6R0yNoTgc16QvWXziFS7ZOytu6Pz+FexXguX3HD/2CTX+L9GxVn6n
+         WW7mEWHBXjvoJ2H36WIl56/RiAC1kgaY6wyDCGReZWbWKcYfLnf0EXZxlq+bBLrqk3wX
+         BuK+yiexASjEdO1grGLSIZfqzRxOUD1XQmlaLfHs7YgQdUH1Hv0GeE8+17LvnaKJrt0y
+         yeAgu0wOvuRWG+as+1+MiLnWJvvTCauyj7blXcdBUM0fxRhAI5JfmahhtK/XqAeg7gQm
+         FTRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:sender:from
+         :date:message-id:subject:to:cc;
+        bh=5X2ykSD+Z2E9Z3yOJY41ClW0eBg2tNrdIffr/IeHYSk=;
+        b=qqiTXAZzF5zvQzPxM4Sh3h7b9ESIB8WPKww8sPM0IHdjbYPKLX+Zt6bVU6DEh3sIVb
+         oJ65OrR/XjflS3NU2IiYNOPKUAlet6miaqPMq8YLmdVPRpAG5xuVvJFRxpVLfP3lCr+E
+         9CPjRHQDOOdHpxk3naWWWoaSf5f+wevYxZU2Kd0zQDueeqMSQYSkEsTxx4F5UTuCkS2K
+         vGO3yDT8RNUpAlE4piDz2Jhgd5icxNnEhFNUK9uAPmpajY1vCFuH65t+wJEG7ISBpmLK
+         CE8byyLrerMR85sB1OlaLbY/nJiZ8Gu5jPfYDUzdXyPcOVmr39orFKUckcXFMeWoa+hX
+         hBAg==
+X-Gm-Message-State: AJcUukeWoQSSY7ZLxrcwVPFJbNpufC5Zprab4vCxSXaBqQ3+xND+sjU7
+        e2JQhkJZWqDl/DMPFPXvnXnM2HCNvDTExXU2m9PigTTc
+X-Google-Smtp-Source: ALg8bN4XGgb7cH4GyE1zJlEzbPzIvO7gySYWf1BnIxiskhbnU6g+R0K4/Ab0mJW005DuEJEPND1pxubriTMyL1m2r78=
+X-Received: by 2002:ab0:25ca:: with SMTP id y10mr19172567uan.21.1546648493760;
+ Fri, 04 Jan 2019 16:34:53 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190104162857-mutt-send-email-mst@kernel.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <s5hk1k48ayx.wl-tiwai@suse.de> <CAHk-=wg+hjDa8UGRVnCFytjwYLPk2yDgJoKOESVSE7_6KfaeTg@mail.gmail.com>
+ <20181228124303.GA16558@gmail.com> <s5hmuoplgw2.wl-tiwai@suse.de>
+ <CAHk-=wjXVPpDWHzvNL=9gGVGNnYg1jOH8hQx=dq4caEzip-n0g@mail.gmail.com>
+ <s5hef9zl69r.wl-tiwai@suse.de> <82bb7f60-c3c2-4715-a0a0-f1f2a8b14c74@linux.intel.com>
+ <s5h1s5ykteg.wl-tiwai@suse.de> <CAAW1UO_YDtddPk7-b=c03crPAOL33YWtu_q225um_hxh4SVYtA@mail.gmail.com>
+ <47137843-14fc-f6d0-4372-a9ef2456cab8@linux.intel.com>
+In-Reply-To: <47137843-14fc-f6d0-4372-a9ef2456cab8@linux.intel.com>
+X-Google-Sender-Delegation: a3at.mail@gmail.com
+From:   Azat Khuzhin <dohardgopro@gmail.com>
+Date:   Sat, 5 Jan 2019 03:34:39 +0300
+X-Google-Sender-Auth: Wkz3gExqNdkJEQHmSWozi_zBTcY
+Message-ID: <CAAW1UO-P5cWWx-orjCHvHw3deStJTiUmT5BHveTTiJotvB9aNA@mail.gmail.com>
+Subject: Re: [GIT PULL] sound updates for 4.21
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 04, 2019 at 04:29:34PM -0500, Michael S. Tsirkin wrote:
-> On Sat, Dec 29, 2018 at 08:46:52PM +0800, Jason Wang wrote:
-> > Use one generic vhost_copy_to_user() instead of two dedicated
-> > accessor. This will simplify the conversion to fine grain
-> > accessors. About 2% improvement of PPS were seen during vitio-user
-> > txonly test.
-> > 
-> > Signed-off-by: Jason Wang <jasowang@redhat.com>
-> 
-> I don't hve a problem with this patch but do you have
-> any idea how come removing what's supposed to be
-> an optimization speeds things up?
+> This is unfortunately a known issue with this driver, Takashi and I had
+> a couple of email threads on this. Even without errors removing the
+> module doesn't seem to release all resources. I don't like this at all,
+> and for the Sound Open Firmware (SOF) driver I mandated module
+> load-unload as a functional requirement along with zero warnings w/
+> Sparse, Coccinelle and friends, but on this legacy code I am afraid
+> there is no simple fix - at least not in a merge window or a single
+> kernel cycle.
 
-With SMAP, the 2x vhost_put_user() will also mean an extra STAC/CLAC pair,
-which is probably slower than the overhead of CALL+RET to whatever flavor
-of copy_user_generic() gets used.  CALL+RET is really the only overhead
-since all variants of copy_user_generic() unroll accesses smaller than
-64 bytes, e.g. on a 64-bit system, __copy_to_user() will write all 8
-bytes in a single MOV.
+And the fact that kernel crashes after?
+Just want extra confirmation
 
-Removing the special casing also eliminates a few hundred bytes of code
-as well as the need for hardware to predict count==1 vs. count>1.
-
-> 
-> > ---
-> >  drivers/vhost/vhost.c | 11 +----------
-> >  1 file changed, 1 insertion(+), 10 deletions(-)
-> > 
-> > diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-> > index 55e5aa662ad5..f179b5ee14c4 100644
-> > --- a/drivers/vhost/vhost.c
-> > +++ b/drivers/vhost/vhost.c
-> > @@ -2174,16 +2174,7 @@ static int __vhost_add_used_n(struct vhost_virtqueue *vq,
-> >  
-> >  	start = vq->last_used_idx & (vq->num - 1);
-> >  	used = vq->used->ring + start;
-> > -	if (count == 1) {
-> > -		if (vhost_put_user(vq, heads[0].id, &used->id)) {
-> > -			vq_err(vq, "Failed to write used id");
-> > -			return -EFAULT;
-> > -		}
-> > -		if (vhost_put_user(vq, heads[0].len, &used->len)) {
-> > -			vq_err(vq, "Failed to write used len");
-> > -			return -EFAULT;
-> > -		}
-> > -	} else if (vhost_copy_to_user(vq, used, heads, count * sizeof *used)) {
-> > +	if (vhost_copy_to_user(vq, used, heads, count * sizeof *used)) {
-> >  		vq_err(vq, "Failed to write used");
-> >  		return -EFAULT;
-> >  	}
-> > -- 
-> > 2.17.1
+Thanks,
+Azat.
