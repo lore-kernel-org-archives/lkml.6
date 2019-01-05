@@ -2,158 +2,120 @@ Return-Path: <SRS0=xVxK=PN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79599C43387
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 23:06:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A2E8C43387
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 23:06:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40263222C0
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 23:06:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 544FF222C0
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 23:06:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="B/cv29R5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726386AbfAEXGA (ORCPT
+        id S1726410AbfAEXGE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 5 Jan 2019 18:06:00 -0500
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:42840 "EHLO
-        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726357AbfAEXGA (ORCPT
+        Sat, 5 Jan 2019 18:06:04 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:38232 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726357AbfAEXGD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 Jan 2019 18:06:00 -0500
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by kvm5.telegraphics.com.au (Postfix) with ESMTP id 09123272DE;
-        Sat,  5 Jan 2019 18:05:50 -0500 (EST)
-Date:   Sun, 6 Jan 2019 10:06:24 +1100 (AEDT)
-From:   Finn Thain <fthain@telegraphics.com.au>
-To:     LEROY Christophe <christophe.leroy@c-s.fr>,
-        Arnd Bergmann <arnd@arndb.de>
-cc:     linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-m68k@lists.linux-m68k.org,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@samba.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH v8 20/25] powerpc, fbdev: Use arch_nvram_ops methods
- instead of nvram_read_byte() and nvram_write_byte()
-In-Reply-To: <alpine.LNX.2.21.1812301024400.215@nippy.intranet>
-Message-ID: <alpine.LNX.2.21.1901060931140.23@nippy.intranet>
-References: <cover.1545784679.git.fthain@telegraphics.com.au> <7e8eb87ea829c03941c895c968df2ebd0f80512f.1545784679.git.fthain@telegraphics.com.au> <20181229180236.Horde.idY3gOIzkSWywjIrqlXJMA1@messagerie.si.c-s.fr>
- <alpine.LNX.2.21.1812301024400.215@nippy.intranet>
+        Sat, 5 Jan 2019 18:06:03 -0500
+Received: by mail-lf1-f68.google.com with SMTP id a8so2707997lfk.5
+        for <linux-kernel@vger.kernel.org>; Sat, 05 Jan 2019 15:06:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3XKfJS3aCUI5VPJ2OoPQz6I8Q3GqY3FZEmK8PJlfXZo=;
+        b=B/cv29R5CnnR4cucX2UAJjOuhWykhQuhG+v+Oo2bw14iZUUk6FsYndgTSKJpoaicZ9
+         zcGzc4h+DmkLxbm9wLZ8q++rbDh/1i1GjjM8RqoPJguvj7kh22AS5Tx7b/s0D/QAEnZY
+         1EePYo9mzlT65j9NUQsGsLfB0eQtm16Ik0+aE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3XKfJS3aCUI5VPJ2OoPQz6I8Q3GqY3FZEmK8PJlfXZo=;
+        b=PxdixLKAeqKjhI6nDhNFZPRuDRbUe1J96Rdcay59VpBOe84yzQNa82R7bSXeFkD9Sf
+         VcNkDzzIvdJvHstmQ6OTMhE/DNnemwxRkKc9pOpE3EjWKjffdyQd1bKuzelwYxwDerJr
+         nz5WdtG0WbQXOkgPrQdiL1gpyvgEcqKQqT3IKLqtdexJty3vqqPMCtUpZVDKrIwj4tGA
+         x0NHE5xY+lzWmM0I65anw7pRQd3vk2JFMxllccJmV8t7GSCb/gk+igJ0+KJ2E4UyPPev
+         J8iFe9yb5M58J+MzTup+y4SV/BfYw1q2EcRM8KPV6ucmMzmzQyAvyX6uTeJ40cLxWPE7
+         v1Mw==
+X-Gm-Message-State: AJcUukdvJUmrtTv0RaRiVuDMGfefDIo+WgFhcxk8KfbqP7hZSugU2cd2
+        4xCLKUQ97FkQO/b9GUD3sUTJmywBmAg=
+X-Google-Smtp-Source: ALg8bN5kkEvGizACJsEU6N5zN6C+dp3VlgQMKLTmjxO5aA6HxpkputOLzP+FWEV4mYWW4EC/qfXcSA==
+X-Received: by 2002:a19:d619:: with SMTP id n25mr17974107lfg.91.1546729561214;
+        Sat, 05 Jan 2019 15:06:01 -0800 (PST)
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com. [209.85.167.45])
+        by smtp.gmail.com with ESMTPSA id y24-v6sm13038023ljd.20.2019.01.05.15.05.59
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 05 Jan 2019 15:06:00 -0800 (PST)
+Received: by mail-lf1-f45.google.com with SMTP id i26so27779901lfc.0
+        for <linux-kernel@vger.kernel.org>; Sat, 05 Jan 2019 15:05:59 -0800 (PST)
+X-Received: by 2002:a19:3fcf:: with SMTP id m198mr26764036lfa.106.1546729559515;
+ Sat, 05 Jan 2019 15:05:59 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <nycvar.YFH.7.76.1901051817390.16954@cbobk.fhfr.pm> <CAG48ez2jAp9xkPXQmVXm0PqNrFGscg9BufQRem2UD8FGX-YzPw@mail.gmail.com>
+In-Reply-To: <CAG48ez2jAp9xkPXQmVXm0PqNrFGscg9BufQRem2UD8FGX-YzPw@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sat, 5 Jan 2019 15:05:43 -0800
+X-Gmail-Original-Message-ID: <CAHk-=whL4sZiM=JcdQAYQvHm7h7xEtVUh+gYGYhoSk4vi38tXg@mail.gmail.com>
+Message-ID: <CAHk-=whL4sZiM=JcdQAYQvHm7h7xEtVUh+gYGYhoSk4vi38tXg@mail.gmail.com>
+Subject: Re: [PATCH] mm/mincore: allow for making sys_mincore() privileged
+To:     Jann Horn <jannh@google.com>
+Cc:     Jiri Kosina <jikos@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Michal Hocko <mhocko@suse.com>, Linux-MM <linux-mm@kvack.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 30 Dec 2018, I wrote:
+On Sat, Jan 5, 2019 at 2:55 PM Jann Horn <jannh@google.com> wrote:
+>
+> Just checking: I guess /proc/$pid/pagemap (iow, the pagemap_read()
+> handler) is less problematic because it only returns data about the
+> state of page tables, and doesn't query the address_space? In other
+> words, it permits monitoring evictions, but non-intrusively detecting
+> that something has been loaded into memory by another process is
+> harder?
 
-> On Sat, 29 Dec 2018, LEROY Christophe wrote:
-> 
-> > Finn Thain <fthain@telegraphics.com.au> a ?crit?:
-> > 
-> > > Make use of arch_nvram_ops in device drivers so that the nvram_* function
-> > > exports can be removed.
-> > > 
-> > > Since they are no longer global symbols, rename the PPC32 nvram_* functions
-> > > appropriately.
-> > > 
-> > > Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
-> > > ---
-> > > arch/powerpc/kernel/setup_32.c             | 8 ++++----
-> > > drivers/char/generic_nvram.c               | 4 ++--
-> > > drivers/video/fbdev/controlfb.c            | 4 ++--
-> > > drivers/video/fbdev/imsttfb.c              | 4 ++--
-> > > drivers/video/fbdev/matrox/matroxfb_base.c | 2 +-
-> > > drivers/video/fbdev/platinumfb.c           | 4 ++--
-> > > drivers/video/fbdev/valkyriefb.c           | 4 ++--
-> > > 7 files changed, 15 insertions(+), 15 deletions(-)
-> > > 
-> > > diff --git a/arch/powerpc/kernel/setup_32.c b/arch/powerpc/kernel/setup_32.c
-> > > index e0d045677472..bdbe6acbef11 100644
-> > > --- a/arch/powerpc/kernel/setup_32.c
-> > > +++ b/arch/powerpc/kernel/setup_32.c
-> > > @@ -152,20 +152,18 @@ __setup("l3cr=", ppc_setup_l3cr);
-> > > 
-> > > #ifdef CONFIG_GENERIC_NVRAM
-> > > 
-> > > -unsigned char nvram_read_byte(int addr)
-> > > +static unsigned char ppc_nvram_read_byte(int addr)
-> > > {
-> > > 	if (ppc_md.nvram_read_val)
-> > > 		return ppc_md.nvram_read_val(addr);
-> > > 	return 0xff;
-> > > }
-> > > -EXPORT_SYMBOL(nvram_read_byte);
-> > > 
-> > > -void nvram_write_byte(unsigned char val, int addr)
-> > > +static void ppc_nvram_write_byte(unsigned char val, int addr)
-> > > {
-> > > 	if (ppc_md.nvram_write_val)
-> > > 		ppc_md.nvram_write_val(addr, val);
-> > > }
-> > > -EXPORT_SYMBOL(nvram_write_byte);
-> > > 
-> > > static ssize_t ppc_nvram_get_size(void)
-> > > {
-> > > @@ -182,6 +180,8 @@ static long ppc_nvram_sync(void)
-> > > }
-> > > 
-> > > const struct nvram_ops arch_nvram_ops = {
-> > > +	.read_byte      = ppc_nvram_read_byte,
-> > > +	.write_byte     = ppc_nvram_write_byte,
-> > > 	.get_size       = ppc_nvram_get_size,
-> > > 	.sync           = ppc_nvram_sync,
-> > > };
-> > > diff --git a/drivers/char/generic_nvram.c b/drivers/char/generic_nvram.c
-> > > index f32d5663de95..41b76bf9614e 100644
-> > > --- a/drivers/char/generic_nvram.c
-> > > +++ b/drivers/char/generic_nvram.c
-> > > @@ -48,7 +48,7 @@ static ssize_t read_nvram(struct file *file, char __user
-> > > *buf,
-> > > 	if (*ppos >= nvram_len)
-> > > 		return 0;
-> > > 	for (i = *ppos; count > 0 && i < nvram_len; ++i, ++p, --count)
-> > > -		if (__put_user(nvram_read_byte(i), p))
-> > > +		if (__put_user(arch_nvram_ops.read_byte(i), p))
-> > 
-> > Instead of modifying all drivers (in this patch and previous ones related to
-> > other arches), wouldn't it be better to add helpers like the following in
-> > nvram.h:
-> > 
-> > Static inline unsigned char nvram_read_byte(int addr)
-> > {
-> >        return arch_nvram_ops.read_byte(addr);
-> > }
-> > 
-> 
-> Is there some benefit, or is that just personal taste?
-> 
-> Avoiding changes to call sites avoids code review, but I think 1) the 
-> thinkpad_acpi changes have already been reviewed and 2) the fbdev changes 
-> need review anyway.
-> 
-> Your suggesion would add several new entities and one extra layer of 
-> indirection.
-> 
+Yes. I think it was brought up during the original report, but to use
+the pagemap for this, you'd basically need to first populate all the
+pages, and then wait for pageout.
 
-Contrary to what I said above, this kind of double indirection could be 
-useful if it allows us to avoid the kind of double indirection which Arnd 
-objected to (which arises when an arch_nvram_ops method invokes a ppc_md 
-method). For example,
+So pagemap *does* leak very similar data, but it's much harder to use
+as an attack vector.
 
-static inline unsigned char nvram_read_byte(int addr)
-{
-#ifdef CONFIG_PPC
-	return ppc_md.nvram_read_byte(addr);
-#else
-	return arch_nvram_ops.read_byte(addr);
-#endif
-}
+That said, I think "mincore()" is just the simple one. You *can* (and
+this was also discussed on the security list) do things like
 
-I'll try this approach for v9 if there are no objections. It may be the 
-least invasive approach. Also, arch_nvram_ops can remain const.
+ - fault in a single page
 
--- 
+ - the kernel will opportunistically fault in pages that it already
+has available _around_ that page.
+
+ - then use pagemap (or just _timing_ - no real kernel support needed)
+to see if those pages are now mapped in your address space
+
+so honestly, mincore is just the "big hammer" and easy way to get at
+some of this data. But it's probably worth closing exactly because
+it's easy. There are other ways to get at the "are these pages mapped"
+information, but they are a lot more combersome to use.
+
+Side note: maybe we could just remove the "__mincore_unmapped_range()"
+thing entirely, and basically make mincore() do what pagemap does,
+which is to say "are the pages mapped in this VM".
+
+That would be nicer than my patch, simply because removing code is
+always nice. And arguably it's a better semantic anyway.
+
+                Linus
