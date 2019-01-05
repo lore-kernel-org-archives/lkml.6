@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C96DC43387
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 23:11:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE767C43387
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 23:12:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DF86222C0
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 23:11:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9762D222BD
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 23:12:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TofNvSsa"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HMjoJM6D"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726395AbfAEXLs (ORCPT
+        id S1726412AbfAEXMy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 5 Jan 2019 18:11:48 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:43785 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726357AbfAEXLr (ORCPT
+        Sat, 5 Jan 2019 18:12:54 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:46534 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726357AbfAEXMy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 Jan 2019 18:11:47 -0500
-Received: by mail-lj1-f196.google.com with SMTP id q2-v6so35230754lji.10;
-        Sat, 05 Jan 2019 15:11:46 -0800 (PST)
+        Sat, 5 Jan 2019 18:12:54 -0500
+Received: by mail-lj1-f194.google.com with SMTP id v15-v6so35246125ljh.13;
+        Sat, 05 Jan 2019 15:12:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=R0z3l7a7ogw82l4Av4h1Pip5Us75eGl9f6ddo8qQhFw=;
-        b=TofNvSsay6JD/cQ/4Kvqs5TCIFUKCjdg3h/fzk9Lf/078kMMgj3cKY/ncnTTlAP6rz
-         aRiWd0RwazpMI8YNJKq5rmHyIFgDl3r8ED9X1szyfkvlePsVqyRfb0vre2RBqPec1Q2U
-         aRxBizObKeFMMNJbv3Kmz/bXshaNbOGoopPlWv7gHjNqzsjXNPTl15tutFQt9YpSCdW+
-         Fw8WwKOtsBlsoRjOUr4dWtEH43o9jE4Xedpmr93Jr2sy0RGXIlbnHYB7RnQSoCtJZyrV
-         22abSq44rrAgF+Wquh48iegLb2VnLWjVmRiHHVIlZY9fnL+op+L9KGWfyBd2kbCNhC3M
-         gGCQ==
+        bh=Tw4oip6EfatkanJXQ0Zx4DwqRQ3BksFdUuwP9ca2DpU=;
+        b=HMjoJM6DXZD4whvqrYNLjU7re2GmchIVGIbLdnvHbZNY46DTSaIP2E6QAxvXSH9ykZ
+         z+M4bDbIb3AU5PG/lmBmCgI5tGfPfZ8QC+i8iQmTeGkSJ0juOhdScli4t/wr04Y3R506
+         kirKnZ3bfJZSqf63uOtrowJpCNXNT2gP7FI8ngq0MS6BMzmiyqE0VTAThqbavn6tB0Pt
+         EogMTpTkdqVpMki+vtvlLikSTZkLAuhWcRzUF6H7KcWFrdhtaNJPwuyKYzgR8iWM1z4H
+         k3cCbut6jCVroSr8WVkI95ju8N4V1ILCn0MnzM0DLAmuK0C2jaPQHO/HWk1aDnOCvDMa
+         FUFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=R0z3l7a7ogw82l4Av4h1Pip5Us75eGl9f6ddo8qQhFw=;
-        b=hkaI1CO9uSYuWDFveddlAyhT/kdP2R0A2M8oz6NIE/TLddwQSRjSYbJr/1qawTqDD7
-         8pwvoOI+DUsWCtv9LMmg1+MrrQMXI5qIOos5pOYAjUS+Z8PCY2v7Ode+Xg5b4rzd5KAf
-         pzRkJ/+Ik0FXYEISQlZbAg6m3IPU2LBPYNjdfC9r25tehkPBEQJcJSApnGIvKL6VIQEJ
-         mre755lA2pUygODW6Vcmrq0/OUkgpRhNj1ot2ItnZHK7SFP8f8SQX4kECbMt0pdgNua0
-         1oZlxxTuRLB8F7Thr5pC1tRUKzK/Btx/kkzznHpawEDiTYXRQKI7NAb993kF2MFu9EQe
-         P9Ug==
-X-Gm-Message-State: AJcUukf7CoRFF5eYSmp/PIC6c7UgxNGtnbfYR7sNBt/gZf7U25Q8d9SK
-        DJTzZ8cSQbtvG4latUaHspGuArLFXP9nTRjoHzc=
-X-Google-Smtp-Source: ALg8bN59Kkxx6Fbs4QbvhyZTL6KqtkMB79FwPZLIvkoDhoElItO614G4Q3/eDitYeloF/R88EfyyK0hCxBMvlOjHQ0Y=
-X-Received: by 2002:a2e:12d0:: with SMTP id 77-v6mr30204477ljs.132.1546729905234;
- Sat, 05 Jan 2019 15:11:45 -0800 (PST)
+        bh=Tw4oip6EfatkanJXQ0Zx4DwqRQ3BksFdUuwP9ca2DpU=;
+        b=aF2PEYRD8OXA65Jz2cQ+D4OS04idYAdoc5wGx68OSwX/hxuiufN4hQl4PHhSNef+sI
+         So5Q73ce91L3JU6he5fG1Bv87bLNIoAHAMcVPZJR79xiSyDRkheCfkLnd9oGJgR3vrVi
+         oVpfDArwBs0scXZlVw+0NMY6DLCB8TwcZhW5U2MYMxNPXbKNHAnuxSWsg7bU/lPwnyfP
+         8xbD27ErPpsTnMvK7reJQ8VfH7y5cFplJFB0zA7WQ2yG8cqqsrKK+Q6fKnGNIzRhc8nK
+         WojssiglwXzkUCipE8QvtomowlelplexcnkMyPoX4b1dwQUiVmMUf5WdGxwSAvpNjuKM
+         rRJQ==
+X-Gm-Message-State: AJcUukd46veAKOboTQo11jrhxSVIJlW7tMSAdGupTQ4n8KChJRhO8AMF
+        mtcn+xkRlvFsDBwjU29LADIwjsjor3uuqlQ2vug=
+X-Google-Smtp-Source: ALg8bN5xUo+LdE7VBmqXR/655CMeG7upatvXP5ldSVPRoOztsaSLNe1m7ZMtJxKfQhZPeRSUDEYVeU4qksWpau9JwQQ=
+X-Received: by 2002:a2e:2d4:: with SMTP id y81-v6mr31641074lje.62.1546729971898;
+ Sat, 05 Jan 2019 15:12:51 -0800 (PST)
 MIME-Version: 1.0
-References: <20190105202659.20198-1-nazgul33@gmail.com> <20190105202659.20198-3-nazgul33@gmail.com>
-In-Reply-To: <20190105202659.20198-3-nazgul33@gmail.com>
+References: <20190105202659.20198-1-nazgul33@gmail.com> <20190105202659.20198-2-nazgul33@gmail.com>
+In-Reply-To: <20190105202659.20198-2-nazgul33@gmail.com>
 From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date:   Sat, 5 Jan 2019 17:11:32 -0600
-Message-ID: <CAKdAkRR80M4R4bWPu4smPD5=KPWanL+EFPvDUYLNrHaFQfApPw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] Input: rotaty-encoder - Add DT binding document
+Date:   Sat, 5 Jan 2019 17:12:40 -0600
+Message-ID: <CAKdAkRQKnH++VuL37EGBaFSMmFPvbpCkVkZLwuMU9eWo+KsaXA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] Input: rotary_encoder - Support key events
 To:     Donghoon Han <nazgul33@gmail.com>
 Cc:     "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
         Daniel Mack <daniel@caiaq.de>,
@@ -71,41 +71,77 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Sat, Jan 5, 2019 at 2:27 PM Donghoon Han <nazgul33@gmail.com> wrote:
 >
-> Add DT binding document for rotary-encoder, keycode options.
+> From: Steven Han <nazgul33@gmail.com>
+>
+> Support generating EV_KEY pair, instead of EV_REL.
 >
 > Signed-off-by: Donghoon Han <nazgul33@gmail.com>
 > ---
->  .../devicetree/bindings/input/rotary-encoder.txt     | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
+>  drivers/input/misc/rotary_encoder.c | 23 +++++++++++++++++++++--
+>  1 file changed, 21 insertions(+), 2 deletions(-)
 >
-> diff --git a/Documentation/devicetree/bindings/input/rotary-encoder.txt b/Documentation/devicetree/bindings/input/rotary-encoder.txt
-> index f99fe5cdeaec..113640079de3 100644
-> --- a/Documentation/devicetree/bindings/input/rotary-encoder.txt
-> +++ b/Documentation/devicetree/bindings/input/rotary-encoder.txt
-> @@ -12,6 +12,10 @@ Optional properties:
->  - rotary-encoder,relative-axis: register a relative axis rather than an
->    absolute one. Relative axis will only generate +1/-1 events on the input
->    device, hence no steps need to be passed.
-> +- rotary-encoder,relative-keys : generate pair of key events. This setting
-> +  behaves just like relative-axis, generating key events. keycode[2]
-> +  corresponds -1/1 events.
-> +- rotary-encoder,relative-keycodes : keycodes for relative-keys
->  - rotary-encoder,rollover: Automatic rollover when the rotary value becomes
->    greater than the specified steps or smaller than 0. For absolute axis only.
->  - rotary-encoder,steps-per-period: Number of steps (stable states) per period.
-> @@ -48,3 +52,11 @@ Example:
->                         rotary-encoder,encoding = "binary";
->                         rotary-encoder,rollover;
->                 };
-> +
-> +               rotary@2 {
-> +                       compatible = "rotary-encoder";
-> +                       gpios = <&gpio 21 0>, <&gpio 22 0>;
-> +                       rotary-encoder,relative-keys;
-> +                       rotary-encoder,relative-keycode = <103>, <108>;
-> +                       rotary-encoder,steps-per-period = <2>;
+> diff --git a/drivers/input/misc/rotary_encoder.c b/drivers/input/misc/rotary_encoder.c
+> index 72eee6d55527..180e35884289 100644
+> --- a/drivers/input/misc/rotary_encoder.c
+> +++ b/drivers/input/misc/rotary_encoder.c
+> @@ -41,6 +41,8 @@ struct rotary_encoder {
+>         u32 steps;
+>         u32 axis;
+>         bool relative_axis;
+> +       bool relative_keys;
+> +       u32 keycodes[2];
+>         bool rollover;
+>         enum rotary_encoder_encoding encoding;
+>
+> @@ -79,6 +81,10 @@ static void rotary_encoder_report_event(struct rotary_encoder *encoder)
+>         if (encoder->relative_axis) {
+>                 input_report_rel(encoder->input,
+>                                  encoder->axis, encoder->dir);
+> +       } else if (encoder->relative_keys) {
+> +               u32 keycode = encoder->keycodes[encoder->dir > 0];
+> +               input_event(encoder->input, EV_KEY, keycode, 1);
 
-Do you need steps for keys? They weren't required for the relative axis mode.
+You need input_sync() here.
+
+> +               input_event(encoder->input, EV_KEY, keycode, 0);
+>         } else {
+>                 unsigned int pos = encoder->pos;
+>
+> @@ -237,6 +243,16 @@ static int rotary_encoder_probe(struct platform_device *pdev)
+>         device_property_read_u32(dev, "linux,axis", &encoder->axis);
+>         encoder->relative_axis =
+>                 device_property_read_bool(dev, "rotary-encoder,relative-axis");
+> +       encoder->relative_keys =
+> +               device_property_read_bool(dev, "rotary-encoder,relative-keys");
+> +       if (encoder->relative_keys) {
+> +               err = device_property_read_u32_array(dev,
+> +                                       "rotary-encoder,relative-keycodes",
+> +                                       encoder->keycodes, 2);
+> +               if (err)
+> +                       dev_err(dev, "unable to get keycodes: %d\n", err);
+> +               return err;
+> +       }
+>
+>         encoder->gpios = devm_gpiod_get_array(dev, NULL, GPIOD_IN);
+>         if (IS_ERR(encoder->gpios)) {
+> @@ -260,9 +276,12 @@ static int rotary_encoder_probe(struct platform_device *pdev)
+>         input->id.bustype = BUS_HOST;
+>         input->dev.parent = dev;
+>
+> -       if (encoder->relative_axis)
+> +       if (encoder->relative_axis) {
+>                 input_set_capability(input, EV_REL, encoder->axis);
+> -       else
+> +       } else if (encoder->relative_keys) {
+> +               input_set_capability(input, EV_KEY, encoder->keycodes[0]);
+> +               input_set_capability(input, EV_KEY, encoder->keycodes[1]);
+> +       } else
+>                 input_set_abs_params(input,
+>                                      encoder->axis, 0, encoder->steps, 0, 1);
+>
+> --
+> 2.17.1
+>
 
 Thanks.
 
