@@ -2,68 +2,69 @@ Return-Path: <SRS0=xVxK=PN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03E38C43387
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 20:13:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5611CC43387
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 20:17:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CABA5222FE
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 20:13:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 20F3F2232D
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 20:17:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Ovm4s7qz"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="K2mrC1he"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726361AbfAEUNW (ORCPT
+        id S1726322AbfAEURc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 5 Jan 2019 15:13:22 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:46228 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726267AbfAEUNW (ORCPT
+        Sat, 5 Jan 2019 15:17:32 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:45505 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726282AbfAEURc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 Jan 2019 15:13:22 -0500
-Received: by mail-lj1-f194.google.com with SMTP id v15-v6so35081119ljh.13
-        for <linux-kernel@vger.kernel.org>; Sat, 05 Jan 2019 12:13:21 -0800 (PST)
+        Sat, 5 Jan 2019 15:17:32 -0500
+Received: by mail-lf1-f67.google.com with SMTP id b20so27601947lfa.12
+        for <linux-kernel@vger.kernel.org>; Sat, 05 Jan 2019 12:17:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Pdi+Bg1i6iYAyJ/YB9jfmxDEJpBzO7ZGd7liVQjUxaA=;
-        b=Ovm4s7qzBlZaFkhRQHYQAfhZuyMy8xnAoaOuLMym+53o/QgkGGfnxgHlttRFkYO0Gj
-         7+uqgCM/NMv2jKFKNKxBNgXexzIvyLZduESW3zVSmxX5oY85FuDM23SDZkRu/VBjDrFH
-         ktPUT1ftZfADhqSMujGo9gCGz4FRn/hgRLlz8=
+        bh=BRF36iWgYXCowecQCa4ahsuhW8PKhuB6aSQnN1znDbc=;
+        b=K2mrC1helUL4L325HY2NrT1I4s0DGh5TZeQoHqBCb4EiGtuS6OMSSMFj/IXj91AApP
+         0WIe+9z7ZKrZaj/QnItuCV8+QYEkOSxpr6DSt8xIIp314eWRJzAXpHNi0YCE6TpH5LnR
+         EZ7lEPWEqoE21UAsTku9cUmNgSynPP2Ll+JaI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Pdi+Bg1i6iYAyJ/YB9jfmxDEJpBzO7ZGd7liVQjUxaA=;
-        b=PS9xlBtyVvKnWUI4qIfsbvy+6pJMMz9MgrC2DCCEwQZAGYgNr8ZtPz18cVzJY3ShGH
-         rUx8jcTQd76/lLgte5u3ZzDLG8b1k1yCcFoOteMqnRT0dfXTbBJmA1sFwf3qk2G/yL1T
-         wfGVnaXDze8p4Rn8O8wlyyd2mdljfG3SVKKAwIxOnYVw35Y2HhHn7BN1IuFvMqZuScWU
-         0JZMZC87e6TShnC1E8tle9GEAsyjNyiFE3eZ04ReNDtVoSzh9kJgHFXG8purfTRtYSkp
-         Aw6glZEfLH9HlB4STHMfbiKjsT9IdWeayF+bNxHmxifFsbqf/nwmvPZuvktuCW2ELUFk
-         OUSA==
-X-Gm-Message-State: AJcUukdvlqyMhqUn4qtJSUO1NzqatsJzIwKAI4MEYbeP0AG3jmS27vG5
-        a0ImCjwGTj4+G0xmDNzf5/F8L0YND9o=
-X-Google-Smtp-Source: ALg8bN4XYYKc3Mo4VAiiV4gao+UValvS46eiUuC3Ql+vATk6KqVqkBiEALeGit/M36n5VYt18IzZag==
-X-Received: by 2002:a2e:5054:: with SMTP id v20-v6mr31243424ljd.45.1546719200193;
-        Sat, 05 Jan 2019 12:13:20 -0800 (PST)
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com. [209.85.167.43])
-        by smtp.gmail.com with ESMTPSA id b21sm11757204lfi.7.2019.01.05.12.13.18
+        bh=BRF36iWgYXCowecQCa4ahsuhW8PKhuB6aSQnN1znDbc=;
+        b=I9hVwZfyhmlHANKBKGfn1XLhtPIV6XyKlSO+YfcaDMf3S/4gC5AnlUJL27P5TY1c5z
+         vhXtaJ7Z9+tL59xMUdoftaEmhYmlBOekMqDRJmYDk0/5Xls/XuE9pCmQGkr6iFcrI852
+         uJzNq9zk9ixLSMG3z//qJ0oydpASShFzXIYqUSYNgRmAz3nZRlLuslGwVxplWK4ZFcif
+         GOH/Mlgiz2GtNTwvpo3DwLmU8LkN0xXS8RB7pS3pRt9wmbtFKqNaaVM8P2b31kYQ1P9a
+         qChP/Hrob4heqJghF+pqY2JYg1AlBTZWCAQrheDk4B2kyWgdwAf+K4lvRdrvn242IySi
+         5jcg==
+X-Gm-Message-State: AA+aEWZdAAmD0mFDEApZB7bQLeGWE8GQS8ZEEVlkeMOS7fcVGp/49h8D
+        w99py36ESDyvboGYxbnA39+5bt+YsZk=
+X-Google-Smtp-Source: AFSGD/XDM3JtT26d+mQpTr+WW9lJvb47B9yNhHy3ee2qu1WkAKcyASNkyCrui0F90IPlbrecK/hw5g==
+X-Received: by 2002:a19:7352:: with SMTP id o79mr30110747lfc.104.1546719449733;
+        Sat, 05 Jan 2019 12:17:29 -0800 (PST)
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
+        by smtp.gmail.com with ESMTPSA id j9sm68291lfk.74.2019.01.05.12.17.28
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 05 Jan 2019 12:13:19 -0800 (PST)
-Received: by mail-lf1-f43.google.com with SMTP id p6so27672950lfc.1
-        for <linux-kernel@vger.kernel.org>; Sat, 05 Jan 2019 12:13:18 -0800 (PST)
-X-Received: by 2002:a19:3fcf:: with SMTP id m198mr26631654lfa.106.1546719198576;
- Sat, 05 Jan 2019 12:13:18 -0800 (PST)
+        Sat, 05 Jan 2019 12:17:28 -0800 (PST)
+Received: by mail-lj1-f171.google.com with SMTP id t18-v6so35098443ljd.4
+        for <linux-kernel@vger.kernel.org>; Sat, 05 Jan 2019 12:17:28 -0800 (PST)
+X-Received: by 2002:a2e:95c6:: with SMTP id y6-v6mr10266322ljh.59.1546719448269;
+ Sat, 05 Jan 2019 12:17:28 -0800 (PST)
 MIME-Version: 1.0
-References: <nycvar.YFH.7.76.1901051817390.16954@cbobk.fhfr.pm> <CAHk-=wicks2BEwm1BhdvEj_P3yawmvQuG3NOnjhdrUDEtTGizw@mail.gmail.com>
-In-Reply-To: <CAHk-=wicks2BEwm1BhdvEj_P3yawmvQuG3NOnjhdrUDEtTGizw@mail.gmail.com>
+References: <nycvar.YFH.7.76.1901051817390.16954@cbobk.fhfr.pm>
+ <CAHk-=wicks2BEwm1BhdvEj_P3yawmvQuG3NOnjhdrUDEtTGizw@mail.gmail.com> <nycvar.YFH.7.76.1901052108390.16954@cbobk.fhfr.pm>
+In-Reply-To: <nycvar.YFH.7.76.1901052108390.16954@cbobk.fhfr.pm>
 From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sat, 5 Jan 2019 12:13:01 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wif_9nvNHJiyxHzJ80_WUb0P7CXNBvXkjZz-r1u0ozp7g@mail.gmail.com>
-Message-ID: <CAHk-=wif_9nvNHJiyxHzJ80_WUb0P7CXNBvXkjZz-r1u0ozp7g@mail.gmail.com>
+Date:   Sat, 5 Jan 2019 12:17:12 -0800
+X-Gmail-Original-Message-ID: <CAHk-=whGmE4QVr6NbgHnrVGVENfM3s1y6GNbsfh8PcOg=6bpqw@mail.gmail.com>
+Message-ID: <CAHk-=whGmE4QVr6NbgHnrVGVENfM3s1y6GNbsfh8PcOg=6bpqw@mail.gmail.com>
 Subject: Re: [PATCH] mm/mincore: allow for making sys_mincore() privileged
 To:     Jiri Kosina <jikos@kernel.org>
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
@@ -72,53 +73,36 @@ Cc:     Andrew Morton <akpm@linux-foundation.org>,
         Michal Hocko <mhocko@suse.com>, linux-mm@kvack.org,
         Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
         linux-api@vger.kernel.org
-Content-Type: multipart/mixed; boundary="0000000000006646d6057ebba023"
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---0000000000006646d6057ebba023
-Content-Type: text/plain; charset="UTF-8"
+[ Crossed emails ]
 
-On Sat, Jan 5, 2019 at 11:46 AM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+On Sat, Jan 5, 2019 at 12:12 PM Jiri Kosina <jikos@kernel.org> wrote:
 >
-> Can we please just limit it to vma's that are either anonymous, or map
-> a file that the user actually owns?
+> I am still not completely sure what to return in such cases though; we can
+> either blatantly lie and always pretend that the pages are resident
 
-.. or slightly simpler: a file that the user opened for writing.
+That's what my untested patch did. Or maybe just claim they are all
+not present?
 
-IOW, some (TOTALLY UNTESTED!) patch like this?
+And again, that patch was entirely untested, so it may be garbage and
+have some fundamental problem. I also don't know exactly what rule
+might make most sense, but "you can write to the file" certainly to me
+implies that you also could know what parts of it are in-core.
 
-               Linus
+Who actually _uses_ mincore()? That's probably the best guide to what
+we should do. Maybe they open the file read-only even if they are the
+owner, and we really should look at file ownership instead.
 
---0000000000006646d6057ebba023
-Content-Type: text/x-patch; charset="US-ASCII"; name="patch.diff"
-Content-Disposition: attachment; filename="patch.diff"
-Content-Transfer-Encoding: base64
-Content-ID: <f_jqjwnxes0>
-X-Attachment-Id: f_jqjwnxes0
+I tried to make that "can_do_mincore()" function easy to understand
+and easy to just modify to some sane state.
 
-IG1tL21pbmNvcmUuYyB8IDE0ICsrKysrKysrKysrKystCiAxIGZpbGUgY2hhbmdlZCwgMTMgaW5z
-ZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQoKZGlmZiAtLWdpdCBhL21tL21pbmNvcmUuYyBiL21t
-L21pbmNvcmUuYwppbmRleCAyMTgwOTliNWVkMzEuLjYxZTM4ODk1ZmIwMiAxMDA2NDQKLS0tIGEv
-bW0vbWluY29yZS5jCisrKyBiL21tL21pbmNvcmUuYwpAQCAtMTY5LDYgKzE2OSwxMyBAQCBzdGF0
-aWMgaW50IG1pbmNvcmVfcHRlX3JhbmdlKHBtZF90ICpwbWQsIHVuc2lnbmVkIGxvbmcgYWRkciwg
-dW5zaWduZWQgbG9uZyBlbmQsCiAJcmV0dXJuIDA7CiB9CiAKK3N0YXRpYyBpbmxpbmUgYm9vbCBj
-YW5fZG9fbWluY29yZShzdHJ1Y3Qgdm1fYXJlYV9zdHJ1Y3QgKnZtYSkKK3sKKwlyZXR1cm4gdm1h
-X2lzX2Fub255bW91cyh2bWEpCisJCXx8ICh2bWEtPnZtX2ZpbGUgJiYgKHZtYS0+dm1fZmlsZS0+
-Zl9tb2RlICYgRk1PREVfV1JJVEUpKQorCQl8fCBjYXBhYmxlKENBUF9TWVNfQURNSU4pOworfQor
-CiAvKgogICogRG8gYSBjaHVuayBvZiAic3lzX21pbmNvcmUoKSIuIFdlJ3ZlIGFscmVhZHkgY2hl
-Y2tlZAogICogYWxsIHRoZSBhcmd1bWVudHMsIHdlIGhvbGQgdGhlIG1tYXAgc2VtYXBob3JlOiB3
-ZSBzaG91bGQKQEAgLTE4OSw4ICsxOTYsMTMgQEAgc3RhdGljIGxvbmcgZG9fbWluY29yZSh1bnNp
-Z25lZCBsb25nIGFkZHIsIHVuc2lnbmVkIGxvbmcgcGFnZXMsIHVuc2lnbmVkIGNoYXIgKnYKIAl2
-bWEgPSBmaW5kX3ZtYShjdXJyZW50LT5tbSwgYWRkcik7CiAJaWYgKCF2bWEgfHwgYWRkciA8IHZt
-YS0+dm1fc3RhcnQpCiAJCXJldHVybiAtRU5PTUVNOwotCW1pbmNvcmVfd2Fsay5tbSA9IHZtYS0+
-dm1fbW07CiAJZW5kID0gbWluKHZtYS0+dm1fZW5kLCBhZGRyICsgKHBhZ2VzIDw8IFBBR0VfU0hJ
-RlQpKTsKKwlpZiAoIWNhbl9kb19taW5jb3JlKHZtYSkpIHsKKwkJdW5zaWduZWQgbG9uZyBwYWdl
-cyA9IChlbmQgLSBhZGRyKSA+PiBQQUdFX1NISUZUOworCQltZW1zZXQodmVjLCAxLCBwYWdlcyk7
-CisJCXJldHVybiBwYWdlczsKKwl9CisJbWluY29yZV93YWxrLm1tID0gdm1hLT52bV9tbTsKIAll
-cnIgPSB3YWxrX3BhZ2VfcmFuZ2UoYWRkciwgZW5kLCAmbWluY29yZV93YWxrKTsKIAlpZiAoZXJy
-IDwgMCkKIAkJcmV0dXJuIGVycjsK
---0000000000006646d6057ebba023--
+Again, my patch is meant as a "perhaps something like this?" rather
+than some "this is _exactly_ how it must be done". Take the patch as a
+quick suggestion, not some final answer.
+
+              Linus
