@@ -2,99 +2,95 @@ Return-Path: <SRS0=xVxK=PN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 240BDC43387
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 20:43:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B889C43387
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 20:44:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0E9E222F7
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 20:43:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546720986;
-	bh=GAwvUo+YWcN7/DvGRXgyekMJvJmRr9k1wmPOILrwkD8=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:List-ID:From;
-	b=ViF5LS2P3oppMXild2LKwNVYXLDLhzLCh1JOodRkTwI+Pen9gIEfk2+dDnMZv/CQn
-	 s6hgrGdtJtt2IPjLfzfEZue05nI170umQ7jZ2H4/VVmCsqLwM4A4rj33Pr/0ch4sMl
-	 REXyJpMxn7nZWTdKdEmb6nIhtJX16i8FvvJDt5QY=
+	by mail.kernel.org (Postfix) with ESMTP id 58E0C222EB
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 20:44:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="cJhb6LH0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726372AbfAEUnF (ORCPT
+        id S1726357AbfAEUoe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 5 Jan 2019 15:43:05 -0500
-Received: from mx2.suse.de ([195.135.220.15]:39632 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726267AbfAEUnE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 Jan 2019 15:43:04 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 92417AF64;
-        Sat,  5 Jan 2019 20:43:03 +0000 (UTC)
-Date:   Sat, 5 Jan 2019 21:43:02 +0100 (CET)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Michal Hocko <mhocko@suse.com>, linux-mm@kvack.org,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        linux-api@vger.kernel.org
-Subject: Re: [PATCH] mm/mincore: allow for making sys_mincore() privileged
-In-Reply-To: <CAHk-=whGmE4QVr6NbgHnrVGVENfM3s1y6GNbsfh8PcOg=6bpqw@mail.gmail.com>
-Message-ID: <nycvar.YFH.7.76.1901052131480.16954@cbobk.fhfr.pm>
-References: <nycvar.YFH.7.76.1901051817390.16954@cbobk.fhfr.pm> <CAHk-=wicks2BEwm1BhdvEj_P3yawmvQuG3NOnjhdrUDEtTGizw@mail.gmail.com> <nycvar.YFH.7.76.1901052108390.16954@cbobk.fhfr.pm> <CAHk-=whGmE4QVr6NbgHnrVGVENfM3s1y6GNbsfh8PcOg=6bpqw@mail.gmail.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        Sat, 5 Jan 2019 15:44:34 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:38694 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726267AbfAEUod (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 5 Jan 2019 15:44:33 -0500
+Received: by mail-lf1-f65.google.com with SMTP id a8so2604740lfk.5
+        for <linux-kernel@vger.kernel.org>; Sat, 05 Jan 2019 12:44:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YdijyVIkjZNRx/nrM2SmFgETwq3q933x1OT4uWxhoNw=;
+        b=cJhb6LH0FSwWg/cZXfcNKelvXrE/ft5aquv/Z2jWkpBLUZEgoUH7AnZe2EEBLUSvUM
+         6O5f1svd5sLzDX/AMT49SvjDpEQ6McZQwPPi6FEIYWeHSOucf8g20YCjj94NNGXN4Zt/
+         pcyFc9u2eyHGNsjtie7tBcd2XilkFN1JSWP/w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YdijyVIkjZNRx/nrM2SmFgETwq3q933x1OT4uWxhoNw=;
+        b=eP3GGk8D/HbmjY1KqHWGPxWwuAakM75KwUEKMC4EjavHTEwsV+1vyZYD29vkWaA9V+
+         EKCFy/Sg6EmLjMTTiLJ682Q4ips2sJ42TR7buVHYeDQBGcdVtB4569JmtYLOnscMrqD9
+         RJ9pMoT3nJKAG9gR0eT/3UYvCItrJTHJVAULtjbAv490bUGOE7QCfrBDOmSXjWCpOPnb
+         WLVi8MZLxt8dwGIinUk42KLlKY3r4q/8QliIE8KVOXfsLSM+CXAakuUO5h87CDJQhD32
+         CPMvYGsDkwGOXS2R8zoI7DBHELk7BCjqVIngCImgwDehYyZS2XxCJrROylvghUdiFf+g
+         Cr1g==
+X-Gm-Message-State: AA+aEWaGRxOxXrvxkQgUCFGFq6f4c9HnimgPvEeNaB2NNDrSs3bp+01I
+        7bqAeLq/zN+9z+gR/172v/84Fxwxhp0=
+X-Google-Smtp-Source: AFSGD/U3L+VtxOvQfWW/y5/uedCpFqcCVp8MGJehsFVljTS4w2DgWRw+Xf7nNay54GGl4aJS3rOMsg==
+X-Received: by 2002:a19:cd50:: with SMTP id d77mr26998986lfg.125.1546721071191;
+        Sat, 05 Jan 2019 12:44:31 -0800 (PST)
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com. [209.85.167.43])
+        by smtp.gmail.com with ESMTPSA id w16-v6sm13206140ljw.11.2019.01.05.12.44.30
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 05 Jan 2019 12:44:30 -0800 (PST)
+Received: by mail-lf1-f43.google.com with SMTP id b20so27623285lfa.12
+        for <linux-kernel@vger.kernel.org>; Sat, 05 Jan 2019 12:44:30 -0800 (PST)
+X-Received: by 2002:a19:4287:: with SMTP id p129mr29617815lfa.135.1546721069892;
+ Sat, 05 Jan 2019 12:44:29 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <CAK7LNAQzEHv7Y69xFTPDEhyMP6JX4ghb96UMqMdxYyVyah6-VA@mail.gmail.com>
+ <CAHk-=whg49nn5q_2QVMGN0u4rQFBmRKywtqJUSk+5=rBzTk1kg@mail.gmail.com> <20190105203906.GA22423@ravnborg.org>
+In-Reply-To: <20190105203906.GA22423@ravnborg.org>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sat, 5 Jan 2019 12:44:14 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wh0rrLKYOxW6hAVaQ8rFGno7Q=XKrd13mfLXyd__WnTPw@mail.gmail.com>
+Message-ID: <CAHk-=wh0rrLKYOxW6hAVaQ8rFGno7Q=XKrd13mfLXyd__WnTPw@mail.gmail.com>
+Subject: Re: [GIT PULL 1/4] Kbuild updates for v4.21
+To:     Sam Ravnborg <sam@ravnborg.org>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        masahiroy@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 5 Jan 2019, Linus Torvalds wrote:
+On Sat, Jan 5, 2019 at 12:39 PM Sam Ravnborg <sam@ravnborg.org> wrote:
+>
+> Not exactly what you ask for - but we have make V=2
 
-> > I am still not completely sure what to return in such cases though; we can
-> > either blatantly lie and always pretend that the pages are resident
-> 
-> That's what my untested patch did. Or maybe just claim they are all
-> not present?
+Yeah, that's certainly more convenient than "make --debug".
 
-Thinking about it a little bit more, I believe Vlastimil has a good point 
-with 'non present' potentially causing more bogus activity in userspace in 
-response (in an effort to actually make them present, and failing 
-indefinitely).
+That said, I was more thinking of not any particular "oh, it's
+recompiling everything" situation (by then it's too late, obviously),
+but if somebody has been looking at tools for finding and maybe
+breaking some of our deeper include chains.
 
-IOW, I think it's a reasonable expectation that the common scenario is 
-"check if it's present, and if not, try to fault it in" instead of "check 
-if it's present, and if it is, try to evict it".
+I know it has come up before (the x86 people did the
+<linux/schedule.h> split some years ago) and then it was all manual.
+But I was kind of hoping that maybe some of the kbuild people had
+looked at this?
 
-> And again, that patch was entirely untested, so it may be garbage and 
-> have some fundamental problem. 
-
-I will be travelling for next ~24 hours, but I have just asked our QA guys 
-to run it through some basic battery of testing (which will probably 
-happen on monday anyway).
-
-> I also don't know exactly what rule might make most sense, but "you can 
-> write to the file" certainly to me implies that you also could know what 
-> parts of it are in-core.
-
-I think it's reasonable; I can't really imagine any sidechannel to a 
-global state be possibly mounted on valid R/W mappings. I'd guess that 
-probably the most interesting here are the code segments of shared 
-libraries, allowing to trace victim's execution.
-
-> Who actually _uses_ mincore()? That's probably the best guide to what
-> we should do. Maybe they open the file read-only even if they are the
-> owner, and we really should look at file ownership instead.
-
-Yeah, well
-
-	https://codesearch.debian.net/search?q=mincore
-
-is a bit too much mess to get some idea quickly I am afraid.
-
--- 
-Jiri Kosina
-SUSE Labs
-
+             Linus
