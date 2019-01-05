@@ -2,155 +2,96 @@ Return-Path: <SRS0=xVxK=PN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B29AC43387
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 19:15:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06E97C43387
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 19:24:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 790C722300
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 19:15:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C47B921915
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 19:24:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546716246;
+	bh=I4KK7Qagc/1zyHir0MqzIgmRr+UlAJCocCic9HsWfaQ=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:List-ID:From;
+	b=vq0IteohSzLTFEWfLR4pFnBkpctmVtIUochSkhOaAgCFHTSJmMTzIVBqjbNdQn7Rr
+	 qK+1FmgQ++vvyB43pndOcaW2FnRf2hqroVH8M2VpNGSmGPiABvpokF83y7d/Vv0/DC
+	 +97T9AxUv58Qwm5MOTPRSHaLCLL8ISg34MPZRFxo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726299AbfAETPC (ORCPT
+        id S1726311AbfAETYG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 5 Jan 2019 14:15:02 -0500
-Received: from mx2.suse.de ([195.135.220.15]:32994 "EHLO mx1.suse.de"
+        Sat, 5 Jan 2019 14:24:06 -0500
+Received: from mx2.suse.de ([195.135.220.15]:33462 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726252AbfAETPB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 Jan 2019 14:15:01 -0500
+        id S1726262AbfAETYF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 5 Jan 2019 14:24:05 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 8560EACE8;
-        Sat,  5 Jan 2019 19:14:59 +0000 (UTC)
-Subject: Re: [PATCH] mm/mincore: allow for making sys_mincore() privileged
-To:     Jiri Kosina <jikos@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        by mx1.suse.de (Postfix) with ESMTP id 0A0CAACE8;
+        Sat,  5 Jan 2019 19:24:04 +0000 (UTC)
+Date:   Sat, 5 Jan 2019 20:24:03 +0100 (CET)
+From:   Jiri Kosina <jikos@kernel.org>
+To:     Vlastimil Babka <vbabka@suse.cz>
+cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Greg KH <gregkh@linuxfoundation.org>,
         Peter Zijlstra <peterz@infradead.org>,
-        Michal Hocko <mhocko@suse.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org
-References: <nycvar.YFH.7.76.1901051817390.16954@cbobk.fhfr.pm>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Message-ID: <d4846cb2-2a4b-b8b3-daac-e5f51751bbf1@suse.cz>
-Date:   Sat, 5 Jan 2019 20:14:57 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Michal Hocko <mhocko@suse.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org
+Subject: Re: [PATCH] mm/mincore: allow for making sys_mincore() privileged
+In-Reply-To: <d4846cb2-2a4b-b8b3-daac-e5f51751bbf1@suse.cz>
+Message-ID: <nycvar.YFH.7.76.1901052016250.16954@cbobk.fhfr.pm>
+References: <nycvar.YFH.7.76.1901051817390.16954@cbobk.fhfr.pm> <d4846cb2-2a4b-b8b3-daac-e5f51751bbf1@suse.cz>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <nycvar.YFH.7.76.1901051817390.16954@cbobk.fhfr.pm>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5.1.2019 18:27, Jiri Kosina wrote:
-> From: Jiri Kosina <jkosina@suse.cz>
-> 
-> There are possibilities [1] how mincore() could be used as a converyor of 
-> a sidechannel information about pagecache metadata.
-> 
-> Provide vm.mincore_privileged sysctl, which makes it possible to mincore() 
-> start returning -EPERM in case it's invoked by a process lacking 
-> CAP_SYS_ADMIN.
+On Sat, 5 Jan 2019, Vlastimil Babka wrote:
 
-Haven't checked the details yet, but wouldn't it be safe if anonymous private
-mincore() kept working, and restrictions were applied only to page cache?
-
-> The default behavior stays "mincore() can be used by anybody" in order to 
-> be conservative with respect to userspace behavior.
-
-What if we lied instead of returned -EPERM, to not break userspace so obviously?
-I guess false positive would be the safer lie?
-
-> [1] https://www.theregister.co.uk/2019/01/05/boffins_beat_page_cache/
+> > There are possibilities [1] how mincore() could be used as a converyor of 
+> > a sidechannel information about pagecache metadata.
+> > 
+> > Provide vm.mincore_privileged sysctl, which makes it possible to mincore() 
+> > start returning -EPERM in case it's invoked by a process lacking 
+> > CAP_SYS_ADMIN.
 > 
-> Signed-off-by: Jiri Kosina <jkosina@suse.cz>
-> ---
->  Documentation/sysctl/vm.txt | 9 +++++++++
->  kernel/sysctl.c             | 8 ++++++++
->  mm/mincore.c                | 5 +++++
->  3 files changed, 22 insertions(+)
+> Haven't checked the details yet, but wouldn't it be safe if anonymous private
+> mincore() kept working, and restrictions were applied only to page cache?
+
+I was considering that, but then I decided not to do so, as that'd make 
+the interface even more confusing and semantics non-obvious in the 
+'privileged' case.
+
+> > The default behavior stays "mincore() can be used by anybody" in order to 
+> > be conservative with respect to userspace behavior.
 > 
-> diff --git a/Documentation/sysctl/vm.txt b/Documentation/sysctl/vm.txt
-> index 187ce4f599a2..afb8635e925e 100644
-> --- a/Documentation/sysctl/vm.txt
-> +++ b/Documentation/sysctl/vm.txt
-> @@ -41,6 +41,7 @@ Currently, these files are in /proc/sys/vm:
->  - min_free_kbytes
->  - min_slab_ratio
->  - min_unmapped_ratio
-> +- mincore_privileged
->  - mmap_min_addr
->  - mmap_rnd_bits
->  - mmap_rnd_compat_bits
-> @@ -485,6 +486,14 @@ files and similar are considered.
->  The default is 1 percent.
->  
->  ==============================================================
-> +mincore_privileged:
-> +
-> +mincore() could be potentially used to mount a side-channel attack against
-> +pagecache metadata. This sysctl provides system administrators means to
-> +make it available only to processess that own CAP_SYS_ADMIN capability.
-> +
-> +The default is 0, which means mincore() can be used without restrictions.
-> +==============================================================
->  
->  mmap_min_addr
->  
-> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-> index 1825f712e73b..f03cb07c8dd4 100644
-> --- a/kernel/sysctl.c
-> +++ b/kernel/sysctl.c
-> @@ -114,6 +114,7 @@ extern unsigned int sysctl_nr_open_min, sysctl_nr_open_max;
->  #ifndef CONFIG_MMU
->  extern int sysctl_nr_trim_pages;
->  #endif
-> +extern int sysctl_mincore_privileged;
->  
->  /* Constants used for minimum and  maximum */
->  #ifdef CONFIG_LOCKUP_DETECTOR
-> @@ -1684,6 +1685,13 @@ static struct ctl_table vm_table[] = {
->  		.extra2		= (void *)&mmap_rnd_compat_bits_max,
->  	},
->  #endif
-> +	{
-> +		.procname	= "mincore_privileged",
-> +		.data		= &sysctl_mincore_privileged,
-> +		.maxlen		= sizeof(sysctl_mincore_privileged),
-> +		.mode		= 0644,
-> +		.proc_handler	= proc_dointvec,
-> +	},
->  	{ }
->  };
->  
-> diff --git a/mm/mincore.c b/mm/mincore.c
-> index 218099b5ed31..77d4928cdfaa 100644
-> --- a/mm/mincore.c
-> +++ b/mm/mincore.c
-> @@ -21,6 +21,8 @@
->  #include <linux/uaccess.h>
->  #include <asm/pgtable.h>
->  
-> +int sysctl_mincore_privileged;
-> +
->  static int mincore_hugetlb(pte_t *pte, unsigned long hmask, unsigned long addr,
->  			unsigned long end, struct mm_walk *walk)
->  {
-> @@ -228,6 +230,9 @@ SYSCALL_DEFINE3(mincore, unsigned long, start, size_t, len,
->  	unsigned long pages;
->  	unsigned char *tmp;
->  
-> +	if (sysctl_mincore_privileged && !capable(CAP_SYS_ADMIN))
-> +		return -EPERM;
-> +
->  	/* Check the start address: needs to be page-aligned.. */
->  	if (start & ~PAGE_MASK)
->  		return -EINVAL;
-> 
+> What if we lied instead of returned -EPERM, to not break userspace so 
+> obviously? I guess false positive would be the safer lie?
+
+So your proposal basically would be
+
+if (privileged && !CAP_SYS_ADMIN)
+	if (pagecache)
+		return false;
+	else
+		return do_mincore()
+
+right ?
+
+I think userspace would hate us for that semantics, but on the other hand 
+I can sort of understand the 'mincore() is racy anyway, so what' argument, 
+if that's what you are suggesting.
+
+But then, I have no idea what userspace is using mincore() for. 
+https://codesearch.debian.net/search?q=mincore might provide some insight 
+I guess (thanks Matthew).
+
+-- 
+Jiri Kosina
+SUSE Labs
 
