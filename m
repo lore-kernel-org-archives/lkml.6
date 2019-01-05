@@ -2,113 +2,72 @@ Return-Path: <SRS0=xVxK=PN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86385C43387
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 20:39:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B28B2C43387
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 20:41:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53465222FE
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 20:39:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 878C8222FE
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 20:41:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726332AbfAEUjM (ORCPT
+        id S1726357AbfAEUlS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 5 Jan 2019 15:39:12 -0500
-Received: from asavdk3.altibox.net ([109.247.116.14]:43041 "EHLO
-        asavdk3.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726296AbfAEUjL (ORCPT
+        Sat, 5 Jan 2019 15:41:18 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:51363 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726299AbfAEUlS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 Jan 2019 15:39:11 -0500
-Received: from ravnborg.org (unknown [158.248.194.18])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by asavdk3.altibox.net (Postfix) with ESMTPS id AD1BE20054;
-        Sat,  5 Jan 2019 21:39:07 +0100 (CET)
-Date:   Sat, 5 Jan 2019 21:39:06 +0100
-From:   Sam Ravnborg <sam@ravnborg.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        masahiroy@kernel.org
-Subject: Re: [GIT PULL 1/4] Kbuild updates for v4.21
-Message-ID: <20190105203906.GA22423@ravnborg.org>
-References: <CAK7LNAQzEHv7Y69xFTPDEhyMP6JX4ghb96UMqMdxYyVyah6-VA@mail.gmail.com>
- <CAHk-=whg49nn5q_2QVMGN0u4rQFBmRKywtqJUSk+5=rBzTk1kg@mail.gmail.com>
+        Sat, 5 Jan 2019 15:41:18 -0500
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1gfskp-0002qD-1C; Sat, 05 Jan 2019 21:41:11 +0100
+Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1gfskn-000633-Mp; Sat, 05 Jan 2019 21:41:09 +0100
+Date:   Sat, 5 Jan 2019 21:41:09 +0100
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Claudiu.Beznea@microchip.com
+Cc:     thierry.reding@gmail.com, corbet@lwn.net,
+        Nicolas.Ferre@microchip.com, alexandre.belloni@bootlin.com,
+        Ludovic.Desroches@microchip.com, linux-pwm@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v8 2/6] pwm: add PWM modes
+Message-ID: <20190105204109.hejk2fkabkv3y5ik@pengutronix.de>
+References: <1546522081-23659-1-git-send-email-claudiu.beznea@microchip.com>
+ <1546522081-23659-3-git-send-email-claudiu.beznea@microchip.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <CAHk-=whg49nn5q_2QVMGN0u4rQFBmRKywtqJUSk+5=rBzTk1kg@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.3 cv=dqr19Wo4 c=1 sm=1 tr=0
-        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
-        a=kj9zAlcOel0A:10 a=LPTCDaSw0Bjh60RHnGUA:9 a=CjuIK1q_8ugA:10
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1546522081-23659-3-git-send-email-claudiu.beznea@microchip.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus.
+On Thu, Jan 03, 2019 at 01:29:47PM +0000, Claudiu.Beznea@microchip.com wrote:
+> From: Claudiu Beznea <claudiu.beznea@microchip.com>
+> 
+> Add PWM normal and complementary modes.
+> 
 
-> But the reason for this email to you is simply to ask whether you
-> use/have any tools for seeing these kinds of deep include chains.
+The Subject line and the commit log don't really match the patch
+content as it only adds documentation.
 
-Not exactly what you ask for - but we have make V=2
+Best regards
+Uwe
 
-Example:
-
-$ touch include/uapi/linux/elf-em.h
-$ make V=2
-  CALL    scripts/checksyscalls.sh - due to target missing
-  DESCEND  objtool
-  CC      init/main.o - due to: include/uapi/linux/elf-em.h
-  CHK     include/generated/compile.h
-  CC      init/version.o - due to: include/uapi/linux/elf-em.h
-  CC      init/do_mounts.o - due to: include/uapi/linux/elf-em.h
-  CC      init/do_mounts_initrd.o - due to: include/uapi/linux/elf-em.h
-  CC      init/do_mounts_md.o - due to: include/uapi/linux/elf-em.h
-...
-
-With V=2 kbuild will try to tell you why a target is rebuild.
-This can sometimes be useful.
-
-Here kbuild will tell you: - due to: include/uapi/linux/elf-em.h
-Which may be a good clue.
-
-But you need to figure out yourself why a certain file
-depends on include/uapi/linux/elf-em.h
-
-One way is to look at the .cmd file for a target:
-
-$ cat init/.do_mounts_md.o.cmd
-...
-  include/linux/module.h \
-    $(wildcard include/config/modules/tree/lookup.h) \
-    $(wildcard include/config/module/sig.h) \
-    $(wildcard include/config/module/unload.h) \
-    $(wildcard include/config/constructors.h) \
-    $(wildcard include/config/function/error/injection.h) \
-  include/linux/kmod.h \
-  include/linux/umh.h \
-  include/linux/elf.h \
-  arch/x86/include/asm/elf.h \
-  arch/x86/include/asm/user.h \
-  arch/x86/include/asm/user_64.h \
-  arch/x86/include/asm/fsgsbase.h \
-  arch/x86/include/asm/msr-index.h \
-  arch/x86/include/asm/vdso.h \
-    $(wildcard include/config/x86/x32.h) \
-  include/uapi/linux/elf.h \
-  include/uapi/linux/elf-em.h \
-...
-
-In the above all the $(wildcard ...) is the CONFIG_ symbols
-in the files that trigger a possible dependency on a file
-representing the CONFIG_ symbol.
-
-We can see that the target depends on elf-em.h and if we follow
-it back we end up with module.h included from do_mounts_md.c
-
-	Sam
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
