@@ -2,154 +2,71 @@ Return-Path: <SRS0=xVxK=PN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A33D2C43387
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 22:31:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B68AAC43387
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 22:32:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72FD6222C7
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 22:31:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 835BD2133F
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 22:32:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546727538;
+	bh=BM4S7Y1+zFn4EU71Xaj2YruXzHbQubg6+5uXAfuXPqg=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
+	b=XuG8Dq9rxkMVFn3Z7DBR8f2nGAUe36SRDpEpNGvW/j/zFd286cohda0cHHj/XBpzV
+	 W3B9x79KBpuCjvmKwlCXNuvVuWRDc5+nC42hqUZ8L+xUkT3wu0l3NnmUlDuuq3eeY0
+	 SuncGXooGffWWii1YVWiMTmlJuh5eItZvxDqRiwM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726413AbfAEWbF (ORCPT
+        id S1726458AbfAEWcR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 5 Jan 2019 17:31:05 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:38446 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726388AbfAEWbF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 Jan 2019 17:31:05 -0500
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id DA4C2809AA; Sat,  5 Jan 2019 23:12:49 +0100 (CET)
-Date:   Sat, 5 Jan 2019 23:12:54 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc:     Vesa =?iso-8859-1?B?SuTkc2tlbORpbmVu?= <dachaac@gmail.com>,
-        Dan Murphy <dmurphy@ti.com>, robh+dt@kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-leds@vger.kernel.org
-Subject: Generic RGB LED support was Re: [PATCH 2/2] leds: lp5024: Add the
- LP5024/18 RGB LED driver
-Message-ID: <20190105221254.GA22322@amd>
-References: <986b5105-2fdb-bd25-7c8a-ca8fd1ade821@gmail.com>
- <7f205102-e854-f1cb-cc03-1307d1cddc87@gmail.com>
- <c9f8965a-90f4-b456-8225-c70694c9f071@gmail.com>
- <cf6c0025-36e7-197b-b27a-1f31fb45cc38@gmail.com>
- <20190104201256.GA2931@amd>
- <a4e3a782-de76-ba91-3727-4db69cf27c3a@gmail.com>
- <20190104220726.GA12395@amd>
- <4cf79414-578e-eea7-4f46-fc8789206988@gmail.com>
- <20190105123146.GA16354@amd>
- <8044cdd9-b9b3-fddd-6106-184b906859e2@gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="ZGiS0Q5IWpPtfppv"
-Content-Disposition: inline
-In-Reply-To: <8044cdd9-b9b3-fddd-6106-184b906859e2@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Sat, 5 Jan 2019 17:32:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51796 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726425AbfAEWcP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 5 Jan 2019 17:32:15 -0500
+Subject: Re: [GIT PULL][PATCH] sh: ftrace: Fix missing parenthesis in WARN_ON()
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1546726503;
+        bh=BM4S7Y1+zFn4EU71Xaj2YruXzHbQubg6+5uXAfuXPqg=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=ZT2QKFpKhU4ZwE7la81tDWHcIYHPungW2CqtJeuFskEbdHsFY2zjDECRs54WVKhVM
+         k5YtKWJm4eW+bzh/JyqD/Bywa1NsFhg7yqFkitr9/GZCHiuy+Ga1UQ92YgZhB/Ml1d
+         XGwkvRsxeRSa6mDt8VndRhDD8pfdJ5H4PWE/5IsQ=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20190103221857.3458296b@vmware.local.home>
+References: <20190103221857.3458296b@vmware.local.home>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20190103221857.3458296b@vmware.local.home>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git
+ trace-v4.21-1
+X-PR-Tracked-Commit-Id: dc56367cb5dbf9d593e4b12373489df9a7edb72c
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: a67012412e5a820c44239af9712a1a6037b33fd4
+Message-Id: <20190105221503.6651.47214.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
+Date:   Sat, 05 Jan 2019 22:15:03 +0000
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-sh@vger.kernel.org,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        kbuild test robot <lkp@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The pull request you sent on Thu, 3 Jan 2019 22:18:57 -0500:
 
---ZGiS0Q5IWpPtfppv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git trace-v4.21-1
 
-Hi!
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/a67012412e5a820c44239af9712a1a6037b33fd4
 
-> >Grab yourself an RGB LED and play with it; you'll see what the
-> >problems are. It is hard to explain colors over email...
->=20
-> Video [0] gives some overview of lp5024 capabilities.
->=20
-> I don't see any problems in exposing separate red,green,blue
-> files and brightness for the devices with hardware support for
-> that.
+Thank you!
 
-Well, that's what we do today, as three separate LEDs, right?
-
-I don't have problem with that, either; other drivers already do
-that. He's free to use existing same interface.
-
-But that is insufficient, as it does not allow simple stuff, such as
-turning led "white".
-
-So... perhaps we should agree on requirements, first, and then we can
-discuss solutions?
-
-Requirements for RGB LED interface:
-
-1) Userspace should be able to set the white color
-
-2) Userspace should be able to arbitrary color from well known list
-and it should approximately match what would CRT, LCD or OLED monitor displ=
-ay
-
-    2a) LEDs probably slightly change color as they age. That's out of
-    scope, unless the variation is much greater than on monitors.
-
-    2b) Manufacturing differences cause small color variation. Again,
-    that's out of scope, unless the variation is much greater than on
-    monitors.
-
-Nice to have features:
-
-3) Full range of available colors/intensities should be available to
-userspace
-
-4) Interface should work well with existing triggers
-
-5) It would be nice if userland knew how many lumens are produced at
-each wavelength for each setting (again, minus aging and manufacturing
-variations).
-
-6) Complexity of math in kernel should be low, and preferably it
-should be integer or fixed point
-
-Problems:
-
-a) RGB LEDs are usually not balanced. Setting 100% PWM on
-red/green/blue channels will result in nothing close to white
-light. In fact, to get white light on N900, blue and green channel's
-PWM needs to be set pretty low, as in 5%.
-
-b) LED class does not define any relation between "brightness" in
-sysfs and ammount of light in lumens. Some drivers use close to linear
-relation, some use exponential relation. Human eyes percieve logarithm
-of lumens. RGB color model uses even more complex function.
-
-c) Except for white LEDs, LEDs are basically sources of single
-wavelength of light, while CRTs and LCDs produce broader
-spectrums.
-
-d) RG, RGBW and probably other LED combinations exist.
-
-e) Not all "red" LEDs will produce same wavelength. Similar
-differences will exist for other colors.
-
-f) We have existing RGB LEDs represented as three separate
-monochromatic LEDs in sysfs.
-
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---ZGiS0Q5IWpPtfppv
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlwxK+YACgkQMOfwapXb+vILFgCgxOnOlQp18Z6SjAygRd9g2tSi
-+T4An2pAO1RIQFE+zBc98noNikm5JT4S
-=CbTN
------END PGP SIGNATURE-----
-
---ZGiS0Q5IWpPtfppv--
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
