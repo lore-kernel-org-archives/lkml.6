@@ -6,40 +6,45 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8252C43387
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 02:04:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75C43C43387
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 02:04:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF66521871
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 02:04:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4EDAD21871
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 02:04:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726750AbfAECET (ORCPT
+        id S1726771AbfAECE1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 21:04:19 -0500
-Received: from mga07.intel.com ([134.134.136.100]:49511 "EHLO mga07.intel.com"
+        Fri, 4 Jan 2019 21:04:27 -0500
+Received: from mga02.intel.com ([134.134.136.20]:23587 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726716AbfAECEQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 21:04:16 -0500
+        id S1726716AbfAECE0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 21:04:26 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jan 2019 18:04:16 -0800
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jan 2019 18:04:25 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,441,1539673200"; 
-   d="scan'208";a="307634812"
+   d="scan'208";a="307634826"
 Received: from kgandham-mobl1.amr.corp.intel.com (HELO pbossart-mobl3.intel.com) ([10.251.139.169])
-  by fmsmga006.fm.intel.com with ESMTP; 04 Jan 2019 18:04:14 -0800
+  by fmsmga006.fm.intel.com with ESMTP; 04 Jan 2019 18:04:21 -0800
 From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 To:     alsa-devel@alsa-project.org
 Cc:     tiwai@suse.de, broonie@kernel.org, liam.r.girdwood@linux.intel.com,
         Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Steven Eckhoff <steven.eckhoff.opensource@gmail.com>,
         Liam Girdwood <lgirdwood@gmail.com>,
         Jaroslav Kysela <perex@perex.cz>,
         Takashi Iwai <tiwai@suse.com>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 16/21] ASoC: tscs42xx.c: fix boolean test
-Date:   Fri,  4 Jan 2019 20:02:44 -0600
-Message-Id: <20190105020249.8639-17-pierre-louis.bossart@linux.intel.com>
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Kai Chieh Chuang <kaichieh.chuang@mediatek.com>,
+        Wei Yongjun <weiyongjun1@huawei.com>,
+        linux-arm-kernel@lists.infradead.org (moderated list:ARM/Mediatek SoC
+        support),
+        linux-mediatek@lists.infradead.org (moderated list:ARM/Mediatek SoC
+        support), linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH 17/21] ASoC: mt6351: remove unneeded variable
+Date:   Fri,  4 Jan 2019 20:02:45 -0600
+Message-Id: <20190105020249.8639-18-pierre-louis.bossart@linux.intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190105020249.8639-1-pierre-louis.bossart@linux.intel.com>
 References: <20190105020249.8639-1-pierre-louis.bossart@linux.intel.com>
@@ -49,26 +54,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Reported by Coccinelle:
-sound/soc/codecs/tscs42xx.c:392:5-31: WARNING: Comparison to bool
+mt6351.c:1418:5-8: Unneeded variable: "ret". Return "0" on line 1437
 
 Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 ---
- sound/soc/codecs/tscs42xx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/codecs/mt6351.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/sound/soc/codecs/tscs42xx.c b/sound/soc/codecs/tscs42xx.c
-index 7396a6e5277e..27b8c6ba72fa 100644
---- a/sound/soc/codecs/tscs42xx.c
-+++ b/sound/soc/codecs/tscs42xx.c
-@@ -389,7 +389,7 @@ static int dac_event(struct snd_soc_dapm_widget *w,
+diff --git a/sound/soc/codecs/mt6351.c b/sound/soc/codecs/mt6351.c
+index f73dcd753584..4b3ce01c5a93 100644
+--- a/sound/soc/codecs/mt6351.c
++++ b/sound/soc/codecs/mt6351.c
+@@ -1415,8 +1415,6 @@ static const struct snd_soc_dapm_route mt6351_dapm_routes[] = {
  
- 	mutex_lock(&tscs42xx->coeff_ram_lock);
+ static int mt6351_codec_init_reg(struct snd_soc_component *cmpnt)
+ {
+-	int ret = 0;
+-
+ 	/* Disable CLKSQ 26MHz */
+ 	regmap_update_bits(cmpnt->regmap, MT6351_TOP_CLKSQ, 0x0001, 0x0);
+ 	/* disable AUDGLB */
+@@ -1434,7 +1432,7 @@ static int mt6351_codec_init_reg(struct snd_soc_component *cmpnt)
+ 	/* Reverse the PMIC clock*/
+ 	regmap_update_bits(cmpnt->regmap, MT6351_AFE_PMIC_NEWIF_CFG2,
+ 			   0x8000, 0x8000);
+-	return ret;
++	return 0;
+ }
  
--	if (tscs42xx->coeff_ram_synced == false) {
-+	if (!tscs42xx->coeff_ram_synced) {
- 		ret = write_coeff_ram(component, tscs42xx->coeff_ram, 0x00,
- 			COEFF_RAM_COEFF_COUNT);
- 		if (ret < 0)
+ static int mt6351_codec_probe(struct snd_soc_component *cmpnt)
 -- 
 2.17.1
 
