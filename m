@@ -2,95 +2,70 @@ Return-Path: <SRS0=xVxK=PN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B889C43387
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 20:44:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95F1DC43387
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 20:45:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58E0C222EB
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 20:44:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="cJhb6LH0"
+	by mail.kernel.org (Postfix) with ESMTP id 4CBB4222EB
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 20:45:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726357AbfAEUoe (ORCPT
+        id S1726365AbfAEUp6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 5 Jan 2019 15:44:34 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:38694 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726267AbfAEUod (ORCPT
+        Sat, 5 Jan 2019 15:45:58 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:35704 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726267AbfAEUp6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 Jan 2019 15:44:33 -0500
-Received: by mail-lf1-f65.google.com with SMTP id a8so2604740lfk.5
-        for <linux-kernel@vger.kernel.org>; Sat, 05 Jan 2019 12:44:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=YdijyVIkjZNRx/nrM2SmFgETwq3q933x1OT4uWxhoNw=;
-        b=cJhb6LH0FSwWg/cZXfcNKelvXrE/ft5aquv/Z2jWkpBLUZEgoUH7AnZe2EEBLUSvUM
-         6O5f1svd5sLzDX/AMT49SvjDpEQ6McZQwPPi6FEIYWeHSOucf8g20YCjj94NNGXN4Zt/
-         pcyFc9u2eyHGNsjtie7tBcd2XilkFN1JSWP/w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YdijyVIkjZNRx/nrM2SmFgETwq3q933x1OT4uWxhoNw=;
-        b=eP3GGk8D/HbmjY1KqHWGPxWwuAakM75KwUEKMC4EjavHTEwsV+1vyZYD29vkWaA9V+
-         EKCFy/Sg6EmLjMTTiLJ682Q4ips2sJ42TR7buVHYeDQBGcdVtB4569JmtYLOnscMrqD9
-         RJ9pMoT3nJKAG9gR0eT/3UYvCItrJTHJVAULtjbAv490bUGOE7QCfrBDOmSXjWCpOPnb
-         WLVi8MZLxt8dwGIinUk42KLlKY3r4q/8QliIE8KVOXfsLSM+CXAakuUO5h87CDJQhD32
-         CPMvYGsDkwGOXS2R8zoI7DBHELk7BCjqVIngCImgwDehYyZS2XxCJrROylvghUdiFf+g
-         Cr1g==
-X-Gm-Message-State: AA+aEWaGRxOxXrvxkQgUCFGFq6f4c9HnimgPvEeNaB2NNDrSs3bp+01I
-        7bqAeLq/zN+9z+gR/172v/84Fxwxhp0=
-X-Google-Smtp-Source: AFSGD/U3L+VtxOvQfWW/y5/uedCpFqcCVp8MGJehsFVljTS4w2DgWRw+Xf7nNay54GGl4aJS3rOMsg==
-X-Received: by 2002:a19:cd50:: with SMTP id d77mr26998986lfg.125.1546721071191;
-        Sat, 05 Jan 2019 12:44:31 -0800 (PST)
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com. [209.85.167.43])
-        by smtp.gmail.com with ESMTPSA id w16-v6sm13206140ljw.11.2019.01.05.12.44.30
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 05 Jan 2019 12:44:30 -0800 (PST)
-Received: by mail-lf1-f43.google.com with SMTP id b20so27623285lfa.12
-        for <linux-kernel@vger.kernel.org>; Sat, 05 Jan 2019 12:44:30 -0800 (PST)
-X-Received: by 2002:a19:4287:: with SMTP id p129mr29617815lfa.135.1546721069892;
- Sat, 05 Jan 2019 12:44:29 -0800 (PST)
+        Sat, 5 Jan 2019 15:45:58 -0500
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.91 #2 (Red Hat Linux))
+        id 1gfspN-0003qm-69; Sat, 05 Jan 2019 20:45:53 +0000
+Date:   Sat, 5 Jan 2019 20:45:53 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: [git pull] vfs.git mount.part1
+Message-ID: <20190105204552.GR2217@ZenIV.linux.org.uk>
+References: <20190104192648.GO2217@ZenIV.linux.org.uk>
+ <87ef9qdhpy.fsf@xmission.com>
 MIME-Version: 1.0
-References: <CAK7LNAQzEHv7Y69xFTPDEhyMP6JX4ghb96UMqMdxYyVyah6-VA@mail.gmail.com>
- <CAHk-=whg49nn5q_2QVMGN0u4rQFBmRKywtqJUSk+5=rBzTk1kg@mail.gmail.com> <20190105203906.GA22423@ravnborg.org>
-In-Reply-To: <20190105203906.GA22423@ravnborg.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sat, 5 Jan 2019 12:44:14 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wh0rrLKYOxW6hAVaQ8rFGno7Q=XKrd13mfLXyd__WnTPw@mail.gmail.com>
-Message-ID: <CAHk-=wh0rrLKYOxW6hAVaQ8rFGno7Q=XKrd13mfLXyd__WnTPw@mail.gmail.com>
-Subject: Re: [GIT PULL 1/4] Kbuild updates for v4.21
-To:     Sam Ravnborg <sam@ravnborg.org>
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        masahiroy@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87ef9qdhpy.fsf@xmission.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jan 5, 2019 at 12:39 PM Sam Ravnborg <sam@ravnborg.org> wrote:
->
-> Not exactly what you ask for - but we have make V=2
+On Sat, Jan 05, 2019 at 01:31:21PM -0600, Eric W. Biederman wrote:
 
-Yeah, that's certainly more convenient than "make --debug".
+> Not having had a chance to review this code I can't really comment on
+> the quality of this code.  What I do know from a glance is that
+> you have not removed FS_BINARY_MOUNTDATA.  Which is the root cause
+> of some of the crazy security mount option processing, and is an if
+> not greater mess than what the security options have been doing with
+> mount options.
+> 
+> The FS_BINARY_MOUNTDATA flag is only relevant for coda and for nfs
+> backwards compatiblity.  The FS_BINARY_MOUNTDATA flag is only set on
+> btrfs to allow calling mount_subtree.
 
-That said, I was more thinking of not any particular "oh, it's
-recompiling everything" situation (by then it's too late, obviously),
-but if somebody has been looking at tools for finding and maybe
-breaking some of our deeper include chains.
+... and thus it can't be killed without having dragged the NFS pile
+into the entire thing.
 
-I know it has come up before (the x86 people did the
-<linux/schedule.h> split some years ago) and then it was all manual.
-But I was kind of hoping that maybe some of the kbuild people had
-looked at this?
+> I have a set of patches that is finally reasonablly stable and cleans up
+> all of the mess in the current internal mount apis that should allow
+> implementing the new mount api to be much less error prone.
 
-             Linus
+Quick question: how do you deal with the differences in quoting for selinux
+options and for everything else?
+
+I've no problem with working with you, now that you've resurfaced.
+Fair warning: no promises of accepting your solutions.  Along with
+a promise to reject anything that breaks existing setups, which your
+earlier proposals did.  With NFS among the victims, IIRC.
