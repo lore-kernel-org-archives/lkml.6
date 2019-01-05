@@ -2,164 +2,122 @@ Return-Path: <SRS0=xVxK=PN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81997C43387
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 12:08:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94F7CC43387
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 12:16:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 465C72070C
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 12:08:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F05420868
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 12:16:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=onstation.org header.i=@onstation.org header.b="hlHzH2QT"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FFNKa+A1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726242AbfAEMIq (ORCPT
+        id S1726243AbfAEMQS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 5 Jan 2019 07:08:46 -0500
-Received: from onstation.org ([52.200.56.107]:42688 "EHLO onstation.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726100AbfAEMIq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 Jan 2019 07:08:46 -0500
-Received: from localhost (c-98-239-145-235.hsd1.wv.comcast.net [98.239.145.235])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: masneyb)
-        by onstation.org (Postfix) with ESMTPSA id A9A6411;
-        Sat,  5 Jan 2019 12:08:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=onstation.org;
-        s=default; t=1546690124;
-        bh=hOgbm0+M8TyF9n+7N36IsKhpLt3KMQz//jbn2TkuwdA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hlHzH2QTloBF7G7nzFh6l4JxzIe1lQesojy36IPqXNqCVj409/mwJBHYNrkDNtDn4
-         /XK0xDJlbrblqQU7XRKSEGyoxx04r7Pqd5tJ3ADPb2/Vsla35zBeBgTNg4vwN2LedU
-         p1WFD32M978owNKFedBSvbyIAUSjFiF+1iYSaRL8=
-Date:   Sat, 5 Jan 2019 07:08:44 -0500
-From:   Brian Masney <masneyb@onstation.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     andy.gross@linaro.org, bjorn.andersson@linaro.org,
-        linus.walleij@linaro.org, marc.zyngier@arm.com,
-        shawnguo@kernel.org, dianders@chromium.org,
-        linux-gpio@vger.kernel.org, nicolas.dechesne@linaro.org,
-        niklas.cassel@linaro.org, david.brown@linaro.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH 2/3] qcom: spmi-gpio: add support for hierarchical IRQ
- chip
-Message-ID: <20190105120844.GA2298@basecamp>
-References: <20181229114755.8711-1-masneyb@onstation.org>
- <20181229114755.8711-3-masneyb@onstation.org>
- <154656291378.15366.8661245319757182529@swboyd.mtv.corp.google.com>
+        Sat, 5 Jan 2019 07:16:18 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:46361 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726100AbfAEMQS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 5 Jan 2019 07:16:18 -0500
+Received: by mail-lj1-f196.google.com with SMTP id v15-v6so34508753ljh.13;
+        Sat, 05 Jan 2019 04:16:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=YgOCaScMyS179dYbYLf7NlPr/N+JginK2XnVCgeGpK4=;
+        b=FFNKa+A14Ej/0BL7uXofITrh0O6QIHCifgekKr07kF0SHEMPcIH132tEmQ4H4pguXL
+         ZamG4I+FA4nXe7caIBEUkbF9l8IyqNvZYgb2BTzHvv4Irv/vSQzl4vR5nBU8rNvL66As
+         NhdV4YdPdgsP4+U1Nd8s4xY5ZSNBAZREqmuM7x+x0p2QySnOm6xn7GygPjTnkvBUe72R
+         fHXF5zAZNMlMbPg2RzSGQVLjAjh/1P61B0oghdfC7Uf9PWcYgJH2m2A1YMAwZwkgrZ42
+         nN6QjKEQgGZSJZcd8xHJf0LLiVV5xNc+9H7OMoUjLn1FJug3kF2mhIJTD+q1oIrIqiz6
+         Pt8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=YgOCaScMyS179dYbYLf7NlPr/N+JginK2XnVCgeGpK4=;
+        b=WDDAr5V1qS8C8tCJIXDgHPSWeYrgLQgDcoqaQl0geCvHcikzAuKQbvi5/gQtQCwh62
+         aGQ7Fkmsufr7vkHkfn5CiIBMlndfQIF4VWAQYuNUoFqdqhNdcHe6ma33uH/4IUsFPZyD
+         TBJjtBo2sDEc0TWOkAH1+KXhlf6EuhYl7Ea0eLHs/74OwyY13y7oLnRA/eXWtJ/AaRLK
+         5IjMLqVGEOBN8CvT9yW9tl1++/do2/+N323C3pI3b8awhjhEqiknxvzRUInxSv7jl1di
+         5WwJKkQQOTnGEeYMH7HXFZZ3X1rCl+xRPtaKcgucz8eZmIoZtckAq7WzpEmgNpiT+53t
+         a5Lw==
+X-Gm-Message-State: AJcUukfcqQtNOlNMqDhKaTAWpFEMmo0W6ug7e8tqs0b3r27o73DD2D+F
+        /nc8UqXUwDkxq3RWBKw95ZzRjY18
+X-Google-Smtp-Source: ALg8bN4dogu2v5TZZNvBC0ZxRecItm/HQtQrkwIyVpZR3MBGmxp9mISldSesl3WCVILRtwYFPYCf3Q==
+X-Received: by 2002:a2e:95c6:: with SMTP id y6-v6mr9738057ljh.59.1546690575039;
+        Sat, 05 Jan 2019 04:16:15 -0800 (PST)
+Received: from [192.168.1.18] (ciw155.neoplus.adsl.tpnet.pl. [83.31.46.155])
+        by smtp.gmail.com with ESMTPSA id m4-v6sm12602576ljb.58.2019.01.05.04.16.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 05 Jan 2019 04:16:14 -0800 (PST)
+Subject: Re: [PATCH 2/2] leds: lp5024: Add the LP5024/18 RGB LED driver
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     =?UTF-8?B?VmVzYSBKw6TDpHNrZWzDpGluZW4=?= <dachaac@gmail.com>,
+        Dan Murphy <dmurphy@ti.com>, robh+dt@kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-leds@vger.kernel.org
+References: <fd624cc1-9997-1cd5-c5cc-62e6897997cf@ti.com>
+ <54f28115-0a7d-8e9c-3bec-6e91fb3981ec@gmail.com>
+ <cd90f179-6c16-823f-496f-27f141e9c322@ti.com>
+ <a72c11c0-949b-bdbc-df2c-4490e04a1065@gmail.com>
+ <986b5105-2fdb-bd25-7c8a-ca8fd1ade821@gmail.com>
+ <7f205102-e854-f1cb-cc03-1307d1cddc87@gmail.com>
+ <c9f8965a-90f4-b456-8225-c70694c9f071@gmail.com>
+ <cf6c0025-36e7-197b-b27a-1f31fb45cc38@gmail.com> <20190104201256.GA2931@amd>
+ <a4e3a782-de76-ba91-3727-4db69cf27c3a@gmail.com> <20190104220726.GA12395@amd>
+From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Message-ID: <4cf79414-578e-eea7-4f46-fc8789206988@gmail.com>
+Date:   Sat, 5 Jan 2019 13:16:11 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <154656291378.15366.8661245319757182529@swboyd.mtv.corp.google.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190104220726.GA12395@amd>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 03, 2019 at 04:48:33PM -0800, Stephen Boyd wrote:
-> I'd think we want the interrupt-cells for the pmic gpio controller to be
-> 2 cells (pin and flags) instead of 4 like you have here to match the
-> parent interrupt specifier.
+Hi Pavel,
 
-I originally went with 4 interrupt cells for spmi-gpio to match the
-number of cells on the parent (spmi-arb). From qcom-msm8974.dtsi:
-
-spmi_bus: spmi@fc4cf000 {
-	compatible = "qcom,spmi-pmic-arb";
-	interrupt-controller;
-	#interrupt-cells = <4>;
-	...
-};
-
-I agree that we should go with 2 cells for spmi-gpio.
-
-> I also seem to recall that GPIO numbering starts from 1 instead of
-> 0, so please keep that in mind.
-
-I'm using the pinctrl numbering, which is zero based.
-
-/ # head /sys/kernel/debug/pinctrl/fc4cf000.spmi\:pm8941@0\:gpios@c000/pins 
-registered pins: 36
-pin 0 (gpio1) 
-pin 1 (gpio2) 
-pin 2 (gpio3) 
-pin 3 (gpio4) 
-pin 4 (gpio5) 
-pin 5 (gpio6) 
-pin 6 (gpio7) 
-pin 7 (gpio8) 
-pin 8 (gpio9) 
-
-> > +static int pmic_gpio_irq_activate(struct irq_domain *domain,
-> > +                                 struct irq_data *data, bool reserve)
-> > +{
-> > +       struct pmic_gpio_state *state = domain->host_data;
+On 1/4/19 11:07 PM, Pavel Machek wrote:
+> Hi!
 > 
-> How about just storing the gpiochip in the domain->host_data?
+>> But, aside from that hypothetic issue, we need a solution for
+>> LEDn_BRIGHTNESS feature of lp5024, i.e. setting color intensity
+>> via a single register write. How would you propose to address that?
 > 
-> > +
-> > +       return gpiochip_lock_as_irq(&state->chip, data->hwirq);
-> > +}
-> > +
-> > +static void pmic_gpio_irq_deactivate(struct irq_domain *domain,
-> > +                                    struct irq_data *data)
-> > +{
-> > +       struct pmic_gpio_state *state = domain->host_data;
-> > +
-> > +       gpiochip_unlock_as_irq(&state->chip, data->hwirq);
-> > +}
-> > +
+> So they have hardware feature that allows control of 3 LEDs at the
+> same time, right?
 > 
-> Then these could be generic gpiolib APIs?
-
-I tried this:
-
-static const struct irq_domain_ops pmic_gpio_domain_ops = {
-        .activate = gpiochip_lock_as_irq,
-        .alloc = pmic_gpio_domain_alloc,
-        .deactivate = gpiochip_unlock_as_irq,
-        .free = irq_domain_free_irqs_common,
-        .translate = pmic_gpio_domain_translate,
-};
-
-But get an incompatible pointer types compiler error.
-
-drivers/pinctrl/qcom/pinctrl-spmi-gpio.c:1003:14: error: initialization of
-‘int (*)(struct irq_domain *, struct irq_data *, bool)’ {aka ‘int
-(*)(struct irq_domain *, struct irq_data *, _Bool)’} from incompatible
-pointer type ‘int (*)(struct gpio_chip *, unsigned int)’
-[-Werror=incompatible-pointer-types]
-
-
-> > +static int pmic_gpio_domain_alloc(struct irq_domain *domain, unsigned int virq,
-> > +                                 unsigned int nr_irqs, void *data)
-> > +{
-> > +       struct pmic_gpio_state *state = domain->host_data;
-> > +       struct irq_fwspec *fwspec = data;
-> > +       struct irq_fwspec parent_fwspec;
-> > +       irq_hw_number_t hwirq;
-> > +       unsigned int type;
-> > +       int ret, i;
-> > +
-> > +       ret = pmic_gpio_domain_translate(domain, fwspec, &hwirq, &type);
-> > +       if (ret)
-> > +               return ret;
-> > +
-> > +       for (i = 0; i < nr_irqs; i++)
-> > +               irq_domain_set_info(domain, virq + i, hwirq + i,
-> > +                                   &pmic_gpio_irq_chip, state,
-> > +                                   handle_level_irq, NULL, NULL);
+> Actually turris routers (IIRC) have similar feature, but shared for
+> all their LEDs.
 > 
-> Does almost nobody pass a name for that last parameter?
+> I'd suggest simply ignoring that feature for now :-).
 
-I see 26 callers to irq_domain_set_info() outside this patch set and
-only 3 of them actually set a name. I'm open to suggestions for what to
-put here.
+Why not use brightness file for that?
 
-Brian
+> We will need to solve RGB leds somehow, hopefully this is solved with
+> it.
+
+When? With this attitude we will procrastinate it forever.
+It's been almost 3 years since first HSV patches.
+
+I proposed rough design of LED RGB class interface in [0].
+If you find it totally flawed, then please spot the problems.
+If not, let's improve it and implement.
+
+[0] https://lkml.org/lkml/2019/1/3/550
+
+-- 
+Best regards,
+Jacek Anaszewski
