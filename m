@@ -2,216 +2,149 @@ Return-Path: <SRS0=xVxK=PN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B69C5C43387
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 18:26:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B5A9C43387
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 18:32:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7AC1E22371
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 18:26:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tronnes.org header.i=@tronnes.org header.b="tVhT5K6E"
+	by mail.kernel.org (Postfix) with ESMTP id 5E9F52070D
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 18:32:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726455AbfAES0D (ORCPT
+        id S1726496AbfAEScA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 5 Jan 2019 13:26:03 -0500
-Received: from smtp.domeneshop.no ([194.63.252.55]:46327 "EHLO
-        smtp.domeneshop.no" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726252AbfAES0D (ORCPT
+        Sat, 5 Jan 2019 13:32:00 -0500
+Received: from kozue.soulik.info ([108.61.200.231]:40212 "EHLO
+        kozue.soulik.info" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726355AbfAEScA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 Jan 2019 13:26:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=tronnes.org; s=ds201810;
-        h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject; bh=JGubgKJ77pVkj5c7Fw007EUWEh+lMbJcyBuj1UjEGlo=;
-        b=tVhT5K6ERrmIEaujHvFCTAFlGYljdCd2pMe/k4WLZMqYzozq0tGEOLzyLgNKPihL8E0LvHNwZmOjf1wFnAn0Lnrl0Z5QqFcZP50+UXkeAFOYuO0Az9N3kxOa+ZWRa526OuFnrHSa6bL1w+1zHMFNoAVKrJDHQTgM7Msg3wRNOqjLWK1yU8YqHv1axHbJexWOrF3FEO0OXAptupMYUaHChOoV0A3jF6lXqPt3eVy0Cvrb8oW1uQq5L++qbhOyojTdkyGF+yA0yhZLVfu8wpkXo0IGqYnWmM8KhAn6gjppaSy531XwjGIoVToYBGjc6tAmBGSwzl/VOGsfOaKW7Elp1g==;
-Received: from 211.81-166-168.customer.lyse.net ([81.166.168.211]:59242 helo=[192.168.10.174])
-        by smtp.domeneshop.no with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.84_2)
-        (envelope-from <noralf@tronnes.org>)
-        id 1gfqdz-0002Ry-EI; Sat, 05 Jan 2019 19:25:59 +0100
-Subject: Re: [PATCH] drm/fb-helper: fix leaks in error path of
- drm_fb_helper_fbdev_setup
-To:     Peter Wu <peter@lekensteyn.nl>
-Cc:     dri-devel@lists.freedesktop.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        rong.a.chen@intel.com, kraxel@redhat.com,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        lkp@01.org
-References: <20181223004315.GA11455@al>
- <20181223005507.28328-1-peter@lekensteyn.nl>
- <ad4be2e7-b53c-97b5-7029-83f4017e4643@tronnes.org>
- <20181223231033.GA31596@al>
- <80d98ab2-dbf8-8d77-e5ca-07995cef0f1b@tronnes.org> <20181224150302.GA2259@al>
-From:   =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>
-Message-ID: <564896a7-e232-70e2-dd01-fec265f731eb@tronnes.org>
-Date:   Sat, 5 Jan 2019 19:25:53 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Sat, 5 Jan 2019 13:32:00 -0500
+Received: from misaki.sumomo.pri (unknown [IPv6:2001:470:b30d:2:c604:15ff:0:a00])
+        by kozue.soulik.info (Postfix) with ESMTPA id EBDDB100F5C;
+        Sun,  6 Jan 2019 03:32:35 +0900 (JST)
+From:   Randy Li <ayaka@soulik.info>
+To:     linux-rockchip@lists.infradead.org
+Cc:     Randy Li <ayaka@soulik.info>, nicolas.dufresne@collabora.com,
+        myy@miouyouyou.fr, paul.kocialkowski@bootlin.com,
+        mchehab@kernel.org, linux-media@vger.kernel.org,
+        hverkuil@xs4all.nl, heiko@sntech.de,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/4] Rockchip: the vendor video codec for reference
+Date:   Sun,  6 Jan 2019 02:31:46 +0800
+Message-Id: <20190105183150.20266-1-ayaka@soulik.info>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20181224150302.GA2259@al>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Those patches are not for merging, I won't dream on it. As I said in
+previous email, this driver is used for checking the status of the other
+drivers. I have checked this driver would memory dump, its output looks
+well. The reason I didn't use the video output is VOP driver doesn't
+work well.
 
+Also I want to offer a reference for those people who want to develop
+the V4L2 request API driver for Rockchip and you can use this driver to
+comparing the result as well. I should said either the one for sunxi nor
+chromium have not reached the vendor production level.
 
-Den 24.12.2018 16.03, skrev Peter Wu:
-> On Mon, Dec 24, 2018 at 03:52:55PM +0100, Noralf Trønnes wrote:
->>
->>
->> Den 24.12.2018 00.10, skrev Peter Wu:
->>> On Sun, Dec 23, 2018 at 02:55:52PM +0100, Noralf Trønnes wrote:
->>>>
->>>>
->>>> Den 23.12.2018 01.55, skrev Peter Wu:
->>>>> After drm_fb_helper_fbdev_setup calls drm_fb_helper_init,
->>>>> "dev->fb_helper" will be initialized (and thus drm_fb_helper_fini will
->>>>> have some effect). After that, drm_fb_helper_initial_config is called
->>>>> which may call the "fb_probe" driver callback.
->>>>>
->>>>> This driver callback may call drm_fb_helper_defio_init (as is done by
->>>>> drm_fb_helper_generic_probe) or set a framebuffer (as is done by bochs)
->>>>> as documented. These are normally cleaned up on exit by
->>>>> drm_fb_helper_fbdev_teardown which also calls drm_fb_helper_fini.
->>>>>
->>>>> If an error occurs after "fb_probe", but before setup is complete, then
->>>>> calling just drm_fb_helper_fini will leak resources. This was triggered
->>>>> by df2052cc922 ("bochs: convert to drm_fb_helper_fbdev_setup/teardown"):
->>>>>
->>>>>        [   50.008030] bochsdrmfb: enable CONFIG_FB_LITTLE_ENDIAN to support this framebuffer
->>>>>        [   50.009436] bochs-drm 0000:00:02.0: [drm:drm_fb_helper_fbdev_setup] *ERROR* fbdev: Failed to set configuration (ret=-38)
->>>>>        [   50.011456] [drm] Initialized bochs-drm 1.0.0 20130925 for 0000:00:02.0 on minor 2
->>>>>        [   50.013604] WARNING: CPU: 1 PID: 1 at drivers/gpu/drm/drm_mode_config.c:477 drm_mode_config_cleanup+0x280/0x2a0
->>>>>        [   50.016175] CPU: 1 PID: 1 Comm: swapper/0 Tainted: G                T 4.20.0-rc7 #1
->>>>>        [   50.017732] EIP: drm_mode_config_cleanup+0x280/0x2a0
->>>>>        ...
->>>>>        [   50.023155] Call Trace:
->>>>>        [   50.023155]  ? bochs_kms_fini+0x1e/0x30
->>>>>        [   50.023155]  ? bochs_unload+0x18/0x40
->>>>>
->>>>> This can be reproduced with QEMU and CONFIG_FB_LITTLE_ENDIAN=n.
->>>>>
->>>>> Link: https://lkml.kernel.org/r/20181221083226.GI23332@shao2-debian
->>>>> Link: https://lkml.kernel.org/r/20181223004315.GA11455@al
->>>>> Fixes: 8741216396b2 ("drm/fb-helper: Add drm_fb_helper_fbdev_setup/teardown()")
->>>>> Reported-by: kernel test robot <rong.a.chen@intel.com>
->>>>> Cc: Noralf Trønnes <noralf@tronnes.org>
->>>>> Signed-off-by: Peter Wu <peter@lekensteyn.nl>
->>>>> ---
->>>>>     drivers/gpu/drm/drm_fb_helper.c | 2 +-
->>>>>     1 file changed, 1 insertion(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
->>>>> index 9d64f874f965..432e0f3b9267 100644
->>>>> --- a/drivers/gpu/drm/drm_fb_helper.c
->>>>> +++ b/drivers/gpu/drm/drm_fb_helper.c
->>>>> @@ -2860,7 +2860,7 @@ int drm_fb_helper_fbdev_setup(struct drm_device *dev,
->>>>>     	return 0;
->>>>>     err_drm_fb_helper_fini:
->>>>> -	drm_fb_helper_fini(fb_helper);
->>>>> +	drm_fb_helper_fbdev_teardown(dev);
->>>>
->>>> This change will break the error path for drm_fbdev_generic_setup()
->>>> because drm_fb_helper_generic_probe() cleans up on error but doesn't
->>>> clear drm_fb_helper->fb resulting in a double drm_framebuffer_remove().
->>>
->>> This should probably considered a bug of drm_fb_helper_generic_probe.
->>> Ownership of fb_helper should remain with the caller. The caller can
->>> detect an error and act accordingly.
->>>
->>>> My assumption has been that the drm_fb_helper_funcs->fb_probe callback
->>>> cleans up its resources on error. Clearly this is not the case for bochs, so
->>>> my take on this is that bochsfb_create() needs to clean up on error.
->>>
->>> That assumption still holds for bochs. The problem is this sequence:
->>> - drm_fb_helper_fbdev_setup is called.
->>> - fb_probe succeeds (this is crucial).
->>> - register_framebuffer fails.
->>> - error path of setup is triggered.
->>>
->>> As fb_helper is fully setup by drivers, the drm_fb_helper core should
->>> fully deallocate it again on the error path or else a leak occurs.
->>>
->>>> Gerd has a patchset that switches bochs over to the generic fbdev
->>>> emulation, but ofc that doesn't help with 4.20:
->>>> https://patchwork.freedesktop.org/series/54269/
->>>
->>> And that does not help with other users of the drm_fb_helper who use
->>> functions like drm_fb_helper_defio_init. They will likely run in the
->>> same problem.
->>>
->>> I don't have a way to test tinydrm or other drivers, but if you force
->>> register_framebuffer to fail, you should be able to reproduce the
->>> problem with drm_fb_helper_generic_probe.
->>>
->>
->> Now I understand. I have looked at the drivers that use drm_fb_helper
->> and no one seem to handle the case where register_framebuffer() is
->> failing.
->>
->> Here's what drivers do when drm_fb_helper_initial_config() fails:
->>
->> Doesn't check:
->> amdgpu
->> virtio
->>
->> Calls drm_fb_helper_fini():
->> armada
->> ast
->> exynos
->> gma500
->> hisilicon
->> mgag200
->> msm
->> nouveau
->> omap
->> radeon
->> rockchip
->> tegra
->> udl
->> bochs - Uses drm_fb_helper_fbdev_setup()
->> qxl - Uses drm_fb_helper_fbdev_setup()
->> vboxvideo - Uses drm_fb_helper_fbdev_setup()
->>
->> Might clean up, not sure:
->> cirrus
->>
->> Looks suspicious:
->> i915
->>
->> I looked at bochs before it switched to drm_fb_helper_fbdev_setup() and
->> it also just called drm_fb_helper_fini().
->>
->> It looks like you've uncovered something no one has though about (or
->> not implemented at least).
->>
->> It's not just the framebuffer that's not destroyed, the buffer object
->> is also leaked. drm_mode_config_cleanup() yells about the framebuffer
->> (and frees it), but says nothing about the buffer object. It might be
->> that it can't even be made to detect that since some drivers do special
->> stuff for the fbdev buffer.
->>
->> I'll pick up on this and do some testing after the Christmas holidays.
-> 
-> Thanks, the warning is bad for CI (which uses QEMU), but otherwise it
-> should not have any effect on regular users so it can wait.
-> 
+I want to point out the obvious problem of the current V4L2 driver, I
+think that is the one I developed years ago and refresh it in the last
+year, then it is merged now.
 
-This patch is good as long as it's applied along side the fix[1] to the 
-generic emulation:
+That driver won't aware the parallel problem between the devices. The
+video codec in Rockchip is very complex, the decoder and encoder are
+NOT paired in some platforms. Also a decoder or encoder can share some
+resource with the other decoder or encoder, requesting a mux in the GRF
+device. We call those devices sharing resource a combo, they may or may
+not having a individual IOMMU for each of its child devices. Also any of
+those devies allowing support less codecs than its full state.
 
-Reviewed-by: Noralf Trønnes <noralf@tronnes.org>
+The RK3328 is a good example of that,
+---------------------------------------------
+| Video decoder for H264, VP8, JPEG, MPEG-4 Part 2
+| Video decoder for AVS+
+|--------------------------------------------
+| Video decoder for H265, H265, VP9
+|--------------------------------------------
+| Video encoder for H265,
+---------------------------------------------
+| Video encoder for H264, JPEG
+---------------------------------------------
+that is why I rewrote the device tree files in these patches, the current
+device tree is not suitable for the other platforms.
 
-I can apply them both when I get an ack/rb on the other patch.
+Besides, the V4L2 driver don't support the error correction and tolerance or
+status recovery. That is more about the parser in the userspace but a
+common parser won't be able to do that, different video codec vendor
+would request a different method, also V4L2 request API is not suitable
+to feedback status.
 
-Thanks for fixing this.
+Anyway, the current developing for decoder is at lease acceptable for
+those simple situations. But I think encoder would become a big issue,
+lucky, it seems that nobody care about encoder. If you have ever looked
+the video encoder for chromium, you would feel disgusted, it is not
+Google's fault, just not suitable for V4L2.
 
-Noralf.
+I don't want to talk much about encoder here, basially the encoder is
+much simpler than decoder requesting less dynamic settings, but those
+dynamic settings request a more real time feedback or related.
 
-[1] https://patchwork.freedesktop.org/patch/275002/
+I don't see much advantage the V4L2 brings, only the compatibility left.
+The previous vendor driver would have DMA buffer problem but it is
+solved in this one. Ndufresne told me about buffer fencing, but I don't
+think it is useful only complication. That is why I didn't develop the
+V4L2 for a long time.
+
+I would attend the FOSDEM 2019, if you have any problem, I think you can
+catch me easily there.
+
+Randy Li (4):
+  staging: video: rockchip: video codec for vendor API
+  staging: video: rockchip: fixup for upstream
+  staging: video: rockchip: add video codec
+  arm64: dts: rockchip: add video codec for rk3399
+
+ .../boot/dts/rockchip/rk3399-sapphire.dtsi    |  29 +
+ arch/arm64/boot/dts/rockchip/rk3399.dtsi      |  68 +-
+ drivers/staging/Kconfig                       |   2 +
+ drivers/staging/Makefile                      |   1 +
+ drivers/staging/rockchip-mpp/Kconfig          |  52 +
+ drivers/staging/rockchip-mpp/Makefile         |  16 +
+ drivers/staging/rockchip-mpp/mpp_debug.h      |  87 ++
+ drivers/staging/rockchip-mpp/mpp_dev_common.c | 971 ++++++++++++++++++
+ drivers/staging/rockchip-mpp/mpp_dev_common.h | 219 ++++
+ drivers/staging/rockchip-mpp/mpp_dev_rkvdec.c | 855 +++++++++++++++
+ drivers/staging/rockchip-mpp/mpp_dev_vdpu1.c  | 614 +++++++++++
+ drivers/staging/rockchip-mpp/mpp_dev_vdpu2.c  | 576 +++++++++++
+ drivers/staging/rockchip-mpp/mpp_dev_vepu1.c  | 480 +++++++++
+ drivers/staging/rockchip-mpp/mpp_dev_vepu2.c  | 477 +++++++++
+ drivers/staging/rockchip-mpp/mpp_iommu_dma.c  | 292 ++++++
+ drivers/staging/rockchip-mpp/mpp_iommu_dma.h  |  42 +
+ drivers/staging/rockchip-mpp/mpp_service.c    | 197 ++++
+ drivers/staging/rockchip-mpp/mpp_service.h    |  38 +
+ include/uapi/video/rk_vpu_service.h           | 101 ++
+ 19 files changed, 5110 insertions(+), 7 deletions(-)
+ create mode 100644 drivers/staging/rockchip-mpp/Kconfig
+ create mode 100644 drivers/staging/rockchip-mpp/Makefile
+ create mode 100644 drivers/staging/rockchip-mpp/mpp_debug.h
+ create mode 100644 drivers/staging/rockchip-mpp/mpp_dev_common.c
+ create mode 100644 drivers/staging/rockchip-mpp/mpp_dev_common.h
+ create mode 100644 drivers/staging/rockchip-mpp/mpp_dev_rkvdec.c
+ create mode 100644 drivers/staging/rockchip-mpp/mpp_dev_vdpu1.c
+ create mode 100644 drivers/staging/rockchip-mpp/mpp_dev_vdpu2.c
+ create mode 100644 drivers/staging/rockchip-mpp/mpp_dev_vepu1.c
+ create mode 100644 drivers/staging/rockchip-mpp/mpp_dev_vepu2.c
+ create mode 100644 drivers/staging/rockchip-mpp/mpp_iommu_dma.c
+ create mode 100644 drivers/staging/rockchip-mpp/mpp_iommu_dma.h
+ create mode 100644 drivers/staging/rockchip-mpp/mpp_service.c
+ create mode 100644 drivers/staging/rockchip-mpp/mpp_service.h
+ create mode 100644 include/uapi/video/rk_vpu_service.h
+
+-- 
+2.20.1
+
