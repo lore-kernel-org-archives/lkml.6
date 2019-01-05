@@ -2,210 +2,217 @@ Return-Path: <SRS0=xVxK=PN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50E7FC43387
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 00:47:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19C44C43612
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 00:49:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A71621872
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 00:47:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="odegTTO5"
+	by mail.kernel.org (Postfix) with ESMTP id DF2BC21872
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 00:49:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726246AbfAEAr5 (ORCPT
+        id S1726282AbfAEAtE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 19:47:57 -0500
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:45310 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725862AbfAEAr4 (ORCPT
+        Fri, 4 Jan 2019 19:49:04 -0500
+Received: from relay1.mentorg.com ([192.94.38.131]:64065 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725862AbfAEAtD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 19:47:56 -0500
-Received: by mail-yb1-f195.google.com with SMTP id q2so8413495ybd.12
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Jan 2019 16:47:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ZyHJGaj0o+e27UnST3Gc5WJRZ2smur2QRsLhOjYwUTA=;
-        b=odegTTO5L3tLhgD1pTSIn+axOi6LLINJHUTowFwpbsXmgGh5aA2AI2kMlojrr39Lzn
-         zSsjvpYS9+a/2T/3JBtK3Av1O+jKaaATel/du/rojEhS6dQMUEqcKJP6bIF3qpBrHhni
-         jpqDJM021XcVxKKBUMBBeC0x83FDnGQWF9z32ANjoy7E9ni55gnFK4FqEy3hSyOwunsF
-         ch4pFlM+BG0Fac7L5pglVwYmUTsohOway4mj+wG8ko8m48KQRBNfJpYha2ZnqmtwoeSV
-         4kGIj4wKg6TwZIo3e2L/OPQSYYZSOITf5RSO4mxzkWNtUdLxmJhrVnO+ZvUif/mJyFZo
-         sdTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ZyHJGaj0o+e27UnST3Gc5WJRZ2smur2QRsLhOjYwUTA=;
-        b=J54xP19GABPg3nIXuHaOgNQNeflFw0gDUCcP5iAwOYqDjINWiERUMV21CvMtBOj+jY
-         bXJqHZWpYNUBRlWObQ6ta5arQDEPib7bRh2YJlFLNPoyATg6j5Dw4uvqbQTXUANyC1+Z
-         O/Gr7Zctt9vqMWjIOyUXwSaOymVKOuDVrnhVI1G0YiGdI2Pt85/wByDZdhs4Q1uFpZaw
-         hlWv7wY9WCA3D0+eWzoA+T5ErSscCQznMxMdgs0jaR6OI9JL9OdH58wU615AouE6KDBi
-         KXx7KaMMgk2vAfBjfntMg/QgOMHIfTCil0RjLecUb6SSl9EHeAZsR2+Y/h+yelBgqxVM
-         cAvw==
-X-Gm-Message-State: AJcUukeLJx03ckCfM8PZdStpDbA4cUlgmHNJy1YI4FSbItDd0l1ymGlE
-        yfU0g6bDLoBZEA6z3MHjwaR9YDkk66klo+th8iGSjw==
-X-Google-Smtp-Source: ALg8bN671BeMyGFWenOeeKnzpzD5OPH9AKzrdoY9n0PLlkRXd6MtMp98kQ6arNqmV5IudASwyzzZfBRyUW+3f7pBkGo=
-X-Received: by 2002:a25:9247:: with SMTP id e7mr42417407ybo.496.1546649275027;
- Fri, 04 Jan 2019 16:47:55 -0800 (PST)
+        Fri, 4 Jan 2019 19:49:03 -0500
+Received: from svr-orw-mbx-02.mgc.mentorg.com ([147.34.90.202])
+        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
+        id 1gfa8m-0007P0-8n from Steve_Longerbeam@mentor.com ; Fri, 04 Jan 2019 16:48:40 -0800
+Received: from [172.30.89.159] (147.34.91.1) by svr-orw-mbx-02.mgc.mentorg.com
+ (147.34.90.202) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Fri, 4 Jan
+ 2019 16:48:37 -0800
+Subject: Re: [RFC PATCH] media: rcar-vin: Allow independent VIN link
+ enablement
+To:     Steve Longerbeam <slongerbeam@gmail.com>,
+        =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>
+CC:     <linux-media@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "open list:MEDIA DRIVERS FOR RENESAS - VIN" 
+        <linux-renesas-soc@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20181225232725.15935-1-slongerbeam@gmail.com>
+ <20181227005125.GK19796@bigcity.dyn.berto.se>
+ <fb6f58b2-3c19-455a-96dc-8e7314e1c8ce@gmail.com>
+From:   Steve Longerbeam <steve_longerbeam@mentor.com>
+Message-ID: <bc2b1307-4d89-26b5-c248-6cc74bffa88e@mentor.com>
+Date:   Fri, 4 Jan 2019 16:48:37 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <1546647560-40026-1-git-send-email-yang.shi@linux.alibaba.com> <1546647560-40026-4-git-send-email-yang.shi@linux.alibaba.com>
-In-Reply-To: <1546647560-40026-4-git-send-email-yang.shi@linux.alibaba.com>
-From:   Shakeel Butt <shakeelb@google.com>
-Date:   Fri, 4 Jan 2019 16:47:44 -0800
-Message-ID: <CALvZod4ea4fR2n1EdZ3HwB3O3iWDHw5nXRnPLKbR6mAuDkWuQA@mail.gmail.com>
-Subject: Re: [v2 PATCH 3/5] mm: memcontrol: introduce wipe_on_offline interface
-To:     Yang Shi <yang.shi@linux.alibaba.com>
-Cc:     Michal Hocko <mhocko@suse.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <fb6f58b2-3c19-455a-96dc-8e7314e1c8ce@gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-ClientProxiedBy: svr-orw-mbx-04.mgc.mentorg.com (147.34.90.204) To
+ svr-orw-mbx-02.mgc.mentorg.com (147.34.90.202)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 4, 2019 at 4:21 PM Yang Shi <yang.shi@linux.alibaba.com> wrote:
->
-> We have some usecases which create and remove memcgs very frequently,
-> and the tasks in the memcg may just access the files which are unlikely
-> accessed by anyone else.  So, we prefer force_empty the memcg before
-> rmdir'ing it to reclaim the page cache so that they don't get
-> accumulated to incur unnecessary memory pressure.  Since the memory
-> pressure may incur direct reclaim to harm some latency sensitive
-> applications.
->
-> Force empty would help out such usecase, however force empty reclaims
-> memory synchronously when writing to memory.force_empty.  It may take
-> some time to return and the afterwards operations are blocked by it.
-> Although this can be done in background, some usecases may need create
-> new memcg with the same name right after the old one is deleted.  So,
-> the creation might get blocked by the before reclaim/remove operation.
->
-> Delaying memory reclaim in cgroup offline for such usecase sounds
-> reasonable.  Introduced a new interface, called wipe_on_offline for both
-> default and legacy hierarchy, which does memory reclaim in css offline
-> kworker.
->
-> Writing to 1 would enable it, writing 0 would disable it.
->
-> Suggested-by: Michal Hocko <mhocko@suse.com>
-> Cc: Johannes Weiner <hannes@cmpxchg.org>
-> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
-> ---
->  include/linux/memcontrol.h |  3 +++
->  mm/memcontrol.c            | 49 ++++++++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 52 insertions(+)
->
-> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-> index 83ae11c..2f1258a 100644
-> --- a/include/linux/memcontrol.h
-> +++ b/include/linux/memcontrol.h
-> @@ -311,6 +311,9 @@ struct mem_cgroup {
->         struct list_head event_list;
->         spinlock_t event_list_lock;
->
-> +       /* Reclaim as much as possible memory in offline kworker */
-> +       bool wipe_on_offline;
-> +
->         struct mem_cgroup_per_node *nodeinfo[0];
->         /* WARNING: nodeinfo must be the last member here */
->  };
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index 75208a2..5a13c6b 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -2918,6 +2918,35 @@ static ssize_t mem_cgroup_force_empty_write(struct kernfs_open_file *of,
->         return mem_cgroup_force_empty(memcg) ?: nbytes;
->  }
->
-> +static int wipe_on_offline_show(struct seq_file *m, void *v)
-> +{
-> +       struct mem_cgroup *memcg = mem_cgroup_from_css(seq_css(m));
-> +
-> +       seq_printf(m, "%lu\n", (unsigned long)memcg->wipe_on_offline);
-> +
-> +       return 0;
-> +}
-> +
-> +static int wipe_on_offline_write(struct cgroup_subsys_state *css,
-> +                                struct cftype *cft, u64 val)
-> +{
-> +       int ret = 0;
-> +
-> +       struct mem_cgroup *memcg = mem_cgroup_from_css(css);
-> +
-> +       if (mem_cgroup_is_root(memcg))
-> +               return -EINVAL;
-> +
-> +       if (val == 0)
-> +               memcg->wipe_on_offline = false;
-> +       else if (val == 1)
-> +               memcg->wipe_on_offline = true;
-> +       else
-> +               ret = -EINVAL;
-> +
-> +       return ret;
-> +}
-> +
->  static u64 mem_cgroup_hierarchy_read(struct cgroup_subsys_state *css,
->                                      struct cftype *cft)
->  {
-> @@ -4283,6 +4312,11 @@ static ssize_t memcg_write_event_control(struct kernfs_open_file *of,
->                 .write = mem_cgroup_reset,
->                 .read_u64 = mem_cgroup_read_u64,
->         },
-> +       {
-> +               .name = "wipe_on_offline",
+Hi Niklas,
 
-What about "force_empty_on_offline"?
+How about a patch that simply replaces the entity use_count check with a 
+stream_count check?
 
-> +               .seq_show = wipe_on_offline_show,
-> +               .write_u64 = wipe_on_offline_write,
-> +       },
->         { },    /* terminate */
->  };
->
-> @@ -4569,6 +4603,15 @@ static void mem_cgroup_css_offline(struct cgroup_subsys_state *css)
->         page_counter_set_min(&memcg->memory, 0);
->         page_counter_set_low(&memcg->memory, 0);
->
-> +       /*
-> +        * Reclaim as much as possible memory when offlining.
-> +        *
-> +        * Do it after min/low is reset otherwise some memory might
-> +        * be protected by min/low.
-> +        */
-> +       if (memcg->wipe_on_offline)
-> +               mem_cgroup_force_empty(memcg);
-> +
+As in:
 
-mem_cgroup_force_empty() also does drain_all_stock(), so, move
-drain_all_stock() in mem_cgroup_css_offline() to the else of 'if
-(memcg->wipe_on_offline)'.
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c 
+b/drivers/media/platform/rcar-vin/rcar-core.c
+index f0719ce24b97..aef8d8dab6ab 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -131,9 +131,13 @@ static int rvin_group_link_notify(struct media_link 
+*link, u32 flags,
+!is_media_entity_v4l2_video_device(link->sink->entity))
+          return 0;
 
->         memcg_offline_kmem(memcg);
->         wb_memcg_offline(memcg);
+-    /* If any entity is in use don't allow link changes. */
++    /*
++     * Don't allow link changes if any entity in the graph is
++     * streaming, modifying the CHSEL register fields can disrupt
++     * running streams.
++     */
+      media_device_for_each_entity(entity, &group->mdev)
+-        if (entity->use_count)
++        if (entity->stream_count)
+              return -EBUSY;
+
+      mutex_lock(&group->lock);
+
+
+And that might be overkilll, maybe only the stream_count's of the VIN 
+entities need to be checked.
+
+Steve
+
+
+
+On 12/29/18 3:37 PM, Steve Longerbeam wrote:
+> Hi Niklas,
 >
-> @@ -5694,6 +5737,12 @@ static ssize_t memory_oom_group_write(struct kernfs_open_file *of,
->                 .seq_show = memory_oom_group_show,
->                 .write = memory_oom_group_write,
->         },
-> +       {
-> +               .name = "wipe_on_offline",
-> +               .flags = CFTYPE_NOT_ON_ROOT,
-> +               .seq_show = wipe_on_offline_show,
-> +               .write_u64 = wipe_on_offline_write,
-> +       },
->         { }     /* terminate */
->  };
+> On 12/26/18 4:51 PM, Niklas Söderlund wrote:
+>> Hi Steve,
+>>
+>> Thanks for your patch.
+>>
+>> On 2018-12-25 15:27:25 -0800, Steve Longerbeam wrote:
+>>> There is a block of code in rvin_group_link_notify() that prevents
+>>> enabling a link to a VIN node if any entity in the media graph is
+>>> in use. This prevents enabling a VIN link even if there is an in-use
+>>> entity somewhere in the graph that is independent of the link's
+>>> pipeline.
+>>>
+>>> For example, the code block will prevent enabling a link from
+>>> the first rcar-csi2 receiver to a VIN node even if there is an
+>>> enabled link somewhere far upstream on the second independent
+>>> rcar-csi2 receiver pipeline.
+>> Unfortunately this is by design and needed due to the hardware design.
+>> The different VIN endpoints shares a configuration register which
+>> controls the routing from the CSI-2 receivers to the VIN (register name
+>> CHSEL). Modifying the CHSEL register which is what happens when a link
+>> is enabled/disabled can have side effects on running streams even if
+>> they are not shown to be dependent in the media graph.
 >
-> --
-> 1.8.3.1
+> Ok, understood, modifying CHSEL register can adversely affect running 
+> streams.
 >
+>>
+>> There is a CHSEL register in VIN0 which controls the routing from all
+>> CSI-2 receivers to VIN0-3 and a CHSEL register in VIN4 which controls
+>> the same for VIN4-7.
+>>
+>>> If this code block is meant to prevent modifying a link if the
+>>> link is actively involved in streaming, there is already such a
+>>> check in __media_entity_setup_link() that verifies the stream_count
+>>> of the link's source and sink entities are both zero.
+>> For the reason above the check in __media_entity_setup_link() is not
+>> enough :-( This register sharing is my least favorite thing about the
+>> VIN on Gen3 and forces the driver to become more complex as all VIN
+>> instances needs to know about each other and interact.
+>>
+>
+> Given above I understand why the stream count checks in 
+> __media_entity_setup_link() are insufficient, because only the 
+> requested link's source stream count is checked, and not the other 
+> CSI-2 receiver for example.
+>
+> But why check the use counts of every entity upstream from the VIN 
+> sources? Why not check only the VIN source entities stream counts 
+> (both CSI-2 receivers and/or parallel devices), and ignore entities 
+> upstream from those?
+>
+> And why are the use counts checked, it seems it should be the stream 
+> counts that should be checked.
+>
+>>> Remove the code block so that VIN node links can be enabled even if
+>>> there are other independent in-use entities.
+>> There is room for some improvement in this area disregarding the odd
+>> hardware design. It *could* be allowed to change a link terminating in
+>> VIN4-7 even if there is a stream running for one or more in VIN0-3.
+>>
+>> I would be interested to test such a patch but to allow any link change
+>> which is allowed by __media_entity_setup_link() is unfortunately not
+>> possible, as I understand it. Maybe someone more clever then me can find
+>> ways to unlock even more then just the split between VIN0-3 and VIn4-7.
+>>
+>> In essence the CHSEL register can not be changed if it's involved in a
+>> running pipeline even if the end result would be that the running
+>> pipeline would look the same. This is possible as there are multiple
+>> CHSEL settings where the same source is connected to a specific VIN
+>> while other members of the "subgroup of VINs" (e.g. VIN0-3) is routed to
+>> something else for the two CHSEL settings.
+>
+> Right, so rvin_group_link_notify() determines whether the requested 
+> VIN link enable will result in a valid set of CSI2->VIN links for the 
+> given hardware, using the CHSEL bitmask tables. Which is why it seems 
+> it is the stream counts that should be checked as mentioned above, 
+> rather than the use counts, because the CHSEL bitmask checks are 
+> validating the set of enabled links, and the only remaining checks are 
+> to verify no streams are running on either CSI-2 receiver.
+>
+> Steve
+>
+>
+>>> Fixes: c0cc5aef31 ("media: rcar-vin: add link notify for Gen3")
+>>>
+>>> Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
+>>> ---
+>>>   drivers/media/platform/rcar-vin/rcar-core.c | 6 ------
+>>>   1 file changed, 6 deletions(-)
+>>>
+>>> diff --git a/drivers/media/platform/rcar-vin/rcar-core.c 
+>>> b/drivers/media/platform/rcar-vin/rcar-core.c
+>>> index f0719ce24b97..b2c9a876969e 100644
+>>> --- a/drivers/media/platform/rcar-vin/rcar-core.c
+>>> +++ b/drivers/media/platform/rcar-vin/rcar-core.c
+>>> @@ -116,7 +116,6 @@ static int rvin_group_link_notify(struct 
+>>> media_link *link, u32 flags,
+>>>                           struct rvin_group, mdev);
+>>>       unsigned int master_id, channel, mask_new, i;
+>>>       unsigned int mask = ~0;
+>>> -    struct media_entity *entity;
+>>>       struct video_device *vdev;
+>>>       struct media_pad *csi_pad;
+>>>       struct rvin_dev *vin = NULL;
+>>> @@ -131,11 +130,6 @@ static int rvin_group_link_notify(struct 
+>>> media_link *link, u32 flags,
+>>> !is_media_entity_v4l2_video_device(link->sink->entity))
+>>>           return 0;
+>>>   -    /* If any entity is in use don't allow link changes. */
+>>> -    media_device_for_each_entity(entity, &group->mdev)
+>>> -        if (entity->use_count)
+>>> -            return -EBUSY;
+>>> -
+>>>       mutex_lock(&group->lock);
+>>>         /* Find the master VIN that controls the routes. */
+>>> -- 
+>>> 2.17.1
+>>>
+>
+
