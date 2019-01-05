@@ -2,199 +2,138 @@ Return-Path: <SRS0=xVxK=PN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CAA4C43387
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 00:39:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92B38C43444
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 00:43:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF2A3218EA
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 00:39:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5EE3C21872
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 00:43:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PK9T9tfr"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="R/IYiBRY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726273AbfAEAju (ORCPT
+        id S1726239AbfAEAng (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 19:39:50 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:46125 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725862AbfAEAjt (ORCPT
+        Fri, 4 Jan 2019 19:43:36 -0500
+Received: from mail-yb1-f193.google.com ([209.85.219.193]:38734 "EHLO
+        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726074AbfAEAng (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 19:39:49 -0500
-Received: by mail-lj1-f193.google.com with SMTP id v15-v6so33787610ljh.13;
-        Fri, 04 Jan 2019 16:39:46 -0800 (PST)
+        Fri, 4 Jan 2019 19:43:36 -0500
+Received: by mail-yb1-f193.google.com with SMTP id x9so6418648ybj.5
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Jan 2019 16:43:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=iYEfAsvFxmrMhRF7OKfKPW2v7gF64a0pQdbeabOPPlc=;
-        b=PK9T9tfr8NxtBH+iurCRLyMyZm7PAKzeeUaqEQEi8niQK5Cj8Cj19EohYKIvTaF0km
-         YWry/vXyIASmPIGZpB2l+8JMru3TTLMQjqqpxiiGdRv3lcOCxBTtRkZh7AizDbpx8KFC
-         an0Gn65u7LoMkTv2XX1foxhaFUq63UNIeTrXQgWBlyn8e9TK2sqaPptjESgeft/eJbUV
-         zyMnD/E2dozFhtRZb57wM/K5dQefwyYacvvgc2zP7WSr84HNzEFw+mZbKhP4jsaxLyd4
-         elxLH3HNyENXR7u/9RD555wn9GcQpV3y6BxSJJjZoxLzypj5UMrr/048DmPpAhg+EuI6
-         KECg==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=snHqLQmz4nt+VNG034zl1FNOGYA7ZEBfLYfuKiNvzvE=;
+        b=R/IYiBRYG+40WnMu2AApy0CGvAWBAXw3LLoHJhw/4mdSbXpsJqLtNIo2TdL28mKP2R
+         jBdmt2yPvZH9c+sP9Gl0idk7S3bG7lO40H1TIFGD+FTiruxX2opueuOv4XNFU5saRzv6
+         YJveZFBkl9SohMJxX44nJJNQirz7B6bh5plb/jFTUS2APj2WQ6fgZbglZ0eBoSrY5nzy
+         LxTprWV6t7i/bDlhHN+Y5UfRIl3tcPTbtEuUh5OVRhboWUXx7sSz0YyB9dSSGqEE48au
+         qxhMzGAyXhNVFr5hPA2d5iy4YvNHf+LuEPa34dSo+Vaxr9uzcmEN1v44fCeWaZuPmRhb
+         AAwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=iYEfAsvFxmrMhRF7OKfKPW2v7gF64a0pQdbeabOPPlc=;
-        b=Jye34W2nN0bOTDlvc1FaXU2X8GiOJLBqO/YM1g5J/s8suFcrvtJYwJ/H1qBz6cQ4N0
-         HPe1QnERipPGSnUrSFrTQiPuTNqFVCAVfl6F9cjKlN3hs4Lkj/cMOaCMgNatCFikoeOx
-         rHJrsTF9vjqS7pdhA+JRkeYbotbG175a6kmuy3hiI+K5EIjPw+HixkgS0jkN507NsWMM
-         PwX5uE28BvLCSwzVil7wv3vrX0VExkjIlMQEP6P5JFg4eplSSljcAb6i5Ky1c1/4rbdK
-         SZKrOuV1W8q9bTTcuhOsTi/o9wO+qDvFj/qgXWf6YQgNrkXSDcpMY3MEzKn1pi0pjWMy
-         zh+A==
-X-Gm-Message-State: AA+aEWajdXhzAm/lphstggOGM7yMVaF8ypaWaLDilxd3YJcoINAUvDbV
-        M9seX1Ukx0tH8KcZbZogAeJkihreTqc=
-X-Google-Smtp-Source: ALg8bN7IJCaGyg+OKOQacFKo29yXytgu1eN+sP8d3ZFb75uAc7BYkC4sG8NdpDHHsfxSgTkemwE/Ow==
-X-Received: by 2002:a2e:9a84:: with SMTP id p4-v6mr28916466lji.73.1546648785386;
-        Fri, 04 Jan 2019 16:39:45 -0800 (PST)
-Received: from ?IPv6:2001:14ba:8017:3300:4da2:4604:cb6f:7dbe? (dtynxhycqzldylw7ss2-y-3.rev.dnainternet.fi. [2001:14ba:8017:3300:4da2:4604:cb6f:7dbe])
-        by smtp.googlemail.com with ESMTPSA id 65sm11590526lfp.55.2019.01.04.16.39.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 04 Jan 2019 16:39:44 -0800 (PST)
-Subject: Re: [PATCH 2/2] leds: lp5024: Add the LP5024/18 RGB LED driver
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>
-Cc:     Dan Murphy <dmurphy@ti.com>, robh+dt@kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-leds@vger.kernel.org
-References: <8740cfd6-a6b5-ad27-313b-984a9febf18a@ti.com>
- <20181219201047.GA23448@amd> <fd624cc1-9997-1cd5-c5cc-62e6897997cf@ti.com>
- <54f28115-0a7d-8e9c-3bec-6e91fb3981ec@gmail.com>
- <cd90f179-6c16-823f-496f-27f141e9c322@ti.com>
- <a72c11c0-949b-bdbc-df2c-4490e04a1065@gmail.com>
- <986b5105-2fdb-bd25-7c8a-ca8fd1ade821@gmail.com>
- <7f205102-e854-f1cb-cc03-1307d1cddc87@gmail.com>
- <c9f8965a-90f4-b456-8225-c70694c9f071@gmail.com>
- <cf6c0025-36e7-197b-b27a-1f31fb45cc38@gmail.com> <20190104201256.GA2931@amd>
- <a4e3a782-de76-ba91-3727-4db69cf27c3a@gmail.com>
-From:   =?UTF-8?B?VmVzYSBKw6TDpHNrZWzDpGluZW4=?= <dachaac@gmail.com>
-Message-ID: <90a2ed79-b437-af14-4538-430d8723cc6b@gmail.com>
-Date:   Sat, 5 Jan 2019 02:39:43 +0200
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.3.3
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=snHqLQmz4nt+VNG034zl1FNOGYA7ZEBfLYfuKiNvzvE=;
+        b=NgEAsU921yKYio6QM7lkMtvhazojctzdJxy9us3PLJ3YSCui44yMuEo7bro/IL+WlP
+         46Csqp2a1Qypy79oJkOe53u4Y7pSFRbHzuTzQTqf0aM6TFwxFUAMcx/OArV1qoqBhmUz
+         Je6vVnLAS8wlWNfBAP7WWz9L6FFGGT+FOndBZOVVaf9yHWVdxJDlEDV6+vGsUaNNs67x
+         z7LbP2Y7Ew8K8DCFbkrkWoESUYsfBNb8+QAiTFowqV9bw1xztKun4wyaT589W3EdKOfC
+         DQ1FxtS074K+c3WpN9rTESb6hfxeuPgIop0JQQDglI/0rGldzA3omscBaosJUDsFPNFj
+         J/Zg==
+X-Gm-Message-State: AJcUukcIC95rXj3jY2bqu4bc1oEPVB3uvxU0YBe7L5BT0i7IzrS9HcVV
+        gy6TLPFkSzpJOzad74tbqX1ivZYPOw5CxDFa9aikZsGOTkQ=
+X-Google-Smtp-Source: ALg8bN7TM7HkFVP1EabeeX+prME1evMFy5HlgmxrURWGtISoIJw7J0auA1L+qAdydzGRcW7HuUvxmpPE86nTUj9QCKk=
+X-Received: by 2002:a25:2743:: with SMTP id n64mr21202102ybn.164.1546649013690;
+ Fri, 04 Jan 2019 16:43:33 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <a4e3a782-de76-ba91-3727-4db69cf27c3a@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <1546647560-40026-1-git-send-email-yang.shi@linux.alibaba.com> <1546647560-40026-3-git-send-email-yang.shi@linux.alibaba.com>
+In-Reply-To: <1546647560-40026-3-git-send-email-yang.shi@linux.alibaba.com>
+From:   Shakeel Butt <shakeelb@google.com>
+Date:   Fri, 4 Jan 2019 16:43:22 -0800
+Message-ID: <CALvZod5Fh0K-JKGPH90c+ONBSTdwo7Z8fUyyAMen=ZDzPqTAXQ@mail.gmail.com>
+Subject: Re: [v2 PATCH 2/5] mm: memcontrol: do not try to do swap when force empty
+To:     Yang Shi <yang.shi@linux.alibaba.com>
+Cc:     Michal Hocko <mhocko@suse.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jacek,
+On Fri, Jan 4, 2019 at 4:21 PM Yang Shi <yang.shi@linux.alibaba.com> wrote:
+>
+> The typical usecase of force empty is to try to reclaim as much as
+> possible memory before offlining a memcg.  Since there should be no
+> attached tasks to offlining memcg, the tasks anonymous pages would have
+> already been freed or uncharged.  Even though anonymous pages get
+> swapped out, but they still get charged to swap space.  So, it sounds
+> pointless to do swap for force empty.
+>
+> I tried to dig into the history of this, it was introduced by
+> commit 8c7c6e34a125 ("memcg: mem+swap controller core"), but there is
+> not any clue about why it was done so at the first place.
+>
+> The below simple test script shows slight file cache reclaim improvement
+> when swap is on.
+>
+> echo 3 > /proc/sys/vm/drop_caches
+> mkdir /sys/fs/cgroup/memory/test
+> echo 30 > /sys/fs/cgroup/memory/test/memory.swappiness
+> echo $$ >/sys/fs/cgroup/memory/test/cgroup.procs
+> cat /proc/meminfo | grep ^Cached|awk -F" " '{print $2}'
+> dd if=/dev/zero of=/mnt/test bs=1M count=1024
+> ping localhost > /dev/null &
+> echo 1 > /sys/fs/cgroup/memory/test/memory.force_empty
+> killall ping
+> echo $$ >/sys/fs/cgroup/memory/cgroup.procs
+> cat /proc/meminfo | grep ^Cached|awk -F" " '{print $2}'
+> rmdir /sys/fs/cgroup/memory/test
+> cat /proc/meminfo | grep ^Cached|awk -F" " '{print $2}'
+>
+> The number of page cache is:
+>                         w/o             w/
+> before force empty    1088792        1088784
+> after force empty     41492          39428
+> reclaimed             1047300        1049356
+>
+> Without doing swap, force empty can reclaim 2MB more memory in 1GB page
+> cache.
+>
+> Cc: Michal Hocko <mhocko@suse.com>
+> Cc: Johannes Weiner <hannes@cmpxchg.org>
+> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+> ---
+>  mm/memcontrol.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index af7f18b..75208a2 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -2895,7 +2895,7 @@ static int mem_cgroup_force_empty(struct mem_cgroup *memcg)
+>                         return -EINTR;
+>
+>                 progress = try_to_free_mem_cgroup_pages(memcg, 1,
+> -                                                       GFP_KERNEL, true);
+> +                                                       GFP_KERNEL, false);
 
-On 04/01/2019 23.37, Jacek Anaszewski wrote:
-> But, aside from that hypothetic issue, we need a solution for
-> LEDn_BRIGHTNESS feature of lp5024, i.e. setting color intensity
-> via a single register write. How would you propose to address that?
+I think we agreed not to change the behavior of force_empty. You can
+customize 'force_empty on wipe_on_offline' to not swapout.
 
-You could model it to something like this in device tree:
-
-led-module @ <i2c-address> {
-	compatible = "lp5024";
-
-	// There is in hardware setup to use either linear or
-	// logarithmic scaling:
-	//enable-logarithmic-brightness;
-
-	led0 {
-		// this will create led instance for LED0 in lp5024
-		label = "lp-led0";
-		
-		// This specifies LED number within lp5024
-		led-index = <0>;   // set output-base as 0*3 == 0
-		
-		element-red {
-			// refers to OUT0
-			output-offset = <0>;
-		};
-		
-		element-green {
-			// refers to OUT1
-			output-offset = <1>;
-		};
-		
-		element-blue {
-			// refers to OUT2
-			output-offset = <2>;
-		};
-		
-	};	
-
-	led1 {
-		// this will create led instance for LED1 in lp5024
-		label = "lp-led1";
-		
-		// This specifies LED number within lp5024
-		led-index = <1>;   // set output-base as 1*3 == 3
-
-		element-red {
-			// refers to OUT3
-			output-offset = <0>;
-		};
-		
-		element-green {
-			// refers to OUT4
-			output-offset = <1>;
-		};
-		
-		element-blue {
-			// refers to OUT5
-			output-offset = <2>;
-		};
-		
-	};
-
-	bank-led {
-		// this will create led instance for bank leds in lp5024
-		label = "lp-bank-led";
-
-		// configured bank led configuration
-		led-index = <2 3 4 5 6 7>;
-		// As here is list of led-indices this entry is
-		// assumed to be bank configuration. Bank mode is enable
-		// for the indices.
-
-		// set output-base as BANK A
-
-		element-red {
-			// refers to BANK A
-			output-offset = <0>;
-		};
-		
-		element-green {
-			// refers to BANK B
-			output-offset = <1>;
-		};
-		
-		element-blue {
-			// refers to BANK C
-			output-offset = <2>;
-		};
-	};	
-};
-
-This would then create three led instances and each led instance has 
-brightness setting and that goes straight to hardware.
-
-If one would want to override hardware control for brightness then I 
-suppose you would define in led node something like:
-
-	brightness-model = "hsl"
-
-This would then pick red, green and blue elements for hsl calculations 
-and others color elements for linear. LED specific hardware brightness 
-would then be either 0 or 0xFF depending if all of LED color elements 
-are zero or not.
-
-Would that kind of model work?
-
-Thanks,
-Vesa Jääskeläinen
+>                 if (!progress) {
+>                         nr_retries--;
+>                         /* maybe some writeback is necessary */
+> --
+> 1.8.3.1
+>
