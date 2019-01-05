@@ -2,134 +2,72 @@ Return-Path: <SRS0=xVxK=PN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D63B8C43387
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 14:22:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38596C43387
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 14:34:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A476E2085A
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 14:22:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=pobox.com header.i=@pobox.com header.b="A+k2WjqU"
+	by mail.kernel.org (Postfix) with ESMTP id EB36C20868
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 14:34:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546698850;
+	bh=2Yt3aLQvhCwyZRK7UGozQ6BWvDaMWB8O3gC0gVbqeCE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=kISsMmNNdvTkGx3LlETx50QR27pfP5uWZhuZ5E111wGf9jR2qerkzpXWVMtvIwgHH
+	 C1g+Vh9vmiTT5tKlWiEW7crtoL9G2oVL4n0oGwIRcrSxShEb6Rm4Xsyf4FnrWOL9pp
+	 Ri9GHQjA7rBRRDQHDE5T1CtMsI4n7bnzkqxHi394=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726330AbfAEOWf (ORCPT
+        id S1726267AbfAEOeJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 5 Jan 2019 09:22:35 -0500
-Received: from pb-sasl20.pobox.com ([173.228.157.48]:62057 "EHLO
-        sasl.smtp.pobox.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726200AbfAEOWe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 Jan 2019 09:22:34 -0500
-Received: from sasl.smtp.pobox.com (unknown [127.0.0.1])
-        by pb-sasl20.pobox.com (Postfix) with ESMTP id C7EE130B39;
-        Sat,  5 Jan 2019 09:22:32 -0500 (EST)
-        (envelope-from mlord@pobox.com)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=pobox.com; h=subject:from
-        :to:cc:references:message-id:date:mime-version:in-reply-to
-        :content-type:content-transfer-encoding; s=sasl; bh=ykolLrs0sXb5
-        T/gExCLiBe3FWJQ=; b=A+k2WjqUgBWFLcAMQ4xOZWQeeXkakV92W8wAuqJktHt+
-        OpCUXVijd3l+a+NZrnkWGrS8j+jqGoedLY/hVKW1YxIpTNYRzMjkoFYsPxRa6vRT
-        eMM4MF+NGtw++Lz85z93LwgkN/oribNEvG5abPlr8TIjMNclMCUhFRC9u60w4Yo=
-DomainKey-Signature: a=rsa-sha1; c=nofws; d=pobox.com; h=subject:from:to
-        :cc:references:message-id:date:mime-version:in-reply-to
-        :content-type:content-transfer-encoding; q=dns; s=sasl; b=HJ4xs9
-        u4canwLC7W6xOy65mJOp/bllVdysBWDgeqLSSvCh/9J+HJTvnX7xR55felWteYF7
-        mmOpSTc/wwIXb6L92aZmJQXfoHnD4h54W3WAsnYQF9n1RcRkwjd6g5ieMYl/uoab
-        EuKhSs0R77eNzVlMUUHrvG3DaEiz5aqkyHCtk=
-Received: from pb-sasl20.sea.icgroup.com (unknown [127.0.0.1])
-        by pb-sasl20.pobox.com (Postfix) with ESMTP id B5DEC30B38;
-        Sat,  5 Jan 2019 09:22:32 -0500 (EST)
-        (envelope-from mlord@pobox.com)
-Received: from [10.0.0.9] (unknown [24.53.240.110])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Sat, 5 Jan 2019 09:34:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51364 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726200AbfAEOeI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 5 Jan 2019 09:34:08 -0500
+Received: from localhost (unknown [188.89.135.87])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by pb-sasl20.pobox.com (Postfix) with ESMTPSA id 9343430B35;
-        Sat,  5 Jan 2019 09:22:29 -0500 (EST)
-        (envelope-from mlord@pobox.com)
-Subject: Re: r8152: data corruption in various scenarios
-From:   Mark Lord <mlord@pobox.com>
-To:     Ansis Atteka <aatteka@nicira.com>,
-        Hayes Wang <hayeswang@realtek.com>
-Cc:     David Miller <davem@davemloft.net>,
-        "greg@kroah.com" <greg@kroah.com>,
-        "romieu@fr.zoreil.com" <romieu@fr.zoreil.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        nic_swsd <nic_swsd@realtek.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>
-References: <ed0c9790-57be-8bca-cdd6-3a54ca24f0bd@pobox.com>
- <20161125095350.GA20653@kroah.com>
- <1816ec7e-2733-f4ba-5d30-29dbabd20aad@pobox.com>
- <20161125.115827.2014848246966159357.davem@davemloft.net>
- <0835B3720019904CB8F7AA43166CEEB201057793@RTITMBSV03.realtek.com.tw>
- <CAA=3Oqn5_5w+vrg9_7UtZ-5BEbZ9Pm=qdX3WoVZKaAkxcMXYXA@mail.gmail.com>
- <469a41ea-e97c-23d2-d129-68aad5585fec@pobox.com>
-Message-ID: <77cfa599-4bc3-3d4a-eab8-f2f102656484@pobox.com>
-Date:   Sat, 5 Jan 2019 09:22:28 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        by mail.kernel.org (Postfix) with ESMTPSA id 81C4C2070C;
+        Sat,  5 Jan 2019 14:34:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1546698848;
+        bh=2Yt3aLQvhCwyZRK7UGozQ6BWvDaMWB8O3gC0gVbqeCE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=vpo4GHdyljJFUZACWWb4YfVT7EBPWGTlPOnwW5cmlWcJoj23msWl4rqNaCnh9DGwZ
+         TNwssq5yT9xCpsgYTUzjPwY+Wh2yISK2j0fmfJF00Ta8JQQJfa2zjIzWHBsGtnACQA
+         IPwPxwqFDvTorUiIRPoVf+8wskWKHPfm6dyaa7us=
+Date:   Sat, 5 Jan 2019 15:34:04 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Roman Kiryanov <rkir@google.com>
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drivers: misc: goldfish_address_space: add a driver
+Message-ID: <20190105143404.GB22044@kroah.com>
+References: <20190104021311.38194-1-rkir@google.com>
+ <20190105085429.GB13941@kroah.com>
+ <CAOGAQeoOTVMzufOvXf+f6SDJYfCWj7unU8oWExfq3WSj55o7CQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <469a41ea-e97c-23d2-d129-68aad5585fec@pobox.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
-Content-Transfer-Encoding: 7bit
-X-Pobox-Relay-ID: 55C38E08-10F5-11E9-AA9E-80D833260776-82205200!pb-sasl20.pobox.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOGAQeoOTVMzufOvXf+f6SDJYfCWj7unU8oWExfq3WSj55o7CQ@mail.gmail.com>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-01-05 9:14 a.m., Mark Lord wrote:
-> A couple of years back, I reported data corruption resulting from
-> a change in kernel 3.16 which enabled hardware checksums in the r8152 driver.
-> This was happening on an embedded system that was using a r8152 USB dongle.
+On Sat, Jan 05, 2019 at 01:43:55AM -0800, Roman Kiryanov wrote:
+> > Why isn't this in drivers/platform/goldfish/ ?
 > 
-> At the time, it was very difficult to figure out what could possibly be causing it,
-> other than that re-enabling software checksums prevented corrupted packets from
-> resulting in more serious issues.
-> 
-> Since that time, more and more reports of similar corruption and issues
-> have been trickling in.  Eg.
-> 
->    https://lore.kernel.org/patchwork/patch/873920/
+> I was not sure where to put, but this driver is not a platform one, it
+> is a pci one.
 
-Forgot to include this link (below) where people still have the issue
-even with the driver workaround.  Switching to software checksums "fixes" it:
+You are controlling a "platform" device, the goldfish platform.  What
+makes this different from any of the other goldfish platform drivers in
+that directory other than you are triggering off of a virtual pci
+device?
 
-https://bugzilla.redhat.com/show_bug.cgi?id=1460789
+thanks,
 
-> 
-> Note that there are reports in the thread above that the issues
-> are not limited to only the built-in ethernet chip of the dock.
-> 
-> There is even now a special hack in the upstream r8152.c to attempt to detect
-> a Dell TB16 dock and disable RX Aggregation in the driver to prevent such issues.
-> 
-> Well.. I have a WD15 dock, not a TB16, and that same hack also catches my dock
-> in its net:
-> 
->     [5.794641] usb 4-1.2: Dell TB16 Dock, disable RX aggregation
-> 
-> So one issue is that the code is not correctly identifying the dock,
-> and the WD15 is claimed to be immune from the r8152 issues.
-> 
-> One of the symptoms of the r8152 issue, reported by Ansis Atteka,
-> were messages like this:
-> 
->    xhci_hcd 0000:39:00.0: ERROR Transfer event TRB DMA ptr not part of current TD ep_index 13
-> comp_code 1
-> 
-> I just got that exact message above, with the r8152 in my 1-day old WD15 dock,
-> with the TB16 "workaround" enabled in Linux kernel 4.20.0.
-> 
->>From this I conclude that the workaround is not 100% complete yet.
-> 
-
-
--- 
-Mark Lord
-Real-Time Remedies Inc.
-mlord@pobox.com
+greg k-h
