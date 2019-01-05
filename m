@@ -2,111 +2,112 @@ Return-Path: <SRS0=xVxK=PN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15DC6C43387
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 15:59:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56F8FC43387
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 16:02:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB8D720868
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 15:58:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1906820868
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 16:02:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="jat6r0tZ"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WKTDZLzS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726295AbfAEP66 (ORCPT
+        id S1726312AbfAEQC2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 5 Jan 2019 10:58:58 -0500
-Received: from mta-p8.oit.umn.edu ([134.84.196.208]:43002 "EHLO
-        mta-p8.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726248AbfAEP66 (ORCPT
+        Sat, 5 Jan 2019 11:02:28 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:39645 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726249AbfAEQC1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 Jan 2019 10:58:58 -0500
-Received: from localhost (unknown [127.0.0.1])
-        by mta-p8.oit.umn.edu (Postfix) with ESMTP id A0FFA937
-        for <linux-kernel@vger.kernel.org>; Sat,  5 Jan 2019 15:58:56 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at umn.edu
-Received: from mta-p8.oit.umn.edu ([127.0.0.1])
-        by localhost (mta-p8.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id XBK-b5AVKHMa for <linux-kernel@vger.kernel.org>;
-        Sat,  5 Jan 2019 09:58:56 -0600 (CST)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mta-p8.oit.umn.edu (Postfix) with ESMTPS id 79FDA9F0
-        for <linux-kernel@vger.kernel.org>; Sat,  5 Jan 2019 09:58:56 -0600 (CST)
-Received: by mail-io1-f70.google.com with SMTP id h7so44895564iof.19
-        for <linux-kernel@vger.kernel.org>; Sat, 05 Jan 2019 07:58:56 -0800 (PST)
+        Sat, 5 Jan 2019 11:02:27 -0500
+Received: by mail-oi1-f195.google.com with SMTP id i6so32680235oia.6;
+        Sat, 05 Jan 2019 08:02:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=umn.edu; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=X7enExX/vzh0gYwePm77rKq+5Vt7Z3N+wAAXZCYHOnU=;
-        b=jat6r0tZHwwhLCNVLS8I4sZ1pC0EfUzLjGD6TnDCJWtXZweG3DAi5upZGotcfDh6z7
-         +C5A9xEM8lCiSLTtgLFqMZ1gVaxyt6l8pH55KQfJSsEHjW1HqmsqAagTj4nSzr8rRL0C
-         8ILmtgftVs7ziNWMK7OrZsbHPDgscRZYOV6Xov+b/JGUxuHsoQ0EiuHENTeIOVywFhAE
-         D4PqJ6oDm07fbFnPu1IwxptTIh+z3FjxcpLDxAEi8nUnK9gxCySDPjxpNYBdWafO7nLK
-         GE9whJWJZnXE0p/69qgN/yWkop8H4Vj4mvoTEYDzWfGvPsCMSKf8NKYmitk7IEqC2lHP
-         Vs5A==
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=8gau+ZTyFfmhuEvQgtmN7kJRLZQIRssOJ6EMgyNoPjI=;
+        b=WKTDZLzSnI5lwfxuxfabhGk6NQwX1xVi0CUQDE2Ujczfz8h4GOnzBK24T3cCJfS8QO
+         Yxhnsb0YFX72gP+LdYyFUx+zfAKuyOR5zyRD2yi8ld9GbdRwWvXMNA8iICX9Wynn+ibf
+         nqRXltUXdDazVqNnLuDQVpsKzbXm2dN6haBf/edWVUNkwkXysnCGCvdwBug+4l9xovcy
+         1o4Jac7sWePZNDpvNd0zzxuh+QTGwPRRoxPESE3P0eO7Epa0LfDv1UZBNeqi+TUBXj6s
+         66aoCbuvCGPhItT1lQbRnwdou8y1jkw4vAITNCtlHP43wRIrWSwQ+wquuhegRtOzLtlJ
+         QwFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=X7enExX/vzh0gYwePm77rKq+5Vt7Z3N+wAAXZCYHOnU=;
-        b=aZzP6+2z1PVDoVs2YO9pP7HC1GQxEXj139WJQS9dQ63LKG++uiN+GKS7RcVZdXRGDv
-         HPXOVn+dFvXwaHcE7N6o+Vx5w5bkBPvRR17T+WnTgNqo+u3yz68OKwApUwH2lQPxvQZC
-         N9Mgcstyc8qUj+oOZumNgEqdkGWIR3XLBpMK56zO0OF3sPappzfR6DFBv9g7YAfK+mW5
-         seGmRjzxlXmxEJYPwbHRTSJSMLF9Ke2WxNoVBeVPJXfCp81PnsICgz2nd1tzX1Wn9Qy+
-         vMRbC2lo/vRtJTXHfv3d6yVRNh9neJGSmYjEyMlSjYIc8wd+83lZgAcMrDaGczNWLkUG
-         GcOw==
-X-Gm-Message-State: AJcUukeGoZe/cjF7Bgy/szzZ7kieH/XtCzohcM6yylnhn4ZvPICsQBMC
-        z95YbGls/G3hY2mglVC7uEudSRcEDarQCZzbqIjf2YvNL9Sr3KC/Gu/4nD5J1tfEx56JJUZt3Gi
-        FhzKStC7UZyj42NtFQZNpSgmwvcgp
-X-Received: by 2002:a6b:39c6:: with SMTP id g189mr36392759ioa.255.1546703936035;
-        Sat, 05 Jan 2019 07:58:56 -0800 (PST)
-X-Google-Smtp-Source: ALg8bN55JOBb96GTCq/t/ov+xBcGR7rJB+6h1A++IOwdRoo9lv8K24ehQTdmr2itqN5hOSuJZ3/dXA==
-X-Received: by 2002:a6b:39c6:: with SMTP id g189mr36392750ioa.255.1546703935797;
-        Sat, 05 Jan 2019 07:58:55 -0800 (PST)
-Received: from cs-u-syssec1.cs.umn.edu (cs-u-syssec1.cs.umn.edu. [134.84.121.78])
-        by smtp.gmail.com with ESMTPSA id v189sm1991550itb.42.2019.01.05.07.58.55
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=8gau+ZTyFfmhuEvQgtmN7kJRLZQIRssOJ6EMgyNoPjI=;
+        b=fuY1Ya3r4fEF3bSlDxsBVWLXR/3jMBDmLXj2K4avFiZhPLspMNL9V5o+xa7NbFA39S
+         EsgF3vQMSEpGqN9bw5ey6muvf6VT3Nwrfogy8WlJQbDrA+TRXFoTXT7HBmzhM86+fvEp
+         lyiw02+/ZsEHAvoklitmhaoKIWG+a4mVfgjiilFVRSvb9EI1OhL+YbQCb2UGS38EAnpT
+         uJV0yvXAbgcWaSBalrfO8xD1mYrBo51jxK/GG7oBMRnJy6TWqjtBPuFDOab95Ye0/+WR
+         SvOq2xbXADjGYOpSeoYzbfkIUX+s8OrzVn/GevI4bIkX2fS6KeQ6dAqkTn/WwZZF3l2X
+         eomQ==
+X-Gm-Message-State: AJcUukesq5gVVIm+hy7BD+OXaIfNNPrUhH/9VmLlxH+QTEj+FCRZeFn1
+        eXHoxa+cMG57PR/PWJVQbHk=
+X-Google-Smtp-Source: ALg8bN59LKy+c2RC4RQ0EWyPFT6NAL/M7K9y27AIZ6rvIX6fBdTyIzT7pJ6LH5S5GVjW0438ayXGjw==
+X-Received: by 2002:aca:2dc8:: with SMTP id t191mr3608262oit.235.1546704145501;
+        Sat, 05 Jan 2019 08:02:25 -0800 (PST)
+Received: from [192.168.1.102] (cpe-24-31-245-230.kc.res.rr.com. [24.31.245.230])
+        by smtp.gmail.com with ESMTPSA id e6sm29184569otp.68.2019.01.05.08.02.24
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 05 Jan 2019 07:58:55 -0800 (PST)
-From:   Aditya Pakki <pakki001@umn.edu>
-To:     pakki001@umn.edu
-Cc:     kjlu@umn.edu, Peter Chen <Peter.Chen@nxp.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] [V2] usb: chipidea: add a check for the availability of next child
-Date:   Sat,  5 Jan 2019 09:58:47 -0600
-Message-Id: <20190105155847.3091-1-pakki001@umn.edu>
-X-Mailer: git-send-email 2.17.1
+        Sat, 05 Jan 2019 08:02:24 -0800 (PST)
+Subject: Re: [PATCH v2] staging: wilc1000: fix cast to restricted __le32
+To:     =?UTF-8?Q?J=c3=balius_Milan?= <jmilan.dev@gmail.com>,
+        linux-kernel@vger.kernel.org
+Cc:     devel@driverdev.osuosl.org, linux-wireless@vger.kernel.org,
+        gregkh@linuxfoundation.org, ajay.kathat@microchip.com,
+        adham.abozaeid@microchip.com
+References: <20190105091025.GA28917@localhost.localdomain>
+From:   Larry Finger <Larry.Finger@lwfinger.net>
+Message-ID: <61a272a5-3c6f-4e69-2ce9-b7c58b427750@lwfinger.net>
+Date:   Sat, 5 Jan 2019 10:02:23 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
+MIME-Version: 1.0
+In-Reply-To: <20190105091025.GA28917@localhost.localdomain>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-of_get_next_available_child returns NULL when no child nodes are found.
-The fix checks its return value instead of assuming a child is found.
+On 1/5/19 3:10 AM, Július Milan wrote:
+> Fixes the following sparse warnings:
+> 
+> drivers/staging/wilc1000/host_interface.c:2360:30: warning:
+>   incorrect type in assignment (different base types)
+>      expected restricted __le32 [addressable] [assigned] [usertype] frame_type
+>      got restricted __le16 [usertype] <noident>
+> 
+> Fixes: 147ccfd451024 ("staging: wilc1000: handle mgmt_frame_register ops from cfg82011 context")
+> Signed-off-by: Július Milan <jmilan.dev@gmail.com>
+> ---
+>   drivers/staging/wilc1000/host_interface.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/staging/wilc1000/host_interface.c b/drivers/staging/wilc1000/host_interface.c
+> index 5dae6e7155d3..07c3d6293573 100644
+> --- a/struct wilc_reg_frame
+> +++ b/drivers/staging/wilc1000/host_interface.c
+> @@ -2357,7 +2357,7 @@ void wilc_frame_register(struct wilc_vif *vif, u16 frame_type, bool reg)
+>   	default:
+>   		break;
+>   	}
+> -	reg_frame.frame_type = cpu_to_le16(frame_type);
+> +	reg_frame.frame_type = cpu_to_le32(frame_type);
+>   	result = wilc_send_config_pkt(vif, WILC_SET_CFG, &wid, 1,
+>   				      wilc_get_vif_idx(vif));
+>   	if (result)
 
-Signed-off-by: Aditya Pakki <pakki001@umn.edu>
----
- drivers/usb/chipidea/ci_hdrc_msm.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Before you send V3, are you sure this is the correct fix? As "frame_type" is 
+input as u16, it seems to me that the frame_type member of struct wilc_reg_frame 
+should be __le16, not __le32.
 
-diff --git a/drivers/usb/chipidea/ci_hdrc_msm.c b/drivers/usb/chipidea/ci_hdrc_msm.c
-index 880009987460..813673eee815 100644
---- a/drivers/usb/chipidea/ci_hdrc_msm.c
-+++ b/drivers/usb/chipidea/ci_hdrc_msm.c
-@@ -250,6 +250,10 @@ static int ci_hdrc_msm_probe(struct platform_device *pdev)
- 	ulpi_node = of_get_child_by_name(pdev->dev.of_node, "ulpi");
- 	if (ulpi_node) {
- 		phy_node = of_get_next_available_child(ulpi_node, NULL);
-+		if (!phy_node) {
-+			ret = -EINVAL;
-+			goto err_mux;
-+		}
- 		ci->hsic = of_device_is_compatible(phy_node, "qcom,usb-hsic-phy");
- 		of_node_put(phy_node);
- 	}
--- 
-2.17.1
-
+Larry
