@@ -2,39 +2,39 @@ Return-Path: <SRS0=xVxK=PN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECFE2C43387
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 20:46:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95F5BC43387
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 20:53:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA015222F0
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 20:46:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 62AEC222F0
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 20:53:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="UIINnWqP"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="ZaITBAs8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726388AbfAEUqm (ORCPT
+        id S1726356AbfAEUxJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 5 Jan 2019 15:46:42 -0500
-Received: from outils.crapouillou.net ([89.234.176.41]:46526 "EHLO
+        Sat, 5 Jan 2019 15:53:09 -0500
+Received: from outils.crapouillou.net ([89.234.176.41]:52434 "EHLO
         crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726267AbfAEUql (ORCPT
+        with ESMTP id S1726282AbfAEUxI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 Jan 2019 15:46:41 -0500
+        Sat, 5 Jan 2019 15:53:08 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1546721197; h=from:from:sender:reply-to:subject:subject:date:date:
+        s=mail; t=1546721585; h=from:from:sender:reply-to:subject:subject:date:date:
          message-id:message-id:to:to:cc:cc:mime-version:mime-version:
          content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=LHe/ZBXwRJD2vtuchEr4bfhlNRWlZCQ6Rnk/RfFz72g=;
-        b=UIINnWqPFRgPmvn6+knV+MJo6fGrDjTwaitj+VcIpl2Ur81KAjWbKoU17MGSq9u9MDvbOg
-        53x2a7w7uXD6m2IoayvXFPztGtlv8SJuy2T3kxsjJUIcRmbmkCv1BV2MueZzWRgE1yLtb7
-        frScfE1GSsp58aaG4b7jrl+lCiNKtvM=
-Date:   Sat, 05 Jan 2019 17:46:18 -0300
+        bh=Noqh6VlxhdquS3mcPIx/dE8195SKbR+hRweZwaN6Lx0=;
+        b=ZaITBAs87id/kC11uQ60KeKfZRGXDSrksa8hvym5WwvVPs1l42ycsYTsyoxJE4HIJ0r19J
+        2sPVO8lb6OM7DMogOYljgg7v40vv3uZ1KuiOdUsK7wjujWRWxQ0/W94q+pW/Cy7H9Veb2Q
+        zb2ZAdgxC1bN63KGme6B9PVWMrmtD3E=
+Date:   Sat, 05 Jan 2019 17:52:46 -0300
 From:   Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH v9 12/27] pwm: jz4740: Use regmap from TCU driver
+Subject: Re: [PATCH v9 13/27] pwm: jz4740: Use clocks from TCU driver
 To:     Uwe =?iso-8859-1?q?Kleine-K=F6nig?= 
         <u.kleine-koenig@pengutronix.de>
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
@@ -49,11 +49,11 @@ Cc:     Thierry Reding <thierry.reding@gmail.com>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-watchdog@vger.kernel.org, linux-mips@vger.kernel.org,
         linux-doc@vger.kernel.org, linux-clk@vger.kernel.org
-Message-Id: <1546721178.28727.0@crapouillou.net>
-In-Reply-To: <20190105194226.pe4huzynz4civ3lm@pengutronix.de>
+Message-Id: <1546721566.29843.0@crapouillou.net>
+In-Reply-To: <20190105194559.jtwyx7th32saa6qh@pengutronix.de>
 References: <20181227181319.31095-1-paul@crapouillou.net>
-        <20181227181319.31095-13-paul@crapouillou.net>
-        <20190105194226.pe4huzynz4civ3lm@pengutronix.de>
+        <20181227181319.31095-14-paul@crapouillou.net>
+        <20190105194559.jtwyx7th32saa6qh@pengutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1; format=flowed
 Content-Transfer-Encoding: quoted-printable
@@ -62,52 +62,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Uwe,
+Hi,
 
-On Sat, Jan 5, 2019 at 4:42 PM, Uwe Kleine-K=F6nig=20
+On Sat, Jan 5, 2019 at 4:45 PM, Uwe Kleine-K=F6nig=20
 <u.kleine-koenig@pengutronix.de> wrote:
-> On Thu, Dec 27, 2018 at 07:13:04PM +0100, Paul Cercueil wrote:
->>  The ingenic-timer "TCU" driver provides us with a regmap, that we=20
->> can
->>  use to safely access the TCU registers.
->>=20
->>  While this driver is devicetree-compatible, it is never (as of now)
->>  probed from devicetree, so this change does not introduce a ABI=20
->> problem
->>  with current devicetree files.
+> Hello,
 >=20
-> Does it change behaviour? If so, how?
-
-No, it does not change the behaviour.
-
->>  @@ -113,26 +117,37 @@ static int jz4740_pwm_apply(struct pwm_chip=20
->> *chip, struct pwm_device *pwm,
->>=20
->>   	jz4740_pwm_disable(chip, pwm);
->>=20
->>  -	jz4740_timer_set_count(pwm->hwpwm, 0);
->>  -	jz4740_timer_set_duty(pwm->hwpwm, duty);
->>  -	jz4740_timer_set_period(pwm->hwpwm, period);
->>  +	/* Set abrupt shutdown */
->>  +	regmap_update_bits(jz4740->map, TCU_REG_TCSRc(pwm->hwpwm),
->>  +			   TCU_TCSR_PWM_SD, TCU_TCSR_PWM_SD);
+> On Thu, Dec 27, 2018 at 07:13:05PM +0100, Paul Cercueil wrote:
+>>  diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
+>>  index 4ed003bc3d8d..0343f0c1238e 100644
+>>  --- a/drivers/pwm/Kconfig
+>>  +++ b/drivers/pwm/Kconfig
+>>  @@ -202,7 +202,8 @@ config PWM_IMX
+>>   config PWM_JZ4740
+>>   	tristate "Ingenic JZ47xx PWM support"
+>>   	depends on MACH_INGENIC
+>>  -	select REGMAP
+>>  +	depends on COMMON_CLK
+>>  +	select INGENIC_TIMER
 >=20
-> I think I already pointed that out before: abrupt mode is wrong. If
-> .apply is called with a new set of parameters the currently running
-> period with the old values is expected to complete before the new=20
-> values
-> take effect.
+> Did you drop REGMAP on purpose?
 
-You pointed it, indeed; but I won't change it until I can verify that=20
-the
-behaviour is correct (which does not seem to be the case even if I leave
-this bit cleared). Besides, this is the TCU patchset, fixes and patches
-unrelated to the TCU don't belong here.
+INGENIC_TIMER selects it, so it's still a dependency but indirectly.
+Should I restore it?
 
 > Best regards
 > Uwe
-
-Kind regards,
--Paul
+>=20
+> --
+> Pengutronix e.K.                           | Uwe Kleine-K=F6nig       =20
+>     |
+> Industrial Linux Solutions                 |=20
+> http://www.pengutronix.de/  |
 =
 
