@@ -2,108 +2,161 @@ Return-Path: <SRS0=xVxK=PN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0605BC43387
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 03:28:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C0A3C43387
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 03:32:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEA5421871
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 03:28:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ingics-com.20150623.gappssmtp.com header.i=@ingics-com.20150623.gappssmtp.com header.b="mtIClXkK"
+	by mail.kernel.org (Postfix) with ESMTP id E3CC821871
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 03:32:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726116AbfAED2c (ORCPT
+        id S1726137AbfAEDct convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 22:28:32 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:33408 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726010AbfAED2b (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 22:28:31 -0500
-Received: by mail-pf1-f196.google.com with SMTP id c123so19159213pfb.0
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Jan 2019 19:28:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ingics-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=+BWAkzfWGnIvslaIoArFRRPgKKRTaPk9A/jc7qGGVqE=;
-        b=mtIClXkKChPD7KZLM3ksRpWeMAIfaT3fPMbW1XfzChCgsumdbhDGQuOwIhPc1SHKLC
-         5omSi5i53cFbJlJni6OGCatgfGj2wILetnzdhjndH9qISYJXscvu9xrgHrcqv/1XWBk5
-         +JFvKBZLAyWT6sczrl4HN+armOJDORlOuj5oKYS+XOmQ1YJxiKjbTB9dlIi4EJWUGxkx
-         FFKOQa0VZkhCVwsCkZSB6HmEbGTzMc5h7A0bmjBeI1SQbj1auusKciSc0qlRRT0LGzrr
-         ktkWQDKS2demNi22jiCQbiWF9HsOPQ8h3rzphHfT4WNzNVCaoWHLCSh5pMt/qzgNvhRb
-         UOLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=+BWAkzfWGnIvslaIoArFRRPgKKRTaPk9A/jc7qGGVqE=;
-        b=JZ+4/1nIF5DTnmP2EBzlu0q1s6095VihzfJXUGp+ioLqLH2ijxWiGC4/xzFx02f8NS
-         zlmxeKAxBuy6sNg4T70tVrGdL5M6HHmkAEf25FVeoquNA5GTx5J2aB87kJnabMTsQWSP
-         0OHcyF9kTEx17IdW5GKzBl6dbbnNosSxEfZhpdCcAXMenbL9UUEt7FAUPSxvNd45relK
-         0/EBfRrpOLV+U6bDEh+kaUTvaasYJtKXq9UfZq5CBmnx6E0Ntgd2pnNS/7zdNP0Ag1xe
-         jXBoXZJmmZmH/oBNNyk56+vFTQX/E8YuALYgqOVJ3amZ91WglkRynRJIUJqeDgc8qHiZ
-         y0xg==
-X-Gm-Message-State: AJcUukcUjHLvySgdnnFoHYcT5FUm76rMqqpBlytW+/AKToj4rUB1hbyX
-        o6Abv6TmlmfJAKhO5KQyjEsneQ==
-X-Google-Smtp-Source: ALg8bN5ZVkV3t2P3LTi+/IJR7+/OwQsBXo+ra20GvRhHv4drZ23P6bqGrW4cDvsvtTlhd2AHS/B/QQ==
-X-Received: by 2002:a63:e445:: with SMTP id i5mr3738999pgk.307.1546658910512;
-        Fri, 04 Jan 2019 19:28:30 -0800 (PST)
-Received: from localhost.localdomain (36-239-217-174.dynamic-ip.hinet.net. [36.239.217.174])
-        by smtp.gmail.com with ESMTPSA id 7sm209307256pfm.8.2019.01.04.19.28.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 04 Jan 2019 19:28:29 -0800 (PST)
-From:   Axel Lin <axel.lin@ingics.com>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Matt Porter <mporter@linaro.org>,
-        Tim Kryger <tim.kryger@linaro.org>,
-        Markus Mayer <markus.mayer@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org, Axel Lin <axel.lin@ingics.com>
-Subject: [RFT][PATCH] regulator: bcm590xx: Fix .enable_reg for BCM590XX_REG_VSR
-Date:   Sat,  5 Jan 2019 11:28:17 +0800
-Message-Id: <20190105032817.13994-1-axel.lin@ingics.com>
-X-Mailer: git-send-email 2.17.1
+        Fri, 4 Jan 2019 22:32:49 -0500
+Received: from mga09.intel.com ([134.134.136.24]:43595 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726010AbfAEDcs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 22:32:48 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jan 2019 19:32:47 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,441,1539673200"; 
+   d="scan'208";a="107101009"
+Received: from fmsmsx107.amr.corp.intel.com ([10.18.124.205])
+  by orsmga008.jf.intel.com with ESMTP; 04 Jan 2019 19:32:47 -0800
+Received: from fmsmsx118.amr.corp.intel.com (10.18.116.18) by
+ fmsmsx107.amr.corp.intel.com (10.18.124.205) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Fri, 4 Jan 2019 19:32:47 -0800
+Received: from shsmsx154.ccr.corp.intel.com (10.239.6.54) by
+ fmsmsx118.amr.corp.intel.com (10.18.116.18) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Fri, 4 Jan 2019 19:32:46 -0800
+Received: from shsmsx102.ccr.corp.intel.com ([169.254.2.63]) by
+ SHSMSX154.ccr.corp.intel.com ([169.254.7.46]) with mapi id 14.03.0415.000;
+ Sat, 5 Jan 2019 11:32:45 +0800
+From:   "Wang, Wei W" <wei.w.wang@intel.com>
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+CC:     "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "virtualization@lists.linux-foundation.org" 
+        <virtualization@lists.linux-foundation.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "cohuck@redhat.com" <cohuck@redhat.com>,
+        "pasic@linux.ibm.com" <pasic@linux.ibm.com>,
+        "borntraeger@de.ibm.com" <borntraeger@de.ibm.com>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "dgilbert@redhat.com" <dgilbert@redhat.com>
+Subject: RE: [PATCH v2 1/2] virtio-balloon: tweak config_changed
+ implementation
+Thread-Topic: [PATCH v2 1/2] virtio-balloon: tweak config_changed
+ implementation
+Thread-Index: AQHUpAGvzs2A3WVI4UiI2vF1n+DznaWeuqmAgAFHRSA=
+Date:   Sat, 5 Jan 2019 03:32:44 +0000
+Message-ID: <286AC319A985734F985F78AFA26841F73DEF57A3@shsmsx102.ccr.corp.intel.com>
+References: <1546585913-34804-1-git-send-email-wei.w.wang@intel.com>
+ <1546585913-34804-2-git-send-email-wei.w.wang@intel.com>
+ <20190104103213-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20190104103213-mutt-send-email-mst@kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiM2QxNWQ3MmItOGMyYS00NDIwLTllNjctM2Q2YWY3ODM5Zjg0IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoic2dJbUVYWmxLNTZJY3VUcmg5elpsQ1VxbWJGaDZ4MWpYOW9NVGVkYmc5RWYrSDVtSitENldDRk5OWDVNT1l5TiJ9
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Current implementation missed the case BCM590XX_REG_VSR, so
-bcm590xx_get_enable_register() returns 0 when id is BCM590XX_REG_VSR.
+On Friday, January 4, 2019 11:45 PM, Michael S. Tsirkin wrote:
+> >  struct virtio_balloon {
+> >  	struct virtio_device *vdev;
+> >  	struct virtqueue *inflate_vq, *deflate_vq, *stats_vq, *free_page_vq;
+> > @@ -77,6 +81,8 @@ struct virtio_balloon {
+> >  	/* Prevent updating balloon when it is being canceled. */
+> >  	spinlock_t stop_update_lock;
+> >  	bool stop_update;
+> > +	/* Bitmap to indicate if reading the related config fields are needed
+> */
+> > +	unsigned long config_read_bitmap;
+> >
+> >  	/* The list of allocated free pages, waiting to be given back to mm */
+> >  	struct list_head free_page_list;
+> 
+> It seems that you never initialize this bitmap. Probably harmless here but
+> generally using uninitialized memory isn't good.
 
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
----
-Hi Matt,
-Current code looks strange becasue bcm590xx_get_enable_register() returns 0
-for BCM590XX_REG_VSR but there is a BCM590XX_VSRPMCTRL1 defined in the code.
-I don't have the h/w, and I even cannot find the datasheet on the internet.
-I might be wrong, but just in case this might fix a real bug.
-Please help to review and test this patch.
+We've used kzalloc to allocate the vb struct, so it's already 0-initialized :)
 
-Thanks,
-Axel
- drivers/regulator/bcm590xx-regulator.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/regulator/bcm590xx-regulator.c b/drivers/regulator/bcm590xx-regulator.c
-index 92d6d7b10cf7..e49c0a7d5dd5 100644
---- a/drivers/regulator/bcm590xx-regulator.c
-+++ b/drivers/regulator/bcm590xx-regulator.c
-@@ -242,8 +242,12 @@ static int bcm590xx_get_enable_register(int id)
- 		case BCM590XX_REG_SDSR2:
- 			reg = BCM590XX_SDSR2PMCTRL1;
- 			break;
-+		case BCM590XX_REG_VSR:
-+			reg = BCM590XX_VSRPMCTRL1;
-+			break;
- 		case BCM590XX_REG_VBUS:
- 			reg = BCM590XX_OTG_CTRL;
-+			break;
- 		}
+> > +
+> >  static int send_free_pages(struct virtio_balloon *vb)  {
+> >  	int err;
+> > @@ -620,6 +630,7 @@ static int send_free_pages(struct virtio_balloon *vb)
+> >  		 * stop the reporting.
+> >  		 */
+> >  		cmd_id_active = virtio32_to_cpu(vb->vdev, vb-
+> >cmd_id_active);
+> > +		virtio_balloon_read_cmd_id_received(vb);
  
- 
--- 
-2.17.1
 
+[1]
+
+
+> >  		if (cmd_id_active != vb->cmd_id_received)
+> >  			break;
+> >
+> > @@ -637,11 +648,9 @@ static int send_free_pages(struct virtio_balloon
+> *vb)
+> >  	return 0;
+> >  }
+> >
+> > -static void report_free_page_func(struct work_struct *work)
+> > +static void virtio_balloon_report_free_page(struct virtio_balloon
+> > +*vb)
+> >  {
+> >  	int err;
+> > -	struct virtio_balloon *vb = container_of(work, struct virtio_balloon,
+> > -						 report_free_page_work);
+> >  	struct device *dev = &vb->vdev->dev;
+> >
+> >  	/* Start by sending the received cmd id to host with an outbuf. */
+> > @@ -659,6 +668,22 @@ static void report_free_page_func(struct
+> work_struct *work)
+> >  		dev_err(dev, "Failed to send a stop id, err = %d\n", err);  }
+> >
+> > +static void report_free_page_func(struct work_struct *work) {
+> > +	struct virtio_balloon *vb = container_of(work, struct virtio_balloon,
+> > +						 report_free_page_work);
+> > +
+> > +	virtio_balloon_read_cmd_id_received(vb);
+> 
+> This will not achieve what you are trying to do, which is cancel reporting if it's
+> in progress.
+> 
+> You need to re-read each time you compare to cmd_id_active.
+
+Yes, already did, please see [1] above
+
+
+> An API similar to
+> 	u32 virtio_balloon_cmd_id_received(vb)
+> seems to be called for, and I would rename cmd_id_received to
+> cmd_id_received_cache to make sure we caught all users.
+> 
+
+I'm not sure about adding "cache" here, cmd_id_received refers to the cmd id
+that the driver just received from the device. There is one called "cmd_id_active" which
+is the one that the driver is actively using. 
+So cmd_id_received is already a "cache" to " cmd_id_active " in some sense.
+
+Best,
+Wei
