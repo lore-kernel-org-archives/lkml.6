@@ -2,90 +2,85 @@ Return-Path: <SRS0=xVxK=PN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E614C43444
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 02:48:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8256FC43387
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 02:59:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3AC6021871
-	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 02:48:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 49A90217F5
+	for <linux-kernel@archiver.kernel.org>; Sat,  5 Jan 2019 02:59:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ph/7c4l2"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qH7lbjv9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726423AbfAECsb (ORCPT
+        id S1726363AbfAEC7Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 21:48:31 -0500
-Received: from mail-pg1-f174.google.com ([209.85.215.174]:32837 "EHLO
-        mail-pg1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726212AbfAECsa (ORCPT
+        Fri, 4 Jan 2019 21:59:24 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:44660 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726202AbfAEC7X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 21:48:30 -0500
-Received: by mail-pg1-f174.google.com with SMTP id z11so18247763pgu.0;
-        Fri, 04 Jan 2019 18:48:29 -0800 (PST)
+        Fri, 4 Jan 2019 21:59:23 -0500
+Received: by mail-ot1-f67.google.com with SMTP id f18so33647206otl.11;
+        Fri, 04 Jan 2019 18:59:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=6wQfkN/TIt9PCEKz1YXzxME2KYLAjV/XhP7L6NOpM/w=;
-        b=Ph/7c4l2//miF05k6MKNRx4Cw+n9yxK9+KKzCpgmBHiJWiQc/oeIxG9DVvELThWqc+
-         vVjq8jLu9z/Bmd4smgYPLt9FYBNI6TUU/0qWp80T1uD/YK3xPpB2r0hjis/VKvbNyqj/
-         8Am6MJSCPMaq/8tfoLnLrvw+9GYRiS9FNleivfXFdkn3bm7dEJOnX0we+9DlHX5C/lIz
-         d1hHsoMAnBNFrh2adNK/v4KMh7Gio2wcJToImr0WWM2uQmNTgiRF6mv/xXg6G/xJXtLe
-         tkZqctgkQ4iXF0KV1KysUhnkuhv5LbIw04zPQCAc+C3ceYsF0SQI7acpytNwqgKGBsw+
-         6bYw==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rd2sFjiALolYxXL0mKqN+kNf27HAUPoRZ4/dzDC/RI8=;
+        b=qH7lbjv9opBkq9IM6nJvpNx5Z0PFSpQb3RMYD6ndvFVxyAkX135gr7nlDmy1oQ0Ylm
+         wXlY9VgohHAiwXqp2UQ0EAmQeCcELHS1wG/5QIy77RtLRcOlnACBz6OmvlOBd2n0EjAH
+         sdOyTu2O33IE9+jr49eQCN/ct8tyEHsUx/+c/VLLnVHbXRcK4hW22dHTl4FZSX60mFCY
+         IyMbcD/jfIgonJj/cEFyYLAL1vekxa19E6XJMrPnmTgXq/iMpB9ciEzK3KdRTJXC7JRZ
+         J2aHqjn1H7LuaweGzNmbYO05bh8P4omZol5F0Jvs5o2Io9WVJeuTQCf8bspBBkiMfW81
+         py9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=6wQfkN/TIt9PCEKz1YXzxME2KYLAjV/XhP7L6NOpM/w=;
-        b=AvqoXgOOm2D8qK5K/hIzbrrbMhPudqhPLaUCqsYmBkgl0sAO4+r+sWUCQnxGfGRKK7
-         m2BdK2zmvt6MTb9Dyhb6NEHRxOfpau3S7qjztUvMmJ9WAmsnyr4JmXDuLyq9mXMYyT0P
-         SnXQT3OdJl39palAuFy8I0BB8AIIryzuFexwsvxWGA5xZvx+PFUEaamyQ2EHZdSdSzSH
-         9OJgrRsdvDwWiKIxXUdQ2jbk3aaNEAmplVecWdMV93z2nwMmOHUBx2ZqNlpeWJz3BD+W
-         55Cy2VuNSXSDyW4GjdXTQ+PgHz1jsmZr70ttpHYDFlqm8mSHMfWpxP5YRgx6CiJVu4Vl
-         dCaA==
-X-Gm-Message-State: AA+aEWbzyw92LhsqZyP1P9wE1o7rij4HvOFHx/RRnu/kUtGo8eOIhBwr
-        MPH0eeVJ7J/Yk7Lm8kZj1E7bJZ/n
-X-Google-Smtp-Source: AFSGD/Vwrvpwqf5fuq3zU9AJl43cslGMrwSts9SboO6dmyEsjE12t03PXAju8tCml5mTzKflwDmClA==
-X-Received: by 2002:a62:e0d8:: with SMTP id d85mr53817376pfm.214.1546656509024;
-        Fri, 04 Jan 2019 18:48:29 -0800 (PST)
-Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
-        by smtp.gmail.com with ESMTPSA id k38sm118521205pgb.33.2019.01.04.18.48.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 04 Jan 2019 18:48:28 -0800 (PST)
-Date:   Fri, 4 Jan 2019 18:48:24 -0800
-From:   Nicolin Chen <nicoleotsuka@gmail.com>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     jdelvare@suse.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] hwmon: (ina3221) Implement ti,single-shot DT property
-Message-ID: <20190105024823.GA20936@Asurada-Nvidia.nvidia.com>
-References: <20190105004904.17947-1-nicoleotsuka@gmail.com>
- <20190105004904.17947-3-nicoleotsuka@gmail.com>
- <c5d8771d-3274-6982-2f9f-903fd5310488@roeck-us.net>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rd2sFjiALolYxXL0mKqN+kNf27HAUPoRZ4/dzDC/RI8=;
+        b=hRvXf3XHadGofVuai/d4GLupj/r3Ud8msQOd4tW5HX2o4XWXIjufP6VPeSe6jb7dCm
+         eFB0IT6kd6tgw7fZ6Cy7AHY2ruMCOIlcdUsRLYHCLKsHGr62Cu7pbl7d/8voPvbEAoSD
+         GuLb8B1/CFftLG0zvxIjl4iV0YSLWUiKjycuA927YmdpgS1fe7zSEwHppeIp1MrflwUY
+         onmg7FipzGyqKY2lJgJy5GOaNWfnGw3Wz1Ln4UP8yAF5oqBXFp9F4pNgEAgpY3b4tL4r
+         uAJw3GbYU88UE5V/y93wjoEolfelYeHVYWu6PpN2w0YUCeVMjsfDCtQQEIPKmsfaiUQf
+         B9Cg==
+X-Gm-Message-State: AJcUukdgW9lOa6GOOjJxkObxaVIs4EpUoID54GNsDc0/JcVTKKACchby
+        Z9EsYamU2X6Y8qeo5ucUYa3BY+TYnrUyU9mHmWI=
+X-Google-Smtp-Source: ALg8bN6sYF1IRze9GVwsGYRXbBUBl0XjQusuew0KqH2UnBBJuiyVbs9hGGWS1/d9Yyc4vnGjid68YKHkWqimQ8POrSU=
+X-Received: by 2002:a9d:3f7:: with SMTP id f110mr38524114otf.171.1546657162739;
+ Fri, 04 Jan 2019 18:59:22 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c5d8771d-3274-6982-2f9f-903fd5310488@roeck-us.net>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20181230163045.20813-1-ap420073@gmail.com> <20190104.125434.2239560197580981867.davem@davemloft.net>
+In-Reply-To: <20190104.125434.2239560197580981867.davem@davemloft.net>
+From:   Taehee Yoo <ap420073@gmail.com>
+Date:   Sat, 5 Jan 2019 11:59:11 +0900
+Message-ID: <CAMArcTW=ixOVtGg-iHrBbaEq+qhtadQvs++wLN0_0epVo6dARA@mail.gmail.com>
+Subject: Re: [PATCH net 0/4] net: bpfilter: fix two bugs in bpfilter
+To:     David Miller <davem@davemloft.net>
+Cc:     Netdev <netdev@vger.kernel.org>, linux-kernel@vger.kernel.org,
+        Daniel Borkmann <daniel@iogearbox.net>, ast@kernel.org,
+        mcgrof@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 04, 2019 at 06:37:55PM -0800, Guenter Roeck wrote:
-> > +enum ina3221_modes {
-> > +	INA3221_MODE_SINGLE_SHOT,
-> > +	INA3221_MODE_CONTINUOUS,
-> > +	INA3221_NUM_MODES,
-> 
-> Is NUM_MODES used anywhere ? Please drop unless there is a reason to keep it.
+On Sat, 5 Jan 2019 at 05:54, David Miller <davem@davemloft.net> wrote:
+>
+> From: Taehee Yoo <ap420073@gmail.com>
+> Date: Mon, 31 Dec 2018 01:30:45 +0900
+>
+> > This patches fix two bugs in the bpfilter_umh which are related in
+> > iptables command.
+>  ...
+>
+> I am still thinking about these patches, sorry for taking so long to
+> give a response.
+>
+> Thank you.
 
-Will clean it up in v2.
-
-Thanks
-Nicolin
+Thank you for letting me know!
