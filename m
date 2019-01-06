@@ -2,69 +2,92 @@ Return-Path: <SRS0=QMhl=PO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CC04C43387
-	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 02:40:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E71F2C43387
+	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 02:46:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0D52222A9
-	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 02:40:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546742437;
-	bh=2gszZ8ttkz6ZLc39JRPFFRK88quGU8JhW0YLmiqPamI=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=NhJlNzpW6KixllnLY6WLHovLR+82m4jOqe4ZHeIpOLTDWDuq3ItgmZcS+OtgSKstW
-	 1V4QvMfHj4Kea6wwMBd2v0RUS5O8/XH93wOg+mw+vtxPzwWi4sLaKLp9RjME5MkV2x
-	 kAgnRjeSMZRpp/xZEjXfS7PMO52oLQ3wHGtUtoMY=
+	by mail.kernel.org (Postfix) with ESMTP id B695620836
+	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 02:46:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726703AbfAFCkg (ORCPT
+        id S1726405AbfAFCqy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 5 Jan 2019 21:40:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36602 "EHLO mail.kernel.org"
+        Sat, 5 Jan 2019 21:46:54 -0500
+Received: from mga09.intel.com ([134.134.136.24]:52179 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726561AbfAFCkF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 Jan 2019 21:40:05 -0500
-Subject: Re: [GIT PULL] Please pull RDMA subsystem changes
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546742405;
-        bh=2gszZ8ttkz6ZLc39JRPFFRK88quGU8JhW0YLmiqPamI=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=1ee3PmSn/EGE7uq8WoqfI6RAfRYrncinktVeX2RyT0tSi/xiCRTG59BAopwW3PqNO
-         GH7gO5ccpNcEU/PPC2PrDAc/BshDQsxlndYEwija4mf+0SZjPYpOO2/q24ZBfBR1Bz
-         FH4ajNzF0pPKBYl5Tdy2w4nBmGvDpG/1DY5IQNiQ=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190104050001.GA26256@ziepe.ca>
-References: <20190104050001.GA26256@ziepe.ca>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190104050001.GA26256@ziepe.ca>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git tags/for-linus
-X-PR-Tracked-Commit-Id: 9c6260de505b63638dd86fcc33849b17f6146d94
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 3954e1d0310e30e743431b58918825c4d4fe8812
-Message-Id: <20190106024005.13237.95467.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
-Date:   Sun, 06 Jan 2019 02:40:05 +0000
-To:     Jason Gunthorpe <jgg@mellanox.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Doug Ledford <dledford@redhat.com>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+        id S1726375AbfAFCqy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 5 Jan 2019 21:46:54 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Jan 2019 18:46:53 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,445,1539673200"; 
+   d="scan'208";a="264736108"
+Received: from saranya-h97m-d3h.iind.intel.com ([10.66.245.63])
+  by orsmga004.jf.intel.com with ESMTP; 05 Jan 2019 18:46:50 -0800
+From:   saranya.gopal@intel.com
+To:     kernel@kolivas.org
+Cc:     gregkh@linuxfoundation.org, pierre-louis.bossart@linux.intel.com,
+        alsa-devel@alsa-project.org, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org, tiwai@suse.de,
+        felipe.balbi@linux.intel.com,
+        Saranya Gopal <saranya.gopal@intel.com>
+Subject: [PATCH V3] usbcore: Select only first configuration for non-UAC3 compliant devices
+Date:   Sun,  6 Jan 2019 08:14:02 +0530
+Message-Id: <1546742642-29269-1-git-send-email-saranya.gopal@intel.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <CABqErrHKFshAMBPHJp2vmGFE6k1GL1oDMSMbDRcBJNfUSxt9KQ@mail.gmail.com>
+References: <CABqErrHKFshAMBPHJp2vmGFE6k1GL1oDMSMbDRcBJNfUSxt9KQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri, 4 Jan 2019 05:00:10 +0000:
+From: Saranya Gopal <saranya.gopal@intel.com>
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git tags/for-linus
+In most of the UAC1 and UAC2 audio devices, the first
+configuration is most often the best configuration.
+However, with recent patch to support UAC3 configuration,
+second configuration was unintentionally chosen for
+some of the UAC1/2 devices that had more than one
+configuration. This was because of the existing check
+after the audio config check which selected any config
+which had a non-vendor class. This patch fixes this issue.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/3954e1d0310e30e743431b58918825c4d4fe8812
+Fixes: f13912d3f014 ("usbcore: Select UAC3 configuration for audio if present")
+Reported-by: Con Kolivas <kernel@kolivas.org>
+Signed-off-by: Saranya Gopal <saranya.gopal@intel.com>
+Tested-by: Con Kolivas <kernel@kolivas.org>
+---
+Changes from V2: Added Tested-by tag
+Changes from V1: Added full commit name and more SHA1 numbers in Fixes tag
 
-Thank you!
+ drivers/usb/core/generic.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
+diff --git a/drivers/usb/core/generic.c b/drivers/usb/core/generic.c
+index 356b05c..f713cec 100644
+--- a/drivers/usb/core/generic.c
++++ b/drivers/usb/core/generic.c
+@@ -143,9 +143,12 @@ int usb_choose_configuration(struct usb_device *udev)
+ 			continue;
+ 		}
+ 
+-		if (i > 0 && desc && is_audio(desc) && is_uac3_config(desc)) {
+-			best = c;
+-			break;
++		if (i > 0 && desc && is_audio(desc)) {
++			if (is_uac3_config(desc)) {
++				best = c;
++				break;
++			}
++			continue;
+ 		}
+ 
+ 		/* From the remaining configs, choose the first one whose
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+1.9.1
+
