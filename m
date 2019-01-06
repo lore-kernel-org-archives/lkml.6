@@ -3,63 +3,65 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 226BEC43387
-	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 02:40:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C572BC43387
+	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 02:40:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E46EE222A9
-	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 02:40:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 91011222AA
+	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 02:40:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546742422;
-	bh=8tSN5fHHvIXucFtMrBlDvBPAqA0okPQ4/a67WErCKQA=;
+	s=default; t=1546742425;
+	bh=XhYQSByy/hMN932Vion0YNCn7NrIkTtBPceV/1S72F0=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=k3K02PQtp4DqpCKKPfxryquRjW0/RZrLDSI59dtOIZrvfsMvf8gchKc54Izd+frbc
-	 D368PcXhzGM3qZHY5qD5mkiGJK8/ZG96vSjXFDn76+84pFWTliOcsNk1RFvjGBS+vZ
-	 0T/v8TDfR+J4FaYUxh6WfCoQ6q/f55a9dFaryO/I=
+	b=qtjpzZQ0gW46tOrKdMSUvQ/FfeoWg3vVGPqtY5en2POowIJAEoqVcBHnIYqF8wjIH
+	 MgyPTWAhVdfPQ4DAKAlpRixVBbhZ5cr3iCvqCEYO9gnZs7wr9XNlDh1vOztXJcNn69
+	 eK1qUlsxUvKVN9+KGt98Lmzl9tsQTg8P75Ft2g08=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726675AbfAFCkV (ORCPT
+        id S1726626AbfAFCkH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 5 Jan 2019 21:40:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36704 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726609AbfAFCkH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 5 Jan 2019 21:40:07 -0500
-Subject: Re: [GIT PULL] Documentation fixes
+Received: from mail.kernel.org ([198.145.29.99]:36622 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726609AbfAFCkG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 5 Jan 2019 21:40:06 -0500
+Subject: Re: [PULL REQUEST] i2c for 5.0 (or how it will be called)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546742407;
-        bh=8tSN5fHHvIXucFtMrBlDvBPAqA0okPQ4/a67WErCKQA=;
+        s=default; t=1546742405;
+        bh=XhYQSByy/hMN932Vion0YNCn7NrIkTtBPceV/1S72F0=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=rdC9ULTG0pVQ6jNFQsZ39FfYNZwCxUpYSN97hxwsUR+MsZ3QgmEiRCHeCwKiWhrKe
-         iRmzpDxfaxz3GtXTrKrzCppmmOYdiLhX/QOfpNOZUN8Zh/YGpppaL+bxnslCX0B/UN
-         lTq9AVNrJ0lHIWF5QwA2xdTbCNJYpBAEMzVPajXY=
+        b=w2K2/zXEtYYESxOrfFs8MheAOfKwAHTB2A7ldH6H5FL+SAH7mMXVEeyNsChDPn6li
+         zLvYSOMZ0BFlzuoAo9dui/DFqbbq37zpvi8tmETOlNqlDy95fN4d3kHdHAf35XmB2V
+         aHkmizO4LwThn8NKje5XQ0c85flnwsMd67S9DqWg=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190104150239.174f0f8a@lwn.net>
-References: <20190104150239.174f0f8a@lwn.net>
+In-Reply-To: <20190104110641.bf7k42aprdikplx6@ninjato>
+References: <20190104110641.bf7k42aprdikplx6@ninjato>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190104150239.174f0f8a@lwn.net>
-X-PR-Tracked-Remote: git://git.lwn.net/linux.git tags/docs-5.0-fixes
-X-PR-Tracked-Commit-Id: 93fb7f19985a08bbe3b76da0b35e97b6e472e4a5
+X-PR-Tracked-Message-Id: <20190104110641.bf7k42aprdikplx6@ninjato>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/for-5.0
+X-PR-Tracked-Commit-Id: 81482d13f37b1c9354d9bf5491699d993b193246
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: b5aef86e089a2d85a6d627372287785d08938cbe
-Message-Id: <20190106024007.13237.36931.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
-Date:   Sun, 06 Jan 2019 02:40:07 +0000
-To:     Jonathan Corbet <corbet@lwn.net>
+X-PR-Merge-Commit-Id: 7671c14e6aca7a816a29a85eba47d9bccb7d23ae
+Message-Id: <20190106024005.13237.57002.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
+Date:   Sun, 06 Jan 2019 02:40:05 +0000
+To:     Wolfram Sang <wsa@the-dreams.de>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org
+        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Peter Rosin <peda@axentia.se>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri, 4 Jan 2019 15:02:39 -0700:
+The pull request you sent on Fri, 4 Jan 2019 12:06:44 +0100:
 
-> git://git.lwn.net/linux.git tags/docs-5.0-fixes
+> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/for-5.0
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/b5aef86e089a2d85a6d627372287785d08938cbe
+https://git.kernel.org/torvalds/c/7671c14e6aca7a816a29a85eba47d9bccb7d23ae
 
 Thank you!
 
