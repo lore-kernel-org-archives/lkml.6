@@ -2,120 +2,103 @@ Return-Path: <SRS0=QMhl=PO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-12.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E557EC43387
-	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 18:17:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F4041C43387
+	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 18:28:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD75D2070D
-	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 18:17:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C290020859
+	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 18:28:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="m58dfHPB"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Zvb31Qj/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726089AbfAFSRk (ORCPT
+        id S1726117AbfAFS2u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 6 Jan 2019 13:17:40 -0500
-Received: from mta-p6.oit.umn.edu ([134.84.196.206]:48130 "EHLO
-        mta-p6.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726034AbfAFSRj (ORCPT
+        Sun, 6 Jan 2019 13:28:50 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:37078 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726014AbfAFS2u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Jan 2019 13:17:39 -0500
-Received: from localhost (unknown [127.0.0.1])
-        by mta-p6.oit.umn.edu (Postfix) with ESMTP id BE21763A
-        for <linux-kernel@vger.kernel.org>; Sun,  6 Jan 2019 18:17:37 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at umn.edu
-Received: from mta-p6.oit.umn.edu ([127.0.0.1])
-        by localhost (mta-p6.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id yWHJje8kiXiT for <linux-kernel@vger.kernel.org>;
-        Sun,  6 Jan 2019 12:17:37 -0600 (CST)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mta-p6.oit.umn.edu (Postfix) with ESMTPS id 9B0BE437
-        for <linux-kernel@vger.kernel.org>; Sun,  6 Jan 2019 12:17:37 -0600 (CST)
-Received: by mail-io1-f70.google.com with SMTP id q16so22607394ios.1
-        for <linux-kernel@vger.kernel.org>; Sun, 06 Jan 2019 10:17:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=umn.edu; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=R4rdnJmUl7RHx0SUd74LFc3h8YHD/OwyUQsNl0U59eI=;
-        b=m58dfHPBEHibEnIk883CfTTIU0EF8Utsce+m3W65sQvpHtFCScIx9emI1bMaiG/bXS
-         B34aWt6ngEkC2GInpgQb8yzWaozacAFxhOy5NhUS4D8ZN2ulV7s9PkBu+3ctHv1ed67J
-         wF+p7wEMQ/tnVmrqw4eZCsIepstnNsBnlTOypoguicwoZX+4ZzPq3YPYhm5Cp4KFN5vt
-         O1oUpLVGdcD+rTEU4F7E3Y3uMseXI5VtJs3ijJKWBkdQGfxc2ZqzOM8z/1N3SDDqTs6t
-         yf5SoVtmGbDOC8IYWCVwW2yXlt5fm7OCzIXB7F2Jt7L94cDuimcSrgTIOL+eI2ADPFk5
-         THQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=R4rdnJmUl7RHx0SUd74LFc3h8YHD/OwyUQsNl0U59eI=;
-        b=UPj/YaJoTduB2fHF+36HnZdnbhrjmg+BCTCyFDIlJ7xknD8OXPD9ljAvWq0d01p0sR
-         JRRkwB714vktpMt5jg+80IFCLuLR/1nVJwnlrctJsfrdhoyYbrPfHa58b6hfYF4PO+P2
-         I+wspRGlVrqg2Yn/wtCKyLiZQIosH0uqavHOdSYrZ/8j15lY0pyUu9YI0DsNeIOwjvRk
-         XSAzfDVHG9lHcqH4vzwGddMVWJ/6MDj6XzkV5gQAlSey9vc1l5fmnluIuhhjrzG+24tB
-         m1ZNzb3eQgg51R7wE94dM6+p79pIuAIX3lzi1DUkMP925EjCgjpla22td3s4P8OmSorc
-         GfAw==
-X-Gm-Message-State: AJcUuke7KT0kmXdrSxK8Pp3smjRY5jbhqAb/AoqC/rV6j7RSxTfrFaS5
-        sDltywdq0cMWbMMu8i5AVUXwl0v5pHYZHiW1mBjakLP/Mb5M6G5LZkzL2FE112aodCKVWeBgM2A
-        N5IiuhE3bwVYIeSqMLM4p2g7Wwa7h
-X-Received: by 2002:a24:7a94:: with SMTP id a142mr4486761itc.88.1546798657209;
-        Sun, 06 Jan 2019 10:17:37 -0800 (PST)
-X-Google-Smtp-Source: ALg8bN6rivm7cD2r6oyKrhC0cf6ZTjJ49PdGTA0B0ZoRD4UZQDvgzNhc3n7MJSSN7xKShvlAOCODIQ==
-X-Received: by 2002:a24:7a94:: with SMTP id a142mr4486756itc.88.1546798656979;
-        Sun, 06 Jan 2019 10:17:36 -0800 (PST)
-Received: from cs-u-syssec1.cs.umn.edu (cs-u-syssec1.cs.umn.edu. [134.84.121.78])
-        by smtp.gmail.com with ESMTPSA id y5sm3451972itb.42.2019.01.06.10.17.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 06 Jan 2019 10:17:36 -0800 (PST)
-From:   Aditya Pakki <pakki001@umn.edu>
-To:     pakki001@umn.edu
-Cc:     kjlu@umn.edu, Michael Hennerich <michael.hennerich@analog.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] [v2] Input: touchscreen: Fix a missing check on regmap_bulk_read
-Date:   Sun,  6 Jan 2019 12:17:27 -0600
-Message-Id: <20190106181727.11815-1-pakki001@umn.edu>
-X-Mailer: git-send-email 2.17.1
+        Sun, 6 Jan 2019 13:28:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=eLDyUetQZfyKZfukLQ1m9gz0Y61/5C0xxyHTCt0PHXs=; b=Zvb31Qj/mBQDlWTlDQCk15E8Y3
+        Nv6MYmvX3yE70mn3YPIvuwjRdNEl1aUGHXJP+HWKLm5cYQ2fluXRU3AEAjq3Aqhh/Qc3B9bf38Hf4
+        j35lFkI8bhn6cOvbYwKXILNMZF8YJjEdvNKeN83RgHOer2vV6jxyaPHlKdsMIeuu6DWnt38p/oz1X
+        MAj7VeQl522aNL+RnBjwDLZtapgbyEPzpq2JLGhSXACZjueEo+A4RuGmMPS21i886G718JH9ogqz/
+        Xxx7K7YAeuvN5R4OizS6K80IBBdDdrovUpkQTwGDp/YXmAzZJ1ioVzFXjLwTwmPXK9qf1Xbq14WAH
+        mlbwN7Dw==;
+Received: from [195.143.101.197] (helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1ggDAH-0006N4-1R; Sun, 06 Jan 2019 18:28:49 +0000
+Date:   Sun, 6 Jan 2019 19:28:46 +0100
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] dma-mapping fixes for Linux 4.21-rc1
+Message-ID: <20190106182846.GA10665@infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-regmap_bulk_read() can return a non zero value on failure. The fix
-checks if the function call succeeded before calling mod_timer. The
-issue was identified by a static analysis tool.
+Hi Linus,
 
-Signed-off-by: Aditya Pakki <pakki001@umn.edu>
----
- drivers/input/touchscreen/ad7879.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+please pull regression fixes, and code removals enabling them for
+4.21-rc1.
 
-diff --git a/drivers/input/touchscreen/ad7879.c b/drivers/input/touchscreen/ad7879.c
-index 6fa714c587b4..8c908572c1f2 100644
---- a/drivers/input/touchscreen/ad7879.c
-+++ b/drivers/input/touchscreen/ad7879.c
-@@ -246,11 +246,14 @@ static void ad7879_timer(struct timer_list *t)
- static irqreturn_t ad7879_irq(int irq, void *handle)
- {
- 	struct ad7879 *ts = handle;
-+	int error;
- 
--	regmap_bulk_read(ts->regmap, AD7879_REG_XPLUS,
--			 ts->conversion_data, AD7879_NR_SENSE);
--
--	if (!ad7879_report(ts))
-+	error = regmap_bulk_read(ts->regmap, AD7879_REG_XPLUS,
-+					ts->conversion_data, AD7879_NR_SENSE);
-+	if (error)
-+		dev_err_ratelimited(ts->dev, "failed to read %#02x: %d\n",
-+					AD7879_REG_XPLUS, error);
-+	else if (!ad7879_report(ts))
- 		mod_timer(&ts->timer, jiffies + TS_PEN_UP_TIMEOUT);
- 
- 	return IRQ_HANDLED;
--- 
-2.17.1
+The following changes since commit 96d4f267e40f9509e8a66e2b39e8b95655617693:
 
+  Remove 'type' argument from access_ok() function (2019-01-03 18:57:57 -0800)
+
+are available in the Git repository at:
+
+  git://git.infradead.org/users/hch/dma-mapping.git tags/dma-mapping-4.21-1
+
+for you to fetch changes up to 8270f3a11ceef64bdb0ab141180e8d2f17c619ec:
+
+  dma-direct: fix DMA_ATTR_NO_KERNEL_MAPPING for remapped allocations (2019-01-05 08:28:29 +0100)
+
+----------------------------------------------------------------
+dma-mapping fixes for Linux 4.21-rc1
+
+Fix various regressions introduced in this cycles:
+
+ - fix dma-debug tracking for the map_page / map_single consolidatation
+ - properly stub out DMA mapping symbols for !HAS_DMA builds to avoid
+   link failures
+ - fix AMD Gart direct mappings
+ - setup the dma address for no kernel mappings using the remap
+   allocator
+
+----------------------------------------------------------------
+Christoph Hellwig (7):
+      dma-mapping: implement dma_map_single_attrs using dma_map_page_attrs
+      dma-mapping: implement dmam_alloc_coherent using dmam_alloc_attrs
+      dma-mapping: remove dmam_{declare,release}_coherent_memory
+      dma-mapping: properly stub out the DMA API for !CONFIG_HAS_DMA
+      dma-mapping: remove a few unused exports
+      x86/amd_gart: fix unmapping of non-GART mappings
+      dma-direct: fix DMA_ATTR_NO_KERNEL_MAPPING for remapped allocations
+
+ Documentation/driver-model/devres.txt |   1 -
+ arch/x86/kernel/amd_gart_64.c         |  10 +-
+ include/linux/dma-debug.h             |  11 +-
+ include/linux/dma-mapping.h           | 340 +++++++++++++++++++---------------
+ kernel/dma/coherent.c                 |   2 -
+ kernel/dma/debug.c                    |  19 +-
+ kernel/dma/mapping.c                  |  94 ----------
+ kernel/dma/remap.c                    |  13 +-
+ 8 files changed, 215 insertions(+), 275 deletions(-)
