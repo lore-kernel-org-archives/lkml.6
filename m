@@ -2,91 +2,167 @@ Return-Path: <SRS0=QMhl=PO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6605C43387
-	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 15:57:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4735DC43387
+	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 16:02:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 970D720665
-	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 15:57:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 05BC42085A
+	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 16:02:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="bqrP4JRW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726443AbfAFP5x (ORCPT
+        id S1726426AbfAFQCd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 6 Jan 2019 10:57:53 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:53868 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726341AbfAFP5w (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Sun, 6 Jan 2019 10:57:52 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5242199D2C;
-        Sun,  6 Jan 2019 15:57:52 +0000 (UTC)
-Received: from krava (ovpn-204-49.brq.redhat.com [10.40.204.49])
-        by smtp.corp.redhat.com (Postfix) with SMTP id D41955D9CB;
-        Sun,  6 Jan 2019 15:57:49 +0000 (UTC)
-Date:   Sun, 6 Jan 2019 16:57:48 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     "Jin, Yao" <yao.jin@linux.intel.com>
-Cc:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com,
-        Linux-kernel@vger.kernel.org, ak@linux.intel.com,
-        kan.liang@intel.com, yao.jin@intel.com
-Subject: Re: [PATCH] perf stat: Poll for monitored tasks being alive in fork
- mode
-Message-ID: <20190106155748.GD31228@krava>
-References: <1546568897-16123-1-git-send-email-yao.jin@linux.intel.com>
- <20190104125441.GF5481@krava>
- <ec011f77-e08e-4471-4479-0cb0281fa79b@linux.intel.com>
- <20190106132509.GA31228@krava>
- <3ccf2565-c271-1cba-e5dc-7c33302cf417@linux.intel.com>
+        Sun, 6 Jan 2019 11:02:33 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:54832 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726341AbfAFQCd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Jan 2019 11:02:33 -0500
+Received: from localhost.localdomain (unknown [96.44.9.229])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id EDF8198C;
+        Sun,  6 Jan 2019 17:02:28 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1546790551;
+        bh=RXeoIlbfHWyvwrcg7GnA48vy6AaONClWFffKnMvtbxk=;
+        h=From:To:Cc:Subject:Date:From;
+        b=bqrP4JRWoVwQ5+esXHzU35Gee6uph3CGI7GTzoEH6MZFybcNpbUTVPTjrDnUPQ0Mo
+         eVjr6Ga8CR1UI0SqngFl6WbqMcJGawPVdFWyjhnFtCkx8pkUzwJAVqMYlR4RCA7jpo
+         DgBxDT9PITYeUQDvebg9+mxmrQkiZjX6dJDFLVYQ=
+From:   Paul Elder <paul.elder@ideasonboard.com>
+To:     laurent.pinchart@ideasonboard.com, kieran.bingham@ideasonboard.com
+Cc:     Paul Elder <paul.elder@ideasonboard.com>, b-liu@ti.com,
+        stern@rowland.harvard.edu, rogerq@ti.com, balbi@kernel.org,
+        gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v4 0/6] usb: gadget: add mechanism to asynchronously validate data stage of ctrl out request
+Date:   Sun,  6 Jan 2019 11:02:15 -0500
+Message-Id: <20190106160221.4480-1-paul.elder@ideasonboard.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3ccf2565-c271-1cba-e5dc-7c33302cf417@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Sun, 06 Jan 2019 15:57:52 +0000 (UTC)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jan 06, 2019 at 10:02:18PM +0800, Jin, Yao wrote:
+This patch series adds a mechanism to allow asynchronously validating
+the data stage of a control OUT request, and for stalling or suceeding
+the request accordingly. This mechanism is implemented for MUSB, and is
+used by UVC. At the same time, UVC packages the setup stage and data
+stage data together to send to userspace to save on a pair of context
+switches per control out request.
 
-SNIP
+This patch series does change the userspace API. We however believe that
+it is justified because the current API is broken, and because it isn't
+being used (because it's broken).
 
-> > ---
-> > diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-> > index acfd48db52dd..c322cb271180 100644
-> > --- a/tools/perf/builtin-stat.c
-> > +++ b/tools/perf/builtin-stat.c
-> > @@ -583,6 +583,14 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
-> >   		if (interval || timeout) {
-> >   			while (!waitpid(child_pid, &status, WNOHANG)) {
-> > +				if (!is_target_alive(&target, evsel_list->threads)) {
-> > +					int pid = child_pid;
-> > +
-> > +					if (pid != -1)
-> > +						kill(pid, SIGTERM);
-> > +					break;
-> > +				}
-> > +
-> >   				nanosleep(&ts, NULL);
-> >   				if (timeout)
-> >   					break;
-> > 
-> 
-> Hi Jiri,
-> 
-> I think your patch is good. At least, we can avoid the case of kill(-1,
-> SIGTERM).
-> 
-> BTW, you post this patch or I re-post it, both fine for me. :)
+The current API is broken such that it is subject to race conditions
+that cause fatal errors with a high frequency. This is actually what
+motivated this patch series in the first place. In the current API, not
+only is there no way to asynchronously validate the data stage of a
+control OUT request, but an empty buffer is expected to be provided to
+hold the data stage data -- which is more likely than not to be late.
+There is even a warning in musb_g_ep0_queue:
 
-please post it
+/* else for sequence #2 (OUT), caller provides a buffer
+ * before the next packet arrives.  deferred responses
+ * (after SETUP is acked) are racey.
+ */
 
-thanks,
-jirka
+This problem has never been reported in years, which is a sign that the
+API isn't used. Furthermore, the vendor kernels that we have seen using
+the UVC gadget driver (such as QC and Huawei) are heavily patched with
+local changes to the API. This corroborates the suspicion that the
+current mainline API is not being used.
+
+Additionally, this API isn't meant to be used by generic applications,
+but by a dedicated userspace helper. uvc-gadget is one such example, but
+it has bitrotten and isn't compatible with the current kernel API. The
+fact that nobody has submitted patches nor complained for a long time
+again shows that it isn't being used.
+
+The conclusion is that since the API hasn't been used for a long time,
+it is safe to fix it.
+
+Changes in v4:
+
+- Change wording and fix typo in patch 4/6 "usb: gadget: add mechanism
+  to specify an explicit status stage"
+- Set explicit_status in usb_gadget_control_complete
+- Change explicit_status from unsigned int to bool
+
+Changes in v3:
+
+- Function driver send STALL status stage by simply calling
+  usb_ep_set_halt, and ACK by enqueueing request
+- Fix signature of usb_gadget_control_complete to check the status of the
+  request that was just given back.
+- Corresponding changes to musb and uvc gadget
+
+Changes in v2:
+
+Overhaul of status stage delay mechanism/API. Now if a function driver
+desires an explicit/delayed status stage, it specifies so in a flag in
+the usb_request that is queued for the data stage. The function driver
+later enqueues another usb_request for the status stage, also with the
+explicit_status flag set, and with the zero flag acting as the status.
+If a function driver does not desire an explicit status stage, then it
+can set (or ignore) the explicit_status flag in the usb_request that
+is queued for the data stage.
+
+To allow the optional explicit status stage, a UDC driver should call
+the newly added usb_gadget_control_complete right after
+usb_gadget_giveback_request, and in its queue function should check if
+the usb_request is for the status stage and if it has been requested to
+be explicit, and if so check the status that should be sent. (See 5/6
+"usb: musb: gadget: implement optional explicit status stage" for an
+implementation for MUSB)
+
+Paul Elder (6):
+  usb: uvc: include videodev2.h in g_uvc.h
+  usb: gadget: uvc: enqueue usb request in setup handler for control OUT
+  usb: gadget: uvc: package setup and data for control OUT requests
+  usb: gadget: add mechanism to specify an explicit status stage
+  usb: musb: gadget: implement optional explicit status stage
+  usb: gadget: uvc: allow ioctl to send response in status stage
+
+ drivers/usb/gadget/function/f_uvc.c    | 32 ++++++++++++++++++------
+ drivers/usb/gadget/function/uvc.h      |  1 +
+ drivers/usb/gadget/function/uvc_v4l2.c | 18 ++++++++++++++
+ drivers/usb/gadget/udc/core.c          | 34 ++++++++++++++++++++++++++
+ drivers/usb/musb/musb_gadget.c         |  2 ++
+ drivers/usb/musb/musb_gadget_ep0.c     | 23 +++++++++++++++++
+ include/linux/usb/gadget.h             | 10 ++++++++
+ include/uapi/linux/usb/g_uvc.h         |  4 ++-
+ 8 files changed, 115 insertions(+), 9 deletions(-)
+
+-- 
+2.19.2
+
+
+Paul Elder (6):
+  usb: uvc: include videodev2.h in g_uvc.h
+  usb: gadget: uvc: enqueue usb request in setup handler for control OUT
+  usb: gadget: uvc: package setup and data for control OUT requests
+  usb: gadget: add mechanism to specify an explicit status stage
+  usb: musb: gadget: implement optional explicit status stage
+  usb: gadget: uvc: allow ioctl to send response in status stage
+
+ drivers/usb/gadget/function/f_uvc.c    | 32 ++++++++++++++++++------
+ drivers/usb/gadget/function/uvc.h      |  1 +
+ drivers/usb/gadget/function/uvc_v4l2.c | 18 ++++++++++++++
+ drivers/usb/gadget/udc/core.c          | 34 ++++++++++++++++++++++++++
+ drivers/usb/musb/musb_gadget.c         |  2 ++
+ drivers/usb/musb/musb_gadget_ep0.c     | 23 +++++++++++++++++
+ include/linux/usb/gadget.h             | 10 ++++++++
+ include/uapi/linux/usb/g_uvc.h         |  4 ++-
+ 8 files changed, 115 insertions(+), 9 deletions(-)
+
+-- 
+2.19.2
+
