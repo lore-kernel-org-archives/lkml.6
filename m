@@ -2,211 +2,100 @@ Return-Path: <SRS0=QMhl=PO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C871C43387
-	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 14:22:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E14F5C43387
+	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 14:38:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC6C520878
-	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 14:22:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B4413206BB
+	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 14:38:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726436AbfAFOW3 (ORCPT
+        id S1726425AbfAFOiN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 6 Jan 2019 09:22:29 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:47688 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726336AbfAFOW2 (ORCPT
+        Sun, 6 Jan 2019 09:38:13 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:41165 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726405AbfAFOiM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Jan 2019 09:22:28 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: ezequiel)
-        with ESMTPSA id 530B72735FE
-Message-ID: <50db3bc3faea97182b7fe18b4d9677f7e1563eaa.camel@collabora.com>
-Subject: Re: [PATCH 4/4] arm64: dts: rockchip: add video codec for rk3399
-From:   Ezequiel Garcia <ezequiel@collabora.com>
-To:     Randy Li <ayaka@soulik.info>, linux-rockchip@lists.infradead.org,
-        Tomasz Figa <tfiga@chromium.org>
-Cc:     nicolas.dufresne@collabora.com, myy@miouyouyou.fr,
-        paul.kocialkowski@bootlin.com, mchehab@kernel.org,
-        linux-media@vger.kernel.org, hverkuil@xs4all.nl, heiko@sntech.de,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Date:   Sun, 06 Jan 2019 11:22:17 -0300
-In-Reply-To: <20190105183150.20266-5-ayaka@soulik.info>
-References: <20190105183150.20266-1-ayaka@soulik.info>
-         <20190105183150.20266-5-ayaka@soulik.info>
-Organization: Collabora
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.3-1 
-Mime-Version: 1.0
+        Sun, 6 Jan 2019 09:38:12 -0500
+Received: from fsav305.sakura.ne.jp (fsav305.sakura.ne.jp [153.120.85.136])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x06Ebqi8023469;
+        Sun, 6 Jan 2019 23:37:52 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav305.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav305.sakura.ne.jp);
+ Sun, 06 Jan 2019 23:37:51 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav305.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x06EbpfU023437
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Sun, 6 Jan 2019 23:37:51 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Subject: Re: KASAN: stack-out-of-bounds Read in check_stack_object
+To:     Dmitry Vyukov <dvyukov@google.com>,
+        syzbot <syzbot+05fc3a636f5ee8830a99@syzkaller.appspotmail.com>
+Cc:     Chris von Recklinghausen <crecklin@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+References: <000000000000ae2357057eca1fa5@google.com>
+ <CACT4Y+Y+dph0wyKOLffXMPFPsvbviYzfn1nrJJgOL1ngkQLtVw@mail.gmail.com>
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Message-ID: <40577a65-3947-aec9-3b82-ac71f150e586@I-love.SAKURA.ne.jp>
+Date:   Sun, 6 Jan 2019 23:37:45 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <CACT4Y+Y+dph0wyKOLffXMPFPsvbviYzfn1nrJJgOL1ngkQLtVw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Randy,
-
-Thanks a lot for this patches. They are really useful
-to provide more insight into the VPU hardware.
-
-This change will make the vpu encoder and vpu decoder
-completely independent, can they really work in parallel?
-
-Could you provide more details about what is
-shared between these devices?
-
-Thanks a lot!
-
-On Sun, 2019-01-06 at 02:31 +0800, Randy Li wrote:
-> It offers an example how a full features video codec
-> should be configured.
+On 2019/01/06 22:48, Dmitry Vyukov wrote:
+> On Sun, Jan 6, 2019 at 2:31 PM syzbot
+> <syzbot+05fc3a636f5ee8830a99@syzkaller.appspotmail.com> wrote:
+>>
+>> Hello,
+>>
+>> syzbot found the following crash on:
+>>
+>> HEAD commit:    3fed6ae4b027 ia64: fix compile without swiotlb
+>> git tree:       upstream
+>> console output: https://syzkaller.appspot.com/x/log.txt?x=161ce1d7400000
+>> kernel config:  https://syzkaller.appspot.com/x/.config?x=7308e68273924137
+>> dashboard link: https://syzkaller.appspot.com/bug?extid=05fc3a636f5ee8830a99
+>> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+>> userspace arch: i386
+>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10b3769f400000
+>>
+>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+>> Reported-by: syzbot+05fc3a636f5ee8830a99@syzkaller.appspotmail.com
 > 
-> The original clocks assignment don't look good, if the clocks
-> lower than 300MHZ, most of decoing tasks would suffer from
-> timeout problem, 500MHZ is also a little high for RK3399
-> running in a stable state.
-> 
-> Signed-off-by: Randy Li <ayaka@soulik.info>
-> ---
->  .../boot/dts/rockchip/rk3399-sapphire.dtsi    | 29 ++++++++
->  arch/arm64/boot/dts/rockchip/rk3399.dtsi      | 68 +++++++++++++++++--
->  2 files changed, 90 insertions(+), 7 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-sapphire.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-sapphire.dtsi
-> index 946d3589575a..c3db878bae45 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3399-sapphire.dtsi
-> +++ b/arch/arm64/boot/dts/rockchip/rk3399-sapphire.dtsi
-> @@ -632,6 +632,35 @@
->  	dr_mode = "host";
->  };
->  
-> +&rkvdec {
-> +	status = "okay";
-> +};
-> +
-> +&rkvdec_srv {
-> +	status = "okay";
-> +};
-> +
-> +&vdec_mmu {
-> +	status = "okay";
-> +};
-> +
-> +&vdpu {
-> +	status = "okay";
-> +};
-> +
-> +&vepu {
-> +	status = "okay";
-> +};
-> +
-> +&vpu_service {
-> +	status = "okay";
-> +};
-> +
-> +&vpu_mmu {
-> +	status = "okay";
-> +
-> +};
-> +
->  &vopb {
->  	status = "okay";
->  };
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3399.dtsi b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-> index b22b2e40422b..5fa3247e7bf0 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-> +++ b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-> @@ -1242,16 +1242,39 @@
->  		status = "disabled";
->  	};
->  
-> -	vpu: video-codec@ff650000 {
-> -		compatible = "rockchip,rk3399-vpu";
-> -		reg = <0x0 0xff650000 0x0 0x800>;
-> -		interrupts = <GIC_SPI 114 IRQ_TYPE_LEVEL_HIGH 0>,
-> -			     <GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH 0>;
-> -		interrupt-names = "vepu", "vdpu";
-> +	vpu_service: vpu-srv {
-> +		compatible = "rockchip,mpp-service";
-> +		status = "disabled";
-> +	};
-> +
-> +	vepu: vpu-encoder@ff650000 {
-> +		compatible = "rockchip,vpu-encoder-v2";
-> +		reg = <0x0 0xff650000 0x0 0x400>;
-> +		interrupts = <GIC_SPI 114 IRQ_TYPE_LEVEL_HIGH 0>;
-> +		interrupt-names = "irq_enc";
->  		clocks = <&cru ACLK_VCODEC>, <&cru HCLK_VCODEC>;
-> -		clock-names = "aclk", "hclk";
-> +		clock-names = "aclk_vcodec", "hclk_vcodec";
-> +		resets = <&cru SRST_H_VCODEC>, <&cru SRST_A_VCODEC>;
-> +		reset-names = "video_h", "video_a";
->  		iommus = <&vpu_mmu>;
->  		power-domains = <&power RK3399_PD_VCODEC>;
-> +		rockchip,srv = <&vpu_service>;
-> +		status = "disabled";
-> +	};
-> +
-> +	vdpu: vpu-decoder@ff650400 {
-> +		compatible = "rockchip,vpu-decoder-v2";
-> +		reg = <0x0 0xff650400 0x0 0x400>;
-> +		interrupts = <GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH 0>;
-> +		interrupt-names = "irq_dec";
-> +		iommus = <&vpu_mmu>;
-> +		clocks = <&cru ACLK_VCODEC>, <&cru HCLK_VCODEC>;
-> +		clock-names = "aclk_vcodec", "hclk_vcodec";
-> +		resets = <&cru SRST_H_VCODEC>, <&cru SRST_A_VCODEC>;
-> +		reset-names = "video_h", "video_a";
-> +		power-domains = <&power RK3399_PD_VCODEC>;
-> +		rockchip,srv = <&vpu_service>;
-> +		status = "disabled";
->  	};
->  
->  	vpu_mmu: iommu@ff650800 {
-> @@ -1261,11 +1284,42 @@
->  		interrupt-names = "vpu_mmu";
->  		clocks = <&cru ACLK_VCODEC>, <&cru HCLK_VCODEC>;
->  		clock-names = "aclk", "iface";
-> +		assigned-clocks = <&cru ACLK_VCODEC_PRE>;
-> +		assigned-clock-parents = <&cru PLL_GPLL>;
->  		#iommu-cells = <0>;
->  		power-domains = <&power RK3399_PD_VCODEC>;
->  		status = "disabled";
->  	};
->  
-> +	rkvdec_srv: rkvdec-srv {
-> +		compatible = "rockchip,mpp-service";
-> +		status = "disabled";
-> +	};
-> +
-> +	rkvdec: video-decoder@ff660000 {
-> +		compatible = "rockchip,video-decoder-v1";
-> +		reg = <0x0 0xff660000 0x0 0x400>;
-> +		interrupts = <GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH 0>;
-> +		interrupt-names = "irq_dec";
-> +		clocks = <&cru ACLK_VDU>, <&cru HCLK_VDU>,
-> +			 <&cru SCLK_VDU_CA>, <&cru SCLK_VDU_CORE>;
-> +		clock-names = "aclk_vcodec", "hclk_vcodec",
-> +			      "clk_cabac", "clk_core";
-> +		assigned-clocks = <&cru ACLK_VDU_PRE>, <&cru SCLK_VDU_CA>,
-> +				  <&cru SCLK_VDU_CORE>;
-> +		assigned-clock-parents = <&cru PLL_NPLL>, <&cru PLL_NPLL>,
-> +					 <&cru PLL_NPLL>;
-> +		resets = <&cru SRST_H_VDU>, <&cru SRST_A_VDU>,
-> +			 <&cru SRST_VDU_CORE>, <&cru SRST_VDU_CA>,
-> +			 <&cru SRST_A_VDU_NOC>, <&cru SRST_H_VDU_NOC>;
-> +		reset-names = "video_h", "video_a", "video_core", "video_cabac",
-> +			      "niu_a", "niu_h";
-> +		power-domains = <&power RK3399_PD_VDU>;
-> +		rockchip,srv = <&rkvdec_srv>;
-> +		iommus = <&vdec_mmu>;
-> +		status = "disabled";
-> +	};
-> +
->  	vdec_mmu: iommu@ff660480 {
->  		compatible = "rockchip,iommu";
->  		reg = <0x0 0xff660480 0x0 0x40>, <0x0 0xff6604c0 0x0 0x40>;
+> I suspect this is another incarnation of:
+> https://syzkaller.appspot.com/bug?id=4821de869e3d78a255a034bf212a4e009f6125a7
+> Any other ideas?
 
+
+
+>> CPU: 0 PID: -1455013312 Comm:  Not tainted 4.20.0+ #10
+
+"current->pid < 0" suggests that "struct task_struct" was overwritten.
+
+>> #PF error: [normal kernel read fault]
+
+>> Thread overran stack, or stack corrupted
+
+And "struct task_struct" might be overwritten by stack overrun?
+
+The cause of overrun is unknown, but given that
+"fou6: Prevent unbounded recursion in GUE error handler" is not yet
+applied to linux.git tree, this might be a dup of that bug.
 
