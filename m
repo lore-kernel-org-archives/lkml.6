@@ -2,151 +2,254 @@ Return-Path: <SRS0=QMhl=PO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5909C43387
-	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 16:02:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1A64C43387
+	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 16:04:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9080420665
-	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 16:02:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="c7P6GVxN"
+	by mail.kernel.org (Postfix) with ESMTP id 725F120665
+	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 16:04:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726559AbfAFQC6 (ORCPT
+        id S1726532AbfAFQEu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 6 Jan 2019 11:02:58 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:54934 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726521AbfAFQCs (ORCPT
+        Sun, 6 Jan 2019 11:04:50 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:47924 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726443AbfAFQEu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Jan 2019 11:02:48 -0500
-Received: from localhost.localdomain (unknown [96.44.9.229])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 6ED82E46;
-        Sun,  6 Jan 2019 17:02:44 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1546790566;
-        bh=U1jryTegm2hmVhmllk2UFbRQ3ZF9pJ5jXCkhgAS5+qE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=c7P6GVxNVMBvgN58l5JgECAAgusyplGZvFXFeWP0R7Fu3AdMdSkyBs1R0znrk3S4q
-         GiYntReTjqFc9xwWu7HG57AXNma2Bln9LMtxZS3L/9qU4HKAIz4wghgf0q+3PGLAKF
-         rTQt4gmqGobclJrvg77XSQORU7LLpDeilEOASCys=
-From:   Paul Elder <paul.elder@ideasonboard.com>
-To:     laurent.pinchart@ideasonboard.com, kieran.bingham@ideasonboard.com
-Cc:     Paul Elder <paul.elder@ideasonboard.com>, b-liu@ti.com,
-        stern@rowland.harvard.edu, rogerq@ti.com, balbi@kernel.org,
-        gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v4 6/6] usb: gadget: uvc: allow ioctl to send response in status stage
-Date:   Sun,  6 Jan 2019 11:02:21 -0500
-Message-Id: <20190106160221.4480-7-paul.elder@ideasonboard.com>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20190106160221.4480-1-paul.elder@ideasonboard.com>
-References: <20190106160221.4480-1-paul.elder@ideasonboard.com>
-MIME-Version: 1.0
+        Sun, 6 Jan 2019 11:04:50 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: ezequiel)
+        with ESMTPSA id 5827D2611BF
+Message-ID: <f3dcd25bb1c3f0544cb7eedd0b27633d923c0d27.camel@collabora.com>
+Subject: Re: [PATCH 4/4] arm64: dts: rockchip: add video codec for rk3399
+From:   Ezequiel Garcia <ezequiel@collabora.com>
+To:     Ayaka <ayaka@soulik.info>
+Cc:     linux-rockchip@lists.infradead.org,
+        Tomasz Figa <tfiga@chromium.org>,
+        nicolas.dufresne@collabora.com, myy@miouyouyou.fr,
+        paul.kocialkowski@bootlin.com, mchehab@kernel.org,
+        linux-media@vger.kernel.org, hverkuil@xs4all.nl, heiko@sntech.de,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Date:   Sun, 06 Jan 2019 13:04:35 -0300
+In-Reply-To: <CAC7DE03-A74C-4154-9443-BC91E6CED02E@soulik.info>
+References: <20190105183150.20266-1-ayaka@soulik.info>
+         <20190105183150.20266-5-ayaka@soulik.info>
+         <50db3bc3faea97182b7fe18b4d9677f7e1563eaa.camel@collabora.com>
+         <CAC7DE03-A74C-4154-9443-BC91E6CED02E@soulik.info>
+Organization: Collabora
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.3-1 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We now have a mechanism to signal the UDC driver to reply to a control
-OUT request with STALL or ACK, and we have packaged the setup stage data
-and the data stage data of a control OUT request into a single
-UVC_EVENT_DATA for userspace to consume. The ioctl UVCIOC_SEND_RESPONSE
-in the case of a control OUT request sends a response to the data stage,
-and so the ioctl now notifies the UDC driver to reply with STALL or ACK.
-In the case of a control IN request, the ioctl sends the UVC data as
-before.
+On Sun, 2019-01-06 at 23:05 +0800, Ayaka wrote:
+> > On Jan 6, 2019, at 10:22 PM, Ezequiel Garcia <ezequiel@collabora.com> wrote:
+> > 
+> > Hi Randy,
+> > 
+> > Thanks a lot for this patches. They are really useful
+> > to provide more insight into the VPU hardware.
+> > 
+> > This change will make the vpu encoder and vpu decoder
+> > completely independent, can they really work in parallel?
+> As I said it depends on the platform, but with this patch, the user space would think they can work at the same time.
 
-Also tell the UDC to delay the status stage for this to work.
 
-Signed-off-by: Paul Elder <paul.elder@ideasonboard.com>
----
-No change from v3
+I think there is some confusion.
 
-Changes from v2:
-- calling usb_ep_set_halt in uvc_send_response if data->length < 0 is
-  now common for both IN and OUT transfers so make that check common
-- remove now unnecessary field setting for the usb_request to be queued
-  for the status stage
+The devicetree is one thing: it is a hardware representation,
+a way to describe the hardware, for the kernel/bootloader to
+parse.
 
-Changes from v1:
-- remove usb_ep_delay_status call from the old proposed API
-- changed portions of uvc_send_response to match v2 API
-- remove UDC warning that send_response is not implemented
+The userspace view will depend on the driver implementation.
 
- drivers/usb/gadget/function/f_uvc.c    |  4 ++--
- drivers/usb/gadget/function/uvc_v4l2.c | 23 +++++++++++++++++------
- 2 files changed, 19 insertions(+), 8 deletions(-)
+The current devicetree and driver (without your patches),
+model the VPU as a single piece of hardware, exposing a decoder
+and an encoder.
 
-diff --git a/drivers/usb/gadget/function/f_uvc.c b/drivers/usb/gadget/function/f_uvc.c
-index aa8262c0a650..64180529fb36 100644
---- a/drivers/usb/gadget/function/f_uvc.c
-+++ b/drivers/usb/gadget/function/f_uvc.c
-@@ -209,14 +209,13 @@ uvc_function_ep0_complete(struct usb_ep *ep, struct usb_request *req)
- 	struct uvc_event *uvc_event = (void *)&v4l2_event.u.data;
- 
- 	if (uvc->event_setup_out) {
--		uvc->event_setup_out = 0;
--
- 		memset(&v4l2_event, 0, sizeof(v4l2_event));
- 		v4l2_event.type = UVC_EVENT_DATA;
- 		uvc_event->data.length = req->actual;
- 		memcpy(&uvc_event->data.data, req->buf, req->actual);
- 		memcpy(&uvc_event->data.setup, &uvc->control_setup,
- 		       sizeof(uvc_event->data.setup));
-+
- 		v4l2_event_queue(&uvc->vdev, &v4l2_event);
- 	}
- }
-@@ -251,6 +250,7 @@ uvc_function_setup(struct usb_function *f, const struct usb_ctrlrequest *ctrl)
- 		 */
- 		req->length = uvc->event_length;
- 		req->zero = 0;
-+		req->explicit_status = 1;
- 		usb_ep_queue(f->config->cdev->gadget->ep0, req, GFP_KERNEL);
- 	} else {
- 		struct v4l2_event v4l2_event;
-diff --git a/drivers/usb/gadget/function/uvc_v4l2.c b/drivers/usb/gadget/function/uvc_v4l2.c
-index 9f7c67f6f4b2..0bf14891b40a 100644
---- a/drivers/usb/gadget/function/uvc_v4l2.c
-+++ b/drivers/usb/gadget/function/uvc_v4l2.c
-@@ -35,15 +35,26 @@ uvc_send_response(struct uvc_device *uvc, struct uvc_request_data *data)
- 	struct usb_composite_dev *cdev = uvc->func.config->cdev;
- 	struct usb_request *req = uvc->control_req;
- 
-+	if (data->length < 0)
-+		return usb_ep_set_halt(cdev->gadget->ep0);
-+
- 	/*
- 	 * For control OUT transfers the request has been enqueued synchronously
--	 * by the setup handler, there's nothing to be done here.
-+	 * by the setup handler, we just need to tell the UDC whether to ACK or
-+	 * STALL the control transfer.
- 	 */
--	if (uvc->event_setup_out)
--		return 0;
--
--	if (data->length < 0)
--		return usb_ep_set_halt(cdev->gadget->ep0);
-+	if (uvc->event_setup_out) {
-+		/*
-+		 * The length field carries the control request status.
-+		 * Negative values signal a STALL and zero values an ACK.
-+		 * Positive values are not valid as there is no data to send
-+		 * back in the status stage.
-+		 */
-+		if (data->length > 0)
-+			return -EINVAL;
-+
-+		return usb_ep_queue(cdev->gadget->ep0, req, GFP_KERNEL);
-+	}
- 
- 	req->length = min_t(unsigned int, uvc->event_length, data->length);
- 	req->zero = data->length < uvc->event_length;
--- 
-2.19.2
+The V4L driver will then create two video devices, i.e. /dev/videoX
+and /dev/videoY. So userspace sees an independent view of the
+devices.
+
+However, they are internally connected, and thus we can
+easily avoid two jobs running in parallel.
+
+So, in other words, if the VPU can issue a decoder and encoder
+job in parallel, then it's useful to model it as two independent
+devices. Otherwise, it's better not to.
+
+I hope this can clarify things a bit for you!
+
+PS: Too bad I won't be at FOSDEM to discuss this personally.
+
+Thanks,
+Ezequiel
+
+> BTW, not only the decoder, there is a post processor with the decoder, it can be used as part of the decoder pipeline with only a macro block delay
+> or process the data from an external buffer.
+> I forget to write a note on what this driver doesn’t present. The real one would have much complex scheduler system, but this one is just a queue.
+> More task management feature are not there.
+> Also the clock boosting is removing and the loading analysis, which are useful for encoder, especially on the rv1108.
+> > Could you provide more details about what is
+> > shared between these devices?
+> No, if Rockchip doesn’t tell, my mouth is sealed.
+> > Thanks a lot!
+> > 
+> > > On Sun, 2019-01-06 at 02:31 +0800, Randy Li wrote:
+> > > It offers an example how a full features video codec
+> > > should be configured.
+> > > 
+> > > The original clocks assignment don't look good, if the clocks
+> > > lower than 300MHZ, most of decoing tasks would suffer from
+> > > timeout problem, 500MHZ is also a little high for RK3399
+> > > running in a stable state.
+> > > 
+> > > Signed-off-by: Randy Li <ayaka@soulik.info>
+> > > ---
+> > > .../boot/dts/rockchip/rk3399-sapphire.dtsi    | 29 ++++++++
+> > > arch/arm64/boot/dts/rockchip/rk3399.dtsi      | 68 +++++++++++++++++--
+> > > 2 files changed, 90 insertions(+), 7 deletions(-)
+> > > 
+> > > diff --git a/arch/arm64/boot/dts/rockchip/rk3399-sapphire.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-sapphire.dtsi
+> > > index 946d3589575a..c3db878bae45 100644
+> > > --- a/arch/arm64/boot/dts/rockchip/rk3399-sapphire.dtsi
+> > > +++ b/arch/arm64/boot/dts/rockchip/rk3399-sapphire.dtsi
+> > > @@ -632,6 +632,35 @@
+> > >   dr_mode = "host";
+> > > };
+> > > 
+> > > +&rkvdec {
+> > > +    status = "okay";
+> > > +};
+> > > +
+> > > +&rkvdec_srv {
+> > > +    status = "okay";
+> > > +};
+> > > +
+> > > +&vdec_mmu {
+> > > +    status = "okay";
+> > > +};
+> > > +
+> > > +&vdpu {
+> > > +    status = "okay";
+> > > +};
+> > > +
+> > > +&vepu {
+> > > +    status = "okay";
+> > > +};
+> > > +
+> > > +&vpu_service {
+> > > +    status = "okay";
+> > > +};
+> > > +
+> > > +&vpu_mmu {
+> > > +    status = "okay";
+> > > +
+> > > +};
+> > > +
+> > > &vopb {
+> > >   status = "okay";
+> > > };
+> > > diff --git a/arch/arm64/boot/dts/rockchip/rk3399.dtsi b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
+> > > index b22b2e40422b..5fa3247e7bf0 100644
+> > > --- a/arch/arm64/boot/dts/rockchip/rk3399.dtsi
+> > > +++ b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
+> > > @@ -1242,16 +1242,39 @@
+> > >       status = "disabled";
+> > >   };
+> > > 
+> > > -    vpu: video-codec@ff650000 {
+> > > -        compatible = "rockchip,rk3399-vpu";
+> > > -        reg = <0x0 0xff650000 0x0 0x800>;
+> > > -        interrupts = <GIC_SPI 114 IRQ_TYPE_LEVEL_HIGH 0>,
+> > > -                 <GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH 0>;
+> > > -        interrupt-names = "vepu", "vdpu";
+> > > +    vpu_service: vpu-srv {
+> > > +        compatible = "rockchip,mpp-service";
+> > > +        status = "disabled";
+> > > +    };
+> > > +
+> > > +    vepu: vpu-encoder@ff650000 {
+> > > +        compatible = "rockchip,vpu-encoder-v2";
+> > > +        reg = <0x0 0xff650000 0x0 0x400>;
+> > > +        interrupts = <GIC_SPI 114 IRQ_TYPE_LEVEL_HIGH 0>;
+> > > +        interrupt-names = "irq_enc";
+> > >       clocks = <&cru ACLK_VCODEC>, <&cru HCLK_VCODEC>;
+> > > -        clock-names = "aclk", "hclk";
+> > > +        clock-names = "aclk_vcodec", "hclk_vcodec";
+> > > +        resets = <&cru SRST_H_VCODEC>, <&cru SRST_A_VCODEC>;
+> > > +        reset-names = "video_h", "video_a";
+> > >       iommus = <&vpu_mmu>;
+> > >       power-domains = <&power RK3399_PD_VCODEC>;
+> > > +        rockchip,srv = <&vpu_service>;
+> > > +        status = "disabled";
+> > > +    };
+> > > +
+> > > +    vdpu: vpu-decoder@ff650400 {
+> > > +        compatible = "rockchip,vpu-decoder-v2";
+> > > +        reg = <0x0 0xff650400 0x0 0x400>;
+> > > +        interrupts = <GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH 0>;
+> > > +        interrupt-names = "irq_dec";
+> > > +        iommus = <&vpu_mmu>;
+> > > +        clocks = <&cru ACLK_VCODEC>, <&cru HCLK_VCODEC>;
+> > > +        clock-names = "aclk_vcodec", "hclk_vcodec";
+> > > +        resets = <&cru SRST_H_VCODEC>, <&cru SRST_A_VCODEC>;
+> > > +        reset-names = "video_h", "video_a";
+> > > +        power-domains = <&power RK3399_PD_VCODEC>;
+> > > +        rockchip,srv = <&vpu_service>;
+> > > +        status = "disabled";
+> > >   };
+> > > 
+> > >   vpu_mmu: iommu@ff650800 {
+> > > @@ -1261,11 +1284,42 @@
+> > >       interrupt-names = "vpu_mmu";
+> > >       clocks = <&cru ACLK_VCODEC>, <&cru HCLK_VCODEC>;
+> > >       clock-names = "aclk", "iface";
+> > > +        assigned-clocks = <&cru ACLK_VCODEC_PRE>;
+> > > +        assigned-clock-parents = <&cru PLL_GPLL>;
+> > >       #iommu-cells = <0>;
+> > >       power-domains = <&power RK3399_PD_VCODEC>;
+> > >       status = "disabled";
+> > >   };
+> > > 
+> > > +    rkvdec_srv: rkvdec-srv {
+> > > +        compatible = "rockchip,mpp-service";
+> > > +        status = "disabled";
+> > > +    };
+> > > +
+> > > +    rkvdec: video-decoder@ff660000 {
+> > > +        compatible = "rockchip,video-decoder-v1";
+> > > +        reg = <0x0 0xff660000 0x0 0x400>;
+> > > +        interrupts = <GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH 0>;
+> > > +        interrupt-names = "irq_dec";
+> > > +        clocks = <&cru ACLK_VDU>, <&cru HCLK_VDU>,
+> > > +             <&cru SCLK_VDU_CA>, <&cru SCLK_VDU_CORE>;
+> > > +        clock-names = "aclk_vcodec", "hclk_vcodec",
+> > > +                  "clk_cabac", "clk_core";
+> > > +        assigned-clocks = <&cru ACLK_VDU_PRE>, <&cru SCLK_VDU_CA>,
+> > > +                  <&cru SCLK_VDU_CORE>;
+> > > +        assigned-clock-parents = <&cru PLL_NPLL>, <&cru PLL_NPLL>,
+> > > +                     <&cru PLL_NPLL>;
+> > > +        resets = <&cru SRST_H_VDU>, <&cru SRST_A_VDU>,
+> > > +             <&cru SRST_VDU_CORE>, <&cru SRST_VDU_CA>,
+> > > +             <&cru SRST_A_VDU_NOC>, <&cru SRST_H_VDU_NOC>;
+> > > +        reset-names = "video_h", "video_a", "video_core", "video_cabac",
+> > > +                  "niu_a", "niu_h";
+> > > +        power-domains = <&power RK3399_PD_VDU>;
+> > > +        rockchip,srv = <&rkvdec_srv>;
+> > > +        iommus = <&vdec_mmu>;
+> > > +        status = "disabled";
+> > > +    };
+> > > +
+> > >   vdec_mmu: iommu@ff660480 {
+> > >       compatible = "rockchip,iommu";
+> > >       reg = <0x0 0xff660480 0x0 0x40>, <0x0 0xff6604c0 0x0 0x40>;
+
 
