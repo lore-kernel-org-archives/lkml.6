@@ -2,89 +2,99 @@ Return-Path: <SRS0=QMhl=PO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC102C43387
-	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 11:33:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E43E0C43387
+	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 11:58:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83E89213A2
-	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 11:33:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A707A206B7
+	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 11:58:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kWtMOrP1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726415AbfAFLdl (ORCPT
+        id S1726415AbfAFL6x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 6 Jan 2019 06:33:41 -0500
-Received: from aws.guarana.org ([13.237.110.252]:57648 "EHLO aws.guarana.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726189AbfAFLdl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Jan 2019 06:33:41 -0500
-Received: by aws.guarana.org (Postfix, from userid 1006)
-        id 705D0A18B4; Sun,  6 Jan 2019 11:33:36 +0000 (UTC)
-Date:   Sun, 6 Jan 2019 11:33:36 +0000
-From:   Kevin Easton <kevin@guarana.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        Masatake YAMATO <yamato@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Michal Hocko <mhocko@suse.com>, linux-mm@kvack.org,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        linux-api@vger.kernel.org
-Subject: Re: [PATCH] mm/mincore: allow for making sys_mincore() privileged
-Message-ID: <20190106113336.GA31214@ip-172-31-15-78>
-References: <nycvar.YFH.7.76.1901051817390.16954@cbobk.fhfr.pm>
- <CAHk-=wicks2BEwm1BhdvEj_P3yawmvQuG3NOnjhdrUDEtTGizw@mail.gmail.com>
- <nycvar.YFH.7.76.1901052108390.16954@cbobk.fhfr.pm>
- <CAHk-=whGmE4QVr6NbgHnrVGVENfM3s1y6GNbsfh8PcOg=6bpqw@mail.gmail.com>
- <nycvar.YFH.7.76.1901052131480.16954@cbobk.fhfr.pm>
- <CAHk-=wgrSKyN23yp-npq6+J-4pGqbzxb3mJ183PryjHw7PWDyA@mail.gmail.com>
+        Sun, 6 Jan 2019 06:58:53 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:39654 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726189AbfAFL6w (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Jan 2019 06:58:52 -0500
+Received: by mail-lf1-f67.google.com with SMTP id n18so28252664lfh.6;
+        Sun, 06 Jan 2019 03:58:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=T1YVVh/H4ZXqJKR4EyzOpe1vykPXUi/qY2yUy/s572s=;
+        b=kWtMOrP19wga2FhOmAG3U4WSJ68TM7MKVbbQg0nBEnT9WPRLnDdnA04ch092bg9mBe
+         r4jSXIAjVJcazDW1g4TovfmCVYD7PNFGbjYmBuUEU8kMt7lmsxh+NKe+zY5XyYyysPV8
+         1vvj88ZfigvkqtBGOKV13N6djMbUwPuUjAxF8/XMbNeYiEzPNzMt0V6OovcBUQYtMlGB
+         Yx6gDvx73uy4LBl9MdwuQcE3NeVu6K6JTSbhgOA55iTThX1PqyXgAuoh/CN6jcTHOv38
+         jQn2GZ6PzRe6h9d/5bo35JOV59CgKBVLv34Ujx+XQCvElzbLZxDY9J1ftaNEVhLcxNbu
+         CMcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=T1YVVh/H4ZXqJKR4EyzOpe1vykPXUi/qY2yUy/s572s=;
+        b=Qp8VLlGgzuA97SSQXB7C5sPhc2LWo4Lq/7WuGjOC+aiIJbFBzdwjFy4bIK6Ez2n7Kv
+         CiPxWCq6H85/d0w3CseY20i27z8X/BNzuxpXs9V6uJjaURbl2JstrvHhyBp2vOdDf67V
+         lmjEcqX6APvab7zQV5WeYMJEcnxcF/7r0vBku8C+/IKV2sZdCECYwuCaR3n7OlosJ7L3
+         vAm4AC3pJ4QQXeAiRF557lMq4+Ou1uYwDUCxHeSW6wEmwAiete7XzESe/ZtShcsrP1EK
+         FH8pWjgDjOKeBjLy4bloE+QksDl/FG/pTvV/pmV025SXJ4y9D7SArzmmA/chzeg/dmAa
+         SfpQ==
+X-Gm-Message-State: AA+aEWYt/PfbJQ2XHQ0Q24UD2By+A7BcXEnLT3ddRpkEFWT8A4gl97x1
+        5401RgyBtk4muPvzoqnyWsQLvgmBatIbQTlsLFc=
+X-Google-Smtp-Source: AFSGD/XVBvw1ojot5A/rijs9domEzwbU0K58hSib/su4CImD7wBWLHZm8bC62vRujl18Vm/rCnJNSMJtKCgRS0r5Kag=
+X-Received: by 2002:a19:d90c:: with SMTP id q12mr27548085lfg.24.1546775929751;
+ Sun, 06 Jan 2019 03:58:49 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wgrSKyN23yp-npq6+J-4pGqbzxb3mJ183PryjHw7PWDyA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190105050907.GA2525@hp-pavilion-15-notebook-pc-brajeswar>
+In-Reply-To: <20190105050907.GA2525@hp-pavilion-15-notebook-pc-brajeswar>
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+Date:   Sun, 6 Jan 2019 17:32:41 +0530
+Message-ID: <CAFqt6zb9Wk63Mne+p9x5zfZJfADV-VOQQvGYwvky5a6nffRmhw@mail.gmail.com>
+Subject: Re: [PATCH] keyboard/mtk-pmic-keys.c: Remove duplicate header
+To:     Brajeswar Ghosh <brajeswar.linux@gmail.com>
+Cc:     dmitry.torokhov@gmail.com,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        lee.jones@linaro.org, chen.zhong@mediatek.com,
+        linux-input@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jan 05, 2019 at 01:54:03PM -0800, Linus Torvalds wrote:
-> On Sat, Jan 5, 2019 at 12:43 PM Jiri Kosina <jikos@kernel.org> wrote:
-> >
-> > > Who actually _uses_ mincore()? That's probably the best guide to what
-> > > we should do. Maybe they open the file read-only even if they are the
-> > > owner, and we really should look at file ownership instead.
-> >
-> > Yeah, well
-> >
-> >         https://codesearch.debian.net/search?q=mincore
-> >
-> > is a bit too much mess to get some idea quickly I am afraid.
+On Sat, Jan 5, 2019 at 10:39 AM Brajeswar Ghosh
+<brajeswar.linux@gmail.com> wrote:
+>
+> Remove linux/kernel.h which is included more than once
+>
+> Signed-off-by: Brajeswar Ghosh <brajeswar.linux@gmail.com>
 
-> Anyway, the Debian code search just results in mostly non-present
-> stuff. It's sad that google code search is no more. It was great for
-> exactly these kinds of questions.
-
-If you select the "Group search results by Debian source package"
-option on the search results page it makes it a lot easier to skim
-through.
-
-It looks to me like Firefox is expecting mincore() not to fail on
-libraries that it has mapped:
-
-https://sources.debian.org/src/firefox-esr/60.4.0esr-1/mozglue/linker/BaseElf.cpp/?hl=98#L98
-
-    - Kevin
-> 
-> The mono runtime seems to have some mono_pages_not_faulted() function,
-> but I don't know if people use it for file mappings, and I couldn't
-> find any interesting users of it.
-> 
-> I didn't find anything that seems to really care, but I gave up after
-> a few pages of really boring stuff.
-> 
->                     Linus
-> 
-> 
+Acked-by: Souptick Joarder <jrdr.linux@gmail.com>
+> ---
+>  drivers/input/keyboard/mtk-pmic-keys.c | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/drivers/input/keyboard/mtk-pmic-keys.c b/drivers/input/keyboard/mtk-pmic-keys.c
+> index 02c67a1749fc..5027ebb7b4e8 100644
+> --- a/drivers/input/keyboard/mtk-pmic-keys.c
+> +++ b/drivers/input/keyboard/mtk-pmic-keys.c
+> @@ -19,7 +19,6 @@
+>  #include <linux/input.h>
+>  #include <linux/interrupt.h>
+>  #include <linux/platform_device.h>
+> -#include <linux/kernel.h>
+>  #include <linux/of.h>
+>  #include <linux/of_device.h>
+>  #include <linux/regmap.h>
+> --
+> 2.17.1
+>
