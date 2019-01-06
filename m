@@ -7,29 +7,29 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B505C43387
-	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 19:28:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 226ADC43387
+	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 19:28:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB06820859
-	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 19:28:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE62720859
+	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 19:28:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726245AbfAFT2h (ORCPT
+        id S1726282AbfAFT2o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 6 Jan 2019 14:28:37 -0500
-Received: from smtp3-g21.free.fr ([212.27.42.3]:30987 "EHLO smtp3-g21.free.fr"
+        Sun, 6 Jan 2019 14:28:44 -0500
+Received: from smtp3-g21.free.fr ([212.27.42.3]:31371 "EHLO smtp3-g21.free.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726050AbfAFT2h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Jan 2019 14:28:37 -0500
+        id S1726050AbfAFT2o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Jan 2019 14:28:44 -0500
 Received: from localhost.localdomain (unknown [IPv6:2a02:8108:4840:8f74:143e:fcd5:beb7:2140])
         (Authenticated sender: albeu)
-        by smtp3-g21.free.fr (Postfix) with ESMTPA id ADD7F13F8C9;
-        Sun,  6 Jan 2019 20:28:29 +0100 (CET)
+        by smtp3-g21.free.fr (Postfix) with ESMTPA id 64D7B13F838;
+        Sun,  6 Jan 2019 20:28:36 +0100 (CET)
 From:   Alban Bedel <albeu@free.fr>
 To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 Cc:     linux-kernel@vger.kernel.org, Alban Bedel <albeu@free.fr>
-Subject: [PATCH 1/8] nvmem: core: Set the provider read-only when no write callback is given
-Date:   Sun,  6 Jan 2019 20:28:13 +0100
-Message-Id: <20190106192820.12558-2-albeu@free.fr>
+Subject: [PATCH 2/8] nvmem: core: Fix of_nvmem_cell_get() for optional cells
+Date:   Sun,  6 Jan 2019 20:28:14 +0100
+Message-Id: <20190106192820.12558-3-albeu@free.fr>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190106192820.12558-1-albeu@free.fr>
 References: <20190106192820.12558-1-albeu@free.fr>
@@ -40,30 +40,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If no write callback is given the device should be marked as read-only.
-While at it also move from a bit or to a logical or as that is a logical
-expression.
+of_nvmem_cell_get() should return -ENOENT when a cell isn't defined,
+otherwise callers can't distinguish between a missing cell and other
+errors.
 
 Signed-off-by: Alban Bedel <albeu@free.fr>
 ---
- drivers/nvmem/core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/nvmem/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-index f7301bb4ef3b..cf2e1091fe89 100644
+index cf2e1091fe89..f8c43da6f2ca 100644
 --- a/drivers/nvmem/core.c
 +++ b/drivers/nvmem/core.c
-@@ -646,8 +646,8 @@ struct nvmem_device *nvmem_register(const struct nvmem_config *config)
- 			     config->name ? config->id : nvmem->id);
- 	}
+@@ -1031,7 +1031,7 @@ struct nvmem_cell *of_nvmem_cell_get(struct device_node *np, const char *id)
  
--	nvmem->read_only = device_property_present(config->dev, "read-only") |
--			   config->read_only;
-+	nvmem->read_only = device_property_present(config->dev, "read-only") ||
-+			   config->read_only || !nvmem->reg_write;
+ 	cell_np = of_parse_phandle(np, "nvmem-cells", index);
+ 	if (!cell_np)
+-		return ERR_PTR(-EINVAL);
++		return ERR_PTR(-ENOENT);
  
- 	if (config->root_only)
- 		nvmem->dev.groups = nvmem->read_only ?
+ 	nvmem_np = of_get_next_parent(cell_np);
+ 	if (!nvmem_np)
 -- 
 2.19.1
 
