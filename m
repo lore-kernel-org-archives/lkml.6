@@ -2,137 +2,91 @@ Return-Path: <SRS0=QMhl=PO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F8F2C43387
-	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 21:52:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B762C43387
+	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 22:21:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1DC22070D
-	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 21:52:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40D9020830
+	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 22:21:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UbEL36OS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726135AbfAFVwl (ORCPT
+        id S1726163AbfAFWVz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 6 Jan 2019 16:52:41 -0500
-Received: from smtprelay0207.hostedemail.com ([216.40.44.207]:58249 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726075AbfAFVwl (ORCPT
+        Sun, 6 Jan 2019 17:21:55 -0500
+Received: from mail-lj1-f177.google.com ([209.85.208.177]:40991 "EHLO
+        mail-lj1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726061AbfAFWVy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Jan 2019 16:52:41 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay01.hostedemail.com (Postfix) with ESMTP id CD6D1100E86C2;
-        Sun,  6 Jan 2019 21:52:39 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: nose92_51444bf427c39
-X-Filterd-Recvd-Size: 3271
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf09.hostedemail.com (Postfix) with ESMTPA;
-        Sun,  6 Jan 2019 21:52:38 +0000 (UTC)
-Message-ID: <3e9bc1431278847ad72fc32960b3687da3f01909.camel@perches.com>
-Subject: acpi_string with const char * losing casts
-From:   Joe Perches <joe@perches.com>
-To:     Robert Moore <robert.moore@intel.com>,
-        Erik Schmauss <erik.schmauss@intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Len Brown <lenb@kernel.org>
-Cc:     linux-acpi@vger.kernel.org, devel@acpica.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Date:   Sun, 06 Jan 2019 13:52:37 -0800
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.1-1build1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Sun, 6 Jan 2019 17:21:54 -0500
+Received: by mail-lj1-f177.google.com with SMTP id k15-v6so36547135ljc.8;
+        Sun, 06 Jan 2019 14:21:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=HuBMLjLwMN2QTKxORFPSq3+SPWrzDaEE+ybQKLSLHfE=;
+        b=UbEL36OSgjjSDVXEVniBjLodFkqoar5UHbDD/HpfZic6o8HNCZbEZJMQSaGuP6ZFbL
+         qgUFAHMwJ/Ndv0qtkshRTL5uj2AYo2aITBVThqT70TQc0YYSU4v/7T0yCqLTKjnyknPv
+         L+tU+BAnCFLLJFgMOprUWcXSqF4wwrnLg2cQAPA5v3I86dwtJiYP45IxuZPmze7nR2oP
+         OVK3E34+qGhhg7w1OsTqvdiFIx74A/iqNhe/9L7aV8dGinQM19xN/8fMEpfyRbiW7uZy
+         chFEIi9hN5C+sa1kaCrcColcXyzMo3Gr8b9M5bTzj81Pc5PjO/oXxqtVpqj0J4PO7i23
+         btBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=HuBMLjLwMN2QTKxORFPSq3+SPWrzDaEE+ybQKLSLHfE=;
+        b=BXMFIPj86Tg6+fyuTzvJK+mQkimyFHMeSRt5NoTWyqdOsG2U3zyesWgVyFSg0utZZT
+         YMiXCh7PVO4qrX4Ruh17KXpbslElAopeS/wYWI+rrxpYbd7R+gGsemIDQoReuu3aUaPl
+         N+tuAjlqKTuCHFHj0cAncg1NUEn4jBYqZj+rrbl6dWxY69alaZAjlWt7zN7wxYzoXPgZ
+         ZXosrBQNBa78uhHapcoGYld9HhiqBV29dsEXBYX01baSuR7/6XWnq31sXYCcutravVJ/
+         Dbe1eeoCVQhPtc8M8Qf1WdoXAAi9Lts/GtLsphJKw4ZBNE9MTn/vdKRKDLQpBob+1u7u
+         2Hzg==
+X-Gm-Message-State: AJcUukcgiMX+uzrQS3TaS5PLsv4a+JN5v5rApgUJHulXl+lMuIQJccr+
+        uLoaodmVG1W3ylu0jv/2Fm9m9FmYOhkrUmQIJmYM6cYL
+X-Google-Smtp-Source: ALg8bN58Iy5tUcbZg33BkZ17oMgQWIHl0wCU0fAFGToN1EN80m08Ed9isqPZGvcnpUoTH6st9NWdQ8HKEuZw/6OCsK4=
+X-Received: by 2002:a2e:9b52:: with SMTP id o18-v6mr32159095ljj.108.1546813312132;
+ Sun, 06 Jan 2019 14:21:52 -0800 (PST)
+MIME-Version: 1.0
+References: <CAA85sZsiifWTKq=Mw30f-UVyrzywnYYX7GvyqG+O+ndSYBML9A@mail.gmail.com>
+In-Reply-To: <CAA85sZsiifWTKq=Mw30f-UVyrzywnYYX7GvyqG+O+ndSYBML9A@mail.gmail.com>
+From:   Ian Kumlien <ian.kumlien@gmail.com>
+Date:   Sun, 6 Jan 2019 23:21:40 +0100
+Message-ID: <CAA85sZsj5PxZeiXSVK92QXi93fc+Ch2x2KHqzzPcT2OffaKsEQ@mail.gmail.com>
+Subject: Fwd: [BUG] v4.20 - bridge not getting DHCP responses? (works in 4.19.13)
+To:     Linux Kernel Network Developers <netdev@vger.kernel.org>
+Cc:     jeffrey.t.kirsher@intel.com, roopa@cumulusnetworks.com,
+        nikolay@cumulusnetworks.com,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-include/acpi/actypes.h:typedef char *acpi_string;       /* Null terminated ASCII string */
+[Sorry for the repost, screwed up the netdev address...]
 
-It seems there are cases where a function with an acpi_string
-argument should instead use const acpi_string.
+Hi,
 
-Some acpi function callers cast const char * to non-const to
-avoid compiler warnings.
+Switching from 4.19.x -> 4.20 resulted in DHCP not working for my VM:s.
 
-It would be good to use const acpi_string where appropriate in
-the generic acpi_<foo> functions instead.
+My firewall (which also runs the dhcpd) runs VM:s and it does this by
+having physical
+interfaces attached to bridges - which the VM:s in turn attach to.
 
-Also acpi_<foo> seems to use acpi_string and char * somewhat
-interchangeably.
+Since 4.20 the VM:s can't use DHCP, it's odd since the requests are
+seen - a response is sent but
+it never enters the interface attached to the bridge.
 
-It would also be good to standardize on one style.
+Basically:
+VM vnet2: -> br0 -> eno2 -> switch -> eno1 (dhcpd)
+dhcpd eno1 -> siwtch and... gone.
 
-For instance intel-hid.c has:
+Any clues?
 
-   static const char *intel_hid_dsm_fn_to_method[INTEL_HID_DSM_FN_MAX] = {
-   	NULL,
-   	"BTNL",
-   	"HDMM",
-   	"HDSM",
-   	"HDEM",
-   	"BTNS",
-   	"BTNE",
-   	"HEBC",
-   	"VGBS",
-   	"HEBC"
-   };
-
-   [...]
-
-   static bool intel_hid_execute_method(acpi_handle handle,
-   				     enum intel_hid_dsm_fn_codes fn_index,
-   				     unsigned long long arg)
-   {
-   	union acpi_object *obj, argv4, req;
-   	acpi_status status;
-   	char *method_name;
-
-   	if (fn_index <= INTEL_HID_DSM_FN_INVALID ||
-   	    fn_index >= INTEL_HID_DSM_FN_MAX)
-   		return false;
-
-   	method_name = (char *)intel_hid_dsm_fn_to_method[fn_index];
-
-   [...]
-
-where the const is cast away because
-
-   skip_dsm_exec:
-   	status = acpi_execute_simple_method(handle, method_name, arg);
-
-here acpi_execute_simple_method takes a non-const acpi_string method_name.
-
-   include/acpi/acpi_bus.h:acpi_status acpi_execute_simple_method(acpi_handle handle, char *method,
-   include/acpi/acpi_bus.h-                                       u64 arg);
-
-and the implementation in drivers/acpi/utils.c does not modify method
-
-   acpi_status acpi_execute_simple_method(acpi_handle handle, char *method,
-   				       u64 arg)
-   {
-   	union acpi_object obj = { .type = ACPI_TYPE_INTEGER };
-   	struct acpi_object_list arg_list = { .count = 1, .pointer = &obj, };
-
-   	obj.integer.value = arg;
-
-   	return acpi_evaluate_object(handle, method, &arg_list, NULL);
-   }
-   EXPORT_SYMBOL(acpi_execute_simple_method);
-
-and acpi_evaluate_object does not modify method either
-but may assign it to another const char *relative_pathname
-
-   acpi_status
-   acpi_evaluate_object(acpi_handle handle,
-   		     acpi_string pathname,
-   		     struct acpi_object_list *external_params,
-   		     struct acpi_buffer *return_buffer)
-
-   {
-   	[...]
-
-   	info->relative_pathname = pathname;
-
-
+All the nics are handled by ixgbe
