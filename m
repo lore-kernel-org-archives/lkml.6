@@ -2,105 +2,133 @@ Return-Path: <SRS0=QMhl=PO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBDF1C43387
-	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 17:52:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC9EBC43387
+	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 17:57:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4EBD20859
-	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 17:52:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546797133;
-	bh=lmxsL7fbFAo9PNGoSMzHaDt9ZGJmwHn7cRoFeg7jAVs=;
-	h=Date:From:To:Subject:References:In-Reply-To:List-ID:From;
-	b=JjMSCDktOsya0ZG5ZCWSLy3Xuv7v94fRWIShGxQcXbFwuiwVpu/bEACmUMEQVicny
-	 MiWsnz32VN8191HP3I/Lxb9cM5jBvpd9nMQ3qb792MM/jkOizta+BuZ7TL/cmqXGXS
-	 tYxX4CreAvdWxbU4iXvx6ss0LR3LzExXzOY9ARKE=
+	by mail.kernel.org (Postfix) with ESMTP id B55932085A
+	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 17:57:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fhotvef0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726090AbfAFRwM (ORCPT
+        id S1726114AbfAFR5V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 6 Jan 2019 12:52:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35162 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726014AbfAFRwM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Jan 2019 12:52:12 -0500
-Received: from sol.localdomain (c-24-23-143-129.hsd1.ca.comcast.net [24.23.143.129])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6BC4620859;
-        Sun,  6 Jan 2019 17:52:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546797131;
-        bh=lmxsL7fbFAo9PNGoSMzHaDt9ZGJmwHn7cRoFeg7jAVs=;
-        h=Date:From:To:Subject:References:In-Reply-To:From;
-        b=oWl92swfutZGJYBORKPOTW9y0AJvcOFraGadCYQmmoUOoJVrKUNiUvpGZE9eKzBLw
-         RYhkG1h7XbPu5AY6rs0EyqtLN4ZiaUk4NteeVHzvDa5567F4SPjUhUNcKNjFuvDW5G
-         lWQz+B/oCtzVPIGLsGBXXHhy933ZXveB3z9foruQ=
-Date:   Sun, 6 Jan 2019 09:52:10 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-fscrypt@vger.kernel.org
-Subject: Re: [GIT PULL] fscrypt update for 4.21
-Message-ID: <20190106175209.GB699@sol.localdomain>
-References: <20190106134912.GA27028@mit.edu>
- <20190106172005.GA699@sol.localdomain>
+        Sun, 6 Jan 2019 12:57:21 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:45337 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726012AbfAFR5U (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Jan 2019 12:57:20 -0500
+Received: by mail-ed1-f66.google.com with SMTP id d39so35891985edb.12;
+        Sun, 06 Jan 2019 09:57:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=UVEHZzCkVqjbbwpl1Hi8T2EJhcJ+fDuzpOWplghqKVY=;
+        b=Fhotvef0XLrXGWiAZMR2vdcgiFh1vfMF+B2LTqQtP/XAsqwqc2XDlp2gqywwLE7mPa
+         ecMnhP8flfVv2BBirK9dogtuED1zqQiivx3NgfidhKfE5P12fR7XKuCB7v3ZIuZqCyR+
+         rQzRPIX8ioLMbuRrzbqWaf0LyrTH3+ss2MN0larfeWEovBAWgxVfjGqVKN5AaAA01vmM
+         OgSGdcPuhw2XNaag6r3ZM5BOqRBF5y0z/Sv4sKtgkfkCKWk1yRqyp1LHBhvzhu/vC9Vb
+         cj+HNujE+FhVCO131F0anm1501QFYd1Njo0dlrmHGtDRUTHOljwhxynZNdk4qGLsmNMI
+         X2Zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=UVEHZzCkVqjbbwpl1Hi8T2EJhcJ+fDuzpOWplghqKVY=;
+        b=UJm67hiHsWmFA7FtUTfpy25aRIC7V55fvg/sg+Ppap2WSYeRrKB4Dd5pXm87pGTpuY
+         nXs1pRU4x+aiQRCOsTXHB6cE0cn5aCm+J2Yo3s+Uz+3xASik1Xn5eYxLl7fSgetFD4Mf
+         GRTJgYkforbbHEm8WgO6KPo3qz2vmbH9yS7KmXYUvjd/PPBYupGJ4f4mhjMXXR5HVOW8
+         JaGKpWRjhQggEyvCGdOGf6HbworHX5cS0gt6yHeW5YRvkEbVKv1+a/pRws+58I+eDaVS
+         6riF748dmkDqSgdS7689QOpk+JePY+d0+PArJjDUsciw8nAzziVXTrHCqTXoXrV6iE+Z
+         U+Gg==
+X-Gm-Message-State: AA+aEWaD+/35QdFIEgnXnhMYzQdmEdBCf0I1K6Vf+VV+dzPSJDMKItwO
+        cFMzoz2rF49JIwCzIpGAiQ==
+X-Google-Smtp-Source: AFSGD/VJdaMahe5iwiOL9n/9b5NXdnOEO+Si3RZM4nWvdHct2DqLml9iw9+5Qv4u4q/X4UJSOTCccw==
+X-Received: by 2002:a50:cdd0:: with SMTP id h16mr54350608edj.151.1546797438630;
+        Sun, 06 Jan 2019 09:57:18 -0800 (PST)
+Received: from latitude-7275.home (2a01cb04006a0a00478c38b296055568.ipv6.abo.wanadoo.fr. [2a01:cb04:6a:a00:478c:38b2:9605:5568])
+        by smtp.gmail.com with ESMTPSA id l20-v6sm17542438eja.18.2019.01.06.09.57.17
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 06 Jan 2019 09:57:17 -0800 (PST)
+From:   =?UTF-8?q?J=C3=A9r=C3=B4me=20de=20Bretagne?= 
+        <jerome.debretagne@gmail.com>
+To:     Alex Hung <alex.hung@canonical.com>
+Cc:     platform-driver-x86@vger.kernel.org,
+        Andy Shevchenko <andy@infradead.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Mario Limonciello <mario.limonciello@dell.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Chih-Wei Huang <cwhuang@android-x86.org>,
+        Tristian Celestin <tristian.celestin@outlook.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] platform/x86: intel-hid: Missing power button release on some Dell models
+Date:   Sun,  6 Jan 2019 18:56:44 +0100
+Message-Id: <20190106175644.24872-1-jerome.debretagne@gmail.com>
+X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190106172005.GA699@sol.localdomain>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jan 06, 2019 at 09:20:07AM -0800, Eric Biggers wrote:
-> On Sun, Jan 06, 2019 at 08:49:12AM -0500, Theodore Y. Ts'o wrote:
-> > The following changes since commit 7beb01f74415c56f5992922b5b902b45d365e694:
-> > 
-> >   f2fs: clean up f2fs_sb_has_##feature_name (2018-11-26 15:53:55 -0800)
-> > 
-> > are available in the Git repository at:
-> > 
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/tytso/fscrypt.git tags/fscrypt_for_linus
-> > 
-> > for you to fetch changes up to 8094c3ceb21ad93896fd4d238e8ba41911932eaf:
-> > 
-> >   fscrypt: add Adiantum support (2019-01-06 08:36:21 -0500)
-> > 
-> > ----------------------------------------------------------------
-> > Add Adiantum support for fscrypt
-> > 
-> > ----------------------------------------------------------------
-> > Eric Biggers (1):
-> >       fscrypt: add Adiantum support
-> > 
-> >  Documentation/filesystems/fscrypt.rst | 179 ++++++++++++---------
-> >  fs/crypto/crypto.c                    |  28 ++--
-> >  fs/crypto/fname.c                     |  22 +--
-> >  fs/crypto/fscrypt_private.h           |  67 +++++++-
-> >  fs/crypto/keyinfo.c                   | 351 ++++++++++++++++++++++++++++++++----------
-> >  fs/crypto/policy.c                    |   5 +-
-> >  include/uapi/linux/fs.h               |   4 +-
-> >  7 files changed, 468 insertions(+), 188 deletions(-)
-> 
-> Hi Ted, that tag is still on an old commit.  Probably you forgot to push.
-> 
+Power button suspend for some Dell models was added in:
 
-Fixed now, so either Ted pushed or I screwed something up.
+commit 821b85366284 (intel-hid: Power button suspend on Dell Latitude 7275)
 
-> Also, FYI Linus - the reason this is so late in the merge window is that this
-> patch was in the fscrypt tree which also had the fsverity stuff, which had
-> concerns raised.  But this patch is independent and has been in linux-next since
-> Dec 4 (albeit under a different commit ID since it was applied after the
-> fsverity stuff), and also tested on some Android devices.
-> 
+by checking against the power button press notification (0xCE) to report
+the power button press event. The corresponding power button release
+notification (0xCF) was caught and ignored to stop it from being reported
+as an "unknown event" in the logs.
 
-Also I forgot: last month I switched my personal desktop (which I'm sending this
-email from) over to use an Adiantum encrypted home directory :-)
+The missing button release event is creating issues on Android-x86, as
+reported on the project mailing list for a Dell Latitude 5175 model, since
+the events are expected in down/up pairs.
 
-- Eric
+Report the power button release event to fix this issue.
+
+Link: https://groups.google.com/forum/#!topic/android-x86/aSwZK9Nf9Ro
+Tested-by: Tristian Celestin <tristian.celestin@outlook.com>
+Tested-by: Jérôme de Bretagne <jerome.debretagne@gmail.com>
+Signed-off-by: Jérôme de Bretagne <jerome.debretagne@gmail.com>
+---
+ drivers/platform/x86/intel-hid.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/platform/x86/intel-hid.c b/drivers/platform/x86/intel-hid.c
+index e28bcf61b126..bc0d55a59015 100644
+--- a/drivers/platform/x86/intel-hid.c
++++ b/drivers/platform/x86/intel-hid.c
+@@ -363,7 +363,7 @@ static void notify_handler(acpi_handle handle, u32 event, void *context)
+ 	 * the 5-button array, but still send notifies with power button
+ 	 * event code to this device object on power button actions.
+ 	 *
+-	 * Report the power button press; catch and ignore the button release.
++	 * Report the power button press and release.
+ 	 */
+ 	if (!priv->array) {
+ 		if (event == 0xce) {
+@@ -372,8 +372,11 @@ static void notify_handler(acpi_handle handle, u32 event, void *context)
+ 			return;
+ 		}
+ 
+-		if (event == 0xcf)
++		if (event == 0xcf) {
++			input_report_key(priv->input_dev, KEY_POWER, 0);
++			input_sync(priv->input_dev);
+ 			return;
++		}
+ 	}
+ 
+ 	/* 0xC0 is for HID events, other values are for 5 button array */
+-- 
+2.11.0
+
