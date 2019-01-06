@@ -7,29 +7,29 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45633C43387
-	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 19:28:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C08E7C43387
+	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 19:28:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19E7620859
-	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 19:28:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E37A20859
+	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 19:28:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726408AbfAFT2w (ORCPT
+        id S1726431AbfAFT25 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 6 Jan 2019 14:28:52 -0500
-Received: from smtp3-g21.free.fr ([212.27.42.3]:31704 "EHLO smtp3-g21.free.fr"
+        Sun, 6 Jan 2019 14:28:57 -0500
+Received: from smtp3-g21.free.fr ([212.27.42.3]:32302 "EHLO smtp3-g21.free.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726050AbfAFT2v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Jan 2019 14:28:51 -0500
+        id S1726050AbfAFT25 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Jan 2019 14:28:57 -0500
 Received: from localhost.localdomain (unknown [IPv6:2a02:8108:4840:8f74:143e:fcd5:beb7:2140])
         (Authenticated sender: albeu)
-        by smtp3-g21.free.fr (Postfix) with ESMTPA id 0AFDD13F8B7;
-        Sun,  6 Jan 2019 20:28:42 +0100 (CET)
+        by smtp3-g21.free.fr (Postfix) with ESMTPA id 9E00F13F8C1;
+        Sun,  6 Jan 2019 20:28:49 +0100 (CET)
 From:   Alban Bedel <albeu@free.fr>
 To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 Cc:     linux-kernel@vger.kernel.org, Alban Bedel <albeu@free.fr>
-Subject: [PATCH 3/8] nvmem: Add nvmem_cell_get_optional and devm_nvmem_cell_get_optional
-Date:   Sun,  6 Jan 2019 20:28:15 +0100
-Message-Id: <20190106192820.12558-4-albeu@free.fr>
+Subject: [PATCH 4/8] nvmem: core: Fix cell lookup when no cell is found
+Date:   Sun,  6 Jan 2019 20:28:16 +0100
+Message-Id: <20190106192820.12558-5-albeu@free.fr>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190106192820.12558-1-albeu@free.fr>
 References: <20190106192820.12558-1-albeu@free.fr>
@@ -40,123 +40,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add helper functions to make the driver code simpler when a cell is
-optional. Using these functions just return NULL when the cell doesn't
-exists or if nvmem is disabled.
+If the cell list is not empty and nvmem_find_cell_by_node/name() is
+called for a cell that is not present in the list they will return an
+invalid pointer instead of NULL. This happen because
+list_for_each_entry() stop once it reach the list head again, but as
+the list head is not contained in a struct nvmem_cell the iteration
+variable then contains an invalid value.
+
+This is easily solved by using a variable to iterate over the list and
+one to return the cell found.
 
 Signed-off-by: Alban Bedel <albeu@free.fr>
 ---
- drivers/nvmem/core.c           | 48 ++++++++++++++++++++++++++++++++++
- include/linux/nvmem-consumer.h | 16 ++++++++++++
- 2 files changed, 64 insertions(+)
+ drivers/nvmem/core.c | 16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-index f8c43da6f2ca..8e1b52559467 100644
+index 8e1b52559467..a7556b20cff4 100644
 --- a/drivers/nvmem/core.c
 +++ b/drivers/nvmem/core.c
-@@ -1083,6 +1083,30 @@ struct nvmem_cell *nvmem_cell_get(struct device *dev, const char *id)
- }
- EXPORT_SYMBOL_GPL(nvmem_cell_get);
- 
-+/**
-+ * nvmem_cell_get_optional() - Get an optional nvmem cell of device from
-+ * a given id.
-+ *
-+ * @dev: Device that requests the nvmem cell.
-+ * @cell_id: nvmem cell name to get.
-+ *
-+ * Return: Will be NULL if no cell with the given name is defined,
-+ * an ERR_PTR() on error or a valid pointer to a struct nvmem_cell.
-+ * The nvmem_cell will be freed by the nvmem_cell_put().
-+ */
-+struct nvmem_cell *nvmem_cell_get_optional(struct device *dev,
-+					   const char *cell_id)
-+{
-+	struct nvmem_cell *cell;
-+
-+	cell = nvmem_cell_get(dev, cell_id);
-+	if (IS_ERR(cell) && PTR_ERR(cell) == -ENOENT)
-+		return NULL;
-+
-+	return cell;
-+}
-+EXPORT_SYMBOL_GPL(nvmem_cell_get_optional);
-+
- static void devm_nvmem_cell_release(struct device *dev, void *res)
+@@ -525,12 +525,14 @@ static int nvmem_add_cells_from_table(struct nvmem_device *nvmem)
+ static struct nvmem_cell *
+ nvmem_find_cell_by_name(struct nvmem_device *nvmem, const char *cell_id)
  {
- 	nvmem_cell_put(*(struct nvmem_cell **)res);
-@@ -1118,6 +1142,30 @@ struct nvmem_cell *devm_nvmem_cell_get(struct device *dev, const char *id)
- }
- EXPORT_SYMBOL_GPL(devm_nvmem_cell_get);
+-	struct nvmem_cell *cell = NULL;
++	struct nvmem_cell *iter, *cell = NULL;
  
-+/**
-+ * devm_nvmem_cell_get() - Get an optional nvmem cell of device from
-+ * a given id.
-+ *
-+ * @dev: Device that requests the nvmem cell.
-+ * @id: nvmem cell name id to get.
-+ *
-+ * Return: Will be NULL if the cell doesn't exists, an ERR_PTR() on
-+ * error or a valid pointer to a struct nvmem_cell.  The nvmem_cell
-+ * will be freed by the automatically once the device is freed.
-+ */
-+struct nvmem_cell *devm_nvmem_cell_get_optional(struct device *dev,
-+						const char *cell_id)
-+{
-+	struct nvmem_cell *cell;
-+
-+	cell = devm_nvmem_cell_get(dev, cell_id);
-+	if (IS_ERR(cell) && PTR_ERR(cell) == -ENOENT)
-+		return NULL;
-+
-+	return cell;
-+}
-+EXPORT_SYMBOL_GPL(devm_nvmem_cell_get_optional);
-+
- static int devm_nvmem_cell_match(struct device *dev, void *res, void *data)
+ 	mutex_lock(&nvmem_mutex);
+-	list_for_each_entry(cell, &nvmem->cells, node) {
+-		if (strcmp(cell_id, cell->name) == 0)
++	list_for_each_entry(iter, &nvmem->cells, node) {
++		if (strcmp(cell_id, iter->name) == 0) {
++			cell = iter;
+ 			break;
++		}
+ 	}
+ 	mutex_unlock(&nvmem_mutex);
+ 
+@@ -994,12 +996,14 @@ nvmem_cell_get_from_lookup(struct device *dev, const char *con_id)
+ static struct nvmem_cell *
+ nvmem_find_cell_by_node(struct nvmem_device *nvmem, struct device_node *np)
  {
- 	struct nvmem_cell **c = res;
-diff --git a/include/linux/nvmem-consumer.h b/include/linux/nvmem-consumer.h
-index 312bfa5efd80..8d7bf21a9adc 100644
---- a/include/linux/nvmem-consumer.h
-+++ b/include/linux/nvmem-consumer.h
-@@ -56,7 +56,11 @@ enum {
+-	struct nvmem_cell *cell = NULL;
++	struct nvmem_cell *iter, *cell = NULL;
  
- /* Cell based interface */
- struct nvmem_cell *nvmem_cell_get(struct device *dev, const char *id);
-+struct nvmem_cell *nvmem_cell_get_optional(struct device *dev,
-+					   const char *id);
- struct nvmem_cell *devm_nvmem_cell_get(struct device *dev, const char *id);
-+struct nvmem_cell *devm_nvmem_cell_get_optional(struct device *dev,
-+						const char *id);
- void nvmem_cell_put(struct nvmem_cell *cell);
- void devm_nvmem_cell_put(struct device *dev, struct nvmem_cell *cell);
- void *nvmem_cell_read(struct nvmem_cell *cell, size_t *len);
-@@ -96,12 +100,24 @@ static inline struct nvmem_cell *nvmem_cell_get(struct device *dev,
- 	return ERR_PTR(-EOPNOTSUPP);
- }
+ 	mutex_lock(&nvmem_mutex);
+-	list_for_each_entry(cell, &nvmem->cells, node) {
+-		if (np == cell->np)
++	list_for_each_entry(iter, &nvmem->cells, node) {
++		if (np == iter->np) {
++			cell = iter;
+ 			break;
++		}
+ 	}
+ 	mutex_unlock(&nvmem_mutex);
  
-+static inline struct nvmem_cell *nvmem_cell_get_optional(struct device *dev,
-+							 const char *id)
-+{
-+	return NULL;
-+}
-+
- static inline struct nvmem_cell *devm_nvmem_cell_get(struct device *dev,
- 						     const char *id)
- {
- 	return ERR_PTR(-EOPNOTSUPP);
- }
- 
-+static inline struct nvmem_cell *
-+devm_nvmem_cell_get_optional(struct device *dev, const char *id)
-+{
-+	return NULL;
-+}
-+
- static inline void devm_nvmem_cell_put(struct device *dev,
- 				       struct nvmem_cell *cell)
- {
 -- 
 2.19.1
 
