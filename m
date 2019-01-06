@@ -2,103 +2,146 @@ Return-Path: <SRS0=QMhl=PO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F4041C43387
-	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 18:28:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 950C9C43387
+	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 19:14:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C290020859
-	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 18:28:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Zvb31Qj/"
+	by mail.kernel.org (Postfix) with ESMTP id 655D820859
+	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 19:14:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726117AbfAFS2u (ORCPT
+        id S1726090AbfAFTOS convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 6 Jan 2019 13:28:50 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:37078 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726014AbfAFS2u (ORCPT
+        Sun, 6 Jan 2019 14:14:18 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:50586 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726050AbfAFTOS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Jan 2019 13:28:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=eLDyUetQZfyKZfukLQ1m9gz0Y61/5C0xxyHTCt0PHXs=; b=Zvb31Qj/mBQDlWTlDQCk15E8Y3
-        Nv6MYmvX3yE70mn3YPIvuwjRdNEl1aUGHXJP+HWKLm5cYQ2fluXRU3AEAjq3Aqhh/Qc3B9bf38Hf4
-        j35lFkI8bhn6cOvbYwKXILNMZF8YJjEdvNKeN83RgHOer2vV6jxyaPHlKdsMIeuu6DWnt38p/oz1X
-        MAj7VeQl522aNL+RnBjwDLZtapgbyEPzpq2JLGhSXACZjueEo+A4RuGmMPS21i886G718JH9ogqz/
-        Xxx7K7YAeuvN5R4OizS6K80IBBdDdrovUpkQTwGDp/YXmAzZJ1ioVzFXjLwTwmPXK9qf1Xbq14WAH
-        mlbwN7Dw==;
-Received: from [195.143.101.197] (helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1ggDAH-0006N4-1R; Sun, 06 Jan 2019 18:28:49 +0000
-Date:   Sun, 6 Jan 2019 19:28:46 +0100
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] dma-mapping fixes for Linux 4.21-rc1
-Message-ID: <20190106182846.GA10665@infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+        Sun, 6 Jan 2019 14:14:18 -0500
+Received: from mail-pl1-f199.google.com ([209.85.214.199])
+        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <kai.heng.feng@canonical.com>)
+        id 1ggDsF-0003wO-IE
+        for linux-kernel@vger.kernel.org; Sun, 06 Jan 2019 19:14:15 +0000
+Received: by mail-pl1-f199.google.com with SMTP id 12so30354808plb.18
+        for <linux-kernel@vger.kernel.org>; Sun, 06 Jan 2019 11:14:15 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=0ivRVsY/+DJHm8bCFkUQInv0DeBpj/yazrThNw/uVbA=;
+        b=lbdpU8IqLR9uj5LzsTT2DKuSrTsXBqcSwN0tdI4of0TSt9Vh5gK3ltqvjGy/qGcNh7
+         dViGwTXrn2hSL+0EJO6X7iFVntCP2P/nt75prqvV7RUTSgzzYE2bp45JzL8AEqS8lLGO
+         zQrop8bOKqo6v1JFSytEhT2L5SsN6OxV+E+GrhWjW7riI66buXRTHJxlg/sJ3JA5l9JC
+         IkFJKZgB3mkApfpHRcLVwxjQkP2thSgmtpjFAJ6KBj6/PtaRXmlt/HOnOyY86kFsAtPX
+         BC4bqWDo2YniSgYHZq0etq9grFfj2lk6RJDtDzbpROQjUDBCTS6QzGB5q6X3LGEDO2y6
+         sSnA==
+X-Gm-Message-State: AJcUukdDdnrXZmYDJ5/zbcWStNrfeEehI7Qz2z1qhiIDuvjQUIMY+l2n
+        Tbnpo7YNrPizvhaFhgd2p2hInFzRHmPctUXnCAPVVvUOZems2pCifsZtBwYIZIkP6SAfe757MG+
+        uHpjdg/zYJcMeRKF3u2LQWBN6gH5kJhcHyXX0I1sv+w==
+X-Received: by 2002:a63:b24a:: with SMTP id t10mr53903355pgo.223.1546802054192;
+        Sun, 06 Jan 2019 11:14:14 -0800 (PST)
+X-Google-Smtp-Source: ALg8bN7GiyMpKFn1Z0wfVpARiLf8ZmPrcC8CYJew7046TTjicdRkt0MUjEsdc4OeUuTlIPMnRUUVBQ==
+X-Received: by 2002:a63:b24a:: with SMTP id t10mr53903331pgo.223.1546802053711;
+        Sun, 06 Jan 2019 11:14:13 -0800 (PST)
+Received: from [192.168.1.215] (220-133-187-190.HINET-IP.hinet.net. [220.133.187.190])
+        by smtp.gmail.com with ESMTPSA id k24sm97465306pfj.13.2019.01.06.11.14.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 06 Jan 2019 11:14:13 -0800 (PST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
+Subject: Re: r8152: data corruption in various scenarios
+From:   Kai Heng Feng <kai.heng.feng@canonical.com>
+In-Reply-To: <469a41ea-e97c-23d2-d129-68aad5585fec@pobox.com>
+Date:   Mon, 7 Jan 2019 03:14:09 +0800
+Cc:     Ansis Atteka <aatteka@nicira.com>,
+        Hayes Wang <hayeswang@realtek.com>,
+        David Miller <davem@davemloft.net>,
+        "greg@kroah.com" <greg@kroah.com>,
+        "romieu@fr.zoreil.com" <romieu@fr.zoreil.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        nic_swsd <nic_swsd@realtek.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        Mario Limonciello <mario.limonciello@dell.com>
+Content-Transfer-Encoding: 8BIT
+Message-Id: <3D7273C4-D378-42D5-92FA-4ED72041D820@canonical.com>
+References: <ed0c9790-57be-8bca-cdd6-3a54ca24f0bd@pobox.com>
+ <20161125095350.GA20653@kroah.com>
+ <1816ec7e-2733-f4ba-5d30-29dbabd20aad@pobox.com>
+ <20161125.115827.2014848246966159357.davem@davemloft.net>
+ <0835B3720019904CB8F7AA43166CEEB201057793@RTITMBSV03.realtek.com.tw>
+ <CAA=3Oqn5_5w+vrg9_7UtZ-5BEbZ9Pm=qdX3WoVZKaAkxcMXYXA@mail.gmail.com>
+ <469a41ea-e97c-23d2-d129-68aad5585fec@pobox.com>
+To:     Mark Lord <mlord@pobox.com>
+X-Mailer: Apple Mail (2.3445.102.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
 
-please pull regression fixes, and code removals enabling them for
-4.21-rc1.
 
-The following changes since commit 96d4f267e40f9509e8a66e2b39e8b95655617693:
+> On Jan 5, 2019, at 10:14 PM, Mark Lord <mlord@pobox.com> wrote:
+> 
+> A couple of years back, I reported data corruption resulting from
+> a change in kernel 3.16 which enabled hardware checksums in the r8152 driver.
+> This was happening on an embedded system that was using a r8152 USB dongle.
+> 
+> At the time, it was very difficult to figure out what could possibly be causing it,
+> other than that re-enabling software checksums prevented corrupted packets from
+> resulting in more serious issues.
+> 
+> Since that time, more and more reports of similar corruption and issues
+> have been trickling in.  Eg.
+> 
+>   https://lore.kernel.org/patchwork/patch/873920/
+> 
+> Note that there are reports in the thread above that the issues
+> are not limited to only the built-in ethernet chip of the dock.
+> 
+> There is even now a special hack in the upstream r8152.c to attempt to detect
+> a Dell TB16 dock and disable RX Aggregation in the driver to prevent such issues.
+> 
+> Well.. I have a WD15 dock, not a TB16, and that same hack also catches my dock
+> in its net:
+> 
+>    [5.794641] usb 4-1.2: Dell TB16 Dock, disable RX aggregation
 
-  Remove 'type' argument from access_ok() function (2019-01-03 18:57:57 -0800)
+The serial should be unique according to Dell.
 
-are available in the Git repository at:
+> 
+> So one issue is that the code is not correctly identifying the dock,
+> and the WD15 is claimed to be immune from the r8152 issues.
 
-  git://git.infradead.org/users/hch/dma-mapping.git tags/dma-mapping-4.21-1
+The WD15 I tested didn't use that serial number though...
 
-for you to fetch changes up to 8270f3a11ceef64bdb0ab141180e8d2f17c619ec:
+> 
+> One of the symptoms of the r8152 issue, reported by Ansis Atteka,
+> were messages like this:
+> 
+>   xhci_hcd 0000:39:00.0: ERROR Transfer event TRB DMA ptr not part of current TD ep_index 13
+> comp_code 1
 
-  dma-direct: fix DMA_ATTR_NO_KERNEL_MAPPING for remapped allocations (2019-01-05 08:28:29 +0100)
+This is probably an xHC bug. A similar issue is fixed by commit 9da5a1092b13
+("xhci: Bad Ethernet performance plugged in ASM1042A host”). 
 
-----------------------------------------------------------------
-dma-mapping fixes for Linux 4.21-rc1
+> 
+> I just got that exact message above, with the r8152 in my 1-day old WD15 dock,
+> with the TB16 "workaround" enabled in Linux kernel 4.20.0.
 
-Fix various regressions introduced in this cycles:
+Is the xHC WD15 connected an ASMedia one?
 
- - fix dma-debug tracking for the map_page / map_single consolidatation
- - properly stub out DMA mapping symbols for !HAS_DMA builds to avoid
-   link failures
- - fix AMD Gart direct mappings
- - setup the dma address for no kernel mappings using the remap
-   allocator
+Kai-Heng
 
-----------------------------------------------------------------
-Christoph Hellwig (7):
-      dma-mapping: implement dma_map_single_attrs using dma_map_page_attrs
-      dma-mapping: implement dmam_alloc_coherent using dmam_alloc_attrs
-      dma-mapping: remove dmam_{declare,release}_coherent_memory
-      dma-mapping: properly stub out the DMA API for !CONFIG_HAS_DMA
-      dma-mapping: remove a few unused exports
-      x86/amd_gart: fix unmapping of non-GART mappings
-      dma-direct: fix DMA_ATTR_NO_KERNEL_MAPPING for remapped allocations
+> 
+> From this I conclude that the workaround is not 100% complete yet.
+> -- 
+> Mark Lord
+> Real-Time Remedies Inc.
+> mlord@pobox.com
 
- Documentation/driver-model/devres.txt |   1 -
- arch/x86/kernel/amd_gart_64.c         |  10 +-
- include/linux/dma-debug.h             |  11 +-
- include/linux/dma-mapping.h           | 340 +++++++++++++++++++---------------
- kernel/dma/coherent.c                 |   2 -
- kernel/dma/debug.c                    |  19 +-
- kernel/dma/mapping.c                  |  94 ----------
- kernel/dma/remap.c                    |  13 +-
- 8 files changed, 215 insertions(+), 275 deletions(-)
