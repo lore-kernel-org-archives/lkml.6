@@ -2,116 +2,169 @@ Return-Path: <SRS0=QMhl=PO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBB1BC43387
-	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 13:24:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C4BCC43387
+	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 13:25:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84CF320663
-	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 13:24:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MK+m7w1f"
+	by mail.kernel.org (Postfix) with ESMTP id 6597820663
+	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 13:25:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726428AbfAFNYh (ORCPT
+        id S1726448AbfAFNZO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 6 Jan 2019 08:24:37 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:52374 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726336AbfAFNYg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Jan 2019 08:24:36 -0500
-Received: by mail-it1-f193.google.com with SMTP id g76so7358696itg.2
-        for <linux-kernel@vger.kernel.org>; Sun, 06 Jan 2019 05:24:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=A94FPMFmRCu34mADbdoh8iPEP0sj3Yw4xbl5b2Pzpt8=;
-        b=MK+m7w1ftHUz4uzw6nibC38wTZ3HmdrCwFfq1n+Uz5n80s5SoomwCpHce3AhkAQaHt
-         sfe3TsWB7DxlXxvh8Pt14lrqsPZAFa7roYBnd0XeKNseRo3cmuYfvtgwpKCo/rD7Luah
-         29gri9qDksgZWH/co8X4/+kv4aHsu3eaemQy9WZvEmJd/cQlUIrrLKlO/K8zH1p5t0YM
-         OnrGNgu7KjYM/iXuaO8KUSvGwa0vS6uiG8BpEA3WTNvm2H6QU/MdjMaHFsJVuUZkhx9v
-         VYt88mgP2I6yIawysVo4z2IIhCgAj+fvwrYLP5V/HrMNW7bVd1NzqCYQzhdxaIgJRiXV
-         G3YA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=A94FPMFmRCu34mADbdoh8iPEP0sj3Yw4xbl5b2Pzpt8=;
-        b=FfB7viVSmJ7a4WgFqOrxIQOnf3p1OlrWj6w97vyn+VHHXe+OVRI+UNa7oUJMODADiv
-         aSE0Rn+z1djxrBlh50ajo7rpKvhTfelOfM9AEw/AGCcdj751kwdpykaHlZipgQaLUy1g
-         dInhSv+PACXRcujQqO68JWuZPiZHjYWrbXV6adGCkYKpwfXxxZ4cI4sd5xq8zTVJtkEA
-         /ybd0uDXMzQNUNYFaDoSW74uuw35urVXxiuoxJtb378Wp9Hjmvtf16fPOBYHHuXyFMQe
-         DFBBP6mym5nguap/jqw42g+0+HZjWldb2FazbjND1GeXqEWd2KKrpmDhdtc70GswPPBA
-         7+pQ==
-X-Gm-Message-State: AJcUukcpMTReqEpPepjALrOUs/NSdoIAoYJw/1xjrgujJIDnw8+vmPlr
-        9C2tHyH6LZJamc8/ietEzQhJHOzJsq8/Ax+CLiU+oQ==
-X-Google-Smtp-Source: ALg8bN6JdQi0jEz8r5GHyCJfoQpsXYffmxwDe5Z++UDHkQR+iNNc4bjjg8mcrIi//WD4TVaottwtiKWu5D4PHJctsfw=
-X-Received: by 2002:a24:f14d:: with SMTP id q13mr4793104iti.166.1546781074476;
- Sun, 06 Jan 2019 05:24:34 -0800 (PST)
+        Sun, 6 Jan 2019 08:25:14 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:59162 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726336AbfAFNZN (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Sun, 6 Jan 2019 08:25:13 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5068586675;
+        Sun,  6 Jan 2019 13:25:13 +0000 (UTC)
+Received: from krava (ovpn-204-49.brq.redhat.com [10.40.204.49])
+        by smtp.corp.redhat.com (Postfix) with SMTP id AA1395D9CB;
+        Sun,  6 Jan 2019 13:25:10 +0000 (UTC)
+Date:   Sun, 6 Jan 2019 14:25:09 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     "Jin, Yao" <yao.jin@linux.intel.com>
+Cc:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com,
+        Linux-kernel@vger.kernel.org, ak@linux.intel.com,
+        kan.liang@intel.com, yao.jin@intel.com
+Subject: Re: [PATCH] perf stat: Poll for monitored tasks being alive in fork
+ mode
+Message-ID: <20190106132509.GA31228@krava>
+References: <1546568897-16123-1-git-send-email-yao.jin@linux.intel.com>
+ <20190104125441.GF5481@krava>
+ <ec011f77-e08e-4471-4479-0cb0281fa79b@linux.intel.com>
 MIME-Version: 1.0
-References: <0000000000007beca9057e4c8c14@google.com> <CACT4Y+Yx4BJw=F_PMx9a8AjPKzEwhzLnzt9K-dgkBoNkKQj2+g@mail.gmail.com>
- <ef2508c9-d069-2143-09a6-a90b9ef12568@I-love.SAKURA.ne.jp>
- <CACT4Y+YYwYDnqFmMwfSg6UNXnrbh46bo0jp7ijbej8nkDDmBXQ@mail.gmail.com>
- <eeb95c52-5bf8-d3ce-d32b-269aa86bcd93@i-love.sakura.ne.jp> <8cdbcb63-d2f7-cace-0eda-d73255fd47e7@i-love.sakura.ne.jp>
-In-Reply-To: <8cdbcb63-d2f7-cace-0eda-d73255fd47e7@i-love.sakura.ne.jp>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Sun, 6 Jan 2019 14:24:23 +0100
-Message-ID: <CACT4Y+Y5cdD=optF2k4a0W7vriVnzmzLU0SPGEJoOHRMi_bsZA@mail.gmail.com>
-Subject: Re: INFO: rcu detected stall in ndisc_alloc_skb
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     syzbot <syzbot+ea7d9cb314b4ab49a18a@syzkaller.appspotmail.com>,
-        David Miller <davem@davemloft.net>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        LKML <linux-kernel@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        Linux-MM <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ec011f77-e08e-4471-4479-0cb0281fa79b@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Sun, 06 Jan 2019 13:25:13 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jan 5, 2019 at 11:49 AM Tetsuo Handa
-<penguin-kernel@i-love.sakura.ne.jp> wrote:
->
-> On 2019/01/03 2:06, Tetsuo Handa wrote:
-> > On 2018/12/31 17:24, Dmitry Vyukov wrote:
-> >>>> Since this involves OOMs and looks like a one-off induced memory corruption:
-> >>>>
-> >>>> #syz dup: kernel panic: corrupted stack end in wb_workfn
-> >>>>
-> >>>
-> >>> Why?
-> >>>
-> >>> RCU stall in this case is likely to be latency caused by flooding of printk().
-> >>
-> >> Just a hypothesis. OOMs lead to arbitrary memory corruptions, so can
-> >> cause stalls as well. But can be what you said too. I just thought
-> >> that cleaner dashboard is more useful than a large assorted pile of
-> >> crashes. If you think it's actionable in some way, feel free to undup.
-> >>
-> >
-> > We don't know why bpf tree is hitting this problem.
-> > Let's continue monitoring this problem.
-> >
-> > #syz undup
-> >
->
-> A report at 2019/01/05 10:08 from "no output from test machine (2)"
-> ( https://syzkaller.appspot.com/text?tag=CrashLog&x=1700726f400000 )
-> says that there are flood of memory allocation failure messages.
-> Since continuous memory allocation failure messages itself is not
-> recognized as a crash, we might be misunderstanding that this problem
-> is not occurring recently. It will be nice if we can run testcases
-> which are executed on bpf-next tree.
+On Sat, Jan 05, 2019 at 11:16:40AM +0800, Jin, Yao wrote:
+> 
+> 
+> On 1/4/2019 8:54 PM, Jiri Olsa wrote:
+> > On Fri, Jan 04, 2019 at 10:28:17AM +0800, Jin Yao wrote:
+> > > Following test shows the stat keeps running even if no longer
+> > > task to monitor (mgen exits at ~5s).
+> > > 
+> > > perf stat -e cycles -p `pgrep mgen` -I1000 -- sleep 10
+> > >              time             counts unit events
+> > >       1.000148916      1,308,365,864      cycles
+> > >       2.000379171      1,297,269,875      cycles
+> > >       3.000556719      1,297,187,078      cycles
+> > >       4.000914241        761,261,827      cycles
+> > >       5.001306091      <not counted>      cycles
+> > >       6.001676881      <not counted>      cycles
+> > >       7.002046336      <not counted>      cycles
+> > >       8.002405651      <not counted>      cycles
+> > >       9.002766625      <not counted>      cycles
+> > >      10.001395827      <not counted>      cycles
+> > > 
+> > > We'd better finish stat immediately if there's no longer task to
+> > > monitor.
+> > > 
+> > > After:
+> > > 
+> > > perf stat -e cycles -p `pgrep mgen` -I1000 -- sleep 10
+> > >              time             counts unit events
+> > >       1.000180062      1,236,592,661      cycles
+> > >       2.000421539      1,223,733,572      cycles
+> > >       3.000609910      1,297,047,663      cycles
+> > >       4.000807545      1,297,215,816      cycles
+> > >       5.001001578      1,297,208,032      cycles
+> > >       6.001390345        582,343,659      cycles
+> > > sleep: Terminated
+> > > 
+> > > Now the stat exits immediately when the monitored tasks ends.
+> > > 
+> > > Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
+> > > ---
+> > >   tools/perf/builtin-stat.c | 7 +++++++
+> > >   1 file changed, 7 insertions(+)
+> > > 
+> > > diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+> > > index 63a3afc..71f3bc8 100644
+> > > --- a/tools/perf/builtin-stat.c
+> > > +++ b/tools/perf/builtin-stat.c
+> > > @@ -553,6 +553,13 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
+> > >   		if (interval || timeout) {
+> > >   			while (!waitpid(child_pid, &status, WNOHANG)) {
+> > > +				if (!is_target_alive(&target,
+> > > +					evsel_list->threads) &&
+> > > +					(child_pid != -1)) {
+> > 
+> > do we need that child_pid check? we just returned from waitpid
+> > so we should be ok.. we just make the race window smaller
+> > 
+> > could we just do:
+> > 
+> > 				if (!is_target_alive(&target, evsel_list->threads)) {
+> > 					kill(child_pid, SIGTERM);
+> > 					break;
+> > 				}
+> > 
+> 
+> I think this code should be OK and I have tested yet. I have a question
+> about the race condition, we really don't need a lock to protect the
+> child_pid?
+> 
+> skip_signal()
+> {
+> 	/*
+> 	 * render child_pid harmless
+> 	 * won't send SIGTERM to a random
+> 	 * process in case of race condition
+> 	 * and fast PID recycling
+> 	 */
+> 	child_pid = -1;
+> }
+> 
+> __run_perf_stat()
+> {
+> 	....
+> 	kill(child_pid, SIGTERM);
+> }
+> 
+> If child_pid is set by -1 in a small window between checking of child_pid
+> and kill(), then kill(-1, SIGTERM) may happen. All processes except the kill
+> process itself and init would receive SIGTERM.
 
-What exactly do you mean by running test cases on bpf-next tree?
-syzbot tests bpf-next, so it executes lots of test cases on that tree.
-One can also ask for patch testing on bpf-next tree to test a specific
-test case.
+ah right, -1 is special.. however that can still happen also
+in the orginal patch.. how about we do something like below
+
+jirka
+
+
+---
+diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+index acfd48db52dd..c322cb271180 100644
+--- a/tools/perf/builtin-stat.c
++++ b/tools/perf/builtin-stat.c
+@@ -583,6 +583,14 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
+ 
+ 		if (interval || timeout) {
+ 			while (!waitpid(child_pid, &status, WNOHANG)) {
++				if (!is_target_alive(&target, evsel_list->threads)) {
++					int pid = child_pid;
++
++					if (pid != -1)
++						kill(pid, SIGTERM);
++					break;
++				}
++
+ 				nanosleep(&ts, NULL);
+ 				if (timeout)
+ 					break;
