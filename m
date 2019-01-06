@@ -2,141 +2,87 @@ Return-Path: <SRS0=QMhl=PO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19BFFC43387
-	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 06:41:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19E07C43387
+	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 07:19:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3AC22184C
-	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 06:41:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C39ED218DE
+	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 07:19:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=memeware.net header.i=@memeware.net header.b="vehBMpcx"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I27b60O5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726426AbfAFGgl (ORCPT
+        id S1726421AbfAFHTG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 6 Jan 2019 01:36:41 -0500
-Received: from cock.li ([185.100.85.212]:39578 "EHLO cock.li"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726368AbfAFGgk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Jan 2019 01:36:40 -0500
+        Sun, 6 Jan 2019 02:19:06 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:33542 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726199AbfAFHTG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Jan 2019 02:19:06 -0500
+Received: by mail-io1-f67.google.com with SMTP id t24so32614384ioi.0;
+        Sat, 05 Jan 2019 23:19:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qFK9Nsxe2U25Ot+Ax+RUnhMmXMrDnTvrZH+rLSlz5rA=;
+        b=I27b60O5fqvXkyPCYPMVlEr9QZ1p+fSQ0+PPE9XGVQLz2UOHITjG8n6GiuLxCxOHlX
+         kL8XZ6dnB7/D5WGzONn1UeXZIdbgslLSgd3Y/zjLULRrlqGzxA9YN3T+ob4dZQW9bFX7
+         MXXNblXPdAEdvP9sdlPncIE1HlRAyhx7JaF5qqz6f4fiuLrdGNaB4fX7rJvVsEfEXqyi
+         28lmyHBkh0o8bgBNGpIT77yQf9sDGdliKTY4LO1bn08mvXQVOcyV9kgQNxkklauGP1ZL
+         MFsiCx2AEKmiiHI2o5bMOADuakxrAeXCkgOa5tL5ffIddFuiGhdcczw1sMG2iVNcdu88
+         ABuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qFK9Nsxe2U25Ot+Ax+RUnhMmXMrDnTvrZH+rLSlz5rA=;
+        b=R/jocgdgnm+gpN6Z0gvslJpUfPswQWnQPrsrIX9lOLJ5Jbb/LVNjpSaGpARE4T3qqp
+         n+kirQRCAi2WhYgwaQZFdGsGb2jTHxD5zm2AU/t2wovkTSuJa0Uh4uADn4pumLspCb0u
+         tjdJU8HzZEQluX5deN5tO9KwpMtLkbu8hg5szoLIbKu3PkQFd7kX+yDODXkBJpMQdEpH
+         4gpqX5lLP/9SLosYl9jsPbnIX0TI4600INjQXCSjh9CxImchJTq9mhCzp2BGqKVyxT6L
+         +YyMCDIwhgjYZfloZ5jJXyYoJ+bNy49iVsGksBZJ3nhv2oWFOW+GTr00n0rZ4pzJ6dQm
+         QgKw==
+X-Gm-Message-State: AJcUukcwu1u1jqT9t4gqWZ1ke8L/6SHDbEUmzB3JuYCKHJoKY/lHbV9y
+        7+2tbBeahLffwY7qDK+taO8dsFjZwtR7c++uh0A=
+X-Google-Smtp-Source: ALg8bN4gswAu/GKHlXQgnDq8RLK/eGZoX+xJJxGUVoX0K4X+GP6DQRaANu6KzCtWYHdR8KOgflBHAyLIbNI9QE8Eu9Y=
+X-Received: by 2002:a6b:7402:: with SMTP id s2mr37888944iog.219.1546759144668;
+ Sat, 05 Jan 2019 23:19:04 -0800 (PST)
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=memeware.net; s=mail;
-        t=1546756596; bh=3aJZsbJG5Z0bkrditZmO6noQzvc+9C7BhhVpSUpcF5k=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=vehBMpcx0nwIsJz2gvdkjBSvwowDNBNYEB+M0UbpX7lMKYzENY2pfXWbEAeJTA3dO
-         Q6sZY1uR/qS7iiylmuX9O9Z74eA98aAYb8bsQo/9Jf5xBJxzWLCwxCGiN/dYTh4mIx
-         L1a02p1996LTyZlVWeZKsOUkEhFG8FjsHsvFejB/HR6uTSTGZ1HW1RKpznn9ZuvXB2
-         pCVjxSgQpZWyjrftp+u5j2VtkOzNKJ0oEG9TvLIvqqPkahx1llo3h/oq9aRaR+LTCi
-         c1uOhcN4Xhglz8Lb9w8qYVF7VHAjptABG5zWYyaRPvMS0Y9eE3qZ+C4W3qcykIk58A
-         t5ftaJc6VF4ng==
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Sun, 06 Jan 2019 06:36:35 +0000
-From:   vsnsdualce@memeware.net
-To:     Emanoil.Kotsev@fincom.at
-Cc:     linux-kernel@vger.kernel.org, gentoo-user@lists.gentoo.org,
-        ubuntu-users@lists.ubuntu.com, debian-user@lists.debian.org,
-        misc@openbsd.org
-Subject: Re: knifeshack (Linux Property rights)
-In-Reply-To: <201901031319.04730.Emanoil.Kotsev@fincom.at>
-References: <201901031319.04730.Emanoil.Kotsev@fincom.at>
-Message-ID: <754b0378b47ee8c3761f3de43a452ff8@memeware.net>
-X-Sender: vsnsdualce@memeware.net
-User-Agent: Roundcube Webmail/1.3.6
+References: <20190105091025.GA28917@localhost.localdomain> <61a272a5-3c6f-4e69-2ce9-b7c58b427750@lwfinger.net>
+In-Reply-To: <61a272a5-3c6f-4e69-2ce9-b7c58b427750@lwfinger.net>
+From:   =?UTF-8?Q?J=C3=BAlius_Milan?= <jmilan.dev@gmail.com>
+Date:   Sun, 6 Jan 2019 08:18:53 +0100
+Message-ID: <CAP=P++DRiM8Rb8vg9hBJ-N2uhfL0Rrj+njYwgZW80yQZ4jQH4g@mail.gmail.com>
+Subject: Re: [PATCH v2] staging: wilc1000: fix cast to restricted __le32
+To:     Larry Finger <Larry.Finger@lwfinger.net>
+Cc:     linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-wireless@vger.kernel.org, gregkh@linuxfoundation.org,
+        ajay.kathat@microchip.com, adham.abozaeid@microchip.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Your "no it does not because we are talking about software" argument is, 
-to put it simply in a way you can understand: retarded.
+Thank you for your review Larry
 
-It shows that you, a software engineer, because you are learned in one 
-field of endeavor, believe yourself to be "smart" and "reasonable" in 
-unrelated fields of endeavors. You are wrong. This really shows how 
-stupid alot of you western software-only guys are. (Also moronic is your 
-constant disparagement of those who have to deal with the physical 
-realities of things: the hardware guys).
+> Before you send V3
 
-I have gone to lengths to attempt to teach you the foundation of 
-licensing law, how it interacts with copyright, and how such applies to 
-the specific facts surrounding the linux kernel; myself knowing the 
-history of the kernel, and also being studied in US law.
+Oh, v3 was already sent a few moments before your message.
 
-It doesn't seem to get through.
-So simply: You are not a lawyer. Do not think your "common sense" as a 
-software engineer applies to the law.
+> Before you send V3, are you sure this is the correct fix? As "frame_type" is
+> input as u16, it seems to me that the frame_type member of struct wilc_reg_frame
+> should be __le16, not __le32.
 
----
-(On to the knifeshack analogy/story:)
-In the USA, the law regarding licensing of various properties is 
-similar. The key here is that the owner simply gave permission to use 
-his property (he did not seek payment for extending that permission).
+Yes, I am confident about it.
+The frame_type member of struct wilc_reg_frame contains in some cases
+32 bit value
+as you can see in function wilc_wlan_cfg_set_wid.
+Cast to 32 bits is also safe, due to resultant endianness.
 
-To illustrate the fact, so that non-lawyers would understand, we have 
-used a Knife as an analogy.
-
-Also note: It is from the USA that the CoC problem is emanating, so it 
-is right to use the law of the USA to illustrate the point (also since 
-that's where lawsuits are most likely to occur: You do know about the 
-USA, correct?)
-
-It doesn't matter so much, in this corner of the law, that IP is not 
-physical property. In the area of giving permission to use it, it is 
-treated much the same.
-
-Remember: the "Thing" that was extended to you was the permission, that 
-is what you "have", you do not own the intellectual property you were 
-licensed.
-
-Now, once we look at commercial licenses, things get more complicated 
-because you paid for the license. But the key point here is that this 
-isn't such a situation. We are not discussing commercial software 
-licensing here.
-
-When you cursory look up information to "fact check" me, 9 times out of 
-10 you will be reading about the law as regards to commercial licenses 
-where there is bargained-for consideration. Then you cite that to say 
-that I'm wrong. (PJ made this very same mistake on this issue in 2005, 
-she's still "cited" even though she's just a paralegal (still) and not a 
-lawyer, and is wrong (maybe that's why she shut-up once her identity was 
-know)).
-
-A license not coupled with an interest is revocable by the property 
-owner. It's fairly simple. Ask yourself "did I pay linux 
-programer-copyright-holder 7829 for permission to use his code?". No? 
-Then you have not paid for whatever "promise" he made to you (if any). 
-Thus you cannot bind him. And as I have shown; he never even made the 
-promise you imagine he did.
-
-The whole counter-argument is to concoct some non-existent attached 
-interest. The fact that we are dealing with software and not land or 
-personal property is NOT controlling. I know you think it should be 
-handled differently, but your uneducated opinion is not controlling law.
-
-Perhaps you would be better off with a video recorded in American to 
-explain it all simply:
-
-Video: https://openload.co/f/mT_AH3xmIUM/TruthAboutLinuxandGPLv2__.mp4
-Audio: https://ufile.io/sdhpl
-
-On 2019-01-03 12:19, MPhil. Emanoil Kotsev wrote:
-> vsnsdualce@memeware.net wrote:
-> 
->> On 2019-01-02 02:32, Mike Galbraith wrote:
->>> Take your medication.
->> 
->> Don't like the story? Why what is wrong with it.
->> 
->> Was it the entrance, the middle, or the conclusion?
->> 
->> It simply explains licensing in a way you might find helpful, as it
->> relates to linux.
-> 
-> No, it does not, because you can not copy and redistribute anything but
-> software.
-> 
-> PLS give us a break!
+Julius
