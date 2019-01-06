@@ -2,85 +2,83 @@ Return-Path: <SRS0=QMhl=PO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE008C43387
-	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 03:35:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08E10C43612
+	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 03:35:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6DAA921907
+	by mail.kernel.org (Postfix) with ESMTP id 9CD8321908
 	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 03:35:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=memeware.net header.i=@memeware.net header.b="HV0U9yVD"
+	dkim=pass (1024-bit key) header.d=synology.com header.i=@synology.com header.b="aRG3hRVO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726391AbfAFD2O (ORCPT
+        id S1726414AbfAFDf3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 5 Jan 2019 22:28:14 -0500
-Received: from cock.li ([185.100.85.212]:54556 "EHLO cock.li"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725945AbfAFD2O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 Jan 2019 22:28:14 -0500
-MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=memeware.net; s=mail;
-        t=1546745290; bh=IshA3I77EW+GCUrEcT08PQMBHoYImI9eO/2pvRxdw3w=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=HV0U9yVD4vbPHBKbexkCZIED5yA97SfoQ5UDFxelBS2sZU5h6l9ZB3uk8niqTpD3D
-         b9kQnPMEJD7GWGvP5bVRF+0g/1T4wQdjJ1S6ogaYZ2MStsOTLfCuxT/LYf4xs0CRLN
-         a2O6nX7e9qgRxN31OpY8MlV2xA6c8GFirv0OhZCjIB+/wj4dcAZL1QbOLylbljW8l7
-         QDH+R8f90RFAJ5sKxDhS+Zu0Ty2Xt1TFwbVrQRy2tPU9BzGRIweP+SYvJ61vnVQHJD
-         YzLd/pJawLc+JMsx0xacne11CsPKWazHXEC4cOvwks9W3PoagCos9FLfBffb6b7hdf
-         zGuUnEZtEJHhw==
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date:   Sun, 06 Jan 2019 03:28:09 +0000
-From:   vsnsdualce@memeware.net
-To:     Ivan Ivanov <qmastery16@gmail.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        gentoo-user@lists.gentoo.org, ubuntu-users@lists.ubuntu.com,
-        debian-user@lists.debian.org, freebsd-women@freebsd.org,
-        freebsd-chat@freebsd.org, misc@openbsd.org, esr@thyrsus.com,
-        rms@gnu.org, bruce@perens.com, bkuhn@sfconservancy.org,
-        editor@lwn.net, labbott@redhat.com,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        moglen@columbia.edu
-Subject: Re: (Audio/Video): The Truth about Linux GPLv2 and license recission
- (revocation).
-In-Reply-To: <CAAaskFDsBAN58wPyhpk1O=434enXP_59SbNpeddnPHc0HROOMQ@mail.gmail.com>
-References: <74950d502cd8bd3578d8ac702e2afaa3@memeware.net>
- <CAAaskFDsBAN58wPyhpk1O=434enXP_59SbNpeddnPHc0HROOMQ@mail.gmail.com>
-Message-ID: <0fa885dab86d49ae669d7040a0936ee9@memeware.net>
-X-Sender: vsnsdualce@memeware.net
-User-Agent: Roundcube Webmail/1.3.6
+        Sat, 5 Jan 2019 22:35:29 -0500
+Received: from mail.synology.com ([211.23.38.101]:33937 "EHLO synology.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726070AbfAFDf3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 5 Jan 2019 22:35:29 -0500
+X-Greylist: delayed 356 seconds by postgrey-1.27 at vger.kernel.org; Sat, 05 Jan 2019 22:35:28 EST
+From:   kchen <kchen@synology.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synology.com; s=123;
+        t=1546745366; bh=OqURPaXDX3NaCD71T1pSksMGmTtYDeCPRxX2W8fKqJI=;
+        h=From:To:Cc:Subject:Date;
+        b=aRG3hRVOAZXTJSQMU8zeX9lZFbXI1ZoZcVlhGEvNCx2Rdsg0D3LHIoTDCazIwRFZL
+         jdyccR3nMQJIgp85xQMxqvUahHRV6JIAahng5LDU6JdL8YMMPN2lAZInQwEDt1W9fZ
+         w5D0eII+qiKUsGL7N5xIJVN77xwhn6zx2a7LkLCE=
+To:     nikolay@cumulusnetworks.com
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        JianJhen Chen <kchen@synology.com>
+Subject: [PATCH 1/1] net: bridge: fix a bug on using a neighbour cache entry without checking its state
+Date:   Sun,  6 Jan 2019 11:28:13 +0800
+Message-Id: <1546745293-5678-1-git-send-email-kchen@synology.com>
+X-Synology-MCP-Status: no
+X-Synology-Spam-Flag: no
+X-Synology-Spam-Status: score=0, required 6, WHITELIST_FROM_ADDRESS 0
+X-Synology-Virus-Status: no
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Liveleak took the files down, here they are again:
-Video: https://openload.co/f/mT_AH3xmIUM/TruthAboutLinuxandGPLv2__.mp4
-Audio: https://ufile.io/sdhpl
+From: JianJhen Chen <kchen@synology.com>
 
+When handling DNAT'ed packets on a bridge device, the neighbour cache entry
+from lookup was used without checking its state. It means that a cache entry
+in the NUD_STALE state will be used directly instead of entering the NUD_DELAY
+state to confirm the reachability of the neighbor.
 
-So hard finding "don't need your real contact info" file hosts these 
-days. (And "real contact info" also includes a non-proxy'd IP)
+This problem becomes worse after commit 2724680bceee ("neigh: Keep neighbour
+cache entries if number of them is small enough."), since all neighbour cache
+entries in the NUD_STALE state will be kept in the neighbour table as long as
+the number of cache entries does not exceed the value specified in gc_thresh1.
 
-On 2019-01-04 14:43, Ivan Ivanov wrote:
-> Sadly your informative videos deleted (by NSA?), could you please 
-> reupload?
-> This could be useful for removing your source code if you disagree
-> with Cock of Conduct
-> 
-> пт, 4 янв. 2019 г. в 16:04, <vsnsdualce@memeware.net>:
->> 
->> Information regarding the rights of the linux programmers, regarding
->> rescission (revocation) of their granted license to use their code.
->> 
->> Video:
->> http://www.liveleak.com/view?t=9O5vz_1546606404
->> 
->> ( Audio Only: )
->> (Part1: http://www.liveleak.com/view?t=s3Sr9_1546605652  )
->> (Part2: http://www.liveleak.com/view?t=aOkfS_1546605889  )
->> 
+This commit validates the state of a neighbour cache entry before using
+the entry.
+
+Signed-off-by: JianJhen Chen <kchen@synology.com>
+Reviewed-by: JinLin Chen <jlchen@synology.com>
+---
+ net/bridge/br_netfilter_hooks.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/bridge/br_netfilter_hooks.c b/net/bridge/br_netfilter_hooks.c
+index b1b5e85..ed683e5 100644
+--- a/net/bridge/br_netfilter_hooks.c
++++ b/net/bridge/br_netfilter_hooks.c
+@@ -278,7 +278,7 @@ int br_nf_pre_routing_finish_bridge(struct net *net, struct sock *sk, struct sk_
+ 		struct nf_bridge_info *nf_bridge = nf_bridge_info_get(skb);
+ 		int ret;
+ 
+-		if (neigh->hh.hh_len) {
++		if ((neigh->nud_state & NUD_CONNECTED) && neigh->hh.hh_len) {
+ 			neigh_hh_bridge(&neigh->hh, skb);
+ 			skb->dev = nf_bridge->physindev;
+ 			ret = br_handle_frame_finish(net, sk, skb);
+-- 
+2.7.4
+
