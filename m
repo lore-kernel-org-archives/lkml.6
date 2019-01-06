@@ -2,147 +2,114 @@ Return-Path: <SRS0=QMhl=PO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C65FEC43387
-	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 16:31:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92F78C43387
+	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 16:31:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F1102085A
-	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 16:31:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5FD092085A
+	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 16:31:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="kafZP4HN"
+	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="ddEMDeFM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726467AbfAFQbJ (ORCPT
+        id S1726477AbfAFQb6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 6 Jan 2019 11:31:09 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:56188 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726341AbfAFQbJ (ORCPT
+        Sun, 6 Jan 2019 11:31:58 -0500
+Received: from mta-p8.oit.umn.edu ([134.84.196.208]:57802 "EHLO
+        mta-p8.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726341AbfAFQb6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Jan 2019 11:31:09 -0500
-Received: by mail-it1-f196.google.com with SMTP id m62so7647580ith.5
-        for <linux-kernel@vger.kernel.org>; Sun, 06 Jan 2019 08:31:08 -0800 (PST)
+        Sun, 6 Jan 2019 11:31:58 -0500
+Received: from localhost (unknown [127.0.0.1])
+        by mta-p8.oit.umn.edu (Postfix) with ESMTP id 48F7B747
+        for <linux-kernel@vger.kernel.org>; Sun,  6 Jan 2019 16:31:56 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at umn.edu
+Received: from mta-p8.oit.umn.edu ([127.0.0.1])
+        by localhost (mta-p8.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id u_-8VuSKjizM for <linux-kernel@vger.kernel.org>;
+        Sun,  6 Jan 2019 10:31:56 -0600 (CST)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mta-p8.oit.umn.edu (Postfix) with ESMTPS id 1D59994E
+        for <linux-kernel@vger.kernel.org>; Sun,  6 Jan 2019 10:31:56 -0600 (CST)
+Received: by mail-io1-f70.google.com with SMTP id f24so46316359ioh.21
+        for <linux-kernel@vger.kernel.org>; Sun, 06 Jan 2019 08:31:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=RpNm2IaOF3siha2bkIDP1P0vfouRYq2qejSlkkMzJKo=;
-        b=kafZP4HNAEAQnx+wui8iHMPWYPay7xwNwbhhoR1///YTISjQRDlYNGiRDAxAdFp0fE
-         qNRrcKZ/Ct1QQ+ebCLVk4NZiQSfQb20+rukN5pgkKKKkxn4PoC1max4MsgCYvgXtlqA9
-         H29tuvlHAYzTkmMwMuuCi0+5Gdn4jT84Xnzgo=
+        d=umn.edu; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=l4JDFm4H97lFvVtPf5saGvZZu+kiKNt8Vw3PFyZO5jo=;
+        b=ddEMDeFMdOC7t9w3aaEjvZTKe/Tai/WTMF8L1uRGKZvTbY+sf9j5LvoxyuDZJ7gDB1
+         uIcV79+/IH08TZ2PDlbEP1jsO3Ylh7mRBPosoUfGlUkHHiU48z5swzWfD89MaWvkKqY+
+         97Vc/91YuttMGK0Rx5+YKNKwT20vKBnXy/YmQGw+VJgGU76UtQL64LNSGdwC5vQPlsAO
+         8ypQ6BVGpQaWNYOC/dn2et12nnLI/1aix68bj1XKbIsNOAf0Ofhck+E6kDL2E5Kb2+Wl
+         F37o50Rdj5yd3or3HK0ZXjnltxKbjNwj7z0zVaBU60zwrTjLwhWPiYvlos1BJ9Zi+KYz
+         fTvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RpNm2IaOF3siha2bkIDP1P0vfouRYq2qejSlkkMzJKo=;
-        b=ok3tD6W2PNL5c5khID7ib5kL6ylsBiD7Tjkj1HHF4FTpuGRxosXtfafZkwhNtBAhBA
-         vgmfm4Zh33TKtfaVtkq8Aot6tnBqOgazSqQ+/QjHlhE02f6Saxh7fT6E0iObhW8mTIx0
-         xCHjKAcPPsd5qKiU+VxwyVLT093ooNNd6lYbzybZGqJsHmP675t4W8uC8thpsgSBw15t
-         X80+We+erNlwaT9x57SMeZBr9+TWqebs69eWHDdexOjcf+QwAb/5Q/iWf5I58oP16Z/t
-         X8IamQzwkwLg564IoAN16MVGVP/w8I/k7F9y0U/bmcRT32TngIBVf51s1JqbRs2YKrvb
-         dYyw==
-X-Gm-Message-State: AA+aEWa46AxCL7Wkrqp+OEM+PHUsr6D+d1rmQJHRZbnC1fIgnsLsyWtD
-        WQA1sctUZSULYrfc8ULxMX06AHCH5NnOLBKRnDW/iQ==
-X-Google-Smtp-Source: AFSGD/VmUsm1CGUrMdpHtObGhn5j8zdXwFc8djaRxi4UBlCC4gL55AIaDKBzNkf/T+fDSKH7wLr98CfHH/FjMHkxqWk=
-X-Received: by 2002:a02:781e:: with SMTP id p30mr40814158jac.85.1546792268054;
- Sun, 06 Jan 2019 08:31:08 -0800 (PST)
-MIME-Version: 1.0
-References: <20181220125438.11700-1-jagan@amarulasolutions.com>
- <20181220125438.11700-3-jagan@amarulasolutions.com> <20181221130025.lbvw7yvy74brf3jn@flea>
- <CAMty3ZCG5cF3tP2mid5xyS=yhtxkY+TOcGkwRkv+vrZt1=0iQg@mail.gmail.com>
-In-Reply-To: <CAMty3ZCG5cF3tP2mid5xyS=yhtxkY+TOcGkwRkv+vrZt1=0iQg@mail.gmail.com>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Sun, 6 Jan 2019 22:00:56 +0530
-Message-ID: <CAMty3ZBeopJTm7kUzqarSfqYAJup7B5eqVWPg4aRpgFJOWP7XA@mail.gmail.com>
-Subject: Re: [PATCH v5 2/6] media: sun6i: Add mod_rate quirk
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Yong Deng <yong.deng@magewell.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        linux-media <linux-media@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        linux-amarula@amarulasolutions.com,
-        Michael Trimarchi <michael@amarulasolutions.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=l4JDFm4H97lFvVtPf5saGvZZu+kiKNt8Vw3PFyZO5jo=;
+        b=gRww0w8gtGD3TgxRcNTJUozmogQ6ZepmMxOUVSiDfayx+Gurrvp56fbENqHiEu2Bhn
+         Zm1KKb6R2rFpLW1is9hOuwwKmIGCLFj+uOEG+NoluCibz5V/RX7liR3MiECFjJLEqKPO
+         63hZDFXh2IVYEPLuynwPHl+izQKYpNQJLRCdCb8qPG5/WUjdUXnZx+2Nn9/vg6CX2p8g
+         U0zaVmhKeULo9PkhjtVpq8iWoJWmJUMfNKsIx0cyI81pwZpY798Rz/u3mx1tXdvN8BPn
+         C3MPg5MCOe47CKuv8SHPEk1ydC5EoMAvWzKm5GiTZOo1vINNx+YotoFVY4PVW1DHCEu8
+         RzwA==
+X-Gm-Message-State: AJcUukfQXOeiHh4+PG+skWK9r+A+t6iQPYonDtRGADyPe7Hta2h3AdMv
+        Ohdfj65hCCEywetr+WRdmYogY2ueBQwmjotxBijrVBRTy6zoDhBdeRUMQGLRD85bw61euRPg+9Y
+        0sWJ0ubZh8f/zKXvu1e3pBprUDAUp
+X-Received: by 2002:a24:7d93:: with SMTP id b141mr5304415itc.91.1546792315570;
+        Sun, 06 Jan 2019 08:31:55 -0800 (PST)
+X-Google-Smtp-Source: ALg8bN56Yp4WG8Sd2GuVj9Flyg4+RrCjepqh44IqLp53eg9pMbi2uqDmWy8WsdjE4nW/e95cE1YTdQ==
+X-Received: by 2002:a24:7d93:: with SMTP id b141mr5304405itc.91.1546792315320;
+        Sun, 06 Jan 2019 08:31:55 -0800 (PST)
+Received: from cs-u-syssec1.cs.umn.edu (cs-u-syssec1.cs.umn.edu. [134.84.121.78])
+        by smtp.gmail.com with ESMTPSA id t2sm30654290iob.7.2019.01.06.08.31.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 06 Jan 2019 08:31:54 -0800 (PST)
+From:   Aditya Pakki <pakki001@umn.edu>
+To:     pakki001@umn.edu
+Cc:     kjlu@umn.edu, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] [v2] ALSA: ice1712: fix a missing check of snd_i2c_sendbytes
+Date:   Sun,  6 Jan 2019 10:31:44 -0600
+Message-Id: <20190106163146.9518-1-pakki001@umn.edu>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 24, 2018 at 8:57 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
->
-> On Fri, Dec 21, 2018 at 6:30 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
-> >
-> > On Thu, Dec 20, 2018 at 06:24:34PM +0530, Jagan Teki wrote:
-> > > Unfortunately default CSI_SCLK rate cannot work properly to
-> > > drive the connected sensor interface, particularly on few
-> > > Allwinner SoC's like A64.
-> > >
-> > > So, add mod_rate quirk via driver data so-that the respective
-> > > SoC's which require to alter the default mod clock rate can assign
-> > > the operating clock rate.
-> > >
-> > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> > > ---
-> > >  .../platform/sunxi/sun6i-csi/sun6i_csi.c      | 34 +++++++++++++++----
-> > >  1 file changed, 28 insertions(+), 6 deletions(-)
-> > >
-> > > diff --git a/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c b/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c
-> > > index ee882b66a5ea..fe002beae09c 100644
-> > > --- a/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c
-> > > +++ b/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c
-> > > @@ -15,6 +15,7 @@
-> > >  #include <linux/ioctl.h>
-> > >  #include <linux/module.h>
-> > >  #include <linux/of.h>
-> > > +#include <linux/of_device.h>
-> > >  #include <linux/platform_device.h>
-> > >  #include <linux/pm_runtime.h>
-> > >  #include <linux/regmap.h>
-> > > @@ -28,8 +29,13 @@
-> > >
-> > >  #define MODULE_NAME  "sun6i-csi"
-> > >
-> > > +struct sun6i_csi_variant {
-> > > +     unsigned long                   mod_rate;
-> > > +};
-> > > +
-> > >  struct sun6i_csi_dev {
-> > >       struct sun6i_csi                csi;
-> > > +     const struct sun6i_csi_variant  *variant;
-> > >       struct device                   *dev;
-> > >
-> > >       struct regmap                   *regmap;
-> > > @@ -822,33 +828,43 @@ static int sun6i_csi_resource_request(struct sun6i_csi_dev *sdev,
-> > >               return PTR_ERR(sdev->clk_mod);
-> > >       }
-> > >
-> > > +     if (sdev->variant->mod_rate)
-> > > +             clk_set_rate_exclusive(sdev->clk_mod, sdev->variant->mod_rate);
-> > > +
-> >
-> > It still doesn't make any sense to do it in the probe function...
->
-> I'm not sure we discussed about the context wrt probe, we discussed
-> about exclusive put clock. Since clocks were enabling in set_power and
-> clock rate can be set during probe in single time instead of setting
-> it in set_power for every power enablement. anything wrong with that.
->
-> >
-> > We discussed this in the previous iteration already.
-> >
-> > What we didn't discuss is the variant function that you introduce,
-> > while the previous approach was enough.
->
-> We discussed about clk_rate_exclusive_put, and that even handle it in
-> .remove right? so I have variant to handle it in sun6i_csi_remove.
+snd_i2c_sendbytes could fail. The fix checks its return value: if it
+fails, issues an error message and returns with its error code.
 
-Any comments?
+Signed-off-by: Aditya Pakki <pakki001@umn.edu>
+---
+ sound/pci/ice1712/ews.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/sound/pci/ice1712/ews.c b/sound/pci/ice1712/ews.c
+index b8af747ecb43..7646c93e8268 100644
+--- a/sound/pci/ice1712/ews.c
++++ b/sound/pci/ice1712/ews.c
+@@ -826,7 +826,12 @@ static int snd_ice1712_6fire_read_pca(struct snd_ice1712 *ice, unsigned char reg
+ 
+ 	snd_i2c_lock(ice->i2c);
+ 	byte = reg;
+-	snd_i2c_sendbytes(spec->i2cdevs[EWS_I2C_6FIRE], &byte, 1);
++	if (snd_i2c_sendbytes(spec->i2cdevs[EWS_I2C_6FIRE], &byte, 1)) {
++		snd_i2c_unlock(ice->i2c);
++		dev_err(ice->card->dev, "cannot send pca\n");
++		return -EIO;
++	}
++
+ 	byte = 0;
+ 	if (snd_i2c_readbytes(spec->i2cdevs[EWS_I2C_6FIRE], &byte, 1) != 1) {
+ 		snd_i2c_unlock(ice->i2c);
+-- 
+2.17.1
+
