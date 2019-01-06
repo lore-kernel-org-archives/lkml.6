@@ -2,169 +2,229 @@ Return-Path: <SRS0=QMhl=PO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C4BCC43387
-	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 13:25:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7895FC43444
+	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 13:31:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6597820663
-	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 13:25:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 458C82070B
+	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 13:31:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726448AbfAFNZO (ORCPT
+        id S1726423AbfAFNbF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 6 Jan 2019 08:25:14 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:59162 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726336AbfAFNZN (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Sun, 6 Jan 2019 08:25:13 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5068586675;
-        Sun,  6 Jan 2019 13:25:13 +0000 (UTC)
-Received: from krava (ovpn-204-49.brq.redhat.com [10.40.204.49])
-        by smtp.corp.redhat.com (Postfix) with SMTP id AA1395D9CB;
-        Sun,  6 Jan 2019 13:25:10 +0000 (UTC)
-Date:   Sun, 6 Jan 2019 14:25:09 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     "Jin, Yao" <yao.jin@linux.intel.com>
-Cc:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com,
-        Linux-kernel@vger.kernel.org, ak@linux.intel.com,
-        kan.liang@intel.com, yao.jin@intel.com
-Subject: Re: [PATCH] perf stat: Poll for monitored tasks being alive in fork
- mode
-Message-ID: <20190106132509.GA31228@krava>
-References: <1546568897-16123-1-git-send-email-yao.jin@linux.intel.com>
- <20190104125441.GF5481@krava>
- <ec011f77-e08e-4471-4479-0cb0281fa79b@linux.intel.com>
+        Sun, 6 Jan 2019 08:31:05 -0500
+Received: from mail-io1-f70.google.com ([209.85.166.70]:39134 "EHLO
+        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726336AbfAFNbE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Jan 2019 08:31:04 -0500
+Received: by mail-io1-f70.google.com with SMTP id q23so46026963ior.6
+        for <linux-kernel@vger.kernel.org>; Sun, 06 Jan 2019 05:31:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=U6ZAiz8PM2lv1eqCmfc7bB55uxu/ZeZ3gJGG8MVX+AQ=;
+        b=TS7zLRHUN0SH7Ct/Z713HzelccRdGrJh5LbijG444mXQrTHtEFAnWc0W3yOxGNhy1j
+         PQaM5e9V29SrsLO9naPRiMBKcVlBz+BQ0bun6cjikAPVsJhvKQa3N9KTPdoyC6wRW9Eo
+         Bu6K5Xfa5Z8K9oTfOLKi+pjVcqaF+wuBV/lgk718XUJrMzr216L7YJnuq9GKluxEQjBo
+         4uGM4d7lMP9prKyT61GHSRqZEe1M8pQ1nydzViDaLwBoTqwLeMx33xscDmUBQs702TRy
+         fmVTp4mSws1LRXrOFcwWTH296ZPtHB2/G5jmnRoBvTYLIdvr3+Ut+0Jzp5Jwv/eimejv
+         75Ow==
+X-Gm-Message-State: AJcUukeZT7VghAqEwD+OCFFn6eCzSFI8x4CDLB34y3CNXUSmHYVyZAKy
+        wLJgUlWQZYI2H7QLrf+tp2oMRJVT3rywCylxmr1blOEXgd6r
+X-Google-Smtp-Source: ALg8bN7U/3u9LgB0McW/mapeC9QnXkbgg38Ap5yiMnk3Eyf8irSegakaT2Qoh2m/4zcqnJu5Ii+wWMJ0ckZ+2u6BshBEy0gfIkBG
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ec011f77-e08e-4471-4479-0cb0281fa79b@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Sun, 06 Jan 2019 13:25:13 +0000 (UTC)
+X-Received: by 2002:a02:8785:: with SMTP id t5mr10930781jai.10.1546781463550;
+ Sun, 06 Jan 2019 05:31:03 -0800 (PST)
+Date:   Sun, 06 Jan 2019 05:31:03 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ae2357057eca1fa5@google.com>
+Subject: KASAN: stack-out-of-bounds Read in check_stack_object
+From:   syzbot <syzbot+05fc3a636f5ee8830a99@syzkaller.appspotmail.com>
+To:     crecklin@redhat.com, keescook@chromium.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jan 05, 2019 at 11:16:40AM +0800, Jin, Yao wrote:
-> 
-> 
-> On 1/4/2019 8:54 PM, Jiri Olsa wrote:
-> > On Fri, Jan 04, 2019 at 10:28:17AM +0800, Jin Yao wrote:
-> > > Following test shows the stat keeps running even if no longer
-> > > task to monitor (mgen exits at ~5s).
-> > > 
-> > > perf stat -e cycles -p `pgrep mgen` -I1000 -- sleep 10
-> > >              time             counts unit events
-> > >       1.000148916      1,308,365,864      cycles
-> > >       2.000379171      1,297,269,875      cycles
-> > >       3.000556719      1,297,187,078      cycles
-> > >       4.000914241        761,261,827      cycles
-> > >       5.001306091      <not counted>      cycles
-> > >       6.001676881      <not counted>      cycles
-> > >       7.002046336      <not counted>      cycles
-> > >       8.002405651      <not counted>      cycles
-> > >       9.002766625      <not counted>      cycles
-> > >      10.001395827      <not counted>      cycles
-> > > 
-> > > We'd better finish stat immediately if there's no longer task to
-> > > monitor.
-> > > 
-> > > After:
-> > > 
-> > > perf stat -e cycles -p `pgrep mgen` -I1000 -- sleep 10
-> > >              time             counts unit events
-> > >       1.000180062      1,236,592,661      cycles
-> > >       2.000421539      1,223,733,572      cycles
-> > >       3.000609910      1,297,047,663      cycles
-> > >       4.000807545      1,297,215,816      cycles
-> > >       5.001001578      1,297,208,032      cycles
-> > >       6.001390345        582,343,659      cycles
-> > > sleep: Terminated
-> > > 
-> > > Now the stat exits immediately when the monitored tasks ends.
-> > > 
-> > > Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
-> > > ---
-> > >   tools/perf/builtin-stat.c | 7 +++++++
-> > >   1 file changed, 7 insertions(+)
-> > > 
-> > > diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-> > > index 63a3afc..71f3bc8 100644
-> > > --- a/tools/perf/builtin-stat.c
-> > > +++ b/tools/perf/builtin-stat.c
-> > > @@ -553,6 +553,13 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
-> > >   		if (interval || timeout) {
-> > >   			while (!waitpid(child_pid, &status, WNOHANG)) {
-> > > +				if (!is_target_alive(&target,
-> > > +					evsel_list->threads) &&
-> > > +					(child_pid != -1)) {
-> > 
-> > do we need that child_pid check? we just returned from waitpid
-> > so we should be ok.. we just make the race window smaller
-> > 
-> > could we just do:
-> > 
-> > 				if (!is_target_alive(&target, evsel_list->threads)) {
-> > 					kill(child_pid, SIGTERM);
-> > 					break;
-> > 				}
-> > 
-> 
-> I think this code should be OK and I have tested yet. I have a question
-> about the race condition, we really don't need a lock to protect the
-> child_pid?
-> 
-> skip_signal()
-> {
-> 	/*
-> 	 * render child_pid harmless
-> 	 * won't send SIGTERM to a random
-> 	 * process in case of race condition
-> 	 * and fast PID recycling
-> 	 */
-> 	child_pid = -1;
-> }
-> 
-> __run_perf_stat()
-> {
-> 	....
-> 	kill(child_pid, SIGTERM);
-> }
-> 
-> If child_pid is set by -1 in a small window between checking of child_pid
-> and kill(), then kill(-1, SIGTERM) may happen. All processes except the kill
-> process itself and init would receive SIGTERM.
+Hello,
 
-ah right, -1 is special.. however that can still happen also
-in the orginal patch.. how about we do something like below
+syzbot found the following crash on:
 
-jirka
+HEAD commit:    3fed6ae4b027 ia64: fix compile without swiotlb
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=161ce1d7400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7308e68273924137
+dashboard link: https://syzkaller.appspot.com/bug?extid=05fc3a636f5ee8830a99
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+userspace arch: i386
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10b3769f400000
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+05fc3a636f5ee8830a99@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+DEBUG_LOCKS_WARN_ON(current->hardirq_context)
+------------[ cut here ]------------
+Bad or missing usercopy whitelist? Kernel memory overwrite attempt detected  
+to SLAB object 'task_struct' (offset 912, size 2)!
+==================================================================
+BUG: KASAN: stack-out-of-bounds in task_stack_page  
+include/linux/sched/task_stack.h:21 [inline]
+BUG: KASAN: stack-out-of-bounds in check_stack_object+0x14e/0x160  
+mm/usercopy.c:39
+list_add corruption. next->prev should be prev (ffff8880ae62d8d8), but was  
+0000000000000000. (next=ffff8880a94642f0).
+Read of size 8 at addr ffff8880a9464258 by task /-1455013312
+------------[ cut here ]------------
+
+kernel BUG at lib/list_debug.c:23!
+CPU: 0 PID: -1455013312 Comm:  Not tainted 4.20.0+ #10
+invalid opcode: 0000 [#1] PREEMPT SMP KASAN
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+CPU: 1 PID: 5941 Comm: syz-executor1 Not tainted 4.20.0+ #10
+Call Trace:
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+
+RIP: 0010:__list_add_valid.cold+0xf/0x3c lib/list_debug.c:23
+Allocated by task 2570092928:
+Code: 34 fe eb d5 4c 89 e7 e8 2a dd 34 fe eb a3 4c 89 f7 e8 20 dd 34 fe e9  
+56 ff ff ff 4c 89 e1 48 c7 c7 60 b4 81 88 e8 f0 2d d7 fd <0f> 0b 48 89 f2  
+4c 89 e1 4c 89 ee 48 c7 c7 a0 b5 81 88 e8 d9 2d d7
+RSP: 0018:ffff8880ae707770 EFLAGS: 00010086
+RAX: 0000000000000075 RBX: ffff8880a3260730 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffffffff81684c16 RDI: ffffed1015ce0ee0
+RBP: ffff8880ae707788 R08: 0000000000000075 R09: ffffed1015ce5021
+R10: ffffed1015ce5020 R11: ffff8880ae728107 R12: ffff8880a94642f0
+R13: ffff8880a3260730 R14: ffff8880ae62d8d8 R15: ffff8880ae707ad0
+FS:  0000000000000000(0000) GS:ffff8880ae700000(0063) knlGS:00000000f7fbbb40
+CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
+CR2: 0000000000625208 CR3: 00000000a57b8000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  <IRQ>
+  __list_add include/linux/list.h:60 [inline]
+  list_add include/linux/list.h:79 [inline]
+  list_move include/linux/list.h:171 [inline]
+  detach_tasks kernel/sched/fair.c:7557 [inline]
+  load_balance+0x1bdd/0x39d0 kernel/sched/fair.c:8979
+  rebalance_domains+0x815/0xf00 kernel/sched/fair.c:9366
+  run_rebalance_domains+0x376/0x4e0 kernel/sched/fair.c:9986
+  __do_softirq+0x30b/0xb11 kernel/softirq.c:292
+  invoke_softirq kernel/softirq.c:373 [inline]
+  irq_exit+0x180/0x1d0 kernel/softirq.c:413
+  exiting_irq arch/x86/include/asm/apic.h:536 [inline]
+  smp_apic_timer_interrupt+0x1b7/0x760 arch/x86/kernel/apic/apic.c:1062
+  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:807
+  </IRQ>
+RIP: 0010:update_stack_state+0x24c/0x680 arch/x86/kernel/unwind_frame.c:244
+Code: 48 b9 00 00 00 00 00 fc ff df 4c 89 f6 48 c1 ee 03 80 3c 0e 00 0f 85  
+b3 03 00 00 48 39 9d 30 ff ff ff 4d 8b 67 40 40 0f 97 c6 <4d> 85 e4 0f 95  
+c1 40 84 ce 74 0c 39 85 44 ff ff ff 0f 84 68 01 00
+RSP: 0018:ffff88809870e768 EFLAGS: 00000283 ORIG_RAX: ffffffffffffff13
+RAX: 0000000000000001 RBX: ffff88809870ec58 RCX: dffffc0000000000
+RDX: ffff888098708000 RSI: 1ffff110130e1d00 RDI: ffff88809870e968
+RBP: ffff88809870e850 R08: 0000000000000001 R09: ffff88809870e9a8
+R10: ffff88809870e980 R11: ffff88809870e990 R12: ffff88809870e948
+R13: dffffc0000000000 R14: ffff88809870e998 R15: ffff88809870e958
+  unwind_next_frame.part.0+0x1ae/0xa90 arch/x86/kernel/unwind_frame.c:329
+  unwind_next_frame+0x3b/0x50 arch/x86/kernel/unwind_frame.c:287
+  __save_stack_trace+0x7a/0xf0 arch/x86/kernel/stacktrace.c:44
+  save_stack_trace+0x1a/0x20 arch/x86/kernel/stacktrace.c:60
+  save_stack+0x45/0xd0 mm/kasan/common.c:73
+  set_track mm/kasan/common.c:85 [inline]
+  kasan_kmalloc mm/kasan/common.c:482 [inline]
+  kasan_kmalloc+0xcf/0xe0 mm/kasan/common.c:455
+  kasan_slab_alloc+0xf/0x20 mm/kasan/common.c:397
+  slab_post_alloc_hook mm/slab.h:444 [inline]
+  slab_alloc_node mm/slab.c:3322 [inline]
+  kmem_cache_alloc_node_trace+0x13c/0x720 mm/slab.c:3648
+  __do_kmalloc_node mm/slab.c:3670 [inline]
+  __kmalloc_node_track_caller+0x3d/0x70 mm/slab.c:3685
+  __kmalloc_reserve.isra.0+0x40/0xe0 net/core/skbuff.c:140
+  __alloc_skb+0x12d/0x730 net/core/skbuff.c:208
+  alloc_skb include/linux/skbuff.h:1011 [inline]
+  alloc_skb_with_frags+0x13a/0x770 net/core/skbuff.c:5288
+  sock_alloc_send_pskb+0x8c9/0xad0 net/core/sock.c:2091
+  sock_alloc_send_skb+0x32/0x40 net/core/sock.c:2108
+  __ip6_append_data.isra.0+0x2556/0x3f20 net/ipv6/ip6_output.c:1443
+  ip6_make_skb+0x391/0x5f0 net/ipv6/ip6_output.c:1806
+  udpv6_sendmsg+0x2b58/0x3550 net/ipv6/udp.c:1460
+  inet_sendmsg+0x1af/0x740 net/ipv4/af_inet.c:798
+  sock_sendmsg_nosec net/socket.c:621 [inline]
+  sock_sendmsg+0xdd/0x130 net/socket.c:631
+  ___sys_sendmsg+0x409/0x910 net/socket.c:2116
+  __sys_sendmmsg+0x3bc/0x730 net/socket.c:2204
+  __compat_sys_sendmmsg net/compat.c:771 [inline]
+  __do_compat_sys_sendmmsg net/compat.c:778 [inline]
+  __se_compat_sys_sendmmsg net/compat.c:775 [inline]
+  __ia32_compat_sys_sendmmsg+0x9f/0x100 net/compat.c:775
+  do_syscall_32_irqs_on arch/x86/entry/common.c:326 [inline]
+  do_fast_syscall_32+0x333/0xf98 arch/x86/entry/common.c:397
+  entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
+RIP: 0023:0xf7fbf869
+Code: 85 d2 74 02 89 0a 5b 5d c3 8b 04 24 c3 8b 14 24 c3 8b 3c 24 c3 90 90  
+90 90 90 90 90 90 90 90 90 90 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90  
+90 90 90 eb 0d 90 90 90 90 90 90 90 90 90 90 90 90
+RSP: 002b:00000000f7fbb0cc EFLAGS: 00000296 ORIG_RAX: 0000000000000159
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000020005fc0
+RDX: 00000000000000fc RSI: 0000000008000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+Modules linked in:
+---[ end trace e0e50d48068f1e3d ]---
+BUG: unable to handle kernel paging request at ffffffff8cf14780
+#PF error: [normal kernel read fault]
+RIP: 0010:__list_add_valid.cold+0xf/0x3c lib/list_debug.c:23
+PGD 9874067 P4D 9874067 PUD 9875063 PMD 0
+Code: 34 fe eb d5 4c 89 e7 e8 2a dd 34 fe eb a3 4c 89 f7 e8 20 dd 34 fe e9  
+56 ff ff ff 4c 89 e1 48 c7 c7 60 b4 81 88 e8 f0 2d d7 fd <0f> 0b 48 89 f2  
+4c 89 e1 4c 89 ee 48 c7 c7 a0 b5 81 88 e8 d9 2d d7
+Thread overran stack, or stack corrupted
+RSP: 0018:ffff8880ae707770 EFLAGS: 00010086
+Oops: 0000 [#2] PREEMPT SMP KASAN
+RAX: 0000000000000075 RBX: ffff8880a3260730 RCX: 0000000000000000
+CPU: 0 PID: -1455013312 Comm:  Tainted: G      D           4.20.0+ #10
+RDX: 0000000000000000 RSI: ffffffff81684c16 RDI: ffffed1015ce0ee0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RBP: ffff8880ae707788 R08: 0000000000000075 R09: ffffed1015ce5021
+RIP: 0010:depot_fetch_stack+0x10/0x30 lib/stackdepot.c:202
+R10: ffffed1015ce5020 R11: ffff8880ae728107 R12: ffff8880a94642f0
+Code: e6 72 22 fe e9 20 fe ff ff 48 89 df e8 d9 72 22 fe e9 f1 fd ff ff 90  
+90 90 90 89 f8 c1 ef 11 25 ff ff 1f 00 81 e7 f0 3f 00 00 <48> 03 3c c5 80  
+03 f5 8b 8b 47 0c 48 83 c7 18 c7 46 10 00 00 00 00
+R13: ffff8880a3260730 R14: ffff8880ae62d8d8 R15: ffff8880ae707ad0
+RSP: 0018:ffff8880a9463fb8 EFLAGS: 00010006
+FS:  0000000000000000(0000) GS:ffff8880ae700000(0063) knlGS:00000000f7fbbb40
+RAX: 00000000001f8880 RBX: ffff8880a9465a04 RCX: 0000000000000000
+CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
+RDX: 0000000000000000 RSI: ffff8880a9463fc0 RDI: 0000000000003ff0
+CR2: 0000000000625208 CR3: 00000000a57b8000 CR4: 00000000001406e0
+RBP: ffff8880a9463fe8 R08: 000000000000001d R09: ffffed1015cc3ef9
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+R10: ffffed1015cc3ef8 R11: ffff8880ae61f7c7 R12: ffffea0002a51900
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+R13: ffff8880a9464258 R14: ffff8880aa13d900 R15: ffff8880a9465a00
 
 
 ---
-diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-index acfd48db52dd..c322cb271180 100644
---- a/tools/perf/builtin-stat.c
-+++ b/tools/perf/builtin-stat.c
-@@ -583,6 +583,14 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
- 
- 		if (interval || timeout) {
- 			while (!waitpid(child_pid, &status, WNOHANG)) {
-+				if (!is_target_alive(&target, evsel_list->threads)) {
-+					int pid = child_pid;
-+
-+					if (pid != -1)
-+						kill(pid, SIGTERM);
-+					break;
-+				}
-+
- 				nanosleep(&ts, NULL);
- 				if (timeout)
- 					break;
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
