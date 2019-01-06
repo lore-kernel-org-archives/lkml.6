@@ -2,185 +2,181 @@ Return-Path: <SRS0=QMhl=PO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3332BC43613
-	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 14:06:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37856C43612
+	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 14:09:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0F872085A
-	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 14:06:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="R7PyxDg3"
+	by mail.kernel.org (Postfix) with ESMTP id 0C9452085A
+	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 14:09:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726478AbfAFOGA (ORCPT
+        id S1726430AbfAFOJg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 6 Jan 2019 09:06:00 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:47031 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726336AbfAFOF7 (ORCPT
+        Sun, 6 Jan 2019 09:09:36 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:44618 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726399AbfAFOJf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Jan 2019 09:05:59 -0500
-Received: by mail-ed1-f65.google.com with SMTP id o10so35546207edt.13
-        for <linux-kernel@vger.kernel.org>; Sun, 06 Jan 2019 06:05:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=2ftKobouv3Xr94oq8McoPtH22MpjL1yw/58eZ8gL10I=;
-        b=R7PyxDg3TAsoYZ6zw5gvF01F8dpwHZNLSL780S4wB/mfy4vLzvJN5ZLksNAm1rK39b
-         6BtOmoeiuVZhnlVX+af574340wuMYIZU2QKGIly3eHBIG1iPDMT8u1BUMskukrvJ+v+J
-         8867e3ZmeVt3bXV/Qnd088bpiCUMq2OuRwiOo68pOKCgWwKnXGg4dF91igrzTGQLD+bj
-         WSyhJKvKSVoNdTIFwPV8qwfrYa0zbJ6Z5xb1HrR4zUGTJqt7w8aBwupmHpdv8Ziw8onC
-         h9CBqc+cv3aoLlZJhMErnUX3Xi5dZgauhwtLyARouX9bDE7s6y9p0GbUMgPwPc6ja3Fk
-         9q3A==
+        Sun, 6 Jan 2019 09:09:35 -0500
+Received: by mail-pg1-f193.google.com with SMTP id t13so19533164pgr.11
+        for <linux-kernel@vger.kernel.org>; Sun, 06 Jan 2019 06:09:35 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=2ftKobouv3Xr94oq8McoPtH22MpjL1yw/58eZ8gL10I=;
-        b=erdqx1pRwilqC3mJFSaTY31J7BNy9rdTtdoStXQ9rH7WCDChx90zdRIie64Ri9hvZe
-         cCLN63NjQuXJhBnM5heVLvga7kuH6yr8ixCN/OKXUf8RBACGNUXf8cDPrfvW58fno8L0
-         BMuruI5tMvjifkKMAstHIZYaKM3HjSCdMlj/R4UlCy4NGPUaUWV4wJ4slESctulZINtB
-         3o3wPcJH951GMsY/YYDIL/PinSIf/7be21FqDCUx/BRid2sTcluOE5KpoNN1UMwE0ciN
-         c1SE9SpOnBqMyBdCRd6Zfy+4zoyBNtMC4nCNixhXVYrtaEDal4hRErQuAoG7rC6XR03Y
-         obvA==
-X-Gm-Message-State: AA+aEWZGp7ORlFZsRxInMfAsLREZhbNKcPABXfljyebPl3VqAkrwhPfL
-        ptky04RRH3IktWJNdFz2W3/Sdw==
-X-Google-Smtp-Source: AFSGD/XDMobth7rSSZ+4NkJIkzsVbcaH7xcVBSM6bNiDh6Eli7r0YmTt7jOW9AlqGgoC3+UilFNP9Q==
-X-Received: by 2002:a50:b744:: with SMTP id g62mr53661832ede.14.1546783557013;
-        Sun, 06 Jan 2019 06:05:57 -0800 (PST)
-Received: from localhost.localdomain ([2a02:8109:b6c0:d6c:9810:663f:f898:8929])
-        by smtp.gmail.com with ESMTPSA id m13sm26984984edd.2.2019.01.06.06.05.56
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=rgd6dB84Md44yvPvtVZ2yuH/V3ZSZBiAqn99ljefJz4=;
+        b=hG0/IQvStOFv36UueMd2PcxleLNRcEwkttzmFMZD4n7G4Fjgf42qxFOAqu3HKeN9Wu
+         XzEl0KcsvLzFBNdOOZOPwmXoLzDygMOb2zVdu+y35eA3eMtlHEKhNnCziw7fEodiL1Ss
+         O+HCWVUoYEAg/UWtAs3xAjd+hbqI+BYiJ0H4AU0UA3xqh4ss/PsUo2oRRUNJIUgglx8y
+         XEojAQF0AWd92vZvd3+1AiEGzrRXKi4VdNnRNdBt3GK8JRYUDTa38gzr+VM8hBZzVoKu
+         oXib13GzzJu3IMlEyomXs2+3qH3HNYikiClT/n4G0VF1+X+jvEzOnOWO5MJiiN1mqclX
+         o4Lg==
+X-Gm-Message-State: AJcUukfisZXDdtu2cBOb5pY3KX1hvsxT83JqyacBnBPzDJw+0+0UawO1
+        NPG0M4scxTGp1fBAIYpQs2wUMQ==
+X-Google-Smtp-Source: ALg8bN5ThljOhw8ZKeWDldbv/jHxdle6qABB21gIye9ibmfGRyl8Ttta1SfFbm8zCiQmoD8fNBMPxw==
+X-Received: by 2002:a63:85c6:: with SMTP id u189mr7550036pgd.156.1546783774636;
+        Sun, 06 Jan 2019 06:09:34 -0800 (PST)
+Received: from bsingh.kernel.org ([125.16.97.119])
+        by smtp.gmail.com with ESMTPSA id o7sm86105875pfb.34.2019.01.06.06.09.31
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 06 Jan 2019 06:05:56 -0800 (PST)
-From:   Christian Brauner <christian@brauner.io>
-To:     gregkh@linuxfoundation.org, tkjos@android.com,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Cc:     arve@android.com, maco@android.com, joel@joelfernandes.org,
-        tkjos@google.com, Christian Brauner <christian@brauner.io>
-Subject: [PATCH 2/2] binderfs: make each binderfs mount a new instance
-Date:   Sun,  6 Jan 2019 15:05:41 +0100
-Message-Id: <20190106140541.16442-3-christian@brauner.io>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190106140541.16442-1-christian@brauner.io>
-References: <20190106140541.16442-1-christian@brauner.io>
+        Sun, 06 Jan 2019 06:09:33 -0800 (PST)
+Subject: Re: [PATCH v2] hpet: Fix missing '=' character in the __setup() code
+ of hpet_mmap_enable
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Greg KH <gregkh@linuxfoundation.org>, clemens@ladisch.de,
+        arnd@arndb.de, prarit@redhat.com
+References: <20181220120524.30732-1-bsingh@redhat.com>
+ <20181220122932.GB17138@kroah.com>
+ <a9704df4-53ee-5b12-2ab1-477fb7e8f083@redhat.com>
+ <20181220140951.GB8621@kroah.com>
+ <04420337-0df1-73ee-69d7-aa39232f495a@redhat.com>
+ <20181221124603.GA7723@kroah.com>
+From:   Buland Singh <bsingh@redhat.com>
+Message-ID: <7ee186c2-dba9-983c-89d1-4c7e66a6f7fb@redhat.com>
+Date:   Sun, 6 Jan 2019 19:39:29 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-X-Patchwork-Bot: notify
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181221124603.GA7723@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When currently mounting binderfs in the same ipc namespace twice:
+On 12/21/18 6:16 PM, Greg KH wrote:
+> On Fri, Dec 21, 2018 at 05:48:38PM +0530, Buland Singh wrote:
+>> On 12/20/18 7:39 PM, Greg KH wrote:
+>>> On Thu, Dec 20, 2018 at 07:12:55PM +0530, Buland Singh wrote:
+>>>> On 12/20/18 5:59 PM, Greg KH wrote:
+>>>>> On Thu, Dec 20, 2018 at 05:35:24PM +0530, Buland Singh wrote:
+>>>>>> Commit '3d035f580699 ("drivers/char/hpet.c: allow user controlled mmap for
+>>>>>> user processes")' introduced a new kernel command line parameter hpet_mmap,
+>>>>>> that is required to expose the memory map of the HPET registers to
+>>>>>> user-space. Unfortunately the kernel command line parameter 'hpet_mmap' is
+>>>>>> broken and never takes effect due to missing '=' character in the __setup()
+>>>>>> code of hpet_mmap_enable.
+>>>>>>
+>>>>>> Before this patch:
+>>>>>>
+>>>>>> dmesg output with the kernel command line parameter hpet_mmap=1
+>>>>>>
+>>>>>> [    0.204152] HPET mmap disabled
+>>>>>>
+>>>>>> dmesg output with the kernel command line parameter hpet_mmap=0
+>>>>>>
+>>>>>> [    0.204192] HPET mmap disabled
+>>>>>>
+>>>>>> After this patch:
+>>>>>>
+>>>>>> dmesg output with the kernel command line parameter hpet_mmap=1
+>>>>>>
+>>>>>> [    0.203945] HPET mmap enabled
+>>>>>>
+>>>>>> dmesg output with the kernel command line parameter hpet_mmap=0
+>>>>>>
+>>>>>> [    0.204652] HPET mmap disabled
+>>>>>>
+>>>>>> Fixes: 3d035f580699 ("drivers/char/hpet.c: allow user controlled mmap for user processes")
+>>>>>> Signed-off-by: Buland Singh <bsingh@redhat.com>
+>>>>>> ---
+>>>>>>     drivers/char/hpet.c | 2 +-
+>>>>>>     1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>>>
+>>>>>> diff --git a/drivers/char/hpet.c b/drivers/char/hpet.c
+>>>>>> index 4a22b4b41aef..9bffcd37cc7b 100644
+>>>>>> --- a/drivers/char/hpet.c
+>>>>>> +++ b/drivers/char/hpet.c
+>>>>>> @@ -377,7 +377,7 @@ static __init int hpet_mmap_enable(char *str)
+>>>>>>     	pr_info("HPET mmap %s\n", hpet_mmap_enabled ? "enabled" : "disabled");
+>>>>>>     	return 1;
+>>>>>>     }
+>>>>>> -__setup("hpet_mmap", hpet_mmap_enable);
+>>>>>> +__setup("hpet_mmap=", hpet_mmap_enable);
+>>>>
+>>>> Hello Greag,
+>>>>
+>>>>> This has _never_ worked?  Since 3.13?
+>>>>
+>>>> Yes, that's true :)
+>>>>
+>>>>> Why not just remove the thing as it is obvious no one actually has ever used it.  > That would make the code even simpler :)
+>>>>
+>>>> Data Plane Development Kit (DPDK)[1] provides API that requires the CONFIG_HPET_MMAP
+>>>> kernel configuration option to be enabled[2]. Some end users might want to use the
+>>>> HPET MMAP functionality within the application.
+>>>
+>>> But, obviously, they really don't need to do that from the kernel
+>>> command line as no one has ever noticed this didn't work :)
+>>>
+>>> Also, that page:
+>>>
+>>>> [2] https://doc.dpdk.org/guides-18.08/linux_gsg/enable_func.html
+>>>
+>>> Does not say to use this command line option either.  So if no one has
+>>> ever used it, please, let us just delete it.
+>>>
+>>> thanks,
+>>>
+>>> greg k-h
+>>>
+>>
+>> Hello Greg,
+>> It is better to allow a user to 'enable/disable' the HPET mmap from the
+>> kernel command line as per the requirement rather than recompiling the
+>> kernel to 'enable/disable' this functionality.
+> 
+> It might be "nice" but given that no one has noticed that this has never
+> worked, for all of the years that this has been present, that means to
+> me that no one has ever tried it because they really do not "need" it.
+> 
+>> Also as per the description in the initial patch (commit 3d035f58), the
+>> 'CONFIG_HPET_MMAP' Kconfig option has a security risk involved. Hence,
+>> keeping the CONFIG_HPET_MMAP_DEFAULT (disabled) and allowing a user to
+>> alter the default behavior using the kernel command line parameter
+>> hpet_mmap is a better solution.
+> 
+> Again, because no one has ever noticed that this was not working, why
+> not just rip it out until someone speaks up as to why they have to have
+> this feature and the other alternatives do not work for them?
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-mount -t binder binder /A
-mount -t binder binder /B
+Hello,
 
-then the binderfs instances mounted on /A and /B will be the same, i.e.
-they will have the same superblock. This was the first approach that seemed
-reasonable. However, this leads to some problems and inconsistencies:
+Adding Prarit to cc list for his opinion.
 
-/* private binderfs instance in same ipc namespace */
-There is no way for a user to request a private binderfs instance in the
-same ipc namespace.
-This request has been made in a private mail to me by two independent
-people.
+Regards,
+--
+Buland Singh
 
-/* bind-mounts */
-If users want the same binderfs instance to appear in multiple places they
-can use bind mounts. So there is no value in having a request for a new
-binderfs mount giving them the same instance.
 
-/* unexpected behavior */
-It's surprising that request to mount binderfs is not giving the user a new
-instance like tmpfs, devpts, ramfs, and others do.
-
-/* past mistakes */
-Other pseudo-filesystems once made the same mistakes of giving back the
-same superblock when actually requesting a new mount (cf. devpts's
-deprecated "newinstance" option).
-We should not make the same mistake. Once we've committed to always giving
-back the same superblock in the same IPC namespace with the next kernel
-release we will not be able to make that change so better to do it now.
-
-/* kdbusfs */
-It was pointed out to me that kdbusfs - which is conceptually closely
-related to binderfs - also allowed users to get a private kdbusfs instance
-in the same IPC namespace by making each mount of kdbusfs a separate
-instance. I think that makes a lot of sense.
-
-Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
----
- drivers/android/binderfs.c | 41 ++------------------------------------
- 1 file changed, 2 insertions(+), 39 deletions(-)
-
-diff --git a/drivers/android/binderfs.c b/drivers/android/binderfs.c
-index 6f68d6217eb3..4990d65d4850 100644
---- a/drivers/android/binderfs.c
-+++ b/drivers/android/binderfs.c
-@@ -379,7 +379,7 @@ static int binderfs_fill_super(struct super_block *sb, void *data, int silent)
- 	struct binderfs_info *info;
- 	int ret = -ENOMEM;
- 	struct inode *inode = NULL;
--	struct ipc_namespace *ipc_ns = sb->s_fs_info;
-+	struct ipc_namespace *ipc_ns = current->nsproxy->ipc_ns;
- 
- 	get_ipc_ns(ipc_ns);
- 
-@@ -450,48 +450,11 @@ static int binderfs_fill_super(struct super_block *sb, void *data, int silent)
- 	return ret;
- }
- 
--static int binderfs_test_super(struct super_block *sb, void *data)
--{
--	struct binderfs_info *info = sb->s_fs_info;
--
--	if (info)
--		return info->ipc_ns == data;
--
--	return 0;
--}
--
--static int binderfs_set_super(struct super_block *sb, void *data)
--{
--	sb->s_fs_info = data;
--	return set_anon_super(sb, NULL);
--}
--
- static struct dentry *binderfs_mount(struct file_system_type *fs_type,
- 				     int flags, const char *dev_name,
- 				     void *data)
- {
--	struct super_block *sb;
--	struct ipc_namespace *ipc_ns = current->nsproxy->ipc_ns;
--
--	if (!ns_capable(ipc_ns->user_ns, CAP_SYS_ADMIN))
--		return ERR_PTR(-EPERM);
--
--	sb = sget_userns(fs_type, binderfs_test_super, binderfs_set_super,
--			 flags, ipc_ns->user_ns, ipc_ns);
--	if (IS_ERR(sb))
--		return ERR_CAST(sb);
--
--	if (!sb->s_root) {
--		int ret = binderfs_fill_super(sb, data, flags & SB_SILENT ? 1 : 0);
--		if (ret) {
--			deactivate_locked_super(sb);
--			return ERR_PTR(ret);
--		}
--
--		sb->s_flags |= SB_ACTIVE;
--	}
--
--	return dget(sb->s_root);
-+	return mount_nodev(fs_type, flags, data, binderfs_fill_super);
- }
- 
- static void binderfs_kill_super(struct super_block *sb)
--- 
-2.19.1
 
