@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF844C43387
-	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 13:36:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 303F2C43387
+	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 13:37:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADF622070B
-	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 13:36:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 099172070B
+	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 13:36:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726471AbfAFNgz (ORCPT
+        id S1726494AbfAFNg6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 6 Jan 2019 08:36:55 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:53002 "EHLO
+        Sun, 6 Jan 2019 08:36:58 -0500
+Received: from vmicros1.altlinux.org ([194.107.17.57]:53102 "EHLO
         vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726399AbfAFNgx (ORCPT
+        with ESMTP id S1726336AbfAFNgy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Jan 2019 08:36:53 -0500
+        Sun, 6 Jan 2019 08:36:54 -0500
 Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 2903872CC6D;
-        Sun,  6 Jan 2019 16:36:49 +0300 (MSK)
+        by vmicros1.altlinux.org (Postfix) with ESMTP id 1386E72CC6C;
+        Sun,  6 Jan 2019 16:36:52 +0300 (MSK)
 Received: from beacon.altlinux.org (unknown [185.6.174.98])
-        by imap.altlinux.org (Postfix) with ESMTPSA id EC40E4A4A14;
-        Sun,  6 Jan 2019 16:36:48 +0300 (MSK)
+        by imap.altlinux.org (Postfix) with ESMTPSA id D75FB4A4A14;
+        Sun,  6 Jan 2019 16:36:51 +0300 (MSK)
 From:   Vitaly Chikunov <vt@altlinux.org>
 To:     David Howells <dhowells@redhat.com>,
         Herbert Xu <herbert@gondor.apana.org.au>,
@@ -33,9 +33,9 @@ To:     David Howells <dhowells@redhat.com>,
         Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
         linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
         linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 2/4] akcipher: Introduce verify2 for public key algorithms
-Date:   Sun,  6 Jan 2019 16:36:06 +0300
-Message-Id: <20190106133608.820-3-vt@altlinux.org>
+Subject: [RFC PATCH 3/4] KEYS: set correct flags for keyctl if encrypt is not supported
+Date:   Sun,  6 Jan 2019 16:36:07 +0300
+Message-Id: <20190106133608.820-4-vt@altlinux.org>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20190106133608.820-1-vt@altlinux.org>
 References: <20190106133608.820-1-vt@altlinux.org>
@@ -46,216 +46,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Current akcipher .verify() just decrypts signature to uncover message
-hash, which is then verified in upper level public_key_verify_signature
-by memcmp with the expected signature value, which is never passed into
-verify().
-
-This approach is incompatible with ECDSA algorithms, because, to verify
-a signature ECDSA algorithm also needs a hash value as input; also, hash
-is used in ECDSA (together with a signature divided into halves `r||s`),
-not to produce hash, but to produce a number, which is then compared to
-`r` (first part of the signature) to determine if the signature is
-correct.  Thus, for ECDSA, nor requirements of .verify() itself, nor its
-output expectations in public_key_verify_signature aren't satisfied.
-
-Make alternative .verify2() call which gets hash value and produce
-complete signature check (without any output, thus max_size() call will
-not be needed for verify2() operation).
-
-If .verify2() call is present, it should be used in place of .verify().
-
 Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
 ---
- crypto/asymmetric_keys/public_key.c | 57 ++++++++++++++++++++++++-------------
- include/crypto/akcipher.h           | 54 +++++++++++++++++++++++++++++++++--
- 2 files changed, 89 insertions(+), 22 deletions(-)
+ crypto/asymmetric_keys/public_key.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
 diff --git a/crypto/asymmetric_keys/public_key.c b/crypto/asymmetric_keys/public_key.c
-index 3bc090b8adef..51dc1c858c7c 100644
+index 51dc1c858c7c..382cf67f510e 100644
 --- a/crypto/asymmetric_keys/public_key.c
 +++ b/crypto/asymmetric_keys/public_key.c
-@@ -242,6 +242,7 @@ int public_key_verify_signature(const struct public_key *pkey,
- 	char alg_name[CRYPTO_MAX_ALG_NAME];
- 	void *output;
- 	unsigned int outlen;
-+	int verify2;
- 	int ret;
- 
- 	pr_devel("==>%s()\n", __func__);
-@@ -279,14 +280,23 @@ int public_key_verify_signature(const struct public_key *pkey,
- 	if (ret)
- 		goto error_free_req;
- 
--	ret = -ENOMEM;
--	outlen = crypto_akcipher_maxsize(tfm);
--	output = kmalloc(outlen, GFP_KERNEL);
--	if (!output)
--		goto error_free_req;
--
-+	verify2 = crypto_akcipher_have_verify2(req);
-+	if (!verify2) {
-+		/* verify2 does not need output buffer */
-+		ret = -ENOMEM;
-+		outlen = crypto_akcipher_maxsize(tfm);
-+		output = kmalloc(outlen, GFP_KERNEL);
-+		if (!output)
-+			goto error_free_req;
-+
-+		sg_init_one(&digest_sg, output, outlen);
-+	} else {
-+		/* dummy init digest_sg */
-+		memset(&digest_sg, 0, sizeof(digest_sg));
-+		output = NULL;
-+		outlen = 0;
-+	}
- 	sg_init_one(&sig_sg, sig->s, sig->s_size);
--	sg_init_one(&digest_sg, output, outlen);
- 	akcipher_request_set_crypt(req, &sig_sg, &digest_sg, sig->s_size,
- 				   outlen);
- 	crypto_init_wait(&cwait);
-@@ -294,18 +304,27 @@ int public_key_verify_signature(const struct public_key *pkey,
- 				      CRYPTO_TFM_REQ_MAY_SLEEP,
- 				      crypto_req_done, &cwait);
- 
--	/* Perform the verification calculation.  This doesn't actually do the
--	 * verification, but rather calculates the hash expected by the
--	 * signature and returns that to us.
--	 */
--	ret = crypto_wait_req(crypto_akcipher_verify(req), &cwait);
--	if (ret)
--		goto out_free_output;
--
--	/* Do the actual verification step. */
--	if (req->dst_len != sig->digest_size ||
--	    memcmp(sig->digest, output, sig->digest_size) != 0)
--		ret = -EKEYREJECTED;
-+	if (!verify2) {
-+		/* Perform the verification calculation.  This doesn't actually
-+		 * do the verification, but rather calculates the hash expected
-+		 * by the signature and returns that to us.
-+		 */
-+		ret = crypto_wait_req(crypto_akcipher_verify(req), &cwait);
-+		if (ret)
-+			goto out_free_output;
-+
-+		/* Do the actual verification step. */
-+		if (req->dst_len != sig->digest_size ||
-+		    memcmp(sig->digest, output, sig->digest_size) != 0)
-+			ret = -EKEYREJECTED;
-+	} else {
-+		/* Perform full verification in one call. */
-+		req->digest = sig->digest;
-+		req->digest_len = sig->digest_size;
-+		ret = crypto_wait_req(crypto_akcipher_verify2(req), &cwait);
-+		if (ret)
-+			goto out_free_output;
-+	}
- 
- out_free_output:
- 	kfree(output);
-diff --git a/include/crypto/akcipher.h b/include/crypto/akcipher.h
-index 84d68dfb551a..b15a995f6118 100644
---- a/include/crypto/akcipher.h
-+++ b/include/crypto/akcipher.h
-@@ -28,6 +28,8 @@
-  *		result.
-  *		In case of error where the dst sgl size was insufficient,
-  *		it will be updated to the size required for the operation.
-+ * @digest:	Digest for verify2.
-+ * @digest_len:	Size of the digest.
-  * @__ctx:	Start of private context data
-  */
- struct akcipher_request {
-@@ -36,6 +38,8 @@ struct akcipher_request {
- 	struct scatterlist *dst;
- 	unsigned int src_len;
- 	unsigned int dst_len;
-+	u8 *digest;
-+	u8 digest_len;
- 	void *__ctx[] CRYPTO_MINALIGN_ATTR;
- };
- 
-@@ -60,6 +64,8 @@ struct crypto_akcipher {
-  *		algorithm. In case of error, where the dst_len was insufficient,
-  *		the req->dst_len will be updated to the size required for the
-  *		operation
-+ * @verify2:	Function performs a verify operation as defined by public key
-+ *		algorithm.
-  * @encrypt:	Function performs an encrypt operation as defined by public key
-  *		algorithm. In case of error, where the dst_len was insufficient,
-  *		the req->dst_len will be updated to the size required for the
-@@ -96,6 +102,7 @@ struct crypto_akcipher {
- struct akcipher_alg {
- 	int (*sign)(struct akcipher_request *req);
- 	int (*verify)(struct akcipher_request *req);
-+	int (*verify2)(struct akcipher_request *req);
- 	int (*encrypt)(struct akcipher_request *req);
- 	int (*decrypt)(struct akcipher_request *req);
- 	int (*set_pub_key)(struct crypto_akcipher *tfm, const void *key,
-@@ -400,11 +407,13 @@ static inline int crypto_akcipher_sign(struct akcipher_request *req)
-  * crypto_akcipher_verify() - Invoke public key verify operation
-  *
-  * Function invokes the specific public key verify operation for a given
-- * public key algorithm
-+ * public key algorithm: basically it does (rsa) decrypt of signature
-+ * producing decrypted hash into dst, which should be compared by a caller
-+ * with expected hash value.
-  *
-- * @req:	asymmetric key request
-+ * @req:	asymmetric key request (without hash)
-  *
-- * Return: zero on success; error code in case of error
-+ * Return: zero on decryption success; error code in case of error
-  */
- static inline int crypto_akcipher_verify(struct akcipher_request *req)
- {
-@@ -418,6 +427,45 @@ static inline int crypto_akcipher_verify(struct akcipher_request *req)
- }
- 
- /**
-+ * crypto_akcipher_verify2() - Invoke public key verify operation
-+ *
-+ * Function performs complete public key verify operation for a given
-+ * public key algorithm
-+ *
-+ * @req:	asymmetric key request (with hash)
-+ *
-+ * Return: zero on verification success; error code in case of error
-+ */
-+static inline int crypto_akcipher_verify2(struct akcipher_request *req)
-+{
-+	struct crypto_akcipher *tfm = crypto_akcipher_reqtfm(req);
-+	struct akcipher_alg *alg = crypto_akcipher_alg(tfm);
-+	int ret;
-+
-+	ret = alg->verify2(req);
-+	crypto_stat_akcipher_verify(req, ret);
-+	return ret;
-+}
-+
-+/**
-+ * crypto_akcipher_have_verify2() - Check for existence of public key verify2
-+ * operation
-+ *
-+ * Function checks for existence of verify2 call for the public key algorithm
-+ *
-+ * @req:	asymmetric key request (with hash)
-+ *
-+ * Return: non-zero is verify2 call exists; zero if it does not
-+ */
-+static inline int crypto_akcipher_have_verify2(struct akcipher_request *req)
-+{
-+	struct crypto_akcipher *tfm = crypto_akcipher_reqtfm(req);
-+	struct akcipher_alg *alg = crypto_akcipher_alg(tfm);
-+
-+	return !!alg->verify2;
-+}
-+
-+/**
-  * crypto_akcipher_set_pub_key() - Invoke set public key operation
-  *
-  * Function invokes the algorithm specific set key function, which knows
+@@ -136,8 +136,9 @@ static int software_key_query(const struct kernel_pkey_params *params,
+ 	info->max_sig_size = len;
+ 	info->max_enc_size = len;
+ 	info->max_dec_size = len;
+-	info->supported_ops = (KEYCTL_SUPPORTS_ENCRYPT |
+-			       KEYCTL_SUPPORTS_VERIFY);
++	info->supported_ops = KEYCTL_SUPPORTS_VERIFY;
++	if (crypto_akcipher_alg(tfm)->encrypt)
++		info->supported_ops |= KEYCTL_SUPPORTS_ENCRYPT;
+ 	if (pkey->key_is_private)
+ 		info->supported_ops |= (KEYCTL_SUPPORTS_DECRYPT |
+ 					KEYCTL_SUPPORTS_SIGN);
 -- 
 2.11.0
 
