@@ -2,131 +2,85 @@ Return-Path: <SRS0=QMhl=PO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F111C43612
-	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 21:20:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11379C43387
+	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 21:27:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BA2C2070C
-	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 21:20:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C795820830
+	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 21:27:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dmLjOxv3"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uJPnfS6z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726212AbfAFVUc (ORCPT
+        id S1726116AbfAFV1N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 6 Jan 2019 16:20:32 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:53316 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726061AbfAFVUc (ORCPT
+        Sun, 6 Jan 2019 16:27:13 -0500
+Received: from mail-lf1-f47.google.com ([209.85.167.47]:33242 "EHLO
+        mail-lf1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726072AbfAFV1N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Jan 2019 16:20:32 -0500
-Received: by mail-wm1-f65.google.com with SMTP id d15so5464374wmb.3;
-        Sun, 06 Jan 2019 13:20:30 -0800 (PST)
+        Sun, 6 Jan 2019 16:27:13 -0500
+Received: by mail-lf1-f47.google.com with SMTP id i26so28813912lfc.0;
+        Sun, 06 Jan 2019 13:27:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=l/m278v1FdY2IwqJYejNRD0kA2spZH4uZWxndJarknI=;
-        b=dmLjOxv33a9TIxAdoo9GtkhTVCFassCFTRiEqgMB3RNS/QbUIuCbCimrPpJWRzFiXl
-         VZ93PVsLJzLDzaqZSl4zqu1W67H7oDAq+kepSfIGnGz/8TFTx8uwCA45PPgDn54lH475
-         TWoSlKtbYqMDqXkR76VQH0oTjx0UG3mz0fOViaJt+mr6xbe5rflAS60OIcxB7JBFuppd
-         cvBrobM4YDBUaii20IxoiV25jBrhKH3VtH2FGE0gFiY/tfFKoHs9cFloS5o0igqGnm3P
-         FS0Q7KR1nO8LnssWzT6wudfOlruYzfT5Fcr0HTwCW+kJPnmKOSC3ElXNa2MwiUr1NWZu
-         5Iwg==
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=ZzqdjFa8aYURTZPXyjuQm640nZgTSUnwQqvZBY0KP1k=;
+        b=uJPnfS6zJRnBHORLz4KcJ4rG8faZEZSABT4VOQOa+K+pmwJPv0kKknqnl2KxthiSm0
+         nvDJLiVy8b4jqfHJrAIKQWbadpl9ZcZdJjUDOjmC9knjsK2Ug+3ZQn+7fwXWnsN/Bjsh
+         Q9m121fiuI885FcgvsF75uINGEMVTR/F4GM6M68JXMa1XGmECuTZPaULIkpJX3jKEdN6
+         /Z9iLrfQlcsqxynxKjCmhQXPbOsnmBvOKy6rR2TPYAlOBTYfK/tMHvvFXwRT6qtpj18W
+         WZBLf8YaHzHD6o+myfgEgXc+hXHFPGCMoHuJNR/dIH46rN+bQJ2AlSvhksLkcqj3VSdt
+         7bdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=l/m278v1FdY2IwqJYejNRD0kA2spZH4uZWxndJarknI=;
-        b=UCsiSvCSKB6udRYzfND2VOfczYrccvX41bOEtxQ+jPe5JTFFDLVlnxHaYgV16RNxx3
-         xtudHAcIx+S9lvajrND/gxYuy+8dv/I/nxi5z5u+WE+S74AqJm10pIV45ZK+TnaRXzc3
-         eAfQUmLi0vK5jbVxsB2i6a1qei0/qUmzRW4GCDZ6qzSmTryvJcLVBCUO1yO4dsKCR1UW
-         22SvweHjkz7rFJPoG+y4drBySpgqIIeaMfRPvdnPcL16Ko8TNeeyR3YrN5XYVxxPPLS9
-         Cq4sqIrw8fVbrtyLraLFPFtTuCC0JG/HDYEGuJsG9kuGqw/mNwCJKprOKmr/lNuCWeOo
-         xO9Q==
-X-Gm-Message-State: AJcUukfTA5smXej5dUCl0xf10LkQzrpYpNuisv8erqt2NMSqg1u3tJ6z
-        KKq1E7YckyIHZuWRAyIvVRKid76+
-X-Google-Smtp-Source: ALg8bN56xqHU7busknN2X9AqT+8g8tm68U0LVOkEuDdeHpxOtRXu32z6xvNXIq2oGpxqpwqaux8cqw==
-X-Received: by 2002:a1c:26c1:: with SMTP id m184mr1628258wmm.25.1546809629009;
-        Sun, 06 Jan 2019 13:20:29 -0800 (PST)
-Received: from mappy.world.mentorg.com (sjewanfw1-nat.mentorg.com. [139.181.7.34])
-        by smtp.gmail.com with ESMTPSA id o81sm10451476wmd.10.2019.01.06.13.20.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 06 Jan 2019 13:20:27 -0800 (PST)
-From:   Steve Longerbeam <slongerbeam@gmail.com>
-To:     linux-media@vger.kernel.org
-Cc:     Steve Longerbeam <slongerbeam@gmail.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-renesas-soc@vger.kernel.org (open list:MEDIA DRIVERS FOR RENESAS
-        - VIN), linux-kernel@vger.kernel.org (open list)
-Subject: [RFC PATCH v2] media: rcar-vin: Allow independent VIN link enablement
-Date:   Sun,  6 Jan 2019 13:20:18 -0800
-Message-Id: <20190106212018.16519-1-slongerbeam@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=ZzqdjFa8aYURTZPXyjuQm640nZgTSUnwQqvZBY0KP1k=;
+        b=U655vEtk4lw6g3rtz1X08rDvbGePHvoGjm9yVtwVMgQg0kyH9whhBbPDWIaADPtPLw
+         JyLazf1oM63hwwIakwDbmhJ2nA1wPI7LrqpW6Db/dWsXGNqJyXLBY3z4tZm5KWLyt0N3
+         FRgS2skynR6LX9X4mIM+2fVk3JAKiVgIsCsM+7wOKlR2lMLr7m40go/XcokojNdB1UTc
+         85Nog5TsxkMR+H/NeeP29dsVCAkg++YJqKNXEc3V7v4w64IOLONGxR6V4JUQDHE38U/A
+         5uq0I1VXvcFJBL7KeatkJBKuQLmv6rGrDr9XXODPu+V9UM/ru4IysVTVeXXomfJsSZd6
+         BTyA==
+X-Gm-Message-State: AJcUukd7tL0IsboHmUrH66B5wrbfhH5yL9pd8iAuYIThuDKWQDpvI4AF
+        K5WxPgScP7LfW/ObILJMNNmz3Xsj5GwaaEUmCY7elZ1X
+X-Google-Smtp-Source: ALg8bN4+RUeVc9qbeKIeqbQT5rvmBSpAmTUJ7reSHVtXTabc1eJu2BE2EABdW3tqRD/4ZDBtZgIFB8ErTjwQEBj1KyE=
+X-Received: by 2002:ac2:4215:: with SMTP id y21mr10240367lfh.6.1546810030642;
+ Sun, 06 Jan 2019 13:27:10 -0800 (PST)
+MIME-Version: 1.0
+From:   Ian Kumlien <ian.kumlien@gmail.com>
+Date:   Sun, 6 Jan 2019 22:26:59 +0100
+Message-ID: <CAA85sZsiifWTKq=Mw30f-UVyrzywnYYX7GvyqG+O+ndSYBML9A@mail.gmail.com>
+Subject: [BUG] v4.20 - bridge not getting DHCP responses? (works in 4.19.13)
+To:     linux-netdev@vger.kernel.org
+Cc:     jeffrey.t.kirsher@intel.com, roopa@cumulusnetworks.com,
+        nikolay@cumulusnetworks.com,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is a block of code in rvin_group_link_notify() that loops through
-all entities in the media graph, and prevents enabling a link to a VIN
-node if any entity is in use. This prevents enabling a VIN link even if
-there is an in-use entity somewhere in the graph that is independent of
-the link's pipeline.
+Hi,
 
-For example, the code will prevent enabling a link from the first
-rcar-csi2 receiver to a VIN node even if there is an enabled link
-somewhere far upstream on the second independent rcar-csi2 receiver
-pipeline.
+Switching from 4.19.x -> 4.20 resulted in DHCP not working for my VM:s.
 
-If this code is meant to prevent modifying a link if any entity in the
-graph is actively involved in streaming (because modifying the CHSEL
-register fields can disrupt any/all running streams), then the entities
-stream counts should be checked rather than the use counts.
+My firewall (which also runs the dhcpd) runs VM:s and it does this by
+having physical
+interfaces attached to bridges - which the VM:s in turn attach to.
 
-(There is already such a check in __media_entity_setup_link() that verifies
-the stream_count of the link's source and sink entities are both zero,
-but that is insufficient, since there should be no running streams in
-the entire graph).
+Since 4.20 the VM:s can't use DHCP, it's odd since the requests are
+seen - a response is sent but
+it never enters the interface attached to the bridge.
 
-Modify the media_device_for_each_entity() loop to check the entity
-stream_count instead of the use_count, and elaborate on the comment.
-VIN node links can now be enabled even if there are other independent
-in-use entities that are not streaming.
+Basically:
+VM vnet2: -> br0 -> eno2 -> switch -> eno1 (dhcpd)
+dhcpd eno1 -> siwtch and... gone.
 
-Fixes: c0cc5aef31 ("media: rcar-vin: add link notify for Gen3")
+Any clues?
 
-Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
----
-Changes in v2:
-- bring back the media_device_for_each_entity() loop but check the
-  stream_count not the use_count.
----
- drivers/media/platform/rcar-vin/rcar-core.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index f0719ce24b97..6dd6b11c1b2b 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -131,9 +131,13 @@ static int rvin_group_link_notify(struct media_link *link, u32 flags,
- 	    !is_media_entity_v4l2_video_device(link->sink->entity))
- 		return 0;
- 
--	/* If any entity is in use don't allow link changes. */
-+	/*
-+	 * Don't allow link changes if any entity in the graph is
-+	 * streaming, because modifying the CHSEL register fields
-+	 * can disrupt running streams.
-+	 */
- 	media_device_for_each_entity(entity, &group->mdev)
--		if (entity->use_count)
-+		if (entity->stream_count)
- 			return -EBUSY;
- 
- 	mutex_lock(&group->lock);
--- 
-2.17.1
-
+All the nics are handled by ixgbe
