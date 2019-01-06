@@ -2,136 +2,174 @@ Return-Path: <SRS0=QMhl=PO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC5DDC43387
-	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 18:10:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07D84C43387
+	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 18:11:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3C682085A
-	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 18:10:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D893120868
+	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 18:11:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726097AbfAFSKc (ORCPT
+        id S1726154AbfAFSL6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 6 Jan 2019 13:10:32 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:37537 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726014AbfAFSKb (ORCPT
+        Sun, 6 Jan 2019 13:11:58 -0500
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.50]:11080 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726014AbfAFSL5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Jan 2019 13:10:31 -0500
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 8BE70809BC; Sun,  6 Jan 2019 19:10:22 +0100 (CET)
-Date:   Sun, 6 Jan 2019 19:10:27 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     "Lee, Chun-Yi" <joeyli.kernel@gmail.com>
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        keyrings@vger.kernel.org, "Lee, Chun-Yi" <jlee@suse.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Chen Yu <yu.c.chen@intel.com>,
-        Oliver Neukum <oneukum@suse.com>,
-        Ryan Chen <yu.chen.surf@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Giovanni Gherdovich <ggherdovich@suse.cz>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Jann Horn <jannh@google.com>, Andy Lutomirski <luto@kernel.org>
-Subject: Re: [PATCH 0/5 v2][RFC] Encryption and authentication for hibernate
- snapshot image
-Message-ID: <20190106181026.GA15256@amd>
-References: <20190103143227.9138-1-jlee@suse.com>
+        Sun, 6 Jan 2019 13:11:57 -0500
+X-RZG-AUTH: ":P2ERcEykfu11Y98lp/T7+hdri+uKZK8TKWEqNyiHySGSa9k9xmwdNnzGHXPbI/Scimcp"
+X-RZG-CLASS-ID: mo00
+Received: from positron.chronox.de
+        by smtp.strato.de (RZmta 44.9 DYNA|AUTH)
+        with ESMTPSA id 309bcfv06IBp92N
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Sun, 6 Jan 2019 19:11:51 +0100 (CET)
+From:   Stephan =?ISO-8859-1?Q?M=FCller?= <smueller@chronox.de>
+To:     Vitaly Chikunov <vt@altlinux.org>
+Cc:     David Howells <dhowells@redhat.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 4/4] crypto: Add EC-RDSA algorithm
+Date:   Sun, 06 Jan 2019 19:11:50 +0100
+Message-ID: <1893001.R2IGJoHzOM@positron.chronox.de>
+In-Reply-To: <20190106133608.820-5-vt@altlinux.org>
+References: <20190106133608.820-1-vt@altlinux.org> <20190106133608.820-5-vt@altlinux.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="zhXaljGHf11kAtnf"
-Content-Disposition: inline
-In-Reply-To: <20190103143227.9138-1-jlee@suse.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Am Sonntag, 6. Januar 2019, 14:36:08 CET schrieb Vitaly Chikunov:
 
---zhXaljGHf11kAtnf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Vitaly,
 
-Hi!
+> Add Elliptic Curve Russian Digital Signature Algorithm (GOST R
+> 34.10-2012, RFC 7091, ISO/IEC 14888-3) is one of the Russian (and since
+> 2018 the CIS countries) cryptographic standard algorithms (called GOST
+> algorithms). Only signature verification is supported, with intent to be
+> used in the IMA.
 
-> This patchset is the implementation of encryption and authentication
-> for hibernate snapshot image. The image will be encrypted by AES and
-> authenticated by HMAC.
-
-Ok, so you encrypt.=20
-
-> The hibernate function can be used to snapshot memory pages to an image,
-> then kernel restores the image to memory space in a appropriate time.
-> There have secrets in snapshot image and cracker may modifies it for
-> hacking system. Encryption and authentication of snapshot image can prote=
-ct
-> the system.
->=20
-> Hibernate function requests the master key through key retention service.
-> The snapshot master key can be a trusted key or a user defined key. The
-> name of snapshot master key is fixed to "swsusp-kmk". User should loads
-> swsusp-kmk to kernel by keyctl tool before the hibernation resume.
-> e.g. The swsusp-kmk must be loaded before systemd-hibernate-resume
-
-But if userspace has a key, encryption is useless against root.
-
-> The TPM trusted key type is preferred to be the master key. But user
-> defined key can also be used for testing or when the platform doesn't
-> have TPM. User must be aware that the security of user key relies on
-> user space. If the root account be compromised, then the user key will
-> easy to be grabbed.
-
-In the TPM case, does userland have access to the key?=20
-
-Please explain your security goals.
-
-								Pavel
+Do you happen to have test vectors for the testmgr?
 
 
-> Lee, Chun-Yi (5):
->   PM / hibernate: Create snapshot keys handler
->   PM / hibernate: Generate and verify signature for snapshot image
->   PM / hibernate: Encrypt snapshot image
->   PM / hibernate: Erase the snapshot master key in snapshot pages
->   PM / hibernate: An option to request that snapshot image must be
->     authenticated
->=20
->  Documentation/admin-guide/kernel-parameters.txt |   6 +
->  include/linux/kernel.h                          |   3 +-
->  kernel/panic.c                                  |   1 +
->  kernel/power/Kconfig                            |  25 +
->  kernel/power/Makefile                           |   1 +
->  kernel/power/hibernate.c                        |  59 ++-
->  kernel/power/power.h                            |  59 +++
->  kernel/power/snapshot.c                         | 576 ++++++++++++++++++=
-+++++-
->  kernel/power/snapshot_key.c                     | 312 +++++++++++++
->  kernel/power/swap.c                             |   6 +
->  kernel/power/user.c                             |  12 +
->  11 files changed, 1042 insertions(+), 18 deletions(-)
->  create mode 100644 kernel/power/snapshot_key.c
->=20
+> +
+> +/* Parse DER encoded subjectPublicKey. */
+> +static int ecrdsa_set_pub_key(struct crypto_akcipher *tfm, const void *ber,
+> +			      unsigned int len)
+> +{
+> +	struct ecrdsa_ctx *ctx = akcipher_tfm_ctx(tfm);
+> +	unsigned int ndigits;
+> +	const u8 *k = ber;
+> +	unsigned int offset;
+> +
+> +	/* First chance to zero ctx */
+> +	memset(ctx, 0, sizeof(*ctx));
+> +
+> +	if (len < 3 ||
+> +	    k[0] != 0x04 || /* OCTET STRING */
+> +	    (k[1] < 0x80 && len != k[1] + 2) ||
+> +	    (k[1] == 0x81 && len != k[2] + 3) ||
+> +	    k[1] > 0x81)
+> +		return -EBADMSG;
+> +	offset = (k[1] < 0x80)? 2 : 3;
+> +	k += offset;
+> +	len -= offset;
 
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+Why do you manually parse the ASN.1 structure instead of using the ASN.1 
+parser?
 
---zhXaljGHf11kAtnf
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+> +	/* Key is two 256- or 512-bit coordinates. */
+> +	if (len != (2 * 256 / 8) &&
+> +	    len != (2 * 512 / 8))
+> +		return -ENOPKG;
+> +	ndigits = len / sizeof(u64) / 2;
+> +	ctx->pub_key = ECC_POINT_INIT(ctx->_pubp[0], ctx->_pubp[1], ndigits);
+> +	vli_from_le64(ctx->pub_key.x, k, ndigits);
+> +	vli_from_le64(ctx->pub_key.y, k + ndigits * sizeof(u64), ndigits);
+> +
+> +	return 0;
+> +}
+> +
+> +/* Parse DER encoded SubjectPublicKeyInfo.AlgorithmIdentifier.parameters.
+> */ +static int ecrdsa_set_params(struct crypto_akcipher *tfm, enum OID
+> algo, +			     const void *params, unsigned int paramlen)
+> +{
+> +	struct ecrdsa_ctx *ctx = akcipher_tfm_ctx(tfm);
+> +	const u8 *p = params;
+> +	int i;
+> +
+> +	if (algo == OID_gost2012PublicKey256) {
+> +		ctx->digest	= "streebog256";
+> +		ctx->digest_oid	= OID_gost2012Digest256;
+> +		ctx->digest_len	= 256 / 8;
+> +	} else if (algo == OID_gost2012PublicKey512) {
+> +		ctx->digest	= "streebog512";
+> +		ctx->digest_oid	= OID_gost2012Digest512;
+> +		ctx->digest_len	= 512 / 8;
+> +	} else
+> +		return -ENOPKG;
+> +	ctx->curve = NULL;
+> +	ctx->curve_oid = 0;
+> +	ctx->algo_oid = algo;
+> +
+> +	for (i = 0; i < paramlen; i += p[i + 1] + 2) {
+> +		const struct ecc_curve *curve;
+> +		enum OID oid;
+> +
+> +		if (paramlen - i < 2 ||
+> +		    p[i] != 0x06 || /* OBJECT IDENTIFIER */
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Same here and in the following
 
-iEYEARECAAYFAlwyRJIACgkQMOfwapXb+vKbGwCgqdFS+SAxvg8NHhZw8KSTwtEn
-xgMAn1tZyKl+ZiX2ewpAPAipm+wK6brO
-=lr4D
------END PGP SIGNATURE-----
+> +		    p[i + 1] > paramlen - i - 2)
+> +			return -EBADMSG;
+> +		oid = look_up_OID(p + i + 2, p[i + 1]);
+> +		if (oid == OID__NR)
+> +			return -ENOPKG;
+> +
+> +		if (oid == OID_gost2012Digest256 ||
+> +		    oid == OID_gost2012Digest512) {
+> +			if (oid != ctx->digest_oid)
+> +				return -ENOPKG;
+> +		} else {
+> +			curve = get_curve_by_oid(oid);
+> +			if (!curve || ctx->curve)
+> +				return -ENOPKG;
+> +			ctx->curve = curve;
+> +			ctx->curve_oid = oid;
+> +		}
+> +	}
+> +	/* Sizes of algo, curve, pub_key, and digest should match each other. */
+> +	if (!ctx->curve ||
+> +	    ctx->curve->g.ndigits * sizeof(u64) != ctx->digest_len ||
+> +	    ctx->curve->g.ndigits != ctx->pub_key.ndigits)
+> +		return -ENOPKG;
+> +
+> +	/* First chance to validate the public key. */
+> +	if (ecc_is_pubkey_valid_partial(ctx->curve, &ctx->pub_key))
+> +		return -EKEYREJECTED;
+> +
+> +	return 0;
+> +}
+> +
 
---zhXaljGHf11kAtnf--
+> +MODULE_ALIAS_CRYPTO("ecrdsa");
+
+I do not think you need that alias as the module name already will be named 
+this way. I guess you rather should add ecrdsa-generic as module alias.
+
+
+
+Ciao
+Stephan
+
+
