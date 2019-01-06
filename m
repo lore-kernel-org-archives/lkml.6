@@ -2,196 +2,283 @@ Return-Path: <SRS0=QMhl=PO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90D57C43387
-	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 19:18:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9CA2C43387
+	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 19:24:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52D1920830
-	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 19:18:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE03E20830
+	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 19:24:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="TMNxFH5d"
+	dkim=pass (2048-bit key) header.d=mena-vt-edu.20150623.gappssmtp.com header.i=@mena-vt-edu.20150623.gappssmtp.com header.b="F2FWkDEV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726190AbfAFTS1 (ORCPT
+        id S1726106AbfAFTY6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 6 Jan 2019 14:18:27 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:37959 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726052AbfAFTS0 (ORCPT
+        Sun, 6 Jan 2019 14:24:58 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:40159 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726050AbfAFTY6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Jan 2019 14:18:26 -0500
-Received: by mail-lj1-f196.google.com with SMTP id c19-v6so36370963lja.5
-        for <linux-kernel@vger.kernel.org>; Sun, 06 Jan 2019 11:18:24 -0800 (PST)
+        Sun, 6 Jan 2019 14:24:58 -0500
+Received: by mail-ed1-f65.google.com with SMTP id g22so36007809edr.7
+        for <linux-kernel@vger.kernel.org>; Sun, 06 Jan 2019 11:24:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=M4Gq4tuj76gbo0nB23LaTjgF1hC0FzDTe7Gn1GXGF0U=;
-        b=TMNxFH5dqoIPaDSFIaz3s9zhAvlBl03WQe1IMuHNOJl/+h1RUVbzA4Keb2Xq4PLBln
-         hj7oHyWeim39Y6NO/Ercv7JERklDNaDA92iIeXVpPfnyc9n8ArPh1I73pEs/d0MrxLEk
-         HX+tw/akh/tVZhyHXdi5tF3bGO0AM53RQ2Ik8=
+        d=mena-vt-edu.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=0OqLvzW5MQrfuIe3z+jSnzLo7imHs95KAnl9HGxJMCo=;
+        b=F2FWkDEVDVew3YMMn6v+I7MCdpHq24Vpx74cQ4+1WenDRduuxPaWT1nH+UagcVNY/I
+         9j+MM3JqXRU1jTRFJ1QaMC7ZUyFjzDk9HOZk2mfrKoxS6CsSnE+4dOGBAjMdCG0ZqY6Z
+         fKg8kww7dvSHqWEvMcyQM5p1Mb+nO4pBEsH9U3d6wO8kVTan8vGQ3zeJsc+SBDs+kUAX
+         tIH7Nh35rWgAbKco27Dblr743WRXoeIUOb4gijOaVOjE6EC81LDR251ceNzoHQ2W0J5X
+         xd1eGO0at1rgPFAhJqTedlbQGVmu+igqu/YvJFIa6FvnczeTQMqwH6tUbKObVDvlD6uZ
+         yBXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=M4Gq4tuj76gbo0nB23LaTjgF1hC0FzDTe7Gn1GXGF0U=;
-        b=ft8U2UEm9PsNO9tB34qKK+Wg4qvmkEI8l/SMro48+JgKyScolnEd3ETWtq0OekR5ym
-         qjcL/sYe+Y8KZyVq7B6MBSmO2Qk7dhlFAEaIL0B1363/naGL0WZYQDpt2eeD51QOd654
-         b7vjEvwH/CUPSnrpKqM4Q7cCQFrH1/GwfeXI7CtMbW9huXdkzJjs55Nj5sc6P23mdmLl
-         lSHK+G+vNGrfABU2vX8BlSDv+AqLZQ+cSy87pB7CkFJqSCIo8E265LpBmQObgFLkGPhc
-         OnlatEKKIG0urFP6ZjVT1u9xYr2jX1dYZuacy8bMEGBsE8xXIwKNvHbDQyl9Yu5k1yGs
-         MzJw==
-X-Gm-Message-State: AJcUukfk5UB22exIsY5jQLZx25j90rAJKc9rFMzhRh0ToBtEBOzXnpzW
-        PrCgj1fp0QchMzVvR3Ic7w9lnXFdXRg=
-X-Google-Smtp-Source: ALg8bN4s7Ytpzal8rBbPkr++c++un2oiIa++xDYWjt5MCYTPYFI4CvlSx20mfQka4d1DcJnXN+ZKYA==
-X-Received: by 2002:a2e:8643:: with SMTP id i3-v6mr1736995ljj.43.1546802303598;
-        Sun, 06 Jan 2019 11:18:23 -0800 (PST)
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com. [209.85.208.180])
-        by smtp.gmail.com with ESMTPSA id r7-v6sm13516556ljc.10.2019.01.06.11.18.22
-        for <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=0OqLvzW5MQrfuIe3z+jSnzLo7imHs95KAnl9HGxJMCo=;
+        b=bIjOyoZ7+SZhTkcA8Xw0aZ3CEauV/r8gjjy+EHjoNBZ3mrZwa/orwS30jtdRY7MUgC
+         3ORD88tvXExc2ndJhQHZQ8N9quGjDvzkOWr7L3CzGRfVzr9kqZICCs1jwKCfB0zADcup
+         Z8Ed+gq6zPdzNE+JQdhZp7ETmngXaTiETVgHgut4qDfIkZEDdSYQtyPnQUF1EWaLC/zM
+         JGYUYPLsBfV/ex/NvDJChS1dnZX0QJoXJzRFUyU3w49OJLgk+iCp/yReEk3f32nN09jP
+         rXF63YMuOv7Icg+O0J/dyxw7s1jwZTtq/0ZoRIuoioMCGUGtUYbIDQlS8zCX8vMlTl/s
+         Q+6A==
+X-Gm-Message-State: AA+aEWYPOoNOlJc3a48ANvteC5t9sWQPK5koGnibMtvfnYqX3E8p4LFa
+        j8KPgY9gtYVmXE/2hX2EPDvFNA==
+X-Google-Smtp-Source: AFSGD/VPXUot8C/JDoy9j2CfsuJWusqxjRCJocmcvk/WhRoNKzklCgm/+ywLSb8P2fdjS6cMqNeXXw==
+X-Received: by 2002:aa7:d35a:: with SMTP id m26mr51732300edr.244.1546802695994;
+        Sun, 06 Jan 2019 11:24:55 -0800 (PST)
+Received: from localhost.localdomain ([156.212.65.252])
+        by smtp.gmail.com with ESMTPSA id b46sm29994035edd.94.2019.01.06.11.24.51
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 06 Jan 2019 11:18:22 -0800 (PST)
-Received: by mail-lj1-f180.google.com with SMTP id s5-v6so36322035ljd.12
-        for <linux-kernel@vger.kernel.org>; Sun, 06 Jan 2019 11:18:22 -0800 (PST)
-X-Received: by 2002:a2e:95c6:: with SMTP id y6-v6mr11604704ljh.59.1546802301874;
- Sun, 06 Jan 2019 11:18:21 -0800 (PST)
+        Sun, 06 Jan 2019 11:24:55 -0800 (PST)
+From:   Ahmed Abd El Mawgood <ahmedsoliman@mena.vt.edu>
+To:     Paolo Bonzini <pbonzini@redhat.com>, rkrcmar@redhat.com,
+        Jonathan Corbet <corbet@lwn.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        hpa@zytor.com, x86@kernel.org, kvm@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ahmedsoliman0x666@gmail.com, ovich00@gmail.com,
+        kernel-hardening@lists.openwall.com, nigel.edwards@hpe.com,
+        Boris Lukashev <blukashev@sempervictus.com>,
+        Igor Stoppa <igor.stoppa@gmail.com>
+Cc:     Ahmed Abd El Mawgood <ahmedsoliman@mena.vt.edu>
+Subject: [PATCH V8 0/11] KVM: X86: Introducing ROE Protection Kernel Hardening
+Date:   Sun,  6 Jan 2019 21:23:34 +0200
+Message-Id: <20190106192345.13578-1-ahmedsoliman@mena.vt.edu>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-References: <20190106180927.GA11993@roeck-us.net> <CAHk-=whyNbpBtPyoS=wh4nVgBtUBpihcOT+LFdEw369kYjATaQ@mail.gmail.com>
-In-Reply-To: <CAHk-=whyNbpBtPyoS=wh4nVgBtUBpihcOT+LFdEw369kYjATaQ@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sun, 6 Jan 2019 11:18:05 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wiHe4dNHKpE4oGhwwmy23jNTuuFQAgWTGCjjxyOVYjG_w@mail.gmail.com>
-Message-ID: <CAHk-=wiHe4dNHKpE4oGhwwmy23jNTuuFQAgWTGCjjxyOVYjG_w@mail.gmail.com>
-Subject: Re: [PATCH] make 'user_access_begin()' do 'access_ok()'
-To:     Guenter Roeck <linux@roeck-us.net>,
-        Matt Turner <mattst88@gmail.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>
-Cc:     Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-Content-Type: multipart/mixed; boundary="000000000000bdece7057ecef90c"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---000000000000bdece7057ecef90c
-Content-Type: text/plain; charset="UTF-8"
+-- Summary --
 
-[ Re-sending the message because my first reply bounced - Guenther had
-mis-typed the lkml address ]
+ROE is a hypercall that enables host operating system to restrict guest's access
+to its own memory. This will provide a hardening mechanism that can be used to
+stop rootkits from manipulating kernel static data structures and code. Once a
+memory region is protected the guest kernel can't even request undoing the
+protection.
 
-On Sun, Jan 6, 2019 at 10:09 AM Guenter Roeck <linux@roeck-us.net> wrote:
->
-> All alpha and sh4 (big and little endian) images fail to boot in qemu
-> with this patch applied. Reverting it fixes the problem.
+Memory protected by ROE should be non-swapable because even if the ROE protected
+page got swapped out, It won't be possible to write anything in its place.
 
-Funky. 99% of that patch is a complete no-op on non-x86.
+ROE hypercall should be capable of either protecting a whole memory frame or
+parts of it. With these two, it should be possible for guest kernel to protect
+its memory and all the page table entries for that memory inside the page table.
+I am still not sure whether this should be part of ROE job or the guest's job.
 
-The one exception is the strncpy_from_user() and strnlen_user() cases,
-which didn't use to do access_ok() at all, and now essentially do.
+Our threat model assumes that an attacker got full root access to a running
+guest and his goal is to manipulate kernel code/data (hook syscalls, overwrite
+IDT ..etc).
 
-But I think I see what may be the problem. I think the alpha version
-of "access_ok()" is buggy.
 
-Lookie here:
+-- Why didn't I implement ROE in host's userspace ? --
 
-  #define __access_ok(addr, size) \
-        ((get_fs().seg & (addr | size | (addr+size))) == 0)
+The reason why it would be better to implement this from inside kvm: It will
+become a big performance hit to vmexit and switch to user space mode on each
+fault, on the other hand, having the permission handled by EPT should make some
+remarkable performance gain when writing in non protected page that contains
+protected chunks. My tests showed that the bottle neck is the time taken in
+context switching, reducing the number of switches did improve performance a
+lot. Full lengthy explanation with numbers can be found in [2].
 
-and what it basically tests is of any of the high bits get set (the
-USER_DS value is 0xfffffc0000000000).
 
-And that's completely wrong for the "addr+size" check. It's off-by-one
-for the case where we check to the very end of the user address space,
-which is exactly what the strn*_user() functions do.
+-- Future Work -- 
+There is future work in progress to also put some sort of protection on the page
+table register CR3 and other critical registers that can be intercepted by KVM.
+This way it won't be possible for an attacker to manipulate any part of the
+guests page table.
 
-Why? Because "addr+size" will be exactly the size of the address
-space, so trying to access the last byte of the user address space
-will *fail* the __access_ok() check, even though it shouldn't.
 
-So it's not really that that commit is buggy in itself, but it
-triggers that off-by-one error in access_ok().
+-- Test Case --
 
-Side note: that alpha macro is buggy for another reason too: it
-re-uses the arguments twice.
+I was requested to add a test to tools/testing/selftests/kvm/. But the original
+testing suite didn't work on my machine, I experienced shutdown due to triple
+fault because of EPT fault with the current tests. I tried bisecting but the
+triple fault was there from the very first commit.
 
-And SH has almost the exact same bug:
+So instead I would provide here a demo kernel module to test the current
+implementation:
 
-  #define __addr_ok(addr) \
-        ((unsigned long __force)(addr) < current_thread_info()->addr_limit.seg)
+```
+	#include <linux/init.h>
+	#include <linux/module.h>
+	#include <linux/kernel.h>
+	#include <linux/slab.h>
+	#include <linux/kvm_para.h>
+	#include <linux/mm.h>
+	MODULE_LICENSE("GPL");
+	MODULE_AUTHOR("OddCoder");
+	MODULE_DESCRIPTION("ROE Hello world Module");
+	MODULE_VERSION("0.0.1");
 
-so far so good: yes, a user address must be below the limit. But then:
+	#define KVM_HC_ROE 11
+	#define ROE_VERSION 0
+	#define ROE_MPROTECT 1
+	#define ROE_MPROTECT_CHUNK 2
 
-  #define __access_ok(addr, size)         \
-        (__addr_ok((addr) + (size)))
+	static long roe_version(void){
+		return kvm_hypercall1 (KVM_HC_ROE, ROE_VERSION);
+	}
 
-is wrong with the exact same off-by-one case: the case when
-"addr+size" is exactly _equal_ to the limit is actually perfectly
-fine.
+	static long roe_mprotect(void *addr, long pg_count) {
+		return kvm_hypercall3 (KVM_HC_ROE, ROE_MPROTECT, (u64)addr, pg_count);
+	}
 
-The SH version is actually seriously buggy in another way: it doesn't
-actually check for overflow, even though it did copy the _comment_
-that talks about overflow.
+	static long roe_mprotect_chunk(void *addr, long size) {
+		return kvm_hypercall3 (KVM_HC_ROE, ROE_MPROTECT_CHUNK, (u64)addr, size);
+	}
 
-So it turns out that both SH and alpha actually have completely
-buggered implementations of access_ok(), but they happened to work
-(although the SH overflow one is a serious serious security bug, not
-that anybody likely cares about SH security)
+ 	static int __init hello(void ) {
+		int x;
+		struct page *pg1, *pg2;
+		void *memory;
+		pg1 = alloc_page(GFP_KERNEL);
+		pg2 = alloc_page(GFP_KERNEL);
+		memory = page_to_virt(pg1);
+		pr_info ("ROE_VERSION: %ld\n", roe_version());
+		pr_info ("Allocated memory: 0x%llx\n", (u64)memory);
+		pr_info("Physical Address: 0x%llx\n", virt_to_phys(memory));
+		strcpy((char *)memory, "ROE PROTECTED");
+		pr_info("memory_content: %s\n", (char *)memory);
+		x = roe_mprotect((void *)memory, 1);
+		strcpy((char *)memory, "The strcpy should silently fail and"
+					"memory content won't be modified");
+		pr_info("memory_content: %s\n", (char *)memory);
+		memory = page_to_virt(pg2);
+		pr_info ("Allocated memory: 0x%llx\n", (u64)memory);
+		pr_info("Physical Address: 0x%llx\n", virt_to_phys(memory));
+		strcpy((char *)memory, "ROE PROTECTED PARTIALLY");
+		roe_mprotect_chunk((void *)memory, strlen((char *)memory));
+		pr_info("memory_content: %s\n", (char *)memory);
+		strcpy((char *)memory, "XXXXXXXXXXXXXXXXXXXXXXX"
+					" <- Text here not modified still Can concat");
+		pr_info("memory_content: %s\n", (char *)memory);
+		return 0;
+	}
+	static void __exit bye(void) {
+		pr_info("Allocated Memory May never be freed at all!\n");
+		pr_info("Actually this is more of an ABI demonstration\n");
+		pr_info("than actual use case\n");
+		}
+	module_init(hello);
+	module_exit(bye);
 
-Ho humm.
+```
 
-Maybe something like the attached patch? Entirely untested, I don't
-have a cross-build environment, much less a boot setup.
+I tried this on Gentoo host with Ubuntu guest and Qemu from git after applying
+the following changes to Qemu
 
-It isn't trying to be clever, the end address is based on this logic:
+diff --git a/accel/kvm/kvm-all.c b/accel/kvm/kvm-all.c
+index 4880a05399..57d0973aca 100644
+--- a/accel/kvm/kvm-all.c
++++ b/accel/kvm/kvm-all.c
+@@ -2035,6 +2035,9 @@ int kvm_cpu_exec(CPUState *cpu)
+                              run->mmio.is_write);
+             ret = 0;
+             break;
++	case KVM_EXIT_ROE:
++	    ret = 0;
++	    break;
+         case KVM_EXIT_IRQ_WINDOW_OPEN:
+             DPRINTF("irq_window_open\n");
+             ret = EXCP_INTERRUPT;
+diff --git a/linux-headers/linux/kvm.h b/linux-headers/linux/kvm.h
+index f11a7eb49c..67aded8f00 100644
+--- a/linux-headers/linux/kvm.h
++++ b/linux-headers/linux/kvm.h
+@@ -235,7 +235,7 @@ struct kvm_hyperv_exit {
+ #define KVM_EXIT_S390_STSI        25
+ #define KVM_EXIT_IOAPIC_EOI       26
+ #define KVM_EXIT_HYPERV           27
+-
++#define KVM_EXIT_ROE              28
+ /* For KVM_EXIT_INTERNAL_ERROR */
+ /* Emulate instruction failed. */
+ #define KVM_INTERNAL_ERROR_EMULATION	1
 
-        unsigned long __ao_end = __ao_a + __ao_b - !!__ao_b;    \
 
-which basically says "subtract one unless the length was zero".
 
-For a lot of access_ok() users the length is a constant, so this isn't
-actually as expensive as it initially looks.
+-- Change log V7 -> V8 --
 
-Does that fix things for you?
+- Bug fix in patch 10, (it didn't work).
+- Replacing the linked list structure used to store protected chunks with a red
+  black tree. That offered huge performance improvement where the query time
+  when writing to a linked list of ~2000 chunks was almost constant.
 
-                   Linus
 
---000000000000bdece7057ecef90c
-Content-Type: application/x-patch; name="patch.diff"
-Content-Disposition: attachment; filename="patch.diff"
-Content-Transfer-Encoding: base64
-Content-ID: <f_jql9zyvk0>
-X-Attachment-Id: f_jql9zyvk0
+-- Known Issues --
 
-IGFyY2gvYWxwaGEvaW5jbHVkZS9hc20vdWFjY2Vzcy5oIHwgOCArKysrKy0tLQogYXJjaC9zaC9p
-bmNsdWRlL2FzbS91YWNjZXNzLmggICAgfCA3ICsrKysrLS0KIDIgZmlsZXMgY2hhbmdlZCwgMTAg
-aW5zZXJ0aW9ucygrKSwgNSBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9hcmNoL2FscGhhL2lu
-Y2x1ZGUvYXNtL3VhY2Nlc3MuaCBiL2FyY2gvYWxwaGEvaW5jbHVkZS9hc20vdWFjY2Vzcy5oCmlu
-ZGV4IGU2OWM0ZTEzYzMyOC4uY2Y0YWM3OTFhNTkyIDEwMDY0NAotLS0gYS9hcmNoL2FscGhhL2lu
-Y2x1ZGUvYXNtL3VhY2Nlc3MuaAorKysgYi9hcmNoL2FscGhhL2luY2x1ZGUvYXNtL3VhY2Nlc3Mu
-aApAQCAtMzAsMTEgKzMwLDEzIEBACiAgKiBBZGRyZXNzIHZhbGlkIGlmOgogICogIC0gImFkZHIi
-IGRvZXNuJ3QgaGF2ZSBhbnkgaGlnaC1iaXRzIHNldAogICogIC0gQU5EICJzaXplIiBkb2Vzbid0
-IGhhdmUgYW55IGhpZ2gtYml0cyBzZXQKLSAqICAtIEFORCAiYWRkcitzaXplIiBkb2Vzbid0IGhh
-dmUgYW55IGhpZ2gtYml0cyBzZXQKKyAqICAtIEFORCAiYWRkcitzaXplLShzaXplICE9IDApIiBk
-b2Vzbid0IGhhdmUgYW55IGhpZ2gtYml0cyBzZXQKICAqICAtIE9SIHdlIGFyZSBpbiBrZXJuZWwg
-bW9kZS4KICAqLwotI2RlZmluZSBfX2FjY2Vzc19vayhhZGRyLCBzaXplKSBcCi0JKChnZXRfZnMo
-KS5zZWcgJiAoYWRkciB8IHNpemUgfCAoYWRkcitzaXplKSkpID09IDApCisjZGVmaW5lIF9fYWNj
-ZXNzX29rKGFkZHIsIHNpemUpICh7CQkJCVwKKwl1bnNpZ25lZCBsb25nIF9fYW9fYSA9IChhZGRy
-KSwgX19hb19iID0gKHNpemUpOwkJXAorCXVuc2lnbmVkIGxvbmcgX19hb19lbmQgPSBfX2FvX2Eg
-KyBfX2FvX2IgLSAhIV9fYW9fYjsJXAorCShnZXRfZnMoKS5zZWcgJiAoX19hb19hIHwgX19hb19i
-IHwgX19hb19lbmQpKSA9PSAwOyB9KQogCiAjZGVmaW5lIGFjY2Vzc19vayhhZGRyLCBzaXplKQkJ
-CQlcCiAoewkJCQkJCQlcCmRpZmYgLS1naXQgYS9hcmNoL3NoL2luY2x1ZGUvYXNtL3VhY2Nlc3Mu
-aCBiL2FyY2gvc2gvaW5jbHVkZS9hc20vdWFjY2Vzcy5oCmluZGV4IGRlZWJiZmFiNTM0Mi4uNWZl
-NzUxYWQ3NTgyIDEwMDY0NAotLS0gYS9hcmNoL3NoL2luY2x1ZGUvYXNtL3VhY2Nlc3MuaAorKysg
-Yi9hcmNoL3NoL2luY2x1ZGUvYXNtL3VhY2Nlc3MuaApAQCAtMTYsOCArMTYsMTEgQEAKICAqIHN1
-bSA6PSBhZGRyICsgc2l6ZTsgIGNhcnJ5PyAtLT4gZmxhZyA9IHRydWU7CiAgKiBpZiAoc3VtID49
-IGFkZHJfbGltaXQpIGZsYWcgPSB0cnVlOwogICovCi0jZGVmaW5lIF9fYWNjZXNzX29rKGFkZHIs
-IHNpemUpCQlcCi0JKF9fYWRkcl9vaygoYWRkcikgKyAoc2l6ZSkpKQorI2RlZmluZSBfX2FjY2Vz
-c19vayhhZGRyLCBzaXplKQkoewkJCQlcCisJdW5zaWduZWQgbG9uZyBfX2FvX2EgPSAoYWRkciks
-IF9fYW9fYiA9IChzaXplKTsJCVwKKwl1bnNpZ25lZCBsb25nIF9fYW9fZW5kID0gX19hb19hICsg
-X19hb19iIC0gISFfX2FvX2I7CVwKKwlfX2FvX2VuZCA+PSBfX2FvX2EgJiYgX19hZGRyX29rKF9f
-YW9fZW5kKTsgfSkKKwogI2RlZmluZSBhY2Nlc3Nfb2soYWRkciwgc2l6ZSkJXAogCShfX2Noa191
-c2VyX3B0cihhZGRyKSwJCVwKIAkgX19hY2Nlc3Nfb2soKHVuc2lnbmVkIGxvbmcgX19mb3JjZSko
-YWRkciksIChzaXplKSkpCg==
---000000000000bdece7057ecef90c--
+- THP is not supported yet. In general it is not supported when the guest frame
+  size is not the same as the equivalent EPT frame size.
+
+The previous version (V7) of the patch set can be found at [1]
+
+-- links --
+
+[1] https://lkml.org/lkml/2018/12/7/345
+[2] https://lkml.org/lkml/2018/12/21/340
+
+-- List of patches --
+
+[PATCH V8 01/11] KVM: State whether memory should be freed in
+[PATCH V8 02/11] KVM: X86: Add arbitrary data pointer in kvm memslot
+[PATCH V8 03/11] KVM: X86: Add helper function to convert SPTE to GFN
+[PATCH V8 04/11] KVM: Document Memory ROE
+[PATCH V8 05/11] KVM: Create architecture independent ROE skeleton
+[PATCH V8 06/11] KVM: X86: Enable ROE for x86
+[PATCH V8 07/11] KVM: Add support for byte granular memory ROE
+[PATCH V8 08/11] KVM: X86: Port ROE_MPROTECT_CHUNK to x86
+[PATCH V8 09/11] KVM: Add new exit reason For ROE violations
+[PATCH V8 10/11] KVM: Log ROE violations in system log
+[PATCH V8 11/11] KVM: ROE: Store protected chunks in red black tree
+
+-- Difstat --
+
+Documentation/virtual/kvm/hypercalls.txt |  40 +++
+arch/x86/include/asm/kvm_host.h          |   2 +-
+arch/x86/kvm/Makefile                    |   4 +-
+arch/x86/kvm/mmu.c                       | 121 ++++-----
+arch/x86/kvm/mmu.h                       |  31 ++-
+arch/x86/kvm/roe.c                       | 104 ++++++++
+arch/x86/kvm/roe_arch.h                  |  28 ++
+arch/x86/kvm/x86.c                       |  21 +-
+include/kvm/roe.h                        |  28 ++
+include/linux/kvm_host.h                 |  57 ++++
+include/uapi/linux/kvm.h                 |   2 +-
+include/uapi/linux/kvm_para.h            |   5 +
+virt/kvm/kvm_main.c                      |  54 +++-
+virt/kvm/roe.c                           | 445 +++++++++++++++++++++++++++++++
+virt/kvm/roe_generic.h                   |  22 ++
+15 files changed, 868 insertions(+), 96 deletions(-)
+
+
+Signed-off-by: Ahmed Abd El Mawgood <ahmedsoliman@mena.vt.edu>
