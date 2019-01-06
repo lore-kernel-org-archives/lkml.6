@@ -6,23 +6,23 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1FA6C43387
-	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 15:06:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A37DC43387
+	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 15:07:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9303E2070C
-	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 15:06:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE1AF2070C
+	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 15:06:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726426AbfAFPGE convert rfc822-to-8bit (ORCPT
+        id S1726450AbfAFPG7 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 6 Jan 2019 10:06:04 -0500
-Received: from kozue.soulik.info ([108.61.200.231]:40960 "EHLO
+        Sun, 6 Jan 2019 10:06:59 -0500
+Received: from kozue.soulik.info ([108.61.200.231]:40990 "EHLO
         kozue.soulik.info" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726399AbfAFPGE (ORCPT
+        with ESMTP id S1726399AbfAFPG6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Jan 2019 10:06:04 -0500
+        Sun, 6 Jan 2019 10:06:58 -0500
 Received: from [192.168.0.49] (unknown [192.168.0.49])
-        by kozue.soulik.info (Postfix) with ESMTPSA id 36204100F5C;
-        Mon,  7 Jan 2019 00:06:27 +0900 (JST)
+        by kozue.soulik.info (Postfix) with ESMTPSA id E17D6100F5C;
+        Mon,  7 Jan 2019 00:07:35 +0900 (JST)
 Content-Type: text/plain;
         charset=utf-8
 Mime-Version: 1.0 (1.0)
@@ -30,7 +30,7 @@ Subject: Re: [PATCH 4/4] arm64: dts: rockchip: add video codec for rk3399
 From:   Ayaka <ayaka@soulik.info>
 X-Mailer: iPad Mail (16A404)
 In-Reply-To: <50db3bc3faea97182b7fe18b4d9677f7e1563eaa.camel@collabora.com>
-Date:   Sun, 6 Jan 2019 23:05:38 +0800
+Date:   Sun, 6 Jan 2019 23:06:29 +0800
 Cc:     linux-rockchip@lists.infradead.org,
         Tomasz Figa <tfiga@chromium.org>,
         nicolas.dufresne@collabora.com, myy@miouyouyou.fr,
@@ -38,7 +38,7 @@ Cc:     linux-rockchip@lists.infradead.org,
         linux-media@vger.kernel.org, hverkuil@xs4all.nl, heiko@sntech.de,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: 8BIT
-Message-Id: <CAC7DE03-A74C-4154-9443-BC91E6CED02E@soulik.info>
+Message-Id: <B3E732B3-2A07-4C8E-9B6B-EDE343F54189@soulik.info>
 References: <20190105183150.20266-1-ayaka@soulik.info> <20190105183150.20266-5-ayaka@soulik.info> <50db3bc3faea97182b7fe18b4d9677f7e1563eaa.camel@collabora.com>
 To:     Ezequiel Garcia <ezequiel@collabora.com>
 Sender: linux-kernel-owner@vger.kernel.org
@@ -84,7 +84,7 @@ No, if Rockchip doesn’t tell, my mouth is sealed.
 >> --- a/arch/arm64/boot/dts/rockchip/rk3399-sapphire.dtsi
 >> +++ b/arch/arm64/boot/dts/rockchip/rk3399-sapphire.dtsi
 >> @@ -632,6 +632,35 @@
->>   dr_mode = "host";
+>>  dr_mode = "host";
 >> };
 >> 
 >> +&rkvdec {
@@ -117,15 +117,15 @@ No, if Rockchip doesn’t tell, my mouth is sealed.
 >> +};
 >> +
 >> &vopb {
->>   status = "okay";
+>>  status = "okay";
 >> };
 >> diff --git a/arch/arm64/boot/dts/rockchip/rk3399.dtsi b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
 >> index b22b2e40422b..5fa3247e7bf0 100644
 >> --- a/arch/arm64/boot/dts/rockchip/rk3399.dtsi
 >> +++ b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
 >> @@ -1242,16 +1242,39 @@
->>       status = "disabled";
->>   };
+>>      status = "disabled";
+>>  };
 >> 
 >> -    vpu: video-codec@ff650000 {
 >> -        compatible = "rockchip,rk3399-vpu";
@@ -143,13 +143,13 @@ No, if Rockchip doesn’t tell, my mouth is sealed.
 >> +        reg = <0x0 0xff650000 0x0 0x400>;
 >> +        interrupts = <GIC_SPI 114 IRQ_TYPE_LEVEL_HIGH 0>;
 >> +        interrupt-names = "irq_enc";
->>       clocks = <&cru ACLK_VCODEC>, <&cru HCLK_VCODEC>;
+>>      clocks = <&cru ACLK_VCODEC>, <&cru HCLK_VCODEC>;
 >> -        clock-names = "aclk", "hclk";
 >> +        clock-names = "aclk_vcodec", "hclk_vcodec";
 >> +        resets = <&cru SRST_H_VCODEC>, <&cru SRST_A_VCODEC>;
 >> +        reset-names = "video_h", "video_a";
->>       iommus = <&vpu_mmu>;
->>       power-domains = <&power RK3399_PD_VCODEC>;
+>>      iommus = <&vpu_mmu>;
+>>      power-domains = <&power RK3399_PD_VCODEC>;
 >> +        rockchip,srv = <&vpu_service>;
 >> +        status = "disabled";
 >> +    };
@@ -167,19 +167,19 @@ No, if Rockchip doesn’t tell, my mouth is sealed.
 >> +        power-domains = <&power RK3399_PD_VCODEC>;
 >> +        rockchip,srv = <&vpu_service>;
 >> +        status = "disabled";
->>   };
+>>  };
 >> 
->>   vpu_mmu: iommu@ff650800 {
+>>  vpu_mmu: iommu@ff650800 {
 >> @@ -1261,11 +1284,42 @@
->>       interrupt-names = "vpu_mmu";
->>       clocks = <&cru ACLK_VCODEC>, <&cru HCLK_VCODEC>;
->>       clock-names = "aclk", "iface";
+>>      interrupt-names = "vpu_mmu";
+>>      clocks = <&cru ACLK_VCODEC>, <&cru HCLK_VCODEC>;
+>>      clock-names = "aclk", "iface";
 >> +        assigned-clocks = <&cru ACLK_VCODEC_PRE>;
 >> +        assigned-clock-parents = <&cru PLL_GPLL>;
->>       #iommu-cells = <0>;
->>       power-domains = <&power RK3399_PD_VCODEC>;
->>       status = "disabled";
->>   };
+>>      #iommu-cells = <0>;
+>>      power-domains = <&power RK3399_PD_VCODEC>;
+>>      status = "disabled";
+>>  };
 >> 
 >> +    rkvdec_srv: rkvdec-srv {
 >> +        compatible = "rockchip,mpp-service";
@@ -210,9 +210,9 @@ No, if Rockchip doesn’t tell, my mouth is sealed.
 >> +        status = "disabled";
 >> +    };
 >> +
->>   vdec_mmu: iommu@ff660480 {
->>       compatible = "rockchip,iommu";
->>       reg = <0x0 0xff660480 0x0 0x40>, <0x0 0xff6604c0 0x0 0x40>;
+>>  vdec_mmu: iommu@ff660480 {
+>>      compatible = "rockchip,iommu";
+>>      reg = <0x0 0xff660480 0x0 0x40>, <0x0 0xff6604c0 0x0 0x40>;
 > 
 > 
 
