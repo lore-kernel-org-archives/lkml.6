@@ -2,113 +2,118 @@ Return-Path: <SRS0=QMhl=PO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09758C43387
-	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 17:26:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CAD7C43387
+	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 17:30:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF48320868
-	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 17:26:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="g3tEGNwE"
+	by mail.kernel.org (Postfix) with ESMTP id F138B21721
+	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 17:30:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726076AbfAFR0f (ORCPT
+        id S1726097AbfAFRaG convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 6 Jan 2019 12:26:35 -0500
-Received: from mta-p7.oit.umn.edu ([134.84.196.207]:42560 "EHLO
-        mta-p7.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725931AbfAFR0f (ORCPT
+        Sun, 6 Jan 2019 12:30:06 -0500
+Received: from kozue.soulik.info ([108.61.200.231]:41034 "EHLO
+        kozue.soulik.info" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725931AbfAFRaG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Jan 2019 12:26:35 -0500
-Received: from localhost (unknown [127.0.0.1])
-        by mta-p7.oit.umn.edu (Postfix) with ESMTP id EDC25BF6
-        for <linux-kernel@vger.kernel.org>; Sun,  6 Jan 2019 17:26:33 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at umn.edu
-Received: from mta-p7.oit.umn.edu ([127.0.0.1])
-        by localhost (mta-p7.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id oB7Jy9cUHQvP for <linux-kernel@vger.kernel.org>;
-        Sun,  6 Jan 2019 11:26:33 -0600 (CST)
-Received: from mail-it1-f197.google.com (mail-it1-f197.google.com [209.85.166.197])
-        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mta-p7.oit.umn.edu (Postfix) with ESMTPS id BAA98C00
-        for <linux-kernel@vger.kernel.org>; Sun,  6 Jan 2019 11:26:33 -0600 (CST)
-Received: by mail-it1-f197.google.com with SMTP id m128so6360701itd.3
-        for <linux-kernel@vger.kernel.org>; Sun, 06 Jan 2019 09:26:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=umn.edu; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=gtFUsguOXXYG03CyZpLhVgn8XcYBG/mO0ybq+IcPfPs=;
-        b=g3tEGNwEGyqiiB/xNzSZTpIHgjpPo4OqbIa8I9W4Rz4m+xVsxL8h53BmQhmECoR9Am
-         Xbvzg7LznIhN2ozuwrnVF3xh7y+W6Yg9w6vZS2HTvvRGq8Zv04svbpQxgF9Hfv6yfgeb
-         VO5wMoZ2eEGgb9jm4n1ISrJ9Ami8edvNAhvn3oxHe1wrgwWtErL6PlL1kZT0gAhEuwFp
-         hIXEnjrB9HRF4RgDZ1pno1hiRHULqi/puJkIngVh5A8DhGiNaS1BVTHQxcJBRw+s9UEe
-         +hd6z3nRKo3aCGmvQCrWqklnZXATbdOAU5PV6mohqhweSzCqa0F9jAwXXzWUXTND4dh7
-         jSxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=gtFUsguOXXYG03CyZpLhVgn8XcYBG/mO0ybq+IcPfPs=;
-        b=BkHKyZM6Z9Pz+Dbb/qdcvQ/tC9TyCfEAGYGQKwDl19dzQc0rJowArQ9KV29Sy12gf+
-         tbIcp+ZjtnClCRjZMSFs79RUfAGrpf0m80UyI5K2ISql2DCPoY0PLZqcThkRbA4mo4jW
-         JAG5WHghggOryiVTumYoyjXh/iJmotJdJdyxwutMaAKCHmtYmpq/fRALpLa4Gm7wMT/y
-         ddwLd7K4Yzl0EMruffd9GptP1iUx78Skuw7rspFhsVIxJ/k92HObk89IkkAoeuJWu8yw
-         Tdj0tSKGR7lt4UptqR5U0BjX7KWx9CZTZTsWMgKp86WvqsPZuRDADZgg7gbzavtY6z1z
-         Xfgg==
-X-Gm-Message-State: AJcUukdyiBEGR1mT6+31+tNiv5fFzTuvM9xd68Eu8jpbdjUNXTdH5otO
-        KW53XwvRLOTWqHgn8FVvz04zmF1WXiR+9RdM7CIHTizG044ySnU0DHdADRNifV9/QeI3Hs856+k
-        J4t3TXZh4QJfg6tbDHaaI6OR5MUzZ
-X-Received: by 2002:a24:4d05:: with SMTP id l5mr5756462itb.147.1546795593328;
-        Sun, 06 Jan 2019 09:26:33 -0800 (PST)
-X-Google-Smtp-Source: ALg8bN48Rhpo0Ce2FdSBMWmFnXscSS6SNzTTaCIIP/Iy6RAZLKweETD4YC1RxSXPPavLu7et2u8KQw==
-X-Received: by 2002:a24:4d05:: with SMTP id l5mr5756457itb.147.1546795593108;
-        Sun, 06 Jan 2019 09:26:33 -0800 (PST)
-Received: from cs-u-syssec1.cs.umn.edu (cs-u-syssec1.cs.umn.edu. [134.84.121.78])
-        by smtp.gmail.com with ESMTPSA id r9sm5852167iom.44.2019.01.06.09.26.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 06 Jan 2019 09:26:32 -0800 (PST)
-From:   Aditya Pakki <pakki001@umn.edu>
-To:     pakki001@umn.edu
-Cc:     kjlu@umn.edu, Matt Mackall <mpm@selenic.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>, Michael Buesch <m@bues.ch>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] [v2] hwrng: core: Fix missing check during driver release
-Date:   Sun,  6 Jan 2019 11:26:12 -0600
-Message-Id: <20190106172613.10913-1-pakki001@umn.edu>
-X-Mailer: git-send-email 2.17.1
+        Sun, 6 Jan 2019 12:30:06 -0500
+Received: from [192.168.0.49] (unknown [192.168.0.49])
+        by kozue.soulik.info (Postfix) with ESMTPSA id A637B100F5C;
+        Mon,  7 Jan 2019 02:30:42 +0900 (JST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH 4/4] arm64: dts: rockchip: add video codec for rk3399
+From:   Ayaka <ayaka@soulik.info>
+X-Mailer: iPad Mail (16A404)
+In-Reply-To: <CAAEAJfCLxvJWrC1CNiSyLV9y=pOjzUBik5SUD0ZVUcnA-+HobQ@mail.gmail.com>
+Date:   Mon, 7 Jan 2019 01:29:54 +0800
+Cc:     Ezequiel Garcia <ezequiel@collabora.com>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+        myy@miouyouyou.fr,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media <linux-media@vger.kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Heiko Stuebner <heiko@sntech.de>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: 8BIT
+Message-Id: <85C6CA4D-CC54-422B-BC2B-25EA10701696@soulik.info>
+References: <20190105183150.20266-1-ayaka@soulik.info> <20190105183150.20266-5-ayaka@soulik.info> <50db3bc3faea97182b7fe18b4d9677f7e1563eaa.camel@collabora.com> <CAC7DE03-A74C-4154-9443-BC91E6CED02E@soulik.info> <f3dcd25bb1c3f0544cb7eedd0b27633d923c0d27.camel@collabora.com> <C53B5CFA-2F9C-41E1-BBA8-D63819D0AC3D@soulik.info> <CAAEAJfCLxvJWrC1CNiSyLV9y=pOjzUBik5SUD0ZVUcnA-+HobQ@mail.gmail.com>
+To:     Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-devres_release can return -ENOENT if the device is not freed. The fix
-throws a warning consistent with other invocations.
+Hello Ezequiel
 
-Signed-off-by: Aditya Pakki <pakki001@umn.edu>
----
- drivers/char/hw_random/core.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Sent from my iPad
 
-diff --git a/drivers/char/hw_random/core.c b/drivers/char/hw_random/core.c
-index 95be7228f327..1b05da40626a 100644
---- a/drivers/char/hw_random/core.c
-+++ b/drivers/char/hw_random/core.c
-@@ -578,7 +578,8 @@ EXPORT_SYMBOL_GPL(devm_hwrng_register);
- 
- void devm_hwrng_unregister(struct device *dev, struct hwrng *rng)
- {
--	devres_release(dev, devm_hwrng_release, devm_hwrng_match, rng);
-+	WARN_ON(devres_release(dev, devm_hwrng_release,
-+				devm_hwrng_match, rng));
- }
- EXPORT_SYMBOL_GPL(devm_hwrng_unregister);
- 
--- 
-2.17.1
+> On Jan 7, 2019, at 1:21 AM, Ezequiel Garcia <ezequiel@vanguardiasur.com.ar> wrote:
+> 
+>> On Sun, 6 Jan 2019 at 13:16, Ayaka <ayaka@soulik.info> wrote:
+>> 
+>> 
+>> 
+>> Sent from my iPad
+>> 
+>>> On Jan 7, 2019, at 12:04 AM, Ezequiel Garcia <ezequiel@collabora.com> wrote:
+>>> 
+>>> On Sun, 2019-01-06 at 23:05 +0800, Ayaka wrote:
+>>>>> On Jan 6, 2019, at 10:22 PM, Ezequiel Garcia <ezequiel@collabora.com> wrote:
+>>>>> 
+>>>>> Hi Randy,
+>>>>> 
+>>>>> Thanks a lot for this patches. They are really useful
+>>>>> to provide more insight into the VPU hardware.
+>>>>> 
+>>>>> This change will make the vpu encoder and vpu decoder
+>>>>> completely independent, can they really work in parallel?
+>>>> As I said it depends on the platform, but with this patch, the user space would think they can work at the same time.
+>>> 
+>>> 
+>>> I think there is some confusion.
+>>> 
+>>> The devicetree is one thing: it is a hardware representation,
+>>> a way to describe the hardware, for the kernel/bootloader to
+>>> parse.
+>>> 
+>>> The userspace view will depend on the driver implementation.
+>>> 
+>>> The current devicetree and driver (without your patches),
+>>> model the VPU as a single piece of hardware, exposing a decoder
+>>> and an encoder.
+>>> 
+>>> The V4L driver will then create two video devices, i.e. /dev/videoX
+>>> and /dev/videoY. So userspace sees an independent view of the
+>>> devices.
+>>> 
+>> I knew that, the problem is that the driver should not always create a decoder and encoder pair, they may not exist at some platforms, even some platforms doesn’t have a encoder. You may have a look on the rk3328 I post on the first email as example.
+> 
+> That is correct. But that still doesn't tackle my question: is the
+> hardware able to run a decoding and an encoding job in parallel?
+> 
+For rk3328, yes, you see I didn’t draw them in the same box.
+> If not, then it's wrong to describe them as independent entities.
+> 
+>>> However, they are internally connected, and thus we can
+>>> easily avoid two jobs running in parallel.
+>>> 
+>> That is what the mpp service did in my patches, handing the relationship between each devices. And it is not a easy work, maybe a 4k decoder would be blocked by another high frame rate encoding work or another decoder session. The vendor kernel have more worry about this,  but not in this version.
+> 
+> Right. That is one way to design it. Another way is having a single
+> devicetree node for the VPU encoder/decoder "complex".
+No, you can’t assume which one is in the combo group, it can be various. you see, in the rk3328, the vdpu is paired with an avs+ decoder. That is why I use a virtual device standing for scheduler.
+> 
+> Thanks for the input!
+> -- 
+> Ezequiel García, VanguardiaSur
+> www.vanguardiasur.com.ar
 
