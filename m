@@ -2,133 +2,136 @@ Return-Path: <SRS0=QMhl=PO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC9EBC43387
-	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 17:57:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC5DDC43387
+	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 18:10:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B55932085A
-	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 17:57:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fhotvef0"
+	by mail.kernel.org (Postfix) with ESMTP id C3C682085A
+	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 18:10:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726114AbfAFR5V (ORCPT
+        id S1726097AbfAFSKc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 6 Jan 2019 12:57:21 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:45337 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726012AbfAFR5U (ORCPT
+        Sun, 6 Jan 2019 13:10:32 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:37537 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726014AbfAFSKb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Jan 2019 12:57:20 -0500
-Received: by mail-ed1-f66.google.com with SMTP id d39so35891985edb.12;
-        Sun, 06 Jan 2019 09:57:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=UVEHZzCkVqjbbwpl1Hi8T2EJhcJ+fDuzpOWplghqKVY=;
-        b=Fhotvef0XLrXGWiAZMR2vdcgiFh1vfMF+B2LTqQtP/XAsqwqc2XDlp2gqywwLE7mPa
-         ecMnhP8flfVv2BBirK9dogtuED1zqQiivx3NgfidhKfE5P12fR7XKuCB7v3ZIuZqCyR+
-         rQzRPIX8ioLMbuRrzbqWaf0LyrTH3+ss2MN0larfeWEovBAWgxVfjGqVKN5AaAA01vmM
-         OgSGdcPuhw2XNaag6r3ZM5BOqRBF5y0z/Sv4sKtgkfkCKWk1yRqyp1LHBhvzhu/vC9Vb
-         cj+HNujE+FhVCO131F0anm1501QFYd1Njo0dlrmHGtDRUTHOljwhxynZNdk4qGLsmNMI
-         X2Zw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=UVEHZzCkVqjbbwpl1Hi8T2EJhcJ+fDuzpOWplghqKVY=;
-        b=UJm67hiHsWmFA7FtUTfpy25aRIC7V55fvg/sg+Ppap2WSYeRrKB4Dd5pXm87pGTpuY
-         nXs1pRU4x+aiQRCOsTXHB6cE0cn5aCm+J2Yo3s+Uz+3xASik1Xn5eYxLl7fSgetFD4Mf
-         GRTJgYkforbbHEm8WgO6KPo3qz2vmbH9yS7KmXYUvjd/PPBYupGJ4f4mhjMXXR5HVOW8
-         JaGKpWRjhQggEyvCGdOGf6HbworHX5cS0gt6yHeW5YRvkEbVKv1+a/pRws+58I+eDaVS
-         6riF748dmkDqSgdS7689QOpk+JePY+d0+PArJjDUsciw8nAzziVXTrHCqTXoXrV6iE+Z
-         U+Gg==
-X-Gm-Message-State: AA+aEWaD+/35QdFIEgnXnhMYzQdmEdBCf0I1K6Vf+VV+dzPSJDMKItwO
-        cFMzoz2rF49JIwCzIpGAiQ==
-X-Google-Smtp-Source: AFSGD/VJdaMahe5iwiOL9n/9b5NXdnOEO+Si3RZM4nWvdHct2DqLml9iw9+5Qv4u4q/X4UJSOTCccw==
-X-Received: by 2002:a50:cdd0:: with SMTP id h16mr54350608edj.151.1546797438630;
-        Sun, 06 Jan 2019 09:57:18 -0800 (PST)
-Received: from latitude-7275.home (2a01cb04006a0a00478c38b296055568.ipv6.abo.wanadoo.fr. [2a01:cb04:6a:a00:478c:38b2:9605:5568])
-        by smtp.gmail.com with ESMTPSA id l20-v6sm17542438eja.18.2019.01.06.09.57.17
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 06 Jan 2019 09:57:17 -0800 (PST)
-From:   =?UTF-8?q?J=C3=A9r=C3=B4me=20de=20Bretagne?= 
-        <jerome.debretagne@gmail.com>
-To:     Alex Hung <alex.hung@canonical.com>
-Cc:     platform-driver-x86@vger.kernel.org,
-        Andy Shevchenko <andy@infradead.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Mario Limonciello <mario.limonciello@dell.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Chih-Wei Huang <cwhuang@android-x86.org>,
-        Tristian Celestin <tristian.celestin@outlook.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] platform/x86: intel-hid: Missing power button release on some Dell models
-Date:   Sun,  6 Jan 2019 18:56:44 +0100
-Message-Id: <20190106175644.24872-1-jerome.debretagne@gmail.com>
-X-Mailer: git-send-email 2.11.0
+        Sun, 6 Jan 2019 13:10:31 -0500
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 8BE70809BC; Sun,  6 Jan 2019 19:10:22 +0100 (CET)
+Date:   Sun, 6 Jan 2019 19:10:27 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     "Lee, Chun-Yi" <joeyli.kernel@gmail.com>
+Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        keyrings@vger.kernel.org, "Lee, Chun-Yi" <jlee@suse.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Chen Yu <yu.c.chen@intel.com>,
+        Oliver Neukum <oneukum@suse.com>,
+        Ryan Chen <yu.chen.surf@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Giovanni Gherdovich <ggherdovich@suse.cz>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Jann Horn <jannh@google.com>, Andy Lutomirski <luto@kernel.org>
+Subject: Re: [PATCH 0/5 v2][RFC] Encryption and authentication for hibernate
+ snapshot image
+Message-ID: <20190106181026.GA15256@amd>
+References: <20190103143227.9138-1-jlee@suse.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="zhXaljGHf11kAtnf"
+Content-Disposition: inline
+In-Reply-To: <20190103143227.9138-1-jlee@suse.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Power button suspend for some Dell models was added in:
 
-commit 821b85366284 (intel-hid: Power button suspend on Dell Latitude 7275)
+--zhXaljGHf11kAtnf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-by checking against the power button press notification (0xCE) to report
-the power button press event. The corresponding power button release
-notification (0xCF) was caught and ignored to stop it from being reported
-as an "unknown event" in the logs.
+Hi!
 
-The missing button release event is creating issues on Android-x86, as
-reported on the project mailing list for a Dell Latitude 5175 model, since
-the events are expected in down/up pairs.
+> This patchset is the implementation of encryption and authentication
+> for hibernate snapshot image. The image will be encrypted by AES and
+> authenticated by HMAC.
 
-Report the power button release event to fix this issue.
+Ok, so you encrypt.=20
 
-Link: https://groups.google.com/forum/#!topic/android-x86/aSwZK9Nf9Ro
-Tested-by: Tristian Celestin <tristian.celestin@outlook.com>
-Tested-by: Jérôme de Bretagne <jerome.debretagne@gmail.com>
-Signed-off-by: Jérôme de Bretagne <jerome.debretagne@gmail.com>
----
- drivers/platform/x86/intel-hid.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+> The hibernate function can be used to snapshot memory pages to an image,
+> then kernel restores the image to memory space in a appropriate time.
+> There have secrets in snapshot image and cracker may modifies it for
+> hacking system. Encryption and authentication of snapshot image can prote=
+ct
+> the system.
+>=20
+> Hibernate function requests the master key through key retention service.
+> The snapshot master key can be a trusted key or a user defined key. The
+> name of snapshot master key is fixed to "swsusp-kmk". User should loads
+> swsusp-kmk to kernel by keyctl tool before the hibernation resume.
+> e.g. The swsusp-kmk must be loaded before systemd-hibernate-resume
 
-diff --git a/drivers/platform/x86/intel-hid.c b/drivers/platform/x86/intel-hid.c
-index e28bcf61b126..bc0d55a59015 100644
---- a/drivers/platform/x86/intel-hid.c
-+++ b/drivers/platform/x86/intel-hid.c
-@@ -363,7 +363,7 @@ static void notify_handler(acpi_handle handle, u32 event, void *context)
- 	 * the 5-button array, but still send notifies with power button
- 	 * event code to this device object on power button actions.
- 	 *
--	 * Report the power button press; catch and ignore the button release.
-+	 * Report the power button press and release.
- 	 */
- 	if (!priv->array) {
- 		if (event == 0xce) {
-@@ -372,8 +372,11 @@ static void notify_handler(acpi_handle handle, u32 event, void *context)
- 			return;
- 		}
- 
--		if (event == 0xcf)
-+		if (event == 0xcf) {
-+			input_report_key(priv->input_dev, KEY_POWER, 0);
-+			input_sync(priv->input_dev);
- 			return;
-+		}
- 	}
- 
- 	/* 0xC0 is for HID events, other values are for 5 button array */
--- 
-2.11.0
+But if userspace has a key, encryption is useless against root.
 
+> The TPM trusted key type is preferred to be the master key. But user
+> defined key can also be used for testing or when the platform doesn't
+> have TPM. User must be aware that the security of user key relies on
+> user space. If the root account be compromised, then the user key will
+> easy to be grabbed.
+
+In the TPM case, does userland have access to the key?=20
+
+Please explain your security goals.
+
+								Pavel
+
+
+> Lee, Chun-Yi (5):
+>   PM / hibernate: Create snapshot keys handler
+>   PM / hibernate: Generate and verify signature for snapshot image
+>   PM / hibernate: Encrypt snapshot image
+>   PM / hibernate: Erase the snapshot master key in snapshot pages
+>   PM / hibernate: An option to request that snapshot image must be
+>     authenticated
+>=20
+>  Documentation/admin-guide/kernel-parameters.txt |   6 +
+>  include/linux/kernel.h                          |   3 +-
+>  kernel/panic.c                                  |   1 +
+>  kernel/power/Kconfig                            |  25 +
+>  kernel/power/Makefile                           |   1 +
+>  kernel/power/hibernate.c                        |  59 ++-
+>  kernel/power/power.h                            |  59 +++
+>  kernel/power/snapshot.c                         | 576 ++++++++++++++++++=
++++++-
+>  kernel/power/snapshot_key.c                     | 312 +++++++++++++
+>  kernel/power/swap.c                             |   6 +
+>  kernel/power/user.c                             |  12 +
+>  11 files changed, 1042 insertions(+), 18 deletions(-)
+>  create mode 100644 kernel/power/snapshot_key.c
+>=20
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--zhXaljGHf11kAtnf
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlwyRJIACgkQMOfwapXb+vKbGwCgqdFS+SAxvg8NHhZw8KSTwtEn
+xgMAn1tZyKl+ZiX2ewpAPAipm+wK6brO
+=lr4D
+-----END PGP SIGNATURE-----
+
+--zhXaljGHf11kAtnf--
