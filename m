@@ -2,259 +2,148 @@ Return-Path: <SRS0=QMhl=PO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14EE7C43387
-	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 13:48:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1157FC43387
+	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 13:49:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A7A6206B7
-	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 13:48:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9549206B7
+	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 13:49:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="svzAopue"
+	dkim=pass (1024-bit key) header.d=mit.edu header.i=@mit.edu header.b="xGHoW/Wq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726437AbfAFNsS (ORCPT
+        id S1726471AbfAFNtV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 6 Jan 2019 08:48:18 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:46831 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726336AbfAFNsS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Jan 2019 08:48:18 -0500
-Received: by mail-io1-f68.google.com with SMTP id v10so32922019ios.13
-        for <linux-kernel@vger.kernel.org>; Sun, 06 Jan 2019 05:48:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=L3n6kchwFDpiNA0tL5XPBHgGt3dEIG0WucTmtHD6HGI=;
-        b=svzAopuetC2Lbgz2CArgaGmQICderrY5AFNbXXS5oDwr4cI1bcWL2kdlvcTxq+7o57
-         eel1lrDEUVZyPp8ucah4xa4M5SZcqJkTqwLA3yPLFOb7rj7SqrZSS5kMRhJjHl8elf7N
-         oxAoHCx7IcovJDLFrJ3bdDaltj0LK5yr9avMzwcFJLPdT3yJeEEJ6Hj6wjrG4MyfPPm0
-         9udD/+BDybr/oXUcOLXWVVFkahk2axazZAr45YfOU7p2JMulvXC+H3tuHVQ0n2qwgreF
-         iDYRHmH/mgtqH0k57bGOk7PQvhC5WYD48+HJaubfHtvsHVvwmOPZ+twgF3BAeb1pOSo5
-         Whaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=L3n6kchwFDpiNA0tL5XPBHgGt3dEIG0WucTmtHD6HGI=;
-        b=ab09+xB3Pq7L9PduYeHg1nWDXk1mhrufrRLArBQKCPBlc8zP1B7gyiG1GJwVbJekAk
-         CD/99r6F2+Co5Vua1ph/MsMO1XWVjRKMY6QZTYuscPmAAOcUblKtLId3eDNoWoRzu0Dn
-         5CfYxQCzhu6BTGg7/I1YW7aPDR5g+eG1Rrdh/FdJjj0kXxPWsmrn6lbchtxubAFEOtDn
-         RDMg/84IMpQ8pSVXjKmw5d1HvuLHfxn9sNxfDVfDDJSZ8BB7wCgTzfkP5x2Ghzeq78tx
-         glCwpEN45P0woj/WVKN1mkAOe1thhNkxM1eDka/DfYXbOzdqVJ8AKG6xeR5XjWfUFByf
-         QBtA==
-X-Gm-Message-State: AJcUukeXoGfQzfSrPV4eygKvK4pc3CR8/ir7XxcKY0QRKsdUB3IkRx/5
-        n9s3M7aiOWAdg4XJs/F+tBNnVZ+izXhh+gZLQ4HH5w==
-X-Google-Smtp-Source: ALg8bN7BXRrbOiP+XHRKwV7+TbUPC02PXcnGKjGXlV/jDxI85/fm1p0QrfTSKPxjX2Xj2OXJpdtDeg0Eke/DZEjsZZY=
-X-Received: by 2002:a5d:9456:: with SMTP id x22mr13281538ior.282.1546782496311;
- Sun, 06 Jan 2019 05:48:16 -0800 (PST)
+        Sun, 6 Jan 2019 08:49:21 -0500
+Received: from mail-eopbgr800118.outbound.protection.outlook.com ([40.107.80.118]:47055
+        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726336AbfAFNtV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Jan 2019 08:49:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ukNPm5/QWj0r3ZJFQ4m4E75UkoZmj/YHWH7baVtuF9Q=;
+ b=xGHoW/WqEY4H52eMr23PgmFNGfchpC5uDL0D46AzHBv8t12PRnVO6amgLXMtT2CbZBs2fdhKzsVEmzr7Lx+3JU4JW12PBqm5Rz1sGY/taCmLH5ypKR+TcQeVPpidTUgTjSTPiZhfFsnvVMHjQ4E2wX7QdgDIB5xaRHMghUOUGrU=
+Received: from MWHPR01CA0042.prod.exchangelabs.com (2603:10b6:300:101::28) by
+ MN2PR01MB5534.prod.exchangelabs.com (2603:10b6:208:118::20) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1495.6; Sun, 6 Jan 2019 13:49:15 +0000
+Received: from CO1NAM03FT033.eop-NAM03.prod.protection.outlook.com
+ (2a01:111:f400:7e48::207) by MWHPR01CA0042.outlook.office365.com
+ (2603:10b6:300:101::28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1495.6 via Frontend
+ Transport; Sun, 6 Jan 2019 13:49:14 +0000
+Authentication-Results: spf=pass (sender IP is 18.9.28.11)
+ smtp.mailfrom=mit.edu; vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
+ header.from=mit.edu;
+Received-SPF: Pass (protection.outlook.com: domain of mit.edu designates
+ 18.9.28.11 as permitted sender) receiver=protection.outlook.com;
+ client-ip=18.9.28.11; helo=outgoing.mit.edu;
+Received: from outgoing.mit.edu (18.9.28.11) by
+ CO1NAM03FT033.mail.protection.outlook.com (10.152.80.175) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.1471.13 via Frontend Transport; Sun, 6 Jan 2019 13:49:14 +0000
+Received: from callcc.thunk.org ([66.31.38.53])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x06DnC1V001624
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 6 Jan 2019 08:49:13 -0500
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 777D57A4BFD; Sun,  6 Jan 2019 08:49:12 -0500 (EST)
+Date:   Sun, 6 Jan 2019 08:49:12 -0500
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+CC:     <linux-kernel@vger.kernel.org>, <linux-fscrypt@vger.kernel.org>
+Subject: [GIT PULL] fscrypt update for 4.21
+Message-ID: <20190106134912.GA27028@mit.edu>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-fscrypt@vger.kernel.org
 MIME-Version: 1.0
-References: <000000000000ae2357057eca1fa5@google.com>
-In-Reply-To: <000000000000ae2357057eca1fa5@google.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Sun, 6 Jan 2019 14:48:04 +0100
-Message-ID: <CACT4Y+Y+dph0wyKOLffXMPFPsvbviYzfn1nrJJgOL1ngkQLtVw@mail.gmail.com>
-Subject: Re: KASAN: stack-out-of-bounds Read in check_stack_object
-To:     syzbot <syzbot+05fc3a636f5ee8830a99@syzkaller.appspotmail.com>
-Cc:     Chris von Recklinghausen <crecklin@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-EOPAttributedMessage: 0
+X-Forefront-Antispam-Report: CIP:18.9.28.11;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10019020)(346002)(396003)(376002)(136003)(39860400002)(2980300002)(189003)(199004)(46406003)(88552002)(33656002)(2906002)(75432002)(86362001)(52956003)(356004)(47776003)(486006)(6916009)(8936002)(476003)(126002)(97756001)(5660300001)(103686004)(1076003)(106466001)(8676002)(4326008)(106002)(54906003)(246002)(316002)(786003)(58126008)(36906005)(16586007)(42186006)(336012)(23726003)(90966002)(2616005)(6266002)(305945005)(36756003)(4001150100001)(186003)(26826003)(50466002)(26005)(478600001)(18370500001);DIR:OUT;SFP:1102;SCL:1;SRVR:MN2PR01MB5534;H:outgoing.mit.edu;FPR:;SPF:Pass;LANG:en;PTR:outgoing-auth-1.mit.edu;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: 1;CO1NAM03FT033;1:cqxBiI05yXA8Sb705AHujtQVZIlL1giialXkXBM2J+vlPfWcjx3yJtcu09jbAYjxA1P//FI2BfaUvgVAGAkdwkYxNv680LEIG3yp7ARkbW4AWWlPhbh6IKwTRT1ThSu1
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 2f2e18fe-cfb0-407d-bc8c-08d673ddbeea
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4608076)(4709027)(2017052603328)(7153060);SRVR:MN2PR01MB5534;
+X-Microsoft-Exchange-Diagnostics: 1;MN2PR01MB5534;3:WCytshM3K7shWfky83r8ibXBw1fC8RnHA6eTJU0rc4ZYIbtxXAWWNBex1OJ2CHKAL1dNOOw5+aO6aHOmAhEX4IJzCrEwmFqalfSNM7ctq6sOWUF8W8DLEaH5vMwhG9btsguESFtgmHhOk4XYf6/nZTI+p4CxsIXxK0TFx0P4lMG0u+bWUpuDHIsNh9PJ660N5oY6v2b6F3ySrmCzWD8lMO0wLyCX8bIYIqXwQioPIap7tBQaOHp6tmvIDbCEqQoMOKlMW1jorQW4vc6cz6YvPP13rNnlPAcMRrmaLQvuqSP+zlwoIlnz5vRWJ6RmN7IUJlq/AW3rBKSd4S1DL6zB2DbWef9DIQZ0N4csircn8m5uEYiQ3zYF/YZ/++FEYlcG;25:jVGjdC65uJLLw21e47zfY3FWj8np1kHMBlJ3ZKgArcP71ETWNkPbm5ruZ74SdP8rnJ7JjoIXxjGKb4M6GGza2NsKKxu2B4rFn9dWl2ytnVRHRP0iY8HfMDiow++Ho7TlsCBAb5FnKfY/9rsAJKvuRpENit44mIQfp+U0Ti4b3PjHG4Q1B1achfp8jO6KqNgUa2QiQou5UgotT+vpyMNYPaoANcfsd7KYtfIlhozTX+OXNk+Vrd/NaZExMEYtz0LYxYg2Mom9NDCtxN4kClEQyvulsoEnyIN5bj2UyarYzi539GmTEkzAgXWz+yEgAil7OiqHq1O/DGaMPnYasSZkhw==
+X-MS-TrafficTypeDiagnostic: MN2PR01MB5534:
+X-LD-Processed: 64afd9ba-0ecf-4acf-bc36-935f6235ba8b,ExtAddr
+X-Microsoft-Exchange-Diagnostics: 1;MN2PR01MB5534;31:8nWeOR4j1V2ngEWE0LlhFKy9PpLMGawOnk6xxbm7ILumBaRq3B5t6Chk6ZYcQ5+kZ8tYzFk4SYYmc8pc3scwuzJ3QC8VH5OSIUT3ObB24w67xcDICcdxLpwcQv3J55cVvDdiatt+NFfqImNCgfLxTMSWN2+b7Z/IHPq4LQeILjIFIPALJ2uM5tNV3f9zD4ai5BMUMrbEgaSCRl3vYTOFHKZTsu7v2sz8mmIw4ztXEuY=;20:XUDPT31zD60zH8ThUszo5m4YD43Hae2G+Qb3Gi0zfig/iTULutjGL9MX06oYytU5yDSB539vFdRkTvbwBzVuUtD2D7LBfqAZHyCUhCSTKBWziyD7Y06BXvmhyE7yh2/Ro6RWju+O7COjeHZf3gpE5bmYgfcmBtvYY6EZeB2VSt1PPIRmWmgG3wURA0sP9JDdH04igS1xuMe4YH5CG7/C6hU70Gop/+Tc9S/Uc5nDtzhtnszjPPUTN/vEBhkVv5LIytGxxjqQHq26YqZ+8nWFpmaWlem7xXtPpx6MHe+TQ9xfUYbTzTOYUz1QfYq4KmT3Rojmf8ryrJPDRzZgPGCKc7TfwLu6pkmMzoLp677NgMvNawVOvRMJuq9cHnunDwG/k8yNfw8Y3r4V9E8E27FAwQCp3G20RqzflpJ7bW7CjNLsg+rNX2qpptA8R/A25Cs4gzuQGm9xHus++gVjGZVjV6h8CGe7M4cTI9nTDC9XgImVriPREIoXbJwzMfYjijBM
+X-Microsoft-Antispam-PRVS: <MN2PR01MB5534CA069E944BF84CB2B0DDB5880@MN2PR01MB5534.prod.exchangelabs.com>
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(908002)(999002)(5005026)(6040522)(8220060)(2401047)(8121501046)(10201501046)(93006095)(93004095)(3231475)(944501520)(52105112)(3002001)(6041310)(20161123560045)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(201702281529075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:MN2PR01MB5534;BCL:0;PCL:0;RULEID:;SRVR:MN2PR01MB5534;
+X-Microsoft-Exchange-Diagnostics: 1;MN2PR01MB5534;4:aHRzBj5fntO/l7kOY8BU3vKW5M5RiDYZ+ARNGx3LeZvJrQj7g+o1dwgmTBaVcQL/ENYl0cpeDkwL025+xnki0q9dYdMkARyxrxifH6RrPgw9c7TukNhoNV0stGYH1Opme3koPaeW21O/oev+qCLPl7DA7ArPvvfIAhM86JCulRy7KKXROlbytp7/YeYla514b7hKtyJV9PqKYmcpI3jlPrYoBJuuRUN+iNFYbwa4SMhT238WIQOy3uKnoOptD47LuYZh1ocT1gzRWfAdznGFfebBWX26cGzZhg9BfcQrY2w=
+X-Forefront-PRVS: 09090B6B69
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;MN2PR01MB5534;23:4fx8Gu0IB3zE80IMtYTbe+1Tekl7ujVlkfgwWXMg9?=
+ =?us-ascii?Q?hc+YKvalvf7KDww8QLpgWPnYBlIuedWwy2D0P6MKan6soIEOk+pEnbDllglX?=
+ =?us-ascii?Q?VI8wTmEyauNXemFbDq/rdQwxRBnYRececG5ZUtN3d5fr57SKMEuejZliIspQ?=
+ =?us-ascii?Q?9LOnjj6ovGK+mY3m+BJw2LXGdPaI1pK/vyHPyTGsJe7SzeNwylgToXf09F3B?=
+ =?us-ascii?Q?eqk1gSylj+qllpBE4GkI3Q87fxDn1tniQf4w7O4lmde7wltCmEotDsvuQm+Y?=
+ =?us-ascii?Q?nO6COEjKoW4B4Z/hKZ5h//CeYZ595+eMYTsUEmz7sP7Pl9yRpcF0dC6PbQOG?=
+ =?us-ascii?Q?52FAXpn+0xPDeF76wAaLcSoGIMAKLUfKc9502gGyMcyuf3uSWn0kuRZdLBDH?=
+ =?us-ascii?Q?evRy1sxJANug+8JFHYPNHSf9MMe8eEzLhJh7OdiR/6PSxERfotvPQyYNv67/?=
+ =?us-ascii?Q?GgYfey/LhMlKvHz4V/Zs1a0sTpJKF2B7+GgfJtzkP6luzbOBt4Rdv0D52QI2?=
+ =?us-ascii?Q?kGM2WjtNUFiT9lHFnjrEzfbWTRQ5ox87prOWGW/qy3qpvWg9kS7TzEG3/fYn?=
+ =?us-ascii?Q?6UHp7+mn4EG++twx7WrQxqzjoc/qoWx64GXu1vO0z0DHmenHSDY1Wa96oE97?=
+ =?us-ascii?Q?0tc1kIe16XUmPe6rNnDE4zQ919pk00lcFAwUJ7hrBI7flx4D0cjQf1FiZmfc?=
+ =?us-ascii?Q?7ug4zyBM3hTg4gqo1iTAyx8ippmVAAWX8jvR77ypsszF9wiAPmGAdRu04a2U?=
+ =?us-ascii?Q?X5k7jklEX7K9+iaQuIqlRD+sN/BiBIK2rO/Z/WgFww5vJIFFogEPTOqy9DVB?=
+ =?us-ascii?Q?GcVDpA92mdvqdHLouyuYNwngzMrJw9lrJ7W4eN1RCg3AW5N6dnL8qXlOIRpF?=
+ =?us-ascii?Q?E1+T8kjZfDCRARdAtzZ7OMzm7+/XkKgBSs2UyCUklwTHnCNQ7a0na9tNwtbn?=
+ =?us-ascii?Q?fW2iZNNdpjC8kDNVVirijK67RESVHMUnb6WSij3JkfMSwR9eMNXGZdX5+6us?=
+ =?us-ascii?Q?Ra04A9eLJpvs+WBRZWgyXCxDqHuF1C8fzkSJcpNHA4REY93Kg/nHnJEkRXqF?=
+ =?us-ascii?Q?mky2iIwF0xO+lymR4Kzb06dD8M+F3YmYSNpzMQnYeaw0Fy2TVuwrShsaX8sq?=
+ =?us-ascii?Q?8PQ/oYrT+UnT3Q2znOUNqhOBO5yevVYhlLrgprER3fRyZqM7RrX8A=3D=3D?=
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam-Message-Info: O70xr4lMMGVIcuFqpxjR29qeT2yq3W+4EG86J2l7DVgS3Ju2trCxRg8U6rKuw6jjLEWQw/VeuCL05YZ3ZTnpF/zG5VBxWCIDIW1Zl7k0y48mhu4xtj05BwwAE8V3rd+RNxVpnUxb9UoAaz5DTItetd/YjL/S8JLO0b6Zt9+5xiuPh7ctGaHCx7CKllpUnlLmoPuFAB9yTMKl3xH8loHp+Gq/4pOq5JGpVJkdI3Kyw0k47nmbTYizmaNCBWIL66hrOfHJfYY/Vb5oMcZODmC8SVjXOTNeYmUM560oVCgsSQWmvV1GfAx2c5KijpwoErjP
+X-Microsoft-Exchange-Diagnostics: 1;MN2PR01MB5534;6:Zwi3NlQZdPDMzq5SayWZlmVRsp8FriXU+RsJXU0BWAFeo/SoR8M+/xgzA+xuZ20xR6Mm+oBU4cMXqNyrx6Sjjkf2jiCC+K7RCuMojs8vU31z2xQRMeL/jsTpm/8IHwOa3NPIxBWnosWPIV84DKU9jj/OKzLFZsX+kD1YbaeMXizjCKjwa4fAzOd2QjYgt4Ogi9Py7t6W/x7BRmIkLugcAiq0t1hbSnx6dOvYgzCaoTwrSiv9zvDfZzeNwRJbcbmQrrhUp6P1CzSucYfrpXajwVwaFo/N+yXRMXSrucyGpqho6tNS6poBzDLC6KbGXSERX+auNCxOPsPHI7lO88ruqHvDfPSKWSDvZegk5XIIB+GjokFgv52UxhkiEGavj1pJebv4B2o3dH9qpRd7f2rNQbap+MQlU0RA60dZGSU+Jr1wndviowlZfbGtETFXmPUKdc5ZI12nJnvADWSSo3JCTA==;5:KolUUvH2l7c88AxPTwKVHNb86yi2732E2iVV+33ksFOwopmt294Bf09zmXDgq870Fj7Hva3aqixzCvBNSriejKrUUfoDF5cIcOv9NcH8CuYmubSPvFfu8lTQdJyg7ojIvFxqScDzOGGGFyTzlhYtEKcyMbrYJnMvVognSnH3qF/B2yM20CGRNymD95eUTW+bD3Wh2vqHeCbqok9KY1SxiQ==;7:MaKrSXgfeYwyZbmbxXnTdpZAhFDduXpGKgLYSNltEgfy8Q2hNHnBEOmn1rrpV+IkaJyacfQVWhWjvewHKJBxDJ8NH/D0XnPRtetCi21IEeHTuf/YfSLpib/RFonYHt9bxoT8+b8fK+wCXbN87thjSg==
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: mit.edu
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jan 2019 13:49:14.4243
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2f2e18fe-cfb0-407d-bc8c-08d673ddbeea
+X-MS-Exchange-CrossTenant-Id: 64afd9ba-0ecf-4acf-bc36-935f6235ba8b
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=64afd9ba-0ecf-4acf-bc36-935f6235ba8b;Ip=[18.9.28.11];Helo=[outgoing.mit.edu]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR01MB5534
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jan 6, 2019 at 2:31 PM syzbot
-<syzbot+05fc3a636f5ee8830a99@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot found the following crash on:
->
-> HEAD commit:    3fed6ae4b027 ia64: fix compile without swiotlb
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=161ce1d7400000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=7308e68273924137
-> dashboard link: https://syzkaller.appspot.com/bug?extid=05fc3a636f5ee8830a99
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> userspace arch: i386
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10b3769f400000
->
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+05fc3a636f5ee8830a99@syzkaller.appspotmail.com
+The following changes since commit 7beb01f74415c56f5992922b5b902b45d365e694:
 
-I suspect this is another incarnation of:
-https://syzkaller.appspot.com/bug?id=4821de869e3d78a255a034bf212a4e009f6125a7
-Any other ideas?
+  f2fs: clean up f2fs_sb_has_##feature_name (2018-11-26 15:53:55 -0800)
 
-> ------------[ cut here ]------------
-> DEBUG_LOCKS_WARN_ON(current->hardirq_context)
-> ------------[ cut here ]------------
-> Bad or missing usercopy whitelist? Kernel memory overwrite attempt detected
-> to SLAB object 'task_struct' (offset 912, size 2)!
-> ==================================================================
-> BUG: KASAN: stack-out-of-bounds in task_stack_page
-> include/linux/sched/task_stack.h:21 [inline]
-> BUG: KASAN: stack-out-of-bounds in check_stack_object+0x14e/0x160
-> mm/usercopy.c:39
-> list_add corruption. next->prev should be prev (ffff8880ae62d8d8), but was
-> 0000000000000000. (next=ffff8880a94642f0).
-> Read of size 8 at addr ffff8880a9464258 by task /-1455013312
-> ------------[ cut here ]------------
->
-> kernel BUG at lib/list_debug.c:23!
-> CPU: 0 PID: -1455013312 Comm:  Not tainted 4.20.0+ #10
-> invalid opcode: 0000 [#1] PREEMPT SMP KASAN
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> CPU: 1 PID: 5941 Comm: syz-executor1 Not tainted 4.20.0+ #10
-> Call Trace:
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
->
-> RIP: 0010:__list_add_valid.cold+0xf/0x3c lib/list_debug.c:23
-> Allocated by task 2570092928:
-> Code: 34 fe eb d5 4c 89 e7 e8 2a dd 34 fe eb a3 4c 89 f7 e8 20 dd 34 fe e9
-> 56 ff ff ff 4c 89 e1 48 c7 c7 60 b4 81 88 e8 f0 2d d7 fd <0f> 0b 48 89 f2
-> 4c 89 e1 4c 89 ee 48 c7 c7 a0 b5 81 88 e8 d9 2d d7
-> RSP: 0018:ffff8880ae707770 EFLAGS: 00010086
-> RAX: 0000000000000075 RBX: ffff8880a3260730 RCX: 0000000000000000
-> RDX: 0000000000000000 RSI: ffffffff81684c16 RDI: ffffed1015ce0ee0
-> RBP: ffff8880ae707788 R08: 0000000000000075 R09: ffffed1015ce5021
-> R10: ffffed1015ce5020 R11: ffff8880ae728107 R12: ffff8880a94642f0
-> R13: ffff8880a3260730 R14: ffff8880ae62d8d8 R15: ffff8880ae707ad0
-> FS:  0000000000000000(0000) GS:ffff8880ae700000(0063) knlGS:00000000f7fbbb40
-> CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
-> CR2: 0000000000625208 CR3: 00000000a57b8000 CR4: 00000000001406e0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->   <IRQ>
->   __list_add include/linux/list.h:60 [inline]
->   list_add include/linux/list.h:79 [inline]
->   list_move include/linux/list.h:171 [inline]
->   detach_tasks kernel/sched/fair.c:7557 [inline]
->   load_balance+0x1bdd/0x39d0 kernel/sched/fair.c:8979
->   rebalance_domains+0x815/0xf00 kernel/sched/fair.c:9366
->   run_rebalance_domains+0x376/0x4e0 kernel/sched/fair.c:9986
->   __do_softirq+0x30b/0xb11 kernel/softirq.c:292
->   invoke_softirq kernel/softirq.c:373 [inline]
->   irq_exit+0x180/0x1d0 kernel/softirq.c:413
->   exiting_irq arch/x86/include/asm/apic.h:536 [inline]
->   smp_apic_timer_interrupt+0x1b7/0x760 arch/x86/kernel/apic/apic.c:1062
->   apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:807
->   </IRQ>
-> RIP: 0010:update_stack_state+0x24c/0x680 arch/x86/kernel/unwind_frame.c:244
-> Code: 48 b9 00 00 00 00 00 fc ff df 4c 89 f6 48 c1 ee 03 80 3c 0e 00 0f 85
-> b3 03 00 00 48 39 9d 30 ff ff ff 4d 8b 67 40 40 0f 97 c6 <4d> 85 e4 0f 95
-> c1 40 84 ce 74 0c 39 85 44 ff ff ff 0f 84 68 01 00
-> RSP: 0018:ffff88809870e768 EFLAGS: 00000283 ORIG_RAX: ffffffffffffff13
-> RAX: 0000000000000001 RBX: ffff88809870ec58 RCX: dffffc0000000000
-> RDX: ffff888098708000 RSI: 1ffff110130e1d00 RDI: ffff88809870e968
-> RBP: ffff88809870e850 R08: 0000000000000001 R09: ffff88809870e9a8
-> R10: ffff88809870e980 R11: ffff88809870e990 R12: ffff88809870e948
-> R13: dffffc0000000000 R14: ffff88809870e998 R15: ffff88809870e958
->   unwind_next_frame.part.0+0x1ae/0xa90 arch/x86/kernel/unwind_frame.c:329
->   unwind_next_frame+0x3b/0x50 arch/x86/kernel/unwind_frame.c:287
->   __save_stack_trace+0x7a/0xf0 arch/x86/kernel/stacktrace.c:44
->   save_stack_trace+0x1a/0x20 arch/x86/kernel/stacktrace.c:60
->   save_stack+0x45/0xd0 mm/kasan/common.c:73
->   set_track mm/kasan/common.c:85 [inline]
->   kasan_kmalloc mm/kasan/common.c:482 [inline]
->   kasan_kmalloc+0xcf/0xe0 mm/kasan/common.c:455
->   kasan_slab_alloc+0xf/0x20 mm/kasan/common.c:397
->   slab_post_alloc_hook mm/slab.h:444 [inline]
->   slab_alloc_node mm/slab.c:3322 [inline]
->   kmem_cache_alloc_node_trace+0x13c/0x720 mm/slab.c:3648
->   __do_kmalloc_node mm/slab.c:3670 [inline]
->   __kmalloc_node_track_caller+0x3d/0x70 mm/slab.c:3685
->   __kmalloc_reserve.isra.0+0x40/0xe0 net/core/skbuff.c:140
->   __alloc_skb+0x12d/0x730 net/core/skbuff.c:208
->   alloc_skb include/linux/skbuff.h:1011 [inline]
->   alloc_skb_with_frags+0x13a/0x770 net/core/skbuff.c:5288
->   sock_alloc_send_pskb+0x8c9/0xad0 net/core/sock.c:2091
->   sock_alloc_send_skb+0x32/0x40 net/core/sock.c:2108
->   __ip6_append_data.isra.0+0x2556/0x3f20 net/ipv6/ip6_output.c:1443
->   ip6_make_skb+0x391/0x5f0 net/ipv6/ip6_output.c:1806
->   udpv6_sendmsg+0x2b58/0x3550 net/ipv6/udp.c:1460
->   inet_sendmsg+0x1af/0x740 net/ipv4/af_inet.c:798
->   sock_sendmsg_nosec net/socket.c:621 [inline]
->   sock_sendmsg+0xdd/0x130 net/socket.c:631
->   ___sys_sendmsg+0x409/0x910 net/socket.c:2116
->   __sys_sendmmsg+0x3bc/0x730 net/socket.c:2204
->   __compat_sys_sendmmsg net/compat.c:771 [inline]
->   __do_compat_sys_sendmmsg net/compat.c:778 [inline]
->   __se_compat_sys_sendmmsg net/compat.c:775 [inline]
->   __ia32_compat_sys_sendmmsg+0x9f/0x100 net/compat.c:775
->   do_syscall_32_irqs_on arch/x86/entry/common.c:326 [inline]
->   do_fast_syscall_32+0x333/0xf98 arch/x86/entry/common.c:397
->   entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
-> RIP: 0023:0xf7fbf869
-> Code: 85 d2 74 02 89 0a 5b 5d c3 8b 04 24 c3 8b 14 24 c3 8b 3c 24 c3 90 90
-> 90 90 90 90 90 90 90 90 90 90 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90
-> 90 90 90 eb 0d 90 90 90 90 90 90 90 90 90 90 90 90
-> RSP: 002b:00000000f7fbb0cc EFLAGS: 00000296 ORIG_RAX: 0000000000000159
-> RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000020005fc0
-> RDX: 00000000000000fc RSI: 0000000008000000 RDI: 0000000000000000
-> RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-> R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
-> Modules linked in:
-> ---[ end trace e0e50d48068f1e3d ]---
-> BUG: unable to handle kernel paging request at ffffffff8cf14780
-> #PF error: [normal kernel read fault]
-> RIP: 0010:__list_add_valid.cold+0xf/0x3c lib/list_debug.c:23
-> PGD 9874067 P4D 9874067 PUD 9875063 PMD 0
-> Code: 34 fe eb d5 4c 89 e7 e8 2a dd 34 fe eb a3 4c 89 f7 e8 20 dd 34 fe e9
-> 56 ff ff ff 4c 89 e1 48 c7 c7 60 b4 81 88 e8 f0 2d d7 fd <0f> 0b 48 89 f2
-> 4c 89 e1 4c 89 ee 48 c7 c7 a0 b5 81 88 e8 d9 2d d7
-> Thread overran stack, or stack corrupted
-> RSP: 0018:ffff8880ae707770 EFLAGS: 00010086
-> Oops: 0000 [#2] PREEMPT SMP KASAN
-> RAX: 0000000000000075 RBX: ffff8880a3260730 RCX: 0000000000000000
-> CPU: 0 PID: -1455013312 Comm:  Tainted: G      D           4.20.0+ #10
-> RDX: 0000000000000000 RSI: ffffffff81684c16 RDI: ffffed1015ce0ee0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> RBP: ffff8880ae707788 R08: 0000000000000075 R09: ffffed1015ce5021
-> RIP: 0010:depot_fetch_stack+0x10/0x30 lib/stackdepot.c:202
-> R10: ffffed1015ce5020 R11: ffff8880ae728107 R12: ffff8880a94642f0
-> Code: e6 72 22 fe e9 20 fe ff ff 48 89 df e8 d9 72 22 fe e9 f1 fd ff ff 90
-> 90 90 90 89 f8 c1 ef 11 25 ff ff 1f 00 81 e7 f0 3f 00 00 <48> 03 3c c5 80
-> 03 f5 8b 8b 47 0c 48 83 c7 18 c7 46 10 00 00 00 00
-> R13: ffff8880a3260730 R14: ffff8880ae62d8d8 R15: ffff8880ae707ad0
-> RSP: 0018:ffff8880a9463fb8 EFLAGS: 00010006
-> FS:  0000000000000000(0000) GS:ffff8880ae700000(0063) knlGS:00000000f7fbbb40
-> RAX: 00000000001f8880 RBX: ffff8880a9465a04 RCX: 0000000000000000
-> CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
-> RDX: 0000000000000000 RSI: ffff8880a9463fc0 RDI: 0000000000003ff0
-> CR2: 0000000000625208 CR3: 00000000a57b8000 CR4: 00000000001406e0
-> RBP: ffff8880a9463fe8 R08: 000000000000001d R09: ffffed1015cc3ef9
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> R10: ffffed1015cc3ef8 R11: ffff8880ae61f7c7 R12: ffffea0002a51900
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> R13: ffff8880a9464258 R14: ffff8880aa13d900 R15: ffff8880a9465a00
->
->
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
-> syzbot.
-> syzbot can test patches for this bug, for details see:
-> https://goo.gl/tpsmEJ#testing-patches
->
-> --
-> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/000000000000ae2357057eca1fa5%40google.com.
-> For more options, visit https://groups.google.com/d/optout.
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tytso/fscrypt.git tags/fscrypt_for_linus
+
+for you to fetch changes up to 8094c3ceb21ad93896fd4d238e8ba41911932eaf:
+
+  fscrypt: add Adiantum support (2019-01-06 08:36:21 -0500)
+
+----------------------------------------------------------------
+Add Adiantum support for fscrypt
+
+----------------------------------------------------------------
+Eric Biggers (1):
+      fscrypt: add Adiantum support
+
+ Documentation/filesystems/fscrypt.rst | 179 ++++++++++++---------
+ fs/crypto/crypto.c                    |  28 ++--
+ fs/crypto/fname.c                     |  22 +--
+ fs/crypto/fscrypt_private.h           |  67 +++++++-
+ fs/crypto/keyinfo.c                   | 351 ++++++++++++++++++++++++++++++++----------
+ fs/crypto/policy.c                    |   5 +-
+ include/uapi/linux/fs.h               |   4 +-
+ 7 files changed, 468 insertions(+), 188 deletions(-)
