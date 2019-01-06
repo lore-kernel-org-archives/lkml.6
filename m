@@ -2,108 +2,93 @@ Return-Path: <SRS0=QMhl=PO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93F33C43387
-	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 00:02:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A66BC43387
+	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 00:11:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68EAB222B3
-	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 00:02:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 26693222C0
+	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 00:11:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="i0NsD4cD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726509AbfAFAC4 (ORCPT
+        id S1726389AbfAFALp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 5 Jan 2019 19:02:56 -0500
-Received: from mail-oln040092066070.outbound.protection.outlook.com ([40.92.66.70]:28958
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726363AbfAFACz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 Jan 2019 19:02:55 -0500
-Received: from HE1EUR01FT038.eop-EUR01.prod.protection.outlook.com
- (10.152.0.55) by HE1EUR01HT209.eop-EUR01.prod.protection.outlook.com
- (10.152.1.137) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1471.13; Sun, 6 Jan
- 2019 00:02:51 +0000
-Received: from DB7PR07MB5353.eurprd07.prod.outlook.com (10.152.0.58) by
- HE1EUR01FT038.mail.protection.outlook.com (10.152.1.93) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.1471.13 via Frontend Transport; Sun, 6 Jan 2019 00:02:51 +0000
-Received: from DB7PR07MB5353.eurprd07.prod.outlook.com
- ([fe80::e1f9:8635:f629:eb8e]) by DB7PR07MB5353.eurprd07.prod.outlook.com
- ([fe80::e1f9:8635:f629:eb8e%4]) with mapi id 15.20.1516.010; Sun, 6 Jan 2019
- 00:02:51 +0000
-From:   Bernd Edlinger <bernd.edlinger@hotmail.de>
-To:     Ping-Ke Shih <pkshih@realtek.com>,
-        Larry Finger <Larry.Finger@lwfinger.net>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Andrew Lunn <andrew@lunn.ch>
-Subject: [PATCH v3 4/4] rtlwifi: Don't clear num_rx_inperiod too early
-Thread-Topic: [PATCH v3 4/4] rtlwifi: Don't clear num_rx_inperiod too early
-Thread-Index: AQHUpVMqbKQKwAnOjEmtsNGk5fiqeA==
-Date:   Sun, 6 Jan 2019 00:02:51 +0000
-Message-ID: <DB7PR07MB5353AB02E166DAF49D5E68FCE4880@DB7PR07MB5353.eurprd07.prod.outlook.com>
-Accept-Language: en-US, en-GB, de-DE
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: AM6PR06CA0035.eurprd06.prod.outlook.com
- (2603:10a6:20b:14::48) To DB7PR07MB5353.eurprd07.prod.outlook.com
- (2603:10a6:10:6e::26)
-x-incomingtopheadermarker: OriginalChecksum:2378198F28BAB2A65EE50B50B44EC937AAD9A7F521B3F422C140E596023CDE17;UpperCasedChecksum:ABDB5120F5B50E2EA2483BFFBC0F3E29C95CAD2FE9FA7446C43744BA12E85C9C;SizeAsReceived:8771;Count:62
-x-ms-exchange-messagesentrepresentingtype: 1
-x-tmn:  [+MX+zvCYfG3n1VEtwC1upCCI+G0CSXF3]
-x-microsoft-original-message-id: <4565959f-d15e-500c-6f36-109b2aa29309@hotmail.de>
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;HE1EUR01HT209;6:TTgMRVDapWAFqfaNlyqY+4wpnwRl39rdfdYVqmEhnZsrX/kcLcBxef1tOxD0iKqfNPrR3Y3VPmFkvGgRzxD7cnCh/Bx4EhtUOMaDf9atdXF6FKn2AjUgZn8cAcF7ReAfvCZTOSmB5OTolQMUKR60sPObk3db78BaYSA+WqS2JK2qeYSypSRqafcwaWUv9wZygmlUUq9zyY6sqWnGDpczmsefWL6NZt/fwnrFV4wKAex8n7q2IYj0m1Hgduh67NqUJcjCLvRrfI207Xq/Z6wHfqyg+LxYkuxVxlHce2El7NOBDp5feV8SqxhTcuWZiYzgTL6Ucva1VS34tvgwwkXItjE1jGEk+v3ZdcKySwosawTi4WakoxzaBSJK2jPgSo8yu/bxs+Ps246YbFBzjP0S+DTpKh0CphA6dM08IT8CehD0qHdajipZzFaBr/ZCe3MF3Pf9dovfRZLaTuMrztgy4A==;5:8qRzTjs+i/Nu1qf4x29655rDIQy8/hhzMEMv9g6AljC0XygGl9YNNsP8RgbgVe/hZd7ZAYpC2u/R1q+/q5G2+4cAYB9mzSa7Flugg6Y4q5X8/279TckiYgbDPS/0VqX75q8czGuKFda9R5sAzBoFhuAsK8OwrnTgehmkgcJVbb8=;7:MaAl4mdu18MXJcfbhsL9TZtTRJ7aIEf3xGceR76xD4UgbYFU3n9SQLxSvoUKdGVcKRtz2DxKNLPsGIY7mpavMTSMuLxQi1Ey9BCJ5DLG1oWNZWjUt+/LhD4+RtbnI2gwtlzjxrf7MaWZVl8XKrRU8Q==
-x-incomingheadercount: 62
-x-eopattributedmessage: 0
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(201702061078)(5061506573)(5061507331)(1603103135)(2017031320274)(2017031323274)(2017031324274)(2017031322404)(1601125500)(1603101475)(1701031045);SRVR:HE1EUR01HT209;
-x-ms-traffictypediagnostic: HE1EUR01HT209:
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(4566010)(82015058);SRVR:HE1EUR01HT209;BCL:0;PCL:0;RULEID:;SRVR:HE1EUR01HT209;
-x-microsoft-antispam-message-info: gflcKgtxwmSv4689tBVnY6xeqHzlc81aYBEKr/8GP6A8S3amfo+m2YSa0aAi8Vev
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <49DADF5C48296D4B979FDD8951861E51@eurprd07.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Sat, 5 Jan 2019 19:11:45 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:34418 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726363AbfAFALp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 5 Jan 2019 19:11:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=hrWMddqDVg55lVU7GWrgf6C5GPOqZ5qTBBQkTmgMG20=; b=i0NsD4cDbJfDVcVT2Vf0bgcLK
+        +bI6mAXzF4IhznJ1yfw9xF7toCT46yU+za3AqoNR3Up1jaDOhcPDTmwbvSyyKruQYkgHc9uL2WFfh
+        ij6dKZjt5dKq9cot2+RGs65x1p8ahNKwyAtdPLfcvbVcMlKfIp7KiXYAMShhkC7Z9Cg2uEQ8b1lxB
+        HtKuskOhsKKt71fGq0kiG2ae1Q0EocD55AeDVI9Yrsli57pK5e9r+QgZXQbZcR/ZFarTKb5HVKPZO
+        b6xaa6l9TSJne0S54uu9f2QoSpFONutQRGEFQdE7zK3ryqva9zLlP5gby0ubKTJri7xHbYv3s4nof
+        2gaH4nivw==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gfw2U-0007jO-SK; Sun, 06 Jan 2019 00:11:38 +0000
+Date:   Sat, 5 Jan 2019 16:11:38 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Jann Horn <jannh@google.com>, Jiri Kosina <jikos@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Michal Hocko <mhocko@suse.com>, Linux-MM <linux-mm@kvack.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Subject: Re: [PATCH] mm/mincore: allow for making sys_mincore() privileged
+Message-ID: <20190106001138.GW6310@bombadil.infradead.org>
+References: <nycvar.YFH.7.76.1901051817390.16954@cbobk.fhfr.pm>
+ <CAG48ez2jAp9xkPXQmVXm0PqNrFGscg9BufQRem2UD8FGX-YzPw@mail.gmail.com>
+ <CAHk-=whL4sZiM=JcdQAYQvHm7h7xEtVUh+gYGYhoSk4vi38tXg@mail.gmail.com>
+ <CAHk-=wg5Kk+r36=jcGBaLUj+gjopjgiW5eyvkdMqvn0jFkD_iQ@mail.gmail.com>
+ <CAHk-=wiMQeCEKESWTmm15x79NjEjNwFvjZ=9XenxY7yH8zqa7A@mail.gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: d4d70346-2c10-4f39-8c00-e767963926d9
-X-MS-Exchange-CrossTenant-Network-Message-Id: 98b28b9f-0f6b-4489-69f7-08d6736a4ca7
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: d4d70346-2c10-4f39-8c00-e767963926d9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Jan 2019 00:02:50.4896
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Internet
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1EUR01HT209
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wiMQeCEKESWTmm15x79NjEjNwFvjZ=9XenxY7yH8zqa7A@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-VGhpcyBwYXRjaCBtb3ZlcyB0aGUgY2xlYXJpbmcgb2YgcnRscHJpdi0+bGlua19pbmZvLm51bV9y
-eF9pbnBlcmlvZCBpbg0KcnRsX3dhdGNoZG9nX3dxX2NhbGxiYWNrIGEgZmV3IGxpbmVzIGRvd24u
-DQoNClRoaXMgaXMgbmVjZXNzYXJ5IHNpbmNlIGl0IGlzIHN0aWxsIHVzZWQgaW4gdGhlICJBUCBv
-ZmYiIGRldGVjdGlvbg0KY29kZSBibG9jay4gTW92ZWQgY2xlYXJpbmcgb2YgcnRscHJpdi0+bGlu
-a19pbmZvLm51bV9yeF9pbnBlcmlvZA0KYXMgd2VsbCBmb3IgY29uc2lzdGVuY3kuDQoNClNpZ25l
-ZC1vZmYtYnk6IEJlcm5kIEVkbGluZ2VyIDxiZXJuZC5lZGxpbmdlckBob3RtYWlsLmRlPg0KLS0t
-DQp2MjogSW1wcm92ZWQgcGF0Y2ggZGVzY3JpcHRpb24uDQoNCnYzOiBNYWtlIHRoZSB0aXRsZSBm
-aXQgaW4gb25lIGxpbmUuDQotLS0NCiBkcml2ZXJzL25ldC93aXJlbGVzcy9yZWFsdGVrL3J0bHdp
-ZmkvYmFzZS5jIHwgNCArKy0tDQogMSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygrKSwgMiBk
-ZWxldGlvbnMoLSkNCg0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvbmV0L3dpcmVsZXNzL3JlYWx0ZWsv
-cnRsd2lmaS9iYXNlLmMgYi9kcml2ZXJzL25ldC93aXJlbGVzcy9yZWFsdGVrL3J0bHdpZmkvYmFz
-ZS5jDQppbmRleCBlZjliNTAyLi43YWE2OGZlIDEwMDY0NA0KLS0tIGEvZHJpdmVycy9uZXQvd2ly
-ZWxlc3MvcmVhbHRlay9ydGx3aWZpL2Jhc2UuYw0KKysrIGIvZHJpdmVycy9uZXQvd2lyZWxlc3Mv
-cmVhbHRlay9ydGx3aWZpL2Jhc2UuYw0KQEAgLTIxNzIsOCArMjE3Miw2IEBAIHZvaWQgcnRsX3dh
-dGNoZG9nX3dxX2NhbGxiYWNrKHZvaWQgKmRhdGEpDQogCQk7DQogCX0NCiANCi0JcnRscHJpdi0+
-bGlua19pbmZvLm51bV9yeF9pbnBlcmlvZCA9IDA7DQotCXJ0bHByaXYtPmxpbmtfaW5mby5udW1f
-dHhfaW5wZXJpb2QgPSAwOw0KIAlmb3IgKHRpZCA9IDA7IHRpZCA8PSA3OyB0aWQrKykNCiAJCXJ0
-bHByaXYtPmxpbmtfaW5mby50aWR0eF9pbnBlcmlvZFt0aWRdID0gMDsNCiANCkBAIC0yMjM2LDYg
-KzIyMzQsOCBAQCB2b2lkIHJ0bF93YXRjaGRvZ193cV9jYWxsYmFjayh2b2lkICpkYXRhKQ0KIAkJ
-CXJ0bHByaXYtPmJ0Y29leGlzdC5idGNfaW5mby5pbl80d2F5ID0gZmFsc2U7DQogCX0NCiANCisJ
-cnRscHJpdi0+bGlua19pbmZvLm51bV9yeF9pbnBlcmlvZCA9IDA7DQorCXJ0bHByaXYtPmxpbmtf
-aW5mby5udW1fdHhfaW5wZXJpb2QgPSAwOw0KIAlydGxwcml2LT5saW5rX2luZm8uYmNuX3J4X2lu
-cGVyaW9kID0gMDsNCiANCiAJLyogPDY+IHNjYW4gbGlzdCAqLw0KLS0gDQoxLjkuMQ0K
+On Sat, Jan 05, 2019 at 03:39:10PM -0800, Linus Torvalds wrote:
+> On Sat, Jan 5, 2019 at 3:16 PM Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+> >
+> > It goes back to forever, it looks like. I can't find a reason.
+> 
+> mincore() was originally added in 2.3.52pre3, it looks like. Around
+> 2000 or so. But sadly before the BK history.
+> 
+> And that comment about
+> 
+>   "Later we can get more picky about what "in core" means precisely."
+> 
+> that still exists above mincore_page() goes back to the original patch.
+
+FreeBSD claims to have a manpage from SunOS 4.1.3 with mincore (!)
+
+https://www.freebsd.org/cgi/man.cgi?query=mincore&apropos=0&sektion=0&manpath=SunOS+4.1.3&arch=default&format=html
+
+DESCRIPTION
+       mincore()  returns  the primary memory residency	status of pages	in the
+       address space covered by	mappings in the	range [addr, addr + len).  The
+       status is returned as a char-per-page in	the character array referenced
+       by *vec (which the system assumes to be large enough to	encompass  all
+       the  pages  in  the  address range).  The least significant bit of each
+       character is set	to 1 to	indicate that the referenced page is  in  pri-
+       mary  memory, 0 if it is	not.  The settings of other bits in each char-
+       acter is	undefined and may contain other	information in the future.
+
