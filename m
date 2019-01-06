@@ -2,46 +2,49 @@ Return-Path: <SRS0=QMhl=PO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4735DC43387
-	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 16:02:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CE1AC43387
+	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 16:02:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05BC42085A
-	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 16:02:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D42062085A
+	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 16:02:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="bqrP4JRW"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="cfFLla9s"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726426AbfAFQCd (ORCPT
+        id S1726459AbfAFQCi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 6 Jan 2019 11:02:33 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:54832 "EHLO
+        Sun, 6 Jan 2019 11:02:38 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:54848 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726341AbfAFQCd (ORCPT
+        with ESMTP id S1726341AbfAFQCe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Jan 2019 11:02:33 -0500
+        Sun, 6 Jan 2019 11:02:34 -0500
 Received: from localhost.localdomain (unknown [96.44.9.229])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id EDF8198C;
-        Sun,  6 Jan 2019 17:02:28 +0100 (CET)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 73A51BB9;
+        Sun,  6 Jan 2019 17:02:31 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1546790551;
-        bh=RXeoIlbfHWyvwrcg7GnA48vy6AaONClWFffKnMvtbxk=;
-        h=From:To:Cc:Subject:Date:From;
-        b=bqrP4JRWoVwQ5+esXHzU35Gee6uph3CGI7GTzoEH6MZFybcNpbUTVPTjrDnUPQ0Mo
-         eVjr6Ga8CR1UI0SqngFl6WbqMcJGawPVdFWyjhnFtCkx8pkUzwJAVqMYlR4RCA7jpo
-         DgBxDT9PITYeUQDvebg9+mxmrQkiZjX6dJDFLVYQ=
+        s=mail; t=1546790553;
+        bh=OKkqu7e4MT/gRqFh+/z/f4161nrtHwosurjZQeO1mXg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=cfFLla9sGKVrui+KvKU35uFFWtxhBxy6c72pNwNvZLoaTv1EVuzKwb8vpJQUPNX2o
+         ZVeaKI+m4gQEZt0ng5WaM2NCwx8KIttrNC+s9Gt4KNfRR4VlgzyPGDDagn/kb4vdUG
+         upxvShqhSyWiVRBkx994/otO3eFCaW3oweuN7EXk=
 From:   Paul Elder <paul.elder@ideasonboard.com>
 To:     laurent.pinchart@ideasonboard.com, kieran.bingham@ideasonboard.com
 Cc:     Paul Elder <paul.elder@ideasonboard.com>, b-liu@ti.com,
         stern@rowland.harvard.edu, rogerq@ti.com, balbi@kernel.org,
         gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v4 0/6] usb: gadget: add mechanism to asynchronously validate data stage of ctrl out request
-Date:   Sun,  6 Jan 2019 11:02:15 -0500
-Message-Id: <20190106160221.4480-1-paul.elder@ideasonboard.com>
+Subject: [PATCH v4 1/6] usb: uvc: include videodev2.h in g_uvc.h
+Date:   Sun,  6 Jan 2019 11:02:16 -0500
+Message-Id: <20190106160221.4480-2-paul.elder@ideasonboard.com>
 X-Mailer: git-send-email 2.19.2
+In-Reply-To: <20190106160221.4480-1-paul.elder@ideasonboard.com>
+References: <20190106160221.4480-1-paul.elder@ideasonboard.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -50,119 +53,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch series adds a mechanism to allow asynchronously validating
-the data stage of a control OUT request, and for stalling or suceeding
-the request accordingly. This mechanism is implemented for MUSB, and is
-used by UVC. At the same time, UVC packages the setup stage and data
-stage data together to send to userspace to save on a pair of context
-switches per control out request.
+V4L2_EVENT_PRIVATE_START is used in g_uvc.h but is defined in
+videodev2.h, which is not included and causes a compiler warning:
 
-This patch series does change the userspace API. We however believe that
-it is justified because the current API is broken, and because it isn't
-being used (because it's broken).
+linux/usb/g_uvc.h:15:28: error: ‘V4L2_EVENT_PRIVATE_START’ undeclared here (not in a function)
+ #define UVC_EVENT_FIRST   (V4L2_EVENT_PRIVATE_START + 0)
 
-The current API is broken such that it is subject to race conditions
-that cause fatal errors with a high frequency. This is actually what
-motivated this patch series in the first place. In the current API, not
-only is there no way to asynchronously validate the data stage of a
-control OUT request, but an empty buffer is expected to be provided to
-hold the data stage data -- which is more likely than not to be late.
-There is even a warning in musb_g_ep0_queue:
+Include videodev2.h in g_uvc.h.
 
-/* else for sequence #2 (OUT), caller provides a buffer
- * before the next packet arrives.  deferred responses
- * (after SETUP is acked) are racey.
- */
+Signed-off-by: Paul Elder <paul.elder@ideasonboard.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+---
+No change from v3
+No change from v2
+No change from v1
 
-This problem has never been reported in years, which is a sign that the
-API isn't used. Furthermore, the vendor kernels that we have seen using
-the UVC gadget driver (such as QC and Huawei) are heavily patched with
-local changes to the API. This corroborates the suspicion that the
-current mainline API is not being used.
+ include/uapi/linux/usb/g_uvc.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-Additionally, this API isn't meant to be used by generic applications,
-but by a dedicated userspace helper. uvc-gadget is one such example, but
-it has bitrotten and isn't compatible with the current kernel API. The
-fact that nobody has submitted patches nor complained for a long time
-again shows that it isn't being used.
-
-The conclusion is that since the API hasn't been used for a long time,
-it is safe to fix it.
-
-Changes in v4:
-
-- Change wording and fix typo in patch 4/6 "usb: gadget: add mechanism
-  to specify an explicit status stage"
-- Set explicit_status in usb_gadget_control_complete
-- Change explicit_status from unsigned int to bool
-
-Changes in v3:
-
-- Function driver send STALL status stage by simply calling
-  usb_ep_set_halt, and ACK by enqueueing request
-- Fix signature of usb_gadget_control_complete to check the status of the
-  request that was just given back.
-- Corresponding changes to musb and uvc gadget
-
-Changes in v2:
-
-Overhaul of status stage delay mechanism/API. Now if a function driver
-desires an explicit/delayed status stage, it specifies so in a flag in
-the usb_request that is queued for the data stage. The function driver
-later enqueues another usb_request for the status stage, also with the
-explicit_status flag set, and with the zero flag acting as the status.
-If a function driver does not desire an explicit status stage, then it
-can set (or ignore) the explicit_status flag in the usb_request that
-is queued for the data stage.
-
-To allow the optional explicit status stage, a UDC driver should call
-the newly added usb_gadget_control_complete right after
-usb_gadget_giveback_request, and in its queue function should check if
-the usb_request is for the status stage and if it has been requested to
-be explicit, and if so check the status that should be sent. (See 5/6
-"usb: musb: gadget: implement optional explicit status stage" for an
-implementation for MUSB)
-
-Paul Elder (6):
-  usb: uvc: include videodev2.h in g_uvc.h
-  usb: gadget: uvc: enqueue usb request in setup handler for control OUT
-  usb: gadget: uvc: package setup and data for control OUT requests
-  usb: gadget: add mechanism to specify an explicit status stage
-  usb: musb: gadget: implement optional explicit status stage
-  usb: gadget: uvc: allow ioctl to send response in status stage
-
- drivers/usb/gadget/function/f_uvc.c    | 32 ++++++++++++++++++------
- drivers/usb/gadget/function/uvc.h      |  1 +
- drivers/usb/gadget/function/uvc_v4l2.c | 18 ++++++++++++++
- drivers/usb/gadget/udc/core.c          | 34 ++++++++++++++++++++++++++
- drivers/usb/musb/musb_gadget.c         |  2 ++
- drivers/usb/musb/musb_gadget_ep0.c     | 23 +++++++++++++++++
- include/linux/usb/gadget.h             | 10 ++++++++
- include/uapi/linux/usb/g_uvc.h         |  4 ++-
- 8 files changed, 115 insertions(+), 9 deletions(-)
-
--- 
-2.19.2
-
-
-Paul Elder (6):
-  usb: uvc: include videodev2.h in g_uvc.h
-  usb: gadget: uvc: enqueue usb request in setup handler for control OUT
-  usb: gadget: uvc: package setup and data for control OUT requests
-  usb: gadget: add mechanism to specify an explicit status stage
-  usb: musb: gadget: implement optional explicit status stage
-  usb: gadget: uvc: allow ioctl to send response in status stage
-
- drivers/usb/gadget/function/f_uvc.c    | 32 ++++++++++++++++++------
- drivers/usb/gadget/function/uvc.h      |  1 +
- drivers/usb/gadget/function/uvc_v4l2.c | 18 ++++++++++++++
- drivers/usb/gadget/udc/core.c          | 34 ++++++++++++++++++++++++++
- drivers/usb/musb/musb_gadget.c         |  2 ++
- drivers/usb/musb/musb_gadget_ep0.c     | 23 +++++++++++++++++
- include/linux/usb/gadget.h             | 10 ++++++++
- include/uapi/linux/usb/g_uvc.h         |  4 ++-
- 8 files changed, 115 insertions(+), 9 deletions(-)
-
+diff --git a/include/uapi/linux/usb/g_uvc.h b/include/uapi/linux/usb/g_uvc.h
+index 3c9ee3020cbb..6698c3263ae8 100644
+--- a/include/uapi/linux/usb/g_uvc.h
++++ b/include/uapi/linux/usb/g_uvc.h
+@@ -11,6 +11,7 @@
+ #include <linux/ioctl.h>
+ #include <linux/types.h>
+ #include <linux/usb/ch9.h>
++#include <linux/videodev2.h>
+ 
+ #define UVC_EVENT_FIRST			(V4L2_EVENT_PRIVATE_START + 0)
+ #define UVC_EVENT_CONNECT		(V4L2_EVENT_PRIVATE_START + 0)
 -- 
 2.19.2
 
