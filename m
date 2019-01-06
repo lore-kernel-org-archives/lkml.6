@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 032ADC43444
-	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 08:10:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02441C43387
+	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 08:10:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C37F1218DE
-	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 08:10:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B977B21907
+	for <linux-kernel@archiver.kernel.org>; Sun,  6 Jan 2019 08:10:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="auAGKjun"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="cMMKRR86"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726565AbfAFIKo (ORCPT
+        id S1726470AbfAFIKV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 6 Jan 2019 03:10:44 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:42131 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726494AbfAFIKY (ORCPT
+        Sun, 6 Jan 2019 03:10:21 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:37463 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726445AbfAFIKT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Jan 2019 03:10:24 -0500
-Received: by mail-pl1-f194.google.com with SMTP id y1so19381707plp.9
-        for <linux-kernel@vger.kernel.org>; Sun, 06 Jan 2019 00:10:23 -0800 (PST)
+        Sun, 6 Jan 2019 03:10:19 -0500
+Received: by mail-pf1-f196.google.com with SMTP id y126so20317615pfb.4
+        for <linux-kernel@vger.kernel.org>; Sun, 06 Jan 2019 00:10:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Eykwn78UBt1QHUenCjEDKqDsuRhugMZbWizZ48+FyMg=;
-        b=auAGKjun5gdTF6rkH5KplLjZ4gxXOfdr+8dFHbA+ENRXJgU/jDZQ0vFciuMaJoAijs
-         Z2aW4MHZyFjkpt4NDM5cux8Ckjn3vME/0dLTZaAcgKComYyuxOLN9V4tByI1eN3KZX6f
-         up+vc2EPqBzRrEBhZzh/i9fUYvJp0QESbc2Tw=
+        bh=rh2Ck7LIQpEkBwHFh55ynypbWnh0z21Uufq2+c/DSpk=;
+        b=cMMKRR86xvlO/bimhaW4sFTbsUyo1Dvu5bGm1I1yAXrqhKPXT5lb5yW69OagxYWoay
+         usXvR9vn8Yxn2UPZB1s42euFIrprWvAGySzeA2bS+/nh7vqCkRgqlqVjUf4c6VVp+Fir
+         r5Qf4Ey2wQMgUvigBhC7vbFSS3k2UovfIVdrA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=Eykwn78UBt1QHUenCjEDKqDsuRhugMZbWizZ48+FyMg=;
-        b=sZisdbA8BOhvdHBadsgci8+DjX+F80xvm9S/nLmhUNEQSr0O3fZ1zvW4fusEtV7cVq
-         BtmcaqwFb31OtSvvBz83rsvAPXiyfBRnqKMKUeKjUSJT2CgLmmt2eHLBKSZjzsDXn+Vh
-         K6f2Vkm1OTFLkgV5hdXQM/mjuxvgpldB/SNO66HTBMLG/50qNjY94QaQjgCOdFtzNkIO
-         xsuC9bL30dEkEz4SHJM6tzR2c6Lqpp2n9+Ba+pTJW7k29PpeDcY7qxg6ycmui8NHEsU3
-         Ib/fnjRSEDZESn/9L736zlhcCWHZ8cufUG5zTbnAnO/ddwHV5zKUE5d8H3oWRlhnd/7l
-         dKyg==
-X-Gm-Message-State: AJcUukdMLfyuyHDj8oUo07oCX8vMmkW6FLNERfGCoI4BIuXeGy7dmO0e
-        x2XBK+7ZJoyJiIlqZqyftWOElA==
-X-Google-Smtp-Source: ALg8bN4nbB29ZKTwJRhVeccnnculUMkx9EBiAGttjj2MIcoyhA32qxDX5YOm1toe7Rf6xc82JQVunA==
-X-Received: by 2002:a17:902:9a07:: with SMTP id v7mr55746557plp.247.1546762222820;
-        Sun, 06 Jan 2019 00:10:22 -0800 (PST)
+        bh=rh2Ck7LIQpEkBwHFh55ynypbWnh0z21Uufq2+c/DSpk=;
+        b=V9K4fyBer9lIufIaUxhRW77DlW/7F/xJlh/5Tp6ScnoVbxzemRuzNCDe5AyESkp+T1
+         UgWrdSlvoo9hwB52Q51xqku1OUczREA11jieCNZnoEfm/gcE6/R+7ga2/8ImQOqKk9HL
+         Po91jDDo3TpLrS5PxPnpbWgJIVXwPUlXk2Mq8EUuOV9P0eiriPi9kCR9R5E25gLkd6WF
+         lUGFcR28bL1YzaSkmlqhE2M/PkvympQayfUC/M6B/IDI2+sQVkzlvYhNeX2edtACgJgd
+         zs4n4Ubv/YyDpjFH/mn5UdDWzGT8AemOMLTGi2yk1jmCNZE2e2HNqxSbrNBENLsfKN+M
+         ZaDw==
+X-Gm-Message-State: AA+aEWaHn5e9PhzLvjEo4RRzzscA+Ye9UcYMOEpxoUG6PKGoqcRH9ATO
+        +PD3d47/ynKyhM+HIc/ponH0gQ==
+X-Google-Smtp-Source: AFSGD/WaJ3iaYBf5UBfalizUVd3c0TIRpPsNS9qE3Gkgj0H++ctugVln6aIlILLWkRtVlhVhMoOsKg==
+X-Received: by 2002:a62:ea09:: with SMTP id t9mr61431520pfh.228.1546762218054;
+        Sun, 06 Jan 2019 00:10:18 -0800 (PST)
 Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id v190sm90763364pfv.26.2019.01.06.00.10.21
+        by smtp.gmail.com with ESMTPSA id v190sm90763364pfv.26.2019.01.06.00.10.16
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 06 Jan 2019 00:10:22 -0800 (PST)
+        Sun, 06 Jan 2019 00:10:17 -0800 (PST)
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
 To:     Andy Gross <andy.gross@linaro.org>,
         David Brown <david.brown@linaro.org>,
@@ -62,9 +62,9 @@ Cc:     Russell King <linux@armlinux.org.uk>,
         Arun Kumar Neelakantam <aneela@codeaurora.org>,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 5/7] remoteproc: q6v5-mss: Active powerdomain for SDM845
-Date:   Sun,  6 Jan 2019 00:09:13 -0800
-Message-Id: <20190106080915.4493-6-bjorn.andersson@linaro.org>
+Subject: [PATCH v2 1/7] dt-bindings: soc: qcom: Add AOSS QMP binding
+Date:   Sun,  6 Jan 2019 00:09:09 -0800
+Message-Id: <20190106080915.4493-2-bjorn.andersson@linaro.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20190106080915.4493-1-bjorn.andersson@linaro.org>
 References: <20190106080915.4493-1-bjorn.andersson@linaro.org>
@@ -73,128 +73,106 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The SDM845 MSS needs the load_state powerdomain voted for during the
-duration of the MSS being powered on, to let the AOSS know that it may
-not perform certain power save measures. So vote for this.
+Add binding for the QMP based side-channel communication mechanism to
+the AOSS, which is used to control resources not exposed through the
+RPMh interface.
 
 Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
 
 Changes since v1:
-- New patch
+- Don't describe power-domain as a separate child node
 
- drivers/remoteproc/qcom_q6v5_mss.c | 31 ++++++++++++++++++++++++++++--
- 1 file changed, 29 insertions(+), 2 deletions(-)
+ .../bindings/soc/qcom/qcom,aoss-qmp.txt       | 57 +++++++++++++++++++
+ include/dt-bindings/power/qcom-aoss-qmp.h     | 15 +++++
+ 2 files changed, 72 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.txt
+ create mode 100644 include/dt-bindings/power/qcom-aoss-qmp.h
 
-diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-index 62cf16ddb7af..7f86d9c551c4 100644
---- a/drivers/remoteproc/qcom_q6v5_mss.c
-+++ b/drivers/remoteproc/qcom_q6v5_mss.c
-@@ -133,6 +133,7 @@ struct rproc_hexagon_res {
- 	char **proxy_clk_names;
- 	char **reset_clk_names;
- 	char **active_clk_names;
-+	char **active_pd_names;
- 	char **proxy_pd_names;
- 	int version;
- 	bool need_mem_protection;
-@@ -159,10 +160,12 @@ struct q6v5 {
- 	struct clk *active_clks[8];
- 	struct clk *reset_clks[4];
- 	struct clk *proxy_clks[4];
-+	struct device *active_pds[1];
- 	struct device *proxy_pds[3];
- 	int active_clk_count;
- 	int reset_clk_count;
- 	int proxy_clk_count;
-+	int active_pd_count;
- 	int proxy_pd_count;
- 
- 	struct reg_info active_regs[1];
-@@ -730,10 +733,16 @@ static int q6v5_mba_load(struct q6v5 *qproc)
- 
- 	qcom_q6v5_prepare(&qproc->q6v5);
- 
-+	ret = q6v5_pds_enable(qproc, qproc->active_pds, qproc->active_pd_count);
-+	if (ret < 0) {
-+		dev_err(qproc->dev, "failed to enable active power domains\n");
-+		goto disable_irqs;
-+	}
+diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.txt b/Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.txt
+new file mode 100644
+index 000000000000..9b0d9785efe0
+--- /dev/null
++++ b/Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.txt
+@@ -0,0 +1,57 @@
++Qualcomm Always-On Subsystem side channel binding
 +
- 	ret = q6v5_pds_enable(qproc, qproc->proxy_pds, qproc->proxy_pd_count);
- 	if (ret < 0) {
- 		dev_err(qproc->dev, "failed to enable proxy power domains\n");
--		goto disable_irqs;
-+		goto disable_active_pds;
- 	}
- 
- 	ret = q6v5_regulator_enable(qproc, qproc->proxy_regs,
-@@ -839,6 +848,8 @@ static int q6v5_mba_load(struct q6v5 *qproc)
- 			       qproc->proxy_reg_count);
- disable_proxy_pds:
- 	q6v5_pds_disable(qproc, qproc->proxy_pds, qproc->proxy_pd_count);
-+disable_active_pds:
-+	q6v5_pds_disable(qproc, qproc->active_pds, qproc->active_pd_count);
- disable_irqs:
- 	qcom_q6v5_unprepare(&qproc->q6v5);
- 
-@@ -878,6 +889,7 @@ static void q6v5_mba_reclaim(struct q6v5 *qproc)
- 			 qproc->active_clk_count);
- 	q6v5_regulator_disable(qproc, qproc->active_regs,
- 			       qproc->active_reg_count);
-+	q6v5_pds_disable(qproc, qproc->active_pds, qproc->active_pd_count);
- 
- 	/* In case of failure or coredump scenario where reclaiming MBA memory
- 	 * could not happen reclaim it here.
-@@ -1410,11 +1422,19 @@ static int q6v5_probe(struct platform_device *pdev)
- 	}
- 	qproc->active_reg_count = ret;
- 
-+	ret = q6v5_pds_attach(&pdev->dev, qproc->active_pds,
-+			      desc->active_pd_names);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "Failed to attach active power domains\n");
-+		goto free_rproc;
-+	}
-+	qproc->active_pd_count = ret;
++This binding describes the hardware component responsible for side channel
++requests to the always-on subsystem (AOSS), used for certain power management
++requests that is not handled by the standard RPMh interface. Each client in the
++SoC has it's own block of message RAM and IRQ for communication with the AOSS.
++The protocol used to communicate in the message RAM is known as QMP.
 +
- 	ret = q6v5_pds_attach(&pdev->dev, qproc->proxy_pds,
- 			      desc->proxy_pd_names);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "Failed to init power domains\n");
--		goto free_rproc;
-+		goto detach_active_pds;
- 	}
- 	qproc->proxy_pd_count = ret;
- 
-@@ -1446,6 +1466,8 @@ static int q6v5_probe(struct platform_device *pdev)
- 
- detach_proxy_pds:
- 	q6v5_pds_detach(qproc, qproc->proxy_pds, qproc->proxy_pd_count);
-+detach_active_pds:
-+	q6v5_pds_detach(qproc, qproc->active_pds, qproc->active_pd_count);
- free_rproc:
- 	rproc_free(rproc);
- 
-@@ -1463,6 +1485,7 @@ static int q6v5_remove(struct platform_device *pdev)
- 	qcom_remove_smd_subdev(qproc->rproc, &qproc->smd_subdev);
- 	qcom_remove_ssr_subdev(qproc->rproc, &qproc->ssr_subdev);
- 
-+	q6v5_pds_detach(qproc, qproc->active_pds, qproc->active_pd_count);
- 	q6v5_pds_detach(qproc, qproc->proxy_pds, qproc->proxy_pd_count);
- 
- 	rproc_free(qproc->rproc);
-@@ -1489,6 +1512,10 @@ static const struct rproc_hexagon_res sdm845_mss = {
- 			"mnoc_axi",
- 			NULL
- 	},
-+	.active_pd_names = (char*[]){
-+			"load_state",
-+			NULL
-+	},
- 	.proxy_pd_names = (char*[]){
- 			"cx",
- 			"mx",
++The AOSS side channel exposes control over a set of resources, used to control
++a set of debug related clocks and to affect the low power state of resources
++related to the secondary subsystems. These resources are exposed as a set of
++power-domains.
++
++- compatible:
++	Usage: required
++	Value type: <string>
++	Definition: must be "qcom,sdm845-aoss-qmp"
++
++- reg:
++	Usage: required
++	Value type: <prop-encoded-array>
++	Definition: the base address and size of the message RAM for this
++		    client's communication with the AOSS
++
++- interrupts:
++	Usage: required
++	Value type: <prop-encoded-array>
++	Definition: should specify the AOSS message IRQ for this client
++
++- mboxes:
++	Usage: required
++	Value type: <prop-encoded-array>
++	Definition: reference to the mailbox representing the outgoing doorbell
++		    in APCS for this client, as described in mailbox/mailbox.txt
++
++- #power-domain-cells:
++	Usage: optional
++	Value type: <u32>
++	Definition: must be 1
++		    The provided power-domains are:
++		    QDSS clock-domain (0), CDSP state (1), LPASS state (2),
++		    modem state (3), SLPI state (4), SPSS state (5) and Venus
++		    state (6).
++
++= EXAMPLE
++
++The following example represents the AOSS side-channel message RAM and the
++mechanism exposing the power-domains, as found in SDM845.
++
++  aoss_qmp: qmp@c300000 {
++          compatible = "qcom,sdm845-aoss-qmp";
++          reg = <0x0c300000 0x100000>;
++          interrupts = <GIC_SPI 389 IRQ_TYPE_EDGE_RISING>;
++          mboxes = <&apss_shared 0>;
++
++	  #power-domain-cells = <1>;
++  };
+diff --git a/include/dt-bindings/power/qcom-aoss-qmp.h b/include/dt-bindings/power/qcom-aoss-qmp.h
+new file mode 100644
+index 000000000000..7d8ac1a4f90c
+--- /dev/null
++++ b/include/dt-bindings/power/qcom-aoss-qmp.h
+@@ -0,0 +1,15 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/* Copyright (c) 2018, Linaro Ltd. */
++
++#ifndef __DT_BINDINGS_POWER_QCOM_AOSS_QMP_H
++#define __DT_BINDINGS_POWER_QCOM_AOSS_QMP_H
++
++#define AOSS_QMP_QDSS_CLK	0
++#define AOSS_QMP_LS_CDSP		1
++#define AOSS_QMP_LS_LPASS	2
++#define AOSS_QMP_LS_MODEM	3
++#define AOSS_QMP_LS_SLPI		4
++#define AOSS_QMP_LS_SPSS		5
++#define AOSS_QMP_LS_VENUS	6
++
++#endif
 -- 
 2.18.0
 
