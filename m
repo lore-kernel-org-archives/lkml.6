@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AF7CC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:07:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C260C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:07:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A96B2147C
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:07:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D27CA2089F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:07:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546866439;
-	bh=4YINXhYo7YX/1lBQXGfWEnClP9n2PZJxhLZDW4pE0ZI=;
+	s=default; t=1546866442;
+	bh=iFfLqXwIOOJ3kYEQC2uek7m2j+A3oSdzUOumcAK2oRs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=U7hKBCEax/60sOUhN/9SctpKpxji7VIw5hkh+Cu4JO/RdSpXgMTP3Jz/2y3kaXJw0
-	 oE4iR77meEG5l6G3rdDeenCaumGerHQIqrtZyXLx/EOIxiteJPsbhHBG2MlDQ8r4KB
-	 Oqy0myma+vcw+DmNACIJEgj8EDGYDWjZBvoLEEQo=
+	b=zusN3SCXn6PfAV1SQecLKUlaqDro+4Dy2CUpLnJsw4o7r56tXpxNC2zDXWGak37K7
+	 m3zlOQ/w1rgVl3NFdCYBOyGYSufSXivc84BqS2OeKRg3OQPjE4ojlJtJdYzh340TAy
+	 NLS5TmsFOCOGtElT6ldzyHwJB8gAz14idVTy9cJo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731300AbfAGNHR (ORCPT
+        id S1731325AbfAGNHW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:07:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54370 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:07:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54458 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727362AbfAGNHO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:07:14 -0500
+        id S1730877AbfAGNHU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:07:20 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 18DED206BB;
-        Mon,  7 Jan 2019 13:07:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DC2202089F;
+        Mon,  7 Jan 2019 13:07:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546866433;
-        bh=4YINXhYo7YX/1lBQXGfWEnClP9n2PZJxhLZDW4pE0ZI=;
+        s=default; t=1546866439;
+        bh=iFfLqXwIOOJ3kYEQC2uek7m2j+A3oSdzUOumcAK2oRs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MedF6ekXg7zoBT3asKjlagyqN0l5dA9n8D8ouNKNiCiEPPej7Yuk9HeX/2gaX8pZd
-         kkNBGD+HhrRJogYkAmggGHeqHVWSXARzkupeBYBtwr6m8eyJszSzZvZv1FnZAmOZcK
-         nST8jCmx2o92am9T4CyojNMt6UZtVsb3B9BVVvSM=
+        b=2Tp+WXn4fYtCckT2OjKBGRfaoWevxD5n3/j/ErkY91jAghIsF5C8AMnq5FuSRmylt
+         k/nDPsiizVMnBIcfUZ0nNROrvo4d3xjV08IlzoDhijgkrwE5kxHfxoUmWam5xCvXa5
+         LbAoXMWo69vJqqkRXlxwuWCwB4vQyCQCSCAt3OIs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mohan Kumar <mkumard@nvidia.com>,
-        Dara Ramesh <dramesh@nvidia.com>,
-        Sameer Pujar <spujar@nvidia.com>, Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.9 36/71] ALSA: hda/tegra: clear pending irq handlers
-Date:   Mon,  7 Jan 2019 13:33:05 +0100
-Message-Id: <20190107105334.832592800@linuxfoundation.org>
+        stable@vger.kernel.org, Scott Chen <scott@labau.com.tw>,
+        Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.9 37/71] USB: serial: pl2303: add ids for Hewlett-Packard HP POS pole displays
+Date:   Mon,  7 Jan 2019 13:33:06 +0100
+Message-Id: <20190107105334.884939149@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107105330.280153213@linuxfoundation.org>
 References: <20190107105330.280153213@linuxfoundation.org>
@@ -66,43 +65,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sameer Pujar <spujar@nvidia.com>
+From: Scott Chen <scott@labau.com.tw>
 
-commit 63d2a9ec310d8bcc955574220d4631aa55c1a80c upstream.
+commit 8d503f206c336677954160ac62f0c7d9c219cd89 upstream.
 
-Even after disabling interrupts on the module, it could be possible
-that irq handlers are still running. System hang is seen during
-suspend path. It was found that, there were pending writes on the
-HDA bus and clock was disabled by that time.
+Add device ids to pl2303 for the HP POS pole displays:
+LM920:   03f0:026b
+TD620:   03f0:0956
+LD960TA: 03f0:4439
+LD220TA: 03f0:4349
+LM940:   03f0:5039
 
-Above mentioned issue is fixed by clearing any pending irq handlers
-before disabling clocks and returning from hda suspend.
-
-Suggested-by: Mohan Kumar <mkumard@nvidia.com>
-Suggested-by: Dara Ramesh <dramesh@nvidia.com>
-Signed-off-by: Sameer Pujar <spujar@nvidia.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Scott Chen <scott@labau.com.tw>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/hda_tegra.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/usb/serial/pl2303.c |    5 +++++
+ drivers/usb/serial/pl2303.h |    5 +++++
+ 2 files changed, 10 insertions(+)
 
---- a/sound/pci/hda/hda_tegra.c
-+++ b/sound/pci/hda/hda_tegra.c
-@@ -249,10 +249,12 @@ static int hda_tegra_suspend(struct devi
- 	struct snd_card *card = dev_get_drvdata(dev);
- 	struct azx *chip = card->private_data;
- 	struct hda_tegra *hda = container_of(chip, struct hda_tegra, chip);
-+	struct hdac_bus *bus = azx_bus(chip);
+--- a/drivers/usb/serial/pl2303.c
++++ b/drivers/usb/serial/pl2303.c
+@@ -86,9 +86,14 @@ static const struct usb_device_id id_tab
+ 	{ USB_DEVICE(YCCABLE_VENDOR_ID, YCCABLE_PRODUCT_ID) },
+ 	{ USB_DEVICE(SUPERIAL_VENDOR_ID, SUPERIAL_PRODUCT_ID) },
+ 	{ USB_DEVICE(HP_VENDOR_ID, HP_LD220_PRODUCT_ID) },
++	{ USB_DEVICE(HP_VENDOR_ID, HP_LD220TA_PRODUCT_ID) },
+ 	{ USB_DEVICE(HP_VENDOR_ID, HP_LD960_PRODUCT_ID) },
++	{ USB_DEVICE(HP_VENDOR_ID, HP_LD960TA_PRODUCT_ID) },
+ 	{ USB_DEVICE(HP_VENDOR_ID, HP_LCM220_PRODUCT_ID) },
+ 	{ USB_DEVICE(HP_VENDOR_ID, HP_LCM960_PRODUCT_ID) },
++	{ USB_DEVICE(HP_VENDOR_ID, HP_LM920_PRODUCT_ID) },
++	{ USB_DEVICE(HP_VENDOR_ID, HP_LM940_PRODUCT_ID) },
++	{ USB_DEVICE(HP_VENDOR_ID, HP_TD620_PRODUCT_ID) },
+ 	{ USB_DEVICE(CRESSI_VENDOR_ID, CRESSI_EDY_PRODUCT_ID) },
+ 	{ USB_DEVICE(ZEAGLE_VENDOR_ID, ZEAGLE_N2ITION3_PRODUCT_ID) },
+ 	{ USB_DEVICE(SONY_VENDOR_ID, SONY_QN3USB_PRODUCT_ID) },
+--- a/drivers/usb/serial/pl2303.h
++++ b/drivers/usb/serial/pl2303.h
+@@ -123,10 +123,15 @@
  
- 	snd_power_change_state(card, SNDRV_CTL_POWER_D3hot);
+ /* Hewlett-Packard POS Pole Displays */
+ #define HP_VENDOR_ID		0x03f0
++#define HP_LM920_PRODUCT_ID	0x026b
++#define HP_TD620_PRODUCT_ID	0x0956
+ #define HP_LD960_PRODUCT_ID	0x0b39
+ #define HP_LCM220_PRODUCT_ID	0x3139
+ #define HP_LCM960_PRODUCT_ID	0x3239
+ #define HP_LD220_PRODUCT_ID	0x3524
++#define HP_LD220TA_PRODUCT_ID	0x4349
++#define HP_LD960TA_PRODUCT_ID	0x4439
++#define HP_LM940_PRODUCT_ID	0x5039
  
- 	azx_stop_chip(chip);
-+	synchronize_irq(bus->irq);
- 	azx_enter_link_reset(chip);
- 	hda_tegra_disable_clocks(hda);
- 
+ /* Cressi Edy (diving computer) PC interface */
+ #define CRESSI_VENDOR_ID	0x04b8
 
 
