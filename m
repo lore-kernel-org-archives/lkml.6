@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C5F6C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:56:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E508AC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:56:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F145720651
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:56:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B4E3C20651
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:56:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546865788;
-	bh=c6RXbA0iuyg6yRL4UbDxXFXfyVIubOmwPW5FkrzxfwY=;
+	s=default; t=1546865793;
+	bh=iIypPojDVY7BWX+E45xzWU/Caw1MI5BuYsZTFtQ6ivY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=HD3VuwNu8SOqDhtOMQ0Pe08e2kTbckC++LEHpTCwqfmDqF+9QS1I9erh00aXzKBzI
-	 gYu3F8NGkh3ANiwQnb1EkINhYbJGIYvDdpWi4ot6w5S4Mh6ILmeuKV0Xt3UQd9ySud
-	 2OXYnnGHgRMltiI1kXWkREQuq9PrEfe79yAggGto=
+	b=jR/veZMVzPkyYD1GEdRuu/2QBKG6ctZy95k+hX6ef7s35iybGUX1/juV6qgGzVQ1X
+	 l1O+0yTimMh9CFbuvh8qvbz7fL47873/XEyHGxdgVeASmP8wqXinp9PT013LKVW2n/
+	 muUbMXm9gveI2e4ZIi2XwbUYWuv95mEudrkxufwQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729653AbfAGM41 (ORCPT
+        id S1729717AbfAGM4d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:56:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44458 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:56:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44512 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728596AbfAGM4Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:56:25 -0500
+        id S1727446AbfAGM4b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:56:31 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A530D206BB;
-        Mon,  7 Jan 2019 12:56:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CE01F20651;
+        Mon,  7 Jan 2019 12:56:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865784;
-        bh=c6RXbA0iuyg6yRL4UbDxXFXfyVIubOmwPW5FkrzxfwY=;
+        s=default; t=1546865790;
+        bh=iIypPojDVY7BWX+E45xzWU/Caw1MI5BuYsZTFtQ6ivY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bJSU2RiBDuTlEnJ0/ntgD/tkLvTTHvdb04GxzVFLjLOzJe3ztGlgZ0NABzQIU9Cy+
-         DX48DdG5NH+KIDhmqArfswdBrgIj9LbEljXccn2cZrStoWdPrynMAbJkTthwWX4Xss
-         LBk592h6nO/An4JZpEiMgTarF7arUTMpqwq4uRDQ=
+        b=vs5i2qr4/gKZlpHUgULdKSMZWJaMUjTUpR7G9AMgh9sLaUwF6EfpNEtcziRo2og+w
+         UGmA6ZmLq7JZtuyoJbWuOctd6M3/HOGoMDIif2reVnl87wcZa1TB5Zaz4+PJ0vgU1e
+         AQnLRRnM4liRBbzGEIgE2DFQAY93hJNf27diBiko=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tejun Heo <tj@kernel.org>,
-        "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Subject: [PATCH 4.19 124/170] cgroup: fix CSS_TASK_ITER_PROCS
-Date:   Mon,  7 Jan 2019 13:32:31 +0100
-Message-Id: <20190107104507.546440503@linuxfoundation.org>
+        stable@vger.kernel.org, Macpaul Lin <macpaul.lin@mediatek.com>,
+        Johan Hovold <johan@kernel.org>,
+        Oliver Neukum <oneukum@suse.com>
+Subject: [PATCH 4.19 125/170] cdc-acm: fix abnormal DATA RX issue for Mediatek Preloader.
+Date:   Mon,  7 Jan 2019 13:32:32 +0100
+Message-Id: <20190107104507.653337306@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104452.953560660@linuxfoundation.org>
 References: <20190107104452.953560660@linuxfoundation.org>
@@ -65,120 +66,80 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tejun Heo <tj@kernel.org>
+From: Macpaul Lin <macpaul.lin@mediatek.com>
 
-commit e9d81a1bc2c48ea9782e3e8b53875f419766ef47 upstream.
+commit eafb27fa5283599ce6c5492ea18cf636a28222bb upstream.
 
-CSS_TASK_ITER_PROCS implements process-only iteration by making
-css_task_iter_advance() skip tasks which aren't threadgroup leaders;
-however, when an iteration is started css_task_iter_start() calls the
-inner helper function css_task_iter_advance_css_set() instead of
-css_task_iter_advance().  As the helper doesn't have the skip logic,
-when the first task to visit is a non-leader thread, it doesn't get
-skipped correctly as shown in the following example.
+Mediatek Preloader is a proprietary embedded boot loader for loading
+Little Kernel and Linux into device DRAM.
 
-  # ps -L 2030
-    PID   LWP TTY      STAT   TIME COMMAND
-   2030  2030 pts/0    Sl+    0:00 ./test-thread
-   2030  2031 pts/0    Sl+    0:00 ./test-thread
-  # mkdir -p /sys/fs/cgroup/x/a/b
-  # echo threaded > /sys/fs/cgroup/x/a/cgroup.type
-  # echo threaded > /sys/fs/cgroup/x/a/b/cgroup.type
-  # echo 2030 > /sys/fs/cgroup/x/a/cgroup.procs
-  # cat /sys/fs/cgroup/x/a/cgroup.threads
-  2030
-  2031
-  # cat /sys/fs/cgroup/x/cgroup.procs
-  2030
-  # echo 2030 > /sys/fs/cgroup/x/a/b/cgroup.threads
-  # cat /sys/fs/cgroup/x/cgroup.procs
-  2031
-  2030
+This boot loader also handle firmware update. Mediatek Preloader will be
+enumerated as a virtual COM port when the device is connected to Windows
+or Linux OS via CDC-ACM class driver. When the USB enumeration has been
+done, Mediatek Preloader will send out handshake command "READY" to PC
+actively instead of waiting command from the download tool.
 
-The last read of cgroup.procs is incorrectly showing non-leader 2031
-in cgroup.procs output.
+Since Linux 4.12, the commit "tty: reset termios state on device
+registration" (93857edd9829e144acb6c7e72d593f6e01aead66) causes Mediatek
+Preloader receiving some abnoraml command like "READYXX" as it sent.
+This will be recognized as an incorrect response. The behavior change
+also causes the download handshake fail. This change only affects
+subsequent connects if the reconnected device happens to get the same minor
+number.
 
-This can be fixed by updating css_task_iter_advance() to handle the
-first advance and css_task_iters_tart() to call
-css_task_iter_advance() instead of the inner helper.  After the fix,
-the same commands result in the following (correct) result:
+By disabling the ECHO termios flag could avoid this problem. However, it
+cannot be done by user space configuration when download tool open
+/dev/ttyACM0. This is because the device running Mediatek Preloader will
+send handshake command "READY" immediately once the CDC-ACM driver is
+ready.
 
-  # ps -L 2062
-    PID   LWP TTY      STAT   TIME COMMAND
-   2062  2062 pts/0    Sl+    0:00 ./test-thread
-   2062  2063 pts/0    Sl+    0:00 ./test-thread
-  # mkdir -p /sys/fs/cgroup/x/a/b
-  # echo threaded > /sys/fs/cgroup/x/a/cgroup.type
-  # echo threaded > /sys/fs/cgroup/x/a/b/cgroup.type
-  # echo 2062 > /sys/fs/cgroup/x/a/cgroup.procs
-  # cat /sys/fs/cgroup/x/a/cgroup.threads
-  2062
-  2063
-  # cat /sys/fs/cgroup/x/cgroup.procs
-  2062
-  # echo 2062 > /sys/fs/cgroup/x/a/b/cgroup.threads
-  # cat /sys/fs/cgroup/x/cgroup.procs
-  2062
+This patch wants to fix above problem by introducing "DISABLE_ECHO"
+property in driver_info. When Mediatek Preloader is connected, the
+CDC-ACM driver could disable ECHO flag in termios to avoid the problem.
 
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Reported-by: "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Fixes: 8cfd8147df67 ("cgroup: implement cgroup v2 thread support")
-Cc: stable@vger.kernel.org # v4.14+
+Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
+Cc: stable@vger.kernel.org
+Reviewed-by: Johan Hovold <johan@kernel.org>
+Acked-by: Oliver Neukum <oneukum@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/cgroup/cgroup.c |   33 +++++++++++++++++++--------------
- 1 file changed, 19 insertions(+), 14 deletions(-)
+ drivers/usb/class/cdc-acm.c |   10 ++++++++++
+ drivers/usb/class/cdc-acm.h |    1 +
+ 2 files changed, 11 insertions(+)
 
---- a/kernel/cgroup/cgroup.c
-+++ b/kernel/cgroup/cgroup.c
-@@ -4186,20 +4186,25 @@ static void css_task_iter_advance(struct
+--- a/drivers/usb/class/cdc-acm.c
++++ b/drivers/usb/class/cdc-acm.c
+@@ -581,6 +581,13 @@ static int acm_tty_install(struct tty_dr
+ 	if (retval)
+ 		goto error_init_termios;
  
- 	lockdep_assert_held(&css_set_lock);
- repeat:
--	/*
--	 * Advance iterator to find next entry.  cset->tasks is consumed
--	 * first and then ->mg_tasks.  After ->mg_tasks, we move onto the
--	 * next cset.
--	 */
--	next = it->task_pos->next;
--
--	if (next == it->tasks_head)
--		next = it->mg_tasks_head->next;
--
--	if (next == it->mg_tasks_head)
-+	if (it->task_pos) {
-+		/*
-+		 * Advance iterator to find next entry.  cset->tasks is
-+		 * consumed first and then ->mg_tasks.  After ->mg_tasks,
-+		 * we move onto the next cset.
-+		 */
-+		next = it->task_pos->next;
++	/*
++	 * Suppress initial echoing for some devices which might send data
++	 * immediately after acm driver has been installed.
++	 */
++	if (acm->quirks & DISABLE_ECHO)
++		tty->termios.c_lflag &= ~ECHO;
 +
-+		if (next == it->tasks_head)
-+			next = it->mg_tasks_head->next;
-+
-+		if (next == it->mg_tasks_head)
-+			css_task_iter_advance_css_set(it);
-+		else
-+			it->task_pos = next;
-+	} else {
-+		/* called from start, proceed to the first cset */
- 		css_task_iter_advance_css_set(it);
--	else
--		it->task_pos = next;
-+	}
+ 	tty->driver_data = acm;
  
- 	/* if PROCS, skip over tasks which aren't group leaders */
- 	if ((it->flags & CSS_TASK_ITER_PROCS) && it->task_pos &&
-@@ -4239,7 +4244,7 @@ void css_task_iter_start(struct cgroup_s
- 
- 	it->cset_head = it->cset_pos;
- 
--	css_task_iter_advance_css_set(it);
-+	css_task_iter_advance(it);
- 
- 	spin_unlock_irq(&css_set_lock);
- }
+ 	return 0;
+@@ -1672,6 +1679,9 @@ static const struct usb_device_id acm_id
+ 	{ USB_DEVICE(0x0e8d, 0x0003), /* FIREFLY, MediaTek Inc; andrey.arapov@gmail.com */
+ 	.driver_info = NO_UNION_NORMAL, /* has no union descriptor */
+ 	},
++	{ USB_DEVICE(0x0e8d, 0x2000), /* MediaTek Inc Preloader */
++	.driver_info = DISABLE_ECHO, /* DISABLE ECHO in termios flag */
++	},
+ 	{ USB_DEVICE(0x0e8d, 0x3329), /* MediaTek Inc GPS */
+ 	.driver_info = NO_UNION_NORMAL, /* has no union descriptor */
+ 	},
+--- a/drivers/usb/class/cdc-acm.h
++++ b/drivers/usb/class/cdc-acm.h
+@@ -140,3 +140,4 @@ struct acm {
+ #define QUIRK_CONTROL_LINE_STATE	BIT(6)
+ #define CLEAR_HALT_CONDITIONS		BIT(7)
+ #define SEND_ZERO_PACKET		BIT(8)
++#define DISABLE_ECHO			BIT(9)
 
 
