@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B75EEC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:08:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0BAEC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:08:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F74F21855
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:08:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF4B321855
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:08:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546866516;
-	bh=x/IPibmxyHdpvNkdK/RlCziDKpap1YPVpPHW3O8sAaY=;
+	s=default; t=1546866521;
+	bh=w6l8LXZK16/fQ1LJ8myXy6nLkRP8r+2G2SttO1sv28c=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=O4j6rOqsq7hl1Jcrak7d0AdY3eJBF2ImF1FmCp85JID37YHU9Rs7tj9Acyx/ZeEAO
-	 T+wrj47d1xaQtE4ZWEdwseri5YV9PQ1MFAIJVEFg2M4+kr1VxIKthGCd+tRQDyO9Ag
-	 q4Rd6hQhxskOUayENojSw6cwEkh8pLktq8mShjEU=
+	b=Mf3vZ0XkE7pLNdvtX3q2IcZ8YzgU6h1ehBm6d9MngEP0xrkjbIHxv0lv6DgBf97W3
+	 vPnSUwdFGi2/1gDZ3jofM3RA1KRfM8EM/v2vB0q4wPz/YhmFO3pTZyniNBagIvnWqd
+	 CLCoqY7xHpCM0n16Ojq2lSKBL/EqczByfoc6KC+o=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731684AbfAGNIf (ORCPT
+        id S1731691AbfAGNIl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:08:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55650 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:08:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55732 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730948AbfAGNId (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:08:33 -0500
+        id S1731538AbfAGNIj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:08:39 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D9CE42147C;
-        Mon,  7 Jan 2019 13:08:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2445221855;
+        Mon,  7 Jan 2019 13:08:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546866513;
-        bh=x/IPibmxyHdpvNkdK/RlCziDKpap1YPVpPHW3O8sAaY=;
+        s=default; t=1546866517;
+        bh=w6l8LXZK16/fQ1LJ8myXy6nLkRP8r+2G2SttO1sv28c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=P1wZ9qoNWT3TD6uQcGc1zkHFJNIL02hmN9ma7WsHM+5UROzXSAx9u6p6ByYf3muip
-         llFlgrR9kT31s1d77Q+z8TPfsT3zCXYp1l2omomvdMlB6Oftht/fJ8gU5YsNMxbgZt
-         Vg3cyrzErTtVLwlJ6ufa5XWhfWIEOhLuK8ITZcCw=
+        b=Rj5/QdMmMem6JnD+zYR3RFhwcNiY6QcunQ1WWarIfzz8hAnYs36FSWkkk/NCMNhv8
+         wPQaq1lR4su1BptavW1is9V/lxIKRE1KBRtQHv/sqHS4yrh8nBpVssDdAIt0qBtcah
+         dXj0dMZpedqRpjSqANM+dkwktv/GoMog8dPs3aog=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Jonker <jbx9999@hotmail.com>,
-        Elaine Zhang <zhangqing@rock-chips.com>,
-        Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH 4.9 55/71] clk: rockchip: fix typo in rk3188 spdif_frac parent
-Date:   Mon,  7 Jan 2019 13:33:24 +0100
-Message-Id: <20190107105335.876101338@linuxfoundation.org>
+        stable@vger.kernel.org, Macpaul Lin <macpaul.lin@mediatek.com>,
+        Johan Hovold <johan@kernel.org>,
+        Oliver Neukum <oneukum@suse.com>
+Subject: [PATCH 4.9 56/71] cdc-acm: fix abnormal DATA RX issue for Mediatek Preloader.
+Date:   Mon,  7 Jan 2019 13:33:25 +0100
+Message-Id: <20190107105335.920025127@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107105330.280153213@linuxfoundation.org>
 References: <20190107105330.280153213@linuxfoundation.org>
@@ -66,34 +66,80 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Johan Jonker <jbx9999@hotmail.com>
+From: Macpaul Lin <macpaul.lin@mediatek.com>
 
-commit 8b19faf6fae2867e2c177212c541e8ae36aa4d32 upstream.
+commit eafb27fa5283599ce6c5492ea18cf636a28222bb upstream.
 
-Fix typo in common_clk_branches.
-Make spdif_pre parent of spdif_frac.
+Mediatek Preloader is a proprietary embedded boot loader for loading
+Little Kernel and Linux into device DRAM.
 
-Fixes: 667464208989 ("clk: rockchip: include downstream muxes into fractional dividers")
+This boot loader also handle firmware update. Mediatek Preloader will be
+enumerated as a virtual COM port when the device is connected to Windows
+or Linux OS via CDC-ACM class driver. When the USB enumeration has been
+done, Mediatek Preloader will send out handshake command "READY" to PC
+actively instead of waiting command from the download tool.
+
+Since Linux 4.12, the commit "tty: reset termios state on device
+registration" (93857edd9829e144acb6c7e72d593f6e01aead66) causes Mediatek
+Preloader receiving some abnoraml command like "READYXX" as it sent.
+This will be recognized as an incorrect response. The behavior change
+also causes the download handshake fail. This change only affects
+subsequent connects if the reconnected device happens to get the same minor
+number.
+
+By disabling the ECHO termios flag could avoid this problem. However, it
+cannot be done by user space configuration when download tool open
+/dev/ttyACM0. This is because the device running Mediatek Preloader will
+send handshake command "READY" immediately once the CDC-ACM driver is
+ready.
+
+This patch wants to fix above problem by introducing "DISABLE_ECHO"
+property in driver_info. When Mediatek Preloader is connected, the
+CDC-ACM driver could disable ECHO flag in termios to avoid the problem.
+
+Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
 Cc: stable@vger.kernel.org
-Signed-off-by: Johan Jonker <jbx9999@hotmail.com>
-Acked-by: Elaine Zhang <zhangqing@rock-chips.com>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Reviewed-by: Johan Hovold <johan@kernel.org>
+Acked-by: Oliver Neukum <oneukum@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/clk/rockchip/clk-rk3188.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/class/cdc-acm.c |   10 ++++++++++
+ drivers/usb/class/cdc-acm.h |    1 +
+ 2 files changed, 11 insertions(+)
 
---- a/drivers/clk/rockchip/clk-rk3188.c
-+++ b/drivers/clk/rockchip/clk-rk3188.c
-@@ -381,7 +381,7 @@ static struct rockchip_clk_branch common
- 	COMPOSITE_NOMUX(0, "spdif_pre", "i2s_src", 0,
- 			RK2928_CLKSEL_CON(5), 0, 7, DFLAGS,
- 			RK2928_CLKGATE_CON(0), 13, GFLAGS),
--	COMPOSITE_FRACMUX(0, "spdif_frac", "spdif_pll", CLK_SET_RATE_PARENT,
-+	COMPOSITE_FRACMUX(0, "spdif_frac", "spdif_pre", CLK_SET_RATE_PARENT,
- 			RK2928_CLKSEL_CON(9), 0,
- 			RK2928_CLKGATE_CON(0), 14, GFLAGS,
- 			&common_spdif_fracmux),
+--- a/drivers/usb/class/cdc-acm.c
++++ b/drivers/usb/class/cdc-acm.c
+@@ -502,6 +502,13 @@ static int acm_tty_install(struct tty_dr
+ 	if (retval)
+ 		goto error_init_termios;
+ 
++	/*
++	 * Suppress initial echoing for some devices which might send data
++	 * immediately after acm driver has been installed.
++	 */
++	if (acm->quirks & DISABLE_ECHO)
++		tty->termios.c_lflag &= ~ECHO;
++
+ 	tty->driver_data = acm;
+ 
+ 	return 0;
+@@ -1620,6 +1627,9 @@ static const struct usb_device_id acm_id
+ 	{ USB_DEVICE(0x0e8d, 0x0003), /* FIREFLY, MediaTek Inc; andrey.arapov@gmail.com */
+ 	.driver_info = NO_UNION_NORMAL, /* has no union descriptor */
+ 	},
++	{ USB_DEVICE(0x0e8d, 0x2000), /* MediaTek Inc Preloader */
++	.driver_info = DISABLE_ECHO, /* DISABLE ECHO in termios flag */
++	},
+ 	{ USB_DEVICE(0x0e8d, 0x3329), /* MediaTek Inc GPS */
+ 	.driver_info = NO_UNION_NORMAL, /* has no union descriptor */
+ 	},
+--- a/drivers/usb/class/cdc-acm.h
++++ b/drivers/usb/class/cdc-acm.h
+@@ -134,3 +134,4 @@ struct acm {
+ #define QUIRK_CONTROL_LINE_STATE	BIT(6)
+ #define CLEAR_HALT_CONDITIONS		BIT(7)
+ #define SEND_ZERO_PACKET		BIT(8)
++#define DISABLE_ECHO			BIT(9)
 
 
