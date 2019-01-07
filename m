@@ -2,151 +2,126 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52998C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 14:11:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72A04C43612
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 14:12:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 296FD206C0
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 14:11:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4CEAD2183E
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 14:12:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728841AbfAGOLl (ORCPT
+        id S1728875AbfAGOMK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 09:11:41 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:37414 "EHLO mx1.redhat.com"
+        Mon, 7 Jan 2019 09:12:10 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:39902 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726911AbfAGOLl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 09:11:41 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7A58CC0587E5;
-        Mon,  7 Jan 2019 14:11:40 +0000 (UTC)
-Received: from redhat.com (ovpn-122-143.rdu2.redhat.com [10.10.122.143])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 85B4A19741;
-        Mon,  7 Jan 2019 14:11:39 +0000 (UTC)
-Date:   Mon, 7 Jan 2019 09:11:38 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Jason Wang <jasowang@redhat.com>, KVM list <kvm@vger.kernel.org>,
-        virtualization@lists.linux-foundation.org,
-        Netdev <netdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Miller <davem@davemloft.net>
-Subject: Re: [RFC PATCH V3 0/5] Hi:
-Message-ID: <20190107084853-mutt-send-email-mst@kernel.org>
-References: <20181229124656.3900-1-jasowang@redhat.com>
- <20190102154038-mutt-send-email-mst@kernel.org>
- <0efd115a-a7fb-54bf-5376-59d047a15fd3@redhat.com>
- <20190106221832-mutt-send-email-mst@kernel.org>
- <c15a17b3-b604-a105-af44-a7e6dfd79801@redhat.com>
- <20190106230224-mutt-send-email-mst@kernel.org>
- <CAPcyv4iXFy0jfoQ_jQYq2yA7cqu4_Jcap4mvQesRRrV-hahGvQ@mail.gmail.com>
+        id S1727012AbfAGOMK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 09:12:10 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 113CE209D7; Mon,  7 Jan 2019 15:12:08 +0100 (CET)
+Received: from localhost (aaubervilliers-681-1-29-148.w90-88.abo.wanadoo.fr [90.88.149.148])
+        by mail.bootlin.com (Postfix) with ESMTPSA id D715420802;
+        Mon,  7 Jan 2019 15:11:57 +0100 (CET)
+Date:   Mon, 7 Jan 2019 15:11:58 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        linux-amarula@amarulasolutions.com
+Subject: Re: [PATCH v5 07/17] drm/sun4i: sun6i_mipi_dsi: Refactor vertical
+ video start delay
+Message-ID: <20190107141158.zaimizk4rlqa6xli@flea>
+References: <20181210161729.29720-1-jagan@amarulasolutions.com>
+ <20181210161729.29720-8-jagan@amarulasolutions.com>
+ <20181211164900.wfmkmbrbj3nmlb3h@flea>
+ <CAMty3ZB5F5jD9iJT1soXSA5HtQOf5W9rKO9nCdGFUfVo0hpO4Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="2f4sgk2x6n64h3fz"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAPcyv4iXFy0jfoQ_jQYq2yA7cqu4_Jcap4mvQesRRrV-hahGvQ@mail.gmail.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Mon, 07 Jan 2019 14:11:40 +0000 (UTC)
+In-Reply-To: <CAMty3ZB5F5jD9iJT1soXSA5HtQOf5W9rKO9nCdGFUfVo0hpO4Q@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jan 06, 2019 at 11:15:20PM -0800, Dan Williams wrote:
-> On Sun, Jan 6, 2019 at 8:17 PM Michael S. Tsirkin <mst@redhat.com> wrote:
+
+--2f4sgk2x6n64h3fz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Dec 21, 2018 at 02:26:11AM +0530, Jagan Teki wrote:
+> On Tue, Dec 11, 2018 at 10:19 PM Maxime Ripard
+> <maxime.ripard@bootlin.com> wrote:
 > >
-> > On Mon, Jan 07, 2019 at 11:53:41AM +0800, Jason Wang wrote:
+> > On Mon, Dec 10, 2018 at 09:47:19PM +0530, Jagan Teki wrote:
+> > > Video start delay can be computed by subtracting total vertical
+> > > timing with front porch timing and with adding 1 delay line for TCON.
 > > >
-> > > On 2019/1/7 上午11:28, Michael S. Tsirkin wrote:
-> > > > On Mon, Jan 07, 2019 at 10:19:03AM +0800, Jason Wang wrote:
-> > > > > On 2019/1/3 上午4:47, Michael S. Tsirkin wrote:
-> > > > > > On Sat, Dec 29, 2018 at 08:46:51PM +0800, Jason Wang wrote:
-> > > > > > > This series tries to access virtqueue metadata through kernel virtual
-> > > > > > > address instead of copy_user() friends since they had too much
-> > > > > > > overheads like checks, spec barriers or even hardware feature
-> > > > > > > toggling.
-> > > > > > Will review, thanks!
-> > > > > > One questions that comes to mind is whether it's all about bypassing
-> > > > > > stac/clac.  Could you please include a performance comparison with
-> > > > > > nosmap?
-> > > > > >
-> > > > > On machine without SMAP (Sandy Bridge):
-> > > > >
-> > > > > Before: 4.8Mpps
-> > > > >
-> > > > > After: 5.2Mpps
-> > > > OK so would you say it's really unsafe versus safe accesses?
-> > > > Or would you say it's just a better written code?
+> > > BSP code form BPI-M64-bsp is computing video start delay as
+> > > (from linux-sunxi/
+> > > drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c)
 > > >
+> > > u32 vfp =3D panel->lcd_vt - panel->lcd_y - panel->lcd_vbp;
+> > > =3D> (panel->lcd_vt) - panel->lcd_y - (panel->lcd_vbp)
+> > > =3D> (timmings->ver_front_porch + panel->lcd_vbp + panel->lcd_y)
+> > >    - panel->lcd_y - (panel->lcd_vbp)
+> > > =3D> timmings->ver_front_porch + panel->lcd_vbp + panel->lcd_y
+> > >                            - panel->lcd_y - panel->lcd_vbp
+> > > =3D> timmings->ver_front_porch
 > > >
-> > > It's the effect of removing speculation barrier.
+> > > So, update the start delay computation accordingly.
+> > >
+> > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 > >
+> > Even though it's a bit better now on my A33 board and I don't have the
+> > white stripes on the bottom of the display, there's still some
+> > flickering with your patches applied.
 > >
-> > You mean __uaccess_begin_nospec introduced by
-> > commit 304ec1b050310548db33063e567123fae8fd0301
-> > ?
-> >
-> > So fundamentally we do access_ok checks when supplying
-> > the memory table to the kernel thread, and we should
-> > do the spec barrier there.
-> >
-> > Then we can just create and use a variant of uaccess macros that does
-> > not include the barrier?
-> >
-> > Or, how about moving the barrier into access_ok?
-> > This way repeated accesses with a single access_ok get a bit faster.
-> > CC Dan Williams on this idea.
-> 
-> It would be interesting to see how expensive re-doing the address
-> limit check is compared to the speculation barrier. I.e. just switch
-> vhost_get_user() to use get_user() rather than __get_user(). That will
-> sanitize the pointer in the speculative path without a barrier.
+> > Bisecting it seems to point at that patch, but reverting it doesn't
+> > make the issue go away, so it's not really clear which one exactly is
+> > at fault.
+>=20
+> Is reverting this patch, work fine or not?
 
-Hmm it's way cheaper even though IIRC it's measureable.
-Jason, would you like to try?
-Although frankly __get_user being slower than get_user feels very wrong.
-Not yet sure what to do exactly but would you agree?
+As I was saying, it doesn't.
 
+> This patch is trying to make use of front porch instead of existing
+> back porch to compute the delay. Since we revert the VBP fix patch[1]
+> to assume VBP as VFP value look like your setup would also require to
+> revert this change. But as per BSP or drm_mode details all of my
+> displays even work with and w/o reverting these two.
 
-> I recall we had a convert access_ok() discussion with this result here:
-> 
-> https://lkml.org/lkml/2018/1/17/929
+Again, I cannot help you without the datasheet for the panels you're
+trying to submit.
 
-Sorry let me try to clarify. IIUC speculating access_ok once
-is harmless. As Linus said the problem is with "_subsequent_
-accesses that can then be used to perturb the cache".
+Maxime
 
-Thus:
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-1. if (!access_ok)
-2.	return
-3.  get_user
-4. if (!access_ok)
-5.	return
-6.  get_user
+--2f4sgk2x6n64h3fz
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Your proposal that Linus nacked was to effectively add a barrier after
-lines 2 and 5 (also using the array_index_nospec trick for speed),
-right? Unfortunately that needs a big API change.
+-----BEGIN PGP SIGNATURE-----
 
-I am asking about adding barrier_nospec within access_ok.
-Thus effectively before lines 1 and 4.
-access_ok will be slower but after all the point of access_ok is
-to then access the same memory multiple times.
-So we should be making __get_user faster and access_ok slower ...
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXDNeLgAKCRDj7w1vZxhR
+xZcmAQD+Vb+9GVQqhaYBdMGINgctl0C0OJbmlIIp5NIuvS7qTQEA5RSgws23ZINC
+hEiM5577HRtlW0Q8p0cQaAY4ZIT0hA0=
+=l3Hj
+-----END PGP SIGNATURE-----
 
-> ...but it sounds like you are proposing a smaller scope fixup for the
-> vhost use case? Something like barrier_nospec() in the success path
-> for all vhost access_ok() checks and then a get_user() variant that
-> disables the barrier.
-
-Maybe we'll have to. Except I hope vhost won't end up being the
-only user otherwise it will be hard to maintain.
-
-
--- 
-MST
+--2f4sgk2x6n64h3fz--
