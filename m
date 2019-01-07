@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFAB8C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:46:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3C89C43612
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:46:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8399221873
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:46:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A5DEB218A3
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:46:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546865164;
-	bh=YNRZJNosaraLwMMKgUBm2ZwWEiutB06p5UU9shVb7wM=;
+	s=default; t=1546865167;
+	bh=14SzkCmzAl77VF5JB1afmF6wueko6+uUI9HX5sKNxAQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=mhS6pdWGPlOXHUUaDCBUtUiA9wIcgIIq/FAsnHxdjfvkyfrMA5eGpXTPD27cDF+4W
-	 ERYMg2Pxqg4hXPcC4PfSuL+GAz2BJPNCgNSJSEyhwki0335j++odZ5QI+ghp+y9R17
-	 9flzbUs7G7/ozXAPVOemrpHLBtRegwfGwcdJeB+Y=
+	b=bo3zaEAA+IcJe02FLP2x7OLuXHCrLVvrs9QIBGHEdKGvoETX9UBAHBsDNOQmh4eig
+	 gezc1hDuk1w+xGtYkxqz3Vxb90duJZOEt9l+4SIRJRlr503KGzhQvxnaWKY51mAfgI
+	 HHTa+H3BJ0lFoKMa2o4dLLSa6VCLm1bG7NuJ7Gdc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728979AbfAGMqD (ORCPT
+        id S1728994AbfAGMqG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:46:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35584 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:46:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35812 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728308AbfAGMpz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:45:55 -0500
+        id S1728978AbfAGMqD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:46:03 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 24ED92183E;
-        Mon,  7 Jan 2019 12:45:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AEE162183E;
+        Mon,  7 Jan 2019 12:46:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865154;
-        bh=YNRZJNosaraLwMMKgUBm2ZwWEiutB06p5UU9shVb7wM=;
+        s=default; t=1546865163;
+        bh=14SzkCmzAl77VF5JB1afmF6wueko6+uUI9HX5sKNxAQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=F1Q2ltBN2llYcWGv1K26DnKDzrmaQ18jGoiJO9XI7C2S25ymoxDVgy+oSwsEmC96D
-         UYJ9GqU2Nvm/df479C6rrtDuxxVymSz5tcwgKbEBgWlhAcY4vX0b8HeqHMqQJOjrik
-         TRZc8VltgTiLbC6VfN+6IYp79uKvamWq4m/+rLKw=
+        b=mdrVHkVmToVm4CUCtA4tt7jXsAYScS02G8cRSXRXp1e2nhpTtQJq4dmi4h9ibJkbp
+         AJ1Zgy+Vd5VAULyXh+HcJIeLbSjgAjz18P86F9f/l1BogxMgf9Y49+7YBABxrOzmMK
+         KQ+AmloJq9BmCbD5mwiRr8tQ7pMu63iWddEVUijw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
+        stable@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 003/170] ibmveth: fix DMA unmap error in ibmveth_xmit_start error path
-Date:   Mon,  7 Jan 2019 13:30:30 +0100
-Message-Id: <20190107104453.379404965@linuxfoundation.org>
+Subject: [PATCH 4.19 006/170] ipv4: Fix potential Spectre v1 vulnerability
+Date:   Mon,  7 Jan 2019 13:30:33 +0100
+Message-Id: <20190107104453.719883595@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104452.953560660@linuxfoundation.org>
 References: <20190107104452.953560660@linuxfoundation.org>
@@ -65,60 +66,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 
-[ Upstream commit 756af9c642329d54f048bac2a62f829b391f6944 ]
+[ Upstream commit 5648451e30a0d13d11796574919a359025d52cce ]
 
-Commit 33a48ab105a7 ("ibmveth: Fix DMA unmap error") fixed an issue in the
-normal code path of ibmveth_xmit_start() that was originally introduced by
-Commit 6e8ab30ec677 ("ibmveth: Add scatter-gather support"). This original
-fix missed the error path where dma_unmap_page is wrongly called on the
-header portion in descs[0] which was mapped with dma_map_single. As a
-result a failure to DMA map any of the frags results in a dmesg warning
-when CONFIG_DMA_API_DEBUG is enabled.
+vr.vifi is indirectly controlled by user-space, hence leading to
+a potential exploitation of the Spectre variant 1 vulnerability.
 
-------------[ cut here ]------------
-DMA-API: ibmveth 30000002: device driver frees DMA memory with wrong function
-  [device address=0x000000000a430000] [size=172 bytes] [mapped as page] [unmapped as single]
-WARNING: CPU: 1 PID: 8426 at kernel/dma/debug.c:1085 check_unmap+0x4fc/0xe10
-...
-<snip>
-...
-DMA-API: Mapped at:
-ibmveth_start_xmit+0x30c/0xb60
-dev_hard_start_xmit+0x100/0x450
-sch_direct_xmit+0x224/0x490
-__qdisc_run+0x20c/0x980
-__dev_queue_xmit+0x1bc/0xf20
+This issue was detected with the help of Smatch:
 
-This fixes the API misuse by unampping descs[0] with dma_unmap_single.
+net/ipv4/ipmr.c:1616 ipmr_ioctl() warn: potential spectre issue 'mrt->vif_table' [r] (local cap)
+net/ipv4/ipmr.c:1690 ipmr_compat_ioctl() warn: potential spectre issue 'mrt->vif_table' [r] (local cap)
 
-Fixes: 6e8ab30ec677 ("ibmveth: Add scatter-gather support")
-Signed-off-by: Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
+Fix this by sanitizing vr.vifi before using it to index mrt->vif_table'
+
+Notice that given that speculation windows are large, the policy is
+to kill the speculation on the first load and not worry if it can be
+completed with a dependent load/store [1].
+
+[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/ibm/ibmveth.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ net/ipv4/ipmr.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/net/ethernet/ibm/ibmveth.c
-+++ b/drivers/net/ethernet/ibm/ibmveth.c
-@@ -1172,11 +1172,15 @@ out:
+--- a/net/ipv4/ipmr.c
++++ b/net/ipv4/ipmr.c
+@@ -69,6 +69,8 @@
+ #include <net/nexthop.h>
+ #include <net/switchdev.h>
  
- map_failed_frags:
- 	last = i+1;
--	for (i = 0; i < last; i++)
-+	for (i = 1; i < last; i++)
- 		dma_unmap_page(&adapter->vdev->dev, descs[i].fields.address,
- 			       descs[i].fields.flags_len & IBMVETH_BUF_LEN_MASK,
- 			       DMA_TO_DEVICE);
- 
-+	dma_unmap_single(&adapter->vdev->dev,
-+			 descs[0].fields.address,
-+			 descs[0].fields.flags_len & IBMVETH_BUF_LEN_MASK,
-+			 DMA_TO_DEVICE);
- map_failed:
- 	if (!firmware_has_feature(FW_FEATURE_CMO))
- 		netdev_err(netdev, "tx: unable to map xmit buffer\n");
++#include <linux/nospec.h>
++
+ struct ipmr_rule {
+ 	struct fib_rule		common;
+ };
+@@ -1612,6 +1614,7 @@ int ipmr_ioctl(struct sock *sk, int cmd,
+ 			return -EFAULT;
+ 		if (vr.vifi >= mrt->maxvif)
+ 			return -EINVAL;
++		vr.vifi = array_index_nospec(vr.vifi, mrt->maxvif);
+ 		read_lock(&mrt_lock);
+ 		vif = &mrt->vif_table[vr.vifi];
+ 		if (VIF_EXISTS(mrt, vr.vifi)) {
+@@ -1686,6 +1689,7 @@ int ipmr_compat_ioctl(struct sock *sk, u
+ 			return -EFAULT;
+ 		if (vr.vifi >= mrt->maxvif)
+ 			return -EINVAL;
++		vr.vifi = array_index_nospec(vr.vifi, mrt->maxvif);
+ 		read_lock(&mrt_lock);
+ 		vif = &mrt->vif_table[vr.vifi];
+ 		if (VIF_EXISTS(mrt, vr.vifi)) {
 
 
