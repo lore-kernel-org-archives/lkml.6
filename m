@@ -2,54 +2,56 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64226C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 14:53:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9A4FC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 14:53:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D0922147C
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 14:53:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 753AB2087F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 14:53:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ddH/1tiT"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="YYvVVXFJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729273AbfAGOxT (ORCPT
+        id S1729301AbfAGOxX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 09:53:19 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:34560 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727548AbfAGOxS (ORCPT
+        Mon, 7 Jan 2019 09:53:23 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:33772 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727548AbfAGOxW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 09:53:18 -0500
-Received: by mail-pl1-f193.google.com with SMTP id w4so270246plz.1
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 06:53:17 -0800 (PST)
+        Mon, 7 Jan 2019 09:53:22 -0500
+Received: by mail-pg1-f195.google.com with SMTP id z11so255712pgu.0
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 06:53:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=C4W4tGQs/4aSuOdcjVltlo4CS5kRV1BEfEL5UEJ/zjg=;
-        b=ddH/1tiTLkcAh38u8Y225jplQlfMckshzN/Plqs8z9BhFN2zcAHGm5KSbAc19KPbB2
-         6gZkMleICfQI5eauxg63VnNe2zFq1NWJSNBf57hE8oT5VKRwzeD0Za7LztESa9zBvgH/
-         AdL4+JfMVdziFf0O2+q86VQ5x3CcrdMx36fug=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=L8dzRK8u+9X5NB1F78wxGzgOGa50Hz3EXcEfF722qFs=;
+        b=YYvVVXFJPr4luDn2L28Jh7AueGzbW9/98BeM/joCJHg+SeC5kq+Usaro50Z0Ietze1
+         07g6V/oEEV6xJaMm6sg00x0FDB5XZm0SC3xEOAt1AOjkJ/m6d3NG3cgoxmTErXi2C8gQ
+         QunI4SPt+XPtKtYBNzS/NopxpfD+li6p6+PaQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=C4W4tGQs/4aSuOdcjVltlo4CS5kRV1BEfEL5UEJ/zjg=;
-        b=siUHdoLlrlPTo1W3ZHBEz4nm9avpY7FYrrq+LyKmzFzzVewBRrAYHyHAmbGun8uRR+
-         V+BLdqifR0EWne8CXfsgcCvQLPG/ABSh8avwvwzo82PLeiE3cPC2Slt8fa9Z1Gx/KyTy
-         bLH75VtirH3Ude87tptHkyBtcnVyPLEpHm+rUc5FeeaVDuSLLPpkwEpm0QmAKgAnt7XO
-         NmOUbxGeQ4iRloWiWRmcITiZQSc80LhAD3/izZNd339OcVnUtN94HqAQ5CFhzUIAVyMu
-         DTzlhKP024oyV5OR4qKTBq6LI+tu/gU4YI57kpvxEtk8NXhTQjayOuw+wv+IIN6mOACg
-         BhJg==
-X-Gm-Message-State: AJcUuke2VppDha3RxW2+cKnEF0fWJHcqSf2IqZZhyZC4vG3aeP1hs8n3
-        8ZheTKn82ylebVV+D2dT4QJS/A==
-X-Google-Smtp-Source: ALg8bN7oyWgYzBfL6s8XsMB/NZRf9W/DuDwrMrW8GAwMABAQQ1TRTdRgjAujwy4o+wB/69fl8GZFng==
-X-Received: by 2002:a17:902:9045:: with SMTP id w5mr59041293plz.32.1546872797321;
-        Mon, 07 Jan 2019 06:53:17 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=L8dzRK8u+9X5NB1F78wxGzgOGa50Hz3EXcEfF722qFs=;
+        b=AxefYvVEo/vvn+ABsY/dV/XxmBfZrcnEnZSmFPOws4kus270BQdHPQJwjKxlXXyy74
+         Ok6s2/mzMd9qH1crh7wPMTTmnyl+dYrFlZxQVdrFNkBrAyCu39zu6gGro8ueQruBplmZ
+         3fGiwZhOtkNbzW1lcZI6piq901cXAQ2T4Oc17KTUQoqsQ6yk33AjwVcOUKiYHMwuTyNf
+         Cl02wdBwNOQWhBF9PxIadoW/uKA5P18V3v6BjyLbYacskYtjHzGTiciK7XD5Y4IPbRxc
+         TO6VZF10zNMRjuq9emo0BK1tsxiVJtvYTlfQO3zA2rmdO2WU0fv062ZblV4wHlWjW7dt
+         EFbQ==
+X-Gm-Message-State: AJcUukfedTcuefoik9tffC37wVq2d9hraIuIGcArOWEib37ExAXLG5Ue
+        DWj5ERMiJ+gSO7AmBEh5W8U56w==
+X-Google-Smtp-Source: ALg8bN6MhFCMF6ytnOv0VgvCrgJaYdylIx4rPvucsInZ5YnGh0AYnTcruBOelDTYZmjzOYm4w4d+GQ==
+X-Received: by 2002:a62:30c3:: with SMTP id w186mr63582883pfw.39.1546872802313;
+        Mon, 07 Jan 2019 06:53:22 -0800 (PST)
 Received: from qualcomm-HP-ZBook-14-G2.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com. [103.229.18.19])
-        by smtp.gmail.com with ESMTPSA id o84sm121145584pfi.172.2019.01.07.06.53.12
+        by smtp.gmail.com with ESMTPSA id o84sm121145584pfi.172.2019.01.07.06.53.17
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 07 Jan 2019 06:53:16 -0800 (PST)
+        Mon, 07 Jan 2019 06:53:21 -0800 (PST)
 From:   Firoz Khan <firoz.khan@linaro.org>
 To:     Mark Salter <msalter@redhat.com>,
         Aurelien Jacquiot <jacquiot.aurelien@gmail.com>,
@@ -62,43 +64,79 @@ To:     Mark Salter <msalter@redhat.com>,
 Cc:     y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
         linux-arch@vger.kernel.org, arnd@arndb.de, deepa.kernel@gmail.com,
         marcin.juszkiewicz@linaro.org, firoz.khan@linaro.org
-Subject: [PATCH 0/3] c6x: system call table generation for asm-generic
-Date:   Mon,  7 Jan 2019 20:22:43 +0530
-Message-Id: <1546872766-3354-1-git-send-email-firoz.khan@linaro.org>
+Subject: [PATCH 1/3] c6x: add Makefile to invoke syscall table generation script
+Date:   Mon,  7 Jan 2019 20:22:44 +0530
+Message-Id: <1546872766-3354-2-git-send-email-firoz.khan@linaro.org>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1546872766-3354-1-git-send-email-firoz.khan@linaro.org>
+References: <1546872766-3354-1-git-send-email-firoz.khan@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This will be an automated scripts to provide easy support
-for add/modify/delete the system call entry by add entry 
-in respective syscall.tbl file.
+Add Makefile to invoke the system call table generation script
+which is placed in scripts directory as a common location acc-
+essible for all the architectures.
 
-System call table generation support for asm-generic is
-provide for c6x architecture which will use the common
-scripts resides in scripts directory and use syscall.tbl
-as inputs. This implementation will replace asm-generic-
-/unistd.h.
+scripts/syscallhdr.sh will generate uapi header and scripts-
+/syscalltbl.sh will generate kapi header respectively. There
+is another scripts scripts/syscallnr.sh can generate total
+number of syscall which doesn't invoke from this Makefile.
 
-This patch depends on:
- https://lore.kernel.org/lkml/1546439331-18646-1-git-send-email-firoz.khan@linaro.org/
- https://lore.kernel.org/lkml/1546520681-24453-1-git-send-email-firoz.khan@linaro.org/
-
-Firoz Khan (3):
-  c6x: add Makefile to invoke syscall table generation script
-  c6x: add __ARCH_NOMMU as a bugfix
-  c6x: generate uapi and kapi headers
-
- arch/c6x/Makefile                  |  3 +++
- arch/c6x/include/asm/Kbuild        |  1 +
- arch/c6x/include/uapi/asm/Kbuild   |  1 +
- arch/c6x/include/uapi/asm/unistd.h | 15 +++++++++-----
- arch/c6x/kernel/sys_c6x.c          |  3 ++-
- arch/c6x/kernel/syscalls/Makefile  | 41 ++++++++++++++++++++++++++++++++++++++
- 6 files changed, 58 insertions(+), 6 deletions(-)
+Signed-off-by: Firoz Khan <firoz.khan@linaro.org>
+---
+ arch/c6x/kernel/syscalls/Makefile | 41 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 41 insertions(+)
  create mode 100644 arch/c6x/kernel/syscalls/Makefile
 
+diff --git a/arch/c6x/kernel/syscalls/Makefile b/arch/c6x/kernel/syscalls/Makefile
+new file mode 100644
+index 0000000..1865a80
+--- /dev/null
++++ b/arch/c6x/kernel/syscalls/Makefile
+@@ -0,0 +1,41 @@
++# SPDX-License-Identifier: GPL-2.0
++kapi := arch/$(SRCARCH)/include/generated/asm
++uapi := arch/$(SRCARCH)/include/generated/uapi/asm
++
++_dummy := $(shell [ -d '$(uapi)' ] || mkdir -p '$(uapi)')	\
++	  $(shell [ -d '$(kapi)' ] || mkdir -p '$(kapi)')
++
++syscall := $(srctree)/scripts/syscalls/syscall.tbl
++syshdr := $(srctree)/scripts/syscallhdr.sh
++systbl := $(srctree)/scripts/syscalltbl.sh
++
++quiet_cmd_syshdr = SYSHDR  $@
++      cmd_syshdr = $(CONFIG_SHELL) '$(syshdr)' '$<' '$@'	\
++		   '$(syshdr_abis_$(basetarget))'		\
++		   '$(syshdr_pfx_$(basetarget))'		\
++		   '$(syshdr_offset_$(basetarget))'
++
++quiet_cmd_systbl = SYSTBL  $@
++      cmd_systbl = $(CONFIG_SHELL) '$(systbl)' '$<' '$@'	\
++		   '$(systbl_abis_$(basetarget))'		\
++		   '$(systbl_abi_$(basetarget))'		\
++		   '$(systbl_offset_$(basetarget))'
++
++syshdr_abis_unistd_32 := common,32,rename,stat64,archs0
++$(uapi)/unistd_32.h: $(syscall) $(syshdr)
++	$(call if_changed,syshdr)
++
++systbl_abis_syscall_table := common,32,rename,stat64,archs0
++systbl_abi_syscall_table := 32
++$(kapi)/syscall_table.h: $(syscall) $(systbl)
++	$(call if_changed,systbl)
++
++uapisyshdr-y		+= unistd_32.h
++kapisyshdr-y		+= syscall_table.h
++
++targets	+= $(uapisyshdr-y) $(kapisyshdr-y)
++
++PHONY += all
++all: $(addprefix $(uapi)/,$(uapisyshdr-y))
++all: $(addprefix $(kapi)/,$(kapisyshdr-y))
++	@:
 -- 
 1.9.1
 
