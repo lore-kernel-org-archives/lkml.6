@@ -4,52 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38871C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:47:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8554C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:47:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEA22206BB
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:47:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3359206BB
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:47:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546865265;
-	bh=xZCAxdFRXTZ+tK3tH5w4V/S7V78r66t3yEPWX9dyOCc=;
+	s=default; t=1546865269;
+	bh=hhmGbfSYNiEePVo+2X98BGwAa0cTj33Vu7g6KtlmUMU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=wxFN3K5Rga+u6UKwL2EqbjRoy9MbkY2X7X0UF0+zt+6fj5vf12WJe5x3GEFSNNrnc
-	 0RxY1cXaPdwITC4nSnI0UY2FswjlGtj8D7wAb5k1SGiKoDXU90uZsM/vVXHRxw1KDs
-	 XjR0maVBmthC3/SPGk8nykpHaU1EUoh+o6PjQFmw=
+	b=c0B1J0lliQwwf2jnXj+LDHMky9Uo8sL4pyz17Min0hHeGq7xI+l757VDvuDGJ3gbX
+	 B18n76CjGblt1K2Ic2wucnCgcwVzzUniTVP2HGPH1idtWpthG4eCYkYZ2EMfJ3RyRB
+	 69j2GmYdcOsxlh/roL8Od41D5UpYCtP7P46yDwyg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728820AbfAGMro (ORCPT
+        id S1728992AbfAGMrs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:47:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38018 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:47:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38076 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728716AbfAGMrl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:47:41 -0500
+        id S1728716AbfAGMro (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:47:44 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6FD4E20651;
-        Mon,  7 Jan 2019 12:47:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7408220651;
+        Mon,  7 Jan 2019 12:47:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865261;
-        bh=xZCAxdFRXTZ+tK3tH5w4V/S7V78r66t3yEPWX9dyOCc=;
+        s=default; t=1546865264;
+        bh=hhmGbfSYNiEePVo+2X98BGwAa0cTj33Vu7g6KtlmUMU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RIv/IdjKjPiJmG9NdhF9GbL8PjL8DrK2EjFm2+dX2jnNuAvZ1j4dm4RfZbDuKLSy2
-         HHeySuJEUR8Ls7ZYeHlXXSnOqb+S+9yDUfsG7i4gsZ03VulHmPqCuF+qrc3Teh5O/h
-         RzmyiklS/LFNv/fYlDYqALpqah6QC/HkUmofw+sM=
+        b=WF0ahmq198r7LSOJp57dKxPIQ+38Tr4Io9dE2vbU9cjTjNoiB72LABP941XIHX4tx
+         wnhrIcMhXf/BkTlQqRdcwJ7uAhw2weQY1MCbDA4bKJJEv2HCPw66mm8jd5CWAiauyT
+         vKWDtRfiKAytDcXXVzXF61fSUV+lf/R6x+jjeIAw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>,
-        Ying Xue <ying.xue@windriver.com>,
-        Jon Maloy <jon.maloy@ericsson.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
+        stable@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 037/170] tipc: use lock_sock() in tipc_sk_reinit()
-Date:   Mon,  7 Jan 2019 13:31:04 +0100
-Message-Id: <20190107104457.612726267@linuxfoundation.org>
+Subject: [PATCH 4.19 038/170] vhost: make sure used idx is seen before log in vhost_add_used_n()
+Date:   Mon,  7 Jan 2019 13:31:05 +0100
+Message-Id: <20190107104457.723229098@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104452.953560660@linuxfoundation.org>
 References: <20190107104452.953560660@linuxfoundation.org>
@@ -68,47 +66,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Cong Wang <xiyou.wangcong@gmail.com>
+From: Jason Wang <jasowang@redhat.com>
 
-[ Upstream commit 15ef70e286176165d28b0b8a969b422561a68dfc ]
+[ Upstream commit 841df922417eb82c835e93d4b93eb6a68c99d599 ]
 
-lock_sock() must be used in process context to be race-free with
-other lock_sock() callers, for example, tipc_release(). Otherwise
-using the spinlock directly can't serialize a parallel tipc_release().
+We miss a write barrier that guarantees used idx is updated and seen
+before log. This will let userspace sync and copy used ring before
+used idx is update. Fix this by adding a barrier before log_write().
 
-As it is blocking, we have to hold the sock refcnt before
-rhashtable_walk_stop() and release it after rhashtable_walk_start().
-
-Fixes: 07f6c4bc048a ("tipc: convert tipc reference table to use generic rhashtable")
-Reported-by: Dmitry Vyukov <dvyukov@google.com>
-Cc: Ying Xue <ying.xue@windriver.com>
-Cc: Jon Maloy <jon.maloy@ericsson.com>
-Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Fixes: 8dd014adfea6f ("vhost-net: mergeable buffers support")
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
+Signed-off-by: Jason Wang <jasowang@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/tipc/socket.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/vhost/vhost.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/net/tipc/socket.c
-+++ b/net/tipc/socket.c
-@@ -2686,11 +2686,15 @@ void tipc_sk_reinit(struct net *net)
- 		rhashtable_walk_start(&iter);
- 
- 		while ((tsk = rhashtable_walk_next(&iter)) && !IS_ERR(tsk)) {
--			spin_lock_bh(&tsk->sk.sk_lock.slock);
-+			sock_hold(&tsk->sk);
-+			rhashtable_walk_stop(&iter);
-+			lock_sock(&tsk->sk);
- 			msg = &tsk->phdr;
- 			msg_set_prevnode(msg, tipc_own_addr(net));
- 			msg_set_orignode(msg, tipc_own_addr(net));
--			spin_unlock_bh(&tsk->sk.sk_lock.slock);
-+			release_sock(&tsk->sk);
-+			rhashtable_walk_start(&iter);
-+			sock_put(&tsk->sk);
- 		}
- 
- 		rhashtable_walk_stop(&iter);
+--- a/drivers/vhost/vhost.c
++++ b/drivers/vhost/vhost.c
+@@ -2233,6 +2233,8 @@ int vhost_add_used_n(struct vhost_virtqu
+ 		return -EFAULT;
+ 	}
+ 	if (unlikely(vq->log_used)) {
++		/* Make sure used idx is seen before log. */
++		smp_wmb();
+ 		/* Log used index update. */
+ 		log_write(vq->log_base,
+ 			  vq->log_addr + offsetof(struct vring_used, idx),
 
 
