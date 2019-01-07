@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96206C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:03:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EA60C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:03:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 685BF21736
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:03:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CBC6621736
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:03:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546866216;
-	bh=gdRmi6FI7vC9olQkzZHX9ujkVTVzq4otTvPMd5kVmp0=;
+	s=default; t=1546866220;
+	bh=KgbrA1LMCSh7xo1mRWV8KkE3zkWqG6GKmEkIZ/IW/C0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=0Dtsf95HgHrZI6QPePbj66enzp8bI23welyCLLsCF0orRARDDSRKZuI+M0ZRy4lve
-	 djpsLjcYD+nKA0JBXwjt2I38Rv3zkuYHW/uRQIwBVy63cV+QBco8hJIJc+8QKxdQNR
-	 YhNXZ8YVAeIaiwEYKGgIa2GsAy2HYCUd8kpWJE8A=
+	b=FyGMuXzEJ3y5m0Xj8hcdyDpjnskf/+RzTZMmJQoE743qyUxJO+C55V002h1E0XBeq
+	 jTYHpIGE4LQ/VyLiRgHNVOdzA50wSdnLlTrMAAayTWZ2nOx03wzEQq4pEB6S+HlQev
+	 xwvAlYPZgjUiir/3noEMiIHaVER98X/gmIr/ssJM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731033AbfAGNDf (ORCPT
+        id S1731059AbfAGNDk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:03:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50972 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:03:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51106 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727684AbfAGNDa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:03:30 -0500
+        id S1731045AbfAGNDi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:03:38 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1872C2089F;
-        Mon,  7 Jan 2019 13:03:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 53007217D4;
+        Mon,  7 Jan 2019 13:03:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546866209;
-        bh=gdRmi6FI7vC9olQkzZHX9ujkVTVzq4otTvPMd5kVmp0=;
+        s=default; t=1546866217;
+        bh=KgbrA1LMCSh7xo1mRWV8KkE3zkWqG6GKmEkIZ/IW/C0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QirjeIJl+nTANXMxPlmC1q1/VazFAuKzvlBAvuTV/+78RVVhKof4YkvnVhCBCd3aB
-         d5dfWwvdcQthW2SsOmSiDhVmwTljpfXcfUb/LoXWCiKEex0YGSoawUGiDnEp3ojOgJ
-         G+H3e19e8T7Rc1WevJEsCjAGBzb7Z75xrIsqj1i8=
+        b=eOh1W7t+k/zkehSr+sPJXI1kcc5StXaIbjmQify2GD4JF0hxTvIPntKDuSjNxkt4l
+         hLLZ+YwxcWHT8nBUrICiYySn+G4ogj1Eym2vHdm0sAczpjuxoCkBYPI9g5FHIPmKeT
+         dEWiWsLAzRnYJgI7YuP1kp+9bFr2MjbrtNX1g3pM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 045/101] ALSA: firewire-lib: fix wrong handling payload_length as payload_quadlet
-Date:   Mon,  7 Jan 2019 13:32:33 +0100
-Message-Id: <20190107105335.367011522@linuxfoundation.org>
+        stable@vger.kernel.org, Mohan Kumar <mkumard@nvidia.com>,
+        Dara Ramesh <dramesh@nvidia.com>,
+        Sameer Pujar <spujar@nvidia.com>, Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.14 048/101] ALSA: hda/tegra: clear pending irq handlers
+Date:   Mon,  7 Jan 2019 13:32:36 +0100
+Message-Id: <20190107105335.546076816@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107105330.372621917@linuxfoundation.org>
 References: <20190107105330.372621917@linuxfoundation.org>
@@ -65,49 +66,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+From: Sameer Pujar <spujar@nvidia.com>
 
-commit ada79fa5a0b374dd2c2262137c734da7524a8263 upstream.
+commit 63d2a9ec310d8bcc955574220d4631aa55c1a80c upstream.
 
-In IEC 61883-1/6 engine of ALSA firewire stack, a packet handler has a
-second argument for 'the number of bytes in payload of isochronous
-packet'. However, an incoming packet handler without CIP header uses the
-value as 'the number of quadlets in the payload'. This brings userspace
-applications to receive the number of PCM frames as four times against
-real time.
+Even after disabling interrupts on the module, it could be possible
+that irq handlers are still running. System hang is seen during
+suspend path. It was found that, there were pending writes on the
+HDA bus and clock was disabled by that time.
 
-This commit fixes the bug.
+Above mentioned issue is fixed by clearing any pending irq handlers
+before disabling clocks and returning from hda suspend.
 
-Cc: <stable@vger.kernel.org> # v4.12+
-Fixes: 3b196c394dd ('ALSA: firewire-lib: add no-header packet processing')
-Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Suggested-by: Mohan Kumar <mkumard@nvidia.com>
+Suggested-by: Dara Ramesh <dramesh@nvidia.com>
+Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+Cc: <stable@vger.kernel.org>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/firewire/amdtp-stream.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ sound/pci/hda/hda_tegra.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/sound/firewire/amdtp-stream.c
-+++ b/sound/firewire/amdtp-stream.c
-@@ -629,15 +629,17 @@ end:
- }
+--- a/sound/pci/hda/hda_tegra.c
++++ b/sound/pci/hda/hda_tegra.c
+@@ -249,10 +249,12 @@ static int hda_tegra_suspend(struct devi
+ 	struct snd_card *card = dev_get_drvdata(dev);
+ 	struct azx *chip = card->private_data;
+ 	struct hda_tegra *hda = container_of(chip, struct hda_tegra, chip);
++	struct hdac_bus *bus = azx_bus(chip);
  
- static int handle_in_packet_without_header(struct amdtp_stream *s,
--			unsigned int payload_quadlets, unsigned int cycle,
-+			unsigned int payload_length, unsigned int cycle,
- 			unsigned int index)
- {
- 	__be32 *buffer;
-+	unsigned int payload_quadlets;
- 	unsigned int data_blocks;
- 	struct snd_pcm_substream *pcm;
- 	unsigned int pcm_frames;
+ 	snd_power_change_state(card, SNDRV_CTL_POWER_D3hot);
  
- 	buffer = s->buffer.packets[s->packet_index].buffer;
-+	payload_quadlets = payload_length / 4;
- 	data_blocks = payload_quadlets / s->data_block_quadlets;
+ 	azx_stop_chip(chip);
++	synchronize_irq(bus->irq);
+ 	azx_enter_link_reset(chip);
+ 	hda_tegra_disable_clocks(hda);
  
- 	trace_in_packet_without_header(s, cycle, payload_quadlets, data_blocks,
 
 
