@@ -7,47 +7,51 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF589C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:09:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F131C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:09:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0A592089F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:09:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 20BED2147C
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:09:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546866591;
-	bh=xhNhxr/EZ0dIu9RP5SjE0V5gOIW7ECul+5n721PbI0w=;
+	s=default; t=1546866597;
+	bh=OgWQ+YXAVSFo3VyBkOEtEl1fwvcdzThm3FGB15JN6a0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=CUL0i6mtLZteiZLxCq7QWEDKQlESmf9aSiRlyJiGZLRXc//7V8Krkif4Kqb+ccWNb
-	 3ts29JVhFzlhq2QVYFCopj2JxhhFsEv7HBsqdHCVtix1ZPWzgPhjPD9G0perFQpBrz
-	 y9/SbE6vn7yIu2Gr+EE3TpmtgeYg/aMhxVpPYxeU=
+	b=sL9uHl2i6kW9ktalGyIH1/2XnU9+11FlzTb1aRE2lr+qb+1cKDPRh5hva761sLUXF
+	 DcXMCdiG1BEhbmS9E4wx9VnoPsxmHQfTvWESEaOM/4qZp/NYSjd6J2+AxwyYy8nnFR
+	 QISy/OyR+1k+aH8Khj35Y4wpRJotzy8WACS0gMnE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731885AbfAGNJu (ORCPT
+        id S1731911AbfAGNJ4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:09:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56554 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:09:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56606 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731556AbfAGNJq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:09:46 -0500
+        id S1731556AbfAGNJv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:09:51 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1DD522147C;
-        Mon,  7 Jan 2019 13:09:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BBF222147C;
+        Mon,  7 Jan 2019 13:09:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546866586;
-        bh=xhNhxr/EZ0dIu9RP5SjE0V5gOIW7ECul+5n721PbI0w=;
+        s=default; t=1546866590;
+        bh=OgWQ+YXAVSFo3VyBkOEtEl1fwvcdzThm3FGB15JN6a0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Tkmf3WPLLT7/wc7H79g3XCNunF/ZinIAxhPuJoNlA7t7lw5pMeH2GJ5i3iZB+1rqS
-         OPFL0Xq76tvCXhfDP9k12bcVFSiVkb8Bsf6TxpuX4zvAIw5GKUa2Gbr36CiBI2IA48
-         gZNYGI9wPr3r1REOXUEetL3bqOa703avsWgR2iHs=
+        b=rZ8a+jz4xx7s+somZYwpi0EZ6I8vJPpkbjamSPUwhKVSwdj5qivKeTKD321YeB05s
+         oPrTYWByJqyWRWgZX8uahcBrpZTMENqc7TPq+YN0wMJ2M65LXyCFlMvvwF26khuQP9
+         ZtGvXZFOtu9l8U9AyBu0kfWBG2yPSxyZ4fq4A/C8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Georgy A Bystrenin <gkot@altlinux.org>,
-        Pavel Shilovsky <pshilov@microsoft.com>,
-        Steve French <stfrench@microsoft.com>
-Subject: [PATCH 4.9 67/71] CIFS: Fix error mapping for SMB2_LOCK command which caused OFD lock problem
-Date:   Mon,  7 Jan 2019 13:33:36 +0100
-Message-Id: <20190107105336.561360257@linuxfoundation.org>
+        stable@vger.kernel.org,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Sasha Levin <alexander.levin@microsoft.com>,
+        Mike Haboustak <haboustak@gmail.com>
+Subject: [PATCH 4.9 68/71] x86/kvm/vmx: do not use vm-exit instruction length for fast MMIO when running nested
+Date:   Mon,  7 Jan 2019 13:33:37 +0100
+Message-Id: <20190107105336.633052729@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107105330.280153213@linuxfoundation.org>
 References: <20190107105330.280153213@linuxfoundation.org>
@@ -66,52 +70,83 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Georgy A Bystrenin <gkot@altlinux.org>
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
 
-commit 9a596f5b39593414c0ec80f71b94a226286f084e upstream.
+commit d391f1207067268261add0485f0f34503539c5b0 upstream.
 
-While resolving a bug with locks on samba shares found a strange behavior.
-When a file locked by one node and we trying to lock it from another node
-it fail with errno 5 (EIO) but in that case errno must be set to
-(EACCES | EAGAIN).
-This isn't happening when we try to lock file second time on same node.
-In this case it returns EACCES as expected.
-Also this issue not reproduces when we use SMB1 protocol (vers=1.0 in
-mount options).
+I was investigating an issue with seabios >= 1.10 which stopped working
+for nested KVM on Hyper-V. The problem appears to be in
+handle_ept_violation() function: when we do fast mmio we need to skip
+the instruction so we do kvm_skip_emulated_instruction(). This, however,
+depends on VM_EXIT_INSTRUCTION_LEN field being set correctly in VMCS.
+However, this is not the case.
 
-Further investigation showed that the mapping from status_to_posix_error
-is different for SMB1 and SMB2+ implementations.
-For SMB1 mapping is [NT_STATUS_LOCK_NOT_GRANTED to ERRlock]
-(See fs/cifs/netmisc.c line 66)
-but for SMB2+ mapping is [STATUS_LOCK_NOT_GRANTED to -EIO]
-(see fs/cifs/smb2maperror.c line 383)
+Intel's manual doesn't mandate VM_EXIT_INSTRUCTION_LEN to be set when
+EPT MISCONFIG occurs. While on real hardware it was observed to be set,
+some hypervisors follow the spec and don't set it; we end up advancing
+IP with some random value.
 
-Quick changes in SMB2+ mapping from EIO to EACCES has fixed issue.
+I checked with Microsoft and they confirmed they don't fill
+VM_EXIT_INSTRUCTION_LEN on EPT MISCONFIG.
 
-BUG: https://bugzilla.kernel.org/show_bug.cgi?id=201971
+Fix the issue by doing instruction skip through emulator when running
+nested.
 
-Signed-off-by: Georgy A Bystrenin <gkot@altlinux.org>
-Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
-CC: Stable <stable@vger.kernel.org>
-Signed-off-by: Steve French <stfrench@microsoft.com>
+Fixes: 68c3b4d1676d870f0453c31d5a52e7e65c7448ae
+Suggested-by: Radim Krčmář <rkrcmar@redhat.com>
+Suggested-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
+Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+[mhaboustak: backport to 4.9.y]
+Signed-off-by: Mike Haboustak <haboustak@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/cifs/smb2maperror.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/x86/kvm/vmx.c |   19 +++++++++++++++++--
+ arch/x86/kvm/x86.c |    3 ++-
+ 2 files changed, 19 insertions(+), 3 deletions(-)
 
---- a/fs/cifs/smb2maperror.c
-+++ b/fs/cifs/smb2maperror.c
-@@ -377,8 +377,8 @@ static const struct status_to_posix_erro
- 	{STATUS_NONEXISTENT_EA_ENTRY, -EIO, "STATUS_NONEXISTENT_EA_ENTRY"},
- 	{STATUS_NO_EAS_ON_FILE, -ENODATA, "STATUS_NO_EAS_ON_FILE"},
- 	{STATUS_EA_CORRUPT_ERROR, -EIO, "STATUS_EA_CORRUPT_ERROR"},
--	{STATUS_FILE_LOCK_CONFLICT, -EIO, "STATUS_FILE_LOCK_CONFLICT"},
--	{STATUS_LOCK_NOT_GRANTED, -EIO, "STATUS_LOCK_NOT_GRANTED"},
-+	{STATUS_FILE_LOCK_CONFLICT, -EACCES, "STATUS_FILE_LOCK_CONFLICT"},
-+	{STATUS_LOCK_NOT_GRANTED, -EACCES, "STATUS_LOCK_NOT_GRANTED"},
- 	{STATUS_DELETE_PENDING, -ENOENT, "STATUS_DELETE_PENDING"},
- 	{STATUS_CTL_FILE_NOT_SUPPORTED, -ENOSYS,
- 	"STATUS_CTL_FILE_NOT_SUPPORTED"},
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -6548,9 +6548,24 @@ static int handle_ept_misconfig(struct k
+ 
+ 	gpa = vmcs_read64(GUEST_PHYSICAL_ADDRESS);
+ 	if (!kvm_io_bus_write(vcpu, KVM_FAST_MMIO_BUS, gpa, 0, NULL)) {
+-		skip_emulated_instruction(vcpu);
+ 		trace_kvm_fast_mmio(gpa);
+-		return 1;
++		/*
++		* Doing kvm_skip_emulated_instruction() depends on undefined
++		* behavior: Intel's manual doesn't mandate
++		* VM_EXIT_INSTRUCTION_LEN to be set in VMCS when EPT MISCONFIG
++		* occurs and while on real hardware it was observed to be set,
++		* other hypervisors (namely Hyper-V) don't set it, we end up
++		* advancing IP with some random value. Disable fast mmio when
++		* running nested and keep it for real hardware in hope that
++		* VM_EXIT_INSTRUCTION_LEN will always be set correctly.
++		*/
++		if (!static_cpu_has(X86_FEATURE_HYPERVISOR)) {
++			skip_emulated_instruction(vcpu);
++			return 1;
++		}
++		else
++			return x86_emulate_instruction(vcpu, gpa, EMULTYPE_SKIP,
++						       NULL, 0) == EMULATE_DONE;
+ 	}
+ 
+ 	ret = handle_mmio_page_fault(vcpu, gpa, true);
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -5707,7 +5707,8 @@ int x86_emulate_instruction(struct kvm_v
+ 		 * handle watchpoints yet, those would be handled in
+ 		 * the emulate_ops.
+ 		 */
+-		if (kvm_vcpu_check_breakpoint(vcpu, &r))
++		if (!(emulation_type & EMULTYPE_SKIP) &&
++		    kvm_vcpu_check_breakpoint(vcpu, &r))
+ 			return r;
+ 
+ 		ctxt->interruptibility = 0;
 
 
