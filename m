@@ -2,60 +2,70 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BC9CC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 10:11:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AADFC43444
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 10:13:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33A6B20859
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 10:11:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC8A62087F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 10:13:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="DZct6zBL"
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="VBlinL9R";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="n8IIP0OJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727038AbfAGKLZ (ORCPT
+        id S1726785AbfAGKNA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 05:11:25 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:34668 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726878AbfAGKK2 (ORCPT
+        Mon, 7 Jan 2019 05:13:00 -0500
+Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:41043 "EHLO
+        wout2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725550AbfAGKNA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 05:10:28 -0500
-Received: by mail-ed1-f67.google.com with SMTP id b3so334639ede.1
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 02:10:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=qUkbCEmsntdfIG+umww963vUUwTtYgwvxVwPjf2SD/8=;
-        b=DZct6zBL6cO8bvOVvbgRzCoic5h4bzwzfjIDjukSlHsl9iCEC/r7y+qPl0mZkDmJaw
-         pUhf5jZ1bSGT2eP1G+ROOHv4+96/8QuuJ0O1EjTVw42j/f4S3aYsLLkZkngcFVu807Lh
-         aGWpsa+ltf8mm4tN7ZXhQluGA/cM56qbyFPIc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=qUkbCEmsntdfIG+umww963vUUwTtYgwvxVwPjf2SD/8=;
-        b=SAzmZnWoaJ9tcRxc4fX8OZGzTZqhEeM9Ca0MSoTmXuH310b0upDXkea7jQy1xzbk/x
-         RW4ycHyAD6G6A/gNj2EZzjzelcVNniW1SWRtvf+yNWp73xTlYDJjgFjxpNMkRvIc8Kan
-         lcqnRqY2RYP68sUaw1IGRQJ7NRhSNW6tOtpQNFyq4Efry5INIoKELXyDL6WiacfHIdD/
-         S7TRk+FN3/BO0UmJOZgvWmzo6iMyml++r/ysCgu9vTWlgN9P53GepkwFr7b0uggTX/UV
-         8lK3kXv6kjxbbR5/JCyxeKCPaLRKKmwK8Py79Ema4UB/3igOsLG1TKjvtN8DINA+Xe8U
-         hsTQ==
-X-Gm-Message-State: AA+aEWa58TDI0UVm0n/7VlCiGir/Qnh2bphy2VQhjxaolBghrHkhbinQ
-        ov3MgP31b+pySt/lZtIJGtpaVg==
-X-Google-Smtp-Source: AFSGD/VqFIUBl/04MXobmMi8biGDuv7a5G4jej4blWUGGAxq4r16hsTLTmab7RbPAdfRZXkfdKr96g==
-X-Received: by 2002:a17:906:6a9b:: with SMTP id p27-v6mr47172326ejr.235.1546855825787;
-        Mon, 07 Jan 2019 02:10:25 -0800 (PST)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id gk8-v6sm19867143ejb.42.2019.01.07.02.10.24
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 07 Jan 2019 02:10:25 -0800 (PST)
-Date:   Mon, 7 Jan 2019 11:10:22 +0100
-From:   Daniel Vetter <daniel@ffwll.ch>
+        Mon, 7 Jan 2019 05:13:00 -0500
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailout.west.internal (Postfix) with ESMTP id 598731431;
+        Mon,  7 Jan 2019 05:12:58 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute6.internal (MEProxy); Mon, 07 Jan 2019 05:12:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm2; bh=bUr2uSJslzFSQjpLPjUpt/KLbov
+        Iy3XFjirj3IH6TzI=; b=VBlinL9RFieXN8sK11N9ePEnuw4EKVh16UggoN3h9iV
+        rmaY9yEdWmdCynWMIAMJ13+IFeor23dsLGbG4us0AGQIef1cib+f9DZc+6qZiQNQ
+        QYXwxyDgV8CicGKomLS1Sq4/xX22b3tCm6IVqlucJj0NAUNOEM8L64Z+t2+O1ToU
+        Hk21ZAxTfF5w/3eVEul1J1Hs2WcNiVszAFJ18DyEZ+XQv1kWc5vDnG9N1EU1ycV+
+        rJ70v2MQOI77dHPEMaxUTtybCrWzqhMLXNwj4qvJ9Spc22mB1qSvZqcEynrxaBbj
+        MgmDeyzF7ifoiHGsfKmSYqlZ+Cw+NZ0nciWptGi9TsQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=bUr2uS
+        JslzFSQjpLPjUpt/KLbovIy3XFjirj3IH6TzI=; b=n8IIP0OJXrRp5YWeOcNFW1
+        4JpqnyGfCIsnHiwQZaWkB92itUpIeJYPYuzDJD6gSGz7K30PsO4aD2+KfgLmnwBY
+        euFRXnHU1mMacW81c/ghe4zfZ//VheBKm8/3rjQv+m+4MqZPKbShR4ik6O080XBB
+        Hei6QE+WxUr73jrv4u9W+8zQscLoGhjCS6eTypBKrHgLQLcBtP6nVAs0V2qTUf7r
+        ovAdDmHcbV6K+2mzKpWOgr0tG6SB4qMf1f9df6aqGWqgsMWsm4lEzqXgwaopyTs7
+        JMf20sB2w9ouNGwNUiQNPVPeQq8VPuHCBIrjkd8qeNXlgFTHGCDAI/ob8lNI9hRg
+        ==
+X-ME-Sender: <xms:KCYzXPOkDA7eFqFmOvNKQy7Z4yPdJtUBWC7MqmJ0uDkBvosEyidI3w>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedtledrvdejgdduudculddtuddrgedtkedrtddtmd
+    cutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfhuthen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjfgesthdtredttdervdenucfhrhhomhepifhrvghg
+    ucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecuffhomhgrihhnpehsohhurhgtvg
+    hfohhrghgvrdhnvghtnecukfhppeekfedrkeeirdekledruddtjeenucfrrghrrghmpehm
+    rghilhhfrhhomhepghhrvghgsehkrhhorghhrdgtohhmnecuvehluhhsthgvrhfuihiivg
+    eptd
+X-ME-Proxy: <xmx:KSYzXOOCvcKYAdHZur-XprvKiZqMauMVv2JlfWaFbPUcvdc7vmM-Tw>
+    <xmx:KSYzXJSZN3P2tWKcedPZr-YNS4jdWk88Wi8zVehk4QgwnBkO8zEg5Q>
+    <xmx:KSYzXIBlFv6kiAjkQgFyNm4kLcnumpNZKkLzPHQToyU3gG13YBDNfw>
+    <xmx:KSYzXCUXkOpG2lb8m_05uiUg9Gomck9t2UBLAuzd7GzOt0l2JXtlqw>
+Received: from localhost (5356596b.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 836CAE4662;
+        Mon,  7 Jan 2019 05:12:56 -0500 (EST)
+Date:   Mon, 7 Jan 2019 11:12:55 +0100
+From:   Greg KH <greg@kroah.com>
 To:     Ivan Mironov <mironov.ivan@gmail.com>
 Cc:     Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org,
         linux-kernel@vger.kernel.org,
@@ -66,14 +76,7 @@ Cc:     Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org,
         Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
 Subject: Re: [PATCH v1 2/2] drm/fb-helper: Ignore the value of
  fb_var_screeninfo.pixclock
-Message-ID: <20190107101022.GA21184@phenom.ffwll.local>
-Mail-Followup-To: Ivan Mironov <mironov.ivan@gmail.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        saahriktu <mail@saahriktu.org>,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Message-ID: <20190107101255.GA2364@kroah.com>
 References: <20181227231308.16904-1-mironov.ivan@gmail.com>
  <20181227231308.16904-3-mironov.ivan@gmail.com>
  <20181228120652.GR9058@dvetter-linux.ger.corp.intel.com>
@@ -82,8 +85,7 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <b9f21efe2fe2d0a71ad6672fbe9155df52ac5e02.camel@gmail.com>
-X-Operating-System: Linux phenom 4.18.0-2-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -145,50 +147,10 @@ On Sat, Jan 05, 2019 at 09:21:21PM +0500, Ivan Mironov wrote:
 > 
 > This particular patch fixes a bug that existed for 10 years unnoticed.
 > Are "Fixes:" and "Cc: stable" really required?
-> 
-> "pixclock != 0" check was introduced in this file by 785b93ef8c309
-> ("drm/kms: move driver specific fb common code to helper functions
-> (v2)"). But actually similar code existed in the device-specific
-> drivers even earlier.
 
-Afaui 785b93ef8c309 broke existing userspace. Broken userspace, but
-existing userspace, and hence we need to fix this regression. That's the
-rules with linux upstream, existing userspace is never allowed to break,
-even if it does really stupid things. Hence Cc: stable.
--Daniel
+If you want it backported into a stable kernel release, then yes, they
+are needed :)
 
-> 
-> > 
-> > > ---
-> > >  drivers/gpu/drm/drm_fb_helper.c | 7 ++++++-
-> > >  1 file changed, 6 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
-> > > index aff576c3c4fb..b95a0c23c7c8 100644
-> > > --- a/drivers/gpu/drm/drm_fb_helper.c
-> > > +++ b/drivers/gpu/drm/drm_fb_helper.c
-> > > @@ -1690,9 +1690,14 @@ int drm_fb_helper_check_var(struct fb_var_screeninfo *var,
-> > >  	struct drm_fb_helper *fb_helper = info->par;
-> > >  	struct drm_framebuffer *fb = fb_helper->fb;
-> > >  
-> > > -	if (var->pixclock != 0 || in_dbg_master())
-> > > +	if (in_dbg_master())
-> > >  		return -EINVAL;
-> > >  
-> > > +	if (var->pixclock != 0) {
-> > > +		DRM_DEBUG("fbdev emulation doesn't support changing the pixel clock, value of pixclock is ignored\n");
-> > > +		var->pixclock = 0;
-> > > +	}
-> > > +
-> > >  	if ((drm_format_info_block_width(fb->format, 0) > 1) ||
-> > >  	    (drm_format_info_block_height(fb->format, 0) > 1))
-> > >  		return -EINVAL;
-> > > -- 
-> > > 2.20.1
-> > > 
-> 
+thanks,
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+greg k-h
