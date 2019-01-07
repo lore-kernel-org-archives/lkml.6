@@ -3,83 +3,189 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F5D3C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 03:54:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 655E1C43612
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 03:58:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBCF12070B
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 03:54:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A1D020881
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 03:58:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726483AbfAGDyx (ORCPT
+        id S1726438AbfAGD6F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 6 Jan 2019 22:54:53 -0500
-Received: from rtits2.realtek.com ([211.75.126.72]:44451 "EHLO
-        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726145AbfAGDyx (ORCPT
+        Sun, 6 Jan 2019 22:58:05 -0500
+Received: from regular1.263xmail.com ([211.150.99.136]:44072 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726246AbfAGD6F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Jan 2019 22:54:53 -0500
-Authenticated-By: 
-X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID x073s1L9006272, This message is accepted by code: ctloc85258
-Received: from mail.realtek.com (rtitcasv02.realtek.com.tw[172.21.6.19])
-        by rtits2.realtek.com.tw (8.15.2/2.57/5.78) with ESMTPS id x073s1L9006272
-        (version=TLSv1 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Mon, 7 Jan 2019 11:54:01 +0800
-Received: from RTITEXH01.realtek.com.tw (172.21.6.62) by
- RTITCASV02.realtek.com.tw (172.21.6.19) with Microsoft SMTP Server (TLS) id
- 14.3.408.0; Mon, 7 Jan 2019 11:54:01 +0800
-Received: from RTITMBSVM03.realtek.com.tw ([fe80::e1fe:b2c1:57ec:f8e1]) by
- RTITEXH01.realtek.com.tw ([::1]) with mapi id 14.03.0415.000; Mon, 7 Jan 2019
- 11:53:59 +0800
-From:   Hayes Wang <hayeswang@realtek.com>
-To:     Mark Lord <mlord@pobox.com>,
-        Kai Heng Feng <kai.heng.feng@canonical.com>
-CC:     Ansis Atteka <aatteka@nicira.com>,
-        David Miller <davem@davemloft.net>,
-        "greg@kroah.com" <greg@kroah.com>,
-        "romieu@fr.zoreil.com" <romieu@fr.zoreil.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        nic_swsd <nic_swsd@realtek.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        Mario Limonciello <mario.limonciello@dell.com>,
-        Ryankao <ryankao@realtek.com>
-Subject: RE: r8152: data corruption in various scenarios
-Thread-Topic: r8152: data corruption in various scenarios
-Thread-Index: AQHUpQD6011CtINiskOD0W/vTF7lIKWiF+GAgAAhRICAAAD+AIAA8qXQ
-Date:   Mon, 7 Jan 2019 03:53:59 +0000
-Message-ID: <0835B3720019904CB8F7AA43166CEEB2D38781F2@RTITMBSVM03.realtek.com.tw>
-References: <ed0c9790-57be-8bca-cdd6-3a54ca24f0bd@pobox.com>
- <20161125095350.GA20653@kroah.com>
- <1816ec7e-2733-f4ba-5d30-29dbabd20aad@pobox.com>
- <20161125.115827.2014848246966159357.davem@davemloft.net>
- <0835B3720019904CB8F7AA43166CEEB201057793@RTITMBSV03.realtek.com.tw>
- <CAA=3Oqn5_5w+vrg9_7UtZ-5BEbZ9Pm=qdX3WoVZKaAkxcMXYXA@mail.gmail.com>
- <469a41ea-e97c-23d2-d129-68aad5585fec@pobox.com>
- <3D7273C4-D378-42D5-92FA-4ED72041D820@canonical.com>
- <1726a1ef-cfa7-0f97-4388-bf2ba72cb9a9@pobox.com>
- <31f145b8-4518-122c-eab8-50ed1075ba55@pobox.com>
-In-Reply-To: <31f145b8-4518-122c-eab8-50ed1075ba55@pobox.com>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.21.177.214]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Sun, 6 Jan 2019 22:58:05 -0500
+X-Greylist: delayed 496 seconds by postgrey-1.27 at vger.kernel.org; Sun, 06 Jan 2019 22:58:02 EST
+Received: from randy.li?rock-chips.com (unknown [192.168.165.135])
+        by regular1.263xmail.com (Postfix) with ESMTP id 77EC33A2;
+        Mon,  7 Jan 2019 11:49:34 +0800 (CST)
+X-263anti-spam: KSV:0;BIG:0;
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-KSVirus-check: 0
+X-ADDR-CHECKED4: 1
+X-ABS-CHECKED: 1
+X-SKE-CHECKED: 1
+X-ANTISPAM-LEVEL: 2
+Received: from [192.168.10.130] (localhost [127.0.0.1])
+        by smtp.263.net (Postfix) with ESMTPA id 06089400;
+        Mon,  7 Jan 2019 11:49:30 +0800 (CST)
+X-IP-DOMAINF: 1
+X-RL-SENDER: randy.li@rock-chips.com
+X-FST-TO: linux-rockchip@lists.infradead.org
+X-SENDER-IP: 103.29.142.67
+X-LOGIN-NAME: randy.li@rock-chips.com
+X-UNIQUE-TAG: <59498dd63bfc6f538d4f0346ef14fc0b>
+X-ATTACHMENT-NUM: 0
+X-SENDER: randy.li@rock-chips.com
+X-DNS-TYPE: 0
+Received: from [192.168.10.130] (unknown [103.29.142.67])
+        by smtp.263.net (Postfix) whith ESMTP id 27737D1YHFF;
+        Mon, 07 Jan 2019 11:49:34 +0800 (CST)
+Subject: Re: [linux-sunxi] [PATCH v2 1/2] media: v4l: Add definitions for the
+ HEVC slice format and controls
+To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc:     =?UTF-8?Q?Jernej_=c5=a0krabec?= <jernej.skrabec@gmail.com>,
+        linux-sunxi@googlegroups.com, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-arm-kernel@lists.infradead.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Randy Li <ayaka@soulik.info>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Randy Li <ayaka@soulik.info>,
+        linux-rockchip@lists.infradead.org
+References: <20181123130209.11696-1-paul.kocialkowski@bootlin.com>
+ <20181123130209.11696-2-paul.kocialkowski@bootlin.com>
+ <5515174.7lFZcYkk85@jernej-laptop>
+ <ffe9c81db34b599f675ca5bbf02de360bf0a1608.camel@bootlin.com>
+From:   Randy Li <randy.li@rock-chips.com>
+Message-ID: <776e63c9-d4a5-342a-e0f7-200ef144ffc4@rock-chips.com>
+Date:   Mon, 7 Jan 2019 11:49:29 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
+In-Reply-To: <ffe9c81db34b599f675ca5bbf02de360bf0a1608.camel@bootlin.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-TW9uZGF5LCBKYW51YXJ5IDA3LCAyMDE5IDU6MTcgQU0NClsuLi5dDQo+PiBUaGlzIGlzIHByb2Jh
-Ymx5IGFuIHhIQyBidWcuIEEgc2ltaWxhciBpc3N1ZSBpcyBmaXhlZCBieSBjb21taXQgOWRhNWEx
-MDkyYjEzDQo+PiAoInhoY2k6IEJhZCBFdGhlcm5ldCBwZXJmb3JtYW5jZSBwbHVnZ2VkIGluIEFT
-TTEwNDJBIGhvc3TigJ0pLiANCj4+DQo+Pj4gSSBqdXN0IGdvdCB0aGF0IGV4YWN0IG1lc3NhZ2Ug
-YWJvdmUsIHdpdGggdGhlIHI4MTUyIGluIG15IDEtZGF5IG9sZCBXRDE1IGRvY2ssDQo+Pj4gd2l0
-aCB0aGUgVEIxNiAid29ya2Fyb3VuZCIgZW5hYmxlZCBpbiBMaW51eCBrZXJuZWwgNC4yMC4wLg0K
-Pj4NCj4+IElzIHRoZSB4SEMgV0QxNSBjb25uZWN0ZWQgYW4gQVNNZWRpYSBvbmU/DQo+IA0KPiBJ
-IGRvbid0IGtub3cuICBJICp0aGluayogaXQgaWRlbnRpZmllcyBhcyBhIERTTDYzNDAgKHNlZSBi
-ZWxvdykuDQo+IA0KDQpBY2NvcmRpbmcgdG8gb3VyIHJlY29yZCwgaXQgaXMgcmVsYXRpdmUgdG8g
-dGhlIGFzbWVkaWEuDQoNCkJlc3QgUmVnYXJkcywNCkhheWVzDQoNCg0K
+
+On 12/12/18 8:51 PM, Paul Kocialkowski wrote:
+> Hi,
+>
+> On Wed, 2018-12-05 at 21:59 +0100, Jernej Škrabec wrote:
+>
+>>> +
+>>> +#define V4L2_HEVC_DPB_ENTRY_RPS_ST_CURR_BEFORE	0x01
+>>> +#define V4L2_HEVC_DPB_ENTRY_RPS_ST_CURR_AFTER	0x02
+>>> +#define V4L2_HEVC_DPB_ENTRY_RPS_LT_CURR		0x03
+>>> +
+>>> +#define V4L2_HEVC_DPB_ENTRIES_NUM_MAX		16
+>>> +
+>>> +struct v4l2_hevc_dpb_entry {
+>>> +	__u32	buffer_tag;
+>>> +	__u8	rps;
+>>> +	__u8	field_pic;
+>>> +	__u16	pic_order_cnt[2];
+>>> +};
+
+Please add a property for reference index, if that rps is not used for 
+this, some device would request that(not the rockchip one). And 
+Rockchip's VDPU1 and VDPU2 for AVC would request a similar property.
+
+Adding another buffer_tag for referring the memory of the motion vectors 
+for each frames. Or a better method is add a meta data to echo picture 
+buffer,  since the picture output is just the same as the original, 
+display won't care whether the motion vectors are written the button of 
+picture or somewhere else.
+
+
+>>> +
+>>> +struct v4l2_hevc_pred_weight_table {
+>>> +	__u8	luma_log2_weight_denom;
+>>> +	__s8	delta_chroma_log2_weight_denom;
+>>> +
+>>> +	__s8	delta_luma_weight_l0[V4L2_HEVC_DPB_ENTRIES_NUM_MAX];
+>>> +	__s8	luma_offset_l0[V4L2_HEVC_DPB_ENTRIES_NUM_MAX];
+>>> +	__s8	delta_chroma_weight_l0[V4L2_HEVC_DPB_ENTRIES_NUM_MAX][2];
+>>> +	__s8	chroma_offset_l0[V4L2_HEVC_DPB_ENTRIES_NUM_MAX][2];
+>>> +
+>>> +	__s8	delta_luma_weight_l1[V4L2_HEVC_DPB_ENTRIES_NUM_MAX];
+>>> +	__s8	luma_offset_l1[V4L2_HEVC_DPB_ENTRIES_NUM_MAX];
+>>> +	__s8	delta_chroma_weight_l1[V4L2_HEVC_DPB_ENTRIES_NUM_MAX][2];
+>>> +	__s8	chroma_offset_l1[V4L2_HEVC_DPB_ENTRIES_NUM_MAX][2];
+>>> +};
+>>> +
+Those properties I think are not necessary are applying for the 
+Rockchip's device, may not work for the others.
+>>> +struct v4l2_ctrl_hevc_slice_params {
+>>> +	__u32	bit_size;
+>>> +	__u32	data_bit_offset;
+>>> +
+>>> +	/* ISO/IEC 23008-2, ITU-T Rec. H.265: NAL unit header */
+>>> +	__u8	nal_unit_type;
+>>> +	__u8	nuh_temporal_id_plus1;
+>>> +
+>>> +	/* ISO/IEC 23008-2, ITU-T Rec. H.265: General slice segment header */
+>>> +	__u8	slice_type;
+>>> +	__u8	colour_plane_id;
+----------------------------------------------------------------------------
+>>> +	__u16	slice_pic_order_cnt;
+>>> +	__u8	slice_sao_luma_flag;
+>>> +	__u8	slice_sao_chroma_flag;
+>>> +	__u8	slice_temporal_mvp_enabled_flag;
+>>> +	__u8	num_ref_idx_l0_active_minus1;
+>>> +	__u8	num_ref_idx_l1_active_minus1;
+Rockchip's decoder doesn't use this part.
+>>> +	__u8	mvd_l1_zero_flag;
+>>> +	__u8	cabac_init_flag;
+>>> +	__u8	collocated_from_l0_flag;
+>>> +	__u8	collocated_ref_idx;
+>>> +	__u8	five_minus_max_num_merge_cand;
+>>> +	__u8	use_integer_mv_flag;
+>>> +	__s8	slice_qp_delta;
+>>> +	__s8	slice_cb_qp_offset;
+>>> +	__s8	slice_cr_qp_offset;
+>>> +	__s8	slice_act_y_qp_offset;
+>>> +	__s8	slice_act_cb_qp_offset;
+>>> +	__s8	slice_act_cr_qp_offset;
+>>> +	__u8	slice_deblocking_filter_disabled_flag;
+>>> +	__s8	slice_beta_offset_div2;
+>>> +	__s8	slice_tc_offset_div2;
+>>> +	__u8	slice_loop_filter_across_slices_enabled_flag;
+>>> +
+>>> +	/* ISO/IEC 23008-2, ITU-T Rec. H.265: Picture timing SEI message */
+>>> +	__u8	pic_struct;
+I think the decoder doesn't care about this, it is used for display.
+>>> +
+>>> +	/* ISO/IEC 23008-2, ITU-T Rec. H.265: General slice segment header */
+>>> +	struct v4l2_hevc_dpb_entry dpb[V4L2_HEVC_DPB_ENTRIES_NUM_MAX];
+>>> +	__u8	num_active_dpb_entries;
+>>> +	__u8	ref_idx_l0[V4L2_HEVC_DPB_ENTRIES_NUM_MAX];
+>>> +	__u8	ref_idx_l1[V4L2_HEVC_DPB_ENTRIES_NUM_MAX];
+>>> +
+>>> +	__u8	num_rps_poc_st_curr_before;
+>>> +	__u8	num_rps_poc_st_curr_after;
+>>> +	__u8	num_rps_poc_lt_curr;
+>>> +
+>>> +	/* ISO/IEC 23008-2, ITU-T Rec. H.265: Weighted prediction parameter */
+>>> +	struct v4l2_hevc_pred_weight_table pred_weight_table;
+>>> +};
+>>> +
+>>>   #endif
+>>
+
