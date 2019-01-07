@@ -2,122 +2,248 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A53EBC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 17:03:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB93CC43444
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 17:06:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7743E2147C
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 17:03:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A21E42147C
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 17:06:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="0wz/MwRl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727033AbfAGRDx (ORCPT
+        id S1726995AbfAGRGS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 12:03:53 -0500
-Received: from mga04.intel.com ([192.55.52.120]:8721 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726709AbfAGRDw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 12:03:52 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jan 2019 09:03:51 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,451,1539673200"; 
-   d="scan'208";a="124881868"
-Received: from ray.jf.intel.com (HELO [10.7.201.126]) ([10.7.201.126])
-  by orsmga001.jf.intel.com with ESMTP; 07 Jan 2019 09:03:51 -0800
-Subject: Re: [RFC PATCH 0/4] x86_64/mm: remove bottom-up allocation style by
- pushing forward the parsing of mem hotplug info
-To:     Pingfan Liu <kernelfans@gmail.com>, x86@kernel.org,
-        linux-acpi@vger.kernel.org
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>, linux-kernel@vger.kernel.org
-References: <1546849485-27933-1-git-send-email-kernelfans@gmail.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-Message-ID: <7d72567c-2ed8-e2ae-8518-115cd9c8a82a@intel.com>
-Date:   Mon, 7 Jan 2019 09:03:51 -0800
+        Mon, 7 Jan 2019 12:06:18 -0500
+Received: from forwardcorp1o.cmail.yandex.net ([37.9.109.47]:59409 "EHLO
+        forwardcorp1o.cmail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726501AbfAGRGS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 12:06:18 -0500
+X-Greylist: delayed 511 seconds by postgrey-1.27 at vger.kernel.org; Mon, 07 Jan 2019 12:06:12 EST
+Received: from mxbackcorp2j.mail.yandex.net (mxbackcorp2j.mail.yandex.net [IPv6:2a02:6b8:0:1619::119])
+        by forwardcorp1o.cmail.yandex.net (Yandex) with ESMTP id B54E820F46;
+        Mon,  7 Jan 2019 19:57:39 +0300 (MSK)
+Received: from smtpcorp1o.mail.yandex.net (smtpcorp1o.mail.yandex.net [2a02:6b8:0:1a2d::30])
+        by mxbackcorp2j.mail.yandex.net (nwsmtp/Yandex) with ESMTP id lQmtbi0E4W-vdLO0xiL;
+        Mon, 07 Jan 2019 19:57:39 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
+        t=1546880259; bh=nE3rlyuW0im+zupLoL/w6s1aktE5Wf5qsQt/gv+/C2U=;
+        h=Subject:To:References:From:Message-ID:Date:In-Reply-To;
+        b=0wz/MwRl57ZmvtRCdG535plceh6qh4FQIp2/xD6whAAvr9krPF7S/8Pju1k08J4md
+         /RMlb2QpSZR71o0YAD1+MVJCGE2ahS5Od/PXsrtgZ5VE2fGzZH6pgKrOtLrsaIE+nR
+         8T3VkbjdPrzzgveTliRSB9qXW8VyvT/QJKiXrvR8=
+Authentication-Results: mxbackcorp2j.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
+Received: from dynamic-iva.dhcp.yndx.net (dynamic-iva.dhcp.yndx.net [2a02:6b8:b010:d003::1:1e])
+        by smtpcorp1o.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id 9OSNJjUnRe-vcOSJVP7;
+        Mon, 07 Jan 2019 19:57:39 +0300
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client certificate not present)
+Subject: Re: kernel BUG at mm/huge_memory.c:LINE!
+To:     syzbot <syzbot+8e075128f7db8555391a@syzkaller.appspotmail.com>,
+        akpm@linux-foundation.org, aneesh.kumar@linux.vnet.ibm.com,
+        hughd@google.com, jglisse@redhat.com,
+        kirill.shutemov@linux.intel.com, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, mhocko@suse.com, rientjes@google.com,
+        syzkaller-bugs@googlegroups.com, vbabka@suse.cz,
+        willy@infradead.org
+References: <0000000000004d2e19057e8b6d78@google.com>
+From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Message-ID: <3478bd83-6f5c-bf8e-6b62-56139110f712@yandex-team.ru>
+Date:   Mon, 7 Jan 2019 19:57:38 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <1546849485-27933-1-git-send-email-kernelfans@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <0000000000004d2e19057e8b6d78@google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-CA
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/7/19 12:24 AM, Pingfan Liu wrote:
-> Background about the defect of the current bottom-up allocation style, take
-> the following scenario:
->   |  unmovable node |     movable node                           |
->      | kaslr-kernel |subtree of pgtable for phy<->virt |
+On 03.01.2019 13:43, syzbot wrote:
+> Hello,
 > 
-> Although kaslr-kernel can avoid to stain the movable node. But the
-> pgtable can still stain the movable node. That is a probability problem,
-> with low probability, but still exist. This patch tries to eliminate the
-> probability. With the previous patch, at the point of init_mem_mapping(),
-> memblock allocator can work with the knowledge of acpi memory hotmovable
-> info, and avoid to stain the movable node. As a result,
-> memory_map_bottom_up() is not needed any more.
+> syzbot found the following crash on:
+> 
+> HEAD commit:    4cd1b60def51 Add linux-next specific files for 20190102
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=147760d3400000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=e8ea56601353001c
+> dashboard link: https://syzkaller.appspot.com/bug?extid=8e075128f7db8555391a
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> 
+> Unfortunately, I don't have any reproducer for this crash yet.
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+8e075128f7db8555391a@syzkaller.appspotmail.com
 
-I'm really missing the basic problem statement.  What's the problem this
-is fixing?  What is the end-user-visible impact of this problem?
 
-To make memory hot-remove work, we want as much memory as possible to he
-hot-removable, which is basically what movable nodes are used for.  But,
-it sounds like, maybe, that KASLR can place the kernel image inside the
-movable node.  This is somehow related to the bottom-up allocation style
-currently in use.
+Few more lines from "console output"
+
+[  549.659441] page:ffffea0000e80000 count:512 mapcount:0 mapping:ffff88809a33f5b1 index:0x20000 compound_mapcount: -1
+[  549.746649] anon
+[  549.746665] flags: 0x1fffc000009000d(locked|uptodate|dirty|head|swapbacked)
+
+> 
+> raw: 01fffc000009000d dead000000000100 dead000000000200 ffff88809a33f5b1
+> raw: 0000000000020000 0000000000000000 0000020000000000 ffff888095368000
+> page dumped because: VM_BUG_ON_PAGE(compound_mapcount(head))
+> page->mem_cgroup:ffff888095368000
+> ------------[ cut here ]------------
+> kernel BUG at mm/huge_memory.c:2683!
+> invalid opcode: 0000 [#1] PREEMPT SMP KASAN
+> CPU: 0 PID: 1551 Comm: kswapd0 Not tainted 4.20.0-next-20190102 #3
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+> RIP: 0010:split_huge_page_to_list+0x2161/0x2ac0 mm/huge_memory.c:2683
+> Code: ff e8 33 35 b8 ff 48 8b 85 10 fc ff ff 4c 8d 70 ff e9 1e ea ff ff e8 1e 35 b8 ff 48 c7 c6 a0 a3 54 88 4c 89 ef e8 0f 15 ea ff <0f> 0b 
+> 48 89 85 10 fc ff ff e8 01 35 b8 ff 48 8b 85 10 fc ff ff 4c
+> RSP: 0018:ffff8880a5f36de8 EFLAGS: 00010246
+> RAX: 0000000000000000 RBX: ffff8880a5f371d8 RCX: 0000000000000000
+> RDX: ffffed1014be6d6e RSI: ffffffff81b3831e RDI: ffffed1014be6dae
+> RBP: ffff8880a5f37200 R08: 0000000000000021 R09: ffffed1015cc5021
+> R10: ffffed1015cc5020 R11: ffff8880ae628107 R12: ffffea0000e80080
+> R13: ffffea0000e80000 R14: 00000000fffffffe R15: 01fffc000009000d
+> FS:  0000000000000000(0000) GS:ffff8880ae600000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000000020003030 CR3: 0000000219267000 CR4: 00000000001426f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>   split_huge_page include/linux/huge_mm.h:148 [inline]
+>   deferred_split_scan+0xa47/0x11d0 mm/huge_memory.c:2820
+>   do_shrink_slab+0x4e5/0xd30 mm/vmscan.c:561
+>   shrink_slab mm/vmscan.c:710 [inline]
+>   shrink_slab+0x6bb/0x8c0 mm/vmscan.c:690
+>   shrink_node+0x61a/0x17e0 mm/vmscan.c:2776
+>   kswapd_shrink_node mm/vmscan.c:3535 [inline]
+>   balance_pgdat+0xb00/0x18b0 mm/vmscan.c:3693
+>   kswapd+0x839/0x1330 mm/vmscan.c:3948
+>   kthread+0x357/0x430 kernel/kthread.c:246
+>   ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
+> Modules linked in:
+> kobject: 'loop1' (000000002d2ad2ad): kobject_uevent_env
+> kobject: 'loop1' (000000002d2ad2ad): fill_kobj_path: path = '/devices/virtual/block/loop1'
+> kobject: 'loop3' (000000003c94a079): kobject_uevent_env
+> kobject: 'loop3' (000000003c94a079): fill_kobj_path: path = '/devices/virtual/block/loop3'
+> kobject: 'loop5' (0000000000e89d9d): kobject_uevent_env
+> kobject: 'loop5' (0000000000e89d9d): fill_kobj_path: path = '/devices/virtual/block/loop5'
+> kobject: 'loop2' (000000001a685ee7): kobject_uevent_env
+> kobject: 'loop2' (000000001a685ee7): fill_kobj_path: path = '/devices/virtual/block/loop2'
+> kobject: 'loop3' (000000003c94a079): kobject_uevent_env
+> kobject: 'loop3' (000000003c94a079): fill_kobj_path: path = '/devices/virtual/block/loop3'
+> ---[ end trace a543f5c1741fca97 ]---
+> kobject: 'loop0' (00000000aa59ea1f): kobject_uevent_env
+> RIP: 0010:split_huge_page_to_list+0x2161/0x2ac0 mm/huge_memory.c:2683
+> Code: ff e8 33 35 b8 ff 48 8b 85 10 fc ff ff 4c 8d 70 ff e9 1e ea ff ff e8 1e 35 b8 ff 48 c7 c6 a0 a3 54 88 4c 89 ef e8 0f 15 ea ff <0f> 0b 
+> 48 89 85 10 fc ff ff e8 01 35 b8 ff 48 8b 85 10 fc ff ff 4c
+> kobject: 'loop0' (00000000aa59ea1f): fill_kobj_path: path = '/devices/virtual/block/loop0'
+> RSP: 0018:ffff8880a5f36de8 EFLAGS: 00010246
+> RAX: 0000000000000000 RBX: ffff8880a5f371d8 RCX: 0000000000000000
+> RDX: ffffed1014be6d6e RSI: ffffffff81b3831e RDI: ffffed1014be6dae
+> RBP: ffff8880a5f37200 R08: 0000000000000021 R09: ffffed1015cc5021
+> netlink: 'syz-executor0': attribute type 22 has an invalid length.
+> R10: ffffed1015cc5020 R11: ffff8880ae628107 R12: ffffea0000e80080
+> R13: ffffea0000e80000 R14: 00000000fffffffe R15: 01fffc000009000d
+> FS:  0000000000000000(0000) GS:ffff8880ae700000(0000) knlGS:0000000000000000
+> kobject: 'loop1' (000000002d2ad2ad): kobject_uevent_env
+> kobject: 'loop1' (000000002d2ad2ad): fill_kobj_path: path = '/devices/virtual/block/loop1'
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00000000004efb18 CR3: 00000000702a7000 CR4: 00000000001426e0
+> kobject: 'loop5' (0000000000e89d9d): kobject_uevent_env
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> kobject: 'loop5' (0000000000e89d9d): fill_kobj_path: path = '/devices/virtual/block/loop5'
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> kobject: 'loop3' (000000003c94a079): kobject_uevent_env
+> 
+
+
+I've got couple of these for 4.14.
+Maybe related but this happened with THP tmpfs.
+
+
+<1>[220723.475439] huge_memory: total_mapcount: 63, page_count(): 576
+<0>[220723.475474] page:ffffea0024ee8000 count:576 mapcount:0 mapping:ffff881813235550 index:0x0 compound_mapcount: 0
+<0>[220723.475512] flags: 0x10000000004807d(locked|referenced|uptodate|dirty|lru|active|head|swapbacked)
+<1>[220723.475545] raw: 010000000004807d ffff881813235550 0000000000000000 00000240ffffffff
+<1>[220723.475573] raw: ffffea004c099a20 ffffea002bd9e020 0000000000000000 ffff883018044800
+<1>[220723.475601] page dumped because: total_mapcount(head) > 0
+<1>[220723.475621] page->mem_cgroup:ffff883018044800
+<4>[220723.475644] ------------[ cut here ]------------
+<2>[220723.475645] kernel BUG at mm/huge_memory.c:2652!
+<4>[220723.475667] invalid opcode: 0000 [#1] SMP PTI
+<4>[220723.475684] Modules linked in: xt_nat xt_limit overlay ip6table_nat nf_nat_ipv6 nf_nat veth tcp_diag inet_diag unix_diag xt_NFLOG 
+nfnetlink_log nfnetlink ip6t_REJECT nf_reject_ipv6 nf_log_ipv6 nf_log_common xt_LOG nf_conntrack_ipv6 nf_defrag_ipv6 xt_u32 ip6table_raw 
+xt_conntrack ip6table_filter xt_tcpudp xt_CT nf_conntrack iptable_raw xt_multiport iptable_filter bridge ip6_tables ip_tables x_tables 
+sch_fq_codel sch_hfsc netconsole configfs 8021q mrp garp stp llc intel_rapl sb_edac x86_pkg_temp_thermal intel_powerclamp mgag200 coretemp 
+ttm kvm_intel drm_kms_helper drm kvm fb_sys_fops sysimgblt input_leds sysfillrect syscopyarea irqbypass lpc_ich mfd_core ghash_clmulni_intel 
+shpchp ioatdma wmi tcp_bbr ip6_tunnel tunnel6 mlx4_en mlx4_core devlink tcp_nv tcp_htcp raid456 async_raid6_recov async_pq async_xor
+<4>[220723.475954]  xor async_memcpy async_tx raid10 igb isci dca libsas i2c_algo_bit ptp scsi_transport_sas pps_core raid6_pq libcrc32c 
+raid1 raid0 multipath linear [last unloaded: ipmi_msghandler]
+<4>[220723.476021] CPU: 5 PID: 529913 Comm: qpipe-updater Not tainted 4.14.80-33 #1
+<4>[220723.476047] Hardware name: Aquarius Aquarius Server/X9DRW, BIOS 3.0c 10/30/2014
+<4>[220723.476074] task: ffff8817b98f3900 task.stack: ffffc900311d4000
+<4>[220723.476099] RIP: 0010:split_huge_page_to_list+0x7b5/0x8d0
+<4>[220723.476120] RSP: 0018:ffffc900311d76a0 EFLAGS: 00010086
+<4>[220723.476140] RAX: 0000000000000021 RBX: ffff881813235550 RCX: 0000000000000006
+<4>[220723.476165] RDX: 0000000000000007 RSI: 0000000000000082 RDI: ffff88181fb55730
+<4>[220723.476190] RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000c20
+<4>[220723.476216] R10: ffffc900311d7690 R11: 0000000000000001 R12: 0000000000000000
+<4>[220723.476241] R13: ffffea0024ee8000 R14: ffff88187fffb000 R15: ffffea0024ee8000
+<4>[220723.476267] FS:  00007fe7a69097c0(0000) GS:ffff88181fb40000(0000) knlGS:0000000000000000
+<4>[220723.476296] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+<4>[220723.476317] CR2: 00007fe78c1e1000 CR3: 0000001815530005 CR4: 00000000000606e0
+<4>[220723.476342] Call Trace:
+<4>[220723.476358]  ? find_get_entry+0x20/0x140
+<4>[220723.476377]  shmem_unused_huge_shrink+0x184/0x3f0
+<4>[220723.476398]  super_cache_scan+0x184/0x190
+<4>[220723.476416]  shrink_slab.part.54+0x1ec/0x430
+<4>[220723.476434]  shrink_node+0x300/0x310
+<4>[220723.476451]  do_try_to_free_pages+0xe3/0x350
+<4>[220723.476469]  try_to_free_pages+0xe4/0x1d0
+<4>[220723.476487]  __alloc_pages_slowpath+0x3a5/0xe70
+<4>[220723.476507]  __alloc_pages_nodemask+0x25c/0x2a0
+<4>[220723.476526]  shmem_alloc_hugepage+0xc7/0x110
+<4>[220723.476545]  ? __radix_tree_create+0x168/0x1f0
+<4>[220723.476563]  ? release_pages+0x2c8/0x3a0
+<4>[220723.476579]  ? release_pages+0x2c8/0x3a0
+<4>[220723.477420]  ? __activate_page+0x200/0x2d0
+<4>[220723.478254]  ? percpu_counter_add_batch+0x52/0x70
+<4>[220723.479095]  shmem_alloc_and_acct_page+0x108/0x1d0
+<4>[220723.479926]  shmem_getpage_gfp+0x4ef/0xdf0
+<4>[220723.480736]  shmem_write_begin+0x35/0x60
+<4>[220723.481514]  generic_perform_write+0xaf/0x1b0
+<4>[220723.482293]  __generic_file_write_iter+0x196/0x1e0
+<4>[220723.483061]  generic_file_write_iter+0xe6/0x1f0
+<4>[220723.483820]  __vfs_write+0xdc/0x150
+<4>[220723.484573]  vfs_write+0xc5/0x1c0
+<4>[220723.485324]  SyS_write+0x42/0x90
+<4>[220723.486067]  do_syscall_64+0x67/0x120
+<4>[220723.486790]  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+<4>[220723.487496] RIP: 0033:0x7fe7a60d8330
+<4>[220723.488175] RSP: 002b:00007ffc05104af8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+<4>[220723.488851] RAX: ffffffffffffffda RBX: 00007fe785e00000 RCX: 00007fe7a60d8330
+<4>[220723.489511] RDX: 0000000011be3b28 RSI: 00007fe785e00000 RDI: 0000000000000003
+<4>[220723.490156] RBP: 0000000011be3b28 R08: 00007fe7a69097c0 R09: 00007ffc05104bb7
+<4>[220723.490770] R10: 00007ffc051048c0 R11: 0000000000000246 R12: 0000000107b88c00
+<4>[220723.491364] R13: 00007ffc051057b8 R14: 0000000011be3b28 R15: 00000001072886b8
+<4>[220723.491933] Code: 8b 54 24 08 48 c7 c7 28 54 06 82 e8 51 59 eb ff 49 8b 45 20 a8 01 0f 85 1b 01 00 00 48 c7 c6 8c 50 06 82 4c 89 ef 
+e8 cb 64 fb ff <0f> 0b 48 c7 c6 60 53 06 82 4c 89 ff e8 ba 64 fb ff 0f 0b e8 23
+<1>[220723.493137] RIP: split_huge_page_to_list+0x7b5/0x8d0 RSP: ffffc900311d76a0
+<4>[220723.493731] ---[ end trace 74a2900540d3546c ]---
+<5>[220723.494322] ---[ now 2018-12-24 07:08:37+03 ]---
+
+
+
+> 
+> ---
+> This bug is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this bug report. See:
+> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with syzbot.
