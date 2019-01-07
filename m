@@ -2,121 +2,118 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBCD1C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 17:52:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05693C43444
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 17:52:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94D152173C
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 17:52:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546883539;
-	bh=dkrgwVDulzh61UryTYo3vyP2dP7JOF3DFrYmriX/G7I=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=Myl1f9FGdh5UUBJaUjiMyTkiX41MwmFmJh2N405VXLoMa4zhKiKif/nk4mF/+6zlp
-	 Dt3TwmTDqIq3ka1d+3Mba2gN+7Bs6JsNLI3m7/G11+k2OjybswbCOpT6vS3vW6tox0
-	 Jaz9yUnKnJMhkPn2/UFqrGQI/8+nqYp5MNrFdOmI=
+	by mail.kernel.org (Postfix) with ESMTP id C81492173C
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 17:52:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="QHkq57RU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728548AbfAGRwT (ORCPT
+        id S1728575AbfAGRwn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 12:52:19 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:42084 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727367AbfAGRwS (ORCPT
+        Mon, 7 Jan 2019 12:52:43 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:51160 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728555AbfAGRwm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 12:52:18 -0500
-Received: by mail-oi1-f193.google.com with SMTP id w13so1025439oiw.9;
-        Mon, 07 Jan 2019 09:52:17 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YwN+jM6jCPn4PEoBjO7c0OyfsynFC9kCw7thHiCAkaM=;
-        b=Po6QW4HfZKhoFgAmEQYMPbaMmfAUs2t3GxJ3/GKi+fYNOsKFHaX497upBClCzx2oaX
-         2ZHutWQdtEsJhhTzWP0X4V6Yngo8PcKzaEEtax55wCzAGfkQIsRw+WyqS0VggAvjIbcp
-         4mB7QBJKEfEg5FJTn5L08PYWkd8xQL2DtknwM+f76L5aiQ055SbDDS7M83qkxNrX54lC
-         iCPWMlp4M+S+Qpi8F6BrFBbDA6HytR93YJF9U3YVWXBiQlaJoII3TTrrkafpUpkyHjzW
-         VJ+rEZQKFzwGlrk2rDmot7j1vjQTo1aztATu6GD4Fo6F/JrS9jTDANQvHLYowNb+Ne3F
-         UBAg==
-X-Gm-Message-State: AJcUukdzagUEQVfUcTjLaYIV7qn5Ecol0MimeSlZeKzkHwUFpsAm94Ax
-        xjiMGGLNUD4lA/mxs7hC4JBC585edn5HNdMIB+Q=
-X-Google-Smtp-Source: ALg8bN5I2WbVUh8WanRlf4X0qrzPLOpmPwdnQ5zM25sH48bvi8CjFWCX8UVwn+sYVj5cKxBsdcyYuIUKHbhrJM6o/kE=
-X-Received: by 2002:aca:e715:: with SMTP id e21mr25568983oih.76.1546883537365;
- Mon, 07 Jan 2019 09:52:17 -0800 (PST)
+        Mon, 7 Jan 2019 12:52:42 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x07Hnof5047630;
+        Mon, 7 Jan 2019 17:52:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=s2LBD94hLj5ql9xBoAg9k14arMuYBh89/DHoqGwn6LU=;
+ b=QHkq57RUWb5nj7Ukmg4LnvW4N8D8El4jqu2ytwJCteA0V8XxznMdyr/8+tgD9b/2wCiP
+ WzVkq+1JZBbfOmLN7dN9Bzro+qZvhVdKtOiEnf3GsrAqrX8l3+XGO9a8QBur+ZTGSi/k
+ aB6+bMwLwu+XWjQe3PaeYx1sc1U639zfrOliEVn6Ks+hYt2nUZCYy/GpdYyWs7b8TsrJ
+ knH/uR8zczCJmpP7eGyVirQYnjKlZsqu0MFLEvQVjtAytNupPYvXXz2+oCkBXQwX+RN8
+ qizbaf8m1iFFqT0QS6+K0HGPrEpAsGEJjFooskZnn8pWaMwrb9nIfAWLgMWZ0IL3okz8 lw== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by aserp2130.oracle.com with ESMTP id 2ptj3dqdvp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 07 Jan 2019 17:52:37 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x07HqUVK014886
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 7 Jan 2019 17:52:31 GMT
+Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x07HqU26008758;
+        Mon, 7 Jan 2019 17:52:30 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 07 Jan 2019 09:52:30 -0800
+Date:   Mon, 7 Jan 2019 09:52:29 -0800
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Su Yanjun <suyj.fnst@cn.fujitsu.com>
+Cc:     linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        suyanjun218@gmail.com
+Subject: Re: [PATCH] xfs: correct statx's result_mask value
+Message-ID: <20190107175229.GJ12689@magnolia>
+References: <1546854790-5233-1-git-send-email-suyj.fnst@cn.fujitsu.com>
 MIME-Version: 1.0
-References: <20190102181038.4418-1-okaya@kernel.org> <20190102181038.4418-3-okaya@kernel.org>
- <CAJZ5v0gkGaxgr+-CzsabqrfVFQFo_R+G3VEg3qF_sGWa6bT-Dg@mail.gmail.com>
- <CGME20190107141740eucas1p15f2975c3d87e7a8fce9daeaea41525d4@eucas1p1.samsung.com>
- <7d6b9323-7760-944d-daa4-6fc663a32481@samsung.com> <aa5ecfd1-fbb5-1f7a-500b-9eaee1cd8e0a@kernel.dk>
-In-Reply-To: <aa5ecfd1-fbb5-1f7a-500b-9eaee1cd8e0a@kernel.dk>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Mon, 7 Jan 2019 18:52:05 +0100
-Message-ID: <CAJZ5v0i60n1Fp0dJ5kbHgpKuB+Www3ZCOX2GuLnzzhpGCZ1jMA@mail.gmail.com>
-Subject: Re: [PATCH v5 02/11] ata: pata_acpi: Make PCI dependency explicit
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Sinan Kaya <okaya@kernel.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        "open list:LIBATA SUBSYSTEM (Serial and Parallel ATA drivers)" 
-        <linux-ide@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1546854790-5233-1-git-send-email-suyj.fnst@cn.fujitsu.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9129 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=939
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1901070152
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 7, 2019 at 4:42 PM Jens Axboe <axboe@kernel.dk> wrote:
->
-> On 1/7/19 7:17 AM, Bartlomiej Zolnierkiewicz wrote:
-> >
-> > On 01/07/2019 12:12 PM, Rafael J. Wysocki wrote:
-> >> On Wed, Jan 2, 2019 at 7:11 PM Sinan Kaya <okaya@kernel.org> wrote:
-> >>>
-> >>> After 'commit 5d32a66541c4 ("PCI/ACPI: Allow ACPI to be built without
-> >>> CONFIG_PCI set")' dependencies on CONFIG_PCI that previously were
-> >>> satisfied implicitly through dependencies on CONFIG_ACPI have to be
-> >>> specified directly. PATA_ACPI is a PCI device driver but the PCI
-> >>> dependency has not been explicitly called out.
-> >>>
-> >>> Fixes: 5d32a66541c46 ("PCI/ACPI: Allow ACPI to be built without CONFIG_PCI set")
-> >>> Signed-off-by: Sinan Kaya <okaya@kernel.org>
-> >>> ---
-> >>>  drivers/ata/Kconfig | 2 +-
-> >>>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >>>
-> >>> diff --git a/drivers/ata/Kconfig b/drivers/ata/Kconfig
-> >>> index 4ca7a6b4eaae..8218db17ebdb 100644
-> >>> --- a/drivers/ata/Kconfig
-> >>> +++ b/drivers/ata/Kconfig
-> >>> @@ -1091,7 +1091,7 @@ comment "Generic fallback / legacy drivers"
-> >>>
-> >>>  config PATA_ACPI
-> >>>         tristate "ACPI firmware driver for PATA"
-> >>> -       depends on ATA_ACPI && ATA_BMDMA
-> >>> +       depends on ATA_ACPI && ATA_BMDMA && PCI
-> >>>         help
-> >>>           This option enables an ACPI method driver which drives
-> >>>           motherboard PATA controller interfaces through the ACPI
-> >>> --
-> >>
-> >> Any objections against this one from anyone?
-> >
-> > Patch looks correct to me (pata_acpi is indeed a PCI driver):
-> >
-> > Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> >
-> > but it is best to wait for Jens' ACK if you want to merge it
-> > through ACPI tree..
->
-> You can add my:
->
-> Reviewed-by: Jens Axboe <axboe@kernel.dk>
->
-> if you want to merge it through the ACPI tree.
+On Mon, Jan 07, 2019 at 04:53:10AM -0500, Su Yanjun wrote:
+> For statx syscall, xfs return the wrong result_mask.
+> 
+> Signed-off-by: Su Yanjun <suyj.fnst@cn.fujitsu.com>
+> ---
+>  fs/xfs/xfs_iops.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+> index f48ffd7..3811457 100644
+> --- a/fs/xfs/xfs_iops.c
+> +++ b/fs/xfs/xfs_iops.c
+> @@ -521,6 +521,9 @@ xfs_vn_getattr(
+>  			stat->btime.tv_nsec = ip->i_d.di_crtime.t_nsec;
+>  		}
+>  	}
+> +	
+> +	/* Only return mask that we care */
+> +	stat->result_mask &= request_mask;
 
-I will do that, thanks!
+Why not just:
+
+	stat->result_mask = STATX_BASIC_STATS;
+
+at the top of the function?
+
+I don't see the need to mask off result_mask at all, since we could some
+day elect to return more than what's in request_mask...
+
+...waitaminute, are you seeing garbage in the result_mask that's
+returned to userspace?  I also noticed the vfs stat functions declare
+"struct kstat stat;" without explicitly zeroing the structure fields,
+which means (I think) that we can leak stack information if the kernel
+isn't built with the stackleak plugin?
+
+--D
+
+>  
+>  	if (ip->i_d.di_flags & XFS_DIFLAG_IMMUTABLE)
+>  		stat->attributes |= STATX_ATTR_IMMUTABLE;
+> -- 
+> 2.7.4
+> 
+> 
+> 
