@@ -2,147 +2,117 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16015C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 09:45:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C628C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 09:47:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D78382089F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 09:45:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 44EAA20859
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 09:47:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="c5Gjq1hv"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hcuul/Vd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726669AbfAGJpG (ORCPT
+        id S1726654AbfAGJrQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 04:45:06 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:44743 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726538AbfAGJpG (ORCPT
+        Mon, 7 Jan 2019 04:47:16 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:35072 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726402AbfAGJrQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 04:45:06 -0500
-Received: by mail-io1-f68.google.com with SMTP id r200so34340716iod.11
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 01:45:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0qAwVWHvQ/pBqnevwsEVcaflQ7iZbyqxoHPDgj61+7Q=;
-        b=c5Gjq1hvyMcR9a58adU/zFtlspSwRetGI2E5YUJvqh5wylnffu7+TCesRIfF0WB3zg
-         upfeNUIWfaUMFwprMpfhXUeRUba73sbjnkmz8ZRVkwcpEnQSyEv4NpupqKN2KOlUPob+
-         mol6zMtj9qFGytuNzSCg/MvomfTG4ErOzUJP4NgW4R6IKs0c/2/iZt8f8ZDXeLwAlUNh
-         FuvHIH2C/lr7b7XuPWIw1hDNX9ygfPZjENcLlNDF+jWnnKFjWKLKLqEyLBnfUuL8pp4Y
-         mPGIqyaZ1I2/FQUjSLrSlsCV+uBX68p2etuvpx8lmusjoqakzE07nOrVlREI24mH8Pmp
-         3+QA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0qAwVWHvQ/pBqnevwsEVcaflQ7iZbyqxoHPDgj61+7Q=;
-        b=h9EzKFJvY8GK72wBsHrhzT7U2K6CJpR+ppGPEx150JvrvuQKrTfzdRUzlJk5WA3DIv
-         WuW0Jy0fCHb0auWtueTc/XSHbiq6Wk7FSUacun9HG3WI8KJHs0A11X+OIebalhrNwccA
-         7Amg9KObjK850QlcEgWwky7uTBmOT/SGiNa3hxPcidoivZpWD2Q5YwpJVPguzedD+Y6h
-         RtoSV3AgWiIYgCpXvLnjcbiUok/qW2NxTDade+Nedsq5NMAf/aPs8XuTFc6gCrKD7m5l
-         eN5ss2Si1ekf1osytgdGjTzgb/UX+qMdow3gp/9hV5eR4EClAuq80exWCw3hPkRglKLs
-         23SA==
-X-Gm-Message-State: AJcUukeG0ubgC4+lDyf4S4U6Dd8hkOm+7NfLii6caX6vbh/EtFkqhVus
-        XE0GO6n0VAXk1rLJxpDUEibg8wvCvSPy9jR0XQFUeA==
-X-Google-Smtp-Source: ALg8bN4Bk1NWVdsG3muhIlQMHTRlHMWzhgGq04fY9Q4/9VHOwNxbTorplf5lSuptw3JiU0OLbQSmkamXML65lJGCxQQ=
-X-Received: by 2002:a5d:8491:: with SMTP id t17mr42285610iom.11.1546854305073;
- Mon, 07 Jan 2019 01:45:05 -0800 (PST)
+        Mon, 7 Jan 2019 04:47:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=owmLCz674NsQ4X6zYu+dDxoNvJMYgBNm8s6qAzHY3Gk=; b=hcuul/VdcJfvZ+HF+Gdr8duBV9
+        ke+A8rJux1Pd+7Z+uETTQiLDCpJ2l0WUMD1waB/dvl7hQAzDYWl1jh7CIxqieU1PgWKTGHaqEzmAc
+        4b6DeMASCB6pMUO/4zKIP+Cn4PXOPCUMsf/4UM7clHh5085s8EI5XTK98wU526CUVKrv7I6x6Wlyp
+        KeiNU7p35dvCUV1Iis7H2feA2Qtm58VTxXuM6UlSPI/sOvseBGUJ7YZvdKdlP3LMTFib7vEeDvgWX
+        sgW09WCIlYpGbxSl615+AA7JXBRcNgJWJQgGTylY4bQURldEXzmxEy4wtEL+8LLEq1L1QR/0WBl4z
+        KEIk6QkA==;
+Received: from [185.88.64.153] (helo=worktop.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1ggRUJ-0002zr-48; Mon, 07 Jan 2019 09:46:27 +0000
+Received: by worktop.programming.kicks-ass.net (Postfix, from userid 1000)
+        id A9696983877; Mon,  7 Jan 2019 10:46:10 +0100 (CET)
+Date:   Mon, 7 Jan 2019 10:46:10 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     Jason Wang <jasowang@redhat.com>, linux-kernel@vger.kernel.org,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Akira Yokosawa <akiyks@gmail.com>,
+        Daniel Lustig <dlustig@nvidia.com>, linux-arch@vger.kernel.org,
+        netdev@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        Richard Henderson <rth@twiddle.net>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org,
+        linux-sparse@vger.kernel.org
+Subject: Re: [PATCH RFC 3/4] barriers: convert a control to a data dependency
+Message-ID: <20190107094610.GA2861@worktop.programming.kicks-ass.net>
+References: <20190102205715.14054-1-mst@redhat.com>
+ <20190102205715.14054-4-mst@redhat.com>
+ <86023cbe-d1ae-a0d6-7b75-26556f1a0c1f@redhat.com>
+ <20190106231756-mutt-send-email-mst@kernel.org>
 MIME-Version: 1.0
-References: <000000000000665f2e057cd00db6@google.com> <CACT4Y+Y-Yv0a1DzqsTHRSP52DdKLy0J2fAfsVfZUSNNnAOUnzg@mail.gmail.com>
- <CACT4Y+bxTz6d11v89gpDSEPyB+sJssNGPmEsC9-LVsGbxEpcuA@mail.gmail.com>
- <20181230154648.GB9832@redhat.com> <CACT4Y+Y+ZdBPXGhytZycqcLc_7GOR-VZB8KKuX_qUgxmiVT60w@mail.gmail.com>
- <20190104231013.GB4924@redhat.com>
-In-Reply-To: <20190104231013.GB4924@redhat.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Mon, 7 Jan 2019 10:44:53 +0100
-Message-ID: <CACT4Y+amB9JGJbX8Coybj0b9yEGhcODCJ5K7azVHNrJT1bVNhg@mail.gmail.com>
-Subject: Re: KASAN: use-after-free Read in handle_userfault (2)
-To:     Andrea Arcangeli <aarcange@redhat.com>
-Cc:     syzbot+cbc64b24b2b2d54c07a9@syzkaller.appspotmail.com,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Peter Xu <peterx@redhat.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190106231756-mutt-send-email-mst@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jan 5, 2019 at 12:10 AM Andrea Arcangeli <aarcange@redhat.com> wrote:
->
-> On Wed, Jan 02, 2019 at 02:37:58PM +0100, Dmitry Vyukov wrote:
-> > If we are proceeding with "mm: some enhancements to the page fault
-> > mechanism", that's good as it will eliminate at least part of this
-> > output.
->
-> Agreed.
->
-> > There are 2 types of debug configs: ones add additional checks for
-> > machines and another add verbose output for humans. CONFIG_DEBUG_VM
-> > seems to be more of the first type of debug config -- additional
-> > checks for machines. I've seen some of the second type debug configs
-> > are prefixed with DEBUG_VERBOSE or something along these lines. Maybe
-> > it makes sense to split this out of CONFIG_DEBUG_VM. Since it's a
-> > "gray" check (rather then white/black check), it can't be used in
-> > CI/fuzzing setups anyways -- not possible to analyse thousands of
-> > cases manually (though maybe we actually hitting some that can be
-> > classified as kernel bugs).
->
-> The problem with the DEBUG_VERBOSE is that if the kernel needs a
-> rebuild it's only marginally better than having to ask the developer
-> to add a one liner dump_stack before rebuilding the kernel.
->
-> Next time we need it, it may be simpler to figure a dynamic tracing
-> trick than to ask a rebuild.
->
-> In addition of pursuing the VM_FAULT_RETRY improvements from Peter,
-> it'd be fine to drop it for now to avoid confusing the machines.
->
-> > Yes, the problem is way more general. As you noted it applies to 100K
-> > of EINVAL|EFAULT|ENOMEM, it's super hard to figure out what/where
-> > exactly goes wrong in the kernel getting only -22. But at the same
->
-> What stands out for this location is that it's the bailout point
-> of all non uffd compatible syscalls.
->
-> The chances such annotation turns out to be useful is much higher than
-> a random -EINVAL location, but in principle it's the same kind of
-> issue and I agree it'd be unpractical to annotate them manually.
->
-> > time we can't have all of these 100K places dump stacks. I don't know
-> > what's a good solution for this. Manually annotating 100K places does
-> > not look like the right way to go. Maybe kprobes can do this? In some
-> > cases I used CONFIG_KCOV  and kcovtrace
-> > (https://github.com/google/syzkaller/blob/master/tools/kcovtrace/kcovtrace.c)
-> > to collect kernel trace from a failing syscall.
->
-> If there is a de facto standard to search for a "syscall bailout call
-> trace" that can provide us that very same dump_stack, that should work
-> for this uffd issue too indeed.
->
-> KCOV may or may not be enabled in enterprise -debug kernels, but the
-> main limitation of the kcovtrace.c seems to be the lack of threading
-> support and the privilege inheritance through fork. While it's not
-> mandatory, the uffd manager is practically always implemented as a
-> thread of some process so whatever alternative to dump_stack() should
-> work with threads.
->
-> I think kprobes/ebpf should work provided debug info is available
-> (which is not always guaranteed), otherwise to obtain it without debug
-> info, it'd require a ftrace static trace point to use with the
-> function graph tracer I guess.
+On Sun, Jan 06, 2019 at 11:23:07PM -0500, Michael S. Tsirkin wrote:
+> On Mon, Jan 07, 2019 at 11:58:23AM +0800, Jason Wang wrote:
+> > On 2019/1/3 上午4:57, Michael S. Tsirkin wrote:
 
-OK, not sure what are the action points here now besides marking this
-bug report as dup:
+> > > +#if defined(COMPILER_HAS_OPTIMIZER_HIDE_VAR) && \
+> > > +	!defined(ARCH_NEEDS_READ_BARRIER_DEPENDS)
+> > > +
+> > > +#define dependent_ptr_mb(ptr, val) ({					\
+> > > +	long dependent_ptr_mb_val = (long)(val);			\
+> > > +	long dependent_ptr_mb_ptr = (long)(ptr) - dependent_ptr_mb_val;	\
+> > > +									\
+> > > +	BUILD_BUG_ON(sizeof(val) > sizeof(long));			\
+> > > +	OPTIMIZER_HIDE_VAR(dependent_ptr_mb_val);			\
+> > > +	(typeof(ptr))(dependent_ptr_mb_ptr + dependent_ptr_mb_val);	\
+> > > +})
+> > > +
+> > > +#else
+> > > +
+> > > +#define dependent_ptr_mb(ptr, val) ({ mb(); (ptr); })
+> > 
+> > 
+> > So for the example of patch 4, we'd better fall back to rmb() or need a
+> > dependent_ptr_rmb()?
+> > 
+> > Thanks
+> 
+> You mean for strongly ordered architectures like Intel?
+> Yes, maybe it makes sense to have dependent_ptr_smp_rmb,
+> dependent_ptr_dma_rmb and dependent_ptr_virt_rmb.
+> 
+> mb variant is unused right now so I'll remove it.
 
-#syz dup: KASAN: use-after-free Read in neigh_mark_dead
+How about naming the thing: dependent_ptr() ? That is without any (r)mb
+implications at all. The address dependency is strictly weaker than an
+rmb in that it will only order the two loads in qestion and not, like
+rmb, any prior to any later load.
