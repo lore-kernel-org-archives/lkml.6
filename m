@@ -2,215 +2,204 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CBF6C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:52:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14A45C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:52:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E3CC20651
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:52:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546865562;
-	bh=S+ztZTsLPXJzQY2Ka9QyY5Z0ha6+eTHvwXm7CcUXTtw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=DUMhDZdvKESenUNvZdHahMBLZltj8rbrPTvGAhKCCeBdp8ptBvOf4Y5uCnFt+v5xg
-	 tyZu923dToyynr24qn4vwr5pSmdFDVAj3kP4HlniPlIVhjt2E9nA8RgMq+0PUz2Ot/
-	 7NboNiuBkL2W2pmEvIbIfiCrI+UfjTPKeAcHT9Tw=
+	by mail.kernel.org (Postfix) with ESMTP id C9FFB20651
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:52:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lo47j8WI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729594AbfAGMwl (ORCPT
+        id S1729605AbfAGMwp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:52:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42220 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727857AbfAGMwi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:52:38 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0C00F20859;
-        Mon,  7 Jan 2019 12:52:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865558;
-        bh=S+ztZTsLPXJzQY2Ka9QyY5Z0ha6+eTHvwXm7CcUXTtw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jwfkm37qWK3HgET7hGeXoCWSAaIvpvkNm4XPcgytMOCHrkn7ESh4n5++xUWxt249V
-         XA6FcfqjY67mMqIEMSAQ3jtFZwV3dWfJMFx/kILh1pQwBHzXJrvxsVBLHJYXwLP/ma
-         iewxpVh/3TxXs3ancPRMk/8waGjnwfs1W5E8e1s0=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        James Morse <james.morse@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Subject: [PATCH 4.19 093/170] arm64: KVM: Make VHE Stage-2 TLB invalidation operations non-interruptible
-Date:   Mon,  7 Jan 2019 13:32:00 +0100
-Message-Id: <20190107104504.013619488@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190107104452.953560660@linuxfoundation.org>
-References: <20190107104452.953560660@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        Mon, 7 Jan 2019 07:52:45 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:36740 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727446AbfAGMwn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:52:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=zXL2g+LrqH5SxJjQrxx6sdVW+HEYZs9gYkrT3nrA67Q=; b=lo47j8WIWi90J+BuKXe4Zek9u
+        QuTuFYL6/y8wMXmDsMkzIZjfsRIDtoa7KgcMiargg073BgJCOVAU6ICijKfdOtJYz3yTBd/Qcl60Q
+        fsr5L4ZewovxuTzOp0Qz79MUa0A1VU7sEIPYlxalW21EFLRfcX03xysNrgWX8sz0L+t4ojAgZcoXn
+        kLopHg/lFe3byKnMDBS8RQvFPKjHKIMSfmUprpz4NmrpqKIiekD2WS0iqRu6QkD2BHHKqKleXt7Yj
+        4VRXnMNCRPQ3/35KP7nqYYpB9cJrJB2hRN0whN/tMrN1h83Hin+hg+qD15jef1a4ZWlEXns49YzsS
+        kq+TPjzvw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1ggUOQ-0004We-Kf; Mon, 07 Jan 2019 12:52:35 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 3529E20074A04; Mon,  7 Jan 2019 13:52:31 +0100 (CET)
+Date:   Mon, 7 Jan 2019 13:52:31 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Mike Galbraith <efault@gmx.de>
+Cc:     Tom Putzeys <tom.putzeys@be.atlascopco.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: CFS scheduler: spin_lock usage causes dead lock when
+ smp_apic_timer_interrupt occurs
+Message-ID: <20190107125231.GE14122@hirez.programming.kicks-ass.net>
+References: <AM0PR03MB480425D5999E0D08DAB30204BB8E0@AM0PR03MB4804.eurprd03.prod.outlook.com>
+ <AM0PR03MB4804FA468B7A006AEEA8592ABB8E0@AM0PR03MB4804.eurprd03.prod.outlook.com>
+ <20190107102613.GC2861@worktop.programming.kicks-ass.net>
+ <1546864114.26963.5.camel@gmx.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1546864114.26963.5.camel@gmx.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.19-stable review patch.  If anyone has any objections, please let me know.
+On Mon, Jan 07, 2019 at 01:28:34PM +0100, Mike Galbraith wrote:
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 960ad0ce77d7..420624c49f38 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -5007,9 +5007,9 @@ void init_cfs_bandwidth(struct cfs_bandwidth *cfs_b)
+>  	cfs_b->period = ns_to_ktime(default_cfs_period());
+>  
+>  	INIT_LIST_HEAD(&cfs_b->throttled_cfs_rq);
+> -	hrtimer_init(&cfs_b->period_timer, CLOCK_MONOTONIC, HRTIMER_MODE_ABS_PINNED);
+> +	hrtimer_init(&cfs_b->period_timer, CLOCK_MONOTONIC, HRTIMER_MODE_ABS_PINNED_HARD);
+>  	cfs_b->period_timer.function = sched_cfs_period_timer;
+> -	hrtimer_init(&cfs_b->slack_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
+> +	hrtimer_init(&cfs_b->slack_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL_HARD);
+>  	cfs_b->slack_timer.function = sched_cfs_slack_timer;
+>  }
 
-------------------
+Right, that should sort it. But I'm not sure this is the best solution
+though. That cfs-runtime crud can (IIRC) iterate lists etc.. so running
+it from the softirq isn't a bad idea. We just need to fix that locking
+up a bit.
 
-From: Marc Zyngier <marc.zyngier@arm.com>
-
-commit c987876a80e7bcb98a839f10dca9ce7fda4feced upstream.
-
-Contrary to the non-VHE version of the TLB invalidation helpers, the VHE
-code  has interrupts enabled, meaning that we can take an interrupt in
-the middle of such a sequence, and start running something else with
-HCR_EL2.TGE cleared.
-
-That's really not a good idea.
-
-Take the heavy-handed option and disable interrupts in
-__tlb_switch_to_guest_vhe, restoring them in __tlb_switch_to_host_vhe.
-The latter also gain an ISB in order to make sure that TGE really has
-taken effect.
-
-Cc: stable@vger.kernel.org
-Acked-by: Christoffer Dall <christoffer.dall@arm.com>
-Reviewed-by: James Morse <james.morse@arm.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Something a wee bit like so perhaps..
 
 ---
- arch/arm64/kvm/hyp/tlb.c |   35 +++++++++++++++++++++++++----------
- 1 file changed, 25 insertions(+), 10 deletions(-)
-
---- a/arch/arm64/kvm/hyp/tlb.c
-+++ b/arch/arm64/kvm/hyp/tlb.c
-@@ -15,14 +15,19 @@
-  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 13776fac7b74..3cfe26aa098a 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -4566,7 +4566,7 @@ static u64 distribute_cfs_runtime(struct cfs_bandwidth *cfs_b,
+ 		struct rq *rq = rq_of(cfs_rq);
+ 		struct rq_flags rf;
+ 
+-		rq_lock(rq, &rf);
++		rq_lock_irqsave(rq, &rf);
+ 		if (!cfs_rq_throttled(cfs_rq))
+ 			goto next;
+ 
+@@ -4583,7 +4583,7 @@ static u64 distribute_cfs_runtime(struct cfs_bandwidth *cfs_b,
+ 			unthrottle_cfs_rq(cfs_rq);
+ 
+ next:
+-		rq_unlock(rq, &rf);
++		rq_unlock_irqrestore(rq, &rf);
+ 
+ 		if (!remaining)
+ 			break;
+@@ -4599,7 +4599,7 @@ static u64 distribute_cfs_runtime(struct cfs_bandwidth *cfs_b,
+  * period the timer is deactivated until scheduling resumes; cfs_b->idle is
+  * used to track this state.
   */
- 
-+#include <linux/irqflags.h>
-+
- #include <asm/kvm_hyp.h>
- #include <asm/kvm_mmu.h>
- #include <asm/tlbflush.h>
- 
--static void __hyp_text __tlb_switch_to_guest_vhe(struct kvm *kvm)
-+static void __hyp_text __tlb_switch_to_guest_vhe(struct kvm *kvm,
-+						 unsigned long *flags)
+-static int do_sched_cfs_period_timer(struct cfs_bandwidth *cfs_b, int overrun)
++static int do_sched_cfs_period_timer(struct cfs_bandwidth *cfs_b, int overrun, unsigned long flags)
  {
- 	u64 val;
+ 	u64 runtime, runtime_expires;
+ 	int throttled;
+@@ -4641,11 +4641,11 @@ static int do_sched_cfs_period_timer(struct cfs_bandwidth *cfs_b, int overrun)
+ 	while (throttled && cfs_b->runtime > 0 && !cfs_b->distribute_running) {
+ 		runtime = cfs_b->runtime;
+ 		cfs_b->distribute_running = 1;
+-		raw_spin_unlock(&cfs_b->lock);
++		raw_spin_unlock_irqrestore(&cfs_b->lock, flags);
+ 		/* we can't nest cfs_b->lock while distributing bandwidth */
+ 		runtime = distribute_cfs_runtime(cfs_b, runtime,
+ 						 runtime_expires);
+-		raw_spin_lock(&cfs_b->lock);
++		raw_spin_lock_irqsave(&cfs_b->lock, flags);
  
-+	local_irq_save(*flags);
-+
- 	/*
- 	 * With VHE enabled, we have HCR_EL2.{E2H,TGE} = {1,1}, and
- 	 * most TLB operations target EL2/EL0. In order to affect the
-@@ -37,7 +42,8 @@ static void __hyp_text __tlb_switch_to_g
- 	isb();
- }
- 
--static void __hyp_text __tlb_switch_to_guest_nvhe(struct kvm *kvm)
-+static void __hyp_text __tlb_switch_to_guest_nvhe(struct kvm *kvm,
-+						  unsigned long *flags)
+ 		cfs_b->distribute_running = 0;
+ 		throttled = !list_empty(&cfs_b->throttled_cfs_rq);
+@@ -4754,17 +4754,18 @@ static __always_inline void return_cfs_rq_runtime(struct cfs_rq *cfs_rq)
+ static void do_sched_cfs_slack_timer(struct cfs_bandwidth *cfs_b)
  {
- 	write_sysreg(kvm->arch.vttbr, vttbr_el2);
- 	isb();
-@@ -48,7 +54,8 @@ static hyp_alternate_select(__tlb_switch
- 			    __tlb_switch_to_guest_vhe,
- 			    ARM64_HAS_VIRT_HOST_EXTN);
- 
--static void __hyp_text __tlb_switch_to_host_vhe(struct kvm *kvm)
-+static void __hyp_text __tlb_switch_to_host_vhe(struct kvm *kvm,
-+						unsigned long flags)
- {
- 	/*
- 	 * We're done with the TLB operation, let's restore the host's
-@@ -56,9 +63,12 @@ static void __hyp_text __tlb_switch_to_h
- 	 */
- 	write_sysreg(0, vttbr_el2);
- 	write_sysreg(HCR_HOST_VHE_FLAGS, hcr_el2);
-+	isb();
-+	local_irq_restore(flags);
- }
- 
--static void __hyp_text __tlb_switch_to_host_nvhe(struct kvm *kvm)
-+static void __hyp_text __tlb_switch_to_host_nvhe(struct kvm *kvm,
-+						 unsigned long flags)
- {
- 	write_sysreg(0, vttbr_el2);
- }
-@@ -70,11 +80,13 @@ static hyp_alternate_select(__tlb_switch
- 
- void __hyp_text __kvm_tlb_flush_vmid_ipa(struct kvm *kvm, phys_addr_t ipa)
- {
+ 	u64 runtime = 0, slice = sched_cfs_bandwidth_slice();
 +	unsigned long flags;
-+
- 	dsb(ishst);
+ 	u64 expires;
  
- 	/* Switch to requested VMID */
- 	kvm = kern_hyp_va(kvm);
--	__tlb_switch_to_guest()(kvm);
-+	__tlb_switch_to_guest()(kvm, &flags);
+ 	/* confirm we're still not at a refresh boundary */
+-	raw_spin_lock(&cfs_b->lock);
++	raw_spin_lock_irqsave(&cfs_b->lock, flags);
+ 	if (cfs_b->distribute_running) {
+-		raw_spin_unlock(&cfs_b->lock);
++		raw_spin_unlock_irqrestore(&cfs_b->lock, flags);
+ 		return;
+ 	}
  
- 	/*
- 	 * We could do so much better if we had the VA as well.
-@@ -117,36 +129,39 @@ void __hyp_text __kvm_tlb_flush_vmid_ipa
- 	if (!has_vhe() && icache_is_vpipt())
- 		__flush_icache_all();
+ 	if (runtime_refresh_within(cfs_b, min_bandwidth_expiration)) {
+-		raw_spin_unlock(&cfs_b->lock);
++		raw_spin_unlock_irqrestore(&cfs_b->lock, flags);
+ 		return;
+ 	}
  
--	__tlb_switch_to_host()(kvm);
-+	__tlb_switch_to_host()(kvm, flags);
+@@ -4775,18 +4776,18 @@ static void do_sched_cfs_slack_timer(struct cfs_bandwidth *cfs_b)
+ 	if (runtime)
+ 		cfs_b->distribute_running = 1;
+ 
+-	raw_spin_unlock(&cfs_b->lock);
++	raw_spin_unlock_irqrestore(&cfs_b->lock, flags);
+ 
+ 	if (!runtime)
+ 		return;
+ 
+ 	runtime = distribute_cfs_runtime(cfs_b, runtime, expires);
+ 
+-	raw_spin_lock(&cfs_b->lock);
++	raw_spin_lock_irqsave(&cfs_b->lock, flags);
+ 	if (expires == cfs_b->runtime_expires)
+ 		lsub_positive(&cfs_b->runtime, runtime);
+ 	cfs_b->distribute_running = 0;
+-	raw_spin_unlock(&cfs_b->lock);
++	raw_spin_unlock_irqrestore(&cfs_b->lock, flags);
  }
  
- void __hyp_text __kvm_tlb_flush_vmid(struct kvm *kvm)
+ /*
+@@ -4864,20 +4865,21 @@ static enum hrtimer_restart sched_cfs_period_timer(struct hrtimer *timer)
  {
+ 	struct cfs_bandwidth *cfs_b =
+ 		container_of(timer, struct cfs_bandwidth, period_timer);
 +	unsigned long flags;
-+
- 	dsb(ishst);
+ 	int overrun;
+ 	int idle = 0;
  
- 	/* Switch to requested VMID */
- 	kvm = kern_hyp_va(kvm);
--	__tlb_switch_to_guest()(kvm);
-+	__tlb_switch_to_guest()(kvm, &flags);
+-	raw_spin_lock(&cfs_b->lock);
++	raw_spin_lock_irqsave(&cfs_b->lock, flags);
+ 	for (;;) {
+ 		overrun = hrtimer_forward_now(timer, cfs_b->period);
+ 		if (!overrun)
+ 			break;
  
- 	__tlbi(vmalls12e1is);
- 	dsb(ish);
- 	isb();
+-		idle = do_sched_cfs_period_timer(cfs_b, overrun);
++		idle = do_sched_cfs_period_timer(cfs_b, overrun, flags);
+ 	}
+ 	if (idle)
+ 		cfs_b->period_active = 0;
+-	raw_spin_unlock(&cfs_b->lock);
++	raw_spin_unlock_irqrestore(&cfs_b->lock, flags);
  
--	__tlb_switch_to_host()(kvm);
-+	__tlb_switch_to_host()(kvm, flags);
+ 	return idle ? HRTIMER_NORESTART : HRTIMER_RESTART;
  }
- 
- void __hyp_text __kvm_tlb_flush_local_vmid(struct kvm_vcpu *vcpu)
- {
- 	struct kvm *kvm = kern_hyp_va(kern_hyp_va(vcpu)->kvm);
-+	unsigned long flags;
- 
- 	/* Switch to requested VMID */
--	__tlb_switch_to_guest()(kvm);
-+	__tlb_switch_to_guest()(kvm, &flags);
- 
- 	__tlbi(vmalle1);
- 	dsb(nsh);
- 	isb();
- 
--	__tlb_switch_to_host()(kvm);
-+	__tlb_switch_to_host()(kvm, flags);
- }
- 
- void __hyp_text __kvm_flush_vm_context(void)
-
-
