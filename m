@@ -2,71 +2,111 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C134BC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:38:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE9FFC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:39:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A4572070B
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:38:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D6992070B
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:39:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="hvtuNZOR";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ZUnRJNS5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727272AbfAGSi1 (ORCPT
+        id S1727303AbfAGSjR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 13:38:27 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:37890 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726535AbfAGSi1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 13:38:27 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Mon, 7 Jan 2019 13:39:17 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:47896 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726535AbfAGSjR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 13:39:17 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 773BE60593; Mon,  7 Jan 2019 18:39:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1546886355;
+        bh=gm5wkfqtQwaBMjQQUqKqTN4PUt+rit6xLabKa+KWRPE=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=hvtuNZOR1XzCLSrw8upzt0w65ShQoOC2iV2orxJIGKV2iLdX0M8GUdDkBlUXi4i4c
+         136FoeHim+znYxUGMfHQ8Eh7rDQWdnSxIZL3bUUPSMRqJwMibmj1JOVt7ANtcjH8jv
+         3uZXAdmRv4frhjtDOIw5aygrOE2ruOgNx/hNkLhw=
+Received: from [10.226.60.81] (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id DC9D8A4034;
-        Mon,  7 Jan 2019 18:38:26 +0000 (UTC)
-Received: from vitty.brq.redhat.com.redhat.com (unknown [10.43.2.155])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 42843601A3;
-        Mon,  7 Jan 2019 18:38:22 +0000 (UTC)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     David Hildenbrand <david@redhat.com>, devel@linuxdriverproject.org,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        linux-kernel@vger.kernel.org, Dexuan Cui <decui@microsoft.com>
-Subject: Re: [PATCH] hv_balloon: avoid touching uninitialized struct page during tail onlining
-In-Reply-To: <20190107175650.GG166797@sasha-vm>
-References: <20190104141942.19126-1-vkuznets@redhat.com> <2ea7e975-6aae-de71-83e5-9302518802ef@redhat.com> <87d0p837lt.fsf@vitty.brq.redhat.com> <20190107175650.GG166797@sasha-vm>
-Date:   Mon, 07 Jan 2019 19:38:20 +0100
-Message-ID: <87a7kc2u03.fsf@vitty.brq.redhat.com>
+        (Authenticated sender: jhugo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 69D4A60303;
+        Mon,  7 Jan 2019 18:39:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1546886354;
+        bh=gm5wkfqtQwaBMjQQUqKqTN4PUt+rit6xLabKa+KWRPE=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=ZUnRJNS5ucGCakvGScDdpD2aJ56ZLLWv0N6lPJGyUNVoicDSyOQo3bZpZ5RUeEQ5Z
+         bjS78q+NcepRBgTrwfCG88k9x13V1/DNZ74urhERcPSGihYCUp2PVeiysC1P0XYIhn
+         kxW89gg/rfLU2gJSZZBBaV5dShoakY2vQhKBW6LU=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 69D4A60303
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
+Subject: Re: [PATCH v1 3/6] phy: qcom-qusb2: Add QUSB2 PHY support for msm8998
+To:     Jack Pham <jackp@codeaurora.org>
+Cc:     kishon@ti.com, robh+dt@kernel.org, bjorn.andersson@linaro.org,
+        andy.gross@linaro.org, david.brown@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, gregkh@linuxfoundation.org,
+        balbi@kernel.org, linux-usb@vger.kernel.org
+References: <1546620629-2426-1-git-send-email-jhugo@codeaurora.org>
+ <20190107181749.GA23243@jackp-linux.qualcomm.com>
+From:   Jeffrey Hugo <jhugo@codeaurora.org>
+Message-ID: <c01ae71b-1d4e-b336-9cab-9aa6c70e2e8c@codeaurora.org>
+Date:   Mon, 7 Jan 2019 11:39:13 -0700
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Mon, 07 Jan 2019 18:38:26 +0000 (UTC)
+In-Reply-To: <20190107181749.GA23243@jackp-linux.qualcomm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sasha Levin <sashal@kernel.org> writes:
+On 1/7/2019 11:18 AM, Jack Pham wrote:
+> Hi Jeff,
+> 
+> Spotted a typo below:
+> 
+> On Fri, Jan 04, 2019 at 09:50:29AM -0700, Jeffrey Hugo wrote:
+>> MSM8998 contains one QUSB2 PHY which is very similar to the existing
+>> sdm845 support.
+>>
+>> Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
+>> ---
+>>   .../devicetree/bindings/phy/qcom-qusb2-phy.txt     |  1 +
+>>   drivers/phy/qualcomm/phy-qcom-qusb2.c              | 41 ++++++++++++++++++++++
+>>   2 files changed, 42 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/phy/qcom-qusb2-phy.txt b/Documentation/devicetree/bindings/phy/qcom-qusb2-phy.txt
+>> index 03025d9..3976847 100644
+>> --- a/Documentation/devicetree/bindings/phy/qcom-qusb2-phy.txt
+>> +++ b/Documentation/devicetree/bindings/phy/qcom-qusb2-phy.txt
+>> @@ -6,6 +6,7 @@ QUSB2 controller supports LS/FS/HS usb connectivity on Qualcomm chipsets.
+>>   Required properties:
+>>    - compatible: compatible list, contains
+>>   	       "qcom,msm8996-qusb2-phy" for 14nm PHY on msm8996,
+>> +	       "qcom,msm8998-qusb2-phy" for 10nm PHY on msm8996,
+>                                                             ^^^^
+> should be 8998.
 
-> On Mon, Jan 07, 2019 at 02:44:30PM +0100, Vitaly Kuznetsov wrote:
->>P.S. I still think about bringing mem_hotplug_begin()/done() to
->>hv_balloon but that's going to be a separate discussion, here I want to
->>have a small fix backportable to stable.
->
-> This should probably be marked for stable then :)
->
+Yes it should.  Thanks for noticing.
 
-Yes, please :-)
-
-I didn't test old kernels but this seems to be an old issue,
-e.g. DEFERRED_STRUCT_PAGE_INIT appeared in 4.2 - not sure if memory
-hotplug code was using it back then but, oh well, it's all history now.
-
-(I remember Greg disliked when people were tagging patches for stable@
-themselves, he prefered maintainers deciding if the particular commit
-deserves stable@ or not - but as you have a tree now we may as well have
-different rules :-)
 
 -- 
-Vitaly
+Jeffrey Hugo
+Qualcomm Datacenter Technologies as an affiliate of Qualcomm 
+Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
