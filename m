@@ -2,123 +2,136 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93701C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 15:41:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 901A0C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 15:42:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E33C206C0
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 15:41:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546875677;
-	bh=EkgyVAaM4cAeG7gQ11CPhiJx80D3nogcVaJ2PiUYfxk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=AiuQ57JSAhwFKV59MkL3YGaNguv7J/1CE2MKO7MSE6ibyaS45aJkwF6V2jzP7eDKw
-	 U1HJVxr/vcgOBzPq3JNc8qd6Qfqlkwtwkc/vuj1Ehec2aN5fWN7iQcT/Udz8Oty2Jk
-	 7R+hB5TanjzExENMM+wTLfzw/xAR0KH9mia/u3KE=
+	by mail.kernel.org (Postfix) with ESMTP id 5DB492173C
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 15:42:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="0Y2GbiAx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730097AbfAGPlQ (ORCPT
+        id S1730181AbfAGPmB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 10:41:16 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:48754 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726873AbfAGPlQ (ORCPT
+        Mon, 7 Jan 2019 10:42:01 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:37551 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730139AbfAGPmA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 10:41:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=lzJiLJYHOmEYUYvDL8OWme+ERqWvDtM4G2i+4tAJnMg=; b=RpV21yS8mWznAp1Rq1swu6A1o
-        RYF51SwYIrHGV632+razFS1SMirPBcidpmVIXM8XPpjQaBAmMVZR0y/5EeiBIRbdZOp2i2DDt54pW
-        GrfVdEb5DF6YlJho+7FitCDZkpeQg0zohJgoDZ77n3zEIu9GujXgxJVUH4Yztqi8wYH5Q=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1ggX1U-0007Po-T8; Mon, 07 Jan 2019 15:41:04 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 6E05E1127491; Mon,  7 Jan 2019 15:41:04 +0000 (GMT)
-Date:   Mon, 7 Jan 2019 15:41:04 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Sinan Kaya <Okaya@kernel.org>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Mon, 7 Jan 2019 10:42:00 -0500
+Received: by mail-it1-f195.google.com with SMTP id b5so1591318iti.2
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 07:41:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=65pTjOwvERfOhCME2vOI3ySk9gqLIB4TjiOb1MI/TjY=;
+        b=0Y2GbiAx7UcXDit8afl9RzmdQvVb52gV6e9fE86QoDSlwEcGmHEIIFzheE1+ye7HLC
+         9ZasuZ3wh0VKspTWeDsKow2KCxipLx7IadjO14LVmp83pD8Bhq0FWj9osdEbaY1O9ISo
+         kY8MvSv3Z5EpSXOeNRXxl149S+y4qPfwUXPrpPOJdjZ8M5FVX2cZhcq9WLZIE4sULpSJ
+         URJ7r59XELp0g3gu9D33eCM5NI3RMMeDAY7c8jEDBtvA8bSTjmOgEazfNYh/Q1PHOUqz
+         JQ9hfe6eqq9WRNzo+5zGpuHkN11cKcmuY4/ylqvK6pREIOvjW1a7JMw4sSL9Ge9GBklI
+         j5NQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=65pTjOwvERfOhCME2vOI3ySk9gqLIB4TjiOb1MI/TjY=;
+        b=DDnQ++A+NgWv88Z1qiAwdW8DzE8FFgTvqrMTXbN1O4l+sBEsRP4e7466+CD+DNSW/k
+         1KqA+k4eFZvSQ8WC1CeDk42mjv7rXlAgr8XIis8bT2rj2ZqycZrLz2l4IIJvlhKwarKd
+         5jMEO6bosTVp1ZwDqiQ7wsbL+lH6HsiLbctH1/GJcZO9QjAQ+C4EgjmxnW0ZcC/oXebS
+         aB3KzThC9mjT8DCWSvYz8Kmx+q6byyLyGZjG7/hQfb259mtiw4CMPKAlkigvdhrx3bbQ
+         2bCwG/mLeucX9eYokGhpFdUNb/gZPxWaGV+2EgfpT8ssyx4qcGCVagj25cdMX5sgOA+G
+         cZqQ==
+X-Gm-Message-State: AJcUukdn2j/S1PTyG5NSBZo2w6tysuwZhR/x31t5qqm59IZtoYUj42lT
+        DaIplgrGaRF2jpocjksa4dk1DoVPt3D4hw==
+X-Google-Smtp-Source: ALg8bN5QRV00sjYacG+ksrltR9LfjsTNsjClFMFWG2vX21h6MVwBlzwmriCIKlNCPUFRVWYnGN4kFQ==
+X-Received: by 2002:a02:4c9:: with SMTP id 192mr33327577jab.2.1546875718837;
+        Mon, 07 Jan 2019 07:41:58 -0800 (PST)
+Received: from [192.168.1.56] ([216.160.245.98])
+        by smtp.gmail.com with ESMTPSA id o63sm4738091ita.8.2019.01.07.07.41.56
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 07 Jan 2019 07:41:57 -0800 (PST)
+Subject: Re: [PATCH v5 02/11] ata: pata_acpi: Make PCI dependency explicit
+To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Sinan Kaya <okaya@kernel.org>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
         ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        Jie Yang <yang.jie@linux.intel.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        "moderated list:INTEL ASoC DRIVERS" <alsa-devel@alsa-project.org>,
+        "open list:LIBATA SUBSYSTEM (Serial and Parallel ATA drivers)" 
+        <linux-ide@vger.kernel.org>,
         open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6 08/11] ASoC: Intel: atom: Make PCI dependency explicit
-Message-ID: <20190107154104.GH9570@sirena.org.uk>
-References: <20190105100606.6673-1-okaya@kernel.org>
- <20190105100606.6673-9-okaya@kernel.org>
- <CAJZ5v0g2bjzjuiDPTbBN8QgvOG0KMC0Ew2QOQH4u2+y6KRo0wQ@mail.gmail.com>
- <20190107121919.GA9570@sirena.org.uk>
- <CAK9iUCPjMr0m+9HUXEbtUPrsvO84HpZV39CUYYkne=EpY_X+bQ@mail.gmail.com>
+References: <20190102181038.4418-1-okaya@kernel.org>
+ <20190102181038.4418-3-okaya@kernel.org>
+ <CAJZ5v0gkGaxgr+-CzsabqrfVFQFo_R+G3VEg3qF_sGWa6bT-Dg@mail.gmail.com>
+ <CGME20190107141740eucas1p15f2975c3d87e7a8fce9daeaea41525d4@eucas1p1.samsung.com>
+ <7d6b9323-7760-944d-daa4-6fc663a32481@samsung.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <aa5ecfd1-fbb5-1f7a-500b-9eaee1cd8e0a@kernel.dk>
+Date:   Mon, 7 Jan 2019 08:41:56 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="TBNym+cBXeFsS4Vs"
-Content-Disposition: inline
-In-Reply-To: <CAK9iUCPjMr0m+9HUXEbtUPrsvO84HpZV39CUYYkne=EpY_X+bQ@mail.gmail.com>
-X-Cookie: NOBODY EXPECTS THE SPANISH INQUISITION!
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <7d6b9323-7760-944d-daa4-6fc663a32481@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 1/7/19 7:17 AM, Bartlomiej Zolnierkiewicz wrote:
+> 
+> On 01/07/2019 12:12 PM, Rafael J. Wysocki wrote:
+>> On Wed, Jan 2, 2019 at 7:11 PM Sinan Kaya <okaya@kernel.org> wrote:
+>>>
+>>> After 'commit 5d32a66541c4 ("PCI/ACPI: Allow ACPI to be built without
+>>> CONFIG_PCI set")' dependencies on CONFIG_PCI that previously were
+>>> satisfied implicitly through dependencies on CONFIG_ACPI have to be
+>>> specified directly. PATA_ACPI is a PCI device driver but the PCI
+>>> dependency has not been explicitly called out.
+>>>
+>>> Fixes: 5d32a66541c46 ("PCI/ACPI: Allow ACPI to be built without CONFIG_PCI set")
+>>> Signed-off-by: Sinan Kaya <okaya@kernel.org>
+>>> ---
+>>>  drivers/ata/Kconfig | 2 +-
+>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/ata/Kconfig b/drivers/ata/Kconfig
+>>> index 4ca7a6b4eaae..8218db17ebdb 100644
+>>> --- a/drivers/ata/Kconfig
+>>> +++ b/drivers/ata/Kconfig
+>>> @@ -1091,7 +1091,7 @@ comment "Generic fallback / legacy drivers"
+>>>
+>>>  config PATA_ACPI
+>>>         tristate "ACPI firmware driver for PATA"
+>>> -       depends on ATA_ACPI && ATA_BMDMA
+>>> +       depends on ATA_ACPI && ATA_BMDMA && PCI
+>>>         help
+>>>           This option enables an ACPI method driver which drives
+>>>           motherboard PATA controller interfaces through the ACPI
+>>> --
+>>
+>> Any objections against this one from anyone?
+> 
+> Patch looks correct to me (pata_acpi is indeed a PCI driver):
+> 
+> Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> 
+> but it is best to wait for Jens' ACK if you want to merge it
+> through ACPI tree..
 
---TBNym+cBXeFsS4Vs
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+You can add my:
 
-On Mon, Jan 07, 2019 at 10:16:53AM -0500, Sinan Kaya wrote:
-> On Mon, Jan 7, 2019 at 7:19 AM Mark Brown <broonie@kernel.org> wrote:
+Reviewed-by: Jens Axboe <axboe@kernel.dk>
 
-> > Yes.  I've also applied it already and it's *still* being sent without
-> > either a cover letter or the rest of the series :(
+if you want to merge it through the ACPI tree.
 
-> There is a cover letter but it is being sent to Linux-acpi and Linux-next only.
+-- 
+Jens Axboe
 
-> https://patchwork.kernel.org/cover/10749203/
-
-> This means that you are not on either of these mailing lists.
-
-No, it means that neither of those lists is going into my inbox
-directly - the cover letters really need to go through the same route as
-the patches to ensure that they're seen.  People often read the lists at
-different times to their inbox, for example I prioritize reviewing
-things that are in my inbox and look at list traffic less frequently
-when my inbox is busy (as it tends to be most of the time).
-
-> I apologize. I didn't realize that you applied this already. I'll drop
-> this patch
-> in case I need to submit a new revision.
-
-You should have got this mail when it was applied:
-
-http://mailman.alsa-project.org/pipermail/alsa-devel/2019-January/143687.html
-
---TBNym+cBXeFsS4Vs
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlwzcw8ACgkQJNaLcl1U
-h9C6bAf/UcLxlzTCRDtcqBbYTaNDpsPQHDXWsqRODlqT15RDtF2y65YwskOLKZox
-E6THXEVyFb/8gXoSlDXTZOR2SkLw8XtijSLgYwz4IhGO19ReRxVipR58hxOjb6Ma
-ImuwYWqMkW37G6qFIf2w2y+jrDOe7Pj8NUCcVpyVHsLkDgWoBIoecb7Y8y3486Ja
-f15LUJs+w9k8cpxmaC1xwJpPxPg9Onj58mLxYYc+zYwMG0kO4ZwI2EjtokrF39EW
-IihDZrJeHyJPOW1HIZ2+3Rw/QqsWMmK9OQdbQoM4wWdRDzmsFIg6u/UlaLErXJ9f
-rwghMtI8AYOy9EN0w/JEK7Aba8piTg==
-=5HWq
------END PGP SIGNATURE-----
-
---TBNym+cBXeFsS4Vs--
