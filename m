@@ -2,136 +2,113 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FE19C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 10:49:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C61AC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 10:53:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 615BC2183F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 10:49:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 06BAA2089F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 10:53:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="A2iHxxaT"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="kmTmMM6D"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726804AbfAGKtV (ORCPT
+        id S1726793AbfAGKxV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 05:49:21 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:41124 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726454AbfAGKtU (ORCPT
+        Mon, 7 Jan 2019 05:53:21 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:38028 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725550AbfAGKxU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 05:49:20 -0500
-Received: by mail-ed1-f65.google.com with SMTP id a20so411195edc.8
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 02:49:19 -0800 (PST)
+        Mon, 7 Jan 2019 05:53:20 -0500
+Received: by mail-lf1-f68.google.com with SMTP id a8so4739035lfk.5
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 02:53:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=MxSd9oxRRK3lKouUtyZ8pdi4vnkopqeGvFVegdgq4kE=;
-        b=A2iHxxaT95nbiHa/HRWcIALrkDDU9/sMCe6V8Ky+w8IDtuXxdrFmW+/0Lf/8IzTAfj
-         +1yQZpoUS2yTfubwS4Ev2pO8pJBCErAG6R21kRPE40I/RZeAhEwnIcx8Lzftu48HHd5R
-         +mf4DkFMYGRnBFS1EzTVaW/HLDkI0hh2Iv30s=
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=jeKwDB/2Is/6iPunhOhtgtREZ1O1mP4ZOy4Ty1PsUuw=;
+        b=kmTmMM6DSkx+0ZLYlthplTRU9UZDR5l+m4F3aL2jNURRQsJ187Gthu2pVKuNkHQ/If
+         XpqIVsG7W6inLWd8PR4GFkc5kvEuZofwFlFP0q0MOYMUFESIbeICY0GmUhdmTPGFREJ9
+         nIh78hIjTZ1KcKHTK4tBQC4y6TwRUVHuIgpLM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=MxSd9oxRRK3lKouUtyZ8pdi4vnkopqeGvFVegdgq4kE=;
-        b=sOXhYIZlhjojNp45Juk7shjxLGOZv0Qch/HzBLNlg+i2dsij9hgxJVsrDT8AXNm//K
-         eINmKZU44T7dMSQnlZXiwi4F8IM1gDkwQYvSnB6aFvcqXGWE+jNZ5Sl2k++vXjj9F5Hw
-         wj+7TaeoGiVxHo4avoPBCn7Id3DdqGBhU9Bmvg+g5xKtdYr+OOO1my8eXvmfK0eFHgbQ
-         EXkhlz7IhWK1u5ghPVfB0LO/XuaehA9sDUPiYJLxbxG0HXhyq1i6NVaC5r0msV4I/1xV
-         pS7HbqlbirfeTnwLql1l/YNfcql38nEtiZj7JNYIksoNhENaaOwEWK7CpFDB0MOcojpG
-         MH2Q==
-X-Gm-Message-State: AA+aEWbl7v4/R5X17uh3QtHdDwgtOMxyyUXO6HEP2lGNXBYXTlsPDwcm
-        bRp/BvnRyrx2e/fkACHBDydWw4BPSdTx3g==
-X-Google-Smtp-Source: AFSGD/WVxMKvE4H+Yy9D6gVlidfUytD8yMOMq2h4X3wZhj43kAndZKIGTLHX4cFQp8xW9oPlIyNjWQ==
-X-Received: by 2002:a17:906:4d2:: with SMTP id g18-v6mr46691968eja.182.1546858159030;
-        Mon, 07 Jan 2019 02:49:19 -0800 (PST)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id 24sm30600447eds.97.2019.01.07.02.49.17
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 07 Jan 2019 02:49:18 -0800 (PST)
-Date:   Mon, 7 Jan 2019 11:49:16 +0100
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Eric Anholt <eric@anholt.net>, Sean Paul <sean@poorly.run>,
-        David Airlie <airlied@linux.ie>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH] drm: Auto-set allow_fb_modifiers when given modifiers at
- plane init
-Message-ID: <20190107104916.GJ21184@phenom.ffwll.local>
-Mail-Followup-To: Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Eric Anholt <eric@anholt.net>, Sean Paul <sean@poorly.run>,
-        David Airlie <airlied@linux.ie>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-References: <20190104085610.5829-1-paul.kocialkowski@bootlin.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jeKwDB/2Is/6iPunhOhtgtREZ1O1mP4ZOy4Ty1PsUuw=;
+        b=ehJQnM81+/PYLB2aLNRdcRLtgYTwTCbML3rzJ1luyGuZhvv7QapgrcKGlAQHaFyWwd
+         Vmtoprzet5LDe1kXhtZGIIZIR6yu5LMl5jpJrF2/gcwvp23HrnkX7zF7wjimPeN57M0e
+         kjtBhQiJV+gNSc49jo9/0f6b2wKdD9BIMn2CJUalrpucriwTVQ5NY7fAWEIwA9nW+4L7
+         EUwrhg5BPOt1xvnXF4xZwUGNkWjbnYMsPTrUKBciPUaOzVMvdZ0RqQ+GbAKsH1lxT1Ak
+         H//t70HQKkH83v5hdB/dVAbyWq/Lh3o39Lawf0thsjLJdv0KvP7pzllLHh1qIKq7GYmY
+         s1AA==
+X-Gm-Message-State: AA+aEWYsM9z2KAYi1zulIzfyxsnQbwe6OOwAovx7gGqN1u6XZaF+s+xe
+        TzzjMmaXQJPWLU1ss33mHRuvb2vG0zIbJFalk8697g==
+X-Google-Smtp-Source: AFSGD/VgSQ7Ind3lHmhtCyOf9RuBCBo/o8k36Z7ONi1j46ibe7EPj4A+U4U7Im/b2oLxCc2WFaZb/WJhFuoDiLItj2U=
+X-Received: by 2002:a19:5154:: with SMTP id f81mr31980355lfb.96.1546858398294;
+ Mon, 07 Jan 2019 02:53:18 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190104085610.5829-1-paul.kocialkowski@bootlin.com>
-X-Operating-System: Linux phenom 4.18.0-2-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190107021145.6370-1-masneyb@onstation.org> <20190107021145.6370-3-masneyb@onstation.org>
+In-Reply-To: <20190107021145.6370-3-masneyb@onstation.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 7 Jan 2019 11:53:07 +0100
+Message-ID: <CACRpkdbLU_2JC1wT=M7EPsx6gPxL=poj2Ci8zTa++51K2qGZ4A@mail.gmail.com>
+Subject: Re: [PATCH v2 2/5] mfd: qcom-spmi-pmic: use devm_mfd_add_devices
+ instead of devm_of_platform_populate
+To:     Brian Masney <masneyb@onstation.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Doug Anderson <dianders@chromium.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Nicolas Dechesne <nicolas.dechesne@linaro.org>,
+        Niklas Cassel <niklas.cassel@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        linux-arm-msm@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 04, 2019 at 09:56:10AM +0100, Paul Kocialkowski wrote:
-> When drivers pass non-empty lists of modifiers for initializing their
-> planes, we can infer that they allow framebuffer modifiers and set the
-> driver's allow_fb_modifiers mode config element.
-> 
-> In case the allow_fb_modifiers element was not set (some drivers tend
-> to set them after registering planes), the modifiers will still be
-> registered but won't be available to userspace unless the flag is set
-> later. However in that case, the IN_FORMATS blob won't be created.
-> 
-> In order to avoid this case and generally reduce the trouble associated
-> with the flag, always set allow_fb_modifiers when a non-empty list of
-> format modifiers is passed at plane init.
-> 
-> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+On Mon, Jan 7, 2019 at 3:11 AM Brian Masney <masneyb@onstation.org> wrote:
 
-The automatic primary plane drm_crtc_init() creates doesn't set this, so
-looks correct in all cases.
+> pmic_spmi_probe calls devm_of_platform_populate, which traverses all
+> of the children in device tree from the parent down to the children,
+> grandchildren, etc. of_irq_count is called on most of the nodes (via
+> of_device_alloc) and this initializes all of the IRQs. Further along in
+> the boot process, spmi-gpio is initialized as a hierarchical IRQ chip
+> in a later patch (with spmi-arb as the parent IRQ domain), and the same
+> hwirq is now associated with two Linux virqs and IRQs will not work as
+> expected. Correct this issue by using devm_mfd_add_devices to initialize
+> just the children so that IRQs are initialized on an as-needed basis.
+>
+> This patch also selects CONFIG_MFD_CORE since this is required by
+> devm_mfd_add_devices.
+>
+> Signed-off-by: Brian Masney <masneyb@onstation.org>
 
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Good catch! Now I see why this was acting so weird for you.
+Also the MFD semantics are standardized and make much more
+sense after this.
 
-(boolin.com has a bunch of drm-misc committers, so I'll leave pushing to
-them).
--Daniel
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-> ---
->  drivers/gpu/drm/drm_plane.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/drm_plane.c b/drivers/gpu/drm/drm_plane.c
-> index 5f650d8fc66b..4cfb56893b7f 100644
-> --- a/drivers/gpu/drm/drm_plane.c
-> +++ b/drivers/gpu/drm/drm_plane.c
-> @@ -220,6 +220,9 @@ int drm_universal_plane_init(struct drm_device *dev, struct drm_plane *plane,
->  			format_modifier_count++;
->  	}
->  
-> +	if (format_modifier_count)
-> +		config->allow_fb_modifiers = true;
-> +
->  	plane->modifier_count = format_modifier_count;
->  	plane->modifiers = kmalloc_array(format_modifier_count,
->  					 sizeof(format_modifiers[0]),
-> -- 
-> 2.20.1
-> 
+I suppose Lee can merge this in orthogonal in the MFD tree,
+the end result will be functional after the v5.1 merge window.
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+I think I should also fix qcom-pm8xxx after this, as well as
+the similar SSBI code for elder platforms.
+
+Yours,
+Linus Walleij
