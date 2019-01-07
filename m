@@ -4,54 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3E24C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:40:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30D3EC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:40:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E9362089F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:40:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E94262173C
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:40:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546864827;
-	bh=EM1jkzlTA1oDJTNeec9F7eAAMyBmQMMnAK8z6ihFfA4=;
+	s=default; t=1546864835;
+	bh=zQAJWfXaPGsVpIl+fV+ly1hL9xjXCt2znZcTU1ipwNA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=dHBc/FO6UJPb/Vl/SDa6AL2CLtJQY+lNf+ycQrAfRLWLwwUlJt8jaFI6nBr1HBP9E
-	 ZXaHXXX3psZNQhoCIopt8/oYXcjUYqST2np2zoIkCZjG0NZD2TQ4KLfooM96JXESAZ
-	 WWxmrRzdGSt14UQ6jQcUWxmE9GRxmTQUKrWzVYjM=
+	b=PUCCBlXuEH1OL0LYRnNxFs68bKfzehsGDmDP+Bk86rHzPwN6/kk3zpqC4Rq8CCluu
+	 RsPZdPyIuxT5FyMZXX5S7n3ewenGfiJKLtXjrQU98PoVzN6vinSSOjFzfPVFKxwOFn
+	 cJMUyRy6fzhclv8joOrYFHHly9tt1H++ZsP9Lrdg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727918AbfAGMk0 (ORCPT
+        id S1728028AbfAGMke (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:40:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55312 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:40:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55504 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727477AbfAGMkX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:40:23 -0500
+        id S1727477AbfAGMkc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:40:32 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7E2272183F;
-        Mon,  7 Jan 2019 12:40:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 53EA72089F;
+        Mon,  7 Jan 2019 12:40:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546864822;
-        bh=EM1jkzlTA1oDJTNeec9F7eAAMyBmQMMnAK8z6ihFfA4=;
+        s=default; t=1546864831;
+        bh=zQAJWfXaPGsVpIl+fV+ly1hL9xjXCt2znZcTU1ipwNA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JEig2FLDhD3zFzRhm3f2XYBAoevrUJuKYstBnZ1qj79BbnGQkR1ydskG6faCcFuSa
-         8sVpqdEHR6bZa9w7WVQDmhNQouuaTR+YNAQBNd5CqNm2IIobWWTxkj9ZvGp3pcj42Y
-         Q7i4oYgpA34mRq+IC5vxYztH9qGomMZZCeCOUAws=
+        b=QzP6kSVIxvO+6XfQRHYS/CEVkZvkqxtNuczDwDKJxC8thQ0hmYEgmnIBRAGFKO3NP
+         NFxYtUxSrTexZeiL/3fOJKsb9/cdJi7guHly+ljf2YQqpYJT/xv5tRoASE9KRGA/gp
+         pH+0yamw23rfsRZtFRU1N4O/HO6tSKd25d+sciJg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michal Hocko <mhocko@suse.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
-        Andi Kleen <ak@linux.intel.com>, Jiri Kosina <jkosina@suse.cz>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Borislav Petkov <bp@suse.de>, linux-mm@kvack.org
-Subject: [PATCH 4.20 054/145] x86/speculation/l1tf: Drop the swap storage limit restriction when l1tf=off
-Date:   Mon,  7 Jan 2019 13:31:31 +0100
-Message-Id: <20190107104444.427143561@linuxfoundation.org>
+        stable@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
+        Mathias Duckeck <m.duckeck@kunbus.de>,
+        Frank Pavlic <f.pavlic@kunbus.de>,
+        Martin Sperl <kernel@martin.sperl.org>,
+        =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 4.20 081/145] spi: bcm2835: Fix book-keeping of DMA termination
+Date:   Mon,  7 Jan 2019 13:31:58 +0100
+Message-Id: <20190107104447.824068213@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104437.308206189@linuxfoundation.org>
 References: <20190107104437.308206189@linuxfoundation.org>
@@ -70,102 +69,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michal Hocko <mhocko@suse.com>
+From: Lukas Wunner <lukas@wunner.de>
 
-commit 5b5e4d623ec8a34689df98e42d038a3b594d2ff9 upstream.
+commit dbc944115eed48af110646992893dc43321368d8 upstream.
 
-Swap storage is restricted to max_swapfile_size (~16TB on x86_64) whenever
-the system is deemed affected by L1TF vulnerability. Even though the limit
-is quite high for most deployments it seems to be too restrictive for
-deployments which are willing to live with the mitigation disabled.
+If submission of a DMA TX transfer succeeds but submission of the
+corresponding RX transfer does not, the BCM2835 SPI driver terminates
+the TX transfer but neglects to reset the dma_pending flag to false.
 
-We have a customer to deploy 8x 6,4TB PCIe/NVMe SSD swap devices which is
-clearly out of the limit.
+Thus, if the next transfer uses interrupt mode (because it is shorter
+than BCM2835_SPI_DMA_MIN_LENGTH) and runs into a timeout,
+dmaengine_terminate_all() will be called both for TX (once more) and
+for RX (which was never started in the first place).  Fix it.
 
-Drop the swap restriction when l1tf=off is specified. It also doesn't make
-much sense to warn about too much memory for the l1tf mitigation when it is
-forcefully disabled by the administrator.
-
-[ tglx: Folded the documentation delta change ]
-
-Fixes: 377eeaa8e11f ("x86/speculation/l1tf: Limit swap file size to MAX_PA/2")
-Signed-off-by: Michal Hocko <mhocko@suse.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Pavel Tatashin <pasha.tatashin@soleen.com>
-Reviewed-by: Andi Kleen <ak@linux.intel.com>
-Acked-by: Jiri Kosina <jkosina@suse.cz>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Borislav Petkov <bp@suse.de>
-Cc: <linux-mm@kvack.org>
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20181113184910.26697-1-mhocko@kernel.org
+Signed-off-by: Lukas Wunner <lukas@wunner.de>
+Fixes: 3ecd37edaa2a ("spi: bcm2835: enable dma modes for transfers meeting certain conditions")
+Cc: stable@vger.kernel.org # v4.2+
+Cc: Mathias Duckeck <m.duckeck@kunbus.de>
+Cc: Frank Pavlic <f.pavlic@kunbus.de>
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Cc: Noralf Trønnes <noralf@tronnes.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- Documentation/admin-guide/kernel-parameters.txt |    3 +++
- Documentation/admin-guide/l1tf.rst              |    6 +++++-
- arch/x86/kernel/cpu/bugs.c                      |    3 ++-
- arch/x86/mm/init.c                              |    2 +-
- 4 files changed, 11 insertions(+), 3 deletions(-)
+ drivers/spi/spi-bcm2835.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -2096,6 +2096,9 @@
- 			off
- 				Disables hypervisor mitigations and doesn't
- 				emit any warnings.
-+				It also drops the swap size and available
-+				RAM limit restriction on both hypervisor and
-+				bare metal.
- 
- 			Default is 'flush'.
- 
---- a/Documentation/admin-guide/l1tf.rst
-+++ b/Documentation/admin-guide/l1tf.rst
-@@ -405,6 +405,9 @@ time with the option "l1tf=". The valid
- 
-   off		Disables hypervisor mitigations and doesn't emit any
- 		warnings.
-+		It also drops the swap size and available RAM limit restrictions
-+		on both hypervisor and bare metal.
-+
-   ============  =============================================================
- 
- The default is 'flush'. For details about L1D flushing see :ref:`l1d_flush`.
-@@ -576,7 +579,8 @@ Default mitigations
-   The kernel default mitigations for vulnerable processors are:
- 
-   - PTE inversion to protect against malicious user space. This is done
--    unconditionally and cannot be controlled.
-+    unconditionally and cannot be controlled. The swap storage is limited
-+    to ~16TB.
- 
-   - L1D conditional flushing on VMENTER when EPT is enabled for
-     a guest.
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -1002,7 +1002,8 @@ static void __init l1tf_select_mitigatio
- #endif
- 
- 	half_pa = (u64)l1tf_pfn_limit() << PAGE_SHIFT;
--	if (e820__mapped_any(half_pa, ULLONG_MAX - half_pa, E820_TYPE_RAM)) {
-+	if (l1tf_mitigation != L1TF_MITIGATION_OFF &&
-+			e820__mapped_any(half_pa, ULLONG_MAX - half_pa, E820_TYPE_RAM)) {
- 		pr_warn("System has more than MAX_PA/2 memory. L1TF mitigation not effective.\n");
- 		pr_info("You may make it effective by booting the kernel with mem=%llu parameter.\n",
- 				half_pa);
---- a/arch/x86/mm/init.c
-+++ b/arch/x86/mm/init.c
-@@ -931,7 +931,7 @@ unsigned long max_swapfile_size(void)
- 
- 	pages = generic_max_swapfile_size();
- 
--	if (boot_cpu_has_bug(X86_BUG_L1TF)) {
-+	if (boot_cpu_has_bug(X86_BUG_L1TF) && l1tf_mitigation != L1TF_MITIGATION_OFF) {
- 		/* Limit the swap file size to MAX_PA/2 for L1TF workaround */
- 		unsigned long long l1tf_limit = l1tf_pfn_limit();
- 		/*
+--- a/drivers/spi/spi-bcm2835.c
++++ b/drivers/spi/spi-bcm2835.c
+@@ -341,6 +341,7 @@ static int bcm2835_spi_transfer_one_dma(
+ 	if (ret) {
+ 		/* need to reset on errors */
+ 		dmaengine_terminate_all(master->dma_tx);
++		bs->dma_pending = false;
+ 		bcm2835_spi_reset_hw(master);
+ 		return ret;
+ 	}
 
 
