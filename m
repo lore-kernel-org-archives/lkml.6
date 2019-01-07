@@ -6,126 +6,147 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAE8EC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 14:09:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52998C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 14:11:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 786BE206C0
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 14:09:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 296FD206C0
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 14:11:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728735AbfAGOJj (ORCPT
+        id S1728841AbfAGOLl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 09:09:39 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54004 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727008AbfAGOJj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 09:09:39 -0500
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x07E98EY003303
-        for <linux-kernel@vger.kernel.org>; Mon, 7 Jan 2019 09:09:37 -0500
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2pv6f5nkb9-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 09:09:37 -0500
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <aneesh.kumar@linux.ibm.com>;
-        Mon, 7 Jan 2019 14:09:35 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 7 Jan 2019 14:09:30 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x07E9Tbq45940774
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 7 Jan 2019 14:09:29 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 68D374C050;
-        Mon,  7 Jan 2019 14:09:29 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0CBAC4C04A;
-        Mon,  7 Jan 2019 14:09:23 +0000 (GMT)
-Received: from skywalker.linux.ibm.com (unknown [9.199.42.180])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon,  7 Jan 2019 14:09:21 +0000 (GMT)
-X-Mailer: emacs 26.1 (via feedmail 11-beta-1 I)
-From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-To:     Fengguang Wu <fengguang.wu@intel.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Fan Du <fan.du@intel.com>, kvm@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Yao Yuan <yuan.yao@intel.com>,
-        Peng Dong <dongx.peng@intel.com>,
-        Huang Ying <ying.huang@intel.com>,
-        Liu Jingqi <jingqi.liu@intel.com>,
-        Dong Eddie <eddie.dong@intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Zhang Yi <yi.z.zhang@linux.intel.com>,
-        Dan Williams <dan.j.williams@intel.com>
-Subject: Re: [RFC][PATCH v2 10/21] mm: build separate zonelist for PMEM and DRAM node
-In-Reply-To: <20190107095753.7feee5fxjja5lt75@wfg-t540p.sh.intel.com>
-References: <20181226131446.330864849@intel.com> <20181226133351.644607371@intel.com> <87sgyc7n9a.fsf@linux.ibm.com> <20190107095753.7feee5fxjja5lt75@wfg-t540p.sh.intel.com>
-Date:   Mon, 07 Jan 2019 19:39:19 +0530
+        Mon, 7 Jan 2019 09:11:41 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:37414 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726911AbfAGOLl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 09:11:41 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7A58CC0587E5;
+        Mon,  7 Jan 2019 14:11:40 +0000 (UTC)
+Received: from redhat.com (ovpn-122-143.rdu2.redhat.com [10.10.122.143])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 85B4A19741;
+        Mon,  7 Jan 2019 14:11:39 +0000 (UTC)
+Date:   Mon, 7 Jan 2019 09:11:38 -0500
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Jason Wang <jasowang@redhat.com>, KVM list <kvm@vger.kernel.org>,
+        virtualization@lists.linux-foundation.org,
+        Netdev <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Miller <davem@davemloft.net>
+Subject: Re: [RFC PATCH V3 0/5] Hi:
+Message-ID: <20190107084853-mutt-send-email-mst@kernel.org>
+References: <20181229124656.3900-1-jasowang@redhat.com>
+ <20190102154038-mutt-send-email-mst@kernel.org>
+ <0efd115a-a7fb-54bf-5376-59d047a15fd3@redhat.com>
+ <20190106221832-mutt-send-email-mst@kernel.org>
+ <c15a17b3-b604-a105-af44-a7e6dfd79801@redhat.com>
+ <20190106230224-mutt-send-email-mst@kernel.org>
+ <CAPcyv4iXFy0jfoQ_jQYq2yA7cqu4_Jcap4mvQesRRrV-hahGvQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-x-cbid: 19010714-0008-0000-0000-000002AC5190
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19010714-0009-0000-0000-000022185B95
-Message-Id: <87h8ekk19s.fsf@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-07_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901070126
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAPcyv4iXFy0jfoQ_jQYq2yA7cqu4_Jcap4mvQesRRrV-hahGvQ@mail.gmail.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Mon, 07 Jan 2019 14:11:40 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fengguang Wu <fengguang.wu@intel.com> writes:
+On Sun, Jan 06, 2019 at 11:15:20PM -0800, Dan Williams wrote:
+> On Sun, Jan 6, 2019 at 8:17 PM Michael S. Tsirkin <mst@redhat.com> wrote:
+> >
+> > On Mon, Jan 07, 2019 at 11:53:41AM +0800, Jason Wang wrote:
+> > >
+> > > On 2019/1/7 上午11:28, Michael S. Tsirkin wrote:
+> > > > On Mon, Jan 07, 2019 at 10:19:03AM +0800, Jason Wang wrote:
+> > > > > On 2019/1/3 上午4:47, Michael S. Tsirkin wrote:
+> > > > > > On Sat, Dec 29, 2018 at 08:46:51PM +0800, Jason Wang wrote:
+> > > > > > > This series tries to access virtqueue metadata through kernel virtual
+> > > > > > > address instead of copy_user() friends since they had too much
+> > > > > > > overheads like checks, spec barriers or even hardware feature
+> > > > > > > toggling.
+> > > > > > Will review, thanks!
+> > > > > > One questions that comes to mind is whether it's all about bypassing
+> > > > > > stac/clac.  Could you please include a performance comparison with
+> > > > > > nosmap?
+> > > > > >
+> > > > > On machine without SMAP (Sandy Bridge):
+> > > > >
+> > > > > Before: 4.8Mpps
+> > > > >
+> > > > > After: 5.2Mpps
+> > > > OK so would you say it's really unsafe versus safe accesses?
+> > > > Or would you say it's just a better written code?
+> > >
+> > >
+> > > It's the effect of removing speculation barrier.
+> >
+> >
+> > You mean __uaccess_begin_nospec introduced by
+> > commit 304ec1b050310548db33063e567123fae8fd0301
+> > ?
+> >
+> > So fundamentally we do access_ok checks when supplying
+> > the memory table to the kernel thread, and we should
+> > do the spec barrier there.
+> >
+> > Then we can just create and use a variant of uaccess macros that does
+> > not include the barrier?
+> >
+> > Or, how about moving the barrier into access_ok?
+> > This way repeated accesses with a single access_ok get a bit faster.
+> > CC Dan Williams on this idea.
+> 
+> It would be interesting to see how expensive re-doing the address
+> limit check is compared to the speculation barrier. I.e. just switch
+> vhost_get_user() to use get_user() rather than __get_user(). That will
+> sanitize the pointer in the speculative path without a barrier.
 
-> On Tue, Jan 01, 2019 at 02:44:41PM +0530, Aneesh Kumar K.V wrote:
->>Fengguang Wu <fengguang.wu@intel.com> writes:
->>
->>> From: Fan Du <fan.du@intel.com>
->>>
->>> When allocate page, DRAM and PMEM node should better not fall back to
->>> each other. This allows migration code to explicitly control which type
->>> of node to allocate pages from.
->>>
->>> With this patch, PMEM NUMA node can only be used in 2 ways:
->>> - migrate in and out
->>> - numactl
->>
->>Can we achieve this using nodemask? That way we don't tag nodes with
->>different properties such as DRAM/PMEM. We can then give the
->>flexibilility to the device init code to add the new memory nodes to
->>the right nodemask
->
-> Aneesh, in patch 2 we did create nodemask numa_nodes_pmem and
-> numa_nodes_dram. What's your supposed way of "using nodemask"?
->
+Hmm it's way cheaper even though IIRC it's measureable.
+Jason, would you like to try?
+Although frankly __get_user being slower than get_user feels very wrong.
+Not yet sure what to do exactly but would you agree?
 
-IIUC the patch is to avoid allocation from PMEM nodes and the way you
-achieve it is by checking if (is_node_pmem(n)). We already have
-abstractness to avoid allocation from a node using node mask. I was
-wondering whether we can do the equivalent of above using that.
 
-ie, __next_zone_zonelist can do zref_in_nodemask(z,
-default_exclude_nodemask)) and decide whether to use the specific zone
-or not.
+> I recall we had a convert access_ok() discussion with this result here:
+> 
+> https://lkml.org/lkml/2018/1/17/929
 
-That way we don't add special code like 
+Sorry let me try to clarify. IIUC speculating access_ok once
+is harmless. As Linus said the problem is with "_subsequent_
+accesses that can then be used to perturb the cache".
 
-+	PGDAT_DRAM,			/* Volatile DRAM memory node */
-+	PGDAT_PMEM,			/* Persistent memory node */
+Thus:
 
-The reason is that there could be other device memory that would want to
-get excluded from that default allocation like you are doing for PMEM
+1. if (!access_ok)
+2.	return
+3.  get_user
+4. if (!access_ok)
+5.	return
+6.  get_user
 
--aneesh
+Your proposal that Linus nacked was to effectively add a barrier after
+lines 2 and 5 (also using the array_index_nospec trick for speed),
+right? Unfortunately that needs a big API change.
 
+I am asking about adding barrier_nospec within access_ok.
+Thus effectively before lines 1 and 4.
+access_ok will be slower but after all the point of access_ok is
+to then access the same memory multiple times.
+So we should be making __get_user faster and access_ok slower ...
+
+> ...but it sounds like you are proposing a smaller scope fixup for the
+> vhost use case? Something like barrier_nospec() in the success path
+> for all vhost access_ok() checks and then a get_user() variant that
+> disables the barrier.
+
+Maybe we'll have to. Except I hope vhost won't end up being the
+only user otherwise it will be hard to maintain.
+
+
+-- 
+MST
