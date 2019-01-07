@@ -2,128 +2,155 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB7E5C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 09:54:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D4A0C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 09:54:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0C4A20859
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 09:54:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE323217F4
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 09:54:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U6Qodm12"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726877AbfAGJyJ (ORCPT
+        id S1726726AbfAGJym (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 04:54:09 -0500
-Received: from mail.netline.ch ([148.251.143.178]:47176 "EHLO
-        netline-mail3.netline.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726615AbfAGJyI (ORCPT
+        Mon, 7 Jan 2019 04:54:42 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:46012 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726323AbfAGJym (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 04:54:08 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by netline-mail3.netline.ch (Postfix) with ESMTP id CC11E2A605C;
-        Mon,  7 Jan 2019 10:54:05 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at netline-mail3.netline.ch
-Received: from netline-mail3.netline.ch ([127.0.0.1])
-        by localhost (netline-mail3.netline.ch [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id 8VKbOFZTIySn; Mon,  7 Jan 2019 10:54:05 +0100 (CET)
-Received: from thor (39.1.199.178.dynamic.wline.res.cust.swisscom.ch [178.199.1.39])
-        by netline-mail3.netline.ch (Postfix) with ESMTPSA id 008BD2A605B;
-        Mon,  7 Jan 2019 10:54:04 +0100 (CET)
-Received: from localhost ([::1])
-        by thor with esmtp (Exim 4.92-RC3)
-        (envelope-from <michel@daenzer.net>)
-        id 1ggRbg-00006f-EA; Mon, 07 Jan 2019 10:54:04 +0100
-Subject: Re: [PATCH v5 1/2] drm/amd: validate user pitch alignment
-To:     Yu Zhao <yuzhao@google.com>
-Cc:     David Zhou <David1.Zhou@amd.com>,
-        Daniel Stone <daniels@collabora.com>,
-        David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        Junwei Zhang <Jerry.Zhang@amd.com>,
-        amd-gfx@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        stable@vger.kernel.org, Harry Wentland <harry.wentland@amd.com>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        Samuel Li <Samuel.Li@amd.com>
-References: <20181223215239.173339-2-yuzhao@google.com>
- <20181230010021.196990-1-yuzhao@google.com>
- <75d5f1d6-b259-6944-6ee0-8cc68cb1af0e@daenzer.net>
- <20190107040038.GA180037@google.com>
-From:   =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>
-Openpgp: preference=signencrypt
-Autocrypt: addr=michel@daenzer.net; prefer-encrypt=mutual; keydata=
- mQGiBDsehS8RBACbsIQEX31aYSIuEKxEnEX82ezMR8z3LG8ktv1KjyNErUX9Pt7AUC7W3W0b
- LUhu8Le8S2va6hi7GfSAifl0ih3k6Bv1Itzgnd+7ZmSrvCN8yGJaHNQfAevAuEboIb+MaVHo
- 9EMJj4ikOcRZCmQWw7evu/D9uQdtkCnRY9iJiAGxbwCguBHtpoGMxDOINCr5UU6qt+m4O+UD
- /355ohBBzzyh49lTj0kTFKr0Ozd20G2FbcqHgfFL1dc1MPyigej2gLga2osu2QY0ObvAGkOu
- WBi3LTY8Zs8uqFGDC4ZAwMPoFy3yzu3ne6T7d/68rJil0QcdQjzzHi6ekqHuhst4a+/+D23h
- Za8MJBEcdOhRhsaDVGAJSFEQB1qLBACOs0xN+XblejO35gsDSVVk8s+FUUw3TSWJBfZa3Imp
- V2U2tBO4qck+wqbHNfdnU/crrsHahjzBjvk8Up7VoY8oT+z03sal2vXEonS279xN2B92Tttr
- AgwosujguFO/7tvzymWC76rDEwue8TsADE11ErjwaBTs8ZXfnN/uAANgPLQjTWljaGVsIERh
- ZW56ZXIgPG1pY2hlbEBkYWVuemVyLm5ldD6IXgQTEQIAHgUCQFXxJgIbAwYLCQgHAwIDFQID
- AxYCAQIeAQIXgAAKCRBaga+OatuyAIrPAJ9ykonXI3oQcX83N2qzCEStLNW47gCeLWm/QiPY
- jqtGUnnSbyuTQfIySkK5AQ0EOx6FRRAEAJZkcvklPwJCgNiw37p0GShKmFGGqf/a3xZZEpjI
- qNxzshFRFneZze4f5LhzbX1/vIm5+ZXsEWympJfZzyCmYPw86QcFxyZflkAxHx9LeD+89Elx
- bw6wT0CcLvSv8ROfU1m8YhGbV6g2zWyLD0/naQGVb8e4FhVKGNY2EEbHgFBrAAMGA/0VktFO
- CxFBdzLQ17RCTwCJ3xpyP4qsLJH0yCoA26rH2zE2RzByhrTFTYZzbFEid3ddGiHOBEL+bO+2
- GNtfiYKmbTkj1tMZJ8L6huKONaVrASFzLvZa2dlc2zja9ZSksKmge5BOTKWgbyepEc5qxSju
- YsYrX5xfLgTZC5abhhztpYhGBBgRAgAGBQI7HoVFAAoJEFqBr45q27IAlscAn2Ufk2d6/3p4
- Cuyz/NX7KpL2dQ8WAJ9UD5JEakhfofed8PSqOM7jOO3LCA==
-Message-ID: <14420828-884e-df3e-3b41-5b87203a20a3@daenzer.net>
-Date:   Mon, 7 Jan 2019 10:54:03 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Mon, 7 Jan 2019 04:54:42 -0500
+Received: by mail-pf1-f194.google.com with SMTP id g62so21595331pfd.12;
+        Mon, 07 Jan 2019 01:54:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Gl6JpnGihjv/yRPtfDAwaNiw30s/+rXs7lnW+RiVw+w=;
+        b=U6Qodm12+cmlexUOT+YapWAX2O5MFLD6yCfZD4FQowvprNss0HTBEY4L6LYeyAHpIy
+         XJcDIAH0RnRaqYwhSZcs4Pz0l5R/A6jKujsARSYNCgyw0fGNlV4loKbqpjuCHh/P6lm0
+         /ErYaQCMcrU4n062Ztd6jSfcrsW7fcA527GdOVTKdgvyZ9lVLTrhE1KuvZhLpY/306V+
+         r8WZ0wQSb7C3t+oipNDmm+NcjQN24qZGM9LULW40JagNw0R2mL+853X0c+TOjbfIF/9N
+         CWM3Mbmq8p5l+TbUzIx9DtfrD7DIUwk24c3ef3MnohD2Nqp6aObXK+Go5ZYT0hh9236i
+         8cjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Gl6JpnGihjv/yRPtfDAwaNiw30s/+rXs7lnW+RiVw+w=;
+        b=cRHPjBkfd+s6A9Pjla53dVi+aa0/SY7tvL/84ZgLPrmVy23OuW/b6FpkTgLTFQeAMd
+         EG7KnMleDq7/PL8n8XEXamBtNOzgo7s7vkmhuIniSy30zzpbTsyHOJ+K+P8VN7OAsvQE
+         BpBItl0LbHvsy6gN2/W0sBIdMunor2ALI+XojS8l393whTEggbwaFeiMr4XGbrT1vvjQ
+         y2KIxhNeqlHBhpbznDYY0Z15yjZHGFzClsiW88ityJ2Ej+MHOla/NTvOutZdmnuz6X5d
+         V3VZ84CLmWGwReWpxf3A2I2T+bVVGD7tt3KUlDkMSaxaPDyw3CNqZeK7CH9tuKbdHsTZ
+         4VnA==
+X-Gm-Message-State: AJcUukd9eUCNZTziXm4I+sMYyKgWxcbWOGkOfmSoPqI8A6pZRrCYpE85
+        P+Ueb2Z295a0BbkuMI37v86/Kycg
+X-Google-Smtp-Source: ALg8bN66x4cl+p6acAKfk7Yva+b6Qp6UE6Yxqc4sl3TnnBCbt+8HP+sKsh9NByyfM9POB/iNlNbJAA==
+X-Received: by 2002:a63:2d82:: with SMTP id t124mr10305065pgt.260.1546854880915;
+        Mon, 07 Jan 2019 01:54:40 -0800 (PST)
+Received: from localhost.localdomain ([175.223.14.193])
+        by smtp.gmail.com with ESMTPSA id i2sm35848569pfi.66.2019.01.07.01.54.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 07 Jan 2019 01:54:40 -0800 (PST)
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+X-Google-Original-From: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+To:     Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghua.yu@intel.com>
+Cc:     linux-ia64@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: [PATCH] ia64: tweak BREAK_LOGLEVEL and RESTORE_LOGLEVEL
+Date:   Mon,  7 Jan 2019 18:54:33 +0900
+Message-Id: <20190107095433.6497-1-sergey.senozhatsky@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20190107040038.GA180037@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-01-07 5:00 a.m., Yu Zhao wrote:
-> On Thu, Jan 03, 2019 at 05:33:19PM +0100, Michel Dänzer wrote:
->> On 2018-12-30 2:00 a.m., Yu Zhao wrote:
->>> Userspace may request pitch alignment that is not supported by GPU.
->>> Some requests 32, but GPU ignores it and uses default 64 when cpp is
->>> 4. If GEM object is allocated based on the smaller alignment, GPU
->>> DMA will go out of bound.
->>>
->>> Cc: stable@vger.kernel.org # v4.2+
->>> Signed-off-by: Yu Zhao <yuzhao@google.com>
->>> ---
->>>  drivers/gpu/drm/amd/amdgpu/amdgpu_display.c | 16 ++++++++++++++++
->>>  1 file changed, 16 insertions(+)
->>>
->>> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
->>> index 15ce7e681d67..16af80ccd0a0 100644
->>> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
->>> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
->>> @@ -527,6 +527,22 @@ amdgpu_display_user_framebuffer_create(struct drm_device *dev,
->>>  	struct drm_gem_object *obj;
->>>  	struct amdgpu_framebuffer *amdgpu_fb;
->>>  	int ret;
->>> +	struct amdgpu_device *adev = dev->dev_private;
->>> +	int cpp = drm_format_plane_cpp(mode_cmd->pixel_format, 0);
->>> +	int pitch = mode_cmd->pitches[0] / cpp;
->>> +
->>> +	if (pitch < mode_cmd->width) {
->>> +		DRM_DEBUG_KMS("Expecting pitch(%d)/cpp(%d) >= width(%d)\n",
->>> +			      mode_cmd->pitches[0], cpp, mode_cmd->width);
->>> +		return ERR_PTR(-EINVAL);
->>> +	}
->>
->> This should possibly be tested in drm_internal_framebuffer_create instead.
-> 
-> It seems to me drm_format_info_min_pitch() in framebuffer_check()
-> already does it. We could just remove the check here?
+a) Do not pass console_loglevel to macros, use console_loglevel directly.
+b) Use CONSOLE_LOGLEVEL_MOTORMOUTH instead of a naked number
+c) Use bust_spinlocks() to set/clear oops_in_progress
+d) Fix checkpatch error: Macros with multiple statements should be
+                         enclosed in a do - while loop
 
-Yeah, looks like that should be fine.
+Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+---
+ arch/ia64/kernel/mca.c | 36 ++++++++++++++++++++----------------
+ 1 file changed, 20 insertions(+), 16 deletions(-)
 
-
+diff --git a/arch/ia64/kernel/mca.c b/arch/ia64/kernel/mca.c
+index 91bd1e129379..06fb40f5c2d6 100644
+--- a/arch/ia64/kernel/mca.c
++++ b/arch/ia64/kernel/mca.c
+@@ -188,19 +188,23 @@ static unsigned int mlogbuf_finished = 0;
+ static unsigned long mlogbuf_timestamp = 0;
+ 
+ static int loglevel_save = -1;
+-#define BREAK_LOGLEVEL(__console_loglevel)		\
+-	oops_in_progress = 1;				\
+-	if (loglevel_save < 0)				\
+-		loglevel_save = __console_loglevel;	\
+-	__console_loglevel = 15;
+-
+-#define RESTORE_LOGLEVEL(__console_loglevel)		\
+-	if (loglevel_save >= 0) {			\
+-		__console_loglevel = loglevel_save;	\
+-		loglevel_save = -1;			\
+-	}						\
+-	mlogbuf_finished = 0;				\
+-	oops_in_progress = 0;
++#define BREAK_LOGLEVEL()					\
++	do {							\
++		bust_spinlocks(1);				\
++		if (loglevel_save < 0)				\
++			loglevel_save = __console_loglevel;	\
++		console_loglevel = CONSOLE_LOGLEVEL_MOTORMOUTH;	\
++	} while (0)
++
++#define RESTORE_LOGLEVEL()					\
++	do {							\
++		if (loglevel_save >= 0) {			\
++			console_loglevel = loglevel_save;	\
++			loglevel_save = -1;			\
++		}						\
++		mlogbuf_finished = 0;				\
++		bust_spinlocks(0);				\
++	} while (0)
+ 
+ /*
+  * Push messages into buffer, print them later if not urgent.
+@@ -287,7 +291,7 @@ EXPORT_SYMBOL(ia64_mlogbuf_dump);
+  */
+ static void ia64_mlogbuf_finish(int wait)
+ {
+-	BREAK_LOGLEVEL(console_loglevel);
++	BREAK_LOGLEVEL();
+ 
+ 	spin_lock_init(&mlogbuf_rlock);
+ 	ia64_mlogbuf_dump();
+@@ -1616,7 +1620,7 @@ default_monarch_init_process(struct notifier_block *self, unsigned long val, voi
+ 	 * To enable show_stack from INIT, we use oops_in_progress which should
+ 	 * be used in real oops. This would cause something wrong after INIT.
+ 	 */
+-	BREAK_LOGLEVEL(console_loglevel);
++	BREAK_LOGLEVEL();
+ 	ia64_mlogbuf_dump_from_init();
+ 
+ 	printk(KERN_ERR "Processes interrupted by INIT -");
+@@ -1641,7 +1645,7 @@ default_monarch_init_process(struct notifier_block *self, unsigned long val, voi
+ 		read_unlock(&tasklist_lock);
+ 	}
+ 	/* FIXME: This will not restore zapped printk locks. */
+-	RESTORE_LOGLEVEL(console_loglevel);
++	RESTORE_LOGLEVEL();
+ 	return NOTIFY_DONE;
+ }
+ 
 -- 
-Earthling Michel Dänzer               |               http://www.amd.com
-Libre software enthusiast             |             Mesa and X developer
+2.20.1
+
