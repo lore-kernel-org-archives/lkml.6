@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71C5AC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:47:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A33FAC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:47:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37D8B206BB
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:47:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 673EE206BB
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:47:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546865237;
-	bh=Re7zD3iOEsFfUx82kK7I1+349goKLq329phxA3w74zc=;
+	s=default; t=1546865245;
+	bh=XQ4bDL8QOtY3q/l8Svb57V2H7TDJ4zk2e9klQAPRtr4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=CjvfcpMNTJv82cLMmky09h0lTSGNzp1bNABb4zq2jNb7pQNYqGykLTRTuCvJxLF5Z
-	 MqTcx6bHr8nOTQAa1wYBLPw7VzQq2/E5eBBM2bOwQ9CCTHiq0spQ58dtqouxKwSiQx
-	 NRzqHkNRYMzSXhyx1pjE/LsVCscCgAu2AmXXoOZ4=
+	b=XmgHrMGhHspM+UCLh8L0asithTlZiCYtCRbZqgTYz9T5g4eWyHPsoFxenl9sVBo7k
+	 o+foU9zQyLvr/omolYqQ5My3J3ILNAiyxoFFuz/dhgX8oe2kh1shiYE0rDv20YqEx9
+	 ZMwE1x3BKzy6/txSMso+wxUFZwN/fu/NeFjwZP7Q=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728670AbfAGMrQ (ORCPT
+        id S1728932AbfAGMpr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:47:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35672 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:45:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35214 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728958AbfAGMp5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:45:57 -0500
+        id S1728914AbfAGMpm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:45:42 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 020912183E;
-        Mon,  7 Jan 2019 12:45:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2A78C2183E;
+        Mon,  7 Jan 2019 12:45:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865157;
-        bh=Re7zD3iOEsFfUx82kK7I1+349goKLq329phxA3w74zc=;
+        s=default; t=1546865141;
+        bh=XQ4bDL8QOtY3q/l8Svb57V2H7TDJ4zk2e9klQAPRtr4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=D0vD7Zg99+awBbN+mhdihvGSZddWUZVXt6+Ukkmvqs6hTfKo7WyhQwfe9IpafYZXB
-         GEYhqYm9lsncAZpoFvHQao+3DHq3aQ/tU2OEPdLlvat+CNtHyARwuIISP9t2hC+7MC
-         ZXcHlLzgGan5NzYjSVAss/wdkum0y6kpU1O2vXkc=
+        b=yHCM1Wz6xS9TUSTRVqIZKFWfhcJ9qmbzg0HR6ssms1ez7kSnhU9I7372hfvuSVnjx
+         SCuFRUtvGDBvr46yplfAGlpa40pdP9bx+5sj0oIF9bsGllIr00WmDVt8BN2lAwZVqG
+         EFzzafza1R3ulloEEjv0/WDYOZK4dSlknQevKlmE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Willem de Bruijn <willemb@google.com>,
-        Alexander Aring <aring@mojatatu.com>,
+        stable@vger.kernel.org, Heiner Kallweit <hkallweit1@gmail.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 004/170] ieee802154: lowpan_header_create check must check daddr
-Date:   Mon,  7 Jan 2019 13:30:31 +0100
-Message-Id: <20190107104453.480104481@linuxfoundation.org>
+Subject: [PATCH 4.19 017/170] net: phy: Fix the issue that netif always links up after resuming
+Date:   Mon,  7 Jan 2019 13:30:44 +0100
+Message-Id: <20190107104455.068553047@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104452.953560660@linuxfoundation.org>
 References: <20190107104452.953560660@linuxfoundation.org>
@@ -66,33 +66,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Willem de Bruijn <willemb@google.com>
+From: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
 
-[ Upstream commit 40c3ff6d5e0809505a067dd423c110c5658c478c ]
+[ Upstream commit 8742beb50f2db903d3b6d69ddd81d67ce9914453 ]
 
-Packet sockets may call dev_header_parse with NULL daddr. Make
-lowpan_header_ops.create fail.
+Even though the link is down before entering hibernation,
+there is an issue that the network interface always links up after resuming
+from hibernation.
 
-Fixes: 87a93e4eceb4 ("ieee802154: change needed headroom/tailroom")
-Signed-off-by: Willem de Bruijn <willemb@google.com>
-Acked-by: Alexander Aring <aring@mojatatu.com>
+If the link is still down before enabling the network interface,
+and after resuming from hibernation, the phydev->state is forcibly set
+to PHY_UP in mdio_bus_phy_restore(), and the link becomes up.
+
+In suspend sequence, only if the PHY is attached, mdio_bus_phy_suspend()
+calls phy_stop_machine(), and mdio_bus_phy_resume() calls
+phy_start_machine().
+In resume sequence, it's enough to do the same as mdio_bus_phy_resume()
+because the state has been preserved.
+
+This patch fixes the issue by calling phy_start_machine() in
+mdio_bus_phy_restore() in the same way as mdio_bus_phy_resume().
+
+Fixes: bc87922ff59d ("phy: Move PHY PM operations into phy_device")
+Suggested-by: Heiner Kallweit <hkallweit1@gmail.com>
+Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ieee802154/6lowpan/tx.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/net/phy/phy_device.c |    7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
---- a/net/ieee802154/6lowpan/tx.c
-+++ b/net/ieee802154/6lowpan/tx.c
-@@ -48,6 +48,9 @@ int lowpan_header_create(struct sk_buff
- 	const struct ipv6hdr *hdr = ipv6_hdr(skb);
- 	struct neighbour *n;
+--- a/drivers/net/phy/phy_device.c
++++ b/drivers/net/phy/phy_device.c
+@@ -164,11 +164,8 @@ static int mdio_bus_phy_restore(struct d
+ 	if (ret < 0)
+ 		return ret;
  
-+	if (!daddr)
-+		return -EINVAL;
-+
- 	/* TODO:
- 	 * if this package isn't ipv6 one, where should it be routed?
- 	 */
+-	/* The PHY needs to renegotiate. */
+-	phydev->link = 0;
+-	phydev->state = PHY_UP;
+-
+-	phy_start_machine(phydev);
++	if (phydev->attached_dev && phydev->adjust_link)
++		phy_start_machine(phydev);
+ 
+ 	return 0;
+ }
 
 
