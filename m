@@ -2,385 +2,85 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF5D0C43444
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 23:33:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F23F1C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 23:37:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2DB42070B
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 23:33:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B39642070B
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 23:37:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tMnvqTrF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727304AbfAGXdy (ORCPT
+        id S1727052AbfAGXhZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 18:33:54 -0500
-Received: from mga12.intel.com ([192.55.52.136]:23467 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726668AbfAGXdx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 18:33:53 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jan 2019 15:33:52 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,451,1539673200"; 
-   d="scan'208";a="124997897"
-Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
-  by orsmga001.jf.intel.com with ESMTP; 07 Jan 2019 15:33:52 -0800
-Subject: [PATCH v7 2/3] mm: Move buddy list manipulations into helpers
-From:   Dan Williams <dan.j.williams@intel.com>
+        Mon, 7 Jan 2019 18:37:25 -0500
+Received: from mail-wm1-f42.google.com ([209.85.128.42]:36812 "EHLO
+        mail-wm1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726667AbfAGXhY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 18:37:24 -0500
+Received: by mail-wm1-f42.google.com with SMTP id p6so2540306wmc.1
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 15:37:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Wid+jioh0zryvJfRcjARqiFU+q4SSkz8696pzO0mQZ4=;
+        b=tMnvqTrFs9P0ksObKT6T4eEW/XR+RTNHyY8yVWAjUanancfm6hmhDluRmq0ruvLFPJ
+         +Q//myTYsC22uFvD16px1U9gtXt/56XcOy/KYOqxoSR8s/y1riFybpToNsHhh6fKBPtz
+         Uf1WnOmPd9hS1F0XAgaZFXGfFuPY4pHHKDyAoAvpXNP2fv0HIAdQyfGfI60pqxwm2AsM
+         TcWm0B1gvOBuLEiHElNhBzTxmn/8QqMScDNR7yhHj6URBK3vn+bDBTbphs59rQmcO3qt
+         T0T3Ci4eeDdYcGJmIvAipkJKKXROzn8EE/XYG66skPGl9TsGBdcXxUXHeRlUApPPuKnH
+         CSmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Wid+jioh0zryvJfRcjARqiFU+q4SSkz8696pzO0mQZ4=;
+        b=k7Qx4wKD2X/eIJcO5AFvB7dgUxN3a7qsjOgasTtadgjk6m7uD0SZEiUjLux4OZW8rI
+         xIAeCR2XkWP6FBdj/nwLcMLlj+lBtBQ9QRL9q/rvc3q4Msco2JOGFhnlJYOPucw6rhlf
+         fPWl3HhdYIBJwRKh+BhXA5ommfeMisS7LZ61iCVD7barwW96cTrLO4nBjdLpbQh56Jsy
+         zV1aMEjzae8m+Vx43CPWOH2nGjtdzMriMTffQp6IeXpk+vlDrp448TwPOqZM8cQ80+5K
+         5GTbOebcb8iS632iJ6oF0OPLpeqSrpcvH+EPsLTGJnlWr7Q69IYnUHU0s4ldDnegSHIg
+         Hydg==
+X-Gm-Message-State: AJcUuke5HKG94bgKxELQt+nGDWFKFcgeJauVtbLbfUTefs6P6yex3+QG
+        KwQt9nK1pxAs51cvCjGbi67wBZg=
+X-Google-Smtp-Source: ALg8bN5RHAMUYQuOIqAU83MphcnnfUxzpEIn/is+itgY9VL/S+HXuimaMe6CT5BgVo/21NRFNYnwVg==
+X-Received: by 2002:a1c:be11:: with SMTP id o17mr9852227wmf.111.1546904242880;
+        Mon, 07 Jan 2019 15:37:22 -0800 (PST)
+Received: from avx2 (nat-minsk-pool-46-53-201-92.telecom.by. [46.53.201.92])
+        by smtp.gmail.com with ESMTPSA id y13sm42694775wrn.73.2019.01.07.15.37.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 07 Jan 2019 15:37:22 -0800 (PST)
+Date:   Tue, 8 Jan 2019 02:37:20 +0300
+From:   Alexey Dobriyan <adobriyan@gmail.com>
 To:     akpm@linux-foundation.org
-Cc:     Michal Hocko <mhocko@suse.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>, mhocko@suse.com,
-        keith.busch@intel.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, mgorman@suse.de
-Date:   Mon, 07 Jan 2019 15:21:16 -0800
-Message-ID: <154690327612.676627.7469591833063917773.stgit@dwillia2-desk3.amr.corp.intel.com>
-In-Reply-To: <154690326478.676627.103843791978176914.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <154690326478.676627.103843791978176914.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.18-2-gc94f
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: + proc-fix-proc-net-after-setns2-checkpatch-fixes.patch added to
+ -mm tree
+Message-ID: <20190107233720.GA26994@avx2>
+References: <20190107223609.Z6BC6rJ1M%akpm@linux-foundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190107223609.Z6BC6rJ1M%akpm@linux-foundation.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation for runtime randomization of the zone lists, take all
-(well, most of) the list_*() functions in the buddy allocator and put
-them in helper functions. Provide a common control point for injecting
-additional behavior when freeing pages.
+On Mon, Jan 07, 2019 at 02:36:09PM -0800, akpm@linux-foundation.org wrote:
+> Subject: proc-fix-proc-net-after-setns2-checkpatch-fixes
+> 
+> WARNING: Block comments use * on subsequent lines
+> #56: FILE: fs/proc/proc_net.c:44:
+> +	// /proc/net/* can be changed under us by setns(CLONE_NEWNET)
+> +	pde->proc_dops = &simple_dentry_operations;
 
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
----
- include/linux/mm.h       |    3 --
- include/linux/mm_types.h |    3 ++
- include/linux/mmzone.h   |   51 ++++++++++++++++++++++++++++++++++
- mm/compaction.c          |    4 +--
- mm/page_alloc.c          |   70 ++++++++++++++++++----------------------------
- 5 files changed, 84 insertions(+), 47 deletions(-)
-
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 80bb6408fe73..1621acd10f83 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -500,9 +500,6 @@ static inline void vma_set_anonymous(struct vm_area_struct *vma)
- struct mmu_gather;
- struct inode;
- 
--#define page_private(page)		((page)->private)
--#define set_page_private(page, v)	((page)->private = (v))
--
- #if !defined(__HAVE_ARCH_PTE_DEVMAP) || !defined(CONFIG_TRANSPARENT_HUGEPAGE)
- static inline int pmd_devmap(pmd_t pmd)
- {
-diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-index 2c471a2c43fa..1c7dc7ffa288 100644
---- a/include/linux/mm_types.h
-+++ b/include/linux/mm_types.h
-@@ -214,6 +214,9 @@ struct page {
- #define PAGE_FRAG_CACHE_MAX_SIZE	__ALIGN_MASK(32768, ~PAGE_MASK)
- #define PAGE_FRAG_CACHE_MAX_ORDER	get_order(PAGE_FRAG_CACHE_MAX_SIZE)
- 
-+#define page_private(page)		((page)->private)
-+#define set_page_private(page, v)	((page)->private = (v))
-+
- struct page_frag_cache {
- 	void * va;
- #if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE)
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index 8c37a023a790..b78a45e0b11c 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -18,6 +18,8 @@
- #include <linux/pageblock-flags.h>
- #include <linux/page-flags-layout.h>
- #include <linux/atomic.h>
-+#include <linux/mm_types.h>
-+#include <linux/page-flags.h>
- #include <asm/page.h>
- 
- /* Free memory management - zoned buddy allocator.  */
-@@ -98,6 +100,55 @@ struct free_area {
- 	unsigned long		nr_free;
- };
- 
-+/* Used for pages not on another list */
-+static inline void add_to_free_area(struct page *page, struct free_area *area,
-+			     int migratetype)
-+{
-+	list_add(&page->lru, &area->free_list[migratetype]);
-+	area->nr_free++;
-+}
-+
-+/* Used for pages not on another list */
-+static inline void add_to_free_area_tail(struct page *page, struct free_area *area,
-+				  int migratetype)
-+{
-+	list_add_tail(&page->lru, &area->free_list[migratetype]);
-+	area->nr_free++;
-+}
-+
-+/* Used for pages which are on another list */
-+static inline void move_to_free_area(struct page *page, struct free_area *area,
-+			     int migratetype)
-+{
-+	list_move(&page->lru, &area->free_list[migratetype]);
-+}
-+
-+static inline struct page *get_page_from_free_area(struct free_area *area,
-+					    int migratetype)
-+{
-+	return list_first_entry_or_null(&area->free_list[migratetype],
-+					struct page, lru);
-+}
-+
-+static inline void rmv_page_order(struct page *page)
-+{
-+	__ClearPageBuddy(page);
-+	set_page_private(page, 0);
-+}
-+
-+static inline void del_page_from_free_area(struct page *page,
-+		struct free_area *area, int migratetype)
-+{
-+	list_del(&page->lru);
-+	rmv_page_order(page);
-+	area->nr_free--;
-+}
-+
-+static inline bool free_area_empty(struct free_area *area, int migratetype)
-+{
-+	return list_empty(&area->free_list[migratetype]);
-+}
-+
- struct pglist_data;
- 
- /*
-diff --git a/mm/compaction.c b/mm/compaction.c
-index ef29490b0f46..a22ac7ab65c5 100644
---- a/mm/compaction.c
-+++ b/mm/compaction.c
-@@ -1359,13 +1359,13 @@ static enum compact_result __compact_finished(struct zone *zone,
- 		bool can_steal;
- 
- 		/* Job done if page is free of the right migratetype */
--		if (!list_empty(&area->free_list[migratetype]))
-+		if (!free_area_empty(area, migratetype))
- 			return COMPACT_SUCCESS;
- 
- #ifdef CONFIG_CMA
- 		/* MIGRATE_MOVABLE can fallback on MIGRATE_CMA */
- 		if (migratetype == MIGRATE_MOVABLE &&
--			!list_empty(&area->free_list[MIGRATE_CMA]))
-+			!free_area_empty(area, MIGRATE_CMA))
- 			return COMPACT_SUCCESS;
- #endif
- 		/*
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 2adcd6da8a07..0b4791a2dd43 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -743,12 +743,6 @@ static inline void set_page_order(struct page *page, unsigned int order)
- 	__SetPageBuddy(page);
- }
- 
--static inline void rmv_page_order(struct page *page)
--{
--	__ClearPageBuddy(page);
--	set_page_private(page, 0);
--}
--
- /*
-  * This function checks whether a page is free && is the buddy
-  * we can coalesce a page and its buddy if
-@@ -849,13 +843,11 @@ static inline void __free_one_page(struct page *page,
- 		 * Our buddy is free or it is CONFIG_DEBUG_PAGEALLOC guard page,
- 		 * merge with it and move up one order.
- 		 */
--		if (page_is_guard(buddy)) {
-+		if (page_is_guard(buddy))
- 			clear_page_guard(zone, buddy, order, migratetype);
--		} else {
--			list_del(&buddy->lru);
--			zone->free_area[order].nr_free--;
--			rmv_page_order(buddy);
--		}
-+		else
-+			del_page_from_free_area(buddy, &zone->free_area[order],
-+					migratetype);
- 		combined_pfn = buddy_pfn & pfn;
- 		page = page + (combined_pfn - pfn);
- 		pfn = combined_pfn;
-@@ -905,15 +897,13 @@ static inline void __free_one_page(struct page *page,
- 		higher_buddy = higher_page + (buddy_pfn - combined_pfn);
- 		if (pfn_valid_within(buddy_pfn) &&
- 		    page_is_buddy(higher_page, higher_buddy, order + 1)) {
--			list_add_tail(&page->lru,
--				&zone->free_area[order].free_list[migratetype]);
--			goto out;
-+			add_to_free_area_tail(page, &zone->free_area[order],
-+					      migratetype);
-+			return;
- 		}
- 	}
- 
--	list_add(&page->lru, &zone->free_area[order].free_list[migratetype]);
--out:
--	zone->free_area[order].nr_free++;
-+	add_to_free_area(page, &zone->free_area[order], migratetype);
- }
- 
- /*
-@@ -1852,7 +1842,7 @@ static inline void expand(struct zone *zone, struct page *page,
- 		if (set_page_guard(zone, &page[size], high, migratetype))
- 			continue;
- 
--		list_add(&page[size].lru, &area->free_list[migratetype]);
-+		add_to_free_area(&page[size], area, migratetype);
- 		area->nr_free++;
- 		set_page_order(&page[size], high);
- 	}
-@@ -1994,13 +1984,10 @@ struct page *__rmqueue_smallest(struct zone *zone, unsigned int order,
- 	/* Find a page of the appropriate size in the preferred list */
- 	for (current_order = order; current_order < MAX_ORDER; ++current_order) {
- 		area = &(zone->free_area[current_order]);
--		page = list_first_entry_or_null(&area->free_list[migratetype],
--							struct page, lru);
-+		page = get_page_from_free_area(area, migratetype);
- 		if (!page)
- 			continue;
--		list_del(&page->lru);
--		rmv_page_order(page);
--		area->nr_free--;
-+		del_page_from_free_area(page, area, migratetype);
- 		expand(zone, page, order, current_order, area, migratetype);
- 		set_pcppage_migratetype(page, migratetype);
- 		return page;
-@@ -2086,8 +2073,7 @@ static int move_freepages(struct zone *zone,
- 		}
- 
- 		order = page_order(page);
--		list_move(&page->lru,
--			  &zone->free_area[order].free_list[migratetype]);
-+		move_to_free_area(page, &zone->free_area[order], migratetype);
- 		page += 1 << order;
- 		pages_moved += 1 << order;
- 	}
-@@ -2263,7 +2249,7 @@ static void steal_suitable_fallback(struct zone *zone, struct page *page,
- 
- single_page:
- 	area = &zone->free_area[current_order];
--	list_move(&page->lru, &area->free_list[start_type]);
-+	move_to_free_area(page, area, start_type);
- }
- 
- /*
-@@ -2287,7 +2273,7 @@ int find_suitable_fallback(struct free_area *area, unsigned int order,
- 		if (fallback_mt == MIGRATE_TYPES)
- 			break;
- 
--		if (list_empty(&area->free_list[fallback_mt]))
-+		if (free_area_empty(area, fallback_mt))
- 			continue;
- 
- 		if (can_steal_fallback(order, migratetype))
-@@ -2374,9 +2360,7 @@ static bool unreserve_highatomic_pageblock(const struct alloc_context *ac,
- 		for (order = 0; order < MAX_ORDER; order++) {
- 			struct free_area *area = &(zone->free_area[order]);
- 
--			page = list_first_entry_or_null(
--					&area->free_list[MIGRATE_HIGHATOMIC],
--					struct page, lru);
-+			page = get_page_from_free_area(area, MIGRATE_HIGHATOMIC);
- 			if (!page)
- 				continue;
- 
-@@ -2499,8 +2483,7 @@ __rmqueue_fallback(struct zone *zone, int order, int start_migratetype,
- 	VM_BUG_ON(current_order == MAX_ORDER);
- 
- do_steal:
--	page = list_first_entry(&area->free_list[fallback_mt],
--							struct page, lru);
-+	page = get_page_from_free_area(area, fallback_mt);
- 
- 	steal_suitable_fallback(zone, page, alloc_flags, start_migratetype,
- 								can_steal);
-@@ -2937,6 +2920,7 @@ EXPORT_SYMBOL_GPL(split_page);
- 
- int __isolate_free_page(struct page *page, unsigned int order)
- {
-+	struct free_area *area = &page_zone(page)->free_area[order];
- 	unsigned long watermark;
- 	struct zone *zone;
- 	int mt;
-@@ -2961,9 +2945,8 @@ int __isolate_free_page(struct page *page, unsigned int order)
- 	}
- 
- 	/* Remove page from free list */
--	list_del(&page->lru);
--	zone->free_area[order].nr_free--;
--	rmv_page_order(page);
-+
-+	del_page_from_free_area(page, area, mt);
- 
- 	/*
- 	 * Set the pageblock if the isolated page is at least half of a
-@@ -3265,13 +3248,13 @@ bool __zone_watermark_ok(struct zone *z, unsigned int order, unsigned long mark,
- 			continue;
- 
- 		for (mt = 0; mt < MIGRATE_PCPTYPES; mt++) {
--			if (!list_empty(&area->free_list[mt]))
-+			if (!free_area_empty(area, mt))
- 				return true;
- 		}
- 
- #ifdef CONFIG_CMA
- 		if ((alloc_flags & ALLOC_CMA) &&
--		    !list_empty(&area->free_list[MIGRATE_CMA])) {
-+		    !free_area_empty(area, MIGRATE_CMA)) {
- 			return true;
- 		}
- #endif
-@@ -5173,7 +5156,7 @@ void show_free_areas(unsigned int filter, nodemask_t *nodemask)
- 
- 			types[order] = 0;
- 			for (type = 0; type < MIGRATE_TYPES; type++) {
--				if (!list_empty(&area->free_list[type]))
-+				if (!free_area_empty(area, type))
- 					types[order] |= 1 << type;
- 			}
- 		}
-@@ -8318,6 +8301,9 @@ __offline_isolated_pages(unsigned long start_pfn, unsigned long end_pfn)
- 	spin_lock_irqsave(&zone->lock, flags);
- 	pfn = start_pfn;
- 	while (pfn < end_pfn) {
-+		struct free_area *area;
-+		int mt;
-+
- 		if (!pfn_valid(pfn)) {
- 			pfn++;
- 			continue;
-@@ -8336,13 +8322,13 @@ __offline_isolated_pages(unsigned long start_pfn, unsigned long end_pfn)
- 		BUG_ON(page_count(page));
- 		BUG_ON(!PageBuddy(page));
- 		order = page_order(page);
-+		area = &zone->free_area[order];
- #ifdef CONFIG_DEBUG_VM
- 		pr_info("remove from free list %lx %d %lx\n",
- 			pfn, 1 << order, end_pfn);
- #endif
--		list_del(&page->lru);
--		rmv_page_order(page);
--		zone->free_area[order].nr_free--;
-+		mt = get_pageblock_migratetype(page);
-+		del_page_from_free_area(page, area, mt);
- 		for (i = 0; i < (1 << order); i++)
- 			SetPageReserved((page+i));
- 		pfn += (1 << order);
-
+I did it on purpose! Otherwise default vim colouring marks "/*" in red
+because it is comment without "*/"
