@@ -2,126 +2,68 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF814C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 10:11:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2B7BC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 10:11:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F54F20854
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 10:11:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="DuJNZtkh";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="CuD221II"
+	by mail.kernel.org (Postfix) with ESMTP id 7411820854
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 10:11:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727024AbfAGKLA (ORCPT
+        id S1727030AbfAGKLM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 05:11:00 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:57206 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726958AbfAGKK7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 05:10:59 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id D5DD160AFE; Mon,  7 Jan 2019 10:10:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1546855858;
-        bh=xna8L3pKpKLpH51OsITmCIR3bGTRCkEom404zCmxtHI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DuJNZtkhn4qfjh66kNYiOPmK0MMBzxwr7om8E91jbs8ZaqyH+qc4V0506JIVRSYOS
-         knxKoLBPLPGbTEivp8iS0HTaIw9izRTSwDurWr15zpBt0EOjHihoAXdakcmISwmEha
-         ZNrPE7IXEzRMzfal9Rt1+P1k5e6nR+FFpqTKMeJw=
-Received: from blr-ubuntu-173.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        Mon, 7 Jan 2019 05:11:12 -0500
+Received: from ozlabs.org ([203.11.71.1]:37635 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726534AbfAGKKu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 05:10:50 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        (Authenticated sender: rnayak@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 1083A60AD6;
-        Mon,  7 Jan 2019 10:10:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1546855854;
-        bh=xna8L3pKpKLpH51OsITmCIR3bGTRCkEom404zCmxtHI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CuD221IIzfN0F1SHJPhoHNurEm2NsCMxpLcYpw488u9UqlYeAEJjM1pemlseDvKUO
-         GLiU7etJ+HNo4AfLSmJRPgg74dpDhinZIPOpYyUePQBaHHZVfJGBcbvbGgf6/RKTeH
-         c85csxoKfsBP+Ukcg44PMS2mjXSLZ9WDHV1p5Ecw=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1083A60AD6
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
-From:   Rajendra Nayak <rnayak@codeaurora.org>
-To:     andy.gross@linaro.org, robh@kernel.org, viresh.kumar@linaro.org,
-        sboyd@kernel.org, ulf.hansson@linaro.org, collinsd@codeaurora.org,
-        mka@chromium.org
-Cc:     devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, henryc.chen@mediatek.com,
-        Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH v9 10/10] soc: qcom: rpmhpd: Mark mx as a parent for cx
-Date:   Mon,  7 Jan 2019 15:39:59 +0530
-Message-Id: <20190107100959.14528-11-rnayak@codeaurora.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190107100959.14528-1-rnayak@codeaurora.org>
-References: <20190107100959.14528-1-rnayak@codeaurora.org>
+        by ozlabs.org (Postfix) with ESMTPSA id 43YB3q3BFVz9sN1;
+        Mon,  7 Jan 2019 21:10:47 +1100 (AEDT)
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Jann Horn <jannh@google.com>
+Cc:     Jiri Kosina <jikos@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Michal Hocko <mhocko@suse.com>, Linux-MM <linux-mm@kvack.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Subject: Re: [PATCH] mm/mincore: allow for making sys_mincore() privileged
+In-Reply-To: <CAHk-=wiMQeCEKESWTmm15x79NjEjNwFvjZ=9XenxY7yH8zqa7A@mail.gmail.com>
+References: <nycvar.YFH.7.76.1901051817390.16954@cbobk.fhfr.pm> <CAG48ez2jAp9xkPXQmVXm0PqNrFGscg9BufQRem2UD8FGX-YzPw@mail.gmail.com> <CAHk-=whL4sZiM=JcdQAYQvHm7h7xEtVUh+gYGYhoSk4vi38tXg@mail.gmail.com> <CAHk-=wg5Kk+r36=jcGBaLUj+gjopjgiW5eyvkdMqvn0jFkD_iQ@mail.gmail.com> <CAHk-=wiMQeCEKESWTmm15x79NjEjNwFvjZ=9XenxY7yH8zqa7A@mail.gmail.com>
+Date:   Mon, 07 Jan 2019 21:10:46 +1100
+Message-ID: <87y37waic9.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Specify the active + sleep and active-only MX power domains as
-the parents of the corresponding CX power domains. This will ensure that
-performance state requests on CX automatically generate equivalent requests
-on MX power domains.
+Linus Torvalds <torvalds@linux-foundation.org> writes:
 
-This is used to enforce a requirement that exists for various
-hardware blocks on SDM845 that MX performance state >= CX performance
-state for a given operating frequency.
+> On Sat, Jan 5, 2019 at 3:16 PM Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+>>
+>> It goes back to forever, it looks like. I can't find a reason.
+>
+> mincore() was originally added in 2.3.52pre3, it looks like. Around
+> 2000 or so. But sadly before the BK history.
 
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
----
- drivers/soc/qcom/rpmhpd.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+Yeah, it's here in the commit titled "Import 2.3.52pre3" (takes a second
+or two to load):
 
-diff --git a/drivers/soc/qcom/rpmhpd.c b/drivers/soc/qcom/rpmhpd.c
-index 38c8a11c92c8..edf67de65f6a 100644
---- a/drivers/soc/qcom/rpmhpd.c
-+++ b/drivers/soc/qcom/rpmhpd.c
-@@ -97,12 +97,14 @@ static struct rpmhpd sdm845_cx_ao;
- static struct rpmhpd sdm845_cx = {
- 	.pd = { .name = "cx", },
- 	.peer = &sdm845_cx_ao,
-+	.parent = &sdm845_mx.pd,
- 	.res_name = "cx.lvl",
- };
- 
- static struct rpmhpd sdm845_cx_ao = {
- 	.pd = { .name = "cx_ao", },
- 	.peer = &sdm845_cx,
-+	.parent = &sdm845_mx_ao.pd,
- 	.res_name = "cx.lvl",
- };
- 
-@@ -372,6 +374,15 @@ static int rpmhpd_probe(struct platform_device *pdev)
- 		data->domains[i] = &rpmhpds[i]->pd;
- 	}
- 
-+	/* Add subdomains */
-+	for (i = 0; i < num_pds; i++) {
-+		if (!rpmhpds[i])
-+			continue;
-+		if (rpmhpds[i]->parent)
-+			pm_genpd_add_subdomain(rpmhpds[i]->parent,
-+					       &rpmhpds[i]->pd);
-+	}
-+
- 	return of_genpd_add_provider_onecell(pdev->dev.of_node, data);
- }
- 
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+  https://github.com/mpe/linux-fullhistory/commit/a1bcda3256956318c95c8da8bee09f79190bb034#diff-fd2d793b8b4760b4887c8c7bbb3451d7R1730
 
+But no further detail.
+
+(Instructions for using that tree https://github.com/mpe/linux-fullhistory/wiki)
+
+cheers
