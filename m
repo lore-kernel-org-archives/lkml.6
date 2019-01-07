@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34766C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:36:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50B5AC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:36:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06C6B21736
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:36:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2099121736
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:36:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546864615;
-	bh=QEarGfvRhzuk6lbfwUqd0YCsF0+noJujd34F0PrxOho=;
+	s=default; t=1546864618;
+	bh=jsODWWm8EonB42K8AAbilYPqLG+Uy3Dg5sOP9ElX3z8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=2SRE+peqIMopVVEt5W9s1Y31Fh46yUaXc5u85X3U/sNwda46JbP1NYqtBkDRNCFf1
-	 I8Cy9gMVDJrSKvHXzKcCFCJZrm/L9nblx6lutFInj7SgSJ2+E1DrmDiU5V6ooHnOXD
-	 3/Cei93f85+q6e4zQBjQkRVgqHMFyfv7LuNLvZZg=
+	b=uBf+z/rgUgLQQDP7xz4jL9567qwPKiTkkSSSK5qFmoED9y2/ABIa453OU7bxlNqXJ
+	 YdixPtCJ92oWDZ/iMuM9pIgaxYaPbDlG9GzxyoYbAltSRDEq59v93Hk8Hy6CaVX9mT
+	 skRp8xmGDai34cpkOi51KLDaVu1gufgZi1eQROc4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727728AbfAGMgy (ORCPT
+        id S1727742AbfAGMg5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:36:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51644 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:36:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51732 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726718AbfAGMgw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:36:52 -0500
+        id S1726718AbfAGMg4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:36:56 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5446321736;
-        Mon,  7 Jan 2019 12:36:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A1E7520859;
+        Mon,  7 Jan 2019 12:36:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546864611;
-        bh=QEarGfvRhzuk6lbfwUqd0YCsF0+noJujd34F0PrxOho=;
+        s=default; t=1546864615;
+        bh=jsODWWm8EonB42K8AAbilYPqLG+Uy3Dg5sOP9ElX3z8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dV9JTaWvsDJyZm+s+3iPcGJcTK/WQkBWQZvzoMSvQi6fSzF3O5kq9gLuaOAUgsir2
-         l6ZJPA4HxAUUEysXN9njqMmA6hhvwRoOaSTmRdI2oi1promSmUBEJ2FPg1mTCNHmnw
-         9aahz5DzINCtJ20R2iQ1ZB8qTo5hf4fVE+eB3DPE=
+        b=QrFXOmUuF2zhbwVB0hph5eDjmXOU5b8qRAKCIyjpq5Oo2O7A4suxQmb9T0+3P3PfV
+         MroHITES2U/kwOY5r5LkTbxb+b2LhegXDUJGk+5WVMlFDOuyH2Q5O0l7tLCNFF0gH8
+         Ga8pO4RXa7+imNUXHdVz145sY+94pHKAO4KYHEFE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ido Schimmel <idosch@idosch.org>,
-        Willem de Bruijn <willemb@google.com>,
+        stable@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.20 015/145] packet: validate address length if non-zero
-Date:   Mon,  7 Jan 2019 13:30:52 +0100
-Message-Id: <20190107104439.352904879@linuxfoundation.org>
+Subject: [PATCH 4.20 016/145] phonet: af_phonet: Fix Spectre v1 vulnerability
+Date:   Mon,  7 Jan 2019 13:30:53 +0100
+Message-Id: <20190107104439.479395203@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104437.308206189@linuxfoundation.org>
 References: <20190107104437.308206189@linuxfoundation.org>
@@ -66,41 +66,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Willem de Bruijn <willemb@google.com>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 
-[ Upstream commit 6b8d95f1795c42161dc0984b6863e95d6acf24ed ]
+[ Upstream commit d686026b1e6ed4ea27d630d8f54f9a694db088b2 ]
 
-Validate packet socket address length if a length is given. Zero
-length is equivalent to not setting an address.
+protocol is indirectly controlled by user-space, hence leading to
+a potential exploitation of the Spectre variant 1 vulnerability.
 
-Fixes: 99137b7888f4 ("packet: validate address length")
-Reported-by: Ido Schimmel <idosch@idosch.org>
-Signed-off-by: Willem de Bruijn <willemb@google.com>
+This issue was detected with the help of Smatch:
+
+net/phonet/af_phonet.c:48 phonet_proto_get() warn: potential spectre issue 'proto_tab' [w] (local cap)
+
+Fix this by sanitizing protocol before using it to index proto_tab.
+
+Notice that given that speculation windows are large, the policy is
+to kill the speculation on the first load and not worry if it can be
+completed with a dependent load/store [1].
+
+[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/packet/af_packet.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/phonet/af_phonet.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/net/packet/af_packet.c
-+++ b/net/packet/af_packet.c
-@@ -2625,7 +2625,7 @@ static int tpacket_snd(struct packet_soc
- 						sll_addr)))
- 			goto out;
- 		proto	= saddr->sll_protocol;
--		addr	= saddr->sll_addr;
-+		addr	= saddr->sll_halen ? saddr->sll_addr : NULL;
- 		dev = dev_get_by_index(sock_net(&po->sk), saddr->sll_ifindex);
- 		if (addr && dev && saddr->sll_halen < dev->addr_len)
- 			goto out;
-@@ -2825,7 +2825,7 @@ static int packet_snd(struct socket *soc
- 		if (msg->msg_namelen < (saddr->sll_halen + offsetof(struct sockaddr_ll, sll_addr)))
- 			goto out;
- 		proto	= saddr->sll_protocol;
--		addr	= saddr->sll_addr;
-+		addr	= saddr->sll_halen ? saddr->sll_addr : NULL;
- 		dev = dev_get_by_index(sock_net(sk), saddr->sll_ifindex);
- 		if (addr && dev && saddr->sll_halen < dev->addr_len)
- 			goto out;
+--- a/net/phonet/af_phonet.c
++++ b/net/phonet/af_phonet.c
+@@ -34,6 +34,8 @@
+ #include <net/phonet/phonet.h>
+ #include <net/phonet/pn_dev.h>
+ 
++#include <linux/nospec.h>
++
+ /* Transport protocol registration */
+ static const struct phonet_protocol *proto_tab[PHONET_NPROTO] __read_mostly;
+ 
+@@ -43,6 +45,7 @@ static const struct phonet_protocol *pho
+ 
+ 	if (protocol >= PHONET_NPROTO)
+ 		return NULL;
++	protocol = array_index_nospec(protocol, PHONET_NPROTO);
+ 
+ 	rcu_read_lock();
+ 	pp = rcu_dereference(proto_tab[protocol]);
 
 
