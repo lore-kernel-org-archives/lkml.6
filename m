@@ -6,119 +6,97 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E1E7C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 08:49:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 497C6C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 08:50:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62C272087F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 08:49:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 240E52087F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 08:50:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726609AbfAGItZ (ORCPT
+        id S1726631AbfAGIuo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 03:49:25 -0500
-Received: from mail5.windriver.com ([192.103.53.11]:51090 "EHLO mail5.wrs.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726496AbfAGItZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 03:49:25 -0500
-Received: from ALA-HCA.corp.ad.wrs.com (ala-hca.corp.ad.wrs.com [147.11.189.40])
-        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id x078l5FZ024630
-        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
-        Mon, 7 Jan 2019 00:47:15 -0800
-Received: from [128.224.162.180] (128.224.162.180) by ALA-HCA.corp.ad.wrs.com
- (147.11.189.50) with Microsoft SMTP Server (TLS) id 14.3.408.0; Mon, 7 Jan
- 2019 00:46:55 -0800
-Subject: Re: [PATCH v2] kernel/dma: Fix panic caused by passing swiotlb to
- command line
-To:     <konrad@darnok.org>, <konrad.wilk@oracle.com>, <hch@lst.de>,
-        <m.szyprowski@samsung.com>, <robin.murphy@arm.com>,
-        <iommu@lists.linux-foundation.org>, <linux-kernel@vger.kernel.org>
-References: <1543832571-121638-1-git-send-email-zhe.he@windriver.com>
-From:   He Zhe <zhe.he@windriver.com>
-Message-ID: <b35907a9-4d30-493b-3839-731b10d71c63@windriver.com>
-Date:   Mon, 7 Jan 2019 16:46:51 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <1543832571-121638-1-git-send-email-zhe.he@windriver.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        Mon, 7 Jan 2019 03:50:44 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:14982 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726531AbfAGIun (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 03:50:43 -0500
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x078fexa030486;
+        Mon, 7 Jan 2019 09:50:18 +0100
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2ptybmp9pv-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Mon, 07 Jan 2019 09:50:18 +0100
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 63D743D;
+        Mon,  7 Jan 2019 08:50:17 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag6node2.st.com [10.75.127.17])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 0C6AB2713;
+        Mon,  7 Jan 2019 08:50:17 +0000 (GMT)
+Received: from SFHDAG6NODE3.st.com (10.75.127.18) by SFHDAG6NODE2.st.com
+ (10.75.127.17) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 7 Jan
+ 2019 09:50:16 +0100
+Received: from SFHDAG6NODE3.st.com ([fe80::d04:5337:ab17:b6f6]) by
+ SFHDAG6NODE3.st.com ([fe80::d04:5337:ab17:b6f6%20]) with mapi id
+ 15.00.1347.000; Mon, 7 Jan 2019 09:50:16 +0100
+From:   Patrice CHOTARD <patrice.chotard@st.com>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>
+CC:     "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] dmaengine: st_fdma: use struct_size() in kzalloc()
+Thread-Topic: [PATCH] dmaengine: st_fdma: use struct_size() in kzalloc()
+Thread-Index: AQHUpF1ix7uI5wB8fU21b6FQMnj6mKWjcoWA
+Date:   Mon, 7 Jan 2019 08:50:16 +0000
+Message-ID: <d5817730-980d-0295-d4fb-43bd34b89e7e@st.com>
+References: <20190104184322.GA9615@embeddedor>
+In-Reply-To: <20190104184322.GA9615@embeddedor>
+Accept-Language: fr-FR, en-US
 Content-Language: en-US
-X-Originating-IP: [128.224.162.180]
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.44]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <6A6E5608DF6E9D4EA4E25F48D85F6408@st.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-07_03:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Kindly ping.
-
-Zhe
-
-On 12/3/18 6:22 PM, zhe.he@windriver.com wrote:
-> From: He Zhe <zhe.he@windriver.com>
->
-> setup_io_tlb_npages does not check input argument before passing it
-> to isdigit. The argument would be a NULL pointer if "swiotlb", without
-> its value, is set in command line and thus causes the following panic.
->
-> PANIC: early exception 0xe3 IP 10:ffffffffbb9b8e9f error 0 cr2 0x0
-> [    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 4.19.0-rc3-yocto-standard+ #9
-> [    0.000000] RIP: 0010:setup_io_tlb_npages+0xf/0x95
-> ...
-> [    0.000000] Call Trace:
-> [    0.000000]  do_early_param+0x57/0x8e
-> [    0.000000]  parse_args+0x208/0x320
-> [    0.000000]  ? rdinit_setup+0x30/0x30
-> [    0.000000]  parse_early_options+0x29/0x2d
-> [    0.000000]  ? rdinit_setup+0x30/0x30
-> [    0.000000]  parse_early_param+0x36/0x4d
-> [    0.000000]  setup_arch+0x336/0x99e
-> [    0.000000]  start_kernel+0x6f/0x4e6
-> [    0.000000]  x86_64_start_reservations+0x24/0x26
-> [    0.000000]  x86_64_start_kernel+0x6f/0x72
-> [    0.000000]  secondary_startup_64+0xa4/0xb0
->
-> This patch adds a check to prevent the panic and sets it for 4MB by default.
->
-> Signed-off-by: He Zhe <zhe.he@windriver.com>
-> Cc: stable@vger.kernel.org
-> Cc: konrad.wilk@oracle.com
-> Cc: hch@lst.de
-> Cc: m.szyprowski@samsung.com
-> Cc: robin.murphy@arm.com
->
-> Signed-off-by: He Zhe <zhe.he@windriver.com>
-> ---
-> v2: Set swiotlb for 4MB by default
->
->  kernel/dma/swiotlb.c | 11 +++++++++++
->  1 file changed, 11 insertions(+)
->
-> diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
-> index 045930e..0e18cd4 100644
-> --- a/kernel/dma/swiotlb.c
-> +++ b/kernel/dma/swiotlb.c
-> @@ -58,6 +58,9 @@
->   */
->  #define IO_TLB_MIN_SLABS ((1<<20) >> IO_TLB_SHIFT)
->  
-> +#define IO_TLB_DEFAULT_MB 4
-> +#define IO_TLB_DEFAULT_SLABS ((IO_TLB_DEFAULT_MB<<20) >> IO_TLB_SHIFT)
-> +
->  enum swiotlb_force swiotlb_force;
->  
->  /*
-> @@ -103,6 +106,14 @@ static int late_alloc;
->  static int __init
->  setup_io_tlb_npages(char *str)
->  {
-> +	if (!str) {
-> +		pr_err("No value provided for swiotlb, "
-> +		       "set it to %d slabs for %dMB by default.\n",
-> +		       IO_TLB_DEFAULT_SLABS, IO_TLB_DEFAULT_MB);
-> +		io_tlb_nslabs = IO_TLB_DEFAULT_SLABS;
-> +		return 0;
-> +	}
-> +
->  	if (isdigit(*str)) {
->  		io_tlb_nslabs = simple_strtoul(str, &str, 0);
->  		/* avoid tail segment of size < IO_TLB_SEGSIZE */
-
+SGkgR3VzdGF2bw0KDQpPbiAxLzQvMTkgNzo0MyBQTSwgR3VzdGF2byBBLiBSLiBTaWx2YSB3cm90
+ZToNCj4gT25lIG9mIHRoZSBtb3JlIGNvbW1vbiBjYXNlcyBvZiBhbGxvY2F0aW9uIHNpemUgY2Fs
+Y3VsYXRpb25zIGlzIGZpbmRpbmcgdGhlDQo+IHNpemUgb2YgYSBzdHJ1Y3R1cmUgdGhhdCBoYXMg
+YSB6ZXJvLXNpemVkIGFycmF5IGF0IHRoZSBlbmQsIGFsb25nIHdpdGggbWVtb3J5DQo+IGZvciBz
+b21lIG51bWJlciBvZiBlbGVtZW50cyBmb3IgdGhhdCBhcnJheS4gRm9yIGV4YW1wbGU6DQo+IA0K
+PiBzdHJ1Y3QgZm9vIHsNCj4gICAgIGludCBzdHVmZjsNCj4gICAgIHZvaWQgKmVudHJ5W107DQo+
+IH07DQo+IA0KPiBpbnN0YW5jZSA9IGt6YWxsb2Moc2l6ZW9mKHN0cnVjdCBmb28pICsgc2l6ZW9m
+KHZvaWQgKikgKiBjb3VudCwgR0ZQX0tFUk5FTCk7DQo+IA0KPiBJbnN0ZWFkIG9mIGxlYXZpbmcg
+dGhlc2Ugb3Blbi1jb2RlZCBhbmQgcHJvbmUgdG8gdHlwZSBtaXN0YWtlcywgd2UgY2FuIG5vdw0K
+PiB1c2UgdGhlIG5ldyBzdHJ1Y3Rfc2l6ZSgpIGhlbHBlcjoNCj4gDQo+IGluc3RhbmNlID0ga3ph
+bGxvYyhzdHJ1Y3Rfc2l6ZShpbnN0YW5jZSwgZW50cnksIGNvdW50KSwgR0ZQX0tFUk5FTCk7DQo+
+IA0KPiBUaGlzIGNvZGUgd2FzIGRldGVjdGVkIHdpdGggdGhlIGhlbHAgb2YgQ29jY2luZWxsZS4N
+Cj4gDQo+IFNpZ25lZC1vZmYtYnk6IEd1c3Rhdm8gQS4gUi4gU2lsdmEgPGd1c3Rhdm9AZW1iZWRk
+ZWRvci5jb20+DQo+IC0tLQ0KPiAgZHJpdmVycy9kbWEvc3RfZmRtYS5jIHwgMyArLS0NCj4gIDEg
+ZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMiBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYg
+LS1naXQgYS9kcml2ZXJzL2RtYS9zdF9mZG1hLmMgYi9kcml2ZXJzL2RtYS9zdF9mZG1hLmMNCj4g
+aW5kZXggMDdjMjBhYTJlOTU1Li5kZjZiNzMwMjhlY2IgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMv
+ZG1hL3N0X2ZkbWEuYw0KPiArKysgYi9kcml2ZXJzL2RtYS9zdF9mZG1hLmMNCj4gQEAgLTI0Myw4
+ICsyNDMsNyBAQCBzdGF0aWMgc3RydWN0IHN0X2ZkbWFfZGVzYyAqc3RfZmRtYV9hbGxvY19kZXNj
+KHN0cnVjdCBzdF9mZG1hX2NoYW4gKmZjaGFuLA0KPiAgCXN0cnVjdCBzdF9mZG1hX2Rlc2MgKmZk
+ZXNjOw0KPiAgCWludCBpOw0KPiAgDQo+IC0JZmRlc2MgPSBremFsbG9jKHNpemVvZigqZmRlc2Mp
+ICsNCj4gLQkJCXNpemVvZihzdHJ1Y3Qgc3RfZmRtYV9zd19ub2RlKSAqIHNnX2xlbiwgR0ZQX05P
+V0FJVCk7DQo+ICsJZmRlc2MgPSBremFsbG9jKHN0cnVjdF9zaXplKGZkZXNjLCBub2RlLCBzZ19s
+ZW4pLCBHRlBfTk9XQUlUKTsNCj4gIAlpZiAoIWZkZXNjKQ0KPiAgCQlyZXR1cm4gTlVMTDsNCj4g
+IA0KPiANCg0KDQpBY2tlZC1ieTogUGF0cmljZSBDaG90YXJkIDxwYXRyaWNlLmNob3RhcmRAc3Qu
+Y29tPg0KDQpUaGFua3M=
