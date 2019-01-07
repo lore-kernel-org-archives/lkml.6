@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C247C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:03:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A94E9C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:03:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 161AB21736
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:03:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 788DC2089F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:03:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546866207;
-	bh=EHghRP9FwtQbXOBkbIt3lGgpGWZgIi5BCgKIECn/wjs=;
+	s=default; t=1546866211;
+	bh=spiMInmw1cQme3Qm4S4wfISxje/ACHYQwcnMWgmy7hI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=vNiRbMrNCqdIPvLOQvO6POFl4vC2ucoF8XFID8Pb6BTO9ix1cr2K5b7W4dY++a0zc
-	 zMWE0WjZQzTMEqqoe4rpy7ZpFDJSFlnfDa2NmPrgMal06EcDcah0u56Nk9d7jDChoU
-	 02jITvHpP991ZZ6zHQH1egipfbohRgQzyx7BeRhc=
+	b=xuen5ze9ZjYjyBWDk50KOc83j1jevA9k03HBnoTmhVOd3M1zQcIP1FWcNbb1rZc5K
+	 bDkiUW4ImpIdbTup7ePhCdHV6dU8RerQUkl1AaZdQjoWztXKmb7PEP0IPXe5LZkD4D
+	 2MiVjnHgbVDPEDIhdTWxwr93rVXcVH8oNOSS3JkY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731002AbfAGND0 (ORCPT
+        id S1730382AbfAGNDa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:03:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50824 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:03:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50920 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730982AbfAGNDV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:03:21 -0500
+        id S1730135AbfAGND1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:03:27 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 91E4B2089F;
-        Mon,  7 Jan 2019 13:03:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3898E2089F;
+        Mon,  7 Jan 2019 13:03:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546866201;
-        bh=EHghRP9FwtQbXOBkbIt3lGgpGWZgIi5BCgKIECn/wjs=;
+        s=default; t=1546866206;
+        bh=spiMInmw1cQme3Qm4S4wfISxje/ACHYQwcnMWgmy7hI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Bog6FlWAVM0lX11mhfGg+Dao4ZZcit4wqrVU301Ube00+znKA3ulv6fTBuOg5fwH+
-         xL+L7H5aDPfXM941AsNEH0U1055JmBtD+O+L/FamtJiO4ijTFMP++55kzzUMoohn8u
-         1MDPlmZGrCXBSRehZ+jdv9Mi/uFe6HXMtUsXAa5c=
+        b=b5/2ou37ykhwG/NoDEqeoBVs4qL5XVv+ww+zZ9hjmRn/L6cVxc5ILPMWk8N8lCy7w
+         VN9aubi4Q37MZNzxq/h8qUSJppE0e9oy7Y3i9tfbbwP6cllkbCicaTGlpdugLzF6Jx
+         11sG9Pv8M+ax7ksot41N5mv8CZ0NaiekKDTWslSY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.14 078/101] btrfs: run delayed items before dropping the snapshot
-Date:   Mon,  7 Jan 2019 13:33:06 +0100
-Message-Id: <20190107105337.242080339@linuxfoundation.org>
+        stable@vger.kernel.org, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.14 044/101] ALSA: fireface: fix for state to fetch PCM frames
+Date:   Mon,  7 Jan 2019 13:32:32 +0100
+Message-Id: <20190107105335.306446646@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107105330.372621917@linuxfoundation.org>
 References: <20190107105330.372621917@linuxfoundation.org>
@@ -66,86 +65,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Josef Bacik <jbacik@fb.com>
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 
-commit 0568e82dbe2510fc1fa664f58e5c997d3f1e649e upstream.
+commit 3d16200a3e55a39caa1c88419cb559c00316f721 upstream.
 
-With my delayed refs patches in place we started seeing a large amount
-of aborts in __btrfs_free_extent:
+According to my memo at hand and saved records, writing 0x00000001 to
+SND_FF_REG_FETCH_PCM_FRAMES disables fetching PCM frames in corresponding
+channel, however current implement uses reversed logic. This results in
+muted volume in device side during playback.
 
- BTRFS error (device sdb1): unable to find ref byte nr 91947008 parent 0 root 35964  owner 1 offset 0
- Call Trace:
-  ? btrfs_merge_delayed_refs+0xaf/0x340
-  __btrfs_run_delayed_refs+0x6ea/0xfc0
-  ? btrfs_set_path_blocking+0x31/0x60
-  btrfs_run_delayed_refs+0xeb/0x180
-  btrfs_commit_transaction+0x179/0x7f0
-  ? btrfs_check_space_for_delayed_refs+0x30/0x50
-  ? should_end_transaction.isra.19+0xe/0x40
-  btrfs_drop_snapshot+0x41c/0x7c0
-  btrfs_clean_one_deleted_snapshot+0xb5/0xd0
-  cleaner_kthread+0xf6/0x120
-  kthread+0xf8/0x130
-  ? btree_invalidatepage+0x90/0x90
-  ? kthread_bind+0x10/0x10
-  ret_from_fork+0x35/0x40
+This commit corrects the bug.
 
-This was because btrfs_drop_snapshot depends on the root not being
-modified while it's dropping the snapshot.  It will unlock the root node
-(and really every node) as it walks down the tree, only to re-lock it
-when it needs to do something.  This is a problem because if we modify
-the tree we could cow a block in our path, which frees our reference to
-that block.  Then once we get back to that shared block we'll free our
-reference to it again, and get ENOENT when trying to lookup our extent
-reference to that block in __btrfs_free_extent.
-
-This is ultimately happening because we have delayed items left to be
-processed for our deleted snapshot _after_ all of the inodes are closed
-for the snapshot.  We only run the delayed inode item if we're deleting
-the inode, and even then we do not run the delayed insertions or delayed
-removals.  These can be run at any point after our final inode does its
-last iput, which is what triggers the snapshot deletion.  We can end up
-with the snapshot deletion happening and then have the delayed items run
-on that file system, resulting in the above problem.
-
-This problem has existed forever, however my patches made it much easier
-to hit as I wake up the cleaner much more often to deal with delayed
-iputs, which made us more likely to start the snapshot dropping work
-before the transaction commits, which is when the delayed items would
-generally be run.  Before, generally speaking, we would run the delayed
-items, commit the transaction, and wakeup the cleaner thread to start
-deleting snapshots, which means we were less likely to hit this problem.
-You could still hit it if you had multiple snapshots to be deleted and
-ended up with lots of delayed items, but it was definitely harder.
-
-Fix for now by simply running all the delayed items before starting to
-drop the snapshot.  We could make this smarter in the future by making
-the delayed items per-root, and then simply drop any delayed items for
-roots that we are going to delete.  But for now just a quick and easy
-solution is the safest.
-
-CC: stable@vger.kernel.org # 4.4+
-Reviewed-by: Filipe Manana <fdmanana@suse.com>
-Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Cc: <stable@vger.kernel.org> # v4.12+
+Fixes: 76fdb3a9e13a ('ALSA: fireface: add support for Fireface 400')
+Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/extent-tree.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ sound/firewire/fireface/ff-protocol-ff400.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/btrfs/extent-tree.c
-+++ b/fs/btrfs/extent-tree.c
-@@ -9183,6 +9183,10 @@ int btrfs_drop_snapshot(struct btrfs_roo
- 		goto out_free;
- 	}
+--- a/sound/firewire/fireface/ff-protocol-ff400.c
++++ b/sound/firewire/fireface/ff-protocol-ff400.c
+@@ -152,7 +152,7 @@ static int ff400_switch_fetching_mode(st
+ 	if (reg == NULL)
+ 		return -ENOMEM;
  
-+	err = btrfs_run_delayed_items(trans);
-+	if (err)
-+		goto out_end_trans;
-+
- 	if (block_rsv)
- 		trans->block_rsv = block_rsv;
- 
+-	if (enable) {
++	if (!enable) {
+ 		/*
+ 		 * Each quadlet is corresponding to data channels in a data
+ 		 * blocks in reverse order. Precisely, quadlets for available
 
 
