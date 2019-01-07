@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACCD1C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:02:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BEE4C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:02:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7620121736
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:02:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C37C21736
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:02:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546866127;
-	bh=fpIgt0hHU6M0Wccqr6631+ckn2qql5wD8ytJm1QxQfQ=;
+	s=default; t=1546866130;
+	bh=jhw46cWuCA4u1MDRH6NSakTWwWfuGobuYJA57k1bk30=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ZDmKXCtREy2rQVBgDJRkla5b/k2+77mAMyAQ4nyuzI5wzMTck5xdAs+amjQzRBBgk
-	 8Q55UPt4ElFkgibK/QQttOtpb6rbeE5FbdotDzjPGgcZ/u4ijjs0i1G0h9M1PwmoTo
-	 wiZpHW9QR0VN8dk+dcHDI+D44vArJwJqvN6QhdTM=
+	b=VV9YqT8WQRfjVI+LRNiz5LupzV7YDEXEK5nx2tHqt4GrdWsRleLkI/vaQr0xGux5Q
+	 Hf+fLcqlOkcCUOaOmskcySJ+lbuPBlzFlUpodoVNwKDPyIyurUGzjISRMj0H61l8UZ
+	 AY1KsTtdXT4wWrmPy5uDYzjxGxbIXjF7fs0T4vXE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730737AbfAGNCG (ORCPT
+        id S1730751AbfAGNCJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:02:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49478 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:02:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49528 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730706AbfAGNCE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:02:04 -0500
+        id S1730706AbfAGNCH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:02:07 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 444552089F;
-        Mon,  7 Jan 2019 13:02:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2F0EB2089F;
+        Mon,  7 Jan 2019 13:02:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546866123;
-        bh=fpIgt0hHU6M0Wccqr6631+ckn2qql5wD8ytJm1QxQfQ=;
+        s=default; t=1546866126;
+        bh=jhw46cWuCA4u1MDRH6NSakTWwWfuGobuYJA57k1bk30=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tm9WywgIu6GhGCo18tnFUwYwyfT/6b5L8MhN+Tq+U55uhLOAPwOqigAHYjvPskA3X
-         jeeeaXcWs+Vn5jswyXHoH274J3yZ6tXI+yFxmuZY18ibxwkkqZ16lKaGsGWthqP3PA
-         cbZeTd9PD6aHJpycX4PX2HW52xzrVH68gb8K2tyo=
+        b=W1gu8b91gtHtJKjc4+w6p4tWazsQbzKhqH8QGrl0vGJH4h1I2J/L7hKBq+ORE/J6Z
+         pkp/RKROUX6x4LRAEY2VjcbNpkikqAToOXTXuZYB0pVyjQy0yBGjf4phdCoOGb23io
+         qrShNKnmYET7/bEOr7kDDzyzNfo04qgKK5kZwRnw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sebastian Ott <sebott@linux.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: [PATCH 4.14 054/101] s390/pci: fix sleeping in atomic during hotplug
-Date:   Mon,  7 Jan 2019 13:32:42 +0100
-Message-Id: <20190107105335.887669133@linuxfoundation.org>
+        stable@vger.kernel.org, Patrick Dreyer <Patrick.Dreyer@gmail.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 4.14 055/101] Input: elan_i2c - add ACPI ID for touchpad in ASUS Aspire F5-573G
+Date:   Mon,  7 Jan 2019 13:32:43 +0100
+Message-Id: <20190107105335.939418590@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107105330.372621917@linuxfoundation.org>
 References: <20190107105330.372621917@linuxfoundation.org>
@@ -65,39 +65,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sebastian Ott <sebott@linux.ibm.com>
+From: Patrick Dreyer <Patrick@Dreyer.name>
 
-commit 98dfd32620e970eb576ebce5ea39d905cb005e72 upstream.
+commit 7db54c89f0b30a101584e09d3729144e6170059d upstream.
 
-When triggered by pci hotplug (PEC 0x306) clp_get_state is called
-with spinlocks held resulting in the following warning:
+This adds ELAN0501 to the ACPI table to support Elan touchpad found in ASUS
+Aspire F5-573G.
 
-zpci: n/a: Event 0x306 reconfigured PCI function 0x0
-BUG: sleeping function called from invalid context at mm/page_alloc.c:4324
-in_atomic(): 1, irqs_disabled(): 0, pid: 98, name: kmcheck
-2 locks held by kmcheck/98:
-
-Change the allocation to use GFP_ATOMIC.
-
-Cc: stable@vger.kernel.org # 4.13+
-Signed-off-by: Sebastian Ott <sebott@linux.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Signed-off-by: Patrick Dreyer <Patrick.Dreyer@gmail.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/s390/pci/pci_clp.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/input/mouse/elan_i2c_core.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/s390/pci/pci_clp.c
-+++ b/arch/s390/pci/pci_clp.c
-@@ -437,7 +437,7 @@ int clp_get_state(u32 fid, enum zpci_sta
- 	struct clp_state_data sd = {fid, ZPCI_FN_STATE_RESERVED};
- 	int rc;
- 
--	rrb = clp_alloc_block(GFP_KERNEL);
-+	rrb = clp_alloc_block(GFP_ATOMIC);
- 	if (!rrb)
- 		return -ENOMEM;
- 
+--- a/drivers/input/mouse/elan_i2c_core.c
++++ b/drivers/input/mouse/elan_i2c_core.c
+@@ -1251,6 +1251,7 @@ MODULE_DEVICE_TABLE(i2c, elan_id);
+ static const struct acpi_device_id elan_acpi_id[] = {
+ 	{ "ELAN0000", 0 },
+ 	{ "ELAN0100", 0 },
++	{ "ELAN0501", 0 },
+ 	{ "ELAN0600", 0 },
+ 	{ "ELAN0602", 0 },
+ 	{ "ELAN0605", 0 },
 
 
