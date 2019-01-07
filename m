@@ -6,202 +6,257 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0261BC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 02:34:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 028D4C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 02:35:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C683220859
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 02:34:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA67B20859
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 02:35:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726522AbfAGCe1 (ORCPT
+        id S1726534AbfAGCfl convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 6 Jan 2019 21:34:27 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:17117 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726160AbfAGCe1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Jan 2019 21:34:27 -0500
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 8A56F289B65558159034;
-        Mon,  7 Jan 2019 10:34:24 +0800 (CST)
-Received: from [127.0.0.1] (10.134.22.195) by DGGEMS402-HUB.china.huawei.com
- (10.3.19.202) with Microsoft SMTP Server id 14.3.408.0; Mon, 7 Jan 2019
- 10:33:46 +0800
-Subject: Re: [PATCH v3 1/2] f2fs-dev: support multi-device direct IO
-To:     sunqiuyang <sunqiuyang@huawei.com>, <linux-kernel@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>
-References: <20190107021933.32741-1-sunqiuyang@huawei.com>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <b6a6879c-9857-556e-06dd-50256d34a090@huawei.com>
-Date:   Mon, 7 Jan 2019 10:33:45 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20190107021933.32741-1-sunqiuyang@huawei.com>
-Content-Type: text/plain; charset="windows-1252"
+        Sun, 6 Jan 2019 21:35:41 -0500
+Received: from [38.106.11.25] ([38.106.11.25]:49112 "EHLO
+        barracuda02.hxt-semitech.com" rhost-flags-FAIL-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726507AbfAGCfk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Jan 2019 21:35:40 -0500
+X-ASG-Debug-ID: 1546828533-107606139f130b30001-xx1T2L
+Received: from HXTBJIDCEMVIW02.hxtcorp.net ([10.128.0.15]) by barracuda02.hxt-semitech.com with ESMTP id P8ON2kRhmPUePqyK (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NO); Mon, 07 Jan 2019 10:35:33 +0800 (CST)
+X-Barracuda-Envelope-From: shunyong.yang@hxt-semitech.com
+Received: from HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15) by
+ HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Mon, 7 Jan 2019 10:35:28 +0800
+Received: from HXTBJIDCEMVIW02.hxtcorp.net ([fe80::3e:f4ff:7927:a6f6]) by
+ HXTBJIDCEMVIW02.hxtcorp.net ([fe80::3e:f4ff:7927:a6f6%12]) with mapi id
+ 15.00.1395.000; Mon, 7 Jan 2019 10:35:28 +0800
+From:   "Yang, Shunyong" <shunyong.yang@hxt-semitech.com>
+To:     Guenter Roeck <linux@roeck-us.net>,
+        "Liu, Xiaoting" <xiaoting.liu@hxt-semitech.com>,
+        "jdelvare@suse.com" <jdelvare@suse.com>
+CC:     "openbmc@lists.ozlabs.org" <openbmc@lists.ozlabs.org>,
+        "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/4] pmbus: associate PMBUS_SKIP_STATUS_CHECK with
+ driver_data
+Thread-Topic: [PATCH 1/4] pmbus: associate PMBUS_SKIP_STATUS_CHECK with
+ driver_data
+X-ASG-Orig-Subj: Re: [PATCH 1/4] pmbus: associate PMBUS_SKIP_STATUS_CHECK with
+ driver_data
+Thread-Index: AQHUpAtN0XMGdiJXnEO7wZj7H+98nw==
+Date:   Mon, 7 Jan 2019 02:35:28 +0000
+Message-ID: <0d61e25645bf457ebb55e4c3f64bcb63@HXTBJIDCEMVIW02.hxtcorp.net>
+References: <cover.1546591275.git.xiaoting.liu@hxt-semitech.com>
+ <680b4d5659971cc4f6e1a6878837c2ce49962a7c.1546591275.git.xiaoting.liu@hxt-semitech.com>
+ <b9548ce0-97d2-a3d4-d578-015fc5419967@roeck-us.net>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.64.6.206]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
+X-Barracuda-Connect: UNKNOWN[10.128.0.15]
+X-Barracuda-Start-Time: 1546828533
+X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA384
+X-Barracuda-URL: https://192.168.50.102:443/cgi-mod/mark.cgi
+X-Barracuda-Scan-Msg-Size: 6971
+X-Virus-Scanned: by bsmtpd at hxt-semitech.com
+X-Barracuda-BRTS-Status: 1
+X-Barracuda-Bayes: INNOCENT GLOBAL 0.4998 1.0000 0.0000
+X-Barracuda-Spam-Score: 0.00
+X-Barracuda-Spam-Status: No, SCORE=0.00 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
+X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.65250
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------------------------
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/1/7 10:19, sunqiuyang wrote:
-> From: Qiuyang Sun <sunqiuyang@huawei.com>
+Hi, Guenter,
+  Thanks for reply.
+
+On 2019/1/4 22:54, Guenter Roeck wrote:
+> On 1/4/19 12:55 AM, Xiaoting Liu wrote:
+>> Current code compares device name with name in i2c_device_id to decide
+>> whether PMBUS_SKIP_STATUS_CHECK should be set in pmbus_platform_data,
+>> which makes adding new devices with PMBUS_SKIP_STATUS_CHECK should also
+>> modify code in pmbus_probe().
+>>
+>> This patch adds pmbus_device_info to save pages and flags. Its pointer
+>> is put in driver_data of i2c_device_id, which makes adding new device
+>> more straightforward.
+>>
 > 
-> Changelog v1 ==> v2:
-> 1. Modify the definition of update_device_state(),
->    and call it in direct write;
-> 2. Move some local variables into branches where they are used.
+> Good idea, but I don't see at this time where the patch is needed.
+> Maybe in patch 3/4 which is missing from the series ?
+
+The reason we figure out this patch is that we want to add dps650ab to
+pmbus_id[] in pmbus.c. As dps650ab has flag of PMBUS_SKIP_STATUS_CHECK
+and we don't want to change pmbus_probe(), so make this patch as a
+premise patch.
+As you stated that adding both dps650ab in pmbus.c and adding a separate
+dps650ab driver file is a conceptional mistake, I will work with
+Xiaoting to decide which approach we should use.
+
 > 
-> Changelog v2 ==> v3:
-> Rename update_device_state() to f2fs_update_device_state() like other
-> exported function names, otherwise it may pollute global namespace of
-> functions in kernel.
+>> Signed-off-by: Shunyong Yang <shunyong.yang@hxt-semitech.com>
+>> Signed-off-by: Xiaoting Liu <xiaoting.liu@hxt-semitech.com>
+>> ---
+>>   drivers/hwmon/pmbus/pmbus.c | 54 +++++++++++++++++++++++++++------------------
+>>   include/linux/pmbus.h       |  5 +++++
+>>   2 files changed, 37 insertions(+), 22 deletions(-)
+>>
+>> diff --git a/drivers/hwmon/pmbus/pmbus.c b/drivers/hwmon/pmbus/pmbus.c
+>> index 7688dab32f6e..aa4cf9636e99 100644
+>> --- a/drivers/hwmon/pmbus/pmbus.c
+>> +++ b/drivers/hwmon/pmbus/pmbus.c
+>> @@ -172,13 +172,15 @@ static int pmbus_probe(struct i2c_client *client,
+>>          struct pmbus_driver_info *info;
+>>          struct pmbus_platform_data *pdata = NULL;
+>>          struct device *dev = &client->dev;
+>> +       struct pmbus_device_info *device_info;
+>>
+>>          info = devm_kzalloc(dev, sizeof(struct pmbus_driver_info), GFP_KERNEL);
+>>          if (!info)
+>>                  return -ENOMEM;
+>>
+>> -       if (!strcmp(id->name, "dps460") || !strcmp(id->name, "dps800") ||
+>> -           !strcmp(id->name, "sgd009")) {
+>> +       device_info = (struct pmbus_device_info *)id->driver_data;
+>> +
+>> +       if (device_info->flags & PMBUS_SKIP_STATUS_CHECK) {
+>>                  pdata = devm_kzalloc(dev, sizeof(struct pmbus_platform_data),
+>>                                       GFP_KERNEL);
+>>                  if (!pdata)
+>> @@ -187,36 +189,44 @@ static int pmbus_probe(struct i2c_client *client,
+>>                  pdata->flags = PMBUS_SKIP_STATUS_CHECK;
+>>          }
+>>
+>> -       info->pages = id->driver_data;
+>> +       info->pages = device_info->pages;
+>>          info->identify = pmbus_identify;
+>>          dev->platform_data = pdata;
+>>
+>>          return pmbus_do_probe(client, id, info);
+>>   }
+>>
+>> +static const struct pmbus_device_info default_pmbus_info = {1, 0};
+>> +static const struct pmbus_device_info dps460_pmbus_info = {
+>> +                               1, PMBUS_SKIP_STATUS_CHECK};
+>> +static const struct pmbus_device_info dps800_pmbus_info = {
+>> +                               1, PMBUS_SKIP_STATUS_CHECK};
+>> +static const struct pmbus_device_info sgd009_pmbus_info = {
+>> +                               1, PMBUS_SKIP_STATUS_CHECK};
 > 
-> Signed-off-by: Qiuyang Sun <sunqiuyang@huawei.com>
-> ---
->  fs/f2fs/data.c    | 25 ++++++++++++++++++++++++-
->  fs/f2fs/f2fs.h    |  4 ++--
->  fs/f2fs/segment.c | 12 ++++++------
->  3 files changed, 32 insertions(+), 9 deletions(-)
+> Three structures with exactly the same content does not add value.
+> Please merge into one with a common name that reflects its use.
+>
+
+Thanks. we will following you suggestion to use common name as
+pmbus_info_one_skip.
+
+>> +static const struct pmbus_device_info pmbus_info = {0, 0};
 > 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index e5cd3fd..b35e042 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -1076,6 +1076,7 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
->  	struct extent_info ei = {0,0,0};
->  	block_t blkaddr;
->  	unsigned int start_pgofs;
-> +	block_t end_blk;
->  
->  	if (!maxblocks)
->  		return 0;
-> @@ -1207,8 +1208,17 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
->  
->  		map->m_pblk = blkaddr;
->  		map->m_len = 1;
-> +
-> +		if (sbi->s_ndevs && blkaddr != NEW_ADDR &&
-> +							blkaddr != NULL_ADDR) {
+> default_pmbus_info and pmbus_info are badly named and ordered.
+> The name should reflect that one sets one page and that the other
+> leaves the number of pages unset.
+> 
+> I would suggest three structures and names, such as
+> 
+> pmbus_info_one
+> pmbus_info_one_skip
+> pmbus_info_zero
+> 
+> though I am open to better names.
 
-Minor, if (sbi->s_ndevs && __is_valid_data_blkaddr(blkaddr)), maybe Jaegeuk
-can help to clean up this when merging this patch.
+Thanks. We will change.
 
-Anyway, it looks good to me. :)
+> 
+>>   /*
+>>    * Use driver_data to set the number of pages supported by the chip.
+>>    */
+>>   static const struct i2c_device_id pmbus_id[] = {
+>> -       {"adp4000", 1},
+>> -       {"bmr453", 1},
+>> -       {"bmr454", 1},
+>> -       {"dps460", 1},
+>> -       {"dps800", 1},
+>> -       {"mdt040", 1},
+>> -       {"ncp4200", 1},
+>> -       {"ncp4208", 1},
+>> -       {"pdt003", 1},
+>> -       {"pdt006", 1},
+>> -       {"pdt012", 1},
+>> -       {"pmbus", 0},
+>> -       {"sgd009", 1},
+>> -       {"tps40400", 1},
+>> -       {"tps544b20", 1},
+>> -       {"tps544b25", 1},
+>> -       {"tps544c20", 1},
+>> -       {"tps544c25", 1},
+>> -       {"udt020", 1},
+>> +       {"adp4000", (kernel_ulong_t)&default_pmbus_info},
+>> +       {"bmr453", (kernel_ulong_t)&default_pmbus_info},
+>> +       {"bmr454", (kernel_ulong_t)&default_pmbus_info},
+>> +       {"dps460", (kernel_ulong_t)&dps460_pmbus_info},
+>> +       {"dps800", (kernel_ulong_t)&dps800_pmbus_info},
+>> +       {"mdt040", (kernel_ulong_t)&default_pmbus_info},
+>> +       {"ncp4200", (kernel_ulong_t)&default_pmbus_info},
+>> +       {"ncp4208", (kernel_ulong_t)&default_pmbus_info},
+>> +       {"pdt003", (kernel_ulong_t)&default_pmbus_info},
+>> +       {"pdt006", (kernel_ulong_t)&default_pmbus_info},
+>> +       {"pdt012", (kernel_ulong_t)&default_pmbus_info},
+>> +       {"pmbus", (kernel_ulong_t)&pmbus_info},
+>> +       {"sgd009", (kernel_ulong_t)&sgd009_pmbus_info},
+>> +       {"tps40400", (kernel_ulong_t)&default_pmbus_info},
+>> +       {"tps544b20", (kernel_ulong_t)&default_pmbus_info},
+>> +       {"tps544b25", (kernel_ulong_t)&default_pmbus_info},
+>> +       {"tps544c20", (kernel_ulong_t)&default_pmbus_info},
+>> +       {"tps544c25", (kernel_ulong_t)&default_pmbus_info},
+>> +       {"udt020", (kernel_ulong_t)&default_pmbus_info},
+>>          {}
+>>   };
+>>
+>> diff --git a/include/linux/pmbus.h b/include/linux/pmbus.h
+>> index ee3c2aba2a8e..3c05edad7666 100644
+>> --- a/include/linux/pmbus.h
+>> +++ b/include/linux/pmbus.h
+>> @@ -46,4 +46,9 @@ struct pmbus_platform_data {
+>>          struct regulator_init_data *reg_init_data;
+>>   };
+>>
+>> +struct pmbus_device_info {
+>> +       int pages;
+>> +       u32 flags;
+>> +};
+>> +
+> 
+> This should not be needed here. The structure can be declared locally
+> in pmbus.c (its use in patch 4/4 is wrong).
+>
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+OK. We will move the structure back to pmbus.c. And we will decide
+whether we need 4/4.
 
-Thanks,
+Thanks.
+Shunyong.
 
 
-> +			int devi;
-> +
-> +			devi = f2fs_target_device_index(sbi, blkaddr);
-> +			end_blk = FDEV(devi).end_blk;
-> +		}
->  	} else if ((map->m_pblk != NEW_ADDR &&
-> -			blkaddr == (map->m_pblk + ofs)) ||
-> +			blkaddr == (map->m_pblk + ofs) &&
-> +			(!sbi->s_ndevs || blkaddr <= end_blk)) ||
->  			(map->m_pblk == NEW_ADDR && blkaddr == NEW_ADDR) ||
->  			flag == F2FS_GET_BLOCK_PRE_DIO) {
->  		ofs++;
-> @@ -1322,6 +1332,7 @@ static int __get_data_block(struct inode *inode, sector_t iblock,
->  {
->  	struct f2fs_map_blocks map;
->  	int err;
-> +	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
->  
->  	map.m_lblk = iblock;
->  	map.m_len = bh->b_size >> inode->i_blkbits;
-> @@ -1333,6 +1344,18 @@ static int __get_data_block(struct inode *inode, sector_t iblock,
->  	err = f2fs_map_blocks(inode, &map, create, flag);
->  	if (!err) {
->  		map_bh(bh, inode->i_sb, map.m_pblk);
-> +		if (sbi->s_ndevs) {
-> +			int devi;
-> +
-> +			devi = f2fs_target_device_index(sbi, map.m_pblk);
-> +			if (devi) {
-> +				bh->b_bdev = FDEV(devi).bdev;
-> +				bh->b_blocknr -= FDEV(devi).start_blk;
-> +			}
-> +			if (may_write)
-> +				f2fs_update_device_state(sbi, inode->i_ino,
-> +								map.m_pblk);
-> +		}
->  		bh->b_state = (bh->b_state & ~F2FS_MAP_FLAGS) | map.m_flags;
->  		bh->b_size = (u64)map.m_len << inode->i_blkbits;
->  	}
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index eeede26..7e423e4 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -3056,6 +3056,8 @@ int f2fs_lookup_journal_in_cursum(struct f2fs_journal *journal, int type,
->  int f2fs_rw_hint_to_seg_type(enum rw_hint hint);
->  enum rw_hint f2fs_io_type_to_rw_hint(struct f2fs_sb_info *sbi,
->  			enum page_type type, enum temp_type temp);
-> +void f2fs_update_device_state(struct f2fs_sb_info *sbi, nid_t ino,
-> +			block_t blkaddr);
->  
->  /*
->   * checkpoint.c
-> @@ -3595,8 +3597,6 @@ static inline bool f2fs_force_buffered_io(struct inode *inode,
->  
->  	if (f2fs_post_read_required(inode))
->  		return true;
-> -	if (sbi->s_ndevs)
-> -		return true;
->  	/*
->  	 * for blkzoned device, fallback direct IO to buffered IO, so
->  	 * all IOs can be serialized by log-structured write.
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index a361d61..2a21d87 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -3050,18 +3050,18 @@ void f2fs_allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
->  	up_read(&SM_I(sbi)->curseg_lock);
->  }
->  
-> -static void update_device_state(struct f2fs_io_info *fio)
-> +void f2fs_update_device_state(struct f2fs_sb_info *sbi, nid_t ino,
-> +						block_t blkaddr)
->  {
-> -	struct f2fs_sb_info *sbi = fio->sbi;
->  	unsigned int devidx;
->  
->  	if (!sbi->s_ndevs)
->  		return;
->  
-> -	devidx = f2fs_target_device_index(sbi, fio->new_blkaddr);
-> +	devidx = f2fs_target_device_index(sbi, blkaddr);
->  
->  	/* update device state for fsync */
-> -	f2fs_set_dirty_device(sbi, fio->ino, devidx, FLUSH_INO);
-> +	f2fs_set_dirty_device(sbi, ino, devidx, FLUSH_INO);
->  
->  	/* update device state for checkpoint */
->  	if (!f2fs_test_bit(devidx, (char *)&sbi->dirty_device)) {
-> @@ -3092,7 +3092,7 @@ static void do_write_page(struct f2fs_summary *sum, struct f2fs_io_info *fio)
->  		goto reallocate;
->  	}
->  
-> -	update_device_state(fio);
-> +	f2fs_update_device_state(fio->sbi, fio->ino, fio->new_blkaddr);
->  
->  	if (keep_order)
->  		up_read(&fio->sbi->io_order_lock);
-> @@ -3168,7 +3168,7 @@ int f2fs_inplace_write_data(struct f2fs_io_info *fio)
->  	else
->  		err = f2fs_submit_page_bio(fio);
->  	if (!err)
-> -		update_device_state(fio);
-> +		f2fs_update_device_state(fio->sbi, fio->ino, fio->new_blkaddr);
->  
->  	f2fs_update_iostat(fio->sbi, fio->io_type, F2FS_BLKSIZE);
->  
+>>   #endif /* _PMBUS_H_ */
+>> --
+>> 1.8.3.1
+>>
+>>
+>>
+>>
+>> This email is intended only for the named addressee. It may contain information that is confidential/private, legally privileged, or copyright-protected, and you should handle it accordingly. If you are not the intended recipient, you do not have legal rights to retain, copy, or distribute this email or its contents, and should promptly delete the email and all electronic copies in your system; do not retain copies in any media. If you have received this email in error, please notify the sender promptly. Thank you.
+>>
+>>
+>>
+> 
 > 
 
