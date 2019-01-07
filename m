@@ -4,50 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFD36C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:02:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 339CFC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:02:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7347321736
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:02:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 05F6D2089F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:02:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546866166;
-	bh=OEo0eb4Xnfw/PzQrKCMRXdsOH0wPFMiqWL6ijjwyJHM=;
+	s=default; t=1546866171;
+	bh=Rj8dEl5Z+Y1jOJZwvi4fPUVfyfOadydUli5TTD2a0uk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=O95hfJ5Hu0G+Rgc8lO0U1ixRdyU4ynOi+HXRPE9BMQYG4b0KLgJjlK8g/tk8/iEJ7
-	 B69gQ3PFKDz4PDU63QICu8uOXYKGk7uAGnkIoUq6MbIWk0JMOVIR1nWIBE6KxCyFG9
-	 l7FoiR2FfED9IOgm63+Yn256pj3PNbJrMckod86g=
+	b=u32+PSjNe8JOWOkvIM9Z2Xom8QozIuDqsr6ynm+pdQUSKESn56DTqjOh8fbdUfUHQ
+	 KEDD1WcSN0ALnL+bd0G1xGFqwH/Ast1FXrVVgCcCHzz+GnicWQxyfVypJwzZJwXfZK
+	 Y1PHzR9pu8M8Rd5jUWAjPS+vwBuLSRGFRe3IsNeQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730865AbfAGNCp (ORCPT
+        id S1730876AbfAGNCt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:02:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50180 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:02:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50272 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730838AbfAGNCk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:02:40 -0500
+        id S1730220AbfAGNCq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:02:46 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E9175206BB;
-        Mon,  7 Jan 2019 13:02:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7E0C82089F;
+        Mon,  7 Jan 2019 13:02:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546866159;
-        bh=OEo0eb4Xnfw/PzQrKCMRXdsOH0wPFMiqWL6ijjwyJHM=;
+        s=default; t=1546866166;
+        bh=Rj8dEl5Z+Y1jOJZwvi4fPUVfyfOadydUli5TTD2a0uk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dqZQtJh/wpbWtO5KZ0X+ePbV/xZg6/87EZaU0XNNx0+BGYdc63g7lUqVpZA475SiX
-         GwWuiS8yX82YuUaxWQ2CAlwBwRQMOQ8+03AflAsTOjGcp+YRKhjy08Xs/sevj+oCVG
-         7zIx8+7c9t8tZNVWZeiICnmrb8X4ntb/GCRg0c1k=
+        b=CMG5/sX3b/32JTY6lPk5ERB3G5SBr6WezRbi9vpogBg366bbmrkXk0tuGeUzNESmA
+         xFIT4WaXTwkxk7M8wcw/yCk4Xy2mRVximynBKMavVrWbUDw4lliSxu61hJvQ1cXB95
+         SEEBN9oy79Ri5tvRFB6c5UyY6Sl61TQ7hYjrgWHk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
-        =?UTF-8?q?ruippan=20 ?= <ruippan@tencent.com>,
         stable@kernel.org
-Subject: [PATCH 4.14 065/101] ext4: fix EXT4_IOC_GROUP_ADD ioctl
-Date:   Mon,  7 Jan 2019 13:32:53 +0100
-Message-Id: <20190107105336.509408302@linuxfoundation.org>
+Subject: [PATCH 4.14 067/101] ext4: force inode writes when nfsd calls commit_metadata()
+Date:   Mon,  7 Jan 2019 13:32:55 +0100
+Message-Id: <20190107105336.648345003@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107105330.372621917@linuxfoundation.org>
 References: <20190107105330.372621917@linuxfoundation.org>
@@ -66,37 +65,86 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: ruippan (潘睿) <ruippan@tencent.com>
+From: Theodore Ts'o <tytso@mit.edu>
 
-commit e647e29196b7f802f8242c39ecb7cc937f5ef217 upstream.
+commit fde872682e175743e0c3ef939c89e3c6008a1529 upstream.
 
-Commit e2b911c53584 ("ext4: clean up feature test macros with
-predicate functions") broke the EXT4_IOC_GROUP_ADD ioctl.  This was
-not noticed since only very old versions of resize2fs (before
-e2fsprogs 1.42) use this ioctl.  However, using a new kernel with an
-enterprise Linux userspace will cause attempts to use online resize to
-fail with "No reserved GDT blocks".
+Some time back, nfsd switched from calling vfs_fsync() to using a new
+commit_metadata() hook in export_operations().  If the file system did
+not provide a commit_metadata() hook, it fell back to using
+sync_inode_metadata().  Unfortunately doesn't work on all file
+systems.  In particular, it doesn't work on ext4 due to how the inode
+gets journalled --- the VFS writeback code will not always call
+ext4_write_inode().
 
-Fixes: e2b911c53584 ("ext4: clean up feature test macros with predicate...")
-Cc: stable@kernel.org # v4.4
+So we need to provide our own ext4_nfs_commit_metdata() method which
+calls ext4_write_inode() directly.
+
+Google-Bug-Id: 121195940
 Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Signed-off-by: ruippan (潘睿) <ruippan@tencent.com>
+Cc: stable@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/resize.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/ext4/super.c             |   11 +++++++++++
+ include/trace/events/ext4.h |   20 ++++++++++++++++++++
+ 2 files changed, 31 insertions(+)
 
---- a/fs/ext4/resize.c
-+++ b/fs/ext4/resize.c
-@@ -1602,7 +1602,7 @@ int ext4_group_add(struct super_block *s
- 	}
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -1153,6 +1153,16 @@ static struct dentry *ext4_fh_to_parent(
+ 				    ext4_nfs_get_inode);
+ }
  
- 	if (reserved_gdb || gdb_off == 0) {
--		if (ext4_has_feature_resize_inode(sb) ||
-+		if (!ext4_has_feature_resize_inode(sb) ||
- 		    !le16_to_cpu(es->s_reserved_gdt_blocks)) {
- 			ext4_warning(sb,
- 				     "No reserved GDT blocks, can't resize");
++static int ext4_nfs_commit_metadata(struct inode *inode)
++{
++	struct writeback_control wbc = {
++		.sync_mode = WB_SYNC_ALL
++	};
++
++	trace_ext4_nfs_commit_metadata(inode);
++	return ext4_write_inode(inode, &wbc);
++}
++
+ /*
+  * Try to release metadata pages (indirect blocks, directories) which are
+  * mapped via the block device.  Since these pages could have journal heads
+@@ -1361,6 +1371,7 @@ static const struct export_operations ex
+ 	.fh_to_dentry = ext4_fh_to_dentry,
+ 	.fh_to_parent = ext4_fh_to_parent,
+ 	.get_parent = ext4_get_parent,
++	.commit_metadata = ext4_nfs_commit_metadata,
+ };
+ 
+ enum {
+--- a/include/trace/events/ext4.h
++++ b/include/trace/events/ext4.h
+@@ -225,6 +225,26 @@ TRACE_EVENT(ext4_drop_inode,
+ 		  (unsigned long) __entry->ino, __entry->drop)
+ );
+ 
++TRACE_EVENT(ext4_nfs_commit_metadata,
++	TP_PROTO(struct inode *inode),
++
++	TP_ARGS(inode),
++
++	TP_STRUCT__entry(
++		__field(	dev_t,	dev			)
++		__field(	ino_t,	ino			)
++	),
++
++	TP_fast_assign(
++		__entry->dev	= inode->i_sb->s_dev;
++		__entry->ino	= inode->i_ino;
++	),
++
++	TP_printk("dev %d,%d ino %lu",
++		  MAJOR(__entry->dev), MINOR(__entry->dev),
++		  (unsigned long) __entry->ino)
++);
++
+ TRACE_EVENT(ext4_mark_inode_dirty,
+ 	TP_PROTO(struct inode *inode, unsigned long IP),
+ 
 
 
