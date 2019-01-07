@@ -2,221 +2,187 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ABDAC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:54:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19707C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:54:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61E932085A
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:54:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D17ED2085A
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:54:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="FG4QOPQu";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="pKjJ5/RX"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U/uaXTk4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727707AbfAGSyn (ORCPT
+        id S1728269AbfAGSyP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 13:54:43 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:55280 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727081AbfAGSyk (ORCPT
+        Mon, 7 Jan 2019 13:54:15 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:35291 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727048AbfAGSyK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 13:54:40 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 0CDB2608FD; Mon,  7 Jan 2019 18:54:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1546887279;
-        bh=WMbrq3G4089ARexzr475dVmKjXoIOG2WzsbqHGRv5zw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FG4QOPQuJfov+Yp8vkZ9V9wYNOVr7hRxk6uBhkUFGioZUtW6vroWDaQ+c+Ym8kxoU
-         sfepWeUlCQl4Vl/jPuBBJhuilKwkP2i0wNEi8w/Eu0Fw3NHeYyvgCOo8wRUAjQLk81
-         VRrLI8Cjz9/+SLxmUFxDrh/exMjQZ74w3XAaPc/8=
-Received: from localhost (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: ilina@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3BC61608D2;
-        Mon,  7 Jan 2019 18:54:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1546887276;
-        bh=WMbrq3G4089ARexzr475dVmKjXoIOG2WzsbqHGRv5zw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=pKjJ5/RXzGCKxAnIf5Q3X/10RnomAq+zbMaqU6w3H2Eas5bdWCd3CcC7rLzLNg6v8
-         o4njy3y7f01PIQ27RFECSi1v7SpX10Y45rkefPl/Kvz0O/VEYo/TE6zTpAMEfh8LyF
-         HnzJZIKWpJ5A4avQd6xX/ctrogyW9oMzITcivQ8U=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3BC61608D2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
-Date:   Mon, 7 Jan 2019 11:54:35 -0700
-From:   Lina Iyer <ilina@codeaurora.org>
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     evgreen@chromium.org, marc.zyngier@arm.com,
-        linux-kernel@vger.kernel.org, rplsssn@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, thierry.reding@gmail.com,
-        bjorn.andersson@linaro.org
-Subject: Re: [PATCH 5/7] drivers: pinctrl: msm: setup GPIO irqchip hierarchy
-Message-ID: <20190107185435.GJ14960@codeaurora.org>
-References: <20181219221105.3004-1-ilina@codeaurora.org>
- <20181219221105.3004-6-ilina@codeaurora.org>
- <154533621302.79149.15228907259643696166@swboyd.mtv.corp.google.com>
+        Mon, 7 Jan 2019 13:54:10 -0500
+Received: by mail-lf1-f65.google.com with SMTP id e26so1095258lfc.2;
+        Mon, 07 Jan 2019 10:54:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=X2xmaLsg9+x3NOOa9a3z9y0xnBcsw3Eg+1EpWLMSG6k=;
+        b=U/uaXTk48haB58XjQDNWEWvQDj2qNa+gwEXqtLDendilnltwq2czrtHqYIViYfIYJz
+         58iFmatzCSe6aCoLBbj9EXpl8n4w3EWgBvHMoxGNgmbKJiiQ3n13n0piZJ29pqNrvrVG
+         m8KuW55O+Jf8N2YgxyHkfDinDWS1BtMz3y0nhLdhuQgc7qSjFm6wQSwY7c8APY0ApNYD
+         oh4gagTsj+0O/5VvrMvaO7b5B2l56R10Kma2YkNtHfPKo5/YzyadE/EPrVpNMUzQV+ul
+         D5hT6W4Fkac45aIO5XPdjU/7GszDca2z3b95frvq/EuPEY5CBqjJVpCaA2CkhNS342Jg
+         1sbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=X2xmaLsg9+x3NOOa9a3z9y0xnBcsw3Eg+1EpWLMSG6k=;
+        b=qPtJxKQevTqlUv1JXqqo12eEA+aLWtgfI7+ETIxqDDPxzLBfZaZhHiYwQoOrFxPgMK
+         U8H0S8NtCQ67eqU0bDNhFadVVXFeP26FUeag2rLhaIVC1TciA+CZHTuhPp8Vffx8+uR7
+         t2Vg0lpNxVpHiLggx8iuQgosRSX184LJytvRcmF12t3q13w/X+AwMXhiUcoWI731w2A7
+         +UsUxgNg/b4Q60xNeT/d6SwnFCKb5sCuL5KSxkhHpQiXCmH/l9y9cdIn3ocn8Qcqzqvv
+         eoajkHqOeuy5B49buWWgDvMgQAxikql46XjMssh+cL466/GR2OydAICH+Fql+Pj6Xil1
+         tsQQ==
+X-Gm-Message-State: AA+aEWZ1ZeaVgQWskojteSve+k3f8RLCLa7+S41qgcsq7Ct5aCUtUv5d
+        lPQwFB16ENnD6avWCO4uUPQ=
+X-Google-Smtp-Source: AFSGD/Vij7p1CEcLNAVrinK7J08BklMtIEMMx8FQP/f017DZC4I69rS+O9lSwHVbU739Q58zzuN8rg==
+X-Received: by 2002:a19:f89:: with SMTP id 9mr30185815lfp.10.1546887247456;
+        Mon, 07 Jan 2019 10:54:07 -0800 (PST)
+Received: from localhost.localdomain ([2a02:a315:5445:5300:c050:d453:6c2:1d01])
+        by smtp.googlemail.com with ESMTPSA id h203sm12825007lfe.44.2019.01.07.10.54.06
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 07 Jan 2019 10:54:06 -0800 (PST)
+From:   =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+To:     dmitry.torokhov@gmail.com
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org, pawel.mikolaj.chmiel@gmail.com,
+        xc-racer2@live.ca, simon@lineageos.org
+Subject: [PATCH v3 1/7] Input: tm2-touchkey: Add support for midas touchkey
+Date:   Mon,  7 Jan 2019 19:53:40 +0100
+Message-Id: <20190107185346.30184-2-pawel.mikolaj.chmiel@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190107185346.30184-1-pawel.mikolaj.chmiel@gmail.com>
+References: <20190107185346.30184-1-pawel.mikolaj.chmiel@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <154533621302.79149.15228907259643696166@swboyd.mtv.corp.google.com>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 20 2018 at 13:03 -0700, Stephen Boyd wrote:
->Quoting Lina Iyer (2018-12-19 14:11:03)
->> To allow GPIOs to wakeup the system from suspend or deep idle, the
->> wakeup capable GPIOs are setup in hierarchy with interrupts from the
->> wakeup-parent irqchip.
->>
->> In older SoC's, the TLMM will handover detection to the parent irqchip
->> and in newer SoC's, the parent irqchip may also be active as well as the
->> TLMM and therefore the GPIOs need to be masked at TLMM to avoid
->> duplicate interrupts. To enable both these configurations to exist,
->> allow the parent irqchip to dictate the TLMM irqchip's behavior when
->> masking/unmasking the interrupt.
->>
->> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
->
->I don't think I gave a signed-off-by, so you need to ask to forge my
->sign off here. Please change it to be:
->
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
->
->and I'm not sure how much I wrote vs. you wrote anymore so perhaps also
->add a
->
-> Co-developed-by: Stephen Boyd <swboyd@chromium.org>
->
-I meant to do that. I will add this tag instead. Sorry about that.
+From: Simon Shields <simon@lineageos.org>
 
->And finally, please just email my chromium.org email for this series
->because I apparently messed up the address once and now it's all going
->to the wrong inbox. Thanks!
->
-Sure.
+The touchkey on midas boards is almost identical.
+The only real difference is that it uses the same register for both
+keycode and base.
 
->> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
->
->Can you Cc Linus Walleij and Bjorn Andersson on the whole patch series
->next time? Would be good to have their review on major pinctrl driver
->changes.
->
-Bjorn is already included. Will make sure to include Linus in the next
-spin.
+Signed-off-by: Simon Shields <simon@lineageos.org>
+Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
+---
+Changes from v1:
+  - Droped separate name changes
+  - Added missing const in few places
+  - Removed redundant cast
+---
+ drivers/input/keyboard/tm2-touchkey.c | 34 +++++++++++++++++++++++----
+ 1 file changed, 29 insertions(+), 5 deletions(-)
 
->> @@ -967,11 +994,86 @@ static bool msm_gpio_needs_valid_mask(struct msm_pinctrl *pctrl)
->>         return device_property_read_u16_array(pctrl->dev, "gpios", NULL, 0) > 0;
->>  }
->>
->> +static int msm_gpio_domain_translate(struct irq_domain *d,
->> +                                    struct irq_fwspec *fwspec,
->> +                                    unsigned long *hwirq, unsigned int *type)
->> +{
->> +       if (is_of_node(fwspec->fwnode)) {
->> +               if (fwspec->param_count < 2)
->> +                       return -EINVAL;
->> +               *hwirq = fwspec->param[0];
->> +               *type = fwspec->param[1] & IRQ_TYPE_SENSE_MASK;
->> +               return 0;
->> +       }
->> +
->> +       return -EINVAL;
->> +}
->
->Maybe this can be a generic function in gpiolib?
->
->> +
->> +static int msm_gpio_domain_alloc(struct irq_domain *domain, unsigned int virq,
->> +                                unsigned int nr_irqs, void *arg)
->> +{
->> +       int ret;
->> +       irq_hw_number_t hwirq;
->> +       struct gpio_chip *gc = domain->host_data;
->> +       struct msm_pinctrl *pctrl = gpiochip_get_data(gc);
->> +       struct irq_fwspec *fwspec = arg;
->> +       struct qcom_irq_fwspec parent = { };
->> +       unsigned int type;
->> +
->> +       ret = msm_gpio_domain_translate(domain, fwspec, &hwirq, &type);
->> +       if (ret)
->> +               return ret;
->> +
->> +       ret = irq_domain_set_hwirq_and_chip(domain, virq, hwirq,
->> +                                           &pctrl->irq_chip, gc);
->> +       if (ret < 0)
->> +               return ret;
->> +
->> +       if (!domain->parent)
->> +               return 0;
->> +
->> +       parent.fwspec.fwnode      = domain->parent->fwnode;
->> +       parent.fwspec.param_count = 2;
->> +       parent.fwspec.param[0]    = hwirq;
->> +       parent.fwspec.param[1]    = type;
->> +
->> +       ret = irq_domain_alloc_irqs_parent(domain, virq, nr_irqs, &parent);
->> +       if (ret)
->> +               return ret;
->> +
->> +       if (parent.mask)
->> +               set_bit(hwirq, pctrl->wakeup_masked_irqs);
->> +
->> +       return 0;
->> +}
->> +
->> +/*
->> + * TODO: Get rid of this and push it into gpiochip_to_irq()
->
->Hmm.. yeah we need to do this still. I think we can have a generic two
->cell function similar to irq_domain_xlate_twocell() that does the fwspec
->creation and uses some of the things that we pass to
->gpiochip_irqchip_add(), like the default level type. This existing
->function is not good to have, so there's work to do to get rid of this.
->
->I was also thinking that maybe we can make the alloc function above take
->a struct gpio_irq_fwspec structure that tells the alloc function what
->gpiochip the irq is for. That would mean that we need to change the
->gpio_to_irq() function below to be generic and stuff the chip inside the
->fwspec wrapper structure:
->
->	struct gpio_irq_fwspec {
->		struct irq_fwspec fwspec;
->		struct gpio_chip *chip;
->		unsigned int offset;
->	};
->
->but I seem to recall that was not working for some reason.
->
-I didn't attemp this. I am hoping we can solve this even after this
-patch set separately. That said, I will try this.
+diff --git a/drivers/input/keyboard/tm2-touchkey.c b/drivers/input/keyboard/tm2-touchkey.c
+index abc266e40e17..5a1fe08bdd76 100644
+--- a/drivers/input/keyboard/tm2-touchkey.c
++++ b/drivers/input/keyboard/tm2-touchkey.c
+@@ -22,12 +22,12 @@
+ #include <linux/leds.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
++#include <linux/of_device.h>
+ #include <linux/pm.h>
+ #include <linux/regulator/consumer.h>
+ 
+ #define TM2_TOUCHKEY_DEV_NAME		"tm2-touchkey"
+-#define TM2_TOUCHKEY_KEYCODE_REG	0x03
+-#define TM2_TOUCHKEY_BASE_REG		0x00
++
+ #define TM2_TOUCHKEY_CMD_LED_ON		0x10
+ #define TM2_TOUCHKEY_CMD_LED_OFF	0x20
+ #define TM2_TOUCHKEY_BIT_PRESS_EV	BIT(3)
+@@ -40,12 +40,28 @@ enum {
+ 	TM2_TOUCHKEY_KEY_BACK,
+ };
+ 
++struct touchkey_variant {
++	u8 keycode_reg;
++	u8 base_reg;
++};
++
+ struct tm2_touchkey_data {
+ 	struct i2c_client *client;
+ 	struct input_dev *input_dev;
+ 	struct led_classdev led_dev;
+ 	struct regulator *vdd;
+ 	struct regulator_bulk_data regulators[2];
++	const struct touchkey_variant *variant;
++};
++
++static const struct touchkey_variant tm2_touchkey_variant = {
++	.keycode_reg = 0x03,
++	.base_reg = 0x00,
++};
++
++static const struct touchkey_variant midas_touchkey_variant = {
++	.keycode_reg = 0x00,
++	.base_reg = 0x00,
+ };
+ 
+ static void tm2_touchkey_led_brightness_set(struct led_classdev *led_dev,
+@@ -66,7 +82,7 @@ static void tm2_touchkey_led_brightness_set(struct led_classdev *led_dev,
+ 
+ 	regulator_set_voltage(touchkey->vdd, volt, volt);
+ 	i2c_smbus_write_byte_data(touchkey->client,
+-				  TM2_TOUCHKEY_BASE_REG, data);
++				  touchkey->variant->base_reg, data);
+ }
+ 
+ static int tm2_touchkey_power_enable(struct tm2_touchkey_data *touchkey)
+@@ -99,7 +115,7 @@ static irqreturn_t tm2_touchkey_irq_handler(int irq, void *devid)
+ 	int key;
+ 
+ 	data = i2c_smbus_read_byte_data(touchkey->client,
+-					TM2_TOUCHKEY_KEYCODE_REG);
++					touchkey->variant->keycode_reg);
+ 	if (data < 0) {
+ 		dev_err(&touchkey->client->dev,
+ 			"failed to read i2c data: %d\n", data);
+@@ -153,6 +169,8 @@ static int tm2_touchkey_probe(struct i2c_client *client,
+ 	touchkey->client = client;
+ 	i2c_set_clientdata(client, touchkey);
+ 
++	touchkey->variant = of_device_get_match_data(&client->dev);
++
+ 	touchkey->regulators[0].supply = "vcc";
+ 	touchkey->regulators[1].supply = "vdd";
+ 	error = devm_regulator_bulk_get(&client->dev,
+@@ -262,7 +280,13 @@ static const struct i2c_device_id tm2_touchkey_id_table[] = {
+ MODULE_DEVICE_TABLE(i2c, tm2_touchkey_id_table);
+ 
+ static const struct of_device_id tm2_touchkey_of_match[] = {
+-	{ .compatible = "cypress,tm2-touchkey", },
++	{
++		.compatible = "cypress,tm2-touchkey",
++		.data = &tm2_touchkey_variant,
++	}, {
++		.compatible = "cypress,midas-touchkey",
++		.data = &midas_touchkey_variant,
++	},
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(of, tm2_touchkey_of_match);
+-- 
+2.17.1
 
->> + */
->> +static int msm_gpio_to_irq(struct gpio_chip *chip, unsigned int offset)
->> +{
->> +       struct irq_fwspec fwspec;
->> +
->> +       fwspec.fwnode = of_node_to_fwnode(chip->of_node);
->> +       fwspec.param[0] = offset;
->> +       fwspec.param[1] = IRQ_TYPE_LEVEL_HIGH;
->> +       fwspec.param_count = 2;
->> +
->> +       return irq_create_fwspec_mapping(&fwspec);
->> +}
->> +
->> +static const struct irq_domain_ops msm_gpio_domain_ops = {
->> +       .translate = msm_gpio_domain_translate,
->> +       .alloc     = msm_gpio_domain_alloc,
->> +       .free      = irq_domain_free_irqs_top,
->> +};
->> +
-
-Thanks,
-Lina
