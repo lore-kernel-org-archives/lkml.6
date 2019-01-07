@@ -4,49 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38061C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:39:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2F7AC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:39:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0428A20859
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:39:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 891B1206BB
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:39:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546864779;
-	bh=CyjWJEbSJaUfGORc5YXH/EzHhrVi2uyNYEIK8BwkWeg=;
+	s=default; t=1546864790;
+	bh=i5n6hfH+NEUfjM5tUfQncxg62BtAo63ja5X0SWWaskk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=XtZYhU4lI5KbKf9AHJbv2jd615J5WICib1F+5BiBMkQyariJS+hjS7IGOir/JSaCy
-	 o6NwwOoyvcBC/fCAcVsnpZot7DYPn2d98bAc+9362chvKdRKqBG59o3UdHOMPzp+Hw
-	 UvhfuqjNS6ans4Y04XbNvrUUbmlcu/Iac4zjcd1M=
+	b=DOYE9xK+ysM9zMKga79IJ48VHNo8UskPXXxJ+FgZv0D6Ll1GQjD8VJwZZy5aRcizB
+	 p6t0j5fKcHqrSS3y92qU9OaKeOzQrKaSBT7PnVRtix/USDjHrX5Q7f/B5eOcvEd8nC
+	 GznezxSM1z6Q7yzOobMA1SMvN1F6D/dbtbQK6mkc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727577AbfAGMji (ORCPT
+        id S1727365AbfAGMjt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:39:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54644 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:39:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47932 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727022AbfAGMjf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:39:35 -0500
+        id S1727379AbfAGMez (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:34:55 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BA6A3206BB;
-        Mon,  7 Jan 2019 12:39:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BE55620859;
+        Mon,  7 Jan 2019 12:34:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546864775;
-        bh=CyjWJEbSJaUfGORc5YXH/EzHhrVi2uyNYEIK8BwkWeg=;
+        s=default; t=1546864495;
+        bh=i5n6hfH+NEUfjM5tUfQncxg62BtAo63ja5X0SWWaskk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qhaDdrXaox279stVmbU9+5/wYnBK8/8V3V3OnyZCJqBfepn0eBQaYPisQRjcL+/f2
-         wdqTcp0hL4ai3my26cW24kRFX391z/0m7LwgNVCDeqzTT1s2poQa32BRGqIytdY9Jt
-         JlBBF+HAf6CCFhPYS3ET8JwhEOJQ9NT+t8en/AWA=
+        b=fE9ekTRNNv3MqC4+v8ewLG/dYda265IrxpXdEfa8/GVwL1DpwbzcAPg+VcVFGwtQ3
+         OkvqETe7CWJrtqS1qN8yj8/3/8wUZ10WnlMm3nCFhiqr3G/esUmvjXaobMVSkHuMod
+         jzfdFXeDbLccQ3YzC/u3gjU/psVAX/Felrs4D9qw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
-        stable@kernel.org
-Subject: [PATCH 4.20 078/145] ext4: force inode writes when nfsd calls commit_metadata()
-Date:   Mon,  7 Jan 2019 13:31:55 +0100
-Message-Id: <20190107104447.456705660@linuxfoundation.org>
+        stable@vger.kernel.org,
+        =?UTF-8?q?Mantas=20Mikul=C4=97nas?= <grawity@gmail.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.20 030/145] ALSA: hda: add mute LED support for HP EliteBook 840 G4
+Date:   Mon,  7 Jan 2019 13:31:07 +0100
+Message-Id: <20190107104441.269435209@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104437.308206189@linuxfoundation.org>
 References: <20190107104437.308206189@linuxfoundation.org>
@@ -65,86 +66,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Theodore Ts'o <tytso@mit.edu>
+From: Mantas Mikulėnas <grawity@gmail.com>
 
-commit fde872682e175743e0c3ef939c89e3c6008a1529 upstream.
+commit 40906ebe3af6a48457151b3c6726b480f6a6cb13 upstream.
 
-Some time back, nfsd switched from calling vfs_fsync() to using a new
-commit_metadata() hook in export_operations().  If the file system did
-not provide a commit_metadata() hook, it fell back to using
-sync_inode_metadata().  Unfortunately doesn't work on all file
-systems.  In particular, it doesn't work on ext4 due to how the inode
-gets journalled --- the VFS writeback code will not always call
-ext4_write_inode().
+Tested with 4.19.9.
 
-So we need to provide our own ext4_nfs_commit_metdata() method which
-calls ext4_write_inode() directly.
+v2: Changed from CXT_FIXUP_MUTE_LED_GPIO to CXT_FIXUP_HP_DOCK because
+    that's what the existing fixups for EliteBooks use.
 
-Google-Bug-Id: 121195940
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@kernel.org
+Signed-off-by: Mantas Mikulėnas <grawity@gmail.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/super.c             |   11 +++++++++++
- include/trace/events/ext4.h |   20 ++++++++++++++++++++
- 2 files changed, 31 insertions(+)
+ sound/pci/hda/patch_conexant.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -1203,6 +1203,16 @@ static struct dentry *ext4_fh_to_parent(
- 				    ext4_nfs_get_inode);
- }
- 
-+static int ext4_nfs_commit_metadata(struct inode *inode)
-+{
-+	struct writeback_control wbc = {
-+		.sync_mode = WB_SYNC_ALL
-+	};
-+
-+	trace_ext4_nfs_commit_metadata(inode);
-+	return ext4_write_inode(inode, &wbc);
-+}
-+
- /*
-  * Try to release metadata pages (indirect blocks, directories) which are
-  * mapped via the block device.  Since these pages could have journal heads
-@@ -1407,6 +1417,7 @@ static const struct export_operations ex
- 	.fh_to_dentry = ext4_fh_to_dentry,
- 	.fh_to_parent = ext4_fh_to_parent,
- 	.get_parent = ext4_get_parent,
-+	.commit_metadata = ext4_nfs_commit_metadata,
- };
- 
- enum {
---- a/include/trace/events/ext4.h
-+++ b/include/trace/events/ext4.h
-@@ -226,6 +226,26 @@ TRACE_EVENT(ext4_drop_inode,
- 		  (unsigned long) __entry->ino, __entry->drop)
- );
- 
-+TRACE_EVENT(ext4_nfs_commit_metadata,
-+	TP_PROTO(struct inode *inode),
-+
-+	TP_ARGS(inode),
-+
-+	TP_STRUCT__entry(
-+		__field(	dev_t,	dev			)
-+		__field(	ino_t,	ino			)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->dev	= inode->i_sb->s_dev;
-+		__entry->ino	= inode->i_ino;
-+	),
-+
-+	TP_printk("dev %d,%d ino %lu",
-+		  MAJOR(__entry->dev), MINOR(__entry->dev),
-+		  (unsigned long) __entry->ino)
-+);
-+
- TRACE_EVENT(ext4_mark_inode_dirty,
- 	TP_PROTO(struct inode *inode, unsigned long IP),
- 
+--- a/sound/pci/hda/patch_conexant.c
++++ b/sound/pci/hda/patch_conexant.c
+@@ -923,6 +923,7 @@ static const struct snd_pci_quirk cxt506
+ 	SND_PCI_QUIRK(0x103c, 0x8079, "HP EliteBook 840 G3", CXT_FIXUP_HP_DOCK),
+ 	SND_PCI_QUIRK(0x103c, 0x807C, "HP EliteBook 820 G3", CXT_FIXUP_HP_DOCK),
+ 	SND_PCI_QUIRK(0x103c, 0x80FD, "HP ProBook 640 G2", CXT_FIXUP_HP_DOCK),
++	SND_PCI_QUIRK(0x103c, 0x828c, "HP EliteBook 840 G4", CXT_FIXUP_HP_DOCK),
+ 	SND_PCI_QUIRK(0x103c, 0x83b3, "HP EliteBook 830 G5", CXT_FIXUP_HP_DOCK),
+ 	SND_PCI_QUIRK(0x103c, 0x83d3, "HP ProBook 640 G4", CXT_FIXUP_HP_DOCK),
+ 	SND_PCI_QUIRK(0x103c, 0x8174, "HP Spectre x360", CXT_FIXUP_HP_SPECTRE),
 
 
