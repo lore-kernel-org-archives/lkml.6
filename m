@@ -4,54 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 567A2C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:58:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 904B6C43444
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:58:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1117B206BB
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:58:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6184A206BB
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:58:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546865912;
-	bh=oACRbGZpWODCK5ujyf489xQ/dTtzWUhW1tOWr0eFesI=;
+	s=default; t=1546865913;
+	bh=j6p05mbGq+VonAmmnH5QnyjLIluQBxSzTSvf8S8KoZA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=OY+0n70W7xJ7oiZIk4uarV3A3DQWKuWRF14wvovPh66U97vy9kTaXpGiD1u5uNziv
-	 PYLhmY553etKzHWmfUTJLPpcdU/AwChk+as7/neeW4S1vZ8fZZ0e/TV89HB3rOl7J3
-	 txjBDqBJM/j1lm5aN24YQW0nC2M7DRoRHNlQMu6k=
+	b=PaCmpt1X+s7xwbFF0Bd4cB9+b9m6teVuA7DLnLJhpYPiXatjjYGPnrFKeINyc6C/1
+	 bZ/nizBKLhkFxdfjKZdIAhdpsjQCfraWVEZweNntNXpKFxA4upLK41vzfjS6l3zfCO
+	 ZsrqQECdFm8xpJJnaqzB5wV7I47pxPQeK6VYujkA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729988AbfAGM6b (ORCPT
+        id S1729536AbfAGM6c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:58:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45988 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:58:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46022 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729977AbfAGM6Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:58:25 -0500
+        id S1729976AbfAGM62 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:58:28 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 91B95217D4;
-        Mon,  7 Jan 2019 12:58:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 590402183F;
+        Mon,  7 Jan 2019 12:58:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865904;
-        bh=oACRbGZpWODCK5ujyf489xQ/dTtzWUhW1tOWr0eFesI=;
+        s=default; t=1546865906;
+        bh=j6p05mbGq+VonAmmnH5QnyjLIluQBxSzTSvf8S8KoZA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QRnnE3jKfuCs7cUrDVRb4aiZs8mqBx0WIuS/ciSVE9RcFoTzNRVAr75TTnSASzr+5
-         xRX986ycTjnqFMYXKWJAjsHsq3WtnDkojo7n2AWi8nU2ZXG091f/rtIV/loUqRXlxZ
-         IsN90BmSoOIIgV08BwmGTeKoMSW+rZR0FK5EAFaw=
+        b=ig1S6UXuah+xo/VLXZ0/rboS3oWmadubhmzFpalUFZxtBwPzuChAC79n2pECVVOtt
+         u6oM7vnAp+qqgUopJ0JeXj7jvUVbW/G7+HgjSp23dd3kIMpn2k6dP/xy8PDvlmWYsY
+         a/+p9nfPIBo29ANJvi8PMOCGGGKD2qzFSMN+7KzM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Huacai Chen <chenhc@lemote.com>,
-        Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <james.hogan@mips.com>,
-        "Steven J . Hill" <Steven.Hill@cavium.com>,
-        linux-mips@linux-mips.org, Fuxin Zhang <zhangfx@lemote.com>,
-        Zhangjin Wu <wuzhangjin@gmail.com>
-Subject: [PATCH 4.19 153/170] MIPS: Align kernel load address to 64KB
-Date:   Mon,  7 Jan 2019 13:33:00 +0100
-Message-Id: <20190107104511.018107480@linuxfoundation.org>
+        stable@vger.kernel.org, Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Jiwei Sun <jiwei.sun@windriver.com>,
+        Yu Huabing <yhb@ruijie.com.cn>, linux-mips@vger.kernel.org
+Subject: [PATCH 4.19 154/170] MIPS: Expand MIPS32 ASIDs to 64 bits
+Date:   Mon,  7 Jan 2019 13:33:01 +0100
+Message-Id: <20190107104511.139077021@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104452.953560660@linuxfoundation.org>
 References: <20190107104452.953560660@linuxfoundation.org>
@@ -70,57 +67,150 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Huacai Chen <chenhc@lemote.com>
+From: Paul Burton <paul.burton@mips.com>
 
-commit bec0de4cfad21bd284dbddee016ed1767a5d2823 upstream.
+commit ff4dd232ec45a0e45ea69f28f069f2ab22b4908a upstream.
 
-KEXEC needs the new kernel's load address to be aligned on a page
-boundary (see sanity_check_segment_list()), but on MIPS the default
-vmlinuz load address is only explicitly aligned to 16 bytes.
+ASIDs have always been stored as unsigned longs, ie. 32 bits on MIPS32
+kernels. This is problematic because it is feasible for the ASID version
+to overflow & wrap around to zero.
 
-Since the largest PAGE_SIZE supported by MIPS kernels is 64KB, increase
-the alignment calculated by calc_vmlinuz_load_addr to 64KB.
+We currently attempt to handle this overflow by simply setting the ASID
+version to 1, using asid_first_version(), but we make no attempt to
+account for the fact that there may be mm_structs with stale ASIDs that
+have versions which we now reuse due to the overflow & wrap around.
 
-Signed-off-by: Huacai Chen <chenhc@lemote.com>
+Encountering this requires that:
+
+  1) A struct mm_struct X is active on CPU A using ASID (V,n).
+
+  2) That mm is not used on CPU A for the length of time that it takes
+     for CPU A's asid_cache to overflow & wrap around to the same
+     version V that the mm had in step 1. During this time tasks using
+     the mm could either be sleeping or only scheduled on other CPUs.
+
+  3) Some other mm Y becomes active on CPU A and is allocated the same
+     ASID (V,n).
+
+  4) mm X now becomes active on CPU A again, and now incorrectly has the
+     same ASID as mm Y.
+
+Where struct mm_struct ASIDs are represented above in the format
+(version, EntryHi.ASID), and on a typical MIPS32 system version will be
+24 bits wide & EntryHi.ASID will be 8 bits wide.
+
+The length of time required in step 2 is highly dependent upon the CPU &
+workload, but for a hypothetical 2GHz CPU running a workload which
+generates a new ASID every 10000 cycles this period is around 248 days.
+Due to this long period of time & the fact that tasks need to be
+scheduled in just the right (or wrong, depending upon your inclination)
+way, this is obviously a difficult bug to encounter but it's entirely
+possible as evidenced by reports.
+
+In order to fix this, simply extend ASIDs to 64 bits even on MIPS32
+builds. This will extend the period of time required for the
+hypothetical system above to encounter the problem from 28 days to
+around 3 trillion years, which feels safely outside of the realms of
+possibility.
+
+The cost of this is slightly more generated code in some commonly
+executed paths, but this is pretty minimal:
+
+                         | Code Size Gain | Percentage
+  -----------------------|----------------|-------------
+    decstation_defconfig |           +270 | +0.00%
+        32r2el_defconfig |           +652 | +0.01%
+        32r6el_defconfig |          +1000 | +0.01%
+
+I have been unable to measure any change in performance of the LMbench
+lat_ctx or lat_proc tests resulting from the 64b ASIDs on either
+32r2el_defconfig+interAptiv or 32r6el_defconfig+I6500 systems.
+
 Signed-off-by: Paul Burton <paul.burton@mips.com>
-Patchwork: https://patchwork.linux-mips.org/patch/21131/
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: James Hogan <james.hogan@mips.com>
-Cc: Steven J . Hill <Steven.Hill@cavium.com>
-Cc: linux-mips@linux-mips.org
-Cc: Fuxin Zhang <zhangfx@lemote.com>
-Cc: Zhangjin Wu <wuzhangjin@gmail.com>
-Cc: <stable@vger.kernel.org> # 2.6.36+
+Suggested-by: James Hogan <jhogan@kernel.org>
+References: https://lore.kernel.org/linux-mips/80B78A8B8FEE6145A87579E8435D78C30205D5F3@fzex.ruijie.com.cn/
+References: https://lore.kernel.org/linux-mips/1488684260-18867-1-git-send-email-jiwei.sun@windriver.com/
+Cc: Jiwei Sun <jiwei.sun@windriver.com>
+Cc: Yu Huabing <yhb@ruijie.com.cn>
+Cc: stable@vger.kernel.org # 2.6.12+
+Cc: linux-mips@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/boot/compressed/calc_vmlinuz_load_addr.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ arch/mips/include/asm/cpu-info.h    |    2 +-
+ arch/mips/include/asm/mmu.h         |    2 +-
+ arch/mips/include/asm/mmu_context.h |   10 ++++------
+ arch/mips/mm/c-r3k.c                |    2 +-
+ 4 files changed, 7 insertions(+), 9 deletions(-)
 
---- a/arch/mips/boot/compressed/calc_vmlinuz_load_addr.c
-+++ b/arch/mips/boot/compressed/calc_vmlinuz_load_addr.c
-@@ -13,6 +13,7 @@
- #include <stdint.h>
- #include <stdio.h>
- #include <stdlib.h>
-+#include "../../../../include/linux/sizes.h"
+--- a/arch/mips/include/asm/cpu-info.h
++++ b/arch/mips/include/asm/cpu-info.h
+@@ -50,7 +50,7 @@ struct guest_info {
+ #define MIPS_CACHE_PINDEX	0x00000020	/* Physically indexed cache */
  
- int main(int argc, char *argv[])
+ struct cpuinfo_mips {
+-	unsigned long		asid_cache;
++	u64			asid_cache;
+ #ifdef CONFIG_MIPS_ASID_BITS_VARIABLE
+ 	unsigned long		asid_mask;
+ #endif
+--- a/arch/mips/include/asm/mmu.h
++++ b/arch/mips/include/asm/mmu.h
+@@ -7,7 +7,7 @@
+ #include <linux/wait.h>
+ 
+ typedef struct {
+-	unsigned long asid[NR_CPUS];
++	u64 asid[NR_CPUS];
+ 	void *vdso;
+ 	atomic_t fp_mode_switching;
+ 
+--- a/arch/mips/include/asm/mmu_context.h
++++ b/arch/mips/include/asm/mmu_context.h
+@@ -76,14 +76,14 @@ extern unsigned long pgd_current[];
+  *  All unused by hardware upper bits will be considered
+  *  as a software asid extension.
+  */
+-static unsigned long asid_version_mask(unsigned int cpu)
++static inline u64 asid_version_mask(unsigned int cpu)
  {
-@@ -45,11 +46,11 @@ int main(int argc, char *argv[])
- 	vmlinuz_load_addr = vmlinux_load_addr + vmlinux_size;
+ 	unsigned long asid_mask = cpu_asid_mask(&cpu_data[cpu]);
  
- 	/*
--	 * Align with 16 bytes: "greater than that used for any standard data
--	 * types by a MIPS compiler." -- See MIPS Run Linux (Second Edition).
-+	 * Align with 64KB: KEXEC needs load sections to be aligned to PAGE_SIZE,
-+	 * which may be as large as 64KB depending on the kernel configuration.
- 	 */
+-	return ~(asid_mask | (asid_mask - 1));
++	return ~(u64)(asid_mask | (asid_mask - 1));
+ }
  
--	vmlinuz_load_addr += (16 - vmlinux_size % 16);
-+	vmlinuz_load_addr += (SZ_64K - vmlinux_size % SZ_64K);
+-static unsigned long asid_first_version(unsigned int cpu)
++static inline u64 asid_first_version(unsigned int cpu)
+ {
+ 	return ~asid_version_mask(cpu) + 1;
+ }
+@@ -102,14 +102,12 @@ static inline void enter_lazy_tlb(struct
+ static inline void
+ get_new_mmu_context(struct mm_struct *mm, unsigned long cpu)
+ {
+-	unsigned long asid = asid_cache(cpu);
++	u64 asid = asid_cache(cpu);
  
- 	printf("0x%llx\n", vmlinuz_load_addr);
+ 	if (!((asid += cpu_asid_inc()) & cpu_asid_mask(&cpu_data[cpu]))) {
+ 		if (cpu_has_vtag_icache)
+ 			flush_icache_all();
+ 		local_flush_tlb_all();	/* start new asid cycle */
+-		if (!asid)		/* fix version if needed */
+-			asid = asid_first_version(cpu);
+ 	}
  
+ 	cpu_context(cpu, mm) = asid_cache(cpu) = asid;
+--- a/arch/mips/mm/c-r3k.c
++++ b/arch/mips/mm/c-r3k.c
+@@ -245,7 +245,7 @@ static void r3k_flush_cache_page(struct
+ 	pmd_t *pmdp;
+ 	pte_t *ptep;
+ 
+-	pr_debug("cpage[%08lx,%08lx]\n",
++	pr_debug("cpage[%08llx,%08lx]\n",
+ 		 cpu_context(smp_processor_id(), mm), addr);
+ 
+ 	/* No ASID => no such page in the cache.  */
 
 
