@@ -2,170 +2,237 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8B47C43444
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 19:35:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22318C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 19:36:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B58C62147C
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 19:35:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D7AA62085A
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 19:36:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VukaHJef"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ldGEaC4U"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728065AbfAGTf6 (ORCPT
+        id S1727662AbfAGTgg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 14:35:58 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:35858 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726888AbfAGTf5 (ORCPT
+        Mon, 7 Jan 2019 14:36:36 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:55760 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726745AbfAGTgf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 14:35:57 -0500
-Received: by mail-pf1-f196.google.com with SMTP id b85so661947pfc.3;
-        Mon, 07 Jan 2019 11:35:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=edW9kvO7o8V+7WPFgx+paf1/9qQIOc7hSoeqZYm+4aY=;
-        b=VukaHJef07iEZi5Zm+xxFQxb08PIp/9GvmqkhYy6216GCvgvTD51h9e9XyrzUDummd
-         QqYlYRjiXcG3Sn46zEVVxa8gdhH9WuEx0Tdlw0keHaxvBdNDZoIZt6JWiFGFzb8pnd6t
-         DvK2ZUMoUu3gnsga88sne7Bi8f0d0K424mf8jnBMYWxI623mtekWs3gUNwhVLw8LNupf
-         5CtsxCGpcxWlAgVzXHPqGLAxY8x+JlLuTBb2pQeMSlvzSAuuGrktWVng4Ohjzzyw4IXm
-         cuyhp9VbkNPxai+BFuubZQZn5q8GVKN03uQk4NhAmxmOyeNZDIJUSaOmXfOsd6deTlNZ
-         XuyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=edW9kvO7o8V+7WPFgx+paf1/9qQIOc7hSoeqZYm+4aY=;
-        b=gujUAhgFd624lTC832yA58fWxDKq52FGqd7lRKc5iQh1ujdYcYPFtCxkAinmfusRbz
-         Zz0jo383NdNCyDzJnm08Ywxf7xqZtgE2v8nJXn5N0In5g3P4LtDJLjQdcPMTcLsBc22j
-         Qx335dpTt2uLpEWOoN5mqRWfC79Oku/N4FJw2zkQgsTpXCyFkuNtyeelUXW9Zc6c8pXA
-         SbGhqMXj8CRV+ytHsae/qyPiaw93V1HsyDlr5B6QwlfPQVq0+NSBvKIIVeiJkywAG60U
-         M50MI+NKW6FOiZw+zEsNTxJwKjqpb6TE91GwfbgMZYaxo5yQ2HCdpBM/1YV12ao6BJuY
-         B1BA==
-X-Gm-Message-State: AJcUukcDawtBgGIkgN5l2YkSOOpQu3CbrfT5sqi+mWLstDr+hevKy9jb
-        g845eaWQ9mDSLLjJH+luP7k=
-X-Google-Smtp-Source: ALg8bN67a/Eu19E0QBa5Nkq1aaq3Q/2GYvcHskeAS5bzj3VAf8GF1r2ZEVHQBmw0x+q0LatE1zfRPg==
-X-Received: by 2002:a65:60c2:: with SMTP id r2mr12159706pgv.393.1546889756881;
-        Mon, 07 Jan 2019 11:35:56 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 78sm121456194pft.184.2019.01.07.11.35.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 07 Jan 2019 11:35:56 -0800 (PST)
-Date:   Mon, 7 Jan 2019 11:35:55 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Nicolin Chen <nicoleotsuka@gmail.com>
-Cc:     jdelvare@suse.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] hwmon: (ina3221) Implement ti,single-shot DT
- property
-Message-ID: <20190107193555.GA13547@roeck-us.net>
-References: <20190105030636.533-1-nicoleotsuka@gmail.com>
- <20190105030636.533-3-nicoleotsuka@gmail.com>
+        Mon, 7 Jan 2019 14:36:35 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x07JaTWe017033;
+        Mon, 7 Jan 2019 13:36:29 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1546889789;
+        bh=nqZzChcFNxk88VSkQJxqDD1rzOvOheIvqICzud/6JMs=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=ldGEaC4URhIVrVgAfU7ieqCHtQOhUnwH37MvwihoK1ERJJNm+P9OoYar96EZI5jiZ
+         Wr4d5mFYQ13SM/ohPs38vIgiCKzfhgrVN+7NCBlIYfS7VL192PJyG8TGKwMPPaE/lS
+         k4aqga2YyapWVIHZe6yppLHozFlUIFNFkScYYBnw=
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x07JaTrj036698
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 7 Jan 2019 13:36:29 -0600
+Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 7
+ Jan 2019 13:36:29 -0600
+Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Mon, 7 Jan 2019 13:36:29 -0600
+Received: from [172.22.110.219] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x07JaSKw010722;
+        Mon, 7 Jan 2019 13:36:28 -0600
+Subject: Re: Generic RGB LED support was Re: [PATCH 2/2] leds: lp5024: Add the
+ LP5024/18 RGB LED driver
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>
+CC:     =?UTF-8?B?VmVzYSBKw6TDpHNrZWzDpGluZW4=?= <dachaac@gmail.com>,
+        <robh+dt@kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-leds@vger.kernel.org>
+References: <986b5105-2fdb-bd25-7c8a-ca8fd1ade821@gmail.com>
+ <7f205102-e854-f1cb-cc03-1307d1cddc87@gmail.com>
+ <c9f8965a-90f4-b456-8225-c70694c9f071@gmail.com>
+ <cf6c0025-36e7-197b-b27a-1f31fb45cc38@gmail.com> <20190104201256.GA2931@amd>
+ <a4e3a782-de76-ba91-3727-4db69cf27c3a@gmail.com> <20190104220726.GA12395@amd>
+ <4cf79414-578e-eea7-4f46-fc8789206988@gmail.com> <20190105123146.GA16354@amd>
+ <8044cdd9-b9b3-fddd-6106-184b906859e2@gmail.com> <20190105221254.GA22322@amd>
+ <dac50714-9caf-2496-3208-fb62f886e31f@gmail.com>
+ <70366f2a-aafd-174f-73ec-a8117133b7af@gmail.com>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <b027299c-a24a-abeb-8f92-97c32c13290b@ti.com>
+Date:   Mon, 7 Jan 2019 13:36:20 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190105030636.533-3-nicoleotsuka@gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <70366f2a-aafd-174f-73ec-a8117133b7af@gmail.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 04, 2019 at 07:06:36PM -0800, Nicolin Chen wrote:
-> By default, ina3221, as a hardware monitor, continuously measures
-> the inputs and generates corresponding data. However, for battery
-> powered devices, this mode might be power consuming.
-> 
-> The DT binding doc is updated with a new boolean type property to
-> allow changing the default operating mode from consuming mode to
-> single-shot mode, which will measure input on demand and then shut
-> down to save power.
-> 
-> So this patch implements the DT property accordingly.
-> 
-> Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
-> ---
-> Changelog
-> v1->v2:
->  * Replaced the useless mode defines with a boolean variable.
-> 
->  drivers/hwmon/ina3221.c | 20 ++++++++++++++++++++
->  1 file changed, 20 insertions(+)
-> 
-> diff --git a/drivers/hwmon/ina3221.c b/drivers/hwmon/ina3221.c
-> index e90ccac8bebb..4258a6ebe195 100644
-> --- a/drivers/hwmon/ina3221.c
-> +++ b/drivers/hwmon/ina3221.c
-> @@ -111,6 +111,7 @@ struct ina3221_input {
->   * @inputs: Array of channel input source specific structures
->   * @lock: mutex lock to serialize sysfs attribute accesses
->   * @reg_config: Register value of INA3221_CONFIG
-> + * @single_shot: running in single-shot operating mode
->   */
->  struct ina3221_data {
->  	struct device *pm_dev;
-> @@ -119,6 +120,8 @@ struct ina3221_data {
->  	struct ina3221_input inputs[INA3221_NUM_CHANNELS];
->  	struct mutex lock;
->  	u32 reg_config;
-> +
-> +	bool single_shot;
->  };
->  
->  static inline bool ina3221_is_enabled(struct ina3221_data *ina, int channel)
-> @@ -188,6 +191,11 @@ static int ina3221_read_in(struct device *dev, u32 attr, int channel, long *val)
->  		if (!ina3221_is_enabled(ina, channel))
->  			return -ENODATA;
->  
-> +		/* Write CONFIG register to trigger a single-shot measurement */
-> +		if (ina->single_shot)
-> +			regmap_write(ina->regmap, INA3221_CONFIG,
-> +				     ina->reg_config);
-> +
->  		ret = ina3221_wait_for_data(ina);
->  		if (ret)
->  			return ret;
-> @@ -232,6 +240,11 @@ static int ina3221_read_curr(struct device *dev, u32 attr,
->  		if (!ina3221_is_enabled(ina, channel))
->  			return -ENODATA;
->  
-> +		/* Write CONFIG register to trigger a single-shot measurement */
-> +		if (ina->single_shot)
-> +			regmap_write(ina->regmap, INA3221_CONFIG,
-> +				     ina->reg_config);
-> +
->  		ret = ina3221_wait_for_data(ina);
->  		if (ret)
->  			return ret;
-> @@ -617,6 +630,9 @@ static int ina3221_probe_from_dt(struct device *dev, struct ina3221_data *ina)
->  	if (!np)
->  		return 0;
->  
-> +	if (of_property_read_bool(np, "ti,single-shot"))
-> +		ina->single_shot = true;
-> +
-	ina->single_shot = of_property_read_bool(np, "ti,single-shot");
+Jacek
 
-No need to resend right now; let's wait for feedback from Rob.
+On 1/7/19 1:13 PM, Jacek Anaszewski wrote:
+> On 1/6/19 4:52 PM, Jacek Anaszewski wrote:
+>> Hi Pavel,
+>>
+>> On 1/5/19 11:12 PM, Pavel Machek wrote:
+>>> Hi!
+>>>
+>>>>> Grab yourself an RGB LED and play with it; you'll see what the
+>>>>> problems are. It is hard to explain colors over email...
+>>>>
+>>>> Video [0] gives some overview of lp5024 capabilities.
+>>>>
+>>>> I don't see any problems in exposing separate red,green,blue
+>>>> files and brightness for the devices with hardware support for
+>>>> that.
+>>>
+>>> Well, that's what we do today, as three separate LEDs, right?
+>>
+>> No. It doesn't allow for setting color intensity by having
+>> the color fixed beforehand. Below is relevant excerpt from
+>> the lp5024 documentation. This is not something that can be
+>> mapped to RGB color space, but rather to HSV/HSL, with the
+>> reservation that the hardware implementation uses PWM
+>> for setting color intensity.
+>>
+>> <quote>
+>> 8.3.1.2 Independent Intensity Control Per RGB LED Module
+>>
+>> When color is fixed, the independent intensity-control is used to
+>> achieve accurate and flexible dimming control for every RGB LED module.
+>>
+>> 8.3.1.2.1 Intensity-Control Register Configuration
+>>
+>> Every three consecutive output channels are assigned to their respective
+>> intensity-control register (LEDx_BRIGHTNESS). For example, OUT0, OUT1,
+>> and OUT2 are assigned to LED0_BRIGHTNESS, so it is recommended to
+>> connect the RGB LEDs in the sequence as shown in Table 1. The LP50xx
+>> device allows 256-step intensity control for each RGB LED module, which
+>> helps achieve a smooth dimming effect.
+>> </quote>
+>>
+>>> I don't have problem with that, either; other drivers already do
+>>> that. He's free to use existing same interface.
+>>>
+>>> But that is insufficient, as it does not allow simple stuff, such as
+>>> turning led "white".
+>>>
+>>> So... perhaps we should agree on requirements, first, and then we can
+>>> discuss solutions?
+>>>
+>>> Requirements for RGB LED interface:
+>>>
+>>> 1) Userspace should be able to set the white color
+>>>
+>>> 2) Userspace should be able to arbitrary color from well known list
+>>> and it should approximately match what would CRT, LCD or OLED monitor display
+>>
+>> The difference is that monitor display driver is pre-calibrated
+>> for given display by the manufacturer. With the LED controllers the
+>> manufacturer has no control over what LEDs will be connected to the
+>> iouts. Therefore it should be not surprising that colors produced
+>> by custom LEDs are not as user would expect when comparing to
+>> the RGB color displayed on the monitor display.
+>>
+>> TI provides "Various LED Ring Lighting Patterns Reference Design" [0]
+>> that show how to produce various patterns with use of the reference
+>> board with LED ring built using sixteen 19-337/R6GHBHC-A01/2T LEDs [1].
+>>
+>> Document [0] mentions also specific "Design considerations" in the
+>> chapter 2.2:
+>>
+>> <quote>
+>> Several considerations are taken into account for this particular design:
+>> • LED map (ring) for meeting the requirement of popular human-machine interaction style.
+>> • LED size, numbers and the diffuse design for meeting lighting pattern uniformity.
+>> • Analog dimming in the difference ambient light lux without losing dimming resolution in lighting pattern.
+>>
+>> These considerations apply to most human-machine interaction end equipment with day and night vision
+>> designs in some way, but the designer must decide the particular considerations to take into account for a
+>> specific design.
+>> </quote>
+>>
+>> This renders your requirement 2) infeasible with use of custom LEDs
+>> any fixed algorithm, since the final effect will always heavily depend
+> 
+> Typo here: s/any fixed/and fixed/
+> 
+>> on the LED circuit design.
+>>
+>>>
+>>>      2a) LEDs probably slightly change color as they age. That's out of
+>>>      scope, unless the variation is much greater than on monitors.
+>>>
+>>>      2b) Manufacturing differences cause small color variation. Again,
+>>>      that's out of scope, unless the variation is much greater than on
+>>>      monitors.
+>>>
+>>> Nice to have features:
+>>>
+>>> 3) Full range of available colors/intensities should be available to
+>>> userspace
+>>>
+>>> 4) Interface should work well with existing triggers
+>>>
+>>> 5) It would be nice if userland knew how many lumens are produced at
+>>> each wavelength for each setting (again, minus aging and manufacturing
+>>> variations).
+>>>
+>>> 6) Complexity of math in kernel should be low, and preferably it
+>>> should be integer or fixed point
+>>>
+>>> Problems:
+>>>
+>>> a) RGB LEDs are usually not balanced. Setting 100% PWM on
+>>> red/green/blue channels will result in nothing close to white
+>>> light. In fact, to get white light on N900, blue and green channel's
+>>> PWM needs to be set pretty low, as in 5%.
+>>>
+>>> b) LED class does not define any relation between "brightness" in
+>>> sysfs and ammount of light in lumens. Some drivers use close to linear
+>>> relation, some use exponential relation. Human eyes percieve logarithm
+>>> of lumens. RGB color model uses even more complex function.
+>>>
+>>> c) Except for white LEDs, LEDs are basically sources of single
+>>> wavelength of light, while CRTs and LCDs produce broader
+>>> spectrums.
+>>>
+>>> d) RG, RGBW and probably other LED combinations exist.
+>>>
+>>> e) Not all "red" LEDs will produce same wavelength. Similar
+>>> differences will exist for other colors.
+>>>
+>>> f) We have existing RGB LEDs represented as three separate
+>>> monochromatic LEDs in sysfs.
+>>
+>> One general question: do you have any solutions in store?
+>>
+>> [0] http://www.ti.com/lit/ug/tiduee6/tiduee6.pdf
+>> [1] http://www.everlight.com/file/ProductFile/19-337-R6GHBHC-A01-2T.pdf
+>>
+> 
 
-Guenter
+I just wanted to point out that there are 4 total devices right now that use the same mapping
 
->  	for_each_child_of_node(np, child) {
->  		ret = ina3221_probe_child_from_dt(dev, child, ina);
->  		if (ret)
-> @@ -666,6 +682,10 @@ static int ina3221_probe(struct i2c_client *client,
->  	/* The driver will be reset, so use reset value */
->  	ina->reg_config = INA3221_CONFIG_DEFAULT;
->  
-> +	/* Clear continuous bit to use single-shot mode */
-> +	if (ina->single_shot)
-> +		ina->reg_config &= ~INA3221_CONFIG_MODE_CONTINUOUS;
-> +
->  	/* Disable channels if their inputs are disconnected */
->  	for (i = 0; i < INA3221_NUM_CHANNELS; i++) {
->  		if (ina->inputs[i].disconnected)
+LP5018, LP5024, LP5030 and the LP5036.
+
+I can implement what ever we would like to I just need to know what to design against.
+
+But keep in mind I still need to invest my time in the other TI-lmu patches on my list to complete.
+
+Dan
+
+-- 
+------------------
+Dan Murphy
