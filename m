@@ -7,49 +7,47 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E76CCC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:48:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9C93C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:48:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6D29206BB
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:48:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A4E720651
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:48:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546865283;
-	bh=WRGvlTSk3f9qsQAFynU8JIsVoRIW9NdiKCBIK4yd5Lc=;
+	s=default; t=1546865287;
+	bh=g/H+8MczTyBBTbE9znFRD5Vp1IIO9KfdxZ2B95Q7a+8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=RS9SeLT3kkexIaPgRCYLQk0iEdvjOl+xu4+ouxf04q9I9+kf92cDBUz7QOlNkKYxM
-	 kzp5UlpifYadQFnX/LprkbG1+q3iT9BmeI+wHoBYecJ5Rr6IByRNBieqf9yKDrbHWI
-	 qb7rZbLh7N8Ek81nf4B1RUqrcTtXfCtfGnL80UqU=
+	b=YJJkdiSwyd/ZZ2Q/KZMGQj0+vCsHYVlFuR90xR2em4SstyQwLody6tuXzfnrOEegY
+	 MReZMYDYTn0dqbX7hAv/skit2bq/8T9N9hNAHnvi/MUGPyIrvF/Hxib0kdBI/JuUMj
+	 7/3DiUYyh0QaL2eGHsgW7hUZtSs50wen+3q8rPrc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729093AbfAGMsD (ORCPT
+        id S1729107AbfAGMsF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:48:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38474 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:48:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38544 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728885AbfAGMsA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:48:00 -0500
+        id S1728885AbfAGMsE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:48:04 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3AABF20859;
-        Mon,  7 Jan 2019 12:47:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 325B020651;
+        Mon,  7 Jan 2019 12:48:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865279;
-        bh=WRGvlTSk3f9qsQAFynU8JIsVoRIW9NdiKCBIK4yd5Lc=;
+        s=default; t=1546865283;
+        bh=g/H+8MczTyBBTbE9znFRD5Vp1IIO9KfdxZ2B95Q7a+8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gJENBqEmYMuoLJMddjYBVunD1XQmbrEDAJsAV3ghXsK5Clge3rcKK+ariaRAy9AfC
-         o5Ndvxq6YwlLgVsXADFKPxy1EaWJKwBZzeCSi3IoKaKHEf6/lCJRVFlPQGKhnAH1ac
-         2d9v7iKz+egtCugy2kaArWMuBQpKN329FpmwxBpk=
+        b=engdE0jhz44KOUQA9l0sycp6Vg9w/pAM+31JFDY5S1sb5j5Suc6+DGC+LLYL7eD3v
+         QxFefN9VM/tLwKUAsaV4gc6FduPwmCwhstvmEGO47CzOXiyHRgGDrJ6MLpG2YxYY62
+         YaAfQUvKdzRbtXP7KOvwiCNnx4dk/utTZdbiu+i0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ying Xue <ying.xue@windriver.com>,
-        Jon Maloy <jon.maloy@ericsson.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        syzbot+99f20222fc5018d2b97a@syzkaller.appspotmail.com
-Subject: [PATCH 4.19 042/170] tipc: check group dests after tipc_wait_for_cond()
-Date:   Mon,  7 Jan 2019 13:31:09 +0100
-Message-Id: <20190107104458.216136135@linuxfoundation.org>
+        stable@vger.kernel.org, Alaa Hleihel <alaa@mellanox.com>,
+        Tariq Toukan <tariqt@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>
+Subject: [PATCH 4.19 043/170] net/mlx5e: Remove the false indication of software timestamping support
+Date:   Mon,  7 Jan 2019 13:31:10 +0100
+Message-Id: <20190107104458.322722183@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104452.953560660@linuxfoundation.org>
 References: <20190107104452.953560660@linuxfoundation.org>
@@ -68,58 +66,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Cong Wang <xiyou.wangcong@gmail.com>
+From: Alaa Hleihel <alaa@mellanox.com>
 
-[ Upstream commit 3c6306d44082ef007a258ae1b86ea58e6974ee3f ]
+[ Upstream commit 4765420439e758bfa4808392d18b0a4cb6f06065 ]
 
-Similar to commit 143ece654f9f ("tipc: check tsk->group in tipc_wait_for_cond()")
-we have to reload grp->dests too after we re-take the sock lock.
-This means we need to move the dsts check after tipc_wait_for_cond()
-too.
+mlx5 driver falsely advertises support of software timestamping.
+Fix it by removing the false indication.
 
-Fixes: 75da2163dbb6 ("tipc: introduce communication groups")
-Reported-and-tested-by: syzbot+99f20222fc5018d2b97a@syzkaller.appspotmail.com
-Cc: Ying Xue <ying.xue@windriver.com>
-Cc: Jon Maloy <jon.maloy@ericsson.com>
-Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
-Acked-by: Jon Maloy <jon.maloy@ericsson.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: ef9814deafd0 ("net/mlx5e: Add HW timestamping (TS) support")
+Signed-off-by: Alaa Hleihel <alaa@mellanox.com>
+Reviewed-by: Tariq Toukan <tariqt@mellanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/tipc/socket.c |    9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c |   11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
 
---- a/net/tipc/socket.c
-+++ b/net/tipc/socket.c
-@@ -1007,7 +1007,7 @@ static int tipc_send_group_bcast(struct
- 	struct sock *sk = sock->sk;
- 	struct net *net = sock_net(sk);
- 	struct tipc_sock *tsk = tipc_sk(sk);
--	struct tipc_nlist *dsts = tipc_group_dests(tsk->group);
-+	struct tipc_nlist *dsts;
- 	struct tipc_mc_method *method = &tsk->mc_method;
- 	bool ack = method->mandatory && method->rcast;
- 	int blks = tsk_blocks(MCAST_H_SIZE + dlen);
-@@ -1016,9 +1016,6 @@ static int tipc_send_group_bcast(struct
- 	struct sk_buff_head pkts;
- 	int rc = -EHOSTUNREACH;
- 
--	if (!dsts->local && !dsts->remote)
--		return -EHOSTUNREACH;
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c
+@@ -1101,11 +1101,6 @@ int mlx5e_ethtool_get_ts_info(struct mlx
+ 			      struct ethtool_ts_info *info)
+ {
+ 	struct mlx5_core_dev *mdev = priv->mdev;
+-	int ret;
 -
- 	/* Block or return if any destination link or member is congested */
- 	rc = tipc_wait_for_cond(sock, &timeout,
- 				!tsk->cong_link_cnt && tsk->group &&
-@@ -1026,6 +1023,10 @@ static int tipc_send_group_bcast(struct
- 	if (unlikely(rc))
- 		return rc;
+-	ret = ethtool_op_get_ts_info(priv->netdev, info);
+-	if (ret)
+-		return ret;
  
-+	dsts = tipc_group_dests(tsk->group);
-+	if (!dsts->local && !dsts->remote)
-+		return -EHOSTUNREACH;
-+
- 	/* Complete message header */
- 	if (dest) {
- 		msg_set_type(hdr, TIPC_GRP_MCAST_MSG);
+ 	info->phc_index = mlx5_clock_get_ptp_index(mdev);
+ 
+@@ -1113,9 +1108,9 @@ int mlx5e_ethtool_get_ts_info(struct mlx
+ 	    info->phc_index == -1)
+ 		return 0;
+ 
+-	info->so_timestamping |= SOF_TIMESTAMPING_TX_HARDWARE |
+-				 SOF_TIMESTAMPING_RX_HARDWARE |
+-				 SOF_TIMESTAMPING_RAW_HARDWARE;
++	info->so_timestamping = SOF_TIMESTAMPING_TX_HARDWARE |
++				SOF_TIMESTAMPING_RX_HARDWARE |
++				SOF_TIMESTAMPING_RAW_HARDWARE;
+ 
+ 	info->tx_types = BIT(HWTSTAMP_TX_OFF) |
+ 			 BIT(HWTSTAMP_TX_ON);
 
 
