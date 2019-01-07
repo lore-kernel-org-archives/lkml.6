@@ -7,49 +7,47 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35DC6C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:16:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B6C1C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:16:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECF7C2089F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:16:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F8CF2089F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:16:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546867003;
-	bh=nMuzbzMe/17TEeFCXRc/9oNbvVHa7eDdHRIB9ar5BYE=;
+	s=default; t=1546867013;
+	bh=g8C1nGI/CiMNcaSGHLqCCTe17+yv/EdejMjaH8Ui+ak=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=SSIWvlv2kbdAbcjWtjhO5Y01pb6gHJYaOLE2BYxflqArYXG7u7Gcub9F05mKWNWQE
-	 2bb5X6E6mnP/4+FFY4WA9bxtKHt13JsMBxZDAeibCmZx/b1ooNJlyBM8WWHaWUJlp9
-	 dfuc5Bj/e+GbBi4R3tlnccUwIC4ya2jW5+RuYdDc=
+	b=IXZ8dHsMaQov1ujjR64TpLHOlB5RFacKxRKUCp0B+kD9rVA0U9RIjai75lrEYgIhx
+	 fMWT9F8bPJc4kePRO337WZjzQuMHf867eKoouczBrxrD5crhNuexLRIOI+fA7nw2tl
+	 e1ovZzeOC8qgZcLGxuedLHdD7cvdxQrKw+5GyGX0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730215AbfAGNAi (ORCPT
+        id S1730467AbfAGNQw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:00:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48070 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:16:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47928 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729992AbfAGNAe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:00:34 -0500
+        id S1730462AbfAGNAZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:00:25 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 55CE62089F;
-        Mon,  7 Jan 2019 13:00:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7573721736;
+        Mon,  7 Jan 2019 13:00:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546866033;
-        bh=nMuzbzMe/17TEeFCXRc/9oNbvVHa7eDdHRIB9ar5BYE=;
+        s=default; t=1546866025;
+        bh=g8C1nGI/CiMNcaSGHLqCCTe17+yv/EdejMjaH8Ui+ak=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=B1Wgp2wEx/m6Cr94YZz2fE2MPyIMy+1YRrqHXXd9gglye2fzQ/ZpE/fYMfuzin1r3
-         0wN8JMK5HiUPsoGEZAVUCLzqBttubf2X15UWKRHldczqYWfwkIQuuHTbonRnTQtA3M
-         qpEZgIBPpmvPqy1+0PJfOENTYW86BDeMj7taAsFs=
+        b=y45UMitnlA8xugrDjNSIJlkRUDcIn+b1C824HREfnMI8C/ik2d6rIuwmGC67wlp+P
+         nJSHoL5wk+IuCr0998ZaZYws5fxW9kCw9dQojQMY+J/ilO1R8NlwogZOvhE3evFLd5
+         tyH8AOzqe7N1gCt9GcW+bTtMY3QADYLPxHLGa8ZY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ying Xue <ying.xue@windriver.com>,
-        Jon Maloy <jon.maloy@ericsson.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        syzbot+eae585ba2cc2752d3704@syzkaller.appspotmail.com
-Subject: [PATCH 4.14 023/101] tipc: fix a double kfree_skb()
-Date:   Mon,  7 Jan 2019 13:32:11 +0100
-Message-Id: <20190107105334.213273968@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 003/101] ipv4: Fix potential Spectre v1 vulnerability
+Date:   Mon,  7 Jan 2019 13:31:51 +0100
+Message-Id: <20190107105330.587860461@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107105330.372621917@linuxfoundation.org>
 References: <20190107105330.372621917@linuxfoundation.org>
@@ -68,37 +66,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Cong Wang <xiyou.wangcong@gmail.com>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 
-[ Upstream commit acb4a33e9856d5fa3384b87d3d8369229be06d31 ]
+[ Upstream commit 5648451e30a0d13d11796574919a359025d52cce ]
 
-tipc_udp_xmit() drops the packet on error, there is no
-need to drop it again.
+vr.vifi is indirectly controlled by user-space, hence leading to
+a potential exploitation of the Spectre variant 1 vulnerability.
 
-Fixes: ef20cd4dd163 ("tipc: introduce UDP replicast")
-Reported-and-tested-by: syzbot+eae585ba2cc2752d3704@syzkaller.appspotmail.com
-Cc: Ying Xue <ying.xue@windriver.com>
-Cc: Jon Maloy <jon.maloy@ericsson.com>
-Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+This issue was detected with the help of Smatch:
+
+net/ipv4/ipmr.c:1616 ipmr_ioctl() warn: potential spectre issue 'mrt->vif_table' [r] (local cap)
+net/ipv4/ipmr.c:1690 ipmr_compat_ioctl() warn: potential spectre issue 'mrt->vif_table' [r] (local cap)
+
+Fix this by sanitizing vr.vifi before using it to index mrt->vif_table'
+
+Notice that given that speculation windows are large, the policy is
+to kill the speculation on the first load and not worry if it can be
+completed with a dependent load/store [1].
+
+[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/tipc/udp_media.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ net/ipv4/ipmr.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/net/tipc/udp_media.c
-+++ b/net/tipc/udp_media.c
-@@ -243,10 +243,8 @@ static int tipc_udp_send_msg(struct net
- 		}
+--- a/net/ipv4/ipmr.c
++++ b/net/ipv4/ipmr.c
+@@ -68,6 +68,8 @@
+ #include <linux/netconf.h>
+ #include <net/nexthop.h>
  
- 		err = tipc_udp_xmit(net, _skb, ub, src, &rcast->addr);
--		if (err) {
--			kfree_skb(_skb);
-+		if (err)
- 			goto out;
--		}
- 	}
- 	err = 0;
- out:
++#include <linux/nospec.h>
++
+ struct ipmr_rule {
+ 	struct fib_rule		common;
+ };
+@@ -1620,6 +1622,7 @@ int ipmr_compat_ioctl(struct sock *sk, u
+ 			return -EFAULT;
+ 		if (vr.vifi >= mrt->maxvif)
+ 			return -EINVAL;
++		vr.vifi = array_index_nospec(vr.vifi, mrt->maxvif);
+ 		read_lock(&mrt_lock);
+ 		vif = &mrt->vif_table[vr.vifi];
+ 		if (VIF_EXISTS(mrt, vr.vifi)) {
 
 
