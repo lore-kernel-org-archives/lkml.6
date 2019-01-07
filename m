@@ -2,73 +2,123 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17021C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 08:43:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E1E7C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 08:49:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABD4620859
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 08:43:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546850621;
-	bh=O6Lx+gqOPgExSXRdaPIE/fX7JvCi1jDuq5yLUG4sPUE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=a65Wic9Dg7f4DGnv7tqAWgSEtsDTOIY5YJasUoUhQx7Wq1xkrPvuK6RUriFNel/qu
-	 zyPv2pyK70R1rBfkl+DRaf79I6iJvcCzeBYvMskkFqfmTfTz9vh3rlvRdtJYlSLIJ/
-	 pH8NTaq3OM2B39Cnguj0fEL3XzKfBem+ssIM29fA=
+	by mail.kernel.org (Postfix) with ESMTP id 62C272087F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 08:49:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726591AbfAGInl (ORCPT
+        id S1726609AbfAGItZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 03:43:41 -0500
-Received: from mx2.suse.de ([195.135.220.15]:47300 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725550AbfAGInk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 03:43:40 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id F228DAC66;
-        Mon,  7 Jan 2019 08:43:38 +0000 (UTC)
-Date:   Mon, 7 Jan 2019 09:43:38 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Anshuman Khandual <anshuman.khandual@arm.com>
-Cc:     akpm@linux-foundation.org, broonie@kernel.org,
-        sfr@canb.auug.org.au, linux-next@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, mm-commits@vger.kernel.org
-Subject: Re: mmotm 2018-12-21-15-28 uploaded
-Message-ID: <20190107084338.GW31793@dhcp22.suse.cz>
-References: <20181221232853.WLvEi%akpm@linux-foundation.org>
- <99ab6512-9fce-9cb9-76e7-7f83d87d5f86@arm.com>
+        Mon, 7 Jan 2019 03:49:25 -0500
+Received: from mail5.windriver.com ([192.103.53.11]:51090 "EHLO mail5.wrs.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726496AbfAGItZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 03:49:25 -0500
+Received: from ALA-HCA.corp.ad.wrs.com (ala-hca.corp.ad.wrs.com [147.11.189.40])
+        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id x078l5FZ024630
+        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
+        Mon, 7 Jan 2019 00:47:15 -0800
+Received: from [128.224.162.180] (128.224.162.180) by ALA-HCA.corp.ad.wrs.com
+ (147.11.189.50) with Microsoft SMTP Server (TLS) id 14.3.408.0; Mon, 7 Jan
+ 2019 00:46:55 -0800
+Subject: Re: [PATCH v2] kernel/dma: Fix panic caused by passing swiotlb to
+ command line
+To:     <konrad@darnok.org>, <konrad.wilk@oracle.com>, <hch@lst.de>,
+        <m.szyprowski@samsung.com>, <robin.murphy@arm.com>,
+        <iommu@lists.linux-foundation.org>, <linux-kernel@vger.kernel.org>
+References: <1543832571-121638-1-git-send-email-zhe.he@windriver.com>
+From:   He Zhe <zhe.he@windriver.com>
+Message-ID: <b35907a9-4d30-493b-3839-731b10d71c63@windriver.com>
+Date:   Mon, 7 Jan 2019 16:46:51 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <99ab6512-9fce-9cb9-76e7-7f83d87d5f86@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1543832571-121638-1-git-send-email-zhe.he@windriver.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Originating-IP: [128.224.162.180]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Kindly ping.
 
-On Mon 07-01-19 13:02:31, Anshuman Khandual wrote:
-> On 12/22/2018 04:58 AM, akpm@linux-foundation.org wrote:
-[...]
-> > A git tree which contains the memory management portion of this tree is
-> > maintained at git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.gi
-> 
-> Hello Michal,
-> 
-> I dont see the newer tags on this tree. Tried fetching all the tags from the tree
-> but only see these right now for 2018. This release should have an equivalent tag
-> (mmotm-2018-12-21-15-28) right ? 
+Zhe
 
-I have stopped tracking mmotm trees in this tree quite some time ago. I
-would much rather turn mmotm into a proper git tree which I was
-discussing with Andrew but we didn't land in anything so far. I hope to
-use LSFMM this year to resurrect the idea. 
--- 
-Michal Hocko
-SUSE Labs
+On 12/3/18 6:22 PM, zhe.he@windriver.com wrote:
+> From: He Zhe <zhe.he@windriver.com>
+>
+> setup_io_tlb_npages does not check input argument before passing it
+> to isdigit. The argument would be a NULL pointer if "swiotlb", without
+> its value, is set in command line and thus causes the following panic.
+>
+> PANIC: early exception 0xe3 IP 10:ffffffffbb9b8e9f error 0 cr2 0x0
+> [    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 4.19.0-rc3-yocto-standard+ #9
+> [    0.000000] RIP: 0010:setup_io_tlb_npages+0xf/0x95
+> ...
+> [    0.000000] Call Trace:
+> [    0.000000]  do_early_param+0x57/0x8e
+> [    0.000000]  parse_args+0x208/0x320
+> [    0.000000]  ? rdinit_setup+0x30/0x30
+> [    0.000000]  parse_early_options+0x29/0x2d
+> [    0.000000]  ? rdinit_setup+0x30/0x30
+> [    0.000000]  parse_early_param+0x36/0x4d
+> [    0.000000]  setup_arch+0x336/0x99e
+> [    0.000000]  start_kernel+0x6f/0x4e6
+> [    0.000000]  x86_64_start_reservations+0x24/0x26
+> [    0.000000]  x86_64_start_kernel+0x6f/0x72
+> [    0.000000]  secondary_startup_64+0xa4/0xb0
+>
+> This patch adds a check to prevent the panic and sets it for 4MB by default.
+>
+> Signed-off-by: He Zhe <zhe.he@windriver.com>
+> Cc: stable@vger.kernel.org
+> Cc: konrad.wilk@oracle.com
+> Cc: hch@lst.de
+> Cc: m.szyprowski@samsung.com
+> Cc: robin.murphy@arm.com
+>
+> Signed-off-by: He Zhe <zhe.he@windriver.com>
+> ---
+> v2: Set swiotlb for 4MB by default
+>
+>  kernel/dma/swiotlb.c | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+>
+> diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
+> index 045930e..0e18cd4 100644
+> --- a/kernel/dma/swiotlb.c
+> +++ b/kernel/dma/swiotlb.c
+> @@ -58,6 +58,9 @@
+>   */
+>  #define IO_TLB_MIN_SLABS ((1<<20) >> IO_TLB_SHIFT)
+>  
+> +#define IO_TLB_DEFAULT_MB 4
+> +#define IO_TLB_DEFAULT_SLABS ((IO_TLB_DEFAULT_MB<<20) >> IO_TLB_SHIFT)
+> +
+>  enum swiotlb_force swiotlb_force;
+>  
+>  /*
+> @@ -103,6 +106,14 @@ static int late_alloc;
+>  static int __init
+>  setup_io_tlb_npages(char *str)
+>  {
+> +	if (!str) {
+> +		pr_err("No value provided for swiotlb, "
+> +		       "set it to %d slabs for %dMB by default.\n",
+> +		       IO_TLB_DEFAULT_SLABS, IO_TLB_DEFAULT_MB);
+> +		io_tlb_nslabs = IO_TLB_DEFAULT_SLABS;
+> +		return 0;
+> +	}
+> +
+>  	if (isdigit(*str)) {
+>  		io_tlb_nslabs = simple_strtoul(str, &str, 0);
+>  		/* avoid tail segment of size < IO_TLB_SEGSIZE */
+
