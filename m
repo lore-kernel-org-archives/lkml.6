@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BCC9C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 10:10:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC307C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 10:10:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C39420854
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 10:10:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB9A220854
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 10:10:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="WQCdHXSa";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="iofHg2va"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ECMsBx1F";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="gDXZqk8p"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726928AbfAGKKe (ORCPT
+        id S1726943AbfAGKKj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 05:10:34 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:56384 "EHLO
+        Mon, 7 Jan 2019 05:10:39 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:56518 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726877AbfAGKKc (ORCPT
+        with ESMTP id S1726877AbfAGKKg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 05:10:32 -0500
+        Mon, 7 Jan 2019 05:10:36 -0500
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id A3D1960A71; Mon,  7 Jan 2019 10:10:29 +0000 (UTC)
+        id 0B75760A7E; Mon,  7 Jan 2019 10:10:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1546855830;
-        bh=8/5/Hr4gjpPWrAjtjm2ZrTJC9RfRXPIRh9avqn4AZPo=;
+        s=default; t=1546855835;
+        bh=VGknM7IwOWjGYLrUbb042qXvuJQSppWSIxoAkiKBUI4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WQCdHXSav3f72aQi7dzOZRpus4nLAo8oszhsdiavbmHCIusTp1zHYg23jdKoMOG5W
-         Ui7+lF3gHLMouBA6JT5+YIgz6uz5SvZenzbmylzWWW5tkfOCqduBAAoWztLDB8cX/L
-         vQ4PSk0Y0f8KZuXgPmbV6WdxLzUDNhwFnS8ByNxo=
+        b=ECMsBx1F9nPSg3GMfOTPPZuayb8CvVaeOdXueVl1l4tcnCv79gAFjdWSHA3adpVNA
+         vgJYs5ovsR/OvkAy55r9RR2WqUPyRAHDUudXUt8mevhaExHkpw7NQx4inEdDz/Az2M
+         pNP+Di5i7Gyql6Hjj3+iwrKhH2IoOHJlHx+3sid4=
 Received: from blr-ubuntu-173.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: rnayak@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 7603060A24;
-        Mon,  7 Jan 2019 10:10:24 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0B79760A41;
+        Mon,  7 Jan 2019 10:10:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1546855828;
-        bh=8/5/Hr4gjpPWrAjtjm2ZrTJC9RfRXPIRh9avqn4AZPo=;
+        s=default; t=1546855832;
+        bh=VGknM7IwOWjGYLrUbb042qXvuJQSppWSIxoAkiKBUI4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iofHg2van7lBSeBsDmwkFPc7z1pOSka4uQ2i312nx5wDl7vSZhYeUEAQOlwaBaXoX
-         ZpHIYVU/aobaAz1RhwgtxbmThnAQU9VvNNu/UVX512sdT/Er5BZrb3NB4KkD0Rbst3
-         K4BJe0iuwjtEoK2RSGEm/pGUNgoE21Fu7zLkqRto=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7603060A24
+        b=gDXZqk8pq6hIT/eQWpbhnXRsa0YQMezmNEWt+L6tf502aBz7K6sy/BWDfYCZf5qiU
+         MF144+joy/ez3yh2mF8QCfBif16ENmn1tkBOPVrclIPu5/45c0MSNuLVBcnqQSP7Os
+         zxQzT5blgndX1E9WzcEJRJ6q7bcez927xkXXadSo=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0B79760A41
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
 From:   Rajendra Nayak <rnayak@codeaurora.org>
@@ -56,9 +56,9 @@ To:     andy.gross@linaro.org, robh@kernel.org, viresh.kumar@linaro.org,
 Cc:     devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         linux-kernel@vger.kernel.org, henryc.chen@mediatek.com,
         Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH v9 04/10] soc: qcom: rpmpd: Add support for get/set performance state
-Date:   Mon,  7 Jan 2019 15:39:53 +0530
-Message-Id: <20190107100959.14528-5-rnayak@codeaurora.org>
+Subject: [PATCH v9 05/10] arm64: dts: msm8996: Add rpmpd device node
+Date:   Mon,  7 Jan 2019 15:39:54 +0530
+Message-Id: <20190107100959.14528-6-rnayak@codeaurora.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190107100959.14528-1-rnayak@codeaurora.org>
 References: <20190107100959.14528-1-rnayak@codeaurora.org>
@@ -69,93 +69,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for the .set_performace_state() and .opp_to_performance_state()
-callbacks in the rpmpd driver.
+Add rpmpd device node and its OPP table
 
 Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
 Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 Reviewed-by: Stephen Boyd <swboyd@chromium.org>
 ---
- drivers/soc/qcom/rpmpd.c | 44 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
+ arch/arm64/boot/dts/qcom/msm8996.dtsi | 34 +++++++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
 
-diff --git a/drivers/soc/qcom/rpmpd.c b/drivers/soc/qcom/rpmpd.c
-index 7715ba7c9157..1c6c5dec2667 100644
---- a/drivers/soc/qcom/rpmpd.c
-+++ b/drivers/soc/qcom/rpmpd.c
-@@ -10,6 +10,7 @@
- #include <linux/of.h>
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
-+#include <linux/pm_opp.h>
- #include <linux/soc/qcom/smd-rpm.h>
+diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+index 99b7495455a6..692bb9934e92 100644
+--- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+@@ -306,6 +306,40 @@
+ 				#clock-cells = <1>;
+ 			};
  
- #include <dt-bindings/mfd/qcom-rpm.h>
-@@ -26,6 +27,8 @@
- #define KEY_ENABLE		0x6e657773 /* swen */
- #define KEY_FLOOR_CORNER	0x636676   /* vfc */
++			rpmpd: power-controller {
++				compatible = "qcom,msm8996-rpmpd";
++				#power-domain-cells = <1>;
++				operating-points-v2 = <&rpmpd_opp_table>;
++
++				rpmpd_opp_table: opp-table {
++					compatible = "operating-points-v2-level";
++
++					rpmpd_opp1: opp1 {
++						opp-level = <1>;
++					};
++
++					rpmpd_opp2: opp2 {
++						opp-level = <2>;
++					};
++
++					rpmpd_opp3: opp3 {
++						opp-level = <3>;
++					};
++
++					rpmpd_opp4: opp4 {
++						opp-level = <4>;
++					};
++
++					rpmpd_opp5: opp5 {
++						opp-level = <5>;
++					};
++
++					rpmpd_opp6: opp6 {
++						opp-level = <6>;
++					};
++				};
++			};
++
+ 			pm8994-regulators {
+ 				compatible = "qcom,rpm-pm8994-regulators";
  
-+#define MAX_RPMPD_STATE		6
-+
- #define DEFINE_RPMPD_CORNER_SMPA(_platform, _name, _active, r_id)		\
- 	static struct rpmpd _platform##_##_active;			\
- 	static struct rpmpd _platform##_##_name = {			\
-@@ -218,6 +221,45 @@ static int rpmpd_power_off(struct generic_pm_domain *domain)
- 	return ret;
- }
- 
-+static int rpmpd_set_performance(struct generic_pm_domain *domain,
-+				 unsigned int state)
-+{
-+	int ret = 0;
-+	struct rpmpd *pd = domain_to_rpmpd(domain);
-+
-+	if (state > MAX_RPMPD_STATE)
-+		goto out;
-+
-+	mutex_lock(&rpmpd_lock);
-+
-+	pd->corner = state;
-+
-+	if (!pd->enabled && pd->key != KEY_FLOOR_CORNER)
-+		goto out;
-+
-+	ret = rpmpd_aggregate_corner(pd);
-+
-+out:
-+	mutex_unlock(&rpmpd_lock);
-+
-+	return ret;
-+}
-+
-+static unsigned int rpmpd_get_performance(struct generic_pm_domain *genpd,
-+					  struct dev_pm_opp *opp)
-+{
-+	struct device_node *np;
-+	unsigned int corner = 0;
-+
-+	np = dev_pm_opp_get_of_node(opp);
-+	if (of_property_read_u32(np, "opp-level", &corner))
-+		pr_err("%s: missing 'opp-level' property\n", __func__);
-+
-+	of_node_put(np);
-+
-+	return corner;
-+}
-+
- static int rpmpd_probe(struct platform_device *pdev)
- {
- 	int i;
-@@ -258,6 +300,8 @@ static int rpmpd_probe(struct platform_device *pdev)
- 		rpmpds[i]->rpm = rpm;
- 		rpmpds[i]->pd.power_off = rpmpd_power_off;
- 		rpmpds[i]->pd.power_on = rpmpd_power_on;
-+		rpmpds[i]->pd.set_performance_state = rpmpd_set_performance;
-+		rpmpds[i]->pd.opp_to_performance_state = rpmpd_get_performance;
- 		pm_genpd_init(&rpmpds[i]->pd, NULL, true);
- 
- 		data->domains[i] = &rpmpds[i]->pd;
 -- 
 QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
 of Code Aurora Forum, hosted by The Linux Foundation
