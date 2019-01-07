@@ -2,128 +2,147 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1ED0C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 10:14:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 790E8C43612
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 10:15:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99AD12087F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 10:14:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45A042089F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 10:15:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546856148;
+	bh=vJMWAsOKip4geW5B7WXYGQhkH4I9qzadf0nL6f5EzEk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=KbM/eQPEGdiRn6YRplxFV81Kh5ON3CdFZn+QwFnrIS2Chs43HnfCkELuZmrHIx5QH
+	 8XD5bdY5D0A0OozVj7tGa/r3qe8CTPm1I4bYmYnyLk+0U4K4vf/cFHSms5Xi5r7Vew
+	 HATuXvneZZ7f564vWi7AF8W2b9UG3DEkmF+muUvI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726879AbfAGKOD convert rfc822-to-8bit (ORCPT
+        id S1726809AbfAGKPr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 05:14:03 -0500
-Received: from mail1.bemta24.messagelabs.com ([67.219.250.209]:25833 "EHLO
-        mail1.bemta24.messagelabs.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726501AbfAGKOD (ORCPT
+        Mon, 7 Jan 2019 05:15:47 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:45350 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726668AbfAGKPq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 05:14:03 -0500
-Received: from [67.219.251.53] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
-        by server-2.bemta.az-c.us-west-2.aws.symcld.net id 3E/86-20272-866233C5; Mon, 07 Jan 2019 10:14:00 +0000
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrPKsWRWlGSWpSXmKPExsXi5LtOQDdDzTj
-  GYOM+XYvDi14wWnz9dpvd4uanb6wWl3fNYXNg8dg56y67x69ta1g8Pm+SC2COYs3MS8qvSGDN
-  ePPiN2vBVp6KOY3f2BsYW7i6GLk4hARWMUrM6frDCuGsZpT4eeUwI4Szh1Hi+slVLF2MnBxsA
-  voS3/4cZAKxRYDs7bN/gRUxC6xklFgybRJYQljAUeL07RuMEEVOEueapjHB2L+3f2QDsVkEVC
-  SWtH5mBbF5BQwl5h3+wwSxbS2jxM25v4GaOTg4Bcwk1ra4gNQwCohJfD+1BmwOs4C4xK0n88F
-  sCQEBiSV7zjND2KISLx//A5spCjS/5eAeFoi4gsTng/PYIHp1JBbs/gRlm0vMmHKIFcLWlli2
-  8DUzxD2CEidnPmEBOUFIQFmi4QrvBEaJWUg2z0IyaRaSSbOQTJqFZNICRtZVjOZJRZnpGSW5i
-  Zk5uoYGBrqGhka6hsbmuiYmeolVusl6pcW65anFJbpGeonlxXrFlbnJOSl6eaklmxiBEZ5S0K
-  mzg3HeivRDjJIcTEqivHZHjGKE+JLyUyozEosz4otKc1KLDzHKcHAoSfC+VDGOERIsSk1PrUj
-  LzAGmGpi0BAePkgivlCpQmre4IDG3ODMdInWK0ZLjzaKOGcwcp948n8nMcbzz6xxmIZa8/LxU
-  KXFeQZAGAZCGjNI8uHGwdHiJUVZKmJeRgYFBiKcgtSg3swRV/hWjOAejkjCvBsgUnsy8Eritr
-  4AOYgI66CWPAchBJYkIKakGRsPP2ndengi96Tr9YrpYiH39b8Yr/qHcO1OnhtxpuGJgXlrQXl
-  j0aGuc7+7Jk6dlmkTVd7y3O67sYthQLBBfIHDrIKvlR54z9o5PNpV58Loosx4Ju786KEFVdob
-  U52LrnTd0byXOL6qIburO1VuQKXvC5L75ym0Mcxe8nuf3gIUnJ3mx6TI3JZbijERDLeai4kQA
-  GCOES4IDAAA=
-X-Env-Sender: Alex.Gonzalez@digi.com
-X-Msg-Ref: server-28.tower-365.messagelabs.com!1546856038!1204892!3
-X-Originating-IP: [66.77.174.16]
-X-SYMC-ESS-Client-Auth: outbound-route-from=pass
-X-StarScan-Received: 
-X-StarScan-Version: 9.31.5; banners=-,-,-
-X-VirusChecked: Checked
-Received: (qmail 21687 invoked from network); 7 Jan 2019 10:14:00 -0000
-Received: from owa.digi.com (HELO MCL-VMS-XCH01.digi.com) (66.77.174.16)
-  by server-28.tower-365.messagelabs.com with DHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 7 Jan 2019 10:14:00 -0000
-Received: from MTK-SMS-XCH05.digi.com (10.10.8.199) by MCL-VMS-XCH01.digi.com
- (10.5.8.49) with Microsoft SMTP Server (TLS) id 14.3.408.0; Mon, 7 Jan 2019
- 04:13:59 -0600
-Received: from DOR-VMS-XCH01.digi.com (10.49.8.98) by MTK-SMS-XCH05.digi.com
- (10.10.8.199) with Microsoft SMTP Server (TLS) id 14.3.408.0; Mon, 7 Jan 2019
- 04:13:58 -0600
-Received: from DOR-SMS-XCH01.digi.com ([fe80::894b:3bdc:74ae:6efc]) by
- DOR-VMS-XCH01.digi.com ([fe80::c47f:be41:1dc7:5ab8%11]) with mapi id
- 14.03.0415.000; Mon, 7 Jan 2019 11:13:57 +0100
-From:   "Gonzalez, Alex" <Alex.Gonzalez@digi.com>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-CC:     "hadess@hadess.net" <hadess@hadess.net>,
-        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] Input: goodix - decouple irq and reset lines
-Thread-Topic: [PATCH] Input: goodix - decouple irq and reset lines
-Thread-Index: AQHUpEatvIDOh1cYWEudJPd429h/UaWfM/8AgAIFKYCAAlDrgA==
-Date:   Mon, 7 Jan 2019 10:13:56 +0000
-Message-ID: <20190107101355.GA3117@agonzal-linux>
-References: <1546617648-23445-1-git-send-email-alex.gonzalez@digi.com>
- <1546617648-23445-2-git-send-email-alex.gonzalez@digi.com>
- <20190105225147.le5fgpnvq7sctxe5@penguin>
-In-Reply-To: <20190105225147.le5fgpnvq7sctxe5@penguin>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mutt/1.5.24 (2015-08-30)
-x-originating-ip: [10.101.2.194]
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2644DA3EE3E44B41AB3E287569C08B39@digi.com>
-Content-Transfer-Encoding: 8BIT
+        Mon, 7 Jan 2019 05:15:46 -0500
+Received: by mail-wr1-f68.google.com with SMTP id t6so42530324wrr.12;
+        Mon, 07 Jan 2019 02:15:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=yWirVjqGb8oxtQKBz5VYdknzBxnaGsefnIlvvHeuY7g=;
+        b=iJYPV0FwUrMRQan3NlPP/Dst6utgocQVSR7jieBqzJK4szthcTcKSK0rEd28CMiJXm
+         GPT8G+0qn3xPqL12BeNqeNb24a2EetfcKN+kJ5LCnPhp8rRJLdSItOY3Gcc7/blpdieU
+         1NXGHYswV1ngjxtg0dAp/uK+UWP/YeIy0S+v4cu3mJoA0kPUoFgdVtvvKcFb0ED/HPbi
+         g65SjOztI80SAYFZ5NTvS6VGsrzaE9Z3oYFOjwBm0zpaWoNWKyqjIeWBq+Fr3i4Kb6yD
+         3caflwBsHyUb33nG8Okuq4QdVWqR4A7xkWL+H2mqNn0Ac3gMoi21eqOumQrbWhyKLuPz
+         koUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=yWirVjqGb8oxtQKBz5VYdknzBxnaGsefnIlvvHeuY7g=;
+        b=GEcoulZK+/Li8NIYkxz/W6OCuFk2ZIBnLyGfd46n+U4OtIb580EcsdHmm5uJkYk/jn
+         g8rFlZfan8oYzYAOK4J/4XSgKtVNj5n5MZKV4HtJ8bQDhv0uxj+NX9xdAsn3yYjs+vPm
+         d6qrgGNKnPhCsQoli/aD+Gj6RcUy8eGsmudy7am6LcN9NAMZI1kTgge9q61t6GLOVhQ6
+         QIeWB9xY61EqG7HxaqG1ZxnZ67vO1BoqNCZEPUfKrcb8MwgusGL4EU3vF1ozDmwOUUPj
+         aN5jHbueuJNn/6w8ieri2vXKGEXdYZv9NANJBEt8mjMFr8roI272XaVa3iKX1EsHMnCP
+         0fHg==
+X-Gm-Message-State: AJcUukdewMb1DbyqsM25Ltzdc4Nfp9q0n9HCcW76AwESsoIXcGaTgvAO
+        4Dd/ZoYd1hCyWWMw+zCcrKI=
+X-Google-Smtp-Source: ALg8bN6mOGCzKj1vVKC4YulHWhkzP3JaidsEdXVOuz5Q6ZZZbocR3cgrs9cqXBxPqruE+ajd6pYAEg==
+X-Received: by 2002:a5d:418b:: with SMTP id m11mr47463365wrp.8.1546856143892;
+        Mon, 07 Jan 2019 02:15:43 -0800 (PST)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id u204sm6847662wmu.30.2019.01.07.02.15.42
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 07 Jan 2019 02:15:43 -0800 (PST)
+Date:   Mon, 7 Jan 2019 11:15:40 +0100
+From:   Ingo Molnar <mingo@kernel.org>
+To:     James Morris <jmorris@namei.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>
+Subject: Re: [GIT PULL] security: seccomp changes for v4.21
+Message-ID: <20190107101540.GA87402@gmail.com>
+References: <alpine.LRH.2.21.1812311511360.1435@namei.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.LRH.2.21.1812311511360.1435@namei.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dmitry,
 
-Thanks for your quick reply.
+* James Morris <jmorris@namei.org> wrote:
 
->
->I do not have a datasheet for the device, so I am not sure if reset line
->is actually needed to put the device into sleep mode. As far as I can
->see from the code we suspend it by pulsing INT line and then sending a
->command to the controller, and resuming by pulsing the INT line again.
->So it sounds to me INT only designs _could_ place device in sleep mode.
->
+> From Kees:
+> 
+> "- Add SECCOMP_RET_USER_NOTIF
+> 
+> - seccomp fixes for sparse warnings and s390 build (Tycho)"
+> 
+> 
+> 
+> The following changes since commit 1072bd678547f8663cfb81a22fdb50c589e4976e:
+> 
+>   security: fs: make inode explicitly non-modular (2018-12-12 14:58:51 -0800)
+> 
+> are available in the Git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-seccomp
+> 
+> for you to fetch changes up to 55b8cbe470d103b44104c64dbf89e5cad525d4e0:
+> 
+>   Merge tag 'seccomp-next-part2' of https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux into next-seccomp (2018-12-17 11:36:26 -0800)
+> 
+> ----------------------------------------------------------------
+> James Morris (2):
+>       Merge tag 'seccomp-next' of https://git.kernel.org/.../kees/linux into next-seccomp
+>       Merge tag 'seccomp-next-part2' of https://git.kernel.org/.../kees/linux into next-seccomp
+> 
+> Tycho Andersen (6):
+>       seccomp: hoist struct seccomp_data recalculation higher
+>       seccomp: switch system call argument type to void *
+>       seccomp: add a return code to trap to userspace
+>       samples: add an example of seccomp user trap
+>       seccomp: fix poor type promotion
+>       seccomp, s390: fix build for syscall type change
+> 
+>  Documentation/ioctl/ioctl-number.txt           |   1 +
+>  Documentation/userspace-api/seccomp_filter.rst |  84 +++++
+>  arch/s390/kernel/compat_wrapper.c              |   2 +-
+>  include/linux/seccomp.h                        |   9 +-
+>  include/linux/syscalls.h                       |   2 +-
+>  include/uapi/linux/seccomp.h                   |  40 ++-
+>  kernel/seccomp.c                               | 467 ++++++++++++++++++++++++-
+>  samples/seccomp/.gitignore                     |   1 +
+>  samples/seccomp/Makefile                       |   7 +-
+>  samples/seccomp/user-trap.c                    | 375 ++++++++++++++++++++
+>  tools/testing/selftests/seccomp/seccomp_bpf.c  | 447 ++++++++++++++++++++++-
+>  11 files changed, 1411 insertions(+), 24 deletions(-)
+>  create mode 100644 samples/seccomp/user-trap.c
 
-The way I read the gt911 dataheet I also understand that only the INT line is
-required to enter sleep mode but I don't other for the other supported 
-controllers.  My comment is based on both the suspend() and resume() functions 
-returning in the absence of either gpiod_int or gpiod_rst and not progressing 
-to the sleep sequence.
+32-bit x86 allyesconfig doesn't build:
 
->As far as the patch goes, if you do not need to execute reset or put
->device into low power mode, you do not need to specify any of the GPIOs
->as GPIO resources. Simply specify the INT GPIO as your interrupt source
->(GpioInt() in ACPI world or "interrupts = <&gpio NNN
->IRQF_TRIGGER_WHATEVER>" in DT world and be done with it.
->
+ /usr/bin/ld: i386:x86-64 architecture of input file `samples/seccomp/user-trap.o' is incompatible with i386 output
+ /usr/bin/ld: samples/seccomp/user-trap.o: file class ELFCLASS64 incompatible with ELFCLASS32
+ /usr/bin/ld: final link failed: File in wrong format
+ collect2: error: ld returned 1 exit status
+ scripts/Makefile.host:99: recipe for target 'samples/seccomp/user-trap' failed
+ make[2]: *** [samples/seccomp/user-trap] Error 1
 
-That was my first impression too. However this does not work for my device. My
-hypothesis is that the touch controller I2C address setting sequence is not 
-happening as it should, so I need at least the control of the INT line in 
-order to fix the I2C address.
+Is this a known regression?
 
-I am unsure though whether this is a problem specific to the design I am 
-testing with or all designs will have problems setting the I2C address without 
-controlling the INT GPIO line.
+Thanks,
 
-Regards,
-Alex
-
-
->Thanks.
->
->--
->Dmitry
+	Ingo
