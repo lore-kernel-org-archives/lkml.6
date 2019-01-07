@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAFA5C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:49:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 785A3C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:49:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BEF120859
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:49:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4708D20859
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:49:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546865370;
-	bh=gF+Fy+j0ynQVWUd5Z1PpDhDaSk2SewhNJzHWsXdaMGM=;
+	s=default; t=1546865374;
+	bh=Zf0YJNJfw8vJuglDu84YQkYtML+aTifV2690ti2lDqQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Z4yAEuGEQMrBbciWdB4Q0AoDqpzvyWav3DxaQr8oAntTcDS9Rg+UAlEBWsaRWrOXw
-	 4awb+lSdMJAzx+P7HGygffJLz5eUMOALCwO9R7ZbNyki9LtM3fhYLbTkC0w+jkC2IQ
-	 BbU42ryyh77429NclguL+T8eC80Evb8U6ya87Mkw=
+	b=SVhMubI7omnsWsuJJ+0ztUKMXaSFN4Ahv6c5AeMvE+tO2+n98H7NVbqf0mwySi0O2
+	 9ZJjrdVVjNX9IUtD5+di5UpM39W3nFSm7VBDrgj0rVLk5V1NaGWzsUMRgtHR/ukLg4
+	 120mANZmxGDcyPlXcRvwsBXP0z1PFVPY98uiSAt8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729504AbfAGMt3 (ORCPT
+        id S1729357AbfAGMtd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:49:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40272 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:49:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40334 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728654AbfAGMtY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:49:24 -0500
+        id S1729498AbfAGMt2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:49:28 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B1AB120651;
-        Mon,  7 Jan 2019 12:49:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 235DA20651;
+        Mon,  7 Jan 2019 12:49:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865364;
-        bh=gF+Fy+j0ynQVWUd5Z1PpDhDaSk2SewhNJzHWsXdaMGM=;
+        s=default; t=1546865367;
+        bh=Zf0YJNJfw8vJuglDu84YQkYtML+aTifV2690ti2lDqQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BKRUrD2G3xVy1MGQrJLsD+E3UtsuykXKhRUMT+mYEsff2DojKWubyldaL1a+JYDY7
-         NynhnCNucOHTqVDRLbVYHqutHBhdGozF0q84LSU026Ma/E8konKEhzl9kG/QdEjy25
-         ix1RDahcvEN9z2QFzEBToby8att5juiF1HuHDBvE=
+        b=0VRuQ0zR4AvjyxSXTswOFwj4gLJCWOQGroIYFUVCMYEbfaffyzkb5aEj3hTS0MzbR
+         ENmDbDtc9LUiAVVSnpz5QVbChcXwwBTOQeQmxKp+VqYXGDSN/AdiMMoMEKcQ6AGHm+
+         jpFKNBJ5jgHVZikueCH53swWKjJ57/0TFDG0mQuw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 020/170] net: stmmac: Fix an error code in probe()
-Date:   Mon,  7 Jan 2019 13:30:47 +0100
-Message-Id: <20190107104455.429287665@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.19 061/170] ALSA: emu10k1: Fix potential Spectre v1 vulnerabilities
+Date:   Mon,  7 Jan 2019 13:31:28 +0100
+Message-Id: <20190107104500.239343946@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104452.953560660@linuxfoundation.org>
 References: <20190107104452.953560660@linuxfoundation.org>
@@ -65,30 +66,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-[ Upstream commit b26322d2ac6c1c1087af73856531bb836f6963ca ]
+commit 5ae4f61f012a097df93de2285070ec8e34716d29 upstream.
 
-The function should return an error if create_singlethread_workqueue()
-fails.
+ipcm->substream is indirectly controlled by user-space, hence leading to
+a potential exploitation of the Spectre variant 1 vulnerability.
 
-Fixes: 34877a15f787 ("net: stmmac: Rework and fix TX Timeout code")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+This issue was detected with the help of Smatch:
+
+sound/pci/emu10k1/emufx.c:1031 snd_emu10k1_ipcm_poke() warn: potential spectre issue 'emu->fx8010.pcm' [r] (local cap)
+sound/pci/emu10k1/emufx.c:1075 snd_emu10k1_ipcm_peek() warn: potential spectre issue 'emu->fx8010.pcm' [r] (local cap)
+
+Fix this by sanitizing ipcm->substream before using it to index emu->fx8010.pcm
+
+Notice that given that speculation windows are large, the policy is
+to kill the speculation on the first load and not worry if it can be
+completed with a dependent load/store [1].
+
+[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c |    1 +
- 1 file changed, 1 insertion(+)
 
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -4247,6 +4247,7 @@ int stmmac_dvr_probe(struct device *devi
- 	priv->wq = create_singlethread_workqueue("stmmac_wq");
- 	if (!priv->wq) {
- 		dev_err(priv->device, "failed to create workqueue\n");
-+		ret = -ENOMEM;
- 		goto error_wq;
- 	}
+---
+ sound/pci/emu10k1/emufx.c |    5 +++++
+ 1 file changed, 5 insertions(+)
+
+--- a/sound/pci/emu10k1/emufx.c
++++ b/sound/pci/emu10k1/emufx.c
+@@ -36,6 +36,7 @@
+ #include <linux/init.h>
+ #include <linux/mutex.h>
+ #include <linux/moduleparam.h>
++#include <linux/nospec.h>
  
+ #include <sound/core.h>
+ #include <sound/tlv.h>
+@@ -1026,6 +1027,8 @@ static int snd_emu10k1_ipcm_poke(struct
+ 
+ 	if (ipcm->substream >= EMU10K1_FX8010_PCM_COUNT)
+ 		return -EINVAL;
++	ipcm->substream = array_index_nospec(ipcm->substream,
++					     EMU10K1_FX8010_PCM_COUNT);
+ 	if (ipcm->channels > 32)
+ 		return -EINVAL;
+ 	pcm = &emu->fx8010.pcm[ipcm->substream];
+@@ -1072,6 +1075,8 @@ static int snd_emu10k1_ipcm_peek(struct
+ 
+ 	if (ipcm->substream >= EMU10K1_FX8010_PCM_COUNT)
+ 		return -EINVAL;
++	ipcm->substream = array_index_nospec(ipcm->substream,
++					     EMU10K1_FX8010_PCM_COUNT);
+ 	pcm = &emu->fx8010.pcm[ipcm->substream];
+ 	mutex_lock(&emu->fx8010.lock);
+ 	spin_lock_irq(&emu->reg_lock);
 
 
