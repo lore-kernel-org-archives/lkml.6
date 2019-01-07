@@ -2,126 +2,146 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DAC3C43612
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 07:48:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 514CEC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 07:48:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A0A52087F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 07:48:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15B89204FD
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 07:48:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Jsft3sqn";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Jsft3sqn"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="A9qz7CTf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726732AbfAGHsH (ORCPT
+        id S1726750AbfAGHsV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 02:48:07 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:35268 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726609AbfAGHsH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 02:48:07 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id E5FF060541; Mon,  7 Jan 2019 07:48:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1546847285;
-        bh=1J9UTJzlAAxpaGQNm6ducRkVjBFVhAU81g0QER2Z9WE=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=Jsft3sqnZmCqnn0KsFPIk4C6lFIrXovmc1VuwzXuEVRJygmAskhtTO+jSVVQs92OL
-         PdeNWwkE1aY3O73UJgIRoRZyzGjUyIgRbunikP1PTRtMSB0oLTilHY/QJhH9EU4oi1
-         4kqNOU0cfTihhywFzW2VlfeP5svbuVvjWSKRmFgk=
-Received: from [10.204.110.203] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: rohitkr@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id EB8886029B;
-        Mon,  7 Jan 2019 07:48:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1546847285;
-        bh=1J9UTJzlAAxpaGQNm6ducRkVjBFVhAU81g0QER2Z9WE=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=Jsft3sqnZmCqnn0KsFPIk4C6lFIrXovmc1VuwzXuEVRJygmAskhtTO+jSVVQs92OL
-         PdeNWwkE1aY3O73UJgIRoRZyzGjUyIgRbunikP1PTRtMSB0oLTilHY/QJhH9EU4oi1
-         4kqNOU0cfTihhywFzW2VlfeP5svbuVvjWSKRmFgk=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EB8886029B
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rohitkr@codeaurora.org
-Subject: Re: [PATCH 1/2] arm64: dts: qcom: sdm845: Add ADSP reserve-memory
- nodes
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Sibi Sankar <sibis@codeaurora.org>
-Cc:     dianders@chromium.org, andy.gross@linaro.org,
-        david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, plai@codeaurora.org,
-        bgoswami@codeaurora.org, srinivas.kandagatla@linaro.org,
-        linux-remoteproc@vger.kernel.org
-References: <1545313174-13481-1-git-send-email-rohitkr@codeaurora.org>
- <1545313174-13481-2-git-send-email-rohitkr@codeaurora.org>
- <20190103234249.GH31596@builder>
-From:   Rohit Kumar <rohitkr@codeaurora.org>
-Message-ID: <6b81869e-1d8b-510e-760a-9476ac08528f@codeaurora.org>
-Date:   Mon, 7 Jan 2019 13:17:58 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
-MIME-Version: 1.0
-In-Reply-To: <20190103234249.GH31596@builder>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Mon, 7 Jan 2019 02:48:21 -0500
+Received: from mail-eopbgr50060.outbound.protection.outlook.com ([40.107.5.60]:27839
+        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726441AbfAGHrr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 02:47:47 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/0x/VH31+hQfAjZgfZ1nvSyj5Nb+x9LVc0bWxvhcXxM=;
+ b=A9qz7CTf80a6xJIpBGSK9hW2Dt+O5sgTLHxp64+v6lnkriK9AlFwk3HM+nsd+yAIbmVJrwi1IEXWeOo2mews/mcI+NeNHFmIxDEMALe/CA2w44WjfpvlutvCNE8NbShlS4mla33iSswDITwcEommBbQE6Ia2vBU5UJrpV/eHzfM=
+Received: from AM6PR04MB5016.eurprd04.prod.outlook.com (20.177.34.88) by
+ AM6PR04MB5831.eurprd04.prod.outlook.com (20.179.2.223) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1495.6; Mon, 7 Jan 2019 07:47:41 +0000
+Received: from AM6PR04MB5016.eurprd04.prod.outlook.com
+ ([fe80::7c57:c2f3:1681:3fc4]) by AM6PR04MB5016.eurprd04.prod.outlook.com
+ ([fe80::7c57:c2f3:1681:3fc4%6]) with mapi id 15.20.1495.011; Mon, 7 Jan 2019
+ 07:47:41 +0000
+From:   Clark Wang <xiaoning.wang@nxp.com>
+To:     "broonie@kernel.org" <broonie@kernel.org>
+CC:     "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Clark Wang <xiaoning.wang@nxp.com>
+Subject: [PATCH 4/8] spi: lpspi: Fix wrong transmission when don't use CONT
+Thread-Topic: [PATCH 4/8] spi: lpspi: Fix wrong transmission when don't use
+ CONT
+Thread-Index: AQHUpl1EySmwrvSbQ0yaJf9q9nP+ww==
+Date:   Mon, 7 Jan 2019 07:47:41 +0000
+Message-ID: <20190107074639.6336-5-xiaoning.wang@nxp.com>
+References: <20190107074639.6336-1-xiaoning.wang@nxp.com>
+In-Reply-To: <20190107074639.6336-1-xiaoning.wang@nxp.com>
+Accept-Language: zh-CN, en-US
 Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: SG2PR02CA0087.apcprd02.prod.outlook.com
+ (2603:1096:4:90::27) To AM6PR04MB5016.eurprd04.prod.outlook.com
+ (2603:10a6:20b:9::24)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=xiaoning.wang@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 2.17.1
+x-originating-ip: [92.121.68.129]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM6PR04MB5831;6:b7URvv06lpFLH5kpI7p2xFGrF22V8zzCAUZjIDGeIfUTA1qIDDh6BzcH+qRwoc5mmua5GXtabXIQAR5vSIKNmqS/WUNM31W/2grbnZTg+D7LKD6r8t8bMuj/Jqmdy1aRbCau/9QJRHhXasLWl+KfbNASmIe/VBxkKnN3TNfIDVIQonNu6tAB0TtOXG6FcyoHxsEQHw+6CM67SqxO4hWShgdzW3O6es1TRt5GJXXXWrucXPB+LoWU7QFl5Lv3yCsl1Z6CgiedTFlpMZwQx7fJChpqdD4jK9k6vjN//MFC6fOOQE2fgakff4iIA2CPa+JAIXZO+IIFzBcVUwDnkIFCcEgICaL+4M5yJ0LsNhj15BOEcM/JMRbJtPYpTA1IiPqvuuwoWeUn8cjbyK7j5ERgH6/4yY5ROeytljfEpuRakVCMXLodo9PUQfLE0wqsTI0AAOduMm37j0hiiVe1LjAj4g==;5:bLWi8am8j3mPGK2N6LfRVkyl1f0nrOC2JfVjG7raJqcODK0Sejbdi0puBeClR+a1P8b4y+PIBOvukNdeNIqVXSaY16IKJUP0yY7PYlADr4orvByyq/WpoCwbopLaegG83eccl/Ie4a6HIq5TLGGXCMWrST1LN/ZMXjfdnMnr4wD8RRqVrWtWcD5ldHsJbiVEwzJXMNpUiBEDtsIQvUEwSg==;7:7MgApl1kyk5oNfOkhBkOdtmTJEO1ErmLcm4XD2L3w9XBcm2sx3OZ1OEEFgEI5SDgEF0NxsW1WkJbHTmBGi0OiIQVwO43N+ZKdKDyfVzwc4oBFzoRWB7LK7BGWZ/KoWQYY6OYAngfgxOm+XH1CgiWzQ==
+x-ms-office365-filtering-correlation-id: 9ae17b09-92cd-4105-bf68-08d6747466d6
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM6PR04MB5831;
+x-ms-traffictypediagnostic: AM6PR04MB5831:
+x-microsoft-antispam-prvs: <AM6PR04MB5831D7410AA807B70E34ACD4F3890@AM6PR04MB5831.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(908002)(999002)(5005026)(6040522)(8220060)(2401047)(8121501046)(10201501046)(3002001)(93006095)(93001095)(3231475)(944501520)(52105112)(6055026)(6041310)(20161123564045)(20161123560045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:AM6PR04MB5831;BCL:0;PCL:0;RULEID:;SRVR:AM6PR04MB5831;
+x-forefront-prvs: 0910AAF391
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(39860400002)(376002)(396003)(366004)(346002)(199004)(189003)(256004)(8676002)(6436002)(97736004)(5640700003)(54906003)(6486002)(68736007)(316002)(6916009)(575784001)(86362001)(2351001)(105586002)(99286004)(66066001)(186003)(26005)(81166006)(2501003)(476003)(8936002)(446003)(36756003)(11346002)(50226002)(2616005)(7736002)(81156014)(106356001)(1730700003)(52116002)(305945005)(76176011)(6116002)(3846002)(102836004)(2906002)(386003)(6506007)(4326008)(1076003)(25786009)(71190400001)(71200400001)(14454004)(486006)(6512007)(478600001)(5660300001)(53936002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR04MB5831;H:AM6PR04MB5016.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: vXChwUDWH9P+wYmgFYoa14Pwj4EgujvlWCt5MBUwj0gCF9Ztsk0Lnh/s88qweAz5r/c01jKE8Tm63PJWF2/X8mTDJM+wCtIXsp6vICE6LPsCt3Li2KRt3irNDA6cWyzJQpye1qhYmtxdENPC8j0wwpMS59RzYqOYhEts/fCR8oWwkfupvxYZozIuEz/Gg9ecKr/EhjqX+RIxw8XP2oQbOll1yBVP5Qr9529/509o2x/+A40w3TMJaIW24uo5hAyZjoFtYx79SImQNbbzr3lRGY/186gLewjplgY+WYPWwjgxE7TBkPaRjHiRAl4C1lFD
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9ae17b09-92cd-4105-bf68-08d6747466d6
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Jan 2019 07:47:39.3730
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR04MB5831
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks Bjorn for review.
+Add judgment on SR_MBF and FSR_RXCOUNT.
 
-On 1/4/2019 5:12 AM, Bjorn Andersson wrote:
-> On Thu 20 Dec 05:39 PST 2018, Rohit kumar wrote:
->
->> Add memory nodes required for remoteproc q6v5_adsp pil.
->>
-> This range doesn't match the documented memory map. I would prefer to
-> see a "Specify all PIL regions as defined in V10" or similar.
+In PIO mode, if don't use CONT to keep cs selected in one transfer, the
+transfer will go wrong. FCIE will be set after one frame transfer
+finish. If use CONT, the frame refer to the whole data in one transfer.
+If don't use CONT, the frame refer to one byte of whole data. This will
+cause the transfer ending early.
 
-Yes,  Sibi will post it along with other PIL regions with update address 
-in next spin.
+This patch add a register reading in isr function, it might lead to a
+slight decrease in the max transmission speed in PIO mode.
 
+Signed-off-by: Clark Wang <xiaoning.wang@nxp.com>
+---
+ drivers/spi/spi-fsl-lpspi.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
->
-> Regards,
-> Bjorn
->
->> Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
->> ---
->>   arch/arm64/boot/dts/qcom/sdm845.dtsi | 5 +++++
->>   1 file changed, 5 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
->> index 23a253b..c0a012f 100644
->> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
->> @@ -88,6 +88,11 @@
->>   			reg = <0 0x86200000 0 0x2d00000>;
->>   			no-map;
->>   		};
->> +
->> +		pil_adsp_mem: memory@8b100000 {
->> +			reg = <0 0x8b100000 0 0x1a00000>;
->> +			no-map;
->> +		};
->>   	};
->>   
->>   	cpus {
->> -- 
->> Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.,
->> is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
->>
-Regards,
-Rohit
--- 
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the Linux Foundation.
+diff --git a/drivers/spi/spi-fsl-lpspi.c b/drivers/spi/spi-fsl-lpspi.c
+index f32a2e0d7ae1..51c85cf0bd9f 100644
+--- a/drivers/spi/spi-fsl-lpspi.c
++++ b/drivers/spi/spi-fsl-lpspi.c
+@@ -52,6 +52,7 @@
+ #define CR_RTF		BIT(8)
+ #define CR_RST		BIT(1)
+ #define CR_MEN		BIT(0)
++#define SR_MBF		BIT(24)
+ #define SR_TCF		BIT(10)
+ #define SR_FCF		BIT(9)
+ #define SR_RDF		BIT(1)
+@@ -65,6 +66,7 @@
+ #define CFGR1_PCSPOL	BIT(8)
+ #define CFGR1_NOSTALL	BIT(3)
+ #define CFGR1_MASTER	BIT(0)
++#define FSR_RXCOUNT	(BIT(16)|BIT(17)|BIT(18))
+ #define RSR_RXEMPTY	BIT(1)
+ #define TCR_CPOL	BIT(31)
+ #define TCR_CPHA	BIT(30)
+@@ -446,6 +448,13 @@ static irqreturn_t fsl_lpspi_isr(int irq, void *dev_id=
+)
+ 		return IRQ_HANDLED;
+ 	}
+=20
++	if (temp_SR & SR_MBF ||
++	    readl(fsl_lpspi->base + IMX7ULP_FSR) & FSR_RXCOUNT) {
++		writel(SR_FCF, fsl_lpspi->base + IMX7ULP_SR);
++		fsl_lpspi_intctrl(fsl_lpspi, IER_FCIE);
++		return IRQ_HANDLED;
++	}
++
+ 	if (temp_SR & SR_FCF && (temp_IER & IER_FCIE)) {
+ 		writel(SR_FCF, fsl_lpspi->base + IMX7ULP_SR);
+ 			complete(&fsl_lpspi->xfer_done);
+--=20
+2.17.1
 
