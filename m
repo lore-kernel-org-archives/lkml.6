@@ -2,103 +2,171 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E536AC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 15:17:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CDBCC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 15:18:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B364F2087F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 15:17:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546874227;
-	bh=uMpT5O0lOzBjpFPPwmWbYNqHrBmkCLg50NVs58cRHW4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=RJe2HN9uhlQQENk/+taKsKojs93Q2Fhg9Spvx/wPet2n9EpBu45k3jYBlllyy2hZ3
-	 LpViMfin3mS/ExGH8RItdKqSit1XCiYJXX8u2mA3F1roPP6Hp8dYyXp2qt9hXfM/vr
-	 8XGeybWWUHsqnBXyZW+F+8XnrwvN7WmYsC1PMNkM=
+	by mail.kernel.org (Postfix) with ESMTP id 4057D206BB
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 15:18:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729673AbfAGPRG (ORCPT
+        id S1729708AbfAGPSA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 10:17:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48322 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726918AbfAGPRG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 10:17:06 -0500
-Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2B6522173C;
-        Mon,  7 Jan 2019 15:17:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546874225;
-        bh=uMpT5O0lOzBjpFPPwmWbYNqHrBmkCLg50NVs58cRHW4=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=i+yxbo7IMhEah2iqcEFHdRFMkM8HzmnqSeUjiSFvr1q685pDEBJHDAX3nR9+jqeP/
-         7oEwGKq4YHUSFehj6A2DXEcVWcFq0m0pfADx2c1y1x+e7u6zDTuC+qR0sMeZKDNn5S
-         WM+pfEVvK12i0BBUxPQV4Pt4XFDg6oJWy0EzzRnU=
-Received: by mail-ot1-f49.google.com with SMTP id k98so604206otk.3;
-        Mon, 07 Jan 2019 07:17:05 -0800 (PST)
-X-Gm-Message-State: AJcUukcPZSoXEC6eWX7edSgUDerHekMDAItkXrcwkcFzn9fBgxQLYJ8+
-        AZeDEHDW5QgsWtYkKrizpNOhup8lZDkCH4ZxQLM=
-X-Google-Smtp-Source: ALg8bN4goN80bRZEpPH4a851HIS/9EhnFhlTaPI3ZM6ndfMRnyp4lhDKYCPe3qozCGoiFsb6Fa+fwg0Z89PRqmQOfGs=
-X-Received: by 2002:a9d:6b82:: with SMTP id b2mr39781350otq.210.1546874224473;
- Mon, 07 Jan 2019 07:17:04 -0800 (PST)
-MIME-Version: 1.0
-References: <20190105100606.6673-1-okaya@kernel.org> <20190105100606.6673-9-okaya@kernel.org>
- <CAJZ5v0g2bjzjuiDPTbBN8QgvOG0KMC0Ew2QOQH4u2+y6KRo0wQ@mail.gmail.com> <20190107121919.GA9570@sirena.org.uk>
-In-Reply-To: <20190107121919.GA9570@sirena.org.uk>
-From:   Sinan Kaya <Okaya@kernel.org>
-Date:   Mon, 7 Jan 2019 10:16:53 -0500
-X-Gmail-Original-Message-ID: <CAK9iUCPjMr0m+9HUXEbtUPrsvO84HpZV39CUYYkne=EpY_X+bQ@mail.gmail.com>
-Message-ID: <CAK9iUCPjMr0m+9HUXEbtUPrsvO84HpZV39CUYYkne=EpY_X+bQ@mail.gmail.com>
-Subject: Re: [PATCH v6 08/11] ASoC: Intel: atom: Make PCI dependency explicit
-To:     Mark Brown <broonie@kernel.org>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        Jie Yang <yang.jie@linux.intel.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        "moderated list:INTEL ASoC DRIVERS" <alsa-devel@alsa-project.org>,
-        open list <linux-kernel@vger.kernel.org>
+        Mon, 7 Jan 2019 10:18:00 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:39897 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727574AbfAGPSA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 10:18:00 -0500
+Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1ggWf5-000716-TE; Mon, 07 Jan 2019 16:17:55 +0100
+Message-ID: <1546874275.3580.18.camel@pengutronix.de>
+Subject: Re: [PATCH RESEND] ARM: dts: imx6sx: Add DISPLAY power domain
+ support
+From:   Lucas Stach <l.stach@pengutronix.de>
+To:     Leonard Crestez <leonard.crestez@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc:     Fabio Estevam <fabio.estevam@nxp.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>
+Date:   Mon, 07 Jan 2019 16:17:55 +0100
+In-Reply-To: <ca5d7f6be8e1cf7ef9b5c8ef322fbcf1a14ae7fa.1546866930.git.leonard.crestez@nxp.com>
+References: <ca5d7f6be8e1cf7ef9b5c8ef322fbcf1a14ae7fa.1546866930.git.leonard.crestez@nxp.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 7, 2019 at 7:19 AM Mark Brown <broonie@kernel.org> wrote:
->
-> On Mon, Jan 07, 2019 at 12:15:35PM +0100, Rafael J. Wysocki wrote:
-> > On Sat, Jan 5, 2019 at 11:06 AM Sinan Kaya <okaya@kernel.org> wrote:
->
-> > > Fixes: 5d32a66541c46 ("PCI/ACPI: Allow ACPI to be built without CONFIG_PCI set")
-> > > Signed-off-by: Sinan Kaya <okaya@kernel.org>
->
-> > Sinan, I thought you received an ACK from Pierre-Louis on this one, didn't you?
->
-> Yes.  I've also applied it already and it's *still* being sent without
-> either a cover letter or the rest of the series :(
+Am Montag, den 07.01.2019, 13:28 +0000 schrieb Leonard Crestez:
+> This was implemented in the driver but not actually defined and
+> referenced in dts. This makes it always on.
+> 
+> From reference manual in section "10.4.1.4.1 Power Distribution":
+> 
+> "Display domain - The DISPLAY domain contains GIS, CSI, PXP, LCDIF,
+> PCIe, DCIC, and LDB. It is supplied by internal regulator."
+> 
+> The current pd_pcie is actually only for PCIE_PHY, the PCIE ip block is
+> actually inside the DISPLAY domain. Handle this by adding the pcie node
+> in both power domains.
+> 
+> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
 
-There is a cover letter but it is being sent to Linux-acpi and Linux-next only.
+Acked-by: Lucas Stach <l.stach@pengutronix.de>
 
-https://patchwork.kernel.org/cover/10749203/
-
-This means that you are not on either of these mailing lists.
-
->
-> Sinan:
->
-> Please do not submit new versions of already applied patches, please
-> submit incremental updates to the existing code.  Modifying existing
-> commits creates problems for other users building on top of those
-> commits so it's best practice to only change pubished git commits if
-> absolutely essential.
-
-I apologize. I didn't realize that you applied this already. I'll drop
-this patch
-in case I need to submit a new revision.
+> ---
+>  arch/arm/boot/dts/imx6sx.dtsi | 19 ++++++++++++++++++-
+>  1 file changed, 18 insertions(+), 1 deletion(-)
+> 
+> This is the last part of a series which was previously accepted, it was
+> delayed because it depends on PCI multi-pd support. All driver
+> dependencies have landed in 5.0-rc1, resending for 5.1 as discussed:
+> 
+> 	https://lore.kernel.org/patchwork/patch/996812/#1190746
+> 
+> Only change is a minor conflict with removing a pxp clk.
+> 
+> diff --git a/arch/arm/boot/dts/imx6sx.dtsi b/arch/arm/boot/dts/imx6sx.dtsi
+> index 272ff6133ec1..ecf3f3e5c0a0 100644
+> --- a/arch/arm/boot/dts/imx6sx.dtsi
+> +++ b/arch/arm/boot/dts/imx6sx.dtsi
+> @@ -783,10 +783,22 @@
+> >  						#power-domain-cells = <0>;
+> >  						power-supply = <&reg_soc>;
+> >  						clocks = <&clks IMX6SX_CLK_GPU>;
+> >  					};
+>  
+> > > +					pd_disp: power-domain@2 {
+> > +						reg = <2>;
+> > +						#power-domain-cells = <0>;
+> > +						clocks = <&clks IMX6SX_CLK_PXP_AXI>,
+> > +							 <&clks IMX6SX_CLK_DISPLAY_AXI>,
+> > +							 <&clks IMX6SX_CLK_LCDIF1_PIX>,
+> > +							 <&clks IMX6SX_CLK_LCDIF_APB>,
+> > +							 <&clks IMX6SX_CLK_LCDIF2_PIX>,
+> > +							 <&clks IMX6SX_CLK_CSI>,
+> > +							 <&clks IMX6SX_CLK_VADC>;
+> > +					};
+> +
+> > >  					pd_pci: power-domain@3 {
+> >  						reg = <3>;
+> >  						#power-domain-cells = <0>;
+> >  						power-supply = <&reg_pcie>;
+> >  					};
+> @@ -1203,10 +1215,11 @@
+> >  					compatible = "fsl,imx6sx-pxp", "fsl,imx6ull-pxp";
+> >  					reg = <0x02218000 0x4000>;
+> >  					interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
+> >  					clocks = <&clks IMX6SX_CLK_PXP_AXI>;
+> >  					clock-names = "axi";
+> > +					power-domains = <&pd_disp>;
+> >  					status = "disabled";
+> >  				};
+>  
+> > >  				csi2: csi@221c000 {
+> >  					reg = <0x0221c000 0x4000>;
+> @@ -1224,10 +1237,11 @@
+> >  					interrupts = <GIC_SPI 5 IRQ_TYPE_EDGE_RISING>;
+> >  					clocks = <&clks IMX6SX_CLK_LCDIF1_PIX>,
+> >  						 <&clks IMX6SX_CLK_LCDIF_APB>,
+> >  						 <&clks IMX6SX_CLK_DISPLAY_AXI>;
+> >  					clock-names = "pix", "axi", "disp_axi";
+> > +					power-domains = <&pd_disp>;
+> >  					status = "disabled";
+> >  				};
+>  
+> > >  				lcdif2: lcdif@2224000 {
+> >  					compatible = "fsl,imx6sx-lcdif", "fsl,imx28-lcdif";
+> @@ -1235,19 +1249,21 @@
+> >  					interrupts = <GIC_SPI 6 IRQ_TYPE_EDGE_RISING>;
+> >  					clocks = <&clks IMX6SX_CLK_LCDIF2_PIX>,
+> >  						 <&clks IMX6SX_CLK_LCDIF_APB>,
+> >  						 <&clks IMX6SX_CLK_DISPLAY_AXI>;
+> >  					clock-names = "pix", "axi", "disp_axi";
+> > +					power-domains = <&pd_disp>;
+> >  					status = "disabled";
+> >  				};
+>  
+> > >  				vadc: vadc@2228000 {
+> >  					reg = <0x02228000 0x4000>, <0x0222c000 0x4000>;
+> >  					reg-names = "vadc-vafe", "vadc-vdec";
+> >  					clocks = <&clks IMX6SX_CLK_VADC>,
+> >  						 <&clks IMX6SX_CLK_CSI>;
+> >  					clock-names = "vadc", "csi";
+> > +					power-domains = <&pd_disp>;
+> >  					status = "disabled";
+> >  				};
+> >  			};
+>  
+> > >  			adc1: adc@2280000 {
+> @@ -1368,10 +1384,11 @@
+> >  			clocks = <&clks IMX6SX_CLK_PCIE_AXI>,
+> >  				 <&clks IMX6SX_CLK_LVDS1_OUT>,
+> >  				 <&clks IMX6SX_CLK_PCIE_REF_125M>,
+> >  				 <&clks IMX6SX_CLK_DISPLAY_AXI>;
+> >  			clock-names = "pcie", "pcie_bus", "pcie_phy", "pcie_inbound_axi";
+> > -			power-domains = <&pd_pci>;
+> > +			power-domains = <&pd_disp>, <&pd_pci>;
+> > +			power-domain-names = "pcie", "pcie_phy";
+> >  			status = "disabled";
+> >  		};
+> >  	};
+>  };
