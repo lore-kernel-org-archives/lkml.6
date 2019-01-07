@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-13.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 865AEC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 14:39:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 313E8C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 14:39:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56AEA2173C
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 14:39:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 014502183E
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 14:39:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546871986;
-	bh=15GsfR6Eob14Cf3becR4feX4Sx7fKT01ew1i9LvD6DE=;
+	s=default; t=1546871988;
+	bh=gttrDAgLwtvr0RfIf1rm39h7ohKZPxQ4Yq85/9N6G8A=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Ms9PsSBCh+JXrbwccyAVXauzQBMA2K8BcYbpIKmN3kwNdxUXqgAuM9kUOrtAHXbOe
-	 tynMq5YvgJwaWYvVCoXAgPnACta2v8Lv9UcHS8hPaFO0Yg4ekPSXW2SV6wLbMFEvgK
-	 u3rPK4O9HzG5IgQTFeUvJLcfTq4DIITFvgvihEgQ=
+	b=YVrzJoJmgV3aXTE0Em75jtunS8gKy6A6jxJmMNCbF56lDCi3FsT+2TJJKw0BD11kZ
+	 D0XHBrb66+0sl55J2HOo1djvV5Dv6kg8c15m0uErh5QjrFCUiNrf25wpWsU0kMvLWY
+	 P46IXcSgdF2ckuOg5NG3U7xLGLgjXh0vIF2aWMgg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728911AbfAGOjp (ORCPT
+        id S1728938AbfAGOjr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 09:39:45 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:41927 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728473AbfAGOjn (ORCPT
+        Mon, 7 Jan 2019 09:39:47 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:33194 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727398AbfAGOjo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 09:39:43 -0500
-Received: by mail-ed1-f65.google.com with SMTP id a20so1083913edc.8
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 06:39:42 -0800 (PST)
+        Mon, 7 Jan 2019 09:39:44 -0500
+Received: by mail-ed1-f66.google.com with SMTP id p6so1128951eds.0
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 06:39:43 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=LFZQrU8fTXYe+4yKyznILHyyYdOjuztNdiLALRdIzAY=;
-        b=SB+hGraYS/Buan6+jzxNbmM5tnjf3AjTf3bLI3IznWsbk7BbVxbY3vICpIkrIMSoUq
-         UkXOvqTkfF8j+X+V7GdIUaaAP4SaYZEZU9oRw48qS2SFmd+5VC1kX+XiP+CkXqlmIjkq
-         VUdQBCgaEr79bzr4Z6E2BF3R2UorS70VpsphGeB8z1jlICDVYMFv5nA8a42wMvVhXYCV
-         V9S+4T0DAVnQy2gXOxmTJld1obiqtrZRRYoOfr+bZHHcYdFLdC5NmCkE27T2SL4RQHMA
-         YUlUnIe7u4fEFi8DqMvkCaPCVBilNEO7LNxec/S11m14Z5toGgIJybFgK8H5bAGS9kD/
-         S4+Q==
-X-Gm-Message-State: AA+aEWb0k8A3NDY0eyVc2KwEeKvKSM9Qa1UavAfRHxxURMDoYZ/UjDhX
-        e23znOpaCk5V3AIHjrMINM0=
-X-Google-Smtp-Source: AFSGD/XDwJtPft+7e+YBwwRMOEFJiiNj0lmF71HskZs7fiZ6HzWFIE7LfZHsN6DrG9+SFqQ6YZXLew==
-X-Received: by 2002:a17:906:d191:: with SMTP id c17-v6mr47364442ejz.27.1546871981554;
-        Mon, 07 Jan 2019 06:39:41 -0800 (PST)
+        bh=czsf4vL5FOcnDURNZogytxKTVT3D/fN437qEHjVuQNY=;
+        b=KAzdgZu4hD+GR40bTiM3Me1xmDOw7cWaipvG7L3bLfMXk8jPfg+6CWSOq74jTWiGis
+         xxOZ+gFRcuY/gJGERQCttNsYlGSrlZPEIvp6VdhYJBnI7CIac4ymM2uKRGpPhSJB69+Q
+         rTy+1ff+CeLeABcIGA5X4/TL6xc2VSsW1piHvc6Ur0yEi6DuUoIKiVVhvWGglLszLGf1
+         iYyF+4qDQbyP2LA2CqW069uYAcXEp7qOxwLsob0sAXZhySlnhqsqNsDoYiYazxgYGxQm
+         EBo04g+BloivgxtEX7K/8uXFKohyvajNbLu1VG44Yaew60jNBt7QZOS9YwswgAi7yDBc
+         jdSg==
+X-Gm-Message-State: AA+aEWaJGDkrPkz+6Fglc8SaaeL+TPeAiUFZEj1U+NO4begPXuGZFxcw
+        frE1knuecqMbkzpacnzD2Ek=
+X-Google-Smtp-Source: AFSGD/Uhw9JeGaHha/JfMcZjkBf21wzOw/01k7ipnizHZJkKEM6lzU1I0tG3yeYB8iVCpINRJsmKrg==
+X-Received: by 2002:a50:d311:: with SMTP id g17mr55094523edh.187.1546871982911;
+        Mon, 07 Jan 2019 06:39:42 -0800 (PST)
 Received: from tiehlicka.suse.cz (prg-ext-pat.suse.com. [213.151.95.130])
-        by smtp.gmail.com with ESMTPSA id l18sm29285813edq.87.2019.01.07.06.39.40
+        by smtp.gmail.com with ESMTPSA id l18sm29285813edq.87.2019.01.07.06.39.41
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 07 Jan 2019 06:39:40 -0800 (PST)
+        Mon, 07 Jan 2019 06:39:41 -0800 (PST)
 From:   Michal Hocko <mhocko@kernel.org>
 To:     <linux-mm@kvack.org>
 Cc:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
@@ -57,9 +57,9 @@ Cc:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
         Andrew Morton <akpm@linux-foundation.org>,
         LKML <linux-kernel@vger.kernel.org>,
         Michal Hocko <mhocko@suse.com>
-Subject: [PATCH 1/2] mm, oom: marks all killed tasks as oom victims
-Date:   Mon,  7 Jan 2019 15:38:01 +0100
-Message-Id: <20190107143802.16847-2-mhocko@kernel.org>
+Subject: [PATCH 2/2] memcg: do not report racy no-eligible OOM tasks
+Date:   Mon,  7 Jan 2019 15:38:02 +0100
+Message-Id: <20190107143802.16847-3-mhocko@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107143802.16847-1-mhocko@kernel.org>
 References: <20190107143802.16847-1-mhocko@kernel.org>
@@ -72,50 +72,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Michal Hocko <mhocko@suse.com>
 
-Historically we have called mark_oom_victim only to the main task
-selected as the oom victim because oom victims have access to memory
-reserves and granting the access to all killed tasks could deplete
-memory reserves very quickly and cause even larger problems.
+Tetsuo has reported [1] that a single process group memcg might easily
+swamp the log with no-eligible oom victim reports due to race between
+the memcg charge and oom_reaper
 
-Since only a partial access to memory reserves is allowed there is no
-longer this risk and so all tasks killed along with the oom victim
-can be considered as well.
+Thread 1		Thread2				oom_reaper
+try_charge		try_charge
+			  mem_cgroup_out_of_memory
+			    mutex_lock(oom_lock)
+  mem_cgroup_out_of_memory
+    mutex_lock(oom_lock)
+			      out_of_memory
+			        select_bad_process
+				oom_kill_process(current)
+				  wake_oom_reaper
+							  oom_reap_task
+							  MMF_OOM_SKIP->victim
+			    mutex_unlock(oom_lock)
+    out_of_memory
+      select_bad_process # no task
 
-The primary motivation for that is that process groups which do not
-shared signals would behave more like standard thread groups wrt oom
-handling (aka tsk_is_oom_victim will work the same way for them).
+If Thread1 didn't race it would bail out from try_charge and force the
+charge. We can achieve the same by checking tsk_is_oom_victim inside
+the oom_lock and therefore close the race.
 
-- Use find_lock_task_mm to stabilize mm as suggested by Tetsuo
-
+[1] http://lkml.kernel.org/r/bb2074c0-34fe-8c2c-1c7d-db71338f1e7f@i-love.sakura.ne.jp
 Signed-off-by: Michal Hocko <mhocko@suse.com>
 ---
- mm/oom_kill.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ mm/memcontrol.c | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
-diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-index f0e8cd9edb1a..0246c7a4e44e 100644
---- a/mm/oom_kill.c
-+++ b/mm/oom_kill.c
-@@ -892,6 +892,7 @@ static void __oom_kill_process(struct task_struct *victim)
- 	 */
- 	rcu_read_lock();
- 	for_each_process(p) {
-+		struct task_struct *t;
- 		if (!process_shares_mm(p, mm))
- 			continue;
- 		if (same_thread_group(p, victim))
-@@ -911,6 +912,11 @@ static void __oom_kill_process(struct task_struct *victim)
- 		if (unlikely(p->flags & PF_KTHREAD))
- 			continue;
- 		do_send_sig_info(SIGKILL, SEND_SIG_PRIV, p, PIDTYPE_TGID);
-+		t = find_lock_task_mm(p);
-+		if (!t)
-+			continue;
-+		mark_oom_victim(t);
-+		task_unlock(t);
- 	}
- 	rcu_read_unlock();
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index af7f18b32389..90eb2e2093e7 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -1387,10 +1387,22 @@ static bool mem_cgroup_out_of_memory(struct mem_cgroup *memcg, gfp_t gfp_mask,
+ 		.gfp_mask = gfp_mask,
+ 		.order = order,
+ 	};
+-	bool ret;
++	bool ret = true;
  
+ 	mutex_lock(&oom_lock);
++
++	/*
++	 * multi-threaded tasks might race with oom_reaper and gain
++	 * MMF_OOM_SKIP before reaching out_of_memory which can lead
++	 * to out_of_memory failure if the task is the last one in
++	 * memcg which would be a false possitive failure reported
++	 */
++	if (tsk_is_oom_victim(current))
++		goto unlock;
++
+ 	ret = out_of_memory(&oc);
++
++unlock:
+ 	mutex_unlock(&oom_lock);
+ 	return ret;
+ }
 -- 
 2.20.1
 
