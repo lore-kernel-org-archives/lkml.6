@@ -2,92 +2,119 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88F44C43444
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 08:31:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A31F2C43444
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 08:38:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EE7120881
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 08:31:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6BBFA20881
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 08:38:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=chronox.de header.i=@chronox.de header.b="T/iycMYO"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EswmIADM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726520AbfAGIbq (ORCPT
+        id S1726569AbfAGIiH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 03:31:46 -0500
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.51]:29065 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725550AbfAGIbp (ORCPT
+        Mon, 7 Jan 2019 03:38:07 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:41598 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725550AbfAGIiG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 03:31:45 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1546849903;
-        s=strato-dkim-0002; d=chronox.de;
-        h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=56myjuoaa8StoNqKDk3T2POnWWYj2+YoHYFnvAqrzdw=;
-        b=T/iycMYOB+79CoefhzKzE0S5xe9bMqh8wRJ0a00o0tosL04ACyrJ080wfTJRuLXn5X
-        oydpes0nR4mdXLLpVUYMO6lGy2eemoX9DL2niMmUe4RKDKQl3vk4HoWnfn/Pns6yIdxx
-        D0knue8CeiS/Nm7aiGH/Ikjnh6DbY455DziKf1yn6ac1YP+3daNzhNE2komv/fHGnUDG
-        om657FN1rZOejn6znKbRcPReIYWL+I4jMJhnaAtltL7kN0e5JMN8TEMOQE09go9JmK7T
-        RcCZH5Asx1OZh6hr9ji14Hqm6iYFtcdz2sZOTOO6QMkDHx94O2yV11DB0H/daOTRdi7a
-        w2Tg==
-X-RZG-AUTH: ":P2ERcEykfu11Y98lp/T7+hdri+uKZK8TKWEqNyiHySGSa9k9xmwdNnzGHXPaJ/SfQIux"
-X-RZG-CLASS-ID: mo00
-Received: from tauon.chronox.de
-        by smtp.strato.de (RZmta 44.9 DYNA|AUTH)
-        with ESMTPSA id 309bcfv078VfBD9
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Mon, 7 Jan 2019 09:31:41 +0100 (CET)
-From:   Stephan Mueller <smueller@chronox.de>
-To:     Vitaly Chikunov <vt@altlinux.org>
-Cc:     David Howells <dhowells@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 4/4] crypto: Add EC-RDSA algorithm
-Date:   Mon, 07 Jan 2019 09:31:40 +0100
-Message-ID: <1714084.mfT8VG1pOj@tauon.chronox.de>
-In-Reply-To: <20190107080710.r4bh7gkqdysxmlnn@sole.flsd.net>
-References: <20190106133608.820-1-vt@altlinux.org> <1893001.R2IGJoHzOM@positron.chronox.de> <20190107080710.r4bh7gkqdysxmlnn@sole.flsd.net>
+        Mon, 7 Jan 2019 03:38:06 -0500
+Received: by mail-io1-f67.google.com with SMTP id s22so34253469ioc.8;
+        Mon, 07 Jan 2019 00:38:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=CVx1N3/1yZKes91LPFLzCoAaNamYHEmbi9lrJ9mdkOM=;
+        b=EswmIADMoit8HAC/ONWLIUOs82xUyZZ7KMpmO9np6klXABsQU1QTRU18JTuiNxSRAO
+         JqCEQgIK+qEXqqFcT232liEa7b5BoboTP1JaHua26Oxa3PU6ycJYqOje/YOsiHvTN8hu
+         h72X/T2z8V4h4XkHJOprue2txZdkbRWgcW91+MtWEN19h2y984vSFt7LlQpQ8mSXiAZ0
+         yFG3AunNP1aSP7HEefVBgpijQe27ZzmdODIBmHYBeyWeG5+vk3VBUqgd44hSWiEWf900
+         HTYM6PegdJmyslG9PeWQE8bjwKTPXGS5giqesuBuGi+5zHfrIQ+1VE8C/UWcQXqXW2Za
+         WaiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=CVx1N3/1yZKes91LPFLzCoAaNamYHEmbi9lrJ9mdkOM=;
+        b=XOwDDc/qgNrVPyeWFnrtbKSAjoyaxDbvP5PKs9aVJJZDEniaO3Le2yL503QsYVMZq+
+         RPkUBiDdTSK2fVrL/zcEvbf7cjc21IlvAQ2K0xvJ8wMZpAtk7XME56n6oletfJIAZTLg
+         VXLeYgASOdA01bfH8WjpXXN5zoQ+PLucbfbihvONOzbXWaCmSPBoyeD9PICn+NJ4EKkY
+         xHscpmatXrVIeKc74zcfiTwh+DrK9ucQrigZ2pek1PthWhH1TFkMNWa0/4rHOKJGeFcE
+         oF5WDeIl6PAULAkD+/5RVmxSaBcbNdgQK7wC630ARC8VF/fp5Jrp25eI1te0QE4eqDgj
+         sSOg==
+X-Gm-Message-State: AJcUukcjnhSpxbYluSsvohIpwOgUd3BaFWKl+9Lup2I/O0rAp0FxOZvN
+        KCCC3IgPNuaLqCoXBRcqIrelYdKruBL6XilFlw==
+X-Google-Smtp-Source: ALg8bN565vD9gCVSgZ0kouTj2emPGiwItjw1PmyzR2yMpnUaBIORex/wGD7CZ9/km0XWTaveGh3JDkr1kJL25ChZtV0=
+X-Received: by 2002:a6b:3f06:: with SMTP id m6mr39444084ioa.117.1546850285729;
+ Mon, 07 Jan 2019 00:38:05 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+References: <1545966002-3075-1-git-send-email-kernelfans@gmail.com>
+ <1545966002-3075-2-git-send-email-kernelfans@gmail.com> <20181231084018.GA28478@rapoport-lnx>
+ <CAFgQCTvQnj7zReFvH_gmfVJdPXE325o+z4Xx76fupvsLR_7H2A@mail.gmail.com>
+ <20190102092749.GA22664@rapoport-lnx> <20190102101804.GD1990@MiWiFi-R3L-srv>
+ <20190102170537.GA3591@rapoport-lnx> <20190103184706.GU2509588@devbig004.ftw2.facebook.com>
+In-Reply-To: <20190103184706.GU2509588@devbig004.ftw2.facebook.com>
+From:   Pingfan Liu <kernelfans@gmail.com>
+Date:   Mon, 7 Jan 2019 16:37:54 +0800
+Message-ID: <CAFgQCTt2=6mwFid8HS+K5UsqkBv8y7N5WOoKpVxYzNxjwmV75A@mail.gmail.com>
+Subject: Re: [PATCHv3 1/2] mm/memblock: extend the limit inferior of bottom-up
+ after parsing hotplug attr
+To:     Tejun Heo <tj@kernel.org>
+Cc:     Mike Rapoport <rppt@linux.ibm.com>, Baoquan He <bhe@redhat.com>,
+        linux-acpi@vger.kernel.org, linux-mm@kvack.org,
+        kexec@lists.infradead.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Yaowei Bai <baiyaowei@cmss.chinamobile.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Daniel Vacek <neelx@redhat.com>,
+        Mathieu Malaterre <malat@debian.org>,
+        Stefan Agner <stefan@agner.ch>, Dave Young <dyoung@redhat.com>,
+        yinghai@kernel.org, vgoyal@redhat.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Montag, 7. Januar 2019, 09:07:10 CET schrieb Vitaly Chikunov:
+I send out a series [RFC PATCH 0/4] x86_64/mm: remove bottom-up
+allocation style by pushing forward the parsing of mem hotplug info (
+https://lore.kernel.org/lkml/1546849485-27933-1-git-send-email-kernelfans@gmail.com/T/#t).
+Please give comment if you are interested.
 
-Hi Vitaly,
+Thanks,
+Pingfan
 
-> > Why do you manually parse the ASN.1 structure instead of using the ASN.1
-> > parser?
-> 
-> I am not sure this worth effort and will not be most degenerate use of
-> asn1_ber_decoder, since 1) I only need to parse one type in each case:
-> OCTET STRING string above code, and OIDs in below code; 2) this data is
-> said to be in DER format, which asn1_ber_decoder can not enforce. Surely
-> this will also produce more code and files.
-
-RSA public keys also only contain n and e in the ASN.1 structure for which the 
-ASN.1 parser is used (see linux/crypto/rsapubkey.asn1). As ASN.1 parsing is 
-always having security issues, I would rather suggest to have this parsing 
-implemented in one spot and not here and there.
-
-Regarding your comment (2), I am not sure I understand. Why do you say that 
-the DER format cannot be parsed by the kernel's ASN.1 parser? For example, 
-when you generate RSA keys in DER format with, say, openssl, the kernel ASN.1 
-parser will happily use them. Also, when I created my (not accepted) patch to 
-load PQG domain parameters for DH using the ASN.1 parser, the PQG domain 
-parameters created by openssl in DER format were processed well.
-
-Ciao
-Stephan
-
-
+On Fri, Jan 4, 2019 at 2:47 AM Tejun Heo <tj@kernel.org> wrote:
+>
+> Hello,
+>
+> On Wed, Jan 02, 2019 at 07:05:38PM +0200, Mike Rapoport wrote:
+> > I agree that currently the bottom-up allocation after the kernel text has
+> > issues with KASLR. But this issues are not necessarily related to the
+> > memory hotplug. Even with a single memory node, a bottom-up allocation will
+> > fail if KASLR would put the kernel near the end of node0.
+> >
+> > What I am trying to understand is whether there is a fundamental reason to
+> > prevent allocations from [0, kernel_start)?
+> >
+> > Maybe Tejun can recall why he suggested to start bottom-up allocations from
+> > kernel_end.
+>
+> That's from 79442ed189ac ("mm/memblock.c: introduce bottom-up
+> allocation mode").  I wasn't involved in that patch, so no idea why
+> the restrictions were added, but FWIW it doesn't seem necessary to me.
+>
+> Thanks.
+>
+> --
+> tejun
