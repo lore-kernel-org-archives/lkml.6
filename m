@@ -7,46 +7,56 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8762C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:41:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 452CAC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:41:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 795A021873
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:41:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 10B2E2183E
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:41:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546864883;
-	bh=WzgQUdK71BR6aFQKtUtwSIcH1NeqJtH/Ej0VAs96O/g=;
+	s=default; t=1546864887;
+	bh=KrL8UmPt5J8+sWS9r8se95/o9CFkv72Ue9N1F1YSskc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=tJ1xg00KLhEZ/xw6C1ZQT/72sOiUR+9tyEa/j8BM49om7MI2BMZGLOSHCYy65yBqb
-	 Y4bnt+RFuI6E+zKMkh9dRNFzEoCwpDIy4ycM7ASTKZ5MAvXWcdONATBGks8qK19Y6D
-	 uieM98OEoHjnWrC0BrW5FacQNFPs+Rb2NK6NnSxc=
+	b=M29n5yUpL8dleuD7WUPfvkenZkVSrU9jJwedCa0ASpHM4K6+5AzTvNqfDQaEda7wF
+	 5cFIUGpWNJhfvf0kdR58QWEW9oB38TVZiwZJ7WXscaCYva6TF5HHdzkfO0SA2SKWbd
+	 8Jh7DKOZSIKIz71Pj0zzKvOzMgPKrR0k6zpR43q8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727675AbfAGMlX (ORCPT
+        id S1728146AbfAGMl0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:41:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56442 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:41:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56538 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728103AbfAGMlT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:41:19 -0500
+        id S1728123AbfAGMlW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:41:22 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ADD682183E;
-        Mon,  7 Jan 2019 12:41:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 70A722183F;
+        Mon,  7 Jan 2019 12:41:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546864878;
-        bh=WzgQUdK71BR6aFQKtUtwSIcH1NeqJtH/Ej0VAs96O/g=;
+        s=default; t=1546864881;
+        bh=KrL8UmPt5J8+sWS9r8se95/o9CFkv72Ue9N1F1YSskc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=X2JdAtzYzBvkzBs6Im9ajqowQ6ldHrGZ1WqR7uf63FaHKyw+yrmrq05stznMRMsKz
-         w7voDD/vviSKBiXI41DVGkQJqJBQ9Em7BSz5El70S0W3hs7zJn1EU0UcsJEd+d6GPP
-         lPgKcOmtvU8AK+Ng3ViySsJcB+0IV+tzzJpWaR1k=
+        b=o2OdJDDtoZ//3sLRL80ImkMKxltW/KJM9RLAnwFqWvknOLWn5bhx5CFGJxOZm6MIj
+         V3L5kGej1zpX6q+mZ0LMgSqsYSfl6NA0D9ADnJTaZndKyrIe8YDaENyRT8tGCuw0Oe
+         CsgAzw8KduJsvvgvc2YHRdeVO02ocRMvOtLhm8sI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Todd Kjos <tkjos@google.com>
-Subject: [PATCH 4.20 090/145] binder: fix use-after-free due to ksys_close() during fdget()
-Date:   Mon,  7 Jan 2019 13:32:07 +0100
-Message-Id: <20190107104448.976364882@linuxfoundation.org>
+        stable@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Rik van Riel <riel@surriel.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Thomas Gleixner <tglx@linutronix.de>, dave.hansen@intel.com,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.20 055/145] x86/mm: Drop usage of __flush_tlb_all() in kernel_physical_mapping_init()
+Date:   Mon,  7 Jan 2019 13:31:32 +0100
+Message-Id: <20190107104444.536173566@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104437.308206189@linuxfoundation.org>
 References: <20190107104437.308206189@linuxfoundation.org>
@@ -65,181 +75,110 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Todd Kjos <tkjos@android.com>
+From: Dan Williams <dan.j.williams@intel.com>
 
-commit 80cd795630d6526ba729a089a435bf74a57af927 upstream.
+commit ba6f508d0ec4adb09f0a939af6d5e19cdfa8667d upstream.
 
-44d8047f1d8 ("binder: use standard functions to allocate fds")
-exposed a pre-existing issue in the binder driver.
+Commit:
 
-fdget() is used in ksys_ioctl() as a performance optimization.
-One of the rules associated with fdget() is that ksys_close() must
-not be called between the fdget() and the fdput(). There is a case
-where this requirement is not met in the binder driver which results
-in the reference count dropping to 0 when the device is still in
-use. This can result in use-after-free or other issues.
+  f77084d96355 "x86/mm/pat: Disable preemption around __flush_tlb_all()"
 
-If userpace has passed a file-descriptor for the binder driver using
-a BINDER_TYPE_FDA object, then kys_close() is called on it when
-handling a binder_ioctl(BC_FREE_BUFFER) command. This violates
-the assumptions for using fdget().
+addressed a case where __flush_tlb_all() is called without preemption
+being disabled. It also left a warning to catch other cases where
+preemption is not disabled.
 
-The problem is fixed by deferring the close using task_work_add(). A
-new variant of __close_fd() was created that returns a struct file
-with a reference. The fput() is deferred instead of using ksys_close().
+That warning triggers for the memory hotplug path which is also used for
+persistent memory enabling:
 
-Fixes: 44d8047f1d87a ("binder: use standard functions to allocate fds")
-Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Todd Kjos <tkjos@google.com>
-Cc: stable <stable@vger.kernel.org>
+ WARNING: CPU: 35 PID: 911 at ./arch/x86/include/asm/tlbflush.h:460
+ RIP: 0010:__flush_tlb_all+0x1b/0x3a
+ [..]
+ Call Trace:
+  phys_pud_init+0x29c/0x2bb
+  kernel_physical_mapping_init+0xfc/0x219
+  init_memory_mapping+0x1a5/0x3b0
+  arch_add_memory+0x2c/0x50
+  devm_memremap_pages+0x3aa/0x610
+  pmem_attach_disk+0x585/0x700 [nd_pmem]
+
+Andy wondered why a path that can sleep was using __flush_tlb_all() [1]
+and Dave confirmed the expectation for TLB flush is for modifying /
+invalidating existing PTE entries, but not initial population [2]. Drop
+the usage of __flush_tlb_all() in phys_{p4d,pud,pmd}_init() on the
+expectation that this path is only ever populating empty entries for the
+linear map. Note, at linear map teardown time there is a call to the
+all-cpu flush_tlb_all() to invalidate the removed mappings.
+
+[1]: https://lkml.kernel.org/r/9DFD717D-857D-493D-A606-B635D72BAC21@amacapital.net
+[2]: https://lkml.kernel.org/r/749919a4-cdb1-48a3-adb4-adb81a5fa0b5@intel.com
+
+[ mingo: Minor readability edits. ]
+
+Suggested-by: Dave Hansen <dave.hansen@linux.intel.com>
+Reported-by: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Cc: <stable@vger.kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Rik van Riel <riel@surriel.com>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: dave.hansen@intel.com
+Fixes: f77084d96355 ("x86/mm/pat: Disable preemption around __flush_tlb_all()")
+Link: http://lkml.kernel.org/r/154395944713.32119.15611079023837132638.stgit@dwillia2-desk3.amr.corp.intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/android/binder.c |   63 +++++++++++++++++++++++++++++++++++++++++++++--
- fs/file.c                |   29 +++++++++++++++++++++
- include/linux/fdtable.h  |    1 
- 3 files changed, 91 insertions(+), 2 deletions(-)
+ arch/x86/mm/init_64.c |    6 ------
+ 1 file changed, 6 deletions(-)
 
---- a/drivers/android/binder.c
-+++ b/drivers/android/binder.c
-@@ -72,6 +72,7 @@
- #include <linux/spinlock.h>
- #include <linux/ratelimit.h>
- #include <linux/syscalls.h>
-+#include <linux/task_work.h>
- 
- #include <uapi/linux/android/binder.h>
- 
-@@ -2160,6 +2161,64 @@ static bool binder_validate_fixup(struct
- 	return (fixup_offset >= last_min_offset);
- }
- 
-+/**
-+ * struct binder_task_work_cb - for deferred close
-+ *
-+ * @twork:                callback_head for task work
-+ * @fd:                   fd to close
-+ *
-+ * Structure to pass task work to be handled after
-+ * returning from binder_ioctl() via task_work_add().
-+ */
-+struct binder_task_work_cb {
-+	struct callback_head twork;
-+	struct file *file;
-+};
-+
-+/**
-+ * binder_do_fd_close() - close list of file descriptors
-+ * @twork:	callback head for task work
-+ *
-+ * It is not safe to call ksys_close() during the binder_ioctl()
-+ * function if there is a chance that binder's own file descriptor
-+ * might be closed. This is to meet the requirements for using
-+ * fdget() (see comments for __fget_light()). Therefore use
-+ * task_work_add() to schedule the close operation once we have
-+ * returned from binder_ioctl(). This function is a callback
-+ * for that mechanism and does the actual ksys_close() on the
-+ * given file descriptor.
-+ */
-+static void binder_do_fd_close(struct callback_head *twork)
-+{
-+	struct binder_task_work_cb *twcb = container_of(twork,
-+			struct binder_task_work_cb, twork);
-+
-+	fput(twcb->file);
-+	kfree(twcb);
-+}
-+
-+/**
-+ * binder_deferred_fd_close() - schedule a close for the given file-descriptor
-+ * @fd:		file-descriptor to close
-+ *
-+ * See comments in binder_do_fd_close(). This function is used to schedule
-+ * a file-descriptor to be closed after returning from binder_ioctl().
-+ */
-+static void binder_deferred_fd_close(int fd)
-+{
-+	struct binder_task_work_cb *twcb;
-+
-+	twcb = kzalloc(sizeof(*twcb), GFP_KERNEL);
-+	if (!twcb)
-+		return;
-+	init_task_work(&twcb->twork, binder_do_fd_close);
-+	__close_fd_get_file(fd, &twcb->file);
-+	if (twcb->file)
-+		task_work_add(current, &twcb->twork, true);
-+	else
-+		kfree(twcb);
-+}
-+
- static void binder_transaction_buffer_release(struct binder_proc *proc,
- 					      struct binder_buffer *buffer,
- 					      binder_size_t *failed_at)
-@@ -2299,7 +2358,7 @@ static void binder_transaction_buffer_re
+--- a/arch/x86/mm/init_64.c
++++ b/arch/x86/mm/init_64.c
+@@ -584,7 +584,6 @@ phys_pud_init(pud_t *pud_page, unsigned
+ 							   paddr_end,
+ 							   page_size_mask,
+ 							   prot);
+-				__flush_tlb_all();
+ 				continue;
  			}
- 			fd_array = (u32 *)(parent_buffer + (uintptr_t)fda->parent_offset);
- 			for (fd_index = 0; fd_index < fda->num_fds; fd_index++)
--				ksys_close(fd_array[fd_index]);
-+				binder_deferred_fd_close(fd_array[fd_index]);
- 		} break;
- 		default:
- 			pr_err("transaction release %d bad object type %x\n",
-@@ -3912,7 +3971,7 @@ static int binder_apply_fd_fixups(struct
- 		} else if (ret) {
- 			u32 *fdp = (u32 *)(t->buffer->data + fixup->offset);
+ 			/*
+@@ -627,7 +626,6 @@ phys_pud_init(pud_t *pud_page, unsigned
+ 		pud_populate(&init_mm, pud, pmd);
+ 		spin_unlock(&init_mm.page_table_lock);
+ 	}
+-	__flush_tlb_all();
  
--			ksys_close(*fdp);
-+			binder_deferred_fd_close(*fdp);
+ 	update_page_count(PG_LEVEL_1G, pages);
+ 
+@@ -668,7 +666,6 @@ phys_p4d_init(p4d_t *p4d_page, unsigned
+ 			paddr_last = phys_pud_init(pud, paddr,
+ 					paddr_end,
+ 					page_size_mask);
+-			__flush_tlb_all();
+ 			continue;
  		}
- 		list_del(&fixup->fixup_entry);
- 		kfree(fixup);
---- a/fs/file.c
-+++ b/fs/file.c
-@@ -640,6 +640,35 @@ out_unlock:
+ 
+@@ -680,7 +677,6 @@ phys_p4d_init(p4d_t *p4d_page, unsigned
+ 		p4d_populate(&init_mm, p4d, pud);
+ 		spin_unlock(&init_mm.page_table_lock);
+ 	}
+-	__flush_tlb_all();
+ 
+ 	return paddr_last;
  }
- EXPORT_SYMBOL(__close_fd); /* for ksys_close() */
+@@ -733,8 +729,6 @@ kernel_physical_mapping_init(unsigned lo
+ 	if (pgd_changed)
+ 		sync_global_pgds(vaddr_start, vaddr_end - 1);
  
-+/*
-+ * variant of __close_fd that gets a ref on the file for later fput
-+ */
-+int __close_fd_get_file(unsigned int fd, struct file **res)
-+{
-+	struct files_struct *files = current->files;
-+	struct file *file;
-+	struct fdtable *fdt;
-+
-+	spin_lock(&files->file_lock);
-+	fdt = files_fdtable(files);
-+	if (fd >= fdt->max_fds)
-+		goto out_unlock;
-+	file = fdt->fd[fd];
-+	if (!file)
-+		goto out_unlock;
-+	rcu_assign_pointer(fdt->fd[fd], NULL);
-+	__put_unused_fd(files, fd);
-+	spin_unlock(&files->file_lock);
-+	get_file(file);
-+	*res = file;
-+	return filp_close(file, files);
-+
-+out_unlock:
-+	spin_unlock(&files->file_lock);
-+	*res = NULL;
-+	return -ENOENT;
-+}
-+
- void do_close_on_exec(struct files_struct *files)
- {
- 	unsigned i;
---- a/include/linux/fdtable.h
-+++ b/include/linux/fdtable.h
-@@ -121,6 +121,7 @@ extern void __fd_install(struct files_st
- 		      unsigned int fd, struct file *file);
- extern int __close_fd(struct files_struct *files,
- 		      unsigned int fd);
-+extern int __close_fd_get_file(unsigned int fd, struct file **res);
- 
- extern struct kmem_cache *files_cachep;
+-	__flush_tlb_all();
+-
+ 	return paddr_last;
+ }
  
 
 
