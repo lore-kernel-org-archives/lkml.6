@@ -2,52 +2,53 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94E5BC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:57:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 825C0C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:57:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 623362089F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:57:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 472BF206BB
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:57:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546865856;
-	bh=Vu1y7d8adEHKQEaa/jUI11BDTaUHQDVt6Y2K0jlZujQ=;
+	s=default; t=1546865862;
+	bh=b5EHuPKIGuH3OjjOfQF3jxl7dWyvdoH5On5rhMiYioI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=YlMK5z3Dxadv4PAKG78GvyuojUSk5jLERGnsbzEo+3g7/vR9rWUpWc6aWwvYWrgx/
-	 4AaABfu11euduYISMGpbeOiMNoFYBRkpCTWFD6/va+5kPOxvOrz49g72OOcsS6CR7P
-	 LwPneP4bvJYLoKfuWBuIUnI/4h/MPbi1Rc+XTvK0=
+	b=i9uIvsnRUpn0o/uBTQ49TpRylXm7jD7UAptssuOkcB7xjAo/3qjSLAvI7fmAkxLXC
+	 nF7k5mpmVM2PFv1/u4A2WOAdrqVMPOmppOdB3OhpwL38xsEVbZFIA61OfjAOxWbNHC
+	 ZzrofoLq8RG2ncaRB0HTHspkUxqztMCEGs7s4n5M=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729226AbfAGM5f (ORCPT
+        id S1729808AbfAGM5l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:57:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45140 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:57:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45186 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727570AbfAGM5b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:57:31 -0500
+        id S1727570AbfAGM5g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:57:36 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C721F2089F;
-        Mon,  7 Jan 2019 12:57:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D5C32206BB;
+        Mon,  7 Jan 2019 12:57:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865850;
-        bh=Vu1y7d8adEHKQEaa/jUI11BDTaUHQDVt6Y2K0jlZujQ=;
+        s=default; t=1546865855;
+        bh=b5EHuPKIGuH3OjjOfQF3jxl7dWyvdoH5On5rhMiYioI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cUVUtHinlqAJXNfBSmG0JlbvdHcCPNb0GeEyKjPwsZIaKcTdCaXENeljzlC6akRas
-         /n2msiXN/UvLITZSnUqajp4qiVJ0IyoATohzmxUMNqqvw+9NWWiWONgyHt3NYUrn1z
-         xIMWknIrdr3W+eCPAfHcd0tlrMjiwbx3CbHVhzio=
+        b=CwEHukW+WQM3TwpiSxhlXi2NhiZHTQVQwFYNf/LOjmA0J3rY9vZ/lypjAjNRHnk9v
+         hlMOkSIXkzRMBVD6D+TvK4L0HOv5lFnHBukMaM400Q2ZdU2Ze4Ve4Sq7SZK8txsMsp
+         W6OoZaUDhzLx33ff43m0AEnt8ypXAkD2NvVJn3as=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Breno Leitao <leitao@debian.org>,
-        =?UTF-8?q?Michal=20Such=C3=A1nek?= <msuchanek@suse.de>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.19 135/170] powerpc/tm: Unset MSR[TS] if not recheckpointing
-Date:   Mon,  7 Jan 2019 13:32:42 +0100
-Message-Id: <20190107104508.929387479@linuxfoundation.org>
+        stable@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
+        Jan Kara <jack@suse.cz>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 136/170] dax: Dont access a freed inode
+Date:   Mon,  7 Jan 2019 13:32:43 +0100
+Message-Id: <20190107104509.026119134@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104452.953560660@linuxfoundation.org>
 References: <20190107104452.953560660@linuxfoundation.org>
@@ -66,122 +67,145 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Breno Leitao <leitao@debian.org>
+commit 55e56f06ed71d9441f3abd5b1d3c1a870812b3fe upstream.
 
-commit 6f5b9f018f4c7686fd944d920209d1382d320e4e upstream.
+After we drop the i_pages lock, the inode can be freed at any time.
+The get_unlocked_entry() code has no choice but to reacquire the lock,
+so it can't be used here.  Create a new wait_entry_unlocked() which takes
+care not to acquire the lock or dereference the address_space in any way.
 
-There is a TM Bad Thing bug that can be caused when you return from a
-signal context in a suspended transaction but with ucontext MSR[TS] unset.
-
-This forces regs->msr[TS] to be set at syscall entrance (since the CPU
-state is transactional). It also calls treclaim() to flush the transaction
-state, which is done based on the live (mfmsr) MSR state.
-
-Since user context MSR[TS] is not set, then restore_tm_sigcontexts() is not
-called, thus, not executing recheckpoint, keeping the CPU state as not
-transactional. When calling rfid, SRR1 will have MSR[TS] set, but the CPU
-state is non transactional, causing the TM Bad Thing with the following
-stack:
-
-	[   33.862316] Bad kernel stack pointer 3fffd9dce3e0 at c00000000000c47c
-	cpu 0x8: Vector: 700 (Program Check) at [c00000003ff7fd40]
-	    pc: c00000000000c47c: fast_exception_return+0xac/0xb4
-	    lr: 00003fff865f442c
-	    sp: 3fffd9dce3e0
-	   msr: 8000000102a03031
-	  current = 0xc00000041f68b700
-	  paca    = 0xc00000000fb84800   softe: 0        irq_happened: 0x01
-	    pid   = 1721, comm = tm-signal-sigre
-	Linux version 4.9.0-3-powerpc64le (debian-kernel@lists.debian.org) (gcc version 6.3.0 20170516 (Debian 6.3.0-18) ) #1 SMP Debian 4.9.30-2+deb9u2 (2017-06-26)
-	WARNING: exception is not recoverable, can't continue
-
-The same problem happens on 32-bits signal handler, and the fix is very
-similar, if tm_recheckpoint() is not executed, then regs->msr[TS] should be
-zeroed.
-
-This patch also fixes a sparse warning related to lack of indentation when
-CONFIG_PPC_TRANSACTIONAL_MEM is set.
-
-Fixes: 2b0a576d15e0e ("powerpc: Add new transactional memory state to the signal context")
-CC: Stable <stable@vger.kernel.org>	# 3.10+
-Signed-off-by: Breno Leitao <leitao@debian.org>
-Tested-by: Michal Suchánek <msuchanek@suse.de>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: c2a7d2a11552 ("filesystem-dax: Introduce dax_lock_mapping_entry()")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Matthew Wilcox <willy@infradead.org>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/kernel/signal_32.c |   18 +++++++++++++-----
- arch/powerpc/kernel/signal_64.c |   20 ++++++++++++++++----
- 2 files changed, 29 insertions(+), 9 deletions(-)
+ fs/dax.c | 69 ++++++++++++++++++++++++++------------------------------
+ 1 file changed, 32 insertions(+), 37 deletions(-)
 
---- a/arch/powerpc/kernel/signal_32.c
-+++ b/arch/powerpc/kernel/signal_32.c
-@@ -1158,11 +1158,11 @@ SYSCALL_DEFINE0(rt_sigreturn)
+diff --git a/fs/dax.c b/fs/dax.c
+index 3a2682a6c832..415605fafaeb 100644
+--- a/fs/dax.c
++++ b/fs/dax.c
+@@ -229,8 +229,8 @@ static void put_unlocked_mapping_entry(struct address_space *mapping,
+  *
+  * Must be called with the i_pages lock held.
+  */
+-static void *__get_unlocked_mapping_entry(struct address_space *mapping,
+-		pgoff_t index, void ***slotp, bool (*wait_fn)(void))
++static void *get_unlocked_mapping_entry(struct address_space *mapping,
++		pgoff_t index, void ***slotp)
  {
- 	struct rt_sigframe __user *rt_sf;
- 	struct pt_regs *regs = current_pt_regs();
-+	int tm_restore = 0;
- #ifdef CONFIG_PPC_TRANSACTIONAL_MEM
- 	struct ucontext __user *uc_transact;
- 	unsigned long msr_hi;
- 	unsigned long tmp;
--	int tm_restore = 0;
- #endif
- 	/* Always make any pending restarted system calls return -EINTR */
- 	current->restart_block.fn = do_no_restart_syscall;
-@@ -1210,11 +1210,19 @@ SYSCALL_DEFINE0(rt_sigreturn)
- 				goto bad;
- 		}
- 	}
--	if (!tm_restore)
--		/* Fall through, for non-TM restore */
-+	if (!tm_restore) {
-+		/*
-+		 * Unset regs->msr because ucontext MSR TS is not
-+		 * set, and recheckpoint was not called. This avoid
-+		 * hitting a TM Bad thing at RFID
-+		 */
-+		regs->msr &= ~MSR_TS_MASK;
-+	}
-+	/* Fall through, for non-TM restore */
- #endif
--	if (do_setcontext(&rt_sf->uc, regs, 1))
--		goto bad;
-+	if (!tm_restore)
-+		if (do_setcontext(&rt_sf->uc, regs, 1))
-+			goto bad;
+ 	void *entry, **slot;
+ 	struct wait_exceptional_entry_queue ewait;
+@@ -240,8 +240,6 @@ static void *__get_unlocked_mapping_entry(struct address_space *mapping,
+ 	ewait.wait.func = wake_exceptional_entry_func;
  
+ 	for (;;) {
+-		bool revalidate;
+-
+ 		entry = __radix_tree_lookup(&mapping->i_pages, index, NULL,
+ 					  &slot);
+ 		if (!entry ||
+@@ -256,30 +254,39 @@ static void *__get_unlocked_mapping_entry(struct address_space *mapping,
+ 		prepare_to_wait_exclusive(wq, &ewait.wait,
+ 					  TASK_UNINTERRUPTIBLE);
+ 		xa_unlock_irq(&mapping->i_pages);
+-		revalidate = wait_fn();
++		schedule();
+ 		finish_wait(wq, &ewait.wait);
+ 		xa_lock_irq(&mapping->i_pages);
+-		if (revalidate) {
+-			put_unlocked_mapping_entry(mapping, index, entry);
+-			return ERR_PTR(-EAGAIN);
+-		}
+ 	}
+ }
+ 
+-static bool entry_wait(void)
++/*
++ * The only thing keeping the address space around is the i_pages lock
++ * (it's cycled in clear_inode() after removing the entries from i_pages)
++ * After we call xas_unlock_irq(), we cannot touch xas->xa.
++ */
++static void wait_entry_unlocked(struct address_space *mapping, pgoff_t index,
++		void ***slotp, void *entry)
+ {
++	struct wait_exceptional_entry_queue ewait;
++	wait_queue_head_t *wq;
++
++	init_wait(&ewait.wait);
++	ewait.wait.func = wake_exceptional_entry_func;
++
++	wq = dax_entry_waitqueue(mapping, index, entry, &ewait.key);
++	prepare_to_wait_exclusive(wq, &ewait.wait, TASK_UNINTERRUPTIBLE);
++	xa_unlock_irq(&mapping->i_pages);
+ 	schedule();
++	finish_wait(wq, &ewait.wait);
++
  	/*
- 	 * It's not clear whether or why it is desirable to save the
---- a/arch/powerpc/kernel/signal_64.c
-+++ b/arch/powerpc/kernel/signal_64.c
-@@ -756,11 +756,23 @@ SYSCALL_DEFINE0(rt_sigreturn)
- 					   &uc_transact->uc_mcontext))
- 			goto badframe;
- 	}
--	else
--	/* Fall through, for non-TM restore */
- #endif
--	if (restore_sigcontext(current, NULL, 1, &uc->uc_mcontext))
--		goto badframe;
-+	/* Fall through, for non-TM restore */
-+	if (!MSR_TM_ACTIVE(msr)) {
-+		/*
-+		 * Unset MSR[TS] on the thread regs since MSR from user
-+		 * context does not have MSR active, and recheckpoint was
-+		 * not called since restore_tm_sigcontexts() was not called
-+		 * also.
-+		 *
-+		 * If not unsetting it, the code can RFID to userspace with
-+		 * MSR[TS] set, but without CPU in the proper state,
-+		 * causing a TM bad thing.
-+		 */
-+		current->thread.regs->msr &= ~MSR_TS_MASK;
-+		if (restore_sigcontext(current, NULL, 1, &uc->uc_mcontext))
-+			goto badframe;
-+	}
+-	 * Never return an ERR_PTR() from
+-	 * __get_unlocked_mapping_entry(), just keep looping.
++	 * Entry lock waits are exclusive. Wake up the next waiter since
++	 * we aren't sure we will acquire the entry lock and thus wake
++	 * the next waiter up on unlock.
+ 	 */
+-	return false;
+-}
+-
+-static void *get_unlocked_mapping_entry(struct address_space *mapping,
+-		pgoff_t index, void ***slotp)
+-{
+-	return __get_unlocked_mapping_entry(mapping, index, slotp, entry_wait);
++	if (waitqueue_active(wq))
++		__wake_up(wq, TASK_NORMAL, 1, &ewait.key);
+ }
  
- 	if (restore_altstack(&uc->uc_stack))
- 		goto badframe;
+ static void unlock_mapping_entry(struct address_space *mapping, pgoff_t index)
+@@ -398,19 +405,6 @@ static struct page *dax_busy_page(void *entry)
+ 	return NULL;
+ }
+ 
+-static bool entry_wait_revalidate(void)
+-{
+-	rcu_read_unlock();
+-	schedule();
+-	rcu_read_lock();
+-
+-	/*
+-	 * Tell __get_unlocked_mapping_entry() to take a break, we need
+-	 * to revalidate page->mapping after dropping locks
+-	 */
+-	return true;
+-}
+-
+ bool dax_lock_mapping_entry(struct page *page)
+ {
+ 	pgoff_t index;
+@@ -446,14 +440,15 @@ bool dax_lock_mapping_entry(struct page *page)
+ 		}
+ 		index = page->index;
+ 
+-		entry = __get_unlocked_mapping_entry(mapping, index, &slot,
+-				entry_wait_revalidate);
++		entry = __radix_tree_lookup(&mapping->i_pages, index,
++						NULL, &slot);
+ 		if (!entry) {
+ 			xa_unlock_irq(&mapping->i_pages);
+ 			break;
+-		} else if (IS_ERR(entry)) {
+-			xa_unlock_irq(&mapping->i_pages);
+-			WARN_ON_ONCE(PTR_ERR(entry) != -EAGAIN);
++		} else if (slot_locked(mapping, slot)) {
++			rcu_read_unlock();
++			wait_entry_unlocked(mapping, index, &slot, entry);
++			rcu_read_lock();
+ 			continue;
+ 		}
+ 		lock_slot(mapping, slot);
+-- 
+2.19.1
+
 
 
