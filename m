@@ -7,47 +7,49 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 264FCC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:45:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53608C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:45:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E870D20449
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:45:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2859620449
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:45:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546865150;
-	bh=bV+Nje7V3/u0Oo21KMeYV1TtIiYioliVdhbGkCvXDTk=;
+	s=default; t=1546865155;
+	bh=HzuiJ78a6rUQPxcJ+XhtYmBD55oMqoY+MM7A7N8qSRw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=tgsIQ14aT6FBYMkhuuRjuwWkrJFAD0c26JQkx8LM7VZjWq0PK3PfmjuJbI/C9+/u9
-	 hrkJ+wdziph+o8S04R4xnhFdMlLBdUTR0lKVuvngNobLw2tUhI/f1SNRc/fyCNaDZ7
-	 h99VbncbG8/rxjUv6i5bhmk2vR0+TmM6iwTLsfxA=
+	b=Ml17Nk4ZOe0hGev2f+BF4LU15HzuAhNyPIhZFkUK+Cax9oGhtp5aWCYFYIhlX4Ouf
+	 dRz/9Dkq1v0lK2Q50JgQB6qU7aXfOdIfdaXUF+DvOezQvkoNn8O9gqxYDtferFXCbi
+	 lIRayrHZsGhpLdK3/a7O0Y/jIrcSofos5d0YXbZk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728943AbfAGMpt (ORCPT
+        id S1728955AbfAGMpy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:45:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35298 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:45:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35398 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728242AbfAGMpp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:45:45 -0500
+        id S1728940AbfAGMpt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:45:49 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EE9BD218A1;
-        Mon,  7 Jan 2019 12:45:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BDB3820449;
+        Mon,  7 Jan 2019 12:45:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865144;
-        bh=bV+Nje7V3/u0Oo21KMeYV1TtIiYioliVdhbGkCvXDTk=;
+        s=default; t=1546865148;
+        bh=HzuiJ78a6rUQPxcJ+XhtYmBD55oMqoY+MM7A7N8qSRw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=M/nL0veJO8qFJvee5S8ldVKSTH4AjV9X9aNdQiD8MJDzwJ46y/7CiSqZ9qT8lfZew
-         hIu8Ys+nM20OhxOuJ5cISoJv5tfAb7etNBRw56VPVE6PYpvAa10KF3A6HjxqjGp6tQ
-         IPF5xwMhvak46TMZ1xRv7OuQbFfGIgGEZRYXqmbA=
+        b=Rs9xtJt+2n7/b7zhNbxG0ZKomB2nQw3WgZam33gL/VebD2ts8tzILDn9gmJZbvxZn
+         4oShxofOaKyma1DVU/o8xC4T8/38GQEfXTIg9QZUmsRxyTFAp7I+Y7W7yycYgVoKFV
+         0Y+4eCm1Ca6x1xwV3lFTorXzMT/mL/M/q9o6pA98=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Cong Wang <xiyou.wangcong@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        syzbot+f621cda8b7e598908efa@syzkaller.appspotmail.com
-Subject: [PATCH 4.19 018/170] netrom: fix locking in nr_find_socket()
-Date:   Mon,  7 Jan 2019 13:30:45 +0100
-Message-Id: <20190107104455.202756371@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+0bf2e01269f1274b4b03@syzkaller.appspotmail.com,
+        syzbot+e3132895630f957306bc@syzkaller.appspotmail.com,
+        Myungho Jung <mhjungk@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 019/170] net/smc: fix TCP fallback socket release
+Date:   Mon,  7 Jan 2019 13:30:46 +0100
+Message-Id: <20190107104455.323825988@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104452.953560660@linuxfoundation.org>
 References: <20190107104452.953560660@linuxfoundation.org>
@@ -66,101 +68,84 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Cong Wang <xiyou.wangcong@gmail.com>
+From: Myungho Jung <mhjungk@gmail.com>
 
-[ Upstream commit 7314f5480f3e37e570104dc5e0f28823ef849e72 ]
+[ Upstream commit 78abe3d0dfad196959b1246003366e2610775ea6 ]
 
-nr_find_socket(), nr_find_peer() and nr_find_listener() lock the
-sock after finding it in the global list. However, the call path
-requires BH disabled for the sock lock consistently.
+clcsock can be released while kernel_accept() references it in TCP
+listen worker. Also, clcsock needs to wake up before released if TCP
+fallback is used and the clcsock is blocked by accept. Add a lock to
+safely release clcsock and call kernel_sock_shutdown() to wake up
+clcsock from accept in smc_release().
 
-Actually the locking is unnecessary at this point, we can just hold
-the sock refcnt to make sure it is not gone after we unlock the global
-list, and lock it later only when needed.
-
-Reported-and-tested-by: syzbot+f621cda8b7e598908efa@syzkaller.appspotmail.com
-Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Reported-by: syzbot+0bf2e01269f1274b4b03@syzkaller.appspotmail.com
+Reported-by: syzbot+e3132895630f957306bc@syzkaller.appspotmail.com
+Signed-off-by: Myungho Jung <mhjungk@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/netrom/af_netrom.c |   15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+ net/smc/af_smc.c |   14 ++++++++++++--
+ net/smc/smc.h    |    4 ++++
+ 2 files changed, 16 insertions(+), 2 deletions(-)
 
---- a/net/netrom/af_netrom.c
-+++ b/net/netrom/af_netrom.c
-@@ -153,7 +153,7 @@ static struct sock *nr_find_listener(ax2
- 	sk_for_each(s, &nr_list)
- 		if (!ax25cmp(&nr_sk(s)->source_addr, addr) &&
- 		    s->sk_state == TCP_LISTEN) {
--			bh_lock_sock(s);
-+			sock_hold(s);
- 			goto found;
- 		}
- 	s = NULL;
-@@ -174,7 +174,7 @@ static struct sock *nr_find_socket(unsig
- 		struct nr_sock *nr = nr_sk(s);
- 
- 		if (nr->my_index == index && nr->my_id == id) {
--			bh_lock_sock(s);
-+			sock_hold(s);
- 			goto found;
- 		}
+--- a/net/smc/af_smc.c
++++ b/net/smc/af_smc.c
+@@ -145,8 +145,14 @@ static int smc_release(struct socket *so
+ 		sk->sk_shutdown |= SHUTDOWN_MASK;
  	}
-@@ -198,7 +198,7 @@ static struct sock *nr_find_peer(unsigne
- 
- 		if (nr->your_index == index && nr->your_id == id &&
- 		    !ax25cmp(&nr->dest_addr, dest)) {
--			bh_lock_sock(s);
-+			sock_hold(s);
- 			goto found;
- 		}
+ 	if (smc->clcsock) {
++		if (smc->use_fallback && sk->sk_state == SMC_LISTEN) {
++			/* wake up clcsock accept */
++			rc = kernel_sock_shutdown(smc->clcsock, SHUT_RDWR);
++		}
++		mutex_lock(&smc->clcsock_release_lock);
+ 		sock_release(smc->clcsock);
+ 		smc->clcsock = NULL;
++		mutex_unlock(&smc->clcsock_release_lock);
  	}
-@@ -224,7 +224,7 @@ static unsigned short nr_find_next_circu
- 		if (i != 0 && j != 0) {
- 			if ((sk=nr_find_socket(i, j)) == NULL)
- 				break;
--			bh_unlock_sock(sk);
-+			sock_put(sk);
- 		}
+ 	if (smc->use_fallback) {
+ 		if (sk->sk_state != SMC_LISTEN && sk->sk_state != SMC_INIT)
+@@ -203,6 +209,7 @@ static struct sock *smc_sock_alloc(struc
+ 	spin_lock_init(&smc->conn.send_lock);
+ 	sk->sk_prot->hash(sk);
+ 	sk_refcnt_debug_inc(sk);
++	mutex_init(&smc->clcsock_release_lock);
  
- 		id++;
-@@ -920,6 +920,7 @@ int nr_rx_frame(struct sk_buff *skb, str
+ 	return sk;
+ }
+@@ -818,7 +825,7 @@ static int smc_clcsock_accept(struct smc
+ 	struct socket *new_clcsock = NULL;
+ 	struct sock *lsk = &lsmc->sk;
+ 	struct sock *new_sk;
+-	int rc;
++	int rc = -EINVAL;
+ 
+ 	release_sock(lsk);
+ 	new_sk = smc_sock_alloc(sock_net(lsk), NULL, lsk->sk_protocol);
+@@ -831,7 +838,10 @@ static int smc_clcsock_accept(struct smc
  	}
+ 	*new_smc = smc_sk(new_sk);
  
- 	if (sk != NULL) {
-+		bh_lock_sock(sk);
- 		skb_reset_transport_header(skb);
+-	rc = kernel_accept(lsmc->clcsock, &new_clcsock, 0);
++	mutex_lock(&lsmc->clcsock_release_lock);
++	if (lsmc->clcsock)
++		rc = kernel_accept(lsmc->clcsock, &new_clcsock, 0);
++	mutex_unlock(&lsmc->clcsock_release_lock);
+ 	lock_sock(lsk);
+ 	if  (rc < 0)
+ 		lsk->sk_err = -rc;
+--- a/net/smc/smc.h
++++ b/net/smc/smc.h
+@@ -219,6 +219,10 @@ struct smc_sock {				/* smc sock contain
+ 						 * started, waiting for unsent
+ 						 * data to be sent
+ 						 */
++	struct mutex            clcsock_release_lock;
++						/* protects clcsock of a listen
++						 * socket
++						 * */
+ };
  
- 		if (frametype == NR_CONNACK && skb->len == 22)
-@@ -929,6 +930,7 @@ int nr_rx_frame(struct sk_buff *skb, str
- 
- 		ret = nr_process_rx_frame(sk, skb);
- 		bh_unlock_sock(sk);
-+		sock_put(sk);
- 		return ret;
- 	}
- 
-@@ -960,10 +962,12 @@ int nr_rx_frame(struct sk_buff *skb, str
- 	    (make = nr_make_new(sk)) == NULL) {
- 		nr_transmit_refusal(skb, 0);
- 		if (sk)
--			bh_unlock_sock(sk);
-+			sock_put(sk);
- 		return 0;
- 	}
- 
-+	bh_lock_sock(sk);
-+
- 	window = skb->data[20];
- 
- 	skb->sk             = make;
-@@ -1016,6 +1020,7 @@ int nr_rx_frame(struct sk_buff *skb, str
- 		sk->sk_data_ready(sk);
- 
- 	bh_unlock_sock(sk);
-+	sock_put(sk);
- 
- 	nr_insert_socket(make);
- 
+ static inline struct smc_sock *smc_sk(const struct sock *sk)
 
 
