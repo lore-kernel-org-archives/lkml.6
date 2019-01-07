@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E7ECC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:38:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51307C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:38:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2B8A217D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:38:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2356D206BB
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:38:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546864724;
-	bh=sv5P3HjAuvncJWTfzt4J0toVWdky/ogW/gvgnCm3SMk=;
+	s=default; t=1546864727;
+	bh=H22Qzxd6vyy8GOgYVSzR3/SNwTEbfRL7G6OhVjtcC9w=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=SG9hpnOiYMAct//2G3kJpCqNBWxfNjh2mktN/EcrJj6W2eZzdkRonc337Xkt1G79A
-	 1hsbbHvpz+QdFmZE4jjQ6idTXrJ3L9pnsL2aWSkQcW+T7EZgM6NtLgj1RvZfmKjCzN
-	 D7VhpiCSErdsztitEoimCR2/hQzfxCOscqUb9XV0=
+	b=zV5J3EghT2scHMUTRe/Wzb0INU8RC/cf7JmZSBquJ946E8Jy/CqoRI+2ZolCoCMVB
+	 2qS6hApx73rdHZpPwzFGWTmvL/UUUXFoXV23RC2rhUcaGbD+G1KQ4jN7RvgbwPhnwa
+	 rR5FEPxQ+hDAROxE1FhsPJIQqytUUnztFX/6+LOo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727971AbfAGMin (ORCPT
+        id S1727984AbfAGMiq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:38:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53830 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:38:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53882 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727318AbfAGMil (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:38:41 -0500
+        id S1727318AbfAGMio (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:38:44 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5B6A720859;
-        Mon,  7 Jan 2019 12:38:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 02C5921736;
+        Mon,  7 Jan 2019 12:38:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546864720;
-        bh=sv5P3HjAuvncJWTfzt4J0toVWdky/ogW/gvgnCm3SMk=;
+        s=default; t=1546864723;
+        bh=H22Qzxd6vyy8GOgYVSzR3/SNwTEbfRL7G6OhVjtcC9w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=spCAe7/3JF0CocLcqZqtz40nj0gdlv5b8CpyoO9nMhYNcZyjs5kBnwi0/XC5JrmZC
-         EEnaNGA+DcEHhjsCl4+DhkKWPdXjiTs3zxK+PCB34gZ4g3D9TYBAnIX3tO9aKPmgla
-         78HHUA/vdfYOYIzx+td4V4tk1sk8/dgvTsCm2Buc=
+        b=Uy+YHXhOFL+MhJeafA8CS3c4X3pEhhYF8PjCYAbH4HN+KdUEOlzRnHcSpQY5aGAr+
+         HAR171NOjqtWtDUN2myPD9r3ZROHoGvecvHfrQWqMu4+86QnjOz0z5FM+3+1zXsTzw
+         8qe/prac7TJ9B7pf5R8uH5ig2Z7+MzRepVTkgR3w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        Pan Bian <bianpan2016@163.com>, Theodore Tso <tytso@mit.edu>,
-        stable@kernel.org
-Subject: [PATCH 4.20 073/145] ext4: fix possible use after free in ext4_quota_enable
-Date:   Mon,  7 Jan 2019 13:31:50 +0100
-Message-Id: <20190107104446.846036201@linuxfoundation.org>
+        stable@vger.kernel.org, Maurizio Lombardi <mlombard@redhat.com>,
+        Theodore Tso <tytso@mit.edu>, stable@kernel.org
+Subject: [PATCH 4.20 074/145] ext4: missing unlock/put_page() in ext4_try_to_write_inline_data()
+Date:   Mon,  7 Jan 2019 13:31:51 +0100
+Message-Id: <20190107104446.934284390@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104437.308206189@linuxfoundation.org>
 References: <20190107104437.308206189@linuxfoundation.org>
@@ -66,37 +65,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Pan Bian <bianpan2016@163.com>
+From: Maurizio Lombardi <mlombard@redhat.com>
 
-commit 61157b24e60fb3cd1f85f2c76a7b1d628f970144 upstream.
+commit 132d00becb31e88469334e1e62751c81345280e0 upstream.
 
-The function frees qf_inode via iput but then pass qf_inode to
-lockdep_set_quota_inode on the failure path. This may result in a
-use-after-free bug. The patch frees df_inode only when it is never used.
+In case of error, ext4_try_to_write_inline_data() should unlock
+and release the page it holds.
 
-Fixes: daf647d2dd5 ("ext4: add lockdep annotations for i_data_sem")
-Cc: stable@kernel.org # 4.6
-Reviewed-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Pan Bian <bianpan2016@163.com>
+Fixes: f19d5870cbf7 ("ext4: add normal write support for inline data")
+Cc: stable@kernel.org # 3.8
+Signed-off-by: Maurizio Lombardi <mlombard@redhat.com>
 Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/super.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/ext4/inline.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -5713,9 +5713,9 @@ static int ext4_quota_enable(struct supe
- 	qf_inode->i_flags |= S_NOQUOTA;
- 	lockdep_set_quota_inode(qf_inode, I_DATA_SEM_QUOTA);
- 	err = dquot_enable(qf_inode, type, format_id, flags);
--	iput(qf_inode);
- 	if (err)
- 		lockdep_set_quota_inode(qf_inode, I_DATA_SEM_NORMAL);
-+	iput(qf_inode);
+--- a/fs/ext4/inline.c
++++ b/fs/ext4/inline.c
+@@ -705,8 +705,11 @@ int ext4_try_to_write_inline_data(struct
  
- 	return err;
- }
+ 	if (!PageUptodate(page)) {
+ 		ret = ext4_read_inline_page(inode, page);
+-		if (ret < 0)
++		if (ret < 0) {
++			unlock_page(page);
++			put_page(page);
+ 			goto out_up_read;
++		}
+ 	}
+ 
+ 	ret = 1;
 
 
