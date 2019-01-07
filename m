@@ -7,49 +7,46 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81529C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:07:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ACB1C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:07:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53BC42089F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:07:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 204C92147C
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:07:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546866470;
-	bh=p+2w8KfA2Nwtgk+Kf3FikIPzgjM1wfuF6D7XbRrjndQ=;
+	s=default; t=1546866476;
+	bh=5NT55KstlBvijj16KJEChKD36xFzow+EF3sLqLV+mXM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=AtQDg3HjRqfwLsgIL5VxEBwxRAFWMD7qXlMsB0LZ4vysyY4kMeDaPfk3w1gRpw2co
-	 yILGVuTO/OaASnIhPjt04tHYmejkkFIPu11iOZ6HZHNB+l0IUt0f/T6NwE8pQdVZDm
-	 hLG8gQ1psCRP3h/iwv8xfn0qBPaBhAHjYLEqW4ns=
+	b=bo4CGYAKVc6MvlIb1S2EybReDOuuHvgWr2WEL/3XVHEQJXfOUqNj8UFjqSoGncqC+
+	 9KcegAhxA6/eZwtSBiOfJa9bRSZucYBwTCKBjiEnA6VzS5EUas/mp2XDPn/QxTaeUg
+	 Z2kdMmgtThIToYsegr0TrV45xlvwAuJTxq6ywSAE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731348AbfAGNHt (ORCPT
+        id S1731575AbfAGNHz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:07:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54830 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:07:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54906 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727392AbfAGNHs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:07:48 -0500
+        id S1729751AbfAGNHx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:07:53 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0EF412147C;
-        Mon,  7 Jan 2019 13:07:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 860922089F;
+        Mon,  7 Jan 2019 13:07:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546866467;
-        bh=p+2w8KfA2Nwtgk+Kf3FikIPzgjM1wfuF6D7XbRrjndQ=;
+        s=default; t=1546866473;
+        bh=5NT55KstlBvijj16KJEChKD36xFzow+EF3sLqLV+mXM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hqtS2rSEBvoQtlUjV41XwmM7XhIT/oZn/tKG+yk6dxoSMmXQjqqV47rHwjfamjdpq
-         zy7nETVqy7pwylBgSgwxIGUL+P+5H4l7IYtniUrk6PP8kfiE0HEzplPWXuFSkTEa5/
-         yS4doNgJ2AnKhuffDOV9jGrZdApQ6/EjlBI6AUUs=
+        b=tUCGzRWdyPbNg4dUw2SVwSnctTsPTWh2bJ9unC0UCvOdhkDALRQPaD3NDPLKXEoPG
+         qk2OJbhYzviVdAg9XZfCeGDPlxgEy5Xutk+HSv5K949gvqBVQTQxIA8mJbyDIQHows
+         Udb94JCphvl+GNpHRbCszSdl6nj026kcGMTXVsPg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sebastian Sjoholm <sebastian.sjoholm@gmail.com>,
-        Reinhard Speyerer <rspmn@arcor.de>,
-        =?UTF-8?q?Bj=C3=B8rn=20Mork?= <bjorn@mork.no>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 41/71] qmi_wwan: apply SET_DTR quirk to the SIMCOM shared device ID
-Date:   Mon,  7 Jan 2019 13:33:10 +0100
-Message-Id: <20190107105335.094283696@linuxfoundation.org>
+        stable@vger.kernel.org, Patrick Dreyer <Patrick.Dreyer@gmail.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 4.9 42/71] Input: elan_i2c - add ACPI ID for touchpad in ASUS Aspire F5-573G
+Date:   Mon,  7 Jan 2019 13:33:11 +0100
+Message-Id: <20190107105335.147928997@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107105330.280153213@linuxfoundation.org>
 References: <20190107105330.280153213@linuxfoundation.org>
@@ -68,45 +65,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Bjørn Mork <bjorn@mork.no>
+From: Patrick Dreyer <Patrick@Dreyer.name>
 
-commit 102cd909635612c0be784a519651954a7924c786 upstream.
+commit 7db54c89f0b30a101584e09d3729144e6170059d upstream.
 
-SIMCOM are reusing a single device ID for many (all of their?)
-different modems, based on different chipsets and firmwares. Newer
-Qualcomm chipset generations require setting DTR to wake the QMI
-function.  The SIM7600E modem is using such a chipset, making it
-fail to work with this driver despite the device ID match.
+This adds ELAN0501 to the ACPI table to support Elan touchpad found in ASUS
+Aspire F5-573G.
 
-Fix by unconditionally enabling the SET_DTR quirk for all SIMCOM
-modems using this specific device ID.  This is similar to what
-we already have done for another case of device IDs recycled over
-multiple chipset generations: 14cf4a771b30 ("drivers: net: usb:
-qmi_wwan: add QMI_QUIRK_SET_DTR for Telit PID 0x1201")
-
-Initial testing on an older SIM7100 modem shows no immediate side
-effects.
-
-Reported-by: Sebastian Sjoholm <sebastian.sjoholm@gmail.com>
-Cc: Reinhard Speyerer <rspmn@arcor.de>
-Signed-off-by: Bjørn Mork <bjorn@mork.no>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Patrick Dreyer <Patrick.Dreyer@gmail.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/usb/qmi_wwan.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/input/mouse/elan_i2c_core.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/net/usb/qmi_wwan.c
-+++ b/drivers/net/usb/qmi_wwan.c
-@@ -951,7 +951,7 @@ static const struct usb_device_id produc
- 	{QMI_FIXED_INTF(0x03f0, 0x4e1d, 8)},	/* HP lt4111 LTE/EV-DO/HSPA+ Gobi 4G Module */
- 	{QMI_FIXED_INTF(0x03f0, 0x9d1d, 1)},	/* HP lt4120 Snapdragon X5 LTE */
- 	{QMI_FIXED_INTF(0x22de, 0x9061, 3)},	/* WeTelecom WPD-600N */
--	{QMI_FIXED_INTF(0x1e0e, 0x9001, 5)},	/* SIMCom 7230E */
-+	{QMI_QUIRK_SET_DTR(0x1e0e, 0x9001, 5)},	/* SIMCom 7100E, 7230E, 7600E ++ */
- 	{QMI_QUIRK_SET_DTR(0x2c7c, 0x0125, 4)},	/* Quectel EC25, EC20 R2.0  Mini PCIe */
- 	{QMI_QUIRK_SET_DTR(0x2c7c, 0x0121, 4)},	/* Quectel EC21 Mini PCIe */
- 	{QMI_QUIRK_SET_DTR(0x2c7c, 0x0191, 4)},	/* Quectel EG91 */
+--- a/drivers/input/mouse/elan_i2c_core.c
++++ b/drivers/input/mouse/elan_i2c_core.c
+@@ -1240,6 +1240,7 @@ MODULE_DEVICE_TABLE(i2c, elan_id);
+ static const struct acpi_device_id elan_acpi_id[] = {
+ 	{ "ELAN0000", 0 },
+ 	{ "ELAN0100", 0 },
++	{ "ELAN0501", 0 },
+ 	{ "ELAN0600", 0 },
+ 	{ "ELAN0602", 0 },
+ 	{ "ELAN0605", 0 },
 
 
