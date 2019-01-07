@@ -4,51 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C57AC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:51:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73835C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:51:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC93E20651
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:51:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 411B320651
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:51:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546865504;
-	bh=geLsU9s16dpfdqQn0UwGJP82RdYiDD9BkxYlWq54byo=;
+	s=default; t=1546865512;
+	bh=6xg1s6sYAH1bs0N7B+CgWIhPe5hyz1uG3TsOhWvwZk8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=01kaT1OR5q3gFLK64WOY/53CTnUh75h9MMa3Fx3g30db0mrlcLDjVh+djo3ubOX9/
-	 xnuor4Dlp5+FmGyivyHRFncBzhOs3CwBGjQyhLzl/+1JO2IP0XUOtzwJDP0vIZ6jiO
-	 iDMxrNiF0eEOLNYwtHs41obUad4Og9TIeHKdpd1E=
+	b=bNx/maVrLocEE4BtYCfQVVbNWP+FOm12d9nqFPtAO5fwR1BY8DAhCGmGbJb/lwrOp
+	 XffTpGZPH9Qu2+fBdTcLN3Lr3yW9pWB6QCvZY/ssxptaSGZM777ANarjY4xXSluuWv
+	 /vn50LAXo8yxXLXLos0ZO8CYr5O+54tDwhpTUSvM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729454AbfAGMvo (ORCPT
+        id S1729505AbfAGMvv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:51:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41638 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:51:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41714 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729041AbfAGMvl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:51:41 -0500
+        id S1728506AbfAGMvr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:51:47 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 39D7B20651;
-        Mon,  7 Jan 2019 12:51:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B5E0420651;
+        Mon,  7 Jan 2019 12:51:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865500;
-        bh=geLsU9s16dpfdqQn0UwGJP82RdYiDD9BkxYlWq54byo=;
+        s=default; t=1546865507;
+        bh=6xg1s6sYAH1bs0N7B+CgWIhPe5hyz1uG3TsOhWvwZk8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SqBcf369npMjy8NiJPXqM+I66hPiFBldInQrVh450I9isQ6ui00XpWJMumA8dAb3f
-         8+sZdS+t5dwmdELFvgXnBj1kd4ZNpWZTtIWHUqMUwCmP7+Z8Dl6F9RONKWD4ye/w7Z
-         4T1mT+YwbZuuvbntF4MlykswFI9kvOk3O7lX9cE8=
+        b=DRQpbC4Ih2j1Kq8ynzY1qlihIzkTYcGAoMatBzrKu9k4R2Zcg/PYsMJYM9+i2Htst
+         ULrOX/ue5IPzN6u1xpgLW3e1TBKwGssoaXPyftQr9RzlzjUctg1UM1xolYoRDY23ft
+         /ii8jzfqzv2g7SGwYcbYrQAt7OV5C3M9we3hBK0U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>,
-        =?UTF-8?q?Jaime=20P=C3=A9rez?= <19.jaime.91@gmail.com>
-Subject: [PATCH 4.19 086/170] ASoC: intel: cht_bsw_max98090_ti: Add pmc_plt_clk_0 quirk for Chromebook Gnawty
-Date:   Mon,  7 Jan 2019 13:31:53 +0100
-Message-Id: <20190107104503.172429703@linuxfoundation.org>
+        stable@vger.kernel.org, Sebastian Ott <sebott@linux.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>
+Subject: [PATCH 4.19 087/170] s390/pci: fix sleeping in atomic during hotplug
+Date:   Mon,  7 Jan 2019 13:31:54 +0100
+Message-Id: <20190107104503.296009545@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104452.953560660@linuxfoundation.org>
 References: <20190107104452.953560660@linuxfoundation.org>
@@ -67,49 +65,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Sebastian Ott <sebott@linux.ibm.com>
 
-commit 94ea56cff506c769a509c5dd87904c7fe3806a81 upstream.
+commit 98dfd32620e970eb576ebce5ea39d905cb005e72 upstream.
 
-The Gnawty model Chromebook uses pmc_plt_clk_0 instead of pmc_plt_clk_3
-for the mclk, just like the Clapper and Swanky models.
+When triggered by pci hotplug (PEC 0x306) clp_get_state is called
+with spinlocks held resulting in the following warning:
 
-This commit adds a DMI based quirk for this.
+zpci: n/a: Event 0x306 reconfigured PCI function 0x0
+BUG: sleeping function called from invalid context at mm/page_alloc.c:4324
+in_atomic(): 1, irqs_disabled(): 0, pid: 98, name: kmcheck
+2 locks held by kmcheck/98:
 
-This fixing audio no longer working on these devices after
-commit 648e921888ad ("clk: x86: Stop marking clocks as CLK_IS_CRITICAL")
-that commit fixes us unnecessary keeping unused clocks on, but in case of
-the Gnawty that was breaking audio support since we were not using the
-right clock in the cht_bsw_max98090_ti machine driver.
+Change the allocation to use GFP_ATOMIC.
 
-BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=201787
-Cc: stable@vger.kernel.org
-Fixes: 648e921888ad ("clk: x86: Stop marking clocks as CLK_IS_CRITICAL")
-Reported-and-tested-by: Jaime Pérez <19.jaime.91@gmail.com>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Cc: stable@vger.kernel.org # 4.13+
+Signed-off-by: Sebastian Ott <sebott@linux.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/soc/intel/boards/cht_bsw_max98090_ti.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/s390/pci/pci_clp.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/sound/soc/intel/boards/cht_bsw_max98090_ti.c
-+++ b/sound/soc/intel/boards/cht_bsw_max98090_ti.c
-@@ -397,6 +397,13 @@ static const struct dmi_system_id cht_ma
- 		.driver_data = (void *)QUIRK_PMC_PLT_CLK_0,
- 	},
- 	{
-+		/* Gnawty model Chromebook (Acer Chromebook CB3-111) */
-+		.matches = {
-+			DMI_MATCH(DMI_PRODUCT_NAME, "Gnawty"),
-+		},
-+		.driver_data = (void *)QUIRK_PMC_PLT_CLK_0,
-+	},
-+	{
- 		/* Swanky model Chromebook (Toshiba Chromebook 2) */
- 		.matches = {
- 			DMI_MATCH(DMI_PRODUCT_NAME, "Swanky"),
+--- a/arch/s390/pci/pci_clp.c
++++ b/arch/s390/pci/pci_clp.c
+@@ -436,7 +436,7 @@ int clp_get_state(u32 fid, enum zpci_sta
+ 	struct clp_state_data sd = {fid, ZPCI_FN_STATE_RESERVED};
+ 	int rc;
+ 
+-	rrb = clp_alloc_block(GFP_KERNEL);
++	rrb = clp_alloc_block(GFP_ATOMIC);
+ 	if (!rrb)
+ 		return -ENOMEM;
+ 
 
 
