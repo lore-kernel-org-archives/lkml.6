@@ -4,50 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D154C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:00:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3CDCC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:00:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1A55206BB
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:00:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BBB622089F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:00:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546866011;
-	bh=uSYfW703c3sQN2xmDUcPVygSABpKh9p9erUmQVJ0V/4=;
+	s=default; t=1546866013;
+	bh=j652PlJRTUysAUx0+nAQEQmZa+Fs+cpF7Ydsvu4UoRk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=R9dzH0UevW/qFBGXG4a+KzDdWYdzf/Iz5Nhq/NAeOfOh85tiYoAafSDe7heD+n9tG
-	 jCrJ6a5u+I9QM1tyRUE5N5PPb4MhQzNkdTCOBx+qmqp/mYqt4Ecj1qZXGW9QTp2q2C
-	 u++KvL60bh/x3QUHCeykST3tQ2OoxfDEgzbI/oJA=
+	b=zIvS2wGuCD2DXDr5UYy8eTdLbyF4tZ5Llt9O2ftECllvDCPQPNdtQgkf+IwgpBuZe
+	 s84M9sKQt1UywEdVVpVIbiHT5Ii6NuQxWniaYi+gg0vYXwL756l9nokYJkiIbVesUh
+	 j1nz8xGSbxcuoNoAD7oabuJfjGUvKokMjI7YRm7Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730399AbfAGNAK (ORCPT
+        id S1730409AbfAGNAM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:00:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47640 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:00:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47664 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730381AbfAGNAG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:00:06 -0500
+        id S1730391AbfAGNAJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:00:09 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E45C92089F;
-        Mon,  7 Jan 2019 13:00:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DE097206BB;
+        Mon,  7 Jan 2019 13:00:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546866005;
-        bh=uSYfW703c3sQN2xmDUcPVygSABpKh9p9erUmQVJ0V/4=;
+        s=default; t=1546866008;
+        bh=j652PlJRTUysAUx0+nAQEQmZa+Fs+cpF7Ydsvu4UoRk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gu4b/qLAl0ZxzA1SYOk6qONC6vnwZX4bFG2yW1NKWSXmplPrkHae2P5pN3C7zpZCp
-         k+B4uGEwHlqTHUjNgqLG+Vb+MDcqkcvpHanj7QOklXf/n+wMLaBP9tPqHzE2bGMF2H
-         ZaNER3jpNV74zhAVDj/6UV9S8KNzwK9dMQfTQSug=
+        b=DP7gBu8zaHB3Ub0IaT2AKesVlZJDIAsboRArVm6AuTIH8UUv9Ml8e3QufnfHVXYks
+         HZBxacH17BZnAhoJodiWU8XsPajgkd1uk4jt4K3isx0BzTT21JKEWSfTxadkEIiMT7
+         yKHepChxVgOjnzFogFVJ4AgSEhMgBmppaPl6Gpl0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Cong Wang <xiyou.wangcong@gmail.com>,
         "David S. Miller" <davem@davemloft.net>,
-        syzbot+f621cda8b7e598908efa@syzkaller.appspotmail.com
-Subject: [PATCH 4.14 015/101] netrom: fix locking in nr_find_socket()
-Date:   Mon,  7 Jan 2019 13:32:03 +0100
-Message-Id: <20190107105332.606110847@linuxfoundation.org>
+        syzbot+5e5e969e525129229052@syzkaller.appspotmail.com
+Subject: [PATCH 4.14 016/101] net/wan: fix a double free in x25_asy_open_tty()
+Date:   Mon,  7 Jan 2019 13:32:04 +0100
+Message-Id: <20190107105332.884410546@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107105330.372621917@linuxfoundation.org>
 References: <20190107105330.372621917@linuxfoundation.org>
@@ -68,99 +67,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Cong Wang <xiyou.wangcong@gmail.com>
 
-[ Upstream commit 7314f5480f3e37e570104dc5e0f28823ef849e72 ]
+[ Upstream commit d5c7c745f254c6cb98b3b3f15fe789b8bd770c72 ]
 
-nr_find_socket(), nr_find_peer() and nr_find_listener() lock the
-sock after finding it in the global list. However, the call path
-requires BH disabled for the sock lock consistently.
+When x25_asy_open() fails, it already cleans up by itself,
+so its caller doesn't need to free the memory again.
 
-Actually the locking is unnecessary at this point, we can just hold
-the sock refcnt to make sure it is not gone after we unlock the global
-list, and lock it later only when needed.
+It seems we still have to call x25_asy_free() to clear the SLF_INUSE
+bit, so just set these pointers to NULL after kfree().
 
-Reported-and-tested-by: syzbot+f621cda8b7e598908efa@syzkaller.appspotmail.com
+Reported-and-tested-by: syzbot+5e5e969e525129229052@syzkaller.appspotmail.com
+Fixes: 3b780bed3138 ("x25_asy: Free x25_asy on x25_asy_open() failure.")
 Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/netrom/af_netrom.c |   15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+ drivers/net/wan/x25_asy.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/net/netrom/af_netrom.c
-+++ b/net/netrom/af_netrom.c
-@@ -153,7 +153,7 @@ static struct sock *nr_find_listener(ax2
- 	sk_for_each(s, &nr_list)
- 		if (!ax25cmp(&nr_sk(s)->source_addr, addr) &&
- 		    s->sk_state == TCP_LISTEN) {
--			bh_lock_sock(s);
-+			sock_hold(s);
- 			goto found;
- 		}
- 	s = NULL;
-@@ -174,7 +174,7 @@ static struct sock *nr_find_socket(unsig
- 		struct nr_sock *nr = nr_sk(s);
+--- a/drivers/net/wan/x25_asy.c
++++ b/drivers/net/wan/x25_asy.c
+@@ -485,8 +485,10 @@ static int x25_asy_open(struct net_devic
  
- 		if (nr->my_index == index && nr->my_id == id) {
--			bh_lock_sock(s);
-+			sock_hold(s);
- 			goto found;
- 		}
- 	}
-@@ -198,7 +198,7 @@ static struct sock *nr_find_peer(unsigne
- 
- 		if (nr->your_index == index && nr->your_id == id &&
- 		    !ax25cmp(&nr->dest_addr, dest)) {
--			bh_lock_sock(s);
-+			sock_hold(s);
- 			goto found;
- 		}
- 	}
-@@ -224,7 +224,7 @@ static unsigned short nr_find_next_circu
- 		if (i != 0 && j != 0) {
- 			if ((sk=nr_find_socket(i, j)) == NULL)
- 				break;
--			bh_unlock_sock(sk);
-+			sock_put(sk);
- 		}
- 
- 		id++;
-@@ -919,6 +919,7 @@ int nr_rx_frame(struct sk_buff *skb, str
- 	}
- 
- 	if (sk != NULL) {
-+		bh_lock_sock(sk);
- 		skb_reset_transport_header(skb);
- 
- 		if (frametype == NR_CONNACK && skb->len == 22)
-@@ -928,6 +929,7 @@ int nr_rx_frame(struct sk_buff *skb, str
- 
- 		ret = nr_process_rx_frame(sk, skb);
- 		bh_unlock_sock(sk);
-+		sock_put(sk);
- 		return ret;
- 	}
- 
-@@ -959,10 +961,12 @@ int nr_rx_frame(struct sk_buff *skb, str
- 	    (make = nr_make_new(sk)) == NULL) {
- 		nr_transmit_refusal(skb, 0);
- 		if (sk)
--			bh_unlock_sock(sk);
-+			sock_put(sk);
- 		return 0;
- 	}
- 
-+	bh_lock_sock(sk);
-+
- 	window = skb->data[20];
- 
- 	skb->sk             = make;
-@@ -1015,6 +1019,7 @@ int nr_rx_frame(struct sk_buff *skb, str
- 		sk->sk_data_ready(sk);
- 
- 	bh_unlock_sock(sk);
-+	sock_put(sk);
- 
- 	nr_insert_socket(make);
- 
+ 	/* Cleanup */
+ 	kfree(sl->xbuff);
++	sl->xbuff = NULL;
+ noxbuff:
+ 	kfree(sl->rbuff);
++	sl->rbuff = NULL;
+ norbuff:
+ 	return -ENOMEM;
+ }
 
 
