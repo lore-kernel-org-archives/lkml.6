@@ -2,102 +2,116 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B099C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 14:41:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DA76C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 14:43:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C00D2183E
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 14:41:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 163A12183E
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 14:43:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BxWxNzpz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729066AbfAGOlQ (ORCPT
+        id S1728959AbfAGOnL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 09:41:16 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:35164 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728418AbfAGOlP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 09:41:15 -0500
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 4C790C515E02D1F4D80;
-        Mon,  7 Jan 2019 22:41:09 +0800 (CST)
-Received: from localhost.localdomain (10.67.212.75) by
- DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
- 14.3.408.0; Mon, 7 Jan 2019 22:41:02 +0800
-From:   John Garry <john.garry@huawei.com>
-To:     <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>
-CC:     <linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>,
-        <linux-scsi@vger.kernel.org>, John Garry <john.garry@huawei.com>
-Subject: [PATCH] scsi: sd: Make protection lookup tables static
-Date:   Mon, 7 Jan 2019 22:41:51 +0800
-Message-ID: <1546872111-5627-1-git-send-email-john.garry@huawei.com>
-X-Mailer: git-send-email 2.8.1
+        Mon, 7 Jan 2019 09:43:11 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:46013 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727643AbfAGOnK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 09:43:10 -0500
+Received: by mail-wr1-f66.google.com with SMTP id t6so630274wrr.12;
+        Mon, 07 Jan 2019 06:43:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :content-transfer-encoding:user-agent;
+        bh=zVDROSnfZqLIC6uZXDp4ZJBmcMkYcpBLNcGKIHLNFsY=;
+        b=BxWxNzpzDYiwDufPtwATgV6wzZ+wgzBpaE3R+Aly2caZ3NmD8/9ayJJwdQZT42bUFi
+         Vl/9LhYT5tG/aF6K9SaU08+yc5yggY5IzJZPb685SXu4Q1aLUYCePCwL5CexJp1dnQco
+         oyXRS3mIMafyWxicm2uXNyiVcWnoFRBe1gQVrMueZAafssD37moPkEigQydgxnYX/Q8k
+         3w5Hf4BZqNgqv1oErNDRgKNanzDjuMOBYIdW+aDUFdI/vkn0f5hGgNOkJGos1FfjLLXu
+         u7OsKMVpOI+SOgY20Nevu1lRDgiGoS4o/8JNBIbuus3PNy8qVEYqPC32wCeTjV9mQln6
+         ODcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:content-transfer-encoding:user-agent;
+        bh=zVDROSnfZqLIC6uZXDp4ZJBmcMkYcpBLNcGKIHLNFsY=;
+        b=rp9jUdFRp/KGAuOg09HxKpxiJiovtdJD1JQ2eoax7ZQmndbDs0u11/bZstxBlXMCHh
+         Ibv3NnINlxkJyyaf9tbJ1VOAqz6Q2wfAIIdyJFsRQnIidSOzsDIu+LmnMSzKq7gqF8sg
+         AcxPvDryJFkJcQsf0b4o4VDgoWWLhgbBDuMZzy65EGR7WaxZpXD7KW6jvvvrMgMRr+5T
+         BBTxnYSS61x0SVOVGr2InXps/6wrl0B9giVx1lGPFMRnzsODV0weT/nO+9l4W0n5G/0G
+         puAmkGNk+yyytVP+L9wQ91ZqGkV6r4nt2RXwpnpuRW/RBxh1BNfMVapLlX2FIAlQQ3k+
+         U+Zw==
+X-Gm-Message-State: AJcUukfKfvYAPlQNmRqtfNommiC5f0Zi8sZF8UeqJlmlSi9NZpfucpy/
+        dSeu2Zt4h1moKpyYu+hA2W9BgXF7
+X-Google-Smtp-Source: ALg8bN65+B1HZkZASV8Ox/+o+od/RCs/nT5U4WD8pOnpMlF7au7liKPdWeOvbLVv/IINKs7jMmtQlQ==
+X-Received: by 2002:adf:8b83:: with SMTP id o3mr54903739wra.81.1546872187970;
+        Mon, 07 Jan 2019 06:43:07 -0800 (PST)
+Received: from localhost.localdomain ([185.140.29.250])
+        by smtp.gmail.com with ESMTPSA id o17sm16359259wmg.35.2019.01.07.06.43.06
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 07 Jan 2019 06:43:07 -0800 (PST)
+Date:   Mon, 7 Jan 2019 15:43:05 +0100
+From:   =?iso-8859-1?Q?J=FAlius?= Milan <jmilan.dev@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     devel@driverdev.osuosl.org, linux-wireless@vger.kernel.org,
+        gregkh@linuxfoundation.org, Adham.Abozaeid@microchip.com,
+        Ajay.Kathat@microchip.com
+Subject: [PATCH v4] staging: wilc1000: fix registration frame size
+Message-ID: <20190107144305.GA14627@localhost.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently the protection lookup tables in sd_prot_flag_mask() and
-sd_prot_op() are declared non-static. As such, they will be rebuilt for
-each respective function call.
+Fixes the following sparse warnings:
 
-Optimise by making them static.
+drivers/staging/wilc1000/host_interface.c:2360:30: warning:
+ incorrect type in assignment (different base types)
+    expected restricted __le32 [addressable] [assigned] [usertype] frame_type
+    got restricted __le16 [usertype] <noident>
 
-This saves ~100B object code for sd.c:
+Fixes: 147ccfd451024 ("staging: wilc1000: handle mgmt_frame_register ops from cfg82011 context")
+Signed-off-by: Július Milan <jmilan.dev@gmail.com>
+---
+ drivers/staging/wilc1000/host_interface.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Before:
-   text	   data	    bss	    dec	    hex	filename
-  25403	   1024	     16	  26443	   674b	drivers/scsi/sd.o
+v3:
+- nothing really changed since v1, v2, I just messed emails and then patch
+  format, sorry for that, it's my first patch :)
 
-After:
-  text	   data	    bss	    dec	    hex	filename
-  25299	   1024	     16	  26339	   66e3	drivers/scsi/sd.o
+v4:
+- changed struct wilc_reg_frame member frame_type type to le16
+- reverted cast of frame_type to le32 in wilc_frame_register
+- changed subject line, previous version has subject:
+  "[PATCH v3] staging: wilc1000: fix cast to restricted __le32"
+  https://www.spinics.net/lists/linux-wireless/msg181166.html
 
-Signed-off-by: John Garry <john.garry@huawei.com>
-
-diff --git a/drivers/scsi/sd.h b/drivers/scsi/sd.h
-index 1d63f3a..89e6d42 100644
---- a/drivers/scsi/sd.h
-+++ b/drivers/scsi/sd.h
-@@ -195,15 +195,15 @@ static inline sector_t sectors_to_logical(struct scsi_device *sdev, sector_t sec
- static inline unsigned int sd_prot_op(bool write, bool dix, bool dif)
- {
- 	/* Lookup table: bit 2 (write), bit 1 (dix), bit 0 (dif) */
--	const unsigned int ops[] = {	/* wrt dix dif */
--		SCSI_PROT_NORMAL,	/*  0	0   0  */
--		SCSI_PROT_READ_STRIP,	/*  0	0   1  */
--		SCSI_PROT_READ_INSERT,	/*  0	1   0  */
--		SCSI_PROT_READ_PASS,	/*  0	1   1  */
--		SCSI_PROT_NORMAL,	/*  1	0   0  */
--		SCSI_PROT_WRITE_INSERT, /*  1	0   1  */
--		SCSI_PROT_WRITE_STRIP,	/*  1	1   0  */
--		SCSI_PROT_WRITE_PASS,	/*  1	1   1  */
-+	static const unsigned int ops[] = {	/* wrt dix dif */
-+		SCSI_PROT_NORMAL,		/*  0	0   0  */
-+		SCSI_PROT_READ_STRIP,		/*  0	0   1  */
-+		SCSI_PROT_READ_INSERT,		/*  0	1   0  */
-+		SCSI_PROT_READ_PASS,		/*  0	1   1  */
-+		SCSI_PROT_NORMAL,		/*  1	0   0  */
-+		SCSI_PROT_WRITE_INSERT,		/*  1	0   1  */
-+		SCSI_PROT_WRITE_STRIP,		/*  1	1   0  */
-+		SCSI_PROT_WRITE_PASS,		/*  1	1   1  */
- 	};
+diff --git a/drivers/staging/wilc1000/host_interface.c b/drivers/staging/wilc1000/host_interface.c
+index 70c854d939ce..7acb790d850b 100644
+--- a/drivers/staging/wilc1000/host_interface.c
++++ b/drivers/staging/wilc1000/host_interface.c
+@@ -36,7 +36,7 @@ struct wilc_op_mode {
+ struct wilc_reg_frame {
+ 	bool reg;
+ 	u8 reg_id;
+-	__le32 frame_type;
++	__le16 frame_type;
+ } __packed;
  
- 	return ops[write << 2 | dix << 1 | dif];
-@@ -215,7 +215,7 @@ static inline unsigned int sd_prot_op(bool write, bool dix, bool dif)
-  */
- static inline unsigned int sd_prot_flag_mask(unsigned int prot_op)
- {
--	const unsigned int flag_mask[] = {
-+	static const unsigned int flag_mask[] = {
- 		[SCSI_PROT_NORMAL]		= 0,
- 
- 		[SCSI_PROT_READ_STRIP]		= SCSI_PROT_TRANSFER_PI |
+ struct wilc_drv_handler {
 -- 
-1.9.1
+2.14.5
 
