@@ -2,184 +2,102 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD8FEC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 09:39:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63902C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 09:43:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 975452070C
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 09:39:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B07120859
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 09:43:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726667AbfAGJjn convert rfc822-to-8bit (ORCPT
+        id S1725550AbfAGJnJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 04:39:43 -0500
-Received: from ozlabs.org ([203.11.71.1]:48689 "EHLO ozlabs.org"
+        Mon, 7 Jan 2019 04:43:09 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:39868 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725550AbfAGJjn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 04:39:43 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        id S1726520AbfAGJnI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 04:43:08 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43Y9Mt2mPyz9sCX;
-        Mon,  7 Jan 2019 20:39:38 +1100 (AEDT)
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-Cc:     kvm@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Gibson <david@gibson.dropbear.id.au>,
-        Alexey Kardashevskiy <aik@ozlabs.ru>,
-        Laura Abbott <labbott@redhat.com>,
-        Alex Williamson <alex.williamson@redhat.com>
-Subject: Out-of-tree build works, in-tree build fails due to tracing (was Re: compilation failure with CONFIG_VFIO_PCI_NVLINK2)
-In-Reply-To: <f14d4753-a527-01cb-d46f-6a185f5beaa6@ozlabs.ru>
-References: <28d0ba1d-b116-178a-d6d0-8a8b569c7c02@redhat.com> <e74e0922-af2e-dac4-2260-8589afa2426b@ozlabs.ru> <2e4484ae-06b7-0de3-db8e-3a6989fac1f7@redhat.com> <91da4363-fed8-a09e-b657-6c10f2b6c33a@ozlabs.ru> <f14d4753-a527-01cb-d46f-6a185f5beaa6@ozlabs.ru>
-Date:   Mon, 07 Jan 2019 20:39:35 +1100
-Message-ID: <871s5obyco.fsf@concordia.ellerman.id.au>
+        by mx1.redhat.com (Postfix) with ESMTPS id 600ED356FE;
+        Mon,  7 Jan 2019 09:43:08 +0000 (UTC)
+Received: from localhost.localdomain (ovpn-12-80.pek2.redhat.com [10.72.12.80])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5643119745;
+        Mon,  7 Jan 2019 09:42:58 +0000 (UTC)
+Subject: Re: [PATCH 2/2 v5] kdump,vmcoreinfo: Export the value of sme mask to
+ vmcoreinfo
+To:     Baoquan He <bhe@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, x86@kernel.org,
+        akpm@linux-foundation.org, dyoung@redhat.com,
+        linux-doc@vger.kernel.org, k-hagio@ab.jp.nec.com,
+        anderson@redhat.com
+References: <20190107014734.9730-1-lijiang@redhat.com>
+ <20190107014734.9730-3-lijiang@redhat.com>
+ <20190107022925.GF30750@MiWiFi-R3L-srv>
+From:   lijiang <lijiang@redhat.com>
+Message-ID: <4a922a68-8513-51ab-b887-e367f627f688@redhat.com>
+Date:   Mon, 7 Jan 2019 17:42:55 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
+In-Reply-To: <20190107022925.GF30750@MiWiFi-R3L-srv>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Mon, 07 Jan 2019 09:43:08 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ + Masahiro & Steve ]
+在 2019年01月07日 10:29, Baoquan He 写道:
+> On 01/07/19 at 09:47am, Lianbo Jiang wrote:
+>> For AMD machine with SME feature, makedumpfile tools need to know
+>> whether the crash kernel was encrypted or not. If SME is enabled
+>               ^ crashed
+>> in the first kernel, the crash kernel's page table(pgd/pud/pmd/pte)
+>                            ^ crashed
+>> contains the memory encryption mask, so need to remove the sme mask
+>                                         "makedumpfile needs" or
+>                                        in makedumpfile need to remove...
 
-Alexey Kardashevskiy <aik@ozlabs.ru> writes:
-> On 07/01/2019 13:58, Alexey Kardashevskiy wrote:
->> On 04/01/2019 02:08, Laura Abbott wrote:
->>> On 1/3/19 5:49 AM, Alexey Kardashevskiy wrote:
->>>> On 03/01/2019 03:37, Laura Abbott wrote:
->>>>> Hi,
->>>>>
->>>>> I got a compilation failure when building with CONFIG_VFIO_PCI_NVLINK2
->>>>> enabled:
->>>>>
->>>>> + make -s 'HOSTCFLAGS=-O2 -g -pipe -Wall -Werror=format-security
->>>>> -Wp,-D_FORTIFY_SOURCE=2 -Wp,-D_GLIBCXX_ASSERTIONS -fexceptions
->>>>> -fstack-protector-strong -grecord-gcc-switches
->>>>> -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1
->>>>> -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1 -m64 -mcpu=power8
->>>>> -mtune=power8 -fasynchronous-unwind-tables -fstack-clash-protection'
->>>>> 'HOSTLDFLAGS=-Wl,-z,relro -Wl,--as-needed  -Wl,-z,now
->>>>> -specs=/usr/lib/rpm/redhat/redhat-hardened-ld -Wl,--build-id=uuid'
->>>>> ARCH=powerpc -j4 modules
->>>>> BUILDSTDERR: In file included from drivers/vfio/pci/trace.h:102,
->>>>> BUILDSTDERR:                  from
->>>>> drivers/vfio/pci/vfio_pci_nvlink2.c:29:
->>>>> BUILDSTDERR: ./include/trace/define_trace.h:89:42: fatal error:
->>>>> ./trace.h: No such file or directory
->>>>> BUILDSTDERR:  #include TRACE_INCLUDE(TRACE_INCLUDE_FILE)
->>>>> BUILDSTDERR:                                           ^
->>>>> BUILDSTDERR: compilation terminated.
->>>>> BUILDSTDERR: make[3]: *** [scripts/Makefile.build:277:
->>>>> drivers/vfio/pci/vfio_pci_nvlink2.o] Error 1
->>>>> BUILDSTDERR: make[2]: *** [scripts/Makefile.build:492: drivers/vfio/pci]
->>>>> Error 2
->>>>> BUILDSTDERR: make[1]: *** [scripts/Makefile.build:492: drivers/vfio]
->>>>> Error 2
->>>>> BUILDSTDERR: make: *** [Makefile:1053: drivers] Error 2
->>>>> BUILDSTDERR: make: *** Waiting for unfinished jobs....
->>>>>
->>>>> I don't know enough about ftrace building to make a guess here.
->>>>> Config is attacked.
->>>>
->>>> What gcc is this and what is the exact sha1 of the tree? gcc8 prints
->>>> other error with your config in drivers/scsi/esas2r/esas2r_ioctl.c but
->>>> not this one so I am curious.
->>>>
->>>
->>> gcc (GCC) 8.2.1 20181215 (Red Hat 8.2.1-6)
->>>
->>> sha 8e143b90e4d45cca3dc53760d3cfab988bc74571
->> 
->> 
->> Your config and this sha1 still make "make oldconfig" ask few questions
->> and then it compiles just fine, are you sure about the config?
->> 
->> These are questions on "make oldconfig":
->> 
->> Kernel Live Patching (LIVEPATCH) [N/y/?] (NEW)
->> Stack Protector buffer overflow detection (STACKPROTECTOR) [Y/n/?] (NEW)
->>   Strong Stack Protector (STACKPROTECTOR_STRONG) [Y/n/?] (NEW)
->>     Do NOT protect notrace function from kprobe events
->> (KPROBE_EVENTS_ON_NOTRACE) [N/y/?] (NEW)
->
->
-> Ok, I figured it out. This is because you compile in tree while I
-> compile out of tree (with O=builddir) and the difference is that in my
-> case gcc gets these additional -I$(src) statements and in your case you
-> need to add them manually:
->
-> yours V=1:
->
->   gcc
->  -Wp,-MD,drivers/vfio/pci/.vfio_pci_nvlink2.o.d
->  -nostdinc
->  -isystem /usr/lib/gcc/powerpc64le-linux-gnu/7/include
->  -I./arch/powerpc/include
->  -I./arch/powerpc/include/generated
->  -I./include
->  -I./arch/powerpc/include/uapi
->  -I./arch/powerpc/include/generated/uapi
->  -I./include/uapi
->  -I./include/generated/uapi
->  -include ./include/linux/kconfig.h
->  -include ./include/linux/compiler_types.h
->  -D__KERNEL__
-> ...
->
->
-> mine V=1 (has -I/home/aik/p/kernel/drivers/vfio/pci and
-> -Idrivers/vfio/pci):
->
->   /opt/cross/gcc-powerpc64le-linux-8.2.1-nolibc/bin/powerpc64le-linux-gcc
->  -Wp,-MD,drivers/vfio/pci/.vfio_pci_nvlink2.o.d
->  -nostdinc
->  -isystem
-> /opt/cross/gcc-powerpc64le-linux-8.2.1-nolibc/bin/../lib/gcc/powerpc64le-linux/8.2.1/include
->  -I/home/aik/p/kernel/arch/powerpc/include
->  -I./arch/powerpc/include/generated
->  -I/home/aik/p/kernel/include
->  -I./include
->  -I/home/aik/p/kernel/arch/powerpc/include/uapi
->  -I./arch/powerpc/include/generated/uapi
->  -I/home/aik/p/kernel/include/uapi
->  -I./include/generated/uapi
->  -include /home/aik/p/kernel/include/linux/kconfig.h
->  -include /home/aik/p/kernel/include/linux/compiler_types.h
->  -I/home/aik/p/kernel/drivers/vfio/pci
->  -Idrivers/vfio/pci
->  -D__KERNEL__
-> ...
->
->
-> This is where it happens:
->
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/scripts/Makefile.lib#n143
->
->
-> I'd rather prefer to fix this in scripts/Makefile.lib#n143 than doing
-> -I$(src) but this is what everybody does already and therefore I guess
-> "[PATCH] vfio_pci: Add local source directory as include" from
-> https://patchwork.kernel.org/patch/10748803/ is correct.
+Thanks for your comment.
 
-Where the patch does:
-+ccflags-y                               += -I$(src)
+This will be modified in next post.
 
+Regards,
+Lianbo
 
-This seems like a bug in the build system?
-
-ie. depending on whether you build in-tree or out-of-tree the build can
-fail, or not.
-
-Can we fix this once and for all in Makefile.lib as Alexey suggests, or
-is there some reason that doesn't work?
-
-(As an aside, why do we even support in-tree build any more?)
-
-cheers
+>> to obtain the true physical address.
+>>
+>> Signed-off-by: Lianbo Jiang <lijiang@redhat.com>
+>> ---
+>>  arch/x86/kernel/machine_kexec_64.c | 3 +++
+>>  1 file changed, 3 insertions(+)
+>>
+>> diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kexec_64.c
+>> index 4c8acdfdc5a7..bc4108096b18 100644
+>> --- a/arch/x86/kernel/machine_kexec_64.c
+>> +++ b/arch/x86/kernel/machine_kexec_64.c
+>> @@ -352,10 +352,13 @@ void machine_kexec(struct kimage *image)
+>>  
+>>  void arch_crash_save_vmcoreinfo(void)
+>>  {
+>> +	u64 sme_mask = sme_me_mask;
+>> +
+>>  	VMCOREINFO_NUMBER(phys_base);
+>>  	VMCOREINFO_SYMBOL(init_top_pgt);
+>>  	vmcoreinfo_append_str("NUMBER(pgtable_l5_enabled)=%d\n",
+>>  			pgtable_l5_enabled());
+>> +	VMCOREINFO_NUMBER(sme_mask);
+>>  
+>>  #ifdef CONFIG_NUMA
+>>  	VMCOREINFO_SYMBOL(node_data);
+>> -- 
+>> 2.17.1
+>>
