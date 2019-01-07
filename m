@@ -4,50 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE96CC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:10:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3B2AC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:10:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8ACB72147C
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:10:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A3C921855
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:10:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546866601;
-	bh=W8Vb0Diax1rZbJGpUCoDpu9ER0RQKIufM6RDe6gZt1s=;
+	s=default; t=1546866605;
+	bh=KAgUlkprUrXJy9VQYhlpgY6TLon+PY4AAbjSvCmnk+s=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=dJyZ8VVK1FB0FQyXDN6/jv/MKv/Cgva8dJ70YOmCye5i7X+fAAE8/kSBWIOrsWcqG
-	 hpyB+qifFA/EzQXIykNVqy4A/FP4fa0/MR/VzwvHsPZepPYblGi5VFSHfJ1fD0a/+w
-	 JlD0EwI8ThF/LDjlTaoGCLZ684KsGUJD1eVS8/kU=
+	b=vMjyXv3JWY8p1ABaRJ/FAgtg/12Gua1ZJ9cbZOs7c/J0DSmQIWCDHBm+gLpR79DqP
+	 EWrT8fPaA17YEdznECwQBjaVVVsRltnatjUBBqAWGtziom3UYr6NoL3b8QLm6LjG9o
+	 GHbCUVIeGeG+apm57EbyqJHk54ZjXem78L9Fe9QE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731934AbfAGNKA (ORCPT
+        id S1731571AbfAGNKE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:10:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56662 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:10:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56758 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731912AbfAGNJ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:09:56 -0500
+        id S1727970AbfAGNKB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:10:01 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 04EDE2089F;
-        Mon,  7 Jan 2019 13:09:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8BE4F2089F;
+        Mon,  7 Jan 2019 13:10:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546866595;
-        bh=W8Vb0Diax1rZbJGpUCoDpu9ER0RQKIufM6RDe6gZt1s=;
+        s=default; t=1546866601;
+        bh=KAgUlkprUrXJy9VQYhlpgY6TLon+PY4AAbjSvCmnk+s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iupX4HCq8LinqDRcJPz0mNwrlY9WkwNb10UzFw/BdiGrORB1C3/vfTIcd0dFmJcBZ
-         Qes+dHrZdN5BZehScGUa4UjoEKeq+uuo++o8SaCXQDUO2l+vDzRNUruvDG2h6pMNzr
-         SLH98b6oFzgm9oI1Nmg2WkMGFSwbU1bC183Yn6Qk=
+        b=hnjVADxVg6/fpm9/Ue/u6PB7f6jZ8m+azEx/r+7sUfyI1LdwZ6ErKsMBikBiZb+H7
+         STX48Qpl7Kd4ctDtN/86dNvKp4Ur7N909a8zg+Fan9m02f4MXG49iXwLt3ag4a0Q9s
+         ba84iHVlbOVHTIFDLKBf5TOyNOd1/Ly6e99e9IuY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Subject: [PATCH 4.9 69/71] arm64: KVM: Avoid setting the upper 32 bits of VTCR_EL2 to 1
-Date:   Mon,  7 Jan 2019 13:33:38 +0100
-Message-Id: <20190107105336.685495832@linuxfoundation.org>
+        stable@vger.kernel.org, "Maciej W. Rozycki" <macro@linux-mips.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH 4.9 70/71] rtc: m41t80: Correct alarm month range with RTC reads
+Date:   Mon,  7 Jan 2019 13:33:39 +0100
+Message-Id: <20190107105336.744523080@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107105330.280153213@linuxfoundation.org>
 References: <20190107105330.280153213@linuxfoundation.org>
@@ -66,38 +65,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Will Deacon <will.deacon@arm.com>
+From: Maciej W. Rozycki <macro@linux-mips.org>
 
-commit df655b75c43fba0f2621680ab261083297fd6d16 upstream.
+commit 3cc9ffbb1f51eb4320575a48e4805a8f52e0e26b upstream.
 
-Although bit 31 of VTCR_EL2 is RES1, we inadvertently end up setting all
-of the upper 32 bits to 1 as well because we define VTCR_EL2_RES1 as
-signed, which is sign-extended when assigning to kvm->arch.vtcr.
+Add the missing adjustment of the month range on alarm reads from the
+RTC, correcting an issue coming from commit 9c6dfed92c3e ("rtc: m41t80:
+add alarm functionality").  The range is 1-12 for hardware and 0-11 for
+`struct rtc_time', and is already correctly handled on alarm writes to
+the RTC.
 
-Lucky for us, the architecture currently treats these upper bits as RES0
-so, whilst we've been naughty, we haven't set fire to anything yet.
+It was correct up until commit 48e9766726eb ("drivers/rtc/rtc-m41t80.c:
+remove disabled alarm functionality") too, which removed the previous
+implementation of alarm support.
 
-Cc: <stable@vger.kernel.org>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Christoffer Dall <christoffer.dall@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Maciej W. Rozycki <macro@linux-mips.org>
+Fixes: 9c6dfed92c3e ("rtc: m41t80: add alarm functionality")
+References: 48e9766726eb ("drivers/rtc/rtc-m41t80.c: remove disabled alarm functionality")
+Cc: stable@vger.kernel.org # 4.7+
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm64/include/asm/kvm_arm.h |    2 +-
+ drivers/rtc/rtc-m41t80.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/arm64/include/asm/kvm_arm.h
-+++ b/arch/arm64/include/asm/kvm_arm.h
-@@ -99,7 +99,7 @@
- 			 TCR_EL2_ORGN0_MASK | TCR_EL2_IRGN0_MASK | TCR_EL2_T0SZ_MASK)
+--- a/drivers/rtc/rtc-m41t80.c
++++ b/drivers/rtc/rtc-m41t80.c
+@@ -333,7 +333,7 @@ static int m41t80_read_alarm(struct devi
+ 	alrm->time.tm_min  = bcd2bin(alarmvals[3] & 0x7f);
+ 	alrm->time.tm_hour = bcd2bin(alarmvals[2] & 0x3f);
+ 	alrm->time.tm_mday = bcd2bin(alarmvals[1] & 0x3f);
+-	alrm->time.tm_mon  = bcd2bin(alarmvals[0] & 0x3f);
++	alrm->time.tm_mon  = bcd2bin(alarmvals[0] & 0x3f) - 1;
  
- /* VTCR_EL2 Registers bits */
--#define VTCR_EL2_RES1		(1 << 31)
-+#define VTCR_EL2_RES1		(1U << 31)
- #define VTCR_EL2_HD		(1 << 22)
- #define VTCR_EL2_HA		(1 << 21)
- #define VTCR_EL2_PS_MASK	TCR_EL2_PS_MASK
+ 	alrm->enabled = !!(alarmvals[0] & M41T80_ALMON_AFE);
+ 	alrm->pending = (flags & M41T80_FLAGS_AF) && alrm->enabled;
 
 
