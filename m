@@ -2,109 +2,221 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6800C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:54:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ABDAC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:54:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 961882085A
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:54:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 61E932085A
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:54:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ih4XoQZx"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="FG4QOPQu";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="pKjJ5/RX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728315AbfAGSyR (ORCPT
+        id S1727707AbfAGSyn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 13:54:17 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:40595 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727751AbfAGSyL (ORCPT
+        Mon, 7 Jan 2019 13:54:43 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:55280 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727081AbfAGSyk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 13:54:11 -0500
-Received: by mail-lf1-f65.google.com with SMTP id v5so1077445lfe.7;
-        Mon, 07 Jan 2019 10:54:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=/MiFsFGxkATaKSohAbLvhLUzl5KdlriZpggnL4SZpos=;
-        b=Ih4XoQZxHUGN1rypAdEa0zF7Ux6jV0VUOslQNrC/pk+uUVtF+auHbG7Tsxwv55kf2m
-         m2iTpffFMAAsY7PEq8z5m689Ph0CdUD6LTrPdSoccZgePeody1kt4MEXEonkNm9ilibt
-         4xuZUfooFza+KP1jd0WcbwrADVX8JFKOd13KmSlyC8ISwnLbdPq3RFnO5FvlPja/lTmf
-         cmz0IYqcAIBFOkeREpetXhHyYlnuQZg5MMTX+678mytKmZHJWN0+YRckVZrJeMKm8tRm
-         jV5Pr1cK6MqcpJslHuHLvaw7BZrIWHh7BzLixhZkbES2KFD+oKp2yNg/27vYfXEtItno
-         31Nw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=/MiFsFGxkATaKSohAbLvhLUzl5KdlriZpggnL4SZpos=;
-        b=UfzMm0WO7OsLmCnA5AEE+TdUYzwxyUTlMReliWfVF5mpNI8/IcHy+SImp8bfKaioDy
-         6mB44/GxRMpyuyxpdSbLh7jIz5Qv24gAk5Hws8Mh9I/Cwxd7qXi18LphY7dTc3xjvis2
-         7ecssMlNq+vYuh83LbTX/8lTBmSAgEHUURgskh6UBRFghawrGcD6EJeDZTLB1U3WpEyL
-         iOt/cH0c4KUJYYSLWV/LoLkWTVbs7dSahIvp95FdCR37Uhngmuwyn0iD73hXce1l0KTf
-         V0dg13qfgX9i23gU1N0TiPQS7m4gvH86EeqWAXK3DQ38Ac6hly4FCubwA6GEoWHqdggR
-         ImDg==
-X-Gm-Message-State: AA+aEWaTJSxht6AqDv37HUepJlpztbxVwxKvRfVIPh2hSrXRvmzzosnn
-        ctX4OUq7pAXqfgAWqqfD8fA=
-X-Google-Smtp-Source: AFSGD/XjR0D7IOEvwqPXopBEC64JE6jDaNXu2IWK+m4qAi6NcZlu47BYeDTudNwq3mKjGaqHHvOL9Q==
-X-Received: by 2002:a19:9508:: with SMTP id x8mr32213693lfd.112.1546887248599;
-        Mon, 07 Jan 2019 10:54:08 -0800 (PST)
-Received: from localhost.localdomain ([2a02:a315:5445:5300:c050:d453:6c2:1d01])
-        by smtp.googlemail.com with ESMTPSA id h203sm12825007lfe.44.2019.01.07.10.54.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 07 Jan 2019 10:54:08 -0800 (PST)
-From:   =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-To:     dmitry.torokhov@gmail.com
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org, pawel.mikolaj.chmiel@gmail.com,
-        xc-racer2@live.ca, simon@lineageos.org
-Subject: [PATCH v3 2/7] Input: dt-bindings: tm2-touchkey: Add support for midas touchkey
-Date:   Mon,  7 Jan 2019 19:53:41 +0100
-Message-Id: <20190107185346.30184-3-pawel.mikolaj.chmiel@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190107185346.30184-1-pawel.mikolaj.chmiel@gmail.com>
-References: <20190107185346.30184-1-pawel.mikolaj.chmiel@gmail.com>
+        Mon, 7 Jan 2019 13:54:40 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 0CDB2608FD; Mon,  7 Jan 2019 18:54:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1546887279;
+        bh=WMbrq3G4089ARexzr475dVmKjXoIOG2WzsbqHGRv5zw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=FG4QOPQuJfov+Yp8vkZ9V9wYNOVr7hRxk6uBhkUFGioZUtW6vroWDaQ+c+Ym8kxoU
+         sfepWeUlCQl4Vl/jPuBBJhuilKwkP2i0wNEi8w/Eu0Fw3NHeYyvgCOo8wRUAjQLk81
+         VRrLI8Cjz9/+SLxmUFxDrh/exMjQZ74w3XAaPc/8=
+Received: from localhost (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: ilina@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3BC61608D2;
+        Mon,  7 Jan 2019 18:54:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1546887276;
+        bh=WMbrq3G4089ARexzr475dVmKjXoIOG2WzsbqHGRv5zw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=pKjJ5/RXzGCKxAnIf5Q3X/10RnomAq+zbMaqU6w3H2Eas5bdWCd3CcC7rLzLNg6v8
+         o4njy3y7f01PIQ27RFECSi1v7SpX10Y45rkefPl/Kvz0O/VEYo/TE6zTpAMEfh8LyF
+         HnzJZIKWpJ5A4avQd6xX/ctrogyW9oMzITcivQ8U=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3BC61608D2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+Date:   Mon, 7 Jan 2019 11:54:35 -0700
+From:   Lina Iyer <ilina@codeaurora.org>
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     evgreen@chromium.org, marc.zyngier@arm.com,
+        linux-kernel@vger.kernel.org, rplsssn@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, thierry.reding@gmail.com,
+        bjorn.andersson@linaro.org
+Subject: Re: [PATCH 5/7] drivers: pinctrl: msm: setup GPIO irqchip hierarchy
+Message-ID: <20190107185435.GJ14960@codeaurora.org>
+References: <20181219221105.3004-1-ilina@codeaurora.org>
+ <20181219221105.3004-6-ilina@codeaurora.org>
+ <154533621302.79149.15228907259643696166@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <154533621302.79149.15228907259643696166@swboyd.mtv.corp.google.com>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Simon Shields <simon@lineageos.org>
+On Thu, Dec 20 2018 at 13:03 -0700, Stephen Boyd wrote:
+>Quoting Lina Iyer (2018-12-19 14:11:03)
+>> To allow GPIOs to wakeup the system from suspend or deep idle, the
+>> wakeup capable GPIOs are setup in hierarchy with interrupts from the
+>> wakeup-parent irqchip.
+>>
+>> In older SoC's, the TLMM will handover detection to the parent irqchip
+>> and in newer SoC's, the parent irqchip may also be active as well as the
+>> TLMM and therefore the GPIOs need to be masked at TLMM to avoid
+>> duplicate interrupts. To enable both these configurations to exist,
+>> allow the parent irqchip to dictate the TLMM irqchip's behavior when
+>> masking/unmasking the interrupt.
+>>
+>> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+>
+>I don't think I gave a signed-off-by, so you need to ask to forge my
+>sign off here. Please change it to be:
+>
+> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+>
+>and I'm not sure how much I wrote vs. you wrote anymore so perhaps also
+>add a
+>
+> Co-developed-by: Stephen Boyd <swboyd@chromium.org>
+>
+I meant to do that. I will add this tag instead. Sorry about that.
 
-Document compatible for midas touchkey.
+>And finally, please just email my chromium.org email for this series
+>because I apparently messed up the address once and now it's all going
+>to the wrong inbox. Thanks!
+>
+Sure.
 
-Signed-off-by: Simon Shields <simon@lineageos.org>
-Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
-Changes from v1:
-  - Added Reviewed-by
----
- .../devicetree/bindings/input/cypress,tm2-touchkey.txt        | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+>> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
+>
+>Can you Cc Linus Walleij and Bjorn Andersson on the whole patch series
+>next time? Would be good to have their review on major pinctrl driver
+>changes.
+>
+Bjorn is already included. Will make sure to include Linus in the next
+spin.
 
-diff --git a/Documentation/devicetree/bindings/input/cypress,tm2-touchkey.txt b/Documentation/devicetree/bindings/input/cypress,tm2-touchkey.txt
-index 0c252d9306da..dfb3b9f0ee40 100644
---- a/Documentation/devicetree/bindings/input/cypress,tm2-touchkey.txt
-+++ b/Documentation/devicetree/bindings/input/cypress,tm2-touchkey.txt
-@@ -1,7 +1,9 @@
- Samsung tm2-touchkey
- 
- Required properties:
--- compatible: must be "cypress,tm2-touchkey"
-+- compatible:
-+    * "cypress,tm2-touchkey" - for the touchkey found on the tm2 board
-+    * "cypress,midas-touchkey" - for the touchkey found on midas boards
- - reg: I2C address of the chip.
- - interrupts: interrupt to which the chip is connected (see interrupt
- 	binding[0]).
--- 
-2.17.1
+>> @@ -967,11 +994,86 @@ static bool msm_gpio_needs_valid_mask(struct msm_pinctrl *pctrl)
+>>         return device_property_read_u16_array(pctrl->dev, "gpios", NULL, 0) > 0;
+>>  }
+>>
+>> +static int msm_gpio_domain_translate(struct irq_domain *d,
+>> +                                    struct irq_fwspec *fwspec,
+>> +                                    unsigned long *hwirq, unsigned int *type)
+>> +{
+>> +       if (is_of_node(fwspec->fwnode)) {
+>> +               if (fwspec->param_count < 2)
+>> +                       return -EINVAL;
+>> +               *hwirq = fwspec->param[0];
+>> +               *type = fwspec->param[1] & IRQ_TYPE_SENSE_MASK;
+>> +               return 0;
+>> +       }
+>> +
+>> +       return -EINVAL;
+>> +}
+>
+>Maybe this can be a generic function in gpiolib?
+>
+>> +
+>> +static int msm_gpio_domain_alloc(struct irq_domain *domain, unsigned int virq,
+>> +                                unsigned int nr_irqs, void *arg)
+>> +{
+>> +       int ret;
+>> +       irq_hw_number_t hwirq;
+>> +       struct gpio_chip *gc = domain->host_data;
+>> +       struct msm_pinctrl *pctrl = gpiochip_get_data(gc);
+>> +       struct irq_fwspec *fwspec = arg;
+>> +       struct qcom_irq_fwspec parent = { };
+>> +       unsigned int type;
+>> +
+>> +       ret = msm_gpio_domain_translate(domain, fwspec, &hwirq, &type);
+>> +       if (ret)
+>> +               return ret;
+>> +
+>> +       ret = irq_domain_set_hwirq_and_chip(domain, virq, hwirq,
+>> +                                           &pctrl->irq_chip, gc);
+>> +       if (ret < 0)
+>> +               return ret;
+>> +
+>> +       if (!domain->parent)
+>> +               return 0;
+>> +
+>> +       parent.fwspec.fwnode      = domain->parent->fwnode;
+>> +       parent.fwspec.param_count = 2;
+>> +       parent.fwspec.param[0]    = hwirq;
+>> +       parent.fwspec.param[1]    = type;
+>> +
+>> +       ret = irq_domain_alloc_irqs_parent(domain, virq, nr_irqs, &parent);
+>> +       if (ret)
+>> +               return ret;
+>> +
+>> +       if (parent.mask)
+>> +               set_bit(hwirq, pctrl->wakeup_masked_irqs);
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +/*
+>> + * TODO: Get rid of this and push it into gpiochip_to_irq()
+>
+>Hmm.. yeah we need to do this still. I think we can have a generic two
+>cell function similar to irq_domain_xlate_twocell() that does the fwspec
+>creation and uses some of the things that we pass to
+>gpiochip_irqchip_add(), like the default level type. This existing
+>function is not good to have, so there's work to do to get rid of this.
+>
+>I was also thinking that maybe we can make the alloc function above take
+>a struct gpio_irq_fwspec structure that tells the alloc function what
+>gpiochip the irq is for. That would mean that we need to change the
+>gpio_to_irq() function below to be generic and stuff the chip inside the
+>fwspec wrapper structure:
+>
+>	struct gpio_irq_fwspec {
+>		struct irq_fwspec fwspec;
+>		struct gpio_chip *chip;
+>		unsigned int offset;
+>	};
+>
+>but I seem to recall that was not working for some reason.
+>
+I didn't attemp this. I am hoping we can solve this even after this
+patch set separately. That said, I will try this.
 
+>> + */
+>> +static int msm_gpio_to_irq(struct gpio_chip *chip, unsigned int offset)
+>> +{
+>> +       struct irq_fwspec fwspec;
+>> +
+>> +       fwspec.fwnode = of_node_to_fwnode(chip->of_node);
+>> +       fwspec.param[0] = offset;
+>> +       fwspec.param[1] = IRQ_TYPE_LEVEL_HIGH;
+>> +       fwspec.param_count = 2;
+>> +
+>> +       return irq_create_fwspec_mapping(&fwspec);
+>> +}
+>> +
+>> +static const struct irq_domain_ops msm_gpio_domain_ops = {
+>> +       .translate = msm_gpio_domain_translate,
+>> +       .alloc     = msm_gpio_domain_alloc,
+>> +       .free      = irq_domain_free_irqs_top,
+>> +};
+>> +
+
+Thanks,
+Lina
