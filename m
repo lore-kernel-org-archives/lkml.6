@@ -2,52 +2,53 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-7.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEB3DC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:45:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF958C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:45:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DD792183E
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:45:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A5B420449
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:45:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546865124;
-	bh=uZdrzunQhlW0MKQTLJomRgH7vmquQpJYwidV9aggTxA=;
+	s=default; t=1546865128;
+	bh=kZaLzZG3hAcF3TuZ5Ks5+FY60x/Mu9psBy6MTQ8X0bE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=EjGHnqNwxgtHkpChwA2lmzjXk/k2Vq4X7be8CsbPPI8AXEVQW1QI1947QLBsWeyEx
-	 0OTmKpbGu5jT95nO4mJM8+IcLlwbR5zLOcLX0lhKrrofONv8HPmyxoq51y2g7A6bS6
-	 FLpaAm79U3wddBJAVe0qtX/U9734alNixNU6sSl8=
+	b=p6elQUXu5KAK7V8g0pOSdZSrWTsqBOId7z3uIhcO1pjj04Lk8r6rbr70F8zhhrFS0
+	 +zKMC+HcCj1HdrVp8KYUw72alO4GACC6K/F9yTMvnwpNrzmggMKHivYQxD76kVSJfc
+	 1nMLpZM6XmWMe46AmPUc/7vO5TaKfcZ8PMRwYf74=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728858AbfAGMpX (ORCPT
+        id S1728877AbfAGMp1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:45:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34482 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:45:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34578 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728844AbfAGMpT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:45:19 -0500
+        id S1728854AbfAGMpX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:45:23 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C03D521873;
-        Mon,  7 Jan 2019 12:45:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B3DDF20449;
+        Mon,  7 Jan 2019 12:45:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865119;
-        bh=uZdrzunQhlW0MKQTLJomRgH7vmquQpJYwidV9aggTxA=;
+        s=default; t=1546865122;
+        bh=kZaLzZG3hAcF3TuZ5Ks5+FY60x/Mu9psBy6MTQ8X0bE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Cat1rLs6Xzxw/797KNukk/mL3zyYc19tLt0wR8oWxAzMHa2hph6hW4yC8mabEvztr
-         AwaLFNfJ8UKDXnbD3k7WnoY2DSalULFE+FQxNamfJuikIxL93lNUX1OQqstNw3u/c2
-         nSn3uC/XJJuKdi6mZoOXSWzxGRtz17aNXQNmZCh8=
+        b=gQwYndSHdr0BnrWj8OufXsNA7oPQdT/6dwToxXxYAvuLlEMHgs7VzCdufF6iqkuoP
+         ZNb1KhZKpHP2wrtkZqsfbbi5cvEnAQjB/UX8HiwJKkBnbNXE710M/xZKCq6yBU038A
+         k+qjMNEZAKCXgCTfjVofbJJyDYzSueKhRXPMbyKw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Cong Wang <xiyou.wangcong@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        syzbot+ae6bb869cbed29b29040@syzkaller.appspotmail.com
-Subject: [PATCH 4.19 001/170] ax25: fix a use-after-free in ax25_fillin_cb()
-Date:   Mon,  7 Jan 2019 13:30:28 +0100
-Message-Id: <20190107104453.089925136@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        syzbot <syzkaller@googlegroups.com>,
+        Karsten Keil <isdn@linux-pingi.de>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 010/170] isdn: fix kernel-infoleak in capi_unlocked_ioctl
+Date:   Mon,  7 Jan 2019 13:30:37 +0100
+Message-Id: <20190107104454.229719310@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104452.953560660@linuxfoundation.org>
 References: <20190107104452.953560660@linuxfoundation.org>
@@ -66,73 +67,80 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Cong Wang <xiyou.wangcong@gmail.com>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit c433570458e49bccea5c551df628d058b3526289 ]
+[ Upstream commit d63967e475ae10f286dbd35e189cb241e0b1f284 ]
 
-There are multiple issues here:
+Since capi_ioctl() copies 64 bytes after calling
+capi20_get_manufacturer() we need to ensure to not leak
+information to user.
 
-1. After freeing dev->ax25_ptr, we need to set it to NULL otherwise
-   we may use a dangling pointer.
+BUG: KMSAN: kernel-infoleak in _copy_to_user+0x16b/0x1f0 lib/usercopy.c:32
+CPU: 0 PID: 11245 Comm: syz-executor633 Not tainted 4.20.0-rc7+ #2
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x173/0x1d0 lib/dump_stack.c:113
+ kmsan_report+0x12e/0x2a0 mm/kmsan/kmsan.c:613
+ kmsan_internal_check_memory+0x9d4/0xb00 mm/kmsan/kmsan.c:704
+ kmsan_copy_to_user+0xab/0xc0 mm/kmsan/kmsan_hooks.c:601
+ _copy_to_user+0x16b/0x1f0 lib/usercopy.c:32
+ capi_ioctl include/linux/uaccess.h:177 [inline]
+ capi_unlocked_ioctl+0x1a0b/0x1bf0 drivers/isdn/capi/capi.c:939
+ do_vfs_ioctl+0xebd/0x2bf0 fs/ioctl.c:46
+ ksys_ioctl fs/ioctl.c:713 [inline]
+ __do_sys_ioctl fs/ioctl.c:720 [inline]
+ __se_sys_ioctl+0x1da/0x270 fs/ioctl.c:718
+ __x64_sys_ioctl+0x4a/0x70 fs/ioctl.c:718
+ do_syscall_64+0xbc/0xf0 arch/x86/entry/common.c:291
+ entry_SYSCALL_64_after_hwframe+0x63/0xe7
+RIP: 0033:0x440019
+Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 fb 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007ffdd4659fb8 EFLAGS: 00000213 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000440019
+RDX: 0000000020000080 RSI: 00000000c0044306 RDI: 0000000000000003
+RBP: 00000000006ca018 R08: 0000000000000000 R09: 00000000004002c8
+R10: 0000000000000000 R11: 0000000000000213 R12: 00000000004018a0
+R13: 0000000000401930 R14: 0000000000000000 R15: 0000000000000000
 
-2. There is a race between ax25_setsockopt() and device notifier as
-   reported by syzbot. Close it by holding RTNL lock.
+Local variable description: ----data.i@capi_unlocked_ioctl
+Variable was created at:
+ capi_ioctl drivers/isdn/capi/capi.c:747 [inline]
+ capi_unlocked_ioctl+0x82/0x1bf0 drivers/isdn/capi/capi.c:939
+ do_vfs_ioctl+0xebd/0x2bf0 fs/ioctl.c:46
 
-3. We need to test if dev->ax25_ptr is NULL before using it.
+Bytes 12-63 of 64 are uninitialized
+Memory access of size 64 starts at ffff88807ac5fce8
+Data copied to user address 0000000020000080
 
-Reported-and-tested-by: syzbot+ae6bb869cbed29b29040@syzkaller.appspotmail.com
-Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Cc: Karsten Keil <isdn@linux-pingi.de>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ax25/af_ax25.c  |   11 +++++++++--
- net/ax25/ax25_dev.c |    2 ++
- 2 files changed, 11 insertions(+), 2 deletions(-)
+ drivers/isdn/capi/kcapi.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/net/ax25/af_ax25.c
-+++ b/net/ax25/af_ax25.c
-@@ -653,15 +653,22 @@ static int ax25_setsockopt(struct socket
- 			break;
- 		}
+--- a/drivers/isdn/capi/kcapi.c
++++ b/drivers/isdn/capi/kcapi.c
+@@ -852,7 +852,7 @@ u16 capi20_get_manufacturer(u32 contr, u
+ 	u16 ret;
  
--		dev = dev_get_by_name(&init_net, devname);
-+		rtnl_lock();
-+		dev = __dev_get_by_name(&init_net, devname);
- 		if (!dev) {
-+			rtnl_unlock();
- 			res = -ENODEV;
- 			break;
- 		}
+ 	if (contr == 0) {
+-		strlcpy(buf, capi_manufakturer, CAPI_MANUFACTURER_LEN);
++		strncpy(buf, capi_manufakturer, CAPI_MANUFACTURER_LEN);
+ 		return CAPI_NOERROR;
+ 	}
  
- 		ax25->ax25_dev = ax25_dev_ax25dev(dev);
-+		if (!ax25->ax25_dev) {
-+			rtnl_unlock();
-+			res = -ENODEV;
-+			break;
-+		}
- 		ax25_fillin_cb(ax25, ax25->ax25_dev);
--		dev_put(dev);
-+		rtnl_unlock();
- 		break;
+@@ -860,7 +860,7 @@ u16 capi20_get_manufacturer(u32 contr, u
  
- 	default:
---- a/net/ax25/ax25_dev.c
-+++ b/net/ax25/ax25_dev.c
-@@ -116,6 +116,7 @@ void ax25_dev_device_down(struct net_dev
- 	if ((s = ax25_dev_list) == ax25_dev) {
- 		ax25_dev_list = s->next;
- 		spin_unlock_bh(&ax25_dev_lock);
-+		dev->ax25_ptr = NULL;
- 		dev_put(dev);
- 		kfree(ax25_dev);
- 		return;
-@@ -125,6 +126,7 @@ void ax25_dev_device_down(struct net_dev
- 		if (s->next == ax25_dev) {
- 			s->next = ax25_dev->next;
- 			spin_unlock_bh(&ax25_dev_lock);
-+			dev->ax25_ptr = NULL;
- 			dev_put(dev);
- 			kfree(ax25_dev);
- 			return;
+ 	ctr = get_capi_ctr_by_nr(contr);
+ 	if (ctr && ctr->state == CAPI_CTR_RUNNING) {
+-		strlcpy(buf, ctr->manu, CAPI_MANUFACTURER_LEN);
++		strncpy(buf, ctr->manu, CAPI_MANUFACTURER_LEN);
+ 		ret = CAPI_NOERROR;
+ 	} else
+ 		ret = CAPI_REGNOTINSTALLED;
 
 
