@@ -7,56 +7,51 @@ X-Spam-Status: No, score=-16.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4399CC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:58:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44450C43444
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:58:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13852206B7
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:58:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1063D206B7
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:58:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546887530;
-	bh=13dut/YYqr2Kpnl4bwQlrPfdzNkdU8Qkm0O2mqCOboc=;
+	s=default; t=1546887532;
+	bh=DzLkuoqA4eenTNgudWyY0yRyowiyW2Icco7Hbe1eR8k=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=tgDIpqnEyYmUj8g9g2K38yMu5zCJViJqY8hFC8MdnFR0Emta28vCp92Dtz0sLmufj
-	 nM3euTLk7h7UjsVgzCxY3cJ7DB+C2Rb8tlkMnXEmNynxkYwu6nW16WdFykLVsM2eQM
-	 MdrRaGRHbpCfOIPkODqDZkx27VNAWW8J1tvSuYp4=
+	b=qLSP0+XIH+saEN7TDe6KPWt+LKWYeASZsOCiAnJHyaoe203WKwd4UyYiSUz9qOHIj
+	 u8bdF5FkTq3sqSSbI7uN3Ci51MsEn++89U/2d+G2/c9Ogfw6rtVJmWiI3W2tgkcM6o
+	 dXPSjaXJLKRtQyGtQwZ1hZdA/Gwe4FzzmJLRjO+w=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728832AbfAGS6t (ORCPT
+        id S1728857AbfAGS6v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 13:58:49 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41902 "EHLO
+        Mon, 7 Jan 2019 13:58:51 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41942 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728786AbfAGS6p (ORCPT
+        with ESMTP id S1727121AbfAGS6r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 13:58:45 -0500
+        Mon, 7 Jan 2019 13:58:47 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=F9u5DklJ1+FHP6StmdnibQ2U7mBAz5v74aaILGTQkE8=; b=f2dAUSQrG/IB
-        cJdKUTB8HpCdIcXWH8d+cW8oxsy9uYDEvfTcWNeMTRFYFq6bppVCwhWLgFlfhXerESV7z8KV60YoQ
-        GkjOwyaXnglMuxDyZWCwJYhCf+QoEtlPSKW5Wp94rQFiPxv2DQrrFR4NcGUxsAkWlyHBg+YbmBS/Z
-        /4Mqs=;
+        List-Archive; bh=OsraQZruK+nLQRqmON7tNZMmn5CJYJe/V58Kd3lBLOQ=; b=TIWXow8NzC/s
+        IqyRKhoYjJuROOnL1P8Fz/fXwAChcs+BpX1obfLQPQaO3VW8D/V5D1YUJzsHGJMVS8+/Fof0gJ4qq
+        U+VR/sHN7S3TRE0YObQDBRTzI5bRxJRfX1WACTR/IJBMkCbe0ee8M2W2ZgG2xca/qfSXpCHSxdwlR
+        CrIVU=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gga6Y-0007oj-Cn; Mon, 07 Jan 2019 18:58:30 +0000
+        id 1gga6m-0007ph-Qb; Mon, 07 Jan 2019 18:58:44 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 01EF01127491; Mon,  7 Jan 2019 18:58:30 +0000 (GMT)
+        id 6D00D1127491; Mon,  7 Jan 2019 18:58:44 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc:     Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, tiwai@suse.de,
-        open list <linux-kernel@vger.kernel.org>,
-        Takashi Iwai <tiwai@suse.com>, liam.r.girdwood@linux.intel.com,
-        broonie@kernel.org, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: es8316: remove unused constant variables" to the asoc tree
-In-Reply-To:  <20190105020249.8639-4-pierre-louis.bossart@linux.intel.com>
+To:     Axel Lin <axel.lin@ingics.com>
+Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Applied "regulator: act8945a: Use rdev_get_id() to access id of regulator" to the regulator tree
+In-Reply-To: 
 X-Patchwork-Hint: ignore
-Message-Id: <20190107185830.01EF01127491@debutante.sirena.org.uk>
-Date:   Mon,  7 Jan 2019 18:58:29 +0000 (GMT)
+Message-Id: <20190107185844.6D00D1127491@debutante.sirena.org.uk>
+Date:   Mon,  7 Jan 2019 18:58:44 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -64,11 +59,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: es8316: remove unused constant variables
+   regulator: act8945a: Use rdev_get_id() to access id of regulator
 
-has been applied to the asoc tree at
+has been applied to the regulator tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -89,44 +84,66 @@ to this mail.
 Thanks,
 Mark
 
-From 37b6f0350374e6c683bc2c2d8a54d4504bc04ec1 Mon Sep 17 00:00:00 2001
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Date: Fri, 4 Jan 2019 20:02:31 -0600
-Subject: [PATCH] ASoC: es8316: remove unused constant variables
+From 557ce9d755d5ffc735f03a9a2ce2f1b4a3b23bd6 Mon Sep 17 00:00:00 2001
+From: Axel Lin <axel.lin@ingics.com>
+Date: Fri, 4 Jan 2019 22:42:36 +0800
+Subject: [PATCH] regulator: act8945a: Use rdev_get_id() to access id of
+ regulator
 
-Fix warnings with W=1
+Use rdev_get_id() instead of directly access rdev->desc->id.
 
-If these variables are useful this driver should be modified to expose
-them.
-
-Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/es8316.c | 4 ----
- 1 file changed, 4 deletions(-)
+ drivers/regulator/act8945a-regulator.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/sound/soc/codecs/es8316.c b/sound/soc/codecs/es8316.c
-index 98464ba1046c..6d4a323f786b 100644
---- a/sound/soc/codecs/es8316.c
-+++ b/sound/soc/codecs/es8316.c
-@@ -167,8 +167,6 @@ static const char * const es8316_hpmux_texts[] = {
- 	"lin-rin with Boost and PGA"
- };
+diff --git a/drivers/regulator/act8945a-regulator.c b/drivers/regulator/act8945a-regulator.c
+index 603db77723b6..caa61d306a69 100644
+--- a/drivers/regulator/act8945a-regulator.c
++++ b/drivers/regulator/act8945a-regulator.c
+@@ -87,7 +87,8 @@ static const struct regulator_linear_range act8945a_voltage_ranges[] = {
+ static int act8945a_set_suspend_state(struct regulator_dev *rdev, bool enable)
+ {
+ 	struct regmap *regmap = rdev->regmap;
+-	int id = rdev->desc->id, reg, val;
++	int id = rdev_get_id(rdev);
++	int reg, val;
  
--static const unsigned int es8316_hpmux_values[] = { 0, 1, 2, 3 };
--
- static SOC_ENUM_SINGLE_DECL(es8316_left_hpmux_enum, ES8316_HPMIX_SEL,
- 	4, es8316_hpmux_texts);
+ 	switch (id) {
+ 	case ACT8945A_ID_DCDC1:
+@@ -159,7 +160,7 @@ static int act8945a_set_mode(struct regulator_dev *rdev, unsigned int mode)
+ {
+ 	struct act8945a_pmic *act8945a = rdev_get_drvdata(rdev);
+ 	struct regmap *regmap = rdev->regmap;
+-	int id = rdev->desc->id;
++	int id = rdev_get_id(rdev);
+ 	int reg, ret, val = 0;
  
-@@ -199,8 +197,6 @@ static const char * const es8316_dacsrc_texts[] = {
- 	"RDATA TO LDAC, LDATA TO RDAC",
- };
+ 	switch (id) {
+@@ -190,11 +191,11 @@ static int act8945a_set_mode(struct regulator_dev *rdev, unsigned int mode)
  
--static const unsigned int es8316_dacsrc_values[] = { 0, 1, 2, 3 };
--
- static SOC_ENUM_SINGLE_DECL(es8316_dacsrc_mux_enum, ES8316_DAC_SET1,
- 	6, es8316_dacsrc_texts);
+ 	switch (mode) {
+ 	case REGULATOR_MODE_STANDBY:
+-		if (rdev->desc->id > ACT8945A_ID_DCDC3)
++		if (id > ACT8945A_ID_DCDC3)
+ 			val = BIT(5);
+ 		break;
+ 	case REGULATOR_MODE_NORMAL:
+-		if (rdev->desc->id <= ACT8945A_ID_DCDC3)
++		if (id <= ACT8945A_ID_DCDC3)
+ 			val = BIT(5);
+ 		break;
+ 	default:
+@@ -213,7 +214,7 @@ static int act8945a_set_mode(struct regulator_dev *rdev, unsigned int mode)
+ static unsigned int act8945a_get_mode(struct regulator_dev *rdev)
+ {
+ 	struct act8945a_pmic *act8945a = rdev_get_drvdata(rdev);
+-	int id = rdev->desc->id;
++	int id = rdev_get_id(rdev);
  
+ 	if (id < ACT8945A_ID_DCDC1 || id >= ACT8945A_ID_MAX)
+ 		return -EINVAL;
 -- 
 2.20.1
 
