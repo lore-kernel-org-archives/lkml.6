@@ -2,91 +2,143 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5602C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 19:12:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DA38C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 19:13:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A676206B7
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 19:12:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bSs5/uDT"
+	by mail.kernel.org (Postfix) with ESMTP id 485ED206B7
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 19:13:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727431AbfAGTMs (ORCPT
+        id S1727557AbfAGTNf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 14:12:48 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:36214 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726655AbfAGTMs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 14:12:48 -0500
-Received: by mail-ot1-f67.google.com with SMTP id k98so1334203otk.3
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 11:12:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=4H9Ani97mWB8KOxzQ5Zy8V+Ms75Hvre4Xp0yMIUU3RQ=;
-        b=bSs5/uDTg+EeQ82OFnSFLkkUfiQwYKlRTegf/dNuNkiM4XVRyVdHi0b9lYoJoAaBpn
-         +LONZjv8BVvzmr/Avz10jyIY4eOVjE3exRYCQBop9U6smg6BWYDIgl1TP1814vi/HA+m
-         AyjMSAeZep4AzI47bGRODFd7EAu6P/kwVRoNH38/YKTjuMi4sLmcROQJ12UV2oAs7WEM
-         4QbEYxOvUi1pJ+fw5+8LeamZUQg1BH3PcXiwTs05f/BlQ24rYkRljWWhiT/K56io+5AH
-         IJL1TdYAjMyza1YxR2SDJ7Pgi37+mtYbrA2Ftr8DbJ69KiIMyFV6aZkfKO++qQLKL3Xx
-         yD+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=4H9Ani97mWB8KOxzQ5Zy8V+Ms75Hvre4Xp0yMIUU3RQ=;
-        b=a26KQAkH5wMW87X0ftGfmF4GFYnJDgBwaxa3/SMnovkurQUWRm6lz0q7G4fMXyni0p
-         /hxOEo2im46toW0ITBGll0ZXlchbBhkEDfvI0fOsOg1OO6Z/XVcksCEVKXX+QrXSsxfv
-         B4MCKTkHbP42qTEoysiD5BUIqW9+/01UP85/wsu0K+4dyL6tsmqHRoW9tKLBvCAa0XbD
-         rWSJ+9EY2m6zNms+OEDuSqOLtmVbNMfx+agqon8VTskzMZyiTdb6OscrcrtrJSbBsLA1
-         O5ifCfK88GJfGFSjl6c0HaS6dRFDAALkWjhAW0ud0zw2y3uyiCz249H9QmlV5Djb7WCz
-         t1uQ==
-X-Gm-Message-State: AJcUukeN2LRNS5X2LveMM2f/WCJ8tW02zS+Chg++l1zDU5h2SyrCOHgE
-        BYb9oMmmtFBuzQLsz2pH1Ziqa9a5
-X-Google-Smtp-Source: ALg8bN5E5syW5PQsKz9erKTF/LaNvFfoTJaFcmveiAyLNupTDX4uDIDA8clYcRcEGM61HfjZJbXJhw==
-X-Received: by 2002:a9d:5d14:: with SMTP id b20mr45395553oti.136.1546888367202;
-        Mon, 07 Jan 2019 11:12:47 -0800 (PST)
-Received: from [192.168.1.112] (cpe-24-31-245-230.kc.res.rr.com. [24.31.245.230])
-        by smtp.gmail.com with ESMTPSA id t2sm30030205otl.4.2019.01.07.11.12.46
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 07 Jan 2019 11:12:46 -0800 (PST)
-Subject: Re: [PATCH] staging: rtl8188eu: Add device code for D-Link DWA-121
- rev B1
-To:     Michael Straube <straube.linux@gmail.com>,
-        gregkh@linuxfoundation.org
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-References: <20190107172858.12110-1-straube.linux@gmail.com>
-From:   Larry Finger <Larry.Finger@lwfinger.net>
-Message-ID: <f414f616-188b-a22f-e7ea-d7835a52eda1@lwfinger.net>
-Date:   Mon, 7 Jan 2019 13:12:45 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+        Mon, 7 Jan 2019 14:13:35 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:43974 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726602AbfAGTNf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 14:13:35 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 64AA0C05090E;
+        Mon,  7 Jan 2019 19:13:34 +0000 (UTC)
+Received: from redhat.com (ovpn-122-143.rdu2.redhat.com [10.10.122.143])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4A5D968874;
+        Mon,  7 Jan 2019 19:13:30 +0000 (UTC)
+Date:   Mon, 7 Jan 2019 14:13:29 -0500
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Jason Wang <jasowang@redhat.com>, linux-kernel@vger.kernel.org,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Akira Yokosawa <akiyks@gmail.com>,
+        Daniel Lustig <dlustig@nvidia.com>, linux-arch@vger.kernel.org,
+        netdev@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        Richard Henderson <rth@twiddle.net>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org,
+        linux-sparse@vger.kernel.org
+Subject: Re: [PATCH RFC 3/4] barriers: convert a control to a data dependency
+Message-ID: <20190107140447-mutt-send-email-mst@kernel.org>
+References: <20190102205715.14054-1-mst@redhat.com>
+ <20190102205715.14054-4-mst@redhat.com>
+ <86023cbe-d1ae-a0d6-7b75-26556f1a0c1f@redhat.com>
+ <20190106231756-mutt-send-email-mst@kernel.org>
+ <20190107094610.GA2861@worktop.programming.kicks-ass.net>
+ <20190107082223-mutt-send-email-mst@kernel.org>
+ <20190107190236.GF1215@linux.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <20190107172858.12110-1-straube.linux@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190107190236.GF1215@linux.ibm.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Mon, 07 Jan 2019 19:13:35 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/7/19 11:28 AM, Michael Straube wrote:
-> This device was added to the stand-alone driver on github.
-> Add it to the staging driver as well.
+On Mon, Jan 07, 2019 at 11:02:36AM -0800, Paul E. McKenney wrote:
+> On Mon, Jan 07, 2019 at 08:36:36AM -0500, Michael S. Tsirkin wrote:
+> > On Mon, Jan 07, 2019 at 10:46:10AM +0100, Peter Zijlstra wrote:
+> > > On Sun, Jan 06, 2019 at 11:23:07PM -0500, Michael S. Tsirkin wrote:
+> > > > On Mon, Jan 07, 2019 at 11:58:23AM +0800, Jason Wang wrote:
+> > > > > On 2019/1/3 上午4:57, Michael S. Tsirkin wrote:
+> > > 
+> > > > > > +#if defined(COMPILER_HAS_OPTIMIZER_HIDE_VAR) && \
+> > > > > > +	!defined(ARCH_NEEDS_READ_BARRIER_DEPENDS)
+> > > > > > +
+> > > > > > +#define dependent_ptr_mb(ptr, val) ({					\
+> > > > > > +	long dependent_ptr_mb_val = (long)(val);			\
+> > > > > > +	long dependent_ptr_mb_ptr = (long)(ptr) - dependent_ptr_mb_val;	\
+> > > > > > +									\
+> > > > > > +	BUILD_BUG_ON(sizeof(val) > sizeof(long));			\
+> > > > > > +	OPTIMIZER_HIDE_VAR(dependent_ptr_mb_val);			\
+> > > > > > +	(typeof(ptr))(dependent_ptr_mb_ptr + dependent_ptr_mb_val);	\
+> > > > > > +})
+> > > > > > +
+> > > > > > +#else
+> > > > > > +
+> > > > > > +#define dependent_ptr_mb(ptr, val) ({ mb(); (ptr); })
+> > > > > 
+> > > > > 
+> > > > > So for the example of patch 4, we'd better fall back to rmb() or need a
+> > > > > dependent_ptr_rmb()?
+> > > > > 
+> > > > > Thanks
+> > > > 
+> > > > You mean for strongly ordered architectures like Intel?
+> > > > Yes, maybe it makes sense to have dependent_ptr_smp_rmb,
+> > > > dependent_ptr_dma_rmb and dependent_ptr_virt_rmb.
+> > > > 
+> > > > mb variant is unused right now so I'll remove it.
+> > > 
+> > > How about naming the thing: dependent_ptr() ? That is without any (r)mb
+> > > implications at all. The address dependency is strictly weaker than an
+> > > rmb in that it will only order the two loads in qestion and not, like
+> > > rmb, any prior to any later load.
+> > 
+> > So I'm fine with this as it's enough for virtio, but I would like to point out two things:
+> > 
+> > 1. E.g. on x86 both SMP and DMA variants can be NOPs but
+> > the madatory one can't, so assuming we do not want
+> > it to be stronger than rmp then either we want
+> > smp_dependent_ptr(), dma_dependent_ptr(), dependent_ptr()
+> > or we just will specify that dependent_ptr() works for
+> > both DMA and SMP.
+> > 
+> > 2. Down the road, someone might want to order a store after a load.
+> > Address dependency does that for us too. Assuming we make
+> > dependent_ptr a NOP on x86, we will want an mb variant
+> > which isn't a NOP on x86. Will we want to rename
+> > dependent_ptr to dependent_ptr_rmb at that point?
 > 
-> Link: https://github.com/lwfinger/rtl8188eu/commit/a0619a07cd1e
-> Signed-off-by: Michael Straube <straube.linux@gmail.com>
+> But x86 preserves store-after-load orderings anyway, and even Alpha
+> respects ordering from loads to dependent stores.  So what am I missing
+> here?
+> 
+> 							Thanx, Paul
 
-Acked-by: Larry Finger <Larry.Finger@lwfinger.net>
+Oh you are right. Stores are not reordered with older loads on x86.
 
-Thanks,
+So point 2 is moot. Sorry about the noise.
 
-Larry
+I guess at this point the only sticking point is the ECC compiler.
+I'm inclined to stick an mb() there, seeing as it doesn't even
+have spectre protection enabled. Slow but safe.
+
+-- 
+MST
