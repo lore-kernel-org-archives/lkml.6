@@ -2,146 +2,140 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 514CEC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 07:48:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C235C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 07:54:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15B89204FD
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 07:48:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="A9qz7CTf"
+	by mail.kernel.org (Postfix) with ESMTP id EB6B4204FD
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 07:54:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726750AbfAGHsV (ORCPT
+        id S1726542AbfAGHyE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 02:48:21 -0500
-Received: from mail-eopbgr50060.outbound.protection.outlook.com ([40.107.5.60]:27839
-        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726441AbfAGHrr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 02:47:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/0x/VH31+hQfAjZgfZ1nvSyj5Nb+x9LVc0bWxvhcXxM=;
- b=A9qz7CTf80a6xJIpBGSK9hW2Dt+O5sgTLHxp64+v6lnkriK9AlFwk3HM+nsd+yAIbmVJrwi1IEXWeOo2mews/mcI+NeNHFmIxDEMALe/CA2w44WjfpvlutvCNE8NbShlS4mla33iSswDITwcEommBbQE6Ia2vBU5UJrpV/eHzfM=
-Received: from AM6PR04MB5016.eurprd04.prod.outlook.com (20.177.34.88) by
- AM6PR04MB5831.eurprd04.prod.outlook.com (20.179.2.223) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1495.6; Mon, 7 Jan 2019 07:47:41 +0000
-Received: from AM6PR04MB5016.eurprd04.prod.outlook.com
- ([fe80::7c57:c2f3:1681:3fc4]) by AM6PR04MB5016.eurprd04.prod.outlook.com
- ([fe80::7c57:c2f3:1681:3fc4%6]) with mapi id 15.20.1495.011; Mon, 7 Jan 2019
- 07:47:41 +0000
-From:   Clark Wang <xiaoning.wang@nxp.com>
-To:     "broonie@kernel.org" <broonie@kernel.org>
-CC:     "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Clark Wang <xiaoning.wang@nxp.com>
-Subject: [PATCH 4/8] spi: lpspi: Fix wrong transmission when don't use CONT
-Thread-Topic: [PATCH 4/8] spi: lpspi: Fix wrong transmission when don't use
- CONT
-Thread-Index: AQHUpl1EySmwrvSbQ0yaJf9q9nP+ww==
-Date:   Mon, 7 Jan 2019 07:47:41 +0000
-Message-ID: <20190107074639.6336-5-xiaoning.wang@nxp.com>
-References: <20190107074639.6336-1-xiaoning.wang@nxp.com>
-In-Reply-To: <20190107074639.6336-1-xiaoning.wang@nxp.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: SG2PR02CA0087.apcprd02.prod.outlook.com
- (2603:1096:4:90::27) To AM6PR04MB5016.eurprd04.prod.outlook.com
- (2603:10a6:20b:9::24)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=xiaoning.wang@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-mailer: git-send-email 2.17.1
-x-originating-ip: [92.121.68.129]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM6PR04MB5831;6:b7URvv06lpFLH5kpI7p2xFGrF22V8zzCAUZjIDGeIfUTA1qIDDh6BzcH+qRwoc5mmua5GXtabXIQAR5vSIKNmqS/WUNM31W/2grbnZTg+D7LKD6r8t8bMuj/Jqmdy1aRbCau/9QJRHhXasLWl+KfbNASmIe/VBxkKnN3TNfIDVIQonNu6tAB0TtOXG6FcyoHxsEQHw+6CM67SqxO4hWShgdzW3O6es1TRt5GJXXXWrucXPB+LoWU7QFl5Lv3yCsl1Z6CgiedTFlpMZwQx7fJChpqdD4jK9k6vjN//MFC6fOOQE2fgakff4iIA2CPa+JAIXZO+IIFzBcVUwDnkIFCcEgICaL+4M5yJ0LsNhj15BOEcM/JMRbJtPYpTA1IiPqvuuwoWeUn8cjbyK7j5ERgH6/4yY5ROeytljfEpuRakVCMXLodo9PUQfLE0wqsTI0AAOduMm37j0hiiVe1LjAj4g==;5:bLWi8am8j3mPGK2N6LfRVkyl1f0nrOC2JfVjG7raJqcODK0Sejbdi0puBeClR+a1P8b4y+PIBOvukNdeNIqVXSaY16IKJUP0yY7PYlADr4orvByyq/WpoCwbopLaegG83eccl/Ie4a6HIq5TLGGXCMWrST1LN/ZMXjfdnMnr4wD8RRqVrWtWcD5ldHsJbiVEwzJXMNpUiBEDtsIQvUEwSg==;7:7MgApl1kyk5oNfOkhBkOdtmTJEO1ErmLcm4XD2L3w9XBcm2sx3OZ1OEEFgEI5SDgEF0NxsW1WkJbHTmBGi0OiIQVwO43N+ZKdKDyfVzwc4oBFzoRWB7LK7BGWZ/KoWQYY6OYAngfgxOm+XH1CgiWzQ==
-x-ms-office365-filtering-correlation-id: 9ae17b09-92cd-4105-bf68-08d6747466d6
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM6PR04MB5831;
-x-ms-traffictypediagnostic: AM6PR04MB5831:
-x-microsoft-antispam-prvs: <AM6PR04MB5831D7410AA807B70E34ACD4F3890@AM6PR04MB5831.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(908002)(999002)(5005026)(6040522)(8220060)(2401047)(8121501046)(10201501046)(3002001)(93006095)(93001095)(3231475)(944501520)(52105112)(6055026)(6041310)(20161123564045)(20161123560045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:AM6PR04MB5831;BCL:0;PCL:0;RULEID:;SRVR:AM6PR04MB5831;
-x-forefront-prvs: 0910AAF391
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(39860400002)(376002)(396003)(366004)(346002)(199004)(189003)(256004)(8676002)(6436002)(97736004)(5640700003)(54906003)(6486002)(68736007)(316002)(6916009)(575784001)(86362001)(2351001)(105586002)(99286004)(66066001)(186003)(26005)(81166006)(2501003)(476003)(8936002)(446003)(36756003)(11346002)(50226002)(2616005)(7736002)(81156014)(106356001)(1730700003)(52116002)(305945005)(76176011)(6116002)(3846002)(102836004)(2906002)(386003)(6506007)(4326008)(1076003)(25786009)(71190400001)(71200400001)(14454004)(486006)(6512007)(478600001)(5660300001)(53936002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR04MB5831;H:AM6PR04MB5016.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: vXChwUDWH9P+wYmgFYoa14Pwj4EgujvlWCt5MBUwj0gCF9Ztsk0Lnh/s88qweAz5r/c01jKE8Tm63PJWF2/X8mTDJM+wCtIXsp6vICE6LPsCt3Li2KRt3irNDA6cWyzJQpye1qhYmtxdENPC8j0wwpMS59RzYqOYhEts/fCR8oWwkfupvxYZozIuEz/Gg9ecKr/EhjqX+RIxw8XP2oQbOll1yBVP5Qr9529/509o2x/+A40w3TMJaIW24uo5hAyZjoFtYx79SImQNbbzr3lRGY/186gLewjplgY+WYPWwjgxE7TBkPaRjHiRAl4C1lFD
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 7 Jan 2019 02:54:04 -0500
+Received: from mail-it1-f198.google.com ([209.85.166.198]:56439 "EHLO
+        mail-it1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726402AbfAGHyE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 02:54:04 -0500
+Received: by mail-it1-f198.google.com with SMTP id x3so6531818itb.6
+        for <linux-kernel@vger.kernel.org>; Sun, 06 Jan 2019 23:54:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=FTUlPXJciqbFcRhh7J7/3a06hNyV70+mcMgpxB8F9u0=;
+        b=GiDwbN7w2q9R7Z1VYQ5einuxpm7407dAw99zGAiXjJeP1Qu1oIPRlnaYBWBHbWY/fg
+         1bbHFlLTx5ePEltV3ZPEqsAv3Drtd+PjS/0pdwOFCHnrNc3a+44Wd+aKU5IwwlSg/0qs
+         wE4TFgvmPtj2abiJs2MKtYeZ8bqMFNy3J2sEaNEmOXGMd5yS41HY5ixOC74oGXjIQyqH
+         fUWrf+YhN+SMtm0gRA38SDg215FgA9GY0RbuvxVu7vHm0HRP0PwYZKWiG+5hYlK3Z7N9
+         z4S2SJZUtKcLiJGJRcpnLdBJcdb5/jBBeoaCcy3TQS+foBSxJoN5NrlOMsZr7D31xqq0
+         XldA==
+X-Gm-Message-State: AJcUukcmXFS4i5LI1lal0uYZJMAImLH80Z/1yu4+v8x2vZrN4YkF8y7z
+        mb6+z5h1DClN62xbuqIIZ2mLJPyLq2Qk/MhOCJnXU0K9kCXr
+X-Google-Smtp-Source: ALg8bN7CNwiEZtpK7sr2IlAwYKZGlwuYo4txZ4TZ4YiO7Uu0FUk0Ohk5EzEbjAtGtcY0TVZ+NsYQ2kMaJ4ftm/2Foq5fAwbEGKxO
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9ae17b09-92cd-4105-bf68-08d6747466d6
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Jan 2019 07:47:39.3730
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR04MB5831
+X-Received: by 2002:a5d:9683:: with SMTP id m3mr31915451ion.28.1546847643263;
+ Sun, 06 Jan 2019 23:54:03 -0800 (PST)
+Date:   Sun, 06 Jan 2019 23:54:03 -0800
+In-Reply-To: <0000000000005f1f37057d4b7d95@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000004c6b32057ed9888f@google.com>
+Subject: Re: KMSAN: uninit-value in tipc_nl_compat_link_set (2)
+From:   syzbot <syzbot+d78b8a29241a195aefb8@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, glider@google.com, jon.maloy@ericsson.com,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com,
+        tipc-discussion@lists.sourceforge.net, ying.xue@windriver.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add judgment on SR_MBF and FSR_RXCOUNT.
+syzbot has found a reproducer for the following crash on:
 
-In PIO mode, if don't use CONT to keep cs selected in one transfer, the
-transfer will go wrong. FCIE will be set after one frame transfer
-finish. If use CONT, the frame refer to the whole data in one transfer.
-If don't use CONT, the frame refer to one byte of whole data. This will
-cause the transfer ending early.
+HEAD commit:    11587f6ee534 kmsan: remove pr_err
+git tree:       kmsan
+console output: https://syzkaller.appspot.com/x/log.txt?x=114c539b400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c8a62a4eb8ea3e9f
+dashboard link: https://syzkaller.appspot.com/bug?extid=d78b8a29241a195aefb8
+compiler:       clang version 8.0.0 (trunk 350161)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=173b7180c00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1262adab400000
 
-This patch add a register reading in isr function, it might lead to a
-slight decrease in the max transmission speed in PIO mode.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+d78b8a29241a195aefb8@syzkaller.appspotmail.com
 
-Signed-off-by: Clark Wang <xiaoning.wang@nxp.com>
----
- drivers/spi/spi-fsl-lpspi.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+==================================================================
+BUG: KMSAN: uninit-value in strlen+0x3b/0xa0 lib/string.c:486
+CPU: 1 PID: 9306 Comm: syz-executor172 Not tainted 4.20.0-rc7+ #2
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x173/0x1d0 lib/dump_stack.c:113
+  kmsan_report+0x12e/0x2a0 mm/kmsan/kmsan.c:613
+  __msan_warning+0x82/0xf0 mm/kmsan/kmsan_instr.c:313
+  strlen+0x3b/0xa0 lib/string.c:486
+  nla_put_string include/net/netlink.h:1154 [inline]
+  __tipc_nl_compat_link_set net/tipc/netlink_compat.c:708 [inline]
+  tipc_nl_compat_link_set+0x929/0x1220 net/tipc/netlink_compat.c:744
+  __tipc_nl_compat_doit net/tipc/netlink_compat.c:311 [inline]
+  tipc_nl_compat_doit+0x3aa/0xaf0 net/tipc/netlink_compat.c:344
+  tipc_nl_compat_handle net/tipc/netlink_compat.c:1107 [inline]
+  tipc_nl_compat_recv+0x14d7/0x2760 net/tipc/netlink_compat.c:1210
+  genl_family_rcv_msg net/netlink/genetlink.c:601 [inline]
+  genl_rcv_msg+0x185f/0x1a60 net/netlink/genetlink.c:626
+  netlink_rcv_skb+0x444/0x640 net/netlink/af_netlink.c:2477
+  genl_rcv+0x63/0x80 net/netlink/genetlink.c:637
+  netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
+  netlink_unicast+0xf40/0x1020 net/netlink/af_netlink.c:1336
+  netlink_sendmsg+0x127f/0x1300 net/netlink/af_netlink.c:1917
+  sock_sendmsg_nosec net/socket.c:621 [inline]
+  sock_sendmsg net/socket.c:631 [inline]
+  ___sys_sendmsg+0xdb9/0x11b0 net/socket.c:2116
+  __sys_sendmsg net/socket.c:2154 [inline]
+  __do_sys_sendmsg net/socket.c:2163 [inline]
+  __se_sys_sendmsg+0x305/0x460 net/socket.c:2161
+  __x64_sys_sendmsg+0x4a/0x70 net/socket.c:2161
+  do_syscall_64+0xbc/0xf0 arch/x86/entry/common.c:291
+  entry_SYSCALL_64_after_hwframe+0x63/0xe7
+RIP: 0033:0x440e29
+Code: e8 cc ab 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 bb 0a fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007fff7fdb6888 EFLAGS: 00000213 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000440e29
+RDX: 0000000000000000 RSI: 0000000020000140 RDI: 0000000000000003
+RBP: 0000000000000000 R08: 00000000004002c8 R09: 00000000004002c8
+R10: 0000000001fb6880 R11: 0000000000000213 R12: 0000000000012572
+R13: 0000000000401e00 R14: 0000000000000000 R15: 0000000000000000
 
-diff --git a/drivers/spi/spi-fsl-lpspi.c b/drivers/spi/spi-fsl-lpspi.c
-index f32a2e0d7ae1..51c85cf0bd9f 100644
---- a/drivers/spi/spi-fsl-lpspi.c
-+++ b/drivers/spi/spi-fsl-lpspi.c
-@@ -52,6 +52,7 @@
- #define CR_RTF		BIT(8)
- #define CR_RST		BIT(1)
- #define CR_MEN		BIT(0)
-+#define SR_MBF		BIT(24)
- #define SR_TCF		BIT(10)
- #define SR_FCF		BIT(9)
- #define SR_RDF		BIT(1)
-@@ -65,6 +66,7 @@
- #define CFGR1_PCSPOL	BIT(8)
- #define CFGR1_NOSTALL	BIT(3)
- #define CFGR1_MASTER	BIT(0)
-+#define FSR_RXCOUNT	(BIT(16)|BIT(17)|BIT(18))
- #define RSR_RXEMPTY	BIT(1)
- #define TCR_CPOL	BIT(31)
- #define TCR_CPHA	BIT(30)
-@@ -446,6 +448,13 @@ static irqreturn_t fsl_lpspi_isr(int irq, void *dev_id=
-)
- 		return IRQ_HANDLED;
- 	}
-=20
-+	if (temp_SR & SR_MBF ||
-+	    readl(fsl_lpspi->base + IMX7ULP_FSR) & FSR_RXCOUNT) {
-+		writel(SR_FCF, fsl_lpspi->base + IMX7ULP_SR);
-+		fsl_lpspi_intctrl(fsl_lpspi, IER_FCIE);
-+		return IRQ_HANDLED;
-+	}
-+
- 	if (temp_SR & SR_FCF && (temp_IER & IER_FCIE)) {
- 		writel(SR_FCF, fsl_lpspi->base + IMX7ULP_SR);
- 			complete(&fsl_lpspi->xfer_done);
---=20
-2.17.1
+Uninit was created at:
+  kmsan_save_stack_with_flags mm/kmsan/kmsan.c:204 [inline]
+  kmsan_internal_poison_shadow+0x92/0x150 mm/kmsan/kmsan.c:158
+  kmsan_kmalloc+0xa6/0x130 mm/kmsan/kmsan_hooks.c:176
+  kmsan_slab_alloc+0xe/0x10 mm/kmsan/kmsan_hooks.c:185
+  slab_post_alloc_hook mm/slab.h:446 [inline]
+  slab_alloc_node mm/slub.c:2759 [inline]
+  __kmalloc_node_track_caller+0xe18/0x1030 mm/slub.c:4383
+  __kmalloc_reserve net/core/skbuff.c:137 [inline]
+  __alloc_skb+0x309/0xa20 net/core/skbuff.c:205
+  alloc_skb include/linux/skbuff.h:998 [inline]
+  netlink_alloc_large_skb net/netlink/af_netlink.c:1182 [inline]
+  netlink_sendmsg+0xb82/0x1300 net/netlink/af_netlink.c:1892
+  sock_sendmsg_nosec net/socket.c:621 [inline]
+  sock_sendmsg net/socket.c:631 [inline]
+  ___sys_sendmsg+0xdb9/0x11b0 net/socket.c:2116
+  __sys_sendmsg net/socket.c:2154 [inline]
+  __do_sys_sendmsg net/socket.c:2163 [inline]
+  __se_sys_sendmsg+0x305/0x460 net/socket.c:2161
+  __x64_sys_sendmsg+0x4a/0x70 net/socket.c:2161
+  do_syscall_64+0xbc/0xf0 arch/x86/entry/common.c:291
+  entry_SYSCALL_64_after_hwframe+0x63/0xe7
+==================================================================
 
