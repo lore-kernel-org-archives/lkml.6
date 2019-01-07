@@ -2,201 +2,113 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F773C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 23:22:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82738C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 23:25:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C6392147C
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 23:22:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 35A082147C
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 23:25:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="lYgA0k+G"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727268AbfAGXW4 (ORCPT
+        id S1727272AbfAGXZQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 18:22:56 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:52223 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726689AbfAGXWz (ORCPT
+        Mon, 7 Jan 2019 18:25:16 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:33017 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727076AbfAGXZP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 18:22:55 -0500
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1ggeEN-0007sY-Eb; Mon, 07 Jan 2019 23:22:51 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        devel@driverdev.osuosl.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: rtl8192e: fix various indentation issues
-Date:   Mon,  7 Jan 2019 23:22:49 +0000
-Message-Id: <20190107232249.13590-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.19.1
+        Mon, 7 Jan 2019 18:25:15 -0500
+Received: by mail-pg1-f193.google.com with SMTP id z11so840191pgu.0
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 15:25:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=l01/MrfL8olU8EZ8L5lMkIBR4BL/yTcKxgnAwIdUGeo=;
+        b=lYgA0k+GoT3nVtvQex9ttd57uPCZwRsZZjxfqNryk85FK5y2VuD+s08YhREJI57Osf
+         0ArhcCeHam8PgZp5GyjRhdeTuP7G1j6+lTPjHmPnNsvGVTYJWJTrC2UFlzNf21XIUvrE
+         ILOzL1alWyZ9BoCsGbpBL3Q8ngIhM5awYvqCX+7lnaTbSJZLe+TunLN/U2qOJV22FOVe
+         oOcEOWl7rPyfHcCYsAUVYrvMNhyB5AYdzUMyCO5tmu8uLBi+sTwsSPcgIaGj7F13C9xG
+         yL/2POfpwONrXmZoGwloGZPwbd4vbHm6KmxE7fjPMd5fKhHJTM4BzRyohRhbq7Z3sJYT
+         I04A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=l01/MrfL8olU8EZ8L5lMkIBR4BL/yTcKxgnAwIdUGeo=;
+        b=oKZZ+1ROtwkDbJjir87fkaQrG6bMlIOvykllajqXCxFdSzHiaq4hwYSmiE+PMMhWOo
+         BZwshUdssX501qi+FI2LyCw5qOBXIs5Yaz8qj5Rw592eRB/EL84qBRuz0TgtfEhq0Zxi
+         xof9xyeDr01wpx1G5w+83g3GZQ/so/A+ogx0+qs6xskfMRpGS2/YDEeZqiJS3gxnQy2I
+         b7BkeIrEY152/VfFZrRk01+mkf4nfjaCQkBxDngW1N20ISxi9x8gkq8Jsa9ivXgH8P94
+         K8S0bpLHBg/4tMp2ZzUki8AvycwXfxBwlIF/KX5a8N0CK+aBFi74KeigJDYz8j56QUS/
+         lovw==
+X-Gm-Message-State: AA+aEWac0kcJiQ1p3CUkI4FmwfUDhtkCLfbJt28r/p8+jniwnXb7XfOo
+        BV0uR1p2RaPi42968lpd8ydvrg==
+X-Google-Smtp-Source: AFSGD/W2N9/OrAIUQJcoYI2NF7NfZMlyPMw+WDUY2yUxvK57FAwgbb+tKlFbpi+A1BmM5y8bVp74oA==
+X-Received: by 2002:a62:a99:: with SMTP id 25mr63928989pfk.121.1546903514816;
+        Mon, 07 Jan 2019 15:25:14 -0800 (PST)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id t90sm141532437pfj.23.2019.01.07.15.25.13
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 07 Jan 2019 15:25:14 -0800 (PST)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1ggeGf-0001rH-81; Mon, 07 Jan 2019 16:25:13 -0700
+Date:   Mon, 7 Jan 2019 16:25:13 -0700
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Joe Perches <joe@perches.com>
+Cc:     Gal Pressman <galpress@amazon.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Stephen Warren <swarren@wwwdotorg.org>,
+        Tariq Toukan <tariqt@mellanox.com>, xavier.huwei@huawei.com,
+        netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+        Doug Ledford <dledford@redhat.com>,
+        Stephen Warren <swarren@nvidia.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] coding-style: Clarify the expectations around bool
+Message-ID: <20190107232513.GA5336@ziepe.ca>
+References: <20190107211117.GA24142@ziepe.ca>
+ <8ec3603317f477fe9923b87499a33da7a2cf81ff.camel@perches.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8ec3603317f477fe9923b87499a33da7a2cf81ff.camel@perches.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Mon, Jan 07, 2019 at 02:10:22PM -0800, Joe Perches wrote:
+> On Mon, 2019-01-07 at 14:11 -0700, Jason Gunthorpe wrote:
+> > There has been some confusion since checkpatch started warning about bool
+> > use in structures, and people have been avoiding using it.
+> > 
+> > Many people feel there is still a legitimate place for bool in structures,
+> > so provide some guidance on bool usage derived from the entire thread that
+> > spawned the checkpatch warning.
+> 
+> Thanks Jason.
+> 
+> It'd be nice to combine this with some better checkpatch warning or
+> even a removal of that misleading warning from checkpatch
+> altogether.
 
-There are several statements that have indentation issues, fix these.
+Okay, do you have a preference?
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c | 8 ++++----
- drivers/staging/rtl8192e/rtl8192e/rtl_core.c   | 6 +++---
- drivers/staging/rtl8192e/rtl8192e/rtl_dm.c     | 2 +-
- drivers/staging/rtl8192e/rtl8192e/rtl_wx.c     | 2 +-
- drivers/staging/rtl8192e/rtl819x_BAProc.c      | 6 +++---
- drivers/staging/rtl8192e/rtllib_crypt_tkip.c   | 2 +-
- drivers/staging/rtl8192e/rtllib_rx.c           | 2 +-
- 7 files changed, 14 insertions(+), 14 deletions(-)
+> With a couple minor nits below and and Ack if
+> you want one:
+> 
+> Acked-by: Joe Perches <joe@perches.com>
 
-diff --git a/drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c b/drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c
-index 1c6ed5b2a6f9..19bb04b3f097 100644
---- a/drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c
-+++ b/drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c
-@@ -660,9 +660,9 @@ static void _rtl92e_hwconfig(struct net_device *dev)
- 	case WIRELESS_MODE_AUTO:
- 	case WIRELESS_MODE_N_24G:
- 		regBwOpMode = BW_OPMODE_20MHZ;
--			regRATR = RATE_ALL_CCK | RATE_ALL_OFDM_AG |
--				  RATE_ALL_OFDM_1SS | RATE_ALL_OFDM_2SS;
--			regRRSR = RATE_ALL_CCK | RATE_ALL_OFDM_AG;
-+		regRATR = RATE_ALL_CCK | RATE_ALL_OFDM_AG |
-+			  RATE_ALL_OFDM_1SS | RATE_ALL_OFDM_2SS;
-+		regRRSR = RATE_ALL_CCK | RATE_ALL_OFDM_AG;
- 		break;
- 	case WIRELESS_MODE_N_5G:
- 		regBwOpMode = BW_OPMODE_5G;
-@@ -961,7 +961,7 @@ static void _rtl92e_net_update(struct net_device *dev)
- 	net = &priv->rtllib->current_network;
- 	rtl92e_config_rate(dev, &rate_config);
- 	priv->dot11CurrentPreambleMode = PREAMBLE_AUTO;
--	 priv->basic_rate = rate_config &= 0x15f;
-+	priv->basic_rate = rate_config &= 0x15f;
- 	rtl92e_writew(dev, BSSIDR, *(u16 *)net->bssid);
- 	rtl92e_writel(dev, BSSIDR + 2, *(u32 *)(net->bssid + 2));
- 
-diff --git a/drivers/staging/rtl8192e/rtl8192e/rtl_core.c b/drivers/staging/rtl8192e/rtl8192e/rtl_core.c
-index 96f265eee007..7031f6833b8b 100644
---- a/drivers/staging/rtl8192e/rtl8192e/rtl_core.c
-+++ b/drivers/staging/rtl8192e/rtl8192e/rtl_core.c
-@@ -436,7 +436,7 @@ static int _rtl92e_qos_handle_probe_response(struct r8192_priv *priv,
- 				network->qos_data.param_count)) {
- 			network->qos_data.old_param_count =
- 				network->qos_data.param_count;
--	priv->rtllib->wmm_acm = network->qos_data.wmm_acm;
-+			priv->rtllib->wmm_acm = network->qos_data.wmm_acm;
- 			schedule_work(&priv->qos_activate);
- 			RT_TRACE(COMP_QOS,
- 				 "QoS parameters change call qos_activate\n");
-@@ -1573,7 +1573,7 @@ static void _rtl92e_free_rx_ring(struct net_device *dev)
- 			pci_unmap_single(priv->pdev,
- 				*((dma_addr_t *)skb->cb),
- 				priv->rxbuffersize, PCI_DMA_FROMDEVICE);
--				kfree_skb(skb);
-+			kfree_skb(skb);
- 		}
- 
- 		pci_free_consistent(priv->pdev,
-@@ -2515,7 +2515,7 @@ static int _rtl92e_pci_probe(struct pci_dev *pdev,
- 	if (dev_alloc_name(dev, ifname) < 0) {
- 		RT_TRACE(COMP_INIT,
- 			 "Oops: devname already taken! Trying wlan%%d...\n");
--			dev_alloc_name(dev, ifname);
-+		dev_alloc_name(dev, ifname);
- 	}
- 
- 	RT_TRACE(COMP_INIT, "Driver probe completed1\n");
-diff --git a/drivers/staging/rtl8192e/rtl8192e/rtl_dm.c b/drivers/staging/rtl8192e/rtl8192e/rtl_dm.c
-index 9bf95bd0ad13..157bcee34067 100644
---- a/drivers/staging/rtl8192e/rtl8192e/rtl_dm.c
-+++ b/drivers/staging/rtl8192e/rtl8192e/rtl_dm.c
-@@ -996,7 +996,7 @@ static void _rtl92e_dm_check_tx_power_tracking_tssi(struct net_device *dev)
- 	tx_power_track_counter++;
- 
- 
--	 if (tx_power_track_counter >= 180) {
-+	if (tx_power_track_counter >= 180) {
- 		schedule_delayed_work(&priv->txpower_tracking_wq, 0);
- 		tx_power_track_counter = 0;
- 	}
-diff --git a/drivers/staging/rtl8192e/rtl8192e/rtl_wx.c b/drivers/staging/rtl8192e/rtl8192e/rtl_wx.c
-index 843e874b8a06..1899dbb2c957 100644
---- a/drivers/staging/rtl8192e/rtl8192e/rtl_wx.c
-+++ b/drivers/staging/rtl8192e/rtl8192e/rtl_wx.c
-@@ -738,7 +738,7 @@ static int _rtl92e_wx_set_enc(struct net_device *dev,
- 
- 		else if (wrqu->encoding.length == 0xd) {
- 			ieee->pairwise_key_type = KEY_TYPE_WEP104;
--				rtl92e_enable_hw_security_config(dev);
-+			rtl92e_enable_hw_security_config(dev);
- 			rtl92e_set_key(dev, key_idx, key_idx, KEY_TYPE_WEP104,
- 				       zero_addr[key_idx], 0, hwkey);
- 			rtl92e_set_swcam(dev, key_idx, key_idx, KEY_TYPE_WEP104,
-diff --git a/drivers/staging/rtl8192e/rtl819x_BAProc.c b/drivers/staging/rtl8192e/rtl819x_BAProc.c
-index 687dbb04ed2e..2d330d2bbf6d 100644
---- a/drivers/staging/rtl8192e/rtl819x_BAProc.c
-+++ b/drivers/staging/rtl8192e/rtl819x_BAProc.c
-@@ -139,7 +139,7 @@ static struct sk_buff *rtllib_DELBA(struct rtllib_device *ieee, u8 *dst,
- {
- 	union delba_param_set DelbaParamSet;
- 	struct sk_buff *skb = NULL;
--	 struct rtllib_hdr_3addr *Delba = NULL;
-+	struct rtllib_hdr_3addr *Delba = NULL;
- 	u8 *tag = NULL;
- 	u16 len = 6 + ieee->tx_headroom;
- 
-@@ -316,7 +316,7 @@ int rtllib_rx_ADDBAReq(struct rtllib_device *ieee, struct sk_buff *skb)
- 
- int rtllib_rx_ADDBARsp(struct rtllib_device *ieee, struct sk_buff *skb)
- {
--	 struct rtllib_hdr_3addr *rsp = NULL;
-+	struct rtllib_hdr_3addr *rsp = NULL;
- 	struct ba_record *pPendingBA, *pAdmittedBA;
- 	struct tx_ts_record *pTS = NULL;
- 	u8 *dst = NULL, *pDialogToken = NULL, *tag = NULL;
-@@ -420,7 +420,7 @@ int rtllib_rx_ADDBARsp(struct rtllib_device *ieee, struct sk_buff *skb)
- 
- int rtllib_rx_DELBA(struct rtllib_device *ieee, struct sk_buff *skb)
- {
--	 struct rtllib_hdr_3addr *delba = NULL;
-+	struct rtllib_hdr_3addr *delba = NULL;
- 	union delba_param_set *pDelBaParamSet = NULL;
- 	u8 *dst = NULL;
- 
-diff --git a/drivers/staging/rtl8192e/rtllib_crypt_tkip.c b/drivers/staging/rtl8192e/rtllib_crypt_tkip.c
-index f38f1f74fcd6..55da8c9dfe50 100644
---- a/drivers/staging/rtl8192e/rtllib_crypt_tkip.c
-+++ b/drivers/staging/rtl8192e/rtllib_crypt_tkip.c
-@@ -285,7 +285,7 @@ static void tkip_mixing_phase2(u8 *WEPSeed, const u8 *TK, const u16 *TTAK,
- static int rtllib_tkip_encrypt(struct sk_buff *skb, int hdr_len, void *priv)
- {
- 	struct rtllib_tkip_data *tkey = priv;
--		int len;
-+	int len;
- 	u8 *pos;
- 	struct rtllib_hdr_4addr *hdr;
- 	struct cb_desc *tcb_desc = (struct cb_desc *)(skb->cb +
-diff --git a/drivers/staging/rtl8192e/rtllib_rx.c b/drivers/staging/rtl8192e/rtllib_rx.c
-index fa580ce1cf43..501ded929329 100644
---- a/drivers/staging/rtl8192e/rtllib_rx.c
-+++ b/drivers/staging/rtl8192e/rtllib_rx.c
-@@ -913,7 +913,7 @@ static size_t rtllib_rx_get_hdrlen(struct rtllib_device *ieee,
- 		rx_stats->bContainHTC = true;
- 	}
- 
--	 if (RTLLIB_QOS_HAS_SEQ(fc))
-+	if (RTLLIB_QOS_HAS_SEQ(fc))
- 		rx_stats->bIsQosData = true;
- 
- 	return hdrlen;
--- 
-2.19.1
+Thanks, I made the revisions with Bart's extra words. I'll send a v4
+in a few days.
 
+Jason
