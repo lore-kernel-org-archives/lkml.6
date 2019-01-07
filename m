@@ -4,42 +4,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90A15C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 02:54:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92D50C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 02:54:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6992E20838
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 02:54:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6266B20838
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 02:54:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726716AbfAGCy3 (ORCPT
+        id S1726729AbfAGCyf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 6 Jan 2019 21:54:29 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:55734 "EHLO
+        Sun, 6 Jan 2019 21:54:35 -0500
+Received: from vmicros1.altlinux.org ([194.107.17.57]:55902 "EHLO
         vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726471AbfAGCy1 (ORCPT
+        with ESMTP id S1726495AbfAGCye (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Jan 2019 21:54:27 -0500
+        Sun, 6 Jan 2019 21:54:34 -0500
 Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 3F26972CC6C;
-        Mon,  7 Jan 2019 05:54:24 +0300 (MSK)
+        by vmicros1.altlinux.org (Postfix) with ESMTP id 8938572CC71;
+        Mon,  7 Jan 2019 05:54:31 +0300 (MSK)
 Received: by mua.local.altlinux.org (Postfix, from userid 508)
-        id 327358E5C51; Mon,  7 Jan 2019 05:54:24 +0300 (MSK)
-Date:   Mon, 7 Jan 2019 05:54:24 +0300
+        id 7B0108E5C51; Mon,  7 Jan 2019 05:54:31 +0300 (MSK)
+Date:   Mon, 7 Jan 2019 05:54:31 +0300
 From:   "Dmitry V. Levin" <ldv@altlinux.org>
-To:     linux-kernel@vger.kernel.org
+To:     Guan Xuetao <gxt@pku.edu.cn>
 Cc:     Elvira Khabirova <lineprinter@altlinux.org>,
         Eugene Syromyatnikov <esyr@redhat.com>,
         Oleg Nesterov <oleg@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Eric Paris <eparis@redhat.com>,
-        linux-riscv@lists.infradead.org, linux-audit@redhat.com,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v7 17/22] riscv: define syscall_get_arch()
-Message-ID: <20190107025424.GQ1207@altlinux.org>
+        Andy Lutomirski <luto@kernel.org>, linux-kernel@vger.kernel.org
+Subject: [PATCH v7 18/22] Move EM_UNICORE to uapi/linux/elf-em.h
+Message-ID: <20190107025431.GR1207@altlinux.org>
 References: <20190107025101.GA1182@altlinux.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -49,74 +43,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syscall_get_arch() is required to be implemented on all architectures
-in addition to already implemented syscall_get_nr(),
-syscall_get_arguments(), syscall_get_error(), and
-syscall_get_return_value() functions in order to extend the generic
-ptrace API with PTRACE_GET_SYSCALL_INFO request.
+This should never have been defined in the arch tree to begin with,
+and now uapi/linux/audit.h header is going to use EM_UNICORE
+in order to define AUDIT_ARCH_UNICORE which is needed to implement
+syscall_get_arch() which in turn is required to extend
+the generic ptrace API with PTRACE_GET_SYSCALL_INFO request.
 
-Based-on-patch-by: David Abdurachmanov <david.abdurachmanov@gmail.com>
-Reviewed-by: Palmer Dabbelt <palmer@sifive.com>
-Acked-by: Paul Moore <paul@paul-moore.com>
-Cc: Elvira Khabirova <lineprinter@altlinux.org>
-Cc: Eugene Syromyatnikov <esyr@redhat.com>
+Cc: Guan Xuetao <gxt@pku.edu.cn>
 Cc: Oleg Nesterov <oleg@redhat.com>
 Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Albert Ou <aou@eecs.berkeley.edu>
-Cc: Eric Paris <eparis@redhat.com>
-Cc: linux-riscv@lists.infradead.org
-Cc: linux-audit@redhat.com
+Cc: Elvira Khabirova <lineprinter@altlinux.org>
+Cc: Eugene Syromyatnikov <esyr@redhat.com>
 Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
 ---
 
 Notes:
-    v7: added Acked-by
+    v7: unchanged
     v6: unchanged
     v5: added Cc
-    v2: added Reviewed-by
 
- arch/riscv/include/asm/syscall.h | 10 ++++++++++
- include/uapi/linux/audit.h       |  2 ++
- 2 files changed, 12 insertions(+)
+ arch/unicore32/include/asm/elf.h | 3 +--
+ include/uapi/linux/elf-em.h      | 1 +
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/riscv/include/asm/syscall.h b/arch/riscv/include/asm/syscall.h
-index 8d25f8904c00..bba3da6ef157 100644
---- a/arch/riscv/include/asm/syscall.h
-+++ b/arch/riscv/include/asm/syscall.h
-@@ -18,6 +18,7 @@
- #ifndef _ASM_RISCV_SYSCALL_H
- #define _ASM_RISCV_SYSCALL_H
+diff --git a/arch/unicore32/include/asm/elf.h b/arch/unicore32/include/asm/elf.h
+index 829042d07722..ae66dc1be49e 100644
+--- a/arch/unicore32/include/asm/elf.h
++++ b/arch/unicore32/include/asm/elf.h
+@@ -19,6 +19,7 @@
+  * ELF register definitions..
+  */
+ #include <asm/ptrace.h>
++#include <linux/elf-em.h>
  
-+#include <uapi/linux/audit.h>
- #include <linux/sched.h>
- #include <linux/err.h>
+ typedef unsigned long elf_greg_t;
+ typedef unsigned long elf_freg_t[3];
+@@ -28,8 +29,6 @@ typedef elf_greg_t elf_gregset_t[ELF_NGREG];
  
-@@ -99,4 +100,13 @@ static inline void syscall_set_arguments(struct task_struct *task,
- 	memcpy(&regs->a1 + i * sizeof(regs->a1), args, n * sizeof(regs->a0));
- }
+ typedef struct fp_state elf_fpregset_t;
  
-+static inline int syscall_get_arch(void)
-+{
-+#ifdef CONFIG_64BIT
-+	return AUDIT_ARCH_RISCV64;
-+#else
-+	return AUDIT_ARCH_RISCV32;
-+#endif
-+}
-+
- #endif	/* _ASM_RISCV_SYSCALL_H */
-diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
-index efeb0bbd6c4d..bcc0619b046f 100644
---- a/include/uapi/linux/audit.h
-+++ b/include/uapi/linux/audit.h
-@@ -411,6 +411,8 @@ enum {
- /* do not define AUDIT_ARCH_PPCLE since it is not supported by audit */
- #define AUDIT_ARCH_PPC64	(EM_PPC64|__AUDIT_ARCH_64BIT)
- #define AUDIT_ARCH_PPC64LE	(EM_PPC64|__AUDIT_ARCH_64BIT|__AUDIT_ARCH_LE)
-+#define AUDIT_ARCH_RISCV32	(EM_RISCV|__AUDIT_ARCH_LE)
-+#define AUDIT_ARCH_RISCV64	(EM_RISCV|__AUDIT_ARCH_64BIT|__AUDIT_ARCH_LE)
- #define AUDIT_ARCH_S390		(EM_S390)
- #define AUDIT_ARCH_S390X	(EM_S390|__AUDIT_ARCH_64BIT)
- #define AUDIT_ARCH_SH		(EM_SH)
+-#define EM_UNICORE		110
+-
+ #define R_UNICORE_NONE		0
+ #define R_UNICORE_PC24		1
+ #define R_UNICORE_ABS32		2
+diff --git a/include/uapi/linux/elf-em.h b/include/uapi/linux/elf-em.h
+index 4b8df722330e..f47e853546fa 100644
+--- a/include/uapi/linux/elf-em.h
++++ b/include/uapi/linux/elf-em.h
+@@ -37,6 +37,7 @@
+ #define EM_ARCOMPACT	93	/* ARCompact processor */
+ #define EM_XTENSA	94	/* Tensilica Xtensa Architecture */
+ #define EM_BLACKFIN     106     /* ADI Blackfin Processor */
++#define EM_UNICORE	110	/* UniCore-32 */
+ #define EM_ALTERA_NIOS2	113	/* Altera Nios II soft-core processor */
+ #define EM_TI_C6000	140	/* TI C6X DSPs */
+ #define EM_HEXAGON	164	/* QUALCOMM Hexagon */
 -- 
 ldv
