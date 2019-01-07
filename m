@@ -4,51 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDA29C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:53:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83C25C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:53:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DA5A20651
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:53:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4AEB820665
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:53:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546865631;
-	bh=j5GLTn4P6v/c9rlP+Ln0RSIket1nyDTF62IVA1KkKrU=;
+	s=default; t=1546865634;
+	bh=RhKMB/Uq74mN8iTdt+rgI4aeTwRAtxlxwsNy/j25/4A=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=t6vdejW1mW8PcPGDKZ6hM7knrc5MsKJLdk0G82hnCyclxIwBmllCR8+0fQsKOvWsG
-	 H05TaurxvgxwN2yRWKf/2h75p4jCp/6R0eweTVMzV2zJZfpXCkY1HDUTUuCr5sqKzJ
-	 w00Rx8oHzl9/GZkhAhvBE8ksgEKHiGyvDI/z8jL0=
+	b=ZjzpqxewjvdTPs5Tagzs0jJCaJyM5CZSkeZIkqoOERIqKzx0K6sDkL4R0xi+B5U8h
+	 C5J6d9dswef2II4rrJf7WE6Ey1hzTVqfjFfQBvKvPdfkKe69zMLJz0R4ir3vfkYG5J
+	 RQgW6z6OU0voLa3H5NyOtIBadSLd/iwqDLNSKxS4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729313AbfAGMxt (ORCPT
+        id S1729449AbfAGMxx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:53:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42952 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:53:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42972 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727919AbfAGMxr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:53:47 -0500
+        id S1729135AbfAGMxt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:53:49 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D5C0A20651;
-        Mon,  7 Jan 2019 12:53:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A9DBB20651;
+        Mon,  7 Jan 2019 12:53:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865626;
-        bh=j5GLTn4P6v/c9rlP+Ln0RSIket1nyDTF62IVA1KkKrU=;
+        s=default; t=1546865629;
+        bh=RhKMB/Uq74mN8iTdt+rgI4aeTwRAtxlxwsNy/j25/4A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uvZaILhGagCazeeRFc79jfJOTGQUxkYTc7BbOZl2x+OYHBK57cAr81gNe/mBixIwr
-         EGvHNaBZHRueksyEIpv1v7bJ42wmBzaRIwHGhzplhZpE7A00rn2y5LelmEBK0kENcz
-         CFckavbUsL0AnPtCQ4J8N8kYYzHcBajvnAZUVcC0=
+        b=Zwo2/9TT657mG8CNq7NhMFetFjMFFYoriyaXy+aOJNFRhn24QvDdr8GoNujTja2fw
+         PLir4m05jpIL2dCysvIQieJmufHwSOIMw2EhVMwpDcK+rekidEr6QrmNcb2eb/bw2u
+         AzEfawGHhXPb8lC6NNfp8XD/XPaAqr7NUS5DEMSo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Alexander Sverdlin <alexander.sverdlin@gmail.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH 4.19 067/170] mtd: rawnand: omap2: Pass the parent of pdev to dma_request_chan()
-Date:   Mon,  7 Jan 2019 13:31:34 +0100
-Message-Id: <20190107104500.929473269@linuxfoundation.org>
+        =?UTF-8?q?Mantas=20Mikul=C4=97nas?= <grawity@gmail.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.19 068/170] ALSA: hda: add mute LED support for HP EliteBook 840 G4
+Date:   Mon,  7 Jan 2019 13:31:35 +0100
+Message-Id: <20190107104501.039367009@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104452.953560660@linuxfoundation.org>
 References: <20190107104452.953560660@linuxfoundation.org>
@@ -67,37 +66,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Boris Brezillon <boris.brezillon@bootlin.com>
+From: Mantas Mikulėnas <grawity@gmail.com>
 
-commit 9b432630e0150b777c423fdef6a7b8d17dfa70b6 upstream.
+commit 40906ebe3af6a48457151b3c6726b480f6a6cb13 upstream.
 
-Commit e1e6255c311b ("mtd: rawnand: omap2: convert driver to
-nand_scan()") moved part of the init code in the ->attach_chip hook
-and at the same time changed the struct device object passed to
-dma_request_chan() (&pdev->dev instead of pdev->dev.parent).
+Tested with 4.19.9.
 
-Fixes: e1e6255c311b ("mtd: rawnand: omap2: convert driver to nand_scan()")
-Reported-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+v2: Changed from CXT_FIXUP_MUTE_LED_GPIO to CXT_FIXUP_HP_DOCK because
+    that's what the existing fixups for EliteBooks use.
+
+Signed-off-by: Mantas Mikulėnas <grawity@gmail.com>
 Cc: <stable@vger.kernel.org>
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
-Tested-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mtd/nand/raw/omap2.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/pci/hda/patch_conexant.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/mtd/nand/raw/omap2.c
-+++ b/drivers/mtd/nand/raw/omap2.c
-@@ -1938,7 +1938,7 @@ static int omap_nand_attach_chip(struct
- 	case NAND_OMAP_PREFETCH_DMA:
- 		dma_cap_zero(mask);
- 		dma_cap_set(DMA_SLAVE, mask);
--		info->dma = dma_request_chan(dev, "rxtx");
-+		info->dma = dma_request_chan(dev->parent, "rxtx");
- 
- 		if (IS_ERR(info->dma)) {
- 			dev_err(dev, "DMA engine request failed\n");
+--- a/sound/pci/hda/patch_conexant.c
++++ b/sound/pci/hda/patch_conexant.c
+@@ -923,6 +923,7 @@ static const struct snd_pci_quirk cxt506
+ 	SND_PCI_QUIRK(0x103c, 0x8079, "HP EliteBook 840 G3", CXT_FIXUP_HP_DOCK),
+ 	SND_PCI_QUIRK(0x103c, 0x807C, "HP EliteBook 820 G3", CXT_FIXUP_HP_DOCK),
+ 	SND_PCI_QUIRK(0x103c, 0x80FD, "HP ProBook 640 G2", CXT_FIXUP_HP_DOCK),
++	SND_PCI_QUIRK(0x103c, 0x828c, "HP EliteBook 840 G4", CXT_FIXUP_HP_DOCK),
+ 	SND_PCI_QUIRK(0x103c, 0x83b3, "HP EliteBook 830 G5", CXT_FIXUP_HP_DOCK),
+ 	SND_PCI_QUIRK(0x103c, 0x83d3, "HP ProBook 640 G4", CXT_FIXUP_HP_DOCK),
+ 	SND_PCI_QUIRK(0x103c, 0x8174, "HP Spectre x360", CXT_FIXUP_HP_SPECTRE),
 
 
