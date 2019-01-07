@@ -7,51 +7,47 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F131C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:09:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE96CC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:10:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20BED2147C
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:09:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8ACB72147C
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:10:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546866597;
-	bh=OgWQ+YXAVSFo3VyBkOEtEl1fwvcdzThm3FGB15JN6a0=;
+	s=default; t=1546866601;
+	bh=W8Vb0Diax1rZbJGpUCoDpu9ER0RQKIufM6RDe6gZt1s=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=sL9uHl2i6kW9ktalGyIH1/2XnU9+11FlzTb1aRE2lr+qb+1cKDPRh5hva761sLUXF
-	 DcXMCdiG1BEhbmS9E4wx9VnoPsxmHQfTvWESEaOM/4qZp/NYSjd6J2+AxwyYy8nnFR
-	 QISy/OyR+1k+aH8Khj35Y4wpRJotzy8WACS0gMnE=
+	b=dJyZ8VVK1FB0FQyXDN6/jv/MKv/Cgva8dJ70YOmCye5i7X+fAAE8/kSBWIOrsWcqG
+	 hpyB+qifFA/EzQXIykNVqy4A/FP4fa0/MR/VzwvHsPZepPYblGi5VFSHfJ1fD0a/+w
+	 JlD0EwI8ThF/LDjlTaoGCLZ684KsGUJD1eVS8/kU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731911AbfAGNJ4 (ORCPT
+        id S1731934AbfAGNKA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:09:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56606 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:10:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56662 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731556AbfAGNJv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:09:51 -0500
+        id S1731912AbfAGNJ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:09:56 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BBF222147C;
-        Mon,  7 Jan 2019 13:09:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 04EDE2089F;
+        Mon,  7 Jan 2019 13:09:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546866590;
-        bh=OgWQ+YXAVSFo3VyBkOEtEl1fwvcdzThm3FGB15JN6a0=;
+        s=default; t=1546866595;
+        bh=W8Vb0Diax1rZbJGpUCoDpu9ER0RQKIufM6RDe6gZt1s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rZ8a+jz4xx7s+somZYwpi0EZ6I8vJPpkbjamSPUwhKVSwdj5qivKeTKD321YeB05s
-         oPrTYWByJqyWRWgZX8uahcBrpZTMENqc7TPq+YN0wMJ2M65LXyCFlMvvwF26khuQP9
-         ZtGvXZFOtu9l8U9AyBu0kfWBG2yPSxyZ4fq4A/C8=
+        b=iupX4HCq8LinqDRcJPz0mNwrlY9WkwNb10UzFw/BdiGrORB1C3/vfTIcd0dFmJcBZ
+         Qes+dHrZdN5BZehScGUa4UjoEKeq+uuo++o8SaCXQDUO2l+vDzRNUruvDG2h6pMNzr
+         SLH98b6oFzgm9oI1Nmg2WkMGFSwbU1bC183Yn6Qk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Sasha Levin <alexander.levin@microsoft.com>,
-        Mike Haboustak <haboustak@gmail.com>
-Subject: [PATCH 4.9 68/71] x86/kvm/vmx: do not use vm-exit instruction length for fast MMIO when running nested
-Date:   Mon,  7 Jan 2019 13:33:37 +0100
-Message-Id: <20190107105336.633052729@linuxfoundation.org>
+        stable@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Subject: [PATCH 4.9 69/71] arm64: KVM: Avoid setting the upper 32 bits of VTCR_EL2 to 1
+Date:   Mon,  7 Jan 2019 13:33:38 +0100
+Message-Id: <20190107105336.685495832@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107105330.280153213@linuxfoundation.org>
 References: <20190107105330.280153213@linuxfoundation.org>
@@ -70,83 +66,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
+From: Will Deacon <will.deacon@arm.com>
 
-commit d391f1207067268261add0485f0f34503539c5b0 upstream.
+commit df655b75c43fba0f2621680ab261083297fd6d16 upstream.
 
-I was investigating an issue with seabios >= 1.10 which stopped working
-for nested KVM on Hyper-V. The problem appears to be in
-handle_ept_violation() function: when we do fast mmio we need to skip
-the instruction so we do kvm_skip_emulated_instruction(). This, however,
-depends on VM_EXIT_INSTRUCTION_LEN field being set correctly in VMCS.
-However, this is not the case.
+Although bit 31 of VTCR_EL2 is RES1, we inadvertently end up setting all
+of the upper 32 bits to 1 as well because we define VTCR_EL2_RES1 as
+signed, which is sign-extended when assigning to kvm->arch.vtcr.
 
-Intel's manual doesn't mandate VM_EXIT_INSTRUCTION_LEN to be set when
-EPT MISCONFIG occurs. While on real hardware it was observed to be set,
-some hypervisors follow the spec and don't set it; we end up advancing
-IP with some random value.
+Lucky for us, the architecture currently treats these upper bits as RES0
+so, whilst we've been naughty, we haven't set fire to anything yet.
 
-I checked with Microsoft and they confirmed they don't fill
-VM_EXIT_INSTRUCTION_LEN on EPT MISCONFIG.
-
-Fix the issue by doing instruction skip through emulator when running
-nested.
-
-Fixes: 68c3b4d1676d870f0453c31d5a52e7e65c7448ae
-Suggested-by: Radim Krčmář <rkrcmar@redhat.com>
-Suggested-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
-Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-[mhaboustak: backport to 4.9.y]
-Signed-off-by: Mike Haboustak <haboustak@gmail.com>
+Cc: <stable@vger.kernel.org>
+Cc: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Christoffer Dall <christoffer.dall@arm.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/x86/kvm/vmx.c |   19 +++++++++++++++++--
- arch/x86/kvm/x86.c |    3 ++-
- 2 files changed, 19 insertions(+), 3 deletions(-)
 
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -6548,9 +6548,24 @@ static int handle_ept_misconfig(struct k
+---
+ arch/arm64/include/asm/kvm_arm.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/arch/arm64/include/asm/kvm_arm.h
++++ b/arch/arm64/include/asm/kvm_arm.h
+@@ -99,7 +99,7 @@
+ 			 TCR_EL2_ORGN0_MASK | TCR_EL2_IRGN0_MASK | TCR_EL2_T0SZ_MASK)
  
- 	gpa = vmcs_read64(GUEST_PHYSICAL_ADDRESS);
- 	if (!kvm_io_bus_write(vcpu, KVM_FAST_MMIO_BUS, gpa, 0, NULL)) {
--		skip_emulated_instruction(vcpu);
- 		trace_kvm_fast_mmio(gpa);
--		return 1;
-+		/*
-+		* Doing kvm_skip_emulated_instruction() depends on undefined
-+		* behavior: Intel's manual doesn't mandate
-+		* VM_EXIT_INSTRUCTION_LEN to be set in VMCS when EPT MISCONFIG
-+		* occurs and while on real hardware it was observed to be set,
-+		* other hypervisors (namely Hyper-V) don't set it, we end up
-+		* advancing IP with some random value. Disable fast mmio when
-+		* running nested and keep it for real hardware in hope that
-+		* VM_EXIT_INSTRUCTION_LEN will always be set correctly.
-+		*/
-+		if (!static_cpu_has(X86_FEATURE_HYPERVISOR)) {
-+			skip_emulated_instruction(vcpu);
-+			return 1;
-+		}
-+		else
-+			return x86_emulate_instruction(vcpu, gpa, EMULTYPE_SKIP,
-+						       NULL, 0) == EMULATE_DONE;
- 	}
- 
- 	ret = handle_mmio_page_fault(vcpu, gpa, true);
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -5707,7 +5707,8 @@ int x86_emulate_instruction(struct kvm_v
- 		 * handle watchpoints yet, those would be handled in
- 		 * the emulate_ops.
- 		 */
--		if (kvm_vcpu_check_breakpoint(vcpu, &r))
-+		if (!(emulation_type & EMULTYPE_SKIP) &&
-+		    kvm_vcpu_check_breakpoint(vcpu, &r))
- 			return r;
- 
- 		ctxt->interruptibility = 0;
+ /* VTCR_EL2 Registers bits */
+-#define VTCR_EL2_RES1		(1 << 31)
++#define VTCR_EL2_RES1		(1U << 31)
+ #define VTCR_EL2_HD		(1 << 22)
+ #define VTCR_EL2_HA		(1 << 21)
+ #define VTCR_EL2_PS_MASK	TCR_EL2_PS_MASK
 
 
