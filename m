@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17960C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:57:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE973C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:57:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D328D206BB
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:57:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9586B2089F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:57:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546865829;
-	bh=MRGctBwpvb4QyUrmZomdGmVfkQ362hqLbp+qcdU4EPU=;
+	s=default; t=1546865837;
+	bh=PVmZp9BPgPEiT66bAMCwztngdbI2n7DRxDG2HrXjzio=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=NOaEV7MBUqiPi8s/zk98ESbtRGprxPETNSll/4KQQg9bdafMzReJOIwCqpZtHy5zN
-	 OyuhtaCgmiQPWYvCUhiJQrf5HCo2XPM1p40H1twowZjI6PHrW8NRPKX4bmnE+glo2h
-	 zUB05aG+5dQaH6MEA+h/qy6wYXzAjZKo+A4KLszw=
+	b=kVSjQRcHoYVggJLgsoze5EmxNtVX0GC9tO/sU9fd1T8wKQAJhBxLd8Ywf5m+uBHLH
+	 5KMAOmzBG45hyfScmULQ9PlWd4gUY+fr89NAQvIzMEXbB0Hp33pf9ziYtVdSbqETAm
+	 bzDSpwAjck1omLbYn4oGenaLM+gYCeJa+Xe6h9bk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729781AbfAGM5J (ORCPT
+        id S1729161AbfAGM5P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:57:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44864 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:57:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44906 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729026AbfAGM5G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:57:06 -0500
+        id S1729026AbfAGM5M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:57:12 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3C6C4206BB;
-        Mon,  7 Jan 2019 12:57:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8C7C9206BB;
+        Mon,  7 Jan 2019 12:57:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865824;
-        bh=MRGctBwpvb4QyUrmZomdGmVfkQ362hqLbp+qcdU4EPU=;
+        s=default; t=1546865831;
+        bh=PVmZp9BPgPEiT66bAMCwztngdbI2n7DRxDG2HrXjzio=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0nBJIkPCR/w4VJKXHmiSDi/PraCE1IkKeW9mMepFxgNW2MU8H9+UNW76xI+Pnhw+a
-         Pge8YI1sZ4hhp5X9nOjZHpqjaGXSAQxeRzOGxtGExtBO/sHLyCw9s2/b9Dk5lTSKWt
-         vsag0qKBdRItI9aJp7Ot/JG4/YAXc9U1SL1Y3JCk=
+        b=1sYe0vQPVEe/0dOVKe78NVh9pAOLD/ZIoGxXNMVxfsXi1oGjMcJUxXMQdUR8oJgJd
+         nrtzPrY9RY0YjqHv9b6XQR9nNhjTfhJKxGr2yTPnPXEiLM6UH8HXnG4pHFG3euUfiy
+         I+h6v0cVnLcwxxudB1u5gtqMkaCefMWyeim8/kpI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
-        Josef Bacik <josef@toxicpanda.com>,
         David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.19 130/170] btrfs: run delayed items before dropping the snapshot
-Date:   Mon,  7 Jan 2019 13:32:37 +0100
-Message-Id: <20190107104508.307476777@linuxfoundation.org>
+Subject: [PATCH 4.19 131/170] Btrfs: send, fix race with transaction commits that create snapshots
+Date:   Mon,  7 Jan 2019 13:32:38 +0100
+Message-Id: <20190107104508.415449636@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104452.953560660@linuxfoundation.org>
 References: <20190107104452.953560660@linuxfoundation.org>
@@ -66,86 +65,145 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Josef Bacik <jbacik@fb.com>
+From: Filipe Manana <fdmanana@suse.com>
 
-commit 0568e82dbe2510fc1fa664f58e5c997d3f1e649e upstream.
+commit be6821f82c3cc36e026f5afd10249988852b35ea upstream.
 
-With my delayed refs patches in place we started seeing a large amount
-of aborts in __btrfs_free_extent:
+If we create a snapshot of a snapshot currently being used by a send
+operation, we can end up with send failing unexpectedly (returning
+-ENOENT error to user space for example). The following diagram shows
+how this happens.
 
- BTRFS error (device sdb1): unable to find ref byte nr 91947008 parent 0 root 35964  owner 1 offset 0
- Call Trace:
-  ? btrfs_merge_delayed_refs+0xaf/0x340
-  __btrfs_run_delayed_refs+0x6ea/0xfc0
-  ? btrfs_set_path_blocking+0x31/0x60
-  btrfs_run_delayed_refs+0xeb/0x180
-  btrfs_commit_transaction+0x179/0x7f0
-  ? btrfs_check_space_for_delayed_refs+0x30/0x50
-  ? should_end_transaction.isra.19+0xe/0x40
-  btrfs_drop_snapshot+0x41c/0x7c0
-  btrfs_clean_one_deleted_snapshot+0xb5/0xd0
-  cleaner_kthread+0xf6/0x120
-  kthread+0xf8/0x130
-  ? btree_invalidatepage+0x90/0x90
-  ? kthread_bind+0x10/0x10
-  ret_from_fork+0x35/0x40
+            CPU 1                                   CPU2                                CPU3
 
-This was because btrfs_drop_snapshot depends on the root not being
-modified while it's dropping the snapshot.  It will unlock the root node
-(and really every node) as it walks down the tree, only to re-lock it
-when it needs to do something.  This is a problem because if we modify
-the tree we could cow a block in our path, which frees our reference to
-that block.  Then once we get back to that shared block we'll free our
-reference to it again, and get ENOENT when trying to lookup our extent
-reference to that block in __btrfs_free_extent.
+ btrfs_ioctl_send()
+  (...)
+                                     create_snapshot()
+                                      -> creates snapshot of a
+                                         root used by the send
+                                         task
+                                      btrfs_commit_transaction()
+                                       create_pending_snapshot()
+  __get_inode_info()
+   btrfs_search_slot()
+    btrfs_search_slot_get_root()
+     down_read commit_root_sem
 
-This is ultimately happening because we have delayed items left to be
-processed for our deleted snapshot _after_ all of the inodes are closed
-for the snapshot.  We only run the delayed inode item if we're deleting
-the inode, and even then we do not run the delayed insertions or delayed
-removals.  These can be run at any point after our final inode does its
-last iput, which is what triggers the snapshot deletion.  We can end up
-with the snapshot deletion happening and then have the delayed items run
-on that file system, resulting in the above problem.
+     get reference on eb of the
+     commit root
+      -> eb with bytenr == X
 
-This problem has existed forever, however my patches made it much easier
-to hit as I wake up the cleaner much more often to deal with delayed
-iputs, which made us more likely to start the snapshot dropping work
-before the transaction commits, which is when the delayed items would
-generally be run.  Before, generally speaking, we would run the delayed
-items, commit the transaction, and wakeup the cleaner thread to start
-deleting snapshots, which means we were less likely to hit this problem.
-You could still hit it if you had multiple snapshots to be deleted and
-ended up with lots of delayed items, but it was definitely harder.
+     up_read commit_root_sem
 
-Fix for now by simply running all the delayed items before starting to
-drop the snapshot.  We could make this smarter in the future by making
-the delayed items per-root, and then simply drop any delayed items for
-roots that we are going to delete.  But for now just a quick and easy
-solution is the safest.
+                                        btrfs_cow_block(root node)
+                                         btrfs_free_tree_block()
+                                          -> creates delayed ref to
+                                             free the extent
 
-CC: stable@vger.kernel.org # 4.4+
-Reviewed-by: Filipe Manana <fdmanana@suse.com>
-Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+                                       btrfs_run_delayed_refs()
+                                        -> runs the delayed ref,
+                                           adds extent to
+                                           fs_info->pinned_extents
+
+                                       btrfs_finish_extent_commit()
+                                        unpin_extent_range()
+                                         -> marks extent as free
+                                            in the free space cache
+
+                                      transaction commit finishes
+
+                                                                       btrfs_start_transaction()
+                                                                        (...)
+                                                                        btrfs_cow_block()
+                                                                         btrfs_alloc_tree_block()
+                                                                          btrfs_reserve_extent()
+                                                                           -> allocates extent at
+                                                                              bytenr == X
+                                                                          btrfs_init_new_buffer(bytenr X)
+                                                                           btrfs_find_create_tree_block()
+                                                                            alloc_extent_buffer(bytenr X)
+                                                                             find_extent_buffer(bytenr X)
+                                                                              -> returns existing eb,
+                                                                                 which the send task got
+
+                                                                        (...)
+                                                                         -> modifies content of the
+                                                                            eb with bytenr == X
+
+    -> uses an eb that now
+       belongs to some other
+       tree and no more matches
+       the commit root of the
+       snapshot, resuts will be
+       unpredictable
+
+The consequences of this race can be various, and can lead to searches in
+the commit root performed by the send task failing unexpectedly (unable to
+find inode items, returning -ENOENT to user space, for example) or not
+failing because an inode item with the same number was added to the tree
+that reused the metadata extent, in which case send can behave incorrectly
+in the worst case or just fail later for some reason.
+
+Fix this by performing a copy of the commit root's extent buffer when doing
+a search in the context of a send operation.
+
+CC: stable@vger.kernel.org # 4.4.x: 1fc28d8e2e9: Btrfs: move get root out of btrfs_search_slot to a helper
+CC: stable@vger.kernel.org # 4.4.x: f9ddfd0592a: Btrfs: remove unused check of skip_locking
+CC: stable@vger.kernel.org # 4.4.x
+Signed-off-by: Filipe Manana <fdmanana@suse.com>
 Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/extent-tree.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ fs/btrfs/ctree.c |   29 +++++++++++++++++++++++------
+ 1 file changed, 23 insertions(+), 6 deletions(-)
 
---- a/fs/btrfs/extent-tree.c
-+++ b/fs/btrfs/extent-tree.c
-@@ -8911,6 +8911,10 @@ int btrfs_drop_snapshot(struct btrfs_roo
- 		goto out_free;
- 	}
+--- a/fs/btrfs/ctree.c
++++ b/fs/btrfs/ctree.c
+@@ -2624,14 +2624,27 @@ static struct extent_buffer *btrfs_searc
+ 	root_lock = BTRFS_READ_LOCK;
  
-+	err = btrfs_run_delayed_items(trans);
-+	if (err)
-+		goto out_end_trans;
+ 	if (p->search_commit_root) {
+-		/* The commit roots are read only so we always do read locks */
+-		if (p->need_commit_sem)
++		/*
++		 * The commit roots are read only so we always do read locks,
++		 * and we always must hold the commit_root_sem when doing
++		 * searches on them, the only exception is send where we don't
++		 * want to block transaction commits for a long time, so
++		 * we need to clone the commit root in order to avoid races
++		 * with transaction commits that create a snapshot of one of
++		 * the roots used by a send operation.
++		 */
++		if (p->need_commit_sem) {
+ 			down_read(&fs_info->commit_root_sem);
+-		b = root->commit_root;
+-		extent_buffer_get(b);
+-		level = btrfs_header_level(b);
+-		if (p->need_commit_sem)
++			b = btrfs_clone_extent_buffer(root->commit_root);
+ 			up_read(&fs_info->commit_root_sem);
++			if (!b)
++				return ERR_PTR(-ENOMEM);
 +
- 	if (block_rsv)
- 		trans->block_rsv = block_rsv;
++		} else {
++			b = root->commit_root;
++			extent_buffer_get(b);
++		}
++		level = btrfs_header_level(b);
+ 		/*
+ 		 * Ensure that all callers have set skip_locking when
+ 		 * p->search_commit_root = 1.
+@@ -2757,6 +2770,10 @@ int btrfs_search_slot(struct btrfs_trans
+ again:
+ 	prev_cmp = -1;
+ 	b = btrfs_search_slot_get_root(root, p, write_lock_level);
++	if (IS_ERR(b)) {
++		ret = PTR_ERR(b);
++		goto done;
++	}
  
+ 	while (b) {
+ 		level = btrfs_header_level(b);
 
 
