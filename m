@@ -2,182 +2,171 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.9 required=3.0 tests=FROM_EXCESS_BASE64,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	SPF_PASS,USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BFA0C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:07:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D994C43444
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:07:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C59420665
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:07:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="LEUl+L0A";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="QMzcsjX6"
+	by mail.kernel.org (Postfix) with ESMTP id 142432147C
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:07:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726701AbfAGMHW (ORCPT
+        id S1726750AbfAGMHr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:07:22 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:47592 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726589AbfAGMHV (ORCPT
+        Mon, 7 Jan 2019 07:07:47 -0500
+Received: from smtp.eu.citrix.com ([185.25.65.24]:64211 "EHLO
+        SMTP.EU.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726589AbfAGMHr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:07:21 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id E91316092B; Mon,  7 Jan 2019 12:07:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1546862840;
-        bh=nQdhMg/zxfqtrScSfOLq5awV0rQd/TXDzDgONYXtPN8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LEUl+L0A+d3IbYCgZgnZpAR7UgW6PQ0q+FEIn47fuduhOQs1LxH9Vgg6K3nU10zL/
-         zcu5VQ76aZuAkvqXIZo1j/mPibUGxhKUtjiDm9WNqtmE+1mIf71KQlj4QyCM4BWC0w
-         fyk3WaVwwb6ekvJXdPvVPMMVw2GD2u73LI2hEY04=
-Received: from blr-ubuntu-41.ap.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id D09A26087B;
-        Mon,  7 Jan 2019 12:07:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1546862839;
-        bh=nQdhMg/zxfqtrScSfOLq5awV0rQd/TXDzDgONYXtPN8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QMzcsjX6ff+Tr1v8kPZxHc11Xn25gjrpML0uZIROZAW0Dcb4sR5n0qCErRbhjb5YZ
-         tYGoc4Wvi+YcL4E1tZMNevtlhm94CF+4JPwDTLV8gg/ZFy6/+/8KdJc1zEB7UypR4j
-         dCRqqrz+8+D7IKhuGMZvhiMu+f4yOIKkHSBDYE1s=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D09A26087B
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
-From:   Vivek Gautam <vivek.gautam@codeaurora.org>
-To:     sean@poorly.run, airlied@linux.ie, dri-devel@lists.freedesktop.org
-Cc:     maarten.lankhorst@linux.intel.com, maxime.ripard@bootlin.com,
-        daniel@ffwll.ch, robdclark@gmail.com, jcrouse@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org,
-        Vivek Gautam <vivek.gautam@codeaurora.org>
-Subject: [PATCH v2 1/1] drm/prime: Use sg_dma_len() macro to get sg's length
-Date:   Mon,  7 Jan 2019 17:37:08 +0530
-Message-Id: <20190107120708.18497-1-vivek.gautam@codeaurora.org>
-X-Mailer: git-send-email 2.16.1.72.g5be1f00a9a70
-In-Reply-To: <CAFp+6iGV6m_Bj=QBvt_wS2v-Bv=3vp15kUCuMZw3uyJGQD2ytg@mail.gmail.com>
-References: <CAFp+6iGV6m_Bj=QBvt_wS2v-Bv=3vp15kUCuMZw3uyJGQD2ytg@mail.gmail.com>
+        Mon, 7 Jan 2019 07:07:47 -0500
+X-IronPort-AV: E=Sophos;i="5.56,450,1539648000"; 
+   d="scan'208";a="84222505"
+Date:   Mon, 7 Jan 2019 13:01:07 +0100
+From:   Roger Pau =?utf-8?B?TW9ubsOp?= <roger.pau@citrix.com>
+To:     Dongli Zhang <dongli.zhang@oracle.com>
+CC:     <xen-devel@lists.xenproject.org>, <linux-block@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <konrad.wilk@oracle.com>,
+        <axboe@kernel.dk>, <Paul.Durrant@citrix.com>
+Subject: Re: [PATCH v4 2/2] xen/blkback: rework connect_ring() to avoid
+ inconsistent xenstore 'ring-page-order' set by malicious blkfront
+Message-ID: <20190107120107.euf7mrq7gk6bmibz@mac>
+References: <1546839359-5478-1-git-send-email-dongli.zhang@oracle.com>
+ <1546839359-5478-2-git-send-email-dongli.zhang@oracle.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <1546839359-5478-2-git-send-email-dongli.zhang@oracle.com>
+User-Agent: NeoMutt/20180716
+X-ClientProxiedBy: AMSPEX02CAS01.citrite.net (10.69.22.112) To
+ AMSPEX02CL02.citrite.net (10.69.22.126)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After mapping a sg list the we should use sg_dma_address() and
-sg_dma_len() macros to access sg->address and sg->length. Fix
-the same for sg->length in drm_prime_sg_to_page_addr_arrays().
+On Mon, Jan 07, 2019 at 01:35:59PM +0800, Dongli Zhang wrote:
+> The xenstore 'ring-page-order' is used globally for each blkback queue and
+> therefore should be read from xenstore only once. However, it is obtained
+> in read_per_ring_refs() which might be called multiple times during the
+> initialization of each blkback queue.
+> 
+> If the blkfront is malicious and the 'ring-page-order' is set in different
+> value by blkfront every time before blkback reads it, this may end up at
+> the "WARN_ON(i != (XEN_BLKIF_REQS_PER_PAGE * blkif->nr_ring_pages));" in
+> xen_blkif_disconnect() when frontend is destroyed.
+> 
+> This patch reworks connect_ring() to read xenstore 'ring-page-order' only
+> once.
+> 
+> Signed-off-by: Dongli Zhang <dongli.zhang@oracle.com>
+> ---
+> Changed since v1:
+>   * change the order of xenstore read in read_per_ring_refs
+>   * use xenbus_read_unsigned() in connect_ring()
+> 
+> Changed since v2:
+>   * simplify the condition check as "(err != 1 && nr_grefs > 1)"
+>   * avoid setting err as -EINVAL to remove extra one line of code
+> 
+> Changed since v3:
+>   * exit at the beginning if !nr_grefs
+>   * change the if statements to avoid test (err != 1) twice
+>   * initialize a 'blkif' stack variable (refer to PATCH 1/2)
+> 
+>  drivers/block/xen-blkback/xenbus.c | 76 +++++++++++++++++++++-----------------
+>  1 file changed, 43 insertions(+), 33 deletions(-)
+> 
+> diff --git a/drivers/block/xen-blkback/xenbus.c b/drivers/block/xen-blkback/xenbus.c
+> index a4aadac..a2acbc9 100644
+> --- a/drivers/block/xen-blkback/xenbus.c
+> +++ b/drivers/block/xen-blkback/xenbus.c
+> @@ -926,7 +926,7 @@ static int read_per_ring_refs(struct xen_blkif_ring *ring, const char *dir)
+>  	int err, i, j;
+>  	struct xen_blkif *blkif = ring->blkif;
+>  	struct xenbus_device *dev = blkif->be->dev;
+> -	unsigned int ring_page_order, nr_grefs, evtchn;
+> +	unsigned int nr_grefs, evtchn;
+>  
+>  	err = xenbus_scanf(XBT_NIL, dir, "event-channel", "%u",
+>  			  &evtchn);
+> @@ -936,43 +936,38 @@ static int read_per_ring_refs(struct xen_blkif_ring *ring, const char *dir)
+>  		return err;
+>  	}
+>  
+> -	err = xenbus_scanf(XBT_NIL, dev->otherend, "ring-page-order", "%u",
+> -			  &ring_page_order);
+> -	if (err != 1) {
+> -		err = xenbus_scanf(XBT_NIL, dir, "ring-ref", "%u", &ring_ref[0]);
+> +	nr_grefs = blkif->nr_ring_pages;
+> +
+> +	if (unlikely(!nr_grefs))
+> +		return -EINVAL;
 
-Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
----
+Is this even possible? AFAICT read_per_ring_refs will always be called
+with blkif->nr_ring_pages != 0?
 
-Changes since v1:
- - Fixed compilation error: replaced sg_dma_length() with sg_dma_len().
+If so, I would consider turning this into a BUG_ON/WARN_ON.
 
-This came while debugging one dmabuf import issue that we are seeing
-on sdm845 target.
-The dmabuf which is prepared by video (venus in this case), is imported
-by drm device.
-The import call flow looks like follows:
+> +
+> +	for (i = 0; i < nr_grefs; i++) {
+> +		char ring_ref_name[RINGREF_NAME_LEN];
+> +
+> +		snprintf(ring_ref_name, RINGREF_NAME_LEN, "ring-ref%u", i);
+> +		err = xenbus_scanf(XBT_NIL, dir, ring_ref_name,
+> +				   "%u", &ring_ref[i]);
+> +
+>  		if (err != 1) {
+> -			err = -EINVAL;
+> -			xenbus_dev_fatal(dev, err, "reading %s/ring-ref", dir);
+> -			return err;
+> -		}
+> -		nr_grefs = 1;
+> -	} else {
+> -		unsigned int i;
+> -
+> -		if (ring_page_order > xen_blkif_max_ring_order) {
+> -			err = -EINVAL;
+> -			xenbus_dev_fatal(dev, err, "%s/request %d ring page order exceed max:%d",
+> -					 dir, ring_page_order,
+> -					 xen_blkif_max_ring_order);
+> -			return err;
+> +			if (nr_grefs == 1)
+> +				break;
+> +
 
-drm_gem_prime_import()
- - drm_gem_prime_import_dev()
-   - dma_buf_attach() & dma_buf_map_attachment()
-     - From dma_buf_map_attachment()
-       - vb2_dma_sg_dmabuf_ops_map()
-         - dma_map_sg(): this updates the sg->nents.
+You need to either set err to EINVAL before calling xenbus_dev_fatal,
+or call xenbus_dev_fatal with EINVAL as the second parameter.
 
-From debugging, the sg table mapping results in sg's 'nents' to be less that
-the original nents. Now drm device prepares the page information based on
-this sg table, and messes up with the mappings, and we start seeing random
-crashes as below from drm's memory space.
+> +			xenbus_dev_fatal(dev, err, "reading %s/%s",
+> +					 dir, ring_ref_name);
+> +			return -EINVAL;
+>  		}
+> +	}
+>  
+> -		nr_grefs = 1 << ring_page_order;
+> -		for (i = 0; i < nr_grefs; i++) {
+> -			char ring_ref_name[RINGREF_NAME_LEN];
+> -
+> -			snprintf(ring_ref_name, RINGREF_NAME_LEN, "ring-ref%u", i);
+> -			err = xenbus_scanf(XBT_NIL, dir, ring_ref_name,
+> -					   "%u", &ring_ref[i]);
+> -			if (err != 1) {
+> -				err = -EINVAL;
+> -				xenbus_dev_fatal(dev, err, "reading %s/%s",
+> -						 dir, ring_ref_name);
+> -				return err;
+> -			}
+> +	if (err != 1) {
+> +		WARN_ON(nr_grefs != 1);
+> +
+> +		err = xenbus_scanf(XBT_NIL, dir, "ring-ref", "%u",
+> +				   &ring_ref[0]);
+> +		if (err != 1) {
+> +			xenbus_dev_fatal(dev, err, "reading %s/ring-ref", dir);
 
-Although this change isn't helping to fix the issue currently, but
-this fix seems the right thing to do.
+Second parameter should be EINVAL, or err should be set to EINVAL
+before calling xenbus_dev_fatal.
 
-One thing to notice is that, if we restore the sg->nents to
-sg->orig_nents in vb2_dma_sg_dmabuf_ops_map(), we don't see the below
-corruptions.
-
-Any pointers on this will be highly appreciated.
-Thanks.
-
-------
-[  338.070558] Unable to handle kernel paging request at virtual address 0000400000000038
-[  338.078751] Mem abort info:
-[  338.081671]   ESR = 0x96000004
-[  338.084860]   Exception class = DABT (current EL), IL = 32 bits
-[  338.090972]   SET = 0, FnV = 0
-[  338.094139]   EA = 0, S1PTW = 0
-[  338.097393] Data abort info:
-[  338.100375]   ISV = 0, ISS = 0x00000004
-[  338.104362]   CM = 0, WnR = 0
-[  338.107446] [0000400000000038] address between user and kernel address ranges
-[  338.114801] Internal error: Oops: 96000004 [#1] PREEMPT SMP
-[  338.120527] Modules linked in: rfcomm uinput cdc_ether venus_dec venus_enc usbnet videobuf2_dma_sg videobuf2_memops hci_uart btqca bluetooth r8152 mii ath10k_snoc venus_core ath10k_core v4l2_mem2mem videobuf2_v4l2 videobuf2_common ath mac80211 ecdh_generic qcom_q6v5_mss lzo lzo_compress qcom_q6v5_adsp qcom_common qcom_q6v5 zram bridge stp llc ipt_MASQUERADE fuse snd_seq_dummy snd_seq snd_seq_device cfg80211 joydev
-[  338.158192] CPU: 4 PID: 3235 Comm: chrome Tainted: G        W         4.19.0 #2
-[  338.165700] Hardware name: Google Cheza (rev1) (DT)
-[  338.170720] pstate: 80400009 (Nzcv daif +PAN -UAO)
-[  338.175660] pc : drm_mm_insert_node_in_range+0xfc/0x348
-[  338.181035] lr : drm_mm_insert_node_in_range+0x24/0x348
-[  338.186407] sp : ffffff8013033b30
-[  338.189816] x29: ffffff8013033bd0 x28: ffffff8008591894
-[  338.195275] x27: 0000000000000010 x26: 0000000000000000
-[  338.200734] x25: 0000000000000000 x24: ffffffffffffffff
-[  338.206194] x23: 0000000000000000 x22: ffffffc0f48b7e08
-[  338.211656] x21: 0000000000000000 x20: 000000000000005d
-[  338.217118] x19: 0000000000000000 x18: 0000000000000000
-[  338.222581] x17: 0000000000000000 x16: 0000000000000000
-[  338.228046] x15: 0000000000000000 x14: 0000000000000000
-[  338.233511] x13: 0000000000000001 x12: ffffffc0b1da7200
-[  338.238978] x11: 0000000000000010 x10: 0000000000000010
-[  338.244437] x9 : 0000000000000008 x8 : 0000400000000000
-[  338.249898] x7 : 0000000000000000 x6 : ffffffffffffffff
-[  338.255361] x5 : 0000000000000000 x4 : 0000000000000000
-[  338.260823] x3 : 0000000000000000 x2 : 000000000000005d
-[  338.266285] x1 : ffffffc0b1da7100 x0 : ffffffc0b0215800
-[  338.271748] Process chrome (pid: 3235, stack limit = 0x000000000900f416)
-[  338.278628] Call trace:
-[  338.281151]  drm_mm_insert_node_in_range+0xfc/0x348
-[  338.286168]  msm_gem_map_vma+0x60/0xdc
-[  338.290022]  msm_gem_get_iova+0xb4/0xf4
-[  338.293967]  msm_ioctl_gem_info+0x90/0xdc
-[  338.298089]  drm_ioctl_kernel+0xa8/0xe8
-[  338.302043]  drm_ioctl+0x218/0x384
-[  338.305547]  drm_compat_ioctl+0xd8/0xe8
-[  338.309503]  __arm64_compat_sys_ioctl+0x134/0x20c
-[  338.314339]  el0_svc_common+0xa0/0xf0
-[  338.318108]  el0_svc_compat_handler+0x2c/0x38
-[  338.322588]  el0_svc_compat+0x8/0x18
-[  338.326274] Code: f94066c8 aa1f03e0 321d03e9 321c03ea (f9401d0b)
-[  338.332538] ---[ end trace 5c09e60869887d87 ]---
-[  338.354633] Kernel panic - not syncing: Fatal exception
-[  338.360018] SMP: stopping secondary CPUs
-[  338.364179] Kernel Offset: disabled
-[  338.367779] CPU features: 0x0,22802a18
-[  338.371643] Memory Limit: none
-------
-
- drivers/gpu/drm/drm_prime.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/drm_prime.c b/drivers/gpu/drm/drm_prime.c
-index 231e3f6d5f41..aa87ba9c0d7b 100644
---- a/drivers/gpu/drm/drm_prime.c
-+++ b/drivers/gpu/drm/drm_prime.c
-@@ -945,7 +945,7 @@ int drm_prime_sg_to_page_addr_arrays(struct sg_table *sgt, struct page **pages,
- 
- 	index = 0;
- 	for_each_sg(sgt->sgl, sg, sgt->nents, count) {
--		len = sg->length;
-+		len = sg_dma_len(sg);
- 		page = sg_page(sg);
- 		addr = sg_dma_address(sg);
- 
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
-
+Thanks, Roger.
