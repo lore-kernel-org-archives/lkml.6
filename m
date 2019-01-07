@@ -2,126 +2,102 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72A04C43612
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 14:12:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81846C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 14:15:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4CEAD2183E
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 14:12:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 520FD2070B
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 14:15:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QiF8l3sY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728875AbfAGOMK (ORCPT
+        id S1727078AbfAGOPs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 09:12:10 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:39902 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727012AbfAGOMK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 09:12:10 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 113CE209D7; Mon,  7 Jan 2019 15:12:08 +0100 (CET)
-Received: from localhost (aaubervilliers-681-1-29-148.w90-88.abo.wanadoo.fr [90.88.149.148])
-        by mail.bootlin.com (Postfix) with ESMTPSA id D715420802;
-        Mon,  7 Jan 2019 15:11:57 +0100 (CET)
-Date:   Mon, 7 Jan 2019 15:11:58 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        linux-amarula@amarulasolutions.com
-Subject: Re: [PATCH v5 07/17] drm/sun4i: sun6i_mipi_dsi: Refactor vertical
- video start delay
-Message-ID: <20190107141158.zaimizk4rlqa6xli@flea>
-References: <20181210161729.29720-1-jagan@amarulasolutions.com>
- <20181210161729.29720-8-jagan@amarulasolutions.com>
- <20181211164900.wfmkmbrbj3nmlb3h@flea>
- <CAMty3ZB5F5jD9iJT1soXSA5HtQOf5W9rKO9nCdGFUfVo0hpO4Q@mail.gmail.com>
+        Mon, 7 Jan 2019 09:15:48 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:42806 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726746AbfAGOPs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 09:15:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=tyjMoiH4P3KcOYrj6SCeq/q34vEUy4KTBkQwzS3aQwg=; b=QiF8l3sYPxS+7nBq81w47X0/C
+        M+5pdqzRbJzZjshXvLgC1r1+0fbf6p6L+9CQpFzdkdJ+7FzmB7dEjub6x+w+p06HBwhjqhDdZL/6T
+        iiem+3WhumYKWpviuVSX5tDHF/ycB2n7zL8j11cwAX7M2MRkoZec+el23PcVoBWdjszsb6ys5YpP7
+        bRYsUsh0QrYCvDDz9QimqECiifUJ1Ar6H6JjmL02Tkx9mdwE0GaBeZ4/7MnaqvtWP/zaaxv4Vwi+W
+        boYjdBkwY2c5UFVoNnu2Q6yy9YYHDrWk/50wDRUVwRvSDkTCs0xfpX5LintP/qPJ8Ukoy/Ak7yUI0
+        svvV0EFcQ==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1ggVgv-0002Qa-KS; Mon, 07 Jan 2019 14:15:45 +0000
+Date:   Mon, 7 Jan 2019 06:15:45 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Vincent Whitchurch <vincent.whitchurch@axis.com>
+Cc:     akpm@linux-foundation.org, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, mcgrof@kernel.org,
+        keescook@chromium.org, corbet@lwn.net, linux-doc@vger.kernel.org,
+        Vincent Whitchurch <rabinv@axis.com>
+Subject: Re: [PATCH] drop_caches: Allow unmapping pages
+Message-ID: <20190107141545.GX6310@bombadil.infradead.org>
+References: <20190107130239.3417-1-vincent.whitchurch@axis.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="2f4sgk2x6n64h3fz"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMty3ZB5F5jD9iJT1soXSA5HtQOf5W9rKO9nCdGFUfVo0hpO4Q@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190107130239.3417-1-vincent.whitchurch@axis.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Jan 07, 2019 at 02:02:39PM +0100, Vincent Whitchurch wrote:
+> +++ b/Documentation/sysctl/vm.txt
+> @@ -222,6 +222,10 @@ To increase the number of objects freed by this operation, the user may run
+>  number of dirty objects on the system and create more candidates to be
+>  dropped.
+>  
+> +By default, pages which are currently mapped are not dropped from the
+> +pagecache.  If you want to unmap and drop these pages too, echo 9 or 11 instead
+> +of 1 or 3 respectively (set bit 4).
 
---2f4sgk2x6n64h3fz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Typically we number bits from 0, so this would be bit 3, not 4.  I do see
+elsewhere in this file somebody else got this wrong:
 
-On Fri, Dec 21, 2018 at 02:26:11AM +0530, Jagan Teki wrote:
-> On Tue, Dec 11, 2018 at 10:19 PM Maxime Ripard
-> <maxime.ripard@bootlin.com> wrote:
-> >
-> > On Mon, Dec 10, 2018 at 09:47:19PM +0530, Jagan Teki wrote:
-> > > Video start delay can be computed by subtracting total vertical
-> > > timing with front porch timing and with adding 1 delay line for TCON.
-> > >
-> > > BSP code form BPI-M64-bsp is computing video start delay as
-> > > (from linux-sunxi/
-> > > drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c)
-> > >
-> > > u32 vfp =3D panel->lcd_vt - panel->lcd_y - panel->lcd_vbp;
-> > > =3D> (panel->lcd_vt) - panel->lcd_y - (panel->lcd_vbp)
-> > > =3D> (timmings->ver_front_porch + panel->lcd_vbp + panel->lcd_y)
-> > >    - panel->lcd_y - (panel->lcd_vbp)
-> > > =3D> timmings->ver_front_porch + panel->lcd_vbp + panel->lcd_y
-> > >                            - panel->lcd_y - panel->lcd_vbp
-> > > =3D> timmings->ver_front_porch
-> > >
-> > > So, update the start delay computation accordingly.
-> > >
-> > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> >
-> > Even though it's a bit better now on my A33 board and I don't have the
-> > white stripes on the bottom of the display, there's still some
-> > flickering with your patches applied.
-> >
-> > Bisecting it seems to point at that patch, but reverting it doesn't
-> > make the issue go away, so it's not really clear which one exactly is
-> > at fault.
->=20
-> Is reverting this patch, work fine or not?
+: with your system.  To disable them, echo 4 (bit 3) into drop_caches.
 
-As I was saying, it doesn't.
+but that should also be fixed.
 
-> This patch is trying to make use of front porch instead of existing
-> back porch to compute the delay. Since we revert the VBP fix patch[1]
-> to assume VBP as VFP value look like your setup would also require to
-> revert this change. But as per BSP or drm_mode details all of my
-> displays even work with and w/o reverting these two.
+> +static int __invalidate_inode_page(struct page *page, bool unmap)
+> +{
+> +	struct address_space *mapping = page_mapping(page);
+> +	if (!mapping)
+> +		return 0;
+> +	if (PageDirty(page) || PageWriteback(page))
+> +		return 0;
+> +	if (page_mapped(page)) {
+> +		if (!unmap)
+> +			return 0;
+> +		if (!try_to_unmap(page, TTU_IGNORE_ACCESS))
+> +			return 0;
 
-Again, I cannot help you without the datasheet for the panels you're
-trying to submit.
+You're going to get data corruption doing this.  try_to_unmap_one() does:
 
-Maxime
+                /* Move the dirty bit to the page. Now the pte is gone. */
+                if (pte_dirty(pteval))
+                        set_page_dirty(page);
 
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+so PageDirty() can be false above, but made true by calling try_to_unmap().
 
---2f4sgk2x6n64h3fz
-Content-Type: application/pgp-signature; name="signature.asc"
+I also think the way you've done this is expedient at the cost of
+efficiency and layering violations.  I think you should first tear
+down the mappings of userspace processes (which will reclaim a lot
+of pages allocated to page tables), then you won't need to touch the
+invalidate_inode_pages paths at all.
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXDNeLgAKCRDj7w1vZxhR
-xZcmAQD+Vb+9GVQqhaYBdMGINgctl0C0OJbmlIIp5NIuvS7qTQEA5RSgws23ZINC
-hEiM5577HRtlW0Q8p0cQaAY4ZIT0hA0=
-=l3Hj
------END PGP SIGNATURE-----
-
---2f4sgk2x6n64h3fz--
