@@ -2,113 +2,94 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B5E7C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 16:43:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99720C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 16:44:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22D2D2087F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 16:43:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GO/XE8/n"
+	by mail.kernel.org (Postfix) with ESMTP id 72E3E2087F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 16:44:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728576AbfAGQne (ORCPT
+        id S1728701AbfAGQoQ convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 11:43:34 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:42528 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726668AbfAGQnd (ORCPT
+        Mon, 7 Jan 2019 11:44:16 -0500
+Received: from mail1.bemta24.messagelabs.com ([67.219.250.210]:13860 "EHLO
+        mail1.bemta24.messagelabs.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726668AbfAGQoQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 11:43:33 -0500
-Received: by mail-pl1-f193.google.com with SMTP id y1so392305plp.9;
-        Mon, 07 Jan 2019 08:43:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=iTXKezavfd1/8uh6u+UUWRqnfi0okDbl6ln27kN1WUE=;
-        b=GO/XE8/nuZmHgZU7hFnddfFS//MJQrg3pyrilzu4JG/5INqvl7mkwiTLA/+yXclzSE
-         nxj9aS+7OTeNi949+BQhEyMJufqxrjoeAt3Bq7bmbYTl7sGWNBoEZRH6Tlxw51Qt7j7t
-         A+nO6HPIDRK5mpSqivE/o9sD/vTwR0LPNFwiKPVNcXsMiPOLu6Tz0bTr+KeEzh6dSU6Q
-         +ar+S3F8fAARlJDL6ZVUe2oRvNynskbDHqInhyBAR2iL18JfXgNxB0/u/UKm4hvmQ0u6
-         PSyj54/5nUSg7RijrPEyVYOAOn0iz6N/1Nr66eBuY+v6hGRTtkC/tx/akYHTrsH4f8Km
-         agPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=iTXKezavfd1/8uh6u+UUWRqnfi0okDbl6ln27kN1WUE=;
-        b=J60MHk6W0aGi7/YTga3fIl3lW8owHeZ37k4Fx8swQ2d7od+SfWuvrfbVc8/T71ZQL/
-         KuvzjdsR5+4QWB+eqCzjFjGWZ9q5cUo9Pa+vqnm0/22GQTWeC1HQEZLB1gZtAEIwpgyf
-         5t+4Q2WOsmOy8lZ2p/PGQWIiIjFyDclCFnHAGBzYaYn83O3rrHLcToTZlQfuOFpjuWk2
-         K9IXqdMo/3vNzLnDyoWGBWjtBNdFoq4RAwT3jqAH5dIImjVOxgBudAD55GQfuh1HYOpo
-         xGZg5CzF9vAwy/4gW/MW7oVjb4FvwFt+92kFiWSOntuEeVF432xrVS+oNrxfq1loKcpT
-         7hWA==
-X-Gm-Message-State: AJcUukegCks/6iolDb9KmN1xoUCt+R8sDNQ/hpWzE7rWDGD3pqaGqh6A
-        nuWNYgx+CAo2CR7hMMpJOizD9l8e
-X-Google-Smtp-Source: ALg8bN6EJu6JUv3CwrN7tnCDHYXbg1g9cy5QKTNwJJLjSTGvFkUQ4+G0tL4nTl3DxV1daUzGP9AyDA==
-X-Received: by 2002:a17:902:1d4a:: with SMTP id u10mr59444329plu.122.1546879412609;
-        Mon, 07 Jan 2019 08:43:32 -0800 (PST)
-Received: from localhost.localdomain ([121.161.238.230])
-        by smtp.gmail.com with ESMTPSA id c72sm118865326pfb.107.2019.01.07.08.43.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 07 Jan 2019 08:43:32 -0800 (PST)
-From:   Donghoon Han <nazgul33@gmail.com>
-To:     linux-input@vger.kernel.org
-Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Daniel Mack <daniel@caiaq.de>, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: [PATCH V2 2/2] Input: rotaty-encoder - Add DT binding document
-Date:   Tue,  8 Jan 2019 01:42:49 +0900
-Message-Id: <20190107164249.2342-3-nazgul33@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190107164249.2342-1-nazgul33@gmail.com>
-References: <20190107164249.2342-1-nazgul33@gmail.com>
+        Mon, 7 Jan 2019 11:44:16 -0500
+Received: from [67.219.251.53] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
+        by server-3.bemta.az-c.us-west-2.aws.symcld.net id 7E/0A-21504-ED1833C5; Mon, 07 Jan 2019 16:44:14 +0000
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrPKsWRWlGSWpSXmKPExsXi5LtOQPdeo3G
+  Mwe7jghaHF71gtPj67Ta7xc1P31gtLu+aw+bA4rFz1l12j1/b1rB4fN4kF8AcxZqZl5RfkcCa
+  cefpGqaCA4wVi8/sYmpgnMnYxcjFISSwilFi7cXTbBDOakaJTW1XWSGcPYwSBxZuB3I4OdgE9
+  CW+/TnIBGKLCKhJbHt3CayIWWAto8TZpX+YQRLCAo4Sp2/fYIQocpI41zQNqIEDyPaTOHhKEi
+  TMIqAicaP9N9gcXgFDia/Ns9ghli1nkpg7tx2sl1PAQ+Lu+o1gNqOAmMT3U2vAGpgFxCVuPZk
+  PZksICEgs2XOeGcIWlXj5+B/YoaJAC1oO7mGBiCtIfD44jw2iV0diwe5PULa5RP+zV1C2tsSy
+  ha+ZIQ4SlDg58wkLyM1CAsoSDVd4JzBKzEKyeRaSSbOQTJqFZNIsJJMWMLKuYjRPKspMzyjJT
+  czM0TU0MNA1NDTSNTS20DUz0kus0k3WKy3WLU8tLtEFcsuL9Yorc5NzUvTyUks2MQIjPKWgy2
+  4H49zu9EOMkhxMSqK8s/KNY4T4kvJTKjMSizPii0pzUosPMcpwcChJ8Do1AOUEi1LTUyvSMnO
+  AqQYmLcHBoyTCqwmS5i0uSMwtzkyHSJ1itORY8f3vdGaON4s6ZjBzHO/8OodZiCUvPy9VSpz3
+  AEiDAEhDRmke3DhYOrzEKCslzMvIwMAgxFOQWpSbWYIq/4pRnINRSZg3BWQKT2ZeCdzWV0AHM
+  QEd9JLHAOSgkkSElFQDY7jr/ZZ3ogurFD+clZp6lyX5ed2WncKfKgtUjjMdl7S+co6v6v9X1T
+  Qhjs8Wv/hNIuUP8xafjeT+dfuKZL7kamPeMP194dfvCQmf7jNjcotOvfrj+ON9ybN6f1ZoMj8
+  KTc5VkEoVrg1ZN3VX06yJ3M0CjuY7U9zcW+v+1R87eirnVMBth7ibSizFGYmGWsxFxYkAbrJ8
+  foIDAAA=
+X-Env-Sender: Alex.Gonzalez@digi.com
+X-Msg-Ref: server-2.tower-365.messagelabs.com!1546879453!1235041!1
+X-Originating-IP: [66.77.174.16]
+X-SYMC-ESS-Client-Auth: outbound-route-from=pass
+X-StarScan-Received: 
+X-StarScan-Version: 9.31.5; banners=-,-,-
+X-VirusChecked: Checked
+Received: (qmail 2800 invoked from network); 7 Jan 2019 16:44:14 -0000
+Received: from owa.digi.com (HELO MCL-VMS-XCH01.digi.com) (66.77.174.16)
+  by server-2.tower-365.messagelabs.com with DHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 7 Jan 2019 16:44:14 -0000
+Received: from MTK-SMS-XCH05.digi.com (10.10.8.199) by MCL-VMS-XCH01.digi.com
+ (10.5.8.49) with Microsoft SMTP Server (TLS) id 14.3.408.0; Mon, 7 Jan 2019
+ 10:44:13 -0600
+Received: from DOR-VMS-XCH01.digi.com (10.49.8.98) by MTK-SMS-XCH05.digi.com
+ (10.10.8.199) with Microsoft SMTP Server (TLS) id 14.3.408.0; Mon, 7 Jan 2019
+ 10:44:12 -0600
+Received: from DOR-SMS-XCH01.digi.com ([fe80::894b:3bdc:74ae:6efc]) by
+ DOR-VMS-XCH01.digi.com ([fe80::c47f:be41:1dc7:5ab8%11]) with mapi id
+ 14.03.0415.000; Mon, 7 Jan 2019 17:44:10 +0100
+From:   "Gonzalez, Alex" <Alex.Gonzalez@digi.com>
+To:     Bastien Nocera <hadess@hadess.net>
+CC:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] Input: goodix - decouple irq and reset lines
+Thread-Topic: [PATCH] Input: goodix - decouple irq and reset lines
+Thread-Index: AQHUpEatvIDOh1cYWEudJPd429h/UaWfM/8AgAIFKYCAArCrgIAAAXwAgAALygA=
+Date:   Mon, 7 Jan 2019 16:44:09 +0000
+Message-ID: <20190107164408.GA5564@agonzal-linux>
+References: <1546617648-23445-1-git-send-email-alex.gonzalez@digi.com>
+ <1546617648-23445-2-git-send-email-alex.gonzalez@digi.com>
+ <20190105225147.le5fgpnvq7sctxe5@penguin>
+ <6b8f757eb52eb74d9dc2c3bedbfec798a58c0ec2.camel@hadess.net>
+ <5dfd17505a7c2f650f1102a8c0d7008ca8dc0b1f.camel@hadess.net>
+In-Reply-To: <5dfd17505a7c2f650f1102a8c0d7008ca8dc0b1f.camel@hadess.net>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mutt/1.5.24 (2015-08-30)
+x-originating-ip: [10.101.2.194]
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <B2493A6C59AF6C4CA6F062DD60749A95@digi.com>
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add DT binding document for rotary-encoder, keycode options.
+>
+>If it doesn't work with the vendor code, then we might not want to make
+>it work with our driver either.
+>
 
-Signed-off-by: Donghoon Han <nazgul33@gmail.com>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Daniel Mack <daniel@caiaq.de>
-Cc: devicetree@vger.kernel.org
-To: linux-input@vger.kernel.org
----
- .../devicetree/bindings/input/rotary-encoder.txt     | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/input/rotary-encoder.txt b/Documentation/devicetree/bindings/input/rotary-encoder.txt
-index f99fe5cdeaec..9986ec2af2d4 100644
---- a/Documentation/devicetree/bindings/input/rotary-encoder.txt
-+++ b/Documentation/devicetree/bindings/input/rotary-encoder.txt
-@@ -12,6 +12,10 @@ Optional properties:
- - rotary-encoder,relative-axis: register a relative axis rather than an
-   absolute one. Relative axis will only generate +1/-1 events on the input
-   device, hence no steps need to be passed.
-+- rotary-encoder,relative-keys : generate pair of key events. This setting
-+  behaves just like relative-axis, generating key events instead.
-+  (Keycodes[2] corresponds to -1/1 events.)
-+- rotary-encoder,relative-keycodes : keycodes for relative-keys
- - rotary-encoder,rollover: Automatic rollover when the rotary value becomes
-   greater than the specified steps or smaller than 0. For absolute axis only.
- - rotary-encoder,steps-per-period: Number of steps (stable states) per period.
-@@ -48,3 +52,11 @@ Example:
- 			rotary-encoder,encoding = "binary";
- 			rotary-encoder,rollover;
- 		};
-+
-+		rotary@2 {
-+			compatible = "rotary-encoder";
-+			gpios = <&gpio 21 0>, <&gpio 22 0>;
-+			rotary-encoder,relative-keys;
-+			rotary-encoder,relative-keycode = <103>, <108>;
-+			rotary-encoder,steps-per-period = <2>;
-+		};
--- 
-2.17.1
-
+Thanks Bastien. The vendor code does seem to require both INT and RESET gpios.
