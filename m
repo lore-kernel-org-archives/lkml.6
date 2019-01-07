@@ -2,64 +2,60 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0678C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:06:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5454BC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:06:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D14721855
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:06:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 24C5C2089F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:06:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546866395;
-	bh=gBSn71AISZNU6bMP+mzXtcVYxY7+nzt8bXiDPwvthxI=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=W2npNtihBgcPRKpjXAdjhamorBc5VwcrogG2pGCF1CvDKAy1PHmhsl7I+b3e+HUmt
-	 yXhfGdQ+A24DaKzJeX8MIz0ZG1IFlM79oDMraPnHHMsN4qdgx1Gyv/HC6cQsdf34Ku
-	 P1G+sNuyvvAQr0bbZFMsxrVcc/+zfHippq3/6Jf8=
+	s=default; t=1546866399;
+	bh=nChGHztmAYv184CmKBU4X7VomHwcKEPNXhKT29IPVtU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=t2LF8o7PkF7Ar6DVvsRlut8F1EotoF2HWEmniz4n14y3ezW53kJqVpQf56GLjV457
+	 W1ahz1L3rVMQ6uzuUGgdZhwRgd1gHp/UBFhPyHl9IqyoDWrjw7DN8DA9qb7QbGIZfR
+	 7fRidNCfB0zX3GANyT2DsrVpByBfBDJmdTcKWxZw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731200AbfAGNGe (ORCPT
+        id S1731223AbfAGNGi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:06:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53868 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:06:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53912 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727748AbfAGNGb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:06:31 -0500
+        id S1727748AbfAGNGg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:06:36 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7DA22217D4;
-        Mon,  7 Jan 2019 13:06:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4E4742089F;
+        Mon,  7 Jan 2019 13:06:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546866390;
-        bh=gBSn71AISZNU6bMP+mzXtcVYxY7+nzt8bXiDPwvthxI=;
-        h=From:To:Cc:Subject:Date:From;
-        b=0IixcO2Gj4/iaNOMHFtHvCLIt4PG8zmKiHaJOzbnJJmtW7Wn7gJolmxLBmUzpc3dK
-         iFiJdql5R2/yW5/UDtHp2m9U//ocKNKbsQGkmYwEWeMeircqAhwR9jg7mhgpbKfl9Z
-         bQe05IPtYvD9uRUkIKZQZHmLzhiK9Xkmi0xrhoNY=
+        s=default; t=1546866394;
+        bh=nChGHztmAYv184CmKBU4X7VomHwcKEPNXhKT29IPVtU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=RuM3C6P47Z0NLuhY8jISEf2osucuNH7T7V+bh0X36sulhgYPF1nVzYA+9OrgRIPpB
+         GbdLMKN62NEGQyojicWWtMVFYLdDLzuZsD7Mv3zEDtcXqWXICDqGIrUR6k39JH2XcI
+         2nUoe51XnnO1r+iQ105djoy1anCnqVF1iGXTrvAE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: [PATCH 4.9 00/71] 4.9.149-stable review
-Date:   Mon,  7 Jan 2019 13:32:29 +0100
-Message-Id: <20190107105330.280153213@linuxfoundation.org>
+        stable@vger.kernel.org, Adit Ranadive <aditr@vmware.com>,
+        Vishnu Dasa <vdasa@vmware.com>,
+        Jorgen Hansen <jhansen@vmware.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 21/71] VSOCK: Send reset control packet when socket is partially bound
+Date:   Mon,  7 Jan 2019 13:32:50 +0100
+Message-Id: <20190107105334.020593101@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
+In-Reply-To: <20190107105330.280153213@linuxfoundation.org>
+References: <20190107105330.280153213@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 X-Patchwork-Hint: ignore
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.149-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-4.9.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 4.9.149-rc1
-X-KernelTest-Deadline: 2019-01-09T10:53+00:00
+MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -67,329 +63,132 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is the start of the stable review cycle for the 4.9.149 release.
-There are 71 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
-
-Responses should be made by Wed Jan  9 10:53:04 UTC 2019.
-Anything received after that time might be too late.
-
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.149-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
-and the diffstat can be found below.
-
-thanks,
-
-greg k-h
-
--------------
-Pseudo-Shortlog of commits:
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 4.9.149-rc1
-
-Tomas Winkler <tomas.winkler@intel.com>
-    tpm: tpm_i2c_nuvoton: use correct command duration for TPM 2.x
-
-Maciej W. Rozycki <macro@linux-mips.org>
-    rtc: m41t80: Correct alarm month range with RTC reads
-
-Will Deacon <will.deacon@arm.com>
-    arm64: KVM: Avoid setting the upper 32 bits of VTCR_EL2 to 1
-
-Vitaly Kuznetsov <vkuznets@redhat.com>
-    x86/kvm/vmx: do not use vm-exit instruction length for fast MMIO when running nested
-
-Georgy A Bystrenin <gkot@altlinux.org>
-    CIFS: Fix error mapping for SMB2_LOCK command which caused OFD lock problem
-
-Aaro Koskinen <aaro.koskinen@iki.fi>
-    MIPS: OCTEON: mark RGMII interface disabled on OCTEON III
-
-Huacai Chen <chenhc@lemote.com>
-    MIPS: Align kernel load address to 64KB
-
-Huacai Chen <chenhc@lemote.com>
-    MIPS: Ensure pmd_present() returns false after pmd_mknotpresent()
-
-Hans Verkuil <hverkuil-cisco@xs4all.nl>
-    media: v4l2-tpg: array index could become negative
-
-Hans Verkuil <hverkuil-cisco@xs4all.nl>
-    media: vivid: free bitmap_cap when updating std/timings/etc.
-
-Nava kishore Manne <nava.manne@xilinx.com>
-    serial: uartps: Fix interrupt mask issue to handle the RX interrupts properly
-
-Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-    f2fs: fix validation of the block count in sanity_check_raw_super
-
-Breno Leitao <leitao@debian.org>
-    powerpc/tm: Set MSR[TS] just prior to recheckpoint
-
-Josef Bacik <jbacik@fb.com>
-    btrfs: run delayed items before dropping the snapshot
-
-Filipe Manana <fdmanana@suse.com>
-    Btrfs: fix fsync of files with multiple hard links in new directories
-
-Macpaul Lin <macpaul.lin@mediatek.com>
-    cdc-acm: fix abnormal DATA RX issue for Mediatek Preloader.
-
-Johan Jonker <jbx9999@hotmail.com>
-    clk: rockchip: fix typo in rk3188 spdif_frac parent
-
-Lukas Wunner <lukas@wunner.de>
-    spi: bcm2835: Avoid finishing transfer prematurely in IRQ mode
-
-Lukas Wunner <lukas@wunner.de>
-    spi: bcm2835: Fix book-keeping of DMA termination
-
-Lukas Wunner <lukas@wunner.de>
-    spi: bcm2835: Fix race on DMA termination
-
-Theodore Ts'o <tytso@mit.edu>
-    ext4: check for shutdown and r/o file system in ext4_write_inode()
-
-Theodore Ts'o <tytso@mit.edu>
-    ext4: force inode writes when nfsd calls commit_metadata()
-
-Theodore Ts'o <tytso@mit.edu>
-    ext4: include terminating u32 in size of xattr entries when expanding inodes
-
-ruippan (潘睿) <ruippan@tencent.com>
-    ext4: fix EXT4_IOC_GROUP_ADD ioctl
-
-Maurizio Lombardi <mlombard@redhat.com>
-    ext4: missing unlock/put_page() in ext4_try_to_write_inline_data()
-
-Pan Bian <bianpan2016@163.com>
-    ext4: fix possible use after free in ext4_quota_enable
-
-Ben Hutchings <ben@decadent.org.uk>
-    perf pmu: Suppress potential format-truncation warning
-
-Miquel Raynal <miquel.raynal@bootlin.com>
-    platform-msi: Free descriptors in platform_msi_domain_free()
-
-Sean Christopherson <sean.j.christopherson@intel.com>
-    KVM: x86: Use jmp to invoke kvm_spurious_fault() from .fixup
-
-Patrick Dreyer <Patrick@Dreyer.name>
-    Input: elan_i2c - add ACPI ID for touchpad in ASUS Aspire F5-573G
-
-Bjørn Mork <bjorn@mork.no>
-    qmi_wwan: apply SET_DTR quirk to the SIMCOM shared device ID
-
-Colin Ian King <colin.king@canonical.com>
-    staging: wilc1000: fix missing read_write setting when reading data
-
-Jia-Ju Bai <baijiaju1990@gmail.com>
-    usb: r8a66597: Fix a possible concurrency use-after-free bug in r8a66597_endpoint_disable()
-
-Jörgen Storvist <jorgen.storvist@gmail.com>
-    USB: serial: option: add Fibocom NL678 series
-
-Scott Chen <scott@labau.com.tw>
-    USB: serial: pl2303: add ids for Hewlett-Packard HP POS pole displays
-
-Sameer Pujar <spujar@nvidia.com>
-    ALSA: hda/tegra: clear pending irq handlers
-
-Mantas Mikulėnas <grawity@gmail.com>
-    ALSA: hda: add mute LED support for HP EliteBook 840 G4
-
-Arnd Bergmann <arnd@arndb.de>
-    mtd: atmel-quadspi: disallow building on ebsa110
-
-Gustavo A. R. Silva <gustavo@embeddedor.com>
-    ALSA: emux: Fix potential Spectre v1 vulnerabilities
-
-Gustavo A. R. Silva <gustavo@embeddedor.com>
-    ALSA: pcm: Fix potential Spectre v1 vulnerability
-
-Gustavo A. R. Silva <gustavo@embeddedor.com>
-    ALSA: emu10k1: Fix potential Spectre v1 vulnerabilities
-
-Gustavo A. R. Silva <gustavo@embeddedor.com>
-    ALSA: rme9652: Fix potential Spectre v1 vulnerability
-
-Cong Wang <xiyou.wangcong@gmail.com>
-    ptr_ring: wrap back ->producer in __ptr_ring_swap_queue()
-
-Deepa Dinamani <deepa.kernel@gmail.com>
-    sock: Make sock->sk_stamp thread-safe
-
-Yuval Avnery <yuvalav@mellanox.com>
-    net/mlx5: Typo fix in del_sw_hw_rule
-
-Alaa Hleihel <alaa@mellanox.com>
-    net/mlx5e: Remove the false indication of software timestamping support
-
-Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
-    gro_cell: add napi_disable in gro_cells_destroy
-
-Cong Wang <xiyou.wangcong@gmail.com>
-    tipc: compare remote and local protocols in tipc_udp_enable()
-
-Cong Wang <xiyou.wangcong@gmail.com>
-    tipc: use lock_sock() in tipc_sk_reinit()
-
-Juergen Gross <jgross@suse.com>
-    xen/netfront: tolerate frags with no data
-
-Jorgen Hansen <jhansen@vmware.com>
-    VSOCK: Send reset control packet when socket is partially bound
-
-Jason Wang <jasowang@redhat.com>
-    vhost: make sure used idx is seen before log in vhost_add_used_n()
-
-Cong Wang <xiyou.wangcong@gmail.com>
-    tipc: fix a double kfree_skb()
-
-Xin Long <lucien.xin@gmail.com>
-    sctp: initialize sin6_flowinfo for ipv6 addrs in sctp_inet6addr_event
-
-Willem de Bruijn <willemb@google.com>
-    packet: validate address length if non-zero
-
-Willem de Bruijn <willemb@google.com>
-    packet: validate address length
-
-Cong Wang <xiyou.wangcong@gmail.com>
-    net/wan: fix a double free in x25_asy_open_tty()
-
-Cong Wang <xiyou.wangcong@gmail.com>
-    netrom: fix locking in nr_find_socket()
-
-Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-    net: phy: Fix the issue that netif always links up after resuming
-
-Michal Kubecek <mkubecek@suse.cz>
-    net: ipv4: do not handle duplicate fragments as overlapping
-
-Eric Dumazet <edumazet@google.com>
-    isdn: fix kernel-infoleak in capi_unlocked_ioctl
-
-Eric Dumazet <edumazet@google.com>
-    ipv6: tunnels: fix two use-after-free
-
-Cong Wang <xiyou.wangcong@gmail.com>
-    ipv6: explicitly initialize udp6_addr in udp_sock_create6()
-
-Willem de Bruijn <willemb@google.com>
-    ieee802154: lowpan_header_create check must check daddr
-
-Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
-    ibmveth: fix DMA unmap error in ibmveth_xmit_start error path
-
-Cong Wang <xiyou.wangcong@gmail.com>
-    ax25: fix a use-after-free in ax25_fillin_cb()
-
-Gustavo A. R. Silva <gustavo@embeddedor.com>
-    phonet: af_phonet: Fix Spectre v1 vulnerability
-
-Gustavo A. R. Silva <gustavo@embeddedor.com>
-    net: core: Fix Spectre v1 vulnerability
-
-Gustavo A. R. Silva <gustavo@embeddedor.com>
-    ipv4: Fix potential Spectre v1 vulnerability
-
-Gustavo A. R. Silva <gustavo@embeddedor.com>
-    ip6mr: Fix potential Spectre v1 vulnerability
-
-Guenter Roeck <linux@roeck-us.net>
-    NFC: nxp-nci: Include unaligned.h instead of access_ok.h
-
-
--------------
-
-Diffstat:
-
- Makefile                                           |  4 +-
- arch/arm64/include/asm/kvm_arm.h                   |  2 +-
- arch/mips/boot/compressed/calc_vmlinuz_load_addr.c |  7 ++-
- arch/mips/cavium-octeon/executive/cvmx-helper.c    |  3 +-
- arch/mips/include/asm/pgtable-64.h                 |  5 ++
- arch/powerpc/kernel/signal_32.c                    | 20 ++++++-
- arch/powerpc/kernel/signal_64.c                    | 44 +++++++++-----
- arch/x86/include/asm/kvm_host.h                    |  2 +-
- arch/x86/kvm/vmx.c                                 | 19 +++++-
- arch/x86/kvm/x86.c                                 |  3 +-
- drivers/base/platform-msi.c                        |  6 +-
- drivers/char/tpm/tpm_i2c_nuvoton.c                 | 11 ++--
- drivers/clk/rockchip/clk-rk3188.c                  |  2 +-
- drivers/input/mouse/elan_i2c_core.c                |  1 +
- drivers/isdn/capi/kcapi.c                          |  4 +-
- drivers/media/common/v4l2-tpg/v4l2-tpg-core.c      |  2 +-
- drivers/media/platform/vivid/vivid-vid-cap.c       |  2 +
- drivers/mtd/spi-nor/Kconfig                        |  2 +-
- drivers/net/ethernet/ibm/ibmveth.c                 |  6 +-
- .../net/ethernet/mellanox/mlx5/core/en_ethtool.c   | 11 +---
- drivers/net/ethernet/mellanox/mlx5/core/fs_core.c  |  2 +-
- drivers/net/phy/phy_device.c                       |  7 +--
- drivers/net/usb/qmi_wwan.c                         |  2 +-
- drivers/net/wan/x25_asy.c                          |  2 +
- drivers/net/xen-netfront.c                         |  2 +-
- drivers/nfc/nxp-nci/firmware.c                     |  2 +-
- drivers/nfc/nxp-nci/i2c.c                          |  2 +-
- drivers/rtc/rtc-m41t80.c                           |  2 +-
- drivers/spi/spi-bcm2835.c                          | 14 ++---
- drivers/staging/wilc1000/wilc_sdio.c               |  1 +
- drivers/tty/serial/xilinx_uartps.c                 |  4 +-
- drivers/usb/class/cdc-acm.c                        | 10 ++++
- drivers/usb/class/cdc-acm.h                        |  1 +
- drivers/usb/host/r8a66597-hcd.c                    |  5 +-
- drivers/usb/serial/option.c                        |  4 ++
- drivers/usb/serial/pl2303.c                        |  5 ++
- drivers/usb/serial/pl2303.h                        |  5 ++
- drivers/vhost/vhost.c                              |  2 +
- fs/btrfs/btrfs_inode.h                             |  6 ++
- fs/btrfs/extent-tree.c                             |  4 ++
- fs/btrfs/inode.c                                   | 17 ++++++
- fs/btrfs/tree-log.c                                | 16 ++++++
- fs/cifs/smb2maperror.c                             |  4 +-
- fs/ext4/inline.c                                   |  5 +-
- fs/ext4/inode.c                                    |  9 ++-
- fs/ext4/resize.c                                   |  2 +-
- fs/ext4/super.c                                    | 13 ++++-
- fs/ext4/xattr.c                                    |  2 +-
- fs/f2fs/super.c                                    |  6 +-
- include/linux/msi.h                                |  2 +
- include/linux/ptr_ring.h                           |  2 +
- include/net/gro_cells.h                            |  1 +
- include/net/sock.h                                 | 36 +++++++++++-
- include/trace/events/ext4.h                        | 20 +++++++
- net/ax25/af_ax25.c                                 | 11 +++-
- net/ax25/ax25_dev.c                                |  2 +
- net/compat.c                                       | 15 +++--
- net/core/filter.c                                  |  2 +
- net/core/sock.c                                    |  3 +
- net/ieee802154/6lowpan/tx.c                        |  3 +
- net/ipv4/ip_fragment.c                             | 18 ++++--
- net/ipv4/ipmr.c                                    |  3 +
- net/ipv6/ip6_tunnel.c                              |  1 +
- net/ipv6/ip6_udp_tunnel.c                          |  3 +-
- net/ipv6/ip6_vti.c                                 |  1 +
- net/ipv6/ip6mr.c                                   |  4 ++
- net/netrom/af_netrom.c                             | 15 +++--
- net/packet/af_packet.c                             |  8 ++-
- net/phonet/af_phonet.c                             |  3 +
- net/sctp/ipv6.c                                    |  1 +
- net/sunrpc/svcsock.c                               |  2 +-
- net/tipc/socket.c                                  |  8 ++-
- net/tipc/udp_media.c                               |  9 ++-
- net/vmw_vsock/vmci_transport.c                     | 67 ++++++++++++++++------
- sound/core/pcm.c                                   |  2 +
- sound/pci/emu10k1/emufx.c                          |  5 ++
- sound/pci/hda/hda_tegra.c                          |  2 +
- sound/pci/hda/patch_conexant.c                     |  1 +
- sound/pci/rme9652/hdsp.c                           | 10 ++--
- sound/synth/emux/emux_hwdep.c                      |  7 ++-
- tools/perf/util/pmu.c                              |  8 +--
- 81 files changed, 451 insertions(+), 136 deletions(-)
+4.9-stable review patch.  If anyone has any objections, please let me know.
+
+------------------
+
+From: Jorgen Hansen <jhansen@vmware.com>
+
+[ Upstream commit a915b982d8f5e4295f64b8dd37ce753874867e88 ]
+
+If a server side socket is bound to an address, but not in the listening
+state yet, incoming connection requests should receive a reset control
+packet in response. However, the function used to send the reset
+silently drops the reset packet if the sending socket isn't bound
+to a remote address (as is the case for a bound socket not yet in
+the listening state). This change fixes this by using the src
+of the incoming packet as destination for the reset packet in
+this case.
+
+Fixes: d021c344051a ("VSOCK: Introduce VM Sockets")
+Reviewed-by: Adit Ranadive <aditr@vmware.com>
+Reviewed-by: Vishnu Dasa <vdasa@vmware.com>
+Signed-off-by: Jorgen Hansen <jhansen@vmware.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ net/vmw_vsock/vmci_transport.c |   67 ++++++++++++++++++++++++++++++-----------
+ 1 file changed, 50 insertions(+), 17 deletions(-)
+
+--- a/net/vmw_vsock/vmci_transport.c
++++ b/net/vmw_vsock/vmci_transport.c
+@@ -273,6 +273,31 @@ vmci_transport_send_control_pkt_bh(struc
+ }
+ 
+ static int
++vmci_transport_alloc_send_control_pkt(struct sockaddr_vm *src,
++				      struct sockaddr_vm *dst,
++				      enum vmci_transport_packet_type type,
++				      u64 size,
++				      u64 mode,
++				      struct vmci_transport_waiting_info *wait,
++				      u16 proto,
++				      struct vmci_handle handle)
++{
++	struct vmci_transport_packet *pkt;
++	int err;
++
++	pkt = kmalloc(sizeof(*pkt), GFP_KERNEL);
++	if (!pkt)
++		return -ENOMEM;
++
++	err = __vmci_transport_send_control_pkt(pkt, src, dst, type, size,
++						mode, wait, proto, handle,
++						true);
++	kfree(pkt);
++
++	return err;
++}
++
++static int
+ vmci_transport_send_control_pkt(struct sock *sk,
+ 				enum vmci_transport_packet_type type,
+ 				u64 size,
+@@ -281,9 +306,7 @@ vmci_transport_send_control_pkt(struct s
+ 				u16 proto,
+ 				struct vmci_handle handle)
+ {
+-	struct vmci_transport_packet *pkt;
+ 	struct vsock_sock *vsk;
+-	int err;
+ 
+ 	vsk = vsock_sk(sk);
+ 
+@@ -293,17 +316,10 @@ vmci_transport_send_control_pkt(struct s
+ 	if (!vsock_addr_bound(&vsk->remote_addr))
+ 		return -EINVAL;
+ 
+-	pkt = kmalloc(sizeof(*pkt), GFP_KERNEL);
+-	if (!pkt)
+-		return -ENOMEM;
+-
+-	err = __vmci_transport_send_control_pkt(pkt, &vsk->local_addr,
+-						&vsk->remote_addr, type, size,
+-						mode, wait, proto, handle,
+-						true);
+-	kfree(pkt);
+-
+-	return err;
++	return vmci_transport_alloc_send_control_pkt(&vsk->local_addr,
++						     &vsk->remote_addr,
++						     type, size, mode,
++						     wait, proto, handle);
+ }
+ 
+ static int vmci_transport_send_reset_bh(struct sockaddr_vm *dst,
+@@ -321,12 +337,29 @@ static int vmci_transport_send_reset_bh(
+ static int vmci_transport_send_reset(struct sock *sk,
+ 				     struct vmci_transport_packet *pkt)
+ {
++	struct sockaddr_vm *dst_ptr;
++	struct sockaddr_vm dst;
++	struct vsock_sock *vsk;
++
+ 	if (pkt->type == VMCI_TRANSPORT_PACKET_TYPE_RST)
+ 		return 0;
+-	return vmci_transport_send_control_pkt(sk,
+-					VMCI_TRANSPORT_PACKET_TYPE_RST,
+-					0, 0, NULL, VSOCK_PROTO_INVALID,
+-					VMCI_INVALID_HANDLE);
++
++	vsk = vsock_sk(sk);
++
++	if (!vsock_addr_bound(&vsk->local_addr))
++		return -EINVAL;
++
++	if (vsock_addr_bound(&vsk->remote_addr)) {
++		dst_ptr = &vsk->remote_addr;
++	} else {
++		vsock_addr_init(&dst, pkt->dg.src.context,
++				pkt->src_port);
++		dst_ptr = &dst;
++	}
++	return vmci_transport_alloc_send_control_pkt(&vsk->local_addr, dst_ptr,
++					     VMCI_TRANSPORT_PACKET_TYPE_RST,
++					     0, 0, NULL, VSOCK_PROTO_INVALID,
++					     VMCI_INVALID_HANDLE);
+ }
+ 
+ static int vmci_transport_send_negotiate(struct sock *sk, size_t size)
 
 
