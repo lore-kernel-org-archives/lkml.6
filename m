@@ -7,46 +7,49 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2250C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:07:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81529C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:07:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 721762089F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:07:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 53BC42089F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:07:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546866465;
-	bh=tjXetGlKif0eCKgtSm5hqT1G2rYkfNF2EMGgBKf+g0w=;
+	s=default; t=1546866470;
+	bh=p+2w8KfA2Nwtgk+Kf3FikIPzgjM1wfuF6D7XbRrjndQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=dIrvPlTTPl6x7NHyAsiDP3i8ixKGq8cS7TeHj5JRNS8mnAs76ln5TCTENjG2pxs+J
-	 9cnyq6diG/ZQTnQceuqZcDI8h0Y+qvL80Tg3T9gODkdwji5P7uXEuJTWjUDFFZ6kEB
-	 GgimvQPSknc0WNaHoCAqdi9plEBVRwyXYJI/FiSc=
+	b=AtQDg3HjRqfwLsgIL5VxEBwxRAFWMD7qXlMsB0LZ4vysyY4kMeDaPfk3w1gRpw2co
+	 yILGVuTO/OaASnIhPjt04tHYmejkkFIPu11iOZ6HZHNB+l0IUt0f/T6NwE8pQdVZDm
+	 hLG8gQ1psCRP3h/iwv8xfn0qBPaBhAHjYLEqW4ns=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731570AbfAGNHo (ORCPT
+        id S1731348AbfAGNHt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:07:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54764 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:07:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54830 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727392AbfAGNHm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:07:42 -0500
+        id S1727392AbfAGNHs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:07:48 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 04A7C2089F;
-        Mon,  7 Jan 2019 13:07:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0EF412147C;
+        Mon,  7 Jan 2019 13:07:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546866462;
-        bh=tjXetGlKif0eCKgtSm5hqT1G2rYkfNF2EMGgBKf+g0w=;
+        s=default; t=1546866467;
+        bh=p+2w8KfA2Nwtgk+Kf3FikIPzgjM1wfuF6D7XbRrjndQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MXk4jRXo/SDbivHZTjAEjzfwsfrDMNEZdVBjp4kvILRLEcCENX0HMI3On9jgkMnVJ
-         PLwVFyn77nHsj2UlhFXLKmQHfjxhMgPkfvOmYWwsMDJzf9JmLdpGxxEJYDJx4GdIgS
-         D444932mUgA7ipn4oKqnvQOQXOot3sBvRGNw0Yfc=
+        b=hqtS2rSEBvoQtlUjV41XwmM7XhIT/oZn/tKG+yk6dxoSMmXQjqqV47rHwjfamjdpq
+         zy7nETVqy7pwylBgSgwxIGUL+P+5H4l7IYtniUrk6PP8kfiE0HEzplPWXuFSkTEa5/
+         yS4doNgJ2AnKhuffDOV9jGrZdApQ6/EjlBI6AUUs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        Ajay Singh <ajay.kathat@microchip.com>
-Subject: [PATCH 4.9 40/71] staging: wilc1000: fix missing read_write setting when reading data
-Date:   Mon,  7 Jan 2019 13:33:09 +0100
-Message-Id: <20190107105335.048387130@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Sebastian Sjoholm <sebastian.sjoholm@gmail.com>,
+        Reinhard Speyerer <rspmn@arcor.de>,
+        =?UTF-8?q?Bj=C3=B8rn=20Mork?= <bjorn@mork.no>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 41/71] qmi_wwan: apply SET_DTR quirk to the SIMCOM shared device ID
+Date:   Mon,  7 Jan 2019 13:33:10 +0100
+Message-Id: <20190107105335.094283696@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107105330.280153213@linuxfoundation.org>
 References: <20190107105330.280153213@linuxfoundation.org>
@@ -65,35 +68,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Bjørn Mork <bjorn@mork.no>
 
-commit c58eef061dda7d843dcc0ad6fea7e597d4c377c0 upstream.
+commit 102cd909635612c0be784a519651954a7924c786 upstream.
 
-Currently the cmd.read_write setting is not initialized so it contains
-garbage from the stack.  Fix this by setting it to 0 to indicate a
-read is required.
+SIMCOM are reusing a single device ID for many (all of their?)
+different modems, based on different chipsets and firmwares. Newer
+Qualcomm chipset generations require setting DTR to wake the QMI
+function.  The SIM7600E modem is using such a chipset, making it
+fail to work with this driver despite the device ID match.
 
-Detected by CoverityScan, CID#1357925 ("Uninitialized scalar variable")
+Fix by unconditionally enabling the SET_DTR quirk for all SIMCOM
+modems using this specific device ID.  This is similar to what
+we already have done for another case of device IDs recycled over
+multiple chipset generations: 14cf4a771b30 ("drivers: net: usb:
+qmi_wwan: add QMI_QUIRK_SET_DTR for Telit PID 0x1201")
 
-Fixes: c5c77ba18ea6 ("staging: wilc1000: Add SDIO/SPI 802.11 driver")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Cc: stable <stable@vger.kernel.org>
-Acked-by: Ajay Singh <ajay.kathat@microchip.com>
+Initial testing on an older SIM7100 modem shows no immediate side
+effects.
+
+Reported-by: Sebastian Sjoholm <sebastian.sjoholm@gmail.com>
+Cc: Reinhard Speyerer <rspmn@arcor.de>
+Signed-off-by: Bjørn Mork <bjorn@mork.no>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/wilc1000/wilc_sdio.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/usb/qmi_wwan.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/staging/wilc1000/wilc_sdio.c
-+++ b/drivers/staging/wilc1000/wilc_sdio.c
-@@ -830,6 +830,7 @@ static int sdio_read_int(struct wilc *wi
- 	if (!g_sdio.irq_gpio) {
- 		int i;
- 
-+		cmd.read_write = 0;
- 		cmd.function = 1;
- 		cmd.address = 0x04;
- 		cmd.data = 0;
+--- a/drivers/net/usb/qmi_wwan.c
++++ b/drivers/net/usb/qmi_wwan.c
+@@ -951,7 +951,7 @@ static const struct usb_device_id produc
+ 	{QMI_FIXED_INTF(0x03f0, 0x4e1d, 8)},	/* HP lt4111 LTE/EV-DO/HSPA+ Gobi 4G Module */
+ 	{QMI_FIXED_INTF(0x03f0, 0x9d1d, 1)},	/* HP lt4120 Snapdragon X5 LTE */
+ 	{QMI_FIXED_INTF(0x22de, 0x9061, 3)},	/* WeTelecom WPD-600N */
+-	{QMI_FIXED_INTF(0x1e0e, 0x9001, 5)},	/* SIMCom 7230E */
++	{QMI_QUIRK_SET_DTR(0x1e0e, 0x9001, 5)},	/* SIMCom 7100E, 7230E, 7600E ++ */
+ 	{QMI_QUIRK_SET_DTR(0x2c7c, 0x0125, 4)},	/* Quectel EC25, EC20 R2.0  Mini PCIe */
+ 	{QMI_QUIRK_SET_DTR(0x2c7c, 0x0121, 4)},	/* Quectel EC21 Mini PCIe */
+ 	{QMI_QUIRK_SET_DTR(0x2c7c, 0x0191, 4)},	/* Quectel EG91 */
 
 
