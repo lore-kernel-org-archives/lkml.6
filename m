@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-13.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E06DC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 06:44:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CF6DC43444
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 06:44:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D86F2087F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 06:44:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D2A92085A
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 06:44:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="JYWkdfNv"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="XiWur7WD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726619AbfAGGn7 (ORCPT
+        id S1726639AbfAGGoA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 01:43:59 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:41086 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725804AbfAGGn5 (ORCPT
+        Mon, 7 Jan 2019 01:44:00 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:44566 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726609AbfAGGn7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 01:43:57 -0500
+        Mon, 7 Jan 2019 01:43:59 -0500
 Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x076hUCk059031;
-        Mon, 7 Jan 2019 00:43:30 -0600
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x076hh6r079970;
+        Mon, 7 Jan 2019 00:43:43 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1546843410;
-        bh=9uy7oBAgopBKXmOWf1Xu6i0EmqFED+atLS7+JVzPan8=;
+        s=ti-com-17Q1; t=1546843423;
+        bh=XoRGeo3vT25+3Bl/ejetLFYJrvBGa4ChLOy2A0kveqs=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=JYWkdfNv1+e1GG3acZ9gMSouaODqZz61M0RplwA1XRHpoOBXPR+m2NpGK9wh60yN/
-         I0S5fdtEZQlaB57gc9lWAtGb1YXw29A6O3MtjBhw7qA0gJQMB7tbjnpIjdV9cMheao
-         YPIgPv+ma6VzsGONL3s77GSYs5s1rnFmemOjiEwU=
-Received: from DFLE101.ent.ti.com (dfle101.ent.ti.com [10.64.6.22])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x076hUZE038637
+        b=XiWur7WDaQZIiey8EGxQN0w+n2AQGBjeDN5eWhhbpW4PjmMnjI2Fm1C9w7AabmkdX
+         7nZnd2yeVgbNnHuhd3fUju3vIznMhj1mFzRsX2HqumwwWndvTLzz9vKAIsemPJb/9Y
+         /+v5CGv42F55AZ8BbFXHIh58J9m7mOS/AlFoFwJY=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x076hh55038785
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 7 Jan 2019 00:43:30 -0600
-Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+        Mon, 7 Jan 2019 00:43:43 -0600
+Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 7
- Jan 2019 00:43:30 -0600
-Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_0,
+ Jan 2019 00:43:43 -0600
+Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_0,
  cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Mon, 7 Jan 2019 00:43:30 -0600
+ Mon, 7 Jan 2019 00:43:43 -0600
 Received: from a0393678ub.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x076gfo7002672;
-        Mon, 7 Jan 2019 00:43:26 -0600
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x076gfoA002672;
+        Mon, 7 Jan 2019 00:43:39 -0600
 From:   Kishon Vijay Abraham I <kishon@ti.com>
 To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         Bjorn Helgaas <bhelgaas@google.com>,
@@ -62,9 +62,9 @@ CC:     Jingoo Han <jingoohan1@gmail.com>,
         <linux-kernel@vger.kernel.org>,
         <linux-rockchip@lists.infradead.org>,
         <linux-arm-kernel@lists.infradead.org>, <kishon@ti.com>
-Subject: [PATCH 10/15] PCI: pci-epf-test: Do not allocate next BARs memory if current BAR is 64Bit
-Date:   Mon, 7 Jan 2019 12:11:43 +0530
-Message-ID: <20190107064148.10152-11-kishon@ti.com>
+Subject: [PATCH 13/15] PCI: rockchip: Remove pci_epf_linkup from Rockchip EP driver
+Date:   Mon, 7 Jan 2019 12:11:46 +0530
+Message-ID: <20190107064148.10152-14-kishon@ti.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190107064148.10152-1-kishon@ti.com>
 References: <20190107064148.10152-1-kishon@ti.com>
@@ -76,44 +76,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It's useless to allocate memory for next BAR if the current BAR is a
-64Bit BAR. Stop allocating memory for the next BAR, if the current
-BARs flag indicates this is a 64Bit BAR.
+pci_epf_linkup is intended to be invoked if the EPC supports linkup
+notification. Now that pci-epf-test uses get_features callback, which
+indicates Rockchip EP driver doesn't support linkup notification, remove
+pci_epf_linkup from Rockchip EP driver.
 
 Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 ---
- drivers/pci/endpoint/functions/pci-epf-test.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/pci/controller/pcie-rockchip-ep.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
-index 44cc31343a80..ade296180383 100644
---- a/drivers/pci/endpoint/functions/pci-epf-test.c
-+++ b/drivers/pci/endpoint/functions/pci-epf-test.c
-@@ -429,6 +429,7 @@ static int pci_epf_test_alloc_space(struct pci_epf *epf)
- {
- 	struct pci_epf_test *epf_test = epf_get_drvdata(epf);
- 	struct device *dev = &epf->dev;
-+	struct pci_epf_bar *epf_bar;
- 	void *base;
- 	int bar;
- 	enum pci_barno test_reg_bar = epf_test->test_reg_bar;
-@@ -442,6 +443,7 @@ static int pci_epf_test_alloc_space(struct pci_epf *epf)
- 	epf_test->reg[test_reg_bar] = base;
+diff --git a/drivers/pci/controller/pcie-rockchip-ep.c b/drivers/pci/controller/pcie-rockchip-ep.c
+index 9b60ad323ac7..a5d799e2dff2 100644
+--- a/drivers/pci/controller/pcie-rockchip-ep.c
++++ b/drivers/pci/controller/pcie-rockchip-ep.c
+@@ -499,9 +499,6 @@ static int rockchip_pcie_ep_start(struct pci_epc *epc)
  
- 	for (bar = BAR_0; bar <= BAR_5; bar++) {
-+		epf_bar = &epf->bar[bar];
- 		if (bar == test_reg_bar)
- 			continue;
- 		base = pci_epf_alloc_space(epf, bar_size[bar], bar);
-@@ -449,6 +451,8 @@ static int pci_epf_test_alloc_space(struct pci_epf *epf)
- 			dev_err(dev, "Failed to allocate space for BAR%d\n",
- 				bar);
- 		epf_test->reg[bar] = base;
-+		if (epf_bar->flags & PCI_BASE_ADDRESS_MEM_TYPE_64)
-+			bar++;
- 	}
+ 	rockchip_pcie_write(rockchip, cfg, PCIE_CORE_PHY_FUNC_CFG);
  
+-	list_for_each_entry(epf, &epc->pci_epf, list)
+-		pci_epf_linkup(epf);
+-
  	return 0;
+ }
+ 
 -- 
 2.17.1
 
