@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73248C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:35:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B845DC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:35:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48F872183E
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:35:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 915672070B
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:35:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728738AbfAGSfO (ORCPT
+        id S1728787AbfAGSfV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 13:35:14 -0500
-Received: from shell.v3.sk ([90.176.6.54]:44508 "EHLO shell.v3.sk"
+        Mon, 7 Jan 2019 13:35:21 -0500
+Received: from shell.v3.sk ([90.176.6.54]:44519 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726132AbfAGSfM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 13:35:12 -0500
+        id S1726132AbfAGSfU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 13:35:20 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id CE5AEFFD8E;
-        Mon,  7 Jan 2019 19:35:08 +0100 (CET)
+        by zimbra.v3.sk (Postfix) with ESMTP id EB47FFFDA0;
+        Mon,  7 Jan 2019 19:35:15 +0100 (CET)
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id vC8KlokcNcJD; Mon,  7 Jan 2019 19:34:53 +0100 (CET)
+        with ESMTP id 5TBdAlPP3a4Y; Mon,  7 Jan 2019 19:34:55 +0100 (CET)
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id BB2FFFFD95;
-        Mon,  7 Jan 2019 19:34:47 +0100 (CET)
+        by zimbra.v3.sk (Postfix) with ESMTP id 7B920FFD9A;
+        Mon,  7 Jan 2019 19:34:48 +0100 (CET)
 X-Virus-Scanned: amavisd-new at zimbra.v3.sk
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id KBp31BqM2Uew; Mon,  7 Jan 2019 19:34:45 +0100 (CET)
+        with ESMTP id HK2S56C2ih31; Mon,  7 Jan 2019 19:34:45 +0100 (CET)
 Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id 16939FFD86;
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 59F5AFFD89;
         Mon,  7 Jan 2019 19:34:45 +0100 (CET)
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     Andy Shevchenko <andy@infradead.org>,
@@ -45,9 +45,9 @@ Cc:     James Cameron <quozl@laptop.org>,
         Sebastian Reichel <sre@kernel.org>, x86@kernel.org,
         devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
         linux-kernel@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH v3 03/16] Revert "platform/olpc: Make ec explicitly non-modular"
-Date:   Mon,  7 Jan 2019 19:34:26 +0100
-Message-Id: <20190107183439.50626-4-lkundrak@v3.sk>
+Subject: [PATCH v3 04/16] Platform: OLPC: Move OLPC config symbol out of x86 tree
+Date:   Mon,  7 Jan 2019 19:34:27 +0100
+Message-Id: <20190107183439.50626-5-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107183439.50626-1-lkundrak@v3.sk>
 References: <20190107183439.50626-1-lkundrak@v3.sk>
@@ -58,55 +58,106 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It doesn't make sense to always have this built-in, e.g. on ARM
-multiplatform kernels.
+There are ARM OLPC machines that use mostly the same drivers, including
+EC infrastructure, DCON and Battery.
 
-A better way to address the problem the original commit aimed to solve is
-to fix Kconfig. That is what the next commit in the series does.
-
-This reverts commit f48d1496b8537d75776478c6942dd87f34d7f270.
+While at that, fix Kconfig to allow building this as a module.
 
 Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+Acked-by: Pavel Machek <pavel@ucw.cz>
 
 ---
 Changes since v1:
-- Sort it later in the patch set
+- Use 'depends on OLPC && X86' idiom (thanks Andy Shevchenko)
 
- drivers/platform/olpc/olpc-ec.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ arch/x86/Kconfig                  | 11 -----------
+ drivers/input/mouse/Kconfig       |  3 ++-
+ drivers/platform/Kconfig          |  2 ++
+ drivers/platform/olpc/Kconfig     | 11 +++++++++++
+ drivers/staging/olpc_dcon/Kconfig |  3 ++-
+ 5 files changed, 17 insertions(+), 13 deletions(-)
+ create mode 100644 drivers/platform/olpc/Kconfig
 
-diff --git a/drivers/platform/olpc/olpc-ec.c b/drivers/platform/olpc/olpc=
--ec.c
-index 981955dce926..35a21c66cd0d 100644
---- a/drivers/platform/olpc/olpc-ec.c
-+++ b/drivers/platform/olpc/olpc-ec.c
-@@ -1,8 +1,6 @@
- /*
-  * Generic driver for the OLPC Embedded Controller.
-  *
-- * Author: Andres Salomon <dilinger@queued.net>
-- *
-  * Copyright (C) 2011-2012 One Laptop per Child Foundation.
-  *
-  * Licensed under the GPL v2 or later.
-@@ -14,7 +12,7 @@
- #include <linux/platform_device.h>
- #include <linux/slab.h>
- #include <linux/workqueue.h>
--#include <linux/init.h>
-+#include <linux/module.h>
- #include <linux/list.h>
- #include <linux/olpc-ec.h>
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 6185d4f33296..0a3fc97827cf 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -2707,17 +2707,6 @@ config SCx200HR_TIMER
+ 	  processor goes idle (as is done by the scheduler).  The
+ 	  other workaround is idle=3Dpoll boot option.
 =20
-@@ -327,4 +325,8 @@ static int __init olpc_ec_init_module(void)
- {
- 	return platform_driver_register(&olpc_ec_plat_driver);
- }
+-config OLPC
+-	bool "One Laptop Per Child support"
+-	depends on !X86_PAE
+-	select GPIOLIB
+-	select OF
+-	select OF_PROMTREE
+-	select IRQ_DOMAIN
+-	---help---
+-	  Add support for detecting the unique features of the OLPC
+-	  XO hardware.
+-
+ config OLPC_XO1_PM
+ 	bool "OLPC XO-1 Power Management"
+ 	depends on OLPC && MFD_CS5535=3Dy && PM_SLEEP
+diff --git a/drivers/input/mouse/Kconfig b/drivers/input/mouse/Kconfig
+index 566a1e3aa504..cf12d0e4fba2 100644
+--- a/drivers/input/mouse/Kconfig
++++ b/drivers/input/mouse/Kconfig
+@@ -165,7 +165,8 @@ config MOUSE_PS2_TOUCHKIT
+=20
+ config MOUSE_PS2_OLPC
+ 	bool "OLPC PS/2 mouse protocol extension"
+-	depends on MOUSE_PS2 && OLPC
++	depends on MOUSE_PS2
++	depends on OLPC && X86
+ 	help
+ 	  Say Y here if you have an OLPC XO-1 laptop (with built-in
+ 	  PS/2 touchpad/tablet device).  The manufacturer calls the
+diff --git a/drivers/platform/Kconfig b/drivers/platform/Kconfig
+index d4c2e424a700..4313d73d3618 100644
+--- a/drivers/platform/Kconfig
++++ b/drivers/platform/Kconfig
+@@ -10,3 +10,5 @@ source "drivers/platform/goldfish/Kconfig"
+ source "drivers/platform/chrome/Kconfig"
+=20
+ source "drivers/platform/mellanox/Kconfig"
 +
- arch_initcall(olpc_ec_init_module);
-+
-+MODULE_AUTHOR("Andres Salomon <dilinger@queued.net>");
-+MODULE_LICENSE("GPL");
++source "drivers/platform/olpc/Kconfig"
+diff --git a/drivers/platform/olpc/Kconfig b/drivers/platform/olpc/Kconfi=
+g
+new file mode 100644
+index 000000000000..7b736c9e67ac
+--- /dev/null
++++ b/drivers/platform/olpc/Kconfig
+@@ -0,0 +1,11 @@
++config OLPC
++	tristate "One Laptop Per Child support"
++	depends on X86 || ARM || COMPILE_TEST
++	depends on !X86_PAE
++	select GPIOLIB
++	select OF
++	select OF_PROMTREE if X86
++	select IRQ_DOMAIN
++	help
++	  Add support for detecting the unique features of the OLPC
++	  XO hardware.
+diff --git a/drivers/staging/olpc_dcon/Kconfig b/drivers/staging/olpc_dco=
+n/Kconfig
+index 192cc8d0853f..ff540350f50f 100644
+--- a/drivers/staging/olpc_dcon/Kconfig
++++ b/drivers/staging/olpc_dcon/Kconfig
+@@ -1,8 +1,9 @@
+ config FB_OLPC_DCON
+ 	tristate "One Laptop Per Child Display CONtroller support"
+-	depends on OLPC && FB
++	depends on FB
+ 	depends on I2C
+ 	depends on BACKLIGHT_LCD_SUPPORT
++	depends on OLPC && X86
+ 	depends on (GPIO_CS5535 || GPIO_CS5535=3Dn)
+ 	select BACKLIGHT_CLASS_DEVICE
+ 	help
 --=20
 2.20.1
 
