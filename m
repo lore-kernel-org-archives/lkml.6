@@ -7,50 +7,46 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CE1DC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:56:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBB54C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:56:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6340D20651
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:56:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A712620665
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:56:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546865760;
-	bh=Kz5ikc20KyPZY8q3BUqY+mVe3mFNBq317lI27VKuhj8=;
+	s=default; t=1546865766;
+	bh=otWSsJZkcjmw2PwiMD4MV50rXJA7Lhjl7cUo5tPk3hk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=LpO16EsDC2ID2x49c2YG0oWwdZlqiU1AlJmD6sBbC8vi7kW+l0aEE4rLJk+qXwzF2
-	 VEsbVMJan+TzcpB6hb87dudQ+ZyVpJmgcGlpoa2T6XjVmG/pmM5+pWt173LzOinmdt
-	 5c3MVn7kBOH2pvrV5a6F8cIt6zPuwmp3arcH35ws=
+	b=mYdPgaY4MEMjavloW4oNH+18GtSVibe8fApBHhLwhWhrNb9EwiyI8a9wwraVYSPmx
+	 F29sKV9OtNmuT4+hmYYxqZOnMDa9lby1/fX9BxNW0WB1sAa5002qrHdUXeG//0wxEX
+	 5XQcFkvJPFjo8WsIU7ByueAZ8dXlQ8KXkHXuzrTM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729797AbfAGMz7 (ORCPT
+        id S1729824AbfAGM4F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:55:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44134 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:56:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44198 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729644AbfAGMz6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:55:58 -0500
+        id S1728564AbfAGM4E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:56:04 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 05869206BB;
-        Mon,  7 Jan 2019 12:55:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5C2A320651;
+        Mon,  7 Jan 2019 12:56:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865757;
-        bh=Kz5ikc20KyPZY8q3BUqY+mVe3mFNBq317lI27VKuhj8=;
+        s=default; t=1546865763;
+        bh=otWSsJZkcjmw2PwiMD4MV50rXJA7Lhjl7cUo5tPk3hk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GEnHN8rJo1vAnU9s6mjrRGmkNxa48LhWVNq/oqJfywh+jYoHxvWZ3kT6hEiumgEWj
-         t+Wnqk2oCsK3pc8MBuFHGy2jiZa5I1sGW+6TwDbRBvdSPORvZfMichmo2LVIUkyKDh
-         4lFAppn5CPxGbuRvkfWkOp41sqs59+turTZ3AxYI=
+        b=ij9n2Ay4RsJiNJSl4MLVFabZaT4aMEBJEu395itiWtO6pOq/wysTCoV5KdBpXaRVk
+         l5uGMih/M91Ke9wDywFuJnndPnD3QZy7CvXzs8gD9NccAMKdBRGS3GHdGH8+/+pZqb
+         aSYqf5dx+Uqlpi4Ls/LPlxLiqm5BRIWnponA7O1o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jiri Olsa <jolsa@redhat.com>, Leo Yan <leo.yan@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 4.19 102/170] perf script: Use fallbacks for branch stacks
-Date:   Mon,  7 Jan 2019 13:32:09 +0100
-Message-Id: <20190107104505.046087594@linuxfoundation.org>
+        stable@vger.kernel.org, Wenwen Wang <wang6495@umn.edu>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.19 120/170] crypto: cavium/nitrox - fix a DMA pool free failure
+Date:   Mon,  7 Jan 2019 13:32:27 +0100
+Message-Id: <20190107104507.118674287@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104452.953560660@linuxfoundation.org>
 References: <20190107104452.953560660@linuxfoundation.org>
@@ -69,109 +65,149 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Adrian Hunter <adrian.hunter@intel.com>
+From: Wenwen Wang <wang6495@umn.edu>
 
-commit 692d0e63324d2954a0c63a812a8588e97023a295 upstream.
+commit 7172122be6a4712d699da4d261f92aa5ab3a78b8 upstream.
 
-Branch stacks do not necessarily have the same cpumode as the 'ip'. Use
-the fallback functions in those cases.
+In crypto_alloc_context(), a DMA pool is allocated through dma_pool_alloc()
+to hold the crypto context. The meta data of the DMA pool, including the
+pool used for the allocation 'ndev->ctx_pool' and the base address of the
+DMA pool used by the device 'dma', are then stored to the beginning of the
+pool. These meta data are eventually used in crypto_free_context() to free
+the DMA pool through dma_pool_free(). However, given that the DMA pool can
+also be accessed by the device, a malicious device can modify these meta
+data, especially when the device is controlled to deploy an attack. This
+can cause an unexpected DMA pool free failure.
 
-This patch depends on patch "perf tools: Add fallback functions for cases
-where cpumode is insufficient".
+To avoid the above issue, this patch introduces a new structure
+crypto_ctx_hdr and a new field chdr in the structure nitrox_crypto_ctx hold
+the meta data information of the DMA pool after the allocation. Note that
+the original structure ctx_hdr is not changed to ensure the compatibility.
 
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: David S. Miller <davem@davemloft.net>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Leo Yan <leo.yan@linaro.org>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: stable@vger.kernel.org # 4.19
-Link: http://lkml.kernel.org/r/20181106210712.12098-4-adrian.hunter@intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/perf/builtin-script.c                            |   12 ++++++------
- tools/perf/util/scripting-engines/trace-event-python.c |   16 ++++++++--------
- 2 files changed, 14 insertions(+), 14 deletions(-)
+ drivers/crypto/cavium/nitrox/nitrox_algs.c |   12 +++++++-----
+ drivers/crypto/cavium/nitrox/nitrox_lib.c  |   22 +++++++++++++++++-----
+ drivers/crypto/cavium/nitrox/nitrox_req.h  |    7 +++++++
+ 3 files changed, 31 insertions(+), 10 deletions(-)
 
---- a/tools/perf/builtin-script.c
-+++ b/tools/perf/builtin-script.c
-@@ -727,8 +727,8 @@ static int perf_sample__fprintf_brstack(
- 		if (PRINT_FIELD(DSO)) {
- 			memset(&alf, 0, sizeof(alf));
- 			memset(&alt, 0, sizeof(alt));
--			thread__find_map(thread, sample->cpumode, from, &alf);
--			thread__find_map(thread, sample->cpumode, to, &alt);
-+			thread__find_map_fb(thread, sample->cpumode, from, &alf);
-+			thread__find_map_fb(thread, sample->cpumode, to, &alt);
- 		}
+--- a/drivers/crypto/cavium/nitrox/nitrox_algs.c
++++ b/drivers/crypto/cavium/nitrox/nitrox_algs.c
+@@ -73,7 +73,7 @@ static int flexi_aes_keylen(int keylen)
+ static int nitrox_skcipher_init(struct crypto_skcipher *tfm)
+ {
+ 	struct nitrox_crypto_ctx *nctx = crypto_skcipher_ctx(tfm);
+-	void *fctx;
++	struct crypto_ctx_hdr *chdr;
  
- 		printed += fprintf(fp, " 0x%"PRIx64, from);
-@@ -774,8 +774,8 @@ static int perf_sample__fprintf_brstacks
- 		from = br->entries[i].from;
- 		to   = br->entries[i].to;
+ 	/* get the first device */
+ 	nctx->ndev = nitrox_get_first_device();
+@@ -81,12 +81,14 @@ static int nitrox_skcipher_init(struct c
+ 		return -ENODEV;
  
--		thread__find_symbol(thread, sample->cpumode, from, &alf);
--		thread__find_symbol(thread, sample->cpumode, to, &alt);
-+		thread__find_symbol_fb(thread, sample->cpumode, from, &alf);
-+		thread__find_symbol_fb(thread, sample->cpumode, to, &alt);
+ 	/* allocate nitrox crypto context */
+-	fctx = crypto_alloc_context(nctx->ndev);
+-	if (!fctx) {
++	chdr = crypto_alloc_context(nctx->ndev);
++	if (!chdr) {
+ 		nitrox_put_device(nctx->ndev);
+ 		return -ENOMEM;
+ 	}
+-	nctx->u.ctx_handle = (uintptr_t)fctx;
++	nctx->chdr = chdr;
++	nctx->u.ctx_handle = (uintptr_t)((u8 *)chdr->vaddr +
++					 sizeof(struct ctx_hdr));
+ 	crypto_skcipher_set_reqsize(tfm, crypto_skcipher_reqsize(tfm) +
+ 				    sizeof(struct nitrox_kcrypt_request));
+ 	return 0;
+@@ -102,7 +104,7 @@ static void nitrox_skcipher_exit(struct
  
- 		printed += symbol__fprintf_symname_offs(alf.sym, &alf, fp);
- 		if (PRINT_FIELD(DSO)) {
-@@ -819,11 +819,11 @@ static int perf_sample__fprintf_brstacko
- 		from = br->entries[i].from;
- 		to   = br->entries[i].to;
+ 		memset(&fctx->crypto, 0, sizeof(struct crypto_keys));
+ 		memset(&fctx->auth, 0, sizeof(struct auth_keys));
+-		crypto_free_context((void *)fctx);
++		crypto_free_context((void *)nctx->chdr);
+ 	}
+ 	nitrox_put_device(nctx->ndev);
  
--		if (thread__find_map(thread, sample->cpumode, from, &alf) &&
-+		if (thread__find_map_fb(thread, sample->cpumode, from, &alf) &&
- 		    !alf.map->dso->adjust_symbols)
- 			from = map__map_ip(alf.map, from);
+--- a/drivers/crypto/cavium/nitrox/nitrox_lib.c
++++ b/drivers/crypto/cavium/nitrox/nitrox_lib.c
+@@ -146,12 +146,19 @@ static void destroy_crypto_dma_pool(stru
+ void *crypto_alloc_context(struct nitrox_device *ndev)
+ {
+ 	struct ctx_hdr *ctx;
++	struct crypto_ctx_hdr *chdr;
+ 	void *vaddr;
+ 	dma_addr_t dma;
  
--		if (thread__find_map(thread, sample->cpumode, to, &alt) &&
-+		if (thread__find_map_fb(thread, sample->cpumode, to, &alt) &&
- 		    !alt.map->dso->adjust_symbols)
- 			to = map__map_ip(alt.map, to);
++	chdr = kmalloc(sizeof(*chdr), GFP_KERNEL);
++	if (!chdr)
++		return NULL;
++
+ 	vaddr = dma_pool_alloc(ndev->ctx_pool, (GFP_KERNEL | __GFP_ZERO), &dma);
+-	if (!vaddr)
++	if (!vaddr) {
++		kfree(chdr);
+ 		return NULL;
++	}
  
---- a/tools/perf/util/scripting-engines/trace-event-python.c
-+++ b/tools/perf/util/scripting-engines/trace-event-python.c
-@@ -494,14 +494,14 @@ static PyObject *python_process_brstack(
- 		pydict_set_item_string_decref(pyelem, "cycles",
- 		    PyLong_FromUnsignedLongLong(br->entries[i].flags.cycles));
+ 	/* fill meta data */
+ 	ctx = vaddr;
+@@ -159,7 +166,11 @@ void *crypto_alloc_context(struct nitrox
+ 	ctx->dma = dma;
+ 	ctx->ctx_dma = dma + sizeof(struct ctx_hdr);
  
--		thread__find_map(thread, sample->cpumode,
--				 br->entries[i].from, &al);
-+		thread__find_map_fb(thread, sample->cpumode,
-+				    br->entries[i].from, &al);
- 		dsoname = get_dsoname(al.map);
- 		pydict_set_item_string_decref(pyelem, "from_dsoname",
- 					      _PyUnicode_FromString(dsoname));
+-	return ((u8 *)vaddr + sizeof(struct ctx_hdr));
++	chdr->pool = ndev->ctx_pool;
++	chdr->dma = dma;
++	chdr->vaddr = vaddr;
++
++	return chdr;
+ }
  
--		thread__find_map(thread, sample->cpumode,
--				 br->entries[i].to, &al);
-+		thread__find_map_fb(thread, sample->cpumode,
-+				    br->entries[i].to, &al);
- 		dsoname = get_dsoname(al.map);
- 		pydict_set_item_string_decref(pyelem, "to_dsoname",
- 					      _PyUnicode_FromString(dsoname));
-@@ -576,14 +576,14 @@ static PyObject *python_process_brstacks
- 		if (!pyelem)
- 			Py_FatalError("couldn't create Python dictionary");
+ /**
+@@ -168,13 +179,14 @@ void *crypto_alloc_context(struct nitrox
+  */
+ void crypto_free_context(void *ctx)
+ {
+-	struct ctx_hdr *ctxp;
++	struct crypto_ctx_hdr *ctxp;
  
--		thread__find_symbol(thread, sample->cpumode,
--				    br->entries[i].from, &al);
-+		thread__find_symbol_fb(thread, sample->cpumode,
-+				       br->entries[i].from, &al);
- 		get_symoff(al.sym, &al, true, bf, sizeof(bf));
- 		pydict_set_item_string_decref(pyelem, "from",
- 					      _PyUnicode_FromString(bf));
+ 	if (!ctx)
+ 		return;
  
--		thread__find_symbol(thread, sample->cpumode,
--				    br->entries[i].to, &al);
-+		thread__find_symbol_fb(thread, sample->cpumode,
-+				       br->entries[i].to, &al);
- 		get_symoff(al.sym, &al, true, bf, sizeof(bf));
- 		pydict_set_item_string_decref(pyelem, "to",
- 					      _PyUnicode_FromString(bf));
+-	ctxp = (struct ctx_hdr *)((u8 *)ctx - sizeof(struct ctx_hdr));
+-	dma_pool_free(ctxp->pool, ctxp, ctxp->dma);
++	ctxp = ctx;
++	dma_pool_free(ctxp->pool, ctxp->vaddr, ctxp->dma);
++	kfree(ctxp);
+ }
+ 
+ /**
+--- a/drivers/crypto/cavium/nitrox/nitrox_req.h
++++ b/drivers/crypto/cavium/nitrox/nitrox_req.h
+@@ -181,12 +181,19 @@ struct flexi_crypto_context {
+ 	struct auth_keys auth;
+ };
+ 
++struct crypto_ctx_hdr {
++	struct dma_pool *pool;
++	dma_addr_t dma;
++	void *vaddr;
++};
++
+ struct nitrox_crypto_ctx {
+ 	struct nitrox_device *ndev;
+ 	union {
+ 		u64 ctx_handle;
+ 		struct flexi_crypto_context *fctx;
+ 	} u;
++	struct crypto_ctx_hdr *chdr;
+ };
+ 
+ struct nitrox_kcrypt_request {
 
 
