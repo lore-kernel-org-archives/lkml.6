@@ -4,50 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5503C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:56:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C5F6C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:56:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 850C420651
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:56:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F145720651
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:56:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546865783;
-	bh=lwf9VWzUDbuk8BMYcis/I7xhqRmiD9Eu5u0jxVRgWZw=;
+	s=default; t=1546865788;
+	bh=c6RXbA0iuyg6yRL4UbDxXFXfyVIubOmwPW5FkrzxfwY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=qzNWudvA8BixdtDl3TUkPyhNI4BuY7aHrZ3dYQkdyfqehUee8SrQG0htVodMeNxzP
-	 USieOvJya2oh8J2ZxeM1lFT1zAmTEnwfGgEFIHlRQdkFi24AAlgRHuWfnaeotYU5Qo
-	 08H2eaFlwiyWPDz7OX6NrC/u6gA6S3DCID6joJZ8=
+	b=HD3VuwNu8SOqDhtOMQ0Pe08e2kTbckC++LEHpTCwqfmDqF+9QS1I9erh00aXzKBzI
+	 gYu3F8NGkh3ANiwQnb1EkINhYbJGIYvDdpWi4ot6w5S4Mh6ILmeuKV0Xt3UQd9ySud
+	 2OXYnnGHgRMltiI1kXWkREQuq9PrEfe79yAggGto=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729889AbfAGM4W (ORCPT
+        id S1729653AbfAGM41 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:56:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44368 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:56:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44458 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729874AbfAGM4T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:56:19 -0500
+        id S1728596AbfAGM4Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:56:25 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A524B20651;
-        Mon,  7 Jan 2019 12:56:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A530D206BB;
+        Mon,  7 Jan 2019 12:56:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865779;
-        bh=lwf9VWzUDbuk8BMYcis/I7xhqRmiD9Eu5u0jxVRgWZw=;
+        s=default; t=1546865784;
+        bh=c6RXbA0iuyg6yRL4UbDxXFXfyVIubOmwPW5FkrzxfwY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bQHl6hKGmd+uHKPHfdA2b2Pps1phd1Axs7K2PAveYu0HKy/c4Z9Bwlce8hj2CshWV
-         LlMPah/4I7z8N8Jch3YvB7ol7NDE8mw6bvvPQKf6eYNb0lvDSYFm8nMBSg6bVhNwdZ
-         bw++Si25drYDaNXQfMidwj+5sBT0/lBr1H59+A1Q=
+        b=bJSU2RiBDuTlEnJ0/ntgD/tkLvTTHvdb04GxzVFLjLOzJe3ztGlgZ0NABzQIU9Cy+
+         DX48DdG5NH+KIDhmqArfswdBrgIj9LbEljXccn2cZrStoWdPrynMAbJkTthwWX4Xss
+         LBk592h6nO/An4JZpEiMgTarF7arUTMpqwq4uRDQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.19 123/170] crypto: cfb - fix decryption
-Date:   Mon,  7 Jan 2019 13:32:30 +0100
-Message-Id: <20190107104507.459422967@linuxfoundation.org>
+        stable@vger.kernel.org, Tejun Heo <tj@kernel.org>,
+        "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+Subject: [PATCH 4.19 124/170] cgroup: fix CSS_TASK_ITER_PROCS
+Date:   Mon,  7 Jan 2019 13:32:31 +0100
+Message-Id: <20190107104507.546440503@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104452.953560660@linuxfoundation.org>
 References: <20190107104452.953560660@linuxfoundation.org>
@@ -66,33 +65,120 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+From: Tejun Heo <tj@kernel.org>
 
-commit fa4600734b74f74d9169c3015946d4722f8bcf79 upstream.
+commit e9d81a1bc2c48ea9782e3e8b53875f419766ef47 upstream.
 
-crypto_cfb_decrypt_segment() incorrectly XOR'ed generated keystream with
-IV, rather than with data stream, resulting in incorrect decryption.
-Test vectors will be added in the next patch.
+CSS_TASK_ITER_PROCS implements process-only iteration by making
+css_task_iter_advance() skip tasks which aren't threadgroup leaders;
+however, when an iteration is started css_task_iter_start() calls the
+inner helper function css_task_iter_advance_css_set() instead of
+css_task_iter_advance().  As the helper doesn't have the skip logic,
+when the first task to visit is a non-leader thread, it doesn't get
+skipped correctly as shown in the following example.
 
-Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+  # ps -L 2030
+    PID   LWP TTY      STAT   TIME COMMAND
+   2030  2030 pts/0    Sl+    0:00 ./test-thread
+   2030  2031 pts/0    Sl+    0:00 ./test-thread
+  # mkdir -p /sys/fs/cgroup/x/a/b
+  # echo threaded > /sys/fs/cgroup/x/a/cgroup.type
+  # echo threaded > /sys/fs/cgroup/x/a/b/cgroup.type
+  # echo 2030 > /sys/fs/cgroup/x/a/cgroup.procs
+  # cat /sys/fs/cgroup/x/a/cgroup.threads
+  2030
+  2031
+  # cat /sys/fs/cgroup/x/cgroup.procs
+  2030
+  # echo 2030 > /sys/fs/cgroup/x/a/b/cgroup.threads
+  # cat /sys/fs/cgroup/x/cgroup.procs
+  2031
+  2030
+
+The last read of cgroup.procs is incorrectly showing non-leader 2031
+in cgroup.procs output.
+
+This can be fixed by updating css_task_iter_advance() to handle the
+first advance and css_task_iters_tart() to call
+css_task_iter_advance() instead of the inner helper.  After the fix,
+the same commands result in the following (correct) result:
+
+  # ps -L 2062
+    PID   LWP TTY      STAT   TIME COMMAND
+   2062  2062 pts/0    Sl+    0:00 ./test-thread
+   2062  2063 pts/0    Sl+    0:00 ./test-thread
+  # mkdir -p /sys/fs/cgroup/x/a/b
+  # echo threaded > /sys/fs/cgroup/x/a/cgroup.type
+  # echo threaded > /sys/fs/cgroup/x/a/b/cgroup.type
+  # echo 2062 > /sys/fs/cgroup/x/a/cgroup.procs
+  # cat /sys/fs/cgroup/x/a/cgroup.threads
+  2062
+  2063
+  # cat /sys/fs/cgroup/x/cgroup.procs
+  2062
+  # echo 2062 > /sys/fs/cgroup/x/a/b/cgroup.threads
+  # cat /sys/fs/cgroup/x/cgroup.procs
+  2062
+
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Reported-by: "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+Fixes: 8cfd8147df67 ("cgroup: implement cgroup v2 thread support")
+Cc: stable@vger.kernel.org # v4.14+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- crypto/cfb.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/cgroup/cgroup.c |   33 +++++++++++++++++++--------------
+ 1 file changed, 19 insertions(+), 14 deletions(-)
 
---- a/crypto/cfb.c
-+++ b/crypto/cfb.c
-@@ -144,7 +144,7 @@ static int crypto_cfb_decrypt_segment(st
+--- a/kernel/cgroup/cgroup.c
++++ b/kernel/cgroup/cgroup.c
+@@ -4186,20 +4186,25 @@ static void css_task_iter_advance(struct
  
- 	do {
- 		crypto_cfb_encrypt_one(tfm, iv, dst);
--		crypto_xor(dst, iv, bsize);
-+		crypto_xor(dst, src, bsize);
- 		iv = src;
+ 	lockdep_assert_held(&css_set_lock);
+ repeat:
+-	/*
+-	 * Advance iterator to find next entry.  cset->tasks is consumed
+-	 * first and then ->mg_tasks.  After ->mg_tasks, we move onto the
+-	 * next cset.
+-	 */
+-	next = it->task_pos->next;
+-
+-	if (next == it->tasks_head)
+-		next = it->mg_tasks_head->next;
+-
+-	if (next == it->mg_tasks_head)
++	if (it->task_pos) {
++		/*
++		 * Advance iterator to find next entry.  cset->tasks is
++		 * consumed first and then ->mg_tasks.  After ->mg_tasks,
++		 * we move onto the next cset.
++		 */
++		next = it->task_pos->next;
++
++		if (next == it->tasks_head)
++			next = it->mg_tasks_head->next;
++
++		if (next == it->mg_tasks_head)
++			css_task_iter_advance_css_set(it);
++		else
++			it->task_pos = next;
++	} else {
++		/* called from start, proceed to the first cset */
+ 		css_task_iter_advance_css_set(it);
+-	else
+-		it->task_pos = next;
++	}
  
- 		src += bsize;
+ 	/* if PROCS, skip over tasks which aren't group leaders */
+ 	if ((it->flags & CSS_TASK_ITER_PROCS) && it->task_pos &&
+@@ -4239,7 +4244,7 @@ void css_task_iter_start(struct cgroup_s
+ 
+ 	it->cset_head = it->cset_pos;
+ 
+-	css_task_iter_advance_css_set(it);
++	css_task_iter_advance(it);
+ 
+ 	spin_unlock_irq(&css_set_lock);
+ }
 
 
