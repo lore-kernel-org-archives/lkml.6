@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8547C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:15:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B14FDC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:16:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 881E12089F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:15:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 730972089F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:16:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546866951;
-	bh=YSsrr8vlyTrCvH+WdgGWaXbh7WjjXTF8Vbx1qpqL7BE=;
+	s=default; t=1546866962;
+	bh=tWMINecG90L68ZcbGxMBCXy0SqL8iVSsQWFbMe+YmbE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=IYOTqIBpP5RH8KjgiBYj4j5xcZD6LsBpiOQi8hsQgkwImapIt3HE2lb2uwbye0V03
-	 JmhK9Pv6llG3M/ViFNndzQDUA1PGB0NYQLwCBEWV8YCvR7j0+sNyD443jEafopfzaR
-	 TGXR/W2ymb/BT5SxG3o4Hg4TMgOihzbc7ycX4lME=
+	b=1fcwuvb6Aq+s6JPAVwcvT5ZSAEFiWp6ANKelprO853Ho5XASHS11/FotlZWMegxUa
+	 w8lDJWaRVZWr5GtMh70KHpq5F6/s/N7LVLosu9kMf5s0rlHBtp3zrZ+b68Vgcqb/Jk
+	 JUxzaoXJQ878UymyBQ7Q1tsM0rEmpvIeaMfR9HrY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731652AbfAGNPu (ORCPT
+        id S1730582AbfAGNBS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:15:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48976 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:01:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48742 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730627AbfAGNBa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:01:30 -0500
+        id S1730560AbfAGNBP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:01:15 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6B39D217D4;
-        Mon,  7 Jan 2019 13:01:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E0FBA2089F;
+        Mon,  7 Jan 2019 13:01:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546866090;
-        bh=YSsrr8vlyTrCvH+WdgGWaXbh7WjjXTF8Vbx1qpqL7BE=;
+        s=default; t=1546866074;
+        bh=tWMINecG90L68ZcbGxMBCXy0SqL8iVSsQWFbMe+YmbE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oHAfyFuUNSszZOQc67hPs8So0yHzoiPXQ/QSfCDxL0LnfsUTHjM7e8YTXNQkVNS5/
-         aqZlb9xlP3PttXda9hhvrsVMxAEuSB/jdwh0hqiL9uj1hUfOoXDUQxo34R2lmJCHjh
-         bcLRRLBJr+OKTxE+HrapOxD435S7ZZWLfqeoTKjU=
+        b=ACZ+x9ELJ6VVcJTsdHcPCXOXERySunCY7bqAzqJGdcVi7X6wufR8x19HOG9djlUqC
+         C73kq5VDQrytp19sRMcQMxisiN351k/T92Stz0m1m5avL3ajMWlNGIo+ZPxxFlbrya
+         JtfDD/HH6vqLzE9hjSsOd76VcEobajutc6K8W2h4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
+        stable@vger.kernel.org, Deepa Dinamani <deepa.kernel@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 007/101] ibmveth: fix DMA unmap error in ibmveth_xmit_start error path
-Date:   Mon,  7 Jan 2019 13:31:55 +0100
-Message-Id: <20190107105330.856728318@linuxfoundation.org>
+Subject: [PATCH 4.14 036/101] sock: Make sock->sk_stamp thread-safe
+Date:   Mon,  7 Jan 2019 13:32:24 +0100
+Message-Id: <20190107105334.895583816@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107105330.372621917@linuxfoundation.org>
 References: <20190107105330.372621917@linuxfoundation.org>
@@ -65,60 +65,183 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
+From: Deepa Dinamani <deepa.kernel@gmail.com>
 
-[ Upstream commit 756af9c642329d54f048bac2a62f829b391f6944 ]
+[ Upstream commit 3a0ed3e9619738067214871e9cb826fa23b2ddb9 ]
 
-Commit 33a48ab105a7 ("ibmveth: Fix DMA unmap error") fixed an issue in the
-normal code path of ibmveth_xmit_start() that was originally introduced by
-Commit 6e8ab30ec677 ("ibmveth: Add scatter-gather support"). This original
-fix missed the error path where dma_unmap_page is wrongly called on the
-header portion in descs[0] which was mapped with dma_map_single. As a
-result a failure to DMA map any of the frags results in a dmesg warning
-when CONFIG_DMA_API_DEBUG is enabled.
+Al Viro mentioned (Message-ID
+<20170626041334.GZ10672@ZenIV.linux.org.uk>)
+that there is probably a race condition
+lurking in accesses of sk_stamp on 32-bit machines.
 
-------------[ cut here ]------------
-DMA-API: ibmveth 30000002: device driver frees DMA memory with wrong function
-  [device address=0x000000000a430000] [size=172 bytes] [mapped as page] [unmapped as single]
-WARNING: CPU: 1 PID: 8426 at kernel/dma/debug.c:1085 check_unmap+0x4fc/0xe10
-...
-<snip>
-...
-DMA-API: Mapped at:
-ibmveth_start_xmit+0x30c/0xb60
-dev_hard_start_xmit+0x100/0x450
-sch_direct_xmit+0x224/0x490
-__qdisc_run+0x20c/0x980
-__dev_queue_xmit+0x1bc/0xf20
+sock->sk_stamp is of type ktime_t which is always an s64.
+On a 32 bit architecture, we might run into situations of
+unsafe access as the access to the field becomes non atomic.
 
-This fixes the API misuse by unampping descs[0] with dma_unmap_single.
+Use seqlocks for synchronization.
+This allows us to avoid using spinlocks for readers as
+readers do not need mutual exclusion.
 
-Fixes: 6e8ab30ec677 ("ibmveth: Add scatter-gather support")
-Signed-off-by: Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
+Another approach to solve this is to require sk_lock for all
+modifications of the timestamps. The current approach allows
+for timestamps to have their own lock: sk_stamp_lock.
+This allows for the patch to not compete with already
+existing critical sections, and side effects are limited
+to the paths in the patch.
+
+The addition of the new field maintains the data locality
+optimizations from
+commit 9115e8cd2a0c ("net: reorganize struct sock for better data
+locality")
+
+Note that all the instances of the sk_stamp accesses
+are either through the ioctl or the syscall recvmsg.
+
+Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/ibm/ibmveth.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ include/net/sock.h   |   38 +++++++++++++++++++++++++++++++++++---
+ net/compat.c         |   15 +++++++++------
+ net/core/sock.c      |    3 +++
+ net/sunrpc/svcsock.c |    2 +-
+ 4 files changed, 48 insertions(+), 10 deletions(-)
 
---- a/drivers/net/ethernet/ibm/ibmveth.c
-+++ b/drivers/net/ethernet/ibm/ibmveth.c
-@@ -1172,11 +1172,15 @@ out:
+--- a/include/net/sock.h
++++ b/include/net/sock.h
+@@ -292,6 +292,7 @@ struct sock_common {
+   *	@sk_filter: socket filtering instructions
+   *	@sk_timer: sock cleanup timer
+   *	@sk_stamp: time stamp of last packet received
++  *	@sk_stamp_seq: lock for accessing sk_stamp on 32 bit architectures only
+   *	@sk_tsflags: SO_TIMESTAMPING socket options
+   *	@sk_tskey: counter to disambiguate concurrent tstamp requests
+   *	@sk_zckey: counter to order MSG_ZEROCOPY notifications
+@@ -457,6 +458,9 @@ struct sock {
+ 	const struct cred	*sk_peer_cred;
+ 	long			sk_rcvtimeo;
+ 	ktime_t			sk_stamp;
++#if BITS_PER_LONG==32
++	seqlock_t		sk_stamp_seq;
++#endif
+ 	u16			sk_tsflags;
+ 	u8			sk_shutdown;
+ 	u32			sk_tskey;
+@@ -2201,6 +2205,34 @@ static inline void sk_drops_add(struct s
+ 	atomic_add(segs, &sk->sk_drops);
+ }
  
- map_failed_frags:
- 	last = i+1;
--	for (i = 0; i < last; i++)
-+	for (i = 1; i < last; i++)
- 		dma_unmap_page(&adapter->vdev->dev, descs[i].fields.address,
- 			       descs[i].fields.flags_len & IBMVETH_BUF_LEN_MASK,
- 			       DMA_TO_DEVICE);
++static inline ktime_t sock_read_timestamp(struct sock *sk)
++{
++#if BITS_PER_LONG==32
++	unsigned int seq;
++	ktime_t kt;
++
++	do {
++		seq = read_seqbegin(&sk->sk_stamp_seq);
++		kt = sk->sk_stamp;
++	} while (read_seqretry(&sk->sk_stamp_seq, seq));
++
++	return kt;
++#else
++	return sk->sk_stamp;
++#endif
++}
++
++static inline void sock_write_timestamp(struct sock *sk, ktime_t kt)
++{
++#if BITS_PER_LONG==32
++	write_seqlock(&sk->sk_stamp_seq);
++	sk->sk_stamp = kt;
++	write_sequnlock(&sk->sk_stamp_seq);
++#else
++	sk->sk_stamp = kt;
++#endif
++}
++
+ void __sock_recv_timestamp(struct msghdr *msg, struct sock *sk,
+ 			   struct sk_buff *skb);
+ void __sock_recv_wifi_status(struct msghdr *msg, struct sock *sk,
+@@ -2225,7 +2257,7 @@ sock_recv_timestamp(struct msghdr *msg,
+ 	     (sk->sk_tsflags & SOF_TIMESTAMPING_RAW_HARDWARE)))
+ 		__sock_recv_timestamp(msg, sk, skb);
+ 	else
+-		sk->sk_stamp = kt;
++		sock_write_timestamp(sk, kt);
  
-+	dma_unmap_single(&adapter->vdev->dev,
-+			 descs[0].fields.address,
-+			 descs[0].fields.flags_len & IBMVETH_BUF_LEN_MASK,
-+			 DMA_TO_DEVICE);
- map_failed:
- 	if (!firmware_has_feature(FW_FEATURE_CMO))
- 		netdev_err(netdev, "tx: unable to map xmit buffer\n");
+ 	if (sock_flag(sk, SOCK_WIFI_STATUS) && skb->wifi_acked_valid)
+ 		__sock_recv_wifi_status(msg, sk, skb);
+@@ -2246,9 +2278,9 @@ static inline void sock_recv_ts_and_drop
+ 	if (sk->sk_flags & FLAGS_TS_OR_DROPS || sk->sk_tsflags & TSFLAGS_ANY)
+ 		__sock_recv_ts_and_drops(msg, sk, skb);
+ 	else if (unlikely(sock_flag(sk, SOCK_TIMESTAMP)))
+-		sk->sk_stamp = skb->tstamp;
++		sock_write_timestamp(sk, skb->tstamp);
+ 	else if (unlikely(sk->sk_stamp == SK_DEFAULT_STAMP))
+-		sk->sk_stamp = 0;
++		sock_write_timestamp(sk, 0);
+ }
+ 
+ void __sock_tx_timestamp(__u16 tsflags, __u8 *tx_flags);
+--- a/net/compat.c
++++ b/net/compat.c
+@@ -462,12 +462,14 @@ int compat_sock_get_timestamp(struct soc
+ 	err = -ENOENT;
+ 	if (!sock_flag(sk, SOCK_TIMESTAMP))
+ 		sock_enable_timestamp(sk, SOCK_TIMESTAMP);
+-	tv = ktime_to_timeval(sk->sk_stamp);
++	tv = ktime_to_timeval(sock_read_timestamp(sk));
++
+ 	if (tv.tv_sec == -1)
+ 		return err;
+ 	if (tv.tv_sec == 0) {
+-		sk->sk_stamp = ktime_get_real();
+-		tv = ktime_to_timeval(sk->sk_stamp);
++		ktime_t kt = ktime_get_real();
++		sock_write_timestamp(sk, kt);
++		tv = ktime_to_timeval(kt);
+ 	}
+ 	err = 0;
+ 	if (put_user(tv.tv_sec, &ctv->tv_sec) ||
+@@ -490,12 +492,13 @@ int compat_sock_get_timestampns(struct s
+ 	err = -ENOENT;
+ 	if (!sock_flag(sk, SOCK_TIMESTAMP))
+ 		sock_enable_timestamp(sk, SOCK_TIMESTAMP);
+-	ts = ktime_to_timespec(sk->sk_stamp);
++	ts = ktime_to_timespec(sock_read_timestamp(sk));
+ 	if (ts.tv_sec == -1)
+ 		return err;
+ 	if (ts.tv_sec == 0) {
+-		sk->sk_stamp = ktime_get_real();
+-		ts = ktime_to_timespec(sk->sk_stamp);
++		ktime_t kt = ktime_get_real();
++		sock_write_timestamp(sk, kt);
++		ts = ktime_to_timespec(kt);
+ 	}
+ 	err = 0;
+ 	if (put_user(ts.tv_sec, &ctv->tv_sec) ||
+--- a/net/core/sock.c
++++ b/net/core/sock.c
+@@ -2730,6 +2730,9 @@ void sock_init_data(struct socket *sock,
+ 	sk->sk_sndtimeo		=	MAX_SCHEDULE_TIMEOUT;
+ 
+ 	sk->sk_stamp = SK_DEFAULT_STAMP;
++#if BITS_PER_LONG==32
++	seqlock_init(&sk->sk_stamp_seq);
++#endif
+ 	atomic_set(&sk->sk_zckey, 0);
+ 
+ #ifdef CONFIG_NET_RX_BUSY_POLL
+--- a/net/sunrpc/svcsock.c
++++ b/net/sunrpc/svcsock.c
+@@ -585,7 +585,7 @@ static int svc_udp_recvfrom(struct svc_r
+ 		/* Don't enable netstamp, sunrpc doesn't
+ 		   need that much accuracy */
+ 	}
+-	svsk->sk_sk->sk_stamp = skb->tstamp;
++	sock_write_timestamp(svsk->sk_sk, skb->tstamp);
+ 	set_bit(XPT_DATA, &svsk->sk_xprt.xpt_flags); /* there may be more data... */
+ 
+ 	len  = skb->len;
 
 
