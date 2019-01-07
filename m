@@ -7,50 +7,47 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B39CC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:08:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37C73C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:08:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0C4221855
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:08:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0789121855
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:08:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546866533;
-	bh=IEVSNX9tgVaqqhZMmwuHULrWU+d+8HgHgaPWJt4BHuc=;
+	s=default; t=1546866538;
+	bh=A13X+9AwadrN4YqbHaC77fG5yHYWjgpU6qG6NLguf/o=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=l8iwnYzcddcbroV+4F1TMR1RuqtcOvE5c65k8th34spAlmyd/grr2Vuy3ROAKd1bW
-	 1fzAnPYdY0aVlMDaudixrpb+IkDlWTIfGzmNKfpKYSuQqWFaLWBEKuZs+gzUcCl4ti
-	 PLUD+DsRF5GNp3ZHIf3ch9aFePlHPV430KY4ua9U=
+	b=L2H4ZEDrJhD60gPbTyHHsX1bIM5EZEGzuFMdX4UfansBwudNiHcJ/6aQJsyk6JNGN
+	 NN+kLn8qwRpMWMiVF5HUc312xxPwrq2S9R5Wq+8UQsdbr8J/IWpM8I+W2iYngB6/wA
+	 rUoWzdpy3nmnyFh1gcEmjnJYgLM3XfzJmiflTbys=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731735AbfAGNIx (ORCPT
+        id S1731139AbfAGNI5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:08:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55906 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:08:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55956 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731204AbfAGNIu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:08:50 -0500
+        id S1731726AbfAGNIw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:08:52 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D07F8218A3;
-        Mon,  7 Jan 2019 13:08:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 845E22089F;
+        Mon,  7 Jan 2019 13:08:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546866529;
-        bh=IEVSNX9tgVaqqhZMmwuHULrWU+d+8HgHgaPWJt4BHuc=;
+        s=default; t=1546866532;
+        bh=A13X+9AwadrN4YqbHaC77fG5yHYWjgpU6qG6NLguf/o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mM1cTTiW7f2BqQxS3ipdelqk6Rm7lW/Lx2fXomT86eHUwFfelrwwo9r6XZ3rM/BFu
-         0zZ3Jld0yMLyknVfx8fVsOyK/nwt387g8GvmTCSLV0drYdDvciQcM5pF2vFWC01jWI
-         Y+ATNeUmT82cJqt2M/S0AzqPJS0sZBcBhHMY+xVQ=
+        b=DHoy3o17IKfcxlrkUCwXZHUmscP/p7Dsr4/BmohH53iWkr0bpZMIluG/6f1Gz80HV
+         KIzN60zQWF1M2Rx2mJLtM04AsDeE39Kk7PZARgCkRaEDOf3PnqHLSOQ/ZMpcJ+IC8D
+         lhhv0i7NLVrqntqbDgkJRnHC8IVIEC2yGRhEwL5E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+eb4da3a20fad2e52555d@syzkaller.appspotmail.com,
-        Ying Xue <ying.xue@windriver.com>,
-        Jon Maloy <jon.maloy@ericsson.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 24/71] tipc: compare remote and local protocols in tipc_udp_enable()
-Date:   Mon,  7 Jan 2019 13:32:53 +0100
-Message-Id: <20190107105334.179236891@linuxfoundation.org>
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH 4.9 60/71] f2fs: fix validation of the block count in sanity_check_raw_super
+Date:   Mon,  7 Jan 2019 13:33:29 +0100
+Message-Id: <20190107105336.152544550@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107105330.280153213@linuxfoundation.org>
 References: <20190107105330.280153213@linuxfoundation.org>
@@ -69,42 +66,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Cong Wang <xiyou.wangcong@gmail.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-[ Upstream commit fb83ed496b9a654f60cd1d58a0e1e79ec5694808 ]
+commit 88960068f25fcc3759455d85460234dcc9d43fef upstream.
 
-When TIPC_NLA_UDP_REMOTE is an IPv6 mcast address but
-TIPC_NLA_UDP_LOCAL is an IPv4 address, a NULL-ptr deref is triggered
-as the UDP tunnel sock is initialized to IPv4 or IPv6 sock merely
-based on the protocol in local address.
+Treat "block_count" from struct f2fs_super_block as 64-bit little endian
+value in sanity_check_raw_super() because struct f2fs_super_block
+declares "block_count" as "__le64".
 
-We should just error out when the remote address and local address
-have different protocols.
+This fixes a bug where the superblock validation fails on big endian
+devices with the following error:
+  F2FS-fs (sda1): Wrong segment_count / block_count (61439 > 0)
+  F2FS-fs (sda1): Can't find valid F2FS filesystem in 1th superblock
+  F2FS-fs (sda1): Wrong segment_count / block_count (61439 > 0)
+  F2FS-fs (sda1): Can't find valid F2FS filesystem in 2th superblock
+As result of this the partition cannot be mounted.
 
-Reported-by: syzbot+eb4da3a20fad2e52555d@syzkaller.appspotmail.com
-Cc: Ying Xue <ying.xue@windriver.com>
-Cc: Jon Maloy <jon.maloy@ericsson.com>
-Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
-Acked-by: Jon Maloy <jon.maloy@ericsson.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+With this patch applied the superblock validation works fine and the
+partition can be mounted again:
+  F2FS-fs (sda1): Mounted with checkpoint version = 7c84
+
+My little endian x86-64 hardware was able to mount the partition without
+this fix.
+To confirm that mounting f2fs filesystems works on big endian machines
+again I tested this on a 32-bit MIPS big endian (lantiq) device.
+
+Fixes: 0cfe75c5b01199 ("f2fs: enhance sanity_check_raw_super() to avoid potential overflows")
+Cc: stable@vger.kernel.org
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/tipc/udp_media.c |    5 +++++
- 1 file changed, 5 insertions(+)
 
---- a/net/tipc/udp_media.c
-+++ b/net/tipc/udp_media.c
-@@ -674,6 +674,11 @@ static int tipc_udp_enable(struct net *n
- 	if (err)
- 		goto err;
+---
+ fs/f2fs/super.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1427,10 +1427,10 @@ static int sanity_check_raw_super(struct
+ 		return 1;
+ 	}
  
-+	if (remote.proto != local.proto) {
-+		err = -EINVAL;
-+		goto err;
-+	}
-+
- 	b->bcast_addr.media_id = TIPC_MEDIA_TYPE_UDP;
- 	b->bcast_addr.broadcast = 1;
- 	rcu_assign_pointer(b->media_ptr, ub);
+-	if (segment_count > (le32_to_cpu(raw_super->block_count) >> 9)) {
++	if (segment_count > (le64_to_cpu(raw_super->block_count) >> 9)) {
+ 		f2fs_msg(sb, KERN_INFO,
+-			"Wrong segment_count / block_count (%u > %u)",
+-			segment_count, le32_to_cpu(raw_super->block_count));
++			"Wrong segment_count / block_count (%u > %llu)",
++			segment_count, le64_to_cpu(raw_super->block_count));
+ 		return 1;
+ 	}
+ 
 
 
