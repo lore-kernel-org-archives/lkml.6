@@ -2,103 +2,151 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1018AC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 04:41:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E73E7C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 04:52:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA3BC2070B
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 04:41:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="GpIx4ERj"
+	by mail.kernel.org (Postfix) with ESMTP id B29AF2085A
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 04:52:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726437AbfAGEle (ORCPT
+        id S1726438AbfAGEwK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 6 Jan 2019 23:41:34 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:38301 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726278AbfAGEle (ORCPT
+        Sun, 6 Jan 2019 23:52:10 -0500
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:45578 "EHLO
+        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726287AbfAGEwK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Jan 2019 23:41:34 -0500
-Received: by mail-wr1-f66.google.com with SMTP id v13so41801772wrw.5
-        for <linux-kernel@vger.kernel.org>; Sun, 06 Jan 2019 20:41:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=o+KJwyA6per4XLo3a8AN/JoxpgSO7smJc09PXpuJYQA=;
-        b=GpIx4ERjFM2xVKM4LvLmMPMuhnm+jdl4aZM+HjEhO2AS08gJnt89Vo0WilFfH7qgHY
-         7JR9rBet8WO60pS4y+PjNMRVgytD7YJ3gBwjVd46olhWR1zzSnXQjFdih5W2a1fXaF/g
-         dAXv3fLfVHPikaBOihIxwJznO+j09aqLWJz9g=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=o+KJwyA6per4XLo3a8AN/JoxpgSO7smJc09PXpuJYQA=;
-        b=QX/3/skUzb0OcB8qDXB7XVAkunUdApw15BfISH4LjFOw0bSB9EM8MoDtZCwUX7Xmo1
-         PIy1gdEgu/pRI5bVuMJmiuKZIUIUK561u9spFSKlavozW22VzcqcJFEZ4GByY3DE8ivN
-         rlJDLljvGkAEvVLWoaqHApASEzketXte0Rd9xp1qfZLEPvak/sotd4eWePr4kaEzp5TY
-         RLYu7aQYtwU7yNLTGZhMsO7Zge56ZY5XJEcWfaSEfFsEwEvBEw1s1WUY4MAM5MfYCKWH
-         zy/5jdROwX9lxRhPsR52UdNoGhBq+QiHw9W6OsSgORiSvJbWE4ZfBytsu0qklwHj8G8N
-         RceA==
-X-Gm-Message-State: AJcUukdHTERsqukhq2TCHbPCIgyziKP/14KcDycaAyryf7s9lOn6jBlm
-        gTZTJKBjbxLfipcsJVWaxSBmImIltLGy4czJfpaHEg==
-X-Google-Smtp-Source: ALg8bN6UpkddzH4MoTOSR0G63vlm2Y9eRO1zYPMUTr4gOz9G7MtSjgV/wmtOqBZiE6PU42ZAJoGQYU3ryLEJfU1dOKg=
-X-Received: by 2002:adf:ee46:: with SMTP id w6mr52275966wro.261.1546836092201;
- Sun, 06 Jan 2019 20:41:32 -0800 (PST)
-MIME-Version: 1.0
-References: <1546505734-24527-1-git-send-email-srinath.mannam@broadcom.com>
- <1546505734-24527-2-git-send-email-srinath.mannam@broadcom.com> <20190103170117.GA11469@bogus>
-In-Reply-To: <20190103170117.GA11469@bogus>
-From:   Srinath Mannam <srinath.mannam@broadcom.com>
-Date:   Mon, 7 Jan 2019 10:11:21 +0530
-Message-ID: <CABe79T4Q=76NRx=uj1LQg9Wu54=Sj+F68Tk6S5nNX5-WHzCsNw@mail.gmail.com>
-Subject: Re: [PATCH v6 1/3] dt-bindings: thermal: Add binding document for SR thermal
-To:     Rob Herring <robh@kernel.org>
-Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org,
+        Sun, 6 Jan 2019 23:52:10 -0500
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by kvm5.telegraphics.com.au (Postfix) with ESMTP id 3632828DE0;
+        Sun,  6 Jan 2019 23:52:02 -0500 (EST)
+Date:   Mon, 7 Jan 2019 15:52:38 +1100 (AEDT)
+From:   Finn Thain <fthain@telegraphics.com.au>
+To:     Michael Ellerman <mpe@ellerman.id.au>
+cc:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        Pramod Kumar <pramod.kumar@broadcom.com>
-Content-Type: text/plain; charset="UTF-8"
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Subject: Re: [PATCH v8 24/25] powerpc: Adopt nvram module for PPC64
+In-Reply-To: <8736q5xst1.fsf@concordia.ellerman.id.au>
+Message-ID: <alpine.LNX.2.21.1901071533060.30@nippy.intranet>
+References: <cover.1545784679.git.fthain@telegraphics.com.au> <2fe2b8e6395aeacfafcbde590a50922d4e632189.1545784679.git.fthain@telegraphics.com.au> <CAK8P3a2p91XJfJuSCZqRLRgC-aP3LR1tMK2DDxTiSuD8_FOg8Q@mail.gmail.com>
+ <8736q5xst1.fsf@concordia.ellerman.id.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
+On Mon, 7 Jan 2019, Michael Ellerman wrote:
 
-Thank you for the note. I will take care from next time onward.
+> Arnd Bergmann <arnd@arndb.de> writes:
+> > On Wed, Dec 26, 2018 at 1:43 AM Finn Thain <fthain@telegraphics.com.au> wrote:
+> >
+> >> +static ssize_t ppc_nvram_get_size(void)
+> >> +{
+> >> +       if (ppc_md.nvram_size)
+> >> +               return ppc_md.nvram_size();
+> >> +       return -ENODEV;
+> >> +}
+> >
+> >> +const struct nvram_ops arch_nvram_ops = {
+> >> +       .read           = ppc_nvram_read,
+> >> +       .write          = ppc_nvram_write,
+> >> +       .get_size       = ppc_nvram_get_size,
+> >> +       .sync           = ppc_nvram_sync,
+> >> +};
+> >
+> > Coming back to this after my comment on the m68k side, I notice that
+> > there is now a double indirection through function pointers. Have you
+> > considered completely removing the operations from ppc_md instead
+> > by having multiple copies of nvram_ops?
+> >
+> > With the current method, it does seem odd to have a single
+> > per-architecture instance of the exported structure containing
+> > function pointers. This doesn't give us the flexibility of having
+> > multiple copies in the kernel the way that ppc_md does, but it adds
+> > overhead compared to simply exporting the functions directly.
+> 
+> Yeah TBH I'm not convinced the arch ops is the best solution.
+> 
+> Why can't each arch just implement the required ops functions? On ppc
+> we'd still use ppc_md but that would be a ppc detail.
+> 
+> Optional ops are fairly easy to support by providing a default
+> implementation, eg. instead of:
+> 
+> +	if (arch_nvram_ops.get_size == NULL)
+> +		return -ENODEV;
+> +
+> +	nvram_size = arch_nvram_ops.get_size();
+> +	if (nvram_size < 0)
+> +		return nvram_size;
+> 
+> 
+> We do in some header:
+> 
+> #ifndef arch_nvram_get_size
+> static inline int arch_nvram_get_size(void)
+> {
+> 	return -ENODEV;
+> }
+> #endif
+> 
+> And then:
+> 
+> 	nvram_size = arch_nvram_get_size();
+> 	if (nvram_size < 0)
+> 		return nvram_size;
+> 
+> 
+> But I haven't digested the whole series so maybe I'm missing something?
+> 
 
-Thanks & Regards,
-Srinath.
+The reason why that doesn't work boils down to introspection. (This was 
+mentioned elsewhere in this email thread.) For example, we presently have 
+code like this,
 
-On Thu, Jan 3, 2019 at 10:31 PM Rob Herring <robh@kernel.org> wrote:
->
-> On Thu,  3 Jan 2019 14:25:32 +0530, Srinath Mannam wrote:
-> > From: Pramod Kumar <pramod.kumar@broadcom.com>
-> >
-> > Add binding document for supported thermal implementation
-> > in Stingray.
-> >
-> > Signed-off-by: Pramod Kumar <pramod.kumar@broadcom.com>
-> > Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
-> > Reviewed-by: Ray Jui <ray.jui@broadcom.com>
-> > Reviewed-by: Scott Branden <scott.branden@broadcom.com>
-> > ---
-> >  .../bindings/thermal/brcm,sr-thermal.txt           | 105 +++++++++++++++++++++
-> >  1 file changed, 105 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/thermal/brcm,sr-thermal.txt
-> >
->
-> Please add Acked-by/Reviewed-by tags when posting new versions. However,
-> there's no need to repost patches *only* to add the tags. The upstream
-> maintainer will do that for acks received on the version they apply.
->
-> If a tag was not added on purpose, please state why and what changed.
+ssize_t nvram_get_size(void)
+{
+       if (ppc_md.nvram_size)
+               return ppc_md.nvram_size();
+       return -1;
+}
+EXPORT_SYMBOL(nvram_get_size);
+
+This construction means we get to decide at run-time which of the NVRAM 
+functions should be used. (Whereas your example makes a build-time decision.)
+
+The purpose of arch_nvram_ops is much the same. That is, it does for m68k 
+and x86 what ppc_md already does for ppc32 and ppc64. (And once these 
+platforms share an API like this, they can share more driver code, and 
+reduce duplicated code.)
+
+The approach taken in this series was to push the arch_nvram_ops approach 
+as far as possible, because by making everything fit into that regime it 
+immediately became apparent where architectures and platforms have 
+diverged, creating weird inconsistencies like the differences in sync 
+ioctl behaviour between ppc32 and ppc64 for core99. (Early revisions of 
+this series exposed more issues like bugs and dead code that got addressed 
+elsewhere.)
+
+Problem is, as Arnd pointed out, powerpc doesn't need both kinds of ops 
+struct. So I'm rewriting this series in such a way that powerpc doesn't 
+have to implement both. This rewrite is going to look totally different 
+for powerpc (though not for x86 or m68k) so you might want to wait for me 
+to post v9 before spending more time on code review.
+
+Thanks.
+
+-- 
+
+> cheers
+> 
