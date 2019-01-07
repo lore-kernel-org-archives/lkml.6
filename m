@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D37F5C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:21:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F02F3C43612
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:21:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D427217D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:21:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B73BC21736
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:21:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546867280;
-	bh=Bb12ywnyhV5KPAwB6IGruNJHFJJYrW2ThoDeqSpYshY=;
+	s=default; t=1546867285;
+	bh=bfoDEjtzPcHWhySdtTd2Bf9m2ckXOE3fGZI8ilioTOo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=K91cH7svlsx4ZcOCYwmXalvVi/EjcDiP55xLUyqcCbLUZaURUEwAk8yO5+AarIhQ2
-	 KDBIHpwQnL37j1lMkDGhOqBjm1hKm9TUorPVAQYnPgU6OfdehOp3zXrg40RFgy7Joe
-	 1rA0xDUwAHuCdfKSoc2qwEqeDaMy7hw/g4j/p1j8=
+	b=k6S17Z553VmWJ+0/ipKBi+TQavyxigJR5OTeePSs9I7S1WYOin9AjtmlU3qzaU64J
+	 33P7Zku1+ocHmzIOG7mReThMEYaPVTfpEUdSZiPV0ZVK68ECY8Z4/ltkMxG/kWNzLy
+	 QZOgpe4U2peGp2p8L7+TWvxmNr+FFtEXjD2vDeGo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729787AbfAGNVT (ORCPT
+        id S1728803AbfAGMpF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:21:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34264 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:45:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33854 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728214AbfAGMpL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:45:11 -0500
+        id S1728774AbfAGMo5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:44:57 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 534282183E;
-        Mon,  7 Jan 2019 12:45:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6D61C21873;
+        Mon,  7 Jan 2019 12:44:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865110;
-        bh=Bb12ywnyhV5KPAwB6IGruNJHFJJYrW2ThoDeqSpYshY=;
+        s=default; t=1546865096;
+        bh=bfoDEjtzPcHWhySdtTd2Bf9m2ckXOE3fGZI8ilioTOo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PnJPKl0CFbPcEE07a/B8BPzQWrQQ09j/b/HUzXANARyHP+6kJp5cBLW45EONPKbnb
-         QXKotAX3qoea6rpWfhMdVi65fARD4OFTjTzmGAIlEDZAvOoBfckX9qO6tXCAhOpmG8
-         JylOaW8NZYd6DMWB7u3iZVLfkem16ogGDWklgzX4=
+        b=Q90+9ex/14sF4IguHzAx3z+defa+v6B7VIKDXtS2FOdKUdfeJqG50FIQmHbteW+iA
+         p0R2Ps/30qZHlgK8fj7Z0W0qlOQHCKNsehUg0xz43F/tgkEtgJhqp5KeS/bIkF0JPw
+         b3zm0udaWGC28j0TQXRwfR3tIAqAEf4oi9rRcg+c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Subject: [PATCH 4.20 139/145] KVM: arm/arm64: vgic: Fix off-by-one bug in vgic_get_irq()
-Date:   Mon,  7 Jan 2019 13:32:56 +0100
-Message-Id: <20190107104455.396089352@linuxfoundation.org>
+        stable@vger.kernel.org, "Maciej W. Rozycki" <macro@linux-mips.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH 4.20 134/145] rtc: m41t80: Correct alarm month range with RTC reads
+Date:   Mon,  7 Jan 2019 13:32:51 +0100
+Message-Id: <20190107104454.738611224@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104437.308206189@linuxfoundation.org>
 References: <20190107104437.308206189@linuxfoundation.org>
@@ -66,58 +65,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Gustavo A. R. Silva <gustavo@embeddedor.com>
+From: Maciej W. Rozycki <macro@linux-mips.org>
 
-commit c23b2e6fc4ca346018618266bcabd335c0a8a49e upstream.
+commit 3cc9ffbb1f51eb4320575a48e4805a8f52e0e26b upstream.
 
-When using the nospec API, it should be taken into account that:
+Add the missing adjustment of the month range on alarm reads from the
+RTC, correcting an issue coming from commit 9c6dfed92c3e ("rtc: m41t80:
+add alarm functionality").  The range is 1-12 for hardware and 0-11 for
+`struct rtc_time', and is already correctly handled on alarm writes to
+the RTC.
 
-"...if the CPU speculates past the bounds check then
- * array_index_nospec() will clamp the index within the range of [0,
- * size)."
+It was correct up until commit 48e9766726eb ("drivers/rtc/rtc-m41t80.c:
+remove disabled alarm functionality") too, which removed the previous
+implementation of alarm support.
 
-The above is part of the header for macro array_index_nospec() in
-linux/nospec.h
-
-Now, in this particular case, if intid evaluates to exactly VGIC_MAX_SPI
-or to exaclty VGIC_MAX_PRIVATE, the array_index_nospec() macro ends up
-returning VGIC_MAX_SPI - 1 or VGIC_MAX_PRIVATE - 1 respectively, instead
-of VGIC_MAX_SPI or VGIC_MAX_PRIVATE, which, based on the original logic:
-
-	/* SGIs and PPIs */
-	if (intid <= VGIC_MAX_PRIVATE)
- 		return &vcpu->arch.vgic_cpu.private_irqs[intid];
-
- 	/* SPIs */
-	if (intid <= VGIC_MAX_SPI)
- 		return &kvm->arch.vgic.spis[intid - VGIC_NR_PRIVATE_IRQS];
-
-are valid values for intid.
-
-Fix this by calling array_index_nospec() macro with VGIC_MAX_PRIVATE + 1
-and VGIC_MAX_SPI + 1 as arguments for its parameter size.
-
-Fixes: 41b87599c743 ("KVM: arm/arm64: vgic: fix possible spectre-v1 in vgic_get_irq()")
-Cc: stable@vger.kernel.org
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-[dropped the SPI part which was fixed separately]
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Maciej W. Rozycki <macro@linux-mips.org>
+Fixes: 9c6dfed92c3e ("rtc: m41t80: add alarm functionality")
+References: 48e9766726eb ("drivers/rtc/rtc-m41t80.c: remove disabled alarm functionality")
+Cc: stable@vger.kernel.org # 4.7+
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- virt/kvm/arm/vgic/vgic.c |    2 +-
+ drivers/rtc/rtc-m41t80.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/virt/kvm/arm/vgic/vgic.c
-+++ b/virt/kvm/arm/vgic/vgic.c
-@@ -103,7 +103,7 @@ struct vgic_irq *vgic_get_irq(struct kvm
- {
- 	/* SGIs and PPIs */
- 	if (intid <= VGIC_MAX_PRIVATE) {
--		intid = array_index_nospec(intid, VGIC_MAX_PRIVATE);
-+		intid = array_index_nospec(intid, VGIC_MAX_PRIVATE + 1);
- 		return &vcpu->arch.vgic_cpu.private_irqs[intid];
- 	}
+--- a/drivers/rtc/rtc-m41t80.c
++++ b/drivers/rtc/rtc-m41t80.c
+@@ -393,7 +393,7 @@ static int m41t80_read_alarm(struct devi
+ 	alrm->time.tm_min  = bcd2bin(alarmvals[3] & 0x7f);
+ 	alrm->time.tm_hour = bcd2bin(alarmvals[2] & 0x3f);
+ 	alrm->time.tm_mday = bcd2bin(alarmvals[1] & 0x3f);
+-	alrm->time.tm_mon  = bcd2bin(alarmvals[0] & 0x3f);
++	alrm->time.tm_mon  = bcd2bin(alarmvals[0] & 0x3f) - 1;
  
+ 	alrm->enabled = !!(alarmvals[0] & M41T80_ALMON_AFE);
+ 	alrm->pending = (flags & M41T80_FLAGS_AF) && alrm->enabled;
 
 
