@@ -7,47 +7,48 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82282C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:35:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 577B6C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:35:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 530FA2089F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:35:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 283822089F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:35:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546864550;
-	bh=ajNBNeVh0Z4X8FJBb+DGBIkp/kVJjOJXkYK2wcJwZJ0=;
+	s=default; t=1546864554;
+	bh=RS8tg+uAKCeeByEsxj7tfJ6uRATizb0Pp4yl8uDWtOc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=HhWkcv1+ZJ6Fm1HhKMzds51h1u+UPf0p3KS25q4hl0/vcRVj2bx1hjhpP+zqMebMd
-	 JEJY6UBRQUxJOw7qhA3XztvYhlphTfDcv2jzbluIfZf2fGeaVeTSNjmztSfSthtFrr
-	 2ticwKc4HJvBGRdkHxrkWSbs7C6/pU7jZEUe4YXo=
+	b=fufiio31phfNenp/uVjMrzXHikcN2ViQlRcTUV6BzY/Wvyghl/TSrssgo/2EA/OLK
+	 xsDPN9E/znq2d8PmsUpg0jhxQv3PsMty5PgnO7RAgeHIVu2OVn6QDCMbsB3GR5CCfA
+	 FtDOSROFS+A+4EW81CrZNiZL+TvE7OvEP65KVQ6k=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727633AbfAGMft (ORCPT
+        id S1727645AbfAGMfx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:35:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49890 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:35:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50056 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727612AbfAGMfo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:35:44 -0500
+        id S1726948AbfAGMfs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:35:48 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1C92B206BB;
-        Mon,  7 Jan 2019 12:35:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4A7F920859;
+        Mon,  7 Jan 2019 12:35:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546864543;
-        bh=ajNBNeVh0Z4X8FJBb+DGBIkp/kVJjOJXkYK2wcJwZJ0=;
+        s=default; t=1546864547;
+        bh=RS8tg+uAKCeeByEsxj7tfJ6uRATizb0Pp4yl8uDWtOc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lEvg62ybBIPlqUnGRucd2A3JYAscLwq886SNjlUHkOT2mEXlG0eWFpxd9kQoWxE3h
-         zb6ymbMOzioVUCUSg7jFTZWu9WlXkYqsGQBopU+qwkGAJJfmVnw9CHWym2LFaul92x
-         DAMpUbIlle0K3Um3LXk+hM8t50FeATKbaifa0tcs=
+        b=kSxpYG9lkEdJ6yGWwlyPJJHk1UzIiZfMKwymsPiG9i1DTI8+meUEBGyogpZe39Mtk
+         rNDvk6cpvQV0eAsEsQIcb0m6KFVSzJr+GbI+Q5P8iuWpBlJI3YxsoKONa3ey3/dMzH
+         vwa/BVkuK+Oo93lf+aGvB5U99IeNVh2wxRVVJUBQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Malcolm Priestley <tvboxspy@gmail.com>,
-        Sean Young <sean@mess.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 4.20 045/145] media: dvb-usb-v2: Fix incorrect use of transfer_flags URB_FREE_BUFFER
-Date:   Mon,  7 Jan 2019 13:31:22 +0100
-Message-Id: <20190107104443.332815469@linuxfoundation.org>
+        stable@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@kernel.org
+Subject: [PATCH 4.20 046/145] i915: fix missing user_access_end() in page fault exception case
+Date:   Mon,  7 Jan 2019 13:31:23 +0100
+Message-Id: <20190107104443.433267336@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104437.308206189@linuxfoundation.org>
 References: <20190107104437.308206189@linuxfoundation.org>
@@ -66,56 +67,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Malcolm Priestley <tvboxspy@gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
-commit 255095fa7f62ff09b6f61393414535c59c6b4cb0 upstream.
+commit 0b2c8f8b6b0c7530e2866c95862546d0da2057b0 upstream.
 
-commit 1a0c10ed7bb1 ("media: dvb-usb-v2: stop using coherent memory for
-URBs") incorrectly adds URB_FREE_BUFFER after every urb transfer.
+When commit fddcd00a49e9 ("drm/i915: Force the slow path after a
+user-write error") unified the error handling for various user access
+problems, it didn't do the user_access_end() that is needed for the
+unsafe_put_user() case.
 
-It cannot use this flag because it reconfigures the URBs accordingly
-to suit connected devices. In doing a call to usb_free_urb is made and
-invertedly frees the buffers.
+It's not a huge deal: a missed user_access_end() will only mean that
+SMAP protection isn't active afterwards, and for the error case we'll be
+returning to user mode soon enough anyway.  But it's wrong, and adding
+the proper user_access_end() is trivial enough (and doing it for the
+other error cases where it isn't needed doesn't hurt).
 
-The stream buffer should remain constant while driver is up.
+I noticed it while doing the same prep-work for changing
+user_access_begin() that precipitated the access_ok() changes in commit
+96d4f267e40f ("Remove 'type' argument from access_ok() function").
 
-Signed-off-by: Malcolm Priestley <tvboxspy@gmail.com>
-CC: stable@vger.kernel.org # v4.18+
-Signed-off-by: Sean Young <sean@mess.org>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Fixes: fddcd00a49e9 ("drm/i915: Force the slow path after a user-write error")
+Cc: Chris Wilson <chris@chris-wilson.co.uk>
+Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Cc: stable@kernel.org # v4.20
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/usb/dvb-usb-v2/usb_urb.c |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/i915/i915_gem_execbuffer.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/media/usb/dvb-usb-v2/usb_urb.c
-+++ b/drivers/media/usb/dvb-usb-v2/usb_urb.c
-@@ -155,7 +155,6 @@ static int usb_urb_alloc_bulk_urbs(struc
- 				stream->props.u.bulk.buffersize,
- 				usb_urb_complete, stream);
- 
--		stream->urb_list[i]->transfer_flags = URB_FREE_BUFFER;
- 		stream->urbs_initialized++;
- 	}
- 	return 0;
-@@ -186,7 +185,7 @@ static int usb_urb_alloc_isoc_urbs(struc
- 		urb->complete = usb_urb_complete;
- 		urb->pipe = usb_rcvisocpipe(stream->udev,
- 				stream->props.endpoint);
--		urb->transfer_flags = URB_ISO_ASAP | URB_FREE_BUFFER;
-+		urb->transfer_flags = URB_ISO_ASAP;
- 		urb->interval = stream->props.u.isoc.interval;
- 		urb->number_of_packets = stream->props.u.isoc.framesperurb;
- 		urb->transfer_buffer_length = stream->props.u.isoc.framesize *
-@@ -210,7 +209,7 @@ static int usb_free_stream_buffers(struc
- 	if (stream->state & USB_STATE_URB_BUF) {
- 		while (stream->buf_num) {
- 			stream->buf_num--;
--			stream->buf_list[stream->buf_num] = NULL;
-+			kfree(stream->buf_list[stream->buf_num]);
- 		}
- 	}
- 
+--- a/drivers/gpu/drm/i915/i915_gem_execbuffer.c
++++ b/drivers/gpu/drm/i915/i915_gem_execbuffer.c
+@@ -1605,6 +1605,7 @@ static int eb_copy_relocations(const str
+ 					     (char __user *)urelocs + copied,
+ 					     len)) {
+ end_user:
++				user_access_end();
+ 				kvfree(relocs);
+ 				err = -EFAULT;
+ 				goto err;
 
 
