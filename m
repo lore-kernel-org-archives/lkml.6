@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 182C3C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:36:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A315C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:36:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD5212089F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:36:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58D44206BB
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:36:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546864584;
-	bh=DG2xgm75EJAKsDLTj05TL4URE0Ik3vvB3YL49x+MNZ0=;
+	s=default; t=1546864588;
+	bh=GyXzTn+A3uss30ENz1p2c6b9P5KFzuj29zJZ07N4q+U=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=cuhVzjn33hGvzXLtbe8cdC0zV/bOYYuA5F5JhyX3rzm22ZLutYJAEba5d7acTvK2K
-	 ERejlZ6p7fg/XONx/ggLgnONs/f4mC2zF1ek35TN0P8B8NvsOEbEwROQOF73Q+Wgfc
-	 xuUhmfaQJ7pC3ocLUqdumlcOnkLvWZ3XVAoE6M/U=
+	b=oZlsRV3Xbfe8affkC7O9xFI/OWi+0/g/mcS/ncM6LEJ6k+tHf0bzfFIj6F+pwxtk1
+	 h0l2Wcg84NcNTFM9GoXpK9U1iY+wOYNlhtjY1auFPf873A16Gur/t93WhE7x7Ppphv
+	 wkYMDk06b6eJvUHKwGqxoZ06d+ZEg/vGCpXFM4TY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727682AbfAGMgY (ORCPT
+        id S1727695AbfAGMg1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:36:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49274 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:36:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51154 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727510AbfAGMf3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:35:29 -0500
+        id S1726718AbfAGMgZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:36:25 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6A72F217D4;
-        Mon,  7 Jan 2019 12:35:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 78DE4206BB;
+        Mon,  7 Jan 2019 12:36:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546864527;
-        bh=DG2xgm75EJAKsDLTj05TL4URE0Ik3vvB3YL49x+MNZ0=;
+        s=default; t=1546864585;
+        bh=GyXzTn+A3uss30ENz1p2c6b9P5KFzuj29zJZ07N4q+U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gx1kXBTgfi9vf1SW3ipC7xtj/8HAutAiMal1qJ0IQixZb1TNgv7UFpiY9qSjv10UR
-         jopmiehX1Qy07va+v2/tn4WXbra/f8GF/4ZhlBL4VUgUiCHhti+MFxU9s/Z0X2nFlj
-         8jYybIC+kSQa6GVRsFXumJPh7Dn3Ug8rW6etLKfQ=
+        b=LeBMP9Z9QrTurfMeyELsg2Wnaq1o1yGwJzqTKPjmb1hr46oqh7nqZ2Jz5tgkCNzDu
+         a8gu/BIkMkk+OWiM0oNTnXggKAN4lV6YmDB7hQuPq+y9ER7SJJM7f5uw10aK9YrlZ/
+         YRbxPyDZFPm83kniyykqKqFf0CLOepCL+1A9dduE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?J=C3=B6rgen=20Storvist?= <jorgen.storvist@gmail.com>,
-        Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.20 040/145] USB: serial: option: add Fibocom NL678 series
-Date:   Mon,  7 Jan 2019 13:31:17 +0100
-Message-Id: <20190107104442.573307004@linuxfoundation.org>
+        stable@vger.kernel.org, Cong Wang <xiyou.wangcong@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        syzbot+5e5e969e525129229052@syzkaller.appspotmail.com
+Subject: [PATCH 4.20 014/145] net/wan: fix a double free in x25_asy_open_tty()
+Date:   Mon,  7 Jan 2019 13:30:51 +0100
+Message-Id: <20190107104439.234661171@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104437.308206189@linuxfoundation.org>
 References: <20190107104437.308206189@linuxfoundation.org>
@@ -66,64 +66,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jörgen Storvist <jorgen.storvist@gmail.com>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-commit 4b2c01ad902ec02fa962b233decd2f14be3714ba upstream.
+[ Upstream commit d5c7c745f254c6cb98b3b3f15fe789b8bd770c72 ]
 
-Added USB serial option driver support for Fibocom NL678 series cellular
-module: VID 2cb7 and PIDs 0x0104 and 0x0105.
-Reserved network and ADB interfaces.
+When x25_asy_open() fails, it already cleans up by itself,
+so its caller doesn't need to free the memory again.
 
-T:  Bus=01 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#=  2 Spd=480 MxCh= 0
-D:  Ver= 2.00 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
-P:  Vendor=2cb7 ProdID=0104 Rev=03.10
-S:  Manufacturer=Fibocom
-S:  Product=Fibocom NL678-E Modem
-S:  SerialNumber=12345678
-C:  #Ifs= 6 Cfg#= 1 Atr=a0 MxPwr=500mA
-I:  If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=ff Driver=option
-I:  If#= 1 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-I:  If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-I:  If#= 3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-I:  If#= 4 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=ff Driver=qmi_wwan
-I:  If#= 5 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=42 Prot=01 Driver=(none)
+It seems we still have to call x25_asy_free() to clear the SLF_INUSE
+bit, so just set these pointers to NULL after kfree().
 
-T:  Bus=01 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#=  3 Spd=480 MxCh= 0
-D:  Ver= 2.00 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
-P:  Vendor=2cb7 ProdID=0105 Rev=03.10
-S:  Manufacturer=Fibocom
-S:  Product=Fibocom NL678-E Modem
-S:  SerialNumber=12345678
-C:  #Ifs= 7 Cfg#= 1 Atr=a0 MxPwr=500mA
-I:  If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=ff Driver=option
-I:  If#= 1 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-I:  If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-I:  If#= 3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-I:  If#= 4 Alt= 0 #EPs= 1 Cls=02(commc) Sub=06 Prot=00 Driver=cdc_ether
-I:  If#= 5 Alt= 1 #EPs= 2 Cls=0a(data ) Sub=00 Prot=00 Driver=cdc_ether
-I:  If#= 6 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=42 Prot=01 Driver=(none)
-
-Signed-off-by: Jörgen Storvist <jorgen.storvist@gmail.com>
-Cc: stable <stable@vger.kernel.org>
-Acked-by: Johan Hovold <johan@kernel.org>
+Reported-and-tested-by: syzbot+5e5e969e525129229052@syzkaller.appspotmail.com
+Fixes: 3b780bed3138 ("x25_asy: Free x25_asy on x25_asy_open() failure.")
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/usb/serial/option.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/net/wan/x25_asy.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/usb/serial/option.c
-+++ b/drivers/usb/serial/option.c
-@@ -1955,6 +1955,10 @@ static const struct usb_device_id option
- 	{ USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0xa31d, 0xff, 0x06, 0x1b) },
- 	{ USB_DEVICE(0x1508, 0x1001),						/* Fibocom NL668 */
- 	  .driver_info = RSVD(4) | RSVD(5) | RSVD(6) },
-+	{ USB_DEVICE(0x2cb7, 0x0104),						/* Fibocom NL678 series */
-+	  .driver_info = RSVD(4) | RSVD(5) },
-+	{ USB_DEVICE_INTERFACE_CLASS(0x2cb7, 0x0105, 0xff),			/* Fibocom NL678 series */
-+	  .driver_info = RSVD(6) },
- 	{ } /* Terminating entry */
- };
- MODULE_DEVICE_TABLE(usb, option_ids);
+--- a/drivers/net/wan/x25_asy.c
++++ b/drivers/net/wan/x25_asy.c
+@@ -485,8 +485,10 @@ static int x25_asy_open(struct net_devic
+ 
+ 	/* Cleanup */
+ 	kfree(sl->xbuff);
++	sl->xbuff = NULL;
+ noxbuff:
+ 	kfree(sl->rbuff);
++	sl->rbuff = NULL;
+ norbuff:
+ 	return -ENOMEM;
+ }
 
 
