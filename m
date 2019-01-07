@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C193C43444
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:55:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18761C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:55:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 395AF20651
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:55:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD72120665
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:55:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546865754;
-	bh=rq3nzkzdVSqYgV0Uj6q5FdD9PeZMOMp2YYziH/bkQXk=;
+	s=default; t=1546865756;
+	bh=Pq89YIiq7/yATsOibhv3SG4NNalkVO4auiT202G+Rr4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=hXawwzgwKRhdDqJEjnykYLfwKR1F5BdmXAnIkrpBe2Cv0PCW6XzJeUO+p5swYQ/Xh
-	 Rcpy8fvH8aSHQudXoz5V2PbuDrWv9yRKBxXQr2oPlfswEwuCNeVaAjvXGMlVpMTY/W
-	 3PzM+Vabsc0HDgt5HTPGVct8T+1iO2C/+dWDbv4E=
+	b=cskpbMOZr1NwGCspc2i741bCscn1hXBDwnQKj697eTRHDcgXMP3N7OLYH6pfUiBC3
+	 SGiwvr8s/JEoM5+btxgBIsZ8YYBeFJ8JzT52RpTZmj+l0MQJpby89+YzYsX14dAMRV
+	 mY3T3LYUYI7YDkKY8y+W5sy1cIcRCiloAq5p9BLw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729472AbfAGMzx (ORCPT
+        id S1729769AbfAGMz4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:55:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44050 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:55:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43994 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727022AbfAGMzv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:55:51 -0500
+        id S1729644AbfAGMzq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:55:46 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 67FA320859;
-        Mon,  7 Jan 2019 12:55:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1756F20651;
+        Mon,  7 Jan 2019 12:55:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865750;
-        bh=rq3nzkzdVSqYgV0Uj6q5FdD9PeZMOMp2YYziH/bkQXk=;
+        s=default; t=1546865745;
+        bh=Pq89YIiq7/yATsOibhv3SG4NNalkVO4auiT202G+Rr4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yPPP/fAPSlcPDSRPFpuVGEvwjLkeeAmoWK/1I7srlc9U4X4/TBdvyncbBvWGEHAiA
-         yCIQ8Y7M/OZKLyXATm4BOWMvsHTulakBVGBn33rMqhiiKk8CMqDW9Vj0QxC4zdP0v2
-         o0AUYTRplw8xorizvHCbIt1edECN7xP/a14jctW8=
+        b=xADkfRtxNnZaMvUgMbXjhY6kzc7qKZdrxXTn6QYht6yFrrURSD2jlUo0KWQ9UCoWi
+         cTHKGN7GR1josIZGrsxhZy6iIyw8Bp7gSrUxk98rr3bnr5LHe2c5oNOSvHY7Ke7PoQ
+         ud4TP5wXkvqBr6r72+oD8HZuJULZ5XJ2w7SAISK4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jernej Skrabec <jernej.skrabec@siol.net>,
-        Maxime Ripard <maxime.ripard@bootlin.com>
-Subject: [PATCH 4.19 119/170] clk: sunxi-ng: Use u64 for calculation of NM rate
-Date:   Mon,  7 Jan 2019 13:32:26 +0100
-Message-Id: <20190107104507.016078050@linuxfoundation.org>
+        stable@vger.kernel.org, Johan Jonker <jbx9999@hotmail.com>,
+        Elaine Zhang <zhangqing@rock-chips.com>,
+        Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH 4.19 118/170] clk: rockchip: fix typo in rk3188 spdif_frac parent
+Date:   Mon,  7 Jan 2019 13:32:25 +0100
+Message-Id: <20190107104506.885848608@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104452.953560660@linuxfoundation.org>
 References: <20190107104452.953560660@linuxfoundation.org>
@@ -65,76 +66,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jernej Skrabec <jernej.skrabec@siol.net>
+From: Johan Jonker <jbx9999@hotmail.com>
 
-commit 65b6657672388b72822e0367f06d41c1e3ffb5bb upstream.
+commit 8b19faf6fae2867e2c177212c541e8ae36aa4d32 upstream.
 
-Allwinner H6 SoC has multiplier N range between 1 and 254. Since parent
-rate is 24MHz, intermediate result when calculating final rate easily
-overflows 32 bit variable.
+Fix typo in common_clk_branches.
+Make spdif_pre parent of spdif_frac.
 
-Because of that, introduce function for calculating clock rate which
-uses 64 bit variable for intermediate result.
-
-Fixes: 6174a1e24b0d ("clk: sunxi-ng: Add N-M-factor clock support")
-Fixes: ee28648cb2b4 ("clk: sunxi-ng: Remove the use of rational computations")
-
-CC: <stable@vger.kernel.org>
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Fixes: 667464208989 ("clk: rockchip: include downstream muxes into fractional dividers")
+Cc: stable@vger.kernel.org
+Signed-off-by: Johan Jonker <jbx9999@hotmail.com>
+Acked-by: Elaine Zhang <zhangqing@rock-chips.com>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/clk/sunxi-ng/ccu_nm.c |   18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
+ drivers/clk/rockchip/clk-rk3188.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/clk/sunxi-ng/ccu_nm.c
-+++ b/drivers/clk/sunxi-ng/ccu_nm.c
-@@ -19,6 +19,17 @@ struct _ccu_nm {
- 	unsigned long	m, min_m, max_m;
- };
- 
-+static unsigned long ccu_nm_calc_rate(unsigned long parent,
-+				      unsigned long n, unsigned long m)
-+{
-+	u64 rate = parent;
-+
-+	rate *= n;
-+	do_div(rate, m);
-+
-+	return rate;
-+}
-+
- static void ccu_nm_find_best(unsigned long parent, unsigned long rate,
- 			     struct _ccu_nm *nm)
- {
-@@ -28,7 +39,8 @@ static void ccu_nm_find_best(unsigned lo
- 
- 	for (_n = nm->min_n; _n <= nm->max_n; _n++) {
- 		for (_m = nm->min_m; _m <= nm->max_m; _m++) {
--			unsigned long tmp_rate = parent * _n  / _m;
-+			unsigned long tmp_rate = ccu_nm_calc_rate(parent,
-+								  _n, _m);
- 
- 			if (tmp_rate > rate)
- 				continue;
-@@ -100,7 +112,7 @@ static unsigned long ccu_nm_recalc_rate(
- 	if (ccu_sdm_helper_is_enabled(&nm->common, &nm->sdm))
- 		rate = ccu_sdm_helper_read_rate(&nm->common, &nm->sdm, m, n);
- 	else
--		rate = parent_rate * n / m;
-+		rate = ccu_nm_calc_rate(parent_rate, n, m);
- 
- 	if (nm->common.features & CCU_FEATURE_FIXED_POSTDIV)
- 		rate /= nm->fixed_post_div;
-@@ -142,7 +154,7 @@ static long ccu_nm_round_rate(struct clk
- 	_nm.max_m = nm->m.max ?: 1 << nm->m.width;
- 
- 	ccu_nm_find_best(*parent_rate, rate, &_nm);
--	rate = *parent_rate * _nm.n / _nm.m;
-+	rate = ccu_nm_calc_rate(*parent_rate, _nm.n, _nm.m);
- 
- 	if (nm->common.features & CCU_FEATURE_FIXED_POSTDIV)
- 		rate /= nm->fixed_post_div;
+--- a/drivers/clk/rockchip/clk-rk3188.c
++++ b/drivers/clk/rockchip/clk-rk3188.c
+@@ -382,7 +382,7 @@ static struct rockchip_clk_branch common
+ 	COMPOSITE_NOMUX(0, "spdif_pre", "i2s_src", 0,
+ 			RK2928_CLKSEL_CON(5), 0, 7, DFLAGS,
+ 			RK2928_CLKGATE_CON(0), 13, GFLAGS),
+-	COMPOSITE_FRACMUX(0, "spdif_frac", "spdif_pll", CLK_SET_RATE_PARENT,
++	COMPOSITE_FRACMUX(0, "spdif_frac", "spdif_pre", CLK_SET_RATE_PARENT,
+ 			RK2928_CLKSEL_CON(9), 0,
+ 			RK2928_CLKGATE_CON(0), 14, GFLAGS,
+ 			&common_spdif_fracmux),
 
 
