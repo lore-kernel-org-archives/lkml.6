@@ -7,48 +7,46 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15FADC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:59:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12906C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:00:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB31E217D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:59:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D85AF2089F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:00:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546865995;
-	bh=tDOMbsz/DHhHLIRUl7p8/iIkpVGE0uGrGjETtojVfxY=;
+	s=default; t=1546866000;
+	bh=/SRndYlewk0Zym3L2jlb3BvYPJcha42of4ak9Xsg7q4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=blsO+I8c7ZSTWqPJ0B61juOU/+vLy3VTyE4kPEyYoz7pJo4QH7ZjE2n0ScFbl/wkF
-	 +xwbfOfLb8E5pQzNpzp9fdqwZmkYxCdPc7qpSh8CZiaa4Ndrwj32/m9NYVIt3tFc0A
-	 b6ELDAftNW5QY3ovFHLN7WdwSIauES/13jfU3Ojo=
+	b=xmYWwxmrCuJcQM9+cAdq1e+zsa+J2AQmA4tVZYabgKA6xYvbFIPRcQL9S/DAN1Y1o
+	 GxlV7jPVVYIIXaViRFPsANUu+WTF4OL11s7JxlyeLIHEubfJgjUDCTgDQpuBkrKc4D
+	 +93cok5B64Rx1Z09OcJEAh2FvayolEV+PowmXsMo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730352AbfAGM7z (ORCPT
+        id S1730363AbfAGM77 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:59:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47438 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:59:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47470 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730333AbfAGM7x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:59:53 -0500
+        id S1727866AbfAGM75 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:59:57 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EFFFA21736;
-        Mon,  7 Jan 2019 12:59:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 177B321736;
+        Mon,  7 Jan 2019 12:59:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865992;
-        bh=tDOMbsz/DHhHLIRUl7p8/iIkpVGE0uGrGjETtojVfxY=;
+        s=default; t=1546865995;
+        bh=/SRndYlewk0Zym3L2jlb3BvYPJcha42of4ak9Xsg7q4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=o0hBw7B9r6Ja+1NeLK5gF+ozM3vw1IuBdxOoSsy4mfVdHql7FdWpp1kiDjb+fxyZ+
-         d2ccIpWgCiGYaUVmkYEf2c0519O9J+YOhYKt34a58n6QgLHSmuWRnzO74872b08Ovh
-         8nyCX9hfhs695J3tY92T0MdxlNd6ZLlUAShdPMZ4=
+        b=ciBabHEE8qg2gqK+Wor+DK2kSmEHJ8qGG+HNSu2AwlYhUA+Ol5EPgOS66lti6t2iA
+         CXETWYFyu5W4aksiMwxDiJ9EbOU0bmvqHJBA9QRWZrnmr/jSC1iwTIcJISd+sBwnCU
+         gtFg3RAjMenD6wIzArPrNF+B7KNFa7av15lfrMx4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        syzbot <syzkaller@googlegroups.com>,
-        Karsten Keil <isdn@linux-pingi.de>,
+        stable@vger.kernel.org, Michal Kubecek <mkubecek@suse.cz>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 011/101] isdn: fix kernel-infoleak in capi_unlocked_ioctl
-Date:   Mon,  7 Jan 2019 13:31:59 +0100
-Message-Id: <20190107105331.483283500@linuxfoundation.org>
+Subject: [PATCH 4.14 012/101] net: ipv4: do not handle duplicate fragments as overlapping
+Date:   Mon,  7 Jan 2019 13:32:00 +0100
+Message-Id: <20190107105331.690671354@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107105330.372621917@linuxfoundation.org>
 References: <20190107105330.372621917@linuxfoundation.org>
@@ -67,80 +65,81 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Michal Kubecek <mkubecek@suse.cz>
 
-[ Upstream commit d63967e475ae10f286dbd35e189cb241e0b1f284 ]
+[ Upstream commit ade446403bfb79d3528d56071a84b15351a139ad ]
 
-Since capi_ioctl() copies 64 bytes after calling
-capi20_get_manufacturer() we need to ensure to not leak
-information to user.
+Since commit 7969e5c40dfd ("ip: discard IPv4 datagrams with overlapping
+segments.") IPv4 reassembly code drops the whole queue whenever an
+overlapping fragment is received. However, the test is written in a way
+which detects duplicate fragments as overlapping so that in environments
+with many duplicate packets, fragmented packets may be undeliverable.
 
-BUG: KMSAN: kernel-infoleak in _copy_to_user+0x16b/0x1f0 lib/usercopy.c:32
-CPU: 0 PID: 11245 Comm: syz-executor633 Not tainted 4.20.0-rc7+ #2
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x173/0x1d0 lib/dump_stack.c:113
- kmsan_report+0x12e/0x2a0 mm/kmsan/kmsan.c:613
- kmsan_internal_check_memory+0x9d4/0xb00 mm/kmsan/kmsan.c:704
- kmsan_copy_to_user+0xab/0xc0 mm/kmsan/kmsan_hooks.c:601
- _copy_to_user+0x16b/0x1f0 lib/usercopy.c:32
- capi_ioctl include/linux/uaccess.h:177 [inline]
- capi_unlocked_ioctl+0x1a0b/0x1bf0 drivers/isdn/capi/capi.c:939
- do_vfs_ioctl+0xebd/0x2bf0 fs/ioctl.c:46
- ksys_ioctl fs/ioctl.c:713 [inline]
- __do_sys_ioctl fs/ioctl.c:720 [inline]
- __se_sys_ioctl+0x1da/0x270 fs/ioctl.c:718
- __x64_sys_ioctl+0x4a/0x70 fs/ioctl.c:718
- do_syscall_64+0xbc/0xf0 arch/x86/entry/common.c:291
- entry_SYSCALL_64_after_hwframe+0x63/0xe7
-RIP: 0033:0x440019
-Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 fb 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffdd4659fb8 EFLAGS: 00000213 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000440019
-RDX: 0000000020000080 RSI: 00000000c0044306 RDI: 0000000000000003
-RBP: 00000000006ca018 R08: 0000000000000000 R09: 00000000004002c8
-R10: 0000000000000000 R11: 0000000000000213 R12: 00000000004018a0
-R13: 0000000000401930 R14: 0000000000000000 R15: 0000000000000000
+Add an extra test and for (potentially) duplicate fragment, only drop the
+new fragment rather than the whole queue. Only starting offset and length
+are checked, not the contents of the fragments as that would be too
+expensive. For similar reason, linear list ("run") of a rbtree node is not
+iterated, we only check if the new fragment is a subset of the interval
+covered by existing consecutive fragments.
 
-Local variable description: ----data.i@capi_unlocked_ioctl
-Variable was created at:
- capi_ioctl drivers/isdn/capi/capi.c:747 [inline]
- capi_unlocked_ioctl+0x82/0x1bf0 drivers/isdn/capi/capi.c:939
- do_vfs_ioctl+0xebd/0x2bf0 fs/ioctl.c:46
+v2: instead of an exact check iterating through linear list of an rbtree
+node, only check if the new fragment is subset of the "run" (suggested
+by Eric Dumazet)
 
-Bytes 12-63 of 64 are uninitialized
-Memory access of size 64 starts at ffff88807ac5fce8
-Data copied to user address 0000000020000080
-
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Cc: Karsten Keil <isdn@linux-pingi.de>
+Fixes: 7969e5c40dfd ("ip: discard IPv4 datagrams with overlapping segments.")
+Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/isdn/capi/kcapi.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/ipv4/ip_fragment.c |   18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
 
---- a/drivers/isdn/capi/kcapi.c
-+++ b/drivers/isdn/capi/kcapi.c
-@@ -851,7 +851,7 @@ u16 capi20_get_manufacturer(u32 contr, u
- 	u16 ret;
+--- a/net/ipv4/ip_fragment.c
++++ b/net/ipv4/ip_fragment.c
+@@ -347,10 +347,10 @@ static int ip_frag_queue(struct ipq *qp,
+ 	struct net *net = container_of(qp->q.net, struct net, ipv4.frags);
+ 	struct rb_node **rbn, *parent;
+ 	struct sk_buff *skb1, *prev_tail;
++	int ihl, end, skb1_run_end;
+ 	struct net_device *dev;
+ 	unsigned int fragsize;
+ 	int flags, offset;
+-	int ihl, end;
+ 	int err = -ENOENT;
+ 	u8 ecn;
  
- 	if (contr == 0) {
--		strlcpy(buf, capi_manufakturer, CAPI_MANUFACTURER_LEN);
-+		strncpy(buf, capi_manufakturer, CAPI_MANUFACTURER_LEN);
- 		return CAPI_NOERROR;
- 	}
+@@ -420,7 +420,9 @@ static int ip_frag_queue(struct ipq *qp,
+ 	 *   overlapping fragment, the entire datagram (and any constituent
+ 	 *   fragments) MUST be silently discarded.
+ 	 *
+-	 * We do the same here for IPv4 (and increment an snmp counter).
++	 * We do the same here for IPv4 (and increment an snmp counter) but
++	 * we do not want to drop the whole queue in response to a duplicate
++	 * fragment.
+ 	 */
  
-@@ -859,7 +859,7 @@ u16 capi20_get_manufacturer(u32 contr, u
- 
- 	ctr = get_capi_ctr_by_nr(contr);
- 	if (ctr && ctr->state == CAPI_CTR_RUNNING) {
--		strlcpy(buf, ctr->manu, CAPI_MANUFACTURER_LEN);
-+		strncpy(buf, ctr->manu, CAPI_MANUFACTURER_LEN);
- 		ret = CAPI_NOERROR;
- 	} else
- 		ret = CAPI_REGNOTINSTALLED;
+ 	/* Find out where to put this fragment.  */
+@@ -444,13 +446,17 @@ static int ip_frag_queue(struct ipq *qp,
+ 		do {
+ 			parent = *rbn;
+ 			skb1 = rb_to_skb(parent);
++			skb1_run_end = skb1->ip_defrag_offset +
++				       FRAG_CB(skb1)->frag_run_len;
+ 			if (end <= skb1->ip_defrag_offset)
+ 				rbn = &parent->rb_left;
+-			else if (offset >= skb1->ip_defrag_offset +
+-						FRAG_CB(skb1)->frag_run_len)
++			else if (offset >= skb1_run_end)
+ 				rbn = &parent->rb_right;
+-			else /* Found an overlap with skb1. */
+-				goto discard_qp;
++			else if (offset >= skb1->ip_defrag_offset &&
++				 end <= skb1_run_end)
++				goto err; /* No new data, potential duplicate */
++			else
++				goto discard_qp; /* Found an overlap */
+ 		} while (*rbn);
+ 		/* Here we have parent properly set, and rbn pointing to
+ 		 * one of its NULL left/right children. Insert skb.
 
 
