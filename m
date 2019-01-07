@@ -2,217 +2,630 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1853AC43444
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 08:05:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8F16C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 08:06:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5EA12087F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 08:05:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jJTzgmzZ"
+	by mail.kernel.org (Postfix) with ESMTP id A028F20859
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 08:06:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726582AbfAGIFW (ORCPT
+        id S1726589AbfAGIGs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 03:05:22 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:45480 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726441AbfAGIFV (ORCPT
+        Mon, 7 Jan 2019 03:06:48 -0500
+Received: from mgwkm03.jp.fujitsu.com ([202.219.69.170]:46016 "EHLO
+        mgwkm03.jp.fujitsu.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725535AbfAGIGr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 03:05:21 -0500
-Received: by mail-pg1-f193.google.com with SMTP id y4so20390677pgc.12
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 00:05:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=kfdCkGhUiRbAOgir5HhOxtbVcWo8hMEtSNSE2dL8r9E=;
-        b=jJTzgmzZJZPxQf6KJK+v6NnyA17dljz2r5ltNg4pdtf6JI6+lUyQDAi1OFNs43E+yn
-         2bB1pGRuTtFOnOr8DmJfXMTwSYX9VPslamG+p/7ps/Vz3mI1PF0CGDsyM/4NIiiuOClY
-         TGdQtdDIdwka8QR3I+1/zrb5I1zDRJqoXqa0FBagPuP4Y1kGrRgrVNLcH6yXQRtuB/FQ
-         sW5eJOGvLrQdqMWSKd49m3M5oUVDRhJXcLRNGYYVNHVl0lHJBM/LwqUHK2yeBwy6C01N
-         /FDsBig2w8zuImOVXAxHoGU1vy8aXX6DhrrmFA6i9cfsjNykO+vIi5UeOH4uXu0DjNJA
-         CvYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=kfdCkGhUiRbAOgir5HhOxtbVcWo8hMEtSNSE2dL8r9E=;
-        b=PMjooo3UB0p8l3TaCLQeFg1RgQ0YKWdEFbLTCwdvDkmZNl/2xIz7HzDurO2MyIuZEM
-         FFZT6bNsrtiq3gPxpvfL5t6phtOU2SXMTbJ5aQKLAvNi5wPIy+NTw87J4/ey3FpfQ9wF
-         xNxRkA0YznWLsPmUl2YovDb68fAdQYClIJ1M76SA3qW1aYwWbEwA2aH2SH5jCe/a1tie
-         R+mjWiU6UtA0icN56HE8a2jRPBtPd/k7rh5noxR8Fz8+FHr3OTrG3DDPeOTwLTlHn7op
-         H/BO3DZiX2SlowwIvdPbjw+rlk+MNFmb5EQpDnrr2UGBiFmRb+R4zGygsoHa05FNslGY
-         EhPA==
-X-Gm-Message-State: AA+aEWbutqqzR0wVxWCXIdyuwWyqw6m+3V7tZiBqOQ2TdshNODBxwIcM
-        MriZpPEushwgvwU50IewKw==
-X-Google-Smtp-Source: ALg8bN7hbpRU1yme4cFZnQRWusC/H5BPQsO37MVTw7+pzpKYR7A4M8ZlTCc1p5HfOoe+gHwX9PtTnQ==
-X-Received: by 2002:a62:c505:: with SMTP id j5mr62066762pfg.149.1546848320048;
-        Mon, 07 Jan 2019 00:05:20 -0800 (PST)
-Received: from mylaptop.nay.redhat.com ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id 83sm112726798pgf.57.2019.01.07.00.05.13
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 07 Jan 2019 00:05:19 -0800 (PST)
-From:   Pingfan Liu <kernelfans@gmail.com>
-To:     linux-mm@kvack.org, kexec@lists.infradead.org
-Cc:     Pingfan Liu <kernelfans@gmail.com>,
-        Tang Chen <tangchen@cn.fujitsu.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Yaowei Bai <baiyaowei@cmss.chinamobile.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Daniel Vacek <neelx@redhat.com>,
-        Mathieu Malaterre <malat@debian.org>,
-        Stefan Agner <stefan@agner.ch>, Dave Young <dyoung@redhat.com>,
-        Baoquan He <bhe@redhat.com>, yinghai@kernel.org,
-        vgoyal@redhat.com, linux-kernel@vger.kernel.org
-Subject: [PATCHv5] x86/kdump: bugfix, make the behavior of crashkernel=X consistent with kaslr
-Date:   Mon,  7 Jan 2019 16:04:59 +0800
-Message-Id: <1546848299-23628-1-git-send-email-kernelfans@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        Mon, 7 Jan 2019 03:06:47 -0500
+X-Greylist: delayed 671 seconds by postgrey-1.27 at vger.kernel.org; Mon, 07 Jan 2019 03:06:46 EST
+Received: from kw-mxoi1.gw.nic.fujitsu.com (unknown [192.168.231.131]) by mgwkm03.jp.fujitsu.com with smtp
+         id 0e81_db47_7fb7c543_620b_47b7_a72a_b7142f2a97a4;
+        Mon, 07 Jan 2019 16:55:30 +0900
+Received: from g01jpfmpwyt02.exch.g01.fujitsu.local (g01jpfmpwyt02.exch.g01.fujitsu.local [10.128.193.56])
+        by kw-mxoi1.gw.nic.fujitsu.com (Postfix) with ESMTP id 53052AC014B;
+        Mon,  7 Jan 2019 16:55:29 +0900 (JST)
+Received: from G01JPEXCHYT15.g01.fujitsu.local (G01JPEXCHYT15.g01.fujitsu.local [10.128.194.54])
+        by g01jpfmpwyt02.exch.g01.fujitsu.local (Postfix) with ESMTP id E8D62584211;
+        Mon,  7 Jan 2019 16:55:27 +0900 (JST)
+Received: from G01JPEXMBYT03.g01.fujitsu.local ([10.128.194.67]) by
+ G01JPEXCHYT15 ([10.128.194.54]) with mapi id 14.03.0415.000; Mon, 7 Jan 2019
+ 16:55:28 +0900
+From:   "Hatayama, Daisuke" <d.hatayama@jp.fujitsu.com>
+To:     'Lianbo Jiang' <lijiang@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     "kexec@lists.infradead.org" <kexec@lists.infradead.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "bp@alien8.de" <bp@alien8.de>, "x86@kernel.org" <x86@kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "bhe@redhat.com" <bhe@redhat.com>,
+        "dyoung@redhat.com" <dyoung@redhat.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "k-hagio@ab.jp.nec.com" <k-hagio@ab.jp.nec.com>,
+        "anderson@redhat.com" <anderson@redhat.com>
+Subject: RE: [PATCH 1/2 v5] kdump: add the vmcoreinfo documentation
+Thread-Topic: [PATCH 1/2 v5] kdump: add the vmcoreinfo documentation
+Thread-Index: AQHUpisXzaAkQ8cLNUeffVp83rCLH6WjZVWA
+Date:   Mon, 7 Jan 2019 07:55:26 +0000
+Message-ID: <33710E6CAA200E4583255F4FB666C4E21BB8AD64@G01JPEXMBYT03>
+References: <20190107014734.9730-1-lijiang@redhat.com>
+ <20190107014734.9730-2-lijiang@redhat.com>
+In-Reply-To: <20190107014734.9730-2-lijiang@redhat.com>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-securitypolicycheck: OK by SHieldMailChecker v2.5.2
+x-shieldmailcheckerpolicyversion: FJ-ISEC-20170217-enc
+x-shieldmailcheckermailid: 546ff76c029848aabf6f557ed3d77f4f
+x-originating-ip: [10.124.89.120]
+Content-Type: text/plain; charset="iso-2022-jp"
+MIME-Version: 1.0
+X-SecurityPolicyCheck-GC: OK by FENCE-Mail
+X-TM-AS-MML: disable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Customer reported a bug on a high end server with many pcie devices, where
-kernel bootup with crashkernel=384M, and kaslr is enabled. Even
-though we still see much memory under 896 MB, the finding still failed
-intermittently. Because currently we can only find region under 896 MB,
-if w/0 ',high' specified. Then KASLR breaks 896 MB into several parts
-randomly, and crashkernel reservation need be aligned to 128 MB, that's
-why failure is found. It raises confusion to the end user that sometimes
-crashkernel=X works while sometimes fails.
-If want to make it succeed, customer can change kernel option to
-"crashkernel=384M, high". Just this give "crashkernel=xx@yy" a very
-limited space to behave even though its grammer looks more generic.
-And we can't answer questions raised from customer that confidently:
-1) why it doesn't succeed to reserve 896 MB;
-2) what's wrong with memory region under 4G;
-3) why I have to add ',high', I only require 384 MB, not 3840 MB.
+Hi,
 
-This patch simplifies the method suggested in the mail [1]. It just goes
-bottom-up to find a candidate region for crashkernel. The bottom-up may be
-better compatible with the old reservation style, i.e. still want to get
-memory region from 896 MB firstly, then [896 MB, 4G], finally above 4G.
+> -----Original Message-----
+> From: linux-kernel-owner@vger.kernel.org
+> [mailto:linux-kernel-owner@vger.kernel.org] On Behalf Of Lianbo Jiang
+> Sent: Monday, January 7, 2019 10:48 AM
+> To: linux-kernel@vger.kernel.org
+> Cc: kexec@lists.infradead.org; tglx@linutronix.de; mingo@redhat.com;
+> bp@alien8.de; x86@kernel.org; akpm@linux-foundation.org; bhe@redhat.com;
+> dyoung@redhat.com; linux-doc@vger.kernel.org; k-hagio@ab.jp.nec.com;
+> anderson@redhat.com
+> Subject: [PATCH 1/2 v5] kdump: add the vmcoreinfo documentation
+> 
+> This document lists some variables that export to vmcoreinfo, and briefly
+> describles what these variables indicate. It should be instructive for
+> many people who do not know the vmcoreinfo, and it also normalizes the
 
-There is one trivial thing about the compatibility with old kexec-tools:
-if the reserved region is above 896M, then old tool will fail to load
-bzImage. But without this patch, the old tool also fail since there is no
-memory below 896M can be reserved for crashkernel.
+I agree to this part, but
 
-[1]: http://lists.infradead.org/pipermail/kexec/2017-October/019571.html
-Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
-Cc: Tang Chen <tangchen@cn.fujitsu.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Len Brown <lenb@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: Yaowei Bai <baiyaowei@cmss.chinamobile.com>
-Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
-Cc: Nicholas Piggin <npiggin@gmail.com>
-Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Cc: Daniel Vacek <neelx@redhat.com>
-Cc: Mathieu Malaterre <malat@debian.org>
-Cc: Stefan Agner <stefan@agner.ch>
-Cc: Dave Young <dyoung@redhat.com>
-Cc: Baoquan He <bhe@redhat.com>
-Cc: yinghai@kernel.org,
-Cc: vgoyal@redhat.com
-Cc: linux-kernel@vger.kernel.org
----
-v4 -> v5:
-  add a wrapper of bottom up allocation func
-v3 -> v4:
-  instead of exporting the stage of parsing mem hotplug info, just using the bottom-up allocation func directly
- arch/x86/kernel/setup.c  |  8 ++++----
- include/linux/memblock.h |  3 +++
- mm/memblock.c            | 29 +++++++++++++++++++++++++++++
- 3 files changed, 36 insertions(+), 4 deletions(-)
+> exported variables as a convention between kernel and use-space.
 
-diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-index d494b9b..80e7923 100644
---- a/arch/x86/kernel/setup.c
-+++ b/arch/x86/kernel/setup.c
-@@ -546,10 +546,10 @@ static void __init reserve_crashkernel(void)
- 		 * as old kexec-tools loads bzImage below that, unless
- 		 * "crashkernel=size[KMG],high" is specified.
- 		 */
--		crash_base = memblock_find_in_range(CRASH_ALIGN,
--						    high ? CRASH_ADDR_HIGH_MAX
--							 : CRASH_ADDR_LOW_MAX,
--						    crash_size, CRASH_ALIGN);
-+		crash_base = memblock_find_range_bottom_up(CRASH_ALIGN,
-+			(max_pfn * PAGE_SIZE), crash_size, CRASH_ALIGN,
-+			NUMA_NO_NODE);
-+
- 		if (!crash_base) {
- 			pr_info("crashkernel reservation failed - No suitable area found.\n");
- 			return;
-diff --git a/include/linux/memblock.h b/include/linux/memblock.h
-index aee299a..a35ae17 100644
---- a/include/linux/memblock.h
-+++ b/include/linux/memblock.h
-@@ -116,6 +116,9 @@ phys_addr_t memblock_find_in_range_node(phys_addr_t size, phys_addr_t align,
- 					int nid, enum memblock_flags flags);
- phys_addr_t memblock_find_in_range(phys_addr_t start, phys_addr_t end,
- 				   phys_addr_t size, phys_addr_t align);
-+phys_addr_t __init_memblock
-+memblock_find_range_bottom_up(phys_addr_t start, phys_addr_t end,
-+	phys_addr_t size, phys_addr_t align, int nid);
- void memblock_allow_resize(void);
- int memblock_add_node(phys_addr_t base, phys_addr_t size, int nid);
- int memblock_add(phys_addr_t base, phys_addr_t size);
-diff --git a/mm/memblock.c b/mm/memblock.c
-index 81ae63c..f68287e 100644
---- a/mm/memblock.c
-+++ b/mm/memblock.c
-@@ -192,6 +192,35 @@ __memblock_find_range_bottom_up(phys_addr_t start, phys_addr_t end,
- 	return 0;
- }
- 
-+phys_addr_t __init_memblock
-+memblock_find_range_bottom_up(phys_addr_t start, phys_addr_t end,
-+	phys_addr_t size, phys_addr_t align, int nid)
-+{
-+	phys_addr_t ret;
-+	enum memblock_flags flags = choose_memblock_flags();
-+
-+	/* pump up @end */
-+	if (end == MEMBLOCK_ALLOC_ACCESSIBLE)
-+		end = memblock.current_limit;
-+
-+	/* avoid allocating the first page */
-+	start = max_t(phys_addr_t, start, PAGE_SIZE);
-+	end = max(start, end);
-+
-+again:
-+	ret = __memblock_find_range_bottom_up(start, end, size, align,
-+					    nid, flags);
-+
-+	if (!ret && (flags & MEMBLOCK_MIRROR)) {
-+		pr_warn("Could not allocate %pap bytes of mirrored memory\n",
-+			&size);
-+		flags &= ~MEMBLOCK_MIRROR;
-+		goto again;
-+	}
-+
-+	return ret;
-+}
-+
- /**
-  * __memblock_find_range_top_down - find free area utility, in top-down
-  * @start: start of candidate range
--- 
-2.7.4
+I don't agree to this part.
+
+The meaning of each symbol is decided by each feature in the kernel,
+not by vmcoreinfo. I suspect anyone mistakenly understand this document is
+ABI enforcing each symbol works as described. We can change symbols and
+their meaning regardless of this document.
+
+Oh, I found this topic has already been discussed at v3, and
+you removed "ABI" in the patch description at v4.
+
+But it seems still confusing to me.
+I think the explicit description saying that this is for user-land tools,
+they treats each symbol as described,
+and the document never affect implementation of each kernel components,
+is necessary in e.g. "Purpose of this document" section?
+
+> 
+> Suggested-by: Borislav Petkov <bp@suse.de>
+> Signed-off-by: Lianbo Jiang <lijiang@redhat.com>
+> ---
+>  Documentation/kdump/vmcoreinfo.txt | 500 +++++++++++++++++++++++++++++
+>  1 file changed, 500 insertions(+)
+>  create mode 100644 Documentation/kdump/vmcoreinfo.txt
+> 
+> diff --git a/Documentation/kdump/vmcoreinfo.txt
+> b/Documentation/kdump/vmcoreinfo.txt
+> new file mode 100644
+> index 000000000000..8e444586b87b
+> --- /dev/null
+> +++ b/Documentation/kdump/vmcoreinfo.txt
+> @@ -0,0 +1,500 @@
+> +================================================================
+> +			VMCOREINFO
+> +================================================================
+> +
+> +=======================
+> +What is the VMCOREINFO?
+> +=======================
+> +
+> +VMCOREINFO is a special ELF note section. It contains various
+> +information from the kernel like structure size, page size, symbol
+> +values, field offsets, etc. These data are packed into an ELF note
+> +section and used by user-space tools like crash and makedumpfile to
+> +analyze a kernel's memory layout.
+> +
+> +================
+> +Common variables
+> +================
+> +
+> +init_uts_ns.name.release
+> +------------------------
+> +
+> +The version of the Linux kernel. Used to find the corresponding source
+> +code from which the kernel has been built.
+> +
+> +PAGE_SIZE
+> +---------
+> +
+> +The size of a page. It is the smallest unit of data for memory
+> +management in kernel. It is usually 4096 bytes and a page is aligned
+> +on 4096 bytes. Used for computing page addresses.
+> +
+> +init_uts_ns
+> +-----------
+> +
+> +This is the UTS namespace, which is used to isolate two specific
+> +elements of the system that relate to the uname(2) system call. The UTS
+> +namespace is named after the data structure used to store information
+> +returned by the uname(2) system call.
+> +
+> +User-space tools can get the kernel name, host name, kernel release
+> +number, kernel version, architecture name and OS type from it.
+> +
+> +node_online_map
+> +---------------
+> +
+> +An array node_states[N_ONLINE] which represents the set of online node
+> +in a system, one bit position per node number. Used to keep track of
+> +which nodes are in the system and online.
+> +
+> +swapper_pg_dir
+> +-------------
+> +
+> +The global page directory pointer of the kernel. Used to translate
+> +virtual to physical addresses.
+> +
+> +_stext
+> +------
+> +
+> +Defines the beginning of the text section. In general, _stext indicates
+> +the kernel start address. Used to convert a virtual address from the
+> +direct kernel map to a physical address.
+> +
+> +vmap_area_list
+> +--------------
+> +
+> +Stores the virtual area list. makedumpfile can get the vmalloc start
+> +value from this variable. This value is necessary for vmalloc translation.
+> +
+> +mem_map
+> +-------
+> +
+> +Physical addresses are translated to struct pages by treating them as
+> +an index into the mem_map array. Right-shifting a physical address
+> +PAGE_SHIFT bits converts it into a page frame number which is an index
+> +into that mem_map array.
+> +
+> +Used to map an address to the corresponding struct page.
+> +
+> +contig_page_data
+> +----------------
+> +
+> +Makedumpfile can get the pglist_data structure from this symbol, which
+> +is used to describe the memory layout.
+> +
+> +User-space tools use this to exclude free pages when dumping memory.
+> +
+> +mem_section|(mem_section, NR_SECTION_ROOTS)|(mem_section, section_mem_map)
+> +-------------------------------------------------------------------------
+> -
+> +
+> +The address of the mem_section array, its length, structure size, and
+> +the section_mem_map offset.
+> +
+> +It exists in the sparse memory mapping model, and it is also somewhat
+> +similar to the mem_map variable, both of them are used to translate an
+> +address.
+> +
+> +page
+> +----
+> +
+> +The size of a page structure. struct page is an important data structure
+> +and it is widely used to compute the contiguous memory.
+> +
+> +pglist_data
+> +-----------
+> +
+> +The size of a pglist_data structure. This value will be used to check
+> +if the pglist_data structure is valid. It is also used for checking the
+> +memory type.
+> +
+> +zone
+> +----
+> +
+> +The size of a zone structure. This value is often used to check if the
+> +zone structure has been found. It is also used for excluding free pages.
+> +
+> +free_area
+> +---------
+> +
+> +The size of a free_area structure. It indicates whether the free_area
+> +structure is valid or not. Useful for excluding free pages.
+> +
+> +list_head
+> +---------
+> +
+> +The size of a list_head structure. Used when iterating lists in a
+> +post-mortem analysis session.
+> +
+> +nodemask_t
+> +----------
+> +
+> +The size of a nodemask_t type. Used to compute the number of online
+> +nodes.
+> +
+> +(page, flags|_refcount|mapping|lru|_mapcount|private|compound_dtor|
+> +       compound_order|compound_head)
+> +-------------------------------------------------------------------
+> +
+> +User-space tools can compute their values based on the offset of these
+> +variables. The variables are helpful to exclude unnecessary pages.
+> +
+> +(pglist_data, node_zones|nr_zones|node_mem_map|node_start_pfn|node_
+> +              spanned_pages|node_id)
+> +-------------------------------------------------------------------
+> +
+> +On NUMA machines, each NUMA node has a pg_data_t to describe its memory
+> +layout. On UMA machines there is a single pglist_data which describes the
+> +whole memory.
+> +
+> +These values are used to check the memory type, and they are also helpful
+> +to compute the virtual address for memory map.
+> +
+> +(zone, free_area|vm_stat|spanned_pages)
+> +---------------------------------------
+> +
+> +Each node is divided into a number of blocks called zones which
+> +represent ranges within memory. A zone is described by a structure zone.
+> +Each zone type is suitable for a different type of usage.
+> +
+> +User-space tools can compute required values based on the offset of these
+> +variables.
+> +
+> +(free_area, free_list)
+> +----------------------
+> +
+> +Offset of the free_list's member. This value is used to compute the number
+> +of free pages.
+> +
+> +Each zone has a free_area structure array called free_area[MAX_ORDER].
+> +The fields in this structure are simple, the free_list represents a linked
+> +list of free page blocks.
+> +
+> +(list_head, next|prev)
+> +----------------------
+> +
+> +Offsets of the list_head's members. list_head is used to define a
+> +circular linked list. User-space tools need these in order to traverse
+> +lists.
+> +
+> +(vmap_area, va_start|list)
+> +--------------------------
+> +
+> +Offsets of the vmap_area's members. They indicate the vmalloc layer
+> +information. Makedumpfile gets the start address of the vmalloc region.
+> +
+> +(zone.free_area, MAX_ORDER)
+> +---------------------------
+> +
+> +It indicates the maximum number of the array free_area. This macro is
+> +used by the zone buddy allocator. User-space tools use this value to
+> +iterate the free_area.
+> +
+> +log_buf
+> +-------
+> +
+> +Console output is written to the ring buffer log_buf at index
+> +log_first_idx. Used to get the kernel log.
+> +
+> +log_buf_len
+> +-----------
+> +
+> +Length of a log_buf. Used to read the number of strings from the
+> +log_buf.
+> +
+> +log_first_idx
+> +-------------
+> +
+> +Index of the first record stored in the buffer log_buf. Used by
+> +user-space tools to read the strings in the log_buf.
+> +
+> +clear_idx
+> +---------
+> +
+> +The index that the next printk() record to read after the last clear
+> +command. It indicates the first record after the last SYSLOG_ACTION
+> +_CLEAR, like issued by 'dmesg -c'. Used by user-space tools to dump
+> +the dmesg log.
+> +
+> +log_next_idx
+> +------------
+> +
+> +The index of the next record to store in the buffer log_buf. Used to
+> +compute the index of the current string position.
+> +
+> +printk_log
+> +----------
+> +
+> +The size of a structure printk_log. Used to compute the size of
+> +messages, and extract dmesg log. It can output human readable text.
+> +Encapsulate header information for log_buf, such as timestamp, syslog
+> +level, etc.
+> +
+> +(printk_log, ts_nsec|len|text_len|dict_len)
+> +-------------------------------------------
+> +
+> +It represents field offsets in struct printk_log. User space tools can
+> +parse it and check whether the values of printk_log's members have been
+> +changed.
+> +
+> +(free_area.free_list, MIGRATE_TYPES)
+> +------------------------------------
+> +
+> +The number of migrate types for pages. The free_list is divided into
+> +the array, it needs to know the number of the array when makedumpfile
+> +computes the number of free pages.
+> +
+> +NR_FREE_PAGES
+> +-------------
+> +
+> +On linux-2.6.21 or later, the number of free_pages is in
+> +vm_stat[NR_FREE_PAGES]. Used to get the number of free pages.
+> +
+> +PG_lru|PG_private|PG_swapcache|PG_swapbacked|PG_slab|PG_hwpoision
+> +|PG_head_mask|PAGE_BUDDY_MAPCOUNT_VALUE(~PG_buddy)
+> +|PAGE_OFFLINE_MAPCOUNT_VALUE(~PG_offline)
+> +-----------------------------------------------------------------
+> +
+> +Page attributes. These flags are used to filter various unnecessary
+> +pages.
+> +
+> +HUGETLB_PAGE_DTOR
+> +-----------------
+> +
+> +The HUGETLB_PAGE_DTOR flag denotes hugetlbfs pages. Makedumpfile
+> +excludes these pages.
+> +
+> +======
+> +x86_64
+> +======
+> +
+> +phys_base
+> +---------
+> +
+> +Used to convert the virtual address of an exported kernel symbol to its
+> +physical address.
+> +
+> +init_top_pgt
+> +------------
+> +
+> +Used to walk through the whole page table and convert virtual addresses
+> +to physical addresses. The init_top_pgt is somewhat similar to the
+> +swapper_pg_dir, but it is only used in x86_64.
+> +
+> +pgtable_l5_enabled
+> +------------------
+> +
+> +User-space tools need to know whether the crash kernel was in 5-level
+> +paging mode.
+> +
+> +node_data
+> +---------
+> +
+> +This is a struct pglist_data array and stores all numa nodes
+> +information. Makedumpfile gets the pglist_data structure from it.
+> +
+> +(node_data, MAX_NUMNODES)
+> +-------------------------
+> +
+> +The maximum number of the nodes in system.
+> +
+> +KERNELOFFSET
+> +------------
+> +
+> +The kernel randomization offset. Used to compute the page offset. If
+> +KASLR is disabled, this value is zero.
+> +
+> +KERNEL_IMAGE_SIZE
+> +-----------------
+> +
+> +Currently unused by Makedumpfile. Used to compute the module virtual
+> +address by Crash.
+> +
+> +sme_mask
+> +--------
+> +
+> +For AMD machine with SME feature, it indicates the secure memory
+> +encryption mask. Makedumpfile tools need to know whether the crash
+> +kernel was encrypted. If SME is enabled in the first kernel, the crash
+> +kernel's page table (pgd/pud/pmd/pte) contains the memory encryption
+> +mask and this is used to remove the SME mask to obtain the true physical
+> +address.
+> +
+> +Currently, the sme_mask stores the value of sme_me_mask(bit 47). If need,
+> +the bit(sme_mask) might be redefined in the future, but the bit 63 will
+> +be reserved.
+> +
+> +For example:
+> +[ misc	        ][ enc bit  ][ other misc SME info       ]
+> +0000_0000_0000_0000_1000_0000_0000_0000_0000_0000_..._0000
+> +63   59   55   51   47   43   39   35   31   27   ... 3
+> +
+> +======
+> +x86_32
+> +======
+> +
+> +X86_PAE
+> +-------
+> +
+> +Denotes whether physical address extensions are enabled. It has the cost
+> +of more page table lookup overhead, and also consumes more page table
+> +space per process. Used to check whether PAE was enabled in the crash
+> +kernel when converting virtual addresses to physical addresses.
+> +
+> +====
+> +ia64
+> +====
+> +
+> +pgdat_list|(pgdat_list, MAX_NUMNODES)
+> +-------------------------------------
+> +
+> +pg_data_t array storing all numa nodes information. MAX_NUMNODES
+> +indicates the number of the nodes.
+> +
+> +node_memblk|(node_memblk, NR_NODE_MEMBLKS)
+> +------------------------------------------
+> +
+> +List of node memory chunks. Filled when parsing SRAT table to obtain
+> +information about memory nodes. NR_NODE_MEMBLKS indicates the number
+> +of node memory chunks.
+> +
+> +These values are used to compute the number of nodes in the crash kernel.
+> +
+> +node_memblk_s|(node_memblk_s, start_paddr)|(node_memblk_s, size)
+> +----------------------------------------------------------------
+> +
+> +The size of a struct node_memblk_s and the offsets of the
+> +node_memblk_s's members. Used to compute the number of nodes.
+> +
+> +PGTABLE_3|PGTABLE_4
+> +-------------------
+> +
+> +User-space tools need to know whether the crash kernel was in 3-level or
+> +4-level paging mode. Used to distinguish the page table.
+> +
+> +=====
+> +ARM64
+> +=====
+> +
+> +VA_BITS
+> +-------
+> +
+> +The maximum number of bits for virtual addresses. Used to compute the
+> +virtual memory ranges.
+> +
+> +kimage_voffset
+> +--------------
+> +
+> +The offset between the kernel virtual and physical mappings. Used to
+> +translate virtual to physical addresses.
+> +
+> +PHYS_OFFSET
+> +-----------
+> +
+> +Indicates the physical address of the start of memory. Similar to
+> +kimage_voffset, which is used to translate virtual address to physical
+> +address.
+> +
+> +KERNELOFFSET
+> +------------
+> +
+> +The kernel randomization offset. Used to compute the page offset. If
+> +KASLR is disabled, this value is zero.
+> +
+> +====
+> +arm
+> +====
+> +
+> +ARM_LPAE
+> +--------
+> +
+> +It indicates whether the crash kernel supports large physical address
+> +extensions. Used to translate virtual address to physical address.
+> +
+> +====
+> +s390
+> +====
+> +
+> +lowcore_ptr
+> +----------
+> +
+> +An array with a pointer to the lowcore of every CPU. Used to print the
+> +psw and all registers information.
+> +
+> +high_memory
+> +-----------
+> +
+> +Used to get the vmalloc_start address from the high_memory symbol.
+> +
+> +(lowcore_ptr, NR_CPUS)
+> +----------------------
+> +
+> +The maximum number of CPUs.
+> +
+> +=======
+> +powerpc
+> +=======
+> +
+> +
+> +node_data|(node_data, MAX_NUMNODES)
+> +-----------------------------------
+> +
+> +See above.
+> +
+> +contig_page_data
+> +----------------
+> +
+> +See above.
+> +
+> +vmemmap_list
+> +------------
+> +
+> +The vmemmap_list maintains the entire vmemmap physical mapping. It can
+> +get vmemmap list count and populate vmemmap regions info. If the vmemmap
+> +address translation information is stored in the crash kernel, it helps
+> +to translate vmemmap kernel virtual addresses.
+> +
+> +mmu_vmemmap_psize
+> +-----------------
+> +
+> +The size of a page. Used to translate address to physical addresses.
+> +
+> +mmu_psize_defs
+> +--------------
+> +
+> +Page size definitions, i.e. 4k, 64k, or 16M.
+> +
+> +Used to make vtop translations.
+> +
+> +vmemmap_backing|(vmemmap_backing, list)|(vmemmap_backing, phys)|
+> +(vmemmap_backing, virt_addr)
+> +----------------------------------------------------------------
+> +
+> +The vmemmap virtual address space management does not have a traditional
+> +page table to track which virtual struct pages are backed by physical
+> +mapping. The virtual to physical mappings are tracked in a simple linked
+> +list format.
+> +
+> +User-space tools need to know the offset of list, phys and virt_addr
+> +when computing the count of vmemmap regions.
+> +
+> +mmu_psize_def|(mmu_psize_def, shift)
+> +------------------------------------
+> +
+> +The size of a struct mmu_psize_def and the offset of mmu_psize_def's
+> +member.
+> +
+> +Used in vtop translations.
+> +
+> +==
+> +sh
+> +==
+> +
+> +node_data|(node_data, MAX_NUMNODES)
+> +-----------------------------------
+> +
+> +See above.
+> +
+> +X2TLB
+> +-----
+> +
+> +Indicates whether the crash kernel enables SH extended mode.
+> --
+> 2.17.1
+> 
+
 
