@@ -5,65 +5,70 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93088C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 15:24:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CB90C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 15:25:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66B222087F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 15:24:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D506E2087F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 15:25:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729794AbfAGPYc (ORCPT
+        id S1729828AbfAGPZJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 10:24:32 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:49486 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727161AbfAGPYb (ORCPT
+        Mon, 7 Jan 2019 10:25:09 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:56824 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727226AbfAGPZJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 10:24:31 -0500
-Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1ggWlP-00042H-5g; Mon, 07 Jan 2019 16:24:27 +0100
-Date:   Mon, 7 Jan 2019 16:24:26 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Paul Menzel <pmenzel@molgen.mpg.de>
-cc:     x86@kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: tsc: Fast TSC calibration failed with AMD B350M/Ryzen 3 2200G
-In-Reply-To: <fd05d500-f1b5-7115-4326-7c7fee9f5456@molgen.mpg.de>
-Message-ID: <alpine.DEB.2.21.1901071622160.2688@nanos.tec.linutronix.de>
-References: <fd05d500-f1b5-7115-4326-7c7fee9f5456@molgen.mpg.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Mon, 7 Jan 2019 10:25:09 -0500
+Received: from localhost (unknown [144.121.20.163])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 5CA9514C8371A;
+        Mon,  7 Jan 2019 07:25:08 -0800 (PST)
+Date:   Mon, 07 Jan 2019 07:25:07 -0800 (PST)
+Message-Id: <20190107.072507.2123333109511407402.davem@davemloft.net>
+To:     ap420073@gmail.com
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        daniel@iogearbox.net, ast@kernel.org, mcgrof@kernel.org
+Subject: Re: [PATCH net v3 1/4] umh: add exit routine for UMH process
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20190107121014.13499-1-ap420073@gmail.com>
+References: <20190107121014.13499-1-ap420073@gmail.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 07 Jan 2019 07:25:08 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Paul,
+From: Taehee Yoo <ap420073@gmail.com>
+Date: Mon,  7 Jan 2019 21:10:14 +0900
 
-On Mon, 31 Dec 2018, Paul Menzel wrote:
+> @@ -679,6 +688,29 @@ static int proc_cap_handler(struct ctl_table *table, int write,
+>  	return 0;
+>  }
+>  
+> +void exit_umh(struct task_struct *tsk)
+> +{
+> +	struct umh_info *info;
+> +	pid_t pid = tsk->pid;
+> +
+> +	if (!(tsk->flags & PF_UMH))
+> +		return;
 
-> Linux 4.19.13 from Debian Sid/unstable logs the message below on the board MSI
-> MS-7A37/B350M MORTAR with the processor AMD Ryzen 3 2200G.
-> 
-> As a result, the early time stamps do not seem to be working.
+Let's really make this low cost.
 
-> > [    0.000000] DMI: Micro-Star International Co., Ltd. MS-7A37/B350M MORTAR
-> > (MS-7A37), BIOS 1.I0 11/06/2018
-> > [    0.000000] tsc: Fast TSC calibration failed
+In linux/sched.h or similar:
 
-And the further boot log says:
+void __exit_umh(struct task_struct *tsk);
 
-[    0.036000] tsc: Unable to calibrate against PIT
-[    0.036000] tsc: using HPET reference calibration
-[    0.036000] tsc: Detected 3500.117 MHz processor
+static inline void exit_umh(struct task_struct *tsk)
+{
+	if (unlikely(tsk->flags & PF_UMH))
+		__exit_umh(tsk);
+}
 
-So the quick calibration in early boot fails because the PIT seems not to
-do what the kernel expects. Nothing we can cure :(
-
-Thanks,
-
-	tglx
-
-
+Thank you.
