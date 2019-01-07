@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F02F3C43612
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:21:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6514EC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:21:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B73BC21736
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:21:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2FF01217D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:21:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546867285;
-	bh=bfoDEjtzPcHWhySdtTd2Bf9m2ckXOE3fGZI8ilioTOo=;
+	s=default; t=1546867289;
+	bh=10Dcalrs+Qt4Txyv0of0WKE8I0S+q9W7GelN7WZhdL8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=k6S17Z553VmWJ+0/ipKBi+TQavyxigJR5OTeePSs9I7S1WYOin9AjtmlU3qzaU64J
-	 33P7Zku1+ocHmzIOG7mReThMEYaPVTfpEUdSZiPV0ZVK68ECY8Z4/ltkMxG/kWNzLy
-	 QZOgpe4U2peGp2p8L7+TWvxmNr+FFtEXjD2vDeGo=
+	b=njCApp86Avr5/VBYxm20KWpImTs4tEX5W/tM8qiOqr3NYVX9sn9437uTwShG6dIg3
+	 2FFXaS55b/e92iD6NhCmkRCPyDC/pg9oDZBGd4inNWO2vbDjlle7Gt/5O3iHCiNkPW
+	 38DEa7FSLw5TeaJKnzhzFQv1imalpPsnsQWwBEpI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728803AbfAGMpF (ORCPT
+        id S1729940AbfAGNV1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:45:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33854 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:21:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34108 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728774AbfAGMo5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:44:57 -0500
+        id S1728801AbfAGMpF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:45:05 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6D61C21873;
-        Mon,  7 Jan 2019 12:44:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CFAFE2183E;
+        Mon,  7 Jan 2019 12:45:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865096;
-        bh=bfoDEjtzPcHWhySdtTd2Bf9m2ckXOE3fGZI8ilioTOo=;
+        s=default; t=1546865105;
+        bh=10Dcalrs+Qt4Txyv0of0WKE8I0S+q9W7GelN7WZhdL8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Q90+9ex/14sF4IguHzAx3z+defa+v6B7VIKDXtS2FOdKUdfeJqG50FIQmHbteW+iA
-         p0R2Ps/30qZHlgK8fj7Z0W0qlOQHCKNsehUg0xz43F/tgkEtgJhqp5KeS/bIkF0JPw
-         b3zm0udaWGC28j0TQXRwfR3tIAqAEf4oi9rRcg+c=
+        b=ThiH/T6f/+eLNNZCei4ELtNPa++3L+DUj2cVncRUQqkCxQJ07kr4r2YU7SAp+n9iG
+         yqoAluSWlsB9bFsfetgaumCPUInQLboK55JXytu0c2O/bzq4FE5BigF6yJTACA+1i2
+         zob+IxGCgpomCS1byvFOlmm8ka6VJjw5HtEI7y/M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Maciej W. Rozycki" <macro@linux-mips.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH 4.20 134/145] rtc: m41t80: Correct alarm month range with RTC reads
-Date:   Mon,  7 Jan 2019 13:32:51 +0100
-Message-Id: <20190107104454.738611224@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Subject: [PATCH 4.20 137/145] KVM: arm/arm64: vgic-v2: Set active_source to 0 when restoring state
+Date:   Mon,  7 Jan 2019 13:32:54 +0100
+Message-Id: <20190107104455.122701207@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104437.308206189@linuxfoundation.org>
 References: <20190107104437.308206189@linuxfoundation.org>
@@ -65,41 +66,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Maciej W. Rozycki <macro@linux-mips.org>
+From: Christoffer Dall <christoffer.dall@arm.com>
 
-commit 3cc9ffbb1f51eb4320575a48e4805a8f52e0e26b upstream.
+commit 60c3ab30d8c2ff3a52606df03f05af2aae07dc6b upstream.
 
-Add the missing adjustment of the month range on alarm reads from the
-RTC, correcting an issue coming from commit 9c6dfed92c3e ("rtc: m41t80:
-add alarm functionality").  The range is 1-12 for hardware and 0-11 for
-`struct rtc_time', and is already correctly handled on alarm writes to
-the RTC.
+When restoring the active state from userspace, we don't know which CPU
+was the source for the active state, and this is not architecturally
+exposed in any of the register state.
 
-It was correct up until commit 48e9766726eb ("drivers/rtc/rtc-m41t80.c:
-remove disabled alarm functionality") too, which removed the previous
-implementation of alarm support.
+Set the active_source to 0 in this case.  In the future, we can expand
+on this and exposse the information as additional information to
+userspace for GICv2 if anyone cares.
 
-Signed-off-by: Maciej W. Rozycki <macro@linux-mips.org>
-Fixes: 9c6dfed92c3e ("rtc: m41t80: add alarm functionality")
-References: 48e9766726eb ("drivers/rtc/rtc-m41t80.c: remove disabled alarm functionality")
-Cc: stable@vger.kernel.org # 4.7+
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Christoffer Dall <christoffer.dall@arm.com>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/rtc/rtc-m41t80.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ virt/kvm/arm/vgic/vgic-mmio.c |   17 ++++++++++++++++-
+ 1 file changed, 16 insertions(+), 1 deletion(-)
 
---- a/drivers/rtc/rtc-m41t80.c
-+++ b/drivers/rtc/rtc-m41t80.c
-@@ -393,7 +393,7 @@ static int m41t80_read_alarm(struct devi
- 	alrm->time.tm_min  = bcd2bin(alarmvals[3] & 0x7f);
- 	alrm->time.tm_hour = bcd2bin(alarmvals[2] & 0x3f);
- 	alrm->time.tm_mday = bcd2bin(alarmvals[1] & 0x3f);
--	alrm->time.tm_mon  = bcd2bin(alarmvals[0] & 0x3f);
-+	alrm->time.tm_mon  = bcd2bin(alarmvals[0] & 0x3f) - 1;
+--- a/virt/kvm/arm/vgic/vgic-mmio.c
++++ b/virt/kvm/arm/vgic/vgic-mmio.c
+@@ -317,11 +317,26 @@ static void vgic_mmio_change_active(stru
+ 		vgic_hw_irq_change_active(vcpu, irq, active, !requester_vcpu);
+ 	} else {
+ 		u32 model = vcpu->kvm->arch.vgic.vgic_model;
++		u8 active_source;
  
- 	alrm->enabled = !!(alarmvals[0] & M41T80_ALMON_AFE);
- 	alrm->pending = (flags & M41T80_FLAGS_AF) && alrm->enabled;
+ 		irq->active = active;
++
++		/*
++		 * The GICv2 architecture indicates that the source CPUID for
++		 * an SGI should be provided during an EOI which implies that
++		 * the active state is stored somewhere, but at the same time
++		 * this state is not architecturally exposed anywhere and we
++		 * have no way of knowing the right source.
++		 *
++		 * This may lead to a VCPU not being able to receive
++		 * additional instances of a particular SGI after migration
++		 * for a GICv2 VM on some GIC implementations.  Oh well.
++		 */
++		active_source = (requester_vcpu) ? requester_vcpu->vcpu_id : 0;
++
+ 		if (model == KVM_DEV_TYPE_ARM_VGIC_V2 &&
+ 		    active && vgic_irq_is_sgi(irq->intid))
+-			irq->active_source = requester_vcpu->vcpu_id;
++			irq->active_source = active_source;
+ 	}
+ 
+ 	if (irq->active)
 
 
