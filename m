@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3451EC43444
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:40:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC5C4C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:40:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 044AD2183F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:40:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C7452183F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:40:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546864847;
-	bh=5Tp1Kv1q+hw5D0VosRq/pgDJccykAFJDZ6uU14VpnCw=;
+	s=default; t=1546864852;
+	bh=gBpEHLnwHAu8DP7iKtRnEkFc6++KR2UKXm3jxIsOG6g=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=SyS4rtYYj8kEC+s8mIgzAhgEIuGbuamV77epnyUSPEmnieDwcrwdtkqiBUxb/Si5T
-	 UhsNk7dkTecPdNQ01BjgFEErA28F5aNnGEDZ52taeZ8jRQPTXwhZLgGvI3otszYBBv
-	 gnd4lsGK3VtK0l5jEQiIorFqdZQoW8120y12z+l4=
+	b=PCvxGyPkAWM25QVHIgw1LYtcw/+iN1O/ZQ2SeNfuvs3pDVcbQxqqV6MUUhktPj/+y
+	 UyIkeDvg3Zt5usHYdBbaC5k8oHvO/FV3tw3FUlOXIjfERyGCIcvYkodvU9KzdDLQ9J
+	 Ue6b7+r8hqFo1yV+mNyJvV3bwBErWAG4sk8UlpQo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727251AbfAGMeb (ORCPT
+        id S1728049AbfAGMkv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:34:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46786 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:40:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47134 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726963AbfAGMe2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:34:28 -0500
+        id S1727270AbfAGMeg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:34:36 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E7B5E2183F;
-        Mon,  7 Jan 2019 12:34:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5C16321855;
+        Mon,  7 Jan 2019 12:34:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546864467;
-        bh=5Tp1Kv1q+hw5D0VosRq/pgDJccykAFJDZ6uU14VpnCw=;
+        s=default; t=1546864475;
+        bh=gBpEHLnwHAu8DP7iKtRnEkFc6++KR2UKXm3jxIsOG6g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=w6gmEUePS39DZFFfPpLOfKcN0xLLpKRx6IsDceTUTa7ODUfxm/g7g608WcnC7eC3l
-         tpqqzcZBVmIIi4oXyYUr84ygfEivob0AOdLHv+dAJx9OAqkP/uhtTya4y5U0vHqiHi
-         peKK+A9apoQozEyAR7wOmv6U4HywTNnJgK8NZ80A=
+        b=eVyPXteUzXoCGdjtqVl+7gfchExfjDY89RDikbnQUVkZDXbs0r/VcYKtx+N6pD8AZ
+         4L1rId0/KPU5abK1K4yU+ZSN0nDssBwWccRxLd0SNAVsDZDLwS90f5a1d8p3h3kwsj
+         zFif68ctBB1W39EUo1gMMgMDtasKXJWCfBXcQtYQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
         Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.20 021/145] ALSA: rme9652: Fix potential Spectre v1 vulnerability
-Date:   Mon,  7 Jan 2019 13:30:58 +0100
-Message-Id: <20190107104440.082737456@linuxfoundation.org>
+Subject: [PATCH 4.20 024/145] ALSA: emux: Fix potential Spectre v1 vulnerabilities
+Date:   Mon,  7 Jan 2019 13:31:01 +0100
+Message-Id: <20190107104440.476724256@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104437.308206189@linuxfoundation.org>
 References: <20190107104437.308206189@linuxfoundation.org>
@@ -68,69 +68,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-commit 0b84304ef5da92add8dc75a1b07879c5374cdb05 upstream.
+commit 4aea96f4237cea0c51a8bc87c0db31f0f932f1f0 upstream.
 
-info->channel is indirectly controlled by user-space, hence leading to
-a potential exploitation of the Spectre variant 1 vulnerability.
+info.mode and info.port are indirectly controlled by user-space,
+hence leading to a potential exploitation of the Spectre variant 1
+vulnerability.
 
-This issue was detected with the help of Smatch:
+These issues were detected with the help of Smatch:
 
-sound/pci/rme9652/hdsp.c:4100 snd_hdsp_channel_info() warn: potential spectre issue 'hdsp->channel_map' [r] (local cap)
+sound/synth/emux/emux_hwdep.c:72 snd_emux_hwdep_misc_mode() warn: potential spectre issue 'emu->portptrs[i]->ctrls' [w] (local cap)
+sound/synth/emux/emux_hwdep.c:75 snd_emux_hwdep_misc_mode() warn: potential spectre issue 'emu->portptrs' [w] (local cap)
+sound/synth/emux/emux_hwdep.c:75 snd_emux_hwdep_misc_mode() warn: potential spectre issue 'emu->portptrs[info.port]->ctrls' [w] (local cap)
 
-Fix this by sanitizing info->channel before using it to index hdsp->channel_map
+Fix this by sanitizing both info.mode and info.port before using them
+to index emu->portptrs[i]->ctrls, emu->portptrs[info.port]->ctrls and
+emu->portptrs.
 
 Notice that given that speculation windows are large, the policy is
 to kill the speculation on the first load and not worry if it can be
 completed with a dependent load/store [1].
 
-Also, notice that I refactored the code a bit in order to get rid of the
-following checkpatch warning:
-
-ERROR: do not use assignment in if condition
-FILE: sound/pci/rme9652/hdsp.c:4103:
-	if ((mapped_channel = hdsp->channel_map[info->channel]) < 0)
-
 [1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
 
-Cc: stable@vger.kernel.org
 Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Cc: stable@vger.kernel.org
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/rme9652/hdsp.c |   10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ sound/synth/emux/emux_hwdep.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/sound/pci/rme9652/hdsp.c
-+++ b/sound/pci/rme9652/hdsp.c
-@@ -30,6 +30,7 @@
- #include <linux/math64.h>
- #include <linux/vmalloc.h>
- #include <linux/io.h>
-+#include <linux/nospec.h>
- 
+--- a/sound/synth/emux/emux_hwdep.c
++++ b/sound/synth/emux/emux_hwdep.c
+@@ -22,9 +22,9 @@
  #include <sound/core.h>
- #include <sound/control.h>
-@@ -4092,15 +4093,16 @@ static int snd_hdsp_channel_info(struct
- 				    struct snd_pcm_channel_info *info)
- {
- 	struct hdsp *hdsp = snd_pcm_substream_chip(substream);
--	int mapped_channel;
-+	unsigned int channel = info->channel;
+ #include <sound/hwdep.h>
+ #include <linux/uaccess.h>
++#include <linux/nospec.h>
+ #include "emux_voice.h"
  
--	if (snd_BUG_ON(info->channel >= hdsp->max_channels))
-+	if (snd_BUG_ON(channel >= hdsp->max_channels))
+-
+ #define TMP_CLIENT_ID	0x1001
+ 
+ /*
+@@ -66,13 +66,16 @@ snd_emux_hwdep_misc_mode(struct snd_emux
+ 		return -EFAULT;
+ 	if (info.mode < 0 || info.mode >= EMUX_MD_END)
  		return -EINVAL;
-+	channel = array_index_nospec(channel, hdsp->max_channels);
++	info.mode = array_index_nospec(info.mode, EMUX_MD_END);
  
--	if ((mapped_channel = hdsp->channel_map[info->channel]) < 0)
-+	if (hdsp->channel_map[channel] < 0)
- 		return -EINVAL;
- 
--	info->offset = mapped_channel * HDSP_CHANNEL_BUFFER_BYTES;
-+	info->offset = hdsp->channel_map[channel] * HDSP_CHANNEL_BUFFER_BYTES;
- 	info->first = 0;
- 	info->step = 32;
+ 	if (info.port < 0) {
+ 		for (i = 0; i < emu->num_ports; i++)
+ 			emu->portptrs[i]->ctrls[info.mode] = info.value;
+ 	} else {
+-		if (info.port < emu->num_ports)
++		if (info.port < emu->num_ports) {
++			info.port = array_index_nospec(info.port, emu->num_ports);
+ 			emu->portptrs[info.port]->ctrls[info.mode] = info.value;
++		}
+ 	}
  	return 0;
+ }
 
 
