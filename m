@@ -7,51 +7,56 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAB75C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:52:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 674CAC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:52:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B65C206BB
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:52:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3AE3820651
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:52:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546865538;
-	bh=uBAO+0PSk87GzmMkWhfeAExr0+iV9ySBMkZvb/EZIX4=;
+	s=default; t=1546865546;
+	bh=ZFgYfEtqbvDy4Mc8K6VQgVrluXWZwTSSCzTWmrWEL5c=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=KvZWCZ+5afZMVgH+I8FP+wdd3GhQnkIS0rWXCUwhNIJJaDVMAlqcWQYOJ1LdolRM4
-	 ftVVz3dg9+VszaSHcRbmTBucxbAN1xqhRQsvS50bNYgmriJjbamSxIqqW1VXZDhxSu
-	 uPdkcb4T6DbbDXVyBuUJzQt7lV8g2o+lpmQU32u8=
+	b=ZIcDYc1P9wO2g/xqZS5se08qkE8LVha/kXUc1e9MLUk2YNRYZ1+zIccPe6IEO5Qd9
+	 nQ1foV8YiWX97OkqeGumOvEl/jX12hMt40WAwS5QmVTEF4MVUBnsyaGO5ETb9plhf1
+	 akaM2C2CtmhH93mK2w4r52r8qoLSIKqlPNrWox20=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729572AbfAGMwR (ORCPT
+        id S1729580AbfAGMwZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:52:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41958 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:52:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42076 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728905AbfAGMwP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:52:15 -0500
+        id S1727705AbfAGMwX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:52:23 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1F7D920651;
-        Mon,  7 Jan 2019 12:52:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5D30F20665;
+        Mon,  7 Jan 2019 12:52:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865534;
-        bh=uBAO+0PSk87GzmMkWhfeAExr0+iV9ySBMkZvb/EZIX4=;
+        s=default; t=1546865542;
+        bh=ZFgYfEtqbvDy4Mc8K6VQgVrluXWZwTSSCzTWmrWEL5c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hjxAMf6RSfa6SDItYsuSoFUTmdodVv3urDWeeZpFv4VXhLsETQ2jgCBgQix4+j1jQ
-         ApyKOg3LxkcoJ/IGvuc48CzofHbdXEgk4s4wNxq5mWawLm6F/KrxpMpw4TZJlRGEfh
-         WRMCtQQCTiV1Xdp+INPA/2zbSTACdj2eIkDSr/hw=
+        b=HmVY2Qg3DqJ5hy8MO701TMOl5w0nYvnMhugs7AtngOQdXSF1GkklpU0eHEfCnzvwO
+         Xt8LJX9YV50rIT6LdnvzRfbmNvRB5EFTOPWxfxWw+5QGw9f2ImEZyz+Upj9z5E+GMP
+         uJq1FsUN9dhE14gIQzQUwVrYj3MA0rSj6ZtOXobs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michal Hocko <mhocko@suse.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
-        Andi Kleen <ak@linux.intel.com>, Jiri Kosina <jkosina@suse.cz>,
+        stable@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Borislav Petkov <bp@suse.de>, linux-mm@kvack.org
-Subject: [PATCH 4.19 090/170] x86/speculation/l1tf: Drop the swap storage limit restriction when l1tf=off
-Date:   Mon,  7 Jan 2019 13:31:57 +0100
-Message-Id: <20190107104503.633415008@linuxfoundation.org>
+        Rik van Riel <riel@surriel.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Thomas Gleixner <tglx@linutronix.de>, dave.hansen@intel.com,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.19 091/170] x86/mm: Drop usage of __flush_tlb_all() in kernel_physical_mapping_init()
+Date:   Mon,  7 Jan 2019 13:31:58 +0100
+Message-Id: <20190107104503.802806010@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104452.953560660@linuxfoundation.org>
 References: <20190107104452.953560660@linuxfoundation.org>
@@ -70,102 +75,110 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michal Hocko <mhocko@suse.com>
+From: Dan Williams <dan.j.williams@intel.com>
 
-commit 5b5e4d623ec8a34689df98e42d038a3b594d2ff9 upstream.
+commit ba6f508d0ec4adb09f0a939af6d5e19cdfa8667d upstream.
 
-Swap storage is restricted to max_swapfile_size (~16TB on x86_64) whenever
-the system is deemed affected by L1TF vulnerability. Even though the limit
-is quite high for most deployments it seems to be too restrictive for
-deployments which are willing to live with the mitigation disabled.
+Commit:
 
-We have a customer to deploy 8x 6,4TB PCIe/NVMe SSD swap devices which is
-clearly out of the limit.
+  f77084d96355 "x86/mm/pat: Disable preemption around __flush_tlb_all()"
 
-Drop the swap restriction when l1tf=off is specified. It also doesn't make
-much sense to warn about too much memory for the l1tf mitigation when it is
-forcefully disabled by the administrator.
+addressed a case where __flush_tlb_all() is called without preemption
+being disabled. It also left a warning to catch other cases where
+preemption is not disabled.
 
-[ tglx: Folded the documentation delta change ]
+That warning triggers for the memory hotplug path which is also used for
+persistent memory enabling:
 
-Fixes: 377eeaa8e11f ("x86/speculation/l1tf: Limit swap file size to MAX_PA/2")
-Signed-off-by: Michal Hocko <mhocko@suse.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Pavel Tatashin <pasha.tatashin@soleen.com>
-Reviewed-by: Andi Kleen <ak@linux.intel.com>
-Acked-by: Jiri Kosina <jkosina@suse.cz>
+ WARNING: CPU: 35 PID: 911 at ./arch/x86/include/asm/tlbflush.h:460
+ RIP: 0010:__flush_tlb_all+0x1b/0x3a
+ [..]
+ Call Trace:
+  phys_pud_init+0x29c/0x2bb
+  kernel_physical_mapping_init+0xfc/0x219
+  init_memory_mapping+0x1a5/0x3b0
+  arch_add_memory+0x2c/0x50
+  devm_memremap_pages+0x3aa/0x610
+  pmem_attach_disk+0x585/0x700 [nd_pmem]
+
+Andy wondered why a path that can sleep was using __flush_tlb_all() [1]
+and Dave confirmed the expectation for TLB flush is for modifying /
+invalidating existing PTE entries, but not initial population [2]. Drop
+the usage of __flush_tlb_all() in phys_{p4d,pud,pmd}_init() on the
+expectation that this path is only ever populating empty entries for the
+linear map. Note, at linear map teardown time there is a call to the
+all-cpu flush_tlb_all() to invalidate the removed mappings.
+
+[1]: https://lkml.kernel.org/r/9DFD717D-857D-493D-A606-B635D72BAC21@amacapital.net
+[2]: https://lkml.kernel.org/r/749919a4-cdb1-48a3-adb4-adb81a5fa0b5@intel.com
+
+[ mingo: Minor readability edits. ]
+
+Suggested-by: Dave Hansen <dave.hansen@linux.intel.com>
+Reported-by: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Cc: <stable@vger.kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: H. Peter Anvin <hpa@zytor.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Borislav Petkov <bp@suse.de>
-Cc: <linux-mm@kvack.org>
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20181113184910.26697-1-mhocko@kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Rik van Riel <riel@surriel.com>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: dave.hansen@intel.com
+Fixes: f77084d96355 ("x86/mm/pat: Disable preemption around __flush_tlb_all()")
+Link: http://lkml.kernel.org/r/154395944713.32119.15611079023837132638.stgit@dwillia2-desk3.amr.corp.intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- Documentation/admin-guide/kernel-parameters.txt |    3 +++
- Documentation/admin-guide/l1tf.rst              |    6 +++++-
- arch/x86/kernel/cpu/bugs.c                      |    3 ++-
- arch/x86/mm/init.c                              |    2 +-
- 4 files changed, 11 insertions(+), 3 deletions(-)
+ arch/x86/mm/init_64.c |    6 ------
+ 1 file changed, 6 deletions(-)
 
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -2073,6 +2073,9 @@
- 			off
- 				Disables hypervisor mitigations and doesn't
- 				emit any warnings.
-+				It also drops the swap size and available
-+				RAM limit restriction on both hypervisor and
-+				bare metal.
+--- a/arch/x86/mm/init_64.c
++++ b/arch/x86/mm/init_64.c
+@@ -585,7 +585,6 @@ phys_pud_init(pud_t *pud_page, unsigned
+ 							   paddr_end,
+ 							   page_size_mask,
+ 							   prot);
+-				__flush_tlb_all();
+ 				continue;
+ 			}
+ 			/*
+@@ -628,7 +627,6 @@ phys_pud_init(pud_t *pud_page, unsigned
+ 		pud_populate(&init_mm, pud, pmd);
+ 		spin_unlock(&init_mm.page_table_lock);
+ 	}
+-	__flush_tlb_all();
  
- 			Default is 'flush'.
+ 	update_page_count(PG_LEVEL_1G, pages);
  
---- a/Documentation/admin-guide/l1tf.rst
-+++ b/Documentation/admin-guide/l1tf.rst
-@@ -405,6 +405,9 @@ time with the option "l1tf=". The valid
+@@ -669,7 +667,6 @@ phys_p4d_init(p4d_t *p4d_page, unsigned
+ 			paddr_last = phys_pud_init(pud, paddr,
+ 					paddr_end,
+ 					page_size_mask);
+-			__flush_tlb_all();
+ 			continue;
+ 		}
  
-   off		Disables hypervisor mitigations and doesn't emit any
- 		warnings.
-+		It also drops the swap size and available RAM limit restrictions
-+		on both hypervisor and bare metal.
-+
-   ============  =============================================================
+@@ -681,7 +678,6 @@ phys_p4d_init(p4d_t *p4d_page, unsigned
+ 		p4d_populate(&init_mm, p4d, pud);
+ 		spin_unlock(&init_mm.page_table_lock);
+ 	}
+-	__flush_tlb_all();
  
- The default is 'flush'. For details about L1D flushing see :ref:`l1d_flush`.
-@@ -576,7 +579,8 @@ Default mitigations
-   The kernel default mitigations for vulnerable processors are:
+ 	return paddr_last;
+ }
+@@ -734,8 +730,6 @@ kernel_physical_mapping_init(unsigned lo
+ 	if (pgd_changed)
+ 		sync_global_pgds(vaddr_start, vaddr_end - 1);
  
-   - PTE inversion to protect against malicious user space. This is done
--    unconditionally and cannot be controlled.
-+    unconditionally and cannot be controlled. The swap storage is limited
-+    to ~16TB.
+-	__flush_tlb_all();
+-
+ 	return paddr_last;
+ }
  
-   - L1D conditional flushing on VMENTER when EPT is enabled for
-     a guest.
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -1000,7 +1000,8 @@ static void __init l1tf_select_mitigatio
- #endif
- 
- 	half_pa = (u64)l1tf_pfn_limit() << PAGE_SHIFT;
--	if (e820__mapped_any(half_pa, ULLONG_MAX - half_pa, E820_TYPE_RAM)) {
-+	if (l1tf_mitigation != L1TF_MITIGATION_OFF &&
-+			e820__mapped_any(half_pa, ULLONG_MAX - half_pa, E820_TYPE_RAM)) {
- 		pr_warn("System has more than MAX_PA/2 memory. L1TF mitigation not effective.\n");
- 		pr_info("You may make it effective by booting the kernel with mem=%llu parameter.\n",
- 				half_pa);
---- a/arch/x86/mm/init.c
-+++ b/arch/x86/mm/init.c
-@@ -932,7 +932,7 @@ unsigned long max_swapfile_size(void)
- 
- 	pages = generic_max_swapfile_size();
- 
--	if (boot_cpu_has_bug(X86_BUG_L1TF)) {
-+	if (boot_cpu_has_bug(X86_BUG_L1TF) && l1tf_mitigation != L1TF_MITIGATION_OFF) {
- 		/* Limit the swap file size to MAX_PA/2 for L1TF workaround */
- 		unsigned long long l1tf_limit = l1tf_pfn_limit();
- 		/*
 
 
