@@ -7,49 +7,46 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44FDBC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:48:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BECDEC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:48:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0985321736
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:48:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 91170206BB
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:48:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546865334;
-	bh=lsja5kgmsApBCXK5+/qRUOLOT9WEVsAd1YMN8VNSXbk=;
+	s=default; t=1546865337;
+	bh=nkdF49Yx/OLj+vT1lnVPlg/H50KU6Z4bI3yGr/JU4sY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=XtuhkMTILJqKZq1smpVk3udo1MsXR2GadbEWkpUQ7N5m6A3nNOcFgbDPqhWXo32g+
-	 ybsG65M2gnjAkkKfIXGeJiFZZsWAagxZPQdtfn3bHfUgf7oMAX8VqG8FXfxhM2z3Op
-	 ZO5cwqAplkISazu9ebQ8kV9es3m5tXU800SiqyUg=
+	b=uKBHAaIKIS7pNfiBlUozEOswibWVom2VfmQtnw5aVjoNSRoUueK00UpE1TNbbE1m+
+	 xEFSsqjZn9m+xDgPuapskemU65Rcaf/qr5Q02HMYl2RQvlGuTqgZv5U2liHrfD5rBZ
+	 KfbWQCfH4HmQ2TXXBa9ccuHboiMdh0+IbNQmfFUQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729266AbfAGMsx (ORCPT
+        id S1729250AbfAGMs4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:48:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39676 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:48:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39732 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729250AbfAGMsv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:48:51 -0500
+        id S1729267AbfAGMsy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:48:54 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3C8B220651;
-        Mon,  7 Jan 2019 12:48:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4E05F20651;
+        Mon,  7 Jan 2019 12:48:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865330;
-        bh=lsja5kgmsApBCXK5+/qRUOLOT9WEVsAd1YMN8VNSXbk=;
+        s=default; t=1546865333;
+        bh=nkdF49Yx/OLj+vT1lnVPlg/H50KU6Z4bI3yGr/JU4sY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bBFNG+mc9Ml0vt8C1jQd/NkzLZLqUZ5MiISuz4VFyvVQh6Fv8J51VAYebLo3y9EDj
-         2ermKFk7LXroIC3vb085yEGWSUSJApiC/D1+RhobOdgf18rpKDFw7H7xk27nuTKpJk
-         Ya0M9myrPglaoWwzntpYGr4itmhXMug6XnEPBw4Q=
+        b=H1Rgui/FApO5Uz7LQ6ZN5oLa8OzSYy5Iy6dYZj+ehrJLQ6122h1GIbEqQ4wr/+WWh
+         x/iTuaFDqWXW4K/4QJ06pq3N3q/Q46tlnyPEY9jlVruFFJ99uoir+exz3r5uNKS3DS
+         qS6BCX7GOGrRT3nteuyySJU9/to5MxYi+PtoOTQw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Timothy Redaelli <tredaelli@redhat.com>,
-        "Herton R. Krzesinski" <herton@redhat.com>,
-        Davide Caratti <dcaratti@redhat.com>,
-        Paolo Abeni <pabeni@redhat.com>,
+        stable@vger.kernel.org, Heiner Kallweit <hkallweit1@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 057/170] net: Use __kernel_clockid_t in uapi net_stamp.h
-Date:   Mon,  7 Jan 2019 13:31:24 +0100
-Message-Id: <20190107104459.819387468@linuxfoundation.org>
+Subject: [PATCH 4.19 058/170] r8169: fix WoL device wakeup enable
+Date:   Mon,  7 Jan 2019 13:31:25 +0100
+Message-Id: <20190107104459.930066884@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104452.953560660@linuxfoundation.org>
 References: <20190107104452.953560660@linuxfoundation.org>
@@ -68,44 +65,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Davide Caratti <dcaratti@redhat.com>
+From: Heiner Kallweit <hkallweit1@gmail.com>
 
-[ Upstream commit e2c4cf7f98a519eb4d95532bfa06bcaf3562fed5 ]
+[ Upstream commit 3bd8264511035dc97c902f03fa9f1d07f95f8f62 ]
 
-Herton reports the following error when building a userspace program that
-includes net_stamp.h:
+In rtl8169_runtime_resume() we configure WoL but don't set the device
+to wakeup-enabled. This prevents PME generation once the cable is
+re-plugged. Fix this by moving the call to device_set_wakeup_enable()
+to __rtl8169_set_wol().
 
- In file included from foo.c:2:
- /usr/include/linux/net_tstamp.h:158:2: error: unknown type name
- ‘clockid_t’
-   clockid_t clockid; /* reference clockid */
-   ^~~~~~~~~
-
-Fix it by using __kernel_clockid_t in place of clockid_t.
-
-Fixes: 80b14dee2bea ("net: Add a new socket option for a future transmit time.")
-Cc: Timothy Redaelli <tredaelli@redhat.com>
-Reported-by: Herton R. Krzesinski <herton@redhat.com>
-Signed-off-by: Davide Caratti <dcaratti@redhat.com>
-Tested-by: Paolo Abeni <pabeni@redhat.com>
+Fixes: 433f9d0ddcc6 ("r8169: improve saved_wolopts handling")
+Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/uapi/linux/net_tstamp.h |    4 ++--
+ drivers/net/ethernet/realtek/r8169.c |    4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/include/uapi/linux/net_tstamp.h
-+++ b/include/uapi/linux/net_tstamp.h
-@@ -155,8 +155,8 @@ enum txtime_flags {
- };
+--- a/drivers/net/ethernet/realtek/r8169.c
++++ b/drivers/net/ethernet/realtek/r8169.c
+@@ -1528,6 +1528,8 @@ static void __rtl8169_set_wol(struct rtl
+ 	}
  
- struct sock_txtime {
--	clockid_t	clockid;	/* reference clockid */
--	__u32		flags;		/* as defined by enum txtime_flags */
-+	__kernel_clockid_t	clockid;/* reference clockid */
-+	__u32			flags;	/* as defined by enum txtime_flags */
- };
+ 	RTL_W8(tp, Cfg9346, Cfg9346_Lock);
++
++	device_set_wakeup_enable(tp_to_dev(tp), wolopts);
+ }
  
- #endif /* _NET_TIMESTAMPING_H */
+ static int rtl8169_set_wol(struct net_device *dev, struct ethtool_wolinfo *wol)
+@@ -1549,8 +1551,6 @@ static int rtl8169_set_wol(struct net_de
+ 
+ 	rtl_unlock_work(tp);
+ 
+-	device_set_wakeup_enable(d, tp->saved_wolopts);
+-
+ 	pm_runtime_put_noidle(d);
+ 
+ 	return 0;
 
 
