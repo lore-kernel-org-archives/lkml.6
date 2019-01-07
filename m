@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37C73C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:08:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ED30C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:09:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0789121855
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:08:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C7C242089F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:09:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546866538;
-	bh=A13X+9AwadrN4YqbHaC77fG5yHYWjgpU6qG6NLguf/o=;
+	s=default; t=1546866541;
+	bh=UpIGB/l+CXp+NcEdglo5aecU91CMEVQQOThksQjsfYc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=L2H4ZEDrJhD60gPbTyHHsX1bIM5EZEGzuFMdX4UfansBwudNiHcJ/6aQJsyk6JNGN
-	 NN+kLn8qwRpMWMiVF5HUc312xxPwrq2S9R5Wq+8UQsdbr8J/IWpM8I+W2iYngB6/wA
-	 rUoWzdpy3nmnyFh1gcEmjnJYgLM3XfzJmiflTbys=
+	b=lBsEVQnsDv0avdvNjq1kmwiMdHJGfEx8mAFxQ0x8pRnROboCoNd1eKeK0o+pmopwY
+	 qFyzjwwddbq/XWtSi6JJ5VrSfJHSQXV0Zg2iW2by//XxubzAqk+cZoIXF+aki8VrCM
+	 XlUel1GMuBWWKrJxLvuPIZwMT20aoQ0Ktx4fSaPQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731139AbfAGNI5 (ORCPT
+        id S1731755AbfAGNJB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:08:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55956 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:09:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56026 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731726AbfAGNIw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:08:52 -0500
+        id S1731146AbfAGNI6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:08:58 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 845E22089F;
-        Mon,  7 Jan 2019 13:08:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 679432089F;
+        Mon,  7 Jan 2019 13:08:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546866532;
-        bh=A13X+9AwadrN4YqbHaC77fG5yHYWjgpU6qG6NLguf/o=;
+        s=default; t=1546866537;
+        bh=UpIGB/l+CXp+NcEdglo5aecU91CMEVQQOThksQjsfYc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DHoy3o17IKfcxlrkUCwXZHUmscP/p7Dsr4/BmohH53iWkr0bpZMIluG/6f1Gz80HV
-         KIzN60zQWF1M2Rx2mJLtM04AsDeE39Kk7PZARgCkRaEDOf3PnqHLSOQ/ZMpcJ+IC8D
-         lhhv0i7NLVrqntqbDgkJRnHC8IVIEC2yGRhEwL5E=
+        b=D3Zy5s+pKajyTlxQya5an6cPsizKKk/k33/fL4OhKYrmq7zA3nOu3RhpmB0q7KEuf
+         f90RRkm21oox7kwT8r+ewMbclB1Ca3ZucvsJf7JpxhTLX5CxS6B/j1HwHXGf2Pt4dQ
+         Nya/6NuErdg5jFeG6yYbnXV1epRCyx4EUMFsAjH0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 4.9 60/71] f2fs: fix validation of the block count in sanity_check_raw_super
-Date:   Mon,  7 Jan 2019 13:33:29 +0100
-Message-Id: <20190107105336.152544550@linuxfoundation.org>
+        stable@vger.kernel.org, Alaa Hleihel <alaa@mellanox.com>,
+        Tariq Toukan <tariqt@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>
+Subject: [PATCH 4.9 26/71] net/mlx5e: Remove the false indication of software timestamping support
+Date:   Mon,  7 Jan 2019 13:32:55 +0100
+Message-Id: <20190107105334.273824922@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107105330.280153213@linuxfoundation.org>
 References: <20190107105330.280153213@linuxfoundation.org>
@@ -66,57 +66,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+From: Alaa Hleihel <alaa@mellanox.com>
 
-commit 88960068f25fcc3759455d85460234dcc9d43fef upstream.
+[ Upstream commit 4765420439e758bfa4808392d18b0a4cb6f06065 ]
 
-Treat "block_count" from struct f2fs_super_block as 64-bit little endian
-value in sanity_check_raw_super() because struct f2fs_super_block
-declares "block_count" as "__le64".
+mlx5 driver falsely advertises support of software timestamping.
+Fix it by removing the false indication.
 
-This fixes a bug where the superblock validation fails on big endian
-devices with the following error:
-  F2FS-fs (sda1): Wrong segment_count / block_count (61439 > 0)
-  F2FS-fs (sda1): Can't find valid F2FS filesystem in 1th superblock
-  F2FS-fs (sda1): Wrong segment_count / block_count (61439 > 0)
-  F2FS-fs (sda1): Can't find valid F2FS filesystem in 2th superblock
-As result of this the partition cannot be mounted.
-
-With this patch applied the superblock validation works fine and the
-partition can be mounted again:
-  F2FS-fs (sda1): Mounted with checkpoint version = 7c84
-
-My little endian x86-64 hardware was able to mount the partition without
-this fix.
-To confirm that mounting f2fs filesystems works on big endian machines
-again I tested this on a 32-bit MIPS big endian (lantiq) device.
-
-Fixes: 0cfe75c5b01199 ("f2fs: enhance sanity_check_raw_super() to avoid potential overflows")
-Cc: stable@vger.kernel.org
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Fixes: ef9814deafd0 ("net/mlx5e: Add HW timestamping (TS) support")
+Signed-off-by: Alaa Hleihel <alaa@mellanox.com>
+Reviewed-by: Tariq Toukan <tariqt@mellanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/f2fs/super.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c |   11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
 
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1427,10 +1427,10 @@ static int sanity_check_raw_super(struct
- 		return 1;
- 	}
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c
+@@ -1167,11 +1167,6 @@ static int mlx5e_get_ts_info(struct net_
+ 			     struct ethtool_ts_info *info)
+ {
+ 	struct mlx5e_priv *priv = netdev_priv(dev);
+-	int ret;
+-
+-	ret = ethtool_op_get_ts_info(dev, info);
+-	if (ret)
+-		return ret;
  
--	if (segment_count > (le32_to_cpu(raw_super->block_count) >> 9)) {
-+	if (segment_count > (le64_to_cpu(raw_super->block_count) >> 9)) {
- 		f2fs_msg(sb, KERN_INFO,
--			"Wrong segment_count / block_count (%u > %u)",
--			segment_count, le32_to_cpu(raw_super->block_count));
-+			"Wrong segment_count / block_count (%u > %llu)",
-+			segment_count, le64_to_cpu(raw_super->block_count));
- 		return 1;
- 	}
+ 	info->phc_index = priv->tstamp.ptp ?
+ 			  ptp_clock_index(priv->tstamp.ptp) : -1;
+@@ -1179,9 +1174,9 @@ static int mlx5e_get_ts_info(struct net_
+ 	if (!MLX5_CAP_GEN(priv->mdev, device_frequency_khz))
+ 		return 0;
  
+-	info->so_timestamping |= SOF_TIMESTAMPING_TX_HARDWARE |
+-				 SOF_TIMESTAMPING_RX_HARDWARE |
+-				 SOF_TIMESTAMPING_RAW_HARDWARE;
++	info->so_timestamping = SOF_TIMESTAMPING_TX_HARDWARE |
++				SOF_TIMESTAMPING_RX_HARDWARE |
++				SOF_TIMESTAMPING_RAW_HARDWARE;
+ 
+ 	info->tx_types = BIT(HWTSTAMP_TX_OFF) |
+ 			 BIT(HWTSTAMP_TX_ON);
 
 
