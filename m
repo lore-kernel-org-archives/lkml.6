@@ -4,54 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BCBFC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:22:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86E6AC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:22:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02EED21736
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:22:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C82721736
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:22:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546867362;
-	bh=rELyEhvrObOpnKxU/5GeKNZVLPS35FuG72YLIP6FW9Q=;
+	s=default; t=1546867376;
+	bh=FcOEr8xkYzEgbzUCKdvGvKX+0d3ZJgBYuKgvVRfms9U=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=yQ46Of6nT8qnmr0IiADhJcHddbs6RYRdhGARWNl15w/mOJn0cjIMCkcD6DY/Qr5Tq
-	 DVDQIh25Vlwi6UFZT23TOhkzac/SROR1zzq3iV6Myvk5pvNlGr8hRXj4+N0MacOBoV
-	 3khrgVy9YSzLL8IIcS48bZpiIzebGyQyjXyBumDE=
+	b=h5He7HktFGPNWk2ysTXbHsteeAdRW6+C0LwuxjsiMf6wQ1rCCPO55k8HHdYVyo73R
+	 3kzEa/Y4Z2DWLorQxDzMRlNQp82NRFoZ8XPoaqYbtI/NlmUzfd08EomJZazSpSnsiP
+	 ZlVmwHaJOUEE/I8hWm1fJfsP9mZfnyTNHMJlcng4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730464AbfAGNWl (ORCPT
+        id S1730135AbfAGNWz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:22:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60146 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:22:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59546 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728165AbfAGMns (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:43:48 -0500
+        id S1727661AbfAGMna (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:43:30 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4DAE420449;
-        Mon,  7 Jan 2019 12:43:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D9FA720449;
+        Mon,  7 Jan 2019 12:43:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865026;
-        bh=rELyEhvrObOpnKxU/5GeKNZVLPS35FuG72YLIP6FW9Q=;
+        s=default; t=1546865010;
+        bh=FcOEr8xkYzEgbzUCKdvGvKX+0d3ZJgBYuKgvVRfms9U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gSn2RqautL38d9DOf57RasmsULFHMVi/ZGa3InwuxuZ0YTaWyBJant3Y3sMD0DsgY
-         jJsxbSDOYmc4YbJhh6CHgAkwzHhPrqPqYkBJrccVvvX5xIl4pQ+yIGzo/O0yh9t4Dm
-         2Q431Qk+VduyUT80aFYHCOeZzMDz0xRoOJiq1vy8=
+        b=fjCR8Dy62er7K/XlP91FClk043aDQyHFjrZRwURD6QBFGN69zp5vWIAg20fs4NEq8
+         fdM6Vpe1RWJ9iWiDJ1Rxw7hXolyvAQN+t536fLwkP3PiZMkpw8PVnW9BGdXRrW+ebC
+         jm+/l+9XNcnoon9WIHIfyYY9+j+qy/R7Ll7Ao9wI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Huacai Chen <chenhc@lemote.com>,
-        Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <james.hogan@mips.com>,
-        "Steven J . Hill" <Steven.Hill@cavium.com>,
-        linux-mips@linux-mips.org, Fuxin Zhang <zhangfx@lemote.com>,
-        Zhangjin Wu <wuzhangjin@gmail.com>
-Subject: [PATCH 4.20 121/145] MIPS: c-r4k: Add r4k_blast_scache_node for Loongson-3
-Date:   Mon,  7 Jan 2019 13:32:38 +0100
-Message-Id: <20190107104453.060783802@linuxfoundation.org>
+        stable@vger.kernel.org, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        syzbot+ccf0a61ed12f2a7313ee@syzkaller.appspotmail.com,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: [PATCH 4.20 117/145] media: v4l2-tpg: array index could become negative
+Date:   Mon,  7 Jan 2019 13:32:34 +0100
+Message-Id: <20190107104452.539596382@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104437.308206189@linuxfoundation.org>
 References: <20190107104437.308206189@linuxfoundation.org>
@@ -70,191 +66,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Huacai Chen <chenhc@lemote.com>
+From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
 
-commit bb53fdf395eed103f85061bfff3b116cee123895 upstream.
+commit e5f71a27fa12c1a1b02ad478a568e76260f1815e upstream.
 
-For multi-node Loongson-3 (NUMA configuration), r4k_blast_scache() can
-only flush Node-0's scache. So we add r4k_blast_scache_node() by using
-(CAC_BASE | (node_id << NODE_ADDRSPACE_SHIFT)) instead of CKSEG0 as the
-start address.
+text[s] is a signed char, so using that as index into the font8x16 array
+can result in negative indices. Cast it to u8 to be safe.
 
-Signed-off-by: Huacai Chen <chenhc@lemote.com>
-[paul.burton@mips.com: Include asm/mmzone.h from asm/r4kcache.h for
-		       nid_to_addrbase(). Add asm/mach-generic/mmzone.h
-		       to allow inclusion for all platforms.]
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Patchwork: https://patchwork.linux-mips.org/patch/21129/
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: James Hogan <james.hogan@mips.com>
-Cc: Steven J . Hill <Steven.Hill@cavium.com>
-Cc: linux-mips@linux-mips.org
-Cc: Fuxin Zhang <zhangfx@lemote.com>
-Cc: Zhangjin Wu <wuzhangjin@gmail.com>
-Cc: <stable@vger.kernel.org> # 3.15+
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Reported-by: syzbot+ccf0a61ed12f2a7313ee@syzkaller.appspotmail.com
+Cc: <stable@vger.kernel.org>      # for v4.7 and up
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/include/asm/mach-generic/mmzone.h    |    2 +
- arch/mips/include/asm/mach-loongson64/mmzone.h |    1 
- arch/mips/include/asm/mmzone.h                 |    8 ++++
- arch/mips/include/asm/r4kcache.h               |   22 ++++++++++++
- arch/mips/mm/c-r4k.c                           |   44 +++++++++++++++++++++----
- 5 files changed, 70 insertions(+), 7 deletions(-)
+ drivers/media/common/v4l2-tpg/v4l2-tpg-core.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- /dev/null
-+++ b/arch/mips/include/asm/mach-generic/mmzone.h
-@@ -0,0 +1,2 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Intentionally empty */
---- a/arch/mips/include/asm/mach-loongson64/mmzone.h
-+++ b/arch/mips/include/asm/mach-loongson64/mmzone.h
-@@ -21,6 +21,7 @@
- #define NODE3_ADDRSPACE_OFFSET 0x300000000000UL
- 
- #define pa_to_nid(addr)  (((addr) & 0xf00000000000) >> NODE_ADDRSPACE_SHIFT)
-+#define nid_to_addrbase(nid) ((nid) << NODE_ADDRSPACE_SHIFT)
- 
- #define LEVELS_PER_SLICE 128
- 
---- a/arch/mips/include/asm/mmzone.h
-+++ b/arch/mips/include/asm/mmzone.h
-@@ -9,6 +9,14 @@
- #include <asm/page.h>
- #include <mmzone.h>
- 
-+#ifndef pa_to_nid
-+#define pa_to_nid(addr) 0
-+#endif
-+
-+#ifndef nid_to_addrbase
-+#define nid_to_addrbase(nid) 0
-+#endif
-+
- #ifdef CONFIG_DISCONTIGMEM
- 
- #define pfn_to_nid(pfn)		pa_to_nid((pfn) << PAGE_SHIFT)
---- a/arch/mips/include/asm/r4kcache.h
-+++ b/arch/mips/include/asm/r4kcache.h
-@@ -20,6 +20,7 @@
- #include <asm/cpu-features.h>
- #include <asm/cpu-type.h>
- #include <asm/mipsmtregs.h>
-+#include <asm/mmzone.h>
- #include <linux/uaccess.h> /* for uaccess_kernel() */
- 
- extern void (*r4k_blast_dcache)(void);
-@@ -674,4 +675,25 @@ __BUILD_BLAST_CACHE_RANGE(s, scache, Hit
- __BUILD_BLAST_CACHE_RANGE(inv_d, dcache, Hit_Invalidate_D, , )
- __BUILD_BLAST_CACHE_RANGE(inv_s, scache, Hit_Invalidate_SD, , )
- 
-+/* Currently, this is very specific to Loongson-3 */
-+#define __BUILD_BLAST_CACHE_NODE(pfx, desc, indexop, hitop, lsize)	\
-+static inline void blast_##pfx##cache##lsize##_node(long node)		\
-+{									\
-+	unsigned long start = CAC_BASE | nid_to_addrbase(node);		\
-+	unsigned long end = start + current_cpu_data.desc.waysize;	\
-+	unsigned long ws_inc = 1UL << current_cpu_data.desc.waybit;	\
-+	unsigned long ws_end = current_cpu_data.desc.ways <<		\
-+			       current_cpu_data.desc.waybit;		\
-+	unsigned long ws, addr;						\
-+									\
-+	for (ws = 0; ws < ws_end; ws += ws_inc)				\
-+		for (addr = start; addr < end; addr += lsize * 32)	\
-+			cache##lsize##_unroll32(addr|ws, indexop);	\
-+}
-+
-+__BUILD_BLAST_CACHE_NODE(s, scache, Index_Writeback_Inv_SD, Hit_Writeback_Inv_SD, 16)
-+__BUILD_BLAST_CACHE_NODE(s, scache, Index_Writeback_Inv_SD, Hit_Writeback_Inv_SD, 32)
-+__BUILD_BLAST_CACHE_NODE(s, scache, Index_Writeback_Inv_SD, Hit_Writeback_Inv_SD, 64)
-+__BUILD_BLAST_CACHE_NODE(s, scache, Index_Writeback_Inv_SD, Hit_Writeback_Inv_SD, 128)
-+
- #endif /* _ASM_R4KCACHE_H */
---- a/arch/mips/mm/c-r4k.c
-+++ b/arch/mips/mm/c-r4k.c
-@@ -459,11 +459,28 @@ static void r4k_blast_scache_setup(void)
- 		r4k_blast_scache = blast_scache128;
- }
- 
-+static void (*r4k_blast_scache_node)(long node);
-+
-+static void r4k_blast_scache_node_setup(void)
-+{
-+	unsigned long sc_lsize = cpu_scache_line_size();
-+
-+	if (current_cpu_type() != CPU_LOONGSON3)
-+		r4k_blast_scache_node = (void *)cache_noop;
-+	else if (sc_lsize == 16)
-+		r4k_blast_scache_node = blast_scache16_node;
-+	else if (sc_lsize == 32)
-+		r4k_blast_scache_node = blast_scache32_node;
-+	else if (sc_lsize == 64)
-+		r4k_blast_scache_node = blast_scache64_node;
-+	else if (sc_lsize == 128)
-+		r4k_blast_scache_node = blast_scache128_node;
-+}
-+
- static inline void local_r4k___flush_cache_all(void * args)
- {
- 	switch (current_cpu_type()) {
- 	case CPU_LOONGSON2:
--	case CPU_LOONGSON3:
- 	case CPU_R4000SC:
- 	case CPU_R4000MC:
- 	case CPU_R4400SC:
-@@ -480,6 +497,11 @@ static inline void local_r4k___flush_cac
- 		r4k_blast_scache();
- 		break;
- 
-+	case CPU_LOONGSON3:
-+		/* Use get_ebase_cpunum() for both NUMA=y/n */
-+		r4k_blast_scache_node(get_ebase_cpunum() >> 2);
-+		break;
-+
- 	case CPU_BMIPS5000:
- 		r4k_blast_scache();
- 		__sync();
-@@ -840,10 +862,14 @@ static void r4k_dma_cache_wback_inv(unsi
- 
- 	preempt_disable();
- 	if (cpu_has_inclusive_pcaches) {
--		if (size >= scache_size)
--			r4k_blast_scache();
--		else
-+		if (size >= scache_size) {
-+			if (current_cpu_type() != CPU_LOONGSON3)
-+				r4k_blast_scache();
-+			else
-+				r4k_blast_scache_node(pa_to_nid(addr));
-+		} else {
- 			blast_scache_range(addr, addr + size);
-+		}
- 		preempt_enable();
- 		__sync();
- 		return;
-@@ -877,9 +903,12 @@ static void r4k_dma_cache_inv(unsigned l
- 
- 	preempt_disable();
- 	if (cpu_has_inclusive_pcaches) {
--		if (size >= scache_size)
--			r4k_blast_scache();
--		else {
-+		if (size >= scache_size) {
-+			if (current_cpu_type() != CPU_LOONGSON3)
-+				r4k_blast_scache();
-+			else
-+				r4k_blast_scache_node(pa_to_nid(addr));
-+		} else {
- 			/*
- 			 * There is no clearly documented alignment requirement
- 			 * for the cache instruction on MIPS processors and
-@@ -1918,6 +1947,7 @@ void r4k_cache_init(void)
- 	r4k_blast_scache_page_setup();
- 	r4k_blast_scache_page_indexed_setup();
- 	r4k_blast_scache_setup();
-+	r4k_blast_scache_node_setup();
- #ifdef CONFIG_EVA
- 	r4k_blast_dcache_user_page_setup();
- 	r4k_blast_icache_user_page_setup();
+--- a/drivers/media/common/v4l2-tpg/v4l2-tpg-core.c
++++ b/drivers/media/common/v4l2-tpg/v4l2-tpg-core.c
+@@ -1769,7 +1769,7 @@ typedef struct { u16 __; u8 _; } __packe
+ 		unsigned s;	\
+ 	\
+ 		for (s = 0; s < len; s++) {	\
+-			u8 chr = font8x16[text[s] * 16 + line];	\
++			u8 chr = font8x16[(u8)text[s] * 16 + line];	\
+ 	\
+ 			if (hdiv == 2 && tpg->hflip) { \
+ 				pos[3] = (chr & (0x01 << 6) ? fg : bg);	\
 
 
