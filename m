@@ -2,89 +2,195 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53B19C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 21:53:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFDEDC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 21:55:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2AFA72089F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 21:53:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 98A5C2147C
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 21:55:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546898146;
+	bh=gEvBrye+lMOTBpKp8oW5/Glq2fltd3QplQrEoL8Ojak=;
+	h=Subject:Cc:To:In-Reply-To:From:References:Date:List-ID:From;
+	b=GcwgLBHpO8Qurw/9yiNtlxHurmaFUHHaC3GpsrZ15BhsoJAfSrVW9HErzJXIgFDNU
+	 nDUh8rAKAoy++ImyLph2rg+awt6J2gO6UOKcpZRJa8NgyXnneqWUvU0qy9X+CD2oVI
+	 XfyDr3a/Wg5XzJTXwVg7izHkiHe9jACJVQZTi2Ws=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727174AbfAGVxX (ORCPT
+        id S1727160AbfAGVzq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 16:53:23 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:37440 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726821AbfAGVxX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 16:53:23 -0500
-Received: by mail-qk1-f193.google.com with SMTP id g125so1209013qke.4
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 13:53:22 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=XscXXsUqMIUZrTmARrC5SmhRBALRJ2JqQUFxn6IIhQM=;
-        b=m96Bmp1GVIgJOo6oH2ZA/SP4v4JVOtuFgAmfA25TrcX9mVtWQ48WUYUV9ZAzegfVfV
-         1djf6t4TTMRWBo7VTY0+nwibnMF7BQOcgmjRuk168xISgplW/qtgiSxdFLbtTWFtDKfg
-         bbUlPfVI3DplCCLdEClYe8Lgk5uhUSoiMQASD4g8LQZzS79ApY45FqksOyVWGQcKiCxn
-         h4C9ra+9T5mDqu6MU6JD8uQlKmufG/6tRUC2TUgz+TRMiqCUGdjyNzzgLrJ/wPNnmuTA
-         Dx9Yc77+R6iZCVT5zdHIZKTDgCBg6lqqSs+nFMa9gUlZ/kUoHNLpdhoarjeWKhwj/lpb
-         QE5w==
-X-Gm-Message-State: AJcUukdZLbbP2PzD/2i61IBGQDaaDLdxK+8aKVHpseARtsQxe0MMVc2v
-        UT8MB1qUgAPenCBH5i17R0Yvmw==
-X-Google-Smtp-Source: ALg8bN6/GEK0em4Dh5XroXwGuSDYTw865EVky9OyUaJcRwPM62t8IVGhBAX5zQpwQkS+CbRDH3K2yA==
-X-Received: by 2002:a37:8006:: with SMTP id b6mr20686649qkd.19.1546898001920;
-        Mon, 07 Jan 2019 13:53:21 -0800 (PST)
-Received: from trogon.sfo.coreos.systems ([2604:2000:80c5:4400:140c:73de:b623:c90])
-        by smtp.gmail.com with ESMTPSA id w52sm38537702qtc.51.2019.01.07.13.53.20
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 07 Jan 2019 13:53:21 -0800 (PST)
-Date:   Mon, 7 Jan 2019 16:53:18 -0500
-From:   Benjamin Gilbert <bgilbert@redhat.com>
-To:     Wei Huang <wei@redhat.com>
-Cc:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        x86@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        hpa@zytor.com, linux-kernel@vger.kernel.org,
-        linux-x86_64@vger.kernel.org
-Subject: Re: [PATCH 1/1] x86/boot/compressed/64: Set EFER.LME=1 in 32-bit
- trampoline code before returning to long mode
-Message-ID: <20190107215318.GA22396@trogon.sfo.coreos.systems>
-References: <20190104054411.12489-1-wei@redhat.com>
- <20190107082512.w5gkbebsypionyey@black.fi.intel.com>
- <6899e645-9579-f599-922a-eb26fc56e8ab@redhat.com>
+        Mon, 7 Jan 2019 16:55:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34412 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726535AbfAGVzp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 16:55:45 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 997602089F;
+        Mon,  7 Jan 2019 21:55:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1546898143;
+        bh=gEvBrye+lMOTBpKp8oW5/Glq2fltd3QplQrEoL8Ojak=;
+        h=Subject:Cc:To:In-Reply-To:From:References:Date:From;
+        b=0RdK3SOmKSaSfGHHc3O32kfQEMYb+PPEBVmTVQxIUPUiAdGjVQ9R9gJz8ZztdTv/m
+         TSt4FSGQoIWSUw6UuHhV859C3QLHj7PV7fbTo/d3tvWSHeejfzvu5n9NniMoKAtxp6
+         Q8NHNWGYLYjI+ORtJFd12TLA955NrXTzG1fCpqAc=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6899e645-9579-f599-922a-eb26fc56e8ab@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 4/5] qcom: spmi-gpio: add support for hierarchical IRQ chip
+Cc:     marc.zyngier@arm.com, shawnguo@kernel.org, dianders@chromium.org,
+        linux-gpio@vger.kernel.org, nicolas.dechesne@linaro.org,
+        niklas.cassel@linaro.org, david.brown@linaro.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+To:     Brian Masney <masneyb@onstation.org>, andy.gross@linaro.org,
+        bjorn.andersson@linaro.org, lee.jones@linaro.org,
+        linus.walleij@linaro.org
+In-Reply-To: <20190107021145.6370-5-masneyb@onstation.org>
+From:   Stephen Boyd <sboyd@kernel.org>
+User-Agent: alot/0.8
+References: <20190107021145.6370-1-masneyb@onstation.org> <20190107021145.6370-5-masneyb@onstation.org>
+Message-ID: <154689814280.15366.2705028033847856491@swboyd.mtv.corp.google.com>
+Date:   Mon, 07 Jan 2019 13:55:42 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 07, 2019 at 02:03:15PM -0600, Wei Huang wrote:
-> On 1/7/19 2:25 AM, Kirill A. Shutemov wrote:
-> > On Fri, Jan 04, 2019 at 05:44:11AM +0000, Wei Huang wrote:
-> >> In some old AMD KVM implementation, guest's EFER.LME bit is cleared by KVM
-> >> when the hypervsior detects guest sets CR0.PG to 0. This causes guest OS
-> >> to reboot when it tries to return from 32-bit trampoline code because CPU
-> >> is in incorrect state: CR4.PAE=1, CR0.PG=1, CS.L=1, but EFER.LME=0.
-> >> As a precaution, this patch sets EFER.LME=1 as part of long mode
-> >> activation procedure. This extra step won't cause any harm when Linux is
-> >> booting on bare-metal machine.
-> >>
-> >> Signed-off-by: Wei Huang <wei@redhat.com>
-> > 
-> > Thanks for tracking this down.
-> 
-> BTW I think this patch _might_ be related the recent reboot issue
-> reported in https://lkml.org/lkml/2018/7/1/836 since the symptoms are
-> exactly the same.
+Quoting Brian Masney (2019-01-06 18:11:44)
+> @@ -762,11 +763,14 @@ static int pmic_gpio_of_xlate(struct gpio_chip *chi=
+p,
+>  static int pmic_gpio_to_irq(struct gpio_chip *chip, unsigned pin)
+>  {
+>         struct pmic_gpio_state *state =3D gpiochip_get_data(chip);
+> -       struct pmic_gpio_pad *pad;
+> +       struct irq_fwspec fwspec;
+> =20
+> -       pad =3D state->ctrl->desc->pins[pin].drv_data;
+> +       fwspec.fwnode =3D state->fwnode;
+> +       fwspec.param_count =3D 2;
+> +       fwspec.param[0] =3D pin + 1;
 
-The problem in that case turned out to be https://lkml.org/lkml/2018/7/4/723
-which was fixed by d503ac531a.
+There seems to be PMIC_GPIO_PHYSICAL_OFFSET for these purposes.
 
---Benjamin Gilbert
+> +       fwspec.param[1] =3D IRQ_TYPE_NONE;
+> =20
+> -       return pad->irq;
+> +       return irq_create_fwspec_mapping(&fwspec);
+>  }
+> =20
+>  static void pmic_gpio_dbg_show(struct seq_file *s, struct gpio_chip *chi=
+p)
+> @@ -936,6 +940,86 @@ static int pmic_gpio_populate(struct pmic_gpio_state=
+ *state,
+>         return 0;
+>  }
+> =20
+> +static struct irq_chip pmic_gpio_irq_chip =3D {
+> +       .name =3D "spmi-gpio",
+> +       .irq_ack =3D irq_chip_ack_parent,
+> +       .irq_mask =3D irq_chip_mask_parent,
+> +       .irq_unmask =3D irq_chip_unmask_parent,
+> +       .irq_set_type =3D irq_chip_set_type_parent,
+> +       .irq_set_wake =3D irq_chip_set_wake_parent,
+> +       .flags =3D IRQCHIP_MASK_ON_SUSPEND,
+> +};
+> +
+> +static int pmic_gpio_irq_activate(struct irq_domain *domain,
+> +                                 struct irq_data *data, bool reserve)
+> +{
+> +       struct pmic_gpio_state *state =3D domain->host_data;
+> +
+> +       return gpiochip_lock_as_irq(&state->chip, data->hwirq);
+> +}
+> +
+> +static void pmic_gpio_irq_deactivate(struct irq_domain *domain,
+> +                                    struct irq_data *data)
+> +{
+> +       struct pmic_gpio_state *state =3D domain->host_data;
+> +
+> +       gpiochip_unlock_as_irq(&state->chip, data->hwirq);
+> +}
+
+I meant these sorts of wrappers that could be used by other drivers
+possibly, if all they need to store in their domain->host_data is the
+gpiochip structure (they can probably indirect through the gpiochip
+again to get their driver specific structure).
+
+int gpiochip_irq_domain_activate(struct irq_domain *domain,
+				 struct irq_data *data, bool reserve)
+{
+	struct gpiochip *chip =3D domain->host_data;
+
+	return gpiochip_lock_as_irq(chip, data->hwirq);
+}
+
+void gpiochip_irq_domain_deactivate(struct irq_domain *domain,
+				    struct irq_data *data)
+{
+	struct gpiochip *chip =3D domain->host_data;
+
+	return gpiochip_unlock_as_irq(chip, data->hwirq);
+}
+
+> +
+> +static int pmic_gpio_domain_translate(struct irq_domain *domain,
+> +                                     struct irq_fwspec *fwspec,
+> +                                     unsigned long *hwirq,
+> +                                     unsigned int *type)
+> +{
+> +       struct pmic_gpio_state *state =3D domain->host_data;
+> +
+> +       if (fwspec->param_count !=3D 2 || fwspec->param[0] >=3D state->ch=
+ip.ngpio)
+> +               return -EINVAL;
+> +
+> +       *hwirq =3D fwspec->param[0] - 1;
+
+There seems to be PMIC_GPIO_PHYSICAL_OFFSET for these purposes.
+
+> +       *type =3D fwspec->param[1];
+> +
+> +       return 0;
+> +}
+> +
+> +static int pmic_gpio_domain_alloc(struct irq_domain *domain, unsigned in=
+t virq,
+> +                                 unsigned int nr_irqs, void *data)
+> +{
+> +       struct pmic_gpio_state *state =3D domain->host_data;
+> +       struct irq_fwspec *fwspec =3D data;
+> +       struct irq_fwspec parent_fwspec;
+> +       irq_hw_number_t hwirq;
+> +       unsigned int type;
+> +       int ret, i;
+> +
+> +       ret =3D pmic_gpio_domain_translate(domain, fwspec, &hwirq, &type);
+> +       if (ret)
+> +               return ret;
+> +
+> +       for (i =3D 0; i < nr_irqs; i++)
+> +               irq_domain_set_info(domain, virq + i, hwirq + i,
+> +                                   &pmic_gpio_irq_chip, state,
+> +                                   handle_level_irq, NULL, NULL);
+> +
+> +       parent_fwspec.fwnode =3D domain->parent->fwnode;
+> +       parent_fwspec.param_count =3D 4;
+> +       parent_fwspec.param[0] =3D 0;
+> +       parent_fwspec.param[1] =3D fwspec->param[0] + 0xc0 - 1;
+
+Is the -1 there twice, once in pmic_gpio_domain_translate() and then
+here?
+
+> +       parent_fwspec.param[2] =3D 0;
+> +       parent_fwspec.param[3] =3D fwspec->param[1];
+> +
+> +       return irq_domain_alloc_irqs_parent(domain, virq, nr_irqs,
+> +                                           &parent_fwspec);
+> +}
+> +
