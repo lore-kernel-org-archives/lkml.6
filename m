@@ -2,99 +2,104 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8852C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:10:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 180B6C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:10:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B1712173C
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:10:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546884633;
-	bh=hSWicu7qShBovi0rWWwy9Nln1mor1kBXG+LpRR6I0fI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=WsC4l9Vc6t3qGLgrMB9Ge+Lk7P6Fr9KUcXR6RLHAVUPEGiXtbg+dAl2vOa5LF7cV5
-	 /mDoMgVpvl0z2GXbj/PtIC5A5U7COlWhBIONsWMiwR0iYR5gwO1B+XbmbJfaJpW0nE
-	 1VAoNSutDXJEwpVkHTfR9WduIVZlX+TVrCLTki3k=
+	by mail.kernel.org (Postfix) with ESMTP id D79312085A
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:10:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="OAY/sXGc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727667AbfAGSKc (ORCPT
+        id S1727953AbfAGSKx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 13:10:32 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:45114 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726897AbfAGSKc (ORCPT
+        Mon, 7 Jan 2019 13:10:53 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:46632 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726897AbfAGSKw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 13:10:32 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=gnu1hmlGA/vVBDC0dsXpy9QyXBtYA3GNQ/azF52kC1I=; b=TVLFYf7G0ygCD6/Zp0wtz4+t7
-        qwPuvCQtAIbSBD4GltQFWrO20D2LMryJZqr9IptTk0dtNqZS87jmR76SpVmoH+iZQ51rdpjdoImV3
-        1fl8aSZSJJASUQ6BOKLX0wgCsRBsM7/0mzEs9eeI3YBjB+qRCJ0NRhuQyioc3D47yEKxk=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1ggZLv-0007bW-Ba; Mon, 07 Jan 2019 18:10:19 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id EA7B01127491; Mon,  7 Jan 2019 18:10:18 +0000 (GMT)
-Date:   Mon, 7 Jan 2019 18:10:18 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Kangjie Lu <kjlu@umn.edu>
-Cc:     pakki001@umn.edu,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        Jie Yang <yang.jie@linux.intel.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sound: atom: fix a missing check  of
- snd_pcm_lib_malloc_pages
-Message-ID: <20190107181018.GQ9570@sirena.org.uk>
-References: <20181226022950.71824-1-kjlu@umn.edu>
+        Mon, 7 Jan 2019 13:10:52 -0500
+Received: by mail-lf1-f65.google.com with SMTP id y14so949001lfg.13
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 10:10:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=iZ3FyP1ZklACIogNGg9kXSA98astrFQsu4QoSyvVAJo=;
+        b=OAY/sXGcl9ciebn5V2U++XCLRpeEiCqPp+plp0U5ab7ji6YErV4/+s8jU5qIOBsDSD
+         NPux+wbSZqAIBIESf/WK+/PgiZuiw7XrpY+VagrFKAi4oqGPRzhyGa+QbFZQ0le2s8xr
+         plJMhXdeQC4LoSQ9evN04p2A/3xEDdBFUBZb0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=iZ3FyP1ZklACIogNGg9kXSA98astrFQsu4QoSyvVAJo=;
+        b=tfakNEHck0KLJTVm4YccBZ9mzlHQ6sYenbu2MaPq2oDAiVupjoNp8y7jNIlmVqaqYR
+         uW9wV/GWyiqVaT9yH7FHnCHiHjMIAlH/odD8kErb5tWg358yOgzLWdwU6My7NKCuZQ7S
+         5JYiMuabFjrKJa9tVygYBwkllh7kwcf7nthobynfkp73yBhyncZwRHbozN2M6ih7nKMF
+         +vG6wfe1UbqxF5gubtfn3xRlDpy0BqOzLrY6/ZqErk84yR3C9/P+jqFwixAPJD3PGin6
+         lHt2gFTd7iTMCRU+IUI3iKbnfueMkEKCc72wNSF16a1kIGMefkdOudOqoBVy9sVt5UAR
+         xzqg==
+X-Gm-Message-State: AA+aEWZ6is2QikWOlFVb8LZhL/fB2CZcirhIpTSTF7V7ofgzcAzHt5/O
+        QAcw9LRe1d5iC5OW8Wc/iLQJk7jCrxQ=
+X-Google-Smtp-Source: AFSGD/UeSDvg8u2vvp1Cw+LdDdmAwBZteY/I1vFeBlEgnejoo6VUSpRWYtu7vbtHL8D1vnHK2d2L8g==
+X-Received: by 2002:a19:5d42:: with SMTP id p2mr33051470lfj.83.1546884649291;
+        Mon, 07 Jan 2019 10:10:49 -0800 (PST)
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com. [209.85.167.45])
+        by smtp.gmail.com with ESMTPSA id a62sm12826619lfa.37.2019.01.07.10.10.47
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 07 Jan 2019 10:10:48 -0800 (PST)
+Received: by mail-lf1-f45.google.com with SMTP id c16so969103lfj.8
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 10:10:47 -0800 (PST)
+X-Received: by 2002:a19:6e0b:: with SMTP id j11mr33529780lfc.124.1546884647534;
+ Mon, 07 Jan 2019 10:10:47 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="de1H0RjRxOSdb4we"
-Content-Disposition: inline
-In-Reply-To: <20181226022950.71824-1-kjlu@umn.edu>
-X-Cookie: NOBODY EXPECTS THE SPANISH INQUISITION!
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190107180306.16602-1-j.neuschaefer@gmx.net>
+In-Reply-To: <20190107180306.16602-1-j.neuschaefer@gmx.net>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 7 Jan 2019 10:10:31 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgAH7QZrAyzaTV1-6MecaSdVkiowSZEM7qwa0L2oegpLA@mail.gmail.com>
+Message-ID: <CAHk-=wgAH7QZrAyzaTV1-6MecaSdVkiowSZEM7qwa0L2oegpLA@mail.gmail.com>
+Subject: Re: [PATCH] kernel/sys.c: Fix UNAME26 for 5.0
+To:     =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+Cc:     Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Jann Horn <jannh@google.com>, Kees Cook <keescook@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Jan 7, 2019 at 10:03 AM Jonathan Neusch=C3=A4fer
+<j.neuschaefer@gmx.net> wrote:
+>
+> UNAME26 is a mechanism to report Linux's version as 2.6.x, for
+> compatibility with old/broken software. Because of the way it is
+> implemented, it needs to be adjusted to handle version 5.0.
 
---de1H0RjRxOSdb4we
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Do we actually need this?
 
-On Tue, Dec 25, 2018 at 08:29:48PM -0600, Kangjie Lu wrote:
-> snd_pcm_lib_malloc_pages() may fail, so let's check its status and
-> return its error code upstream.
+I'd rather let it bitrot, and just let it return random versions. It
+will just start again at 2.4.60, won't it?
 
+Anybody who uses UNAME26 for a 5.x kernel might as well think it's
+still 4.x. The user space is so old that it can't possibly care about
+differences between 4.x and 5.x, can it?
 
-Please use subject lines matching the style for the subsystem.  This
-makes it easier for people to identify relevant patches.
+The only thing that matters is that it shows "2.4.<largeenough>",
+which it will do regardless.
 
---de1H0RjRxOSdb4we
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlwzlgoACgkQJNaLcl1U
-h9ANhQgAhHbiwBS6b8x9Tn9JFl0iCcDZB3svIqny+Ef/LSlGRHidf/5/e+bAKf2/
-3REHixLpaTnnNpPlAyq+oJZkclpY7lz/WgTfAoW+JPtCkb5CA/XokaPa1pu8zBYR
-WYLGU5MjckgX08S7Hx1gR+Kmy6TXSHm4CWhbjfL6SaVvaCLB7Sfnnk6KGygUC2FD
-7tEPxKd0bpLwQGU+G3WSA+gHeNrTNjgnf8Fq1EfRYvOUWiz3DRw4n4X19T18Cfp4
-+nuaEKZVSlEhtq6K1BUvab334bJbyWG85f0kxNjVOy301rmKKc43gwvcMyxKa1Ke
-cRSTNPd2J870DwhQMfKVUGwMDuofRA==
-=UU+m
------END PGP SIGNATURE-----
-
---de1H0RjRxOSdb4we--
+                Linus
