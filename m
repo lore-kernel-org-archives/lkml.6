@@ -4,51 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 931E5C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:10:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EE04C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:11:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65B152089F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:10:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 634FD2089F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:11:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546866653;
-	bh=rIBEgWswjgMhHQC91tJ3AHwqvZWhv7gV07Jh5pf7MPw=;
+	s=default; t=1546866678;
+	bh=zkFCP4Sk8flYuhKwGp7ebLIpcjJlpE5sCI13hAl3MhE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=wI3Ly/SpzXnAfzXEOROv6xaPXu/PbV48/ryvImyDKjPFAhCRxk+b1UZvtQ3DkUCCU
-	 Y4nVfgXfW7fZigYMAzrDzI6dBx8yfrITfTu1LPGeAtmS2wi6cgm/jyPCsyFLj5C7JD
-	 nne0xBDl6JTrhY3f4nJoUBQNuAGeGIvklYqZ+RUY=
+	b=2Lc2Dxw+yOqZON9URbBzmHIAP+hsfZPOKOI4+NWnVEaxX5u2H5GxhJh/6NVHMucoi
+	 utSSoiDRA8hrSL///v7rFWWLsTXc0vIU9Bcso4Gg1gX8T9H2x74/IK3PM8GZHElwjz
+	 z5SRN+L31qWawbz9XpTeofp/WXiNajXBtN+wmhgw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731594AbfAGNKw (ORCPT
+        id S1730949AbfAGNLR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:10:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55996 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:11:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55572 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730973AbfAGNIz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:08:55 -0500
+        id S1731545AbfAGNI2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:08:28 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 788DA21855;
-        Mon,  7 Jan 2019 13:08:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 37E12217D4;
+        Mon,  7 Jan 2019 13:08:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546866535;
-        bh=rIBEgWswjgMhHQC91tJ3AHwqvZWhv7gV07Jh5pf7MPw=;
+        s=default; t=1546866507;
+        bh=zkFCP4Sk8flYuhKwGp7ebLIpcjJlpE5sCI13hAl3MhE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mxpDITJtczfbrxOLdFEdPKyds20o9y6GAlmG+xqiVNeuIODx4CKyYarR9WORWrxuL
-         nL0txPUGET3/aj4XZbXKtprrwzkkeYPTIOzzobgcd1lBkBZx6zbQqp07h7t7j3H43S
-         KrVy43D4btZH0xr4s+4ABtS6yvUIxvKBQp0hOalI=
+        b=bucd/AG+0yKmg6gDV086HAqnHXSyFeChevh+eYT9JTKMVAkIT/vgPvJiiTe1wRSwG
+         zbfVJSVaD9NBQD7CJeNMuFbK3GS1Yqj02Cl+s1ZOfosmTvGUeCXpnjSMs3s9xFboxf
+         q/FPfnsfSEkaPiDLZ1SJosgTdL1GNgkkhdwOS73Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
-        Eric Dumazet <edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 25/71] gro_cell: add napi_disable in gro_cells_destroy
-Date:   Mon,  7 Jan 2019 13:32:54 +0100
-Message-Id: <20190107105334.215497628@linuxfoundation.org>
+        stable@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
+        Mathias Duckeck <m.duckeck@kunbus.de>,
+        Frank Pavlic <f.pavlic@kunbus.de>,
+        Martin Sperl <kernel@martin.sperl.org>,
+        =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 4.9 53/71] spi: bcm2835: Fix book-keeping of DMA termination
+Date:   Mon,  7 Jan 2019 13:33:22 +0100
+Message-Id: <20190107105335.760674977@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107105330.280153213@linuxfoundation.org>
 References: <20190107105330.280153213@linuxfoundation.org>
@@ -67,77 +69,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
+From: Lukas Wunner <lukas@wunner.de>
 
-[ Upstream commit 8e1da73acded4751a93d4166458a7e640f37d26c ]
+commit dbc944115eed48af110646992893dc43321368d8 upstream.
 
-Add napi_disable routine in gro_cells_destroy since starting from
-commit c42858eaf492 ("gro_cells: remove spinlock protecting receive
-queues") gro_cell_poll and gro_cells_destroy can run concurrently on
-napi_skbs list producing a kernel Oops if the tunnel interface is
-removed while gro_cell_poll is running. The following Oops has been
-triggered removing a vxlan device while the interface is receiving
-traffic
+If submission of a DMA TX transfer succeeds but submission of the
+corresponding RX transfer does not, the BCM2835 SPI driver terminates
+the TX transfer but neglects to reset the dma_pending flag to false.
 
-[ 5628.948853] BUG: unable to handle kernel NULL pointer dereference at 0000000000000008
-[ 5628.949981] PGD 0 P4D 0
-[ 5628.950308] Oops: 0002 [#1] SMP PTI
-[ 5628.950748] CPU: 0 PID: 9 Comm: ksoftirqd/0 Not tainted 4.20.0-rc6+ #41
-[ 5628.952940] RIP: 0010:gro_cell_poll+0x49/0x80
-[ 5628.955615] RSP: 0018:ffffc9000004fdd8 EFLAGS: 00010202
-[ 5628.956250] RAX: 0000000000000000 RBX: ffffe8ffffc08150 RCX: 0000000000000000
-[ 5628.957102] RDX: 0000000000000000 RSI: ffff88802356bf00 RDI: ffffe8ffffc08150
-[ 5628.957940] RBP: 0000000000000026 R08: 0000000000000000 R09: 0000000000000000
-[ 5628.958803] R10: 0000000000000001 R11: 0000000000000000 R12: 0000000000000040
-[ 5628.959661] R13: ffffe8ffffc08100 R14: 0000000000000000 R15: 0000000000000040
-[ 5628.960682] FS:  0000000000000000(0000) GS:ffff88803ea00000(0000) knlGS:0000000000000000
-[ 5628.961616] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[ 5628.962359] CR2: 0000000000000008 CR3: 000000000221c000 CR4: 00000000000006b0
-[ 5628.963188] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[ 5628.964034] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[ 5628.964871] Call Trace:
-[ 5628.965179]  net_rx_action+0xf0/0x380
-[ 5628.965637]  __do_softirq+0xc7/0x431
-[ 5628.966510]  run_ksoftirqd+0x24/0x30
-[ 5628.966957]  smpboot_thread_fn+0xc5/0x160
-[ 5628.967436]  kthread+0x113/0x130
-[ 5628.968283]  ret_from_fork+0x3a/0x50
-[ 5628.968721] Modules linked in:
-[ 5628.969099] CR2: 0000000000000008
-[ 5628.969510] ---[ end trace 9d9dedc7181661fe ]---
-[ 5628.970073] RIP: 0010:gro_cell_poll+0x49/0x80
-[ 5628.972965] RSP: 0018:ffffc9000004fdd8 EFLAGS: 00010202
-[ 5628.973611] RAX: 0000000000000000 RBX: ffffe8ffffc08150 RCX: 0000000000000000
-[ 5628.974504] RDX: 0000000000000000 RSI: ffff88802356bf00 RDI: ffffe8ffffc08150
-[ 5628.975462] RBP: 0000000000000026 R08: 0000000000000000 R09: 0000000000000000
-[ 5628.976413] R10: 0000000000000001 R11: 0000000000000000 R12: 0000000000000040
-[ 5628.977375] R13: ffffe8ffffc08100 R14: 0000000000000000 R15: 0000000000000040
-[ 5628.978296] FS:  0000000000000000(0000) GS:ffff88803ea00000(0000) knlGS:0000000000000000
-[ 5628.979327] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[ 5628.980044] CR2: 0000000000000008 CR3: 000000000221c000 CR4: 00000000000006b0
-[ 5628.980929] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[ 5628.981736] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[ 5628.982409] Kernel panic - not syncing: Fatal exception in interrupt
-[ 5628.983307] Kernel Offset: disabled
+Thus, if the next transfer uses interrupt mode (because it is shorter
+than BCM2835_SPI_DMA_MIN_LENGTH) and runs into a timeout,
+dmaengine_terminate_all() will be called both for TX (once more) and
+for RX (which was never started in the first place).  Fix it.
 
-Fixes: c42858eaf492 ("gro_cells: remove spinlock protecting receive queues")
-Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
-Acked-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Lukas Wunner <lukas@wunner.de>
+Fixes: 3ecd37edaa2a ("spi: bcm2835: enable dma modes for transfers meeting certain conditions")
+Cc: stable@vger.kernel.org # v4.2+
+Cc: Mathias Duckeck <m.duckeck@kunbus.de>
+Cc: Frank Pavlic <f.pavlic@kunbus.de>
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Cc: Noralf Trønnes <noralf@tronnes.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- include/net/gro_cells.h |    1 +
+ drivers/spi/spi-bcm2835.c |    1 +
  1 file changed, 1 insertion(+)
 
---- a/include/net/gro_cells.h
-+++ b/include/net/gro_cells.h
-@@ -86,6 +86,7 @@ static inline void gro_cells_destroy(str
- 	for_each_possible_cpu(i) {
- 		struct gro_cell *cell = per_cpu_ptr(gcells->cells, i);
- 
-+		napi_disable(&cell->napi);
- 		netif_napi_del(&cell->napi);
- 		__skb_queue_purge(&cell->napi_skbs);
+--- a/drivers/spi/spi-bcm2835.c
++++ b/drivers/spi/spi-bcm2835.c
+@@ -341,6 +341,7 @@ static int bcm2835_spi_transfer_one_dma(
+ 	if (ret) {
+ 		/* need to reset on errors */
+ 		dmaengine_terminate_all(master->dma_tx);
++		bs->dma_pending = false;
+ 		bcm2835_spi_reset_hw(master);
+ 		return ret;
  	}
 
 
