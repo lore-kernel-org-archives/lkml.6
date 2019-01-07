@@ -2,39 +2,39 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16C89C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 10:08:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E29CBC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 10:08:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8DAA20859
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 10:08:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB91820854
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 10:08:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726844AbfAGKI3 (ORCPT
+        id S1726761AbfAGKIT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 05:08:29 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:42940 "EHLO
+        Mon, 7 Jan 2019 05:08:19 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:42937 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726714AbfAGKIT (ORCPT
+        by vger.kernel.org with ESMTP id S1726646AbfAGKIT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 7 Jan 2019 05:08:19 -0500
 Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x07A3hjY001107;
-        Mon, 7 Jan 2019 11:07:58 +0100
+        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x07A3fDr001096;
+        Mon, 7 Jan 2019 11:08:00 +0100
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2ptvjffee0-1
+        by mx08-00178001.pphosted.com with ESMTP id 2ptvjffee8-1
         (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Mon, 07 Jan 2019 11:07:58 +0100
+        Mon, 07 Jan 2019 11:08:00 +0100
 Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 0A9E43A;
-        Mon,  7 Jan 2019 10:07:56 +0000 (GMT)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 8A3E731;
+        Mon,  7 Jan 2019 10:07:59 +0000 (GMT)
 Received: from Webmail-eu.st.com (sfhdag5node3.st.com [10.75.127.15])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id CA75D2A00;
-        Mon,  7 Jan 2019 10:07:56 +0000 (GMT)
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 5D6D62A2D;
+        Mon,  7 Jan 2019 10:07:59 +0000 (GMT)
 Received: from localhost (10.75.127.47) by SFHDAG5NODE3.st.com (10.75.127.15)
- with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 7 Jan 2019 11:07:56
+ with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 7 Jan 2019 11:07:58
  +0100
 From:   Fabrice Gasnier <fabrice.gasnier@st.com>
 To:     <lee.jones@linaro.org>, <alexandre.torgue@st.com>
@@ -44,14 +44,16 @@ CC:     <robh+dt@kernel.org>, <mcoquelin.stm32@gmail.com>, <arnd@arndb.de>,
         <linux-kernel@vger.kernel.org>,
         <linux-stm32@st-md-mailman.stormreply.com>,
         <linux-arm-kernel@lists.infradead.org>
-Subject: [RESEND PATCH v2 0/3] mfd: syscon: Add optional clock support needed on stm32
-Date:   Mon, 7 Jan 2019 11:07:42 +0100
-Message-ID: <1546855665-26218-1-git-send-email-fabrice.gasnier@st.com>
+Subject: [RESEND PATCH v2 3/3] ARM: dts: stm32: Add clock on stm32mp157c syscfg
+Date:   Mon, 7 Jan 2019 11:07:45 +0100
+Message-ID: <1546855665-26218-4-git-send-email-fabrice.gasnier@st.com>
 X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1546855665-26218-1-git-send-email-fabrice.gasnier@st.com>
+References: <1546855665-26218-1-git-send-email-fabrice.gasnier@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.75.127.47]
-X-ClientProxiedBy: SFHDAG8NODE2.st.com (10.75.127.23) To SFHDAG5NODE3.st.com
+X-ClientProxiedBy: SFHDAG5NODE3.st.com (10.75.127.15) To SFHDAG5NODE3.st.com
  (10.75.127.15)
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-07_04:,,
  signatures=0
@@ -60,24 +62,25 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-STM32 syscfg registers are accessed using syscon. It needs syscfg clock
-to be enabled while accessing registers.
-This adds support for optional clock on syscon, and the relevant clock
-in stm32mp157 device tree.
+STM32 syscfg needs a clock to access registers.
 
-Changes in v2:
-- move clocks to specific bindings using syscon as per Rob's comment
+Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+---
+ arch/arm/boot/dts/stm32mp157c.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-Fabrice Gasnier (3):
-  dt-bindings: stm32: syscon: add clock support
-  mfd: syscon: Add optional clock support
-  ARM: dts: stm32: Add clock on stm32mp157c syscfg
-
- .../devicetree/bindings/arm/stm32/stm32-syscon.txt    |  2 ++
- arch/arm/boot/dts/stm32mp157c.dtsi                    |  1 +
- drivers/mfd/syscon.c                                  | 19 +++++++++++++++++++
- 3 files changed, 22 insertions(+)
-
+diff --git a/arch/arm/boot/dts/stm32mp157c.dtsi b/arch/arm/boot/dts/stm32mp157c.dtsi
+index 8bf1c17..61b2a70 100644
+--- a/arch/arm/boot/dts/stm32mp157c.dtsi
++++ b/arch/arm/boot/dts/stm32mp157c.dtsi
+@@ -820,6 +820,7 @@
+ 		syscfg: syscon@50020000 {
+ 			compatible = "st,stm32mp157-syscfg", "syscon";
+ 			reg = <0x50020000 0x400>;
++			clocks = <&rcc SYSCFG>;
+ 		};
+ 
+ 		lptimer2: timer@50021000 {
 -- 
 1.9.1
 
