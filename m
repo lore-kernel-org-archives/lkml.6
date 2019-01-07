@@ -2,134 +2,221 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57C3FC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:26:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00170C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:26:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2885D2147C
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:26:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546863962;
-	bh=+6DKjwObnc5/utsvJ6n+umZHvj5BRGqPHo5N+0BvrMs=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=VtuU296P9gsZqziSHULnjybtGhAT1aS7EM6p1aRNeIueu9+/KJhPurSqScoHrBtd0
-	 uavdY7KhT7Qs3q61QI05L8YHvwXi0kuAByHNnp5DYW8WvU5b6hUj/n+XmP1hQwLS5u
-	 +sRUxoTEE5kDUdWkUaIcA9RYt639735uetnogSfA=
+	by mail.kernel.org (Postfix) with ESMTP id C07D72070C
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:26:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726833AbfAGM0A (ORCPT
+        id S1726875AbfAGM0Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:26:00 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:59284 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726572AbfAGMZ5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:25:57 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=SDa7b9dmQ73qDj1iiHK6aDCEUZBXmn2g7pn2XRH6/9E=; b=lGMQdSC2t0+4
-        6rHNesKDVEq4o6ReUetSVOsU4Ug/d1HL3iP/G4697lMGQuCcAi3zokOd7GHxncc6BuCpvG9NODMHF
-        GPpKYDL9jD2gOBpgDwV0q9b4kWUs6JxadKv73NvwWqmPRs0md46sWICJsq3ckwOxahcdHW+UyNJ0t
-        3czh8=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1ggTyb-0006i9-GN; Mon, 07 Jan 2019 12:25:53 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 1F2621127490; Mon,  7 Jan 2019 12:25:53 +0000 (GMT)
-From:   Mark Brown <broonie@kernel.org>
-To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
-Cc:     Mark Brown <broonie@kernel.org>, broonie@kernel.org,
-        lgirdwood@gmail.com, devicetree@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        jsarha@ti.com, robh+dt@kernel.org, misael.lopez@ti.com,
-        alsa-devel@alsa-project.org
-Subject: Applied "ASoC: davinci-mcasp: Document GPIO support" to the asoc tree
-In-Reply-To:  <20190103140552.29809-3-peter.ujfalusi@ti.com>
-X-Patchwork-Hint: ignore
-Message-Id: <20190107122553.1F2621127490@debutante.sirena.org.uk>
-Date:   Mon,  7 Jan 2019 12:25:53 +0000 (GMT)
+        Mon, 7 Jan 2019 07:26:16 -0500
+Received: from foss.arm.com ([217.140.101.70]:57700 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726521AbfAGM0P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:26:15 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 665F41596;
+        Mon,  7 Jan 2019 04:26:15 -0800 (PST)
+Received: from queper01-lin.cambridge.arm.com (queper01-lin.cambridge.arm.com [10.1.195.48])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2F58B3F5AF;
+        Mon,  7 Jan 2019 04:26:14 -0800 (PST)
+From:   Quentin Perret <quentin.perret@arm.com>
+To:     rafael@kernel.org, peterz@infradead.org, mingo@redhat.com
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        dietmar.eggemann@arm.com
+Subject: [PATCH] PM / EM: Expose the Energy Model in debugfs
+Date:   Mon,  7 Jan 2019 12:26:08 +0000
+Message-Id: <20190107122608.21913-1-quentin.perret@arm.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+The recently introduced Energy Model (EM) framework manages power cost
+tables of CPUs. These tables are currently only visible from kernel
+space. However, in order to debug the behaviour of subsystems that use
+the EM, it is often required to know what the power costs are from
+userspace.
 
-   ASoC: davinci-mcasp: Document GPIO support
+For this reason, introduce under /sys/kernel/debug/energy_model a set of
+directories representing the performance domains of the system. Each
+performance domain contains a set of sub-directories representing the
+different capacity states (cs) and their attributes, as well as a file
+exposing the related CPUs.
 
-has been applied to the asoc tree at
+The resulting hierarchy is as follows on Arm juno r0 for example:
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+    /sys/kernel/debug/energy_model
+    ├── pd0
+    │   ├── cpus
+    │   ├── cs:450000
+    │   │   ├── cost
+    │   │   ├── frequency
+    │   │   └── power
+    │   ├── cs:575000
+    │   │   ├── cost
+    │   │   ├── frequency
+    │   │   └── power
+    │   ├── cs:700000
+    │   │   ├── cost
+    │   │   ├── frequency
+    │   │   └── power
+    │   ├── cs:775000
+    │   │   ├── cost
+    │   │   ├── frequency
+    │   │   └── power
+    │   └── cs:850000
+    │       ├── cost
+    │       ├── frequency
+    │       └── power
+    └── pd1
+        ├── cpus
+        ├── cs:1100000
+        │   ├── cost
+        │   ├── frequency
+        │   └── power
+        ├── cs:450000
+        │   ├── cost
+        │   ├── frequency
+        │   └── power
+        ├── cs:625000
+        │   ├── cost
+        │   ├── frequency
+        │   └── power
+        ├── cs:800000
+        │   ├── cost
+        │   ├── frequency
+        │   └── power
+        └── cs:950000
+            ├── cost
+            ├── frequency
+            └── power
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 4664b94c98b4f9fdd3845da41d5c65288e59c66c Mon Sep 17 00:00:00 2001
-From: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Date: Thu, 3 Jan 2019 16:05:51 +0200
-Subject: [PATCH] ASoC: davinci-mcasp: Document GPIO support
-
-McASP pins can be used as GPIO, add optional section to enable GPIO support
-for McASP.
-
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Quentin Perret <quentin.perret@arm.com>
 ---
- .../bindings/sound/davinci-mcasp-audio.txt      | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ kernel/power/energy_model.c | 86 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 86 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/sound/davinci-mcasp-audio.txt b/Documentation/devicetree/bindings/sound/davinci-mcasp-audio.txt
-index b279b6072bd5..a58f79f5345c 100644
---- a/Documentation/devicetree/bindings/sound/davinci-mcasp-audio.txt
-+++ b/Documentation/devicetree/bindings/sound/davinci-mcasp-audio.txt
-@@ -45,6 +45,23 @@ Optional properties:
- - fck_parent : Should contain a valid clock name which will be used as parent
- 	       for the McASP fck
+diff --git a/kernel/power/energy_model.c b/kernel/power/energy_model.c
+index d9dc2c38764a..8ef48daa62ff 100644
+--- a/kernel/power/energy_model.c
++++ b/kernel/power/energy_model.c
+@@ -10,6 +10,7 @@
  
-+Optional GPIO support:
-+If any McASP pin need to be used as GPIO then the McASP node must have:
-+...
-+  gpio-controller
-+  #gpio-cells = <2>;
-+...
-+
-+When requesting a GPIO, the first parameter is the PIN index in McASP_P*
-+registers.
-+For example to request the AXR2 pin of mcasp8:
-+function-gpios = <&mcasp8 2 0>;
-+
-+Or to request the ACLKR pin of mcasp8:
-+function-gpios = <&mcasp8 29 0>;
-+
-+For generic gpio information, please refer to bindings/gpio/gpio.txt
-+
- Example:
+ #include <linux/cpu.h>
+ #include <linux/cpumask.h>
++#include <linux/debugfs.h>
+ #include <linux/energy_model.h>
+ #include <linux/sched/topology.h>
+ #include <linux/slab.h>
+@@ -23,6 +24,88 @@ static DEFINE_PER_CPU(struct em_perf_domain *, em_data);
+  */
+ static DEFINE_MUTEX(em_pd_mutex);
  
- mcasp0: mcasp0@1d00000 {
++#ifdef CONFIG_DEBUG_FS
++static struct dentry *rootdir;
++
++static int em_debug_create_cs(struct em_cap_state *cs, struct dentry *pd)
++{
++	struct dentry *d;
++	char name[24];
++
++	snprintf(name, sizeof(name), "cs:%lu", cs->frequency);
++
++	d = debugfs_create_dir(name, pd);
++	if (!d)
++		return -ENOMEM;
++
++	if (!debugfs_create_ulong("frequency", 0444, d, &cs->frequency))
++		return -ENOMEM;
++
++	if (!debugfs_create_ulong("power", 0444, d, &cs->power))
++		return -ENOMEM;
++
++	if (!debugfs_create_ulong("cost", 0444, d, &cs->cost))
++		return -ENOMEM;
++
++	return 0;
++}
++
++static int em_debug_cpus_show(struct seq_file *s, void *unused)
++{
++	seq_printf(s, "%*pbl\n", cpumask_pr_args(to_cpumask(s->private)));
++
++	return 0;
++}
++DEFINE_SHOW_ATTRIBUTE(em_debug_cpus);
++
++static int em_debug_create_pd(struct em_perf_domain *pd, int cpu)
++{
++	struct dentry *d;
++	char name[16];
++	int i;
++
++	if (!rootdir)
++		return -EINVAL;
++
++	snprintf(name, sizeof(name), "pd%d", cpu);
++
++	/* Create the directory of the performance domain */
++	d = debugfs_create_dir(name, rootdir);
++	if (!d)
++		return -ENOMEM;
++
++	/* Create one file per pd to expose the related CPUs */
++	if (!debugfs_create_file("cpus", 0444, d, pd->cpus,
++							&em_debug_cpus_fops))
++		return -ENOMEM;
++
++	/* Create a sub-directory for each capacity state */
++	for (i = 0; i < pd->nr_cap_states; i++) {
++		if (em_debug_create_cs(&pd->table[i], d))
++			return -ENOMEM;
++	}
++
++	return 0;
++}
++
++static int __init em_debug_init(void)
++{
++	/* Create /sys/kernel/debug/energy_model directory */
++	rootdir = debugfs_create_dir("energy_model", NULL);
++	if (!rootdir) {
++		pr_err("%s: Failed to create root directory\n", __func__);
++		return -ENOMEM;
++	}
++
++	return 0;
++}
++core_initcall(em_debug_init);
++#else /* CONFIG_DEBUG_FS */
++static int em_debug_create_pd(struct em_perf_domain *pd, int cpu)
++{
++	return 0;
++}
++#endif
+ static struct em_perf_domain *em_create_pd(cpumask_t *span, int nr_states,
+ 						struct em_data_callback *cb)
+ {
+@@ -102,6 +185,9 @@ static struct em_perf_domain *em_create_pd(cpumask_t *span, int nr_states,
+ 	pd->nr_cap_states = nr_states;
+ 	cpumask_copy(to_cpumask(pd->cpus), span);
+ 
++	if (em_debug_create_pd(pd, cpu))
++		pr_err("Failed to create debugfs for pd%d\n", cpu);
++
+ 	return pd;
+ 
+ free_cs_table:
 -- 
 2.20.1
 
