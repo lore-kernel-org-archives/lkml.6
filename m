@@ -2,77 +2,100 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BCD2C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 15:56:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D083AC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 15:56:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D94D62089F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 15:56:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tronnes.org header.i=@tronnes.org header.b="hnuInWtP"
+	by mail.kernel.org (Postfix) with ESMTP id 9ED332183F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 15:56:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726985AbfAGP4M (ORCPT
+        id S1727228AbfAGP4m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 10:56:12 -0500
-Received: from smtp.domeneshop.no ([194.63.252.55]:56021 "EHLO
-        smtp.domeneshop.no" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726602AbfAGP4M (ORCPT
+        Mon, 7 Jan 2019 10:56:42 -0500
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:39345 "EHLO
+        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726602AbfAGP4l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 10:56:12 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=tronnes.org; s=ds201810;
-        h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject; bh=5EJoY6vuV/rslcBRmqiZlw/Dw3eSF7aLh9hg0/FXmyI=;
-        b=hnuInWtPwilaYjZS2LdnDy1G/46Bo5DWC/X8f/rKm+kkvvsHyxH1fiF6m0+qrCe20o0wsBXp5HHtqzGmw4L/alSj5JSW8dPcxaiygkItETa03aeYp84VyO2szvwOKBD1PDUQAduVcaXbb2D5eFKd7Pg/qEwDhhinXtIvnj1rPn4/FzfhEFiwXG2HAQ6UgX+0uRL1VWIFQLLdWUTZIIBmH5hKHiafKmC+gcQQ4dQ6TeBa6DZ9Kx3HDK3xIbDRXigB9w9E2zOkroaw2NiVkGkwIM2PmtuKvwn+3x3GXKOiFh6fwGgxTRCurfDjc0qwKPWZEr6qwX8vEC9vUj0aX8DqAw==;
-Received: from 211.81-166-168.customer.lyse.net ([81.166.168.211]:64468 helo=[192.168.10.174])
-        by smtp.domeneshop.no with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.84_2)
-        (envelope-from <noralf@tronnes.org>)
-        id 1ggXG6-00005y-2N; Mon, 07 Jan 2019 16:56:10 +0100
-Subject: Re: [PATCH v2 05/14] drm: make drm_file.h self contained
-To:     Sam Ravnborg <sam@ravnborg.org>, Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>,
-        David Lechner <david@lechnology.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc:     Jani Nikula <jani.nikula@intel.com>
-References: <20181230174838.32330-6-sam@ravnborg.org>
-From:   =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>
-Message-ID: <489cb248-07e4-cfff-336e-6e86fdbecda2@tronnes.org>
-Date:   Mon, 7 Jan 2019 16:56:05 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <20181230174838.32330-6-sam@ravnborg.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+        Mon, 7 Jan 2019 10:56:41 -0500
+X-Originating-IP: 83.155.44.161
+Received: from classic (mon69-7-83-155-44-161.fbx.proxad.net [83.155.44.161])
+        (Authenticated sender: hadess@hadess.net)
+        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 402C5240005;
+        Mon,  7 Jan 2019 15:56:38 +0000 (UTC)
+Message-ID: <6b8f757eb52eb74d9dc2c3bedbfec798a58c0ec2.camel@hadess.net>
+Subject: Re: [PATCH] Input: goodix - decouple irq and reset lines
+From:   Bastien Nocera <hadess@hadess.net>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Alex Gonzalez <alex.gonzalez@digi.com>
+Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Mon, 07 Jan 2019 16:56:37 +0100
+In-Reply-To: <20190105225147.le5fgpnvq7sctxe5@penguin>
+References: <1546617648-23445-1-git-send-email-alex.gonzalez@digi.com>
+         <1546617648-23445-2-git-send-email-alex.gonzalez@digi.com>
+         <20190105225147.le5fgpnvq7sctxe5@penguin>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.2 (3.30.2-2.fc29) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-Den 30.12.2018 18.48, skrev Sam Ravnborg:
-> drm_file.h embed struct idr, so this file need to know
-> the full type definition.
+On Sat, 2019-01-05 at 22:51 +0000, Dmitry Torokhov wrote:
+> Hi Alex,
 > 
-> With this change users of drm_file.h are no longer forced
-> to include idr.h - a file they usually get from drmP.h
+> On Fri, Jan 04, 2019 at 05:00:48PM +0100, Alex Gonzalez wrote:
+> > The Goodix touch controller allows the use of two optional GPIOs
+> > (RESET
+> > and INT) to reset the touch controller, select the I2C address of
+> > the
+> > device and exit the device from sleep mode.
+> > 
+> > The current implementation requires both GPIOs to be provided,
+> > however,
+> > it is possible to provide only the INT line and not to have the
+> > RESET line
+> > available but pulled-up.
+> > 
+> > Designs that only provide the INT line are able to operate the
+> > touch on
+> > the default I2C address but will not be able to reset the touch via
+> > software or place the device in sleep mode.
 > 
-> This makes it simpler to remove drmP.h includes
-> 
-> Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
-> Cc: Jani Nikula <jani.nikula@intel.com>
-> Cc: Daniel Vetter <daniel@ffwll.ch>
-> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-> Cc: Maxime Ripard <maxime.ripard@bootlin.com>
-> Cc: Sean Paul <sean@poorly.run>
-> Cc: David Airlie <airlied@linux.ie>
-> ---
+> I do not have a datasheet for the device, so I am not sure if reset
+> line
 
-Acked-by: Noralf Trønnes <noralf@tronnes.org>
+Data sheets for a lot of the Goodix devices were shared a couple of
+years ago on this list. You'll find the one for the GT911 in here:
+https://drive.google.com/drive/folders/0BxCVOQS3ZymGfmJyY2RKbE5XbVlKNlktVTlwV0lxNEdxd2dzeWZER094cmJPVnMxN1F0Yzg?usp=sharing
+
+You can probably translate it using Google Translate's Documents
+upload, but I haven't had much luck at all...
+
+> is actually needed to put the device into sleep mode. As far as I can
+> see from the code we suspend it by pulsing INT line and then sending
+> a
+> command to the controller, and resuming by pulsing the INT line
+> again.
+> So it sounds to me INT only designs _could_ place device in sleep
+> mode.
+> 
+> As far as the patch goes, if you do not need to execute reset or put
+> device into low power mode, you do not need to specify any of the
+> GPIOs
+> as GPIO resources. Simply specify the INT GPIO as your interrupt
+> source
+> (GpioInt() in ACPI world or "interrupts = <&gpio NNN
+> IRQF_TRIGGER_WHATEVER>" in DT world and be done with it.
+
+Given that we do have access to the datasheet, it would also be useful
+for the patch to mention where in the datasheet it says that the reset
+line can be left pulled-up, or mention on which shipping device this
+setup is already used (and if so, what the DTS or ACPI snippet that
+declares those is).
+
+Cheers
+
