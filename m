@@ -4,46 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FD7EC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 19:01:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E973C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 19:01:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E98D206B7
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 19:01:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4CC86206B7
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 19:01:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546887689;
-	bh=PdhdAJ8Z9ax1Xqlm3H0O+4WVvNVoJkiXrhALVE4FGTQ=;
+	s=default; t=1546887694;
+	bh=9puYaTb1xIozFKEh+3JBUNlmYVQiwDIBrcZ1NLQrB8E=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=zhAFUX8XymKvXYcj9dZ1joIkHvIMeaTCbSzIpW503UhjGImdzVWquhx5BT41mHL/4
-	 iPMrML7L+QLm4MJ4GlEwyHHwSbFR+M2/YhJu88VhGHQIYEiO2yRluIuOmBNefqktTY
-	 Z1x265q6SlghTFtDv2vAgzTJgM8ZDzwlUTDUjaT4=
+	b=nITYwiRosYSTNjeLzo1pt2VUv/48qz/puBnRprcYuIUzlj1K8H3HygN+Ac+q/mrnU
+	 di6wniH5oikt7hZNRCEZsnJBcS9sO41HidUfVvZeUp+knax71VU4rNvNZ+NPyyFY+z
+	 PGLFWhCndMOfVboC8FIor29RlpHaMQAAvEcgiHIQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728629AbfAGS60 (ORCPT
+        id S1727762AbfAGTBd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 13:58:26 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41106 "EHLO
+        Mon, 7 Jan 2019 14:01:33 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41186 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728064AbfAGS6X (ORCPT
+        with ESMTP id S1727286AbfAGS60 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 13:58:23 -0500
+        Mon, 7 Jan 2019 13:58:26 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=dDdDkEBX26nTt0Sq+KRwI9S+fZ4Gvzc22GZc+fXzHQU=; b=v9fsPWbzWRuf
-        Rw+FTKXE0p/ocaFhG392UL4nRpATOZL1GYb0v3S8Eq7uja+73gf4s4je5bDF9kWpGPGbLZW24A5WL
-        Sh5+Ok4qBQSoakfLmmGMfa0l6pIR8uWmHx84AcVsvGMgBgqbUNHWBvGT7ioVIfkHSFV+u46/wH6Q4
-        RZPLk=;
+        List-Archive; bh=PaZ+YfQlIvYjG77V9ZXFCJAbem2SmoCOWWtH8HKVsPU=; b=hS1lStVEagBB
+        KqqqNZFQAPE4qyQQ44X1W7PFrQwdieqfRv4sZwSt9qecgU5++1VSJGHCAyZDY6Z+Ehn8yb9L5EVgF
+        HYgMQjZbn1w+p8bGtY7M/GMib7paaxCdzlbxkPJr8HyBd75pkpVL2YPRsdLMwwlIPI3r9gYECldKh
+        8ZtM4=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gga6L-0007nD-2m; Mon, 07 Jan 2019 18:58:17 +0000
+        id 1gga6J-0007n0-AB; Mon, 07 Jan 2019 18:58:15 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id BF8051127491; Mon,  7 Jan 2019 18:58:16 +0000 (GMT)
+        id E8CCB1127492; Mon,  7 Jan 2019 18:58:14 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
 To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 Cc:     Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org,
@@ -53,11 +53,11 @@ Cc:     Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org,
         Liam Girdwood <lgirdwood@gmail.com>,
         liam.r.girdwood@linux.intel.com, broonie@kernel.org,
         Bard Liao <bardliao@realtek.com>, alsa-devel@alsa-project.org
-Subject: Applied "ASoc: rt286: fix boolean tests" to the asoc tree
-In-Reply-To:  <20190105020249.8639-12-pierre-louis.bossart@linux.intel.com>
+Subject: Applied "ASoC: rt5640: fix boolean assignments" to the asoc tree
+In-Reply-To:  <20190105020249.8639-13-pierre-louis.bossart@linux.intel.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190107185816.BF8051127491@debutante.sirena.org.uk>
-Date:   Mon,  7 Jan 2019 18:58:16 +0000 (GMT)
+Message-Id: <20190107185814.E8CCB1127492@debutante.sirena.org.uk>
+Date:   Mon,  7 Jan 2019 18:58:14 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -65,7 +65,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoc: rt286: fix boolean tests
+   ASoC: rt5640: fix boolean assignments
 
 has been applied to the asoc tree at
 
@@ -90,53 +90,49 @@ to this mail.
 Thanks,
 Mark
 
-From af3b2b54cb294b997ad9a2a88ed3c6c9af7d03c0 Mon Sep 17 00:00:00 2001
+From e0a99927ff5f395f24e09e6297858cd2006793f7 Mon Sep 17 00:00:00 2001
 From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Date: Fri, 4 Jan 2019 20:02:39 -0600
-Subject: [PATCH] ASoc: rt286: fix boolean tests
+Date: Fri, 4 Jan 2019 20:02:40 -0600
+Subject: [PATCH] ASoC: rt5640: fix boolean assignments
 
 Reported by Coccinelle:
-sound/soc/codecs/rt286.c:927:5-7: WARNING: Comparison to bool
-sound/soc/codecs/rt286.c:930:5-8: WARNING: Comparison to bool
-sound/soc/codecs/rt286.c:299:5-7: WARNING: Comparison to bool
-sound/soc/codecs/rt286.c:302:5-8: WARNING: Comparison to bool
+sound/soc/codecs/rt5640.c:980:2-17: WARNING: Assignment of bool to 0/1
+sound/soc/codecs/rt5640.c:984:2-17: WARNING: Assignment of bool to 0/1
+sound/soc/codecs/rt5640.c:2825:1-16: WARNING: Assignment of bool to 0/1
 
 Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/rt286.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ sound/soc/codecs/rt5640.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/sound/soc/codecs/rt286.c b/sound/soc/codecs/rt286.c
-index 0b0f748bffbe..c9457c247a03 100644
---- a/sound/soc/codecs/rt286.c
-+++ b/sound/soc/codecs/rt286.c
-@@ -296,10 +296,10 @@ static void rt286_jack_detect_work(struct work_struct *work)
+diff --git a/sound/soc/codecs/rt5640.c b/sound/soc/codecs/rt5640.c
+index fc530481a6e4..b3580ecadecf 100644
+--- a/sound/soc/codecs/rt5640.c
++++ b/sound/soc/codecs/rt5640.c
+@@ -977,11 +977,11 @@ static int rt5640_hp_event(struct snd_soc_dapm_widget *w,
+ 	switch (event) {
+ 	case SND_SOC_DAPM_POST_PMU:
+ 		rt5640_pmu_depop(component);
+-		rt5640->hp_mute = 0;
++		rt5640->hp_mute = false;
+ 		break;
  
- 	rt286_jack_detect(rt286, &hp, &mic);
+ 	case SND_SOC_DAPM_PRE_PMD:
+-		rt5640->hp_mute = 1;
++		rt5640->hp_mute = true;
+ 		msleep(70);
+ 		break;
  
--	if (hp == true)
-+	if (hp)
- 		status |= SND_JACK_HEADPHONE;
+@@ -2822,7 +2822,7 @@ static int rt5640_i2c_probe(struct i2c_client *i2c,
+ 	regmap_update_bits(rt5640->regmap, RT5640_DUMMY1,
+ 				RT5640_MCLK_DET, RT5640_MCLK_DET);
  
--	if (mic == true)
-+	if (mic)
- 		status |= SND_JACK_MICROPHONE;
- 
- 	snd_soc_jack_report(rt286->jack, status,
-@@ -924,10 +924,10 @@ static irqreturn_t rt286_irq(int irq, void *data)
- 	/* Clear IRQ */
- 	regmap_update_bits(rt286->regmap, RT286_IRQ_CTRL, 0x1, 0x1);
- 
--	if (hp == true)
-+	if (hp)
- 		status |= SND_JACK_HEADPHONE;
- 
--	if (mic == true)
-+	if (mic)
- 		status |= SND_JACK_MICROPHONE;
- 
- 	snd_soc_jack_report(rt286->jack, status,
+-	rt5640->hp_mute = 1;
++	rt5640->hp_mute = true;
+ 	rt5640->irq = i2c->irq;
+ 	INIT_DELAYED_WORK(&rt5640->bp_work, rt5640_button_press_work);
+ 	INIT_WORK(&rt5640->jack_work, rt5640_jack_work);
 -- 
 2.20.1
 
