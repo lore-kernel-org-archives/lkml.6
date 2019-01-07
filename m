@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4E2CC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:01:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AC83C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:01:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 771C92173C
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:01:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A0422173C
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:01:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546866085;
-	bh=6Ae/7jO+QHtcjTwwTb99mBZ/QN/wMf8NeU9mxsTyLIs=;
+	s=default; t=1546866089;
+	bh=gYMaFGlo4avxR8ogDUvyGqIwKgwgMNO8BwLuDgOkxCc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=qrBNMcRDCZAJd8fpQ3krVX8VgAQ8dS1iGL+Nsj+dOIlM2zWTWnRrQ8ksIQP2SBiv4
-	 hYJBXjqj/XMG23sNto2WZ4jgYLHTq54+iR95RxNmBLvk5swp1PikZu4QfDGbi57JOK
-	 TFmtsUpQSg5FBhf1GxtCxsb6FsnIRbqKm+GxDgvo=
+	b=m48a1E+pk9QzaBI6Iq2USHkSQQSi7Wrjq7R9A5tg0qBZYLDxr2ulBZ1eUp1PCjrUL
+	 fZ4GEiWo3RDPh3UGYRlsuKJdQPCV25Ub7Emx/U6p/P6/OoMg+DpvM+r+EVqb4m8rT1
+	 DpeV/PmEzMl7w4E5C77CcesFQg/bEWz05f/NCLCo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727330AbfAGNBY (ORCPT
+        id S1730622AbfAGNB1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:01:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48826 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:01:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48866 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730577AbfAGNBV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:01:21 -0500
+        id S1730603AbfAGNBY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:01:24 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BD3D021736;
-        Mon,  7 Jan 2019 13:01:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D8A822089F;
+        Mon,  7 Jan 2019 13:01:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546866080;
-        bh=6Ae/7jO+QHtcjTwwTb99mBZ/QN/wMf8NeU9mxsTyLIs=;
+        s=default; t=1546866083;
+        bh=gYMaFGlo4avxR8ogDUvyGqIwKgwgMNO8BwLuDgOkxCc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EHHvRWzWcj1W282nu9Ua8jw6CkZGBToN+LUdeaWwIze4jHmxnyq3xiHcOrSWQM5W7
-         OECP4sryt6AsHev36lkrjj1Dr6TcaJblEZ+dO3fEO3Xcm8SvijXmG4DtAh+KhzIhH4
-         8YMSCIWWSSGBEcGI+AB37QPvWMdIaGt7ildo8kx4=
+        b=kwN0H4xpAcDuDDQ5SUM9qnfGGGoALAJsCkOjmBuZX1QjWJVmrtHSmqRibV5lXJif8
+         Z5XInA97mptOBpjQuZ1xDHyfBqY37VP5xv34ZvHv3VZY3cDQmyztX3EpKCCTzFfxTl
+         CNRhcEmhs644Ob2umH3BWVUOllToxT5YdyMan4TM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 038/101] ALSA: rme9652: Fix potential Spectre v1 vulnerability
-Date:   Mon,  7 Jan 2019 13:32:26 +0100
-Message-Id: <20190107105334.991118836@linuxfoundation.org>
+        stable@vger.kernel.org, Cong Wang <xiyou.wangcong@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        syzbot+ae6bb869cbed29b29040@syzkaller.appspotmail.com
+Subject: [PATCH 4.14 005/101] ax25: fix a use-after-free in ax25_fillin_cb()
+Date:   Mon,  7 Jan 2019 13:31:53 +0100
+Message-Id: <20190107105330.725325137@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107105330.372621917@linuxfoundation.org>
 References: <20190107105330.372621917@linuxfoundation.org>
@@ -66,71 +66,73 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Gustavo A. R. Silva <gustavo@embeddedor.com>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-commit 0b84304ef5da92add8dc75a1b07879c5374cdb05 upstream.
+[ Upstream commit c433570458e49bccea5c551df628d058b3526289 ]
 
-info->channel is indirectly controlled by user-space, hence leading to
-a potential exploitation of the Spectre variant 1 vulnerability.
+There are multiple issues here:
 
-This issue was detected with the help of Smatch:
+1. After freeing dev->ax25_ptr, we need to set it to NULL otherwise
+   we may use a dangling pointer.
 
-sound/pci/rme9652/hdsp.c:4100 snd_hdsp_channel_info() warn: potential spectre issue 'hdsp->channel_map' [r] (local cap)
+2. There is a race between ax25_setsockopt() and device notifier as
+   reported by syzbot. Close it by holding RTNL lock.
 
-Fix this by sanitizing info->channel before using it to index hdsp->channel_map
+3. We need to test if dev->ax25_ptr is NULL before using it.
 
-Notice that given that speculation windows are large, the policy is
-to kill the speculation on the first load and not worry if it can be
-completed with a dependent load/store [1].
-
-Also, notice that I refactored the code a bit in order to get rid of the
-following checkpatch warning:
-
-ERROR: do not use assignment in if condition
-FILE: sound/pci/rme9652/hdsp.c:4103:
-	if ((mapped_channel = hdsp->channel_map[info->channel]) < 0)
-
-[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Reported-and-tested-by: syzbot+ae6bb869cbed29b29040@syzkaller.appspotmail.com
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- sound/pci/rme9652/hdsp.c |   10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ net/ax25/af_ax25.c  |   11 +++++++++--
+ net/ax25/ax25_dev.c |    2 ++
+ 2 files changed, 11 insertions(+), 2 deletions(-)
 
---- a/sound/pci/rme9652/hdsp.c
-+++ b/sound/pci/rme9652/hdsp.c
-@@ -30,6 +30,7 @@
- #include <linux/math64.h>
- #include <linux/vmalloc.h>
- #include <linux/io.h>
-+#include <linux/nospec.h>
+--- a/net/ax25/af_ax25.c
++++ b/net/ax25/af_ax25.c
+@@ -654,15 +654,22 @@ static int ax25_setsockopt(struct socket
+ 			break;
+ 		}
  
- #include <sound/core.h>
- #include <sound/control.h>
-@@ -4092,15 +4093,16 @@ static int snd_hdsp_channel_info(struct
- 				    struct snd_pcm_channel_info *info)
- {
- 	struct hdsp *hdsp = snd_pcm_substream_chip(substream);
--	int mapped_channel;
-+	unsigned int channel = info->channel;
+-		dev = dev_get_by_name(&init_net, devname);
++		rtnl_lock();
++		dev = __dev_get_by_name(&init_net, devname);
+ 		if (!dev) {
++			rtnl_unlock();
+ 			res = -ENODEV;
+ 			break;
+ 		}
  
--	if (snd_BUG_ON(info->channel >= hdsp->max_channels))
-+	if (snd_BUG_ON(channel >= hdsp->max_channels))
- 		return -EINVAL;
-+	channel = array_index_nospec(channel, hdsp->max_channels);
+ 		ax25->ax25_dev = ax25_dev_ax25dev(dev);
++		if (!ax25->ax25_dev) {
++			rtnl_unlock();
++			res = -ENODEV;
++			break;
++		}
+ 		ax25_fillin_cb(ax25, ax25->ax25_dev);
+-		dev_put(dev);
++		rtnl_unlock();
+ 		break;
  
--	if ((mapped_channel = hdsp->channel_map[info->channel]) < 0)
-+	if (hdsp->channel_map[channel] < 0)
- 		return -EINVAL;
- 
--	info->offset = mapped_channel * HDSP_CHANNEL_BUFFER_BYTES;
-+	info->offset = hdsp->channel_map[channel] * HDSP_CHANNEL_BUFFER_BYTES;
- 	info->first = 0;
- 	info->step = 32;
- 	return 0;
+ 	default:
+--- a/net/ax25/ax25_dev.c
++++ b/net/ax25/ax25_dev.c
+@@ -116,6 +116,7 @@ void ax25_dev_device_down(struct net_dev
+ 	if ((s = ax25_dev_list) == ax25_dev) {
+ 		ax25_dev_list = s->next;
+ 		spin_unlock_bh(&ax25_dev_lock);
++		dev->ax25_ptr = NULL;
+ 		dev_put(dev);
+ 		kfree(ax25_dev);
+ 		return;
+@@ -125,6 +126,7 @@ void ax25_dev_device_down(struct net_dev
+ 		if (s->next == ax25_dev) {
+ 			s->next = ax25_dev->next;
+ 			spin_unlock_bh(&ax25_dev_lock);
++			dev->ax25_ptr = NULL;
+ 			dev_put(dev);
+ 			kfree(ax25_dev);
+ 			return;
 
 
