@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33388C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:38:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DF58C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:39:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0485620859
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:38:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 32EF220859
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:39:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546864732;
-	bh=SU+tvD2ohfF6Eh4ZFbWDwlWnFOnEJGT1g5O6zvQ/aSk=;
+	s=default; t=1546864748;
+	bh=F3SBEAkPlgMToHQt0dFg4pAwKDctQyQOkHOQ1Ng4sek=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=vaIYIMOiOSA4M42EFl2ZwEYNeYOmeI/FgjsZGBPibyDDeBDWQeHaOcs02LJqzvEXr
-	 X4RQ4owk30wnYY1f4Qdpr/zrpGbkBNbkYy3bKr6s1tCuCNpgwFYi8fYX32qSHrpZeY
-	 9RV+v0LgWar1v8UCQj/AjWLGujiefrJ+I7EOZHkM=
+	b=hkRn+kQ2ex86pOkt0KMKQlZipe67g62Dj8IoVsR/mYj0hvVD8Aa1k3RnrrsW5Txjm
+	 +1rp2oLXnOwN5z+/LFSDxWqUF2Kf20OtVj0tzTzQNBxjUPK+gMmkYsSDUeE+sMluLT
+	 weYPCsJvNONAUicgkOctozwvUbbg4btNjAHBUFZc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727995AbfAGMiu (ORCPT
+        id S1728007AbfAGMjG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:38:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54002 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:39:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54226 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727318AbfAGMit (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:38:49 -0500
+        id S1727318AbfAGMjE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:39:04 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 85D03206BB;
-        Mon,  7 Jan 2019 12:38:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9498C20859;
+        Mon,  7 Jan 2019 12:39:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546864728;
-        bh=SU+tvD2ohfF6Eh4ZFbWDwlWnFOnEJGT1g5O6zvQ/aSk=;
+        s=default; t=1546864744;
+        bh=F3SBEAkPlgMToHQt0dFg4pAwKDctQyQOkHOQ1Ng4sek=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=C2i+Bs+gJAkKvWSE7BA+d6FU8HOcHPs+5Oqg4Cr0C1usGXGxIfXRD1Z9id3hDyP/t
-         jzunn+AnSqQgFL0U6iDYcY6RfSd7RqzS7RDGM4CMqe89edncavpgLai36jXfq8Hj/V
-         c4nBmzODeTVG7qc92QgoePe077nzeHQCY9xCBEPk=
+        b=exoLL/v+ZJw8CBvEkT1urr0Isl1eIpMJjSB+i1QYLBmN+ldsAC30atG/gDeCzk5GF
+         2XcVoEek1RAs1+5mnw5ZjlSLI1Z8e14s3B9qoaTtWpXqdr2Oi6HubIQb1zErGKdbsK
+         1O5XRb60+yKYnK5/sdsD2i74PVxnD50Uxo+IpWh0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
-        =?UTF-8?q?ruippan=20 ?= <ruippan@tencent.com>,
-        stable@kernel.org
-Subject: [PATCH 4.20 075/145] ext4: fix EXT4_IOC_GROUP_ADD ioctl
-Date:   Mon,  7 Jan 2019 13:31:52 +0100
-Message-Id: <20190107104447.083544885@linuxfoundation.org>
+        stable@vger.kernel.org, Steve Graham <stgraham2000@gmail.com>,
+        Theodore Tso <tytso@mit.edu>, stable@kernel.org
+Subject: [PATCH 4.20 076/145] ext4: include terminating u32 in size of xattr entries when expanding inodes
+Date:   Mon,  7 Jan 2019 13:31:53 +0100
+Message-Id: <20190107104447.218124725@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104437.308206189@linuxfoundation.org>
 References: <20190107104437.308206189@linuxfoundation.org>
@@ -66,37 +65,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: ruippan (潘睿) <ruippan@tencent.com>
+From: Theodore Ts'o <tytso@mit.edu>
 
-commit e647e29196b7f802f8242c39ecb7cc937f5ef217 upstream.
+commit a805622a757b6d7f65def4141d29317d8e37b8a1 upstream.
 
-Commit e2b911c53584 ("ext4: clean up feature test macros with
-predicate functions") broke the EXT4_IOC_GROUP_ADD ioctl.  This was
-not noticed since only very old versions of resize2fs (before
-e2fsprogs 1.42) use this ioctl.  However, using a new kernel with an
-enterprise Linux userspace will cause attempts to use online resize to
-fail with "No reserved GDT blocks".
+In ext4_expand_extra_isize_ea(), we calculate the total size of the
+xattr header, plus the xattr entries so we know how much of the
+beginning part of the xattrs to move when expanding the inode extra
+size.  We need to include the terminating u32 at the end of the xattr
+entries, or else if there is uninitialized, non-zero bytes after the
+xattr entries and before the xattr values, the list of xattr entries
+won't be properly terminated.
 
-Fixes: e2b911c53584 ("ext4: clean up feature test macros with predicate...")
-Cc: stable@kernel.org # v4.4
+Reported-by: Steve Graham <stgraham2000@gmail.com>
 Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Signed-off-by: ruippan (潘睿) <ruippan@tencent.com>
+Cc: stable@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/resize.c |    2 +-
+ fs/ext4/xattr.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/ext4/resize.c
-+++ b/fs/ext4/resize.c
-@@ -1631,7 +1631,7 @@ int ext4_group_add(struct super_block *s
- 	}
+--- a/fs/ext4/xattr.c
++++ b/fs/ext4/xattr.c
+@@ -2721,7 +2721,7 @@ retry:
+ 	base = IFIRST(header);
+ 	end = (void *)raw_inode + EXT4_SB(inode->i_sb)->s_inode_size;
+ 	min_offs = end - base;
+-	total_ino = sizeof(struct ext4_xattr_ibody_header);
++	total_ino = sizeof(struct ext4_xattr_ibody_header) + sizeof(u32);
  
- 	if (reserved_gdb || gdb_off == 0) {
--		if (ext4_has_feature_resize_inode(sb) ||
-+		if (!ext4_has_feature_resize_inode(sb) ||
- 		    !le16_to_cpu(es->s_reserved_gdt_blocks)) {
- 			ext4_warning(sb,
- 				     "No reserved GDT blocks, can't resize");
+ 	error = xattr_check_inode(inode, header, end);
+ 	if (error)
 
 
