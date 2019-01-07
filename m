@@ -7,47 +7,49 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFD53C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:47:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E76CCC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:48:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C006020651
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:47:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B6D29206BB
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:48:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546865278;
-	bh=1B4mooM7rEPi1KwzCpAEGtLbDMp4DnOsPq9UGxuHCC4=;
+	s=default; t=1546865283;
+	bh=WRGvlTSk3f9qsQAFynU8JIsVoRIW9NdiKCBIK4yd5Lc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=2ILfQp8x3uzzfCQXy0egirfG4mUXhL0C0JasVgS1mff8OtkAwjSRmgdS3ZoSczSvz
-	 q6pJxuwBuz1MBoahMpygxn9bLAunVmLDv87Kqzq0Zi7RLcEiJXZvnJjMQLZ4w41l2/
-	 FverEP3V8kk9QGnhHJ0gIKl61Le7u2I4nAQqihqU=
+	b=RS9SeLT3kkexIaPgRCYLQk0iEdvjOl+xu4+ouxf04q9I9+kf92cDBUz7QOlNkKYxM
+	 kzp5UlpifYadQFnX/LprkbG1+q3iT9BmeI+wHoBYecJ5Rr6IByRNBieqf9yKDrbHWI
+	 qb7rZbLh7N8Ek81nf4B1RUqrcTtXfCtfGnL80UqU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729068AbfAGMr5 (ORCPT
+        id S1729093AbfAGMsD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:47:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38322 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:48:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38474 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728885AbfAGMrx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:47:53 -0500
+        id S1728885AbfAGMsA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:48:00 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8A1B220651;
-        Mon,  7 Jan 2019 12:47:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3AABF20859;
+        Mon,  7 Jan 2019 12:47:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865273;
-        bh=1B4mooM7rEPi1KwzCpAEGtLbDMp4DnOsPq9UGxuHCC4=;
+        s=default; t=1546865279;
+        bh=WRGvlTSk3f9qsQAFynU8JIsVoRIW9NdiKCBIK4yd5Lc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gE/mtOeH5yJQS2U1f8+FgR4FKb4iM8hu2nqc9sFHYuGTsuj8Sa23/bvYFFNWEhg2A
-         OyrWjMNgik2g7OxFlFkqB0iuZMYsQAja+N178tSuA3uZjf4WwO5cXIByW/XOQ0V3MW
-         l25Epi2+hfISyypWrs3+JjKPAyj11rMZSJcU4t68=
+        b=gJENBqEmYMuoLJMddjYBVunD1XQmbrEDAJsAV3ghXsK5Clge3rcKK+ariaRAy9AfC
+         o5Ndvxq6YwlLgVsXADFKPxy1EaWJKwBZzeCSi3IoKaKHEf6/lCJRVFlPQGKhnAH1ac
+         2d9v7iKz+egtCugy2kaArWMuBQpKN329FpmwxBpk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dietmar Hahn <dietmar.hahn@ts.fujitsu.com>,
-        Juergen Gross <jgross@suse.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 040/170] xen/netfront: tolerate frags with no data
-Date:   Mon,  7 Jan 2019 13:31:07 +0100
-Message-Id: <20190107104457.995460155@linuxfoundation.org>
+        stable@vger.kernel.org, Ying Xue <ying.xue@windriver.com>,
+        Jon Maloy <jon.maloy@ericsson.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        syzbot+99f20222fc5018d2b97a@syzkaller.appspotmail.com
+Subject: [PATCH 4.19 042/170] tipc: check group dests after tipc_wait_for_cond()
+Date:   Mon,  7 Jan 2019 13:31:09 +0100
+Message-Id: <20190107104458.216136135@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104452.953560660@linuxfoundation.org>
 References: <20190107104452.953560660@linuxfoundation.org>
@@ -66,35 +68,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Juergen Gross <jgross@suse.com>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-[ Upstream commit d81c5054a5d1d4999c7cdead7636b6cd4af83d36 ]
+[ Upstream commit 3c6306d44082ef007a258ae1b86ea58e6974ee3f ]
 
-At least old Xen net backends seem to send frags with no real data
-sometimes. In case such a fragment happens to occur with the frag limit
-already reached the frontend will BUG currently even if this situation
-is easily recoverable.
+Similar to commit 143ece654f9f ("tipc: check tsk->group in tipc_wait_for_cond()")
+we have to reload grp->dests too after we re-take the sock lock.
+This means we need to move the dsts check after tipc_wait_for_cond()
+too.
 
-Modify the BUG_ON() condition accordingly.
-
-Tested-by: Dietmar Hahn <dietmar.hahn@ts.fujitsu.com>
-Signed-off-by: Juergen Gross <jgross@suse.com>
+Fixes: 75da2163dbb6 ("tipc: introduce communication groups")
+Reported-and-tested-by: syzbot+99f20222fc5018d2b97a@syzkaller.appspotmail.com
+Cc: Ying Xue <ying.xue@windriver.com>
+Cc: Jon Maloy <jon.maloy@ericsson.com>
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Acked-by: Jon Maloy <jon.maloy@ericsson.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/xen-netfront.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/tipc/socket.c |    9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
---- a/drivers/net/xen-netfront.c
-+++ b/drivers/net/xen-netfront.c
-@@ -905,7 +905,7 @@ static RING_IDX xennet_fill_frags(struct
- 		if (skb_shinfo(skb)->nr_frags == MAX_SKB_FRAGS) {
- 			unsigned int pull_to = NETFRONT_SKB_CB(skb)->pull_to;
+--- a/net/tipc/socket.c
++++ b/net/tipc/socket.c
+@@ -1007,7 +1007,7 @@ static int tipc_send_group_bcast(struct
+ 	struct sock *sk = sock->sk;
+ 	struct net *net = sock_net(sk);
+ 	struct tipc_sock *tsk = tipc_sk(sk);
+-	struct tipc_nlist *dsts = tipc_group_dests(tsk->group);
++	struct tipc_nlist *dsts;
+ 	struct tipc_mc_method *method = &tsk->mc_method;
+ 	bool ack = method->mandatory && method->rcast;
+ 	int blks = tsk_blocks(MCAST_H_SIZE + dlen);
+@@ -1016,9 +1016,6 @@ static int tipc_send_group_bcast(struct
+ 	struct sk_buff_head pkts;
+ 	int rc = -EHOSTUNREACH;
  
--			BUG_ON(pull_to <= skb_headlen(skb));
-+			BUG_ON(pull_to < skb_headlen(skb));
- 			__pskb_pull_tail(skb, pull_to - skb_headlen(skb));
- 		}
- 		if (unlikely(skb_shinfo(skb)->nr_frags >= MAX_SKB_FRAGS)) {
+-	if (!dsts->local && !dsts->remote)
+-		return -EHOSTUNREACH;
+-
+ 	/* Block or return if any destination link or member is congested */
+ 	rc = tipc_wait_for_cond(sock, &timeout,
+ 				!tsk->cong_link_cnt && tsk->group &&
+@@ -1026,6 +1023,10 @@ static int tipc_send_group_bcast(struct
+ 	if (unlikely(rc))
+ 		return rc;
+ 
++	dsts = tipc_group_dests(tsk->group);
++	if (!dsts->local && !dsts->remote)
++		return -EHOSTUNREACH;
++
+ 	/* Complete message header */
+ 	if (dest) {
+ 		msg_set_type(hdr, TIPC_GRP_MCAST_MSG);
 
 
