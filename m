@@ -2,53 +2,52 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF958C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:45:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1B3CC43444
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:45:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A5B420449
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:45:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B54D521873
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:45:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546865128;
-	bh=kZaLzZG3hAcF3TuZ5Ks5+FY60x/Mu9psBy6MTQ8X0bE=;
+	s=default; t=1546865132;
+	bh=gXURwoeuxwDrFynjjhxvPRTT2jiP3keZIAq4gSbQcNY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=p6elQUXu5KAK7V8g0pOSdZSrWTsqBOId7z3uIhcO1pjj04Lk8r6rbr70F8zhhrFS0
-	 +zKMC+HcCj1HdrVp8KYUw72alO4GACC6K/F9yTMvnwpNrzmggMKHivYQxD76kVSJfc
-	 1nMLpZM6XmWMe46AmPUc/7vO5TaKfcZ8PMRwYf74=
+	b=aRDqZqY1ofx+TDp+9/O1DClFsc5CCs1aSlI0hisnqLkh/pEC0xtdbwS1HhKU+GctX
+	 IuyfrCbkCweA4K8k4s86ajcmRPwka1+h8Uxs+QHB6tk0M3Wew9iKE092JDK6OWRWiU
+	 b6JpAkz1UxjPazqbx37eyx6eVDMFGUzicAsD6B3M=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728877AbfAGMp1 (ORCPT
+        id S1728886AbfAGMpb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:45:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34578 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:45:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34742 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728854AbfAGMpX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:45:23 -0500
+        id S1728236AbfAGMp2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:45:28 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B3DDF20449;
-        Mon,  7 Jan 2019 12:45:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 387492183E;
+        Mon,  7 Jan 2019 12:45:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865122;
-        bh=kZaLzZG3hAcF3TuZ5Ks5+FY60x/Mu9psBy6MTQ8X0bE=;
+        s=default; t=1546865127;
+        bh=gXURwoeuxwDrFynjjhxvPRTT2jiP3keZIAq4gSbQcNY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gQwYndSHdr0BnrWj8OufXsNA7oPQdT/6dwToxXxYAvuLlEMHgs7VzCdufF6iqkuoP
-         ZNb1KhZKpHP2wrtkZqsfbbi5cvEnAQjB/UX8HiwJKkBnbNXE710M/xZKCq6yBU038A
-         k+qjMNEZAKCXgCTfjVofbJJyDYzSueKhRXPMbyKw=
+        b=Y/We5NknCgADNRDViThxaHrnJ8SWja1xDuA8gN5ipjG/vgjTSZ2qTwhEtEo/Kyd/z
+         RgHw+S5EK0YolDl8dS/krk7y9wGIpkiA6KG+GP7zqYjatV70WvuTFjPp2dnn2xXDw0
+         VKWl8EUusjWy4uIEZaxdoXOPDPH2UhThjT6MyFn0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        syzbot <syzkaller@googlegroups.com>,
-        Karsten Keil <isdn@linux-pingi.de>,
+        stable@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 010/170] isdn: fix kernel-infoleak in capi_unlocked_ioctl
-Date:   Mon,  7 Jan 2019 13:30:37 +0100
-Message-Id: <20190107104454.229719310@linuxfoundation.org>
+Subject: [PATCH 4.19 012/170] net: core: Fix Spectre v1 vulnerability
+Date:   Mon,  7 Jan 2019 13:30:39 +0100
+Message-Id: <20190107104454.482721892@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104452.953560660@linuxfoundation.org>
 References: <20190107104452.953560660@linuxfoundation.org>
@@ -67,80 +66,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 
-[ Upstream commit d63967e475ae10f286dbd35e189cb241e0b1f284 ]
+[ Upstream commit 50d5258634aee2e62832aa086d2fb0de00e72b91 ]
 
-Since capi_ioctl() copies 64 bytes after calling
-capi20_get_manufacturer() we need to ensure to not leak
-information to user.
+flen is indirectly controlled by user-space, hence leading to
+a potential exploitation of the Spectre variant 1 vulnerability.
 
-BUG: KMSAN: kernel-infoleak in _copy_to_user+0x16b/0x1f0 lib/usercopy.c:32
-CPU: 0 PID: 11245 Comm: syz-executor633 Not tainted 4.20.0-rc7+ #2
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x173/0x1d0 lib/dump_stack.c:113
- kmsan_report+0x12e/0x2a0 mm/kmsan/kmsan.c:613
- kmsan_internal_check_memory+0x9d4/0xb00 mm/kmsan/kmsan.c:704
- kmsan_copy_to_user+0xab/0xc0 mm/kmsan/kmsan_hooks.c:601
- _copy_to_user+0x16b/0x1f0 lib/usercopy.c:32
- capi_ioctl include/linux/uaccess.h:177 [inline]
- capi_unlocked_ioctl+0x1a0b/0x1bf0 drivers/isdn/capi/capi.c:939
- do_vfs_ioctl+0xebd/0x2bf0 fs/ioctl.c:46
- ksys_ioctl fs/ioctl.c:713 [inline]
- __do_sys_ioctl fs/ioctl.c:720 [inline]
- __se_sys_ioctl+0x1da/0x270 fs/ioctl.c:718
- __x64_sys_ioctl+0x4a/0x70 fs/ioctl.c:718
- do_syscall_64+0xbc/0xf0 arch/x86/entry/common.c:291
- entry_SYSCALL_64_after_hwframe+0x63/0xe7
-RIP: 0033:0x440019
-Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 fb 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffdd4659fb8 EFLAGS: 00000213 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000440019
-RDX: 0000000020000080 RSI: 00000000c0044306 RDI: 0000000000000003
-RBP: 00000000006ca018 R08: 0000000000000000 R09: 00000000004002c8
-R10: 0000000000000000 R11: 0000000000000213 R12: 00000000004018a0
-R13: 0000000000401930 R14: 0000000000000000 R15: 0000000000000000
+This issue was detected with the help of Smatch:
 
-Local variable description: ----data.i@capi_unlocked_ioctl
-Variable was created at:
- capi_ioctl drivers/isdn/capi/capi.c:747 [inline]
- capi_unlocked_ioctl+0x82/0x1bf0 drivers/isdn/capi/capi.c:939
- do_vfs_ioctl+0xebd/0x2bf0 fs/ioctl.c:46
+net/core/filter.c:1101 bpf_check_classic() warn: potential spectre issue 'filter' [w]
 
-Bytes 12-63 of 64 are uninitialized
-Memory access of size 64 starts at ffff88807ac5fce8
-Data copied to user address 0000000020000080
+Fix this by sanitizing flen before using it to index filter at line 1101:
 
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Cc: Karsten Keil <isdn@linux-pingi.de>
+	switch (filter[flen - 1].code) {
+
+and through pc at line 1040:
+
+	const struct sock_filter *ftest = &filter[pc];
+
+Notice that given that speculation windows are large, the policy is
+to kill the speculation on the first load and not worry if it can be
+completed with a dependent load/store [1].
+
+[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/isdn/capi/kcapi.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/core/filter.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/isdn/capi/kcapi.c
-+++ b/drivers/isdn/capi/kcapi.c
-@@ -852,7 +852,7 @@ u16 capi20_get_manufacturer(u32 contr, u
- 	u16 ret;
+--- a/net/core/filter.c
++++ b/net/core/filter.c
+@@ -68,6 +68,7 @@
+ #include <linux/seg6_local.h>
+ #include <net/seg6.h>
+ #include <net/seg6_local.h>
++#include <linux/nospec.h>
  
- 	if (contr == 0) {
--		strlcpy(buf, capi_manufakturer, CAPI_MANUFACTURER_LEN);
-+		strncpy(buf, capi_manufakturer, CAPI_MANUFACTURER_LEN);
- 		return CAPI_NOERROR;
- 	}
+ /**
+  *	sk_filter_trim_cap - run a packet through a socket filter
+@@ -1033,6 +1034,7 @@ static int bpf_check_classic(const struc
+ 	bool anc_found;
+ 	int pc;
  
-@@ -860,7 +860,7 @@ u16 capi20_get_manufacturer(u32 contr, u
- 
- 	ctr = get_capi_ctr_by_nr(contr);
- 	if (ctr && ctr->state == CAPI_CTR_RUNNING) {
--		strlcpy(buf, ctr->manu, CAPI_MANUFACTURER_LEN);
-+		strncpy(buf, ctr->manu, CAPI_MANUFACTURER_LEN);
- 		ret = CAPI_NOERROR;
- 	} else
- 		ret = CAPI_REGNOTINSTALLED;
++	flen = array_index_nospec(flen, BPF_MAXINSNS + 1);
+ 	/* Check the filter code now */
+ 	for (pc = 0; pc < flen; pc++) {
+ 		const struct sock_filter *ftest = &filter[pc];
 
 
