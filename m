@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ED57C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:59:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 779F1C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:59:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35B4621736
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:59:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4834C2089F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:59:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546865966;
-	bh=JS//P338n5iFs7cy9x4xdC0vL/oTqGGUF4wbTgNmKuc=;
+	s=default; t=1546865970;
+	bh=x6BmhccloZ8JVOtX5YcV1oiCAyDRn7lBL5zNqLIbx4M=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=PFVS8SZxbO3QitvoFjF2CAEv+te7orIEeeBlr9FxrOP4Q7ZL0rRp1ShOVxqSrzclY
-	 OmupFVEDyDIX/nkcOGyqvSyWwCn2b5GqcNs1UbztALi06TbhrmLl5y8skgzDMIgtN3
-	 2wFa2p203Q3e8FpEAipLvrL1QNtuzfaX3CzPhdQE=
+	b=ETI8suyNn6p0YD+/NDmQSV5BplGfh3SVCN9q/9Wl31T9DHZCHulUnlxH0d6h6HuaR
+	 MVL02De6kz2HASM0oEbE0wKlRtgZZ3VbUUH9zxqJqSPekXC80YlGtvCq5begPmwA/g
+	 rOsnELtUHx8j8fCX6GPc63qzG6sdg0LCBxj9o/xo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730297AbfAGM7Z (ORCPT
+        id S1730311AbfAGM73 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:59:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46938 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:59:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47012 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729034AbfAGM7U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:59:20 -0500
+        id S1729034AbfAGM70 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:59:26 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 69AF5206BB;
-        Mon,  7 Jan 2019 12:59:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1E895206BB;
+        Mon,  7 Jan 2019 12:59:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865959;
-        bh=JS//P338n5iFs7cy9x4xdC0vL/oTqGGUF4wbTgNmKuc=;
+        s=default; t=1546865965;
+        bh=x6BmhccloZ8JVOtX5YcV1oiCAyDRn7lBL5zNqLIbx4M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VyxCJgzPG1zA6RIxmYGT8rG6cdeV8qqFk8+zz675yO4jv8ukcWTonD8ZzU34FnnsX
-         ILsTHaAbHv03KS61R11w0bZmlYcSzOzUYr3PK+P891xYqKeHvma2dUFDcOTfJByKmH
-         PinC22GmefY/QZ8PnO7lF/BvO4Ib763dumsmnIjM=
+        b=RRR7ase7nJfTzL/+judmby7bicO6t1EnSFK8NsOD8Lj6uOvXoika3rs6Q0X7Lr3YC
+         /ZRU3EIICiudA+W20LPqXj4bkjfN9yljWL95DGpP+hhFsueFQ53fDzJFaL5MqLObcY
+         aox10xl1d07e91OHd81RVWpSiB86fq2dMY29uRJY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>,
-        Hans Verkuil <hansverk@cisco.com>,
+        stable@vger.kernel.org, Sean Young <sean@mess.org>,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 4.19 143/170] media: cec-pin: fix broken tx_ignore_nack_until_eom error injection
-Date:   Mon,  7 Jan 2019 13:32:50 +0100
-Message-Id: <20190107104509.811204613@linuxfoundation.org>
+Subject: [PATCH 4.19 144/170] media: rc: cec devices do not have a lirc chardev
+Date:   Mon,  7 Jan 2019 13:32:51 +0100
+Message-Id: <20190107104509.935963720@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104452.953560660@linuxfoundation.org>
 References: <20190107104452.953560660@linuxfoundation.org>
@@ -66,43 +65,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hans Verkuil <hverkuil@xs4all.nl>
+From: Sean Young <sean@mess.org>
 
-commit ac791f19a273a7fe254a7596f193af6534582a9f upstream.
+commit e5bb9d3d755f128956ed467ae50b41d22bb680c6 upstream.
 
-If the tx_ignore_nack_until_eom error injection was activated,
-then tx_nacked was never set instead of setting it when the last
-byte of the message was transmitted.
+This fixes an oops in ir_lirc_scancode_event().
 
-As a result the transmit was marked as OK, when it should have
-been NACKed.
+BUG: unable to handle kernel NULL pointer dereference at 0000000000000038
+PGD 0 P4D 0
+Oops: 0000 [#1] SMP PTI
+CPU: 9 PID: 27687 Comm: kworker/9:2 Tainted: P           OE 4.18.12-200.fc28.x86_64 #1
+Hardware name: Supermicro C7X99-OCE-F/C7X99-OCE-F, BIOS 2.1a 06/15/2018
+Workqueue: events pulse8_irq_work_handler [pulse8_cec]
+RIP: 0010:ir_lirc_scancode_event+0x3d/0xb0 [rc_core]
+Code: 8d ae b4 07 00 00 49 81 c6 b8 07 00 00 53 e8 4a df c3 d5 48 89 ef 49 89 45 00 e8 4e 84 41 d6 49 8b 1e 49 89 c4 4c 39 f3 74 58 <8b> 43 38 8b 53 40 89 c1 2b 4b 3c 39 ca 72 41 21 d0 49 8b 7d 00 49
+RSP: 0018:ffffaa10e3c07d58 EFLAGS: 00010017
+RAX: 0000000000000002 RBX: 0000000000000000 RCX: 0000000000000018
+RDX: 0000000000000001 RSI: 00316245397fa93c RDI: ffff966d31c8d7b4
+RBP: ffff966d31c8d7b4 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000003 R11: ffffaa10e3c07e28 R12: 0000000000000002
+R13: ffffaa10e3c07d88 R14: ffff966d31c8d7b8 R15: 0000000000000073
+FS:  0000000000000000(0000) GS:ffff966d3f440000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000000038 CR3: 00000009d820a003 CR4: 00000000003606e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ ir_do_keydown+0x75/0x260 [rc_core]
+ rc_keydown+0x54/0xc0 [rc_core]
+ cec_received_msg_ts+0xaa8/0xaf0 [cec]
+ process_one_work+0x1a1/0x350
+ worker_thread+0x30/0x380
+ ? pwq_unbound_release_workfn+0xd0/0xd0
+ kthread+0x112/0x130
+ ? kthread_create_worker_on_cpu+0x70/0x70
+ ret_from_fork+0x35/0x40
+Modules linked in: rc_tt_1500 dvb_usb_dvbsky dvb_usb_v2 uas usb_storage fuse vhost_net vhost tap xt_CHECKSUM iptable_mangle ip6t_REJECT nf_reject_ipv6 tun 8021q garp mrp xt_nat macvlan xfs devlink ebta
+ si2157 si2168 cx25840 cx23885 kvm altera_ci tda18271 joydev ir_rc6_decoder rc_rc6_mce crct10dif_pclmul crc32_pclmul ghash_clmulni_intel intel_cstate intel_uncore altera_stapl m88ds3103 tveeprom cx2341
+ mxm_wmi igb crc32c_intel megaraid_sas dca i2c_algo_bit wmi vfio_pci irqbypass vfio_virqfd vfio_iommu_type1 vfio i2c_dev
+CR2: 0000000000000038
 
-Modify the condition so that it always sets tx_nacked when the
-last byte of the message was transmitted.
-
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Cc: <stable@vger.kernel.org>      # for v4.17 and up
-Signed-off-by: Hans Verkuil <hansverk@cisco.com>
+Cc: <stable@vger.kernel.org> # v4.16+
+Signed-off-by: Sean Young <sean@mess.org>
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/cec/cec-pin.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/media/rc/rc-main.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/media/cec/cec-pin.c
-+++ b/drivers/media/cec/cec-pin.c
-@@ -601,8 +601,9 @@ static void cec_pin_tx_states(struct cec
- 			break;
- 		/* Was the message ACKed? */
- 		ack = cec_msg_is_broadcast(&pin->tx_msg) ? v : !v;
--		if (!ack && !pin->tx_ignore_nack_until_eom &&
--		    pin->tx_bit / 10 < pin->tx_msg.len && !pin->tx_post_eom) {
-+		if (!ack && (!pin->tx_ignore_nack_until_eom ||
-+		    pin->tx_bit / 10 == pin->tx_msg.len - 1) &&
-+		    !pin->tx_post_eom) {
- 			/*
- 			 * Note: the CEC spec is ambiguous regarding
- 			 * what action to take when a NACK appears
+--- a/drivers/media/rc/rc-main.c
++++ b/drivers/media/rc/rc-main.c
+@@ -707,7 +707,8 @@ void rc_repeat(struct rc_dev *dev)
+ 			 (dev->last_toggle ? LIRC_SCANCODE_FLAG_TOGGLE : 0)
+ 	};
+ 
+-	ir_lirc_scancode_event(dev, &sc);
++	if (dev->allowed_protocols != RC_PROTO_BIT_CEC)
++		ir_lirc_scancode_event(dev, &sc);
+ 
+ 	spin_lock_irqsave(&dev->keylock, flags);
+ 
+@@ -747,7 +748,8 @@ static void ir_do_keydown(struct rc_dev
+ 		.keycode = keycode
+ 	};
+ 
+-	ir_lirc_scancode_event(dev, &sc);
++	if (dev->allowed_protocols != RC_PROTO_BIT_CEC)
++		ir_lirc_scancode_event(dev, &sc);
+ 
+ 	if (new_event && dev->keypressed)
+ 		ir_do_keyup(dev, false);
 
 
