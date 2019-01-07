@@ -2,116 +2,212 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC45CC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 16:37:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 675EBC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 16:38:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8E462089F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 16:37:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546879035;
-	bh=eFH32WHuTRScNT48M45NKiN73l7OjLAk13GN31Q0uC0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=0NHCAuISuYU57IaPY4X2YqLRNJF0QtaXVq18BqmYFwjYywaZ2DrOhpMe9KlBdEIoZ
-	 5eo0mRTU0aQks5cakfzjLQwlCXPnhimYlniC8hS8Bf04Dt5yT/PcoUv7qSHeSSWZ1v
-	 QE4scjcNY6e3ieUvey8ECbrQsiT8XOUqgFy9Q77k=
+	by mail.kernel.org (Postfix) with ESMTP id 2A2382089F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 16:38:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728093AbfAGQhP (ORCPT
+        id S1728375AbfAGQiQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 11:37:15 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:40323 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726874AbfAGQhO (ORCPT
+        Mon, 7 Jan 2019 11:38:16 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47684 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726918AbfAGQiQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 11:37:14 -0500
-Received: by mail-lf1-f68.google.com with SMTP id v5so744570lfe.7;
-        Mon, 07 Jan 2019 08:37:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=OesGRHeQjjHAr6dEOjmw/xnpBLcPVIoRKc0KepIuIcg=;
-        b=vfSxrm01TiLpz+25jc1xsFh+l3fIwsTVw3eaXW9OP43XueFKXZyMo1W9bSqZsU+Nrd
-         7g9zPmOM6/epQswUYSA4ubR2/AQ5iGRZBwc1WyPZzZ5qgTfVqq4l7PR6OWmksPab4VPu
-         hKCYWavQkZXzKiWe5ypE5glvB5tIwHq1QzhcouSlv+ZyXpprcIFCvNAnSpyLjoOwU5Lf
-         qg9+m4IQwUyErC+7c86WsWXQDS2QaVJUKMLG9wzr2d+MQunEA/exuPmDts/pJPtWI/Vy
-         ImHkoqH3HieIg1opsEXBUMNam65iIue156xRQY7oK9BETtxhD0EglN7oA+VlaMFTipF0
-         d2WA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=OesGRHeQjjHAr6dEOjmw/xnpBLcPVIoRKc0KepIuIcg=;
-        b=PdO1w7wD/sMQcPspo4b3LEbT4WhHEeWJW4vjBhfsnhZLK/xWDhFgiMLP1IeOwpIUzL
-         8jwIHOtwS68Kfvc8NdHrJ+rBx9bwnPkO+Ho0aABiowNfHQI3jpwGaBElR2HTKBj1tVEl
-         9rKxIdiWywCa3TJmIT6bVkwTjDRDKIH8NFkgQ5qayH1yxhKJYm8ccLYAKdqP+PY/hviB
-         umO7KYH+NcxhK/XPu3ysk+tr4+H8fJo5VNUjGPyo1BD2K4NtXzLyHMax6Y/c757m7u26
-         fsaJL8W+3/6+cDbhVVjzI/3HTm1C0Yj32tEeDvs2qvOwrL6RV5j679iXSfn8mmGpH+3L
-         IAww==
-X-Gm-Message-State: AA+aEWY12g9MJ9f1LdZkEBbiOa14251yXxVEF0x3tcPFATtJNJal62I4
-        fPmvhwRYPbIF/b1viwonDIU=
-X-Google-Smtp-Source: AFSGD/Wc41qVUsikF+w2mR+rLI84dYpHLAXCVLjg9yKdoHcu8U2krxcDLEUq6yCsJ5qsvbipoWqWMA==
-X-Received: by 2002:a19:3809:: with SMTP id f9mr29820492lfa.148.1546879032364;
-        Mon, 07 Jan 2019 08:37:12 -0800 (PST)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id v17-v6sm13755008ljg.32.2019.01.07.08.37.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 07 Jan 2019 08:37:11 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1ggXto-0006lY-SB; Mon, 07 Jan 2019 17:37:12 +0100
-Date:   Mon, 7 Jan 2019 17:37:12 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Loys Ollivier <lollivier@baylibre.com>
-Cc:     Johan Hovold <johan@kernel.org>, devicetree@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-kernel@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>,
-        linux-amlogic@lists.infradead.org,
-        Neil Armstrong <narmstrong@baylibre.com>
-Subject: Re: [PATCH 0/4] Add driver for globaltop GNSS receivers
-Message-ID: <20190107163712.GF14782@localhost>
-References: <1545994235-8309-1-git-send-email-lollivier@baylibre.com>
- <86bm4x6830.fsf@baylibre.com>
- <20190104091937.GA4737@localhost>
- <86ftu41lqx.fsf@baylibre.com>
+        Mon, 7 Jan 2019 11:38:16 -0500
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x07GTSdw131331
+        for <linux-kernel@vger.kernel.org>; Mon, 7 Jan 2019 11:38:14 -0500
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2pv8mwxwpn-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 11:38:14 -0500
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ubraun@linux.ibm.com>;
+        Mon, 7 Jan 2019 16:38:12 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 7 Jan 2019 16:38:08 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x07Gc8MI11599944
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 7 Jan 2019 16:38:08 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id F19EAA4040;
+        Mon,  7 Jan 2019 16:38:07 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 91C17A4051;
+        Mon,  7 Jan 2019 16:38:06 +0000 (GMT)
+Received: from oc5311105230.ibm.com (unknown [9.145.63.215])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon,  7 Jan 2019 16:38:06 +0000 (GMT)
+Subject: Re: general protection fault in __smc_diag_dump
+To:     Eric Dumazet <eric.dumazet@gmail.com>,
+        syzbot <syzbot+5dd1f9327a9ee760048c@syzkaller.appspotmail.com>,
+        davem@davemloft.net, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com,
+        Cong Wang <xiyou.wangcong@gmail.com>
+References: <00000000000060600e057e7748dc@google.com>
+ <2ffacbe4-a33a-8e82-a492-711c00b25754@gmail.com>
+From:   Ursula Braun <ubraun@linux.ibm.com>
+Openpgp: preference=signencrypt
+Date:   Mon, 7 Jan 2019 17:38:06 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <86ftu41lqx.fsf@baylibre.com>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+In-Reply-To: <2ffacbe4-a33a-8e82-a492-711c00b25754@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19010716-0016-0000-0000-000002417919
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19010716-0017-0000-0000-0000329B884E
+Message-Id: <5a0268c3-5f48-9c48-3d0b-422a3a2d81cd@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-07_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901070144
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 07, 2019 at 05:21:58PM +0100, Loys Ollivier wrote:
-> 
-> On Fri 04 Jan 2019 at 09:19, Johan Hovold wrote:
-> 
-> > On Thu, Jan 03, 2019 at 05:04:35PM +0100, Loys Ollivier wrote:
-> >> 
-> >> As suggested by Neil Armstrong - this GNSS device seems to behave like
-> >> most generic GNSS receivers.
-> >> I'll send a v2 with a generic driver that works for both GlobalTop and
-> >> u-blox.
-> >
-> > That doesn't sound right to me. Judging from a quick look, this device
-> > appears to be based on a mediatek chipset, so I suggest reworking
-> > (renaming) this as a Mediatek driver (gnss type would be MTK, reflecting
-> > the vendor protocol) even if it happens to look a lot like the current
-> > u-blox driver.
-> >
-> OK, agreed - will rename the driver as Mediatek.
-> Would you recommend keeping any reference to Globaltop ? Such as in the
-> devicetree gnss bindings.
-> Or only keep "mediatek,mt3339" for any solution based on that chipset.
 
-Yes, I suggest keeping the globaltop compatible (cf. the sirf driver for
-devices based on sirf chipsets).
 
-Thanks,
-Johan
+On 01/02/2019 12:29 PM, Eric Dumazet wrote:
+> 
+> 
+> On 01/02/2019 02:41 AM, syzbot wrote:
+>> Hello,
+>>
+>> syzbot found the following crash on:
+>>
+>> HEAD commit:    28e8c4bc8eb4 Merge tag 'rtc-4.21' of git://git.kernel.org/..
+>> git tree:       upstream
+>> console output: https://syzkaller.appspot.com/x/log.txt?x=10c040d3400000
+>> kernel config:  https://syzkaller.appspot.com/x/.config?x=c2ab9708c613a224
+>> dashboard link: https://syzkaller.appspot.com/bug?extid=5dd1f9327a9ee760048c
+>> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15d17880c00000
+>>
+>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+>> Reported-by: syzbot+5dd1f9327a9ee760048c@syzkaller.appspotmail.com
+>>
+>> IPv6: ADDRCONF(NETDEV_CHANGE): team0: link becomes ready
+>> IPv6: ADDRCONF(NETDEV_UP): vxcan1: link is not ready
+>> 8021q: adding VLAN 0 to HW filter on device batadv0
+>> kasan: CONFIG_KASAN_INLINE enabled
+>> kasan: GPF could be caused by NULL-ptr deref or user memory access
+>> general protection fault: 0000 [#1] PREEMPT SMP KASAN
+>> CPU: 1 PID: 7982 Comm: syz-executor0 Not tainted 4.20.0+ #4
+>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+>> RIP: 0010:smc_diag_msg_common_fill net/smc/smc_diag.c:43 [inline]
+>> RIP: 0010:__smc_diag_dump.isra.0+0x32a/0x2ba0 net/smc/smc_diag.c:93
+>> Code: 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 26 25 00 00 48 b8 00 00 00 00 00 fc ff df 4d 8b 7f 20 49 8d 7f 0e 48 89 fa 48 c1 ea 03 <0f> b6 14 02 48 89 f8 83 e0 07 83 c0 01 38 d0 7c 08 84 d2 0f 85 d2
+>> RSP: 0018:ffff88808a29f120 EFLAGS: 00010203
+>> RAX: dffffc0000000000 RBX: ffff88807f4d7240 RCX: 0000000000000000
+>> RDX: 0000000000000001 RSI: ffffffff87b4e7c2 RDI: 000000000000000e
+>> RBP: ffff88808a29f3e8 R08: ffff88808d5721c0 R09: ffff888098960e90
+>> R10: fffffbfff14a0020 R11: ffffffff8a500103 R12: ffff88808878d760
+>> R13: ffff888098960e40 R14: ffff88807f4d76a0 R15: 0000000000000000
+>> FS:  00007f6b83b40700(0000) GS:ffff8880ae700000(0000) knlGS:0000000000000000
+>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> CR2: 0000000000000000 CR3: 0000000095561000 CR4: 00000000001406e0
+>> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+>> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>> Call Trace:
+>>  smc_diag_dump_proto.isra.0+0x2e7/0x3c0 net/smc/smc_diag.c:211
+>>  smc_diag_dump+0x27/0x80 net/smc/smc_diag.c:225
+>>  netlink_dump+0x5f2/0x1070 net/netlink/af_netlink.c:2244
+>>  __netlink_dump_start+0x5b4/0x7e0 net/netlink/af_netlink.c:2352
+>>  netlink_dump_start include/linux/netlink.h:225 [inline]
+>>  smc_diag_handler_dump+0x2a7/0x350 net/smc/smc_diag.c:242
+>>  __sock_diag_cmd net/core/sock_diag.c:232 [inline]
+>>  sock_diag_rcv_msg+0x322/0x410 net/core/sock_diag.c:263
+>>  netlink_rcv_skb+0x17d/0x410 net/netlink/af_netlink.c:2477
+>>  sock_diag_rcv+0x2b/0x40 net/core/sock_diag.c:274
+>>  netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
+>>  netlink_unicast+0x574/0x770 net/netlink/af_netlink.c:1336
+>>  netlink_sendmsg+0xa05/0xf90 net/netlink/af_netlink.c:1917
+>>  sock_sendmsg_nosec net/socket.c:621 [inline]
+>>  sock_sendmsg+0xdd/0x130 net/socket.c:631
+>>  ___sys_sendmsg+0x7ec/0x910 net/socket.c:2116
+>>  __sys_sendmsg+0x112/0x270 net/socket.c:2154
+>>  __do_sys_sendmsg net/socket.c:2163 [inline]
+>>  __se_sys_sendmsg net/socket.c:2161 [inline]
+>>  __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2161
+>>  do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
+>>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>> RIP: 0033:0x457ec9
+>> Code: 6d b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 3b b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+>> RSP: 002b:00007f6b83b3fc78 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+>> RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457ec9
+>> RDX: 0000000000000000 RSI: 0000000020000040 RDI: 0000000000000006
+>> RBP: 000000000073bf00 R08: 0000000000000000 R09: 0000000000000000
+>> R10: 0000000000000000 R11: 0000000000000246 R12: 00007f6b83b406d4
+>> R13: 00000000004c5188 R14: 00000000004d8a10 R15: 00000000ffffffff
+>> Modules linked in:
+>> ---[ end trace db4e074cdaa51579 ]---
+>> RIP: 0010:smc_diag_msg_common_fill net/smc/smc_diag.c:43 [inline]
+>> RIP: 0010:__smc_diag_dump.isra.0+0x32a/0x2ba0 net/smc/smc_diag.c:93
+>> Code: 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 26 25 00 00 48 b8 00 00 00 00 00 fc ff df 4d 8b 7f 20 49 8d 7f 0e 48 89 fa 48 c1 ea 03 <0f> b6 14 02 48 89 f8 83 e0 07 83 c0 01 38 d0 7c 08 84 d2 0f 85 d2
+>> RSP: 0018:ffff88808a29f120 EFLAGS: 00010203
+>> RAX: dffffc0000000000 RBX: ffff88807f4d7240 RCX: 0000000000000000
+>> RDX: 0000000000000001 RSI: ffffffff87b4e7c2 RDI: 000000000000000e
+>> RBP: ffff88808a29f3e8 R08: ffff88808d5721c0 R09: ffff888098960e90
+>> R10: fffffbfff14a0020 R11: ffffffff8a500103 R12: ffff88808878d760
+>> R13: ffff888098960e40 R14: ffff88807f4d76a0 R15: 0000000000000000
+>> FS:  00007f6b83b40700(0000) GS:ffff8880ae700000(0000) knlGS:0000000000000000
+>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> CR2: 0000000000000000 CR3: 0000000095561000 CR4: 00000000001406e0
+>> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+>> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>>
+>>
+>> ---
+>> This bug is generated by a bot. It may contain errors.
+>> See https://goo.gl/tpsmEJ for more information about syzbot.
+>> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>>
+>> syzbot will keep track of this bug report. See:
+>> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with syzbot.
+>> syzbot can test patches for this bug, for details see:
+>> https://goo.gl/tpsmEJ#testing-patches
+> 
+> 
+> Probable fix would be :
+> 
+> diff --git a/net/smc/af_smc.c b/net/smc/af_smc.c
+> index c4da4a78d369e359f237772090ff0890a1782c5b..afa1e24fb935281219016c339b15939312f2c89c 100644
+> --- a/net/smc/af_smc.c
+> +++ b/net/smc/af_smc.c
+> @@ -165,12 +165,12 @@ static int smc_release(struct socket *sock)
+>  
+>         /* detach socket */
+>         sock_orphan(sk);
+> -       sock->sk = NULL;
+>         if (!smc->use_fallback && sk->sk_state == SMC_CLOSED)
+>                 smc_conn_free(&smc->conn);
+>         release_sock(sk);
+>  
+>         sk->sk_prot->unhash(sk);
+> +       sock->sk = NULL;
+>         sock_put(sk); /* final sock_put */
+>  out:
+>         return rc;
+> 
+
+Cong Wang now comes up with a different patch proposal, which makes sense in my eyes.
+
