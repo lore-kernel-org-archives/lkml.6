@@ -2,128 +2,104 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64697C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 02:14:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 606F9C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 02:16:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E3CA2085A
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 02:14:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1AB002085A
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 02:16:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="sSowMEhv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726458AbfAGCOx (ORCPT
+        id S1726463AbfAGCQE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 6 Jan 2019 21:14:53 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:53254 "EHLO mx1.redhat.com"
+        Sun, 6 Jan 2019 21:16:04 -0500
+Received: from ozlabs.org ([203.11.71.1]:49127 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726160AbfAGCOw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Jan 2019 21:14:52 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726170AbfAGCQE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Jan 2019 21:16:04 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8B40699D2C;
-        Mon,  7 Jan 2019 02:14:52 +0000 (UTC)
-Received: from [10.72.12.172] (ovpn-12-172.pek2.redhat.com [10.72.12.172])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 74577608C3;
-        Mon,  7 Jan 2019 02:14:39 +0000 (UTC)
-Subject: Re: [PATCH RFC 1/2] virtio-net: bql support
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, maxime.coquelin@redhat.com,
-        tiwei.bie@intel.com, wexu@redhat.com, jfreimann@redhat.com,
-        "David S. Miller" <davem@davemloft.net>,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org
-References: <20181205225323.12555-1-mst@redhat.com>
- <20181205225323.12555-2-mst@redhat.com>
- <21384cb5-99a6-7431-1039-b356521e1bc3@redhat.com>
- <20181226101528-mutt-send-email-mst@kernel.org>
- <0fa99d9b-e510-d7eb-db1b-831bd7610ce9@redhat.com>
- <20181230134106-mutt-send-email-mst@kernel.org>
- <b4f06d11-4761-dabb-f641-5fc05c1c34fc@redhat.com>
- <20190102085457-mutt-send-email-mst@kernel.org>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <17d2ab21-1c9a-2bb9-166f-2863d019cb0b@redhat.com>
-Date:   Mon, 7 Jan 2019 10:14:37 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        by ozlabs.org (Postfix) with ESMTPSA id 43XzX1159Gz9s7h;
+        Mon,  7 Jan 2019 13:16:01 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1546827361;
+        bh=KMECz8wt4TC5nH6d47Z0QQOdHJgpHjwUMTYjc/AoM0c=;
+        h=Date:From:To:Cc:Subject:From;
+        b=sSowMEhvCLxVwBRzgUiJbF5/ehP5tILXtxvGZwfWYGfNs9UWite0HMFAmLvPLqi3R
+         F+Rp+1Q0OBAJzOGRfwpPtuaqx8gWpz7e4vphenm6oSAcItJwAm0NGBBr7PcIjHJMzG
+         1gbNjq/OFmZVdcOoJwjHqaTNB6jZcXIUhehBo84DolEWFJcuZKpXa46yY34m5p29EK
+         qCkoEn4DFuUZ+43jh9CCvl/2mm8VK1GK5ipxMlJpcdvmyJBKSTADnLCrHP30HSMxaC
+         1hxhCumwv1tP4SOrNVtNnIm436t5asF1o8WGXaKOIeH82qP9m6mEqtewTAQYfWqaD/
+         JmsAtMb65Ibxg==
+Date:   Mon, 7 Jan 2019 13:16:00 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Huang Ying <ying.huang@intel.com>
+Subject: linux-next: manual merge of the akpm-current tree with Linus' tree
+Message-ID: <20190107131600.4a33b1df@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <20190102085457-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Mon, 07 Jan 2019 02:14:52 +0000 (UTC)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/IgU6laMv6xfhT4VrJeoT8Ra"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+--Sig_/IgU6laMv6xfhT4VrJeoT8Ra
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On 2019/1/2 下午9:59, Michael S. Tsirkin wrote:
-> On Wed, Jan 02, 2019 at 11:28:43AM +0800, Jason Wang wrote:
->> On 2018/12/31 上午2:45, Michael S. Tsirkin wrote:
->>> On Thu, Dec 27, 2018 at 06:00:36PM +0800, Jason Wang wrote:
->>>> On 2018/12/26 下午11:19, Michael S. Tsirkin wrote:
->>>>> On Thu, Dec 06, 2018 at 04:17:36PM +0800, Jason Wang wrote:
->>>>>> On 2018/12/6 上午6:54, Michael S. Tsirkin wrote:
->>>>>>> When use_napi is set, let's enable BQLs.  Note: some of the issues are
->>>>>>> similar to wifi.  It's worth considering whether something similar to
->>>>>>> commit 36148c2bbfbe ("mac80211: Adjust TSQ pacing shift") might be
->>>>>>> benefitial.
->>>>>> I've played a similar patch several days before. The tricky part is the mode
->>>>>> switching between napi and no napi. We should make sure when the packet is
->>>>>> sent and trakced by BQL,  it should be consumed by BQL as well. I did it by
->>>>>> tracking it through skb->cb.  And deal with the freeze by reset the BQL
->>>>>> status. Patch attached.
->>>>>>
->>>>>> But when testing with vhost-net, I don't very a stable performance,
->>>>> So how about increasing TSQ pacing shift then?
->>>> I can test this. But changing default TCP value is much more than a
->>>> virtio-net specific thing.
->>> Well same logic as wifi applies. Unpredictable latencies related
->>> to radio in one case, to host scheduler in the other.
->>>
->>>>>> it was
->>>>>> probably because we batch the used ring updating so tx interrupt may come
->>>>>> randomly. We probably need to implement time bounded coalescing mechanism
->>>>>> which could be configured from userspace.
->>>>> I don't think it's reasonable to expect userspace to be that smart ...
->>>>> Why do we need time bounded? used ring is always updated when ring
->>>>> becomes empty.
->>>> We don't add used when means BQL may not see the consumed packet in time.
->>>> And the delay varies based on the workload since we count packets not bytes
->>>> or time before doing the batched updating.
->>>>
->>>> Thanks
->>> Sorry I still don't get it.
->>> When nothing is outstanding then we do update the used.
->>> So if BQL stops userspace from sending packets then
->>> we get an interrupt and packets start flowing again.
->> Yes, but how about the cases of multiple flows. That's where I see unstable
->> results.
->>
->>
->>> It might be suboptimal, we might need to tune it but I doubt running
->>> timers is a solution, timer interrupts cause VM exits.
->> Probably not a timer but a time counter (or event byte counter) in vhost to
->> add used and signal guest if it exceeds a value instead of waiting the
->> number of packets.
->>
->>
->> Thanks
-> Well we already have VHOST_NET_WEIGHT - is it too big then?
+Hi all,
 
+Today's linux-next merge of the akpm-current tree got a conflict in:
 
-I'm not sure, it might be too big.
+  mm/mincore.c
 
+between commit:
 
->
-> And maybe we should expose the "MORE" flag in the descriptor -
-> do you think that will help?
->
+  574823bfab82 ("Change mincore() to count "mapped" pages rather than "cach=
+ed" pages")
 
-I don't know. But how a "more" flag can help here?
+from Linus' tree and commit:
 
-Thanks
+  86ee23ad82b6 ("mm: fix race between swapoff and mincore")
 
+from the akpm-current tree.
 
->
+I fixed it up (the former removed the code modified by the latter) and
+can carry the fix as necessary. This is now fixed as far as linux-next
+is concerned, but any non trivial conflicts should be mentioned to your
+upstream maintainer when your tree is submitted for merging.  You may
+also want to consider cooperating with the maintainer of the conflicting
+tree to minimise any particularly complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/IgU6laMv6xfhT4VrJeoT8Ra
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwytmAACgkQAVBC80lX
+0GysVgf+JzcYJQ9CEc5VC9M/QTL9a5C5y3Q7wkeshfYzFj/3ybJLRkL+4cM/Gl1Z
+yGafNUEWL2WJkmYEx/Q+g4jPHHM0T4M/rlBafnJXwCHqsBYqGMNi+pWh+BYH1ILI
+p0JnZ6GUHiJnIKPd0NwmhRuCMruZmlF0RfzwrQa7kVRou49WOCMuIouXZAx/vLxi
+oA991CsB04TnWzunukLgVVEsvyo25Fv/8oQkf7M6mHg969Oy7nZDQnCok9a76RqQ
+SFCD5ogf3Ckx1w/q2A3EWOGCUreDRPF+t/u4gIR+3R8BPQx5ywEDTkQs1GRw0qMA
+jnaa06WkGySakwefcMQH9fpvBX0Ygw==
+=9RDF
+-----END PGP SIGNATURE-----
+
+--Sig_/IgU6laMv6xfhT4VrJeoT8Ra--
