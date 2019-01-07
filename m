@@ -2,128 +2,410 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C519FC43444
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 10:10:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51E20C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 10:10:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D7F720854
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 10:10:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 03FA720854
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 10:10:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="HTWqzFUM";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="nUjenvf/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726872AbfAGKKU (ORCPT
+        id S1726905AbfAGKKa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 05:10:20 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:56078 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726785AbfAGKKS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 05:10:18 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DEBBE1596;
-        Mon,  7 Jan 2019 02:10:17 -0800 (PST)
-Received: from mbp (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A02253F5D4;
-        Mon,  7 Jan 2019 02:10:16 -0800 (PST)
-Date:   Mon, 7 Jan 2019 10:10:13 +0000
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     He Zhe <zhe.he@windriver.com>
-Cc:     paulmck@linux.ibm.com, josh@joshtriplett.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm: kmemleak: Turn kmemleak_lock to spin lock and RCU
- primitives
-Message-ID: <20190107101013.334spvonrenl3mne@mbp>
-References: <1546612153-451172-1-git-send-email-zhe.he@windriver.com>
- <20190104183715.GC187360@arrakis.emea.arm.com>
- <f923e9e9-ed73-5054-3d82-b2244c67a65e@windriver.com>
+        Mon, 7 Jan 2019 05:10:30 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:56232 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726877AbfAGKK1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 05:10:27 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 4D7D860A43; Mon,  7 Jan 2019 10:10:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1546855826;
+        bh=57gr/az9SFOE/1nz1OQJMhzACAdFL0n2T6OPEE7LpWA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=HTWqzFUMemuvCLMVsWyUomK6TOjKdU8qbhpTyMNjpsXnXOvlh2KvWdg//W4OPajBH
+         5yRgbsPKuQKybAhj0lopVYsWS+/PMRfHDJXchHG6KSNrur7fJPbCyQQ19o13l+4Q7e
+         8Aq/9DY59yHDeZ0EPXNr1Pi63OmHWH5hk2XoCTzI=
+Received: from blr-ubuntu-173.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: rnayak@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id F2C7560303;
+        Mon,  7 Jan 2019 10:10:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1546855823;
+        bh=57gr/az9SFOE/1nz1OQJMhzACAdFL0n2T6OPEE7LpWA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=nUjenvf/PBIGGKPt8GCv7qZPN22//tXgMmqMJ5OL8Mer+KItmwRp2oTkl8is7h+Gn
+         8TScdnpx3txTqC3tPmOj3fm4v191b6xZd6zvpJCYFIc0psV3ypLxSnToQ7m/uyFJYv
+         FPZmV5N+EBBACnqWIAFocDDFYpx4mBpzKCyr1nkg=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F2C7560303
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
+From:   Rajendra Nayak <rnayak@codeaurora.org>
+To:     andy.gross@linaro.org, robh@kernel.org, viresh.kumar@linaro.org,
+        sboyd@kernel.org, ulf.hansson@linaro.org, collinsd@codeaurora.org,
+        mka@chromium.org
+Cc:     devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, henryc.chen@mediatek.com,
+        Rajendra Nayak <rnayak@codeaurora.org>
+Subject: [PATCH v9 03/10] soc: qcom: rpmpd: Add a Power domain driver to model corners
+Date:   Mon,  7 Jan 2019 15:39:52 +0530
+Message-Id: <20190107100959.14528-4-rnayak@codeaurora.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190107100959.14528-1-rnayak@codeaurora.org>
+References: <20190107100959.14528-1-rnayak@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f923e9e9-ed73-5054-3d82-b2244c67a65e@windriver.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 07, 2019 at 03:31:18PM +0800, He Zhe wrote:
-> On 1/5/19 2:37 AM, Catalin Marinas wrote:
-> > On Fri, Jan 04, 2019 at 10:29:13PM +0800, zhe.he@windriver.com wrote:
-> >> It's not necessary to keep consistency between readers and writers of
-> >> kmemleak_lock. RCU is more proper for this case. And in order to gain better
-> >> performance, we turn the reader locks to RCU read locks and writer locks to
-> >> normal spin locks.
-> > This won't work.
-> >
-> >> @@ -515,9 +515,7 @@ static struct kmemleak_object *find_and_get_object(unsigned long ptr, int alias)
-> >>  	struct kmemleak_object *object;
-> >>  
-> >>  	rcu_read_lock();
-> >> -	read_lock_irqsave(&kmemleak_lock, flags);
-> >>  	object = lookup_object(ptr, alias);
-> >> -	read_unlock_irqrestore(&kmemleak_lock, flags);
-> > The comment on lookup_object() states that the kmemleak_lock must be
-> > held. That's because we don't have an RCU-like mechanism for removing
-> > removing objects from the object_tree_root:
-> >
-> >>  
-> >>  	/* check whether the object is still available */
-> >>  	if (object && !get_object(object))
-> >> @@ -537,13 +535,13 @@ static struct kmemleak_object *find_and_remove_object(unsigned long ptr, int ali
-> >>  	unsigned long flags;
-> >>  	struct kmemleak_object *object;
-> >>  
-> >> -	write_lock_irqsave(&kmemleak_lock, flags);
-> >> +	spin_lock_irqsave(&kmemleak_lock, flags);
-> >>  	object = lookup_object(ptr, alias);
-> >>  	if (object) {
-> >>  		rb_erase(&object->rb_node, &object_tree_root);
-> >>  		list_del_rcu(&object->object_list);
-> >>  	}
-> >> -	write_unlock_irqrestore(&kmemleak_lock, flags);
-> >> +	spin_unlock_irqrestore(&kmemleak_lock, flags);
-> > So here, while list removal is RCU-safe, rb_erase() is not.
-> >
-> > If you have time to implement an rb_erase_rcu(), than we could reduce
-> > the locking in kmemleak.
-> 
-> Thanks, I really neglected that rb_erase is not RCU-safe here.
-> 
-> I'm not sure if it is practically possible to implement rb_erase_rcu. Here
-> is my concern:
-> In the code paths starting from rb_erase, the tree is tweaked at many
-> places, in both __rb_erase_augmented and ____rb_erase_color. To my
-> understanding, there are many intermediate versions of the tree
-> during the erasion. In some of the versions, the tree is incomplete, i.e.
-> some nodes(not the one to be deleted) are invisible to readers. I'm not
-> sure if this is acceptable as an RCU implementation. Does it mean we
-> need to form a rb_erase_rcu from scratch?
+The Power domains for corners just pass the performance state set by the
+consumers to the RPM (Remote Power manager) which then takes care
+of setting the appropriate voltage on the corresponding rails to
+meet the performance needs.
 
-If it's possible, I think it would help. I had a quick look as well but
-as it seemed non-trivial, I moved on to something else.
+We add all power domain data needed on msm8996 here. This driver can easily
+be extended by adding data for other qualcomm SoCs as well.
 
-> And are there any other concerns about this attempt?
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+Acked-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+---
+ drivers/soc/qcom/Kconfig  |   9 ++
+ drivers/soc/qcom/Makefile |   1 +
+ drivers/soc/qcom/rpmpd.c  | 282 ++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 292 insertions(+)
+ create mode 100644 drivers/soc/qcom/rpmpd.c
 
-No concerns if it's possible at all. In the meantime, you could try to
-replace the rw_lock with a classic spinlock. There was a thread recently
-and I concluded that the rw_lock is no longer necessary as we don't have
-multiple readers contention.
-
-Yet another improvement could be to drop the kmemleak_object.lock
-entirely and just rely on the main kmemleak_lock. I don't think the
-fine-grained locking saves us much as in most cases where it acquires
-the object->lock it already holds (or may have acquired/released) the
-kmemleak_lock.
-
-Note that even if we have an rb_erase_rcu(), we'd still need to acquire
-the object->lock to prevent the scanned block being de-allocated
-(unmapped in the case of vmalloc()). So if we manage with a single
-kmemleak_lock (spin_lock_t), it may give a similar performance boost to
-what you've got without kmemleak_lock.
-
-FTR, the original aim of RCU grace period in kmemleak was to avoid a
-recursive call into the slab freeing code; it later came in handy for
-some list traversal.
-
+diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
+index fcbf8a2e4080..df5cd9fa0d5e 100644
+--- a/drivers/soc/qcom/Kconfig
++++ b/drivers/soc/qcom/Kconfig
+@@ -98,6 +98,15 @@ config QCOM_RPMH
+ 	  of hardware components aggregate requests for these resources and
+ 	  help apply the aggregated state on the resource.
+ 
++config QCOM_RPMPD
++	bool "Qualcomm RPM Power domain driver"
++	depends on MFD_QCOM_RPM && QCOM_SMD_RPM
++	help
++	  QCOM RPM Power domain driver to support power-domains with
++	  performance states. The driver communicates a performance state
++	  value to RPM which then translates it into corresponding voltage
++	  for the voltage rail.
++
+ config QCOM_SMEM
+ 	tristate "Qualcomm Shared Memory Manager (SMEM)"
+ 	depends on ARCH_QCOM || COMPILE_TEST
+diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
+index f25b54cd6cf8..f1b25fdcf2ad 100644
+--- a/drivers/soc/qcom/Makefile
++++ b/drivers/soc/qcom/Makefile
+@@ -21,3 +21,4 @@ obj-$(CONFIG_QCOM_WCNSS_CTRL) += wcnss_ctrl.o
+ obj-$(CONFIG_QCOM_APR) += apr.o
+ obj-$(CONFIG_QCOM_LLCC) += llcc-slice.o
+ obj-$(CONFIG_QCOM_SDM845_LLCC) += llcc-sdm845.o
++obj-$(CONFIG_QCOM_RPMPD) += rpmpd.o
+diff --git a/drivers/soc/qcom/rpmpd.c b/drivers/soc/qcom/rpmpd.c
+new file mode 100644
+index 000000000000..7715ba7c9157
+--- /dev/null
++++ b/drivers/soc/qcom/rpmpd.c
+@@ -0,0 +1,282 @@
++// SPDX-License-Identifier: GPL-2.0
++/* Copyright (c) 2017-2018, The Linux Foundation. All rights reserved. */
++
++#include <linux/err.h>
++#include <linux/init.h>
++#include <linux/kernel.h>
++#include <linux/mutex.h>
++#include <linux/pm_domain.h>
++#include <linux/mfd/qcom_rpm.h>
++#include <linux/of.h>
++#include <linux/of_device.h>
++#include <linux/platform_device.h>
++#include <linux/soc/qcom/smd-rpm.h>
++
++#include <dt-bindings/mfd/qcom-rpm.h>
++#include <dt-bindings/power/qcom-rpmpd.h>
++
++#define domain_to_rpmpd(domain) container_of(domain, struct rpmpd, pd)
++
++/* Resource types */
++#define RPMPD_SMPA 0x61706d73
++#define RPMPD_LDOA 0x616f646c
++
++/* Operation Keys */
++#define KEY_CORNER		0x6e726f63 /* corn */
++#define KEY_ENABLE		0x6e657773 /* swen */
++#define KEY_FLOOR_CORNER	0x636676   /* vfc */
++
++#define DEFINE_RPMPD_CORNER_SMPA(_platform, _name, _active, r_id)		\
++	static struct rpmpd _platform##_##_active;			\
++	static struct rpmpd _platform##_##_name = {			\
++		.pd = {	.name = #_name,	},				\
++		.peer = &_platform##_##_active,				\
++		.res_type = RPMPD_SMPA,					\
++		.res_id = r_id,						\
++		.key = KEY_CORNER,					\
++	};								\
++	static struct rpmpd _platform##_##_active = {			\
++		.pd = { .name = #_active, },				\
++		.peer = &_platform##_##_name,				\
++		.active_only = true,					\
++		.res_type = RPMPD_SMPA,					\
++		.res_id = r_id,						\
++		.key = KEY_CORNER,					\
++	}
++
++#define DEFINE_RPMPD_CORNER_LDOA(_platform, _name, r_id)			\
++	static struct rpmpd _platform##_##_name = {			\
++		.pd = { .name = #_name, },				\
++		.res_type = RPMPD_LDOA,					\
++		.res_id = r_id,						\
++		.key = KEY_CORNER,					\
++	}
++
++#define DEFINE_RPMPD_VFC(_platform, _name, r_id, r_type)		\
++	static struct rpmpd _platform##_##_name = {			\
++		.pd = { .name = #_name, },				\
++		.res_type = r_type,					\
++		.res_id = r_id,						\
++		.key = KEY_FLOOR_CORNER,				\
++	}
++
++#define DEFINE_RPMPD_VFC_SMPA(_platform, _name, r_id)			\
++	DEFINE_RPMPD_VFC(_platform, _name, r_id, RPMPD_SMPA)
++
++#define DEFINE_RPMPD_VFC_LDOA(_platform, _name, r_id)			\
++	DEFINE_RPMPD_VFC(_platform, _name, r_id, RPMPD_LDOA)
++
++struct rpmpd_req {
++	__le32 key;
++	__le32 nbytes;
++	__le32 value;
++};
++
++struct rpmpd {
++	struct generic_pm_domain pd;
++	struct rpmpd *peer;
++	const bool active_only;
++	unsigned int corner;
++	bool enabled;
++	const char *res_name;
++	const int res_type;
++	const int res_id;
++	struct qcom_smd_rpm *rpm;
++	__le32 key;
++};
++
++struct rpmpd_desc {
++	struct rpmpd **rpmpds;
++	size_t num_pds;
++};
++
++static DEFINE_MUTEX(rpmpd_lock);
++
++/* msm8996 RPM Power domains */
++DEFINE_RPMPD_CORNER_SMPA(msm8996, vddcx, vddcx_ao, 1);
++DEFINE_RPMPD_CORNER_SMPA(msm8996, vddmx, vddmx_ao, 2);
++DEFINE_RPMPD_CORNER_LDOA(msm8996, vddsscx, 26);
++
++DEFINE_RPMPD_VFC_SMPA(msm8996, vddcx_vfc, 1);
++DEFINE_RPMPD_VFC_LDOA(msm8996, vddsscx_vfc, 26);
++
++static struct rpmpd *msm8996_rpmpds[] = {
++	[MSM8996_VDDCX] =	&msm8996_vddcx,
++	[MSM8996_VDDCX_AO] =	&msm8996_vddcx_ao,
++	[MSM8996_VDDCX_VFC] =	&msm8996_vddcx_vfc,
++	[MSM8996_VDDMX] =	&msm8996_vddmx,
++	[MSM8996_VDDMX_AO] =	&msm8996_vddmx_ao,
++	[MSM8996_VDDSSCX] =	&msm8996_vddsscx,
++	[MSM8996_VDDSSCX_VFC] =	&msm8996_vddsscx_vfc,
++};
++
++static const struct rpmpd_desc msm8996_desc = {
++	.rpmpds = msm8996_rpmpds,
++	.num_pds = ARRAY_SIZE(msm8996_rpmpds),
++};
++
++static const struct of_device_id rpmpd_match_table[] = {
++	{ .compatible = "qcom,msm8996-rpmpd", .data = &msm8996_desc },
++	{ }
++};
++
++static int rpmpd_send_enable(struct rpmpd *pd, bool enable)
++{
++	struct rpmpd_req req = {
++		.key = KEY_ENABLE,
++		.nbytes = cpu_to_le32(sizeof(u32)),
++		.value = cpu_to_le32(enable),
++	};
++
++	return qcom_rpm_smd_write(pd->rpm, QCOM_RPM_ACTIVE_STATE, pd->res_type,
++				  pd->res_id, &req, sizeof(req));
++}
++
++static int rpmpd_send_corner(struct rpmpd *pd, int state, unsigned int corner)
++{
++	struct rpmpd_req req = {
++		.key = pd->key,
++		.nbytes = cpu_to_le32(sizeof(u32)),
++		.value = cpu_to_le32(corner),
++	};
++
++	return qcom_rpm_smd_write(pd->rpm, state, pd->res_type, pd->res_id,
++				  &req, sizeof(req));
++};
++
++static void to_active_sleep(struct rpmpd *pd, unsigned int corner,
++			    unsigned int *active, unsigned int *sleep)
++{
++	*active = corner;
++
++	if (pd->active_only)
++		*sleep = 0;
++	else
++		*sleep = *active;
++}
++
++static int rpmpd_aggregate_corner(struct rpmpd *pd)
++{
++	int ret;
++	struct rpmpd *peer = pd->peer;
++	unsigned int active_corner, sleep_corner;
++	unsigned int this_active_corner = 0, this_sleep_corner = 0;
++	unsigned int peer_active_corner = 0, peer_sleep_corner = 0;
++
++	to_active_sleep(pd, pd->corner, &this_active_corner, &this_sleep_corner);
++
++	if (peer && peer->enabled)
++		to_active_sleep(peer, peer->corner, &peer_active_corner,
++				&peer_sleep_corner);
++
++	active_corner = max(this_active_corner, peer_active_corner);
++
++	ret = rpmpd_send_corner(pd, QCOM_RPM_ACTIVE_STATE, active_corner);
++	if (ret)
++		return ret;
++
++	sleep_corner = max(this_sleep_corner, peer_sleep_corner);
++
++	return rpmpd_send_corner(pd, QCOM_RPM_SLEEP_STATE, sleep_corner);
++}
++
++static int rpmpd_power_on(struct generic_pm_domain *domain)
++{
++	int ret;
++	struct rpmpd *pd = domain_to_rpmpd(domain);
++
++	mutex_lock(&rpmpd_lock);
++
++	ret = rpmpd_send_enable(pd, true);
++	if (ret)
++		goto out;
++
++	pd->enabled = true;
++
++	if (pd->corner)
++		ret = rpmpd_aggregate_corner(pd);
++
++out:
++	mutex_unlock(&rpmpd_lock);
++
++	return ret;
++}
++
++static int rpmpd_power_off(struct generic_pm_domain *domain)
++{
++	int ret;
++	struct rpmpd *pd = domain_to_rpmpd(domain);
++
++	mutex_lock(&rpmpd_lock);
++
++	ret = rpmpd_send_enable(pd, false);
++	if (!ret)
++		pd->enabled = false;
++
++	mutex_unlock(&rpmpd_lock);
++
++	return ret;
++}
++
++static int rpmpd_probe(struct platform_device *pdev)
++{
++	int i;
++	size_t num;
++	struct genpd_onecell_data *data;
++	struct qcom_smd_rpm *rpm;
++	struct rpmpd **rpmpds;
++	const struct rpmpd_desc *desc;
++
++	rpm = dev_get_drvdata(pdev->dev.parent);
++	if (!rpm) {
++		dev_err(&pdev->dev, "Unable to retrieve handle to RPM\n");
++		return -ENODEV;
++	}
++
++	desc = of_device_get_match_data(&pdev->dev);
++	if (!desc)
++		return -EINVAL;
++
++	rpmpds = desc->rpmpds;
++	num = desc->num_pds;
++
++	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
++	if (!data)
++		return -ENOMEM;
++
++	data->domains = devm_kcalloc(&pdev->dev, num, sizeof(*data->domains),
++				     GFP_KERNEL);
++	data->num_domains = num;
++
++	for (i = 0; i < num; i++) {
++		if (!rpmpds[i]) {
++			dev_warn(&pdev->dev, "rpmpds[] with empty entry at index=%d\n",
++				 i);
++			continue;
++		}
++
++		rpmpds[i]->rpm = rpm;
++		rpmpds[i]->pd.power_off = rpmpd_power_off;
++		rpmpds[i]->pd.power_on = rpmpd_power_on;
++		pm_genpd_init(&rpmpds[i]->pd, NULL, true);
++
++		data->domains[i] = &rpmpds[i]->pd;
++	}
++
++	return of_genpd_add_provider_onecell(pdev->dev.of_node, data);
++}
++
++static struct platform_driver rpmpd_driver = {
++	.driver = {
++		.name = "qcom-rpmpd",
++		.of_match_table = rpmpd_match_table,
++		.suppress_bind_attrs = true,
++	},
++	.probe = rpmpd_probe,
++};
++
++static int __init rpmpd_init(void)
++{
++	return platform_driver_register(&rpmpd_driver);
++}
++core_initcall(rpmpd_init);
 -- 
-Catalin
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
+
