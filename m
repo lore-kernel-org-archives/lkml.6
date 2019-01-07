@@ -2,205 +2,94 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35147C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 21:15:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 497B2C43612
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 21:15:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7E852147C
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 21:15:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E80A21855
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 21:15:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="vhZ5mLvq"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oSRqbbJF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727084AbfAGVPP (ORCPT
+        id S1727092AbfAGVP5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 16:15:15 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:34178 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726638AbfAGVPP (ORCPT
+        Mon, 7 Jan 2019 16:15:57 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:45406 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726638AbfAGVP5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 16:15:15 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x07LFBWK080570;
-        Mon, 7 Jan 2019 15:15:11 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1546895711;
-        bh=S+3YYUlO1c/GZgpozimUPey6IMXudPor8xkeuLA1kLE=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=vhZ5mLvqP2Txx6NqwFI8uNVvF471CZ1yXUa6Rz5GhZcrewUx9MMUvrNUEqILdRjbT
-         bgvznJJtI2JF8cH6XJsHd6GEAngtFvzK2M+MEsi6kGdXMOtCjORGADl4u3K5S26yRl
-         DPCEKIugb314clSOy4Bha1B+YXW0Nsc4IKMmctfA=
-Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x07LFAnF007166
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 7 Jan 2019 15:15:11 -0600
-Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 7
- Jan 2019 15:15:10 -0600
-Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Mon, 7 Jan 2019 15:15:10 -0600
-Received: from [172.22.110.219] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x07LFAhA031539;
-        Mon, 7 Jan 2019 15:15:10 -0600
-Subject: Re: [PATCH 2/2] leds: lp5024: Add the LP5024/18 RGB LED driver
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        =?UTF-8?B?VmVzYSBKw6TDpHNrZWzDpGluZW4=?= <dachaac@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>
-CC:     <robh+dt@kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-leds@vger.kernel.org>
-References: <8740cfd6-a6b5-ad27-313b-984a9febf18a@ti.com>
- <20181219201047.GA23448@amd> <fd624cc1-9997-1cd5-c5cc-62e6897997cf@ti.com>
- <54f28115-0a7d-8e9c-3bec-6e91fb3981ec@gmail.com>
- <cd90f179-6c16-823f-496f-27f141e9c322@ti.com>
- <a72c11c0-949b-bdbc-df2c-4490e04a1065@gmail.com>
- <986b5105-2fdb-bd25-7c8a-ca8fd1ade821@gmail.com>
- <7f205102-e854-f1cb-cc03-1307d1cddc87@gmail.com>
- <c9f8965a-90f4-b456-8225-c70694c9f071@gmail.com>
- <cf6c0025-36e7-197b-b27a-1f31fb45cc38@gmail.com> <20190104201256.GA2931@amd>
- <a4e3a782-de76-ba91-3727-4db69cf27c3a@gmail.com>
- <90a2ed79-b437-af14-4538-430d8723cc6b@gmail.com>
- <38daf022-e4e4-799d-4c75-ee851315290d@gmail.com>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <0982f9c3-b5df-7131-8d5a-761adefd389d@ti.com>
-Date:   Mon, 7 Jan 2019 15:15:02 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+        Mon, 7 Jan 2019 16:15:57 -0500
+Received: by mail-oi1-f193.google.com with SMTP id y1so1541944oie.12;
+        Mon, 07 Jan 2019 13:15:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=sRmuTc+Q8QTezs6E65fSI39xViVpSu9NSinUik62B9w=;
+        b=oSRqbbJFXbjEuT6yPOdC9/a3xPcRnojaY7xaa3aVN3LlePGTdaSG54pWQBm/oQrZgJ
+         4QvxeU251SVk1Vo52xHymXv8uFR16m5X+g1AbXvr0hYZcROUfKxlJ5GxEZcIkQLsFhVY
+         8O+Svgra2Du3wajiS78jfN/qEOr3Uj22OXr4IHZSsfEa/Cf9wjcjHfJ3nTsFyLM3wRxv
+         eo6y/AdFd1VNCHx7Oy8ktgQXbMAyf2GJUtt50SgY23y9oAilalWpkr4Yd5MCKoQU49Dx
+         daYIGjWGJYsc52e3T9XK0wfFz3ystf2BsVuNUXaRW4ZcuqwAgSk0Cadmmf/lqOtEkET7
+         9AUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=sRmuTc+Q8QTezs6E65fSI39xViVpSu9NSinUik62B9w=;
+        b=qepQKEYemVw8T7ZDKZRUACIre7H8E0FZjC796mBfvneYsih0aHhOy7A8eRVSVs6RrT
+         hn+5cJa0UknnQmgoMynCbZEjKfrn+o5kaZ0KHlAgrHakvHM2ySKY9UKIdrb0KFRYLW/I
+         ChjimxSM0GVfCkx5lOE+dZIuyvU19U1pfkNZBLq6dLOMGs0d+SrmP1nauGhcLSikseiT
+         RFtAqROn37cVsJsqBbFpI7Mlviv8Bx+s7PzLr/AJ798bjVjifAQ5zUlr5QvOs2J7XE2w
+         d9/i34jXW5pvobnE5qOQhoL5a+31UZB5XlNBEBpjTJBw1K3RpBv+Afe988NePN1emoTL
+         Rguw==
+X-Gm-Message-State: AJcUukcRwzc0PSXbX+HiwLHcuzpngZVHcInEde4K7Ij5LANjk1OpBqOX
+        lv4PeD51dXw3TweFCX9ssaoc1nsgyfjI3j3cjtA=
+X-Google-Smtp-Source: ALg8bN6fGlCfKszXv9C7G3jNY0EfpdTpjBIxOi6zzcuyThESah/oZK6JCowE0eJKU5SQ0adNewVCZ+BvS2pjn80Zpcs=
+X-Received: by 2002:aca:3345:: with SMTP id z66mr9446112oiz.91.1546895756370;
+ Mon, 07 Jan 2019 13:15:56 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <38daf022-e4e4-799d-4c75-ee851315290d@gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20190107105330.372621917@linuxfoundation.org> <20190107105336.765968953@linuxfoundation.org>
+In-Reply-To: <20190107105336.765968953@linuxfoundation.org>
+From:   Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Date:   Mon, 7 Jan 2019 21:15:20 +0000
+Message-ID: <CADVatmNmc1mkcaJ4wKjufFcTwE_6=iMUTR811Gdcop9y0_LLVg@mail.gmail.com>
+Subject: Re: [PATCH 4.14 069/101] spi: bcm2835: Fix race on DMA termination
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Stable <stable@vger.kernel.org>, Lukas Wunner <lukas@wunner.de>,
+        Mathias Duckeck <m.duckeck@kunbus.de>,
+        Frank Pavlic <f.pavlic@kunbus.de>,
+        Martin Sperl <kernel@martin.sperl.org>,
+        =?UTF-8?Q?Noralf_Tr=C3=B8nnes?= <noralf@tronnes.org>,
+        Mark Brown <broonie@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jacek
+HI Greg,
 
-On 1/7/19 3:13 PM, Jacek Anaszewski wrote:
-> Hi Vesa,
-> 
-> On 1/5/19 1:39 AM, Vesa Jääskeläinen wrote:
->> Hi Jacek,
->>
->> On 04/01/2019 23.37, Jacek Anaszewski wrote:
->>> But, aside from that hypothetic issue, we need a solution for
->>> LEDn_BRIGHTNESS feature of lp5024, i.e. setting color intensity
->>> via a single register write. How would you propose to address that?
->>
->> You could model it to something like this in device tree:
->>
->> led-module @ <i2c-address> {
->>      compatible = "lp5024";
->>
->>      // There is in hardware setup to use either linear or
->>      // logarithmic scaling:
->>      //enable-logarithmic-brightness;
->>
->>      led0 {
->>          // this will create led instance for LED0 in lp5024
->>          label = "lp-led0";
->>
->>          // This specifies LED number within lp5024
->>          led-index = <0>;   // set output-base as 0*3 == 0
->>
->>          element-red {
->>              // refers to OUT0
->>              output-offset = <0>;
->>          };
->>
->>          element-green {
->>              // refers to OUT1
->>              output-offset = <1>;
->>          };
->>
->>          element-blue {
->>              // refers to OUT2
->>              output-offset = <2>;
->>          };
->>
->>      };
->>
->>      led1 {
->>          // this will create led instance for LED1 in lp5024
->>          label = "lp-led1";
->>
->>          // This specifies LED number within lp5024
->>          led-index = <1>;   // set output-base as 1*3 == 3
->>
->>          element-red {
->>              // refers to OUT3
->>              output-offset = <0>;
->>          };
->>
->>          element-green {
->>              // refers to OUT4
->>              output-offset = <1>;
->>          };
->>
->>          element-blue {
->>              // refers to OUT5
->>              output-offset = <2>;
->>          };
->>
->>      };
->>
->>      bank-led {
->>          // this will create led instance for bank leds in lp5024
->>          label = "lp-bank-led";
->>
->>          // configured bank led configuration
->>          led-index = <2 3 4 5 6 7>;
->>          // As here is list of led-indices this entry is
->>          // assumed to be bank configuration. Bank mode is enable
->>          // for the indices.
->>
->>          // set output-base as BANK A
->>
->>          element-red {
->>              // refers to BANK A
->>              output-offset = <0>;
->>          };
->>
->>          element-green {
->>              // refers to BANK B
->>              output-offset = <1>;
->>          };
->>
->>          element-blue {
->>              // refers to BANK C
->>              output-offset = <2>;
->>          };
->>      };
->> };
->>
->> This would then create three led instances and each led instance has brightness setting and that goes straight to hardware.
->>
->> If one would want to override hardware control for brightness then I suppose you would define in led node something like:
->>
->>      brightness-model = "hsl"
->>
->> This would then pick red, green and blue elements for hsl calculations and others color elements for linear. LED specific hardware brightness would then be either 0 or 0xFF depending if all of LED color elements are zero or not.
->>
->> Would that kind of model work?
-> 
-> I'd prefer to have single RGB LED device. And your DT design
-> is unnecessarily complex and a bit confusing.
+On Mon, Jan 7, 2019 at 1:15 PM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> 4.14-stable review patch.  If anyone has any objections, please let me know.
+>
+> ------------------
+>
+> From: Lukas Wunner <lukas@wunner.de>
+>
+> commit e82b0b3828451c1cd331d9f304c6078fcd43b62e upstream.
 
-+1 to that comment
-
-> 
-> Also, you provided scarce information about sysfs interface.
-> It would be nice to see the sequence of commands.
-> 
+This has been fixed later by 29bdedfd9cf4 ("spi: bcm2835: Unbreak the
+build of esoteric configs")
 
 
 -- 
-------------------
-Dan Murphy
+Regards
+Sudip
