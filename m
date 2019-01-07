@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D17EFC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:08:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAA17C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:08:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5CD62147C
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:08:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C1C121736
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:08:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546866489;
-	bh=1ZMn89voueEWJjLh5U+pQmtghE/ZCs87arA+RwpQnto=;
+	s=default; t=1546866494;
+	bh=8IDcVt3ZzckGEbKCaPPLsuTrJ1JFLnth28cd4LkRqIk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=qODsys+35RnApuTw0pwSwZ+jyfWJ6veOzs6hjM+52kbUAYbQDbIW7yUrWNwK0w5sS
-	 80O0x8odpLd+A7kZ95oTffas0OePLGsrd/l/24eS9cVn44IbpkrQzVut7VvqZ/ms0I
-	 eRDeVE+pJq3PvwGesU5hFBZSM/zF5fOcopyHkVX4=
+	b=dUCz4z7pyGhNV8hLXG35RGCxn5CtuOurtUfzWUcgh9/NR5DoOeREzoXnGHdR341zr
+	 e98XDAFi3h7XbZrv6jsw14QIj5E98k4M3JC+f3BToPfaH+makQ2uiHtizj//cUfKa6
+	 ZGBOtL2BWD/2inM4mAM+WUBLWy3ydAG+7aRDkn7E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731609AbfAGNII (ORCPT
+        id S1731622AbfAGNIM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:08:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55138 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:08:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55246 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731596AbfAGNIE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:08:04 -0500
+        id S1731596AbfAGNIK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:08:10 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D522D21736;
-        Mon,  7 Jan 2019 13:08:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 719652089F;
+        Mon,  7 Jan 2019 13:08:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546866484;
-        bh=1ZMn89voueEWJjLh5U+pQmtghE/ZCs87arA+RwpQnto=;
+        s=default; t=1546866490;
+        bh=8IDcVt3ZzckGEbKCaPPLsuTrJ1JFLnth28cd4LkRqIk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HHYzeXGvEZXEnTFQBRxBNq36fhMQaoxTZGd91mJ9qFnLViw546p7kv9O4/IZ9GVAF
-         ZeL0DrgNaqOEqSBxY6kL2E6qQoffOk6ynzfbBgGDuAbdDoPXHQn8pIjo/BuUuL+0WR
-         tr0oRysvBTq4/7uxfCzBilkafkzKYZJFPXx/VwE4=
+        b=MtzSgZWJ7dcY+cg/YdgpcGjsN3yrndxG/rgXHgu556zGzJumtCouvMb6SOd1m5kF5
+         TUelPTDEBhyn/K3E4pChHCEJ2jCzpFIKmdlwxDftmMfan3vuzoVjlbS5MrbI+59VGj
+         YTcB8jAHwx4Ae7685LUaEf0Nxb1nlqOI0t8NwYac=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        Pan Bian <bianpan2016@163.com>, Theodore Tso <tytso@mit.edu>,
+        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
+        =?UTF-8?q?ruippan=20 ?= <ruippan@tencent.com>,
         stable@kernel.org
-Subject: [PATCH 4.9 46/71] ext4: fix possible use after free in ext4_quota_enable
-Date:   Mon,  7 Jan 2019 13:33:15 +0100
-Message-Id: <20190107105335.348724459@linuxfoundation.org>
+Subject: [PATCH 4.9 48/71] ext4: fix EXT4_IOC_GROUP_ADD ioctl
+Date:   Mon,  7 Jan 2019 13:33:17 +0100
+Message-Id: <20190107105335.457193220@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107105330.280153213@linuxfoundation.org>
 References: <20190107105330.280153213@linuxfoundation.org>
@@ -66,37 +66,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Pan Bian <bianpan2016@163.com>
+From: ruippan (潘睿) <ruippan@tencent.com>
 
-commit 61157b24e60fb3cd1f85f2c76a7b1d628f970144 upstream.
+commit e647e29196b7f802f8242c39ecb7cc937f5ef217 upstream.
 
-The function frees qf_inode via iput but then pass qf_inode to
-lockdep_set_quota_inode on the failure path. This may result in a
-use-after-free bug. The patch frees df_inode only when it is never used.
+Commit e2b911c53584 ("ext4: clean up feature test macros with
+predicate functions") broke the EXT4_IOC_GROUP_ADD ioctl.  This was
+not noticed since only very old versions of resize2fs (before
+e2fsprogs 1.42) use this ioctl.  However, using a new kernel with an
+enterprise Linux userspace will cause attempts to use online resize to
+fail with "No reserved GDT blocks".
 
-Fixes: daf647d2dd5 ("ext4: add lockdep annotations for i_data_sem")
-Cc: stable@kernel.org # 4.6
-Reviewed-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Pan Bian <bianpan2016@163.com>
+Fixes: e2b911c53584 ("ext4: clean up feature test macros with predicate...")
+Cc: stable@kernel.org # v4.4
 Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Signed-off-by: ruippan (潘睿) <ruippan@tencent.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/super.c |    2 +-
+ fs/ext4/resize.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -5425,9 +5425,9 @@ static int ext4_quota_enable(struct supe
- 	qf_inode->i_flags |= S_NOQUOTA;
- 	lockdep_set_quota_inode(qf_inode, I_DATA_SEM_QUOTA);
- 	err = dquot_enable(qf_inode, type, format_id, flags);
--	iput(qf_inode);
- 	if (err)
- 		lockdep_set_quota_inode(qf_inode, I_DATA_SEM_NORMAL);
-+	iput(qf_inode);
+--- a/fs/ext4/resize.c
++++ b/fs/ext4/resize.c
+@@ -1600,7 +1600,7 @@ int ext4_group_add(struct super_block *s
+ 	}
  
- 	return err;
- }
+ 	if (reserved_gdb || gdb_off == 0) {
+-		if (ext4_has_feature_resize_inode(sb) ||
++		if (!ext4_has_feature_resize_inode(sb) ||
+ 		    !le16_to_cpu(es->s_reserved_gdt_blocks)) {
+ 			ext4_warning(sb,
+ 				     "No reserved GDT blocks, can't resize");
 
 
