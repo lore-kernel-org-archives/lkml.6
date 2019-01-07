@@ -4,51 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B9E7C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:36:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34766C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:36:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BB5521855
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:36:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 06C6B21736
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:36:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546864597;
-	bh=ZQb629oDc8bohg4SFlVQhlDr2ETdC6JAGp9Ry++gj+o=;
+	s=default; t=1546864615;
+	bh=QEarGfvRhzuk6lbfwUqd0YCsF0+noJujd34F0PrxOho=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=bKqYQhr9jMA1nJ47ag0DdhuhqfYclO65VXmG7EzfuYn1YaSRGgKSQ0cKN2+cjJPgW
-	 GtY0RXYpk3IKZdsINSD4prOJiKTnWUQbsRKKGq6r1rUF6TVo+HEckCXVyO8kll4SGJ
-	 guQyLM2i2Ywvi1y1iEgvAU4IF/A25zCGduiRj6+0=
+	b=2SRE+peqIMopVVEt5W9s1Y31Fh46yUaXc5u85X3U/sNwda46JbP1NYqtBkDRNCFf1
+	 I8Cy9gMVDJrSKvHXzKcCFCJZrm/L9nblx6lutFInj7SgSJ2+E1DrmDiU5V6ooHnOXD
+	 3/Cei93f85+q6e4zQBjQkRVgqHMFyfv7LuNLvZZg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727723AbfAGMgg (ORCPT
+        id S1727728AbfAGMgy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:36:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51364 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:36:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51644 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726718AbfAGMgf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:36:35 -0500
+        id S1726718AbfAGMgw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:36:52 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 484EC206BB;
-        Mon,  7 Jan 2019 12:36:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5446321736;
+        Mon,  7 Jan 2019 12:36:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546864594;
-        bh=ZQb629oDc8bohg4SFlVQhlDr2ETdC6JAGp9Ry++gj+o=;
+        s=default; t=1546864611;
+        bh=QEarGfvRhzuk6lbfwUqd0YCsF0+noJujd34F0PrxOho=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1tLx8uPxM6DUkRTk+O5/2aqqNdT6/m91zUX+x8h13cWyIrTxX/y8gnyrmE3K9Duea
-         tWSX5U6GFCBDeb4jERyiGktRF+GTnVRnIag9DBy5+Qsm1Wh0EJEGussXPNQQH/NIlO
-         bomCRtBBcLxMq/RDfG3P1866RIvnIlmnr/LprXCo=
+        b=dV9JTaWvsDJyZm+s+3iPcGJcTK/WQkBWQZvzoMSvQi6fSzF3O5kq9gLuaOAUgsir2
+         l6ZJPA4HxAUUEysXN9njqMmA6hhvwRoOaSTmRdI2oi1promSmUBEJ2FPg1mTCNHmnw
+         9aahz5DzINCtJ20R2iQ1ZB8qTo5hf4fVE+eB3DPE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>,
-        =?UTF-8?q?Jaime=20P=C3=A9rez?= <19.jaime.91@gmail.com>
-Subject: [PATCH 4.20 050/145] ASoC: intel: cht_bsw_max98090_ti: Add pmc_plt_clk_0 quirk for Chromebook Gnawty
-Date:   Mon,  7 Jan 2019 13:31:27 +0100
-Message-Id: <20190107104443.972407093@linuxfoundation.org>
+        stable@vger.kernel.org, Ido Schimmel <idosch@idosch.org>,
+        Willem de Bruijn <willemb@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.20 015/145] packet: validate address length if non-zero
+Date:   Mon,  7 Jan 2019 13:30:52 +0100
+Message-Id: <20190107104439.352904879@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104437.308206189@linuxfoundation.org>
 References: <20190107104437.308206189@linuxfoundation.org>
@@ -67,49 +66,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Willem de Bruijn <willemb@google.com>
 
-commit 94ea56cff506c769a509c5dd87904c7fe3806a81 upstream.
+[ Upstream commit 6b8d95f1795c42161dc0984b6863e95d6acf24ed ]
 
-The Gnawty model Chromebook uses pmc_plt_clk_0 instead of pmc_plt_clk_3
-for the mclk, just like the Clapper and Swanky models.
+Validate packet socket address length if a length is given. Zero
+length is equivalent to not setting an address.
 
-This commit adds a DMI based quirk for this.
-
-This fixing audio no longer working on these devices after
-commit 648e921888ad ("clk: x86: Stop marking clocks as CLK_IS_CRITICAL")
-that commit fixes us unnecessary keeping unused clocks on, but in case of
-the Gnawty that was breaking audio support since we were not using the
-right clock in the cht_bsw_max98090_ti machine driver.
-
-BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=201787
-Cc: stable@vger.kernel.org
-Fixes: 648e921888ad ("clk: x86: Stop marking clocks as CLK_IS_CRITICAL")
-Reported-and-tested-by: Jaime Pérez <19.jaime.91@gmail.com>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: 99137b7888f4 ("packet: validate address length")
+Reported-by: Ido Schimmel <idosch@idosch.org>
+Signed-off-by: Willem de Bruijn <willemb@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- sound/soc/intel/boards/cht_bsw_max98090_ti.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ net/packet/af_packet.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/sound/soc/intel/boards/cht_bsw_max98090_ti.c
-+++ b/sound/soc/intel/boards/cht_bsw_max98090_ti.c
-@@ -397,6 +397,13 @@ static const struct dmi_system_id cht_ma
- 		.driver_data = (void *)QUIRK_PMC_PLT_CLK_0,
- 	},
- 	{
-+		/* Gnawty model Chromebook (Acer Chromebook CB3-111) */
-+		.matches = {
-+			DMI_MATCH(DMI_PRODUCT_NAME, "Gnawty"),
-+		},
-+		.driver_data = (void *)QUIRK_PMC_PLT_CLK_0,
-+	},
-+	{
- 		/* Swanky model Chromebook (Toshiba Chromebook 2) */
- 		.matches = {
- 			DMI_MATCH(DMI_PRODUCT_NAME, "Swanky"),
+--- a/net/packet/af_packet.c
++++ b/net/packet/af_packet.c
+@@ -2625,7 +2625,7 @@ static int tpacket_snd(struct packet_soc
+ 						sll_addr)))
+ 			goto out;
+ 		proto	= saddr->sll_protocol;
+-		addr	= saddr->sll_addr;
++		addr	= saddr->sll_halen ? saddr->sll_addr : NULL;
+ 		dev = dev_get_by_index(sock_net(&po->sk), saddr->sll_ifindex);
+ 		if (addr && dev && saddr->sll_halen < dev->addr_len)
+ 			goto out;
+@@ -2825,7 +2825,7 @@ static int packet_snd(struct socket *soc
+ 		if (msg->msg_namelen < (saddr->sll_halen + offsetof(struct sockaddr_ll, sll_addr)))
+ 			goto out;
+ 		proto	= saddr->sll_protocol;
+-		addr	= saddr->sll_addr;
++		addr	= saddr->sll_halen ? saddr->sll_addr : NULL;
+ 		dev = dev_get_by_index(sock_net(sk), saddr->sll_ifindex);
+ 		if (addr && dev && saddr->sll_halen < dev->addr_len)
+ 			goto out;
 
 
