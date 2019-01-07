@@ -4,50 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 083E0C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:01:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E86B7C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:01:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDD392173C
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:01:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B79FF21736
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:01:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546866108;
-	bh=Rv2hE2zlNol/70MxCs8l6bbvNaBl7U7go5/3M7s/eTk=;
+	s=default; t=1546866116;
+	bh=8VnNL/j6P3AP5FebkcYMOAvYEkrucqd44fdzsIl3bWw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=2DGQck2NNG1DpJ4pFT4mgWfXRjJ4XSBsEjARjF50Zf+rsRHOghfY5/yKdoxhNXQa/
-	 AORzUuKEtvHtoop1+qmuU1y8DWGk7ctRgevycSRcRlLw9rcOatmIgq14nZuqSC/snC
-	 BexeVNtqpneUFMwOdn4cygGoMPW0WLSwxx2LBji4=
+	b=jp3H6q3M6P10kdAc5dyN/5+K9TMXAbTeKHv7F1WaVnOde0GLGR4seCeNtMkame1NY
+	 2ApazakC+QLQ7jDBO1RFJzyZzZRktTDMziU1P3vJKSYC1W5Et3Fw0XaaBW6+uT2JUN
+	 62uqSsklG6rpvLO545p27//FLfgFLOWsBUCxIBug=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730677AbfAGNBr (ORCPT
+        id S1730705AbfAGNB4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:01:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49194 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:01:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49236 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729655AbfAGNBp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:01:45 -0500
+        id S1729655AbfAGNBs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:01:48 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 80A30206BB;
-        Mon,  7 Jan 2019 13:01:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A390021736;
+        Mon,  7 Jan 2019 13:01:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546866105;
-        bh=Rv2hE2zlNol/70MxCs8l6bbvNaBl7U7go5/3M7s/eTk=;
+        s=default; t=1546866108;
+        bh=8VnNL/j6P3AP5FebkcYMOAvYEkrucqd44fdzsIl3bWw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mS+D8htU0rwMnapj9ehBfQSphcZy4w0wwH6GqDXOSWI8OPcF47frfZ0SMAQ6riqgk
-         4qPoWKzf2wMVK4p1dcexR2nSrCVUsq12TekmMVQA75qBeftT+AdGHiWOefANs81srG
-         W0btd9Sl5+qEiaNUhOclu4aQqC3rrmOhcfbAh2pw=
+        b=g6FVnt2laEEwrxcz/y8gur5RLeaRz24NFWX7yctmtM/g8T16BsoIAT1KMDQfcjsqo
+         Lc/KdyEOBuGbX83idv6cv9oFGrx6klXC7q5otIzdCk8gmoK+4XtnW2XW11kw8I7pta
+         wdU/L+fLp69L86SuCNXBzBAVdInpPhFGdstl2WLY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 040/101] ALSA: pcm: Fix potential Spectre v1 vulnerability
-Date:   Mon,  7 Jan 2019 13:32:28 +0100
-Message-Id: <20190107105335.100613782@linuxfoundation.org>
+        stable@vger.kernel.org, Scott Chen <scott@labau.com.tw>,
+        Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.14 049/101] USB: serial: pl2303: add ids for Hewlett-Packard HP POS pole displays
+Date:   Mon,  7 Jan 2019 13:32:37 +0100
+Message-Id: <20190107105335.607380799@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107105330.372621917@linuxfoundation.org>
 References: <20190107105330.372621917@linuxfoundation.org>
@@ -66,51 +64,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Gustavo A. R. Silva <gustavo@embeddedor.com>
+From: Scott Chen <scott@labau.com.tw>
 
-commit 94ffb030b6d31ec840bb811be455dd2e26a4f43e upstream.
+commit 8d503f206c336677954160ac62f0c7d9c219cd89 upstream.
 
-stream is indirectly controlled by user-space, hence leading to
-a potential exploitation of the Spectre variant 1 vulnerability.
+Add device ids to pl2303 for the HP POS pole displays:
+LM920:   03f0:026b
+TD620:   03f0:0956
+LD960TA: 03f0:4439
+LD220TA: 03f0:4349
+LM940:   03f0:5039
 
-This issue was detected with the help of Smatch:
-
-sound/core/pcm.c:140 snd_pcm_control_ioctl() warn: potential spectre issue 'pcm->streams' [r] (local cap)
-
-Fix this by sanitizing stream before using it to index pcm->streams
-
-Notice that given that speculation windows are large, the policy is
-to kill the speculation on the first load and not worry if it can be
-completed with a dependent load/store [1].
-
-[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Scott Chen <scott@labau.com.tw>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/core/pcm.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/usb/serial/pl2303.c |    5 +++++
+ drivers/usb/serial/pl2303.h |    5 +++++
+ 2 files changed, 10 insertions(+)
 
---- a/sound/core/pcm.c
-+++ b/sound/core/pcm.c
-@@ -25,6 +25,7 @@
- #include <linux/time.h>
- #include <linux/mutex.h>
- #include <linux/device.h>
-+#include <linux/nospec.h>
- #include <sound/core.h>
- #include <sound/minors.h>
- #include <sound/pcm.h>
-@@ -129,6 +130,7 @@ static int snd_pcm_control_ioctl(struct
- 				return -EFAULT;
- 			if (stream < 0 || stream > 1)
- 				return -EINVAL;
-+			stream = array_index_nospec(stream, 2);
- 			if (get_user(subdevice, &info->subdevice))
- 				return -EFAULT;
- 			mutex_lock(&register_mutex);
+--- a/drivers/usb/serial/pl2303.c
++++ b/drivers/usb/serial/pl2303.c
+@@ -94,9 +94,14 @@ static const struct usb_device_id id_tab
+ 	{ USB_DEVICE(YCCABLE_VENDOR_ID, YCCABLE_PRODUCT_ID) },
+ 	{ USB_DEVICE(SUPERIAL_VENDOR_ID, SUPERIAL_PRODUCT_ID) },
+ 	{ USB_DEVICE(HP_VENDOR_ID, HP_LD220_PRODUCT_ID) },
++	{ USB_DEVICE(HP_VENDOR_ID, HP_LD220TA_PRODUCT_ID) },
+ 	{ USB_DEVICE(HP_VENDOR_ID, HP_LD960_PRODUCT_ID) },
++	{ USB_DEVICE(HP_VENDOR_ID, HP_LD960TA_PRODUCT_ID) },
+ 	{ USB_DEVICE(HP_VENDOR_ID, HP_LCM220_PRODUCT_ID) },
+ 	{ USB_DEVICE(HP_VENDOR_ID, HP_LCM960_PRODUCT_ID) },
++	{ USB_DEVICE(HP_VENDOR_ID, HP_LM920_PRODUCT_ID) },
++	{ USB_DEVICE(HP_VENDOR_ID, HP_LM940_PRODUCT_ID) },
++	{ USB_DEVICE(HP_VENDOR_ID, HP_TD620_PRODUCT_ID) },
+ 	{ USB_DEVICE(CRESSI_VENDOR_ID, CRESSI_EDY_PRODUCT_ID) },
+ 	{ USB_DEVICE(ZEAGLE_VENDOR_ID, ZEAGLE_N2ITION3_PRODUCT_ID) },
+ 	{ USB_DEVICE(SONY_VENDOR_ID, SONY_QN3USB_PRODUCT_ID) },
+--- a/drivers/usb/serial/pl2303.h
++++ b/drivers/usb/serial/pl2303.h
+@@ -124,10 +124,15 @@
+ 
+ /* Hewlett-Packard POS Pole Displays */
+ #define HP_VENDOR_ID		0x03f0
++#define HP_LM920_PRODUCT_ID	0x026b
++#define HP_TD620_PRODUCT_ID	0x0956
+ #define HP_LD960_PRODUCT_ID	0x0b39
+ #define HP_LCM220_PRODUCT_ID	0x3139
+ #define HP_LCM960_PRODUCT_ID	0x3239
+ #define HP_LD220_PRODUCT_ID	0x3524
++#define HP_LD220TA_PRODUCT_ID	0x4349
++#define HP_LD960TA_PRODUCT_ID	0x4439
++#define HP_LM940_PRODUCT_ID	0x5039
+ 
+ /* Cressi Edy (diving computer) PC interface */
+ #define CRESSI_VENDOR_ID	0x04b8
 
 
