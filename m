@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 459A4C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:48:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E03F4C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:48:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A39D206BB
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:48:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B158F20651
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:48:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546865310;
-	bh=IBs63HXrtvo+fc9IRLQBJ3GBP7LDz5CIRnUMIjgOb5w=;
+	s=default; t=1546865313;
+	bh=1oUSqP54/O86Evnw7TveITlI+S1qUT3/Y1qtftsXeJo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=U7nJdOFmYvOgKK79wB4uQ39zOOhrR6ASTNxapSFa4Kcc2si99+ZU62yb0SkgAVAfk
-	 McPuwSZj97r1kOnPbS1/KNJJf+IsQjGnAg9QWABdWlfQln21ra1rbK0pkj94T6nCIF
-	 0hBM//9aM9WsysidTGcFLrHb2kOHfQdl5K3DFJDY=
+	b=xHMiwXwppV5Shc2J3A8Oh9EWxEl4+H2mScNuScberRiHCHKs1JbHWLaYdpnSI0tyz
+	 zOZ7jPojqmHxwNQqVrKZH730cHmyNxQFudr0EKLEhmzgxM7vLFf5h23TYduwzwCZfb
+	 dyS/iVDx39Hz23Wr5bUTxDyPAZiB1Px4v9xqSc+g=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729169AbfAGMs3 (ORCPT
+        id S1729179AbfAGMsd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:48:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39030 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:48:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39142 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729025AbfAGMsX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:48:23 -0500
+        id S1729170AbfAGMs3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:48:29 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 08D6320651;
-        Mon,  7 Jan 2019 12:48:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B895120651;
+        Mon,  7 Jan 2019 12:48:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865302;
-        bh=IBs63HXrtvo+fc9IRLQBJ3GBP7LDz5CIRnUMIjgOb5w=;
+        s=default; t=1546865309;
+        bh=1oUSqP54/O86Evnw7TveITlI+S1qUT3/Y1qtftsXeJo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=l06uJ9aOp5dhSbCRGGGQ8u5kDJRIpJOnsrf0b4zNJHz2lRmbTCTqtGyAtiM5oYoBo
-         CvYMK4w0c3l1KConFRZLTPqZsi4WIYPQqxDP9TKUHlUECARvTzrf8hUutIvbcjzXzc
-         m/tsAwi/21ZsnmLpXjc81/xkU65kbTAu/yX2KB2Y=
+        b=JCe6n+OWbcLU+Ji5iitqUT/lwcqnfgtnjLpH09+AIeyRa4vgv9AlvNOvpBwErrxuc
+         5sEGvfsGTv4+GKDXdH1lXHAWHLGFgNGrdJyHEhaNbju45uiVbPgvirBtKSQIS5sVBS
+         hbSuV+v4Kmow7oB4WHX7AW30P15q5pGAZfEABb/k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tal Gilboa <talgi@mellanox.com>,
+        stable@vger.kernel.org, Moshe Shemesh <moshe@mellanox.com>,
         Tariq Toukan <tariqt@mellanox.com>,
         Saeed Mahameed <saeedm@mellanox.com>
-Subject: [PATCH 4.19 049/170] net/mlx5e: Cancel DIM work on close SQ
-Date:   Mon,  7 Jan 2019 13:31:16 +0100
-Message-Id: <20190107104458.946045170@linuxfoundation.org>
+Subject: [PATCH 4.19 050/170] net/mlx5e: RX, Verify MPWQE stride size is in range
+Date:   Mon,  7 Jan 2019 13:31:17 +0100
+Message-Id: <20190107104459.042865756@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104452.953560660@linuxfoundation.org>
 References: <20190107104452.953560660@linuxfoundation.org>
@@ -66,36 +66,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tal Gilboa <talgi@mellanox.com>
+From: Moshe Shemesh <moshe@mellanox.com>
 
-[ Upstream commit fa2bf86bab4bbc61e5678a42a14e40075093a98f ]
+[ Upstream commit e1c15b62b7015119d3e5915cd2ae3b89d59c2576 ]
 
-TXQ SQ closure is followed by closing the corresponding CQ. A pending
-DIM work would try to modify the now non-existing CQ.
-This would trigger an error:
-[85535.835926] mlx5_core 0000:af:00.0: mlx5_cmd_check:769:(pid 124399):
-MODIFY_CQ(0x403) op_mod(0x0) failed, status bad resource state(0x9), syndrome (0x1d7771)
+Add check of MPWQE stride size is within range supported by HW. In case
+calculated MPWQE stride size exceed range, linear SKB can't be used and
+we should use non linear MPWQE instead.
 
-Fix by making sure to cancel any pending DIM work before destroying the SQ.
-
-Fixes: cbce4f444798 ("net/mlx5e: Enable adaptive-TX moderation")
-Signed-off-by: Tal Gilboa <talgi@mellanox.com>
+Fixes: 619a8f2a42f1 ("net/mlx5e: Use linear SKB in Striding RQ")
+Signed-off-by: Moshe Shemesh <moshe@mellanox.com>
 Reviewed-by: Tariq Toukan <tariqt@mellanox.com>
 Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/en_main.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/mellanox/mlx5/core/en_main.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
 --- a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
 +++ b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
-@@ -1383,6 +1383,7 @@ static void mlx5e_close_txqsq(struct mlx
- 	struct mlx5_core_dev *mdev = c->mdev;
- 	struct mlx5_rate_limit rl = {0};
+@@ -128,6 +128,8 @@ static bool mlx5e_rx_is_linear_skb(struc
+ 	return !params->lro_en && frag_sz <= PAGE_SIZE;
+ }
  
-+	cancel_work_sync(&sq->dim.work);
- 	mlx5e_destroy_sq(mdev, sq->sqn);
- 	if (sq->rate_limit) {
- 		rl.rate = sq->rate_limit;
++#define MLX5_MAX_MPWQE_LOG_WQE_STRIDE_SZ ((BIT(__mlx5_bit_sz(wq, log_wqe_stride_size)) - 1) + \
++					  MLX5_MPWQE_LOG_STRIDE_SZ_BASE)
+ static bool mlx5e_rx_mpwqe_is_linear_skb(struct mlx5_core_dev *mdev,
+ 					 struct mlx5e_params *params)
+ {
+@@ -138,6 +140,9 @@ static bool mlx5e_rx_mpwqe_is_linear_skb
+ 	if (!mlx5e_rx_is_linear_skb(mdev, params))
+ 		return false;
+ 
++	if (order_base_2(frag_sz) > MLX5_MAX_MPWQE_LOG_WQE_STRIDE_SZ)
++		return false;
++
+ 	if (MLX5_CAP_GEN(mdev, ext_stride_num_range))
+ 		return true;
+ 
 
 
