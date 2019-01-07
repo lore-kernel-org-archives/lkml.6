@@ -2,293 +2,285 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 698CCC43444
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 06:35:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BD09C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 06:40:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F6B520859
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 06:35:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lLIiG3vQ"
+	by mail.kernel.org (Postfix) with ESMTP id 2AF0E20859
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 06:40:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726459AbfAGGfQ (ORCPT
+        id S1726453AbfAGGk1 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 01:35:16 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:34575 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725535AbfAGGfP (ORCPT
+        Mon, 7 Jan 2019 01:40:27 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:60328 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725550AbfAGGk1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 01:35:15 -0500
-Received: by mail-pl1-f194.google.com with SMTP id w4so20409820plz.1;
-        Sun, 06 Jan 2019 22:35:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=mIbqUppx7dXtchBf+xYJZ6LmFQeVAzEnWphgzqCFBIc=;
-        b=lLIiG3vQ+ceANz0tsx8FfDHkhwPb3NF9M9lobp66tRCxZE2q0EJvYr9qrl9Oq3mf6S
-         P2l5vrq7paD4IpVHw6/90BRhq+S7zG4edW2otTcm0bigLCKWmkeZRWlWJmsKoDihn1P8
-         4gybR+apGqzJiCSZUPhhObYDR8lRDZni+haX0aBYVccOH3t8d7edbnl7mvkbhBl+1W9T
-         3J/oIs+gzIDjMaGKXu/XLp8adGGBLf6iGLZBAZ0/NW1mjOXZnlwShHd4V3CSpekIvQQd
-         wuwPQOksbx7YhDsm91OFr0G4Q7D6VFat9chz3aMItemUxa8rGE2bI4cm0ssWtFxjfc0p
-         Ewow==
+        Mon, 7 Jan 2019 01:40:27 -0500
+Received: from mail-pf1-f197.google.com ([209.85.210.197])
+        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <kai.heng.feng@canonical.com>)
+        id 1ggOaF-0000QU-PG
+        for linux-kernel@vger.kernel.org; Mon, 07 Jan 2019 06:40:23 +0000
+Received: by mail-pf1-f197.google.com with SMTP id i3so42632682pfj.4
+        for <linux-kernel@vger.kernel.org>; Sun, 06 Jan 2019 22:40:23 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=mIbqUppx7dXtchBf+xYJZ6LmFQeVAzEnWphgzqCFBIc=;
-        b=Wuyarmj+ROTPFOncJVRD6eRbBTcQY9IbwqKvfZ+mGVIwd/4P4cro1n5viehkwlujYZ
-         Zfsxai1TADuJm472Td7DaChLFzOz4NjQU6Mq9MMbtuZJ6xnEzdqqtdStjNUIBb6ytZ+H
-         zHffK9cfsHqizCbVZyEbUXylwjD4OqncrDfto8Bdsne1fJamgITUJc39QUAUhAv+Wbxz
-         Norao/g3KNg9E+3hXvU2YBXixFgckGSFFdEWhB8etXvskEneHKg6hGnSx6R9atyi+dKP
-         8dT6Zrd/rac9tx0n0XrN+9ONI26FetSKC66JGCYP5DGtqEeG3rbU/2Khw5UR5kS8hMtW
-         l5vA==
-X-Gm-Message-State: AJcUuke7ZpJ+5RaMw3miIRfSGLmHdH4tJdmjor41KEsgrc24zBhnn81i
-        auBNU+bmB2SxurZPIIwkON5icEKI
-X-Google-Smtp-Source: ALg8bN75VpWo4HOmpQ0AOP2x+osoYj5Y29CZhTzWMfpxDIDgPO0WTYDQLADShAIDA0WjMazrc+s/5Q==
-X-Received: by 2002:a17:902:780c:: with SMTP id p12mr58764861pll.197.1546842914887;
-        Sun, 06 Jan 2019 22:35:14 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id x26sm97346946pfn.50.2019.01.06.22.35.13
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=A8LMqy1Ds4TqOSFdYSQa8lZXQL01qjKmESvfgDI6HZs=;
+        b=R3Cd0ANZp6Wd7LrtvDrdjnE3FyGjtDe3b0N+n6f1p3+9O2if+/DJaSqVntHpkI8huU
+         6/tatbSUmwwxO/QkaEdFpHZTH+x54RJ8fLih+fi7rzQFZ8VtF0+GSGvtzQoN6ENIe+Ot
+         09su0xJCNLcSIEb9dlosYm60BicW1a8pAnuiamVuzMXEkzlQvWE1nZuJ+91qXeIfknZs
+         CeVv93mfSUTeiF5fccLITyLUO3yAqBlk6qedsW6x3tOgoXL2xvN5IIrZ0Qdj1Ys0bWfx
+         clc33FYmhvFGyv8VHPYq66YcsPJ+IlNCsvc6QbxeQ4ueJauaEzF3Ju8W+HO7fVjdKpXx
+         C28A==
+X-Gm-Message-State: AJcUukc/2v/UjIYLcRfa/+6jEvLMDcRhTm5g4Me1PCD67Jo79c9om7rY
+        J4hacfcT26VaOsdkOt87GnPUCOFp0a2CqmzGYA/pNX8xbGcflkRQs4oULPy/SUymo8vPdPDmoCW
+        y5YRh4CGNm0nykYm3Dk92an4Zn8fMDSQIawI5QSDG2g==
+X-Received: by 2002:a65:448a:: with SMTP id l10mr9969413pgq.387.1546843222352;
+        Sun, 06 Jan 2019 22:40:22 -0800 (PST)
+X-Google-Smtp-Source: ALg8bN7gP3QDUyAx9xyA6vsWLE8ZkY+RXpXVXI9afFEbywFpfOtiuN5y65a2tpsAPK+Lh7doGh2ODQ==
+X-Received: by 2002:a65:448a:: with SMTP id l10mr9969397pgq.387.1546843221964;
+        Sun, 06 Jan 2019 22:40:21 -0800 (PST)
+Received: from 2001-b011-380f-3f3d-8c0d-0ee6-8d41-4b74.dynamic-ip6.hinet.net (2001-b011-380f-3f3d-8c0d-0ee6-8d41-4b74.dynamic-ip6.hinet.net. [2001:b011:380f:3f3d:8c0d:ee6:8d41:4b74])
+        by smtp.gmail.com with ESMTPSA id t3sm76652949pgv.31.2019.01.06.22.40.20
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 06 Jan 2019 22:35:14 -0800 (PST)
-Subject: Re: [PATCH 4/4] pmbus (dps650ab): add power supply driver
-To:     "Liu, Xiaoting" <xiaoting.liu@hxt-semitech.com>
-Cc:     "jdelvare@suse.com" <jdelvare@suse.com>,
-        "openbmc@lists.ozlabs.org" <openbmc@lists.ozlabs.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
-        "Yang, Shunyong" <shunyong.yang@hxt-semitech.com>,
-        "Wang, Dongsheng" <dongsheng.wang@hxt-semitech.com>
-References: <cover.1546591275.git.xiaoting.liu@hxt-semitech.com>
- <e0ad8b6bb620f9fc2f818cbda66825c297f73d67.1546591275.git.xiaoting.liu@hxt-semitech.com>
- <20190105170847.GA14962@roeck-us.net>
- <a494c032f6344528a89bf9b9aa81a3d7@HXTBJIDCEMVIW02.hxtcorp.net>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <60d19f7a-8977-fa64-f7ca-5b5940f16bb2@roeck-us.net>
-Date:   Sun, 6 Jan 2019 22:35:12 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <a494c032f6344528a89bf9b9aa81a3d7@HXTBJIDCEMVIW02.hxtcorp.net>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Sun, 06 Jan 2019 22:40:21 -0800 (PST)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
+Subject: Re: [PATCH v4] USB: Don't enable LPM if it's already enabled
+From:   Kai Heng Feng <kai.heng.feng@canonical.com>
+In-Reply-To: <20181203102643.22690-1-kai.heng.feng@canonical.com>
+Date:   Mon, 7 Jan 2019 14:40:19 +0800
+Cc:     Linux USB List <linux-usb@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Mathias Nyman <mathias.nyman@linux.intel.com>
+Content-Transfer-Encoding: 8BIT
+Message-Id: <F24F822F-E721-47DC-9860-A2D0847C09DB@canonical.com>
+References: <20181203102643.22690-1-kai.heng.feng@canonical.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+X-Mailer: Apple Mail (2.3445.102.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/6/19 10:25 PM, Liu, Xiaoting wrote:
-> Hi Guenter Roeck,
-> 
-> Thanks for your apply, we will drop this patch and add the structpmbus_device_info in PMBus.c.
-> 
+Hi,
 
-NP. Make sure though that the auto-detection finds all properties.
-If it does, there is really no reason to have an extra driver.
+> On Dec 3, 2018, at 18:26, Kai-Heng Feng <kai.heng.feng@canonical.com> wrote:
+> 
+> USB Bluetooth controller QCA ROME (0cf3:e007) sometimes stops working
+> after S3:
+> [ 165.110742] Bluetooth: hci0: using NVM file: qca/nvm_usb_00000302.bin
+> [ 168.432065] Bluetooth: hci0: Failed to send body at 4 of 1953 (-110)
+> 
+> After some experiments, I found that disabling LPM can workaround the
+> issue.
+> 
+> On some platforms, the USB power is cut during S3, so the driver uses
+> reset-resume to resume the device. During port resume, LPM gets enabled
+> twice, by usb_reset_and_verify_device() and usb_port_resume().
+> 
+> So let's enable LPM for just once, as this solves the issue for the
+> device in question.
+> 
+> Also consolidate USB2 LPM functions to usb_enable_usb2_hardware_lpm()
+> and usb_disable_usb2_hardware_lpm().
 
-Thanks,
-Guenter
+Please review my new approach, hopefully this can be included in Linux v5.0. 
 
-> Thanks,
-> Xiaoting.
 > 
-> On 2019/1/6 1:08, Guenter Roeck wrote:
->> On Fri, Jan 04, 2019 at 05:05:27PM +0800, Xiaoting Liu wrote:
->>> The Delta dps650ab provides main power and standby power to server.
->>> dps650ab can be detected by MFR_ID and MFR_MODEL referring to
->>> manufacturer's feedback. This patch adds driver to moniter power
->>> supply status.
->>>
->> Another comment: The subject should be something like
->> 	hwmon: (pmbus) Add driver for DPS650AB power supply
->>
->> Additional comments inline below.
->>
->> Thanks,
->> Guenter
->>> Signed-off-by: Xiaoting Liu<xiaoting.liu@hxt-semitech.com>
->>> ---
->>>   drivers/hwmon/pmbus/Kconfig    |  10 +++++
->>>   drivers/hwmon/pmbus/Makefile   |   1 +
->>>   drivers/hwmon/pmbus/dps650ab.c | 100 +++++++++++++++++++++++++++++++++++++++++
->>>   drivers/hwmon/pmbus/pmbus.c    |   3 ++
->>>   4 files changed, 114 insertions(+)
->>>
->>> --
->>> 1.8.3.1
->>>
->>>
->>> diff --git a/drivers/hwmon/pmbus/Kconfig b/drivers/hwmon/pmbus/Kconfig
->>> index 629cb45f8557..de4638396592 100644
->>> --- a/drivers/hwmon/pmbus/Kconfig
->>> +++ b/drivers/hwmon/pmbus/Kconfig
->>> @@ -184,4 +184,14 @@ config SENSORS_ZL6100
->>>            This driver can also be built as a module. If so, the module will
->>>            be called zl6100.
->>>
->>> +config SENSORS_DPS650AB
->>> +       tristate "Delta DPS650AB"
->>> +       default n
->>> +       help
->>> +         If you say yes here you get hardware monitoring support for the
->>> +         Delta DPS650AB controller.
->>> +
->>> +         This driver can also be built as a module. If so, the module will
->>> +         be called dps650ab.
->>> +
->> Ahplabetic order, please.
->>
->>>   endif # PMBUS
->>> diff --git a/drivers/hwmon/pmbus/Makefile b/drivers/hwmon/pmbus/Makefile
->>> index ea0e39518c21..414818230a26 100644
->>> --- a/drivers/hwmon/pmbus/Makefile
->>> +++ b/drivers/hwmon/pmbus/Makefile
->>> @@ -21,3 +21,4 @@ obj-$(CONFIG_SENSORS_TPS53679)        += tps53679.o
->>>   obj-$(CONFIG_SENSORS_UCD9000)  += ucd9000.o
->>>   obj-$(CONFIG_SENSORS_UCD9200)  += ucd9200.o
->>>   obj-$(CONFIG_SENSORS_ZL6100)   += zl6100.o
->>> +obj-$(CONFIG_SENSORS_DPS650AB) += dps650ab.o
->> Alphabetic order, please.
->>
->>> diff --git a/drivers/hwmon/pmbus/dps650ab.c b/drivers/hwmon/pmbus/dps650ab.c
->>> new file mode 100644
->>> index 000000000000..3c300e621f5a
->>> --- /dev/null
->>> +++ b/drivers/hwmon/pmbus/dps650ab.c
->>> @@ -0,0 +1,100 @@
->>> +// SPDX-License-Identifier: GPL-2.0
->>> +/*
->>> + * Hardware monitoring driver for DELTA DPS650AB
->>> + *
->>> + * Copyright (c) 2018 Huaxintong Semiconductor Technology Co., Ltd.
->>> + */
->>> +
->>> +#include <linux/err.h>
->>> +#include <linux/i2c.h>
->>> +#include <linux/init.h>
->>> +#include <linux/kernel.h>
->>> +#include <linux/module.h>
->>> +#include "pmbus.h"
->>> +
->>> +#define DPS650AB_MFR_ID                        "DELTA"
->>> +#define DPS650AB_MFR_MODEL             "DPS-650AB-16 A"
->>> +
->>> +static int dps650ab_probe(struct i2c_client *client,
->>> +                        const struct i2c_device_id *id)
->>> +{
->>> +       struct pmbus_driver_info *info;
->>> +       u8 buf[I2C_SMBUS_BLOCK_MAX];
->>> +       int ret;
->>> +
->>> +       memset(buf, 0, I2C_SMBUS_BLOCK_MAX);
->>> +
->>> +       if (!i2c_check_functionality(client->adapter,
->>> +                                    I2C_FUNC_SMBUS_READ_BYTE_DATA
->>> +                               | I2C_FUNC_SMBUS_READ_WORD_DATA
->>> +                               | I2C_FUNC_SMBUS_READ_BLOCK_DATA))
->>> +               return -ENODEV;
->>> +
->>> +       ret = i2c_smbus_read_block_data(client, PMBUS_MFR_ID, buf);
->>> +       if (ret < 0) {
->>> +               dev_err(&client->dev, "Failed to read PMBUS_MFR_ID\n");
->>> +               return ret;
->>> +       }
->>> +
->>> +       if (strncmp(buf, DPS650AB_MFR_ID, strlen(DPS650AB_MFR_ID))) {
->>> +               dev_err(&client->dev, "DPS650AB_MFR_ID unrecognised\n");
->>> +               return -ENODEV;
->>> +       }
->>> +
->>> +       ret = i2c_smbus_read_block_data(client, PMBUS_MFR_MODEL, buf);
->>> +       if (ret < 0) {
->>> +               dev_err(&client->dev, "Failed to read PMBUS_MFR_MODEL\n");
->>> +               return ret;
->>> +       }
->>> +
->>> +       if (strncmp(buf, DPS650AB_MFR_MODEL, strlen(DPS650AB_MFR_MODEL))) {
->>> +               dev_err(&client->dev, "DPS650AB_MFR_MODEL unrecognised\n");
->>> +               return -ENODEV;
->>> +       }
->>> +
->>> +       info = devm_kzalloc(&client->dev, sizeof(*info), GFP_KERNEL);
->>> +       if (!info)
->>> +               return -ENOMEM;
->>> +
->>> +       info->pages = 1;
->>> +       info->format[PSC_VOLTAGE_IN] = linear;
->>> +       info->format[PSC_VOLTAGE_OUT] = linear;
->>> +       info->format[PSC_CURRENT_IN] = linear;
->>> +       info->format[PSC_CURRENT_OUT] = linear;
->>> +       info->format[PSC_POWER] = linear;
->>> +       info->format[PSC_TEMPERATURE] = linear;
->>> +
->>> +       info->func[0] = PMBUS_HAVE_VIN
->>> +               | PMBUS_HAVE_IIN | PMBUS_HAVE_PIN
->>> +               | PMBUS_HAVE_STATUS_INPUT
->>> +               | PMBUS_HAVE_POUT | PMBUS_HAVE_FAN12
->>> +               | PMBUS_HAVE_IOUT | PMBUS_HAVE_STATUS_IOUT
->>> +               | PMBUS_HAVE_VOUT | PMBUS_HAVE_STATUS_VOUT
->>> +               | PMBUS_HAVE_TEMP | PMBUS_HAVE_TEMP2
->>> +               | PMBUS_HAVE_STATUS_TEMP;
->>> +       info->func[1] = info->func[0];
->>> +
->>> +       return pmbus_do_probe(client, id, info);
->>> +}
->>> +
->>> +static const struct i2c_device_id dps650ab_id[] = {
->>> +       {"dps650ab", 1},
->>> +       {}
->>> +};
->>> +
->>> +MODULE_DEVICE_TABLE(i2c, dps650ab_id);
->>> +
->>> +static struct i2c_driver dps650ab_driver = {
->>> +       .driver = {
->>> +               .name   = "dps650ab",
->>> +       },
->>> +       .probe          = dps650ab_probe,
->>> +       .remove         = pmbus_do_remove,
->>> +       .id_table       = dps650ab_id,
->>> +};
->>> +
->>> +module_i2c_driver(dps650ab_driver);
->>> +
->>> +MODULE_AUTHOR("Liuxiaoting <xiaoting.liu@hxt-semitech.com");
->>> +MODULE_DESCRIPTION("PMBus driver for DPS650AB");
->>> +MODULE_LICENSE("GPL v2");
->>> diff --git a/drivers/hwmon/pmbus/pmbus.c b/drivers/hwmon/pmbus/pmbus.c
->>> index aa4cf9636e99..930e8a3e2366 100644
->>> --- a/drivers/hwmon/pmbus/pmbus.c
->>> +++ b/drivers/hwmon/pmbus/pmbus.c
->>> @@ -204,6 +204,8 @@ static int pmbus_probe(struct i2c_client *client,
->>>   static const struct pmbus_device_info sgd009_pmbus_info = {
->>>                                  1, PMBUS_SKIP_STATUS_CHECK};
->>>   static const struct pmbus_device_info pmbus_info = {0, 0};
->>> +static const struct pmbus_device_info dps650ab_pmbus_info = {
->>> +                               1, PMBUS_SKIP_STATUS_CHECK};
->>>   /*
->>>    * Use driver_data to set the number of pages supported by the chip.
->>>    */
->>> @@ -227,6 +229,7 @@ static int pmbus_probe(struct i2c_client *client,
->>>          {"tps544c20", (kernel_ulong_t)&default_pmbus_info},
->>>          {"tps544c25", (kernel_ulong_t)&default_pmbus_info},
->>>          {"udt020", (kernel_ulong_t)&default_pmbus_info},
->>> +       {"dps650ab", (kernel_ulong_t)&dps650ab_pmbus_info},
->>>          {}
->>>   };
+> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+> ---
+> v4:
+> - Use usb_enable_usb2_hardware_lpm() and
+>   usb_disable_usb2_hardware_lpm() to control USB2 LPM.
+> v3:
+> - Consolidate udev->usb2_hw_lpm_capable and udev->usb2_hw_lpm_enabled
+>  check to usb_set_usb2_hardware_lpm().
+> v2:
+>  - Check udev->usb2_hw_lpm_enabled before calling usb_port_resume().
 > 
+> drivers/usb/core/driver.c  | 23 +++++++++++++++++++----
+> drivers/usb/core/hub.c     | 16 ++++++----------
+> drivers/usb/core/message.c |  3 +--
+> drivers/usb/core/sysfs.c   |  5 ++++-
+> drivers/usb/core/usb.h     | 10 ++++++++--
+> 5 files changed, 38 insertions(+), 19 deletions(-)
 > 
+> diff --git a/drivers/usb/core/driver.c b/drivers/usb/core/driver.c
+> index 53564386ed57..8987cec9549d 100644
+> --- a/drivers/usb/core/driver.c
+> +++ b/drivers/usb/core/driver.c
+> @@ -1896,14 +1896,11 @@ int usb_runtime_idle(struct device *dev)
+> 	return -EBUSY;
+> }
 > 
+> -int usb_set_usb2_hardware_lpm(struct usb_device *udev, int enable)
+> +static int usb_set_usb2_hardware_lpm(struct usb_device *udev, int enable)
+> {
+> 	struct usb_hcd *hcd = bus_to_hcd(udev->bus);
+> 	int ret = -EPERM;
 > 
+> -	if (enable && !udev->usb2_hw_lpm_allowed)
+> -		return 0;
+> -
+> 	if (hcd->driver->set_usb2_hw_lpm) {
+> 		ret = hcd->driver->set_usb2_hw_lpm(hcd, udev, enable);
+> 		if (!ret)
+> @@ -1913,6 +1910,24 @@ int usb_set_usb2_hardware_lpm(struct usb_device *udev, int enable)
+> 	return ret;
+> }
 > 
-> This email is intended only for the named addressee. It may contain information that is confidential/private, legally privileged, or copyright-protected, and you should handle it accordingly. If you are not the intended recipient, you do not have legal rights to retain, copy, or distribute this email or its contents, and should promptly delete the email and all electronic copies in your system; do not retain copies in any media. If you have received this email in error, please notify the sender promptly. Thank you.
+> +int usb_enable_usb2_hardware_lpm(struct usb_device *udev)
+> +{
+> +	if (!udev->usb2_hw_lpm_capable ||
+> +	    !udev->usb2_hw_lpm_allowed ||
+> +	    udev->usb2_hw_lpm_enabled)
+> +		return 0;
+> +
+> +	return usb_set_usb2_hardware_lpm(udev, 1);
+> +}
+> +
+> +int usb_disable_usb2_hardware_lpm(struct usb_device *udev)
+> +{
+> +	if (!udev->usb2_hw_lpm_enabled)
+> +		return 0;
+> +
+> +	return usb_set_usb2_hardware_lpm(udev, 0);
+> +}
+> +
+> #endif /* CONFIG_PM */
 > 
+> struct bus_type usb_bus_type = {
+> diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
+> index 0f9381b69a3b..b4439ee2d144 100644
+> --- a/drivers/usb/core/hub.c
+> +++ b/drivers/usb/core/hub.c
+> @@ -3210,8 +3210,7 @@ int usb_port_suspend(struct usb_device *udev, pm_message_t msg)
+> 	}
 > 
+> 	/* disable USB2 hardware LPM */
+> -	if (udev->usb2_hw_lpm_enabled == 1)
+> -		usb_set_usb2_hardware_lpm(udev, 0);
+> +	usb_disable_usb2_hardware_lpm(udev);
+> 
+> 	if (usb_disable_ltm(udev)) {
+> 		dev_err(&udev->dev, "Failed to disable LTM before suspend\n");
+> @@ -3249,8 +3248,7 @@ int usb_port_suspend(struct usb_device *udev, pm_message_t msg)
+> 		usb_enable_ltm(udev);
+>  err_ltm:
+> 		/* Try to enable USB2 hardware LPM again */
+> -		if (udev->usb2_hw_lpm_capable == 1)
+> -			usb_set_usb2_hardware_lpm(udev, 1);
+> +		usb_enable_usb2_hardware_lpm(udev);
+> 
+> 		if (udev->do_remote_wakeup)
+> 			(void) usb_disable_remote_wakeup(udev);
+> @@ -3533,8 +3531,7 @@ int usb_port_resume(struct usb_device *udev, pm_message_t msg)
+> 		hub_port_logical_disconnect(hub, port1);
+> 	} else  {
+> 		/* Try to enable USB2 hardware LPM */
+> -		if (udev->usb2_hw_lpm_capable == 1)
+> -			usb_set_usb2_hardware_lpm(udev, 1);
+> +		usb_enable_usb2_hardware_lpm(udev);
+> 
+> 		/* Try to enable USB3 LTM */
+> 		usb_enable_ltm(udev);
+> @@ -4425,7 +4422,7 @@ static void hub_set_initial_usb2_lpm_policy(struct usb_device *udev)
+> 	if ((udev->bos->ext_cap->bmAttributes & cpu_to_le32(USB_BESL_SUPPORT)) ||
+> 			connect_type == USB_PORT_CONNECT_TYPE_HARD_WIRED) {
+> 		udev->usb2_hw_lpm_allowed = 1;
+> -		usb_set_usb2_hardware_lpm(udev, 1);
+> +		usb_enable_usb2_hardware_lpm(udev);
+> 	}
+> }
+> 
+> @@ -5638,8 +5635,7 @@ static int usb_reset_and_verify_device(struct usb_device *udev)
+> 	/* Disable USB2 hardware LPM.
+> 	 * It will be re-enabled by the enumeration process.
+> 	 */
+> -	if (udev->usb2_hw_lpm_enabled == 1)
+> -		usb_set_usb2_hardware_lpm(udev, 0);
+> +	usb_disable_usb2_hardware_lpm(udev);
+> 
+> 	/* Disable LPM while we reset the device and reinstall the alt settings.
+> 	 * Device-initiated LPM, and system exit latency settings are cleared
+> @@ -5742,7 +5738,7 @@ static int usb_reset_and_verify_device(struct usb_device *udev)
+> 
+> done:
+> 	/* Now that the alt settings are re-installed, enable LTM and LPM. */
+> -	usb_set_usb2_hardware_lpm(udev, 1);
+> +	usb_enable_usb2_hardware_lpm(udev);
+> 	usb_unlocked_enable_lpm(udev);
+> 	usb_enable_ltm(udev);
+> 	usb_release_bos_descriptor(udev);
+> diff --git a/drivers/usb/core/message.c b/drivers/usb/core/message.c
+> index bfa5eda0cc26..4f33eb632a88 100644
+> --- a/drivers/usb/core/message.c
+> +++ b/drivers/usb/core/message.c
+> @@ -1243,8 +1243,7 @@ void usb_disable_device(struct usb_device *dev, int skip_ep0)
+> 			dev->actconfig->interface[i] = NULL;
+> 		}
+> 
+> -		if (dev->usb2_hw_lpm_enabled == 1)
+> -			usb_set_usb2_hardware_lpm(dev, 0);
+> +		usb_disable_usb2_hardware_lpm(dev);
+> 		usb_unlocked_disable_lpm(dev);
+> 		usb_disable_ltm(dev);
+> 
+> diff --git a/drivers/usb/core/sysfs.c b/drivers/usb/core/sysfs.c
+> index ea18284dfa9a..7e88fdfe3cf5 100644
+> --- a/drivers/usb/core/sysfs.c
+> +++ b/drivers/usb/core/sysfs.c
+> @@ -528,7 +528,10 @@ static ssize_t usb2_hardware_lpm_store(struct device *dev,
+> 
+> 	if (!ret) {
+> 		udev->usb2_hw_lpm_allowed = value;
+> -		ret = usb_set_usb2_hardware_lpm(udev, value);
+> +		if (value)
+> +			ret = usb_enable_usb2_hardware_lpm(udev);
+> +		else
+> +			ret = usb_disable_usb2_hardware_lpm(udev);
+> 	}
+> 
+> 	usb_unlock_device(udev);
+> diff --git a/drivers/usb/core/usb.h b/drivers/usb/core/usb.h
+> index 546a2219454b..d95a5358f73d 100644
+> --- a/drivers/usb/core/usb.h
+> +++ b/drivers/usb/core/usb.h
+> @@ -92,7 +92,8 @@ extern int usb_remote_wakeup(struct usb_device *dev);
+> extern int usb_runtime_suspend(struct device *dev);
+> extern int usb_runtime_resume(struct device *dev);
+> extern int usb_runtime_idle(struct device *dev);
+> -extern int usb_set_usb2_hardware_lpm(struct usb_device *udev, int enable);
+> +extern int usb_enable_usb2_hardware_lpm(struct usb_device *udev);
+> +extern int usb_disable_usb2_hardware_lpm(struct usb_device *udev);
+> 
+> #else
+> 
+> @@ -112,7 +113,12 @@ static inline int usb_autoresume_device(struct usb_device *udev)
+> 	return 0;
+> }
+> 
+> -static inline int usb_set_usb2_hardware_lpm(struct usb_device *udev, int enable)
+> +static inline int usb_enable_usb2_hardware_lpm(struct usb_device *udev)
+> +{
+> +	return 0;
+> +}
+> +
+> +static inline int usb_disable_usb2_hardware_lpm(struct usb_device *udev)
+> {
+> 	return 0;
+> }
+> -- 
+> 2.17.1
 > 
 
