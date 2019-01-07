@@ -2,129 +2,116 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B573C43444
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 22:57:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EE18C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 22:59:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 600202087F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 22:57:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6EF012087F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 22:59:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727160AbfAGW5W (ORCPT
+        id S1727076AbfAGW7f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 17:57:22 -0500
-Received: from mga14.intel.com ([192.55.52.115]:56705 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726668AbfAGW5W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 17:57:22 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jan 2019 14:57:21 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,451,1539673200"; 
-   d="scan'208";a="114916979"
-Received: from jprestwo.jf.intel.com ([10.54.74.49])
-  by fmsmga008.fm.intel.com with ESMTP; 07 Jan 2019 14:57:21 -0800
-Message-ID: <e0edb0e102ad2ba386a47e97b4e9930fdce71728.camel@linux.intel.com>
-Subject: Re: [PATCH] PCI: quirks: add vendor ID for AR9462 card
-From:   James Prestwood <james.prestwood@linux.intel.com>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     linux-pci@vger.kernel.org,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Bharat Bhushan <bharat.bhushan@nxp.com>,
-        linux-kernel@vger.kernel.org
-Date:   Mon, 07 Jan 2019 15:02:11 -0800
-In-Reply-To: <20190107220811.GA165042@google.com>
-References: <20190107213248.3034-1-james.prestwood@linux.intel.com>
-         <20190107220811.GA165042@google.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Mon, 7 Jan 2019 17:59:35 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:51951 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726667AbfAGW7f (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 17:59:35 -0500
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1ggdrk-0001uu-Re; Mon, 07 Jan 2019 22:59:28 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] i40e: clean up several indentation issues
+Date:   Mon,  7 Jan 2019 22:59:28 +0000
+Message-Id: <20190107225928.12855-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.19.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-01-07 at 16:08 -0600, Bjorn Helgaas wrote:
-> [+cc Alex, Bharat, LKML]
-> 
-> Hi James,
-> 
-> Thanks for finding this issue and for the patch.
-> 
-> Is there any chance you have a PCIe analyzer and could investigate
-> what's going on at that level?  The bus reset should be fairly
-> similar
-> to what happens on a cold boot, and obviously *that* works, so I
-> wonder if we can figure out what the difference here is.
+From: Colin Ian King <colin.king@canonical.com>
 
-I don't have a PCIe analyzer (unless thats just a piece of software I
-could download). Maybe I should have included a cover letter about what
-exactly is happening in my testing:
+There are several statements that have incorrect levels of indentation,
+fix these.
 
-I am using PCI passthough with various wireless hardware, all of which
-worked fine except this Ath9k card. If I tried to pass through this
-card my host machine would completely lock up/freeze when starting the
-VM, and I would have to hard reboot. I asked on the linux-wireless
-mailing list (since it seemed to be specific to the Ath9k card) and it
-was suggested to add that line to quirks.c, which did resolve the
-issue.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/intel/i40e/i40e_ethtool.c     | 8 ++++----
+ drivers/net/ethernet/intel/i40e/i40e_main.c        | 6 +++---
+ drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c | 4 ++--
+ 3 files changed, 9 insertions(+), 9 deletions(-)
 
-Beyond that, its really all I know. I am not at all knowledgeable about
-how PCI actually works :) (or really what this patch is even doing).
-Since it was so simple and fixed my issue I figured I should try and
-upstream it.
-
-I wish I could be of more help hardware wise. If there is anything
-software wise I could run to get more info I can do that.
-
-Thanks,
-James
-> 
-> If this is actually broken somehow in the hardware, can you dig up a
-> hardware erratum and include a URL here?
-> 
-> If there's any chance we could fix or work around this in the kernel,
-> I'd rather do that than extend this quirk to more devices.
-> 
-> FWIW, here's a similar report, which hasn't been resolved yet:
-> 
-https://lore.kernel.org/linux-pci/20181127083454.26560-1-Bharat.Bhushan@nxp.com
-> 
-> On Mon, Jan 07, 2019 at 01:32:48PM -0800, James Prestwood wrote:
-> > This card has similar issues with bus reset as the others present
-> > in
-> > this list.
-> > 
-> > Signed-off-by: James Prestwood <james.prestwood@linux.intel.com>
-> > ---
-> >  drivers/pci/quirks.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-> > index ef7143a274e0..d9d4a95b0309 100644
-> > --- a/drivers/pci/quirks.c
-> > +++ b/drivers/pci/quirks.c
-> > @@ -3379,6 +3379,7 @@
-> > DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_ATHEROS, 0x0030,
-> > quirk_no_bus_reset);
-> >  DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_ATHEROS, 0x0032,
-> > quirk_no_bus_reset);
-> >  DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_ATHEROS, 0x003c,
-> > quirk_no_bus_reset);
-> >  DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_ATHEROS, 0x0033,
-> > quirk_no_bus_reset);
-> > +DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_ATHEROS, 0x0034,
-> > quirk_no_bus_reset);
-> >  
-> >  /*
-> >   * Root port on some Cavium CN8xxx chips do not successfully
-> > complete a bus
-> > -- 
-> > 2.17.1
-> > 
+diff --git a/drivers/net/ethernet/intel/i40e/i40e_ethtool.c b/drivers/net/ethernet/intel/i40e/i40e_ethtool.c
+index a6bc7847346b..fe84f054f0c1 100644
+--- a/drivers/net/ethernet/intel/i40e/i40e_ethtool.c
++++ b/drivers/net/ethernet/intel/i40e/i40e_ethtool.c
+@@ -2440,10 +2440,10 @@ static int i40e_set_phys_id(struct net_device *netdev,
+ 	default:
+ 		break;
+ 	}
+-		if (ret)
+-			return -ENOENT;
+-		else
+-			return 0;
++	if (ret)
++		return -ENOENT;
++	else
++		return 0;
+ }
+ 
+ /* NOTE: i40e hardware uses a conversion factor of 2 for Interrupt
+diff --git a/drivers/net/ethernet/intel/i40e/i40e_main.c b/drivers/net/ethernet/intel/i40e/i40e_main.c
+index 4d40878e395a..76dac65bf0ca 100644
+--- a/drivers/net/ethernet/intel/i40e/i40e_main.c
++++ b/drivers/net/ethernet/intel/i40e/i40e_main.c
+@@ -3610,7 +3610,7 @@ static void i40e_configure_msi_and_legacy(struct i40e_vsi *vsi)
+ 		      (I40E_QUEUE_TYPE_TX
+ 		       << I40E_QINT_TQCTL_NEXTQ_TYPE_SHIFT);
+ 
+-	       wr32(hw, I40E_QINT_TQCTL(nextqp), val);
++		wr32(hw, I40E_QINT_TQCTL(nextqp), val);
+ 	}
+ 
+ 	val = I40E_QINT_TQCTL_CAUSE_ENA_MASK		      |
+@@ -8131,8 +8131,8 @@ static int i40e_handle_lldp_event(struct i40e_pf *pf,
+ 		i40e_service_event_schedule(pf);
+ 	} else {
+ 		i40e_pf_unquiesce_all_vsi(pf);
+-	set_bit(__I40E_CLIENT_SERVICE_REQUESTED, pf->state);
+-	set_bit(__I40E_CLIENT_L2_CHANGE, pf->state);
++		set_bit(__I40E_CLIENT_SERVICE_REQUESTED, pf->state);
++		set_bit(__I40E_CLIENT_L2_CHANGE, pf->state);
+ 	}
+ 
+ exit:
+diff --git a/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c b/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
+index 2ac23ebfbf31..46054634e68c 100644
+--- a/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
++++ b/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
+@@ -3384,8 +3384,8 @@ static int i40e_vc_add_cloud_filter(struct i40e_vf *vf, u8 *msg)
+ 		dev_info(&pf->pdev->dev,
+ 			 "VF %d: Invalid input/s, can't apply cloud filter\n",
+ 			 vf->vf_id);
+-			aq_ret = I40E_ERR_PARAM;
+-			goto err;
++		aq_ret = I40E_ERR_PARAM;
++		goto err;
+ 	}
+ 
+ 	cfilter = kzalloc(sizeof(*cfilter), GFP_KERNEL);
+-- 
+2.19.1
 
