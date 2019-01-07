@@ -4,48 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26A00C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:45:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D936FC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:45:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2F5D218A3
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:45:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA782218A3
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:45:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546865109;
-	bh=afIvtUEiXWVkaAXkV1IyZIHHwOSPtTGp3PK/kfaY9FA=;
+	s=default; t=1546865113;
+	bh=bDVUMK7x89sS0+jIr4/iClA/CFfGHb1EfOjtwGAH9x0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ekVfcLXTg2UqD7RiSI2ai5GNcxHAtBR3wTVgynJM6E0PRbByY2m67SNUCKdeQwaYn
-	 /JvT78Ama1OUvaRmbo2NG8jm/gbeFeZDIUHPYnLsvalFeRFLDkRngh3HpSp7KEXKQ4
-	 byHz5AlCBQ9TJWhdP4OShz7UCO8G7q83nfMTZVms=
+	b=D8waYsOaf8NfARI4viPchdbnV/mebCav1NlTjzjBRUAxJZlDs+R4vfX77L/+/m9Ga
+	 mP50P85UcfvPyOppO3VbAvC311V/Zo2rmhnxAXWp3fbFqz8O8oMSF5jpn8SJ5mUSmw
+	 2WcnSyiDcstB8vrIlFw7zEFy1wnwqpgtuz4URuos=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728347AbfAGMpI (ORCPT
+        id S1728826AbfAGMpM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:45:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34038 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:45:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34178 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728214AbfAGMpD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:45:03 -0500
+        id S1728817AbfAGMpI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:45:08 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1FA10218A1;
-        Mon,  7 Jan 2019 12:45:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 971B5218A1;
+        Mon,  7 Jan 2019 12:45:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865102;
-        bh=afIvtUEiXWVkaAXkV1IyZIHHwOSPtTGp3PK/kfaY9FA=;
+        s=default; t=1546865108;
+        bh=bDVUMK7x89sS0+jIr4/iClA/CFfGHb1EfOjtwGAH9x0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Y+QkKkQNF3YlWliblz8FvdMAYzeul5mPHHHvC5LqgjRp5FXNK5/ct5vTqpB3qRoOV
-         W3rCeIJwdHaE7lyduaVjm2cdNKMP0eFPxwyEJpYxiOeoM+Bm+BhBJWU5xk5qnYI3OH
-         7+Z4vL9Q8f1F415l5WLIkYEdOLHX74Q4ryyEZrqk=
+        b=RUbjzIq4GFU7VcGeJMj7pqvtqGLL9ZR9f4MdyiXIZezGS8X13sx0e4k+zOloAjjqx
+         Y3rZjiBCWvbhfaR0IQ2OC28aLc+Afal1cB0y/FEDXB+OJXOdzdM25tlGEcn6TD/blv
+         zmvDpi11Vwr79XNpKZlQWmvgrkLCCPlI3kO54T/A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>
-Subject: [PATCH 4.20 136/145] KVM: arm/arm64: vgic: Cap SPIs to the VM-defined maximum
-Date:   Mon,  7 Jan 2019 13:32:53 +0100
-Message-Id: <20190107104455.007139255@linuxfoundation.org>
+        stable@vger.kernel.org, Julien Thierry <julien.thierry@arm.com>,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Subject: [PATCH 4.20 138/145] KVM: arm/arm64: Fix VMID alloc race by reverting to lock-less
+Date:   Mon,  7 Jan 2019 13:32:55 +0100
+Message-Id: <20190107104455.269088229@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104437.308206189@linuxfoundation.org>
 References: <20190107104437.308206189@linuxfoundation.org>
@@ -64,33 +66,120 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Marc Zyngier <marc.zyngier@arm.com>
+From: Christoffer Dall <christoffer.dall@arm.com>
 
-commit bea2ef803ade3359026d5d357348842bca9edcf1 upstream.
+commit fb544d1ca65a89f7a3895f7531221ceeed74ada7 upstream.
 
-SPIs should be checked against the VMs specific configuration, and
-not the architectural maximum.
+We recently addressed a VMID generation race by introducing a read/write
+lock around accesses and updates to the vmid generation values.
+
+However, kvm_arch_vcpu_ioctl_run() also calls need_new_vmid_gen() but
+does so without taking the read lock.
+
+As far as I can tell, this can lead to the same kind of race:
+
+  VM 0, VCPU 0			VM 0, VCPU 1
+  ------------			------------
+  update_vttbr (vmid 254)
+  				update_vttbr (vmid 1) // roll over
+				read_lock(kvm_vmid_lock);
+				force_vm_exit()
+  local_irq_disable
+  need_new_vmid_gen == false //because vmid gen matches
+
+  enter_guest (vmid 254)
+  				kvm_arch.vttbr = <PGD>:<VMID 1>
+				read_unlock(kvm_vmid_lock);
+
+  				enter_guest (vmid 1)
+
+Which results in running two VCPUs in the same VM with different VMIDs
+and (even worse) other VCPUs from other VMs could now allocate clashing
+VMID 254 from the new generation as long as VCPU 0 is not exiting.
+
+Attempt to solve this by making sure vttbr is updated before another CPU
+can observe the updated VMID generation.
 
 Cc: stable@vger.kernel.org
+Fixes: f0cf47d939d0 "KVM: arm/arm64: Close VMID generation race"
+Reviewed-by: Julien Thierry <julien.thierry@arm.com>
+Signed-off-by: Christoffer Dall <christoffer.dall@arm.com>
 Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- virt/kvm/arm/vgic/vgic.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ virt/kvm/arm/arm.c |   23 +++++++++++------------
+ 1 file changed, 11 insertions(+), 12 deletions(-)
 
---- a/virt/kvm/arm/vgic/vgic.c
-+++ b/virt/kvm/arm/vgic/vgic.c
-@@ -108,8 +108,8 @@ struct vgic_irq *vgic_get_irq(struct kvm
+--- a/virt/kvm/arm/arm.c
++++ b/virt/kvm/arm/arm.c
+@@ -66,7 +66,7 @@ static DEFINE_PER_CPU(struct kvm_vcpu *,
+ static atomic64_t kvm_vmid_gen = ATOMIC64_INIT(1);
+ static u32 kvm_next_vmid;
+ static unsigned int kvm_vmid_bits __read_mostly;
+-static DEFINE_RWLOCK(kvm_vmid_lock);
++static DEFINE_SPINLOCK(kvm_vmid_lock);
+ 
+ static bool vgic_present;
+ 
+@@ -484,7 +484,9 @@ void force_vm_exit(const cpumask_t *mask
+  */
+ static bool need_new_vmid_gen(struct kvm *kvm)
+ {
+-	return unlikely(kvm->arch.vmid_gen != atomic64_read(&kvm_vmid_gen));
++	u64 current_vmid_gen = atomic64_read(&kvm_vmid_gen);
++	smp_rmb(); /* Orders read of kvm_vmid_gen and kvm->arch.vmid */
++	return unlikely(READ_ONCE(kvm->arch.vmid_gen) != current_vmid_gen);
+ }
+ 
+ /**
+@@ -499,16 +501,11 @@ static void update_vttbr(struct kvm *kvm
+ {
+ 	phys_addr_t pgd_phys;
+ 	u64 vmid, cnp = kvm_cpu_has_cnp() ? VTTBR_CNP_BIT : 0;
+-	bool new_gen;
+ 
+-	read_lock(&kvm_vmid_lock);
+-	new_gen = need_new_vmid_gen(kvm);
+-	read_unlock(&kvm_vmid_lock);
+-
+-	if (!new_gen)
++	if (!need_new_vmid_gen(kvm))
+ 		return;
+ 
+-	write_lock(&kvm_vmid_lock);
++	spin_lock(&kvm_vmid_lock);
+ 
+ 	/*
+ 	 * We need to re-check the vmid_gen here to ensure that if another vcpu
+@@ -516,7 +513,7 @@ static void update_vttbr(struct kvm *kvm
+ 	 * use the same vmid.
+ 	 */
+ 	if (!need_new_vmid_gen(kvm)) {
+-		write_unlock(&kvm_vmid_lock);
++		spin_unlock(&kvm_vmid_lock);
+ 		return;
  	}
  
- 	/* SPIs */
--	if (intid <= VGIC_MAX_SPI) {
--		intid = array_index_nospec(intid, VGIC_MAX_SPI);
-+	if (intid < (kvm->arch.vgic.nr_spis + VGIC_NR_PRIVATE_IRQS)) {
-+		intid = array_index_nospec(intid, kvm->arch.vgic.nr_spis + VGIC_NR_PRIVATE_IRQS);
- 		return &kvm->arch.vgic.spis[intid - VGIC_NR_PRIVATE_IRQS];
+@@ -539,7 +536,6 @@ static void update_vttbr(struct kvm *kvm
+ 		kvm_call_hyp(__kvm_flush_vm_context);
  	}
  
+-	kvm->arch.vmid_gen = atomic64_read(&kvm_vmid_gen);
+ 	kvm->arch.vmid = kvm_next_vmid;
+ 	kvm_next_vmid++;
+ 	kvm_next_vmid &= (1 << kvm_vmid_bits) - 1;
+@@ -550,7 +546,10 @@ static void update_vttbr(struct kvm *kvm
+ 	vmid = ((u64)(kvm->arch.vmid) << VTTBR_VMID_SHIFT) & VTTBR_VMID_MASK(kvm_vmid_bits);
+ 	kvm->arch.vttbr = kvm_phys_to_vttbr(pgd_phys) | vmid | cnp;
+ 
+-	write_unlock(&kvm_vmid_lock);
++	smp_wmb();
++	WRITE_ONCE(kvm->arch.vmid_gen, atomic64_read(&kvm_vmid_gen));
++
++	spin_unlock(&kvm_vmid_lock);
+ }
+ 
+ static int kvm_vcpu_first_run_init(struct kvm_vcpu *vcpu)
 
 
