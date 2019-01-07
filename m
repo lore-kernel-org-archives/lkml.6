@@ -4,50 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 006BCC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:50:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F37F2C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:50:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B52E520651
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:50:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B9C42206BB
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:50:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546865441;
-	bh=27zeDSdaXrk7UO+lisfSV3iaMbT5C7/rPJqn2m2KQKA=;
+	s=default; t=1546865451;
+	bh=fkzWj3BczSowI6pm6h5MABORaLYR5cdynt6UQlBJrOM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ITrWHpRHy8dsGuN56oxJBLx5A/fDvSv09QoCpo+HI07GJOTgleAeqbg8dpitoAC6P
-	 1d0LLj4ZmbuE8rS25URIopnU/gMor/Xa0rFcPpnaGt6ufvyw746vruJ+uZ/2Edo5ul
-	 ZaIY56jhxWJGbIXYglnSgBZmT8a4gdKbAEHRVKLs=
+	b=MH/iXPoVEjmXHUQpitLYuw4h0IGkW/33HrDab4h4WWhnbFiT1oaX4QISjfSp0jhTV
+	 +8nytCE1+ZtALTrT4fDPu09n6lLYzI9XUtof3EtQIBhD9T/Om4YlXTroYY0hlbwT6C
+	 Z+VwclV5tAiGHcPaD6mudd2Hput3qKY7JOuW0zoA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729478AbfAGMtW (ORCPT
+        id S1729164AbfAGMuv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:49:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40098 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:50:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41118 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729403AbfAGMtN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:49:13 -0500
+        id S1727534AbfAGMut (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:50:49 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0EC13206BB;
-        Mon,  7 Jan 2019 12:49:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8D28420651;
+        Mon,  7 Jan 2019 12:50:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865352;
-        bh=27zeDSdaXrk7UO+lisfSV3iaMbT5C7/rPJqn2m2KQKA=;
+        s=default; t=1546865449;
+        bh=fkzWj3BczSowI6pm6h5MABORaLYR5cdynt6UQlBJrOM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1Cdzm2shvhwPJZlWOHJF1KSzIEeHhX5I5Vt62sYQ0S7xUJvtgz5Y8tT8sbD3M3bU8
-         FprRAHUQk9zbx/Z8QVEy0vg/SZrYhvTK/2zdXuV9KLve3z2zkCj64w4nRxcsuG9df5
-         IPFy87ZSym0OComfawgAKg4/iM24rQEHZkfIa9zA=
+        b=ca8d0QT07OSKWGahhZXVaERdGWS06/lRawg4v3CjHl9jD50NFJjewebCMmecwPv1H
+         XoxAwWtJYQVqzAkYArEoXnp+GIRPplpQk3pmetteCCExXgROBoitxSr1YlHkAc8/30
+         thUmL4MS30wo59GBIGCSFpijMEo/ZwMtgDC5Tlnc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        =?UTF-8?q?J=C3=B6rgen=20Storvist?= <jorgen.storvist@gmail.com>,
-        =?UTF-8?q?Bj=C3=B8rn=20Mork?= <bjorn@mork.no>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 028/170] qmi_wwan: Added support for Telit LN940 series
-Date:   Mon,  7 Jan 2019 13:30:55 +0100
-Message-Id: <20190107104456.382670211@linuxfoundation.org>
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.19 062/170] ALSA: pcm: Fix potential Spectre v1 vulnerability
+Date:   Mon,  7 Jan 2019 13:31:29 +0100
+Message-Id: <20190107104500.362790119@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104452.953560660@linuxfoundation.org>
 References: <20190107104452.953560660@linuxfoundation.org>
@@ -66,30 +65,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jörgen Storvist <jorgen.storvist@gmail.com>
+From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-[ Upstream commit 1986af16e8ed355822600c24b3d2f0be46b573df ]
+commit 94ffb030b6d31ec840bb811be455dd2e26a4f43e upstream.
 
-Added support for the Telit LN940 series cellular modules QMI interface.
-QMI_QUIRK_SET_DTR quirk requied for Qualcomm MDM9x40 chipset.
+stream is indirectly controlled by user-space, hence leading to
+a potential exploitation of the Spectre variant 1 vulnerability.
 
-Signed-off-by: Jörgen Storvist <jorgen.storvist@gmail.com>
-Acked-by: Bjørn Mork <bjorn@mork.no>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+This issue was detected with the help of Smatch:
+
+sound/core/pcm.c:140 snd_pcm_control_ioctl() warn: potential spectre issue 'pcm->streams' [r] (local cap)
+
+Fix this by sanitizing stream before using it to index pcm->streams
+
+Notice that given that speculation windows are large, the policy is
+to kill the speculation on the first load and not worry if it can be
+completed with a dependent load/store [1].
+
+[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/usb/qmi_wwan.c |    1 +
- 1 file changed, 1 insertion(+)
 
---- a/drivers/net/usb/qmi_wwan.c
-+++ b/drivers/net/usb/qmi_wwan.c
-@@ -1230,6 +1230,7 @@ static const struct usb_device_id produc
- 	{QMI_FIXED_INTF(0x1bc7, 0x1101, 3)},	/* Telit ME910 dual modem */
- 	{QMI_FIXED_INTF(0x1bc7, 0x1200, 5)},	/* Telit LE920 */
- 	{QMI_QUIRK_SET_DTR(0x1bc7, 0x1201, 2)},	/* Telit LE920, LE920A4 */
-+	{QMI_QUIRK_SET_DTR(0x1bc7, 0x1900, 1)},	/* Telit LN940 series */
- 	{QMI_FIXED_INTF(0x1c9e, 0x9801, 3)},	/* Telewell TW-3G HSPA+ */
- 	{QMI_FIXED_INTF(0x1c9e, 0x9803, 4)},	/* Telewell TW-3G HSPA+ */
- 	{QMI_FIXED_INTF(0x1c9e, 0x9b01, 3)},	/* XS Stick W100-2 from 4G Systems */
+---
+ sound/core/pcm.c |    2 ++
+ 1 file changed, 2 insertions(+)
+
+--- a/sound/core/pcm.c
++++ b/sound/core/pcm.c
+@@ -25,6 +25,7 @@
+ #include <linux/time.h>
+ #include <linux/mutex.h>
+ #include <linux/device.h>
++#include <linux/nospec.h>
+ #include <sound/core.h>
+ #include <sound/minors.h>
+ #include <sound/pcm.h>
+@@ -129,6 +130,7 @@ static int snd_pcm_control_ioctl(struct
+ 				return -EFAULT;
+ 			if (stream < 0 || stream > 1)
+ 				return -EINVAL;
++			stream = array_index_nospec(stream, 2);
+ 			if (get_user(subdevice, &info->subdevice))
+ 				return -EFAULT;
+ 			mutex_lock(&register_mutex);
 
 
