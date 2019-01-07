@@ -2,97 +2,309 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 603EFC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 07:24:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7A4EC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 07:25:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DC8420859
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 07:24:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 42EAB20859
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 07:25:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ozlabs-ru.20150623.gappssmtp.com header.i=@ozlabs-ru.20150623.gappssmtp.com header.b="WuERswJq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726500AbfAGHYi (ORCPT
+        id S1726520AbfAGHZU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 02:24:38 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:60887 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726257AbfAGHYi (ORCPT
+        Mon, 7 Jan 2019 02:25:20 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:46366 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725306AbfAGHZT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 02:24:38 -0500
-Received: from 61-220-137-37.hinet-ip.hinet.net ([61.220.137.37] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <kai.heng.feng@canonical.com>)
-        id 1ggPH0-0002jb-0j; Mon, 07 Jan 2019 07:24:34 +0000
-From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
-To:     jikos@kernel.org, benjamin.tissoires@redhat.com
-Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>
-Subject: [PATCH v3] HID: i2c-hid: Ignore input report if there's no data present on Elan touchpanels
-Date:   Mon,  7 Jan 2019 15:24:29 +0800
-Message-Id: <20190107072429.23828-1-kai.heng.feng@canonical.com>
-X-Mailer: git-send-email 2.17.1
+        Mon, 7 Jan 2019 02:25:19 -0500
+Received: by mail-pl1-f196.google.com with SMTP id t13so20447395ply.13
+        for <linux-kernel@vger.kernel.org>; Sun, 06 Jan 2019 23:25:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ozlabs-ru.20150623.gappssmtp.com; s=20150623;
+        h=subject:from:to:cc:references:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=mTPp8lipitNNUCQvCSWRv2kgVbwkhzQZo0qmaURAoTs=;
+        b=WuERswJqq8aD+jrT9eExxqDo0Ln4Wm8vHbRGEygu+1dXlVXll1jsFXpvEQUxsb644P
+         BPTIBZZYTMjV3zbsfIs695o7kQ0r1YCuRgwmfcNo7Ay0EivrBvLAkQabkxdVaCo8JdRB
+         nrc5t5wcbGJV24wUE+mu/diR5f+xDxVN24eseiTr6GfkM5XJ1b+Q7LjudPVH8VN3c88j
+         yQwtXCxaTVKle4tVB/CypF2dfpaM3cp5uaamkddWT8nziWMjidA0veC2yX+2zOWWCOp2
+         dBW0xPUfxxF5YslOvY+eXenKte7awpzZXv93pfHKO1tX8L2xQiIZE+uAFZS3MjO3er2A
+         3LKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:references:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=mTPp8lipitNNUCQvCSWRv2kgVbwkhzQZo0qmaURAoTs=;
+        b=KK/SVRCHLH35ttT6uUaY+j3Kkbszq5m4c1GGuPTZ97hE80rdYHVSE+so7qPZKva7Rc
+         OIbCS8wjP4+EFh0cY5sfBioSu+L75zCh/XjNr6xgmdyCmIBsLgIUU6Gk+2fMmeqPUKMU
+         sjTz/SoHxYion56RTdTNS1kN7sAQHIRxQZVsfkQmMIIADSX0Y3mxGiP1JTluVEp11NPl
+         UyuE9g2BFWv+/ddFnxo/b7DPem6N0boZGamfr0qMTHV/baZAT8nAcB23jqxczTOkn7TC
+         lIJz+AFzMaofGMhdopP7Tnu2jprW1Bh6xJjQfGOvHKxO8jbfDd+GsnbOdXyW+HdXsxf2
+         OqkQ==
+X-Gm-Message-State: AJcUukfyP6ETYOYjERLsHXCy+wgwBkQxy9vXoGXC7PMsVIX70AUto9Qq
+        lK5UTgZEoyvZ4PAB2BfzRltaNA==
+X-Google-Smtp-Source: ALg8bN5HeArgwDf8zYp8idXc8wKuusVjt0n3BBH0l6nKBf9g4FApFVJZtovplWvr3luKwn7JV0ginw==
+X-Received: by 2002:a17:902:2c83:: with SMTP id n3mr60882703plb.104.1546845918832;
+        Sun, 06 Jan 2019 23:25:18 -0800 (PST)
+Received: from [10.61.2.175] ([122.99.82.10])
+        by smtp.gmail.com with ESMTPSA id h82sm111714133pfa.105.2019.01.06.23.25.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 06 Jan 2019 23:25:18 -0800 (PST)
+Subject: Re: compilation failure with CONFIG_VFIO_PCI_NVLINK2
+From:   Alexey Kardashevskiy <aik@ozlabs.ru>
+To:     Laura Abbott <labbott@redhat.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     kvm@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Gibson <david@gibson.dropbear.id.au>
+References: <28d0ba1d-b116-178a-d6d0-8a8b569c7c02@redhat.com>
+ <e74e0922-af2e-dac4-2260-8589afa2426b@ozlabs.ru>
+ <2e4484ae-06b7-0de3-db8e-3a6989fac1f7@redhat.com>
+ <91da4363-fed8-a09e-b657-6c10f2b6c33a@ozlabs.ru>
+Openpgp: preference=signencrypt
+Autocrypt: addr=aik@ozlabs.ru; keydata=
+ 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
+Message-ID: <f14d4753-a527-01cb-d46f-6a185f5beaa6@ozlabs.ru>
+Date:   Mon, 7 Jan 2019 18:25:13 +1100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <91da4363-fed8-a09e-b657-6c10f2b6c33a@ozlabs.ru>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-While using Elan touchpads, the message floods:
-[  136.138487] i2c_hid i2c-DELL08D6:00: i2c_hid_get_input: incomplete report (14/65535)
 
-Though the message flood is annoying, the device it self works without
-any issue. I suspect that the device in question takes too much time to
-pull the IRQ back to high after I2C host has done reading its data.
 
-Since the host receives all useful data, let's ignore the input report
-when there's no data.
+On 07/01/2019 13:58, Alexey Kardashevskiy wrote:
+> 
+> 
+> On 04/01/2019 02:08, Laura Abbott wrote:
+>> On 1/3/19 5:49 AM, Alexey Kardashevskiy wrote:
+>>>
+>>>
+>>> On 03/01/2019 03:37, Laura Abbott wrote:
+>>>> Hi,
+>>>>
+>>>> I got a compilation failure when building with CONFIG_VFIO_PCI_NVLINK2
+>>>> enabled:
+>>>>
+>>>> + make -s 'HOSTCFLAGS=-O2 -g -pipe -Wall -Werror=format-security
+>>>> -Wp,-D_FORTIFY_SOURCE=2 -Wp,-D_GLIBCXX_ASSERTIONS -fexceptions
+>>>> -fstack-protector-strong -grecord-gcc-switches
+>>>> -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1
+>>>> -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1 -m64 -mcpu=power8
+>>>> -mtune=power8 -fasynchronous-unwind-tables -fstack-clash-protection'
+>>>> 'HOSTLDFLAGS=-Wl,-z,relro -Wl,--as-needed  -Wl,-z,now
+>>>> -specs=/usr/lib/rpm/redhat/redhat-hardened-ld -Wl,--build-id=uuid'
+>>>> ARCH=powerpc -j4 modules
+>>>> BUILDSTDERR: In file included from drivers/vfio/pci/trace.h:102,
+>>>> BUILDSTDERR:                  from
+>>>> drivers/vfio/pci/vfio_pci_nvlink2.c:29:
+>>>> BUILDSTDERR: ./include/trace/define_trace.h:89:42: fatal error:
+>>>> ./trace.h: No such file or directory
+>>>> BUILDSTDERR:  #include TRACE_INCLUDE(TRACE_INCLUDE_FILE)
+>>>> BUILDSTDERR:                                           ^
+>>>> BUILDSTDERR: compilation terminated.
+>>>> BUILDSTDERR: make[3]: *** [scripts/Makefile.build:277:
+>>>> drivers/vfio/pci/vfio_pci_nvlink2.o] Error 1
+>>>> BUILDSTDERR: make[2]: *** [scripts/Makefile.build:492: drivers/vfio/pci]
+>>>> Error 2
+>>>> BUILDSTDERR: make[1]: *** [scripts/Makefile.build:492: drivers/vfio]
+>>>> Error 2
+>>>> BUILDSTDERR: make: *** [Makefile:1053: drivers] Error 2
+>>>> BUILDSTDERR: make: *** Waiting for unfinished jobs....
+>>>>
+>>>> I don't know enough about ftrace building to make a guess here.
+>>>> Config is attacked.
+>>>
+>>> What gcc is this and what is the exact sha1 of the tree? gcc8 prints
+>>> other error with your config in drivers/scsi/esas2r/esas2r_ioctl.c but
+>>> not this one so I am curious.
+>>>
+>>
+>> gcc (GCC) 8.2.1 20181215 (Red Hat 8.2.1-6)
+>>
+>> sha 8e143b90e4d45cca3dc53760d3cfab988bc74571
+> 
+> 
+> Your config and this sha1 still make "make oldconfig" ask few questions
+> and then it compiles just fine, are you sure about the config?
+> 
+> These are questions on "make oldconfig":
+> 
+> Kernel Live Patching (LIVEPATCH) [N/y/?] (NEW)
+> Stack Protector buffer overflow detection (STACKPROTECTOR) [Y/n/?] (NEW)
+>   Strong Stack Protector (STACKPROTECTOR_STRONG) [Y/n/?] (NEW)
+>     Do NOT protect notrace function from kprobe events
+> (KPROBE_EVENTS_ON_NOTRACE) [N/y/?] (NEW)
 
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
----
-v3:
-Fix compiler error/warnings.
 
-v2:
-Use dev_warn_once() to warn the user about the situation.
+Ok, I figured it out. This is because you compile in tree while I
+compile out of tree (with O=builddir) and the difference is that in my
+case gcc gets these additional -I$(src) statements and in your case you
+need to add them manually:
 
- drivers/hid/i2c-hid/i2c-hid-core.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+yours V=1:
 
-diff --git a/drivers/hid/i2c-hid/i2c-hid-core.c b/drivers/hid/i2c-hid/i2c-hid-core.c
-index 8555ce7e737b..2f940c1de616 100644
---- a/drivers/hid/i2c-hid/i2c-hid-core.c
-+++ b/drivers/hid/i2c-hid/i2c-hid-core.c
-@@ -50,6 +50,7 @@
- #define I2C_HID_QUIRK_NO_IRQ_AFTER_RESET	BIT(1)
- #define I2C_HID_QUIRK_NO_RUNTIME_PM		BIT(2)
- #define I2C_HID_QUIRK_DELAY_AFTER_SLEEP		BIT(3)
-+#define I2C_HID_QUIRK_BOGUS_IRQ			BIT(4)
- 
- /* flags */
- #define I2C_HID_STARTED		0
-@@ -179,6 +180,8 @@ static const struct i2c_hid_quirks {
- 		I2C_HID_QUIRK_DELAY_AFTER_SLEEP },
- 	{ USB_VENDOR_ID_LG, I2C_DEVICE_ID_LG_8001,
- 		I2C_HID_QUIRK_NO_RUNTIME_PM },
-+	{ USB_VENDOR_ID_ELAN, HID_ANY_ID,
-+		 I2C_HID_QUIRK_BOGUS_IRQ },
- 	{ 0, 0 }
- };
- 
-@@ -503,6 +506,12 @@ static void i2c_hid_get_input(struct i2c_hid *ihid)
- 		return;
- 	}
- 
-+	if (ihid->quirks & I2C_HID_QUIRK_BOGUS_IRQ && ret_size == 0xffff) {
-+		dev_warn_once(&ihid->client->dev, "%s: IRQ triggered but "
-+			      "there's no data\n", __func__);
-+		return;
-+	}
-+
- 	if ((ret_size > size) || (ret_size < 2)) {
- 		dev_err(&ihid->client->dev, "%s: incomplete report (%d/%d)\n",
- 			__func__, size, ret_size);
+  gcc
+ -Wp,-MD,drivers/vfio/pci/.vfio_pci_nvlink2.o.d
+ -nostdinc
+ -isystem /usr/lib/gcc/powerpc64le-linux-gnu/7/include
+ -I./arch/powerpc/include
+ -I./arch/powerpc/include/generated
+ -I./include
+ -I./arch/powerpc/include/uapi
+ -I./arch/powerpc/include/generated/uapi
+ -I./include/uapi
+ -I./include/generated/uapi
+ -include ./include/linux/kconfig.h
+ -include ./include/linux/compiler_types.h
+ -D__KERNEL__
+...
+
+
+mine V=1 (has -I/home/aik/p/kernel/drivers/vfio/pci and
+-Idrivers/vfio/pci):
+
+  /opt/cross/gcc-powerpc64le-linux-8.2.1-nolibc/bin/powerpc64le-linux-gcc
+ -Wp,-MD,drivers/vfio/pci/.vfio_pci_nvlink2.o.d
+ -nostdinc
+ -isystem
+/opt/cross/gcc-powerpc64le-linux-8.2.1-nolibc/bin/../lib/gcc/powerpc64le-linux/8.2.1/include
+ -I/home/aik/p/kernel/arch/powerpc/include
+ -I./arch/powerpc/include/generated
+ -I/home/aik/p/kernel/include
+ -I./include
+ -I/home/aik/p/kernel/arch/powerpc/include/uapi
+ -I./arch/powerpc/include/generated/uapi
+ -I/home/aik/p/kernel/include/uapi
+ -I./include/generated/uapi
+ -include /home/aik/p/kernel/include/linux/kconfig.h
+ -include /home/aik/p/kernel/include/linux/compiler_types.h
+ -I/home/aik/p/kernel/drivers/vfio/pci
+ -Idrivers/vfio/pci
+ -D__KERNEL__
+...
+
+
+This is where it happens:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/scripts/Makefile.lib#n143
+
+
+I'd rather prefer to fix this in scripts/Makefile.lib#n143 than doing
+-I$(src) but this is what everybody does already and therefore I guess
+"[PATCH] vfio_pci: Add local source directory as include" from
+https://patchwork.kernel.org/patch/10748803/ is correct.
+
+
+> 
+> 
+> 
+>>>>
+>>>> Also, would it be possible to switch this option from def_bool to
+>>>> bool? I can't turn it off directly when it's def_bool.
+>>>
+>>> Why? Honestly I'd rather fix the compile error.
+>>>
+>>>
+>>
+>> It's not just about this error, there may be other situations where
+>> it would be good to have this turned off.
+> 
+> Oh well I think I misunderstood what "def_bool" actually does (it does
+> not make much sense without "if" conditions). I'll post a patch.
+
+I've had a quick discussion here, and the point is that the distros are
+going to enable this anyway and it is quite hard to think of a scenario
+when we want VFIO_PCI and POWERNV but not this NVLINK2 support. What
+scenario do you have in mind?
+
+
+
 -- 
-2.17.1
-
+Alexey
