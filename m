@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4E21C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:51:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7601C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:51:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B17DB206BB
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:51:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7946920651
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:51:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546865488;
-	bh=p0ZegkDv+VRKAzCilnZYgJn4YA3n+KNO+9LaDdi31k8=;
+	s=default; t=1546865492;
+	bh=2oWf+xew/4LA/jFW8uQrv3PuSMrJvh/kOoVgXa4Yhdk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=KP/9pTr2CbCO5EYisGegR4yNObTL3nCIu9TG/bDNOfsBet/0EPN8vKUeckHqguK6g
-	 UstyprlRnFMw1i+j+VexAqoXMXa9K/S4ZZJhfwBjoMEXyXwCiNEST2FxVwQ7Tn9gdG
-	 ST81nsAJZaKHX6oTcYfrImomg8FSffLZaPs5efC4=
+	b=gc3DUKzwccWkDLODjgSvQx4Gddcr8kIBCCI+uI+jwkeKSJPYiorlRCNG3iwo0ycLm
+	 UV933RxIIt2aB1BUELvZHdnnRa91F6UTs7BtGEi6lCRyfjy+/yYWnaArAnmzi3rTOW
+	 7zG8MWmUvH8EUicz43z3X8IJviVEnYRfXlNV6UDc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729384AbfAGMv1 (ORCPT
+        id S1729407AbfAGMvb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:51:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41436 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:51:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41526 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729370AbfAGMvY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:51:24 -0500
+        id S1729370AbfAGMv3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:51:29 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5B07920651;
-        Mon,  7 Jan 2019 12:51:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 12FCF20651;
+        Mon,  7 Jan 2019 12:51:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865484;
-        bh=p0ZegkDv+VRKAzCilnZYgJn4YA3n+KNO+9LaDdi31k8=;
+        s=default; t=1546865489;
+        bh=2oWf+xew/4LA/jFW8uQrv3PuSMrJvh/kOoVgXa4Yhdk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fWzBnmLfDAylCSteF63R3v04rZhtXYV1gTT3E3AU8w9FUCkunKGtroaBezlTqNifg
-         5Hp7VUUVveSgaqhXlYRMwh3DDajCyop1jPT4HRmr0jY8LSQ+jMyfR3E0+TyaI4TLrK
-         IJjPIoyuJfuvgAtu9+S/TBYxJjqXvRYTCugmBw30=
+        b=JeoDd48q4SZS/OzxqcU5zgFLUktt1ugPJYGWa7w+44p9jPkWkKAd/rwtYCmTFRZSF
+         7Gsg2TlOhnA8/Zc6L3emCv6Sm/VOUrHdCW0ChVFB6ZKitceKiqfasnr9JKoAaklm98
+         OcByizh9AVuTvGc/ZBO9XHYmqvZ1M3SongktcEZk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Malcolm Priestley <tvboxspy@gmail.com>,
-        Sean Young <sean@mess.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 4.19 083/170] media: dvb-usb-v2: Fix incorrect use of transfer_flags URB_FREE_BUFFER
-Date:   Mon,  7 Jan 2019 13:31:50 +0100
-Message-Id: <20190107104502.847505502@linuxfoundation.org>
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        Ajay Singh <ajay.kathat@microchip.com>
+Subject: [PATCH 4.19 084/170] staging: wilc1000: fix missing read_write setting when reading data
+Date:   Mon,  7 Jan 2019 13:31:51 +0100
+Message-Id: <20190107104502.942350207@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104452.953560660@linuxfoundation.org>
 References: <20190107104452.953560660@linuxfoundation.org>
@@ -66,56 +65,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Malcolm Priestley <tvboxspy@gmail.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-commit 255095fa7f62ff09b6f61393414535c59c6b4cb0 upstream.
+commit c58eef061dda7d843dcc0ad6fea7e597d4c377c0 upstream.
 
-commit 1a0c10ed7bb1 ("media: dvb-usb-v2: stop using coherent memory for
-URBs") incorrectly adds URB_FREE_BUFFER after every urb transfer.
+Currently the cmd.read_write setting is not initialized so it contains
+garbage from the stack.  Fix this by setting it to 0 to indicate a
+read is required.
 
-It cannot use this flag because it reconfigures the URBs accordingly
-to suit connected devices. In doing a call to usb_free_urb is made and
-invertedly frees the buffers.
+Detected by CoverityScan, CID#1357925 ("Uninitialized scalar variable")
 
-The stream buffer should remain constant while driver is up.
-
-Signed-off-by: Malcolm Priestley <tvboxspy@gmail.com>
-CC: stable@vger.kernel.org # v4.18+
-Signed-off-by: Sean Young <sean@mess.org>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Fixes: c5c77ba18ea6 ("staging: wilc1000: Add SDIO/SPI 802.11 driver")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Cc: stable <stable@vger.kernel.org>
+Acked-by: Ajay Singh <ajay.kathat@microchip.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/usb/dvb-usb-v2/usb_urb.c |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/staging/wilc1000/wilc_sdio.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/media/usb/dvb-usb-v2/usb_urb.c
-+++ b/drivers/media/usb/dvb-usb-v2/usb_urb.c
-@@ -155,7 +155,6 @@ static int usb_urb_alloc_bulk_urbs(struc
- 				stream->props.u.bulk.buffersize,
- 				usb_urb_complete, stream);
+--- a/drivers/staging/wilc1000/wilc_sdio.c
++++ b/drivers/staging/wilc1000/wilc_sdio.c
+@@ -831,6 +831,7 @@ static int sdio_read_int(struct wilc *wi
+ 	if (!g_sdio.irq_gpio) {
+ 		int i;
  
--		stream->urb_list[i]->transfer_flags = URB_FREE_BUFFER;
- 		stream->urbs_initialized++;
- 	}
- 	return 0;
-@@ -186,7 +185,7 @@ static int usb_urb_alloc_isoc_urbs(struc
- 		urb->complete = usb_urb_complete;
- 		urb->pipe = usb_rcvisocpipe(stream->udev,
- 				stream->props.endpoint);
--		urb->transfer_flags = URB_ISO_ASAP | URB_FREE_BUFFER;
-+		urb->transfer_flags = URB_ISO_ASAP;
- 		urb->interval = stream->props.u.isoc.interval;
- 		urb->number_of_packets = stream->props.u.isoc.framesperurb;
- 		urb->transfer_buffer_length = stream->props.u.isoc.framesize *
-@@ -210,7 +209,7 @@ static int usb_free_stream_buffers(struc
- 	if (stream->state & USB_STATE_URB_BUF) {
- 		while (stream->buf_num) {
- 			stream->buf_num--;
--			stream->buf_list[stream->buf_num] = NULL;
-+			kfree(stream->buf_list[stream->buf_num]);
- 		}
- 	}
- 
++		cmd.read_write = 0;
+ 		cmd.function = 1;
+ 		cmd.address = 0x04;
+ 		cmd.data = 0;
 
 
