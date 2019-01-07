@@ -2,75 +2,55 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-5.9 required=3.0 tests=FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 629F2C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 11:49:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD758C43612
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 11:53:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3836C2070C
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 11:49:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B81F82070C
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 11:53:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727062AbfAGLtJ (ORCPT
+        id S1726674AbfAGLxh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 06:49:09 -0500
-Received: from ozlabs.org ([203.11.71.1]:49321 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726696AbfAGLtJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 06:49:09 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43YDFG5Fy3z9sML;
-        Mon,  7 Jan 2019 22:49:06 +1100 (AEDT)
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: Tree for Jan 7
-In-Reply-To: <CAMuHMdUCKaADLBrv0KLXSYHe8bR3ws7mhYr+1SkFYW15kDGo9Q@mail.gmail.com>
-References: <20190107150609.0510def3@canb.auug.org.au> <CAMuHMdUCKaADLBrv0KLXSYHe8bR3ws7mhYr+1SkFYW15kDGo9Q@mail.gmail.com>
-Date:   Mon, 07 Jan 2019 22:49:03 +1100
-Message-ID: <87va30adsg.fsf@concordia.ellerman.id.au>
+        Mon, 7 Jan 2019 06:53:37 -0500
+Received: from smtp.eu.citrix.com ([185.25.65.24]:63641 "EHLO
+        SMTP.EU.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726485AbfAGLxg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 06:53:36 -0500
+X-IronPort-AV: E=Sophos;i="5.56,450,1539648000"; 
+   d="scan'208";a="84221874"
+Date:   Mon, 7 Jan 2019 12:53:25 +0100
+From:   Roger Pau =?utf-8?B?TW9ubsOp?= <roger.pau@citrix.com>
+To:     Dongli Zhang <dongli.zhang@oracle.com>
+CC:     <xen-devel@lists.xenproject.org>, <linux-block@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <konrad.wilk@oracle.com>,
+        <axboe@kernel.dk>, <Paul.Durrant@citrix.com>
+Subject: Re: [PATCH v4 1/2] xen/blkback: add stack variable 'blkif' in
+ connect_ring()
+Message-ID: <20190107115325.nlw6irg4jgcjx6t2@mac>
+References: <1546839359-5478-1-git-send-email-dongli.zhang@oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1546839359-5478-1-git-send-email-dongli.zhang@oracle.com>
+User-Agent: NeoMutt/20180716
+X-ClientProxiedBy: AMSPEX02CAS02.citrite.net (10.69.22.113) To
+ AMSPEX02CL02.citrite.net (10.69.22.126)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Geert Uytterhoeven <geert@linux-m68k.org> writes:
-> Hi Stephen, Michael,
->
-> Happy NY! Looking forward to lots of linux-next releases and build
-> logs in 2019 ;-)
->
-> On Mon, Jan 7, 2019 at 5:08 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->> Status of my local build tests will be at
->> http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
->> advice about cross compilers/configs that work, we are always open to add
->> more builds.
->
->     Proxy Error
->     The proxy server received an invalid response from an upstream server.
->     The proxy server could not handle the request GET /kisskb/.
->
->     Reason: Error reading from remote server
->
->     Apache/2.4.37 (Debian) Server at kisskb.ellerman.id.au Port 80
->
-> Oops...
+On Mon, Jan 07, 2019 at 01:35:58PM +0800, Dongli Zhang wrote:
+> As 'be->blkif' is used for many times in connect_ring(), the stack variable
+> 'blkif' is added to substitute 'be-blkif'.
+> 
+> Suggested-by: Paul Durrant <paul.durrant@citrix.com>
+> Signed-off-by: Dongli Zhang <dongli.zhang@oracle.com>
 
-Erk.
-
-Seems postgres is unhappy, database is corrupt.
-
-I'm restoring from a backup but it seems to be taking a long time, I may
-not get it finished tonight.
-
-Sorry!
-
-cheers
+Reviewed-by: Roger Pau Monné <roger.pau@citrix.com>
