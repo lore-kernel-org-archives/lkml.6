@@ -7,50 +7,49 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B92BCC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:05:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2129AC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:05:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87D152183F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:05:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E533A217D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:05:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546866331;
-	bh=LviuQ4wqKY9jMJeavmJxa8wnrBVJh9im2XzkCi/XqRQ=;
+	s=default; t=1546866335;
+	bh=J5wwWkYINFrz0MufIa2xUbDPawq4m33S1IZ6J9pTGK8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=0Vnp5oZDXRk+JJf1ydrceBf0NheGbLPdRQ/jPciQk4uIxvGjVH5Sfum8eG/aZRiS0
-	 dFAdbpZohgo3PzHdKhfygra6L8QZidxFWu3bD9c4xA1a2UvK5ATIJRpcapW4hkI/Mh
-	 ta137hUBlyXuasUq1Qtv4jn8DNJ/VHSxZBm6SNhI=
+	b=rUnves40JS3IZ+z65cJyhqpj1EE9U58qF8CrklqmxSl/xYB5wtuTHNtVzAwQWzSYa
+	 MOObh4r08TLI5cQ0vP13KWdaRA2XmCHKz9oRShZx1YK+8D78fF55owiHtB97SYajCW
+	 WW1tJXjQgWcpKzr9b7xLz9+08YM4aIWGYPndRFTU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731479AbfAGNFa (ORCPT
+        id S1731488AbfAGNFd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:05:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53178 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:05:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53246 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729264AbfAGNF0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:05:26 -0500
+        id S1727994AbfAGNFc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:05:32 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 756712089F;
-        Mon,  7 Jan 2019 13:05:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C318B21736;
+        Mon,  7 Jan 2019 13:05:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546866325;
-        bh=LviuQ4wqKY9jMJeavmJxa8wnrBVJh9im2XzkCi/XqRQ=;
+        s=default; t=1546866332;
+        bh=J5wwWkYINFrz0MufIa2xUbDPawq4m33S1IZ6J9pTGK8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KcVL2PYjipFSZzzZmNT5Jse1ExY7u7YdOL/yp9UbBTXTbNalY/Tx8aSI25Bto00e4
-         txI9F4hp0FqUoG/WzLl4N98mEXHYDgDqvn7pafOTyUMsmHl7WeRrjfNFw1Vz9i+vFD
-         Vg9u0HlYNIP0+HWHfjPICplpDIAAAjUCcdrK1zj4=
+        b=fF7PmDZ3nsU5488Cu+ywc/gaUKMljkEvBD2p7E+REX7YTuT9TfZhGh/+DqI4jE7V2
+         gNfyBsU4+TUf8+aOpcPYgIPu/8XhQ3koNbT3K7o7oZK6c99y++GMlYqI1BR+xhafMr
+         3NlCoVmEZFGYht4hlwGNDkWVHIxmU+mZxEivPykU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+ad5d327e6936a2e284be@syzkaller.appspotmail.com,
-        Xin Long <lucien.xin@gmail.com>,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-        Neil Horman <nhorman@tuxdriver.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 18/71] sctp: initialize sin6_flowinfo for ipv6 addrs in sctp_inet6addr_event
-Date:   Mon,  7 Jan 2019 13:32:47 +0100
-Message-Id: <20190107105332.939015640@linuxfoundation.org>
+        stable@vger.kernel.org, Ying Xue <ying.xue@windriver.com>,
+        Jon Maloy <jon.maloy@ericsson.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        syzbot+eae585ba2cc2752d3704@syzkaller.appspotmail.com
+Subject: [PATCH 4.9 19/71] tipc: fix a double kfree_skb()
+Date:   Mon,  7 Jan 2019 13:32:48 +0100
+Message-Id: <20190107105333.690200243@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107105330.280153213@linuxfoundation.org>
 References: <20190107105330.280153213@linuxfoundation.org>
@@ -69,61 +68,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Xin Long <lucien.xin@gmail.com>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-[ Upstream commit 4a2eb0c37b4759416996fbb4c45b932500cf06d3 ]
+[ Upstream commit acb4a33e9856d5fa3384b87d3d8369229be06d31 ]
 
-syzbot reported a kernel-infoleak, which is caused by an uninitialized
-field(sin6_flowinfo) of addr->a.v6 in sctp_inet6addr_event().
-The call trace is as below:
+tipc_udp_xmit() drops the packet on error, there is no
+need to drop it again.
 
-  BUG: KMSAN: kernel-infoleak in _copy_to_user+0x19a/0x230 lib/usercopy.c:33
-  CPU: 1 PID: 8164 Comm: syz-executor2 Not tainted 4.20.0-rc3+ #95
-  Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-  Google 01/01/2011
-  Call Trace:
-    __dump_stack lib/dump_stack.c:77 [inline]
-    dump_stack+0x32d/0x480 lib/dump_stack.c:113
-    kmsan_report+0x12c/0x290 mm/kmsan/kmsan.c:683
-    kmsan_internal_check_memory+0x32a/0xa50 mm/kmsan/kmsan.c:743
-    kmsan_copy_to_user+0x78/0xd0 mm/kmsan/kmsan_hooks.c:634
-    _copy_to_user+0x19a/0x230 lib/usercopy.c:33
-    copy_to_user include/linux/uaccess.h:183 [inline]
-    sctp_getsockopt_local_addrs net/sctp/socket.c:5998 [inline]
-    sctp_getsockopt+0x15248/0x186f0 net/sctp/socket.c:7477
-    sock_common_getsockopt+0x13f/0x180 net/core/sock.c:2937
-    __sys_getsockopt+0x489/0x550 net/socket.c:1939
-    __do_sys_getsockopt net/socket.c:1950 [inline]
-    __se_sys_getsockopt+0xe1/0x100 net/socket.c:1947
-    __x64_sys_getsockopt+0x62/0x80 net/socket.c:1947
-    do_syscall_64+0xcf/0x110 arch/x86/entry/common.c:291
-    entry_SYSCALL_64_after_hwframe+0x63/0xe7
-
-sin6_flowinfo is not really used by SCTP, so it will be fixed by simply
-setting it to 0.
-
-The issue exists since very beginning.
-Thanks Alexander for the reproducer provided.
-
-Reported-by: syzbot+ad5d327e6936a2e284be@syzkaller.appspotmail.com
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
-Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-Acked-by: Neil Horman <nhorman@tuxdriver.com>
+Fixes: ef20cd4dd163 ("tipc: introduce UDP replicast")
+Reported-and-tested-by: syzbot+eae585ba2cc2752d3704@syzkaller.appspotmail.com
+Cc: Ying Xue <ying.xue@windriver.com>
+Cc: Jon Maloy <jon.maloy@ericsson.com>
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sctp/ipv6.c |    1 +
- 1 file changed, 1 insertion(+)
+ net/tipc/udp_media.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
---- a/net/sctp/ipv6.c
-+++ b/net/sctp/ipv6.c
-@@ -101,6 +101,7 @@ static int sctp_inet6addr_event(struct n
- 		if (addr) {
- 			addr->a.v6.sin6_family = AF_INET6;
- 			addr->a.v6.sin6_port = 0;
-+			addr->a.v6.sin6_flowinfo = 0;
- 			addr->a.v6.sin6_addr = ifa->addr;
- 			addr->a.v6.sin6_scope_id = ifa->idev->dev->ifindex;
- 			addr->valid = 1;
+--- a/net/tipc/udp_media.c
++++ b/net/tipc/udp_media.c
+@@ -243,10 +243,8 @@ static int tipc_udp_send_msg(struct net
+ 		}
+ 
+ 		err = tipc_udp_xmit(net, _skb, ub, src, &rcast->addr);
+-		if (err) {
+-			kfree_skb(_skb);
++		if (err)
+ 			goto out;
+-		}
+ 	}
+ 	err = 0;
+ out:
 
 
