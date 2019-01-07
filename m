@@ -2,82 +2,97 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94DD4C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 11:30:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECB23C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 11:38:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6478E21736
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 11:30:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B34BD2089F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 11:38:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=onstation.org header.i=@onstation.org header.b="oaiWO3Ka"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="CdBHya0x"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727169AbfAGLaJ (ORCPT
+        id S1727161AbfAGLio (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 06:30:09 -0500
-Received: from onstation.org ([52.200.56.107]:48462 "EHLO onstation.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726893AbfAGLaJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 06:30:09 -0500
-Received: from localhost (c-98-239-145-235.hsd1.wv.comcast.net [98.239.145.235])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: masneyb)
-        by onstation.org (Postfix) with ESMTPSA id 23A23347;
-        Mon,  7 Jan 2019 11:30:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=onstation.org;
-        s=default; t=1546860608;
-        bh=awfFrwnCuDopimp6qrJGoBJ4YMMI366NAohO/oPtqM4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=oaiWO3KaszqtgMTpyGUbjKj3PU3mR0G30juKHesSjglcCj+b5u2pbjueJ2Tf3uUeB
-         8XzQ3m5X2Q37FJR2b9nOCUhF8o7wYHLDpk+TCJs1PS4Uk7VdzuxZ7vy5+KE+keBpbB
-         9bommviaSZjsqQyoyYe0cp9IhaGDE8SpBKJvGnFo=
-Date:   Mon, 7 Jan 2019 06:30:07 -0500
-From:   Brian Masney <masneyb@onstation.org>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Mon, 7 Jan 2019 06:38:44 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:39156 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726893AbfAGLio (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 06:38:44 -0500
+Received: by mail-pl1-f196.google.com with SMTP id 101so24310pld.6
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 03:38:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ePJe8cVSRqtlaGA7V9EgMDTzK24IvCXYylFk83HfJes=;
+        b=CdBHya0xIV2o7rasb5t+gJ++qxMpDpd9XQOHA4HVSq2yhLq1m3OKjDgFWqproXlg2B
+         57Dozefo2H/3agSacTurbXzfemDjZSNVS27uIumyFWd/OSpyPcq/YLbutddlsan4dOgf
+         A88dn/pmXnqA3BNlDUmkhps6E4PBlyiSLxS/w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ePJe8cVSRqtlaGA7V9EgMDTzK24IvCXYylFk83HfJes=;
+        b=BLGUz3fSgZEP7r2acq7ZlHz6xsHYcCx4CSJlzlvujale9BWPrGKb76C/UG084gps5H
+         Lds8uaCBoV34ePxh27H30rRiJue5DAL2rRt/IGNtAHeWkEyDWBtgZydh6Yf+rIV+Pojv
+         RqR9QfShqACJMoAQ6M5a0pIlxOmgT1uUflt2hfh0FcTPd839cpGpw1CmkFdScZe+zqDa
+         mwZC4nMyBVtlJDkmUmMcG9jJCqgX6cPa05GFsWEj8IvWrA+MRhwEv54w2qjKv761oMEk
+         M5d1Go3Tahxr7BZffCWLuGchjywhMaUblxnlEpJTnyGjMlBXuKLL5iiwu14ssCB+hU2O
+         JBNA==
+X-Gm-Message-State: AJcUukcSyNheHCkotZ3hMVnHgEjPUnFKGgzJ+lYFpJUxD4wFpn0ebxZq
+        VVmwk5spdaiBbDh2s1VVPEGDwA==
+X-Google-Smtp-Source: ALg8bN4X15OWjP5RmXnsZlO2WWFXs1xpmK/dF6kMe3mQa8vwxbBbhyx7nPAgh/ASeVp2+Mf4V9P9kA==
+X-Received: by 2002:a17:902:20b:: with SMTP id 11mr61093325plc.57.1546861123595;
+        Mon, 07 Jan 2019 03:38:43 -0800 (PST)
+Received: from pihsun-z840.tpe.corp.google.com ([2401:fa00:1:10:7889:7a43:f899:134c])
+        by smtp.googlemail.com with ESMTPSA id m3sm109338783pff.173.2019.01.07.03.38.41
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 07 Jan 2019 03:38:42 -0800 (PST)
+From:   Pi-Hsun Shih <pihsun@chromium.org>
+Cc:     Pi-Hsun Shih <pihsun@chromium.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Doug Anderson <dianders@chromium.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Nicolas Dechesne <nicolas.dechesne@linaro.org>,
-        Niklas Cassel <niklas.cassel@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        linux-arm-msm@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v2 2/5] mfd: qcom-spmi-pmic: use devm_mfd_add_devices
- instead of devm_of_platform_populate
-Message-ID: <20190107113007.GA1284@basecamp>
-References: <20190107021145.6370-1-masneyb@onstation.org>
- <20190107021145.6370-3-masneyb@onstation.org>
- <CACRpkdbLU_2JC1wT=M7EPsx6gPxL=poj2Ci8zTa++51K2qGZ4A@mail.gmail.com>
+        linux-remoteproc@vger.kernel.org (open list:REMOTE PROCESSOR MESSAGING
+        (RPMSG) SUBSYSTEM), linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] rpmsg: core: Make remove handler for rpmsg driver optional.
+Date:   Mon,  7 Jan 2019 19:38:32 +0800
+Message-Id: <20190107113833.243672-1-pihsun@chromium.org>
+X-Mailer: git-send-email 2.20.1.97.g81188d93c3-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACRpkdbLU_2JC1wT=M7EPsx6gPxL=poj2Ci8zTa++51K2qGZ4A@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 07, 2019 at 11:53:07AM +0100, Linus Walleij wrote:
-> I suppose Lee can merge this in orthogonal in the MFD tree,
-> the end result will be functional after the v5.1 merge window.
+Most other bus (for example, SPI, i2c) have the remove handler for
+driver optional. Make remove handler for rpmsg driver optional too.
 
-To keep git bisect happy, it would be nice if either all of the patches
-go in through the same tree (with the proper ACKs), or if the first four
-patches are applied during the v5.1 merge window, and the last patch is
-applied during the v5.2 merge window.
+Signed-off-by: Pi-Hsun Shih <pihsun@chromium.org>
+---
+ drivers/rpmsg/rpmsg_core.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Brian
+diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
+index 8122807db38094..ea88fd4e2a6ecf 100644
+--- a/drivers/rpmsg/rpmsg_core.c
++++ b/drivers/rpmsg/rpmsg_core.c
+@@ -493,7 +493,8 @@ static int rpmsg_dev_remove(struct device *dev)
+ 	if (rpdev->ops->announce_destroy)
+ 		err = rpdev->ops->announce_destroy(rpdev);
+ 
+-	rpdrv->remove(rpdev);
++	if (rpdrv->remove)
++		rpdrv->remove(rpdev);
+ 
+ 	dev_pm_domain_detach(dev, true);
+ 
+-- 
+2.20.1.97.g81188d93c3-goog
+
