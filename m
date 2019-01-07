@@ -3,28 +3,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53695C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 16:28:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A55A7C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 16:28:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E6272147C
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 16:28:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 79B712089F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 16:28:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730661AbfAGQ2k (ORCPT
+        id S1730687AbfAGQ2p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 11:28:40 -0500
-Received: from foss.arm.com ([217.140.101.70]:34566 "EHLO foss.arm.com"
+        Mon, 7 Jan 2019 11:28:45 -0500
+Received: from foss.arm.com ([217.140.101.70]:34620 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728174AbfAGQ2j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 11:28:39 -0500
+        id S1727374AbfAGQ2o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 11:28:44 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D44801713;
-        Mon,  7 Jan 2019 08:28:38 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A1380174E;
+        Mon,  7 Jan 2019 08:28:43 -0800 (PST)
 Received: from e119886-lin.cambridge.arm.com (unknown [10.37.6.11])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6012F3F5A0;
-        Mon,  7 Jan 2019 08:28:34 -0800 (PST)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2BD733F5A0;
+        Mon,  7 Jan 2019 08:28:39 -0800 (PST)
 From:   Andrew Murray <andrew.murray@arm.com>
 To:     Peter Zijlstra <peterz@infradead.org>,
         Ingo Molnar <mingo@redhat.com>,
@@ -45,9 +45,9 @@ To:     Peter Zijlstra <peterz@infradead.org>,
 Cc:     x86@kernel.org, linuxppc-dev@lists.ozlabs.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-alpha@vger.kernel.org
-Subject: [PATCH v4 12/13] perf/core: remove unused perf_flags
-Date:   Mon,  7 Jan 2019 16:27:29 +0000
-Message-Id: <1546878450-20341-13-git-send-email-andrew.murray@arm.com>
+Subject: [PATCH v4 13/13] drivers/perf: use PERF_PMU_CAP_NO_EXCLUDE for Cavium TX2 PMU
+Date:   Mon,  7 Jan 2019 16:27:30 +0000
+Message-Id: <1546878450-20341-14-git-send-email-andrew.murray@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1546878450-20341-1-git-send-email-andrew.murray@arm.com>
 References: <1546878450-20341-1-git-send-email-andrew.murray@arm.com>
@@ -56,40 +56,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that perf_flags is not used we remove it.
+The Cavium ThunderX2 UNCORE PMU driver doesn't support any event
+filtering. Let's advertise the PERF_PMU_CAP_NO_EXCLUDE capability to
+simplify the code.
 
 Signed-off-by: Andrew Murray <andrew.murray@arm.com>
 ---
- include/uapi/linux/perf_event.h       | 2 --
- tools/include/uapi/linux/perf_event.h | 2 --
- 2 files changed, 4 deletions(-)
+ drivers/perf/thunderx2_pmu.c | 10 +---------
+ 1 file changed, 1 insertion(+), 9 deletions(-)
 
-diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
-index 9de8780..ea19b5d 100644
---- a/include/uapi/linux/perf_event.h
-+++ b/include/uapi/linux/perf_event.h
-@@ -445,8 +445,6 @@ struct perf_event_query_bpf {
- 	__u32	ids[0];
- };
+diff --git a/drivers/perf/thunderx2_pmu.c b/drivers/perf/thunderx2_pmu.c
+index c9a1701..43d76c8 100644
+--- a/drivers/perf/thunderx2_pmu.c
++++ b/drivers/perf/thunderx2_pmu.c
+@@ -424,15 +424,6 @@ static int tx2_uncore_event_init(struct perf_event *event)
+ 	if (is_sampling_event(event) || event->attach_state & PERF_ATTACH_TASK)
+ 		return -EINVAL;
  
--#define perf_flags(attr)	(*(&(attr)->read_format + 1))
+-	/* We have no filtering of any kind */
+-	if (event->attr.exclude_user	||
+-	    event->attr.exclude_kernel	||
+-	    event->attr.exclude_hv	||
+-	    event->attr.exclude_idle	||
+-	    event->attr.exclude_host	||
+-	    event->attr.exclude_guest)
+-		return -EINVAL;
 -
- /*
-  * Ioctls that can be done on a perf event fd:
-  */
-diff --git a/tools/include/uapi/linux/perf_event.h b/tools/include/uapi/linux/perf_event.h
-index 9de8780..ea19b5d 100644
---- a/tools/include/uapi/linux/perf_event.h
-+++ b/tools/include/uapi/linux/perf_event.h
-@@ -445,8 +445,6 @@ struct perf_event_query_bpf {
- 	__u32	ids[0];
- };
+ 	if (event->cpu < 0)
+ 		return -EINVAL;
  
--#define perf_flags(attr)	(*(&(attr)->read_format + 1))
--
- /*
-  * Ioctls that can be done on a perf event fd:
-  */
+@@ -572,6 +563,7 @@ static int tx2_uncore_pmu_register(
+ 		.start		= tx2_uncore_event_start,
+ 		.stop		= tx2_uncore_event_stop,
+ 		.read		= tx2_uncore_event_read,
++		.capabilities	= PERF_PMU_CAP_NO_EXCLUDE,
+ 	};
+ 
+ 	tx2_pmu->pmu.name = devm_kasprintf(dev, GFP_KERNEL,
 -- 
 2.7.4
 
