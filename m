@@ -2,147 +2,118 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED0B8C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 08:07:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C375FC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 08:25:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEE3E2087F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 08:07:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 850F42085A
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 08:25:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uQNEu0mj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726615AbfAGIHP (ORCPT
+        id S1726496AbfAGIZA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 03:07:15 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:58410 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725535AbfAGIHP (ORCPT
+        Mon, 7 Jan 2019 03:25:00 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:33930 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725306AbfAGIZA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 03:07:15 -0500
-Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 99BBC72CC71;
-        Mon,  7 Jan 2019 11:07:11 +0300 (MSK)
-Received: from sole.flsd.net (sole.flsd.net [185.75.180.6])
-        by imap.altlinux.org (Postfix) with ESMTPSA id 7DE394A4A14;
-        Mon,  7 Jan 2019 11:07:11 +0300 (MSK)
-Date:   Mon, 7 Jan 2019 11:07:10 +0300
-From:   Vitaly Chikunov <vt@altlinux.org>
-To:     Stephan =?utf-8?Q?M=C3=BCller?= <smueller@chronox.de>
-Cc:     David Howells <dhowells@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 4/4] crypto: Add EC-RDSA algorithm
-Message-ID: <20190107080710.r4bh7gkqdysxmlnn@sole.flsd.net>
-Mail-Followup-To: Stephan =?utf-8?Q?M=C3=BCller?= <smueller@chronox.de>,
-        David Howells <dhowells@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190106133608.820-1-vt@altlinux.org>
- <20190106133608.820-5-vt@altlinux.org>
- <1893001.R2IGJoHzOM@positron.chronox.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1893001.R2IGJoHzOM@positron.chronox.de>
-User-Agent: NeoMutt/20171215-106-ac61c7
+        Mon, 7 Jan 2019 03:25:00 -0500
+Received: by mail-pg1-f194.google.com with SMTP id j10so20432716pga.1;
+        Mon, 07 Jan 2019 00:24:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=+dzdIS2lLNlfx5pYH4BHiQ9CpbloelWYGZhqrZ3Bn3U=;
+        b=uQNEu0mjCZDf383GEADhrf3cKPk4EnvChTPb605zJ9mNj/ZmbmdOaWpgSLSTC8UyV0
+         L8wcEsxJE1o754C3iF73oFIsC0S1mooWx5rDb4spFxyi728cIK2vAGO07crciWV8MdOX
+         R1UJLeBinnTSDXAhshbWQmMDdbNv3RfUUpbzZI2+OKhgPg/lApte80NW6w2ZGw1zLaEF
+         q1/gpsaZmxgl/0RPp3hy8bVV10a4k3/5zv9W60lBwmCG0+FmvC1MfyesJ5E3WCIw/rC8
+         IsR4msDB9vQ/w4eNEOHMNRQwDEdwjQXl9zND+lxWKq8MYWPYQ5RDeCgR5sOztlh/5Tc9
+         QpLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=+dzdIS2lLNlfx5pYH4BHiQ9CpbloelWYGZhqrZ3Bn3U=;
+        b=rC+rxlSxhIULO8Bf5GH0c/UZCxDteRsW+WrC75LwVCTxl8IBKvI2R0LOmv+Xmo9BUe
+         zdThgnSmLWEl+Dq6YNGx12puMac68qXx0vdKcZOiH7r2JrM4UXolkyhPoSplTzZ0hBGV
+         nBOu8pSD7JHrhKp3cfoAfK+Fub0x2SsO1CnenWq1cJZ+Omx7L5cIhooFZAHZCHw6Zcdl
+         1EqWIQisWWsBvk6/z6LtNBbsmNrpQPaq0Cw6NrL13oS4A9zcqbeSstN7iWomn+wepO59
+         AGYfOlTNwoqIpqaaH4uvzxijPxR3ZTVTrecOYk8mLRCBrQ+G/0QeLUDv7WlWVive80Wd
+         aLWA==
+X-Gm-Message-State: AJcUukcU3D05YvTzInvLKwVa+/zsgPUgUejjnuzENdV1sh17Daj2Ojcl
+        oxxlLYMWmtvcP+NYfRZJyzxeQT1mnQ==
+X-Google-Smtp-Source: ALg8bN55EPObgAtz3bUGR21XEG6MSsdZEwW6b8JyGuEvARvgzdVx6GMYMcN26WtYKODiiNXLprWJ9Q==
+X-Received: by 2002:a63:151f:: with SMTP id v31mr28652279pgl.34.1546849498564;
+        Mon, 07 Jan 2019 00:24:58 -0800 (PST)
+Received: from mylaptop.nay.redhat.com ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id t3sm76981674pgv.31.2019.01.07.00.24.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 07 Jan 2019 00:24:58 -0800 (PST)
+From:   Pingfan Liu <kernelfans@gmail.com>
+To:     x86@kernel.org, linux-acpi@vger.kernel.org
+Cc:     Pingfan Liu <kernelfans@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>, linux-kernel@vger.kernel.org
+Subject: [RFC PATCH 0/4] x86_64/mm: remove bottom-up allocation style by pushing forward the parsing of mem hotplug info 
+Date:   Mon,  7 Jan 2019 16:24:41 +0800
+Message-Id: <1546849485-27933-1-git-send-email-kernelfans@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Stephan,
+Background about the defect of the current bottom-up allocation style, take
+the following scenario:
+  |  unmovable node |     movable node                           |
+     | kaslr-kernel |subtree of pgtable for phy<->virt |
 
-On Sun, Jan 06, 2019 at 07:11:50PM +0100, Stephan Müller wrote:
-> Am Sonntag, 6. Januar 2019, 14:36:08 CET schrieb Vitaly Chikunov:
-> 
-> > Add Elliptic Curve Russian Digital Signature Algorithm (GOST R
-> > 34.10-2012, RFC 7091, ISO/IEC 14888-3) is one of the Russian (and since
-> > 2018 the CIS countries) cryptographic standard algorithms (called GOST
-> > algorithms). Only signature verification is supported, with intent to be
-> > used in the IMA.
-> 
-> Do you happen to have test vectors for the testmgr?
+Although kaslr-kernel can avoid to stain the movable node. But the
+pgtable can still stain the movable node. That is a probability problem,
+with low probability, but still exist. This patch tries to eliminate the
+probability. With the previous patch, at the point of init_mem_mapping(),
+memblock allocator can work with the knowledge of acpi memory hotmovable
+info, and avoid to stain the movable node. As a result,
+memory_map_bottom_up() is not needed any more.
 
-Yes, I will add this.
 
-> > +/* Parse DER encoded subjectPublicKey. */
-> > +static int ecrdsa_set_pub_key(struct crypto_akcipher *tfm, const void *ber,
-> > +			      unsigned int len)
-> > +{
-> > +	struct ecrdsa_ctx *ctx = akcipher_tfm_ctx(tfm);
-> > +	unsigned int ndigits;
-> > +	const u8 *k = ber;
-> > +	unsigned int offset;
-> > +
-> > +	/* First chance to zero ctx */
-> > +	memset(ctx, 0, sizeof(*ctx));
-> > +
-> > +	if (len < 3 ||
-> > +	    k[0] != 0x04 || /* OCTET STRING */
-> > +	    (k[1] < 0x80 && len != k[1] + 2) ||
-> > +	    (k[1] == 0x81 && len != k[2] + 3) ||
-> > +	    k[1] > 0x81)
-> > +		return -EBADMSG;
-> > +	offset = (k[1] < 0x80)? 2 : 3;
-> > +	k += offset;
-> > +	len -= offset;
-> 
-> Why do you manually parse the ASN.1 structure instead of using the ASN.1 
-> parser?
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Len Brown <lenb@kernel.org>
+Cc: linux-kernel@vger.kernel.org
 
-I am not sure this worth effort and will not be most degenerate use of
-asn1_ber_decoder, since 1) I only need to parse one type in each case:
-OCTET STRING string above code, and OIDs in below code; 2) this data is
-said to be in DER format, which asn1_ber_decoder can not enforce. Surely
-this will also produce more code and files.
+Pingfan Liu (4):
+  acpi: change the topo of acpi_table_upgrade()
+  x86/setup: parse acpi to get hotplug info before init_mem_mapping()
+  x86/mm: set allowed range for memblock allocator
+  x86/mm: remove bottom-up allocation style for x86_64
 
-> > +/* Parse DER encoded SubjectPublicKeyInfo.AlgorithmIdentifier.parameters.
-> > */ +static int ecrdsa_set_params(struct crypto_akcipher *tfm, enum OID
-> > algo, +			     const void *params, unsigned int paramlen)
-> > +{
-> > +	struct ecrdsa_ctx *ctx = akcipher_tfm_ctx(tfm);
-> > +	const u8 *p = params;
-> > +	int i;
-> > +
-> > +	if (algo == OID_gost2012PublicKey256) {
-> > +		ctx->digest	= "streebog256";
-> > +		ctx->digest_oid	= OID_gost2012Digest256;
-> > +		ctx->digest_len	= 256 / 8;
-> > +	} else if (algo == OID_gost2012PublicKey512) {
-> > +		ctx->digest	= "streebog512";
-> > +		ctx->digest_oid	= OID_gost2012Digest512;
-> > +		ctx->digest_len	= 512 / 8;
-> > +	} else
-> > +		return -ENOPKG;
-> > +	ctx->curve = NULL;
-> > +	ctx->curve_oid = 0;
-> > +	ctx->algo_oid = algo;
-> > +
-> > +	for (i = 0; i < paramlen; i += p[i + 1] + 2) {
-> > +		const struct ecc_curve *curve;
-> > +		enum OID oid;
-> > +
-> > +		if (paramlen - i < 2 ||
-> > +		    p[i] != 0x06 || /* OBJECT IDENTIFIER */
-> 
-> Same here and in the following
-> 
-> > +		    p[i + 1] > paramlen - i - 2)
-> > +			return -EBADMSG;
-> > +		oid = look_up_OID(p + i + 2, p[i + 1]);
+ arch/arm64/kernel/setup.c |   2 +-
+ arch/x86/kernel/setup.c   |  17 ++++-
+ arch/x86/mm/init.c        | 154 +++++++---------------------------------------
+ arch/x86/mm/init_32.c     | 123 ++++++++++++++++++++++++++++++++++++
+ arch/x86/mm/mm_internal.h |   7 +++
+ drivers/acpi/tables.c     |   4 +-
+ include/linux/acpi.h      |   5 +-
+ 7 files changed, 172 insertions(+), 140 deletions(-)
 
-> > +MODULE_ALIAS_CRYPTO("ecrdsa");
-> 
-> I do not think you need that alias as the module name already will be named 
-> this way. I guess you rather should add ecrdsa-generic as module alias.
-
-Thanks!
+-- 
+2.7.4
 
