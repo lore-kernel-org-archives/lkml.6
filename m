@@ -4,50 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C41ABC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:02:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34E71C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:02:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85D4121736
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:02:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 063B121736
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:02:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546866145;
-	bh=okWfYbLYUC6pUQfgpuKvuGrQ6JqtLaCvEhrvQvDj8DQ=;
+	s=default; t=1546866149;
+	bh=YOG7hbAdiB4UAtBKl5zJrEL3SwV7EKxnTdWp1TihnLE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=JYaVIHv9JuRUtXjZHeHz7LUihgR6IppT+M1/pXzNSNVl0cfZXYLsfihA9I1unilJr
-	 Zc6sR6uoU21Ep/RP8OSl+9BuJAB5WbOBFOn6K+NRCUw1rOGtjshTjgewdSfzDqzWLE
-	 2o9t8VDbamTGXImkbnQ3sFvogxqIOviGeH4JizB4=
+	b=pG00wIe3TV27owHI5C8KGcbRjEhyfBzaQeEt/EGTfMNpCtpvihVWEOJv9VFTzFZKA
+	 Hw6lVtKcHskW4G8H1PiaXRZ79R5196uxKxnlHmBn8xb5DfDxl5Wq2HwMITJy4SLZMA
+	 L+ypt084E3fpKPqipcHGZare0IPlGoQapzMdJWHM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730797AbfAGNCY (ORCPT
+        id S1730810AbfAGNC1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:02:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49848 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:02:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49934 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730097AbfAGNCV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:02:21 -0500
+        id S1730798AbfAGNCZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:02:25 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D5AAB2089F;
-        Mon,  7 Jan 2019 13:02:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 11CCE2089F;
+        Mon,  7 Jan 2019 13:02:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546866141;
-        bh=okWfYbLYUC6pUQfgpuKvuGrQ6JqtLaCvEhrvQvDj8DQ=;
+        s=default; t=1546866144;
+        bh=YOG7hbAdiB4UAtBKl5zJrEL3SwV7EKxnTdWp1TihnLE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OLRxZ+SuBzCbZmWQlCi7IvqoBTv/seMSw6nSyZWf4XE5jefP3CEiwIbGRXNWTD+I/
-         U20p4T814h4K7RCOm3E2J44JL017ycn+jKZatB3xKGC0TkDMf3TSP/ke242xb9Z+pg
-         lRgo46dEHGDcWLuoukao54yZVwhdkG0Ux6SeTeJo=
+        b=lMM0LnHXR/s5AiOjKKj0C+5uLO9y2wSGH8mffZ8KEOcM4Vf6cF0qLHyUF9Xs9XHUT
+         XuLi93PKx2ZkRzR/BPSW/haWxavNnYi3Ic1cELKIcvDrycwGC3jHfWBILq3lVjdLQV
+         AwES16jlVrEDpylCG4rSGNjKsfgSdM0xIA4Jndx0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 4.14 059/101] KVM: nVMX: Free the VMREAD/VMWRITE bitmaps if alloc_kvm_area() fails
-Date:   Mon,  7 Jan 2019 13:32:47 +0100
-Message-Id: <20190107105336.146126782@linuxfoundation.org>
+        stable@vger.kernel.org, Miquel Raynal <miquel.raynal@bootlin.com>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Subject: [PATCH 4.14 060/101] platform-msi: Free descriptors in platform_msi_domain_free()
+Date:   Mon,  7 Jan 2019 13:32:48 +0100
+Message-Id: <20190107105336.206881509@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107105330.372621917@linuxfoundation.org>
 References: <20190107105330.372621917@linuxfoundation.org>
@@ -66,40 +65,87 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sean Christopherson <sean.j.christopherson@intel.com>
+From: Miquel Raynal <miquel.raynal@bootlin.com>
 
-commit 1b3ab5ad1b8ad99bae76ec583809c5f5a31c707c upstream.
+commit 81b1e6e6a8590a19257e37a1633bec098d499c57 upstream.
 
-Fixes: 34a1cd60d17f ("kvm: x86: vmx: move some vmx setting from vmx_init() to hardware_setup()")
+Since the addition of platform MSI support, there were two helpers
+supposed to allocate/free IRQs for a device:
+
+    platform_msi_domain_alloc_irqs()
+    platform_msi_domain_free_irqs()
+
+In these helpers, IRQ descriptors are allocated in the "alloc" routine
+while they are freed in the "free" one.
+
+Later, two other helpers have been added to handle IRQ domains on top
+of MSI domains:
+
+    platform_msi_domain_alloc()
+    platform_msi_domain_free()
+
+Seen from the outside, the logic is pretty close with the former
+helpers and people used it with the same logic as before: a
+platform_msi_domain_alloc() call should be balanced with a
+platform_msi_domain_free() call. While this is probably what was
+intended to do, the platform_msi_domain_free() does not remove/free
+the IRQ descriptor(s) created/inserted in
+platform_msi_domain_alloc().
+
+One effect of such situation is that removing a module that requested
+an IRQ will let one orphaned IRQ descriptor (with an allocated MSI
+entry) in the device descriptors list. Next time the module will be
+inserted back, one will observe that the allocation will happen twice
+in the MSI domain, one time for the remaining descriptor, one time for
+the new one. It also has the side effect to quickly overshoot the
+maximum number of allocated MSI and then prevent any module requesting
+an interrupt in the same domain to be inserted anymore.
+
+This situation has been met with loops of insertion/removal of the
+mvpp2.ko module (requesting 15 MSIs each time).
+
+Fixes: 552c494a7666 ("platform-msi: Allow creation of a MSI-based stacked irq domain")
 Cc: stable@vger.kernel.org
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/vmx.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/base/platform-msi.c |    6 ++++--
+ include/linux/msi.h         |    2 ++
+ 2 files changed, 6 insertions(+), 2 deletions(-)
 
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -7275,13 +7275,16 @@ static __init int hardware_setup(void)
+--- a/drivers/base/platform-msi.c
++++ b/drivers/base/platform-msi.c
+@@ -374,14 +374,16 @@ void platform_msi_domain_free(struct irq
+ 			      unsigned int nvec)
+ {
+ 	struct platform_msi_priv_data *data = domain->host_data;
+-	struct msi_desc *desc;
+-	for_each_msi_entry(desc, data->dev) {
++	struct msi_desc *desc, *tmp;
++	for_each_msi_entry_safe(desc, tmp, data->dev) {
+ 		if (WARN_ON(!desc->irq || desc->nvec_used != 1))
+ 			return;
+ 		if (!(desc->irq >= virq && desc->irq < (virq + nvec)))
+ 			continue;
  
- 	kvm_mce_cap_supported |= MCG_LMCE_P;
- 
--	return alloc_kvm_area();
-+	r = alloc_kvm_area();
-+	if (r)
-+		goto out;
-+	return 0;
- 
- out:
- 	for (i = 0; i < VMX_BITMAP_NR; i++)
- 		free_page((unsigned long)vmx_bitmap[i]);
- 
--    return r;
-+	return r;
+ 		irq_domain_free_irqs_common(domain, desc->irq, 1);
++		list_del(&desc->list);
++		free_msi_entry(desc);
+ 	}
  }
  
- static __exit void hardware_unsetup(void)
+--- a/include/linux/msi.h
++++ b/include/linux/msi.h
+@@ -116,6 +116,8 @@ struct msi_desc {
+ 	list_first_entry(dev_to_msi_list((dev)), struct msi_desc, list)
+ #define for_each_msi_entry(desc, dev)	\
+ 	list_for_each_entry((desc), dev_to_msi_list((dev)), list)
++#define for_each_msi_entry_safe(desc, tmp, dev)	\
++	list_for_each_entry_safe((desc), (tmp), dev_to_msi_list((dev)), list)
+ 
+ #ifdef CONFIG_PCI_MSI
+ #define first_pci_msi_entry(pdev)	first_msi_entry(&(pdev)->dev)
 
 
