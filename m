@@ -7,56 +7,47 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17F90C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:02:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0445CC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:02:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DAD142070B
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:02:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BEE2A21736
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:02:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546866137;
-	bh=KozZ53BpVdVuO9prhPitEsEpuKSk/NHFsSdcIa3jzcw=;
+	s=default; t=1546866141;
+	bh=Py8Vj5SL1VLcsdxxvEhgOhIscFMZ5KWpVLver33dyM4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=yTsKQoXODixH99+GP1u9XM4VEPIEWu5VvAj1kvro5RXMAjIwXS2bGf3Y0gm5UteOw
-	 9AZdfb1/AmwhNeHTElI721g6/LZPGpQ0K7Cdo8nExO1A7JF+7/d7k+WNa+uLVnN3xa
-	 Crlsfpp5zLKL1F2N6JpTInDvhV19lIRCb8/yh4vI=
+	b=HFCjpj5AwV7dKgPL8g9O4xrmuNzYptJU5VqdF3kuShdRFqYNXoB+F0eDe5G+KumGw
+	 BK+jXaEwfY9cukflPXAabft3q54/BaRh4MvW9xoAh8GXy5PAkBEuLvCoi4k1fxs6E4
+	 VW9bLRMfdUFVRtGpEfOaw1tpNvzeDkylG7sI5zi0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730773AbfAGNCQ (ORCPT
+        id S1730785AbfAGNCU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:02:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49676 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:02:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49744 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730756AbfAGNCN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:02:13 -0500
+        id S1730768AbfAGNCQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:02:16 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A898C21736;
-        Mon,  7 Jan 2019 13:02:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C7017206BB;
+        Mon,  7 Jan 2019 13:02:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546866132;
-        bh=KozZ53BpVdVuO9prhPitEsEpuKSk/NHFsSdcIa3jzcw=;
+        s=default; t=1546866135;
+        bh=Py8Vj5SL1VLcsdxxvEhgOhIscFMZ5KWpVLver33dyM4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wZiNTU9/if+AWJ9cUwk+qCpaM7YGBKz7pTESG4aP3+VTWX8/Ag6Roi4JoS8/S2lWm
-         MGQdvCPG+M1dhfE1OvKDSd9TVDTgZf3Fk6ZvWY+t3LkksTXwDYVXTGuflEzZRhuigD
-         AF7Ieq1pzxO6RjzU8cqE42bZCE+PvQMW3fKTAhjg=
+        b=11K4mPTBUDcXQumI/dayptaVq6Qxg0dkeUUCUHHPxvYAH/ypheZA3v1+bWf1XcwLI
+         63cOu/ykbUBrKtHl4dUeAJnN8NFuzjHswqy8VsvNE2GyCvQtyreAP8CiFpGzvCspr3
+         oVpqwl6UIokYs9cPB/wyMCEDU5pWuhZgmAlMYbfs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Rik van Riel <riel@surriel.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Thomas Gleixner <tglx@linutronix.de>, dave.hansen@intel.com,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.14 057/101] x86/mm: Drop usage of __flush_tlb_all() in kernel_physical_mapping_init()
-Date:   Mon,  7 Jan 2019 13:32:45 +0100
-Message-Id: <20190107105336.046274395@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 4.14 058/101] KVM: x86: Use jmp to invoke kvm_spurious_fault() from .fixup
+Date:   Mon,  7 Jan 2019 13:32:46 +0100
+Message-Id: <20190107105336.100340090@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107105330.372621917@linuxfoundation.org>
 References: <20190107105330.372621917@linuxfoundation.org>
@@ -75,110 +66,136 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Williams <dan.j.williams@intel.com>
+From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-commit ba6f508d0ec4adb09f0a939af6d5e19cdfa8667d upstream.
+commit e81434995081fd7efb755fd75576b35dbb0850b1 upstream.
 
-Commit:
+____kvm_handle_fault_on_reboot() provides a generic exception fixup
+handler that is used to cleanly handle faults on VMX/SVM instructions
+during reboot (or at least try to).  If there isn't a reboot in
+progress, ____kvm_handle_fault_on_reboot() treats any exception as
+fatal to KVM and invokes kvm_spurious_fault(), which in turn generates
+a BUG() to get a stack trace and die.
 
-  f77084d96355 "x86/mm/pat: Disable preemption around __flush_tlb_all()"
+When it was originally added by commit 4ecac3fd6dc2 ("KVM: Handle
+virtualization instruction #UD faults during reboot"), the "call" to
+kvm_spurious_fault() was handcoded as PUSH+JMP, where the PUSH'd value
+is the RIP of the faulting instructing.
 
-addressed a case where __flush_tlb_all() is called without preemption
-being disabled. It also left a warning to catch other cases where
-preemption is not disabled.
+The PUSH+JMP trickery is necessary because the exception fixup handler
+code lies outside of its associated function, e.g. right after the
+function.  An actual CALL from the .fixup code would show a slightly
+bogus stack trace, e.g. an extra "random" function would be inserted
+into the trace, as the return RIP on the stack would point to no known
+function (and the unwinder will likely try to guess who owns the RIP).
 
-That warning triggers for the memory hotplug path which is also used for
-persistent memory enabling:
+Unfortunately, the JMP was replaced with a CALL when the macro was
+reworked to not spin indefinitely during reboot (commit b7c4145ba2eb
+"KVM: Don't spin on virt instruction faults during reboot").  This
+causes the aforementioned behavior where a bogus function is inserted
+into the stack trace, e.g. my builds like to blame free_kvm_area().
 
- WARNING: CPU: 35 PID: 911 at ./arch/x86/include/asm/tlbflush.h:460
- RIP: 0010:__flush_tlb_all+0x1b/0x3a
- [..]
- Call Trace:
-  phys_pud_init+0x29c/0x2bb
-  kernel_physical_mapping_init+0xfc/0x219
-  init_memory_mapping+0x1a5/0x3b0
-  arch_add_memory+0x2c/0x50
-  devm_memremap_pages+0x3aa/0x610
-  pmem_attach_disk+0x585/0x700 [nd_pmem]
+Revert the CALL back to a JMP.  The changelog for commit b7c4145ba2eb
+("KVM: Don't spin on virt instruction faults during reboot") contains
+nothing that indicates the switch to CALL was deliberate.  This is
+backed up by the fact that the PUSH <insn RIP> was left intact.
 
-Andy wondered why a path that can sleep was using __flush_tlb_all() [1]
-and Dave confirmed the expectation for TLB flush is for modifying /
-invalidating existing PTE entries, but not initial population [2]. Drop
-the usage of __flush_tlb_all() in phys_{p4d,pud,pmd}_init() on the
-expectation that this path is only ever populating empty entries for the
-linear map. Note, at linear map teardown time there is a call to the
-all-cpu flush_tlb_all() to invalidate the removed mappings.
+Note that an alternative to the PUSH+JMP magic would be to JMP back
+to the "real" code and CALL from there, but that would require adding
+a JMP in the non-faulting path to avoid calling kvm_spurious_fault()
+and would add no value, i.e. the stack trace would be the same.
 
-[1]: https://lkml.kernel.org/r/9DFD717D-857D-493D-A606-B635D72BAC21@amacapital.net
-[2]: https://lkml.kernel.org/r/749919a4-cdb1-48a3-adb4-adb81a5fa0b5@intel.com
+Using CALL:
 
-[ mingo: Minor readability edits. ]
+------------[ cut here ]------------
+kernel BUG at /home/sean/go/src/kernel.org/linux/arch/x86/kvm/x86.c:356!
+invalid opcode: 0000 [#1] SMP
+CPU: 4 PID: 1057 Comm: qemu-system-x86 Not tainted 4.20.0-rc6+ #75
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 0.0.0 02/06/2015
+RIP: 0010:kvm_spurious_fault+0x5/0x10 [kvm]
+Code: <0f> 0b 66 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 41 55 49 89 fd 41
+RSP: 0018:ffffc900004bbcc8 EFLAGS: 00010046
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffffffffffffff
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffff888273fd8000 R08: 00000000000003e8 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000784 R12: ffffc90000371fb0
+R13: 0000000000000000 R14: 000000026d763cf4 R15: ffff888273fd8000
+FS:  00007f3d69691700(0000) GS:ffff888277800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055f89bc56fe0 CR3: 0000000271a5a001 CR4: 0000000000362ee0
+Call Trace:
+ free_kvm_area+0x1044/0x43ea [kvm_intel]
+ ? vmx_vcpu_run+0x156/0x630 [kvm_intel]
+ ? kvm_arch_vcpu_ioctl_run+0x447/0x1a40 [kvm]
+ ? kvm_vcpu_ioctl+0x368/0x5c0 [kvm]
+ ? kvm_vcpu_ioctl+0x368/0x5c0 [kvm]
+ ? __set_task_blocked+0x38/0x90
+ ? __set_current_blocked+0x50/0x60
+ ? __fpu__restore_sig+0x97/0x490
+ ? do_vfs_ioctl+0xa1/0x620
+ ? __x64_sys_futex+0x89/0x180
+ ? ksys_ioctl+0x66/0x70
+ ? __x64_sys_ioctl+0x16/0x20
+ ? do_syscall_64+0x4f/0x100
+ ? entry_SYSCALL_64_after_hwframe+0x44/0xa9
+Modules linked in: vhost_net vhost tap kvm_intel kvm irqbypass bridge stp llc
+---[ end trace 9775b14b123b1713 ]---
 
-Suggested-by: Dave Hansen <dave.hansen@linux.intel.com>
-Reported-by: Andy Lutomirski <luto@kernel.org>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: <stable@vger.kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Rik van Riel <riel@surriel.com>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: dave.hansen@intel.com
-Fixes: f77084d96355 ("x86/mm/pat: Disable preemption around __flush_tlb_all()")
-Link: http://lkml.kernel.org/r/154395944713.32119.15611079023837132638.stgit@dwillia2-desk3.amr.corp.intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Using JMP:
+
+------------[ cut here ]------------
+kernel BUG at /home/sean/go/src/kernel.org/linux/arch/x86/kvm/x86.c:356!
+invalid opcode: 0000 [#1] SMP
+CPU: 6 PID: 1067 Comm: qemu-system-x86 Not tainted 4.20.0-rc6+ #75
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 0.0.0 02/06/2015
+RIP: 0010:kvm_spurious_fault+0x5/0x10 [kvm]
+Code: <0f> 0b 66 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 41 55 49 89 fd 41
+RSP: 0018:ffffc90000497cd0 EFLAGS: 00010046
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffffffffffffff
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffff88827058bd40 R08: 00000000000003e8 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000784 R12: ffffc90000369fb0
+R13: 0000000000000000 R14: 00000003c8fc6642 R15: ffff88827058bd40
+FS:  00007f3d7219e700(0000) GS:ffff888277900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f3d64001000 CR3: 0000000271c6b004 CR4: 0000000000362ee0
+Call Trace:
+ vmx_vcpu_run+0x156/0x630 [kvm_intel]
+ ? kvm_arch_vcpu_ioctl_run+0x447/0x1a40 [kvm]
+ ? kvm_vcpu_ioctl+0x368/0x5c0 [kvm]
+ ? kvm_vcpu_ioctl+0x368/0x5c0 [kvm]
+ ? __set_task_blocked+0x38/0x90
+ ? __set_current_blocked+0x50/0x60
+ ? __fpu__restore_sig+0x97/0x490
+ ? do_vfs_ioctl+0xa1/0x620
+ ? __x64_sys_futex+0x89/0x180
+ ? ksys_ioctl+0x66/0x70
+ ? __x64_sys_ioctl+0x16/0x20
+ ? do_syscall_64+0x4f/0x100
+ ? entry_SYSCALL_64_after_hwframe+0x44/0xa9
+Modules linked in: vhost_net vhost tap kvm_intel kvm irqbypass bridge stp llc
+---[ end trace f9daedb85ab3ddba ]---
+
+Fixes: b7c4145ba2eb ("KVM: Don't spin on virt instruction faults during reboot")
+Cc: stable@vger.kernel.org
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/mm/init_64.c |    6 ------
- 1 file changed, 6 deletions(-)
+ arch/x86/include/asm/kvm_host.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/mm/init_64.c
-+++ b/arch/x86/mm/init_64.c
-@@ -574,7 +574,6 @@ phys_pud_init(pud_t *pud_page, unsigned
- 							   paddr_end,
- 							   page_size_mask,
- 							   prot);
--				__flush_tlb_all();
- 				continue;
- 			}
- 			/*
-@@ -617,7 +616,6 @@ phys_pud_init(pud_t *pud_page, unsigned
- 		pud_populate(&init_mm, pud, pmd);
- 		spin_unlock(&init_mm.page_table_lock);
- 	}
--	__flush_tlb_all();
- 
- 	update_page_count(PG_LEVEL_1G, pages);
- 
-@@ -658,7 +656,6 @@ phys_p4d_init(p4d_t *p4d_page, unsigned
- 			paddr_last = phys_pud_init(pud, paddr,
- 					paddr_end,
- 					page_size_mask);
--			__flush_tlb_all();
- 			continue;
- 		}
- 
-@@ -670,7 +667,6 @@ phys_p4d_init(p4d_t *p4d_page, unsigned
- 		p4d_populate(&init_mm, p4d, pud);
- 		spin_unlock(&init_mm.page_table_lock);
- 	}
--	__flush_tlb_all();
- 
- 	return paddr_last;
- }
-@@ -723,8 +719,6 @@ kernel_physical_mapping_init(unsigned lo
- 	if (pgd_changed)
- 		sync_global_pgds(vaddr_start, vaddr_end - 1);
- 
--	__flush_tlb_all();
--
- 	return paddr_last;
- }
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -1355,7 +1355,7 @@ asmlinkage void kvm_spurious_fault(void)
+ 	"cmpb $0, kvm_rebooting \n\t"	      \
+ 	"jne 668b \n\t"      		      \
+ 	__ASM_SIZE(push) " $666b \n\t"	      \
+-	"call kvm_spurious_fault \n\t"	      \
++	"jmp kvm_spurious_fault \n\t"	      \
+ 	".popsection \n\t" \
+ 	_ASM_EXTABLE(666b, 667b)
  
 
 
