@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 670AAC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 19:54:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF764C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 19:54:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 338002183E
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 19:54:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D0D02147C
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 19:54:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728587AbfAGTyc (ORCPT
+        id S1728607AbfAGTyj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 14:54:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35466 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 14:54:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35388 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728191AbfAGTxf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 14:53:35 -0500
+        id S1727885AbfAGTxe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 14:53:34 -0500
 Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 730CA218C3;
-        Mon,  7 Jan 2019 19:53:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2774021855;
+        Mon,  7 Jan 2019 19:53:33 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.91)
         (envelope-from <rostedt@goodmis.org>)
-        id 1ggaxp-0000Ll-Ed; Mon, 07 Jan 2019 14:53:33 -0500
-Message-Id: <20190107195333.322706801@goodmis.org>
+        id 1ggaxo-0000IL-7Q; Mon, 07 Jan 2019 14:53:32 -0500
+Message-Id: <20190107195332.098645365@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Mon, 07 Jan 2019 14:53:01 -0500
+Date:   Mon, 07 Jan 2019 14:52:55 -0500
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org,
         linux-rt-users <linux-rt-users@vger.kernel.org>
@@ -40,9 +40,8 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Paul Gortmaker <paul.gortmaker@windriver.com>,
         Julia Cartwright <julia@ni.com>,
         Daniel Wagner <daniel.wagner@siemens.com>,
-        tom.zanussi@linux.intel.com, stable-rt@vger.kernel.org,
-        Daniel Bristot de Oliveira <bristot@redhat.com>
-Subject: [PATCH RT 09/13] hrtimer: move state change before hrtimer_cancel in do_nanosleep()
+        tom.zanussi@linux.intel.com, Clark Williams <williams@redhat.com>
+Subject: [PATCH RT 03/13] mm/kasan: make quarantine_lock a raw_spinlock_t
 References: <20190107195252.599921907@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
@@ -56,52 +55,100 @@ If anyone has any objections, please let me know.
 
 ------------------
 
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+From: Clark Williams <williams@redhat.com>
 
-[ Upstream commit 8115ac730fd5aa27134f002cf710204b5dd7cd5e ]
+[ Upstream commit 089cb35faad5da57fa90399b230b3aee4920bb02 ]
 
-There is a small window between setting t->task to NULL and waking the
-task up (which would set TASK_RUNNING). So the timer would fire, run and
-set ->task to NULL while the other side/do_nanosleep() wouldn't enter
-freezable_schedule(). After all we are peemptible here (in
-do_nanosleep() and on the timer wake up path) and on KVM/virt the
-virt-CPU might get preempted.
-So do_nanosleep() wouldn't enter freezable_schedule() but cancel the
-timer which is still running and wait for it via
-hrtimer_wait_for_timer(). Then wait_event()/might_sleep() would complain
-that it is invoked with state != TASK_RUNNING.
-This isn't a problem since it would be reset to TASK_RUNNING later
-anyway and we don't rely on the previous state.
+The static lock quarantine_lock is used in quarantine.c to protect the
+quarantine queue datastructures. It is taken inside quarantine queue
+manipulation routines (quarantine_put(), quarantine_reduce() and
+quarantine_remove_cache()), with IRQs disabled.
+This is not a problem on a stock kernel but is problematic on an RT
+kernel where spin locks are sleeping spinlocks, which can sleep and can
+not be acquired with disabled interrupts.
 
-Move the state update to TASK_RUNNING before hrtimer_cancel() so there
-are no complains from might_sleep() about wrong state.
+Convert the quarantine_lock to a raw spinlock_t. The usage of
+quarantine_lock is confined to quarantine.c and the work performed while
+the lock is held is limited.
 
-Cc: stable-rt@vger.kernel.org
-Reviewed-by: Daniel Bristot de Oliveira <bristot@redhat.com>
+Signed-off-by: Clark Williams <williams@redhat.com>
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- kernel/time/hrtimer.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ mm/kasan/quarantine.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
-index b59e009087a9..c8d806126381 100644
---- a/kernel/time/hrtimer.c
-+++ b/kernel/time/hrtimer.c
-@@ -1753,12 +1753,12 @@ static int __sched do_nanosleep(struct hrtimer_sleeper *t, enum hrtimer_mode mod
- 		if (likely(t->task))
- 			freezable_schedule();
+diff --git a/mm/kasan/quarantine.c b/mm/kasan/quarantine.c
+index 3a8ddf8baf7d..b209dbaefde8 100644
+--- a/mm/kasan/quarantine.c
++++ b/mm/kasan/quarantine.c
+@@ -103,7 +103,7 @@ static int quarantine_head;
+ static int quarantine_tail;
+ /* Total size of all objects in global_quarantine across all batches. */
+ static unsigned long quarantine_size;
+-static DEFINE_SPINLOCK(quarantine_lock);
++static DEFINE_RAW_SPINLOCK(quarantine_lock);
+ DEFINE_STATIC_SRCU(remove_cache_srcu);
  
-+		__set_current_state(TASK_RUNNING);
- 		hrtimer_cancel(&t->timer);
- 		mode = HRTIMER_MODE_ABS;
+ /* Maximum size of the global queue. */
+@@ -190,7 +190,7 @@ void quarantine_put(struct kasan_free_meta *info, struct kmem_cache *cache)
+ 	if (unlikely(q->bytes > QUARANTINE_PERCPU_SIZE)) {
+ 		qlist_move_all(q, &temp);
  
- 	} while (t->task && !signal_pending(current));
+-		spin_lock(&quarantine_lock);
++		raw_spin_lock(&quarantine_lock);
+ 		WRITE_ONCE(quarantine_size, quarantine_size + temp.bytes);
+ 		qlist_move_all(&temp, &global_quarantine[quarantine_tail]);
+ 		if (global_quarantine[quarantine_tail].bytes >=
+@@ -203,7 +203,7 @@ void quarantine_put(struct kasan_free_meta *info, struct kmem_cache *cache)
+ 			if (new_tail != quarantine_head)
+ 				quarantine_tail = new_tail;
+ 		}
+-		spin_unlock(&quarantine_lock);
++		raw_spin_unlock(&quarantine_lock);
+ 	}
  
--	__set_current_state(TASK_RUNNING);
+ 	local_irq_restore(flags);
+@@ -230,7 +230,7 @@ void quarantine_reduce(void)
+ 	 * expected case).
+ 	 */
+ 	srcu_idx = srcu_read_lock(&remove_cache_srcu);
+-	spin_lock_irqsave(&quarantine_lock, flags);
++	raw_spin_lock_irqsave(&quarantine_lock, flags);
  
- 	if (!t->task)
- 		return 0;
+ 	/*
+ 	 * Update quarantine size in case of hotplug. Allocate a fraction of
+@@ -254,7 +254,7 @@ void quarantine_reduce(void)
+ 			quarantine_head = 0;
+ 	}
+ 
+-	spin_unlock_irqrestore(&quarantine_lock, flags);
++	raw_spin_unlock_irqrestore(&quarantine_lock, flags);
+ 
+ 	qlist_free_all(&to_free, NULL);
+ 	srcu_read_unlock(&remove_cache_srcu, srcu_idx);
+@@ -310,17 +310,17 @@ void quarantine_remove_cache(struct kmem_cache *cache)
+ 	 */
+ 	on_each_cpu(per_cpu_remove_cache, cache, 1);
+ 
+-	spin_lock_irqsave(&quarantine_lock, flags);
++	raw_spin_lock_irqsave(&quarantine_lock, flags);
+ 	for (i = 0; i < QUARANTINE_BATCHES; i++) {
+ 		if (qlist_empty(&global_quarantine[i]))
+ 			continue;
+ 		qlist_move_cache(&global_quarantine[i], &to_free, cache);
+ 		/* Scanning whole quarantine can take a while. */
+-		spin_unlock_irqrestore(&quarantine_lock, flags);
++		raw_spin_unlock_irqrestore(&quarantine_lock, flags);
+ 		cond_resched();
+-		spin_lock_irqsave(&quarantine_lock, flags);
++		raw_spin_lock_irqsave(&quarantine_lock, flags);
+ 	}
+-	spin_unlock_irqrestore(&quarantine_lock, flags);
++	raw_spin_unlock_irqrestore(&quarantine_lock, flags);
+ 
+ 	qlist_free_all(&to_free, cache);
+ 
 -- 
 2.19.2
 
