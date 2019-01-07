@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0BD6C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:07:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58AFEC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:07:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B73C32089F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:07:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1DACD20578
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:07:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546866426;
-	bh=lCbzVanza381aZjm1prDEJxoALCM4HIuhtojJLJ0jxs=;
+	s=default; t=1546866435;
+	bh=iP5ptsh6upZ4OvQXitlp+iCDjrGo1TJDJMSKMSf3JP4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=eIDYGC6bOfbvrIaZG7881rmpc+uksOKvufiHCswnUDfMejl1p+HUl/Fz7b01b3Nfz
-	 qthdtlCx3NEgfEUSh5kFitkrDoI64QYvhZ8EwjG9rVOXR9FR3tlWfXybxYRKeuTiQf
-	 QNoHNGhE84Y1mEr85kD5XyNcT77gmPfQ8hqrQbUk=
+	b=WMaO5AtpXMLTmliGQE4LDStjzV4g+i75W+TrRcfIqQLZr3Mq8l+gdNTCBCVC9DJxz
+	 mE9N11VA126Wq3zefKoI+P+1iJP95os5j7p98T5ppW4O+rqXJnR2aue+zfvhXl7p9C
+	 2i807uY57ASnwTvH3vm8RkVpSs9aJ77QWwXZrROg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731285AbfAGNHG (ORCPT
+        id S1731297AbfAGNHN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:07:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54258 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:07:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54328 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727362AbfAGNHE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:07:04 -0500
+        id S1727362AbfAGNHL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:07:11 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 23C442089F;
-        Mon,  7 Jan 2019 13:07:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F13C5206BB;
+        Mon,  7 Jan 2019 13:07:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546866423;
-        bh=lCbzVanza381aZjm1prDEJxoALCM4HIuhtojJLJ0jxs=;
+        s=default; t=1546866430;
+        bh=iP5ptsh6upZ4OvQXitlp+iCDjrGo1TJDJMSKMSf3JP4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OfUUmwDrDpg+OLxTMGwyXtdXaUogtyxYJtVVhMcyC5lpTldAOsrW+fgt3b6jSiG4x
-         Wz1LQa44cr0REx2RIzFXltJGmJ4U3wgxqUbc8O8VB59XSC4dXaGN+FFH4d7uLe+04O
-         C7LzeLOXTmE+U1dGKskCGdk0xLssNs1ClXoRONIE=
+        b=Mt/Dtbn9j9JdKIPoEGA0RiZMiXlJGNRPeSHG2XhwG2KN8JOIMTykDyiKzNOEXH1n3
+         3rSKIGxTAJPy5WyVrMpFql3QB4C4kBQN3faB36kKLDHmCKtiT6L+Qhq8xBD1m0duOY
+         lbWjeUrETl4eiGoUkTTk8QbqvUmWoRnPM7dJrKAk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.9 34/71] mtd: atmel-quadspi: disallow building on ebsa110
-Date:   Mon,  7 Jan 2019 13:33:03 +0100
-Message-Id: <20190107105334.709470586@linuxfoundation.org>
+        stable@vger.kernel.org,
+        =?UTF-8?q?Mantas=20Mikul=C4=97nas?= <grawity@gmail.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.9 35/71] ALSA: hda: add mute LED support for HP EliteBook 840 G4
+Date:   Mon,  7 Jan 2019 13:33:04 +0100
+Message-Id: <20190107105334.766856733@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107105330.280153213@linuxfoundation.org>
 References: <20190107105330.280153213@linuxfoundation.org>
@@ -66,46 +66,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Mantas Mikulėnas <grawity@gmail.com>
 
-commit 2a9d92fb3a1282a4659f1bb6d5684018846537b7 upstream.
+commit 40906ebe3af6a48457151b3c6726b480f6a6cb13 upstream.
 
-I ran into a link-time error with the atmel-quadspi driver on the
-EBSA110 platform:
+Tested with 4.19.9.
 
-drivers/mtd/built-in.o: In function `atmel_qspi_run_command':
-:(.text+0x1ee3c): undefined reference to `_memcpy_toio'
-:(.text+0x1ee48): undefined reference to `_memcpy_fromio'
+v2: Changed from CXT_FIXUP_MUTE_LED_GPIO to CXT_FIXUP_HP_DOCK because
+    that's what the existing fixups for EliteBooks use.
 
-The problem is that _memcpy_toio/_memcpy_fromio are not available on
-that platform, and we have to prevent building the driver there.
-
-In case we want to backport this to older kernels: between linux-4.8
-and linux-4.20, the Kconfig entry was in drivers/mtd/spi-nor/Kconfig
-but had the same problem.
-
-Link: https://lore.kernel.org/patchwork/patch/812860/
-Fixes: 161aaab8a067 ("mtd: atmel-quadspi: add driver for Atmel QSPI controller")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Cc: stable@vger.kernel.org
+Signed-off-by: Mantas Mikulėnas <grawity@gmail.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mtd/spi-nor/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/pci/hda/patch_conexant.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/mtd/spi-nor/Kconfig
-+++ b/drivers/mtd/spi-nor/Kconfig
-@@ -31,7 +31,7 @@ config MTD_SPI_NOR_USE_4K_SECTORS
- 
- config SPI_ATMEL_QUADSPI
- 	tristate "Atmel Quad SPI Controller"
--	depends on ARCH_AT91 || (ARM && COMPILE_TEST)
-+	depends on ARCH_AT91 || (ARM && COMPILE_TEST && !ARCH_EBSA110)
- 	depends on OF && HAS_IOMEM
- 	help
- 	  This enables support for the Quad SPI controller in master mode.
+--- a/sound/pci/hda/patch_conexant.c
++++ b/sound/pci/hda/patch_conexant.c
+@@ -853,6 +853,7 @@ static const struct snd_pci_quirk cxt506
+ 	SND_PCI_QUIRK(0x103c, 0x8079, "HP EliteBook 840 G3", CXT_FIXUP_HP_DOCK),
+ 	SND_PCI_QUIRK(0x103c, 0x807C, "HP EliteBook 820 G3", CXT_FIXUP_HP_DOCK),
+ 	SND_PCI_QUIRK(0x103c, 0x80FD, "HP ProBook 640 G2", CXT_FIXUP_HP_DOCK),
++	SND_PCI_QUIRK(0x103c, 0x828c, "HP EliteBook 840 G4", CXT_FIXUP_HP_DOCK),
+ 	SND_PCI_QUIRK(0x103c, 0x83b3, "HP EliteBook 830 G5", CXT_FIXUP_HP_DOCK),
+ 	SND_PCI_QUIRK(0x103c, 0x83d3, "HP ProBook 640 G4", CXT_FIXUP_HP_DOCK),
+ 	SND_PCI_QUIRK(0x103c, 0x8174, "HP Spectre x360", CXT_FIXUP_HP_SPECTRE),
 
 
