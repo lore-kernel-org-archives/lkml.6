@@ -2,100 +2,75 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A495C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 15:53:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E81EBC43612
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 15:53:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D685A218A6
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 15:53:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=chronox.de header.i=@chronox.de header.b="bc0wctjv"
+	by mail.kernel.org (Postfix) with ESMTP id AF3782173C
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 15:53:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546876413;
+	bh=kYw6byPDpny+hxiVprsaX055uPGvf/HAwLVfVgLbGlM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=N26LO9QloTb0XJjXcNh9xapLzofn0XRXjYzrwkNwCrUWhpjk0M/aH4mTRC5iAUZsF
+	 lBZdkKGk0uMWkQP/32vPg7MGFPpQXNfwmwC5KTTyLfHaUb4kQM6lvaXKc6aUnjtgB5
+	 ey4WCxiJ2k7PP5/G8j8SKsFPLlxmAQbq855QPYto=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729076AbfAGPxC (ORCPT
+        id S1730311AbfAGPxc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 10:53:02 -0500
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.50]:31130 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726873AbfAGPxC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 10:53:02 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1546876380;
-        s=strato-dkim-0002; d=chronox.de;
-        h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=FWgpn4Gs1XQXE55hR7MjDyXAwrGdQnmdLnAxI/A6CE0=;
-        b=bc0wctjvLab0SDb+PqUKsj4hZvMURIeTjmR73RuSPaN+9FCRM2WNdiCHC8dXNFslgG
-        5IKhSl6yuH+7zLn4GbcVR2KtjwyWO1thtKXpnLC6g+n5z/Z3aNNVtmuc9n6hzdZOz2Oq
-        V/yfGJrzhRjpSNi1OMIvL/tceTrdwep/Kf6j9rS2yiOMv7myBRQ6xqaBAFvaqzRb/PCf
-        8vgA5m5DnOHA0cpPmoXThMVSOSswbQDs7v8J8LQko2/kAZuYKdik9zwIxaRAl6sSjRym
-        zpBg8SFB+dL5SN/ad4l55roIeQXdd+Zqw5aK1pPQKxJY7Jb1VNWmc0zLJ11lhxTgFKH2
-        bqTA==
-X-RZG-AUTH: ":P2ERcEykfu11Y98lp/T7+hdri+uKZK8TKWEqNyiHySGSa9k9xmwdNnzGHXPaJ/SfQIux"
-X-RZG-CLASS-ID: mo00
-Received: from tauon.chronox.de
-        by smtp.strato.de (RZmta 44.9 DYNA|AUTH)
-        with ESMTPSA id 309bcfv07Fq1Evw
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Mon, 7 Jan 2019 16:52:01 +0100 (CET)
-From:   Stephan Mueller <smueller@chronox.de>
-To:     herbert@gondor.apana.org.au
-Cc:     "Lee, Chun-Yi" <joeyli.kernel@gmail.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, keyrings@vger.kernel.org,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Chen Yu <yu.c.chen@intel.com>,
-        Oliver Neukum <oneukum@suse.com>,
-        Ryan Chen <yu.chen.surf@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Giovanni Gherdovich <ggherdovich@suse.cz>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Jann Horn <jannh@google.com>, Andy Lutomirski <luto@kernel.org>
-Subject: Re: [PATCH 1/5 v2] PM / hibernate: Create snapshot keys handler
-Date:   Mon, 07 Jan 2019 16:52:00 +0100
-Message-ID: <4499700.LRS4F2YjjC@tauon.chronox.de>
-In-Reply-To: <20190107153327.GB4210@linux-l9pv.suse>
-References: <20190103143227.9138-1-jlee@suse.com> <4539995.kc8yiMsNgQ@tauon.chronox.de> <20190107153327.GB4210@linux-l9pv.suse>
+        Mon, 7 Jan 2019 10:53:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59828 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726654AbfAGPxc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 10:53:32 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 562C82089F;
+        Mon,  7 Jan 2019 15:53:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1546876411;
+        bh=kYw6byPDpny+hxiVprsaX055uPGvf/HAwLVfVgLbGlM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Glk5X+nTik/+8E8MV57LQ4m+anMt+bCubv/iwlbE1sHluSZzKDx6xnowcriOY+Hus
+         R878ydPVwfL89l+ma5ffyo1X1wnB3MGAzmjIpvPMTL9OtznrqCDV8cxPVd32+vIeDn
+         XLIyxnVI6BX4LOYc4H7coWzM54jc2tRtePAwncaA=
+Date:   Mon, 7 Jan 2019 16:53:28 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 4.9 00/71] 4.9.149-stable review
+Message-ID: <20190107155328.GA26514@kroah.com>
+References: <20190107105330.280153213@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190107105330.280153213@linuxfoundation.org>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Montag, 7. Januar 2019, 16:33:27 CET schrieb joeyli:
-
-Hi Herbert,
-
+On Mon, Jan 07, 2019 at 01:32:29PM +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.9.149 release.
+> There are 71 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> > use an official KDF type like SP800-108 or HKDF?
-> > 
-> > You find the counter-KDF according to SP800-108 in security/keys/dh.c
-> > (search for functions *kdf*).
-> > 
-> > Or we may start pulling in KDF support into the kernel crypto API via the
-> > patches along the line of [1].
-> > 
-> > [1] http://www.chronox.de/kdf.html
+> Responses should be made by Wed Jan  9 10:53:04 UTC 2019.
+> Anything received after that time might be too late.
 > 
-> Thanks for your suggestion. I didn't touch any key derivation standard
-> before. I will study it.
-> 
-> But I still want to use my original function currently. Because the same
-> logic is also used in trusted key. I will happy to move to SP800-108 or
-> HKDF when it's available in kernel.
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.149-rc1.gz
 
-Would it make sense to polish these mentioned KDF patches and add them to the 
-kernel crypto API? The sprawl of key derivation logic here and there which 
-seemingly does not comply to any standard and thus possibly have issues should 
-be prevented and cleaned up.
-
-Ciao
-Stephan
-
+Ok, hopefully this is better, at least it builds on x86-64 properly
+now, -rc3:
+	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.149-rc3.gz
 
