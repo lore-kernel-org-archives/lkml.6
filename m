@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 822D2C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:05:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB8E3C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:05:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 497A92183F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:05:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D0822183F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:05:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546866349;
-	bh=ekZc2ibdCR36vllBWBmjYnoC5Pgj67ndd4yEvBg/Dt0=;
+	s=default; t=1546866356;
+	bh=Ld13Sbe4HKYF/4vuBE9S6BPU0VGVUx0VCiKIsG3FJ/Q=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ZIOrmY7XWry1wNR+wLkavWcxQNhqOBWf0e68C3o0/MTxlRdnpm/bmXBeT6YIPVj84
-	 3QFcknnCslT1NLPf6vypYN5Lf1vxbJ09BKtNQaaLEjWBhca3Z4QMDuBmzJGfBRoJX1
-	 Lzzegw3ujbmiy9p73oZGveoabpcyEKBrlO8bSyao=
+	b=WBu/ItZdKXpewlt724pU7wvq1uaf1zZSHxvzBqpX5dls/6C+Vc4u0cDukZXEIS7r1
+	 j90g01MR2nMzMwv+VZPX99BtD+91c8EthZfr+7ezAexL8FHqbd5D5t8w1zCYxCy7jD
+	 WVw+9ROGRhuKzQ5QGwcNOE9zzWKvlt5EhNGKSTgQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731501AbfAGNFs (ORCPT
+        id S1731511AbfAGNFz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:05:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53374 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:05:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53442 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727328AbfAGNFr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:05:47 -0500
+        id S1730806AbfAGNFx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:05:53 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 83B39217D4;
-        Mon,  7 Jan 2019 13:05:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 41C6021736;
+        Mon,  7 Jan 2019 13:05:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546866346;
-        bh=ekZc2ibdCR36vllBWBmjYnoC5Pgj67ndd4yEvBg/Dt0=;
+        s=default; t=1546866352;
+        bh=Ld13Sbe4HKYF/4vuBE9S6BPU0VGVUx0VCiKIsG3FJ/Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Lf3IeISijv2VWBQXn0TpF4J3AfiXT/pw51G1mExP2TI+angSUmqVSajwHPSd7dubM
-         9II6pG+ymyzeNH6di5XfZmyrMCPSVtiltl9xUVqJM2PFVI/aAjgL3jvcWok+F1n9CY
-         BFoQbANeJaUjyTUqL6j6gfBLZ4weLWi+KvtbzAhU=
+        b=v/9Ykk0V1F1w8z57L6pSoV/r/ZzXT16loLkAG+QqdQ1vVY7ns7LCZjljtIu6x2rO6
+         C4NHEq8vmCV9pr/RIAd8FwvdrYKinPpi/sL/CdTMmhc52pBrvLyfqKUq9FEAT/9nHo
+         pjYcAE005L6Cyf2nVd7u968xf4eVABWztJ2yCY+c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 03/71] ipv4: Fix potential Spectre v1 vulnerability
-Date:   Mon,  7 Jan 2019 13:32:32 +0100
-Message-Id: <20190107105330.487311913@linuxfoundation.org>
+Subject: [PATCH 4.9 04/71] net: core: Fix Spectre v1 vulnerability
+Date:   Mon,  7 Jan 2019 13:32:33 +0100
+Message-Id: <20190107105330.536657603@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107105330.280153213@linuxfoundation.org>
 References: <20190107105330.280153213@linuxfoundation.org>
@@ -68,17 +68,22 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 
-[ Upstream commit 5648451e30a0d13d11796574919a359025d52cce ]
+[ Upstream commit 50d5258634aee2e62832aa086d2fb0de00e72b91 ]
 
-vr.vifi is indirectly controlled by user-space, hence leading to
+flen is indirectly controlled by user-space, hence leading to
 a potential exploitation of the Spectre variant 1 vulnerability.
 
 This issue was detected with the help of Smatch:
 
-net/ipv4/ipmr.c:1616 ipmr_ioctl() warn: potential spectre issue 'mrt->vif_table' [r] (local cap)
-net/ipv4/ipmr.c:1690 ipmr_compat_ioctl() warn: potential spectre issue 'mrt->vif_table' [r] (local cap)
+net/core/filter.c:1101 bpf_check_classic() warn: potential spectre issue 'filter' [w]
 
-Fix this by sanitizing vr.vifi before using it to index mrt->vif_table'
+Fix this by sanitizing flen before using it to index filter at line 1101:
+
+	switch (filter[flen - 1].code) {
+
+and through pc at line 1040:
+
+	const struct sock_filter *ftest = &filter[pc];
 
 Notice that given that speculation windows are large, the policy is
 to kill the speculation on the first load and not worry if it can be
@@ -90,27 +95,26 @@ Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/ipmr.c |    3 +++
- 1 file changed, 3 insertions(+)
+ net/core/filter.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/net/ipv4/ipmr.c
-+++ b/net/ipv4/ipmr.c
-@@ -68,6 +68,8 @@
- #include <linux/netconf.h>
- #include <net/nexthop.h>
- 
+--- a/net/core/filter.c
++++ b/net/core/filter.c
+@@ -51,6 +51,7 @@
+ #include <net/dst_metadata.h>
+ #include <net/dst.h>
+ #include <net/sock_reuseport.h>
 +#include <linux/nospec.h>
-+
- struct ipmr_rule {
- 	struct fib_rule		common;
- };
-@@ -1562,6 +1564,7 @@ int ipmr_compat_ioctl(struct sock *sk, u
- 			return -EFAULT;
- 		if (vr.vifi >= mrt->maxvif)
- 			return -EINVAL;
-+		vr.vifi = array_index_nospec(vr.vifi, mrt->maxvif);
- 		read_lock(&mrt_lock);
- 		vif = &mrt->vif_table[vr.vifi];
- 		if (VIF_EXISTS(mrt, vr.vifi)) {
+ 
+ /**
+  *	sk_filter_trim_cap - run a packet through a socket filter
+@@ -786,6 +787,7 @@ static int bpf_check_classic(const struc
+ 	bool anc_found;
+ 	int pc;
+ 
++	flen = array_index_nospec(flen, BPF_MAXINSNS + 1);
+ 	/* Check the filter code now */
+ 	for (pc = 0; pc < flen; pc++) {
+ 		const struct sock_filter *ftest = &filter[pc];
 
 
