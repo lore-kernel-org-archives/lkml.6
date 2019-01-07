@@ -2,63 +2,40 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 488E2C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:33:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17464C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:33:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1942B206B6
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:33:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Pm8xTDeg";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Q6HwPujf"
+	by mail.kernel.org (Postfix) with ESMTP id E3FB6206B6
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:33:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727721AbfAGNdD (ORCPT
+        id S1727794AbfAGNdH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:33:03 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:38296 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726886AbfAGNdC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:33:02 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 359E660593; Mon,  7 Jan 2019 13:33:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1546867982;
-        bh=BwXqca18cf3Jzd2q6qFYRtz1Q1b0eGsEv5GDzrt9S38=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=Pm8xTDegaLxNzkOeh0OclgtiLsBaAUnQIAjfjTzqCyk4MWdDi4mNqrjgm2hyANnDL
-         aSv2eY/CyifClseVGfKV8CrlzkU3EAMHB1rjPPuGxxklQNPEnwUrUxLFXJunGMgh6B
-         +1sCm1Gw47/URqtcbN/L6QxTqn5qlr9/c9o6yS58=
-Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 640C6601D1;
-        Mon,  7 Jan 2019 13:33:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1546867981;
-        bh=BwXqca18cf3Jzd2q6qFYRtz1Q1b0eGsEv5GDzrt9S38=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=Q6HwPujf4MS3PPhHTJQt6BuPikNSJNWhg0nscxMEnlH33jWxlHE56aPbsXyb3N9n9
-         eODllMAtUkRYsHwSMF2Gb89EJShurGiPJd+viJvw80+qpJ6r2MWM6v/9FZnekHKNb1
-         ndL6syDEQpEYij1+iGVWHeP6eICu7DOycnU4GR3M=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 640C6601D1
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From:   Kalle Valo <kvalo@codeaurora.org>
-To:     kbuild test robot <lkp@intel.com>
-Cc:     Luca Coelho <luciano.coelho@intel.com>, kbuild-all@01.org,
-        linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org
-Subject: Re: ERROR: "ieee80211_hdrlen" [drivers/net/wireless/intel/iwlwifi/iwlwifi.ko] undefined!
-References: <201901071217.9zkGKNxN%fengguang.wu@intel.com>
-Date:   Mon, 07 Jan 2019 15:32:58 +0200
-In-Reply-To: <201901071217.9zkGKNxN%fengguang.wu@intel.com> (kbuild test
-        robot's message of "Mon, 7 Jan 2019 12:53:59 +0800")
-Message-ID: <87o98ssid1.fsf@kamboji.qca.qualcomm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        Mon, 7 Jan 2019 08:33:07 -0500
+Received: from mx2.suse.de ([195.135.220.15]:45478 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726886AbfAGNdG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:33:06 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E219EAD43;
+        Mon,  7 Jan 2019 13:33:04 +0000 (UTC)
+From:   Andreas Schwab <schwab@suse.de>
+To:     Atish Patra <atish.patra@wdc.com>
+Cc:     linux-riscv@lists.infradead.org, palmer@sifive.com,
+        linux-kernel@vger.kernel.org, anup@brainfault.org,
+        jeremy.linton@arm.com, sudeep.holla@arm.com
+Subject: Re: [PATCH] RISC-V: Fix of_node_* refcount
+References: <1542755270-10433-1-git-send-email-atish.patra@wdc.com>
+X-Yow:  Is this "BIKINI BEACH"?
+Date:   Mon, 07 Jan 2019 14:33:03 +0100
+In-Reply-To: <1542755270-10433-1-git-send-email-atish.patra@wdc.com> (Atish
+        Patra's message of "Tue, 20 Nov 2018 15:07:50 -0800")
+Message-ID: <mvmd0p8wq28.fsf@suse.de>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.90 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
@@ -66,32 +43,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+ linux-wireless
+On Nov 20 2018, Atish Patra <atish.patra@wdc.com> wrote:
 
-kbuild test robot <lkp@intel.com> writes:
+> diff --git a/arch/riscv/kernel/smpboot.c b/arch/riscv/kernel/smpboot.c
+> index 18cda0e8..fc185eca 100644
+> --- a/arch/riscv/kernel/smpboot.c
+> +++ b/arch/riscv/kernel/smpboot.c
+> @@ -57,12 +57,15 @@ void __init setup_smp(void)
+>  
+>  	while ((dn = of_find_node_by_type(dn, "cpu"))) {
+>  		hart = riscv_of_processor_hartid(dn);
+> -		if (hart < 0)
+> +		if (hart < 0) {
+> +			of_node_put(dn);
+>  			continue;
+> +		}
+>  
+>  		if (hart == cpuid_to_hartid_map(0)) {
+>  			BUG_ON(found_boot_cpu);
+>  			found_boot_cpu = 1;
+> +			of_node_put(dn);
+>  			continue;
+>  		}
+>  
 
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-> head:   574823bfab82d9d8fa47f422778043fbb4b4f50e
-> commit: aca432f06b8a60a92b27fb46e6518a19b28ca93f iwlwifi: make MVM and
-> DVM depend on MAC80211
-> date:   3 weeks ago
-> config: x86_64-randconfig-i1-01061720 (attached as .config)
-> compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
-> reproduce:
->         git checkout aca432f06b8a60a92b27fb46e6518a19b28ca93f
->         # save the attached .config to linux build tree
->         make ARCH=x86_64 
->
-> All errors (new ones prefixed by >>):
->
->>> ERROR: "ieee80211_hdrlen"
->>> [drivers/net/wireless/intel/iwlwifi/iwlwifi.ko] undefined!
->>> ERROR: "ieee80211_channel_to_frequency"
->>> [drivers/net/wireless/intel/iwlwifi/iwlwifi.ko] undefined!
->>> ERROR: "reg_query_regdb_wmm"
->>> [drivers/net/wireless/intel/iwlwifi/iwlwifi.ko] undefined!
+[    0.000000] OF: ERROR: Bad of_node_put() on /cpus/cpu@0
+[    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 5.0.0-rc1-00013-ge0b3e41110 #4
+[    0.000000] Call Trace:
+[    0.000000] [<ffffffe0010c8c74>] walk_stackframe+0x0/0xa4
+[    0.000000] [<ffffffe0010c8e74>] show_stack+0x2a/0x34
+[    0.000000] [<ffffffe00160989c>] dump_stack+0x62/0x7c
+[    0.000000] [<ffffffe0014d9660>] of_node_release+0xbe/0xc0
+[    0.000000] [<ffffffe00160e560>] kobject_put+0xa6/0x1e8
+[    0.000000] [<ffffffe0014d8bb8>] of_node_put+0x16/0x20
+[    0.000000] [<ffffffe0014d4bc2>] of_find_node_by_type+0x66/0xa4
+[    0.000000] [<ffffffe0000028bc>] 0xffffffe0000028bc
+[    0.000000] [<ffffffe0000026cc>] 0xffffffe0000026cc
+[    0.000000] [<ffffffe0000006ec>] 0xffffffe0000006ec
+[    0.000000] [<ffffffe000000076>] 0xffffffe000000076
+[    0.000000] OF: ERROR: Bad of_node_put() on /cpus/cpu@1
+[    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 5.0.0-rc1-00013-ge0b3e41110 #4
+[    0.000000] Call Trace:
+[    0.000000] [<ffffffe0010c8c74>] walk_stackframe+0x0/0xa4
+[    0.000000] [<ffffffe0010c8e74>] show_stack+0x2a/0x34
+[    0.000000] [<ffffffe00160989c>] dump_stack+0x62/0x7c
+[    0.000000] [<ffffffe0014d9660>] of_node_release+0xbe/0xc0
+[    0.000000] [<ffffffe00160e560>] kobject_put+0xa6/0x1e8
+[    0.000000] [<ffffffe0014d8bb8>] of_node_put+0x16/0x20
+[    0.000000] [<ffffffe0014d4bc2>] of_find_node_by_type+0x66/0xa4
+[    0.000000] [<ffffffe0000028bc>] 0xffffffe0000028bc
+[    0.000000] [<ffffffe0000026cc>] 0xffffffe0000026cc
+[    0.000000] [<ffffffe0000006ec>] 0xffffffe0000006ec
+[    0.000000] [<ffffffe000000076>] 0xffffffe000000076
 
-Luca, I guess you will send a fix for 5.0?
+Andreas.
 
 -- 
-Kalle Valo
+Andreas Schwab, SUSE Labs, schwab@suse.de
+GPG Key fingerprint = 0196 BAD8 1CE9 1970 F4BE  1748 E4D4 88E3 0EEA B9D7
+"And now for something completely different."
