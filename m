@@ -2,58 +2,52 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 541FFC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:38:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F0F4C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:38:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BD1420859
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:38:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 60FAD21736
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:38:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546864698;
-	bh=5246R1KAOd5CX6XXvvNS4B4D5t9NqxaAx4b0jshq3nc=;
+	s=default; t=1546864703;
+	bh=8F5HsyIgdYko+KDC9Ydp8PAwcUEyTRA8rQETaqJ2KW8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=hMPeP/CKZcVGJsr74nmdJU/jThVijqDH8Osh5e/CbsMHkeURPKpp2VxMQ7XhBvKL/
-	 vMYbmi/vDZAWfQUCkA2LWmo0HBMxqU9Rl6aw3IxMfiRKb7OSmh0A+GOiPQRatPwtKM
-	 sWVNXgYYsUtOzXKUAsOGM5g5ylIxEc4GhOWQ3MYQ=
+	b=GMHSQJ90iHWFBkopnVAf3lRQWyINv9penFvsZP25R5dMEObiKUZYblA74pV7xNCjf
+	 n0lnbvmVN6iA/EpXZbllTwOSUt3R/xB/F6d9MeR/f31q0dxhKu+XzyUnkMAkOlquXp
+	 junpEPRiOI4aq+gbQxdLLaeQibA8ovm0vuK53Mgs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727388AbfAGMiR (ORCPT
+        id S1727922AbfAGMiW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:38:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53336 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:38:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53450 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727460AbfAGMiO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:38:14 -0500
+        id S1727460AbfAGMiT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:38:19 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BCE2C206BB;
-        Mon,  7 Jan 2019 12:38:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7957020859;
+        Mon,  7 Jan 2019 12:38:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546864693;
-        bh=5246R1KAOd5CX6XXvvNS4B4D5t9NqxaAx4b0jshq3nc=;
+        s=default; t=1546864699;
+        bh=8F5HsyIgdYko+KDC9Ydp8PAwcUEyTRA8rQETaqJ2KW8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pKv+qzCXO4On5jO9SHc+O5i0Zp3ofGqDw7WbXCzQ3ZOSPGUIqQHMvCfq54S8wFPO+
-         OVckYDP20DM3PlYAs1zAlesRykM2ngZGsr7/REzrWIupDJjbjjoB3PLPuusItyXBJh
-         b/b5dyXTeH8su5j/IqpN0oixWs5N+ylp/LrZ5idw=
+        b=2NQ61BOTbZbrnZf+6xI87wfY70w67tkw1T+8AppOXULaIlu3K2y7F5jgPYvJGu22G
+         A3SK7sXxSqQtvgF+jqUGTXfUEZ6PB/9QWqVmu21BBpthZlsB1yWwtrOn+fZzltaJhd
+         iW/611b9GhYbP/jCoFp8YBnSITJYAEOHUIf/cuBM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        David Ahern <dsahern@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jiri Olsa <jolsa@redhat.com>, Leo Yan <leo.yan@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Wang Nan <wangnan0@huawei.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 4.20 069/145] perf env: Also consider env->arch == NULL as local operation
-Date:   Mon,  7 Jan 2019 13:31:46 +0100
-Message-Id: <20190107104446.280558460@linuxfoundation.org>
+        stable@vger.kernel.org, Greg Kurz <groug@kaod.org>,
+        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.20 070/145] ocxl: Fix endiannes bug in ocxl_link_update_pe()
+Date:   Mon,  7 Jan 2019 13:31:47 +0100
+Message-Id: <20190107104446.397241613@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104437.308206189@linuxfoundation.org>
 References: <20190107104437.308206189@linuxfoundation.org>
@@ -72,43 +66,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+From: Greg Kurz <groug@kaod.org>
 
-commit 804234f27180dcf9a25cb98a88d5212f65b7f3fd upstream.
+commit e1e71e201703500f708bdeaf64660a2a178cb6a0 upstream.
 
-We'll set a new machine field based on env->arch, which for live mode,
-like with 'perf top' means we need to use uname() to figure the name of
-the arch, fix perf_env__arch() to consider both (env == NULL) and
-(env->arch == NULL) as local operation.
+All fields in the PE are big-endian. Use cpu_to_be32() like everywhere
+else something is written to the PE. Otherwise a wrong TID will be used
+by the NPU. If this TID happens to point to an existing thread sharing
+the same mm, it could be woken up by error. This is highly improbable
+though. The likely outcome of this is the NPU not finding the target
+thread and forcing the AFU into sending an interrupt, which userspace
+is supposed to handle anyway.
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: David S. Miller <davem@davemloft.net>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Leo Yan <leo.yan@linaro.org>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Cc: stable@vger.kernel.org # 4.19
-Link: https://lkml.kernel.org/n/tip-vcz4ufzdon7cwy8dm2ua53xk@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Fixes: e948e06fc63a ("ocxl: Expose the thread_id needed for wait on POWER9")
+Cc: stable@vger.kernel.org      # v4.18
+Signed-off-by: Greg Kurz <groug@kaod.org>
+Acked-by: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/perf/util/env.c |    2 +-
+ drivers/misc/ocxl/link.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/tools/perf/util/env.c
-+++ b/tools/perf/util/env.c
-@@ -166,7 +166,7 @@ const char *perf_env__arch(struct perf_e
- 	struct utsname uts;
- 	char *arch_name;
+--- a/drivers/misc/ocxl/link.c
++++ b/drivers/misc/ocxl/link.c
+@@ -566,7 +566,7 @@ int ocxl_link_update_pe(void *link_handl
  
--	if (!env) { /* Assume local operation */
-+	if (!env || !env->arch) { /* Assume local operation */
- 		if (uname(&uts) < 0)
- 			return NULL;
- 		arch_name = uts.machine;
+ 	mutex_lock(&spa->spa_lock);
+ 
+-	pe->tid = tid;
++	pe->tid = cpu_to_be32(tid);
+ 
+ 	/*
+ 	 * The barrier makes sure the PE is updated
 
 
