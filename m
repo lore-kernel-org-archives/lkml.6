@@ -4,50 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DB6FC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:04:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75D34C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:04:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C1CD217D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:04:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3AD77217D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:04:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546866254;
-	bh=mZomK6BCGNMZvAVJX9eDxKIakGMRZaJ+7dEUZJOcwDw=;
+	s=default; t=1546866263;
+	bh=qrB9d1A5BJM3ODAFMbhwwY16VwaWE7X2gN2cYRikbTo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=P97gj+5iUozU4xrN7WtcZjiruxORKcHNsCIbkbMF+kGngpw9yAq10vP/xmjNmirAi
-	 WqZexeiLUhxhxwSSR7Y9RWx5VWL3KELZVvxRglG9P/5GazxXTiwG+2lmPeYpv0ixEz
-	 fewSjgv7PqI1AiBIh28x1Y8sQJSKhXyxIf+Faud4=
+	b=eonBsuSFXaeZP14qvN1q+p55DG5ZjAHrGAMMoYPw2radJPwfhqH+Imu0SKTgzLwXn
+	 LXvsd2FW5brTZ/cYTEb+Pm0LF0M/4vGJKIyjUN+vt59JmT9oZmQMcWRAIW730KcWlF
+	 bGzeKpVDxiuPNChwChbB+FoAuJ3g5xGwyFBHJA8k=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731154AbfAGNEH (ORCPT
+        id S1731366AbfAGNEW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:04:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51652 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:04:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51774 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731123AbfAGNED (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:04:03 -0500
+        id S1731264AbfAGNEM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:04:12 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5850C206BB;
-        Mon,  7 Jan 2019 13:04:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D6678206BB;
+        Mon,  7 Jan 2019 13:04:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546866242;
-        bh=mZomK6BCGNMZvAVJX9eDxKIakGMRZaJ+7dEUZJOcwDw=;
+        s=default; t=1546866251;
+        bh=qrB9d1A5BJM3ODAFMbhwwY16VwaWE7X2gN2cYRikbTo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HUAFfxeRGzw1UU4+ZyHI1/0bP89pRtIyGJtlSFPjvvtXegVpG8VmBwgW2KdVFCtW5
-         k9PBYxWH8gCCK5j2tAjk8pt0WLM2ep9UnCDg8bDERirUAnSoFV16Bn5sSknFp+8+BN
-         Qlv/4w0Qib9j/GhPCG6GgJbbjA5d2HBMLO0axyHM=
+        b=2I3ihExaBKQldWBwfM2SRJW6bFZzVhmjUVBxYzItsCh/crAEulWlizkhN0GJKPdUh
+         Qt/EFcWq/OhvWS2QbllAgH0SYNlmXh0MI1b+qRZJVa8/0uJQOaFRgAsX4jSsDeMt07
+         xWCHTwmUp0ss4SV2k6816pjSTEOc2SAYTVin7e28=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Georgy A Bystrenin <gkot@altlinux.org>,
-        Pavel Shilovsky <pshilov@microsoft.com>,
-        Steve French <stfrench@microsoft.com>
-Subject: [PATCH 4.14 095/101] CIFS: Fix error mapping for SMB2_LOCK command which caused OFD lock problem
-Date:   Mon,  7 Jan 2019 13:33:23 +0100
-Message-Id: <20190107105338.002620728@linuxfoundation.org>
+        stable@vger.kernel.org, "Maciej W. Rozycki" <macro@linux-mips.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH 4.14 098/101] rtc: m41t80: Correct alarm month range with RTC reads
+Date:   Mon,  7 Jan 2019 13:33:26 +0100
+Message-Id: <20190107105338.116473089@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107105330.372621917@linuxfoundation.org>
 References: <20190107105330.372621917@linuxfoundation.org>
@@ -66,52 +65,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Georgy A Bystrenin <gkot@altlinux.org>
+From: Maciej W. Rozycki <macro@linux-mips.org>
 
-commit 9a596f5b39593414c0ec80f71b94a226286f084e upstream.
+commit 3cc9ffbb1f51eb4320575a48e4805a8f52e0e26b upstream.
 
-While resolving a bug with locks on samba shares found a strange behavior.
-When a file locked by one node and we trying to lock it from another node
-it fail with errno 5 (EIO) but in that case errno must be set to
-(EACCES | EAGAIN).
-This isn't happening when we try to lock file second time on same node.
-In this case it returns EACCES as expected.
-Also this issue not reproduces when we use SMB1 protocol (vers=1.0 in
-mount options).
+Add the missing adjustment of the month range on alarm reads from the
+RTC, correcting an issue coming from commit 9c6dfed92c3e ("rtc: m41t80:
+add alarm functionality").  The range is 1-12 for hardware and 0-11 for
+`struct rtc_time', and is already correctly handled on alarm writes to
+the RTC.
 
-Further investigation showed that the mapping from status_to_posix_error
-is different for SMB1 and SMB2+ implementations.
-For SMB1 mapping is [NT_STATUS_LOCK_NOT_GRANTED to ERRlock]
-(See fs/cifs/netmisc.c line 66)
-but for SMB2+ mapping is [STATUS_LOCK_NOT_GRANTED to -EIO]
-(see fs/cifs/smb2maperror.c line 383)
+It was correct up until commit 48e9766726eb ("drivers/rtc/rtc-m41t80.c:
+remove disabled alarm functionality") too, which removed the previous
+implementation of alarm support.
 
-Quick changes in SMB2+ mapping from EIO to EACCES has fixed issue.
-
-BUG: https://bugzilla.kernel.org/show_bug.cgi?id=201971
-
-Signed-off-by: Georgy A Bystrenin <gkot@altlinux.org>
-Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
-CC: Stable <stable@vger.kernel.org>
-Signed-off-by: Steve French <stfrench@microsoft.com>
+Signed-off-by: Maciej W. Rozycki <macro@linux-mips.org>
+Fixes: 9c6dfed92c3e ("rtc: m41t80: add alarm functionality")
+References: 48e9766726eb ("drivers/rtc/rtc-m41t80.c: remove disabled alarm functionality")
+Cc: stable@vger.kernel.org # 4.7+
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cifs/smb2maperror.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/rtc/rtc-m41t80.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/cifs/smb2maperror.c
-+++ b/fs/cifs/smb2maperror.c
-@@ -378,8 +378,8 @@ static const struct status_to_posix_erro
- 	{STATUS_NONEXISTENT_EA_ENTRY, -EIO, "STATUS_NONEXISTENT_EA_ENTRY"},
- 	{STATUS_NO_EAS_ON_FILE, -ENODATA, "STATUS_NO_EAS_ON_FILE"},
- 	{STATUS_EA_CORRUPT_ERROR, -EIO, "STATUS_EA_CORRUPT_ERROR"},
--	{STATUS_FILE_LOCK_CONFLICT, -EIO, "STATUS_FILE_LOCK_CONFLICT"},
--	{STATUS_LOCK_NOT_GRANTED, -EIO, "STATUS_LOCK_NOT_GRANTED"},
-+	{STATUS_FILE_LOCK_CONFLICT, -EACCES, "STATUS_FILE_LOCK_CONFLICT"},
-+	{STATUS_LOCK_NOT_GRANTED, -EACCES, "STATUS_LOCK_NOT_GRANTED"},
- 	{STATUS_DELETE_PENDING, -ENOENT, "STATUS_DELETE_PENDING"},
- 	{STATUS_CTL_FILE_NOT_SUPPORTED, -ENOSYS,
- 	"STATUS_CTL_FILE_NOT_SUPPORTED"},
+--- a/drivers/rtc/rtc-m41t80.c
++++ b/drivers/rtc/rtc-m41t80.c
+@@ -404,7 +404,7 @@ static int m41t80_read_alarm(struct devi
+ 	alrm->time.tm_min  = bcd2bin(alarmvals[3] & 0x7f);
+ 	alrm->time.tm_hour = bcd2bin(alarmvals[2] & 0x3f);
+ 	alrm->time.tm_mday = bcd2bin(alarmvals[1] & 0x3f);
+-	alrm->time.tm_mon  = bcd2bin(alarmvals[0] & 0x3f);
++	alrm->time.tm_mon  = bcd2bin(alarmvals[0] & 0x3f) - 1;
+ 
+ 	alrm->enabled = !!(alarmvals[0] & M41T80_ALMON_AFE);
+ 	alrm->pending = (flags & M41T80_FLAGS_AF) && alrm->enabled;
 
 
