@@ -7,58 +7,59 @@ X-Spam-Status: No, score=-16.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D4D9C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 19:01:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C715C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 19:01:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E331B206B7
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 19:01:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1DCEA206B7
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 19:01:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546887669;
-	bh=tqRuZcm1X9MuJH/8lmJS9aAfDUQcD3EnqRNSnN0bx74=;
+	s=default; t=1546887673;
+	bh=Z/64+ai/ScdGA8D9ruSyz/B+1SVAwTzfgq4zH6Sw3FQ=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=Fk664CjOuxLa95Ht03yNoVBXSfSri/IBXske/QM2Bp+P84jfSPx6I//TeLZSxI371
-	 tVg84lpm0MdHTM0kcyZ0pN+azC3QCdb3JXmJbxhGo5t2xjNpi7qlpOxL7rkhdY+EQa
-	 F1r8+D9KH9EFbQDF4mU7C5uTZIvWEH18doZBorGw=
+	b=iP07u4byOAHV1b54s/9nfVRs3May9iZ1Syef0lkCUFc/RyMKZl9/cq2aWVnqri1H3
+	 /MeiurfRG6gZV4PucCmBg8m95+0AXPeDVurwWJKh40eAfpLbftIJbKDKpdyhzT5x6z
+	 3/zVHKKu/G/n95ppgGKtFz6lITRE9MdY7SmGAkUA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729220AbfAGTBI (ORCPT
+        id S1728117AbfAGTBG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 14:01:08 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41488 "EHLO
+        Mon, 7 Jan 2019 14:01:06 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41456 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728716AbfAGS6d (ORCPT
+        with ESMTP id S1728709AbfAGS6e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 13:58:33 -0500
+        Mon, 7 Jan 2019 13:58:34 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=Pd+W5LEWQfPOubUABKWraHufv5i5xMnDLCMQlfknii0=; b=UsxPX5wAaT07
-        VXgM3B1fVBqP5OIqva37cgN/LM0S5gWcEp4d31x/n2YgOgSRb5ImilawzL7Kk61PAmRPjc71BAuzR
-        ya+Bm4uPps4rB6DXQdn2sFDyEJk7NOF/O4AeFURWJUiuMT5H4msOYJoIdbxhiw/lJlmOKdT3pkYfN
-        TO0ok=;
+        List-Archive; bh=boVUgfP4fjTSD8RRTg3eIDX1I/g7Z81HLtimQC1prcM=; b=qrOVQmJHaTfp
+        ilqzv5XNUyK1yMtyPxpMTi2wkRjnhtuAcAL/A/9PIWza31lfwg3ORfsctcYrIVWGPAK3+QfDxM1bz
+        RvW2Rdpa1dmXrjqaQWUJEW80EgBfK864gsrDvmLS9LrO69UUsLNpszP+/K4T9JodK0CIGRT3vNrR0
+        XI9ME=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gga6O-0007ng-Qm; Mon, 07 Jan 2019 18:58:20 +0000
+        id 1gga6U-0007oK-JL; Mon, 07 Jan 2019 18:58:26 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 78EFA1127491; Mon,  7 Jan 2019 18:58:20 +0000 (GMT)
+        id 3FE911127491; Mon,  7 Jan 2019 18:58:26 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc:     Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org,
-        Brian Austin <brian.austin@cirrus.com>, tiwai@suse.de,
+To:     Bard liao <yung-chuan.liao@linux.intel.com>
+Cc:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org,
+        Oder Chiou <oder_chiou@realtek.com>, tiwai@suse.de,
         open list <linux-kernel@vger.kernel.org>,
         Takashi Iwai <tiwai@suse.com>,
-        Paul Handrigan <Paul.Handrigan@cirrus.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
         Liam Girdwood <lgirdwood@gmail.com>,
         liam.r.girdwood@linux.intel.com, broonie@kernel.org,
-        alsa-devel@alsa-project.org
-Subject: Applied "ASoC: cs4271: fix boolean assignments" to the asoc tree
-In-Reply-To:  <20190105020249.8639-10-pierre-louis.bossart@linux.intel.com>
+        Bard Liao <bardliao@realtek.com>, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: rt5645: remove unused mux define" to the asoc tree
+In-Reply-To:  <20190105020249.8639-6-pierre-louis.bossart@linux.intel.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190107185820.78EFA1127491@debutante.sirena.org.uk>
-Date:   Mon,  7 Jan 2019 18:58:20 +0000 (GMT)
+Message-Id: <20190107185826.3FE911127491@debutante.sirena.org.uk>
+Date:   Mon,  7 Jan 2019 18:58:26 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -66,7 +67,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: cs4271: fix boolean assignments
+   ASoC: rt5645: remove unused mux define
 
 has been applied to the asoc tree at
 
@@ -91,38 +92,75 @@ to this mail.
 Thanks,
 Mark
 
-From 3c17bcfd35bca1bee34709e7509646b5bc88643f Mon Sep 17 00:00:00 2001
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Date: Fri, 4 Jan 2019 20:02:37 -0600
-Subject: [PATCH] ASoC: cs4271: fix boolean assignments
+From c3db21324442137552041711a878d75358c993ae Mon Sep 17 00:00:00 2001
+From: Bard liao <yung-chuan.liao@linux.intel.com>
+Date: Fri, 4 Jan 2019 20:02:33 -0600
+Subject: [PATCH] ASoC: rt5645: remove unused mux define
 
-Reported by Coccinelle:
-sound/soc/codecs/cs4271.c:226:2-16: WARNING: Assignment of bool to 0/1
-sound/soc/codecs/cs4271.c:229:2-16: WARNING: Assignment of bool to 0/1
+rt5645_if3_adc_in_mux, rt5645_inr_mux, and rt5645_inl_mux are not used.
+Remove them from the driver.
 
+Signed-off-by: Bard liao <yung-chuan.liao@linux.intel.com>
 Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/cs4271.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/soc/codecs/rt5645.c | 36 ------------------------------------
+ 1 file changed, 36 deletions(-)
 
-diff --git a/sound/soc/codecs/cs4271.c b/sound/soc/codecs/cs4271.c
-index 849fdb2cb260..1104830edaf8 100644
---- a/sound/soc/codecs/cs4271.c
-+++ b/sound/soc/codecs/cs4271.c
-@@ -223,10 +223,10 @@ static int cs4271_set_dai_fmt(struct snd_soc_dai *codec_dai,
+diff --git a/sound/soc/codecs/rt5645.c b/sound/soc/codecs/rt5645.c
+index be674688dc40..52ce380c8f3a 100644
+--- a/sound/soc/codecs/rt5645.c
++++ b/sound/soc/codecs/rt5645.c
+@@ -1288,30 +1288,6 @@ static SOC_ENUM_SINGLE_DECL(
+ static const struct snd_kcontrol_new rt5645_dac_r2_mux =
+ 	SOC_DAPM_ENUM("DAC2 R source", rt5645_dac2r_enum);
  
- 	switch (format & SND_SOC_DAIFMT_MASTER_MASK) {
- 	case SND_SOC_DAIFMT_CBS_CFS:
--		cs4271->master = 0;
-+		cs4271->master = false;
- 		break;
- 	case SND_SOC_DAIFMT_CBM_CFM:
--		cs4271->master = 1;
-+		cs4271->master = true;
- 		val |= CS4271_MODE1_MASTER;
- 		break;
- 	default:
+-
+-/* INL/R source */
+-static const char * const rt5645_inl_src[] = {
+-	"IN2P", "MonoP"
+-};
+-
+-static SOC_ENUM_SINGLE_DECL(
+-	rt5645_inl_enum, RT5645_INL1_INR1_VOL,
+-	RT5645_INL_SEL_SFT, rt5645_inl_src);
+-
+-static const struct snd_kcontrol_new rt5645_inl_mux =
+-	SOC_DAPM_ENUM("INL source", rt5645_inl_enum);
+-
+-static const char * const rt5645_inr_src[] = {
+-	"IN2N", "MonoN"
+-};
+-
+-static SOC_ENUM_SINGLE_DECL(
+-	rt5645_inr_enum, RT5645_INL1_INR1_VOL,
+-	RT5645_INR_SEL_SFT, rt5645_inr_src);
+-
+-static const struct snd_kcontrol_new rt5645_inr_mux =
+-	SOC_DAPM_ENUM("INR source", rt5645_inr_enum);
+-
+ /* Stereo1 ADC source */
+ /* MX-27 [12] */
+ static const char * const rt5645_stereo_adc1_src[] = {
+@@ -1611,18 +1587,6 @@ static SOC_ENUM_SINGLE_DECL(
+ static const struct snd_kcontrol_new rt5645_if2_adc_in_mux =
+ 	SOC_DAPM_ENUM("IF2 ADC IN source", rt5645_if2_adc_in_enum);
+ 
+-/* MX-2F [1:0] */
+-static const char * const rt5645_if3_adc_in_src[] = {
+-	"IF_ADC1", "IF_ADC2", "VAD_ADC"
+-};
+-
+-static SOC_ENUM_SINGLE_DECL(
+-	rt5645_if3_adc_in_enum, RT5645_DIG_INF1_DATA,
+-	RT5645_IF3_ADC_IN_SFT, rt5645_if3_adc_in_src);
+-
+-static const struct snd_kcontrol_new rt5645_if3_adc_in_mux =
+-	SOC_DAPM_ENUM("IF3 ADC IN source", rt5645_if3_adc_in_enum);
+-
+ /* MX-31 [15] [13] [11] [9] */
+ static const char * const rt5645_pdm_src[] = {
+ 	"Mono DAC", "Stereo DAC"
 -- 
 2.20.1
 
