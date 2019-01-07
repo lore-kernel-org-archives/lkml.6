@@ -2,139 +2,104 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6218FC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 11:14:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A8E9C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 11:15:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C30520859
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 11:14:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4538720859
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 11:15:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546859748;
+	bh=kTPT3kn/zChx/q71SBbBpHN3d33CrAsyDX7qSQsyPPc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=ZIqH+R5fhWdnB2cIbpY2s6GSFifrCXQfhT3FoHgjKJNQBoiZHfPc/By4UGgR6m8TF
+	 SO/SpQiS/GcyQqRHmCEEytx/Gs6HiIY0WQzb53LuqDWEl571dcTkK4uvD0HPD3z8lv
+	 LW+W8WzGeXLrE7fNncvm95fFjJ4EwU8irAsX0Lno=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727124AbfAGLOF (ORCPT
+        id S1727079AbfAGLPr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 06:14:05 -0500
-Received: from mail-io1-f70.google.com ([209.85.166.70]:44171 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727012AbfAGLOF (ORCPT
+        Mon, 7 Jan 2019 06:15:47 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:37945 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726798AbfAGLPr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 06:14:05 -0500
-Received: by mail-io1-f70.google.com with SMTP id v8so47807007ioh.11
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 03:14:04 -0800 (PST)
+        Mon, 7 Jan 2019 06:15:47 -0500
+Received: by mail-oi1-f195.google.com with SMTP id a77so35559482oii.5;
+        Mon, 07 Jan 2019 03:15:46 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=T5dnsuSgZeq0RfI05RxHXFAgE0NHADoHZWudVNSShLc=;
-        b=mwcNHI9ppr7kjhCO7SGVIVJ0YdcVTBT95LSMqCwxxtV775spMDhIzFfivUOhb7Dzro
-         f4T8UdIDgj+u09Cuo6MwaBlI6KG2VW/XGyuNNi49W7oxcBFASMF7yyjud08bmGx2XNCW
-         R60/sfiVdF6nyM96Kinq8HHLSbf7YO1J1wAJW/YnXZb0EeWz3pEbU/kjiDCeoiS1HiX5
-         D3ZzK1YO23LcJRlJ8QGCVfzU1zqYjYr6TzqIdDdv5gnPjXA5CsubhMjh222XRzBcpRla
-         cVNmJJLsA9nSmRKXAypvCtnS9bik1a411Bw9HQIYJEv25NKWuVZr+75MDx1mxE4wxbt6
-         N6xg==
-X-Gm-Message-State: AA+aEWYk6FTmxYqNOAz4SgEI/qIAyQWsmKippaavPqHBrzUi0bMeHK8s
-        sCgiYHtjt4n3+yUhf48bU3Hefh0v1vGt0JV6fEzNfhBen03Y
-X-Google-Smtp-Source: AFSGD/X4YWWD+Rk2cQc8j7eeHkwaMzkEovmwbEzPoKmr/FZkyDd2AQMMcmdHv6xtq4SElmS4ATMhLgWFPljuyfiq39k6i1zhL24p
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8vuU/QkgnzmMdOsMipKPEn0MeBUlYH0FAsCjmO/A+RU=;
+        b=WoJ2ARdGGCIOrMX0dAdxnsSNRlMZw7SR/8FqWvAnhDdafzzfdC6iw27AVUEfIO1EgQ
+         lgEy0oCZjAcm381Ceu5hHblRmyVX8BJ/ZTLRv08f3r7A6r1z/20QRiOvL4JJ5rJRzRMi
+         SzN3y7roPDQnEiZovsxz9ryR0RJpESLXNm+WUPCXIqiaDqqB4eiYt8jWseKK0VsyGo4Z
+         +HmnkcSt5/eK6IjAfHG2c3FLlHnJ2+zEsiBAk7sI+AoA1T/UWH0kX3pcbHQvxqE5Tcop
+         8AlJHRh9UmV5YrkvuJBayYh/6iMA1o3jkjMnxIliVNJF7/hTl2ZiE/W1mUQRvoEx8Xgj
+         puAg==
+X-Gm-Message-State: AJcUukfHwzjOpGdM9UiC5gjH02An9Gd44z0tkyGAU5QRZbv9QT2JUb3C
+        v5BpA+hx9NrWp7iuh/BXoinMYIOYlyrpNp7bFzA=
+X-Google-Smtp-Source: ALg8bN6TXNtpBvAkSNNjB+5nYnfzyL3FJW/WifMadGdvJutosd/uTBoiWkJu5v0ewo3rglyRPOxug5rFes60mOQI4vw=
+X-Received: by 2002:a54:4d01:: with SMTP id v1mr7412377oix.246.1546859746321;
+ Mon, 07 Jan 2019 03:15:46 -0800 (PST)
 MIME-Version: 1.0
-X-Received: by 2002:a02:6006:: with SMTP id i6mr47465932jac.6.1546859644478;
- Mon, 07 Jan 2019 03:14:04 -0800 (PST)
-Date:   Mon, 07 Jan 2019 03:14:04 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000a06f21057edc53c0@google.com>
-Subject: KASAN: user-memory-access Write in dst_release
-From:   syzbot <syzbot+29ffc731816e0995ad54@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, dsahern@gmail.com,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        pablo@netfilter.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+References: <20190105100606.6673-1-okaya@kernel.org> <20190105100606.6673-9-okaya@kernel.org>
+In-Reply-To: <20190105100606.6673-9-okaya@kernel.org>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Mon, 7 Jan 2019 12:15:35 +0100
+Message-ID: <CAJZ5v0g2bjzjuiDPTbBN8QgvOG0KMC0Ew2QOQH4u2+y6KRo0wQ@mail.gmail.com>
+Subject: Re: [PATCH v6 08/11] ASoC: Intel: atom: Make PCI dependency explicit
+To:     Sinan Kaya <okaya@kernel.org>, Mark Brown <broonie@kernel.org>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        Jie Yang <yang.jie@linux.intel.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        "moderated list:INTEL ASoC DRIVERS" <alsa-devel@alsa-project.org>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Sat, Jan 5, 2019 at 11:06 AM Sinan Kaya <okaya@kernel.org> wrote:
+>
+> After 'commit 5d32a66541c4 ("PCI/ACPI: Allow ACPI to be built without
+> CONFIG_PCI set")' dependencies on CONFIG_PCI that previously were
+> satisfied implicitly through dependencies on CONFIG_ACPI have to be
+> specified directly. This code relies on IOSF_MBI and IOSF_MBI depends
+> on PCI. For this reason, add a direct dependency on CONFIG_PCI to the
+> IOSF_MBI driver.
+>
+> Fixes: 5d32a66541c46 ("PCI/ACPI: Allow ACPI to be built without CONFIG_PCI set")
+> Signed-off-by: Sinan Kaya <okaya@kernel.org>
 
-syzbot found the following crash on:
+Sinan, I thought you received an ACK from Pierre-Louis on this one, didn't you?
 
-HEAD commit:    b71acb0e3721 Merge branch 'linus' of git://git.kernel.org/..
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=16f6544f400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b03c5892bb940c76
-dashboard link: https://syzkaller.appspot.com/bug?extid=29ffc731816e0995ad54
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> ---
+>  sound/soc/intel/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/sound/soc/intel/Kconfig b/sound/soc/intel/Kconfig
+> index 99a62ba409df..bd9fd2035c55 100644
+> --- a/sound/soc/intel/Kconfig
+> +++ b/sound/soc/intel/Kconfig
+> @@ -91,7 +91,7 @@ config SND_SST_ATOM_HIFI2_PLATFORM_PCI
+>  config SND_SST_ATOM_HIFI2_PLATFORM_ACPI
+>         tristate "ACPI HiFi2 (Baytrail, Cherrytrail) Platforms"
+>         default ACPI
+> -       depends on X86 && ACPI
+> +       depends on X86 && ACPI && PCI
+>         select SND_SST_IPC_ACPI
+>         select SND_SST_ATOM_HIFI2_PLATFORM
+>         select SND_SOC_ACPI_INTEL_MATCH
+> --
 
-Unfortunately, I don't have any reproducer for this crash yet.
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+29ffc731816e0995ad54@syzkaller.appspotmail.com
-
-bridge0: port 2(bridge_slave_1) entered disabled state
-device bridge_slave_1 entered promiscuous mode
-bond0: Enslaving bond_slave_0 as an active interface with an up link
-bond0: Enslaving bond_slave_1 as an active interface with an up link
-==================================================================
-BUG: KASAN: user-memory-access in atomic_sub_return  
-include/asm-generic/atomic-instrumented.h:305 [inline]
-BUG: KASAN: user-memory-access in dst_release net/core/dst.c:186 [inline]
-BUG: KASAN: user-memory-access in dst_release+0x2a/0xb0 net/core/dst.c:181
-Write of size 4 at addr 00000000000054e8 by task kworker/u4:2/55
-
-CPU: 1 PID: 55 Comm: kworker/u4:2 Not tainted 4.20.0+ #3
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Workqueue: netns cleanup_net
-Call Trace:
-IPv6: ADDRCONF(NETDEV_UP): team_slave_0: link is not ready
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1db/0x2d0 lib/dump_stack.c:113
-team0: Port device team_slave_0 added
-  kasan_report_error mm/kasan/report.c:352 [inline]
-  kasan_report mm/kasan/report.c:412 [inline]
-  kasan_report.cold+0x19f/0x2ba mm/kasan/report.c:396
-IPv6: ADDRCONF(NETDEV_UP): team_slave_1: link is not ready
-  check_memory_region_inline mm/kasan/kasan.c:260 [inline]
-  check_memory_region+0x123/0x190 mm/kasan/kasan.c:267
-team0: Port device team_slave_1 added
-  kasan_check_write+0x14/0x20 mm/kasan/kasan.c:278
-IPv6: ADDRCONF(NETDEV_UP): bridge_slave_0: link is not ready
-  atomic_sub_return include/asm-generic/atomic-instrumented.h:305 [inline]
-  dst_release net/core/dst.c:186 [inline]
-  dst_release+0x2a/0xb0 net/core/dst.c:181
-IPv6: ADDRCONF(NETDEV_UP): bridge_slave_1: link is not ready
-  dst_cache_destroy net/core/dst_cache.c:164 [inline]
-  dst_cache_destroy+0xd3/0x1b0 net/core/dst_cache.c:156
-  ip_tunnel_dev_free+0x25/0x60 net/ipv4/ip_tunnel.c:970
-  netdev_run_todo+0x647/0xae0 net/core/dev.c:8885
-  rtnl_unlock+0xe/0x10 net/core/rtnetlink.c:117
-  ip_tunnel_delete_nets+0x4df/0x6d0 net/ipv4/ip_tunnel.c:1083
-  ipip_exit_batch_net+0x23/0x30 net/ipv4/ipip.c:663
-  ops_exit_list.isra.0+0x105/0x160 net/core/net_namespace.c:156
-  cleanup_net+0x51d/0xb10 net/core/net_namespace.c:551
-  process_one_work+0xd0c/0x1ce0 kernel/workqueue.c:2153
-  worker_thread+0x143/0x14a0 kernel/workqueue.c:2296
-kobject: 'batman_adv' (0000000005425111): kobject_add_internal:  
-parent: 'veth0_to_hsr', set: '<NULL>'
-kobject: 'hsr_slave_0' (000000005dd69dfa): kobject_add_internal:  
-parent: 'net', set: 'devices'
-kobject: 'hsr_slave_0' (000000005dd69dfa): kobject_uevent_env
-kobject: 'hsr_slave_0' (000000005dd69dfa): fill_kobj_path: path  
-= '/devices/virtual/net/hsr_slave_0'
-kobject: 'queues' (000000008eea68f9): kobject_add_internal:  
-parent: 'hsr_slave_0', set: '<NULL>'
-kobject: 'queues' (000000008eea68f9): kobject_uevent_env
-kobject: 'queues' (000000008eea68f9): kobject_uevent_env: filter function  
-caused the event to drop!
-  kthread+0x357/0x430 kernel/kthread.c:246
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
-==================================================================
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
+Mark, assuming that the ACK above was given here, do you want me to
+take this patch or do you want to take care of it yourself?
