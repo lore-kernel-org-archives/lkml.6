@@ -2,462 +2,138 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 790C3C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 14:31:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82B37C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 14:35:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 339352147C
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 14:31:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HQYX9Z4G"
+	by mail.kernel.org (Postfix) with ESMTP id 52DF22087F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 14:35:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728377AbfAGObF (ORCPT
+        id S1728396AbfAGOfN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 09:31:05 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:41466 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727034AbfAGObE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 09:31:04 -0500
-Received: by mail-pf1-f194.google.com with SMTP id b7so240396pfi.8
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 06:31:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=jJZR9aZQ0kq6IiLAgViphAYqRggONFnlHdlGmKATTJ4=;
-        b=HQYX9Z4GhbkxHIgczgeGTR3oRkGDHlr2n/ZZBnO7Lb1wJISc/8eTvfM8YBTqYG+9vS
-         0amyhN8mKyH2WozXi4BJFRcBsAdjszkuGZdk5R36fq7iyvNG1rb7Picd1tMvK/y+Xv3K
-         U+SSLkMznZUrXvyQQjipiA+ILoXmwRX+hPx0k=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=jJZR9aZQ0kq6IiLAgViphAYqRggONFnlHdlGmKATTJ4=;
-        b=t7FtsZbHTzcyf8Ki2tYs+H/XJ/9oN6LQ0pthZ2PD8Rl5B1EtwjZy+yoI8srlRpsEuj
-         3+lfXkfCSmxSOg3eEBrwCBTD6Xn3F6bxEUIEzBY7uvs+7RbRvy/asfCPqSv+yFdjXd0W
-         HNTXHQTxWGIjjZqrO/creLPXQ9LpujlsXUQNQPDMOfUIGrEOxLHUt2ck0t4/VxrOkdwK
-         U1nUOBUeGG1OOg6eqRYerofe/CwPZyYpKvWOoFd0QFTyfG0WLP1DydPBYNY9d1w+wyFB
-         80RFBovNTV232b0k3f9TEecKnTe+SEyR6HzIEDKcmRpQcKwCX2It4ow96x0tTrgqS+xb
-         KSxg==
-X-Gm-Message-State: AJcUukdKi7OB/4hc84pBugW/i7UAbwgh2g+Q9xbU1hNw56o9cPls0TCy
-        EiqQyem2TJFiIk2fV69H2yhoPg==
-X-Google-Smtp-Source: ALg8bN5SxrolZeFqZGdCp9XCIZUncDn/HItiSwSYK1QmrIUWr2/xR768zxtu8NRkmLm/1+zPWIoAdQ==
-X-Received: by 2002:a63:9402:: with SMTP id m2mr10748994pge.93.1546871463405;
-        Mon, 07 Jan 2019 06:31:03 -0800 (PST)
-Received: from qualcomm-HP-ZBook-14-G2.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com. [103.229.18.19])
-        by smtp.gmail.com with ESMTPSA id 84sm229998834pfa.115.2019.01.07.06.30.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 07 Jan 2019 06:31:02 -0800 (PST)
-From:   Firoz Khan <firoz.khan@linaro.org>
-To:     arnd@arndb.de, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>
-Cc:     y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, deepa.kernel@gmail.com,
-        marcin.juszkiewicz@linaro.org, firoz.khan@linaro.org
-Subject: [PATCH v2] scripts/syscalls: add system call table file for asm-generic
-Date:   Mon,  7 Jan 2019 20:00:13 +0530
-Message-Id: <1546871413-2433-1-git-send-email-firoz.khan@linaro.org>
-X-Mailer: git-send-email 2.7.4
+        Mon, 7 Jan 2019 09:35:13 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:44384 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727665AbfAGOfN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 09:35:13 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 963C7C0733EC;
+        Mon,  7 Jan 2019 14:35:11 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-223.bos.redhat.com [10.18.17.223])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 83BB31054FD5;
+        Mon,  7 Jan 2019 14:35:09 +0000 (UTC)
+Subject: Re: [RFC] locking/rwsem: Avoid issuing wakeup before setting the
+ reader waiter to nil
+To:     peterz@infradead.org
+Cc:     Yongji Xie <elohimes@gmail.com>, dave@stgolabs.net,
+        mingo@redhat.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, Xie Yongji <xieyongji@baidu.com>,
+        zhangyu31@baidu.com, liuqi16@baidu.com, yuanlinsi01@baidu.com,
+        nixun@baidu.com, lilin24@baidu.com,
+        andrea.parri@amarulasolutions.com
+References: <5598cd71-c3c8-d6ef-eb30-777cf901a2ef@redhat.com>
+ <20181129160627.GU2131@hirez.programming.kicks-ass.net>
+ <8cc45695-b325-a219-8b46-d5da6ddfdd63@redhat.com>
+ <20181129172700.GA11632@hirez.programming.kicks-ass.net>
+ <20181129180828.GA11650@hirez.programming.kicks-ass.net>
+ <729ceddb-dd9a-ec2a-f74e-03fa4d7e65e8@redhat.com>
+ <20181129213017.v3eljor54lfpoug2@linux-r8p5>
+ <20181129213421.wwvhsjql3m3lvtv4@linux-r8p5>
+ <20181129221714.GF11632@hirez.programming.kicks-ass.net>
+ <CAONzpcZ_kQ0cwit+d5uL=v2SqwP=Fo0WSihdCr23uKCAFAhTbQ@mail.gmail.com>
+ <20181217113718.GB4900@worktop.programming.kicks-ass.net>
+ <CAONzpcbvyvXdUEL6Mc8_kN_Z_=jYiRCzDScSWH07+MOtbgxdKQ@mail.gmail.com>
+From:   Waiman Long <longman@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ weim8xU=
+Organization: Red Hat
+Message-ID: <f85780cd-6d90-6cf3-2474-4f9998f5cbd5@redhat.com>
+Date:   Mon, 7 Jan 2019 09:35:09 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <CAONzpcbvyvXdUEL6Mc8_kN_Z_=jYiRCzDScSWH07+MOtbgxdKQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Mon, 07 Jan 2019 14:35:12 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add system call table file - syscall.tbl which can be use by
-the system call table generation script to generate the equi-
-valent file for asm-generic/unistd.h for architectures which
-include the same file.
+On 12/17/2018 08:12 AM, Yongji Xie wrote:
+> On Mon, 17 Dec 2018 at 19:37, Peter Zijlstra <peterz@infradead.org> wrote:
+>> On Mon, Dec 10, 2018 at 11:12:52PM +0800, Yongji Xie wrote:
+>>> Hi Peter,
+>>>
+>>> Please let me know If there is any progress on this issue. Thank you!
+>> Right, sorry, my brain was filled with snot and didn't want to make
+>> sense of things.
+>>
+>> I've put some patches here:
+>>
+>>   git://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git locking/core
+>>
+>> Could you have a look?
+> That looks good to me. Thank you!
+>
+> Thanks,
+> Yongji
 
-The system call table generation script will use syscall.tbl
-file as input to generate the uapi and kapi header files.
-Added some extra abi to make the syscall.tbl file generic and
-can be use the same file for architectures which include the
-file asm-generic/unistd.h.
+Peter,
 
-This patch is depends on:
- https://lore.kernel.org/lkml/1546439331-18646-1-git-send-email-firoz.khan@linaro.org/
+Are you planning to move the patch over to tip as the merge window has
+just closed?
 
-Signed-off-by: Firoz Khan <firoz.khan@linaro.org>
----
-Changes since v1:
- - added syscall entry kexec_file_load.
- - modified the custom abi from archsp to archs*.
- - removed the entry cacheflush.
- - modified the entry from arch_specific_syscall to arch_specific_syscall0.
----
- scripts/syscalls/syscall.tbl | 358 +++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 358 insertions(+)
- create mode 100644 scripts/syscalls/syscall.tbl
-
-diff --git a/scripts/syscalls/syscall.tbl b/scripts/syscalls/syscall.tbl
-new file mode 100644
-index 0000000..4a3395b
---- /dev/null
-+++ b/scripts/syscalls/syscall.tbl
-@@ -0,0 +1,358 @@
-+# SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note
-+#
-+# system call numbers and entry vectors for asm-generic
-+#
-+# The format is:
-+# <number> <abi> <name> <entry point> <compat entry point>
-+#
-+# The <abi> is always "common" for this file.
-+#
-+0	common	io_setup			sys_io_setup			compat_sys_io_setup
-+1	common	io_destroy			sys_io_destroy
-+2	common	io_submit			sys_io_submit			compat_sys_io_submit
-+3	common	io_cancel			sys_io_cancel
-+4	common	io_getevents			sys_io_getevents		compat_sys_io_getevents
-+# fs/xattr.c
-+5	common	setxattr			sys_setxattr
-+6	common	lsetxattr			sys_lsetxattr
-+7	common	fsetxattr			sys_fsetxattr
-+8	common	getxattr			sys_getxattr
-+9	common	lgetxattr			sys_lgetxattr
-+10	common	fgetxattr			sys_fgetxattr
-+11	common	listxattr			sys_listxattr
-+12	common	llistxattr			sys_llistxattr
-+13	common	flistxattr			sys_flistxattr
-+14	common	removexattr			sys_removexattr
-+15	common	lremovexattr			sys_lremovexattr
-+16	common	fremovexattr			sys_fremovexattr
-+# fs/dcache.c
-+17	common	getcwd				sys_getcwd
-+# fs/cookies.c
-+18	common	lookup_dcookie			sys_lookup_dcookie		compat_sys_lookup_dcookie
-+# fs/eventfd.c
-+19	common	eventfd2			sys_eventfd2
-+# fs/eventpoll.c
-+20	common	epoll_create1			sys_epoll_create1
-+21	common	epoll_ctl			sys_epoll_ctl
-+22	common	epoll_pwait			sys_epoll_pwait			compat_sys_epoll_pwait
-+# fs/fcntl.c
-+23	common	dup				sys_dup
-+24	common	dup3				sys_dup3
-+25	32	fcntl64				sys_fcntl64			compat_sys_fcntl64
-+25	64	fcntl				sys_fcntl
-+# fs/inotify_user.c
-+26	common	inotify_init1			sys_inotify_init1
-+27	common	inotify_add_watch		sys_inotify_add_watch
-+28	common	inotify_rm_watch		sys_inotify_rm_watch
-+# fs/ioctl.c
-+29	common	ioctl				sys_ioctl			compat_sys_ioctl
-+# fs/ioprio.c
-+30	common	ioprio_set			sys_ioprio_set
-+31	common	ioprio_get			sys_ioprio_get
-+# fs/locks.c
-+32	common	flock				sys_flock
-+# fs/namei.c
-+33	common	mknodat				sys_mknodat
-+34	common	mkdirat				sys_mkdirat
-+35	common	unlinkat			sys_unlinkat
-+36	common	symlinkat			sys_symlinkat
-+37	common	linkat				sys_linkat
-+38	rename	renameat			sys_renameat
-+# fs/namespace.c
-+39	common	umount2				sys_umount
-+40	common	mount				sys_mount			compat_sys_mount
-+41	common	pivot_root			sys_pivot_root
-+# fs/nfsctl.c
-+42	common	nfsservctl			sys_ni_syscall
-+# fs/open.c
-+43	32	statfs64			sys_statfs64			compat_sys_statfs64
-+43	64	statfs				sys_statfs
-+44	32	fstatfs64			sys_fstatfs64			compat_sys_fstatfs64
-+44	64	fstatfs				sys_fstatfs
-+45	32	truncate64			sys_truncate64			compat_sys_truncate64
-+45	64	truncate			sys_truncate
-+46	32	ftruncate64			sys_ftruncate64			compat_sys_ftruncate64
-+46	64	ftruncate			sys_ftruncate
-+47	common	fallocate			sys_fallocate			compat_sys_fallocate
-+48	common	faccessat			sys_faccessat
-+49	common	chdir				sys_chdir
-+50	common	fchdir				sys_fchdir
-+51	common	chroot				sys_chroot
-+52	common	fchmod				sys_fchmod
-+53	common	fchmodat			sys_fchmodat
-+54	common	fchownat			sys_fchownat
-+55	common	fchown				sys_fchown
-+56	common	openat				sys_openat			compat_sys_openat
-+57	common	close				sys_close
-+58	common	vhangup				sys_vhangup
-+# fs/pipe.c
-+59	common	pipe2				sys_pipe2
-+# fs/quota.c
-+60	common	quotactl			sys_quotactl
-+# fs/readdir.c
-+61	common	getdents64			sys_getdents64
-+# fs/read_write.c
-+62	32	llseek				sys_llseek
-+62	64	lseek				sys_lseek
-+63	common	read				sys_read
-+64	common	write				sys_write
-+65	common	readv				sys_readv			compat_sys_readv
-+66	common	writev				sys_writev			compat_sys_writev
-+67	common	pread64				sys_pread64			compat_sys_pread64
-+68	common	pwrite64			sys_pwrite64			compat_sys_pwrite64
-+69	common	preadv				sys_preadv			compat_sys_preadv
-+70	common	pwritev				sys_pwritev			compat_sys_pwritev
-+# fs/sendfile.c
-+71	32	sendfile64			sys_sendfile64
-+71	64	sendfile			sys_sendfile64
-+# fs/select.c
-+72	common	pselect6			sys_pselect6			compat_sys_pselect6
-+73	common	ppoll				sys_ppoll			compat_sys_ppoll
-+# fs/signalfd.c
-+74	common	signalfd4			sys_signalfd4			compat_sys_signalfd4
-+# fs/splice.c
-+75	common	vmsplice			sys_vmsplice			compat_sys_vmsplice
-+76	common	splice				sys_splice
-+77	common	tee				sys_tee
-+# fs/stat.c
-+78	common	readlinkat			sys_readlinkat
-+79	stat64	fstatat64			sys_fstatat64
-+79	nwstat	newfstatat			sys_newfstatat
-+80	stat64	fstat64				sys_fstat64
-+80	nwstat	fstat				sys_newfstat
-+# fs/sync.c
-+81	common	sync				sys_sync
-+82	common	fsync				sys_fsync
-+83	common	fdatasync			sys_fdatasync
-+84	common	sync_file_range			sys_sync_file_range		compat_sys_sync_file_range
-+# fs/timerfd.c
-+85	common	timerfd_create			sys_timerfd_create
-+86	common	timerfd_settime			sys_timerfd_settime		compat_sys_timerfd_settime
-+87	common	timerfd_gettime			sys_timerfd_gettime		compat_sys_timerfd_gettime
-+# fs/utimes.c
-+88	common	utimensat			sys_utimensat			compat_sys_utimensat
-+# kernel/acct.c
-+89	common	acct				sys_acct
-+# kernel/capability.c
-+90	common	capget				sys_capget
-+91	common	capset				sys_capset
-+# kernel/exec_domain.c
-+92	common	personality			sys_personality
-+# kernel/exit.c
-+93	common	exit				sys_exit
-+94	common	exit_group			sys_exit_group
-+95	common	waitid				sys_waitid			compat_sys_waitid
-+# kernel/fork.c
-+96	common	set_tid_address			sys_set_tid_address
-+97	common	unshare				sys_unshare
-+# kernel/futex.c
-+98	common	futex				sys_futex			compat_sys_futex
-+99	common	set_robust_list			sys_set_robust_list		compat_sys_set_robust_list
-+100	common	get_robust_list			sys_get_robust_list		compat_sys_get_robust_list
-+# kernel/hrtimer.c
-+101	common	nanosleep			sys_nanosleep			compat_sys_nanosleep
-+# kernel/itimer.c
-+102	common	getitimer			sys_getitimer			compat_sys_getitimer
-+103	common	setitimer			sys_setitimer			compat_sys_setitimer
-+# kernel/kexec.c
-+104	common	kexec_load			sys_kexec_load			compat_sys_kexec_load
-+# kernel/module.c
-+105	common	init_module			sys_init_module
-+106	common	delete_module			sys_delete_module
-+# kernel/posix-timers.c
-+107	common	timer_create			sys_timer_create		compat_sys_timer_create
-+108	common	timer_gettime			sys_timer_gettime		compat_sys_timer_gettime
-+109	common	timer_getoverrun		sys_timer_getoverrun
-+110	common	timer_settime			sys_timer_settime		compat_sys_timer_settime
-+111	common	timer_delete			sys_timer_delete
-+112	common	clock_settime			sys_clock_settime		compat_sys_clock_settime
-+113	common	clock_gettime			sys_clock_gettime		compat_sys_clock_gettime
-+114	common	clock_getres			sys_clock_getres		compat_sys_clock_getres
-+115	common	clock_nanosleep			sys_clock_nanosleep		compat_sys_clock_nanosleep
-+# kernel/printk.c
-+116	common	syslog				sys_syslog
-+# kernel/ptrace.c
-+117	common	ptrace				sys_ptrace
-+# kernel/sched/core.c
-+118	common	sched_setparam			sys_sched_setparam
-+119	common	sched_setscheduler		sys_sched_setscheduler
-+120	common	sched_getscheduler		sys_sched_getscheduler
-+121	common	sched_getparam			sys_sched_getparam
-+122	common	sched_setaffinity		sys_sched_setaffinity		compat_sys_sched_setaffinity
-+123	common	sched_getaffinity		sys_sched_getaffinity		compat_sys_sched_getaffinity
-+124	common	sched_yield			sys_sched_yield
-+125	common	sched_get_priority_max		sys_sched_get_priority_max
-+126	common	sched_get_priority_min		sys_sched_get_priority_min
-+127	common	sched_rr_get_interval		sys_sched_rr_get_interval	compat_sys_sched_rr_get_interval
-+# kernel/signal.c
-+128	common	restart_syscall			sys_restart_syscall
-+129	common	kill				sys_kill
-+130	common	tkill				sys_tkill
-+131	common	tgkill				sys_tgkill
-+132	common	sigaltstack			sys_sigaltstack			compat_sys_sigaltstack
-+133	common	rt_sigsuspend			sys_rt_sigsuspend		compat_sys_rt_sigsuspend
-+134	common	rt_sigaction			sys_rt_sigaction		compat_sys_rt_sigaction
-+135	common	rt_sigprocmask			sys_rt_sigprocmask		compat_sys_rt_sigprocmask
-+136	common	rt_sigpending			sys_rt_sigpending		compat_sys_rt_sigpending
-+137	common	rt_sigtimedwait			sys_rt_sigtimedwait		compat_sys_rt_sigtimedwait
-+138	common	rt_sigqueueinfo			sys_rt_sigqueueinfo		compat_sys_rt_sigqueueinfo
-+139	common	rt_sigreturn			sys_rt_sigreturn		compat_sys_rt_sigreturn
-+# kernel/sys.c
-+140	common	setpriority			sys_setpriority
-+141	common	getpriority			sys_getpriority
-+142	common	reboot				sys_reboot
-+143	common	setregid			sys_setregid
-+144	common	setgid				sys_setgid
-+145	common	setreuid			sys_setreuid
-+146	common	setuid				sys_setuid
-+147	common	setresuid			sys_setresuid
-+148	common	getresuid			sys_getresuid
-+149	common	setresgid			sys_setresgid
-+150	common	getresgid			sys_getresgid
-+151	common	setfsuid			sys_setfsuid
-+152	common	setfsgid			sys_setfsgid
-+153	common	times				sys_times			compat_sys_times
-+154	common	setpgid				sys_setpgid
-+155	common	getpgid				sys_getpgid
-+156	common	getsid				sys_getsid
-+157	common	setsid				sys_setsid
-+158	common	getgroups			sys_getgroups
-+159	common	setgroups			sys_setgroups
-+160	common	uname				sys_newuname
-+161	common	sethostname			sys_sethostname
-+162	common	setdomainname			sys_setdomainname
-+163	common	getrlimit			sys_getrlimit			compat_sys_getrlimit
-+164	common	setrlimit			sys_setrlimit			compat_sys_setrlimit
-+165	common	getrusage			sys_getrusage			compat_sys_getrusage
-+166	common	umask				sys_umask
-+167	common	prctl				sys_prctl
-+168	common	getcpu				sys_getcpu
-+169	common	gettimeofday			sys_gettimeofday		compat_sys_gettimeofday
-+# kernel/time.c
-+170	common	settimeofday			sys_settimeofday		compat_sys_settimeofday
-+171	common	adjtimex			sys_adjtimex			compat_sys_adjtimex
-+# kernel/timer.c
-+172	common	getpid				sys_getpid
-+173	common	getppid				sys_getppid
-+174	common	getuid				sys_getuid
-+175	common	geteuid				sys_geteuid
-+176	common	getgid				sys_getgid
-+177	common	getegid				sys_getegid
-+178	common	gettid				sys_gettid
-+179	common	sysinfo				sys_sysinfo			compat_sys_sysinfo
-+# ipc/mqueue.c
-+180	common	mq_open				sys_mq_open			compat_sys_mq_open
-+181	common	mq_unlink			sys_mq_unlink
-+182	common	mq_timedsend			sys_mq_timedsend		compat_sys_mq_timedsend
-+183	common	mq_timedreceive			sys_mq_timedreceive		compat_sys_mq_timedreceive
-+184	common	mq_notify			sys_mq_notify			compat_sys_mq_notify
-+185	common	mq_getsetattr			sys_mq_getsetattr		compat_sys_mq_getsetattr
-+# ipc/msg.c
-+186	common	msgget				sys_msgget
-+187	common	msgctl				sys_msgctl			compat_sys_msgctl
-+188	common	msgrcv				sys_msgrcv			compat_sys_msgrcv
-+189	common	msgsnd				sys_msgsnd			compat_sys_msgsnd
-+# ipc/sem.c
-+190	common	semget				sys_semget
-+191	common	semctl				sys_semctl			compat_sys_semctl
-+192	common	semtimedop			sys_semtimedop			compat_sys_semtimedop
-+193	common	semop				sys_semop
-+# ipc/shm.c
-+194	common	shmget				sys_shmget
-+195	common	shmctl				sys_shmctl			compat_sys_shmctl
-+196	common	shmat				sys_shmat			compat_sys_shmat
-+197	common	shmdt				sys_shmdt
-+# net/socket.c
-+198	common	socket				sys_socket
-+199	common	socketpair			sys_socketpair
-+200	common	bind				sys_bind
-+201	common	listen				sys_listen
-+202	common	accept				sys_accept
-+203	common	connect				sys_connect
-+204	common	getsockname			sys_getsockname
-+205	common	getpeername			sys_getpeername
-+206	common	sendto				sys_sendto
-+207	common	recvfrom			sys_recvfrom			compat_sys_recvfrom
-+208	common	setsockopt			sys_setsockopt			compat_sys_setsockopt
-+209	common	getsockopt			sys_getsockopt			compat_sys_getsockopt
-+210	common	shutdown			sys_shutdown
-+211	common	sendmsg				sys_sendmsg			compat_sys_sendmsg
-+212	common	recvmsg				sys_recvmsg			compat_sys_recvmsg
-+# mm/filemap.c
-+213	common	readahead			sys_readahead			compat_sys_readahead
-+# mm/nommu.c, also with MMU
-+214	common	brk				sys_brk
-+215	common	munmap				sys_munmap
-+216	common	mremap				sys_mremap
-+# security/keys/keyctl.c
-+217	common	add_key				sys_add_key
-+218	common	request_key			sys_request_key
-+219	common	keyctl				sys_keyctl			compat_sys_keyctl
-+# arch/example/kernel/sys_example.c
-+220	common	clone				sys_clone
-+221	common	execve				sys_execve			compat_sys_execve
-+222	32	mmap2				sys_mmap2
-+222	64	mmap				sys_mmap
-+# mm/fadvise.c
-+223	32	fadvise64_64			sys_fadvise64_64		compat_sys_fadvise64_64
-+223	64	fadvise64			sys_fadvise64_64
-+224	mmu	swapon				sys_swapon
-+225	mmu	swapoff				sys_swapoff
-+226	mmu	mprotect			sys_mprotect
-+227	mmu	msync				sys_msync
-+228	mmu	mlock				sys_mlock
-+229	mmu	munlock				sys_munlock
-+230	mmu	mlockall			sys_mlockall
-+231	mmu	munlockall			sys_munlockall
-+232	mmu	mincore				sys_mincore
-+233	mmu	madvise				sys_madvise
-+234	mmu	remap_file_pages		sys_remap_file_pages
-+235	mmu	mbind				sys_mbind			compat_sys_mbind
-+236	mmu	get_mempolicy			sys_get_mempolicy		compat_sys_get_mempolicy
-+237	mmu	set_mempolicy			sys_set_mempolicy		compat_sys_set_mempolicy
-+238	mmu	migrate_pages			sys_migrate_pages		compat_sys_migrate_pages
-+239	mmu	move_pages			sys_move_pages			compat_sys_move_pages
-+240	common	rt_tgsigqueueinfo		sys_rt_tgsigqueueinfo		compat_sys_rt_tgsigqueueinfo
-+241	common	perf_event_open			sys_perf_event_open
-+242	common	accept4				sys_accept4
-+243	common	recvmmsg			sys_recvmmsg			compat_sys_recvmmsg
-+244 	archs0	arch_specific_syscall0		sys_arch_specific_syscall0
-+245 	archs1	arch_specific_syscall1		sys_arch_specific_syscall1
-+246	archs2	arch_specific_syscall2		sys_arch_specific_syscall2
-+247	archs3	arch_specific_syscall3		sys_arch_specific_syscall3
-+248	archs4	arch_specific_syscall4		sys_arch_specific_syscall4
-+260	common	wait4				sys_wait4			compat_sys_wait4
-+261	common	prlimit64			sys_prlimit64
-+262	common	fanotify_init			sys_fanotify_init
-+263	common	fanotify_mark			sys_fanotify_mark
-+264	common	name_to_handle_at		sys_name_to_handle_at
-+265	common	open_by_handle_at		sys_open_by_handle_at		compat_sys_open_by_handle_at
-+266	common	clock_adjtime			sys_clock_adjtime		compat_sys_clock_adjtime
-+267	common	syncfs				sys_syncfs
-+268	common	setns				sys_setns
-+269	common	sendmmsg			sys_sendmmsg			compat_sys_sendmmsg
-+270	common	process_vm_readv		sys_process_vm_readv		compat_sys_process_vm_readv
-+271	common	process_vm_writev		sys_process_vm_writev		compat_sys_process_vm_writev
-+272	common	kcmp				sys_kcmp
-+273	common	finit_module			sys_finit_module
-+274	common	sched_setattr			sys_sched_setattr
-+275	common	sched_getattr			sys_sched_getattr
-+276	common	renameat2			sys_renameat2
-+277	common	seccomp				sys_seccomp
-+278	common	getrandom			sys_getrandom
-+279	common	memfd_create			sys_memfd_create
-+280	common	bpf				sys_bpf
-+281	common	execveat			sys_execveat			compat_sys_execveat
-+282	common	userfaultfd			sys_userfaultfd
-+283	common	membarrier			sys_membarrier
-+284	common	mlock2				sys_mlock2
-+285	common	copy_file_range			sys_copy_file_range
-+286	common	preadv2				sys_preadv2			compat_sys_preadv2
-+287	common	pwritev2			sys_pwritev2			compat_sys_pwritev2
-+288	common	pkey_mprotect			sys_pkey_mprotect
-+289	common	pkey_alloc			sys_pkey_alloc
-+290	common	pkey_free			sys_pkey_free
-+291	common	statx				sys_statx
-+292	common	io_pgetevents			sys_io_pgetevents		compat_sys_io_pgetevents
-+293	common	rseq				sys_rseq
-+294	common	kexec_file_load			sys_kexec_file_load
--- 
-1.9.1
+Cheers,
+Longman
 
