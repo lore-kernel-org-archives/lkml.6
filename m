@@ -7,49 +7,50 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E45C1C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:55:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D982C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:55:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AADCD20665
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:55:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D631206BB
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:55:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546865718;
-	bh=j7mV8G4m1HXyUsdTHABauTZYfqWueeZ6TZwSdgKqEn0=;
+	s=default; t=1546865732;
+	bh=pWZRSh3VHsFImjfLSKgjHYbvuRVQ75I2+hXavdFMfRU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=tT3yVwQnRrbW3NW3Tu1Klva6WkK3pFdYWhncCxZumanfNpQWdZ+X3IaK5HpZLJLqJ
-	 Nv8EH9mT5ZB3azdiDiPEA/npf/y2owboK2612UnPOwHLvFm3D6fqZXktr4Y6Ko6kuz
-	 G1jK27pFt/8+aQh2Io1puYnTFtmbHnVaJqNgNU/Q=
+	b=k+LeELB3Kk1OEXMyaHBbecCDGBQg6+wG46ScAo2aKK61R64rbyU+eSHuoLBF/9lWp
+	 JfUTpnGQHNC1olnVKcEzGeezxmOHT8VI3rhAxrNP/I83krS7yiDMxIqx/TrMWQqi0m
+	 QEcJ/QpIYiPOPGzbsA2ehlzLGXSCLsM1q3zm8tfc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729159AbfAGMsZ (ORCPT
+        id S1729597AbfAGMzb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:48:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38954 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:55:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43812 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729147AbfAGMsT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:48:19 -0500
+        id S1728809AbfAGMz3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:55:29 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B889F2089F;
-        Mon,  7 Jan 2019 12:48:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 56A0020651;
+        Mon,  7 Jan 2019 12:55:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865299;
-        bh=j7mV8G4m1HXyUsdTHABauTZYfqWueeZ6TZwSdgKqEn0=;
+        s=default; t=1546865728;
+        bh=pWZRSh3VHsFImjfLSKgjHYbvuRVQ75I2+hXavdFMfRU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YQA/tWyhptrMGTzTCGBe4NZ/oaVBSnrf6k0LIm/rkCAK+YzSYvwnHGCemWILnE889
-         h0UT9KGlhMjtEpANUfr84/02lvGdjXd+bF1NawChj9M67cOdCBiw2KxRsTifSVNK0y
-         hRURY9ngSTfep/br5EQwNtaAPUNaIgU1pkr7Y4sU=
+        b=HZ8rcv2JUhk7ir2aD72gDvMZowuV4QKWHlwfIqulnHJLDZq+kvftWpEaNoaJ9ERhJ
+         d9+u2R/bti46JQQS6nFBTcdMmQ/QTTaeU3jxc2L5Bk02gQ90LbIfNVU0CzjGuXQ1sw
+         yVNPznByDrW3JJQ5olqF7a9CjWNF8ipM1TNMq1GU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Allan Nielsen <allan.nielsen@microchip.com>,
-        Steen Hegelund <steen.hegelund@microchip.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 048/170] mscc: Configured MAC entries should be locked.
-Date:   Mon,  7 Jan 2019 13:31:15 +0100
-Message-Id: <20190107104458.839565009@linuxfoundation.org>
+        stable@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
+        Mathias Duckeck <m.duckeck@kunbus.de>,
+        Frank Pavlic <f.pavlic@kunbus.de>,
+        Martin Sperl <kernel@martin.sperl.org>,
+        =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 4.19 116/170] spi: bcm2835: Fix book-keeping of DMA termination
+Date:   Mon,  7 Jan 2019 13:32:23 +0100
+Message-Id: <20190107104506.646063206@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104452.953560660@linuxfoundation.org>
 References: <20190107104452.953560660@linuxfoundation.org>
@@ -68,35 +69,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Allan W. Nielsen" <allan.nielsen@microchip.com>
+From: Lukas Wunner <lukas@wunner.de>
 
-[ Upstream commit 8fd1a4affbdafda592f80cd01bf7a382a5ff2fe8 ]
+commit dbc944115eed48af110646992893dc43321368d8 upstream.
 
-The MAC table in Ocelot supports auto aging (normal) and static entries.
-MAC entries that is manually configured should be static and not subject
-to aging.
+If submission of a DMA TX transfer succeeds but submission of the
+corresponding RX transfer does not, the BCM2835 SPI driver terminates
+the TX transfer but neglects to reset the dma_pending flag to false.
 
-Fixes: a556c76adc05 ("net: mscc: Add initial Ocelot switch support")
-Signed-off-by: Allan Nielsen <allan.nielsen@microchip.com>
-Reviewed-by: Steen Hegelund <steen.hegelund@microchip.com>
-Signed-off-by: Steen Hegelund <steen.hegelund@microchip.com>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Thus, if the next transfer uses interrupt mode (because it is shorter
+than BCM2835_SPI_DMA_MIN_LENGTH) and runs into a timeout,
+dmaengine_terminate_all() will be called both for TX (once more) and
+for RX (which was never started in the first place).  Fix it.
+
+Signed-off-by: Lukas Wunner <lukas@wunner.de>
+Fixes: 3ecd37edaa2a ("spi: bcm2835: enable dma modes for transfers meeting certain conditions")
+Cc: stable@vger.kernel.org # v4.2+
+Cc: Mathias Duckeck <m.duckeck@kunbus.de>
+Cc: Frank Pavlic <f.pavlic@kunbus.de>
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Cc: Noralf Trønnes <noralf@tronnes.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/mscc/ocelot.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/mscc/ocelot.c
-+++ b/drivers/net/ethernet/mscc/ocelot.c
-@@ -733,7 +733,7 @@ static int ocelot_fdb_add(struct ndmsg *
+---
+ drivers/spi/spi-bcm2835.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/drivers/spi/spi-bcm2835.c
++++ b/drivers/spi/spi-bcm2835.c
+@@ -341,6 +341,7 @@ static int bcm2835_spi_transfer_one_dma(
+ 	if (ret) {
+ 		/* need to reset on errors */
+ 		dmaengine_terminate_all(master->dma_tx);
++		bs->dma_pending = false;
+ 		bcm2835_spi_reset_hw(master);
+ 		return ret;
  	}
- 
- 	return ocelot_mact_learn(ocelot, port->chip_port, addr, vid,
--				 ENTRYTYPE_NORMAL);
-+				 ENTRYTYPE_LOCKED);
- }
- 
- static int ocelot_fdb_del(struct ndmsg *ndm, struct nlattr *tb[],
 
 
