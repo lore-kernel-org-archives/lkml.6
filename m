@@ -4,51 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF560C43612
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:39:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 345DAC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:39:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B893C20859
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:39:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E5541206BB
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:39:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546864752;
-	bh=HtL+gJK/kzmErIZ2BHEglfHs1XxqBDlkVqTk2dA2nXs=;
+	s=default; t=1546864760;
+	bh=UXek4xQZvNOnhyDdh1M/dYVyaWnhI2mlT3pfreua3xk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=UWonDDh1hhdgV/NCxYdY9k4oxZzDp6FLVVanP0UOhgie8I3+QbgTsltUIUt+/eTN9
-	 9iUqJd5jKbY4NOSYg2S4Lt3uw/YOS/6Kq+85YP9j7PdksxRnvr6GDGsK8fx0Rjdi4Y
-	 GCPQ3iKKpEHyUG6wL8DUVi2d+PnScKX6yyde1gI8=
+	b=Fyr0xTteaZ2bxpsEi+Vo16TqHm30yGd5P9F+0b17S9Kv5cU1f9RFB+A39jEyleMra
+	 rH1weNvZUziway2j7eqBTu5MhXhgADB2KMbo5ynRTE86AC4r8p95Fk0bLsyGBCBTYk
+	 Rxh3mlJETr/E1gfO/vbTN3OumTufMpWP03HXlKgU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727834AbfAGMhn (ORCPT
+        id S1727759AbfAGMjT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:37:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52562 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:39:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54412 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727566AbfAGMhe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:37:34 -0500
+        id S1727022AbfAGMjQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:39:16 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 265772173C;
-        Mon,  7 Jan 2019 12:37:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 568CE206BB;
+        Mon,  7 Jan 2019 12:39:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546864653;
-        bh=HtL+gJK/kzmErIZ2BHEglfHs1XxqBDlkVqTk2dA2nXs=;
+        s=default; t=1546864755;
+        bh=UXek4xQZvNOnhyDdh1M/dYVyaWnhI2mlT3pfreua3xk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ub8MTslnohVX+6JIGa9SFf2fWWE5Cv/DwdkjbX4WgI9kauC+iP2mDJw3Fmdfte3JG
-         p/7Kwr7OY65Pj8yRTAisyoyEid0uYxQn7JkFpSmcnV6b1ktAw8xRSnUc60eYGfSOXM
-         xm+VpOyt1YkKmyGIQwnHPJ8CjQJL6G5BhsBet6eI=
+        b=eus2AnH21cBhs/v1F06nf/VE+guSXEHJy7KvPA8SmZ/KZuRRx9WCWp/vFN1TpIQVt
+         M+jw52CAli0zYO7MPJmKfaR6P0NYKKFPCRuwaXUR83Uwh8eRyvVuPvMMCcLu8q0NvN
+         w8sN1oCSAfYYoTNfAzY76SpgLQnn+EF6jNLg7Qnw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexey Brodkin <abrodkin@synopsys.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 4.20 063/145] clocksource/drivers/arc_timer: Utilize generic sched_clock
-Date:   Mon,  7 Jan 2019 13:31:40 +0100
-Message-Id: <20190107104445.551185789@linuxfoundation.org>
+        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
+        stable@kernel.org
+Subject: [PATCH 4.20 077/145] ext4: avoid declaring fs inconsistent due to invalid file handles
+Date:   Mon,  7 Jan 2019 13:31:54 +0100
+Message-Id: <20190107104447.331836514@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104437.308206189@linuxfoundation.org>
 References: <20190107104437.308206189@linuxfoundation.org>
@@ -67,174 +65,339 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexey Brodkin <alexey.brodkin@synopsys.com>
+From: Theodore Ts'o <tytso@mit.edu>
 
-commit bf287607c80f24387fedb431a346dc67f25be12c upstream.
+commit 8a363970d1dc38c4ec4ad575c862f776f468d057 upstream.
 
-It turned out we used to use default implementation of sched_clock()
-from kernel/sched/clock.c which was as precise as 1/HZ, i.e.
-by default we had 10 msec granularity of time measurement.
+If we receive a file handle, either from NFS or open_by_handle_at(2),
+and it points at an inode which has not been initialized, and the file
+system has metadata checksums enabled, we shouldn't try to get the
+inode, discover the checksum is invalid, and then declare the file
+system as being inconsistent.
 
-Now given ARC built-in timers are clocked with the same frequency as
-CPU cores we may get much higher precision of time tracking.
+This can be reproduced by creating a test file system via "mke2fs -t
+ext4 -O metadata_csum /tmp/foo.img 8M", mounting it, cd'ing into that
+directory, and then running the following program.
 
-Thus we switch to generic sched_clock which really reads ARC hardware
-counters.
+#define _GNU_SOURCE
+#include <fcntl.h>
 
-This is especially helpful for measuring short events.
-That's what we used to have:
------------------------------->8------------------------
-$ perf stat /bin/sh -c /root/lmbench-master/bin/arc/hello > /dev/null
+struct handle {
+	struct file_handle fh;
+	unsigned char fid[MAX_HANDLE_SZ];
+};
 
- Performance counter stats for '/bin/sh -c /root/lmbench-master/bin/arc/hello':
+int main(int argc, char **argv)
+{
+	struct handle h = {{8, 1 }, { 12, }};
 
-         10.000000      task-clock (msec)         #    2.832 CPUs utilized
-                 1      context-switches          #    0.100 K/sec
-                 1      cpu-migrations            #    0.100 K/sec
-                63      page-faults               #    0.006 M/sec
-           3049480      cycles                    #    0.305 GHz
-           1091259      instructions              #    0.36  insn per cycle
-            256828      branches                  #   25.683 M/sec
-             27026      branch-misses             #   10.52% of all branches
+	open_by_handle_at(AT_FDCWD, &h.fh, O_RDONLY);
+	return 0;
+}
 
-       0.003530687 seconds time elapsed
-
-       0.000000000 seconds user
-       0.010000000 seconds sys
------------------------------->8------------------------
-
-And now we'll see:
------------------------------->8------------------------
-$ perf stat /bin/sh -c /root/lmbench-master/bin/arc/hello > /dev/null
-
- Performance counter stats for '/bin/sh -c /root/lmbench-master/bin/arc/hello':
-
-          3.004322      task-clock (msec)         #    0.865 CPUs utilized
-                 1      context-switches          #    0.333 K/sec
-                 1      cpu-migrations            #    0.333 K/sec
-                63      page-faults               #    0.021 M/sec
-           2986734      cycles                    #    0.994 GHz
-           1087466      instructions              #    0.36  insn per cycle
-            255209      branches                  #   84.947 M/sec
-             26002      branch-misses             #   10.19% of all branches
-
-       0.003474829 seconds time elapsed
-
-       0.003519000 seconds user
-       0.000000000 seconds sys
------------------------------->8------------------------
-
-Note how much more meaningful is the second output - time spent for
-execution pretty much matches number of cycles spent (we're runnign
-@ 1GHz here).
-
-Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Vineet Gupta <vgupta@synopsys.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: stable@vger.kernel.org
-Acked-by: Vineet Gupta <vgupta@synopsys.com>
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Google-Bug-Id: 120690101
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: stable@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arc/Kconfig                |    1 +
- drivers/clocksource/Kconfig     |    1 +
- drivers/clocksource/arc_timer.c |   22 ++++++++++++++++++++++
- 3 files changed, 24 insertions(+)
+ fs/ext4/ext4.h   |   15 +++++++++++++--
+ fs/ext4/ialloc.c |    2 +-
+ fs/ext4/inode.c  |   54 +++++++++++++++++++++++++++++++++++++-----------------
+ fs/ext4/ioctl.c  |    2 +-
+ fs/ext4/namei.c  |    4 ++--
+ fs/ext4/resize.c |    5 +++--
+ fs/ext4/super.c  |   19 +++++--------------
+ fs/ext4/xattr.c  |    5 +++--
+ 8 files changed, 65 insertions(+), 41 deletions(-)
 
---- a/arch/arc/Kconfig
-+++ b/arch/arc/Kconfig
-@@ -26,6 +26,7 @@ config ARC
- 	select GENERIC_IRQ_SHOW
- 	select GENERIC_PCI_IOMAP
- 	select GENERIC_PENDING_IRQ if SMP
-+	select GENERIC_SCHED_CLOCK
- 	select GENERIC_SMP_IDLE_THREAD
- 	select HAVE_ARCH_KGDB
- 	select HAVE_ARCH_TRACEHOOK
---- a/drivers/clocksource/Kconfig
-+++ b/drivers/clocksource/Kconfig
-@@ -290,6 +290,7 @@ config CLKSRC_MPS2
+--- a/fs/ext4/ext4.h
++++ b/fs/ext4/ext4.h
+@@ -2454,8 +2454,19 @@ int do_journal_get_write_access(handle_t
+ #define FALL_BACK_TO_NONDELALLOC 1
+ #define CONVERT_INLINE_DATA	 2
  
- config ARC_TIMERS
- 	bool "Support for 32-bit TIMERn counters in ARC Cores" if COMPILE_TEST
-+	depends on GENERIC_SCHED_CLOCK
- 	select TIMER_OF
- 	help
- 	  These are legacy 32-bit TIMER0 and TIMER1 counters found on all ARC cores
---- a/drivers/clocksource/arc_timer.c
-+++ b/drivers/clocksource/arc_timer.c
-@@ -23,6 +23,7 @@
- #include <linux/cpu.h>
- #include <linux/of.h>
- #include <linux/of_irq.h>
-+#include <linux/sched_clock.h>
+-extern struct inode *ext4_iget(struct super_block *, unsigned long);
+-extern struct inode *ext4_iget_normal(struct super_block *, unsigned long);
++typedef enum {
++	EXT4_IGET_NORMAL =	0,
++	EXT4_IGET_SPECIAL =	0x0001, /* OK to iget a system inode */
++	EXT4_IGET_HANDLE = 	0x0002	/* Inode # is from a handle */
++} ext4_iget_flags;
++
++extern struct inode *__ext4_iget(struct super_block *sb, unsigned long ino,
++				 ext4_iget_flags flags, const char *function,
++				 unsigned int line);
++
++#define ext4_iget(sb, ino, flags) \
++	__ext4_iget((sb), (ino), (flags), __func__, __LINE__)
++
+ extern int  ext4_write_inode(struct inode *, struct writeback_control *);
+ extern int  ext4_setattr(struct dentry *, struct iattr *);
+ extern int  ext4_getattr(const struct path *, struct kstat *, u32, unsigned int);
+--- a/fs/ext4/ialloc.c
++++ b/fs/ext4/ialloc.c
+@@ -1225,7 +1225,7 @@ struct inode *ext4_orphan_get(struct sup
+ 	if (!ext4_test_bit(bit, bitmap_bh->b_data))
+ 		goto bad_orphan;
  
- #include <soc/arc/timers.h>
- #include <soc/arc/mcip.h>
-@@ -88,6 +89,11 @@ static u64 arc_read_gfrc(struct clocksou
- 	return (((u64)h) << 32) | l;
+-	inode = ext4_iget(sb, ino);
++	inode = ext4_iget(sb, ino, EXT4_IGET_NORMAL);
+ 	if (IS_ERR(inode)) {
+ 		err = PTR_ERR(inode);
+ 		ext4_error(sb, "couldn't read orphan inode %lu (err %d)",
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -4817,7 +4817,9 @@ static inline u64 ext4_inode_peek_iversi
+ 		return inode_peek_iversion(inode);
  }
  
-+static notrace u64 arc_gfrc_clock_read(void)
-+{
-+	return arc_read_gfrc(NULL);
-+}
-+
- static struct clocksource arc_counter_gfrc = {
- 	.name   = "ARConnect GFRC",
- 	.rating = 400,
-@@ -111,6 +117,8 @@ static int __init arc_cs_setup_gfrc(stru
- 	if (ret)
- 		return ret;
+-struct inode *ext4_iget(struct super_block *sb, unsigned long ino)
++struct inode *__ext4_iget(struct super_block *sb, unsigned long ino,
++			  ext4_iget_flags flags, const char *function,
++			  unsigned int line)
+ {
+ 	struct ext4_iloc iloc;
+ 	struct ext4_inode *raw_inode;
+@@ -4831,6 +4833,18 @@ struct inode *ext4_iget(struct super_blo
+ 	gid_t i_gid;
+ 	projid_t i_projid;
  
-+	sched_clock_register(arc_gfrc_clock_read, 64, arc_timer_freq);
++	if (((flags & EXT4_IGET_NORMAL) &&
++	     (ino < EXT4_FIRST_INO(sb) && ino != EXT4_ROOT_INO)) ||
++	    (ino < EXT4_ROOT_INO) ||
++	    (ino > le32_to_cpu(EXT4_SB(sb)->s_es->s_inodes_count))) {
++		if (flags & EXT4_IGET_HANDLE)
++			return ERR_PTR(-ESTALE);
++		__ext4_error(sb, function, line,
++			     "inode #%lu: comm %s: iget: illegal inode #",
++			     ino, current->comm);
++		return ERR_PTR(-EFSCORRUPTED);
++	}
 +
- 	return clocksource_register_hz(&arc_counter_gfrc, arc_timer_freq);
+ 	inode = iget_locked(sb, ino);
+ 	if (!inode)
+ 		return ERR_PTR(-ENOMEM);
+@@ -4846,18 +4860,26 @@ struct inode *ext4_iget(struct super_blo
+ 	raw_inode = ext4_raw_inode(&iloc);
+ 
+ 	if ((ino == EXT4_ROOT_INO) && (raw_inode->i_links_count == 0)) {
+-		EXT4_ERROR_INODE(inode, "root inode unallocated");
++		ext4_error_inode(inode, function, line, 0,
++				 "iget: root inode unallocated");
+ 		ret = -EFSCORRUPTED;
+ 		goto bad_inode;
+ 	}
+ 
++	if ((flags & EXT4_IGET_HANDLE) &&
++	    (raw_inode->i_links_count == 0) && (raw_inode->i_mode == 0)) {
++		ret = -ESTALE;
++		goto bad_inode;
++	}
++
+ 	if (EXT4_INODE_SIZE(inode->i_sb) > EXT4_GOOD_OLD_INODE_SIZE) {
+ 		ei->i_extra_isize = le16_to_cpu(raw_inode->i_extra_isize);
+ 		if (EXT4_GOOD_OLD_INODE_SIZE + ei->i_extra_isize >
+ 			EXT4_INODE_SIZE(inode->i_sb) ||
+ 		    (ei->i_extra_isize & 3)) {
+-			EXT4_ERROR_INODE(inode,
+-					 "bad extra_isize %u (inode size %u)",
++			ext4_error_inode(inode, function, line, 0,
++					 "iget: bad extra_isize %u "
++					 "(inode size %u)",
+ 					 ei->i_extra_isize,
+ 					 EXT4_INODE_SIZE(inode->i_sb));
+ 			ret = -EFSCORRUPTED;
+@@ -4879,7 +4901,8 @@ struct inode *ext4_iget(struct super_blo
+ 	}
+ 
+ 	if (!ext4_inode_csum_verify(inode, raw_inode, ei)) {
+-		EXT4_ERROR_INODE(inode, "checksum invalid");
++		ext4_error_inode(inode, function, line, 0,
++				 "iget: checksum invalid");
+ 		ret = -EFSBADCRC;
+ 		goto bad_inode;
+ 	}
+@@ -4936,7 +4959,8 @@ struct inode *ext4_iget(struct super_blo
+ 			((__u64)le16_to_cpu(raw_inode->i_file_acl_high)) << 32;
+ 	inode->i_size = ext4_isize(sb, raw_inode);
+ 	if ((size = i_size_read(inode)) < 0) {
+-		EXT4_ERROR_INODE(inode, "bad i_size value: %lld", size);
++		ext4_error_inode(inode, function, line, 0,
++				 "iget: bad i_size value: %lld", size);
+ 		ret = -EFSCORRUPTED;
+ 		goto bad_inode;
+ 	}
+@@ -5012,7 +5036,8 @@ struct inode *ext4_iget(struct super_blo
+ 	ret = 0;
+ 	if (ei->i_file_acl &&
+ 	    !ext4_data_block_valid(EXT4_SB(sb), ei->i_file_acl, 1)) {
+-		EXT4_ERROR_INODE(inode, "bad extended attribute block %llu",
++		ext4_error_inode(inode, function, line, 0,
++				 "iget: bad extended attribute block %llu",
+ 				 ei->i_file_acl);
+ 		ret = -EFSCORRUPTED;
+ 		goto bad_inode;
+@@ -5040,8 +5065,9 @@ struct inode *ext4_iget(struct super_blo
+ 	} else if (S_ISLNK(inode->i_mode)) {
+ 		/* VFS does not allow setting these so must be corruption */
+ 		if (IS_APPEND(inode) || IS_IMMUTABLE(inode)) {
+-			EXT4_ERROR_INODE(inode,
+-			  "immutable or append flags not allowed on symlinks");
++			ext4_error_inode(inode, function, line, 0,
++					 "iget: immutable or append flags "
++					 "not allowed on symlinks");
+ 			ret = -EFSCORRUPTED;
+ 			goto bad_inode;
+ 		}
+@@ -5071,7 +5097,8 @@ struct inode *ext4_iget(struct super_blo
+ 		make_bad_inode(inode);
+ 	} else {
+ 		ret = -EFSCORRUPTED;
+-		EXT4_ERROR_INODE(inode, "bogus i_mode (%o)", inode->i_mode);
++		ext4_error_inode(inode, function, line, 0,
++				 "iget: bogus i_mode (%o)", inode->i_mode);
+ 		goto bad_inode;
+ 	}
+ 	brelse(iloc.bh);
+@@ -5085,13 +5112,6 @@ bad_inode:
+ 	return ERR_PTR(ret);
  }
- TIMER_OF_DECLARE(arc_gfrc, "snps,archs-timer-gfrc", arc_cs_setup_gfrc);
-@@ -139,6 +147,11 @@ static u64 arc_read_rtc(struct clocksour
- 	return (((u64)h) << 32) | l;
+ 
+-struct inode *ext4_iget_normal(struct super_block *sb, unsigned long ino)
+-{
+-	if (ino < EXT4_FIRST_INO(sb) && ino != EXT4_ROOT_INO)
+-		return ERR_PTR(-EFSCORRUPTED);
+-	return ext4_iget(sb, ino);
+-}
+-
+ static int ext4_inode_blocks_set(handle_t *handle,
+ 				struct ext4_inode *raw_inode,
+ 				struct ext4_inode_info *ei)
+--- a/fs/ext4/ioctl.c
++++ b/fs/ext4/ioctl.c
+@@ -125,7 +125,7 @@ static long swap_inode_boot_loader(struc
+ 	    !inode_owner_or_capable(inode) || !capable(CAP_SYS_ADMIN))
+ 		return -EPERM;
+ 
+-	inode_bl = ext4_iget(sb, EXT4_BOOT_LOADER_INO);
++	inode_bl = ext4_iget(sb, EXT4_BOOT_LOADER_INO, EXT4_IGET_SPECIAL);
+ 	if (IS_ERR(inode_bl))
+ 		return PTR_ERR(inode_bl);
+ 	ei_bl = EXT4_I(inode_bl);
+--- a/fs/ext4/namei.c
++++ b/fs/ext4/namei.c
+@@ -1571,7 +1571,7 @@ static struct dentry *ext4_lookup(struct
+ 					 dentry);
+ 			return ERR_PTR(-EFSCORRUPTED);
+ 		}
+-		inode = ext4_iget_normal(dir->i_sb, ino);
++		inode = ext4_iget(dir->i_sb, ino, EXT4_IGET_NORMAL);
+ 		if (inode == ERR_PTR(-ESTALE)) {
+ 			EXT4_ERROR_INODE(dir,
+ 					 "deleted inode referenced: %u",
+@@ -1613,7 +1613,7 @@ struct dentry *ext4_get_parent(struct de
+ 		return ERR_PTR(-EFSCORRUPTED);
+ 	}
+ 
+-	return d_obtain_alias(ext4_iget_normal(child->d_sb, ino));
++	return d_obtain_alias(ext4_iget(child->d_sb, ino, EXT4_IGET_NORMAL));
  }
  
-+static notrace u64 arc_rtc_clock_read(void)
-+{
-+	return arc_read_rtc(NULL);
-+}
-+
- static struct clocksource arc_counter_rtc = {
- 	.name   = "ARCv2 RTC",
- 	.rating = 350,
-@@ -170,6 +183,8 @@ static int __init arc_cs_setup_rtc(struc
+ /*
+--- a/fs/ext4/resize.c
++++ b/fs/ext4/resize.c
+@@ -1637,7 +1637,7 @@ int ext4_group_add(struct super_block *s
+ 				     "No reserved GDT blocks, can't resize");
+ 			return -EPERM;
+ 		}
+-		inode = ext4_iget(sb, EXT4_RESIZE_INO);
++		inode = ext4_iget(sb, EXT4_RESIZE_INO, EXT4_IGET_SPECIAL);
+ 		if (IS_ERR(inode)) {
+ 			ext4_warning(sb, "Error opening resize inode");
+ 			return PTR_ERR(inode);
+@@ -1965,7 +1965,8 @@ retry:
+ 		}
  
- 	write_aux_reg(AUX_RTC_CTRL, 1);
+ 		if (!resize_inode)
+-			resize_inode = ext4_iget(sb, EXT4_RESIZE_INO);
++			resize_inode = ext4_iget(sb, EXT4_RESIZE_INO,
++						 EXT4_IGET_SPECIAL);
+ 		if (IS_ERR(resize_inode)) {
+ 			ext4_warning(sb, "Error opening resize inode");
+ 			return PTR_ERR(resize_inode);
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -1174,20 +1174,11 @@ static struct inode *ext4_nfs_get_inode(
+ {
+ 	struct inode *inode;
  
-+	sched_clock_register(arc_rtc_clock_read, 64, arc_timer_freq);
-+
- 	return clocksource_register_hz(&arc_counter_rtc, arc_timer_freq);
- }
- TIMER_OF_DECLARE(arc_rtc, "snps,archs-timer-rtc", arc_cs_setup_rtc);
-@@ -185,6 +200,11 @@ static u64 arc_read_timer1(struct clocks
- 	return (u64) read_aux_reg(ARC_REG_TIMER1_CNT);
- }
+-	if (ino < EXT4_FIRST_INO(sb) && ino != EXT4_ROOT_INO)
+-		return ERR_PTR(-ESTALE);
+-	if (ino > le32_to_cpu(EXT4_SB(sb)->s_es->s_inodes_count))
+-		return ERR_PTR(-ESTALE);
+-
+-	/* iget isn't really right if the inode is currently unallocated!!
+-	 *
+-	 * ext4_read_inode will return a bad_inode if the inode had been
+-	 * deleted, so we should be safe.
+-	 *
++	/*
+ 	 * Currently we don't know the generation for parent directory, so
+ 	 * a generation of 0 means "accept any"
+ 	 */
+-	inode = ext4_iget_normal(sb, ino);
++	inode = ext4_iget(sb, ino, EXT4_IGET_HANDLE);
+ 	if (IS_ERR(inode))
+ 		return ERR_CAST(inode);
+ 	if (generation && inode->i_generation != generation) {
+@@ -4351,7 +4342,7 @@ no_journal:
+ 	 * so we can safely mount the rest of the filesystem now.
+ 	 */
  
-+static notrace u64 arc_timer1_clock_read(void)
-+{
-+	return arc_read_timer1(NULL);
-+}
-+
- static struct clocksource arc_counter_timer1 = {
- 	.name   = "ARC Timer1",
- 	.rating = 300,
-@@ -209,6 +229,8 @@ static int __init arc_cs_setup_timer1(st
- 	write_aux_reg(ARC_REG_TIMER1_CNT, 0);
- 	write_aux_reg(ARC_REG_TIMER1_CTRL, TIMER_CTRL_NH);
+-	root = ext4_iget(sb, EXT4_ROOT_INO);
++	root = ext4_iget(sb, EXT4_ROOT_INO, EXT4_IGET_SPECIAL);
+ 	if (IS_ERR(root)) {
+ 		ext4_msg(sb, KERN_ERR, "get root inode failed");
+ 		ret = PTR_ERR(root);
+@@ -4621,7 +4612,7 @@ static struct inode *ext4_get_journal_in
+ 	 * happen if we iget() an unused inode, as the subsequent iput()
+ 	 * will try to delete it.
+ 	 */
+-	journal_inode = ext4_iget(sb, journal_inum);
++	journal_inode = ext4_iget(sb, journal_inum, EXT4_IGET_SPECIAL);
+ 	if (IS_ERR(journal_inode)) {
+ 		ext4_msg(sb, KERN_ERR, "no journal found");
+ 		return NULL;
+@@ -5703,7 +5694,7 @@ static int ext4_quota_enable(struct supe
+ 	if (!qf_inums[type])
+ 		return -EPERM;
  
-+	sched_clock_register(arc_timer1_clock_read, 32, arc_timer_freq);
-+
- 	return clocksource_register_hz(&arc_counter_timer1, arc_timer_freq);
- }
+-	qf_inode = ext4_iget(sb, qf_inums[type]);
++	qf_inode = ext4_iget(sb, qf_inums[type], EXT4_IGET_SPECIAL);
+ 	if (IS_ERR(qf_inode)) {
+ 		ext4_error(sb, "Bad quota inode # %lu", qf_inums[type]);
+ 		return PTR_ERR(qf_inode);
+--- a/fs/ext4/xattr.c
++++ b/fs/ext4/xattr.c
+@@ -384,7 +384,7 @@ static int ext4_xattr_inode_iget(struct
+ 	struct inode *inode;
+ 	int err;
  
+-	inode = ext4_iget(parent->i_sb, ea_ino);
++	inode = ext4_iget(parent->i_sb, ea_ino, EXT4_IGET_NORMAL);
+ 	if (IS_ERR(inode)) {
+ 		err = PTR_ERR(inode);
+ 		ext4_error(parent->i_sb,
+@@ -1482,7 +1482,8 @@ ext4_xattr_inode_cache_find(struct inode
+ 	}
+ 
+ 	while (ce) {
+-		ea_inode = ext4_iget(inode->i_sb, ce->e_value);
++		ea_inode = ext4_iget(inode->i_sb, ce->e_value,
++				     EXT4_IGET_NORMAL);
+ 		if (!IS_ERR(ea_inode) &&
+ 		    !is_bad_inode(ea_inode) &&
+ 		    (EXT4_I(ea_inode)->i_flags & EXT4_EA_INODE_FL) &&
 
 
