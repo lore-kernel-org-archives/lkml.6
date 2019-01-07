@@ -6,24 +6,24 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40E92C43444
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:02:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ED2AC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:02:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 025372147C
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:02:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B275205C9
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:02:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726955AbfAGMCC (ORCPT
+        id S1726990AbfAGMCI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:02:02 -0500
-Received: from smtp2207-205.mail.aliyun.com ([121.197.207.205]:48162 "EHLO
+        Mon, 7 Jan 2019 07:02:08 -0500
+Received: from smtp2207-205.mail.aliyun.com ([121.197.207.205]:44654 "EHLO
         smtp2207-205.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726535AbfAGMB7 (ORCPT
+        by vger.kernel.org with ESMTP id S1726655AbfAGMB5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:01:59 -0500
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07436282|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03309;MF=liaoweixiong@allwinnertech.com;NM=1;PH=DS;RN=14;RT=14;SR=0;TI=SMTPD_---.DibxlYK_1546862495;
+        Mon, 7 Jan 2019 07:01:57 -0500
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07436282|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e01l07391;MF=liaoweixiong@allwinnertech.com;NM=1;PH=DS;RN=14;RT=14;SR=0;TI=SMTPD_---.DibxlYK_1546862495;
 Received: from PC-liaoweixiong.allwinnertech.com(mailfrom:liaoweixiong@allwinnertech.com fp:SMTPD_---.DibxlYK_1546862495)
           by smtp.aliyun-inc.com(10.147.40.200);
-          Mon, 07 Jan 2019 20:01:49 +0800
+          Mon, 07 Jan 2019 20:01:52 +0800
 From:   liaoweixiong <liaoweixiong@allwinnertech.com>
 To:     Kees Cook <keescook@chromium.org>,
         Anton Vorontsov <anton@enomsg.org>,
@@ -38,9 +38,9 @@ To:     Kees Cook <keescook@chromium.org>,
         Arnd Bergmann <arnd@arndb.de>
 Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         liaoweixiong <liaoweixiong@allwinnertech.com>
-Subject: [RFC v5 3/4] pstore/blk: support pmsg for pstore block
-Date:   Mon,  7 Jan 2019 20:01:01 +0800
-Message-Id: <1546862462-19640-4-git-send-email-liaoweixiong@allwinnertech.com>
+Subject: [RFC v5 4/4] Documentation: pstore/blk: create document for pstore_blk
+Date:   Mon,  7 Jan 2019 20:01:02 +0800
+Message-Id: <1546862462-19640-5-git-send-email-liaoweixiong@allwinnertech.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1546862462-19640-1-git-send-email-liaoweixiong@allwinnertech.com>
 References: <1546862462-19640-1-git-send-email-liaoweixiong@allwinnertech.com>
@@ -49,472 +49,277 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To enable pmsg, just set pmsg_size when block device register blkzone.
+The documemt, at Documentation/admin-guide/pstore-block.rst,
+tells user how to use pstore_blk and the attentions about panic
+read/write
 
 Signed-off-by: liaoweixiong <liaoweixiong@allwinnertech.com>
 ---
- fs/pstore/blkzone.c        | 254 +++++++++++++++++++++++++++++++++++++++++----
- include/linux/pstore_blk.h |   1 +
- 2 files changed, 233 insertions(+), 22 deletions(-)
+ Documentation/admin-guide/pstore-block.rst | 226 +++++++++++++++++++++++++++++
+ MAINTAINERS                                |   1 +
+ fs/pstore/Kconfig                          |   4 +
+ 3 files changed, 231 insertions(+)
+ create mode 100644 Documentation/admin-guide/pstore-block.rst
 
-diff --git a/fs/pstore/blkzone.c b/fs/pstore/blkzone.c
-index e1b7f26..157f1cfd 100644
---- a/fs/pstore/blkzone.c
-+++ b/fs/pstore/blkzone.c
-@@ -32,12 +32,14 @@
-  *
-  * @sig: signature to indicate header (BLK_SIG xor BLKZONE-type value)
-  * @datalen: length of data in @data
-+ * @start: offset into @data where the beginning of the stored bytes begin
-  * @data: zone data.
-  */
- struct blkz_buffer {
- #define BLK_SIG (0x43474244) /* DBGC */
- 	uint32_t sig;
- 	atomic_t datalen;
-+	atomic_t start;
- 	uint8_t data[0];
- };
- 
-@@ -70,6 +72,9 @@ struct blkz_dmesg_header {
-  *	frontent name for this zone
-  * @buffer:
-  *	pointer to data buffer managed by this zone
-+ * @oldbuf:
-+ *	pointer to old data buffer. It is used for single zone such as pmsg,
-+ *	saving the old buffer.
-  * @buffer_size:
-  *	bytes in @buffer->data
-  * @should_recover:
-@@ -83,6 +88,7 @@ struct blkz_zone {
- 	enum pstore_type_id type;
- 
- 	struct blkz_buffer *buffer;
-+	struct blkz_buffer *oldbuf;
- 	size_t buffer_size;
- 	bool should_recover;
- 	atomic_t dirty;
-@@ -90,8 +96,10 @@ struct blkz_zone {
- 
- struct blkoops_context {
- 	struct blkz_zone **dbzs;	/* dmesg block zones */
-+	struct blkz_zone *pbz;		/* Pmsg block zone */
- 	unsigned int dmesg_max_cnt;
- 	unsigned int dmesg_read_cnt;
-+	unsigned int pmsg_read_cnt;
- 	unsigned int dmesg_write_cnt;
- 	/**
- 	 * the counter should be recovered when do recovery
-@@ -125,6 +133,11 @@ static inline int buffer_datalen(struct blkz_zone *zone)
- 	return atomic_read(&zone->buffer->datalen);
- }
- 
-+static inline int buffer_start(struct blkz_zone *zone)
-+{
-+	return atomic_read(&zone->buffer->start);
-+}
+diff --git a/Documentation/admin-guide/pstore-block.rst b/Documentation/admin-guide/pstore-block.rst
+new file mode 100644
+index 0000000..2fc9fd8
+--- /dev/null
++++ b/Documentation/admin-guide/pstore-block.rst
+@@ -0,0 +1,226 @@
++.. SPDX-License-Identifier: GPL-2.0
 +
- static inline bool is_on_panic(void)
- {
- 	struct blkoops_context *cxt = &blkz_cxt;
-@@ -394,6 +407,72 @@ static int blkz_recover_dmesg(struct blkoops_context *cxt)
- 	return ret;
- }
++Pstore block oops/panic logger
++==============================
++
++Introduction
++------------
++
++Pstore block (pstore_blk) is an oops/panic logger that write its logs to block
++device before the system crashes. Pstore_blk needs block device driver
++registering a partition path of the block device, like /dev/mmcblk0p7 for mmc
++driver, and read/write APIs for this partition when on panic.
++
++Pstore block concepts
++---------------------
++
++Pstore block begins at function ``blkz_register``, by which block driver
++registers to pstore_blk. Recomemd that, block driver should register to
++pstore_blk after block device is ready. Block driver transfers a structure
++``blkz_info`` which is defined in *linux/pstore_blk.h*.
++
++The following key members of ``struct blkz_info`` may be of interest to you.
++
++part_path
++~~~~~~~~~
++
++The path of partition used for pstore_blk. It may be ``/dev/mmcblk[N]p[M]`` for
++mmc, and ``/dev/mtdblock[N]`` for mtd device.
++
++The ``part_path`` is not necessarily if you self-defined general read/write APIs
++on ``blkz_info``. In other words, the ``part_path`` is only used (by function
++blkz_sample_read/write) when general read/write APIs are not defined.
++
++See more on section **read/write**.
++
++part_size
++~~~~~~~~~
++
++The total size in bytes of partition used for pstore_blk. This member **MUST**
++be effective and a multiple of 4096. It is recommended to 1M or larger for block
++device.
++
++The block device area is divided into many chunks, and each event writes
++a chunk of information.
++
++dmesg_size
++~~~~~~~~~~
++
++The chunk size in bytes for dmesg(oops/panic). It **MUST** be a multiple of
++SECTOR_SIZE (Most of the time, the SECTOR_SIZE is 512). If you don't need dmesg,
++you are safely to set it to 0.
++
++NOTE that, the remaining space, except ``pmsg_size`` and others, belongs to
++dmesg. It means that there are multiple chunks for dmesg.
++
++Psotre_blk will log to dmesg chunks one by one, and always overwrite the oldest
++chunk if no free chunk.
++
++pmsg_size
++~~~~~~~~~
++
++The chunk size in bytes for pmsg. It **MUST** be a multiple of SECTOR_SIZE (Most
++of the time, the SECTOR_SIZE is 512). If you don't need pmsg, you are safely to
++set it to 0.
++
++There is only one chunk for pmsg.
++
++Pmsg is a user space accessible pstore object. Writes to */dev/pmsg0* are
++appended to the chunk. On reboot the contents are available in
++/sys/fs/pstore/pmsg-blkoops-0.
++
++dump_oops
++~~~~~~~~~
++
++Dumping both oopses and panics can be done by setting 1 in the ``dump_oops``
++member while setting 0 in that variable dumps only the panics.
++
++read/write
++~~~~~~~~~~
++
++They are general ``read/write`` APIs. It is safely and recommended to ignore it,
++but set ``part_path``.
++
++These general APIs are used all the time expect panic. The ``read`` API is
++usually used to recover data from block device, and the ``write`` API is usually
++to flush new data and erase to block device.
++
++Pstore_blk will temporarily hold all new data before block device is ready. If
++you ignore both of ``read/write`` and ``part_path``, the old data will not be
++recovered and the new data will not be flushed until panic, using panic APIs.
++If you don't have panic APIs neither, all the data will be dropped when reboot.
++
++NOTE that, the general APIs must check whether the block device is ready if
++self-defined.
++
++panic_read/panic_write
++~~~~~~~~~~~~~~~~~~~~~~
++
++They are ``read/write`` APIs for panic. They are likely to general
++``read/write`` but will be used only when on panic.
++
++The attentions for panic read/write see section
++**Attentions in panic read/write APIs**.
++
++Register to pstore block
++------------------------
++
++Block device driver call ``blkz_register`` to register to Psotre_blk.
++For example:
++
++.. code-block:: c
++
++ #include <linux/pstore_blk.h>
++ [...]
++
++ static ssize_t XXXX_panic_read(char *buf, size bytes, loff_t pos)
++ {
++    [...]
++ }
++
++ static ssize_t XXXX_panic_write(const char *buf, size_t bytes, loff_t pos)
++ {
++        [...]
++ }
++
++ struct blkz_info XXXX_info = {
++        .onwer = THIS_MODULE,
++        .name = <...>,
++        .dmesg_size = <...>,
++        .pmsg_size = <...>,
++        .dump_oops = true,
++        .panic_read = XXXX_panic_read,
++        .panic_write = XXXX_panic_write,
++ };
++
++ static int __init XXXX_init(void)
++ {
++        [... get partition information ...]
++        XXXX_info.part_path = <...>;
++        XXXX_info.part_size = <...>;
++
++        [...]
++        return blkz_register(&XXXX_info);
++ }
++
++There are multiple ways by which you can get partition information.
++
++A. Use the module parameters and kernel cmdline.
++B. Use Device Tree bindings.
++C. Use Kconfig.
++D. Use Driver Feature.
++   For example, traverse all MTD device by ``register_mtd_user``, and get the
++   matching name MTD partition.
++
++NOTE that, all of above are done by block driver rather then pstore_blk.
++
++The attentions for panic read/write see section
++**Attentions in panic read/write APIs**.
++
++Compression and header
++----------------------
++
++Block device is large enough, it is not necessary to compress dmesg data.
++Actually, we recommend not compress. Because pstore_blk will insert some
++information into the first line of dmesg data if no compression.
++For example::
++
++        blkoops: Panic: Total 16 times
++
++It means that it's the 16th times panic log since burning.
++Sometimes, the oops|panic counter since burning is very important for embedded
++device to judge whether the system is stable.
++
++The follow line is insert by pstore filesystem.
++For example::
++
++        Oops#2 Part1
++
++It means that it's the 2nd times oops log on last booting.
++
++Reading the data
++----------------
++
++The dump data can be read from the pstore filesystem. The format for these
++files is ``dmesg-blkoops-[N]`` for dmesg(oops|panic) and ``pmsg-blkoops-0`` for
++pmsg, where N is the record number. To delete a stored record from block device,
++simply unlink the respective pstore file. The timestamp of the dump file records
++the trigger time.
++
++Attentions in panic read/write APIs
++-----------------------------------
++
++If on panic, the kernel is not going to be running for much longer. The tasks
++will not be scheduled and the most kernel resources will be out of service. It
++looks like a single-threaded program running on a single-core computer.
++
++The following points need special attention for panic read/write APIs:
++
++1. Can **NOT** allocate any memory.
++
++   If you need memory, just allocate while the block driver is initialing rather
++   than waiting until the panic.
++
++2. Must be polled, **NOT** interrupt driven.
++
++   No task schedule any more. The block driver should delay to ensure the write
++   succeeds, but NOT sleep.
++
++3. Can **NOT** take any lock.
++
++   There is no other task, no any share resource, you are safely to break all
++   locks.
++
++4. Just use cpu to transfer.
++
++   Do not use DMA to transfer unless you are sure that DMA will not keep lock.
++
++5. Operate register directly.
++
++   Try not to use linux kernel resources. Do io map while initialing rather than
++   waiting until the panic.
++
++6. Reset your block device and controller if necessary.
++
++   If you are not sure the state of you block device and controller when panic,
++   you are safely to stop and reset them.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 0abecc5..ebf9c71 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -12054,6 +12054,7 @@ F:	include/linux/pstore*
+ F:	drivers/firmware/efi/efi-pstore.c
+ F:	drivers/acpi/apei/erst.c
+ F:	Documentation/admin-guide/ramoops.rst
++F:	Documentation/admin-guide/pstore-block.rst
+ F:	Documentation/devicetree/bindings/reserved-memory/ramoops.txt
+ K:	\b(pstore|ramoops)
  
-+static int blkz_recover_pmsg(struct blkoops_context *cxt)
-+{
-+	struct blkz_info *info = cxt->bzinfo;
-+	struct blkz_buffer *oldbuf;
-+	struct blkz_zone *zone = NULL;
-+	ssize_t (*readop)(char *buf, size_t bytes, loff_t pos);
-+	int ret = 0;
-+	ssize_t rcnt, len;
-+
-+	zone = cxt->pbz;
-+	if (!zone || zone->oldbuf)
-+		return 0;
-+
-+	if (is_on_panic())
-+		goto out;
-+
-+	readop = info->read;
-+	if (unlikely(!readop))
-+		return -EINVAL;
-+
-+	len = zone->buffer_size + sizeof(*oldbuf);
-+	oldbuf = kzalloc(len, GFP_KERNEL);
-+	if (!oldbuf)
-+		return -ENOMEM;
-+
-+	rcnt = readop((char *)oldbuf, len, zone->off);
-+	if (rcnt != len) {
-+		pr_debug("recovery pmsg failed\n");
-+		ret = (int)rcnt < 0 ? (int)rcnt : -EIO;
-+		goto free_oldbuf;
-+	}
-+
-+	if (oldbuf->sig != zone->buffer->sig) {
-+		pr_debug("no valid data in zone %s\n", zone->name);
-+		goto free_oldbuf;
-+	}
-+
-+	if (zone->buffer_size < atomic_read(&oldbuf->datalen) ||
-+		zone->buffer_size < atomic_read(&oldbuf->start)) {
-+		pr_info("found overtop zone: %s: off %lu, size %zu\n",
-+				zone->name, zone->off, zone->buffer_size);
-+		goto free_oldbuf;
-+	}
-+
-+	if (!atomic_read(&oldbuf->datalen)) {
-+		pr_debug("found erased zone: %s: id 0, off %lu, size %zu, datalen %d\n",
-+				zone->name, zone->off, zone->buffer_size,
-+				atomic_read(&oldbuf->datalen));
-+		kfree(oldbuf);
-+		goto out;
-+	}
-+
-+	pr_debug("found nice zone: %s: id 0, off %lu, size %zu, datalen %d\n",
-+			zone->name, zone->off, zone->buffer_size,
-+			atomic_read(&oldbuf->datalen));
-+	zone->oldbuf = oldbuf;
-+out:
-+	if (atomic_read(&zone->dirty))
-+		blkz_zone_write(zone, FLUSH_ALL, NULL, buffer_datalen(zone), 0);
-+	return 0;
-+
-+free_oldbuf:
-+	kfree(oldbuf);
-+	return ret;
-+}
-+
- static inline int blkz_recovery(struct blkoops_context *cxt)
- {
- 	int ret = -EBUSY;
-@@ -408,6 +487,10 @@ static inline int blkz_recovery(struct blkoops_context *cxt)
- 	if (ret)
- 		goto recover_fail;
+diff --git a/fs/pstore/Kconfig b/fs/pstore/Kconfig
+index 18b1fe6..5c5273c 100644
+--- a/fs/pstore/Kconfig
++++ b/fs/pstore/Kconfig
+@@ -160,6 +160,10 @@ config PSTORE_BLK
+ 	  This enables panic and oops message to be logged to a block dev
+ 	  where it can be read back at some later point.
  
-+	ret = blkz_recover_pmsg(cxt);
-+	if (ret)
-+		goto recover_fail;
++	  For more information, see Documentation/admin-guide/pstore-block.rst.
 +
- 	atomic_set(&cxt->recovery, 1);
- 	pr_debug("recover end!\n");
- 	return 0;
-@@ -425,11 +508,18 @@ static int blkoops_pstore_open(struct pstore_info *psi)
- 	return 0;
- }
- 
-+static inline bool blkz_old_ok(struct blkz_zone *zone)
-+{
-+	if (zone && zone->oldbuf && atomic_read(&zone->oldbuf->datalen))
-+		return true;
-+	return false;
-+}
++	  If unsure, say N.
 +
- static inline bool blkz_ok(struct blkz_zone *zone)
- {
--	if (!zone || !zone->buffer || !buffer_datalen(zone))
--		return false;
--	return true;
-+	if (zone && zone->buffer && buffer_datalen(zone))
-+		return true;
-+	return false;
- }
- 
- static int blkoops_pstore_erase(struct pstore_record *record)
-@@ -443,13 +533,29 @@ static int blkoops_pstore_erase(struct pstore_record *record)
- 	 */
- 	blkz_recovery(cxt);
- 
--	if (record->type == PSTORE_TYPE_DMESG)
-+	if (record->type == PSTORE_TYPE_DMESG) {
- 		zone = cxt->dbzs[record->id];
--	if (!blkz_ok(zone))
--		return 0;
-+		if (unlikely(!blkz_ok(zone)))
-+			return 0;
- 
--	atomic_set(&zone->buffer->datalen, 0);
--	return blkz_zone_write(zone, FLUSH_META, NULL, 0, 0);
-+		atomic_set(&zone->buffer->datalen, 0);
-+		return blkz_zone_write(zone, FLUSH_META, NULL, 0, 0);
-+	} else if (record->type == PSTORE_TYPE_PMSG) {
-+		zone = cxt->pbz;
-+		if (unlikely(!blkz_old_ok(zone)))
-+			return 0;
-+
-+		kfree(zone->oldbuf);
-+		zone->oldbuf = NULL;
-+		/**
-+		 * if there is new data in zone buffer, there is no need to
-+		 * flush 0 (erase) to block device
-+		 */
-+		if (buffer_datalen(zone))
-+			return 0;
-+		return blkz_zone_write(zone, FLUSH_META, NULL, 0, 0);
-+	}
-+	return -EINVAL;
- }
- 
- static void blkoops_write_kmsg_hdr(struct blkz_zone *zone,
-@@ -467,8 +573,10 @@ static void blkoops_write_kmsg_hdr(struct blkz_zone *zone,
- 	hdr->reason = record->reason;
- 	if (hdr->reason == KMSG_DUMP_OOPS)
- 		hdr->counter = ++cxt->oops_counter;
--	else
-+	else if (hdr->reason == KMSG_DUMP_PANIC)
- 		hdr->counter = ++cxt->panic_counter;
-+	else
-+		hdr->counter = 0;
- }
- 
- static int notrace blkz_dmesg_write(struct blkoops_context *cxt,
-@@ -518,6 +626,55 @@ static int notrace blkz_dmesg_write(struct blkoops_context *cxt,
- 	return 0;
- }
- 
-+static int notrace blkz_pmsg_write(struct blkoops_context *cxt,
-+		struct pstore_record *record)
-+{
-+	struct blkz_zone *zone;
-+	size_t start, rem;
-+	int cnt = record->size;
-+	bool is_full_data = false;
-+	char *buf = record->buf;
-+
-+	zone = cxt->pbz;
-+	if (!zone)
-+		return -ENOSPC;
-+
-+	if (atomic_read(&zone->buffer->datalen) >= zone->buffer_size)
-+		is_full_data = true;
-+
-+	if (unlikely(cnt > zone->buffer_size)) {
-+		buf += cnt - zone->buffer_size;
-+		cnt = zone->buffer_size;
-+	}
-+
-+	start = buffer_start(zone);
-+	rem = zone->buffer_size - start;
-+	if (unlikely(rem < cnt)) {
-+		blkz_zone_write(zone, FLUSH_PART, buf, rem, start);
-+		buf += rem;
-+		cnt -= rem;
-+		start = 0;
-+		is_full_data = true;
-+	}
-+
-+	atomic_set(&zone->buffer->start, cnt + start);
-+	blkz_zone_write(zone, FLUSH_PART, buf, cnt, start);
-+
-+	/**
-+	 * blkz_zone_write will set datalen as start + cnt.
-+	 * It work if actual data length lesser than buffer size.
-+	 * If data length greater than buffer size, pmsg will rewrite to
-+	 * beginning of zone, which make buffer->datalen wrongly.
-+	 * So we should reset datalen as buffer size once actual data length
-+	 * greater than buffer size.
-+	 */
-+	if (is_full_data) {
-+		atomic_set(&zone->buffer->datalen, zone->buffer_size);
-+		blkz_zone_write(zone, FLUSH_META, NULL, 0, 0);
-+	}
-+	return 0;
-+}
-+
- static int notrace blkoops_pstore_write(struct pstore_record *record)
- {
- 	struct blkoops_context *cxt = record->psi->data;
-@@ -535,6 +692,8 @@ static int notrace blkoops_pstore_write(struct pstore_record *record)
- 	switch (record->type) {
- 	case PSTORE_TYPE_DMESG:
- 		return blkz_dmesg_write(cxt, record);
-+	case PSTORE_TYPE_PMSG:
-+		return blkz_pmsg_write(cxt, record);
- 	default:
- 		return -EINVAL;
- 	}
-@@ -551,6 +710,13 @@ static struct blkz_zone *blkz_read_next_zone(struct blkoops_context *cxt)
- 			return zone;
- 	}
- 
-+	if (cxt->pmsg_read_cnt == 0) {
-+		cxt->pmsg_read_cnt++;
-+		zone = cxt->pbz;
-+		if (blkz_old_ok(zone))
-+			return zone;
-+	}
-+
- 	return NULL;
- }
- 
-@@ -589,7 +755,8 @@ static ssize_t blkz_dmesg_read(struct blkz_zone *zone,
- 		char *buf = kasprintf(GFP_KERNEL,
- 				"blkoops: %s: Total %d times\n",
- 				record->reason == KMSG_DUMP_OOPS ? "Oops" :
--				"Panic", record->count);
-+				record->reason == KMSG_DUMP_PANIC ? "Panic" :
-+				"Unknown", record->count);
- 		hlen = strlen(buf);
- 		record->buf = krealloc(buf, hlen + size, GFP_KERNEL);
- 		if (!record->buf) {
-@@ -611,6 +778,29 @@ static ssize_t blkz_dmesg_read(struct blkz_zone *zone,
- 	return size + hlen;
- }
- 
-+static ssize_t blkz_pmsg_read(struct blkz_zone *zone,
-+		struct pstore_record *record)
-+{
-+	size_t size, start;
-+	struct blkz_buffer *buf;
-+
-+	buf = (struct blkz_buffer *)zone->oldbuf;
-+	if (!buf)
-+		return READ_NEXT_ZONE;
-+
-+	size = atomic_read(&buf->datalen);
-+	start = atomic_read(&buf->start);
-+
-+	record->buf = kmalloc(size, GFP_KERNEL);
-+	if (!record->buf)
-+		return -ENOMEM;
-+
-+	memcpy(record->buf, buf->data + start, size - start);
-+	memcpy(record->buf + size - start, buf->data, start);
-+
-+	return size;
-+}
-+
- static ssize_t blkoops_pstore_read(struct pstore_record *record)
- {
- 	struct blkoops_context *cxt = record->psi->data;
-@@ -642,6 +832,9 @@ static ssize_t blkoops_pstore_read(struct pstore_record *record)
- 		blkz_read = blkz_dmesg_read;
- 		record->id = cxt->dmesg_read_cnt - 1;
- 		break;
-+	case PSTORE_TYPE_PMSG:
-+		blkz_read = blkz_pmsg_read;
-+		break;
- 	default:
- 		goto next_zone;
- 	}
-@@ -754,8 +947,10 @@ static struct blkz_zone *blkz_init_zone(enum pstore_type_id type,
- 	zone->type = type;
- 	zone->buffer_size = size - sizeof(struct blkz_buffer);
- 	zone->buffer->sig = type ^ BLK_SIG;
-+	zone->oldbuf = NULL;
- 	atomic_set(&zone->dirty, 0);
- 	atomic_set(&zone->buffer->datalen, 0);
-+	atomic_set(&zone->buffer->start, 0);
- 
- 	*off += size;
- 
-@@ -837,7 +1032,7 @@ static int blkz_cut_zones(struct blkoops_context *cxt)
- 	int err;
- 	size_t size;
- 
--	size = info->part_size;
-+	size = info->part_size - info->pmsg_size;
- 	cxt->dbzs = blkz_init_zones(PSTORE_TYPE_DMESG, &off, size,
- 			info->dmesg_size, &cxt->dmesg_max_cnt);
- 	if (IS_ERR(cxt->dbzs)) {
-@@ -845,7 +1040,16 @@ static int blkz_cut_zones(struct blkoops_context *cxt)
- 		goto fail_out;
- 	}
- 
-+	size = info->pmsg_size;
-+	cxt->pbz = blkz_init_zone(PSTORE_TYPE_PMSG, &off, size);
-+	if (IS_ERR(cxt->pbz)) {
-+		err = PTR_ERR(cxt->pbz);
-+		goto free_dmesg_zones;
-+	}
-+
- 	return 0;
-+free_dmesg_zones:
-+	blkz_free_zones(&cxt->dbzs, &cxt->dmesg_max_cnt);
- fail_out:
- 	return err;
- }
-@@ -856,7 +1060,7 @@ int blkz_register(struct blkz_info *info)
- 	struct blkoops_context *cxt = &blkz_cxt;
- 	struct module *owner = info->owner;
- 
--	if (!info->part_size || !info->dmesg_size) {
-+	if (!info->part_size || (!info->dmesg_size && !info->pmsg_size)) {
- 		pr_warn("The memory size and the dmesg size must be non-zero\n");
- 		return -EINVAL;
- 	}
-@@ -876,6 +1080,7 @@ int blkz_register(struct blkz_info *info)
- 
- 	check_size(part_size, 4096 - 1);
- 	check_size(dmesg_size, SECTOR_SIZE - 1);
-+	check_size(pmsg_size, SECTOR_SIZE - 1);
- 
- #undef check_size
- 
-@@ -902,16 +1107,20 @@ int blkz_register(struct blkz_info *info)
- 		goto fail_out;
- 	}
- 
--	cxt->pstore.bufsize = cxt->dbzs[0]->buffer_size -
-+	if (info->dmesg_size) {
-+		cxt->pstore.bufsize = cxt->dbzs[0]->buffer_size -
- 			sizeof(struct blkz_dmesg_header);
--	cxt->pstore.buf = kzalloc(cxt->pstore.bufsize, GFP_KERNEL);
--	if (!cxt->pstore.buf) {
--		pr_err("cannot allocate pstore crash dump buffer\n");
--		err = -ENOMEM;
--		goto fail_out;
-+		cxt->pstore.buf = kzalloc(cxt->pstore.bufsize, GFP_KERNEL);
-+		if (!cxt->pstore.buf) {
-+			err = -ENOMEM;
-+			goto fail_out;
-+		}
- 	}
- 	cxt->pstore.data = cxt;
--	cxt->pstore.flags = PSTORE_FLAGS_DMESG;
-+	if (info->dmesg_size)
-+		cxt->pstore.flags |= PSTORE_FLAGS_DMESG;
-+	if (info->pmsg_size)
-+		cxt->pstore.flags |= PSTORE_FLAGS_PMSG;
- 
- 	err = pstore_register(&cxt->pstore);
- 	if (err) {
-@@ -919,9 +1128,10 @@ int blkz_register(struct blkz_info *info)
- 		goto free_pstore_buf;
- 	}
- 
--	pr_info("Registered %s as blkzone backend for %s%s\n", info->name,
-+	pr_info("Registered %s as blkzone backend for %s%s%s\n", info->name,
- 			cxt->dbzs && cxt->bzinfo->dump_oops ? "Oops " : "",
--			cxt->dbzs && cxt->bzinfo->panic_write ? "Panic " : "");
-+			cxt->dbzs && cxt->bzinfo->panic_write ? "Panic " : "",
-+			cxt->pbz ? "Pmsg" : "");
- 
- 	module_put(owner);
- 	return 0;
-@@ -949,7 +1159,7 @@ void blkz_unregister(struct blkz_info *info)
- 	spin_unlock(&cxt->bzinfo_lock);
- 
- 	blkz_free_zones(&cxt->dbzs, &cxt->dmesg_max_cnt);
--
-+	blkz_free_zone(&cxt->pbz);
- }
- EXPORT_SYMBOL_GPL(blkz_unregister);
- 
-diff --git a/include/linux/pstore_blk.h b/include/linux/pstore_blk.h
-index 426cae4..6c6b4eb 100644
---- a/include/linux/pstore_blk.h
-+++ b/include/linux/pstore_blk.h
-@@ -48,6 +48,7 @@ struct blkz_info {
- 	const char *part_path;
- 	unsigned long part_size;
- 	unsigned long dmesg_size;
-+	unsigned long pmsg_size;
- 	int dump_oops;
- 	ssize_t (*read)(char *buf, size_t bytes, loff_t pos);
- 	ssize_t (*write)(const char *buf, size_t bytes, loff_t pos);
+ config PSTORE_BLKBUF
+ 	tristate "pstore block buffer sample"
+ 	depends on PSTORE_BLK
 -- 
 1.9.1
 
