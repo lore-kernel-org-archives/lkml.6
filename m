@@ -2,158 +2,130 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2160EC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 23:21:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87BCCC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 23:21:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D07752147C
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 23:21:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="PauB65Fy"
+	by mail.kernel.org (Postfix) with ESMTP id 50780218A6
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 23:21:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727063AbfAGXVF (ORCPT
+        id S1727170AbfAGXVK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 18:21:05 -0500
-Received: from mta-p8.oit.umn.edu ([134.84.196.208]:58202 "EHLO
-        mta-p8.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726638AbfAGXVE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 18:21:04 -0500
-Received: from localhost (unknown [127.0.0.1])
-        by mta-p8.oit.umn.edu (Postfix) with ESMTP id 0EBF6B89
-        for <linux-kernel@vger.kernel.org>; Mon,  7 Jan 2019 23:21:03 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at umn.edu
-Received: from mta-p8.oit.umn.edu ([127.0.0.1])
-        by localhost (mta-p8.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id o-iIjLqWCAlf for <linux-kernel@vger.kernel.org>;
-        Mon,  7 Jan 2019 17:21:02 -0600 (CST)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+        Mon, 7 Jan 2019 18:21:10 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:50342 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727030AbfAGXVJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 18:21:09 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mta-p8.oit.umn.edu (Postfix) with ESMTPS id D0F78B88
-        for <linux-kernel@vger.kernel.org>; Mon,  7 Jan 2019 17:21:02 -0600 (CST)
-Received: by mail-io1-f70.google.com with SMTP id q207so1662477iod.18
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 15:21:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=umn.edu; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=eEZZlwwZnonv8Jnbaow5N/PQRcwiKIViUuOqgowjw+o=;
-        b=PauB65FyZlvy6agFVlBA7zkb7xNVKTORvThXAH58FMWI9P3eYhLLCor6W6l5hxSS23
-         EwIRPkW4VBox6+NrNEfIx07TfwVI07V/HgFzoY0e8WZLYFwcnTfNFbwaK3IecXlRthUS
-         /JBIEZgwTTy06vSKSN825Up6GrQHzvWJDaCUnsRxzP0yd3vpcYnmVo2Sp3i/CmrW/i4i
-         LRvWPiakHKOaWEe02GI9lfkyWsLXoZe30IMHKIoj7cZptSWhO3RnOzo3upPUjoJXbyrc
-         Qg1/GEksF+KzmtkNO0tSsky6jaIkG+xnIBQTs8GPDh2Rf/wkDOC7ojg7gW/gneM56rR9
-         UUyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=eEZZlwwZnonv8Jnbaow5N/PQRcwiKIViUuOqgowjw+o=;
-        b=iFMqCVSJZ0XPvHEb9qEolkYkkfQ2f/1Tg4Q5VY0CEJiHfrV61H3r/jJhvkg0xG5y94
-         vp/ISu0Mk0MoiHSVyXGNSJO2Smi38AU925kGJ95vd7u10G1CWdY3emXxyzfmo7W9e+N/
-         vxcKpEgT+I68SCTG5auOo3gnWoibtY04dwLj8TTFytn7qCzFD+6YGgNqVEMWquQ0q4F6
-         aB6v32enMfqiqYOrWI66vOlslUTvyWfQdZYyCBeaXmVMtlC26Gf9RWSbPeQSAIi1WpwY
-         zz6kj2SeBQKYhJl/ArjUb6/b4AeajoWmoOvuMLJDmyAlBT3W/+UG23x6oN/w4S6KWRwI
-         fDrg==
-X-Gm-Message-State: AA+aEWZF9AwegxbHj5C6mgltlitrQX+/KKu7Cp90LqTQqI89Zd7z8l6P
-        hTbd2Nfxgo6gaGBmykRu/+N24y8Btldc9LPTvnDZ4FnduhOaVa7za4QzsEV0dD/fGOMXXWjSxie
-        nRJoBpiWXujKgE6MdHos0yiBsNQ+7
-X-Received: by 2002:a02:b424:: with SMTP id i33mr45795561jaj.37.1546903262344;
-        Mon, 07 Jan 2019 15:21:02 -0800 (PST)
-X-Google-Smtp-Source: AFSGD/XCOXex0PJ2VVZMji46efYTJXXAht2pPR8Fnf7J1Ql7UzPk+2GEhfIZEmybSHlP89NzDdhBHQ==
-X-Received: by 2002:a02:b424:: with SMTP id i33mr45795537jaj.37.1546903262099;
-        Mon, 07 Jan 2019 15:21:02 -0800 (PST)
-Received: from cs-u-syssec1.cs.umn.edu (cs-u-syssec1.cs.umn.edu. [134.84.121.78])
-        by smtp.gmail.com with ESMTPSA id t17sm18413178iog.34.2019.01.07.15.21.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 07 Jan 2019 15:21:01 -0800 (PST)
-From:   Aditya Pakki <pakki001@umn.edu>
-To:     pakki001@umn.edu
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Quytelda Kahja <quytelda@tamalin.org>,
-        Michael Straube <straube.linux@gmail.com>,
-        Mamta Shukla <mamtashukla555@gmail.com>,
-        Wen Yang <wen.yang99@zte.com.cn>,
-        Arushi Singhal <arushisinghal19971997@gmail.com>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] [v3] staging: rtl8723bs: Clean up dead code
-Date:   Mon,  7 Jan 2019 17:20:52 -0600
-Message-Id: <20190107232054.4742-1-pakki001@umn.edu>
-X-Mailer: git-send-email 2.17.1
+        by mx1.redhat.com (Postfix) with ESMTPS id 077E83DBD1;
+        Mon,  7 Jan 2019 23:21:09 +0000 (UTC)
+Received: from [10.36.112.10] (unknown [10.36.112.10])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id EB4D45D756;
+        Mon,  7 Jan 2019 23:20:57 +0000 (UTC)
+Subject: Re: [PATCH V2] SelfTest: KVM: Drop Asserts for madvise
+ MADV_NOHUGEPAGE failure
+To:     shuah <shuah@kernel.org>, Ahmed Soliman <ahmedsoliman@mena.vt.edu>,
+        Andrew Jones <drjones@redhat.com>
+Cc:     Peter Xu <peterx@redhat.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Hossam Hassan <7ossam9063@gmail.com>,
+        Ahmed Lotfy <A7med.lotfey@gmail.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Anders Roxell <anders.roxell@linaro.org>
+References: <20181116115055.7415-1-ahmedsoliman0x666@gmail.com>
+ <20181116125858.yujwx5xkpg2kgyxe@kamzik.brq.redhat.com>
+ <CANBxJ=EeosO1EOfvQ6OFLps+D9ZQRBKTmByvcJ5r=h-4ahbekQ@mail.gmail.com>
+ <218eb42a-ccbd-c454-e6f9-153f66c4478b@kernel.org>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ uUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
+Message-ID: <9008504a-df6a-3978-526f-7e908a079673@redhat.com>
+Date:   Tue, 8 Jan 2019 00:20:55 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
+MIME-Version: 1.0
+In-Reply-To: <218eb42a-ccbd-c454-e6f9-153f66c4478b@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Mon, 07 Jan 2019 23:21:09 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-rtw_wps_start() is part of dead code due to CONFIG_INTEL_WIDI.
-The fix removes the deadcode and replaces the function with NULL
-in rtw_private_handler. Identified as part of copy_from_user bug.
+On 27/12/18 01:44, shuah wrote:
+> Hi Paolo,
+> 
+> On 12/24/18 7:56 AM, Ahmed Soliman wrote:
+>> Kind reminder to merge my patch into next
+>>
+>> thanks.
+>>
+> 
+> I am assuming you will be picking this patch up. Please let me know if
+> you want me to take it through kselftest tree.
 
-Changes from v1 & 2:
-The return value of copy_from_user() is not checked appropriately.
-However, maintainers identified the patch fixing the issue is not
-required as function rts_wps_start() is dead code and can be removed.
+Yes, I was on vacataion but I'm back now.
 
-Signed-off-by: Aditya Pakki <pakki001@umn.edu>
----
- .../staging/rtl8723bs/os_dep/ioctl_linux.c    | 34 +------------------
- 1 file changed, 1 insertion(+), 33 deletions(-)
-
-diff --git a/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c b/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
-index 8fb03efd588b..2621c47f343f 100644
---- a/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
-+++ b/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
-@@ -2568,38 +2568,6 @@ static int rtw_set_pid(struct net_device *dev,
- 
- }
- 
--static int rtw_wps_start(struct net_device *dev,
--                               struct iw_request_info *info,
--                               union iwreq_data *wrqu, char *extra)
--{
--
--	int ret = 0;
--	struct adapter *padapter = (struct adapter *)rtw_netdev_priv(dev);
--	struct iw_point *pdata = &wrqu->data;
--	u32   u32wps_start = 0;
--        unsigned int uintRet = 0;
--
--	if ((true == padapter->bDriverStopped) ||(true ==padapter->bSurpriseRemoved) || (NULL == pdata)) {
--		ret = -EINVAL;
--		goto exit;
--	}
--
--	uintRet = copy_from_user((void*)&u32wps_start, pdata->pointer, 4);
--	if (u32wps_start == 0)
--		u32wps_start = *extra;
--
--	DBG_871X("[%s] wps_start = %d\n", __func__, u32wps_start);
--
--#ifdef CONFIG_INTEL_WIDI
--	process_intel_widi_wps_status(padapter, u32wps_start);
--#endif /* CONFIG_INTEL_WIDI */
--
--exit:
--
--	return ret;
--
--}
--
- static int rtw_p2p_set(struct net_device *dev,
-                                struct iw_request_info *info,
-                                union iwreq_data *wrqu, char *extra)
-@@ -4820,7 +4788,7 @@ static iw_handler rtw_private_handler[] = {
- 	rtw_get_ap_info,					/* 0x04 */
- 
- 	rtw_set_pid,						/* 0x05 */
--	rtw_wps_start,					/* 0x06 */
-+	NULL,					/* 0x06 */
- 
- /*  for PLATFORM_MT53XX */
- 	rtw_wx_get_sensitivity,			/* 0x07 */
--- 
-2.17.1
-
+Paolo
