@@ -2,176 +2,117 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 386B2C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 14:19:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37350C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 14:22:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 046EA2087F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 14:19:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F219D217D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 14:22:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546870923;
+	bh=lnDSYHGN6rNIJSR/c7EGks0FRT405XLrP6bjK6hOHyg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=UX+Q5Y0g21hokFyjDrmiUIVqPm2HiM/hVxtNRqrTQBOFbCqWqSDjiIkumJnw7v/dl
+	 iz0teNCXMfxvMZFUhY5Dl/7ZA2kXykoEVgNrwvTbh9QIIMYBHuu81CdorZ1iFnp7+6
+	 LAIy09ev9mcO08tYUqHqRVrcyMCyUxs3AeRmMlC4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727742AbfAGOTi (ORCPT
+        id S1727880AbfAGOWC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 09:19:38 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:46842 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726827AbfAGOTh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 09:19:37 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 19E2D88E55;
-        Mon,  7 Jan 2019 14:19:37 +0000 (UTC)
-Received: from redhat.com (ovpn-122-143.rdu2.redhat.com [10.10.122.143])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 953E55D756;
-        Mon,  7 Jan 2019 14:19:35 +0000 (UTC)
-Date:   Mon, 7 Jan 2019 09:19:35 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, maxime.coquelin@redhat.com,
-        tiwei.bie@intel.com, wexu@redhat.com, jfreimann@redhat.com,
-        "David S. Miller" <davem@davemloft.net>,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org
-Subject: Re: [PATCH RFC 1/2] virtio-net: bql support
-Message-ID: <20190107091334-mutt-send-email-mst@kernel.org>
-References: <20181226101528-mutt-send-email-mst@kernel.org>
- <0fa99d9b-e510-d7eb-db1b-831bd7610ce9@redhat.com>
- <20181230134106-mutt-send-email-mst@kernel.org>
- <b4f06d11-4761-dabb-f641-5fc05c1c34fc@redhat.com>
- <20190102085457-mutt-send-email-mst@kernel.org>
- <17d2ab21-1c9a-2bb9-166f-2863d019cb0b@redhat.com>
- <20190106221506-mutt-send-email-mst@kernel.org>
- <aea2fd16-ec5b-64b5-2095-9a37044223f6@redhat.com>
- <20190106225951-mutt-send-email-mst@kernel.org>
- <88db987e-b519-5c1f-f64f-6f65f8415799@redhat.com>
+        Mon, 7 Jan 2019 09:22:02 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:33821 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726827AbfAGOWB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 09:22:01 -0500
+Received: by mail-ot1-f68.google.com with SMTP id t5so451748otk.1;
+        Mon, 07 Jan 2019 06:22:01 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lnDSYHGN6rNIJSR/c7EGks0FRT405XLrP6bjK6hOHyg=;
+        b=I/sMH969Rih5ajkde/7CkNUwfV3OIMqvj7hWeti0yW4ZAzw9BGaRgsW1FZ4Q2AD/gg
+         o8XN8l7sk3vBm7dQGI3PriWDYcGn3G7ZDX6b/aavdxR9+wybxYH96o+iDbgy4OVZfmGG
+         rH0GhhUWY4YKelqiqo5RsU7LiiGDIB2ncdRrtFGrUjrlYVp9B56k7jN+TSVqMVbPNby5
+         S4C5beDqaxHbYyxJM0kvv+U5hqj2VRMmIMttzsq/Ok4drQ/2nTg2Ki/urz13UnP5GjfU
+         pW4+Hf0KN9AlWcnyIdw1EbsRLkq2icbUXNY3GK67w8EaazrI3YGK5wcy4Ytzk0xpvOMC
+         ptWA==
+X-Gm-Message-State: AJcUukfxRWhz9VIOM8LggYfeBzV8glGnN4cCRfA2Hz9srWGK/Qm96wL9
+        2GR/lpAjHrCvAcqFLSrcCtdQ1x94AJXE5QXz1tc=
+X-Google-Smtp-Source: ALg8bN4fWEHeL7jYMpoON+5ytbUBEDCKoiPVBJUfaziPIhJvzKznL9lgh+LdnOxcAxi/KM+vTlPBb0RJ6RhpSzhYPnI=
+X-Received: by 2002:a9d:5e8c:: with SMTP id f12mr45432271otl.343.1546870921008;
+ Mon, 07 Jan 2019 06:22:01 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <88db987e-b519-5c1f-f64f-6f65f8415799@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Mon, 07 Jan 2019 14:19:37 +0000 (UTC)
+References: <1545388436-7489-1-git-send-email-vincent.guittot@linaro.org>
+ <1545388436-7489-3-git-send-email-vincent.guittot@linaro.org>
+ <ae85c6d4-5482-1376-7573-8ece9f78bc61@linux.intel.com> <CAKfTPtDx8u_TnZQnQNmn+=A5A78CPVSWKvMdOVD0UEw4m4s1iQ@mail.gmail.com>
+ <d15e49e3-8d86-9c25-6412-a8534f1790d4@linux.intel.com> <CAKfTPtC1VVqK8Fde=AdRFyd4--09XVoNg8xHUja2siynL_o_3Q@mail.gmail.com>
+In-Reply-To: <CAKfTPtC1VVqK8Fde=AdRFyd4--09XVoNg8xHUja2siynL_o_3Q@mail.gmail.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Mon, 7 Jan 2019 15:21:49 +0100
+Message-ID: <CAJZ5v0i_xyKTtMShut5JEFSE=8GrE4cfb_Yi+eeMPZdRsNvmbA@mail.gmail.com>
+Subject: Re: [Intel-gfx] [PATCH v5 2/3] drm/i915: Move on the new pm runtime interface
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Thara Gopinath <thara.gopinath@linaro.org>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        rodrigo.vivi@intel.com, David Airlie <airlied@linux.ie>,
+        "Intel graphics driver community testing & development" 
+        <intel-gfx@lists.freedesktop.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 07, 2019 at 02:31:47PM +0800, Jason Wang wrote:
-> 
-> On 2019/1/7 下午12:01, Michael S. Tsirkin wrote:
-> > On Mon, Jan 07, 2019 at 11:51:55AM +0800, Jason Wang wrote:
-> > > On 2019/1/7 上午11:17, Michael S. Tsirkin wrote:
-> > > > On Mon, Jan 07, 2019 at 10:14:37AM +0800, Jason Wang wrote:
-> > > > > On 2019/1/2 下午9:59, Michael S. Tsirkin wrote:
-> > > > > > On Wed, Jan 02, 2019 at 11:28:43AM +0800, Jason Wang wrote:
-> > > > > > > On 2018/12/31 上午2:45, Michael S. Tsirkin wrote:
-> > > > > > > > On Thu, Dec 27, 2018 at 06:00:36PM +0800, Jason Wang wrote:
-> > > > > > > > > On 2018/12/26 下午11:19, Michael S. Tsirkin wrote:
-> > > > > > > > > > On Thu, Dec 06, 2018 at 04:17:36PM +0800, Jason Wang wrote:
-> > > > > > > > > > > On 2018/12/6 上午6:54, Michael S. Tsirkin wrote:
-> > > > > > > > > > > > When use_napi is set, let's enable BQLs.  Note: some of the issues are
-> > > > > > > > > > > > similar to wifi.  It's worth considering whether something similar to
-> > > > > > > > > > > > commit 36148c2bbfbe ("mac80211: Adjust TSQ pacing shift") might be
-> > > > > > > > > > > > benefitial.
-> > > > > > > > > > > I've played a similar patch several days before. The tricky part is the mode
-> > > > > > > > > > > switching between napi and no napi. We should make sure when the packet is
-> > > > > > > > > > > sent and trakced by BQL,  it should be consumed by BQL as well. I did it by
-> > > > > > > > > > > tracking it through skb->cb.  And deal with the freeze by reset the BQL
-> > > > > > > > > > > status. Patch attached.
-> > > > > > > > > > > 
-> > > > > > > > > > > But when testing with vhost-net, I don't very a stable performance,
-> > > > > > > > > > So how about increasing TSQ pacing shift then?
-> > > > > > > > > I can test this. But changing default TCP value is much more than a
-> > > > > > > > > virtio-net specific thing.
-> > > > > > > > Well same logic as wifi applies. Unpredictable latencies related
-> > > > > > > > to radio in one case, to host scheduler in the other.
-> > > > > > > > 
-> > > > > > > > > > > it was
-> > > > > > > > > > > probably because we batch the used ring updating so tx interrupt may come
-> > > > > > > > > > > randomly. We probably need to implement time bounded coalescing mechanism
-> > > > > > > > > > > which could be configured from userspace.
-> > > > > > > > > > I don't think it's reasonable to expect userspace to be that smart ...
-> > > > > > > > > > Why do we need time bounded? used ring is always updated when ring
-> > > > > > > > > > becomes empty.
-> > > > > > > > > We don't add used when means BQL may not see the consumed packet in time.
-> > > > > > > > > And the delay varies based on the workload since we count packets not bytes
-> > > > > > > > > or time before doing the batched updating.
-> > > > > > > > > 
-> > > > > > > > > Thanks
-> > > > > > > > Sorry I still don't get it.
-> > > > > > > > When nothing is outstanding then we do update the used.
-> > > > > > > > So if BQL stops userspace from sending packets then
-> > > > > > > > we get an interrupt and packets start flowing again.
-> > > > > > > Yes, but how about the cases of multiple flows. That's where I see unstable
-> > > > > > > results.
-> > > > > > > 
-> > > > > > > 
-> > > > > > > > It might be suboptimal, we might need to tune it but I doubt running
-> > > > > > > > timers is a solution, timer interrupts cause VM exits.
-> > > > > > > Probably not a timer but a time counter (or event byte counter) in vhost to
-> > > > > > > add used and signal guest if it exceeds a value instead of waiting the
-> > > > > > > number of packets.
-> > > > > > > 
-> > > > > > > 
-> > > > > > > Thanks
-> > > > > > Well we already have VHOST_NET_WEIGHT - is it too big then?
-> > > > > I'm not sure, it might be too big.
-> > > > > 
-> > > > > 
-> > > > > > And maybe we should expose the "MORE" flag in the descriptor -
-> > > > > > do you think that will help?
-> > > > > > 
-> > > > > I don't know. But how a "more" flag can help here?
-> > > > > 
-> > > > > Thanks
-> > > > It sounds like we should be a bit more aggressive in updating used ring.
-> > > > But if we just do it naively we will harm performance for sure as that
-> > > > is how we are doing batching right now.
-> > > 
-> > > I agree but the problem is to balance the PPS and throughput. More batching
-> > > helps for PPS but may damage TCP throughput.
-> > That is what more flag is supposed to be I think - it is only set if
-> > there's a socket that actually needs the skb freed in order to go on.
-> 
-> 
-> I'm not quite sure I get, but is this something similar to what you want?
-> 
-> https://lists.linuxfoundation.org/pipermail/virtualization/2014-October/027667.html
-> 
-> Which enables tx interrupt for TCP packets, and you want to add used more
-> aggressively for those sockets?
-> 
-> 
-> Thanks
+On Mon, Jan 7, 2019 at 3:04 PM Vincent Guittot
+<vincent.guittot@linaro.org> wrote:
+>
+> Hi Tvrtko,
+>
+> On Mon, 31 Dec 2018 at 13:32, Tvrtko Ursulin
+> <tvrtko.ursulin@linux.intel.com> wrote:
+> >
+> >
+> > On 21/12/2018 13:26, Vincent Guittot wrote:
+> > > On Fri, 21 Dec 2018 at 12:33, Tvrtko Ursulin
+>
+> [snip]
+>
+> > >>
+> > >> If it is always monotonic, then worst case we report one wrong sample,
+> > >> which I guess is still not ideal since someone could be querying the PMU
+> > >> with quite low frequency.
+> > >>
+> > >> There are tests which probably can hit this, but to run them
+> > >> automatically your patches would need to be rebased on drm-tip and maybe
+> > >> sent to our trybot. I can do that after the holiday break if you are
+> > >> okay with having the series waiting until then.
+> > >
+> > > yes looks good to me
+> >
+> > Looks good to me as well. And our CI agrees with it. So:
+> >
+> > Reviewed-by: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
+>
+> Thanks for the review and the test
+>
+> >
+> > I assume you will take the patch through some power related tree and we
+> > will eventually pull it back to drm-tip.
+>
+> Rafael,
+> How do you want to proceed with this patch and the 2 others of the serie ?
 
-That's the idea.
-But then you said we can just play with event index
-instead. I think the answer to why not do that is that it's tricky to do
-without races.
+I'm going to queue up the whole series for 5.1.
 
-
-We need to think about the exact semantics: e.g. I think it is better to
-keep interrupts on and then saying "I promise sending more buffers even
-if you do not use any buffers so using this one is not urgent" rather
-than as your patches do keeping them off and then saying "this one is
-urgent".
-
-The reason being is that "I promise to send more" is
-more informative and can allow better batching for the
-host.
-
-> 
-> > > >    Instead we could make guest
-> > > > control batching using the more flag - if that's not set we write out
-> > > > the used ring.
-> > > 
-> > > It's under the control of guest, so I'm afraid we still need some more guard
-> > > (e.g time/bytes counters) on host.
-> > > 
-> > > Thanks
-> > Point is if guest does not care about the skb being freed, then there is no
-> > rush host side to mark buffer used.
-> > 
-> > 
+Thanks!
