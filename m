@@ -4,50 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EA60C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:03:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE9B1C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:03:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBC6621736
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:03:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 89FB921736
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:03:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546866220;
-	bh=KgbrA1LMCSh7xo1mRWV8KkE3zkWqG6GKmEkIZ/IW/C0=;
+	s=default; t=1546866224;
+	bh=s7c7C+w2nt06au10LKZ+XwRkweQv0/rMu3+k72A1zlY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=FyGMuXzEJ3y5m0Xj8hcdyDpjnskf/+RzTZMmJQoE743qyUxJO+C55V002h1E0XBeq
-	 jTYHpIGE4LQ/VyLiRgHNVOdzA50wSdnLlTrMAAayTWZ2nOx03wzEQq4pEB6S+HlQev
-	 xwvAlYPZgjUiir/3noEMiIHaVER98X/gmIr/ssJM=
+	b=ThRwLAg+zf9QxmjbFBphkwbpXfIKjuUUG80VHF5z/VxeBGehqkgO1m+ND394xnqdk
+	 HhZdKaID7x+deSk1Tbg0OQuqfEuXH1g6ld5TBib8a2m+UGxWv3WoEHsNJI+A5bkQFE
+	 kwYxltzCfUDjjnE9BjDdAI8fZ03ZO15YG9hEpNOQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731059AbfAGNDk (ORCPT
+        id S1731071AbfAGNDn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:03:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51106 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:03:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51152 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731045AbfAGNDi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:03:38 -0500
+        id S1731045AbfAGNDl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:03:41 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 53007217D4;
-        Mon,  7 Jan 2019 13:03:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 27101206BB;
+        Mon,  7 Jan 2019 13:03:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546866217;
-        bh=KgbrA1LMCSh7xo1mRWV8KkE3zkWqG6GKmEkIZ/IW/C0=;
+        s=default; t=1546866220;
+        bh=s7c7C+w2nt06au10LKZ+XwRkweQv0/rMu3+k72A1zlY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eOh1W7t+k/zkehSr+sPJXI1kcc5StXaIbjmQify2GD4JF0hxTvIPntKDuSjNxkt4l
-         hLLZ+YwxcWHT8nBUrICiYySn+G4ogj1Eym2vHdm0sAczpjuxoCkBYPI9g5FHIPmKeT
-         dEWiWsLAzRnYJgI7YuP1kp+9bFr2MjbrtNX1g3pM=
+        b=jTkAMS5QDTiCFmHJZF3GF9RFjdKEXhQ21xxfv4ro7celZGKB9FgeAJo7LsyMLvHLg
+         Whn12RAvo9BoQOhpLH0szEAabqJtA+iJH7WrMgBh/cLG7/Nwahno0TNKJp2FKPs8LM
+         BNoWFo0LSFfigIgZiojs2eE5NPMUstqve6Y4w/dA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mohan Kumar <mkumard@nvidia.com>,
-        Dara Ramesh <dramesh@nvidia.com>,
-        Sameer Pujar <spujar@nvidia.com>, Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 048/101] ALSA: hda/tegra: clear pending irq handlers
-Date:   Mon,  7 Jan 2019 13:32:36 +0100
-Message-Id: <20190107105335.546076816@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.14 039/101] ALSA: emu10k1: Fix potential Spectre v1 vulnerabilities
+Date:   Mon,  7 Jan 2019 13:32:27 +0100
+Message-Id: <20190107105335.053797714@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107105330.372621917@linuxfoundation.org>
 References: <20190107105330.372621917@linuxfoundation.org>
@@ -66,43 +65,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sameer Pujar <spujar@nvidia.com>
+From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-commit 63d2a9ec310d8bcc955574220d4631aa55c1a80c upstream.
+commit 5ae4f61f012a097df93de2285070ec8e34716d29 upstream.
 
-Even after disabling interrupts on the module, it could be possible
-that irq handlers are still running. System hang is seen during
-suspend path. It was found that, there were pending writes on the
-HDA bus and clock was disabled by that time.
+ipcm->substream is indirectly controlled by user-space, hence leading to
+a potential exploitation of the Spectre variant 1 vulnerability.
 
-Above mentioned issue is fixed by clearing any pending irq handlers
-before disabling clocks and returning from hda suspend.
+This issue was detected with the help of Smatch:
 
-Suggested-by: Mohan Kumar <mkumard@nvidia.com>
-Suggested-by: Dara Ramesh <dramesh@nvidia.com>
-Signed-off-by: Sameer Pujar <spujar@nvidia.com>
-Cc: <stable@vger.kernel.org>
+sound/pci/emu10k1/emufx.c:1031 snd_emu10k1_ipcm_poke() warn: potential spectre issue 'emu->fx8010.pcm' [r] (local cap)
+sound/pci/emu10k1/emufx.c:1075 snd_emu10k1_ipcm_peek() warn: potential spectre issue 'emu->fx8010.pcm' [r] (local cap)
+
+Fix this by sanitizing ipcm->substream before using it to index emu->fx8010.pcm
+
+Notice that given that speculation windows are large, the policy is
+to kill the speculation on the first load and not worry if it can be
+completed with a dependent load/store [1].
+
+[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/hda_tegra.c |    2 ++
- 1 file changed, 2 insertions(+)
+ sound/pci/emu10k1/emufx.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/sound/pci/hda/hda_tegra.c
-+++ b/sound/pci/hda/hda_tegra.c
-@@ -249,10 +249,12 @@ static int hda_tegra_suspend(struct devi
- 	struct snd_card *card = dev_get_drvdata(dev);
- 	struct azx *chip = card->private_data;
- 	struct hda_tegra *hda = container_of(chip, struct hda_tegra, chip);
-+	struct hdac_bus *bus = azx_bus(chip);
+--- a/sound/pci/emu10k1/emufx.c
++++ b/sound/pci/emu10k1/emufx.c
+@@ -36,6 +36,7 @@
+ #include <linux/init.h>
+ #include <linux/mutex.h>
+ #include <linux/moduleparam.h>
++#include <linux/nospec.h>
  
- 	snd_power_change_state(card, SNDRV_CTL_POWER_D3hot);
+ #include <sound/core.h>
+ #include <sound/tlv.h>
+@@ -1033,6 +1034,8 @@ static int snd_emu10k1_ipcm_poke(struct
  
- 	azx_stop_chip(chip);
-+	synchronize_irq(bus->irq);
- 	azx_enter_link_reset(chip);
- 	hda_tegra_disable_clocks(hda);
+ 	if (ipcm->substream >= EMU10K1_FX8010_PCM_COUNT)
+ 		return -EINVAL;
++	ipcm->substream = array_index_nospec(ipcm->substream,
++					     EMU10K1_FX8010_PCM_COUNT);
+ 	if (ipcm->channels > 32)
+ 		return -EINVAL;
+ 	pcm = &emu->fx8010.pcm[ipcm->substream];
+@@ -1079,6 +1082,8 @@ static int snd_emu10k1_ipcm_peek(struct
  
+ 	if (ipcm->substream >= EMU10K1_FX8010_PCM_COUNT)
+ 		return -EINVAL;
++	ipcm->substream = array_index_nospec(ipcm->substream,
++					     EMU10K1_FX8010_PCM_COUNT);
+ 	pcm = &emu->fx8010.pcm[ipcm->substream];
+ 	mutex_lock(&emu->fx8010.lock);
+ 	spin_lock_irq(&emu->reg_lock);
 
 
