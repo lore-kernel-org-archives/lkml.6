@@ -7,50 +7,50 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B6C1C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:16:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 988F8C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:17:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F8CF2089F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:16:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69AFC217D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:17:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546867013;
-	bh=g8C1nGI/CiMNcaSGHLqCCTe17+yv/EdejMjaH8Ui+ak=;
+	s=default; t=1546867023;
+	bh=hVG+p684V4bZ4JBIFAYqFmQbmT+u5VF7CFJYbb3TsEk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=IXZ8dHsMaQov1ujjR64TpLHOlB5RFacKxRKUCp0B+kD9rVA0U9RIjai75lrEYgIhx
-	 fMWT9F8bPJc4kePRO337WZjzQuMHf867eKoouczBrxrD5crhNuexLRIOI+fA7nw2tl
-	 e1ovZzeOC8qgZcLGxuedLHdD7cvdxQrKw+5GyGX0=
+	b=XkTDRgaPXvI9IjZ9K9Jw+5FPegKF9DoUSd7Mt7AHf5v04KoRXR8ULcw50N/h4XAZa
+	 o+VW4UdwLs8ANYWeMABE+/nH9C30/BIOe3n3G1UuXZbhHI+ApFEi+lWCiS4rp6JSB/
+	 qBm+tO32MvOSt79T/6Pdxfz0O41L1CLjUiakOrSQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730467AbfAGNQw (ORCPT
+        id S1730433AbfAGNAS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:16:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47928 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:00:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46882 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730462AbfAGNAZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:00:25 -0500
+        id S1730139AbfAGM7P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:59:15 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7573721736;
-        Mon,  7 Jan 2019 13:00:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9DED42089F;
+        Mon,  7 Jan 2019 12:59:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546866025;
-        bh=g8C1nGI/CiMNcaSGHLqCCTe17+yv/EdejMjaH8Ui+ak=;
+        s=default; t=1546865954;
+        bh=hVG+p684V4bZ4JBIFAYqFmQbmT+u5VF7CFJYbb3TsEk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=y45UMitnlA8xugrDjNSIJlkRUDcIn+b1C824HREfnMI8C/ik2d6rIuwmGC67wlp+P
-         nJSHoL5wk+IuCr0998ZaZYws5fxW9kCw9dQojQMY+J/ilO1R8NlwogZOvhE3evFLd5
-         tyH8AOzqe7N1gCt9GcW+bTtMY3QADYLPxHLGa8ZY=
+        b=eY+CpKTAxS6era1cEm4DiPtHiVGogAG6Gd4KGaQAIwlj97mzE5yFAc5O/I0QwhgLt
+         nmyII5KtehKQGgOU1RhXoSzoFVXoXAzYnWER7ShJEzAUjMAm17osE0XCZbR4l69FKU
+         ARPiVcVdBEyHQIxo9Y9Pl3ijk9Pw+IU/durkR4IE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 003/101] ipv4: Fix potential Spectre v1 vulnerability
-Date:   Mon,  7 Jan 2019 13:31:51 +0100
-Message-Id: <20190107105330.587860461@linuxfoundation.org>
+        stable@vger.kernel.org, Dave Martin <Dave.Martin@arm.com>,
+        Pi-Hsun Shih <pihsun@chromium.org>,
+        Will Deacon <will.deacon@arm.com>
+Subject: [PATCH 4.19 168/170] arm64: compat: Avoid sending SIGILL for unallocated syscall numbers
+Date:   Mon,  7 Jan 2019 13:33:15 +0100
+Message-Id: <20190107104512.806132750@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190107105330.372621917@linuxfoundation.org>
-References: <20190107105330.372621917@linuxfoundation.org>
+In-Reply-To: <20190107104452.953560660@linuxfoundation.org>
+References: <20190107104452.953560660@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -62,55 +62,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+4.19-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+From: Will Deacon <will.deacon@arm.com>
 
-[ Upstream commit 5648451e30a0d13d11796574919a359025d52cce ]
+commit 169113ece0f29ebe884a6cfcf57c1ace04d8a36a upstream.
 
-vr.vifi is indirectly controlled by user-space, hence leading to
-a potential exploitation of the Spectre variant 1 vulnerability.
+The ARM Linux kernel handles the EABI syscall numbers as follows:
 
-This issue was detected with the help of Smatch:
+  0           - NR_SYSCALLS-1	: Invoke syscall via syscall table
+  NR_SYSCALLS - 0xeffff		: -ENOSYS (to be allocated in future)
+  0xf0000     - 0xf07ff		: Private syscall or -ENOSYS if not allocated
+  > 0xf07ff			: SIGILL
 
-net/ipv4/ipmr.c:1616 ipmr_ioctl() warn: potential spectre issue 'mrt->vif_table' [r] (local cap)
-net/ipv4/ipmr.c:1690 ipmr_compat_ioctl() warn: potential spectre issue 'mrt->vif_table' [r] (local cap)
+Our compat code gets this wrong and ends up sending SIGILL in response
+to all syscalls greater than NR_SYSCALLS which have a value greater
+than 0x7ff in the bottom 16 bits.
 
-Fix this by sanitizing vr.vifi before using it to index mrt->vif_table'
+Fix this by defining the end of the ARM private syscall region and
+checking the syscall number against that directly. Update the comment
+while we're at it.
 
-Notice that given that speculation windows are large, the policy is
-to kill the speculation on the first load and not worry if it can be
-completed with a dependent load/store [1].
-
-[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Cc: <stable@vger.kernel.org>
+Cc: Dave Martin <Dave.Martin@arm.com>
+Reported-by: Pi-Hsun Shih <pihsun@chromium.org>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/ipv4/ipmr.c |    3 +++
- 1 file changed, 3 insertions(+)
 
---- a/net/ipv4/ipmr.c
-+++ b/net/ipv4/ipmr.c
-@@ -68,6 +68,8 @@
- #include <linux/netconf.h>
- #include <net/nexthop.h>
+---
+ arch/arm64/include/asm/unistd.h |    5 +++--
+ arch/arm64/kernel/sys_compat.c  |    4 ++--
+ 2 files changed, 5 insertions(+), 4 deletions(-)
+
+--- a/arch/arm64/include/asm/unistd.h
++++ b/arch/arm64/include/asm/unistd.h
+@@ -40,8 +40,9 @@
+  * The following SVCs are ARM private.
+  */
+ #define __ARM_NR_COMPAT_BASE		0x0f0000
+-#define __ARM_NR_compat_cacheflush	(__ARM_NR_COMPAT_BASE+2)
+-#define __ARM_NR_compat_set_tls		(__ARM_NR_COMPAT_BASE+5)
++#define __ARM_NR_compat_cacheflush	(__ARM_NR_COMPAT_BASE + 2)
++#define __ARM_NR_compat_set_tls		(__ARM_NR_COMPAT_BASE + 5)
++#define __ARM_NR_COMPAT_END		(__ARM_NR_COMPAT_BASE + 0x800)
  
-+#include <linux/nospec.h>
-+
- struct ipmr_rule {
- 	struct fib_rule		common;
- };
-@@ -1620,6 +1622,7 @@ int ipmr_compat_ioctl(struct sock *sk, u
- 			return -EFAULT;
- 		if (vr.vifi >= mrt->maxvif)
- 			return -EINVAL;
-+		vr.vifi = array_index_nospec(vr.vifi, mrt->maxvif);
- 		read_lock(&mrt_lock);
- 		vif = &mrt->vif_table[vr.vifi];
- 		if (VIF_EXISTS(mrt, vr.vifi)) {
+ #define __NR_compat_syscalls		399
+ #endif
+--- a/arch/arm64/kernel/sys_compat.c
++++ b/arch/arm64/kernel/sys_compat.c
+@@ -102,12 +102,12 @@ long compat_arm_syscall(struct pt_regs *
+ 
+ 	default:
+ 		/*
+-		 * Calls 9f00xx..9f07ff are defined to return -ENOSYS
++		 * Calls 0xf0xxx..0xf07ff are defined to return -ENOSYS
+ 		 * if not implemented, rather than raising SIGILL. This
+ 		 * way the calling program can gracefully determine whether
+ 		 * a feature is supported.
+ 		 */
+-		if ((no & 0xffff) <= 0x7ff)
++		if (no < __ARM_NR_COMPAT_END)
+ 			return -ENOSYS;
+ 		break;
+ 	}
 
 
