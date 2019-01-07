@@ -5,63 +5,163 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1DD5C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:48:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18C58C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:50:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92A7B218AD
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:48:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CED7D2147C
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:50:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728537AbfAGNsa (ORCPT
+        id S1728565AbfAGNui (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:48:30 -0500
-Received: from mx2.suse.de ([195.135.220.15]:48910 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727943AbfAGNs3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:48:29 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 00337AE5F;
-        Mon,  7 Jan 2019 13:48:27 +0000 (UTC)
-Message-ID: <1546868906.3037.37.camel@suse.com>
-Subject: Re: [PATCH RFC 4/5] usb: cdc-acm: Enable serdev support
-From:   Oliver Neukum <oneukum@suse.com>
-To:     Andreas =?ISO-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
-        linux-lpwan@lists.infradead.org, linux-serial@vger.kernel.org
-Cc:     Johan Hovold <johan@kernel.org>, Rob Herring <robh@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org
-Date:   Mon, 07 Jan 2019 14:48:26 +0100
-In-Reply-To: <20190104112131.14451-5-afaerber@suse.de>
-References: <20190104112131.14451-1-afaerber@suse.de>
-         <20190104112131.14451-5-afaerber@suse.de>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
+        Mon, 7 Jan 2019 08:50:38 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44536 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727943AbfAGNuh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:50:37 -0500
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x07Dmqot108412
+        for <linux-kernel@vger.kernel.org>; Mon, 7 Jan 2019 08:50:36 -0500
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2pv4083pn0-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 08:50:35 -0500
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <borntraeger@de.ibm.com>;
+        Mon, 7 Jan 2019 13:50:33 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 7 Jan 2019 13:50:28 -0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x07DoRlL54919336
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 7 Jan 2019 13:50:27 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C063EAE051;
+        Mon,  7 Jan 2019 13:50:27 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DD216AE053;
+        Mon,  7 Jan 2019 13:50:26 +0000 (GMT)
+Received: from oc7455500831.ibm.com (unknown [9.152.224.141])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon,  7 Jan 2019 13:50:26 +0000 (GMT)
+Subject: Re: [PATCH v3 0/3] virtio-balloon: tweak config_changed
+To:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Wei Wang <wei.w.wang@intel.com>
+Cc:     virtio-dev@lists.oasis-open.org, linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
+        cohuck@redhat.com, pbonzini@redhat.com, dgilbert@redhat.com,
+        pasic@linux.ibm.com
+References: <1546844466-38079-1-git-send-email-wei.w.wang@intel.com>
+ <20190107084502-mutt-send-email-mst@kernel.org>
+From:   Christian Borntraeger <borntraeger@de.ibm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
+ 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
+ syiRa+UVlsKmx1hsEg==
+Date:   Mon, 7 Jan 2019 14:50:26 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20190107084502-mutt-send-email-mst@kernel.org>
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 19010713-0028-0000-0000-000003355613
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19010713-0029-0000-0000-000023F25F58
+Message-Id: <44f7eca0-1569-2b70-4e6a-027bc1bc4f6e@de.ibm.com>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-07_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=833 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901070123
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fr, 2019-01-04 at 12:21 +0100, Andreas Färber  wrote:
-> Switch from tty_port_register_device() to tty_port_register_device_serdev()
-> and from tty_unregister_device() to tty_port_unregister_device().
-> 
-> On removal of a serdev driver sometimes count mismatch warnings were seen:
-> 
->   ttyACM ttyACM0: tty_hangup: tty->count(1) != (#fd's(0) + #kopen's(0))
->   ttyACM ttyACM0: tty_port_close_start: tty->count = 1 port count = 0
-> 
-> Note: The serdev drivers appear to probe asynchronously as soon as they
-> are registered. Should the USB quirks in probe be moved before registration?
-> No noticeable difference for the devices at hand.
 
-That is quite drastic a change.
-Johan, how complete in terms of features is serdev?
 
-Are you refering to CLEAR_HALT_CONDITIONS in terms of quirks?
+On 07.01.2019 14:45, Michael S. Tsirkin wrote:
+> On Mon, Jan 07, 2019 at 03:01:03PM +0800, Wei Wang wrote:
+>> Since virtio-ccw doesn't work with accessing to the config space
+>> inside an interrupt context, this patch series avoids that issue by
+>> moving the config register accesses to the related workqueue contexts.
+> 
+> So is this enough to get ccw going again or do we also need
+> the patches that deal with NULL VQ names?
 
-	Regards
-		Oliver
+This alone does not fix 4.20. You need the other ones as well.(The other patches
+fix the memory corruption during boot, this patch fixes the deadlock when actually
+changing the balloon size)
+
+
+> 
+>> v2->v3 ChangeLog:
+>>     - rename cmd_id_received to cmd_id_received_cache, and have call sites
+>>       read the latest value via virtio_balloon_cmd_id_received. (Still
+>>       kept Cornelia and Halil's reviewed-by as it's a minor change)
+>>     - remove zeroing vb->num_free_page_blocks in probe since vb is
+>>       allocated via kzalloc.
+>> v1->v2 ChangeLog:
+>>     - add config_read_bitmap to indicate to the workqueue callbacks about
+>>       the necessity of reading the related config fields.
+>>
+>> Wei Wang (3):
+>>   virtio-balloon: tweak config_changed implementation
+>>   virtio-balloon: improve update_balloon_size_func
+>>   virtio_balloon: remove the unnecessary 0-initialization
+>>
+>>  drivers/virtio/virtio_balloon.c | 104 ++++++++++++++++++++++++++--------------
+>>  1 file changed, 69 insertions(+), 35 deletions(-)
+>>
+>> -- 
+>> 2.7.4
+> 
 
