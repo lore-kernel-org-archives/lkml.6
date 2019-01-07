@@ -2,325 +2,152 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE118C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 19:18:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3205EC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 19:18:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FB30206B7
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 19:18:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DCBFD206B7
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 19:18:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="qGqOW3N4";
+	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="MlIhiAtU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727482AbfAGTSN (ORCPT
+        id S1727644AbfAGTSt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 14:18:13 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46960 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726392AbfAGTSM (ORCPT
+        Mon, 7 Jan 2019 14:18:49 -0500
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:43890 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726392AbfAGTSs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 14:18:12 -0500
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x07JEI6e141326
-        for <linux-kernel@vger.kernel.org>; Mon, 7 Jan 2019 14:18:11 -0500
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2pvadefyyb-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 14:18:10 -0500
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <mimu@linux.ibm.com>;
-        Mon, 7 Jan 2019 19:18:08 -0000
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 7 Jan 2019 19:18:06 -0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x07JI4pJ50069628
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 7 Jan 2019 19:18:04 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id AE05752051;
-        Mon,  7 Jan 2019 19:18:04 +0000 (GMT)
-Received: from [9.152.96.120] (unknown [9.152.96.120])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 3404F5204E;
-        Mon,  7 Jan 2019 19:18:04 +0000 (GMT)
-Reply-To: mimu@linux.ibm.com
-Subject: Re: [PATCH v5 13/15] KVM: s390: add function process_gib_alert_list()
-To:     pmorel@linux.ibm.com, KVM Mailing List <kvm@vger.kernel.org>
-Cc:     Linux-S390 Mailing List <linux-s390@vger.kernel.org>,
-        linux-kernel@vger.kernel.org,
-        kvm390-list@tuxmaker.boeblingen.de.ibm.com,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Halil Pasic <pasic@linux.ibm.com>
-References: <20181219191756.57973-1-mimu@linux.ibm.com>
- <20181219191756.57973-14-mimu@linux.ibm.com>
- <645d74cf-7448-f143-c899-bdcf290dac59@linux.ibm.com>
-From:   Michael Mueller <mimu@linux.ibm.com>
-Organization: IBM
-Date:   Mon, 7 Jan 2019 20:18:03 +0100
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <645d74cf-7448-f143-c899-bdcf290dac59@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        Mon, 7 Jan 2019 14:18:48 -0500
+Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x07JII7Z003673;
+        Mon, 7 Jan 2019 11:18:20 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : content-type : content-id :
+ content-transfer-encoding : mime-version; s=facebook;
+ bh=h3oMA5zTDkrOOnfXjjDkrgWqsXLHcbFTu56KbeW1Nzw=;
+ b=qGqOW3N4Cxs37Ep8AQbd04P9z9kosEreeG7Fbxf8u/fxXGLkABCrfzqFIaSL8GLdEZDR
+ HjUb+UvSUrT5+gc0TOudIGva5CUTRtA1XfOsMbKpQjxjDXLKIk7Bem+XKs7VKJdoWU0L
+ tKkxf1rOYdshzqv4/HJmDhfKg7XV9peNolU= 
+Received: from mail.thefacebook.com ([199.201.64.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2pv9hmrun0-7
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Mon, 07 Jan 2019 11:18:20 -0800
+Received: from prn-hub05.TheFacebook.com (2620:10d:c081:35::129) by
+ prn-hub01.TheFacebook.com (2620:10d:c081:35::125) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1531.3; Mon, 7 Jan 2019 11:18:07 -0800
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (192.168.54.28)
+ by o365-in.thefacebook.com (192.168.16.29) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1531.3
+ via Frontend Transport; Mon, 7 Jan 2019 11:18:07 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector1-fb-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=h3oMA5zTDkrOOnfXjjDkrgWqsXLHcbFTu56KbeW1Nzw=;
+ b=MlIhiAtU1XIF3uMDku7etZkCbyMKpcvPugN2ULLKuo5QLYGeBYZ3wZ0dyfYnNh8hAsUY8X9xgO44wXbBjF8qmP1Qpc9gpBkGGVc4ic0+vfGiJWZ3f5CwaX+soTL1j3QmqXrAt0aGFkgkjQOGxc5RZa604RnK9wKHZiaQIZOj68E=
+Received: from CY4PR15MB1269.namprd15.prod.outlook.com (10.172.180.139) by
+ CY4PR15MB1656.namprd15.prod.outlook.com (10.175.120.143) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1495.9; Mon, 7 Jan 2019 19:18:06 +0000
+Received: from CY4PR15MB1269.namprd15.prod.outlook.com
+ ([fe80::f9c6:952c:8b66:cc9d]) by CY4PR15MB1269.namprd15.prod.outlook.com
+ ([fe80::f9c6:952c:8b66:cc9d%10]) with mapi id 15.20.1495.011; Mon, 7 Jan 2019
+ 19:18:06 +0000
+From:   Vijay Khemka <vijaykhemka@fb.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     "openbmc @ lists . ozlabs . org" <openbmc@lists.ozlabs.org>
+Subject: Re: [Potential Spoof] Re: [PATCH v2 4/4] ARM: dts: aspeed: Add lpc
+ ctrl for Facebook
+Thread-Topic: [Potential Spoof] Re: [PATCH v2 4/4] ARM: dts: aspeed: Add lpc
+ ctrl for Facebook
+Thread-Index: AQHUpr23H6EDIEv7IECCwY4fHMoqwA==
+Date:   Mon, 7 Jan 2019 19:18:06 +0000
+Message-ID: <87110C25-B836-4DD0-813E-41745EB909FA@fb.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19010719-4275-0000-0000-000002FB822B
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19010719-4276-0000-0000-000038098B1E
-Message-Id: <1889d0a2-d22a-1170-10bd-0bfc91549388@linux.ibm.com>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [2620:10d:c090:200::6:23a]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;CY4PR15MB1656;20:hIy3tVel4IF0y4U3b/1OmmaI+V8a1q/0C0xc6t269LhTXpPusYWIGc1Pdb41U1d2otipK/fhBHHiq7G7mqGzRmTUyzyDgj+a3CG18Lk5Rkw0o/Fsg5agGe/dP8kjuBL56m8Xxub3qdTDC/idK6CAFIGhm44cMmd0cqqh90TJYtU=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 54ac6e2e-6c72-4dfd-5152-08d674d4da68
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(2017052603328)(7153060)(7193020);SRVR:CY4PR15MB1656;
+x-ms-traffictypediagnostic: CY4PR15MB1656:
+x-microsoft-antispam-prvs: <CY4PR15MB1656CAC49DF0FE2135895700DD890@CY4PR15MB1656.namprd15.prod.outlook.com>
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(908002)(999002)(11241501185)(5005026)(6040522)(8220060)(2401047)(8121501046)(3231475)(944501520)(52105112)(3002001)(10201501046)(93006095)(93001095)(6041310)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:CY4PR15MB1656;BCL:0;PCL:0;RULEID:;SRVR:CY4PR15MB1656;
+x-forefront-prvs: 0910AAF391
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(39860400002)(396003)(376002)(136003)(366004)(47680400002)(43544003)(189003)(199004)(99286004)(4326008)(476003)(71190400001)(71200400001)(86362001)(106356001)(82746002)(478600001)(68736007)(83716004)(25786009)(5660300001)(53936002)(7736002)(229853002)(6246003)(6512007)(256004)(2501003)(6486002)(8936002)(8676002)(6436002)(81156014)(81166006)(14454004)(6506007)(186003)(102836004)(33656002)(46003)(2616005)(2906002)(305945005)(53546011)(2201001)(6116002)(97736004)(110136005)(486006)(105586002)(36756003)(316002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR15MB1656;H:CY4PR15MB1269.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: byYdueZp8y4EzuRMkGcdFeqguaHP4YzmPJGbXi+cQoISkmqLQI66Zu9mg/z/QRAqeDXcoypU8du5jCfHEkk9DVOeZ8lTmIBq9tJBE+Q+ZQeIcgZt4eXO5vcLF3pmykDbuuykXLpBSwntwFVExhZxI17eW0JaZX6U2gDQpggKiphtkocInALOosZl+9oPSEcCyjOteYAUnpeLrXbUQtLcB6dVu9k3nXXEqPWTRtAGysXCPSR12GllVmaVtevLCDhXwjlK3LCT6HeRewG7Pkec2WTcYWJb/bQE8s4wJ/DHewvQO3Nu26w1dHYFMxpKuu0a
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <A3CF9BDE5A2E8D49A7A02831FC01959A@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: 54ac6e2e-6c72-4dfd-5152-08d674d4da68
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Jan 2019 19:18:06.3910
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR15MB1656
+X-OriginatorOrg: fb.com
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-07_08:,,
  signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901070161
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 03.01.19 15:43, Pierre Morel wrote:
-> On 19/12/2018 20:17, Michael Mueller wrote:
->> This function processes the Gib Alert List (GAL). It is required
->> to run when either a gib alert interruption has been received or
->> a gisa that is in the alert list is cleared or dropped.
->>
->> The GAL is build up by millicode, when the respective ISC bit is
->> set in the Interruption Alert Mask (IAM) and an interruption of
->> that class is observed.
->>
->> Signed-off-by: Michael Mueller <mimu@linux.ibm.com>
->> ---
->>   arch/s390/kvm/interrupt.c | 140 
->> ++++++++++++++++++++++++++++++++++++++++++++++
->>   1 file changed, 140 insertions(+)
->>
->> diff --git a/arch/s390/kvm/interrupt.c b/arch/s390/kvm/interrupt.c
->> index 48a93f5e5333..03e7ba4f215a 100644
->> --- a/arch/s390/kvm/interrupt.c
->> +++ b/arch/s390/kvm/interrupt.c
->> @@ -2941,6 +2941,146 @@ int kvm_s390_get_irq_state(struct kvm_vcpu 
->> *vcpu, __u8 __user *buf, int len)
->>       return n;
->>   }
->> +static int __try_airqs_kick(struct kvm *kvm, u8 ipm)
-> 
-> static inline ?
-> 
->> +{
->> +    struct kvm_s390_float_interrupt *fi = &kvm->arch.float_int;
->> +    struct kvm_vcpu *vcpu = NULL, *kick_vcpu[MAX_ISC + 1];
->> +    int online_vcpus = atomic_read(&kvm->online_vcpus);
->> +    u8 ioint_mask, isc_mask, kick_mask = 0x00;
->> +    int vcpu_id, kicked = 0;
->> +
->> +    /* Loop over vcpus in WAIT state. */
->> +    for (vcpu_id = find_first_bit(fi->idle_mask, online_vcpus);
->> +         /* Until all pending ISCs have a vcpu open for airqs. */
->> +         (~kick_mask & ipm) && vcpu_id < online_vcpus;
->> +         vcpu_id = find_next_bit(fi->idle_mask, online_vcpus, 
->> vcpu_id)) {
->> +        vcpu = kvm_get_vcpu(kvm, vcpu_id);
->> +        if (psw_ioint_disabled(vcpu))
->> +            continue;
->> +        ioint_mask = (u8)(vcpu->arch.sie_block->gcr[6] >> 24);
->> +        for (isc_mask = 0x80; isc_mask; isc_mask >>= 1) {
->> +            /* ISC pending in IPM ? */
->> +            if (!(ipm & isc_mask))
->> +                continue;
->> +            /* vcpu for this ISC already found ? */
->> +            if (kick_mask & isc_mask)
->> +                continue;
->> +            /* vcpu open for airq of this ISC ? */
->> +            if (!(ioint_mask & isc_mask))
->> +                continue;
->> +            /* use this vcpu (for all ISCs in ioint_mask) */
->> +            kick_mask |= ioint_mask; > +            
->> kick_vcpu[kicked++] = vcpu;
->> +        }
->> +    }
->> +
->> +    if (vcpu && ~kick_mask & ipm)
->> +        VM_EVENT(kvm, 4, "gib alert undeliverable isc mask 0x%02x",
->> +             ~kick_mask & ipm);
->> +
->> +    for (vcpu_id = 0; vcpu_id < kicked; vcpu_id++)
->> +        kvm_s390_vcpu_wakeup(kick_vcpu[vcpu_id]);
->> +
->> +    return (online_vcpus != 0) ? kicked : -ENODEV;
->> +}
->> +
->> +static void __floating_airqs_kick(struct kvm *kvm)
-> static inline ?
-> 
->> +{
->> +    struct kvm_s390_float_interrupt *fi = &kvm->arch.float_int;
->> +    int online_vcpus, kicked;
->> +    u8 ipm_t0, ipm;
->> +
->> +    /* Get IPM and return if clean, IAM has been restored. */
->> +    ipm = get_ipm(kvm->arch.gisa, IRQ_FLAG_IAM);
-> 
-> If we do not get an IPM here, it must have been stolen by the firmware 
-> for delivery to the guest.
-
-Yes, a running SIE instance took it before we were able to. But is
-it still running now? It could have gone to WAIT before we see
-that the IPM is clean. Then it was restored already. Otherwise,
-it is still running and will go WAIT and then restore the IAM.
-
-I will do some tests on this.
-
-> Then why restoring the IAM?
-> 
-> Or do I miss something?
-> 
->> +    if (!ipm)
->> +        return;
->> +retry:
->> +    ipm_t0 = ipm;
->> +
->> +    /* Try to kick some vcpus in WAIT state. */
->> +    kicked = __try_airqs_kick(kvm, ipm);
->> +    if (kicked < 0)
->> +        return;
->> +
->> +    /* Get IPM and return if clean, IAM has been restored. */
->> +    ipm = get_ipm(kvm->arch.gisa, IRQ_FLAG_IAM);
->> +    if (!ipm)
->> +        return;
->> +
->> +    /* Start over, if new ISC bits are pending in IPM. */
->> +    if ((ipm_t0 ^ ipm) & ~ipm_t0)
->> +        goto retry;
->> +
->> +    /*
->> +     * Return as we just kicked at least one vcpu in WAIT state
->> +     * open for airqs. The IAM will be restored latest when one
->> +     * of them goes into WAIT or STOP state.
->> +     */
->> +    if (kicked > 0)
->> +        return;
->> +
->> +    /*
->> +     * No vcpu was kicked either because no vcpu was in WAIT state
->> +     * or none of the vcpus in WAIT state are open for airqs.
->> +     * Return immediately if no vcpus are in WAIT state.
->> +     * There are vcpus in RUN state. They will process the airqs
->> +     * if not closed for airqs as well. In that case the system will
->> +     * delay airqs until a vcpu decides to take airqs again.
->> +     */
->> +    online_vcpus = atomic_read(&kvm->online_vcpus);
->> +    if (!bitmap_weight(fi->idle_mask, online_vcpus))
->> +        return;
->> +
->> +    /*
->> +     * None of the vcpus in WAIT state take airqs and we might
->> +     * have no running vcpus as at least one vcpu is in WAIT state
->> +     * and IPM is dirty.
->> +     */
->> +    set_iam(kvm->arch.gisa, kvm->arch.iam);
-> 
-> I do not understand why we need to set IAM here.
-> The interrupt will be delivered by the firmware as soon as the PSW or 
-> CR6 is changed by any vCPU.
-> ...and if this does not happen we can not deliver the interrupt anyway.
-> 
->> +}
->> +
->> +#define NULL_GISA_ADDR 0x00000000UL
->> +#define NONE_GISA_ADDR 0x00000001UL
->> +#define GISA_ADDR_MASK 0xfffff000UL
->> +
->> +static void __maybe_unused process_gib_alert_list(void)
->> +{
->> +    u32 final, next_alert, origin = 0UL;
->> +    struct kvm_s390_gisa *gisa;
->> +    struct kvm *kvm;
->> +
->> +    do {
->> +        /*
->> +         * If the NONE_GISA_ADDR is still stored in the alert list
->> +         * origin, we will leave the outer loop. No further GISA has
->> +         * been added to the alert list by millicode while processing
->> +         * the current alert list.
->> +         */
->> +        final = (origin & NONE_GISA_ADDR);
->> +        /*
->> +         * Cut off the alert list and store the NONE_GISA_ADDR in the
->> +         * alert list origin to avoid further GAL interruptions.
->> +         * A new alert list can be build up by millicode in parallel
->> +         * for guests not in the yet cut-off alert list. When in the
->> +         * final loop, store the NULL_GISA_ADDR instead. This will re-
->> +         * enable GAL interruptions on the host again.
->> +         */
->> +        origin = xchg(&gib->alert_list_origin,
->> +                  (!final) ? NONE_GISA_ADDR : NULL_GISA_ADDR);
->> +        /* Loop through the just cut-off alert list. */
->> +        while (origin & GISA_ADDR_MASK) {
->> +            gisa = (struct kvm_s390_gisa *)(u64)origin;
->> +            next_alert = gisa->next_alert;
->> +            /* Unlink the GISA from the alert list. */
->> +            gisa->next_alert = origin;
-> 
-> AFAIU this enable GISA interrupt for the guest...
-
-Only together with the IAM being set what could happen if
-__floating_airqs_kick() calls get_ipm and the IPM is clean already. :(
-
-> 
->> +            kvm = container_of(gisa, struct sie_page2, gisa)->kvm;
->> +            /* Kick suitable vcpus */
->> +            __floating_airqs_kick(kvm);
-> 
-> ...and here we kick a VCPU for the guest.
-> 
-> Logically I would do it in the otherway, first kicking the vCPU then 
-> enabling the GISA interruption again.
-> 
-> If the IPM bit is cleared by the firmware during delivering the 
-> interrupt to the guest before we enter get_ipm() called by 
-> __floating_airqs_kick() we will set the IAM despite we have a running 
-> CPU handling the IRQ.
-
-I will move the unlink below the kick that will assure get_ipm will 
-never take the IAM restore path.
-
-> In the worst case we can also set the IAM with the GISA in the alert list.
-> Or we must accept that the firmware can deliver the IPM as soon as we 
-> reset the GISA next field.
-
-See statement above.
-
-> 
->> +            origin = next_alert;
->> +        }
->> +    } while (!final);
->> +}
->> +
->>   static void nullify_gisa(struct kvm_s390_gisa *gisa)
->>   {
->>       memset(gisa, 0, sizeof(struct kvm_s390_gisa));
->>
-> 
-> I think that avoiding to restore the IAM during the call to get_ipm 
-> inside __floating_airqs_kick() would good.
-> 
-> If you agree, with that:
-> 
-> Reviewed-by: Pierre Morel<pmorel@linux.ibm.com>
-> 
-> 
-
-
+UGxlYXNlIG1lcmdlIHRoZXNlIHBhdGNoZXMgaW4gdXBzdHJlYW0ga2VybmVsLg0KDQpSZWdhcmRz
+DQotVmlqYXkNCg0K77u/T24gMTIvMjAvMTgsIDEwOjA2IEFNLCAiTGludXgtYXNwZWVkIG9uIGJl
+aGFsZiBvZiBWaWpheSBLaGVta2EiIDxsaW51eC1hc3BlZWQtYm91bmNlcyt2aWpheWtoZW1rYT1m
+Yi5jb21AbGlzdHMub3psYWJzLm9yZyBvbiBiZWhhbGYgb2YgdmlqYXlraGVta2FAZmIuY29tPiB3
+cm90ZToNCg0KICAgIEpvZWwsIENhbiB5b3UgcGxlYXNlIHRha2UgY2FyZSBvZiB0aGVzZSBwYXRj
+aGVzIG1lcmdlLg0KICAgIA0KICAgIE9uIDEyLzE3LzE4LCAxMjowNCBQTSwgIlZpamF5IEtoZW1r
+YSIgPHZpamF5a2hlbWthQGZiLmNvbT4gd3JvdGU6DQogICAgDQogICAgICAgIEFkZGVkIGxwYyBj
+dHJsIGRldmljZSB0byBlbmFibGUgTFBDIGNsb2NrIGluIEZhY2Vib29rDQogICAgICAgIFRpb2dh
+cGFzcyBkZXZpY2UgdHJlZS4NCiAgICAgICAgDQogICAgICAgIFNpZ25lZC1vZmYtYnk6IFZpamF5
+IEtoZW1rYSA8dmlqYXlraGVta2FAZmIuY29tPg0KICAgICAgICAtLS0NCiAgICAgICAgIC4uLi9i
+b290L2R0cy9hc3BlZWQtYm1jLWZhY2Vib29rLXRpb2dhcGFzcy5kdHMgIHwgMTcgKysrKysrKysr
+KysrKysrKysNCiAgICAgICAgIDEgZmlsZSBjaGFuZ2VkLCAxNyBpbnNlcnRpb25zKCspDQogICAg
+ICAgIA0KICAgICAgICBkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vYm9vdC9kdHMvYXNwZWVkLWJtYy1m
+YWNlYm9vay10aW9nYXBhc3MuZHRzIGIvYXJjaC9hcm0vYm9vdC9kdHMvYXNwZWVkLWJtYy1mYWNl
+Ym9vay10aW9nYXBhc3MuZHRzDQogICAgICAgIGluZGV4IDczZTU4YTgyMTYxMy4uZWY3ODc1YjU0
+NTYyIDEwMDY0NA0KICAgICAgICAtLS0gYS9hcmNoL2FybS9ib290L2R0cy9hc3BlZWQtYm1jLWZh
+Y2Vib29rLXRpb2dhcGFzcy5kdHMNCiAgICAgICAgKysrIGIvYXJjaC9hcm0vYm9vdC9kdHMvYXNw
+ZWVkLWJtYy1mYWNlYm9vay10aW9nYXBhc3MuZHRzDQogICAgICAgIEBAIC0yMiw2ICsyMiwxNyBA
+QA0KICAgICAgICAgCQlyZWcgPSA8MHg4MDAwMDAwMCAweDIwMDAwMDAwPjsNCiAgICAgICAgIAl9
+Ow0KICAgICAgICAgDQogICAgICAgICsJcmVzZXJ2ZWQtbWVtb3J5IHsNCiAgICAgICAgKwkJI2Fk
+ZHJlc3MtY2VsbHMgPSA8MT47DQogICAgICAgICsJCSNzaXplLWNlbGxzID0gPDE+Ow0KICAgICAg
+ICArCQlyYW5nZXM7DQogICAgICAgICsNCiAgICAgICAgKwkJZmxhc2hfbWVtb3J5OiByZWdpb25A
+OTgwMDAwMDAgew0KICAgICAgICArCQkJbm8tbWFwOw0KICAgICAgICArCQkJcmVnID0gPDB4OTgw
+MDAwMDAgMHgwMDAwMTAwMD47IC8qIDRLICovDQogICAgICAgICsJCX07DQogICAgICAgICsJfTsN
+CiAgICAgICAgKw0KICAgICAgICAgCWlpby1od21vbiB7DQogICAgICAgICAJCWNvbXBhdGlibGUg
+PSAiaWlvLWh3bW9uIjsNCiAgICAgICAgIAkJaW8tY2hhbm5lbHMgPSA8JmFkYyAwPiwgPCZhZGMg
+MT4sIDwmYWRjIDI+LCA8JmFkYyAzPiwNCiAgICAgICAgQEAgLTU0LDYgKzY1LDEyIEBADQogICAg
+ICAgICAJfTsNCiAgICAgICAgIH07DQogICAgICAgICANCiAgICAgICAgKyZscGNfY3RybCB7DQog
+ICAgICAgICsJc3RhdHVzID0gIm9rYXkiOw0KICAgICAgICArCW1lbW9yeS1yZWdpb24gPSA8JmZs
+YXNoX21lbW9yeT47DQogICAgICAgICsJZmxhc2ggPSA8JnNwaTE+Ow0KICAgICAgICArfTsNCiAg
+ICAgICAgKw0KICAgICAgICAgJnVhcnQxIHsNCiAgICAgICAgIAkvLyBIb3N0IENvbnNvbGUNCiAg
+ICAgICAgIAlzdGF0dXMgPSAib2theSI7DQogICAgICAgIC0tIA0KICAgICAgICAyLjE3LjENCiAg
+ICAgICAgDQogICAgICAgIA0KICAgIA0KICAgIA0KDQo=
