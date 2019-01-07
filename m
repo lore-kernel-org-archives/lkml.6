@@ -2,99 +2,99 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90202C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 17:55:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67C69C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 17:56:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51CB12070B
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 17:55:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546883742;
-	bh=3PdE8HkYnxO00KRDKzzo/0L/bCUPEMsfy/q79Q1Wzgs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=i761uszQsbZDvbx4sWNfQSsBPIaUdlIOTY0Nn9CkirIHMhIlB3jyqtTuSexabBUMa
-	 Ja32+T4Wf9/JrrLkW4HxfPXrS1Yn5m6bKBxaHuTmh9F3g9mPPrH2+qL9Vh56ARiyRU
-	 1QKiGRqScXOIvSG4xnBePiclYuDC2/+o8IjCRg6U=
+	by mail.kernel.org (Postfix) with ESMTP id 3F1182070B
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 17:56:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728753AbfAGRzl (ORCPT
+        id S1727648AbfAGR4s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 12:55:41 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:48404 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726890AbfAGRzl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 12:55:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=3PdE8HkYnxO00KRDKzzo/0L/bCUPEMsfy/q79Q1Wzgs=; b=hGbXywoElBQylHp7s+k2nz3tF
-        PJJjLO/K4cYddlY9PvPPG8b0SWi/oigFH+YuwXne740xja1yL/ShjFr6u/r+V/2d7HVxWTMk8JUBK
-        n7opt4tq5L63oe8YmexIEca56XberfVw2hwVTTiUpZico5Fnx9yNuA+YdDRBinjbi+cKw=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1ggZ7b-0007ab-JE; Mon, 07 Jan 2019 17:55:31 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 14BAF1127491; Mon,  7 Jan 2019 17:55:31 +0000 (GMT)
-Date:   Mon, 7 Jan 2019 17:55:31 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     Anders Roxell <anders.roxell@linaro.org>,
-        linux-kernel@vger.kernel.org, catalin.marinas@arm.com,
-        will.deacon@arm.com, arnd@arndb.de, mingo@redhat.com,
-        rostedt@goodmis.org, akpm@linux-foundation.org
-Subject: Re: [RFC PATCH 3/3] arm64: add a new config option KTEST_RUNNABLE
-Message-ID: <20190107175531.GN9570@sirena.org.uk>
-References: <20181213122910.24193-1-anders.roxell@linaro.org>
- <20181213122910.24193-4-anders.roxell@linaro.org>
- <20190107144356.GB46743@lakrids.cambridge.arm.com>
+        Mon, 7 Jan 2019 12:56:48 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:55181 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726942AbfAGR4r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 12:56:47 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4E29CA909;
+        Mon,  7 Jan 2019 17:56:47 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.103])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 194CE5DE69;
+        Mon,  7 Jan 2019 17:56:45 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Mon,  7 Jan 2019 18:56:47 +0100 (CET)
+Date:   Mon, 7 Jan 2019 18:56:45 +0100
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Qian Cai <cai@lca.pw>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        linux kernel <linux-kernel@vger.kernel.org>,
+        gkohli@codeaurora.org
+Subject: Re: kernel BUG at kernel/sched/core.c:3490!
+Message-ID: <20190107175644.GB7636@redhat.com>
+References: <ba9c5ad8-d78c-904d-0430-a67d8e3ea729@lca.pw>
+ <20190107135215.GG14122@hirez.programming.kicks-ass.net>
+ <46089f1c-ad72-c96c-2f35-c2f60e726462@lca.pw>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="7VkxxUl3xUvPtoxk"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190107144356.GB46743@lakrids.cambridge.arm.com>
-X-Cookie: NOBODY EXPECTS THE SPANISH INQUISITION!
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <46089f1c-ad72-c96c-2f35-c2f60e726462@lca.pw>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Mon, 07 Jan 2019 17:56:47 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 01/07, Qian Cai wrote:
+>
+>
+> On 1/7/19 8:52 AM, Peter Zijlstra wrote:
+> > On Tue, Jan 01, 2019 at 12:44:35AM -0500, Qian Cai wrote:
+> >> Running some mmap() workloads to put the system on low memory situation with
+> >> swapping and OOM, and then it trigger this BUG(),
+> >>
+> >> void __noreturn do_task_dead(void)
+> >> {
+> >>         /* Causes final put_task_struct in finish_task_switch(): */
+> >>         set_special_state(TASK_DEAD);
+> >>
+> >>         /* Tell freezer to ignore us: */
+> >>         current->flags |= PF_NOFREEZE;
+> >>
+> >>         __schedule(false);
+> >>         BUG();
+> >>
+> >>         /* Avoid "noreturn function does return" - but don't continue if BUG()
+> >> is a NOP: */
+> >>         for (;;)
+> >>                 cpu_relax();
+> >> }
+> >
+> > This would mean that we somehow loose the TASK_DEAD state before hitting
+> > schedule(), but that is something that should be avoided by
+> > set_special_state(), which is supposed to serialize against concurrent
+> > wake-ups.
 
---7VkxxUl3xUvPtoxk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+or may be pick_next_task() somehow returns the deactivated TASK_DEAD task?
 
-On Mon, Jan 07, 2019 at 02:43:57PM +0000, Mark Rutland wrote:
+> > How readily does this reproduce?
+>
+> Running LTP oom01 [1] triggered it at least once in five attempts every time so
+> far on v4.20+. Have not tried much on v5.0-rc1 yet.
 
-> Is it possible to use an allyesconfig rather than an allmodconfig? That
-> would leave all relevant options built-in.
+Can you add
 
-The allyesconfig would make it more difficult to apply this approach to
-real hardware which is part of the goal here - the idea was to come up
-with a way of making runnable configurations which are likely to be
-usable with random userspace testsuites in order to avoid needing ever
-expanding combinations of builds.
+	pr_crit("XXX: %ld %d\n", current->state, current->on_rq);
 
---7VkxxUl3xUvPtoxk
-Content-Type: application/pgp-signature; name="signature.asc"
+before that BUG() and reproduce?
 
------BEGIN PGP SIGNATURE-----
+Oleg.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlwzkpIACgkQJNaLcl1U
-h9Bb0Qf/fdF9RcX9SaLp2k0IMZ1Lg9JMd5hlJ9YKA/TzRigA6SXtqWYGvoQOUT8o
-3w4IJNFvrqmxhd1yPI45xH13Mb//TQU3nbUC2x611vlvym0AspERT7HNZy4gIZXM
-HGe+G9kAWLW7kTeJDQi2kh/wf9axInPomnG9kGdM+vl/LW0Z+R0P1Ec0BDRtQCYM
-W62NBh5dEEPNzOHq6uJi//yH3+ddUN5zTVRU2Wz0joEjBhMekgucU34IZmiNFGZ6
-hF5epTqp2HKWYcLZJDPUpMgci5wj+xSL5d1Yq2loZNTjlwHtivaoaVvgiiwT0/Qg
-n0Q4o4Am6J+tIuXFDgE1AJic8uYohQ==
-=Q+A3
------END PGP SIGNATURE-----
-
---7VkxxUl3xUvPtoxk--
