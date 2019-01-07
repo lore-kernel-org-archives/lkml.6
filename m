@@ -2,324 +2,182 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ED2AC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:02:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BFA0C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:07:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B275205C9
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:02:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C59420665
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:07:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="LEUl+L0A";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="QMzcsjX6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726990AbfAGMCI (ORCPT
+        id S1726701AbfAGMHW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:02:08 -0500
-Received: from smtp2207-205.mail.aliyun.com ([121.197.207.205]:44654 "EHLO
-        smtp2207-205.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726655AbfAGMB5 (ORCPT
+        Mon, 7 Jan 2019 07:07:22 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:47592 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726589AbfAGMHV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:01:57 -0500
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07436282|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e01l07391;MF=liaoweixiong@allwinnertech.com;NM=1;PH=DS;RN=14;RT=14;SR=0;TI=SMTPD_---.DibxlYK_1546862495;
-Received: from PC-liaoweixiong.allwinnertech.com(mailfrom:liaoweixiong@allwinnertech.com fp:SMTPD_---.DibxlYK_1546862495)
-          by smtp.aliyun-inc.com(10.147.40.200);
-          Mon, 07 Jan 2019 20:01:52 +0800
-From:   liaoweixiong <liaoweixiong@allwinnertech.com>
-To:     Kees Cook <keescook@chromium.org>,
-        Anton Vorontsov <anton@enomsg.org>,
-        Colin Cross <ccross@android.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Arnd Bergmann <arnd@arndb.de>
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        liaoweixiong <liaoweixiong@allwinnertech.com>
-Subject: [RFC v5 4/4] Documentation: pstore/blk: create document for pstore_blk
-Date:   Mon,  7 Jan 2019 20:01:02 +0800
-Message-Id: <1546862462-19640-5-git-send-email-liaoweixiong@allwinnertech.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1546862462-19640-1-git-send-email-liaoweixiong@allwinnertech.com>
-References: <1546862462-19640-1-git-send-email-liaoweixiong@allwinnertech.com>
+        Mon, 7 Jan 2019 07:07:21 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id E91316092B; Mon,  7 Jan 2019 12:07:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1546862840;
+        bh=nQdhMg/zxfqtrScSfOLq5awV0rQd/TXDzDgONYXtPN8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=LEUl+L0A+d3IbYCgZgnZpAR7UgW6PQ0q+FEIn47fuduhOQs1LxH9Vgg6K3nU10zL/
+         zcu5VQ76aZuAkvqXIZo1j/mPibUGxhKUtjiDm9WNqtmE+1mIf71KQlj4QyCM4BWC0w
+         fyk3WaVwwb6ekvJXdPvVPMMVw2GD2u73LI2hEY04=
+Received: from blr-ubuntu-41.ap.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id D09A26087B;
+        Mon,  7 Jan 2019 12:07:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1546862839;
+        bh=nQdhMg/zxfqtrScSfOLq5awV0rQd/TXDzDgONYXtPN8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=QMzcsjX6ff+Tr1v8kPZxHc11Xn25gjrpML0uZIROZAW0Dcb4sR5n0qCErRbhjb5YZ
+         tYGoc4Wvi+YcL4E1tZMNevtlhm94CF+4JPwDTLV8gg/ZFy6/+/8KdJc1zEB7UypR4j
+         dCRqqrz+8+D7IKhuGMZvhiMu+f4yOIKkHSBDYE1s=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D09A26087B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
+From:   Vivek Gautam <vivek.gautam@codeaurora.org>
+To:     sean@poorly.run, airlied@linux.ie, dri-devel@lists.freedesktop.org
+Cc:     maarten.lankhorst@linux.intel.com, maxime.ripard@bootlin.com,
+        daniel@ffwll.ch, robdclark@gmail.com, jcrouse@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org,
+        Vivek Gautam <vivek.gautam@codeaurora.org>
+Subject: [PATCH v2 1/1] drm/prime: Use sg_dma_len() macro to get sg's length
+Date:   Mon,  7 Jan 2019 17:37:08 +0530
+Message-Id: <20190107120708.18497-1-vivek.gautam@codeaurora.org>
+X-Mailer: git-send-email 2.16.1.72.g5be1f00a9a70
+In-Reply-To: <CAFp+6iGV6m_Bj=QBvt_wS2v-Bv=3vp15kUCuMZw3uyJGQD2ytg@mail.gmail.com>
+References: <CAFp+6iGV6m_Bj=QBvt_wS2v-Bv=3vp15kUCuMZw3uyJGQD2ytg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The documemt, at Documentation/admin-guide/pstore-block.rst,
-tells user how to use pstore_blk and the attentions about panic
-read/write
+After mapping a sg list the we should use sg_dma_address() and
+sg_dma_len() macros to access sg->address and sg->length. Fix
+the same for sg->length in drm_prime_sg_to_page_addr_arrays().
 
-Signed-off-by: liaoweixiong <liaoweixiong@allwinnertech.com>
+Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
 ---
- Documentation/admin-guide/pstore-block.rst | 226 +++++++++++++++++++++++++++++
- MAINTAINERS                                |   1 +
- fs/pstore/Kconfig                          |   4 +
- 3 files changed, 231 insertions(+)
- create mode 100644 Documentation/admin-guide/pstore-block.rst
 
-diff --git a/Documentation/admin-guide/pstore-block.rst b/Documentation/admin-guide/pstore-block.rst
-new file mode 100644
-index 0000000..2fc9fd8
---- /dev/null
-+++ b/Documentation/admin-guide/pstore-block.rst
-@@ -0,0 +1,226 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+Pstore block oops/panic logger
-+==============================
-+
-+Introduction
-+------------
-+
-+Pstore block (pstore_blk) is an oops/panic logger that write its logs to block
-+device before the system crashes. Pstore_blk needs block device driver
-+registering a partition path of the block device, like /dev/mmcblk0p7 for mmc
-+driver, and read/write APIs for this partition when on panic.
-+
-+Pstore block concepts
-+---------------------
-+
-+Pstore block begins at function ``blkz_register``, by which block driver
-+registers to pstore_blk. Recomemd that, block driver should register to
-+pstore_blk after block device is ready. Block driver transfers a structure
-+``blkz_info`` which is defined in *linux/pstore_blk.h*.
-+
-+The following key members of ``struct blkz_info`` may be of interest to you.
-+
-+part_path
-+~~~~~~~~~
-+
-+The path of partition used for pstore_blk. It may be ``/dev/mmcblk[N]p[M]`` for
-+mmc, and ``/dev/mtdblock[N]`` for mtd device.
-+
-+The ``part_path`` is not necessarily if you self-defined general read/write APIs
-+on ``blkz_info``. In other words, the ``part_path`` is only used (by function
-+blkz_sample_read/write) when general read/write APIs are not defined.
-+
-+See more on section **read/write**.
-+
-+part_size
-+~~~~~~~~~
-+
-+The total size in bytes of partition used for pstore_blk. This member **MUST**
-+be effective and a multiple of 4096. It is recommended to 1M or larger for block
-+device.
-+
-+The block device area is divided into many chunks, and each event writes
-+a chunk of information.
-+
-+dmesg_size
-+~~~~~~~~~~
-+
-+The chunk size in bytes for dmesg(oops/panic). It **MUST** be a multiple of
-+SECTOR_SIZE (Most of the time, the SECTOR_SIZE is 512). If you don't need dmesg,
-+you are safely to set it to 0.
-+
-+NOTE that, the remaining space, except ``pmsg_size`` and others, belongs to
-+dmesg. It means that there are multiple chunks for dmesg.
-+
-+Psotre_blk will log to dmesg chunks one by one, and always overwrite the oldest
-+chunk if no free chunk.
-+
-+pmsg_size
-+~~~~~~~~~
-+
-+The chunk size in bytes for pmsg. It **MUST** be a multiple of SECTOR_SIZE (Most
-+of the time, the SECTOR_SIZE is 512). If you don't need pmsg, you are safely to
-+set it to 0.
-+
-+There is only one chunk for pmsg.
-+
-+Pmsg is a user space accessible pstore object. Writes to */dev/pmsg0* are
-+appended to the chunk. On reboot the contents are available in
-+/sys/fs/pstore/pmsg-blkoops-0.
-+
-+dump_oops
-+~~~~~~~~~
-+
-+Dumping both oopses and panics can be done by setting 1 in the ``dump_oops``
-+member while setting 0 in that variable dumps only the panics.
-+
-+read/write
-+~~~~~~~~~~
-+
-+They are general ``read/write`` APIs. It is safely and recommended to ignore it,
-+but set ``part_path``.
-+
-+These general APIs are used all the time expect panic. The ``read`` API is
-+usually used to recover data from block device, and the ``write`` API is usually
-+to flush new data and erase to block device.
-+
-+Pstore_blk will temporarily hold all new data before block device is ready. If
-+you ignore both of ``read/write`` and ``part_path``, the old data will not be
-+recovered and the new data will not be flushed until panic, using panic APIs.
-+If you don't have panic APIs neither, all the data will be dropped when reboot.
-+
-+NOTE that, the general APIs must check whether the block device is ready if
-+self-defined.
-+
-+panic_read/panic_write
-+~~~~~~~~~~~~~~~~~~~~~~
-+
-+They are ``read/write`` APIs for panic. They are likely to general
-+``read/write`` but will be used only when on panic.
-+
-+The attentions for panic read/write see section
-+**Attentions in panic read/write APIs**.
-+
-+Register to pstore block
-+------------------------
-+
-+Block device driver call ``blkz_register`` to register to Psotre_blk.
-+For example:
-+
-+.. code-block:: c
-+
-+ #include <linux/pstore_blk.h>
-+ [...]
-+
-+ static ssize_t XXXX_panic_read(char *buf, size bytes, loff_t pos)
-+ {
-+    [...]
-+ }
-+
-+ static ssize_t XXXX_panic_write(const char *buf, size_t bytes, loff_t pos)
-+ {
-+        [...]
-+ }
-+
-+ struct blkz_info XXXX_info = {
-+        .onwer = THIS_MODULE,
-+        .name = <...>,
-+        .dmesg_size = <...>,
-+        .pmsg_size = <...>,
-+        .dump_oops = true,
-+        .panic_read = XXXX_panic_read,
-+        .panic_write = XXXX_panic_write,
-+ };
-+
-+ static int __init XXXX_init(void)
-+ {
-+        [... get partition information ...]
-+        XXXX_info.part_path = <...>;
-+        XXXX_info.part_size = <...>;
-+
-+        [...]
-+        return blkz_register(&XXXX_info);
-+ }
-+
-+There are multiple ways by which you can get partition information.
-+
-+A. Use the module parameters and kernel cmdline.
-+B. Use Device Tree bindings.
-+C. Use Kconfig.
-+D. Use Driver Feature.
-+   For example, traverse all MTD device by ``register_mtd_user``, and get the
-+   matching name MTD partition.
-+
-+NOTE that, all of above are done by block driver rather then pstore_blk.
-+
-+The attentions for panic read/write see section
-+**Attentions in panic read/write APIs**.
-+
-+Compression and header
-+----------------------
-+
-+Block device is large enough, it is not necessary to compress dmesg data.
-+Actually, we recommend not compress. Because pstore_blk will insert some
-+information into the first line of dmesg data if no compression.
-+For example::
-+
-+        blkoops: Panic: Total 16 times
-+
-+It means that it's the 16th times panic log since burning.
-+Sometimes, the oops|panic counter since burning is very important for embedded
-+device to judge whether the system is stable.
-+
-+The follow line is insert by pstore filesystem.
-+For example::
-+
-+        Oops#2 Part1
-+
-+It means that it's the 2nd times oops log on last booting.
-+
-+Reading the data
-+----------------
-+
-+The dump data can be read from the pstore filesystem. The format for these
-+files is ``dmesg-blkoops-[N]`` for dmesg(oops|panic) and ``pmsg-blkoops-0`` for
-+pmsg, where N is the record number. To delete a stored record from block device,
-+simply unlink the respective pstore file. The timestamp of the dump file records
-+the trigger time.
-+
-+Attentions in panic read/write APIs
-+-----------------------------------
-+
-+If on panic, the kernel is not going to be running for much longer. The tasks
-+will not be scheduled and the most kernel resources will be out of service. It
-+looks like a single-threaded program running on a single-core computer.
-+
-+The following points need special attention for panic read/write APIs:
-+
-+1. Can **NOT** allocate any memory.
-+
-+   If you need memory, just allocate while the block driver is initialing rather
-+   than waiting until the panic.
-+
-+2. Must be polled, **NOT** interrupt driven.
-+
-+   No task schedule any more. The block driver should delay to ensure the write
-+   succeeds, but NOT sleep.
-+
-+3. Can **NOT** take any lock.
-+
-+   There is no other task, no any share resource, you are safely to break all
-+   locks.
-+
-+4. Just use cpu to transfer.
-+
-+   Do not use DMA to transfer unless you are sure that DMA will not keep lock.
-+
-+5. Operate register directly.
-+
-+   Try not to use linux kernel resources. Do io map while initialing rather than
-+   waiting until the panic.
-+
-+6. Reset your block device and controller if necessary.
-+
-+   If you are not sure the state of you block device and controller when panic,
-+   you are safely to stop and reset them.
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 0abecc5..ebf9c71 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12054,6 +12054,7 @@ F:	include/linux/pstore*
- F:	drivers/firmware/efi/efi-pstore.c
- F:	drivers/acpi/apei/erst.c
- F:	Documentation/admin-guide/ramoops.rst
-+F:	Documentation/admin-guide/pstore-block.rst
- F:	Documentation/devicetree/bindings/reserved-memory/ramoops.txt
- K:	\b(pstore|ramoops)
+Changes since v1:
+ - Fixed compilation error: replaced sg_dma_length() with sg_dma_len().
+
+This came while debugging one dmabuf import issue that we are seeing
+on sdm845 target.
+The dmabuf which is prepared by video (venus in this case), is imported
+by drm device.
+The import call flow looks like follows:
+
+drm_gem_prime_import()
+ - drm_gem_prime_import_dev()
+   - dma_buf_attach() & dma_buf_map_attachment()
+     - From dma_buf_map_attachment()
+       - vb2_dma_sg_dmabuf_ops_map()
+         - dma_map_sg(): this updates the sg->nents.
+
+From debugging, the sg table mapping results in sg's 'nents' to be less that
+the original nents. Now drm device prepares the page information based on
+this sg table, and messes up with the mappings, and we start seeing random
+crashes as below from drm's memory space.
+
+Although this change isn't helping to fix the issue currently, but
+this fix seems the right thing to do.
+
+One thing to notice is that, if we restore the sg->nents to
+sg->orig_nents in vb2_dma_sg_dmabuf_ops_map(), we don't see the below
+corruptions.
+
+Any pointers on this will be highly appreciated.
+Thanks.
+
+------
+[  338.070558] Unable to handle kernel paging request at virtual address 0000400000000038
+[  338.078751] Mem abort info:
+[  338.081671]   ESR = 0x96000004
+[  338.084860]   Exception class = DABT (current EL), IL = 32 bits
+[  338.090972]   SET = 0, FnV = 0
+[  338.094139]   EA = 0, S1PTW = 0
+[  338.097393] Data abort info:
+[  338.100375]   ISV = 0, ISS = 0x00000004
+[  338.104362]   CM = 0, WnR = 0
+[  338.107446] [0000400000000038] address between user and kernel address ranges
+[  338.114801] Internal error: Oops: 96000004 [#1] PREEMPT SMP
+[  338.120527] Modules linked in: rfcomm uinput cdc_ether venus_dec venus_enc usbnet videobuf2_dma_sg videobuf2_memops hci_uart btqca bluetooth r8152 mii ath10k_snoc venus_core ath10k_core v4l2_mem2mem videobuf2_v4l2 videobuf2_common ath mac80211 ecdh_generic qcom_q6v5_mss lzo lzo_compress qcom_q6v5_adsp qcom_common qcom_q6v5 zram bridge stp llc ipt_MASQUERADE fuse snd_seq_dummy snd_seq snd_seq_device cfg80211 joydev
+[  338.158192] CPU: 4 PID: 3235 Comm: chrome Tainted: G        W         4.19.0 #2
+[  338.165700] Hardware name: Google Cheza (rev1) (DT)
+[  338.170720] pstate: 80400009 (Nzcv daif +PAN -UAO)
+[  338.175660] pc : drm_mm_insert_node_in_range+0xfc/0x348
+[  338.181035] lr : drm_mm_insert_node_in_range+0x24/0x348
+[  338.186407] sp : ffffff8013033b30
+[  338.189816] x29: ffffff8013033bd0 x28: ffffff8008591894
+[  338.195275] x27: 0000000000000010 x26: 0000000000000000
+[  338.200734] x25: 0000000000000000 x24: ffffffffffffffff
+[  338.206194] x23: 0000000000000000 x22: ffffffc0f48b7e08
+[  338.211656] x21: 0000000000000000 x20: 000000000000005d
+[  338.217118] x19: 0000000000000000 x18: 0000000000000000
+[  338.222581] x17: 0000000000000000 x16: 0000000000000000
+[  338.228046] x15: 0000000000000000 x14: 0000000000000000
+[  338.233511] x13: 0000000000000001 x12: ffffffc0b1da7200
+[  338.238978] x11: 0000000000000010 x10: 0000000000000010
+[  338.244437] x9 : 0000000000000008 x8 : 0000400000000000
+[  338.249898] x7 : 0000000000000000 x6 : ffffffffffffffff
+[  338.255361] x5 : 0000000000000000 x4 : 0000000000000000
+[  338.260823] x3 : 0000000000000000 x2 : 000000000000005d
+[  338.266285] x1 : ffffffc0b1da7100 x0 : ffffffc0b0215800
+[  338.271748] Process chrome (pid: 3235, stack limit = 0x000000000900f416)
+[  338.278628] Call trace:
+[  338.281151]  drm_mm_insert_node_in_range+0xfc/0x348
+[  338.286168]  msm_gem_map_vma+0x60/0xdc
+[  338.290022]  msm_gem_get_iova+0xb4/0xf4
+[  338.293967]  msm_ioctl_gem_info+0x90/0xdc
+[  338.298089]  drm_ioctl_kernel+0xa8/0xe8
+[  338.302043]  drm_ioctl+0x218/0x384
+[  338.305547]  drm_compat_ioctl+0xd8/0xe8
+[  338.309503]  __arm64_compat_sys_ioctl+0x134/0x20c
+[  338.314339]  el0_svc_common+0xa0/0xf0
+[  338.318108]  el0_svc_compat_handler+0x2c/0x38
+[  338.322588]  el0_svc_compat+0x8/0x18
+[  338.326274] Code: f94066c8 aa1f03e0 321d03e9 321c03ea (f9401d0b)
+[  338.332538] ---[ end trace 5c09e60869887d87 ]---
+[  338.354633] Kernel panic - not syncing: Fatal exception
+[  338.360018] SMP: stopping secondary CPUs
+[  338.364179] Kernel Offset: disabled
+[  338.367779] CPU features: 0x0,22802a18
+[  338.371643] Memory Limit: none
+------
+
+ drivers/gpu/drm/drm_prime.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/drm_prime.c b/drivers/gpu/drm/drm_prime.c
+index 231e3f6d5f41..aa87ba9c0d7b 100644
+--- a/drivers/gpu/drm/drm_prime.c
++++ b/drivers/gpu/drm/drm_prime.c
+@@ -945,7 +945,7 @@ int drm_prime_sg_to_page_addr_arrays(struct sg_table *sgt, struct page **pages,
  
-diff --git a/fs/pstore/Kconfig b/fs/pstore/Kconfig
-index 18b1fe6..5c5273c 100644
---- a/fs/pstore/Kconfig
-+++ b/fs/pstore/Kconfig
-@@ -160,6 +160,10 @@ config PSTORE_BLK
- 	  This enables panic and oops message to be logged to a block dev
- 	  where it can be read back at some later point.
+ 	index = 0;
+ 	for_each_sg(sgt->sgl, sg, sgt->nents, count) {
+-		len = sg->length;
++		len = sg_dma_len(sg);
+ 		page = sg_page(sg);
+ 		addr = sg_dma_address(sg);
  
-+	  For more information, see Documentation/admin-guide/pstore-block.rst.
-+
-+	  If unsure, say N.
-+
- config PSTORE_BLKBUF
- 	tristate "pstore block buffer sample"
- 	depends on PSTORE_BLK
 -- 
-1.9.1
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
 
