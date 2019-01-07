@@ -2,147 +2,81 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 790E8C43612
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 10:15:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 054D1C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 10:16:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45A042089F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 10:15:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C85172089F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 10:16:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546856148;
-	bh=vJMWAsOKip4geW5B7WXYGQhkH4I9qzadf0nL6f5EzEk=;
+	s=default; t=1546856213;
+	bh=7bk0BQnjs+s0/FuuVeNhRPZdNs/cubAJJq8XsjY1wLc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=KbM/eQPEGdiRn6YRplxFV81Kh5ON3CdFZn+QwFnrIS2Chs43HnfCkELuZmrHIx5QH
-	 8XD5bdY5D0A0OozVj7tGa/r3qe8CTPm1I4bYmYnyLk+0U4K4vf/cFHSms5Xi5r7Vew
-	 HATuXvneZZ7f564vWi7AF8W2b9UG3DEkmF+muUvI=
+	b=DPLthqxeyfolIpRCU4p/Dfbe4VuiaaJ7VO4QnaW8SA/XZTAPiJsowGL6fJWlGgyaJ
+	 XgUY00Vk9J7aW3cmCYq8DjY97OOwxPvUBy/a7/pHIbC86wPUpyLhwqPU04sjVYSMFp
+	 drAxPtK/j6K09bqQllZWm4swgtGPraqReZP5FCcU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726809AbfAGKPr (ORCPT
+        id S1726821AbfAGKQw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 05:15:47 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:45350 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726668AbfAGKPq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 05:15:46 -0500
-Received: by mail-wr1-f68.google.com with SMTP id t6so42530324wrr.12;
-        Mon, 07 Jan 2019 02:15:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=yWirVjqGb8oxtQKBz5VYdknzBxnaGsefnIlvvHeuY7g=;
-        b=iJYPV0FwUrMRQan3NlPP/Dst6utgocQVSR7jieBqzJK4szthcTcKSK0rEd28CMiJXm
-         GPT8G+0qn3xPqL12BeNqeNb24a2EetfcKN+kJ5LCnPhp8rRJLdSItOY3Gcc7/blpdieU
-         1NXGHYswV1ngjxtg0dAp/uK+UWP/YeIy0S+v4cu3mJoA0kPUoFgdVtvvKcFb0ED/HPbi
-         g65SjOztI80SAYFZ5NTvS6VGsrzaE9Z3oYFOjwBm0zpaWoNWKyqjIeWBq+Fr3i4Kb6yD
-         3caflwBsHyUb33nG8Okuq4QdVWqR4A7xkWL+H2mqNn0Ac3gMoi21eqOumQrbWhyKLuPz
-         koUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=yWirVjqGb8oxtQKBz5VYdknzBxnaGsefnIlvvHeuY7g=;
-        b=GEcoulZK+/Li8NIYkxz/W6OCuFk2ZIBnLyGfd46n+U4OtIb580EcsdHmm5uJkYk/jn
-         g8rFlZfan8oYzYAOK4J/4XSgKtVNj5n5MZKV4HtJ8bQDhv0uxj+NX9xdAsn3yYjs+vPm
-         d6qrgGNKnPhCsQoli/aD+Gj6RcUy8eGsmudy7am6LcN9NAMZI1kTgge9q61t6GLOVhQ6
-         QIeWB9xY61EqG7HxaqG1ZxnZ67vO1BoqNCZEPUfKrcb8MwgusGL4EU3vF1ozDmwOUUPj
-         aN5jHbueuJNn/6w8ieri2vXKGEXdYZv9NANJBEt8mjMFr8roI272XaVa3iKX1EsHMnCP
-         0fHg==
-X-Gm-Message-State: AJcUukdewMb1DbyqsM25Ltzdc4Nfp9q0n9HCcW76AwESsoIXcGaTgvAO
-        4Dd/ZoYd1hCyWWMw+zCcrKI=
-X-Google-Smtp-Source: ALg8bN6mOGCzKj1vVKC4YulHWhkzP3JaidsEdXVOuz5Q6ZZZbocR3cgrs9cqXBxPqruE+ajd6pYAEg==
-X-Received: by 2002:a5d:418b:: with SMTP id m11mr47463365wrp.8.1546856143892;
-        Mon, 07 Jan 2019 02:15:43 -0800 (PST)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id u204sm6847662wmu.30.2019.01.07.02.15.42
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 07 Jan 2019 02:15:43 -0800 (PST)
-Date:   Mon, 7 Jan 2019 11:15:40 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     James Morris <jmorris@namei.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Mon, 7 Jan 2019 05:16:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42810 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726642AbfAGKQw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 05:16:52 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 03F342087F;
+        Mon,  7 Jan 2019 10:16:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1546856211;
+        bh=7bk0BQnjs+s0/FuuVeNhRPZdNs/cubAJJq8XsjY1wLc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=wbO8kAa+oak7PnwcLwq2KQ2omPaaPZioeiPPjzWLRVhk3mXXLTNBRVUBKsHAiRtSa
+         F0atFmJSjJ1UAkkO8LdLaCzcrht7uhtOyBrSU3UF4ACY1xNKMQ+22/nntiqIQhkNmy
+         U+dWx1+OvxoRGEy+6kTI+5ree/p7BI5lYdlGiTDw=
+Date:   Mon, 7 Jan 2019 11:16:49 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Aditya Pakki <pakki001@umn.edu>
+Cc:     Arushi Singhal <arushisinghal19971997@gmail.com>,
+        devel@driverdev.osuosl.org, kjlu@umn.edu,
         linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>
-Subject: Re: [GIT PULL] security: seccomp changes for v4.21
-Message-ID: <20190107101540.GA87402@gmail.com>
-References: <alpine.LRH.2.21.1812311511360.1435@namei.org>
+        Mamta Shukla <mamtashukla555@gmail.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Quytelda Kahja <quytelda@tamalin.org>,
+        Wen Yang <wen.yang99@zte.com.cn>
+Subject: Re: [PATCH] v2 staging: rtl8723bs: Clean up dead code
+Message-ID: <20190107101649.GA2750@kroah.com>
+References: <20190106162101.9176-1-pakki001@umn.edu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alpine.LRH.2.21.1812311511360.1435@namei.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190106162101.9176-1-pakki001@umn.edu>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sun, Jan 06, 2019 at 10:20:59AM -0600, Aditya Pakki wrote:
+> rtw_wps_start() is part of dead code due to CONFIG_INTEL_WIDI.
+> The fix removes the deadcode and replaces the function with NULL
+> in rtw_private_handler. Identified as part of copy_from_user bug.
+> 
+> Signed-off-by: Aditya Pakki <pakki001@umn.edu>
+> ---
+>  .../staging/rtl8723bs/os_dep/ioctl_linux.c    | 34 +------------------
+>  1 file changed, 1 insertion(+), 33 deletions(-)
 
-* James Morris <jmorris@namei.org> wrote:
+What changed from v1?  Always put that below the --- line.
 
-> From Kees:
-> 
-> "- Add SECCOMP_RET_USER_NOTIF
-> 
-> - seccomp fixes for sparse warnings and s390 build (Tycho)"
-> 
-> 
-> 
-> The following changes since commit 1072bd678547f8663cfb81a22fdb50c589e4976e:
-> 
->   security: fs: make inode explicitly non-modular (2018-12-12 14:58:51 -0800)
-> 
-> are available in the Git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-seccomp
-> 
-> for you to fetch changes up to 55b8cbe470d103b44104c64dbf89e5cad525d4e0:
-> 
->   Merge tag 'seccomp-next-part2' of https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux into next-seccomp (2018-12-17 11:36:26 -0800)
-> 
-> ----------------------------------------------------------------
-> James Morris (2):
->       Merge tag 'seccomp-next' of https://git.kernel.org/.../kees/linux into next-seccomp
->       Merge tag 'seccomp-next-part2' of https://git.kernel.org/.../kees/linux into next-seccomp
-> 
-> Tycho Andersen (6):
->       seccomp: hoist struct seccomp_data recalculation higher
->       seccomp: switch system call argument type to void *
->       seccomp: add a return code to trap to userspace
->       samples: add an example of seccomp user trap
->       seccomp: fix poor type promotion
->       seccomp, s390: fix build for syscall type change
-> 
->  Documentation/ioctl/ioctl-number.txt           |   1 +
->  Documentation/userspace-api/seccomp_filter.rst |  84 +++++
->  arch/s390/kernel/compat_wrapper.c              |   2 +-
->  include/linux/seccomp.h                        |   9 +-
->  include/linux/syscalls.h                       |   2 +-
->  include/uapi/linux/seccomp.h                   |  40 ++-
->  kernel/seccomp.c                               | 467 ++++++++++++++++++++++++-
->  samples/seccomp/.gitignore                     |   1 +
->  samples/seccomp/Makefile                       |   7 +-
->  samples/seccomp/user-trap.c                    | 375 ++++++++++++++++++++
->  tools/testing/selftests/seccomp/seccomp_bpf.c  | 447 ++++++++++++++++++++++-
->  11 files changed, 1411 insertions(+), 24 deletions(-)
->  create mode 100644 samples/seccomp/user-trap.c
+Please fix up and send v3.
 
-32-bit x86 allyesconfig doesn't build:
+thanks,
 
- /usr/bin/ld: i386:x86-64 architecture of input file `samples/seccomp/user-trap.o' is incompatible with i386 output
- /usr/bin/ld: samples/seccomp/user-trap.o: file class ELFCLASS64 incompatible with ELFCLASS32
- /usr/bin/ld: final link failed: File in wrong format
- collect2: error: ld returned 1 exit status
- scripts/Makefile.host:99: recipe for target 'samples/seccomp/user-trap' failed
- make[2]: *** [samples/seccomp/user-trap] Error 1
-
-Is this a known regression?
-
-Thanks,
-
-	Ingo
+greg k-h
