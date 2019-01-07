@@ -2,91 +2,111 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72BA7C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 16:33:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B77EEC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 16:33:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D460206B7
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 16:33:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 85F992089F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 16:33:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KXCJLQ73"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="o0gLYYOu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727311AbfAGQdB (ORCPT
+        id S1727633AbfAGQdH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 11:33:01 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:39498 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726746AbfAGQdA (ORCPT
+        Mon, 7 Jan 2019 11:33:07 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:42739 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726589AbfAGQdG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 11:33:00 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=GtWpeKyfFUi49ulQ4FppWq7mFLs8k1BBbuYAu9x3aOk=; b=KXCJLQ73FxXiU7iXxKU/825n7
-        Hrmix1nuYg7LjHB9ZLyqg7WEh+8AAdRF99pm7kv9/IdiqieOW7KnQJ6rXSajFAzadYeGXkwglDQP6
-        sgcOOfArku1G2qXWQ1WGq5Pg9MyIhuWfiamm1tpYcSCTpmBuGyIIPhJc3Bg7jv8uqfefbjXKn0610
-        3EDdqSCm++Gu3erW39DBH7oxNFxLnH9kRzob/S6LlyLo+YjzZev+MQrQpnoqFeiN9lL0L2yiQtNyu
-        5Jdj7I6EoNUesbKRpm84hcakELIYYzELEafCkIxO1XCNbKpKGPV0FeQC3fL346K/xacZ+4qaBlFRX
-        rVxosnYtw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1ggXpH-0006Xi-1g; Mon, 07 Jan 2019 16:32:31 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id EF63C200BB704; Mon,  7 Jan 2019 17:32:27 +0100 (CET)
-Date:   Mon, 7 Jan 2019 17:32:27 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Andi Kleen <ak@linux.intel.com>
-Cc:     Nadav Amit <namit@vmware.com>, Ingo Molnar <mingo@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Edward Cree <ecree@solarflare.com>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Nadav Amit <nadav.amit@gmail.com>, X86 ML <x86@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        David Woodhouse <dwmw@amazon.co.uk>, adrian.hunter@intel.com,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Subject: Re: [RFC v2 0/6] x86: dynamic indirect branch promotion
-Message-ID: <20190107163227.GH14122@hirez.programming.kicks-ass.net>
-References: <20181231072112.21051-1-namit@vmware.com>
- <87zhshe66w.fsf@linux.intel.com>
+        Mon, 7 Jan 2019 11:33:06 -0500
+Received: by mail-wr1-f67.google.com with SMTP id q18so1052555wrx.9;
+        Mon, 07 Jan 2019 08:33:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=F6PwismgQUx3Nb1dfsjM6hGkSYv/Ilqj/e7nnGtXZK8=;
+        b=o0gLYYOugSmsxql0yEUrY0t66kZPhgfzKR9VIobqIEwUX8734+CONlrLPsLtth3THA
+         vTHAe2TiKlc8gu9mqilqN6jEqlboijw5Sr9MD/p6JtgGn0K2sFA2SQScHeVutjXiDSae
+         m0cnfKY4ojfIClFwNbpST30ZyITZPgalk9s+9GUQ4dahruzDFXaLdchs1Tyrcvnnblwy
+         JaL4iaA3xNInOaUv2d1eW8WSW+IMGzWkY2HkK/9dXkoJNu5hLcPWiKArIl/JcQLEqGIp
+         YgquLz1gZxdoUlBdPyXTufjtwz3yZcOrQPmC9VNV5Gd5gGE+r/XZIkujUy74dR5PSuez
+         MEqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=F6PwismgQUx3Nb1dfsjM6hGkSYv/Ilqj/e7nnGtXZK8=;
+        b=gxHEKe17vVR9gY+s+8saD6IavywgnDruknkgJZFx2HdXU8BWf0UVJ9IKYkzZ8SWMZc
+         tyN7UJQdejC4UUtdSb66di7QDj06RhrrxJc75avq1ORhEgPAJ26c5VyN/xS3pe0Yee4L
+         as8zW6dhNxf15dtFup7VKAzBabs1+pvk3Pn+69NToxTd5OaUYNbhZLEhMYlkpsjDgaK0
+         fre8mPkkTlr2HIBP88S6b0ZbWs1esnKFKzsrPVjUYGBM07m3oQ9NJ6Q5erNC2X509pKE
+         0lM/FUiPuN1eu8/kQq0u+U0JmQxvpW4Yr2dPgkLejLVTfgqpqa//MDeZ3IZP8IAxV6aF
+         qr+g==
+X-Gm-Message-State: AJcUukfJMDxNDhCW1oYygC0KHbAJsZnZowJ5xk6jJggIlcONyC/AFGgj
+        VH2L4FH9AoYs3XT6kXI0HA==
+X-Google-Smtp-Source: ALg8bN6XiEOJZWUCl6cLXLKhX916vT0pL6xemdGCULDz21Opl5eojgxtJ7uYEqYkn1FLEapQ8Gyp1A==
+X-Received: by 2002:adf:fa05:: with SMTP id m5mr39417885wrr.155.1546878784778;
+        Mon, 07 Jan 2019 08:33:04 -0800 (PST)
+Received: from avx2 (nat-minsk-pool-46-53-201-92.telecom.by. [46.53.201.92])
+        by smtp.gmail.com with ESMTPSA id g16sm53449368wru.41.2019.01.07.08.33.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 07 Jan 2019 08:33:04 -0800 (PST)
+Date:   Mon, 7 Jan 2019 19:33:01 +0300
+From:   Alexey Dobriyan <adobriyan@gmail.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Waiman Long <longman@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Daniel Colascione <dancol@google.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH 2/2] /proc/stat: Add sysctl parameter to control irq
+ counts latency
+Message-ID: <20190107163301.GA14354@avx2>
+References: <1546873978-27797-1-git-send-email-longman@redhat.com>
+ <1546873978-27797-3-git-send-email-longman@redhat.com>
+ <20190107155840.GY6310@bombadil.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <87zhshe66w.fsf@linux.intel.com>
+In-Reply-To: <20190107155840.GY6310@bombadil.infradead.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 03, 2019 at 02:18:15PM -0800, Andi Kleen wrote:
-> Nadav Amit <namit@vmware.com> writes:
-> >
-> > - Do we use periodic learning or not? Josh suggested to reconfigure the
-> >   branches whenever a new target is found. However, I do not know at
-> >   this time how to do learning efficiently, without making learning much
-> >   more expensive.
-> 
-> FWIW frequent patching will likely completely break perf Processor Trace
-> decoding, which needs a somewhat stable kernel text image to decode the
-> traces generated by the CPU. Right now it relies on kcore dumped after
-> the trace usually being stable because jumplabel changes happen only
-> infrequently. But if you start patching frequently this assumption will
-> break.
-> 
-> You would either need a way to turn this off, or provide
-> updates for every change to the trace, so that the decoder can
-> keep track.
+On Mon, Jan 07, 2019 at 07:58:40AM -0800, Matthew Wilcox wrote:
+> On Mon, Jan 07, 2019 at 10:12:58AM -0500, Waiman Long wrote:
 
-I'm thining it would be entirely possible to create and feed text_poke
-events into the regular (!aux) buffer which can be timestamp correlated
-to the PT data.
+> > A new "fs/proc-stat-irqs-latency-ms" sysctl parameter is now added to
+> 
+> No.  No, no, no, no, no.  No.
+> 
+> Stop adding new sysctls for this kind of thing.  It's just a way to shift
+> blame from us (who allegedly know what we're doing) to the sysadmin
+> (who probably has better things to be doing than keeping up with the
+> intricacies of development of every single piece of software running on
+> their system).
+> 
+> Let's figure out what this _should_ be.
+
+Yeah, let's start interrogating about which values specifically this
+super sekret applications wants.
+
+I assume CPU stats, so system call which returns CPU statistics in binary form.
+
+> Why are you caching the _output_ of calling sprintf(), rather than caching the
+> values of each interrupt?
+
+For output caching string is better, but I'm not defending the patch.
