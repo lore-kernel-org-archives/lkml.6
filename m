@@ -2,152 +2,102 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58474C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:26:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BBC2C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:28:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 277C12173C
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:26:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 487A22070B
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:28:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546885688;
+	bh=Iy7T6/W+OoI8X1kyh6ZOZUpGef+ELy1lNX0roo8CUkc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=oWxLzsb3oRcRmz2W7Af5BekoLJTw+cChKGnxlpH7uvEm+MFPN4WDJLVAdEQFgI0fX
+	 S91bc0QQ3WKtK43Beo+tQPhp69gI374qUnukpDM0IktlZo5vCMgAxCabw7ErFU6QIV
+	 TIjMYPNksqqBTjYy2FCODtvHaYbK74EZVIE1MaQE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728671AbfAGS0E (ORCPT
+        id S1727517AbfAGS2H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 13:26:04 -0500
-Received: from shell.v3.sk ([90.176.6.54]:44360 "EHLO shell.v3.sk"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727090AbfAGS0E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 13:26:04 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id E73C3FFD7D;
-        Mon,  7 Jan 2019 19:25:58 +0100 (CET)
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id wkQBFvO01pwA; Mon,  7 Jan 2019 19:25:55 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id E1B35FFD7E;
-        Mon,  7 Jan 2019 19:25:54 +0100 (CET)
-X-Virus-Scanned: amavisd-new at zimbra.v3.sk
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id LUdJIGp02hQm; Mon,  7 Jan 2019 19:25:53 +0100 (CET)
-Received: from belphegor (nat-pool-brq-t.redhat.com [213.175.37.10])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id 43495FFD7D;
-        Mon,  7 Jan 2019 19:25:53 +0100 (CET)
-Message-ID: <4364d7c4dc1266ca45255cdad5ba40fb20a9bea3.camel@v3.sk>
-Subject: Re: [PATCH v2 13/17] power: supply: olpc_battery: Use DT to get
- battery version
-From:   Lubomir Rintel <lkundrak@v3.sk>
-To:     Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        James Cameron <quozl@laptop.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Eric Miao <eric.y.miao@gmail.com>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Daniel Mack <daniel@zonque.org>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        platform-driver-x86@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-pm@vger.kernel.org
-Date:   Mon, 07 Jan 2019 19:25:52 +0100
-In-Reply-To: <20181205205459.bsumxn57hjjzvqaj@earth.universe>
-References: <20181116162403.49854-1-lkundrak@v3.sk>
-         <20181116162403.49854-14-lkundrak@v3.sk>
-         <20181205205459.bsumxn57hjjzvqaj@earth.universe>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.3 (3.30.3-1.fc29) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Mon, 7 Jan 2019 13:28:07 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:46476 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726718AbfAGS2H (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 13:28:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Iy7T6/W+OoI8X1kyh6ZOZUpGef+ELy1lNX0roo8CUkc=; b=r9iMxzZzUkILFeBYlzjyPIZXk
+        pPKEBuSKJ9d2yg/h3qfW8nlCtvSnmYvCCd5s6Q0oL0fsWonInB/vdZLxlCwzPqwP0pbmiYd9B83VR
+        TdyXlO55XEXab7JyHyxa0PPTWoL/5yOQhAQzvo7z7L9rhIct8pYTXJg5gNTlJ7X1TAVLo=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1ggZd0-0007gb-1N; Mon, 07 Jan 2019 18:27:58 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 8C5271127491; Mon,  7 Jan 2019 18:27:57 +0000 (GMT)
+Date:   Mon, 7 Jan 2019 18:27:57 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Rohit kumar <rohitkr@codeaurora.org>
+Cc:     plai@codeaurora.org, bgoswami@codeaurora.org,
+        asishb@codeaurora.org, lgirdwood@gmail.com, perex@perex.cz,
+        tiwai@suse.com, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, rohkumar@qti.qualcomm.com,
+        srinivas.kandagatla@linaro.org, Ajit Pandey <ajitp@codeaurora.org>
+Subject: Re: [PATCH 2/2] ASoC: qcom: defer probe if platform dai is not
+ registered
+Message-ID: <20190107182757.GS9570@sirena.org.uk>
+References: <1545642133-16120-1-git-send-email-rohitkr@codeaurora.org>
+ <1545642133-16120-3-git-send-email-rohitkr@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="jesV4P1FjH8FXPjZ"
+Content-Disposition: inline
+In-Reply-To: <1545642133-16120-3-git-send-email-rohitkr@codeaurora.org>
+X-Cookie: NOBODY EXPECTS THE SPANISH INQUISITION!
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-12-05 at 21:54 +0100, Sebastian Reichel wrote:
-> Hi,
-> 
-> On Fri, Nov 16, 2018 at 05:23:59PM +0100, Lubomir Rintel wrote:
-> > Avoid using the x86 OLPC platform specific call to get the board
-> > version. It won't work on FDT-based ARM MMP2 platform.
-> > 
-> > Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-> > Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> > Acked-by: Pavel Machek <pavel@ucw.cz>
-> > 
-> > ---
-> 
-> Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-> 
-> I assume this patch cannot be applied to power-supply without patch
-> 12 having been merged to avoid breaking XO1.5 devices temporarily?
 
-That is true. What's the correct way to deal with a situation like
-this? Just hold the patch until the other changes get in, perhaps via
-linux-platform-drivers-x86.git? Or maybe this can go in together via
-that tree along with the other patches?
+--jesV4P1FjH8FXPjZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks
-Lubo
+On Mon, Dec 24, 2018 at 02:32:13PM +0530, Rohit kumar wrote:
+> From: Ajit Pandey <ajitp@codeaurora.org>
+>=20
+> Platform DAI component probe is not called if it is not
+> present in component list during sound card registration.
+> Check if component is registered for platform dai before
+> soundcard registration.
 
-> -- Sebastian
-> 
-> > Changes since v1:
-> > - Sort the new include a bit higher
-> > 
-> >  drivers/power/supply/olpc_battery.c | 10 +++++++---
-> >  1 file changed, 7 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/power/supply/olpc_battery.c
-> > b/drivers/power/supply/olpc_battery.c
-> > index 5a97e42a3547..5323987d9284 100644
-> > --- a/drivers/power/supply/olpc_battery.c
-> > +++ b/drivers/power/supply/olpc_battery.c
-> > @@ -14,6 +14,7 @@
-> >  #include <linux/types.h>
-> >  #include <linux/err.h>
-> >  #include <linux/device.h>
-> > +#include <linux/of.h>
-> >  #include <linux/platform_device.h>
-> >  #include <linux/power_supply.h>
-> >  #include <linux/jiffies.h>
-> > @@ -622,11 +623,13 @@ static int olpc_battery_probe(struct
-> > platform_device *pdev)
-> >  	olpc_ac = power_supply_register(&pdev->dev, &olpc_ac_desc,
-> > NULL);
-> >  	if (IS_ERR(olpc_ac))
-> >  		return PTR_ERR(olpc_ac);
-> > -
-> > -	if (olpc_board_at_least(olpc_board_pre(0xd0))) { /* XO-1.5 */
-> > +	if (of_property_match_string(pdev->dev.of_node, "compatible",
-> > +					"olpc,xo1.5-battery") >= 0) {
-> > +		/* XO-1.5 */
-> >  		olpc_bat_desc.properties = olpc_xo15_bat_props;
-> >  		olpc_bat_desc.num_properties =
-> > ARRAY_SIZE(olpc_xo15_bat_props);
-> > -	} else { /* XO-1 */
-> > +	} else {
-> > +		/* XO-1 */
-> >  		olpc_bat_desc.properties = olpc_xo1_bat_props;
-> >  		olpc_bat_desc.num_properties =
-> > ARRAY_SIZE(olpc_xo1_bat_props);
-> >  	}
-> > @@ -672,6 +675,7 @@ static int olpc_battery_remove(struct
-> > platform_device *pdev)
-> >  
-> >  static const struct of_device_id olpc_battery_ids[] = {
-> >  	{ .compatible = "olpc,xo1-battery" },
-> > +	{ .compatible = "olpc,xo1.5-battery" },
-> >  	{}
-> >  };
-> >  MODULE_DEVICE_TABLE(of, olpc_battery_ids);
-> > -- 
-> > 2.19.1
-> > 
+Why do we need to do this in the driver, I'd expect this to be something
+that we need to do for everything not just this driver so I'd expect it
+to be handled in the core?
 
+--jesV4P1FjH8FXPjZ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlwzmiwACgkQJNaLcl1U
+h9DQjgf/T0oyN1/MUYlbj/WHJfg5qzDHvFO7pSuwm6jRnkfHq10cSqBiiymFlZeT
+ffXyclWvM/TyYKu83AwbKY12XR6E/FYmX7A/xtx4f9hHl4RGkNjZqeEOkwWHFWPU
+Da967A58RYhtT+Da+ygBiC4ElQnlXxLMlbOBXWXkO1h8UXHcesl8herw1AwS1RmA
+Mtb6OINAR9+azH4wWfRGuwFLNqEbDiMDL8q+ad2q5WHe6KE6t7bLLGelj23BXo1C
+UeEmino9DKG0XbNJgkPTWfEBGg/sahv9fqqNGxzgMUl6GhhVuHHBsnqMyxb12XPG
+DHVN3hfmzcXom5VwIPGix8MDev14zQ==
+=DveR
+-----END PGP SIGNATURE-----
+
+--jesV4P1FjH8FXPjZ--
