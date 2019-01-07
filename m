@@ -2,73 +2,71 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7A4EC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 07:25:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7409EC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 07:26:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42EAB20859
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 07:25:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3816A20859
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 07:26:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ozlabs-ru.20150623.gappssmtp.com header.i=@ozlabs-ru.20150623.gappssmtp.com header.b="WuERswJq"
+	dkim=pass (2048-bit key) header.d=ozlabs-ru.20150623.gappssmtp.com header.i=@ozlabs-ru.20150623.gappssmtp.com header.b="0iw8ekGd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726520AbfAGHZU (ORCPT
+        id S1726540AbfAGH0J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 02:25:20 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:46366 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725306AbfAGHZT (ORCPT
+        Mon, 7 Jan 2019 02:26:09 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:36850 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725550AbfAGH0I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 02:25:19 -0500
-Received: by mail-pl1-f196.google.com with SMTP id t13so20447395ply.13
-        for <linux-kernel@vger.kernel.org>; Sun, 06 Jan 2019 23:25:19 -0800 (PST)
+        Mon, 7 Jan 2019 02:26:08 -0500
+Received: by mail-pf1-f196.google.com with SMTP id b85so21418862pfc.3
+        for <linux-kernel@vger.kernel.org>; Sun, 06 Jan 2019 23:26:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=ozlabs-ru.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:cc:references:openpgp:autocrypt:message-id:date
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=mTPp8lipitNNUCQvCSWRv2kgVbwkhzQZo0qmaURAoTs=;
-        b=WuERswJqq8aD+jrT9eExxqDo0Ln4Wm8vHbRGEygu+1dXlVXll1jsFXpvEQUxsb644P
-         BPTIBZZYTMjV3zbsfIs695o7kQ0r1YCuRgwmfcNo7Ay0EivrBvLAkQabkxdVaCo8JdRB
-         nrc5t5wcbGJV24wUE+mu/diR5f+xDxVN24eseiTr6GfkM5XJ1b+Q7LjudPVH8VN3c88j
-         yQwtXCxaTVKle4tVB/CypF2dfpaM3cp5uaamkddWT8nziWMjidA0veC2yX+2zOWWCOp2
-         dBW0xPUfxxF5YslOvY+eXenKte7awpzZXv93pfHKO1tX8L2xQiIZE+uAFZS3MjO3er2A
-         3LKA==
+        bh=OMcqfN7oUV6vN+tmfVm7Sra6b9nzXRYaQ1YfhUiCSzI=;
+        b=0iw8ekGdF53R4ftbsckNlbHUDoYBswolxsNtF7Bol3b9NZaA8o3/pbZ4A9fqVspQUa
+         plyEXs/ra2zOBF/LMoNrtFaisbYWQ/htgUKK/Zn9xgA3w2dihJ624WanEpLGUIVavAHl
+         qRuLTwyzwHIhbWVqXJyu7JLCH/YZHjiChqVZ9fkC0FlT4tG4iGW48zNfrMtFkuGuuPFt
+         /dDjTkOLYc0nXu9aeAqd1CHkQKKlQ0JdTvIqnjGEpPllsAuPDskOM7bXhbpAvDee490Q
+         OjsnREg2+2jjmzuuwOf3MXk/wLkvOoyZsEd0W9jOJN7vavR4QyhwnM03Cu77tk6JeXaX
+         ussw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:openpgp:autocrypt
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=mTPp8lipitNNUCQvCSWRv2kgVbwkhzQZo0qmaURAoTs=;
-        b=KK/SVRCHLH35ttT6uUaY+j3Kkbszq5m4c1GGuPTZ97hE80rdYHVSE+so7qPZKva7Rc
-         OIbCS8wjP4+EFh0cY5sfBioSu+L75zCh/XjNr6xgmdyCmIBsLgIUU6Gk+2fMmeqPUKMU
-         sjTz/SoHxYion56RTdTNS1kN7sAQHIRxQZVsfkQmMIIADSX0Y3mxGiP1JTluVEp11NPl
-         UyuE9g2BFWv+/ddFnxo/b7DPem6N0boZGamfr0qMTHV/baZAT8nAcB23jqxczTOkn7TC
-         lIJz+AFzMaofGMhdopP7Tnu2jprW1Bh6xJjQfGOvHKxO8jbfDd+GsnbOdXyW+HdXsxf2
-         OqkQ==
-X-Gm-Message-State: AJcUukfyP6ETYOYjERLsHXCy+wgwBkQxy9vXoGXC7PMsVIX70AUto9Qq
-        lK5UTgZEoyvZ4PAB2BfzRltaNA==
-X-Google-Smtp-Source: ALg8bN5HeArgwDf8zYp8idXc8wKuusVjt0n3BBH0l6nKBf9g4FApFVJZtovplWvr3luKwn7JV0ginw==
-X-Received: by 2002:a17:902:2c83:: with SMTP id n3mr60882703plb.104.1546845918832;
-        Sun, 06 Jan 2019 23:25:18 -0800 (PST)
+        bh=OMcqfN7oUV6vN+tmfVm7Sra6b9nzXRYaQ1YfhUiCSzI=;
+        b=CNeu7BwP/6A/Ke0YUrz9XtcOgc/H4/aTv923vPRnsM5gFur3gyAkr+qa5aZtujXdjD
+         pvd9dOO7HbDzfiZanuGVhpNDhRLYloSQvoQEVxBAoCC4c8Y6SrO06TxHUF75MjAO4XBT
+         lPJjCCVq9haMFKAOmEtjtHUE0l8DokEwnFV8vsS3cY5o6tbeiVP5YelSvaGxhRxOXyON
+         zy+mloXuxAWHtQ/NTfgYiG3bzpbIVdReyIR3qkJlFGdOqVeNTPcFFVbw8pN2MlqX8tAy
+         TSXUs5K3O9DX/UQraJXPItkXm9MOsRXrc2sk4MUV5mHSKbl9WeWGi9kHgwuzNPtH/UAN
+         H45w==
+X-Gm-Message-State: AJcUukfFqj61nSgNHo2bXlUpHEUCyhzHLozR+yrKoPlPWA+YPNi6JZqI
+        di+zaMzu80OH0Uz6tDvdxJYChA==
+X-Google-Smtp-Source: AFSGD/UVbQF3lH195hJzMJxl9tL8XH2XvyR+EnOzQPrMHaCWxhK3yI5U0eU5OwjHvCSmU9kno6MmsQ==
+X-Received: by 2002:a62:5003:: with SMTP id e3mr63799423pfb.23.1546845967586;
+        Sun, 06 Jan 2019 23:26:07 -0800 (PST)
 Received: from [10.61.2.175] ([122.99.82.10])
-        by smtp.gmail.com with ESMTPSA id h82sm111714133pfa.105.2019.01.06.23.25.15
+        by smtp.gmail.com with ESMTPSA id a90sm119939382pfj.109.2019.01.06.23.26.04
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 06 Jan 2019 23:25:18 -0800 (PST)
-Subject: Re: compilation failure with CONFIG_VFIO_PCI_NVLINK2
-From:   Alexey Kardashevskiy <aik@ozlabs.ru>
+        Sun, 06 Jan 2019 23:26:07 -0800 (PST)
+Subject: Re: [PATCH] vfio_pci: Add local source directory as include
 To:     Laura Abbott <labbott@redhat.com>,
         Alex Williamson <alex.williamson@redhat.com>,
         Michael Ellerman <mpe@ellerman.id.au>
 Cc:     kvm@vger.kernel.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         David Gibson <david@gibson.dropbear.id.au>
-References: <28d0ba1d-b116-178a-d6d0-8a8b569c7c02@redhat.com>
- <e74e0922-af2e-dac4-2260-8589afa2426b@ozlabs.ru>
- <2e4484ae-06b7-0de3-db8e-3a6989fac1f7@redhat.com>
- <91da4363-fed8-a09e-b657-6c10f2b6c33a@ozlabs.ru>
+References: <20190104195714.30045-1-labbott@redhat.com>
+From:   Alexey Kardashevskiy <aik@ozlabs.ru>
 Openpgp: preference=signencrypt
 Autocrypt: addr=aik@ozlabs.ru; keydata=
  mQINBE+rT0sBEADFEI2UtPRsLLvnRf+tI9nA8T91+jDK3NLkqV+2DKHkTGPP5qzDZpRSH6mD
@@ -143,15 +141,15 @@ Autocrypt: addr=aik@ozlabs.ru; keydata=
  c7E5M+/NpslPCmYnDjs5qg0/3ihh6XuOGggZQOqrYPC3PnsNs3NxirwOkVPQgO6mXxpuifvJ
  DG9EMkK8IBXnLulqVk54kf7fE0jT/d8RTtJIA92GzsgdK2rpT1MBKKVffjRFGwN7nQVOzi4T
  XrB5p+6ML7Bd84xOEGsj/vdaXmz1esuH7BOZAGEZfLRCHJ0GVCSssg==
-Message-ID: <f14d4753-a527-01cb-d46f-6a185f5beaa6@ozlabs.ru>
-Date:   Mon, 7 Jan 2019 18:25:13 +1100
+Message-ID: <62053d95-26d3-a578-efb7-37681971f6c2@ozlabs.ru>
+Date:   Mon, 7 Jan 2019 18:26:03 +1100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <91da4363-fed8-a09e-b657-6c10f2b6c33a@ozlabs.ru>
+In-Reply-To: <20190104195714.30045-1-labbott@redhat.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -159,152 +157,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 07/01/2019 13:58, Alexey Kardashevskiy wrote:
+On 05/01/2019 06:57, Laura Abbott wrote:
+> Commit 7f92891778df ("vfio_pci: Add NVIDIA GV100GL [Tesla V100 SXM2]
+> subdriver") introduced a trace.h file in the local directory but
+> missed adding the local include path, resulting in compilation
+> failures with tracepoints:
 > 
+> In file included from drivers/vfio/pci/trace.h:102,
+>                  from drivers/vfio/pci/vfio_pci_nvlink2.c:29:
+> ./include/trace/define_trace.h:89:42: fatal error: ./trace.h: No such file or directory
+>  #include TRACE_INCLUDE(TRACE_INCLUDE_FILE)
 > 
-> On 04/01/2019 02:08, Laura Abbott wrote:
->> On 1/3/19 5:49 AM, Alexey Kardashevskiy wrote:
->>>
->>>
->>> On 03/01/2019 03:37, Laura Abbott wrote:
->>>> Hi,
->>>>
->>>> I got a compilation failure when building with CONFIG_VFIO_PCI_NVLINK2
->>>> enabled:
->>>>
->>>> + make -s 'HOSTCFLAGS=-O2 -g -pipe -Wall -Werror=format-security
->>>> -Wp,-D_FORTIFY_SOURCE=2 -Wp,-D_GLIBCXX_ASSERTIONS -fexceptions
->>>> -fstack-protector-strong -grecord-gcc-switches
->>>> -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1
->>>> -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1 -m64 -mcpu=power8
->>>> -mtune=power8 -fasynchronous-unwind-tables -fstack-clash-protection'
->>>> 'HOSTLDFLAGS=-Wl,-z,relro -Wl,--as-needed  -Wl,-z,now
->>>> -specs=/usr/lib/rpm/redhat/redhat-hardened-ld -Wl,--build-id=uuid'
->>>> ARCH=powerpc -j4 modules
->>>> BUILDSTDERR: In file included from drivers/vfio/pci/trace.h:102,
->>>> BUILDSTDERR:                  from
->>>> drivers/vfio/pci/vfio_pci_nvlink2.c:29:
->>>> BUILDSTDERR: ./include/trace/define_trace.h:89:42: fatal error:
->>>> ./trace.h: No such file or directory
->>>> BUILDSTDERR:  #include TRACE_INCLUDE(TRACE_INCLUDE_FILE)
->>>> BUILDSTDERR:                                           ^
->>>> BUILDSTDERR: compilation terminated.
->>>> BUILDSTDERR: make[3]: *** [scripts/Makefile.build:277:
->>>> drivers/vfio/pci/vfio_pci_nvlink2.o] Error 1
->>>> BUILDSTDERR: make[2]: *** [scripts/Makefile.build:492: drivers/vfio/pci]
->>>> Error 2
->>>> BUILDSTDERR: make[1]: *** [scripts/Makefile.build:492: drivers/vfio]
->>>> Error 2
->>>> BUILDSTDERR: make: *** [Makefile:1053: drivers] Error 2
->>>> BUILDSTDERR: make: *** Waiting for unfinished jobs....
->>>>
->>>> I don't know enough about ftrace building to make a guess here.
->>>> Config is attacked.
->>>
->>> What gcc is this and what is the exact sha1 of the tree? gcc8 prints
->>> other error with your config in drivers/scsi/esas2r/esas2r_ioctl.c but
->>> not this one so I am curious.
->>>
->>
->> gcc (GCC) 8.2.1 20181215 (Red Hat 8.2.1-6)
->>
->> sha 8e143b90e4d45cca3dc53760d3cfab988bc74571
+> Fix this by adjusting the include path.
 > 
+> Fixes: 7f92891778df ("vfio_pci: Add NVIDIA GV100GL [Tesla V100 SXM2] subdriver")
+> Signed-off-by: Laura Abbott <labbott@redhat.com>
+
+
+
+Reviewed-by: Alexey Kardashevskiy <aik@ozlabs.ru>
+
+
+
+> ---
+> I'd still like to echo my sentiment that this should not be a def_bool.
+> We hit this error on our internal testing and we couldn't even turn
+> off the driver until we fixed this.
+> ---
+>  drivers/vfio/pci/Makefile | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> Your config and this sha1 still make "make oldconfig" ask few questions
-> and then it compiles just fine, are you sure about the config?
+> diff --git a/drivers/vfio/pci/Makefile b/drivers/vfio/pci/Makefile
+> index 9662c063a6b1..08d4676a8495 100644
+> --- a/drivers/vfio/pci/Makefile
+> +++ b/drivers/vfio/pci/Makefile
+> @@ -1,3 +1,4 @@
+> +ccflags-y                               += -I$(src)
+>  
+>  vfio-pci-y := vfio_pci.o vfio_pci_intrs.o vfio_pci_rdwr.o vfio_pci_config.o
+>  vfio-pci-$(CONFIG_VFIO_PCI_IGD) += vfio_pci_igd.o
 > 
-> These are questions on "make oldconfig":
-> 
-> Kernel Live Patching (LIVEPATCH) [N/y/?] (NEW)
-> Stack Protector buffer overflow detection (STACKPROTECTOR) [Y/n/?] (NEW)
->   Strong Stack Protector (STACKPROTECTOR_STRONG) [Y/n/?] (NEW)
->     Do NOT protect notrace function from kprobe events
-> (KPROBE_EVENTS_ON_NOTRACE) [N/y/?] (NEW)
-
-
-Ok, I figured it out. This is because you compile in tree while I
-compile out of tree (with O=builddir) and the difference is that in my
-case gcc gets these additional -I$(src) statements and in your case you
-need to add them manually:
-
-yours V=1:
-
-  gcc
- -Wp,-MD,drivers/vfio/pci/.vfio_pci_nvlink2.o.d
- -nostdinc
- -isystem /usr/lib/gcc/powerpc64le-linux-gnu/7/include
- -I./arch/powerpc/include
- -I./arch/powerpc/include/generated
- -I./include
- -I./arch/powerpc/include/uapi
- -I./arch/powerpc/include/generated/uapi
- -I./include/uapi
- -I./include/generated/uapi
- -include ./include/linux/kconfig.h
- -include ./include/linux/compiler_types.h
- -D__KERNEL__
-...
-
-
-mine V=1 (has -I/home/aik/p/kernel/drivers/vfio/pci and
--Idrivers/vfio/pci):
-
-  /opt/cross/gcc-powerpc64le-linux-8.2.1-nolibc/bin/powerpc64le-linux-gcc
- -Wp,-MD,drivers/vfio/pci/.vfio_pci_nvlink2.o.d
- -nostdinc
- -isystem
-/opt/cross/gcc-powerpc64le-linux-8.2.1-nolibc/bin/../lib/gcc/powerpc64le-linux/8.2.1/include
- -I/home/aik/p/kernel/arch/powerpc/include
- -I./arch/powerpc/include/generated
- -I/home/aik/p/kernel/include
- -I./include
- -I/home/aik/p/kernel/arch/powerpc/include/uapi
- -I./arch/powerpc/include/generated/uapi
- -I/home/aik/p/kernel/include/uapi
- -I./include/generated/uapi
- -include /home/aik/p/kernel/include/linux/kconfig.h
- -include /home/aik/p/kernel/include/linux/compiler_types.h
- -I/home/aik/p/kernel/drivers/vfio/pci
- -Idrivers/vfio/pci
- -D__KERNEL__
-...
-
-
-This is where it happens:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/scripts/Makefile.lib#n143
-
-
-I'd rather prefer to fix this in scripts/Makefile.lib#n143 than doing
--I$(src) but this is what everybody does already and therefore I guess
-"[PATCH] vfio_pci: Add local source directory as include" from
-https://patchwork.kernel.org/patch/10748803/ is correct.
-
-
-> 
-> 
-> 
->>>>
->>>> Also, would it be possible to switch this option from def_bool to
->>>> bool? I can't turn it off directly when it's def_bool.
->>>
->>> Why? Honestly I'd rather fix the compile error.
->>>
->>>
->>
->> It's not just about this error, there may be other situations where
->> it would be good to have this turned off.
-> 
-> Oh well I think I misunderstood what "def_bool" actually does (it does
-> not make much sense without "if" conditions). I'll post a patch.
-
-I've had a quick discussion here, and the point is that the distros are
-going to enable this anyway and it is quite hard to think of a scenario
-when we want VFIO_PCI and POWERNV but not this NVLINK2 support. What
-scenario do you have in mind?
-
-
 
 -- 
 Alexey
