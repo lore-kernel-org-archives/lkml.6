@@ -2,258 +2,209 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1CF7C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:03:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D413C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:03:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8EE4E2089F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:03:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D6EF2089F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:03:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546866194;
+	bh=7T/Y8D3pJnjWAraxEMp8lW05Nhm2JOw20yO+uMSSe10=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=S3VuO7QBdEW2dSlfED1xCg6JphVVbxTbeia9GOVpGoDg9CB7ZEqCpvlG4XY1Nza77
+	 PgvdwJ/DHZt4TD84wej6C3cn4JuqLEE1uErt/EpyzVjNavmTh9pqmIKP+cB2Ruu+Tl
+	 LV77t3CJFwY7xQuo4FuxvZowKwg1nmQQmjOmqpWM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730953AbfAGNDI (ORCPT
+        id S1730270AbfAGNDN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:03:08 -0500
-Received: from bastet.se.axis.com ([195.60.68.11]:37102 "EHLO
-        bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730918AbfAGNDE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:03:04 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by bastet.se.axis.com (Postfix) with ESMTP id 8F9B21844B;
-        Mon,  7 Jan 2019 14:03:01 +0100 (CET)
-X-Axis-User: NO
-X-Axis-NonUser: YES
-X-Virus-Scanned: Debian amavisd-new at bastet.se.axis.com
-Received: from bastet.se.axis.com ([IPv6:::ffff:127.0.0.1])
-        by localhost (bastet.se.axis.com [::ffff:127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id RbzXBgy2OCTx; Mon,  7 Jan 2019 14:03:00 +0100 (CET)
-Received: from boulder02.se.axis.com (boulder02.se.axis.com [10.0.8.16])
-        by bastet.se.axis.com (Postfix) with ESMTPS id 2C43C18351;
-        Mon,  7 Jan 2019 14:03:00 +0100 (CET)
-Received: from boulder02.se.axis.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 145381A065;
-        Mon,  7 Jan 2019 14:03:00 +0100 (CET)
-Received: from boulder02.se.axis.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 07D8E1A064;
-        Mon,  7 Jan 2019 14:03:00 +0100 (CET)
-Received: from thoth.se.axis.com (unknown [10.0.2.173])
-        by boulder02.se.axis.com (Postfix) with ESMTP;
-        Mon,  7 Jan 2019 14:02:59 +0100 (CET)
-Received: from lnxartpec.se.axis.com (lnxartpec.se.axis.com [10.88.4.9])
-        by thoth.se.axis.com (Postfix) with ESMTP id EF72B1C75;
-        Mon,  7 Jan 2019 14:02:59 +0100 (CET)
-Received: by lnxartpec.se.axis.com (Postfix, from userid 10564)
-        id EB0458017A; Mon,  7 Jan 2019 14:02:59 +0100 (CET)
-From:   Vincent Whitchurch <vincent.whitchurch@axis.com>
-To:     akpm@linux-foundation.org
-Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        mcgrof@kernel.org, keescook@chromium.org, corbet@lwn.net,
-        linux-doc@vger.kernel.org, Vincent Whitchurch <rabinv@axis.com>
-Subject: [PATCH] drop_caches: Allow unmapping pages
-Date:   Mon,  7 Jan 2019 14:02:39 +0100
-Message-Id: <20190107130239.3417-1-vincent.whitchurch@axis.com>
-X-Mailer: git-send-email 2.20.0
+        Mon, 7 Jan 2019 08:03:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50640 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730936AbfAGNDJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:03:09 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5F1A22183E;
+        Mon,  7 Jan 2019 13:03:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1546866188;
+        bh=7T/Y8D3pJnjWAraxEMp8lW05Nhm2JOw20yO+uMSSe10=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=c0mRCsVKm1v1cllpXnjjv52GiP6doaKnHJ1Y9NSy+6nk8W+AN7HR9Qo8K00j1H9pN
+         KvmkG2pgH3Dd7NtkWP05eP3McA8lDTJ1CYR2+ohSNsLlCX5vzt7PT/gqOCBBossdLK
+         5dGB2eM2sf4w+O6XpTrSOHY3eo2mjeUgUbZY7+ys=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.14 074/101] crypto: testmgr - add AES-CFB tests
+Date:   Mon,  7 Jan 2019 13:33:02 +0100
+Message-Id: <20190107105337.027200704@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190107105330.372621917@linuxfoundation.org>
+References: <20190107105330.372621917@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-drop_caches does not drop pages which are currently mapped.  Add an
-option to try to unmap and drop even these pages.  This provides a
-simple way to obtain a rough estimate of how many file pages are used in
-a particular use case: drop everything and check how much gets read
-back.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
- # cat /proc/meminfo | grep file
- Active(file):      16608 kB
- Inactive(file):    23424 kB
- # echo 3 > /proc/sys/vm/drop_caches && cat /proc/meminfo | grep file
- Active(file):      10624 kB
- Inactive(file):    15060 kB
- # echo 11 > /proc/sys/vm/drop_caches && cat /proc/meminfo | grep file
- Active(file):        240 kB
- Inactive(file):     2344 kB
+------------------
 
-Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
+From: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+
+commit 7da66670775d201f633577f5b15a4bbeebaaa2b0 upstream.
+
+Add AES128/192/256-CFB testvectors from NIST SP800-38A.
+
+Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- Documentation/sysctl/vm.txt |  4 ++++
- fs/drop_caches.c            |  3 ++-
- include/linux/fs.h          | 10 ++++++++--
- kernel/sysctl.c             |  4 ++--
- mm/truncate.c               | 39 ++++++++++++++++++++++++-------------
- 5 files changed, 41 insertions(+), 19 deletions(-)
+ crypto/tcrypt.c  |    5 +++
+ crypto/testmgr.c |    7 +++++
+ crypto/testmgr.h |   76 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 88 insertions(+)
 
-diff --git a/Documentation/sysctl/vm.txt b/Documentation/sysctl/vm.txt
-index 187ce4f599a2..6ea06c2c973b 100644
---- a/Documentation/sysctl/vm.txt
-+++ b/Documentation/sysctl/vm.txt
-@@ -222,6 +222,10 @@ To increase the number of objects freed by this operation, the user may run
- number of dirty objects on the system and create more candidates to be
- dropped.
+--- a/crypto/tcrypt.c
++++ b/crypto/tcrypt.c
+@@ -1099,6 +1099,7 @@ static int do_test(const char *alg, u32
+ 		ret += tcrypt_test("xts(aes)");
+ 		ret += tcrypt_test("ctr(aes)");
+ 		ret += tcrypt_test("rfc3686(ctr(aes))");
++		ret += tcrypt_test("cfb(aes)");
+ 		break;
  
-+By default, pages which are currently mapped are not dropped from the
-+pagecache.  If you want to unmap and drop these pages too, echo 9 or 11 instead
-+of 1 or 3 respectively (set bit 4).
-+
- This file is not a means to control the growth of the various kernel caches
- (inodes, dentries, pagecache, etc...)  These objects are automatically
- reclaimed by the kernel when memory is needed elsewhere on the system.
-diff --git a/fs/drop_caches.c b/fs/drop_caches.c
-index 82377017130f..9faaa1e3a672 100644
---- a/fs/drop_caches.c
-+++ b/fs/drop_caches.c
-@@ -17,6 +17,7 @@ int sysctl_drop_caches;
- static void drop_pagecache_sb(struct super_block *sb, void *unused)
- {
- 	struct inode *inode, *toput_inode = NULL;
-+	bool unmap = sysctl_drop_caches & 8;
+ 	case 11:
+@@ -1422,6 +1423,10 @@ static int do_test(const char *alg, u32
+ 				speed_template_16_24_32);
+ 		test_cipher_speed("ctr(aes)", DECRYPT, sec, NULL, 0,
+ 				speed_template_16_24_32);
++		test_cipher_speed("cfb(aes)", ENCRYPT, sec, NULL, 0,
++				speed_template_16_24_32);
++		test_cipher_speed("cfb(aes)", DECRYPT, sec, NULL, 0,
++				speed_template_16_24_32);
+ 		break;
  
- 	spin_lock(&sb->s_inode_list_lock);
- 	list_for_each_entry(inode, &sb->s_inodes, i_sb_list) {
-@@ -30,7 +31,7 @@ static void drop_pagecache_sb(struct super_block *sb, void *unused)
- 		spin_unlock(&inode->i_lock);
- 		spin_unlock(&sb->s_inode_list_lock);
- 
--		invalidate_mapping_pages(inode->i_mapping, 0, -1);
-+		__invalidate_mapping_pages(inode->i_mapping, 0, -1, unmap);
- 		iput(toput_inode);
- 		toput_inode = inode;
- 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 811c77743dad..503e176654ce 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2675,8 +2675,14 @@ extern int check_disk_change(struct block_device *);
- extern int __invalidate_device(struct block_device *, bool);
- extern int invalidate_partition(struct gendisk *, int);
- #endif
--unsigned long invalidate_mapping_pages(struct address_space *mapping,
--					pgoff_t start, pgoff_t end);
-+unsigned long __invalidate_mapping_pages(struct address_space *mapping,
-+					pgoff_t start, pgoff_t end, bool unmap);
-+
-+static inline unsigned long invalidate_mapping_pages(struct address_space *mapping,
-+						     pgoff_t start, pgoff_t end)
-+{
-+	return __invalidate_mapping_pages(mapping, start, end, false);
-+}
- 
- static inline void invalidate_remote_inode(struct inode *inode)
- {
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index ba4d9e85feb8..f12c2a8d84fb 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -125,7 +125,7 @@ static int __maybe_unused neg_one = -1;
- static int zero;
- static int __maybe_unused one = 1;
- static int __maybe_unused two = 2;
--static int __maybe_unused four = 4;
-+static int __maybe_unused fifteen = 15;
- static unsigned long one_ul = 1;
- static int one_hundred = 100;
- static int one_thousand = 1000;
-@@ -1431,7 +1431,7 @@ static struct ctl_table vm_table[] = {
- 		.mode		= 0644,
- 		.proc_handler	= drop_caches_sysctl_handler,
- 		.extra1		= &one,
--		.extra2		= &four,
-+		.extra2		= &fifteen,
- 	},
- #ifdef CONFIG_COMPACTION
- 	{
-diff --git a/mm/truncate.c b/mm/truncate.c
-index 798e7ccfb030..613b02e02146 100644
---- a/mm/truncate.c
-+++ b/mm/truncate.c
-@@ -245,6 +245,22 @@ int generic_error_remove_page(struct address_space *mapping, struct page *page)
- }
- EXPORT_SYMBOL(generic_error_remove_page);
- 
-+static int __invalidate_inode_page(struct page *page, bool unmap)
-+{
-+	struct address_space *mapping = page_mapping(page);
-+	if (!mapping)
-+		return 0;
-+	if (PageDirty(page) || PageWriteback(page))
-+		return 0;
-+	if (page_mapped(page)) {
-+		if (!unmap)
-+			return 0;
-+		if (!try_to_unmap(page, TTU_IGNORE_ACCESS))
-+			return 0;
-+	}
-+	return invalidate_complete_page(mapping, page);
-+}
-+
- /*
-  * Safely invalidate one page from its pagecache mapping.
-  * It only drops clean, unused pages. The page must be locked.
-@@ -253,16 +269,10 @@ EXPORT_SYMBOL(generic_error_remove_page);
-  */
- int invalidate_inode_page(struct page *page)
- {
--	struct address_space *mapping = page_mapping(page);
--	if (!mapping)
--		return 0;
--	if (PageDirty(page) || PageWriteback(page))
--		return 0;
--	if (page_mapped(page))
--		return 0;
--	return invalidate_complete_page(mapping, page);
-+	return __invalidate_inode_page(page, false);
- }
- 
-+
- /**
-  * truncate_inode_pages_range - truncate range of pages specified by start & end byte offsets
-  * @mapping: mapping to truncate
-@@ -532,16 +542,17 @@ EXPORT_SYMBOL(truncate_inode_pages_final);
-  * @mapping: the address_space which holds the pages to invalidate
-  * @start: the offset 'from' which to invalidate
-  * @end: the offset 'to' which to invalidate (inclusive)
-+ * @unmap: try to unmap pages
-  *
-  * This function only removes the unlocked pages, if you want to
-  * remove all the pages of one inode, you must call truncate_inode_pages.
-  *
-  * invalidate_mapping_pages() will not block on IO activity. It will not
-- * invalidate pages which are dirty, locked, under writeback or mapped into
-- * pagetables.
-+ * invalidate pages which are dirty, locked, under writeback or, if unmap is
-+ * false, mapped into pagetables.
-  */
--unsigned long invalidate_mapping_pages(struct address_space *mapping,
--		pgoff_t start, pgoff_t end)
-+unsigned long __invalidate_mapping_pages(struct address_space *mapping,
-+		pgoff_t start, pgoff_t end, bool unmap)
- {
- 	pgoff_t indices[PAGEVEC_SIZE];
- 	struct pagevec pvec;
-@@ -591,7 +602,7 @@ unsigned long invalidate_mapping_pages(struct address_space *mapping,
- 				}
+ 	case 201:
+--- a/crypto/testmgr.c
++++ b/crypto/testmgr.c
+@@ -2626,6 +2626,13 @@ static const struct alg_test_desc alg_te
  			}
+ 		}
+ 	}, {
++		.alg = "cfb(aes)",
++		.test = alg_test_skcipher,
++		.fips_allowed = 1,
++		.suite = {
++			.cipher = __VECS(aes_cfb_tv_template)
++		},
++	}, {
+ 		.alg = "chacha20",
+ 		.test = alg_test_skcipher,
+ 		.suite = {
+--- a/crypto/testmgr.h
++++ b/crypto/testmgr.h
+@@ -16029,6 +16029,82 @@ static const struct cipher_testvec aes_c
+ 	},
+ };
  
--			ret = invalidate_inode_page(page);
-+			ret = __invalidate_inode_page(page, unmap);
- 			unlock_page(page);
- 			/*
- 			 * Invalidation is a hint that the page is no longer
-@@ -608,7 +619,7 @@ unsigned long invalidate_mapping_pages(struct address_space *mapping,
- 	}
- 	return count;
- }
--EXPORT_SYMBOL(invalidate_mapping_pages);
-+EXPORT_SYMBOL(__invalidate_mapping_pages);
- 
- /*
-  * This is like invalidate_complete_page(), except it ignores the page's
--- 
-2.20.0
++static const struct cipher_testvec aes_cfb_tv_template[] = {
++	{ /* From NIST SP800-38A */
++		.key	= "\x2b\x7e\x15\x16\x28\xae\xd2\xa6"
++			  "\xab\xf7\x15\x88\x09\xcf\x4f\x3c",
++		.klen	= 16,
++		.iv	= "\x00\x01\x02\x03\x04\x05\x06\x07"
++			  "\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f",
++		.ptext	= "\x6b\xc1\xbe\xe2\x2e\x40\x9f\x96"
++			  "\xe9\x3d\x7e\x11\x73\x93\x17\x2a"
++			  "\xae\x2d\x8a\x57\x1e\x03\xac\x9c"
++			  "\x9e\xb7\x6f\xac\x45\xaf\x8e\x51"
++			  "\x30\xc8\x1c\x46\xa3\x5c\xe4\x11"
++			  "\xe5\xfb\xc1\x19\x1a\x0a\x52\xef"
++			  "\xf6\x9f\x24\x45\xdf\x4f\x9b\x17"
++			  "\xad\x2b\x41\x7b\xe6\x6c\x37\x10",
++		.ctext	= "\x3b\x3f\xd9\x2e\xb7\x2d\xad\x20"
++			  "\x33\x34\x49\xf8\xe8\x3c\xfb\x4a"
++			  "\xc8\xa6\x45\x37\xa0\xb3\xa9\x3f"
++			  "\xcd\xe3\xcd\xad\x9f\x1c\xe5\x8b"
++			  "\x26\x75\x1f\x67\xa3\xcb\xb1\x40"
++			  "\xb1\x80\x8c\xf1\x87\xa4\xf4\xdf"
++			  "\xc0\x4b\x05\x35\x7c\x5d\x1c\x0e"
++			  "\xea\xc4\xc6\x6f\x9f\xf7\xf2\xe6",
++		.len	= 64,
++	}, {
++		.key	= "\x8e\x73\xb0\xf7\xda\x0e\x64\x52"
++			  "\xc8\x10\xf3\x2b\x80\x90\x79\xe5"
++			  "\x62\xf8\xea\xd2\x52\x2c\x6b\x7b",
++		.klen	= 24,
++		.iv	= "\x00\x01\x02\x03\x04\x05\x06\x07"
++			  "\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f",
++		.ptext	= "\x6b\xc1\xbe\xe2\x2e\x40\x9f\x96"
++			  "\xe9\x3d\x7e\x11\x73\x93\x17\x2a"
++			  "\xae\x2d\x8a\x57\x1e\x03\xac\x9c"
++			  "\x9e\xb7\x6f\xac\x45\xaf\x8e\x51"
++			  "\x30\xc8\x1c\x46\xa3\x5c\xe4\x11"
++			  "\xe5\xfb\xc1\x19\x1a\x0a\x52\xef"
++			  "\xf6\x9f\x24\x45\xdf\x4f\x9b\x17"
++			  "\xad\x2b\x41\x7b\xe6\x6c\x37\x10",
++		.ctext	= "\xcd\xc8\x0d\x6f\xdd\xf1\x8c\xab"
++			  "\x34\xc2\x59\x09\xc9\x9a\x41\x74"
++			  "\x67\xce\x7f\x7f\x81\x17\x36\x21"
++			  "\x96\x1a\x2b\x70\x17\x1d\x3d\x7a"
++			  "\x2e\x1e\x8a\x1d\xd5\x9b\x88\xb1"
++			  "\xc8\xe6\x0f\xed\x1e\xfa\xc4\xc9"
++			  "\xc0\x5f\x9f\x9c\xa9\x83\x4f\xa0"
++			  "\x42\xae\x8f\xba\x58\x4b\x09\xff",
++		.len	= 64,
++	}, {
++		.key	= "\x60\x3d\xeb\x10\x15\xca\x71\xbe"
++			  "\x2b\x73\xae\xf0\x85\x7d\x77\x81"
++			  "\x1f\x35\x2c\x07\x3b\x61\x08\xd7"
++			  "\x2d\x98\x10\xa3\x09\x14\xdf\xf4",
++		.klen	= 32,
++		.iv	= "\x00\x01\x02\x03\x04\x05\x06\x07"
++			  "\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f",
++		.ptext	= "\x6b\xc1\xbe\xe2\x2e\x40\x9f\x96"
++			  "\xe9\x3d\x7e\x11\x73\x93\x17\x2a"
++			  "\xae\x2d\x8a\x57\x1e\x03\xac\x9c"
++			  "\x9e\xb7\x6f\xac\x45\xaf\x8e\x51"
++			  "\x30\xc8\x1c\x46\xa3\x5c\xe4\x11"
++			  "\xe5\xfb\xc1\x19\x1a\x0a\x52\xef"
++			  "\xf6\x9f\x24\x45\xdf\x4f\x9b\x17"
++			  "\xad\x2b\x41\x7b\xe6\x6c\x37\x10",
++		.ctext	= "\xdc\x7e\x84\xbf\xda\x79\x16\x4b"
++			  "\x7e\xcd\x84\x86\x98\x5d\x38\x60"
++			  "\x39\xff\xed\x14\x3b\x28\xb1\xc8"
++			  "\x32\x11\x3c\x63\x31\xe5\x40\x7b"
++			  "\xdf\x10\x13\x24\x15\xe5\x4b\x92"
++			  "\xa1\x3e\xd0\xa8\x26\x7a\xe2\xf9"
++			  "\x75\xa3\x85\x74\x1a\xb9\xce\xf8"
++			  "\x20\x31\x62\x3d\x55\xb1\xe4\x71",
++		.len	= 64,
++	},
++};
++
+ static const struct aead_testvec hmac_md5_ecb_cipher_null_enc_tv_template[] = {
+ 	{ /* Input data from RFC 2410 Case 1 */
+ #ifdef __LITTLE_ENDIAN
+
 
