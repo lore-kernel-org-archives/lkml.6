@@ -2,60 +2,129 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69A4DC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 22:56:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B573C43444
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 22:57:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3407F218AE
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 22:56:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 600202087F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 22:57:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727142AbfAGW4S (ORCPT
+        id S1727160AbfAGW5W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 17:56:18 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60180 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726742AbfAGW4Q (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 17:56:16 -0500
-Received: from localhost.localdomain (c-24-6-170-16.hsd1.ca.comcast.net [24.6.170.16])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7865CA67;
-        Mon,  7 Jan 2019 22:56:15 +0000 (UTC)
-Date:   Mon, 7 Jan 2019 14:56:14 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Olof Johansson <olof@lixom.net>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Huang Shijie <sjhuang@iluvatar.ai>,
-        Alexey Skidanov <alexey.skidanov@intel.com>
-Subject: Re: [PATCH] lib/genalloc.c: include vmalloc.h
-Message-Id: <20190107145614.2152eb5e59248d17994759ea@linux-foundation.org>
-In-Reply-To: <CAHk-=wiwLK8uPuzh3OABUHHi9D4PO5+fPaizRnviGno5oGevbA@mail.gmail.com>
-References: <20190105212118.61022-1-olof@lixom.net>
-        <CAHk-=wiwLK8uPuzh3OABUHHi9D4PO5+fPaizRnviGno5oGevbA@mail.gmail.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Mon, 7 Jan 2019 17:57:22 -0500
+Received: from mga14.intel.com ([192.55.52.115]:56705 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726668AbfAGW5W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 17:57:22 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jan 2019 14:57:21 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,451,1539673200"; 
+   d="scan'208";a="114916979"
+Received: from jprestwo.jf.intel.com ([10.54.74.49])
+  by fmsmga008.fm.intel.com with ESMTP; 07 Jan 2019 14:57:21 -0800
+Message-ID: <e0edb0e102ad2ba386a47e97b4e9930fdce71728.camel@linux.intel.com>
+Subject: Re: [PATCH] PCI: quirks: add vendor ID for AR9462 card
+From:   James Prestwood <james.prestwood@linux.intel.com>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     linux-pci@vger.kernel.org,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Bharat Bhushan <bharat.bhushan@nxp.com>,
+        linux-kernel@vger.kernel.org
+Date:   Mon, 07 Jan 2019 15:02:11 -0800
+In-Reply-To: <20190107220811.GA165042@google.com>
+References: <20190107213248.3034-1-james.prestwood@linux.intel.com>
+         <20190107220811.GA165042@google.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 5 Jan 2019 13:35:33 -0800 Linus Torvalds <torvalds@linux-foundation.org> wrote:
+On Mon, 2019-01-07 at 16:08 -0600, Bjorn Helgaas wrote:
+> [+cc Alex, Bharat, LKML]
+> 
+> Hi James,
+> 
+> Thanks for finding this issue and for the patch.
+> 
+> Is there any chance you have a PCIe analyzer and could investigate
+> what's going on at that level?  The bus reset should be fairly
+> similar
+> to what happens on a cold boot, and obviously *that* works, so I
+> wonder if we can figure out what the difference here is.
 
-> On Sat, Jan 5, 2019 at 1:21 PM Olof Johansson <olof@lixom.net> wrote:
-> >
-> > Fixes build break on most ARM/ARM64 defconfigs:
-> 
-> Interesting.
-> 
-> Andrew, I thought ARM was one of the platforms that your tree compiled
-> against? Or was some other change just hiding this?
-> 
+I don't have a PCIe analyzer (unless thats just a piece of software I
+could download). Maybe I should have included a cover letter about what
+exactly is happening in my testing:
 
-I've become a bit lazy with the cross-compiling because linux-next's
-build coverage is pretty broad.  But Stephen's holiday interrupted
-things and this one fell in that window.
+I am using PCI passthough with various wireless hardware, all of which
+worked fine except this Ath9k card. If I tried to pass through this
+card my host machine would completely lock up/freeze when starting the
+VM, and I would have to hard reboot. I asked on the linux-wireless
+mailing list (since it seemed to be specific to the Ath9k card) and it
+was suggested to add that line to quirks.c, which did resolve the
+issue.
+
+Beyond that, its really all I know. I am not at all knowledgeable about
+how PCI actually works :) (or really what this patch is even doing).
+Since it was so simple and fixed my issue I figured I should try and
+upstream it.
+
+I wish I could be of more help hardware wise. If there is anything
+software wise I could run to get more info I can do that.
+
+Thanks,
+James
+> 
+> If this is actually broken somehow in the hardware, can you dig up a
+> hardware erratum and include a URL here?
+> 
+> If there's any chance we could fix or work around this in the kernel,
+> I'd rather do that than extend this quirk to more devices.
+> 
+> FWIW, here's a similar report, which hasn't been resolved yet:
+> 
+https://lore.kernel.org/linux-pci/20181127083454.26560-1-Bharat.Bhushan@nxp.com
+> 
+> On Mon, Jan 07, 2019 at 01:32:48PM -0800, James Prestwood wrote:
+> > This card has similar issues with bus reset as the others present
+> > in
+> > this list.
+> > 
+> > Signed-off-by: James Prestwood <james.prestwood@linux.intel.com>
+> > ---
+> >  drivers/pci/quirks.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+> > index ef7143a274e0..d9d4a95b0309 100644
+> > --- a/drivers/pci/quirks.c
+> > +++ b/drivers/pci/quirks.c
+> > @@ -3379,6 +3379,7 @@
+> > DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_ATHEROS, 0x0030,
+> > quirk_no_bus_reset);
+> >  DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_ATHEROS, 0x0032,
+> > quirk_no_bus_reset);
+> >  DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_ATHEROS, 0x003c,
+> > quirk_no_bus_reset);
+> >  DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_ATHEROS, 0x0033,
+> > quirk_no_bus_reset);
+> > +DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_ATHEROS, 0x0034,
+> > quirk_no_bus_reset);
+> >  
+> >  /*
+> >   * Root port on some Cavium CN8xxx chips do not successfully
+> > complete a bus
+> > -- 
+> > 2.17.1
+> > 
+
