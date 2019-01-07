@@ -7,48 +7,46 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A07FDC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:38:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFA95C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:38:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 723D021736
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:38:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8967D20859
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:38:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546864714;
-	bh=A+6gH5gzc9Jw/TP++eq0LZgGr2I642YoFwoaZGJAiiQ=;
+	s=default; t=1546864719;
+	bh=eLi5Yo4F7WDxhJRa/rEtOKhWHjT4vRQZ9I4PGds64kw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=0UGtcWMwjzmTfCOZOSW7BQMXueep4SSbW5uPe4+p8GrpsEBKKaYbvLSHFsjTEqECe
-	 c5e2U5JZg3lAVeD2pNhwzljdlFvwbptWG+GqiULDnQ0MLsElfMA233Hi2hlnjoH/dn
-	 /heZj3FyMLjFHypHAmWL0awSviyubH+7KDEgtMQE=
+	b=2NCcDjNDIo70DqyI+cFb4ql5NSkNFKGMigsLOr6jDZjiny2GoWrWv46JQBreDG2YC
+	 qsUU/J4y7GSg1ly7WNRbK3bLvw4uQ2hxk/aO6t8RtEpuXdZbEL011HhceM3YYdl5c2
+	 IzY1WxY1AAGxSJbMe92Ywkqh7K5YX1SGMbGrr7z8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727948AbfAGMid (ORCPT
+        id S1727964AbfAGMii (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:38:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53632 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:38:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53752 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727460AbfAGMib (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:38:31 -0500
+        id S1727951AbfAGMih (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:38:37 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A8FC320859;
-        Mon,  7 Jan 2019 12:38:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EF78C21736;
+        Mon,  7 Jan 2019 12:38:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546864710;
-        bh=A+6gH5gzc9Jw/TP++eq0LZgGr2I642YoFwoaZGJAiiQ=;
+        s=default; t=1546864716;
+        bh=eLi5Yo4F7WDxhJRa/rEtOKhWHjT4vRQZ9I4PGds64kw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZR4CeeAjLXgpI4yfnIX/7Bl6uvulOwDoAW3NviTjo8+ewyCt/mNYYNGPpWaDzd1NH
-         RlWI6jUaMo6X2Irg1iVFKYkf4Uq+sOGMpYg+dmjJCZQMI5heo9j9km+/AJCWOCjNyI
-         Iv2ai6QfN5O5yPyPfih/S+gjoabE79piQZJ05keM=
+        b=WICYV8NmLZXxBlflfBUzFLo5pX3ciMBLqLm+RfdeG1KYmyMVYcnphLVhhnWX+XvSv
+         xnBp+/Xm+zMNGcFyF1HlsJ/rUDQ5fnmooKhsECYxHRrKnIJaT68quhc4SLINU4D/1p
+         RPcQxgbpTGnI5rEHCwFPfKUoCWo76p6jhJUDSH70=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Greg Kurz <groug@kaod.org>,
-        Frederic Barrat <fbarrat@linux.ibm.com>,
-        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.20 071/145] ocxl: Fix endiannes bug in read_afu_name()
-Date:   Mon,  7 Jan 2019 13:31:48 +0100
-Message-Id: <20190107104446.543638829@linuxfoundation.org>
+        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
+        stable@kernel.org
+Subject: [PATCH 4.20 072/145] ext4: add ext4_sb_bread() to disambiguate ENOMEM cases
+Date:   Mon,  7 Jan 2019 13:31:49 +0100
+Message-Id: <20190107104446.676020917@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104437.308206189@linuxfoundation.org>
 References: <20190107104437.308206189@linuxfoundation.org>
@@ -67,45 +65,501 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Greg Kurz <groug@kaod.org>
+From: Theodore Ts'o <tytso@mit.edu>
 
-commit 2f07229f02d4c55affccd11a61af4fd4b94dc436 upstream.
+commit fb265c9cb49e2074ddcdd4de99728aefdd3b3592 upstream.
 
-The AFU Descriptor Template in the PCI config space has a Name Space
-field which is a 24 Byte ASCII character string of descriptive name
-space for the AFU. The OCXL driver read the string four characters at
-a time with pci_read_config_dword().
+Today, when sb_bread() returns NULL, this can either be because of an
+I/O error or because the system failed to allocate the buffer.  Since
+it's an old interface, changing would require changing many call
+sites.
 
-This optimization is valid on a little-endian system since this is PCI,
-but a big-endian system ends up with each subset of four characters in
-reverse order.
+So instead we create our own ext4_sb_bread(), which also allows us to
+set the REQ_META flag.
 
-This could be fixed by switching to read characters one by one. Another
-option is to swap the bytes if we're big-endian.
+Also fixed a problem in the xattr code where a NULL return in a
+function could also mean that the xattr was not found, which could
+lead to the wrong error getting returned to userspace.
 
-Go for the latter with le32_to_cpu().
-
-Cc: stable@vger.kernel.org      # v4.16
-Signed-off-by: Greg Kurz <groug@kaod.org>
-Acked-by: Frederic Barrat <fbarrat@linux.ibm.com>
-Acked-by: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Fixes: ac27a0ec112a ("ext4: initial copy of files from ext3")
+Cc: stable@kernel.org # 2.6.19
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/misc/ocxl/config.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/ext4/ext4.h    |    2 +
+ fs/ext4/migrate.c |   36 ++++++++++++-------------
+ fs/ext4/resize.c  |   72 +++++++++++++++++++++++++--------------------------
+ fs/ext4/super.c   |   23 ++++++++++++++++
+ fs/ext4/xattr.c   |   76 +++++++++++++++++++++++++-----------------------------
+ 5 files changed, 115 insertions(+), 94 deletions(-)
 
---- a/drivers/misc/ocxl/config.c
-+++ b/drivers/misc/ocxl/config.c
-@@ -318,7 +318,7 @@ static int read_afu_name(struct pci_dev
- 		if (rc)
- 			return rc;
- 		ptr = (u32 *) &afu->name[i];
--		*ptr = val;
-+		*ptr = le32_to_cpu((__force __le32) val);
+--- a/fs/ext4/ext4.h
++++ b/fs/ext4/ext4.h
+@@ -2538,6 +2538,8 @@ extern int ext4_group_extend(struct supe
+ extern int ext4_resize_fs(struct super_block *sb, ext4_fsblk_t n_blocks_count);
+ 
+ /* super.c */
++extern struct buffer_head *ext4_sb_bread(struct super_block *sb,
++					 sector_t block, int op_flags);
+ extern int ext4_seq_options_show(struct seq_file *seq, void *offset);
+ extern int ext4_calculate_overhead(struct super_block *sb);
+ extern void ext4_superblock_csum_set(struct super_block *sb);
+--- a/fs/ext4/migrate.c
++++ b/fs/ext4/migrate.c
+@@ -116,9 +116,9 @@ static int update_ind_extent_range(handl
+ 	int i, retval = 0;
+ 	unsigned long max_entries = inode->i_sb->s_blocksize >> 2;
+ 
+-	bh = sb_bread(inode->i_sb, pblock);
+-	if (!bh)
+-		return -EIO;
++	bh = ext4_sb_bread(inode->i_sb, pblock, 0);
++	if (IS_ERR(bh))
++		return PTR_ERR(bh);
+ 
+ 	i_data = (__le32 *)bh->b_data;
+ 	for (i = 0; i < max_entries; i++) {
+@@ -145,9 +145,9 @@ static int update_dind_extent_range(hand
+ 	int i, retval = 0;
+ 	unsigned long max_entries = inode->i_sb->s_blocksize >> 2;
+ 
+-	bh = sb_bread(inode->i_sb, pblock);
+-	if (!bh)
+-		return -EIO;
++	bh = ext4_sb_bread(inode->i_sb, pblock, 0);
++	if (IS_ERR(bh))
++		return PTR_ERR(bh);
+ 
+ 	i_data = (__le32 *)bh->b_data;
+ 	for (i = 0; i < max_entries; i++) {
+@@ -175,9 +175,9 @@ static int update_tind_extent_range(hand
+ 	int i, retval = 0;
+ 	unsigned long max_entries = inode->i_sb->s_blocksize >> 2;
+ 
+-	bh = sb_bread(inode->i_sb, pblock);
+-	if (!bh)
+-		return -EIO;
++	bh = ext4_sb_bread(inode->i_sb, pblock, 0);
++	if (IS_ERR(bh))
++		return PTR_ERR(bh);
+ 
+ 	i_data = (__le32 *)bh->b_data;
+ 	for (i = 0; i < max_entries; i++) {
+@@ -224,9 +224,9 @@ static int free_dind_blocks(handle_t *ha
+ 	struct buffer_head *bh;
+ 	unsigned long max_entries = inode->i_sb->s_blocksize >> 2;
+ 
+-	bh = sb_bread(inode->i_sb, le32_to_cpu(i_data));
+-	if (!bh)
+-		return -EIO;
++	bh = ext4_sb_bread(inode->i_sb, le32_to_cpu(i_data), 0);
++	if (IS_ERR(bh))
++		return PTR_ERR(bh);
+ 
+ 	tmp_idata = (__le32 *)bh->b_data;
+ 	for (i = 0; i < max_entries; i++) {
+@@ -254,9 +254,9 @@ static int free_tind_blocks(handle_t *ha
+ 	struct buffer_head *bh;
+ 	unsigned long max_entries = inode->i_sb->s_blocksize >> 2;
+ 
+-	bh = sb_bread(inode->i_sb, le32_to_cpu(i_data));
+-	if (!bh)
+-		return -EIO;
++	bh = ext4_sb_bread(inode->i_sb, le32_to_cpu(i_data), 0);
++	if (IS_ERR(bh))
++		return PTR_ERR(bh);
+ 
+ 	tmp_idata = (__le32 *)bh->b_data;
+ 	for (i = 0; i < max_entries; i++) {
+@@ -382,9 +382,9 @@ static int free_ext_idx(handle_t *handle
+ 	struct ext4_extent_header *eh;
+ 
+ 	block = ext4_idx_pblock(ix);
+-	bh = sb_bread(inode->i_sb, block);
+-	if (!bh)
+-		return -EIO;
++	bh = ext4_sb_bread(inode->i_sb, block, 0);
++	if (IS_ERR(bh))
++		return PTR_ERR(bh);
+ 
+ 	eh = (struct ext4_extent_header *)bh->b_data;
+ 	if (eh->eh_depth != 0) {
+--- a/fs/ext4/resize.c
++++ b/fs/ext4/resize.c
+@@ -127,10 +127,12 @@ static int verify_group_input(struct sup
+ 	else if (free_blocks_count < 0)
+ 		ext4_warning(sb, "Bad blocks count %u",
+ 			     input->blocks_count);
+-	else if (!(bh = sb_bread(sb, end - 1)))
++	else if (IS_ERR(bh = ext4_sb_bread(sb, end - 1, 0))) {
++		err = PTR_ERR(bh);
++		bh = NULL;
+ 		ext4_warning(sb, "Cannot read last block (%llu)",
+ 			     end - 1);
+-	else if (outside(input->block_bitmap, start, end))
++	} else if (outside(input->block_bitmap, start, end))
+ 		ext4_warning(sb, "Block bitmap not in group (block %llu)",
+ 			     (unsigned long long)input->block_bitmap);
+ 	else if (outside(input->inode_bitmap, start, end))
+@@ -781,11 +783,11 @@ static int add_new_gdb(handle_t *handle,
+ 	struct ext4_super_block *es = EXT4_SB(sb)->s_es;
+ 	unsigned long gdb_num = group / EXT4_DESC_PER_BLOCK(sb);
+ 	ext4_fsblk_t gdblock = EXT4_SB(sb)->s_sbh->b_blocknr + 1 + gdb_num;
+-	struct buffer_head **o_group_desc, **n_group_desc;
+-	struct buffer_head *dind;
+-	struct buffer_head *gdb_bh;
++	struct buffer_head **o_group_desc, **n_group_desc = NULL;
++	struct buffer_head *dind = NULL;
++	struct buffer_head *gdb_bh = NULL;
+ 	int gdbackups;
+-	struct ext4_iloc iloc;
++	struct ext4_iloc iloc = { .bh = NULL };
+ 	__le32 *data;
+ 	int err;
+ 
+@@ -794,21 +796,22 @@ static int add_new_gdb(handle_t *handle,
+ 		       "EXT4-fs: ext4_add_new_gdb: adding group block %lu\n",
+ 		       gdb_num);
+ 
+-	gdb_bh = sb_bread(sb, gdblock);
+-	if (!gdb_bh)
+-		return -EIO;
++	gdb_bh = ext4_sb_bread(sb, gdblock, 0);
++	if (IS_ERR(gdb_bh))
++		return PTR_ERR(gdb_bh);
+ 
+ 	gdbackups = verify_reserved_gdb(sb, group, gdb_bh);
+ 	if (gdbackups < 0) {
+ 		err = gdbackups;
+-		goto exit_bh;
++		goto errout;
  	}
- 	afu->name[OCXL_AFU_NAME_SZ - 1] = '\0'; /* play safe */
- 	return 0;
+ 
+ 	data = EXT4_I(inode)->i_data + EXT4_DIND_BLOCK;
+-	dind = sb_bread(sb, le32_to_cpu(*data));
+-	if (!dind) {
+-		err = -EIO;
+-		goto exit_bh;
++	dind = ext4_sb_bread(sb, le32_to_cpu(*data), 0);
++	if (IS_ERR(dind)) {
++		err = PTR_ERR(dind);
++		dind = NULL;
++		goto errout;
+ 	}
+ 
+ 	data = (__le32 *)dind->b_data;
+@@ -816,18 +819,18 @@ static int add_new_gdb(handle_t *handle,
+ 		ext4_warning(sb, "new group %u GDT block %llu not reserved",
+ 			     group, gdblock);
+ 		err = -EINVAL;
+-		goto exit_dind;
++		goto errout;
+ 	}
+ 
+ 	BUFFER_TRACE(EXT4_SB(sb)->s_sbh, "get_write_access");
+ 	err = ext4_journal_get_write_access(handle, EXT4_SB(sb)->s_sbh);
+ 	if (unlikely(err))
+-		goto exit_dind;
++		goto errout;
+ 
+ 	BUFFER_TRACE(gdb_bh, "get_write_access");
+ 	err = ext4_journal_get_write_access(handle, gdb_bh);
+ 	if (unlikely(err))
+-		goto exit_dind;
++		goto errout;
+ 
+ 	BUFFER_TRACE(dind, "get_write_access");
+ 	err = ext4_journal_get_write_access(handle, dind);
+@@ -837,7 +840,7 @@ static int add_new_gdb(handle_t *handle,
+ 	/* ext4_reserve_inode_write() gets a reference on the iloc */
+ 	err = ext4_reserve_inode_write(handle, inode, &iloc);
+ 	if (unlikely(err))
+-		goto exit_dind;
++		goto errout;
+ 
+ 	n_group_desc = ext4_kvmalloc((gdb_num + 1) *
+ 				     sizeof(struct buffer_head *),
+@@ -846,7 +849,7 @@ static int add_new_gdb(handle_t *handle,
+ 		err = -ENOMEM;
+ 		ext4_warning(sb, "not enough memory for %lu groups",
+ 			     gdb_num + 1);
+-		goto exit_inode;
++		goto errout;
+ 	}
+ 
+ 	/*
+@@ -862,7 +865,7 @@ static int add_new_gdb(handle_t *handle,
+ 	err = ext4_handle_dirty_metadata(handle, NULL, dind);
+ 	if (unlikely(err)) {
+ 		ext4_std_error(sb, err);
+-		goto exit_inode;
++		goto errout;
+ 	}
+ 	inode->i_blocks -= (gdbackups + 1) * sb->s_blocksize >>
+ 			   (9 - EXT4_SB(sb)->s_cluster_bits);
+@@ -871,8 +874,7 @@ static int add_new_gdb(handle_t *handle,
+ 	err = ext4_handle_dirty_metadata(handle, NULL, gdb_bh);
+ 	if (unlikely(err)) {
+ 		ext4_std_error(sb, err);
+-		iloc.bh = NULL;
+-		goto exit_inode;
++		goto errout;
+ 	}
+ 	brelse(dind);
+ 
+@@ -888,15 +890,11 @@ static int add_new_gdb(handle_t *handle,
+ 	err = ext4_handle_dirty_super(handle, sb);
+ 	if (err)
+ 		ext4_std_error(sb, err);
+-
+ 	return err;
+-
+-exit_inode:
++errout:
+ 	kvfree(n_group_desc);
+ 	brelse(iloc.bh);
+-exit_dind:
+ 	brelse(dind);
+-exit_bh:
+ 	brelse(gdb_bh);
+ 
+ 	ext4_debug("leaving with error %d\n", err);
+@@ -916,9 +914,9 @@ static int add_new_gdb_meta_bg(struct su
+ 
+ 	gdblock = ext4_meta_bg_first_block_no(sb, group) +
+ 		   ext4_bg_has_super(sb, group);
+-	gdb_bh = sb_bread(sb, gdblock);
+-	if (!gdb_bh)
+-		return -EIO;
++	gdb_bh = ext4_sb_bread(sb, gdblock, 0);
++	if (IS_ERR(gdb_bh))
++		return PTR_ERR(gdb_bh);
+ 	n_group_desc = ext4_kvmalloc((gdb_num + 1) *
+ 				     sizeof(struct buffer_head *),
+ 				     GFP_NOFS);
+@@ -975,9 +973,10 @@ static int reserve_backup_gdb(handle_t *
+ 		return -ENOMEM;
+ 
+ 	data = EXT4_I(inode)->i_data + EXT4_DIND_BLOCK;
+-	dind = sb_bread(sb, le32_to_cpu(*data));
+-	if (!dind) {
+-		err = -EIO;
++	dind = ext4_sb_bread(sb, le32_to_cpu(*data), 0);
++	if (IS_ERR(dind)) {
++		err = PTR_ERR(dind);
++		dind = NULL;
+ 		goto exit_free;
+ 	}
+ 
+@@ -996,9 +995,10 @@ static int reserve_backup_gdb(handle_t *
+ 			err = -EINVAL;
+ 			goto exit_bh;
+ 		}
+-		primary[res] = sb_bread(sb, blk);
+-		if (!primary[res]) {
+-			err = -EIO;
++		primary[res] = ext4_sb_bread(sb, blk, 0);
++		if (IS_ERR(primary[res])) {
++			err = PTR_ERR(primary[res]);
++			primary[res] = NULL;
+ 			goto exit_bh;
+ 		}
+ 		gdbackups = verify_reserved_gdb(sb, group, primary[res]);
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -140,6 +140,29 @@ MODULE_ALIAS_FS("ext3");
+ MODULE_ALIAS("ext3");
+ #define IS_EXT3_SB(sb) ((sb)->s_bdev->bd_holder == &ext3_fs_type)
+ 
++/*
++ * This works like sb_bread() except it uses ERR_PTR for error
++ * returns.  Currently with sb_bread it's impossible to distinguish
++ * between ENOMEM and EIO situations (since both result in a NULL
++ * return.
++ */
++struct buffer_head *
++ext4_sb_bread(struct super_block *sb, sector_t block, int op_flags)
++{
++	struct buffer_head *bh = sb_getblk(sb, block);
++
++	if (bh == NULL)
++		return ERR_PTR(-ENOMEM);
++	if (buffer_uptodate(bh))
++		return bh;
++	ll_rw_block(REQ_OP_READ, REQ_META | op_flags, 1, &bh);
++	wait_on_buffer(bh);
++	if (buffer_uptodate(bh))
++		return bh;
++	put_bh(bh);
++	return ERR_PTR(-EIO);
++}
++
+ static int ext4_verify_csum_type(struct super_block *sb,
+ 				 struct ext4_super_block *es)
+ {
+--- a/fs/ext4/xattr.c
++++ b/fs/ext4/xattr.c
+@@ -522,14 +522,13 @@ ext4_xattr_block_get(struct inode *inode
+ 	ea_idebug(inode, "name=%d.%s, buffer=%p, buffer_size=%ld",
+ 		  name_index, name, buffer, (long)buffer_size);
+ 
+-	error = -ENODATA;
+ 	if (!EXT4_I(inode)->i_file_acl)
+-		goto cleanup;
++		return -ENODATA;
+ 	ea_idebug(inode, "reading block %llu",
+ 		  (unsigned long long)EXT4_I(inode)->i_file_acl);
+-	bh = sb_bread(inode->i_sb, EXT4_I(inode)->i_file_acl);
+-	if (!bh)
+-		goto cleanup;
++	bh = ext4_sb_bread(inode->i_sb, EXT4_I(inode)->i_file_acl, REQ_PRIO);
++	if (IS_ERR(bh))
++		return PTR_ERR(bh);
+ 	ea_bdebug(bh, "b_count=%d, refcount=%d",
+ 		atomic_read(&(bh->b_count)), le32_to_cpu(BHDR(bh)->h_refcount));
+ 	error = ext4_xattr_check_block(inode, bh);
+@@ -696,26 +695,23 @@ ext4_xattr_block_list(struct dentry *den
+ 	ea_idebug(inode, "buffer=%p, buffer_size=%ld",
+ 		  buffer, (long)buffer_size);
+ 
+-	error = 0;
+ 	if (!EXT4_I(inode)->i_file_acl)
+-		goto cleanup;
++		return 0;
+ 	ea_idebug(inode, "reading block %llu",
+ 		  (unsigned long long)EXT4_I(inode)->i_file_acl);
+-	bh = sb_bread(inode->i_sb, EXT4_I(inode)->i_file_acl);
+-	error = -EIO;
+-	if (!bh)
+-		goto cleanup;
++	bh = ext4_sb_bread(inode->i_sb, EXT4_I(inode)->i_file_acl, REQ_PRIO);
++	if (IS_ERR(bh))
++		return PTR_ERR(bh);
+ 	ea_bdebug(bh, "b_count=%d, refcount=%d",
+ 		atomic_read(&(bh->b_count)), le32_to_cpu(BHDR(bh)->h_refcount));
+ 	error = ext4_xattr_check_block(inode, bh);
+ 	if (error)
+ 		goto cleanup;
+ 	ext4_xattr_block_cache_insert(EA_BLOCK_CACHE(inode), bh);
+-	error = ext4_xattr_list_entries(dentry, BFIRST(bh), buffer, buffer_size);
+-
++	error = ext4_xattr_list_entries(dentry, BFIRST(bh), buffer,
++					buffer_size);
+ cleanup:
+ 	brelse(bh);
+-
+ 	return error;
+ }
+ 
+@@ -830,9 +826,9 @@ int ext4_get_inode_usage(struct inode *i
+ 	}
+ 
+ 	if (EXT4_I(inode)->i_file_acl) {
+-		bh = sb_bread(inode->i_sb, EXT4_I(inode)->i_file_acl);
+-		if (!bh) {
+-			ret = -EIO;
++		bh = ext4_sb_bread(inode->i_sb, EXT4_I(inode)->i_file_acl, REQ_PRIO);
++		if (IS_ERR(bh)) {
++			ret = PTR_ERR(bh);
+ 			goto out;
+ 		}
+ 
+@@ -1821,16 +1817,15 @@ ext4_xattr_block_find(struct inode *inod
+ 
+ 	if (EXT4_I(inode)->i_file_acl) {
+ 		/* The inode already has an extended attribute block. */
+-		bs->bh = sb_bread(sb, EXT4_I(inode)->i_file_acl);
+-		error = -EIO;
+-		if (!bs->bh)
+-			goto cleanup;
++		bs->bh = ext4_sb_bread(sb, EXT4_I(inode)->i_file_acl, REQ_PRIO);
++		if (IS_ERR(bs->bh))
++			return PTR_ERR(bs->bh);
+ 		ea_bdebug(bs->bh, "b_count=%d, refcount=%d",
+ 			atomic_read(&(bs->bh->b_count)),
+ 			le32_to_cpu(BHDR(bs->bh)->h_refcount));
+ 		error = ext4_xattr_check_block(inode, bs->bh);
+ 		if (error)
+-			goto cleanup;
++			return error;
+ 		/* Find the named attribute. */
+ 		bs->s.base = BHDR(bs->bh);
+ 		bs->s.first = BFIRST(bs->bh);
+@@ -1839,13 +1834,10 @@ ext4_xattr_block_find(struct inode *inod
+ 		error = xattr_find_entry(inode, &bs->s.here, bs->s.end,
+ 					 i->name_index, i->name, 1);
+ 		if (error && error != -ENODATA)
+-			goto cleanup;
++			return error;
+ 		bs->s.not_found = error;
+ 	}
+-	error = 0;
+-
+-cleanup:
+-	return error;
++	return 0;
+ }
+ 
+ static int
+@@ -2274,9 +2266,9 @@ static struct buffer_head *ext4_xattr_ge
+ 
+ 	if (!EXT4_I(inode)->i_file_acl)
+ 		return NULL;
+-	bh = sb_bread(inode->i_sb, EXT4_I(inode)->i_file_acl);
+-	if (!bh)
+-		return ERR_PTR(-EIO);
++	bh = ext4_sb_bread(inode->i_sb, EXT4_I(inode)->i_file_acl, REQ_PRIO);
++	if (IS_ERR(bh))
++		return bh;
+ 	error = ext4_xattr_check_block(inode, bh);
+ 	if (error) {
+ 		brelse(bh);
+@@ -2746,10 +2738,11 @@ retry:
+ 	if (EXT4_I(inode)->i_file_acl) {
+ 		struct buffer_head *bh;
+ 
+-		bh = sb_bread(inode->i_sb, EXT4_I(inode)->i_file_acl);
+-		error = -EIO;
+-		if (!bh)
++		bh = ext4_sb_bread(inode->i_sb, EXT4_I(inode)->i_file_acl, REQ_PRIO);
++		if (IS_ERR(bh)) {
++			error = PTR_ERR(bh);
+ 			goto cleanup;
++		}
+ 		error = ext4_xattr_check_block(inode, bh);
+ 		if (error) {
+ 			brelse(bh);
+@@ -2903,11 +2896,12 @@ int ext4_xattr_delete_inode(handle_t *ha
+ 	}
+ 
+ 	if (EXT4_I(inode)->i_file_acl) {
+-		bh = sb_bread(inode->i_sb, EXT4_I(inode)->i_file_acl);
+-		if (!bh) {
+-			EXT4_ERROR_INODE(inode, "block %llu read error",
+-					 EXT4_I(inode)->i_file_acl);
+-			error = -EIO;
++		bh = ext4_sb_bread(inode->i_sb, EXT4_I(inode)->i_file_acl, REQ_PRIO);
++		if (IS_ERR(bh)) {
++			error = PTR_ERR(bh);
++			if (error == -EIO)
++				EXT4_ERROR_INODE(inode, "block %llu read error",
++						 EXT4_I(inode)->i_file_acl);
+ 			goto cleanup;
+ 		}
+ 		error = ext4_xattr_check_block(inode, bh);
+@@ -3060,8 +3054,10 @@ ext4_xattr_block_cache_find(struct inode
+ 	while (ce) {
+ 		struct buffer_head *bh;
+ 
+-		bh = sb_bread(inode->i_sb, ce->e_value);
+-		if (!bh) {
++		bh = ext4_sb_bread(inode->i_sb, ce->e_value, REQ_PRIO);
++		if (IS_ERR(bh)) {
++			if (PTR_ERR(bh) == -ENOMEM)
++				return NULL;
+ 			EXT4_ERROR_INODE(inode, "block %lu read error",
+ 					 (unsigned long)ce->e_value);
+ 		} else if (ext4_xattr_cmp(header, BHDR(bh)) == 0) {
 
 
