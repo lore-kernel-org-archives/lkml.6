@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3CE0C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:37:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1FA0C43444
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:37:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5827206BB
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:37:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B33F2183E
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:37:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546864651;
-	bh=2Q/+0lqhtxYQc3wHqqIcMWT1zF/sDPcBsDC9AP1fVqQ=;
+	s=default; t=1546864657;
+	bh=FaB3XAFPBCyym3VorNEEgW5/OMhhKmF7GkqM3BV6DPE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=SyG696cZd5cBoxZivpCxT+dCDmYgXlS+gNIYuqgXRU6Tj3AshbS8dX3I+gnvuzdWz
-	 mtW5/p0bOzCEAYYD8cA+VZ07ojScqhJSITDEks3+oIZyXh8xXiGvBd0S6/aEoVSCRr
-	 KSmtbr5HCaSa9c9zHj3Dd11QohX0f2Ugb7frCUxA=
+	b=0rcqLGSr8HxtBgIMwkDfM4oKuVQQxRsonUo8Fb1qog7CmIk+zgsMBPQ4zk7TVx194
+	 i2dvVTZz26oB3968SusC+LXCaaatynguD45uzYS89CCgG6himEihIq4YY65CkfKt5T
+	 dbWGtcDrIC42L5sEBq1oEfhTbdsxDIgVJCM9E/Dw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727821AbfAGMha (ORCPT
+        id S1727826AbfAGMhg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:37:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52398 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:37:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52452 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727805AbfAGMh0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:37:26 -0500
+        id S1727577AbfAGMh3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:37:29 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 38A3F206BB;
-        Mon,  7 Jan 2019 12:37:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DE008206BB;
+        Mon,  7 Jan 2019 12:37:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546864645;
-        bh=2Q/+0lqhtxYQc3wHqqIcMWT1zF/sDPcBsDC9AP1fVqQ=;
+        s=default; t=1546864648;
+        bh=FaB3XAFPBCyym3VorNEEgW5/OMhhKmF7GkqM3BV6DPE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=srtJQWKzWQkogq8t4IbAofUX4sbhgCFEtm1tic2GXGlk9hQtvsKRMCjluUYD/y9o0
-         HATig2vA7EMwdXU9l0xJRoCLwmdLvdyJX31Lo3rt3gElMhLdlB9vRiVDSFgVV8zG/w
-         vLYAHILZneDlTl1qI4P9HS22VtwHC7SQ2eT8m/mg=
+        b=BgvzkUxtJ3tESTK+wHatktU3ZzmZtCuNhh8aGR5TO0cGZlw9ObKtUCCWTiMwq586c
+         qDbJYOUJjnkfVGkYpTbMG0K24Vo8lWA8yVqdNhttXg5nC0XLhxklWdLGURQwkuNZjq
+         93tX0epFHbTsR1TOOKVnMjTFIeVmb0cSEDZs6+wI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Anholt <eric@anholt.net>,
-        Boris Brezillon <boris.brezillon@bootlin.com>
-Subject: [PATCH 4.20 061/145] drm/v3d: Skip debugfs dumping GCA on platforms without GCA.
-Date:   Mon,  7 Jan 2019 13:31:38 +0100
-Message-Id: <20190107104445.246016861@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>
+Subject: [PATCH 4.20 062/145] DRM: UDL: get rid of useless vblank initialization
+Date:   Mon,  7 Jan 2019 13:31:39 +0100
+Message-Id: <20190107104445.339741360@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104437.308206189@linuxfoundation.org>
 References: <20190107104437.308206189@linuxfoundation.org>
@@ -65,42 +66,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Anholt <eric@anholt.net>
+From: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
 
-commit 2f20fa8d12e859a03f68bdd81d75830141bc9ac9 upstream.
+commit 32e932e37e6b6e13b66add307192c7ddd40a781d upstream.
 
-Fixes an oops reading this debugfs entry on BCM7278.
+UDL doesn't support vblank functionality so we don't need to
+initialize vblank here (we are able to send page flip
+completion events even without vblank initialization)
 
-Signed-off-by: Eric Anholt <eric@anholt.net>
-Link: https://patchwork.freedesktop.org/patch/msgid/20180928232126.4332-4-eric@anholt.net
-Fixes: 57692c94dcbe ("drm/v3d: Introduce a new DRM driver for Broadcom V3D V3.x+")
-Cc: <stable@vger.kernel.org>
-Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Moreover current drm_vblank_init call with num_crtcs > 0 causes
+sending DRM_EVENT_FLIP_COMPLETE event with zero timestamp every
+time. This breaks userspace apps (for example weston) which
+relies on timestamp value.
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Link: https://patchwork.freedesktop.org/patch/msgid/20180928144126.21598-1-Eugeniy.Paltsev@synopsys.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/v3d/v3d_debugfs.c |   11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/udl/udl_main.c |    7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
---- a/drivers/gpu/drm/v3d/v3d_debugfs.c
-+++ b/drivers/gpu/drm/v3d/v3d_debugfs.c
-@@ -71,10 +71,13 @@ static int v3d_v3d_debugfs_regs(struct s
- 			   V3D_READ(v3d_hub_reg_defs[i].reg));
- 	}
+--- a/drivers/gpu/drm/udl/udl_main.c
++++ b/drivers/gpu/drm/udl/udl_main.c
+@@ -350,15 +350,10 @@ int udl_driver_load(struct drm_device *d
+ 	if (ret)
+ 		goto err;
  
--	for (i = 0; i < ARRAY_SIZE(v3d_gca_reg_defs); i++) {
--		seq_printf(m, "%s (0x%04x): 0x%08x\n",
--			   v3d_gca_reg_defs[i].name, v3d_gca_reg_defs[i].reg,
--			   V3D_GCA_READ(v3d_gca_reg_defs[i].reg));
-+	if (v3d->ver < 41) {
-+		for (i = 0; i < ARRAY_SIZE(v3d_gca_reg_defs); i++) {
-+			seq_printf(m, "%s (0x%04x): 0x%08x\n",
-+				   v3d_gca_reg_defs[i].name,
-+				   v3d_gca_reg_defs[i].reg,
-+				   V3D_GCA_READ(v3d_gca_reg_defs[i].reg));
-+		}
- 	}
+-	ret = drm_vblank_init(dev, 1);
+-	if (ret)
+-		goto err_fb;
+-
+ 	drm_kms_helper_poll_init(dev);
  
- 	for (core = 0; core < v3d->cores; core++) {
+ 	return 0;
+-err_fb:
+-	udl_fbdev_cleanup(dev);
++
+ err:
+ 	if (udl->urbs.count)
+ 		udl_free_urb_list(dev);
 
 
