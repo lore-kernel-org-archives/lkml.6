@@ -2,108 +2,169 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 892D4C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 16:22:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27437C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 16:23:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62EE52147C
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 16:22:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE1132147C
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 16:23:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mmV1Xq3P"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730145AbfAGQWa (ORCPT
+        id S1730241AbfAGQXl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 11:22:30 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:38564 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728683AbfAGQW3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 11:22:29 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B0387804ED;
-        Mon,  7 Jan 2019 16:22:28 +0000 (UTC)
-Received: from redhat.com (ovpn-122-143.rdu2.redhat.com [10.10.122.143])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 9A08E65F76;
-        Mon,  7 Jan 2019 16:22:23 +0000 (UTC)
-Date:   Mon, 7 Jan 2019 11:22:23 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Jason Wang <jasowang@redhat.com>, linux-kernel@vger.kernel.org,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Akira Yokosawa <akiyks@gmail.com>,
-        Daniel Lustig <dlustig@nvidia.com>, linux-arch@vger.kernel.org,
-        netdev@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org,
-        linux-sparse@vger.kernel.org
-Subject: Re: [PATCH RFC 3/4] barriers: convert a control to a data dependency
-Message-ID: <20190107112007-mutt-send-email-mst@kernel.org>
-References: <20190102205715.14054-1-mst@redhat.com>
- <20190102205715.14054-4-mst@redhat.com>
- <86023cbe-d1ae-a0d6-7b75-26556f1a0c1f@redhat.com>
- <20190106231756-mutt-send-email-mst@kernel.org>
- <20190107094610.GA2861@worktop.programming.kicks-ass.net>
- <20190107082223-mutt-send-email-mst@kernel.org>
- <20190107155423.GM2218@hirez.programming.kicks-ass.net>
+        Mon, 7 Jan 2019 11:23:41 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:42870 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730117AbfAGQXl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 11:23:41 -0500
+Received: by mail-wr1-f66.google.com with SMTP id q18so1018565wrx.9;
+        Mon, 07 Jan 2019 08:23:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :content-transfer-encoding:user-agent;
+        bh=ueNybj+ZyUpCeo1lAUe23ANl04I+fO88frt93lziI+s=;
+        b=mmV1Xq3PclgbsVQNtWi+rwyj9h2u5RK2u20Qw94ex00SqMEwhK5A9pnB9wCV405R39
+         a03g959bCOrEkDwZYvTEZJgxckahJUH16PT6V5YqrQolZQYmM03QFpV8rKCdarl0Nz2Z
+         WfylcnDD32Nur33Pw4tchzdYSrUO3Bv0qKPATDPPvB1jj+6bbmJkcDukU6c1eJ8Qe01k
+         /1eG/got/SJkAblYayoDLmbi8b/AHmnzUR5ULMOQjSZI8vL7E5flPpzaPlfaXGohs1ft
+         2B4kATWSJm5A4tPunI7OFzVg0WnHczVsEX7u9FgVfYJxRpUfQRYzD+92ZLH/HNOFQRGL
+         fbFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:content-transfer-encoding:user-agent;
+        bh=ueNybj+ZyUpCeo1lAUe23ANl04I+fO88frt93lziI+s=;
+        b=hiRE7RGE44SSd3ngOKve1tsczAxFkM8jNI6MKv6j5BbNg5YLRlaq11VF8hER2N4uQ2
+         ZypjpI67Pgbr21bAj1IdGTSnYXadiGHIEfob+7Y5tHasX/1zdqRyW51I+C233DgGo/qD
+         4QDL4h9C7EXRaHRl9kbDTIAMhdGNDFXbXSZDmcZRJ0XNILfOKHO774eWaS0xE2vrbeYF
+         mP7NMj4jeWnuS9+22WV/ud5FfPUcHDlIFB2fBqu8jCTwnUrGqUQIhJruDYP/eflKY/Qi
+         0g9X4uuOygCYnUF88IUaMItrcMbPvAj/myS/L0kzBf4YaDR7Pb+UCxb02T/aKZUnZ76i
+         yWrw==
+X-Gm-Message-State: AJcUukcNY40PNxet26e+XLKEoTt8Z7baUS6vOSDR4xmsBqKb3CRZAkaM
+        F/ioYVTrqNvU76vr8cU/Qw==
+X-Google-Smtp-Source: ALg8bN5Ry3JaxN7PRztpD2C39Srb6Y4b7mA3/uB/34y2KgClsuvmb3KeDEwM4ESbK/on9fl9/J2alA==
+X-Received: by 2002:adf:c7cc:: with SMTP id y12mr54387113wrg.52.1546878219452;
+        Mon, 07 Jan 2019 08:23:39 -0800 (PST)
+Received: from avx2 (nat-minsk-pool-46-53-201-92.telecom.by. [46.53.201.92])
+        by smtp.gmail.com with ESMTPSA id w2sm18285157wrm.69.2019.01.07.08.23.38
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 07 Jan 2019 08:23:38 -0800 (PST)
+Date:   Mon, 7 Jan 2019 19:23:36 +0300
+From:   Alexey Dobriyan <adobriyan@gmail.com>
+To:     akpm@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        viro@zeniv.linux.org.uk, mateusz.stepien@netrounds.com,
+        a.fatoum@pengutronix.de
+Subject: [PATCH] proc: fix /proc/net/* after setns(2)
+Message-ID: <20190107162336.GA9239@avx2>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190107155423.GM2218@hirez.programming.kicks-ass.net>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Mon, 07 Jan 2019 16:22:29 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 07, 2019 at 04:54:23PM +0100, Peter Zijlstra wrote:
-> On Mon, Jan 07, 2019 at 08:36:36AM -0500, Michael S. Tsirkin wrote:
-> > On Mon, Jan 07, 2019 at 10:46:10AM +0100, Peter Zijlstra wrote:
-> 
-> > > How about naming the thing: dependent_ptr() ? That is without any (r)mb
-> > > implications at all. The address dependency is strictly weaker than an
-> > > rmb in that it will only order the two loads in qestion and not, like
-> > > rmb, any prior to any later load.
-> > 
-> > So I'm fine with this as it's enough for virtio, but I would like to point out two things:
-> > 
-> > 1. E.g. on x86 both SMP and DMA variants can be NOPs but
-> > the madatory one can't, so assuming we do not want
-> > it to be stronger than rmp then either we want
-> > smp_dependent_ptr(), dma_dependent_ptr(), dependent_ptr()
-> > or we just will specify that dependent_ptr() works for
-> > both DMA and SMP.
-> 
-> The latter; the construct simply generates dependent loads. It is up to
-> the CPU as to what all that works for.
+/proc entries under /proc/net/* can't be cached into dcache
+because setns(2) can change current net namespace.
 
-But not on intel right? On intel loads are ordered so it can be a nop.
+Reported-by: Mateusz Stępień <mateusz.stepien@netrounds.com>
+Reported-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
+Fixes: 1da4d377f943fe4194ffb9fb9c26cc58fad4dd24 ("proc: revalidate misc dentries")
+Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+---
 
-> > 2. Down the road, someone might want to order a store after a load.
-> > Address dependency does that for us too. Assuming we make
-> > dependent_ptr a NOP on x86, we will want an mb variant
-> > which isn't a NOP on x86. Will we want to rename
-> > dependent_ptr to dependent_ptr_rmb at that point?
-> 
-> Not sure; what is the actual overhead of the construct on x86 vs the
-> NOP?
+	I'm still looking into it because modules can create entries
+	under /proc/net/* :-(
 
-I'll have to check. There's a pipeline stall almost for sure - that's
-why we put it there after all :).
+ fs/proc/generic.c  |    4 +++-
+ fs/proc/internal.h |    1 +
+ fs/proc/proc_net.c |   10 ++++++++++
+ 3 files changed, 14 insertions(+), 1 deletion(-)
 
--- 
-MST
+--- a/fs/proc/generic.c
++++ b/fs/proc/generic.c
+@@ -256,7 +256,7 @@ struct dentry *proc_lookup_de(struct inode *dir, struct dentry *dentry,
+ 		inode = proc_get_inode(dir->i_sb, de);
+ 		if (!inode)
+ 			return ERR_PTR(-ENOMEM);
+-		d_set_d_op(dentry, &proc_misc_dentry_ops);
++		d_set_d_op(dentry, de->proc_dops);
+ 		return d_splice_alias(inode, dentry);
+ 	}
+ 	read_unlock(&proc_subdir_lock);
+@@ -429,6 +429,8 @@ static struct proc_dir_entry *__proc_create(struct proc_dir_entry **parent,
+ 	INIT_LIST_HEAD(&ent->pde_openers);
+ 	proc_set_user(ent, (*parent)->uid, (*parent)->gid);
+ 
++	ent->proc_dops = &proc_misc_dentry_ops;
++
+ out:
+ 	return ent;
+ }
+--- a/fs/proc/internal.h
++++ b/fs/proc/internal.h
+@@ -44,6 +44,7 @@ struct proc_dir_entry {
+ 	struct completion *pde_unload_completion;
+ 	const struct inode_operations *proc_iops;
+ 	const struct file_operations *proc_fops;
++	const struct dentry_operations *proc_dops;
+ 	union {
+ 		const struct seq_operations *seq_ops;
+ 		int (*single_show)(struct seq_file *, void *);
+--- a/fs/proc/proc_net.c
++++ b/fs/proc/proc_net.c
+@@ -38,6 +38,12 @@ static struct net *get_proc_net(const struct inode *inode)
+ 	return maybe_get_net(PDE_NET(PDE(inode)));
+ }
+ 
++static void pde_force_lookup(struct proc_dir_entry *pde)
++{
++	// /proc/net/* can be changed under us by setns(CLONE_NEWNET)
++	pde->proc_dops = &simple_dentry_operations;
++}
++
+ static int seq_open_net(struct inode *inode, struct file *file)
+ {
+ 	unsigned int state_size = PDE(inode)->state_size;
+@@ -90,6 +96,7 @@ struct proc_dir_entry *proc_create_net_data(const char *name, umode_t mode,
+ 	p = proc_create_reg(name, mode, &parent, data);
+ 	if (!p)
+ 		return NULL;
++	pde_force_lookup(p);
+ 	p->proc_fops = &proc_net_seq_fops;
+ 	p->seq_ops = ops;
+ 	p->state_size = state_size;
+@@ -133,6 +140,7 @@ struct proc_dir_entry *proc_create_net_data_write(const char *name, umode_t mode
+ 	p = proc_create_reg(name, mode, &parent, data);
+ 	if (!p)
+ 		return NULL;
++	pde_force_lookup(p);
+ 	p->proc_fops = &proc_net_seq_fops;
+ 	p->seq_ops = ops;
+ 	p->state_size = state_size;
+@@ -181,6 +189,7 @@ struct proc_dir_entry *proc_create_net_single(const char *name, umode_t mode,
+ 	p = proc_create_reg(name, mode, &parent, data);
+ 	if (!p)
+ 		return NULL;
++	pde_force_lookup(p);
+ 	p->proc_fops = &proc_net_single_fops;
+ 	p->single_show = show;
+ 	return proc_register(parent, p);
+@@ -223,6 +232,7 @@ struct proc_dir_entry *proc_create_net_single_write(const char *name, umode_t mo
+ 	p = proc_create_reg(name, mode, &parent, data);
+ 	if (!p)
+ 		return NULL;
++	pde_force_lookup(p);
+ 	p->proc_fops = &proc_net_single_fops;
+ 	p->single_show = show;
+ 	p->write = write;
