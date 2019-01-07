@@ -2,109 +2,78 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC276C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 09:29:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2377C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 09:29:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1EE72087F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 09:29:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E0A02087F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 09:29:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726613AbfAGJ3x convert rfc822-to-8bit (ORCPT
+        id S1726643AbfAGJ35 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 04:29:53 -0500
-Received: from skedge03.snt-world.com ([91.208.41.68]:38112 "EHLO
-        skedge03.snt-world.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725550AbfAGJ3w (ORCPT
+        Mon, 7 Jan 2019 04:29:57 -0500
+Received: from xavier.telenet-ops.be ([195.130.132.52]:43346 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726602AbfAGJ3y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 04:29:52 -0500
-Received: from sntmail10s.snt-is.com (unknown [10.203.32.183])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by skedge03.snt-world.com (Postfix) with ESMTPS id BB39F67B8C2;
-        Mon,  7 Jan 2019 10:29:49 +0100 (CET)
-Received: from sntmail12r.snt-is.com (10.203.32.182) by sntmail10s.snt-is.com
- (10.203.32.183) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1466.3; Mon, 7 Jan 2019
- 10:29:49 +0100
-Received: from sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305]) by
- sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305%5]) with mapi id
- 15.01.1466.003; Mon, 7 Jan 2019 10:29:49 +0100
-From:   Schrempf Frieder <frieder.schrempf@kontron.de>
-To:     "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "boris.brezillon@bootlin.com" <boris.brezillon@bootlin.com>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        "Marek Vasut" <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>
-CC:     "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
-        "david.wolfe@nxp.com" <david.wolfe@nxp.com>,
-        "fabio.estevam@nxp.com" <fabio.estevam@nxp.com>,
-        "prabhakar.kushwaha@nxp.com" <prabhakar.kushwaha@nxp.com>,
-        "yogeshnarayan.gaur@nxp.com" <yogeshnarayan.gaur@nxp.com>,
-        "han.xu@nxp.com" <han.xu@nxp.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Schrempf Frieder <frieder.schrempf@kontron.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH v8 2/7] dt-bindings: spi: Move the bindings for the FSL QSPI
- driver
-Thread-Topic: [PATCH v8 2/7] dt-bindings: spi: Move the bindings for the FSL
- QSPI driver
-Thread-Index: AQHUpmuJwwc0+C6VAUGKdYFlsrbUzA==
-Date:   Mon, 7 Jan 2019 09:29:49 +0000
-Message-ID: <20190107092823.11188-3-frieder.schrempf@kontron.de>
-References: <20190107092823.11188-1-frieder.schrempf@kontron.de>
-In-Reply-To: <20190107092823.11188-1-frieder.schrempf@kontron.de>
-Accept-Language: de-DE, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.25.9.42]
-x-c2processedorg: 51b406b7-48a2-4d03-b652-521f56ac89f3
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8BIT
+        Mon, 7 Jan 2019 04:29:54 -0500
+Received: from ramsan ([84.194.111.163])
+        by xavier.telenet-ops.be with bizsmtp
+        id MMVt1z00B3XaVaC01MVt1E; Mon, 07 Jan 2019 10:29:53 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1ggREH-0003KU-Ax; Mon, 07 Jan 2019 10:29:53 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1ggREH-0003pg-8q; Mon, 07 Jan 2019 10:29:53 +0100
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+To:     linux-m68k@lists.linux-m68k.org
+Cc:     Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH] m68k/atari: Avoid VLA use in atari_switches_setup()
+Date:   Mon,  7 Jan 2019 10:29:52 +0100
+Message-Id: <20190107092952.14691-1-geert@linux-m68k.org>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-X-SnT-MailScanner-Information: Please contact the ISP for more information
-X-SnT-MailScanner-ID: BB39F67B8C2.A256A
-X-SnT-MailScanner: Found to be clean
-X-SnT-MailScanner-SpamCheck: 
-X-SnT-MailScanner-From: frieder.schrempf@kontron.de
-X-SnT-MailScanner-To: bbrezillon@kernel.org, boris.brezillon@bootlin.com,
-        broonie@kernel.org, computersforpeace@gmail.com, david.wolfe@nxp.com,
-        devicetree@vger.kernel.org, dwmw2@infradead.org,
-        fabio.estevam@nxp.com, han.xu@nxp.com, linux-kernel@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-spi@vger.kernel.org,
-        marek.vasut@gmail.com, mark.rutland@arm.com,
-        miquel.raynal@bootlin.com, prabhakar.kushwaha@nxp.com,
-        richard@nod.at, robh+dt@kernel.org, shawnguo@kernel.org,
-        yogeshnarayan.gaur@nxp.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Frieder Schrempf <frieder.schrempf@kontron.de>
+With gcc 7.3.0:
 
-Move the documentation of the old SPI NOR driver to the place of the new
-SPI memory interface based driver.
+    arch/m68k/atari/config.c: In function ‘atari_switches_setup’:
+    arch/m68k/atari/config.c:151:2: warning: ISO C90 forbids variable length array ‘switches’ [-Wvla]
+      char switches[strlen(str) + 1];
+      ^~~~
 
-Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
-Reviewed-by: Rob Herring <robh@kernel.org>
+Replace the variable size by the maximum kernel command line size (512
+bytes), which is an upper limit for all suboptions.
+
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 ---
- .../bindings/{mtd/fsl-quadspi.txt => spi/spi-fsl-qspi.txt}           | 0
- 1 file changed, 0 insertions(+), 0 deletions(-)
+ arch/m68k/atari/config.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/mtd/fsl-quadspi.txt b/Documentation/devicetree/bindings/spi/spi-fsl-qspi.txt
-similarity index 100%
-rename from Documentation/devicetree/bindings/mtd/fsl-quadspi.txt
-rename to Documentation/devicetree/bindings/spi/spi-fsl-qspi.txt
+diff --git a/arch/m68k/atari/config.c b/arch/m68k/atari/config.c
+index bd96702a1ad09773..4fcc4b1df1c0f2b4 100644
+--- a/arch/m68k/atari/config.c
++++ b/arch/m68k/atari/config.c
+@@ -148,7 +148,7 @@ int __init atari_parse_bootinfo(const struct bi_record *record)
+ /* Parse the Atari-specific switches= option. */
+ static int __init atari_switches_setup(char *str)
+ {
+-	char switches[strlen(str) + 1];
++	char switches[COMMAND_LINE_SIZE];
+ 	char *p;
+ 	int ovsc_shift;
+ 	char *args = switches;
 -- 
 2.17.1
+
