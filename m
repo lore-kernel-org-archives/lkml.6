@@ -2,68 +2,287 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2B7BC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 10:11:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED4C3C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 10:11:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7411820854
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 10:11:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B45CE20859
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 10:11:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Vm7aBqHL";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="OAiOATMv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727030AbfAGKLM (ORCPT
+        id S1726893AbfAGKK2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 05:11:12 -0500
-Received: from ozlabs.org ([203.11.71.1]:37635 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726534AbfAGKKu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 05:10:50 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        Mon, 7 Jan 2019 05:10:28 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:56092 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726873AbfAGKKY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 05:10:24 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 2B30B60A37; Mon,  7 Jan 2019 10:10:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1546855823;
+        bh=yQ4FheJC5BDW+Q/FeprIjkBhVrkPTT8oY993ejs2JKo=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Vm7aBqHLhuOmBOs46DTffiYatXV3dNdoeBe0CBvBdPY2VtCR1mjeyDMlFyWTjPgqN
+         JMYUq/FxrWKkgYQOV/eC0BswfauN2moL2XImbrmV/6BZgGIIOwKDgZ0nDUr/HZU+hg
+         3tMVNIXs915a0eajMhmkFyuFkh3VwNAYI8vh+j9c=
+Received: from blr-ubuntu-173.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43YB3q3BFVz9sN1;
-        Mon,  7 Jan 2019 21:10:47 +1100 (AEDT)
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Jann Horn <jannh@google.com>
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Michal Hocko <mhocko@suse.com>, Linux-MM <linux-mm@kvack.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Re: [PATCH] mm/mincore: allow for making sys_mincore() privileged
-In-Reply-To: <CAHk-=wiMQeCEKESWTmm15x79NjEjNwFvjZ=9XenxY7yH8zqa7A@mail.gmail.com>
-References: <nycvar.YFH.7.76.1901051817390.16954@cbobk.fhfr.pm> <CAG48ez2jAp9xkPXQmVXm0PqNrFGscg9BufQRem2UD8FGX-YzPw@mail.gmail.com> <CAHk-=whL4sZiM=JcdQAYQvHm7h7xEtVUh+gYGYhoSk4vi38tXg@mail.gmail.com> <CAHk-=wg5Kk+r36=jcGBaLUj+gjopjgiW5eyvkdMqvn0jFkD_iQ@mail.gmail.com> <CAHk-=wiMQeCEKESWTmm15x79NjEjNwFvjZ=9XenxY7yH8zqa7A@mail.gmail.com>
-Date:   Mon, 07 Jan 2019 21:10:46 +1100
-Message-ID: <87y37waic9.fsf@concordia.ellerman.id.au>
+        (Authenticated sender: rnayak@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id CACD9609C6;
+        Mon,  7 Jan 2019 10:10:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1546855819;
+        bh=yQ4FheJC5BDW+Q/FeprIjkBhVrkPTT8oY993ejs2JKo=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=OAiOATMvvPn6f7dZ2IcO/WIz8oyExLcmjR2occX7TNd5Qnn1WFHIZWWqgNGHdsoLO
+         Wb+S1q7A27dU0JOJI8C1k8PlIhmXe0A8KSuu7aADYxmDlythgixQkXuR7Uh8XOhe5o
+         tFZD9Ueavizt3y9NbQHTMJ86UfhTcuAQkq22PwKk=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CACD9609C6
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
+From:   Rajendra Nayak <rnayak@codeaurora.org>
+To:     andy.gross@linaro.org, robh@kernel.org, viresh.kumar@linaro.org,
+        sboyd@kernel.org, ulf.hansson@linaro.org, collinsd@codeaurora.org,
+        mka@chromium.org
+Cc:     devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, henryc.chen@mediatek.com,
+        Rajendra Nayak <rnayak@codeaurora.org>
+Subject: [PATCH v9 02/10] dt-bindings: power: Add qcom rpm power domain driver bindings
+Date:   Mon,  7 Jan 2019 15:39:51 +0530
+Message-Id: <20190107100959.14528-3-rnayak@codeaurora.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190107100959.14528-1-rnayak@codeaurora.org>
+References: <20190107100959.14528-1-rnayak@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus Torvalds <torvalds@linux-foundation.org> writes:
+Add DT bindings to describe the rpm/rpmh power domains found on Qualcomm
+Technologies, Inc. SoCs. These power domains communicate a performance
+state to RPM/RPMh, which then translates it into corresponding voltage on a
+PMIC rail.
 
-> On Sat, Jan 5, 2019 at 3:16 PM Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
->>
->> It goes back to forever, it looks like. I can't find a reason.
->
-> mincore() was originally added in 2.3.52pre3, it looks like. Around
-> 2000 or so. But sadly before the BK history.
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+ .../devicetree/bindings/power/qcom,rpmpd.txt  | 145 ++++++++++++++++++
+ include/dt-bindings/power/qcom-rpmpd.h        |  39 +++++
+ 2 files changed, 184 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/power/qcom,rpmpd.txt
+ create mode 100644 include/dt-bindings/power/qcom-rpmpd.h
 
-Yeah, it's here in the commit titled "Import 2.3.52pre3" (takes a second
-or two to load):
+diff --git a/Documentation/devicetree/bindings/power/qcom,rpmpd.txt b/Documentation/devicetree/bindings/power/qcom,rpmpd.txt
+new file mode 100644
+index 000000000000..2f0764298d86
+--- /dev/null
++++ b/Documentation/devicetree/bindings/power/qcom,rpmpd.txt
+@@ -0,0 +1,145 @@
++Qualcomm RPM/RPMh Power domains
++
++For RPM/RPMh Power domains, we communicate a performance state to RPM/RPMh
++which then translates it into a corresponding voltage on a rail
++
++Required Properties:
++ - compatible: Should be one of the following
++	* qcom,msm8996-rpmpd: RPM Power domain for the msm8996 family of SoC
++	* qcom,sdm845-rpmhpd: RPMh Power domain for the sdm845 family of SoC
++ - #power-domain-cells: number of cells in Power domain specifier
++	must be 1.
++ - operating-points-v2: Phandle to the OPP table for the Power domain.
++	Refer to Documentation/devicetree/bindings/power/power_domain.txt
++	and Documentation/devicetree/bindings/opp/opp-level.txt for more details
++
++Refer to <dt-bindings/power/qcom-rpmpd.h> for the level values for
++various OPPs for different platforms as well as Power domain indexes
++
++Example: rpmh power domain controller and OPP table
++
++#include <dt-bindings/power/qcom-rpmhpd.h>
++
++opp-level values specified in the OPP tables for RPMh power domains
++should use the RPMH_REGULATOR_LEVEL_* constants from
++<dt-bindings/power/qcom-rpmhpd.h>
++
++	rpmhpd: power-controller {
++		compatible = "qcom,sdm845-rpmhpd";
++		#power-domain-cells = <1>;
++		operating-points-v2 = <&rpmhpd_opp_table>;
++
++		rpmhpd_opp_table: opp-table {
++			compatible = "operating-points-v2-level";
++
++			rpmhpd_opp_ret: opp1 {
++				opp-level = <RPMH_REGULATOR_LEVEL_RETENTION>;
++			};
++
++			rpmhpd_opp_min_svs: opp2 {
++				opp-level = <RPMH_REGULATOR_LEVEL_MIN_SVS>;
++			};
++
++			rpmhpd_opp_low_svs: opp3 {
++				opp-level = <RPMH_REGULATOR_LEVEL_LOW_SVS>;
++			};
++
++			rpmhpd_opp_svs: opp4 {
++				opp-level = <RPMH_REGULATOR_LEVEL_SVS>;
++			};
++
++			rpmhpd_opp_svs_l1: opp5 {
++				opp-level = <RPMH_REGULATOR_LEVEL_SVS_L1>;
++			};
++
++			rpmhpd_opp_nom: opp6 {
++				opp-level = <RPMH_REGULATOR_LEVEL_NOM>;
++			};
++
++			rpmhpd_opp_nom_l1: opp7 {
++				opp-level = <RPMH_REGULATOR_LEVEL_NOM_L1>;
++			};
++
++			rpmhpd_opp_nom_l2: opp8 {
++				opp-level = <RPMH_REGULATOR_LEVEL_NOM_L2>;
++			};
++
++			rpmhpd_opp_turbo: opp9 {
++				opp-level = <RPMH_REGULATOR_LEVEL_TURBO>;
++			};
++
++			rpmhpd_opp_turbo_l1: opp10 {
++				opp-level = <RPMH_REGULATOR_LEVEL_TURBO_L1>;
++			};
++		};
++	};
++
++Example: rpm power domain controller and OPP table
++
++	rpmpd: power-controller {
++		compatible = "qcom,msm8996-rpmpd";
++		#power-domain-cells = <1>;
++		operating-points-v2 = <&rpmpd_opp_table>;
++
++		rpmpd_opp_table: opp-table {
++			compatible = "operating-points-v2-level";
++
++			rpmpd_opp_low: opp1 {
++				opp-level = <1>;
++			};
++
++			rpmpd_opp_ret: opp2 {
++				opp-level = <2>;
++			};
++
++			rpmpd_opp_svs: opp3 {
++				opp-level = <3>;
++			};
++
++			rpmpd_opp_normal: opp4 {
++				opp-level = <4>;
++			};
++
++			rpmpd_opp_high: opp5 {
++				opp-level = <5>;
++			};
++
++			rpmpd_opp_turbo: opp6 {
++				opp-level = <6>;
++			};
++		};
++	};
++
++Example: Client/Consumer device using OPP table
++
++	leaky-device0@12350000 {
++		compatible = "foo,i-leak-current";
++		reg = <0x12350000 0x1000>;
++		power-domains = <&rpmhpd SDM845_MX>;
++		operating-points-v2 = <&leaky_opp_table>;
++	};
++
++
++	leaky_opp_table: opp-table {
++		compatible = "operating-points-v2";
++
++		opp1 {
++			opp-hz = /bits/ 64 <144000>;
++			required-opps = <&rpmhpd_opp_low>;
++		};
++
++		opp2 {
++			opp-hz = /bits/ 64 <400000>;
++			required-opps = <&rpmhpd_opp_ret>;
++		};
++
++		opp3 {
++			opp-hz = /bits/ 64 <20000000>;
++			required-opps = <&rpmpd_opp_svs>;
++		};
++
++		opp4 {
++			opp-hz = /bits/ 64 <25000000>;
++			required-opps = <&rpmpd_opp_normal>;
++		};
++	};
+diff --git a/include/dt-bindings/power/qcom-rpmpd.h b/include/dt-bindings/power/qcom-rpmpd.h
+new file mode 100644
+index 000000000000..87d9c6611682
+--- /dev/null
++++ b/include/dt-bindings/power/qcom-rpmpd.h
+@@ -0,0 +1,39 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/* Copyright (c) 2018, The Linux Foundation. All rights reserved. */
++
++#ifndef _DT_BINDINGS_POWER_QCOM_RPMPD_H
++#define _DT_BINDINGS_POWER_QCOM_RPMPD_H
++
++/* SDM845 Power Domain Indexes */
++#define SDM845_EBI	0
++#define SDM845_MX	1
++#define SDM845_MX_AO	2
++#define SDM845_CX	3
++#define SDM845_CX_AO	4
++#define SDM845_LMX	5
++#define SDM845_LCX	6
++#define SDM845_GFX	7
++#define SDM845_MSS	8
++
++/* SDM845 Power Domain performance levels */
++#define RPMH_REGULATOR_LEVEL_RETENTION	16
++#define RPMH_REGULATOR_LEVEL_MIN_SVS	48
++#define RPMH_REGULATOR_LEVEL_LOW_SVS	64
++#define RPMH_REGULATOR_LEVEL_SVS	128
++#define RPMH_REGULATOR_LEVEL_SVS_L1	192
++#define RPMH_REGULATOR_LEVEL_NOM	256
++#define RPMH_REGULATOR_LEVEL_NOM_L1	320
++#define RPMH_REGULATOR_LEVEL_NOM_L2	336
++#define RPMH_REGULATOR_LEVEL_TURBO	384
++#define RPMH_REGULATOR_LEVEL_TURBO_L1	416
++
++/* MSM8996 Power Domain Indexes */
++#define MSM8996_VDDCX		0
++#define MSM8996_VDDCX_AO	1
++#define MSM8996_VDDCX_VFC	2
++#define MSM8996_VDDMX		3
++#define MSM8996_VDDMX_AO	4
++#define MSM8996_VDDSSCX		5
++#define MSM8996_VDDSSCX_VFC	6
++
++#endif
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
 
-  https://github.com/mpe/linux-fullhistory/commit/a1bcda3256956318c95c8da8bee09f79190bb034#diff-fd2d793b8b4760b4887c8c7bbb3451d7R1730
-
-But no further detail.
-
-(Instructions for using that tree https://github.com/mpe/linux-fullhistory/wiki)
-
-cheers
