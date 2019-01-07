@@ -2,132 +2,136 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4211FC43444
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:04:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60B40C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:05:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C6E52173C
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:04:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 260D22085A
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:05:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=colorfullife-com.20150623.gappssmtp.com header.i=@colorfullife-com.20150623.gappssmtp.com header.b="QxhnLywW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728037AbfAGSE1 (ORCPT
+        id S1728179AbfAGSFA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 13:04:27 -0500
-Received: from sandeen.net ([63.231.237.45]:50946 "EHLO sandeen.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726521AbfAGSE1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 13:04:27 -0500
-Received: from Liberator-6.local (erlite [10.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by sandeen.net (Postfix) with ESMTPSA id DEF772B14;
-        Mon,  7 Jan 2019 12:03:41 -0600 (CST)
-Subject: Re: [PATCH] xfs: correct statx's result_mask value
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Su Yanjun <suyj.fnst@cn.fujitsu.com>
-Cc:     linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        suyanjun218@gmail.com
-References: <1546854790-5233-1-git-send-email-suyj.fnst@cn.fujitsu.com>
- <20190107175229.GJ12689@magnolia>
-From:   Eric Sandeen <sandeen@sandeen.net>
-Openpgp: preference=signencrypt
-Autocrypt: addr=sandeen@sandeen.net; prefer-encrypt=mutual; keydata=
- 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 pA==
-Message-ID: <2b27e2ec-368b-d24c-8443-e265f87e417c@sandeen.net>
-Date:   Mon, 7 Jan 2019 12:04:24 -0600
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
+        Mon, 7 Jan 2019 13:05:00 -0500
+Received: from mail-wm1-f45.google.com ([209.85.128.45]:39371 "EHLO
+        mail-wm1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726521AbfAGSE7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 13:04:59 -0500
+Received: by mail-wm1-f45.google.com with SMTP id f81so1806387wmd.4
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 10:04:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=colorfullife-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=pgjTbpN8FXb/wpLhdTDoqFmKQswH6IxZ3RsZ1XGqquI=;
+        b=QxhnLywWeAsUYy/r4SAmQoEVzNylXKYIxsTbSyxOtu/04DI3jWmA9PG8HhADdyNtaW
+         phteKAR72d21OPP4WIuFrWxCB1HzzFS4xI1JFCnitsCm/Y6/VBIrUTFrd7WdUoeG6Rcb
+         +K/C1jq/5AzOEqldUqE1Q7165IeOAwnYOaKqBqDZJevuqGcJkN3Sfa/2i6sgKCl0EtQQ
+         +WHF7RH2mTR11+PP3cmHwEdUMQwuU/yaP3SLnSN1vZUuW42l29naARfIcDzBgPAlyTdq
+         8TwaAKi+BMUK4PfKGwcO5Q8PdXQh57xmLNQu/SfgO1B/rSBhW0utraUsrKh5ho0eB2Jl
+         lGZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=pgjTbpN8FXb/wpLhdTDoqFmKQswH6IxZ3RsZ1XGqquI=;
+        b=EP9J3Gq/0bDcM0qD9eVxlgL7j3YXOZJMdQOnmoO0xXRF4q8KQiHefeeLkkpGXy9q0/
+         hh+nMbymlh7b9lyap8XMHupKamV0s5Cl7Ai98PXpsliFbya60hbBJr2zZHMVwodF7Rap
+         VbH8Defp3JEIJrGabAOfRvM3iIzJePcOwXkVE82BUsySCWw9Eb8dhKs/58l1tAdKJ7aU
+         AdVfazAVdZdaQ6FYTB4IW6BiM7+xzRcv/xs1cnTYPeO5AhM/9UbzzfuL4jXAFCS4XjOe
+         7CgO+vhtp3qJUvacgpP3oTjxJRWUWXs7vlAc4qOyhTcQIRUxhDktvIDvUyy7dtYf2hCh
+         Z4EQ==
+X-Gm-Message-State: AJcUukcrMbzXFB4I2awo0RBteA+LNVmb8hHit29jx+fTRbm30/PfRYsc
+        O2wkAV+tUZiVzfbjefcXy8yLNg==
+X-Google-Smtp-Source: ALg8bN5377PnsFcd7JkBU1RMF5RAhLIVoDg/xG08TpliYdpC5YjznehGH7GES/VuWFMdz9xezhuITA==
+X-Received: by 2002:a1c:cf82:: with SMTP id f124mr9855146wmg.95.1546884297341;
+        Mon, 07 Jan 2019 10:04:57 -0800 (PST)
+Received: from linux-2.fritz.box (p200300D993C59900F26698422463201C.dip0.t-ipconnect.de. [2003:d9:93c5:9900:f266:9842:2463:201c])
+        by smtp.googlemail.com with ESMTPSA id h131sm11636528wmd.17.2019.01.07.10.04.56
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 07 Jan 2019 10:04:56 -0800 (PST)
+Subject: Re: general protection fault in put_pid
+To:     Shakeel Butt <shakeelb@google.com>
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
+        syzbot+1145ec2e23165570c3ac@syzkaller.appspotmail.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Howells <dhowells@redhat.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        ktsanaktsidis@zendesk.com, LKML <linux-kernel@vger.kernel.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Davidlohr Bueso <dave@stgolabs.net>
+References: <00000000000051ee78057cc4d98f@google.com>
+ <CACT4Y+YX3=OLqfmWwhHVCQz+HwE=53VH9c1E2M+rgbF=UVTV5A@mail.gmail.com>
+ <ab2fb696-8d3b-9720-a8a0-99c66a080605@colorfullife.com>
+ <CACT4Y+Y-c7FgSTKyHqpRZu3eKLo5QfXy10axTSwWkU4MUgjFgw@mail.gmail.com>
+ <87614226-e895-c3a3-3626-b0fbe7e191be@colorfullife.com>
+ <CACT4Y+bU4mLF1tEhw6mKf1m1W63OGvaFhAsTrpTW0M5MFXekRQ@mail.gmail.com>
+ <CACT4Y+Zynq-URqgJNyCZyTPM80GU8DndtKv=BFDU9_U=f0KceA@mail.gmail.com>
+ <cc088b05-7bc9-778e-30b9-4b8720314001@colorfullife.com>
+ <CALvZod7RtD7zcN48S+duFtjLUsSJrmXUqQawh6=ziw62gvOQjg@mail.gmail.com>
+From:   Manfred Spraul <manfred@colorfullife.com>
+Message-ID: <ef0fe093-6fae-6c54-024b-fdec9c056af3@colorfullife.com>
+Date:   Mon, 7 Jan 2019 19:04:55 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-In-Reply-To: <20190107175229.GJ12689@magnolia>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <CALvZod7RtD7zcN48S+duFtjLUsSJrmXUqQawh6=ziw62gvOQjg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 1/7/19 11:52 AM, Darrick J. Wong wrote:
-> On Mon, Jan 07, 2019 at 04:53:10AM -0500, Su Yanjun wrote:
->> For statx syscall, xfs return the wrong result_mask.
+On 1/3/19 11:18 PM, Shakeel Butt wrote:
+> Hi Manfred,
+>
+> On Sun, Dec 23, 2018 at 4:26 AM Manfred Spraul <manfred@colorfullife.com> wrote:
+>> Hello Dmitry,
 >>
->> Signed-off-by: Su Yanjun <suyj.fnst@cn.fujitsu.com>
->> ---
->>  fs/xfs/xfs_iops.c | 3 +++
->>  1 file changed, 3 insertions(+)
+>> On 12/23/18 10:57 AM, Dmitry Vyukov wrote:
+>>> I can reproduce this infinite memory consumption with the C program:
+>>> https://gist.githubusercontent.com/dvyukov/03ec54b3429ade16fa07bf8b2379aff3/raw/ae4f654e279810de2505e8fa41b73dc1d77778e6/gistfile1.txt
+>>>
+>>> But this is working as intended, right? It just creates infinite
+>>> number of large semaphore sets, which reasonably consumes infinite
+>>> amount of memory.
+>>> Except that it also violates the memcg bound and a process can have
+>>> effectively unlimited amount of such "drum memory" in semaphores.
+>> Yes, this is as intended:
 >>
->> diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
->> index f48ffd7..3811457 100644
->> --- a/fs/xfs/xfs_iops.c
->> +++ b/fs/xfs/xfs_iops.c
->> @@ -521,6 +521,9 @@ xfs_vn_getattr(
->>  			stat->btime.tv_nsec = ip->i_d.di_crtime.t_nsec;
->>  		}
->>  	}
->> +	
->> +	/* Only return mask that we care */
->> +	stat->result_mask &= request_mask;
-> 
-> Why not just:
-> 
-> 	stat->result_mask = STATX_BASIC_STATS;
-> 
-> at the top of the function?
-> 
-> I don't see the need to mask off result_mask at all, since we could some
-> day elect to return more than what's in request_mask...
-> 
-> ...waitaminute, are you seeing garbage in the result_mask that's
-> returned to userspace?  I also noticed the vfs stat functions declare
-> "struct kstat stat;" without explicitly zeroing the structure fields,
-> which means (I think) that we can leak stack information if the kernel
-> isn't built with the stackleak plugin?
+>> If you call semget(), then you can use memory, up to the limits in
+>> /proc/sys/kernel/sem.
+>>
+>> Memcg is not taken into account, an admin must set /proc/sys/kernel/sem.
+>>
+>> The default are "infinite amount of memory allowed", as this is the most
+>> sane default: We had a logic that tried to autotune (i.e.: a new
+>> namespace "inherits" a fraction of the parent namespaces memory limits),
+>> but this we more or less always wrong.
+>>
+>>
+> What's the disadvantage of setting the limits in /proc/sys/kernel/sem
+> high and let the task's memcg limits the number of semaphore a process
+> can create? Please note that the memory underlying shmget and msgget
+> is already accounted to memcg.
 
-A clear problem statement and reproducer steps would be hugely useful
-here.
+Nothing, it it just a question of implementing it.
 
--Eric
+I'll try to look at it.
+
+--
+
+     Manfred
+
