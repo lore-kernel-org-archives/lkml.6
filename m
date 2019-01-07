@@ -7,48 +7,47 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE51AC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:43:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A0C8C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:43:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 733EE20665
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:43:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 623A3218B0
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:43:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546865025;
-	bh=dqsqlWNQc5x9FJ4vb4Xj3SyAFR7Cilj2ga3vjLlcBdg=;
+	s=default; t=1546865029;
+	bh=omYbFQerSKtGyLfnFVztcU0wQLHtI7Jo2ahFjhYWdDU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=BEJg333WtNnCh6NpHk+WcnNn+iyp6h92RzChBuyq99kLOF2jbhrSvWHnYjE/fSVr2
-	 tRRq7JWkj01qHVv8R8teH0Uv7faNdVnay1Lw7AGcgdv1CMBs43B/fPoYBHXq2ElP7K
-	 gkcHThmvEFJAi0G3pyKyNXX4esdgx9y7tVQTpi0k=
+	b=SzUn99fXCfgTrEF/3hl4qVE6DwCsI1huuoJQw5tAwL9cWGBpsu/v6VVDSn5yi7MyU
+	 RyZzvzBJTOTsoZQYBP4irYULQzbXEle/gnIQIuf+4Nfl0ZzQkHQUOKmLt3mhFLmS5a
+	 T07kWH1Tw43RFZ9wtQUeIC+X4INLbysGzGC73R3E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728461AbfAGMno (ORCPT
+        id S1728473AbfAGMns (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:43:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59898 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:43:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60024 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728446AbfAGMnl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:43:41 -0500
+        id S1728458AbfAGMno (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:43:44 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E8A0F20665;
-        Mon,  7 Jan 2019 12:43:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E395220449;
+        Mon,  7 Jan 2019 12:43:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865020;
-        bh=dqsqlWNQc5x9FJ4vb4Xj3SyAFR7Cilj2ga3vjLlcBdg=;
+        s=default; t=1546865023;
+        bh=omYbFQerSKtGyLfnFVztcU0wQLHtI7Jo2ahFjhYWdDU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NMtZQYckqkjZJ61dzseCo/tH6IfI+OwIdc0nmhbz9/sHBXovbONzOdi/FF43EkJxF
-         VfXvXq71Seujgu0YxB21Shn7Vql0IHQv5JRxqS6EeYZfu0JsZklSHEiGENpFXG2MuX
-         OMZc57jvC05+oUmuU7tcKsqpifVU8SK90oNlmWqs=
+        b=iRC9YO+sUBZsjnH6R3tjJezdUact4zlBORm9Fy9GELPHyI8tV39bgwgbSByre254d
+         ACDdNPl29lXL0qBjjxAUslDNCepWwiVwd1PareM81ngWaSeHJkXWJiG9weuHeBgy6q
+         iH6Ift6q13Lp8ztr5hQFjSVeYURpNoWl7/eJdWws=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
-        Paul Burton <paul.burton@mips.com>, linux-mips@vger.kernel.org,
-        Rich Felker <dalias@libc.org>,
-        David Daney <david.daney@cavium.com>
-Subject: [PATCH 4.20 120/145] MIPS: math-emu: Write-protect delay slot emulation pages
-Date:   Mon,  7 Jan 2019 13:32:37 +0100
-Message-Id: <20190107104452.929400082@linuxfoundation.org>
+        stable@vger.kernel.org, Nikolay Borisov <nborisov@suse.com>,
+        Filipe Manana <fdmanana@suse.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.20 094/145] Btrfs: fix deadlock with memory reclaim during scrub
+Date:   Mon,  7 Jan 2019 13:32:11 +0100
+Message-Id: <20190107104449.511419128@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104437.308206189@linuxfoundation.org>
 References: <20190107104437.308206189@linuxfoundation.org>
@@ -67,125 +66,123 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paul Burton <paul.burton@mips.com>
+From: Filipe Manana <fdmanana@suse.com>
 
-commit adcc81f148d733b7e8e641300c5590a2cdc13bf3 upstream.
+commit a5fb11429167ee6ddeeacc554efaf5776b36433a upstream.
 
-Mapping the delay slot emulation page as both writeable & executable
-presents a security risk, in that if an exploit can write to & jump into
-the page then it can be used as an easy way to execute arbitrary code.
+When a transaction commit starts, it attempts to pause scrub and it blocks
+until the scrub is paused. So while the transaction is blocked waiting for
+scrub to pause, we can not do memory allocation with GFP_KERNEL from scrub,
+otherwise we risk getting into a deadlock with reclaim.
 
-Prevent this by mapping the page read-only for userland, and using
-access_process_vm() with the FOLL_FORCE flag to write to it from
-mips_dsemul().
+Checking for scrub pause requests is done early at the beginning of the
+while loop of scrub_stripe() and later in the loop, scrub_extent() and
+scrub_raid56_parity() are called, which in turn call scrub_pages() and
+scrub_pages_for_parity() respectively. These last two functions do memory
+allocations using GFP_KERNEL. Same problem could happen while scrubbing
+the super blocks, since it calls scrub_pages().
 
-This will likely be less efficient due to copy_to_user_page() performing
-cache maintenance on a whole page, rather than a single line as in the
-previous use of flush_cache_sigtramp(). However this delay slot
-emulation code ought not to be running in any performance critical paths
-anyway so this isn't really a problem, and we can probably do better in
-copy_to_user_page() anyway in future.
+We also can not have any of the worker tasks, created by the scrub task,
+doing GFP_KERNEL allocations, because before pausing, the scrub task waits
+for all the worker tasks to complete (also done at scrub_stripe()).
 
-A major advantage of this approach is that the fix is small & simple to
-backport to stable kernels.
+So make sure GFP_NOFS is used for the memory allocations because at any
+time a scrub pause request can happen from another task that started to
+commit a transaction.
 
-Reported-by: Andy Lutomirski <luto@kernel.org>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Fixes: 432c6bacbd0c ("MIPS: Use per-mm page to execute branch delay slot instructions")
-Cc: stable@vger.kernel.org # v4.8+
-Cc: linux-mips@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: Rich Felker <dalias@libc.org>
-Cc: David Daney <david.daney@cavium.com>
+Fixes: 58c4e173847a ("btrfs: scrub: use GFP_KERNEL on the submission path")
+CC: stable@vger.kernel.org # 4.6+
+Reviewed-by: Nikolay Borisov <nborisov@suse.com>
+Signed-off-by: Filipe Manana <fdmanana@suse.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/kernel/vdso.c     |    4 ++--
- arch/mips/math-emu/dsemul.c |   38 ++++++++++++++++++++------------------
- 2 files changed, 22 insertions(+), 20 deletions(-)
+ fs/btrfs/scrub.c |   35 ++++++++++++++++++++++++++++++++++-
+ 1 file changed, 34 insertions(+), 1 deletion(-)
 
---- a/arch/mips/kernel/vdso.c
-+++ b/arch/mips/kernel/vdso.c
-@@ -126,8 +126,8 @@ int arch_setup_additional_pages(struct l
+--- a/fs/btrfs/scrub.c
++++ b/fs/btrfs/scrub.c
+@@ -322,6 +322,7 @@ static struct full_stripe_lock *insert_f
+ 	struct rb_node *parent = NULL;
+ 	struct full_stripe_lock *entry;
+ 	struct full_stripe_lock *ret;
++	unsigned int nofs_flag;
  
- 	/* Map delay slot emulation page */
- 	base = mmap_region(NULL, STACK_TOP, PAGE_SIZE,
--			   VM_READ|VM_WRITE|VM_EXEC|
--			   VM_MAYREAD|VM_MAYWRITE|VM_MAYEXEC,
-+			   VM_READ | VM_EXEC |
-+			   VM_MAYREAD | VM_MAYWRITE | VM_MAYEXEC,
- 			   0, NULL);
- 	if (IS_ERR_VALUE(base)) {
- 		ret = base;
---- a/arch/mips/math-emu/dsemul.c
-+++ b/arch/mips/math-emu/dsemul.c
-@@ -214,8 +214,9 @@ int mips_dsemul(struct pt_regs *regs, mi
- {
- 	int isa16 = get_isa16_mode(regs->cp0_epc);
- 	mips_instruction break_math;
--	struct emuframe __user *fr;
--	int err, fr_idx;
-+	unsigned long fr_uaddr;
-+	struct emuframe fr;
-+	int fr_idx, ret;
+ 	lockdep_assert_held(&locks_root->lock);
  
- 	/* NOP is easy */
- 	if (ir == 0)
-@@ -250,27 +251,31 @@ int mips_dsemul(struct pt_regs *regs, mi
- 		fr_idx = alloc_emuframe();
- 	if (fr_idx == BD_EMUFRAME_NONE)
- 		return SIGBUS;
--	fr = &dsemul_page()[fr_idx];
- 
- 	/* Retrieve the appropriately encoded break instruction */
- 	break_math = BREAK_MATH(isa16);
- 
- 	/* Write the instructions to the frame */
- 	if (isa16) {
--		err = __put_user(ir >> 16,
--				 (u16 __user *)(&fr->emul));
--		err |= __put_user(ir & 0xffff,
--				  (u16 __user *)((long)(&fr->emul) + 2));
--		err |= __put_user(break_math >> 16,
--				  (u16 __user *)(&fr->badinst));
--		err |= __put_user(break_math & 0xffff,
--				  (u16 __user *)((long)(&fr->badinst) + 2));
-+		union mips_instruction _emul = {
-+			.halfword = { ir >> 16, ir }
-+		};
-+		union mips_instruction _badinst = {
-+			.halfword = { break_math >> 16, break_math }
-+		};
-+
-+		fr.emul = _emul.word;
-+		fr.badinst = _badinst.word;
- 	} else {
--		err = __put_user(ir, &fr->emul);
--		err |= __put_user(break_math, &fr->badinst);
-+		fr.emul = ir;
-+		fr.badinst = break_math;
+@@ -339,8 +340,17 @@ static struct full_stripe_lock *insert_f
+ 		}
  	}
  
--	if (unlikely(err)) {
-+	/* Write the frame to user memory */
-+	fr_uaddr = (unsigned long)&dsemul_page()[fr_idx];
-+	ret = access_process_vm(current, fr_uaddr, &fr, sizeof(fr),
-+				FOLL_FORCE | FOLL_WRITE);
-+	if (unlikely(ret != sizeof(fr))) {
- 		MIPS_FPU_EMU_INC_STATS(errors);
- 		free_emuframe(fr_idx, current->mm);
- 		return SIGBUS;
-@@ -282,10 +287,7 @@ int mips_dsemul(struct pt_regs *regs, mi
- 	atomic_set(&current->thread.bd_emu_frame, fr_idx);
+-	/* Insert new lock */
++	/*
++	 * Insert new lock.
++	 *
++	 * We must use GFP_NOFS because the scrub task might be waiting for a
++	 * worker task executing this function and in turn a transaction commit
++	 * might be waiting the scrub task to pause (which needs to wait for all
++	 * the worker tasks to complete before pausing).
++	 */
++	nofs_flag = memalloc_nofs_save();
+ 	ret = kmalloc(sizeof(*ret), GFP_KERNEL);
++	memalloc_nofs_restore(nofs_flag);
+ 	if (!ret)
+ 		return ERR_PTR(-ENOMEM);
+ 	ret->logical = fstripe_logical;
+@@ -1620,8 +1630,19 @@ static int scrub_add_page_to_wr_bio(stru
+ 	mutex_lock(&sctx->wr_lock);
+ again:
+ 	if (!sctx->wr_curr_bio) {
++		unsigned int nofs_flag;
++
++		/*
++		 * We must use GFP_NOFS because the scrub task might be waiting
++		 * for a worker task executing this function and in turn a
++		 * transaction commit might be waiting the scrub task to pause
++		 * (which needs to wait for all the worker tasks to complete
++		 * before pausing).
++		 */
++		nofs_flag = memalloc_nofs_save();
+ 		sctx->wr_curr_bio = kzalloc(sizeof(*sctx->wr_curr_bio),
+ 					      GFP_KERNEL);
++		memalloc_nofs_restore(nofs_flag);
+ 		if (!sctx->wr_curr_bio) {
+ 			mutex_unlock(&sctx->wr_lock);
+ 			return -ENOMEM;
+@@ -3772,6 +3793,7 @@ int btrfs_scrub_dev(struct btrfs_fs_info
+ 	struct scrub_ctx *sctx;
+ 	int ret;
+ 	struct btrfs_device *dev;
++	unsigned int nofs_flag;
  
- 	/* Change user register context to execute the frame */
--	regs->cp0_epc = (unsigned long)&fr->emul | isa16;
--
--	/* Ensure the icache observes our newly written frame */
--	flush_cache_sigtramp((unsigned long)&fr->emul);
-+	regs->cp0_epc = fr_uaddr | isa16;
+ 	if (btrfs_fs_closing(fs_info))
+ 		return -EINVAL;
+@@ -3875,6 +3897,16 @@ int btrfs_scrub_dev(struct btrfs_fs_info
+ 	atomic_inc(&fs_info->scrubs_running);
+ 	mutex_unlock(&fs_info->scrub_lock);
  
- 	return 0;
- }
++	/*
++	 * In order to avoid deadlock with reclaim when there is a transaction
++	 * trying to pause scrub, make sure we use GFP_NOFS for all the
++	 * allocations done at btrfs_scrub_pages() and scrub_pages_for_parity()
++	 * invoked by our callees. The pausing request is done when the
++	 * transaction commit starts, and it blocks the transaction until scrub
++	 * is paused (done at specific points at scrub_stripe() or right above
++	 * before incrementing fs_info->scrubs_running).
++	 */
++	nofs_flag = memalloc_nofs_save();
+ 	if (!is_dev_replace) {
+ 		/*
+ 		 * by holding device list mutex, we can
+@@ -3887,6 +3919,7 @@ int btrfs_scrub_dev(struct btrfs_fs_info
+ 
+ 	if (!ret)
+ 		ret = scrub_enumerate_chunks(sctx, dev, start, end);
++	memalloc_nofs_restore(nofs_flag);
+ 
+ 	wait_event(sctx->list_wait, atomic_read(&sctx->bios_in_flight) == 0);
+ 	atomic_dec(&fs_info->scrubs_running);
 
 
