@@ -2,123 +2,99 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A486CC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:07:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8852C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:10:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7BEB92173C
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:07:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B1712173C
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:10:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546884633;
+	bh=hSWicu7qShBovi0rWWwy9Nln1mor1kBXG+LpRR6I0fI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=WsC4l9Vc6t3qGLgrMB9Ge+Lk7P6Fr9KUcXR6RLHAVUPEGiXtbg+dAl2vOa5LF7cV5
+	 /mDoMgVpvl0z2GXbj/PtIC5A5U7COlWhBIONsWMiwR0iYR5gwO1B+XbmbJfaJpW0nE
+	 1VAoNSutDXJEwpVkHTfR9WduIVZlX+TVrCLTki3k=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728453AbfAGSHG (ORCPT
+        id S1727667AbfAGSKc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 13:07:06 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:48009 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727210AbfAGSHG (ORCPT
+        Mon, 7 Jan 2019 13:10:32 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:45114 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726897AbfAGSKc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 13:07:06 -0500
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 131D2808D5; Mon,  7 Jan 2019 19:06:58 +0100 (CET)
-Date:   Mon, 7 Jan 2019 19:07:03 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     joeyli <jlee@suse.com>
-Cc:     "Lee, Chun-Yi" <joeyli.kernel@gmail.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        keyrings@vger.kernel.org,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Chen Yu <yu.c.chen@intel.com>,
-        Oliver Neukum <oneukum@suse.com>,
-        Ryan Chen <yu.chen.surf@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Giovanni Gherdovich <ggherdovich@suse.cz>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Jann Horn <jannh@google.com>, Andy Lutomirski <luto@kernel.org>
-Subject: Re: [PATCH 0/5 v2][RFC] Encryption and authentication for hibernate
- snapshot image
-Message-ID: <20190107180703.GE933@amd>
-References: <20190103143227.9138-1-jlee@suse.com>
- <20190106181026.GA15256@amd>
- <20190107173743.GC4210@linux-l9pv.suse>
+        Mon, 7 Jan 2019 13:10:32 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=gnu1hmlGA/vVBDC0dsXpy9QyXBtYA3GNQ/azF52kC1I=; b=TVLFYf7G0ygCD6/Zp0wtz4+t7
+        qwPuvCQtAIbSBD4GltQFWrO20D2LMryJZqr9IptTk0dtNqZS87jmR76SpVmoH+iZQ51rdpjdoImV3
+        1fl8aSZSJJASUQ6BOKLX0wgCsRBsM7/0mzEs9eeI3YBjB+qRCJ0NRhuQyioc3D47yEKxk=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1ggZLv-0007bW-Ba; Mon, 07 Jan 2019 18:10:19 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id EA7B01127491; Mon,  7 Jan 2019 18:10:18 +0000 (GMT)
+Date:   Mon, 7 Jan 2019 18:10:18 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Kangjie Lu <kjlu@umn.edu>
+Cc:     pakki001@umn.edu,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        Jie Yang <yang.jie@linux.intel.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sound: atom: fix a missing check  of
+ snd_pcm_lib_malloc_pages
+Message-ID: <20190107181018.GQ9570@sirena.org.uk>
+References: <20181226022950.71824-1-kjlu@umn.edu>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="4Epv4kl9IRBfg3rk"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="de1H0RjRxOSdb4we"
 Content-Disposition: inline
-In-Reply-To: <20190107173743.GC4210@linux-l9pv.suse>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20181226022950.71824-1-kjlu@umn.edu>
+X-Cookie: NOBODY EXPECTS THE SPANISH INQUISITION!
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---4Epv4kl9IRBfg3rk
+--de1H0RjRxOSdb4we
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi!
+On Tue, Dec 25, 2018 at 08:29:48PM -0600, Kangjie Lu wrote:
+> snd_pcm_lib_malloc_pages() may fail, so let's check its status and
+> return its error code upstream.
 
-> Thanks for your review!
->=20
-> > > The hibernate function can be used to snapshot memory pages to an ima=
-ge,
-> > > then kernel restores the image to memory space in a appropriate time.
-> > > There have secrets in snapshot image and cracker may modifies it for
-> > > hacking system. Encryption and authentication of snapshot image can p=
-rotect
-> > > the system.
-> > >=20
-> > > Hibernate function requests the master key through key retention serv=
-ice.
-> > > The snapshot master key can be a trusted key or a user defined key. T=
-he
-> > > name of snapshot master key is fixed to "swsusp-kmk". User should loa=
-ds
-> > > swsusp-kmk to kernel by keyctl tool before the hibernation resume.
-> > > e.g. The swsusp-kmk must be loaded before systemd-hibernate-resume
-> >=20
-> > But if userspace has a key, encryption is useless against root.
-> >
->=20
-> Yes, but this concern is not only for hibernation encryption. This patch
-> set does not provide solution against this concern.
 
-So, can we postpone these patches until we have a solution secure
-against root users?
+Please use subject lines matching the style for the subsystem.  This
+makes it easier for people to identify relevant patches.
 
-> My security goals:
->=20
-> - Encrypt and authicate hibernate snapshot image in kernel space. Userspa=
-ce
->   can only touch an encrypted and signed snapshot image.
->=20
-> - The code of encryption are in kernel. They will be signed and verify wi=
-th
->   kernel binary when secure boot enabled. It's better than using
->   unauthenticated userspace code at runtime.
-
-These are not goals. I'd like to understand why you want to put it into
-kernel in the first place.
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---4Epv4kl9IRBfg3rk
+--de1H0RjRxOSdb4we
 Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
 
-iEYEARECAAYFAlwzlUcACgkQMOfwapXb+vK4kgCfVB1Z62JFyX7Bq7sSXrFTCqN8
-rT0AoKyLzzIy+PWQLFi2lG7Z/J1iUq3L
-=H3zH
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlwzlgoACgkQJNaLcl1U
+h9ANhQgAhHbiwBS6b8x9Tn9JFl0iCcDZB3svIqny+Ef/LSlGRHidf/5/e+bAKf2/
+3REHixLpaTnnNpPlAyq+oJZkclpY7lz/WgTfAoW+JPtCkb5CA/XokaPa1pu8zBYR
+WYLGU5MjckgX08S7Hx1gR+Kmy6TXSHm4CWhbjfL6SaVvaCLB7Sfnnk6KGygUC2FD
+7tEPxKd0bpLwQGU+G3WSA+gHeNrTNjgnf8Fq1EfRYvOUWiz3DRw4n4X19T18Cfp4
++nuaEKZVSlEhtq6K1BUvab334bJbyWG85f0kxNjVOy301rmKKc43gwvcMyxKa1Ke
+cRSTNPd2J870DwhQMfKVUGwMDuofRA==
+=UU+m
 -----END PGP SIGNATURE-----
 
---4Epv4kl9IRBfg3rk--
+--de1H0RjRxOSdb4we--
