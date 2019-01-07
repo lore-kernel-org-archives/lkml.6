@@ -2,51 +2,56 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-7.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EA8AC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:58:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05898C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:58:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F11C21736
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:58:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BCD3A2183E
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:58:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546865899;
-	bh=wK8MIUloWs4olZDQ5R9AiaQ696u1gb8ENrJDDTMq5UU=;
+	s=default; t=1546865903;
+	bh=Kkz475Hmy9c5ns/vRglFnfmSm5KpPGRmZfz3qeiSSWA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=B5HzEEaxptj2V/AUG9l7SKDNU/9YHTca2ByByU4X4xu+wjNlvEpjhlKoG6+QpeNEC
-	 WN+7L07eFrhApCyexs/tv0AYbQ0mcayXmkhD+S/8UwzLjKc5LIzZKT+v8XpYRwtuBC
-	 wmh27lqVZuzw/7YQ2buMGl6fuLi8o+afhheu2bGY=
+	b=bg90fxjxa0h1ugwlaOhGl80LWLlyomw4cmS0gh561AsuVJGCBT1x6xCM8jlfoxJmx
+	 327nXKR6T16BwIlh5yyTwmWoQXvLkEb5QJM7v/OUOxhexeBL/W8K2KrKwBri7og+Yh
+	 mhgNpb2J93RGjeosrILh6TrR8YvpLDKF6C9whmI8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729965AbfAGM6S (ORCPT
+        id S1728512AbfAGM6X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:58:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45774 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:58:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45884 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728816AbfAGM6M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:58:12 -0500
+        id S1728816AbfAGM6T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:58:19 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CB1AF2089F;
-        Mon,  7 Jan 2019 12:58:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CFB55206BB;
+        Mon,  7 Jan 2019 12:58:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865892;
-        bh=wK8MIUloWs4olZDQ5R9AiaQ696u1gb8ENrJDDTMq5UU=;
+        s=default; t=1546865898;
+        bh=Kkz475Hmy9c5ns/vRglFnfmSm5KpPGRmZfz3qeiSSWA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cq9W2aoepYLIyDfE3zViXCPk23cg3w+12F4OThd62ZGcqkvKaSNL21xtqn+Vd4qW2
-         EVXNRpmyyc3iw20AsxZy7V8ZlMCEsUN2IVq8lzbJkbjm302bU8x4b2MYx1q9PIZbJ4
-         qdDH8vO/cuZS0iEf77DT8rHunjhwipjU2YxCkrNo=
+        b=c+nLo/WdZNovee1X7kYAJ+XbGVITIyqVKYbjz+kOc3McXVqnGhw6WOY9NMo9KgWNA
+         sYbPC2f2pCUAPSZY7fqlfPGOjnC9uWWK/dRCvkc2CgsgzCokTkwFPrm0Rg0VZ6Z5OV
+         JRgX3TXjAr3vEqWbSh2HaTndR2HGRu3YYtXRlEnE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nava kishore Manne <nava.manne@xilinx.com>,
-        Michal Simek <michal.simek@xilinx.com>
-Subject: [PATCH 4.19 141/170] serial: uartps: Fix interrupt mask issue to handle the RX interrupts properly
-Date:   Mon,  7 Jan 2019 13:32:48 +0100
-Message-Id: <20190107104509.596425479@linuxfoundation.org>
+        stable@vger.kernel.org, Huacai Chen <chenhc@lemote.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <james.hogan@mips.com>,
+        "Steven J . Hill" <Steven.Hill@cavium.com>,
+        linux-mips@linux-mips.org, Fuxin Zhang <zhangfx@lemote.com>,
+        Zhangjin Wu <wuzhangjin@gmail.com>
+Subject: [PATCH 4.19 151/170] MIPS: c-r4k: Add r4k_blast_scache_node for Loongson-3
+Date:   Mon,  7 Jan 2019 13:32:58 +0100
+Message-Id: <20190107104510.789447670@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104452.953560660@linuxfoundation.org>
 References: <20190107104452.953560660@linuxfoundation.org>
@@ -65,42 +70,191 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nava kishore Manne <nava.manne@xilinx.com>
+From: Huacai Chen <chenhc@lemote.com>
 
-commit 260683137ab5276113fc322fdbbc578024185fee upstream.
+commit bb53fdf395eed103f85061bfff3b116cee123895 upstream.
 
-This patch Correct the RX interrupt mask value to handle the
-RX interrupts properly.
+For multi-node Loongson-3 (NUMA configuration), r4k_blast_scache() can
+only flush Node-0's scache. So we add r4k_blast_scache_node() by using
+(CAC_BASE | (node_id << NODE_ADDRSPACE_SHIFT)) instead of CKSEG0 as the
+start address.
 
-Fixes: c8dbdc842d30 ("serial: xuartps: Rewrite the interrupt handling logic")
-Signed-off-by: Nava kishore Manne <nava.manne@xilinx.com>
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+Signed-off-by: Huacai Chen <chenhc@lemote.com>
+[paul.burton@mips.com: Include asm/mmzone.h from asm/r4kcache.h for
+		       nid_to_addrbase(). Add asm/mach-generic/mmzone.h
+		       to allow inclusion for all platforms.]
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Patchwork: https://patchwork.linux-mips.org/patch/21129/
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: James Hogan <james.hogan@mips.com>
+Cc: Steven J . Hill <Steven.Hill@cavium.com>
+Cc: linux-mips@linux-mips.org
+Cc: Fuxin Zhang <zhangfx@lemote.com>
+Cc: Zhangjin Wu <wuzhangjin@gmail.com>
+Cc: <stable@vger.kernel.org> # 3.15+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/serial/xilinx_uartps.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/mips/include/asm/mach-generic/mmzone.h    |    2 +
+ arch/mips/include/asm/mach-loongson64/mmzone.h |    1 
+ arch/mips/include/asm/mmzone.h                 |    8 ++++
+ arch/mips/include/asm/r4kcache.h               |   22 ++++++++++++
+ arch/mips/mm/c-r4k.c                           |   44 +++++++++++++++++++++----
+ 5 files changed, 70 insertions(+), 7 deletions(-)
 
---- a/drivers/tty/serial/xilinx_uartps.c
-+++ b/drivers/tty/serial/xilinx_uartps.c
-@@ -125,7 +125,7 @@ MODULE_PARM_DESC(rx_timeout, "Rx timeout
- #define CDNS_UART_IXR_RXTRIG	0x00000001 /* RX FIFO trigger interrupt */
- #define CDNS_UART_IXR_RXFULL	0x00000004 /* RX FIFO full interrupt. */
- #define CDNS_UART_IXR_RXEMPTY	0x00000002 /* RX FIFO empty interrupt. */
--#define CDNS_UART_IXR_MASK	0x00001FFF /* Valid bit mask */
-+#define CDNS_UART_IXR_RXMASK	0x000021e7 /* Valid RX bit mask */
+--- /dev/null
++++ b/arch/mips/include/asm/mach-generic/mmzone.h
+@@ -0,0 +1,2 @@
++// SPDX-License-Identifier: GPL-2.0
++/* Intentionally empty */
+--- a/arch/mips/include/asm/mach-loongson64/mmzone.h
++++ b/arch/mips/include/asm/mach-loongson64/mmzone.h
+@@ -21,6 +21,7 @@
+ #define NODE3_ADDRSPACE_OFFSET 0x300000000000UL
  
- 	/*
- 	 * Do not enable parity error interrupt for the following
-@@ -362,7 +362,7 @@ static irqreturn_t cdns_uart_isr(int irq
- 		cdns_uart_handle_tx(dev_id);
- 		isrstatus &= ~CDNS_UART_IXR_TXEMPTY;
- 	}
--	if (isrstatus & CDNS_UART_IXR_MASK)
-+	if (isrstatus & CDNS_UART_IXR_RXMASK)
- 		cdns_uart_handle_rx(dev_id, isrstatus);
+ #define pa_to_nid(addr)  (((addr) & 0xf00000000000) >> NODE_ADDRSPACE_SHIFT)
++#define nid_to_addrbase(nid) ((nid) << NODE_ADDRSPACE_SHIFT)
  
- 	spin_unlock(&port->lock);
+ #define LEVELS_PER_SLICE 128
+ 
+--- a/arch/mips/include/asm/mmzone.h
++++ b/arch/mips/include/asm/mmzone.h
+@@ -9,6 +9,14 @@
+ #include <asm/page.h>
+ #include <mmzone.h>
+ 
++#ifndef pa_to_nid
++#define pa_to_nid(addr) 0
++#endif
++
++#ifndef nid_to_addrbase
++#define nid_to_addrbase(nid) 0
++#endif
++
+ #ifdef CONFIG_DISCONTIGMEM
+ 
+ #define pfn_to_nid(pfn)		pa_to_nid((pfn) << PAGE_SHIFT)
+--- a/arch/mips/include/asm/r4kcache.h
++++ b/arch/mips/include/asm/r4kcache.h
+@@ -20,6 +20,7 @@
+ #include <asm/cpu-features.h>
+ #include <asm/cpu-type.h>
+ #include <asm/mipsmtregs.h>
++#include <asm/mmzone.h>
+ #include <linux/uaccess.h> /* for uaccess_kernel() */
+ 
+ extern void (*r4k_blast_dcache)(void);
+@@ -747,4 +748,25 @@ __BUILD_BLAST_CACHE_RANGE(s, scache, Hit
+ __BUILD_BLAST_CACHE_RANGE(inv_d, dcache, Hit_Invalidate_D, , )
+ __BUILD_BLAST_CACHE_RANGE(inv_s, scache, Hit_Invalidate_SD, , )
+ 
++/* Currently, this is very specific to Loongson-3 */
++#define __BUILD_BLAST_CACHE_NODE(pfx, desc, indexop, hitop, lsize)	\
++static inline void blast_##pfx##cache##lsize##_node(long node)		\
++{									\
++	unsigned long start = CAC_BASE | nid_to_addrbase(node);		\
++	unsigned long end = start + current_cpu_data.desc.waysize;	\
++	unsigned long ws_inc = 1UL << current_cpu_data.desc.waybit;	\
++	unsigned long ws_end = current_cpu_data.desc.ways <<		\
++			       current_cpu_data.desc.waybit;		\
++	unsigned long ws, addr;						\
++									\
++	for (ws = 0; ws < ws_end; ws += ws_inc)				\
++		for (addr = start; addr < end; addr += lsize * 32)	\
++			cache##lsize##_unroll32(addr|ws, indexop);	\
++}
++
++__BUILD_BLAST_CACHE_NODE(s, scache, Index_Writeback_Inv_SD, Hit_Writeback_Inv_SD, 16)
++__BUILD_BLAST_CACHE_NODE(s, scache, Index_Writeback_Inv_SD, Hit_Writeback_Inv_SD, 32)
++__BUILD_BLAST_CACHE_NODE(s, scache, Index_Writeback_Inv_SD, Hit_Writeback_Inv_SD, 64)
++__BUILD_BLAST_CACHE_NODE(s, scache, Index_Writeback_Inv_SD, Hit_Writeback_Inv_SD, 128)
++
+ #endif /* _ASM_R4KCACHE_H */
+--- a/arch/mips/mm/c-r4k.c
++++ b/arch/mips/mm/c-r4k.c
+@@ -459,11 +459,28 @@ static void r4k_blast_scache_setup(void)
+ 		r4k_blast_scache = blast_scache128;
+ }
+ 
++static void (*r4k_blast_scache_node)(long node);
++
++static void r4k_blast_scache_node_setup(void)
++{
++	unsigned long sc_lsize = cpu_scache_line_size();
++
++	if (current_cpu_type() != CPU_LOONGSON3)
++		r4k_blast_scache_node = (void *)cache_noop;
++	else if (sc_lsize == 16)
++		r4k_blast_scache_node = blast_scache16_node;
++	else if (sc_lsize == 32)
++		r4k_blast_scache_node = blast_scache32_node;
++	else if (sc_lsize == 64)
++		r4k_blast_scache_node = blast_scache64_node;
++	else if (sc_lsize == 128)
++		r4k_blast_scache_node = blast_scache128_node;
++}
++
+ static inline void local_r4k___flush_cache_all(void * args)
+ {
+ 	switch (current_cpu_type()) {
+ 	case CPU_LOONGSON2:
+-	case CPU_LOONGSON3:
+ 	case CPU_R4000SC:
+ 	case CPU_R4000MC:
+ 	case CPU_R4400SC:
+@@ -480,6 +497,11 @@ static inline void local_r4k___flush_cac
+ 		r4k_blast_scache();
+ 		break;
+ 
++	case CPU_LOONGSON3:
++		/* Use get_ebase_cpunum() for both NUMA=y/n */
++		r4k_blast_scache_node(get_ebase_cpunum() >> 2);
++		break;
++
+ 	case CPU_BMIPS5000:
+ 		r4k_blast_scache();
+ 		__sync();
+@@ -840,10 +862,14 @@ static void r4k_dma_cache_wback_inv(unsi
+ 
+ 	preempt_disable();
+ 	if (cpu_has_inclusive_pcaches) {
+-		if (size >= scache_size)
+-			r4k_blast_scache();
+-		else
++		if (size >= scache_size) {
++			if (current_cpu_type() != CPU_LOONGSON3)
++				r4k_blast_scache();
++			else
++				r4k_blast_scache_node(pa_to_nid(addr));
++		} else {
+ 			blast_scache_range(addr, addr + size);
++		}
+ 		preempt_enable();
+ 		__sync();
+ 		return;
+@@ -877,9 +903,12 @@ static void r4k_dma_cache_inv(unsigned l
+ 
+ 	preempt_disable();
+ 	if (cpu_has_inclusive_pcaches) {
+-		if (size >= scache_size)
+-			r4k_blast_scache();
+-		else {
++		if (size >= scache_size) {
++			if (current_cpu_type() != CPU_LOONGSON3)
++				r4k_blast_scache();
++			else
++				r4k_blast_scache_node(pa_to_nid(addr));
++		} else {
+ 			/*
+ 			 * There is no clearly documented alignment requirement
+ 			 * for the cache instruction on MIPS processors and
+@@ -1918,6 +1947,7 @@ void r4k_cache_init(void)
+ 	r4k_blast_scache_page_setup();
+ 	r4k_blast_scache_page_indexed_setup();
+ 	r4k_blast_scache_setup();
++	r4k_blast_scache_node_setup();
+ #ifdef CONFIG_EVA
+ 	r4k_blast_dcache_user_page_setup();
+ 	r4k_blast_icache_user_page_setup();
 
 
