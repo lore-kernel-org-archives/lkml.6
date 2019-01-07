@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91871C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:58:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EA8AC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:58:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38F4221736
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:58:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F11C21736
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:58:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546865892;
-	bh=9xjIuNcYg4GLqatvJjIuhEPh7tN2CQSK2abmNe3qv3s=;
+	s=default; t=1546865899;
+	bh=wK8MIUloWs4olZDQ5R9AiaQ696u1gb8ENrJDDTMq5UU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=k02oVsCVvrKe/yT3RQM+1bJoMxl9SvOUTYXggRD4ItHcszyNOoCFzGq1v699ntC9N
-	 DHHVPCEJSWIX+ePygFW8q8xDMRTJoH774PVO3Tk0dqw+CF4UZyqZpWvX33+zgapSOq
-	 9km7r+038QhlwUH1RAWogCdATN1bdln0/Rjvs+nk=
+	b=B5HzEEaxptj2V/AUG9l7SKDNU/9YHTca2ByByU4X4xu+wjNlvEpjhlKoG6+QpeNEC
+	 WN+7L07eFrhApCyexs/tv0AYbQ0mcayXmkhD+S/8UwzLjKc5LIzZKT+v8XpYRwtuBC
+	 wmh27lqVZuzw/7YQ2buMGl6fuLi8o+afhheu2bGY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729755AbfAGM6L (ORCPT
+        id S1729965AbfAGM6S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:58:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45672 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:58:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45774 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729939AbfAGM6G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:58:06 -0500
+        id S1728816AbfAGM6M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:58:12 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B5635206BB;
-        Mon,  7 Jan 2019 12:58:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CB1AF2089F;
+        Mon,  7 Jan 2019 12:58:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865886;
-        bh=9xjIuNcYg4GLqatvJjIuhEPh7tN2CQSK2abmNe3qv3s=;
+        s=default; t=1546865892;
+        bh=wK8MIUloWs4olZDQ5R9AiaQ696u1gb8ENrJDDTMq5UU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HpFj5TY7YBK7VupP8a3tsJbLJmb124Wh11A8KjzoO0wyN/L89Yvq7VbFXsqHS2l88
-         AEYuimSPDKX1HO7diImX7qdBY4la789IzqdSX/c69TZCwiOu8YUwF74/XvVeu/tEfG
-         S7L5U+h9z8TamTuW9qPaqoOEq4rEJgB8FoQ55mCg=
+        b=cq9W2aoepYLIyDfE3zViXCPk23cg3w+12F4OThd62ZGcqkvKaSNL21xtqn+Vd4qW2
+         EVXNRpmyyc3iw20AsxZy7V8ZlMCEsUN2IVq8lzbJkbjm302bU8x4b2MYx1q9PIZbJ4
+         qdDH8vO/cuZS0iEf77DT8rHunjhwipjU2YxCkrNo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Maurizio Lombardi <mlombard@redhat.com>,
-        Theodore Tso <tytso@mit.edu>, stable@kernel.org
-Subject: [PATCH 4.19 109/170] ext4: missing unlock/put_page() in ext4_try_to_write_inline_data()
-Date:   Mon,  7 Jan 2019 13:32:16 +0100
-Message-Id: <20190107104505.809381854@linuxfoundation.org>
+        stable@vger.kernel.org, Nava kishore Manne <nava.manne@xilinx.com>,
+        Michal Simek <michal.simek@xilinx.com>
+Subject: [PATCH 4.19 141/170] serial: uartps: Fix interrupt mask issue to handle the RX interrupts properly
+Date:   Mon,  7 Jan 2019 13:32:48 +0100
+Message-Id: <20190107104509.596425479@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104452.953560660@linuxfoundation.org>
 References: <20190107104452.953560660@linuxfoundation.org>
@@ -65,37 +65,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Maurizio Lombardi <mlombard@redhat.com>
+From: Nava kishore Manne <nava.manne@xilinx.com>
 
-commit 132d00becb31e88469334e1e62751c81345280e0 upstream.
+commit 260683137ab5276113fc322fdbbc578024185fee upstream.
 
-In case of error, ext4_try_to_write_inline_data() should unlock
-and release the page it holds.
+This patch Correct the RX interrupt mask value to handle the
+RX interrupts properly.
 
-Fixes: f19d5870cbf7 ("ext4: add normal write support for inline data")
-Cc: stable@kernel.org # 3.8
-Signed-off-by: Maurizio Lombardi <mlombard@redhat.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Fixes: c8dbdc842d30 ("serial: xuartps: Rewrite the interrupt handling logic")
+Signed-off-by: Nava kishore Manne <nava.manne@xilinx.com>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Michal Simek <michal.simek@xilinx.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/inline.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/tty/serial/xilinx_uartps.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/fs/ext4/inline.c
-+++ b/fs/ext4/inline.c
-@@ -705,8 +705,11 @@ int ext4_try_to_write_inline_data(struct
+--- a/drivers/tty/serial/xilinx_uartps.c
++++ b/drivers/tty/serial/xilinx_uartps.c
+@@ -125,7 +125,7 @@ MODULE_PARM_DESC(rx_timeout, "Rx timeout
+ #define CDNS_UART_IXR_RXTRIG	0x00000001 /* RX FIFO trigger interrupt */
+ #define CDNS_UART_IXR_RXFULL	0x00000004 /* RX FIFO full interrupt. */
+ #define CDNS_UART_IXR_RXEMPTY	0x00000002 /* RX FIFO empty interrupt. */
+-#define CDNS_UART_IXR_MASK	0x00001FFF /* Valid bit mask */
++#define CDNS_UART_IXR_RXMASK	0x000021e7 /* Valid RX bit mask */
  
- 	if (!PageUptodate(page)) {
- 		ret = ext4_read_inline_page(inode, page);
--		if (ret < 0)
-+		if (ret < 0) {
-+			unlock_page(page);
-+			put_page(page);
- 			goto out_up_read;
-+		}
+ 	/*
+ 	 * Do not enable parity error interrupt for the following
+@@ -362,7 +362,7 @@ static irqreturn_t cdns_uart_isr(int irq
+ 		cdns_uart_handle_tx(dev_id);
+ 		isrstatus &= ~CDNS_UART_IXR_TXEMPTY;
  	}
+-	if (isrstatus & CDNS_UART_IXR_MASK)
++	if (isrstatus & CDNS_UART_IXR_RXMASK)
+ 		cdns_uart_handle_rx(dev_id, isrstatus);
  
- 	ret = 1;
+ 	spin_unlock(&port->lock);
 
 
