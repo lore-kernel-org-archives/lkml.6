@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58AFEC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:07:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AF7CC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:07:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DACD20578
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:07:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A96B2147C
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:07:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546866435;
-	bh=iP5ptsh6upZ4OvQXitlp+iCDjrGo1TJDJMSKMSf3JP4=;
+	s=default; t=1546866439;
+	bh=4YINXhYo7YX/1lBQXGfWEnClP9n2PZJxhLZDW4pE0ZI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=WMaO5AtpXMLTmliGQE4LDStjzV4g+i75W+TrRcfIqQLZr3Mq8l+gdNTCBCVC9DJxz
-	 mE9N11VA126Wq3zefKoI+P+1iJP95os5j7p98T5ppW4O+rqXJnR2aue+zfvhXl7p9C
-	 2i807uY57ASnwTvH3vm8RkVpSs9aJ77QWwXZrROg=
+	b=U7hKBCEax/60sOUhN/9SctpKpxji7VIw5hkh+Cu4JO/RdSpXgMTP3Jz/2y3kaXJw0
+	 oE4iR77meEG5l6G3rdDeenCaumGerHQIqrtZyXLx/EOIxiteJPsbhHBG2MlDQ8r4KB
+	 Oqy0myma+vcw+DmNACIJEgj8EDGYDWjZBvoLEEQo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731297AbfAGNHN (ORCPT
+        id S1731300AbfAGNHR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:07:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54328 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:07:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54370 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727362AbfAGNHL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:07:11 -0500
+        id S1727362AbfAGNHO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:07:14 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F13C5206BB;
-        Mon,  7 Jan 2019 13:07:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 18DED206BB;
+        Mon,  7 Jan 2019 13:07:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546866430;
-        bh=iP5ptsh6upZ4OvQXitlp+iCDjrGo1TJDJMSKMSf3JP4=;
+        s=default; t=1546866433;
+        bh=4YINXhYo7YX/1lBQXGfWEnClP9n2PZJxhLZDW4pE0ZI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Mt/Dtbn9j9JdKIPoEGA0RiZMiXlJGNRPeSHG2XhwG2KN8JOIMTykDyiKzNOEXH1n3
-         3rSKIGxTAJPy5WyVrMpFql3QB4C4kBQN3faB36kKLDHmCKtiT6L+Qhq8xBD1m0duOY
-         lbWjeUrETl4eiGoUkTTk8QbqvUmWoRnPM7dJrKAk=
+        b=MedF6ekXg7zoBT3asKjlagyqN0l5dA9n8D8ouNKNiCiEPPej7Yuk9HeX/2gaX8pZd
+         kkNBGD+HhrRJogYkAmggGHeqHVWSXARzkupeBYBtwr6m8eyJszSzZvZv1FnZAmOZcK
+         nST8jCmx2o92am9T4CyojNMt6UZtVsb3B9BVVvSM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Mantas=20Mikul=C4=97nas?= <grawity@gmail.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.9 35/71] ALSA: hda: add mute LED support for HP EliteBook 840 G4
-Date:   Mon,  7 Jan 2019 13:33:04 +0100
-Message-Id: <20190107105334.766856733@linuxfoundation.org>
+        stable@vger.kernel.org, Mohan Kumar <mkumard@nvidia.com>,
+        Dara Ramesh <dramesh@nvidia.com>,
+        Sameer Pujar <spujar@nvidia.com>, Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.9 36/71] ALSA: hda/tegra: clear pending irq handlers
+Date:   Mon,  7 Jan 2019 13:33:05 +0100
+Message-Id: <20190107105334.832592800@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107105330.280153213@linuxfoundation.org>
 References: <20190107105330.280153213@linuxfoundation.org>
@@ -66,33 +66,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mantas Mikulėnas <grawity@gmail.com>
+From: Sameer Pujar <spujar@nvidia.com>
 
-commit 40906ebe3af6a48457151b3c6726b480f6a6cb13 upstream.
+commit 63d2a9ec310d8bcc955574220d4631aa55c1a80c upstream.
 
-Tested with 4.19.9.
+Even after disabling interrupts on the module, it could be possible
+that irq handlers are still running. System hang is seen during
+suspend path. It was found that, there were pending writes on the
+HDA bus and clock was disabled by that time.
 
-v2: Changed from CXT_FIXUP_MUTE_LED_GPIO to CXT_FIXUP_HP_DOCK because
-    that's what the existing fixups for EliteBooks use.
+Above mentioned issue is fixed by clearing any pending irq handlers
+before disabling clocks and returning from hda suspend.
 
-Signed-off-by: Mantas Mikulėnas <grawity@gmail.com>
+Suggested-by: Mohan Kumar <mkumard@nvidia.com>
+Suggested-by: Dara Ramesh <dramesh@nvidia.com>
+Signed-off-by: Sameer Pujar <spujar@nvidia.com>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_conexant.c |    1 +
- 1 file changed, 1 insertion(+)
+ sound/pci/hda/hda_tegra.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/sound/pci/hda/patch_conexant.c
-+++ b/sound/pci/hda/patch_conexant.c
-@@ -853,6 +853,7 @@ static const struct snd_pci_quirk cxt506
- 	SND_PCI_QUIRK(0x103c, 0x8079, "HP EliteBook 840 G3", CXT_FIXUP_HP_DOCK),
- 	SND_PCI_QUIRK(0x103c, 0x807C, "HP EliteBook 820 G3", CXT_FIXUP_HP_DOCK),
- 	SND_PCI_QUIRK(0x103c, 0x80FD, "HP ProBook 640 G2", CXT_FIXUP_HP_DOCK),
-+	SND_PCI_QUIRK(0x103c, 0x828c, "HP EliteBook 840 G4", CXT_FIXUP_HP_DOCK),
- 	SND_PCI_QUIRK(0x103c, 0x83b3, "HP EliteBook 830 G5", CXT_FIXUP_HP_DOCK),
- 	SND_PCI_QUIRK(0x103c, 0x83d3, "HP ProBook 640 G4", CXT_FIXUP_HP_DOCK),
- 	SND_PCI_QUIRK(0x103c, 0x8174, "HP Spectre x360", CXT_FIXUP_HP_SPECTRE),
+--- a/sound/pci/hda/hda_tegra.c
++++ b/sound/pci/hda/hda_tegra.c
+@@ -249,10 +249,12 @@ static int hda_tegra_suspend(struct devi
+ 	struct snd_card *card = dev_get_drvdata(dev);
+ 	struct azx *chip = card->private_data;
+ 	struct hda_tegra *hda = container_of(chip, struct hda_tegra, chip);
++	struct hdac_bus *bus = azx_bus(chip);
+ 
+ 	snd_power_change_state(card, SNDRV_CTL_POWER_D3hot);
+ 
+ 	azx_stop_chip(chip);
++	synchronize_irq(bus->irq);
+ 	azx_enter_link_reset(chip);
+ 	hda_tegra_disable_clocks(hda);
+ 
 
 
