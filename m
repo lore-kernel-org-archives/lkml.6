@@ -2,166 +2,190 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18C58C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:50:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3A11C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:50:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CED7D2147C
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:50:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4C212147C
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:50:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728565AbfAGNui (ORCPT
+        id S1728638AbfAGNuo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:50:38 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44536 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727943AbfAGNuh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:50:37 -0500
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x07Dmqot108412
-        for <linux-kernel@vger.kernel.org>; Mon, 7 Jan 2019 08:50:36 -0500
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2pv4083pn0-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 08:50:35 -0500
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <borntraeger@de.ibm.com>;
-        Mon, 7 Jan 2019 13:50:33 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 7 Jan 2019 13:50:28 -0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x07DoRlL54919336
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 7 Jan 2019 13:50:27 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C063EAE051;
-        Mon,  7 Jan 2019 13:50:27 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DD216AE053;
-        Mon,  7 Jan 2019 13:50:26 +0000 (GMT)
-Received: from oc7455500831.ibm.com (unknown [9.152.224.141])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon,  7 Jan 2019 13:50:26 +0000 (GMT)
-Subject: Re: [PATCH v3 0/3] virtio-balloon: tweak config_changed
-To:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Wei Wang <wei.w.wang@intel.com>
-Cc:     virtio-dev@lists.oasis-open.org, linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
-        cohuck@redhat.com, pbonzini@redhat.com, dgilbert@redhat.com,
-        pasic@linux.ibm.com
-References: <1546844466-38079-1-git-send-email-wei.w.wang@intel.com>
- <20190107084502-mutt-send-email-mst@kernel.org>
-From:   Christian Borntraeger <borntraeger@de.ibm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
- 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
- syiRa+UVlsKmx1hsEg==
-Date:   Mon, 7 Jan 2019 14:50:26 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 7 Jan 2019 08:50:44 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:17089 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727943AbfAGNul (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:50:41 -0500
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 6B658FB66F1F160458EC;
+        Mon,  7 Jan 2019 21:50:37 +0800 (CST)
+Received: from [127.0.0.1] (10.202.226.43) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server id 14.3.408.0; Mon, 7 Jan 2019
+ 21:50:35 +0800
+Subject: Re: [PATCH] scsi/mvsas/mv_init.c: Use dma_zalloc_coherent
+To:     Souptick Joarder <jrdr.linux@gmail.com>
+References: <5bf56248.1c69fb81.21a6e.5a72@mx.google.com>
+ <CAJr6mf11gp9iV=NiFEFyo7kSZfCfMsEySdijem_PhMFEAwqucA@mail.gmail.com>
+ <CAJr6mf2kr4BmCWZU0=EwXURWUZWRHHLifi_2aiUrJSCjnWusZg@mail.gmail.com>
+ <CAJr6mf29hJft=rurUK8EJRQ1MS_3_MXb7f-zX0vyXUrQNLcWYA@mail.gmail.com>
+ <ff090818-2f5f-1fa0-2eff-6988e1660345@huawei.com>
+ <CAJr6mf1ebw16j0AZSDDxnK2t_=8wdzZBm=X_3DW=zP+XRbRFsw@mail.gmail.com>
+ <8af8ef0a-add1-1010-6ef3-7e5c6ff51aa9@huawei.com>
+ <CAFqt6zbZaOA9+SX8CwYobBN_3hhhWOWkcBJ_qdgEuELoOBU5=w@mail.gmail.com>
+CC:     Sabyasachi Gupta <sabyasachi.linux@gmail.com>,
+        James Bottomley <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        linux-scsi <linux-scsi@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Brajeswar Ghosh <brajeswar.linux@gmail.com>
+From:   John Garry <john.garry@huawei.com>
+Message-ID: <1e3d2653-67b5-07a2-37c3-d3e39532cbcb@huawei.com>
+Date:   Mon, 7 Jan 2019 13:50:29 +0000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-In-Reply-To: <20190107084502-mutt-send-email-mst@kernel.org>
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 19010713-0028-0000-0000-000003355613
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19010713-0029-0000-0000-000023F25F58
-Message-Id: <44f7eca0-1569-2b70-4e6a-027bc1bc4f6e@de.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-07_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=833 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901070123
+In-Reply-To: <CAFqt6zbZaOA9+SX8CwYobBN_3hhhWOWkcBJ_qdgEuELoOBU5=w@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.43]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 07.01.2019 14:45, Michael S. Tsirkin wrote:
-> On Mon, Jan 07, 2019 at 03:01:03PM +0800, Wei Wang wrote:
->> Since virtio-ccw doesn't work with accessing to the config space
->> inside an interrupt context, this patch series avoids that issue by
->> moving the config register accesses to the related workqueue contexts.
-> 
-> So is this enough to get ccw going again or do we also need
-> the patches that deal with NULL VQ names?
-
-This alone does not fix 4.20. You need the other ones as well.(The other patches
-fix the memory corruption during boot, this patch fixes the deadlock when actually
-changing the balloon size)
-
-
-> 
->> v2->v3 ChangeLog:
->>     - rename cmd_id_received to cmd_id_received_cache, and have call sites
->>       read the latest value via virtio_balloon_cmd_id_received. (Still
->>       kept Cornelia and Halil's reviewed-by as it's a minor change)
->>     - remove zeroing vb->num_free_page_blocks in probe since vb is
->>       allocated via kzalloc.
->> v1->v2 ChangeLog:
->>     - add config_read_bitmap to indicate to the workqueue callbacks about
->>       the necessity of reading the related config fields.
+On 04/01/2019 19:49, Souptick Joarder wrote:
+> On Fri, Jan 4, 2019 at 9:34 PM John Garry <john.garry@huawei.com> wrote:
 >>
->> Wei Wang (3):
->>   virtio-balloon: tweak config_changed implementation
->>   virtio-balloon: improve update_balloon_size_func
->>   virtio_balloon: remove the unnecessary 0-initialization
+>> On 04/01/2019 15:11, Sabyasachi Gupta wrote:
+>>> On Fri, Jan 4, 2019 at 6:43 PM John Garry <john.garry@huawei.com> wrote:
+>>>>
+>>>> On 04/01/2019 12:48, Sabyasachi Gupta wrote:
+>>>>> On Wed, Dec 19, 2018 at 6:49 PM Sabyasachi Gupta
+>>>>> <sabyasachi.linux@gmail.com> wrote:
+>>>>>>
+>>>>>> On Sat, Dec 1, 2018 at 6:40 PM Sabyasachi Gupta
+>>>>>> <sabyasachi.linux@gmail.com> wrote:
+>>>>>>>
+>>>>>>> On Wed, Nov 21, 2018 at 7:18 PM Sabyasachi Gupta
+>>>>>>> <sabyasachi.linux@gmail.com> wrote:
+>>>>>>>>
+>>>>>>>> Replace dma_alloc_coherent + memset with dma_zalloc_coherent
+>>>>>>>>
+>>>>
+>>>> If you're going to make this change, then how about change these to the
+>>>> managed version, so that we can avoid the explicit free'ing at driver
+>>>> removal?
+>>>
+>>> I can't get it
 >>
->>  drivers/virtio/virtio_balloon.c | 104 ++++++++++++++++++++++++++--------------
->>  1 file changed, 69 insertions(+), 35 deletions(-)
+>> Please see dmam_alloc_coherent(). You can set __GFP_ZERO in the gfp
+>> argument to memset(0).
+>
+> and dma_zalloc_coherent() did the same. So both are same right ? No ?
+>
+
+Firstly I would to say that I am not so keen on changes like this since 
+(I assume) it will not be tested at all.
+
+However, having said that, the reason to use dmam_alloc_coherent() is 
+that you can also drop the dma_free_coherent() in mvs_free(). But 
+changes like that would actually require some code analysis effort...
+
+John
+
 >>
->> -- 
->> 2.7.4
-> 
+>> I would say that this is a more useful change.
+>>
+>>>
+>>>>
+>>>>>>>> Signed-off-by: Sabyasachi Gupta <sabyasachi.linux@gmail.com>
+>>>>>>>
+>>>>>>> Any comment on this patch?
+>>>>>>
+>>>>>> Any comment on this patch?
+>>>>>
+>>>>> Any comment on this patch?
+>>>>>
+>>>>>>
+>>>>>>>
+>>>>>>>> ---
+>>>>>>>>  drivers/scsi/mvsas/mv_init.c | 12 ++++--------
+>>>>>>>>  1 file changed, 4 insertions(+), 8 deletions(-)
+>>>>>>>>
+>>>>>>>> diff --git a/drivers/scsi/mvsas/mv_init.c b/drivers/scsi/mvsas/mv_init.c
+>>>>>>>> index 3ac3437..495bddb 100644
+>>>>>>>> --- a/drivers/scsi/mvsas/mv_init.c
+>>>>>>>> +++ b/drivers/scsi/mvsas/mv_init.c
+>>>>>>>> @@ -253,33 +253,29 @@ static int mvs_alloc(struct mvs_info *mvi, struct Scsi_Host *shost)
+>>>>>>>>         /*
+>>>>>>>>          * alloc and init our DMA areas
+>>>>>>>>          */
+>>>>>>>> -       mvi->tx = dma_alloc_coherent(mvi->dev,
+>>>>>>>> +       mvi->tx = dma_zalloc_coherent(mvi->dev,
+>>>>>>>>                                      sizeof(*mvi->tx) * MVS_CHIP_SLOT_SZ,
+>>>>>>>>                                      &mvi->tx_dma, GFP_KERNEL);
+>>>>
+>>>> I'm guessing that this does not pass checkpatch with --strict option.
+>>>>
+>>>> Thanks,
+>>>> John
+>>>
+>>> I have not not checked with --strict option
+>>
+>> It may warn that you're not maintaining alignment.
+>>
+>>>
+>>>>
+>>>>>>>>         if (!mvi->tx)
+>>>>>>>>                 goto err_out;
+>>>>>>>> -       memset(mvi->tx, 0, sizeof(*mvi->tx) * MVS_CHIP_SLOT_SZ);
+>>>>>>>> -       mvi->rx_fis = dma_alloc_coherent(mvi->dev, MVS_RX_FISL_SZ,
+>>>>>>>> +       mvi->rx_fis = dma_zalloc_coherent(mvi->dev, MVS_RX_FISL_SZ,
+>>>>>>>>                                          &mvi->rx_fis_dma, GFP_KERNEL);
+>>>>>>>>         if (!mvi->rx_fis)
+>>>>>>>>                 goto err_out;
+>>>>>>>> -       memset(mvi->rx_fis, 0, MVS_RX_FISL_SZ);
+>>>>>>>>
+>>>>>>>> -       mvi->rx = dma_alloc_coherent(mvi->dev,
+>>>>>>>> +       mvi->rx = dma_zalloc_coherent(mvi->dev,
+>>>>>>>>                                      sizeof(*mvi->rx) * (MVS_RX_RING_SZ + 1),
+>>>>>>>>                                      &mvi->rx_dma, GFP_KERNEL);
+>>>>>>>>         if (!mvi->rx)
+>>>>>>>>                 goto err_out;
+>>>>>>>> -       memset(mvi->rx, 0, sizeof(*mvi->rx) * (MVS_RX_RING_SZ + 1));
+>>>>>>>>         mvi->rx[0] = cpu_to_le32(0xfff);
+>>>>>>>>         mvi->rx_cons = 0xfff;
+>>>>>>>>
+>>>>>>>> -       mvi->slot = dma_alloc_coherent(mvi->dev,
+>>>>>>>> +       mvi->slot = dma_zalloc_coherent(mvi->dev,
+>>>>>>>>                                        sizeof(*mvi->slot) * slot_nr,
+>>>>>>>>                                        &mvi->slot_dma, GFP_KERNEL);
+>>>>>>>>         if (!mvi->slot)
+>>>>>>>>                 goto err_out;
+>>>>>>>> -       memset(mvi->slot, 0, sizeof(*mvi->slot) * slot_nr);
+>>>>>>>>
+>>>>>>>>         mvi->bulk_buffer = dma_alloc_coherent(mvi->dev,
+>>>>>>>>                                        TRASH_BUCKET_SIZE,
+>>>>>>>> --
+>>>>>>>> 2.7.4
+>>>>>>>>
+>>>>>
+>>>>> .
+>>>>>
+>>>>
+>>>>
+>>>
+>>> .
+>>>
+>>
+>>
+>
+> .
+>
+
 
