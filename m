@@ -7,57 +7,56 @@ X-Spam-Status: No, score=-16.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EBDCC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:58:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA7D5C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:58:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E07742147C
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:58:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A7BF52147C
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:58:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546887498;
-	bh=K4Xx5gUc6fxY5zxN13XcSwFf6QM2QadTYG1L8LyfSmQ=;
+	s=default; t=1546887502;
+	bh=VpzSbNiHd7o5Ci3oIOC/l+KWxgbag+tzkHfZO8KGMFY=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=x+uguk8yUGMBOfJ9YyNntP4dvtykJb9OcHpa9SfV/LVBjb+mAMFA3PK6LoKd2WjtX
-	 rs2SS3MTFc+MwxhqlbarqGpQp3I0ZngwkbegThpdRh8stWOxM1efRoxMbF/9VdrBAY
-	 LYuko0CApC2AFi1rDwdQZgf6SeJ/jVh6DJnyxlJI=
+	b=rBe8jRBlhrXMBbBhGpBJljZQh4uZ2n53JyNExsw9aWfOVuwNBI79H6gV+9tNBUw8j
+	 XUr2tn34e9erZi3Pt4y/6T2ond9NMzZ35L4xd9qHXCXXRGsd/4IGf1+DcYQlG1nC2u
+	 MJOdTZp9AV3VTdDmsf98Ks1/Eaj0k8bwi6A+O0oI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728531AbfAGS6R (ORCPT
+        id S1728593AbfAGS6V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 13:58:17 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40768 "EHLO
+        Mon, 7 Jan 2019 13:58:21 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40990 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728064AbfAGS6P (ORCPT
+        with ESMTP id S1728064AbfAGS6U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 13:58:15 -0500
+        Mon, 7 Jan 2019 13:58:20 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=0CFmZXVBD+W42dQpza14xP6O0vZOxewMie4f+IsKfcM=; b=o6M5iHZWb82W
-        NuLlK7wnCbJiT2HD1c0oWZGgKs5+1jdhx8y8ZY+gqRYukxcIFc9/qDVLE0Ypu2S1qVFcGgdoTebzT
-        YcIjF74z91pyIZml4Gadrre2A1ECawwypa/AikfFUZ9m8T1Q2IXAl4LHH6Sf/Q3144uFwn+YlpaK/
-        ITL5A=;
+        List-Archive; bh=ySZgogXzCIwuMC4gA8nOYWZCcV820xihZVZ6d49nLg4=; b=lLFJ8tJJTvCl
+        uJcANC1/pDl85PkDl/VNoQPaqlVsslwwHzv6ZvRVjYLW5zJWyZtMDinXJ4MLYNDoVnKz8afR61LCd
+        r2TB+hm2XpKg6jEsogVjz3HlpXLSsSv3ulZDvVhlyz6YEEdRlQj4am5wOVJiCixN2QtcfKpXQwf/r
+        b5fc0=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gga6B-0007mY-TF; Mon, 07 Jan 2019 18:58:07 +0000
+        id 1gga6H-0007mn-HT; Mon, 07 Jan 2019 18:58:13 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 8BC8A1127492; Mon,  7 Jan 2019 18:58:07 +0000 (GMT)
+        id 1B96C1127492; Mon,  7 Jan 2019 18:58:13 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
 To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 Cc:     Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org,
-        Steven Eckhoff <steven.eckhoff.opensource@gmail.com>,
-        tiwai@suse.de, open list <linux-kernel@vger.kernel.org>,
-        Takashi Iwai <tiwai@suse.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        liam.r.girdwood@linux.intel.com, broonie@kernel.org,
-        alsa-devel@alsa-project.org
-Subject: Applied "ASoC: tscs42xx.c: fix boolean test" to the asoc tree
-In-Reply-To:  <20190105020249.8639-17-pierre-louis.bossart@linux.intel.com>
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, tiwai@suse.de,
+        open list <linux-kernel@vger.kernel.org>,
+        Takashi Iwai <tiwai@suse.com>, liam.r.girdwood@linux.intel.com,
+        broonie@kernel.org, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: max98927: fix boolean assignments" to the asoc tree
+In-Reply-To:  <20190105020249.8639-14-pierre-louis.bossart@linux.intel.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190107185807.8BC8A1127492@debutante.sirena.org.uk>
-Date:   Mon,  7 Jan 2019 18:58:07 +0000 (GMT)
+Message-Id: <20190107185813.1B96C1127492@debutante.sirena.org.uk>
+Date:   Mon,  7 Jan 2019 18:58:13 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -65,7 +64,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: tscs42xx.c: fix boolean test
+   ASoC: max98927: fix boolean assignments
 
 has been applied to the asoc tree at
 
@@ -90,33 +89,51 @@ to this mail.
 Thanks,
 Mark
 
-From f361ca36802031ae3abf9860a02e1d5931c04b63 Mon Sep 17 00:00:00 2001
+From 091cd877d8d6b2b934d565134172db771907d50a Mon Sep 17 00:00:00 2001
 From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Date: Fri, 4 Jan 2019 20:02:44 -0600
-Subject: [PATCH] ASoC: tscs42xx.c: fix boolean test
+Date: Fri, 4 Jan 2019 20:02:41 -0600
+Subject: [PATCH] ASoC: max98927: fix boolean assignments
 
 Reported by Coccinelle:
-sound/soc/codecs/tscs42xx.c:392:5-31: WARNING: Comparison to bool
+sound/soc/codecs/max98927.c:508:2-20: WARNING: Assignment of bool to 0/1
+sound/soc/codecs/max98927.c:889:3-28: WARNING: Assignment of bool to 0/1
+sound/soc/codecs/max98927.c:891:3-28: WARNING: Assignment of bool to 0/1
+sound/soc/codecs/max98927.c:893:2-27: WARNING: Assignment of bool to 0/1
 
 Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/tscs42xx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/codecs/max98927.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/sound/soc/codecs/tscs42xx.c b/sound/soc/codecs/tscs42xx.c
-index 7396a6e5277e..27b8c6ba72fa 100644
---- a/sound/soc/codecs/tscs42xx.c
-+++ b/sound/soc/codecs/tscs42xx.c
-@@ -389,7 +389,7 @@ static int dac_event(struct snd_soc_dapm_widget *w,
+diff --git a/sound/soc/codecs/max98927.c b/sound/soc/codecs/max98927.c
+index 065303a46535..e53d2007f3be 100644
+--- a/sound/soc/codecs/max98927.c
++++ b/sound/soc/codecs/max98927.c
+@@ -505,7 +505,7 @@ static int max98927_dac_event(struct snd_soc_dapm_widget *w,
  
- 	mutex_lock(&tscs42xx->coeff_ram_lock);
+ 	switch (event) {
+ 	case SND_SOC_DAPM_PRE_PMU:
+-		max98927->tdm_mode = 0;
++		max98927->tdm_mode = false;
+ 		break;
+ 	case SND_SOC_DAPM_POST_PMU:
+ 		regmap_update_bits(max98927->regmap,
+@@ -886,11 +886,11 @@ static int max98927_i2c_probe(struct i2c_client *i2c,
+ 	if (!of_property_read_u32(i2c->dev.of_node,
+ 		"interleave_mode", &value)) {
+ 		if (value > 0)
+-			max98927->interleave_mode = 1;
++			max98927->interleave_mode = true;
+ 		else
+-			max98927->interleave_mode = 0;
++			max98927->interleave_mode = false;
+ 	} else
+-		max98927->interleave_mode = 0;
++		max98927->interleave_mode = false;
  
--	if (tscs42xx->coeff_ram_synced == false) {
-+	if (!tscs42xx->coeff_ram_synced) {
- 		ret = write_coeff_ram(component, tscs42xx->coeff_ram, 0x00,
- 			COEFF_RAM_COEFF_COUNT);
- 		if (ret < 0)
+ 	/* regmap initialization */
+ 	max98927->regmap
 -- 
 2.20.1
 
