@@ -4,51 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E10FC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:00:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D154C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:00:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6ED312089F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:00:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F1A55206BB
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:00:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546866003;
-	bh=YfQlL0P6uuFcDsWoiE50D+RrF6eOqllvTwVP4TpBkOo=;
+	s=default; t=1546866011;
+	bh=uSYfW703c3sQN2xmDUcPVygSABpKh9p9erUmQVJ0V/4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Yat8jk2L4EjNISzWgwc3pM7f/Qg9YJvTzm9oBQgN3yCw080K4NHlp7VM2R/pt/ZjD
-	 iwT+Tj1GshSVhzpACuhmTbdAnKYX8Jxchf5UIX4f3lgaxeQ+hQmTBkpE5swyddbcYa
-	 fp+mSmYWkqDYYTHcAqI3CUu6XdJWkzcSpZPSc3aY=
+	b=R9dzH0UevW/qFBGXG4a+KzDdWYdzf/Iz5Nhq/NAeOfOh85tiYoAafSDe7heD+n9tG
+	 jCrJ6a5u+I9QM1tyRUE5N5PPb4MhQzNkdTCOBx+qmqp/mYqt4Ecj1qZXGW9QTp2q2C
+	 u++KvL60bh/x3QUHCeykST3tQ2OoxfDEgzbI/oJA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730375AbfAGNAC (ORCPT
+        id S1730399AbfAGNAK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:00:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47508 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:00:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47640 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730361AbfAGM77 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:59:59 -0500
+        id S1730381AbfAGNAG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:00:06 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DBDED21736;
-        Mon,  7 Jan 2019 12:59:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E45C92089F;
+        Mon,  7 Jan 2019 13:00:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865998;
-        bh=YfQlL0P6uuFcDsWoiE50D+RrF6eOqllvTwVP4TpBkOo=;
+        s=default; t=1546866005;
+        bh=uSYfW703c3sQN2xmDUcPVygSABpKh9p9erUmQVJ0V/4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=X7oFaY3vOJfMCy2YKa1fgQI+GDxKyZqGCgMXuf/9aOV73I/QVS/n2BU2UjcmgJJ3Z
-         3/qmiplYIYpkgHVfv+c/RnO1X1H8H3eZKcBJjvR9S8Q+/0SYY/hezokrHhXXUmVkum
-         i3ajb7ckzib8cyOfXmUbQaoOiPpIcGGGtLnK0Ecg=
+        b=gu4b/qLAl0ZxzA1SYOk6qONC6vnwZX4bFG2yW1NKWSXmplPrkHae2P5pN3C7zpZCp
+         k+B4uGEwHlqTHUjNgqLG+Vb+MDcqkcvpHanj7QOklXf/n+wMLaBP9tPqHzE2bGMF2H
+         ZaNER3jpNV74zhAVDj/6UV9S8KNzwK9dMQfTQSug=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 013/101] net: macb: restart tx after tx used bit read
-Date:   Mon,  7 Jan 2019 13:32:01 +0100
-Message-Id: <20190107105331.885070977@linuxfoundation.org>
+        stable@vger.kernel.org, Cong Wang <xiyou.wangcong@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        syzbot+f621cda8b7e598908efa@syzkaller.appspotmail.com
+Subject: [PATCH 4.14 015/101] netrom: fix locking in nr_find_socket()
+Date:   Mon,  7 Jan 2019 13:32:03 +0100
+Message-Id: <20190107105332.606110847@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107105330.372621917@linuxfoundation.org>
 References: <20190107105330.372621917@linuxfoundation.org>
@@ -67,71 +66,101 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Claudiu Beznea <claudiu.beznea@microchip.com>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-[ Upstream commit 4298388574dae6168fa8940b3edc7ba965e8a7ab ]
+[ Upstream commit 7314f5480f3e37e570104dc5e0f28823ef849e72 ]
 
-On some platforms (currently detected only on SAMA5D4) TX might stuck
-even the pachets are still present in DMA memories and TX start was
-issued for them. This happens due to race condition between MACB driver
-updating next TX buffer descriptor to be used and IP reading the same
-descriptor. In such a case, the "TX USED BIT READ" interrupt is asserted.
-GEM/MACB user guide specifies that if a "TX USED BIT READ" interrupt
-is asserted TX must be restarted. Restart TX if used bit is read and
-packets are present in software TX queue. Packets are removed from software
-TX queue if TX was successful for them (see macb_tx_interrupt()).
+nr_find_socket(), nr_find_peer() and nr_find_listener() lock the
+sock after finding it in the global list. However, the call path
+requires BH disabled for the sock lock consistently.
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+Actually the locking is unnecessary at this point, we can just hold
+the sock refcnt to make sure it is not gone after we unlock the global
+list, and lock it later only when needed.
+
+Reported-and-tested-by: syzbot+f621cda8b7e598908efa@syzkaller.appspotmail.com
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/cadence/macb_main.c |   21 ++++++++++++++++++++-
- 1 file changed, 20 insertions(+), 1 deletion(-)
+ net/netrom/af_netrom.c |   15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
---- a/drivers/net/ethernet/cadence/macb_main.c
-+++ b/drivers/net/ethernet/cadence/macb_main.c
-@@ -60,7 +60,8 @@
- #define MACB_TX_ERR_FLAGS	(MACB_BIT(ISR_TUND)			\
- 					| MACB_BIT(ISR_RLE)		\
- 					| MACB_BIT(TXERR))
--#define MACB_TX_INT_FLAGS	(MACB_TX_ERR_FLAGS | MACB_BIT(TCOMP))
-+#define MACB_TX_INT_FLAGS	(MACB_TX_ERR_FLAGS | MACB_BIT(TCOMP)	\
-+					| MACB_BIT(TXUBR))
+--- a/net/netrom/af_netrom.c
++++ b/net/netrom/af_netrom.c
+@@ -153,7 +153,7 @@ static struct sock *nr_find_listener(ax2
+ 	sk_for_each(s, &nr_list)
+ 		if (!ax25cmp(&nr_sk(s)->source_addr, addr) &&
+ 		    s->sk_state == TCP_LISTEN) {
+-			bh_lock_sock(s);
++			sock_hold(s);
+ 			goto found;
+ 		}
+ 	s = NULL;
+@@ -174,7 +174,7 @@ static struct sock *nr_find_socket(unsig
+ 		struct nr_sock *nr = nr_sk(s);
  
- /* Max length of transmit frame must be a multiple of 8 bytes */
- #define MACB_TX_LEN_ALIGN	8
-@@ -1243,6 +1244,21 @@ static int macb_poll(struct napi_struct
- 	return work_done;
- }
+ 		if (nr->my_index == index && nr->my_id == id) {
+-			bh_lock_sock(s);
++			sock_hold(s);
+ 			goto found;
+ 		}
+ 	}
+@@ -198,7 +198,7 @@ static struct sock *nr_find_peer(unsigne
  
-+static void macb_tx_restart(struct macb_queue *queue)
-+{
-+	unsigned int head = queue->tx_head;
-+	unsigned int tail = queue->tx_tail;
-+	struct macb *bp = queue->bp;
-+
-+	if (bp->caps & MACB_CAPS_ISR_CLEAR_ON_WRITE)
-+		queue_writel(queue, ISR, MACB_BIT(TXUBR));
-+
-+	if (head == tail)
-+		return;
-+
-+	macb_writel(bp, NCR, macb_readl(bp, NCR) | MACB_BIT(TSTART));
-+}
-+
- static irqreturn_t macb_interrupt(int irq, void *dev_id)
- {
- 	struct macb_queue *queue = dev_id;
-@@ -1300,6 +1316,9 @@ static irqreturn_t macb_interrupt(int ir
- 		if (status & MACB_BIT(TCOMP))
- 			macb_tx_interrupt(queue);
+ 		if (nr->your_index == index && nr->your_id == id &&
+ 		    !ax25cmp(&nr->dest_addr, dest)) {
+-			bh_lock_sock(s);
++			sock_hold(s);
+ 			goto found;
+ 		}
+ 	}
+@@ -224,7 +224,7 @@ static unsigned short nr_find_next_circu
+ 		if (i != 0 && j != 0) {
+ 			if ((sk=nr_find_socket(i, j)) == NULL)
+ 				break;
+-			bh_unlock_sock(sk);
++			sock_put(sk);
+ 		}
  
-+		if (status & MACB_BIT(TXUBR))
-+			macb_tx_restart(queue);
+ 		id++;
+@@ -919,6 +919,7 @@ int nr_rx_frame(struct sk_buff *skb, str
+ 	}
+ 
+ 	if (sk != NULL) {
++		bh_lock_sock(sk);
+ 		skb_reset_transport_header(skb);
+ 
+ 		if (frametype == NR_CONNACK && skb->len == 22)
+@@ -928,6 +929,7 @@ int nr_rx_frame(struct sk_buff *skb, str
+ 
+ 		ret = nr_process_rx_frame(sk, skb);
+ 		bh_unlock_sock(sk);
++		sock_put(sk);
+ 		return ret;
+ 	}
+ 
+@@ -959,10 +961,12 @@ int nr_rx_frame(struct sk_buff *skb, str
+ 	    (make = nr_make_new(sk)) == NULL) {
+ 		nr_transmit_refusal(skb, 0);
+ 		if (sk)
+-			bh_unlock_sock(sk);
++			sock_put(sk);
+ 		return 0;
+ 	}
+ 
++	bh_lock_sock(sk);
 +
- 		/* Link change detection isn't possible with RMII, so we'll
- 		 * add that if/when we get our hands on a full-blown MII PHY.
- 		 */
+ 	window = skb->data[20];
+ 
+ 	skb->sk             = make;
+@@ -1015,6 +1019,7 @@ int nr_rx_frame(struct sk_buff *skb, str
+ 		sk->sk_data_ready(sk);
+ 
+ 	bh_unlock_sock(sk);
++	sock_put(sk);
+ 
+ 	nr_insert_socket(make);
+ 
 
 
