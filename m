@@ -2,76 +2,230 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75E24C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 09:16:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22A85C43612
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 09:18:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 337EE20989
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 09:16:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EDCAD206B7
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 09:18:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726685AbfAGJQ5 (ORCPT
+        id S1726568AbfAGJSG convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 04:16:57 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55076 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726402AbfAGJQ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 04:16:57 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BD53580D;
-        Mon,  7 Jan 2019 01:16:56 -0800 (PST)
-Received: from [10.163.1.156] (unknown [10.163.1.156])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CA0783F5D4;
-        Mon,  7 Jan 2019 01:16:49 -0800 (PST)
-Subject: Re: mmotm 2018-12-21-15-28 uploaded
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     akpm@linux-foundation.org, broonie@kernel.org,
-        sfr@canb.auug.org.au, linux-next@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, mm-commits@vger.kernel.org
-References: <20181221232853.WLvEi%akpm@linux-foundation.org>
- <99ab6512-9fce-9cb9-76e7-7f83d87d5f86@arm.com>
- <20190107084338.GW31793@dhcp22.suse.cz>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Message-ID: <451ec03f-d669-fcd0-11c7-f7fef9f85a56@arm.com>
-Date:   Mon, 7 Jan 2019 14:46:43 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20190107084338.GW31793@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
+        Mon, 7 Jan 2019 04:18:06 -0500
+Received: from smtp.eu.citrix.com ([185.25.65.24]:54564 "EHLO
+        SMTP.EU.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725550AbfAGJSF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 04:18:05 -0500
+X-IronPort-AV: E=Sophos;i="5.56,450,1539648000"; 
+   d="scan'208";a="84216836"
+From:   Paul Durrant <Paul.Durrant@citrix.com>
+To:     'Dongli Zhang' <dongli.zhang@oracle.com>,
+        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>,
+        Roger Pau Monne <roger.pau@citrix.com>,
+        "axboe@kernel.dk" <axboe@kernel.dk>
+Subject: RE: [PATCH v4 2/2] xen/blkback: rework connect_ring() to avoid
+ inconsistent xenstore 'ring-page-order' set by malicious blkfront
+Thread-Topic: [PATCH v4 2/2] xen/blkback: rework connect_ring() to avoid
+ inconsistent xenstore 'ring-page-order' set by malicious blkfront
+Thread-Index: AQHUpkp4N6gRL6Twe0ia3bzTqyP18qWjhddQ
+Date:   Mon, 7 Jan 2019 09:18:01 +0000
+Message-ID: <df8d9a4f2b474d90814c32b60dd3a7d7@AMSPEX02CL03.citrite.net>
+References: <1546839359-5478-1-git-send-email-dongli.zhang@oracle.com>
+ <1546839359-5478-2-git-send-email-dongli.zhang@oracle.com>
+In-Reply-To: <1546839359-5478-2-git-send-email-dongli.zhang@oracle.com>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 01/07/2019 02:13 PM, Michal Hocko wrote:
-> Hi,
+> -----Original Message-----
+> From: Dongli Zhang [mailto:dongli.zhang@oracle.com]
+> Sent: 07 January 2019 05:36
+> To: xen-devel@lists.xenproject.org; linux-block@vger.kernel.org; linux-
+> kernel@vger.kernel.org
+> Cc: konrad.wilk@oracle.com; Roger Pau Monne <roger.pau@citrix.com>;
+> axboe@kernel.dk; Paul Durrant <Paul.Durrant@citrix.com>
+> Subject: [PATCH v4 2/2] xen/blkback: rework connect_ring() to avoid
+> inconsistent xenstore 'ring-page-order' set by malicious blkfront
 > 
-> On Mon 07-01-19 13:02:31, Anshuman Khandual wrote:
->> On 12/22/2018 04:58 AM, akpm@linux-foundation.org wrote:
-> [...]
->>> A git tree which contains the memory management portion of this tree is
->>> maintained at git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.gi
->>
->> Hello Michal,
->>
->> I dont see the newer tags on this tree. Tried fetching all the tags from the tree
->> but only see these right now for 2018. This release should have an equivalent tag
->> (mmotm-2018-12-21-15-28) right ? 
+> The xenstore 'ring-page-order' is used globally for each blkback queue and
+> therefore should be read from xenstore only once. However, it is obtained
+> in read_per_ring_refs() which might be called multiple times during the
+> initialization of each blkback queue.
 > 
-> I have stopped tracking mmotm trees in this tree quite some time ago. I
-> would much rather turn mmotm into a proper git tree which I was
-> discussing with Andrew but we didn't land in anything so far. I hope to
-> use LSFMM this year to resurrect the idea. 
->
+> If the blkfront is malicious and the 'ring-page-order' is set in different
+> value by blkfront every time before blkback reads it, this may end up at
+> the "WARN_ON(i != (XEN_BLKIF_REQS_PER_PAGE * blkif->nr_ring_pages));" in
+> xen_blkif_disconnect() when frontend is destroyed.
+> 
+> This patch reworks connect_ring() to read xenstore 'ring-page-order' only
+> once.
+> 
+> Signed-off-by: Dongli Zhang <dongli.zhang@oracle.com>
+> ---
+> Changed since v1:
+>   * change the order of xenstore read in read_per_ring_refs
+>   * use xenbus_read_unsigned() in connect_ring()
+> 
+> Changed since v2:
+>   * simplify the condition check as "(err != 1 && nr_grefs > 1)"
+>   * avoid setting err as -EINVAL to remove extra one line of code
+> 
+> Changed since v3:
+>   * exit at the beginning if !nr_grefs
+>   * change the if statements to avoid test (err != 1) twice
+>   * initialize a 'blkif' stack variable (refer to PATCH 1/2)
+> 
+>  drivers/block/xen-blkback/xenbus.c | 76 +++++++++++++++++++++------------
+> -----
+>  1 file changed, 43 insertions(+), 33 deletions(-)
+> 
+> diff --git a/drivers/block/xen-blkback/xenbus.c b/drivers/block/xen-
+> blkback/xenbus.c
+> index a4aadac..a2acbc9 100644
+> --- a/drivers/block/xen-blkback/xenbus.c
+> +++ b/drivers/block/xen-blkback/xenbus.c
+> @@ -926,7 +926,7 @@ static int read_per_ring_refs(struct xen_blkif_ring
+> *ring, const char *dir)
+>  	int err, i, j;
+>  	struct xen_blkif *blkif = ring->blkif;
+>  	struct xenbus_device *dev = blkif->be->dev;
+> -	unsigned int ring_page_order, nr_grefs, evtchn;
+> +	unsigned int nr_grefs, evtchn;
+> 
+>  	err = xenbus_scanf(XBT_NIL, dir, "event-channel", "%u",
+>  			  &evtchn);
+> @@ -936,43 +936,38 @@ static int read_per_ring_refs(struct xen_blkif_ring
+> *ring, const char *dir)
+>  		return err;
+>  	}
+> 
+> -	err = xenbus_scanf(XBT_NIL, dev->otherend, "ring-page-order", "%u",
+> -			  &ring_page_order);
+> -	if (err != 1) {
+> -		err = xenbus_scanf(XBT_NIL, dir, "ring-ref", "%u",
+> &ring_ref[0]);
+> +	nr_grefs = blkif->nr_ring_pages;
+> +
+> +	if (unlikely(!nr_grefs))
+> +		return -EINVAL;
+> +
+> +	for (i = 0; i < nr_grefs; i++) {
+> +		char ring_ref_name[RINGREF_NAME_LEN];
+> +
+> +		snprintf(ring_ref_name, RINGREF_NAME_LEN, "ring-ref%u", i);
+> +		err = xenbus_scanf(XBT_NIL, dir, ring_ref_name,
+> +				   "%u", &ring_ref[i]);
+> +
+>  		if (err != 1) {
+> -			err = -EINVAL;
+> -			xenbus_dev_fatal(dev, err, "reading %s/ring-ref", dir);
+> -			return err;
+> -		}
+> -		nr_grefs = 1;
+> -	} else {
+> -		unsigned int i;
+> -
+> -		if (ring_page_order > xen_blkif_max_ring_order) {
+> -			err = -EINVAL;
+> -			xenbus_dev_fatal(dev, err, "%s/request %d ring page
+> order exceed max:%d",
+> -					 dir, ring_page_order,
+> -					 xen_blkif_max_ring_order);
+> -			return err;
+> +			if (nr_grefs == 1)
+> +				break;
+> +
+> +			xenbus_dev_fatal(dev, err, "reading %s/%s",
+> +					 dir, ring_ref_name);
 
-Even this tree http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/ does not clone. So
-right now the only way to construct the latest mmotm tree is through applying all
-the patches mentioned here at http://www.ozlabs.org/~akpm/mmotm/ on linux-next ?
+This patch looks much better, but I guess you don't want to be using 'err' in the above call as it will still be set to whatever xenbus_scanf() returned. Probably neatest to just leave the "err = -EINVAL" and "return err" alone.
+
+> +			return -EINVAL;
+>  		}
+> +	}
+> 
+> -		nr_grefs = 1 << ring_page_order;
+> -		for (i = 0; i < nr_grefs; i++) {
+> -			char ring_ref_name[RINGREF_NAME_LEN];
+> -
+> -			snprintf(ring_ref_name, RINGREF_NAME_LEN, "ring-ref%u",
+> i);
+> -			err = xenbus_scanf(XBT_NIL, dir, ring_ref_name,
+> -					   "%u", &ring_ref[i]);
+> -			if (err != 1) {
+> -				err = -EINVAL;
+> -				xenbus_dev_fatal(dev, err, "reading %s/%s",
+> -						 dir, ring_ref_name);
+> -				return err;
+> -			}
+> +	if (err != 1) {
+> +		WARN_ON(nr_grefs != 1);
+> +
+> +		err = xenbus_scanf(XBT_NIL, dir, "ring-ref", "%u",
+> +				   &ring_ref[0]);
+> +		if (err != 1) {
+> +			xenbus_dev_fatal(dev, err, "reading %s/ring-ref", dir);
+
+Same here. Set err to -EINVAL above the call to xenbus_dev_fatal() and return it below...
+
+> +			return -EINVAL;
+>  		}
+>  	}
+> -	blkif->nr_ring_pages = nr_grefs;
+> 
+>  	for (i = 0; i < nr_grefs * XEN_BLKIF_REQS_PER_PAGE; i++) {
+>  		req = kzalloc(sizeof(*req), GFP_KERNEL);
+> @@ -1031,6 +1026,7 @@ static int connect_ring(struct backend_info *be)
+>  	size_t xspathsize;
+>  	const size_t xenstore_path_ext_size = 11; /* sufficient for "/queue-
+> NNN" */
+>  	unsigned int requested_num_queues = 0;
+> +	unsigned int ring_page_order;
+> 
+>  	pr_debug("%s %s\n", __func__, dev->otherend);
+> 
+> @@ -1076,6 +1072,20 @@ static int connect_ring(struct backend_info *be)
+>  		 blkif->nr_rings, blkif->blk_protocol, protocol,
+>  		 pers_grants ? "persistent grants" : "");
+> 
+> +	ring_page_order = xenbus_read_unsigned(dev->otherend,
+> +					       "ring-page-order", 0);
+> +
+> +	if (ring_page_order > xen_blkif_max_ring_order) {
+> +		err = -EINVAL;
+> +		xenbus_dev_fatal(dev, err,
+> +				 "requested ring page order %d exceed max:%d",
+> +				 ring_page_order,
+> +				 xen_blkif_max_ring_order);
+> +		return err;
+
+... just like here :-)
+
+  Paul
+
+> +	}
+> +
+> +	blkif->nr_ring_pages = 1 << ring_page_order;
+> +
+>  	if (blkif->nr_rings == 1)
+>  		return read_per_ring_refs(&blkif->rings[0], dev->otherend);
+>  	else {
+> --
+> 2.7.4
+
