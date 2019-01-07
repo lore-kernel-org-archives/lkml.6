@@ -2,108 +2,96 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81413C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:32:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 488E2C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:33:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51FE8206B7
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:32:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546867977;
-	bh=rrcpYg/T65LaTQ1muj1zktdfO/LkzJyePhGsS3iiJI4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=eosuap2U1PSDTRjXZd4nOyQ3FSee1K+uulEl6RsUOGky0Od7chPmfZRDAhn2/XYjI
-	 DzswtJeNqzXfFUL6WvWWIZ4FxxyYgdjoi6wkV7R1rTlv6kpCjeHFL/ZudnIvr+1300
-	 14N+ZRufbQT6EkHcDaA7HrizpI/Fbw/QrJsFbGgM=
+	by mail.kernel.org (Postfix) with ESMTP id 1942B206B6
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:33:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Pm8xTDeg";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Q6HwPujf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727624AbfAGNc4 (ORCPT
+        id S1727721AbfAGNdD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:32:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38186 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726886AbfAGNc4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:32:56 -0500
-Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Mon, 7 Jan 2019 08:33:03 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:38296 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726886AbfAGNdC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:33:02 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 359E660593; Mon,  7 Jan 2019 13:33:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1546867982;
+        bh=BwXqca18cf3Jzd2q6qFYRtz1Q1b0eGsEv5GDzrt9S38=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=Pm8xTDegaLxNzkOeh0OclgtiLsBaAUnQIAjfjTzqCyk4MWdDi4mNqrjgm2hyANnDL
+         aSv2eY/CyifClseVGfKV8CrlzkU3EAMHB1rjPPuGxxklQNPEnwUrUxLFXJunGMgh6B
+         +1sCm1Gw47/URqtcbN/L6QxTqn5qlr9/c9o6yS58=
+Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 19686206B6;
-        Mon,  7 Jan 2019 13:32:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546867975;
-        bh=rrcpYg/T65LaTQ1muj1zktdfO/LkzJyePhGsS3iiJI4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HE3ENubCiPlXNJhUlhH29+0DIzy7vWBnKTkJ/BPFGpdxd7sX9+ExWpC9RAuD3aPMm
-         3xJCf5woRU3pDXeOT1zYnnsIaSO4OdquCJfzeWjLrwQRqZwUUXxjqxPrlfT085AFZK
-         b7uyxkxhkDdskH7wMdmWsrLUjJW+Y7sBpKl5iY9M=
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Ingo Molnar <mingo@redhat.com>
-Cc:     Masami Hiramatsu <mhiramat@kernel.org>, peterz@infradead.org,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Andrea Righi <righi.andrea@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: [PATCH 2/2] kprobes: Mark ftrace mcount handler functions nokprobe
-Date:   Mon,  7 Jan 2019 22:32:32 +0900
-Message-Id: <154686795211.15479.15577152313750689302.stgit@devbox>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <154686789378.15479.2886543882215785247.stgit@devbox>
-References: <154686789378.15479.2886543882215785247.stgit@devbox>
-User-Agent: StGit/0.17.1-dirty
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 640C6601D1;
+        Mon,  7 Jan 2019 13:33:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1546867981;
+        bh=BwXqca18cf3Jzd2q6qFYRtz1Q1b0eGsEv5GDzrt9S38=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=Q6HwPujf4MS3PPhHTJQt6BuPikNSJNWhg0nscxMEnlH33jWxlHE56aPbsXyb3N9n9
+         eODllMAtUkRYsHwSMF2Gb89EJShurGiPJd+viJvw80+qpJ6r2MWM6v/9FZnekHKNb1
+         ndL6syDEQpEYij1+iGVWHeP6eICu7DOycnU4GR3M=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 640C6601D1
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From:   Kalle Valo <kvalo@codeaurora.org>
+To:     kbuild test robot <lkp@intel.com>
+Cc:     Luca Coelho <luciano.coelho@intel.com>, kbuild-all@01.org,
+        linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org
+Subject: Re: ERROR: "ieee80211_hdrlen" [drivers/net/wireless/intel/iwlwifi/iwlwifi.ko] undefined!
+References: <201901071217.9zkGKNxN%fengguang.wu@intel.com>
+Date:   Mon, 07 Jan 2019 15:32:58 +0200
+In-Reply-To: <201901071217.9zkGKNxN%fengguang.wu@intel.com> (kbuild test
+        robot's message of "Mon, 7 Jan 2019 12:53:59 +0800")
+Message-ID: <87o98ssid1.fsf@kamboji.qca.qualcomm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mark ftrace mcount handler functions nokprobe since
-probing on these functions with kretprobe pushes
-return address incorrectly on kretprobe shadow stack.
++ linux-wireless
 
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Reported-by: Francis Deslauriers <francis.deslauriers@efficios.com>
----
- kernel/trace/ftrace.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+kbuild test robot <lkp@intel.com> writes:
 
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index f0ff24173a0b..ad4babad4a03 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -6250,7 +6250,7 @@ void ftrace_reset_array_ops(struct trace_array *tr)
- 	tr->ops->func = ftrace_stub;
- }
- 
--static inline void
-+static nokprobe_inline void
- __ftrace_ops_list_func(unsigned long ip, unsigned long parent_ip,
- 		       struct ftrace_ops *ignored, struct pt_regs *regs)
- {
-@@ -6310,11 +6310,13 @@ static void ftrace_ops_list_func(unsigned long ip, unsigned long parent_ip,
- {
- 	__ftrace_ops_list_func(ip, parent_ip, NULL, regs);
- }
-+NOKPROBE_SYMBOL(ftrace_ops_list_func);
- #else
- static void ftrace_ops_no_ops(unsigned long ip, unsigned long parent_ip)
- {
- 	__ftrace_ops_list_func(ip, parent_ip, NULL, NULL);
- }
-+NOKPROBE_SYMBOL(ftrace_ops_no_ops);
- #endif
- 
- /*
-@@ -6341,6 +6343,7 @@ static void ftrace_ops_assist_func(unsigned long ip, unsigned long parent_ip,
- 	preempt_enable_notrace();
- 	trace_clear_recursion(bit);
- }
-+NOKPROBE_SYMBOL(ftrace_ops_assist_func);
- 
- /**
-  * ftrace_ops_get_func - get the function a trampoline should call
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> head:   574823bfab82d9d8fa47f422778043fbb4b4f50e
+> commit: aca432f06b8a60a92b27fb46e6518a19b28ca93f iwlwifi: make MVM and
+> DVM depend on MAC80211
+> date:   3 weeks ago
+> config: x86_64-randconfig-i1-01061720 (attached as .config)
+> compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
+> reproduce:
+>         git checkout aca432f06b8a60a92b27fb46e6518a19b28ca93f
+>         # save the attached .config to linux build tree
+>         make ARCH=x86_64 
+>
+> All errors (new ones prefixed by >>):
+>
+>>> ERROR: "ieee80211_hdrlen"
+>>> [drivers/net/wireless/intel/iwlwifi/iwlwifi.ko] undefined!
+>>> ERROR: "ieee80211_channel_to_frequency"
+>>> [drivers/net/wireless/intel/iwlwifi/iwlwifi.ko] undefined!
+>>> ERROR: "reg_query_regdb_wmm"
+>>> [drivers/net/wireless/intel/iwlwifi/iwlwifi.ko] undefined!
 
+Luca, I guess you will send a fix for 5.0?
+
+-- 
+Kalle Valo
