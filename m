@@ -4,50 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD701C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:52:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAB75C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:52:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E19D20651
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:52:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B65C206BB
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:52:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546865531;
-	bh=jPS2ZwoyxihOzYUZHRsuZkRuqBqhXkUuz6+HuAufrYw=;
+	s=default; t=1546865538;
+	bh=uBAO+0PSk87GzmMkWhfeAExr0+iV9ySBMkZvb/EZIX4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Xnqp7NIegNWwB39YCtqbsSMmSOcv1M5w2fMbvJdxfWDFaOFS4Nrgzx6MQYDvto70a
-	 a/x7j5wqVwXLwtB9TxzHcpMzOtwG+lkdcnInXGEvTNGFn73+FnhsqML/IfR4CVMW3B
-	 TG61pE3qEu6RnT5p0BNErMX8XFVPHhQobcNFA7uQ=
+	b=KvZWCZ+5afZMVgH+I8FP+wdd3GhQnkIS0rWXCUwhNIJJaDVMAlqcWQYOJ1LdolRM4
+	 ftVVz3dg9+VszaSHcRbmTBucxbAN1xqhRQsvS50bNYgmriJjbamSxIqqW1VXZDhxSu
+	 uPdkcb4T6DbbDXVyBuUJzQt7lV8g2o+lpmQU32u8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729237AbfAGMwL (ORCPT
+        id S1729572AbfAGMwR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:52:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41890 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:52:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41958 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727215AbfAGMwJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:52:09 -0500
+        id S1728905AbfAGMwP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:52:15 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 01A8020859;
-        Mon,  7 Jan 2019 12:52:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1F7D920651;
+        Mon,  7 Jan 2019 12:52:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865528;
-        bh=jPS2ZwoyxihOzYUZHRsuZkRuqBqhXkUuz6+HuAufrYw=;
+        s=default; t=1546865534;
+        bh=uBAO+0PSk87GzmMkWhfeAExr0+iV9ySBMkZvb/EZIX4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=l4Khwa9YcCWSXShZ69f4Sbz7d/Cse4eDSd6weDdyl39mbOWB6Gr5nuuYo+hQN7i7e
-         FUS9C/hcqN44UzTbpnwh9x5ZnCygKcWP4Nvms368EotVFbmZSjjcbY0GNB6Mj6YZrv
-         XxNr/r++mM6UswI3g5r3+gCAjRrpj3ZAQ179pYGM=
+        b=hjxAMf6RSfa6SDItYsuSoFUTmdodVv3urDWeeZpFv4VXhLsETQ2jgCBgQix4+j1jQ
+         ApyKOg3LxkcoJ/IGvuc48CzofHbdXEgk4s4wNxq5mWawLm6F/KrxpMpw4TZJlRGEfh
+         WRMCtQQCTiV1Xdp+INPA/2zbSTACdj2eIkDSr/hw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.19 063/170] ALSA: emux: Fix potential Spectre v1 vulnerabilities
-Date:   Mon,  7 Jan 2019 13:31:30 +0100
-Message-Id: <20190107104500.467427706@linuxfoundation.org>
+        stable@vger.kernel.org, Michal Hocko <mhocko@suse.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        Andi Kleen <ak@linux.intel.com>, Jiri Kosina <jkosina@suse.cz>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Borislav Petkov <bp@suse.de>, linux-mm@kvack.org
+Subject: [PATCH 4.19 090/170] x86/speculation/l1tf: Drop the swap storage limit restriction when l1tf=off
+Date:   Mon,  7 Jan 2019 13:31:57 +0100
+Message-Id: <20190107104503.633415008@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104452.953560660@linuxfoundation.org>
 References: <20190107104452.953560660@linuxfoundation.org>
@@ -66,69 +70,102 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Gustavo A. R. Silva <gustavo@embeddedor.com>
+From: Michal Hocko <mhocko@suse.com>
 
-commit 4aea96f4237cea0c51a8bc87c0db31f0f932f1f0 upstream.
+commit 5b5e4d623ec8a34689df98e42d038a3b594d2ff9 upstream.
 
-info.mode and info.port are indirectly controlled by user-space,
-hence leading to a potential exploitation of the Spectre variant 1
-vulnerability.
+Swap storage is restricted to max_swapfile_size (~16TB on x86_64) whenever
+the system is deemed affected by L1TF vulnerability. Even though the limit
+is quite high for most deployments it seems to be too restrictive for
+deployments which are willing to live with the mitigation disabled.
 
-These issues were detected with the help of Smatch:
+We have a customer to deploy 8x 6,4TB PCIe/NVMe SSD swap devices which is
+clearly out of the limit.
 
-sound/synth/emux/emux_hwdep.c:72 snd_emux_hwdep_misc_mode() warn: potential spectre issue 'emu->portptrs[i]->ctrls' [w] (local cap)
-sound/synth/emux/emux_hwdep.c:75 snd_emux_hwdep_misc_mode() warn: potential spectre issue 'emu->portptrs' [w] (local cap)
-sound/synth/emux/emux_hwdep.c:75 snd_emux_hwdep_misc_mode() warn: potential spectre issue 'emu->portptrs[info.port]->ctrls' [w] (local cap)
+Drop the swap restriction when l1tf=off is specified. It also doesn't make
+much sense to warn about too much memory for the l1tf mitigation when it is
+forcefully disabled by the administrator.
 
-Fix this by sanitizing both info.mode and info.port before using them
-to index emu->portptrs[i]->ctrls, emu->portptrs[info.port]->ctrls and
-emu->portptrs.
+[ tglx: Folded the documentation delta change ]
 
-Notice that given that speculation windows are large, the policy is
-to kill the speculation on the first load and not worry if it can be
-completed with a dependent load/store [1].
-
-[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Fixes: 377eeaa8e11f ("x86/speculation/l1tf: Limit swap file size to MAX_PA/2")
+Signed-off-by: Michal Hocko <mhocko@suse.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Pavel Tatashin <pasha.tatashin@soleen.com>
+Reviewed-by: Andi Kleen <ak@linux.intel.com>
+Acked-by: Jiri Kosina <jkosina@suse.cz>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Borislav Petkov <bp@suse.de>
+Cc: <linux-mm@kvack.org>
 Cc: stable@vger.kernel.org
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Link: https://lkml.kernel.org/r/20181113184910.26697-1-mhocko@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/synth/emux/emux_hwdep.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ Documentation/admin-guide/kernel-parameters.txt |    3 +++
+ Documentation/admin-guide/l1tf.rst              |    6 +++++-
+ arch/x86/kernel/cpu/bugs.c                      |    3 ++-
+ arch/x86/mm/init.c                              |    2 +-
+ 4 files changed, 11 insertions(+), 3 deletions(-)
 
---- a/sound/synth/emux/emux_hwdep.c
-+++ b/sound/synth/emux/emux_hwdep.c
-@@ -22,9 +22,9 @@
- #include <sound/core.h>
- #include <sound/hwdep.h>
- #include <linux/uaccess.h>
-+#include <linux/nospec.h>
- #include "emux_voice.h"
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -2073,6 +2073,9 @@
+ 			off
+ 				Disables hypervisor mitigations and doesn't
+ 				emit any warnings.
++				It also drops the swap size and available
++				RAM limit restriction on both hypervisor and
++				bare metal.
  
--
- #define TMP_CLIENT_ID	0x1001
+ 			Default is 'flush'.
  
- /*
-@@ -66,13 +66,16 @@ snd_emux_hwdep_misc_mode(struct snd_emux
- 		return -EFAULT;
- 	if (info.mode < 0 || info.mode >= EMUX_MD_END)
- 		return -EINVAL;
-+	info.mode = array_index_nospec(info.mode, EMUX_MD_END);
+--- a/Documentation/admin-guide/l1tf.rst
++++ b/Documentation/admin-guide/l1tf.rst
+@@ -405,6 +405,9 @@ time with the option "l1tf=". The valid
  
- 	if (info.port < 0) {
- 		for (i = 0; i < emu->num_ports; i++)
- 			emu->portptrs[i]->ctrls[info.mode] = info.value;
- 	} else {
--		if (info.port < emu->num_ports)
-+		if (info.port < emu->num_ports) {
-+			info.port = array_index_nospec(info.port, emu->num_ports);
- 			emu->portptrs[info.port]->ctrls[info.mode] = info.value;
-+		}
- 	}
- 	return 0;
- }
+   off		Disables hypervisor mitigations and doesn't emit any
+ 		warnings.
++		It also drops the swap size and available RAM limit restrictions
++		on both hypervisor and bare metal.
++
+   ============  =============================================================
+ 
+ The default is 'flush'. For details about L1D flushing see :ref:`l1d_flush`.
+@@ -576,7 +579,8 @@ Default mitigations
+   The kernel default mitigations for vulnerable processors are:
+ 
+   - PTE inversion to protect against malicious user space. This is done
+-    unconditionally and cannot be controlled.
++    unconditionally and cannot be controlled. The swap storage is limited
++    to ~16TB.
+ 
+   - L1D conditional flushing on VMENTER when EPT is enabled for
+     a guest.
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -1000,7 +1000,8 @@ static void __init l1tf_select_mitigatio
+ #endif
+ 
+ 	half_pa = (u64)l1tf_pfn_limit() << PAGE_SHIFT;
+-	if (e820__mapped_any(half_pa, ULLONG_MAX - half_pa, E820_TYPE_RAM)) {
++	if (l1tf_mitigation != L1TF_MITIGATION_OFF &&
++			e820__mapped_any(half_pa, ULLONG_MAX - half_pa, E820_TYPE_RAM)) {
+ 		pr_warn("System has more than MAX_PA/2 memory. L1TF mitigation not effective.\n");
+ 		pr_info("You may make it effective by booting the kernel with mem=%llu parameter.\n",
+ 				half_pa);
+--- a/arch/x86/mm/init.c
++++ b/arch/x86/mm/init.c
+@@ -932,7 +932,7 @@ unsigned long max_swapfile_size(void)
+ 
+ 	pages = generic_max_swapfile_size();
+ 
+-	if (boot_cpu_has_bug(X86_BUG_L1TF)) {
++	if (boot_cpu_has_bug(X86_BUG_L1TF) && l1tf_mitigation != L1TF_MITIGATION_OFF) {
+ 		/* Limit the swap file size to MAX_PA/2 for L1TF workaround */
+ 		unsigned long long l1tf_limit = l1tf_pfn_limit();
+ 		/*
 
 
