@@ -2,95 +2,71 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A333CC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:37:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C134BC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:38:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71D032070B
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:37:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A4572070B
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:38:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727161AbfAGShN (ORCPT
+        id S1727272AbfAGSi1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 13:37:13 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:48861 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726535AbfAGShN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 13:37:13 -0500
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id D05B2808E2; Mon,  7 Jan 2019 19:37:06 +0100 (CET)
-Date:   Mon, 7 Jan 2019 19:37:11 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
-        kernel list <linux-kernel@vger.kernel.org>, corbet@lwn.net,
-        linux-doc@vger.kernel.org
-Subject: Consistent capitalization of "device tree"?
-Message-ID: <20190107183711.GA5671@amd>
+        Mon, 7 Jan 2019 13:38:27 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:37890 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726535AbfAGSi1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 13:38:27 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id DC9D8A4034;
+        Mon,  7 Jan 2019 18:38:26 +0000 (UTC)
+Received: from vitty.brq.redhat.com.redhat.com (unknown [10.43.2.155])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 42843601A3;
+        Mon,  7 Jan 2019 18:38:22 +0000 (UTC)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     David Hildenbrand <david@redhat.com>, devel@linuxdriverproject.org,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        linux-kernel@vger.kernel.org, Dexuan Cui <decui@microsoft.com>
+Subject: Re: [PATCH] hv_balloon: avoid touching uninitialized struct page during tail onlining
+In-Reply-To: <20190107175650.GG166797@sasha-vm>
+References: <20190104141942.19126-1-vkuznets@redhat.com> <2ea7e975-6aae-de71-83e5-9302518802ef@redhat.com> <87d0p837lt.fsf@vitty.brq.redhat.com> <20190107175650.GG166797@sasha-vm>
+Date:   Mon, 07 Jan 2019 19:38:20 +0100
+Message-ID: <87a7kc2u03.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="W/nzBZO5zC0uMSeA"
-Content-Disposition: inline
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Mon, 07 Jan 2019 18:38:26 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Sasha Levin <sashal@kernel.org> writes:
 
---W/nzBZO5zC0uMSeA
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> On Mon, Jan 07, 2019 at 02:44:30PM +0100, Vitaly Kuznetsov wrote:
+>>P.S. I still think about bringing mem_hotplug_begin()/done() to
+>>hv_balloon but that's going to be a separate discussion, here I want to
+>>have a small fix backportable to stable.
+>
+> This should probably be marked for stable then :)
+>
 
-Is it "Device Tree" or "device tree"?
-   =20
- pavel@duo:/data/l/k/Documentation$ grep -r "Device Tree"  | wc -l
- 235
- pavel@duo:/data/l/k/Documentation$ grep -r "device tree"  | wc -l
- 595
-   =20
-I guess it would be nice to make it consistent. I guess "device tree"
-is preffered?
+Yes, please :-)
 
-Should we do something like this?
-								Pavel
+I didn't test old kernels but this seems to be an old issue,
+e.g. DEFERRED_STRUCT_PAGE_INIT appeared in 4.2 - not sure if memory
+hotplug code was using it back then but, oh well, it's all history now.
 
-Signed-off-by: Pavel Machek <pavel@ucw.cz>
-   =20
-diff --git a/Documentation/devicetree/overlay-notes.txt b/Documentation/dev=
-icetree/overlay-notes.txt
-index 725fb8d..cc5f507 100644
---- a/Documentation/devicetree/overlay-notes.txt
-+++ b/Documentation/devicetree/overlay-notes.txt
-@@ -8,7 +8,7 @@ companion document to Documentation/devicetree/dynamic-reso=
-lution-notes.txt[1]
- How overlays work
- -----------------
-=20
--A Device Tree's overlay purpose is to modify the kernel's live tree, and
-+A device tree's overlay purpose is to modify the kernel's live tree, and
- have the modification affecting the state of the kernel in a way that
- is reflecting the changes.
- Since the kernel mainly deals with devices, any new device node that result
+(I remember Greg disliked when people were tagging patches for stable@
+themselves, he prefered maintainers deciding if the particular commit
+deserves stable@ or not - but as you have a tree now we may as well have
+different rules :-)
 
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---W/nzBZO5zC0uMSeA
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlwznFcACgkQMOfwapXb+vIgYwCfTmcj844BEmwus3pL2tHXVvih
-hKwAn3Q//DngNjgqZmiFNmNlFCYcuUey
-=aXsV
------END PGP SIGNATURE-----
-
---W/nzBZO5zC0uMSeA--
+-- 
+Vitaly
