@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B497C43444
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 16:27:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5C95C43612
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 16:28:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32A112089F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 16:27:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF0502089F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 16:28:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730448AbfAGQ15 (ORCPT
+        id S1730476AbfAGQ2B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 11:27:57 -0500
-Received: from foss.arm.com ([217.140.101.70]:34166 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730428AbfAGQ14 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 11:27:56 -0500
+        Mon, 7 Jan 2019 11:28:01 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:34206 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730428AbfAGQ2A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 11:28:00 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 89A251596;
-        Mon,  7 Jan 2019 08:27:55 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 55A9C15AB;
+        Mon,  7 Jan 2019 08:28:00 -0800 (PST)
 Received: from e119886-lin.cambridge.arm.com (unknown [10.37.6.11])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 119B53F5A0;
-        Mon,  7 Jan 2019 08:27:50 -0800 (PST)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D56A93F5A0;
+        Mon,  7 Jan 2019 08:27:55 -0800 (PST)
 From:   Andrew Murray <andrew.murray@arm.com>
 To:     Peter Zijlstra <peterz@infradead.org>,
         Ingo Molnar <mingo@redhat.com>,
@@ -45,9 +45,9 @@ To:     Peter Zijlstra <peterz@infradead.org>,
 Cc:     x86@kernel.org, linuxppc-dev@lists.ozlabs.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-alpha@vger.kernel.org
-Subject: [PATCH v4 03/13] perf/core: add PERF_PMU_CAP_NO_EXCLUDE for exclusion incapable PMUs
-Date:   Mon,  7 Jan 2019 16:27:20 +0000
-Message-Id: <1546878450-20341-4-git-send-email-andrew.murray@arm.com>
+Subject: [PATCH v4 04/13] alpha: perf/core: use PERF_PMU_CAP_NO_EXCLUDE
+Date:   Mon,  7 Jan 2019 16:27:21 +0000
+Message-Id: <1546878450-20341-5-git-send-email-andrew.murray@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1546878450-20341-1-git-send-email-andrew.murray@arm.com>
 References: <1546878450-20341-1-git-send-email-andrew.murray@arm.com>
@@ -56,54 +56,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Many PMU drivers do not have the capability to exclude counting events
-that occur in specific contexts such as idle, kernel, guest, etc. These
-drivers indicate this by returning an error in their event_init upon
-testing the events attribute flags. This approach is error prone and
-often inconsistent.
+As the Alpha PMU doesn't support context exclusion let's advertise
+the PERF_PMU_CAP_NO_EXCLUDE capability. This ensures that perf will
+prevent us from handling events where any exclusion flags are set.
+Let's also remove the now unnecessary check for exclusion flags.
 
-Let's instead allow PMU drivers to advertise their inability to exclude
-based on context via a new capability: PERF_PMU_CAP_NO_EXCLUDE. This
-allows the perf core to reject requests for exclusion events where
-there is no support in the PMU.
+This change means that __hw_perf_event_init will now also
+indicate that it doesn't support exclude_host and exclude_guest and
+will now implicitly return -EINVAL instead of -EPERM. This is likely
+more desirable as -EPERM will result in a kernel.perf_event_paranoid
+related warning from the perf userspace utility.
 
 Signed-off-by: Andrew Murray <andrew.murray@arm.com>
 ---
- include/linux/perf_event.h | 1 +
- kernel/events/core.c       | 9 +++++++++
- 2 files changed, 10 insertions(+)
+ arch/alpha/kernel/perf_event.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index 54a78d2..cec02dc 100644
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -244,6 +244,7 @@ struct perf_event;
- #define PERF_PMU_CAP_EXCLUSIVE			0x10
- #define PERF_PMU_CAP_ITRACE			0x20
- #define PERF_PMU_CAP_HETEROGENEOUS_CPUS		0x40
-+#define PERF_PMU_CAP_NO_EXCLUDE			0x80
+diff --git a/arch/alpha/kernel/perf_event.c b/arch/alpha/kernel/perf_event.c
+index 5613aa37..4341ccf 100644
+--- a/arch/alpha/kernel/perf_event.c
++++ b/arch/alpha/kernel/perf_event.c
+@@ -630,12 +630,6 @@ static int __hw_perf_event_init(struct perf_event *event)
+ 		return ev;
+ 	}
  
- /**
-  * struct pmu - generic performance monitoring unit
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 3cd13a3..fbe59b7 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -9772,6 +9772,15 @@ static int perf_try_init_event(struct pmu *pmu, struct perf_event *event)
- 	if (ctx)
- 		perf_event_ctx_unlock(event->group_leader, ctx);
+-	/* The EV67 does not support mode exclusion */
+-	if (attr->exclude_kernel || attr->exclude_user
+-			|| attr->exclude_hv || attr->exclude_idle) {
+-		return -EPERM;
+-	}
+-
+ 	/*
+ 	 * We place the event type in event_base here and leave calculation
+ 	 * of the codes to programme the PMU for alpha_pmu_enable() because
+@@ -771,6 +765,7 @@ static struct pmu pmu = {
+ 	.start		= alpha_pmu_start,
+ 	.stop		= alpha_pmu_stop,
+ 	.read		= alpha_pmu_read,
++	.capabilities	= PERF_PMU_CAP_NO_EXCLUDE,
+ };
  
-+	if (!ret) {
-+		if (pmu->capabilities & PERF_PMU_CAP_NO_EXCLUDE &&
-+				event_has_any_exclude_flag(event)) {
-+			if (event->destroy)
-+				event->destroy(event);
-+			ret = -EINVAL;
-+		}
-+	}
-+
- 	if (ret)
- 		module_put(pmu->module);
  
 -- 
 2.7.4
