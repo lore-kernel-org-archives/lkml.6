@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF37CC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:37:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3CE0C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:37:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91D9A217D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:37:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5827206BB
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:37:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546864647;
-	bh=n7pF/pYRTEG6sjkZiq2CkrP0y3hm29Qq/EZNgrghJ4M=;
+	s=default; t=1546864651;
+	bh=2Q/+0lqhtxYQc3wHqqIcMWT1zF/sDPcBsDC9AP1fVqQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=gx73njXgIxPzg9HWdr+0d/nfu8BqqyN94TyTImn86LXHJlqyvT6aoO+9vd79v5aWL
-	 /Qgkx9y/63xpuZPDqXCeEZsKIxo+LVWiwRlcm+PSE2wAeIUlHAmiminmp32MB2A4OU
-	 82YLROVC9iezdz5lzbNeC/2TkBqMhjbKAy+cXrxc=
+	b=SyG696cZd5cBoxZivpCxT+dCDmYgXlS+gNIYuqgXRU6Tj3AshbS8dX3I+gnvuzdWz
+	 mtW5/p0bOzCEAYYD8cA+VZ07ojScqhJSITDEks3+oIZyXh8xXiGvBd0S6/aEoVSCRr
+	 KSmtbr5HCaSa9c9zHj3Dd11QohX0f2Ugb7frCUxA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727812AbfAGMh1 (ORCPT
+        id S1727821AbfAGMha (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:37:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52316 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:37:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52398 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726718AbfAGMhX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:37:23 -0500
+        id S1727805AbfAGMh0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:37:26 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 82077206BB;
-        Mon,  7 Jan 2019 12:37:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 38A3F206BB;
+        Mon,  7 Jan 2019 12:37:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546864643;
-        bh=n7pF/pYRTEG6sjkZiq2CkrP0y3hm29Qq/EZNgrghJ4M=;
+        s=default; t=1546864645;
+        bh=2Q/+0lqhtxYQc3wHqqIcMWT1zF/sDPcBsDC9AP1fVqQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vhshWVN1+E43gPQRT+xhQH0CaQxPu2FcxKaAWBcyWjiIlis+bOZ5HtUPtpVbMh32Z
-         BvhLVPDz0GvD8XZOAPrnn+DY9i9UiDMA6vEF/4V37qh3bxpqXGnuHeE2cf/fDRe7BC
-         cl3Cyc5aJx6maNywlvClrOx3Yic1IWZjED9fH01c=
+        b=srtJQWKzWQkogq8t4IbAofUX4sbhgCFEtm1tic2GXGlk9hQtvsKRMCjluUYD/y9o0
+         HATig2vA7EMwdXU9l0xJRoCLwmdLvdyJX31Lo3rt3gElMhLdlB9vRiVDSFgVV8zG/w
+         vLYAHILZneDlTl1qI4P9HS22VtwHC7SQ2eT8m/mg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sanjeev Chugh <sanjeev_chugh@mentor.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 4.20 052/145] Input: atmel_mxt_ts - dont try to free unallocated kernel memory
-Date:   Mon,  7 Jan 2019 13:31:29 +0100
-Message-Id: <20190107104444.152728846@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Anholt <eric@anholt.net>,
+        Boris Brezillon <boris.brezillon@bootlin.com>
+Subject: [PATCH 4.20 061/145] drm/v3d: Skip debugfs dumping GCA on platforms without GCA.
+Date:   Mon,  7 Jan 2019 13:31:38 +0100
+Message-Id: <20190107104445.246016861@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104437.308206189@linuxfoundation.org>
 References: <20190107104437.308206189@linuxfoundation.org>
@@ -65,40 +65,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sanjeev Chugh <sanjeev_chugh@mentor.com>
+From: Eric Anholt <eric@anholt.net>
 
-commit 1e3c336ad8f40f88a8961c434640920fe35cc08b upstream.
+commit 2f20fa8d12e859a03f68bdd81d75830141bc9ac9 upstream.
 
-If the user attempts to update Atmel device with an invalid configuration
-cfg file, error handling code is trying to free cfg file memory which is
-not allocated yet hence results into kernel crash.
+Fixes an oops reading this debugfs entry on BCM7278.
 
-This patch fixes the order of memory free operations.
-
-Signed-off-by: Sanjeev Chugh <sanjeev_chugh@mentor.com>
-Fixes: a4891f105837 ("Input: atmel_mxt_ts - zero terminate config firmware file")
-Cc: stable@vger.kernel.org
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Eric Anholt <eric@anholt.net>
+Link: https://patchwork.freedesktop.org/patch/msgid/20180928232126.4332-4-eric@anholt.net
+Fixes: 57692c94dcbe ("drm/v3d: Introduce a new DRM driver for Broadcom V3D V3.x+")
+Cc: <stable@vger.kernel.org>
+Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/input/touchscreen/atmel_mxt_ts.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/v3d/v3d_debugfs.c |   11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
---- a/drivers/input/touchscreen/atmel_mxt_ts.c
-+++ b/drivers/input/touchscreen/atmel_mxt_ts.c
-@@ -1585,10 +1585,10 @@ static int mxt_update_cfg(struct mxt_dat
- 	/* T7 config may have changed */
- 	mxt_init_t7_power_cfg(data);
+--- a/drivers/gpu/drm/v3d/v3d_debugfs.c
++++ b/drivers/gpu/drm/v3d/v3d_debugfs.c
+@@ -71,10 +71,13 @@ static int v3d_v3d_debugfs_regs(struct s
+ 			   V3D_READ(v3d_hub_reg_defs[i].reg));
+ 	}
  
--release_raw:
--	kfree(cfg.raw);
- release_mem:
- 	kfree(cfg.mem);
-+release_raw:
-+	kfree(cfg.raw);
- 	return ret;
- }
+-	for (i = 0; i < ARRAY_SIZE(v3d_gca_reg_defs); i++) {
+-		seq_printf(m, "%s (0x%04x): 0x%08x\n",
+-			   v3d_gca_reg_defs[i].name, v3d_gca_reg_defs[i].reg,
+-			   V3D_GCA_READ(v3d_gca_reg_defs[i].reg));
++	if (v3d->ver < 41) {
++		for (i = 0; i < ARRAY_SIZE(v3d_gca_reg_defs); i++) {
++			seq_printf(m, "%s (0x%04x): 0x%08x\n",
++				   v3d_gca_reg_defs[i].name,
++				   v3d_gca_reg_defs[i].reg,
++				   V3D_GCA_READ(v3d_gca_reg_defs[i].reg));
++		}
+ 	}
  
+ 	for (core = 0; core < v3d->cores; core++) {
 
 
