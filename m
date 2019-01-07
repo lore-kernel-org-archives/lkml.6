@@ -7,47 +7,48 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56807C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:56:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 790C2C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:56:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 278DB20665
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:56:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45CE120665
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:56:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546865811;
-	bh=qI2ewgQsKioDBsVTfh6/rrR+1JkPUGmnlNj1LZ6ODc4=;
+	s=default; t=1546865817;
+	bh=ENwY/ZZ3bSoavu/knRpcEtx4ltjvBTMHu55AGIptCbc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ne301bMA07Yz0UIdRWNsZ0lEUGITvzTQJIOM6Kzw9/Y7rLT9bPHk98/WTMr7/LnyH
-	 o4bEinXTgDMgODuER5qcFxHFOrHmmjE9cB/lNaN+iIqp+NI25r6t58puFgAVviUbxJ
-	 wUBR/Neom48fLU64rvCrArpE/xquW8MV8qV1QROk=
+	b=XEKQxJrrAEgRzL6YLxrnnAbqGSDDz1+JNbXRfDwvpXjoHxMl38YnHxeS1n9XFs9D6
+	 OR5uX6Xyeei0PucjrhYIV2G2TEpYD0GjQOTtxsEpoHQ2NKC9i+DmD0WYaSLjoZd4Xy
+	 ILHVmxksR3svrxyIfdsgRsjbGc91af3XTt8Hw1b4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729749AbfAGM4u (ORCPT
+        id S1729753AbfAGM44 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:56:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44664 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:56:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44728 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727398AbfAGM4r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:56:47 -0500
+        id S1727398AbfAGM4y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:56:54 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C6AFF20665;
-        Mon,  7 Jan 2019 12:56:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D8AE920665;
+        Mon,  7 Jan 2019 12:56:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865806;
-        bh=qI2ewgQsKioDBsVTfh6/rrR+1JkPUGmnlNj1LZ6ODc4=;
+        s=default; t=1546865812;
+        bh=ENwY/ZZ3bSoavu/knRpcEtx4ltjvBTMHu55AGIptCbc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lkwXV2U0QAbhlOlAi9wF14Cflma962GnWKEkIyvKobRSslPMFEwnNLCbiFzA+//KC
-         +97H93YjCuLW3b7S8M55p6d34fGlWdCCTleHi9ujsMgZId9KeeRXzTG/z/y7X4qhtN
-         uKRUUqrwlWqsGclRFQ13n1v7zYFN6vJ2zuzvrLjI=
+        b=VncdKyzB/T0++A6rls0sZ6U7cTSR3qjF9+eWt/DmUalzyf/CGFnTUVdZ0v7+p4vJb
+         3ODmxZcpar+kBpIVrkDNEqJ8OVGAORsvbjgR8O5b5BKWJgCX1rOfdNtweymzonb8oX
+         uL3b7rnriHvPyHGriYh4iRBLAI8NxqGRYhiJvoiA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
-        Lu Fengqi <lufq.fnst@cn.fujitsu.com>,
+        stable@vger.kernel.org, Vijay Chidambaram <vvijay03@gmail.com>,
+        Jayashree Mohan <jayashree2912@gmail.com>,
+        Filipe Manana <fdmanana@suse.com>,
         David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.19 128/170] btrfs: skip file_extent generation check for free_space_inode in run_delalloc_nocow
-Date:   Mon,  7 Jan 2019 13:32:35 +0100
-Message-Id: <20190107104508.040017626@linuxfoundation.org>
+Subject: [PATCH 4.19 129/170] Btrfs: fix fsync of files with multiple hard links in new directories
+Date:   Mon,  7 Jan 2019 13:32:36 +0100
+Message-Id: <20190107104508.175328970@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104452.953560660@linuxfoundation.org>
 References: <20190107104452.953560660@linuxfoundation.org>
@@ -66,71 +67,150 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lu Fengqi <lufq.fnst@cn.fujitsu.com>
+From: Filipe Manana <fdmanana@suse.com>
 
-commit 27a7ff554e8d349627a90bda275c527b7348adae upstream.
+commit 41bd60676923822de1df2c50b3f9a10171f4338a upstream.
 
-The test case btrfs/001 with inode_cache mount option will encounter the
-following warning:
+The log tree has a long standing problem that when a file is fsync'ed we
+only check for new ancestors, created in the current transaction, by
+following only the hard link for which the fsync was issued. We follow the
+ancestors using the VFS' dget_parent() API. This means that if we create a
+new link for a file in a directory that is new (or in an any other new
+ancestor directory) and then fsync the file using an old hard link, we end
+up not logging the new ancestor, and on log replay that new hard link and
+ancestor do not exist. In some cases, involving renames, the file will not
+exist at all.
 
-  WARNING: CPU: 1 PID: 23700 at fs/btrfs/inode.c:956 cow_file_range.isra.19+0x32b/0x430 [btrfs]
-  CPU: 1 PID: 23700 Comm: btrfs Kdump: loaded Tainted: G        W  O      4.20.0-rc4-custom+ #30
-  Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 0.0.0 02/06/2015
-  RIP: 0010:cow_file_range.isra.19+0x32b/0x430 [btrfs]
-  Call Trace:
-   ? free_extent_buffer+0x46/0x90 [btrfs]
-   run_delalloc_nocow+0x455/0x900 [btrfs]
-   btrfs_run_delalloc_range+0x1a7/0x360 [btrfs]
-   writepage_delalloc+0xf9/0x150 [btrfs]
-   __extent_writepage+0x125/0x3e0 [btrfs]
-   extent_write_cache_pages+0x1b6/0x3e0 [btrfs]
-   ? __wake_up_common_lock+0x63/0xc0
-   extent_writepages+0x50/0x80 [btrfs]
-   do_writepages+0x41/0xd0
-   ? __filemap_fdatawrite_range+0x9e/0xf0
-   __filemap_fdatawrite_range+0xbe/0xf0
-   btrfs_fdatawrite_range+0x1b/0x50 [btrfs]
-   __btrfs_write_out_cache+0x42c/0x480 [btrfs]
-   btrfs_write_out_ino_cache+0x84/0xd0 [btrfs]
-   btrfs_save_ino_cache+0x551/0x660 [btrfs]
-   commit_fs_roots+0xc5/0x190 [btrfs]
-   btrfs_commit_transaction+0x2bf/0x8d0 [btrfs]
-   btrfs_mksubvol+0x48d/0x4d0 [btrfs]
-   btrfs_ioctl_snap_create_transid+0x170/0x180 [btrfs]
-   btrfs_ioctl_snap_create_v2+0x124/0x180 [btrfs]
-   btrfs_ioctl+0x123f/0x3030 [btrfs]
+Example:
 
-The file extent generation of the free space inode is equal to the last
-snapshot of the file root, so the inode will be passed to cow_file_rage.
-But the inode was created and its extents were preallocated in
-btrfs_save_ino_cache, there are no cow copies on disk.
+  mkfs.btrfs -f /dev/sdb
+  mount /dev/sdb /mnt
 
-The preallocated extent is not yet in the extent tree, and
-btrfs_cross_ref_exist will ignore the -ENOENT returned by
-check_committed_ref, so we can directly write the inode to the disk.
+  mkdir /mnt/A
+  touch /mnt/foo
+  ln /mnt/foo /mnt/A/bar
+  xfs_io -c fsync /mnt/foo
 
-Fixes: 78d4295b1eee ("btrfs: lift some btrfs_cross_ref_exist checks in nocow path")
-CC: stable@vger.kernel.org # 4.18+
-Reviewed-by: Filipe Manana <fdmanana@suse.com>
-Signed-off-by: Lu Fengqi <lufq.fnst@cn.fujitsu.com>
+  <power failure>
+
+In this example after log replay only the hard link named 'foo' exists
+and directory A does not exist, which is unexpected. In other major linux
+filesystems, such as ext4, xfs and f2fs for example, both hard links exist
+and so does directory A after mounting again the filesystem.
+
+Checking if any new ancestors are new and need to be logged was added in
+2009 by commit 12fcfd22fe5b ("Btrfs: tree logging unlink/rename fixes"),
+however only for the ancestors of the hard link (dentry) for which the
+fsync was issued, instead of checking for all ancestors for all of the
+inode's hard links.
+
+So fix this by tracking the id of the last transaction where a hard link
+was created for an inode and then on fsync fallback to a full transaction
+commit when an inode has more than one hard link and at least one new hard
+link was created in the current transaction. This is the simplest solution
+since this is not a common use case (adding frequently hard links for
+which there's an ancestor created in the current transaction and then
+fsync the file). In case it ever becomes a common use case, a solution
+that consists of iterating the fs/subvol btree for each hard link and
+check if any ancestor is new, could be implemented.
+
+This solves many unexpected scenarios reported by Jayashree Mohan and
+Vijay Chidambaram, and for which there is a new test case for fstests
+under review.
+
+Fixes: 12fcfd22fe5b ("Btrfs: tree logging unlink/rename fixes")
+CC: stable@vger.kernel.org # 4.4+
+Reported-by: Vijay Chidambaram <vvijay03@gmail.com>
+Reported-by: Jayashree Mohan <jayashree2912@gmail.com>
+Signed-off-by: Filipe Manana <fdmanana@suse.com>
 Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/inode.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/btrfs/btrfs_inode.h |    6 ++++++
+ fs/btrfs/inode.c       |   17 +++++++++++++++++
+ fs/btrfs/tree-log.c    |   16 ++++++++++++++++
+ 3 files changed, 39 insertions(+)
 
+--- a/fs/btrfs/btrfs_inode.h
++++ b/fs/btrfs/btrfs_inode.h
+@@ -147,6 +147,12 @@ struct btrfs_inode {
+ 	u64 last_unlink_trans;
+ 
+ 	/*
++	 * Track the transaction id of the last transaction used to create a
++	 * hard link for the inode. This is used by the log tree (fsync).
++	 */
++	u64 last_link_trans;
++
++	/*
+ 	 * Number of bytes outstanding that are going to need csums.  This is
+ 	 * used in ENOSPC accounting.
+ 	 */
 --- a/fs/btrfs/inode.c
 +++ b/fs/btrfs/inode.c
-@@ -1373,7 +1373,8 @@ next_slot:
- 			 * Do the same check as in btrfs_cross_ref_exist but
- 			 * without the unnecessary search.
- 			 */
--			if (btrfs_file_extent_generation(leaf, fi) <=
-+			if (!nolock &&
-+			    btrfs_file_extent_generation(leaf, fi) <=
- 			    btrfs_root_last_snapshot(&root->root_item))
- 				goto out_check;
- 			if (extent_type == BTRFS_FILE_EXTENT_REG && !force)
+@@ -3689,6 +3689,21 @@ cache_index:
+ 	 * inode is not a directory, logging its parent unnecessarily.
+ 	 */
+ 	BTRFS_I(inode)->last_unlink_trans = BTRFS_I(inode)->last_trans;
++	/*
++	 * Similar reasoning for last_link_trans, needs to be set otherwise
++	 * for a case like the following:
++	 *
++	 * mkdir A
++	 * touch foo
++	 * ln foo A/bar
++	 * echo 2 > /proc/sys/vm/drop_caches
++	 * fsync foo
++	 * <power failure>
++	 *
++	 * Would result in link bar and directory A not existing after the power
++	 * failure.
++	 */
++	BTRFS_I(inode)->last_link_trans = BTRFS_I(inode)->last_trans;
+ 
+ 	path->slots[0]++;
+ 	if (inode->i_nlink != 1 ||
+@@ -6647,6 +6662,7 @@ static int btrfs_link(struct dentry *old
+ 			if (err)
+ 				goto fail;
+ 		}
++		BTRFS_I(inode)->last_link_trans = trans->transid;
+ 		d_instantiate(dentry, inode);
+ 		ret = btrfs_log_new_name(trans, BTRFS_I(inode), NULL, parent,
+ 					 true, NULL);
+@@ -9175,6 +9191,7 @@ struct inode *btrfs_alloc_inode(struct s
+ 	ei->index_cnt = (u64)-1;
+ 	ei->dir_index = 0;
+ 	ei->last_unlink_trans = 0;
++	ei->last_link_trans = 0;
+ 	ei->last_log_commit = 0;
+ 
+ 	spin_lock_init(&ei->lock);
+--- a/fs/btrfs/tree-log.c
++++ b/fs/btrfs/tree-log.c
+@@ -5781,6 +5781,22 @@ static int btrfs_log_inode_parent(struct
+ 			goto end_trans;
+ 	}
+ 
++	/*
++	 * If a new hard link was added to the inode in the current transaction
++	 * and its link count is now greater than 1, we need to fallback to a
++	 * transaction commit, otherwise we can end up not logging all its new
++	 * parents for all the hard links. Here just from the dentry used to
++	 * fsync, we can not visit the ancestor inodes for all the other hard
++	 * links to figure out if any is new, so we fallback to a transaction
++	 * commit (instead of adding a lot of complexity of scanning a btree,
++	 * since this scenario is not a common use case).
++	 */
++	if (inode->vfs_inode.i_nlink > 1 &&
++	    inode->last_link_trans > last_committed) {
++		ret = -EMLINK;
++		goto end_trans;
++	}
++
+ 	while (1) {
+ 		if (!parent || d_really_is_negative(parent) || sb != parent->d_sb)
+ 			break;
 
 
