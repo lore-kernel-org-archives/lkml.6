@@ -7,47 +7,48 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 812CCC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:18:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A525C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:18:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E6C321736
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:18:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4236121736
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:18:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546867108;
-	bh=iir08ecdAzl9vaZsIA3tVOKcx56I0uMx92x1dXC/ovM=;
+	s=default; t=1546867132;
+	bh=l8DHyLL9bbUQHiZK02k2EnHdUCbaZIYgBckkGw8wocc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=wwPfjPR10vFH5J5RLpb52FKW4AEENbuvGoibpju+fcsDdnVmVjWl3+SYc+hu1c+Ij
-	 YpKh51/l5xwJmZmUMcqITeHfN+MD7XzgsagZ5Z4coGTWebt8vNIPmEX2GLzie6itXz
-	 iBlsvBvJYy4dFjUhA+39zJlxeyhFbC6iKIqwJyck=
+	b=fG4wToA7T+dt1mazjm8NnxuitsifnZBus7PNb7bb+uzqGM88ssoqmmuG/hQ1iUVP9
+	 VZUHXSIhSDkXc3WV3VITzOrhYzRw53OhZ1UUlNHZv7CaUTLbZ8wqjX3XpKyuMmr4rR
+	 ENebf3b1QNk9Dbp3OohyybhM0kTnHESeKVkRsYMc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730500AbfAGNS1 (ORCPT
+        id S1730250AbfAGNSv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:18:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46506 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:18:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46078 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730059AbfAGM6v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:58:51 -0500
+        id S1729896AbfAGM6a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:58:30 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8BAAF206BB;
-        Mon,  7 Jan 2019 12:58:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 32BE121855;
+        Mon,  7 Jan 2019 12:58:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865931;
-        bh=iir08ecdAzl9vaZsIA3tVOKcx56I0uMx92x1dXC/ovM=;
+        s=default; t=1546865909;
+        bh=l8DHyLL9bbUQHiZK02k2EnHdUCbaZIYgBckkGw8wocc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=O03hJ69OCZu76fWApCDvaVmCmUODuXU4FKX7KpXFNhKXgp5gF8gNaiCmfzvEioJZj
-         rAFXb6JHHksdFfYC3iUFjz6SCQ2FjWobqSa6GNRpoGSuq4G3n5mcHAVR4neoiNKNG5
-         y0R3aprcmIAQpuymF4VsWX5IW3dLa1nrJvCSjzXo=
+        b=apYV8J4SIk86soOTQXB0InWtH7JFknOG6QB7sSvhHqX2vXmyMmglQ/TQwumnXRafv
+         q1o8XQ6BmKMAFLN3VJj2G1DPicNiPCXnKpXYf2rvGfYE0hTykSZRfvpNolU3lnCAFz
+         i5CTfvMaGrXqNFtOu0IPLwbeftWusIkXVSH6JoRE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 4.19 161/170] ARM: dts: exynos: Specify I2S assigned clocks in proper node
-Date:   Mon,  7 Jan 2019 13:33:08 +0100
-Message-Id: <20190107104511.966113811@linuxfoundation.org>
+        stable@vger.kernel.org, Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>, linux-mips@vger.kernel.org
+Subject: [PATCH 4.19 155/170] MIPS: OCTEON: mark RGMII interface disabled on OCTEON III
+Date:   Mon,  7 Jan 2019 13:33:02 +0100
+Message-Id: <20190107104511.246060303@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104452.953560660@linuxfoundation.org>
 References: <20190107104452.953560660@linuxfoundation.org>
@@ -66,114 +67,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+From: Aaro Koskinen <aaro.koskinen@iki.fi>
 
-commit 8ac686d7dfed721102860ff2571e6b9f529ae81a upstream.
+commit edefae94b7b9f10d5efe32dece5a36e9d9ecc29e upstream.
 
-The assigned parent clocks should be normally specified in the consumer
-device's DT node, this ensures respective driver always sees correct clock
-settings when required.
+Commit 885872b722b7 ("MIPS: Octeon: Add Octeon III CN7xxx
+interface detection") added RGMII interface detection for OCTEON III,
+but it results in the following logs:
 
-This patch fixes regression in audio subsystem on Odroid XU3/XU4 boards
-that appeared after commits:
+[    7.165984] ERROR: Unsupported Octeon model in __cvmx_helper_rgmii_probe
+[    7.173017] ERROR: Unsupported Octeon model in __cvmx_helper_rgmii_probe
 
-commit 647d04f8e07a ("ASoC: samsung: i2s: Ensure the RCLK rate is properly determined")
-commit 995e73e55f46 ("ASoC: samsung: i2s: Fix rclk_srcrate handling")
-commit 48279c53fd1d ("ASoC: samsung: i2s: Prevent external abort on exynos5433 I2S1 access")
+The current RGMII routines are valid only for older OCTEONS that
+use GMX/ASX hardware blocks. On later chips AGL should be used,
+but support for that is missing in the mainline. Until that is added,
+mark the interface as disabled.
 
-Without this patch the driver gets wrong clock as the I2S function clock
-(op_clk) in probe() and effectively the clock which is finally assigned
-from DT is not being enabled/disabled in the runtime resume/suspend ops.
-
-Without the above listed commits the EXYNOS_I2S_BUS clock was always set
-as parent of CLK_I2S_RCLK_SRC regardless of DT settings so there was no issue
-with not enabled EXYNOS_SCLK_I2S.
-
-Cc: <stable@vger.kernel.org> # 4.17.x
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Fixes: 885872b722b7 ("MIPS: Octeon: Add Octeon III CN7xxx interface detection")
+Signed-off-by: Aaro Koskinen <aaro.koskinen@iki.fi>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: James Hogan <jhogan@kernel.org>
+Cc: linux-mips@vger.kernel.org
+Cc: stable@vger.kernel.org # 4.7+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi |    9 ++++-----
- arch/arm/boot/dts/exynos5422-odroidxu4.dts        |    9 ++++-----
- 2 files changed, 8 insertions(+), 10 deletions(-)
+ arch/mips/cavium-octeon/executive/cvmx-helper.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi
-@@ -26,8 +26,7 @@
- 			"Speakers", "SPKL",
- 			"Speakers", "SPKR";
- 
--		assigned-clocks = <&i2s0 CLK_I2S_RCLK_SRC>,
--				<&clock CLK_MOUT_EPLL>,
-+		assigned-clocks = <&clock CLK_MOUT_EPLL>,
- 				<&clock CLK_MOUT_MAU_EPLL>,
- 				<&clock CLK_MOUT_USER_MAU_EPLL>,
- 				<&clock_audss EXYNOS_MOUT_AUDSS>,
-@@ -36,8 +35,7 @@
- 				<&clock_audss EXYNOS_DOUT_AUD_BUS>,
- 				<&clock_audss EXYNOS_DOUT_I2S>;
- 
--		assigned-clock-parents = <&clock_audss EXYNOS_SCLK_I2S>,
--				<&clock CLK_FOUT_EPLL>,
-+		assigned-clock-parents = <&clock CLK_FOUT_EPLL>,
- 				<&clock CLK_MOUT_EPLL>,
- 				<&clock CLK_MOUT_MAU_EPLL>,
- 				<&clock CLK_MAU_EPLL>,
-@@ -48,7 +46,6 @@
- 				<0>,
- 				<0>,
- 				<0>,
--				<0>,
- 				<196608001>,
- 				<(196608002 / 2)>,
- 				<196608000>;
-@@ -84,4 +81,6 @@
- 
- &i2s0 {
- 	status = "okay";
-+	assigned-clocks = <&i2s0 CLK_I2S_RCLK_SRC>;
-+	assigned-clock-parents = <&clock_audss EXYNOS_SCLK_I2S>;
- };
---- a/arch/arm/boot/dts/exynos5422-odroidxu4.dts
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu4.dts
-@@ -33,8 +33,7 @@
- 		compatible = "samsung,odroid-xu3-audio";
- 		model = "Odroid-XU4";
- 
--		assigned-clocks = <&i2s0 CLK_I2S_RCLK_SRC>,
--				<&clock CLK_MOUT_EPLL>,
-+		assigned-clocks = <&clock CLK_MOUT_EPLL>,
- 				<&clock CLK_MOUT_MAU_EPLL>,
- 				<&clock CLK_MOUT_USER_MAU_EPLL>,
- 				<&clock_audss EXYNOS_MOUT_AUDSS>,
-@@ -43,8 +42,7 @@
- 				<&clock_audss EXYNOS_DOUT_AUD_BUS>,
- 				<&clock_audss EXYNOS_DOUT_I2S>;
- 
--		assigned-clock-parents = <&clock_audss EXYNOS_SCLK_I2S>,
--				<&clock CLK_FOUT_EPLL>,
-+		assigned-clock-parents = <&clock CLK_FOUT_EPLL>,
- 				<&clock CLK_MOUT_EPLL>,
- 				<&clock CLK_MOUT_MAU_EPLL>,
- 				<&clock CLK_MAU_EPLL>,
-@@ -55,7 +53,6 @@
- 				<0>,
- 				<0>,
- 				<0>,
--				<0>,
- 				<196608001>,
- 				<(196608002 / 2)>,
- 				<196608000>;
-@@ -79,6 +76,8 @@
- 
- &i2s0 {
- 	status = "okay";
-+	assigned-clocks = <&i2s0 CLK_I2S_RCLK_SRC>;
-+	assigned-clock-parents = <&clock_audss EXYNOS_SCLK_I2S>;
- };
- 
- &pwm {
+--- a/arch/mips/cavium-octeon/executive/cvmx-helper.c
++++ b/arch/mips/cavium-octeon/executive/cvmx-helper.c
+@@ -286,7 +286,8 @@ static cvmx_helper_interface_mode_t __cv
+ 	case 3:
+ 		return CVMX_HELPER_INTERFACE_MODE_LOOP;
+ 	case 4:
+-		return CVMX_HELPER_INTERFACE_MODE_RGMII;
++		/* TODO: Implement support for AGL (RGMII). */
++		return CVMX_HELPER_INTERFACE_MODE_DISABLED;
+ 	default:
+ 		return CVMX_HELPER_INTERFACE_MODE_DISABLED;
+ 	}
 
 
