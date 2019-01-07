@@ -6,49 +6,54 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAE83C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:00:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3EE9C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:00:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A52B21736
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:00:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A1FD4206BB
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:00:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546866021;
-	bh=bG4PAxG9nALbTIQvZckLakyJOWjzRSYDgC6R5gqx8kM=;
+	s=default; t=1546866025;
+	bh=0e2IVA6aBRnOrzUZwNqWhCkwW54tu34JaU/qXezzldI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ohixTIkZLmun9MUOjyI8DqdtDKKmnOEqjOxNoqkkRkNz0RzsEFfqWv1e/MVT9hF9a
-	 lkO8m8Sb1jZyWA3CNPG3yMhZeJbA9cMjibMHUuLs72r8iOC7EgJbHA6GwKbZc1qbqo
-	 3j32ZnwV+9QaWNYs2iO5xTbxhUCFVz6gghLHrQi0=
+	b=jR8mCh+BiVYmpLen6t1b2yEZmFXTn6f03AeT4oZKZhzgskkXyT/fy5CANAz0K6Obi
+	 VfvkMg3J1NUUN7u3wJQT0z94uAYqDNBoa0GJI7HmoEN1F5oNNfufgWTDLsjrAdIy4e
+	 rWKWhu+Va4wJdiYiiTymbgpD46PzXbrV2VG+1vpY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729750AbfAGNAU (ORCPT
+        id S1729969AbfAGNAY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:00:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46906 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:00:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47844 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730208AbfAGM7R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:59:17 -0500
+        id S1730435AbfAGNAT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:00:19 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 785E921736;
-        Mon,  7 Jan 2019 12:59:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8145E206BB;
+        Mon,  7 Jan 2019 13:00:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865957;
-        bh=bG4PAxG9nALbTIQvZckLakyJOWjzRSYDgC6R5gqx8kM=;
+        s=default; t=1546866019;
+        bh=0e2IVA6aBRnOrzUZwNqWhCkwW54tu34JaU/qXezzldI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Q1vQyFGHlFBl6feyUOiyU+r62dJS42QW+IrB26Jb8GV4hgaa5NGEkOb6BM+el2ZYh
-         OC9PEJyFWOAdBISvKKC2DsBPwv2IQepbc8lEU4QVaX21qZLusYXpj5JpN65zpbeTgT
-         2gnTR9xKi9PUNpLkIJxjwq1QFnNp+prBRvpVO+Mg=
+        b=QPqUFzYUQtvgxZFULetwrJZZX+i7PoESQ6clUfSxEqbPaNCo8bqOEQe+77hEZL6Bi
+         O/am3X8Z/rnSx0NjIT/biNfntfqxrQDa3TMGrHfx5uY9ku8bEcUu2AsOc1+C+D7wdf
+         K/CmUIkteYAddGEojgpPHnOVdmsayB/DmmzY8yy4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tomas Winkler <tomas.winkler@intel.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Subject: [PATCH 4.19 169/170] tpm: tpm_try_transmit() refactor error flow.
-Date:   Mon,  7 Jan 2019 13:33:16 +0100
-Message-Id: <20190107104512.899409698@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+8993c0fa96d57c399735@syzkaller.appspotmail.com,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 019/101] ptr_ring: wrap back ->producer in __ptr_ring_swap_queue()
+Date:   Mon,  7 Jan 2019 13:32:07 +0100
+Message-Id: <20190107105334.007994537@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190107104452.953560660@linuxfoundation.org>
-References: <20190107104452.953560660@linuxfoundation.org>
+In-Reply-To: <20190107105330.372621917@linuxfoundation.org>
+References: <20190107105330.372621917@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -60,71 +65,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.19-stable review patch.  If anyone has any objections, please let me know.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Tomas Winkler <tomas.winkler@intel.com>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-commit 01f54664a4db0d612de0ece8e0022f21f9374e9b upstream.
+[ Upstream commit aff6db454599d62191aabc208930e891748e4322 ]
 
-First, rename out_no_locality to out_locality for bailing out on
-both tpm_cmd_ready() and tpm_request_locality() failure.
-Second, ignore the return value of go_to_idle() as  it may override
-the return value of the actual tpm operation, the go_to_idle() error
-will be caught on any consequent command.
-Last, fix the wrong 'goto out', that jumped back instead of forward.
+__ptr_ring_swap_queue() tries to move pointers from the old
+ring to the new one, but it forgets to check if ->producer
+is beyond the new size at the end of the operation. This leads
+to an out-of-bound access in __ptr_ring_produce() as reported
+by syzbot.
 
-Cc: stable@vger.kernel.org
-Fixes: 627448e85c76 ("tpm: separate cmd_ready/go_idle from runtime_pm")
-Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Reported-by: syzbot+8993c0fa96d57c399735@syzkaller.appspotmail.com
+Fixes: 5d49de532002 ("ptr_ring: resize support")
+Cc: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: John Fastabend <john.fastabend@gmail.com>
+Cc: Jason Wang <jasowang@redhat.com>
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/char/tpm/tpm-interface.c |   15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+ include/linux/ptr_ring.h |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -477,13 +477,15 @@ static ssize_t tpm_try_transmit(struct t
+--- a/include/linux/ptr_ring.h
++++ b/include/linux/ptr_ring.h
+@@ -551,6 +551,8 @@ static inline void **__ptr_ring_swap_que
+ 		else if (destroy)
+ 			destroy(ptr);
  
- 	if (need_locality) {
- 		rc = tpm_request_locality(chip, flags);
--		if (rc < 0)
--			goto out_no_locality;
-+		if (rc < 0) {
-+			need_locality = false;
-+			goto out_locality;
-+		}
- 	}
- 
- 	rc = tpm_cmd_ready(chip, flags);
- 	if (rc)
--		goto out;
-+		goto out_locality;
- 
- 	rc = tpm2_prepare_space(chip, space, ordinal, buf);
- 	if (rc)
-@@ -547,14 +549,13 @@ out_recv:
- 		dev_err(&chip->dev, "tpm2_commit_space: error %d\n", rc);
- 
- out:
--	rc = tpm_go_idle(chip, flags);
--	if (rc)
--		goto out;
-+	/* may fail but do not override previous error value in rc */
-+	tpm_go_idle(chip, flags);
- 
-+out_locality:
- 	if (need_locality)
- 		tpm_relinquish_locality(chip, flags);
- 
--out_no_locality:
- 	if (chip->ops->clk_enable != NULL)
- 		chip->ops->clk_enable(chip, false);
- 
++	if (producer >= size)
++		producer = 0;
+ 	__ptr_ring_set_size(r, size);
+ 	r->producer = producer;
+ 	r->consumer_head = 0;
 
 
