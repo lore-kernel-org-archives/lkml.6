@@ -2,116 +2,108 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DA76C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 14:43:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 519BDC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 14:44:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 163A12183E
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 14:43:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BxWxNzpz"
+	by mail.kernel.org (Postfix) with ESMTP id 2C3042087F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 14:44:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728959AbfAGOnL (ORCPT
+        id S1729019AbfAGOoC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 09:43:11 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:46013 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727643AbfAGOnK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 09:43:10 -0500
-Received: by mail-wr1-f66.google.com with SMTP id t6so630274wrr.12;
-        Mon, 07 Jan 2019 06:43:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :content-transfer-encoding:user-agent;
-        bh=zVDROSnfZqLIC6uZXDp4ZJBmcMkYcpBLNcGKIHLNFsY=;
-        b=BxWxNzpzDYiwDufPtwATgV6wzZ+wgzBpaE3R+Aly2caZ3NmD8/9ayJJwdQZT42bUFi
-         Vl/9LhYT5tG/aF6K9SaU08+yc5yggY5IzJZPb685SXu4Q1aLUYCePCwL5CexJp1dnQco
-         oyXRS3mIMafyWxicm2uXNyiVcWnoFRBe1gQVrMueZAafssD37moPkEigQydgxnYX/Q8k
-         3w5Hf4BZqNgqv1oErNDRgKNanzDjuMOBYIdW+aDUFdI/vkn0f5hGgNOkJGos1FfjLLXu
-         u7OsKMVpOI+SOgY20Nevu1lRDgiGoS4o/8JNBIbuus3PNy8qVEYqPC32wCeTjV9mQln6
-         ODcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:content-transfer-encoding:user-agent;
-        bh=zVDROSnfZqLIC6uZXDp4ZJBmcMkYcpBLNcGKIHLNFsY=;
-        b=rp9jUdFRp/KGAuOg09HxKpxiJiovtdJD1JQ2eoax7ZQmndbDs0u11/bZstxBlXMCHh
-         Ibv3NnINlxkJyyaf9tbJ1VOAqz6Q2wfAIIdyJFsRQnIidSOzsDIu+LmnMSzKq7gqF8sg
-         AcxPvDryJFkJcQsf0b4o4VDgoWWLhgbBDuMZzy65EGR7WaxZpXD7KW6jvvvrMgMRr+5T
-         BBTxnYSS61x0SVOVGr2InXps/6wrl0B9giVx1lGPFMRnzsODV0weT/nO+9l4W0n5G/0G
-         puAmkGNk+yyytVP+L9wQ91ZqGkV6r4nt2RXwpnpuRW/RBxh1BNfMVapLlX2FIAlQQ3k+
-         U+Zw==
-X-Gm-Message-State: AJcUukfKfvYAPlQNmRqtfNommiC5f0Zi8sZF8UeqJlmlSi9NZpfucpy/
-        dSeu2Zt4h1moKpyYu+hA2W9BgXF7
-X-Google-Smtp-Source: ALg8bN65+B1HZkZASV8Ox/+o+od/RCs/nT5U4WD8pOnpMlF7au7liKPdWeOvbLVv/IINKs7jMmtQlQ==
-X-Received: by 2002:adf:8b83:: with SMTP id o3mr54903739wra.81.1546872187970;
-        Mon, 07 Jan 2019 06:43:07 -0800 (PST)
-Received: from localhost.localdomain ([185.140.29.250])
-        by smtp.gmail.com with ESMTPSA id o17sm16359259wmg.35.2019.01.07.06.43.06
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 07 Jan 2019 06:43:07 -0800 (PST)
-Date:   Mon, 7 Jan 2019 15:43:05 +0100
-From:   =?iso-8859-1?Q?J=FAlius?= Milan <jmilan.dev@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     devel@driverdev.osuosl.org, linux-wireless@vger.kernel.org,
-        gregkh@linuxfoundation.org, Adham.Abozaeid@microchip.com,
-        Ajay.Kathat@microchip.com
-Subject: [PATCH v4] staging: wilc1000: fix registration frame size
-Message-ID: <20190107144305.GA14627@localhost.localdomain>
+        Mon, 7 Jan 2019 09:44:02 -0500
+Received: from foss.arm.com ([217.140.101.70]:60790 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727366AbfAGOoB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 09:44:01 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 30DB780D;
+        Mon,  7 Jan 2019 06:44:01 -0800 (PST)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 84FC23F5AF;
+        Mon,  7 Jan 2019 06:43:59 -0800 (PST)
+Date:   Mon, 7 Jan 2019 14:43:57 +0000
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Anders Roxell <anders.roxell@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, catalin.marinas@arm.com,
+        will.deacon@arm.com, arnd@arndb.de, mingo@redhat.com,
+        rostedt@goodmis.org, akpm@linux-foundation.org, broonie@kernel.org
+Subject: Re: [RFC PATCH 3/3] arm64: add a new config option KTEST_RUNNABLE
+Message-ID: <20190107144356.GB46743@lakrids.cambridge.arm.com>
+References: <20181213122910.24193-1-anders.roxell@linaro.org>
+ <20181213122910.24193-4-anders.roxell@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20181213122910.24193-4-anders.roxell@linaro.org>
+User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes the following sparse warnings:
+Hi,
 
-drivers/staging/wilc1000/host_interface.c:2360:30: warning:
- incorrect type in assignment (different base types)
-    expected restricted __le32 [addressable] [assigned] [usertype] frame_type
-    got restricted __le16 [usertype] <noident>
+As a general thing, please Cc LAKML on patches for arm64.
 
-Fixes: 147ccfd451024 ("staging: wilc1000: handle mgmt_frame_register ops from cfg82011 context")
-Signed-off-by: Július Milan <jmilan.dev@gmail.com>
----
- drivers/staging/wilc1000/host_interface.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Thu, Dec 13, 2018 at 01:29:10PM +0100, Anders Roxell wrote:
+> With this new config option, we can boot a allmodconfig kernel in qemu.
+> Config options SERIAL_AMBA_PL011, SERIAL_AMBA_PL011_CONSOLE, UNIX needs
+> to be enabled in order to get a console. Options like CPU_BIG_ENDIAN,
+> CMDLINE_FORCE, CMDLINE_OVERRIDE and HVC_DCC needs to be disabled.
+> 
+> Co-developed-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+> ---
+>  arch/arm64/Kconfig      | 8 ++++++++
+>  drivers/tty/hvc/Kconfig | 1 +
+>  init/Kconfig            | 1 +
+>  3 files changed, 10 insertions(+)
+> 
+> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> index 1f52362f8d99..bb17ccb7bab2 100644
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@ -292,6 +292,12 @@ config ARCH_SUPPORTS_UPROBES
+>  config ARCH_PROC_KCORE_TEXT
+>  	def_bool y
+>  
+> +config KTEST_RUNNABLE
+> +	bool "Test build kernels that run in qemu for ktest"
+> +	select SERIAL_AMBA_PL011
+> +	select SERIAL_AMBA_PL011_CONSOLE
+> +	select UNIX
+> +
 
-v3:
-- nothing really changed since v1, v2, I just messed emails and then patch
-  format, sorry for that, it's my first patch :)
+As Mark Brown points out, the PL011 bits are platform-specific, and
+don't directly relate to ktest.
 
-v4:
-- changed struct wilc_reg_frame member frame_type type to le16
-- reverted cast of frame_type to le32 in wilc_frame_register
-- changed subject line, previous version has subject:
-  "[PATCH v3] staging: wilc1000: fix cast to restricted __le32"
-  https://www.spinics.net/lists/linux-wireless/msg181166.html
+The UNIX part is simply because that can be built as a module.
 
-diff --git a/drivers/staging/wilc1000/host_interface.c b/drivers/staging/wilc1000/host_interface.c
-index 70c854d939ce..7acb790d850b 100644
---- a/drivers/staging/wilc1000/host_interface.c
-+++ b/drivers/staging/wilc1000/host_interface.c
-@@ -36,7 +36,7 @@ struct wilc_op_mode {
- struct wilc_reg_frame {
- 	bool reg;
- 	u8 reg_id;
--	__le32 frame_type;
-+	__le16 frame_type;
- } __packed;
- 
- struct wilc_drv_handler {
--- 
-2.14.5
+Is it possible to use an allyesconfig rather than an allmodconfig? That
+would leave all relevant options built-in.
 
+> diff --git a/drivers/tty/hvc/Kconfig b/drivers/tty/hvc/Kconfig
+> index 4293c172e120..44e23c2388bd 100644
+> --- a/drivers/tty/hvc/Kconfig
+> +++ b/drivers/tty/hvc/Kconfig
+> @@ -82,6 +82,7 @@ config HVC_UDBG
+>  config HVC_DCC
+>         bool "ARM JTAG DCC console"
+>         depends on ARM || ARM64
+> +	depends on !KTEST_RUNNABLE
+>         select HVC_DRIVER
+>         help
+>           This console uses the JTAG DCC on ARM to create a console under the HVC
+
+... this is just a hack around the DCC driver being dodgy.
+
+We should fix that to only probe if explicitly requested at run-time via
+a command line argument.
+
+Thanks,
+Mark.
