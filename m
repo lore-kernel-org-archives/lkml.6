@@ -2,81 +2,172 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B45AC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 09:09:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D531C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 09:11:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F3A820989
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 09:09:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 65AC72089F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 09:11:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726638AbfAGJJs (ORCPT
+        id S1726654AbfAGJLS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 04:09:48 -0500
-Received: from mga04.intel.com ([192.55.52.120]:24564 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726453AbfAGJJr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 04:09:47 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jan 2019 01:09:47 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,450,1539673200"; 
-   d="scan'208";a="309576703"
-Received: from unknown (HELO [10.239.13.114]) ([10.239.13.114])
-  by fmsmga005.fm.intel.com with ESMTP; 07 Jan 2019 01:09:44 -0800
-Message-ID: <5C3318A1.9090009@intel.com>
-Date:   Mon, 07 Jan 2019 17:15:13 +0800
-From:   Wei Wang <wei.w.wang@intel.com>
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Thunderbird/31.7.0
+        Mon, 7 Jan 2019 04:11:18 -0500
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:40725 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726453AbfAGJLS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 04:11:18 -0500
+Received: by mail-ua1-f68.google.com with SMTP id n7so13926196uao.7;
+        Mon, 07 Jan 2019 01:11:17 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=TyfiYxy02nFIqJScDstpS7n30oG7HiUbO+eXuTYplOU=;
+        b=Sl1HzAwyMNg/BQ6pINYgDjAWxurIA2p6VEn6Oy5EXo94n9PWb1rB3G9kPfLskSQi3i
+         5/4uGRXBmgk29oEbgj98LvyKZW1a3AfaHKJtIz12vEH26o55SD3ki7ZrWCriM1S1hWr1
+         IPBr82oOFreP++5AysLTGBPCEfZOCZxqHwbT8sJBsmjPl1NbuylPm80tWaprgOjwbz2c
+         usJ6VWLVTtRgdqpzMMs2pySGpr4a0+7hi0ajUBtkfwLPWsyHeBzh+uX7GYBRzXM4JBMO
+         hGSk85H/U1+R10gi+oAQj3PxN6p62tduzlVea5hYvV4ask4i1dvBp87mKPLuq7YlgVXN
+         R94Q==
+X-Gm-Message-State: AJcUukcB1eSCMMspqsvzgHJn1dGzLTDYOeaoTkIOTcV6J9/TfEzCXf53
+        ykOPu3O0KrfyT3OjEUQMhOP6YttfD+Pgyf9bw8Dm1r+X
+X-Google-Smtp-Source: ALg8bN6g6Ckji8dIg5uTBfjYrZJK6eHemJSuegWUDV4eZHINQ1lQ04/pkSl5Wm8oSQXBQwQrTDXwwOb881dzKWtHvMM=
+X-Received: by 2002:a9f:364a:: with SMTP id s10mr21215616uad.78.1546852276507;
+ Mon, 07 Jan 2019 01:11:16 -0800 (PST)
 MIME-Version: 1.0
-To:     Jim Mattson <jmattson@google.com>
-CC:     LKML <linux-kernel@vger.kernel.org>,
-        kvm list <kvm@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Kan Liang <kan.liang@intel.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        like.xu@intel.com, Jann Horn <jannh@google.com>,
-        arei.gonglei@huawei.com
-Subject: Re: [PATCH v4 05/10] KVM/x86: expose MSR_IA32_PERF_CAPABILITIES to
- the guest
-References: <1545816338-1171-1-git-send-email-wei.w.wang@intel.com> <1545816338-1171-6-git-send-email-wei.w.wang@intel.com> <CALMp9eTOV3Twep9gL-9S+Pe_k-=v17CcJTLb5=+7_pjvWf9RfQ@mail.gmail.com> <5C2DC132.9050103@intel.com> <CALMp9eQ0nzKBP7az72G+eRe8C4KQQUBdj+7oD_WJHSFfYkj+Vw@mail.gmail.com>
-In-Reply-To: <CALMp9eQ0nzKBP7az72G+eRe8C4KQQUBdj+7oD_WJHSFfYkj+Vw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20181126215725.2548-1-peda@axentia.se> <20181126215725.2548-3-peda@axentia.se>
+ <CAMuHMdVfoRP_yNL5HcmwwV3fn9GqnsbORtG_hOhWw3qUeMKFKQ@mail.gmail.com>
+ <37be75aa-7a63-a937-6de7-777a31af741b@axentia.se> <CAMuHMdXR2iuftV26s-EnKo74vZxcW2w_R1dD_Mk+Ug8MsNwL3Q@mail.gmail.com>
+ <cb772a2f-2d33-6d0e-9ea6-ba9eb49023f9@axentia.se> <662db203-ae18-4a11-7b10-3d7d480f6f37@axentia.se>
+In-Reply-To: <662db203-ae18-4a11-7b10-3d7d480f6f37@axentia.se>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 7 Jan 2019 10:11:04 +0100
+Message-ID: <CAMuHMdXMidVgtz-T8PZDUrKAwJmz9B4g1hNgw6FwrCpU-m5Gew@mail.gmail.com>
+Subject: Re: [PATCH] fbdev: fbmem: convert CONFIG_FB_LOGO_CENTER into a cmd
+ line, option
+To:     Peter Rosin <peda@axentia.se>
+Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Linux Documentation List <linux-doc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/03/2019 11:25 PM, Jim Mattson wrote:
-> On Wed, Jan 2, 2019 at 11:55 PM Wei Wang <wei.w.wang@intel.com> wrote:
+Hi Peter,
+
+On Mon, Jan 7, 2019 at 10:03 AM Peter Rosin <peda@axentia.se> wrote:
+> On 2019-01-07 09:59, Peter Rosin wrote:
+> > On 2019-01-07 09:40, Geert Uytterhoeven wrote:
+> >> On Mon, Jan 7, 2019 at 9:26 AM Peter Rosin <peda@axentia.se> wrote:
+> >>> On 2019-01-06 10:33, Geert Uytterhoeven wrote:
+> >>>> On Mon, Nov 26, 2018 at 10:59 PM Peter Rosin <peda@axentia.se> wrote:
+> >>>>> If there are extra logos (CONFIG_FB_LOGO_EXTRA) the heights of these
+> >>>>> extra logos are not considered when centering the first logo vertically.
+> >>>>>
+> >>>>> Signed-off-by: Peter Rosin <peda@axentia.se>
+> >>>>
+> >>>>> --- a/drivers/video/logo/Kconfig
+> >>>>> +++ b/drivers/video/logo/Kconfig
+> >>>>> @@ -10,6 +10,15 @@ menuconfig LOGO
+> >>>>>
+> >>>>>  if LOGO
+> >>>>>
+> >>>>> +config FB_LOGO_CENTER
+> >>>>> +       bool "Center the logo"
+> >>>>> +       depends on FB=y
+> >>>>> +       help
+> >>>>> +         When this option is selected, the bootup logo is centered both
+> >>>>> +         horizontally and vertically. If more than one logo is displayed
+> >>>>> +         due to multiple CPUs, the collected line of logos is centered
+> >>>>> +         as a whole.
+> >>>>> +
+> >>>>
+> >>>> Isn't a kernel command line option more suitable to configure the position
+> >>>> of the logo?
+> >>>
+> >>> That didn't occur to me previously, but it does make sense now that you
+> >>> mention it. This is on top of v5.0-rc1, and if applied before v5.0 we
+> >>> can avoid possible regressions for folks who might start to rely on
+> >>> CONFIG_FB_LOGO_CENTER if v5.0 is released w/o this.
+> >>>
+> >>> Cheers,
+> >>> Peter
+> >>>
+> >>> From de7353ab519ba9b5c9ea3f62d607bb8e94b687cc Mon Sep 17 00:00:00 2001
+> >>> From: Peter Rosin <peda@axentia.se>
+> >>> Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> >>> Cc: Jonathan Corbet <corbet@lwn.net>
+> >>> Cc: Peter Rosin <peda@axentia.se>
+> >>> Cc: dri-devel@lists.freedesktop.org
+> >>> Cc: linux-fbdev@vger.kernel.org
+> >>> Cc: linux-doc@vger.kernel.org
+> >>> To: linux-kernel@vger.kernel.org
+> >>> Date: Mon, 7 Jan 2019 08:35:26 +0100
+> >>> Subject: [PATCH] fbdev: fbmem: convert CONFIG_FB_LOGO_CENTER into a cmd line
+> >>>  option
+> >>>
+> >>> A command line option is much more flexible than a config option and
+> >>> the supporting code is small. Gets rid of #ifdefs in the code too...
+> >>>
+> >>> Suggested-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> >>> Signed-off-by: Peter Rosin <peda@axentia.se>
+> >>
+> >> Thanks for your patch!
+> >>
+> >>> --- a/Documentation/fb/fbcon.txt
+> >>> +++ b/Documentation/fb/fbcon.txt
+> >>> @@ -163,6 +163,12 @@ C. Boot options
+> >>>         be preserved until there actually is some text is output to the console.
+> >>>         This option causes fbcon to bind immediately to the fbdev device.
+> >>>
+> >>> +7. fbcon=center-logo
+> >>> +
+> >>> +       When this option is selected, the bootup logo is centered both
+> >>> +       horizontally and vertically. If more than one logo is displayed due to
+> >>> +       multiple CPUs, the collected line of logos is centered as a whole.
+> >>> +
+> >>
+> >> What about making this more generic, than an option specific for centering?
+> >> Else people want fbcon=left-logo or fbcon=right-logo soon?
+> >>
+> >>     fbcon=logo-pos:<pos>
+> >>
+> >> With <pos> being "center", "left", "top", "right", "bottom", and combinations
+> >> like "top,center"? Or is that complicating stuff too much?
+> >
+> > I'm not too keen on implementing all that when I have zero use for it. I can
+> > however rename the trigger for the existing fb_center_logo bool to
+> >
+> >       fbcon=logo-pos:center
+> >
+> > and add a check for "top,left" to reset the bool to false. Then the other
+> > variants can be added later by whomever and when needed.
+> >
+> > Is that good enough?
 >
->> Right, thanks. Probably better to change it to below:
->>
->> msr_info->data = 0;
->> data = native_read_msr(MSR_IA32_PERF_CAPABILITIES);
->> if (vcpu->kvm->arch.lbr_in_guest)
->>       msr_info->data |= (data & X86_PERF_CAP_MASK_LBR_FMT);
->>
-> This still breaks backwards compatibility. Returning 0 and raising #GP
-> are not the same.
+> Ouch, I just realized that using a comma is a no-go, as that is already
+> separating fbcon suboptions, so I suggest top-left instead.
 
-I'm not sure about raising GP# in this case.
+Sure, sounds fine to me.  I just want to avoid having a parameter system
+that complicates future extension.
+I think you can drop the check for top-left, as the bool defaults to false.
 
-This PERF_CAP msr contains more things than the lbr format.
-For example, a guest with lbr=false option could read it to get PEBS_FMT,
-which is PERF_CAP[11:8]. We should offer those bits in this case.
+Gr{oetje,eeting}s,
 
-When lbr=false, the lbr feature is not usable by the guest,
-so I think whatever value (0 or other value) of the LBR_FMT bits that
-we give to the guest might not be important.
+                        Geert
 
-Best,
-Wei
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
