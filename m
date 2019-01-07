@@ -4,48 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88D20C43612
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:14:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D1E5C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:14:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F2E9217D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:14:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C77E2089F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:14:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546866880;
-	bh=EzTRVvksDdEx31li63y0GS73ZDwuZ+zcZcNfj0DXa5s=;
+	s=default; t=1546866883;
+	bh=Is6cF+fbPMUnLMQJB3E3J5+BB0US/QHIGdx5U/ADh8E=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=EopYWuXnAQAY62k40tmAgRFEE9y6XUVezOulTzUNGEigc9C0vxfZE3ZYyQMBrwqMd
-	 CYD2Hx3+TXsqRB8WAiTz7ru+eOHzwSB+DYm8CAYoO8LVPiICXDv6H6UGOuMN2cLahi
-	 k6kCoyXqCCnX1madtizE3h2ZHp2NAP4I6JjlJg8w=
+	b=gQ7rjKtVajTED0G04e+fRg/Q6Tq4bLrqUgR31qlzzVW4mWAhJXTZDoKZmWdZB63sF
+	 6NYCS533VT902XTGyz1z7uCiytZ5K5MuoMypvohasjmUTMqWAI64S4G7Te7a4CL6t3
+	 icdcrHdwHck9DLukTJhUQK2mklN0atvW2LIgxxlQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730852AbfAGNCn (ORCPT
+        id S1731394AbfAGNOm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:02:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50136 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:14:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50232 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730831AbfAGNCh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:02:37 -0500
+        id S1727576AbfAGNCn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:02:43 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 08523206BB;
-        Mon,  7 Jan 2019 13:02:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E3BB52089F;
+        Mon,  7 Jan 2019 13:02:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546866156;
-        bh=EzTRVvksDdEx31li63y0GS73ZDwuZ+zcZcNfj0DXa5s=;
+        s=default; t=1546866162;
+        bh=Is6cF+fbPMUnLMQJB3E3J5+BB0US/QHIGdx5U/ADh8E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rvu+KusCKl+Z99EwyKWAF5ikAS70eBYGyCRrycQcSHLRbWnjqkOPYjVoyQGJ73CkF
-         JbYprYz4/XPpqEA1zDzjxkrk5by0IQSf1qHYB5lp33MRTebFqyfR6Wqmddj/5n8IAb
-         uxgISdKGAwlHvnGRay3duXYs61eBhf7CCDvswWrE=
+        b=c0V3NjlfWDN1fgWe1ACH8pOVm1Zwr2k/T1/P5vRdwGl1VWnI8c8vZXmPZVKPdNVyw
+         WeaZjAdSdBGtvqfG+hgQreW2LCC6zkSofAap0g+RwwJUQPBK4lRCa+Ppgd1g/xRsuf
+         vSet5WRAGG2uU/z62k9nxhDx9eAAIhfDoOpn1oAs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Maurizio Lombardi <mlombard@redhat.com>,
+        stable@vger.kernel.org, Steve Graham <stgraham2000@gmail.com>,
         Theodore Tso <tytso@mit.edu>, stable@kernel.org
-Subject: [PATCH 4.14 064/101] ext4: missing unlock/put_page() in ext4_try_to_write_inline_data()
-Date:   Mon,  7 Jan 2019 13:32:52 +0100
-Message-Id: <20190107105336.462666060@linuxfoundation.org>
+Subject: [PATCH 4.14 066/101] ext4: include terminating u32 in size of xattr entries when expanding inodes
+Date:   Mon,  7 Jan 2019 13:32:54 +0100
+Message-Id: <20190107105336.558682968@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107105330.372621917@linuxfoundation.org>
 References: <20190107105330.372621917@linuxfoundation.org>
@@ -64,37 +65,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Maurizio Lombardi <mlombard@redhat.com>
+From: Theodore Ts'o <tytso@mit.edu>
 
-commit 132d00becb31e88469334e1e62751c81345280e0 upstream.
+commit a805622a757b6d7f65def4141d29317d8e37b8a1 upstream.
 
-In case of error, ext4_try_to_write_inline_data() should unlock
-and release the page it holds.
+In ext4_expand_extra_isize_ea(), we calculate the total size of the
+xattr header, plus the xattr entries so we know how much of the
+beginning part of the xattrs to move when expanding the inode extra
+size.  We need to include the terminating u32 at the end of the xattr
+entries, or else if there is uninitialized, non-zero bytes after the
+xattr entries and before the xattr values, the list of xattr entries
+won't be properly terminated.
 
-Fixes: f19d5870cbf7 ("ext4: add normal write support for inline data")
-Cc: stable@kernel.org # 3.8
-Signed-off-by: Maurizio Lombardi <mlombard@redhat.com>
+Reported-by: Steve Graham <stgraham2000@gmail.com>
 Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: stable@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/inline.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ fs/ext4/xattr.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/ext4/inline.c
-+++ b/fs/ext4/inline.c
-@@ -711,8 +711,11 @@ int ext4_try_to_write_inline_data(struct
+--- a/fs/ext4/xattr.c
++++ b/fs/ext4/xattr.c
+@@ -2724,7 +2724,7 @@ retry:
+ 	base = IFIRST(header);
+ 	end = (void *)raw_inode + EXT4_SB(inode->i_sb)->s_inode_size;
+ 	min_offs = end - base;
+-	total_ino = sizeof(struct ext4_xattr_ibody_header);
++	total_ino = sizeof(struct ext4_xattr_ibody_header) + sizeof(u32);
  
- 	if (!PageUptodate(page)) {
- 		ret = ext4_read_inline_page(inode, page);
--		if (ret < 0)
-+		if (ret < 0) {
-+			unlock_page(page);
-+			put_page(page);
- 			goto out_up_read;
-+		}
- 	}
- 
- 	ret = 1;
+ 	error = xattr_check_inode(inode, header, end);
+ 	if (error)
 
 
