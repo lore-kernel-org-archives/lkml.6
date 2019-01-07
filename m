@@ -7,50 +7,47 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05E96C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:01:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36D3CC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:01:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C682221736
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:01:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 088D02089F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:01:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546866066;
-	bh=/L/5+Izm6D5RHlNXjulSiV1Wl/2IV/NmeyyBgp86v/8=;
+	s=default; t=1546866070;
+	bh=fp5NOO8fo0WrB0bgMTBycfyDhloiPGRgM6pqcDuaRn0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ib7IP4w4dlWjvD5IfiWsp0lWn1EeyJaviAhVn57iLBH+6ml9TV5a3RVDAdqYsU8Ph
-	 PwcyAz8H09jQVXlLkprNDNpknwSDVtksMRrjaEYl3Qiq5HZU/kHcSrXBWUJ5jItaBV
-	 jyuJbuojXMCfSLMV5xKhy6DngrTjdYElXfiObsn8=
+	b=foHPqxYR7CannULGrZRG2Y4xdOj/oo3AvN+d6TGxrImbjAbwruaZ3X7HtcaZi+3A+
+	 1kz2VV2LxltsuzogIF64kPhM2UIz4l+gUIsLbzHVa9I5csqd79PPEDNp9YiYGlHnU4
+	 8cTjFYfyyadWUBOFWBusI9qbMdB7qE5wt7raPLAA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730534AbfAGNBF (ORCPT
+        id S1730547AbfAGNBJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:01:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48526 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:01:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48584 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730525AbfAGNBD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:01:03 -0500
+        id S1730525AbfAGNBG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:01:06 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1692D217D4;
-        Mon,  7 Jan 2019 13:01:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 14DFF2173C;
+        Mon,  7 Jan 2019 13:01:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546866062;
-        bh=/L/5+Izm6D5RHlNXjulSiV1Wl/2IV/NmeyyBgp86v/8=;
+        s=default; t=1546866065;
+        bh=fp5NOO8fo0WrB0bgMTBycfyDhloiPGRgM6pqcDuaRn0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oCGNSeMW57XLeXY59SSPm+W+cqPQBFH7FYS+eICCI2ApqW4/5/atMUlRcgHcbKfv+
-         N9sPn1nrBW9BmHg/2ee9gjYSd7bKnZe52e51viJ3kctkoC74DDA7se2kFe4m3eO189
-         Eoea27rYDFWsodkdg4vSK8hSNhNDpxtvNINEcpuo=
+        b=W0mdWtboixAlwNNdI5iT0TYWgSb8X9OShRFcHdfPbM080n6LrFtAhcWSGdaBaHdBz
+         Ss8g7gyVzDbRISYs/ggrLGb+zb3oI9KrstqEvDWblSeAlXbmnT6AEyH5k+DHfhq1M2
+         ItYXhp90QZueJ4FFLQQ4dMKhiRXrTMNlU6C9Zshw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+eb4da3a20fad2e52555d@syzkaller.appspotmail.com,
-        Ying Xue <ying.xue@windriver.com>,
-        Jon Maloy <jon.maloy@ericsson.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
+        =?UTF-8?q?J=C3=B6rgen=20Storvist?= <jorgen.storvist@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 032/101] tipc: compare remote and local protocols in tipc_udp_enable()
-Date:   Mon,  7 Jan 2019 13:32:20 +0100
-Message-Id: <20190107105334.670794353@linuxfoundation.org>
+Subject: [PATCH 4.14 033/101] qmi_wwan: Added support for Fibocom NL668 series
+Date:   Mon,  7 Jan 2019 13:32:21 +0100
+Message-Id: <20190107105334.707537726@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107105330.372621917@linuxfoundation.org>
 References: <20190107105330.372621917@linuxfoundation.org>
@@ -69,42 +66,29 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Cong Wang <xiyou.wangcong@gmail.com>
+From: Jörgen Storvist <jorgen.storvist@gmail.com>
 
-[ Upstream commit fb83ed496b9a654f60cd1d58a0e1e79ec5694808 ]
+[ Upstream commit 110a1cc28bc383adb4885eff27e18c61ddebffb4 ]
 
-When TIPC_NLA_UDP_REMOTE is an IPv6 mcast address but
-TIPC_NLA_UDP_LOCAL is an IPv4 address, a NULL-ptr deref is triggered
-as the UDP tunnel sock is initialized to IPv4 or IPv6 sock merely
-based on the protocol in local address.
+Added support for Fibocom NL668 series QMI interface.
+Using QMI_QUIRK_SET_DTR required for Qualcomm MDM9x07 chipsets.
 
-We should just error out when the remote address and local address
-have different protocols.
-
-Reported-by: syzbot+eb4da3a20fad2e52555d@syzkaller.appspotmail.com
-Cc: Ying Xue <ying.xue@windriver.com>
-Cc: Jon Maloy <jon.maloy@ericsson.com>
-Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
-Acked-by: Jon Maloy <jon.maloy@ericsson.com>
+Signed-off-by: Jörgen Storvist <jorgen.storvist@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/tipc/udp_media.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/net/usb/qmi_wwan.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/net/tipc/udp_media.c
-+++ b/net/tipc/udp_media.c
-@@ -675,6 +675,11 @@ static int tipc_udp_enable(struct net *n
- 	if (err)
- 		goto err;
- 
-+	if (remote.proto != local.proto) {
-+		err = -EINVAL;
-+		goto err;
-+	}
-+
- 	b->bcast_addr.media_id = TIPC_MEDIA_TYPE_UDP;
- 	b->bcast_addr.broadcast = TIPC_BROADCAST_SUPPORT;
- 	rcu_assign_pointer(b->media_ptr, ub);
+--- a/drivers/net/usb/qmi_wwan.c
++++ b/drivers/net/usb/qmi_wwan.c
+@@ -1109,6 +1109,7 @@ static const struct usb_device_id produc
+ 	{QMI_FIXED_INTF(0x1435, 0xd181, 3)},	/* Wistron NeWeb D18Q1 */
+ 	{QMI_FIXED_INTF(0x1435, 0xd181, 4)},	/* Wistron NeWeb D18Q1 */
+ 	{QMI_FIXED_INTF(0x1435, 0xd181, 5)},	/* Wistron NeWeb D18Q1 */
++	{QMI_QUIRK_SET_DTR(0x1508, 0x1001, 4)},	/* Fibocom NL668 series */
+ 	{QMI_FIXED_INTF(0x16d8, 0x6003, 0)},	/* CMOTech 6003 */
+ 	{QMI_FIXED_INTF(0x16d8, 0x6007, 0)},	/* CMOTech CHE-628S */
+ 	{QMI_FIXED_INTF(0x16d8, 0x6008, 0)},	/* CMOTech CMU-301 */
 
 
