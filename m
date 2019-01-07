@@ -2,88 +2,117 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 109D5C43612
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 14:36:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30D4BC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 14:36:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3A56218A3
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 14:36:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EAE1F2173C
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 14:36:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="Q8bQhSwX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728539AbfAGOgJ (ORCPT
+        id S1728606AbfAGOgM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 7 Jan 2019 09:36:12 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:42477 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727854AbfAGOgJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 7 Jan 2019 09:36:09 -0500
-Received: from gloria.sntech.de ([185.11.138.130]:34932 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727854AbfAGOgI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 09:36:08 -0500
-Received: from wf0848.dip.tu-dresden.de ([141.76.183.80] helo=phil.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1ggW0R-0003eu-5K; Mon, 07 Jan 2019 15:35:55 +0100
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Alan Douglas <adouglas@cadence.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>,
-        Jia-Ju Bai <baijiaju1990@gmail.com>,
-        linux-omap@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 00/15] PCI: endpoint: Cleanup EPC features
-Date:   Mon, 07 Jan 2019 15:35:54 +0100
-Message-ID: <1936135.agpnLP3rXd@phil>
-In-Reply-To: <20190107064148.10152-1-kishon@ti.com>
-References: <20190107064148.10152-1-kishon@ti.com>
+Received: by mail-qt1-f196.google.com with SMTP id d19so612224qtq.9
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 06:36:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=oNHJ28PHCRGNBfxGC4JYon2+bxtcvPjs+sEoG2143Eo=;
+        b=Q8bQhSwXxxudatND4G8+Ihuw7A2k81G53OVMf2ibLRYrBnmeiyAAOgIIQ2dcQZb2t5
+         sxX+ApGOGISxRaeQdPwgkLpntx23OcIZ/eJ5z7CgnRmQ1vizWDxq2hwptwjg77r3K2IQ
+         kd3370tyBCs7jaC9poftx4IUFw7B/xKpskZVO/PfsjzoakAvA/bS2PURzwmWLUbfm8MV
+         BVoZV0AhEYJ7QJKj1VimSW8S9PHWWc1UoJCqGQoWLj8la7cvoRt18vwYozjkbunByFwn
+         o90UEYDqIJg/mocNhU3tmiTaXa9zkgGL+ZX31WvibeQ2oFsC57m98V9eI/x+RWdnmTJE
+         O4NA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=oNHJ28PHCRGNBfxGC4JYon2+bxtcvPjs+sEoG2143Eo=;
+        b=ZsY7/eiqUcDmzHvaS6Yxc0kW/EflBJr2TuY72UvEBJrLlpFBzx3co7OdmisTN/WSgG
+         k0UlcZXoQ3cje7wzsYwRnNTfjcmuzmFOMhaIlmI3FkUU++Ukd4a6lLP67G45iNO2B/OM
+         OlnGkgkjyVfpKQREH1Xpz+ggxDkzYmTt9RNnH3rMYCKz93n8C4kH3GdsTJduyhzSD0Ky
+         vK7taXSIb/hyRVSlcCWK75bST6LCY3l1HoYoHHIqdIVrJh+G8c1HgGO6+sStFL15sFUX
+         Q2Zs4bqsi+3MZBLPTdVEiWpm3BoCTi01/YrodG8ydmSxyuTeOjZbrpn1k+SdihfnijNs
+         fb5A==
+X-Gm-Message-State: AJcUukcBS+7mjSVYL9wMNEnFYoVFpu+9T7h3PwX+EQlCuYWqGlONK9qr
+        Imevzp6VJxasWCGWEAJYBT37iw==
+X-Google-Smtp-Source: ALg8bN58a3E/LGwZU0KAaRBR5tK8HeWKX8oS6VcaX15xO1+5z8hNdLRrljm49hmVbm/Yj3+n8NlNPg==
+X-Received: by 2002:a0c:ade7:: with SMTP id x36mr58670610qvc.66.1546871767705;
+        Mon, 07 Jan 2019 06:36:07 -0800 (PST)
+Received: from ovpn-120-55.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id m41sm42554081qtc.58.2019.01.07.06.36.06
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 07 Jan 2019 06:36:07 -0800 (PST)
+Subject: Re: kernel BUG at kernel/sched/core.c:3490!
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        linux kernel <linux-kernel@vger.kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>, gkohli@codeaurora.org
+References: <ba9c5ad8-d78c-904d-0430-a67d8e3ea729@lca.pw>
+ <20190107135215.GG14122@hirez.programming.kicks-ass.net>
+From:   Qian Cai <cai@lca.pw>
+Message-ID: <46089f1c-ad72-c96c-2f35-c2f60e726462@lca.pw>
+Date:   Mon, 7 Jan 2019 09:36:05 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.3.3
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20190107135215.GG14122@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Montag, 7. Januar 2019, 07:41:33 CET schrieb Kishon Vijay Abraham I:
-> Hi Lorenzo,
-> 
-> The Endpoint controller driver uses features member in 'struct pci_epc'
-> to advertise the list of supported features to the endpoint function
-> driver.
-> 
-> There are a few shortcomings with this approach.
->   *) Certain endpoint controllers support fixed size BAR (e.g. TI's
->      AM654 uses Designware configuration with fixed size BAR). The
->      size of each BARs cannot be passed to the endpoint function
->      driver.
->   *) Too many macros for handling EPC features.
->      (EPC_FEATURE_NO_LINKUP_NOTIFIER, EPC_FEATURE_BAR_MASK,
->       EPC_FEATURE_MSIX_AVAILABLE, EPC_FEATURE_SET_BAR,
->       EPC_FEATURE_GET_BAR)
->   *) Endpoint controllers are directly modifying struct pci_epc
->      members. (I have plans to move struct pci_epc to
->      drivers/pci/endpoint so that pci_epc members are referenced
->      only by endpoint core).
-> 
-> To overcome the above shortcomings, introduced pci_epc_get_features()
-> API, pci_epc_features structure and a ->get_features() callback.
-> 
-> Also added a patch to set BAR flags in pci_epf_alloc_space and
-> remove it from pci-epf-test function driver.
-> 
-> Tested on TI's DRA7xx platform.
-
-While I don't have that much PCI experience and hence cannot judge
-this cleanup as a whole, I can at least say, that my Rockchip rk3399
-still does find its PCIE-connected wifi card, so this series on rk3399
-
-Tested-by: Heiko Stuebner <heiko@sntech.de>
 
 
+On 1/7/19 8:52 AM, Peter Zijlstra wrote:
+> On Tue, Jan 01, 2019 at 12:44:35AM -0500, Qian Cai wrote:
+>> Running some mmap() workloads to put the system on low memory situation with
+>> swapping and OOM, and then it trigger this BUG(),
+>>
+>> void __noreturn do_task_dead(void)
+>> {
+>>         /* Causes final put_task_struct in finish_task_switch(): */
+>>         set_special_state(TASK_DEAD);
+>>
+>>         /* Tell freezer to ignore us: */
+>>         current->flags |= PF_NOFREEZE;
+>>
+>>         __schedule(false);
+>>         BUG();
+>>
+>>         /* Avoid "noreturn function does return" - but don't continue if BUG()
+>> is a NOP: */
+>>         for (;;)
+>>                 cpu_relax();
+>> }
+> 
+> This would mean that we somehow loose the TASK_DEAD state before hitting
+> schedule(), but that is something that should be avoided by
+> set_special_state(), which is supposed to serialize against concurrent
+> wake-ups.
+> 
+> Also see commit: b5bf9a90bbeb ("sched/core: Introduce set_special_state()")
+> 
+> How readily does this reproduce?
 
+Running LTP oom01 [1] triggered it at least once in five attempts every time so
+far on v4.20+. Have not tried much on v5.0-rc1 yet.
+
+[1]
+https://github.com/linux-test-project/ltp/blob/master/testcases/kernel/mem/oom/oom01.c
