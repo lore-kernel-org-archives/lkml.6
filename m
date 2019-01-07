@@ -2,93 +2,209 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB1DAC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:23:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F6BCC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:23:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82F2A21736
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:23:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VBrQTNZD"
+	by mail.kernel.org (Postfix) with ESMTP id 2EE8021736
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:23:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546867432;
+	bh=SjaTqu/XNtPQsinBHlxswIkvqbrEWzAQN/C6IhAowAQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=VJqF/C1qdS5NBYLnqzpfy9RQ4MVcEhIAeARskN5yVuD8i/1sy1GrGJ6srQIeuLTnG
+	 tHc1te2zrJ/yO91nXMv1c33pQzL08VQnDxJ/mESjMo4dIRsPhoOIlwZJqK9YkwjbIG
+	 sxm4vqlZ6lrKAQ3yzdYV9lbRGhthwu7zqSmtcgu8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730675AbfAGNXa (ORCPT
+        id S1728088AbfAGMlO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:23:30 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:38590 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729846AbfAGNX1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:23:27 -0500
-Received: by mail-ed1-f67.google.com with SMTP id h50so856243ede.5;
-        Mon, 07 Jan 2019 05:23:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=HIBinLwZ1ghjqd3NQ3ePFix2UVejfaQY7pzz6QW8sPw=;
-        b=VBrQTNZDSe08jcHY20uRb39HyAf++fJ5S7cnJwcg5HcZu/miN7U5lCP9SwgYUbAJ3Y
-         zvVT9LbhADr6gabH3kLE/4/i7Qe3WlCOmGAT16hKUyyAO4zJGuNNl/0XPodFUQBP14zb
-         +3qOLWQ1Zktuci1DeMKB4Ag3BOFZrK18Z9vFEJB+XMPWsX6CV09a5/DzZyCzTpM1U6zl
-         7ghPIhI87XZwU24OdLK7SWAlbKzRbvGXaK/FvNYvw6xEnB7Nj8660a8fgwsiz9ekcmqT
-         onEQwH5kFNaxTn7dO3dshJFW6vDXgnTyZ6EjjlV6bAEJPj1LZ+v6sQMnH1ddoQyAfZoU
-         emvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=HIBinLwZ1ghjqd3NQ3ePFix2UVejfaQY7pzz6QW8sPw=;
-        b=IkqPxGCzs+8fNpoFSu40zsS2Qv1dViahp56RxAFqr5qbHDmG3gE/FbAbTHHkm3TDSs
-         dko5jxIsjQBBRWGhZSX9b02Fb1yEsgTCgZ9pDa1H5ZBhM115ySuZSBSzjIH0V03mZ7Dq
-         ON4g3oRnO0nnb1pqWR7rtrww/Zq1wlZGecY4PSBaKeSsT5SfK/+QyT5MuaiYWSe4/r7C
-         Nkp0OJod5oBsPYte65ej55ofyl9Cjcldy14hQ+3NjA2nxj7fZS0pgfrXptd68F8BEo8k
-         1kKh5rDSYkEmrwWWmhnK0ZXeI8IfeB+q7u5e5YzOTRtOZwYqqS13upSDMD6ktPTgpOtL
-         mnwA==
-X-Gm-Message-State: AA+aEWaiFmMReomlF6vbpmWKcNi01ODhs449JoOpQkJRXunaIGQfTW5y
-        dFkDWwyqhNXEfXG1o3+f6nY=
-X-Google-Smtp-Source: AFSGD/WWePlxSEs4y7Ly3AuLsZtP0XzU1awgYeec9SpOhX32XDJyXyFpL+W3ex9/huXgdS3/wPqDdg==
-X-Received: by 2002:a50:a55c:: with SMTP id z28mr55607764edb.124.1546867405558;
-        Mon, 07 Jan 2019 05:23:25 -0800 (PST)
-Received: from ltop.local ([2a02:a03f:407b:c500:4142:d3d:8d31:6743])
-        by smtp.gmail.com with ESMTPSA id o37sm29790886edc.32.2019.01.07.05.23.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 07 Jan 2019 05:23:24 -0800 (PST)
-Date:   Mon, 7 Jan 2019 14:23:23 +0100
-From:   Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     =?utf-8?Q?J=C3=BAlius?= Milan <julikmilan@gmail.com>,
-        kbuild test robot <lkp@intel.com>,
-        linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org,
-        gregkh@linuxfoundation.org, ajay.kathat@microchip.com,
-        linux-wireless@vger.kernel.org, adham.abozaeid@microchip.com
-Subject: Re: [PATCH] staging: wilc1000: fix cast to restricted __le32
-Message-ID: <20190107132322.sk3lcvafg65fdd7b@ltop.local>
-References: <20190105082323.GA27838@localhost.localdomain>
- <20190107125437.GA3200@kadam>
+        Mon, 7 Jan 2019 07:41:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56236 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728063AbfAGMlK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:41:10 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D0DDE2183F;
+        Mon,  7 Jan 2019 12:41:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1546864869;
+        bh=SjaTqu/XNtPQsinBHlxswIkvqbrEWzAQN/C6IhAowAQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=2ZkHS6d3A+UwMKBc3ohJZAAWnMK4CUutFIJKtK9xplGlFV2RyZOOdgWZfDMt3cFt2
+         kkIzshGq3bf7lY+i0VKa73FVqegzyc8o27Xu/3FN9+e1v6d6yRCBO/5fRCT2Xr0+Lj
+         3Nlqkd7TWpErjDJlObE7MhyYgadqdLNX7tJm9GH4=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.20 087/145] crypto: testmgr - add AES-CFB tests
+Date:   Mon,  7 Jan 2019 13:32:04 +0100
+Message-Id: <20190107104448.632853193@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190107104437.308206189@linuxfoundation.org>
+References: <20190107104437.308206189@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190107125437.GA3200@kadam>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 07, 2019 at 03:54:37PM +0300, Dan Carpenter wrote:
-> I'm sort of surprised that the zero day bot didn't complain about this.
-> It probably should.
-> 
-> The endianness checking is not turned on by default in Sparse.  You have
-> to do "make C=1 CF=-D__CHECK_ENDIAN__" to turn it on.
+4.20-stable review patch.  If anyone has any objections, please let me know.
 
-Bitwise (and thus endian) checking is enabled by default in the kernel
-since 05de97003 ("linux/types.h: enable endian checks for all sparse builds")
-included in v4.10-rc1. Since then they make more than half of sparse
-warnings (in a x86-64 allyesconfig).
+------------------
 
-Best regards,
--- Luc
+From: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+
+commit 7da66670775d201f633577f5b15a4bbeebaaa2b0 upstream.
+
+Add AES128/192/256-CFB testvectors from NIST SP800-38A.
+
+Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ crypto/tcrypt.c  |    5 +++
+ crypto/testmgr.c |    7 +++++
+ crypto/testmgr.h |   76 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 88 insertions(+)
+
+--- a/crypto/tcrypt.c
++++ b/crypto/tcrypt.c
+@@ -1736,6 +1736,7 @@ static int do_test(const char *alg, u32
+ 		ret += tcrypt_test("ctr(aes)");
+ 		ret += tcrypt_test("rfc3686(ctr(aes))");
+ 		ret += tcrypt_test("ofb(aes)");
++		ret += tcrypt_test("cfb(aes)");
+ 		break;
+ 
+ 	case 11:
+@@ -2060,6 +2061,10 @@ static int do_test(const char *alg, u32
+ 				speed_template_16_24_32);
+ 		test_cipher_speed("ctr(aes)", DECRYPT, sec, NULL, 0,
+ 				speed_template_16_24_32);
++		test_cipher_speed("cfb(aes)", ENCRYPT, sec, NULL, 0,
++				speed_template_16_24_32);
++		test_cipher_speed("cfb(aes)", DECRYPT, sec, NULL, 0,
++				speed_template_16_24_32);
+ 		break;
+ 
+ 	case 201:
+--- a/crypto/testmgr.c
++++ b/crypto/testmgr.c
+@@ -2691,6 +2691,13 @@ static const struct alg_test_desc alg_te
+ 			}
+ 		}
+ 	}, {
++		.alg = "cfb(aes)",
++		.test = alg_test_skcipher,
++		.fips_allowed = 1,
++		.suite = {
++			.cipher = __VECS(aes_cfb_tv_template)
++		},
++	}, {
+ 		.alg = "chacha20",
+ 		.test = alg_test_skcipher,
+ 		.suite = {
+--- a/crypto/testmgr.h
++++ b/crypto/testmgr.h
+@@ -11449,6 +11449,82 @@ static const struct cipher_testvec aes_c
+ 	},
+ };
+ 
++static const struct cipher_testvec aes_cfb_tv_template[] = {
++	{ /* From NIST SP800-38A */
++		.key	= "\x2b\x7e\x15\x16\x28\xae\xd2\xa6"
++			  "\xab\xf7\x15\x88\x09\xcf\x4f\x3c",
++		.klen	= 16,
++		.iv	= "\x00\x01\x02\x03\x04\x05\x06\x07"
++			  "\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f",
++		.ptext	= "\x6b\xc1\xbe\xe2\x2e\x40\x9f\x96"
++			  "\xe9\x3d\x7e\x11\x73\x93\x17\x2a"
++			  "\xae\x2d\x8a\x57\x1e\x03\xac\x9c"
++			  "\x9e\xb7\x6f\xac\x45\xaf\x8e\x51"
++			  "\x30\xc8\x1c\x46\xa3\x5c\xe4\x11"
++			  "\xe5\xfb\xc1\x19\x1a\x0a\x52\xef"
++			  "\xf6\x9f\x24\x45\xdf\x4f\x9b\x17"
++			  "\xad\x2b\x41\x7b\xe6\x6c\x37\x10",
++		.ctext	= "\x3b\x3f\xd9\x2e\xb7\x2d\xad\x20"
++			  "\x33\x34\x49\xf8\xe8\x3c\xfb\x4a"
++			  "\xc8\xa6\x45\x37\xa0\xb3\xa9\x3f"
++			  "\xcd\xe3\xcd\xad\x9f\x1c\xe5\x8b"
++			  "\x26\x75\x1f\x67\xa3\xcb\xb1\x40"
++			  "\xb1\x80\x8c\xf1\x87\xa4\xf4\xdf"
++			  "\xc0\x4b\x05\x35\x7c\x5d\x1c\x0e"
++			  "\xea\xc4\xc6\x6f\x9f\xf7\xf2\xe6",
++		.len	= 64,
++	}, {
++		.key	= "\x8e\x73\xb0\xf7\xda\x0e\x64\x52"
++			  "\xc8\x10\xf3\x2b\x80\x90\x79\xe5"
++			  "\x62\xf8\xea\xd2\x52\x2c\x6b\x7b",
++		.klen	= 24,
++		.iv	= "\x00\x01\x02\x03\x04\x05\x06\x07"
++			  "\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f",
++		.ptext	= "\x6b\xc1\xbe\xe2\x2e\x40\x9f\x96"
++			  "\xe9\x3d\x7e\x11\x73\x93\x17\x2a"
++			  "\xae\x2d\x8a\x57\x1e\x03\xac\x9c"
++			  "\x9e\xb7\x6f\xac\x45\xaf\x8e\x51"
++			  "\x30\xc8\x1c\x46\xa3\x5c\xe4\x11"
++			  "\xe5\xfb\xc1\x19\x1a\x0a\x52\xef"
++			  "\xf6\x9f\x24\x45\xdf\x4f\x9b\x17"
++			  "\xad\x2b\x41\x7b\xe6\x6c\x37\x10",
++		.ctext	= "\xcd\xc8\x0d\x6f\xdd\xf1\x8c\xab"
++			  "\x34\xc2\x59\x09\xc9\x9a\x41\x74"
++			  "\x67\xce\x7f\x7f\x81\x17\x36\x21"
++			  "\x96\x1a\x2b\x70\x17\x1d\x3d\x7a"
++			  "\x2e\x1e\x8a\x1d\xd5\x9b\x88\xb1"
++			  "\xc8\xe6\x0f\xed\x1e\xfa\xc4\xc9"
++			  "\xc0\x5f\x9f\x9c\xa9\x83\x4f\xa0"
++			  "\x42\xae\x8f\xba\x58\x4b\x09\xff",
++		.len	= 64,
++	}, {
++		.key	= "\x60\x3d\xeb\x10\x15\xca\x71\xbe"
++			  "\x2b\x73\xae\xf0\x85\x7d\x77\x81"
++			  "\x1f\x35\x2c\x07\x3b\x61\x08\xd7"
++			  "\x2d\x98\x10\xa3\x09\x14\xdf\xf4",
++		.klen	= 32,
++		.iv	= "\x00\x01\x02\x03\x04\x05\x06\x07"
++			  "\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f",
++		.ptext	= "\x6b\xc1\xbe\xe2\x2e\x40\x9f\x96"
++			  "\xe9\x3d\x7e\x11\x73\x93\x17\x2a"
++			  "\xae\x2d\x8a\x57\x1e\x03\xac\x9c"
++			  "\x9e\xb7\x6f\xac\x45\xaf\x8e\x51"
++			  "\x30\xc8\x1c\x46\xa3\x5c\xe4\x11"
++			  "\xe5\xfb\xc1\x19\x1a\x0a\x52\xef"
++			  "\xf6\x9f\x24\x45\xdf\x4f\x9b\x17"
++			  "\xad\x2b\x41\x7b\xe6\x6c\x37\x10",
++		.ctext	= "\xdc\x7e\x84\xbf\xda\x79\x16\x4b"
++			  "\x7e\xcd\x84\x86\x98\x5d\x38\x60"
++			  "\x39\xff\xed\x14\x3b\x28\xb1\xc8"
++			  "\x32\x11\x3c\x63\x31\xe5\x40\x7b"
++			  "\xdf\x10\x13\x24\x15\xe5\x4b\x92"
++			  "\xa1\x3e\xd0\xa8\x26\x7a\xe2\xf9"
++			  "\x75\xa3\x85\x74\x1a\xb9\xce\xf8"
++			  "\x20\x31\x62\x3d\x55\xb1\xe4\x71",
++		.len	= 64,
++	},
++};
++
+ static const struct aead_testvec hmac_md5_ecb_cipher_null_enc_tv_template[] = {
+ 	{ /* Input data from RFC 2410 Case 1 */
+ #ifdef __LITTLE_ENDIAN
+
+
