@@ -2,53 +2,57 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69B82C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:31:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A634C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:32:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BFF8206B7
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:31:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41E49206B7
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:32:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546867921;
+	bh=ExqBsncdjZvOonjyiSSHLhJPQIY75Y/4dhV4LkRuaRY=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=w8nuzaCenYXV/1TG8/Mm7Gms7bQGxuAKGmjSqsCAkA5RH0V1Q8oA41u9SXODIl4uM
+	 T/6hiM3On3v6+MQh4Qq6dtWrVM4zNcWtPXFKhn7nrhk4iiHCQPogEUpUfIKzGxximd
+	 kVpIEVh5o7oyEjMsSYC939cSVTqqm8Lsmq6mihyw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727248AbfAGNbF (ORCPT
+        id S1727472AbfAGNcA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:31:05 -0500
-Received: from mail-io1-f69.google.com ([209.85.166.69]:35591 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726886AbfAGNbE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:31:04 -0500
-Received: by mail-io1-f69.google.com with SMTP id x12so277527ioj.2
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 05:31:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=vm6ItJyYSta4/ymiPfVMaGeSQpw+CMG54sFJCA/cdoQ=;
-        b=m/I8kPGGc52cS83g00u/Ty5n2nGsdQXOaWjZYRcT6EeF2D+iObh6Ueh80FX5asdXhW
-         nnATnsmyY2Kx6nnUl1ZdEF6r+FBG28r1UaQoLoavky/Fi1EkN3oH5jrWn9K0T7JrdcOD
-         03nJMp96LrWChPjFbUoJhTfMU59qongXmZ62+QzIlL46rvHscnHXuDrnoOEvb49aB5iE
-         kgGSxTi8RIUjnv3xre98GRnodgJV0kjDI0hu74AZN0/tmmOuQYIr31nVkFTVzY6yqq1B
-         pQYpoNfuP+t5TWFIB+oEWpChxleZtU2HaQWzViY88Kv/nft4ZhXuOcUyd1FFDD/z2sSI
-         cc2Q==
-X-Gm-Message-State: AA+aEWYcr0WhB9stfvQ1Vea6Sj6s+64joUTuTcBBHr9z8d9ldNvb7lSt
-        MI403FVe3vxoxpessssTCXJJwhZqu7ErVhTuF04lAO3r+ihH
-X-Google-Smtp-Source: AFSGD/VPn3AAcFnwwWXbqm6aWR6GnmgjkASB+lH4ek0+JIfMy1agZe7gKVIxNLgWmVWb8whbbLCoYG2h6jvDNGCxCKvWzVII7vAQ
+        Mon, 7 Jan 2019 08:32:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37272 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726886AbfAGNcA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:32:00 -0500
+Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 43252206B6;
+        Mon,  7 Jan 2019 13:31:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1546867918;
+        bh=ExqBsncdjZvOonjyiSSHLhJPQIY75Y/4dhV4LkRuaRY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=dDf4HPsJQN0Klabsgq6wI4v24aGDrY5VPp4bZSqBG2Qqbk6Mq/emM/SKoQQyHC8Qm
+         F1piZlftlel/38ZCd4RJ5reJ8vO6LKmfR9WnPUUxX0DhiQF0H56DsW8zFCLOtwjFWE
+         o8klb6w5dMdv6KvstEm9pd8m6Cc3VcKpULFjTBEg=
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Ingo Molnar <mingo@redhat.com>
+Cc:     Masami Hiramatsu <mhiramat@kernel.org>, peterz@infradead.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Andrea Righi <righi.andrea@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: [PATCH 0/2] kprobes: Fix kretprobe incorrect stacking order problem
+Date:   Mon,  7 Jan 2019 22:31:34 +0900
+Message-Id: <154686789378.15479.2886543882215785247.stgit@devbox>
+X-Mailer: git-send-email 2.13.6
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-X-Received: by 2002:a02:c55:: with SMTP id g82mr47932757jad.17.1546867863851;
- Mon, 07 Jan 2019 05:31:03 -0800 (PST)
-Date:   Mon, 07 Jan 2019 05:31:03 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000008a1bce057ede3d13@google.com>
-Subject: KASAN: slab-out-of-bounds Read in bacpy
-From:   syzbot <syzbot+660883c56e2fa65d4497@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, johan.hedberg@gmail.com,
-        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
-        marcel@holtmann.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -56,120 +60,154 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hello,
 
-syzbot found the following crash on:
+On recent talk with Andrea, I started more precise investigation on
+the kernel panic with kretprobes on notrace functions, which Francis
+had been reported last year ( https://lkml.org/lkml/2017/7/14/466 ).
 
-HEAD commit:    574823bfab82 Change mincore() to count "mapped" pages rath..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15145dab400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d55557b516c45456
-dashboard link: https://syzkaller.appspot.com/bug?extid=660883c56e2fa65d4497
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1756666f400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1397354b400000
+At first, I tried to reproduce the issue. I picked up __fdget and
+ftrace_ops_assist_func as probed functions.
+With CONFIG_KPROBE_EVENTS_ON_NOTRACE=y, I could reproduce the kernel
+panic as below.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+660883c56e2fa65d4497@syzkaller.appspotmail.com
+=====
+/sys/kernel/debug/tracing # echo "r:event_1 __fdget" >> kprobe_events 
+/sys/kernel/debug/tracing # echo "r:event_2 ftrace_ops_assist_func" >> kprobe_events
+/sys/kernel/debug/tracing # echo 1 > events/kprobes/enable 
+[   70.491856] BUG: unable to handle kernel NULL pointer dereference at 0000000000000010
+[   70.493203] PGD 800000001c62e067 P4D 800000001c62e067 PUD 1b5bf067 PMD 0 
+[   70.494247] Oops: 0010 [#1] PREEMPT SMP PTI
+[   70.494918] CPU: 6 PID: 1210 Comm: sh Not tainted 4.20.0-rc3+ #58
+[   70.495931] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.10.1-0-g8891697-prebuilt.qemu-project.org 04/01/2014
+[   70.497906] RIP: 0010:0x10
+[   70.498465] Code: Bad RIP value.
+[   70.499077] RSP: 0018:ffffb1d4c0347e78 EFLAGS: 00010246
+[   70.499959] RAX: 00000000fffffff7 RBX: 0000000000000000 RCX: 0000000000000000
+[   70.501383] RDX: ffff88f19f9c4f80 RSI: ffffffffb7d75e12 RDI: ffffffffb7d0ede7
+[   70.502501] RBP: 00007ffc7061af20 R08: 0000000080000002 R09: ffff88f19f9c4f80
+[   70.503698] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000005401
+[   70.504810] R13: 0000000000000000 R14: ffffb1d4c0347f58 R15: 0000000000000000
+[   70.506028] FS:  0000000000922880(0000) GS:ffff88f19d380000(0000) knlGS:0000000000000000
+[   70.507354] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   70.508271] CR2: ffffffffffffffe6 CR3: 000000001f916000 CR4: 00000000000006e0
+[   70.509419] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[   70.510803] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[   70.511748] Call Trace:
+[   70.512225]  ? ksys_ioctl+0x70/0x70
+[   70.512884]  ? __fdget+0x5/0x10
+[   70.513454]  ? __fdget+0x5/0x10
+[   70.513980]  ? copy_oldmem_page_encrypted+0x20/0x20
+[   70.514815]  ? __x64_sys_ioctl+0x16/0x20
+[   70.515596]  ? do_syscall_64+0x50/0x100
+[   70.516229]  ? entry_SYSCALL_64_after_hwframe+0x49/0xbe
+[   70.517143] Modules linked in:
+[   70.517806] CR2: 0000000000000010
+[   70.518527] ---[ end trace ece844ac05189f10 ]---
+[   70.519417] RIP: 0010:0x10
+[   70.520026] Code: Bad RIP value.
+[   70.520800] RSP: 0018:ffffb1d4c0347e78 EFLAGS: 00010246
+[   70.521948] RAX: 00000000fffffff7 RBX: 0000000000000000 RCX: 0000000000000000
+[   70.523315] RDX: ffff88f19f9c4f80 RSI: ffffffffb7d75e12 RDI: ffffffffb7d0ede7
+[   70.524515] RBP: 00007ffc7061af20 R08: 0000000080000002 R09: ffff88f19f9c4f80
+[   70.525702] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000005401
+[   70.526715] R13: 0000000000000000 R14: ffffb1d4c0347f58 R15: 0000000000000000
+[   70.527673] FS:  0000000000922880(0000) GS:ffff88f19d380000(0000) knlGS:0000000000000000
+[   70.528896] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   70.529851] CR2: ffffffffffffffe6 CR3: 000000001f916000 CR4: 00000000000006e0
+[   70.530922] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[   70.531907] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Killed
+=====
 
-==================================================================
-BUG: KASAN: slab-out-of-bounds in memcpy include/linux/string.h:352 [inline]
-BUG: KASAN: slab-out-of-bounds in bacpy+0x23/0x30  
-include/net/bluetooth/bluetooth.h:236
-Read of size 6 at addr ffff888094f0bc3b by task kworker/u5:0/1171
+This seems the kernel is trying to execute incorrect address.
 
-CPU: 0 PID: 1171 Comm: kworker/u5:0 Not tainted 4.20.0+ #13
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Workqueue: hci0 hci_rx_work
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1db/0x2d0 lib/dump_stack.c:113
-  print_address_description.cold+0x7c/0x20d mm/kasan/report.c:187
-  kasan_report.cold+0x1b/0x40 mm/kasan/report.c:317
-  check_memory_region_inline mm/kasan/generic.c:185 [inline]
-  check_memory_region+0x123/0x190 mm/kasan/generic.c:191
-  memcpy+0x24/0x50 mm/kasan/common.c:130
-  memcpy include/linux/string.h:352 [inline]
-  bacpy+0x23/0x30 include/net/bluetooth/bluetooth.h:236
-  hci_inquiry_result_with_rssi_evt net/bluetooth/hci_event.c:3986 [inline]
-  hci_event_packet+0x3afc/0xc22e net/bluetooth/hci_event.c:5863
-  hci_rx_work+0x578/0xcd0 net/bluetooth/hci_core.c:4412
-  process_one_work+0xd0c/0x1ce0 kernel/workqueue.c:2153
-  worker_thread+0x143/0x14a0 kernel/workqueue.c:2296
-  kthread+0x357/0x430 kernel/kthread.c:246
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
+Next, I focused on the combination of probes. From Francis's report,
+this issue caused by the combination of kretprobes, not kprobes.
+I ensured that was true.
 
-Allocated by task 7831:
-  save_stack+0x45/0xd0 mm/kasan/common.c:73
-  set_track mm/kasan/common.c:85 [inline]
-  kasan_kmalloc mm/kasan/common.c:482 [inline]
-  kasan_kmalloc+0xcf/0xe0 mm/kasan/common.c:455
-  __do_kmalloc_node mm/slab.c:3671 [inline]
-  __kmalloc_node_track_caller+0x4e/0x70 mm/slab.c:3685
-  __kmalloc_reserve.isra.0+0x40/0xe0 net/core/skbuff.c:140
-  __alloc_skb+0x12d/0x730 net/core/skbuff.c:208
-  alloc_skb include/linux/skbuff.h:1011 [inline]
-  bt_skb_alloc include/net/bluetooth/bluetooth.h:339 [inline]
-  vhci_get_user drivers/bluetooth/hci_vhci.c:180 [inline]
-  vhci_write+0xc4/0x470 drivers/bluetooth/hci_vhci.c:299
-  call_write_iter include/linux/fs.h:1862 [inline]
-  new_sync_write fs/read_write.c:474 [inline]
-  __vfs_write+0x764/0xb40 fs/read_write.c:487
-  vfs_write+0x20c/0x580 fs/read_write.c:549
-  ksys_write+0x105/0x260 fs/read_write.c:598
-  __do_sys_write fs/read_write.c:610 [inline]
-  __se_sys_write fs/read_write.c:607 [inline]
-  __x64_sys_write+0x73/0xb0 fs/read_write.c:607
-  do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+r __fdget & r ftrace_ops_assist_func => NG
+p __fdget & p ftrace_ops_assist_func => OK
+p __fdget & r ftrace_ops_assist_func => OK
+r __fdget & p ftrace_ops_assist_func => OK
 
-Freed by task 5970:
-  save_stack+0x45/0xd0 mm/kasan/common.c:73
-  set_track mm/kasan/common.c:85 [inline]
-  __kasan_slab_free+0x102/0x150 mm/kasan/common.c:444
-  kasan_slab_free+0xe/0x10 mm/kasan/common.c:452
-  __cache_free mm/slab.c:3485 [inline]
-  kfree+0xcf/0x230 mm/slab.c:3804
-  load_elf_binary+0x25dd/0x5580 fs/binfmt_elf.c:1118
-  search_binary_handler fs/exec.c:1656 [inline]
-  search_binary_handler+0x17f/0x570 fs/exec.c:1634
-  exec_binprm fs/exec.c:1698 [inline]
-  __do_execve_file.isra.0+0x14f3/0x2700 fs/exec.c:1818
-  do_execveat_common fs/exec.c:1865 [inline]
-  do_execve fs/exec.c:1882 [inline]
-  __do_sys_execve fs/exec.c:1963 [inline]
-  __se_sys_execve fs/exec.c:1958 [inline]
-  __x64_sys_execve+0x8f/0xc0 fs/exec.c:1958
-  do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+r: kretprobe, p: kprobe
 
-The buggy address belongs to the object at ffff888094f0ba40
-  which belongs to the cache kmalloc-512 of size 512
-The buggy address is located 507 bytes inside of
-  512-byte region [ffff888094f0ba40, ffff888094f0bc40)
-The buggy address belongs to the page:
-page:ffffea000253c2c0 count:1 mapcount:0 mapping:ffff88812c3f0940 index:0x0
-flags: 0x1fffc0000000200(slab)
-raw: 01fffc0000000200 ffffea00025dbf08 ffffea000253ca88 ffff88812c3f0940
-raw: 0000000000000000 ffff888094f0b040 0000000100000006 0000000000000000
-page dumped because: kasan: bad access detected
+This gave me a hint of what happened. I can explain the cause of this
+issue as below;
+ 
+Correct processing of kretprobe on probed-function.
 
-Memory state around the buggy address:
-  ffff888094f0bb00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-  ffff888094f0bb80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> ffff888094f0bc00: 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc fc
-                                            ^
-  ffff888094f0bc80: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
-  ffff888094f0bd00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
+<caller>
+ -><probed-function>
+   ->fentry
+    ->ftrace_ops_assist_func()
+     ->kprobe_ftrace_handler()
+      ...->pre_handler_kretprobe()
+           push the return address (caller) of probed-function to top of the
+           kretprobe list and replace it with kretprobe_trampoline.
+    <-(ftrace_ops_assist_func())
+   <-(fentry)
+  <-(probed-function)
+[kretprobe_trampoline]
+ ->tampoline_handler()
+   pop the return address (caller) from top of the kretprobe list
+ <-(trampoline_handler())
+<caller>
 
+When we put a kretprobe on ftrace_ops_assist_func(), below happens
+
+<caller>
+ -><probed-function>
+   ->fentry
+    ->ftrace_ops_assist_func()
+     ->int3
+      ->kprobe_int3_handler()
+      ...->pre_handler_kretprobe()
+           push the return address (*fentry*) of ftrace_ops_assist_func() to
+           top of the kretprobe list and replace it with kretprobe_trampoline.
+      <-kprobe_int3_handler()
+     <-(int3)
+     ->kprobe_ftrace_handler()
+      ...->pre_handler_kretprobe()
+           push the return address (caller) of probed-function to top of the
+           kretprobe list and replace it with kretprobe_trampoline.
+     <-(kprobe_ftrace_handler())
+    <-(ftrace_ops_assist_func())
+    [kretprobe_trampoline]
+     ->tampoline_handler()
+       pop the return address (caller) from top of the kretprobe list
+     <-(trampoline_handler())
+    <caller>
+    [run caller with incorrect stack information]
+   <-(<caller>)
+  !!KERNEL PANIC!!
+
+Therefore, this kernel panic happens only when we put 2 k*ret*probes on
+ftrace_ops_assist_func() and other functions. If we put kprobes, it
+doesn't cause any issue, since it doesn't change the return address.
+
+To fix (or just avoid) this issue, we can introduce a frame pointer
+verification to skip wrong order entries. And I also would like to
+blacklist those functions because those are part of ftrace-based 
+kprobe handling routine.
+
+BTW, this is not all of issues. To remove CONFIG_KPROBE_EVENTS_ON_NOTRACE
+I'm trying to find out other notrace functions which can cause
+kernel crash by probing. Mostly done on x86, so I'll post it
+after this series.
+
+Thank you,
 
 ---
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+Masami Hiramatsu (2):
+      x86/kprobes: Verify stack frame on kretprobe
+      kprobes: Mark ftrace mcount handler functions nokprobe
+
+
+ arch/x86/kernel/kprobes/core.c |   26 ++++++++++++++++++++++++++
+ include/linux/kprobes.h        |    1 +
+ kernel/trace/ftrace.c          |    5 ++++-
+ 3 files changed, 31 insertions(+), 1 deletion(-)
+
+--
+Masami Hiramatsu (Linaro) <mhiramat@kernel.org>
