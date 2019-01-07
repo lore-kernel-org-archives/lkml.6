@@ -2,91 +2,79 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FROM_LOCAL_NOVOWEL,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E196C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 16:16:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86D04C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 16:18:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBEEE218AE
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 16:16:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F83E2147C
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 16:18:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="EY9oKWv+";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="fh8F1DsO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729446AbfAGQQ3 (ORCPT
+        id S1729838AbfAGQSj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 11:16:29 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37056 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729292AbfAGQQX (ORCPT
+        Mon, 7 Jan 2019 11:18:39 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:45196 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726864AbfAGQSi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 11:16:23 -0500
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x07GEGIs079479
-        for <linux-kernel@vger.kernel.org>; Mon, 7 Jan 2019 11:16:22 -0500
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2pv8mwwqjb-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 11:16:21 -0500
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <mimu@linux.ibm.com>;
-        Mon, 7 Jan 2019 16:16:19 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 7 Jan 2019 16:16:17 -0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x07GGFII5177700
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 7 Jan 2019 16:16:15 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B8A57AE045;
-        Mon,  7 Jan 2019 16:16:15 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 50C9AAE053;
-        Mon,  7 Jan 2019 16:16:15 +0000 (GMT)
-Received: from [9.152.96.120] (unknown [9.152.96.120])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon,  7 Jan 2019 16:16:15 +0000 (GMT)
-Reply-To: mimu@linux.ibm.com
-Subject: Re: [PATCH v5 02/15] KVM: s390: coding style issue
- kvm_s390_gisa_init/clear()
-To:     pmorel@linux.ibm.com, KVM Mailing List <kvm@vger.kernel.org>
-Cc:     Linux-S390 Mailing List <linux-s390@vger.kernel.org>,
-        linux-kernel@vger.kernel.org,
-        kvm390-list@tuxmaker.boeblingen.de.ibm.com,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Halil Pasic <pasic@linux.ibm.com>
-References: <20181219191756.57973-1-mimu@linux.ibm.com>
- <20181219191756.57973-3-mimu@linux.ibm.com>
- <0c41bb2c-aa6c-ccbc-752b-c73f74fdd12b@linux.ibm.com>
-From:   Michael Mueller <mimu@linux.ibm.com>
-Organization: IBM
-Date:   Mon, 7 Jan 2019 17:16:15 +0100
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.3.3
+        Mon, 7 Jan 2019 11:18:38 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 9C36060132; Mon,  7 Jan 2019 16:18:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1546877917;
+        bh=Vd0GSTwVHmxHGxTVofQUT5Ru48N2IHVxwsVZ+p2QY10=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=EY9oKWv+9DguXMYQ3KZ23qrG7VphplWN5cFsDlIodbsOQSVLLM0u5Rz/sOHM/bdyb
+         LV37i846QtZupQ0L4sAqx6v6Jvti8cR8Mg3j0RHLHzo1ak63nOIUxhj3Du+sVGRzA+
+         glpfDOJ7GEmlN1bcbjzeSjTKKd5mUNeBRUnZ/jxE=
+Received: from [192.168.1.6] (unknown [183.83.79.153])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: rplsssn@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id BCF8360300;
+        Mon,  7 Jan 2019 16:17:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1546877916;
+        bh=Vd0GSTwVHmxHGxTVofQUT5Ru48N2IHVxwsVZ+p2QY10=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=fh8F1DsOM+0pi3xZq8gWbEUAHa22+GW6UBVhEB2ZGRtq/xsk1J0ZDxueIT6ZjRqHT
+         vH7JOHm3rNBqkUvaD5r8TGbYgvOrCseEJxHoxs2417a4m9mEI+E3goSIxh9Gy5e5OL
+         XlPefw6XV+ds3D1M1NMxEq7G0FO0jeJ/SW8OOvM4=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BCF8360300
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rplsssn@codeaurora.org
+Subject: Re: [PATCH RFC 3/5] dt-bindings: Add PDC timer bindings for Qualcomm
+ SoCs
+To:     Stephen Boyd <swboyd@chromium.org>, andy.gross@linaro.org,
+        david.brown@linaro.org, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org
+Cc:     rnayak@codeaurora.org, bjorn.andersson@linaro.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        evgreen@chromium.org, dianders@chromium.org, mka@chromium.org,
+        ilina@codeaurora.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20181221115946.10095-1-rplsssn@codeaurora.org>
+ <20181221115946.10095-4-rplsssn@codeaurora.org>
+ <154546438942.179992.14851496143150245966@swboyd.mtv.corp.google.com>
+ <504cae51-0f35-beb8-496b-a335863a9071@codeaurora.org>
+ <154603310752.179992.9262815873457262616@swboyd.mtv.corp.google.com>
+ <b97937a0-68ff-ded7-d63b-680981818114@codeaurora.org>
+ <154655037205.15366.7302521016277534390@swboyd.mtv.corp.google.com>
+From:   Raju P L S S S N <rplsssn@codeaurora.org>
+Message-ID: <6384bcac-634c-5e7e-b357-93982de6eafb@codeaurora.org>
+Date:   Mon, 7 Jan 2019 21:47:47 +0530
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <0c41bb2c-aa6c-ccbc-752b-c73f74fdd12b@linux.ibm.com>
+In-Reply-To: <154655037205.15366.7302521016277534390@swboyd.mtv.corp.google.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19010716-0012-0000-0000-000002E36DB6
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19010716-0013-0000-0000-0000211A77BD
-Message-Id: <951277df-bb77-4981-7ec6-bc271aa453a7@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-07_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901070142
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -94,60 +82,117 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 02.01.19 17:50, Pierre Morel wrote:
-> On 19/12/2018 20:17, Michael Mueller wrote:
->> The change hepls to reduce line length and
->> icreases code readability.
+On 1/4/2019 2:49 AM, Stephen Boyd wrote:
+> Quoting Raju P L S S S N (2019-01-03 04:22:58)
 >>
->> Signed-off-by: Michael Mueller <mimu@linux.ibm.com>
->> ---
->>   arch/s390/kvm/interrupt.c | 20 ++++++++++----------
->>   1 file changed, 10 insertions(+), 10 deletions(-)
+>> On 12/29/2018 3:08 AM, Stephen Boyd wrote:
+>>> Quoting Raju P L S S S N (2018-12-26 01:44:43)
+>>>>
+>>>> There are two RSC devices in SoC one for application processor subsystem
+>>>> & other display subsystem. Both RSC contain registers for PDC timers
+>>>> (one for each subsystem).
+>>>
+>>> When is the timer programmed on the display subsystem's RSC? It's hard
+>>> to give advice without all the information.
 >>
->> diff --git a/arch/s390/kvm/interrupt.c b/arch/s390/kvm/interrupt.c
->> index fcb55b02990e..9a3aed608914 100644
->> --- a/arch/s390/kvm/interrupt.c
->> +++ b/arch/s390/kvm/interrupt.c
->> @@ -2886,20 +2886,20 @@ int kvm_s390_get_irq_state(struct kvm_vcpu 
->> *vcpu, __u8 __user *buf, int len)
->>   void kvm_s390_gisa_clear(struct kvm *kvm)
->>   {
->> -    if (kvm->arch.gisa) {
->> -        memset(kvm->arch.gisa, 0, sizeof(struct kvm_s390_gisa));
->> -        kvm->arch.gisa->next_alert = (u32)(u64)kvm->arch.gisa;
->> -        VM_EVENT(kvm, 3, "gisa 0x%pK cleared", kvm->arch.gisa);
->> -    }
->> +    if (!kvm->arch.gisa)
->> +        return;
->> +    memset(kvm->arch.gisa, 0, sizeof(struct kvm_s390_gisa));
->> +    kvm->arch.gisa->next_alert = (u32)(u64)kvm->arch.gisa;
->> +    VM_EVENT(kvm, 3, "gisa 0x%pK cleared", kvm->arch.gisa);
->>   }
->>   void kvm_s390_gisa_init(struct kvm *kvm)
->>   {
->> -    if (css_general_characteristics.aiv) {
->> -        kvm->arch.gisa = &kvm->arch.sie_page2->gisa;
->> -        VM_EVENT(kvm, 3, "gisa 0x%pK initialized", kvm->arch.gisa);
->> -        kvm_s390_gisa_clear(kvm);
->> -    }
->> +    if (!css_general_characteristics.aiv)
->> +        return;
->> +    kvm->arch.gisa = &kvm->arch.sie_page2->gisa;
->> +    VM_EVENT(kvm, 3, "gisa 0x%pK initialized", kvm->arch.gisa);
+>> For display subsystem RSC, hardware sleep solver takes care of timer
+>> programming for wakeup when the subsystem goes to Power collapse.
 > 
-> to be annoying, shouldn't the trace be done after the clear?
-
-sure, I will address that
+> So the display subsystem doesn't need to program their PDC in their RSC
+> from software?
+Yes.
 
 > 
->> +    kvm_s390_gisa_clear(kvm);
->>   }
->>   void kvm_s390_gisa_destroy(struct kvm *kvm)
+>>>
+>>> I would think that it would make sense for the application processor's
+>>> RSC timer to be programmed from the broadcast timer mechanism in the
+>>> kernel so that timers during idle work and suspend turns off the timer
+>>> appropriately with a shutdown hook. I guess the PDC can't tell you the
+>>> time though? It looks like a shadow (and limited) version of the ARM
+>>> architected MMIO timer that we already program for the broadcast timer
+>>> mechanism. Is that because even the MMIO timer can't wakeup the system
+>>> in deep idle?  Assuming that's true, it means the ARM MMIO timer can't
+>>> always be used as the system wide broadcast mechanism because we need to
+>>> augment it with the PDC timer to get the actual wakeup.
+>>>
 >>
+>> Yes. this is correct.
+>>
+>>> Maybe we should be adding hooks into the broadcast timer mechanism to
+>>> program this wakeup event hardware in addition to the ARM MMIO timer. Or
+>>> we should stop using the ARM MMIO timer on these systems and read the
+>>> system register based physical time in the RSC timer driver and register
+>>> this 64-bit PDC register as the broadcast timer. So the time reading
+>>> would be through sysreg and the wakeup programming would be done by
+>>> writing the PDC timer. The assumption would be that we have access to
+>>> the physical time registers (which sounds like the assumption we have to
+>>> make).
+>>
+>> There are no physical timer registers available in RSC for this purpose.
+>>
+>>>
+>>> Do we get an interrupt somewhere from the RSC hardware when the timer
+>>> fires? Or does that just cause a system wakeup event without any pending
+>>> irq and then another irq (like the ARM architected timer) just happens
+>>> to be pending around the same time? If we get an interrupt somehow then
+>>> I would prefer to drop the ARM MMIO timer and do this hybrid broadcast
+>>> timer approach.
+>>
+>> There is no interrupt for PDC timeout. It just causes system wakeup
+>> without a pending irq. ARM MMIO is necessary for irq.
 > 
-> Reviewed-by: Pierre Morel<pmorel@linux.ibm.com>
+> Does that system wakeup cause the CPUs to be enabled? So the sysreg
+> based timer in the CPU would start working? Or does it only make the
+> system come out of a deep enough idle state to make an always on domain
+> work that only contains the MMIO based ARM architected timer?
+
+It only makes the system come out of deep sleep state for MMIO timer to 
+function.
+
 > 
+> I'd hope that each RSC's PDC timer wakes up the owner of the RSC so that
+> we can use the sysreg based timers and ignore the MMIO based timers
+> here. This isn't a very important distinction to make though, so if you
+> have to use the MMIO timers then it just means some extra DT things need
+> to be done to relate the MMIO timers with the RSC that has the timer
+> that needs to be programmed too.
+
+> 
+> Either way we would need a way to either hook the ARM architected timer
+> driver in the kernel, or reimplement the bit of code needed to implement
+> the clockevent based on the ARM architected timer that programs the ARM
+> timer and the PDC timer together.
 > 
 
--- 
+Could you please provide some more details on the implementation?
 
+
+>>
+>>>
+>>> How the RSC is used in general by other devices, like display, is not
+>>> clear to me. We don't have a "wakeup event" framework in the kernel that
+>>> device drivers like the display driver can grab a reference to and
+>>> program some system wide wakeup for. That sounds like something new that
+>>> could be handled entirely in the display driver with direct register
+>>> writes, or it could be some qcom specific API/framework that eventually
+>>> calls down into the same RSC driver that knows what offsets to write
+>>> into in the display RSC's register space, or it could be an entirely
+>>> generic framework like clk or regulator frameworks that could be used by
+>>> anything. BTW, are we using the display RSC yet?
+>>>
+>>
+>> Only display subsystem RSC is programmed along with CPU RSC in Linux.
+>> display RSC instance is not present in upstream but it is present in
+>> downstream and used for resource communication purpose only.
+> 
+>  From the comment above it sounds like the display RSC handles the wakeup
+> programming in hardware? So there isn't a need to add a 'wakeup event'
+> framework or anything like that. Please correct me if I'm wrong.
+
+Yes. There is no need for any framework. From RSC driver point of view 
+there is a need to differentiate apps_rsc vs display_rsc as SW programs 
+PDC timer only in apps_rsc case. How about having a dt property to 
+capture this?
+
+Thanks,
+Raju
