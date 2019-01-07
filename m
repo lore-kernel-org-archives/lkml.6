@@ -4,51 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84FEDC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:46:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFAB8C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:46:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 490F42183E
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:46:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8399221873
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:46:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546865161;
-	bh=iZRbWb56itwvF5UpZJxot2pYlTJQHRWKtsjbrm7ZgJc=;
+	s=default; t=1546865164;
+	bh=YNRZJNosaraLwMMKgUBm2ZwWEiutB06p5UU9shVb7wM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=bjRwz0zftWYZpqgssZxulTzuBwdE1dmMZler5gPBv/NQhjjVmbyszki0UtJGNTe0w
-	 bKf+cRLDXWNmuuKo6uiyOr0AjCH57/njRJ2BE8gqEWteIQUoCeOZYTqKXiYRWm9c0c
-	 lgzZVdqeIL12L+IC/cjRHmPol1Sqzamd+1X00efI=
+	b=mhS6pdWGPlOXHUUaDCBUtUiA9wIcgIIq/FAsnHxdjfvkyfrMA5eGpXTPD27cDF+4W
+	 ERYMg2Pxqg4hXPcC4PfSuL+GAz2BJPNCgNSJSEyhwki0335j++odZ5QI+ghp+y9R17
+	 9flzbUs7G7/ozXAPVOemrpHLBtRegwfGwcdJeB+Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728967AbfAGMqA (ORCPT
+        id S1728979AbfAGMqD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:46:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35502 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:46:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35584 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728949AbfAGMpw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:45:52 -0500
+        id S1728308AbfAGMpz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:45:55 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3F30D20449;
-        Mon,  7 Jan 2019 12:45:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 24ED92183E;
+        Mon,  7 Jan 2019 12:45:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865151;
-        bh=iZRbWb56itwvF5UpZJxot2pYlTJQHRWKtsjbrm7ZgJc=;
+        s=default; t=1546865154;
+        bh=YNRZJNosaraLwMMKgUBm2ZwWEiutB06p5UU9shVb7wM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fSiQxnh9CIZBN58R2RUyqmTUvUPQG31NUiRxVEKeClLmWEQiKqQ9FrfIAxP4At40b
-         weDOiL7Sh5u2FvSqKDnU9aealXZiYuwBF5z+aLSgIN9G1c5mkcjFp3OoejpM5XVQkT
-         6462k84oofgRi1o5Kv6P6TvOLYbRYQb69TTg8oIc=
+        b=F1Q2ltBN2llYcWGv1K26DnKDzrmaQ18jGoiJO9XI7C2S25ymoxDVgy+oSwsEmC96D
+         UYJ9GqU2Nvm/df479C6rrtDuxxVymSz5tcwgKbEBgWlhAcY4vX0b8HeqHMqQJOjrik
+         TRZc8VltgTiLbC6VfN+6IYp79uKvamWq4m/+rLKw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
-        Eric Dumazet <edumazet@google.com>,
+        stable@vger.kernel.org, Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 002/170] gro_cell: add napi_disable in gro_cells_destroy
-Date:   Mon,  7 Jan 2019 13:30:29 +0100
-Message-Id: <20190107104453.223055170@linuxfoundation.org>
+Subject: [PATCH 4.19 003/170] ibmveth: fix DMA unmap error in ibmveth_xmit_start error path
+Date:   Mon,  7 Jan 2019 13:30:30 +0100
+Message-Id: <20190107104453.379404965@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104452.953560660@linuxfoundation.org>
 References: <20190107104452.953560660@linuxfoundation.org>
@@ -67,77 +65,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
+From: Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
 
-[ Upstream commit 8e1da73acded4751a93d4166458a7e640f37d26c ]
+[ Upstream commit 756af9c642329d54f048bac2a62f829b391f6944 ]
 
-Add napi_disable routine in gro_cells_destroy since starting from
-commit c42858eaf492 ("gro_cells: remove spinlock protecting receive
-queues") gro_cell_poll and gro_cells_destroy can run concurrently on
-napi_skbs list producing a kernel Oops if the tunnel interface is
-removed while gro_cell_poll is running. The following Oops has been
-triggered removing a vxlan device while the interface is receiving
-traffic
+Commit 33a48ab105a7 ("ibmveth: Fix DMA unmap error") fixed an issue in the
+normal code path of ibmveth_xmit_start() that was originally introduced by
+Commit 6e8ab30ec677 ("ibmveth: Add scatter-gather support"). This original
+fix missed the error path where dma_unmap_page is wrongly called on the
+header portion in descs[0] which was mapped with dma_map_single. As a
+result a failure to DMA map any of the frags results in a dmesg warning
+when CONFIG_DMA_API_DEBUG is enabled.
 
-[ 5628.948853] BUG: unable to handle kernel NULL pointer dereference at 0000000000000008
-[ 5628.949981] PGD 0 P4D 0
-[ 5628.950308] Oops: 0002 [#1] SMP PTI
-[ 5628.950748] CPU: 0 PID: 9 Comm: ksoftirqd/0 Not tainted 4.20.0-rc6+ #41
-[ 5628.952940] RIP: 0010:gro_cell_poll+0x49/0x80
-[ 5628.955615] RSP: 0018:ffffc9000004fdd8 EFLAGS: 00010202
-[ 5628.956250] RAX: 0000000000000000 RBX: ffffe8ffffc08150 RCX: 0000000000000000
-[ 5628.957102] RDX: 0000000000000000 RSI: ffff88802356bf00 RDI: ffffe8ffffc08150
-[ 5628.957940] RBP: 0000000000000026 R08: 0000000000000000 R09: 0000000000000000
-[ 5628.958803] R10: 0000000000000001 R11: 0000000000000000 R12: 0000000000000040
-[ 5628.959661] R13: ffffe8ffffc08100 R14: 0000000000000000 R15: 0000000000000040
-[ 5628.960682] FS:  0000000000000000(0000) GS:ffff88803ea00000(0000) knlGS:0000000000000000
-[ 5628.961616] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[ 5628.962359] CR2: 0000000000000008 CR3: 000000000221c000 CR4: 00000000000006b0
-[ 5628.963188] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[ 5628.964034] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[ 5628.964871] Call Trace:
-[ 5628.965179]  net_rx_action+0xf0/0x380
-[ 5628.965637]  __do_softirq+0xc7/0x431
-[ 5628.966510]  run_ksoftirqd+0x24/0x30
-[ 5628.966957]  smpboot_thread_fn+0xc5/0x160
-[ 5628.967436]  kthread+0x113/0x130
-[ 5628.968283]  ret_from_fork+0x3a/0x50
-[ 5628.968721] Modules linked in:
-[ 5628.969099] CR2: 0000000000000008
-[ 5628.969510] ---[ end trace 9d9dedc7181661fe ]---
-[ 5628.970073] RIP: 0010:gro_cell_poll+0x49/0x80
-[ 5628.972965] RSP: 0018:ffffc9000004fdd8 EFLAGS: 00010202
-[ 5628.973611] RAX: 0000000000000000 RBX: ffffe8ffffc08150 RCX: 0000000000000000
-[ 5628.974504] RDX: 0000000000000000 RSI: ffff88802356bf00 RDI: ffffe8ffffc08150
-[ 5628.975462] RBP: 0000000000000026 R08: 0000000000000000 R09: 0000000000000000
-[ 5628.976413] R10: 0000000000000001 R11: 0000000000000000 R12: 0000000000000040
-[ 5628.977375] R13: ffffe8ffffc08100 R14: 0000000000000000 R15: 0000000000000040
-[ 5628.978296] FS:  0000000000000000(0000) GS:ffff88803ea00000(0000) knlGS:0000000000000000
-[ 5628.979327] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[ 5628.980044] CR2: 0000000000000008 CR3: 000000000221c000 CR4: 00000000000006b0
-[ 5628.980929] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[ 5628.981736] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[ 5628.982409] Kernel panic - not syncing: Fatal exception in interrupt
-[ 5628.983307] Kernel Offset: disabled
+------------[ cut here ]------------
+DMA-API: ibmveth 30000002: device driver frees DMA memory with wrong function
+  [device address=0x000000000a430000] [size=172 bytes] [mapped as page] [unmapped as single]
+WARNING: CPU: 1 PID: 8426 at kernel/dma/debug.c:1085 check_unmap+0x4fc/0xe10
+...
+<snip>
+...
+DMA-API: Mapped at:
+ibmveth_start_xmit+0x30c/0xb60
+dev_hard_start_xmit+0x100/0x450
+sch_direct_xmit+0x224/0x490
+__qdisc_run+0x20c/0x980
+__dev_queue_xmit+0x1bc/0xf20
 
-Fixes: c42858eaf492 ("gro_cells: remove spinlock protecting receive queues")
-Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
-Acked-by: Eric Dumazet <edumazet@google.com>
+This fixes the API misuse by unampping descs[0] with dma_unmap_single.
+
+Fixes: 6e8ab30ec677 ("ibmveth: Add scatter-gather support")
+Signed-off-by: Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/core/gro_cells.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/ibm/ibmveth.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/net/core/gro_cells.c
-+++ b/net/core/gro_cells.c
-@@ -84,6 +84,7 @@ void gro_cells_destroy(struct gro_cells
- 	for_each_possible_cpu(i) {
- 		struct gro_cell *cell = per_cpu_ptr(gcells->cells, i);
+--- a/drivers/net/ethernet/ibm/ibmveth.c
++++ b/drivers/net/ethernet/ibm/ibmveth.c
+@@ -1172,11 +1172,15 @@ out:
  
-+		napi_disable(&cell->napi);
- 		netif_napi_del(&cell->napi);
- 		__skb_queue_purge(&cell->napi_skbs);
- 	}
+ map_failed_frags:
+ 	last = i+1;
+-	for (i = 0; i < last; i++)
++	for (i = 1; i < last; i++)
+ 		dma_unmap_page(&adapter->vdev->dev, descs[i].fields.address,
+ 			       descs[i].fields.flags_len & IBMVETH_BUF_LEN_MASK,
+ 			       DMA_TO_DEVICE);
+ 
++	dma_unmap_single(&adapter->vdev->dev,
++			 descs[0].fields.address,
++			 descs[0].fields.flags_len & IBMVETH_BUF_LEN_MASK,
++			 DMA_TO_DEVICE);
+ map_failed:
+ 	if (!firmware_has_feature(FW_FEATURE_CMO))
+ 		netdev_err(netdev, "tx: unable to map xmit buffer\n");
 
 
