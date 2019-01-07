@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9C93C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:48:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B45ADC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:48:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A4E720651
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:48:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 844FB206BB
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:48:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546865287;
-	bh=g/H+8MczTyBBTbE9znFRD5Vp1IIO9KfdxZ2B95Q7a+8=;
+	s=default; t=1546865291;
+	bh=hIGqcqvl3KqmUkYcSlqCqX8fiakG8eR57bOjyEZ9jtA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=YJJkdiSwyd/ZZ2Q/KZMGQj0+vCsHYVlFuR90xR2em4SstyQwLody6tuXzfnrOEegY
-	 MReZMYDYTn0dqbX7hAv/skit2bq/8T9N9hNAHnvi/MUGPyIrvF/Hxib0kdBI/JuUMj
-	 7/3DiUYyh0QaL2eGHsgW7hUZtSs50wen+3q8rPrc=
+	b=01vKHIQIq53eNpAuu6jm8DwSDNdjuH7vhK6rFWSm56zxeYWt9aVLzZf/Kp3ctKppM
+	 l1D7B+h9Mqq+nx/nyRpdWWCayFM1t2DQTbbjTd5D477g1DtDb/REW17d+YhjLdOXos
+	 so5sJ8dG5lcZTQNWyeG4GbZhkXUlx/jOIQxcY8+8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729107AbfAGMsF (ORCPT
+        id S1729117AbfAGMsK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:48:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38544 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:48:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38616 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728885AbfAGMsE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:48:04 -0500
+        id S1728875AbfAGMsH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:48:07 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 325B020651;
-        Mon,  7 Jan 2019 12:48:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 52B49206BB;
+        Mon,  7 Jan 2019 12:48:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865283;
-        bh=g/H+8MczTyBBTbE9znFRD5Vp1IIO9KfdxZ2B95Q7a+8=;
+        s=default; t=1546865286;
+        bh=hIGqcqvl3KqmUkYcSlqCqX8fiakG8eR57bOjyEZ9jtA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=engdE0jhz44KOUQA9l0sycp6Vg9w/pAM+31JFDY5S1sb5j5Suc6+DGC+LLYL7eD3v
-         QxFefN9VM/tLwKUAsaV4gc6FduPwmCwhstvmEGO47CzOXiyHRgGDrJ6MLpG2YxYY62
-         YaAfQUvKdzRbtXP7KOvwiCNnx4dk/utTZdbiu+i0=
+        b=rBm3a3zy8Po6eWZNqai+zFezbCsOZZ5p0xEM74/a/8Ah7p54fNf1g36jiJ3ec4POW
+         shsyHBcPxmHMq49eq3c7LltAw4yHjDAvV8Ez1Q/XiIjCrHAZLbGEG+1qkQPiGnz3AR
+         3drulQV0rnQnaz9XxIMV/lWLzeKCpPx0o41bxNnI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alaa Hleihel <alaa@mellanox.com>,
-        Tariq Toukan <tariqt@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>
-Subject: [PATCH 4.19 043/170] net/mlx5e: Remove the false indication of software timestamping support
-Date:   Mon,  7 Jan 2019 13:31:10 +0100
-Message-Id: <20190107104458.322722183@linuxfoundation.org>
+        stable@vger.kernel.org, Xiumei Mu <xmu@redhat.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 044/170] ipv6: frags: Fix bogus skb->sk in reassembled packets
+Date:   Mon,  7 Jan 2019 13:31:11 +0100
+Message-Id: <20190107104458.439410173@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104452.953560660@linuxfoundation.org>
 References: <20190107104452.953560660@linuxfoundation.org>
@@ -66,48 +66,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alaa Hleihel <alaa@mellanox.com>
+From: Herbert Xu <herbert@gondor.apana.org.au>
 
-[ Upstream commit 4765420439e758bfa4808392d18b0a4cb6f06065 ]
+[ Upstream commit d15f5ac8deea936d3adf629421a66a88b42b8a2f ]
 
-mlx5 driver falsely advertises support of software timestamping.
-Fix it by removing the false indication.
+It was reported that IPsec would crash when it encounters an IPv6
+reassembled packet because skb->sk is non-zero and not a valid
+pointer.
 
-Fixes: ef9814deafd0 ("net/mlx5e: Add HW timestamping (TS) support")
-Signed-off-by: Alaa Hleihel <alaa@mellanox.com>
-Reviewed-by: Tariq Toukan <tariqt@mellanox.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+This is because skb->sk is now a union with ip_defrag_offset.
+
+This patch fixes this by resetting skb->sk when exiting from
+the reassembly code.
+
+Reported-by: Xiumei Mu <xmu@redhat.com>
+Fixes: 219badfaade9 ("ipv6: frags: get rid of ip6frag_skb_cb/...")
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c |   11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
+ net/ipv6/reassembly.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c
-@@ -1101,11 +1101,6 @@ int mlx5e_ethtool_get_ts_info(struct mlx
- 			      struct ethtool_ts_info *info)
- {
- 	struct mlx5_core_dev *mdev = priv->mdev;
--	int ret;
--
--	ret = ethtool_op_get_ts_info(priv->netdev, info);
--	if (ret)
--		return ret;
- 
- 	info->phc_index = mlx5_clock_get_ptp_index(mdev);
- 
-@@ -1113,9 +1108,9 @@ int mlx5e_ethtool_get_ts_info(struct mlx
- 	    info->phc_index == -1)
- 		return 0;
- 
--	info->so_timestamping |= SOF_TIMESTAMPING_TX_HARDWARE |
--				 SOF_TIMESTAMPING_RX_HARDWARE |
--				 SOF_TIMESTAMPING_RAW_HARDWARE;
-+	info->so_timestamping = SOF_TIMESTAMPING_TX_HARDWARE |
-+				SOF_TIMESTAMPING_RX_HARDWARE |
-+				SOF_TIMESTAMPING_RAW_HARDWARE;
- 
- 	info->tx_types = BIT(HWTSTAMP_TX_OFF) |
- 			 BIT(HWTSTAMP_TX_ON);
+--- a/net/ipv6/reassembly.c
++++ b/net/ipv6/reassembly.c
+@@ -384,6 +384,7 @@ static int ip6_frag_reasm(struct frag_qu
+ 		if (skb_try_coalesce(head, fp, &headstolen, &delta)) {
+ 			kfree_skb_partial(fp, headstolen);
+ 		} else {
++			fp->sk = NULL;
+ 			if (!skb_shinfo(head)->frag_list)
+ 				skb_shinfo(head)->frag_list = fp;
+ 			head->data_len += fp->len;
 
 
