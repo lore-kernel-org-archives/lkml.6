@@ -2,88 +2,97 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62255C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 11:21:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68C42C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 11:24:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C5032087F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 11:21:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 08BD02087F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 11:24:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="T+ea7hdg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727139AbfAGLVc (ORCPT
+        id S1727066AbfAGLYh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 06:21:32 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:3962 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725550AbfAGLVb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 06:21:31 -0500
-X-UUID: 8b8dea8163384ecb8d76bfe5e81adc3a-20190107
-X-UUID: 8b8dea8163384ecb8d76bfe5e81adc3a-20190107
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
-        (envelope-from <miles.chen@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 471533334; Mon, 07 Jan 2019 19:21:24 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Mon, 7 Jan 2019 19:21:21 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 7 Jan 2019 19:21:22 +0800
-From:   Miles Chen <miles.chen@mediatek.com>
-To:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <wsd_upstream@mediatek.com>,
-        Miles Chen <miles.chen@mediatek.com>
-Subject: [PATCH] arm64: trap illegal translations in __virt_to_phys()
-Date:   Mon, 7 Jan 2019 19:21:20 +0800
-Message-ID: <1546860080-13027-1-git-send-email-miles.chen@mediatek.com>
-X-Mailer: git-send-email 1.9.1
+        Mon, 7 Jan 2019 06:24:37 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:41126 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725550AbfAGLYh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 06:24:37 -0500
+Received: from nazgul.tnic (unknown [78.130.214.198])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 8CDE21EC035B;
+        Mon,  7 Jan 2019 12:24:35 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1546860275;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=IcM5TA0IuUQwbspzD3n7TdBp6UmZoVHuF6MwK3QYyDg=;
+        b=T+ea7hdgmhZ2UCBPTtv+hGsfcAeq7eUR5AS3cdg9xvX45BaJC6Jpx84ZUhhhdfKb8MSvAO
+        Gq0Vu+Uji/65BWERQnBZMUPmb6adQAtr1NRGxNxo0b5qIU5N3Xnj6zg1E22tTPKX2YzYEm
+        G6kAFEW2FQg6mBQjZbGcQjI2XkQiDd4=
+Date:   Mon, 7 Jan 2019 12:24:30 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     "S, Shirish" <Shirish.S@amd.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        "maintainer : X86 ARCHITECTURE" <x86@kernel.org>,
+        Tony Luck <tony.luck@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        "open list : X86 ARCHITECTURE" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/2] x86/mce/amd: apply missing quirks for family 15
+ models
+Message-ID: <20190107112430.GA28223@nazgul.tnic>
+References: <1546857399-2926-1-git-send-email-shirish.s@amd.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-SNTS-SMTP: 234332DA94720DE407A4821BBD08A888B8AD06626A5B9BD0790A841A1B7E05452000:8
-X-MTK:  N
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1546857399-2926-1-git-send-email-shirish.s@amd.com>
+User-Agent: Mutt/1.6.0 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Current __virt_to_phys() only print warning messages for non-linear
-addresses. It's hard to catch all warnings by those messages. So add a
-VIRTUAL_BUG_ON() to trap all non-linear and non-symbol addresses
-(e.g., stack addresses)
+On Mon, Jan 07, 2019 at 10:37:07AM +0000, S, Shirish wrote:
+> This patch series applies to family 15 CPU's of AMD platforms,
+> so as to address a consistent warning of
+>  "[Firmware Bug]: cpu 0, invalid threshold interrupt offset"
+> at every boot and upon completiong of successful S3 cycle,
+> due to a missing quirk, which was not extended to newer models
+> and also not applied in resume path.
+> 
+> Shirish S (2):
+>   x86/mce/amd: Extend "Disable error thresholding bank 4" to more models
+>   x86/mce/amd: Ensure quirks are applied in resume path as well
+> 
+>  arch/x86/kernel/cpu/mce/amd.c  | 34 ++++++++++++++++++++++++++++++++++
+>  arch/x86/kernel/cpu/mce/core.c |  2 +-
+>  2 files changed, 35 insertions(+), 1 deletion(-)
+> 
+> -- 
 
-Tested by pass stack addresses and symbol addresses to __pa(). Result:
-stack addresses: kernel BUG()
-symbol addresses: kernel warning message
+You sent those once three days ago. Why are you sending them again?
+There's no changelog to explain what the difference is from the last
+submission so what's up?
 
-Maybe we should trap all non-linear address translations in the future.
+Also, I'd suggest you have more patience. And while you wait, you can
+take a look at
 
-Signed-off-by: Miles Chen <miles.chen@mediatek.com>
----
- arch/arm64/mm/physaddr.c | 5 +++++
- 1 file changed, 5 insertions(+)
+https://www.kernel.org/doc/html/latest/process/submitting-patches.html
 
-diff --git a/arch/arm64/mm/physaddr.c b/arch/arm64/mm/physaddr.c
-index 67a9ba9eaa96..f6b935dad19c 100644
---- a/arch/arm64/mm/physaddr.c
-+++ b/arch/arm64/mm/physaddr.c
-@@ -14,6 +14,11 @@ phys_addr_t __virt_to_phys(unsigned long x)
- 	      (void *)x,
- 	      (void *)x);
- 
-+	/* trap all non-linear and non-symbol addresses */
-+	VIRTUAL_BUG_ON(!__is_lm_address(x) &&
-+			(x < (unsigned long)KERNEL_START ||
-+			 x > (unsigned long)KERNEL_END));
-+
- 	return __virt_to_phys_nodebug(x);
- }
- EXPORT_SYMBOL(__virt_to_phys);
+to read up on all the modalities when sending patches.
+
+Thx.
+
 -- 
-2.18.0
+Regards/Gruss,
+    Boris.
 
+ECO tip #101: Trim your mails when you reply.
+--
