@@ -4,62 +4,63 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C162CC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:59:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 573A2C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:59:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A68D2147C
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:59:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 261CB206B7
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:59:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546887543;
-	bh=IRcDshHCBJigh2uwl0lmMNB1hCM03tgO+bG9/wyt94Q=;
+	s=default; t=1546887547;
+	bh=BAN0fhTz3ywJQvuPoIUPN6dNDOpQXvY0UmFegPn60ZI=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=yfj0pAma7G7WJ4nF2xxu+mS/BldvdpggRIxgpbC0Nx6vqSSzHNRUYq0SW7xipTH9J
-	 BAv3+m0SOFEq2gZYozRKl79P+e8WcabFs75YXWlOh1MUYBzXTTLcoJKyeRnE2m3e/T
-	 3cLtRUl0k7bJgTIMWe2R/0C6aWvreH/Lice64WEg=
+	b=NBqQSuUd7GcnToNSIoRx0T7jgMODuP81pb47SWu4ksnFVEomwVG2T14bP4y601VuG
+	 Fq0LUCdLKdDe9RRUrmGDx44854ix9/noZlHoNixlyDqYWc0MGJQk3G8nUAM+QDAQPo
+	 TUG2L7zf4YaFx6XyXgmanzYu/HGXP1U7ojA5NGMg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728929AbfAGS7C (ORCPT
+        id S1728898AbfAGS7A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 13:59:02 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42298 "EHLO
+        Mon, 7 Jan 2019 13:59:00 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42066 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727078AbfAGS66 (ORCPT
+        with ESMTP id S1728827AbfAGS6u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 13:58:58 -0500
+        Mon, 7 Jan 2019 13:58:50 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=HRf5kn33r7fEQgiKgrSPHNJfVuLdODB8ZHNDwqgSrRQ=; b=wkDnQwC5kzPw
-        Hsn+WX7Au43JuqHEIBCwud7cvHjRSzjEp7bRtXhg0ngowqnYfcBSa9gmvitlhIumqUV1uCXGfw96w
-        bN/PeQcAK6+LhM20e1Ckk9GEPM9YXx7feCvS1E1h2r1EFTRp8NXoFp0KjrCu22jR7xVrsqKGYBwrn
-        xtsF8=;
+        List-Archive; bh=qOVLzL/MCSmF430/ewdMGwZceCrdimAoegmQHNme8AE=; b=DvI14cUUxzWu
+        PjSEZAQQKghFd6ytWqF/3ALD/DBbNIRTLiM+yBbXUBfhT+VRYqXYtdYWwKdQplzvOkRQGd5pwXS8T
+        NePptbhqksZZ9xmjVUnFA1tcU2L4AP98y4byiAzWtiBBIWe+4rajIG+9vLBkeLt6iVyzz+jeQiZyx
+        xz5DU=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gga6D-0007mg-Px; Mon, 07 Jan 2019 18:58:09 +0000
+        id 1gga6c-0007p3-3j; Mon, 07 Jan 2019 18:58:34 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 69B7D1127492; Mon,  7 Jan 2019 18:58:09 +0000 (GMT)
+        id B1A7D1127491; Mon,  7 Jan 2019 18:58:33 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
 To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 Cc:     Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org,
+        Rob Herring <robh@kernel.org>,
         Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
         Liam Girdwood <lgirdwood@gmail.com>, tiwai@suse.de,
         open list <linux-kernel@vger.kernel.org>,
-        Takashi Iwai <tiwai@suse.com>, John Hsu <KCHSU0@nuvoton.com>,
-        liam.r.girdwood@linux.intel.com, broonie@kernel.org,
-        Colin Ian King <colin.king@canonical.com>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Takashi Iwai <tiwai@suse.com>, liam.r.girdwood@linux.intel.com,
+        broonie@kernel.org, Matthias Kaehlcke <mka@chromium.org>,
+        Jenny TC <jenny.tc@intel.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
         alsa-devel@alsa-project.org
-Subject: Applied "ASoC: nau8824: fix boolean assignment" to the asoc tree
-In-Reply-To:  <20190105020249.8639-16-pierre-louis.bossart@linux.intel.com>
+Subject: Applied "ASoC: dmic: declare trigger function as static" to the asoc tree
+In-Reply-To:  <20190105020249.8639-2-pierre-louis.bossart@linux.intel.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190107185809.69B7D1127492@debutante.sirena.org.uk>
-Date:   Mon,  7 Jan 2019 18:58:09 +0000 (GMT)
+Message-Id: <20190107185833.B1A7D1127491@debutante.sirena.org.uk>
+Date:   Mon,  7 Jan 2019 18:58:33 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -67,7 +68,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: nau8824: fix boolean assignment
+   ASoC: dmic: declare trigger function as static
 
 has been applied to the asoc tree at
 
@@ -92,33 +93,34 @@ to this mail.
 Thanks,
 Mark
 
-From 290da7a7e349566f0e1541b14f25b722f58f236b Mon Sep 17 00:00:00 2001
+From 902d82222270c957d12fa2e9856484d600a88d20 Mon Sep 17 00:00:00 2001
 From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Date: Fri, 4 Jan 2019 20:02:43 -0600
-Subject: [PATCH] ASoC: nau8824: fix boolean assignment
+Date: Fri, 4 Jan 2019 20:02:29 -0600
+Subject: [PATCH] ASoC: dmic: declare trigger function as static
 
-Reported by Coccinelle:
-nau8824.c:810:6-12: ERROR: Assignment of bool to non-0/1 constant
+No reason why this is global, fix warnings with W=1
 
 Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/nau8824.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/codecs/dmic.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/codecs/nau8824.c b/sound/soc/codecs/nau8824.c
-index 468d5143e2c4..87ed3dc496dc 100644
---- a/sound/soc/codecs/nau8824.c
-+++ b/sound/soc/codecs/nau8824.c
-@@ -807,7 +807,7 @@ static const struct snd_soc_dapm_route nau8824_dapm_routes[] = {
- static bool nau8824_is_jack_inserted(struct nau8824 *nau8824)
- {
- 	struct snd_soc_jack *jack = nau8824->jack;
--	bool insert = FALSE;
-+	bool insert = false;
+diff --git a/sound/soc/codecs/dmic.c b/sound/soc/codecs/dmic.c
+index da921da50ef0..de041369e5a7 100644
+--- a/sound/soc/codecs/dmic.c
++++ b/sound/soc/codecs/dmic.c
+@@ -44,8 +44,8 @@ struct dmic {
+ 	int modeswitch_delay;
+ };
  
- 	if (nau8824->irq && jack)
- 		insert = jack->status & SND_JACK_HEADPHONE;
+-int dmic_daiops_trigger(struct snd_pcm_substream *substream,
+-		int cmd, struct snd_soc_dai *dai)
++static int dmic_daiops_trigger(struct snd_pcm_substream *substream,
++			       int cmd, struct snd_soc_dai *dai)
+ {
+ 	struct snd_soc_component *component = dai->component;
+ 	struct dmic *dmic = snd_soc_component_get_drvdata(component);
 -- 
 2.20.1
 
