@@ -2,138 +2,88 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82B37C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 14:35:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 109D5C43612
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 14:36:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52DF22087F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 14:35:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3A56218A3
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 14:36:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728396AbfAGOfN (ORCPT
+        id S1728539AbfAGOgJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 09:35:13 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:44384 "EHLO mx1.redhat.com"
+        Mon, 7 Jan 2019 09:36:09 -0500
+Received: from gloria.sntech.de ([185.11.138.130]:34932 "EHLO gloria.sntech.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727665AbfAGOfN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 09:35:13 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 963C7C0733EC;
-        Mon,  7 Jan 2019 14:35:11 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-223.bos.redhat.com [10.18.17.223])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 83BB31054FD5;
-        Mon,  7 Jan 2019 14:35:09 +0000 (UTC)
-Subject: Re: [RFC] locking/rwsem: Avoid issuing wakeup before setting the
- reader waiter to nil
-To:     peterz@infradead.org
-Cc:     Yongji Xie <elohimes@gmail.com>, dave@stgolabs.net,
-        mingo@redhat.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, Xie Yongji <xieyongji@baidu.com>,
-        zhangyu31@baidu.com, liuqi16@baidu.com, yuanlinsi01@baidu.com,
-        nixun@baidu.com, lilin24@baidu.com,
-        andrea.parri@amarulasolutions.com
-References: <5598cd71-c3c8-d6ef-eb30-777cf901a2ef@redhat.com>
- <20181129160627.GU2131@hirez.programming.kicks-ass.net>
- <8cc45695-b325-a219-8b46-d5da6ddfdd63@redhat.com>
- <20181129172700.GA11632@hirez.programming.kicks-ass.net>
- <20181129180828.GA11650@hirez.programming.kicks-ass.net>
- <729ceddb-dd9a-ec2a-f74e-03fa4d7e65e8@redhat.com>
- <20181129213017.v3eljor54lfpoug2@linux-r8p5>
- <20181129213421.wwvhsjql3m3lvtv4@linux-r8p5>
- <20181129221714.GF11632@hirez.programming.kicks-ass.net>
- <CAONzpcZ_kQ0cwit+d5uL=v2SqwP=Fo0WSihdCr23uKCAFAhTbQ@mail.gmail.com>
- <20181217113718.GB4900@worktop.programming.kicks-ass.net>
- <CAONzpcbvyvXdUEL6Mc8_kN_Z_=jYiRCzDScSWH07+MOtbgxdKQ@mail.gmail.com>
-From:   Waiman Long <longman@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- weim8xU=
-Organization: Red Hat
-Message-ID: <f85780cd-6d90-6cf3-2474-4f9998f5cbd5@redhat.com>
-Date:   Mon, 7 Jan 2019 09:35:09 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1727854AbfAGOgI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 09:36:08 -0500
+Received: from wf0848.dip.tu-dresden.de ([141.76.183.80] helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1ggW0R-0003eu-5K; Mon, 07 Jan 2019 15:35:55 +0100
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     Kishon Vijay Abraham I <kishon@ti.com>
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Alan Douglas <adouglas@cadence.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>,
+        Jia-Ju Bai <baijiaju1990@gmail.com>,
+        linux-omap@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 00/15] PCI: endpoint: Cleanup EPC features
+Date:   Mon, 07 Jan 2019 15:35:54 +0100
+Message-ID: <1936135.agpnLP3rXd@phil>
+In-Reply-To: <20190107064148.10152-1-kishon@ti.com>
+References: <20190107064148.10152-1-kishon@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <CAONzpcbvyvXdUEL6Mc8_kN_Z_=jYiRCzDScSWH07+MOtbgxdKQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Mon, 07 Jan 2019 14:35:12 +0000 (UTC)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/17/2018 08:12 AM, Yongji Xie wrote:
-> On Mon, 17 Dec 2018 at 19:37, Peter Zijlstra <peterz@infradead.org> wrote:
->> On Mon, Dec 10, 2018 at 11:12:52PM +0800, Yongji Xie wrote:
->>> Hi Peter,
->>>
->>> Please let me know If there is any progress on this issue. Thank you!
->> Right, sorry, my brain was filled with snot and didn't want to make
->> sense of things.
->>
->> I've put some patches here:
->>
->>   git://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git locking/core
->>
->> Could you have a look?
-> That looks good to me. Thank you!
->
-> Thanks,
-> Yongji
+Am Montag, 7. Januar 2019, 07:41:33 CET schrieb Kishon Vijay Abraham I:
+> Hi Lorenzo,
+> 
+> The Endpoint controller driver uses features member in 'struct pci_epc'
+> to advertise the list of supported features to the endpoint function
+> driver.
+> 
+> There are a few shortcomings with this approach.
+>   *) Certain endpoint controllers support fixed size BAR (e.g. TI's
+>      AM654 uses Designware configuration with fixed size BAR). The
+>      size of each BARs cannot be passed to the endpoint function
+>      driver.
+>   *) Too many macros for handling EPC features.
+>      (EPC_FEATURE_NO_LINKUP_NOTIFIER, EPC_FEATURE_BAR_MASK,
+>       EPC_FEATURE_MSIX_AVAILABLE, EPC_FEATURE_SET_BAR,
+>       EPC_FEATURE_GET_BAR)
+>   *) Endpoint controllers are directly modifying struct pci_epc
+>      members. (I have plans to move struct pci_epc to
+>      drivers/pci/endpoint so that pci_epc members are referenced
+>      only by endpoint core).
+> 
+> To overcome the above shortcomings, introduced pci_epc_get_features()
+> API, pci_epc_features structure and a ->get_features() callback.
+> 
+> Also added a patch to set BAR flags in pci_epf_alloc_space and
+> remove it from pci-epf-test function driver.
+> 
+> Tested on TI's DRA7xx platform.
 
-Peter,
+While I don't have that much PCI experience and hence cannot judge
+this cleanup as a whole, I can at least say, that my Rockchip rk3399
+still does find its PCIE-connected wifi card, so this series on rk3399
 
-Are you planning to move the patch over to tip as the merge window has
-just closed?
+Tested-by: Heiko Stuebner <heiko@sntech.de>
 
-Cheers,
-Longman
+
 
