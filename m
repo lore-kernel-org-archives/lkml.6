@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72541C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:05:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1DFDC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:05:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39A752089F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:05:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 70B862089F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:05:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546866318;
-	bh=LM3y4/RZUVi5YB9ygjkpSbJXWL9V1DctC32beVMlU3M=;
+	s=default; t=1546866323;
+	bh=zFRRhkLQmTQe0SxpQjl8SECTQkTaelCdvY/6mzqUnfQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=rDg3gEHCUCbyE9b2TpR0wGTyvz1xGV68m6mzOv4phHEpcyV9JIKp+79xWmUBRCWAn
-	 a63iWwoIvgoXz5DOluwW07QWqqoUBtcliOEsKf8Q4PpXIo6L9n2ZgEaiJsuUm8teph
-	 PpA10Vg/maxFicyGHKiV/diIK38N0EC3lWGFHZYs=
+	b=D5f/c5Vp5a0BR5c+QFMelz1Ec8qUug/uosJ2aSzgNEHUMRhKK42Ri4c5JrR5UlcCB
+	 LySxZyIJDnFXsjgTh6DMtau4Z+ZMxfWuBNW3ZESmSY6Fd0/DhZ1TUuDSS2Aqb+Hefp
+	 alN7X3NAzQC1WHLN55pMgW/5+Ss4yE7VNVlJhGLs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731457AbfAGNFR (ORCPT
+        id S1731469AbfAGNFW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:05:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52972 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:05:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53096 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729984AbfAGNFN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:05:13 -0500
+        id S1729264AbfAGNFU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:05:20 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2895B2089F;
-        Mon,  7 Jan 2019 13:05:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4DEB22183F;
+        Mon,  7 Jan 2019 13:05:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546866312;
-        bh=LM3y4/RZUVi5YB9ygjkpSbJXWL9V1DctC32beVMlU3M=;
+        s=default; t=1546866319;
+        bh=zFRRhkLQmTQe0SxpQjl8SECTQkTaelCdvY/6mzqUnfQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wevFT1YvVe6XQh1kuCC9nRItLmFpGwSN1Wg8bnEmSu3YPTHD29I8fxOMy7KVpvyCM
-         v1Lfbrequ9kmK08pZTwT6WHCYqa8huODxV+7eJuELVycTjV6irGp2o44iWdxbtSfP/
-         bZqvRliOUQC4ty119b7amp0LQWk/jcyurjXx3EgE=
+        b=rG0DMP/DEJIcxcJ4DGlhGvTdKbaA005L47HqRodhSMSDRRzWbw/HTyi/8+wp0adNP
+         fbGTLepwX/0thEgPSkfrhvR5MYJtWgEs4o5o+77kgTaPQ6XIeeXnmiY8Hwjl8BffN3
+         W3OV3NfM0o+LsJ7U5oyYIZc5t7zgBvlyficdhUjc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, syzbot <syzkaller@googlegroups.com>,
+        stable@vger.kernel.org, Ido Schimmel <idosch@idosch.org>,
         Willem de Bruijn <willemb@google.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 16/71] packet: validate address length
-Date:   Mon,  7 Jan 2019 13:32:45 +0100
-Message-Id: <20190107105332.302209202@linuxfoundation.org>
+Subject: [PATCH 4.9 17/71] packet: validate address length if non-zero
+Date:   Mon,  7 Jan 2019 13:32:46 +0100
+Message-Id: <20190107105332.602797054@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107105330.280153213@linuxfoundation.org>
 References: <20190107105330.280153213@linuxfoundation.org>
@@ -68,38 +68,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Willem de Bruijn <willemb@google.com>
 
-[ Upstream commit 99137b7888f4058087895d035d81c6b2d31015c5 ]
+[ Upstream commit 6b8d95f1795c42161dc0984b6863e95d6acf24ed ]
 
-Packet sockets with SOCK_DGRAM may pass an address for use in
-dev_hard_header. Ensure that it is of sufficient length.
+Validate packet socket address length if a length is given. Zero
+length is equivalent to not setting an address.
 
-Reported-by: syzbot <syzkaller@googlegroups.com>
+Fixes: 99137b7888f4 ("packet: validate address length")
+Reported-by: Ido Schimmel <idosch@idosch.org>
 Signed-off-by: Willem de Bruijn <willemb@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/packet/af_packet.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ net/packet/af_packet.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 --- a/net/packet/af_packet.c
 +++ b/net/packet/af_packet.c
-@@ -2662,6 +2662,8 @@ static int tpacket_snd(struct packet_soc
+@@ -2660,7 +2660,7 @@ static int tpacket_snd(struct packet_soc
+ 						sll_addr)))
+ 			goto out;
  		proto	= saddr->sll_protocol;
- 		addr	= saddr->sll_addr;
+-		addr	= saddr->sll_addr;
++		addr	= saddr->sll_halen ? saddr->sll_addr : NULL;
  		dev = dev_get_by_index(sock_net(&po->sk), saddr->sll_ifindex);
-+		if (addr && dev && saddr->sll_halen < dev->addr_len)
-+			goto out;
- 	}
- 
- 	err = -ENXIO;
-@@ -2859,6 +2861,8 @@ static int packet_snd(struct socket *soc
+ 		if (addr && dev && saddr->sll_halen < dev->addr_len)
+ 			goto out;
+@@ -2859,7 +2859,7 @@ static int packet_snd(struct socket *soc
+ 		if (msg->msg_namelen < (saddr->sll_halen + offsetof(struct sockaddr_ll, sll_addr)))
+ 			goto out;
  		proto	= saddr->sll_protocol;
- 		addr	= saddr->sll_addr;
+-		addr	= saddr->sll_addr;
++		addr	= saddr->sll_halen ? saddr->sll_addr : NULL;
  		dev = dev_get_by_index(sock_net(sk), saddr->sll_ifindex);
-+		if (addr && dev && saddr->sll_halen < dev->addr_len)
-+			goto out;
- 	}
- 
- 	err = -ENXIO;
+ 		if (addr && dev && saddr->sll_halen < dev->addr_len)
+ 			goto out;
 
 
