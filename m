@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4A9BC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:56:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFE92C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:56:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 967F320665
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:56:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 96AF7206BB
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:56:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546865775;
-	bh=bybX8AhjXKTaaaleifGWXJjuo6xJs6WcMJpuuEUED/0=;
+	s=default; t=1546865780;
+	bh=0b4A0njjRLn09zFf8k99TSzNn4RmJnEe+3sqZ7oOpAo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Kxmic9o5HVPo8nR3nR5H4fXc4fQcCmFOT22gfPLxaVj+uXbGs/xYSx8EgifGszNQk
-	 JK3c6dUEyVPuPWm6X7IBsa52l3RI+CWrP96Qww6bEdLWnOJywMzvCBa6/Yd4K45QrY
-	 DxfyYM6UGdq7ZRNfdffE96TriSaFGW+3pBVxVgps=
+	b=FRC7+Tz9N92K5tUr5BZujEZNpF+91+RkQQGxA4K4Eio4N1d5Q6o08FM9TlE+MjDW6
+	 0CF/sGjiNd+43nayzbkEcuSMV4eQ0M/BXbOvHbZ7iRkUbS24TclFjeAwyTJvw0VrMC
+	 L2cTSOk08uLaDutxtQTl+zVSJb9cHgbak26e9fxw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729861AbfAGM4N (ORCPT
+        id S1729876AbfAGM4T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:56:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43216 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:56:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44318 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729709AbfAGMyN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:54:13 -0500
+        id S1729709AbfAGM4P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:56:15 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C19DB206BB;
-        Mon,  7 Jan 2019 12:54:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E6BD320651;
+        Mon,  7 Jan 2019 12:56:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865653;
-        bh=bybX8AhjXKTaaaleifGWXJjuo6xJs6WcMJpuuEUED/0=;
+        s=default; t=1546865775;
+        bh=0b4A0njjRLn09zFf8k99TSzNn4RmJnEe+3sqZ7oOpAo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vcyPGolDPjCu7FlahkeYwqfqRZuXT5X6l/j0qVYlFmAyAuT3YhSRJhvRuM3e5vwSI
-         Qj2hTezHbk1FA1xEl9gdTfH5j8NEGgtLVdaAi4S0CHpFcQjqa2ygEEmyffEu0ji5Np
-         KtA1JCyQbZTkL3RDglQohFOYr1bTuABLLX6Qn2RM=
+        b=KWg3U4+MNdldPOoxr3YTrB8lsmkmnqjnxZD4w5Y4v092S/1mtHjrgbjmO3SKILOfO
+         jwONCwB0T6Uf0nOtM9J6wVQaNDPk2PLCKepZZ5UrjS1a6tP9OBd+I0Zt+4gRpXZ2qo
+         jr/oYuJ5fCs1iyReB2ufClO0xPl0tD8NgQkztPdk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
-        =?UTF-8?q?ruippan=20 ?= <ruippan@tencent.com>,
-        stable@kernel.org
-Subject: [PATCH 4.19 110/170] ext4: fix EXT4_IOC_GROUP_ADD ioctl
-Date:   Mon,  7 Jan 2019 13:32:17 +0100
-Message-Id: <20190107104505.923672383@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.19 122/170] crypto: testmgr - add AES-CFB tests
+Date:   Mon,  7 Jan 2019 13:32:29 +0100
+Message-Id: <20190107104507.352747223@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104452.953560660@linuxfoundation.org>
 References: <20190107104452.953560660@linuxfoundation.org>
@@ -66,37 +66,145 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: ruippan (潘睿) <ruippan@tencent.com>
+From: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
 
-commit e647e29196b7f802f8242c39ecb7cc937f5ef217 upstream.
+commit 7da66670775d201f633577f5b15a4bbeebaaa2b0 upstream.
 
-Commit e2b911c53584 ("ext4: clean up feature test macros with
-predicate functions") broke the EXT4_IOC_GROUP_ADD ioctl.  This was
-not noticed since only very old versions of resize2fs (before
-e2fsprogs 1.42) use this ioctl.  However, using a new kernel with an
-enterprise Linux userspace will cause attempts to use online resize to
-fail with "No reserved GDT blocks".
+Add AES128/192/256-CFB testvectors from NIST SP800-38A.
 
-Fixes: e2b911c53584 ("ext4: clean up feature test macros with predicate...")
-Cc: stable@kernel.org # v4.4
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Signed-off-by: ruippan (潘睿) <ruippan@tencent.com>
+Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/resize.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ crypto/tcrypt.c  |    5 +++
+ crypto/testmgr.c |    7 +++++
+ crypto/testmgr.h |   76 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 88 insertions(+)
 
---- a/fs/ext4/resize.c
-+++ b/fs/ext4/resize.c
-@@ -1631,7 +1631,7 @@ int ext4_group_add(struct super_block *s
- 	}
+--- a/crypto/tcrypt.c
++++ b/crypto/tcrypt.c
+@@ -1736,6 +1736,7 @@ static int do_test(const char *alg, u32
+ 		ret += tcrypt_test("xts(aes)");
+ 		ret += tcrypt_test("ctr(aes)");
+ 		ret += tcrypt_test("rfc3686(ctr(aes))");
++		ret += tcrypt_test("cfb(aes)");
+ 		break;
  
- 	if (reserved_gdb || gdb_off == 0) {
--		if (ext4_has_feature_resize_inode(sb) ||
-+		if (!ext4_has_feature_resize_inode(sb) ||
- 		    !le16_to_cpu(es->s_reserved_gdt_blocks)) {
- 			ext4_warning(sb,
- 				     "No reserved GDT blocks, can't resize");
+ 	case 11:
+@@ -2062,6 +2063,10 @@ static int do_test(const char *alg, u32
+ 				speed_template_16_24_32);
+ 		test_cipher_speed("ctr(aes)", DECRYPT, sec, NULL, 0,
+ 				speed_template_16_24_32);
++		test_cipher_speed("cfb(aes)", ENCRYPT, sec, NULL, 0,
++				speed_template_16_24_32);
++		test_cipher_speed("cfb(aes)", DECRYPT, sec, NULL, 0,
++				speed_template_16_24_32);
+ 		break;
+ 
+ 	case 201:
+--- a/crypto/testmgr.c
++++ b/crypto/testmgr.c
+@@ -2685,6 +2685,13 @@ static const struct alg_test_desc alg_te
+ 			}
+ 		}
+ 	}, {
++		.alg = "cfb(aes)",
++		.test = alg_test_skcipher,
++		.fips_allowed = 1,
++		.suite = {
++			.cipher = __VECS(aes_cfb_tv_template)
++		},
++	}, {
+ 		.alg = "chacha20",
+ 		.test = alg_test_skcipher,
+ 		.suite = {
+--- a/crypto/testmgr.h
++++ b/crypto/testmgr.h
+@@ -11343,6 +11343,82 @@ static const struct cipher_testvec aes_c
+ 	},
+ };
+ 
++static const struct cipher_testvec aes_cfb_tv_template[] = {
++	{ /* From NIST SP800-38A */
++		.key	= "\x2b\x7e\x15\x16\x28\xae\xd2\xa6"
++			  "\xab\xf7\x15\x88\x09\xcf\x4f\x3c",
++		.klen	= 16,
++		.iv	= "\x00\x01\x02\x03\x04\x05\x06\x07"
++			  "\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f",
++		.ptext	= "\x6b\xc1\xbe\xe2\x2e\x40\x9f\x96"
++			  "\xe9\x3d\x7e\x11\x73\x93\x17\x2a"
++			  "\xae\x2d\x8a\x57\x1e\x03\xac\x9c"
++			  "\x9e\xb7\x6f\xac\x45\xaf\x8e\x51"
++			  "\x30\xc8\x1c\x46\xa3\x5c\xe4\x11"
++			  "\xe5\xfb\xc1\x19\x1a\x0a\x52\xef"
++			  "\xf6\x9f\x24\x45\xdf\x4f\x9b\x17"
++			  "\xad\x2b\x41\x7b\xe6\x6c\x37\x10",
++		.ctext	= "\x3b\x3f\xd9\x2e\xb7\x2d\xad\x20"
++			  "\x33\x34\x49\xf8\xe8\x3c\xfb\x4a"
++			  "\xc8\xa6\x45\x37\xa0\xb3\xa9\x3f"
++			  "\xcd\xe3\xcd\xad\x9f\x1c\xe5\x8b"
++			  "\x26\x75\x1f\x67\xa3\xcb\xb1\x40"
++			  "\xb1\x80\x8c\xf1\x87\xa4\xf4\xdf"
++			  "\xc0\x4b\x05\x35\x7c\x5d\x1c\x0e"
++			  "\xea\xc4\xc6\x6f\x9f\xf7\xf2\xe6",
++		.len	= 64,
++	}, {
++		.key	= "\x8e\x73\xb0\xf7\xda\x0e\x64\x52"
++			  "\xc8\x10\xf3\x2b\x80\x90\x79\xe5"
++			  "\x62\xf8\xea\xd2\x52\x2c\x6b\x7b",
++		.klen	= 24,
++		.iv	= "\x00\x01\x02\x03\x04\x05\x06\x07"
++			  "\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f",
++		.ptext	= "\x6b\xc1\xbe\xe2\x2e\x40\x9f\x96"
++			  "\xe9\x3d\x7e\x11\x73\x93\x17\x2a"
++			  "\xae\x2d\x8a\x57\x1e\x03\xac\x9c"
++			  "\x9e\xb7\x6f\xac\x45\xaf\x8e\x51"
++			  "\x30\xc8\x1c\x46\xa3\x5c\xe4\x11"
++			  "\xe5\xfb\xc1\x19\x1a\x0a\x52\xef"
++			  "\xf6\x9f\x24\x45\xdf\x4f\x9b\x17"
++			  "\xad\x2b\x41\x7b\xe6\x6c\x37\x10",
++		.ctext	= "\xcd\xc8\x0d\x6f\xdd\xf1\x8c\xab"
++			  "\x34\xc2\x59\x09\xc9\x9a\x41\x74"
++			  "\x67\xce\x7f\x7f\x81\x17\x36\x21"
++			  "\x96\x1a\x2b\x70\x17\x1d\x3d\x7a"
++			  "\x2e\x1e\x8a\x1d\xd5\x9b\x88\xb1"
++			  "\xc8\xe6\x0f\xed\x1e\xfa\xc4\xc9"
++			  "\xc0\x5f\x9f\x9c\xa9\x83\x4f\xa0"
++			  "\x42\xae\x8f\xba\x58\x4b\x09\xff",
++		.len	= 64,
++	}, {
++		.key	= "\x60\x3d\xeb\x10\x15\xca\x71\xbe"
++			  "\x2b\x73\xae\xf0\x85\x7d\x77\x81"
++			  "\x1f\x35\x2c\x07\x3b\x61\x08\xd7"
++			  "\x2d\x98\x10\xa3\x09\x14\xdf\xf4",
++		.klen	= 32,
++		.iv	= "\x00\x01\x02\x03\x04\x05\x06\x07"
++			  "\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f",
++		.ptext	= "\x6b\xc1\xbe\xe2\x2e\x40\x9f\x96"
++			  "\xe9\x3d\x7e\x11\x73\x93\x17\x2a"
++			  "\xae\x2d\x8a\x57\x1e\x03\xac\x9c"
++			  "\x9e\xb7\x6f\xac\x45\xaf\x8e\x51"
++			  "\x30\xc8\x1c\x46\xa3\x5c\xe4\x11"
++			  "\xe5\xfb\xc1\x19\x1a\x0a\x52\xef"
++			  "\xf6\x9f\x24\x45\xdf\x4f\x9b\x17"
++			  "\xad\x2b\x41\x7b\xe6\x6c\x37\x10",
++		.ctext	= "\xdc\x7e\x84\xbf\xda\x79\x16\x4b"
++			  "\x7e\xcd\x84\x86\x98\x5d\x38\x60"
++			  "\x39\xff\xed\x14\x3b\x28\xb1\xc8"
++			  "\x32\x11\x3c\x63\x31\xe5\x40\x7b"
++			  "\xdf\x10\x13\x24\x15\xe5\x4b\x92"
++			  "\xa1\x3e\xd0\xa8\x26\x7a\xe2\xf9"
++			  "\x75\xa3\x85\x74\x1a\xb9\xce\xf8"
++			  "\x20\x31\x62\x3d\x55\xb1\xe4\x71",
++		.len	= 64,
++	},
++};
++
+ static const struct aead_testvec hmac_md5_ecb_cipher_null_enc_tv_template[] = {
+ 	{ /* Input data from RFC 2410 Case 1 */
+ #ifdef __LITTLE_ENDIAN
 
 
