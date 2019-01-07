@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20747C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:35:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 711E3C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:35:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5FC92173C
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:35:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 416772173C
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:35:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546864517;
-	bh=yp0WnHn+TY+ovUJ6sj/Mv/hWGhNnwMbJV+DvhNwt2qQ=;
+	s=default; t=1546864520;
+	bh=FTvbUirvDsDIz2hvqX6aZinOBj+wJrWfwj+zW384bG0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=EyREY66npA+ROZ57YPlHGdFMKZoWLAX3wDAf4AzAEh3+cMUCTm6lH2HJdb8B5ApsC
-	 ydaa0I9xiSdwrOeznYBJHeZf5qTiH6nsMRg7VTygeST+kIwJa2W1syMvEzdiWS/jCI
-	 xLXKWm+VKWzm1EQWuKvncxgNmK94i0NHB2OGp6AQ=
+	b=S+HOq/FHKTVcuXjMHRmB5IYTI/PYs/+Prm/1r1YMkHNVXQ86Zpy8BPw0GDM+Dy7Q6
+	 8p96yBiZUg0MEOqQxXhJYL87YuLVk/BMYCF0NHImdiTwOEsO4TJtOH2/MNPsNNmn/D
+	 yoJF+dwLIAqPJrb4iXHgT/laFCHAzfWkwPrEOFR8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726994AbfAGMfQ (ORCPT
+        id S1727498AbfAGMfS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:35:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48668 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:35:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48786 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727467AbfAGMfN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:35:13 -0500
+        id S1727483AbfAGMfQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:35:16 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1F472206BB;
-        Mon,  7 Jan 2019 12:35:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EA81F206BB;
+        Mon,  7 Jan 2019 12:35:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546864512;
-        bh=yp0WnHn+TY+ovUJ6sj/Mv/hWGhNnwMbJV+DvhNwt2qQ=;
+        s=default; t=1546864515;
+        bh=FTvbUirvDsDIz2hvqX6aZinOBj+wJrWfwj+zW384bG0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JR2LeqlvAZhj95U5dvJnilFYKorEWe+J0YJDLg9fCw484TOzSnPiyJ0lXmRZ50SzQ
-         WxU+5e/vQQRlQUK8uPbLa6mS0w/ivOoRIDVI7b3bSnDJmoiSJzIE24/9Ykkj5felxJ
-         tjgx8rRpy/aXmqDqtl0UfNLv9BkAZb2e5OE0hw8M=
+        b=y1mUDGicrgXU6I3EQsrvbBchj1q3V76K5WmPimUXYmCGTsmO2LFPfkzr01Dj1wy0g
+         SHWSi4ohTf+Bo1sD2KYH+SKMfUd9dTflgcPPnDIPUmGvW0JalLNHIyzKOUf869Uf3g
+         g8/c/hzQSQ4VIzlNG3x5Vumxhg4pqmoRBTlM5ANU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Drake <drake@endlessm.com>,
-        Jian-Hong Pan <jian-hong@endlessm.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.20 036/145] ALSA: hda/realtek: Enable the headset mic auto detection for ASUS laptops
-Date:   Mon,  7 Jan 2019 13:31:13 +0100
-Message-Id: <20190107104442.037221880@linuxfoundation.org>
+        stable@vger.kernel.org, Mohan Kumar <mkumard@nvidia.com>,
+        Dara Ramesh <dramesh@nvidia.com>,
+        Sameer Pujar <spujar@nvidia.com>, Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.20 037/145] ALSA: hda/tegra: clear pending irq handlers
+Date:   Mon,  7 Jan 2019 13:31:14 +0100
+Message-Id: <20190107104442.167120233@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104437.308206189@linuxfoundation.org>
 References: <20190107104437.308206189@linuxfoundation.org>
@@ -66,35 +66,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jian-Hong Pan <jian-hong@endlessm.com>
+From: Sameer Pujar <spujar@nvidia.com>
 
-commit 82b01149ec94d746867d7f9156c44d775d4d2d67 upstream.
+commit 63d2a9ec310d8bcc955574220d4631aa55c1a80c upstream.
 
-The headset mic of ASUS laptops like UX533FD, UX433FN and UX333FA, whose
-CODEC is Realtek ALC294 has jack auto detection feature. This patch
-enables the feature.
+Even after disabling interrupts on the module, it could be possible
+that irq handlers are still running. System hang is seen during
+suspend path. It was found that, there were pending writes on the
+HDA bus and clock was disabled by that time.
 
-Fixes: 4e051106730d ("ALSA: hda/realtek: Enable audio jacks of ASUS UX533FD with ALC294")
-Signed-off-by: Daniel Drake <drake@endlessm.com>
-Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
+Above mentioned issue is fixed by clearing any pending irq handlers
+before disabling clocks and returning from hda suspend.
+
+Suggested-by: Mohan Kumar <mkumard@nvidia.com>
+Suggested-by: Dara Ramesh <dramesh@nvidia.com>
+Signed-off-by: Sameer Pujar <spujar@nvidia.com>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_realtek.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/pci/hda/hda_tegra.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -6424,7 +6424,7 @@ static const struct hda_fixup alc269_fix
- 	[ALC294_FIXUP_ASUS_HEADSET_MIC] = {
- 		.type = HDA_FIXUP_PINS,
- 		.v.pins = (const struct hda_pintbl[]) {
--			{ 0x19, 0x01a1113c }, /* use as headset mic, without its own jack detect */
-+			{ 0x19, 0x01a1103c }, /* use as headset mic */
- 			{ }
- 		},
- 		.chained = true,
+--- a/sound/pci/hda/hda_tegra.c
++++ b/sound/pci/hda/hda_tegra.c
+@@ -233,10 +233,12 @@ static int hda_tegra_suspend(struct devi
+ 	struct snd_card *card = dev_get_drvdata(dev);
+ 	struct azx *chip = card->private_data;
+ 	struct hda_tegra *hda = container_of(chip, struct hda_tegra, chip);
++	struct hdac_bus *bus = azx_bus(chip);
+ 
+ 	snd_power_change_state(card, SNDRV_CTL_POWER_D3hot);
+ 
+ 	azx_stop_chip(chip);
++	synchronize_irq(bus->irq);
+ 	azx_enter_link_reset(chip);
+ 	hda_tegra_disable_clocks(hda);
+ 
 
 
