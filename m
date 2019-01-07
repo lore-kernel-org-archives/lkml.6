@@ -2,162 +2,123 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86902C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 16:20:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EEA8C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 16:22:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BD852147C
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 16:20:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 49BCA218A3
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 16:22:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eV+GpH4A"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="Ln75HulD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730063AbfAGQUk (ORCPT
+        id S1730085AbfAGQWC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 11:20:40 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:44188 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726864AbfAGQUj (ORCPT
+        Mon, 7 Jan 2019 11:22:02 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:44300 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727592AbfAGQWC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 11:20:39 -0500
-Received: by mail-wr1-f66.google.com with SMTP id z5so993266wrt.11;
-        Mon, 07 Jan 2019 08:20:37 -0800 (PST)
+        Mon, 7 Jan 2019 11:22:02 -0500
+Received: by mail-wr1-f68.google.com with SMTP id z5so998104wrt.11
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 08:22:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:openpgp:autocrypt:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=wo6kvzYCEB9x6sNLpbzEiDdvddMlVBTQkNzc4peqcCQ=;
-        b=eV+GpH4AQ6+7T7LIwNOOOejnJmtqZM2yXT2/VG308IJZHjjJWS3N9gcP2nHKtkdKM/
-         JSHGL1niPKpht2EkJPG0TH/ZEyjxwZOOxHQZipQC4OkRjBRRecfDTw4YBB1LwHoXFC9v
-         tlQODf899mTtivp7XmyjMbe28JPPTbJdZqkufAuDIxH0pbKvIfPCyG54kRacioV/ZCER
-         OAScVNmXQW7hsXbXDhUsZHGvOibmdboZ/nz2xngABk4O5ZdLPs/ivMrBJql+rEHsT24D
-         piOxUPf3ysxjycsEaKrpbN++XCo7/zdlGe4l+GI8qh4/k7k7sFCDyGb6M1UMqBpqMyGt
-         wg4A==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=references:user-agent:from:to:cc:subject:in-reply-to:date
+         :message-id:mime-version;
+        bh=2cCUr7PlaXmiRjtgfpz3Nae1G4BEEyhXg8rSKqZZ88E=;
+        b=Ln75HulD8kMo5118jQgIXCZQlJUcI3zzOfGV84h9A+YsQGyAuRom1MI3NByIeZOEbx
+         I8CYyid/j/wWWwAlfA7uGvHTXdmzU/AZPcljWcOSJj88jTak20ZGXSFwqS7CCf2fIJpl
+         IjXL74DmjHKYgfuffzbNbk3mFjArmI8lpYLF5G3KHMiJLqyjCWqChh1BMyR/6ioqQNJm
+         H1nT5DZZC7dyPQh5PUioBLtOOocZvDk634WZjHOm+5m1XTnQPXl4lqrRzsR3LX4++jGA
+         EXTHsdOU8V/uswf4btvMnxZrNjoUBUHEUd/oDaGunuQ9Rjs61VUWC8k4lcUxdMtxeA+d
+         a7Tg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:openpgp
-         :autocrypt:message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=wo6kvzYCEB9x6sNLpbzEiDdvddMlVBTQkNzc4peqcCQ=;
-        b=ntNkfam2EYhk1ZMuI87ixZLr342Jnh213ICwizeTsWw5KFKbnjIzFDSoV+eBq3MTI1
-         vCd+jaXA0XzIlKKt8futLOQ6ilf3om0r1bB6knHJUh9oszQBWQ+2DtAC2t6Xz9yXx2nG
-         NRdnFKCKYEwiNVU0r0oFFR7Mbr+MdoCpG7Fz+w3QBARoE94gsd2qG3K8Dc+v0tTfRbUM
-         8uuK2dWDYtYiF9mvQB9eOOFMGa/v8mN9/E+NG8uhEb3jTK1paVOTHDa6J9ZfAg77M0ya
-         FwPoiE4PqYR8pA8XNuMRzShei2vW1o6dLGFxa7QCCrXfVE02GUnYwgLq1hDy3LvzyiEB
-         +aEw==
-X-Gm-Message-State: AJcUukfBXLZfOZvKg90owJr9Cc4iuP9Elc0Mr/5aQ2mHRUyMJeNzusYP
-        6/bWsVAuCgw+ihIOrXDDUEw=
-X-Google-Smtp-Source: ALg8bN75whlY2X8B+OnId7dxa6Gwo2IHtNNBq6DMkLET6wv0X8qN6sDjd1i2QO6EG+oSM13RIXDDEg==
-X-Received: by 2002:adf:f149:: with SMTP id y9mr56724337wro.284.1546878037106;
-        Mon, 07 Jan 2019 08:20:37 -0800 (PST)
-Received: from ?IPv6:2001:b07:6468:f312:3473:41cf:8b30:f2e1? ([2001:b07:6468:f312:3473:41cf:8b30:f2e1])
-        by smtp.googlemail.com with ESMTPSA id j8sm19509377wmd.0.2019.01.07.08.20.35
+        h=x-gm-message-state:references:user-agent:from:to:cc:subject
+         :in-reply-to:date:message-id:mime-version;
+        bh=2cCUr7PlaXmiRjtgfpz3Nae1G4BEEyhXg8rSKqZZ88E=;
+        b=ZuNfXbzIzyH2DQooNiNc7Ag3x0ZUOTwvD/wiKTGtCLjm9B+GAWC1u0qEoX6cirhDSA
+         AQarDf/knjGA8JIIj1YsAfuVUgwI4BSC344laCOpX4kDrukdBDJY/yaD04j/lpxlZvnN
+         IQbua6ce+LI1E1eg3rbXtxPvta85qEP239B3Fr5VKpEGYW3mW0y5ymLzTs8EexGboq5P
+         hIUFuynjaifP49jsxEafEFVKqAsbqRIBpPqRKcvJN4du4WCJeDftPcru2of3bb8bjoI2
+         RetynsYmSTelPXf/CpWGuU5qGKjpdYnSIy6P3UZj/p2RRc327njV2uhmZ5Ch2kdg8fn8
+         Qz7Q==
+X-Gm-Message-State: AJcUukdjWVoX9fpBx8Cf1uYrgz+9nb7pioFPzujmzTxLxVxQBd5iAD/f
+        F7WhagbGgHQHBY+euaIYGVIiVw==
+X-Google-Smtp-Source: ALg8bN6Xo4Re/va2IqW4tTrg+DLn7mq9r7Vs2LxOISxe2uenpNQHJZSwLoa0ZCbXvWIA4iKPOPiOKw==
+X-Received: by 2002:a5d:6105:: with SMTP id v5mr50787171wrt.63.1546878120518;
+        Mon, 07 Jan 2019 08:22:00 -0800 (PST)
+Received: from localhost ([2620:10d:c092:180::1:9696])
+        by smtp.gmail.com with ESMTPSA id y185sm6216760wmg.34.2019.01.07.08.21.59
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 07 Jan 2019 08:20:36 -0800 (PST)
-Subject: Re: [PATCH 7/11] KVM: Remove redundant check in the
- kvm_get_dirty_log_protect()
-To:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        lantianyu1986@gmail.com
-Cc:     kvm@vger.kernel.org, rkrcmar@redhat.com, catalin.marinas@arm.com,
-        will.deacon@arm.com, linux-kernel@vger.kernel.org,
-        paulus@ozlabs.org, hpa@zytor.com, kys@microsoft.com,
-        kvmarm@lists.cs.columbia.edu, mpe@ellerman.id.au, x86@kernel.org,
-        linux@armlinux.org.uk, michael.h.kelley@microsoft.com,
-        mingo@redhat.com, benh@kernel.crashing.org, jhogan@kernel.org,
-        linux-mips@vger.kernel.org, Lan Tianyu <Tianyu.Lan@microsoft.com>,
-        marc.zyngier@arm.com, kvm-ppc@vger.kernel.org, bp@alien8.de,
-        tglx@linutronix.de, linux-arm-kernel@lists.infradead.org,
-        christoffer.dall@arm.com, ralf@linux-mips.org,
-        paul.burton@mips.com, vkuznets@redhat.com,
-        linuxppc-dev@lists.ozlabs.org
-References: <20190104085405.40356-1-Tianyu.Lan@microsoft.com>
- <20190104085405.40356-8-Tianyu.Lan@microsoft.com>
- <20190104155036.GA11288@linux.intel.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; keydata=
- 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
- uUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
-Message-ID: <dad62bfb-e4c0-266f-ff36-8344d3952ba0@redhat.com>
-Date:   Mon, 7 Jan 2019 17:20:30 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Mon, 07 Jan 2019 08:21:59 -0800 (PST)
+References: <1545994235-8309-1-git-send-email-lollivier@baylibre.com> <86bm4x6830.fsf@baylibre.com> <20190104091937.GA4737@localhost>
+User-agent: mu4e 1.0; emacs 25.3.2
+From:   Loys Ollivier <lollivier@baylibre.com>
+To:     Johan Hovold <johan@kernel.org>
+Cc:     Loys Ollivier <lollivier@baylibre.com>, devicetree@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-kernel@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>,
+        linux-amlogic@lists.infradead.org,
+        Neil Armstrong <narmstrong@baylibre.com>
+Subject: Re: [PATCH 0/4] Add driver for globaltop GNSS receivers
+In-reply-to: <20190104091937.GA4737@localhost>
+Date:   Mon, 07 Jan 2019 17:21:58 +0100
+Message-ID: <86ftu41lqx.fsf@baylibre.com>
 MIME-Version: 1.0
-In-Reply-To: <20190104155036.GA11288@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; format=flowed
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/01/19 16:50, Sean Christopherson wrote:
-> Tangentially related, does mmu_lock actually need to be held while we
-> walk dirty_bitmap in kvm_{clear,get}_dirty_log_protect()?  The bitmap
-> itself is protected by slots_lock (a lockdep assertion would be nice
-> too), e.g. can we grab the lock iff dirty_bitmap[i] != 0?
 
-Yes, we could avoid grabbing it as long as the bitmap is zero.  However,
-without kvm->manual_dirty_log_protect, the granularity of
-kvm_get_dirty_log_protect() is too coarse so it won't happen in
-practice.  Instead, with the new manual clear,
-kvm_get_dirty_log_protect() does not take the lock and a well-written
-userspace is not going to call the clear ioctl unless some bits are set.
+On Fri 04 Jan 2019 at 09:19, Johan Hovold wrote:
 
-Paolo
+> On Thu, Jan 03, 2019 at 05:04:35PM +0100, Loys Ollivier wrote:
+>> 
+>> As suggested by Neil Armstrong - this GNSS device seems to behave like
+>> most generic GNSS receivers.
+>> I'll send a v2 with a generic driver that works for both GlobalTop and
+>> u-blox.
+>
+> That doesn't sound right to me. Judging from a quick look, this device
+> appears to be based on a mediatek chipset, so I suggest reworking
+> (renaming) this as a Mediatek driver (gnss type would be MTK, reflecting
+> the vendor protocol) even if it happens to look a lot like the current
+> u-blox driver.
+>
+OK, agreed - will rename the driver as Mediatek.
+Would you recommend keeping any reference to Globaltop ? Such as in the
+devicetree gnss bindings.
+Or only keep "mediatek,mt3339" for any solution based on that chipset.
+> If we ever add more features, like support for some part of the vendor
+> protocol or maybe 1pps, things will start diverging. As you noticed you
+> already have the generic serial gnss implementation to handle a lot of
+> the common bits.
+Yes, I would like indeed to look into 1pps after that patch series.
+>
+>> Loys Ollivier writes:
+>> 
+>> > Hello !
+>> >
+>> > This patch series adds a new GNSS driver for the globaltop GNSS
+>> > receivers.  These receivers transmits NMEA output sequence as soon
+>> > as they have booted.  Power management can be done via the main
+>> > supply and optional backup supply as defined in the device tree.
+>> >
+>> > The driver has been tested using a GlobalTop pa6h chipset on a
+>> > Libretech-cc board using the expansion header. Changes made in the
+>> > board device tree can be found below for reference and testing.
+>
+> Thanks,
+> Johan
+
+Will send a v2.
+
+-- 
+-L
