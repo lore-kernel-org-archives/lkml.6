@@ -7,48 +7,52 @@ X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5B56C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:04:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A90E8C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:04:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7069121736
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:04:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 79AF6217D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:04:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546866270;
-	bh=RqfecMqVd4p+8vp0lH/1NKMDEWxhl74hBX0XHQECKW0=;
+	s=default; t=1546866272;
+	bh=9a2Ub2wUaexXd6c4x9e5CO6pUtKSivbKm5PauN/7UqY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=gQJsIrCxf6m9nGDsiAhUsJHzF3FV8C6dTD2oqdopmSPKVxIUgJNyQHKOOtUQoRJDd
-	 ePNUP06I7plYiqQJLPSD0k1sBM+7csfGI8qdRXXwXQmga9tJOIe7c+GhsKn/MUcb7r
-	 OSeruAvKKC6cIQzi8Yj8dtXXTYnIlFR3qFDUAuPU=
+	b=rsCd7uVOwp7DIhIXh04sit6FKAMhEbvzuEGECmW7cCLTKsd947hQRwZtuDyavqh6I
+	 HGj1H/LF/9DC6+R/U6MmkP2dDh9UsrgF9NncvvM5q6FXppjRIxoq2otMMOBzO4Se5S
+	 yyZ81A3elT1+8pt+HEFLRVilGRKawwWH9eZSXRqk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731176AbfAGNE2 (ORCPT
+        id S1731216AbfAGNEb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:04:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52036 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:04:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52094 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731382AbfAGNE0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:04:26 -0500
+        id S1731179AbfAGNE3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:04:29 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 05DFC21736;
-        Mon,  7 Jan 2019 13:04:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E92F52089F;
+        Mon,  7 Jan 2019 13:04:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546866265;
-        bh=RqfecMqVd4p+8vp0lH/1NKMDEWxhl74hBX0XHQECKW0=;
+        s=default; t=1546866268;
+        bh=9a2Ub2wUaexXd6c4x9e5CO6pUtKSivbKm5PauN/7UqY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=p6sOkB/+dNnWocrSh/AjAJdbqMIR4+MfcqT0ZJbDEqfVOTQf0TjSXubTqo25RqHm3
-         CN6nkuoKsl5Gvi9T3mFLBmgH7169ZYTvBHIAU2F/XdpqZ4MVsw8ugI87KoFLMbPay0
-         WE8VWNDmQ03h7jkB3J6VTcktBtD7mUbgMys+L6Lk=
+        b=bi12AorUFQZhwLFYRUz3x1mySDl+4qlDs31giPvMBwaLTwTZ8OD1pvMEHCae9zDNA
+         U/W+/OZLB58lEY4KUOiIuUdBXkfrD32rKv2N/aFq7xKufm9+H1X/pbD8Dlm7/5HBiu
+         e3D+DdbnjI9iaHFKU+bpiAWCvEc28EpS1bSGDU8w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yi-Hung Wei <yihung.wei@gmail.com>,
+        stable@vger.kernel.org,
+        Dmitry Andrianov <dmitry.andrianov@alertme.com>,
+        Justin Pettit <jpettit@vmware.com>,
+        Yi-Hung Wei <yihung.wei@gmail.com>,
+        Florian Westphal <fw@strlen.de>,
         Pablo Neira Ayuso <pablo@netfilter.org>,
         Mauricio Faria de Oliveira <mfo@canonical.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 082/101] netfilter: nf_conncount: Fix garbage collection with zones
-Date:   Mon,  7 Jan 2019 13:33:10 +0100
-Message-Id: <20190107105337.426859757@linuxfoundation.org>
+Subject: [PATCH 4.14 083/101] netfilter: nf_conncount: fix garbage collection confirm race
+Date:   Mon,  7 Jan 2019 13:33:11 +0100
+Message-Id: <20190107105337.481551812@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107105330.372621917@linuxfoundation.org>
 References: <20190107105330.372621917@linuxfoundation.org>
@@ -67,115 +71,144 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-commit 21ba8847f857028dc83a0f341e16ecc616e34740 upstream.
+commit b36e4523d4d56e2595e28f16f6ccf1cd6a9fc452 upstream.
 
-Currently, we use check_hlist() for garbage colleciton. However, we
-use the ‘zone’ from the counted entry to query the existence of
-existing entries in the hlist. This could be wrong when they are in
-different zones, and this patch fixes this issue.
+Yi-Hung Wei and Justin Pettit found a race in the garbage collection scheme
+used by nf_conncount.
 
-Fixes: e59ea3df3fc2 ("netfilter: xt_connlimit: honor conntrack zone if available")
-Signed-off-by: Yi-Hung Wei <yihung.wei@gmail.com>
+When doing list walk, we lookup the tuple in the conntrack table.
+If the lookup fails we remove this tuple from our list because
+the conntrack entry is gone.
+
+This is the common cause, but turns out its not the only one.
+The list entry could have been created just before by another cpu, i.e. the
+conntrack entry might not yet have been inserted into the global hash.
+
+The avoid this, we introduce a timestamp and the owning cpu.
+If the entry appears to be stale, evict only if:
+ 1. The current cpu is the one that added the entry, or,
+ 2. The timestamp is older than two jiffies
+
+The second constraint allows GC to be taken over by other
+cpu too (e.g. because a cpu was offlined or napi got moved to another
+cpu).
+
+We can't pretend the 'doubtful' entry wasn't in our list.
+Instead, when we don't find an entry indicate via IS_ERR
+that entry was removed ('did not exist' or withheld
+('might-be-unconfirmed').
+
+This most likely also fixes a xt_connlimit imbalance earlier reported by
+Dmitry Andrianov.
+
+Cc: Dmitry Andrianov <dmitry.andrianov@alertme.com>
+Reported-by: Justin Pettit <jpettit@vmware.com>
+Reported-by: Yi-Hung Wei <yihung.wei@gmail.com>
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Acked-by: Yi-Hung Wei <yihung.wei@gmail.com>
 Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 
-[mfo: backport: refresh context lines and use older symbol/file names, note hunk 5:
- - nf_conncount.c -> xt_connlimit.c
+[mfo: backport: refresh context lines and use older symbol/file names:
+ - nf_conncount.c -> xt_connlimit.c.
    - nf_conncount_rb -> xt_connlimit_rb
    - nf_conncount_tuple -> xt_connlimit_conn
-   - hunk 5: remove check for non-NULL 'tuple', that isn't required as it's introduced
-     by upstream commit 35d8deb80 ("netfilter: conncount: Support count only use case")
-     which addresses nf_conncount_count() that does not exist yet -- it's introduced by
-     upstream commit 625c556118f3 ("netfilter: connlimit: split xt_connlimit into front
-     and backend"), a refactor change.
- - nft_connlimit.c -> removed, not used/doesn't exist yet.]
+   - conncount_conn_cachep -> connlimit_conn_cachep]
 Signed-off-by: Mauricio Faria de Oliveira <mfo@canonical.com>
 
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/net/netfilter/nf_conntrack_count.h |  3 ++-
- net/netfilter/xt_connlimit.c               | 13 +++++++++----
- 2 files changed, 11 insertions(+), 5 deletions(-)
+ net/netfilter/xt_connlimit.c | 52 ++++++++++++++++++++++++++++++++----
+ 1 file changed, 47 insertions(+), 5 deletions(-)
 
-diff --git a/include/net/netfilter/nf_conntrack_count.h b/include/net/netfilter/nf_conntrack_count.h
-index 54e43b8a8da1..4b71a2f4c351 100644
---- a/include/net/netfilter/nf_conntrack_count.h
-+++ b/include/net/netfilter/nf_conntrack_count.h
-@@ -7,7 +7,8 @@ unsigned int nf_conncount_lookup(struct net *net, struct hlist_head *head,
- 				 bool *addit);
- 
- bool nf_conncount_add(struct hlist_head *head,
--		      const struct nf_conntrack_tuple *tuple);
-+		      const struct nf_conntrack_tuple *tuple,
-+		      const struct nf_conntrack_zone *zone);
- 
- void nf_conncount_cache_free(struct hlist_head *hhead);
- 
 diff --git a/net/netfilter/xt_connlimit.c b/net/netfilter/xt_connlimit.c
-index 7af58750ab49..ab1f849464fa 100644
+index ab1f849464fa..913b86ef3a8d 100644
 --- a/net/netfilter/xt_connlimit.c
 +++ b/net/netfilter/xt_connlimit.c
-@@ -46,6 +46,7 @@
- struct xt_connlimit_conn {
+@@ -47,6 +47,8 @@ struct xt_connlimit_conn {
  	struct hlist_node		node;
  	struct nf_conntrack_tuple	tuple;
-+	struct nf_conntrack_zone	zone;
+ 	struct nf_conntrack_zone	zone;
++	int				cpu;
++	u32				jiffies32;
  };
  
  struct xt_connlimit_rb {
-@@ -115,7 +116,8 @@ same_source_net(const union nf_inet_addr *addr,
- }
- 
- bool nf_conncount_add(struct hlist_head *head,
--		      const struct nf_conntrack_tuple *tuple)
-+		      const struct nf_conntrack_tuple *tuple,
-+		      const struct nf_conntrack_zone *zone)
- {
- 	struct xt_connlimit_conn *conn;
- 
-@@ -123,6 +125,7 @@ bool nf_conncount_add(struct hlist_head *head,
- 	if (conn == NULL)
+@@ -126,11 +128,42 @@ bool nf_conncount_add(struct hlist_head *head,
  		return false;
  	conn->tuple = *tuple;
-+	conn->zone = *zone;
+ 	conn->zone = *zone;
++	conn->cpu = raw_smp_processor_id();
++	conn->jiffies32 = (u32)jiffies;
  	hlist_add_head(&conn->node, head);
  	return true;
  }
-@@ -143,7 +146,7 @@ unsigned int nf_conncount_lookup(struct net *net, struct hlist_head *head,
+ EXPORT_SYMBOL_GPL(nf_conncount_add);
+ 
++static const struct nf_conntrack_tuple_hash *
++find_or_evict(struct net *net, struct xt_connlimit_conn *conn)
++{
++	const struct nf_conntrack_tuple_hash *found;
++	unsigned long a, b;
++	int cpu = raw_smp_processor_id();
++	__s32 age;
++
++	found = nf_conntrack_find_get(net, &conn->zone, &conn->tuple);
++	if (found)
++		return found;
++	b = conn->jiffies32;
++	a = (u32)jiffies;
++
++	/* conn might have been added just before by another cpu and
++	 * might still be unconfirmed.  In this case, nf_conntrack_find()
++	 * returns no result.  Thus only evict if this cpu added the
++	 * stale entry or if the entry is older than two jiffies.
++	 */
++	age = a - b;
++	if (conn->cpu == cpu || age >= 2) {
++		hlist_del(&conn->node);
++		kmem_cache_free(connlimit_conn_cachep, conn);
++		return ERR_PTR(-ENOENT);
++	}
++
++	return ERR_PTR(-EAGAIN);
++}
++
+ unsigned int nf_conncount_lookup(struct net *net, struct hlist_head *head,
+ 				 const struct nf_conntrack_tuple *tuple,
+ 				 const struct nf_conntrack_zone *zone,
+@@ -138,18 +171,27 @@ unsigned int nf_conncount_lookup(struct net *net, struct hlist_head *head,
+ {
+ 	const struct nf_conntrack_tuple_hash *found;
+ 	struct xt_connlimit_conn *conn;
+-	struct hlist_node *n;
+ 	struct nf_conn *found_ct;
++	struct hlist_node *n;
+ 	unsigned int length = 0;
+ 
+ 	*addit = true;
  
  	/* check the saved connections */
  	hlist_for_each_entry_safe(conn, n, head, node) {
--		found = nf_conntrack_find_get(net, zone, &conn->tuple);
-+		found = nf_conntrack_find_get(net, &conn->zone, &conn->tuple);
- 		if (found == NULL) {
- 			hlist_del(&conn->node);
- 			kmem_cache_free(connlimit_conn_cachep, conn);
-@@ -152,7 +155,8 @@ unsigned int nf_conncount_lookup(struct net *net, struct hlist_head *head,
+-		found = nf_conntrack_find_get(net, &conn->zone, &conn->tuple);
+-		if (found == NULL) {
+-			hlist_del(&conn->node);
+-			kmem_cache_free(connlimit_conn_cachep, conn);
++		found = find_or_evict(net, conn);
++		if (IS_ERR(found)) {
++			/* Not found, but might be about to be confirmed */
++			if (PTR_ERR(found) == -EAGAIN) {
++				length++;
++				if (!tuple)
++					continue;
++
++				if (nf_ct_tuple_equal(&conn->tuple, tuple) &&
++				    nf_ct_zone_id(&conn->zone, conn->zone.dir) ==
++				    nf_ct_zone_id(zone, zone->dir))
++					*addit = false;
++			}
+ 			continue;
+ 		}
  
- 		found_ct = nf_ct_tuplehash_to_ctrack(found);
- 
--		if (nf_ct_tuple_equal(&conn->tuple, tuple)) {
-+		if (nf_ct_tuple_equal(&conn->tuple, tuple) &&
-+		    nf_ct_zone_equal(found_ct, zone, zone->dir)) {
- 			/*
- 			 * Just to be sure we have it only once in the list.
- 			 * We should not see tuples twice unless someone hooks
-@@ -231,7 +235,7 @@ count_tree(struct net *net, struct rb_root *root,
- 			if (!addit)
- 				return count;
- 
--			if (!nf_conncount_add(&rbconn->hhead, tuple))
-+			if (!nf_conncount_add(&rbconn->hhead, tuple, zone))
- 				return 0; /* hotdrop */
- 
- 			return count + 1;
-@@ -270,6 +274,7 @@ count_tree(struct net *net, struct rb_root *root,
- 	}
- 
- 	conn->tuple = *tuple;
-+	conn->zone = *zone;
- 	rbconn->addr = *addr;
- 
- 	INIT_HLIST_HEAD(&rbconn->hhead);
 -- 
 2.19.1
 
