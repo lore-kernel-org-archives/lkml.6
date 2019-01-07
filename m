@@ -2,142 +2,85 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5E70C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 03:43:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF60FC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 03:44:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B8BC20660
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 03:43:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9623C20660
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 03:44:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="egwE/USG"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pbjwHpW7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726425AbfAGDnL (ORCPT
+        id S1726445AbfAGDo4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 6 Jan 2019 22:43:11 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:44904 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726246AbfAGDnL (ORCPT
+        Sun, 6 Jan 2019 22:44:56 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:33167 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726145AbfAGDo4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Jan 2019 22:43:11 -0500
-Received: by mail-pg1-f196.google.com with SMTP id t13so20095684pgr.11;
-        Sun, 06 Jan 2019 19:43:10 -0800 (PST)
+        Sun, 6 Jan 2019 22:44:56 -0500
+Received: by mail-oi1-f195.google.com with SMTP id c206so34867442oib.0;
+        Sun, 06 Jan 2019 19:44:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=C4Vbstej3VAneOE8NJl/qUzPSkF2WggfusBmTAKBwUM=;
-        b=egwE/USGm5sivqG2SMXhrkv2m9V3/DD1HlR622ysYAGPHkmSnEOCF9tvQDNpiqh6Gx
-         HU6F2ntNdxircs+47ceJ1Pe+caNmHQz6v/uVT3McBCAQYTVbdVGpRNhOJUUEif+qHbZP
-         PD32ddRLFcQC/cWzY3muIB/H31OeXlqr5lKf3ZYs3VONuS7C6zH2q8sPWsjPmiKJTeR8
-         x0yd0qFAycy/h/94Po1zBBCCPUVJot9aeT9NAYpBlxeFGjT2ErVPAj4TLJrscdzycK+W
-         DDiteSM+l/9IaXJWPr/odNNDHQnRg5V2vHEV5BV5wLfrPwOuFpO9Nrdz3FIM4mSX/HC8
-         HqhQ==
+        bh=il5EYEvlVMHtJoIOYPOQFE5SNOKwK+b+o9VV+R/V9kk=;
+        b=pbjwHpW71bpKFquMHLrEW5678CfRgxiWKtbrl1jv947rHphjXiXujGpr6vhc9fgsMB
+         doSx9cujPk6WV3T06I7barhvX9TK0wY/JFF6zZxz7OK4XwdnbDDGUZculSa6ZYrAusYr
+         IL6ciSelo7rse08nTOLV5dhYc9Zy8VaEgVY1HOvA+zullEuxMb3fkuzlf1FTvEyRQKrB
+         ArGfr6v0kQ1d3FCa8L+D2bQiSrT4EkgFB/7Vh16P3M/2MyarzRx8ow1lXQL3y6xDFI8d
+         TSt6feydm5QHKoNgxVaLeY/8bWTtqUtNWiNpMdWG7zh3xZI0YNl38lk1CkAROnGS0YEo
+         V0xw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=C4Vbstej3VAneOE8NJl/qUzPSkF2WggfusBmTAKBwUM=;
-        b=uQdzE4jmX321y4fPRk7zvsHeXt4qUn0z8bT73de9NowfDnfA8V8L80cYDIXGXytyMv
-         enScERgEFZK86JWjBx95BlysD4QfohY8q0TZU6vQu4C4TzqW5zZ9iEyXArC+EPaN5cJ3
-         s5sLgMxqJEu4pcsjWBlPiacADm6m4CaSZTg8mJicx+C9rzhWoHWI6NGQ2QE4ozud5NzE
-         dR6D4e4PhgNLNFM1IzW6Mrpt5MJanEFShvpCFivIZh439WaefjGIO07kNVJDT9gS3JTg
-         DjfGHmLVMQM7u/kBk2M2/2RfqllOp70i/ECw7Rr2cXKDBP86+UviuWAd+4+acgIiyMvF
-         WV9A==
-X-Gm-Message-State: AJcUukfwR/a0ynNoYxrQ3B4u5978Sf4hlt2ftAzliGqwWtmPQ5VLDvfT
-        KMZSzW4Q88vrj9sJI5NdMyf8T6DntZjyug2Z9Gw=
-X-Google-Smtp-Source: ALg8bN4k587ha4oJ6zDfdpMVPqjrdrOo683otyk5Siz2e8ACUXH76j8cA6JQaoq2n84HuebQTd2HvPahHXDcL0Iqw/Y=
-X-Received: by 2002:a63:6bc1:: with SMTP id g184mr29286395pgc.25.1546832590303;
- Sun, 06 Jan 2019 19:43:10 -0800 (PST)
+        bh=il5EYEvlVMHtJoIOYPOQFE5SNOKwK+b+o9VV+R/V9kk=;
+        b=WzlSydeJV8Ow04SEMNmLZvZELS+FvnvrxRWwTdvBiOwKk+Zjx2BV80xUTZtU4DB974
+         T1mrXG3vBOQJgRLYEyGLASJACOgye8Ffda1R0PMtNHJRoVOqUBgmbbB8YjBVN9bDuwCa
+         X+LxQZOcH9yIpBHTb4wdxjoP5mEQyEJ1i9s/PDmvvpFcoJ7qFnQc/mxR0QswzuXC6W2r
+         KINm1eYnlEP6FU6juyOFtPnr6oxHdlSeb2yimeSlfy/NN7/pX7DUeM0F+6XKsDtR2/7x
+         y6xrsLBKdnx1GJV5piVTIcp9qTD2O0NXmG5ObQBV3O1ysOnte4VVdU27p8ZaLjWTE59B
+         WC1g==
+X-Gm-Message-State: AA+aEWaAa5s2SeaDexw2lYfWHk94E/v6wF69DNUs07wIt/721Ypm/0rO
+        OV5nS+wz3SgeOOAKcF0uamzkjvQzRMzAZ07wMiJOFg==
+X-Google-Smtp-Source: AFSGD/X1jzgCT25y7EUxafZ/qJwUujCT17A+9nTx9CX1Jywdzz/5JsrkE9MELrXyVZg/lJycRWHAOH72waBdDk+XB1Y=
+X-Received: by 2002:aca:d4d7:: with SMTP id l206mr42268767oig.320.1546832695306;
+ Sun, 06 Jan 2019 19:44:55 -0800 (PST)
 MIME-Version: 1.0
-References: <20190104085405.40356-1-Tianyu.Lan@microsoft.com>
- <20190104085405.40356-12-Tianyu.Lan@microsoft.com> <20190104161235.GB11288@linux.intel.com>
-In-Reply-To: <20190104161235.GB11288@linux.intel.com>
-From:   Tianyu Lan <lantianyu1986@gmail.com>
-Date:   Mon, 7 Jan 2019 11:42:59 +0800
-Message-ID: <CAOLK0pzPe3agXCFrvHt9Qa_kRVfdtYeKorbRL2waOo29f5wcyw@mail.gmail.com>
-Subject: Re: [PATCH 11/11] KVM/MMU: Flush tlb in the kvm_age_rmapp()
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Lan Tianyu <Tianyu.Lan@microsoft.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim Krcmar <rkrcmar@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, bp@alien8.de,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        kvm <kvm@vger.kernel.org>,
-        "linux-kernel@vger kernel org" <linux-kernel@vger.kernel.org>,
-        michael.h.kelley@microsoft.com, kys@microsoft.com,
-        vkuznets@redhat.com, linux@armlinux.org.uk
+References: <20181230163143.21030-1-ap420073@gmail.com> <20190105.141021.1299321405902891635.davem@davemloft.net>
+ <CAMArcTUGujArU1L8L=n32yKbT+MwuUEm6S8C=am_EGQ5GG3jQA@mail.gmail.com> <20190106.085535.1209544587823450673.davem@davemloft.net>
+In-Reply-To: <20190106.085535.1209544587823450673.davem@davemloft.net>
+From:   Taehee Yoo <ap420073@gmail.com>
+Date:   Mon, 7 Jan 2019 12:44:44 +0900
+Message-ID: <CAMArcTXvCMPHarHJy19QAr9AKb4w2RNQ-E6JJoBhuD3eGhHkSg@mail.gmail.com>
+Subject: Re: [PATCH net 1/4] umh: add exit routine for UMH process
+To:     David Miller <davem@davemloft.net>
+Cc:     Netdev <netdev@vger.kernel.org>, linux-kernel@vger.kernel.org,
+        Daniel Borkmann <daniel@iogearbox.net>, ast@kernel.org,
+        mcgrof@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sean:
-             Thanks for your review.
-
-On Sat, Jan 5, 2019 at 12:12 AM Sean Christopherson
-<sean.j.christopherson@intel.com> wrote:
+On Mon, 7 Jan 2019 at 01:55, David Miller <davem@davemloft.net> wrote:
 >
-> On Fri, Jan 04, 2019 at 04:54:05PM +0800, lantianyu1986@gmail.com wrote:
-> > From: Lan Tianyu <Tianyu.Lan@microsoft.com>
-> >
-> > This patch is to flush tlb in the kvm_age_rmapp() when tlb range flush
-> > is available and flush request is true.
-> >
-> > Signed-off-by: Lan Tianyu <Tianyu.Lan@microsoft.com>
-> > ---
-> >  arch/x86/kvm/mmu.c | 7 +++++++
-> >  1 file changed, 7 insertions(+)
-> >
-> > diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
-> > index a5728f51bf7d..bc402a72956a 100644
-> > --- a/arch/x86/kvm/mmu.c
-> > +++ b/arch/x86/kvm/mmu.c
-> > @@ -1958,10 +1958,17 @@ static int kvm_age_rmapp(struct kvm *kvm, struct kvm_rmap_head *rmap_head,
-> >       u64 *sptep;
-> >       struct rmap_iterator uninitialized_var(iter);
-> >       int young = 0;
-> > +     bool flush = (bool)data;
-> >
-> >       for_each_rmap_spte(rmap_head, &iter, sptep)
-> >               young |= mmu_spte_age(sptep);
-> >
-> > +     if (young && flush) {
-> > +             kvm_flush_remote_tlbs_with_address(kvm, gfn,
-> > +                             KVM_PAGES_PER_HPAGE(level));
-> > +             young = 0;
-> > +     }
-> > +
+> From: Taehee Yoo <ap420073@gmail.com>
+> Date: Sun, 6 Jan 2019 14:34:52 +0900
 >
-> young shouldn't be cleared, the tracing will be wrong and the caller
-> might actually care about the return value.
-
-Yes, this is wrong and will update.
-
-> I'm assuming you're
-> clearing young to avoid the flush in kvm_mmu_notifier_clear_flush_young(),
-> but keeping that flush is silly since it will never be invoked.  Just
-> squash this patch with patch 10/11 so that you can remove the unnecessary
-> flush in kvm_mmu_notifier_clear_flush_young() and preserve young.
+> > How about adding a new PF_UMH flag for task_struct->flags to identify
+> > UMH process?
+> > By using this flag, the exit_umh() can avoid unnecessary lookups.
 >
+> Yes, that might be more efficient and eliminate the high cost for
+> non-UMH tasks.
 
-The platform may provide tlb flush with address range as granularity. My changes
-are to use range flush when it's available. kvm_mmu_notifier_clear_flush_young()
-is common function for all platforms and most platforms still need the
-flush in the
-kvm_mmu_notifier_clear_flush_young(). I think it's better to separate
-flush request and
-"young" from return value of kvm_age_hva(). New flush parameter I
-added in the patch 10
-can be changed to a pointer and kvm_age_hva() can use it to return
-flush request.
-
--- 
-Best regards
-Tianyu Lan
+I will send a v3 patch.
+Thank you!
