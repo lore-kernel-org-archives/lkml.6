@@ -2,186 +2,126 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0BE7C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 10:32:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 801A6C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 10:33:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C66A20859
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 10:32:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="hQF4sWCb"
+	by mail.kernel.org (Postfix) with ESMTP id 5AB8C2089F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 10:33:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726757AbfAGKcy (ORCPT
+        id S1726785AbfAGKdL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 05:32:54 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:49884 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726454AbfAGKcy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 05:32:54 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x07AWFbw123694;
-        Mon, 7 Jan 2019 04:32:15 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1546857135;
-        bh=WZOvc9w2Xgrp9UHj8feQgQ5nDtiv4OItfXo0zoeNieI=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=hQF4sWCbglQDl1tdMH9lYd338AIMA3wqo2wI24bpvf1fFMXk1WrPdKkQeeiSbMXy4
-         QYcbTEyXVEojfLgjzff0b9HJrCEZLvf0kWVMb5fZdzVCe8RBcgXV6VSrcqCqwtiNfH
-         3rfCGiAnZ5DhnBojA8pR3y4VaDzCEG6IYUbMs7fM=
-Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x07AWFwp032329
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 7 Jan 2019 04:32:15 -0600
-Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 7
- Jan 2019 04:32:14 -0600
-Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Mon, 7 Jan 2019 04:32:14 -0600
-Received: from [172.24.190.215] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x07AWA6o032034;
-        Mon, 7 Jan 2019 04:32:11 -0600
-Subject: Re: [PATCH v2 2/2] mmc: sdhci-omap: Workaround errata regarding
- SDR104/HS200 tuning failures (i929)
-To:     Olof Johansson <olof@lixom.net>
-CC:     Eduardo Valentin <edubezval@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Kishon <kishon@ti.com>, Keerthy <j-keerthy@ti.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Tony Lindgren <tony@atomide.com>
-References: <20181211142253.23747-1-faiz_abbas@ti.com>
- <20181211142253.23747-3-faiz_abbas@ti.com>
- <CAPDyKFoi+NzS-d8E8oz-h_ab70jY7owwqPXsEoJWnRg6J2zcNA@mail.gmail.com>
- <CAOesGMjXcpY1c0Bpf2tMACVVXNW1W-Gp3HO+yjK8f6dQ-cp5bQ@mail.gmail.com>
- <20190102195626.GA2024@localhost.localdomain>
- <1d83e4df-78dc-10f6-f0c0-60e84b0e1094@ti.com>
- <CAOesGMiTmR6t2h1AzkPRWQon3onXKb5db5q6yVix9D5r+ExKfA@mail.gmail.com>
-From:   Faiz Abbas <faiz_abbas@ti.com>
-Message-ID: <88ee183f-7997-45dd-d5c3-fab615340b21@ti.com>
-Date:   Mon, 7 Jan 2019 16:05:07 +0530
+        Mon, 7 Jan 2019 05:33:11 -0500
+Received: from mx2.suse.de ([195.135.220.15]:37470 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726454AbfAGKdL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 05:33:11 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 28697AECD;
+        Mon,  7 Jan 2019 10:33:09 +0000 (UTC)
+Subject: Re: [PATCH] mm/mincore: allow for making sys_mincore() privileged
+To:     Dominique Martinet <asmadeus@codewreck.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Matthew Wilcox <willy@infradead.org>, Jann Horn <jannh@google.com>,
+        Jiri Kosina <jikos@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Michal Hocko <mhocko@suse.com>, Linux-MM <linux-mm@kvack.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>, daniel@gruss.cc
+References: <20190107043227.GA3325@nautica>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Openpgp: preference=signencrypt
+Message-ID: <151b4ac8-5cfc-ed30-db30-e4d67a324c4b@suse.cz>
+Date:   Mon, 7 Jan 2019 11:33:08 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-In-Reply-To: <CAOesGMiTmR6t2h1AzkPRWQon3onXKb5db5q6yVix9D5r+ExKfA@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20190107043227.GA3325@nautica>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Olof,
+On 1/7/19 5:32 AM, Dominique Martinet wrote:
+> Linus Torvalds wrote on Sat, Jan 05, 2019:
+>> But I think my patch to just rip out all that page lookup, and just
+>> base it on the page table state has the fundamental advantage that it
+>> gets rid of code. Maybe I should jst commit it, and see if anything
+>> breaks? We do have options in case things break, and then we'd at
+>> least know who cares (and perhaps a lot more information of _why_ they
+>> care).
+> 
+> There actually are many tools like fincore which depend on mincore to
+> try to tell whether a file is "loaded in cache" or not (I personally use
+> vmtouch[1], but I know of at least nocache[2] uses it as well to only
+> try to evict used pages)
 
-On 05/01/19 6:27 AM, Olof Johansson wrote:
-> On Wed, Jan 2, 2019 at 9:58 PM Faiz Abbas <faiz_abbas@ti.com> wrote:
->>
->> Hi Olof, Eduardo,
->>
->> On 03/01/19 1:26 AM, Eduardo Valentin wrote:
->>> On Wed, Jan 02, 2019 at 10:29:31AM -0800, Olof Johansson wrote:
->>>> Hi,
->>>>
->>>>
+nocache could probably do fine without mincore. IIUC the point is to not
+evict anything that was already resident prior to running some command
+wrapped in nocache. Without the mincore checks,
+posix_fadvise(POSIX_FADV_DONTNEED) will still not drop anything that
+others have mapped. That means without mincore() it will drop data
+that's in cache but not currently in use by anybody, which shouldn't
+cause large performance regressions?
+
+> [1] https://hoytech.com/vmtouch/
+> [2] https://github.com/Feh/nocache
+> 
+> 
+> I mostly use these to either fadvise(POSIX_FADV_DONTNEED) or
+> prefetch/lock whole files so my "production" use-cases don't actually
+> rely on the mincore part of them;
+
+Ah so you seem to confirm my above point.
+
 ...
->>>>
->>>> This is throwing errors on builds of keystone_defconfig in next and mainline:
->>>>
->>>> http://arm-soc.lixom.net/buildlogs/next/next-20190102/buildall.arm.keystone_defconfig.log.passed
->>>>
->>>> WARNING: unmet direct dependencies detected for TI_SOC_THERMAL
->>>>   Depends on [n]: THERMAL [=y] && (ARCH_HAS_BANDGAP [=n] ||
->>>> COMPILE_TEST [=n]) && HAS_IOMEM [=y]
->>>>   Selected by [y]:
->>>>   - MMC_SDHCI_OMAP [=y] && MMC [=y] && MMC_SDHCI_PLTFM [=y] && OF [=y]
->>>>
->>>> So, thermal depends on ARCH_HAS_BANDGAP, which keystone doesn't provide.
->>>>
->>>> Selecting a major framework such as THERMAL from a driver config is
->>>> likely not the right solution anyway, especially since THERMAL does
->>>> provide stubbed out versions of the functions if it's not enabled.
->>>
->>> Yeah, that seams a bit up-side-down. Can you guys give a bit more of
->>> context? Why do you need the cpu thermal zone ? From patch description,
->>> looks like you want to have your own zone then apply different tuning
->>> values based on temperature (range?). Why do you need to mess up with
->>> cpu_thermal zone? Don't you have a bandgap in the mem controller for
->>> this application?
->>>
->>
->> Thats correct. We don't have a bandgap in the MMC controller and thus we
->> have to use the cpu one to measure temperature.
->>
->> THERMAL is critical for tuning. The interface is supposed to fail if we
->> can't get temperature. So IMO we should ensure that it is present.
->>
->> I can fix this by "select TI_SOC_THERMAL if ARCH_HAS_BANDGAP" if you
->> guys agree.
-> 
-> Building elaborate select statements is usually fragile, once
-> dependencies for TI_SOC_THERMAL changes you need to come back here to
-> fixup the select.
-> 
-> Supposedly this driver works on keystone (or does it?), it doesn't
 
-Yes. This driver works on keystone.
+> FWIW I personally don't care much about "only for owner" or depending on
+> mmap options; I don't understand much of the security implications
+> honestly so I'm not sure how these limitations actually help.
+> On the other hand, a simple CAP_SYS_ADMIN check making the call take
+> either behaviour should be safe and would cover what I described above.
 
-> actually need TI_SOC_THERMAL for basic functionality beyond tuning?
-> Or, at least, it needs to fall back to a reasonable behavior if it's
-> unavailable on keystone.
+So without CAP_SYS_ADMIN, mincore() would return mapping status, and
+with CAP_SYS_ADMIN, it would return cache residency status? Very clumsy
+:( Maybe if we introduced mincore2() with flags similar to BSD mentioned
+earlier in the thread, and the cache residency flag would require
+CAP_SYS_ADMIN or something similar.
+> (by the way, while we are discussing permissions, a regular user can use
+> fadvise dontneed on files it doesn't own as well as long as it can open
+> them for reading; I'm not sure if that would need restricting as well in
+> the context of the security issue.
 
-The scenario is this. dra7 devices (omap2plus_defconfig) support tuning
-which needs THERMAL and TI_SOC_THERMAL. Keystone devices don't need
-thermal at all. The tuning part of the code will never be touched by the
-keystone device.
+Probably not, as I've mentioned it won't evict what's mapped by somebody
+else. And eviction is also possible via controlling LRU, which is what
+the paper [1] does anyway (and also mentions that DONTNEED doesn't
+work). Being able to evict somebody's page is AFAIU not sufficient for
+attack, the side channel is about knowing that somebody brought that
+page back to RAM by touching it.
 
-In omap2plus_defconfig, THERMAL AND TI_SOC_THERMAL are modules by
-default. I need them to be built-in because MMC is built-in.
+> Frankly even with mincore someone
+> could likely tell the difference through timing, if they just do it a
+> few times. Do magic, probe, flush out, repeat until satisfied.)
+
+That's my bigger concern here. In [1] there's described a remote attack
+(on webserver) using the page fault timing differences for present/not
+present page cache pages. Noisy but works, and I expect locally it to be
+much less noisy. Yet the countermeasures section only mentions
+restricting mincore() as if it was sufficient (and also how to make
+evictions harder, but that's secondary IMHO).
+
+[1] https://arxiv.org/abs/1901.01161
 
 > 
-> Having the driver print a warning and refuse to tune to higher speeds
-> is a reasonable way to do this, I think. That would carry to all
-> platforms, i.e. even the ones who have TI_SOC_THERMAL and
-> ARCH_HAS_BANDGAP, without adding the select.
+> Thanks,
 > 
-
-The MMC core today doesn't support a fallback to lower speeds when
-tuning fails. The interface just fails. This means a bunch cards that
-were working will now fail. Also, people building with olddefconfig will
-get build errors because of THERMAL=m. Thus the Kconfig architecture
-should automatically select the dependencies for SDHCI_OMAP in DRA7.
-
-An "imply TI_SOC_THERMAL" is even better here. It won't force
-TI_SOC_THERMAL for keystone and doesn't cause any warnings.
-
-So I propose the following patch:
-
-diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-index e26b8145efb3..bc61eefcb695 100644
---- a/drivers/mmc/host/Kconfig
-+++ b/drivers/mmc/host/Kconfig
-@@ -978,7 +978,7 @@ config MMC_SDHCI_OMAP
-        tristate "TI SDHCI Controller Support"
-        depends on MMC_SDHCI_PLTFM && OF
-        select THERMAL
--       select TI_SOC_THERMAL
-+       imply TI_SOC_THERMAL
-        help
---
-
-Thanks,
-Faiz
 
