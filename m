@@ -7,48 +7,47 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD01BC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:03:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C247C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:03:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74B8C21736
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:03:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 161AB21736
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:03:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546866203;
-	bh=igrjsQl4TqaaN7J0H/HRYfB4iFI5Wu1iqunqnzJIxtg=;
+	s=default; t=1546866207;
+	bh=EHghRP9FwtQbXOBkbIt3lGgpGWZgIi5BCgKIECn/wjs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=NgXpL6yzlCG+r12srI2DE4dFfyIJCmqVd9CzJZ600ZQFLcn9D/gn5cxZhjfTuUIA8
-	 dUMCXMTaUYNbQP8LrIk7cz/P+u8sAX0H7LWOP4NSdBQGLpDmYKmXC7yxXsxYjytePe
-	 3hSz8dmhWGjWvyV4/qbfV5H4fTzZF9lY7CzmifjA=
+	b=vNiRbMrNCqdIPvLOQvO6POFl4vC2ucoF8XFID8Pb6BTO9ix1cr2K5b7W4dY++a0zc
+	 zMWE0WjZQzTMEqqoe4rpy7ZpFDJSFlnfDa2NmPrgMal06EcDcah0u56Nk9d7jDChoU
+	 02jITvHpP991ZZ6zHQH1egipfbohRgQzyx7BeRhc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730989AbfAGNDW (ORCPT
+        id S1731002AbfAGND0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:03:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50774 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:03:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50824 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730522AbfAGNDT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:03:19 -0500
+        id S1730982AbfAGNDV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:03:21 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B78D82089F;
-        Mon,  7 Jan 2019 13:03:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 91E4B2089F;
+        Mon,  7 Jan 2019 13:03:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546866198;
-        bh=igrjsQl4TqaaN7J0H/HRYfB4iFI5Wu1iqunqnzJIxtg=;
+        s=default; t=1546866201;
+        bh=EHghRP9FwtQbXOBkbIt3lGgpGWZgIi5BCgKIECn/wjs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IBsjy3SDI/uRmwHcWQRG3wOikpGyNYV3GWr3i7+T2QjWiowAIL+SycAihUhiZXFrz
-         mOq5NOLObXG8a0oUnu3J9ESRRg+2+Qev3D3yyva7FknMMcMXxkKvvGG51nTPDFpw5k
-         FsfyDU3sIjGfbHqkWb7ogDgenApvMsKvLtWzH+sE=
+        b=Bog6FlWAVM0lX11mhfGg+Dao4ZZcit4wqrVU301Ube00+znKA3ulv6fTBuOg5fwH+
+         xL+L7H5aDPfXM941AsNEH0U1055JmBtD+O+L/FamtJiO4ijTFMP++55kzzUMoohn8u
+         1MDPlmZGrCXBSRehZ+jdv9Mi/uFe6HXMtUsXAa5c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vijay Chidambaram <vvijay03@gmail.com>,
-        Jayashree Mohan <jayashree2912@gmail.com>,
-        Filipe Manana <fdmanana@suse.com>,
+        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
+        Josef Bacik <josef@toxicpanda.com>,
         David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.14 077/101] Btrfs: fix fsync of files with multiple hard links in new directories
-Date:   Mon,  7 Jan 2019 13:33:05 +0100
-Message-Id: <20190107105337.182644939@linuxfoundation.org>
+Subject: [PATCH 4.14 078/101] btrfs: run delayed items before dropping the snapshot
+Date:   Mon,  7 Jan 2019 13:33:06 +0100
+Message-Id: <20190107105337.242080339@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107105330.372621917@linuxfoundation.org>
 References: <20190107105330.372621917@linuxfoundation.org>
@@ -67,150 +66,86 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Filipe Manana <fdmanana@suse.com>
+From: Josef Bacik <jbacik@fb.com>
 
-commit 41bd60676923822de1df2c50b3f9a10171f4338a upstream.
+commit 0568e82dbe2510fc1fa664f58e5c997d3f1e649e upstream.
 
-The log tree has a long standing problem that when a file is fsync'ed we
-only check for new ancestors, created in the current transaction, by
-following only the hard link for which the fsync was issued. We follow the
-ancestors using the VFS' dget_parent() API. This means that if we create a
-new link for a file in a directory that is new (or in an any other new
-ancestor directory) and then fsync the file using an old hard link, we end
-up not logging the new ancestor, and on log replay that new hard link and
-ancestor do not exist. In some cases, involving renames, the file will not
-exist at all.
+With my delayed refs patches in place we started seeing a large amount
+of aborts in __btrfs_free_extent:
 
-Example:
+ BTRFS error (device sdb1): unable to find ref byte nr 91947008 parent 0 root 35964  owner 1 offset 0
+ Call Trace:
+  ? btrfs_merge_delayed_refs+0xaf/0x340
+  __btrfs_run_delayed_refs+0x6ea/0xfc0
+  ? btrfs_set_path_blocking+0x31/0x60
+  btrfs_run_delayed_refs+0xeb/0x180
+  btrfs_commit_transaction+0x179/0x7f0
+  ? btrfs_check_space_for_delayed_refs+0x30/0x50
+  ? should_end_transaction.isra.19+0xe/0x40
+  btrfs_drop_snapshot+0x41c/0x7c0
+  btrfs_clean_one_deleted_snapshot+0xb5/0xd0
+  cleaner_kthread+0xf6/0x120
+  kthread+0xf8/0x130
+  ? btree_invalidatepage+0x90/0x90
+  ? kthread_bind+0x10/0x10
+  ret_from_fork+0x35/0x40
 
-  mkfs.btrfs -f /dev/sdb
-  mount /dev/sdb /mnt
+This was because btrfs_drop_snapshot depends on the root not being
+modified while it's dropping the snapshot.  It will unlock the root node
+(and really every node) as it walks down the tree, only to re-lock it
+when it needs to do something.  This is a problem because if we modify
+the tree we could cow a block in our path, which frees our reference to
+that block.  Then once we get back to that shared block we'll free our
+reference to it again, and get ENOENT when trying to lookup our extent
+reference to that block in __btrfs_free_extent.
 
-  mkdir /mnt/A
-  touch /mnt/foo
-  ln /mnt/foo /mnt/A/bar
-  xfs_io -c fsync /mnt/foo
+This is ultimately happening because we have delayed items left to be
+processed for our deleted snapshot _after_ all of the inodes are closed
+for the snapshot.  We only run the delayed inode item if we're deleting
+the inode, and even then we do not run the delayed insertions or delayed
+removals.  These can be run at any point after our final inode does its
+last iput, which is what triggers the snapshot deletion.  We can end up
+with the snapshot deletion happening and then have the delayed items run
+on that file system, resulting in the above problem.
 
-  <power failure>
+This problem has existed forever, however my patches made it much easier
+to hit as I wake up the cleaner much more often to deal with delayed
+iputs, which made us more likely to start the snapshot dropping work
+before the transaction commits, which is when the delayed items would
+generally be run.  Before, generally speaking, we would run the delayed
+items, commit the transaction, and wakeup the cleaner thread to start
+deleting snapshots, which means we were less likely to hit this problem.
+You could still hit it if you had multiple snapshots to be deleted and
+ended up with lots of delayed items, but it was definitely harder.
 
-In this example after log replay only the hard link named 'foo' exists
-and directory A does not exist, which is unexpected. In other major linux
-filesystems, such as ext4, xfs and f2fs for example, both hard links exist
-and so does directory A after mounting again the filesystem.
+Fix for now by simply running all the delayed items before starting to
+drop the snapshot.  We could make this smarter in the future by making
+the delayed items per-root, and then simply drop any delayed items for
+roots that we are going to delete.  But for now just a quick and easy
+solution is the safest.
 
-Checking if any new ancestors are new and need to be logged was added in
-2009 by commit 12fcfd22fe5b ("Btrfs: tree logging unlink/rename fixes"),
-however only for the ancestors of the hard link (dentry) for which the
-fsync was issued, instead of checking for all ancestors for all of the
-inode's hard links.
-
-So fix this by tracking the id of the last transaction where a hard link
-was created for an inode and then on fsync fallback to a full transaction
-commit when an inode has more than one hard link and at least one new hard
-link was created in the current transaction. This is the simplest solution
-since this is not a common use case (adding frequently hard links for
-which there's an ancestor created in the current transaction and then
-fsync the file). In case it ever becomes a common use case, a solution
-that consists of iterating the fs/subvol btree for each hard link and
-check if any ancestor is new, could be implemented.
-
-This solves many unexpected scenarios reported by Jayashree Mohan and
-Vijay Chidambaram, and for which there is a new test case for fstests
-under review.
-
-Fixes: 12fcfd22fe5b ("Btrfs: tree logging unlink/rename fixes")
 CC: stable@vger.kernel.org # 4.4+
-Reported-by: Vijay Chidambaram <vvijay03@gmail.com>
-Reported-by: Jayashree Mohan <jayashree2912@gmail.com>
-Signed-off-by: Filipe Manana <fdmanana@suse.com>
+Reviewed-by: Filipe Manana <fdmanana@suse.com>
+Signed-off-by: Josef Bacik <josef@toxicpanda.com>
 Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/btrfs_inode.h |    6 ++++++
- fs/btrfs/inode.c       |   17 +++++++++++++++++
- fs/btrfs/tree-log.c    |   16 ++++++++++++++++
- 3 files changed, 39 insertions(+)
+ fs/btrfs/extent-tree.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/fs/btrfs/btrfs_inode.h
-+++ b/fs/btrfs/btrfs_inode.h
-@@ -161,6 +161,12 @@ struct btrfs_inode {
- 	u64 last_unlink_trans;
- 
- 	/*
-+	 * Track the transaction id of the last transaction used to create a
-+	 * hard link for the inode. This is used by the log tree (fsync).
-+	 */
-+	u64 last_link_trans;
-+
-+	/*
- 	 * Number of bytes outstanding that are going to need csums.  This is
- 	 * used in ENOSPC accounting.
- 	 */
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -3897,6 +3897,21 @@ cache_index:
- 	 * inode is not a directory, logging its parent unnecessarily.
- 	 */
- 	BTRFS_I(inode)->last_unlink_trans = BTRFS_I(inode)->last_trans;
-+	/*
-+	 * Similar reasoning for last_link_trans, needs to be set otherwise
-+	 * for a case like the following:
-+	 *
-+	 * mkdir A
-+	 * touch foo
-+	 * ln foo A/bar
-+	 * echo 2 > /proc/sys/vm/drop_caches
-+	 * fsync foo
-+	 * <power failure>
-+	 *
-+	 * Would result in link bar and directory A not existing after the power
-+	 * failure.
-+	 */
-+	BTRFS_I(inode)->last_link_trans = BTRFS_I(inode)->last_trans;
- 
- 	path->slots[0]++;
- 	if (inode->i_nlink != 1 ||
-@@ -6813,6 +6828,7 @@ static int btrfs_link(struct dentry *old
- 			if (err)
- 				goto fail;
- 		}
-+		BTRFS_I(inode)->last_link_trans = trans->transid;
- 		d_instantiate(dentry, inode);
- 		btrfs_log_new_name(trans, BTRFS_I(inode), NULL, parent);
- 	}
-@@ -9540,6 +9556,7 @@ struct inode *btrfs_alloc_inode(struct s
- 	ei->index_cnt = (u64)-1;
- 	ei->dir_index = 0;
- 	ei->last_unlink_trans = 0;
-+	ei->last_link_trans = 0;
- 	ei->last_log_commit = 0;
- 	ei->delayed_iput_count = 0;
- 
---- a/fs/btrfs/tree-log.c
-+++ b/fs/btrfs/tree-log.c
-@@ -5795,6 +5795,22 @@ static int btrfs_log_inode_parent(struct
- 			goto end_trans;
+--- a/fs/btrfs/extent-tree.c
++++ b/fs/btrfs/extent-tree.c
+@@ -9183,6 +9183,10 @@ int btrfs_drop_snapshot(struct btrfs_roo
+ 		goto out_free;
  	}
  
-+	/*
-+	 * If a new hard link was added to the inode in the current transaction
-+	 * and its link count is now greater than 1, we need to fallback to a
-+	 * transaction commit, otherwise we can end up not logging all its new
-+	 * parents for all the hard links. Here just from the dentry used to
-+	 * fsync, we can not visit the ancestor inodes for all the other hard
-+	 * links to figure out if any is new, so we fallback to a transaction
-+	 * commit (instead of adding a lot of complexity of scanning a btree,
-+	 * since this scenario is not a common use case).
-+	 */
-+	if (inode->vfs_inode.i_nlink > 1 &&
-+	    inode->last_link_trans > last_committed) {
-+		ret = -EMLINK;
-+		goto end_trans;
-+	}
++	err = btrfs_run_delayed_items(trans);
++	if (err)
++		goto out_end_trans;
 +
- 	while (1) {
- 		if (!parent || d_really_is_negative(parent) || sb != parent->d_sb)
- 			break;
+ 	if (block_rsv)
+ 		trans->block_rsv = block_rsv;
+ 
 
 
