@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A94E9C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:03:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96206C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:03:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 788DC2089F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:03:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 685BF21736
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:03:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546866211;
-	bh=spiMInmw1cQme3Qm4S4wfISxje/ACHYQwcnMWgmy7hI=;
+	s=default; t=1546866216;
+	bh=gdRmi6FI7vC9olQkzZHX9ujkVTVzq4otTvPMd5kVmp0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=xuen5ze9ZjYjyBWDk50KOc83j1jevA9k03HBnoTmhVOd3M1zQcIP1FWcNbb1rZc5K
-	 bDkiUW4ImpIdbTup7ePhCdHV6dU8RerQUkl1AaZdQjoWztXKmb7PEP0IPXe5LZkD4D
-	 2MiVjnHgbVDPEDIhdTWxwr93rVXcVH8oNOSS3JkY=
+	b=0Dtsf95HgHrZI6QPePbj66enzp8bI23welyCLLsCF0orRARDDSRKZuI+M0ZRy4lve
+	 djpsLjcYD+nKA0JBXwjt2I38Rv3zkuYHW/uRQIwBVy63cV+QBco8hJIJc+8QKxdQNR
+	 YhNXZ8YVAeIaiwEYKGgIa2GsAy2HYCUd8kpWJE8A=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730382AbfAGNDa (ORCPT
+        id S1731033AbfAGNDf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:03:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50920 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:03:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50972 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730135AbfAGND1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:03:27 -0500
+        id S1727684AbfAGNDa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:03:30 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3898E2089F;
-        Mon,  7 Jan 2019 13:03:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1872C2089F;
+        Mon,  7 Jan 2019 13:03:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546866206;
-        bh=spiMInmw1cQme3Qm4S4wfISxje/ACHYQwcnMWgmy7hI=;
+        s=default; t=1546866209;
+        bh=gdRmi6FI7vC9olQkzZHX9ujkVTVzq4otTvPMd5kVmp0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=b5/2ou37ykhwG/NoDEqeoBVs4qL5XVv+ww+zZ9hjmRn/L6cVxc5ILPMWk8N8lCy7w
-         VN9aubi4Q37MZNzxq/h8qUSJppE0e9oy7Y3i9tfbbwP6cllkbCicaTGlpdugLzF6Jx
-         11sG9Pv8M+ax7ksot41N5mv8CZ0NaiekKDTWslSY=
+        b=QirjeIJl+nTANXMxPlmC1q1/VazFAuKzvlBAvuTV/+78RVVhKof4YkvnVhCBCd3aB
+         d5dfWwvdcQthW2SsOmSiDhVmwTljpfXcfUb/LoXWCiKEex0YGSoawUGiDnEp3ojOgJ
+         G+H3e19e8T7Rc1WevJEsCjAGBzb7Z75xrIsqj1i8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
         Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 044/101] ALSA: fireface: fix for state to fetch PCM frames
-Date:   Mon,  7 Jan 2019 13:32:32 +0100
-Message-Id: <20190107105335.306446646@linuxfoundation.org>
+Subject: [PATCH 4.14 045/101] ALSA: firewire-lib: fix wrong handling payload_length as payload_quadlet
+Date:   Mon,  7 Jan 2019 13:32:33 +0100
+Message-Id: <20190107105335.367011522@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107105330.372621917@linuxfoundation.org>
 References: <20190107105330.372621917@linuxfoundation.org>
@@ -67,35 +67,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 
-commit 3d16200a3e55a39caa1c88419cb559c00316f721 upstream.
+commit ada79fa5a0b374dd2c2262137c734da7524a8263 upstream.
 
-According to my memo at hand and saved records, writing 0x00000001 to
-SND_FF_REG_FETCH_PCM_FRAMES disables fetching PCM frames in corresponding
-channel, however current implement uses reversed logic. This results in
-muted volume in device side during playback.
+In IEC 61883-1/6 engine of ALSA firewire stack, a packet handler has a
+second argument for 'the number of bytes in payload of isochronous
+packet'. However, an incoming packet handler without CIP header uses the
+value as 'the number of quadlets in the payload'. This brings userspace
+applications to receive the number of PCM frames as four times against
+real time.
 
-This commit corrects the bug.
+This commit fixes the bug.
 
 Cc: <stable@vger.kernel.org> # v4.12+
-Fixes: 76fdb3a9e13a ('ALSA: fireface: add support for Fireface 400')
+Fixes: 3b196c394dd ('ALSA: firewire-lib: add no-header packet processing')
 Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/firewire/fireface/ff-protocol-ff400.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/firewire/amdtp-stream.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/sound/firewire/fireface/ff-protocol-ff400.c
-+++ b/sound/firewire/fireface/ff-protocol-ff400.c
-@@ -152,7 +152,7 @@ static int ff400_switch_fetching_mode(st
- 	if (reg == NULL)
- 		return -ENOMEM;
+--- a/sound/firewire/amdtp-stream.c
++++ b/sound/firewire/amdtp-stream.c
+@@ -629,15 +629,17 @@ end:
+ }
  
--	if (enable) {
-+	if (!enable) {
- 		/*
- 		 * Each quadlet is corresponding to data channels in a data
- 		 * blocks in reverse order. Precisely, quadlets for available
+ static int handle_in_packet_without_header(struct amdtp_stream *s,
+-			unsigned int payload_quadlets, unsigned int cycle,
++			unsigned int payload_length, unsigned int cycle,
+ 			unsigned int index)
+ {
+ 	__be32 *buffer;
++	unsigned int payload_quadlets;
+ 	unsigned int data_blocks;
+ 	struct snd_pcm_substream *pcm;
+ 	unsigned int pcm_frames;
+ 
+ 	buffer = s->buffer.packets[s->packet_index].buffer;
++	payload_quadlets = payload_length / 4;
+ 	data_blocks = payload_quadlets / s->data_block_quadlets;
+ 
+ 	trace_in_packet_without_header(s, cycle, payload_quadlets, data_blocks,
 
 
