@@ -7,53 +7,63 @@ X-Spam-Status: No, score=-16.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8FF1C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:31:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF881C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:31:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6702F206BB
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:31:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 98C25206BB
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:31:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546864280;
-	bh=f2/YgG4Mz2wyfe1n1uSKTgzaC4EnCHe1qmHz8Ykzlss=;
+	s=default; t=1546864312;
+	bh=1wRhts//mmnDJnPMNcCNg0IVeoNAC1MtOoU+X05R3Ik=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=eYMxpcHAJVctiGDWMC798mcRbuTlKUB8r78GjDm4ZYBYR4WyIRWx3u44n3+s5N7Ig
-	 ZJhWzm7Gg9Ok3ndWZ7fj6V+GGT6q6eQPwXlJWP5GpGIrdJoLnBFx1OSHoU2/lw9iMD
-	 i08rZU7QzuQPUaAqhlB77coqlnBol8iVGEfVwJ54=
+	b=O0mKvDOgLVTi/0vsGrbSBpJQBg/znZqjp1eWc+/7ge13By0A0sj1SqRJTU9NtjlBl
+	 w9hffo4mY/+OZqUIBdSkv/jAq1P8IbuEqnktaAMSHD8v/iStlMYdHLAmQgu+yHkRpv
+	 jzZosmh13g/nFFXoT5PteoNOVRMF/0ryb+VUtGB4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726992AbfAGMbT (ORCPT
+        id S1727017AbfAGMbv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:31:19 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40160 "EHLO
+        Mon, 7 Jan 2019 07:31:51 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41264 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726718AbfAGMbT (ORCPT
+        with ESMTP id S1726718AbfAGMbv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:31:19 -0500
+        Mon, 7 Jan 2019 07:31:51 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=Za5EIDULCMa9DaButhg+AHF4ahF5tWT5iLhEO6JurwY=; b=N9VRxuIFFXF1
-        +bKp9Ey3ygvw77iGXMRbccAYc1si5Q3ZDXw2dIwKe6T3sqmsZtEcUCr6gciE42Od8uzi/pdTT5eNn
-        53ozpZzG8yAupot8ITToE/FYiXi/Fidj7FEZhIxLxSXnZsWnLg4yDfZJsnjoAGG3Pf/ii/VcOiI1S
-        HL9IE=;
+        List-Archive; bh=FtxNA+gPqKunymamtXoYnsLRns/ERQ53jLFij46Eyoc=; b=No+jEsS7MbSR
+        vpFMcQ9Zazmod8xk/YCSyWlBKQ1j8CGrL3g8TuhQixbAumNVfZkMCdptR8LWHZcRFK2YDtonONY71
+        fqLgmTdpylwMde0OKlIZDaZ8RSnMmJ0i7qU7v8b51qsmrnGNdjUwAgcaxmF4XxM4g490Yih1BSsNa
+        og8Uw=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1ggU3c-0006lT-WE; Mon, 07 Jan 2019 12:31:05 +0000
+        id 1ggU40-0006n7-La; Mon, 07 Jan 2019 12:31:28 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id A59491127491; Mon,  7 Jan 2019 12:31:04 +0000 (GMT)
+        id 472A71127490; Mon,  7 Jan 2019 12:31:28 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
-To:     Katsuhiro Suzuki <katsuhiro@katsuster.net>
-Cc:     Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: rockchip: support ACODEC for rk3328" to the asoc tree
-In-Reply-To:  <20181220153636.5213-1-katsuhiro@katsuster.net>
+To:     Maruthi Srinivas Bayyavarapu 
+        <maruthi.srinivas.bayyavarapu@xilinx.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Vishal Sagar <vsagar@xilinx.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
+        alsa-devel@alsa-project.org
+Subject: Applied "ASoC: xlnx: add pcm formatter platform driver" to the asoc tree
+In-Reply-To:  <1545382649-181411-3-git-send-email-maruthi.srinivas.bayyavarapu@xilinx.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190107123104.A59491127491@debutante.sirena.org.uk>
-Date:   Mon,  7 Jan 2019 12:31:04 +0000 (GMT)
+Message-Id: <20190107123128.472A71127490@debutante.sirena.org.uk>
+Date:   Mon,  7 Jan 2019 12:31:28 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -61,7 +71,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: rockchip: support ACODEC for rk3328
+   ASoC: xlnx: add pcm formatter platform driver
 
 has been applied to the asoc tree at
 
@@ -86,843 +96,594 @@ to this mail.
 Thanks,
 Mark
 
-From c32759035ad246d3e4c65d23a07f9e6ba32caeaf Mon Sep 17 00:00:00 2001
-From: Katsuhiro Suzuki <katsuhiro@katsuster.net>
-Date: Fri, 21 Dec 2018 00:36:35 +0900
-Subject: [PATCH] ASoC: rockchip: support ACODEC for rk3328
+From 6f6c3c36f0917be24587eeba818ab4fdfcb5465a Mon Sep 17 00:00:00 2001
+From: Maruthi Srinivas Bayyavarapu <maruthi.srinivas.bayyavarapu@xilinx.com>
+Date: Fri, 21 Dec 2018 14:27:28 +0530
+Subject: [PATCH] ASoC: xlnx: add pcm formatter platform driver
 
-This patch adds support for audio CODEC core of rk3328.
+The audio formatter PL IP supports DMA of two streams -
+mm2s and s2mm for playback and capture respectively. Apart from
+DMA, IP also does conversions like PCM to AES and viceversa.
+This patch adds DMA component driver for the IP.
 
-Rockchip does not publish detail specification of this core
-but driver source code is opened on their GitHub repository.
-  https://github.com/rockchip-linux/kernel
-
-So I ported this code to linux-next and added some trivial fixes.
-
-Signed-off-by: Katsuhiro Suzuki <katsuhiro@katsuster.net>
+Signed-off-by: Maruthi Srinivas Bayyavarapu <maruthi.srinivas.bayyavarapu@xilinx.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- .../bindings/sound/rockchip,rk3328-codec.txt  |  23 +
- sound/soc/codecs/Kconfig                      |   5 +
- sound/soc/codecs/Makefile                     |   2 +
- sound/soc/codecs/rk3328_codec.c               | 517 ++++++++++++++++++
- sound/soc/codecs/rk3328_codec.h               | 210 +++++++
- 5 files changed, 757 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/sound/rockchip,rk3328-codec.txt
- create mode 100644 sound/soc/codecs/rk3328_codec.c
- create mode 100644 sound/soc/codecs/rk3328_codec.h
+ sound/soc/xilinx/xlnx_formatter_pcm.c | 565 ++++++++++++++++++++++++++
+ 1 file changed, 565 insertions(+)
+ create mode 100644 sound/soc/xilinx/xlnx_formatter_pcm.c
 
-diff --git a/Documentation/devicetree/bindings/sound/rockchip,rk3328-codec.txt b/Documentation/devicetree/bindings/sound/rockchip,rk3328-codec.txt
+diff --git a/sound/soc/xilinx/xlnx_formatter_pcm.c b/sound/soc/xilinx/xlnx_formatter_pcm.c
 new file mode 100644
-index 000000000000..2469588c7ccb
+index 000000000000..f7235f7664d7
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/rockchip,rk3328-codec.txt
-@@ -0,0 +1,23 @@
-+* Rockchip Rk3328 internal codec
-+
-+Required properties:
-+
-+- compatible: "rockchip,rk3328-codec"
-+- reg: physical base address of the controller and length of memory mapped
-+  region.
-+- rockchip,grf: the phandle of the syscon node for GRF register.
-+- clocks: a list of phandle + clock-specifer pairs, one for each entry in clock-names.
-+- clock-names: should be "pclk".
-+- spk-depop-time-ms: speak depop time msec.
-+
-+Example for rk3328 internal codec:
-+
-+codec: codec@ff410000 {
-+	compatible = "rockchip,rk3328-codec";
-+	reg = <0x0 0xff410000 0x0 0x1000>;
-+	rockchip,grf = <&grf>;
-+	clocks = <&cru PCLK_ACODEC>;
-+	clock-names = "pclk";
-+	spk-depop-time-ms = 100;
-+	status = "disabled";
-+};
-diff --git a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
-index d46de3e04ff6..87cb9c51e6f5 100644
---- a/sound/soc/codecs/Kconfig
-+++ b/sound/soc/codecs/Kconfig
-@@ -130,6 +130,7 @@ config SND_SOC_ALL_CODECS
- 	select SND_SOC_PCM5102A
- 	select SND_SOC_PCM512x_I2C if I2C
- 	select SND_SOC_PCM512x_SPI if SPI_MASTER
-+	select SND_SOC_RK3328
- 	select SND_SOC_RT274 if I2C
- 	select SND_SOC_RT286 if I2C
- 	select SND_SOC_RT298 if I2C
-@@ -806,6 +807,10 @@ config SND_SOC_PCM512x_SPI
- 	select SND_SOC_PCM512x
- 	select REGMAP_SPI
- 
-+config SND_SOC_RK3328
-+	tristate "Rockchip RK3328 audio CODEC"
-+	select REGMAP_MMIO
-+
- config SND_SOC_RL6231
- 	tristate
- 	default y if SND_SOC_RT5514=y
-diff --git a/sound/soc/codecs/Makefile b/sound/soc/codecs/Makefile
-index fbe36e6177b0..9bb3346fab2f 100644
---- a/sound/soc/codecs/Makefile
-+++ b/sound/soc/codecs/Makefile
-@@ -133,6 +133,7 @@ snd-soc-pcm5102a-objs := pcm5102a.o
- snd-soc-pcm512x-objs := pcm512x.o
- snd-soc-pcm512x-i2c-objs := pcm512x-i2c.o
- snd-soc-pcm512x-spi-objs := pcm512x-spi.o
-+snd-soc-rk3328-objs := rk3328_codec.o
- snd-soc-rl6231-objs := rl6231.o
- snd-soc-rl6347a-objs := rl6347a.o
- snd-soc-rt1305-objs := rt1305.o
-@@ -400,6 +401,7 @@ obj-$(CONFIG_SND_SOC_PCM5102A)	+= snd-soc-pcm5102a.o
- obj-$(CONFIG_SND_SOC_PCM512x)	+= snd-soc-pcm512x.o
- obj-$(CONFIG_SND_SOC_PCM512x_I2C)	+= snd-soc-pcm512x-i2c.o
- obj-$(CONFIG_SND_SOC_PCM512x_SPI)	+= snd-soc-pcm512x-spi.o
-+obj-$(CONFIG_SND_SOC_RK3328)	+= snd-soc-rk3328.o
- obj-$(CONFIG_SND_SOC_RL6231)	+= snd-soc-rl6231.o
- obj-$(CONFIG_SND_SOC_RL6347A)	+= snd-soc-rl6347a.o
- obj-$(CONFIG_SND_SOC_RT1305)	+= snd-soc-rt1305.o
-diff --git a/sound/soc/codecs/rk3328_codec.c b/sound/soc/codecs/rk3328_codec.c
-new file mode 100644
-index 000000000000..71f3fc2d970c
---- /dev/null
-+++ b/sound/soc/codecs/rk3328_codec.c
-@@ -0,0 +1,517 @@
++++ b/sound/soc/xilinx/xlnx_formatter_pcm.c
+@@ -0,0 +1,565 @@
 +// SPDX-License-Identifier: GPL-2.0
 +//
-+// rk3328 ALSA SoC Audio driver
++// Xilinx ASoC audio formatter support
 +//
-+// Copyright (c) 2017, Fuzhou Rockchip Electronics Co., Ltd All rights reserved.
++// Copyright (C) 2018 Xilinx, Inc.
++//
++// Author: Maruthi Srinivas Bayyavarapu <maruthis@xilinx.com>
 +
 +#include <linux/clk.h>
-+#include <linux/delay.h>
-+#include <linux/device.h>
++#include <linux/io.h>
 +#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/regmap.h>
-+#include <linux/mfd/syscon.h>
-+#include <sound/dmaengine_pcm.h>
++#include <linux/of_address.h>
++#include <linux/of_irq.h>
++#include <linux/sizes.h>
++
++#include <sound/soc.h>
 +#include <sound/pcm_params.h>
-+#include "rk3328_codec.h"
++
++#define DRV_NAME "xlnx_formatter_pcm"
++
++#define XLNX_S2MM_OFFSET	0
++#define XLNX_MM2S_OFFSET	0x100
++
++#define XLNX_AUD_CORE_CONFIG	0x4
++#define XLNX_AUD_CTRL		0x10
++#define XLNX_AUD_STS		0x14
++
++#define AUD_CTRL_RESET_MASK	BIT(1)
++#define AUD_CFG_MM2S_MASK	BIT(15)
++#define AUD_CFG_S2MM_MASK	BIT(31)
++
++#define XLNX_AUD_FS_MULTIPLIER	0x18
++#define XLNX_AUD_PERIOD_CONFIG	0x1C
++#define XLNX_AUD_BUFF_ADDR_LSB	0x20
++#define XLNX_AUD_BUFF_ADDR_MSB	0x24
++#define XLNX_AUD_XFER_COUNT	0x28
++#define XLNX_AUD_CH_STS_START	0x2C
++#define XLNX_BYTES_PER_CH	0x44
++
++#define AUD_STS_IOC_IRQ_MASK	BIT(31)
++#define AUD_STS_CH_STS_MASK	BIT(29)
++#define AUD_CTRL_IOC_IRQ_MASK	BIT(13)
++#define AUD_CTRL_TOUT_IRQ_MASK	BIT(14)
++#define AUD_CTRL_DMA_EN_MASK	BIT(0)
++
++#define CFG_MM2S_CH_MASK	GENMASK(11, 8)
++#define CFG_MM2S_CH_SHIFT	8
++#define CFG_MM2S_XFER_MASK	GENMASK(14, 13)
++#define CFG_MM2S_XFER_SHIFT	13
++#define CFG_MM2S_PKG_MASK	BIT(12)
++
++#define CFG_S2MM_CH_MASK	GENMASK(27, 24)
++#define CFG_S2MM_CH_SHIFT	24
++#define CFG_S2MM_XFER_MASK	GENMASK(30, 29)
++#define CFG_S2MM_XFER_SHIFT	29
++#define CFG_S2MM_PKG_MASK	BIT(28)
++
++#define AUD_CTRL_DATA_WIDTH_SHIFT	16
++#define AUD_CTRL_ACTIVE_CH_SHIFT	19
++#define PERIOD_CFG_PERIODS_SHIFT	16
++
++#define PERIODS_MIN		2
++#define PERIODS_MAX		6
++#define PERIOD_BYTES_MIN	192
++#define PERIOD_BYTES_MAX	(50 * 1024)
++
++enum bit_depth {
++	BIT_DEPTH_8,
++	BIT_DEPTH_16,
++	BIT_DEPTH_20,
++	BIT_DEPTH_24,
++	BIT_DEPTH_32,
++};
++
++struct xlnx_pcm_drv_data {
++	void __iomem *mmio;
++	bool s2mm_presence;
++	bool mm2s_presence;
++	unsigned int s2mm_irq;
++	unsigned int mm2s_irq;
++	struct snd_pcm_substream *play_stream;
++	struct snd_pcm_substream *capture_stream;
++	struct clk *axi_clk;
++};
 +
 +/*
-+ * volume setting
-+ * 0: -39dB
-+ * 26: 0dB
-+ * 31: 6dB
-+ * Step: 1.5dB
++ * struct xlnx_pcm_stream_param - stream configuration
++ * @mmio: base address offset
++ * @interleaved: audio channels arrangement in buffer
++ * @xfer_mode: data formatting mode during transfer
++ * @ch_limit: Maximum channels supported
++ * @buffer_size: stream ring buffer size
 + */
-+#define OUT_VOLUME	(0x18)
-+#define RK3328_GRF_SOC_CON2	(0x0408)
-+#define RK3328_GRF_SOC_CON10	(0x0428)
-+#define INITIAL_FREQ	(11289600)
-+
-+struct rk3328_codec_priv {
-+	struct regmap *regmap;
-+	struct regmap *grf;
-+	struct clk *mclk;
-+	struct clk *pclk;
-+	unsigned int sclk;
-+	int spk_depop_time; /* msec */
++struct xlnx_pcm_stream_param {
++	void __iomem *mmio;
++	bool interleaved;
++	u32 xfer_mode;
++	u32 ch_limit;
++	u64 buffer_size;
 +};
 +
-+static const struct reg_default rk3328_codec_reg_defaults[] = {
-+	{ CODEC_RESET, 0x03 },
-+	{ DAC_INIT_CTRL1, 0x00 },
-+	{ DAC_INIT_CTRL2, 0x50 },
-+	{ DAC_INIT_CTRL3, 0x0e },
-+	{ DAC_PRECHARGE_CTRL, 0x01 },
-+	{ DAC_PWR_CTRL, 0x00 },
-+	{ DAC_CLK_CTRL, 0x00 },
-+	{ HPMIX_CTRL, 0x00 },
-+	{ HPOUT_CTRL, 0x00 },
-+	{ HPOUTL_GAIN_CTRL, 0x00 },
-+	{ HPOUTR_GAIN_CTRL, 0x00 },
-+	{ HPOUT_POP_CTRL, 0x11 },
++static const struct snd_pcm_hardware xlnx_pcm_hardware = {
++	.info = SNDRV_PCM_INFO_INTERLEAVED | SNDRV_PCM_INFO_BLOCK_TRANSFER |
++		SNDRV_PCM_INFO_BATCH | SNDRV_PCM_INFO_PAUSE |
++		SNDRV_PCM_INFO_RESUME,
++	.formats = SNDRV_PCM_FMTBIT_S8 | SNDRV_PCM_FMTBIT_S16_LE |
++		   SNDRV_PCM_FMTBIT_S24_LE,
++	.channels_min = 2,
++	.channels_max = 2,
++	.rates = SNDRV_PCM_RATE_8000_192000,
++	.rate_min = 8000,
++	.rate_max = 192000,
++	.buffer_bytes_max = PERIODS_MAX * PERIOD_BYTES_MAX,
++	.period_bytes_min = PERIOD_BYTES_MIN,
++	.period_bytes_max = PERIOD_BYTES_MAX,
++	.periods_min = PERIODS_MIN,
++	.periods_max = PERIODS_MAX,
 +};
 +
-+static int rk3328_codec_reset(struct rk3328_codec_priv *rk3328)
++static int xlnx_formatter_pcm_reset(void __iomem *mmio_base)
 +{
-+	regmap_write(rk3328->regmap, CODEC_RESET, 0x00);
-+	mdelay(10);
-+	regmap_write(rk3328->regmap, CODEC_RESET, 0x03);
++	u32 val, retries = 0;
 +
-+	return 0;
-+}
++	val = readl(mmio_base + XLNX_AUD_CTRL);
++	val |= AUD_CTRL_RESET_MASK;
++	writel(val, mmio_base + XLNX_AUD_CTRL);
 +
-+static int rk3328_set_dai_fmt(struct snd_soc_dai *dai, unsigned int fmt)
-+{
-+	struct rk3328_codec_priv *rk3328 =
-+		snd_soc_component_get_drvdata(dai->component);
-+	unsigned int val;
-+
-+	switch (fmt & SND_SOC_DAIFMT_MASTER_MASK) {
-+	case SND_SOC_DAIFMT_CBS_CFS:
-+		val = PIN_DIRECTION_IN | DAC_I2S_MODE_SLAVE;
-+		break;
-+	case SND_SOC_DAIFMT_CBM_CFM:
-+		val = PIN_DIRECTION_OUT | DAC_I2S_MODE_MASTER;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	regmap_update_bits(rk3328->regmap, DAC_INIT_CTRL1,
-+			   PIN_DIRECTION_MASK | DAC_I2S_MODE_MASK, val);
-+
-+	switch (fmt & SND_SOC_DAIFMT_FORMAT_MASK) {
-+	case SND_SOC_DAIFMT_DSP_A:
-+	case SND_SOC_DAIFMT_DSP_B:
-+		val = DAC_MODE_PCM;
-+		break;
-+	case SND_SOC_DAIFMT_I2S:
-+		val = DAC_MODE_I2S;
-+		break;
-+	case SND_SOC_DAIFMT_RIGHT_J:
-+		val = DAC_MODE_RJM;
-+		break;
-+	case SND_SOC_DAIFMT_LEFT_J:
-+		val = DAC_MODE_LJM;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	regmap_update_bits(rk3328->regmap, DAC_INIT_CTRL2,
-+			   DAC_MODE_MASK, val);
-+
-+	return 0;
-+}
-+
-+static void rk3328_analog_output(struct rk3328_codec_priv *rk3328, int mute)
-+{
-+	unsigned int val = BIT(17);
-+
-+	if (mute)
-+		val |= BIT(1);
-+
-+	regmap_write(rk3328->grf, RK3328_GRF_SOC_CON10, val);
-+}
-+
-+static int rk3328_digital_mute(struct snd_soc_dai *dai, int mute)
-+{
-+	struct rk3328_codec_priv *rk3328 =
-+		snd_soc_component_get_drvdata(dai->component);
-+	unsigned int val;
-+
-+	if (mute)
-+		val = HPOUTL_MUTE | HPOUTR_MUTE;
-+	else
-+		val = HPOUTL_UNMUTE | HPOUTR_UNMUTE;
-+
-+	regmap_update_bits(rk3328->regmap, HPOUT_CTRL,
-+			   HPOUTL_MUTE_MASK | HPOUTR_MUTE_MASK, val);
-+
-+	return 0;
-+}
-+
-+static int rk3328_codec_power_on(struct rk3328_codec_priv *rk3328, int wait_ms)
-+{
-+	regmap_update_bits(rk3328->regmap, DAC_PRECHARGE_CTRL,
-+			   DAC_CHARGE_XCHARGE_MASK, DAC_CHARGE_PRECHARGE);
-+	mdelay(10);
-+	regmap_update_bits(rk3328->regmap, DAC_PRECHARGE_CTRL,
-+			   DAC_CHARGE_CURRENT_ALL_MASK,
-+			   DAC_CHARGE_CURRENT_ALL_ON);
-+	mdelay(wait_ms);
-+
-+	return 0;
-+}
-+
-+static int rk3328_codec_power_off(struct rk3328_codec_priv *rk3328, int wait_ms)
-+{
-+	regmap_update_bits(rk3328->regmap, DAC_PRECHARGE_CTRL,
-+			   DAC_CHARGE_XCHARGE_MASK, DAC_CHARGE_DISCHARGE);
-+	mdelay(10);
-+	regmap_update_bits(rk3328->regmap, DAC_PRECHARGE_CTRL,
-+			   DAC_CHARGE_CURRENT_ALL_MASK,
-+			   DAC_CHARGE_CURRENT_ALL_ON);
-+	mdelay(wait_ms);
-+
-+	return 0;
-+}
-+
-+static const struct rk3328_reg_msk_val playback_open_list[] = {
-+	{ DAC_PWR_CTRL, DAC_PWR_MASK, DAC_PWR_ON },
-+	{ DAC_PWR_CTRL, DACL_PATH_REFV_MASK | DACR_PATH_REFV_MASK,
-+	  DACL_PATH_REFV_ON | DACR_PATH_REFV_ON },
-+	{ DAC_PWR_CTRL, HPOUTL_ZERO_CROSSING_MASK | HPOUTR_ZERO_CROSSING_MASK,
-+	  HPOUTL_ZERO_CROSSING_ON | HPOUTR_ZERO_CROSSING_ON },
-+	{ HPOUT_POP_CTRL, HPOUTR_POP_MASK | HPOUTL_POP_MASK,
-+	  HPOUTR_POP_WORK | HPOUTL_POP_WORK },
-+	{ HPMIX_CTRL, HPMIXL_MASK | HPMIXR_MASK, HPMIXL_EN | HPMIXR_EN },
-+	{ HPMIX_CTRL, HPMIXL_INIT_MASK | HPMIXR_INIT_MASK,
-+	  HPMIXL_INIT_EN | HPMIXR_INIT_EN },
-+	{ HPOUT_CTRL, HPOUTL_MASK | HPOUTR_MASK, HPOUTL_EN | HPOUTR_EN },
-+	{ HPOUT_CTRL, HPOUTL_INIT_MASK | HPOUTR_INIT_MASK,
-+	  HPOUTL_INIT_EN | HPOUTR_INIT_EN },
-+	{ DAC_CLK_CTRL, DACL_REFV_MASK | DACR_REFV_MASK,
-+	  DACL_REFV_ON | DACR_REFV_ON },
-+	{ DAC_CLK_CTRL, DACL_CLK_MASK | DACR_CLK_MASK,
-+	  DACL_CLK_ON | DACR_CLK_ON },
-+	{ DAC_CLK_CTRL, DACL_MASK | DACR_MASK, DACL_ON | DACR_ON },
-+	{ DAC_CLK_CTRL, DACL_INIT_MASK | DACR_INIT_MASK,
-+	  DACL_INIT_ON | DACR_INIT_ON },
-+	{ DAC_SELECT, DACL_SELECT_MASK | DACR_SELECT_MASK,
-+	  DACL_SELECT | DACR_SELECT },
-+	{ HPMIX_CTRL, HPMIXL_INIT2_MASK | HPMIXR_INIT2_MASK,
-+	  HPMIXL_INIT2_EN | HPMIXR_INIT2_EN },
-+	{ HPOUT_CTRL, HPOUTL_MUTE_MASK | HPOUTR_MUTE_MASK,
-+	  HPOUTL_UNMUTE | HPOUTR_UNMUTE },
-+};
-+
-+static int rk3328_codec_open_playback(struct rk3328_codec_priv *rk3328)
-+{
-+	int i;
-+
-+	regmap_update_bits(rk3328->regmap, DAC_PRECHARGE_CTRL,
-+			   DAC_CHARGE_CURRENT_ALL_MASK,
-+			   DAC_CHARGE_CURRENT_I);
-+
-+	for (i = 0; i < ARRAY_SIZE(playback_open_list); i++) {
-+		regmap_update_bits(rk3328->regmap,
-+				   playback_open_list[i].reg,
-+				   playback_open_list[i].msk,
-+				   playback_open_list[i].val);
++	val = readl(mmio_base + XLNX_AUD_CTRL);
++	/* Poll for maximum timeout of approximately 100ms (1 * 100)*/
++	while ((val & AUD_CTRL_RESET_MASK) && (retries < 100)) {
 +		mdelay(1);
++		retries++;
++		val = readl(mmio_base + XLNX_AUD_CTRL);
 +	}
-+
-+	msleep(rk3328->spk_depop_time);
-+	rk3328_analog_output(rk3328, 1);
-+
-+	regmap_update_bits(rk3328->regmap, HPOUTL_GAIN_CTRL,
-+			   HPOUTL_GAIN_MASK, OUT_VOLUME);
-+	regmap_update_bits(rk3328->regmap, HPOUTR_GAIN_CTRL,
-+			   HPOUTR_GAIN_MASK, OUT_VOLUME);
++	if (val & AUD_CTRL_RESET_MASK)
++		return -ENODEV;
 +
 +	return 0;
 +}
 +
-+static const struct rk3328_reg_msk_val playback_close_list[] = {
-+	{ HPMIX_CTRL, HPMIXL_INIT2_MASK | HPMIXR_INIT2_MASK,
-+	  HPMIXL_INIT2_DIS | HPMIXR_INIT2_DIS },
-+	{ DAC_SELECT, DACL_SELECT_MASK | DACR_SELECT_MASK,
-+	  DACL_UNSELECT | DACR_UNSELECT },
-+	{ HPOUT_CTRL, HPOUTL_MUTE_MASK | HPOUTR_MUTE_MASK,
-+	  HPOUTL_MUTE | HPOUTR_MUTE },
-+	{ HPOUT_CTRL, HPOUTL_INIT_MASK | HPOUTR_INIT_MASK,
-+	  HPOUTL_INIT_DIS | HPOUTR_INIT_DIS },
-+	{ HPOUT_CTRL, HPOUTL_MASK | HPOUTR_MASK, HPOUTL_DIS | HPOUTR_DIS },
-+	{ HPMIX_CTRL, HPMIXL_MASK | HPMIXR_MASK, HPMIXL_DIS | HPMIXR_DIS },
-+	{ DAC_CLK_CTRL, DACL_MASK | DACR_MASK, DACL_OFF | DACR_OFF },
-+	{ DAC_CLK_CTRL, DACL_CLK_MASK | DACR_CLK_MASK,
-+	  DACL_CLK_OFF | DACR_CLK_OFF },
-+	{ DAC_CLK_CTRL, DACL_REFV_MASK | DACR_REFV_MASK,
-+	  DACL_REFV_OFF | DACR_REFV_OFF },
-+	{ HPOUT_POP_CTRL, HPOUTR_POP_MASK | HPOUTL_POP_MASK,
-+	  HPOUTR_POP_XCHARGE | HPOUTL_POP_XCHARGE },
-+	{ DAC_PWR_CTRL, DACL_PATH_REFV_MASK | DACR_PATH_REFV_MASK,
-+	  DACL_PATH_REFV_OFF | DACR_PATH_REFV_OFF },
-+	{ DAC_PWR_CTRL, DAC_PWR_MASK, DAC_PWR_OFF },
-+	{ HPMIX_CTRL, HPMIXL_INIT_MASK | HPMIXR_INIT_MASK,
-+	  HPMIXL_INIT_DIS | HPMIXR_INIT_DIS },
-+	{ DAC_CLK_CTRL, DACL_INIT_MASK | DACR_INIT_MASK,
-+	  DACL_INIT_OFF | DACR_INIT_OFF },
-+};
-+
-+static int rk3328_codec_close_playback(struct rk3328_codec_priv *rk3328)
++static void xlnx_formatter_disable_irqs(void __iomem *mmio_base, int stream)
 +{
-+	size_t i;
++	u32 val;
 +
-+	rk3328_analog_output(rk3328, 0);
++	val = readl(mmio_base + XLNX_AUD_CTRL);
++	val &= ~AUD_CTRL_IOC_IRQ_MASK;
++	if (stream == SNDRV_PCM_STREAM_CAPTURE)
++		val &= ~AUD_CTRL_TOUT_IRQ_MASK;
 +
-+	regmap_update_bits(rk3328->regmap, HPOUTL_GAIN_CTRL,
-+			   HPOUTL_GAIN_MASK, 0);
-+	regmap_update_bits(rk3328->regmap, HPOUTR_GAIN_CTRL,
-+			   HPOUTR_GAIN_MASK, 0);
++	writel(val, mmio_base + XLNX_AUD_CTRL);
++}
 +
-+	for (i = 0; i < ARRAY_SIZE(playback_close_list); i++) {
-+		regmap_update_bits(rk3328->regmap,
-+				   playback_close_list[i].reg,
-+				   playback_close_list[i].msk,
-+				   playback_close_list[i].val);
-+		mdelay(1);
++static irqreturn_t xlnx_mm2s_irq_handler(int irq, void *arg)
++{
++	u32 val;
++	void __iomem *reg;
++	struct device *dev = arg;
++	struct xlnx_pcm_drv_data *adata = dev_get_drvdata(dev);
++
++	reg = adata->mmio + XLNX_MM2S_OFFSET + XLNX_AUD_STS;
++	val = readl(reg);
++	if (val & AUD_STS_IOC_IRQ_MASK) {
++		writel(val & AUD_STS_IOC_IRQ_MASK, reg);
++		if (adata->play_stream)
++			snd_pcm_period_elapsed(adata->play_stream);
++		return IRQ_HANDLED;
 +	}
 +
-+	regmap_update_bits(rk3328->regmap, DAC_PRECHARGE_CTRL,
-+			   DAC_CHARGE_CURRENT_ALL_MASK,
-+			   DAC_CHARGE_CURRENT_I);
-+
-+	return 0;
++	return IRQ_NONE;
 +}
 +
-+static int rk3328_hw_params(struct snd_pcm_substream *substream,
-+			    struct snd_pcm_hw_params *params,
-+			    struct snd_soc_dai *dai)
++static irqreturn_t xlnx_s2mm_irq_handler(int irq, void *arg)
 +{
-+	struct rk3328_codec_priv *rk3328 =
-+		snd_soc_component_get_drvdata(dai->component);
-+	unsigned int val = 0;
++	u32 val;
++	void __iomem *reg;
++	struct device *dev = arg;
++	struct xlnx_pcm_drv_data *adata = dev_get_drvdata(dev);
 +
-+	switch (params_format(params)) {
-+	case SNDRV_PCM_FORMAT_S16_LE:
-+		val = DAC_VDL_16BITS;
-+		break;
-+	case SNDRV_PCM_FORMAT_S20_3LE:
-+		val = DAC_VDL_20BITS;
-+		break;
-+	case SNDRV_PCM_FORMAT_S24_LE:
-+		val = DAC_VDL_24BITS;
-+		break;
-+	case SNDRV_PCM_FORMAT_S32_LE:
-+		val = DAC_VDL_32BITS;
-+		break;
-+	default:
-+		return -EINVAL;
++	reg = adata->mmio + XLNX_S2MM_OFFSET + XLNX_AUD_STS;
++	val = readl(reg);
++	if (val & AUD_STS_IOC_IRQ_MASK) {
++		writel(val & AUD_STS_IOC_IRQ_MASK, reg);
++		if (adata->capture_stream)
++			snd_pcm_period_elapsed(adata->capture_stream);
++		return IRQ_HANDLED;
 +	}
-+	regmap_update_bits(rk3328->regmap, DAC_INIT_CTRL2, DAC_VDL_MASK, val);
 +
-+	val = DAC_WL_32BITS | DAC_RST_DIS;
-+	regmap_update_bits(rk3328->regmap, DAC_INIT_CTRL3,
-+			   DAC_WL_MASK | DAC_RST_MASK, val);
-+
-+	return 0;
++	return IRQ_NONE;
 +}
 +
-+static int rk3328_pcm_startup(struct snd_pcm_substream *substream,
-+			      struct snd_soc_dai *dai)
++static int xlnx_formatter_pcm_open(struct snd_pcm_substream *substream)
 +{
-+	struct rk3328_codec_priv *rk3328 =
-+		snd_soc_component_get_drvdata(dai->component);
++	int err;
++	u32 val, data_format_mode;
++	u32 ch_count_mask, ch_count_shift, data_xfer_mode, data_xfer_shift;
++	struct xlnx_pcm_stream_param *stream_data;
++	struct snd_pcm_runtime *runtime = substream->runtime;
++	struct snd_soc_pcm_runtime *prtd = substream->private_data;
++	struct snd_soc_component *component = snd_soc_rtdcom_lookup(prtd,
++								    DRV_NAME);
++	struct xlnx_pcm_drv_data *adata = dev_get_drvdata(component->dev);
 +
-+	return rk3328_codec_open_playback(rk3328);
-+}
++	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK &&
++	    !adata->mm2s_presence)
++		return -ENODEV;
++	else if (substream->stream == SNDRV_PCM_STREAM_CAPTURE &&
++		 !adata->s2mm_presence)
++		return -ENODEV;
 +
-+static void rk3328_pcm_shutdown(struct snd_pcm_substream *substream,
-+				struct snd_soc_dai *dai)
-+{
-+	struct rk3328_codec_priv *rk3328 =
-+		snd_soc_component_get_drvdata(dai->component);
-+
-+	rk3328_codec_close_playback(rk3328);
-+}
-+
-+static const struct snd_soc_dai_ops rk3328_dai_ops = {
-+	.hw_params = rk3328_hw_params,
-+	.set_fmt = rk3328_set_dai_fmt,
-+	.digital_mute = rk3328_digital_mute,
-+	.startup = rk3328_pcm_startup,
-+	.shutdown = rk3328_pcm_shutdown,
-+};
-+
-+static struct snd_soc_dai_driver rk3328_dai[] = {
-+	{
-+		.name = "rk3328-hifi",
-+		.id = RK3328_HIFI,
-+		.playback = {
-+			.stream_name = "HIFI Playback",
-+			.channels_min = 1,
-+			.channels_max = 2,
-+			.rates = SNDRV_PCM_RATE_8000_96000,
-+			.formats = (SNDRV_PCM_FMTBIT_S16_LE |
-+				    SNDRV_PCM_FMTBIT_S20_3LE |
-+				    SNDRV_PCM_FMTBIT_S24_LE |
-+				    SNDRV_PCM_FMTBIT_S32_LE),
-+		},
-+		.capture = {
-+			.stream_name = "HIFI Capture",
-+			.channels_min = 2,
-+			.channels_max = 8,
-+			.rates = SNDRV_PCM_RATE_8000_96000,
-+			.formats = (SNDRV_PCM_FMTBIT_S16_LE |
-+				    SNDRV_PCM_FMTBIT_S20_3LE |
-+				    SNDRV_PCM_FMTBIT_S24_LE |
-+				    SNDRV_PCM_FMTBIT_S32_LE),
-+		},
-+		.ops = &rk3328_dai_ops,
-+	},
-+};
-+
-+static int rk3328_codec_probe(struct snd_soc_component *component)
-+{
-+	struct rk3328_codec_priv *rk3328 =
-+		snd_soc_component_get_drvdata(component);
-+
-+	rk3328_codec_reset(rk3328);
-+	rk3328_codec_power_on(rk3328, 0);
-+
-+	return 0;
-+}
-+
-+static void rk3328_codec_remove(struct snd_soc_component *component)
-+{
-+	struct rk3328_codec_priv *rk3328 =
-+		snd_soc_component_get_drvdata(component);
-+
-+	rk3328_codec_close_playback(rk3328);
-+	rk3328_codec_power_off(rk3328, 0);
-+}
-+
-+static const struct snd_soc_component_driver soc_codec_rk3328 = {
-+	.probe = rk3328_codec_probe,
-+	.remove = rk3328_codec_remove,
-+};
-+
-+static bool rk3328_codec_write_read_reg(struct device *dev, unsigned int reg)
-+{
-+	switch (reg) {
-+	case CODEC_RESET:
-+	case DAC_INIT_CTRL1:
-+	case DAC_INIT_CTRL2:
-+	case DAC_INIT_CTRL3:
-+	case DAC_PRECHARGE_CTRL:
-+	case DAC_PWR_CTRL:
-+	case DAC_CLK_CTRL:
-+	case HPMIX_CTRL:
-+	case DAC_SELECT:
-+	case HPOUT_CTRL:
-+	case HPOUTL_GAIN_CTRL:
-+	case HPOUTR_GAIN_CTRL:
-+	case HPOUT_POP_CTRL:
-+		return true;
-+	default:
-+		return false;
-+	}
-+}
-+
-+static bool rk3328_codec_volatile_reg(struct device *dev, unsigned int reg)
-+{
-+	switch (reg) {
-+	case CODEC_RESET:
-+		return true;
-+	default:
-+		return false;
-+	}
-+}
-+
-+static const struct regmap_config rk3328_codec_regmap_config = {
-+	.reg_bits = 32,
-+	.reg_stride = 4,
-+	.val_bits = 32,
-+	.max_register = HPOUT_POP_CTRL,
-+	.writeable_reg = rk3328_codec_write_read_reg,
-+	.readable_reg = rk3328_codec_write_read_reg,
-+	.volatile_reg = rk3328_codec_volatile_reg,
-+	.reg_defaults = rk3328_codec_reg_defaults,
-+	.num_reg_defaults = ARRAY_SIZE(rk3328_codec_reg_defaults),
-+	.cache_type = REGCACHE_FLAT,
-+};
-+
-+static int rk3328_platform_probe(struct platform_device *pdev)
-+{
-+	struct device_node *rk3328_np = pdev->dev.of_node;
-+	struct rk3328_codec_priv *rk3328;
-+	struct resource *res;
-+	struct regmap *grf;
-+	void __iomem *base;
-+	int ret = 0;
-+
-+	rk3328 = devm_kzalloc(&pdev->dev, sizeof(*rk3328), GFP_KERNEL);
-+	if (!rk3328)
++	stream_data = kzalloc(sizeof(*stream_data), GFP_KERNEL);
++	if (!stream_data)
 +		return -ENOMEM;
 +
-+	grf = syscon_regmap_lookup_by_phandle(rk3328_np,
-+					      "rockchip,grf");
-+	if (IS_ERR(grf)) {
-+		dev_err(&pdev->dev, "missing 'rockchip,grf'\n");
-+		return PTR_ERR(grf);
++	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
++		ch_count_mask = CFG_MM2S_CH_MASK;
++		ch_count_shift = CFG_MM2S_CH_SHIFT;
++		data_xfer_mode = CFG_MM2S_XFER_MASK;
++		data_xfer_shift = CFG_MM2S_XFER_SHIFT;
++		data_format_mode = CFG_MM2S_PKG_MASK;
++		stream_data->mmio = adata->mmio + XLNX_MM2S_OFFSET;
++		adata->play_stream = substream;
++
++	} else {
++		ch_count_mask = CFG_S2MM_CH_MASK;
++		ch_count_shift = CFG_S2MM_CH_SHIFT;
++		data_xfer_mode = CFG_S2MM_XFER_MASK;
++		data_xfer_shift = CFG_S2MM_XFER_SHIFT;
++		data_format_mode = CFG_S2MM_PKG_MASK;
++		stream_data->mmio = adata->mmio + XLNX_S2MM_OFFSET;
++		adata->capture_stream = substream;
 +	}
-+	rk3328->grf = grf;
-+	/* enable i2s_acodec_en */
-+	regmap_write(grf, RK3328_GRF_SOC_CON2,
-+		     (BIT(14) << 16 | BIT(14)));
 +
-+	ret = of_property_read_u32(rk3328_np, "spk-depop-time-ms",
-+				   &rk3328->spk_depop_time);
-+	if (ret < 0) {
-+		dev_info(&pdev->dev, "spk_depop_time use default value.\n");
-+		rk3328->spk_depop_time = 200;
++	val = readl(adata->mmio + XLNX_AUD_CORE_CONFIG);
++
++	if (!(val & data_format_mode))
++		stream_data->interleaved = true;
++
++	stream_data->xfer_mode = (val & data_xfer_mode) >> data_xfer_shift;
++	stream_data->ch_limit = (val & ch_count_mask) >> ch_count_shift;
++	dev_info(component->dev,
++		 "stream %d : format = %d mode = %d ch_limit = %d\n",
++		 substream->stream, stream_data->interleaved,
++		 stream_data->xfer_mode, stream_data->ch_limit);
++
++	snd_soc_set_runtime_hwparams(substream, &xlnx_pcm_hardware);
++	runtime->private_data = stream_data;
++
++	/* Resize the period size divisible by 64 */
++	err = snd_pcm_hw_constraint_step(runtime, 0,
++					 SNDRV_PCM_HW_PARAM_PERIOD_BYTES, 64);
++	if (err) {
++		dev_err(component->dev,
++			"unable to set constraint on period bytes\n");
++		return err;
 +	}
 +
-+	rk3328_analog_output(rk3328, 0);
++	/* enable DMA IOC irq */
++	val = readl(stream_data->mmio + XLNX_AUD_CTRL);
++	val |= AUD_CTRL_IOC_IRQ_MASK;
++	writel(val, stream_data->mmio + XLNX_AUD_CTRL);
 +
-+	rk3328->mclk = devm_clk_get(&pdev->dev, "mclk");
-+	if (IS_ERR(rk3328->mclk))
-+		return PTR_ERR(rk3328->mclk);
++	return 0;
++}
 +
-+	ret = clk_prepare_enable(rk3328->mclk);
-+	if (ret)
++static int xlnx_formatter_pcm_close(struct snd_pcm_substream *substream)
++{
++	int ret;
++	struct xlnx_pcm_stream_param *stream_data =
++			substream->runtime->private_data;
++	struct snd_soc_pcm_runtime *prtd = substream->private_data;
++	struct snd_soc_component *component = snd_soc_rtdcom_lookup(prtd,
++								    DRV_NAME);
++
++	ret = xlnx_formatter_pcm_reset(stream_data->mmio);
++	if (ret) {
++		dev_err(component->dev, "audio formatter reset failed\n");
++		goto err_reset;
++	}
++	xlnx_formatter_disable_irqs(stream_data->mmio, substream->stream);
++
++err_reset:
++	kfree(stream_data);
++	return 0;
++}
++
++static snd_pcm_uframes_t
++xlnx_formatter_pcm_pointer(struct snd_pcm_substream *substream)
++{
++	u32 pos;
++	struct snd_pcm_runtime *runtime = substream->runtime;
++	struct xlnx_pcm_stream_param *stream_data = runtime->private_data;
++
++	pos = readl(stream_data->mmio + XLNX_AUD_XFER_COUNT);
++
++	if (pos >= stream_data->buffer_size)
++		pos = 0;
++
++	return bytes_to_frames(runtime, pos);
++}
++
++static int xlnx_formatter_pcm_hw_params(struct snd_pcm_substream *substream,
++					struct snd_pcm_hw_params *params)
++{
++	u32 low, high, active_ch, val, bytes_per_ch, bits_per_sample;
++	int status;
++	u64 size;
++	struct snd_pcm_runtime *runtime = substream->runtime;
++	struct xlnx_pcm_stream_param *stream_data = runtime->private_data;
++
++	active_ch = params_channels(params);
++	if (active_ch > stream_data->ch_limit)
++		return -EINVAL;
++
++	size = params_buffer_bytes(params);
++	status = snd_pcm_lib_malloc_pages(substream, size);
++	if (status < 0)
++		return status;
++
++	stream_data->buffer_size = size;
++
++	low = lower_32_bits(substream->dma_buffer.addr);
++	high = upper_32_bits(substream->dma_buffer.addr);
++	writel(low, stream_data->mmio + XLNX_AUD_BUFF_ADDR_LSB);
++	writel(high, stream_data->mmio + XLNX_AUD_BUFF_ADDR_MSB);
++
++	val = readl(stream_data->mmio + XLNX_AUD_CTRL);
++	bits_per_sample = params_width(params);
++	switch (bits_per_sample) {
++	case 8:
++		val |= (BIT_DEPTH_8 << AUD_CTRL_DATA_WIDTH_SHIFT);
++		break;
++	case 16:
++		val |= (BIT_DEPTH_16 << AUD_CTRL_DATA_WIDTH_SHIFT);
++		break;
++	case 20:
++		val |= (BIT_DEPTH_20 << AUD_CTRL_DATA_WIDTH_SHIFT);
++		break;
++	case 24:
++		val |= (BIT_DEPTH_24 << AUD_CTRL_DATA_WIDTH_SHIFT);
++		break;
++	case 32:
++		val |= (BIT_DEPTH_32 << AUD_CTRL_DATA_WIDTH_SHIFT);
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	val |= active_ch << AUD_CTRL_ACTIVE_CH_SHIFT;
++	writel(val, stream_data->mmio + XLNX_AUD_CTRL);
++
++	val = (params_periods(params) << PERIOD_CFG_PERIODS_SHIFT)
++		| params_period_bytes(params);
++	writel(val, stream_data->mmio + XLNX_AUD_PERIOD_CONFIG);
++	bytes_per_ch = DIV_ROUND_UP(params_period_bytes(params), active_ch);
++	writel(bytes_per_ch, stream_data->mmio + XLNX_BYTES_PER_CH);
++
++	return 0;
++}
++
++static int xlnx_formatter_pcm_hw_free(struct snd_pcm_substream *substream)
++{
++	return snd_pcm_lib_free_pages(substream);
++}
++
++static int xlnx_formatter_pcm_trigger(struct snd_pcm_substream *substream,
++				      int cmd)
++{
++	u32 val;
++	struct xlnx_pcm_stream_param *stream_data =
++			substream->runtime->private_data;
++
++	switch (cmd) {
++	case SNDRV_PCM_TRIGGER_START:
++	case SNDRV_PCM_TRIGGER_PAUSE_RELEASE:
++	case SNDRV_PCM_TRIGGER_RESUME:
++		val = readl(stream_data->mmio + XLNX_AUD_CTRL);
++		val |= AUD_CTRL_DMA_EN_MASK;
++		writel(val, stream_data->mmio + XLNX_AUD_CTRL);
++		break;
++	case SNDRV_PCM_TRIGGER_STOP:
++	case SNDRV_PCM_TRIGGER_PAUSE_PUSH:
++	case SNDRV_PCM_TRIGGER_SUSPEND:
++		val = readl(stream_data->mmio + XLNX_AUD_CTRL);
++		val &= ~AUD_CTRL_DMA_EN_MASK;
++		writel(val, stream_data->mmio + XLNX_AUD_CTRL);
++		break;
++	}
++
++	return 0;
++}
++
++static int xlnx_formatter_pcm_new(struct snd_soc_pcm_runtime *rtd)
++{
++	struct snd_soc_component *component = snd_soc_rtdcom_lookup(rtd,
++								    DRV_NAME);
++	return snd_pcm_lib_preallocate_pages_for_all(rtd->pcm,
++			SNDRV_DMA_TYPE_DEV, component->dev,
++			xlnx_pcm_hardware.buffer_bytes_max,
++			xlnx_pcm_hardware.buffer_bytes_max);
++}
++
++static const struct snd_pcm_ops xlnx_formatter_pcm_ops = {
++	.open = xlnx_formatter_pcm_open,
++	.close = xlnx_formatter_pcm_close,
++	.ioctl = snd_pcm_lib_ioctl,
++	.hw_params = xlnx_formatter_pcm_hw_params,
++	.hw_free = xlnx_formatter_pcm_hw_free,
++	.trigger = xlnx_formatter_pcm_trigger,
++	.pointer = xlnx_formatter_pcm_pointer,
++};
++
++static const struct snd_soc_component_driver xlnx_asoc_component = {
++	.name = DRV_NAME,
++	.ops = &xlnx_formatter_pcm_ops,
++	.pcm_new = xlnx_formatter_pcm_new,
++};
++
++static int xlnx_formatter_pcm_probe(struct platform_device *pdev)
++{
++	int ret;
++	u32 val;
++	struct xlnx_pcm_drv_data *aud_drv_data;
++	struct resource *res;
++	struct device *dev = &pdev->dev;
++
++	aud_drv_data = devm_kzalloc(dev, sizeof(*aud_drv_data), GFP_KERNEL);
++	if (!aud_drv_data)
++		return -ENOMEM;
++
++	aud_drv_data->axi_clk = devm_clk_get(dev, "s_axi_lite_aclk");
++	if (IS_ERR(aud_drv_data->axi_clk)) {
++		ret = PTR_ERR(aud_drv_data->axi_clk);
++		dev_err(dev, "failed to get s_axi_lite_aclk(%d)\n", ret);
 +		return ret;
-+	clk_set_rate(rk3328->mclk, INITIAL_FREQ);
-+
-+	rk3328->pclk = devm_clk_get(&pdev->dev, "pclk");
-+	if (IS_ERR(rk3328->pclk)) {
-+		dev_err(&pdev->dev, "can't get acodec pclk\n");
-+		return PTR_ERR(rk3328->pclk);
 +	}
-+
-+	ret = clk_prepare_enable(rk3328->pclk);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "failed to enable acodec pclk\n");
++	ret = clk_prepare_enable(aud_drv_data->axi_clk);
++	if (ret) {
++		dev_err(dev,
++			"failed to enable s_axi_lite_aclk(%d)\n", ret);
 +		return ret;
 +	}
 +
 +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	base = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
++	if (!res) {
++		dev_err(dev, "audio formatter node:addr to resource failed\n");
++		ret = -ENXIO;
++		goto clk_err;
++	}
++	aud_drv_data->mmio = devm_ioremap_resource(dev, res);
++	if (IS_ERR(aud_drv_data->mmio)) {
++		dev_err(dev, "audio formatter ioremap failed\n");
++		ret = PTR_ERR(aud_drv_data->mmio);
++		goto clk_err;
++	}
 +
-+	rk3328->regmap = devm_regmap_init_mmio(&pdev->dev, base,
-+					       &rk3328_codec_regmap_config);
-+	if (IS_ERR(rk3328->regmap))
-+		return PTR_ERR(rk3328->regmap);
++	val = readl(aud_drv_data->mmio + XLNX_AUD_CORE_CONFIG);
++	if (val & AUD_CFG_MM2S_MASK) {
++		aud_drv_data->mm2s_presence = true;
++		ret = xlnx_formatter_pcm_reset(aud_drv_data->mmio +
++					       XLNX_MM2S_OFFSET);
++		if (ret) {
++			dev_err(dev, "audio formatter reset failed\n");
++			goto clk_err;
++		}
++		xlnx_formatter_disable_irqs(aud_drv_data->mmio +
++					    XLNX_MM2S_OFFSET,
++					    SNDRV_PCM_STREAM_PLAYBACK);
 +
-+	platform_set_drvdata(pdev, rk3328);
++		aud_drv_data->mm2s_irq = platform_get_irq_byname(pdev,
++								 "irq_mm2s");
++		if (aud_drv_data->mm2s_irq < 0) {
++			dev_err(dev, "xlnx audio mm2s irq resource failed\n");
++			ret = aud_drv_data->mm2s_irq;
++			goto clk_err;
++		}
++		ret = devm_request_irq(dev, aud_drv_data->mm2s_irq,
++				       xlnx_mm2s_irq_handler, 0,
++				       "xlnx_formatter_pcm_mm2s_irq", dev);
++		if (ret) {
++			dev_err(dev, "xlnx audio mm2s irq request failed\n");
++			goto clk_err;
++		}
++	}
++	if (val & AUD_CFG_S2MM_MASK) {
++		aud_drv_data->s2mm_presence = true;
++		ret = xlnx_formatter_pcm_reset(aud_drv_data->mmio +
++					       XLNX_S2MM_OFFSET);
++		if (ret) {
++			dev_err(dev, "audio formatter reset failed\n");
++			goto clk_err;
++		}
++		xlnx_formatter_disable_irqs(aud_drv_data->mmio +
++					    XLNX_S2MM_OFFSET,
++					    SNDRV_PCM_STREAM_CAPTURE);
 +
-+	return devm_snd_soc_register_component(&pdev->dev, &soc_codec_rk3328,
-+					       rk3328_dai,
-+					       ARRAY_SIZE(rk3328_dai));
++		aud_drv_data->s2mm_irq = platform_get_irq_byname(pdev,
++								 "irq_s2mm");
++		if (aud_drv_data->s2mm_irq < 0) {
++			dev_err(dev, "xlnx audio s2mm irq resource failed\n");
++			ret = aud_drv_data->s2mm_irq;
++			goto clk_err;
++		}
++		ret = devm_request_irq(dev, aud_drv_data->s2mm_irq,
++				       xlnx_s2mm_irq_handler, 0,
++				       "xlnx_formatter_pcm_s2mm_irq",
++				       dev);
++		if (ret) {
++			dev_err(dev, "xlnx audio s2mm irq request failed\n");
++			goto clk_err;
++		}
++	}
++
++	dev_set_drvdata(dev, aud_drv_data);
++
++	ret = devm_snd_soc_register_component(dev, &xlnx_asoc_component,
++					      NULL, 0);
++	if (ret) {
++		dev_err(dev, "pcm platform device register failed\n");
++		goto clk_err;
++	}
++
++	return 0;
++
++clk_err:
++	clk_disable_unprepare(aud_drv_data->axi_clk);
++	return ret;
 +}
 +
-+static const struct of_device_id rk3328_codec_of_match[] = {
-+		{ .compatible = "rockchip,rk3328-codec", },
-+		{},
-+};
-+MODULE_DEVICE_TABLE(of, rk3328_codec_of_match);
++static int xlnx_formatter_pcm_remove(struct platform_device *pdev)
++{
++	int ret = 0;
++	struct xlnx_pcm_drv_data *adata = dev_get_drvdata(&pdev->dev);
 +
-+static struct platform_driver rk3328_codec_driver = {
-+	.driver = {
-+		   .name = "rk3328-codec",
-+		   .owner = THIS_MODULE,
-+		   .of_match_table = of_match_ptr(rk3328_codec_of_match),
++	if (adata->s2mm_presence)
++		ret = xlnx_formatter_pcm_reset(adata->mmio + XLNX_S2MM_OFFSET);
++
++	/* Try MM2S reset, even if S2MM  reset fails */
++	if (adata->mm2s_presence)
++		ret = xlnx_formatter_pcm_reset(adata->mmio + XLNX_MM2S_OFFSET);
++
++	if (ret)
++		dev_err(&pdev->dev, "audio formatter reset failed\n");
++
++	clk_disable_unprepare(adata->axi_clk);
++	return ret;
++}
++
++static const struct of_device_id xlnx_formatter_pcm_of_match[] = {
++	{ .compatible = "xlnx,audio-formatter-1.0"},
++	{},
++};
++MODULE_DEVICE_TABLE(of, xlnx_formatter_pcm_of_match);
++
++static struct platform_driver xlnx_formatter_pcm_driver = {
++	.probe	= xlnx_formatter_pcm_probe,
++	.remove	= xlnx_formatter_pcm_remove,
++	.driver	= {
++		.name	= DRV_NAME,
++		.of_match_table	= xlnx_formatter_pcm_of_match,
 +	},
-+	.probe = rk3328_platform_probe,
 +};
-+module_platform_driver(rk3328_codec_driver);
 +
-+MODULE_AUTHOR("Sugar Zhang <sugar.zhang@rock-chips.com>");
-+MODULE_DESCRIPTION("ASoC rk3328 codec driver");
++module_platform_driver(xlnx_formatter_pcm_driver);
++MODULE_AUTHOR("Maruthi Srinivas Bayyavarapu <maruthis@xilinx.com>");
 +MODULE_LICENSE("GPL v2");
-diff --git a/sound/soc/codecs/rk3328_codec.h b/sound/soc/codecs/rk3328_codec.h
-new file mode 100644
-index 000000000000..655103586241
---- /dev/null
-+++ b/sound/soc/codecs/rk3328_codec.h
-@@ -0,0 +1,210 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * rk3328 ALSA SoC Audio driver
-+ *
-+ * Copyright (c) 2017, Fuzhou Rockchip Electronics Co., Ltd All rights reserved.
-+ */
-+
-+#ifndef _RK3328_CODEC_H
-+#define _RK3328_CODEC_H
-+
-+#include <linux/bitfield.h>
-+
-+/* codec register */
-+#define CODEC_RESET			(0x00 << 2)
-+#define DAC_INIT_CTRL1			(0x03 << 2)
-+#define DAC_INIT_CTRL2			(0x04 << 2)
-+#define DAC_INIT_CTRL3			(0x05 << 2)
-+#define DAC_PRECHARGE_CTRL		(0x22 << 2)
-+#define DAC_PWR_CTRL			(0x23 << 2)
-+#define DAC_CLK_CTRL			(0x24 << 2)
-+#define HPMIX_CTRL			(0x25 << 2)
-+#define DAC_SELECT			(0x26 << 2)
-+#define HPOUT_CTRL			(0x27 << 2)
-+#define HPOUTL_GAIN_CTRL		(0x28 << 2)
-+#define HPOUTR_GAIN_CTRL		(0x29 << 2)
-+#define HPOUT_POP_CTRL			(0x2a << 2)
-+
-+/* REG00: CODEC_RESET */
-+#define PWR_RST_BYPASS_DIS		(0x0 << 6)
-+#define PWR_RST_BYPASS_EN		(0x1 << 6)
-+#define DIG_CORE_RST			(0x0 << 1)
-+#define DIG_CORE_WORK			(0x1 << 1)
-+#define SYS_RST				(0x0 << 0)
-+#define SYS_WORK			(0x1 << 0)
-+
-+/* REG03: DAC_INIT_CTRL1 */
-+#define PIN_DIRECTION_MASK		BIT(5)
-+#define PIN_DIRECTION_IN		(0x0 << 5)
-+#define PIN_DIRECTION_OUT		(0x1 << 5)
-+#define DAC_I2S_MODE_MASK		BIT(4)
-+#define DAC_I2S_MODE_SLAVE		(0x0 << 4)
-+#define DAC_I2S_MODE_MASTER		(0x1 << 4)
-+
-+/* REG04: DAC_INIT_CTRL2 */
-+#define DAC_I2S_LRP_MASK		BIT(7)
-+#define DAC_I2S_LRP_NORMAL		(0x0 << 7)
-+#define DAC_I2S_LRP_REVERSAL		(0x1 << 7)
-+#define DAC_VDL_MASK			GENMASK(6, 5)
-+#define DAC_VDL_16BITS			(0x0 << 5)
-+#define DAC_VDL_20BITS			(0x1 << 5)
-+#define DAC_VDL_24BITS			(0x2 << 5)
-+#define DAC_VDL_32BITS			(0x3 << 5)
-+#define DAC_MODE_MASK			GENMASK(4, 3)
-+#define DAC_MODE_RJM			(0x0 << 3)
-+#define DAC_MODE_LJM			(0x1 << 3)
-+#define DAC_MODE_I2S			(0x2 << 3)
-+#define DAC_MODE_PCM			(0x3 << 3)
-+#define DAC_LR_SWAP_MASK		BIT(2)
-+#define DAC_LR_SWAP_DIS			(0x0 << 2)
-+#define DAC_LR_SWAP_EN			(0x1 << 2)
-+
-+/* REG05: DAC_INIT_CTRL3 */
-+#define DAC_WL_MASK			GENMASK(3, 2)
-+#define DAC_WL_16BITS			(0x0 << 2)
-+#define DAC_WL_20BITS			(0x1 << 2)
-+#define DAC_WL_24BITS			(0x2 << 2)
-+#define DAC_WL_32BITS			(0x3 << 2)
-+#define DAC_RST_MASK			BIT(1)
-+#define DAC_RST_EN			(0x0 << 1)
-+#define DAC_RST_DIS			(0x1 << 1)
-+#define DAC_BCP_MASK			BIT(0)
-+#define DAC_BCP_NORMAL			(0x0 << 0)
-+#define DAC_BCP_REVERSAL		(0x1 << 0)
-+
-+/* REG22: DAC_PRECHARGE_CTRL */
-+#define DAC_CHARGE_XCHARGE_MASK		BIT(7)
-+#define DAC_CHARGE_DISCHARGE		(0x0 << 7)
-+#define DAC_CHARGE_PRECHARGE		(0x1 << 7)
-+#define DAC_CHARGE_CURRENT_64I_MASK	BIT(6)
-+#define DAC_CHARGE_CURRENT_64I		(0x1 << 6)
-+#define DAC_CHARGE_CURRENT_32I_MASK	BIT(5)
-+#define DAC_CHARGE_CURRENT_32I		(0x1 << 5)
-+#define DAC_CHARGE_CURRENT_16I_MASK	BIT(4)
-+#define DAC_CHARGE_CURRENT_16I		(0x1 << 4)
-+#define DAC_CHARGE_CURRENT_08I_MASK	BIT(3)
-+#define DAC_CHARGE_CURRENT_08I		(0x1 << 3)
-+#define DAC_CHARGE_CURRENT_04I_MASK	BIT(2)
-+#define DAC_CHARGE_CURRENT_04I		(0x1 << 2)
-+#define DAC_CHARGE_CURRENT_02I_MASK	BIT(1)
-+#define DAC_CHARGE_CURRENT_02I		(0x1 << 1)
-+#define DAC_CHARGE_CURRENT_I_MASK	BIT(0)
-+#define DAC_CHARGE_CURRENT_I		(0x1 << 0)
-+#define DAC_CHARGE_CURRENT_ALL_MASK	GENMASK(6, 0)
-+#define DAC_CHARGE_CURRENT_ALL_OFF	0x00
-+#define DAC_CHARGE_CURRENT_ALL_ON	0x7f
-+
-+/* REG23: DAC_PWR_CTRL */
-+#define DAC_PWR_MASK			BIT(6)
-+#define DAC_PWR_OFF			(0x0 << 6)
-+#define DAC_PWR_ON			(0x1 << 6)
-+#define DACL_PATH_REFV_MASK		BIT(5)
-+#define DACL_PATH_REFV_OFF		(0x0 << 5)
-+#define DACL_PATH_REFV_ON		(0x1 << 5)
-+#define HPOUTL_ZERO_CROSSING_MASK	BIT(4)
-+#define HPOUTL_ZERO_CROSSING_OFF	(0x0 << 4)
-+#define HPOUTL_ZERO_CROSSING_ON		(0x1 << 4)
-+#define DACR_PATH_REFV_MASK		BIT(1)
-+#define DACR_PATH_REFV_OFF		(0x0 << 1)
-+#define DACR_PATH_REFV_ON		(0x1 << 1)
-+#define HPOUTR_ZERO_CROSSING_MASK	BIT(0)
-+#define HPOUTR_ZERO_CROSSING_OFF	(0x0 << 0)
-+#define HPOUTR_ZERO_CROSSING_ON		(0x1 << 0)
-+
-+/* REG24: DAC_CLK_CTRL */
-+#define DACL_REFV_MASK			BIT(7)
-+#define DACL_REFV_OFF			(0x0 << 7)
-+#define DACL_REFV_ON			(0x1 << 7)
-+#define DACL_CLK_MASK			BIT(6)
-+#define DACL_CLK_OFF			(0x0 << 6)
-+#define DACL_CLK_ON			(0x1 << 6)
-+#define DACL_MASK			BIT(5)
-+#define DACL_OFF			(0x0 << 5)
-+#define DACL_ON				(0x1 << 5)
-+#define DACL_INIT_MASK			BIT(4)
-+#define DACL_INIT_OFF			(0x0 << 4)
-+#define DACL_INIT_ON			(0x1 << 4)
-+#define DACR_REFV_MASK			BIT(3)
-+#define DACR_REFV_OFF			(0x0 << 3)
-+#define DACR_REFV_ON			(0x1 << 3)
-+#define DACR_CLK_MASK			BIT(2)
-+#define DACR_CLK_OFF			(0x0 << 2)
-+#define DACR_CLK_ON			(0x1 << 2)
-+#define DACR_MASK			BIT(1)
-+#define DACR_OFF			(0x0 << 1)
-+#define DACR_ON				(0x1 << 1)
-+#define DACR_INIT_MASK			BIT(0)
-+#define DACR_INIT_OFF			(0x0 << 0)
-+#define DACR_INIT_ON			(0x1 << 0)
-+
-+/* REG25: HPMIX_CTRL*/
-+#define HPMIXL_MASK			BIT(6)
-+#define HPMIXL_DIS			(0x0 << 6)
-+#define HPMIXL_EN			(0x1 << 6)
-+#define HPMIXL_INIT_MASK		BIT(5)
-+#define HPMIXL_INIT_DIS			(0x0 << 5)
-+#define HPMIXL_INIT_EN			(0x1 << 5)
-+#define HPMIXL_INIT2_MASK		BIT(4)
-+#define HPMIXL_INIT2_DIS		(0x0 << 4)
-+#define HPMIXL_INIT2_EN			(0x1 << 4)
-+#define HPMIXR_MASK			BIT(2)
-+#define HPMIXR_DIS			(0x0 << 2)
-+#define HPMIXR_EN			(0x1 << 2)
-+#define HPMIXR_INIT_MASK		BIT(1)
-+#define HPMIXR_INIT_DIS			(0x0 << 1)
-+#define HPMIXR_INIT_EN			(0x1 << 1)
-+#define HPMIXR_INIT2_MASK		BIT(0)
-+#define HPMIXR_INIT2_DIS		(0x0 << 0)
-+#define HPMIXR_INIT2_EN			(0x1 << 0)
-+
-+/* REG26: DAC_SELECT */
-+#define DACL_SELECT_MASK		BIT(4)
-+#define DACL_UNSELECT			(0x0 << 4)
-+#define DACL_SELECT			(0x1 << 4)
-+#define DACR_SELECT_MASK		BIT(0)
-+#define DACR_UNSELECT			(0x0 << 0)
-+#define DACR_SELECT			(0x1 << 0)
-+
-+/* REG27: HPOUT_CTRL */
-+#define HPOUTL_MASK			BIT(7)
-+#define HPOUTL_DIS			(0x0 << 7)
-+#define HPOUTL_EN			(0x1 << 7)
-+#define HPOUTL_INIT_MASK		BIT(6)
-+#define HPOUTL_INIT_DIS			(0x0 << 6)
-+#define HPOUTL_INIT_EN			(0x1 << 6)
-+#define HPOUTL_MUTE_MASK		BIT(5)
-+#define HPOUTL_MUTE			(0x0 << 5)
-+#define HPOUTL_UNMUTE			(0x1 << 5)
-+#define HPOUTR_MASK			BIT(4)
-+#define HPOUTR_DIS			(0x0 << 4)
-+#define HPOUTR_EN			(0x1 << 4)
-+#define HPOUTR_INIT_MASK		BIT(3)
-+#define HPOUTR_INIT_DIS			(0x0 << 3)
-+#define HPOUTR_INIT_EN			(0x1 << 3)
-+#define HPOUTR_MUTE_MASK		BIT(2)
-+#define HPOUTR_MUTE			(0x0 << 2)
-+#define HPOUTR_UNMUTE			(0x1 << 2)
-+
-+/* REG28: HPOUTL_GAIN_CTRL */
-+#define HPOUTL_GAIN_MASK		GENMASK(4, 0)
-+
-+/* REG29: HPOUTR_GAIN_CTRL */
-+#define HPOUTR_GAIN_MASK		GENMASK(4, 0)
-+
-+/* REG2a: HPOUT_POP_CTRL */
-+#define HPOUTR_POP_MASK			GENMASK(5, 4)
-+#define HPOUTR_POP_XCHARGE		(0x1 << 4)
-+#define HPOUTR_POP_WORK			(0x2 << 4)
-+#define HPOUTL_POP_MASK			GENMASK(1, 0)
-+#define HPOUTL_POP_XCHARGE		(0x1 << 0)
-+#define HPOUTL_POP_WORK			(0x2 << 0)
-+
-+#define RK3328_HIFI			0
-+
-+struct rk3328_reg_msk_val {
-+	unsigned int reg;
-+	unsigned int msk;
-+	unsigned int val;
-+};
-+
-+#endif
 -- 
 2.20.1
 
