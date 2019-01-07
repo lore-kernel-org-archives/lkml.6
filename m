@@ -4,50 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1B3CC43444
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:45:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B188C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:45:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B54D521873
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:45:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 365C720449
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:45:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546865132;
-	bh=gXURwoeuxwDrFynjjhxvPRTT2jiP3keZIAq4gSbQcNY=;
+	s=default; t=1546865137;
+	bh=WnH/597T22iB8HKbCq33O09dPpN72pOPxsxvJeLlxio=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=aRDqZqY1ofx+TDp+9/O1DClFsc5CCs1aSlI0hisnqLkh/pEC0xtdbwS1HhKU+GctX
-	 IuyfrCbkCweA4K8k4s86ajcmRPwka1+h8Uxs+QHB6tk0M3Wew9iKE092JDK6OWRWiU
-	 b6JpAkz1UxjPazqbx37eyx6eVDMFGUzicAsD6B3M=
+	b=MupJWc3Jogbw546mGohBJs/M9gswqDCBD+C6RwurbBzvQ+mhbZIWlDDmJZtSD5CLc
+	 A8kUuJzbup+2UtmOpznYVRhL8NNuRLOj5XLfYIoYLP1UbdtRRnv4Cq8C7WJg66lRaG
+	 MTXJ5MDo86sgORiZIfUL0nZW379YpjII9e+SMPJE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728886AbfAGMpb (ORCPT
+        id S1728898AbfAGMpf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:45:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34742 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:45:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34846 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728236AbfAGMp2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:45:28 -0500
+        id S1728884AbfAGMpc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:45:32 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 387492183E;
-        Mon,  7 Jan 2019 12:45:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EE0C220449;
+        Mon,  7 Jan 2019 12:45:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865127;
-        bh=gXURwoeuxwDrFynjjhxvPRTT2jiP3keZIAq4gSbQcNY=;
+        s=default; t=1546865130;
+        bh=WnH/597T22iB8HKbCq33O09dPpN72pOPxsxvJeLlxio=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Y/We5NknCgADNRDViThxaHrnJ8SWja1xDuA8gN5ipjG/vgjTSZ2qTwhEtEo/Kyd/z
-         RgHw+S5EK0YolDl8dS/krk7y9wGIpkiA6KG+GP7zqYjatV70WvuTFjPp2dnn2xXDw0
-         VKWl8EUusjWy4uIEZaxdoXOPDPH2UhThjT6MyFn0=
+        b=J8gnYz/leb9KibH3Z1XmBm6Qk/Z4gEB3gguBySSrHrWT2b1nYvbyIqihFs//Unlu1
+         f3RulFhLia4CrU1/IhoTEQVvyaSIEL1pI7EgQbDiewI2zCR7bxvoIm6abPjql6cihn
+         VG7ZhfE2GDMHqfGUbsjE194tcIPT+VzBCw5m8p8c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        syzbot <syzkaller@googlegroups.com>,
+        Andreas Koensgen <ajk@comnets.uni-bremen.de>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 012/170] net: core: Fix Spectre v1 vulnerability
-Date:   Mon,  7 Jan 2019 13:30:39 +0100
-Message-Id: <20190107104454.482721892@linuxfoundation.org>
+Subject: [PATCH 4.19 013/170] net/hamradio/6pack: use mod_timer() to rearm timers
+Date:   Mon,  7 Jan 2019 13:30:40 +0100
+Message-Id: <20190107104454.594114589@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104452.953560660@linuxfoundation.org>
 References: <20190107104452.953560660@linuxfoundation.org>
@@ -66,55 +67,94 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit 50d5258634aee2e62832aa086d2fb0de00e72b91 ]
+[ Upstream commit 202700e30740c6568b5a6943662f3829566dd533 ]
 
-flen is indirectly controlled by user-space, hence leading to
-a potential exploitation of the Spectre variant 1 vulnerability.
+Using del_timer() + add_timer() is generally unsafe on SMP,
+as noticed by syzbot. Use mod_timer() instead.
 
-This issue was detected with the help of Smatch:
+kernel BUG at kernel/time/timer.c:1136!
+invalid opcode: 0000 [#1] PREEMPT SMP KASAN
+CPU: 1 PID: 1026 Comm: kworker/u4:4 Not tainted 4.20.0+ #2
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Workqueue: events_unbound flush_to_ldisc
+RIP: 0010:add_timer kernel/time/timer.c:1136 [inline]
+RIP: 0010:add_timer+0xa81/0x1470 kernel/time/timer.c:1134
+Code: 4d 89 7d 40 48 c7 85 70 fe ff ff 00 00 00 00 c7 85 7c fe ff ff ff ff ff ff 48 89 85 90 fe ff ff e9 e6 f7 ff ff e8 cf 42 12 00 <0f> 0b e8 c8 42 12 00 0f 0b e8 c1 42 12 00 4c 89 bd 60 fe ff ff e9
+RSP: 0018:ffff8880a7fdf5a8 EFLAGS: 00010293
+RAX: ffff8880a7846340 RBX: dffffc0000000000 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffffffff816f3ee1 RDI: ffff88808a514ff8
+RBP: ffff8880a7fdf760 R08: 0000000000000007 R09: ffff8880a7846c58
+R10: ffff8880a7846340 R11: 0000000000000000 R12: ffff88808a514ff8
+R13: ffff88808a514ff8 R14: ffff88808a514dc0 R15: 0000000000000030
+FS:  0000000000000000(0000) GS:ffff8880ae700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000000061c500 CR3: 00000000994d9000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ decode_prio_command drivers/net/hamradio/6pack.c:903 [inline]
+ sixpack_decode drivers/net/hamradio/6pack.c:971 [inline]
+ sixpack_receive_buf drivers/net/hamradio/6pack.c:457 [inline]
+ sixpack_receive_buf+0xf9c/0x1470 drivers/net/hamradio/6pack.c:434
+ tty_ldisc_receive_buf+0x164/0x1c0 drivers/tty/tty_buffer.c:465
+ tty_port_default_receive_buf+0x114/0x190 drivers/tty/tty_port.c:38
+ receive_buf drivers/tty/tty_buffer.c:481 [inline]
+ flush_to_ldisc+0x3b2/0x590 drivers/tty/tty_buffer.c:533
+ process_one_work+0xd0c/0x1ce0 kernel/workqueue.c:2153
+ worker_thread+0x143/0x14a0 kernel/workqueue.c:2296
+ kthread+0x357/0x430 kernel/kthread.c:246
+ ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
 
-net/core/filter.c:1101 bpf_check_classic() warn: potential spectre issue 'filter' [w]
-
-Fix this by sanitizing flen before using it to index filter at line 1101:
-
-	switch (filter[flen - 1].code) {
-
-and through pc at line 1040:
-
-	const struct sock_filter *ftest = &filter[pc];
-
-Notice that given that speculation windows are large, the policy is
-to kill the speculation on the first load and not worry if it can be
-completed with a dependent load/store [1].
-
-[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Cc: Andreas Koensgen <ajk@comnets.uni-bremen.de>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/core/filter.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/hamradio/6pack.c |   16 ++++------------
+ 1 file changed, 4 insertions(+), 12 deletions(-)
 
---- a/net/core/filter.c
-+++ b/net/core/filter.c
-@@ -68,6 +68,7 @@
- #include <linux/seg6_local.h>
- #include <net/seg6.h>
- #include <net/seg6_local.h>
-+#include <linux/nospec.h>
+--- a/drivers/net/hamradio/6pack.c
++++ b/drivers/net/hamradio/6pack.c
+@@ -524,10 +524,7 @@ static void resync_tnc(struct timer_list
  
- /**
-  *	sk_filter_trim_cap - run a packet through a socket filter
-@@ -1033,6 +1034,7 @@ static int bpf_check_classic(const struc
- 	bool anc_found;
- 	int pc;
  
-+	flen = array_index_nospec(flen, BPF_MAXINSNS + 1);
- 	/* Check the filter code now */
- 	for (pc = 0; pc < flen; pc++) {
- 		const struct sock_filter *ftest = &filter[pc];
+ 	/* Start resync timer again -- the TNC might be still absent */
+-
+-	del_timer(&sp->resync_t);
+-	sp->resync_t.expires	= jiffies + SIXP_RESYNC_TIMEOUT;
+-	add_timer(&sp->resync_t);
++	mod_timer(&sp->resync_t, jiffies + SIXP_RESYNC_TIMEOUT);
+ }
+ 
+ static inline int tnc_init(struct sixpack *sp)
+@@ -538,9 +535,7 @@ static inline int tnc_init(struct sixpac
+ 
+ 	sp->tty->ops->write(sp->tty, &inbyte, 1);
+ 
+-	del_timer(&sp->resync_t);
+-	sp->resync_t.expires = jiffies + SIXP_RESYNC_TIMEOUT;
+-	add_timer(&sp->resync_t);
++	mod_timer(&sp->resync_t, jiffies + SIXP_RESYNC_TIMEOUT);
+ 
+ 	return 0;
+ }
+@@ -918,11 +913,8 @@ static void decode_prio_command(struct s
+         /* if the state byte has been received, the TNC is present,
+            so the resync timer can be reset. */
+ 
+-	if (sp->tnc_state == TNC_IN_SYNC) {
+-		del_timer(&sp->resync_t);
+-		sp->resync_t.expires	= jiffies + SIXP_INIT_RESYNC_TIMEOUT;
+-		add_timer(&sp->resync_t);
+-	}
++	if (sp->tnc_state == TNC_IN_SYNC)
++		mod_timer(&sp->resync_t, jiffies + SIXP_INIT_RESYNC_TIMEOUT);
+ 
+ 	sp->status1 = cmd & SIXP_PRIO_DATA_MASK;
+ }
 
 
