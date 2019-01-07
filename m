@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77582C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:54:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CCF7C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:55:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F73320651
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:54:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D3F1206BB
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:55:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546865699;
-	bh=ilpU2SFC+YuobzqR68Wu1a8YG5vvE0NW5LgluEe2u4Q=;
+	s=default; t=1546865709;
+	bh=0xLUIajsQJ9mtEw6R5TFXOdmeLoQ5AJX7MpZ5wkKfSQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=iBvNOX9PbWxgdg8cJAPYP5bzoouNUrls89CalxwWxAg0CngRULu/pve+IfAkAwejo
-	 pVJvVOO0IYhjRoYeTbbe9VKJ+d5YHYh5vb7hr0v9zgEfHJRCz0weCKiBt2iT9QLj5H
-	 rqkB/C2Z8eh3YQCrQUknSSE24xtOHoUC/+9dTSKQ=
+	b=QJP+q2Eo7Yyhp1mPB0aRssn6kvNzQI99fesMkri+5tCW8vVs1F2E+Yc9RUJOPd5eh
+	 7m+VLZVjJ5Y2Ffbyr2Xe8mS742OukDcFRjKjTk2nHYFEAmbPxWfKNrmo8CkZ1kWzow
+	 sxcG0uZctm5Jt38yI6iUQxKBKzhxQKQUXVgWxv0c=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729307AbfAGMy6 (ORCPT
+        id S1728581AbfAGMzI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:54:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43550 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:55:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39088 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728296AbfAGMy4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:54:56 -0500
+        id S1729165AbfAGMs0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:48:26 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8E37C20651;
-        Mon,  7 Jan 2019 12:54:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9446E20651;
+        Mon,  7 Jan 2019 12:48:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865695;
-        bh=ilpU2SFC+YuobzqR68Wu1a8YG5vvE0NW5LgluEe2u4Q=;
+        s=default; t=1546865306;
+        bh=0xLUIajsQJ9mtEw6R5TFXOdmeLoQ5AJX7MpZ5wkKfSQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VWCMl4ab/2cpugjiaNUkfvS06rqyZ+B1xlvyOOlPdFc/TRdtc2VUEbSUM0NMMGnbu
-         psK/Dx6SCvo2USQfR8rffqJq3SKTs64Uv1J/CW6rQnj3/9ZfDHqRYRguPwv+UEJfKb
-         TvxTbs86YZYSrnPPtQkU4N1ta1uEsha9p6qRvJ2w=
+        b=EJY9HA/GAGqZ4WrwyapTHwVB8lcPxVjfyF/X/cSN796AFE5w2FCjDTTi80CWN3KTS
+         VzqiQc5vvDQa83sdGxcU6tD4iRUUdWWSywUOL4N1CeRQeR8w8j4kJx/prmHLp/dwt7
+         3A3aZx6Kqo84mTCIf3xekRuXnnL6YhjaZHLgdsO0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
-        stable@kernel.org
-Subject: [PATCH 4.19 114/170] ext4: check for shutdown and r/o file system in ext4_write_inode()
-Date:   Mon,  7 Jan 2019 13:32:21 +0100
-Message-Id: <20190107104506.405947594@linuxfoundation.org>
+        stable@vger.kernel.org, syzbot <syzkaller@googlegroups.com>,
+        Willem de Bruijn <willemb@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 023/170] packet: validate address length
+Date:   Mon,  7 Jan 2019 13:30:50 +0100
+Message-Id: <20190107104455.787018910@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104452.953560660@linuxfoundation.org>
 References: <20190107104452.953560660@linuxfoundation.org>
@@ -65,50 +66,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Theodore Ts'o <tytso@mit.edu>
+From: Willem de Bruijn <willemb@google.com>
 
-commit 18f2c4fcebf2582f96cbd5f2238f4f354a0e4847 upstream.
+[ Upstream commit 99137b7888f4058087895d035d81c6b2d31015c5 ]
 
-If the file system has been shut down or is read-only, then
-ext4_write_inode() needs to bail out early.
+Packet sockets with SOCK_DGRAM may pass an address for use in
+dev_hard_header. Ensure that it is of sufficient length.
 
-Also use jbd2_complete_transaction() instead of ext4_force_commit() so
-we only force a commit if it is needed.
-
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@kernel.org
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: Willem de Bruijn <willemb@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/ext4/inode.c |    9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ net/packet/af_packet.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -5369,9 +5369,13 @@ int ext4_write_inode(struct inode *inode
- {
- 	int err;
+--- a/net/packet/af_packet.c
++++ b/net/packet/af_packet.c
+@@ -2627,6 +2627,8 @@ static int tpacket_snd(struct packet_soc
+ 		proto	= saddr->sll_protocol;
+ 		addr	= saddr->sll_addr;
+ 		dev = dev_get_by_index(sock_net(&po->sk), saddr->sll_ifindex);
++		if (addr && dev && saddr->sll_halen < dev->addr_len)
++			goto out;
+ 	}
  
--	if (WARN_ON_ONCE(current->flags & PF_MEMALLOC))
-+	if (WARN_ON_ONCE(current->flags & PF_MEMALLOC) ||
-+	    sb_rdonly(inode->i_sb))
- 		return 0;
+ 	err = -ENXIO;
+@@ -2825,6 +2827,8 @@ static int packet_snd(struct socket *soc
+ 		proto	= saddr->sll_protocol;
+ 		addr	= saddr->sll_addr;
+ 		dev = dev_get_by_index(sock_net(sk), saddr->sll_ifindex);
++		if (addr && dev && saddr->sll_halen < dev->addr_len)
++			goto out;
+ 	}
  
-+	if (unlikely(ext4_forced_shutdown(EXT4_SB(inode->i_sb))))
-+		return -EIO;
-+
- 	if (EXT4_SB(inode->i_sb)->s_journal) {
- 		if (ext4_journal_current_handle()) {
- 			jbd_debug(1, "called recursively, non-PF_MEMALLOC!\n");
-@@ -5387,7 +5391,8 @@ int ext4_write_inode(struct inode *inode
- 		if (wbc->sync_mode != WB_SYNC_ALL || wbc->for_sync)
- 			return 0;
- 
--		err = ext4_force_commit(inode->i_sb);
-+		err = jbd2_complete_transaction(EXT4_SB(inode->i_sb)->s_journal,
-+						EXT4_I(inode)->i_sync_tid);
- 	} else {
- 		struct ext4_iloc iloc;
- 
+ 	err = -ENXIO;
 
 
