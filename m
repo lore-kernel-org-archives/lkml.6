@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 356F0C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:43:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C22AC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:43:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0776720665
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:43:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E681420665
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:43:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546864999;
-	bh=0AVrYq4m714zdNnekI7D7EgRIW/5jirYlSS5GfdJ6bc=;
+	s=default; t=1546865005;
+	bh=FyhnPYe7ID1quoPaxXwdSuvPczTeltxsk3tPSQGgrQg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Pona3obBcRJKvLwS/+WBW6m7mKNYK2REc9YILQGJ0n8uFHAaIDd/lw4ybx4R5gmk7
-	 01odKgPTMwC5WyGd1YZQyEvmXIx/+6u5V3FamGzuwEmKFqr6SlgvUTa+LWo0OTVFLB
-	 TwjGGoG054FJpFf+cHR/loa3h5saVvRy4ihgXzoo=
+	b=YMcholyiPhAWATaD5O0cqj7s3jGGR6/WNnBDR8BcQRAv8IDcxN5n9ZnGP4HO7Md7a
+	 ujG1dzsf7SN+aLoDJGcTTE7ni0lgImr92REy//Hv82Eo8lIrW6ROi1wMzmWDSMh0B7
+	 0W6uZG6NQhkLZ7Dk3dAEsdleZKlfFFUdpAQfTP98=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728385AbfAGMnR (ORCPT
+        id S1728396AbfAGMnX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:43:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59092 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:43:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59202 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727806AbfAGMnP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:43:15 -0500
+        id S1727661AbfAGMnV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:43:21 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 146F920449;
-        Mon,  7 Jan 2019 12:43:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 61DCF20665;
+        Mon,  7 Jan 2019 12:43:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546864994;
-        bh=0AVrYq4m714zdNnekI7D7EgRIW/5jirYlSS5GfdJ6bc=;
+        s=default; t=1546865000;
+        bh=FyhnPYe7ID1quoPaxXwdSuvPczTeltxsk3tPSQGgrQg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=n7RgYDIXeT6ZmekjrPCMN7L9EwNp9CfTRgX6T9iHZ0cd7ffiuyBLw5BMJmpnHOEV7
-         9CQI1rBsrxcnshAnsxNVX3RmJOzTaOG1ptTd5H14FQxvWA62C0pj6aJJJhr0+fh7hP
-         Q2J9F8t4UCLm394ErBKZFypj3CeTwRzgsNw1KmvE=
+        b=DGvfonPkCs6YPVWHK2/b2UnYO2iVAMoQyMmn7gNuQP/wdeeo5+t0A21y2D7YooMjW
+         8vJZ2g6+myylS914jhOXdd2h5LN2bJdKp/nCYJqKe77mqwmKpnprREyyaUbyH9lb9f
+         TOHfEFZXmpJnixaL2j+GjSrUhpB8dZaw2t/6BHW4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Luca Ceresoli <luca@lucaceresoli.net>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        stable@vger.kernel.org, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        syzbot+0cc8e3cc63ca373722c6@syzkaller.appspotmail.com,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 4.20 113/145] media: imx274: fix stack corruption in imx274_read_reg
-Date:   Mon,  7 Jan 2019 13:32:30 +0100
-Message-Id: <20190107104451.962712193@linuxfoundation.org>
+Subject: [PATCH 4.20 114/145] media: vivid: free bitmap_cap when updating std/timings/etc.
+Date:   Mon,  7 Jan 2019 13:32:31 +0100
+Message-Id: <20190107104452.133369375@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104437.308206189@linuxfoundation.org>
 References: <20190107104437.308206189@linuxfoundation.org>
@@ -66,49 +66,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Luca Ceresoli <luca@lucaceresoli.net>
+From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
 
-commit cea8c0077d6cf3a0cea2f18a8e914af78d46b2ff upstream.
+commit 560ccb75c2caa6b1039dec1a53cd2ef526f5bf03 upstream.
 
-imx274_read_reg() takes a u8 pointer ("reg") and casts it to pass it
-to regmap_read(), which takes an unsigned int pointer. This results in
-a corrupted stack and random crashes.
+When vivid_update_format_cap() is called it should free any overlay
+bitmap since the compose size will change.
 
-Fixes: 0985dd306f72 ("media: imx274: V4l2 driver for Sony imx274 CMOS sensor")
-
-Cc: stable@vger.kernel.org # for 4.15 and up
-Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Reported-by: syzbot+0cc8e3cc63ca373722c6@syzkaller.appspotmail.com
+Cc: <stable@vger.kernel.org>      # for v3.18 and up
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/i2c/imx274.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/media/platform/vivid/vivid-vid-cap.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/media/i2c/imx274.c
-+++ b/drivers/media/i2c/imx274.c
-@@ -619,16 +619,19 @@ static int imx274_write_table(struct sti
- 
- static inline int imx274_read_reg(struct stimx274 *priv, u16 addr, u8 *val)
- {
-+	unsigned int uint_val;
- 	int err;
- 
--	err = regmap_read(priv->regmap, addr, (unsigned int *)val);
-+	err = regmap_read(priv->regmap, addr, &uint_val);
- 	if (err)
- 		dev_err(&priv->client->dev,
- 			"%s : i2c read failed, addr = %x\n", __func__, addr);
- 	else
- 		dev_dbg(&priv->client->dev,
- 			"%s : addr 0x%x, val=0x%x\n", __func__,
--			addr, *val);
-+			addr, uint_val);
-+
-+	*val = uint_val;
- 	return err;
- }
- 
+--- a/drivers/media/platform/vivid/vivid-vid-cap.c
++++ b/drivers/media/platform/vivid/vivid-vid-cap.c
+@@ -449,6 +449,8 @@ void vivid_update_format_cap(struct vivi
+ 		tpg_s_rgb_range(&dev->tpg, v4l2_ctrl_g_ctrl(dev->rgb_range_cap));
+ 		break;
+ 	}
++	vfree(dev->bitmap_cap);
++	dev->bitmap_cap = NULL;
+ 	vivid_update_quality(dev);
+ 	tpg_reset_source(&dev->tpg, dev->src_rect.width, dev->src_rect.height, dev->field_cap);
+ 	dev->crop_cap = dev->src_rect;
 
 
