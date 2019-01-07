@@ -2,189 +2,166 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03930C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 19:25:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04A1BC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 19:26:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3B1F218AE
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 19:25:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA39B2070B
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 19:26:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cmCDrypP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728301AbfAGTZc (ORCPT
+        id S1727650AbfAGT0w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 14:25:32 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56674 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727908AbfAGTZc (ORCPT
+        Mon, 7 Jan 2019 14:26:52 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:37124 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726858AbfAGT0w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 14:25:32 -0500
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x07JEVeT024215
-        for <linux-kernel@vger.kernel.org>; Mon, 7 Jan 2019 14:25:30 -0500
-Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2pvb0spncm-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 14:25:30 -0500
-Received: from localhost
-        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Mon, 7 Jan 2019 19:25:19 -0000
-Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
-        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 7 Jan 2019 19:25:13 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x07JPCfU25297014
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 7 Jan 2019 19:25:12 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 537AEB2075;
-        Mon,  7 Jan 2019 19:25:11 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 208E7B205F;
-        Mon,  7 Jan 2019 19:25:11 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.88])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Mon,  7 Jan 2019 19:25:11 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id CF76616C5EEF; Mon,  7 Jan 2019 11:25:34 -0800 (PST)
-Date:   Mon, 7 Jan 2019 11:25:34 -0800
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Jason Wang <jasowang@redhat.com>, linux-kernel@vger.kernel.org,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Akira Yokosawa <akiyks@gmail.com>,
-        Daniel Lustig <dlustig@nvidia.com>, linux-arch@vger.kernel.org,
-        netdev@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org,
-        linux-sparse@vger.kernel.org
-Subject: Re: [PATCH RFC 3/4] barriers: convert a control to a data dependency
-Reply-To: paulmck@linux.ibm.com
-References: <20190102205715.14054-1-mst@redhat.com>
- <20190102205715.14054-4-mst@redhat.com>
- <86023cbe-d1ae-a0d6-7b75-26556f1a0c1f@redhat.com>
- <20190106231756-mutt-send-email-mst@kernel.org>
- <20190107094610.GA2861@worktop.programming.kicks-ass.net>
- <20190107082223-mutt-send-email-mst@kernel.org>
- <20190107190236.GF1215@linux.ibm.com>
- <20190107140447-mutt-send-email-mst@kernel.org>
+        Mon, 7 Jan 2019 14:26:52 -0500
+Received: by mail-pf1-f196.google.com with SMTP id y126so650649pfb.4
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 11:26:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=wxiswoGvNOkYufXv5Pcu3TaPLYykn9tVz7mvJKc08DI=;
+        b=cmCDrypPnt8EUytvGdbewQMgoz/hPT+gpbOnsVB5BwnJkF72eAQaG1by0PWmMkEPyr
+         huveWqLA/MyrU+wWjO7A8w8XKfBGHgOYPRAMHVTjdZWOe1QX5NPxuDPw0APo3rhsesL/
+         F6e35dQ9KPpbd0ubq915gJ1ogBoch9X70QEaU3ERXRtFuF1tt/RDziWIrkudbeVll1Uy
+         EZe4WZoill3rqCJZY6PVIXT/IC32HKx/fhJiL7XKplXllHEuVgcWW9ZoemYiA9y6TuPI
+         QD0HbSEJmLgOqdpJRQH+BmILrhrpKJnryfoWs8E164DwzpjP8BtlrI3BFrpciMPYicMJ
+         Wv1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=wxiswoGvNOkYufXv5Pcu3TaPLYykn9tVz7mvJKc08DI=;
+        b=NwHxZigcuTN8VMXpHWU468nr26hhP3YWX6iM/JKKjr48EUmV4fREaohXSLnpDEUeJE
+         yWOJSBuIy5YVVjgOVvitrsTxpcEUYVdS5lkJXwfkI6fsJOsQ6KjyvSphsniPj4ThNRDE
+         ettUlGCFPQUh3t/YX3nuCKyJUMMtlzaJFtJimlkpJdi1S4OG9DNPyNHsZ6ItxezYnOWJ
+         8rHPPZw6oS1HCcLGr6j9OiEDhT2S/tAVKnfcxEkXwHRmsHodrdsiscOBaspn9YCN4sho
+         H2XIYvfmAo+qIVrymKFjn1gDMKx2vYKbZEGYVqC44CERMx/+AXbbebOdlSDgfA8399l4
+         eBlQ==
+X-Gm-Message-State: AA+aEWYU3jfjnxoZxTBxBljJum/JkzClw/I/Tjq5MVDnCo8tY5NzdYWp
+        korh5uoS9Gyrnpt0z4CmjMY=
+X-Google-Smtp-Source: AFSGD/UY4WO0yluwo2V/LPLQ1P5Rk+InUdF7bPXGgcVRTstPv9PWj4ji5zNT2jm2TekD8Neblf42MA==
+X-Received: by 2002:a62:fc8a:: with SMTP id e132mr63134919pfh.176.1546889211198;
+        Mon, 07 Jan 2019 11:26:51 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id u70sm117797246pfa.176.2019.01.07.11.26.49
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 07 Jan 2019 11:26:50 -0800 (PST)
+Date:   Mon, 7 Jan 2019 11:26:48 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Guo Ren <guoren@kernel.org>
+Subject: Re: Linux 5.0-rc1 (test results)
+Message-ID: <20190107192648.GA10789@roeck-us.net>
+References: <CAHk-=wgKYnrL3LjhVkH2Fp+ecmWhLqezT9zmR6CzfcpwcJX0qA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190107140447-mutt-send-email-mst@kernel.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 19010719-2213-0000-0000-00000337D338
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010362; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000273; SDB=6.01143156; UDB=6.00595109; IPR=6.00923406;
- MB=3.00025019; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-07 19:25:19
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19010719-2214-0000-0000-00005CE080FC
-Message-Id: <20190107192534.GG1215@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-07_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901070161
+In-Reply-To: <CAHk-=wgKYnrL3LjhVkH2Fp+ecmWhLqezT9zmR6CzfcpwcJX0qA@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 07, 2019 at 02:13:29PM -0500, Michael S. Tsirkin wrote:
-> On Mon, Jan 07, 2019 at 11:02:36AM -0800, Paul E. McKenney wrote:
-> > On Mon, Jan 07, 2019 at 08:36:36AM -0500, Michael S. Tsirkin wrote:
-> > > On Mon, Jan 07, 2019 at 10:46:10AM +0100, Peter Zijlstra wrote:
-> > > > On Sun, Jan 06, 2019 at 11:23:07PM -0500, Michael S. Tsirkin wrote:
-> > > > > On Mon, Jan 07, 2019 at 11:58:23AM +0800, Jason Wang wrote:
-> > > > > > On 2019/1/3 上午4:57, Michael S. Tsirkin wrote:
-> > > > 
-> > > > > > > +#if defined(COMPILER_HAS_OPTIMIZER_HIDE_VAR) && \
-> > > > > > > +	!defined(ARCH_NEEDS_READ_BARRIER_DEPENDS)
-> > > > > > > +
-> > > > > > > +#define dependent_ptr_mb(ptr, val) ({					\
-> > > > > > > +	long dependent_ptr_mb_val = (long)(val);			\
-> > > > > > > +	long dependent_ptr_mb_ptr = (long)(ptr) - dependent_ptr_mb_val;	\
-> > > > > > > +									\
-> > > > > > > +	BUILD_BUG_ON(sizeof(val) > sizeof(long));			\
-> > > > > > > +	OPTIMIZER_HIDE_VAR(dependent_ptr_mb_val);			\
-> > > > > > > +	(typeof(ptr))(dependent_ptr_mb_ptr + dependent_ptr_mb_val);	\
-> > > > > > > +})
-> > > > > > > +
-> > > > > > > +#else
-> > > > > > > +
-> > > > > > > +#define dependent_ptr_mb(ptr, val) ({ mb(); (ptr); })
-> > > > > > 
-> > > > > > 
-> > > > > > So for the example of patch 4, we'd better fall back to rmb() or need a
-> > > > > > dependent_ptr_rmb()?
-> > > > > > 
-> > > > > > Thanks
-> > > > > 
-> > > > > You mean for strongly ordered architectures like Intel?
-> > > > > Yes, maybe it makes sense to have dependent_ptr_smp_rmb,
-> > > > > dependent_ptr_dma_rmb and dependent_ptr_virt_rmb.
-> > > > > 
-> > > > > mb variant is unused right now so I'll remove it.
-> > > > 
-> > > > How about naming the thing: dependent_ptr() ? That is without any (r)mb
-> > > > implications at all. The address dependency is strictly weaker than an
-> > > > rmb in that it will only order the two loads in qestion and not, like
-> > > > rmb, any prior to any later load.
-> > > 
-> > > So I'm fine with this as it's enough for virtio, but I would like to point out two things:
-> > > 
-> > > 1. E.g. on x86 both SMP and DMA variants can be NOPs but
-> > > the madatory one can't, so assuming we do not want
-> > > it to be stronger than rmp then either we want
-> > > smp_dependent_ptr(), dma_dependent_ptr(), dependent_ptr()
-> > > or we just will specify that dependent_ptr() works for
-> > > both DMA and SMP.
-> > > 
-> > > 2. Down the road, someone might want to order a store after a load.
-> > > Address dependency does that for us too. Assuming we make
-> > > dependent_ptr a NOP on x86, we will want an mb variant
-> > > which isn't a NOP on x86. Will we want to rename
-> > > dependent_ptr to dependent_ptr_rmb at that point?
-> > 
-> > But x86 preserves store-after-load orderings anyway, and even Alpha
-> > respects ordering from loads to dependent stores.  So what am I missing
-> > here?
-> > 
-> > 							Thanx, Paul
+On Sun, Jan 06, 2019 at 06:14:15PM -0800, Linus Torvalds wrote:
+> So this was a fairly unusual merge window with the holidays, and as a
+> result I'm not even going to complain about the pull requests that
+> ended up coming in late. It all mostly worked out fine, I think. And
+> lot of people got their pull requests in early, and hopefully had a
+> calm holiday season. Thanks again to everybody.
 > 
-> Oh you are right. Stores are not reordered with older loads on x86.
+> The numbering change is not indicative of anything special. If you
+> want to have an official reason, it's that I ran out of fingers and
+> toes to count on, so 4.21 became 5.0. There's no nice git object
+> numerology this time (we're _about_ 6.5M objects in the git repo), and
+> there isn't any major particular feature that made for the release
+> numbering either. Of course, depending on your particular interests,
+> some people might well find a feature _they_ like so much that they
+> think it can do as a reason for incrementing the major number.
 > 
-> So point 2 is moot. Sorry about the noise.
+> So go wild. Make up your own reason for why it's 5.0.
 > 
-> I guess at this point the only sticking point is the ECC compiler.
-> I'm inclined to stick an mb() there, seeing as it doesn't even
-> have spectre protection enabled. Slow but safe.
+> Because as usual, there's a lot of changes in there. Not because this
+> merge window was particularly big - but even our smaller merge windows
+> aren't exactly small. It's a very solid and average merge window with
+> just under 11k commits (or about 11.5k if you count merges).
+> 
+> The stats look fairly normal. About 50% is drivers, 20% is
+> architecture updates, 10% is tooling, and the remaining 20% is all
+> over (documentation, networking, filesystems, header file updates,
+> core kernel code..). Nothing particular stands out, although I do like
+> seeing how some ancient drivers are getting put out to pasture
+> (*cought*isdn*cough*).
+> 
+> As usual even the shortlog is much too big to post, so the summary
+> below is only a list of the pull requests I merged.
+> 
+> Go test. Kick the tires. Be the first kid on your block running a 5.0
+> pre-release kernel.
+> 
 
-Well, there is a mention of DMA above, which on some systems throws in
-a wild card.  I would certainly hope that DMA would integrate nicely
-with the cache-coherence protocols these days, unlike 25 years ago,
-but who knows?
+For v5.0-rc1-1-g3bd6e94bec12:
 
-							Thanx, Paul
+Build results:
+	total: 158 pass: 155 fail: 3
+Failed builds: 
+	csky:defconfig 
+	csky:allnoconfig
+	csky:tinyconfig 
+Qemu test results:
+	total: 332 pass: 332 fail: 0
 
+mm/memory.c: In function ‘__pte_alloc’:
+mm/memory.c:406:18: error: too few arguments to function ‘pte_alloc_one’
+
+mm/memory.c: In function ‘__pte_alloc_kernel’:
+mm/memory.c:439:15: error: too few arguments to function ‘pte_alloc_one_kernel’
+
+mm/memory.c: In function ‘do_fault_around’:
+mm/memory.c:3363:23: error: too few arguments to function ‘pte_alloc_one’
+
+Bisect points to commit 4cf58924951ef ("mm: treewide: remove unused address
+argument from pte_alloc functions"). Interesting - wasn't that supposed
+to be automatic ?
+
+csky does use the the removed address argument, so I won't even try to
+provide a patch. Copying csky maintainer instead.
+
+Guenter
+
+---
+# bad: [3bd6e94bec122a951d462c239b47954cf5f36e33] arch: restore generic-y += shmparam.h for some architectures
+# good: [3fed6ae4b027f9c93be18520f87bd06bdffd196b] ia64: fix compile without swiotlb
+git bisect start 'HEAD' '3fed6ae4b027'
+# bad: [e9666d10a5677a494260d60d1fa0b73cc7646eb3] jump_label: move 'asm goto' support test to Kconfig
+git bisect bad e9666d10a5677a494260d60d1fa0b73cc7646eb3
+# bad: [b23b0ea3708c3dec599966fc856836aca48835b9] Merge tag 'armsoc-late' of git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc
+git bisect bad b23b0ea3708c3dec599966fc856836aca48835b9
+# bad: [9ee3b3f4a5eb523ef27675ac2fcd2269b9d68767] Merge tag 'csky-for-linus-4.21' of git://github.com/c-sky/csky-linux
+git bisect bad 9ee3b3f4a5eb523ef27675ac2fcd2269b9d68767
+# good: [655c16a8ce9c15842547f40ce23fd148aeccc074] exec: separate MM_ANONPAGES and RLIMIT_STACK accounting
+git bisect good 655c16a8ce9c15842547f40ce23fd148aeccc074
+# bad: [a65981109f294ba7e64b33ad3b4575a4636fce66] Merge branch 'akpm' (patches from Andrew)
+git bisect bad a65981109f294ba7e64b33ad3b4575a4636fce66
+# bad: [3bb5f4ac55dd91d516e7e36b45c94bd57efbb068] kernel/locking/mutex.c: remove caller signal_pending branch predictions
+git bisect bad 3bb5f4ac55dd91d516e7e36b45c94bd57efbb068
+# good: [b058809bfc8faeb7b7cae047666e23375a060059] scripts/gdb: fix lx-version string output
+git bisect good b058809bfc8faeb7b7cae047666e23375a060059
+# bad: [4cf58924951ef80eec636b863e7a53973c44261a] mm: treewide: remove unused address argument from pte_alloc functions
+git bisect bad 4cf58924951ef80eec636b863e7a53973c44261a
+# good: [ff1522bb7d98450c72aea729f0b4147bc9986aed] initramfs: cleanup incomplete rootfs
+git bisect good ff1522bb7d98450c72aea729f0b4147bc9986aed
+# first bad commit: [4cf58924951ef80eec636b863e7a53973c44261a] mm: treewide: remove unused address argument from pte_alloc functions
