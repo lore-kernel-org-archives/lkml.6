@@ -2,94 +2,162 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96416C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 06:27:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E5CAC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 06:32:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E4BC20854
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 06:27:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6015A20859
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 06:32:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726496AbfAGG1I (ORCPT
+        id S1726458AbfAGGcD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 01:27:08 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:60213 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725535AbfAGG1I (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 01:27:08 -0500
-Received: from 61-220-137-37.hinet-ip.hinet.net ([61.220.137.37] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <kai.heng.feng@canonical.com>)
-        id 1ggONL-00082g-O7; Mon, 07 Jan 2019 06:27:04 +0000
-From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
-To:     jikos@kernel.org, benjamin.tissoires@redhat.com
-Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>
-Subject: [PATCH v2] HID: i2c-hid: Ignore input report if there's no data present on Elan touchpanels
-Date:   Mon,  7 Jan 2019 14:26:56 +0800
-Message-Id: <20190107062656.3065-1-kai.heng.feng@canonical.com>
-X-Mailer: git-send-email 2.17.1
+        Mon, 7 Jan 2019 01:32:03 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:50646 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725306AbfAGGcD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 01:32:03 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 30903C0587F7;
+        Mon,  7 Jan 2019 06:32:02 +0000 (UTC)
+Received: from [10.72.12.209] (ovpn-12-209.pek2.redhat.com [10.72.12.209])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 22CE15D9CD;
+        Mon,  7 Jan 2019 06:31:49 +0000 (UTC)
+Subject: Re: [PATCH RFC 1/2] virtio-net: bql support
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, maxime.coquelin@redhat.com,
+        tiwei.bie@intel.com, wexu@redhat.com, jfreimann@redhat.com,
+        "David S. Miller" <davem@davemloft.net>,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org
+References: <20181205225323.12555-2-mst@redhat.com>
+ <21384cb5-99a6-7431-1039-b356521e1bc3@redhat.com>
+ <20181226101528-mutt-send-email-mst@kernel.org>
+ <0fa99d9b-e510-d7eb-db1b-831bd7610ce9@redhat.com>
+ <20181230134106-mutt-send-email-mst@kernel.org>
+ <b4f06d11-4761-dabb-f641-5fc05c1c34fc@redhat.com>
+ <20190102085457-mutt-send-email-mst@kernel.org>
+ <17d2ab21-1c9a-2bb9-166f-2863d019cb0b@redhat.com>
+ <20190106221506-mutt-send-email-mst@kernel.org>
+ <aea2fd16-ec5b-64b5-2095-9a37044223f6@redhat.com>
+ <20190106225951-mutt-send-email-mst@kernel.org>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <88db987e-b519-5c1f-f64f-6f65f8415799@redhat.com>
+Date:   Mon, 7 Jan 2019 14:31:47 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <20190106225951-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Mon, 07 Jan 2019 06:32:02 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-While using Elan touchpads, the message floods:
-[  136.138487] i2c_hid i2c-DELL08D6:00: i2c_hid_get_input: incomplete report (14/65535)
 
-Though the message flood is annoying, the device it self works without
-any issue. I suspect that the device in question takes too much time to
-pull the IRQ back to high after I2C host has done reading its data.
+On 2019/1/7 下午12:01, Michael S. Tsirkin wrote:
+> On Mon, Jan 07, 2019 at 11:51:55AM +0800, Jason Wang wrote:
+>> On 2019/1/7 上午11:17, Michael S. Tsirkin wrote:
+>>> On Mon, Jan 07, 2019 at 10:14:37AM +0800, Jason Wang wrote:
+>>>> On 2019/1/2 下午9:59, Michael S. Tsirkin wrote:
+>>>>> On Wed, Jan 02, 2019 at 11:28:43AM +0800, Jason Wang wrote:
+>>>>>> On 2018/12/31 上午2:45, Michael S. Tsirkin wrote:
+>>>>>>> On Thu, Dec 27, 2018 at 06:00:36PM +0800, Jason Wang wrote:
+>>>>>>>> On 2018/12/26 下午11:19, Michael S. Tsirkin wrote:
+>>>>>>>>> On Thu, Dec 06, 2018 at 04:17:36PM +0800, Jason Wang wrote:
+>>>>>>>>>> On 2018/12/6 上午6:54, Michael S. Tsirkin wrote:
+>>>>>>>>>>> When use_napi is set, let's enable BQLs.  Note: some of the issues are
+>>>>>>>>>>> similar to wifi.  It's worth considering whether something similar to
+>>>>>>>>>>> commit 36148c2bbfbe ("mac80211: Adjust TSQ pacing shift") might be
+>>>>>>>>>>> benefitial.
+>>>>>>>>>> I've played a similar patch several days before. The tricky part is the mode
+>>>>>>>>>> switching between napi and no napi. We should make sure when the packet is
+>>>>>>>>>> sent and trakced by BQL,  it should be consumed by BQL as well. I did it by
+>>>>>>>>>> tracking it through skb->cb.  And deal with the freeze by reset the BQL
+>>>>>>>>>> status. Patch attached.
+>>>>>>>>>>
+>>>>>>>>>> But when testing with vhost-net, I don't very a stable performance,
+>>>>>>>>> So how about increasing TSQ pacing shift then?
+>>>>>>>> I can test this. But changing default TCP value is much more than a
+>>>>>>>> virtio-net specific thing.
+>>>>>>> Well same logic as wifi applies. Unpredictable latencies related
+>>>>>>> to radio in one case, to host scheduler in the other.
+>>>>>>>
+>>>>>>>>>> it was
+>>>>>>>>>> probably because we batch the used ring updating so tx interrupt may come
+>>>>>>>>>> randomly. We probably need to implement time bounded coalescing mechanism
+>>>>>>>>>> which could be configured from userspace.
+>>>>>>>>> I don't think it's reasonable to expect userspace to be that smart ...
+>>>>>>>>> Why do we need time bounded? used ring is always updated when ring
+>>>>>>>>> becomes empty.
+>>>>>>>> We don't add used when means BQL may not see the consumed packet in time.
+>>>>>>>> And the delay varies based on the workload since we count packets not bytes
+>>>>>>>> or time before doing the batched updating.
+>>>>>>>>
+>>>>>>>> Thanks
+>>>>>>> Sorry I still don't get it.
+>>>>>>> When nothing is outstanding then we do update the used.
+>>>>>>> So if BQL stops userspace from sending packets then
+>>>>>>> we get an interrupt and packets start flowing again.
+>>>>>> Yes, but how about the cases of multiple flows. That's where I see unstable
+>>>>>> results.
+>>>>>>
+>>>>>>
+>>>>>>> It might be suboptimal, we might need to tune it but I doubt running
+>>>>>>> timers is a solution, timer interrupts cause VM exits.
+>>>>>> Probably not a timer but a time counter (or event byte counter) in vhost to
+>>>>>> add used and signal guest if it exceeds a value instead of waiting the
+>>>>>> number of packets.
+>>>>>>
+>>>>>>
+>>>>>> Thanks
+>>>>> Well we already have VHOST_NET_WEIGHT - is it too big then?
+>>>> I'm not sure, it might be too big.
+>>>>
+>>>>
+>>>>> And maybe we should expose the "MORE" flag in the descriptor -
+>>>>> do you think that will help?
+>>>>>
+>>>> I don't know. But how a "more" flag can help here?
+>>>>
+>>>> Thanks
+>>> It sounds like we should be a bit more aggressive in updating used ring.
+>>> But if we just do it naively we will harm performance for sure as that
+>>> is how we are doing batching right now.
+>>
+>> I agree but the problem is to balance the PPS and throughput. More batching
+>> helps for PPS but may damage TCP throughput.
+> That is what more flag is supposed to be I think - it is only set if
+> there's a socket that actually needs the skb freed in order to go on.
 
-Since the host receives all useful data, let's ignore the input report
-when there's no data.
 
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
----
-v2:
- Use dev_warn_once() to warn the user about the situation.
+I'm not quite sure I get, but is this something similar to what you want?
 
- drivers/hid/i2c-hid/i2c-hid-core.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+https://lists.linuxfoundation.org/pipermail/virtualization/2014-October/027667.html
 
-diff --git a/drivers/hid/i2c-hid/i2c-hid-core.c b/drivers/hid/i2c-hid/i2c-hid-core.c
-index 8555ce7e737b..fd3b0ddace27 100644
---- a/drivers/hid/i2c-hid/i2c-hid-core.c
-+++ b/drivers/hid/i2c-hid/i2c-hid-core.c
-@@ -50,6 +50,7 @@
- #define I2C_HID_QUIRK_NO_IRQ_AFTER_RESET	BIT(1)
- #define I2C_HID_QUIRK_NO_RUNTIME_PM		BIT(2)
- #define I2C_HID_QUIRK_DELAY_AFTER_SLEEP		BIT(3)
-+#define I2C_HID_QUIRK_BOGUS_IRQ			BIT(4)
- 
- /* flags */
- #define I2C_HID_STARTED		0
-@@ -179,6 +180,8 @@ static const struct i2c_hid_quirks {
- 		I2C_HID_QUIRK_DELAY_AFTER_SLEEP },
- 	{ USB_VENDOR_ID_LG, I2C_DEVICE_ID_LG_8001,
- 		I2C_HID_QUIRK_NO_RUNTIME_PM },
-+	{ USB_VENDOR_ID_ELAN, HID_ANY_ID,
-+		 I2C_HID_QUIRK_BOGUS_IRQ },
- 	{ 0, 0 }
- };
- 
-@@ -503,6 +506,12 @@ static void i2c_hid_get_input(struct i2c_hid *ihid)
- 		return;
- 	}
- 
-+	if (ihid->quirks & I2C_HID_QUIRK_BOGUS_IRQ && ret_size == 0xffff) {
-+		dev_warn_once(&ihid->client->dev, "%s: IRQ triggered but
-+			      there's no data\n", __func__);
-+		return;
-+	}
-+
- 	if ((ret_size > size) || (ret_size < 2)) {
- 		dev_err(&ihid->client->dev, "%s: incomplete report (%d/%d)\n",
- 			__func__, size, ret_size);
--- 
-2.17.1
+Which enables tx interrupt for TCP packets, and you want to add used 
+more aggressively for those sockets?
 
+
+Thanks
+
+
+>>>    Instead we could make guest
+>>> control batching using the more flag - if that's not set we write out
+>>> the used ring.
+>>
+>> It's under the control of guest, so I'm afraid we still need some more guard
+>> (e.g time/bytes counters) on host.
+>>
+>> Thanks
+> Point is if guest does not care about the skb being freed, then there is no
+> rush host side to mark buffer used.
+>
+>
