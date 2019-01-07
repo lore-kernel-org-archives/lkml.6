@@ -4,57 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03D3FC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:57:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 090EDC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:57:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD2C52089F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:57:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4196206BB
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:57:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546865847;
-	bh=P0GPhit0Iw72yFzCuwxo7KiVaXJVjBy0wKWAReeg3Wg=;
+	s=default; t=1546865851;
+	bh=Sfuiqqti5g9rkazo/6CT/4BMvuQuaqpMbbuJAGVpWrg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=otD/VVPhnrEfpZAF5YO0MXLfxiG6MUJxYhmnyi0RbcZlelRVy7cWb5+DiIvA9KbhP
-	 tJoCFYHRxCzIG/Q++AweSL3sKSxG4WwtLRHnuA34L3BuJR5EIfJ783yqMGP1cStLFq
-	 FstngtyXVLGbq7aMsCyeGxnfzMqbo9NQtDMHhmS0=
+	b=kzeIU4lIUfONxY62sZqIqh4vMYGKAJ23kDf6ptSrn9IbHx1Gjw9HhwL5/2gcn0ccA
+	 SUXpK7KlKyRw/sswNjDlfZ40FvCavLR1p3Qz9/SAoBUq2zERFVU/0ZCUYBh7RmlxVu
+	 IJKG93lzNIgCeLdMgVCsGkMgPmtTdfVM5IIVugx8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729187AbfAGM50 (ORCPT
+        id S1729807AbfAGM5b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:57:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45018 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:57:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45094 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727191AbfAGM5X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:57:23 -0500
+        id S1727191AbfAGM51 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:57:27 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0D02320859;
-        Mon,  7 Jan 2019 12:57:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4A47F206BB;
+        Mon,  7 Jan 2019 12:57:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865842;
-        bh=P0GPhit0Iw72yFzCuwxo7KiVaXJVjBy0wKWAReeg3Wg=;
+        s=default; t=1546865846;
+        bh=Sfuiqqti5g9rkazo/6CT/4BMvuQuaqpMbbuJAGVpWrg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Z+LiIrDiTGHokWs0D0uPuIteEEo++pu/lzikTBf0MWnqvt69UpQsct1B66vuKGukY
-         syeIOKm2C0Wl4xxbwC4g/Wlxlu1i9CtTcsdiX4nZbt8eBJJ88wMshL4anId6pyL4hJ
-         jsIW3RsCcbNrnta7moZEpxGYHbJzwmGzYHPLVwhM=
+        b=vXfw7N08+17VvvkhCQhQfOdeT+TOxSmOmRS+gZFQdgl2Lybt6NI2C82eX2vIjLtYi
+         Gi85cT+qUxhuGkzNEsc23WlT1IDNvk7Fh7bfMtoa5DigsgV54q0pr3Idx9eDai101h
+         mvZglcIgIn2ThBZ3gSyIo8RHl8FdlNgs1Was32AM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Hante Meuleman <hante.meuleman@broadcom.com>,
-        Pieter-Paul Giesberts <pieter-paul.giesberts@broadcom.com>,
-        Franky Lin <franky.lin@broadcom.com>,
-        Arend van Spriel <arend.vanspriel@broadcom.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Himanshu Jha <himanshujha199640@gmail.com>,
-        Dan Haab <dhaab@luxul.com>,
-        Jia-Shyr Chuang <saint.chuang@cypress.com>,
-        Ian Molton <ian@mnementh.co.uk>, Lyude Paul <lyude@redhat.com>
-Subject: [PATCH 4.19 133/170] brcmfmac: Fix out of bounds memory access during fw load
-Date:   Mon,  7 Jan 2019 13:32:40 +0100
-Message-Id: <20190107104508.692701112@linuxfoundation.org>
+        stable@vger.kernel.org, Breno Leitao <leitao@debian.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.19 134/170] powerpc/tm: Set MSR[TS] just prior to recheckpoint
+Date:   Mon,  7 Jan 2019 13:32:41 +0100
+Message-Id: <20190107104508.812963736@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104452.953560660@linuxfoundation.org>
 References: <20190107104452.953560660@linuxfoundation.org>
@@ -73,116 +65,189 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lyude Paul <lyude@redhat.com>
+From: Breno Leitao <leitao@debian.org>
 
-commit b72c51a58e6d63ef673ac96b8ab5bc98799c5f7b upstream.
+commit e1c3743e1a20647c53b719dbf28b48f45d23f2cd upstream.
 
-I ended up tracking down some rather nasty issues with f2fs (and other
-filesystem modules) constantly crashing on my kernel down to a
-combination of out of bounds memory accesses, one of which was coming
-from brcmfmac during module load:
+On a signal handler return, the user could set a context with MSR[TS] bits
+set, and these bits would be copied to task regs->msr.
 
-[   30.891382] brcmfmac: brcmf_fw_alloc_request: using brcm/brcmfmac4356-sdio for chip BCM4356/2
-[   30.894437] ==================================================================
-[   30.901581] BUG: KASAN: global-out-of-bounds in brcmf_fw_alloc_request+0x42c/0x480 [brcmfmac]
-[   30.909935] Read of size 1 at addr ffff2000024865df by task kworker/6:2/387
-[   30.916805]
-[   30.918261] CPU: 6 PID: 387 Comm: kworker/6:2 Tainted: G           O      4.20.0-rc3Lyude-Test+ #19
-[   30.927251] Hardware name: amlogic khadas-vim2/khadas-vim2, BIOS 2018.07-rc2-armbian 09/11/2018
-[   30.935964] Workqueue: events brcmf_driver_register [brcmfmac]
-[   30.941641] Call trace:
-[   30.944058]  dump_backtrace+0x0/0x3e8
-[   30.947676]  show_stack+0x14/0x20
-[   30.950968]  dump_stack+0x130/0x1c4
-[   30.954406]  print_address_description+0x60/0x25c
-[   30.959066]  kasan_report+0x1b4/0x368
-[   30.962683]  __asan_report_load1_noabort+0x18/0x20
-[   30.967547]  brcmf_fw_alloc_request+0x42c/0x480 [brcmfmac]
-[   30.967639]  brcmf_sdio_probe+0x163c/0x2050 [brcmfmac]
-[   30.978035]  brcmf_ops_sdio_probe+0x598/0xa08 [brcmfmac]
-[   30.983254]  sdio_bus_probe+0x190/0x398
-[   30.983270]  really_probe+0x2a0/0xa70
-[   30.983296]  driver_probe_device+0x1b4/0x2d8
-[   30.994901]  __driver_attach+0x200/0x280
-[   30.994914]  bus_for_each_dev+0x10c/0x1a8
-[   30.994925]  driver_attach+0x38/0x50
-[   30.994935]  bus_add_driver+0x330/0x608
-[   30.994953]  driver_register+0x140/0x388
-[   31.013965]  sdio_register_driver+0x74/0xa0
-[   31.014076]  brcmf_sdio_register+0x14/0x60 [brcmfmac]
-[   31.023177]  brcmf_driver_register+0xc/0x18 [brcmfmac]
-[   31.023209]  process_one_work+0x654/0x1080
-[   31.032266]  worker_thread+0x4f0/0x1308
-[   31.032286]  kthread+0x2a8/0x320
-[   31.039254]  ret_from_fork+0x10/0x1c
-[   31.039269]
-[   31.044226] The buggy address belongs to the variable:
-[   31.044351]  brcmf_firmware_path+0x11f/0xfffffffffffd3b40 [brcmfmac]
-[   31.055601]
-[   31.057031] Memory state around the buggy address:
-[   31.061800]  ffff200002486480: 04 fa fa fa fa fa fa fa 00 00 00 00 00 00 00 00
-[   31.068983]  ffff200002486500: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-[   31.068993] >ffff200002486580: 00 00 00 00 00 00 00 00 fa fa fa fa 00 00 00 00
-[   31.068999]                                                     ^
-[   31.069017]  ffff200002486600: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-[   31.096521]  ffff200002486680: 00 00 00 00 00 00 00 00 00 00 00 00 fa fa fa fa
-[   31.096528] ==================================================================
-[   31.096533] Disabling lock debugging due to kernel taint
+At restore_tm_sigcontexts(), after current task regs->msr[TS] bits are set,
+several __get_user() are called and then a recheckpoint is executed.
 
-It appears that when trying to determine the length of the string in the
-alternate firmware path, we make the mistake of not handling the case
-where the firmware path is empty correctly. Since strlen(mp_path) can
-return 0, we'll end up accessing mp_path[-1] when the firmware_path
-isn't provided through the module arguments.
+This is a problem since a page fault (in kernel space) could happen when
+calling __get_user(). If it happens, the process MSR[TS] bits were
+already set, but recheckpoint was not executed, and SPRs are still invalid.
 
-So, fix this by just setting the end char to '\0' by default, and only
-changing it if we have a non-zero length. Additionally, use strnlen()
-with BRCMF_FW_ALTPATH_LEN instead of strlen() just to be extra safe.
+The page fault can cause the current process to be de-scheduled, with
+MSR[TS] active and without tm_recheckpoint() being called.  More
+importantly, without TEXASR[FS] bit set also.
 
-Fixes: 2baa3aaee27f ("brcmfmac: introduce brcmf_fw_alloc_request() function")
-Cc: Hante Meuleman <hante.meuleman@broadcom.com>
-Cc: Pieter-Paul Giesberts <pieter-paul.giesberts@broadcom.com>
-Cc: Franky Lin <franky.lin@broadcom.com>
-Cc: Arend van Spriel <arend.vanspriel@broadcom.com>
-Cc: Kalle Valo <kvalo@codeaurora.org>
-Cc: Arend Van Spriel <arend.vanspriel@broadcom.com>
-Cc: Himanshu Jha <himanshujha199640@gmail.com>
-Cc: Dan Haab <dhaab@luxul.com>
-Cc: Jia-Shyr Chuang <saint.chuang@cypress.com>
-Cc: Ian Molton <ian@mnementh.co.uk>
-Cc: <stable@vger.kernel.org> # v4.17+
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Since TEXASR might not have the FS bit set, and when the process is
+scheduled back, it will try to reclaim, which will be aborted because of
+the CPU is not in the suspended state, and, then, recheckpoint. This
+recheckpoint will restore thread->texasr into TEXASR SPR, which might be
+zero, hitting a BUG_ON().
+
+	kernel BUG at /build/linux-sf3Co9/linux-4.9.30/arch/powerpc/kernel/tm.S:434!
+	cpu 0xb: Vector: 700 (Program Check) at [c00000041f1576d0]
+	    pc: c000000000054550: restore_gprs+0xb0/0x180
+	    lr: 0000000000000000
+	    sp: c00000041f157950
+	   msr: 8000000100021033
+	  current = 0xc00000041f143000
+	  paca    = 0xc00000000fb86300	 softe: 0	 irq_happened: 0x01
+	    pid   = 1021, comm = kworker/11:1
+	kernel BUG at /build/linux-sf3Co9/linux-4.9.30/arch/powerpc/kernel/tm.S:434!
+	Linux version 4.9.0-3-powerpc64le (debian-kernel@lists.debian.org) (gcc version 6.3.0 20170516 (Debian 6.3.0-18) ) #1 SMP Debian 4.9.30-2+deb9u2 (2017-06-26)
+	enter ? for help
+	[c00000041f157b30] c00000000001bc3c tm_recheckpoint.part.11+0x6c/0xa0
+	[c00000041f157b70] c00000000001d184 __switch_to+0x1e4/0x4c0
+	[c00000041f157bd0] c00000000082eeb8 __schedule+0x2f8/0x990
+	[c00000041f157cb0] c00000000082f598 schedule+0x48/0xc0
+	[c00000041f157ce0] c0000000000f0d28 worker_thread+0x148/0x610
+	[c00000041f157d80] c0000000000f96b0 kthread+0x120/0x140
+	[c00000041f157e30] c00000000000c0e0 ret_from_kernel_thread+0x5c/0x7c
+
+This patch simply delays the MSR[TS] set, so, if there is any page fault in
+the __get_user() section, it does not have regs->msr[TS] set, since the TM
+structures are still invalid, thus avoiding doing TM operations for
+in-kernel exceptions and possible process reschedule.
+
+With this patch, the MSR[TS] will only be set just before recheckpointing
+and setting TEXASR[FS] = 1, thus avoiding an interrupt with TM registers in
+invalid state.
+
+Other than that, if CONFIG_PREEMPT is set, there might be a preemption just
+after setting MSR[TS] and before tm_recheckpoint(), thus, this block must
+be atomic from a preemption perspective, thus, calling
+preempt_disable/enable() on this code.
+
+It is not possible to move tm_recheckpoint to happen earlier, because it is
+required to get the checkpointed registers from userspace, with
+__get_user(), thus, the only way to avoid this undesired behavior is
+delaying the MSR[TS] set.
+
+The 32-bits signal handler seems to be safe this current issue, but, it
+might be exposed to the preemption issue, thus, disabling preemption in
+this chunk of code.
+
+Changes from v2:
+ * Run the critical section with preempt_disable.
+
+Fixes: 87b4e5393af7 ("powerpc/tm: Fix return of active 64bit signals")
+Cc: stable@vger.kernel.org (v3.9+)
+Signed-off-by: Breno Leitao <leitao@debian.org>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/broadcom/brcm80211/brcmfmac/firmware.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ arch/powerpc/kernel/signal_32.c |   20 +++++++++++++++++-
+ arch/powerpc/kernel/signal_64.c |   44 +++++++++++++++++++++++++++-------------
+ 2 files changed, 49 insertions(+), 15 deletions(-)
 
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/firmware.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/firmware.c
-@@ -641,8 +641,9 @@ brcmf_fw_alloc_request(u32 chip, u32 chi
- 	struct brcmf_fw_request *fwreq;
- 	char chipname[12];
- 	const char *mp_path;
-+	size_t mp_path_len;
- 	u32 i, j;
--	char end;
-+	char end = '\0';
- 	size_t reqsz;
- 
- 	for (i = 0; i < table_size; i++) {
-@@ -667,7 +668,10 @@ brcmf_fw_alloc_request(u32 chip, u32 chi
- 		   mapping_table[i].fw_base, chipname);
- 
- 	mp_path = brcmf_mp_global.firmware_path;
--	end = mp_path[strlen(mp_path) - 1];
-+	mp_path_len = strnlen(mp_path, BRCMF_FW_ALTPATH_LEN);
-+	if (mp_path_len)
-+		end = mp_path[mp_path_len - 1];
+--- a/arch/powerpc/kernel/signal_32.c
++++ b/arch/powerpc/kernel/signal_32.c
+@@ -848,7 +848,23 @@ static long restore_tm_user_regs(struct
+ 	/* If TM bits are set to the reserved value, it's an invalid context */
+ 	if (MSR_TM_RESV(msr_hi))
+ 		return 1;
+-	/* Pull in the MSR TM bits from the user context */
 +
- 	fwreq->n_items = n_fwnames;
++	/*
++	 * Disabling preemption, since it is unsafe to be preempted
++	 * with MSR[TS] set without recheckpointing.
++	 */
++	preempt_disable();
++
++	/*
++	 * CAUTION:
++	 * After regs->MSR[TS] being updated, make sure that get_user(),
++	 * put_user() or similar functions are *not* called. These
++	 * functions can generate page faults which will cause the process
++	 * to be de-scheduled with MSR[TS] set but without calling
++	 * tm_recheckpoint(). This can cause a bug.
++	 *
++	 * Pull in the MSR TM bits from the user context
++	 */
+ 	regs->msr = (regs->msr & ~MSR_TS_MASK) | (msr_hi & MSR_TS_MASK);
+ 	/* Now, recheckpoint.  This loads up all of the checkpointed (older)
+ 	 * registers, including FP and V[S]Rs.  After recheckpointing, the
+@@ -873,6 +889,8 @@ static long restore_tm_user_regs(struct
+ 	}
+ #endif
  
- 	for (j = 0; j < n_fwnames; j++) {
++	preempt_enable();
++
+ 	return 0;
+ }
+ #endif
+--- a/arch/powerpc/kernel/signal_64.c
++++ b/arch/powerpc/kernel/signal_64.c
+@@ -467,20 +467,6 @@ static long restore_tm_sigcontexts(struc
+ 	if (MSR_TM_RESV(msr))
+ 		return -EINVAL;
+ 
+-	/* pull in MSR TS bits from user context */
+-	regs->msr = (regs->msr & ~MSR_TS_MASK) | (msr & MSR_TS_MASK);
+-
+-	/*
+-	 * Ensure that TM is enabled in regs->msr before we leave the signal
+-	 * handler. It could be the case that (a) user disabled the TM bit
+-	 * through the manipulation of the MSR bits in uc_mcontext or (b) the
+-	 * TM bit was disabled because a sufficient number of context switches
+-	 * happened whilst in the signal handler and load_tm overflowed,
+-	 * disabling the TM bit. In either case we can end up with an illegal
+-	 * TM state leading to a TM Bad Thing when we return to userspace.
+-	 */
+-	regs->msr |= MSR_TM;
+-
+ 	/* pull in MSR LE from user context */
+ 	regs->msr = (regs->msr & ~MSR_LE) | (msr & MSR_LE);
+ 
+@@ -572,6 +558,34 @@ static long restore_tm_sigcontexts(struc
+ 	tm_enable();
+ 	/* Make sure the transaction is marked as failed */
+ 	tsk->thread.tm_texasr |= TEXASR_FS;
++
++	/*
++	 * Disabling preemption, since it is unsafe to be preempted
++	 * with MSR[TS] set without recheckpointing.
++	 */
++	preempt_disable();
++
++	/* pull in MSR TS bits from user context */
++	regs->msr = (regs->msr & ~MSR_TS_MASK) | (msr & MSR_TS_MASK);
++
++	/*
++	 * Ensure that TM is enabled in regs->msr before we leave the signal
++	 * handler. It could be the case that (a) user disabled the TM bit
++	 * through the manipulation of the MSR bits in uc_mcontext or (b) the
++	 * TM bit was disabled because a sufficient number of context switches
++	 * happened whilst in the signal handler and load_tm overflowed,
++	 * disabling the TM bit. In either case we can end up with an illegal
++	 * TM state leading to a TM Bad Thing when we return to userspace.
++	 *
++	 * CAUTION:
++	 * After regs->MSR[TS] being updated, make sure that get_user(),
++	 * put_user() or similar functions are *not* called. These
++	 * functions can generate page faults which will cause the process
++	 * to be de-scheduled with MSR[TS] set but without calling
++	 * tm_recheckpoint(). This can cause a bug.
++	 */
++	regs->msr |= MSR_TM;
++
+ 	/* This loads the checkpointed FP/VEC state, if used */
+ 	tm_recheckpoint(&tsk->thread);
+ 
+@@ -585,6 +599,8 @@ static long restore_tm_sigcontexts(struc
+ 		regs->msr |= MSR_VEC;
+ 	}
+ 
++	preempt_enable();
++
+ 	return err;
+ }
+ #endif
 
 
