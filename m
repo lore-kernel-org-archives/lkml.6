@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D452CC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:34:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43383C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:34:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A58A4206BB
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:34:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14FFE218AD
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:34:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546864488;
-	bh=+QsLprlsJtxWOjZJ/xN4gp4XMjesyvd/sO/k44X6Xoc=;
+	s=default; t=1546864492;
+	bh=RqEXmUJIvIiCV6Yca0AgsJlfMpAViNEyJKUklVq2JAk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=jckpK5aWmXsH396H614m2xVC6Upa3c/Ton23C6iQeCL3B49or0bOKBFbQSIVj6HfL
-	 E5pNELRZlT6o2h5vjs2tX0tap8cORghuBFYzt6hHLgMUpPDnLgyvgzLjjd4KB5sqH1
-	 Vlfv5oyLWLbs/aV7edHgrWbg+BxvqTf5YNiwIBs8=
+	b=peCJZWfxFFH7WpRiB+u+EA4/GdMGEB9NlTH2F6+ZCBDropUtRH0lRK8AvzHNxCBC2
+	 dbsBKNwfwIwIBGthzOIk0U1zupSRxjbjfbE3IPc1+XNGt8ej8FI0ziQsQLQ8RoKx17
+	 /KdHY+i8i/GeflF4FrpWaH82Q7wZ3yCN7wocbiPE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727354AbfAGMer (ORCPT
+        id S1727371AbfAGMev (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:34:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47478 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:34:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47598 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727331AbfAGMep (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:34:45 -0500
+        id S1727351AbfAGMer (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:34:47 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8DD7320859;
-        Mon,  7 Jan 2019 12:34:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6A83E206BB;
+        Mon,  7 Jan 2019 12:34:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546864484;
-        bh=+QsLprlsJtxWOjZJ/xN4gp4XMjesyvd/sO/k44X6Xoc=;
+        s=default; t=1546864486;
+        bh=RqEXmUJIvIiCV6Yca0AgsJlfMpAViNEyJKUklVq2JAk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nGT79SExsVbqn/HdqreiZGKKYHlXNPGGzsMo8NkeVpEgoSxSw5FMT6tnW1tVp29Zj
-         Ui2OGKrfRqfFl29NRjestTfc4GJDEekd9JIF+8nNB83Yy/IKwItyMyZOh/KjGcGuN7
-         wuo4v74g075DQSKZzHxeInXvGvejJv94fbgsXSa0=
+        b=RmpAn9XuFPxWLTCBF0fKCyHuCiYt68sigb3sYP5FJXXS6Dr6GNdSsxm4jPSx3dLH6
+         yazXACOX1PoDn1aY5vbSeHL2qxVQaOxXKSazPrI8WXXb/YT6OLGIFARgdJReYiyQe7
+         RMlouu43RNdAT7OYCxM4tHn5xQ4B1voNgvYmlHGI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Miquel Raynal <miquel.raynal@bootlin.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>
-Subject: [PATCH 4.20 027/145] mtd: rawnand: marvell: prevent timeouts on a loaded machine
-Date:   Mon,  7 Jan 2019 13:31:04 +0100
-Message-Id: <20190107104440.896123918@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Subject: [PATCH 4.20 028/145] mtd: rawnand: Fix JEDEC detection
+Date:   Mon,  7 Jan 2019 13:31:05 +0100
+Message-Id: <20190107104440.986237906@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104437.308206189@linuxfoundation.org>
 References: <20190107104437.308206189@linuxfoundation.org>
@@ -65,82 +66,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Miquel Raynal <miquel.raynal@bootlin.com>
+From: Boris Brezillon <boris.brezillon@bootlin.com>
 
-commit cafb56dd741e61c99709bcd2b193a9a1d36def3b upstream.
+commit b637ef779575a977068025f842ecd480a9671f3f upstream.
 
-marvell_nfc_wait_op() waits for completion during 'timeout_ms'
-milliseconds before throwing an error. While the logic is fine, the
-value of 'timeout_ms' is given by the core and actually correspond to
-the maximum time the NAND chip will take to complete the
-operation. Assuming there is no overhead in the propagation of the
-interrupt signal to the the NAND controller (through the Ready/Busy
-line), this delay does not take into account the latency of the
-operating system. For instance, for a page write, the delay given by
-the core is rounded up to 1ms. Hence, when the machine is over loaded,
-there is chances that this timeout will be reached.
+nand_jedec_detect() should return 1 when the PARAM page parsing
+succeeds, otherwise the core considers JEDEC detection failed and falls
+back to ID-based detection.
 
-There are two ways to solve this issue that are not incompatible:
-1/ Enlarge the timeout value (if so, how much?).
-2/ Check after the waiting method if we did not miss any interrupt
-because of the OS latency (an interrupt is still pending). In this
-case, we assume the operation exited successfully.
-
-We choose the second approach that is a must in all cases, with the
-possibility to also modify the timeout value to be, e.g. at least 1
-second in all cases.
-
-Fixes: 02f26ecf8c77 ("mtd: nand: add reworked Marvell NAND controller driver")
-Cc: stable@vger.kernel.org
+Fixes: 480139d9229e ("mtd: rawnand: get rid of the JEDEC parameter page in nand_chip")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Acked-by: Miquel Raynal <miquel.raynal@bootlin.com>
 Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mtd/nand/raw/marvell_nand.c |   17 ++++++++++++++---
- 1 file changed, 14 insertions(+), 3 deletions(-)
+ drivers/mtd/nand/raw/nand_jedec.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/mtd/nand/raw/marvell_nand.c
-+++ b/drivers/mtd/nand/raw/marvell_nand.c
-@@ -514,9 +514,14 @@ static void marvell_nfc_enable_int(struc
- 	writel_relaxed(reg & ~int_mask, nfc->regs + NDCR);
- }
- 
--static void marvell_nfc_clear_int(struct marvell_nfc *nfc, u32 int_mask)
-+static u32 marvell_nfc_clear_int(struct marvell_nfc *nfc, u32 int_mask)
- {
-+	u32 reg;
-+
-+	reg = readl_relaxed(nfc->regs + NDSR);
- 	writel_relaxed(int_mask, nfc->regs + NDSR);
-+
-+	return reg & int_mask;
- }
- 
- static void marvell_nfc_force_byte_access(struct nand_chip *chip,
-@@ -683,6 +688,7 @@ static int marvell_nfc_wait_cmdd(struct
- static int marvell_nfc_wait_op(struct nand_chip *chip, unsigned int timeout_ms)
- {
- 	struct marvell_nfc *nfc = to_marvell_nfc(chip->controller);
-+	u32 pending;
- 	int ret;
- 
- 	/* Timeout is expressed in ms */
-@@ -695,8 +701,13 @@ static int marvell_nfc_wait_op(struct na
- 	ret = wait_for_completion_timeout(&nfc->complete,
- 					  msecs_to_jiffies(timeout_ms));
- 	marvell_nfc_disable_int(nfc, NDCR_RDYM);
--	marvell_nfc_clear_int(nfc, NDSR_RDY(0) | NDSR_RDY(1));
--	if (!ret) {
-+	pending = marvell_nfc_clear_int(nfc, NDSR_RDY(0) | NDSR_RDY(1));
-+
-+	/*
-+	 * In case the interrupt was not served in the required time frame,
-+	 * check if the ISR was not served or if something went actually wrong.
-+	 */
-+	if (ret && !pending) {
- 		dev_err(nfc->dev, "Timeout waiting for RB signal\n");
- 		return -ETIMEDOUT;
+--- a/drivers/mtd/nand/raw/nand_jedec.c
++++ b/drivers/mtd/nand/raw/nand_jedec.c
+@@ -107,6 +107,8 @@ int nand_jedec_detect(struct nand_chip *
+ 		pr_warn("Invalid codeword size\n");
  	}
+ 
++	ret = 1;
++
+ free_jedec_param_page:
+ 	kfree(p);
+ 	return ret;
 
 
