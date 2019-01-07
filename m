@@ -2,181 +2,140 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED6CDC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 10:04:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0692C43444
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 10:06:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE35920854
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 10:04:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ll02p/T2"
+	by mail.kernel.org (Postfix) with ESMTP id BB0E420854
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 10:06:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726676AbfAGKEU (ORCPT
+        id S1726703AbfAGKGs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 05:04:20 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:51552 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726448AbfAGKET (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 05:04:19 -0500
-Received: by mail-it1-f195.google.com with SMTP id w18so351783ite.1
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 02:04:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xtpZZ82T+J672IEzf3rtrmsgcO0W/zmgYx3Gu0WKyLQ=;
-        b=Ll02p/T294fLunfCXo5gc5nCLZoyZTVFFBe/cOfuR7/6Wnu68nV2GRKES9Uk9dROPC
-         KugUqdMvhPN/WQt9HpZycscDzI30MsuqVhhY5w2oKoOPKhbFSyBZ+Eku6n9jNSg+1+TU
-         nKRCuSLHDk4h0UfKgvbKoXkoNcdOwnHoV3zdwsLuQ95NkNCJYhF2qmVSGHRiQ5jyA3jJ
-         8isrXxx4fjGUNU1wGDgzzQLzATv4rp2cEkUXj0ry9H/mxvPrrtsz4Jn1jldXRdo7wHV6
-         9GFfmezhmfOwxlEMR0YFzqA9DyGh3vL1EaiIODCu+a3eYMt8RFLtiIgC6cIjpMRM7xXF
-         F7aw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xtpZZ82T+J672IEzf3rtrmsgcO0W/zmgYx3Gu0WKyLQ=;
-        b=E8RR/Jo2HCCf+g4qEACgXBQ8ti4FZEBo1H16JB7Kb1VlWvMpmI5Jp6/VyXgcNgTD0p
-         u1PD2i0iYK27AhPhgIfRnVf7xRK4z1i8S4O0+gXPC8WuHuOvWMnc5Z41M9l6MsovgHtR
-         6BaKB9i0mvLDb/OgXk5Wp0a7lt1wQ8mYxxEHGIhZQYcpD07q2DUEevpYo81xslCIg0/H
-         U2TIeyxq283ax2UMEj23nOVB8eWBJohz4IWegCoAQqvNepJoeKB1upt06W26qNwT8kGu
-         cgSS/T54HSX/o29ysWaHfivRwpr58v4pFoH4HHlsn17MIjvklqI0evqyzQrye4Ho6OUv
-         n1fw==
-X-Gm-Message-State: AJcUukexmpU7BeaYSBINVtFTwJVsJT3rVM2T7aCSijf7qFwZZSzyCTIh
-        Vn2hryAYypIYH3KLD126hw2tyU07iqJyM+g6TbVTpA==
-X-Google-Smtp-Source: ALg8bN49vzOWVIP2egw6eUF61mC0F8g9GsqIREEGm82t9jqjE1DfdKFInZTQ0o4+qvPbsEcbrqOqaXYNNYIdvCDTk78=
-X-Received: by 2002:a05:660c:f94:: with SMTP id x20mr5964820itl.144.1546855458217;
- Mon, 07 Jan 2019 02:04:18 -0800 (PST)
+        Mon, 7 Jan 2019 05:06:48 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32818 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726453AbfAGKGr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 05:06:47 -0500
+Received: from LHREML711-CAH.china.huawei.com (unknown [172.18.7.106])
+        by Forcepoint Email with ESMTP id EC413F9CFFC653B95D1C;
+        Mon,  7 Jan 2019 10:06:45 +0000 (GMT)
+Received: from [10.204.65.149] (10.204.65.149) by smtpsuk.huawei.com
+ (10.201.108.34) with Microsoft SMTP Server (TLS) id 14.3.408.0; Mon, 7 Jan
+ 2019 10:06:38 +0000
+Subject: Re: [PATCH v7 1/5] tpm: dynamically allocate the allocated_banks
+ array
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+CC:     <zohar@linux.ibm.com>, <david.safford@ge.com>,
+        <monty.wiseman@ge.com>, <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>
+References: <20181213102945.30946-1-roberto.sassu@huawei.com>
+ <20181213102945.30946-2-roberto.sassu@huawei.com>
+ <20181220145500.GA10652@linux.intel.com>
+ <0900a894-e17b-edc8-fa30-db7d16665082@huawei.com>
+ <20181222000321.GB8954@linux.intel.com>
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+Message-ID: <7cc91a22-b09b-8bdc-c225-adff68e1f69e@huawei.com>
+Date:   Mon, 7 Jan 2019 11:06:33 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-References: <0000000000007b7cbf057edb4e33@google.com>
-In-Reply-To: <0000000000007b7cbf057edb4e33@google.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Mon, 7 Jan 2019 11:04:07 +0100
-Message-ID: <CACT4Y+YLNQRe-vsoaGtHpPT=M7z2ybjXqrUSbVctZ54Ub5Li-Q@mail.gmail.com>
-Subject: Re: KASAN: out-of-bounds Read in unwind_next_frame
-To:     syzbot <syzbot+2fdf0ed2b3bc8fc51fc6@syzkaller.appspotmail.com>
-Cc:     Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "the arch/x86 maintainers" <x86@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181222000321.GB8954@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.204.65.149]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 7, 2019 at 11:01 AM syzbot
-<syzbot+2fdf0ed2b3bc8fc51fc6@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot found the following crash on:
->
-> HEAD commit:    b5aef86e089a Merge tag 'docs-5.0-fixes' of git://git.lwn.n..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1034c54b400000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=d55557b516c45456
-> dashboard link: https://syzkaller.appspot.com/bug?extid=2fdf0ed2b3bc8fc51fc6
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
->
-> Unfortunately, I don't have any reproducer for this crash yet.
->
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+2fdf0ed2b3bc8fc51fc6@syzkaller.appspotmail.com
+On 12/22/2018 1:03 AM, Jarkko Sakkinen wrote:
+> On Fri, Dec 21, 2018 at 10:40:09AM +0100, Roberto Sassu wrote:
+>> On 12/20/2018 3:55 PM, Jarkko Sakkinen wrote:
+>>> On Thu, Dec 13, 2018 at 11:29:41AM +0100, Roberto Sassu wrote:
+>>>> This patch renames active_banks (member of tpm_chip) to allocated_banks,
+>>>> stores the number of allocated PCR banks in nr_allocated_banks (new member
+>>>> of tpm_chip), and replaces the static array with a pointer to a dynamically
+>>>> allocated array.
+>>>>
+>>>> tpm2_get_pcr_allocation() determines if a PCR bank is allocated by checking
+>>>> the mask in the TPML_PCR_SELECTION structure returned by the TPM for
+>>>> TPM2_Get_Capability(). If a bank is not allocated, the TPM returns that
+>>>> bank in TPML_PCR_SELECTION, with all bits in the mask set to zero. In this
+>>>> case, the bank is not included in chip->allocated_banks, to avoid that TPM
+>>>> driver users unnecessarily calculate a digest for that bank.
+>>>>
+>>>> One PCR bank with algorithm set to SHA1 is always allocated for TPM 1.x.
+>>>>
+>>>> As a consequence of the introduction of nr_allocated_banks,
+>>>> tpm_pcr_extend() does not check anymore if the algorithm stored in tpm_chip
+>>>> is equal to zero.
+>>>>
+>>>> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+>>>> Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+>>>> ---
+>>>>    drivers/char/tpm/tpm-chip.c      |  1 +
+>>>>    drivers/char/tpm/tpm-interface.c | 18 +++++++++--------
+>>>>    drivers/char/tpm/tpm.h           |  3 ++-
+>>>>    drivers/char/tpm/tpm1-cmd.c      | 10 ++++++++++
+>>>>    drivers/char/tpm/tpm2-cmd.c      | 34 ++++++++++++++++++++++----------
+>>>>    5 files changed, 47 insertions(+), 19 deletions(-)
+>>>>
+>>>> diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
+>>>> index 32db84683c40..ce851c62bb68 100644
+>>>> --- a/drivers/char/tpm/tpm-chip.c
+>>>> +++ b/drivers/char/tpm/tpm-chip.c
+>>>> @@ -160,6 +160,7 @@ static void tpm_dev_release(struct device *dev)
+>>>>    	kfree(chip->log.bios_event_log);
+>>>>    	kfree(chip->work_space.context_buf);
+>>>>    	kfree(chip->work_space.session_buf);
+>>>> +	kfree(chip->allocated_banks);
+>>>>    	kfree(chip);
+>>>>    }
+>>>> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+>>>> index d9439f9abe78..7b80919228be 100644
+>>>> --- a/drivers/char/tpm/tpm-interface.c
+>>>> +++ b/drivers/char/tpm/tpm-interface.c
+>>>> @@ -488,8 +488,7 @@ EXPORT_SYMBOL_GPL(tpm_pcr_read);
+>>>>    int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash)
+>>>>    {
+>>>>    	int rc;
+>>>> -	struct tpm2_digest digest_list[ARRAY_SIZE(chip->active_banks)];
+>>>> -	u32 count = 0;
+>>>> +	struct tpm2_digest *digest_list;
+>>>>    	int i;
+>>>>    	chip = tpm_find_get_ops(chip);
+>>>> @@ -497,16 +496,19 @@ int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash)
+>>>>    		return -ENODEV;
+>>>>    	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
+>>>> -		memset(digest_list, 0, sizeof(digest_list));
+>>>> +		digest_list = kcalloc(chip->nr_allocated_banks,
+>>>> +				      sizeof(*digest_list), GFP_KERNEL);
+>>>> +		if (!digest_list)
+>>>> +			return -ENOMEM;
+>>>
+>>> You could preallocate digest list and place it to struct tpm_chip
+>>> instead of doing it everytime tpm_pcr_extend() called.
+>>
+>> This part will be removed with patch 5/5.
+> 
+> Even if it did, it does not make this patch unbroken.
 
-This happens on the line that does _not_ use READ_ONCE_TASK_STACK:
+Can two calls to tpm_pcr_extend() be executed at the same time?
 
-/* Get the next frame pointer: */
-if (state->regs)
-        next_bp = (unsigned long *)state->regs->bp;
-else
-        next_bp = (unsigned long *)READ_ONCE_TASK_STACK(state->task,
-*state->bp);
+If yes, the digest list should be protected by a mutex.
 
-Should the first line also use READ_ONCE_TASK_STACK?
-Or should we always have state->regs == NULL when unwinding a remote task?
-Or is it a true OOB if we are unwinding own stack?
+Roberto
 
 
+> /Jarkko
+> 
 
-> ==================================================================
-> BUG: KASAN: out-of-bounds in unwind_next_frame.part.0+0x756/0xa90
-> arch/x86/kernel/unwind_frame.c:324
-> Read of size 8 at addr ffff88805082fb68 by task syz-executor2/21500
->
-> CPU: 0 PID: 21500 Comm: syz-executor2 Not tainted 4.20.0+ #12
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->   __dump_stack lib/dump_stack.c:77 [inline]
->   dump_stack+0x1db/0x2d0 lib/dump_stack.c:113
->   print_address_description.cold+0x7c/0x20d mm/kasan/report.c:187
->   kasan_report.cold+0x1b/0x40 mm/kasan/report.c:317
->   __asan_report_load8_noabort+0x14/0x20 mm/kasan/generic_report.c:135
->   unwind_next_frame.part.0+0x756/0xa90 arch/x86/kernel/unwind_frame.c:324
->   unwind_next_frame+0x3b/0x50 arch/x86/kernel/unwind_frame.c:287
->   __save_stack_trace+0x7a/0xf0 arch/x86/kernel/stacktrace.c:44
->   save_stack_trace_tsk arch/x86/kernel/stacktrace.c:76 [inline]
->   save_stack_trace_tsk+0x9e/0xd0 arch/x86/kernel/stacktrace.c:69
->   proc_pid_stack+0x272/0x430 fs/proc/base.c:438
->   proc_single_show+0xf6/0x180 fs/proc/base.c:739
->   seq_read+0x4db/0x1130 fs/seq_file.c:229
->   do_loop_readv_writev fs/read_write.c:700 [inline]
->   do_loop_readv_writev fs/read_write.c:687 [inline]
->   do_iter_read+0x4a9/0x660 fs/read_write.c:921
->   vfs_readv+0x175/0x1c0 fs/read_write.c:983
->   do_preadv+0x1c4/0x280 fs/read_write.c:1067
->   __do_sys_preadv fs/read_write.c:1117 [inline]
->   __se_sys_preadv fs/read_write.c:1112 [inline]
->   __x64_sys_preadv+0x9a/0xf0 fs/read_write.c:1112
->   do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
->   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x457ec9
-> Code: 6d b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7
-> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff
-> ff 0f 83 3b b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-> RSP: 002b:00007f8d6c5e5c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000127
-> RAX: ffffffffffffffda RBX: 0000000000000004 RCX: 0000000000457ec9
-> RDX: 00000000000001a1 RSI: 00000000200017c0 RDI: 0000000000000005
-> RBP: 000000000073bf00 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 00007f8d6c5e66d4
-> R13: 00000000004c4861 R14: 00000000004d7d20 R15: 00000000ffffffff
->
-> The buggy address belongs to the page:
-> page:ffffea0001420bc0 count:0 mapcount:0 mapping:0000000000000000 index:0x0
-> flags: 0x1fffc0000000000()
-> raw: 01fffc0000000000 0000000000000000 ffffffff01420101 0000000000000000
-> raw: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
-> page dumped because: kasan: bad access detected
->
-> Memory state around the buggy address:
->   ffff88805082fa00: 00 f2 f2 00 f2 f2 f2 00 f2 f2 f2 00 f2 f2 f2 f8
->   ffff88805082fa80: f3 f3 f3 00 00 00 00 00 00 00 00 00 00 00 00 00
-> > ffff88805082fb00: f1 f1 f1 f1 00 f2 f2 f2 00 f3 f3 f3 00 00 00 00
->                                                            ^
->   ffff88805082fb80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 f1 f1
->   ffff88805082fc00: f1 f1 00 f2 f2 f2 00 00 f2 f2 04 f3 f3 f3 00 00
-> ==================================================================
->
->
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
-> syzbot.
->
-> --
-> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/0000000000007b7cbf057edb4e33%40google.com.
-> For more options, visit https://groups.google.com/d/optout.
+-- 
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Bo PENG, Jian LI, Yanli SHI
