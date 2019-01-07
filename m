@@ -2,112 +2,89 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A20CDC43612
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 15:03:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46E20C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 15:06:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B99C2147C
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 15:03:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546873410;
-	bh=IeqPKUGxhHRC5DZRvK8TNQD6sFsEhOVJ26wGiNQwMns=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=iTVHlvb5RH9mvUAViGXMD1aEnK4QLO/V2lXstrmu1PCLNdaCT3b7hIsO6HE8p94UK
-	 ed71ONU165Cn6ZFruM9y0OlfYQ1Z7xKmBwGxsbXgpOK0TtKF1RpeBual0wc5O2iq8j
-	 WjqdYFJJFuUtwzQWCeWKerkUwLohHab1gS9Dufio=
+	by mail.kernel.org (Postfix) with ESMTP id 12DFE2173C
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 15:06:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729400AbfAGPD3 (ORCPT
+        id S1729415AbfAGPGA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 10:03:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39592 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727242AbfAGPD3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 10:03:29 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3CE672089F;
-        Mon,  7 Jan 2019 15:03:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546873408;
-        bh=IeqPKUGxhHRC5DZRvK8TNQD6sFsEhOVJ26wGiNQwMns=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=dcL1m+8w5TIfM79AOXRs+FLoVWwcuiU4N30VZjVZChOYC1GXuGRvhNaowocfMMIGc
-         IokKhPvt5guFtFsOPkBy/jH/g1zE7jONkZrKNiv1zCovk6MyJuf5KLdJiUuGNCAdkx
-         e9pYk/db+WYRiWOK2EIaZRFE8F1ZaKeVGRvdn/vE=
-Date:   Mon, 7 Jan 2019 16:03:26 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Daniel =?iso-8859-1?Q?D=EDaz?= <daniel.diaz@linaro.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        torvalds@linux-foundation.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 4.9 00/71] 4.9.149-stable review
-Message-ID: <20190107150326.GA16052@kroah.com>
-References: <20190107105330.280153213@linuxfoundation.org>
- <CAEUSe7-ymDukTDvA6rPTsJrxxs31ChAtHo54+Uti_eG2m1_F9A@mail.gmail.com>
- <20190107145414.GA27990@kroah.com>
+        Mon, 7 Jan 2019 10:06:00 -0500
+Received: from iolanthe.rowland.org ([192.131.102.54]:57352 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1729090AbfAGPF7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 10:05:59 -0500
+Received: (qmail 2171 invoked by uid 2102); 7 Jan 2019 10:05:58 -0500
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 7 Jan 2019 10:05:58 -0500
+Date:   Mon, 7 Jan 2019 10:05:58 -0500 (EST)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     Kai Heng Feng <kai.heng.feng@canonical.com>
+cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux USB List <linux-usb@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Mathias Nyman <mathias.nyman@linux.intel.com>
+Subject: Re: [PATCH v4] USB: Don't enable LPM if it's already enabled
+In-Reply-To: <F24F822F-E721-47DC-9860-A2D0847C09DB@canonical.com>
+Message-ID: <Pine.LNX.4.44L0.1901071004430.1399-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190107145414.GA27990@kroah.com>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 07, 2019 at 03:54:14PM +0100, Greg Kroah-Hartman wrote:
-> On Mon, Jan 07, 2019 at 08:40:56AM -0600, Daniel Díaz wrote:
-> > Hello!
-> > 
-> > On Mon, 7 Jan 2019 at 07:06, Greg Kroah-Hartman
-> > <gregkh@linuxfoundation.org> wrote:
-> > > This is the start of the stable review cycle for the 4.9.149 release.
-> > > There are 71 patches in this series, all will be posted as a response
-> > > to this one.  If anyone has any issues with these being applied, please
-> > > let me know.
-> > 
-> > With 4.9, we get this build error:
-> > | /srv/oe/build/tmp-lkft-glibc/work-shared/am57xx-evm/kernel-source/fs/ext4/inode.c:
-> > In function 'ext4_write_inode':
-> > | /srv/oe/build/tmp-lkft-glibc/work-shared/am57xx-evm/kernel-source/fs/ext4/inode.c:5018:6:
-> > error: implicit declaration of function 'sb_rdonly'
-> > [-Werror=implicit-function-declaration]
-> > |       sb_rdonly(inode->i_sb))
-> > |       ^~~~~~~~~
-> > |   CC      drivers/char/virtio_console.o
-> > | In file included from
-> > /srv/oe/build/tmp-lkft-glibc/work-shared/am57xx-evm/kernel-source/include/linux/linkage.h:4:0,
-> > |                  from
-> > /srv/oe/build/tmp-lkft-glibc/work-shared/am57xx-evm/kernel-source/include/linux/fs.h:4,
-> > |                  from
-> > /srv/oe/build/tmp-lkft-glibc/work-shared/am57xx-evm/kernel-source/fs/ext4/inode.c:21:
-> > | /srv/oe/build/tmp-lkft-glibc/work-shared/am57xx-evm/kernel-source/fs/ext4/inode.c:5021:15:
-> > error: implicit declaration of function 'ext4_forced_shutdown'; did
-> > you mean 'ext4_force_commit'? [-Werror=implicit-function-declaration]
-> > |   if (unlikely(ext4_forced_shutdown(EXT4_SB(inode->i_sb))))
-> > |                ^
-> > | /srv/oe/build/tmp-lkft-glibc/work-shared/am57xx-evm/kernel-source/include/linux/compiler.h:168:42:
-> > note: in definition of macro 'unlikely'
-> > |  # define unlikely(x) __builtin_expect(!!(x), 0)
-> > |                                           ^
+On Mon, 7 Jan 2019, Kai Heng Feng wrote:
+
+> Hi,
 > 
-> Ugh, wow.  Ok, something is really wrong with my build systems to not
-> find this either, let me go see what is up...
+> > On Dec 3, 2018, at 18:26, Kai-Heng Feng <kai.heng.feng@canonical.com> wrote:
+> > 
+> > USB Bluetooth controller QCA ROME (0cf3:e007) sometimes stops working
+> > after S3:
+> > [ 165.110742] Bluetooth: hci0: using NVM file: qca/nvm_usb_00000302.bin
+> > [ 168.432065] Bluetooth: hci0: Failed to send body at 4 of 1953 (-110)
+> > 
+> > After some experiments, I found that disabling LPM can workaround the
+> > issue.
+> > 
+> > On some platforms, the USB power is cut during S3, so the driver uses
+> > reset-resume to resume the device. During port resume, LPM gets enabled
+> > twice, by usb_reset_and_verify_device() and usb_port_resume().
+> > 
+> > So let's enable LPM for just once, as this solves the issue for the
+> > device in question.
+> > 
+> > Also consolidate USB2 LPM functions to usb_enable_usb2_hardware_lpm()
+> > and usb_disable_usb2_hardware_lpm().
+> 
+> Please review my new approach, hopefully this can be included in Linux v5.0. 
+> 
+> > 
+> > Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+> > ---
+> > v4:
+> > - Use usb_enable_usb2_hardware_lpm() and
+> >   usb_disable_usb2_hardware_lpm() to control USB2 LPM.
+> > v3:
+> > - Consolidate udev->usb2_hw_lpm_capable and udev->usb2_hw_lpm_enabled
+> >  check to usb_set_usb2_hardware_lpm().
+> > v2:
+> >  - Check udev->usb2_hw_lpm_enabled before calling usb_port_resume().
+> > 
+> > drivers/usb/core/driver.c  | 23 +++++++++++++++++++----
+> > drivers/usb/core/hub.c     | 16 ++++++----------
+> > drivers/usb/core/message.c |  3 +--
+> > drivers/usb/core/sysfs.c   |  5 ++++-
+> > drivers/usb/core/usb.h     | 10 ++++++++--
+> > 5 files changed, 38 insertions(+), 19 deletions(-)
 
-Ok, builder problem fixed (my fault, hadn't updated the kernel tree
-there...)  Let me run it through that testing before I push out a -rc3
-to make sure I really fix all of these issues.
+Reviewed-by: Alan Stern <stern@rowland.harvard.edu>
 
-thanks for pointing these out, it must be monday...
-
-greg k-h
