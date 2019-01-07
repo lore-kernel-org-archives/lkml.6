@@ -2,212 +2,164 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 675EBC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 16:38:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99942C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 16:39:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A2382089F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 16:38:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 582BF2147C
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 16:39:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lqTLqygV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728375AbfAGQiQ (ORCPT
+        id S1728538AbfAGQjl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 11:38:16 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47684 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726918AbfAGQiQ (ORCPT
+        Mon, 7 Jan 2019 11:39:41 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:32875 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726957AbfAGQjk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 11:38:16 -0500
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x07GTSdw131331
-        for <linux-kernel@vger.kernel.org>; Mon, 7 Jan 2019 11:38:14 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2pv8mwxwpn-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 11:38:14 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ubraun@linux.ibm.com>;
-        Mon, 7 Jan 2019 16:38:12 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 7 Jan 2019 16:38:08 -0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x07Gc8MI11599944
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 7 Jan 2019 16:38:08 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id F19EAA4040;
-        Mon,  7 Jan 2019 16:38:07 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 91C17A4051;
-        Mon,  7 Jan 2019 16:38:06 +0000 (GMT)
-Received: from oc5311105230.ibm.com (unknown [9.145.63.215])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon,  7 Jan 2019 16:38:06 +0000 (GMT)
-Subject: Re: general protection fault in __smc_diag_dump
-To:     Eric Dumazet <eric.dumazet@gmail.com>,
-        syzbot <syzbot+5dd1f9327a9ee760048c@syzkaller.appspotmail.com>,
-        davem@davemloft.net, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com,
-        Cong Wang <xiyou.wangcong@gmail.com>
-References: <00000000000060600e057e7748dc@google.com>
- <2ffacbe4-a33a-8e82-a492-711c00b25754@gmail.com>
-From:   Ursula Braun <ubraun@linux.ibm.com>
+        Mon, 7 Jan 2019 11:39:40 -0500
+Received: by mail-wr1-f66.google.com with SMTP id c14so1133696wrr.0;
+        Mon, 07 Jan 2019 08:39:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:openpgp:autocrypt:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=BteyKLlXLM8xWhmFfx8rEo5j5LsIt2xkNi4G5K7nq30=;
+        b=lqTLqygV9eTX8EMiBHxdl51ZJjd30A0Q1vjaqc6FHVAA4EC6R2iIuVPrWNUNI/C8Bj
+         JHXDexAWZrtz48IFC5MgGCtCTsxDNN0Y/fiUZ6euEBzaKyi2HxYgAQtZ5J91oQMcDAYY
+         UyYZYQwNWIV5lVPu+VTyE0Cnc/0LnF6C18HXSD6g9KaCwtvrdTJiy7Wz3h+ZM9GKEVa9
+         kwazWvew+Xvo7jBwDWhyjMErEk7MS8Ix3KhsSjZK4hs1j8bSgSrwv/GLyIBJR6Xwi8xO
+         I4RA5kLnSD8I8SoEt9prBpjr9NZW1+XkqP1h5k532Gre6Q4Zk1L11t3ux3FkObfJuiop
+         moYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:openpgp
+         :autocrypt:message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=BteyKLlXLM8xWhmFfx8rEo5j5LsIt2xkNi4G5K7nq30=;
+        b=ZtbKkC9EgNwyGE91fb5y803FPb3aTeydaMZ/JMD3j2tI5WN8frnXORC8FTZadThmNE
+         n7Bom1r1xqyBH4ShE1DGlviquz2N/MJLVI/bFtd1wYSOtbOcO0BinTEWt+b4VSgDta6d
+         3ecFgjY7zkMoJ63Xe/OcgmrPnXiZFgcAjsVKL75rJuL9ZaEVMPHpndsBRmAllK6wCbTf
+         5m29eIBdaM5ERCEyFVaDTp+I8vi+v+6/Ls/WSFJMPNZtU/xtx4mVyoMV3NIvI62zRwva
+         EMXijKya2ilPlOT5/C1RLQzXFSaleA48RPOVGUG3OrBXNv8kZ5dnP+0yYLINGEOkI2/X
+         XZtA==
+X-Gm-Message-State: AJcUukdvNcasUEozJfFwJXVpma+wxwrGxua5Qvrxy8VrFVQBICKJxaXt
+        /raH2lECXs8/c1m6xjn4miE=
+X-Google-Smtp-Source: ALg8bN5A4h2vi1OaJoHqPHyE7gYA/rx1zturjQ0g6r5Fu3Wm3FdHxIrKHDubTXPGhlOsjlB/7qNs7A==
+X-Received: by 2002:adf:b6a1:: with SMTP id j33mr52322444wre.55.1546879178246;
+        Mon, 07 Jan 2019 08:39:38 -0800 (PST)
+Received: from ?IPv6:2001:b07:6468:f312:3473:41cf:8b30:f2e1? ([2001:b07:6468:f312:3473:41cf:8b30:f2e1])
+        by smtp.googlemail.com with ESMTPSA id l20sm111840324wrb.93.2019.01.07.08.39.35
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 07 Jan 2019 08:39:37 -0800 (PST)
+Subject: Re: [PATCH 4/11] KVM/MMU: Introduce tlb flush with range list
+To:     lantianyu1986@gmail.com
+Cc:     kvm@vger.kernel.org, catalin.marinas@arm.com, will.deacon@arm.com,
+        paulus@ozlabs.org, hpa@zytor.com, kys@microsoft.com,
+        kvmarm@lists.cs.columbia.edu, mpe@ellerman.id.au, x86@kernel.org,
+        linux@armlinux.org.uk, michael.h.kelley@microsoft.com,
+        mingo@redhat.com, benh@kernel.crashing.org, jhogan@kernel.org,
+        linux-mips@vger.kernel.org, Lan Tianyu <Tianyu.Lan@microsoft.com>,
+        marc.zyngier@arm.com, kvm-ppc@vger.kernel.org, bp@alien8.de,
+        tglx@linutronix.de, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, ralf@linux-mips.org,
+        paul.burton@mips.com, vkuznets@redhat.com,
+        linuxppc-dev@lists.ozlabs.org
+References: <20190104085405.40356-1-Tianyu.Lan@microsoft.com>
+ <20190104085405.40356-5-Tianyu.Lan@microsoft.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
 Openpgp: preference=signencrypt
-Date:   Mon, 7 Jan 2019 17:38:06 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+Autocrypt: addr=pbonzini@redhat.com; keydata=
+ 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
+ uUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
+Message-ID: <2c6f7a11-b406-d4f1-c934-e6dedf5b07fd@redhat.com>
+Date:   Mon, 7 Jan 2019 17:39:33 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-In-Reply-To: <2ffacbe4-a33a-8e82-a492-711c00b25754@gmail.com>
+In-Reply-To: <20190104085405.40356-5-Tianyu.Lan@microsoft.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19010716-0016-0000-0000-000002417919
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19010716-0017-0000-0000-0000329B884E
-Message-Id: <5a0268c3-5f48-9c48-3d0b-422a3a2d81cd@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-07_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901070144
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 01/02/2019 12:29 PM, Eric Dumazet wrote:
-> 
-> 
-> On 01/02/2019 02:41 AM, syzbot wrote:
->> Hello,
->>
->> syzbot found the following crash on:
->>
->> HEAD commit:    28e8c4bc8eb4 Merge tag 'rtc-4.21' of git://git.kernel.org/..
->> git tree:       upstream
->> console output: https://syzkaller.appspot.com/x/log.txt?x=10c040d3400000
->> kernel config:  https://syzkaller.appspot.com/x/.config?x=c2ab9708c613a224
->> dashboard link: https://syzkaller.appspot.com/bug?extid=5dd1f9327a9ee760048c
->> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
->> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15d17880c00000
->>
->> IMPORTANT: if you fix the bug, please add the following tag to the commit:
->> Reported-by: syzbot+5dd1f9327a9ee760048c@syzkaller.appspotmail.com
->>
->> IPv6: ADDRCONF(NETDEV_CHANGE): team0: link becomes ready
->> IPv6: ADDRCONF(NETDEV_UP): vxcan1: link is not ready
->> 8021q: adding VLAN 0 to HW filter on device batadv0
->> kasan: CONFIG_KASAN_INLINE enabled
->> kasan: GPF could be caused by NULL-ptr deref or user memory access
->> general protection fault: 0000 [#1] PREEMPT SMP KASAN
->> CPU: 1 PID: 7982 Comm: syz-executor0 Not tainted 4.20.0+ #4
->> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
->> RIP: 0010:smc_diag_msg_common_fill net/smc/smc_diag.c:43 [inline]
->> RIP: 0010:__smc_diag_dump.isra.0+0x32a/0x2ba0 net/smc/smc_diag.c:93
->> Code: 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 26 25 00 00 48 b8 00 00 00 00 00 fc ff df 4d 8b 7f 20 49 8d 7f 0e 48 89 fa 48 c1 ea 03 <0f> b6 14 02 48 89 f8 83 e0 07 83 c0 01 38 d0 7c 08 84 d2 0f 85 d2
->> RSP: 0018:ffff88808a29f120 EFLAGS: 00010203
->> RAX: dffffc0000000000 RBX: ffff88807f4d7240 RCX: 0000000000000000
->> RDX: 0000000000000001 RSI: ffffffff87b4e7c2 RDI: 000000000000000e
->> RBP: ffff88808a29f3e8 R08: ffff88808d5721c0 R09: ffff888098960e90
->> R10: fffffbfff14a0020 R11: ffffffff8a500103 R12: ffff88808878d760
->> R13: ffff888098960e40 R14: ffff88807f4d76a0 R15: 0000000000000000
->> FS:  00007f6b83b40700(0000) GS:ffff8880ae700000(0000) knlGS:0000000000000000
->> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->> CR2: 0000000000000000 CR3: 0000000095561000 CR4: 00000000001406e0
->> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->> Call Trace:
->>  smc_diag_dump_proto.isra.0+0x2e7/0x3c0 net/smc/smc_diag.c:211
->>  smc_diag_dump+0x27/0x80 net/smc/smc_diag.c:225
->>  netlink_dump+0x5f2/0x1070 net/netlink/af_netlink.c:2244
->>  __netlink_dump_start+0x5b4/0x7e0 net/netlink/af_netlink.c:2352
->>  netlink_dump_start include/linux/netlink.h:225 [inline]
->>  smc_diag_handler_dump+0x2a7/0x350 net/smc/smc_diag.c:242
->>  __sock_diag_cmd net/core/sock_diag.c:232 [inline]
->>  sock_diag_rcv_msg+0x322/0x410 net/core/sock_diag.c:263
->>  netlink_rcv_skb+0x17d/0x410 net/netlink/af_netlink.c:2477
->>  sock_diag_rcv+0x2b/0x40 net/core/sock_diag.c:274
->>  netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
->>  netlink_unicast+0x574/0x770 net/netlink/af_netlink.c:1336
->>  netlink_sendmsg+0xa05/0xf90 net/netlink/af_netlink.c:1917
->>  sock_sendmsg_nosec net/socket.c:621 [inline]
->>  sock_sendmsg+0xdd/0x130 net/socket.c:631
->>  ___sys_sendmsg+0x7ec/0x910 net/socket.c:2116
->>  __sys_sendmsg+0x112/0x270 net/socket.c:2154
->>  __do_sys_sendmsg net/socket.c:2163 [inline]
->>  __se_sys_sendmsg net/socket.c:2161 [inline]
->>  __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2161
->>  do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
->>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
->> RIP: 0033:0x457ec9
->> Code: 6d b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 3b b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
->> RSP: 002b:00007f6b83b3fc78 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
->> RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457ec9
->> RDX: 0000000000000000 RSI: 0000000020000040 RDI: 0000000000000006
->> RBP: 000000000073bf00 R08: 0000000000000000 R09: 0000000000000000
->> R10: 0000000000000000 R11: 0000000000000246 R12: 00007f6b83b406d4
->> R13: 00000000004c5188 R14: 00000000004d8a10 R15: 00000000ffffffff
->> Modules linked in:
->> ---[ end trace db4e074cdaa51579 ]---
->> RIP: 0010:smc_diag_msg_common_fill net/smc/smc_diag.c:43 [inline]
->> RIP: 0010:__smc_diag_dump.isra.0+0x32a/0x2ba0 net/smc/smc_diag.c:93
->> Code: 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 26 25 00 00 48 b8 00 00 00 00 00 fc ff df 4d 8b 7f 20 49 8d 7f 0e 48 89 fa 48 c1 ea 03 <0f> b6 14 02 48 89 f8 83 e0 07 83 c0 01 38 d0 7c 08 84 d2 0f 85 d2
->> RSP: 0018:ffff88808a29f120 EFLAGS: 00010203
->> RAX: dffffc0000000000 RBX: ffff88807f4d7240 RCX: 0000000000000000
->> RDX: 0000000000000001 RSI: ffffffff87b4e7c2 RDI: 000000000000000e
->> RBP: ffff88808a29f3e8 R08: ffff88808d5721c0 R09: ffff888098960e90
->> R10: fffffbfff14a0020 R11: ffffffff8a500103 R12: ffff88808878d760
->> R13: ffff888098960e40 R14: ffff88807f4d76a0 R15: 0000000000000000
->> FS:  00007f6b83b40700(0000) GS:ffff8880ae700000(0000) knlGS:0000000000000000
->> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->> CR2: 0000000000000000 CR3: 0000000095561000 CR4: 00000000001406e0
->> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->>
->>
->> ---
->> This bug is generated by a bot. It may contain errors.
->> See https://goo.gl/tpsmEJ for more information about syzbot.
->> syzbot engineers can be reached at syzkaller@googlegroups.com.
->>
->> syzbot will keep track of this bug report. See:
->> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with syzbot.
->> syzbot can test patches for this bug, for details see:
->> https://goo.gl/tpsmEJ#testing-patches
-> 
-> 
-> Probable fix would be :
-> 
-> diff --git a/net/smc/af_smc.c b/net/smc/af_smc.c
-> index c4da4a78d369e359f237772090ff0890a1782c5b..afa1e24fb935281219016c339b15939312f2c89c 100644
-> --- a/net/smc/af_smc.c
-> +++ b/net/smc/af_smc.c
-> @@ -165,12 +165,12 @@ static int smc_release(struct socket *sock)
+On 04/01/19 09:53, lantianyu1986@gmail.com wrote:
+>  struct kvm_mmu_page {
+>  	struct list_head link;
+> +
+> +	/*
+> +	 * Tlb flush with range list uses struct kvm_mmu_page as list entry
+> +	 * and all list operations should be under protection of mmu_lock.
+> +	 */
+> +	struct list_head flush_link;
+>  	struct hlist_node hash_link;
+>  	bool unsync;
 >  
->         /* detach socket */
->         sock_orphan(sk);
-> -       sock->sk = NULL;
->         if (!smc->use_fallback && sk->sk_state == SMC_CLOSED)
->                 smc_conn_free(&smc->conn);
->         release_sock(sk);
->  
->         sk->sk_prot->unhash(sk);
-> +       sock->sk = NULL;
->         sock_put(sk); /* final sock_put */
->  out:
->         return rc;
-> 
+> @@ -443,6 +449,7 @@ struct kvm_mmu {
 
-Cong Wang now comes up with a different patch proposal, which makes sense in my eyes.
+Again, it would be nice not to grow the struct too much, though I
+understand that it's already relatively big (168 bytes).
 
+Can you at least make this an hlist, so that it only takes a single word?
+
+Paolo
