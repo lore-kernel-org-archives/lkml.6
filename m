@@ -7,50 +7,47 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FF8EC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:08:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B75EEC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:08:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6113C218A1
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:08:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F74F21855
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:08:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546866513;
-	bh=AfMYJoITpWioCihJBpIQ8MpgL7fSMrdm/I+waEBAW1s=;
+	s=default; t=1546866516;
+	bh=x/IPibmxyHdpvNkdK/RlCziDKpap1YPVpPHW3O8sAaY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=dkADoFVIPR1gvKPdwPT5l/CtuwtZYez5wL3iPazMqbqTWWh0wVmx4c6wMOyV0Ak6e
-	 fhqVTXTDCZlid7bHIzlJF/SFQXtxEcmYWPeWyyG4syMg9IhxFcA19lz8NGQt9YwoFP
-	 QsWb2HugCQxUhU7sn8reC5aAqV+iHLsx1np+IlAo=
+	b=O4j6rOqsq7hl1Jcrak7d0AdY3eJBF2ImF1FmCp85JID37YHU9Rs7tj9Acyx/ZeEAO
+	 T+wrj47d1xaQtE4ZWEdwseri5YV9PQ1MFAIJVEFg2M4+kr1VxIKthGCd+tRQDyO9Ag
+	 q4Rd6hQhxskOUayENojSw6cwEkh8pLktq8mShjEU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731173AbfAGNId (ORCPT
+        id S1731684AbfAGNIf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:08:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55598 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:08:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55650 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731653AbfAGNIb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:08:31 -0500
+        id S1730948AbfAGNId (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:08:33 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F24022089F;
-        Mon,  7 Jan 2019 13:08:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D9CE42147C;
+        Mon,  7 Jan 2019 13:08:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546866510;
-        bh=AfMYJoITpWioCihJBpIQ8MpgL7fSMrdm/I+waEBAW1s=;
+        s=default; t=1546866513;
+        bh=x/IPibmxyHdpvNkdK/RlCziDKpap1YPVpPHW3O8sAaY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AtbjvUPKb8nYbypOhjPsgPzwk+7Xf8U6F8XyDalh4i6k0cQ8flVAT8kRpoZkgQT+D
-         Knbkmre4lsQeXCchkM2BCQ6cgyIj1u6ifl5vbiQukazk9a5RFujH7u7CPPi6lSgRxI
-         N9qUdKYJ6pTb1wqK3l2oYuY9DszC4JkioXZSM3wU=
+        b=P1wZ9qoNWT3TD6uQcGc1zkHFJNIL02hmN9ma7WsHM+5UROzXSAx9u6p6ByYf3muip
+         llFlgrR9kT31s1d77Q+z8TPfsT3zCXYp1l2omomvdMlB6Oftht/fJ8gU5YsNMxbgZt
+         Vg3cyrzErTtVLwlJ6ufa5XWhfWIEOhLuK8ITZcCw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
-        Mathias Duckeck <m.duckeck@kunbus.de>,
-        Frank Pavlic <f.pavlic@kunbus.de>,
-        Martin Sperl <kernel@martin.sperl.org>,
-        =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.9 54/71] spi: bcm2835: Avoid finishing transfer prematurely in IRQ mode
-Date:   Mon,  7 Jan 2019 13:33:23 +0100
-Message-Id: <20190107105335.821695797@linuxfoundation.org>
+        stable@vger.kernel.org, Johan Jonker <jbx9999@hotmail.com>,
+        Elaine Zhang <zhangqing@rock-chips.com>,
+        Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH 4.9 55/71] clk: rockchip: fix typo in rk3188 spdif_frac parent
+Date:   Mon,  7 Jan 2019 13:33:24 +0100
+Message-Id: <20190107105335.876101338@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107105330.280153213@linuxfoundation.org>
 References: <20190107105330.280153213@linuxfoundation.org>
@@ -69,57 +66,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lukas Wunner <lukas@wunner.de>
+From: Johan Jonker <jbx9999@hotmail.com>
 
-commit 56c1723426d3cfd4723bfbfce531d7b38bae6266 upstream.
+commit 8b19faf6fae2867e2c177212c541e8ae36aa4d32 upstream.
 
-The IRQ handler bcm2835_spi_interrupt() first reads as much as possible
-from the RX FIFO, then writes as much as possible to the TX FIFO.
-Afterwards it decides whether the transfer is finished by checking if
-the TX FIFO is empty.
+Fix typo in common_clk_branches.
+Make spdif_pre parent of spdif_frac.
 
-If very few bytes were written to the TX FIFO, they may already have
-been transmitted by the time the FIFO's emptiness is checked.  As a
-result, the transfer will be declared finished and the chip will be
-reset without reading the corresponding received bytes from the RX FIFO.
-
-The odds of this happening increase with a high clock frequency (such
-that the TX FIFO drains quickly) and either passing "threadirqs" on the
-command line or enabling CONFIG_PREEMPT_RT_BASE (such that the IRQ
-handler may be preempted between filling the TX FIFO and checking its
-emptiness).
-
-Fix by instead checking whether rx_len has reached zero, which means
-that the transfer has been received in full.  This is also more
-efficient as it avoids one bus read access per interrupt.  Note that
-bcm2835_spi_transfer_one_poll() likewise uses rx_len to determine
-whether the transfer has finished.
-
-Signed-off-by: Lukas Wunner <lukas@wunner.de>
-Fixes: e34ff011c70e ("spi: bcm2835: move to the transfer_one driver model")
-Cc: stable@vger.kernel.org # v4.1+
-Cc: Mathias Duckeck <m.duckeck@kunbus.de>
-Cc: Frank Pavlic <f.pavlic@kunbus.de>
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Cc: Noralf Trønnes <noralf@tronnes.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: 667464208989 ("clk: rockchip: include downstream muxes into fractional dividers")
+Cc: stable@vger.kernel.org
+Signed-off-by: Johan Jonker <jbx9999@hotmail.com>
+Acked-by: Elaine Zhang <zhangqing@rock-chips.com>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/spi/spi-bcm2835.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/clk/rockchip/clk-rk3188.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/spi/spi-bcm2835.c
-+++ b/drivers/spi/spi-bcm2835.c
-@@ -155,8 +155,7 @@ static irqreturn_t bcm2835_spi_interrupt
- 	/* Write as many bytes as possible to FIFO */
- 	bcm2835_wr_fifo(bs);
- 
--	/* based on flags decide if we can finish the transfer */
--	if (bcm2835_rd(bs, BCM2835_SPI_CS) & BCM2835_SPI_CS_DONE) {
-+	if (!bs->rx_len) {
- 		/* Transfer complete - reset SPI HW */
- 		bcm2835_spi_reset_hw(master);
- 		/* wake up the framework */
+--- a/drivers/clk/rockchip/clk-rk3188.c
++++ b/drivers/clk/rockchip/clk-rk3188.c
+@@ -381,7 +381,7 @@ static struct rockchip_clk_branch common
+ 	COMPOSITE_NOMUX(0, "spdif_pre", "i2s_src", 0,
+ 			RK2928_CLKSEL_CON(5), 0, 7, DFLAGS,
+ 			RK2928_CLKGATE_CON(0), 13, GFLAGS),
+-	COMPOSITE_FRACMUX(0, "spdif_frac", "spdif_pll", CLK_SET_RATE_PARENT,
++	COMPOSITE_FRACMUX(0, "spdif_frac", "spdif_pre", CLK_SET_RATE_PARENT,
+ 			RK2928_CLKSEL_CON(9), 0,
+ 			RK2928_CLKGATE_CON(0), 14, GFLAGS,
+ 			&common_spdif_fracmux),
 
 
