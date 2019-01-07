@@ -2,113 +2,313 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F312CC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:19:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA772C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:25:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B42F620859
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:19:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 897A92070C
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:25:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546863574;
-	bh=XuR54kofSfe41nViEwtHJYTk3g6AQeE81rbqXUjrdsY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=D5M1vAg6csY0Gid4qTTIhh0cX0dXI/mBWcey66vNS0ML3lyCZreqs4AVIJ99IwuXy
-	 sL3fnEmLXJJMpOGgD5sWRqv5B5FrmJIJ4gnqeAHCUiszqSxXemNP9DTTMI3WAgN3/B
-	 nNOoZG5sTs7Ql8d1u8CqEu9CCoJbRmvbo2atxTRQ=
+	s=default; t=1546863904;
+	bh=zR/CUkkZyN6m/uYCImEhY7M+n5J2xLOcVLIP3AtiBo8=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
+	b=PkXAO+dZLCgoZmrREXNu/jYHCGNUpMtqSyZOZwrH8ea/kvLuUEH2rTVKk4c2OlzuL
+	 32sbRfes1S0E2kO41tBFY/DVLlQfYV9D2sx+rHgH7+xPwB4KNHkKiBpjPB4aTuo+Dh
+	 R6J7BUKixXo12BKcK0qR38lyng9rtJoHVs2dFmbA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726773AbfAGMTd (ORCPT
+        id S1726828AbfAGMZD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:19:33 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:48432 "EHLO
+        Mon, 7 Jan 2019 07:25:03 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:57690 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726485AbfAGMTd (ORCPT
+        with ESMTP id S1726501AbfAGMZD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:19:33 -0500
+        Mon, 7 Jan 2019 07:25:03 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=mTRi9Pl5JLCxr8HY4wKUQz1tplNueDdmmh1qoY0R5VI=; b=iHDVYYnKg3uMfe0WunA3iuCeJ
-        KhQIp+GPGuJtjA6zRkYsVzmBQ/HIyWbp3PspXXx4GqBIqJHcZf9TJBq2uIxhujuXB9HHHG20NLGlK
-        vNMi4JsJ6stnjpjP4MSIOH9MDOtrqP0zxjmKUO2fZ151jncbGSMS5v8Ca9MNdU1osuL20=;
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=aOtoosd4+lraNWrm4UzXbozQUEiWpsK/L4DGakb1hcw=; b=Q9vQSk99HCeU
+        REhjuT+rzslTNz3VfQNugzFAQF3ZBEZF210497VzFPTyxskNqMTtpWsvdX1ZQIt/qTb85HOL5Aa3w
+        5e7/17n+F4ZPJUpXSaBewnaq+2ZFNYR+HNrPzqnGCs45r/J6PMFlN3POWnnx0x1xhq+J5xq7ZRgiT
+        txLB0=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1ggTsK-0006gJ-JZ; Mon, 07 Jan 2019 12:19:24 +0000
+        id 1ggTxh-0006ha-FT; Mon, 07 Jan 2019 12:24:57 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 209451127490; Mon,  7 Jan 2019 12:19:19 +0000 (GMT)
-Date:   Mon, 7 Jan 2019 12:19:19 +0000
+        id D529B1127490; Mon,  7 Jan 2019 12:24:56 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Sinan Kaya <okaya@kernel.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        Jie Yang <yang.jie@linux.intel.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        "moderated list:INTEL ASoC DRIVERS" <alsa-devel@alsa-project.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6 08/11] ASoC: Intel: atom: Make PCI dependency explicit
-Message-ID: <20190107121919.GA9570@sirena.org.uk>
-References: <20190105100606.6673-1-okaya@kernel.org>
- <20190105100606.6673-9-okaya@kernel.org>
- <CAJZ5v0g2bjzjuiDPTbBN8QgvOG0KMC0Ew2QOQH4u2+y6KRo0wQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="y0ulUmNC+osPPQO6"
-Content-Disposition: inline
-In-Reply-To: <CAJZ5v0g2bjzjuiDPTbBN8QgvOG0KMC0Ew2QOQH4u2+y6KRo0wQ@mail.gmail.com>
-X-Cookie: NOBODY EXPECTS THE SPANISH INQUISITION!
-User-Agent: Mutt/1.10.1 (2018-07-13)
+To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
+Cc:     Mark Brown <broonie@kernel.org>, broonie@kernel.org,
+        lgirdwood@gmail.com, devicetree@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        jsarha@ti.com, robh+dt@kernel.org, misael.lopez@ti.com,
+        alsa-devel@alsa-project.org
+Subject: Applied "ASoC: ti: davinci-mcasp: Add support for GPIO mode of the pins" to the asoc tree
+In-Reply-To:  <20190103140552.29809-4-peter.ujfalusi@ti.com>
+X-Patchwork-Hint: ignore
+Message-Id: <20190107122456.D529B1127490@debutante.sirena.org.uk>
+Date:   Mon,  7 Jan 2019 12:24:56 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The patch
 
---y0ulUmNC+osPPQO6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+   ASoC: ti: davinci-mcasp: Add support for GPIO mode of the pins
 
-On Mon, Jan 07, 2019 at 12:15:35PM +0100, Rafael J. Wysocki wrote:
-> On Sat, Jan 5, 2019 at 11:06 AM Sinan Kaya <okaya@kernel.org> wrote:
+has been applied to the asoc tree at
 
-> > Fixes: 5d32a66541c46 ("PCI/ACPI: Allow ACPI to be built without CONFIG_PCI set")
-> > Signed-off-by: Sinan Kaya <okaya@kernel.org>
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-> Sinan, I thought you received an ACK from Pierre-Louis on this one, didn't you?
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-Yes.  I've also applied it already and it's *still* being sent without
-either a cover letter or the rest of the series :(
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-Sinan:
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-Please do not submit new versions of already applied patches, please
-submit incremental updates to the existing code.  Modifying existing
-commits creates problems for other users building on top of those
-commits so it's best practice to only change pubished git commits if
-absolutely essential.
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
---y0ulUmNC+osPPQO6
-Content-Type: application/pgp-signature; name="signature.asc"
+Thanks,
+Mark
 
------BEGIN PGP SIGNATURE-----
+From 540f1ba7b3a5596827a3bfeaae9c5e754347c933 Mon Sep 17 00:00:00 2001
+From: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Date: Thu, 3 Jan 2019 16:05:52 +0200
+Subject: [PATCH] ASoC: ti: davinci-mcasp: Add support for GPIO mode of the
+ pins
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlwzQ8YACgkQJNaLcl1U
-h9Dk3gf/VSotM7FP5LrgR8nnd8s0QCNxDaJNzQKDeK5QNqcuJTjFXHnueHbqQTN1
-XTK8OXYLK8DYqVDYpv+3HAdYdb1p0U/oEZo1kDof0et7g3+HnWy5h09jWxjREbw9
-GdAVB5B4muqL0O9iAXXGnk+nubHbVccT3Ksf3qRwxQk10ttkjUWiYEGu12B3d08U
-0UmuzpXOmm3TUPvydt+myreT99t22YBTAXgYYR5uESOoFrB88yn+AFu35LNZD3mh
-OgnMFAF5pXoFGAlP0FuLlmDbvW0Y5VUsUKe4iP9iWVK3wTt52bONrao5f98vl9hR
-ydbZSx4dHQ5kMURR4qvl0PQzQc8e5A==
-=HdFs
------END PGP SIGNATURE-----
+All McASP pin can be configured as GPIO.
+Add gpiochip support for McASP and only enable it when the
+gpio-controller is present in the DT node.
 
---y0ulUmNC+osPPQO6--
+Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/ti/davinci-mcasp.c | 159 ++++++++++++++++++++++++++++++++++-
+ 1 file changed, 156 insertions(+), 3 deletions(-)
+
+diff --git a/sound/soc/ti/davinci-mcasp.c b/sound/soc/ti/davinci-mcasp.c
+index a6a470a76900..a3a67a8f0f54 100644
+--- a/sound/soc/ti/davinci-mcasp.c
++++ b/sound/soc/ti/davinci-mcasp.c
+@@ -29,6 +29,7 @@
+ #include <linux/platform_data/davinci_asp.h>
+ #include <linux/math64.h>
+ #include <linux/bitmap.h>
++#include <linux/gpio/driver.h>
+ 
+ #include <sound/asoundef.h>
+ #include <sound/core.h>
+@@ -54,6 +55,7 @@ static u32 context_regs[] = {
+ 	DAVINCI_MCASP_AHCLKXCTL_REG,
+ 	DAVINCI_MCASP_AHCLKRCTL_REG,
+ 	DAVINCI_MCASP_PDIR_REG,
++	DAVINCI_MCASP_PFUNC_REG,
+ 	DAVINCI_MCASP_RXMASK_REG,
+ 	DAVINCI_MCASP_TXMASK_REG,
+ 	DAVINCI_MCASP_RXTDM_REG,
+@@ -108,6 +110,10 @@ struct davinci_mcasp {
+ 	/* Used for comstraint setting on the second stream */
+ 	u32	channels;
+ 
++#ifdef CONFIG_GPIOLIB
++	struct gpio_chip gpio_chip;
++#endif
++
+ #ifdef CONFIG_PM
+ 	struct davinci_mcasp_context context;
+ #endif
+@@ -818,9 +824,6 @@ static int mcasp_common_hw_param(struct davinci_mcasp *mcasp, int stream,
+ 	if (mcasp->version < MCASP_VERSION_3)
+ 		mcasp_set_bits(mcasp, DAVINCI_MCASP_PWREMUMGT_REG, MCASP_SOFT);
+ 
+-	/* All PINS as McASP */
+-	mcasp_set_reg(mcasp, DAVINCI_MCASP_PFUNC_REG, 0x00000000);
+-
+ 	if (stream == SNDRV_PCM_STREAM_PLAYBACK) {
+ 		mcasp_set_reg(mcasp, DAVINCI_MCASP_TXSTAT_REG, 0xFFFFFFFF);
+ 		mcasp_clr_bits(mcasp, DAVINCI_MCASP_XEVTCTL_REG, TXDATADMADIS);
+@@ -1845,6 +1848,147 @@ static u32 davinci_mcasp_rxdma_offset(struct davinci_mcasp_pdata *pdata)
+ 	return offset;
+ }
+ 
++#ifdef CONFIG_GPIOLIB
++static int davinci_mcasp_gpio_request(struct gpio_chip *chip, unsigned offset)
++{
++	struct davinci_mcasp *mcasp = gpiochip_get_data(chip);
++
++	if (mcasp->num_serializer && offset < mcasp->num_serializer &&
++	    mcasp->serial_dir[offset] != INACTIVE_MODE) {
++		dev_err(mcasp->dev, "AXR%u pin is  used for audio\n", offset);
++		return -EBUSY;
++	}
++
++	/* Do not change the PIN yet */
++
++	return pm_runtime_get_sync(mcasp->dev);
++}
++
++static void davinci_mcasp_gpio_free(struct gpio_chip *chip, unsigned offset)
++{
++	struct davinci_mcasp *mcasp = gpiochip_get_data(chip);
++
++	/* Set the direction to input */
++	mcasp_clr_bits(mcasp, DAVINCI_MCASP_PDIR_REG, BIT(offset));
++
++	/* Set the pin as McASP pin */
++	mcasp_clr_bits(mcasp, DAVINCI_MCASP_PFUNC_REG, BIT(offset));
++
++	pm_runtime_put_sync(mcasp->dev);
++}
++
++static int davinci_mcasp_gpio_direction_out(struct gpio_chip *chip,
++					    unsigned offset, int value)
++{
++	struct davinci_mcasp *mcasp = gpiochip_get_data(chip);
++	u32 val;
++
++	if (value)
++		mcasp_set_bits(mcasp, DAVINCI_MCASP_PDOUT_REG, BIT(offset));
++	else
++		mcasp_clr_bits(mcasp, DAVINCI_MCASP_PDOUT_REG, BIT(offset));
++
++	val = mcasp_get_reg(mcasp, DAVINCI_MCASP_PFUNC_REG);
++	if (!(val & BIT(offset))) {
++		/* Set the pin as GPIO pin */
++		mcasp_set_bits(mcasp, DAVINCI_MCASP_PFUNC_REG, BIT(offset));
++
++		/* Set the direction to output */
++		mcasp_set_bits(mcasp, DAVINCI_MCASP_PDIR_REG, BIT(offset));
++	}
++
++	return 0;
++}
++
++static void davinci_mcasp_gpio_set(struct gpio_chip *chip, unsigned offset,
++				  int value)
++{
++	struct davinci_mcasp *mcasp = gpiochip_get_data(chip);
++
++	if (value)
++		mcasp_set_bits(mcasp, DAVINCI_MCASP_PDOUT_REG, BIT(offset));
++	else
++		mcasp_clr_bits(mcasp, DAVINCI_MCASP_PDOUT_REG, BIT(offset));
++}
++
++static int davinci_mcasp_gpio_direction_in(struct gpio_chip *chip,
++					   unsigned offset)
++{
++	struct davinci_mcasp *mcasp = gpiochip_get_data(chip);
++	u32 val;
++
++	val = mcasp_get_reg(mcasp, DAVINCI_MCASP_PFUNC_REG);
++	if (!(val & BIT(offset))) {
++		/* Set the direction to input */
++		mcasp_clr_bits(mcasp, DAVINCI_MCASP_PDIR_REG, BIT(offset));
++
++		/* Set the pin as GPIO pin */
++		mcasp_set_bits(mcasp, DAVINCI_MCASP_PFUNC_REG, BIT(offset));
++	}
++
++	return 0;
++}
++
++static int davinci_mcasp_gpio_get(struct gpio_chip *chip, unsigned offset)
++{
++	struct davinci_mcasp *mcasp = gpiochip_get_data(chip);
++	u32 val;
++
++	val = mcasp_get_reg(mcasp, DAVINCI_MCASP_PDSET_REG);
++	if (val & BIT(offset))
++		return 1;
++
++	return 0;
++}
++
++static int davinci_mcasp_gpio_get_direction(struct gpio_chip *chip,
++					    unsigned offset)
++{
++	struct davinci_mcasp *mcasp = gpiochip_get_data(chip);
++	u32 val;
++
++	val = mcasp_get_reg(mcasp, DAVINCI_MCASP_PDIR_REG);
++	if (val & BIT(offset))
++		return 0;
++
++	return 1;
++}
++
++static const struct gpio_chip davinci_mcasp_template_chip = {
++	.owner			= THIS_MODULE,
++	.request		= davinci_mcasp_gpio_request,
++	.free			= davinci_mcasp_gpio_free,
++	.direction_output	= davinci_mcasp_gpio_direction_out,
++	.set			= davinci_mcasp_gpio_set,
++	.direction_input	= davinci_mcasp_gpio_direction_in,
++	.get			= davinci_mcasp_gpio_get,
++	.get_direction		= davinci_mcasp_gpio_get_direction,
++	.base			= -1,
++	.ngpio			= 32,
++};
++
++static int davinci_mcasp_init_gpiochip(struct davinci_mcasp *mcasp)
++{
++	if (!of_property_read_bool(mcasp->dev->of_node, "gpio-controller"))
++		return 0;
++
++	mcasp->gpio_chip = davinci_mcasp_template_chip;
++	mcasp->gpio_chip.label = dev_name(mcasp->dev);
++	mcasp->gpio_chip.parent = mcasp->dev;
++#ifdef CONFIG_OF_GPIO
++	mcasp->gpio_chip.of_node = mcasp->dev->of_node;
++#endif
++
++	return devm_gpiochip_add_data(mcasp->dev, &mcasp->gpio_chip, mcasp);
++}
++
++#else /* CONFIG_GPIOLIB */
++static inline int davinci_mcasp_init_gpiochip(struct davinci_mcasp *mcasp)
++{
++	return 0;
++}
++#endif /* CONFIG_GPIOLIB */
++
+ static int davinci_mcasp_probe(struct platform_device *pdev)
+ {
+ 	struct snd_dmaengine_dai_dma_data *dma_data;
+@@ -2069,6 +2213,15 @@ static int davinci_mcasp_probe(struct platform_device *pdev)
+ 
+ 	mcasp_reparent_fck(pdev);
+ 
++	/* All PINS as McASP */
++	pm_runtime_get_sync(mcasp->dev);
++	mcasp_set_reg(mcasp, DAVINCI_MCASP_PFUNC_REG, 0x00000000);
++	pm_runtime_put(mcasp->dev);
++
++	ret = davinci_mcasp_init_gpiochip(mcasp);
++	if (ret)
++		goto err;
++
+ 	ret = devm_snd_soc_register_component(&pdev->dev,
+ 					&davinci_mcasp_component,
+ 					&davinci_mcasp_dai[pdata->op_mode], 1);
+-- 
+2.20.1
+
