@@ -2,99 +2,116 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51BEDC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:09:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF589C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:09:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E406218A1
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:09:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C0A592089F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:09:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546866591;
+	bh=xhNhxr/EZ0dIu9RP5SjE0V5gOIW7ECul+5n721PbI0w=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=CUL0i6mtLZteiZLxCq7QWEDKQlESmf9aSiRlyJiGZLRXc//7V8Krkif4Kqb+ccWNb
+	 3ts29JVhFzlhq2QVYFCopj2JxhhFsEv7HBsqdHCVtix1ZPWzgPhjPD9G0perFQpBrz
+	 y9/SbE6vn7yIu2Gr+EE3TpmtgeYg/aMhxVpPYxeU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731879AbfAGNJr (ORCPT
+        id S1731885AbfAGNJu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:09:47 -0500
-Received: from mga17.intel.com ([192.55.52.151]:36962 "EHLO mga17.intel.com"
+        Mon, 7 Jan 2019 08:09:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56554 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727700AbfAGNJo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:09:44 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jan 2019 05:09:44 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,451,1539673200"; 
-   d="scan'208";a="309629132"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga005.fm.intel.com with ESMTP; 07 Jan 2019 05:09:41 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1001)
-        id 10B2B141; Mon,  7 Jan 2019 15:09:40 +0200 (EET)
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Bjorn Helgaas <bhelgaas@google.com>
-Cc:     Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>,
-        Lukas Wunner <lukas@wunner.de>,
-        Sinan Kaya <okaya@codeaurora.org>,
-        Keith Busch <keith.busch@intel.com>,
-        Oza Pawandeep <poza@codeaurora.org>, wangzhou1@hisilicon.com,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH RESEND] PCI: pciehp: Assign ctrl->slot_ctrl before writing it to hardware
-Date:   Mon,  7 Jan 2019 16:09:40 +0300
-Message-Id: <20190107130940.83680-1-mika.westerberg@linux.intel.com>
-X-Mailer: git-send-email 2.19.2
+        id S1731556AbfAGNJq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:09:46 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1DD522147C;
+        Mon,  7 Jan 2019 13:09:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1546866586;
+        bh=xhNhxr/EZ0dIu9RP5SjE0V5gOIW7ECul+5n721PbI0w=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Tkmf3WPLLT7/wc7H79g3XCNunF/ZinIAxhPuJoNlA7t7lw5pMeH2GJ5i3iZB+1rqS
+         OPFL0Xq76tvCXhfDP9k12bcVFSiVkb8Bsf6TxpuX4zvAIw5GKUa2Gbr36CiBI2IA48
+         gZNYGI9wPr3r1REOXUEetL3bqOa703avsWgR2iHs=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Georgy A Bystrenin <gkot@altlinux.org>,
+        Pavel Shilovsky <pshilov@microsoft.com>,
+        Steve French <stfrench@microsoft.com>
+Subject: [PATCH 4.9 67/71] CIFS: Fix error mapping for SMB2_LOCK command which caused OFD lock problem
+Date:   Mon,  7 Jan 2019 13:33:36 +0100
+Message-Id: <20190107105336.561360257@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190107105330.280153213@linuxfoundation.org>
+References: <20190107105330.280153213@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Shameerali reported that running v4.20-rc1 as QEMU guest, the PCIe
-hotplug port times out during boot:
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
-  pciehp 0000:00:01.0:pcie004: Timeout on hotplug command 0x03f1 (issued 1016 msec ago)
-  pciehp 0000:00:01.0:pcie004: Timeout on hotplug command 0x03f1 (issued 1024 msec ago)
-  pciehp 0000:00:01.0:pcie004: Failed to check link status
-  pciehp 0000:00:01.0:pcie004: Timeout on hotplug command 0x02f1 (issued 2520 msec ago)
+------------------
 
-The issue was bisected down to commit 720d6a671a6e ("PCI: pciehp: Do not
-handle events if interrupts are masked") and was further analyzed by the
-reporter to be caused by the fact that pciehp first updates the hardware
-and only then cache the ctrl->slot_ctrl in pcie_do_write_cmd(). If the
-interrupt happens before we cache the value, pciehp_isr() reads value 0
-and decides that the interrupt was not meant for it causing the above
-timeout to trigger.
+From: Georgy A Bystrenin <gkot@altlinux.org>
 
-Fix by moving ctrl->slot_ctrl assignment to happen before it is written
-to the hardware.
+commit 9a596f5b39593414c0ec80f71b94a226286f084e upstream.
 
-Fixes: 720d6a671a6e ("PCI: pciehp: Do not handle events if interrupts are masked")
-Reported-by: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+While resolving a bug with locks on samba shares found a strange behavior.
+When a file locked by one node and we trying to lock it from another node
+it fail with errno 5 (EIO) but in that case errno must be set to
+(EACCES | EAGAIN).
+This isn't happening when we try to lock file second time on same node.
+In this case it returns EACCES as expected.
+Also this issue not reproduces when we use SMB1 protocol (vers=1.0 in
+mount options).
+
+Further investigation showed that the mapping from status_to_posix_error
+is different for SMB1 and SMB2+ implementations.
+For SMB1 mapping is [NT_STATUS_LOCK_NOT_GRANTED to ERRlock]
+(See fs/cifs/netmisc.c line 66)
+but for SMB2+ mapping is [STATUS_LOCK_NOT_GRANTED to -EIO]
+(see fs/cifs/smb2maperror.c line 383)
+
+Quick changes in SMB2+ mapping from EIO to EACCES has fixed issue.
+
+BUG: https://bugzilla.kernel.org/show_bug.cgi?id=201971
+
+Signed-off-by: Georgy A Bystrenin <gkot@altlinux.org>
+Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
+CC: Stable <stable@vger.kernel.org>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
-The original patch was sent 14 Nov 2018 but was never applied so resending.
+ fs/cifs/smb2maperror.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-  https://patchwork.kernel.org/patch/10682715/
+--- a/fs/cifs/smb2maperror.c
++++ b/fs/cifs/smb2maperror.c
+@@ -377,8 +377,8 @@ static const struct status_to_posix_erro
+ 	{STATUS_NONEXISTENT_EA_ENTRY, -EIO, "STATUS_NONEXISTENT_EA_ENTRY"},
+ 	{STATUS_NO_EAS_ON_FILE, -ENODATA, "STATUS_NO_EAS_ON_FILE"},
+ 	{STATUS_EA_CORRUPT_ERROR, -EIO, "STATUS_EA_CORRUPT_ERROR"},
+-	{STATUS_FILE_LOCK_CONFLICT, -EIO, "STATUS_FILE_LOCK_CONFLICT"},
+-	{STATUS_LOCK_NOT_GRANTED, -EIO, "STATUS_LOCK_NOT_GRANTED"},
++	{STATUS_FILE_LOCK_CONFLICT, -EACCES, "STATUS_FILE_LOCK_CONFLICT"},
++	{STATUS_LOCK_NOT_GRANTED, -EACCES, "STATUS_LOCK_NOT_GRANTED"},
+ 	{STATUS_DELETE_PENDING, -ENOENT, "STATUS_DELETE_PENDING"},
+ 	{STATUS_CTL_FILE_NOT_SUPPORTED, -ENOSYS,
+ 	"STATUS_CTL_FILE_NOT_SUPPORTED"},
 
- drivers/pci/hotplug/pciehp_hpc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/pci/hotplug/pciehp_hpc.c b/drivers/pci/hotplug/pciehp_hpc.c
-index 7dd443aea5a5..cd9eae650aa5 100644
---- a/drivers/pci/hotplug/pciehp_hpc.c
-+++ b/drivers/pci/hotplug/pciehp_hpc.c
-@@ -156,9 +156,9 @@ static void pcie_do_write_cmd(struct controller *ctrl, u16 cmd,
- 	slot_ctrl |= (cmd & mask);
- 	ctrl->cmd_busy = 1;
- 	smp_mb();
-+	ctrl->slot_ctrl = slot_ctrl;
- 	pcie_capability_write_word(pdev, PCI_EXP_SLTCTL, slot_ctrl);
- 	ctrl->cmd_started = jiffies;
--	ctrl->slot_ctrl = slot_ctrl;
- 
- 	/*
- 	 * Controllers with the Intel CF118 and similar errata advertise
--- 
-2.19.2
 
