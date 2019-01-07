@@ -2,28 +2,28 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB619C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:01:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2AFBC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:01:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0F6F205C9
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:01:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C96B7205C9
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:01:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726834AbfAGMBv (ORCPT
+        id S1726886AbfAGMB4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:01:51 -0500
-Received: from smtp2207-205.mail.aliyun.com ([121.197.207.205]:40368 "EHLO
+        Mon, 7 Jan 2019 07:01:56 -0500
+Received: from smtp2207-205.mail.aliyun.com ([121.197.207.205]:45051 "EHLO
         smtp2207-205.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726535AbfAGMBu (ORCPT
+        by vger.kernel.org with ESMTP id S1726535AbfAGMBz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:01:50 -0500
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07436366|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03303;MF=liaoweixiong@allwinnertech.com;NM=1;PH=DS;RN=14;RT=14;SR=0;TI=SMTPD_---.DibxlYK_1546862495;
+        Mon, 7 Jan 2019 07:01:55 -0500
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07520836|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03301;MF=liaoweixiong@allwinnertech.com;NM=1;PH=DS;RN=14;RT=14;SR=0;TI=SMTPD_---.DibxlYK_1546862495;
 Received: from PC-liaoweixiong.allwinnertech.com(mailfrom:liaoweixiong@allwinnertech.com fp:SMTPD_---.DibxlYK_1546862495)
           by smtp.aliyun-inc.com(10.147.40.200);
-          Mon, 07 Jan 2019 20:01:41 +0800
+          Mon, 07 Jan 2019 20:01:47 +0800
 From:   liaoweixiong <liaoweixiong@allwinnertech.com>
 To:     Kees Cook <keescook@chromium.org>,
         Anton Vorontsov <anton@enomsg.org>,
@@ -38,88 +38,109 @@ To:     Kees Cook <keescook@chromium.org>,
         Arnd Bergmann <arnd@arndb.de>
 Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         liaoweixiong <liaoweixiong@allwinnertech.com>
-Subject: [RFC v5 0/4] pstore/block: new support logger for block devices
-Date:   Mon,  7 Jan 2019 20:00:58 +0800
-Message-Id: <1546862462-19640-1-git-send-email-liaoweixiong@allwinnertech.com>
+Subject: [RFC v5 2/4] pstore/blk: add sample for pstore_blk
+Date:   Mon,  7 Jan 2019 20:01:00 +0800
+Message-Id: <1546862462-19640-3-git-send-email-liaoweixiong@allwinnertech.com>
 X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1546862462-19640-1-git-send-email-liaoweixiong@allwinnertech.com>
+References: <1546862462-19640-1-git-send-email-liaoweixiong@allwinnertech.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Why should we need pstore_block?
-1. Most embedded intelligent equipment have no persistent ram, which
-increases costs. We perfer to cheaper solutions, like block devices.
-In fast, there is already a sample for block device logger in driver
-MTD (drivers/mtd/mtdoops.c).
-2. Do not any equipment have battery, which means that it lost all data
-on general ram if power failure. Pstore has little to do for these
-equipments.
+It is a sample for pstore_blk, using general ram rather than block device.
+According to pstore_blk, the data will be saved to ram buffer if not
+register device path and apis for panic. So, it can only used to dump
+Oops and some things will not reboot.
 
-[PATCH v5]
-On patch 1:
-1. rename pstore/rom to pstore/blk
-2. Do not allocate any memory in the write path of panic. So, use local
-array instead in function romz_recover_dmesg_meta.
-3. Add C header file "linux/fs.h" to fix implicit declaration of function
-   'filp_open','kernel_read'...
-On patch 3:
-1. If panic, do not recover pmsg but flush if it is dirty.
-2. Fix erase pmsg failed.
-On patch 4:
-1. Create a document for pstore/blk
-
-[PATCH v4]
-On patch 1:
-1. Fix always true condition '(--i >= 0) => (0-u32max >= 0)' in function
-   romz_init_zones by defining variable i to 'int' rahter than
-   'unsigned int'.
-2. To make codes more easily to read, we use macro READ_NEXT_ZONE for
-   return value of romz_dmesg_read if it need to read next zone.
-   Moveover, we assign READ_NEXT_ZONE -1024 rather than 0.
-3. Add 'FLUSH_META' to 'enum romz_flush_mode' and rename 'NOT_FLUSH' to
-   'FLUSH_NONE'
-4. Function romz_zone_write work badly with FLUSH_PART mode as badly
-   address and offset to write.
-On patch 3:
-NEW SUPPORT psmg for pstore_rom.
-
-[PATCH v3]
-On patch 1:
-Fix build as module error for undefined 'vfs_read' and 'vfs_write'
-Both of 'vfs_read' and 'vfs_write' haven't be exproted yet, so we use
-'kernel_read' and 'kernel_write' instead.
-
-[PATCH v2]
-On patch 1:
-Fix build as module error for redefinition of 'romz_unregister' and
-'romz_register'
-
-[PATCH v1]
-On patch 1:
-Core codes of pstore_rom, which works well on allwinner(sunxi) platform.
-On patch 2:
-A sample for pstore_rom, using general ram rather than block device.
-
-liaoweixiong (4):
-  pstore/blk: new support logger for block devices
-  pstore/blk: add sample for pstore_blk
-  pstore/blk: support pmsg for pstore block
-  Documentation: pstore/blk: create document for pstore_blk
-
- Documentation/admin-guide/pstore-block.rst |  226 ++++++
- MAINTAINERS                                |    1 +
- fs/pstore/Kconfig                          |   20 +
- fs/pstore/Makefile                         |    5 +
- fs/pstore/blkbuf.c                         |   46 ++
- fs/pstore/blkzone.c                        | 1168 ++++++++++++++++++++++++++++
- include/linux/pstore_blk.h                 |   62 ++
- 7 files changed, 1528 insertions(+)
- create mode 100644 Documentation/admin-guide/pstore-block.rst
+Signed-off-by: liaoweixiong <liaoweixiong@allwinnertech.com>
+---
+ fs/pstore/Kconfig  |  9 +++++++++
+ fs/pstore/Makefile |  2 ++
+ fs/pstore/blkbuf.c | 46 ++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 57 insertions(+)
  create mode 100644 fs/pstore/blkbuf.c
- create mode 100644 fs/pstore/blkzone.c
- create mode 100644 include/linux/pstore_blk.h
 
+diff --git a/fs/pstore/Kconfig b/fs/pstore/Kconfig
+index a881c53..18b1fe6 100644
+--- a/fs/pstore/Kconfig
++++ b/fs/pstore/Kconfig
+@@ -159,3 +159,12 @@ config PSTORE_BLK
+ 	help
+ 	  This enables panic and oops message to be logged to a block dev
+ 	  where it can be read back at some later point.
++
++config PSTORE_BLKBUF
++	tristate "pstore block buffer sample"
++	depends on PSTORE_BLK
++	help
++	  This is a sample for pstore block, but do NOT have a block dev.
++	  According to pstore_blk, the data will be saved to ram buffer and
++	  dropped when reboot. So, it can only used to dump Oops and some
++	  things will not reboot.
+diff --git a/fs/pstore/Makefile b/fs/pstore/Makefile
+index c431700..4a6cde1 100644
+--- a/fs/pstore/Makefile
++++ b/fs/pstore/Makefile
+@@ -15,3 +15,5 @@ obj-$(CONFIG_PSTORE_RAM)	+= ramoops.o
+ 
+ obj-$(CONFIG_PSTORE_BLK)	+= pstore_blk.o
+ pstore_blk-y += blkzone.o
++
++obj-$(CONFIG_PSTORE_BLKBUF)	+= blkbuf.o
+diff --git a/fs/pstore/blkbuf.c b/fs/pstore/blkbuf.c
+new file mode 100644
+index 0000000..f1c6f57
+--- /dev/null
++++ b/fs/pstore/blkbuf.c
+@@ -0,0 +1,46 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ *
++ * blkbuf.c: Block device Oops/Panic logger
++ *
++ * Copyright (C) 2019 liaoweixiong <liaoweixiong@gallwinnertech.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ */
++#define pr_fmt(fmt) "blkbuf: " fmt
++
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/pstore_blk.h>
++
++struct blkz_info blkbuf_info = {
++	.owner = THIS_MODULE,
++	.name = "blkbuf",
++	.part_size = 512 * 1024,
++	.dmesg_size = 64 * 1024,
++	.dump_oops = true,
++};
++
++static int __init blkbuf_init(void)
++{
++	return blkz_register(&blkbuf_info);
++}
++module_init(blkbuf_init);
++
++static void __exit blkbuf_exit(void)
++{
++	blkz_unregister(&blkbuf_info);
++}
++module_exit(blkbuf_exit);
++
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("liaoweixiong <liaoweixiong@allwinnertech.com>");
++MODULE_DESCRIPTION("Sample for Pstore BLK with Oops logger");
 -- 
 1.9.1
 
