@@ -2,121 +2,179 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B66EC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:38:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0316AC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:40:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4ED8F206B7
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:38:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5717206B7
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:40:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727531AbfAGNiA (ORCPT
+        id S1727942AbfAGNko (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:38:00 -0500
-Received: from gruss.cc ([80.82.209.135]:51704 "EHLO mail.gruss.cc"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726886AbfAGNiA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:38:00 -0500
-X-Greylist: delayed 533 seconds by postgrey-1.27 at vger.kernel.org; Mon, 07 Jan 2019 08:37:59 EST
-Received: from [192.168.0.30] (80-110-159-138.static.upcbusiness.at [80.110.159.138])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: lava@gruss.cc)
-        by mail.gruss.cc (Postfix) with ESMTPSA id 519502A00C5;
-        Mon,  7 Jan 2019 13:29:04 +0000 (UTC)
-Subject: Re: [PATCH] mm/mincore: allow for making sys_mincore() privileged
-To:     Dominique Martinet <asmadeus@codewreck.org>,
-        Vlastimil Babka <vbabka@suse.cz>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jann Horn <jannh@google.com>, Jiri Kosina <jikos@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Michal Hocko <mhocko@suse.com>, Linux-MM <linux-mm@kvack.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-References: <20190107043227.GA3325@nautica>
- <151b4ac8-5cfc-ed30-db30-e4d67a324c4b@suse.cz>
- <20190107110827.GA15249@nautica>
-From:   Daniel Gruss <daniel@gruss.cc>
+        Mon, 7 Jan 2019 08:40:44 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33846 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727200AbfAGNko (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:40:44 -0500
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x07DeUgZ030042
+        for <linux-kernel@vger.kernel.org>; Mon, 7 Jan 2019 08:40:43 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2pv6w4k6m7-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 08:40:41 -0500
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <borntraeger@de.ibm.com>;
+        Mon, 7 Jan 2019 13:39:49 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 7 Jan 2019 13:39:46 -0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x07Ddj7a49283198
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 7 Jan 2019 13:39:45 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B396FAE051;
+        Mon,  7 Jan 2019 13:39:45 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 83870AE045;
+        Mon,  7 Jan 2019 13:39:45 +0000 (GMT)
+Received: from oc7455500831.ibm.com (unknown [9.152.224.141])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon,  7 Jan 2019 13:39:45 +0000 (GMT)
+Subject: Re: [PATCH 4.20 005/145] tap: call skb_probe_transport_header after
+ setting skb->dev
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     stable@vger.kernel.org, Willem de Bruijn <willemb@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+References: <20190107104437.308206189@linuxfoundation.org>
+ <20190107104438.019339514@linuxfoundation.org>
+From:   Christian Borntraeger <borntraeger@de.ibm.com>
 Openpgp: preference=signencrypt
-Autocrypt: addr=daniel@gruss.cc; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <3b6525a6-4d8b-b5f4-67cd-0e230eb2691e@gruss.cc>
-Date:   Mon, 7 Jan 2019 14:29:03 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
+ 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
+ syiRa+UVlsKmx1hsEg==
+Date:   Mon, 7 Jan 2019 14:39:45 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20190107110827.GA15249@nautica>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20190107104438.019339514@linuxfoundation.org>
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19010713-4275-0000-0000-000002FB50F5
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19010713-4276-0000-0000-00003809588C
+Message-Id: <e5c618da-2abc-f50d-b31a-29f17f7ce1dd@de.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-07_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=879 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901070121
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/7/19 12:08 PM, Dominique Martinet wrote:
->> That's my bigger concern here. In [1] there's described a remote attack
->> (on webserver) using the page fault timing differences for present/not
->> present page cache pages. Noisy but works, and I expect locally it to be
->> much less noisy. Yet the countermeasures section only mentions
->> restricting mincore() as if it was sufficient (and also how to make
->> evictions harder, but that's secondary IMHO).
+
+
+On 07.01.2019 13:30, Greg Kroah-Hartman wrote:
+> 4.20-stable review patch.  If anyone has any objections, please let me know.
 > 
-> I'd suggest making clock rougher for non-root users but javascript tried
-> that and it wasn't enough... :)
-> Honestly won't be of much help there, good luck?
+> ------------------
+> 
+> From: Willem de Bruijn <willemb@google.com>
+> 
+> [ Upstream commit 8c76e77f9069f10505c08e02646c3ee11ad79038 ]
+> 
+> The BPF flow dissector expects either skb->sk or skb->dev set on
+> all skbs. Delay flow dissection until after skb->dev is set.
+> 
+> This requires calling from within an rcu read-side critical section.
+> That is fine, see also the call from tun_xdp_one.
+> 
+> Fixes: d0e13a1488ad ("flow_dissector: lookup netns by skb->sk if skb->dev is NULL")
+> Reported-by: Christian Borntraeger <borntraeger@de.ibm.com>
+> Signed-off-by: Willem de Bruijn <willemb@google.com>
+> Signed-off-by: David S. Miller <davem@davemloft.net>
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Restricting mincore() is sufficient to fix the hardware-agnostic part.
-If the attack is not hardware-agnostic anymore, an attacker could also
-just use a hardware cache attack, which has a higher temporal and
-spatial resolution, so there's no reason why the attacker would use page
-cache attacks instead then.
+I can confirm that this fixes my issue.
 
+Tested-by: Christian Borntraeger <borntraeger@de.ibm.com>
+> ---
+>  drivers/net/tap.c |    3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> --- a/drivers/net/tap.c
+> +++ b/drivers/net/tap.c
+> @@ -1177,8 +1177,6 @@ static int tap_get_user_xdp(struct tap_q
+>  			goto err_kfree;
+>  	}
+>  
+> -	skb_probe_transport_header(skb, ETH_HLEN);
+> -
+>  	/* Move network header to the right position for VLAN tagged packets */
+>  	if ((skb->protocol == htons(ETH_P_8021Q) ||
+>  	     skb->protocol == htons(ETH_P_8021AD)) &&
+> @@ -1189,6 +1187,7 @@ static int tap_get_user_xdp(struct tap_q
+>  	tap = rcu_dereference(q->tap);
+>  	if (tap) {
+>  		skb->dev = tap->dev;
+> +		skb_probe_transport_header(skb, ETH_HLEN);
+>  		dev_queue_xmit(skb);
+>  	} else {
+>  		kfree_skb(skb);
+> 
+> 
 
-Cheers,
-Daniel
