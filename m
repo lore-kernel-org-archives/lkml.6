@@ -2,149 +2,144 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35542C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 17:56:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B605C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 17:57:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F39832070B
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 17:56:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546883815;
-	bh=2fipaT8TEbUQVkA2WKBocakmjbLq4NlJxAI6lZWS89s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=0yKHrIstEp2LyH78qi87kAoVpBUleR6pP2+TdTTPb+2TIUCaTIASODyRxV0IszPDl
-	 zsduga43iVgcZvYzJGrtciFcmBG6Bh3zlv0NUferLXyQP8VwQVgSOkHPPtZb9oF84k
-	 ozHZP4z4CxF4ihWeMVoflUmDV3D+o1xlo6A+Rfpg=
+	by mail.kernel.org (Postfix) with ESMTP id 54EA22085A
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 17:57:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728543AbfAGR4y (ORCPT
+        id S1728573AbfAGR5W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 12:56:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57170 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 12:57:22 -0500
+Received: from mga06.intel.com ([134.134.136.31]:63915 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728034AbfAGR4x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 12:56:53 -0500
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DA9242070B;
-        Mon,  7 Jan 2019 17:56:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546883812;
-        bh=2fipaT8TEbUQVkA2WKBocakmjbLq4NlJxAI6lZWS89s=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=QmmDaT6XXEbNpFSRce17PgYhMPu5EVBrJUAJrCIjMKIzulQw4dP//if3OWn03OAEL
-         M2igsr2/FJ+d67w+Rw7/3q2IWEDkEVW5s474QOPrmggeq/E4VSG89/jzyfaZ2Ab+z4
-         lpuC11sMmmKKYka0fiOmq9IUCWY4ftTNJV8TMKFw=
-Date:   Mon, 7 Jan 2019 12:56:50 -0500
-From:   Sasha Levin <sashal@kernel.org>
-To:     Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc:     David Hildenbrand <david@redhat.com>, devel@linuxdriverproject.org,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        linux-kernel@vger.kernel.org, Dexuan Cui <decui@microsoft.com>
-Subject: Re: [PATCH] hv_balloon: avoid touching uninitialized struct page
- during tail onlining
-Message-ID: <20190107175650.GG166797@sasha-vm>
-References: <20190104141942.19126-1-vkuznets@redhat.com>
- <2ea7e975-6aae-de71-83e5-9302518802ef@redhat.com>
- <87d0p837lt.fsf@vitty.brq.redhat.com>
+        id S1726589AbfAGR5V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 12:57:21 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jan 2019 09:57:20 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,451,1539673200"; 
+   d="scan'208";a="132363093"
+Received: from schen9-desk.jf.intel.com (HELO [10.54.74.162]) ([10.54.74.162])
+  by fmsmga002.fm.intel.com with ESMTP; 07 Jan 2019 09:57:19 -0800
+To:     Ben Greear <greearb@candelatech.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     Jiri Kosina <jikos@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Asit Mallick <asit.k.mallick@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jon Masters <jcm@redhat.com>,
+        Waiman Long <longman9394@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org,
+        x86@kernel.org, stable@vger.kernel.org
+References: <64efec3fda40c0758601bf9b1480a35d76d3c487.1545413988.git.tim.c.chen@linux.intel.com>
+ <1c7923ec-70aa-25d4-3de1-f1b1768bb80b@candelatech.com>
+ <fdf4e1cd-9b28-75c7-6846-6d0f5b816936@linux.intel.com>
+ <5d45f3ef-a91f-815a-f532-62e75899e697@candelatech.com>
+From:   Tim Chen <tim.c.chen@linux.intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual; keydata=
+ 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
+ dvVU867d07PlWksfYwCeYP4bs+4GSLzI1w==
+Subject: Re: [PATCH] x86/speculation: Add document to describe Spectre and its
+ mitigations
+Message-ID: <0d89b5a0-01d3-4927-ce59-fd9dc24c53b3@linux.intel.com>
+Date:   Mon, 7 Jan 2019 09:57:19 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <87d0p837lt.fsf@vitty.brq.redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <5d45f3ef-a91f-815a-f532-62e75899e697@candelatech.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 07, 2019 at 02:44:30PM +0100, Vitaly Kuznetsov wrote:
->David Hildenbrand <david@redhat.com> writes:
->> On 04.01.19 15:19, Vitaly Kuznetsov wrote:
->>> Hyper-V memory hotplug protocol has 2M granularity and in Linux x86 we use
->>> 128M. To deal with it we implement partial section onlining by registering
->>> custom page onlining callback (hv_online_page()). Later, when more memory
->>> arrives we try to online the 'tail' (see hv_bring_pgs_online()).
->>>
->>> It was found that in some cases this 'tail' onlining causes issues:
->>>
->>>  BUG: Bad page state in process kworker/0:2  pfn:109e3a
->>>  page:ffffe08344278e80 count:0 mapcount:1 mapping:0000000000000000 index:0x0
->>>  flags: 0xfffff80000000()
->>>  raw: 000fffff80000000 dead000000000100 dead000000000200 0000000000000000
->>>  raw: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
->>>  page dumped because: nonzero mapcount
->>>  ...
->>>  Workqueue: events hot_add_req [hv_balloon]
->>>  Call Trace:
->>>   dump_stack+0x5c/0x80
->>>   bad_page.cold.112+0x7f/0xb2
->>>   free_pcppages_bulk+0x4b8/0x690
->>>   free_unref_page+0x54/0x70
->>>   hv_page_online_one+0x5c/0x80 [hv_balloon]
->>>   hot_add_req.cold.24+0x182/0x835 [hv_balloon]
->>>   ...
->>>
->>> Turns out that we now have deferred struct page initialization for memory
->>> hotplug so e.g. memory_block_action() in drivers/base/memory.c does
->>> pages_correctly_probed() check and in that check it avoids inspecting
->>> struct pages and checks sections instead. But in Hyper-V balloon driver we
->>> do PageReserved(pfn_to_page()) check and this is now wrong.
->>>
->>> Switch to checking online_section_nr() instead.
->>>
->>> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
->>> ---
->>>  drivers/hv/hv_balloon.c | 10 ++++++----
->>>  1 file changed, 6 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/drivers/hv/hv_balloon.c b/drivers/hv/hv_balloon.c
->>> index 5301fef16c31..7c6349a50ef1 100644
->>> --- a/drivers/hv/hv_balloon.c
->>> +++ b/drivers/hv/hv_balloon.c
->>> @@ -888,12 +888,14 @@ static unsigned long handle_pg_range(unsigned long pg_start,
->>>  			pfn_cnt -= pgs_ol;
->>>  			/*
->>>  			 * Check if the corresponding memory block is already
->>> -			 * online by checking its last previously backed page.
->>> -			 * In case it is we need to bring rest (which was not
->>> -			 * backed previously) online too.
->>> +			 * online. It is possible to observe struct pages still
->>> +			 * being uninitialized here so check section instead.
->>> +			 * In case the section is online we need to bring the
->>> +			 * rest of pfns (which were not backed previously)
->>> +			 * online too.
->>>  			 */
->>>  			if (start_pfn > has->start_pfn &&
->>> -			    !PageReserved(pfn_to_page(start_pfn - 1)))
->>> +			    online_section_nr(pfn_to_section_nr(start_pfn)))
->>>  				hv_bring_pgs_online(has, start_pfn, pgs_ol);
->>>
->>>  		}
->>>
+On 12/31/18 8:22 AM, Ben Greear wrote:
+> 
+> 
+> On 12/21/2018 05:17 PM, Tim Chen wrote:
 >>
->> I wonder if you should use pfn_to_online_page() and check for PageOffline().
->>
->> (I guess online_section_nr() should also do the trick)
->
->I'm worried a bit about racing with mm code here as we're not doing
->mem_hotplug_begin()/done() so I'd slightly prefer keeping
->online_section_nr() (pfn_to_online_page() also uses it but then it gets
->to the particular struct page). Moreover, with pfn_to_online_page() we
->will be looking at some other pfn - because the start_pfn is definitelly
->offline (pre-patch we were looking at start_pfn-1). Just looking at the
->whole section seems cleaner.
->
->P.S. I still think about bringing mem_hotplug_begin()/done() to
->hv_balloon but that's going to be a separate discussion, here I want to
->have a small fix backportable to stable.
+>> If you don't worry about security and performance is paramount, then
+>> boot with "nospectre_v2".  That's explained in the document.
+> 
+> There seem to be lots of different variants of this type of problem.  It was not clear
+> to me that just doing nospectre_v2 would be sufficient to get back full performance.
 
-This should probably be marked for stable then :)
+The performance penalty comes from retpoline penalizing indirect branch predictions in kernel.
+With nospectre_v2, retpoline is disabled so you should get all the performance
+back from spectre mitigation.
 
---
-Thanks,
-Sasha
+This does not disable kernel page table isolation for meltdown mitigation, which also
+needs to be turned off if you want to get the full performance back.  That's somewhat
+beyond the scope of this doc on Spectre.
+
+> 
+> And anyway, I would like to compile the kernel to not need that command-line option,
+> so I am still interesting in what compile options need to be set to what values...
+> 
+
+If you just want to disable spectre mitigation, setting CONFIG_RETPOLINE=n should do
+the  trick.  If you also want to disable meltdown mitigation,
+set CONFIG_PAGE_TABLE_ISOLATION=n.
+
+Thanks.
+
+Tim
