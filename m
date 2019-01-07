@@ -7,38 +7,38 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30D3EC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:40:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC898C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:40:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E94262173C
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:40:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 98C512183E
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:40:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546864835;
-	bh=zQAJWfXaPGsVpIl+fV+ly1hL9xjXCt2znZcTU1ipwNA=;
+	s=default; t=1546864841;
+	bh=lBgs3AQnMe0zN+iXblwyGSK7VBQ9ALzBa6m1VGDx3IA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=PUCCBlXuEH1OL0LYRnNxFs68bKfzehsGDmDP+Bk86rHzPwN6/kk3zpqC4Rq8CCluu
-	 RsPZdPyIuxT5FyMZXX5S7n3ewenGfiJKLtXjrQU98PoVzN6vinSSOjFzfPVFKxwOFn
-	 cJMUyRy6fzhclv8joOrYFHHly9tt1H++ZsP9Lrdg=
+	b=yrDe0lhXF6yWwXqks7mn3Dm6UKC82yW3t0XH0HyIAaWj+IwjeSTuQl9jeo1zY3QbZ
+	 oHAfB6q3kDbQ/1EtwlBRKjyOIDDlLFLL4CD9mdTOWh+z4mDSpOx+aASBvORPSBaycv
+	 0RpNByJe0F26oIZvleGA/7ptItqetz8xDNJC4tEs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728028AbfAGMke (ORCPT
+        id S1728030AbfAGMkk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:40:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55504 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:40:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55588 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727477AbfAGMkc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:40:32 -0500
+        id S1727477AbfAGMki (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:40:38 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 53EA72089F;
-        Mon,  7 Jan 2019 12:40:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AE2042173C;
+        Mon,  7 Jan 2019 12:40:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546864831;
-        bh=zQAJWfXaPGsVpIl+fV+ly1hL9xjXCt2znZcTU1ipwNA=;
+        s=default; t=1546864837;
+        bh=lBgs3AQnMe0zN+iXblwyGSK7VBQ9ALzBa6m1VGDx3IA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QzP6kSVIxvO+6XfQRHYS/CEVkZvkqxtNuczDwDKJxC8thQ0hmYEgmnIBRAGFKO3NP
-         NFxYtUxSrTexZeiL/3fOJKsb9/cdJi7guHly+ljf2YQqpYJT/xv5tRoASE9KRGA/gp
-         pH+0yamw23rfsRZtFRU1N4O/HO6tSKd25d+sciJg=
+        b=uBjb3s3i4zOfCkby2H3bYY4oIhSI+KLQGqnU5FaRcoC339ReQdfjgwZGo6HB0TjKw
+         cZHEypqgf48SyYGvW2aywbybzxQWRkHndhaNh52dsEMVHRkA31SDJ14lI7UPc7TBA6
+         31CBTmEHW6DYTYguvPsvYZGfH0dLvnA+OhM21Omk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -48,9 +48,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Martin Sperl <kernel@martin.sperl.org>,
         =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>,
         Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.20 081/145] spi: bcm2835: Fix book-keeping of DMA termination
-Date:   Mon,  7 Jan 2019 13:31:58 +0100
-Message-Id: <20190107104447.824068213@linuxfoundation.org>
+Subject: [PATCH 4.20 082/145] spi: bcm2835: Avoid finishing transfer prematurely in IRQ mode
+Date:   Mon,  7 Jan 2019 13:31:59 +0100
+Message-Id: <20190107104447.944106075@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104437.308206189@linuxfoundation.org>
 References: <20190107104437.308206189@linuxfoundation.org>
@@ -71,20 +71,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Lukas Wunner <lukas@wunner.de>
 
-commit dbc944115eed48af110646992893dc43321368d8 upstream.
+commit 56c1723426d3cfd4723bfbfce531d7b38bae6266 upstream.
 
-If submission of a DMA TX transfer succeeds but submission of the
-corresponding RX transfer does not, the BCM2835 SPI driver terminates
-the TX transfer but neglects to reset the dma_pending flag to false.
+The IRQ handler bcm2835_spi_interrupt() first reads as much as possible
+from the RX FIFO, then writes as much as possible to the TX FIFO.
+Afterwards it decides whether the transfer is finished by checking if
+the TX FIFO is empty.
 
-Thus, if the next transfer uses interrupt mode (because it is shorter
-than BCM2835_SPI_DMA_MIN_LENGTH) and runs into a timeout,
-dmaengine_terminate_all() will be called both for TX (once more) and
-for RX (which was never started in the first place).  Fix it.
+If very few bytes were written to the TX FIFO, they may already have
+been transmitted by the time the FIFO's emptiness is checked.  As a
+result, the transfer will be declared finished and the chip will be
+reset without reading the corresponding received bytes from the RX FIFO.
+
+The odds of this happening increase with a high clock frequency (such
+that the TX FIFO drains quickly) and either passing "threadirqs" on the
+command line or enabling CONFIG_PREEMPT_RT_BASE (such that the IRQ
+handler may be preempted between filling the TX FIFO and checking its
+emptiness).
+
+Fix by instead checking whether rx_len has reached zero, which means
+that the transfer has been received in full.  This is also more
+efficient as it avoids one bus read access per interrupt.  Note that
+bcm2835_spi_transfer_one_poll() likewise uses rx_len to determine
+whether the transfer has finished.
 
 Signed-off-by: Lukas Wunner <lukas@wunner.de>
-Fixes: 3ecd37edaa2a ("spi: bcm2835: enable dma modes for transfers meeting certain conditions")
-Cc: stable@vger.kernel.org # v4.2+
+Fixes: e34ff011c70e ("spi: bcm2835: move to the transfer_one driver model")
+Cc: stable@vger.kernel.org # v4.1+
 Cc: Mathias Duckeck <m.duckeck@kunbus.de>
 Cc: Frank Pavlic <f.pavlic@kunbus.de>
 Cc: Martin Sperl <kernel@martin.sperl.org>
@@ -93,18 +106,20 @@ Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/spi/spi-bcm2835.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/spi/spi-bcm2835.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
 --- a/drivers/spi/spi-bcm2835.c
 +++ b/drivers/spi/spi-bcm2835.c
-@@ -341,6 +341,7 @@ static int bcm2835_spi_transfer_one_dma(
- 	if (ret) {
- 		/* need to reset on errors */
- 		dmaengine_terminate_all(master->dma_tx);
-+		bs->dma_pending = false;
+@@ -155,8 +155,7 @@ static irqreturn_t bcm2835_spi_interrupt
+ 	/* Write as many bytes as possible to FIFO */
+ 	bcm2835_wr_fifo(bs);
+ 
+-	/* based on flags decide if we can finish the transfer */
+-	if (bcm2835_rd(bs, BCM2835_SPI_CS) & BCM2835_SPI_CS_DONE) {
++	if (!bs->rx_len) {
+ 		/* Transfer complete - reset SPI HW */
  		bcm2835_spi_reset_hw(master);
- 		return ret;
- 	}
+ 		/* wake up the framework */
 
 
