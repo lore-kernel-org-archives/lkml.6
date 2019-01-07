@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C3CAC43612
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 21:12:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4A65C43612
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 21:13:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE8772147C
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 21:12:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9CFC82147C
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 21:13:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SPH/JC5d"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LcDe1/Sn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726907AbfAGVMK (ORCPT
+        id S1726982AbfAGVNm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 16:12:10 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:34991 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726535AbfAGVMJ (ORCPT
+        Mon, 7 Jan 2019 16:13:42 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:42014 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726667AbfAGVNm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 16:12:09 -0500
-Received: by mail-ot1-f67.google.com with SMTP id 81so1655179otj.2;
-        Mon, 07 Jan 2019 13:12:09 -0800 (PST)
+        Mon, 7 Jan 2019 16:13:42 -0500
+Received: by mail-oi1-f193.google.com with SMTP id w13so1549244oiw.9;
+        Mon, 07 Jan 2019 13:13:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=eHINnB1HSAP4lNQBfSE8Vd3n6OBP47Gzz9+JIR90aAU=;
-        b=SPH/JC5dPFHukOBQVRoXJq6rz33w+c0bbuCr/9+dJKZmBh5UOTqu5Sf52Juza1tCwm
-         hz2H9/CQjsIe/qROYk1U5yoc4Ylmvk9JQD8ghPPawjcBGHbMQOTu48b4I9ASUdWeBiu2
-         CiR0swZCQ8iic6VRCS3fI/XSJkoAeaDa9kHTdz152x8vyjuEGv5z1vnCvgD40CodrKwm
-         89uoY4G4RpgA5E4jBS4AZ3Ru6dy0y1UcOECcbkTdaTbDhErNxuvKSH7FjFD3l+7sVaSq
-         P1FleBODThQbfnvxpmIVOlrOhzqsOuIz+ZBe4lvK0KVI9+lJCAYV/c+bvg9IS5L38P5G
-         i0fQ==
+        bh=hc+4pFIEoZRJSnjuZ6K6IWUr2XH/ERn5nG/FVoZJaVI=;
+        b=LcDe1/Sn3It1js7x36sN24Sc8vhwZqDzedMzwOCWp+ttrSweGnrKY08mks+iqVF0zH
+         mE4+sjqlg1vNr/q4fFC5CoLqbSoCbvOXRCoHhvnaqe1PHkuxiBoZa0jjAvibYZiylgbM
+         /xxddsRjmq/3obFIFcBxRDe9DguM854hAu0pyUWaKL8s64e0SahoIez3sYu/PWnCZcO6
+         XTO82uP6rX5Wkx7TjbD/STc4YHQyhLYrVyQl7JDh6v4bUm2KHZOcW9bpPilAazwWsMHw
+         pINFKu3F1FfnNpHgzsUE73pjJKEUPk/q/CXllpfpb49nMS++cFy0ITdrnBaVKzBdOnNU
+         iQfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=eHINnB1HSAP4lNQBfSE8Vd3n6OBP47Gzz9+JIR90aAU=;
-        b=rO6qIo1xPxxtHcXnDYE4S4YvGly+5oG1MFNUVA58hyV2IZmn+H6BGWMJ9QvxmNmQE7
-         sMcSigVOmQtpwkoAqeOLRKcEpCOucrWi3e2IMQ9A3rVRWU3b2o7GsAA3uhOaWe6O+kLc
-         X4zo67jK5+tUiVeoUrv8f9sFOjo8hCoevyA8VckJjdgKUAnqaNIw4vh+XM3P7uRAv95y
-         /zZGglP0PuSe17nCQRmOPtON1ejnFnlsZAt9KXSnK8V3s4pHbAqvjRh+WOmhmhMcCopK
-         FygBOkkbYIR1puvMNDvVKwfGG2q1asKwtz12z5lh9XU7U5VvFDmVZ8pddpH+PxuG77tD
-         1N2w==
-X-Gm-Message-State: AJcUukd90A0CaiTRj3CQawiorZwa31bf9/fABDcSBPiylTYsdRGufew5
-        y2ospA30SJ0BPJnLVFGAH8EL0O8Us3bCgRHl0gM=
-X-Google-Smtp-Source: ALg8bN580D8ARKTieaLCX4jzyUqbC+2nAdPl8jH9fj25AN3hJzgJRGJntfkb0GiDn/mMjgFQRHVnjQ4a1EgXTTGlWbA=
-X-Received: by 2002:a9d:4ac:: with SMTP id 41mr42096918otm.344.1546895528875;
- Mon, 07 Jan 2019 13:12:08 -0800 (PST)
+        bh=hc+4pFIEoZRJSnjuZ6K6IWUr2XH/ERn5nG/FVoZJaVI=;
+        b=GWiHprvA+x2puNyf530+JLaj7/R7c4bAeM3dHVGsd4TF1g5p81DgTRbC1uQKDWSVQ/
+         yzG5KgBKvKWK1ZxQRTDTnvQ/i/RUtr2QlrjNksYndO3PA4WoKtR2jXFBJt7aILm/TOuK
+         pqBsdmPwnO6b147knxVBJiW2ZXCma2fvs4pGmCX0Lp1QGGoq5mguxImg1V1AHMj4STX7
+         QmmFtxZDcLRCLnkppCf9aTyl1vaGeHQYao4DLoYeGDfdNo29Ze73srvGzI2JrpGFCB1t
+         rEgukrcUsa/pJ9jFb7Nerh7ozN3W+QRy1se87trhzogBjoMfgi8qm1bIZeSocSuzzj48
+         fhpw==
+X-Gm-Message-State: AJcUukerV/+ntFJ99lW9FSsIO3F/huKMo/hsffy3WI1WBNIC/9GsFFxa
+        T66ffxlMESqQ/Tnca6jlN8olJLSGk5WCYVeHV0U=
+X-Google-Smtp-Source: ALg8bN6Omlt4l1LE3FRiESykbxWVQPtweBLy72ylE47mHcXbWzRWZ4ZmaxRdz5musejInM7UPJUhCh9iLv4dBskfYHo=
+X-Received: by 2002:aca:4ed8:: with SMTP id c207mr9468249oib.276.1546895621745;
+ Mon, 07 Jan 2019 13:13:41 -0800 (PST)
 MIME-Version: 1.0
-References: <20190107105330.372621917@linuxfoundation.org> <20190107105330.456283338@linuxfoundation.org>
-In-Reply-To: <20190107105330.456283338@linuxfoundation.org>
+References: <20190107105330.372621917@linuxfoundation.org> <20190107105330.528127680@linuxfoundation.org>
+In-Reply-To: <20190107105330.528127680@linuxfoundation.org>
 From:   Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Date:   Mon, 7 Jan 2019 21:11:33 +0000
-Message-ID: <CADVatmOcv31QUSHcY_TCLkjJCZ60FtYmnOPj=V5s1Q6KV_08Fw@mail.gmail.com>
-Subject: Re: [PATCH 4.14 001/101] phonet: af_phonet: Fix Spectre v1 vulnerability
+Date:   Mon, 7 Jan 2019 21:13:06 +0000
+Message-ID: <CADVatmOxZngMs8foHj0mOTjC5NhAZvZyxRJXREkEsKvG-6z6Ug@mail.gmail.com>
+Subject: Re: [PATCH 4.14 002/101] net: core: Fix Spectre v1 vulnerability
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
         Stable <stable@vger.kernel.org>,
@@ -72,7 +72,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi Greg,
 
-On Mon, Jan 7, 2019 at 1:16 PM Greg Kroah-Hartman
+On Mon, Jan 7, 2019 at 1:00 PM Greg Kroah-Hartman
 <gregkh@linuxfoundation.org> wrote:
 >
 > 4.14-stable review patch.  If anyone has any objections, please let me know.
@@ -81,11 +81,10 @@ On Mon, Jan 7, 2019 at 1:16 PM Greg Kroah-Hartman
 >
 > From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 >
-> [ Upstream commit d686026b1e6ed4ea27d630d8f54f9a694db088b2 ]
+> [ Upstream commit 50d5258634aee2e62832aa086d2fb0de00e72b91 ]
 
 This has been reverted upstream by f2ab95814103 ("net: Revert recent
 Spectre-v1 patches.")
-
 
 -- 
 Regards
