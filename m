@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E036C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:44:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7251C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:44:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC8D82177B
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:44:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7CFE72183E
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:44:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546865064;
-	bh=7FM8rQlGaF3UaAGH7esqC51CMM4smE5DF4gHHPFah/Q=;
+	s=default; t=1546865067;
+	bh=r7kdQw1nJIhqa+2rdmHkhCfGnx/efgG//Av8/fe16BM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=t+xMf9W+RxRKLlbEVv7tGii3Zm51lA9F6Lw/4VRo3Z/rQcVziun3rV7JkrDc7ZvcV
-	 Dk0cdCbvdzRemqC1lrgyefoaEXFDnxjQ4C91S6iVeKYXTcSlGpYC2Yxze3QxqVrbGO
-	 XsTlqnHNtGWvjCJxvgFUB1XABPLcPlMAP6BDSc14=
+	b=ci3CGfQ30g00yYQzx7Zgc9WUWMPazfb4MSCn2XH/3TLQyn381bP0mMt/1eErAeSMs
+	 ou08yvKl9sify/e4/a/KL3Vd+r0SZDJLewKkq5qF9Q9rofdLs0rS2uFBls1eTNTAFS
+	 35jU8JYKfctEAe+TgB4DoRd8yMnqKzC1AK/ccAdY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728740AbfAGMoX (ORCPT
+        id S1728755AbfAGMo0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:44:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60970 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:44:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32854 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727324AbfAGMoS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:44:18 -0500
+        id S1728731AbfAGMoX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:44:23 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 46FE220449;
-        Mon,  7 Jan 2019 12:44:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C895620665;
+        Mon,  7 Jan 2019 12:44:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865056;
-        bh=7FM8rQlGaF3UaAGH7esqC51CMM4smE5DF4gHHPFah/Q=;
+        s=default; t=1546865062;
+        bh=r7kdQw1nJIhqa+2rdmHkhCfGnx/efgG//Av8/fe16BM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pCAnon3pPVPBlg6mD7dE89lyq0Ckh89O6BmfI9bqplPOArY+YbL/ocsYMrPDP+/rY
-         rZG0CpmGhQUelc8cv8NdewS6vPjeP9beL0Jo/o33ayu8SMYETkq34gCgg3IY97LSkz
-         GmGNQp6riwghJDNsH3Lst2b5DPBSpmIo4odCFkWU=
+        b=PEDhSYAelB082uC9+dlMzODdUJRRQClLbgbgpJAcc8uH7KEop2sp2smdP3FlBQVfi
+         FxFYlOC4ZeO1DiSWclfvkO0mfi+ILsEWWwkCVSCyk/ADwkD/PnbbwtBPgO2nExEzZM
+         aAl3IHalGR1E+oHg7NH4Ib5Zb4oht5aZKtop7RP4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
-        Lu Fengqi <lufq.fnst@cn.fujitsu.com>,
+        Josef Bacik <josef@toxicpanda.com>,
         David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.20 095/145] btrfs: skip file_extent generation check for free_space_inode in run_delalloc_nocow
-Date:   Mon,  7 Jan 2019 13:32:12 +0100
-Message-Id: <20190107104449.647750834@linuxfoundation.org>
+Subject: [PATCH 4.20 097/145] btrfs: run delayed items before dropping the snapshot
+Date:   Mon,  7 Jan 2019 13:32:14 +0100
+Message-Id: <20190107104449.906025975@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104437.308206189@linuxfoundation.org>
 References: <20190107104437.308206189@linuxfoundation.org>
@@ -66,71 +66,86 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lu Fengqi <lufq.fnst@cn.fujitsu.com>
+From: Josef Bacik <jbacik@fb.com>
 
-commit 27a7ff554e8d349627a90bda275c527b7348adae upstream.
+commit 0568e82dbe2510fc1fa664f58e5c997d3f1e649e upstream.
 
-The test case btrfs/001 with inode_cache mount option will encounter the
-following warning:
+With my delayed refs patches in place we started seeing a large amount
+of aborts in __btrfs_free_extent:
 
-  WARNING: CPU: 1 PID: 23700 at fs/btrfs/inode.c:956 cow_file_range.isra.19+0x32b/0x430 [btrfs]
-  CPU: 1 PID: 23700 Comm: btrfs Kdump: loaded Tainted: G        W  O      4.20.0-rc4-custom+ #30
-  Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 0.0.0 02/06/2015
-  RIP: 0010:cow_file_range.isra.19+0x32b/0x430 [btrfs]
-  Call Trace:
-   ? free_extent_buffer+0x46/0x90 [btrfs]
-   run_delalloc_nocow+0x455/0x900 [btrfs]
-   btrfs_run_delalloc_range+0x1a7/0x360 [btrfs]
-   writepage_delalloc+0xf9/0x150 [btrfs]
-   __extent_writepage+0x125/0x3e0 [btrfs]
-   extent_write_cache_pages+0x1b6/0x3e0 [btrfs]
-   ? __wake_up_common_lock+0x63/0xc0
-   extent_writepages+0x50/0x80 [btrfs]
-   do_writepages+0x41/0xd0
-   ? __filemap_fdatawrite_range+0x9e/0xf0
-   __filemap_fdatawrite_range+0xbe/0xf0
-   btrfs_fdatawrite_range+0x1b/0x50 [btrfs]
-   __btrfs_write_out_cache+0x42c/0x480 [btrfs]
-   btrfs_write_out_ino_cache+0x84/0xd0 [btrfs]
-   btrfs_save_ino_cache+0x551/0x660 [btrfs]
-   commit_fs_roots+0xc5/0x190 [btrfs]
-   btrfs_commit_transaction+0x2bf/0x8d0 [btrfs]
-   btrfs_mksubvol+0x48d/0x4d0 [btrfs]
-   btrfs_ioctl_snap_create_transid+0x170/0x180 [btrfs]
-   btrfs_ioctl_snap_create_v2+0x124/0x180 [btrfs]
-   btrfs_ioctl+0x123f/0x3030 [btrfs]
+ BTRFS error (device sdb1): unable to find ref byte nr 91947008 parent 0 root 35964  owner 1 offset 0
+ Call Trace:
+  ? btrfs_merge_delayed_refs+0xaf/0x340
+  __btrfs_run_delayed_refs+0x6ea/0xfc0
+  ? btrfs_set_path_blocking+0x31/0x60
+  btrfs_run_delayed_refs+0xeb/0x180
+  btrfs_commit_transaction+0x179/0x7f0
+  ? btrfs_check_space_for_delayed_refs+0x30/0x50
+  ? should_end_transaction.isra.19+0xe/0x40
+  btrfs_drop_snapshot+0x41c/0x7c0
+  btrfs_clean_one_deleted_snapshot+0xb5/0xd0
+  cleaner_kthread+0xf6/0x120
+  kthread+0xf8/0x130
+  ? btree_invalidatepage+0x90/0x90
+  ? kthread_bind+0x10/0x10
+  ret_from_fork+0x35/0x40
 
-The file extent generation of the free space inode is equal to the last
-snapshot of the file root, so the inode will be passed to cow_file_rage.
-But the inode was created and its extents were preallocated in
-btrfs_save_ino_cache, there are no cow copies on disk.
+This was because btrfs_drop_snapshot depends on the root not being
+modified while it's dropping the snapshot.  It will unlock the root node
+(and really every node) as it walks down the tree, only to re-lock it
+when it needs to do something.  This is a problem because if we modify
+the tree we could cow a block in our path, which frees our reference to
+that block.  Then once we get back to that shared block we'll free our
+reference to it again, and get ENOENT when trying to lookup our extent
+reference to that block in __btrfs_free_extent.
 
-The preallocated extent is not yet in the extent tree, and
-btrfs_cross_ref_exist will ignore the -ENOENT returned by
-check_committed_ref, so we can directly write the inode to the disk.
+This is ultimately happening because we have delayed items left to be
+processed for our deleted snapshot _after_ all of the inodes are closed
+for the snapshot.  We only run the delayed inode item if we're deleting
+the inode, and even then we do not run the delayed insertions or delayed
+removals.  These can be run at any point after our final inode does its
+last iput, which is what triggers the snapshot deletion.  We can end up
+with the snapshot deletion happening and then have the delayed items run
+on that file system, resulting in the above problem.
 
-Fixes: 78d4295b1eee ("btrfs: lift some btrfs_cross_ref_exist checks in nocow path")
-CC: stable@vger.kernel.org # 4.18+
+This problem has existed forever, however my patches made it much easier
+to hit as I wake up the cleaner much more often to deal with delayed
+iputs, which made us more likely to start the snapshot dropping work
+before the transaction commits, which is when the delayed items would
+generally be run.  Before, generally speaking, we would run the delayed
+items, commit the transaction, and wakeup the cleaner thread to start
+deleting snapshots, which means we were less likely to hit this problem.
+You could still hit it if you had multiple snapshots to be deleted and
+ended up with lots of delayed items, but it was definitely harder.
+
+Fix for now by simply running all the delayed items before starting to
+drop the snapshot.  We could make this smarter in the future by making
+the delayed items per-root, and then simply drop any delayed items for
+roots that we are going to delete.  But for now just a quick and easy
+solution is the safest.
+
+CC: stable@vger.kernel.org # 4.4+
 Reviewed-by: Filipe Manana <fdmanana@suse.com>
-Signed-off-by: Lu Fengqi <lufq.fnst@cn.fujitsu.com>
+Signed-off-by: Josef Bacik <josef@toxicpanda.com>
 Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/inode.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/btrfs/extent-tree.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -1372,7 +1372,8 @@ next_slot:
- 			 * Do the same check as in btrfs_cross_ref_exist but
- 			 * without the unnecessary search.
- 			 */
--			if (btrfs_file_extent_generation(leaf, fi) <=
-+			if (!nolock &&
-+			    btrfs_file_extent_generation(leaf, fi) <=
- 			    btrfs_root_last_snapshot(&root->root_item))
- 				goto out_check;
- 			if (extent_type == BTRFS_FILE_EXTENT_REG && !force)
+--- a/fs/btrfs/extent-tree.c
++++ b/fs/btrfs/extent-tree.c
+@@ -8944,6 +8944,10 @@ int btrfs_drop_snapshot(struct btrfs_roo
+ 		goto out_free;
+ 	}
+ 
++	err = btrfs_run_delayed_items(trans);
++	if (err)
++		goto out_end_trans;
++
+ 	if (block_rsv)
+ 		trans->block_rsv = block_rsv;
+ 
 
 
