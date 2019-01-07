@@ -2,124 +2,598 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UPPERCASE_50_75,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66E65C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 09:30:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA755C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 09:30:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F6EB2070C
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 09:30:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 969FE2087F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 09:30:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726750AbfAGJaQ convert rfc822-to-8bit (ORCPT
+        id S1726771AbfAGJaV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 04:30:16 -0500
-Received: from skedge03.snt-world.com ([91.208.41.68]:38268 "EHLO
-        skedge03.snt-world.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726602AbfAGJaO (ORCPT
+        Mon, 7 Jan 2019 04:30:21 -0500
+Received: from laurent.telenet-ops.be ([195.130.137.89]:47796 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726602AbfAGJaU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 04:30:14 -0500
-Received: from sntmail11s.snt-is.com (unknown [10.203.32.181])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by skedge03.snt-world.com (Postfix) with ESMTPS id 3B80767B8C7;
-        Mon,  7 Jan 2019 10:30:11 +0100 (CET)
-Received: from sntmail12r.snt-is.com (10.203.32.182) by sntmail11s.snt-is.com
- (10.203.32.181) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1466.3; Mon, 7 Jan 2019
- 10:30:10 +0100
-Received: from sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305]) by
- sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305%5]) with mapi id
- 15.01.1466.003; Mon, 7 Jan 2019 10:30:10 +0100
-From:   Schrempf Frieder <frieder.schrempf@kontron.de>
-To:     "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "boris.brezillon@bootlin.com" <boris.brezillon@bootlin.com>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        "richard@nod.at" <richard@nod.at>,
-        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
-        "david.wolfe@nxp.com" <david.wolfe@nxp.com>,
-        "fabio.estevam@nxp.com" <fabio.estevam@nxp.com>,
-        "prabhakar.kushwaha@nxp.com" <prabhakar.kushwaha@nxp.com>,
-        "yogeshnarayan.gaur@nxp.com" <yogeshnarayan.gaur@nxp.com>,
-        "han.xu@nxp.com" <han.xu@nxp.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Schrempf Frieder <frieder.schrempf@kontron.de>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH v8 7/7] MAINTAINERS: Move the Freescale QSPI driver to the SPI
- framework
-Thread-Topic: [PATCH v8 7/7] MAINTAINERS: Move the Freescale QSPI driver to
- the SPI framework
-Thread-Index: AQHUpmuVzeEw6+OFa0Gn1kM8UNj/BQ==
-Date:   Mon, 7 Jan 2019 09:30:10 +0000
-Message-ID: <20190107092823.11188-8-frieder.schrempf@kontron.de>
-References: <20190107092823.11188-1-frieder.schrempf@kontron.de>
-In-Reply-To: <20190107092823.11188-1-frieder.schrempf@kontron.de>
-Accept-Language: de-DE, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.25.9.42]
-x-c2processedorg: 51b406b7-48a2-4d03-b652-521f56ac89f3
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8BIT
-MIME-Version: 1.0
-X-SnT-MailScanner-Information: Please contact the ISP for more information
-X-SnT-MailScanner-ID: 3B80767B8C7.ADD22
-X-SnT-MailScanner: Found to be clean
-X-SnT-MailScanner-SpamCheck: 
-X-SnT-MailScanner-From: frieder.schrempf@kontron.de
-X-SnT-MailScanner-To: akpm@linux-foundation.org, arnd@arndb.de,
-        boris.brezillon@bootlin.com, broonie@kernel.org,
-        computersforpeace@gmail.com, davem@davemloft.net,
-        david.wolfe@nxp.com, dwmw2@infradead.org, fabio.estevam@nxp.com,
-        gregkh@linuxfoundation.org, han.xu@nxp.com,
-        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-spi@vger.kernel.org, marek.vasut@gmail.com,
-        mchehab+samsung@kernel.org, miquel.raynal@bootlin.com,
-        nicolas.ferre@microchip.com, prabhakar.kushwaha@nxp.com,
-        richard@nod.at, shawnguo@kernel.org, yogeshnarayan.gaur@nxp.com
+        Mon, 7 Jan 2019 04:30:20 -0500
+Received: from ramsan ([84.194.111.163])
+        by laurent.telenet-ops.be with bizsmtp
+        id MMWG1z00J3XaVaC01MWGY0; Mon, 07 Jan 2019 10:30:16 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1ggREe-0003Kf-9g; Mon, 07 Jan 2019 10:30:16 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1ggREe-0003rp-84; Mon, 07 Jan 2019 10:30:16 +0100
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+To:     linux-m68k@lists.linux-m68k.org
+Cc:     linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH] m68k/defconfig: Update defconfigs for v5.0-rc1
+Date:   Mon,  7 Jan 2019 10:30:15 +0100
+Message-Id: <20190107093015.14824-1-geert@linux-m68k.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Frieder Schrempf <frieder.schrempf@kontron.de>
+Actual changes:
+    -CONFIG_IOSCHED_DEADLINE=m
+    -CONFIG_BATMAN_ADV_MCAST=y
+    -# CONFIG_SCSI_MQ_DEFAULT is not set
+    +CONFIG_CRYPTO_ADIANTUM=m
+    +CONFIG_CRYPTO_STREEBOG=m
 
-The driver was ported to the SPI framework so it can be used as
-a generic SPI memory driver and not only for SPI NOR.
-Reflect this transition in the MAINTAINERS file.
-
-Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 ---
- MAINTAINERS | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/m68k/configs/amiga_defconfig    | 5 ++---
+ arch/m68k/configs/apollo_defconfig   | 5 ++---
+ arch/m68k/configs/atari_defconfig    | 5 ++---
+ arch/m68k/configs/bvme6000_defconfig | 5 ++---
+ arch/m68k/configs/hp300_defconfig    | 5 ++---
+ arch/m68k/configs/mac_defconfig      | 5 ++---
+ arch/m68k/configs/multi_defconfig    | 5 ++---
+ arch/m68k/configs/mvme147_defconfig  | 5 ++---
+ arch/m68k/configs/mvme16x_defconfig  | 5 ++---
+ arch/m68k/configs/q40_defconfig      | 5 ++---
+ arch/m68k/configs/sun3_defconfig     | 5 ++---
+ arch/m68k/configs/sun3x_defconfig    | 5 ++---
+ 12 files changed, 24 insertions(+), 36 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 32d444476a90..8b6c0d454d7e 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -6090,9 +6090,9 @@ F:	Documentation/devicetree/bindings/ptp/ptp-qoriq.txt
- 
- FREESCALE QUAD SPI DRIVER
- M:	Han Xu <han.xu@nxp.com>
--L:	linux-mtd@lists.infradead.org
-+L:	linux-spi@vger.kernel.org
- S:	Maintained
--F:	drivers/mtd/spi-nor/fsl-quadspi.c
-+F:	drivers/spi/spi-fsl-qspi.c
- 
- FREESCALE QUICC ENGINE LIBRARY
- M:	Qiang Zhao <qiang.zhao@nxp.com>
+diff --git a/arch/m68k/configs/amiga_defconfig b/arch/m68k/configs/amiga_defconfig
+index bfd4648e76e32072..de88ccaeb92ab5fe 100644
+--- a/arch/m68k/configs/amiga_defconfig
++++ b/arch/m68k/configs/amiga_defconfig
+@@ -38,7 +38,6 @@ CONFIG_UNIXWARE_DISKLABEL=y
+ CONFIG_SUN_PARTITION=y
+ # CONFIG_EFI_PARTITION is not set
+ CONFIG_SYSV68_PARTITION=y
+-CONFIG_IOSCHED_DEADLINE=m
+ CONFIG_MQ_IOSCHED_DEADLINE=m
+ CONFIG_MQ_IOSCHED_KYBER=m
+ CONFIG_IOSCHED_BFQ=m
+@@ -304,7 +303,6 @@ CONFIG_DNS_RESOLVER=y
+ CONFIG_BATMAN_ADV=m
+ # CONFIG_BATMAN_ADV_BATMAN_V is not set
+ CONFIG_BATMAN_ADV_NC=y
+-CONFIG_BATMAN_ADV_MCAST=y
+ CONFIG_NETLINK_DIAG=m
+ CONFIG_MPLS=y
+ CONFIG_NET_MPLS_GSO=m
+@@ -342,7 +340,6 @@ CONFIG_BLK_DEV_GAYLE=y
+ CONFIG_BLK_DEV_BUDDHA=y
+ CONFIG_RAID_ATTRS=m
+ CONFIG_SCSI=y
+-# CONFIG_SCSI_MQ_DEFAULT is not set
+ CONFIG_BLK_DEV_SD=y
+ CONFIG_CHR_DEV_ST=m
+ CONFIG_CHR_DEV_OSST=m
+@@ -612,6 +609,7 @@ CONFIG_CRYPTO_LRW=m
+ CONFIG_CRYPTO_OFB=m
+ CONFIG_CRYPTO_PCBC=m
+ CONFIG_CRYPTO_KEYWRAP=m
++CONFIG_CRYPTO_ADIANTUM=m
+ CONFIG_CRYPTO_XCBC=m
+ CONFIG_CRYPTO_VMAC=m
+ CONFIG_CRYPTO_MICHAEL_MIC=m
+@@ -621,6 +619,7 @@ CONFIG_CRYPTO_RMD256=m
+ CONFIG_CRYPTO_RMD320=m
+ CONFIG_CRYPTO_SHA3=m
+ CONFIG_CRYPTO_SM3=m
++CONFIG_CRYPTO_STREEBOG=m
+ CONFIG_CRYPTO_TGR192=m
+ CONFIG_CRYPTO_WP512=m
+ CONFIG_CRYPTO_AES_TI=m
+diff --git a/arch/m68k/configs/apollo_defconfig b/arch/m68k/configs/apollo_defconfig
+index 81112af1e478fe28..87b0f7f3973df2d9 100644
+--- a/arch/m68k/configs/apollo_defconfig
++++ b/arch/m68k/configs/apollo_defconfig
+@@ -34,7 +34,6 @@ CONFIG_UNIXWARE_DISKLABEL=y
+ CONFIG_SUN_PARTITION=y
+ # CONFIG_EFI_PARTITION is not set
+ CONFIG_SYSV68_PARTITION=y
+-CONFIG_IOSCHED_DEADLINE=m
+ CONFIG_MQ_IOSCHED_DEADLINE=m
+ CONFIG_MQ_IOSCHED_KYBER=m
+ CONFIG_IOSCHED_BFQ=m
+@@ -300,7 +299,6 @@ CONFIG_DNS_RESOLVER=y
+ CONFIG_BATMAN_ADV=m
+ # CONFIG_BATMAN_ADV_BATMAN_V is not set
+ CONFIG_BATMAN_ADV_NC=y
+-CONFIG_BATMAN_ADV_MCAST=y
+ CONFIG_NETLINK_DIAG=m
+ CONFIG_MPLS=y
+ CONFIG_NET_MPLS_GSO=m
+@@ -327,7 +325,6 @@ CONFIG_ATA_OVER_ETH=m
+ CONFIG_DUMMY_IRQ=m
+ CONFIG_RAID_ATTRS=m
+ CONFIG_SCSI=y
+-# CONFIG_SCSI_MQ_DEFAULT is not set
+ CONFIG_BLK_DEV_SD=y
+ CONFIG_CHR_DEV_ST=m
+ CONFIG_CHR_DEV_OSST=m
+@@ -569,6 +566,7 @@ CONFIG_CRYPTO_LRW=m
+ CONFIG_CRYPTO_OFB=m
+ CONFIG_CRYPTO_PCBC=m
+ CONFIG_CRYPTO_KEYWRAP=m
++CONFIG_CRYPTO_ADIANTUM=m
+ CONFIG_CRYPTO_XCBC=m
+ CONFIG_CRYPTO_VMAC=m
+ CONFIG_CRYPTO_MICHAEL_MIC=m
+@@ -578,6 +576,7 @@ CONFIG_CRYPTO_RMD256=m
+ CONFIG_CRYPTO_RMD320=m
+ CONFIG_CRYPTO_SHA3=m
+ CONFIG_CRYPTO_SM3=m
++CONFIG_CRYPTO_STREEBOG=m
+ CONFIG_CRYPTO_TGR192=m
+ CONFIG_CRYPTO_WP512=m
+ CONFIG_CRYPTO_AES_TI=m
+diff --git a/arch/m68k/configs/atari_defconfig b/arch/m68k/configs/atari_defconfig
+index 1d0fd7b651c0cec7..07c6c3febff77861 100644
+--- a/arch/m68k/configs/atari_defconfig
++++ b/arch/m68k/configs/atari_defconfig
+@@ -41,7 +41,6 @@ CONFIG_UNIXWARE_DISKLABEL=y
+ CONFIG_SUN_PARTITION=y
+ # CONFIG_EFI_PARTITION is not set
+ CONFIG_SYSV68_PARTITION=y
+-CONFIG_IOSCHED_DEADLINE=m
+ CONFIG_MQ_IOSCHED_DEADLINE=m
+ CONFIG_MQ_IOSCHED_KYBER=m
+ CONFIG_IOSCHED_BFQ=m
+@@ -307,7 +306,6 @@ CONFIG_DNS_RESOLVER=y
+ CONFIG_BATMAN_ADV=m
+ # CONFIG_BATMAN_ADV_BATMAN_V is not set
+ CONFIG_BATMAN_ADV_NC=y
+-CONFIG_BATMAN_ADV_MCAST=y
+ CONFIG_NETLINK_DIAG=m
+ CONFIG_MPLS=y
+ CONFIG_NET_MPLS_GSO=m
+@@ -342,7 +340,6 @@ CONFIG_BLK_DEV_IDECD=y
+ CONFIG_BLK_DEV_FALCON_IDE=y
+ CONFIG_RAID_ATTRS=m
+ CONFIG_SCSI=y
+-# CONFIG_SCSI_MQ_DEFAULT is not set
+ CONFIG_BLK_DEV_SD=y
+ CONFIG_CHR_DEV_ST=m
+ CONFIG_CHR_DEV_OSST=m
+@@ -597,6 +594,7 @@ CONFIG_CRYPTO_LRW=m
+ CONFIG_CRYPTO_OFB=m
+ CONFIG_CRYPTO_PCBC=m
+ CONFIG_CRYPTO_KEYWRAP=m
++CONFIG_CRYPTO_ADIANTUM=m
+ CONFIG_CRYPTO_XCBC=m
+ CONFIG_CRYPTO_VMAC=m
+ CONFIG_CRYPTO_MICHAEL_MIC=m
+@@ -606,6 +604,7 @@ CONFIG_CRYPTO_RMD256=m
+ CONFIG_CRYPTO_RMD320=m
+ CONFIG_CRYPTO_SHA3=m
+ CONFIG_CRYPTO_SM3=m
++CONFIG_CRYPTO_STREEBOG=m
+ CONFIG_CRYPTO_TGR192=m
+ CONFIG_CRYPTO_WP512=m
+ CONFIG_CRYPTO_AES_TI=m
+diff --git a/arch/m68k/configs/bvme6000_defconfig b/arch/m68k/configs/bvme6000_defconfig
+index 3306dff09d3c3638..152f621df393d3ca 100644
+--- a/arch/m68k/configs/bvme6000_defconfig
++++ b/arch/m68k/configs/bvme6000_defconfig
+@@ -31,7 +31,6 @@ CONFIG_SOLARIS_X86_PARTITION=y
+ CONFIG_UNIXWARE_DISKLABEL=y
+ CONFIG_SUN_PARTITION=y
+ # CONFIG_EFI_PARTITION is not set
+-CONFIG_IOSCHED_DEADLINE=m
+ CONFIG_MQ_IOSCHED_DEADLINE=m
+ CONFIG_MQ_IOSCHED_KYBER=m
+ CONFIG_IOSCHED_BFQ=m
+@@ -297,7 +296,6 @@ CONFIG_DNS_RESOLVER=y
+ CONFIG_BATMAN_ADV=m
+ # CONFIG_BATMAN_ADV_BATMAN_V is not set
+ CONFIG_BATMAN_ADV_NC=y
+-CONFIG_BATMAN_ADV_MCAST=y
+ CONFIG_NETLINK_DIAG=m
+ CONFIG_MPLS=y
+ CONFIG_NET_MPLS_GSO=m
+@@ -324,7 +322,6 @@ CONFIG_ATA_OVER_ETH=m
+ CONFIG_DUMMY_IRQ=m
+ CONFIG_RAID_ATTRS=m
+ CONFIG_SCSI=y
+-# CONFIG_SCSI_MQ_DEFAULT is not set
+ CONFIG_BLK_DEV_SD=y
+ CONFIG_CHR_DEV_ST=m
+ CONFIG_CHR_DEV_OSST=m
+@@ -561,6 +558,7 @@ CONFIG_CRYPTO_LRW=m
+ CONFIG_CRYPTO_OFB=m
+ CONFIG_CRYPTO_PCBC=m
+ CONFIG_CRYPTO_KEYWRAP=m
++CONFIG_CRYPTO_ADIANTUM=m
+ CONFIG_CRYPTO_XCBC=m
+ CONFIG_CRYPTO_VMAC=m
+ CONFIG_CRYPTO_MICHAEL_MIC=m
+@@ -570,6 +568,7 @@ CONFIG_CRYPTO_RMD256=m
+ CONFIG_CRYPTO_RMD320=m
+ CONFIG_CRYPTO_SHA3=m
+ CONFIG_CRYPTO_SM3=m
++CONFIG_CRYPTO_STREEBOG=m
+ CONFIG_CRYPTO_TGR192=m
+ CONFIG_CRYPTO_WP512=m
+ CONFIG_CRYPTO_AES_TI=m
+diff --git a/arch/m68k/configs/hp300_defconfig b/arch/m68k/configs/hp300_defconfig
+index c15e15b68d394f28..b450d5bfe2a930c6 100644
+--- a/arch/m68k/configs/hp300_defconfig
++++ b/arch/m68k/configs/hp300_defconfig
+@@ -33,7 +33,6 @@ CONFIG_UNIXWARE_DISKLABEL=y
+ CONFIG_SUN_PARTITION=y
+ # CONFIG_EFI_PARTITION is not set
+ CONFIG_SYSV68_PARTITION=y
+-CONFIG_IOSCHED_DEADLINE=m
+ CONFIG_MQ_IOSCHED_DEADLINE=m
+ CONFIG_MQ_IOSCHED_KYBER=m
+ CONFIG_IOSCHED_BFQ=m
+@@ -299,7 +298,6 @@ CONFIG_DNS_RESOLVER=y
+ CONFIG_BATMAN_ADV=m
+ # CONFIG_BATMAN_ADV_BATMAN_V is not set
+ CONFIG_BATMAN_ADV_NC=y
+-CONFIG_BATMAN_ADV_MCAST=y
+ CONFIG_NETLINK_DIAG=m
+ CONFIG_MPLS=y
+ CONFIG_NET_MPLS_GSO=m
+@@ -326,7 +324,6 @@ CONFIG_ATA_OVER_ETH=m
+ CONFIG_DUMMY_IRQ=m
+ CONFIG_RAID_ATTRS=m
+ CONFIG_SCSI=y
+-# CONFIG_SCSI_MQ_DEFAULT is not set
+ CONFIG_BLK_DEV_SD=y
+ CONFIG_CHR_DEV_ST=m
+ CONFIG_CHR_DEV_OSST=m
+@@ -571,6 +568,7 @@ CONFIG_CRYPTO_LRW=m
+ CONFIG_CRYPTO_OFB=m
+ CONFIG_CRYPTO_PCBC=m
+ CONFIG_CRYPTO_KEYWRAP=m
++CONFIG_CRYPTO_ADIANTUM=m
+ CONFIG_CRYPTO_XCBC=m
+ CONFIG_CRYPTO_VMAC=m
+ CONFIG_CRYPTO_MICHAEL_MIC=m
+@@ -580,6 +578,7 @@ CONFIG_CRYPTO_RMD256=m
+ CONFIG_CRYPTO_RMD320=m
+ CONFIG_CRYPTO_SHA3=m
+ CONFIG_CRYPTO_SM3=m
++CONFIG_CRYPTO_STREEBOG=m
+ CONFIG_CRYPTO_TGR192=m
+ CONFIG_CRYPTO_WP512=m
+ CONFIG_CRYPTO_AES_TI=m
+diff --git a/arch/m68k/configs/mac_defconfig b/arch/m68k/configs/mac_defconfig
+index 1a0ce0d11267cf65..3777ed55064cd283 100644
+--- a/arch/m68k/configs/mac_defconfig
++++ b/arch/m68k/configs/mac_defconfig
+@@ -32,7 +32,6 @@ CONFIG_UNIXWARE_DISKLABEL=y
+ CONFIG_SUN_PARTITION=y
+ # CONFIG_EFI_PARTITION is not set
+ CONFIG_SYSV68_PARTITION=y
+-CONFIG_IOSCHED_DEADLINE=m
+ CONFIG_MQ_IOSCHED_DEADLINE=m
+ CONFIG_MQ_IOSCHED_KYBER=m
+ CONFIG_IOSCHED_BFQ=m
+@@ -301,7 +300,6 @@ CONFIG_DNS_RESOLVER=y
+ CONFIG_BATMAN_ADV=m
+ # CONFIG_BATMAN_ADV_BATMAN_V is not set
+ CONFIG_BATMAN_ADV_NC=y
+-CONFIG_BATMAN_ADV_MCAST=y
+ CONFIG_NETLINK_DIAG=m
+ CONFIG_MPLS=y
+ CONFIG_NET_MPLS_GSO=m
+@@ -333,7 +331,6 @@ CONFIG_BLK_DEV_IDECD=y
+ CONFIG_BLK_DEV_MAC_IDE=y
+ CONFIG_RAID_ATTRS=m
+ CONFIG_SCSI=y
+-# CONFIG_SCSI_MQ_DEFAULT is not set
+ CONFIG_BLK_DEV_SD=y
+ CONFIG_CHR_DEV_ST=m
+ CONFIG_CHR_DEV_OSST=m
+@@ -593,6 +590,7 @@ CONFIG_CRYPTO_LRW=m
+ CONFIG_CRYPTO_OFB=m
+ CONFIG_CRYPTO_PCBC=m
+ CONFIG_CRYPTO_KEYWRAP=m
++CONFIG_CRYPTO_ADIANTUM=m
+ CONFIG_CRYPTO_XCBC=m
+ CONFIG_CRYPTO_VMAC=m
+ CONFIG_CRYPTO_MICHAEL_MIC=m
+@@ -602,6 +600,7 @@ CONFIG_CRYPTO_RMD256=m
+ CONFIG_CRYPTO_RMD320=m
+ CONFIG_CRYPTO_SHA3=m
+ CONFIG_CRYPTO_SM3=m
++CONFIG_CRYPTO_STREEBOG=m
+ CONFIG_CRYPTO_TGR192=m
+ CONFIG_CRYPTO_WP512=m
+ CONFIG_CRYPTO_AES_TI=m
+diff --git a/arch/m68k/configs/multi_defconfig b/arch/m68k/configs/multi_defconfig
+index 9758839b74bde7a0..2d7e1c4330671c51 100644
+--- a/arch/m68k/configs/multi_defconfig
++++ b/arch/m68k/configs/multi_defconfig
+@@ -52,7 +52,6 @@ CONFIG_MINIX_SUBPARTITION=y
+ CONFIG_SOLARIS_X86_PARTITION=y
+ CONFIG_UNIXWARE_DISKLABEL=y
+ # CONFIG_EFI_PARTITION is not set
+-CONFIG_IOSCHED_DEADLINE=m
+ CONFIG_MQ_IOSCHED_DEADLINE=m
+ CONFIG_MQ_IOSCHED_KYBER=m
+ CONFIG_IOSCHED_BFQ=m
+@@ -321,7 +320,6 @@ CONFIG_DNS_RESOLVER=y
+ CONFIG_BATMAN_ADV=m
+ # CONFIG_BATMAN_ADV_BATMAN_V is not set
+ CONFIG_BATMAN_ADV_NC=y
+-CONFIG_BATMAN_ADV_MCAST=y
+ CONFIG_NETLINK_DIAG=m
+ CONFIG_MPLS=y
+ CONFIG_NET_MPLS_GSO=m
+@@ -366,7 +364,6 @@ CONFIG_BLK_DEV_MAC_IDE=y
+ CONFIG_BLK_DEV_Q40IDE=y
+ CONFIG_RAID_ATTRS=m
+ CONFIG_SCSI=y
+-# CONFIG_SCSI_MQ_DEFAULT is not set
+ CONFIG_BLK_DEV_SD=y
+ CONFIG_CHR_DEV_ST=m
+ CONFIG_CHR_DEV_OSST=m
+@@ -675,6 +672,7 @@ CONFIG_CRYPTO_LRW=m
+ CONFIG_CRYPTO_OFB=m
+ CONFIG_CRYPTO_PCBC=m
+ CONFIG_CRYPTO_KEYWRAP=m
++CONFIG_CRYPTO_ADIANTUM=m
+ CONFIG_CRYPTO_XCBC=m
+ CONFIG_CRYPTO_VMAC=m
+ CONFIG_CRYPTO_MICHAEL_MIC=m
+@@ -684,6 +682,7 @@ CONFIG_CRYPTO_RMD256=m
+ CONFIG_CRYPTO_RMD320=m
+ CONFIG_CRYPTO_SHA3=m
+ CONFIG_CRYPTO_SM3=m
++CONFIG_CRYPTO_STREEBOG=m
+ CONFIG_CRYPTO_TGR192=m
+ CONFIG_CRYPTO_WP512=m
+ CONFIG_CRYPTO_AES_TI=m
+diff --git a/arch/m68k/configs/mvme147_defconfig b/arch/m68k/configs/mvme147_defconfig
+index f5526731ccdba655..0be202bb4553d5ac 100644
+--- a/arch/m68k/configs/mvme147_defconfig
++++ b/arch/m68k/configs/mvme147_defconfig
+@@ -30,7 +30,6 @@ CONFIG_SOLARIS_X86_PARTITION=y
+ CONFIG_UNIXWARE_DISKLABEL=y
+ CONFIG_SUN_PARTITION=y
+ # CONFIG_EFI_PARTITION is not set
+-CONFIG_IOSCHED_DEADLINE=m
+ CONFIG_MQ_IOSCHED_DEADLINE=m
+ CONFIG_MQ_IOSCHED_KYBER=m
+ CONFIG_IOSCHED_BFQ=m
+@@ -296,7 +295,6 @@ CONFIG_DNS_RESOLVER=y
+ CONFIG_BATMAN_ADV=m
+ # CONFIG_BATMAN_ADV_BATMAN_V is not set
+ CONFIG_BATMAN_ADV_NC=y
+-CONFIG_BATMAN_ADV_MCAST=y
+ CONFIG_NETLINK_DIAG=m
+ CONFIG_MPLS=y
+ CONFIG_NET_MPLS_GSO=m
+@@ -323,7 +321,6 @@ CONFIG_ATA_OVER_ETH=m
+ CONFIG_DUMMY_IRQ=m
+ CONFIG_RAID_ATTRS=m
+ CONFIG_SCSI=y
+-# CONFIG_SCSI_MQ_DEFAULT is not set
+ CONFIG_BLK_DEV_SD=y
+ CONFIG_CHR_DEV_ST=m
+ CONFIG_CHR_DEV_OSST=m
+@@ -561,6 +558,7 @@ CONFIG_CRYPTO_LRW=m
+ CONFIG_CRYPTO_OFB=m
+ CONFIG_CRYPTO_PCBC=m
+ CONFIG_CRYPTO_KEYWRAP=m
++CONFIG_CRYPTO_ADIANTUM=m
+ CONFIG_CRYPTO_XCBC=m
+ CONFIG_CRYPTO_VMAC=m
+ CONFIG_CRYPTO_MICHAEL_MIC=m
+@@ -570,6 +568,7 @@ CONFIG_CRYPTO_RMD256=m
+ CONFIG_CRYPTO_RMD320=m
+ CONFIG_CRYPTO_SHA3=m
+ CONFIG_CRYPTO_SM3=m
++CONFIG_CRYPTO_STREEBOG=m
+ CONFIG_CRYPTO_TGR192=m
+ CONFIG_CRYPTO_WP512=m
+ CONFIG_CRYPTO_AES_TI=m
+diff --git a/arch/m68k/configs/mvme16x_defconfig b/arch/m68k/configs/mvme16x_defconfig
+index 5db58ff4b1074129..c5cd30c455135193 100644
+--- a/arch/m68k/configs/mvme16x_defconfig
++++ b/arch/m68k/configs/mvme16x_defconfig
+@@ -31,7 +31,6 @@ CONFIG_SOLARIS_X86_PARTITION=y
+ CONFIG_UNIXWARE_DISKLABEL=y
+ CONFIG_SUN_PARTITION=y
+ # CONFIG_EFI_PARTITION is not set
+-CONFIG_IOSCHED_DEADLINE=m
+ CONFIG_MQ_IOSCHED_DEADLINE=m
+ CONFIG_MQ_IOSCHED_KYBER=m
+ CONFIG_IOSCHED_BFQ=m
+@@ -297,7 +296,6 @@ CONFIG_DNS_RESOLVER=y
+ CONFIG_BATMAN_ADV=m
+ # CONFIG_BATMAN_ADV_BATMAN_V is not set
+ CONFIG_BATMAN_ADV_NC=y
+-CONFIG_BATMAN_ADV_MCAST=y
+ CONFIG_NETLINK_DIAG=m
+ CONFIG_MPLS=y
+ CONFIG_NET_MPLS_GSO=m
+@@ -324,7 +322,6 @@ CONFIG_ATA_OVER_ETH=m
+ CONFIG_DUMMY_IRQ=m
+ CONFIG_RAID_ATTRS=m
+ CONFIG_SCSI=y
+-# CONFIG_SCSI_MQ_DEFAULT is not set
+ CONFIG_BLK_DEV_SD=y
+ CONFIG_CHR_DEV_ST=m
+ CONFIG_CHR_DEV_OSST=m
+@@ -561,6 +558,7 @@ CONFIG_CRYPTO_LRW=m
+ CONFIG_CRYPTO_OFB=m
+ CONFIG_CRYPTO_PCBC=m
+ CONFIG_CRYPTO_KEYWRAP=m
++CONFIG_CRYPTO_ADIANTUM=m
+ CONFIG_CRYPTO_XCBC=m
+ CONFIG_CRYPTO_VMAC=m
+ CONFIG_CRYPTO_MICHAEL_MIC=m
+@@ -570,6 +568,7 @@ CONFIG_CRYPTO_RMD256=m
+ CONFIG_CRYPTO_RMD320=m
+ CONFIG_CRYPTO_SHA3=m
+ CONFIG_CRYPTO_SM3=m
++CONFIG_CRYPTO_STREEBOG=m
+ CONFIG_CRYPTO_TGR192=m
+ CONFIG_CRYPTO_WP512=m
+ CONFIG_CRYPTO_AES_TI=m
+diff --git a/arch/m68k/configs/q40_defconfig b/arch/m68k/configs/q40_defconfig
+index b645230da1287a77..fbfda56bd3cb9e3b 100644
+--- a/arch/m68k/configs/q40_defconfig
++++ b/arch/m68k/configs/q40_defconfig
+@@ -32,7 +32,6 @@ CONFIG_UNIXWARE_DISKLABEL=y
+ CONFIG_SUN_PARTITION=y
+ # CONFIG_EFI_PARTITION is not set
+ CONFIG_SYSV68_PARTITION=y
+-CONFIG_IOSCHED_DEADLINE=m
+ CONFIG_MQ_IOSCHED_DEADLINE=m
+ CONFIG_MQ_IOSCHED_KYBER=m
+ CONFIG_IOSCHED_BFQ=m
+@@ -298,7 +297,6 @@ CONFIG_DNS_RESOLVER=y
+ CONFIG_BATMAN_ADV=m
+ # CONFIG_BATMAN_ADV_BATMAN_V is not set
+ CONFIG_BATMAN_ADV_NC=y
+-CONFIG_BATMAN_ADV_MCAST=y
+ CONFIG_NETLINK_DIAG=m
+ CONFIG_MPLS=y
+ CONFIG_NET_MPLS_GSO=m
+@@ -332,7 +330,6 @@ CONFIG_BLK_DEV_IDECD=y
+ CONFIG_BLK_DEV_Q40IDE=y
+ CONFIG_RAID_ATTRS=m
+ CONFIG_SCSI=y
+-# CONFIG_SCSI_MQ_DEFAULT is not set
+ CONFIG_BLK_DEV_SD=y
+ CONFIG_CHR_DEV_ST=m
+ CONFIG_CHR_DEV_OSST=m
+@@ -584,6 +581,7 @@ CONFIG_CRYPTO_LRW=m
+ CONFIG_CRYPTO_OFB=m
+ CONFIG_CRYPTO_PCBC=m
+ CONFIG_CRYPTO_KEYWRAP=m
++CONFIG_CRYPTO_ADIANTUM=m
+ CONFIG_CRYPTO_XCBC=m
+ CONFIG_CRYPTO_VMAC=m
+ CONFIG_CRYPTO_MICHAEL_MIC=m
+@@ -593,6 +591,7 @@ CONFIG_CRYPTO_RMD256=m
+ CONFIG_CRYPTO_RMD320=m
+ CONFIG_CRYPTO_SHA3=m
+ CONFIG_CRYPTO_SM3=m
++CONFIG_CRYPTO_STREEBOG=m
+ CONFIG_CRYPTO_TGR192=m
+ CONFIG_CRYPTO_WP512=m
+ CONFIG_CRYPTO_AES_TI=m
+diff --git a/arch/m68k/configs/sun3_defconfig b/arch/m68k/configs/sun3_defconfig
+index 4afe2100947edcce..49b3a38a08c3334b 100644
+--- a/arch/m68k/configs/sun3_defconfig
++++ b/arch/m68k/configs/sun3_defconfig
+@@ -28,7 +28,6 @@ CONFIG_SOLARIS_X86_PARTITION=y
+ CONFIG_UNIXWARE_DISKLABEL=y
+ # CONFIG_EFI_PARTITION is not set
+ CONFIG_SYSV68_PARTITION=y
+-CONFIG_IOSCHED_DEADLINE=m
+ CONFIG_MQ_IOSCHED_DEADLINE=m
+ CONFIG_MQ_IOSCHED_KYBER=m
+ CONFIG_IOSCHED_BFQ=m
+@@ -294,7 +293,6 @@ CONFIG_DNS_RESOLVER=y
+ CONFIG_BATMAN_ADV=m
+ # CONFIG_BATMAN_ADV_BATMAN_V is not set
+ CONFIG_BATMAN_ADV_NC=y
+-CONFIG_BATMAN_ADV_MCAST=y
+ CONFIG_NETLINK_DIAG=m
+ CONFIG_MPLS=y
+ CONFIG_NET_MPLS_GSO=m
+@@ -321,7 +319,6 @@ CONFIG_ATA_OVER_ETH=m
+ CONFIG_DUMMY_IRQ=m
+ CONFIG_RAID_ATTRS=m
+ CONFIG_SCSI=y
+-# CONFIG_SCSI_MQ_DEFAULT is not set
+ CONFIG_BLK_DEV_SD=y
+ CONFIG_CHR_DEV_ST=m
+ CONFIG_CHR_DEV_OSST=m
+@@ -563,6 +560,7 @@ CONFIG_CRYPTO_LRW=m
+ CONFIG_CRYPTO_OFB=m
+ CONFIG_CRYPTO_PCBC=m
+ CONFIG_CRYPTO_KEYWRAP=m
++CONFIG_CRYPTO_ADIANTUM=m
+ CONFIG_CRYPTO_XCBC=m
+ CONFIG_CRYPTO_VMAC=m
+ CONFIG_CRYPTO_MICHAEL_MIC=m
+@@ -572,6 +570,7 @@ CONFIG_CRYPTO_RMD256=m
+ CONFIG_CRYPTO_RMD320=m
+ CONFIG_CRYPTO_SHA3=m
+ CONFIG_CRYPTO_SM3=m
++CONFIG_CRYPTO_STREEBOG=m
+ CONFIG_CRYPTO_TGR192=m
+ CONFIG_CRYPTO_WP512=m
+ CONFIG_CRYPTO_AES_TI=m
+diff --git a/arch/m68k/configs/sun3x_defconfig b/arch/m68k/configs/sun3x_defconfig
+index bd22893d0dc34bc0..d8acd36e45b110dc 100644
+--- a/arch/m68k/configs/sun3x_defconfig
++++ b/arch/m68k/configs/sun3x_defconfig
+@@ -28,7 +28,6 @@ CONFIG_SOLARIS_X86_PARTITION=y
+ CONFIG_UNIXWARE_DISKLABEL=y
+ # CONFIG_EFI_PARTITION is not set
+ CONFIG_SYSV68_PARTITION=y
+-CONFIG_IOSCHED_DEADLINE=m
+ CONFIG_MQ_IOSCHED_DEADLINE=m
+ CONFIG_MQ_IOSCHED_KYBER=m
+ CONFIG_IOSCHED_BFQ=m
+@@ -294,7 +293,6 @@ CONFIG_DNS_RESOLVER=y
+ CONFIG_BATMAN_ADV=m
+ # CONFIG_BATMAN_ADV_BATMAN_V is not set
+ CONFIG_BATMAN_ADV_NC=y
+-CONFIG_BATMAN_ADV_MCAST=y
+ CONFIG_NETLINK_DIAG=m
+ CONFIG_MPLS=y
+ CONFIG_NET_MPLS_GSO=m
+@@ -321,7 +319,6 @@ CONFIG_ATA_OVER_ETH=m
+ CONFIG_DUMMY_IRQ=m
+ CONFIG_RAID_ATTRS=m
+ CONFIG_SCSI=y
+-# CONFIG_SCSI_MQ_DEFAULT is not set
+ CONFIG_BLK_DEV_SD=y
+ CONFIG_CHR_DEV_ST=m
+ CONFIG_CHR_DEV_OSST=m
+@@ -563,6 +560,7 @@ CONFIG_CRYPTO_LRW=m
+ CONFIG_CRYPTO_OFB=m
+ CONFIG_CRYPTO_PCBC=m
+ CONFIG_CRYPTO_KEYWRAP=m
++CONFIG_CRYPTO_ADIANTUM=m
+ CONFIG_CRYPTO_XCBC=m
+ CONFIG_CRYPTO_VMAC=m
+ CONFIG_CRYPTO_MICHAEL_MIC=m
+@@ -572,6 +570,7 @@ CONFIG_CRYPTO_RMD256=m
+ CONFIG_CRYPTO_RMD320=m
+ CONFIG_CRYPTO_SHA3=m
+ CONFIG_CRYPTO_SM3=m
++CONFIG_CRYPTO_STREEBOG=m
+ CONFIG_CRYPTO_TGR192=m
+ CONFIG_CRYPTO_WP512=m
+ CONFIG_CRYPTO_AES_TI=m
 -- 
 2.17.1
+
