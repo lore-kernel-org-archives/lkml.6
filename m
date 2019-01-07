@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-16.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44450C43444
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:58:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 011C3C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:58:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1063D206B7
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:58:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5F08206B7
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:58:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546887532;
-	bh=DzLkuoqA4eenTNgudWyY0yRyowiyW2Icco7Hbe1eR8k=;
+	s=default; t=1546887534;
+	bh=/I0TvypM2rGP+s4TWu8tiF/MP1pQF2U1qzL9LsgdJvs=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=qLSP0+XIH+saEN7TDe6KPWt+LKWYeASZsOCiAnJHyaoe203WKwd4UyYiSUz9qOHIj
-	 u8bdF5FkTq3sqSSbI7uN3Ci51MsEn++89U/2d+G2/c9Ogfw6rtVJmWiI3W2tgkcM6o
-	 dXPSjaXJLKRtQyGtQwZ1hZdA/Gwe4FzzmJLRjO+w=
+	b=N/tDCfLctgnfTE6uyqRkR0RLQJT2IM/DICpubd7OBNERgVqgmHi/M6TDSH+E579py
+	 1CIrI7q4GG5lZR9zKT62Bcpew/26pfwyl/RqObUgPLmwve+n99zZieSfntmmX+WED+
+	 DWBeMFZ2ld126EBf72WnDPFwllWbAxr7sogtLbUM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728857AbfAGS6v (ORCPT
+        id S1728883AbfAGS6x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 13:58:51 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41942 "EHLO
+        Mon, 7 Jan 2019 13:58:53 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42006 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727121AbfAGS6r (ORCPT
+        with ESMTP id S1728814AbfAGS6s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 13:58:47 -0500
+        Mon, 7 Jan 2019 13:58:48 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=OsraQZruK+nLQRqmON7tNZMmn5CJYJe/V58Kd3lBLOQ=; b=TIWXow8NzC/s
-        IqyRKhoYjJuROOnL1P8Fz/fXwAChcs+BpX1obfLQPQaO3VW8D/V5D1YUJzsHGJMVS8+/Fof0gJ4qq
-        U+VR/sHN7S3TRE0YObQDBRTzI5bRxJRfX1WACTR/IJBMkCbe0ee8M2W2ZgG2xca/qfSXpCHSxdwlR
-        CrIVU=;
+        List-Archive; bh=WNQ0h9AF/1QFGYt+jhZRU4YGXb3cm+56ukOe3w6oCI0=; b=nu/przJAyjsk
+        gVE204ZPfpvxNdlfoqG0xIlzCGO9BEb0GGz5bXLSPtSvwAMN666eHB1oeu+/X1Gq4Tz3Gx8eKsflG
+        R/LefAVYjzKOs9toaHgjMRk1m1iaEZMSBAXgnnY8eOWHULCPFdlgpNwRCxCQYvlbJn+Ybdt1HlZEt
+        fIFkg=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gga6m-0007ph-Qb; Mon, 07 Jan 2019 18:58:44 +0000
+        id 1gga6o-0007pq-H4; Mon, 07 Jan 2019 18:58:46 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 6D00D1127491; Mon,  7 Jan 2019 18:58:44 +0000 (GMT)
+        id 1ABC31127491; Mon,  7 Jan 2019 18:58:46 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
 To:     Axel Lin <axel.lin@ingics.com>
 Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Applied "regulator: act8945a: Use rdev_get_id() to access id of regulator" to the regulator tree
+Subject: Applied "regulator: bcm590xx: Fix .enable_reg for BCM590XX_REG_VSR" to the regulator tree
 In-Reply-To: 
 X-Patchwork-Hint: ignore
-Message-Id: <20190107185844.6D00D1127491@debutante.sirena.org.uk>
-Date:   Mon,  7 Jan 2019 18:58:44 +0000 (GMT)
+Message-Id: <20190107185846.1ABC31127491@debutante.sirena.org.uk>
+Date:   Mon,  7 Jan 2019 18:58:46 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -59,7 +59,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: act8945a: Use rdev_get_id() to access id of regulator
+   regulator: bcm590xx: Fix .enable_reg for BCM590XX_REG_VSR
 
 has been applied to the regulator tree at
 
@@ -84,66 +84,37 @@ to this mail.
 Thanks,
 Mark
 
-From 557ce9d755d5ffc735f03a9a2ce2f1b4a3b23bd6 Mon Sep 17 00:00:00 2001
+From d6afa2bed00486767fd5f3255cc89c05ccb70c0a Mon Sep 17 00:00:00 2001
 From: Axel Lin <axel.lin@ingics.com>
-Date: Fri, 4 Jan 2019 22:42:36 +0800
-Subject: [PATCH] regulator: act8945a: Use rdev_get_id() to access id of
- regulator
+Date: Sat, 5 Jan 2019 11:28:17 +0800
+Subject: [PATCH] regulator: bcm590xx: Fix .enable_reg for BCM590XX_REG_VSR
 
-Use rdev_get_id() instead of directly access rdev->desc->id.
+Current implementation missed the case BCM590XX_REG_VSR, so
+bcm590xx_get_enable_register() returns 0 when id is BCM590XX_REG_VSR.
 
 Signed-off-by: Axel Lin <axel.lin@ingics.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/act8945a-regulator.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ drivers/regulator/bcm590xx-regulator.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/regulator/act8945a-regulator.c b/drivers/regulator/act8945a-regulator.c
-index 603db77723b6..caa61d306a69 100644
---- a/drivers/regulator/act8945a-regulator.c
-+++ b/drivers/regulator/act8945a-regulator.c
-@@ -87,7 +87,8 @@ static const struct regulator_linear_range act8945a_voltage_ranges[] = {
- static int act8945a_set_suspend_state(struct regulator_dev *rdev, bool enable)
- {
- 	struct regmap *regmap = rdev->regmap;
--	int id = rdev->desc->id, reg, val;
-+	int id = rdev_get_id(rdev);
-+	int reg, val;
+diff --git a/drivers/regulator/bcm590xx-regulator.c b/drivers/regulator/bcm590xx-regulator.c
+index 92d6d7b10cf7..e49c0a7d5dd5 100644
+--- a/drivers/regulator/bcm590xx-regulator.c
++++ b/drivers/regulator/bcm590xx-regulator.c
+@@ -242,8 +242,12 @@ static int bcm590xx_get_enable_register(int id)
+ 		case BCM590XX_REG_SDSR2:
+ 			reg = BCM590XX_SDSR2PMCTRL1;
+ 			break;
++		case BCM590XX_REG_VSR:
++			reg = BCM590XX_VSRPMCTRL1;
++			break;
+ 		case BCM590XX_REG_VBUS:
+ 			reg = BCM590XX_OTG_CTRL;
++			break;
+ 		}
  
- 	switch (id) {
- 	case ACT8945A_ID_DCDC1:
-@@ -159,7 +160,7 @@ static int act8945a_set_mode(struct regulator_dev *rdev, unsigned int mode)
- {
- 	struct act8945a_pmic *act8945a = rdev_get_drvdata(rdev);
- 	struct regmap *regmap = rdev->regmap;
--	int id = rdev->desc->id;
-+	int id = rdev_get_id(rdev);
- 	int reg, ret, val = 0;
  
- 	switch (id) {
-@@ -190,11 +191,11 @@ static int act8945a_set_mode(struct regulator_dev *rdev, unsigned int mode)
- 
- 	switch (mode) {
- 	case REGULATOR_MODE_STANDBY:
--		if (rdev->desc->id > ACT8945A_ID_DCDC3)
-+		if (id > ACT8945A_ID_DCDC3)
- 			val = BIT(5);
- 		break;
- 	case REGULATOR_MODE_NORMAL:
--		if (rdev->desc->id <= ACT8945A_ID_DCDC3)
-+		if (id <= ACT8945A_ID_DCDC3)
- 			val = BIT(5);
- 		break;
- 	default:
-@@ -213,7 +214,7 @@ static int act8945a_set_mode(struct regulator_dev *rdev, unsigned int mode)
- static unsigned int act8945a_get_mode(struct regulator_dev *rdev)
- {
- 	struct act8945a_pmic *act8945a = rdev_get_drvdata(rdev);
--	int id = rdev->desc->id;
-+	int id = rdev_get_id(rdev);
- 
- 	if (id < ACT8945A_ID_DCDC1 || id >= ACT8945A_ID_MAX)
- 		return -EINVAL;
 -- 
 2.20.1
 
