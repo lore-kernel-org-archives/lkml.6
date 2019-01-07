@@ -4,50 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A57E5C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:10:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 931E5C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:10:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CB562147C
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:10:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 65B152089F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:10:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546866641;
-	bh=qp/jlSUKY+kembumNDz8a/yENm8nZuTUjLFNzD48Mhc=;
+	s=default; t=1546866653;
+	bh=rIBEgWswjgMhHQC91tJ3AHwqvZWhv7gV07Jh5pf7MPw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=o41Fp4o7jTS8e9jFu97n4C+f6Yk04OY5YOmtujGCCa+UldgYt+4fIciZMv97O5d7u
-	 UG06Gi/7zHqZYczNOd3WosQ7FZ9pdNoXXIztA2tCo0lXAHFxcwy7nvlhQ+UlfsfBGS
-	 sONfnPI0bWivzqaznHu0CqwK1fHTg3FWr5G8BQCc=
+	b=wI3Ly/SpzXnAfzXEOROv6xaPXu/PbV48/ryvImyDKjPFAhCRxk+b1UZvtQ3DkUCCU
+	 Y4nVfgXfW7fZigYMAzrDzI6dBx8yfrITfTu1LPGeAtmS2wi6cgm/jyPCsyFLj5C7JD
+	 nne0xBDl6JTrhY3f4nJoUBQNuAGeGIvklYqZ+RUY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732007AbfAGNJV (ORCPT
+        id S1731594AbfAGNKw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:09:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56208 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:10:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55996 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731801AbfAGNJK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:09:10 -0500
+        id S1730973AbfAGNIz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:08:55 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 181B82089F;
-        Mon,  7 Jan 2019 13:09:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 788DA21855;
+        Mon,  7 Jan 2019 13:08:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546866549;
-        bh=qp/jlSUKY+kembumNDz8a/yENm8nZuTUjLFNzD48Mhc=;
+        s=default; t=1546866535;
+        bh=rIBEgWswjgMhHQC91tJ3AHwqvZWhv7gV07Jh5pf7MPw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tXypJ0+npXWc072Qs1XkwaSsUXLtV5j9SkjMA973+fB4onrv+zXPc9A3Ft9pETIxA
-         blRghbh+JN8MhGBMFeb61JBc7PDJmLVbII+lxWdX4FdFwE19jk1NWHN3leVoiaRoy8
-         OfQKzsg1RL2eFRblpU4jAGoF57tZYfbHtlyorMHo=
+        b=mxpDITJtczfbrxOLdFEdPKyds20o9y6GAlmG+xqiVNeuIODx4CKyYarR9WORWrxuL
+         nL0txPUGET3/aj4XZbXKtprrwzkkeYPTIOzzobgcd1lBkBZx6zbQqp07h7t7j3H43S
+         KrVy43D4btZH0xr4s+4ABtS6yvUIxvKBQp0hOalI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
+        stable@vger.kernel.org,
+        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
+        Eric Dumazet <edumazet@google.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 20/71] vhost: make sure used idx is seen before log in vhost_add_used_n()
-Date:   Mon,  7 Jan 2019 13:32:49 +0100
-Message-Id: <20190107105333.956136898@linuxfoundation.org>
+Subject: [PATCH 4.9 25/71] gro_cell: add napi_disable in gro_cells_destroy
+Date:   Mon,  7 Jan 2019 13:32:54 +0100
+Message-Id: <20190107105334.215497628@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107105330.280153213@linuxfoundation.org>
 References: <20190107105330.280153213@linuxfoundation.org>
@@ -66,33 +67,77 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jason Wang <jasowang@redhat.com>
+From: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
 
-[ Upstream commit 841df922417eb82c835e93d4b93eb6a68c99d599 ]
+[ Upstream commit 8e1da73acded4751a93d4166458a7e640f37d26c ]
 
-We miss a write barrier that guarantees used idx is updated and seen
-before log. This will let userspace sync and copy used ring before
-used idx is update. Fix this by adding a barrier before log_write().
+Add napi_disable routine in gro_cells_destroy since starting from
+commit c42858eaf492 ("gro_cells: remove spinlock protecting receive
+queues") gro_cell_poll and gro_cells_destroy can run concurrently on
+napi_skbs list producing a kernel Oops if the tunnel interface is
+removed while gro_cell_poll is running. The following Oops has been
+triggered removing a vxlan device while the interface is receiving
+traffic
 
-Fixes: 8dd014adfea6f ("vhost-net: mergeable buffers support")
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
-Signed-off-by: Jason Wang <jasowang@redhat.com>
+[ 5628.948853] BUG: unable to handle kernel NULL pointer dereference at 0000000000000008
+[ 5628.949981] PGD 0 P4D 0
+[ 5628.950308] Oops: 0002 [#1] SMP PTI
+[ 5628.950748] CPU: 0 PID: 9 Comm: ksoftirqd/0 Not tainted 4.20.0-rc6+ #41
+[ 5628.952940] RIP: 0010:gro_cell_poll+0x49/0x80
+[ 5628.955615] RSP: 0018:ffffc9000004fdd8 EFLAGS: 00010202
+[ 5628.956250] RAX: 0000000000000000 RBX: ffffe8ffffc08150 RCX: 0000000000000000
+[ 5628.957102] RDX: 0000000000000000 RSI: ffff88802356bf00 RDI: ffffe8ffffc08150
+[ 5628.957940] RBP: 0000000000000026 R08: 0000000000000000 R09: 0000000000000000
+[ 5628.958803] R10: 0000000000000001 R11: 0000000000000000 R12: 0000000000000040
+[ 5628.959661] R13: ffffe8ffffc08100 R14: 0000000000000000 R15: 0000000000000040
+[ 5628.960682] FS:  0000000000000000(0000) GS:ffff88803ea00000(0000) knlGS:0000000000000000
+[ 5628.961616] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[ 5628.962359] CR2: 0000000000000008 CR3: 000000000221c000 CR4: 00000000000006b0
+[ 5628.963188] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[ 5628.964034] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[ 5628.964871] Call Trace:
+[ 5628.965179]  net_rx_action+0xf0/0x380
+[ 5628.965637]  __do_softirq+0xc7/0x431
+[ 5628.966510]  run_ksoftirqd+0x24/0x30
+[ 5628.966957]  smpboot_thread_fn+0xc5/0x160
+[ 5628.967436]  kthread+0x113/0x130
+[ 5628.968283]  ret_from_fork+0x3a/0x50
+[ 5628.968721] Modules linked in:
+[ 5628.969099] CR2: 0000000000000008
+[ 5628.969510] ---[ end trace 9d9dedc7181661fe ]---
+[ 5628.970073] RIP: 0010:gro_cell_poll+0x49/0x80
+[ 5628.972965] RSP: 0018:ffffc9000004fdd8 EFLAGS: 00010202
+[ 5628.973611] RAX: 0000000000000000 RBX: ffffe8ffffc08150 RCX: 0000000000000000
+[ 5628.974504] RDX: 0000000000000000 RSI: ffff88802356bf00 RDI: ffffe8ffffc08150
+[ 5628.975462] RBP: 0000000000000026 R08: 0000000000000000 R09: 0000000000000000
+[ 5628.976413] R10: 0000000000000001 R11: 0000000000000000 R12: 0000000000000040
+[ 5628.977375] R13: ffffe8ffffc08100 R14: 0000000000000000 R15: 0000000000000040
+[ 5628.978296] FS:  0000000000000000(0000) GS:ffff88803ea00000(0000) knlGS:0000000000000000
+[ 5628.979327] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[ 5628.980044] CR2: 0000000000000008 CR3: 000000000221c000 CR4: 00000000000006b0
+[ 5628.980929] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[ 5628.981736] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[ 5628.982409] Kernel panic - not syncing: Fatal exception in interrupt
+[ 5628.983307] Kernel Offset: disabled
+
+Fixes: c42858eaf492 ("gro_cells: remove spinlock protecting receive queues")
+Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
+Acked-by: Eric Dumazet <edumazet@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/vhost/vhost.c |    2 ++
- 1 file changed, 2 insertions(+)
+ include/net/gro_cells.h |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/vhost/vhost.c
-+++ b/drivers/vhost/vhost.c
-@@ -2145,6 +2145,8 @@ int vhost_add_used_n(struct vhost_virtqu
- 		return -EFAULT;
+--- a/include/net/gro_cells.h
++++ b/include/net/gro_cells.h
+@@ -86,6 +86,7 @@ static inline void gro_cells_destroy(str
+ 	for_each_possible_cpu(i) {
+ 		struct gro_cell *cell = per_cpu_ptr(gcells->cells, i);
+ 
++		napi_disable(&cell->napi);
+ 		netif_napi_del(&cell->napi);
+ 		__skb_queue_purge(&cell->napi_skbs);
  	}
- 	if (unlikely(vq->log_used)) {
-+		/* Make sure used idx is seen before log. */
-+		smp_wmb();
- 		/* Log used index update. */
- 		log_write(vq->log_base,
- 			  vq->log_addr + offsetof(struct vring_used, idx),
 
 
