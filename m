@@ -4,53 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8050AC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:19:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE3CDC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:19:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B1EA21736
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:19:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8BAD721736
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:19:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546867145;
-	bh=vIDXWmRUc/kyZxvNo2gXiMb49bMrd3D0zXLfVyrRaco=;
+	s=default; t=1546867155;
+	bh=haEl7muVCQu0QiqmCBCruTBspB2gMF8LfR+RaNYaCK8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=GcN5GAQhuoAECFyWKB30i1fn0tqvuE4bMVtmdIK9AYbHMnuVm4Ww/4xItEVwqQIkH
-	 Uvq7oyqtGBkJ/7p+IfQpZVnv8NtF/U9CMiDCF1AOGrsKZ8ulgYg0AACAMox3B6A021
-	 HNoSryASr+9Grh/C4dYeZBVbGLQjqWfM79sLZcHk=
+	b=kHCJ8D6pJJwLMQev3VCRDMyDkwFAQbaWdHpk2sivfCu49D00opU7N2GrScBu+mH+R
+	 aPW7fPtJbXKhk3lpQvzIjKNXXTwY9Ns7oMu6bG1vTWygPxNEGTTaMbFalqtGjGNni8
+	 0J1d/kSi2r/vc49vGHIrlcRPjEUTcAQeATEgCEzk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729947AbfAGM6Q (ORCPT
+        id S1730915AbfAGNTI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:58:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45726 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:19:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45844 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729938AbfAGM6K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:58:10 -0500
+        id S1729954AbfAGM6Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:58:16 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C3987206BB;
-        Mon,  7 Jan 2019 12:58:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CCB2A2089F;
+        Mon,  7 Jan 2019 12:58:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865889;
-        bh=vIDXWmRUc/kyZxvNo2gXiMb49bMrd3D0zXLfVyrRaco=;
+        s=default; t=1546865895;
+        bh=haEl7muVCQu0QiqmCBCruTBspB2gMF8LfR+RaNYaCK8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VmhvC5MznuP/rI69rLcbrplUHrgkAdMcX/LFyFjcHKPjeH0QW/nPnI0RlwC3ViVsW
-         h2eyqyqQE6LQVI7taQruKQfnELO/NnTNGD9DaKek2voNomcB/boI7nFD/TaUagn8tC
-         T8vtuqBQv40STGI8GIsNGB0IsErdBJj/2tjYYoGQ=
+        b=IO3+P8hWux2Ft4Q33pbYpDdeEPIgsoKw8fFa9pwczEriEzXPrCePzjyMCZk5uQMr5
+         h6l1n0WEg1OeUNtS0+gCZc0wGeUMdgXgC0B/ln7pZfflOrFvgldgSJ9ixrxfDkPMDx
+         aaXNRqZ3Bx0BN4Yf6padto1ctmA/bbc+gsmyRlBg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jiri Olsa <jolsa@redhat.com>, Leo Yan <leo.yan@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 4.19 100/170] perf thread: Add fallback functions for cases where cpumode is insufficient
-Date:   Mon,  7 Jan 2019 13:32:07 +0100
-Message-Id: <20190107104504.812702665@linuxfoundation.org>
+        stable@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
+        Paul Burton <paul.burton@mips.com>, linux-mips@vger.kernel.org,
+        Rich Felker <dalias@libc.org>,
+        David Daney <david.daney@cavium.com>
+Subject: [PATCH 4.19 150/170] MIPS: math-emu: Write-protect delay slot emulation pages
+Date:   Mon,  7 Jan 2019 13:32:57 +0100
+Message-Id: <20190107104510.662706762@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104452.953560660@linuxfoundation.org>
 References: <20190107104452.953560660@linuxfoundation.org>
@@ -69,138 +67,125 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Adrian Hunter <adrian.hunter@intel.com>
+From: Paul Burton <paul.burton@mips.com>
 
-commit 8e80ad9983caeee09c3a0a1a37e05bff93becce4 upstream.
+commit adcc81f148d733b7e8e641300c5590a2cdc13bf3 upstream.
 
-For branch stacks or branch samples, the sample cpumode might not be
-correct because it applies only to the sample 'ip' and not necessary to
-'addr' or branch stack addresses. Add fallback functions that can be
-used to deal with those cases
+Mapping the delay slot emulation page as both writeable & executable
+presents a security risk, in that if an exploit can write to & jump into
+the page then it can be used as an easy way to execute arbitrary code.
 
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: David S. Miller <davem@davemloft.net>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Leo Yan <leo.yan@linaro.org>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: stable@vger.kernel.org # 4.19
-Link: http://lkml.kernel.org/r/20181106210712.12098-2-adrian.hunter@intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Prevent this by mapping the page read-only for userland, and using
+access_process_vm() with the FOLL_FORCE flag to write to it from
+mips_dsemul().
+
+This will likely be less efficient due to copy_to_user_page() performing
+cache maintenance on a whole page, rather than a single line as in the
+previous use of flush_cache_sigtramp(). However this delay slot
+emulation code ought not to be running in any performance critical paths
+anyway so this isn't really a problem, and we can probably do better in
+copy_to_user_page() anyway in future.
+
+A major advantage of this approach is that the fix is small & simple to
+backport to stable kernels.
+
+Reported-by: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Fixes: 432c6bacbd0c ("MIPS: Use per-mm page to execute branch delay slot instructions")
+Cc: stable@vger.kernel.org # v4.8+
+Cc: linux-mips@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: Rich Felker <dalias@libc.org>
+Cc: David Daney <david.daney@cavium.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/perf/util/event.c   |   27 +++++++++++++++++++++++++++
- tools/perf/util/machine.c |   27 +++++++++++++++++++++++++++
- tools/perf/util/machine.h |    2 ++
- tools/perf/util/thread.h  |    4 ++++
- 4 files changed, 60 insertions(+)
+ arch/mips/kernel/vdso.c     |    4 ++--
+ arch/mips/math-emu/dsemul.c |   38 ++++++++++++++++++++------------------
+ 2 files changed, 22 insertions(+), 20 deletions(-)
 
---- a/tools/perf/util/event.c
-+++ b/tools/perf/util/event.c
-@@ -1576,6 +1576,24 @@ struct map *thread__find_map(struct thre
- 	return al->map;
- }
+--- a/arch/mips/kernel/vdso.c
++++ b/arch/mips/kernel/vdso.c
+@@ -126,8 +126,8 @@ int arch_setup_additional_pages(struct l
  
-+/*
-+ * For branch stacks or branch samples, the sample cpumode might not be correct
-+ * because it applies only to the sample 'ip' and not necessary to 'addr' or
-+ * branch stack addresses. If possible, use a fallback to deal with those cases.
-+ */
-+struct map *thread__find_map_fb(struct thread *thread, u8 cpumode, u64 addr,
-+				struct addr_location *al)
-+{
-+	struct map *map = thread__find_map(thread, cpumode, addr, al);
-+	struct machine *machine = thread->mg->machine;
-+	u8 addr_cpumode = machine__addr_cpumode(machine, cpumode, addr);
-+
-+	if (map || addr_cpumode == cpumode)
-+		return map;
-+
-+	return thread__find_map(thread, addr_cpumode, addr, al);
-+}
-+
- struct symbol *thread__find_symbol(struct thread *thread, u8 cpumode,
- 				   u64 addr, struct addr_location *al)
+ 	/* Map delay slot emulation page */
+ 	base = mmap_region(NULL, STACK_TOP, PAGE_SIZE,
+-			   VM_READ|VM_WRITE|VM_EXEC|
+-			   VM_MAYREAD|VM_MAYWRITE|VM_MAYEXEC,
++			   VM_READ | VM_EXEC |
++			   VM_MAYREAD | VM_MAYWRITE | VM_MAYEXEC,
+ 			   0, NULL);
+ 	if (IS_ERR_VALUE(base)) {
+ 		ret = base;
+--- a/arch/mips/math-emu/dsemul.c
++++ b/arch/mips/math-emu/dsemul.c
+@@ -214,8 +214,9 @@ int mips_dsemul(struct pt_regs *regs, mi
  {
-@@ -1584,6 +1602,15 @@ struct symbol *thread__find_symbol(struc
- 		al->sym = map__find_symbol(al->map, al->addr);
- 	return al->sym;
+ 	int isa16 = get_isa16_mode(regs->cp0_epc);
+ 	mips_instruction break_math;
+-	struct emuframe __user *fr;
+-	int err, fr_idx;
++	unsigned long fr_uaddr;
++	struct emuframe fr;
++	int fr_idx, ret;
+ 
+ 	/* NOP is easy */
+ 	if (ir == 0)
+@@ -250,27 +251,31 @@ int mips_dsemul(struct pt_regs *regs, mi
+ 		fr_idx = alloc_emuframe();
+ 	if (fr_idx == BD_EMUFRAME_NONE)
+ 		return SIGBUS;
+-	fr = &dsemul_page()[fr_idx];
+ 
+ 	/* Retrieve the appropriately encoded break instruction */
+ 	break_math = BREAK_MATH(isa16);
+ 
+ 	/* Write the instructions to the frame */
+ 	if (isa16) {
+-		err = __put_user(ir >> 16,
+-				 (u16 __user *)(&fr->emul));
+-		err |= __put_user(ir & 0xffff,
+-				  (u16 __user *)((long)(&fr->emul) + 2));
+-		err |= __put_user(break_math >> 16,
+-				  (u16 __user *)(&fr->badinst));
+-		err |= __put_user(break_math & 0xffff,
+-				  (u16 __user *)((long)(&fr->badinst) + 2));
++		union mips_instruction _emul = {
++			.halfword = { ir >> 16, ir }
++		};
++		union mips_instruction _badinst = {
++			.halfword = { break_math >> 16, break_math }
++		};
++
++		fr.emul = _emul.word;
++		fr.badinst = _badinst.word;
+ 	} else {
+-		err = __put_user(ir, &fr->emul);
+-		err |= __put_user(break_math, &fr->badinst);
++		fr.emul = ir;
++		fr.badinst = break_math;
+ 	}
+ 
+-	if (unlikely(err)) {
++	/* Write the frame to user memory */
++	fr_uaddr = (unsigned long)&dsemul_page()[fr_idx];
++	ret = access_process_vm(current, fr_uaddr, &fr, sizeof(fr),
++				FOLL_FORCE | FOLL_WRITE);
++	if (unlikely(ret != sizeof(fr))) {
+ 		MIPS_FPU_EMU_INC_STATS(errors);
+ 		free_emuframe(fr_idx, current->mm);
+ 		return SIGBUS;
+@@ -282,10 +287,7 @@ int mips_dsemul(struct pt_regs *regs, mi
+ 	atomic_set(&current->thread.bd_emu_frame, fr_idx);
+ 
+ 	/* Change user register context to execute the frame */
+-	regs->cp0_epc = (unsigned long)&fr->emul | isa16;
+-
+-	/* Ensure the icache observes our newly written frame */
+-	flush_cache_sigtramp((unsigned long)&fr->emul);
++	regs->cp0_epc = fr_uaddr | isa16;
+ 
+ 	return 0;
  }
-+
-+struct symbol *thread__find_symbol_fb(struct thread *thread, u8 cpumode,
-+				      u64 addr, struct addr_location *al)
-+{
-+	al->sym = NULL;
-+	if (thread__find_map_fb(thread, cpumode, addr, al))
-+		al->sym = map__find_symbol(al->map, al->addr);
-+	return al->sym;
-+}
- 
- /*
-  * Callers need to drop the reference to al->thread, obtained in
---- a/tools/perf/util/machine.c
-+++ b/tools/perf/util/machine.c
-@@ -2575,6 +2575,33 @@ int machine__get_kernel_start(struct mac
- 	return err;
- }
- 
-+u8 machine__addr_cpumode(struct machine *machine, u8 cpumode, u64 addr)
-+{
-+	u8 addr_cpumode = cpumode;
-+	bool kernel_ip;
-+
-+	if (!machine->single_address_space)
-+		goto out;
-+
-+	kernel_ip = machine__kernel_ip(machine, addr);
-+	switch (cpumode) {
-+	case PERF_RECORD_MISC_KERNEL:
-+	case PERF_RECORD_MISC_USER:
-+		addr_cpumode = kernel_ip ? PERF_RECORD_MISC_KERNEL :
-+					   PERF_RECORD_MISC_USER;
-+		break;
-+	case PERF_RECORD_MISC_GUEST_KERNEL:
-+	case PERF_RECORD_MISC_GUEST_USER:
-+		addr_cpumode = kernel_ip ? PERF_RECORD_MISC_GUEST_KERNEL :
-+					   PERF_RECORD_MISC_GUEST_USER;
-+		break;
-+	default:
-+		break;
-+	}
-+out:
-+	return addr_cpumode;
-+}
-+
- struct dso *machine__findnew_dso(struct machine *machine, const char *filename)
- {
- 	return dsos__findnew(&machine->dsos, filename);
---- a/tools/perf/util/machine.h
-+++ b/tools/perf/util/machine.h
-@@ -100,6 +100,8 @@ static inline bool machine__kernel_ip(st
- 	return ip >= kernel_start;
- }
- 
-+u8 machine__addr_cpumode(struct machine *machine, u8 cpumode, u64 addr);
-+
- struct thread *machine__find_thread(struct machine *machine, pid_t pid,
- 				    pid_t tid);
- struct comm *machine__thread_exec_comm(struct machine *machine,
---- a/tools/perf/util/thread.h
-+++ b/tools/perf/util/thread.h
-@@ -94,9 +94,13 @@ struct thread *thread__main_thread(struc
- 
- struct map *thread__find_map(struct thread *thread, u8 cpumode, u64 addr,
- 			     struct addr_location *al);
-+struct map *thread__find_map_fb(struct thread *thread, u8 cpumode, u64 addr,
-+				struct addr_location *al);
- 
- struct symbol *thread__find_symbol(struct thread *thread, u8 cpumode,
- 				   u64 addr, struct addr_location *al);
-+struct symbol *thread__find_symbol_fb(struct thread *thread, u8 cpumode,
-+				      u64 addr, struct addr_location *al);
- 
- void thread__find_cpumode_addr_location(struct thread *thread, u64 addr,
- 					struct addr_location *al);
 
 
