@@ -2,173 +2,177 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B598BC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 16:07:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58C7DC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 16:08:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A5532087F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 16:07:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D5142173C
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 16:08:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pfd4JMrX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728354AbfAGQHu convert rfc822-to-8bit (ORCPT
+        id S1728469AbfAGQIF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 11:07:50 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:53826 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727246AbfAGQHt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 11:07:49 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 033D12D7FF;
-        Mon,  7 Jan 2019 16:07:49 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-223.bos.redhat.com [10.18.17.223])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 730EE6B8C2;
-        Mon,  7 Jan 2019 16:07:47 +0000 (UTC)
-Subject: Re: [PATCH 2/2] /proc/stat: Add sysctl parameter to control irq
- counts latency
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Daniel Colascione <dancol@google.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Randy Dunlap <rdunlap@infradead.org>
-References: <1546873978-27797-1-git-send-email-longman@redhat.com>
- <1546873978-27797-3-git-send-email-longman@redhat.com>
- <20190107155840.GY6310@bombadil.infradead.org>
-From:   Waiman Long <longman@redhat.com>
+        Mon, 7 Jan 2019 11:08:05 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:35639 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728363AbfAGQIE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 11:08:04 -0500
+Received: by mail-wr1-f68.google.com with SMTP id 96so1003435wrb.2;
+        Mon, 07 Jan 2019 08:08:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:openpgp:autocrypt:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=D1kXDsIrRaGiuvpcXhul7eIrHZWAcX7Be7iXngO47mU=;
+        b=Pfd4JMrXW94JLhpb93PNrONLZqtI042xCGEnUApBzSI+I1Qktx/70Ak08yjw8CPDzD
+         M3I3qNUOUQ7MQIq5oZohly7mSJS0E7iuasgQEmsLixPcplEpvZmvAVnnPH+adJP0vmxn
+         gVybgMj2t8Iv9i8iofYiq+22Cn+5IfSeC3n1NUROo9Bda6Ii+0T+a6idJKH5WH8V3avq
+         MiXOE6b4g+1jXRDReud5SmVbTtMpEsrNmPf9dDAu3rUftqUwCVnhLtGa+YqgbaY4c3un
+         xkTIngjPKoPjbUwZE6ulvJv4P6yMHJY8+FzuBl3clJFhYg8QlWSjbqxXZzop09EzoAmO
+         cWSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:openpgp
+         :autocrypt:message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=D1kXDsIrRaGiuvpcXhul7eIrHZWAcX7Be7iXngO47mU=;
+        b=bLZdLwoL5XbPt1JHaOCbLmQACPtAUc5SoHV2BwlZDKOAqVefAI9sEDW7rlC3HobTUA
+         XiXZVmAzg9b84CKG98QMQVoDCPC9B8x90q+LHX5b4OiC95Kj3wsrfCuoiBlDVGn3kcW5
+         FggEWPa0zOwyIMuJC9loED4pnk5ARHJYsT77MMC2zAW0PlYKvK/ezpGfS9QWWaAlaSzn
+         ufrQZXYGHUZ8VQtGOURSFG3HelGf7UljdmR1i5EX5NkTb0keZaPOYnbRYhre0x8LjVvN
+         VmgcsLRDOWGZpy20rlKddpDa5VIxl3U/cMk7IiCO4EegTa+qHuFa7E47WjWlM+iaPPPS
+         Axcw==
+X-Gm-Message-State: AJcUukeDyZ2p5H7+8JfnWDDVhQIHFTOUDDhm+DbxDgxV/HPWNU1UQNsl
+        WS8uBwDgjxWvBwC/pYsaxiM=
+X-Google-Smtp-Source: ALg8bN7kCmotn2Lkm6tNO33Zxglj/qRXgzoyZwqfavhkj+12KwHxH97DI/diz/R+btrsZA+A1bvudA==
+X-Received: by 2002:adf:e284:: with SMTP id v4mr50789999wri.26.1546877281636;
+        Mon, 07 Jan 2019 08:08:01 -0800 (PST)
+Received: from ?IPv6:2001:b07:6468:f312:3473:41cf:8b30:f2e1? ([2001:b07:6468:f312:3473:41cf:8b30:f2e1])
+        by smtp.googlemail.com with ESMTPSA id x10sm60879531wrn.29.2019.01.07.08.07.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 07 Jan 2019 08:08:01 -0800 (PST)
+Subject: Re: [PATCH 6/11] KVM/MMU: Flush tlb with range list in sync_page()
+To:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        lantianyu1986@gmail.com
+Cc:     kvm@vger.kernel.org, rkrcmar@redhat.com, catalin.marinas@arm.com,
+        will.deacon@arm.com, linux-kernel@vger.kernel.org,
+        paulus@ozlabs.org, hpa@zytor.com, kys@microsoft.com,
+        kvmarm@lists.cs.columbia.edu, mpe@ellerman.id.au, x86@kernel.org,
+        linux@armlinux.org.uk, michael.h.kelley@microsoft.com,
+        mingo@redhat.com, benh@kernel.crashing.org, jhogan@kernel.org,
+        linux-mips@vger.kernel.org, Lan Tianyu <Tianyu.Lan@microsoft.com>,
+        marc.zyngier@arm.com, kvm-ppc@vger.kernel.org, bp@alien8.de,
+        tglx@linutronix.de, linux-arm-kernel@lists.infradead.org,
+        christoffer.dall@arm.com, ralf@linux-mips.org,
+        paul.burton@mips.com, vkuznets@redhat.com,
+        linuxppc-dev@lists.ozlabs.org
+References: <20190104085405.40356-1-Tianyu.Lan@microsoft.com>
+ <20190104085405.40356-7-Tianyu.Lan@microsoft.com>
+ <20190104163035.GC11288@linux.intel.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
 Openpgp: preference=signencrypt
-Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- weim8xU=
-Organization: Red Hat
-Message-ID: <c2ef7231-fe1f-9463-0b06-e88f990aa865@redhat.com>
-Date:   Mon, 7 Jan 2019 11:07:47 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+Autocrypt: addr=pbonzini@redhat.com; keydata=
+ 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
+ uUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
+Message-ID: <99e47cc1-43d6-ff05-46b8-6a96ebc34b2a@redhat.com>
+Date:   Mon, 7 Jan 2019 17:07:58 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-In-Reply-To: <20190107155840.GY6310@bombadil.infradead.org>
+In-Reply-To: <20190104163035.GC11288@linux.intel.com>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
 Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Mon, 07 Jan 2019 16:07:49 +0000 (UTC)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/07/2019 10:58 AM, Matthew Wilcox wrote:
-> On Mon, Jan 07, 2019 at 10:12:58AM -0500, Waiman Long wrote:
->> Reading /proc/stat can be slow especially if there are many irqs and on
->> systems with many CPUs as summation of all the percpu counts for each
->> of the irqs is required. On some newer systems, there can be more than
->> 1000 irqs per socket.
->>
->> Applications that need to read /proc/stat many times per seconds will
->> easily hit a bottleneck. In reality, the irq counts are seldom looked
->> at. Even those applications that read them don't really need up-to-date
->> information. One way to reduce the performance impact of irq counts
->> computation is to do it less frequently.
->>
->> A new "fs/proc-stat-irqs-latency-ms" sysctl parameter is now added to
-> No.  No, no, no, no, no.  No.
->
-> Stop adding new sysctls for this kind of thing.  It's just a way to shift
-> blame from us (who allegedly know what we're doing) to the sysadmin
-> (who probably has better things to be doing than keeping up with the
-> intricacies of development of every single piece of software running on
-> their system).
->
-> Let's figure out what this _should_ be.  As a strawman, I propose we
-> update these stats once a second.  That's easy to document and understand.
-
-I am fine with having a fixed value (like 1s) for reporting purpose. It
-is just people may have many different opinions on what the right value
-should be. That is why I opt for flexibility in the initial patch.
-
->
->> @@ -98,7 +105,48 @@ static u64 compute_stat_irqs_sum(void)
->>  static void show_stat_irqs(struct seq_file *p)
->>  {
->>  	int i;
->> +#ifdef CONFIG_PROC_SYSCTL
->> +	static char *irqs_buf;		   /* Buffer for irqs values */
->> +	static int buflen;
->> +	static unsigned long last_jiffies; /* Last buffer update jiffies */
->> +	static DEFINE_MUTEX(irqs_mutex);
->> +	unsigned int latency = proc_stat_irqs_latency_ms;
+On 04/01/19 17:30, Sean Christopherson wrote:
 >> +
->> +	if (latency) {
->> +		char *ptr;
+>> +		if (kvm_available_flush_tlb_with_range()
+>> +		    && (tmp_spte_ret & SET_SPTE_NEED_REMOTE_TLB_FLUSH)) {
+>> +			struct kvm_mmu_page *leaf_sp = page_header(sp->spt[i]
+>> +					& PT64_BASE_ADDR_MASK);
+>> +			list_add(&leaf_sp->flush_link, &flush_list);
+>> +		}
 >> +
->> +		latency = _msecs_to_jiffies(latency);
+>> +		set_spte_ret |= tmp_spte_ret;
 >> +
->> +		mutex_lock(&irqs_mutex);
->> +		if (irqs_buf && time_before(jiffies, last_jiffies + latency))
->> +			goto print_out;
->> +
->> +		/*
->> +		 * Each irq value may require up to 11 bytes.
->> +		 */
->> +		if (!irqs_buf) {
->> +			irqs_buf = kmalloc(nr_irqs * 11 + 32,
->> +					   GFP_KERNEL | __GFP_ZERO);
-> Why are you caching the _output_ of calling sprintf(), rather than caching the
-> values of each interrupt?
->
-It is just faster to dump the whole string buffer than redoing the
-number formatting each time when the values don't change. I can cache
-the individual sums instead if it is the preferred by most.
+>>  	}
+>>  
+>>  	if (set_spte_ret & SET_SPTE_NEED_REMOTE_TLB_FLUSH)
+>> -		kvm_flush_remote_tlbs(vcpu->kvm);
+>> +		kvm_flush_remote_tlbs_with_list(vcpu->kvm, &flush_list);
+> This is a bit confusing and potentially fragile.  It's not obvious that
+> kvm_flush_remote_tlbs_with_list() is guaranteed to call
+> kvm_flush_remote_tlbs() when kvm_available_flush_tlb_with_range() is
+> false, and you're relying on the kvm_flush_remote_tlbs_with_list() call
+> chain to never optimize away the empty list case.  Rechecking
+> kvm_available_flush_tlb_with_range() isn't expensive.
+> 
 
-Cheers,
-Longman
+Alternatively, do not check it during the loop: always build the
+flush_list, and always call kvm_flush_remote_tlbs_with_list.  The
+function can then check whether the list is empty, and the OR of
+tmp_spte_ret on every iteration goes away.
 
-
+Paolo
