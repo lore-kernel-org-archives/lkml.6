@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86021C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:41:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9024C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:41:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55A1021855
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:41:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99C2B21873
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:41:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546864866;
-	bh=Z8e0cePwRQPudDsRFcgWNrBhAvuHKqv1AgOEtryZNmM=;
+	s=default; t=1546864870;
+	bh=s9ZVqHp9+hAaSMZzEzuMAB234LXUT7EBX9Ob3TtGOQ8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Nh0VlftZWGKUCTdp6iw0TXgzlzu9/kxSqgBIX9dx/Bn3zc0IDvpT5ZNin/sYNOc3Y
-	 AGlG5yAugZyZanywFdkpGsx/Wm5WwQbAyj5DbhRiyxamKgQ5N2K6kfkqmZyplMOC9V
-	 HS4CCUQo1uSVYN9eQT4JRJ9Md9WemgniBs42jCaY=
+	b=JvHO/F8fhrHaeq/hkeHMWrip9s1IWdCLf839s6NkBhZZFNzf4FNKeph7adY0AvLYi
+	 1Ba9YfAATluK2dyNbdi5CHDQJUqRNuz6+U5f9keNM7+nfzg2+S92rqN8WvInMTbPOs
+	 Gv+mmCtACB/l0M/3mHrTP9x7zxEYfGNpGOIVFb6I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728067AbfAGMlF (ORCPT
+        id S1728078AbfAGMlJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:41:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56052 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:41:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56142 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727827AbfAGMlB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:41:01 -0500
+        id S1728063AbfAGMlF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:41:05 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F309A2183E;
-        Mon,  7 Jan 2019 12:40:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CE06F2183E;
+        Mon,  7 Jan 2019 12:41:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546864860;
-        bh=Z8e0cePwRQPudDsRFcgWNrBhAvuHKqv1AgOEtryZNmM=;
+        s=default; t=1546864864;
+        bh=s9ZVqHp9+hAaSMZzEzuMAB234LXUT7EBX9Ob3TtGOQ8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RKuVXKacj0PscakogmzOhqhUW0sJCC0QAqC2wi27Fcg4aZ3uVVtx5NyXW6J9gtMUt
-         OqoFhIC6qPOtg7fkqX93ckjtxrYaBE4SEqlLbQWfiGlTRx/0okqWJwfl+VDWIdzF/T
-         C/GxbH6jVH0leCnrQSWUzDA5ePh1JDw1svs3jZZI=
+        b=UvfQwBxV780HyAlHHJJLZ5xIpQvDbiy/orhgeoBnDtO2M5dkC/mft5iUGTeOsTFat
+         qPZhlv49UPD0ka6gpY7oOtCocnZ+0GhOyNAo/DxrZfX3DHYjapHtPJFFfZt3eajd+g
+         woqNsChDeEvtkrdt3DTPNad+M1Ml+tZU7Z99dius=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wenwen Wang <wang6495@umn.edu>,
+        stable@vger.kernel.org, Atul Gupta <atul.gupta@chelsio.com>,
         Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.20 085/145] crypto: cavium/nitrox - fix a DMA pool free failure
-Date:   Mon,  7 Jan 2019 13:32:02 +0100
-Message-Id: <20190107104448.386127926@linuxfoundation.org>
+Subject: [PATCH 4.20 086/145] crypto: chcr - small packet Tx stalls the queue
+Date:   Mon,  7 Jan 2019 13:32:03 +0100
+Message-Id: <20190107104448.503505492@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104437.308206189@linuxfoundation.org>
 References: <20190107104437.308206189@linuxfoundation.org>
@@ -65,149 +65,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Wenwen Wang <wang6495@umn.edu>
+From: Atul Gupta <atul.gupta@chelsio.com>
 
-commit 7172122be6a4712d699da4d261f92aa5ab3a78b8 upstream.
+commit c35828ea906a7c76632a0211e59c392903cd4615 upstream.
 
-In crypto_alloc_context(), a DMA pool is allocated through dma_pool_alloc()
-to hold the crypto context. The meta data of the DMA pool, including the
-pool used for the allocation 'ndev->ctx_pool' and the base address of the
-DMA pool used by the device 'dma', are then stored to the beginning of the
-pool. These meta data are eventually used in crypto_free_context() to free
-the DMA pool through dma_pool_free(). However, given that the DMA pool can
-also be accessed by the device, a malicious device can modify these meta
-data, especially when the device is controlled to deploy an attack. This
-can cause an unexpected DMA pool free failure.
+Immediate packets sent to hardware should include the work
+request length in calculating the flits. WR occupy one flit and
+if not accounted result in invalid request which stalls the HW
+queue.
 
-To avoid the above issue, this patch introduces a new structure
-crypto_ctx_hdr and a new field chdr in the structure nitrox_crypto_ctx hold
-the meta data information of the DMA pool after the allocation. Note that
-the original structure ctx_hdr is not changed to ensure the compatibility.
-
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+Cc: stable@vger.kernel.org
+Signed-off-by: Atul Gupta <atul.gupta@chelsio.com>
 Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/cavium/nitrox/nitrox_algs.c |   12 +++++++-----
- drivers/crypto/cavium/nitrox/nitrox_lib.c  |   22 +++++++++++++++++-----
- drivers/crypto/cavium/nitrox/nitrox_req.h  |    7 +++++++
- 3 files changed, 31 insertions(+), 10 deletions(-)
+ drivers/crypto/chelsio/chcr_ipsec.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/drivers/crypto/cavium/nitrox/nitrox_algs.c
-+++ b/drivers/crypto/cavium/nitrox/nitrox_algs.c
-@@ -73,7 +73,7 @@ static int flexi_aes_keylen(int keylen)
- static int nitrox_skcipher_init(struct crypto_skcipher *tfm)
+--- a/drivers/crypto/chelsio/chcr_ipsec.c
++++ b/drivers/crypto/chelsio/chcr_ipsec.c
+@@ -303,7 +303,10 @@ static bool chcr_ipsec_offload_ok(struct
+ 
+ static inline int is_eth_imm(const struct sk_buff *skb, unsigned int kctx_len)
  {
- 	struct nitrox_crypto_ctx *nctx = crypto_skcipher_ctx(tfm);
--	void *fctx;
-+	struct crypto_ctx_hdr *chdr;
- 
- 	/* get the first device */
- 	nctx->ndev = nitrox_get_first_device();
-@@ -81,12 +81,14 @@ static int nitrox_skcipher_init(struct c
- 		return -ENODEV;
- 
- 	/* allocate nitrox crypto context */
--	fctx = crypto_alloc_context(nctx->ndev);
--	if (!fctx) {
-+	chdr = crypto_alloc_context(nctx->ndev);
-+	if (!chdr) {
- 		nitrox_put_device(nctx->ndev);
- 		return -ENOMEM;
- 	}
--	nctx->u.ctx_handle = (uintptr_t)fctx;
-+	nctx->chdr = chdr;
-+	nctx->u.ctx_handle = (uintptr_t)((u8 *)chdr->vaddr +
-+					 sizeof(struct ctx_hdr));
- 	crypto_skcipher_set_reqsize(tfm, crypto_skcipher_reqsize(tfm) +
- 				    sizeof(struct nitrox_kcrypt_request));
- 	return 0;
-@@ -102,7 +104,7 @@ static void nitrox_skcipher_exit(struct
- 
- 		memset(&fctx->crypto, 0, sizeof(struct crypto_keys));
- 		memset(&fctx->auth, 0, sizeof(struct auth_keys));
--		crypto_free_context((void *)fctx);
-+		crypto_free_context((void *)nctx->chdr);
- 	}
- 	nitrox_put_device(nctx->ndev);
- 
---- a/drivers/crypto/cavium/nitrox/nitrox_lib.c
-+++ b/drivers/crypto/cavium/nitrox/nitrox_lib.c
-@@ -158,12 +158,19 @@ static void destroy_crypto_dma_pool(stru
- void *crypto_alloc_context(struct nitrox_device *ndev)
- {
- 	struct ctx_hdr *ctx;
-+	struct crypto_ctx_hdr *chdr;
- 	void *vaddr;
- 	dma_addr_t dma;
- 
-+	chdr = kmalloc(sizeof(*chdr), GFP_KERNEL);
-+	if (!chdr)
-+		return NULL;
+-	int hdrlen = sizeof(struct chcr_ipsec_req) + kctx_len;
++	int hdrlen;
 +
- 	vaddr = dma_pool_zalloc(ndev->ctx_pool, GFP_KERNEL, &dma);
--	if (!vaddr)
-+	if (!vaddr) {
-+		kfree(chdr);
- 		return NULL;
-+	}
++	hdrlen = sizeof(struct fw_ulptx_wr) +
++		 sizeof(struct chcr_ipsec_req) + kctx_len;
  
- 	/* fill meta data */
- 	ctx = vaddr;
-@@ -171,7 +178,11 @@ void *crypto_alloc_context(struct nitrox
- 	ctx->dma = dma;
- 	ctx->ctx_dma = dma + sizeof(struct ctx_hdr);
- 
--	return ((u8 *)vaddr + sizeof(struct ctx_hdr));
-+	chdr->pool = ndev->ctx_pool;
-+	chdr->dma = dma;
-+	chdr->vaddr = vaddr;
-+
-+	return chdr;
- }
- 
- /**
-@@ -180,13 +191,14 @@ void *crypto_alloc_context(struct nitrox
-  */
- void crypto_free_context(void *ctx)
- {
--	struct ctx_hdr *ctxp;
-+	struct crypto_ctx_hdr *ctxp;
- 
- 	if (!ctx)
- 		return;
- 
--	ctxp = (struct ctx_hdr *)((u8 *)ctx - sizeof(struct ctx_hdr));
--	dma_pool_free(ctxp->pool, ctxp, ctxp->dma);
-+	ctxp = ctx;
-+	dma_pool_free(ctxp->pool, ctxp->vaddr, ctxp->dma);
-+	kfree(ctxp);
- }
- 
- /**
---- a/drivers/crypto/cavium/nitrox/nitrox_req.h
-+++ b/drivers/crypto/cavium/nitrox/nitrox_req.h
-@@ -181,12 +181,19 @@ struct flexi_crypto_context {
- 	struct auth_keys auth;
- };
- 
-+struct crypto_ctx_hdr {
-+	struct dma_pool *pool;
-+	dma_addr_t dma;
-+	void *vaddr;
-+};
-+
- struct nitrox_crypto_ctx {
- 	struct nitrox_device *ndev;
- 	union {
- 		u64 ctx_handle;
- 		struct flexi_crypto_context *fctx;
- 	} u;
-+	struct crypto_ctx_hdr *chdr;
- };
- 
- struct nitrox_kcrypt_request {
+ 	hdrlen += sizeof(struct cpl_tx_pkt);
+ 	if (skb->len <= MAX_IMM_TX_PKT_LEN - hdrlen)
 
 
