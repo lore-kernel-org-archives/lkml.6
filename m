@@ -7,47 +7,48 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A89BC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:22:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB3DCC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:22:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40A8921736
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:22:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ACEAF21736
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:22:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546867338;
-	bh=aXcTOBp8bNgdxJsVsJ1yU7POIrdQzO84nrQ0ZDLsP0U=;
+	s=default; t=1546867342;
+	bh=U7CtIwnvf2qH9o3JLljjes70nUP+Dc9uGGaOE0fErlI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=1XV6H/rmem/JHfHVJWhGNn7FyS47d9Q9qoKsrGvx2QjkjETzkQp/aw18J8oyG693v
-	 GePTJ/0QAMBOETrv4Nyi02q+LxxTVjOlEGZ/14CWa6ufAL5glQ8xGe1ymh3i41Q9dg
-	 HQOJHaHoDsWImx9HLjtKjay3WyOXvmsJ08ugLWLQ=
+	b=tY3jE455so5AzAT2Z41GqgcMGKH0GMpPYOJOveELuDCLZdFwXTRUtarEApnBQsFP+
+	 xpgs0Kz3GvICITjohIdtpQeVrvbqhuK6wAiCYJ93avwhEY2qXVn60uzkwTcA03pZjS
+	 uqkfSzSUbXi8B9qjlRbbjymn5CgwhtcyIBbtnh4o=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728728AbfAGMoW (ORCPT
+        id S1729736AbfAGNWV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:44:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60886 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:22:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32794 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727117AbfAGMoO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:44:14 -0500
+        id S1728722AbfAGMoV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:44:21 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8178020449;
-        Mon,  7 Jan 2019 12:44:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 16BB020665;
+        Mon,  7 Jan 2019 12:44:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865054;
-        bh=aXcTOBp8bNgdxJsVsJ1yU7POIrdQzO84nrQ0ZDLsP0U=;
+        s=default; t=1546865059;
+        bh=U7CtIwnvf2qH9o3JLljjes70nUP+Dc9uGGaOE0fErlI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Y4R3byLngk9KAVBUU+JB/KKhvO3U1TqyCSSZ7JKyhb2/H8Wm3mkmEEy5y2KS3p+BW
-         P/dNbR6y17QYPjnQwSD3buVPhsGM5tLEy8VTs1VkO3yUJthmPJlB4diKD4wvjDDEzJ
-         USLCVFaZzB+rVffEjZCg0vV/IOOV12MYAV0PSVxA=
+        b=ybBEXTLb9bVlMBN/MfNUuUkeKsS60t5UsSvUu/1p7oUz3jVHYogdy3//3GATuBlEc
+         6B9DRfL6QYNxjTiF5V0B++PJNqdWudA/oZDOvoqOUgY6jU1azFxKcSf3s+DVEElM51
+         wnzmn6ss7oEaFIA1bpCPQEwaal2URcl+vl1GkGq0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Long Li <longli@microsoft.com>,
-        Steve French <stfrench@microsoft.com>,
-        Joey Pabalinas <joeypabalinas@gmail.com>
-Subject: [PATCH 4.20 130/145] CIFS: use the correct length when pinning memory for direct I/O for write
-Date:   Mon,  7 Jan 2019 13:32:47 +0100
-Message-Id: <20190107104454.179028436@linuxfoundation.org>
+        stable@vger.kernel.org, Vijay Chidambaram <vvijay03@gmail.com>,
+        Jayashree Mohan <jayashree2912@gmail.com>,
+        Filipe Manana <fdmanana@suse.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.20 096/145] Btrfs: fix fsync of files with multiple hard links in new directories
+Date:   Mon,  7 Jan 2019 13:32:13 +0100
+Message-Id: <20190107104449.786671798@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104437.308206189@linuxfoundation.org>
 References: <20190107104437.308206189@linuxfoundation.org>
@@ -66,42 +67,150 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Long Li <longli@microsoft.com>
+From: Filipe Manana <fdmanana@suse.com>
 
-commit b6bc8a7b993e62f82415a5e3e4a6469e80fea19c upstream.
+commit 41bd60676923822de1df2c50b3f9a10171f4338a upstream.
 
-The current code attempts to pin memory using the largest possible wsize
-based on the currect SMB credits. This doesn't cause kernel oops but this
-is not optimal as we may pin more pages then actually needed.
+The log tree has a long standing problem that when a file is fsync'ed we
+only check for new ancestors, created in the current transaction, by
+following only the hard link for which the fsync was issued. We follow the
+ancestors using the VFS' dget_parent() API. This means that if we create a
+new link for a file in a directory that is new (or in an any other new
+ancestor directory) and then fsync the file using an old hard link, we end
+up not logging the new ancestor, and on log replay that new hard link and
+ancestor do not exist. In some cases, involving renames, the file will not
+exist at all.
 
-Fix this by only pinning what are needed for doing this write I/O.
+Example:
 
-Signed-off-by: Long Li <longli@microsoft.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Steve French <stfrench@microsoft.com>
-Reviewed-by: Joey Pabalinas <joeypabalinas@gmail.com>
+  mkfs.btrfs -f /dev/sdb
+  mount /dev/sdb /mnt
+
+  mkdir /mnt/A
+  touch /mnt/foo
+  ln /mnt/foo /mnt/A/bar
+  xfs_io -c fsync /mnt/foo
+
+  <power failure>
+
+In this example after log replay only the hard link named 'foo' exists
+and directory A does not exist, which is unexpected. In other major linux
+filesystems, such as ext4, xfs and f2fs for example, both hard links exist
+and so does directory A after mounting again the filesystem.
+
+Checking if any new ancestors are new and need to be logged was added in
+2009 by commit 12fcfd22fe5b ("Btrfs: tree logging unlink/rename fixes"),
+however only for the ancestors of the hard link (dentry) for which the
+fsync was issued, instead of checking for all ancestors for all of the
+inode's hard links.
+
+So fix this by tracking the id of the last transaction where a hard link
+was created for an inode and then on fsync fallback to a full transaction
+commit when an inode has more than one hard link and at least one new hard
+link was created in the current transaction. This is the simplest solution
+since this is not a common use case (adding frequently hard links for
+which there's an ancestor created in the current transaction and then
+fsync the file). In case it ever becomes a common use case, a solution
+that consists of iterating the fs/subvol btree for each hard link and
+check if any ancestor is new, could be implemented.
+
+This solves many unexpected scenarios reported by Jayashree Mohan and
+Vijay Chidambaram, and for which there is a new test case for fstests
+under review.
+
+Fixes: 12fcfd22fe5b ("Btrfs: tree logging unlink/rename fixes")
+CC: stable@vger.kernel.org # 4.4+
+Reported-by: Vijay Chidambaram <vvijay03@gmail.com>
+Reported-by: Jayashree Mohan <jayashree2912@gmail.com>
+Signed-off-by: Filipe Manana <fdmanana@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cifs/file.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ fs/btrfs/btrfs_inode.h |    6 ++++++
+ fs/btrfs/inode.c       |   17 +++++++++++++++++
+ fs/btrfs/tree-log.c    |   16 ++++++++++++++++
+ 3 files changed, 39 insertions(+)
 
---- a/fs/cifs/file.c
-+++ b/fs/cifs/file.c
-@@ -2617,11 +2617,13 @@ cifs_write_from_iter(loff_t offset, size
- 		if (rc)
- 			break;
+--- a/fs/btrfs/btrfs_inode.h
++++ b/fs/btrfs/btrfs_inode.h
+@@ -147,6 +147,12 @@ struct btrfs_inode {
+ 	u64 last_unlink_trans;
  
-+		cur_len = min_t(const size_t, len, wsize);
+ 	/*
++	 * Track the transaction id of the last transaction used to create a
++	 * hard link for the inode. This is used by the log tree (fsync).
++	 */
++	u64 last_link_trans;
 +
- 		if (ctx->direct_io) {
- 			ssize_t result;
++	/*
+ 	 * Number of bytes outstanding that are going to need csums.  This is
+ 	 * used in ENOSPC accounting.
+ 	 */
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -3687,6 +3687,21 @@ cache_index:
+ 	 * inode is not a directory, logging its parent unnecessarily.
+ 	 */
+ 	BTRFS_I(inode)->last_unlink_trans = BTRFS_I(inode)->last_trans;
++	/*
++	 * Similar reasoning for last_link_trans, needs to be set otherwise
++	 * for a case like the following:
++	 *
++	 * mkdir A
++	 * touch foo
++	 * ln foo A/bar
++	 * echo 2 > /proc/sys/vm/drop_caches
++	 * fsync foo
++	 * <power failure>
++	 *
++	 * Would result in link bar and directory A not existing after the power
++	 * failure.
++	 */
++	BTRFS_I(inode)->last_link_trans = BTRFS_I(inode)->last_trans;
  
- 			result = iov_iter_get_pages_alloc(
--				from, &pagevec, wsize, &start);
-+				from, &pagevec, cur_len, &start);
- 			if (result < 0) {
- 				cifs_dbg(VFS,
- 					"direct_writev couldn't get user pages "
+ 	path->slots[0]++;
+ 	if (inode->i_nlink != 1 ||
+@@ -6626,6 +6641,7 @@ static int btrfs_link(struct dentry *old
+ 			if (err)
+ 				goto fail;
+ 		}
++		BTRFS_I(inode)->last_link_trans = trans->transid;
+ 		d_instantiate(dentry, inode);
+ 		ret = btrfs_log_new_name(trans, BTRFS_I(inode), NULL, parent,
+ 					 true, NULL);
+@@ -9158,6 +9174,7 @@ struct inode *btrfs_alloc_inode(struct s
+ 	ei->index_cnt = (u64)-1;
+ 	ei->dir_index = 0;
+ 	ei->last_unlink_trans = 0;
++	ei->last_link_trans = 0;
+ 	ei->last_log_commit = 0;
+ 
+ 	spin_lock_init(&ei->lock);
+--- a/fs/btrfs/tree-log.c
++++ b/fs/btrfs/tree-log.c
+@@ -5778,6 +5778,22 @@ static int btrfs_log_inode_parent(struct
+ 			goto end_trans;
+ 	}
+ 
++	/*
++	 * If a new hard link was added to the inode in the current transaction
++	 * and its link count is now greater than 1, we need to fallback to a
++	 * transaction commit, otherwise we can end up not logging all its new
++	 * parents for all the hard links. Here just from the dentry used to
++	 * fsync, we can not visit the ancestor inodes for all the other hard
++	 * links to figure out if any is new, so we fallback to a transaction
++	 * commit (instead of adding a lot of complexity of scanning a btree,
++	 * since this scenario is not a common use case).
++	 */
++	if (inode->vfs_inode.i_nlink > 1 &&
++	    inode->last_link_trans > last_committed) {
++		ret = -EMLINK;
++		goto end_trans;
++	}
++
+ 	while (1) {
+ 		if (!parent || d_really_is_negative(parent) || sb != parent->d_sb)
+ 			break;
 
 
