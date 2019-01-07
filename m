@@ -4,49 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E15AFC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:44:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA40DC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:44:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2EB421873
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:44:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A90432183E
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:44:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546865093;
-	bh=SSbvmJy0vGIJPMIHILPJz7pG8qyx7/nRfeGMcK6mTy0=;
+	s=default; t=1546865098;
+	bh=WnELgCRUzBPxf0HBkDJbJ/PQ6QCyFbnqUiRFs3Kv3OI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=JJZqv6dAaxZSyYPY6BM/zloED/ECIu/csh5K94rlnSmunepq7cdqyjjnY7OO6kQFy
-	 qzioLGtCsoy9xocf8v1D5yXDtYGwX0Q7PcWa/uA+c63XBPilpoz2G8SKs5potJp6+w
-	 5Gm11gxRfbR5wk/asTrvJwXvor33Uy/2Ex2DnDwU=
+	b=NDT/JKzcuu8ElWAFjPzobPfjyuqze4UtYtI0gt7eB3CgNGqxjib/mn2K0UkaQjKgl
+	 eHWTKxabVJqJNxVcLzz9CR4BNBKBNgizZPQerMeIvWa23ENJ6LHwF7IPfoXGwytO/+
+	 eymHJ/l2ywbZVoT7dYu4YbYYhuE6s3S4Fea1fWto=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728763AbfAGMox (ORCPT
+        id S1728780AbfAGMo6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:44:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33604 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:44:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33780 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728664AbfAGMos (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:44:48 -0500
+        id S1728766AbfAGMoz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:44:55 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AD85720449;
-        Mon,  7 Jan 2019 12:44:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 63F272183E;
+        Mon,  7 Jan 2019 12:44:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865088;
-        bh=SSbvmJy0vGIJPMIHILPJz7pG8qyx7/nRfeGMcK6mTy0=;
+        s=default; t=1546865094;
+        bh=WnELgCRUzBPxf0HBkDJbJ/PQ6QCyFbnqUiRFs3Kv3OI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CGzTqphJsN8sAsGnAXNBSwbaRmRhJxHGl/oC4/FrFVJ3Y+tE3Api9Xe79oK9GubLv
-         ORzQF9UyvRVL7dbCUVSLydFBDuG6dz8Hn7mQ8QNwkEyIQD0zStey7F4L8yRJkBsw8H
-         7+nJtae82Y1VpZnR6FQ5blDJRmf/EEBHWppSwLwE=
+        b=fQBJI0r4pGZ/ACUBuvWEY/xCQzPQvRNZ4jjXN/4NS0IITTxeBfVurqO7X3SWMB8Bf
+         5rthrynCqkMGD3Qkw2NjKEZR4A2bYIlrbn8XVPRnN0pG1RCT6864Ujy4cDwyGnqAB4
+         S87WysanuVrvMm52gf0BWJRudD4Ik4FDosQfBLfo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tomas Winkler <tomas.winkler@intel.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Subject: [PATCH 4.20 144/145] tpm: tpm_try_transmit() refactor error flow.
-Date:   Mon,  7 Jan 2019 13:33:01 +0100
-Message-Id: <20190107104455.979533733@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH 4.20 133/145] ARM: dts: exynos: Specify I2S assigned clocks in proper node
+Date:   Mon,  7 Jan 2019 13:32:50 +0100
+Message-Id: <20190107104454.616090864@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104437.308206189@linuxfoundation.org>
 References: <20190107104437.308206189@linuxfoundation.org>
@@ -65,67 +66,114 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tomas Winkler <tomas.winkler@intel.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-commit 01f54664a4db0d612de0ece8e0022f21f9374e9b upstream.
+commit 8ac686d7dfed721102860ff2571e6b9f529ae81a upstream.
 
-First, rename out_no_locality to out_locality for bailing out on
-both tpm_cmd_ready() and tpm_request_locality() failure.
-Second, ignore the return value of go_to_idle() as  it may override
-the return value of the actual tpm operation, the go_to_idle() error
-will be caught on any consequent command.
-Last, fix the wrong 'goto out', that jumped back instead of forward.
+The assigned parent clocks should be normally specified in the consumer
+device's DT node, this ensures respective driver always sees correct clock
+settings when required.
 
-Cc: stable@vger.kernel.org
-Fixes: 627448e85c76 ("tpm: separate cmd_ready/go_idle from runtime_pm")
-Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+This patch fixes regression in audio subsystem on Odroid XU3/XU4 boards
+that appeared after commits:
+
+commit 647d04f8e07a ("ASoC: samsung: i2s: Ensure the RCLK rate is properly determined")
+commit 995e73e55f46 ("ASoC: samsung: i2s: Fix rclk_srcrate handling")
+commit 48279c53fd1d ("ASoC: samsung: i2s: Prevent external abort on exynos5433 I2S1 access")
+
+Without this patch the driver gets wrong clock as the I2S function clock
+(op_clk) in probe() and effectively the clock which is finally assigned
+from DT is not being enabled/disabled in the runtime resume/suspend ops.
+
+Without the above listed commits the EXYNOS_I2S_BUS clock was always set
+as parent of CLK_I2S_RCLK_SRC regardless of DT settings so there was no issue
+with not enabled EXYNOS_SCLK_I2S.
+
+Cc: <stable@vger.kernel.org> # 4.17.x
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/char/tpm/tpm-interface.c |   15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+ arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi |    9 ++++-----
+ arch/arm/boot/dts/exynos5422-odroidxu4.dts        |    9 ++++-----
+ 2 files changed, 8 insertions(+), 10 deletions(-)
 
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -477,13 +477,15 @@ static ssize_t tpm_try_transmit(struct t
+--- a/arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi
++++ b/arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi
+@@ -26,8 +26,7 @@
+ 			"Speakers", "SPKL",
+ 			"Speakers", "SPKR";
  
- 	if (need_locality) {
- 		rc = tpm_request_locality(chip, flags);
--		if (rc < 0)
--			goto out_no_locality;
-+		if (rc < 0) {
-+			need_locality = false;
-+			goto out_locality;
-+		}
- 	}
+-		assigned-clocks = <&i2s0 CLK_I2S_RCLK_SRC>,
+-				<&clock CLK_MOUT_EPLL>,
++		assigned-clocks = <&clock CLK_MOUT_EPLL>,
+ 				<&clock CLK_MOUT_MAU_EPLL>,
+ 				<&clock CLK_MOUT_USER_MAU_EPLL>,
+ 				<&clock_audss EXYNOS_MOUT_AUDSS>,
+@@ -36,8 +35,7 @@
+ 				<&clock_audss EXYNOS_DOUT_AUD_BUS>,
+ 				<&clock_audss EXYNOS_DOUT_I2S>;
  
- 	rc = tpm_cmd_ready(chip, flags);
- 	if (rc)
--		goto out;
-+		goto out_locality;
+-		assigned-clock-parents = <&clock_audss EXYNOS_SCLK_I2S>,
+-				<&clock CLK_FOUT_EPLL>,
++		assigned-clock-parents = <&clock CLK_FOUT_EPLL>,
+ 				<&clock CLK_MOUT_EPLL>,
+ 				<&clock CLK_MOUT_MAU_EPLL>,
+ 				<&clock CLK_MAU_EPLL>,
+@@ -48,7 +46,6 @@
+ 				<0>,
+ 				<0>,
+ 				<0>,
+-				<0>,
+ 				<196608001>,
+ 				<(196608002 / 2)>,
+ 				<196608000>;
+@@ -84,4 +81,6 @@
  
- 	rc = tpm2_prepare_space(chip, space, ordinal, buf);
- 	if (rc)
-@@ -547,14 +549,13 @@ out_recv:
- 		dev_err(&chip->dev, "tpm2_commit_space: error %d\n", rc);
+ &i2s0 {
+ 	status = "okay";
++	assigned-clocks = <&i2s0 CLK_I2S_RCLK_SRC>;
++	assigned-clock-parents = <&clock_audss EXYNOS_SCLK_I2S>;
+ };
+--- a/arch/arm/boot/dts/exynos5422-odroidxu4.dts
++++ b/arch/arm/boot/dts/exynos5422-odroidxu4.dts
+@@ -33,8 +33,7 @@
+ 		compatible = "samsung,odroid-xu3-audio";
+ 		model = "Odroid-XU4";
  
- out:
--	rc = tpm_go_idle(chip, flags);
--	if (rc)
--		goto out;
-+	/* may fail but do not override previous error value in rc */
-+	tpm_go_idle(chip, flags);
+-		assigned-clocks = <&i2s0 CLK_I2S_RCLK_SRC>,
+-				<&clock CLK_MOUT_EPLL>,
++		assigned-clocks = <&clock CLK_MOUT_EPLL>,
+ 				<&clock CLK_MOUT_MAU_EPLL>,
+ 				<&clock CLK_MOUT_USER_MAU_EPLL>,
+ 				<&clock_audss EXYNOS_MOUT_AUDSS>,
+@@ -43,8 +42,7 @@
+ 				<&clock_audss EXYNOS_DOUT_AUD_BUS>,
+ 				<&clock_audss EXYNOS_DOUT_I2S>;
  
-+out_locality:
- 	if (need_locality)
- 		tpm_relinquish_locality(chip, flags);
+-		assigned-clock-parents = <&clock_audss EXYNOS_SCLK_I2S>,
+-				<&clock CLK_FOUT_EPLL>,
++		assigned-clock-parents = <&clock CLK_FOUT_EPLL>,
+ 				<&clock CLK_MOUT_EPLL>,
+ 				<&clock CLK_MOUT_MAU_EPLL>,
+ 				<&clock CLK_MAU_EPLL>,
+@@ -55,7 +53,6 @@
+ 				<0>,
+ 				<0>,
+ 				<0>,
+-				<0>,
+ 				<196608001>,
+ 				<(196608002 / 2)>,
+ 				<196608000>;
+@@ -79,6 +76,8 @@
  
--out_no_locality:
- 	if (chip->ops->clk_enable != NULL)
- 		chip->ops->clk_enable(chip, false);
+ &i2s0 {
+ 	status = "okay";
++	assigned-clocks = <&i2s0 CLK_I2S_RCLK_SRC>;
++	assigned-clock-parents = <&clock_audss EXYNOS_SCLK_I2S>;
+ };
  
+ &pwm {
 
 
