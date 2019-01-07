@@ -7,50 +7,50 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59DFFC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:45:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEB3DC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:45:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FA2C20449
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:45:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8DD792183E
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:45:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546865120;
-	bh=Ysl3Kknxu9YBXrA78bILict4LY9HZ8kJFS4TNX6/toI=;
+	s=default; t=1546865124;
+	bh=uZdrzunQhlW0MKQTLJomRgH7vmquQpJYwidV9aggTxA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=yi0c3HoY/X0/4JEcAHt4jh8g+xanke5U/e6u8nANMpLIkIfkb4RsLgFwkgBSfD7lk
-	 PCkbi3BivmIMG81dstw/bJ3RAatpVgV21avvaYTLjSGSpWscyBRLd0isI1XIxjZzAl
-	 fbvcJknMGsAobQiUTyDAdCDyzTx6xnYvqVUW8F6M=
+	b=EjGHnqNwxgtHkpChwA2lmzjXk/k2Vq4X7be8CsbPPI8AXEVQW1QI1947QLBsWeyEx
+	 0OTmKpbGu5jT95nO4mJM8+IcLlwbR5zLOcLX0lhKrrofONv8HPmyxoq51y2g7A6bS6
+	 FLpaAm79U3wddBJAVe0qtX/U9734alNixNU6sSl8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728845AbfAGMpT (ORCPT
+        id S1728858AbfAGMpX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:45:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34404 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:45:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34482 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727841AbfAGMpR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:45:17 -0500
+        id S1728844AbfAGMpT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:45:19 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0CF2B20449;
-        Mon,  7 Jan 2019 12:45:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C03D521873;
+        Mon,  7 Jan 2019 12:45:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865116;
-        bh=Ysl3Kknxu9YBXrA78bILict4LY9HZ8kJFS4TNX6/toI=;
+        s=default; t=1546865119;
+        bh=uZdrzunQhlW0MKQTLJomRgH7vmquQpJYwidV9aggTxA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=y8UUdzd9ovHSYn8Q1+6suCQd3PK0/JatdulPYVAVhHtN4u9Uf7biSPQg7lNFdG9C7
-         vJ+AwQZq1SAdaK6p400crSijU9k+8j9UF51rR9/PoellYQBzHbCZgkEFTKI1RFqpTp
-         VoUvqjVkwhK/vi0drUqKTl6fyU0niuPBlBbbBpuw=
+        b=Cat1rLs6Xzxw/797KNukk/mL3zyYc19tLt0wR8oWxAzMHa2hph6hW4yC8mabEvztr
+         AwaLFNfJ8UKDXnbD3k7WnoY2DSalULFE+FQxNamfJuikIxL93lNUX1OQqstNw3u/c2
+         nSn3uC/XJJuKdi6mZoOXSWzxGRtz17aNXQNmZCh8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Subject: [PATCH 4.20 131/145] arm64: KVM: Avoid setting the upper 32 bits of VTCR_EL2 to 1
-Date:   Mon,  7 Jan 2019 13:32:48 +0100
-Message-Id: <20190107104454.330167322@linuxfoundation.org>
+        stable@vger.kernel.org, Cong Wang <xiyou.wangcong@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        syzbot+ae6bb869cbed29b29040@syzkaller.appspotmail.com
+Subject: [PATCH 4.19 001/170] ax25: fix a use-after-free in ax25_fillin_cb()
+Date:   Mon,  7 Jan 2019 13:30:28 +0100
+Message-Id: <20190107104453.089925136@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190107104437.308206189@linuxfoundation.org>
-References: <20190107104437.308206189@linuxfoundation.org>
+In-Reply-To: <20190107104452.953560660@linuxfoundation.org>
+References: <20190107104452.953560660@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -62,42 +62,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.20-stable review patch.  If anyone has any objections, please let me know.
+4.19-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Will Deacon <will.deacon@arm.com>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-commit df655b75c43fba0f2621680ab261083297fd6d16 upstream.
+[ Upstream commit c433570458e49bccea5c551df628d058b3526289 ]
 
-Although bit 31 of VTCR_EL2 is RES1, we inadvertently end up setting all
-of the upper 32 bits to 1 as well because we define VTCR_EL2_RES1 as
-signed, which is sign-extended when assigning to kvm->arch.vtcr.
+There are multiple issues here:
 
-Lucky for us, the architecture currently treats these upper bits as RES0
-so, whilst we've been naughty, we haven't set fire to anything yet.
+1. After freeing dev->ax25_ptr, we need to set it to NULL otherwise
+   we may use a dangling pointer.
 
-Cc: <stable@vger.kernel.org>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Christoffer Dall <christoffer.dall@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+2. There is a race between ax25_setsockopt() and device notifier as
+   reported by syzbot. Close it by holding RTNL lock.
+
+3. We need to test if dev->ax25_ptr is NULL before using it.
+
+Reported-and-tested-by: syzbot+ae6bb869cbed29b29040@syzkaller.appspotmail.com
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/arm64/include/asm/kvm_arm.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/ax25/af_ax25.c  |   11 +++++++++--
+ net/ax25/ax25_dev.c |    2 ++
+ 2 files changed, 11 insertions(+), 2 deletions(-)
 
---- a/arch/arm64/include/asm/kvm_arm.h
-+++ b/arch/arm64/include/asm/kvm_arm.h
-@@ -104,7 +104,7 @@
- 			 TCR_EL2_ORGN0_MASK | TCR_EL2_IRGN0_MASK | TCR_EL2_T0SZ_MASK)
+--- a/net/ax25/af_ax25.c
++++ b/net/ax25/af_ax25.c
+@@ -653,15 +653,22 @@ static int ax25_setsockopt(struct socket
+ 			break;
+ 		}
  
- /* VTCR_EL2 Registers bits */
--#define VTCR_EL2_RES1		(1 << 31)
-+#define VTCR_EL2_RES1		(1U << 31)
- #define VTCR_EL2_HD		(1 << 22)
- #define VTCR_EL2_HA		(1 << 21)
- #define VTCR_EL2_PS_SHIFT	TCR_EL2_PS_SHIFT
+-		dev = dev_get_by_name(&init_net, devname);
++		rtnl_lock();
++		dev = __dev_get_by_name(&init_net, devname);
+ 		if (!dev) {
++			rtnl_unlock();
+ 			res = -ENODEV;
+ 			break;
+ 		}
+ 
+ 		ax25->ax25_dev = ax25_dev_ax25dev(dev);
++		if (!ax25->ax25_dev) {
++			rtnl_unlock();
++			res = -ENODEV;
++			break;
++		}
+ 		ax25_fillin_cb(ax25, ax25->ax25_dev);
+-		dev_put(dev);
++		rtnl_unlock();
+ 		break;
+ 
+ 	default:
+--- a/net/ax25/ax25_dev.c
++++ b/net/ax25/ax25_dev.c
+@@ -116,6 +116,7 @@ void ax25_dev_device_down(struct net_dev
+ 	if ((s = ax25_dev_list) == ax25_dev) {
+ 		ax25_dev_list = s->next;
+ 		spin_unlock_bh(&ax25_dev_lock);
++		dev->ax25_ptr = NULL;
+ 		dev_put(dev);
+ 		kfree(ax25_dev);
+ 		return;
+@@ -125,6 +126,7 @@ void ax25_dev_device_down(struct net_dev
+ 		if (s->next == ax25_dev) {
+ 			s->next = ax25_dev->next;
+ 			spin_unlock_bh(&ax25_dev_lock);
++			dev->ax25_ptr = NULL;
+ 			dev_put(dev);
+ 			kfree(ax25_dev);
+ 			return;
 
 
