@@ -2,166 +2,129 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05E93C43387
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E67EC43444
 	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 06:26:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C508F206C0
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 06:26:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546842381;
-	bh=Popv6Sq1yL76yihLROiJyRmTq2fr/Xn+ufoh8ah3sGw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=cImxQGXQ4b6epA35/XZJIUg1YReZ9XE6GQ+Dt8tKtetjwi2l0KFYJHGufeejTBxjy
-	 70ejHZTPGzcV3linZNXylUPKy2nFtBP1OXGZcH1ajQ1lGKnP0mqYZiMQhLWJb/LBRK
-	 9PLocmfNAsO4D8mRApO5EcfeeXY9XZCeRoUMBTiQ=
+	by mail.kernel.org (Postfix) with ESMTP id 34128206C0
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 06:26:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="muVIUbhx";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="muVIUbhx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726438AbfAGG0H (ORCPT
+        id S1726474AbfAGG0K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 01:26:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51830 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725535AbfAGG0G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 01:26:06 -0500
-Received: from localhost (unknown [171.76.109.220])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Mon, 7 Jan 2019 01:26:10 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:54734 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725535AbfAGG0K (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 01:26:10 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id BCCFE6079C; Mon,  7 Jan 2019 06:26:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1546842368;
+        bh=NcvDkdHslQskU5FV0T++SVP5eAegMYAeilPH1q0w3X8=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=muVIUbhxZs/TljBpG72XI4owXMJ6kMw+6EneYwx4GqtH2aRJDxtFXulBkhZEp8M2v
+         uX2ZjGzYmyM0sHVaMuEKIn6t2pTAER+GsajnAv+e97K/Njs5pMsTfGpXpa2P13JrpO
+         H2vsfmyFxeuZMD5cLOoiqO+Ev4x+DVAh78oqbZds=
+Received: from [192.168.225.247] (unknown [49.33.229.115])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D669A206C0;
-        Mon,  7 Jan 2019 06:26:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546842364;
-        bh=Popv6Sq1yL76yihLROiJyRmTq2fr/Xn+ufoh8ah3sGw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=OP/z/aFN2FaqTZOFInNl8ENXWJtIBYI2pv8ziUD/zVXytHw2gC4nKQw93COk7EDKU
-         43+FU0/aC0rJvCfQWV66uiJMyCPPxYYQvj3KbhCUt9x+/4T2oKPzOcJJUEjfum5oPv
-         ABTKvJlPS5zH3lWiDr9W0lizX1GWlNAkZ/P4k0Fk=
-Date:   Mon, 7 Jan 2019 11:54:27 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc:     John Stultz <john.stultz@linaro.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Tanglei Han <hantanglei@huawei.com>,
-        Zhuangluan Su <suzhuangluan@hisilicon.com>,
-        Ryan Grachek <ryan@edited.us>, dmaengine@vger.kernel.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-Subject: Re: [PATCH 2/8 v2] Documentation: bindings: k3dma: Add binding for
- dma-avail-chan
-Message-ID: <20190107062427.GY13372@vkoul-mobl.Dlink>
-References: <1546635388-13795-1-git-send-email-john.stultz@linaro.org>
- <1546635388-13795-3-git-send-email-john.stultz@linaro.org>
- <20190105040030.GF2477@Mani-XPS-13-9360>
- <CALAqxLUZ=6_tELtZPEjYwV+BNNBcZj4Z=dq9UyrRXuPhs_uGUw@mail.gmail.com>
- <20190105045320.GA3761@Mani-XPS-13-9360>
- <20190105134610.GX13372@vkoul-mobl.Dlink>
- <20190105140826.GA28029@Mani-XPS-13-9360>
+        (Authenticated sender: tdas@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 35AE96020A;
+        Mon,  7 Jan 2019 06:26:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1546842368;
+        bh=NcvDkdHslQskU5FV0T++SVP5eAegMYAeilPH1q0w3X8=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=muVIUbhxZs/TljBpG72XI4owXMJ6kMw+6EneYwx4GqtH2aRJDxtFXulBkhZEp8M2v
+         uX2ZjGzYmyM0sHVaMuEKIn6t2pTAER+GsajnAv+e97K/Njs5pMsTfGpXpa2P13JrpO
+         H2vsfmyFxeuZMD5cLOoiqO+Ev4x+DVAh78oqbZds=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 35AE96020A
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+Subject: Re: [PATCH v1] clk: qcom: lpass: Add CLK_IGNORE_UNUSED for lpass
+ clocks
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1545306385-31240-1-git-send-email-tdas@codeaurora.org>
+ <154533989563.79149.10213938035592547726@swboyd.mtv.corp.google.com>
+From:   Taniya Das <tdas@codeaurora.org>
+Message-ID: <b6397ef1-a6df-0040-9dcc-c491b76a2f8f@codeaurora.org>
+Date:   Mon, 7 Jan 2019 11:56:00 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190105140826.GA28029@Mani-XPS-13-9360>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <154533989563.79149.10213938035592547726@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05-01-19, 19:38, Manivannan Sadhasivam wrote:
-> Hi Vinod,
-> 
-> On Sat, Jan 05, 2019 at 07:16:10PM +0530, Vinod Koul wrote:
-> > On 05-01-19, 10:23, Manivannan Sadhasivam wrote:
-> > > On Fri, Jan 04, 2019 at 08:39:34PM -0800, John Stultz wrote:
-> > > > On Fri, Jan 4, 2019 at 8:00 PM Manivannan Sadhasivam
-> > > > <manivannan.sadhasivam@linaro.org> wrote:
-> > > > >
-> > > > > Hi John,
-> > > > >
-> > > > > On Fri, Jan 04, 2019 at 12:56:22PM -0800, John Stultz wrote:
-> > > > > > Some dma channels can be reserved for secure mode or other
-> > > > > > hardware on the SoC, so provide a binding for a bitmask
-> > > > > > listing the available channels for the kernel to use.
-> > > > > >
-> > > > > > Cc: Vinod Koul <vkoul@kernel.org>
-> > > > > > Cc: Rob Herring <robh+dt@kernel.org>
-> > > > > > Cc: Mark Rutland <mark.rutland@arm.com>
-> > > > > > Cc: Tanglei Han <hantanglei@huawei.com>
-> > > > > > Cc: Zhuangluan Su <suzhuangluan@hisilicon.com>
-> > > > > > Cc: Ryan Grachek <ryan@edited.us>
-> > > > > > Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > > > > > Cc: dmaengine@vger.kernel.org
-> > > > > > Cc: devicetree@vger.kernel.org
-> > > > > > Signed-off-by: John Stultz <john.stultz@linaro.org>
-> > > > > > ---
-> > > > > >  Documentation/devicetree/bindings/dma/k3dma.txt | 3 +++
-> > > > > >  1 file changed, 3 insertions(+)
-> > > > > >
-> > > > > > diff --git a/Documentation/devicetree/bindings/dma/k3dma.txt b/Documentation/devicetree/bindings/dma/k3dma.txt
-> > > > > > index 10a2f15..1c466c1 100644
-> > > > > > --- a/Documentation/devicetree/bindings/dma/k3dma.txt
-> > > > > > +++ b/Documentation/devicetree/bindings/dma/k3dma.txt
-> > > > > > @@ -14,6 +14,9 @@ Required properties:
-> > > > > >               have specific request line
-> > > > > >  - clocks: clock required
-> > > > > >
-> > > > > > +Optional properties:
-> > > > > > +- dma-avail-chan: Bitmask of available physical channels
-> > > > > > +
-> > > > >
-> > > > > This property looks too generic. Since this is specific to HiSi SoCs,
-> > > > > this could be "hisi-dma-avail-chan"?
-> > > > 
-> > > > I'm fine to change it, but I'm not sure I fully understand the
-> > > > rational. Can you help me understand?
-> > > > Are device node-binding names supposed to have global scope? I assumed
-> > > > the node property names are basically scoped to the entry?
-> > > 
-> > > IIUC properties documented in subsystem binding (dma.txt in this case)
-> > > will have global scope. Those which are not documented in this binding
-> > > are specific to vendor IPs and should be prefixed with the vendor
-> > > prefix (hisi in this case).
-> > > 
-> > > > Further, having some dma channels be reserved doesn't seem to be too
-> > > > unique a concept, so I'm not sure what we gain long term by prefixing
-> > > > it?
-> > > > 
-> > > 
-> > > Right, but this brings up the point of having this functionality in
-> > > generic DMA engine so that the DMA controller drivers need not handle.
-> > > So either we should move this available channel check to DMA Engine
-> > > and document the property in dma.txt so that other IPs can also use it
-> > > or keep the functionality in K3 driver and use HiSi prefix for the
-> > > property.
-> > > 
-> > > But I'd like to hear Vinod/Rob's opinion on this!
-> > 
-> > So there are two parts, first is if this new property of using 'some'
-> > channels of controller is generic enough, the answer is unfortunately
-> > yes, so we should move this to dma.txt as a generic property
-> > 
-> > But I don't agree the dmaengine core should handle it, we may add
-> > helpers, but controllers registers N channels and they would do so, core
-> > should not do filtering
-> > 
-> 
-> Okay. But won't it create ambiguity? What if a new driver developer
-> assmes that he can use this property to filter the channels for his own
-> DMA controller? Since we are _explicitly_ stating that these channels
-> should be filtered, why the dmaengine core can't handle it?
-> 
-> If the property is generic, then it makes sense to keep the
-> functionality also generic.
+Hello Stephen,
 
-Core doesnt have a view of channels to be filtered, it looks at N
-channels getting registered and works on those.
+On 12/21/2018 2:34 AM, Stephen Boyd wrote:
+> Quoting Taniya Das (2018-12-20 03:46:25)
+>> The LPASS clocks has a dependency on the GCC lpass clocks to be enabled
+>> before accessing them and that was the reason to mark the gcc lpass clocks
+>> as critical. But in the case where the lpass subsystem would require a
+>> restart, toggling the lpass reset would from HW clear the SW enable bits
+>> of the GCC lpass clocks. Thus the next time bringing up the lpass subsystem
+>> out of reset would fail.
+>>
+>> Allow the lpass clock driver to enable/disable the gcc lpass clocks and
+>> mark the lpass clocks not be accessed during late_init if no client vote.
+> 
+> You need to add more details here. It feels like you wrote the beginning
+> of a paragraph and then stopped abruptly, leaving the reader hanging for
+> the whole story. Why is late_init important? Why do we need to leave
+> them on from the bootloader? What if the bootloader doesn't leave them
+> enabled? This is all rather hacky so I'm deeply confused. Does the lpass
+> driver need to get these gcc clks and enable/prepare them during probe?
+> But then it needs to also allow a reset happen and change the clk state?
+> 
+> I suspect this situation is circling a larger problem where a reset is
+> toggled and that changes some clk state without the clk framework
+> knowing. There's not much we can do about that besides having some
+> mechanism for the clks to know that their state is now out of sync. If
+> that can be done on the provider driver side then we should have an
+> easier time not needing to write a bunch of framework code to handle
+> this. OMAP folks are dealing with the same problems from what I recall.
+> 
 
-Till now folks do not create channels for 'filtered' ones and register
-the ones kernel can use..
+Hmm, if I mark the CLK_IS_CRITICAL, I don't see a way to handle it in 
+provider. Please suggest if you think provider could handle it.
+
+>>
+>> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> 
+>> @@ -77,6 +81,7 @@
+>>                  .enable_mask = BIT(0),
+>>                  .hw.init = &(struct clk_init_data){
+>>                          .name = "lpass_qdsp6ss_sleep_clk",
+>> +                       .flags = CLK_IGNORE_UNUSED,
+> 
+> All uses of CLK_IGNORE_UNUSED and CLK_IS_CRITICAL need comments about
+> why they're there. It's never obvious why these things are being done.
+> 
+
+Sure, would add comments.
 
 -- 
-~Vinod
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
+
+--
