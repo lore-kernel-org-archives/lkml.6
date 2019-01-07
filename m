@@ -4,54 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1ED5C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:13:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A511C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:13:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 901742089F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:13:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 641672089F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:13:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546866794;
-	bh=+EmzAL1l8qQp15hV8/0v7nspHsKJYyEMm0FT3xRF9oM=;
+	s=default; t=1546866805;
+	bh=bSBPiChESolQeq7V5JlUqU/PADOZUi0/BwfhDFgdAZQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=wYMSV9kxosrw4eNmp0KvOaLrFt/ksk9XRZgTrZJdC7qnFU3FPO8I0P0Kz28s3tGx8
-	 kI5d5ACOkDC2uNckhqFuhzR25tIFfg+2Q8hy6d+S46qGqGYueDcZSh/zOyy0KItAnA
-	 AxzBekDxuHtEzz2HRXDjH7vsrBrzQ9kCn8P2qJWk=
+	b=z7fd88TFfwT9Em7V05NkMW1oDbAX1m7oBKs04LTeYbu4KyJTA5v1xsacwLjIeoId3
+	 lykHJvcFz3iBX42OW59znWlXz36hXmAjWF8PU5zk0FP36dCYNUQ8MaASE/jOJKLovi
+	 yTTDb9hlgNOZzJnKMnlmN01RfJc4ifL6XvcwSex4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731703AbfAGNNN (ORCPT
+        id S1731726AbfAGNNY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:13:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51470 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:13:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51276 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731095AbfAGNDy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:03:54 -0500
+        id S1730260AbfAGNDr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:03:47 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CEB77206BB;
-        Mon,  7 Jan 2019 13:03:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AFEBB217D4;
+        Mon,  7 Jan 2019 13:03:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546866234;
-        bh=+EmzAL1l8qQp15hV8/0v7nspHsKJYyEMm0FT3xRF9oM=;
+        s=default; t=1546866226;
+        bh=bSBPiChESolQeq7V5JlUqU/PADOZUi0/BwfhDFgdAZQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EI3dur/yjmg3KOc6e+hJjCmc/0MyGA7D1PaXdawtDltKio9L/6OtdPr8boAMZnrLC
-         eum2MWt0mpMEzReHNsq17nZtAeV8oFAt+fEmQKJDuSPqRhTCEuQ1b5xoUzagWhWe0F
-         RXFsfnXxXTwXhwmpG72xxnx4DIydT815BPfD7fmI=
+        b=tgHlz1FVnurUDH7U0lBg1aKG8aKxgjOlhrMQe28Pk+EexzFbJiqCAJ3Fr9/5KQFyk
+         8pfw/G+CN2cXC1Svs7Tt2NCba9J4HEGkTEvTIvJ2sVoA/WinKCoapkmdNZ6ekEmCBg
+         d6xPHXrZuebLwD3LgaxcM7+29nyi6kNLgnBqVh7c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Huacai Chen <chenhc@lemote.com>,
-        Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <james.hogan@mips.com>,
-        "Steven J . Hill" <Steven.Hill@cavium.com>,
-        linux-mips@linux-mips.org, Fuxin Zhang <zhangfx@lemote.com>,
-        Zhangjin Wu <wuzhangjin@gmail.com>
-Subject: [PATCH 4.14 092/101] MIPS: Align kernel load address to 64KB
-Date:   Mon,  7 Jan 2019 13:33:20 +0100
-Message-Id: <20190107105337.877027496@linuxfoundation.org>
+        stable@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
+        Paul Burton <paul.burton@mips.com>, linux-mips@vger.kernel.org,
+        Rich Felker <dalias@libc.org>,
+        David Daney <david.daney@cavium.com>
+Subject: [PATCH 4.14 089/101] MIPS: math-emu: Write-protect delay slot emulation pages
+Date:   Mon,  7 Jan 2019 13:33:17 +0100
+Message-Id: <20190107105337.745058069@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107105330.372621917@linuxfoundation.org>
 References: <20190107105330.372621917@linuxfoundation.org>
@@ -70,57 +67,125 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Huacai Chen <chenhc@lemote.com>
+From: Paul Burton <paul.burton@mips.com>
 
-commit bec0de4cfad21bd284dbddee016ed1767a5d2823 upstream.
+commit adcc81f148d733b7e8e641300c5590a2cdc13bf3 upstream.
 
-KEXEC needs the new kernel's load address to be aligned on a page
-boundary (see sanity_check_segment_list()), but on MIPS the default
-vmlinuz load address is only explicitly aligned to 16 bytes.
+Mapping the delay slot emulation page as both writeable & executable
+presents a security risk, in that if an exploit can write to & jump into
+the page then it can be used as an easy way to execute arbitrary code.
 
-Since the largest PAGE_SIZE supported by MIPS kernels is 64KB, increase
-the alignment calculated by calc_vmlinuz_load_addr to 64KB.
+Prevent this by mapping the page read-only for userland, and using
+access_process_vm() with the FOLL_FORCE flag to write to it from
+mips_dsemul().
 
-Signed-off-by: Huacai Chen <chenhc@lemote.com>
+This will likely be less efficient due to copy_to_user_page() performing
+cache maintenance on a whole page, rather than a single line as in the
+previous use of flush_cache_sigtramp(). However this delay slot
+emulation code ought not to be running in any performance critical paths
+anyway so this isn't really a problem, and we can probably do better in
+copy_to_user_page() anyway in future.
+
+A major advantage of this approach is that the fix is small & simple to
+backport to stable kernels.
+
+Reported-by: Andy Lutomirski <luto@kernel.org>
 Signed-off-by: Paul Burton <paul.burton@mips.com>
-Patchwork: https://patchwork.linux-mips.org/patch/21131/
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: James Hogan <james.hogan@mips.com>
-Cc: Steven J . Hill <Steven.Hill@cavium.com>
-Cc: linux-mips@linux-mips.org
-Cc: Fuxin Zhang <zhangfx@lemote.com>
-Cc: Zhangjin Wu <wuzhangjin@gmail.com>
-Cc: <stable@vger.kernel.org> # 2.6.36+
+Fixes: 432c6bacbd0c ("MIPS: Use per-mm page to execute branch delay slot instructions")
+Cc: stable@vger.kernel.org # v4.8+
+Cc: linux-mips@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: Rich Felker <dalias@libc.org>
+Cc: David Daney <david.daney@cavium.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/boot/compressed/calc_vmlinuz_load_addr.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ arch/mips/kernel/vdso.c     |    4 ++--
+ arch/mips/math-emu/dsemul.c |   38 ++++++++++++++++++++------------------
+ 2 files changed, 22 insertions(+), 20 deletions(-)
 
---- a/arch/mips/boot/compressed/calc_vmlinuz_load_addr.c
-+++ b/arch/mips/boot/compressed/calc_vmlinuz_load_addr.c
-@@ -13,6 +13,7 @@
- #include <stdint.h>
- #include <stdio.h>
- #include <stdlib.h>
-+#include "../../../../include/linux/sizes.h"
+--- a/arch/mips/kernel/vdso.c
++++ b/arch/mips/kernel/vdso.c
+@@ -126,8 +126,8 @@ int arch_setup_additional_pages(struct l
  
- int main(int argc, char *argv[])
+ 	/* Map delay slot emulation page */
+ 	base = mmap_region(NULL, STACK_TOP, PAGE_SIZE,
+-			   VM_READ|VM_WRITE|VM_EXEC|
+-			   VM_MAYREAD|VM_MAYWRITE|VM_MAYEXEC,
++			   VM_READ | VM_EXEC |
++			   VM_MAYREAD | VM_MAYWRITE | VM_MAYEXEC,
+ 			   0, NULL);
+ 	if (IS_ERR_VALUE(base)) {
+ 		ret = base;
+--- a/arch/mips/math-emu/dsemul.c
++++ b/arch/mips/math-emu/dsemul.c
+@@ -214,8 +214,9 @@ int mips_dsemul(struct pt_regs *regs, mi
  {
-@@ -45,11 +46,11 @@ int main(int argc, char *argv[])
- 	vmlinuz_load_addr = vmlinux_load_addr + vmlinux_size;
+ 	int isa16 = get_isa16_mode(regs->cp0_epc);
+ 	mips_instruction break_math;
+-	struct emuframe __user *fr;
+-	int err, fr_idx;
++	unsigned long fr_uaddr;
++	struct emuframe fr;
++	int fr_idx, ret;
  
- 	/*
--	 * Align with 16 bytes: "greater than that used for any standard data
--	 * types by a MIPS compiler." -- See MIPS Run Linux (Second Edition).
-+	 * Align with 64KB: KEXEC needs load sections to be aligned to PAGE_SIZE,
-+	 * which may be as large as 64KB depending on the kernel configuration.
- 	 */
+ 	/* NOP is easy */
+ 	if (ir == 0)
+@@ -250,27 +251,31 @@ int mips_dsemul(struct pt_regs *regs, mi
+ 		fr_idx = alloc_emuframe();
+ 	if (fr_idx == BD_EMUFRAME_NONE)
+ 		return SIGBUS;
+-	fr = &dsemul_page()[fr_idx];
  
--	vmlinuz_load_addr += (16 - vmlinux_size % 16);
-+	vmlinuz_load_addr += (SZ_64K - vmlinux_size % SZ_64K);
+ 	/* Retrieve the appropriately encoded break instruction */
+ 	break_math = BREAK_MATH(isa16);
  
- 	printf("0x%llx\n", vmlinuz_load_addr);
+ 	/* Write the instructions to the frame */
+ 	if (isa16) {
+-		err = __put_user(ir >> 16,
+-				 (u16 __user *)(&fr->emul));
+-		err |= __put_user(ir & 0xffff,
+-				  (u16 __user *)((long)(&fr->emul) + 2));
+-		err |= __put_user(break_math >> 16,
+-				  (u16 __user *)(&fr->badinst));
+-		err |= __put_user(break_math & 0xffff,
+-				  (u16 __user *)((long)(&fr->badinst) + 2));
++		union mips_instruction _emul = {
++			.halfword = { ir >> 16, ir }
++		};
++		union mips_instruction _badinst = {
++			.halfword = { break_math >> 16, break_math }
++		};
++
++		fr.emul = _emul.word;
++		fr.badinst = _badinst.word;
+ 	} else {
+-		err = __put_user(ir, &fr->emul);
+-		err |= __put_user(break_math, &fr->badinst);
++		fr.emul = ir;
++		fr.badinst = break_math;
+ 	}
  
+-	if (unlikely(err)) {
++	/* Write the frame to user memory */
++	fr_uaddr = (unsigned long)&dsemul_page()[fr_idx];
++	ret = access_process_vm(current, fr_uaddr, &fr, sizeof(fr),
++				FOLL_FORCE | FOLL_WRITE);
++	if (unlikely(ret != sizeof(fr))) {
+ 		MIPS_FPU_EMU_INC_STATS(errors);
+ 		free_emuframe(fr_idx, current->mm);
+ 		return SIGBUS;
+@@ -282,10 +287,7 @@ int mips_dsemul(struct pt_regs *regs, mi
+ 	atomic_set(&current->thread.bd_emu_frame, fr_idx);
+ 
+ 	/* Change user register context to execute the frame */
+-	regs->cp0_epc = (unsigned long)&fr->emul | isa16;
+-
+-	/* Ensure the icache observes our newly written frame */
+-	flush_cache_sigtramp((unsigned long)&fr->emul);
++	regs->cp0_epc = fr_uaddr | isa16;
+ 
+ 	return 0;
+ }
 
 
