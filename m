@@ -2,105 +2,54 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81576C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 19:22:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81468C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 19:23:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F499206B7
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 19:22:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546888971;
-	bh=Y5ZyZXNGTfo1ShUnlqO7DpRMWny3zxbC7w9mgnf8JDo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=Y/ewVa83gerw/w07Up9hzi210uehbb7F436c43TUFdIPm0+b1a+kCEidFrXwWu6lO
-	 GIhINp6zoJ4aWeejfGk7ov3tZl4E8Q138bdFgVwZ59ynnb8kWosiHvKmuEKhK4t9Cv
-	 gSEDFO6+nBzrRjrJX66vnOhScwiM4AYs+TCNpLfg=
+	by mail.kernel.org (Postfix) with ESMTP id 5A7C5206B7
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 19:23:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727820AbfAGTWu (ORCPT
+        id S1727951AbfAGTXf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 14:22:50 -0500
-Received: from casper.infradead.org ([85.118.1.10]:53060 "EHLO
-        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727064AbfAGTWt (ORCPT
+        Mon, 7 Jan 2019 14:23:35 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:60392 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726602AbfAGTXe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 14:22:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-        MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=mwyvS9cqn7ZB0uWlHM0yyy2cALvoq6rpMi4xORDK6Qg=; b=Lx4SnL7IX5fTfVVePhaL71km6R
-        u8m5rav4apiQj7APLkmFPbpEyK1j6FCLixk5fnCtPBqArUbfXZFRA5aacvofYozb5j3GnyW7+OXyN
-        pJ7TA3zVTA++yGpXl4ZOosTw6X/ueNGodlOSIT91HyKTSLbdywV3dq+I1tcxNNsXhPnqL0qRUmvhZ
-        tVIC1p7+yh9VPLz1a1MEWqMWA/arFCJkraXTQ+pDlcFGOR0M9yI1zyhHAgf1LI2TIDqLrn3Mf0aQM
-        0dt4Ed7UYNsY7f0c2uuZH6MZMqPBkzHNPOUjWg0TH6m+qIhw21jEzC707yMx/npeUHx9gFMsZJW2+
-        uUx3K0Gg==;
-Received: from 177.41.113.230.dynamic.adsl.gvt.net.br ([177.41.113.230] helo=coco.lan)
-        by casper.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1ggaTr-00023B-Kq; Mon, 07 Jan 2019 19:22:36 +0000
-Date:   Mon, 7 Jan 2019 17:22:31 -0200
-From:   Mauro Carvalho Chehab <mchehab@kernel.org>
-To:     Kangjie Lu <kjlu@umn.edu>
-Cc:     pakki001@umn.edu, "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] media: drx: fix a missing check of return value
-Message-ID: <20190107172231.49b549db@coco.lan>
-In-Reply-To: <20181220065747.40379-1-kjlu@umn.edu>
-References: <20181220065747.40379-1-kjlu@umn.edu>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Mon, 7 Jan 2019 14:23:34 -0500
+Received: from localhost (unknown [144.121.20.163])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id BB0AE14C892F7;
+        Mon,  7 Jan 2019 11:23:33 -0800 (PST)
+Date:   Mon, 07 Jan 2019 11:23:29 -0800 (PST)
+Message-Id: <20190107.112329.202441308657115890.davem@davemloft.net>
+To:     jgg@mellanox.com
+Cc:     grygorii.strashko@ti.com, kishon@ti.com,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH] phy: ti: Fix compilation failures without REGMAP
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20190107175407.GA5612@ziepe.ca>
+References: <20190107175407.GA5612@ziepe.ca>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=iso-8859-7
+Content-Transfer-Encoding: base64
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 07 Jan 2019 11:23:34 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, 20 Dec 2018 00:57:44 -0600
-Kangjie Lu <kjlu@umn.edu> escreveu:
-
-> Function drxj_dap_write_reg16(), which writes data to buffer, may fail.
-> We need to check if it fails, and if so, we should goto error.
-
-Did you test this on a real hardware? This kind of patch has a potential 
-of breaking things, as, on some drivers, some writes may return error.
-
-For example, when called on early stages, a write may fail because
-the firmware was not loaded yet. So, a change like that should be
-carefully tested with real hardware.
-
-> Otherwise, the buffer will have incorrect data.
-> 
-> Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-> ---
->  drivers/media/dvb-frontends/drx39xyj/drxj.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/dvb-frontends/drx39xyj/drxj.c b/drivers/media/dvb-frontends/drx39xyj/drxj.c
-> index 551b7d65fa66..d105125bc1c3 100644
-> --- a/drivers/media/dvb-frontends/drx39xyj/drxj.c
-> +++ b/drivers/media/dvb-frontends/drx39xyj/drxj.c
-> @@ -2136,9 +2136,13 @@ int drxj_dap_atomic_read_write_block(struct i2c_device_addr *dev_addr,
->  
->  			word = ((u16) data[2 * i]);
->  			word += (((u16) data[(2 * i) + 1]) << 8);
-> -			drxj_dap_write_reg16(dev_addr,
-> +			rc = drxj_dap_write_reg16(dev_addr,
->  					     (DRXJ_HI_ATOMIC_BUF_START + i),
->  					    word, 0);
-> +			if (rc) {
-> +				pr_err("error %d\n", rc);
-> +				goto rw_error;
-> +			}
->  		}
->  	}
->  
-
-
-
-Thanks,
-Mauro
+RnJvbTogSmFzb24gR3VudGhvcnBlIDxqZ2dAbWVsbGFub3guY29tPg0KRGF0ZTogTW9uLCA3IEph
+biAyMDE5IDE3OjU0OjE0ICswMDAwDQoNCj4gVGhpcyBkcml2ZXIgcmVxdWlyZXMgcmVnbWFwIG9y
+IHRoZSBjb21waWxlIGZhaWxzOg0KPiANCj4gZHJpdmVycy9waHkvdGkvcGh5LWdtaWktc2VsLmM6
+NDM6Mjc6IGVycm9yOiBhcnJheSB0eXBlIGhhcyBpbmNvbXBsZXRlIGVsZW1lbnQgdHlwZSChc3Ry
+dWN0IHJlZ19maWVsZKINCj4gICBjb25zdCBzdHJ1Y3QgcmVnX2ZpZWxkICgqcmVnZmllbGRzKVtQ
+SFlfR01JSV9TRUxfTEFTVF07DQo+IA0KPiBBZGQgaXQgdG8ga2NvbmZpZy4NCj4gDQo+IFNpZ25l
+ZC1vZmYtYnk6IEphc29uIEd1bnRob3JwZSA8amdnQG1lbGxhbm94LmNvbT4NCg0KQXBwbGllZC4N
+Cg==
