@@ -6,71 +6,114 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11765C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 03:19:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB523C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 03:23:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0E0A20859
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 03:19:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A6FE820859
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 03:23:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726286AbfAGDTf (ORCPT
+        id S1726330AbfAGDXo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 6 Jan 2019 22:19:35 -0500
-Received: from esa3.microchip.iphmx.com ([68.232.153.233]:35930 "EHLO
-        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726074AbfAGDTf (ORCPT
+        Sun, 6 Jan 2019 22:23:44 -0500
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:54897 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726180AbfAGDXo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Jan 2019 22:19:35 -0500
-X-IronPort-AV: E=Sophos;i="5.56,449,1539673200"; 
-   d="scan'208";a="25169875"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 06 Jan 2019 20:19:35 -0700
-Received: from localhost (10.10.76.4) by chn-sv-exch06.mchp-main.com
- (10.10.76.107) with Microsoft SMTP Server id 14.3.352.0; Sun, 6 Jan 2019
- 20:20:10 -0700
-From:   Joey Zhang <joey.zhang@microchip.com>
-To:     <jdmason@kudzu.us>, <dave.jiang@intel.com>, <allenbh@gmail.com>,
-        <linux-ntb@googlegroups.com>, <linux-kernel@vger.kernel.org>
-CC:     Joey Zhang <joey.zhang@microchip.com>
-Subject: [PATCH] NTB: ntb_transport: Free MWs in ntb_transport_link_cleanup()
-Date:   Mon, 7 Jan 2019 11:12:56 +0800
-Message-ID: <1546830776-3138-1-git-send-email-joey.zhang@microchip.com>
-X-Mailer: git-send-email 2.7.4
+        Sun, 6 Jan 2019 22:23:44 -0500
+X-IronPort-AV: E=Sophos;i="5.56,449,1539619200"; 
+   d="scan'208";a="51438959"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 07 Jan 2019 11:23:42 +0800
+Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
+        by cn.fujitsu.com (Postfix) with ESMTP id 568DD4B7EC5C;
+        Mon,  7 Jan 2019 11:23:36 +0800 (CST)
+Received: from localhost.local (10.167.225.56) by
+ G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Mon, 7 Jan 2019 11:23:41 +0800
+From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
+To:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>, <bp@alien8.de>,
+        <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
+        <keescook@chromium.org>, <bhe@redhat.com>, <msys.mizuma@gmail.com>
+CC:     <indou.takao@jp.fujitsu.com>, <caoj.fnst@cn.fujitsu.com>,
+        <fanc.fnst@cn.fujitsu.com>
+Subject: [PATCH v15 2/6] x86/boot: Introduce get_acpi_rsdp() to parse RSDP in cmdline from KEXEC
+Date:   Mon, 7 Jan 2019 11:22:39 +0800
+Message-ID: <20190107032243.25324-3-fanc.fnst@cn.fujitsu.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190107032243.25324-1-fanc.fnst@cn.fujitsu.com>
+References: <20190107032243.25324-1-fanc.fnst@cn.fujitsu.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.167.225.56]
+X-yoursite-MailScanner-ID: 568DD4B7EC5C.AA513
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If NTB peer host crashes or reboots, the NTB transport link will be
-down and the MWs of NTB transport will be invalid. But the
-ntb_transport_link_cleanup() does not free these invalid MWs. When
-the NTB peer host is recovered later, NTB transport link will be
-up and the ntb_set_mw() will not reset up MWs. Because the MWs of
-NTB transport are invalid, the NTB transport will not work.
+KASLR may randomly choose some positions which are located in movable
+memory regions. This will make the movable memory chosen by KASLR
+can't be removed.
 
-We can fix it by freeing MWs when NTB transport link is down, then
-the ntb_set_mw() will reset up MWs when NTB transport link is up.
+Memory information in SRAT is necessary to fix the conflict between
+KASLR and memory-hotremove.
 
-Signed-off-by: Joey Zhang <joey.zhang@microchip.com>
+ACPI SRAT (System/Static Resource Affinity Table) shows the details
+about memory ranges, including ranges of memory provided by hot-added
+memory devices. SRAT is introduced by Root System Description
+Pointer(RSDP). So RSDP should be found firstly.
+
+When booting form KEXEC/EFI/BIOS, the methods to find RSDP
+are different. When booting from KEXEC, 'acpi_rsdp=' may have been
+added to cmdline, so parse cmdline to find RSDP.
+
+Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
 ---
- drivers/ntb/ntb_transport.c | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/x86/boot/compressed/acpi.c | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
+ create mode 100644 arch/x86/boot/compressed/acpi.c
 
-diff --git a/drivers/ntb/ntb_transport.c b/drivers/ntb/ntb_transport.c
-index 3bfdb45..6e8902d 100644
---- a/drivers/ntb/ntb_transport.c
-+++ b/drivers/ntb/ntb_transport.c
-@@ -862,6 +862,9 @@ static void ntb_transport_link_cleanup(struct ntb_transport_ctx *nt)
- 	if (!nt->link_is_up)
- 		cancel_delayed_work_sync(&nt->link_work);
- 
-+	for (i = 0; i < nt->mw_count; i++)
-+		ntb_free_mw(nt, i);
+diff --git a/arch/x86/boot/compressed/acpi.c b/arch/x86/boot/compressed/acpi.c
+new file mode 100644
+index 000000000000..7ca5001d7639
+--- /dev/null
++++ b/arch/x86/boot/compressed/acpi.c
+@@ -0,0 +1,30 @@
++// SPDX-License-Identifier: GPL-2.0
++#define BOOT_CTYPE_H
++#include "misc.h"
++#include "error.h"
++#include "../string.h"
 +
- 	/* The scratchpad registers keep the values if the remote side
- 	 * goes down, blast them now to give them a sane value the next
- 	 * time they are accessed
++#include <linux/acpi.h>
++
++/*
++ * Max length of 64-bit hex address string is 19, prefix "0x" + 16 hex
++ * digits, and '\0' for termination.
++ */
++#define MAX_HEX_ADDRESS_STRING_LEN 19
++
++static acpi_physical_address get_acpi_rsdp(void)
++{
++#ifdef CONFIG_KEXEC
++	char val[MAX_HEX_ADDRESS_STRING_LEN];
++	unsigned long long res;
++	int len = 0;
++
++	len = cmdline_find_option("acpi_rsdp", val, MAX_HEX_ADDRESS_STRING_LEN);
++	if (len > 0) {
++		val[len] = '\0';
++		if (!kstrtoull(val, 16, &res))
++			return res;
++	}
++#endif
++	return 0;
++}
 -- 
-2.7.4
+2.20.1
+
+
 
