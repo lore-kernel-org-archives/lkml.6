@@ -4,53 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D953C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:38:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5849AC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:38:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0BD4520859
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:38:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 26AB0206BB
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:38:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546864685;
-	bh=mCQsbCqBISjjzkIhEEncSxu5U3cXUtzckFub+sYWxT4=;
+	s=default; t=1546864692;
+	bh=jj1FbtvZwyM5I4ytqnqcgFcpu/e6b+YJNLTjjamzwJM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=bQfczOX32kcCaHDNwa2bSpYSEuRyYUHeFL++O1PVv7KviNdkr+zlAuf2wIPC3TS1z
-	 NG6DhEX1LBc+vlJqI1faCkGKNR6r6XFMdlZPqIG9J3zBvM6HaEErF3NmQRVunemya2
-	 JRGkYn7+lS0I9fYNw9NHy1VJbxO6IUMC7HrfpJBo=
+	b=F2Df6FtOaV0Ev0BcmCeYYu910mZZhrtxkEbToCtTYgeznBkYmV2vo4/5N/McJam5U
+	 Bmg6ZLg2lKM29l2UtbzQal/GfVPyoDCG0FMZKwd1Ov9WNypmkcAViStMl+d8HqJbA7
+	 9jb3bpxmCIDIs5BC9kXajuAcocpzHihuAI2MILc8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727892AbfAGMiE (ORCPT
+        id S1727899AbfAGMiL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:38:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53078 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:38:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53220 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727084AbfAGMiC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:38:02 -0500
+        id S1727084AbfAGMiJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:38:09 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5BF5720859;
-        Mon,  7 Jan 2019 12:37:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D814A217D4;
+        Mon,  7 Jan 2019 12:38:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546864681;
-        bh=mCQsbCqBISjjzkIhEEncSxu5U3cXUtzckFub+sYWxT4=;
+        s=default; t=1546864688;
+        bh=jj1FbtvZwyM5I4ytqnqcgFcpu/e6b+YJNLTjjamzwJM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Sl9pcJNpES18Y3QLYGWV3+OKOnQBOERadNREt9vtGYwATHqXOhfUXeaJgyCXeH2nH
-         GAb14Dhqi6XhlO4cNVfpdzawZx2/ljeZbw0vGjaiWcLXOffb2uNnK1miW6Hr76GI+7
-         WnkyjJdV0AfDcuIHO/nOtODpCUUvaNXzhjPCLInQ=
+        b=VLZXwfJIt/CzBIQrR8ehts2ceyXUWGnp0a9hGAFJfh9iq+chrEzS/zDWBiLf3ryzR
+         /Bv6kaXPvvvvZZgBfTNg38Yt8WLAFl8iZhn2SUpzn8+0UvI9b8JiK5kOeQLFetWU8I
+         Ii83XAJZ80sweUdgeHSGFczxR3fYq3AX2m01xCRI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jiri Olsa <jolsa@redhat.com>, Leo Yan <leo.yan@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        stable@vger.kernel.org, Ben Hutchings <ben@decadent.org.uk>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 4.20 067/145] perf script: Use fallbacks for branch stacks
-Date:   Mon,  7 Jan 2019 13:31:44 +0100
-Message-Id: <20190107104446.050458027@linuxfoundation.org>
+Subject: [PATCH 4.20 068/145] perf pmu: Suppress potential format-truncation warning
+Date:   Mon,  7 Jan 2019 13:31:45 +0100
+Message-Id: <20190107104446.206073404@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104437.308206189@linuxfoundation.org>
 References: <20190107104437.308206189@linuxfoundation.org>
@@ -69,109 +69,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Adrian Hunter <adrian.hunter@intel.com>
+From: Ben Hutchings <ben@decadent.org.uk>
 
-commit 692d0e63324d2954a0c63a812a8588e97023a295 upstream.
+commit 11a64a05dc649815670b1be9fe63d205cb076401 upstream.
 
-Branch stacks do not necessarily have the same cpumode as the 'ip'. Use
-the fallback functions in those cases.
+Depending on which functions are inlined in util/pmu.c, the snprintf()
+calls in perf_pmu__parse_{scale,unit,per_pkg,snapshot}() might trigger a
+warning:
 
-This patch depends on patch "perf tools: Add fallback functions for cases
-where cpumode is insufficient".
+  util/pmu.c: In function 'pmu_aliases':
+  util/pmu.c:178:31: error: '%s' directive output may be truncated writing up to 255 bytes into a region of size between 0 and 4095 [-Werror=format-truncation=]
+    snprintf(path, PATH_MAX, "%s/%s.unit", dir, name);
+                               ^~
 
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: David S. Miller <davem@davemloft.net>
+I found this when trying to build perf from Linux 3.16 with gcc 8.
+However I can reproduce the problem in mainline if I force
+__perf_pmu__new_alias() to be inlined.
+
+Suppress this by using scnprintf() as has been done elsewhere in perf.
+
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Leo Yan <leo.yan@linaro.org>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: stable@vger.kernel.org # 4.19
-Link: http://lkml.kernel.org/r/20181106210712.12098-4-adrian.hunter@intel.com
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: stable@vger.kernel.org
+Link: http://lkml.kernel.org/r/20181111184524.fux4taownc6ndbx6@decadent.org.uk
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/perf/builtin-script.c                            |   12 ++++++------
- tools/perf/util/scripting-engines/trace-event-python.c |   16 ++++++++--------
- 2 files changed, 14 insertions(+), 14 deletions(-)
+ tools/perf/util/pmu.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/tools/perf/builtin-script.c
-+++ b/tools/perf/builtin-script.c
-@@ -728,8 +728,8 @@ static int perf_sample__fprintf_brstack(
- 		if (PRINT_FIELD(DSO)) {
- 			memset(&alf, 0, sizeof(alf));
- 			memset(&alt, 0, sizeof(alt));
--			thread__find_map(thread, sample->cpumode, from, &alf);
--			thread__find_map(thread, sample->cpumode, to, &alt);
-+			thread__find_map_fb(thread, sample->cpumode, from, &alf);
-+			thread__find_map_fb(thread, sample->cpumode, to, &alt);
- 		}
+--- a/tools/perf/util/pmu.c
++++ b/tools/perf/util/pmu.c
+@@ -145,7 +145,7 @@ static int perf_pmu__parse_scale(struct
+ 	int fd, ret = -1;
+ 	char path[PATH_MAX];
  
- 		printed += fprintf(fp, " 0x%"PRIx64, from);
-@@ -775,8 +775,8 @@ static int perf_sample__fprintf_brstacks
- 		from = br->entries[i].from;
- 		to   = br->entries[i].to;
+-	snprintf(path, PATH_MAX, "%s/%s.scale", dir, name);
++	scnprintf(path, PATH_MAX, "%s/%s.scale", dir, name);
  
--		thread__find_symbol(thread, sample->cpumode, from, &alf);
--		thread__find_symbol(thread, sample->cpumode, to, &alt);
-+		thread__find_symbol_fb(thread, sample->cpumode, from, &alf);
-+		thread__find_symbol_fb(thread, sample->cpumode, to, &alt);
+ 	fd = open(path, O_RDONLY);
+ 	if (fd == -1)
+@@ -175,7 +175,7 @@ static int perf_pmu__parse_unit(struct p
+ 	ssize_t sret;
+ 	int fd;
  
- 		printed += symbol__fprintf_symname_offs(alf.sym, &alf, fp);
- 		if (PRINT_FIELD(DSO)) {
-@@ -820,11 +820,11 @@ static int perf_sample__fprintf_brstacko
- 		from = br->entries[i].from;
- 		to   = br->entries[i].to;
+-	snprintf(path, PATH_MAX, "%s/%s.unit", dir, name);
++	scnprintf(path, PATH_MAX, "%s/%s.unit", dir, name);
  
--		if (thread__find_map(thread, sample->cpumode, from, &alf) &&
-+		if (thread__find_map_fb(thread, sample->cpumode, from, &alf) &&
- 		    !alf.map->dso->adjust_symbols)
- 			from = map__map_ip(alf.map, from);
+ 	fd = open(path, O_RDONLY);
+ 	if (fd == -1)
+@@ -205,7 +205,7 @@ perf_pmu__parse_per_pkg(struct perf_pmu_
+ 	char path[PATH_MAX];
+ 	int fd;
  
--		if (thread__find_map(thread, sample->cpumode, to, &alt) &&
-+		if (thread__find_map_fb(thread, sample->cpumode, to, &alt) &&
- 		    !alt.map->dso->adjust_symbols)
- 			to = map__map_ip(alt.map, to);
+-	snprintf(path, PATH_MAX, "%s/%s.per-pkg", dir, name);
++	scnprintf(path, PATH_MAX, "%s/%s.per-pkg", dir, name);
  
---- a/tools/perf/util/scripting-engines/trace-event-python.c
-+++ b/tools/perf/util/scripting-engines/trace-event-python.c
-@@ -494,14 +494,14 @@ static PyObject *python_process_brstack(
- 		pydict_set_item_string_decref(pyelem, "cycles",
- 		    PyLong_FromUnsignedLongLong(br->entries[i].flags.cycles));
+ 	fd = open(path, O_RDONLY);
+ 	if (fd == -1)
+@@ -223,7 +223,7 @@ static int perf_pmu__parse_snapshot(stru
+ 	char path[PATH_MAX];
+ 	int fd;
  
--		thread__find_map(thread, sample->cpumode,
--				 br->entries[i].from, &al);
-+		thread__find_map_fb(thread, sample->cpumode,
-+				    br->entries[i].from, &al);
- 		dsoname = get_dsoname(al.map);
- 		pydict_set_item_string_decref(pyelem, "from_dsoname",
- 					      _PyUnicode_FromString(dsoname));
+-	snprintf(path, PATH_MAX, "%s/%s.snapshot", dir, name);
++	scnprintf(path, PATH_MAX, "%s/%s.snapshot", dir, name);
  
--		thread__find_map(thread, sample->cpumode,
--				 br->entries[i].to, &al);
-+		thread__find_map_fb(thread, sample->cpumode,
-+				    br->entries[i].to, &al);
- 		dsoname = get_dsoname(al.map);
- 		pydict_set_item_string_decref(pyelem, "to_dsoname",
- 					      _PyUnicode_FromString(dsoname));
-@@ -576,14 +576,14 @@ static PyObject *python_process_brstacks
- 		if (!pyelem)
- 			Py_FatalError("couldn't create Python dictionary");
- 
--		thread__find_symbol(thread, sample->cpumode,
--				    br->entries[i].from, &al);
-+		thread__find_symbol_fb(thread, sample->cpumode,
-+				       br->entries[i].from, &al);
- 		get_symoff(al.sym, &al, true, bf, sizeof(bf));
- 		pydict_set_item_string_decref(pyelem, "from",
- 					      _PyUnicode_FromString(bf));
- 
--		thread__find_symbol(thread, sample->cpumode,
--				    br->entries[i].to, &al);
-+		thread__find_symbol_fb(thread, sample->cpumode,
-+				       br->entries[i].to, &al);
- 		get_symoff(al.sym, &al, true, bf, sizeof(bf));
- 		pydict_set_item_string_decref(pyelem, "to",
- 					      _PyUnicode_FromString(bf));
+ 	fd = open(path, O_RDONLY);
+ 	if (fd == -1)
 
 
