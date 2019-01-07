@@ -2,111 +2,101 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51C81C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 22:09:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7EADC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 22:10:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E50B2147C
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 22:09:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Ewiw0WV6"
+	by mail.kernel.org (Postfix) with ESMTP id 8D89F2070B
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 22:10:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727286AbfAGWJI (ORCPT
+        id S1727324AbfAGWK1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 17:09:08 -0500
-Received: from mail-ua1-f67.google.com ([209.85.222.67]:32826 "EHLO
-        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727247AbfAGWJI (ORCPT
+        Mon, 7 Jan 2019 17:10:27 -0500
+Received: from smtprelay0002.hostedemail.com ([216.40.44.2]:37838 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726821AbfAGWK1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 17:09:08 -0500
-Received: by mail-ua1-f67.google.com with SMTP id t8so666171uap.0
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 14:09:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=J33h6qXf6ElT9XL2i8kx3wn14Hryf/VSZjLaXuvQAVI=;
-        b=Ewiw0WV6aqZk5P40wvwdHy0u7d0SdrL2Qf4s3P2ZEzPAc7+DQFq7fRCypHJv22ICOM
-         KdOKhdF1N5w+jLSIDPl35f104iajGnFG2Vf05Tlsgu0wmvVSxDY1FYjnyHrstEXg9zFe
-         Tt44vc7wjwEYsET2Ne8yq/PEUELjWp2J0pTxY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=J33h6qXf6ElT9XL2i8kx3wn14Hryf/VSZjLaXuvQAVI=;
-        b=jz5jj5d5Y33AJsEjOVaMrZpbEEqjGJkCAAL70Ly99PNC00ij9llLwtinpF1yOpjdBI
-         Yr6uJg8ndI1ZDT6puhHC6T0Z9/6WFUnlEX13cAT6m6nOzZGX5li9r0we9gDPUbWsSLC+
-         R2Lyht1dh7iHtsD3RGJY/WUAYiDgM1P3kRvjGmvE+NtLWWWp5RsRkLW9sr5S16RgmAwI
-         FINmjL8wFVSl6BCtCLmxcP/OvrQFr3HBQN9hvORvueBzf8ivugOfLi/AqQyA3o1XYPPy
-         OJU88MKPvd24u3GbhB6nrIT5ETXYDkKXPbWky/2IHIemfBcnK+V71UCGA/Y0ksKz6oKK
-         THiQ==
-X-Gm-Message-State: AJcUukfvoqdRb62IvuCsEKEu+4s3OJcaXAk/b7EPcJOP/ZbqkX5iEFlB
-        17SZ4TQovd4Cxm8Vcsv5dNF2FdUGvO0=
-X-Google-Smtp-Source: ALg8bN641CqM7NDE9en9V247s+ruvIbrZD13zj3JCpjZ4qB6FKcUdzxlNhsPzDC4GGcVhQCVUozCig==
-X-Received: by 2002:ab0:4a99:: with SMTP id s25mr17888628uae.34.1546898946786;
-        Mon, 07 Jan 2019 14:09:06 -0800 (PST)
-Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com. [209.85.217.42])
-        by smtp.gmail.com with ESMTPSA id p136sm19006763vsc.18.2019.01.07.14.09.05
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 07 Jan 2019 14:09:05 -0800 (PST)
-Received: by mail-vs1-f42.google.com with SMTP id y27so1266362vsi.1
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 14:09:05 -0800 (PST)
-X-Received: by 2002:a67:e15e:: with SMTP id o30mr8745238vsl.66.1546898945316;
- Mon, 07 Jan 2019 14:09:05 -0800 (PST)
-MIME-Version: 1.0
-References: <20190104214727.29431-1-mcroce@redhat.com>
-In-Reply-To: <20190104214727.29431-1-mcroce@redhat.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Mon, 7 Jan 2019 14:08:54 -0800
-X-Gmail-Original-Message-ID: <CAGXu5jLY6WGHssefD5=gHay1faFGH-Rofhj0Lr_SUMwSLW=Nkw@mail.gmail.com>
-Message-ID: <CAGXu5jLY6WGHssefD5=gHay1faFGH-Rofhj0Lr_SUMwSLW=Nkw@mail.gmail.com>
-Subject: Re: [PATCH] kernel/sysctl.c: fix typo
-To:     Matteo Croce <mcroce@redhat.com>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 7 Jan 2019 17:10:27 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay06.hostedemail.com (Postfix) with ESMTP id 9A62318021E99;
+        Mon,  7 Jan 2019 22:10:25 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: fruit85_3621416afa1f
+X-Filterd-Recvd-Size: 2707
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf19.hostedemail.com (Postfix) with ESMTPA;
+        Mon,  7 Jan 2019 22:10:23 +0000 (UTC)
+Message-ID: <8ec3603317f477fe9923b87499a33da7a2cf81ff.camel@perches.com>
+Subject: Re: [PATCH v3] coding-style: Clarify the expectations around bool
+From:   Joe Perches <joe@perches.com>
+To:     Jason Gunthorpe <jgg@ziepe.ca>, Gal Pressman <galpress@amazon.com>
+Cc:     Bart Van Assche <bvanassche@acm.org>,
+        Stephen Warren <swarren@wwwdotorg.org>,
+        Tariq Toukan <tariqt@mellanox.com>, xavier.huwei@huawei.com,
+        netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+        Doug Ledford <dledford@redhat.com>,
+        Stephen Warren <swarren@nvidia.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org
+Date:   Mon, 07 Jan 2019 14:10:22 -0800
+In-Reply-To: <20190107211117.GA24142@ziepe.ca>
+References: <20190107211117.GA24142@ziepe.ca>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 4, 2019 at 1:47 PM Matteo Croce <mcroce@redhat.com> wrote:
->
-> Fix spelling mistake: "lenght" -> "length"
->
-> Signed-off-by: Matteo Croce <mcroce@redhat.com>
+On Mon, 2019-01-07 at 14:11 -0700, Jason Gunthorpe wrote:
+> There has been some confusion since checkpatch started warning about bool
+> use in structures, and people have been avoiding using it.
+> 
+> Many people feel there is still a legitimate place for bool in structures,
+> so provide some guidance on bool usage derived from the entire thread that
+> spawned the checkpatch warning.
 
-Acked-by: Kees Cook <keescook@chromium.org>
+Thanks Jason.
 
--Kees
+It'd be nice to combine this with some better
+checkpatch warning or even a removal of that
+misleading warning from checkpatch altogether.
 
-> ---
->  kernel/sysctl.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-> index 1825f712e73b..6b2691f5d4c9 100644
-> --- a/kernel/sysctl.c
-> +++ b/kernel/sysctl.c
-> @@ -191,7 +191,7 @@ extern int no_unaligned_warning;
->   *     file position 0 and the value must be fully contained in the buffer
->   *     sent to the write syscall. If dealing with strings respect the file
->   *     position, but restrict this to the max length of the buffer, anything
-> - *     passed the max lenght will be ignored. Multiple writes will append
-> + *     passed the max length will be ignored. Multiple writes will append
->   *     to the buffer.
->   *
->   * These write modes control how current file position affects the behavior of
-> --
-> 2.20.1
->
+With a couple minor nits below and and Ack if
+you want one:
+
+Acked-by: Joe Perches <joe@perches.com>
+
+> diff --git a/Documentation/process/coding-style.rst b/Documentation/process/coding-style.rst
+[]
+> @@ -921,7 +921,37 @@ result.  Typical examples would be functions that return pointers; they use
+>  NULL or the ERR_PTR mechanism to report failure.
+>  
+>  
+> -17) Don't re-invent the kernel macros
+> +17) Using bool
+> +--------------
+> +
+> +The Linux kernel uses the C99 standard for the bool type. bool values can only
+
+Maybe
+
+The Linux kernel bool type is the C99 _Bool type.
+
+> +evaluate to 0 or 1, and implicit or explicit conversion to bool automatically
+> +converts the value to true or false. When using bool types the !! construction
+> +is not needed, which eliminates a class of bugs.
+> +
+> +When working with bool values the true and false labels should be used instead
+
+true and false are not labels but #defines
 
 
--- 
-Kees Cook
