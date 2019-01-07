@@ -2,113 +2,150 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82738C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 23:25:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F5ABC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 23:33:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35A082147C
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 23:25:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="lYgA0k+G"
+	by mail.kernel.org (Postfix) with ESMTP id 1D43B2070B
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 23:33:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727272AbfAGXZQ (ORCPT
+        id S1727161AbfAGXdm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 18:25:16 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:33017 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727076AbfAGXZP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 18:25:15 -0500
-Received: by mail-pg1-f193.google.com with SMTP id z11so840191pgu.0
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 15:25:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=l01/MrfL8olU8EZ8L5lMkIBR4BL/yTcKxgnAwIdUGeo=;
-        b=lYgA0k+GoT3nVtvQex9ttd57uPCZwRsZZjxfqNryk85FK5y2VuD+s08YhREJI57Osf
-         0ArhcCeHam8PgZp5GyjRhdeTuP7G1j6+lTPjHmPnNsvGVTYJWJTrC2UFlzNf21XIUvrE
-         ILOzL1alWyZ9BoCsGbpBL3Q8ngIhM5awYvqCX+7lnaTbSJZLe+TunLN/U2qOJV22FOVe
-         oOcEOWl7rPyfHcCYsAUVYrvMNhyB5AYdzUMyCO5tmu8uLBi+sTwsSPcgIaGj7F13C9xG
-         yL/2POfpwONrXmZoGwloGZPwbd4vbHm6KmxE7fjPMd5fKhHJTM4BzRyohRhbq7Z3sJYT
-         I04A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=l01/MrfL8olU8EZ8L5lMkIBR4BL/yTcKxgnAwIdUGeo=;
-        b=oKZZ+1ROtwkDbJjir87fkaQrG6bMlIOvykllajqXCxFdSzHiaq4hwYSmiE+PMMhWOo
-         BZwshUdssX501qi+FI2LyCw5qOBXIs5Yaz8qj5Rw592eRB/EL84qBRuz0TgtfEhq0Zxi
-         xof9xyeDr01wpx1G5w+83g3GZQ/so/A+ogx0+qs6xskfMRpGS2/YDEeZqiJS3gxnQy2I
-         b7BkeIrEY152/VfFZrRk01+mkf4nfjaCQkBxDngW1N20ISxi9x8gkq8Jsa9ivXgH8P94
-         K8S0bpLHBg/4tMp2ZzUki8AvycwXfxBwlIF/KX5a8N0CK+aBFi74KeigJDYz8j56QUS/
-         lovw==
-X-Gm-Message-State: AA+aEWac0kcJiQ1p3CUkI4FmwfUDhtkCLfbJt28r/p8+jniwnXb7XfOo
-        BV0uR1p2RaPi42968lpd8ydvrg==
-X-Google-Smtp-Source: AFSGD/W2N9/OrAIUQJcoYI2NF7NfZMlyPMw+WDUY2yUxvK57FAwgbb+tKlFbpi+A1BmM5y8bVp74oA==
-X-Received: by 2002:a62:a99:: with SMTP id 25mr63928989pfk.121.1546903514816;
-        Mon, 07 Jan 2019 15:25:14 -0800 (PST)
-Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
-        by smtp.gmail.com with ESMTPSA id t90sm141532437pfj.23.2019.01.07.15.25.13
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 07 Jan 2019 15:25:14 -0800 (PST)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1ggeGf-0001rH-81; Mon, 07 Jan 2019 16:25:13 -0700
-Date:   Mon, 7 Jan 2019 16:25:13 -0700
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Joe Perches <joe@perches.com>
-Cc:     Gal Pressman <galpress@amazon.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Stephen Warren <swarren@wwwdotorg.org>,
-        Tariq Toukan <tariqt@mellanox.com>, xavier.huwei@huawei.com,
-        netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-        Doug Ledford <dledford@redhat.com>,
-        Stephen Warren <swarren@nvidia.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] coding-style: Clarify the expectations around bool
-Message-ID: <20190107232513.GA5336@ziepe.ca>
-References: <20190107211117.GA24142@ziepe.ca>
- <8ec3603317f477fe9923b87499a33da7a2cf81ff.camel@perches.com>
+        Mon, 7 Jan 2019 18:33:42 -0500
+Received: from mga14.intel.com ([192.55.52.115]:60036 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726668AbfAGXdm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 18:33:42 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jan 2019 15:33:41 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,451,1539673200"; 
+   d="scan'208";a="124068789"
+Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
+  by FMSMGA003.fm.intel.com with ESMTP; 07 Jan 2019 15:33:41 -0800
+Subject: [PATCH v7 0/3] mm: Randomize free memory
+From:   Dan Williams <dan.j.williams@intel.com>
+To:     akpm@linux-foundation.org
+Cc:     Michal Hocko <mhocko@suse.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Kees Cook <keescook@chromium.org>, mhocko@suse.com,
+        keith.busch@intel.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, mgorman@suse.de
+Date:   Mon, 07 Jan 2019 15:21:04 -0800
+Message-ID: <154690326478.676627.103843791978176914.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.18-2-gc94f
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8ec3603317f477fe9923b87499a33da7a2cf81ff.camel@perches.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 07, 2019 at 02:10:22PM -0800, Joe Perches wrote:
-> On Mon, 2019-01-07 at 14:11 -0700, Jason Gunthorpe wrote:
-> > There has been some confusion since checkpatch started warning about bool
-> > use in structures, and people have been avoiding using it.
-> > 
-> > Many people feel there is still a legitimate place for bool in structures,
-> > so provide some guidance on bool usage derived from the entire thread that
-> > spawned the checkpatch warning.
-> 
-> Thanks Jason.
-> 
-> It'd be nice to combine this with some better checkpatch warning or
-> even a removal of that misleading warning from checkpatch
-> altogether.
+Changes since v6 [1]:
+* Simplify the review, drop the autodetect patches from the series. That
+  work simply results in a single call to page_alloc_shuffle(SHUFFLE_ENABLE)
+  injected at the right location during ACPI NUMA initialization / parsing
+  of the HMAT (Heterogeneous Memory Attributes Table). That is purely a
+  follow-on consideration once the base shuffle implementation and
+  definition of page_alloc_shuffle() is accepted. The end result for this
+  series is that the command line parameter "page_alloc.shuffle" is
+  required to enable the randomization.
 
-Okay, do you have a preference?
+* Fix declaration of page_alloc_shuffle() in the
+  CONFIG_SHUFFLE_PAGE_ALLOCATOR=n case. (0day)
 
-> With a couple minor nits below and and Ack if
-> you want one:
-> 
-> Acked-by: Joe Perches <joe@perches.com>
+* Rebased on v5.0-rc1
 
-Thanks, I made the revisions with Bart's extra words. I'll send a v4
-in a few days.
+[1]: https://lkml.org/lkml/2018/12/17/1116
 
-Jason
+---
+
+Hi Andrew, please consider this series for -mm only after Michal and Mel
+have had a chance to review and have their concerns addressed.
+
+---
+
+Quote Patch 1:
+
+Randomization of the page allocator improves the average utilization of
+a direct-mapped memory-side-cache. Memory side caching is a platform
+capability that Linux has been previously exposed to in HPC
+(high-performance computing) environments on specialty platforms. In
+that instance it was a smaller pool of high-bandwidth-memory relative to
+higher-capacity / lower-bandwidth DRAM. Now, this capability is going to
+be found on general purpose server platforms where DRAM is a cache in
+front of higher latency persistent memory [2].
+
+Robert offered an explanation of the state of the art of Linux
+interactions with memory-side-caches [3], and I copy it here:
+
+    It's been a problem in the HPC space:
+    http://www.nersc.gov/research-and-development/knl-cache-mode-performance-coe/
+
+    A kernel module called zonesort is available to try to help:
+    https://software.intel.com/en-us/articles/xeon-phi-software
+
+    and this abandoned patch series proposed that for the kernel:
+    https://lkml.org/lkml/2017/8/23/195
+
+    Dan's patch series doesn't attempt to ensure buffers won't conflict, but
+    also reduces the chance that the buffers will. This will make performance
+    more consistent, albeit slower than "optimal" (which is near impossible
+    to attain in a general-purpose kernel).  That's better than forcing
+    users to deploy remedies like:
+        "To eliminate this gradual degradation, we have added a Stream
+         measurement to the Node Health Check that follows each job;
+         nodes are rebooted whenever their measured memory bandwidth
+         falls below 300 GB/s."
+
+A replacement for zonesort was merged upstream in commit cc9aec03e58f
+"x86/numa_emulation: Introduce uniform split capability". With this
+numa_emulation capability, memory can be split into cache sized
+("near-memory" sized) numa nodes. A bind operation to such a node, and
+disabling workloads on other nodes, enables full cache performance.
+However, once the workload exceeds the cache size then cache conflicts
+are unavoidable. While HPC environments might be able to tolerate
+time-scheduling of cache sized workloads, for general purpose server
+platforms, the oversubscribed cache case will be the common case.
+
+The worst case scenario is that a server system owner benchmarks a
+workload at boot with an un-contended cache only to see that performance
+degrade over time, even below the average cache performance due to
+excessive conflicts. Randomization clips the peaks and fills in the
+valleys of cache utilization to yield steady average performance.
+
+See patch 1 for more details.
+
+[2]: https://itpeernetwork.intel.com/intel-optane-dc-persistent-memory-operating-modes/
+[3]: https://lkml.org/lkml/2018/9/22/54
+
+---
+
+Dan Williams (3):
+      mm: Shuffle initial free memory to improve memory-side-cache utilization
+      mm: Move buddy list manipulations into helpers
+      mm: Maintain randomization of page free lists
+
+
+ include/linux/list.h     |   17 +++
+ include/linux/mm.h       |    3 -
+ include/linux/mm_types.h |    3 +
+ include/linux/mmzone.h   |   65 +++++++++++++
+ include/linux/shuffle.h  |   60 ++++++++++++
+ init/Kconfig             |   36 +++++++
+ mm/Makefile              |    7 +
+ mm/compaction.c          |    4 -
+ mm/memblock.c            |   10 ++
+ mm/memory_hotplug.c      |    3 +
+ mm/page_alloc.c          |   82 ++++++++--------
+ mm/shuffle.c             |  231 ++++++++++++++++++++++++++++++++++++++++++++++
+ 12 files changed, 471 insertions(+), 50 deletions(-)
+ create mode 100644 include/linux/shuffle.h
+ create mode 100644 mm/shuffle.c
