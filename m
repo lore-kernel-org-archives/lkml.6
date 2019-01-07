@@ -7,47 +7,48 @@ X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B6D7C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:04:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5B56C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:04:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A9FA217D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:04:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7069121736
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:04:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546866267;
-	bh=kj3o1FX3f7dIHo7fM9/39UdgPQQt5P4SkaMf22cBrs0=;
+	s=default; t=1546866270;
+	bh=RqfecMqVd4p+8vp0lH/1NKMDEWxhl74hBX0XHQECKW0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=R0OokNLWiAy0gsPD5QDqJ5MIH/kgGzsWF2RMMUZRArTI39k/pczOLLlo6KEha75UU
-	 Tdsdg2Zxzjim1Ke/638SnPNGW+l73Dsc1eB3CpgShJmj2yaelfYW21Tg8RMWCz7bQL
-	 Hp095A783pjd0yYVgWwj+BImbB8D105fXFbl6HMQ=
+	b=gQJsIrCxf6m9nGDsiAhUsJHzF3FV8C6dTD2oqdopmSPKVxIUgJNyQHKOOtUQoRJDd
+	 ePNUP06I7plYiqQJLPSD0k1sBM+7csfGI8qdRXXwXQmga9tJOIe7c+GhsKn/MUcb7r
+	 OSeruAvKKC6cIQzi8Yj8dtXXTYnIlFR3qFDUAuPU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731392AbfAGNE0 (ORCPT
+        id S1731176AbfAGNE2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:04:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51968 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:04:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52036 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731367AbfAGNEX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:04:23 -0500
+        id S1731382AbfAGNE0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:04:26 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 35D832089F;
-        Mon,  7 Jan 2019 13:04:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 05DFC21736;
+        Mon,  7 Jan 2019 13:04:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546866262;
-        bh=kj3o1FX3f7dIHo7fM9/39UdgPQQt5P4SkaMf22cBrs0=;
+        s=default; t=1546866265;
+        bh=RqfecMqVd4p+8vp0lH/1NKMDEWxhl74hBX0XHQECKW0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=O80fAtwvOKOdeuplleaUCQdQTcJOegOAi8y3zgcKzqpXlu8vNI6HYt1LYcJ9qjNIr
-         3JnFPHCpVWU6blHNf7XanbQwhrdILhChnh3xkpwHdxxzF/PGEYLhgQuiB35PkDvsKt
-         CptMrFUV5yYgh7F1Brc0vupVpC0gLaDL9Pcn4GQ4=
+        b=p6sOkB/+dNnWocrSh/AjAJdbqMIR4+MfcqT0ZJbDEqfVOTQf0TjSXubTqo25RqHm3
+         CN6nkuoKsl5Gvi9T3mFLBmgH7169ZYTvBHIAU2F/XdpqZ4MVsw8ugI87KoFLMbPay0
+         WE8VWNDmQ03h7jkB3J6VTcktBtD7mUbgMys+L6Lk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 4.14 101/101] ARM: dts: exynos: Specify I2S assigned clocks in proper node
-Date:   Mon,  7 Jan 2019 13:33:29 +0100
-Message-Id: <20190107105338.234917895@linuxfoundation.org>
+        stable@vger.kernel.org, Yi-Hung Wei <yihung.wei@gmail.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Mauricio Faria de Oliveira <mfo@canonical.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 082/101] netfilter: nf_conncount: Fix garbage collection with zones
+Date:   Mon,  7 Jan 2019 13:33:10 +0100
+Message-Id: <20190107105337.426859757@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107105330.372621917@linuxfoundation.org>
 References: <20190107105330.372621917@linuxfoundation.org>
@@ -66,113 +67,117 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+commit 21ba8847f857028dc83a0f341e16ecc616e34740 upstream.
 
-commit 8ac686d7dfed721102860ff2571e6b9f529ae81a upstream.
+Currently, we use check_hlist() for garbage colleciton. However, we
+use the ‘zone’ from the counted entry to query the existence of
+existing entries in the hlist. This could be wrong when they are in
+different zones, and this patch fixes this issue.
 
-The assigned parent clocks should be normally specified in the consumer
-device's DT node, this ensures respective driver always sees correct clock
-settings when required.
+Fixes: e59ea3df3fc2 ("netfilter: xt_connlimit: honor conntrack zone if available")
+Signed-off-by: Yi-Hung Wei <yihung.wei@gmail.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 
-This patch fixes regression in audio subsystem on Odroid XU3/XU4 boards
-that appeared after commits:
+[mfo: backport: refresh context lines and use older symbol/file names, note hunk 5:
+ - nf_conncount.c -> xt_connlimit.c
+   - nf_conncount_rb -> xt_connlimit_rb
+   - nf_conncount_tuple -> xt_connlimit_conn
+   - hunk 5: remove check for non-NULL 'tuple', that isn't required as it's introduced
+     by upstream commit 35d8deb80 ("netfilter: conncount: Support count only use case")
+     which addresses nf_conncount_count() that does not exist yet -- it's introduced by
+     upstream commit 625c556118f3 ("netfilter: connlimit: split xt_connlimit into front
+     and backend"), a refactor change.
+ - nft_connlimit.c -> removed, not used/doesn't exist yet.]
+Signed-off-by: Mauricio Faria de Oliveira <mfo@canonical.com>
 
-commit 647d04f8e07a ("ASoC: samsung: i2s: Ensure the RCLK rate is properly determined")
-commit 995e73e55f46 ("ASoC: samsung: i2s: Fix rclk_srcrate handling")
-commit 48279c53fd1d ("ASoC: samsung: i2s: Prevent external abort on exynos5433 I2S1 access")
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ include/net/netfilter/nf_conntrack_count.h |  3 ++-
+ net/netfilter/xt_connlimit.c               | 13 +++++++++----
+ 2 files changed, 11 insertions(+), 5 deletions(-)
 
-Without this patch the driver gets wrong clock as the I2S function clock
-(op_clk) in probe() and effectively the clock which is finally assigned
-from DT is not being enabled/disabled in the runtime resume/suspend ops.
-
-Without the above listed commits the EXYNOS_I2S_BUS clock was always set
-as parent of CLK_I2S_RCLK_SRC regardless of DT settings so there was no issue
-with not enabled EXYNOS_SCLK_I2S.
-
-Cc: <stable@vger.kernel.org> # 4.17.x
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi
-index 03611d50c5a9..e84544b220b9 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi
-@@ -26,8 +26,7 @@
- 			"Speakers", "SPKL",
- 			"Speakers", "SPKR";
+diff --git a/include/net/netfilter/nf_conntrack_count.h b/include/net/netfilter/nf_conntrack_count.h
+index 54e43b8a8da1..4b71a2f4c351 100644
+--- a/include/net/netfilter/nf_conntrack_count.h
++++ b/include/net/netfilter/nf_conntrack_count.h
+@@ -7,7 +7,8 @@ unsigned int nf_conncount_lookup(struct net *net, struct hlist_head *head,
+ 				 bool *addit);
  
--		assigned-clocks = <&i2s0 CLK_I2S_RCLK_SRC>,
--				<&clock CLK_MOUT_EPLL>,
-+		assigned-clocks = <&clock CLK_MOUT_EPLL>,
- 				<&clock CLK_MOUT_MAU_EPLL>,
- 				<&clock CLK_MOUT_USER_MAU_EPLL>,
- 				<&clock_audss EXYNOS_MOUT_AUDSS>,
-@@ -36,8 +35,7 @@
- 				<&clock_audss EXYNOS_DOUT_AUD_BUS>,
- 				<&clock_audss EXYNOS_DOUT_I2S>;
+ bool nf_conncount_add(struct hlist_head *head,
+-		      const struct nf_conntrack_tuple *tuple);
++		      const struct nf_conntrack_tuple *tuple,
++		      const struct nf_conntrack_zone *zone);
  
--		assigned-clock-parents = <&clock_audss EXYNOS_SCLK_I2S>,
--				<&clock CLK_FOUT_EPLL>,
-+		assigned-clock-parents = <&clock CLK_FOUT_EPLL>,
- 				<&clock CLK_MOUT_EPLL>,
- 				<&clock CLK_MOUT_MAU_EPLL>,
- 				<&clock CLK_MAU_EPLL>,
-@@ -48,7 +46,6 @@
- 				<0>,
- 				<0>,
- 				<0>,
--				<0>,
- 				<196608001>,
- 				<(196608002 / 2)>,
- 				<196608000>;
-@@ -84,4 +81,6 @@
+ void nf_conncount_cache_free(struct hlist_head *hhead);
  
- &i2s0 {
- 	status = "okay";
-+	assigned-clocks = <&i2s0 CLK_I2S_RCLK_SRC>;
-+	assigned-clock-parents = <&clock_audss EXYNOS_SCLK_I2S>;
- };
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu4.dts b/arch/arm/boot/dts/exynos5422-odroidxu4.dts
-index 4a30cc849b00..122174ea9e0a 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu4.dts
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu4.dts
-@@ -33,8 +33,7 @@
- 		compatible = "samsung,odroid-xu3-audio";
- 		model = "Odroid-XU4";
- 
--		assigned-clocks = <&i2s0 CLK_I2S_RCLK_SRC>,
--				<&clock CLK_MOUT_EPLL>,
-+		assigned-clocks = <&clock CLK_MOUT_EPLL>,
- 				<&clock CLK_MOUT_MAU_EPLL>,
- 				<&clock CLK_MOUT_USER_MAU_EPLL>,
- 				<&clock_audss EXYNOS_MOUT_AUDSS>,
-@@ -43,8 +42,7 @@
- 				<&clock_audss EXYNOS_DOUT_AUD_BUS>,
- 				<&clock_audss EXYNOS_DOUT_I2S>;
- 
--		assigned-clock-parents = <&clock_audss EXYNOS_SCLK_I2S>,
--				<&clock CLK_FOUT_EPLL>,
-+		assigned-clock-parents = <&clock CLK_FOUT_EPLL>,
- 				<&clock CLK_MOUT_EPLL>,
- 				<&clock CLK_MOUT_MAU_EPLL>,
- 				<&clock CLK_MAU_EPLL>,
-@@ -55,7 +53,6 @@
- 				<0>,
- 				<0>,
- 				<0>,
--				<0>,
- 				<196608001>,
- 				<(196608002 / 2)>,
- 				<196608000>;
-@@ -79,6 +76,8 @@
- 
- &i2s0 {
- 	status = "okay";
-+	assigned-clocks = <&i2s0 CLK_I2S_RCLK_SRC>;
-+	assigned-clock-parents = <&clock_audss EXYNOS_SCLK_I2S>;
+diff --git a/net/netfilter/xt_connlimit.c b/net/netfilter/xt_connlimit.c
+index 7af58750ab49..ab1f849464fa 100644
+--- a/net/netfilter/xt_connlimit.c
++++ b/net/netfilter/xt_connlimit.c
+@@ -46,6 +46,7 @@
+ struct xt_connlimit_conn {
+ 	struct hlist_node		node;
+ 	struct nf_conntrack_tuple	tuple;
++	struct nf_conntrack_zone	zone;
  };
  
- &pwm {
+ struct xt_connlimit_rb {
+@@ -115,7 +116,8 @@ same_source_net(const union nf_inet_addr *addr,
+ }
+ 
+ bool nf_conncount_add(struct hlist_head *head,
+-		      const struct nf_conntrack_tuple *tuple)
++		      const struct nf_conntrack_tuple *tuple,
++		      const struct nf_conntrack_zone *zone)
+ {
+ 	struct xt_connlimit_conn *conn;
+ 
+@@ -123,6 +125,7 @@ bool nf_conncount_add(struct hlist_head *head,
+ 	if (conn == NULL)
+ 		return false;
+ 	conn->tuple = *tuple;
++	conn->zone = *zone;
+ 	hlist_add_head(&conn->node, head);
+ 	return true;
+ }
+@@ -143,7 +146,7 @@ unsigned int nf_conncount_lookup(struct net *net, struct hlist_head *head,
+ 
+ 	/* check the saved connections */
+ 	hlist_for_each_entry_safe(conn, n, head, node) {
+-		found = nf_conntrack_find_get(net, zone, &conn->tuple);
++		found = nf_conntrack_find_get(net, &conn->zone, &conn->tuple);
+ 		if (found == NULL) {
+ 			hlist_del(&conn->node);
+ 			kmem_cache_free(connlimit_conn_cachep, conn);
+@@ -152,7 +155,8 @@ unsigned int nf_conncount_lookup(struct net *net, struct hlist_head *head,
+ 
+ 		found_ct = nf_ct_tuplehash_to_ctrack(found);
+ 
+-		if (nf_ct_tuple_equal(&conn->tuple, tuple)) {
++		if (nf_ct_tuple_equal(&conn->tuple, tuple) &&
++		    nf_ct_zone_equal(found_ct, zone, zone->dir)) {
+ 			/*
+ 			 * Just to be sure we have it only once in the list.
+ 			 * We should not see tuples twice unless someone hooks
+@@ -231,7 +235,7 @@ count_tree(struct net *net, struct rb_root *root,
+ 			if (!addit)
+ 				return count;
+ 
+-			if (!nf_conncount_add(&rbconn->hhead, tuple))
++			if (!nf_conncount_add(&rbconn->hhead, tuple, zone))
+ 				return 0; /* hotdrop */
+ 
+ 			return count + 1;
+@@ -270,6 +274,7 @@ count_tree(struct net *net, struct rb_root *root,
+ 	}
+ 
+ 	conn->tuple = *tuple;
++	conn->zone = *zone;
+ 	rbconn->addr = *addr;
+ 
+ 	INIT_HLIST_HEAD(&rbconn->hhead);
+-- 
+2.19.1
+
 
 
