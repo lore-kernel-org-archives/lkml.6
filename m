@@ -7,50 +7,47 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97619C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:20:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32CC7C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:20:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6461B21736
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:20:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EECC721736
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:20:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546867201;
-	bh=545UHZUd4Kpwd2q1bcRmZMAmQ41FTTTgbAdJvngpewc=;
+	s=default; t=1546867213;
+	bh=V0gEXI1Ez2ZT0jM76V5cHlNuL4wRLygbWh6yIBV9e5I=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=mM4M4/GjqZywti+nxQuStT50/SrBsj8DHrlLEbxiS3pmxK46r9ViaOjZfWviurE2b
-	 qgEYPKzbEzZM/JhEq3BbgCl5tFh4+AbXJiAGyxeU7Au3zNcyAEdq62LeGg11BXQzLl
-	 Q2B9ag/E7MkVapZKkyw9M7z+75Wvisu02pSPCFEs=
+	b=POBBzlp1CZDOPgJhNnH6xjnXawNRWg91JyCns6bErY40IkIeb94WlGKnVWei6aj2u
+	 z+hjyofADDwJiHt2RNeygVPXFoN4u3Iaf3l0oQvH5LgKnJC5CGUedvs5McCjQcMbSk
+	 BGdzO4fIyLCnLtBZBySeIJKlQZ5+w/yp5fbvINB8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727810AbfAGMzp (ORCPT
+        id S1729907AbfAGNUM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:55:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43938 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:20:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38252 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727532AbfAGMzm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:55:42 -0500
+        id S1728918AbfAGMru (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:47:50 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0002E20665;
-        Mon,  7 Jan 2019 12:55:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 80E6120651;
+        Mon,  7 Jan 2019 12:47:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865742;
-        bh=545UHZUd4Kpwd2q1bcRmZMAmQ41FTTTgbAdJvngpewc=;
+        s=default; t=1546865270;
+        bh=V0gEXI1Ez2ZT0jM76V5cHlNuL4wRLygbWh6yIBV9e5I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=r264z7pa3D2BaBOCg0QoGfMu04YHm1l8W62cMO51J0ES90BkVFt6qwBF8EwS+GDjV
-         TCol9FECCseRpSYrPRoBsJrypdB+jNyoWW4MM36g2FXBoL3t9as8AuCo5hmlbKLbqv
-         1qzlDWkQ82xUtYrgnA+t44juVZeeAthm5NGrVe9E=
+        b=V2Q5HaZ2//G9+aplo/VrPeg3JP/FfbDrvYZQjJP2nCesS0VwAe6Krcjt32fNgsrlX
+         ZA0w9K6CwH7iM1BCBrEtAiNd+FnsIJSss9k9aVOACC3AVQIxWtIXmfZJL517QeEEAW
+         VanBtxRUZ1t/4ZO2IwiooQkKTrx+tfTwjC686XuQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
-        Mathias Duckeck <m.duckeck@kunbus.de>,
-        Frank Pavlic <f.pavlic@kunbus.de>,
-        Martin Sperl <kernel@martin.sperl.org>,
-        =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.19 117/170] spi: bcm2835: Avoid finishing transfer prematurely in IRQ mode
-Date:   Mon,  7 Jan 2019 13:32:24 +0100
-Message-Id: <20190107104506.758086070@linuxfoundation.org>
+        stable@vger.kernel.org, Cong Wang <xiyou.wangcong@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        syzbot+5e5e969e525129229052@syzkaller.appspotmail.com
+Subject: [PATCH 4.19 022/170] net/wan: fix a double free in x25_asy_open_tty()
+Date:   Mon,  7 Jan 2019 13:30:49 +0100
+Message-Id: <20190107104455.676064273@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104452.953560660@linuxfoundation.org>
 References: <20190107104452.953560660@linuxfoundation.org>
@@ -69,57 +66,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lukas Wunner <lukas@wunner.de>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-commit 56c1723426d3cfd4723bfbfce531d7b38bae6266 upstream.
+[ Upstream commit d5c7c745f254c6cb98b3b3f15fe789b8bd770c72 ]
 
-The IRQ handler bcm2835_spi_interrupt() first reads as much as possible
-from the RX FIFO, then writes as much as possible to the TX FIFO.
-Afterwards it decides whether the transfer is finished by checking if
-the TX FIFO is empty.
+When x25_asy_open() fails, it already cleans up by itself,
+so its caller doesn't need to free the memory again.
 
-If very few bytes were written to the TX FIFO, they may already have
-been transmitted by the time the FIFO's emptiness is checked.  As a
-result, the transfer will be declared finished and the chip will be
-reset without reading the corresponding received bytes from the RX FIFO.
+It seems we still have to call x25_asy_free() to clear the SLF_INUSE
+bit, so just set these pointers to NULL after kfree().
 
-The odds of this happening increase with a high clock frequency (such
-that the TX FIFO drains quickly) and either passing "threadirqs" on the
-command line or enabling CONFIG_PREEMPT_RT_BASE (such that the IRQ
-handler may be preempted between filling the TX FIFO and checking its
-emptiness).
-
-Fix by instead checking whether rx_len has reached zero, which means
-that the transfer has been received in full.  This is also more
-efficient as it avoids one bus read access per interrupt.  Note that
-bcm2835_spi_transfer_one_poll() likewise uses rx_len to determine
-whether the transfer has finished.
-
-Signed-off-by: Lukas Wunner <lukas@wunner.de>
-Fixes: e34ff011c70e ("spi: bcm2835: move to the transfer_one driver model")
-Cc: stable@vger.kernel.org # v4.1+
-Cc: Mathias Duckeck <m.duckeck@kunbus.de>
-Cc: Frank Pavlic <f.pavlic@kunbus.de>
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Cc: Noralf Trønnes <noralf@tronnes.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Reported-and-tested-by: syzbot+5e5e969e525129229052@syzkaller.appspotmail.com
+Fixes: 3b780bed3138 ("x25_asy: Free x25_asy on x25_asy_open() failure.")
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/spi/spi-bcm2835.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/net/wan/x25_asy.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/spi/spi-bcm2835.c
-+++ b/drivers/spi/spi-bcm2835.c
-@@ -155,8 +155,7 @@ static irqreturn_t bcm2835_spi_interrupt
- 	/* Write as many bytes as possible to FIFO */
- 	bcm2835_wr_fifo(bs);
+--- a/drivers/net/wan/x25_asy.c
++++ b/drivers/net/wan/x25_asy.c
+@@ -486,8 +486,10 @@ static int x25_asy_open(struct net_devic
  
--	/* based on flags decide if we can finish the transfer */
--	if (bcm2835_rd(bs, BCM2835_SPI_CS) & BCM2835_SPI_CS_DONE) {
-+	if (!bs->rx_len) {
- 		/* Transfer complete - reset SPI HW */
- 		bcm2835_spi_reset_hw(master);
- 		/* wake up the framework */
+ 	/* Cleanup */
+ 	kfree(sl->xbuff);
++	sl->xbuff = NULL;
+ noxbuff:
+ 	kfree(sl->rbuff);
++	sl->rbuff = NULL;
+ norbuff:
+ 	return -ENOMEM;
+ }
 
 
