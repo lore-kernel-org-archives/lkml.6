@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 721D9C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 14:53:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FBFFC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 14:53:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 433732147C
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 14:53:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D30BD2147C
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 14:53:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="VkVhLmNL"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gT4vW4tQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729316AbfAGOx2 (ORCPT
+        id S1729349AbfAGOxl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 09:53:28 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:35340 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726961AbfAGOx1 (ORCPT
+        Mon, 7 Jan 2019 09:53:41 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:44467 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728314AbfAGOxk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 09:53:27 -0500
-Received: by mail-pl1-f194.google.com with SMTP id p8so269042plo.2
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 06:53:27 -0800 (PST)
+        Mon, 7 Jan 2019 09:53:40 -0500
+Received: by mail-pl1-f193.google.com with SMTP id e11so246020plt.11
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 06:53:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=13qvNhqz5adh8H7HAMhUD3/uHkd4DMTPZ6JpXLBiryc=;
-        b=VkVhLmNLZjD0w1SQF5mARUTC4wmcsNYNDjFqrDgEvBl5FQ/51cl/M4BtUosGyIriSo
-         piVnjTjHzaHa2/sACpY2CnxfTSM62u3nSOQSLHIRH8GdAlqPaujqXbmni28JPi1INSdH
-         Dux8zULQ+33ces7BYTEnu4MCL5jqW+C0uqe50=
+        bh=Qribx+gqAo/t4LskQU55eR6fPQXJgUz1Qy4Xg5x2OCo=;
+        b=gT4vW4tQu9TNvj7pFGXrIWNRbZbY6iA7ypL9RYQ0jmwd+T7DP3diVC8S6lC6iIwRmO
+         iDyPgS4X1CA7+vOS6t1GQz+P2zG2glast45xM+0vG3o8Rbx/3OzT0CoePpoNjPDS0oVq
+         Pl2RqgEBCdjNXaRH8J0HMpOJkmYn5qz+HEANQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=13qvNhqz5adh8H7HAMhUD3/uHkd4DMTPZ6JpXLBiryc=;
-        b=c0XM2nKKwgdFQmotfNzZ4wWdQpV6UnoElqvFvh4f55gOENK/XZXD7xb9v39V/biJXT
-         b9OWgU2ZWvB8AYIE5e9rA6Jlg1EH0xOOAyweZWUZwRcdsHxafBorB61si4DTd6sq4RRg
-         z7g3Unhx1fpgCsKWqAnU9ENYK7c0vJ/4cn3AT8K31lFMw/1n8+BKyFgHaKk1XV3aPQgL
-         Aqz8HqkFy/DKSSc1mzrCvBZN7qnvRuFFnxy0tJpEsDeXWxKXCfvSnmB27R96Cq6c2fji
-         RVeXate0Yvze/gL9cJm9Bsh/LzkRCCQb3noTpXJPPLIuivGLqHKGpor0BTByjbpMRa7f
-         Z4yQ==
-X-Gm-Message-State: AJcUukcNpYW4kZUEZhA7+Z+juHtFJVRGwdjqDiJgbP5IY8vr4UfF6fOo
-        EYZdFnJbRoLqNMDxCNHeNYcZIw==
-X-Google-Smtp-Source: ALg8bN7ymGLs/Ielo723WIkrcEDnyxlP2IVT+0gXCCRbihcDqQi35RXNbJ2qpcG5sZyR8uCWwWTt8w==
-X-Received: by 2002:a17:902:820d:: with SMTP id x13mr63232243pln.229.1546872807090;
-        Mon, 07 Jan 2019 06:53:27 -0800 (PST)
+        bh=Qribx+gqAo/t4LskQU55eR6fPQXJgUz1Qy4Xg5x2OCo=;
+        b=DVPmeHKmHKseiHezmIXAwDUavFErDCnPLWecax8wkenoF29BW7YEhJPk/x1sTOZ5Q4
+         L2iMrGzAjDbfsuqI4kaPguSzo2w3cUosfy7UaWv3rD+N6/7rZKxdKCRB2X5+E35kJ35c
+         XS6GSnaivujg+puYlHExegujNIBLdFF/ANy5lEQhiCTnie9COhRQ+910Y2EzWq2d7DkM
+         jBf5aPL7cpZuI3ZwpSJfKBAOigDjC2+gC3V+fE7TktdeQiMAfX6dMOh1rXuk42XnO9WF
+         X4M+SWvK3MyZ/JaXSrbf7cF4UOUNPL+Jp0Rqam23TdqvtDmWNYJDPMHa+0EwB13mrhGF
+         +wQg==
+X-Gm-Message-State: AJcUukcRB1Th4hoNbzBPcmgO7Ec9l2D9ZvT9bO7FRXZeYyxV5Reg09YA
+        fpvHCxmxb3XBQ7uIiYbvDW2qUg==
+X-Google-Smtp-Source: ALg8bN6+xFPQUYGEdwsGNd3uAxSLx72nvFjOUb0KhRCgtkUyboe4xD5TyWslHQPgd+rsz35qCzm4Wg==
+X-Received: by 2002:a17:902:9047:: with SMTP id w7mr62018164plz.270.1546872819948;
+        Mon, 07 Jan 2019 06:53:39 -0800 (PST)
 Received: from qualcomm-HP-ZBook-14-G2.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com. [103.229.18.19])
-        by smtp.gmail.com with ESMTPSA id o84sm121145584pfi.172.2019.01.07.06.53.22
+        by smtp.gmail.com with ESMTPSA id o84sm121145584pfi.172.2019.01.07.06.53.27
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 07 Jan 2019 06:53:26 -0800 (PST)
+        Mon, 07 Jan 2019 06:53:39 -0800 (PST)
 From:   Firoz Khan <firoz.khan@linaro.org>
 To:     Mark Salter <msalter@redhat.com>,
         Aurelien Jacquiot <jacquiot.aurelien@gmail.com>,
@@ -64,9 +64,9 @@ To:     Mark Salter <msalter@redhat.com>,
 Cc:     y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
         linux-arch@vger.kernel.org, arnd@arndb.de, deepa.kernel@gmail.com,
         marcin.juszkiewicz@linaro.org, firoz.khan@linaro.org
-Subject: [PATCH 2/3] c6x: add __ARCH_NOMMU as a bugfix
-Date:   Mon,  7 Jan 2019 20:22:45 +0530
-Message-Id: <1546872766-3354-3-git-send-email-firoz.khan@linaro.org>
+Subject: [PATCH 3/3] c6x: generate uapi and kapi headers
+Date:   Mon,  7 Jan 2019 20:22:46 +0530
+Message-Id: <1546872766-3354-4-git-send-email-firoz.khan@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1546872766-3354-1-git-send-email-firoz.khan@linaro.org>
 References: <1546872766-3354-1-git-send-email-firoz.khan@linaro.org>
@@ -75,25 +75,93 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add __ARCH_NOMMU in uapi/asm/unistd.h file as a bugfix.
+Unified system call table generation script need to be invoked
+to generated the uapi and kapi headers. The Makefile changes
+present in this patch will invoke the scripts and generate uapi
+and kapi header files.
+
+The generated files - unistd_*.h and syscall_table_*.h files
+will be included by unistd.h and sys_c6x.c files by replacing
+asm-generic/unistd.h file.
 
 Signed-off-by: Firoz Khan <firoz.khan@linaro.org>
 ---
- arch/c6x/include/uapi/asm/unistd.h | 1 +
- 1 file changed, 1 insertion(+)
+ arch/c6x/Makefile                  |  3 +++
+ arch/c6x/include/asm/Kbuild        |  1 +
+ arch/c6x/include/uapi/asm/Kbuild   |  1 +
+ arch/c6x/include/uapi/asm/unistd.h | 14 +++++++++-----
+ arch/c6x/kernel/sys_c6x.c          |  3 ++-
+ 5 files changed, 16 insertions(+), 6 deletions(-)
 
+diff --git a/arch/c6x/Makefile b/arch/c6x/Makefile
+index b7aa854..acc9c91 100644
+--- a/arch/c6x/Makefile
++++ b/arch/c6x/Makefile
+@@ -53,6 +53,9 @@ dtbImage.%: vmlinux
+ archclean:
+ 	$(Q)$(MAKE) $(clean)=$(boot)
+ 
++archheaders:
++	$(Q)$(MAKE) $(build)=arch/c6x/kernel/syscalls all
++
+ define archhelp
+   @echo '  vmlinux.bin     - Binary kernel image (arch/$(ARCH)/boot/vmlinux.bin)'
+   @echo '  dtbImage.<dt>   - ELF image with $(arch)/boot/dts/<dt>.dts linked in'
+diff --git a/arch/c6x/include/asm/Kbuild b/arch/c6x/include/asm/Kbuild
+index 33a2c94..3d551e6 100644
+--- a/arch/c6x/include/asm/Kbuild
++++ b/arch/c6x/include/asm/Kbuild
+@@ -1,3 +1,4 @@
++generated-y += syscall_table.h
+ generic-y += atomic.h
+ generic-y += barrier.h
+ generic-y += bugs.h
+diff --git a/arch/c6x/include/uapi/asm/Kbuild b/arch/c6x/include/uapi/asm/Kbuild
+index 6c6f630..28823e3 100644
+--- a/arch/c6x/include/uapi/asm/Kbuild
++++ b/arch/c6x/include/uapi/asm/Kbuild
+@@ -1,5 +1,6 @@
+ include include/uapi/asm-generic/Kbuild.asm
+ 
++generated-y += unistd_32.h
+ generic-y += kvm_para.h
+ generic-y += shmparam.h
+ generic-y += ucontext.h
 diff --git a/arch/c6x/include/uapi/asm/unistd.h b/arch/c6x/include/uapi/asm/unistd.h
-index 6b2fe79..9e9ffe5 100644
+index 9e9ffe5..4633005 100644
 --- a/arch/c6x/include/uapi/asm/unistd.h
 +++ b/arch/c6x/include/uapi/asm/unistd.h
-@@ -18,6 +18,7 @@
- #define __ARCH_WANT_RENAMEAT
- #define __ARCH_WANT_STAT64
+@@ -20,9 +20,13 @@
  #define __ARCH_WANT_SYS_CLONE
-+#define __ARCH_NOMMU
+ #define __ARCH_NOMMU
  
- /* Use the standard ABI for syscalls. */
- #include <asm-generic/unistd.h>
+-/* Use the standard ABI for syscalls. */
+-#include <asm-generic/unistd.h>
++#include <asm/bitsperlong.h>
+ 
+-/* C6X-specific syscalls. */
+-#define __NR_cache_sync	(__NR_arch_specific_syscall + 0)
+-__SYSCALL(__NR_cache_sync, sys_cache_sync)
++#ifndef __SYSCALL
++#define __SYSCALL(x, y)
++#endif
++
++#if __BITS_PER_LONG == 32
++#define __NR_cache_sync	__NR_arch_specific_syscall0
++#include <asm/unistd_32.h>
++#endif
+diff --git a/arch/c6x/kernel/sys_c6x.c b/arch/c6x/kernel/sys_c6x.c
+index a742ae25..3e4b4e4 100644
+--- a/arch/c6x/kernel/sys_c6x.c
++++ b/arch/c6x/kernel/sys_c6x.c
+@@ -70,5 +70,6 @@ asmlinkage int sys_cache_sync(unsigned long s, unsigned long e)
+  */
+ void *sys_call_table[__NR_syscalls] = {
+ 	[0 ... __NR_syscalls-1] = sys_ni_syscall,
+-#include <asm/unistd.h>
++#define sys_arch_specific_syscall0	sys_cache_sync
++#include <asm/syscall_table.h>
+ };
 -- 
 1.9.1
 
