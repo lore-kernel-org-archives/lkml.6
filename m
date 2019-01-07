@@ -2,131 +2,119 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65746C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 23:16:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BF3AC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 23:18:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B7902173C
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 23:16:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 511C9218AE
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 23:18:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="f98gwhS7"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="THEnSFS2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727107AbfAGXQ5 (ORCPT
+        id S1727112AbfAGXSm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 18:16:57 -0500
-Received: from mail-vk1-f196.google.com ([209.85.221.196]:46035 "EHLO
-        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726638AbfAGXQ4 (ORCPT
+        Mon, 7 Jan 2019 18:18:42 -0500
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:33808 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726638AbfAGXSl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 18:16:56 -0500
-Received: by mail-vk1-f196.google.com with SMTP id n126so473463vke.12
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 15:16:56 -0800 (PST)
+        Mon, 7 Jan 2019 18:18:41 -0500
+Received: by mail-vs1-f67.google.com with SMTP id y27so1363046vsi.1
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 15:18:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=DMknoEMoeSXjj4UHAQvdqUkRXX2v0sWeTabM8utGsZw=;
-        b=f98gwhS7qxj0T+C11+KTziTjRGIyGDdRXoL4jvBLS8c0H0t0uNYncDIutsSn9NCjno
-         yMWRbWDbShbpYwdGRwGgnNH3yP7Ykg9Sdqe70dfgjgDRqRKrcpmi1VGy8iA7FwrcKtco
-         J0LtZz+GHSDQ/5CmFDTVvqSUZL969xJEXxHgU=
+        bh=H5HVsH1a0vWV+EFF8RrEdBmIUHTwVCB9s8LdihxERN0=;
+        b=THEnSFS2WgaTS4NLptScKlgGvvDoirqcQlj6dBWoVE6MdiEwp7rqSC9xrqtibDg5k5
+         V9UC1kd/uElU0xJ/m91dAp20lEv2A8GUH3qzClBC/9siNUG5mdobNJenmG/lCV89TqKT
+         uKQuqHMNjvBWgRy+/jAVw0jvMdpEy9a++vxyQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=DMknoEMoeSXjj4UHAQvdqUkRXX2v0sWeTabM8utGsZw=;
-        b=add+ndPbWxvuBSXJZHKtxo8k3ak6yF3ddlsPmdeWvtXSbiZ4ci8wqBt54D1RPHbe0X
-         +kZpRSJD1cr6VCWws7TY6DI++bYrp4e8ATdtv97M6YrZEliv6R966PzSn/3WblHxMhMR
-         F1y4gKrWK49WxiyNP1/f6BnSRNXyub3z7LhH7VdxGSQLBB2EWPsF5SfvvjlyWNTc8RuX
-         BwJTa52mtYNQtbw3T3GTnOZ480fqGxugiT6dQ0LSocylOp9Ey2Kzm2fDhX67EG7iDe3j
-         3eKd1Zwz1TTFrsgn1oRXv31TfxeuiMZCkRKVhG0ddVh+gVBjeb9K6Xmea3OJaCaAIU/p
-         VKwA==
-X-Gm-Message-State: AJcUukeyecwRGLNk5HX+o1/PmJoO2XQrGtEBSC4HLZFuq5r9kS/R+jzx
-        bd2NbLVV6gJJxaoxItmyazUor6M/qXk=
-X-Google-Smtp-Source: ALg8bN7eNhXRflEfcwQ5AR4OQhG+fpkoN9dRFIV6ryQOEKU0NWJgnykC6qNuvK8UsH7KAW9bqx6v0Q==
-X-Received: by 2002:a1f:1e09:: with SMTP id e9mr23866029vke.18.1546903015371;
-        Mon, 07 Jan 2019 15:16:55 -0800 (PST)
-Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com. [209.85.221.181])
-        by smtp.gmail.com with ESMTPSA id 67sm19597830vkt.35.2019.01.07.15.16.54
+        bh=H5HVsH1a0vWV+EFF8RrEdBmIUHTwVCB9s8LdihxERN0=;
+        b=rxj119bihmzhZ4wMGISlfc5nZz2xmUo7BOuoTi2XraUVwKt0i/1l2d+9N6lhh8tKq7
+         AC0WwhPcuqxQ151g6Lad7RB1l61pmtpBqip6hBIiX+SjRgY7zolOvUq4Oe6HkJd6mePp
+         CqwotmIOPvmo3Z+1AbhW0JnqmQ8w96OSdPEDxKO7N0W6roFCBHpma/SLHKI/MQfWzDkp
+         dOlpU07N9goficHKITvmwWlXkevXTk9nHb5msM38HJjMAJnbzjAErncR7+lZCdrrtClK
+         oqlseOZwUJ/F9oRwqGwWgm2N6yTkBYeZ8OlPfyylGkgW6xncZhKvPK0T/wFxk2YKTsKV
+         Z3Pw==
+X-Gm-Message-State: AA+aEWZ7qx8T4eA2BKyuKVMg560ya+GzHrvSoKJLFwm1Or3q0oZCOp0s
+        ZinP/PhnMcTwsIWd1AOgpyfbfQgvevY=
+X-Google-Smtp-Source: ALg8bN6GmSoB4EtMMAyaPnj5P9A6wT/sD4Mhria4ljtnULS3lhWh8iAQSTqW+B6GGWMReYI5kxqDGQ==
+X-Received: by 2002:a67:3d54:: with SMTP id k81mr25286612vsa.57.1546903120393;
+        Mon, 07 Jan 2019 15:18:40 -0800 (PST)
+Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com. [209.85.217.53])
+        by smtp.gmail.com with ESMTPSA id k20sm17078516uaq.2.2019.01.07.15.18.39
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 07 Jan 2019 15:16:54 -0800 (PST)
-Received: by mail-vk1-f181.google.com with SMTP id b18so487154vke.2
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 15:16:54 -0800 (PST)
-X-Received: by 2002:a1f:3d10:: with SMTP id k16mr23265287vka.13.1546903013896;
- Mon, 07 Jan 2019 15:16:53 -0800 (PST)
+        Mon, 07 Jan 2019 15:18:39 -0800 (PST)
+Received: by mail-vs1-f53.google.com with SMTP id h78so1344699vsi.6
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 15:18:39 -0800 (PST)
+X-Received: by 2002:a67:e15e:: with SMTP id o30mr8825592vsl.66.1546903118803;
+ Mon, 07 Jan 2019 15:18:38 -0800 (PST)
 MIME-Version: 1.0
-References: <20190107222700.15954-1-christian@brauner.io>
-In-Reply-To: <20190107222700.15954-1-christian@brauner.io>
+References: <20190107231631.1849-1-tycho@tycho.ws>
+In-Reply-To: <20190107231631.1849-1-tycho@tycho.ws>
 From:   Kees Cook <keescook@chromium.org>
-Date:   Mon, 7 Jan 2019 15:16:42 -0800
-X-Gmail-Original-Message-ID: <CAGXu5jJQgZDec1+WnsU6ttVaMb6j5oqtJ7Zw_YYn4RgWgvc0SA@mail.gmail.com>
-Message-ID: <CAGXu5jJQgZDec1+WnsU6ttVaMb6j5oqtJ7Zw_YYn4RgWgvc0SA@mail.gmail.com>
-Subject: Re: [RESEND PATCH v3 0/2] sysctl: handle overflow for file-max
-To:     Christian Brauner <christian@brauner.io>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
+Date:   Mon, 7 Jan 2019 15:18:27 -0800
+X-Gmail-Original-Message-ID: <CAGXu5jK1pY-RqB_J5_obMDaWav8cJHjXQkpz0B4cHM=A8Ztq7w@mail.gmail.com>
+Message-ID: <CAGXu5jK1pY-RqB_J5_obMDaWav8cJHjXQkpz0B4cHM=A8Ztq7w@mail.gmail.com>
+Subject: Re: [PATCH] samples/seccomp: fix 32-bit build
+To:     Tycho Andersen <tycho@tycho.ws>
+Cc:     Ingo Molnar <mingo@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Waiman Long <longman@redhat.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Linux API <linux-api@vger.kernel.org>
+        James Morris <jmorris@namei.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Thomas Gleixner <tglx@linutronix.de>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 7, 2019 at 2:27 PM Christian Brauner <christian@brauner.io> wrote:
+On Mon, Jan 7, 2019 at 3:16 PM Tycho Andersen <tycho@tycho.ws> wrote:
 >
-> Hey,
+> Both the .o and the actual executable need to be built with -m32 in order
+> to link correctly.
 >
-> Here is v3 of this patchset. Changelogs are in the individual commits.
+> Signed-off-by: Tycho Andersen <tycho@tycho.ws>
+> Reported-by: Ingo Molnar <mingo@kernel.org>
+> Fixes: fec7b6690541 ("samples: add an example of seccomp user trap")
 
-Andrew, can you take these? I've already Acked them.
+Reviewed-by: Kees Cook <keescook@chromium.org>
+
+> ---
+> I guess x86 can pick this up directly? Not sure where it should go
+> exactly.
+
+Ingo, can you snag this? (It's a more direct path, otherwise I can
+take it via seccomp, which will go through my tree then James's
+tree...)
 
 -Kees
 
+> ---
+>  samples/seccomp/Makefile | 1 +
+>  1 file changed, 1 insertion(+)
 >
-> Currently, when writing
->
-> echo 18446744073709551616 > /proc/sys/fs/file-max
->
-> /proc/sys/fs/file-max will overflow and be set to 0. That quickly
-> crashes the system.
->
-> The first version of this patch intended to detect the overflow and cap
-> at ULONG_MAX. However, we should not do this and rather return EINVAL on
-> overflow. The reasons are:
-> - this aligns with other sysctl handlers that simply reject overflows
->   (cf. [1], [2], and a bunch of others)
-> - we already do a partial fail on overflow right now
->   Namely, when the TMPBUFLEN is exceeded. So we already reject values
->   such as 184467440737095516160 (21 chars) but accept values such as
->   18446744073709551616 (20 chars) but both are overflows. So we should
->   just always reject 64bit overflows and not special-case this based on
->   the number of chars.
->
-> (This patchset is in reference to https://lkml.org/lkml/2018/10/11/585.)
->
-> Thanks!
-> Christian
->
-> [1]: fb910c42cceb ("sysctl: check for UINT_MAX before unsigned int min/max")
-> [2]: 196851bed522 ("s390/topology: correct topology mode proc handler")
->
-> Christian Brauner (2):
->   sysctl: handle overflow in proc_get_long
->   sysctl: handle overflow for file-max
->
->  kernel/sysctl.c | 47 ++++++++++++++++++++++++++++++++++++++++++++++-
->  1 file changed, 46 insertions(+), 1 deletion(-)
->
+> diff --git a/samples/seccomp/Makefile b/samples/seccomp/Makefile
+> index 4920903c8009..fb43a814d4c0 100644
+> --- a/samples/seccomp/Makefile
+> +++ b/samples/seccomp/Makefile
+> @@ -34,6 +34,7 @@ HOSTCFLAGS_bpf-direct.o += $(MFLAG)
+>  HOSTCFLAGS_dropper.o += $(MFLAG)
+>  HOSTCFLAGS_bpf-helper.o += $(MFLAG)
+>  HOSTCFLAGS_bpf-fancy.o += $(MFLAG)
+> +HOSTCFLAGS_user-trap.o += $(MFLAG)
+>  HOSTLDLIBS_bpf-direct += $(MFLAG)
+>  HOSTLDLIBS_bpf-fancy += $(MFLAG)
+>  HOSTLDLIBS_dropper += $(MFLAG)
 > --
 > 2.19.1
 >
