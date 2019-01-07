@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC5C4C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:40:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9ACFC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:40:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C7452183F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:40:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A9EB12183F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:40:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546864852;
-	bh=gBpEHLnwHAu8DP7iKtRnEkFc6++KR2UKXm3jxIsOG6g=;
+	s=default; t=1546864858;
+	bh=wkB7OD6CoWHvpd12N6P7BRzMxMCNO8XN1rHieluLRcQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=PCvxGyPkAWM25QVHIgw1LYtcw/+iN1O/ZQ2SeNfuvs3pDVcbQxqqV6MUUhktPj/+y
-	 UyIkeDvg3Zt5usHYdBbaC5k8oHvO/FV3tw3FUlOXIjfERyGCIcvYkodvU9KzdDLQ9J
-	 Ue6b7+r8hqFo1yV+mNyJvV3bwBErWAG4sk8UlpQo=
+	b=rzeF6fShpJJy5yAGylXfCbqgph2CnhXdm2303ssmuVwpyK1WcOP+2rXAlOcr36anq
+	 Z/2w4wqu+x+fPJTH2pCW4La6Pn+Mk8WeVDm7oxl2cwAYeoQfTAg4m2LRfHLkF2qp/x
+	 4oM9HYbyudcfTMqO19w9RY1krBVSxdTXPmcr9dy8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728049AbfAGMkv (ORCPT
+        id S1728057AbfAGMk5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:40:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47134 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:40:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55886 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727270AbfAGMeg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:34:36 -0500
+        id S1727827AbfAGMkx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:40:53 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5C16321855;
-        Mon,  7 Jan 2019 12:34:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2FE092183E;
+        Mon,  7 Jan 2019 12:40:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546864475;
-        bh=gBpEHLnwHAu8DP7iKtRnEkFc6++KR2UKXm3jxIsOG6g=;
+        s=default; t=1546864852;
+        bh=wkB7OD6CoWHvpd12N6P7BRzMxMCNO8XN1rHieluLRcQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eVyPXteUzXoCGdjtqVl+7gfchExfjDY89RDikbnQUVkZDXbs0r/VcYKtx+N6pD8AZ
-         4L1rId0/KPU5abK1K4yU+ZSN0nDssBwWccRxLd0SNAVsDZDLwS90f5a1d8p3h3kwsj
-         zFif68ctBB1W39EUo1gMMgMDtasKXJWCfBXcQtYQ=
+        b=1dt2hS0wNiE68gNm2rHjttYNVRqMLyLCo4UKFCd71gf5GOjsoUlyqlp/iu2FVQzXs
+         Q2wOUVBZkxtbQ2PeGHUm+2x5l9XQCIzJ0/4M49/zZ7PQpg2pqEZ0PE2FlngIqSj/cP
+         LxTehhpWi71iADouQ75kvipkF6irvsCrurwF7EHw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.20 024/145] ALSA: emux: Fix potential Spectre v1 vulnerabilities
-Date:   Mon,  7 Jan 2019 13:31:01 +0100
-Message-Id: <20190107104440.476724256@linuxfoundation.org>
+        stable@vger.kernel.org, Jernej Skrabec <jernej.skrabec@siol.net>,
+        Maxime Ripard <maxime.ripard@bootlin.com>
+Subject: [PATCH 4.20 084/145] clk: sunxi-ng: Use u64 for calculation of NM rate
+Date:   Mon,  7 Jan 2019 13:32:01 +0100
+Message-Id: <20190107104448.247005486@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104437.308206189@linuxfoundation.org>
 References: <20190107104437.308206189@linuxfoundation.org>
@@ -66,69 +65,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Gustavo A. R. Silva <gustavo@embeddedor.com>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
 
-commit 4aea96f4237cea0c51a8bc87c0db31f0f932f1f0 upstream.
+commit 65b6657672388b72822e0367f06d41c1e3ffb5bb upstream.
 
-info.mode and info.port are indirectly controlled by user-space,
-hence leading to a potential exploitation of the Spectre variant 1
-vulnerability.
+Allwinner H6 SoC has multiplier N range between 1 and 254. Since parent
+rate is 24MHz, intermediate result when calculating final rate easily
+overflows 32 bit variable.
 
-These issues were detected with the help of Smatch:
+Because of that, introduce function for calculating clock rate which
+uses 64 bit variable for intermediate result.
 
-sound/synth/emux/emux_hwdep.c:72 snd_emux_hwdep_misc_mode() warn: potential spectre issue 'emu->portptrs[i]->ctrls' [w] (local cap)
-sound/synth/emux/emux_hwdep.c:75 snd_emux_hwdep_misc_mode() warn: potential spectre issue 'emu->portptrs' [w] (local cap)
-sound/synth/emux/emux_hwdep.c:75 snd_emux_hwdep_misc_mode() warn: potential spectre issue 'emu->portptrs[info.port]->ctrls' [w] (local cap)
+Fixes: 6174a1e24b0d ("clk: sunxi-ng: Add N-M-factor clock support")
+Fixes: ee28648cb2b4 ("clk: sunxi-ng: Remove the use of rational computations")
 
-Fix this by sanitizing both info.mode and info.port before using them
-to index emu->portptrs[i]->ctrls, emu->portptrs[info.port]->ctrls and
-emu->portptrs.
-
-Notice that given that speculation windows are large, the policy is
-to kill the speculation on the first load and not worry if it can be
-completed with a dependent load/store [1].
-
-[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+CC: <stable@vger.kernel.org>
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/synth/emux/emux_hwdep.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/clk/sunxi-ng/ccu_nm.c |   18 +++++++++++++++---
+ 1 file changed, 15 insertions(+), 3 deletions(-)
 
---- a/sound/synth/emux/emux_hwdep.c
-+++ b/sound/synth/emux/emux_hwdep.c
-@@ -22,9 +22,9 @@
- #include <sound/core.h>
- #include <sound/hwdep.h>
- #include <linux/uaccess.h>
-+#include <linux/nospec.h>
- #include "emux_voice.h"
+--- a/drivers/clk/sunxi-ng/ccu_nm.c
++++ b/drivers/clk/sunxi-ng/ccu_nm.c
+@@ -19,6 +19,17 @@ struct _ccu_nm {
+ 	unsigned long	m, min_m, max_m;
+ };
  
--
- #define TMP_CLIENT_ID	0x1001
++static unsigned long ccu_nm_calc_rate(unsigned long parent,
++				      unsigned long n, unsigned long m)
++{
++	u64 rate = parent;
++
++	rate *= n;
++	do_div(rate, m);
++
++	return rate;
++}
++
+ static void ccu_nm_find_best(unsigned long parent, unsigned long rate,
+ 			     struct _ccu_nm *nm)
+ {
+@@ -28,7 +39,8 @@ static void ccu_nm_find_best(unsigned lo
  
- /*
-@@ -66,13 +66,16 @@ snd_emux_hwdep_misc_mode(struct snd_emux
- 		return -EFAULT;
- 	if (info.mode < 0 || info.mode >= EMUX_MD_END)
- 		return -EINVAL;
-+	info.mode = array_index_nospec(info.mode, EMUX_MD_END);
+ 	for (_n = nm->min_n; _n <= nm->max_n; _n++) {
+ 		for (_m = nm->min_m; _m <= nm->max_m; _m++) {
+-			unsigned long tmp_rate = parent * _n  / _m;
++			unsigned long tmp_rate = ccu_nm_calc_rate(parent,
++								  _n, _m);
  
- 	if (info.port < 0) {
- 		for (i = 0; i < emu->num_ports; i++)
- 			emu->portptrs[i]->ctrls[info.mode] = info.value;
- 	} else {
--		if (info.port < emu->num_ports)
-+		if (info.port < emu->num_ports) {
-+			info.port = array_index_nospec(info.port, emu->num_ports);
- 			emu->portptrs[info.port]->ctrls[info.mode] = info.value;
-+		}
- 	}
- 	return 0;
- }
+ 			if (tmp_rate > rate)
+ 				continue;
+@@ -100,7 +112,7 @@ static unsigned long ccu_nm_recalc_rate(
+ 	if (ccu_sdm_helper_is_enabled(&nm->common, &nm->sdm))
+ 		rate = ccu_sdm_helper_read_rate(&nm->common, &nm->sdm, m, n);
+ 	else
+-		rate = parent_rate * n / m;
++		rate = ccu_nm_calc_rate(parent_rate, n, m);
+ 
+ 	if (nm->common.features & CCU_FEATURE_FIXED_POSTDIV)
+ 		rate /= nm->fixed_post_div;
+@@ -149,7 +161,7 @@ static long ccu_nm_round_rate(struct clk
+ 	_nm.max_m = nm->m.max ?: 1 << nm->m.width;
+ 
+ 	ccu_nm_find_best(*parent_rate, rate, &_nm);
+-	rate = *parent_rate * _nm.n / _nm.m;
++	rate = ccu_nm_calc_rate(*parent_rate, _nm.n, _nm.m);
+ 
+ 	if (nm->common.features & CCU_FEATURE_FIXED_POSTDIV)
+ 		rate /= nm->fixed_post_div;
 
 
