@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EE79C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:35:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CC88C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:35:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2A13206BB
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:35:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 02AA820859
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:35:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546864503;
-	bh=XyO0CCoN/vCdFwJFhSheWrCrNkbGax6Siun67tUOBaQ=;
+	s=default; t=1546864505;
+	bh=f2lzRGTfXO+yzRn2UIJmrduzJB06iz/BHdu2G2vAxeY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=X6Q3guaHFDo0ipNsqgGGRdk/CKH3hx6X/X2XrQi9D+b0DetSsBrG37oH50Nur6uUw
-	 gKm54mlnrmpybyVrDToFe1TRt5BrxyzrX6hyggBO+SFYcAq2udKMa2loqEWhQSaxBJ
-	 /vCOa2eVl8pjwnnvbXdD1/9FQDAGSnTIC/C0jruE=
+	b=cCzSP/9ds8Awm6ROWaHRjP26M9r1IEHgc8aDg44mWcT9qxjrmz6v7gOptAKroxQ09
+	 Hc8mzW3RUJ/PrOn1M8iMXFGTqHqib4uBfGqui/zUgvNZOycrLWvYopxCvDuCkpzr76
+	 +kXQoW3mW/HyUL1mLr8YfGJCUri/NVCOgonUgHU4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727420AbfAGMfC (ORCPT
+        id S1727432AbfAGMfE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:35:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48064 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:35:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48176 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727364AbfAGMe6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:34:58 -0500
+        id S1727412AbfAGMfB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:35:01 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8A175206BB;
-        Mon,  7 Jan 2019 12:34:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 656FD20859;
+        Mon,  7 Jan 2019 12:35:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546864498;
-        bh=XyO0CCoN/vCdFwJFhSheWrCrNkbGax6Siun67tUOBaQ=;
+        s=default; t=1546864500;
+        bh=f2lzRGTfXO+yzRn2UIJmrduzJB06iz/BHdu2G2vAxeY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bNb+IDGk8oFWb36P/kV6aJD/KmC6IXAOk+aG+R5wI1ezVl6MDdipblFbIUU6fLtkp
-         XzSt4wAgrQGmlJKdPjWCC+y4RVmxBkdALfEPOJvHd/nvg0ADz9pNKycIvK+yacrsyB
-         r4ZyNeJbnXCLHuPU3xTk2myA4zz5VsvZayuw6QY8=
+        b=cq44Cz7kLiH+5UyCc3ByhUYxhgksONnLFgZrJ9ZwJSBkaphCXcbnvMeI3x3O9NK4u
+         BQaKvVAMrDf3shLiXgCuRzs2eHXkNO7hpfaXAdSy5lQScqyY1xkC6U2Bl3Asr6SrSd
+         VuQJPmioV0XK7O8Iy2Z9ZI/DpKKa7D/IRbL+vBn8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wandrille RONCE <w@ndrille.fr>,
+        stable@vger.kernel.org, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
         Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.20 031/145] ALSA: hda/realtek: Enable audio jacks of ASUS UX391UA with ALC294
-Date:   Mon,  7 Jan 2019 13:31:08 +0100
-Message-Id: <20190107104441.399458310@linuxfoundation.org>
+Subject: [PATCH 4.20 032/145] ALSA: fireface: fix for state to fetch PCM frames
+Date:   Mon,  7 Jan 2019 13:31:09 +0100
+Message-Id: <20190107104441.499472098@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104437.308206189@linuxfoundation.org>
 References: <20190107104437.308206189@linuxfoundation.org>
@@ -65,36 +65,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Wandrille RONCE <w@ndrille.fr>
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 
-commit 9cf6533e8060d3896b88ea14b27f620e6504b84b upstream.
+commit 3d16200a3e55a39caa1c88419cb559c00316f721 upstream.
 
-By default, there is no sound on Asus UX391UA on Linux.
+According to my memo at hand and saved records, writing 0x00000001 to
+SND_FF_REG_FETCH_PCM_FRAMES disables fetching PCM frames in corresponding
+channel, however current implement uses reversed logic. This results in
+muted volume in device side during playback.
 
-This patch adds sound support on Asus UX391UA. Tested working by three
-different users.
+This commit corrects the bug.
 
-The problem has also been described at
-https://bugs.launchpad.net/ubuntu/+source/alsa-driver/+bug/1784485
-
-Signed-off-by: Wandrille RONCE <w@ndrille.fr>
-Cc: <stable@vger.kernel.org>
+Cc: <stable@vger.kernel.org> # v4.12+
+Fixes: 76fdb3a9e13a ('ALSA: fireface: add support for Fireface 400')
+Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_realtek.c |    1 +
- 1 file changed, 1 insertion(+)
+ sound/firewire/fireface/ff-protocol-ff400.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -6573,6 +6573,7 @@ static const struct snd_pci_quirk alc269
- 	SND_PCI_QUIRK(0x1043, 0x103e, "ASUS X540SA", ALC256_FIXUP_ASUS_MIC),
- 	SND_PCI_QUIRK(0x1043, 0x103f, "ASUS TX300", ALC282_FIXUP_ASUS_TX300),
- 	SND_PCI_QUIRK(0x1043, 0x106d, "Asus K53BE", ALC269_FIXUP_LIMIT_INT_MIC_BOOST),
-+	SND_PCI_QUIRK(0x1043, 0x10a1, "ASUS UX391UA", ALC294_FIXUP_ASUS_SPK),
- 	SND_PCI_QUIRK(0x1043, 0x10c0, "ASUS X540SA", ALC256_FIXUP_ASUS_MIC),
- 	SND_PCI_QUIRK(0x1043, 0x10d0, "ASUS X540LA/X540LJ", ALC255_FIXUP_ASUS_MIC_NO_PRESENCE),
- 	SND_PCI_QUIRK(0x1043, 0x115d, "Asus 1015E", ALC269_FIXUP_LIMIT_INT_MIC_BOOST),
+--- a/sound/firewire/fireface/ff-protocol-ff400.c
++++ b/sound/firewire/fireface/ff-protocol-ff400.c
+@@ -152,7 +152,7 @@ static int ff400_switch_fetching_mode(st
+ 	if (reg == NULL)
+ 		return -ENOMEM;
+ 
+-	if (enable) {
++	if (!enable) {
+ 		/*
+ 		 * Each quadlet is corresponding to data channels in a data
+ 		 * blocks in reverse order. Precisely, quadlets for available
 
 
