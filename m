@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0574EC43612
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 10:08:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0380C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 10:08:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C93A520859
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 10:08:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 898DE20854
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 10:08:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726790AbfAGKIU (ORCPT
+        id S1726819AbfAGKIY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 05:08:20 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:42938 "EHLO
+        Mon, 7 Jan 2019 05:08:24 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:22870 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726712AbfAGKIT (ORCPT
+        by vger.kernel.org with ESMTP id S1726715AbfAGKIU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 05:08:19 -0500
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x07A3fDq001096;
-        Mon, 7 Jan 2019 11:07:58 +0100
+        Mon, 7 Jan 2019 05:08:20 -0500
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x07A4mRI019386;
+        Mon, 7 Jan 2019 11:07:59 +0100
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2ptvjffee2-1
+        by mx08-00178001.pphosted.com with ESMTP id 2ptt11qy11-1
         (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Mon, 07 Jan 2019 11:07:58 +0100
+        Mon, 07 Jan 2019 11:07:59 +0100
 Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id EBB403D;
-        Mon,  7 Jan 2019 10:07:57 +0000 (GMT)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id B246E3A;
+        Mon,  7 Jan 2019 10:07:58 +0000 (GMT)
 Received: from Webmail-eu.st.com (sfhdag5node3.st.com [10.75.127.15])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 9F91F2A00;
-        Mon,  7 Jan 2019 10:07:57 +0000 (GMT)
-Received: from localhost (10.75.127.47) by SFHDAG5NODE3.st.com (10.75.127.15)
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 8831D2A00;
+        Mon,  7 Jan 2019 10:07:58 +0000 (GMT)
+Received: from localhost (10.75.127.45) by SFHDAG5NODE3.st.com (10.75.127.15)
  with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 7 Jan 2019 11:07:57
  +0100
 From:   Fabrice Gasnier <fabrice.gasnier@st.com>
@@ -44,16 +44,16 @@ CC:     <robh+dt@kernel.org>, <mcoquelin.stm32@gmail.com>, <arnd@arndb.de>,
         <linux-kernel@vger.kernel.org>,
         <linux-stm32@st-md-mailman.stormreply.com>,
         <linux-arm-kernel@lists.infradead.org>
-Subject: [RESEND PATCH v2 1/3] dt-bindings: stm32: syscon: add clock support
-Date:   Mon, 7 Jan 2019 11:07:43 +0100
-Message-ID: <1546855665-26218-2-git-send-email-fabrice.gasnier@st.com>
+Subject: [RESEND PATCH v2 2/3] mfd: syscon: Add optional clock support
+Date:   Mon, 7 Jan 2019 11:07:44 +0100
+Message-ID: <1546855665-26218-3-git-send-email-fabrice.gasnier@st.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1546855665-26218-1-git-send-email-fabrice.gasnier@st.com>
 References: <1546855665-26218-1-git-send-email-fabrice.gasnier@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.75.127.47]
-X-ClientProxiedBy: SFHDAG3NODE3.st.com (10.75.127.9) To SFHDAG5NODE3.st.com
+X-Originating-IP: [10.75.127.45]
+X-ClientProxiedBy: SFHDAG5NODE3.st.com (10.75.127.15) To SFHDAG5NODE3.st.com
  (10.75.127.15)
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-07_04:,,
  signatures=0
@@ -62,35 +62,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-STM32 system configuration controller registers needs to be clocked.
-Document clock support on stm32-syscon.
+Some system control registers need to be clocked, so the registers can
+be accessed. Add an optional clock and attach it to regmap.
 
 Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
 ---
-Changes in v2:
-- move clocks to specific bindings using syscon as per Rob's comment
----
- Documentation/devicetree/bindings/arm/stm32/stm32-syscon.txt | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/mfd/syscon.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/stm32/stm32-syscon.txt b/Documentation/devicetree/bindings/arm/stm32/stm32-syscon.txt
-index 99980ae..c92d411 100644
---- a/Documentation/devicetree/bindings/arm/stm32/stm32-syscon.txt
-+++ b/Documentation/devicetree/bindings/arm/stm32/stm32-syscon.txt
-@@ -5,10 +5,12 @@ Properties:
-                  - " st,stm32mp157-syscfg " - for stm32mp157 based SoCs,
-                  second value must be always "syscon".
-    - reg : offset and length of the register set.
-+   - clocks: phandle to the syscfg clock
+diff --git a/drivers/mfd/syscon.c b/drivers/mfd/syscon.c
+index b6d05cd..a0ba4ff 100644
+--- a/drivers/mfd/syscon.c
++++ b/drivers/mfd/syscon.c
+@@ -12,6 +12,7 @@
+  * (at your option) any later version.
+  */
  
-  Example:
-          syscfg: syscon@50020000 {
-                  compatible = "st,stm32mp157-syscfg", "syscon";
-                  reg = <0x50020000 0x400>;
-+                 clocks = <&rcc SYSCFG>;
-          };
++#include <linux/clk.h>
+ #include <linux/err.h>
+ #include <linux/hwspinlock.h>
+ #include <linux/io.h>
+@@ -45,6 +46,7 @@ struct syscon {
  
+ static struct syscon *of_syscon_register(struct device_node *np)
+ {
++	struct clk *clk;
+ 	struct syscon *syscon;
+ 	struct regmap *regmap;
+ 	void __iomem *base;
+@@ -119,6 +121,18 @@ static struct syscon *of_syscon_register(struct device_node *np)
+ 		goto err_regmap;
+ 	}
+ 
++	clk = of_clk_get(np, 0);
++	if (IS_ERR(clk)) {
++		ret = PTR_ERR(clk);
++		/* clock is optional */
++		if (ret != -ENOENT)
++			goto err_clk;
++	} else {
++		ret = regmap_mmio_attach_clk(regmap, clk);
++		if (ret)
++			goto err_attach;
++	}
++
+ 	syscon->regmap = regmap;
+ 	syscon->np = np;
+ 
+@@ -128,6 +142,11 @@ static struct syscon *of_syscon_register(struct device_node *np)
+ 
+ 	return syscon;
+ 
++err_attach:
++	if (!IS_ERR(clk))
++		clk_put(clk);
++err_clk:
++	regmap_exit(regmap);
+ err_regmap:
+ 	iounmap(base);
+ err_map:
 -- 
 1.9.1
 
