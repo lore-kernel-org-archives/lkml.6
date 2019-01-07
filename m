@@ -6,32 +6,32 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B87F2C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 10:58:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48F96C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 10:59:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D00C2147C
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 10:58:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1FBB12147C
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 10:59:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726894AbfAGK6s (ORCPT
+        id S1726898AbfAGK7u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 05:58:48 -0500
-Received: from mx2.suse.de ([195.135.220.15]:42122 "EHLO mx1.suse.de"
+        Mon, 7 Jan 2019 05:59:50 -0500
+Received: from mx2.suse.de ([195.135.220.15]:42260 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726501AbfAGK6s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 05:58:48 -0500
+        id S1725550AbfAGK7t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 05:59:49 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 18CFAAD70;
-        Mon,  7 Jan 2019 10:58:47 +0000 (UTC)
-Date:   Mon, 07 Jan 2019 11:58:47 +0100
-Message-ID: <s5hsgy4iviw.wl-tiwai@suse.de>
+        by mx1.suse.de (Postfix) with ESMTP id B3E95AD70;
+        Mon,  7 Jan 2019 10:59:48 +0000 (UTC)
+Date:   Mon, 07 Jan 2019 11:59:48 +0100
+Message-ID: <s5hr2doivh7.wl-tiwai@suse.de>
 From:   Takashi Iwai <tiwai@suse.de>
 To:     "Aditya Pakki" <pakki001@umn.edu>
 Cc:     <alsa-devel@alsa-project.org>, "Jaroslav Kysela" <perex@perex.cz>,
         <kjlu@umn.edu>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] [v2] ALSA: line6: fix check on snd_card_register
-In-Reply-To: <20190106170148.9938-1-pakki001@umn.edu>
-References: <20190106170148.9938-1-pakki001@umn.edu>
+Subject: Re: [PATCH] [v2] ALSA: isa: fix a missing check of snd_ctl_add
+In-Reply-To: <20190106171601.10506-1-pakki001@umn.edu>
+References: <20190106171601.10506-1-pakki001@umn.edu>
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
  FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/26
  (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
@@ -42,15 +42,15 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 06 Jan 2019 18:01:47 +0100,
+On Sun, 06 Jan 2019 18:16:00 +0100,
 Aditya Pakki wrote:
 > 
-> The fix checks if snd_card_register() fails, and if so logs the error
-> via dev_err() consistent with other patches.
+> snd_ctl_add() could fail, so let's check its return value and return its
+> error code upstream upon failure.
 > 
 > Signed-off-by: Aditya Pakki <pakki001@umn.edu>
 
-Thanks, applied.
+Applied now.  Thanks.
 
 
 Takashi
