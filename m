@@ -6,47 +6,52 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46102C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:09:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4320FC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:09:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A02E2089F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:09:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E404218A1
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:09:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546866569;
-	bh=awN8AsS2CyYCo8finARUTQJFFdejREz0bvv9Iw1+CZg=;
+	s=default; t=1546866576;
+	bh=CbcanykCtNSTVoUzpMULS1F+skinZYhHx2usbz/GIfA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=1CI9hM+SW/5tvTZX+yhcr0IQgsbveu352Ufl9fILPM2tEt7+EPe8c8KvY+OGIZIGd
-	 lmiseZzC3gCe7cdTsP2zaOR4y2SsYYswwgMRMDxCpTszzXyWO+U/yXm/uHePhMxoIo
-	 w3/8nYEEQtw1tuD/GK8Xs42aGTsorA4q5l0YWO4Y=
+	b=RUh/+DF76ZWU5kcExT3DBA0A+ZoNAKDSSijIopykkLKiqiOz32cxJjqJ+aOcFJ8+5
+	 97xUe7Ub95AevyYQIWQSN94SIJMsEu/kRGbexHvtjFLC47f5hIiea0aXeNEszt+7gJ
+	 A+naL84o3ZOa9qKVUogi8tgO+6zP9TOzwZ3iJXC4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732031AbfAGNJ2 (ORCPT
+        id S1727972AbfAGNJe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:09:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56310 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:09:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56358 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731303AbfAGNJ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:09:26 -0500
+        id S1731303AbfAGNJb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:09:31 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E5B0A2089F;
-        Mon,  7 Jan 2019 13:09:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 867AA2089F;
+        Mon,  7 Jan 2019 13:09:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546866565;
-        bh=awN8AsS2CyYCo8finARUTQJFFdejREz0bvv9Iw1+CZg=;
+        s=default; t=1546866570;
+        bh=CbcanykCtNSTVoUzpMULS1F+skinZYhHx2usbz/GIfA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=b+QtxX02HVWhqfVwPts8LUvTP5gAdoli7xAMfLfurLG9UorDYvjrYtRUUbxU9ALSj
-         LW/jFbL/QDdbax0ndUrmKJHtwKIUPTleOzFeXZbUZPl7I7gQJN4d2xyzCv1HI9hNLg
-         E1XeGZIPxQdeSmzL4vYO6aUtTLyjbJf1TAsNDtBQ=
+        b=xWUKksgOFw12JlROZVFr1q5yRiHkIS20dBbWkRTpbzQKzFYjSe1fiBiiVCE3+PRYn
+         hMg9XdL4Zvd12ma87oechhWSnFZOV/eNlQqqUQMyrT2EvGXUZsp0CZQ9j/YqTZQv1S
+         1GrVXX0rUwQhEsNuPglWOTwMYT4Niu4J4BnLnK7Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        syzbot+ccf0a61ed12f2a7313ee@syzkaller.appspotmail.com,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 4.9 63/71] media: v4l2-tpg: array index could become negative
-Date:   Mon,  7 Jan 2019 13:33:32 +0100
-Message-Id: <20190107105336.331731759@linuxfoundation.org>
+        stable@vger.kernel.org, James Hogan <jhogan@kernel.org>,
+        Huacai Chen <chenhc@lemote.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <james.hogan@mips.com>,
+        "Steven J . Hill" <Steven.Hill@cavium.com>,
+        linux-mips@linux-mips.org, Fuxin Zhang <zhangfx@lemote.com>,
+        Zhangjin Wu <wuzhangjin@gmail.com>
+Subject: [PATCH 4.9 64/71] MIPS: Ensure pmd_present() returns false after pmd_mknotpresent()
+Date:   Mon,  7 Jan 2019 13:33:33 +0100
+Message-Id: <20190107105336.393249530@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107105330.280153213@linuxfoundation.org>
 References: <20190107105330.280153213@linuxfoundation.org>
@@ -65,33 +70,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+From: Huacai Chen <chenhc@lemote.com>
 
-commit e5f71a27fa12c1a1b02ad478a568e76260f1815e upstream.
+commit 92aa0718c9fa5160ad2f0e7b5bffb52f1ea1e51a upstream.
 
-text[s] is a signed char, so using that as index into the font8x16 array
-can result in negative indices. Cast it to u8 to be safe.
+This patch is borrowed from ARM64 to ensure pmd_present() returns false
+after pmd_mknotpresent(). This is needed for THP.
 
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Reported-by: syzbot+ccf0a61ed12f2a7313ee@syzkaller.appspotmail.com
-Cc: <stable@vger.kernel.org>      # for v4.7 and up
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+References: 5bb1cc0ff9a6 ("arm64: Ensure pmd_present() returns false after pmd_mknotpresent()")
+Reviewed-by: James Hogan <jhogan@kernel.org>
+Signed-off-by: Huacai Chen <chenhc@lemote.com>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Patchwork: https://patchwork.linux-mips.org/patch/21135/
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: James Hogan <james.hogan@mips.com>
+Cc: Steven J . Hill <Steven.Hill@cavium.com>
+Cc: linux-mips@linux-mips.org
+Cc: Fuxin Zhang <zhangfx@lemote.com>
+Cc: Zhangjin Wu <wuzhangjin@gmail.com>
+Cc: <stable@vger.kernel.org> # 3.8+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/common/v4l2-tpg/v4l2-tpg-core.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/mips/include/asm/pgtable-64.h |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/drivers/media/common/v4l2-tpg/v4l2-tpg-core.c
-+++ b/drivers/media/common/v4l2-tpg/v4l2-tpg-core.c
-@@ -1618,7 +1618,7 @@ typedef struct { u16 __; u8 _; } __packe
- 		unsigned s;	\
- 	\
- 		for (s = 0; s < len; s++) {	\
--			u8 chr = font8x16[text[s] * 16 + line];	\
-+			u8 chr = font8x16[(u8)text[s] * 16 + line];	\
- 	\
- 			if (hdiv == 2 && tpg->hflip) { \
- 				pos[3] = (chr & (0x01 << 6) ? fg : bg);	\
+--- a/arch/mips/include/asm/pgtable-64.h
++++ b/arch/mips/include/asm/pgtable-64.h
+@@ -193,6 +193,11 @@ static inline int pmd_bad(pmd_t pmd)
+ 
+ static inline int pmd_present(pmd_t pmd)
+ {
++#ifdef CONFIG_MIPS_HUGE_TLB_SUPPORT
++	if (unlikely(pmd_val(pmd) & _PAGE_HUGE))
++		return pmd_val(pmd) & _PAGE_PRESENT;
++#endif
++
+ 	return pmd_val(pmd) != (unsigned long) invalid_pte_table;
+ }
+ 
 
 
