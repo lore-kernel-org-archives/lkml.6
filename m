@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1A3FC43612
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:13:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AD02C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:13:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A228217D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:13:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1CBFC2089F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:13:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546866814;
-	bh=qxKYB1J70dXlRlGBekvWnqzoZFrQ9ydNyQaMJreix3A=;
+	s=default; t=1546866820;
+	bh=+HRhI5ZBsLD00uK3klo5ygXBbbge2L2a/USxS+yQw3A=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=hfRgRCjfTZtXYASBWMDcvyNPY9CVxvJwErZS4AoAHu/SdR85kv0M/C0yta/Oo6Rw6
-	 xNLUyw+bg7VP+uL9Ugvev5yPBTd5dMe9Kyr7eyyp3hxWpCD2AdcI+NV8BfAL/lk/lq
-	 ILJt4X7aIlq4o5c0LHdBjMrawRUWTLeKvW85kU+Y=
+	b=dMcRfO3tgRhIFpM08vU0pSt/AARAhCOv9sMAQWZE98aUdE2o9VHyHGWiEFO3q86C2
+	 kMQnAIYLSdv5puVbfYcxoC9vKTarhpR/CICzWY4O+FVIWoz+A3Tnstsb+HS/LmmGr+
+	 aszME9AwakyNX9jooPucq4I4pm125XJe31xOD7aE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730634AbfAGNDi (ORCPT
+        id S1731022AbfAGNDe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:03:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51042 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:03:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51018 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731034AbfAGNDf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:03:35 -0500
+        id S1730135AbfAGNDd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:03:33 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A23922089F;
-        Mon,  7 Jan 2019 13:03:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EA52D21736;
+        Mon,  7 Jan 2019 13:03:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546866215;
-        bh=qxKYB1J70dXlRlGBekvWnqzoZFrQ9ydNyQaMJreix3A=;
+        s=default; t=1546866212;
+        bh=+HRhI5ZBsLD00uK3klo5ygXBbbge2L2a/USxS+yQw3A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HpLhPJijPItXVqgTKKtpPy5BzAJ06ROzqONFNv+Fn0bbfKpnj5sUGAxA/kPlYoDKn
-         WgiiXgiPfD9OKgj/7KbXGn8+5eTnaStV8iD7GP5hYdgrTdcc6iLdDjVuQAdAm0Canh
-         vou95LvdAE2Zm6U4K5r3VcjhIaLdDb6ku4RYBbOM=
+        b=VIwX85MH0j/ROySqVaO52B8E6Wgi5uLXnm8i3KLEp5LsgUlLwMHhY9seuLudR+++/
+         1uYBlHJQynhbf7kwrGqFuV98joWKSXMDqV0Eqrd5WrkgWLmDJDJElDoribGJee2BJT
+         f07SENQXZ6f9a5qdqKCQN/oks6Ejm5cWiyZeViIA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
         Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 047/101] ALSA: firewire-lib: use the same print format for without_header tracepoints
-Date:   Mon,  7 Jan 2019 13:32:35 +0100
-Message-Id: <20190107105335.472917571@linuxfoundation.org>
+Subject: [PATCH 4.14 046/101] ALSA: firewire-lib: fix wrong assignment for out_packet_without_header tracepoint
+Date:   Mon,  7 Jan 2019 13:32:34 +0100
+Message-Id: <20190107105335.425048347@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107105330.372621917@linuxfoundation.org>
 References: <20190107105330.372621917@linuxfoundation.org>
@@ -67,13 +67,13 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 
-commit 5ef108c53e6efd695e32aad969638ccbc35b4be9 upstream.
+commit aa9a9e39b4f65733bf19d90cbd026e85a74efb99 upstream.
 
 An initial commit to add tracepoints for packets without CIP headers
-uses different print formats for added tracepoints. However this is not
-convenient for users/developers to prepare debug tools.
+introduces a wrong assignment to 'data_blocks' value of
+'out_packet_without_header' tracepoint.
 
-This commit uses the same format for the two tracepoints.
+This commit fixes the bug.
 
 Cc: <stable@vger.kernel.org> # v4.12+
 Fixes: b164d2fd6e49 ('ALSA: firewire_lib: add tracepoints for packets without CIP headers')
@@ -87,14 +87,14 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/sound/firewire/amdtp-stream-trace.h
 +++ b/sound/firewire/amdtp-stream-trace.h
-@@ -131,7 +131,7 @@ TRACE_EVENT(in_packet_without_header,
+@@ -169,7 +169,7 @@ TRACE_EVENT(out_packet_without_header,
+ 		__entry->dest = fw_parent_device(s->unit)->node_id;
+ 		__entry->payload_quadlets = payload_length / 4;
+ 		__entry->data_blocks = data_blocks,
+-		__entry->data_blocks = s->data_block_counter,
++		__entry->data_block_counter = s->data_block_counter,
+ 		__entry->packet_index = s->packet_index;
+ 		__entry->irq = !!in_interrupt();
  		__entry->index = index;
- 	),
- 	TP_printk(
--		"%02u %04u %04x %04x %02d %03u %3u %3u %02u %01u %02u",
-+		"%02u %04u %04x %04x %02d %03u %02u %03u %02u %01u %02u",
- 		__entry->second,
- 		__entry->cycle,
- 		__entry->src,
 
 
