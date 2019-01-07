@@ -7,47 +7,45 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15A28C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:35:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 258CBC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:35:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DAF2D2183F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:35:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E9F672089F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:35:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546864530;
-	bh=G/bBJEp6dzXefXfAxTn/95RaF5IO5npQlUna55XFtZs=;
+	s=default; t=1546864535;
+	bh=SLTjktUVA2GojJfTEVdPb0k/D5V8qLPXenVIL++++Go=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=0igZYeZ2O8C4qI2/Cr0Cqf2i+7tswJKewkcELQeX6++66rPeRh2rvhPGkLDta88Vq
-	 CV9e49jbl2ODx+zg8KzEEmoHhSMZStD4dxlz+iNYWs7hpzjC173awFAP2Ap+S2CuE8
-	 C+jrhUBMvlbxAi1jeTyAbIYdFatldhsalUszNQoY=
+	b=fGKY0PvEWbURAufC8vGXhbo96jLciXYAN1DScMY8cgEyzOiYd03pWC700rX8M2Zsw
+	 u5+6drBukirvsKyLvl4eWTj4pDm3/XUzVeO7xLz5TSrJVtASJKgepMmT6BqN/3Vbs1
+	 JVUHrzFo0JRUblvU7ZK8Gr8Etm99ICJg5q45mhFc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727552AbfAGMfa (ORCPT
+        id S1727572AbfAGMfd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:35:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49158 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:35:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49390 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727523AbfAGMf0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:35:26 -0500
+        id S1727523AbfAGMfb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:35:31 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8099E206BB;
-        Mon,  7 Jan 2019 12:35:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 27E012173C;
+        Mon,  7 Jan 2019 12:35:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546864525;
-        bh=G/bBJEp6dzXefXfAxTn/95RaF5IO5npQlUna55XFtZs=;
+        s=default; t=1546864530;
+        bh=SLTjktUVA2GojJfTEVdPb0k/D5V8qLPXenVIL++++Go=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bhUvkW/UiLdQw9JKOJjNDrIjlHYU5R9Gsf9tZ9WKPQm5LcGLkL20MBdCdodMZjjeS
-         xRpAMGryaXmCd5+vsYFc6hKRA8mfnMCdKyeKbvlvsbCGb31qQswKchm1Fpjdep3bdc
-         t9zydmScNYG4vKmDYfWc36D87E/oohCwa6zHRfOw=
+        b=iRRGiO0Z7YvgYXGScwcawpuVMaNz6JVHdlvO03bNKQVJckNIRIa0Qo0bMtK1+E/Md
+         sehFvd2QcKvtW1T/+rBmWVAG4yLG3UJQGbKpbSj78KUDoVLz1oK/CRmPutrqcT3lV1
+         4RAqT971QbWeu4oLWdRNqrinXQsN+4cv90MEX8Ls=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Cong Wang <xiyou.wangcong@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        syzbot+f621cda8b7e598908efa@syzkaller.appspotmail.com
-Subject: [PATCH 4.20 013/145] netrom: fix locking in nr_find_socket()
-Date:   Mon,  7 Jan 2019 13:30:50 +0100
-Message-Id: <20190107104439.082848256@linuxfoundation.org>
+        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH 4.20 041/145] usb: r8a66597: Fix a possible concurrency use-after-free bug in r8a66597_endpoint_disable()
+Date:   Mon,  7 Jan 2019 13:31:18 +0100
+Message-Id: <20190107104442.682511840@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104437.308206189@linuxfoundation.org>
 References: <20190107104437.308206189@linuxfoundation.org>
@@ -66,101 +64,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Cong Wang <xiyou.wangcong@gmail.com>
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
 
-[ Upstream commit 7314f5480f3e37e570104dc5e0f28823ef849e72 ]
+commit c85400f886e3d41e69966470879f635a2b50084c upstream.
 
-nr_find_socket(), nr_find_peer() and nr_find_listener() lock the
-sock after finding it in the global list. However, the call path
-requires BH disabled for the sock lock consistently.
+The function r8a66597_endpoint_disable() and r8a66597_urb_enqueue() may
+be concurrently executed.
+The two functions both access a possible shared variable "hep->hcpriv".
 
-Actually the locking is unnecessary at this point, we can just hold
-the sock refcnt to make sure it is not gone after we unlock the global
-list, and lock it later only when needed.
+This shared variable is freed by r8a66597_endpoint_disable() via the
+call path:
+r8a66597_endpoint_disable
+  kfree(hep->hcpriv) (line 1995 in Linux-4.19)
 
-Reported-and-tested-by: syzbot+f621cda8b7e598908efa@syzkaller.appspotmail.com
-Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+This variable is read by r8a66597_urb_enqueue() via the call path:
+r8a66597_urb_enqueue
+  spin_lock_irqsave(&r8a66597->lock)
+  init_pipe_info
+    enable_r8a66597_pipe
+      pipe = hep->hcpriv (line 802 in Linux-4.19)
+
+The read operation is protected by a spinlock, but the free operation
+is not protected by this spinlock, thus a concurrency use-after-free bug
+may occur.
+
+To fix this bug, the spin-lock and spin-unlock function calls in
+r8a66597_endpoint_disable() are moved to protect the free operation.
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/netrom/af_netrom.c |   15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
 
---- a/net/netrom/af_netrom.c
-+++ b/net/netrom/af_netrom.c
-@@ -153,7 +153,7 @@ static struct sock *nr_find_listener(ax2
- 	sk_for_each(s, &nr_list)
- 		if (!ax25cmp(&nr_sk(s)->source_addr, addr) &&
- 		    s->sk_state == TCP_LISTEN) {
--			bh_lock_sock(s);
-+			sock_hold(s);
- 			goto found;
- 		}
- 	s = NULL;
-@@ -174,7 +174,7 @@ static struct sock *nr_find_socket(unsig
- 		struct nr_sock *nr = nr_sk(s);
+---
+ drivers/usb/host/r8a66597-hcd.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+--- a/drivers/usb/host/r8a66597-hcd.c
++++ b/drivers/usb/host/r8a66597-hcd.c
+@@ -1979,6 +1979,8 @@ static int r8a66597_urb_dequeue(struct u
  
- 		if (nr->my_index == index && nr->my_id == id) {
--			bh_lock_sock(s);
-+			sock_hold(s);
- 			goto found;
- 		}
- 	}
-@@ -198,7 +198,7 @@ static struct sock *nr_find_peer(unsigne
+ static void r8a66597_endpoint_disable(struct usb_hcd *hcd,
+ 				      struct usb_host_endpoint *hep)
++__acquires(r8a66597->lock)
++__releases(r8a66597->lock)
+ {
+ 	struct r8a66597 *r8a66597 = hcd_to_r8a66597(hcd);
+ 	struct r8a66597_pipe *pipe = (struct r8a66597_pipe *)hep->hcpriv;
+@@ -1991,13 +1993,14 @@ static void r8a66597_endpoint_disable(st
+ 		return;
+ 	pipenum = pipe->info.pipenum;
  
- 		if (nr->your_index == index && nr->your_id == id &&
- 		    !ax25cmp(&nr->dest_addr, dest)) {
--			bh_lock_sock(s);
-+			sock_hold(s);
- 			goto found;
- 		}
- 	}
-@@ -224,7 +224,7 @@ static unsigned short nr_find_next_circu
- 		if (i != 0 && j != 0) {
- 			if ((sk=nr_find_socket(i, j)) == NULL)
- 				break;
--			bh_unlock_sock(sk);
-+			sock_put(sk);
- 		}
- 
- 		id++;
-@@ -920,6 +920,7 @@ int nr_rx_frame(struct sk_buff *skb, str
++	spin_lock_irqsave(&r8a66597->lock, flags);
+ 	if (pipenum == 0) {
+ 		kfree(hep->hcpriv);
+ 		hep->hcpriv = NULL;
++		spin_unlock_irqrestore(&r8a66597->lock, flags);
+ 		return;
  	}
  
- 	if (sk != NULL) {
-+		bh_lock_sock(sk);
- 		skb_reset_transport_header(skb);
- 
- 		if (frametype == NR_CONNACK && skb->len == 22)
-@@ -929,6 +930,7 @@ int nr_rx_frame(struct sk_buff *skb, str
- 
- 		ret = nr_process_rx_frame(sk, skb);
- 		bh_unlock_sock(sk);
-+		sock_put(sk);
- 		return ret;
- 	}
- 
-@@ -960,10 +962,12 @@ int nr_rx_frame(struct sk_buff *skb, str
- 	    (make = nr_make_new(sk)) == NULL) {
- 		nr_transmit_refusal(skb, 0);
- 		if (sk)
--			bh_unlock_sock(sk);
-+			sock_put(sk);
- 		return 0;
- 	}
- 
-+	bh_lock_sock(sk);
-+
- 	window = skb->data[20];
- 
- 	skb->sk             = make;
-@@ -1016,6 +1020,7 @@ int nr_rx_frame(struct sk_buff *skb, str
- 		sk->sk_data_ready(sk);
- 
- 	bh_unlock_sock(sk);
-+	sock_put(sk);
- 
- 	nr_insert_socket(make);
- 
+-	spin_lock_irqsave(&r8a66597->lock, flags);
+ 	pipe_stop(r8a66597, pipe);
+ 	pipe_irq_disable(r8a66597, pipenum);
+ 	disable_irq_empty(r8a66597, pipenum);
 
 
