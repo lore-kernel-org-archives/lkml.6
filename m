@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E7B6C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 10:10:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E89B8C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 10:10:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 107BA20859
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 10:10:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B2B8420854
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 10:10:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="HglO4sRq";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ZvU3JAdu"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="itS94wRB";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="jZ9kzgVS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726994AbfAGKKx (ORCPT
+        id S1726834AbfAGKK5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 05:10:53 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:56886 "EHLO
+        Mon, 7 Jan 2019 05:10:57 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:57068 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726958AbfAGKKt (ORCPT
+        with ESMTP id S1726958AbfAGKKy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 05:10:49 -0500
+        Mon, 7 Jan 2019 05:10:54 -0500
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 6B6D660C67; Mon,  7 Jan 2019 10:10:46 +0000 (UTC)
+        id 54B7160C69; Mon,  7 Jan 2019 10:10:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1546855847;
-        bh=JY0fYwYCMlDauuhzXbzpe6pMMXRcC2I8nz/hypWrY1c=;
+        s=default; t=1546855853;
+        bh=j4/HRuALrdelYuSkk9txqmXQSHP8W2hpRZg0r21rZbE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HglO4sRq4RBqdqzWJCdjH6bJYssKBdwKGjem6DLEHVlMpy/ms2TpHTbwozohHcgiV
-         UYdPCgwoi8aTm1Vk/muZH9O5W3guNIrRGLLZqEsEt5mKz7aqukEMb7QE9kmv8j0mTp
-         3wpzDXN+foCTZbknRhe0zt8MWBToh1Ge14Tn2dAw=
+        b=itS94wRBPijETo49+Km7wcX6ikJ+5vhFasqi8+S9Z73YUjKd0Zr0jeD4Q+y8Nu71w
+         H2uPhlrZwJ7wPVeWAgt5cRFemyuTdLpeBQLSz83V8+rI87q+HhTFlK2jNp56HbKSsz
+         zccAwHBnyCjzuVtUflmyOnazhojA+i6RZj7m0ZQk=
 Received: from blr-ubuntu-173.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: rnayak@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 6D24660C61;
-        Mon,  7 Jan 2019 10:10:42 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id AB3FF60A08;
+        Mon,  7 Jan 2019 10:10:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1546855846;
-        bh=JY0fYwYCMlDauuhzXbzpe6pMMXRcC2I8nz/hypWrY1c=;
+        s=default; t=1546855850;
+        bh=j4/HRuALrdelYuSkk9txqmXQSHP8W2hpRZg0r21rZbE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZvU3JAduEGozW4FR4TeZetZ79VBbG4O9FfEMq1cgc2jh+KnLuRRldpXMIzAsSnLm5
-         zxeGH5fXyppVmn9IEoBmULfgV38NY/oru9unHhTf3Z/58kxodYU8h5J9JUg0M7xYwt
-         UiHxblgVipsSpk0JmaefChRvM/Tv9bCWQSy0tpMo=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6D24660C61
+        b=jZ9kzgVSHMPb6WzFBmLR0UJdXXwFF6lS+iwMO4yL2oZxLsfWpHBOfHDZS72WdFyEm
+         pNEm8SoU+S1L/f+khqOCmNOqKWoOmj//DRVn7DFXliIcx53re6cEIJuvlbIGY61qfs
+         fkO6FGAeNlHvFARpeqGtKv0xrwic3Lt/OZpyJoPY=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AB3FF60A08
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
 From:   Rajendra Nayak <rnayak@codeaurora.org>
@@ -56,9 +56,9 @@ To:     andy.gross@linaro.org, robh@kernel.org, viresh.kumar@linaro.org,
 Cc:     devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         linux-kernel@vger.kernel.org, henryc.chen@mediatek.com,
         Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH v9 08/10] OPP: Add a dev_pm_opp_of_get_level() helper
-Date:   Mon,  7 Jan 2019 15:39:57 +0530
-Message-Id: <20190107100959.14528-9-rnayak@codeaurora.org>
+Subject: [PATCH v9 09/10] soc: qcom: rpmpd: Use dev_pm_opp_of_get_level() helper
+Date:   Mon,  7 Jan 2019 15:39:58 +0530
+Message-Id: <20190107100959.14528-10-rnayak@codeaurora.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190107100959.14528-1-rnayak@codeaurora.org>
 References: <20190107100959.14528-1-rnayak@codeaurora.org>
@@ -69,77 +69,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that we have atleast 2 genpd providers, both using a simple
-routine to read a performance state (opp-level) value from device
-tree, in order to implement the .opp_to_performance_state
-callback, add a dev_pm_opp_of_get_level() helper to do
-it, so it can be resued across all such genpd providers which
-just need to read the value from DT.
+Get rid of the duplicate code across rpmpd and rpmhpd to read the
+performance state value (opp-level) from Device tree and use the
+dev_pm_opp_of_get_level() helper instead.
 
 Suggested-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 ---
- drivers/opp/of.c       | 23 +++++++++++++++++++++++
- include/linux/pm_opp.h |  5 +++++
- 2 files changed, 28 insertions(+)
+ drivers/soc/qcom/rpmhpd.c | 11 +----------
+ drivers/soc/qcom/rpmpd.c  | 11 +----------
+ 2 files changed, 2 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/opp/of.c b/drivers/opp/of.c
-index 06f0f632ec47..6fb383fee601 100644
---- a/drivers/opp/of.c
-+++ b/drivers/opp/of.c
-@@ -1029,6 +1029,29 @@ int of_get_required_opp_performance_state(struct device_node *np, int index)
- }
- EXPORT_SYMBOL_GPL(of_get_required_opp_performance_state);
- 
-+/**
-+ * dev_pm_opp_of_get_level() - Reads the opp-level value from Device Tree
-+ * @opp: opp for which 'opp-level' should be read and returned
-+ *
-+ * Returns the opp-level value read from Device Tree, if present, else 0
-+ *
-+ * Return: Zero or positive opp-level value read from Device tree
-+ */
-+unsigned int dev_pm_opp_of_get_level(struct dev_pm_opp *opp)
-+{
-+	struct device_node *np;
-+	unsigned int perf_state = 0;
-+
-+	np = dev_pm_opp_get_of_node(opp);
-+	if (of_property_read_u32(np, "opp-level", &perf_state))
-+		pr_err("%s: missing 'opp-level' property\n", __func__);
-+
-+	of_node_put(np);
-+
-+	return perf_state;
-+}
-+EXPORT_SYMBOL_GPL(dev_pm_opp_of_get_level);
-+
- /**
-  * dev_pm_opp_get_of_node() - Gets the DT node corresponding to an opp
-  * @opp:	opp for which DT node has to be returned for
-diff --git a/include/linux/pm_opp.h b/include/linux/pm_opp.h
-index 0a2a88e5a383..bf7d21b23a5e 100644
---- a/include/linux/pm_opp.h
-+++ b/include/linux/pm_opp.h
-@@ -322,6 +322,7 @@ int dev_pm_opp_of_get_sharing_cpus(struct device *cpu_dev, struct cpumask *cpuma
- struct device_node *dev_pm_opp_of_get_opp_desc_node(struct device *dev);
- struct device_node *dev_pm_opp_get_of_node(struct dev_pm_opp *opp);
- int of_get_required_opp_performance_state(struct device_node *np, int index);
-+unsigned int dev_pm_opp_of_get_level(struct dev_pm_opp *opp);
- #else
- static inline int dev_pm_opp_of_add_table(struct device *dev)
+diff --git a/drivers/soc/qcom/rpmhpd.c b/drivers/soc/qcom/rpmhpd.c
+index 521aa2a571bb..38c8a11c92c8 100644
+--- a/drivers/soc/qcom/rpmhpd.c
++++ b/drivers/soc/qcom/rpmhpd.c
+@@ -276,16 +276,7 @@ static int rpmhpd_set_performance_state(struct generic_pm_domain *domain,
+ static unsigned int rpmhpd_get_performance_state(struct generic_pm_domain *genpd,
+ 						 struct dev_pm_opp *opp)
  {
-@@ -364,6 +365,10 @@ static inline int of_get_required_opp_performance_state(struct device_node *np,
- {
- 	return -ENOTSUPP;
+-	struct device_node *np;
+-	unsigned int level = 0;
+-
+-	np = dev_pm_opp_get_of_node(opp);
+-	if (of_property_read_u32(np, "opp-level", &level))
+-		pr_err("%s: missing 'opp-level' property\n", __func__);
+-
+-	of_node_put(np);
+-
+-	return level;
++	return dev_pm_opp_of_get_level(opp);
  }
-+static inline int dev_pm_opp_of_get_level(struct dev_pm_opp *opp)
-+{
-+	return 0;
-+}
- #endif
  
- #endif		/* __LINUX_OPP_H__ */
+ static int rpmhpd_update_level_mapping(struct rpmhpd *rpmhpd)
+diff --git a/drivers/soc/qcom/rpmpd.c b/drivers/soc/qcom/rpmpd.c
+index 1c6c5dec2667..68179e4bac3d 100644
+--- a/drivers/soc/qcom/rpmpd.c
++++ b/drivers/soc/qcom/rpmpd.c
+@@ -248,16 +248,7 @@ static int rpmpd_set_performance(struct generic_pm_domain *domain,
+ static unsigned int rpmpd_get_performance(struct generic_pm_domain *genpd,
+ 					  struct dev_pm_opp *opp)
+ {
+-	struct device_node *np;
+-	unsigned int corner = 0;
+-
+-	np = dev_pm_opp_get_of_node(opp);
+-	if (of_property_read_u32(np, "opp-level", &corner))
+-		pr_err("%s: missing 'opp-level' property\n", __func__);
+-
+-	of_node_put(np);
+-
+-	return corner;
++	return dev_pm_opp_of_get_level(opp);
+ }
+ 
+ static int rpmpd_probe(struct platform_device *pdev)
 -- 
 QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
 of Code Aurora Forum, hosted by The Linux Foundation
