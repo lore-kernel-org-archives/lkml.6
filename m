@@ -2,78 +2,100 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-6.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C8D0C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 16:55:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B48F0C43444
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 16:56:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 342D22183F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 16:55:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A0712089F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 16:56:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546880171;
+	bh=ajVMGG4Sjw+WPm4/s2aEbB4MhWrOn8u/esw9qP0BE0k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=WO2aDRAhQ/wbR7hRdOX+5Ksw7OPuHgleEkAQnBPIEv+FzhjxLVyPaH2WcJLNZBvmS
+	 2DecI7hHbRLlbKKr1fWJrTNcDat6nTQvGeYVYqWHvhUhOi+btphvaPCgGcAT9SoEft
+	 kU95pRbXUiQrudkkEIkk4sSHEUPwpbayg/ROc+YA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727906AbfAGQz1 (ORCPT
+        id S1728041AbfAGQ4K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 11:55:27 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:37880 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727002AbfAGQz1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 11:55:27 -0500
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.91 #2 (Red Hat Linux))
-        id 1ggYBJ-0004Uf-Pc; Mon, 07 Jan 2019 16:55:17 +0000
-Date:   Mon, 7 Jan 2019 16:55:17 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Malathi Gottam <mgottam@codeaurora.org>
-Cc:     stanimir.varbanov@linaro.org, hverkuil@xs4all.nl,
-        mchehab@kernel.org, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        acourbot@chromium.org, vgarodia@codeaurora.org
-Subject: Re: [PATCH v2] media: venus: add debugfs support
-Message-ID: <20190107165517.GS2217@ZenIV.linux.org.uk>
-References: <1546871340-13009-1-git-send-email-mgottam@codeaurora.org>
+        Mon, 7 Jan 2019 11:56:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56802 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727002AbfAGQ4J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 11:56:09 -0500
+Received: from gmail.com (unknown [104.132.1.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0DA5C2087F;
+        Mon,  7 Jan 2019 16:56:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1546880169;
+        bh=ajVMGG4Sjw+WPm4/s2aEbB4MhWrOn8u/esw9qP0BE0k=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=H57wY+zXKgp+0BUXisekOBmDUKgrUbFuUcMxiCIt1gp2RlrBnac3wg8kTZDxsZZTK
+         T46FYKpnBehce5sZ4CfwxxreQ8qi3cQIaKx+ytNvaKKr7+1P9OdIZpTgxRgs6cZEVW
+         P/TAWo0rMBj4TToOIJX9CYnJnUzsMNmLFxlAMF5s=
+Date:   Mon, 7 Jan 2019 08:56:07 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Kalyani Akula <kalyani.akula@xilinx.com>
+Cc:     herbert@gondor.apana.org.au, davem@davemloft.net,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Kalyani Akula <kalyania@xilinx.com>,
+        Sarat Chand Savitala <saratcha@xilinx.com>
+Subject: Re: [RFC PATCH 2/3] crypto: Add Xilinx SHA3 driver
+Message-ID: <20190107165606.GA2077@gmail.com>
+References: <1546851776-3456-1-git-send-email-kalyani.akula@xilinx.com>
+ <1546851776-3456-3-git-send-email-kalyani.akula@xilinx.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1546871340-13009-1-git-send-email-mgottam@codeaurora.org>
+In-Reply-To: <1546851776-3456-3-git-send-email-kalyani.akula@xilinx.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 07, 2019 at 07:59:00PM +0530, Malathi Gottam wrote:
+Hi Kalyani,
 
-> +static struct dentry *venus_debugfs_init_drv(void)
-> +{
-> +	bool ok = false;
-> +	struct dentry *dir = NULL;
+On Mon, Jan 07, 2019 at 02:32:55PM +0530, Kalyani Akula wrote:
+> This patch adds SHA3 driver suuport for the Xilinx
+> ZynqMP SoC.
+> 
+> Signed-off-by: Kalyani Akula <kalyani.akula@xilinx.com>
+[...]
 > +
-> +	dir = debugfs_create_dir("venus", NULL);
-> +	if (IS_ERR_OR_NULL(dir)) {
-> +		dir = NULL;
-> +		pr_err("failed to create debug dir");
-> +		goto failed_create_dir;
+> +static struct ahash_alg sha3_alg = {
+> +	.init		= zynqmp_sha_init,
+> +	.update		= zynqmp_sha_update,
+> +	.final		= zynqmp_sha_final,
+> +	.finup		= zynqmp_sha_finup,
+> +	.digest		= zynqmp_sha_digest,
+> +	.export		= zynqmp_sha_export,
+> +	.import		= zynqmp_sha_import,
+> +	.halg = {
+> +		.digestsize	= SHA384_DIGEST_SIZE,
+> +		.statesize	= sizeof(struct sha256_state),
+> +		.base	= {
+> +			.cra_name		= "xilinx-keccak-384",
+> +			.cra_driver_name	= "zynqmp-keccak-384",
+> +			.cra_priority		= 300,
+> +			.cra_flags		= CRYPTO_ALG_ASYNC,
+> +			.cra_blocksize		= SHA384_BLOCK_SIZE,
+> +			.cra_ctxsize		= sizeof(struct zynqmp_sha_ctx),
+> +			.cra_alignmask		= 0,
+> +			.cra_module		= THIS_MODULE,
+> +			.cra_init		= zynqmp_sha_cra_init,
+> +		}
 > +	}
+> +};
 
-Huh?  When does debugfs_create_dir() return ERR_PTR()?
+cra_name needs to match an algorithm that has a generic implementation.
+It should be "sha3-384", or is your hardware not compatible?
+Also does your hardware not support sha3-256 and sha3-512?
 
-Any interface that mixes returning NULL for error-reporting with returning
-ERR_PTR(...) for the same needs to be put out of its misery.  As it happens,
-debugfs_create_dir() returns NULL on all errors.  And if you've meant the
-above as "future-proofing"... don't do that, please.  That only breeds
-confusion down the road, as the code gets cut'n'pasted around.
-
-> -	if (ret)
-> +	if (ret) {
-> +		dprintk(ERR,
-> +			"Failed to set actual buffer count %d for buffer type %d\n",
-> +			buf_count.count_actual, buf_count.type);
->  		return ret;
->  
->  	buf_count.type = HFI_BUFFER_OUTPUT;
->  	buf_count.count_actual = output_bufs;
->  
-
-*blink*
-Does that even compile?
+- Eric
