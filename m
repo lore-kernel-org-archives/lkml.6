@@ -3,28 +3,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 084BEC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 16:27:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B497C43444
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 16:27:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D63F12147C
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 16:27:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 32A112089F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 16:27:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730419AbfAGQ1x (ORCPT
+        id S1730448AbfAGQ15 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 11:27:53 -0500
-Received: from foss.arm.com ([217.140.101.70]:34116 "EHLO foss.arm.com"
+        Mon, 7 Jan 2019 11:27:57 -0500
+Received: from foss.arm.com ([217.140.101.70]:34166 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730399AbfAGQ1v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 11:27:51 -0500
+        id S1730428AbfAGQ14 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 11:27:56 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B8C5B1650;
-        Mon,  7 Jan 2019 08:27:50 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 89A251596;
+        Mon,  7 Jan 2019 08:27:55 -0800 (PST)
 Received: from e119886-lin.cambridge.arm.com (unknown [10.37.6.11])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 42CF43F5A0;
-        Mon,  7 Jan 2019 08:27:46 -0800 (PST)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 119B53F5A0;
+        Mon,  7 Jan 2019 08:27:50 -0800 (PST)
 From:   Andrew Murray <andrew.murray@arm.com>
 To:     Peter Zijlstra <peterz@infradead.org>,
         Ingo Molnar <mingo@redhat.com>,
@@ -45,9 +45,9 @@ To:     Peter Zijlstra <peterz@infradead.org>,
 Cc:     x86@kernel.org, linuxppc-dev@lists.ozlabs.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-alpha@vger.kernel.org
-Subject: [PATCH v4 02/13] perf/core: add function to test for event exclusion flags
-Date:   Mon,  7 Jan 2019 16:27:19 +0000
-Message-Id: <1546878450-20341-3-git-send-email-andrew.murray@arm.com>
+Subject: [PATCH v4 03/13] perf/core: add PERF_PMU_CAP_NO_EXCLUDE for exclusion incapable PMUs
+Date:   Mon,  7 Jan 2019 16:27:20 +0000
+Message-Id: <1546878450-20341-4-git-send-email-andrew.murray@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1546878450-20341-1-git-send-email-andrew.murray@arm.com>
 References: <1546878450-20341-1-git-send-email-andrew.murray@arm.com>
@@ -56,34 +56,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a function that tests if any of the perf event exclusion flags
-are set on a given event.
+Many PMU drivers do not have the capability to exclude counting events
+that occur in specific contexts such as idle, kernel, guest, etc. These
+drivers indicate this by returning an error in their event_init upon
+testing the events attribute flags. This approach is error prone and
+often inconsistent.
+
+Let's instead allow PMU drivers to advertise their inability to exclude
+based on context via a new capability: PERF_PMU_CAP_NO_EXCLUDE. This
+allows the perf core to reject requests for exclusion events where
+there is no support in the PMU.
 
 Signed-off-by: Andrew Murray <andrew.murray@arm.com>
 ---
- include/linux/perf_event.h | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ include/linux/perf_event.h | 1 +
+ kernel/events/core.c       | 9 +++++++++
+ 2 files changed, 10 insertions(+)
 
 diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index 1d5c551..54a78d2 100644
+index 54a78d2..cec02dc 100644
 --- a/include/linux/perf_event.h
 +++ b/include/linux/perf_event.h
-@@ -1004,6 +1004,15 @@ perf_event__output_id_sample(struct perf_event *event,
- extern void
- perf_log_lost_samples(struct perf_event *event, u64 lost);
+@@ -244,6 +244,7 @@ struct perf_event;
+ #define PERF_PMU_CAP_EXCLUSIVE			0x10
+ #define PERF_PMU_CAP_ITRACE			0x20
+ #define PERF_PMU_CAP_HETEROGENEOUS_CPUS		0x40
++#define PERF_PMU_CAP_NO_EXCLUDE			0x80
  
-+static inline bool event_has_any_exclude_flag(struct perf_event *event)
-+{
-+	struct perf_event_attr *attr = &event->attr;
+ /**
+  * struct pmu - generic performance monitoring unit
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 3cd13a3..fbe59b7 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -9772,6 +9772,15 @@ static int perf_try_init_event(struct pmu *pmu, struct perf_event *event)
+ 	if (ctx)
+ 		perf_event_ctx_unlock(event->group_leader, ctx);
+ 
++	if (!ret) {
++		if (pmu->capabilities & PERF_PMU_CAP_NO_EXCLUDE &&
++				event_has_any_exclude_flag(event)) {
++			if (event->destroy)
++				event->destroy(event);
++			ret = -EINVAL;
++		}
++	}
 +
-+	return attr->exclude_idle || attr->exclude_user ||
-+	       attr->exclude_kernel || attr->exclude_hv ||
-+	       attr->exclude_guest || attr->exclude_host;
-+}
-+
- static inline bool is_sampling_event(struct perf_event *event)
- {
- 	return event->attr.sample_period != 0;
+ 	if (ret)
+ 		module_put(pmu->module);
+ 
 -- 
 2.7.4
 
