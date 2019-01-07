@@ -4,48 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB858C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:44:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E15AFC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:44:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FF3821873
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:44:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B2EB421873
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:44:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546865090;
-	bh=0rEJxKMMFwaxOCd67KbF+13LChc5QNQXLas3rHzHkIQ=;
+	s=default; t=1546865093;
+	bh=SSbvmJy0vGIJPMIHILPJz7pG8qyx7/nRfeGMcK6mTy0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=w9Dnd0fByznSq7rRqa5c7cVh5z/fnuTqg4zcRKiZBD+Rs8261AjfoSjqsSNgVUqvZ
-	 feikA87W8q1m+NiLG3vLyg5++4LJKB7l0jAKAh6dT2SgHFHxAk4YRiJS5qdI8qwf8q
-	 HFrdCImEhmPSzKI8ixApQDxcFtzzunfxqlnfk8nA=
+	b=JJZqv6dAaxZSyYPY6BM/zloED/ECIu/csh5K94rlnSmunepq7cdqyjjnY7OO6kQFy
+	 qzioLGtCsoy9xocf8v1D5yXDtYGwX0Q7PcWa/uA+c63XBPilpoz2G8SKs5potJp6+w
+	 5Gm11gxRfbR5wk/asTrvJwXvor33Uy/2Ex2DnDwU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728701AbfAGMot (ORCPT
+        id S1728763AbfAGMox (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:44:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33526 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:44:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33604 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728619AbfAGMoq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:44:46 -0500
+        id S1728664AbfAGMos (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:44:48 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E8B9C2183E;
-        Mon,  7 Jan 2019 12:44:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AD85720449;
+        Mon,  7 Jan 2019 12:44:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865085;
-        bh=0rEJxKMMFwaxOCd67KbF+13LChc5QNQXLas3rHzHkIQ=;
+        s=default; t=1546865088;
+        bh=SSbvmJy0vGIJPMIHILPJz7pG8qyx7/nRfeGMcK6mTy0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Wwlug+MhPz7495enH8Q7YKxnLnGjHnh2GvM2QsUkNNtCaQPvRQYryP33K8VXT//gs
-         nNjHWuv4GWbrtg0u/HfzbGZk4KRh4OetZ1/AUvByCUVVaLrPJvceVqdXeAOptgJ4Bl
-         rwF6ZMy5pHGyQXL66XHJt427XzcAGYJzVwDqDta8=
+        b=CGzTqphJsN8sAsGnAXNBSwbaRmRhJxHGl/oC4/FrFVJ3Y+tE3Api9Xe79oK9GubLv
+         ORzQF9UyvRVL7dbCUVSLydFBDuG6dz8Hn7mQ8QNwkEyIQD0zStey7F4L8yRJkBsw8H
+         7+nJtae82Y1VpZnR6FQ5blDJRmf/EEBHWppSwLwE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Helge Deller <deller@gmx.de>
-Subject: [PATCH 4.20 143/145] parisc: Remap hugepage-aligned pages in set_kernel_text_rw()
-Date:   Mon,  7 Jan 2019 13:33:00 +0100
-Message-Id: <20190107104455.846950033@linuxfoundation.org>
+        stable@vger.kernel.org, Tomas Winkler <tomas.winkler@intel.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH 4.20 144/145] tpm: tpm_try_transmit() refactor error flow.
+Date:   Mon,  7 Jan 2019 13:33:01 +0100
+Message-Id: <20190107104455.979533733@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104437.308206189@linuxfoundation.org>
 References: <20190107104437.308206189@linuxfoundation.org>
@@ -64,38 +65,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Helge Deller <deller@gmx.de>
+From: Tomas Winkler <tomas.winkler@intel.com>
 
-commit dfbaecb2b707cfdc5276b548d52b437384bd6483 upstream.
+commit 01f54664a4db0d612de0ece8e0022f21f9374e9b upstream.
 
-The alternative coding patch for parisc in kernel 4.20 broke booting
-machines with PA8500-PA8700 CPUs. The problem is, that for such machines
-the parisc kernel automatically utilizes huge pages to access kernel
-text code, but the set_kernel_text_rw() function, which is used shortly
-before applying any alternative patches, didn't used the correctly
-hugepage-aligned addresses to remap the kernel text read-writeable.
+First, rename out_no_locality to out_locality for bailing out on
+both tpm_cmd_ready() and tpm_request_locality() failure.
+Second, ignore the return value of go_to_idle() as  it may override
+the return value of the actual tpm operation, the go_to_idle() error
+will be caught on any consequent command.
+Last, fix the wrong 'goto out', that jumped back instead of forward.
 
-Fixes: 3847dab77421 ("parisc: Add alternative coding infrastructure")
-Cc: <stable@vger.kernel.org>	[4.20]
-Signed-off-by: Helge Deller <deller@gmx.de>
+Cc: stable@vger.kernel.org
+Fixes: 627448e85c76 ("tpm: separate cmd_ready/go_idle from runtime_pm")
+Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/parisc/mm/init.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/char/tpm/tpm-interface.c |   15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
---- a/arch/parisc/mm/init.c
-+++ b/arch/parisc/mm/init.c
-@@ -512,8 +512,8 @@ static void __init map_pages(unsigned lo
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -477,13 +477,15 @@ static ssize_t tpm_try_transmit(struct t
  
- void __init set_kernel_text_rw(int enable_read_write)
- {
--	unsigned long start = (unsigned long)__init_begin;
--	unsigned long end   = (unsigned long)_etext;
-+	unsigned long start = (unsigned long) _text;
-+	unsigned long end   = (unsigned long) &data_start;
+ 	if (need_locality) {
+ 		rc = tpm_request_locality(chip, flags);
+-		if (rc < 0)
+-			goto out_no_locality;
++		if (rc < 0) {
++			need_locality = false;
++			goto out_locality;
++		}
+ 	}
  
- 	map_pages(start, __pa(start), end-start,
- 		PAGE_KERNEL_RWX, enable_read_write ? 1:0);
+ 	rc = tpm_cmd_ready(chip, flags);
+ 	if (rc)
+-		goto out;
++		goto out_locality;
+ 
+ 	rc = tpm2_prepare_space(chip, space, ordinal, buf);
+ 	if (rc)
+@@ -547,14 +549,13 @@ out_recv:
+ 		dev_err(&chip->dev, "tpm2_commit_space: error %d\n", rc);
+ 
+ out:
+-	rc = tpm_go_idle(chip, flags);
+-	if (rc)
+-		goto out;
++	/* may fail but do not override previous error value in rc */
++	tpm_go_idle(chip, flags);
+ 
++out_locality:
+ 	if (need_locality)
+ 		tpm_relinquish_locality(chip, flags);
+ 
+-out_no_locality:
+ 	if (chip->ops->clk_enable != NULL)
+ 		chip->ops->clk_enable(chip, false);
+ 
 
 
