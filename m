@@ -6,39 +6,39 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CBE8C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 03:23:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FE4AC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 03:23:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EAAF213A2
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 03:23:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E2E420859
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 03:23:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726446AbfAGDXw (ORCPT
+        id S1726471AbfAGDX4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 6 Jan 2019 22:23:52 -0500
+        Sun, 6 Jan 2019 22:23:56 -0500
 Received: from mail.cn.fujitsu.com ([183.91.158.132]:15467 "EHLO
         heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726402AbfAGDXt (ORCPT
+        with ESMTP id S1726402AbfAGDXy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Jan 2019 22:23:49 -0500
+        Sun, 6 Jan 2019 22:23:54 -0500
 X-IronPort-AV: E=Sophos;i="5.56,449,1539619200"; 
-   d="scan'208";a="51438962"
+   d="scan'208";a="51438972"
 Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 07 Jan 2019 11:23:45 +0800
+  by heian.cn.fujitsu.com with ESMTP; 07 Jan 2019 11:23:50 +0800
 Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
-        by cn.fujitsu.com (Postfix) with ESMTP id DE2714B7EC76;
-        Mon,  7 Jan 2019 11:23:41 +0800 (CST)
+        by cn.fujitsu.com (Postfix) with ESMTP id 4BADC4B7EC53;
+        Mon,  7 Jan 2019 11:23:34 +0800 (CST)
 Received: from localhost.local (10.167.225.56) by
  G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Mon, 7 Jan 2019 11:23:47 +0800
+ (TLS) id 14.3.408.0; Mon, 7 Jan 2019 11:23:39 +0800
 From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
 To:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>, <bp@alien8.de>,
         <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
         <keescook@chromium.org>, <bhe@redhat.com>, <msys.mizuma@gmail.com>
 CC:     <indou.takao@jp.fujitsu.com>, <caoj.fnst@cn.fujitsu.com>,
         <fanc.fnst@cn.fujitsu.com>
-Subject: [PATCH v15 5/6] x86/boot: Parse SRAT address from RSDP and store immovable memory
-Date:   Mon, 7 Jan 2019 11:22:42 +0800
-Message-ID: <20190107032243.25324-6-fanc.fnst@cn.fujitsu.com>
+Subject: [PATCH v15 1/6] x86/boot: Copy kstrtoull() to boot/string.c instead of using simple_strtoull()
+Date:   Mon, 7 Jan 2019 11:22:38 +0800
+Message-ID: <20190107032243.25324-2-fanc.fnst@cn.fujitsu.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107032243.25324-1-fanc.fnst@cn.fujitsu.com>
 References: <20190107032243.25324-1-fanc.fnst@cn.fujitsu.com>
@@ -46,7 +46,7 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
 Content-Type:   text/plain; charset=US-ASCII
 X-Originating-IP: [10.167.225.56]
-X-yoursite-MailScanner-ID: DE2714B7EC76.AA137
+X-yoursite-MailScanner-ID: 4BADC4B7EC53.A9E76
 X-yoursite-MailScanner: Found to be clean
 X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
@@ -54,268 +54,185 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SRAT should be parsed by RSDP to fix the conflict between KASLR and
-memory-hotremove, then find the immovable memory regions and store
-them in an array called immovable_mem[]. With immovable_mem[], KASLR
-can avoid to extract kernel to specific regions.
+Copy kstrtoull() and necessary functions from lib/kstrtox.c to
+boot/string.c so that code in boot/ can use kstrtoull() and the old
+simple_strtoull() can be replaced.
 
-Since 'RANDOMIZE_BASE' && 'MEMORY_HOTREMOVE' is needed, introduce
-'CONFIG_EARLY_SRAT_PARSE' to make ifdeffery clear.
+In boot/string.c, using div_u64() from math64.h directly will cause the
+dividend handled as 64-bit value and bring ld error. The solution is to
+separate the dividend to upper and lower in boot/string.o. So copy the
+useful div_u64() and div_u64_rem() to boot/string.c also. To avoid
+redefinition in i386, rename them as __div_u64() and __div_u64_rem().
 
 Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
 ---
- arch/x86/Kconfig                  |  12 +++
- arch/x86/boot/compressed/Makefile |   2 +
- arch/x86/boot/compressed/acpi.c   | 138 ++++++++++++++++++++++++++++++
- arch/x86/boot/compressed/kaslr.c  |   4 -
- arch/x86/boot/compressed/misc.h   |  19 ++++
- 5 files changed, 171 insertions(+), 4 deletions(-)
+ arch/x86/boot/string.c | 137 +++++++++++++++++++++++++++++++++++++++++
+ arch/x86/boot/string.h |   2 +
+ 2 files changed, 139 insertions(+)
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index ba7e3464ee92..c1457609f2e3 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -2149,6 +2149,18 @@ config X86_NEED_RELOCS
- 	def_bool y
- 	depends on RANDOMIZE_BASE || (X86_32 && RELOCATABLE)
- 
-+config EARLY_SRAT_PARSE
-+	bool "EARLY SRAT parsing"
-+	def_bool y
-+	depends on RANDOMIZE_BASE && MEMORY_HOTREMOVE
-+	help
-+	  This option enables early SRAT parsing in compressed boot stage
-+	  so that memory hot-remove ranges do not overlap with KASLR
-+	  chosen ranges. Kernel won't be extracted in hot-removable
-+	  memory, so that make sure memory-hotremove works well with
-+	  KASLR enabled.
-+	  Say Y if you want to use both KASLR and memory-hotremove.
-+
- config PHYSICAL_ALIGN
- 	hex "Alignment value to which kernel should be aligned"
- 	default "0x200000"
-diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed/Makefile
-index 466f66c8a7f8..23491d74939d 100644
---- a/arch/x86/boot/compressed/Makefile
-+++ b/arch/x86/boot/compressed/Makefile
-@@ -84,6 +84,8 @@ ifdef CONFIG_X86_64
- 	vmlinux-objs-y += $(obj)/pgtable_64.o
- endif
- 
-+vmlinux-objs-$(CONFIG_EARLY_SRAT_PARSE) += $(obj)/acpi.o
-+
- $(obj)/eboot.o: KBUILD_CFLAGS += -fshort-wchar -mno-red-zone
- 
- vmlinux-objs-$(CONFIG_EFI_STUB) += $(obj)/eboot.o $(obj)/efi_stub_$(BITS).o \
-diff --git a/arch/x86/boot/compressed/acpi.c b/arch/x86/boot/compressed/acpi.c
-index e9dd84f459ed..f7a9e9cbd254 100644
---- a/arch/x86/boot/compressed/acpi.c
-+++ b/arch/x86/boot/compressed/acpi.c
-@@ -5,6 +5,7 @@
- #include "../string.h"
- 
- #include <linux/acpi.h>
-+#include <linux/numa.h>
- #include <linux/efi.h>
- #include <asm/efi.h>
- 
-@@ -14,6 +15,19 @@
+diff --git a/arch/x86/boot/string.c b/arch/x86/boot/string.c
+index c4428a176973..3de8de39a1ca 100644
+--- a/arch/x86/boot/string.c
++++ b/arch/x86/boot/string.c
+@@ -13,6 +13,8 @@
   */
- #define MAX_HEX_ADDRESS_STRING_LEN 19
  
-+/*
-+ * Longest parameter of 'acpi=' in cmldine is 'copy_dsdt', so max length
-+ * is 10, which contains '\0' for termination.
-+ */
-+#define MAX_ACPI_ARG_LENGTH 10
-+
-+/*
-+ * Information of immovable memory regions.
-+ * Max amount of memory regions is MAX_NUMNODES*2, so need such array
-+ * to place immovable memory regions if all of the memory is immovable.
-+ */
-+struct mem_vector immovable_mem[MAX_NUMNODES*2];
-+
- static acpi_physical_address get_acpi_rsdp(void)
- {
- #ifdef CONFIG_KEXEC
-@@ -197,3 +211,127 @@ static acpi_physical_address bios_get_rsdp_addr(void)
- 	}
- 	return 0;
+ #include <linux/types.h>
++#include <linux/kernel.h>
++#include <linux/errno.h>
+ #include <asm/asm.h>
+ #include "ctype.h"
+ #include "string.h"
+@@ -187,3 +189,138 @@ char *strchr(const char *s, int c)
+ 			return NULL;
+ 	return (char *)s;
  }
 +
-+/* Determine RSDP, based on acpi_os_get_root_pointer(). */
-+static acpi_physical_address get_rsdp_addr(void)
++static inline u64 __div_u64_rem(u64 dividend, u32 divisor, u32 *remainder)
 +{
-+	acpi_physical_address pa;
++	union {
++		u64 v64;
++		u32 v32[2];
++	} d = { dividend };
++	u32 upper;
 +
-+	pa = get_acpi_rsdp();
-+
-+	if (!pa)
-+		pa = efi_get_rsdp_addr();
-+
-+	if (!pa)
-+		pa = bios_get_rsdp_addr();
-+
-+	return pa;
++	upper = d.v32[1];
++	d.v32[1] = 0;
++	if (upper >= divisor) {
++		d.v32[1] = upper / divisor;
++		upper %= divisor;
++	}
++	asm ("divl %2" : "=a" (d.v32[0]), "=d" (*remainder) :
++		"rm" (divisor), "0" (d.v32[0]), "1" (upper));
++	return d.v64;
 +}
 +
-+/* Compute SRAT address from RSDP. */
-+static struct acpi_table_header *get_acpi_srat_table(void)
++static inline u64 __div_u64(u64 dividend, u32 divisor)
 +{
-+	acpi_physical_address acpi_table;
-+	acpi_physical_address root_table;
-+	struct acpi_table_header *header;
-+	struct acpi_table_rsdp *rsdp;
-+	u32 num_entries;
-+	char arg[10];
-+	u8 *entry;
-+	u32 size;
-+	u32 len;
++	u32 remainder;
 +
-+	rsdp = (struct acpi_table_rsdp *)(long)get_rsdp_addr();
-+	if (!rsdp)
-+		return NULL;
++	return __div_u64_rem(dividend, divisor, &remainder);
++}
 +
-+	/* Get RSDT or XSDT from RSDP. */
-+	if (!(cmdline_find_option("acpi", arg, sizeof(arg)) == 4 &&
-+	    !strncmp(arg, "rsdt", 4)) &&
-+	    rsdp->xsdt_physical_address &&
-+	    rsdp->revision > 1) {
-+		root_table = rsdp->xsdt_physical_address;
-+		size = ACPI_XSDT_ENTRY_SIZE;
-+	} else {
-+		root_table = rsdp->rsdt_physical_address;
-+		size = ACPI_RSDT_ENTRY_SIZE;
++static inline char _tolower(const char c)
++{
++	return c | 0x20;
++}
++
++const char *_parse_integer_fixup_radix(const char *s, unsigned int *base)
++{
++	if (*base == 0) {
++		if (s[0] == '0') {
++			if (_tolower(s[1]) == 'x' && isxdigit(s[2]))
++				*base = 16;
++			else
++				*base = 8;
++		} else
++			*base = 10;
 +	}
-+
-+	/* Get ACPI root table from RSDT or XSDT.*/
-+	if (!root_table)
-+		return NULL;
-+	header = (struct acpi_table_header *)(long)root_table;
-+
-+	len = header->length;
-+	if (len < sizeof(struct acpi_table_header) + size)
-+		return NULL;
-+
-+	num_entries = (u32)((len - sizeof(struct acpi_table_header)) / size);
-+	entry = ACPI_ADD_PTR(u8, header, sizeof(struct acpi_table_header));
-+
-+	while (num_entries--) {
-+		u64 address64;
-+
-+		if (size == ACPI_RSDT_ENTRY_SIZE)
-+			acpi_table =  *ACPI_CAST_PTR(u32, entry);
-+		else {
-+			address64 = *(u64 *)entry;
-+			acpi_table = address64;
-+		}
-+
-+		if (acpi_table) {
-+			header = (struct acpi_table_header *)(long)acpi_table;
-+
-+			if (ACPI_COMPARE_NAME(header->signature, ACPI_SIG_SRAT))
-+				return header;
-+		}
-+		entry += size;
-+	}
-+	return NULL;
++	if (*base == 16 && s[0] == '0' && _tolower(s[1]) == 'x')
++		s += 2;
++	return s;
 +}
 +
 +/*
-+ * According to ACPI table, filter the immovable memory regions
-+ * and store them in immovable_mem[].
++ * Convert non-negative integer string representation in explicitly given radix
++ * to an integer.
++ * Return number of characters consumed maybe or-ed with overflow bit.
++ * If overflow occurs, result integer (incorrect) is still returned.
++ *
++ * Don't you dare use this function.
 + */
-+void get_immovable_mem(void)
++unsigned int _parse_integer(const char *s, unsigned int base, unsigned long long *p)
 +{
-+	struct acpi_table_header *table_header;
-+	struct acpi_subtable_header *table;
-+	struct acpi_srat_mem_affinity *ma;
-+	char arg[MAX_ACPI_ARG_LENGTH];
-+	unsigned long table_end;
-+	int i = 0;
++	unsigned long long res;
++	unsigned int rv;
 +
-+	if (cmdline_find_option("acpi", arg, sizeof(arg)) == 3 &&
-+	    !strncmp(arg, "off", 3))
-+		return;
++	res = 0;
++	rv = 0;
++	while (1) {
++		unsigned int c = *s;
++		unsigned int lc = c | 0x20; /* don't tolower() this line */
++		unsigned int val;
 +
-+	table_header = get_acpi_srat_table();
-+	if (!table_header)
-+		return;
++		if ('0' <= c && c <= '9')
++			val = c - '0';
++		else if ('a' <= lc && lc <= 'f')
++			val = lc - 'a' + 10;
++		else
++			break;
 +
-+	table_end = (unsigned long)table_header + table_header->length;
-+	table = (struct acpi_subtable_header *)
-+		((unsigned long)table_header + sizeof(struct acpi_table_srat));
-+
-+	while (((unsigned long)table) +
-+		       sizeof(struct acpi_subtable_header) < table_end) {
-+		if (table->type == ACPI_SRAT_TYPE_MEMORY_AFFINITY) {
-+			ma = (struct acpi_srat_mem_affinity *)table;
-+			if (!(ma->flags & ACPI_SRAT_MEM_HOT_PLUGGABLE)) {
-+				immovable_mem[i].start = ma->base_address;
-+				immovable_mem[i].size = ma->length;
-+				i++;
-+			}
-+
-+			if (i >= MAX_NUMNODES*2) {
-+				debug_putstr("Too many immovable memory regions, aborting.\n");
-+				return;
-+			}
++		if (val >= base)
++			break;
++		/*
++		 * Check for overflow only if we are within range of
++		 * it in the max base we support (16)
++		 */
++		if (unlikely(res & (~0ull << 60))) {
++			if (res > __div_u64(ULLONG_MAX - val, base))
++				rv |= KSTRTOX_OVERFLOW;
 +		}
-+		table = (struct acpi_subtable_header *)
-+			((unsigned long)table + table->length);
++		res = res * base + val;
++		rv++;
++		s++;
 +	}
-+	num_immovable_mem = i;
++	*p = res;
++	return rv;
 +}
-diff --git a/arch/x86/boot/compressed/kaslr.c b/arch/x86/boot/compressed/kaslr.c
-index 9ed9709d9947..b251572e77af 100644
---- a/arch/x86/boot/compressed/kaslr.c
-+++ b/arch/x86/boot/compressed/kaslr.c
-@@ -87,10 +87,6 @@ static unsigned long get_boot_seed(void)
- #define KASLR_COMPRESSED_BOOT
- #include "../../lib/kaslr.c"
- 
--struct mem_vector {
--	unsigned long long start;
--	unsigned long long size;
--};
- 
- /* Only supporting at most 4 unusable memmap regions with kaslr */
- #define MAX_MEMMAP_REGIONS	4
-diff --git a/arch/x86/boot/compressed/misc.h b/arch/x86/boot/compressed/misc.h
-index a1d5918765f3..b49748366a5b 100644
---- a/arch/x86/boot/compressed/misc.h
-+++ b/arch/x86/boot/compressed/misc.h
-@@ -77,6 +77,11 @@ void choose_random_location(unsigned long input,
- 			    unsigned long *output,
- 			    unsigned long output_size,
- 			    unsigned long *virt_addr);
-+struct mem_vector {
-+	unsigned long long start;
-+	unsigned long long size;
-+};
 +
- /* cpuflags.c */
- bool has_cpuflag(int flag);
- #else
-@@ -116,3 +121,17 @@ static inline void console_init(void)
- void set_sev_encryption_mask(void);
- 
- #endif
-+
-+/* acpi.c */
-+#ifdef CONFIG_RANDOMIZE_BASE
-+/* Amount of immovable memory regions */
-+int num_immovable_mem;
-+#endif
-+
-+#ifdef CONFIG_EARLY_SRAT_PARSE
-+void get_immovable_mem(void);
-+#else
-+static void get_immovable_mem(void)
++static int _kstrtoull(const char *s, unsigned int base, unsigned long long *res)
 +{
++	unsigned long long _res;
++	unsigned int rv;
++
++	s = _parse_integer_fixup_radix(s, &base);
++	rv = _parse_integer(s, base, &_res);
++	if (rv & KSTRTOX_OVERFLOW)
++		return -ERANGE;
++	if (rv == 0)
++		return -EINVAL;
++	s += rv;
++	if (*s == '\n')
++		s++;
++	if (*s)
++		return -EINVAL;
++	*res = _res;
++	return 0;
 +}
-+#endif
++
++/**
++ * kstrtoull - convert a string to an unsigned long long
++ * @s: The start of the string. The string must be null-terminated, and may also
++ *  include a single newline before its terminating null. The first character
++ *  may also be a plus sign, but not a minus sign.
++ * @base: The number base to use. The maximum supported base is 16. If base is
++ *  given as 0, then the base of the string is automatically detected with the
++ *  conventional semantics - If it begins with 0x the number will be parsed as a
++ *  hexadecimal (case insensitive), if it otherwise begins with 0, it will be
++ *  parsed as an octal number. Otherwise it will be parsed as a decimal.
++ * @res: Where to write the result of the conversion on success.
++ *
++ * Returns 0 on success, -ERANGE on overflow and -EINVAL on parsing error.
++ * Used as a replacement for the obsolete simple_strtoull. Return code must
++ * be checked.
++ */
++int kstrtoull(const char *s, unsigned int base, unsigned long long *res)
++{
++	if (s[0] == '+')
++		s++;
++	return _kstrtoull(s, base, res);
++}
+diff --git a/arch/x86/boot/string.h b/arch/x86/boot/string.h
+index 3d78e27077f4..171007c99acc 100644
+--- a/arch/x86/boot/string.h
++++ b/arch/x86/boot/string.h
+@@ -29,4 +29,6 @@ extern unsigned int atou(const char *s);
+ extern unsigned long long simple_strtoull(const char *cp, char **endp,
+ 					  unsigned int base);
+ 
++int kstrtoull(const char *s, unsigned int base, unsigned long long *res);
++#define KSTRTOX_OVERFLOW       (1U << 31)
+ #endif /* BOOT_STRING_H */
 -- 
 2.20.1
 
