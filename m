@@ -4,49 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BC7BC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:06:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B22DC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:06:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 445BD21855
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:06:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2934021736
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:06:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546866405;
-	bh=pMpeoezp/GEILklmnZWSnU2Vg/WC3omOpGwKR7jb2vc=;
+	s=default; t=1546866412;
+	bh=ItEOuPTi2EluHu4w16fSGV8620zkRuWqS/wFutVBDgM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=NVRXHO1BqjiyjznkOKnMRhiiCGlyrc7WaWOtLqcyYkgSAHrDE1MnDp3ALoniL73Yz
-	 bz+mwqh9fCioNEfVhR2235CHhKY8cfPBzjnJQ+Ci+8zrnFHe/ZUv6YrBMmGUKDI/nl
-	 VR/e488GOyf/zVMt4PcN4rfyF6ON/b1mwAL9XzQg=
+	b=HtQ7ZsA+K4fsGsIHMVS4HR6nuMo3EQMpw1QwPH3t2mU1/XBRiMYRN32sbY1lgG8k0
+	 Jrp5Bt1mpG1SbopIz3ln7T2FGX068k5SRHz+YX9xIIaLRImD/Pt/0OH1hL1KHv8n4h
+	 dOPe9O8B7LqLKKksIp5rny/JLboIrEk5wbu3/Hbs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731218AbfAGNGo (ORCPT
+        id S1731235AbfAGNGv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:06:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54022 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:06:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54088 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727362AbfAGNGm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:06:42 -0500
+        id S1727362AbfAGNGs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:06:48 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3B4422089F;
-        Mon,  7 Jan 2019 13:06:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0DF9721855;
+        Mon,  7 Jan 2019 13:06:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546866401;
-        bh=pMpeoezp/GEILklmnZWSnU2Vg/WC3omOpGwKR7jb2vc=;
+        s=default; t=1546866407;
+        bh=ItEOuPTi2EluHu4w16fSGV8620zkRuWqS/wFutVBDgM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=d/cIq3q5qA4AZEVyqpRwCsSlDHSiqWRUqSRJom79RK2zaWUWdu+kSk2SXXNUXYBSb
-         amrpN35OTRN7FE1jp8HLpGHT6Qj/renv0WN0s7SyUujRUbVVHewuE2W7zA3NNR/Jv7
-         ZQYGkVAgKi2rmRTy1l8PU8qnQvDplfsflMKJppDI=
+        b=MmdPoqyl5tlWaxjQ1NX2unUM9BuOdMahSKBQofq90ibsBynuKVgN1ptmLq7FVE5St
+         zaoK56EKur4XnoRM5l/zXubkImhUgpMedwiTxyzr0PUMHcegIzV/SC9Xh/NOmNYPyH
+         Wzv0bRq6yToat9DnxJihC9LeTfQCBLQosr+ykZ1E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
         Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.9 30/71] ALSA: rme9652: Fix potential Spectre v1 vulnerability
-Date:   Mon,  7 Jan 2019 13:32:59 +0100
-Message-Id: <20190107105334.474006236@linuxfoundation.org>
+Subject: [PATCH 4.9 31/71] ALSA: emu10k1: Fix potential Spectre v1 vulnerabilities
+Date:   Mon,  7 Jan 2019 13:33:00 +0100
+Message-Id: <20190107105334.540507957@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107105330.280153213@linuxfoundation.org>
 References: <20190107105330.280153213@linuxfoundation.org>
@@ -67,27 +68,21 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-commit 0b84304ef5da92add8dc75a1b07879c5374cdb05 upstream.
+commit 5ae4f61f012a097df93de2285070ec8e34716d29 upstream.
 
-info->channel is indirectly controlled by user-space, hence leading to
+ipcm->substream is indirectly controlled by user-space, hence leading to
 a potential exploitation of the Spectre variant 1 vulnerability.
 
 This issue was detected with the help of Smatch:
 
-sound/pci/rme9652/hdsp.c:4100 snd_hdsp_channel_info() warn: potential spectre issue 'hdsp->channel_map' [r] (local cap)
+sound/pci/emu10k1/emufx.c:1031 snd_emu10k1_ipcm_poke() warn: potential spectre issue 'emu->fx8010.pcm' [r] (local cap)
+sound/pci/emu10k1/emufx.c:1075 snd_emu10k1_ipcm_peek() warn: potential spectre issue 'emu->fx8010.pcm' [r] (local cap)
 
-Fix this by sanitizing info->channel before using it to index hdsp->channel_map
+Fix this by sanitizing ipcm->substream before using it to index emu->fx8010.pcm
 
 Notice that given that speculation windows are large, the policy is
 to kill the speculation on the first load and not worry if it can be
 completed with a dependent load/store [1].
-
-Also, notice that I refactored the code a bit in order to get rid of the
-following checkpatch warning:
-
-ERROR: do not use assignment in if condition
-FILE: sound/pci/rme9652/hdsp.c:4103:
-	if ((mapped_channel = hdsp->channel_map[info->channel]) < 0)
 
 [1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
 
@@ -97,39 +92,36 @@ Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/rme9652/hdsp.c |   10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ sound/pci/emu10k1/emufx.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/sound/pci/rme9652/hdsp.c
-+++ b/sound/pci/rme9652/hdsp.c
-@@ -30,6 +30,7 @@
- #include <linux/math64.h>
- #include <linux/vmalloc.h>
- #include <linux/io.h>
+--- a/sound/pci/emu10k1/emufx.c
++++ b/sound/pci/emu10k1/emufx.c
+@@ -36,6 +36,7 @@
+ #include <linux/init.h>
+ #include <linux/mutex.h>
+ #include <linux/moduleparam.h>
 +#include <linux/nospec.h>
  
  #include <sound/core.h>
- #include <sound/control.h>
-@@ -4065,15 +4066,16 @@ static int snd_hdsp_channel_info(struct
- 				    struct snd_pcm_channel_info *info)
- {
- 	struct hdsp *hdsp = snd_pcm_substream_chip(substream);
--	int mapped_channel;
-+	unsigned int channel = info->channel;
+ #include <sound/tlv.h>
+@@ -1000,6 +1001,8 @@ static int snd_emu10k1_ipcm_poke(struct
  
--	if (snd_BUG_ON(info->channel >= hdsp->max_channels))
-+	if (snd_BUG_ON(channel >= hdsp->max_channels))
+ 	if (ipcm->substream >= EMU10K1_FX8010_PCM_COUNT)
  		return -EINVAL;
-+	channel = array_index_nospec(channel, hdsp->max_channels);
- 
--	if ((mapped_channel = hdsp->channel_map[info->channel]) < 0)
-+	if (hdsp->channel_map[channel] < 0)
++	ipcm->substream = array_index_nospec(ipcm->substream,
++					     EMU10K1_FX8010_PCM_COUNT);
+ 	if (ipcm->channels > 32)
  		return -EINVAL;
+ 	pcm = &emu->fx8010.pcm[ipcm->substream];
+@@ -1046,6 +1049,8 @@ static int snd_emu10k1_ipcm_peek(struct
  
--	info->offset = mapped_channel * HDSP_CHANNEL_BUFFER_BYTES;
-+	info->offset = hdsp->channel_map[channel] * HDSP_CHANNEL_BUFFER_BYTES;
- 	info->first = 0;
- 	info->step = 32;
- 	return 0;
+ 	if (ipcm->substream >= EMU10K1_FX8010_PCM_COUNT)
+ 		return -EINVAL;
++	ipcm->substream = array_index_nospec(ipcm->substream,
++					     EMU10K1_FX8010_PCM_COUNT);
+ 	pcm = &emu->fx8010.pcm[ipcm->substream];
+ 	mutex_lock(&emu->fx8010.lock);
+ 	spin_lock_irq(&emu->reg_lock);
 
 
