@@ -2,143 +2,160 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA555C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:28:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1B88C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:31:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CFB32070B
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:28:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=dell.com header.i=@dell.com header.b="ja8ipZwO"
+	by mail.kernel.org (Postfix) with ESMTP id 597CB2173C
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:31:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728677AbfAGS2M (ORCPT
+        id S1727426AbfAGSbF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 13:28:12 -0500
-Received: from esa2.dell-outbound.iphmx.com ([68.232.149.220]:43240 "EHLO
-        esa2.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726718AbfAGS2L (ORCPT
+        Mon, 7 Jan 2019 13:31:05 -0500
+Received: from mail-it1-f200.google.com ([209.85.166.200]:38637 "EHLO
+        mail-it1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726758AbfAGSbE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 13:28:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=dell.com; i=@dell.com; q=dns/txt; s=smtpout;
-  t=1546885690; x=1578421690;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=iNEXrw+JuciYXpsRk13ts/N2Ysai6OahDymefqbWf5g=;
-  b=ja8ipZwOAICRyd+9QszzEDjJkPRspemOTH1DSDCu5gEg1TpsbGf7Zyht
-   +ZQBmurAynckRupg8osVShfF2SB3Yfmj2+qqG2wPoCW0iyC7oiZhDRpcI
-   V3zqi7iHaY23ckfTZWOUUOQCqUDHygw2bzGMVwI4Uc4NtZMP/ZIVJxtD7
-   0=;
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2EmAABLmTNchyWd50NjGQEBAQEBAQE?=
- =?us-ascii?q?BAQEBAQcBAQEBAQGBZYNsJwqDdYh5iwuCDYNFlD6BZwsBAYRsAheBbiI4EgE?=
- =?us-ascii?q?DAQECAQECAQECEAEBARUJCCkvgjoigm8BAQEBAxIREUUMBAIBCBEEAQEBAgI?=
- =?us-ascii?q?mAgICRQgIAgQBDQUIGoMAggKabj0CgW6JBgEBAW6BL4oqgQuLNIIWgRGDEoR?=
- =?us-ascii?q?OARIBNoJxglcCi0uWEQcCkWkgkW+JYpA0AgQCBAUCFIFdIGdxcIM8gjWOJ0A?=
- =?us-ascii?q?BMQGIQ4EfgR8BAQ?=
-X-IPAS-Result: =?us-ascii?q?A2EmAABLmTNchyWd50NjGQEBAQEBAQEBAQEBAQcBAQEBA?=
- =?us-ascii?q?QGBZYNsJwqDdYh5iwuCDYNFlD6BZwsBAYRsAheBbiI4EgEDAQECAQECAQECE?=
- =?us-ascii?q?AEBARUJCCkvgjoigm8BAQEBAxIREUUMBAIBCBEEAQEBAgImAgICRQgIAgQBD?=
- =?us-ascii?q?QUIGoMAggKabj0CgW6JBgEBAW6BL4oqgQuLNIIWgRGDEoROARIBNoJxglcCi?=
- =?us-ascii?q?0uWEQcCkWkgkW+JYpA0AgQCBAUCFIFdIGdxcIM8gjWOJ0ABMQGIQ4EfgR8BA?=
- =?us-ascii?q?Q?=
-Received: from mx0b-00154901.pphosted.com ([67.231.157.37])
-  by esa2.dell-outbound.iphmx.com with ESMTP/TLS/AES256-SHA256; 07 Jan 2019 12:28:08 -0600
-Received: from pps.filterd (m0144104.ppops.net [127.0.0.1])
-        by mx0b-00154901.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x07IMYmd191565;
-        Mon, 7 Jan 2019 13:28:07 -0500
-Received: from esa2.dell-outbound2.iphmx.com (esa2.dell-outbound2.iphmx.com [68.232.153.202])
-        by mx0b-00154901.pphosted.com with ESMTP id 2pv8kesdey-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 07 Jan 2019 13:28:07 -0500
-From:   <Mario.Limonciello@dell.com>
-Received: from ausc60ps301.us.dell.com ([143.166.148.206])
-  by esa2.dell-outbound2.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA256; 08 Jan 2019 00:28:04 +0600
-X-LoopCount0: from 10.166.132.172
-X-IronPort-AV: E=Sophos;i="5.56,451,1539666000"; 
-   d="scan'208";a="1243321372"
-To:     <mlord@pobox.com>, <hayeswang@realtek.com>,
-        <kai.heng.feng@canonical.com>
-CC:     <aatteka@nicira.com>, <davem@davemloft.net>, <greg@kroah.com>,
-        <romieu@fr.zoreil.com>, <netdev@vger.kernel.org>,
-        <nic_swsd@realtek.com>, <linux-kernel@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>, <ryankao@realtek.com>
-Subject: RE: r8152: data corruption in various scenarios
-Thread-Topic: r8152: data corruption in various scenarios
-Thread-Index: AQHUpfQHALXHc6TickGdZTS3BUtrnaWjIfGAgAAA/gCAAG77gIAAZjZAgACH8QD//5wzgA==
-Date:   Mon, 7 Jan 2019 18:27:56 +0000
-Message-ID: <53c5ebc06e454ed38a8254acbbabaa68@ausx13mpc120.AMER.DELL.COM>
-References: <ed0c9790-57be-8bca-cdd6-3a54ca24f0bd@pobox.com>
- <20161125095350.GA20653@kroah.com>
- <1816ec7e-2733-f4ba-5d30-29dbabd20aad@pobox.com>
- <20161125.115827.2014848246966159357.davem@davemloft.net>
- <0835B3720019904CB8F7AA43166CEEB201057793@RTITMBSV03.realtek.com.tw>
- <CAA=3Oqn5_5w+vrg9_7UtZ-5BEbZ9Pm=qdX3WoVZKaAkxcMXYXA@mail.gmail.com>
- <469a41ea-e97c-23d2-d129-68aad5585fec@pobox.com>
- <3D7273C4-D378-42D5-92FA-4ED72041D820@canonical.com>
- <1726a1ef-cfa7-0f97-4388-bf2ba72cb9a9@pobox.com>
- <31f145b8-4518-122c-eab8-50ed1075ba55@pobox.com>
- <0835B3720019904CB8F7AA43166CEEB2D38781F2@RTITMBSVM03.realtek.com.tw>
- <92e9ddd8a05a493bbb1f5ac4828c2f2a@ausx13mpc120.AMER.DELL.COM>
- <0e7fce67-a88e-4245-ae4e-c218bfbea12f@pobox.com>
-In-Reply-To: <0e7fce67-a88e-4245-ae4e-c218bfbea12f@pobox.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.143.242.75]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Mon, 7 Jan 2019 13:31:04 -0500
+Received: by mail-it1-f200.google.com with SMTP id m128so1352818itd.3
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 10:31:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=0jYZIyCrrX6/GR8efrwhudP/H6iO9n0VT1CfmVttA0M=;
+        b=RQ1zerpE7GmbAoktXPMNtXbRmg2o9xBZssdZcjIgR9JtLnPLVJx92Q4f0g1HUrpARV
+         /3BHJIriO4zbXS0YDR538yoEZ1iVq3wM3xS2Q/pLsvICcsaVxmLkDFH5tBtfevPrfqdm
+         wNufqRrXE36e84W6V3z03b3SBXMlK4spudow6w2e+FQeU5NCTuW2EceBjcgd0WnWaujQ
+         sovU3gHo30SSotSJzKBBR8U/Yh/Q8qYlylv46WkJ+y1iPYuwGVaidKUE95Shm0wbfLBt
+         4/TKnBUyusiEr6DfTN79tZOhg57QNOcpU0rOK5exjjkwDTQD8Tje1Koeqtsq63n78KzC
+         xGAQ==
+X-Gm-Message-State: AA+aEWbHCXGXnaWnyPKsehMwR2BuFh+ETHXV6AfY92V2pax2Namyx7jg
+        WBND+rC67/dzTaoXRQ6xhowqN43XUudbqpUtQ1UglRplp8nU
+X-Google-Smtp-Source: AFSGD/UJZr/pFTUWFCQvtlUr7LqYjvNnBvAtApnKipTOFkXc0ZcUI7KmTocgPlVIIJsxpbqBIInkfkilMkWxsw7/pUchkOPIsOB/
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-07_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901070157
+X-Received: by 2002:a02:5c8:: with SMTP id 69mr48679298jal.20.1546885863660;
+ Mon, 07 Jan 2019 10:31:03 -0800 (PST)
+Date:   Mon, 07 Jan 2019 10:31:03 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000696949057ee26e44@google.com>
+Subject: KASAN: slab-out-of-bounds Read in hci_event_packet
+From:   syzbot <syzbot+cec7a50c412a2c03f8f5@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, johan.hedberg@gmail.com,
+        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+        marcel@holtmann.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBNYXJrIExvcmQgPG1sb3JkQHBv
-Ym94LmNvbT4NCj4gU2VudDogTW9uZGF5LCBKYW51YXJ5IDcsIDIwMTkgMTI6MDYgUE0NCj4gVG86
-IExpbW9uY2llbGxvLCBNYXJpbzsgaGF5ZXN3YW5nQHJlYWx0ZWsuY29tOyBrYWkuaGVuZy5mZW5n
-QGNhbm9uaWNhbC5jb20NCj4gQ2M6IGFhdHRla2FAbmljaXJhLmNvbTsgZGF2ZW1AZGF2ZW1sb2Z0
-Lm5ldDsgZ3JlZ0Brcm9haC5jb207DQo+IHJvbWlldUBmci56b3JlaWwuY29tOyBuZXRkZXZAdmdl
-ci5rZXJuZWwub3JnOyBuaWNfc3dzZEByZWFsdGVrLmNvbTsgbGludXgtDQo+IGtlcm5lbEB2Z2Vy
-Lmtlcm5lbC5vcmc7IGxpbnV4LXVzYkB2Z2VyLmtlcm5lbC5vcmc7IHJ5YW5rYW9AcmVhbHRlay5j
-b20NCj4gU3ViamVjdDogUmU6IHI4MTUyOiBkYXRhIGNvcnJ1cHRpb24gaW4gdmFyaW91cyBzY2Vu
-YXJpb3MNCj4gDQo+IA0KPiBbRVhURVJOQUwgRU1BSUxdDQo+IA0KPiBPbiAyMDE5LTAxLTA3IDEx
-OjAxIGEubS4sIE1hcmlvLkxpbW9uY2llbGxvQGRlbGwuY29tIHdyb3RlOg0KPiA+DQo+ID4gVEIx
-NiBjb250YWlucyBBU01lZGlhIGhvc3QgY29udHJvbGxlci4gIEl0J3MgYSBUaHVuZGVyYm9sdCBk
-b2NrIGFuZCBhbGwgVVNCDQo+IGRldmljZXMNCj4gPiBhcmUgY29ubmVjdGVkIHRvIEFTTWVkaWEg
-aG9zdCBjb250cm9sbGVyIGluIHRoZSBkb2NrLg0KPiA+DQo+ID4gV0QxNSBkb2VzIG5vdCBjb250
-YWluIGFuIEFTTWVkaWEgaG9zdCBjb250cm9sbGVyLCBpdCBjb25uZWN0ZWQgdG8gc3lzdGVtJ3MN
-Cj4gPiBVU0IgaG9zdCBjb250cm9sbGVyLg0KPiANCj4gDQo+IFRoYW5rLXlvdSwgTWFyaW8uDQo+
-IA0KPiBTby4uIHdoeSBhcmUgd2UgZW5hYmxpbmcgdGhlIHI4MTUzIChVU0ItZXRoZXJuZXQpIHdv
-cmthcm91bmQgb24gdGhpcyBXRDE1DQo+IGRvY2s/DQo+IFRoZSBkaXNjdXNzaW9uIGJhY2sgaW4g
-MjAxNyB3YXMgdGhhdCBvbmx5IHRoZSBUQjE1L1RCMTYgd2VyZSBhZmZlY3RlZCBieQ0KPiB0aGUg
-WEhDSSBvdmVycnVucyBpdCBwcm9kdWNlcz8NCj4gDQo+IC0tDQoNClRoZSB4SENJIG92ZXJydW4g
-d29ya2Fyb3VuZCBzaG91bGQgb25seSBiZSBhcHBsaWVkIG9uIFRCMTYvVEIxNiwgY29ycmVjdC4N
-Cg0KQ2FuIHlvdSBkb3VibGUgY2hlY2sgdGhlIHZlcmJvc2UgaW5mb3JtYXRpb24gZnJvbSBsc3Vz
-YiBmb3IgdGhlIHI4MTUzIGRldmljZQ0Kb24geW91ciBXRDE1Pw0KDQpJIGp1c3QgZG91YmxlIGNo
-ZWNrZWQgb24gbXkgb24gaGFuZCBXRDE1IHdpdGggYW4gWFBTIDkzODAgYW5kIGl0J3Mgbm90IGFj
-dGl2YXRpbmcgdGhlDQpxdWlyayAoYmNkRGV2aWNlIHdhcyBkaWZmZXJlbnQpLg0KDQpJZiBpdCdz
-IHRoZSBzYW1lIGluZm9ybWF0aW9uIGFzIHRoZSBUQjE2ICh3aGljaCBpdCBzb3VuZHMgbGlrZSBp
-dCBpcykgS2FpIEhlbmcgYW5kIEkgd2lsbCBjaGVjaw0KYXJvdW5kIGludGVybmFsbHkgdG8gZmlu
-ZCBvdXQgd2h5IHRoZXkncmUgbG9va2luZyB0aGUgc2FtZS4NCg0KSSBjYW4gaHlwb3RoZXNpemUg
-YSBmZXcgZ3Vlc3NlcyBvZiB3aGF0IGhhcHBlbmVkLg0KTXkgZmlyc3QgZ3Vlc3Mgd291bGQgYmUg
-YSBjb21wYXJpc29uIGlzc3VlIHdpdGggdGhlIGxvZ2ljIGluIDE3NmViNjE0Yi4NCg0KTG9va2lu
-ZyBhdCB0aGF0IGNvbW1pdCwgSSBndWVzcyBJIHdvdWxkIGFzayBvbiB0aGUgY29tcGlsZXIgYmVo
-YXZpb3Igb2YgIXN0cmNtcCgpLg0KV291bGQgdGhhdCBiZSBtYXRjaGluZyB0aGUgbGVzcyB0aGFu
-IGNhc2UgYXMgd2VsbCBhcyB0aGUgemVybyBjYXNlPw0KSWYgc28sIGl0IG1pZ2h0IG5lZWQgdG8g
-YmUgY2hhbmdlZCB0byBzdHJjbXAoKSA9PSAwLg0KDQpNeSBzZWNvbmQgZ3Vlc3Mgd291bGQgYmUg
-bWF5YmUgbmV3ZXIgZXRoZXJuZXQgTlZNIGluIG1hbnVmYWN0dXJpbmcuDQpNeSB0aGlyZCBndWVz
-cyB3b3VsZCBiZSBhIG1hbnVmYWN0dXJpbmcgaXNzdWUgcHV0dGluZyB3cm9uZyBOVk0gaW1hZ2Ug
-b24geW91ciBXRDE1Lg0K
+Hello,
+
+syzbot found the following crash on:
+
+HEAD commit:    574823bfab82 Change mincore() to count "mapped" pages rath..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=145e8207400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d55557b516c45456
+dashboard link: https://syzkaller.appspot.com/bug?extid=cec7a50c412a2c03f8f5
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1643bfbf400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12d6c8f7400000
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+cec7a50c412a2c03f8f5@syzkaller.appspotmail.com
+
+kauditd_printk_skb: 5 callbacks suppressed
+audit: type=1400 audit(1546856008.711:36): avc:  denied  { map } for   
+pid=8365 comm="syz-executor431" path="/root/syz-executor431611296"  
+dev="sda1" ino=16484 scontext=unconfined_u:system_r:insmod_t:s0-s0:c0.c1023  
+tcontext=unconfined_u:object_r:user_home_t:s0 tclass=file permissive=1
+==================================================================
+BUG: KASAN: slab-out-of-bounds in hci_inquiry_result_with_rssi_evt  
+net/bluetooth/hci_event.c:3988 [inline]
+BUG: KASAN: slab-out-of-bounds in hci_event_packet+0xb33e/0xc22e  
+net/bluetooth/hci_event.c:5863
+Read of size 1 at addr ffff88809fcab1c0 by task kworker/u5:0/1171
+
+CPU: 1 PID: 1171 Comm: kworker/u5:0 Not tainted 4.20.0+ #13
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: hci0 hci_rx_work
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1db/0x2d0 lib/dump_stack.c:113
+  print_address_description.cold+0x7c/0x20d mm/kasan/report.c:187
+  kasan_report.cold+0x1b/0x40 mm/kasan/report.c:317
+  __asan_report_load1_noabort+0x14/0x20 mm/kasan/generic_report.c:132
+  hci_inquiry_result_with_rssi_evt net/bluetooth/hci_event.c:3988 [inline]
+  hci_event_packet+0xb33e/0xc22e net/bluetooth/hci_event.c:5863
+  hci_rx_work+0x578/0xcd0 net/bluetooth/hci_core.c:4412
+  process_one_work+0xd0c/0x1ce0 kernel/workqueue.c:2153
+  worker_thread+0x143/0x14a0 kernel/workqueue.c:2296
+  kthread+0x357/0x430 kernel/kthread.c:246
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
+
+Allocated by task 8369:
+  save_stack+0x45/0xd0 mm/kasan/common.c:73
+  set_track mm/kasan/common.c:85 [inline]
+  kasan_kmalloc mm/kasan/common.c:482 [inline]
+  kasan_kmalloc+0xcf/0xe0 mm/kasan/common.c:455
+  __do_kmalloc_node mm/slab.c:3671 [inline]
+  __kmalloc_node_track_caller+0x4e/0x70 mm/slab.c:3685
+  __kmalloc_reserve.isra.0+0x40/0xe0 net/core/skbuff.c:140
+  __alloc_skb+0x12d/0x730 net/core/skbuff.c:208
+  alloc_skb include/linux/skbuff.h:1011 [inline]
+  bt_skb_alloc include/net/bluetooth/bluetooth.h:339 [inline]
+  vhci_get_user drivers/bluetooth/hci_vhci.c:180 [inline]
+  vhci_write+0xc4/0x470 drivers/bluetooth/hci_vhci.c:299
+  call_write_iter include/linux/fs.h:1862 [inline]
+  new_sync_write fs/read_write.c:474 [inline]
+  __vfs_write+0x764/0xb40 fs/read_write.c:487
+  vfs_write+0x20c/0x580 fs/read_write.c:549
+  ksys_write+0x105/0x260 fs/read_write.c:598
+  __do_sys_write fs/read_write.c:610 [inline]
+  __se_sys_write fs/read_write.c:607 [inline]
+  __x64_sys_write+0x73/0xb0 fs/read_write.c:607
+  do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Freed by task 0:
+(stack is not available)
+
+The buggy address belongs to the object at ffff88809fcaadc0
+  which belongs to the cache kmalloc-1k of size 1024
+The buggy address is located 0 bytes to the right of
+  1024-byte region [ffff88809fcaadc0, ffff88809fcab1c0)
+The buggy address belongs to the page:
+page:ffffea00027f2a80 count:1 mapcount:0 mapping:ffff88812c3f0ac0 index:0x0  
+compound_mapcount: 0
+flags: 0x1fffc0000010200(slab|head)
+raw: 01fffc0000010200 ffffea0001d08488 ffffea0002812908 ffff88812c3f0ac0
+raw: 0000000000000000 ffff88809fcaa040 0000000100000007 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff88809fcab080: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  ffff88809fcab100: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> ffff88809fcab180: 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc fc
+                                            ^
+  ffff88809fcab200: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+  ffff88809fcab280: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+==================================================================
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
