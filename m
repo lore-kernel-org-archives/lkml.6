@@ -2,104 +2,150 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-15.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E904C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 21:04:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CE95C43612
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 21:09:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4998A2089F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 21:04:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546895080;
-	bh=fqUgkZCO8NwjdpjcV77f6IGZIEMqltxXOFqnLSY+ObI=;
-	h=Subject:Cc:To:In-Reply-To:From:References:Date:List-ID:From;
-	b=An/cXbnXzeGd86jy7UmZlnXC8tnXk1p0SRejkoNr6duRa2x+BiR/8EZZuB68FZtWb
-	 HmrRg7Rfakm/BU9+7z65GwrY8Ys6TaP/HKBCiK6zSV5ijvjtV5c177DnPWmHtv+wzK
-	 QRZ1SaLsMZd/Txiw4qYmqK5Z9BZOn2AyNWTtJ4Bw=
+	by mail.kernel.org (Postfix) with ESMTP id 08C072089F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 21:09:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DGHbVUV5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727071AbfAGVEj (ORCPT
+        id S1727103AbfAGVJ0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 16:04:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35570 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726767AbfAGVEj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 16:04:39 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 515DE2089F;
-        Mon,  7 Jan 2019 21:04:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546895078;
-        bh=fqUgkZCO8NwjdpjcV77f6IGZIEMqltxXOFqnLSY+ObI=;
-        h=Subject:Cc:To:In-Reply-To:From:References:Date:From;
-        b=x/HHxvk05N+Iym1BHoyHbye+Mdd8Y5ypUyAkL+6Xz15hhvMjASbSzJ6znX9JkN++X
-         7Wd7yDvPP0OT3qrWyI5P+APDVlbT5u3PBDd/zaqBfDsvuYssWS2amCH+8bWOMdv0RM
-         +IsLOoRdIhmU0Fb0xV162oP+pUYru3rv/C47hs3M=
-Content-Type: text/plain; charset="utf-8"
+        Mon, 7 Jan 2019 16:09:26 -0500
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:45073 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726946AbfAGVJZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 16:09:25 -0500
+Received: by mail-vs1-f67.google.com with SMTP id x28so1116296vsh.12
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 13:09:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=up1MW20yEfSNO6kjzw/ThzXsTljbPgzfQgz+1UwjdnE=;
+        b=DGHbVUV5gdm2AAWcbnDV8PxQ4RIiu8swDmyjv91s2px9gLnuA3FBfLRxvCeRUdJCGJ
+         W+vzMh7j9nH9Fy8aygdN+2jnPdv53t5st/PPWdH07USj4Z2uuLgAP8cn0BklFGmgSVBH
+         AW2dWs+7HXWQDO0Qepk3M+lbzHEnPhyf/15ZM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=up1MW20yEfSNO6kjzw/ThzXsTljbPgzfQgz+1UwjdnE=;
+        b=Y4v7snfnNGShPwWiE4mbOta8TqhZZpnTUVYqcB8p8QLfPDx5tCA5LBt0bBt1rPriFt
+         aTRL/8FA40j989dBCmfIgUFlYy68AF8eMaZVzRNEkCtAnLhT+X9vBJBVUQgSegbgJmx3
+         pFxTogGhZGzn4L+ewSJBRqWXHFfhyaVS7gUsvafBgmkwkf9puKicnXXFNJLIrN4C7xDX
+         Df+eLuhiqyTJgRtN4PTFxKxbCqgvcGE6rjebQstnafI8TQsJE5sIfr6fSEw753x95nCF
+         ZpBbybtR4AmITbgaGBWGtwsp0aOUUWRa9ElSLCelPgSSMIj4wONVYc3D0w2JFFAHt8ql
+         DVgg==
+X-Gm-Message-State: AJcUukeBPYy/i+T3K9mD8rwB0u3fZDvyUPYkQsEN0BVN4KJfx4/5zo2J
+        mbiDNsc4aT8KzhoPVsM6graIt6W+3aM=
+X-Google-Smtp-Source: AFSGD/VpuZboITigWJQQwoU40nZbcVeDQq6k2QcmHAQ34Uqnz3MXdDT0bwMuVJr66hBP7QVQgNEdRA==
+X-Received: by 2002:a67:e983:: with SMTP id b3mr25504688vso.231.1546895364140;
+        Mon, 07 Jan 2019 13:09:24 -0800 (PST)
+Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com. [209.85.221.181])
+        by smtp.gmail.com with ESMTPSA id 67sm19276572uas.1.2019.01.07.13.09.22
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 07 Jan 2019 13:09:23 -0800 (PST)
+Received: by mail-vk1-f181.google.com with SMTP id 197so417008vkf.4
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 13:09:22 -0800 (PST)
+X-Received: by 2002:a1f:3d10:: with SMTP id k16mr23120881vka.13.1546895361430;
+ Mon, 07 Jan 2019 13:09:21 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v1] clk: qcom: lpass: Add CLK_IGNORE_UNUSED for lpass clocks
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>
-In-Reply-To: <b6397ef1-a6df-0040-9dcc-c491b76a2f8f@codeaurora.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-User-Agent: alot/0.8
-References: <1545306385-31240-1-git-send-email-tdas@codeaurora.org> <154533989563.79149.10213938035592547726@swboyd.mtv.corp.google.com> <b6397ef1-a6df-0040-9dcc-c491b76a2f8f@codeaurora.org>
-Message-ID: <154689507747.15366.6553307032295093169@swboyd.mtv.corp.google.com>
-Date:   Mon, 07 Jan 2019 13:04:37 -0800
+References: <alpine.LRH.2.21.1812311511360.1435@namei.org> <20190107101540.GA87402@gmail.com>
+In-Reply-To: <20190107101540.GA87402@gmail.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Mon, 7 Jan 2019 13:09:09 -0800
+X-Gmail-Original-Message-ID: <CAGXu5jLYe_H_BF5SK2GWjYL9P7RJ9t0oadjDNnDL7UTXfb_Jfw@mail.gmail.com>
+Message-ID: <CAGXu5jLYe_H_BF5SK2GWjYL9P7RJ9t0oadjDNnDL7UTXfb_Jfw@mail.gmail.com>
+Subject: Re: [GIT PULL] security: seccomp changes for v4.21
+To:     Ingo Molnar <mingo@kernel.org>, Tycho Andersen <tycho@tycho.ws>
+Cc:     James Morris <jmorris@namei.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Taniya Das (2019-01-06 22:26:00)
-> Hello Stephen,
->=20
-> On 12/21/2018 2:34 AM, Stephen Boyd wrote:
-> > Quoting Taniya Das (2018-12-20 03:46:25)
-> >> The LPASS clocks has a dependency on the GCC lpass clocks to be enabled
-> >> before accessing them and that was the reason to mark the gcc lpass cl=
-ocks
-> >> as critical. But in the case where the lpass subsystem would require a
-> >> restart, toggling the lpass reset would from HW clear the SW enable bi=
-ts
-> >> of the GCC lpass clocks. Thus the next time bringing up the lpass subs=
-ystem
-> >> out of reset would fail.
-> >>
-> >> Allow the lpass clock driver to enable/disable the gcc lpass clocks and
-> >> mark the lpass clocks not be accessed during late_init if no client vo=
-te.
-> >=20
-> > You need to add more details here. It feels like you wrote the beginning
-> > of a paragraph and then stopped abruptly, leaving the reader hanging for
-> > the whole story. Why is late_init important? Why do we need to leave
-> > them on from the bootloader? What if the bootloader doesn't leave them
-> > enabled? This is all rather hacky so I'm deeply confused. Does the lpass
-> > driver need to get these gcc clks and enable/prepare them during probe?
-> > But then it needs to also allow a reset happen and change the clk state?
-> >=20
-> > I suspect this situation is circling a larger problem where a reset is
-> > toggled and that changes some clk state without the clk framework
-> > knowing. There's not much we can do about that besides having some
-> > mechanism for the clks to know that their state is now out of sync. If
-> > that can be done on the provider driver side then we should have an
-> > easier time not needing to write a bunch of framework code to handle
-> > this. OMAP folks are dealing with the same problems from what I recall.
-> >=20
->=20
-> Hmm, if I mark the CLK_IS_CRITICAL, I don't see a way to handle it in=20
-> provider. Please suggest if you think provider could handle it.
+On Mon, Jan 7, 2019 at 2:15 AM Ingo Molnar <mingo@kernel.org> wrote:
+>
+>
+> * James Morris <jmorris@namei.org> wrote:
+>
+> > From Kees:
+> >
+> > "- Add SECCOMP_RET_USER_NOTIF
+> >
+> > - seccomp fixes for sparse warnings and s390 build (Tycho)"
+> >
+> >
+> >
+> > The following changes since commit 1072bd678547f8663cfb81a22fdb50c589e4976e:
+> >
+> >   security: fs: make inode explicitly non-modular (2018-12-12 14:58:51 -0800)
+> >
+> > are available in the Git repository at:
+> >
+> >   git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-seccomp
+> >
+> > for you to fetch changes up to 55b8cbe470d103b44104c64dbf89e5cad525d4e0:
+> >
+> >   Merge tag 'seccomp-next-part2' of https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux into next-seccomp (2018-12-17 11:36:26 -0800)
+> >
+> > ----------------------------------------------------------------
+> > James Morris (2):
+> >       Merge tag 'seccomp-next' of https://git.kernel.org/.../kees/linux into next-seccomp
+> >       Merge tag 'seccomp-next-part2' of https://git.kernel.org/.../kees/linux into next-seccomp
+> >
+> > Tycho Andersen (6):
+> >       seccomp: hoist struct seccomp_data recalculation higher
+> >       seccomp: switch system call argument type to void *
+> >       seccomp: add a return code to trap to userspace
+> >       samples: add an example of seccomp user trap
+> >       seccomp: fix poor type promotion
+> >       seccomp, s390: fix build for syscall type change
+> >
+> >  Documentation/ioctl/ioctl-number.txt           |   1 +
+> >  Documentation/userspace-api/seccomp_filter.rst |  84 +++++
+> >  arch/s390/kernel/compat_wrapper.c              |   2 +-
+> >  include/linux/seccomp.h                        |   9 +-
+> >  include/linux/syscalls.h                       |   2 +-
+> >  include/uapi/linux/seccomp.h                   |  40 ++-
+> >  kernel/seccomp.c                               | 467 ++++++++++++++++++++++++-
+> >  samples/seccomp/.gitignore                     |   1 +
+> >  samples/seccomp/Makefile                       |   7 +-
+> >  samples/seccomp/user-trap.c                    | 375 ++++++++++++++++++++
+> >  tools/testing/selftests/seccomp/seccomp_bpf.c  | 447 ++++++++++++++++++++++-
+> >  11 files changed, 1411 insertions(+), 24 deletions(-)
+> >  create mode 100644 samples/seccomp/user-trap.c
+>
+> 32-bit x86 allyesconfig doesn't build:
+>
+>  /usr/bin/ld: i386:x86-64 architecture of input file `samples/seccomp/user-trap.o' is incompatible with i386 output
+>  /usr/bin/ld: samples/seccomp/user-trap.o: file class ELFCLASS64 incompatible with ELFCLASS32
+>  /usr/bin/ld: final link failed: File in wrong format
+>  collect2: error: ld returned 1 exit status
+>  scripts/Makefile.host:99: recipe for target 'samples/seccomp/user-trap' failed
+>  make[2]: *** [samples/seccomp/user-trap] Error 1
+>
+> Is this a known regression?
 
-As far as I know, I'm not suggesting the use of CLK_IS_CRITICAL here.
-But removing CLK_IS_CRITICAL and relying on some random bootloader
-behavior also looks wrong. Can you clarify what's going on?
+That looks like something is busted in the samples Makefile? Tycho,
+are you able to reproduce this?
 
+-Kees
+
+-- 
+Kees Cook
