@@ -7,47 +7,50 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CCF7C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:55:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB77DC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:55:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D3F1206BB
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:55:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BC13E206BB
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:55:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546865709;
-	bh=0xLUIajsQJ9mtEw6R5TFXOdmeLoQ5AJX7MpZ5wkKfSQ=;
+	s=default; t=1546865712;
+	bh=GWy0NywB4iJqKTuch/LHvwsty9YnnPPQMPAYlwT43GA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=QJP+q2Eo7Yyhp1mPB0aRssn6kvNzQI99fesMkri+5tCW8vVs1F2E+Yc9RUJOPd5eh
-	 7m+VLZVjJ5Y2Ffbyr2Xe8mS742OukDcFRjKjTk2nHYFEAmbPxWfKNrmo8CkZ1kWzow
-	 sxcG0uZctm5Jt38yI6iUQxKBKzhxQKQUXVgWxv0c=
+	b=ZuDew3iZZpC1sRK8ZsheZGnbesGr9FVnzGAlXgEVTZ9p/k3HitpkJgyDvdnMt5jl5
+	 XBLFIuPL217V3232KVPooKvsZievuJ1BQAxCQT8Xc10OYqZMMq3WFl84+ZxSsd3cbR
+	 CY0BwQyZ2t0FVKwlRkvEmtS5TZWLrBAf0fJl0u1o=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728581AbfAGMzI (ORCPT
+        id S1729642AbfAGMzM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:55:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39088 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:55:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43634 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729165AbfAGMs0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:48:26 -0500
+        id S1729264AbfAGMzI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:55:08 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9446E20651;
-        Mon,  7 Jan 2019 12:48:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 37F4820651;
+        Mon,  7 Jan 2019 12:55:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865306;
-        bh=0xLUIajsQJ9mtEw6R5TFXOdmeLoQ5AJX7MpZ5wkKfSQ=;
+        s=default; t=1546865707;
+        bh=GWy0NywB4iJqKTuch/LHvwsty9YnnPPQMPAYlwT43GA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EJY9HA/GAGqZ4WrwyapTHwVB8lcPxVjfyF/X/cSN796AFE5w2FCjDTTi80CWN3KTS
-         VzqiQc5vvDQa83sdGxcU6tD4iRUUdWWSywUOL4N1CeRQeR8w8j4kJx/prmHLp/dwt7
-         3A3aZx6Kqo84mTCIf3xekRuXnnL6YhjaZHLgdsO0=
+        b=tQbQbeWBUaY3JhfdoMQdU4pZqU3rNecRusD3XI233sUU9/LhJxKSu9mcBelBeiSv+
+         6CJufZUYrr0iStVPk+8hiVlHELeYyv22+9kSmwmhQAlrdlBjENqIkFaGXtRI5Sgrv5
+         99geAtIFyFwYD6hTIJMPk921Uix5ooD3MvpajfD8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, syzbot <syzkaller@googlegroups.com>,
-        Willem de Bruijn <willemb@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 023/170] packet: validate address length
-Date:   Mon,  7 Jan 2019 13:30:50 +0100
-Message-Id: <20190107104455.787018910@linuxfoundation.org>
+        stable@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
+        Mathias Duckeck <m.duckeck@kunbus.de>,
+        Frank Pavlic <f.pavlic@kunbus.de>,
+        Martin Sperl <kernel@martin.sperl.org>,
+        =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 4.19 115/170] spi: bcm2835: Fix race on DMA termination
+Date:   Mon,  7 Jan 2019 13:32:22 +0100
+Message-Id: <20190107104506.513422580@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104452.953560660@linuxfoundation.org>
 References: <20190107104452.953560660@linuxfoundation.org>
@@ -66,40 +69,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Willem de Bruijn <willemb@google.com>
+From: Lukas Wunner <lukas@wunner.de>
 
-[ Upstream commit 99137b7888f4058087895d035d81c6b2d31015c5 ]
+commit e82b0b3828451c1cd331d9f304c6078fcd43b62e upstream.
 
-Packet sockets with SOCK_DGRAM may pass an address for use in
-dev_hard_header. Ensure that it is of sufficient length.
+If a DMA transfer finishes orderly right when spi_transfer_one_message()
+determines that it has timed out, the callbacks bcm2835_spi_dma_done()
+and bcm2835_spi_handle_err() race to call dmaengine_terminate_all(),
+potentially leading to double termination.
 
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: Willem de Bruijn <willemb@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Prevent by atomically changing the dma_pending flag before calling
+dmaengine_terminate_all().
+
+Signed-off-by: Lukas Wunner <lukas@wunner.de>
+Fixes: 3ecd37edaa2a ("spi: bcm2835: enable dma modes for transfers meeting certain conditions")
+Cc: stable@vger.kernel.org # v4.2+
+Cc: Mathias Duckeck <m.duckeck@kunbus.de>
+Cc: Frank Pavlic <f.pavlic@kunbus.de>
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Cc: Noralf Trønnes <noralf@tronnes.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/packet/af_packet.c |    4 ++++
- 1 file changed, 4 insertions(+)
 
---- a/net/packet/af_packet.c
-+++ b/net/packet/af_packet.c
-@@ -2627,6 +2627,8 @@ static int tpacket_snd(struct packet_soc
- 		proto	= saddr->sll_protocol;
- 		addr	= saddr->sll_addr;
- 		dev = dev_get_by_index(sock_net(&po->sk), saddr->sll_ifindex);
-+		if (addr && dev && saddr->sll_halen < dev->addr_len)
-+			goto out;
- 	}
+---
+ drivers/spi/spi-bcm2835.c |   10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
+
+--- a/drivers/spi/spi-bcm2835.c
++++ b/drivers/spi/spi-bcm2835.c
+@@ -233,10 +233,9 @@ static void bcm2835_spi_dma_done(void *d
+ 	 * is called the tx-dma must have finished - can't get to this
+ 	 * situation otherwise...
+ 	 */
+-	dmaengine_terminate_all(master->dma_tx);
+-
+-	/* mark as no longer pending */
+-	bs->dma_pending = 0;
++	if (cmpxchg(&bs->dma_pending, true, false)) {
++		dmaengine_terminate_all(master->dma_tx);
++	}
  
- 	err = -ENXIO;
-@@ -2825,6 +2827,8 @@ static int packet_snd(struct socket *soc
- 		proto	= saddr->sll_protocol;
- 		addr	= saddr->sll_addr;
- 		dev = dev_get_by_index(sock_net(sk), saddr->sll_ifindex);
-+		if (addr && dev && saddr->sll_halen < dev->addr_len)
-+			goto out;
- 	}
+ 	/* and mark as completed */;
+ 	complete(&master->xfer_completion);
+@@ -617,10 +616,9 @@ static void bcm2835_spi_handle_err(struc
+ 	struct bcm2835_spi *bs = spi_master_get_devdata(master);
  
- 	err = -ENXIO;
+ 	/* if an error occurred and we have an active dma, then terminate */
+-	if (bs->dma_pending) {
++	if (cmpxchg(&bs->dma_pending, true, false)) {
+ 		dmaengine_terminate_all(master->dma_tx);
+ 		dmaengine_terminate_all(master->dma_rx);
+-		bs->dma_pending = 0;
+ 	}
+ 	/* and reset */
+ 	bcm2835_spi_reset_hw(master);
 
 
