@@ -2,104 +2,173 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD60CC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 16:05:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B598BC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 16:07:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 975EB2183E
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 16:05:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546877124;
-	bh=XppA6qeEp0FE0Recg7XWyg/lSkKBRPtqjwsZpwc6WJs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=UNqQ0o0IJDxMCerXhiDvmNDBKwt/ImbN1t1z7RI4rkj5vULCvqcx5o466HOgXReRz
-	 JVkVcSLYUAP6XlIjnm6Wkc6nQCxumfGU0TEsainKpoeInGsFL15WY6q97VPSN1lc7O
-	 V+QV8LHRTIPQRa8xvtj91g1gioCf8Gsd/0X2joV0=
+	by mail.kernel.org (Postfix) with ESMTP id 7A5532087F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 16:07:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728319AbfAGQFX (ORCPT
+        id S1728354AbfAGQHu convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 11:05:23 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:60998 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726921AbfAGQFX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 11:05:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=BHk6pAZ7AMOKZ56193m8j6RY+PTuUr5Vo0v1AKwGtgg=; b=qNenDot8oDTTrMwJLKPBrV8o7
-        W8HVvvK1iGHe9Uo77s6pVFsvK+owHcLm8PAbw8kkjDQIGBQfw9WAHgNVXIhmtGmlVbWXhQFKiP5ko
-        kJnTJieqce7qgv1p8c4UynVOYIJzlTOOUkU00Os9wBu24Owe8v81P/zeotkJYV++SxB6I=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1ggXOd-0007RZ-SS; Mon, 07 Jan 2019 16:04:59 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 5BE1F1127491; Mon,  7 Jan 2019 16:04:59 +0000 (GMT)
-Date:   Mon, 7 Jan 2019 16:04:59 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Aditya Pakki <pakki001@umn.edu>
-Cc:     kjlu@umn.edu, Bard Liao <bardliao@realtek.com>,
-        Oder Chiou <oder_chiou@realtek.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ASoC: rt5663: Fix error handling of
- device_property_read_u32_array
-Message-ID: <20190107160459.GI9570@sirena.org.uk>
-References: <20190105134427.1022-1-pakki001@umn.edu>
+        Mon, 7 Jan 2019 11:07:50 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:53826 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727246AbfAGQHt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 11:07:49 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 033D12D7FF;
+        Mon,  7 Jan 2019 16:07:49 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-223.bos.redhat.com [10.18.17.223])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 730EE6B8C2;
+        Mon,  7 Jan 2019 16:07:47 +0000 (UTC)
+Subject: Re: [PATCH 2/2] /proc/stat: Add sysctl parameter to control irq
+ counts latency
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Daniel Colascione <dancol@google.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Randy Dunlap <rdunlap@infradead.org>
+References: <1546873978-27797-1-git-send-email-longman@redhat.com>
+ <1546873978-27797-3-git-send-email-longman@redhat.com>
+ <20190107155840.GY6310@bombadil.infradead.org>
+From:   Waiman Long <longman@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ weim8xU=
+Organization: Red Hat
+Message-ID: <c2ef7231-fe1f-9463-0b06-e88f990aa865@redhat.com>
+Date:   Mon, 7 Jan 2019 11:07:47 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="+ZmrHH5cGjskQnY1"
-Content-Disposition: inline
-In-Reply-To: <20190105134427.1022-1-pakki001@umn.edu>
-X-Cookie: NOBODY EXPECTS THE SPANISH INQUISITION!
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190107155840.GY6310@bombadil.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Mon, 07 Jan 2019 16:07:49 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 01/07/2019 10:58 AM, Matthew Wilcox wrote:
+> On Mon, Jan 07, 2019 at 10:12:58AM -0500, Waiman Long wrote:
+>> Reading /proc/stat can be slow especially if there are many irqs and on
+>> systems with many CPUs as summation of all the percpu counts for each
+>> of the irqs is required. On some newer systems, there can be more than
+>> 1000 irqs per socket.
+>>
+>> Applications that need to read /proc/stat many times per seconds will
+>> easily hit a bottleneck. In reality, the irq counts are seldom looked
+>> at. Even those applications that read them don't really need up-to-date
+>> information. One way to reduce the performance impact of irq counts
+>> computation is to do it less frequently.
+>>
+>> A new "fs/proc-stat-irqs-latency-ms" sysctl parameter is now added to
+> No.  No, no, no, no, no.  No.
+>
+> Stop adding new sysctls for this kind of thing.  It's just a way to shift
+> blame from us (who allegedly know what we're doing) to the sysadmin
+> (who probably has better things to be doing than keeping up with the
+> intricacies of development of every single piece of software running on
+> their system).
+>
+> Let's figure out what this _should_ be.  As a strawman, I propose we
+> update these stats once a second.  That's easy to document and understand.
 
---+ZmrHH5cGjskQnY1
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I am fine with having a fixed value (like 1s) for reporting purpose. It
+is just people may have many different opinions on what the right value
+should be. That is why I opt for flexibility in the initial patch.
 
-On Sat, Jan 05, 2019 at 07:44:27AM -0600, Aditya Pakki wrote:
+>
+>> @@ -98,7 +105,48 @@ static u64 compute_stat_irqs_sum(void)
+>>  static void show_stat_irqs(struct seq_file *p)
+>>  {
+>>  	int i;
+>> +#ifdef CONFIG_PROC_SYSCTL
+>> +	static char *irqs_buf;		   /* Buffer for irqs values */
+>> +	static int buflen;
+>> +	static unsigned long last_jiffies; /* Last buffer update jiffies */
+>> +	static DEFINE_MUTEX(irqs_mutex);
+>> +	unsigned int latency = proc_stat_irqs_latency_ms;
+>> +
+>> +	if (latency) {
+>> +		char *ptr;
+>> +
+>> +		latency = _msecs_to_jiffies(latency);
+>> +
+>> +		mutex_lock(&irqs_mutex);
+>> +		if (irqs_buf && time_before(jiffies, last_jiffies + latency))
+>> +			goto print_out;
+>> +
+>> +		/*
+>> +		 * Each irq value may require up to 11 bytes.
+>> +		 */
+>> +		if (!irqs_buf) {
+>> +			irqs_buf = kmalloc(nr_irqs * 11 + 32,
+>> +					   GFP_KERNEL | __GFP_ZERO);
+> Why are you caching the _output_ of calling sprintf(), rather than caching the
+> values of each interrupt?
+>
+It is just faster to dump the whole string buffer than redoing the
+number formatting each time when the values don't change. I can cache
+the individual sums instead if it is the preferred by most.
 
->  		rt5663->imp_table = devm_kzalloc(dev, table_size, GFP_KERNEL);
-> -		device_property_read_u32_array(dev,
-> +		return device_property_read_u32_array(dev,
->  			"realtek,impedance_sensing_table",
->  			(u32 *)rt5663->imp_table, table_size);
+Cheers,
+Longman
 
-This is going to silently fail without giving any indication of what's
-wrong which isn't great - it's not clear that completely failing to load
-the driver is the best option here, and even if it is we should probably
-tell the user what went wrong.
 
-We're also not checking the result of the memory allocation...
-
---+ZmrHH5cGjskQnY1
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlwzeKoACgkQJNaLcl1U
-h9BOCwf9FphVz+v+WezrJsnnKtKAX73L3q+F+LoFQ0sxXwzvHm15Q7+tUGL/75dL
-NCYxGPw4LoGf/kZWUhhIX9dII37aIjsez8ss8KiLu6LP/+28oJDwqX7yT/SoIay0
-ocmTlngVqm5ceU1j4lJl/8Irr7zCOJfZ63ZrfEUQ+FfX6Uoy1tdiIkHt+Cx2jsbm
-erayQMF4JnKC3htgSP7eN80YuLKi6n2FXPQlETfNcQVgbpLXaOI7gFE+cGkvk6xv
-+5fn5EuQJ/hmUP2NIkHEtJULV315KSc7Pg06UVNJ0DsEu0Zn6v9J4AwlXSIsT9Os
-LZOkQe3w6jfF5yeejCKGFPzBIMLzlA==
-=Do7P
------END PGP SIGNATURE-----
-
---+ZmrHH5cGjskQnY1--
