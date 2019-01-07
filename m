@@ -7,46 +7,51 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA634C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:10:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75B0BC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:10:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 922732089F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:10:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C2222089F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:10:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546866612;
-	bh=VuUzpgxjTxKg+nywbtNfOmYFfwP1kVcIq8/Y9bwjhAs=;
+	s=default; t=1546866616;
+	bh=uglj+PnscaOaYix1LjFhrx1w6YzViYzSmjPWBGe+jbg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=qICu+QShl6R0NnPHvuz+CaJCZaBM6daQK9/4SlZo7Pc2HUO6aTXBCVA37ueJIYS0M
-	 UhHgGAh7KYKnAarLXhJSJHo3v8xkfiqbLtfu6GjRa5e3vxVXKqiP36+60ucvGcc1J9
-	 9+O58vNmH4iNaV0VxNKSt4VfDeOgcZToYGUd3XDs=
+	b=d4gSi+G7NaN28hjFQCbUwxHFaz//XylMQKRhinIHLZi2PHbQLotrMOXgZz1Z4z0Lv
+	 dg/Bu5v7vMmjjLaa2pkxNE+LinR8xYeoFzUSjt/G9NR3pmIE/xVc/oLHE7jPI0EeRA
+	 m9LxiC0SXfptou1nhCZPMvmq8LdAQ6/w6Ar/JNdI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731988AbfAGNKL (ORCPT
+        id S1732004AbfAGNKP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:10:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56894 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:10:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56166 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731572AbfAGNKH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:10:07 -0500
+        id S1731762AbfAGNJH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:09:07 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 87708217D4;
-        Mon,  7 Jan 2019 13:10:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4B7B72089F;
+        Mon,  7 Jan 2019 13:09:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546866606;
-        bh=VuUzpgxjTxKg+nywbtNfOmYFfwP1kVcIq8/Y9bwjhAs=;
+        s=default; t=1546866546;
+        bh=uglj+PnscaOaYix1LjFhrx1w6YzViYzSmjPWBGe+jbg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yIzXdUQ7bTaNZL1U8/OPG5YJVSbFm3GoOp8KgcUSVsnM6YP8yVnf5tCeptEEU6/18
-         I0slZsclC5+KtjCG5B7wOnEEUl7ZokGwUDZslj5AYUR7n2TyP91CprSwknLIktNhSz
-         GGAgdIkyVVyK/2O6Q1F9atNZA7X1PLFNzMxM9q/g=
+        b=kkzvxfHKo8ZK7bwH/pWwCsfmNTNgjJSFz5pQIp/sns5nd83Y/kkqbfZWxdmgK7QId
+         /ACwi2k7kq0a/gooH953KjSK/k+n32AY38dFLLEQ02OtmzyciqDuvu9Fne04L4hBCF
+         ASmWJxXCL+n5MhX1fQJyb2VSPLfqWelj8GQ4GIwU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nava kishore Manne <nava.manne@xilinx.com>,
-        Michal Simek <michal.simek@xilinx.com>
-Subject: [PATCH 4.9 61/71] serial: uartps: Fix interrupt mask issue to handle the RX interrupts properly
-Date:   Mon,  7 Jan 2019 13:33:30 +0100
-Message-Id: <20190107105336.225934413@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+8993c0fa96d57c399735@syzkaller.appspotmail.com,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 29/71] ptr_ring: wrap back ->producer in __ptr_ring_swap_queue()
+Date:   Mon,  7 Jan 2019 13:32:58 +0100
+Message-Id: <20190107105334.421191654@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107105330.280153213@linuxfoundation.org>
 References: <20190107105330.280153213@linuxfoundation.org>
@@ -65,42 +70,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nava kishore Manne <nava.manne@xilinx.com>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-commit 260683137ab5276113fc322fdbbc578024185fee upstream.
+[ Upstream commit aff6db454599d62191aabc208930e891748e4322 ]
 
-This patch Correct the RX interrupt mask value to handle the
-RX interrupts properly.
+__ptr_ring_swap_queue() tries to move pointers from the old
+ring to the new one, but it forgets to check if ->producer
+is beyond the new size at the end of the operation. This leads
+to an out-of-bound access in __ptr_ring_produce() as reported
+by syzbot.
 
-Fixes: c8dbdc842d30 ("serial: xuartps: Rewrite the interrupt handling logic")
-Signed-off-by: Nava kishore Manne <nava.manne@xilinx.com>
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+Reported-by: syzbot+8993c0fa96d57c399735@syzkaller.appspotmail.com
+Fixes: 5d49de532002 ("ptr_ring: resize support")
+Cc: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: John Fastabend <john.fastabend@gmail.com>
+Cc: Jason Wang <jasowang@redhat.com>
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/tty/serial/xilinx_uartps.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ include/linux/ptr_ring.h |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/tty/serial/xilinx_uartps.c
-+++ b/drivers/tty/serial/xilinx_uartps.c
-@@ -128,7 +128,7 @@ MODULE_PARM_DESC(rx_timeout, "Rx timeout
- #define CDNS_UART_IXR_RXTRIG	0x00000001 /* RX FIFO trigger interrupt */
- #define CDNS_UART_IXR_RXFULL	0x00000004 /* RX FIFO full interrupt. */
- #define CDNS_UART_IXR_RXEMPTY	0x00000002 /* RX FIFO empty interrupt. */
--#define CDNS_UART_IXR_MASK	0x00001FFF /* Valid bit mask */
-+#define CDNS_UART_IXR_RXMASK	0x000021e7 /* Valid RX bit mask */
+--- a/include/linux/ptr_ring.h
++++ b/include/linux/ptr_ring.h
+@@ -384,6 +384,8 @@ static inline void **__ptr_ring_swap_que
+ 		else if (destroy)
+ 			destroy(ptr);
  
- 	/*
- 	 * Do not enable parity error interrupt for the following
-@@ -362,7 +362,7 @@ static irqreturn_t cdns_uart_isr(int irq
- 		cdns_uart_handle_tx(dev_id);
- 		isrstatus &= ~CDNS_UART_IXR_TXEMPTY;
- 	}
--	if (isrstatus & CDNS_UART_IXR_MASK)
-+	if (isrstatus & CDNS_UART_IXR_RXMASK)
- 		cdns_uart_handle_rx(dev_id, isrstatus);
- 
- 	spin_unlock(&port->lock);
++	if (producer >= size)
++		producer = 0;
+ 	r->size = size;
+ 	r->producer = producer;
+ 	r->consumer = 0;
 
 
