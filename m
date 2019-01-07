@@ -2,159 +2,103 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9A78C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 14:53:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64226C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 14:53:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F00A206C0
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 14:53:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D0922147C
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 14:53:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IjBMgFMJ"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ddH/1tiT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729250AbfAGOxI (ORCPT
+        id S1729273AbfAGOxT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 09:53:08 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:38915 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727548AbfAGOxI (ORCPT
+        Mon, 7 Jan 2019 09:53:19 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:34560 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727548AbfAGOxS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 09:53:08 -0500
-Received: by mail-pf1-f193.google.com with SMTP id r136so274006pfc.6;
-        Mon, 07 Jan 2019 06:53:07 -0800 (PST)
+        Mon, 7 Jan 2019 09:53:18 -0500
+Received: by mail-pl1-f193.google.com with SMTP id w4so270246plz.1
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 06:53:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=gbUbaFp0/lGttbZtf5mjlQK3Weann7eHKviq2kqFajk=;
-        b=IjBMgFMJlLgNUV2K1xbqWSv2A4TRFI6QLxc1lnK8lNhL33uTGrlRz+SlXCzn3pNmrw
-         j5lCsUq7iJcQgRT/2n3F4oKiFG0zIjC4ZWHq0kl1EZfFehI+BwDYFZ55rOfvhAxfggpy
-         tq3rDiI9KqKaUF0xt6/hea/F2wFUha2dpxDiQByt1B1c828VNNAQ9+Hi/DkE+Ei4xVis
-         Ch7vWnDZKe2sR/2ZpM2eQJOZqA7AvkjbZ8rwffvOZnnGzr4uEgIJyOZL2xUvrvyR4EKQ
-         +hGpHcdgIdXyC7Hb8Q2farK0bsIXY+mxE9Xs58HDa+q/B2Ar88uGW1bT15ql4JeipdMH
-         SlGg==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=C4W4tGQs/4aSuOdcjVltlo4CS5kRV1BEfEL5UEJ/zjg=;
+        b=ddH/1tiTLkcAh38u8Y225jplQlfMckshzN/Plqs8z9BhFN2zcAHGm5KSbAc19KPbB2
+         6gZkMleICfQI5eauxg63VnNe2zFq1NWJSNBf57hE8oT5VKRwzeD0Za7LztESa9zBvgH/
+         AdL4+JfMVdziFf0O2+q86VQ5x3CcrdMx36fug=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=gbUbaFp0/lGttbZtf5mjlQK3Weann7eHKviq2kqFajk=;
-        b=c2KG5GIB+RVzlgtj801XucLq0JN6+iGWalm0u5xaheyx6VnXB+OEoszaRqILmuxE2D
-         +LXR19ulPAAKdNGlsGm6jhBe6YaFWo/s7yfaPfWyNYVYYDitjwFFBMTCCMI52olfOuVh
-         c5xME5sCg0EHGwCqCqqal4Ucag8tloDdlK5p7aGt4gfXYXPJTKA4hU52OUPfxhe7/zUj
-         xYvg5/U9mwlSrl51LSOee3i+kQfsiL+IMr2o17nGalPxqVloxQcgNZCZRHm8j7eO61Ci
-         oK2Vz2Bm4BBfOebW0h1sD80C7SYncpkVLt1VOUr1NmzNyo4bmSmyYPo4IuJE7Te8M7mH
-         E9+A==
-X-Gm-Message-State: AJcUukcZfNo9dEOx+4sTieoOn6pZRF5SpxZdFPJzTHDcpgSK2BeeG0Ig
-        8h/eCrXaZOjaZiBO5Oteaozeh6dl
-X-Google-Smtp-Source: ALg8bN7YwnsVYZfmApPYiDG8k8vCXhE2eLNpPFQpjIA9wmGMN1huVpmjfNzCkM4dtbWusw/wtWJahg==
-X-Received: by 2002:a62:ae04:: with SMTP id q4mr36096235pff.126.1546872787066;
-        Mon, 07 Jan 2019 06:53:07 -0800 (PST)
-Received: from localhost.localdomain ([121.137.63.184])
-        by smtp.gmail.com with ESMTPSA id x27sm123153763pfe.178.2019.01.07.06.53.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 07 Jan 2019 06:53:06 -0800 (PST)
-From:   Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-To:     Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghua.yu@intel.com>
-Cc:     linux-ia64@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Subject: [PATCHv2] ia64: tweak BREAK_LOGLEVEL and RESTORE_LOGLEVEL
-Date:   Mon,  7 Jan 2019 23:52:58 +0900
-Message-Id: <20190107145258.22918-1-sergey.senozhatsky@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190107095433.6497-1-sergey.senozhatsky@gmail.com>
-References: <20190107095433.6497-1-sergey.senozhatsky@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=C4W4tGQs/4aSuOdcjVltlo4CS5kRV1BEfEL5UEJ/zjg=;
+        b=siUHdoLlrlPTo1W3ZHBEz4nm9avpY7FYrrq+LyKmzFzzVewBRrAYHyHAmbGun8uRR+
+         V+BLdqifR0EWne8CXfsgcCvQLPG/ABSh8avwvwzo82PLeiE3cPC2Slt8fa9Z1Gx/KyTy
+         bLH75VtirH3Ude87tptHkyBtcnVyPLEpHm+rUc5FeeaVDuSLLPpkwEpm0QmAKgAnt7XO
+         NmOUbxGeQ4iRloWiWRmcITiZQSc80LhAD3/izZNd339OcVnUtN94HqAQ5CFhzUIAVyMu
+         DTzlhKP024oyV5OR4qKTBq6LI+tu/gU4YI57kpvxEtk8NXhTQjayOuw+wv+IIN6mOACg
+         BhJg==
+X-Gm-Message-State: AJcUuke2VppDha3RxW2+cKnEF0fWJHcqSf2IqZZhyZC4vG3aeP1hs8n3
+        8ZheTKn82ylebVV+D2dT4QJS/A==
+X-Google-Smtp-Source: ALg8bN7oyWgYzBfL6s8XsMB/NZRf9W/DuDwrMrW8GAwMABAQQ1TRTdRgjAujwy4o+wB/69fl8GZFng==
+X-Received: by 2002:a17:902:9045:: with SMTP id w5mr59041293plz.32.1546872797321;
+        Mon, 07 Jan 2019 06:53:17 -0800 (PST)
+Received: from qualcomm-HP-ZBook-14-G2.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com. [103.229.18.19])
+        by smtp.gmail.com with ESMTPSA id o84sm121145584pfi.172.2019.01.07.06.53.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 07 Jan 2019 06:53:16 -0800 (PST)
+From:   Firoz Khan <firoz.khan@linaro.org>
+To:     Mark Salter <msalter@redhat.com>,
+        Aurelien Jacquiot <jacquiot.aurelien@gmail.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        linux-c6x-dev@linux-c6x.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>
+Cc:     y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, arnd@arndb.de, deepa.kernel@gmail.com,
+        marcin.juszkiewicz@linaro.org, firoz.khan@linaro.org
+Subject: [PATCH 0/3] c6x: system call table generation for asm-generic
+Date:   Mon,  7 Jan 2019 20:22:43 +0530
+Message-Id: <1546872766-3354-1-git-send-email-firoz.khan@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+This will be an automated scripts to provide easy support
+for add/modify/delete the system call entry by add entry 
+in respective syscall.tbl file.
 
-a) Do not pass console_loglevel to macros, use console_loglevel directly.
-b) Use CONSOLE_LOGLEVEL_MOTORMOUTH instead of a naked number
-c) Use bust_spinlocks() to set/clear oops_in_progress
-d) Fix checkpatch error: Macros with multiple statements should be
-                         enclosed in a do - while loop
+System call table generation support for asm-generic is
+provide for c6x architecture which will use the common
+scripts resides in scripts directory and use syscall.tbl
+as inputs. This implementation will replace asm-generic-
+/unistd.h.
 
-Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
----
- arch/ia64/kernel/mca.c | 36 ++++++++++++++++++++----------------
- 1 file changed, 20 insertions(+), 16 deletions(-)
+This patch depends on:
+ https://lore.kernel.org/lkml/1546439331-18646-1-git-send-email-firoz.khan@linaro.org/
+ https://lore.kernel.org/lkml/1546520681-24453-1-git-send-email-firoz.khan@linaro.org/
 
-diff --git a/arch/ia64/kernel/mca.c b/arch/ia64/kernel/mca.c
-index 91bd1e129379..940f34db97d3 100644
---- a/arch/ia64/kernel/mca.c
-+++ b/arch/ia64/kernel/mca.c
-@@ -188,19 +188,23 @@ static unsigned int mlogbuf_finished = 0;
- static unsigned long mlogbuf_timestamp = 0;
- 
- static int loglevel_save = -1;
--#define BREAK_LOGLEVEL(__console_loglevel)		\
--	oops_in_progress = 1;				\
--	if (loglevel_save < 0)				\
--		loglevel_save = __console_loglevel;	\
--	__console_loglevel = 15;
--
--#define RESTORE_LOGLEVEL(__console_loglevel)		\
--	if (loglevel_save >= 0) {			\
--		__console_loglevel = loglevel_save;	\
--		loglevel_save = -1;			\
--	}						\
--	mlogbuf_finished = 0;				\
--	oops_in_progress = 0;
-+#define BREAK_LOGLEVEL()					\
-+	do {							\
-+		bust_spinlocks(1);				\
-+		if (loglevel_save < 0)				\
-+			loglevel_save = console_loglevel;	\
-+		console_loglevel = CONSOLE_LOGLEVEL_MOTORMOUTH;	\
-+	} while (0)
-+
-+#define RESTORE_LOGLEVEL()					\
-+	do {							\
-+		if (loglevel_save >= 0) {			\
-+			console_loglevel = loglevel_save;	\
-+			loglevel_save = -1;			\
-+		}						\
-+		mlogbuf_finished = 0;				\
-+		bust_spinlocks(0);				\
-+	} while (0)
- 
- /*
-  * Push messages into buffer, print them later if not urgent.
-@@ -287,7 +291,7 @@ EXPORT_SYMBOL(ia64_mlogbuf_dump);
-  */
- static void ia64_mlogbuf_finish(int wait)
- {
--	BREAK_LOGLEVEL(console_loglevel);
-+	BREAK_LOGLEVEL();
- 
- 	spin_lock_init(&mlogbuf_rlock);
- 	ia64_mlogbuf_dump();
-@@ -1616,7 +1620,7 @@ default_monarch_init_process(struct notifier_block *self, unsigned long val, voi
- 	 * To enable show_stack from INIT, we use oops_in_progress which should
- 	 * be used in real oops. This would cause something wrong after INIT.
- 	 */
--	BREAK_LOGLEVEL(console_loglevel);
-+	BREAK_LOGLEVEL();
- 	ia64_mlogbuf_dump_from_init();
- 
- 	printk(KERN_ERR "Processes interrupted by INIT -");
-@@ -1641,7 +1645,7 @@ default_monarch_init_process(struct notifier_block *self, unsigned long val, voi
- 		read_unlock(&tasklist_lock);
- 	}
- 	/* FIXME: This will not restore zapped printk locks. */
--	RESTORE_LOGLEVEL(console_loglevel);
-+	RESTORE_LOGLEVEL();
- 	return NOTIFY_DONE;
- }
- 
+Firoz Khan (3):
+  c6x: add Makefile to invoke syscall table generation script
+  c6x: add __ARCH_NOMMU as a bugfix
+  c6x: generate uapi and kapi headers
+
+ arch/c6x/Makefile                  |  3 +++
+ arch/c6x/include/asm/Kbuild        |  1 +
+ arch/c6x/include/uapi/asm/Kbuild   |  1 +
+ arch/c6x/include/uapi/asm/unistd.h | 15 +++++++++-----
+ arch/c6x/kernel/sys_c6x.c          |  3 ++-
+ arch/c6x/kernel/syscalls/Makefile  | 41 ++++++++++++++++++++++++++++++++++++++
+ 6 files changed, 58 insertions(+), 6 deletions(-)
+ create mode 100644 arch/c6x/kernel/syscalls/Makefile
+
 -- 
-2.20.1
+1.9.1
 
