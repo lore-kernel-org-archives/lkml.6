@@ -7,25 +7,25 @@ X-Spam-Status: No, score=-16.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBE56C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 19:01:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A333C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 19:02:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4E802147C
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 19:01:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 090EF206B7
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 19:02:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546887717;
-	bh=1e9hlTKLlvWNld7J8NLCagp0kxzl2IYicE24LzcKb3A=;
+	s=default; t=1546887723;
+	bh=I9glFtasa+omp4z1O9S6XOyXpoZGtpXj6fViH8G6Wcg=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=K7+R2wl1XLW1iB7o/6UkEydS7mft4IX5jx2aiRh4xQe4Pl0P3Gbc5dq/dWC8X5cl5
-	 4MpJh4g7o3/SZv0ZVgT3o0fY06vdkn6qLqH4nTvX8gkjHs9lpBSW38Xt+03ugN56iX
-	 VzMEbOjz16X+Fp0teNniovOnN+nlz5lyDzLZUmjk=
+	b=rPu5hG1xLa9SjXJp+D1yCdHW8PvcDaJ+84736mBt/EN6s1xZwKE5aKAKwBT0ZhJit
+	 otDicyc63Ru5WCpaF+J2rbGM3rcIai7C1hk47sgNNDXy/aTmYpKjhnUKXnHDQ4gwfb
+	 ZiwPhv2UFjcnY7pEtU13DHQ678ffqxaRmICJHBnU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728376AbfAGTB4 (ORCPT
+        id S1728299AbfAGTBz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 14:01:56 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40502 "EHLO
+        Mon, 7 Jan 2019 14:01:55 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40540 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726921AbfAGS6H (ORCPT
+        with ESMTP id S1728301AbfAGS6H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 7 Jan 2019 13:58:07 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -34,33 +34,32 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=ExSbMjyXOvkpN+sqJ2mk8nWQhe5iHuXQRC86J+bjjtk=; b=O+J8Pbebt1ec
-        mrxLaTa4n8++XoJrKq5h42CLBId8U+BxfCmrcb5IQ1qeFNZ3h5Wqg5S11tPFTx+P/oFDPmhwrV2EQ
-        yi5QyTJjb2eHm6pFU4t7K91F3Dfc1WtIyGLnyDUI8aOcOQDwzOm0y4oVd/SfLh932UKXyavVfqQZd
-        l0ZWY=;
+        List-Archive; bh=FcPwXZ/ImYm9gw7NrZp9B6EBR0r695ObnvPVpD/wZrk=; b=ACLDF+4WJm+0
+        uUuaRbBurZiu2o2KbM3OXTryrQ4SjWJEu509X+XOc040FW5TvgkG9dX1FG6a4BU+1ZKPAjvPkR+xq
+        bIok8RhAoItQsRm+l3a9QuXoWYWGy06bOTnxKPKNSENQ/Nik9dcFmhTiGqTYCJufHAuxFJbn7BwB0
+        3AnLg=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gga64-0007ls-H4; Mon, 07 Jan 2019 18:58:00 +0000
+        id 1gga66-0007m3-Cv; Mon, 07 Jan 2019 18:58:02 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 2D1431127491; Mon,  7 Jan 2019 18:58:00 +0000 (GMT)
+        id 086401127491; Mon,  7 Jan 2019 18:58:02 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
-To:     Bard liao <yung-chuan.liao@linux.intel.com>
-Cc:     Oder Chiou <oder_chiou@realtek.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc:     Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
         Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org,
-        Oder Chiou <oder_chiou@realtek.com>, tiwai@suse.de,
-        open list <linux-kernel@vger.kernel.org>,
+        Support Opensource <support.opensource@diasemi.com>,
+        tiwai@suse.de, open list <linux-kernel@vger.kernel.org>,
         Takashi Iwai <tiwai@suse.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
         Liam Girdwood <lgirdwood@gmail.com>,
         liam.r.girdwood@linux.intel.com, broonie@kernel.org,
-        Bard Liao <bardliao@realtek.com>, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: rt5645: store eq kcontrol byte in __be" to the asoc tree
-In-Reply-To:  <20190105020249.8639-21-pierre-louis.bossart@linux.intel.com>
+        Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
+        alsa-devel@alsa-project.org
+Subject: Applied "ASoC: da7219: use logical AND" to the asoc tree
+In-Reply-To:  <20190105020249.8639-20-pierre-louis.bossart@linux.intel.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190107185800.2D1431127491@debutante.sirena.org.uk>
-Date:   Mon,  7 Jan 2019 18:58:00 +0000 (GMT)
+Message-Id: <20190107185802.086401127491@debutante.sirena.org.uk>
+Date:   Mon,  7 Jan 2019 18:58:02 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -68,7 +67,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: rt5645: store eq kcontrol byte in __be
+   ASoC: da7219: use logical AND
 
 has been applied to the asoc tree at
 
@@ -93,97 +92,35 @@ to this mail.
 Thanks,
 Mark
 
-From 60b52ed627213d1782e70b9810f5668f61bba3a8 Mon Sep 17 00:00:00 2001
-From: Bard liao <yung-chuan.liao@linux.intel.com>
-Date: Fri, 4 Jan 2019 20:02:48 -0600
-Subject: [PATCH] ASoC: rt5645: store eq kcontrol byte in __be
+From b468f379e1e01b723825267431d3ba60f824fda2 Mon Sep 17 00:00:00 2001
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Date: Fri, 4 Jan 2019 20:02:47 -0600
+Subject: [PATCH] ASoC: da7219: use logical AND
 
-The eq parameters binary is stored in __be. However, it is unsigned short
-in rt5645_eq_param_s{} which will cause incorrect type assignment. So add
-struct rt5645_eq_param_s_be16{} to store the eq binary and convert it to
-unsigned short in rt5645->eq_param.
+Reported by Sparse:
+da7219.c:841:57: warning: dubious: x & !y
 
-Cc: Oder Chiou <oder_chiou@realtek.com>
-Signed-off-by: Bard liao <yung-chuan.liao@linux.intel.com>
+Cc: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
 Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Reviewed-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/rt5645.c | 30 ++++++++++++++++--------------
- 1 file changed, 16 insertions(+), 14 deletions(-)
+ sound/soc/codecs/da7219.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/rt5645.c b/sound/soc/codecs/rt5645.c
-index 52ce380c8f3a..9a0751978090 100644
---- a/sound/soc/codecs/rt5645.c
-+++ b/sound/soc/codecs/rt5645.c
-@@ -401,6 +401,11 @@ struct rt5645_eq_param_s {
- 	unsigned short val;
- };
+diff --git a/sound/soc/codecs/da7219.c b/sound/soc/codecs/da7219.c
+index ce165047b9f9..513ec0368653 100644
+--- a/sound/soc/codecs/da7219.c
++++ b/sound/soc/codecs/da7219.c
+@@ -838,7 +838,7 @@ static int da7219_dai_event(struct snd_soc_dapm_widget *w,
+ 				++i;
+ 				msleep(50);
+ 			}
+-		} while ((i < DA7219_SRM_CHECK_RETRIES) & (!srm_lock));
++		} while ((i < DA7219_SRM_CHECK_RETRIES) && (!srm_lock));
  
-+struct rt5645_eq_param_s_be16 {
-+	__be16 reg;
-+	__be16 val;
-+};
-+
- static const char *const rt5645_supply_names[] = {
- 	"avdd",
- 	"cpvdd",
-@@ -672,8 +677,8 @@ static int rt5645_hweq_get(struct snd_kcontrol *kcontrol,
- {
- 	struct snd_soc_component *component = snd_kcontrol_chip(kcontrol);
- 	struct rt5645_priv *rt5645 = snd_soc_component_get_drvdata(component);
--	struct rt5645_eq_param_s *eq_param =
--		(struct rt5645_eq_param_s *)ucontrol->value.bytes.data;
-+	struct rt5645_eq_param_s_be16 *eq_param =
-+		(struct rt5645_eq_param_s_be16 *)ucontrol->value.bytes.data;
- 	int i;
- 
- 	for (i = 0; i < RT5645_HWEQ_NUM; i++) {
-@@ -698,36 +703,33 @@ static int rt5645_hweq_put(struct snd_kcontrol *kcontrol,
- {
- 	struct snd_soc_component *component = snd_kcontrol_chip(kcontrol);
- 	struct rt5645_priv *rt5645 = snd_soc_component_get_drvdata(component);
--	struct rt5645_eq_param_s *eq_param =
--		(struct rt5645_eq_param_s *)ucontrol->value.bytes.data;
-+	struct rt5645_eq_param_s_be16 *eq_param =
-+		(struct rt5645_eq_param_s_be16 *)ucontrol->value.bytes.data;
- 	int i;
- 
- 	for (i = 0; i < RT5645_HWEQ_NUM; i++) {
--		eq_param[i].reg = be16_to_cpu(eq_param[i].reg);
--		eq_param[i].val = be16_to_cpu(eq_param[i].val);
-+		rt5645->eq_param[i].reg = be16_to_cpu(eq_param[i].reg);
-+		rt5645->eq_param[i].val = be16_to_cpu(eq_param[i].val);
- 	}
- 
- 	/* The final setting of the table should be RT5645_EQ_CTRL2 */
- 	for (i = RT5645_HWEQ_NUM - 1; i >= 0; i--) {
--		if (eq_param[i].reg == 0)
-+		if (rt5645->eq_param[i].reg == 0)
- 			continue;
--		else if (eq_param[i].reg != RT5645_EQ_CTRL2)
-+		else if (rt5645->eq_param[i].reg != RT5645_EQ_CTRL2)
- 			return 0;
- 		else
- 			break;
- 	}
- 
- 	for (i = 0; i < RT5645_HWEQ_NUM; i++) {
--		if (!rt5645_validate_hweq(eq_param[i].reg) &&
--			eq_param[i].reg != 0)
-+		if (!rt5645_validate_hweq(rt5645->eq_param[i].reg) &&
-+		    rt5645->eq_param[i].reg != 0)
- 			return 0;
--		else if (eq_param[i].reg == 0)
-+		else if (rt5645->eq_param[i].reg == 0)
- 			break;
- 	}
- 
--	memcpy(rt5645->eq_param, eq_param,
--		RT5645_HWEQ_NUM * sizeof(struct rt5645_eq_param_s));
--
- 	return 0;
- }
- 
+ 		if (!srm_lock)
+ 			dev_warn(component->dev, "SRM failed to lock\n");
 -- 
 2.20.1
 
