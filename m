@@ -7,50 +7,48 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B61F1C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:43:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE51AC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:43:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84AD020449
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:43:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 733EE20665
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:43:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546865022;
-	bh=DOStrqzC/B2lJG/bFy4nOd7zXg0QZr1BFH1zffjpkpQ=;
+	s=default; t=1546865025;
+	bh=dqsqlWNQc5x9FJ4vb4Xj3SyAFR7Cilj2ga3vjLlcBdg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=mqG+NtL7k+0/bkNx+m6agg8YzVQwX0z3yEIdmseVHMFzc4JdrmE4++HfB4Dz1EuY1
-	 h0la0x0DGM5rMHzgc+VmgmwjDBereWAbSi0kXBIVwMOJRSMXvdCrtrMq7PU3lAFAQ9
-	 ADF7uAAHCCYBBmgOjL9u9qxkyHQofNssKq/bHdZg=
+	b=BEJg333WtNnCh6NpHk+WcnNn+iyp6h92RzChBuyq99kLOF2jbhrSvWHnYjE/fSVr2
+	 tRRq7JWkj01qHVv8R8teH0Uv7faNdVnay1Lw7AGcgdv1CMBs43B/fPoYBHXq2ElP7K
+	 gkcHThmvEFJAi0G3pyKyNXX4esdgx9y7tVQTpi0k=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728447AbfAGMnl (ORCPT
+        id S1728461AbfAGMno (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:43:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59786 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:43:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59898 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728127AbfAGMni (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:43:38 -0500
+        id S1728446AbfAGMnl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:43:41 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2969120449;
-        Mon,  7 Jan 2019 12:43:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E8A0F20665;
+        Mon,  7 Jan 2019 12:43:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865017;
-        bh=DOStrqzC/B2lJG/bFy4nOd7zXg0QZr1BFH1zffjpkpQ=;
+        s=default; t=1546865020;
+        bh=dqsqlWNQc5x9FJ4vb4Xj3SyAFR7Cilj2ga3vjLlcBdg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Aqpj1/Iv61rVqw2lFdYWFlsTPlMBz2NAr1g9exRwcdbURbAeg43ld6rFnLuvBBcKF
-         2K+nv+YV6HS87P4iYVCrAcr1dhrWnI9gLdQud5CF0hDNgrngR/PhxZquseZdigFaL/
-         1rWwGxi7oOrIpxhi+VG2Z4NfSl/vD+T3wkomNwgs=
+        b=NMtZQYckqkjZJ61dzseCo/tH6IfI+OwIdc0nmhbz9/sHBXovbONzOdi/FF43EkJxF
+         VfXvXq71Seujgu0YxB21Shn7Vql0IHQv5JRxqS6EeYZfu0JsZklSHEiGENpFXG2MuX
+         OMZc57jvC05+oUmuU7tcKsqpifVU8SK90oNlmWqs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-trace-devel@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 4.20 119/145] tools lib traceevent: Fix processing of dereferenced args in bprintk events
-Date:   Mon,  7 Jan 2019 13:32:36 +0100
-Message-Id: <20190107104452.785874755@linuxfoundation.org>
+        stable@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
+        Paul Burton <paul.burton@mips.com>, linux-mips@vger.kernel.org,
+        Rich Felker <dalias@libc.org>,
+        David Daney <david.daney@cavium.com>
+Subject: [PATCH 4.20 120/145] MIPS: math-emu: Write-protect delay slot emulation pages
+Date:   Mon,  7 Jan 2019 13:32:37 +0100
+Message-Id: <20190107104452.929400082@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104437.308206189@linuxfoundation.org>
 References: <20190107104437.308206189@linuxfoundation.org>
@@ -69,38 +67,125 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Steven Rostedt (VMware) <rostedt@goodmis.org>
+From: Paul Burton <paul.burton@mips.com>
 
-commit f024cf085c423bac7512479f45c34ee9a24af7ce upstream.
+commit adcc81f148d733b7e8e641300c5590a2cdc13bf3 upstream.
 
-In the case that a bprintk event has a dereferenced pointer that is
-stored as a string, and there's more values to process (more args), the
-arg was not updated to point to the next arg after processing the
-dereferenced pointer, and it screwed up what was to be displayed.
+Mapping the delay slot emulation page as both writeable & executable
+presents a security risk, in that if an exploit can write to & jump into
+the page then it can be used as an easy way to execute arbitrary code.
 
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: linux-trace-devel@vger.kernel.org
-Cc: stable@vger.kernel.org
-Fixes: 37db96bb49629 ("tools lib traceevent: Handle new pointer processing of bprint strings")
-Link: http://lkml.kernel.org/r/20181210134522.3f71e2ca@gandalf.local.home
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Prevent this by mapping the page read-only for userland, and using
+access_process_vm() with the FOLL_FORCE flag to write to it from
+mips_dsemul().
+
+This will likely be less efficient due to copy_to_user_page() performing
+cache maintenance on a whole page, rather than a single line as in the
+previous use of flush_cache_sigtramp(). However this delay slot
+emulation code ought not to be running in any performance critical paths
+anyway so this isn't really a problem, and we can probably do better in
+copy_to_user_page() anyway in future.
+
+A major advantage of this approach is that the fix is small & simple to
+backport to stable kernels.
+
+Reported-by: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Fixes: 432c6bacbd0c ("MIPS: Use per-mm page to execute branch delay slot instructions")
+Cc: stable@vger.kernel.org # v4.8+
+Cc: linux-mips@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: Rich Felker <dalias@libc.org>
+Cc: David Daney <david.daney@cavium.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/lib/traceevent/event-parse.c |    1 +
- 1 file changed, 1 insertion(+)
+ arch/mips/kernel/vdso.c     |    4 ++--
+ arch/mips/math-emu/dsemul.c |   38 ++++++++++++++++++++------------------
+ 2 files changed, 22 insertions(+), 20 deletions(-)
 
---- a/tools/lib/traceevent/event-parse.c
-+++ b/tools/lib/traceevent/event-parse.c
-@@ -4970,6 +4970,7 @@ static void pretty_print(struct trace_se
+--- a/arch/mips/kernel/vdso.c
++++ b/arch/mips/kernel/vdso.c
+@@ -126,8 +126,8 @@ int arch_setup_additional_pages(struct l
  
- 				if (arg->type == TEP_PRINT_BSTRING) {
- 					trace_seq_puts(s, arg->string.string);
-+					arg = arg->next;
- 					break;
- 				}
+ 	/* Map delay slot emulation page */
+ 	base = mmap_region(NULL, STACK_TOP, PAGE_SIZE,
+-			   VM_READ|VM_WRITE|VM_EXEC|
+-			   VM_MAYREAD|VM_MAYWRITE|VM_MAYEXEC,
++			   VM_READ | VM_EXEC |
++			   VM_MAYREAD | VM_MAYWRITE | VM_MAYEXEC,
+ 			   0, NULL);
+ 	if (IS_ERR_VALUE(base)) {
+ 		ret = base;
+--- a/arch/mips/math-emu/dsemul.c
++++ b/arch/mips/math-emu/dsemul.c
+@@ -214,8 +214,9 @@ int mips_dsemul(struct pt_regs *regs, mi
+ {
+ 	int isa16 = get_isa16_mode(regs->cp0_epc);
+ 	mips_instruction break_math;
+-	struct emuframe __user *fr;
+-	int err, fr_idx;
++	unsigned long fr_uaddr;
++	struct emuframe fr;
++	int fr_idx, ret;
  
+ 	/* NOP is easy */
+ 	if (ir == 0)
+@@ -250,27 +251,31 @@ int mips_dsemul(struct pt_regs *regs, mi
+ 		fr_idx = alloc_emuframe();
+ 	if (fr_idx == BD_EMUFRAME_NONE)
+ 		return SIGBUS;
+-	fr = &dsemul_page()[fr_idx];
+ 
+ 	/* Retrieve the appropriately encoded break instruction */
+ 	break_math = BREAK_MATH(isa16);
+ 
+ 	/* Write the instructions to the frame */
+ 	if (isa16) {
+-		err = __put_user(ir >> 16,
+-				 (u16 __user *)(&fr->emul));
+-		err |= __put_user(ir & 0xffff,
+-				  (u16 __user *)((long)(&fr->emul) + 2));
+-		err |= __put_user(break_math >> 16,
+-				  (u16 __user *)(&fr->badinst));
+-		err |= __put_user(break_math & 0xffff,
+-				  (u16 __user *)((long)(&fr->badinst) + 2));
++		union mips_instruction _emul = {
++			.halfword = { ir >> 16, ir }
++		};
++		union mips_instruction _badinst = {
++			.halfword = { break_math >> 16, break_math }
++		};
++
++		fr.emul = _emul.word;
++		fr.badinst = _badinst.word;
+ 	} else {
+-		err = __put_user(ir, &fr->emul);
+-		err |= __put_user(break_math, &fr->badinst);
++		fr.emul = ir;
++		fr.badinst = break_math;
+ 	}
+ 
+-	if (unlikely(err)) {
++	/* Write the frame to user memory */
++	fr_uaddr = (unsigned long)&dsemul_page()[fr_idx];
++	ret = access_process_vm(current, fr_uaddr, &fr, sizeof(fr),
++				FOLL_FORCE | FOLL_WRITE);
++	if (unlikely(ret != sizeof(fr))) {
+ 		MIPS_FPU_EMU_INC_STATS(errors);
+ 		free_emuframe(fr_idx, current->mm);
+ 		return SIGBUS;
+@@ -282,10 +287,7 @@ int mips_dsemul(struct pt_regs *regs, mi
+ 	atomic_set(&current->thread.bd_emu_frame, fr_idx);
+ 
+ 	/* Change user register context to execute the frame */
+-	regs->cp0_epc = (unsigned long)&fr->emul | isa16;
+-
+-	/* Ensure the icache observes our newly written frame */
+-	flush_cache_sigtramp((unsigned long)&fr->emul);
++	regs->cp0_epc = fr_uaddr | isa16;
+ 
+ 	return 0;
+ }
 
 
