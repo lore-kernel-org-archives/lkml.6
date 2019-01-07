@@ -7,43 +7,43 @@ X-Spam-Status: No, score=-16.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67EAAC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 19:00:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBFA3C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 19:00:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35292206B7
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 19:00:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99E90206B7
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 19:00:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546887627;
-	bh=6SI6jTgl6WdrBeaKgmPFiGtphxlzhLXpfIwfwTu6X94=;
+	s=default; t=1546887629;
+	bh=DAVSOEfLbLxjBmAhanIBfOlNJpRzS08DRj0R2TlvcOE=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=y5pGAKt1QQesqm2MiHSUaG2CUm5sdO9jij9j/78/iLm8pv95/TY77TWut3nfuSnAC
-	 wtNFbfOfM95T+6b97FSkOYBfO6AgjSovNEubqTQovYq0klcZWwsO6F2b4jWI4B8r8i
-	 k/DpJgTJFCU0EI6Vhxrqc8O0cTdtYlyDc+8R3mow=
+	b=esEUP1m9yGFAMrOme4V4KzCLe0rxNm/Yi5gpruJU+YZG/UKWwWdIGpE1mwQYfnOwm
+	 YwCMG+mcM3s8OQZP2AboiaJQhmtNfNjbnSWTWYSAdUY5f6QeGi/AmlHlZNcDwLrDsr
+	 wqZeZynczgBrH9Flipd3dN3kil0eWpIjrIJvufJs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728958AbfAGS7Q (ORCPT
+        id S1729167AbfAGTA2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 13:59:16 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42796 "EHLO
+        Mon, 7 Jan 2019 14:00:28 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42908 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727008AbfAGS7N (ORCPT
+        with ESMTP id S1728942AbfAGS7Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 13:59:13 -0500
+        Mon, 7 Jan 2019 13:59:16 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=j6IPE14bSTdSl8O64DoUax6quuqxKvjbwoSzT35o1F0=; b=XU3ZIdD9e8o1
-        3FeUh5Z+YHJhu4cOBdQpbsRrlCM23VsUTD4lw49A0J4P4lCqi7ypSFWid3jn97BtcGsRV+3+M65dY
-        d1ATqCt6XaSY0BUGq55k1cOg/Di8DuSEmoU8yykTR5ev/HcI0VvESacPX10oLxTD0d4AdJ5GMBMuX
-        utu5w=;
+        List-Archive; bh=bPpFLdt1RsxemTLkKfv9pv5f9X+G5jh2tEpv2eU+UXI=; b=oxmPfy+A7xTi
+        /4uXzbJ8NQ3wwu0X/DYtGGIYnK05nNLQhx5ZXBTmIEZdo1ldyubgNvSJSv9vextvvsF+LuBfoUyo8
+        mpKQGyiwZR3NVgtPlPwmYg5rJ6Zb6dQ+r6csjQGHZtCwyIA55bqBJdBYmX/Q+pBvmJFnOkZaQKJJP
+        D0RuY=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gga77-0007qV-Or; Mon, 07 Jan 2019 18:59:05 +0000
+        id 1gga7D-0007qy-Er; Mon, 07 Jan 2019 18:59:11 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 6663D1127491; Mon,  7 Jan 2019 18:59:05 +0000 (GMT)
+        id 12A251127491; Mon,  7 Jan 2019 18:59:11 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
 To:     Cezary Gapinski <cezary.gapinski@gmail.com>
 Cc:     Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
@@ -55,11 +55,11 @@ Cc:     Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
         Maxime Coquelin <mcoquelin.stm32@gmail.com>,
         Alexandre Torgue <alexandre.torgue@st.com>,
         Mark Rutland <mark.rutland@arm.com>, linux-spi@vger.kernel.org
-Subject: Applied "spi: stm32: rename interrupt function" to the spi tree
-In-Reply-To:  <1545688840-23992-9-git-send-email-cezary.gapinski@gmail.com>
+Subject: Applied "spi: stm32: use explicit CPOL and CPHA mode bits" to the spi tree
+In-Reply-To:  <1545688840-23992-6-git-send-email-cezary.gapinski@gmail.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190107185905.6663D1127491@debutante.sirena.org.uk>
-Date:   Mon,  7 Jan 2019 18:59:05 +0000 (GMT)
+Message-Id: <20190107185911.12A251127491@debutante.sirena.org.uk>
+Date:   Mon,  7 Jan 2019 18:59:11 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -67,7 +67,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   spi: stm32: rename interrupt function
+   spi: stm32: use explicit CPOL and CPHA mode bits
 
 has been applied to the spi tree at
 
@@ -92,47 +92,34 @@ to this mail.
 Thanks,
 Mark
 
-From a9675337ad3e540cecb2411a7fc71fda133a3932 Mon Sep 17 00:00:00 2001
+From d6cea11b092a2c28ecf8371c093214cbb112e926 Mon Sep 17 00:00:00 2001
 From: Cezary Gapinski <cezary.gapinski@gmail.com>
-Date: Mon, 24 Dec 2018 23:00:34 +0100
-Subject: [PATCH] spi: stm32: rename interrupt function
+Date: Mon, 24 Dec 2018 23:00:31 +0100
+Subject: [PATCH] spi: stm32: use explicit CPOL and CPHA mode bits
 
-Interrupt function is used as a thread so rename it to express
-meaning directly by more clear function name.
+Driver supports SPI mode 0 to 3 not only the mode 3.
+Use SPI_CPOL and SPI_CPHA indicates that these bits
+can be changed to obtain modes 0 - 3.
 
 Signed-off-by: Cezary Gapinski <cezary.gapinski@gmail.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/spi/spi-stm32.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/spi/spi-stm32.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/spi/spi-stm32.c b/drivers/spi/spi-stm32.c
-index 2ece69a75ae4..9cb7d334a5cb 100644
+index 8310f14fe273..f7056b767477 100644
 --- a/drivers/spi/spi-stm32.c
 +++ b/drivers/spi/spi-stm32.c
-@@ -466,11 +466,11 @@ static bool stm32_spi_can_dma(struct spi_master *master,
- }
- 
- /**
-- * stm32_spi_irq - Interrupt handler for SPI controller events
-+ * stm32_spi_irq_thread - Thread of interrupt handler for SPI controller
-  * @irq: interrupt line
-  * @dev_id: SPI controller master interface
-  */
--static irqreturn_t stm32_spi_irq(int irq, void *dev_id)
-+static irqreturn_t stm32_spi_irq_thread(int irq, void *dev_id)
- {
- 	struct spi_master *master = dev_id;
- 	struct stm32_spi *spi = spi_master_get_devdata(master);
-@@ -1113,7 +1113,7 @@ static int stm32_spi_probe(struct platform_device *pdev)
- 		goto err_master_put;
- 	}
- 	ret = devm_request_threaded_irq(&pdev->dev, spi->irq, NULL,
--					stm32_spi_irq, IRQF_ONESHOT,
-+					stm32_spi_irq_thread, IRQF_ONESHOT,
- 					pdev->name, master);
- 	if (ret) {
- 		dev_err(&pdev->dev, "irq%d request failed: %d\n", spi->irq,
+@@ -1142,7 +1142,7 @@ static int stm32_spi_probe(struct platform_device *pdev)
+ 	master->dev.of_node = pdev->dev.of_node;
+ 	master->auto_runtime_pm = true;
+ 	master->bus_num = pdev->id;
+-	master->mode_bits = SPI_MODE_3 | SPI_CS_HIGH | SPI_LSB_FIRST |
++	master->mode_bits = SPI_CPHA | SPI_CPOL | SPI_CS_HIGH | SPI_LSB_FIRST |
+ 			    SPI_3WIRE | SPI_LOOP;
+ 	master->bits_per_word_mask = stm32_spi_get_bpw_mask(spi);
+ 	master->max_speed_hz = spi->clk_rate / SPI_MBR_DIV_MIN;
 -- 
 2.20.1
 
