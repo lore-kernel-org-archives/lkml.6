@@ -2,119 +2,139 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87E8DC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:55:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C193C43444
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:55:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 555AF206BB
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:55:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="UCA9puy3"
+	by mail.kernel.org (Postfix) with ESMTP id 395AF20651
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:55:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546865754;
+	bh=rq3nzkzdVSqYgV0Uj6q5FdD9PeZMOMp2YYziH/bkQXk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=hXawwzgwKRhdDqJEjnykYLfwKR1F5BdmXAnIkrpBe2Cv0PCW6XzJeUO+p5swYQ/Xh
+	 Rcpy8fvH8aSHQudXoz5V2PbuDrWv9yRKBxXQr2oPlfswEwuCNeVaAjvXGMlVpMTY/W
+	 3PzM+Vabsc0HDgt5HTPGVct8T+1iO2C/+dWDbv4E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729702AbfAGMzr (ORCPT
+        id S1729472AbfAGMzx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:55:47 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:60954 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727022AbfAGMzn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:55:43 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x07CnSss030048;
-        Mon, 7 Jan 2019 12:55:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- content-transfer-encoding : in-reply-to; s=corp-2018-07-02;
- bh=uz4LkBO1vBAjKUDA/RMmMBcHEt2I72G1OKaBaDKEfBE=;
- b=UCA9puy3aEQtXmNRB+yUtFbvRRzYIp1qH58yIJlwfb3n3fIMSL45I/oLpeRXOW1qkRNy
- 0yfA4xm8usflhZDbPg3fgRj0vAYsEZnL5lZjUJl25mxuQz3sEUGqywSDLnLn37icl5zc
- zqDnq3e5WXR9IUWoMTwHtgvlqYX9Da7/OvVKbbuA+jOU9pYwv7NxwePE/+d/QBhFEiqi
- ohHx513+3nnOhHS6J+mc346VQw2WuaXUOrOiX8RAYpU1+x1vxYCswFQbNgz72ptSEaUt
- OVmzz/I/AmRJyG6BHHnF5xZ23neHB137urLB6YrLLcW0Lwykm6tiuzr1BwGmWjdvG/3G wA== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2130.oracle.com with ESMTP id 2ptm0twk7s-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 07 Jan 2019 12:55:36 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x07CtZfq013551
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 7 Jan 2019 12:55:35 GMT
-Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x07CtZ3P013565;
-        Mon, 7 Jan 2019 12:55:35 GMT
-Received: from kadam (/197.157.0.45)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 07 Jan 2019 04:55:34 -0800
-Date:   Mon, 7 Jan 2019 15:54:37 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     =?iso-8859-1?Q?J=FAlius?= Milan <julikmilan@gmail.com>,
-        kbuild test robot <lkp@intel.com>
-Cc:     linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org,
-        gregkh@linuxfoundation.org, ajay.kathat@microchip.com,
-        linux-wireless@vger.kernel.org, adham.abozaeid@microchip.com
-Subject: Re: [PATCH] staging: wilc1000: fix cast to restricted __le32
-Message-ID: <20190107125437.GA3200@kadam>
-References: <20190105082323.GA27838@localhost.localdomain>
+        Mon, 7 Jan 2019 07:55:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44050 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727022AbfAGMzv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:55:51 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 67FA320859;
+        Mon,  7 Jan 2019 12:55:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1546865750;
+        bh=rq3nzkzdVSqYgV0Uj6q5FdD9PeZMOMp2YYziH/bkQXk=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=yPPP/fAPSlcPDSRPFpuVGEvwjLkeeAmoWK/1I7srlc9U4X4/TBdvyncbBvWGEHAiA
+         yCIQ8Y7M/OZKLyXATm4BOWMvsHTulakBVGBn33rMqhiiKk8CMqDW9Vj0QxC4zdP0v2
+         o0AUYTRplw8xorizvHCbIt1edECN7xP/a14jctW8=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Jernej Skrabec <jernej.skrabec@siol.net>,
+        Maxime Ripard <maxime.ripard@bootlin.com>
+Subject: [PATCH 4.19 119/170] clk: sunxi-ng: Use u64 for calculation of NM rate
+Date:   Mon,  7 Jan 2019 13:32:26 +0100
+Message-Id: <20190107104507.016078050@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190107104452.953560660@linuxfoundation.org>
+References: <20190107104452.953560660@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190105082323.GA27838@localhost.localdomain>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9128 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1901070114
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I'm sort of surprised that the zero day bot didn't complain about this.
-It probably should.
+4.19-stable review patch.  If anyone has any objections, please let me know.
 
-The endianness checking is not turned on by default in Sparse.  You have
-to do "make C=1 CF=-D__CHECK_ENDIAN__" to turn it on.
+------------------
 
-regards,
-dan carpenter
+From: Jernej Skrabec <jernej.skrabec@siol.net>
 
-On Sat, Jan 05, 2019 at 09:23:23AM +0100, Július Milan wrote:
-> Fixes the following sparse warnings:
-> 
-> drivers/staging/wilc1000/host_interface.c:2360:30: warning:
->  incorrect type in assignment (different base types)
->     expected restricted __le32 [addressable] [assigned] [usertype] frame_type
->     got restricted __le16 [usertype] <noident>
-> 
-> Fixes: 147ccfd451024 ("staging: wilc1000: handle mgmt_frame_register ops from cfg82011 context")
-> Signed-off-by: Július Milan <jmilan.dev@gmail.com>
-> ---
->  drivers/staging/wilc1000/host_interface.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/wilc1000/host_interface.c b/drivers/staging/wilc1000/host_interface.c
-> index 5dae6e7155d3..07c3d6293573 100644
-> --- a/drivers/staging/wilc1000/host_interface.c
-> +++ b/drivers/staging/wilc1000/host_interface.c
-> @@ -2357,7 +2357,7 @@ void wilc_frame_register(struct wilc_vif *vif, u16 frame_type, bool reg)
->  	default:
->  		break;
->  	}
-> -	reg_frame.frame_type = cpu_to_le16(frame_type);
-> +	reg_frame.frame_type = cpu_to_le32(frame_type);
->  	result = wilc_send_config_pkt(vif, WILC_SET_CFG, &wid, 1,
->  				      wilc_get_vif_idx(vif));
->  	if (result)
-> -- 
-> 2.14.5
-> 
-> _______________________________________________
-> devel mailing list
-> devel@linuxdriverproject.org
-> http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+commit 65b6657672388b72822e0367f06d41c1e3ffb5bb upstream.
+
+Allwinner H6 SoC has multiplier N range between 1 and 254. Since parent
+rate is 24MHz, intermediate result when calculating final rate easily
+overflows 32 bit variable.
+
+Because of that, introduce function for calculating clock rate which
+uses 64 bit variable for intermediate result.
+
+Fixes: 6174a1e24b0d ("clk: sunxi-ng: Add N-M-factor clock support")
+Fixes: ee28648cb2b4 ("clk: sunxi-ng: Remove the use of rational computations")
+
+CC: <stable@vger.kernel.org>
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ drivers/clk/sunxi-ng/ccu_nm.c |   18 +++++++++++++++---
+ 1 file changed, 15 insertions(+), 3 deletions(-)
+
+--- a/drivers/clk/sunxi-ng/ccu_nm.c
++++ b/drivers/clk/sunxi-ng/ccu_nm.c
+@@ -19,6 +19,17 @@ struct _ccu_nm {
+ 	unsigned long	m, min_m, max_m;
+ };
+ 
++static unsigned long ccu_nm_calc_rate(unsigned long parent,
++				      unsigned long n, unsigned long m)
++{
++	u64 rate = parent;
++
++	rate *= n;
++	do_div(rate, m);
++
++	return rate;
++}
++
+ static void ccu_nm_find_best(unsigned long parent, unsigned long rate,
+ 			     struct _ccu_nm *nm)
+ {
+@@ -28,7 +39,8 @@ static void ccu_nm_find_best(unsigned lo
+ 
+ 	for (_n = nm->min_n; _n <= nm->max_n; _n++) {
+ 		for (_m = nm->min_m; _m <= nm->max_m; _m++) {
+-			unsigned long tmp_rate = parent * _n  / _m;
++			unsigned long tmp_rate = ccu_nm_calc_rate(parent,
++								  _n, _m);
+ 
+ 			if (tmp_rate > rate)
+ 				continue;
+@@ -100,7 +112,7 @@ static unsigned long ccu_nm_recalc_rate(
+ 	if (ccu_sdm_helper_is_enabled(&nm->common, &nm->sdm))
+ 		rate = ccu_sdm_helper_read_rate(&nm->common, &nm->sdm, m, n);
+ 	else
+-		rate = parent_rate * n / m;
++		rate = ccu_nm_calc_rate(parent_rate, n, m);
+ 
+ 	if (nm->common.features & CCU_FEATURE_FIXED_POSTDIV)
+ 		rate /= nm->fixed_post_div;
+@@ -142,7 +154,7 @@ static long ccu_nm_round_rate(struct clk
+ 	_nm.max_m = nm->m.max ?: 1 << nm->m.width;
+ 
+ 	ccu_nm_find_best(*parent_rate, rate, &_nm);
+-	rate = *parent_rate * _nm.n / _nm.m;
++	rate = ccu_nm_calc_rate(*parent_rate, _nm.n, _nm.m);
+ 
+ 	if (nm->common.features & CCU_FEATURE_FIXED_POSTDIV)
+ 		rate /= nm->fixed_post_div;
+
+
