@@ -4,51 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB3DCC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:22:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC3AEC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:22:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACEAF21736
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:22:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C2F321736
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:22:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546867342;
-	bh=U7CtIwnvf2qH9o3JLljjes70nUP+Dc9uGGaOE0fErlI=;
+	s=default; t=1546867354;
+	bh=PZa/bK/dLS+WkzTC9uN26VClCD8IJPAtjhm3utKQYFc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=tY3jE455so5AzAT2Z41GqgcMGKH0GMpPYOJOveELuDCLZdFwXTRUtarEApnBQsFP+
-	 xpgs0Kz3GvICITjohIdtpQeVrvbqhuK6wAiCYJ93avwhEY2qXVn60uzkwTcA03pZjS
-	 uqkfSzSUbXi8B9qjlRbbjymn5CgwhtcyIBbtnh4o=
+	b=fY1RwCJNgFYfLcXVN+3s94cT3LVFqokYQIfN9RAVmvPgn2QeAZN7EimfVu9QEkOKW
+	 iKpEtzIqpKtivT53Xj/emwxYp3jUo46LPrY0JPmjiKfGDCcJvidGbPoXcJbaWbMR5B
+	 XynAAV+X1QmB2Ztw0FrFmWeqbfZvYB3WINdThWNg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729736AbfAGNWV (ORCPT
+        id S1729120AbfAGNWd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:22:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32794 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:22:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60376 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728722AbfAGMoV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:44:21 -0500
+        id S1728489AbfAGMnx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:43:53 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 16BB020665;
-        Mon,  7 Jan 2019 12:44:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 74BBA2183E;
+        Mon,  7 Jan 2019 12:43:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865059;
-        bh=U7CtIwnvf2qH9o3JLljjes70nUP+Dc9uGGaOE0fErlI=;
+        s=default; t=1546865033;
+        bh=PZa/bK/dLS+WkzTC9uN26VClCD8IJPAtjhm3utKQYFc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ybBEXTLb9bVlMBN/MfNUuUkeKsS60t5UsSvUu/1p7oUz3jVHYogdy3//3GATuBlEc
-         6B9DRfL6QYNxjTiF5V0B++PJNqdWudA/oZDOvoqOUgY6jU1azFxKcSf3s+DVEElM51
-         wnzmn6ss7oEaFIA1bpCPQEwaal2URcl+vl1GkGq0=
+        b=U20jzQJXZriHTSl5YGW3FVnwFIrHFY1XiPZa5upmpQaZxeTuSup6nQwt6iXMlNoeI
+         eyypVanQ+rmxA4C1moGqxBSqq+gYkCWfgbXqzHuwfG8uY2TwkMKix8xR+IP+u1zl2M
+         3tP3M87Ao07+ncZKz3RYodnJY2tWfPM1MyMsZKOI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vijay Chidambaram <vvijay03@gmail.com>,
-        Jayashree Mohan <jayashree2912@gmail.com>,
-        Filipe Manana <fdmanana@suse.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.20 096/145] Btrfs: fix fsync of files with multiple hard links in new directories
-Date:   Mon,  7 Jan 2019 13:32:13 +0100
-Message-Id: <20190107104449.786671798@linuxfoundation.org>
+        stable@vger.kernel.org, Huacai Chen <chenhc@lemote.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <james.hogan@mips.com>,
+        "Steven J . Hill" <Steven.Hill@cavium.com>,
+        linux-mips@linux-mips.org, Fuxin Zhang <zhangfx@lemote.com>,
+        Zhangjin Wu <wuzhangjin@gmail.com>
+Subject: [PATCH 4.20 123/145] MIPS: Align kernel load address to 64KB
+Date:   Mon,  7 Jan 2019 13:32:40 +0100
+Message-Id: <20190107104453.291058387@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104437.308206189@linuxfoundation.org>
 References: <20190107104437.308206189@linuxfoundation.org>
@@ -67,150 +70,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Filipe Manana <fdmanana@suse.com>
+From: Huacai Chen <chenhc@lemote.com>
 
-commit 41bd60676923822de1df2c50b3f9a10171f4338a upstream.
+commit bec0de4cfad21bd284dbddee016ed1767a5d2823 upstream.
 
-The log tree has a long standing problem that when a file is fsync'ed we
-only check for new ancestors, created in the current transaction, by
-following only the hard link for which the fsync was issued. We follow the
-ancestors using the VFS' dget_parent() API. This means that if we create a
-new link for a file in a directory that is new (or in an any other new
-ancestor directory) and then fsync the file using an old hard link, we end
-up not logging the new ancestor, and on log replay that new hard link and
-ancestor do not exist. In some cases, involving renames, the file will not
-exist at all.
+KEXEC needs the new kernel's load address to be aligned on a page
+boundary (see sanity_check_segment_list()), but on MIPS the default
+vmlinuz load address is only explicitly aligned to 16 bytes.
 
-Example:
+Since the largest PAGE_SIZE supported by MIPS kernels is 64KB, increase
+the alignment calculated by calc_vmlinuz_load_addr to 64KB.
 
-  mkfs.btrfs -f /dev/sdb
-  mount /dev/sdb /mnt
-
-  mkdir /mnt/A
-  touch /mnt/foo
-  ln /mnt/foo /mnt/A/bar
-  xfs_io -c fsync /mnt/foo
-
-  <power failure>
-
-In this example after log replay only the hard link named 'foo' exists
-and directory A does not exist, which is unexpected. In other major linux
-filesystems, such as ext4, xfs and f2fs for example, both hard links exist
-and so does directory A after mounting again the filesystem.
-
-Checking if any new ancestors are new and need to be logged was added in
-2009 by commit 12fcfd22fe5b ("Btrfs: tree logging unlink/rename fixes"),
-however only for the ancestors of the hard link (dentry) for which the
-fsync was issued, instead of checking for all ancestors for all of the
-inode's hard links.
-
-So fix this by tracking the id of the last transaction where a hard link
-was created for an inode and then on fsync fallback to a full transaction
-commit when an inode has more than one hard link and at least one new hard
-link was created in the current transaction. This is the simplest solution
-since this is not a common use case (adding frequently hard links for
-which there's an ancestor created in the current transaction and then
-fsync the file). In case it ever becomes a common use case, a solution
-that consists of iterating the fs/subvol btree for each hard link and
-check if any ancestor is new, could be implemented.
-
-This solves many unexpected scenarios reported by Jayashree Mohan and
-Vijay Chidambaram, and for which there is a new test case for fstests
-under review.
-
-Fixes: 12fcfd22fe5b ("Btrfs: tree logging unlink/rename fixes")
-CC: stable@vger.kernel.org # 4.4+
-Reported-by: Vijay Chidambaram <vvijay03@gmail.com>
-Reported-by: Jayashree Mohan <jayashree2912@gmail.com>
-Signed-off-by: Filipe Manana <fdmanana@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Huacai Chen <chenhc@lemote.com>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Patchwork: https://patchwork.linux-mips.org/patch/21131/
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: James Hogan <james.hogan@mips.com>
+Cc: Steven J . Hill <Steven.Hill@cavium.com>
+Cc: linux-mips@linux-mips.org
+Cc: Fuxin Zhang <zhangfx@lemote.com>
+Cc: Zhangjin Wu <wuzhangjin@gmail.com>
+Cc: <stable@vger.kernel.org> # 2.6.36+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/btrfs_inode.h |    6 ++++++
- fs/btrfs/inode.c       |   17 +++++++++++++++++
- fs/btrfs/tree-log.c    |   16 ++++++++++++++++
- 3 files changed, 39 insertions(+)
+ arch/mips/boot/compressed/calc_vmlinuz_load_addr.c |    7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
---- a/fs/btrfs/btrfs_inode.h
-+++ b/fs/btrfs/btrfs_inode.h
-@@ -147,6 +147,12 @@ struct btrfs_inode {
- 	u64 last_unlink_trans;
+--- a/arch/mips/boot/compressed/calc_vmlinuz_load_addr.c
++++ b/arch/mips/boot/compressed/calc_vmlinuz_load_addr.c
+@@ -13,6 +13,7 @@
+ #include <stdint.h>
+ #include <stdio.h>
+ #include <stdlib.h>
++#include "../../../../include/linux/sizes.h"
+ 
+ int main(int argc, char *argv[])
+ {
+@@ -45,11 +46,11 @@ int main(int argc, char *argv[])
+ 	vmlinuz_load_addr = vmlinux_load_addr + vmlinux_size;
  
  	/*
-+	 * Track the transaction id of the last transaction used to create a
-+	 * hard link for the inode. This is used by the log tree (fsync).
-+	 */
-+	u64 last_link_trans;
-+
-+	/*
- 	 * Number of bytes outstanding that are going to need csums.  This is
- 	 * used in ENOSPC accounting.
+-	 * Align with 16 bytes: "greater than that used for any standard data
+-	 * types by a MIPS compiler." -- See MIPS Run Linux (Second Edition).
++	 * Align with 64KB: KEXEC needs load sections to be aligned to PAGE_SIZE,
++	 * which may be as large as 64KB depending on the kernel configuration.
  	 */
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -3687,6 +3687,21 @@ cache_index:
- 	 * inode is not a directory, logging its parent unnecessarily.
- 	 */
- 	BTRFS_I(inode)->last_unlink_trans = BTRFS_I(inode)->last_trans;
-+	/*
-+	 * Similar reasoning for last_link_trans, needs to be set otherwise
-+	 * for a case like the following:
-+	 *
-+	 * mkdir A
-+	 * touch foo
-+	 * ln foo A/bar
-+	 * echo 2 > /proc/sys/vm/drop_caches
-+	 * fsync foo
-+	 * <power failure>
-+	 *
-+	 * Would result in link bar and directory A not existing after the power
-+	 * failure.
-+	 */
-+	BTRFS_I(inode)->last_link_trans = BTRFS_I(inode)->last_trans;
  
- 	path->slots[0]++;
- 	if (inode->i_nlink != 1 ||
-@@ -6626,6 +6641,7 @@ static int btrfs_link(struct dentry *old
- 			if (err)
- 				goto fail;
- 		}
-+		BTRFS_I(inode)->last_link_trans = trans->transid;
- 		d_instantiate(dentry, inode);
- 		ret = btrfs_log_new_name(trans, BTRFS_I(inode), NULL, parent,
- 					 true, NULL);
-@@ -9158,6 +9174,7 @@ struct inode *btrfs_alloc_inode(struct s
- 	ei->index_cnt = (u64)-1;
- 	ei->dir_index = 0;
- 	ei->last_unlink_trans = 0;
-+	ei->last_link_trans = 0;
- 	ei->last_log_commit = 0;
+-	vmlinuz_load_addr += (16 - vmlinux_size % 16);
++	vmlinuz_load_addr += (SZ_64K - vmlinux_size % SZ_64K);
  
- 	spin_lock_init(&ei->lock);
---- a/fs/btrfs/tree-log.c
-+++ b/fs/btrfs/tree-log.c
-@@ -5778,6 +5778,22 @@ static int btrfs_log_inode_parent(struct
- 			goto end_trans;
- 	}
+ 	printf("0x%llx\n", vmlinuz_load_addr);
  
-+	/*
-+	 * If a new hard link was added to the inode in the current transaction
-+	 * and its link count is now greater than 1, we need to fallback to a
-+	 * transaction commit, otherwise we can end up not logging all its new
-+	 * parents for all the hard links. Here just from the dentry used to
-+	 * fsync, we can not visit the ancestor inodes for all the other hard
-+	 * links to figure out if any is new, so we fallback to a transaction
-+	 * commit (instead of adding a lot of complexity of scanning a btree,
-+	 * since this scenario is not a common use case).
-+	 */
-+	if (inode->vfs_inode.i_nlink > 1 &&
-+	    inode->last_link_trans > last_committed) {
-+		ret = -EMLINK;
-+		goto end_trans;
-+	}
-+
- 	while (1) {
- 		if (!parent || d_really_is_negative(parent) || sb != parent->d_sb)
- 			break;
 
 
