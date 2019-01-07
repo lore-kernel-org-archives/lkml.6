@@ -2,214 +2,147 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 728DDC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 03:50:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C62D6C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 03:52:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3755D20675
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 03:50:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=endlessm-com.20150623.gappssmtp.com header.i=@endlessm-com.20150623.gappssmtp.com header.b="igr5vNYz"
+	by mail.kernel.org (Postfix) with ESMTP id 9CA0820675
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 03:52:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726417AbfAGDur (ORCPT
+        id S1726443AbfAGDwI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 6 Jan 2019 22:50:47 -0500
-Received: from mail-qk1-f180.google.com ([209.85.222.180]:38049 "EHLO
-        mail-qk1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726145AbfAGDuq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Jan 2019 22:50:46 -0500
-Received: by mail-qk1-f180.google.com with SMTP id a1so24681100qkc.5
-        for <linux-kernel@vger.kernel.org>; Sun, 06 Jan 2019 19:50:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6Nbe9JYrc+ZcLUDJbtIuZXxkhRaLuM5dP6YX28A3dG0=;
-        b=igr5vNYziC+2uQy3Zt82iWvCQNzL2iCz+tHT9u6EZoEeiVchjgsus9YPj+G16uEywC
-         JRohOwd0tPLoWj1gM6d01KHKHKZH0O2Kq//yG+cMYFbrt3ZguSjM5HNG+FBaJA33+wOu
-         jmwYa+VRMZollvS+bPh4mzSH+AAVw8x9OF0T8qK1b8dEC7Y5VBLThVkskCKpHWnpwbUW
-         DxPTOpjUnl8OxCQRIC6IJxI6fZ2c0GAjvj284EhBDC+G0TbkbkNCnnE07t4iqSWafNKp
-         Kg0JbM15dpDmhgmqBriJrhNZ5AiSjol13ZpVq38kmz3qHZsV8dbNfNazpvwcZKRSOMzk
-         r2og==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6Nbe9JYrc+ZcLUDJbtIuZXxkhRaLuM5dP6YX28A3dG0=;
-        b=cUHOaaRpqez9nkKbuSRRYSQg7yzt54uvib51pC62Er6MNVnhKpI6bxY5S681x8GMK6
-         bvtQ4ZlraYoKRPjADrvgOP1fYQF+lo+Q9qKLjSFDglCjJoa5WscP0llM5cgJKemljnmp
-         2Q98jh1b+AhvN8N/WvKdOc0ir4LsXZX0inBWfczIYGFF2Y8YduBT8JkUxuP2eGmD9QY/
-         XkTmSCIcb1lZyuY2nMh8UPQgtTX7dkW9nDD7eAeo80PDhVlNkJ/63IIh/FiOny9jmXwD
-         jHZynxjJMlZgAVmH/7RZy7d55VzaddOkNmyTUmKtXPVxMpxn+KEg7HoX9iYHdS1uDFzV
-         qaRA==
-X-Gm-Message-State: AJcUukeAIGCZ6a3L90bO2zCJSme8w/oGstxGx7q7640rUmZMqapn+CFY
-        PMMxiB9kZCj6UPBkxOd4x2jh6Htpgw/f6oVB45jiEQ==
-X-Google-Smtp-Source: ALg8bN6B5P2mji2J/TtfaTGMUzdp6fCF+AHweN2lggidIbCSbyes7xKkeBSQxyDQ8qVEKvWrWhftUC3bgIy4Cs9Ig+0=
-X-Received: by 2002:a05:620a:158b:: with SMTP id d11mr28828655qkk.275.1546833045050;
- Sun, 06 Jan 2019 19:50:45 -0800 (PST)
+        Sun, 6 Jan 2019 22:52:08 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:39246 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726145AbfAGDwI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Jan 2019 22:52:08 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 793F73680B;
+        Mon,  7 Jan 2019 03:52:07 +0000 (UTC)
+Received: from [10.72.12.172] (ovpn-12-172.pek2.redhat.com [10.72.12.172])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A12A253;
+        Mon,  7 Jan 2019 03:51:57 +0000 (UTC)
+Subject: Re: [PATCH RFC 1/2] virtio-net: bql support
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, maxime.coquelin@redhat.com,
+        tiwei.bie@intel.com, wexu@redhat.com, jfreimann@redhat.com,
+        "David S. Miller" <davem@davemloft.net>,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org
+References: <20181205225323.12555-1-mst@redhat.com>
+ <20181205225323.12555-2-mst@redhat.com>
+ <21384cb5-99a6-7431-1039-b356521e1bc3@redhat.com>
+ <20181226101528-mutt-send-email-mst@kernel.org>
+ <0fa99d9b-e510-d7eb-db1b-831bd7610ce9@redhat.com>
+ <20181230134106-mutt-send-email-mst@kernel.org>
+ <b4f06d11-4761-dabb-f641-5fc05c1c34fc@redhat.com>
+ <20190102085457-mutt-send-email-mst@kernel.org>
+ <17d2ab21-1c9a-2bb9-166f-2863d019cb0b@redhat.com>
+ <20190106221506-mutt-send-email-mst@kernel.org>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <aea2fd16-ec5b-64b5-2095-9a37044223f6@redhat.com>
+Date:   Mon, 7 Jan 2019 11:51:55 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <CAD8Lp46R2oQxKv5gmC09Zb=WL=nV6o0CGZ3K=JZ80QYm0DJ9QQ@mail.gmail.com>
-In-Reply-To: <CAD8Lp46R2oQxKv5gmC09Zb=WL=nV6o0CGZ3K=JZ80QYm0DJ9QQ@mail.gmail.com>
-From:   Daniel Drake <drake@endlessm.com>
-Date:   Mon, 7 Jan 2019 11:50:33 +0800
-Message-ID: <CAD8Lp468JYCGn6Qbc5720wy3JfO2SwQTD-SQWi4RK_9_dBwtbA@mail.gmail.com>
-Subject: Re: APIC timer checked before it is set up, boot fails on Connex L1430
-To:     Thomas Gleixner <tglx@linutronix.de>, suresh.b.siddha@intel.com
-Cc:     Linux Upstreaming Team <linux@endlessm.com>,
-        Linux Kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190106221506-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Mon, 07 Jan 2019 03:52:07 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 28, 2018 at 2:11 PM Daniel Drake <drake@endlessm.com> wrote:
-> On the Connex L1430 laptop based on Intel Apollo Lake N3350, Linux
-> doesn't boot. It hangs early on a blank screen. Reproduced with Linus
-> git, 4.18 and 4.19 (there is no previous known working kernel
-> version). EFI earlyprintk shows:
->
-> APIC: switch to symmetric I/O mode setup
-> x2apic: IRQ remapping doesn't support X2APIC mode
-> ..TIMER: vector=0x30 apic1=0 pin1=2 apic2=-1 pin2=-1
-> ..MP-BIOS bug: 8254 timer not connected to IO-APIC
-> ...tryign to set up timer (IRQ0) through the 8259A ...
-> ..... (found apic 0 pin 2) ...
-> ....... failed.
-> ...trying to set up timer as Virtual Wire IRQ...
-> ..... failed.
-> ...trying to set up timer as ExtINT IRQ...
-> do_IRQ: 0.55 No irq handler for vector
-> ..... failed :(.
-> Kernel panic - not syncing: IO-APIC + timer doesn't work! Boot with
-> apic=debug and send a report.
->
-> Looking closer, check_timer() is observing that the IOAPIC timer
-> doesn't tick, so it then tries some other approaches but doesn't
-> manage to get them working either.
->
-> The strange thing is, I booted with the no_timer_check parameter and
-> the system works fine! With this parameter it assumes the IOAPIC timer
-> is ticking and just continues the boot sequence anyway. Here is the
-> boot log with apic=debug no_timer_check:
-> https://gist.github.com/dsd/6f40d8ecc7102dd5dcb90c5dedc69214#file-dmesg-txt
->
-> /proc/interrupts shows that APIC Local timer interrupts are working
-> fine on both CPUs:
-> https://gist.github.com/dsd/6f40d8ecc7102dd5dcb90c5dedc69214#file-interrupts-txt
->
-> So, check_timer() is incorrectly deducing that the IOAPIC timer isn't
-> working. The way it checks this is to do a delay loop and then check
-> if jiffies has advanced. I presume the expectation here is that during
-> this delay, the hardware IRQ will invoke local_apic_timer_interrupt()
-> which will then increment jiffies. Indeed, during check_timer()
-> execution this interrupt does not fire, however by using
-> no_timer_check and adding a log message I can see that it fires for
-> the first time quite some time after check_timer() is done:
->
->  ..TIMER: vector=0x30 apic1=0 pin1=2 apic2=-1 pin2=-1
->  clocksource: tsc-early: mask: 0xffffffffffffffff max_cycles:
-> 0xfc66f4fc7c, max_idle_ns: 440795224246 ns
->  Calibrating delay loop (skipped), value calculated using timer
-> frequency.. 2188.80 BogoMIPS (lpj=1094400)
->  pid_max: default: 32768 minimum: 301
->  LSM: Security Framework initializing
->  SELinux:  Initializing.
->  Dentry cache hash table entries: 262144 (order: 9, 2097152 bytes)
->  Inode-cache hash table entries: 131072 (order: 8, 1048576 bytes)
->  Mount-cache hash table entries: 4096 (order: 3, 32768 bytes)
->  Mountpoint-cache hash table entries: 4096 (order: 3, 32768 bytes)
->  mce: CPU supports 7 MCE banks
->  mce: CPU0: Thermal monitoring enabled (TM1)
->  Last level iTLB entries: 4KB 48, 2MB 0, 4MB 0
->  Last level dTLB entries: 4KB 0, 2MB 0, 4MB 0, 1GB 0
->  Spectre V2 : Spectre mitigation: kernel not compiled with retpoline;
-> no mitigation available!
->  Freeing SMP alternatives memory: 44K
->  TSC deadline timer enabled
->  smpboot: CPU0: Intel(R) Celeron(R) CPU N3350 @ 1.10GHz (family: 0x6,
-> model: 0x5c, stepping: 0x9)
->  Performance Events: PEBS fmt3+, Goldmont events, 32-deep LBR,
-> full-width counters, Intel PMU driver.
->  ... version:                4
->  ... bit width:              48
->  ... generic registers:      4
->  ... value mask:             0000ffffffffffff
->  ... max period:             00007fffffffffff
->  ... fixed-purpose events:   3
->  ... event mask:             000000070000000f
->  rcu: Hierarchical SRCU implementation.
->  smp: Bringing up secondary CPUs ...
->  !!! local_apic_timer_interrupt for the first time cpu0 !!!
->
-> Experimenting further, I used the same approach of adding delays and
-> checking for the interrupt during the delay to figure out at which
-> precise point during the boot sequence the timer interrupt starts
-> working. It's here:
->
-> static void setup_APIC_timer(void)
-> {
-> [...]
->     if (this_cpu_has(X86_FEATURE_TSC_DEADLINE_TIMER)) {
-> [...]
->         clockevents_config_and_register(levt,
->                         tsc_khz * (1000 / TSC_DIVISOR),
->                         0xF, ~0UL);
->     }
-> }
->
-> We reach clockevents_register_device() which does:
->  1. Take a spinlock and disable IRQs
->  2. lapic_set_oneshot() which leads to "TSC deadline timer enabled" message
->  3. lapic_next_deadline()
->  4. Spin unlock & re-enable IRQs
->
-> At the exact point where IRQs are re-enabled above, which is at the
-> time of return from clockevents_config_and_register(), timer
-> interrupts start working.
->
->
-> The overall ordering here seems surprising. check_timer() is probing
-> whether the APIC timer works well before setup_APIC_timer() has been
-> called. Shouldn't the timer be checked only after it has been set up?
->
-> Or is Linux assuming that the BIOS will boot with the APIC timer
-> already running?
 
-Sorry for the rambling there - having investigated further I see I
-made some bad assumptions.
+On 2019/1/7 上午11:17, Michael S. Tsirkin wrote:
+> On Mon, Jan 07, 2019 at 10:14:37AM +0800, Jason Wang wrote:
+>> On 2019/1/2 下午9:59, Michael S. Tsirkin wrote:
+>>> On Wed, Jan 02, 2019 at 11:28:43AM +0800, Jason Wang wrote:
+>>>> On 2018/12/31 上午2:45, Michael S. Tsirkin wrote:
+>>>>> On Thu, Dec 27, 2018 at 06:00:36PM +0800, Jason Wang wrote:
+>>>>>> On 2018/12/26 下午11:19, Michael S. Tsirkin wrote:
+>>>>>>> On Thu, Dec 06, 2018 at 04:17:36PM +0800, Jason Wang wrote:
+>>>>>>>> On 2018/12/6 上午6:54, Michael S. Tsirkin wrote:
+>>>>>>>>> When use_napi is set, let's enable BQLs.  Note: some of the issues are
+>>>>>>>>> similar to wifi.  It's worth considering whether something similar to
+>>>>>>>>> commit 36148c2bbfbe ("mac80211: Adjust TSQ pacing shift") might be
+>>>>>>>>> benefitial.
+>>>>>>>> I've played a similar patch several days before. The tricky part is the mode
+>>>>>>>> switching between napi and no napi. We should make sure when the packet is
+>>>>>>>> sent and trakced by BQL,  it should be consumed by BQL as well. I did it by
+>>>>>>>> tracking it through skb->cb.  And deal with the freeze by reset the BQL
+>>>>>>>> status. Patch attached.
+>>>>>>>>
+>>>>>>>> But when testing with vhost-net, I don't very a stable performance,
+>>>>>>> So how about increasing TSQ pacing shift then?
+>>>>>> I can test this. But changing default TCP value is much more than a
+>>>>>> virtio-net specific thing.
+>>>>> Well same logic as wifi applies. Unpredictable latencies related
+>>>>> to radio in one case, to host scheduler in the other.
+>>>>>
+>>>>>>>> it was
+>>>>>>>> probably because we batch the used ring updating so tx interrupt may come
+>>>>>>>> randomly. We probably need to implement time bounded coalescing mechanism
+>>>>>>>> which could be configured from userspace.
+>>>>>>> I don't think it's reasonable to expect userspace to be that smart ...
+>>>>>>> Why do we need time bounded? used ring is always updated when ring
+>>>>>>> becomes empty.
+>>>>>> We don't add used when means BQL may not see the consumed packet in time.
+>>>>>> And the delay varies based on the workload since we count packets not bytes
+>>>>>> or time before doing the batched updating.
+>>>>>>
+>>>>>> Thanks
+>>>>> Sorry I still don't get it.
+>>>>> When nothing is outstanding then we do update the used.
+>>>>> So if BQL stops userspace from sending packets then
+>>>>> we get an interrupt and packets start flowing again.
+>>>> Yes, but how about the cases of multiple flows. That's where I see unstable
+>>>> results.
+>>>>
+>>>>
+>>>>> It might be suboptimal, we might need to tune it but I doubt running
+>>>>> timers is a solution, timer interrupts cause VM exits.
+>>>> Probably not a timer but a time counter (or event byte counter) in vhost to
+>>>> add used and signal guest if it exceeds a value instead of waiting the
+>>>> number of packets.
+>>>>
+>>>>
+>>>> Thanks
+>>> Well we already have VHOST_NET_WEIGHT - is it too big then?
+>>
+>> I'm not sure, it might be too big.
+>>
+>>
+>>> And maybe we should expose the "MORE" flag in the descriptor -
+>>> do you think that will help?
+>>>
+>> I don't know. But how a "more" flag can help here?
+>>
+>> Thanks
+> It sounds like we should be a bit more aggressive in updating used ring.
+> But if we just do it naively we will harm performance for sure as that
+> is how we are doing batching right now.
 
-Before all this clock checking happens, Linux does configure the
-legacy 8254 timer via the drivers/clocksource/i8253.c driver. You
-would then expect these early boot timer interrupts to start arriving
-via timer_interrupt(). The APIC timer that gets set up later is not
-the way that timer interrupts should appear at this earlier point
-(that only gets set up later, as I found in my last mail). I verified
-this behaviour on other platforms that do boot correctly.
 
-I asked the motherboard vendor if they have any idea why the 8254 is
-not ticking and they sent me a new BIOS where it is now working. So we
-can probably consider this a non issue, although there are a few other
-curious points to mention:
+I agree but the problem is to balance the PPS and throughput. More 
+batching helps for PPS but may damage TCP throughput.
 
-1. Other platforms with the same Intel N3350 SoC use the HPET timer
-instead of PIC during early boot; on this platform there is no HPET
-ACPI table though, so it uses PIT instead.
 
-2. It does seem a little redundant that the Linux APIC code goes to
-these lengths to check that the legacy 8254 timer interrupt is working
-before it then gets disabled a bit later during boot (when
-setup_APIC_timer happens, the clocksource layer disables the previous
-timer source, in this case the PIT or HPET). Although I can see this
-is not a trivial patch to write.
+>   Instead we could make guest
+> control batching using the more flag - if that's not set we write out
+> the used ring.
 
-3. Windows 10 boots fine with no HPET & no 8254 timer ticks, so if we
-find more platforms that appear in this state, we may want to look for
-how to work around this strange situation on the Linux side.
 
-Daniel
+It's under the control of guest, so I'm afraid we still need some more 
+guard (e.g time/bytes counters) on host.
+
+Thanks
+
+
+>
