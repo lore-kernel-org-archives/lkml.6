@@ -4,49 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ADC6C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:37:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05737C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:37:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C576D206BB
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:37:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB7A32089F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:37:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546864637;
-	bh=Kp7a/7uThTE4UJwnuzQwLEMLdOCF1/0ktQlOQ2/v0lA=;
+	s=default; t=1546864640;
+	bh=n53D2VTTUKrLpkkrEnUq6GMfDkj+b7d3DSXYnXSuAw8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=xSLrIcS2uhlS/tIdn3/IZgWJemrt5DLaDuv8NpVnmKqnLEA2ixWsItyGS6gTsFec0
-	 FHk+aq9PjD79MH8lL0xVcsNZQRrLSD+nOQnSUxV6SxqXy4csuX+2nRmtBAvFf9RXAR
-	 l0KOEm1qF45rS2aQbYP9mJ9cQhZy6t7ZElkiyieQ=
+	b=kt/r6byk6IpHxSYWyUkr0Y3mLH8/qrbJByGZE2AQ47vA+iHJ9N/HEyqBHMcU910Qw
+	 +fSCM5YuFcIUszmeANfvIg14issQarCSRr8T/WVtiR6xQK76oA6Kn/8aQigPuUkIXv
+	 j7rmLS0FVV6aDW6DK66HSFSELQroux6fSedvfD3U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727262AbfAGMhQ (ORCPT
+        id S1727784AbfAGMhT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:37:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48552 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:37:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52094 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727431AbfAGMfK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:35:10 -0500
+        id S1726718AbfAGMhO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:37:14 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 080D5206BB;
-        Mon,  7 Jan 2019 12:35:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 213A2206BB;
+        Mon,  7 Jan 2019 12:37:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546864509;
-        bh=Kp7a/7uThTE4UJwnuzQwLEMLdOCF1/0ktQlOQ2/v0lA=;
+        s=default; t=1546864634;
+        bh=n53D2VTTUKrLpkkrEnUq6GMfDkj+b7d3DSXYnXSuAw8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bqk3h+mSVGJyUxA5qmIhmcbiJeUxhHdc1fXUkoYiGi2KMnc9qwhfs4Jz6LzVlBphf
-         F/txzwL4w6EEh3O0W4NA1VHouIGuxMii7xaDpc/KTrfrgdXlthSWlzq87JGEJUgZoh
-         8bruzZHeSGdMtu3QkzQSKeCK4rRta4SRdTwCkL2c=
+        b=IsERFVWsAlcGfoy2BxGkhWbRIN4EcT/7Ku/mmVEVJ4t9eCZdtIBH/JaRRO2lUOJFy
+         7fH7lC3alJP0sEuh6Mnln3qbDXrhhV6gVs4HVUArMc+MjZhS8o4b7MiMtp/5FUoT0Q
+         aaQn/Z4nfm3G6r1Eo5Bsu0f9VRyJCx3Cua8j4O/0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.20 035/145] ALSA: firewire-lib: use the same print format for without_header tracepoints
-Date:   Mon,  7 Jan 2019 13:31:12 +0100
-Message-Id: <20190107104441.909475652@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+b981acf1fb240c0c128b@syzkaller.appspotmail.com,
+        Ying Xue <ying.xue@windriver.com>,
+        Jon Maloy <jon.maloy@ericsson.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.20 019/145] tipc: fix a double free in tipc_enable_bearer()
+Date:   Mon,  7 Jan 2019 13:30:56 +0100
+Message-Id: <20190107104439.763123118@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104437.308206189@linuxfoundation.org>
 References: <20190107104437.308206189@linuxfoundation.org>
@@ -65,36 +69,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-commit 5ef108c53e6efd695e32aad969638ccbc35b4be9 upstream.
+[ Upstream commit dc4501ff287547dea7ca10f1c580c741291a8760 ]
 
-An initial commit to add tracepoints for packets without CIP headers
-uses different print formats for added tracepoints. However this is not
-convenient for users/developers to prepare debug tools.
+bearer_disable() already calls kfree_rcu() to free struct tipc_bearer,
+we don't need to call kfree() again.
 
-This commit uses the same format for the two tracepoints.
-
-Cc: <stable@vger.kernel.org> # v4.12+
-Fixes: b164d2fd6e49 ('ALSA: firewire_lib: add tracepoints for packets without CIP headers')
-Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Fixes: cb30a63384bc ("tipc: refactor function tipc_enable_bearer()")
+Reported-by: syzbot+b981acf1fb240c0c128b@syzkaller.appspotmail.com
+Cc: Ying Xue <ying.xue@windriver.com>
+Cc: Jon Maloy <jon.maloy@ericsson.com>
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- sound/firewire/amdtp-stream-trace.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/tipc/bearer.c |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/sound/firewire/amdtp-stream-trace.h
-+++ b/sound/firewire/amdtp-stream-trace.h
-@@ -131,7 +131,7 @@ TRACE_EVENT(in_packet_without_header,
- 		__entry->index = index;
- 	),
- 	TP_printk(
--		"%02u %04u %04x %04x %02d %03u %3u %3u %02u %01u %02u",
-+		"%02u %04u %04x %04x %02d %03u %02u %03u %02u %01u %02u",
- 		__entry->second,
- 		__entry->cycle,
- 		__entry->src,
+--- a/net/tipc/bearer.c
++++ b/net/tipc/bearer.c
+@@ -317,7 +317,6 @@ static int tipc_enable_bearer(struct net
+ 	res = tipc_disc_create(net, b, &b->bcast_addr, &skb);
+ 	if (res) {
+ 		bearer_disable(net, b);
+-		kfree(b);
+ 		errstr = "failed to create discoverer";
+ 		goto rejected;
+ 	}
 
 
