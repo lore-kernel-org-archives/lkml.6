@@ -2,163 +2,97 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 058ACC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 02:10:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A463C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 02:11:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF0BD2085B
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 02:10:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 05F2520838
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 02:11:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="Xkpa6DOW"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=onstation.org header.i=@onstation.org header.b="IKInSSLm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726330AbfAGCKQ (ORCPT
+        id S1726399AbfAGCLz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 6 Jan 2019 21:10:16 -0500
-Received: from conuserg-12.nifty.com ([210.131.2.79]:40743 "EHLO
-        conuserg-12.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726106AbfAGCKP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Jan 2019 21:10:15 -0500
-Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-12.nifty.com with ESMTP id x0728I1G022620;
-        Mon, 7 Jan 2019 11:08:18 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-12.nifty.com x0728I1G022620
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1546826899;
-        bh=3qC/QbwPHGLHXMMXK75YADLfQze8MkxfsjczvjMNEco=;
+        Sun, 6 Jan 2019 21:11:55 -0500
+Received: from onstation.org ([52.200.56.107]:46918 "EHLO onstation.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726106AbfAGCLy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Jan 2019 21:11:54 -0500
+Received: from localhost.localdomain (c-98-239-145-235.hsd1.wv.comcast.net [98.239.145.235])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: masneyb)
+        by onstation.org (Postfix) with ESMTPSA id 4E0B114A;
+        Mon,  7 Jan 2019 02:11:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=onstation.org;
+        s=default; t=1546827113;
+        bh=wDkjj6h/FHlpuxzIn6VJz9ckyAqF5ZE7VKucEdJw3iU=;
         h=From:To:Cc:Subject:Date:From;
-        b=Xkpa6DOW87LP4GK8wjZc4tpvOQQSG9LLeCwFjhxEWmGw4CuAsycwKfCyrbBSRtx4p
-         e1S7CBnvDNOyjB4X06shN2a7LhVusN/d59bXeCYjXnhOUGYsb2b/PzQYtOFWWj9IP+
-         hH6UHSB+2MG9xXev+2lw2rOPEEO1brBbppSuYMPl+C1lrJwCMfQ4JVQgcVRy7pA2SM
-         y0i2+x1QGMXG5LSqL3AFCIFbaNw04TlNqs57HdPpSmPu9mdsIngp8R4oKWCQDoYcAa
-         ZVaOekEcDsZwFhNlEHA6CyUrdBvS7A0+jhtRcua7V4BV1nE7obvEkfgE1gsiIu2LI8
-         DdLOs1jMGQ8Xw==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Mark Salter <msalter@redhat.com>,
-        Aurelien Jacquiot <jacquiot.aurelien@gmail.com>,
-        Richard Kuo <rkuo@codeaurora.org>,
-        Michal Simek <monstr@monstr.eu>,
-        Stafford Horne <shorne@gmail.com>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Jonas Bonn <jonas@southpole.se>,
-        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
-        Guan Xuetao <gxt@pku.edu.cn>, linux-c6x-dev@linux-c6x.org,
-        linux-kernel@vger.kernel.org,
-        uclinux-h8-devel@lists.sourceforge.jp,
-        linux-hexagon@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        openrisc@lists.librecores.org
-Subject: [URGENT FIX PATCH] arch: restore generic-y += shmparam.h for some architectures
-Date:   Mon,  7 Jan 2019 11:08:08 +0900
-Message-Id: <1546826888-29197-1-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
+        b=IKInSSLmkdP64hPdpITKc0zlrCVz6wZkpJNPdH+iyc/TMCcZ/Vx8D2q2+SvldhcGX
+         xO0ndR+SHnEMTlsOQ6EHQNbyG/OxPt9IIXjMD8T20sc7OxLHiC/CK99LrAisYIz3++
+         F208nUWXjv826Ne0driFk9I6bORA8zEMlpMDH+oc=
+From:   Brian Masney <masneyb@onstation.org>
+To:     linus.walleij@linaro.org, sboyd@kernel.org,
+        bjorn.andersson@linaro.org, andy.gross@linaro.org,
+        lee.jones@linaro.org
+Cc:     marc.zyngier@arm.com, shawnguo@kernel.org, dianders@chromium.org,
+        linux-gpio@vger.kernel.org, nicolas.dechesne@linaro.org,
+        niklas.cassel@linaro.org, david.brown@linaro.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: [PATCH v2 0/5] qcom: spmi: add support for hierarchical IRQ chip
+Date:   Sun,  6 Jan 2019 21:11:40 -0500
+Message-Id: <20190107021145.6370-1-masneyb@onstation.org>
+X-Mailer: git-send-email 2.17.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For some reasons, I accidentally got rid of "generic-y += shmparam.h"
-from some architectures.
+This patch series adds hierarchical IRQ chip support to spmi-gpio so
+that device tree consumers can request an IRQ directly from the GPIO
+block rather than having to request an IRQ from the underlying PMIC.
+The first two patches in this series removes some IRQ count code that
+was causing the IRQs to be prematurely initialized. Patch three
+converts pmic-arb to use the version 2 IRQ interface. Patches 4/5
+add support for the hierarchical IRQ chip to spmi-gpio.
 
-Restore them to fix building c6x, h8300, hexagon, m68k, microblaze,
-openrisc, and unicore32.
+For more background information, see the email thread with Linus
+Walleij's excellent description of the problem at
+https://www.spinics.net/lists/linux-gpio/msg34655.html.
 
-Fixes: d6e4b3e326d8 ("arch: remove redundant UAPI generic-y defines")
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+Patches 3-5 need to be applied in the order that are presented here in
+order to allow for a proper bisection. Patch 5 depends on the presence
+of 1-4. Part of the series can be applied without any breakage.
 
-Hi Linus,
+This work was tested on a LG Nexus 5 (hammerhead) phone. My status page
+at https://masneyb.github.io/nexus-5-upstream/ describes what is working
+so far with an upstream kernel.
 
-Could you pick up this directly?
-Apology for breakage.
+High-level changes since v1:
+- Patches 1 and 2 are new. This brought in a third subsystem (mfd).
+- I have detailed changelogs attached to the notes on patches 3-5.
 
+Brian Masney (5):
+  spmi: pmic-arb: hardcode IRQ counts
+  mfd: qcom-spmi-pmic: use devm_mfd_add_devices instead of
+    devm_of_platform_populate
+  spmi: pmic-arb: convert to v2 irq interfaces to support hierarchical
+    IRQ chips
+  qcom: spmi-gpio: add support for hierarchical IRQ chip
+  ARM: dts: qcom: msm8974: add interrupt controller properties
 
+ arch/arm/boot/dts/qcom-pm8941.dtsi       |  39 +-----
+ drivers/mfd/Kconfig                      |   1 +
+ drivers/mfd/qcom-spmi-pmic.c             |  61 ++++++++-
+ drivers/pinctrl/qcom/pinctrl-spmi-gpio.c | 160 +++++++++++++++++++----
+ drivers/spmi/spmi-pmic-arb.c             |  58 +++++---
+ 5 files changed, 233 insertions(+), 86 deletions(-)
 
- arch/c6x/include/uapi/asm/Kbuild        | 1 +
- arch/h8300/include/uapi/asm/Kbuild      | 1 +
- arch/hexagon/include/uapi/asm/Kbuild    | 1 +
- arch/m68k/include/uapi/asm/Kbuild       | 1 +
- arch/microblaze/include/uapi/asm/Kbuild | 1 +
- arch/openrisc/include/uapi/asm/Kbuild   | 1 +
- arch/unicore32/include/uapi/asm/Kbuild  | 1 +
- 7 files changed, 7 insertions(+)
-
-diff --git a/arch/c6x/include/uapi/asm/Kbuild b/arch/c6x/include/uapi/asm/Kbuild
-index 0febf1a..6c6f630 100644
---- a/arch/c6x/include/uapi/asm/Kbuild
-+++ b/arch/c6x/include/uapi/asm/Kbuild
-@@ -1,4 +1,5 @@
- include include/uapi/asm-generic/Kbuild.asm
- 
- generic-y += kvm_para.h
-+generic-y += shmparam.h
- generic-y += ucontext.h
-diff --git a/arch/h8300/include/uapi/asm/Kbuild b/arch/h8300/include/uapi/asm/Kbuild
-index 0febf1a..6c6f630 100644
---- a/arch/h8300/include/uapi/asm/Kbuild
-+++ b/arch/h8300/include/uapi/asm/Kbuild
-@@ -1,4 +1,5 @@
- include include/uapi/asm-generic/Kbuild.asm
- 
- generic-y += kvm_para.h
-+generic-y += shmparam.h
- generic-y += ucontext.h
-diff --git a/arch/hexagon/include/uapi/asm/Kbuild b/arch/hexagon/include/uapi/asm/Kbuild
-index c1b06dc..61d955c 100644
---- a/arch/hexagon/include/uapi/asm/Kbuild
-+++ b/arch/hexagon/include/uapi/asm/Kbuild
-@@ -1,3 +1,4 @@
- include include/uapi/asm-generic/Kbuild.asm
- 
-+generic-y += shmparam.h
- generic-y += ucontext.h
-diff --git a/arch/m68k/include/uapi/asm/Kbuild b/arch/m68k/include/uapi/asm/Kbuild
-index 960bf1e..b8b3525 100644
---- a/arch/m68k/include/uapi/asm/Kbuild
-+++ b/arch/m68k/include/uapi/asm/Kbuild
-@@ -2,3 +2,4 @@ include include/uapi/asm-generic/Kbuild.asm
- 
- generated-y += unistd_32.h
- generic-y += kvm_para.h
-+generic-y += shmparam.h
-diff --git a/arch/microblaze/include/uapi/asm/Kbuild b/arch/microblaze/include/uapi/asm/Kbuild
-index 97823ec..28823e3 100644
---- a/arch/microblaze/include/uapi/asm/Kbuild
-+++ b/arch/microblaze/include/uapi/asm/Kbuild
-@@ -2,4 +2,5 @@ include include/uapi/asm-generic/Kbuild.asm
- 
- generated-y += unistd_32.h
- generic-y += kvm_para.h
-+generic-y += shmparam.h
- generic-y += ucontext.h
-diff --git a/arch/openrisc/include/uapi/asm/Kbuild b/arch/openrisc/include/uapi/asm/Kbuild
-index 0febf1a..6c6f630 100644
---- a/arch/openrisc/include/uapi/asm/Kbuild
-+++ b/arch/openrisc/include/uapi/asm/Kbuild
-@@ -1,4 +1,5 @@
- include include/uapi/asm-generic/Kbuild.asm
- 
- generic-y += kvm_para.h
-+generic-y += shmparam.h
- generic-y += ucontext.h
-diff --git a/arch/unicore32/include/uapi/asm/Kbuild b/arch/unicore32/include/uapi/asm/Kbuild
-index 0febf1a..6c6f630 100644
---- a/arch/unicore32/include/uapi/asm/Kbuild
-+++ b/arch/unicore32/include/uapi/asm/Kbuild
-@@ -1,4 +1,5 @@
- include include/uapi/asm-generic/Kbuild.asm
- 
- generic-y += kvm_para.h
-+generic-y += shmparam.h
- generic-y += ucontext.h
 -- 
-2.7.4
+2.17.2
 
