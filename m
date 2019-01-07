@@ -2,181 +2,109 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70113C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 15:42:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4403AC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 15:42:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F5172089F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 15:42:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1345A2173C
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 15:42:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546875753;
+	bh=xyHwYlMUxtAmZvLZ0B9xN892ULiaxtaQB1atI+4TECo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=Tjn125n1A5sQ8TjyTYM1LateD284RjlT3Qk8ldjAsKrXkbqxFqZMf3ib9OWrzvgrQ
+	 4pcOYh5cvdpXn1PToVBLuE4/2ZKz2NaKYn1vHItukc2z8J1/yPuarJV+FPUE6plQse
+	 Ox8cZgufoegto2UUUb+lQSOiIc/ZFVKN3+1nBP1g=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730224AbfAGPmN (ORCPT
+        id S1730270AbfAGPmb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 10:42:13 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:42072 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727305AbfAGPmN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 10:42:13 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 3AF9D20797; Mon,  7 Jan 2019 16:42:11 +0100 (CET)
-Received: from windsurf (aaubervilliers-681-1-29-148.w90-88.abo.wanadoo.fr [90.88.149.148])
-        by mail.bootlin.com (Postfix) with ESMTPSA id D4B7D20714;
-        Mon,  7 Jan 2019 16:42:10 +0100 (CET)
-Date:   Mon, 7 Jan 2019 16:42:10 +0100
-From:   Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-To:     Michal Simek <michal.simek@xilinx.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     Nava kishore Manne <navam@xilinx.com>,
-        Josh Cartwright <josh.cartwright@ni.com>,
-        "monstr@monstr.eu" <monstr@monstr.eu>,
-        Peter Crosthwaite <peter.crosthwaite@xilinx.com>,
-        Borsodi Petr <Petr.Borsodi@i.cz>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        Rob Herring <robherring2@gmail.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Steffen Trumtrar <s.trumtrar@pengutronix.de>,
-        =?UTF-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>,
-        Shubhrajyoti Datta <shubhraj@xilinx.com>
-Subject: Re: [PATCH 2/8] gpio: zynq: Wakeup gpio controller when it is used
- as IRQ controller
-Message-ID: <20190107164210.3ecf37e8@windsurf>
-In-Reply-To: <6da5fd79-fbc8-b613-954f-dcbe2ef8d6c5@xilinx.com>
-References: <cover.1502103715.git.michal.simek@xilinx.com>
-        <72d3cd83bed792a23ab60cf9b6d51b618f5aa084.1502103715.git.michal.simek@xilinx.com>
-        <CACRpkdZE-Edr7fWZY5VQM1_65iw7MYGP-iDa2ExZsPxpM0rurQ@mail.gmail.com>
-        <6da5fd79-fbc8-b613-954f-dcbe2ef8d6c5@xilinx.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Mon, 7 Jan 2019 10:42:31 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:43269 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727305AbfAGPmb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 10:42:31 -0500
+Received: by mail-lf1-f65.google.com with SMTP id u18so586126lff.10;
+        Mon, 07 Jan 2019 07:42:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=n75hWKUAKINCjjwiXS3H+56nnwEW3ocILgEXSHrGOsQ=;
+        b=sK2L1SHuZ/p45VDd7jRX1DgLcP2iqzrbqBn0D+/4AGa1i1RBG1DikbXsjwOafE3NTY
+         CSPZR+ILWT57n3cvbZYZfiI8Vxmu2mbgKYOD4sQIIcgHXsZPhsbzUJB9kC72fZLJ2XD0
+         YNp5XX/rcb+iu3c0l6JJ5Xd0+nPIR+JyRR8KNF8cfUaQkJBk6QoK4SrTnVGuZro9pGg0
+         EN9lI4/LNGBMpYdosYI328QTYSVsiM1qtATufiuZwYuyoR2j3qh+nIaI85hs9EKPWnkh
+         qZj392JUFeYDpZYtJeQvyWHwqN/IYiN9REHNrb8+5OgFtWTAfmOc8w+/M0r1gb/4XgQN
+         a/GA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=n75hWKUAKINCjjwiXS3H+56nnwEW3ocILgEXSHrGOsQ=;
+        b=NSNxT/x+nV13HjL8pgQ1eHz+omwmMHZxjpiY+oDVmwC6QW23zZNZhrrJ9HGd6XlNVG
+         ScuUsnxYoKdQMUsJKy4kX4+EMmSR5KnG3XzMnR25qhKJWfUD6E1PTtTuEJENHgqJTMCm
+         kpDa3QqbtMeqD0X2vMbqX8HhjPTXxrO2+njH6MBC5X5vqprs5Lv0HoJa/THEC+2vuJcL
+         d7GQAv6y76pRd3UssAFiqJpHhfoBj+B3iKbTp+qWje109vOEK7muV0rbsFoknYHhXY0o
+         uZzdqNQ+rHd5yI7jXfGmhmoWminrBKH95o5Ln32RWVPuVhZDVSw3P3xEWkywvai9mUZn
+         kjVw==
+X-Gm-Message-State: AJcUukczxKrkIdbRyPYxk04QkGSl5gwnGpldlcwIrY8Br5T8a5bCxrt2
+        ev5SyGmYGVuvH0ZyoUXAQqeeiYLX
+X-Google-Smtp-Source: ALg8bN4wNz28guO/Z7N7inuDlPbyghWrBgqoe92ZtfyO8Psnup2QvsWvTbfuNk1kWR9krwn+PBLlsA==
+X-Received: by 2002:a19:ec16:: with SMTP id b22mr23110123lfa.65.1546875749008;
+        Mon, 07 Jan 2019 07:42:29 -0800 (PST)
+Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
+        by smtp.gmail.com with ESMTPSA id c19sm12480524lfg.86.2019.01.07.07.42.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 07 Jan 2019 07:42:28 -0800 (PST)
+Received: from johan by xi.terra with local (Exim 4.91)
+        (envelope-from <johan@kernel.org>)
+        id 1ggX2r-0006a1-OK; Mon, 07 Jan 2019 16:42:29 +0100
+Date:   Mon, 7 Jan 2019 16:42:29 +0100
+From:   Johan Hovold <johan@kernel.org>
+To:     Max Schulze <max.schulze@posteo.de>
+Cc:     johan@kernel.org, gregkh@linuxfoundation.org,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] USB: serial: simple: add Motorola Tetra driver for
+ TPG2200
+Message-ID: <20190107154229.GE14782@localhost>
+References: <20190107073149.8214-1-max.schulze@posteo.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190107073149.8214-1-max.schulze@posteo.de>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Mon, Jan 07, 2019 at 08:31:49AM +0100, Max Schulze wrote:
+> Add new Motorola Tetra (simple) driver for Motorola Solutions TETRA PEI
+> device
 
-I am reviving this old thread, because the proposed patch (almost)
-solves the problem I recently reported with the bad interaction of
-runtime PM with the Zynq GPIO driver (see
-https://www.spinics.net/lists/linux-gpio/msg35437.html).
+I rephrased the summary and comment above since you're adding a new
+device id to an existing driver (rather than a new driver).
 
-On Mon, 14 Aug 2017 16:33:09 +0200, Michal Simek wrote:
-
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index 9568708a550b..a08a044fa4aa 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -1647,14 +1647,22 @@ static void gpiochip_irq_unmap(struct irq_domain
-> *d, unsigned int irq)
->  static int gpiochip_irq_reqres(struct irq_data *d)
->  {
->         struct gpio_chip *chip = irq_data_get_irq_chip_data(d);
-> +       int ret;
+> T:  Bus=02 Lev=01 Prnt=01 Port=01 Cnt=01 Dev#=  4 Spd=480 MxCh= 0
+> D:  Ver= 2.00 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
+> P:  Vendor=0cad ProdID=9016 Rev=24.16
+> S:  Manufacturer=Motorola Solutions, Inc.
+> S:  Product=TETRA PEI interface
+> C:  #Ifs= 2 Cfg#= 1 Atr=80 MxPwr=500mA
+> I:  If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=usb_serial_simple
+> I:  If#= 1 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=usb_serial_simple
 > 
->         if (!try_module_get(chip->gpiodev->owner))
->                 return -ENODEV;
-> 
-> +       ret = pm_runtime_get_sync(chip->parent);
-> +       if (ret < 0) {
-> +               module_put(chip->gpiodev->owner);
-> +               return ret;
-> +       }
-> +
->         if (gpiochip_lock_as_irq(chip, d->hwirq)) {
->                 chip_err(chip,
->                         "unable to lock HW IRQ %lu for IRQ\n",
->                         d->hwirq);
-> +               pm_runtime_put(chip->parent);
->                 module_put(chip->gpiodev->owner);
->                 return -EINVAL;
->         }
-> @@ -1666,6 +1674,7 @@ static void gpiochip_irq_relres(struct irq_data *d)
->         struct gpio_chip *chip = irq_data_get_irq_chip_data(d);
-> 
->         gpiochip_unlock_as_irq(chip, d->hwirq);
-> +       pm_runtime_put(chip->parent);
->         module_put(chip->gpiodev->owner);
->  }
+> Signed-off-by: Max Schulze <max.schulze@posteo.de>
+> Tested-by: Max Schulze <max.schulze@posteo.de>
 
-This patch almost solves the problem. It doesn't work as-is, because it
-assumes that runtime PM is used by all GPIO controllers, which is not
-the case. When runtime PM is not enabled, pm_runtime_get_sync() fails
-with -EACCES, and the whole gpiochip_irq_reqres() function aborts.
+And no need to add Tested-by for your own patches; submissions are
+always supposed to be tested.
 
-The following patch works fine in my case (a MMC card detect signal is
-connected to a pin of a PCA GPIO expander over I2C, whose INT# pin is
-itself connected to a GPIO pin of the Zynq SoC).
+Applied for -rc2.
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 20887c62fbb3..bd9a81fc8d56 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -27,6 +27,7 @@
- #include <linux/kfifo.h>
- #include <linux/poll.h>
- #include <linux/timekeeping.h>
-+#include <linux/pm_runtime.h>
- #include <uapi/linux/gpio.h>
- 
- #include "gpiolib.h"
-@@ -3540,12 +3541,23 @@ int gpiochip_reqres_irq(struct gpio_chip *chip, unsigned int offset)
-        if (!try_module_get(chip->gpiodev->owner))
-                return -ENODEV;
- 
-+       if (pm_runtime_enabled(chip->parent)) {
-+               ret = pm_runtime_get_sync(chip->parent);
-+               if (ret < 0) {
-+                       module_put(chip->gpiodev->owner);
-+                       return ret;
-+               }
-+       }
-+
-        ret = gpiochip_lock_as_irq(chip, offset);
-        if (ret) {
-                chip_err(chip, "unable to lock HW IRQ %u for IRQ\n", offset);
-+               if (pm_runtime_enabled(chip->parent))
-+                       pm_runtime_put(chip->parent);
-                module_put(chip->gpiodev->owner);
-                return ret;
-        }
-+
-        return 0;
- }
- EXPORT_SYMBOL_GPL(gpiochip_reqres_irq);
-@@ -3553,6 +3565,8 @@ EXPORT_SYMBOL_GPL(gpiochip_reqres_irq);
- void gpiochip_relres_irq(struct gpio_chip *chip, unsigned int offset)
- {
-        gpiochip_unlock_as_irq(chip, offset);
-+       if (pm_runtime_enabled(chip->parent))
-+               pm_runtime_put(chip->parent);
-        module_put(chip->gpiodev->owner);
- }
- EXPORT_SYMBOL_GPL(gpiochip_relres_irq);
-
-However, I must say that from a design perspective, I am not a big fan
-of this solution. Indeed for the normal GPIO ->request() and ->free()
-hooks, it is currently the GPIO driver itself that is responsible for
-runtime PM get/put, so it would be weird to have the runtime PM get/put
-for the IRQ request/free be done by the GPIO core.
-
-I believe that either the GPIO core should be in charge of the entire
-runtime PM interaction, or it should entirely be the responsibility of
-each GPIO controller driver. Having a mixed solution seems very
-confusing.
-
-Let me know which direction should be taken so that I can submit a
-proper patch to hopefully resolve this issue.
-
-Best regards,
-
-Thomas
--- 
-Thomas Petazzoni, CTO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Thanks,
+Johan
