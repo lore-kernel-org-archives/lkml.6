@@ -4,50 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6573AC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:21:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACAC7C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:21:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36AD821736
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:21:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7DCA4217D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:21:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546867294;
-	bh=u7b4o1jaLgPIippnEODpgri1oaBiu1Td8rTnkp8dvHs=;
+	s=default; t=1546867302;
+	bh=8+Zfdi0LI3U38ikvTScbj/Nfv/G0afZsWPcvHMnPffE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=1qvIFbKO8rePdirTe2ztW7OWJz5Na6PkZHQ/d1xkB79QmyjH+eCs56JyDN4aSdMMw
-	 3aDIBXNWnebkpH7+iFmun1D4Po+Jghp/c8CZJRJ8fPLPaZgG8w4Oajb+bXxt40hzfK
-	 WvjkClIxgORKhqfag9QCjLyA8wurvCfaj9P3X58k=
+	b=EVimBpHc2HCHXvqrAstPIh5rooWstR48FEKjEILQETx3x08jmnJtOVVp/WVkPcpRo
+	 xm4Id/U/Q0V1pycvPXE+YKCkcXi1G4fLfvHB98YMIP63TYSj1gVo32sDeVU3bAoufo
+	 oQ52TP0eGohR8i5jD28qARJ1+Y77TFGZIZAZQpTM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727906AbfAGMpC (ORCPT
+        id S1729961AbfAGNVl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:45:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33936 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:21:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33692 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727594AbfAGMpA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:45:00 -0500
+        id S1728560AbfAGMov (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:44:51 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 31C782183E;
-        Mon,  7 Jan 2019 12:44:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6E8FA20449;
+        Mon,  7 Jan 2019 12:44:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865099;
-        bh=u7b4o1jaLgPIippnEODpgri1oaBiu1Td8rTnkp8dvHs=;
+        s=default; t=1546865090;
+        bh=8+Zfdi0LI3U38ikvTScbj/Nfv/G0afZsWPcvHMnPffE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QXAoVocvDeLbDnN43BgE8tkMJjLqE4j7mZJuG0hV4KchLgIqD+4dKAWRS21r0VDVV
-         FbRLhVPnRO6Vawo/V0HA0bnbUkU+3hho3Eby8XLEhtkkKwPj9XIbADPlv8O23fI9oo
-         CMRqZj8BpRxXtydZg80SQqikQLsvJJBmiDQBl8cQ=
+        b=rZvr47R7QZJCaDNW6ULb58nnEfpVJOPDBQZYOOnScQUfZbvzeqm1nrKH/e6iULls8
+         g78i/PheDNBpmTVN/HUgMwTGvGGs+8Fz8hEC4/GISF8D3c14ahy5wWjzspD7so8uaf
+         lp56x2YdlDePeIkyoLCABv0dZKMM3B/tkEg5xCqA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Julien Thierry <julien.thierry@arm.com>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Subject: [PATCH 4.20 135/145] KVM: arm/arm64: vgic: Do not cond_resched_lock() with IRQs disabled
-Date:   Mon,  7 Jan 2019 13:32:52 +0100
-Message-Id: <20190107104454.882943697@linuxfoundation.org>
+        stable@vger.kernel.org, Nayna Jain <nayna@linux.vnet.ibm.com>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH 4.20 145/145] tpm: tpm_i2c_nuvoton: use correct command duration for TPM 2.x
+Date:   Mon,  7 Jan 2019 13:33:02 +0100
+Message-Id: <20190107104456.117336005@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104437.308206189@linuxfoundation.org>
 References: <20190107104437.308206189@linuxfoundation.org>
@@ -66,58 +67,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Julien Thierry <julien.thierry@arm.com>
+From: Tomas Winkler <tomas.winkler@intel.com>
 
-commit 2e2f6c3c0b08eed3fcf7de3c7684c940451bdeb1 upstream.
+commit 2ba5780ce30549cf57929b01d8cba6fe656e31c5 upstream.
 
-To change the active state of an MMIO, halt is requested for all vcpus of
-the affected guest before modifying the IRQ state. This is done by calling
-cond_resched_lock() in vgic_mmio_change_active(). However interrupts are
-disabled at this point and we cannot reschedule a vcpu.
+tpm_i2c_nuvoton calculated commands duration using TPM 1.x
+values via tpm_calc_ordinal_duration() also for TPM 2.x chips.
+Call tpm2_calc_ordinal_duration() for retrieving ordinal
+duration for TPM 2.X chips.
 
-We actually don't need any of this, as kvm_arm_halt_guest ensures that
-all the other vcpus are out of the guest. Let's just drop that useless
-code.
-
-Signed-off-by: Julien Thierry <julien.thierry@arm.com>
-Suggested-by: Christoffer Dall <christoffer.dall@arm.com>
 Cc: stable@vger.kernel.org
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Nayna Jain <nayna@linux.vnet.ibm.com>
+Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+Reviewed-by: Nayna Jain <nayna@linux.ibm.com>
+Tested-by: Nayna Jain <nayna@linux.ibm.com> (For TPM 2.0)
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- virt/kvm/arm/vgic/vgic-mmio.c |   21 ---------------------
- 1 file changed, 21 deletions(-)
+ drivers/char/tpm/tpm_i2c_nuvoton.c |   11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
---- a/virt/kvm/arm/vgic/vgic-mmio.c
-+++ b/virt/kvm/arm/vgic/vgic-mmio.c
-@@ -313,27 +313,6 @@ static void vgic_mmio_change_active(stru
+--- a/drivers/char/tpm/tpm_i2c_nuvoton.c
++++ b/drivers/char/tpm/tpm_i2c_nuvoton.c
+@@ -369,6 +369,7 @@ static int i2c_nuvoton_send(struct tpm_c
+ 	struct device *dev = chip->dev.parent;
+ 	struct i2c_client *client = to_i2c_client(dev);
+ 	u32 ordinal;
++	unsigned long duration;
+ 	size_t count = 0;
+ 	int burst_count, bytes2write, retries, rc = -EIO;
  
- 	spin_lock_irqsave(&irq->irq_lock, flags);
- 
--	/*
--	 * If this virtual IRQ was written into a list register, we
--	 * have to make sure the CPU that runs the VCPU thread has
--	 * synced back the LR state to the struct vgic_irq.
--	 *
--	 * As long as the conditions below are true, we know the VCPU thread
--	 * may be on its way back from the guest (we kicked the VCPU thread in
--	 * vgic_change_active_prepare)  and still has to sync back this IRQ,
--	 * so we release and re-acquire the spin_lock to let the other thread
--	 * sync back the IRQ.
--	 *
--	 * When accessing VGIC state from user space, requester_vcpu is
--	 * NULL, which is fine, because we guarantee that no VCPUs are running
--	 * when accessing VGIC state from user space so irq->vcpu->cpu is
--	 * always -1.
--	 */
--	while (irq->vcpu && /* IRQ may have state in an LR somewhere */
--	       irq->vcpu != requester_vcpu && /* Current thread is not the VCPU thread */
--	       irq->vcpu->cpu != -1) /* VCPU thread is running */
--		cond_resched_lock(&irq->irq_lock);
--
- 	if (irq->hw) {
- 		vgic_hw_irq_change_active(vcpu, irq, active, !requester_vcpu);
- 	} else {
+@@ -455,10 +456,12 @@ static int i2c_nuvoton_send(struct tpm_c
+ 		return rc;
+ 	}
+ 	ordinal = be32_to_cpu(*((__be32 *) (buf + 6)));
+-	rc = i2c_nuvoton_wait_for_data_avail(chip,
+-					     tpm_calc_ordinal_duration(chip,
+-								       ordinal),
+-					     &priv->read_queue);
++	if (chip->flags & TPM_CHIP_FLAG_TPM2)
++		duration = tpm2_calc_ordinal_duration(chip, ordinal);
++	else
++		duration = tpm_calc_ordinal_duration(chip, ordinal);
++
++	rc = i2c_nuvoton_wait_for_data_avail(chip, duration, &priv->read_queue);
+ 	if (rc) {
+ 		dev_err(dev, "%s() timeout command duration\n", __func__);
+ 		i2c_nuvoton_ready(chip);
 
 
