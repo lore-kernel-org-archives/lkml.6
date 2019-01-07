@@ -2,161 +2,53 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0EC5C43612
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 21:56:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D178C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 22:00:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D84F2089F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 21:56:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546898169;
-	bh=pA6IjBgsIE8nHxFGAuRtU3Spu7CXU9qhhIQ64y4mvQk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=BNpZuxJ8H3+tYViyqtQreuxqMM7cV9h+jCKn3ofsRN9sIYPtDDlONNDqzu+nf29vG
-	 wr/03Cqm7IK2JtJGdrESGlyl4ufj8XYqib5bb6QQc02CDcCYuSNAuiYyyXOw9Qp4VG
-	 vozl2zhcsi93/RnETLa5QE8PBn3d3RuBVygzQXdY=
+	by mail.kernel.org (Postfix) with ESMTP id 1DB9B206BB
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 22:00:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727220AbfAGV4J (ORCPT
+        id S1727204AbfAGWAH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 16:56:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34632 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 17:00:07 -0500
+Received: from ms.lwn.net ([45.79.88.28]:53518 "EHLO ms.lwn.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726535AbfAGV4I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 16:56:08 -0500
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        id S1726746AbfAGWAH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 17:00:07 -0500
+Received: from lwn.net (localhost [127.0.0.1])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4DE552089F;
-        Mon,  7 Jan 2019 21:56:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546898167;
-        bh=pA6IjBgsIE8nHxFGAuRtU3Spu7CXU9qhhIQ64y4mvQk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=QcAGeLuE82yHo8lgFIeKeNsOIuvYD3IHtuGd6xrLVHyIKW97MMwqsVYztKKR+x5Wn
-         BvRys2ObxujiGlLL0EQQtqJAWqARuSdx22ty8lPMHM1UUE/wKHx1Wk3wglqiyrRKpi
-         84397/XrUzZgAqf2QlLMYKwVYOW7n/+RtKekawTY=
-Date:   Mon, 7 Jan 2019 16:56:06 -0500
-From:   Sasha Levin <sashal@kernel.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Theodore Tso <tytso@mit.edu>, stable@kernel.org
-Subject: Re: [PATCH 4.20 079/145] ext4: check for shutdown and r/o file
- system in ext4_write_inode()
-Message-ID: <20190107215606.GH166797@sasha-vm>
-References: <20190107104437.308206189@linuxfoundation.org>
- <20190107104447.599996662@linuxfoundation.org>
+        by ms.lwn.net (Postfix) with ESMTPSA id C8C5D9A9;
+        Mon,  7 Jan 2019 22:00:06 +0000 (UTC)
+Date:   Mon, 7 Jan 2019 15:00:05 -0700
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     David Miller <davem@davemloft.net>
+Cc:     ottosabart@seberm.com, linux-doc@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/4] doc: network: integrate offload documents into
+ doc tree
+Message-ID: <20190107150005.64bcc7e0@lwn.net>
+In-Reply-To: <20190107.073029.563146149237352062.davem@davemloft.net>
+References: <cover.1546730285.git.ottosabart@seberm.com>
+        <20190107.073029.563146149237352062.davem@davemloft.net>
+Organization: LWN.net
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20190107104447.599996662@linuxfoundation.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 07, 2019 at 01:31:56PM +0100, Greg Kroah-Hartman wrote:
->4.20-stable review patch.  If anyone has any objections, please let me know.
->
->------------------
->
->From: Theodore Ts'o <tytso@mit.edu>
->
->commit 18f2c4fcebf2582f96cbd5f2238f4f354a0e4847 upstream.
->
->If the file system has been shut down or is read-only, then
->ext4_write_inode() needs to bail out early.
->
->Also use jbd2_complete_transaction() instead of ext4_force_commit() so
->we only force a commit if it is needed.
->
->Signed-off-by: Theodore Ts'o <tytso@mit.edu>
->Cc: stable@kernel.org
->Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->
->---
-> fs/ext4/inode.c |    9 +++++++--
-> 1 file changed, 7 insertions(+), 2 deletions(-)
->
->--- a/fs/ext4/inode.c
->+++ b/fs/ext4/inode.c
->@@ -5400,9 +5400,13 @@ int ext4_write_inode(struct inode *inode
-> {
-> 	int err;
->
->-	if (WARN_ON_ONCE(current->flags & PF_MEMALLOC))
->+	if (WARN_ON_ONCE(current->flags & PF_MEMALLOC) ||
->+	    sb_rdonly(inode->i_sb))
-> 		return 0;
->
->+	if (unlikely(ext4_forced_shutdown(EXT4_SB(inode->i_sb))))
->+		return -EIO;
->+
-> 	if (EXT4_SB(inode->i_sb)->s_journal) {
-> 		if (ext4_journal_current_handle()) {
-> 			jbd_debug(1, "called recursively, non-PF_MEMALLOC!\n");
->@@ -5418,7 +5422,8 @@ int ext4_write_inode(struct inode *inode
-> 		if (wbc->sync_mode != WB_SYNC_ALL || wbc->for_sync)
-> 			return 0;
->
->-		err = ext4_force_commit(inode->i_sb);
->+		err = jbd2_complete_transaction(EXT4_SB(inode->i_sb)->s_journal,
->+						EXT4_I(inode)->i_sync_tid);
-> 	} else {
-> 		struct ext4_iloc iloc;
+On Mon, 07 Jan 2019 07:30:29 -0800 (PST)
+David Miller <davem@davemloft.net> wrote:
 
-Hi Ted,
+> Jon, do you want to integrate these?  I'm fine with that and I don't anticiapte
+> any serious conflicts.
 
-I'm not sure if this patch is the culprit or no, but testing with
-xfstests on 4.20.1-rc1 started failing generic/390 with:
+I'll do that shortly, thanks.
 
-[ 3405.656893] run fstests generic/390 at 2019-01-07 20:26:55
-[ 3406.524380] EXT4-fs (nvme0n1p2): mounted filesystem without journal. Opts: acl,user_xattr
-[ 3406.731410] WARNING: CPU: 0 PID: 93128 at fs/ext4/ext4_jbd2.c:53 ext4_journal_check_start+0x121/0x190
-[ 3406.731418] CPU: 0 PID: 93128 Comm: fsstress Tainted: G    B   W         4.20.1-rc1+ #1
-[ 3406.731420] Hardware name: Microsoft Corporation Virtual Machine/Virtual Machine, BIOS 090007  05/18/2018
-[ 3406.731425] RIP: 0010:ext4_journal_check_start+0x121/0x190
-[ 3406.731430] Code: 4d 85 e4 74 1e 4c 89 e2 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 80 3c 02 00 75 4f 41 f6 04 24 02 75 0b 31 c0 5b 41 5c 5d c3 <0f> 0b eb ab 48 c7 c1 60 b4 f9 a4 ba 3d 00 00 00 48 c7 c6 a0 b8 f9
-[ 3406.731432] RSP: 0018:ffff888f30317648 EFLAGS: 00010246
-[ 3406.731437] RAX: 0000000000000000 RBX: ffff888ee6ce12c8 RCX: 000000000000000c
-[ 3406.731440] RDX: 1ffff111dcd9c2a0 RSI: 0000000000000b33 RDI: ffff888ee6ce1500
-[ 3406.731442] RBP: ffff888f30317658 R08: 0000000000000000 R09: ffffed11db5f01a7
-[ 3406.731444] R10: 0000000000000001 R11: ffffed11db5f01a6 R12: ffff888ee6ce2ee8
-[ 3406.731447] R13: dffffc0000000000 R14: 0000000000000000 R15: ffff888f303178e0
-[ 3406.731450] FS:  00007fc015d5cb80(0000) GS:ffff888f6b800000(0000) knlGS:0000000000000000
-[ 3406.731452] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[ 3406.731455] CR2: 0000557f34651000 CR3: 0000000f2c722000 CR4: 00000000003406f0
-[ 3406.731459] Call Trace:
-[ 3406.731465]  __ext4_journal_start_sb+0x95/0x380
-[ 3406.731479]  ext4_writepages+0x10e1/0x3170
-[ 3406.731567]  do_writepages+0xc7/0x120
-[ 3406.731577]  __filemap_fdatawrite_range+0x313/0x470
-[ 3406.731594]  file_write_and_wait_range+0x7c/0xd0
-[ 3406.731598]  __generic_file_fsync+0x6c/0x180
-[ 3406.731601]  ext4_sync_file+0x60b/0xf90
-[ 3406.731626]  vfs_fsync_range+0xf5/0x210
-[ 3406.731630]  do_fsync+0x3d/0x70
-[ 3406.731634]  __x64_sys_fdatasync+0x36/0x50
-[ 3406.731638]  do_syscall_64+0x153/0x460
-[ 3406.731666]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-[ 3406.731669] RIP: 0033:0x7fc0152412c4
-[ 3406.731673] Code: 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 8d 05 41 96 2d 00 8b 00 85 c0 75 13 b8 4b 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 3c f3 c3 66 90 53 89 fb 48 83 ec 10 e8 04 94
-[ 3406.731675] RSP: 002b:00007ffc445f72f8 EFLAGS: 00000246 ORIG_RAX: 000000000000004b
-[ 3406.731679] RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007fc0152412c4
-[ 3406.731681] RDX: 00007ffc445f7250 RSI: 00007ffc445f7250 RDI: 0000000000000003
-[ 3406.731683] RBP: 0000000000000034 R08: 00007fc015515c40 R09: 0000000000000000
-[ 3406.731685] R10: 0000000000000000 R11: 0000000000000246 R12: 00000000000001f4
-[ 3406.731687] R13: 0000000051eb851f R14: 00007ffc445f73f6 R15: 0000557f33ad1930
-[ 3406.731690] ---[ end trace 698eba2a0467d312 ]---
-
-I'm also slightly confused here because this test is for ext4 without
-journal (see even "EXT4-fs (nvme0n1p2): mounted filesystem without
-journal") but for some reason it seems that this still goes to the
-journal?
-
---
-Thanks,
-Sasha
+jon
