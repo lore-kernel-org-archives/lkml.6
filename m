@@ -4,56 +4,59 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 203A2C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:31:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21393C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:31:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2B1B20859
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:31:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E63582173C
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:31:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546864271;
-	bh=+fcl0PjsTro93+snGeoRTeKaBLtozQ3vuwLZDVKguEQ=;
+	s=default; t=1546864274;
+	bh=oy9avoh9SGTyU6XEPLC3yupQSz0AsYCo7KPsFqCRwlM=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=MB9xJv0JHhciGto0qL5omfYYuClIG2y0OBTdRujcXRle82fmfC7f3wYv++KjbIZb1
-	 GbOdF/oJMlm6llDwkJcwa9qOuqmoQa32eqOsuZVvGtLslzcEmoh4zfBGn4XMOvZqd8
-	 lwx0Zlg9P5Y3aLX6zwEUW+9cUhoLjOcd/5ZVpZUc=
+	b=cx/iTZRgeiHcn7maz4NdpbU//hEglIol1jM6DKqiNg/9t2zxU8iASkqU5A6NtNUb9
+	 z7N+XADQ2MbjjtM7B1PDq7zWTzEJYORdOXbl31v1RqMqqKAl/wATU9DquL6VOK/xu6
+	 PStadsf23qdldMWbVVZWzfXcNJEKKSoTcE0x7Jmw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726946AbfAGMbJ (ORCPT
+        id S1726971AbfAGMbM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:31:09 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:39954 "EHLO
+        Mon, 7 Jan 2019 07:31:12 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:39994 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726521AbfAGMbJ (ORCPT
+        with ESMTP id S1726718AbfAGMbK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:31:09 -0500
+        Mon, 7 Jan 2019 07:31:10 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=e0fBSdAO5PjtDC0wVBHORxbqwBWBFdz5+Jgee6FFlAc=; b=OqNgnMLmepCD
-        E9rKkXX7RUHiGlsC30gy7t8Ixs+T4mNgnGHK83GQPBOOcu46808xI1DHPvdkdDo+RhIUQOoDpdHzh
-        8RrQRa5T7qD3HMwtJXydSXdwK3erngsE0FK8IJb5kcBz+v+BSqazVcXZunXOg5vOMpAF2itkGCygc
-        renyI=;
+        List-Archive; bh=xCR2tCpN6yn3y/CMXeFkBxchqHXiiiSGmietEWbXeRU=; b=K062oBo4KcGw
+        wGLcyCjoFFUIUIqAIqO5Q8r3n+6mmZpezGGNUEEe77IFo8xFVtOh+bWllmO09o32oT9QEHVlu4P+U
+        t4x+m7ikqSuk0n9+iT8wkTw9gT2sVIEqbFBi1heNGX+kzNPfeYjAs6anrlwaefRjAckm0xPUVMcdZ
+        Pe7Ww=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1ggU3b-0006lK-9B; Mon, 07 Jan 2019 12:31:03 +0000
+        id 1ggU3X-0006lB-Jw; Mon, 07 Jan 2019 12:30:59 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id D557A1127491; Mon,  7 Jan 2019 12:31:02 +0000 (GMT)
+        id 3A8B31127490; Mon,  7 Jan 2019 12:30:59 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
-To:     Katsuhiro Suzuki <katsuhiro@katsuster.net>
-Cc:     Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: rockchip: add workaround for silence of rk3288 ACODEC" to the asoc tree
-In-Reply-To:  <20181220153636.5213-2-katsuhiro@katsuster.net>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Katsuhiro Suzuki <katsuhiro@katsuster.net>,
+        alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>,
+        Mark Brown <broonie@kernel.org>, kbuild-all@01.org,
+        alsa-devel@alsa-project.org
+Subject: Applied "ASoC: rockchip: fix platform_no_drv_owner.cocci warnings" to the asoc tree
+In-Reply-To:  <20181225043826.GA158508@lkp-ib04.lkp.intel.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190107123102.D557A1127491@debutante.sirena.org.uk>
-Date:   Mon,  7 Jan 2019 12:31:02 +0000 (GMT)
+Message-Id: <20190107123059.3A8B31127490@debutante.sirena.org.uk>
+Date:   Mon,  7 Jan 2019 12:30:59 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -61,7 +64,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: rockchip: add workaround for silence of rk3288 ACODEC
+   ASoC: rockchip: fix platform_no_drv_owner.cocci warnings
 
 has been applied to the asoc tree at
 
@@ -86,41 +89,32 @@ to this mail.
 Thanks,
 Mark
 
-From f5758544d98c8bec7793aeea28928f5e8bd45d47 Mon Sep 17 00:00:00 2001
-From: Katsuhiro Suzuki <katsuhiro@katsuster.net>
-Date: Fri, 21 Dec 2018 00:36:36 +0900
-Subject: [PATCH] ASoC: rockchip: add workaround for silence of rk3288 ACODEC
+From e1de3d237b5083fcd0da6fcf600848a4cef9cc67 Mon Sep 17 00:00:00 2001
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Tue, 25 Dec 2018 02:20:36 +0000
+Subject: [PATCH] ASoC: rockchip: fix platform_no_drv_owner.cocci warnings
 
-This patch adds reset and precharge in shutdown of PCM device.
+Remove .owner field if calls are used which set it automatically
+Generated by: scripts/coccinelle/api/platform_no_drv_owner.cocci
 
-ACODEC goes to silence if we change Fs to 44.1kHz from 48kHz. This
-workaround seems to work but I don't know this workaround is correct
-sequence or not for ACODEC.
-
-Signed-off-by: Katsuhiro Suzuki <katsuhiro@katsuster.net>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/rk3328_codec.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ sound/soc/codecs/rk3328_codec.c | 1 -
+ 1 file changed, 1 deletion(-)
 
 diff --git a/sound/soc/codecs/rk3328_codec.c b/sound/soc/codecs/rk3328_codec.c
-index 71f3fc2d970c..f3442a2283ea 100644
+index f3442a2283ea..24f8f86d58e9 100644
 --- a/sound/soc/codecs/rk3328_codec.c
 +++ b/sound/soc/codecs/rk3328_codec.c
-@@ -261,9 +261,12 @@ static int rk3328_codec_close_playback(struct rk3328_codec_priv *rk3328)
- 		mdelay(1);
- 	}
- 
-+	/* Workaround for silence when changed Fs 48 -> 44.1kHz */
-+	rk3328_codec_reset(rk3328);
-+
- 	regmap_update_bits(rk3328->regmap, DAC_PRECHARGE_CTRL,
- 			   DAC_CHARGE_CURRENT_ALL_MASK,
--			   DAC_CHARGE_CURRENT_I);
-+			   DAC_CHARGE_CURRENT_ALL_ON);
- 
- 	return 0;
- }
+@@ -508,7 +508,6 @@ MODULE_DEVICE_TABLE(of, rk3328_codec_of_match);
+ static struct platform_driver rk3328_codec_driver = {
+ 	.driver = {
+ 		   .name = "rk3328-codec",
+-		   .owner = THIS_MODULE,
+ 		   .of_match_table = of_match_ptr(rk3328_codec_of_match),
+ 	},
+ 	.probe = rk3328_platform_probe,
 -- 
 2.20.1
 
