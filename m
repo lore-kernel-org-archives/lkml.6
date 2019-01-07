@@ -4,50 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA40DC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:44:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26A00C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:45:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A90432183E
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:44:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E2F5D218A3
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:45:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546865098;
-	bh=WnELgCRUzBPxf0HBkDJbJ/PQ6QCyFbnqUiRFs3Kv3OI=;
+	s=default; t=1546865109;
+	bh=afIvtUEiXWVkaAXkV1IyZIHHwOSPtTGp3PK/kfaY9FA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=NDT/JKzcuu8ElWAFjPzobPfjyuqze4UtYtI0gt7eB3CgNGqxjib/mn2K0UkaQjKgl
-	 eHWTKxabVJqJNxVcLzz9CR4BNBKBNgizZPQerMeIvWa23ENJ6LHwF7IPfoXGwytO/+
-	 eymHJ/l2ywbZVoT7dYu4YbYYhuE6s3S4Fea1fWto=
+	b=ekVfcLXTg2UqD7RiSI2ai5GNcxHAtBR3wTVgynJM6E0PRbByY2m67SNUCKdeQwaYn
+	 /JvT78Ama1OUvaRmbo2NG8jm/gbeFeZDIUHPYnLsvalFeRFLDkRngh3HpSp7KEXKQ4
+	 byHz5AlCBQ9TJWhdP4OShz7UCO8G7q83nfMTZVms=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728780AbfAGMo6 (ORCPT
+        id S1728347AbfAGMpI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:44:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33780 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:45:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34038 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728766AbfAGMoz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:44:55 -0500
+        id S1728214AbfAGMpD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:45:03 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 63F272183E;
-        Mon,  7 Jan 2019 12:44:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1FA10218A1;
+        Mon,  7 Jan 2019 12:45:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865094;
-        bh=WnELgCRUzBPxf0HBkDJbJ/PQ6QCyFbnqUiRFs3Kv3OI=;
+        s=default; t=1546865102;
+        bh=afIvtUEiXWVkaAXkV1IyZIHHwOSPtTGp3PK/kfaY9FA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fQBJI0r4pGZ/ACUBuvWEY/xCQzPQvRNZ4jjXN/4NS0IITTxeBfVurqO7X3SWMB8Bf
-         5rthrynCqkMGD3Qkw2NjKEZR4A2bYIlrbn8XVPRnN0pG1RCT6864Ujy4cDwyGnqAB4
-         S87WysanuVrvMm52gf0BWJRudD4Ik4FDosQfBLfo=
+        b=Y+QkKkQNF3YlWliblz8FvdMAYzeul5mPHHHvC5LqgjRp5FXNK5/ct5vTqpB3qRoOV
+         W3rCeIJwdHaE7lyduaVjm2cdNKMP0eFPxwyEJpYxiOeoM+Bm+BhBJWU5xk5qnYI3OH
+         7+Z4vL9Q8f1F415l5WLIkYEdOLHX74Q4ryyEZrqk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 4.20 133/145] ARM: dts: exynos: Specify I2S assigned clocks in proper node
-Date:   Mon,  7 Jan 2019 13:32:50 +0100
-Message-Id: <20190107104454.616090864@linuxfoundation.org>
+        stable@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>
+Subject: [PATCH 4.20 136/145] KVM: arm/arm64: vgic: Cap SPIs to the VM-defined maximum
+Date:   Mon,  7 Jan 2019 13:32:53 +0100
+Message-Id: <20190107104455.007139255@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104437.308206189@linuxfoundation.org>
 References: <20190107104437.308206189@linuxfoundation.org>
@@ -66,114 +64,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
 
-commit 8ac686d7dfed721102860ff2571e6b9f529ae81a upstream.
+commit bea2ef803ade3359026d5d357348842bca9edcf1 upstream.
 
-The assigned parent clocks should be normally specified in the consumer
-device's DT node, this ensures respective driver always sees correct clock
-settings when required.
+SPIs should be checked against the VMs specific configuration, and
+not the architectural maximum.
 
-This patch fixes regression in audio subsystem on Odroid XU3/XU4 boards
-that appeared after commits:
-
-commit 647d04f8e07a ("ASoC: samsung: i2s: Ensure the RCLK rate is properly determined")
-commit 995e73e55f46 ("ASoC: samsung: i2s: Fix rclk_srcrate handling")
-commit 48279c53fd1d ("ASoC: samsung: i2s: Prevent external abort on exynos5433 I2S1 access")
-
-Without this patch the driver gets wrong clock as the I2S function clock
-(op_clk) in probe() and effectively the clock which is finally assigned
-from DT is not being enabled/disabled in the runtime resume/suspend ops.
-
-Without the above listed commits the EXYNOS_I2S_BUS clock was always set
-as parent of CLK_I2S_RCLK_SRC regardless of DT settings so there was no issue
-with not enabled EXYNOS_SCLK_I2S.
-
-Cc: <stable@vger.kernel.org> # 4.17.x
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: stable@vger.kernel.org
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi |    9 ++++-----
- arch/arm/boot/dts/exynos5422-odroidxu4.dts        |    9 ++++-----
- 2 files changed, 8 insertions(+), 10 deletions(-)
+ virt/kvm/arm/vgic/vgic.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi
-@@ -26,8 +26,7 @@
- 			"Speakers", "SPKL",
- 			"Speakers", "SPKR";
+--- a/virt/kvm/arm/vgic/vgic.c
++++ b/virt/kvm/arm/vgic/vgic.c
+@@ -108,8 +108,8 @@ struct vgic_irq *vgic_get_irq(struct kvm
+ 	}
  
--		assigned-clocks = <&i2s0 CLK_I2S_RCLK_SRC>,
--				<&clock CLK_MOUT_EPLL>,
-+		assigned-clocks = <&clock CLK_MOUT_EPLL>,
- 				<&clock CLK_MOUT_MAU_EPLL>,
- 				<&clock CLK_MOUT_USER_MAU_EPLL>,
- 				<&clock_audss EXYNOS_MOUT_AUDSS>,
-@@ -36,8 +35,7 @@
- 				<&clock_audss EXYNOS_DOUT_AUD_BUS>,
- 				<&clock_audss EXYNOS_DOUT_I2S>;
+ 	/* SPIs */
+-	if (intid <= VGIC_MAX_SPI) {
+-		intid = array_index_nospec(intid, VGIC_MAX_SPI);
++	if (intid < (kvm->arch.vgic.nr_spis + VGIC_NR_PRIVATE_IRQS)) {
++		intid = array_index_nospec(intid, kvm->arch.vgic.nr_spis + VGIC_NR_PRIVATE_IRQS);
+ 		return &kvm->arch.vgic.spis[intid - VGIC_NR_PRIVATE_IRQS];
+ 	}
  
--		assigned-clock-parents = <&clock_audss EXYNOS_SCLK_I2S>,
--				<&clock CLK_FOUT_EPLL>,
-+		assigned-clock-parents = <&clock CLK_FOUT_EPLL>,
- 				<&clock CLK_MOUT_EPLL>,
- 				<&clock CLK_MOUT_MAU_EPLL>,
- 				<&clock CLK_MAU_EPLL>,
-@@ -48,7 +46,6 @@
- 				<0>,
- 				<0>,
- 				<0>,
--				<0>,
- 				<196608001>,
- 				<(196608002 / 2)>,
- 				<196608000>;
-@@ -84,4 +81,6 @@
- 
- &i2s0 {
- 	status = "okay";
-+	assigned-clocks = <&i2s0 CLK_I2S_RCLK_SRC>;
-+	assigned-clock-parents = <&clock_audss EXYNOS_SCLK_I2S>;
- };
---- a/arch/arm/boot/dts/exynos5422-odroidxu4.dts
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu4.dts
-@@ -33,8 +33,7 @@
- 		compatible = "samsung,odroid-xu3-audio";
- 		model = "Odroid-XU4";
- 
--		assigned-clocks = <&i2s0 CLK_I2S_RCLK_SRC>,
--				<&clock CLK_MOUT_EPLL>,
-+		assigned-clocks = <&clock CLK_MOUT_EPLL>,
- 				<&clock CLK_MOUT_MAU_EPLL>,
- 				<&clock CLK_MOUT_USER_MAU_EPLL>,
- 				<&clock_audss EXYNOS_MOUT_AUDSS>,
-@@ -43,8 +42,7 @@
- 				<&clock_audss EXYNOS_DOUT_AUD_BUS>,
- 				<&clock_audss EXYNOS_DOUT_I2S>;
- 
--		assigned-clock-parents = <&clock_audss EXYNOS_SCLK_I2S>,
--				<&clock CLK_FOUT_EPLL>,
-+		assigned-clock-parents = <&clock CLK_FOUT_EPLL>,
- 				<&clock CLK_MOUT_EPLL>,
- 				<&clock CLK_MOUT_MAU_EPLL>,
- 				<&clock CLK_MAU_EPLL>,
-@@ -55,7 +53,6 @@
- 				<0>,
- 				<0>,
- 				<0>,
--				<0>,
- 				<196608001>,
- 				<(196608002 / 2)>,
- 				<196608000>;
-@@ -79,6 +76,8 @@
- 
- &i2s0 {
- 	status = "okay";
-+	assigned-clocks = <&i2s0 CLK_I2S_RCLK_SRC>;
-+	assigned-clock-parents = <&clock_audss EXYNOS_SCLK_I2S>;
- };
- 
- &pwm {
 
 
