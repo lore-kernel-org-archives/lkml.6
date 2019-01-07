@@ -7,51 +7,50 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F647C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:46:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77191C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:46:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2DFD20449
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:46:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E03A2183E
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:46:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546865178;
-	bh=aolziLPkeACCygLg2EefYrfWfLRdVreB0xP0aJA0FD4=;
+	s=default; t=1546865184;
+	bh=tq+u06QoMr+qtkseZ+GzmVlKJnk58KLFKlYn9SiW30g=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=MbuXtQQyfUvb7K6xmIb1+C+t5Df0EOUQp5F/mnpm4aGb8z0G32Lb9M+pX2Z2Ifi9N
-	 KtWzIPWDdxxOMf5C46WH6/RoEbKHbHWn3wqHSez0KUgJIyOAORgsWLoh4uET+VVsDh
-	 HHchPdx20S2BiYh8zgkGrw6a07nCVjqKbMRTgbHA=
+	b=rpCQiIzAo7/wUXxqRM6A0Be2LF64jjBfBtUKEX1wXgIASInIvzHhoKaiaBhdU1G1A
+	 8JPB/3Ppj94JAMjRJrFPaLG/QPmpxFOm9QIjcsRPQUE0typEWYFos1S/V4nUj1ZrPU
+	 33cU5PbR9qS9qphmgWHj5i2Dq41Q6I9CUBVH+7g4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729019AbfAGMqL (ORCPT
+        id S1729036AbfAGMqX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:46:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60778 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:46:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35980 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728584AbfAGMoJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:44:09 -0500
+        id S1729006AbfAGMqK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:46:10 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E34212147C;
-        Mon,  7 Jan 2019 12:44:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 55713218A1;
+        Mon,  7 Jan 2019 12:46:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865048;
-        bh=aolziLPkeACCygLg2EefYrfWfLRdVreB0xP0aJA0FD4=;
+        s=default; t=1546865168;
+        bh=tq+u06QoMr+qtkseZ+GzmVlKJnk58KLFKlYn9SiW30g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DglFW6zPfd+0vqbUFdi8Tsd57VOC3vcs06f9uv3UI537pQq5bLMN0/JvITK+GQNZ/
-         WqBfWW723pG4rTDFDGW5JrJ6IsZJ7T0DMuKXWqKMxCZslvUO89LW51odgIt4J683Jc
-         AWuL9pdWWV3U+CTT2VA8oZfoYqV/RIFYQxGoFhIo=
+        b=ywNtz7aaP2ao8+QrB2uYUJD43CCwx4nrzO/um02sIoORcYOx4h4wC3tDC8UczvXmJ
+         TfNP9TLaBHZeDMaMLzB39drwSKO0W1fSJv0tqfxA20dDP1t7BnLakTgXSgt2DFggDy
+         8Ed8/VPDY/g32wzKlgdIRp4U23WoLmv00XuWSZVo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paul Aurich <paul@darkrain42.org>,
-        Yves-Alexis Perez <corsac@corsac.net>,
-        Steve French <stfrench@microsoft.com>,
-        Ronnie Sahlberg <lsahlber@redhat.com>
-Subject: [PATCH 4.20 128/145] smb3: fix large reads on encrypted connections
-Date:   Mon,  7 Jan 2019 13:32:45 +0100
-Message-Id: <20190107104453.903389171@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 008/170] ipv6: tunnels: fix two use-after-free
+Date:   Mon,  7 Jan 2019 13:30:35 +0100
+Message-Id: <20190107104453.952845473@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190107104437.308206189@linuxfoundation.org>
-References: <20190107104437.308206189@linuxfoundation.org>
+In-Reply-To: <20190107104452.953560660@linuxfoundation.org>
+References: <20190107104452.953560660@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -63,47 +62,215 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.20-stable review patch.  If anyone has any objections, please let me know.
+4.19-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Paul Aurich <paul@darkrain42.org>
+From: Eric Dumazet <edumazet@google.com>
 
-commit 6d2f84eee098540ae857998fe32f29b9e2cd9613 upstream.
+[ Upstream commit cbb49697d5512ce9e61b45ce75d3ee43d7ea5524 ]
 
-When passing a large read to receive_encrypted_read(), ensure that the
-demultiplex_thread knows that a MID was processed.  Without this, those
-operations never complete.
+xfrm6_policy_check() might have re-allocated skb->head, we need
+to reload ipv6 header pointer.
 
-This is a similar issue/fix to lease break handling:
-commit 7af929d6d05ba5564139718e30d5bc96bdbc716a
-("smb3: fix lease break problem introduced by compounding")
+sysbot reported :
 
-CC: Stable <stable@vger.kernel.org> # 4.19+
-Fixes: b24df3e30cbf ("cifs: update receive_encrypted_standard to handle compounded responses")
-Signed-off-by: Paul Aurich <paul@darkrain42.org>
-Tested-by: Yves-Alexis Perez <corsac@corsac.net>
-Signed-off-by: Steve French <stfrench@microsoft.com>
-Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
+BUG: KASAN: use-after-free in __ipv6_addr_type+0x302/0x32f net/ipv6/addrconf_core.c:40
+Read of size 4 at addr ffff888191b8cb70 by task syz-executor2/1304
+
+CPU: 0 PID: 1304 Comm: syz-executor2 Not tainted 4.20.0-rc7+ #356
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ <IRQ>
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x244/0x39d lib/dump_stack.c:113
+ print_address_description.cold.7+0x9/0x1ff mm/kasan/report.c:256
+ kasan_report_error mm/kasan/report.c:354 [inline]
+ kasan_report.cold.8+0x242/0x309 mm/kasan/report.c:412
+ __asan_report_load4_noabort+0x14/0x20 mm/kasan/report.c:432
+ __ipv6_addr_type+0x302/0x32f net/ipv6/addrconf_core.c:40
+ ipv6_addr_type include/net/ipv6.h:403 [inline]
+ ip6_tnl_get_cap+0x27/0x190 net/ipv6/ip6_tunnel.c:727
+ ip6_tnl_rcv_ctl+0xdb/0x2a0 net/ipv6/ip6_tunnel.c:757
+ vti6_rcv+0x336/0x8f3 net/ipv6/ip6_vti.c:321
+ xfrm6_ipcomp_rcv+0x1a5/0x3a0 net/ipv6/xfrm6_protocol.c:132
+ ip6_protocol_deliver_rcu+0x372/0x1940 net/ipv6/ip6_input.c:394
+ ip6_input_finish+0x84/0x170 net/ipv6/ip6_input.c:434
+ NF_HOOK include/linux/netfilter.h:289 [inline]
+ ip6_input+0xe9/0x600 net/ipv6/ip6_input.c:443
+IPVS: ftp: loaded support on port[0] = 21
+ ip6_mc_input+0x514/0x11c0 net/ipv6/ip6_input.c:537
+ dst_input include/net/dst.h:450 [inline]
+ ip6_rcv_finish+0x17a/0x330 net/ipv6/ip6_input.c:76
+ NF_HOOK include/linux/netfilter.h:289 [inline]
+ ipv6_rcv+0x115/0x640 net/ipv6/ip6_input.c:272
+ __netif_receive_skb_one_core+0x14d/0x200 net/core/dev.c:4973
+ __netif_receive_skb+0x2c/0x1e0 net/core/dev.c:5083
+ process_backlog+0x24e/0x7a0 net/core/dev.c:5923
+ napi_poll net/core/dev.c:6346 [inline]
+ net_rx_action+0x7fa/0x19b0 net/core/dev.c:6412
+ __do_softirq+0x308/0xb7e kernel/softirq.c:292
+ do_softirq_own_stack+0x2a/0x40 arch/x86/entry/entry_64.S:1027
+ </IRQ>
+ do_softirq.part.14+0x126/0x160 kernel/softirq.c:337
+ do_softirq+0x19/0x20 kernel/softirq.c:340
+ netif_rx_ni+0x521/0x860 net/core/dev.c:4569
+ dev_loopback_xmit+0x287/0x8c0 net/core/dev.c:3576
+ NF_HOOK include/linux/netfilter.h:289 [inline]
+ ip6_finish_output2+0x193a/0x2930 net/ipv6/ip6_output.c:84
+ ip6_fragment+0x2b06/0x3850 net/ipv6/ip6_output.c:727
+ ip6_finish_output+0x6b7/0xc50 net/ipv6/ip6_output.c:152
+ NF_HOOK_COND include/linux/netfilter.h:278 [inline]
+ ip6_output+0x232/0x9d0 net/ipv6/ip6_output.c:171
+ dst_output include/net/dst.h:444 [inline]
+ ip6_local_out+0xc5/0x1b0 net/ipv6/output_core.c:176
+ ip6_send_skb+0xbc/0x340 net/ipv6/ip6_output.c:1727
+ ip6_push_pending_frames+0xc5/0xf0 net/ipv6/ip6_output.c:1747
+ rawv6_push_pending_frames net/ipv6/raw.c:615 [inline]
+ rawv6_sendmsg+0x3a3e/0x4b40 net/ipv6/raw.c:945
+kobject: 'queues' (0000000089e6eea2): kobject_add_internal: parent: 'tunl0', set: '<NULL>'
+kobject: 'queues' (0000000089e6eea2): kobject_uevent_env
+ inet_sendmsg+0x1a1/0x690 net/ipv4/af_inet.c:798
+kobject: 'queues' (0000000089e6eea2): kobject_uevent_env: filter function caused the event to drop!
+ sock_sendmsg_nosec net/socket.c:621 [inline]
+ sock_sendmsg+0xd5/0x120 net/socket.c:631
+ sock_write_iter+0x35e/0x5c0 net/socket.c:900
+ call_write_iter include/linux/fs.h:1857 [inline]
+ new_sync_write fs/read_write.c:474 [inline]
+ __vfs_write+0x6b8/0x9f0 fs/read_write.c:487
+kobject: 'rx-0' (00000000e2d902d9): kobject_add_internal: parent: 'queues', set: 'queues'
+kobject: 'rx-0' (00000000e2d902d9): kobject_uevent_env
+ vfs_write+0x1fc/0x560 fs/read_write.c:549
+ ksys_write+0x101/0x260 fs/read_write.c:598
+kobject: 'rx-0' (00000000e2d902d9): fill_kobj_path: path = '/devices/virtual/net/tunl0/queues/rx-0'
+ __do_sys_write fs/read_write.c:610 [inline]
+ __se_sys_write fs/read_write.c:607 [inline]
+ __x64_sys_write+0x73/0xb0 fs/read_write.c:607
+ do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+kobject: 'tx-0' (00000000443b70ac): kobject_add_internal: parent: 'queues', set: 'queues'
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x457669
+Code: fd b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 cb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f9bd200bc78 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457669
+RDX: 000000000000058f RSI: 00000000200033c0 RDI: 0000000000000003
+kobject: 'tx-0' (00000000443b70ac): kobject_uevent_env
+RBP: 000000000072bf00 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f9bd200c6d4
+R13: 00000000004c2dcc R14: 00000000004da398 R15: 00000000ffffffff
+
+Allocated by task 1304:
+ save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+ set_track mm/kasan/kasan.c:460 [inline]
+ kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
+ __do_kmalloc_node mm/slab.c:3684 [inline]
+ __kmalloc_node_track_caller+0x50/0x70 mm/slab.c:3698
+ __kmalloc_reserve.isra.41+0x41/0xe0 net/core/skbuff.c:140
+ __alloc_skb+0x155/0x760 net/core/skbuff.c:208
+kobject: 'tx-0' (00000000443b70ac): fill_kobj_path: path = '/devices/virtual/net/tunl0/queues/tx-0'
+ alloc_skb include/linux/skbuff.h:1011 [inline]
+ __ip6_append_data.isra.49+0x2f1a/0x3f50 net/ipv6/ip6_output.c:1450
+ ip6_append_data+0x1bc/0x2d0 net/ipv6/ip6_output.c:1619
+ rawv6_sendmsg+0x15ab/0x4b40 net/ipv6/raw.c:938
+ inet_sendmsg+0x1a1/0x690 net/ipv4/af_inet.c:798
+ sock_sendmsg_nosec net/socket.c:621 [inline]
+ sock_sendmsg+0xd5/0x120 net/socket.c:631
+ ___sys_sendmsg+0x7fd/0x930 net/socket.c:2116
+ __sys_sendmsg+0x11d/0x280 net/socket.c:2154
+ __do_sys_sendmsg net/socket.c:2163 [inline]
+ __se_sys_sendmsg net/socket.c:2161 [inline]
+ __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2161
+ do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+kobject: 'gre0' (00000000cb1b2d7b): kobject_add_internal: parent: 'net', set: 'devices'
+
+Freed by task 1304:
+ save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+ set_track mm/kasan/kasan.c:460 [inline]
+ __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
+ kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
+ __cache_free mm/slab.c:3498 [inline]
+ kfree+0xcf/0x230 mm/slab.c:3817
+ skb_free_head+0x93/0xb0 net/core/skbuff.c:553
+ pskb_expand_head+0x3b2/0x10d0 net/core/skbuff.c:1498
+ __pskb_pull_tail+0x156/0x18a0 net/core/skbuff.c:1896
+ pskb_may_pull include/linux/skbuff.h:2188 [inline]
+ _decode_session6+0xd11/0x14d0 net/ipv6/xfrm6_policy.c:150
+ __xfrm_decode_session+0x71/0x140 net/xfrm/xfrm_policy.c:3272
+kobject: 'gre0' (00000000cb1b2d7b): kobject_uevent_env
+ __xfrm_policy_check+0x380/0x2c40 net/xfrm/xfrm_policy.c:3322
+ __xfrm_policy_check2 include/net/xfrm.h:1170 [inline]
+ xfrm_policy_check include/net/xfrm.h:1175 [inline]
+ xfrm6_policy_check include/net/xfrm.h:1185 [inline]
+ vti6_rcv+0x4bd/0x8f3 net/ipv6/ip6_vti.c:316
+ xfrm6_ipcomp_rcv+0x1a5/0x3a0 net/ipv6/xfrm6_protocol.c:132
+ ip6_protocol_deliver_rcu+0x372/0x1940 net/ipv6/ip6_input.c:394
+ ip6_input_finish+0x84/0x170 net/ipv6/ip6_input.c:434
+ NF_HOOK include/linux/netfilter.h:289 [inline]
+ ip6_input+0xe9/0x600 net/ipv6/ip6_input.c:443
+ ip6_mc_input+0x514/0x11c0 net/ipv6/ip6_input.c:537
+ dst_input include/net/dst.h:450 [inline]
+ ip6_rcv_finish+0x17a/0x330 net/ipv6/ip6_input.c:76
+ NF_HOOK include/linux/netfilter.h:289 [inline]
+ ipv6_rcv+0x115/0x640 net/ipv6/ip6_input.c:272
+ __netif_receive_skb_one_core+0x14d/0x200 net/core/dev.c:4973
+ __netif_receive_skb+0x2c/0x1e0 net/core/dev.c:5083
+ process_backlog+0x24e/0x7a0 net/core/dev.c:5923
+kobject: 'gre0' (00000000cb1b2d7b): fill_kobj_path: path = '/devices/virtual/net/gre0'
+ napi_poll net/core/dev.c:6346 [inline]
+ net_rx_action+0x7fa/0x19b0 net/core/dev.c:6412
+ __do_softirq+0x308/0xb7e kernel/softirq.c:292
+
+The buggy address belongs to the object at ffff888191b8cac0
+ which belongs to the cache kmalloc-512 of size 512
+The buggy address is located 176 bytes inside of
+ 512-byte region [ffff888191b8cac0, ffff888191b8ccc0)
+The buggy address belongs to the page:
+page:ffffea000646e300 count:1 mapcount:0 mapping:ffff8881da800940 index:0x0
+flags: 0x2fffc0000000200(slab)
+raw: 02fffc0000000200 ffffea0006eaaa48 ffffea00065356c8 ffff8881da800940
+raw: 0000000000000000 ffff888191b8c0c0 0000000100000006 0000000000000000
+page dumped because: kasan: bad access detected
+kobject: 'queues' (000000005fd6226e): kobject_add_internal: parent: 'gre0', set: '<NULL>'
+
+Memory state around the buggy address:
+ ffff888191b8ca00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff888191b8ca80: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
+>ffff888191b8cb00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                                             ^
+ ffff888191b8cb80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff888191b8cc00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+
+Fixes: 0d3c703a9d17 ("ipv6: Cleanup IPv6 tunnel receive path")
+Fixes: ed1efb2aefbb ("ipv6: Add support for IPsec virtual tunnel interfaces")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Cc: Steffen Klassert <steffen.klassert@secunet.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/cifs/smb2ops.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ net/ipv6/ip6_tunnel.c |    1 +
+ net/ipv6/ip6_vti.c    |    1 +
+ 2 files changed, 2 insertions(+)
 
---- a/fs/cifs/smb2ops.c
-+++ b/fs/cifs/smb2ops.c
-@@ -3384,8 +3384,10 @@ smb3_receive_transform(struct TCP_Server
- 	}
+--- a/net/ipv6/ip6_tunnel.c
++++ b/net/ipv6/ip6_tunnel.c
+@@ -901,6 +901,7 @@ static int ipxip6_rcv(struct sk_buff *sk
+ 			goto drop;
+ 		if (!xfrm6_policy_check(NULL, XFRM_POLICY_IN, skb))
+ 			goto drop;
++		ipv6h = ipv6_hdr(skb);
+ 		if (!ip6_tnl_rcv_ctl(t, &ipv6h->daddr, &ipv6h->saddr))
+ 			goto drop;
+ 		if (iptunnel_pull_header(skb, 0, tpi->proto, false))
+--- a/net/ipv6/ip6_vti.c
++++ b/net/ipv6/ip6_vti.c
+@@ -318,6 +318,7 @@ static int vti6_rcv(struct sk_buff *skb)
+ 			return 0;
+ 		}
  
- 	/* TODO: add support for compounds containing READ. */
--	if (pdu_length > CIFSMaxBufSize + MAX_HEADER_SIZE(server))
-+	if (pdu_length > CIFSMaxBufSize + MAX_HEADER_SIZE(server)) {
-+		*num_mids = 1;
- 		return receive_encrypted_read(server, &mids[0]);
-+	}
- 
- 	return receive_encrypted_standard(server, mids, bufs, num_mids);
- }
++		ipv6h = ipv6_hdr(skb);
+ 		if (!ip6_tnl_rcv_ctl(t, &ipv6h->daddr, &ipv6h->saddr)) {
+ 			t->dev->stats.rx_dropped++;
+ 			rcu_read_unlock();
 
 
