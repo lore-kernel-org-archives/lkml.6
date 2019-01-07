@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C22AC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:43:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EB0AC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:43:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E681420665
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:43:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D8D6C2147C
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:43:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546865005;
-	bh=FyhnPYe7ID1quoPaxXwdSuvPczTeltxsk3tPSQGgrQg=;
+	s=default; t=1546865009;
+	bh=i/owExtCXc/77X1oOjaoeB7WrfmUIRej7RTnkbvAvco=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=YMcholyiPhAWATaD5O0cqj7s3jGGR6/WNnBDR8BcQRAv8IDcxN5n9ZnGP4HO7Md7a
-	 ujG1dzsf7SN+aLoDJGcTTE7ni0lgImr92REy//Hv82Eo8lIrW6ROi1wMzmWDSMh0B7
-	 0W6uZG6NQhkLZ7Dk3dAEsdleZKlfFFUdpAQfTP98=
+	b=aGlwM2oE1Op3ZjEnegxyb+tKSM7I1yOrsqihEw6nd22h1pjmIT1B0ltR4+pjiaNaa
+	 pQV9x9ZEpBljxpW5EVWqNcxyJJD613bQM08aObLP7sygijrUNsFR9AJTz6/vDXjJGP
+	 3H671UDnEH9od3vW3yT1J0KlMMJaeJCeZH5yBa3g=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728396AbfAGMnX (ORCPT
+        id S1727311AbfAGMn2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:43:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59202 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:43:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59316 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727661AbfAGMnV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:43:21 -0500
+        id S1727330AbfAGMnY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:43:24 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 61DCF20665;
-        Mon,  7 Jan 2019 12:43:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7C1382147C;
+        Mon,  7 Jan 2019 12:43:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865000;
-        bh=FyhnPYe7ID1quoPaxXwdSuvPczTeltxsk3tPSQGgrQg=;
+        s=default; t=1546865004;
+        bh=i/owExtCXc/77X1oOjaoeB7WrfmUIRej7RTnkbvAvco=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DGvfonPkCs6YPVWHK2/b2UnYO2iVAMoQyMmn7gNuQP/wdeeo5+t0A21y2D7YooMjW
-         8vJZ2g6+myylS914jhOXdd2h5LN2bJdKp/nCYJqKe77mqwmKpnprREyyaUbyH9lb9f
-         TOHfEFZXmpJnixaL2j+GjSrUhpB8dZaw2t/6BHW4=
+        b=tdUld/YSHOZbl5D7sQQdIi8kUuYXQRg3+5aQVo8gZC1/CJFnLTdli1VDzfg3OfmD6
+         OjKQtOGNS+W1L6VIfMSAbSpqm2Uixtu1GbQgGZol1/yloCElgl7gFDvhDqfeY+z0GB
+         MWpmdevcuVBjKPo13VMmQDunHIiB7Rq5BaImnXSA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        syzbot+0cc8e3cc63ca373722c6@syzkaller.appspotmail.com,
+        syzbot+69780d144754b8071f4b@syzkaller.appspotmail.com,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 4.20 114/145] media: vivid: free bitmap_cap when updating std/timings/etc.
-Date:   Mon,  7 Jan 2019 13:32:31 +0100
-Message-Id: <20190107104452.133369375@linuxfoundation.org>
+Subject: [PATCH 4.20 115/145] media: vim2m: use cancel_delayed_work_sync instead of flush_schedule_work
+Date:   Mon,  7 Jan 2019 13:32:32 +0100
+Message-Id: <20190107104452.239483759@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104437.308206189@linuxfoundation.org>
 References: <20190107104437.308206189@linuxfoundation.org>
@@ -68,31 +68,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
 
-commit 560ccb75c2caa6b1039dec1a53cd2ef526f5bf03 upstream.
+commit 52117be68b82ee05c96da0a7beec319906ccf6cc upstream.
 
-When vivid_update_format_cap() is called it should free any overlay
-bitmap since the compose size will change.
+The use of flush_schedule_work() made no sense and caused a syzkaller error.
+Replace with the correct cancel_delayed_work_sync().
 
 Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Reported-by: syzbot+0cc8e3cc63ca373722c6@syzkaller.appspotmail.com
-Cc: <stable@vger.kernel.org>      # for v3.18 and up
+Reported-by: syzbot+69780d144754b8071f4b@syzkaller.appspotmail.com
+Cc: <stable@vger.kernel.org>      # for v4.20 and up
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/platform/vivid/vivid-vid-cap.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/media/platform/vim2m.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/media/platform/vivid/vivid-vid-cap.c
-+++ b/drivers/media/platform/vivid/vivid-vid-cap.c
-@@ -449,6 +449,8 @@ void vivid_update_format_cap(struct vivi
- 		tpg_s_rgb_range(&dev->tpg, v4l2_ctrl_g_ctrl(dev->rgb_range_cap));
- 		break;
- 	}
-+	vfree(dev->bitmap_cap);
-+	dev->bitmap_cap = NULL;
- 	vivid_update_quality(dev);
- 	tpg_reset_source(&dev->tpg, dev->src_rect.width, dev->src_rect.height, dev->field_cap);
- 	dev->crop_cap = dev->src_rect;
+--- a/drivers/media/platform/vim2m.c
++++ b/drivers/media/platform/vim2m.c
+@@ -805,10 +805,11 @@ static int vim2m_start_streaming(struct
+ static void vim2m_stop_streaming(struct vb2_queue *q)
+ {
+ 	struct vim2m_ctx *ctx = vb2_get_drv_priv(q);
++	struct vim2m_dev *dev = ctx->dev;
+ 	struct vb2_v4l2_buffer *vbuf;
+ 	unsigned long flags;
+ 
+-	flush_scheduled_work();
++	cancel_delayed_work_sync(&dev->work_run);
+ 	for (;;) {
+ 		if (V4L2_TYPE_IS_OUTPUT(q->type))
+ 			vbuf = v4l2_m2m_src_buf_remove(ctx->fh.m2m_ctx);
 
 
