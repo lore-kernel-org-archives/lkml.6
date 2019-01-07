@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4791CC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:43:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76F7AC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:43:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F9202147C
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:43:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40FF120665
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:43:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546864985;
-	bh=YOIw7zvEkTgTJDWDFwP3NXl1DMIfZaCZMGo8CFGKjoE=;
+	s=default; t=1546864988;
+	bh=IM19D94wImMedyDRitErZIJpMYcxhDRL/ChA6J2DdSQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=HJbI9TSYgFM0a9uUxc7vl7f97x/VUhm0cuPuBMWhj9w+ssXBW2WuojPibSiHVq5tZ
-	 jUMgSanEN1eOihS+4IWO0TsdKgPh68pZgVPq1NM9xpH7BUzpEHIn+2xWRc2voFsJDW
-	 JiSo2qaE5m8iExfpKAfr7oZ+tnie8S5VcO3vhEKc=
+	b=gvY03AawD1M+mUx6KpOEtwISIEw4UPRQ3Ra9n3kRaNCXD2jA+KO4wmz4qTKiFVeUI
+	 5BKtpIepF1k4B/8yHXWDbpN20NgqKl4A71IOMnFs0u+V9+hbHyN/E7GlJIDwULw5yV
+	 m+yF3W35cxGi2Hbo5wOXvR46ecOKZidiTfslWY6k=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728359AbfAGMnD (ORCPT
+        id S1728369AbfAGMnH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:43:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58752 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:43:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58850 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728347AbfAGMm7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:42:59 -0500
+        id S1728360AbfAGMnD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:43:03 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DF5FB20665;
-        Mon,  7 Jan 2019 12:42:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 787A520449;
+        Mon,  7 Jan 2019 12:43:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546864978;
-        bh=YOIw7zvEkTgTJDWDFwP3NXl1DMIfZaCZMGo8CFGKjoE=;
+        s=default; t=1546864983;
+        bh=IM19D94wImMedyDRitErZIJpMYcxhDRL/ChA6J2DdSQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ObhC4V5hlTNsiFHbw7EsG+zTBumBGV2Z4GlvyEk29aAgGA4uvvce0HDgXhRZ4tHl9
-         dUgOd1kULCGw58P2RBtRcxwCROtv7qSzuA5cSptwTHn3tfqozvkmWFANvYRCHf9i1D
-         5JAHQCEDOk0CZiX53oQ0m3Tsex2XfrSCKBjsu5b4=
+        b=AStHazmGHNjUPQL9x7x5AX8ITP847l2/Zz612J3WcP6PaX5WsbLNvr7JUumvUCMjA
+         nigKDisHr0A8lPyokMPL94q9Ppxhl81VmXYNpAkpNxnsiFo86yvr/Z7p2Yw7tWTv3m
+         T3Lvqvy/RFELswLycmaxH2+NPaonqts8M3XO4/Qs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anand Jain <anand.jain@oracle.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.20 093/145] btrfs: dev-replace: go back to suspend state if another EXCL_OP is running
-Date:   Mon,  7 Jan 2019 13:32:10 +0100
-Message-Id: <20190107104449.402881288@linuxfoundation.org>
+        stable@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>,
+        Hans Verkuil <hansverk@cisco.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: [PATCH 4.20 111/145] media: cec-pin: fix broken tx_ignore_nack_until_eom error injection
+Date:   Mon,  7 Jan 2019 13:32:28 +0100
+Message-Id: <20190107104451.689915401@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104437.308206189@linuxfoundation.org>
 References: <20190107104437.308206189@linuxfoundation.org>
@@ -65,45 +66,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Anand Jain <anand.jain@oracle.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
 
-commit 05c49e6bc1e8866ecfd674ebeeb58cdbff9145c2 upstream.
+commit ac791f19a273a7fe254a7596f193af6534582a9f upstream.
 
-In a secnario where balance and replace co-exists as below,
+If the tx_ignore_nack_until_eom error injection was activated,
+then tx_nacked was never set instead of setting it when the last
+byte of the message was transmitted.
 
-  - start balance
-  - pause balance
-  - start replace
-  - reboot
+As a result the transmit was marked as OK, when it should have
+been NACKed.
 
-and when system restarts, balance resumes first. Then the replace is
-attempted to restart but will fail as the EXCL_OP lock is already held
-by the balance. If so place the replace state back to
-BTRFS_IOCTL_DEV_REPLACE_STATE_SUSPENDED state.
+Modify the condition so that it always sets tx_nacked when the
+last byte of the message was transmitted.
 
-Fixes: 010a47bde9420 ("btrfs: add proper safety check before resuming dev-replace")
-CC: stable@vger.kernel.org # 4.18+
-Signed-off-by: Anand Jain <anand.jain@oracle.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Cc: <stable@vger.kernel.org>      # for v4.17 and up
+Signed-off-by: Hans Verkuil <hansverk@cisco.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/dev-replace.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/media/cec/cec-pin.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/fs/btrfs/dev-replace.c
-+++ b/fs/btrfs/dev-replace.c
-@@ -897,6 +897,10 @@ int btrfs_resume_dev_replace_async(struc
- 	 * dev-replace to start anyway.
- 	 */
- 	if (test_and_set_bit(BTRFS_FS_EXCL_OP, &fs_info->flags)) {
-+		btrfs_dev_replace_write_lock(dev_replace);
-+		dev_replace->replace_state =
-+					BTRFS_IOCTL_DEV_REPLACE_STATE_SUSPENDED;
-+		btrfs_dev_replace_write_unlock(dev_replace);
- 		btrfs_info(fs_info,
- 		"cannot resume dev-replace, other exclusive operation running");
- 		return 0;
+--- a/drivers/media/cec/cec-pin.c
++++ b/drivers/media/cec/cec-pin.c
+@@ -601,8 +601,9 @@ static void cec_pin_tx_states(struct cec
+ 			break;
+ 		/* Was the message ACKed? */
+ 		ack = cec_msg_is_broadcast(&pin->tx_msg) ? v : !v;
+-		if (!ack && !pin->tx_ignore_nack_until_eom &&
+-		    pin->tx_bit / 10 < pin->tx_msg.len && !pin->tx_post_eom) {
++		if (!ack && (!pin->tx_ignore_nack_until_eom ||
++		    pin->tx_bit / 10 == pin->tx_msg.len - 1) &&
++		    !pin->tx_post_eom) {
+ 			/*
+ 			 * Note: the CEC spec is ambiguous regarding
+ 			 * what action to take when a NACK appears
 
 
