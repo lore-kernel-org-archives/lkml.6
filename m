@@ -2,119 +2,101 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD428C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 21:43:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40558C43612
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 21:45:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 863102089F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 21:43:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1827A2147C
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 21:45:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727538AbfAGVnI (ORCPT
+        id S1727082AbfAGVpd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 16:43:08 -0500
-Received: from mga05.intel.com ([192.55.52.43]:19768 "EHLO mga05.intel.com"
+        Mon, 7 Jan 2019 16:45:33 -0500
+Received: from namei.org ([65.99.196.166]:54908 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726878AbfAGVls (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 16:41:48 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jan 2019 13:41:47 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,451,1539673200"; 
-   d="scan'208";a="124046643"
-Received: from maru.jf.intel.com ([10.54.51.77])
-  by FMSMGA003.fm.intel.com with ESMTP; 07 Jan 2019 13:41:47 -0800
-From:   Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-To:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Eric Sandeen <sandeen@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>, Wu Hao <hao.wu@intel.com>,
-        Tomohiro Kusumi <kusumi.tomohiro@gmail.com>,
-        "Bryant G . Ly" <bryantly@linux.vnet.ibm.com>,
-        Frederic Barrat <fbarrat@linux.vnet.ibm.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        David Kershner <david.kershner@unisys.com>,
-        Uwe Kleine-Konig <u.kleine-koenig@pengutronix.de>,
-        Sagar Dharia <sdharia@codeaurora.org>,
-        Johan Hovold <johan@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Juergen Gross <jgross@suse.com>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>
-Cc:     linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        openbmc@lists.ozlabs.org,
-        Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>,
-        James Feist <james.feist@linux.intel.com>,
-        Jason M Biils <jason.m.bills@linux.intel.com>,
-        Vernon Mauery <vernon.mauery@linux.intel.com>
-Subject: [PATCH v10 02/12] Documentation: ioctl: Add ioctl numbers for PECI subsystem
-Date:   Mon,  7 Jan 2019 13:41:26 -0800
-Message-Id: <20190107214136.5256-3-jae.hyun.yoo@linux.intel.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190107214136.5256-1-jae.hyun.yoo@linux.intel.com>
-References: <20190107214136.5256-1-jae.hyun.yoo@linux.intel.com>
+        id S1726535AbfAGVpd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 16:45:33 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id x07LjMY9016724;
+        Mon, 7 Jan 2019 21:45:22 GMT
+Date:   Tue, 8 Jan 2019 08:45:22 +1100 (AEDT)
+From:   James Morris <jmorris@namei.org>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        linux-security-module@vger.kernel.org,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Subject: Re: [GIT PULL] security: general updates for v4.21
+In-Reply-To: <1546137859.4069.59.camel@linux.ibm.com>
+Message-ID: <alpine.LRH.2.21.1901080840080.2451@namei.org>
+References: <alpine.LRH.2.21.1812250652420.2714@namei.org>  <CAHk-=wiUaA4sZ=8UnT+q6eXE29K+XGVX=kZPR6gG-Z4UhO3p+Q@mail.gmail.com>  <alpine.LRH.2.21.1812291406530.29722@namei.org>  <CAHk-=wh4sL5mO1J+yzngonBvjO9ZwL_kA0a2e51rE9TzVjAA4g@mail.gmail.com> 
+ <alpine.LRH.2.21.1812291505480.31477@namei.org>  <CAHk-=wh+6WrC_W7ZCjMDPaZm9SuuRjoTe8Buq123CfRvTyu0wA@mail.gmail.com>  <45d180c5-a174-7eef-9e23-83b819f8abd6@schaufler-ca.com> <1546137859.4069.59.camel@linux.ibm.com>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed; boundary="1665246916-1077201687-1546897523=:2451"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit updates ioctl-number.txt to reflect ioctl numbers used
-by the PECI subsystem.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Cc: Darrick J. Wong <darrick.wong@oracle.com>
-Cc: Tomohiro Kusumi <kusumi.tomohiro@gmail.com>
-Cc: Eric Sandeen <sandeen@redhat.com>
-Cc: Frederic Barrat <fbarrat@linux.vnet.ibm.com>
-Cc: Bryant G. Ly <bryantly@linux.vnet.ibm.com>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: James Feist <james.feist@linux.intel.com>
-Cc: Jason M Biils <jason.m.bills@linux.intel.com>
-Cc: Vernon Mauery <vernon.mauery@linux.intel.com>
-Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
----
- Documentation/ioctl/ioctl-number.txt | 2 ++
- 1 file changed, 2 insertions(+)
+--1665246916-1077201687-1546897523=:2451
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 
-diff --git a/Documentation/ioctl/ioctl-number.txt b/Documentation/ioctl/ioctl-number.txt
-index c9558146ac58..aec1215bf6fd 100644
---- a/Documentation/ioctl/ioctl-number.txt
-+++ b/Documentation/ioctl/ioctl-number.txt
-@@ -327,6 +327,8 @@ Code  Seq#(hex)	Include File		Comments
- 0xB4	00-0F	linux/gpio.h		<mailto:linux-gpio@vger.kernel.org>
- 0xB5	00-0F	uapi/linux/rpmsg.h	<mailto:linux-remoteproc@vger.kernel.org>
- 0xB6	all	linux/fpga-dfl.h
-+0xB7	00-0F	uapi/linux/peci-ioctl.h	PECI subsystem
-+					<mailto:jae.hyun.yoo@linux.intel.com>
- 0xC0	00-0F	linux/usb/iowarrior.h
- 0xCA	00-0F	uapi/misc/cxl.h
- 0xCA	10-2F	uapi/misc/ocxl.h
+On Sat, 29 Dec 2018, Mimi Zohar wrote:
+
+> On Sat, 2018-12-29 at 10:34 -0800, Casey Schaufler wrote:
+> > On 12/28/2018 8:15 PM, Linus Torvalds wrote:
+> > > On Fri, Dec 28, 2018 at 8:09 PM James Morris <jmorris@namei.org> wrote:
+> > >> Yep, I understand what you mean. I can't find the discussion from several
+> > >> years ago, but developers asked to be able to work with more current
+> > >> kernels, and I recall you saying that if you want to do this, merge to a
+> > >> specific -rc tag at least.
+> > > If people really want it, maybe the merge can state that explicit
+> > > thing, as it is I'm trying to push back on empty merges that don't
+> > > explain why they even exist.
+> > >
+> > >                   Linus
+> > 
+> > The security tree tends to get changed from multiple directions,
+> > most of which aren't based out of the security sub-system. The mount
+> > rework from David is an excellent example. It gets hit just about
+> > any time there's a significant VFS or networking change. Keeping
+> > it current has helped find issues much earlier in the process.
+> 
+> Agreed, the security subsystem is different than other subsystems.  In
+> addition to VFS changes, are key changes.  Changes in other subsystems
+> do affect the LSMs/integrity.
+
+Yep, I agree that if we get too far behind Linus then changes in things 
+like overlayfs (a recent example) may subtly break LSM and we don't see 
+this in the actual security development trees.  In theory these things 
+will be picked up in next testing, although not everything spends long 
+enough in next.
+
+
+And it's not necessarily changes to security code, it can be apparently 
+unrelated changes in the VFS or other subsystems which impact security 
+semantics.
+
+> Included in this open window are a number of LSM changes, which were
+> not posted on the LSM mailing list and are not being upstreamed via
+> the LSMs.
+
+If you see changes doing this, please call them out. Any changes to LSM 
+need to be cc'd at least to the LSM mailing list.
+
+
 -- 
-2.20.1
+James Morris
+<jmorris@namei.org>
 
+--1665246916-1077201687-1546897523=:2451--
