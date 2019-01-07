@@ -2,101 +2,120 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EEB1C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 11:01:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B773DC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 11:04:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 372C521736
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 11:01:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 923372147C
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 11:04:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726954AbfAGLBi convert rfc822-to-8bit (ORCPT
+        id S1726956AbfAGLE1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 06:01:38 -0500
-Received: from mx01.hxt-semitech.com ([223.203.96.7]:57621 "EHLO
-        barracuda.hxt-semitech.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726853AbfAGLBg (ORCPT
+        Mon, 7 Jan 2019 06:04:27 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:35703 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726888AbfAGLE1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 06:01:36 -0500
-X-ASG-Debug-ID: 1546858862-093b7e2d88524a0001-xx1T2L
-Received: from HXTBJIDCEMVIW02.hxtcorp.net ([10.128.0.15]) by barracuda.hxt-semitech.com with ESMTP id ZGV4YeSamT1I0GId (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NO); Mon, 07 Jan 2019 19:01:32 +0800 (CST)
-X-Barracuda-Envelope-From: xiaoting.liu@hxt-semitech.com
-Received: from openbmc001.localdomain (10.5.21.169) by
- HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Mon, 7 Jan 2019 19:00:56 +0800
-From:   Xiaoting Liu <xiaoting.liu@hxt-semitech.com>
-To:     <linux@roeck-us.net>, <jdelvare@suse.com>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <openbmc@lists.ozlabs.org>
-CC:     <linux-hwmon@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <shunyong.yang@hxt-semitech.com>,
-        <dongsheng.wang@hxt-semitech.com>,
-        Xiaoting Liu <xiaoting.liu@hxt-semitech.com>
-Subject: [PATCH v2 2/4] dt-bindings: hwmon: add dps650ab documentation
-Date:   Mon, 7 Jan 2019 19:00:56 +0800
-X-ASG-Orig-Subj: [PATCH v2 2/4] dt-bindings: hwmon: add dps650ab documentation
-Message-ID: <0087d2d9c7cd7f38761f76c80d1c37cb2cea6ef2.1546851856.git.xiaoting.liu@hxt-semitech.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <cover.1546851856.git.xiaoting.liu@hxt-semitech.com>
-References: <cover.1546851856.git.xiaoting.liu@hxt-semitech.com>
+        Mon, 7 Jan 2019 06:04:27 -0500
+X-UUID: 3362d471a04d403cbb7a17bbe9257f95-20190107
+X-UUID: 3362d471a04d403cbb7a17bbe9257f95-20190107
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
+        (envelope-from <henryc.chen@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 160994866; Mon, 07 Jan 2019 19:04:16 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs02n2.mediatek.inc (172.21.101.101) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Mon, 7 Jan 2019 19:04:14 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Mon, 7 Jan 2019 19:04:14 +0800
+Message-ID: <1546859054.6818.126.camel@mtksdaap41>
+Subject: Re: [RFC RESEND PATCH 2/7] dt-bindings: soc: Add opp table on
+ scpsys bindings
+From:   Henry Chen <henryc.chen@mediatek.com>
+To:     Rob Herring <robh+dt@kernel.org>
+CC:     Viresh Kumar <vireshk@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Fan Chen <fan.chen@mediatek.com>,
+        Weiyi Lu <weiyi.lu@mediatek.com>,
+        James Liao <jamesjj.liao@mediatek.com>,
+        Kees Cook <keescook@chromium.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Date:   Mon, 7 Jan 2019 19:04:14 +0800
+In-Reply-To: <CAL_JsqJXFAEdSaexA3p62u8f3RsVA1vfNsOLu4aetB-iLb9qFg@mail.gmail.com>
+References: <1546438198-1677-1-git-send-email-henryc.chen@mediatek.com>
+         <1546438198-1677-3-git-send-email-henryc.chen@mediatek.com>
+         <CAL_JsqJXFAEdSaexA3p62u8f3RsVA1vfNsOLu4aetB-iLb9qFg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.5.21.169]
-X-ClientProxiedBy: HXTBJIDCEMVIW01.hxtcorp.net (10.128.0.14) To
- HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15)
-Content-Transfer-Encoding: 8BIT
-X-Barracuda-Connect: UNKNOWN[10.128.0.15]
-X-Barracuda-Start-Time: 1546858892
-X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA384
-X-Barracuda-URL: https://192.168.50.101:443/cgi-mod/mark.cgi
-X-Virus-Scanned: by bsmtpd at hxt-semitech.com
-X-Barracuda-BRTS-Status: 1
-X-Barracuda-Bayes: INNOCENT GLOBAL 0.5000 1.0000 0.0000
-X-Barracuda-Spam-Score: 0.00
-X-Barracuda-Spam-Status: No, SCORE=0.00 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
-X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.65265
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------------------------
+Content-Transfer-Encoding: 7bit
+X-TM-SNTS-SMTP: 3D2415C0AEB49D232C6ED296E50AE70C96799812009A42BA4E753082113069E82000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Bindings for DPS650AB power, voltage, temperature, and fan monitering.
+On Thu, 2019-01-03 at 12:45 -0600, Rob Herring wrote:
+> On Wed, Jan 2, 2019 at 8:10 AM Henry Chen <henryc.chen@mediatek.com> wrote:
+> >
+> > Add opp table on scpsys dt-bindings for Mediatek SoC.
+> >
+> > Signed-off-by: Henry Chen <henryc.chen@mediatek.com>
+> > ---
+> >  Documentation/devicetree/bindings/opp/mtk-opp.txt  | 24 +++++++++++++
+> >  .../devicetree/bindings/soc/mediatek/scpsys.txt    | 42 ++++++++++++++++++++++
+> >  2 files changed, 66 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/opp/mtk-opp.txt
+> >
+> > diff --git a/Documentation/devicetree/bindings/opp/mtk-opp.txt b/Documentation/devicetree/bindings/opp/mtk-opp.txt
+> > new file mode 100644
+> > index 0000000..036be1c
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/opp/mtk-opp.txt
+> > @@ -0,0 +1,24 @@
+> > +Mediatek OPP bindings to descibe OPP nodes with level values
+> > +
+> > +OPP tables for devices on Mediatek platforms require an additional
+> > +platform specific level value to be specified.
+> > +This value is passed on to the mediatek Power Management Unit by the
+> > +CPU, which then takes the necessary actions to set a voltage rail
+> > +to an appropriate voltage based on the value passed.
+> > +
+> > +The bindings are based on top of the operating-points-v2 bindings
+> > +described in Documentation/devicetree/bindings/opp/opp.txt
+> > +Additional properties are described below.
+> > +
+> > +* OPP Table Node
+> > +
+> > +Required properties:
+> > +- compatible: Allow OPPs to express their compatibility. It should be:
+> > +  "operating-points-v2-mtk-level"
+> > +
+> > +* OPP Node
+> > +
+> > +Required properties:
+> > +- mtk,level: On Mediatek platforms an OPP node can describe a positive value
+> > +representing a level that's communicated with a our power management hardware
+> > +which then translates it into a certain voltage on a voltage rail.
+> 
+> Work with the Qcom folks and create a common level property.
+> 
+> Rob
 
-Signed-off-by: Xiaoting Liu <xiaoting.liu@hxt-semitech.com>
----
-v2:
-  Change the patch subject.
----
- Documentation/devicetree/bindings/hwmon/dps650ab.txt | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/hwmon/dps650ab.txt b/Documentation/devicetree/bindings/hwmon/dps650ab.txt
-new file mode 100644
-index 000000000000..6bbbff89f6d5
---- /dev/null
-+++ b/Documentation/devicetree/bindings/hwmon/dps650ab.txt
-@@ -0,0 +1,11 @@
-+Bindings for DPS650AB power, voltage, temperature, and fan monitering
-+
-+Required properties:
-+- compatible : "dps650ab"
-+- reg       : I2C address, one of 0x58, 0x59.
-+
-+Example:
-+       dps650ab@58 {
-+                   compatible = "dps650ab";
-+                   reg = <0x58>;
-+       };
---
-1.8.3.1
-
-
-
-
-This email is intended only for the named addressee. It may contain information that is confidential/private, legally privileged, or copyright-protected, and you should handle it accordingly. If you are not the intended recipient, you do not have legal rights to retain, copy, or distribute this email or its contents, and should promptly delete the email and all electronic copies in your system; do not retain copies in any media. If you have received this email in error, please notify the sender promptly. Thank you.
+Ok, I see the reply from Rajendra on
+https://lore.kernel.org/patchwork/patch/1027082/
+I will follow the new common property, thanks.
 
 
