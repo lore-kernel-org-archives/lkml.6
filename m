@@ -2,77 +2,127 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EB96C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:34:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DC77C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:36:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B20C206B6
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:34:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0AB9B218A3
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:36:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727795AbfAGNeq (ORCPT
+        id S1727829AbfAGNgp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:34:46 -0500
-Received: from mga18.intel.com ([134.134.136.126]:1763 "EHLO mga18.intel.com"
+        Mon, 7 Jan 2019 08:36:45 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:35098 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726886AbfAGNep (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:34:45 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jan 2019 05:34:44 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,451,1539673200"; 
-   d="scan'208";a="123957850"
-Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.174])
-  by orsmga002.jf.intel.com with SMTP; 07 Jan 2019 05:34:41 -0800
-Received: by stinkbox (sSMTP sendmail emulation); Mon, 07 Jan 2019 15:34:40 +0200
-Date:   Mon, 7 Jan 2019 15:34:40 +0200
-From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-To:     Daniel Kamil Kozar <dkk089@gmail.com>
-Cc:     jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
-        rodrigo.vivi@intel.com, airlied@linux.ie, azhar.shaikh@intel.com,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: "flip_done timed out" messages causing huge increase in boot time
-Message-ID: <20190107133440.GO20097@intel.com>
-References: <CANMdSOztZu2bsG+g=T-pThiHK9cNaMVq=tvTJ6kn2Tvu4CXJCQ@mail.gmail.com>
+        id S1726886AbfAGNgo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:36:44 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8B9CE7F3EA;
+        Mon,  7 Jan 2019 13:36:43 +0000 (UTC)
+Received: from redhat.com (ovpn-122-143.rdu2.redhat.com [10.10.122.143])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9AF155D9CD;
+        Mon,  7 Jan 2019 13:36:37 +0000 (UTC)
+Date:   Mon, 7 Jan 2019 08:36:36 -0500
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Jason Wang <jasowang@redhat.com>, linux-kernel@vger.kernel.org,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Akira Yokosawa <akiyks@gmail.com>,
+        Daniel Lustig <dlustig@nvidia.com>, linux-arch@vger.kernel.org,
+        netdev@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        Richard Henderson <rth@twiddle.net>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org,
+        linux-sparse@vger.kernel.org
+Subject: Re: [PATCH RFC 3/4] barriers: convert a control to a data dependency
+Message-ID: <20190107082223-mutt-send-email-mst@kernel.org>
+References: <20190102205715.14054-1-mst@redhat.com>
+ <20190102205715.14054-4-mst@redhat.com>
+ <86023cbe-d1ae-a0d6-7b75-26556f1a0c1f@redhat.com>
+ <20190106231756-mutt-send-email-mst@kernel.org>
+ <20190107094610.GA2861@worktop.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANMdSOztZu2bsG+g=T-pThiHK9cNaMVq=tvTJ6kn2Tvu4CXJCQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190107094610.GA2861@worktop.programming.kicks-ass.net>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Mon, 07 Jan 2019 13:36:44 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jan 05, 2019 at 12:47:12AM +0100, Daniel Kamil Kozar wrote:
-> Hello.
-> After upgrading the kernel to 4.20, I noticed that the boot time
-> increased from about 5 seconds to 25 seconds. My machine is an Asus
-> K53SV with an Intel i7-2630QM, i.e. Sandy Bridge. I have an external
-> display connected to it via HDMI. If the display is unplugged when
-> booting the machine, the boot time stays at its old value.
-> The kernel log shows two messages like this :
+On Mon, Jan 07, 2019 at 10:46:10AM +0100, Peter Zijlstra wrote:
+> On Sun, Jan 06, 2019 at 11:23:07PM -0500, Michael S. Tsirkin wrote:
+> > On Mon, Jan 07, 2019 at 11:58:23AM +0800, Jason Wang wrote:
+> > > On 2019/1/3 ä¸Šåˆ4:57, Michael S. Tsirkin wrote:
 > 
-> [   15.747206] [drm:drm_atomic_helper_wait_for_flip_done
-> [drm_kms_helper]] *ERROR* [CRTC:39:pipe A] flip_done timed out
-> [   26.198968] [drm:drm_atomic_helper_wait_for_dependencies
-> [drm_kms_helper]] *ERROR* [CRTC:39:pipe A] flip_done timed out
+> > > > +#if defined(COMPILER_HAS_OPTIMIZER_HIDE_VAR) && \
+> > > > +	!defined(ARCH_NEEDS_READ_BARRIER_DEPENDS)
+> > > > +
+> > > > +#define dependent_ptr_mb(ptr, val) ({					\
+> > > > +	long dependent_ptr_mb_val = (long)(val);			\
+> > > > +	long dependent_ptr_mb_ptr = (long)(ptr) - dependent_ptr_mb_val;	\
+> > > > +									\
+> > > > +	BUILD_BUG_ON(sizeof(val) > sizeof(long));			\
+> > > > +	OPTIMIZER_HIDE_VAR(dependent_ptr_mb_val);			\
+> > > > +	(typeof(ptr))(dependent_ptr_mb_ptr + dependent_ptr_mb_val);	\
+> > > > +})
+> > > > +
+> > > > +#else
+> > > > +
+> > > > +#define dependent_ptr_mb(ptr, val) ({ mb(); (ptr); })
+> > > 
+> > > 
+> > > So for the example of patch 4, we'd better fall back to rmb() or need a
+> > > dependent_ptr_rmb()?
+> > > 
+> > > Thanks
+> > 
+> > You mean for strongly ordered architectures like Intel?
+> > Yes, maybe it makes sense to have dependent_ptr_smp_rmb,
+> > dependent_ptr_dma_rmb and dependent_ptr_virt_rmb.
+> > 
+> > mb variant is unused right now so I'll remove it.
+> 
+> How about naming the thing: dependent_ptr() ? That is without any (r)mb
+> implications at all. The address dependency is strictly weaker than an
+> rmb in that it will only order the two loads in qestion and not, like
+> rmb, any prior to any later load.
 
-Hrm. With SNB I would be tempted to blame the LP3 watermarks, but
-4.20 already has commit 21556350ade3 ("drm/i915: Disable LP3 watermarks
-on all SNB machines").
+So I'm fine with this as it's enough for virtio, but I would like to point out two things:
 
-Can you file a bug at
-https://bugs.freedesktop.org/enter_bug.cgi?product=DRI&component=DRM/Intel
-and attach the full dmesg from the boot with drm.debug=0xe passed to the
-kernel cmdline?
+1. E.g. on x86 both SMP and DMA variants can be NOPs but
+the madatory one can't, so assuming we do not want
+it to be stronger than rmp then either we want
+smp_dependent_ptr(), dma_dependent_ptr(), dependent_ptr()
+or we just will specify that dependent_ptr() works for
+both DMA and SMP.
+
+2. Down the road, someone might want to order a store after a load.
+Address dependency does that for us too. Assuming we make
+dependent_ptr a NOP on x86, we will want an mb variant
+which isn't a NOP on x86. Will we want to rename
+dependent_ptr to dependent_ptr_rmb at that point?
+
+Thanks,
 
 -- 
-Ville Syrjälä
-Intel
+MST
