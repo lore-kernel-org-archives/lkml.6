@@ -4,50 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83C25C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:53:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 159AAC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:53:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4AEB820665
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:53:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CFBAF206BB
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:53:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546865634;
-	bh=RhKMB/Uq74mN8iTdt+rgI4aeTwRAtxlxwsNy/j25/4A=;
+	s=default; t=1546865638;
+	bh=+qOMeibuXXcf3H+1EUmq/UBZkyt3wlxlXlUp0m3OPYI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ZjzpqxewjvdTPs5Tagzs0jJCaJyM5CZSkeZIkqoOERIqKzx0K6sDkL4R0xi+B5U8h
-	 C5J6d9dswef2II4rrJf7WE6Ey1hzTVqfjFfQBvKvPdfkKe69zMLJz0R4ir3vfkYG5J
-	 RQgW6z6OU0voLa3H5NyOtIBadSLd/iwqDLNSKxS4=
+	b=VzNEjvtgw7t2XZL2Y7U+t9thw8188YUFdgB7CYlh9Ohxh3b5q1/PjThIzQpHd4hHS
+	 h9Jx3IYZffVHCyp1zKErIYqbx0m9LXDviRKxt2WBwtzB22NnQSS8oW/fdK7zYQDKpR
+	 wIxZW51Qfh+o+3jptX3+xfWMiAQHWRwNmj9ryy0I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729449AbfAGMxx (ORCPT
+        id S1729659AbfAGMx5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:53:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42972 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:53:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43028 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729135AbfAGMxt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:53:49 -0500
+        id S1729429AbfAGMxx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:53:53 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A9DBB20651;
-        Mon,  7 Jan 2019 12:53:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 274E620651;
+        Mon,  7 Jan 2019 12:53:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865629;
-        bh=RhKMB/Uq74mN8iTdt+rgI4aeTwRAtxlxwsNy/j25/4A=;
+        s=default; t=1546865633;
+        bh=+qOMeibuXXcf3H+1EUmq/UBZkyt3wlxlXlUp0m3OPYI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Zwo2/9TT657mG8CNq7NhMFetFjMFFYoriyaXy+aOJNFRhn24QvDdr8GoNujTja2fw
-         PLir4m05jpIL2dCysvIQieJmufHwSOIMw2EhVMwpDcK+rekidEr6QrmNcb2eb/bw2u
-         AzEfawGHhXPb8lC6NNfp8XD/XPaAqr7NUS5DEMSo=
+        b=XuEnOy/kATq8cVyu2G81v+vBU48iZq+hGBpNk/tKqS68ee3AlnAamaxywmzGZ4HPy
+         J5CoSipnMe/2qXy1uXgcpeeQCUd3bw+zgD5gWaVhuqiJszFzHd8Lf1QWtg/v21pQ/E
+         WlF0ZK20gK5gymjA3BvFxBHVCJs7xqYYXl5QKFzc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Mantas=20Mikul=C4=97nas?= <grawity@gmail.com>,
+        stable@vger.kernel.org, Wandrille RONCE <w@ndrille.fr>,
         Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.19 068/170] ALSA: hda: add mute LED support for HP EliteBook 840 G4
-Date:   Mon,  7 Jan 2019 13:31:35 +0100
-Message-Id: <20190107104501.039367009@linuxfoundation.org>
+Subject: [PATCH 4.19 069/170] ALSA: hda/realtek: Enable audio jacks of ASUS UX391UA with ALC294
+Date:   Mon,  7 Jan 2019 13:31:36 +0100
+Message-Id: <20190107104501.142243510@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104452.953560660@linuxfoundation.org>
 References: <20190107104452.953560660@linuxfoundation.org>
@@ -66,33 +65,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mantas Mikulėnas <grawity@gmail.com>
+From: Wandrille RONCE <w@ndrille.fr>
 
-commit 40906ebe3af6a48457151b3c6726b480f6a6cb13 upstream.
+commit 9cf6533e8060d3896b88ea14b27f620e6504b84b upstream.
 
-Tested with 4.19.9.
+By default, there is no sound on Asus UX391UA on Linux.
 
-v2: Changed from CXT_FIXUP_MUTE_LED_GPIO to CXT_FIXUP_HP_DOCK because
-    that's what the existing fixups for EliteBooks use.
+This patch adds sound support on Asus UX391UA. Tested working by three
+different users.
 
-Signed-off-by: Mantas Mikulėnas <grawity@gmail.com>
+The problem has also been described at
+https://bugs.launchpad.net/ubuntu/+source/alsa-driver/+bug/1784485
+
+Signed-off-by: Wandrille RONCE <w@ndrille.fr>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_conexant.c |    1 +
+ sound/pci/hda/patch_realtek.c |    1 +
  1 file changed, 1 insertion(+)
 
---- a/sound/pci/hda/patch_conexant.c
-+++ b/sound/pci/hda/patch_conexant.c
-@@ -923,6 +923,7 @@ static const struct snd_pci_quirk cxt506
- 	SND_PCI_QUIRK(0x103c, 0x8079, "HP EliteBook 840 G3", CXT_FIXUP_HP_DOCK),
- 	SND_PCI_QUIRK(0x103c, 0x807C, "HP EliteBook 820 G3", CXT_FIXUP_HP_DOCK),
- 	SND_PCI_QUIRK(0x103c, 0x80FD, "HP ProBook 640 G2", CXT_FIXUP_HP_DOCK),
-+	SND_PCI_QUIRK(0x103c, 0x828c, "HP EliteBook 840 G4", CXT_FIXUP_HP_DOCK),
- 	SND_PCI_QUIRK(0x103c, 0x83b3, "HP EliteBook 830 G5", CXT_FIXUP_HP_DOCK),
- 	SND_PCI_QUIRK(0x103c, 0x83d3, "HP ProBook 640 G4", CXT_FIXUP_HP_DOCK),
- 	SND_PCI_QUIRK(0x103c, 0x8174, "HP Spectre x360", CXT_FIXUP_HP_SPECTRE),
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -6573,6 +6573,7 @@ static const struct snd_pci_quirk alc269
+ 	SND_PCI_QUIRK(0x1043, 0x103e, "ASUS X540SA", ALC256_FIXUP_ASUS_MIC),
+ 	SND_PCI_QUIRK(0x1043, 0x103f, "ASUS TX300", ALC282_FIXUP_ASUS_TX300),
+ 	SND_PCI_QUIRK(0x1043, 0x106d, "Asus K53BE", ALC269_FIXUP_LIMIT_INT_MIC_BOOST),
++	SND_PCI_QUIRK(0x1043, 0x10a1, "ASUS UX391UA", ALC294_FIXUP_ASUS_SPK),
+ 	SND_PCI_QUIRK(0x1043, 0x10c0, "ASUS X540SA", ALC256_FIXUP_ASUS_MIC),
+ 	SND_PCI_QUIRK(0x1043, 0x10d0, "ASUS X540LA/X540LJ", ALC255_FIXUP_ASUS_MIC_NO_PRESENCE),
+ 	SND_PCI_QUIRK(0x1043, 0x115d, "Asus 1015E", ALC269_FIXUP_LIMIT_INT_MIC_BOOST),
 
 
