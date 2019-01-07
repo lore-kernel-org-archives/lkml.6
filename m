@@ -2,202 +2,165 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62598C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 22:10:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2749C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 22:25:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2FAC02070B
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 22:10:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 608292147C
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 22:25:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727340AbfAGWKw (ORCPT
+        id S1727157AbfAGWZa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 17:10:52 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:60451 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726934AbfAGWKv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 17:10:51 -0500
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1ggd6Y-00078D-46; Mon, 07 Jan 2019 23:10:42 +0100
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1ggd6W-0008NU-Ow; Mon, 07 Jan 2019 23:10:40 +0100
-Date:   Mon, 7 Jan 2019 23:10:40 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Claudiu.Beznea@microchip.com
-Cc:     thierry.reding@gmail.com, corbet@lwn.net,
-        Nicolas.Ferre@microchip.com, alexandre.belloni@bootlin.com,
-        Ludovic.Desroches@microchip.com, linux-pwm@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v8 1/6] pwm: extend PWM framework with PWM modes
-Message-ID: <20190107221040.uos5qlnkjmcayv73@pengutronix.de>
-References: <1546522081-23659-1-git-send-email-claudiu.beznea@microchip.com>
- <1546522081-23659-2-git-send-email-claudiu.beznea@microchip.com>
- <20190105210522.ho2o2a4gc7r7ijeq@pengutronix.de>
- <67e881c5-0ea7-3d2f-5910-534729097d11@microchip.com>
+        Mon, 7 Jan 2019 17:25:30 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:43362 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726643AbfAGWZ3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 17:25:29 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0939EC05D3FD;
+        Mon,  7 Jan 2019 22:25:29 +0000 (UTC)
+Received: from redhat.com (ovpn-122-143.rdu2.redhat.com [10.10.122.143])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id DFB94648DE;
+        Mon,  7 Jan 2019 22:25:27 +0000 (UTC)
+Date:   Mon, 7 Jan 2019 17:25:27 -0500
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Jason Wang <jasowang@redhat.com>, KVM list <kvm@vger.kernel.org>,
+        virtualization@lists.linux-foundation.org,
+        Netdev <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Miller <davem@davemloft.net>
+Subject: Re: [RFC PATCH V3 0/5] Hi:
+Message-ID: <20190107172517-mutt-send-email-mst@kernel.org>
+References: <20181229124656.3900-1-jasowang@redhat.com>
+ <20190102154038-mutt-send-email-mst@kernel.org>
+ <0efd115a-a7fb-54bf-5376-59d047a15fd3@redhat.com>
+ <20190106221832-mutt-send-email-mst@kernel.org>
+ <c15a17b3-b604-a105-af44-a7e6dfd79801@redhat.com>
+ <20190106230224-mutt-send-email-mst@kernel.org>
+ <CAPcyv4iXFy0jfoQ_jQYq2yA7cqu4_Jcap4mvQesRRrV-hahGvQ@mail.gmail.com>
+ <20190107084853-mutt-send-email-mst@kernel.org>
+ <CAPcyv4jf-4=2oGJrdvMBeRiAJnQoKbYhwZDD+5ZEH+xgDaOzRQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <67e881c5-0ea7-3d2f-5910-534729097d11@microchip.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <CAPcyv4jf-4=2oGJrdvMBeRiAJnQoKbYhwZDD+5ZEH+xgDaOzRQ@mail.gmail.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Mon, 07 Jan 2019 22:25:29 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Claudiu,
-
-On Mon, Jan 07, 2019 at 09:30:55AM +0000, Claudiu.Beznea@microchip.com wrote:
-> On 05.01.2019 23:05, Uwe Kleine-König wrote:
-> > On Thu, Jan 03, 2019 at 01:29:44PM +0000, Claudiu.Beznea@microchip.com wrote:
-> >> From: Claudiu Beznea <claudiu.beznea@microchip.com>
-> >>
-> >> Add basic PWM modes: normal and complementary. These modes should
-> >> differentiate the single output PWM channels from two outputs PWM
-> >> channels. These modes could be set as follow:
-> >> 1. PWM channels with one output per channel:
-> >> - normal mode
-> >> 2. PWM channels with two outputs per channel:
-> >> - normal mode
-> >> - complementary mode
-> >> Since users could use a PWM channel with two output as one output PWM
-> >> channel, the PWM normal mode is allowed to be set for PWM channels with
-> >> two outputs; in fact PWM normal mode should be supported by all PWMs.
-> > 
-> > I still think that my suggestion that I sent in reply to your v5 using
-> > .alt_duty_cycle and .alt_offset is the better one as it is more generic.
+On Mon, Jan 07, 2019 at 01:39:15PM -0800, Dan Williams wrote:
+> On Mon, Jan 7, 2019 at 6:11 AM Michael S. Tsirkin <mst@redhat.com> wrote:
+> >
+> > On Sun, Jan 06, 2019 at 11:15:20PM -0800, Dan Williams wrote:
+> > > On Sun, Jan 6, 2019 at 8:17 PM Michael S. Tsirkin <mst@redhat.com> wrote:
+> > > >
+> > > > On Mon, Jan 07, 2019 at 11:53:41AM +0800, Jason Wang wrote:
+> > > > >
+> > > > > On 2019/1/7 ä¸Šåˆ11:28, Michael S. Tsirkin wrote:
+> > > > > > On Mon, Jan 07, 2019 at 10:19:03AM +0800, Jason Wang wrote:
+> > > > > > > On 2019/1/3 ä¸Šåˆ4:47, Michael S. Tsirkin wrote:
+> > > > > > > > On Sat, Dec 29, 2018 at 08:46:51PM +0800, Jason Wang wrote:
+> > > > > > > > > This series tries to access virtqueue metadata through kernel virtual
+> > > > > > > > > address instead of copy_user() friends since they had too much
+> > > > > > > > > overheads like checks, spec barriers or even hardware feature
+> > > > > > > > > toggling.
+> > > > > > > > Will review, thanks!
+> > > > > > > > One questions that comes to mind is whether it's all about bypassing
+> > > > > > > > stac/clac.  Could you please include a performance comparison with
+> > > > > > > > nosmap?
+> > > > > > > >
+> > > > > > > On machine without SMAP (Sandy Bridge):
+> > > > > > >
+> > > > > > > Before: 4.8Mpps
+> > > > > > >
+> > > > > > > After: 5.2Mpps
+> > > > > > OK so would you say it's really unsafe versus safe accesses?
+> > > > > > Or would you say it's just a better written code?
+> > > > >
+> > > > >
+> > > > > It's the effect of removing speculation barrier.
+> > > >
+> > > >
+> > > > You mean __uaccess_begin_nospec introduced by
+> > > > commit 304ec1b050310548db33063e567123fae8fd0301
+> > > > ?
+> > > >
+> > > > So fundamentally we do access_ok checks when supplying
+> > > > the memory table to the kernel thread, and we should
+> > > > do the spec barrier there.
+> > > >
+> > > > Then we can just create and use a variant of uaccess macros that does
+> > > > not include the barrier?
+> > > >
+> > > > Or, how about moving the barrier into access_ok?
+> > > > This way repeated accesses with a single access_ok get a bit faster.
+> > > > CC Dan Williams on this idea.
+> > >
+> > > It would be interesting to see how expensive re-doing the address
+> > > limit check is compared to the speculation barrier. I.e. just switch
+> > > vhost_get_user() to use get_user() rather than __get_user(). That will
+> > > sanitize the pointer in the speculative path without a barrier.
+> >
+> > Hmm it's way cheaper even though IIRC it's measureable.
+> > Jason, would you like to try?
+> > Although frankly __get_user being slower than get_user feels very wrong.
+> > Not yet sure what to do exactly but would you agree?
 > 
-> I like it better my way, I explained myself why.
+> Agree. __get_user() being faster than get_user() defeats the whole
+> point of converting code paths to the access_ok() + __get_user()
+> pattern.
 
-I couldn't really follow your argument though. You seemed to acknowledge
-that using .alt_duty_cycle and .alt_offset is more generic. Then you
-wrote that the push-pull mode is hardware generated on Atmel with some
-implementation details. IMHO these implementation details shouldn't be
-part of the PWM API and atmel's .apply should look as follows:
+Did you mean the reverse?
 
-	if (state->alt_duty_cycle == 0) {
-
-		... configure for normal mode ...
-
-	} else if (state->duty_cycle == state->alt_duty_cycle &&
-	           state->alt_offset == state->period / 2) {
-
-		... configure for push pull mode ...
-
-	} else if (state->duty_cycle + state->alt_duty_cycle == state->period &&
-		   state->alt_offset == state->duty_cycle) {
-
-		... configure for complementary mode ...
-
-	} else {
-		return -EINVAL;
-	}
-
-If it turns out to be a common pattern, we can add helper functions à la
-pwm_is_complementary_mode(state) and
-pwm_set_complementary_mode(state, period, duty_cycle). This allows to
-have a generic way to describe a wide range of wave forms in a uniform
-way in the API (which is good) and each driver implements the parts of
-this range that it can support.
-
-> > I don't repeat what I wrote there assuming you still remember or are
-> > willing to look it up at
-> > e.g. https://www.spinics.net/lists/linux-pwm/msg08174.html (in the 2nd half
-> > of my mail).
+> >
+> >
+> > > I recall we had a convert access_ok() discussion with this result here:
+> > >
+> > > https://lkml.org/lkml/2018/1/17/929
+> >
+> > Sorry let me try to clarify. IIUC speculating access_ok once
+> > is harmless. As Linus said the problem is with "_subsequent_
+> > accesses that can then be used to perturb the cache".
+> >
+> > Thus:
+> >
+> > 1. if (!access_ok)
+> > 2.      return
+> > 3.  get_user
+> > 4. if (!access_ok)
+> > 5.      return
+> > 6.  get_user
+> >
+> > Your proposal that Linus nacked was to effectively add a barrier after
+> > lines 2 and 5 (also using the array_index_nospec trick for speed),
+> > right? Unfortunately that needs a big API change.
+> >
+> > I am asking about adding barrier_nospec within access_ok.
+> > Thus effectively before lines 1 and 4.
+> > access_ok will be slower but after all the point of access_ok is
+> > to then access the same memory multiple times.
 > 
-> Yes, I remember it.
-
-I expected that, my words were more directed to Thierry than you.
- 
-> > Also I think that if the capabilities function is the way forward adding
-> > support to detect availability of polarity inversion should be
-> > considered. 
+> If the barrier is before lines 1 and 4 then it offers no real
+> protection as far I can see. It will start speculating again on the
+> user controlled pointer value after the barrier resolves.
 > 
-> Yep, why not. But it should be done in a different patch. It is not related
-> to this series.
-
-Yes, given that polarity already exists, this would be a good
-opportunity to introduce the capability function for that and only
-afterwards add the new use case with modes. (But having said this, read
-further as I think that this capability function is a bad idea.)
-
-> > This would also be an opportunity to split the introduction
-> > of the capabilities function and the introduction of complementary mode.
-> > (But my personal preference would be to just let .apply fail when an
-> > unsupported configuration is requested.)
+> > So we should be making __get_user faster and access_ok slower ...
 > 
-> .apply fails when something wrong is requested.
-
-If my controller doesn't support a second output is it "wrong" to
-request complementary mode? I'd say yes. So you have to catch that in
-.apply anyhow and there is little benefit to be able to ask the
-controller if it supports it beforehand.
-
-I don't have a provable statistic at hand, but my feeling is that quite
-some users of the i2c frame work get it wrong to first check the
-capabilities and only then try to use them. This is at least error prone
-and harder to use than the apply function returning an error code.
-And on the driver side the upside is to have all stuff related to which
-wave form can be generated and which cannot is a single place. (Just
-consider "inverted complementary mode". Theoretically this should work
-if your controller supports complementary mode and inverted mode. If you
-now have a driver for a controller that can do both, but not at the same
-time, the separation gets ugly. OK, this is a constructed example, but
-in my experience something like that happens earlier or later.)
-
-> >> [...]
-> >> @@ -53,12 +75,14 @@ enum {
-> >>   * @period: PWM period (in nanoseconds)
-> >>   * @duty_cycle: PWM duty cycle (in nanoseconds)
-> >>   * @polarity: PWM polarity
-> >> + * @modebit: PWM mode bit
-> >>   * @enabled: PWM enabled status
-> >>   */
-> >>  struct pwm_state {
-> >>  	unsigned int period;
-> >>  	unsigned int duty_cycle;
-> >>  	enum pwm_polarity polarity;
-> >> +	unsigned long modebit;
-> > 
-> > I fail to see the upside of storing the mode as 2^mode instead of a
-> > plain enum pwm_mode. Given that struct pwm_state is visible for pwm
-> > users a plain pwm_mode would at least be more intuitive.
+> I agree, but then the barrier always needs to be after the access_ok()
+> check unconditionally called in the return path from access_ok(). At
+> that point it's back to the implementation that Linus nak'd, or I'm
+> missing some other detail.
 > 
-> To have all modes supported by a controller grouped in pwm_caps::modes_msk.
-
-My question was not about struct pwm_caps::modes_msk but about
-struct pwm_state::modebit. As struct pwm_state has visibility even
-outside of the pwm API (i.e. it is used by consumers) it is beneficial
-to keep that simple. Letting a consumer pass in the mode he wants is
-easier to explain than setting a single bit. Also error checking with a
-plain enum is easier because you just do:
-
-	if (mode >= MODE_CNT)
-		error()
-
-which is easy to grasp. Compare that to
-
-	if (!is_power_of_two(modebit) || modebit >= PWM_MODE_BIT(CNT))
-		error()
-
-(modulo syntactical correctness).
-
-Best regards
-Uwe
-
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+> ...but maybe if it is limited to a new access_ok_nospec() then the
+> concern is addressed? Then rename current __get_user() to
+> __get_user_nospec() and make a new __get_user() that is back to being
+> optimal.
