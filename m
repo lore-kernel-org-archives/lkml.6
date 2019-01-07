@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F2A0C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:06:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DA09C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:06:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8D0121855
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:06:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5DCFA21736
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:06:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546866363;
-	bh=848c5EXCAMChJV4lobp6UKu9PQQ3UB6BXwM+uUVsZu0=;
+	s=default; t=1546866369;
+	bh=/cQLdfcbFfz7bxFsx5gOpWgoqOQKLzd3C/yqgA37hbM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=GnsGdShY0cOqMtNhYO16M4m+YPnRkKX1kapzv6bVpY64bY+Zzh1PFr9Dqzmd/023W
-	 yoY0txSHWEVw35bk49kPVV/zaXZxOg9gFyBYePAqLZ9ugCUYqNevD2OcSFCS4Gczjo
-	 jXWIGNsjSZ5x2x/HnJwwpD1DQiUQ5mei4965vAX8=
+	b=gPPU0ZOJJQkkSy+Rd5xvJGTW1HTBTnFRpE5Z9A+BF5+oduG2O1JVjzPZki4uEchtM
+	 kGtMsnpBLY9WVDYXwb2nmsqza3/59H394X8RAQ2wNjYNYQ40JPkWIwkRIA2DVOfsM3
+	 xoXO34/rbDa6GQySJIavKoiTmEQNKH9LYRzARCPY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731517AbfAGNGC (ORCPT
+        id S1731526AbfAGNGI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:06:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53512 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:06:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53588 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727786AbfAGNGA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:06:00 -0500
+        id S1727252AbfAGNGH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:06:07 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 417BA217D4;
-        Mon,  7 Jan 2019 13:05:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 543B021736;
+        Mon,  7 Jan 2019 13:06:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546866359;
-        bh=848c5EXCAMChJV4lobp6UKu9PQQ3UB6BXwM+uUVsZu0=;
+        s=default; t=1546866366;
+        bh=/cQLdfcbFfz7bxFsx5gOpWgoqOQKLzd3C/yqgA37hbM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eOvukLllOsT/7IqcyfoctQ2G7ZuHcOAyI229nA94Dp+zHE1xq9WOLc56qiDDdu5Ii
-         YvCAlwteVsnIukTilK+kY4Uu3N9vXn3L9cT+aazV/rYumTgUC5pZsmElNSf9nsIQPh
-         PrCECyFwhaCpE/h6vxpDb6ujQxG2JdzDq3pNbsMs=
+        b=EWuk1WRNEUAYbch3+icpR86WYBSa8dhn6+YiJ898pMsFGEL+EuqAC+3ei85eSt/0B
+         0INd70/0Bhw+yboAXZqlRYlMH5IiXTh0xvlMzKLTF1Hkshbk0zWsrH/qUgMY5tY39n
+         vB3ZPqnnd8hK7li/79e3P1v63yyZRHozz9WIXkpg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 05/71] phonet: af_phonet: Fix Spectre v1 vulnerability
-Date:   Mon,  7 Jan 2019 13:32:34 +0100
-Message-Id: <20190107105330.590339037@linuxfoundation.org>
+        stable@vger.kernel.org, Cong Wang <xiyou.wangcong@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        syzbot+ae6bb869cbed29b29040@syzkaller.appspotmail.com
+Subject: [PATCH 4.9 06/71] ax25: fix a use-after-free in ax25_fillin_cb()
+Date:   Mon,  7 Jan 2019 13:32:35 +0100
+Message-Id: <20190107105330.681072921@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107105330.280153213@linuxfoundation.org>
 References: <20190107105330.280153213@linuxfoundation.org>
@@ -66,50 +66,73 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-[ Upstream commit d686026b1e6ed4ea27d630d8f54f9a694db088b2 ]
+[ Upstream commit c433570458e49bccea5c551df628d058b3526289 ]
 
-protocol is indirectly controlled by user-space, hence leading to
-a potential exploitation of the Spectre variant 1 vulnerability.
+There are multiple issues here:
 
-This issue was detected with the help of Smatch:
+1. After freeing dev->ax25_ptr, we need to set it to NULL otherwise
+   we may use a dangling pointer.
 
-net/phonet/af_phonet.c:48 phonet_proto_get() warn: potential spectre issue 'proto_tab' [w] (local cap)
+2. There is a race between ax25_setsockopt() and device notifier as
+   reported by syzbot. Close it by holding RTNL lock.
 
-Fix this by sanitizing protocol before using it to index proto_tab.
+3. We need to test if dev->ax25_ptr is NULL before using it.
 
-Notice that given that speculation windows are large, the policy is
-to kill the speculation on the first load and not worry if it can be
-completed with a dependent load/store [1].
-
-[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Reported-and-tested-by: syzbot+ae6bb869cbed29b29040@syzkaller.appspotmail.com
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/phonet/af_phonet.c |    3 +++
- 1 file changed, 3 insertions(+)
+ net/ax25/af_ax25.c  |   11 +++++++++--
+ net/ax25/ax25_dev.c |    2 ++
+ 2 files changed, 11 insertions(+), 2 deletions(-)
 
---- a/net/phonet/af_phonet.c
-+++ b/net/phonet/af_phonet.c
-@@ -34,6 +34,8 @@
- #include <net/phonet/phonet.h>
- #include <net/phonet/pn_dev.h>
+--- a/net/ax25/af_ax25.c
++++ b/net/ax25/af_ax25.c
+@@ -654,15 +654,22 @@ static int ax25_setsockopt(struct socket
+ 			break;
+ 		}
  
-+#include <linux/nospec.h>
-+
- /* Transport protocol registration */
- static struct phonet_protocol *proto_tab[PHONET_NPROTO] __read_mostly;
+-		dev = dev_get_by_name(&init_net, devname);
++		rtnl_lock();
++		dev = __dev_get_by_name(&init_net, devname);
+ 		if (!dev) {
++			rtnl_unlock();
+ 			res = -ENODEV;
+ 			break;
+ 		}
  
-@@ -43,6 +45,7 @@ static struct phonet_protocol *phonet_pr
+ 		ax25->ax25_dev = ax25_dev_ax25dev(dev);
++		if (!ax25->ax25_dev) {
++			rtnl_unlock();
++			res = -ENODEV;
++			break;
++		}
+ 		ax25_fillin_cb(ax25, ax25->ax25_dev);
+-		dev_put(dev);
++		rtnl_unlock();
+ 		break;
  
- 	if (protocol >= PHONET_NPROTO)
- 		return NULL;
-+	protocol = array_index_nospec(protocol, PHONET_NPROTO);
- 
- 	rcu_read_lock();
- 	pp = rcu_dereference(proto_tab[protocol]);
+ 	default:
+--- a/net/ax25/ax25_dev.c
++++ b/net/ax25/ax25_dev.c
+@@ -116,6 +116,7 @@ void ax25_dev_device_down(struct net_dev
+ 	if ((s = ax25_dev_list) == ax25_dev) {
+ 		ax25_dev_list = s->next;
+ 		spin_unlock_bh(&ax25_dev_lock);
++		dev->ax25_ptr = NULL;
+ 		dev_put(dev);
+ 		kfree(ax25_dev);
+ 		return;
+@@ -125,6 +126,7 @@ void ax25_dev_device_down(struct net_dev
+ 		if (s->next == ax25_dev) {
+ 			s->next = ax25_dev->next;
+ 			spin_unlock_bh(&ax25_dev_lock);
++			dev->ax25_ptr = NULL;
+ 			dev_put(dev);
+ 			kfree(ax25_dev);
+ 			return;
 
 
