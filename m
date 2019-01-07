@@ -7,47 +7,51 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 444E4C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:49:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41AF2C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:49:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09F9320859
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:49:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 12F9E20651
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:49:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546865347;
-	bh=Jb2/5CL62w9yQgmAOukgXo7E2fIoPC2BTMJ8vCSHyFM=;
+	s=default; t=1546865355;
+	bh=PwWvZfx+jNAqWRjwsm9G+7dX3EzkTkbsiF7jakmZRWU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ah0SFO8AmFdHD3XShqEpRoJB6YQeNt766VyiSR3SpUAcl6xfU7EKtg/gvHjNH0u2L
-	 /cyhl+MfH9YHEBwyUzQna+DitvSOE8p4h0fECurQHW+uJ0oF8eVNuAvVn2QjJm+/k2
-	 +9t/ZwsNs695Az7FGphs1iiYGeaVstCQmHNOgX8M=
+	b=lMDRpCsI4Cta52fMWXBnU+Em2RcTkcdgXzu6XWKfxyHuQSXB3CQul7wBaBXvPqS03
+	 z8QL9I+FLLTkZQhd+6QyihU+ynC8H4cCvu0vbhYl2VH0KL2lL3cL0BEoTrq/Rnm7JH
+	 Z7zndxggoxOYzaO03spL/QgWu19GBJ3AWCv8efL8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729312AbfAGMtG (ORCPT
+        id S1729334AbfAGMtJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:49:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39944 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:49:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39992 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729300AbfAGMtE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:49:04 -0500
+        id S1729300AbfAGMtH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:49:07 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E8CF120651;
-        Mon,  7 Jan 2019 12:49:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EA625206BB;
+        Mon,  7 Jan 2019 12:49:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865343;
-        bh=Jb2/5CL62w9yQgmAOukgXo7E2fIoPC2BTMJ8vCSHyFM=;
+        s=default; t=1546865346;
+        bh=PwWvZfx+jNAqWRjwsm9G+7dX3EzkTkbsiF7jakmZRWU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OxfoJKYKme4JueurkMgXLaozX3qlMNYonDRr7E9+bcyd9fnFvEV0ojuaV0PCnELqh
-         sFp+n847/BOglFNIkeM3zaNyuDADN1e4bXkMo7ZbHApKYpO6uALvvCcMRnpmxV3OMg
-         oKHVvm1lxHRnDJmc+Fnh3i1KK6/ir6sLAOnwOEag=
+        b=0TH8PrLc8l+/iGdGqr5Q/JY+mog0y6j0y/YqEUMwpEqIXD/cvW4G4gSl6BdEOTw+a
+         oPMv41BtI72iEVZImhdjBve9XAoHnp7qKpMcb7S4/q6cchRX+GXv16u9o83EqKdDZ7
+         x4DwFdG8pIvZO7ST4mknXRWfEDrzfA+5LmDL9/3Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        syzbot+8993c0fa96d57c399735@syzkaller.appspotmail.com,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 025/170] phonet: af_phonet: Fix Spectre v1 vulnerability
-Date:   Mon,  7 Jan 2019 13:30:52 +0100
-Message-Id: <20190107104456.064296316@linuxfoundation.org>
+Subject: [PATCH 4.19 026/170] ptr_ring: wrap back ->producer in __ptr_ring_swap_queue()
+Date:   Mon,  7 Jan 2019 13:30:53 +0100
+Message-Id: <20190107104456.156425272@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104452.953560660@linuxfoundation.org>
 References: <20190107104452.953560660@linuxfoundation.org>
@@ -66,50 +70,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-[ Upstream commit d686026b1e6ed4ea27d630d8f54f9a694db088b2 ]
+[ Upstream commit aff6db454599d62191aabc208930e891748e4322 ]
 
-protocol is indirectly controlled by user-space, hence leading to
-a potential exploitation of the Spectre variant 1 vulnerability.
+__ptr_ring_swap_queue() tries to move pointers from the old
+ring to the new one, but it forgets to check if ->producer
+is beyond the new size at the end of the operation. This leads
+to an out-of-bound access in __ptr_ring_produce() as reported
+by syzbot.
 
-This issue was detected with the help of Smatch:
-
-net/phonet/af_phonet.c:48 phonet_proto_get() warn: potential spectre issue 'proto_tab' [w] (local cap)
-
-Fix this by sanitizing protocol before using it to index proto_tab.
-
-Notice that given that speculation windows are large, the policy is
-to kill the speculation on the first load and not worry if it can be
-completed with a dependent load/store [1].
-
-[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Reported-by: syzbot+8993c0fa96d57c399735@syzkaller.appspotmail.com
+Fixes: 5d49de532002 ("ptr_ring: resize support")
+Cc: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: John Fastabend <john.fastabend@gmail.com>
+Cc: Jason Wang <jasowang@redhat.com>
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/phonet/af_phonet.c |    3 +++
- 1 file changed, 3 insertions(+)
+ include/linux/ptr_ring.h |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/net/phonet/af_phonet.c
-+++ b/net/phonet/af_phonet.c
-@@ -34,6 +34,8 @@
- #include <net/phonet/phonet.h>
- #include <net/phonet/pn_dev.h>
+--- a/include/linux/ptr_ring.h
++++ b/include/linux/ptr_ring.h
+@@ -573,6 +573,8 @@ static inline void **__ptr_ring_swap_que
+ 		else if (destroy)
+ 			destroy(ptr);
  
-+#include <linux/nospec.h>
-+
- /* Transport protocol registration */
- static const struct phonet_protocol *proto_tab[PHONET_NPROTO] __read_mostly;
- 
-@@ -43,6 +45,7 @@ static const struct phonet_protocol *pho
- 
- 	if (protocol >= PHONET_NPROTO)
- 		return NULL;
-+	protocol = array_index_nospec(protocol, PHONET_NPROTO);
- 
- 	rcu_read_lock();
- 	pp = rcu_dereference(proto_tab[protocol]);
++	if (producer >= size)
++		producer = 0;
+ 	__ptr_ring_set_size(r, size);
+ 	r->producer = producer;
+ 	r->consumer_head = 0;
 
 
