@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE6ECC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:01:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FFC3C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:01:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CFFA21736
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:01:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 510C12089F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:01:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546866077;
-	bh=lUWo0EtSXupqH0UIsVqEbeM/sokqqcCiTWQsMvuhFvc=;
+	s=default; t=1546866081;
+	bh=GBErmSPs5qGxMHNV23yuN5V6Bs940vV+QlKo8+bgGUc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=x+idaieGCeka9lr+UqUSrLKbAEyFHeJxjsTlDidfw+M+dSLmydLNdEQzEZQYMtuvN
-	 HMbF1le4uQAFnPGaG1DDLH+27in26VpU1/7NAgfHmmHl37f1YJmEDw+Cp8snHnX/jr
-	 KqwMCYmyaatk64guuSM5q4rvjxvPO/A5cHdn6J+0=
+	b=taBKrmu8w7fwaqdzqVD03PdYdGP6zS6EtnSgiRSY3wT4qnBQrqCSpk3EbrunGo4Lg
+	 FbqUnUFfDA/jRDEdm1W0xMkaPZQE0/wSk1COXYgM8DMh3sSDB/picMxnoAIHXxhrf1
+	 hMlyY67vO7Kqp1wSJYaQVz2mYdJ4CgU2pUogNHsc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730570AbfAGNBQ (ORCPT
+        id S1730594AbfAGNBU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:01:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48698 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:01:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48770 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730553AbfAGNBM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:01:12 -0500
+        id S1730577AbfAGNBS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:01:18 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 055A12089F;
-        Mon,  7 Jan 2019 13:01:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C8F152089F;
+        Mon,  7 Jan 2019 13:01:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546866071;
-        bh=lUWo0EtSXupqH0UIsVqEbeM/sokqqcCiTWQsMvuhFvc=;
+        s=default; t=1546866077;
+        bh=GBErmSPs5qGxMHNV23yuN5V6Bs940vV+QlKo8+bgGUc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=M3fFAWL+Crq60t12GPF1GPpIF3BDwF1VJ4wb4p/Tf4vQpoup1SM0hUaQx9aNVgErl
-         SZ54lurqDlRVW3s23MEuE17IB5nMyuxCiBEEn/H9XPFgJhk2z5blJCe5F+GMQgartU
-         ke515eBZ486t6R/sToHkb6E04Y7g/wO5gGDeHgfI=
+        b=r45ys99KpwAZ6OQJW+L8joVwT80+KiHdiExrF6s6Ed1dHDk5afipjVA+6oPK26xXz
+         KXOOgchv/pzLSNDaTFsKUItY4a4ckm0VDdsyznOrH0yABEyE3+AqyKSlGUsFJ7wkC1
+         eWvSMB/Zd4pjX2SDeCCc+clA9mO19Vu1hCAU/jn0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+0bf2e01269f1274b4b03@syzkaller.appspotmail.com,
-        syzbot+e3132895630f957306bc@syzkaller.appspotmail.com,
-        Myungho Jung <mhjungk@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 035/101] net/smc: fix TCP fallback socket release
-Date:   Mon,  7 Jan 2019 13:32:23 +0100
-Message-Id: <20190107105334.842604218@linuxfoundation.org>
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        "Michael J. Ruhl" <michael.j.ruhl@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 4.14 037/101] IB/hfi1: Incorrect sizing of sge for PIO will OOPs
+Date:   Mon,  7 Jan 2019 13:32:25 +0100
+Message-Id: <20190107105334.940567665@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107105330.372621917@linuxfoundation.org>
 References: <20190107105330.372621917@linuxfoundation.org>
@@ -68,84 +68,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Myungho Jung <mhjungk@gmail.com>
+From: Michael J. Ruhl <michael.j.ruhl@intel.com>
 
-[ Upstream commit 78abe3d0dfad196959b1246003366e2610775ea6 ]
+commit dbc2970caef74e8ff41923d302aa6fb5a4812d0e upstream.
 
-clcsock can be released while kernel_accept() references it in TCP
-listen worker. Also, clcsock needs to wake up before released if TCP
-fallback is used and the clcsock is blocked by accept. Add a lock to
-safely release clcsock and call kernel_sock_shutdown() to wake up
-clcsock from accept in smc_release().
+An incorrect sge sizing in the HFI PIO path will cause an OOPs similar to
+this:
 
-Reported-by: syzbot+0bf2e01269f1274b4b03@syzkaller.appspotmail.com
-Reported-by: syzbot+e3132895630f957306bc@syzkaller.appspotmail.com
-Signed-off-by: Myungho Jung <mhjungk@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+BUG: unable to handle kernel NULL pointer dereference at (null)
+IP: [] hfi1_verbs_send_pio+0x3d8/0x530 [hfi1]
+PGD 0
+Oops: 0000 1 SMP
+ Call Trace:
+ ? hfi1_verbs_send_dma+0xad0/0xad0 [hfi1]
+ hfi1_verbs_send+0xdf/0x250 [hfi1]
+ ? make_rc_ack+0xa80/0xa80 [hfi1]
+ hfi1_do_send+0x192/0x430 [hfi1]
+ hfi1_do_send_from_rvt+0x10/0x20 [hfi1]
+ rvt_post_send+0x369/0x820 [rdmavt]
+ ib_uverbs_post_send+0x317/0x570 [ib_uverbs]
+ ib_uverbs_write+0x26f/0x420 [ib_uverbs]
+ ? security_file_permission+0x21/0xa0
+ vfs_write+0xbd/0x1e0
+ ? mntput+0x24/0x40
+ SyS_write+0x7f/0xe0
+ system_call_fastpath+0x16/0x1b
+
+Fix by adding the missing sizing check to correctly determine the sge
+length.
+
+Fixes: 7724105686e7 ("IB/hfi1: add driver files")
+Reviewed-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
+Signed-off-by: Michael J. Ruhl <michael.j.ruhl@intel.com>
+Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/smc/af_smc.c |   14 ++++++++++++--
- net/smc/smc.h    |    4 ++++
- 2 files changed, 16 insertions(+), 2 deletions(-)
 
---- a/net/smc/af_smc.c
-+++ b/net/smc/af_smc.c
-@@ -133,8 +133,14 @@ static int smc_release(struct socket *so
- 		sk->sk_shutdown |= SHUTDOWN_MASK;
- 	}
- 	if (smc->clcsock) {
-+		if (smc->use_fallback && sk->sk_state == SMC_LISTEN) {
-+			/* wake up clcsock accept */
-+			rc = kernel_sock_shutdown(smc->clcsock, SHUT_RDWR);
-+		}
-+		mutex_lock(&smc->clcsock_release_lock);
- 		sock_release(smc->clcsock);
- 		smc->clcsock = NULL;
-+		mutex_unlock(&smc->clcsock_release_lock);
- 	}
+---
+ drivers/infiniband/hw/hfi1/verbs.c |    2 ++
+ 1 file changed, 2 insertions(+)
+
+--- a/drivers/infiniband/hw/hfi1/verbs.c
++++ b/drivers/infiniband/hw/hfi1/verbs.c
+@@ -1123,6 +1123,8 @@ int hfi1_verbs_send_pio(struct rvt_qp *q
  
- 	/* detach socket */
-@@ -184,6 +190,7 @@ static struct sock *smc_sock_alloc(struc
- 	INIT_DELAYED_WORK(&smc->sock_put_work, smc_close_sock_put_work);
- 	sk->sk_prot->hash(sk);
- 	sk_refcnt_debug_inc(sk);
-+	mutex_init(&smc->clcsock_release_lock);
- 
- 	return sk;
- }
-@@ -577,7 +584,7 @@ static int smc_clcsock_accept(struct smc
- 	struct sock *sk = &lsmc->sk;
- 	struct socket *new_clcsock;
- 	struct sock *new_sk;
--	int rc;
-+	int rc = -EINVAL;
- 
- 	release_sock(&lsmc->sk);
- 	new_sk = smc_sock_alloc(sock_net(sk), NULL);
-@@ -590,7 +597,10 @@ static int smc_clcsock_accept(struct smc
- 	}
- 	*new_smc = smc_sk(new_sk);
- 
--	rc = kernel_accept(lsmc->clcsock, &new_clcsock, 0);
-+	mutex_lock(&lsmc->clcsock_release_lock);
-+	if (lsmc->clcsock)
-+		rc = kernel_accept(lsmc->clcsock, &new_clcsock, 0);
-+	mutex_unlock(&lsmc->clcsock_release_lock);
- 	lock_sock(&lsmc->sk);
- 	if  (rc < 0) {
- 		lsmc->sk.sk_err = -rc;
---- a/net/smc/smc.h
-+++ b/net/smc/smc.h
-@@ -185,6 +185,10 @@ struct smc_sock {				/* smc sock contain
- 						 * started, waiting for unsent
- 						 * data to be sent
- 						 */
-+	struct mutex            clcsock_release_lock;
-+						/* protects clcsock of a listen
-+						 * socket
-+						 * */
- };
- 
- static inline struct smc_sock *smc_sk(const struct sock *sk)
+ 				if (slen > len)
+ 					slen = len;
++				if (slen > ss->sge.sge_length)
++					slen = ss->sge.sge_length;
+ 				rvt_update_sge(ss, slen, false);
+ 				seg_pio_copy_mid(pbuf, addr, slen);
+ 				len -= slen;
 
 
