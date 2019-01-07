@@ -7,50 +7,45 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2576EC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:59:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFF9EC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:59:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCD3D206BB
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:59:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4C922089F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:59:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546865985;
-	bh=8DK/16rN1NzSbAzF/55PYg3SiUhaA3POLCvKTC9S0PI=;
+	s=default; t=1546865988;
+	bh=XpfWEeSu3lEWuml9/FStMfS2vmcSWWwnXg8ZsgIIouQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=IOKO5rEtc3pnyESdBDO7tB2PptW4BILB3Zv1k17WON63y3W3CWPvxq/gQ4glGaJav
-	 OgZONl52kbLZnXhTw19Zxufno7W17FLwO4SMlZhLKpJBoJhPkKNOFyJ1XRpLe0cxfU
-	 +rnAMw+mgbYZRrK4x6o71KRqHNPJs2dAgexwch2o=
+	b=lRkTjxXe3H6D9fkKVQQUqmISrJDGuWfBJlU/KkCBZh2qcshvYzUgGKLCQNGDkZ7ol
+	 oV5oSGtR35sp/w2xGAIUabL6RsW1nAN2HxAqX2eVUX24au9Dt0vDza7a49euRBiLQ9
+	 NPTD9mx7PGSer4cUQ2F5yArt3W5av0VrTK1/uAjg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729895AbfAGM7o (ORCPT
+        id S1730314AbfAGM7r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:59:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47240 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:59:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47286 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730204AbfAGM7l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:59:41 -0500
+        id S1729173AbfAGM7o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:59:44 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3606321736;
-        Mon,  7 Jan 2019 12:59:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4310E206BB;
+        Mon,  7 Jan 2019 12:59:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865980;
-        bh=8DK/16rN1NzSbAzF/55PYg3SiUhaA3POLCvKTC9S0PI=;
+        s=default; t=1546865983;
+        bh=XpfWEeSu3lEWuml9/FStMfS2vmcSWWwnXg8ZsgIIouQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KTrjgkZUZEweos90I2LkIs8rBbqXTDRNnT8VTilgMTKLX+Ke2h0Ni6BXC8kh5PGYp
-         jpweI5EEsqtttGcqzDdFlKfrPQSqKdizCjzwzBwihybdPr46aGqiJzcracGhkSklkc
-         VCOfCRGqnGo9i4jGAMRhiRPlWk2Ecbenh9FrlToA=
+        b=DL61b6hOVxbGuo6LfV1S4uIQjNLsc5CilrfP2lQ27E//WXKGj+B9p1T3Ik9HUbKa4
+         f7Yc1/IhF4gDHyNl6mwmuquMGOT69X6iYSyUF/z12LrKcdSBAJUYRfEd/B6Ucam0lz
+         7juYFthalQGs82eLQ86zkKm4z17XbfEgwi+YV9ss=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-trace-devel@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 4.19 149/170] tools lib traceevent: Fix processing of dereferenced args in bprintk events
-Date:   Mon,  7 Jan 2019 13:32:56 +0100
-Message-Id: <20190107104510.552687119@linuxfoundation.org>
+        stable@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH 4.19 140/170] f2fs: sanity check of xattr entry size
+Date:   Mon,  7 Jan 2019 13:32:47 +0100
+Message-Id: <20190107104509.513223763@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104452.953560660@linuxfoundation.org>
 References: <20190107104452.953560660@linuxfoundation.org>
@@ -69,38 +64,85 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Steven Rostedt (VMware) <rostedt@goodmis.org>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
 
-commit f024cf085c423bac7512479f45c34ee9a24af7ce upstream.
+commit 64beba0558fce7b59e9a8a7afd77290e82a22163 upstream.
 
-In the case that a bprintk event has a dereferenced pointer that is
-stored as a string, and there's more values to process (more args), the
-arg was not updated to point to the next arg after processing the
-dereferenced pointer, and it screwed up what was to be displayed.
+There is a security report where f2fs_getxattr() has a hole to expose wrong
+memory region when the image is malformed like this.
 
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: linux-trace-devel@vger.kernel.org
-Cc: stable@vger.kernel.org
-Fixes: 37db96bb49629 ("tools lib traceevent: Handle new pointer processing of bprint strings")
-Link: http://lkml.kernel.org/r/20181210134522.3f71e2ca@gandalf.local.home
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+f2fs_getxattr: entry->e_name_len: 4, size: 12288, buffer_size: 16384, len: 4
+
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/lib/traceevent/event-parse.c |    1 +
- 1 file changed, 1 insertion(+)
+ fs/f2fs/xattr.c |   18 +++++++++++++-----
+ 1 file changed, 13 insertions(+), 5 deletions(-)
 
---- a/tools/lib/traceevent/event-parse.c
-+++ b/tools/lib/traceevent/event-parse.c
-@@ -4968,6 +4968,7 @@ static void pretty_print(struct trace_se
+--- a/fs/f2fs/xattr.c
++++ b/fs/f2fs/xattr.c
+@@ -291,7 +291,7 @@ static int read_xattr_block(struct inode
+ static int lookup_all_xattrs(struct inode *inode, struct page *ipage,
+ 				unsigned int index, unsigned int len,
+ 				const char *name, struct f2fs_xattr_entry **xe,
+-				void **base_addr)
++				void **base_addr, int *base_size)
+ {
+ 	void *cur_addr, *txattr_addr, *last_addr = NULL;
+ 	nid_t xnid = F2FS_I(inode)->i_xattr_nid;
+@@ -302,8 +302,8 @@ static int lookup_all_xattrs(struct inod
+ 	if (!size && !inline_size)
+ 		return -ENODATA;
  
- 				if (arg->type == PRINT_BSTRING) {
- 					trace_seq_puts(s, arg->string.string);
-+					arg = arg->next;
- 					break;
- 				}
+-	txattr_addr = f2fs_kzalloc(F2FS_I_SB(inode),
+-			inline_size + size + XATTR_PADDING_SIZE, GFP_NOFS);
++	*base_size = inline_size + size + XATTR_PADDING_SIZE;
++	txattr_addr = f2fs_kzalloc(F2FS_I_SB(inode), *base_size, GFP_NOFS);
+ 	if (!txattr_addr)
+ 		return -ENOMEM;
  
+@@ -315,8 +315,10 @@ static int lookup_all_xattrs(struct inod
+ 
+ 		*xe = __find_inline_xattr(inode, txattr_addr, &last_addr,
+ 						index, len, name);
+-		if (*xe)
++		if (*xe) {
++			*base_size = inline_size;
+ 			goto check;
++		}
+ 	}
+ 
+ 	/* read from xattr node block */
+@@ -477,6 +479,7 @@ int f2fs_getxattr(struct inode *inode, i
+ 	int error = 0;
+ 	unsigned int size, len;
+ 	void *base_addr = NULL;
++	int base_size;
+ 
+ 	if (name == NULL)
+ 		return -EINVAL;
+@@ -487,7 +490,7 @@ int f2fs_getxattr(struct inode *inode, i
+ 
+ 	down_read(&F2FS_I(inode)->i_xattr_sem);
+ 	error = lookup_all_xattrs(inode, ipage, index, len, name,
+-				&entry, &base_addr);
++				&entry, &base_addr, &base_size);
+ 	up_read(&F2FS_I(inode)->i_xattr_sem);
+ 	if (error)
+ 		return error;
+@@ -501,6 +504,11 @@ int f2fs_getxattr(struct inode *inode, i
+ 
+ 	if (buffer) {
+ 		char *pval = entry->e_name + entry->e_name_len;
++
++		if (base_size - (pval - (char *)base_addr) < size) {
++			error = -ERANGE;
++			goto out;
++		}
+ 		memcpy(buffer, pval, size);
+ 	}
+ 	error = size;
 
 
