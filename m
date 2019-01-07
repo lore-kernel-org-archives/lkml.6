@@ -7,46 +7,49 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ED05C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:33:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68A37C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:34:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D43512089F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:33:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B39F2147C
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:34:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546864438;
-	bh=O27KYWT9gmxwLMGQISlv9memGcHJFPTUPeUcQhI36aw=;
+	s=default; t=1546864442;
+	bh=PwJ2E8W221dvg9FsNUSQ64CXnzFRhczx88WNbKxukHQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=EMlYIiG+AUlVG+nFL58KMeR46A02ZPsWAF25JYDFAWlF7wLQWFSdeT0Fp9UVSeKlu
-	 NlJOvVnBZfLXnCtizIFmahfohE5DTC+EvNYcbJYyJ4GtqKptkIobxtkfzfzDM4IbXj
-	 HV0epJN98KRK2eaJIEm04enAvSfUi3TZ2DfrlK50=
+	b=hn8hN8HJOcBJJjqGExswcPd+/uav+Vfcrt9XRtBO4gdiE8AiFNWiMe0E/RwtTLnYB
+	 CPtRyuKzuVvO2j3FMZGfp+JEjAwsVYSzlWEcFe2HWdxMY6sFPjRwkr/JUB2wP4T8gV
+	 3e4ylyDtNP1Ub3ORPErw6CJylkwhrMGMj+U0g+zA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727035AbfAGMd6 (ORCPT
+        id S1727054AbfAGMeB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:33:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45448 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:34:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45552 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726667AbfAGMd5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:33:57 -0500
+        id S1726667AbfAGMd7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:33:59 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D7EE3206BB;
-        Mon,  7 Jan 2019 12:33:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A50C0206BB;
+        Mon,  7 Jan 2019 12:33:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546864436;
-        bh=O27KYWT9gmxwLMGQISlv9memGcHJFPTUPeUcQhI36aw=;
+        s=default; t=1546864439;
+        bh=PwJ2E8W221dvg9FsNUSQ64CXnzFRhczx88WNbKxukHQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GvMkssLdBdm8j5iavGL0DpWdmG1in9A5DqVhjKbJG8zT/itOiZqIiVpCAH8GqeKNR
-         CissCZ4jy3lGPQy7xj4UsPfB/zn7onx6I5cQOyjZP10S7Kc5inFH37ki5ffACaAxBA
-         t8NW+gbkJ3k7Pp3drkSGvxb0xNHYf3hay3OGQLlg=
+        b=F9b7IH+DcMsogq9IQAuF5v0opXxAIcmrInveRzmPdAKwre9GzihABtmAhuXappUvO
+         YqpE/VoZQli0i0+PD8OW4hzUF8G9zmT8ZKE6rF1bBxmxKE3Pl+sc3Cp/Fk3SNsm+j7
+         tCfV+m7s48u/Y9tRVqECV71ORd2OqQQPN6PFs/aM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ihab Zhaika <ihab.zhaika@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>
-Subject: [PATCH 4.20 002/145] iwlwifi: add new cards for 9560, 9462, 9461 and killer series
-Date:   Mon,  7 Jan 2019 13:30:39 +0100
-Message-Id: <20190107104437.646800312@linuxfoundation.org>
+        stable@vger.kernel.org, Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Adam Ford <aford173@gmail.com>
+Subject: [PATCH 4.20 003/145] media: ov5640: Fix set format regression
+Date:   Mon,  7 Jan 2019 13:30:40 +0100
+Message-Id: <20190107104437.769711486@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104437.308206189@linuxfoundation.org>
 References: <20190107104437.308206189@linuxfoundation.org>
@@ -65,79 +68,73 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ihab Zhaika <ihab.zhaika@intel.com>
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-commit f108703cb5f199d0fc98517ac29a997c4c646c94 upstream.
+commit 07115449919383548d094ff83cc27bd08639a8a1 upstream.
 
-add few PCI ID'S for 9560, 9462, 9461 and killer series.
+The set_fmt operations updates the sensor format only when the image format
+is changed. When only the image sizes gets changed, the format do not get
+updated causing the sensor to always report the one that was previously in
+use.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Ihab Zhaika <ihab.zhaika@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Without this patch, updating frame size only fails:
+  [fmt:UYVY8_2X8/640x480@1/30 field:none colorspace:srgb xfer:srgb ...]
+
+With this patch applied:
+  [fmt:UYVY8_2X8/1024x768@1/30 field:none colorspace:srgb xfer:srgb ...]
+
+Fixes: 6949d864776e ("media: ov5640: do not change mode if format or frame interval is unchanged")
+
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Tested-by: Adam Ford <aford173@gmail.com> #imx6 w/ CSI2 interface on 4.19.6 and 4.20-RC5
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/intel/iwlwifi/pcie/drv.c |   50 ++++++++++++++++++++++++++
- 1 file changed, 50 insertions(+)
+ drivers/media/i2c/ov5640.c |   17 ++++++++---------
+ 1 file changed, 8 insertions(+), 9 deletions(-)
 
---- a/drivers/net/wireless/intel/iwlwifi/pcie/drv.c
-+++ b/drivers/net/wireless/intel/iwlwifi/pcie/drv.c
-@@ -513,6 +513,56 @@ static const struct pci_device_id iwl_hw
- 	{IWL_PCI_DEVICE(0x24FD, 0x9074, iwl8265_2ac_cfg)},
+--- a/drivers/media/i2c/ov5640.c
++++ b/drivers/media/i2c/ov5640.c
+@@ -2020,6 +2020,7 @@ static int ov5640_set_fmt(struct v4l2_su
+ 	struct ov5640_dev *sensor = to_ov5640_dev(sd);
+ 	const struct ov5640_mode_info *new_mode;
+ 	struct v4l2_mbus_framefmt *mbus_fmt = &format->format;
++	struct v4l2_mbus_framefmt *fmt;
+ 	int ret;
  
- /* 9000 Series */
-+	{IWL_PCI_DEVICE(0x02F0, 0x0030, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x02F0, 0x0034, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x02F0, 0x0038, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x02F0, 0x003C, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x02F0, 0x0060, iwl9461_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x02F0, 0x0064, iwl9461_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x02F0, 0x00A0, iwl9462_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x02F0, 0x00A4, iwl9462_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x02F0, 0x0230, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x02F0, 0x0234, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x02F0, 0x0238, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x02F0, 0x023C, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x02F0, 0x0260, iwl9461_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x02F0, 0x0264, iwl9461_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x02F0, 0x02A0, iwl9462_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x02F0, 0x02A4, iwl9462_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x02F0, 0x1551, iwl9560_killer_s_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x02F0, 0x1552, iwl9560_killer_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x02F0, 0x2030, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x02F0, 0x2034, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x02F0, 0x4030, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x02F0, 0x4034, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x02F0, 0x40A4, iwl9462_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x02F0, 0x4234, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x02F0, 0x42A4, iwl9462_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x06F0, 0x0030, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x06F0, 0x0034, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x06F0, 0x0038, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x06F0, 0x003C, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x06F0, 0x0060, iwl9461_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x06F0, 0x0064, iwl9461_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x06F0, 0x00A0, iwl9462_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x06F0, 0x00A4, iwl9462_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x06F0, 0x0230, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x06F0, 0x0234, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x06F0, 0x0238, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x06F0, 0x023C, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x06F0, 0x0260, iwl9461_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x06F0, 0x0264, iwl9461_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x06F0, 0x02A0, iwl9462_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x06F0, 0x02A4, iwl9462_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x06F0, 0x1551, iwl9560_killer_s_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x06F0, 0x1552, iwl9560_killer_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x06F0, 0x2030, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x06F0, 0x2034, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x06F0, 0x4030, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x06F0, 0x4034, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x06F0, 0x40A4, iwl9462_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x06F0, 0x4234, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x06F0, 0x42A4, iwl9462_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x2526, 0x0010, iwl9260_2ac_cfg)},
- 	{IWL_PCI_DEVICE(0x2526, 0x0014, iwl9260_2ac_cfg)},
- 	{IWL_PCI_DEVICE(0x2526, 0x0018, iwl9260_2ac_cfg)},
+ 	if (format->pad != 0)
+@@ -2037,22 +2038,20 @@ static int ov5640_set_fmt(struct v4l2_su
+ 	if (ret)
+ 		goto out;
+ 
+-	if (format->which == V4L2_SUBDEV_FORMAT_TRY) {
+-		struct v4l2_mbus_framefmt *fmt =
+-			v4l2_subdev_get_try_format(sd, cfg, 0);
++	if (format->which == V4L2_SUBDEV_FORMAT_TRY)
++		fmt = v4l2_subdev_get_try_format(sd, cfg, 0);
++	else
++		fmt = &sensor->fmt;
+ 
+-		*fmt = *mbus_fmt;
+-		goto out;
+-	}
++	*fmt = *mbus_fmt;
+ 
+ 	if (new_mode != sensor->current_mode) {
+ 		sensor->current_mode = new_mode;
+ 		sensor->pending_mode_change = true;
+ 	}
+-	if (mbus_fmt->code != sensor->fmt.code) {
+-		sensor->fmt = *mbus_fmt;
++	if (mbus_fmt->code != sensor->fmt.code)
+ 		sensor->pending_fmt_change = true;
+-	}
++
+ out:
+ 	mutex_unlock(&sensor->lock);
+ 	return ret;
 
 
