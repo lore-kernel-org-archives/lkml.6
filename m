@@ -2,143 +2,237 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DA38C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 19:13:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8D08C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 19:13:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 485ED206B7
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 19:13:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA325206B7
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 19:13:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VJ89IFDb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727557AbfAGTNf (ORCPT
+        id S1727637AbfAGTNv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 14:13:35 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:43974 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726602AbfAGTNf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 14:13:35 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 64AA0C05090E;
-        Mon,  7 Jan 2019 19:13:34 +0000 (UTC)
-Received: from redhat.com (ovpn-122-143.rdu2.redhat.com [10.10.122.143])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4A5D968874;
-        Mon,  7 Jan 2019 19:13:30 +0000 (UTC)
-Date:   Mon, 7 Jan 2019 14:13:29 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Jason Wang <jasowang@redhat.com>, linux-kernel@vger.kernel.org,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Akira Yokosawa <akiyks@gmail.com>,
-        Daniel Lustig <dlustig@nvidia.com>, linux-arch@vger.kernel.org,
-        netdev@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org,
-        linux-sparse@vger.kernel.org
-Subject: Re: [PATCH RFC 3/4] barriers: convert a control to a data dependency
-Message-ID: <20190107140447-mutt-send-email-mst@kernel.org>
-References: <20190102205715.14054-1-mst@redhat.com>
- <20190102205715.14054-4-mst@redhat.com>
- <86023cbe-d1ae-a0d6-7b75-26556f1a0c1f@redhat.com>
- <20190106231756-mutt-send-email-mst@kernel.org>
- <20190107094610.GA2861@worktop.programming.kicks-ass.net>
- <20190107082223-mutt-send-email-mst@kernel.org>
- <20190107190236.GF1215@linux.ibm.com>
+        Mon, 7 Jan 2019 14:13:51 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:36212 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726602AbfAGTNu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 14:13:50 -0500
+Received: by mail-lj1-f195.google.com with SMTP id g11-v6so1315875ljk.3;
+        Mon, 07 Jan 2019 11:13:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=N/xr4f0uEjvh8U2NSLZRnLKIapDMmUbiM1biX8KG98U=;
+        b=VJ89IFDbldEAkfNjF63yIkIhLkVf/J+WU623s6dMb4YnemJM6rrlPsISextt6hTYhE
+         nWfF6N3F0ysU2jYV621ESXESdnX9dWIy38lXsYjaaG6Qsv+1/Mf4uQAPfSpiYc4CzeYg
+         4hyGCtT6jQ/MtxDrwRhFoY1WzqIoiZS0fiDOHkhlVMSNP6cmTzID6aVxXALCEGVWUcUS
+         JO02xqeIMlbXIEiTcNiVMwQ3+dHx9Da0PcydZsGHTVQ0a52Pab8ZctsWyDG858CFbb7V
+         9D3PBT6+5Vy93EqPbA/XpmfnwI1+hk+9z+V0ePkb7OitpgBx9EDRK4NMdVG144/VHqCj
+         iCLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=N/xr4f0uEjvh8U2NSLZRnLKIapDMmUbiM1biX8KG98U=;
+        b=IB2RERYEWi6bC8oKhNSuUgplPYaFC3o7mVXRQ9jxklLuvEDifTsoMgj6yEwGCW0YPC
+         KqDomdpxzcOYU2ssWpyKtrtPFQ3jzGIxkzaPL0dEJHy8RTrxoQDeVMmU4VCSIVfXuPz/
+         qO55J7MNzGqpTcgeynmUh23Mq+nZ8t4uf/0ayQqb/gp3bDjuvjZxFFTRJ/codAfWR61J
+         yQjTunUqewjSdVOHZlSOGq5Kep+h/+fzht8D2LdPY0XOtqppWsSB9kGDrLHwhHFl32PI
+         kgI+L5nyRJD93DTiz54EE2+RPzunGGhEhW0G734cpMiOkb9RlqDmhX8dgnTof9UgPXNS
+         iWDg==
+X-Gm-Message-State: AJcUukdGv32E6utg7/tXtgDIFagvY1PaRplvtI+iwXKEsEXkF+tZ1k2r
+        Kk40GBO0xpapLMl533oWDr12kvRa
+X-Google-Smtp-Source: ALg8bN5io/G2UGfBu3L4cgPxShbCVioraWqnS+n6bxeI2tvlkDLdl5WVHMoBMr6OL7Aoabe5nulh3Q==
+X-Received: by 2002:a2e:3012:: with SMTP id w18-v6mr34341754ljw.75.1546888426986;
+        Mon, 07 Jan 2019 11:13:46 -0800 (PST)
+Received: from [192.168.1.18] (dnq218.neoplus.adsl.tpnet.pl. [83.24.98.218])
+        by smtp.gmail.com with ESMTPSA id c203sm12792936lfe.95.2019.01.07.11.13.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 07 Jan 2019 11:13:46 -0800 (PST)
+Subject: Re: Generic RGB LED support was Re: [PATCH 2/2] leds: lp5024: Add the
+ LP5024/18 RGB LED driver
+From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     =?UTF-8?B?VmVzYSBKw6TDpHNrZWzDpGluZW4=?= <dachaac@gmail.com>,
+        Dan Murphy <dmurphy@ti.com>, robh+dt@kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-leds@vger.kernel.org
+References: <986b5105-2fdb-bd25-7c8a-ca8fd1ade821@gmail.com>
+ <7f205102-e854-f1cb-cc03-1307d1cddc87@gmail.com>
+ <c9f8965a-90f4-b456-8225-c70694c9f071@gmail.com>
+ <cf6c0025-36e7-197b-b27a-1f31fb45cc38@gmail.com> <20190104201256.GA2931@amd>
+ <a4e3a782-de76-ba91-3727-4db69cf27c3a@gmail.com> <20190104220726.GA12395@amd>
+ <4cf79414-578e-eea7-4f46-fc8789206988@gmail.com> <20190105123146.GA16354@amd>
+ <8044cdd9-b9b3-fddd-6106-184b906859e2@gmail.com> <20190105221254.GA22322@amd>
+ <dac50714-9caf-2496-3208-fb62f886e31f@gmail.com>
+Message-ID: <70366f2a-aafd-174f-73ec-a8117133b7af@gmail.com>
+Date:   Mon, 7 Jan 2019 20:13:43 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+In-Reply-To: <dac50714-9caf-2496-3208-fb62f886e31f@gmail.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190107190236.GF1215@linux.ibm.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Mon, 07 Jan 2019 19:13:35 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 07, 2019 at 11:02:36AM -0800, Paul E. McKenney wrote:
-> On Mon, Jan 07, 2019 at 08:36:36AM -0500, Michael S. Tsirkin wrote:
-> > On Mon, Jan 07, 2019 at 10:46:10AM +0100, Peter Zijlstra wrote:
-> > > On Sun, Jan 06, 2019 at 11:23:07PM -0500, Michael S. Tsirkin wrote:
-> > > > On Mon, Jan 07, 2019 at 11:58:23AM +0800, Jason Wang wrote:
-> > > > > On 2019/1/3 ä¸Šåˆ4:57, Michael S. Tsirkin wrote:
-> > > 
-> > > > > > +#if defined(COMPILER_HAS_OPTIMIZER_HIDE_VAR) && \
-> > > > > > +	!defined(ARCH_NEEDS_READ_BARRIER_DEPENDS)
-> > > > > > +
-> > > > > > +#define dependent_ptr_mb(ptr, val) ({					\
-> > > > > > +	long dependent_ptr_mb_val = (long)(val);			\
-> > > > > > +	long dependent_ptr_mb_ptr = (long)(ptr) - dependent_ptr_mb_val;	\
-> > > > > > +									\
-> > > > > > +	BUILD_BUG_ON(sizeof(val) > sizeof(long));			\
-> > > > > > +	OPTIMIZER_HIDE_VAR(dependent_ptr_mb_val);			\
-> > > > > > +	(typeof(ptr))(dependent_ptr_mb_ptr + dependent_ptr_mb_val);	\
-> > > > > > +})
-> > > > > > +
-> > > > > > +#else
-> > > > > > +
-> > > > > > +#define dependent_ptr_mb(ptr, val) ({ mb(); (ptr); })
-> > > > > 
-> > > > > 
-> > > > > So for the example of patch 4, we'd better fall back to rmb() or need a
-> > > > > dependent_ptr_rmb()?
-> > > > > 
-> > > > > Thanks
-> > > > 
-> > > > You mean for strongly ordered architectures like Intel?
-> > > > Yes, maybe it makes sense to have dependent_ptr_smp_rmb,
-> > > > dependent_ptr_dma_rmb and dependent_ptr_virt_rmb.
-> > > > 
-> > > > mb variant is unused right now so I'll remove it.
-> > > 
-> > > How about naming the thing: dependent_ptr() ? That is without any (r)mb
-> > > implications at all. The address dependency is strictly weaker than an
-> > > rmb in that it will only order the two loads in qestion and not, like
-> > > rmb, any prior to any later load.
-> > 
-> > So I'm fine with this as it's enough for virtio, but I would like to point out two things:
-> > 
-> > 1. E.g. on x86 both SMP and DMA variants can be NOPs but
-> > the madatory one can't, so assuming we do not want
-> > it to be stronger than rmp then either we want
-> > smp_dependent_ptr(), dma_dependent_ptr(), dependent_ptr()
-> > or we just will specify that dependent_ptr() works for
-> > both DMA and SMP.
-> > 
-> > 2. Down the road, someone might want to order a store after a load.
-> > Address dependency does that for us too. Assuming we make
-> > dependent_ptr a NOP on x86, we will want an mb variant
-> > which isn't a NOP on x86. Will we want to rename
-> > dependent_ptr to dependent_ptr_rmb at that point?
+On 1/6/19 4:52 PM, Jacek Anaszewski wrote:
+> Hi Pavel,
 > 
-> But x86 preserves store-after-load orderings anyway, and even Alpha
-> respects ordering from loads to dependent stores.  So what am I missing
-> here?
+> On 1/5/19 11:12 PM, Pavel Machek wrote:
+>> Hi!
+>>
+>>>> Grab yourself an RGB LED and play with it; you'll see what the
+>>>> problems are. It is hard to explain colors over email...
+>>>
+>>> Video [0] gives some overview of lp5024 capabilities.
+>>>
+>>> I don't see any problems in exposing separate red,green,blue
+>>> files and brightness for the devices with hardware support for
+>>> that.
+>>
+>> Well, that's what we do today, as three separate LEDs, right?
 > 
-> 							Thanx, Paul
+> No. It doesn't allow for setting color intensity by having
+> the color fixed beforehand. Below is relevant excerpt from
+> the lp5024 documentation. This is not something that can be
+> mapped to RGB color space, but rather to HSV/HSL, with the
+> reservation that the hardware implementation uses PWM
+> for setting color intensity.
+> 
+> <quote>
+> 8.3.1.2 Independent Intensity Control Per RGB LED Module
+> 
+> When color is fixed, the independent intensity-control is used to
+> achieve accurate and flexible dimming control for every RGB LED module.
+> 
+> 8.3.1.2.1 Intensity-Control Register Configuration
+> 
+> Every three consecutive output channels are assigned to their respective
+> intensity-control register (LEDx_BRIGHTNESS). For example, OUT0, OUT1,
+> and OUT2 are assigned to LED0_BRIGHTNESS, so it is recommended to
+> connect the RGB LEDs in the sequence as shown in Table 1. The LP50xx
+> device allows 256-step intensity control for each RGB LED module, which
+> helps achieve a smooth dimming effect.
+> </quote>
+> 
+>> I don't have problem with that, either; other drivers already do
+>> that. He's free to use existing same interface.
+>>
+>> But that is insufficient, as it does not allow simple stuff, such as
+>> turning led "white".
+>>
+>> So... perhaps we should agree on requirements, first, and then we can
+>> discuss solutions?
+>>
+>> Requirements for RGB LED interface:
+>>
+>> 1) Userspace should be able to set the white color
+>>
+>> 2) Userspace should be able to arbitrary color from well known list
+>> and it should approximately match what would CRT, LCD or OLED monitor 
+>> display
+> 
+> The difference is that monitor display driver is pre-calibrated
+> for given display by the manufacturer. With the LED controllers the
+> manufacturer has no control over what LEDs will be connected to the
+> iouts. Therefore it should be not surprising that colors produced
+> by custom LEDs are not as user would expect when comparing to
+> the RGB color displayed on the monitor display.
+> 
+> TI provides "Various LED Ring Lighting Patterns Reference Design" [0]
+> that show how to produce various patterns with use of the reference
+> board with LED ring built using sixteen 19-337/R6GHBHC-A01/2T LEDs [1].
+> 
+> Document [0] mentions also specific "Design considerations" in the
+> chapter 2.2:
+> 
+> <quote>
+> Several considerations are taken into account for this particular design:
+> • LED map (ring) for meeting the requirement of popular human-machine 
+> interaction style.
+> • LED size, numbers and the diffuse design for meeting lighting pattern 
+> uniformity.
+> • Analog dimming in the difference ambient light lux without losing 
+> dimming resolution in lighting pattern.
+> 
+> These considerations apply to most human-machine interaction end 
+> equipment with day and night vision
+> designs in some way, but the designer must decide the particular 
+> considerations to take into account for a
+> specific design.
+> </quote>
+> 
+> This renders your requirement 2) infeasible with use of custom LEDs
+> any fixed algorithm, since the final effect will always heavily depend
 
-Oh you are right. Stores are not reordered with older loads on x86.
+Typo here: s/any fixed/and fixed/
 
-So point 2 is moot. Sorry about the noise.
-
-I guess at this point the only sticking point is the ECC compiler.
-I'm inclined to stick an mb() there, seeing as it doesn't even
-have spectre protection enabled. Slow but safe.
+> on the LED circuit design.
+> 
+>>
+>>      2a) LEDs probably slightly change color as they age. That's out of
+>>      scope, unless the variation is much greater than on monitors.
+>>
+>>      2b) Manufacturing differences cause small color variation. Again,
+>>      that's out of scope, unless the variation is much greater than on
+>>      monitors.
+>>
+>> Nice to have features:
+>>
+>> 3) Full range of available colors/intensities should be available to
+>> userspace
+>>
+>> 4) Interface should work well with existing triggers
+>>
+>> 5) It would be nice if userland knew how many lumens are produced at
+>> each wavelength for each setting (again, minus aging and manufacturing
+>> variations).
+>>
+>> 6) Complexity of math in kernel should be low, and preferably it
+>> should be integer or fixed point
+>>
+>> Problems:
+>>
+>> a) RGB LEDs are usually not balanced. Setting 100% PWM on
+>> red/green/blue channels will result in nothing close to white
+>> light. In fact, to get white light on N900, blue and green channel's
+>> PWM needs to be set pretty low, as in 5%.
+>>
+>> b) LED class does not define any relation between "brightness" in
+>> sysfs and ammount of light in lumens. Some drivers use close to linear
+>> relation, some use exponential relation. Human eyes percieve logarithm
+>> of lumens. RGB color model uses even more complex function.
+>>
+>> c) Except for white LEDs, LEDs are basically sources of single
+>> wavelength of light, while CRTs and LCDs produce broader
+>> spectrums.
+>>
+>> d) RG, RGBW and probably other LED combinations exist.
+>>
+>> e) Not all "red" LEDs will produce same wavelength. Similar
+>> differences will exist for other colors.
+>>
+>> f) We have existing RGB LEDs represented as three separate
+>> monochromatic LEDs in sysfs.
+> 
+> One general question: do you have any solutions in store?
+> 
+> [0] http://www.ti.com/lit/ug/tiduee6/tiduee6.pdf
+> [1] http://www.everlight.com/file/ProductFile/19-337-R6GHBHC-A01-2T.pdf
+> 
 
 -- 
-MST
+Best regards,
+Jacek Anaszewski
