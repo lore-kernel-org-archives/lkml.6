@@ -4,53 +4,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A309FC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:04:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56024C43444
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:04:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7325421736
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:04:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 24458217D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:04:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546866286;
-	bh=RQNPaTqBQeT0iDHGFwVEO9pAs+gkUR6NjSjJltxAuHU=;
+	s=default; t=1546866293;
+	bh=l50d+kx+CpnkvD0BepZJPbl4gAB4UU+XX5TurTx6J04=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=HCcEN2qwpk9kXw5YbWWdZJrsn8LbSJK4x4P4zNXTLYG6BKULPH+xCnkJaYsSPn8w2
-	 x9debdPYaPL5E4EHHxKetnoba660Dj4/6d/frpwa3noFMDEn8EEXGLUwVERmvg4WyK
-	 rUD3LiQWxgFvk62hsoP7P44gA7kTFAs7GGTXyY2U=
+	b=VXRjckmdeCdl0//QIWrXGj1njUAzfsHjHeJ4GVrMOABTfeiKeLVDR/BQYb3/p1jlE
+	 7mibr/yO8+zt9/F9vCHDcvoQ9OO8GCajLK+UMFLdyDpulMqgctpTFtcs7jjN76I0qY
+	 WnytP9t5A8Ph8mnaDvi1ANrMAvtBCIsrfKt/uusQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731159AbfAGNEo (ORCPT
+        id S1731329AbfAGNEw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:04:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52324 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:04:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52498 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731254AbfAGNEk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:04:40 -0500
+        id S1731274AbfAGNEt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:04:49 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 864562089F;
-        Mon,  7 Jan 2019 13:04:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D863121736;
+        Mon,  7 Jan 2019 13:04:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546866280;
-        bh=RQNPaTqBQeT0iDHGFwVEO9pAs+gkUR6NjSjJltxAuHU=;
+        s=default; t=1546866288;
+        bh=l50d+kx+CpnkvD0BepZJPbl4gAB4UU+XX5TurTx6J04=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZP0x3eOe2v5FACNh9klsplrntojz/m2PFR5s4FxsdhtC5K1otH3PjX/ZB4N8YZkkk
-         Kt4a6ko8rndmQGEWBYqFy9qKrgZEvU5Azg/LKvm/qjyxPmjMRaX6H6wYf8VwthIYmx
-         Fvp0zarHRKqhRznL5KfljoXpl3oPI2Y40lWoozx8=
+        b=ntJhb7b4kfJ5qTmk5jT7KWlBkExrE8Vc9OANKf7xtVsdXkWY7QZo2XR84kXaGf4KY
+         GF2q+F9UlPIowNDdmRK19HWXyfwKHSsIv1U5p6aHrz88iTIUSYjARekxJd8w8bLFGQ
+         xhkAcvk6xlLQyPGv8z32fYB1mdC4/0GIR42ioek4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        syzbot+0cc8e3cc63ca373722c6@syzkaller.appspotmail.com,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 4.14 087/101] media: vivid: free bitmap_cap when updating std/timings/etc.
-Date:   Mon,  7 Jan 2019 13:33:15 +0100
-Message-Id: <20190107105337.661088101@linuxfoundation.org>
+        stable@vger.kernel.org,
+        =?UTF-8?q?Cl=C3=A9ment=20Perrochaud?= 
+        <clement.perrochaud@effinnov.com>,
+        Samuel Ortiz <sameo@linux.intel.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Matthias Kaehlcke <mka@chromium.org>
+Subject: [PATCH 4.9 01/71] NFC: nxp-nci: Include unaligned.h instead of access_ok.h
+Date:   Mon,  7 Jan 2019 13:32:30 +0100
+Message-Id: <20190107105330.362659021@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190107105330.372621917@linuxfoundation.org>
-References: <20190107105330.372621917@linuxfoundation.org>
+In-Reply-To: <20190107105330.280153213@linuxfoundation.org>
+References: <20190107105330.280153213@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -62,37 +64,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+From: Guenter Roeck <linux@roeck-us.net>
 
-commit 560ccb75c2caa6b1039dec1a53cd2ef526f5bf03 upstream.
+commit 2eee74b7e2a496dea49847c36fd09320505f45b7 upstream.
 
-When vivid_update_format_cap() is called it should free any overlay
-bitmap since the compose size will change.
+Directly including access_ok.h can result in the following compile errors
+if an architecture such as ia64 does not support direct unaligned accesses.
 
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Reported-by: syzbot+0cc8e3cc63ca373722c6@syzkaller.appspotmail.com
-Cc: <stable@vger.kernel.org>      # for v3.18 and up
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+include/linux/unaligned/access_ok.h:7:19: error:
+	redefinition of 'get_unaligned_le16'
+include/linux/unaligned/le_struct.h:6:19: note:
+	previous definition of 'get_unaligned_le16' was here
+include/linux/unaligned/access_ok.h:12:19: error:
+	redefinition of 'get_unaligned_le32'
+include/linux/unaligned/le_struct.h:11:19: note:
+	previous definition of 'get_unaligned_le32' was here
+
+Include asm/unaligned.h instead and let the architecture decide which
+access functions to use.
+
+Cc: Clément Perrochaud <clement.perrochaud@effinnov.com>
+Cc: Samuel Ortiz <sameo@linux.intel.com>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Samuel Ortiz <sameo@linux.intel.com>
+Cc: Matthias Kaehlcke <mka@chromium.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/platform/vivid/vivid-vid-cap.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/nfc/nxp-nci/firmware.c |    2 +-
+ drivers/nfc/nxp-nci/i2c.c      |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/media/platform/vivid/vivid-vid-cap.c
-+++ b/drivers/media/platform/vivid/vivid-vid-cap.c
-@@ -455,6 +455,8 @@ void vivid_update_format_cap(struct vivi
- 		tpg_s_rgb_range(&dev->tpg, v4l2_ctrl_g_ctrl(dev->rgb_range_cap));
- 		break;
- 	}
-+	vfree(dev->bitmap_cap);
-+	dev->bitmap_cap = NULL;
- 	vivid_update_quality(dev);
- 	tpg_reset_source(&dev->tpg, dev->src_rect.width, dev->src_rect.height, dev->field_cap);
- 	dev->crop_cap = dev->src_rect;
+--- a/drivers/nfc/nxp-nci/firmware.c
++++ b/drivers/nfc/nxp-nci/firmware.c
+@@ -24,7 +24,7 @@
+ #include <linux/completion.h>
+ #include <linux/firmware.h>
+ #include <linux/nfc.h>
+-#include <linux/unaligned/access_ok.h>
++#include <asm/unaligned.h>
+ 
+ #include "nxp-nci.h"
+ 
+--- a/drivers/nfc/nxp-nci/i2c.c
++++ b/drivers/nfc/nxp-nci/i2c.c
+@@ -36,7 +36,7 @@
+ #include <linux/of_gpio.h>
+ #include <linux/of_irq.h>
+ #include <linux/platform_data/nxp-nci.h>
+-#include <linux/unaligned/access_ok.h>
++#include <asm/unaligned.h>
+ 
+ #include <net/nfc/nfc.h>
+ 
 
 
