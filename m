@@ -2,126 +2,110 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 801A6C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 10:33:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D264C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 10:33:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5AB8C2089F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 10:33:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D7BA2089F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 10:33:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="dr63eMG6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726785AbfAGKdL (ORCPT
+        id S1726811AbfAGKdT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 05:33:11 -0500
-Received: from mx2.suse.de ([195.135.220.15]:37470 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726454AbfAGKdL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 05:33:11 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 28697AECD;
-        Mon,  7 Jan 2019 10:33:09 +0000 (UTC)
-Subject: Re: [PATCH] mm/mincore: allow for making sys_mincore() privileged
-To:     Dominique Martinet <asmadeus@codewreck.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Matthew Wilcox <willy@infradead.org>, Jann Horn <jannh@google.com>,
-        Jiri Kosina <jikos@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Michal Hocko <mhocko@suse.com>, Linux-MM <linux-mm@kvack.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>, daniel@gruss.cc
-References: <20190107043227.GA3325@nautica>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Message-ID: <151b4ac8-5cfc-ed30-db30-e4d67a324c4b@suse.cz>
-Date:   Mon, 7 Jan 2019 11:33:08 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+        Mon, 7 Jan 2019 05:33:19 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:37212 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726601AbfAGKdS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 05:33:18 -0500
+Received: by mail-ed1-f67.google.com with SMTP id h15so385418edb.4
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 02:33:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=vfk3PowwMKp15Tt5YwQln/FnD9UY/ok8kCfjL45nT9U=;
+        b=dr63eMG6Z1+qP2Os4nI508i78eLwVaamo6hE7PdkYiisklYPkn+BKfBvb2fApvXDPa
+         hyng4M4wsSRW3PAy25KgdKKocBGpltjxGbUpC9GmdwNdhskW3cZ1JnQ0xPI08iFKS8sL
+         D2vh+7m3HUZo5NTyPksZTatnJjkL//FoAZBBA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=vfk3PowwMKp15Tt5YwQln/FnD9UY/ok8kCfjL45nT9U=;
+        b=qzt+NiwU0/CK4go88TmyZ6UKSrGorpwelWnhHkDJdKBemW+ByA6VVwhENCkbduwFho
+         TSCX0oF2L59NxDTB7hrtOsdx7d2jr+xY2vQ2FlPpidlxUrAMitc1utx/j2OcdKs/Maqh
+         Hs3cqWexfpRbrCra8vR0Ib7dRgDImsmFzJnB+HTEM7r9mubKgF0EK24iymAOhsY51hFi
+         WF1iMUWKXpCM1uUH3y+K1qYvtog5ij4vV29/efxKmPPDnIZxsKIX3i+ka3l5usGP94jz
+         uIOlQUf8Fhty2Df3fuGE7wrmA6AOmU7dDjn2wl0b56U3PyLetP37s3qLutjGmQkn1nW/
+         rpCA==
+X-Gm-Message-State: AA+aEWZ1AOpL1QTmLgl1rQfYC5u4FDLl/Pfkh8dWkrjmGxa3GsICQMpM
+        haBWHZ63pJ2gxrS6e3elEhCBEA==
+X-Google-Smtp-Source: AFSGD/Wik8djyjWRkkHGpuZpveVCb/CsGaBSeoutEO3mnT8niriwOdMEj26TESqPTFAvF6jqUI+njw==
+X-Received: by 2002:a17:906:4e82:: with SMTP id v2-v6mr46216209eju.149.1546857197184;
+        Mon, 07 Jan 2019 02:33:17 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id u7-v6sm17596743ejb.65.2019.01.07.02.33.15
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 07 Jan 2019 02:33:16 -0800 (PST)
+Date:   Mon, 7 Jan 2019 11:33:14 +0100
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Sam Ravnborg <sam@ravnborg.org>, Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>,
+        David Lechner <david@lechnology.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v2 07/14] drm: move EXPORT_SYMBOL_FOR_TESTS_ONLY to
+ drm_util.h
+Message-ID: <20190107103314.GF21184@phenom.ffwll.local>
+Mail-Followup-To: Christoph Hellwig <hch@infradead.org>,
+        Sam Ravnborg <sam@ravnborg.org>, David Airlie <airlied@linux.ie>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Lechner <david@lechnology.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+References: <20181230174838.32330-8-sam@ravnborg.org>
+ <20190103081646.GB31320@infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <20190107043227.GA3325@nautica>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190103081646.GB31320@infradead.org>
+X-Operating-System: Linux phenom 4.18.0-2-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/7/19 5:32 AM, Dominique Martinet wrote:
-> Linus Torvalds wrote on Sat, Jan 05, 2019:
->> But I think my patch to just rip out all that page lookup, and just
->> base it on the page table state has the fundamental advantage that it
->> gets rid of code. Maybe I should jst commit it, and see if anything
->> breaks? We do have options in case things break, and then we'd at
->> least know who cares (and perhaps a lot more information of _why_ they
->> care).
+On Thu, Jan 03, 2019 at 12:16:46AM -0800, Christoph Hellwig wrote:
+> On Sun, Dec 30, 2018 at 06:48:31PM +0100, Sam Ravnborg wrote:
+> > +/*
+> > + * Use EXPORT_SYMBOL_FOR_TESTS_ONLY() for functions that shall
+> > + * only be visible for drmselftests.
+> > + */
+> > +#if defined(CONFIG_DRM_DEBUG_SELFTEST_MODULE)
+> > +#define EXPORT_SYMBOL_FOR_TESTS_ONLY(x) EXPORT_SYMBOL(x)
+> > +#else
+> > +#define EXPORT_SYMBOL_FOR_TESTS_ONLY(x)
+> > +#endif
 > 
-> There actually are many tools like fincore which depend on mincore to
-> try to tell whether a file is "loaded in cache" or not (I personally use
-> vmtouch[1], but I know of at least nocache[2] uses it as well to only
-> try to evict used pages)
+> Btw, why isn't this an EXPORT_SYMBOL_GPL if it is only for internal
+> tests?
 
-nocache could probably do fine without mincore. IIUC the point is to not
-evict anything that was already resident prior to running some command
-wrapped in nocache. Without the mincore checks,
-posix_fadvise(POSIX_FADV_DONTNEED) will still not drop anything that
-others have mapped. That means without mincore() it will drop data
-that's in cache but not currently in use by anybody, which shouldn't
-cause large performance regressions?
-
-> [1] https://hoytech.com/vmtouch/
-> [2] https://github.com/Feh/nocache
-> 
-> 
-> I mostly use these to either fadvise(POSIX_FADV_DONTNEED) or
-> prefetch/lock whole files so my "production" use-cases don't actually
-> rely on the mincore part of them;
-
-Ah so you seem to confirm my above point.
-
-...
-
-> FWIW I personally don't care much about "only for owner" or depending on
-> mmap options; I don't understand much of the security implications
-> honestly so I'm not sure how these limitations actually help.
-> On the other hand, a simple CAP_SYS_ADMIN check making the call take
-> either behaviour should be safe and would cover what I described above.
-
-So without CAP_SYS_ADMIN, mincore() would return mapping status, and
-with CAP_SYS_ADMIN, it would return cache residency status? Very clumsy
-:( Maybe if we introduced mincore2() with flags similar to BSD mentioned
-earlier in the thread, and the cache residency flag would require
-CAP_SYS_ADMIN or something similar.
-> (by the way, while we are discussing permissions, a regular user can use
-> fadvise dontneed on files it doesn't own as well as long as it can open
-> them for reading; I'm not sure if that would need restricting as well in
-> the context of the security issue.
-
-Probably not, as I've mentioned it won't evict what's mapped by somebody
-else. And eviction is also possible via controlling LRU, which is what
-the paper [1] does anyway (and also mentions that DONTNEED doesn't
-work). Being able to evict somebody's page is AFAIU not sufficient for
-attack, the side channel is about knowing that somebody brought that
-page back to RAM by touching it.
-
-> Frankly even with mincore someone
-> could likely tell the difference through timing, if they just do it a
-> few times. Do magic, probe, flush out, repeat until satisfied.)
-
-That's my bigger concern here. In [1] there's described a remote attack
-(on webserver) using the page fault timing differences for present/not
-present page cache pages. Noisy but works, and I expect locally it to be
-much less noisy. Yet the countermeasures section only mentions
-restricting mincore() as if it was sufficient (and also how to make
-evictions harder, but that's secondary IMHO).
-
-[1] https://arxiv.org/abs/1901.01161
-
-> 
-> Thanks,
-> 
-
+Yeah EXPORT_SYMBOL_GPL makes sense here I think. Well most of drm is still
+MIT, so it's a bit hm, but the semantics of _GPL still seem like what we.
+-Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
