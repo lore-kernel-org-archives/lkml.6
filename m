@@ -2,99 +2,101 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CFF0C43612
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 14:47:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E524CC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 14:47:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 345BD2183E
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 14:47:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546872426;
-	bh=0zKTMrDJLn5GVGX1e0XN0FJrVfPPrMherqtiAL+2bGQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Oe1bzdZW6d3F9PaRX0o6vuGUggsei9uDyCgyzL+4E/Uc1GDWYQwQC7lJjXfXE3hYK
-	 7vRTjcxOHq+xUNbyWv/6a9ShM/XuEXAWiyZ+qnx/ns8rU+Cxo85jbiB8F4c6Cj+1q0
-	 wfY7tLrF9fcF4y/WX03N2IDi5wy+aQrXvXtpFHqM=
+	by mail.kernel.org (Postfix) with ESMTP id B962D2183E
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 14:47:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729042AbfAGOrF (ORCPT
+        id S1729113AbfAGOrX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 09:47:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35088 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 09:47:23 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:47196 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727242AbfAGOrF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 09:47:05 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1729046AbfAGOrX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 09:47:23 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C9A172087F;
-        Mon,  7 Jan 2019 14:47:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546872424;
-        bh=0zKTMrDJLn5GVGX1e0XN0FJrVfPPrMherqtiAL+2bGQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Gao98PNPwN44ZM4wwT0oyLW9ziavKP9yhtlJPDtJxtaDNjIc14Mh1jV+Tx1ffwSqL
-         t+GEvTNtHg7QWofCZIht3u1ujYxSrwCS6h0br1D9hJ88ArVIBpAna7Bvc8rBYY4fQn
-         rv1/zyJ9thjn1eNVl+75ztnf6yw58LDjtzQVagwE=
-Date:   Mon, 7 Jan 2019 15:47:01 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Daniel =?iso-8859-1?Q?D=EDaz?= <daniel.diaz@linaro.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        torvalds@linux-foundation.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 4.14 000/101] 4.14.92-stable review
-Message-ID: <20190107144701.GA27006@kroah.com>
-References: <20190107105330.372621917@linuxfoundation.org>
- <CAEUSe78fJzysEuEbQ_=finJ_XwhB3YCbTroL=FMpiSYu8Mh88g@mail.gmail.com>
+        by mx1.redhat.com (Postfix) with ESMTPS id 1D52D81F13;
+        Mon,  7 Jan 2019 14:47:23 +0000 (UTC)
+Received: from redhat.com (ovpn-122-143.rdu2.redhat.com [10.10.122.143])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 42F3E61D38;
+        Mon,  7 Jan 2019 14:47:22 +0000 (UTC)
+Date:   Mon, 7 Jan 2019 09:47:21 -0500
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        davem@davemloft.net
+Subject: Re: [RFC PATCH V3 0/5] Hi:
+Message-ID: <20190107094516-mutt-send-email-mst@kernel.org>
+References: <20181229124656.3900-1-jasowang@redhat.com>
+ <20190104163516-mutt-send-email-mst@kernel.org>
+ <68727e1b-1d51-0596-29c3-931475dd5dab@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEUSe78fJzysEuEbQ_=finJ_XwhB3YCbTroL=FMpiSYu8Mh88g@mail.gmail.com>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+In-Reply-To: <68727e1b-1d51-0596-29c3-931475dd5dab@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Mon, 07 Jan 2019 14:47:23 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 07, 2019 at 08:39:12AM -0600, Daniel D�az wrote:
-> Hello!
+On Mon, Jan 07, 2019 at 02:58:08PM +0800, Jason Wang wrote:
 > 
-> On Mon, 7 Jan 2019 at 06:59, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> > This is the start of the stable review cycle for the 4.14.92 release.
-> > There are 101 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
+> On 2019/1/5 上午5:41, Michael S. Tsirkin wrote:
+> > On Sat, Dec 29, 2018 at 08:46:51PM +0800, Jason Wang wrote:
+> > > This series tries to access virtqueue metadata through kernel virtual
+> > > address instead of copy_user() friends since they had too much
+> > > overheads like checks, spec barriers or even hardware feature
+> > > toggling.
+> > 
+> > I think it's a reasonable approach.
+> > However I need to look at whether and which mmu notifiers are invoked before
+> > writeback. Do you know?
 > 
-> We see these build errors with 4.14:
-> | /srv/oe/build/tmp-lkft-glibc/work-shared/juno/kernel-source/fs/btrfs/extent-tree.c:
-> In function 'btrfs_drop_snapshot':
-> | /srv/oe/build/tmp-lkft-glibc/work-shared/juno/kernel-source/fs/btrfs/extent-tree.c:9186:8:
-> error: too few arguments to function 'btrfs_run_delayed_items'
-> |   err = btrfs_run_delayed_items(trans);
-> |         ^~~~~~~~~~~~~~~~~~~~~~~
-> | In file included from
-> /srv/oe/build/tmp-lkft-glibc/work-shared/juno/kernel-source/fs/btrfs/btrfs_inode.h:26:0,
-> |                  from
-> /srv/oe/build/tmp-lkft-glibc/work-shared/juno/kernel-source/fs/btrfs/transaction.h:23,
-> |                  from
-> /srv/oe/build/tmp-lkft-glibc/work-shared/juno/kernel-source/fs/btrfs/tree-log.h:23,
-> |                  from
-> /srv/oe/build/tmp-lkft-glibc/work-shared/juno/kernel-source/fs/btrfs/extent-tree.c:30:
-> | /srv/oe/build/tmp-lkft-glibc/work-shared/juno/kernel-source/fs/btrfs/delayed-inode.h:114:5:
-> note: declared here
-> |  int btrfs_run_delayed_items(struct btrfs_trans_handle *trans,
-> |      ^~~~~~~~~~~~~~~~~~~~~~~
+> 
+> I don't know but just looking at the MMU notifier ops definition, there's no
+> such callback if my understanding is correct.
+> 
+> Thanks
 
-Ugh, why does my build system not show this, but my laptop does...
+In that case how are you making sure used ring updates are written back?
+If they aren't guest will crash ...
 
-Let me go drop the broken patches, thanks fo rletting me know.
-
-greg k-h
+> 
+> > 
+> > > Test shows about 24% improvement on TX PPS. It should benefit other
+> > > cases as well.
+> > > 
+> > > Changes from V2:
+> > > - fix buggy range overlapping check
+> > > - tear down MMU notifier during vhost ioctl to make sure invalidation
+> > >    request can read metadata userspace address and vq size without
+> > >    holding vq mutex.
+> > > Changes from V1:
+> > > - instead of pinning pages, use MMU notifier to invalidate vmaps and
+> > >    remap duing metadata prefetch
+> > > - fix build warning on MIPS
+> > > 
+> > > Jason Wang (5):
+> > >    vhost: generalize adding used elem
+> > >    vhost: fine grain userspace memory accessors
+> > >    vhost: rename vq_iotlb_prefetch() to vq_meta_prefetch()
+> > >    vhost: introduce helpers to get the size of metadata area
+> > >    vhost: access vq metadata through kernel virtual address
+> > > 
+> > >   drivers/vhost/net.c   |   4 +-
+> > >   drivers/vhost/vhost.c | 416 +++++++++++++++++++++++++++++++++++++-----
+> > >   drivers/vhost/vhost.h |  15 +-
+> > >   3 files changed, 384 insertions(+), 51 deletions(-)
+> > > 
+> > > -- 
+> > > 2.17.1
