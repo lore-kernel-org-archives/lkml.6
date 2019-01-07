@@ -7,50 +7,47 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D982C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:55:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AA7DC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:55:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D631206BB
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:55:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40DF5206BB
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:55:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546865732;
-	bh=pWZRSh3VHsFImjfLSKgjHYbvuRVQ75I2+hXavdFMfRU=;
+	s=default; t=1546865743;
+	bh=1Nejq1qtW3Fa7KtiSj8qpdpaxlsmvPfhynv3fM+sHMI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=k+LeELB3Kk1OEXMyaHBbecCDGBQg6+wG46ScAo2aKK61R64rbyU+eSHuoLBF/9lWp
-	 JfUTpnGQHNC1olnVKcEzGeezxmOHT8VI3rhAxrNP/I83krS7yiDMxIqx/TrMWQqi0m
-	 QEcJ/QpIYiPOPGzbsA2ehlzLGXSCLsM1q3zm8tfc=
+	b=qX9XRzjEbXVE1AtF/W9rcKejeLPSFV7Bexj/+Wc+HUqlCZc5ncmtuCxOq13ziaIYy
+	 +s5g9bWtsqBu78VEqQ98B6KfXEY4lcFHLhj056MHM+2WHpj6hpGQvG/oEL0AdrwYWp
+	 EvgJ4DI2FeqDZ2Vt4Ypa4IyEuANJdaly+HCRpWFQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729597AbfAGMzb (ORCPT
+        id S1729081AbfAGMsC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:55:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43812 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:48:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38400 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728809AbfAGMz3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:55:29 -0500
+        id S1729062AbfAGMr5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:47:57 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 56A0020651;
-        Mon,  7 Jan 2019 12:55:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0ED1E206BB;
+        Mon,  7 Jan 2019 12:47:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865728;
-        bh=pWZRSh3VHsFImjfLSKgjHYbvuRVQ75I2+hXavdFMfRU=;
+        s=default; t=1546865276;
+        bh=1Nejq1qtW3Fa7KtiSj8qpdpaxlsmvPfhynv3fM+sHMI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HZ8rcv2JUhk7ir2aD72gDvMZowuV4QKWHlwfIqulnHJLDZq+kvftWpEaNoaJ9ERhJ
-         d9+u2R/bti46JQQS6nFBTcdMmQ/QTTaeU3jxc2L5Bk02gQ90LbIfNVU0CzjGuXQ1sw
-         yVNPznByDrW3JJQ5olqF7a9CjWNF8ipM1TNMq1GU=
+        b=AZKjFyPwtR+3LAw+/Wf8jbvEN0E88JH0Z/1CZ8ZTFLYpqrbnUxyljhlb33G3u80jg
+         4w0kbNncYbgvaC0ykJmz8fJ1iDiwsk+Sii0u8NYuY+JiSfq6ImofF3C9/KSCahLajQ
+         +pzSV0j7neLmJd0nYJM88hxJAZWegOG9LSVH0tWQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
-        Mathias Duckeck <m.duckeck@kunbus.de>,
-        Frank Pavlic <f.pavlic@kunbus.de>,
-        Martin Sperl <kernel@martin.sperl.org>,
-        =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.19 116/170] spi: bcm2835: Fix book-keeping of DMA termination
-Date:   Mon,  7 Jan 2019 13:32:23 +0100
-Message-Id: <20190107104506.646063206@linuxfoundation.org>
+        stable@vger.kernel.org, Yuval Avnery <yuvalav@mellanox.com>,
+        Daniel Jurgens <danielj@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>
+Subject: [PATCH 4.19 041/170] net/mlx5: Typo fix in del_sw_hw_rule
+Date:   Mon,  7 Jan 2019 13:31:08 +0100
+Message-Id: <20190107104458.089363193@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104452.953560660@linuxfoundation.org>
 References: <20190107104452.953560660@linuxfoundation.org>
@@ -69,42 +66,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lukas Wunner <lukas@wunner.de>
+From: Yuval Avnery <yuvalav@mellanox.com>
 
-commit dbc944115eed48af110646992893dc43321368d8 upstream.
+[ Upstream commit f0337889147c956721696553ffcc97212b0948fe ]
 
-If submission of a DMA TX transfer succeeds but submission of the
-corresponding RX transfer does not, the BCM2835 SPI driver terminates
-the TX transfer but neglects to reset the dma_pending flag to false.
+Expression terminated with "," instead of ";", resulted in
+set_fte getting bad value for modify_enable_mask field.
 
-Thus, if the next transfer uses interrupt mode (because it is shorter
-than BCM2835_SPI_DMA_MIN_LENGTH) and runs into a timeout,
-dmaengine_terminate_all() will be called both for TX (once more) and
-for RX (which was never started in the first place).  Fix it.
-
-Signed-off-by: Lukas Wunner <lukas@wunner.de>
-Fixes: 3ecd37edaa2a ("spi: bcm2835: enable dma modes for transfers meeting certain conditions")
-Cc: stable@vger.kernel.org # v4.2+
-Cc: Mathias Duckeck <m.duckeck@kunbus.de>
-Cc: Frank Pavlic <f.pavlic@kunbus.de>
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Cc: Noralf Trønnes <noralf@tronnes.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: bd5251dbf156 ("net/mlx5_core: Introduce flow steering destination of type counter")
+Signed-off-by: Yuval Avnery <yuvalav@mellanox.com>
+Reviewed-by: Daniel Jurgens <danielj@mellanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/spi/spi-bcm2835.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/mellanox/mlx5/core/fs_core.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/spi/spi-bcm2835.c
-+++ b/drivers/spi/spi-bcm2835.c
-@@ -341,6 +341,7 @@ static int bcm2835_spi_transfer_one_dma(
- 	if (ret) {
- 		/* need to reset on errors */
- 		dmaengine_terminate_all(master->dma_tx);
-+		bs->dma_pending = false;
- 		bcm2835_spi_reset_hw(master);
- 		return ret;
+--- a/drivers/net/ethernet/mellanox/mlx5/core/fs_core.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/fs_core.c
+@@ -432,7 +432,7 @@ static void del_sw_hw_rule(struct fs_nod
+ 
+ 	if ((fte->action.action & MLX5_FLOW_CONTEXT_ACTION_FWD_DEST) &&
+ 	    --fte->dests_size) {
+-		modify_mask = BIT(MLX5_SET_FTE_MODIFY_ENABLE_MASK_DESTINATION_LIST),
++		modify_mask = BIT(MLX5_SET_FTE_MODIFY_ENABLE_MASK_DESTINATION_LIST);
+ 		update_fte = true;
  	}
+ out:
 
 
