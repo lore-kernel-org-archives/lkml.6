@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A1ECC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:06:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00FC6C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:07:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A3FB206BB
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:06:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C64D221736
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:07:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546866415;
-	bh=9X/rLfCyixiqH6WvmjKEVmbXFKE8KPR9zuDdJLul9oM=;
+	s=default; t=1546866421;
+	bh=HWipk9tTY4oM6WAuP2ZaKvGYa7jx2R1G7yZz6QMYU2o=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=u4P87eTOttEgubvYEItwOy4qCpkTPEr8ub9iiGQ0NZpmLwG/PP92HgtQRVBqozYNt
-	 FztCBlzKNVFAeljITuP4m+fGpyG6zZOq5x5CVihu+ft40566gjyDUhpCH7FDR/fDFT
-	 oMidPIrc4DkwOfHEbVI9xBNLBLTfow6JyJmiCQ/I=
+	b=aNRANew7Tb9GI5PgstSBM5u2GzXm6luaZe/KDyLZnQ7zVpUzmGsBhYqvqRNyrPRot
+	 HVq2NQJf3f3H52jAW6uZddBDnA9UI8JxPHzrpioyW4V5gO5LnsIYwForVUYJXz9WCE
+	 9ew1jcZZXcD8pPFJpeI2uzeiHpdnBggEoKZM8mxg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731253AbfAGNGy (ORCPT
+        id S1731266AbfAGNHA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:06:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54152 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:07:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54206 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731236AbfAGNGx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:06:53 -0500
+        id S1727362AbfAGNG6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:06:58 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3314F217D4;
-        Mon,  7 Jan 2019 13:06:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EBDA4206BB;
+        Mon,  7 Jan 2019 13:06:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546866412;
-        bh=9X/rLfCyixiqH6WvmjKEVmbXFKE8KPR9zuDdJLul9oM=;
+        s=default; t=1546866417;
+        bh=HWipk9tTY4oM6WAuP2ZaKvGYa7jx2R1G7yZz6QMYU2o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=f4cmjqCyYta2R0cVwk/uUdaCNIO5m71h2hwb9bccHV6Ir0Z/6jTmE8lJ6ewwayqPW
-         NCKtbLcxzW6tINSKWZ4PSClLr9FH4GkOy61p4bWTXdpVmk1a0CSiUN03m2elqS1y0T
-         o0oJ5whFPV+QOQvKyv4hsxBIp9NqfqTTYW7KCjAs=
+        b=xZpKLDTDvuQHpfPycSllpMv8yFgberuL422DgWfDZEcTqm4cjhrQ2f+xFvqXYAFYP
+         7bpLOWKtlwjRK7qXmWHFOtdUSJaDHYTy/wukDjcpp0Vygb46b6m5ZNrenMhRrVO4/F
+         UI6Zdmx3su++bCZLZXybRrVK9Kw0NphGvhA1SJkg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
         Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.9 32/71] ALSA: pcm: Fix potential Spectre v1 vulnerability
-Date:   Mon,  7 Jan 2019 13:33:01 +0100
-Message-Id: <20190107105334.589888706@linuxfoundation.org>
+Subject: [PATCH 4.9 33/71] ALSA: emux: Fix potential Spectre v1 vulnerabilities
+Date:   Mon,  7 Jan 2019 13:33:02 +0100
+Message-Id: <20190107105334.647008182@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107105330.280153213@linuxfoundation.org>
 References: <20190107105330.280153213@linuxfoundation.org>
@@ -68,16 +68,21 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-commit 94ffb030b6d31ec840bb811be455dd2e26a4f43e upstream.
+commit 4aea96f4237cea0c51a8bc87c0db31f0f932f1f0 upstream.
 
-stream is indirectly controlled by user-space, hence leading to
-a potential exploitation of the Spectre variant 1 vulnerability.
+info.mode and info.port are indirectly controlled by user-space,
+hence leading to a potential exploitation of the Spectre variant 1
+vulnerability.
 
-This issue was detected with the help of Smatch:
+These issues were detected with the help of Smatch:
 
-sound/core/pcm.c:140 snd_pcm_control_ioctl() warn: potential spectre issue 'pcm->streams' [r] (local cap)
+sound/synth/emux/emux_hwdep.c:72 snd_emux_hwdep_misc_mode() warn: potential spectre issue 'emu->portptrs[i]->ctrls' [w] (local cap)
+sound/synth/emux/emux_hwdep.c:75 snd_emux_hwdep_misc_mode() warn: potential spectre issue 'emu->portptrs' [w] (local cap)
+sound/synth/emux/emux_hwdep.c:75 snd_emux_hwdep_misc_mode() warn: potential spectre issue 'emu->portptrs[info.port]->ctrls' [w] (local cap)
 
-Fix this by sanitizing stream before using it to index pcm->streams
+Fix this by sanitizing both info.mode and info.port before using them
+to index emu->portptrs[i]->ctrls, emu->portptrs[info.port]->ctrls and
+emu->portptrs.
 
 Notice that given that speculation windows are large, the policy is
 to kill the speculation on the first load and not worry if it can be
@@ -91,26 +96,39 @@ Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/core/pcm.c |    2 ++
- 1 file changed, 2 insertions(+)
+ sound/synth/emux/emux_hwdep.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/sound/core/pcm.c
-+++ b/sound/core/pcm.c
-@@ -25,6 +25,7 @@
- #include <linux/time.h>
- #include <linux/mutex.h>
- #include <linux/device.h>
-+#include <linux/nospec.h>
+--- a/sound/synth/emux/emux_hwdep.c
++++ b/sound/synth/emux/emux_hwdep.c
+@@ -22,9 +22,9 @@
  #include <sound/core.h>
- #include <sound/minors.h>
- #include <sound/pcm.h>
-@@ -125,6 +126,7 @@ static int snd_pcm_control_ioctl(struct
- 				return -EFAULT;
- 			if (stream < 0 || stream > 1)
- 				return -EINVAL;
-+			stream = array_index_nospec(stream, 2);
- 			if (get_user(subdevice, &info->subdevice))
- 				return -EFAULT;
- 			mutex_lock(&register_mutex);
+ #include <sound/hwdep.h>
+ #include <linux/uaccess.h>
++#include <linux/nospec.h>
+ #include "emux_voice.h"
+ 
+-
+ #define TMP_CLIENT_ID	0x1001
+ 
+ /*
+@@ -66,13 +66,16 @@ snd_emux_hwdep_misc_mode(struct snd_emux
+ 		return -EFAULT;
+ 	if (info.mode < 0 || info.mode >= EMUX_MD_END)
+ 		return -EINVAL;
++	info.mode = array_index_nospec(info.mode, EMUX_MD_END);
+ 
+ 	if (info.port < 0) {
+ 		for (i = 0; i < emu->num_ports; i++)
+ 			emu->portptrs[i]->ctrls[info.mode] = info.value;
+ 	} else {
+-		if (info.port < emu->num_ports)
++		if (info.port < emu->num_ports) {
++			info.port = array_index_nospec(info.port, emu->num_ports);
+ 			emu->portptrs[info.port]->ctrls[info.mode] = info.value;
++		}
+ 	}
+ 	return 0;
+ }
 
 
