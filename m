@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C73FFC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:37:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF37CC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:37:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 956B02089F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:37:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 91D9A217D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:37:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546864643;
-	bh=dxMxhs4XMcPgAt6gfv2ZrLlG7FF+M2NNHA676pCSl+4=;
+	s=default; t=1546864647;
+	bh=n7pF/pYRTEG6sjkZiq2CkrP0y3hm29Qq/EZNgrghJ4M=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=pMyPbC9cQk5Wk3aHeaSD1rMs9xgHOoDUMHR8oILuCi3OVJTWGFRmSbEn6uELsAEaD
-	 iqyEYfqF48I/Nr6kuveRcMp5um37VAB73eeetc3e96nM4hyWyC0xzWQCNZGOPocZEx
-	 St0YlOy9vRAH5TW53bzwUs9u0Hr7cFcoJ6hSak1A=
+	b=gx73njXgIxPzg9HWdr+0d/nfu8BqqyN94TyTImn86LXHJlqyvT6aoO+9vd79v5aWL
+	 /Qgkx9y/63xpuZPDqXCeEZsKIxo+LVWiwRlcm+PSE2wAeIUlHAmiminmp32MB2A4OU
+	 82YLROVC9iezdz5lzbNeC/2TkBqMhjbKAy+cXrxc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727797AbfAGMhW (ORCPT
+        id S1727812AbfAGMh1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:37:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52232 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:37:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52316 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726718AbfAGMhU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:37:20 -0500
+        id S1726718AbfAGMhX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:37:23 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 116452173C;
-        Mon,  7 Jan 2019 12:37:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 82077206BB;
+        Mon,  7 Jan 2019 12:37:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546864639;
-        bh=dxMxhs4XMcPgAt6gfv2ZrLlG7FF+M2NNHA676pCSl+4=;
+        s=default; t=1546864643;
+        bh=n7pF/pYRTEG6sjkZiq2CkrP0y3hm29Qq/EZNgrghJ4M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=D5azvR9+l9i0VobnwCcusliA9M1WfZZs92lwt+pDd+Z1L9sYqWHV5OKDji3HqxjTq
-         VFBUim+d6cNpK2pJAXkpGCoYwO3AoqEWwOiYQaK65U/RyOqiZMIi28KYXVYOsHRZ8m
-         OfJZnoUW+/3vC6ibltaI83Ax3TXAS1MsOc5MogMk=
+        b=vhshWVN1+E43gPQRT+xhQH0CaQxPu2FcxKaAWBcyWjiIlis+bOZ5HtUPtpVbMh32Z
+         BvhLVPDz0GvD8XZOAPrnn+DY9i9UiDMA6vEF/4V37qh3bxpqXGnuHeE2cf/fDRe7BC
+         cl3Cyc5aJx6maNywlvClrOx3Yic1IWZjED9fH01c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.20 010/145] net: core: Fix Spectre v1 vulnerability
-Date:   Mon,  7 Jan 2019 13:30:47 +0100
-Message-Id: <20190107104438.682815889@linuxfoundation.org>
+        stable@vger.kernel.org, Sanjeev Chugh <sanjeev_chugh@mentor.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 4.20 052/145] Input: atmel_mxt_ts - dont try to free unallocated kernel memory
+Date:   Mon,  7 Jan 2019 13:31:29 +0100
+Message-Id: <20190107104444.152728846@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104437.308206189@linuxfoundation.org>
 References: <20190107104437.308206189@linuxfoundation.org>
@@ -66,55 +65,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+From: Sanjeev Chugh <sanjeev_chugh@mentor.com>
 
-[ Upstream commit 50d5258634aee2e62832aa086d2fb0de00e72b91 ]
+commit 1e3c336ad8f40f88a8961c434640920fe35cc08b upstream.
 
-flen is indirectly controlled by user-space, hence leading to
-a potential exploitation of the Spectre variant 1 vulnerability.
+If the user attempts to update Atmel device with an invalid configuration
+cfg file, error handling code is trying to free cfg file memory which is
+not allocated yet hence results into kernel crash.
 
-This issue was detected with the help of Smatch:
+This patch fixes the order of memory free operations.
 
-net/core/filter.c:1101 bpf_check_classic() warn: potential spectre issue 'filter' [w]
-
-Fix this by sanitizing flen before using it to index filter at line 1101:
-
-	switch (filter[flen - 1].code) {
-
-and through pc at line 1040:
-
-	const struct sock_filter *ftest = &filter[pc];
-
-Notice that given that speculation windows are large, the policy is
-to kill the speculation on the first load and not worry if it can be
-completed with a dependent load/store [1].
-
-[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sanjeev Chugh <sanjeev_chugh@mentor.com>
+Fixes: a4891f105837 ("Input: atmel_mxt_ts - zero terminate config firmware file")
+Cc: stable@vger.kernel.org
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/core/filter.c |    2 ++
- 1 file changed, 2 insertions(+)
 
---- a/net/core/filter.c
-+++ b/net/core/filter.c
-@@ -73,6 +73,7 @@
- #include <linux/seg6_local.h>
- #include <net/seg6.h>
- #include <net/seg6_local.h>
-+#include <linux/nospec.h>
+---
+ drivers/input/touchscreen/atmel_mxt_ts.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- a/drivers/input/touchscreen/atmel_mxt_ts.c
++++ b/drivers/input/touchscreen/atmel_mxt_ts.c
+@@ -1585,10 +1585,10 @@ static int mxt_update_cfg(struct mxt_dat
+ 	/* T7 config may have changed */
+ 	mxt_init_t7_power_cfg(data);
  
- /**
-  *	sk_filter_trim_cap - run a packet through a socket filter
-@@ -1038,6 +1039,7 @@ static int bpf_check_classic(const struc
- 	bool anc_found;
- 	int pc;
+-release_raw:
+-	kfree(cfg.raw);
+ release_mem:
+ 	kfree(cfg.mem);
++release_raw:
++	kfree(cfg.raw);
+ 	return ret;
+ }
  
-+	flen = array_index_nospec(flen, BPF_MAXINSNS + 1);
- 	/* Check the filter code now */
- 	for (pc = 0; pc < flen; pc++) {
- 		const struct sock_filter *ftest = &filter[pc];
 
 
