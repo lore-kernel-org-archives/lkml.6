@@ -7,46 +7,50 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 942F2C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:19:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97619C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:20:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52185217D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:19:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6461B21736
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:20:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546867178;
-	bh=RfV5UDLhfxZVCakSdT2yhgb/21g1PPvpwnJ7kls+fTE=;
+	s=default; t=1546867201;
+	bh=545UHZUd4Kpwd2q1bcRmZMAmQ41FTTTgbAdJvngpewc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=C5bhQjyHWlZ4DcyKyhw/i/2oOSpEPHORGR+OLBqDYVN3DFkrC438xWi8e3q/lykGS
-	 qCrQVO72hnwusHpGlOE81Lmy3EiaBT7VxaQNN+Ti+xPmbICMhXeKkT/Z82bJDkMXAq
-	 irKtNYEei+kOpzE5OJUDzNtrnfxDv9u5UwkVBx2Y=
+	b=mM4M4/GjqZywti+nxQuStT50/SrBsj8DHrlLEbxiS3pmxK46r9ViaOjZfWviurE2b
+	 qgEYPKzbEzZM/JhEq3BbgCl5tFh4+AbXJiAGyxeU7Au3zNcyAEdq62LeGg11BXQzLl
+	 Q2B9ag/E7MkVapZKkyw9M7z+75Wvisu02pSPCFEs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730340AbfAGNTh (ORCPT
+        id S1727810AbfAGMzp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:19:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45302 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:55:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43938 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729120AbfAGM5p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:57:45 -0500
+        id S1727532AbfAGMzm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:55:42 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0458E206BB;
-        Mon,  7 Jan 2019 12:57:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0002E20665;
+        Mon,  7 Jan 2019 12:55:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865864;
-        bh=RfV5UDLhfxZVCakSdT2yhgb/21g1PPvpwnJ7kls+fTE=;
+        s=default; t=1546865742;
+        bh=545UHZUd4Kpwd2q1bcRmZMAmQ41FTTTgbAdJvngpewc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fLKTW3Z1uPFkEBhe3Y0b6kvsUa76IhPCV5qMvHxEZ+AjOdNyd3VRextJQmT6zSbwe
-         sqE+uccEcBGrbYR7gH2fivgOA3qrqvvzaVpPm4Dvnwo3Z/BVU48KV9OChWvAB2PADg
-         Cudq5DW7dRJS2oxl6X8VBRPTZ18mYcuUyOiaSnBg=
+        b=r264z7pa3D2BaBOCg0QoGfMu04YHm1l8W62cMO51J0ES90BkVFt6qwBF8EwS+GDjV
+         TCol9FECCseRpSYrPRoBsJrypdB+jNyoWW4MM36g2FXBoL3t9as8AuCo5hmlbKLbqv
+         1qzlDWkQ82xUtYrgnA+t44juVZeeAthm5NGrVe9E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pan Bian <bianpan2016@163.com>,
-        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 4.19 138/170] f2fs: read page index before freeing
-Date:   Mon,  7 Jan 2019 13:32:45 +0100
-Message-Id: <20190107104509.252793949@linuxfoundation.org>
+        stable@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
+        Mathias Duckeck <m.duckeck@kunbus.de>,
+        Frank Pavlic <f.pavlic@kunbus.de>,
+        Martin Sperl <kernel@martin.sperl.org>,
+        =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 4.19 117/170] spi: bcm2835: Avoid finishing transfer prematurely in IRQ mode
+Date:   Mon,  7 Jan 2019 13:32:24 +0100
+Message-Id: <20190107104506.758086070@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104452.953560660@linuxfoundation.org>
 References: <20190107104452.953560660@linuxfoundation.org>
@@ -65,47 +69,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Pan Bian <bianpan2016@163.com>
+From: Lukas Wunner <lukas@wunner.de>
 
-commit 0ea295dd853e0879a9a30ab61f923c26be35b902 upstream.
+commit 56c1723426d3cfd4723bfbfce531d7b38bae6266 upstream.
 
-The function truncate_node frees the page with f2fs_put_page. However,
-the page index is read after that. So, the patch reads the index before
-freeing the page.
+The IRQ handler bcm2835_spi_interrupt() first reads as much as possible
+from the RX FIFO, then writes as much as possible to the TX FIFO.
+Afterwards it decides whether the transfer is finished by checking if
+the TX FIFO is empty.
 
-Fixes: bf39c00a9a7f ("f2fs: drop obsolete node page when it is truncated")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Pan Bian <bianpan2016@163.com>
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+If very few bytes were written to the TX FIFO, they may already have
+been transmitted by the time the FIFO's emptiness is checked.  As a
+result, the transfer will be declared finished and the chip will be
+reset without reading the corresponding received bytes from the RX FIFO.
+
+The odds of this happening increase with a high clock frequency (such
+that the TX FIFO drains quickly) and either passing "threadirqs" on the
+command line or enabling CONFIG_PREEMPT_RT_BASE (such that the IRQ
+handler may be preempted between filling the TX FIFO and checking its
+emptiness).
+
+Fix by instead checking whether rx_len has reached zero, which means
+that the transfer has been received in full.  This is also more
+efficient as it avoids one bus read access per interrupt.  Note that
+bcm2835_spi_transfer_one_poll() likewise uses rx_len to determine
+whether the transfer has finished.
+
+Signed-off-by: Lukas Wunner <lukas@wunner.de>
+Fixes: e34ff011c70e ("spi: bcm2835: move to the transfer_one driver model")
+Cc: stable@vger.kernel.org # v4.1+
+Cc: Mathias Duckeck <m.duckeck@kunbus.de>
+Cc: Frank Pavlic <f.pavlic@kunbus.de>
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Cc: Noralf Trønnes <noralf@tronnes.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/f2fs/node.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/spi/spi-bcm2835.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -827,6 +827,7 @@ static int truncate_node(struct dnode_of
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(dn->inode);
- 	struct node_info ni;
- 	int err;
-+	pgoff_t index;
+--- a/drivers/spi/spi-bcm2835.c
++++ b/drivers/spi/spi-bcm2835.c
+@@ -155,8 +155,7 @@ static irqreturn_t bcm2835_spi_interrupt
+ 	/* Write as many bytes as possible to FIFO */
+ 	bcm2835_wr_fifo(bs);
  
- 	err = f2fs_get_node_info(sbi, dn->nid, &ni);
- 	if (err)
-@@ -846,10 +847,11 @@ static int truncate_node(struct dnode_of
- 	clear_node_page_dirty(dn->node_page);
- 	set_sbi_flag(sbi, SBI_IS_DIRTY);
- 
-+	index = dn->node_page->index;
- 	f2fs_put_page(dn->node_page, 1);
- 
- 	invalidate_mapping_pages(NODE_MAPPING(sbi),
--			dn->node_page->index, dn->node_page->index);
-+			index, index);
- 
- 	dn->node_page = NULL;
- 	trace_f2fs_truncate_node(dn->inode, dn->nid, ni.blk_addr);
+-	/* based on flags decide if we can finish the transfer */
+-	if (bcm2835_rd(bs, BCM2835_SPI_CS) & BCM2835_SPI_CS_DONE) {
++	if (!bs->rx_len) {
+ 		/* Transfer complete - reset SPI HW */
+ 		bcm2835_spi_reset_hw(master);
+ 		/* wake up the framework */
 
 
