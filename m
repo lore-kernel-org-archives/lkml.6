@@ -4,48 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00B7DC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:15:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE9F4C43444
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:15:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEE9E2089F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:15:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AEB1E2089F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:15:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546866927;
-	bh=kcbm2e3zG4QX4f/0lzDQ++0TcMfFjcs5xj917arg+ww=;
+	s=default; t=1546866931;
+	bh=3FKgTEa62XF36/C8C59PSTrl+GCDK4X978/fbaQtVBA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=lxLbFSr6OaBq0a4I2r7x7GrXU1pbhLiCVOM/+S4j+XdzxGAJ6BrN1v4Hxs8QIsX6N
-	 uSWqYTgeVSOHuXh1s86EEo8vj8PifZpyEzzNXhbfmNs/klXPEsMMcpx+CRI8CTPD7B
-	 3tXKJdIz2uGNkqCJ8zVUBZZ8bTZJ4HdbXY3Hu0hc=
+	b=B9i0WEoOUmg+xFzLvbjQTazGQQj6bPWtSByXQYRvqjvS74daNj01cg5YyIf1OnncY
+	 wik/F2Mg4hNnn92O/hRaM+k7a0eferblvzRnIZhl51/2WCtGLbAfP+hh8daY+FEid6
+	 VHv7ltVyNorfMpujvHaTA7sFOunDbBThs6oXJt40=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731595AbfAGNP0 (ORCPT
+        id S1730691AbfAGNBy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:15:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49318 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730694AbfAGNBy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 7 Jan 2019 08:01:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49282 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729879AbfAGNBw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:01:52 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9B9A2217D4;
-        Mon,  7 Jan 2019 13:01:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B353C2173C;
+        Mon,  7 Jan 2019 13:01:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546866114;
-        bh=kcbm2e3zG4QX4f/0lzDQ++0TcMfFjcs5xj917arg+ww=;
+        s=default; t=1546866111;
+        bh=3FKgTEa62XF36/C8C59PSTrl+GCDK4X978/fbaQtVBA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sK59p67ROBm5yCnon5UnEVYY+XwAcr7bW6s/ty2FRtNwBfxnLU/kvZ7Q9xeUSXXff
-         tZCIJ4BFzbmhiXYPZhkdPxoHvkhPar8MWH7GxVmjpPX0SMiqCDA8VLJ1U5udUGD9Qe
-         jMcawgvKYFsFkn04JuNL/fQDk10Y+k562BsvJPhk=
+        b=KVVEC1k1kQO9fEGpfFNTxu1I7iVO4XxNYL3roZx8jxiiHOeesBqITOS5G4j2172PI
+         qos+JzVpBORiX/ozvStR10xdqeV7tS4ziM3xEWWdnGPVrDUKrV/8IiAPMcX1pKmNHL
+         U9Hked8eJsxGd/x79CHuxvZ/RFWCR4WNTTttmJFY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [PATCH 4.14 051/101] usb: r8a66597: Fix a possible concurrency use-after-free bug in r8a66597_endpoint_disable()
-Date:   Mon,  7 Jan 2019 13:32:39 +0100
-Message-Id: <20190107105335.721781205@linuxfoundation.org>
+        stable@vger.kernel.org,
+        =?UTF-8?q?J=C3=B6rgen=20Storvist?= <jorgen.storvist@gmail.com>,
+        Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.14 050/101] USB: serial: option: add Fibocom NL678 series
+Date:   Mon,  7 Jan 2019 13:32:38 +0100
+Message-Id: <20190107105335.657442439@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107105330.372621917@linuxfoundation.org>
 References: <20190107105330.372621917@linuxfoundation.org>
@@ -64,67 +66,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jia-Ju Bai <baijiaju1990@gmail.com>
+From: Jörgen Storvist <jorgen.storvist@gmail.com>
 
-commit c85400f886e3d41e69966470879f635a2b50084c upstream.
+commit 4b2c01ad902ec02fa962b233decd2f14be3714ba upstream.
 
-The function r8a66597_endpoint_disable() and r8a66597_urb_enqueue() may
-be concurrently executed.
-The two functions both access a possible shared variable "hep->hcpriv".
+Added USB serial option driver support for Fibocom NL678 series cellular
+module: VID 2cb7 and PIDs 0x0104 and 0x0105.
+Reserved network and ADB interfaces.
 
-This shared variable is freed by r8a66597_endpoint_disable() via the
-call path:
-r8a66597_endpoint_disable
-  kfree(hep->hcpriv) (line 1995 in Linux-4.19)
+T:  Bus=01 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#=  2 Spd=480 MxCh= 0
+D:  Ver= 2.00 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
+P:  Vendor=2cb7 ProdID=0104 Rev=03.10
+S:  Manufacturer=Fibocom
+S:  Product=Fibocom NL678-E Modem
+S:  SerialNumber=12345678
+C:  #Ifs= 6 Cfg#= 1 Atr=a0 MxPwr=500mA
+I:  If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=ff Driver=option
+I:  If#= 1 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+I:  If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+I:  If#= 3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+I:  If#= 4 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=ff Driver=qmi_wwan
+I:  If#= 5 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=42 Prot=01 Driver=(none)
 
-This variable is read by r8a66597_urb_enqueue() via the call path:
-r8a66597_urb_enqueue
-  spin_lock_irqsave(&r8a66597->lock)
-  init_pipe_info
-    enable_r8a66597_pipe
-      pipe = hep->hcpriv (line 802 in Linux-4.19)
+T:  Bus=01 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#=  3 Spd=480 MxCh= 0
+D:  Ver= 2.00 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
+P:  Vendor=2cb7 ProdID=0105 Rev=03.10
+S:  Manufacturer=Fibocom
+S:  Product=Fibocom NL678-E Modem
+S:  SerialNumber=12345678
+C:  #Ifs= 7 Cfg#= 1 Atr=a0 MxPwr=500mA
+I:  If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=ff Driver=option
+I:  If#= 1 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+I:  If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+I:  If#= 3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+I:  If#= 4 Alt= 0 #EPs= 1 Cls=02(commc) Sub=06 Prot=00 Driver=cdc_ether
+I:  If#= 5 Alt= 1 #EPs= 2 Cls=0a(data ) Sub=00 Prot=00 Driver=cdc_ether
+I:  If#= 6 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=42 Prot=01 Driver=(none)
 
-The read operation is protected by a spinlock, but the free operation
-is not protected by this spinlock, thus a concurrency use-after-free bug
-may occur.
-
-To fix this bug, the spin-lock and spin-unlock function calls in
-r8a66597_endpoint_disable() are moved to protect the free operation.
-
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Signed-off-by: Jörgen Storvist <jorgen.storvist@gmail.com>
 Cc: stable <stable@vger.kernel.org>
+Acked-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/host/r8a66597-hcd.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/usb/serial/option.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/usb/host/r8a66597-hcd.c
-+++ b/drivers/usb/host/r8a66597-hcd.c
-@@ -1990,6 +1990,8 @@ static int r8a66597_urb_dequeue(struct u
- 
- static void r8a66597_endpoint_disable(struct usb_hcd *hcd,
- 				      struct usb_host_endpoint *hep)
-+__acquires(r8a66597->lock)
-+__releases(r8a66597->lock)
- {
- 	struct r8a66597 *r8a66597 = hcd_to_r8a66597(hcd);
- 	struct r8a66597_pipe *pipe = (struct r8a66597_pipe *)hep->hcpriv;
-@@ -2002,13 +2004,14 @@ static void r8a66597_endpoint_disable(st
- 		return;
- 	pipenum = pipe->info.pipenum;
- 
-+	spin_lock_irqsave(&r8a66597->lock, flags);
- 	if (pipenum == 0) {
- 		kfree(hep->hcpriv);
- 		hep->hcpriv = NULL;
-+		spin_unlock_irqrestore(&r8a66597->lock, flags);
- 		return;
- 	}
- 
--	spin_lock_irqsave(&r8a66597->lock, flags);
- 	pipe_stop(r8a66597, pipe);
- 	pipe_irq_disable(r8a66597, pipenum);
- 	disable_irq_empty(r8a66597, pipenum);
+--- a/drivers/usb/serial/option.c
++++ b/drivers/usb/serial/option.c
+@@ -1957,6 +1957,10 @@ static const struct usb_device_id option
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0xa31d, 0xff, 0x06, 0x1b) },
+ 	{ USB_DEVICE(0x1508, 0x1001),						/* Fibocom NL668 */
+ 	  .driver_info = RSVD(4) | RSVD(5) | RSVD(6) },
++	{ USB_DEVICE(0x2cb7, 0x0104),						/* Fibocom NL678 series */
++	  .driver_info = RSVD(4) | RSVD(5) },
++	{ USB_DEVICE_INTERFACE_CLASS(0x2cb7, 0x0105, 0xff),			/* Fibocom NL678 series */
++	  .driver_info = RSVD(6) },
+ 	{ } /* Terminating entry */
+ };
+ MODULE_DEVICE_TABLE(usb, option_ids);
 
 
