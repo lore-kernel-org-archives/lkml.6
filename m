@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9B21C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:59:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12AA4C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:59:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8D9A2089F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:59:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D67B921736
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:59:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546865941;
-	bh=SEjH7hWMk1kJ6wnWDgwH8nwggylSawVimdrxbvUl/H0=;
+	s=default; t=1546865949;
+	bh=5WmGrLw4Gjys7Y4cyfcoEcfMzrkyIJHFrA3ibV9q/Kc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=CDP7vufz2b2CLBAPD95IN1zlfffSIBly5t1G5C/mXKMEhmCLjSMpiq9y+KK7t/viF
-	 cds15CmJIOHUDvEBgFrbQ73C8ZrM/AQe0PVVnFclS+LSVGONox6ecZj73CWljMKllO
-	 S61u53Q3s8LAkAEt4lIU7kaSOYvD9AShjE3VuZIs=
+	b=qqy3AaCGWaOa2/pFam/C0xtvxsYcTQbpwGw+gA+4LO/nKKcE3CY3KhzOmSnUy0Qmr
+	 xvSRqLhsjUS2h7cRTfNxbvR8jkc7P21KHjm7SQhqqdqDs9VJZVf5oEeJOPlETpSCmD
+	 RdYRW81Cs/cC0VzCnSRIa8Cdch5X/YCO5GTtClCM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730102AbfAGM7A (ORCPT
+        id S1730125AbfAGM7I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:59:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46640 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:59:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46734 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727845AbfAGM66 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:58:58 -0500
+        id S1730104AbfAGM7G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:59:06 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 577C1206BB;
-        Mon,  7 Jan 2019 12:58:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AA2E9206BB;
+        Mon,  7 Jan 2019 12:59:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865937;
-        bh=SEjH7hWMk1kJ6wnWDgwH8nwggylSawVimdrxbvUl/H0=;
+        s=default; t=1546865945;
+        bh=5WmGrLw4Gjys7Y4cyfcoEcfMzrkyIJHFrA3ibV9q/Kc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GeBlDKiO4FxbHPfbDpsSUTW+O1TJ21IIcLFfo0BEI1ZvO+BFRA/+XQpOouEoBPjVY
-         sffY/9zwI047e5tb7o7pPaVq9/nwTT1lwx/oy6nyhL3pkLUct9CbaVINiSqLQbWX4/
-         yCzrdKr+MeEqnjfq33XNic1bf+kphBtvI0uaKgYE=
+        b=qbR6+XergcDXC0pLAkD4PX7tt3IeKx+fk9Gsqa9z+Dy6r1fn1avuKBRSJkXPCf/JR
+         OgdWpwBg/Zz3H9oJgHv8yuFBVKt4tElRyW2IS+i/J78XhfQ07VINnjdi1dUcJVGQnI
+         19vvWsg7TijxAlmK52+Xr1Db7Ne5pFjnDsbEObRM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Julien Thierry <julien.thierry@arm.com>,
+        stable@vger.kernel.org,
         Christoffer Dall <christoffer.dall@arm.com>,
         Marc Zyngier <marc.zyngier@arm.com>
-Subject: [PATCH 4.19 163/170] KVM: arm/arm64: vgic: Do not cond_resched_lock() with IRQs disabled
-Date:   Mon,  7 Jan 2019 13:33:10 +0100
-Message-Id: <20190107104512.186733941@linuxfoundation.org>
+Subject: [PATCH 4.19 165/170] KVM: arm/arm64: vgic-v2: Set active_source to 0 when restoring state
+Date:   Mon,  7 Jan 2019 13:33:12 +0100
+Message-Id: <20190107104512.456281545@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104452.953560660@linuxfoundation.org>
 References: <20190107104452.953560660@linuxfoundation.org>
@@ -66,58 +66,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Julien Thierry <julien.thierry@arm.com>
+From: Christoffer Dall <christoffer.dall@arm.com>
 
-commit 2e2f6c3c0b08eed3fcf7de3c7684c940451bdeb1 upstream.
+commit 60c3ab30d8c2ff3a52606df03f05af2aae07dc6b upstream.
 
-To change the active state of an MMIO, halt is requested for all vcpus of
-the affected guest before modifying the IRQ state. This is done by calling
-cond_resched_lock() in vgic_mmio_change_active(). However interrupts are
-disabled at this point and we cannot reschedule a vcpu.
+When restoring the active state from userspace, we don't know which CPU
+was the source for the active state, and this is not architecturally
+exposed in any of the register state.
 
-We actually don't need any of this, as kvm_arm_halt_guest ensures that
-all the other vcpus are out of the guest. Let's just drop that useless
-code.
+Set the active_source to 0 in this case.  In the future, we can expand
+on this and exposse the information as additional information to
+userspace for GICv2 if anyone cares.
 
-Signed-off-by: Julien Thierry <julien.thierry@arm.com>
-Suggested-by: Christoffer Dall <christoffer.dall@arm.com>
 Cc: stable@vger.kernel.org
+Signed-off-by: Christoffer Dall <christoffer.dall@arm.com>
 Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- virt/kvm/arm/vgic/vgic-mmio.c |   21 ---------------------
- 1 file changed, 21 deletions(-)
+ virt/kvm/arm/vgic/vgic-mmio.c |   17 ++++++++++++++++-
+ 1 file changed, 16 insertions(+), 1 deletion(-)
 
 --- a/virt/kvm/arm/vgic/vgic-mmio.c
 +++ b/virt/kvm/arm/vgic/vgic-mmio.c
-@@ -313,27 +313,6 @@ static void vgic_mmio_change_active(stru
- 
- 	spin_lock_irqsave(&irq->irq_lock, flags);
- 
--	/*
--	 * If this virtual IRQ was written into a list register, we
--	 * have to make sure the CPU that runs the VCPU thread has
--	 * synced back the LR state to the struct vgic_irq.
--	 *
--	 * As long as the conditions below are true, we know the VCPU thread
--	 * may be on its way back from the guest (we kicked the VCPU thread in
--	 * vgic_change_active_prepare)  and still has to sync back this IRQ,
--	 * so we release and re-acquire the spin_lock to let the other thread
--	 * sync back the IRQ.
--	 *
--	 * When accessing VGIC state from user space, requester_vcpu is
--	 * NULL, which is fine, because we guarantee that no VCPUs are running
--	 * when accessing VGIC state from user space so irq->vcpu->cpu is
--	 * always -1.
--	 */
--	while (irq->vcpu && /* IRQ may have state in an LR somewhere */
--	       irq->vcpu != requester_vcpu && /* Current thread is not the VCPU thread */
--	       irq->vcpu->cpu != -1) /* VCPU thread is running */
--		cond_resched_lock(&irq->irq_lock);
--
- 	if (irq->hw) {
+@@ -317,11 +317,26 @@ static void vgic_mmio_change_active(stru
  		vgic_hw_irq_change_active(vcpu, irq, active, !requester_vcpu);
  	} else {
+ 		u32 model = vcpu->kvm->arch.vgic.vgic_model;
++		u8 active_source;
+ 
+ 		irq->active = active;
++
++		/*
++		 * The GICv2 architecture indicates that the source CPUID for
++		 * an SGI should be provided during an EOI which implies that
++		 * the active state is stored somewhere, but at the same time
++		 * this state is not architecturally exposed anywhere and we
++		 * have no way of knowing the right source.
++		 *
++		 * This may lead to a VCPU not being able to receive
++		 * additional instances of a particular SGI after migration
++		 * for a GICv2 VM on some GIC implementations.  Oh well.
++		 */
++		active_source = (requester_vcpu) ? requester_vcpu->vcpu_id : 0;
++
+ 		if (model == KVM_DEV_TYPE_ARM_VGIC_V2 &&
+ 		    active && vgic_irq_is_sgi(irq->intid))
+-			irq->active_source = requester_vcpu->vcpu_id;
++			irq->active_source = active_source;
+ 	}
+ 
+ 	if (irq->active)
 
 
