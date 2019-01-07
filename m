@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AD02C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:13:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD1D9C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:13:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CBFC2089F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:13:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4D6F2089F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:13:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546866820;
-	bh=+HRhI5ZBsLD00uK3klo5ygXBbbge2L2a/USxS+yQw3A=;
+	s=default; t=1546866828;
+	bh=ptcx/UgF59pxQ8KdBdcW8M/Szacvu1jYiat9uphieT0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=dMcRfO3tgRhIFpM08vU0pSt/AARAhCOv9sMAQWZE98aUdE2o9VHyHGWiEFO3q86C2
-	 kMQnAIYLSdv5puVbfYcxoC9vKTarhpR/CICzWY4O+FVIWoz+A3Tnstsb+HS/LmmGr+
-	 aszME9AwakyNX9jooPucq4I4pm125XJe31xOD7aE=
+	b=ZkEyYX5MfyOrwnqWaAYQwCMoYnoZhmSYRPoUZrGNCbgUT0e8HgCgB2VhD0eH/icOV
+	 m/PoEo+xIDhWhW/eNNAAgTdPSC00y0T2wbqKd0lMiXs8WSO92FIQyQV13vbUyX7Lcw
+	 LbJc57ZMZzYJw4KZxt9MO3Ytz1kmy59mFnkPSpoc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731022AbfAGNDe (ORCPT
+        id S1731730AbfAGNNs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:03:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51018 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:13:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50896 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730135AbfAGNDd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:03:33 -0500
+        id S1730522AbfAGNDY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:03:24 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EA52D21736;
-        Mon,  7 Jan 2019 13:03:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 697A52089F;
+        Mon,  7 Jan 2019 13:03:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546866212;
-        bh=+HRhI5ZBsLD00uK3klo5ygXBbbge2L2a/USxS+yQw3A=;
+        s=default; t=1546866203;
+        bh=ptcx/UgF59pxQ8KdBdcW8M/Szacvu1jYiat9uphieT0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VIwX85MH0j/ROySqVaO52B8E6Wgi5uLXnm8i3KLEp5LsgUlLwMHhY9seuLudR+++/
-         1uYBlHJQynhbf7kwrGqFuV98joWKSXMDqV0Eqrd5WrkgWLmDJDJElDoribGJee2BJT
-         f07SENQXZ6f9a5qdqKCQN/oks6Ejm5cWiyZeViIA=
+        b=dUvYmCuKAvE0Sk4grxghPLrsuy38uDSNXD9GnKEyjh/EtLqj3HbnN3nc3szpCuXW0
+         YwvrXxVcVTS+Sp29wzU4NXziE1DZHhYBIwERPmWRDy/dVK71h5lCL1ToaXeo3RmHgn
+         pEwchUVdK5Kgq/PFnuF52lqbeUBslsVbcBF07CrI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+        stable@vger.kernel.org,
+        =?UTF-8?q?Mantas=20Mikul=C4=97nas?= <grawity@gmail.com>,
         Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 046/101] ALSA: firewire-lib: fix wrong assignment for out_packet_without_header tracepoint
-Date:   Mon,  7 Jan 2019 13:32:34 +0100
-Message-Id: <20190107105335.425048347@linuxfoundation.org>
+Subject: [PATCH 4.14 043/101] ALSA: hda: add mute LED support for HP EliteBook 840 G4
+Date:   Mon,  7 Jan 2019 13:32:31 +0100
+Message-Id: <20190107105335.266924103@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107105330.372621917@linuxfoundation.org>
 References: <20190107105330.372621917@linuxfoundation.org>
@@ -65,36 +66,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+From: Mantas Mikulėnas <grawity@gmail.com>
 
-commit aa9a9e39b4f65733bf19d90cbd026e85a74efb99 upstream.
+commit 40906ebe3af6a48457151b3c6726b480f6a6cb13 upstream.
 
-An initial commit to add tracepoints for packets without CIP headers
-introduces a wrong assignment to 'data_blocks' value of
-'out_packet_without_header' tracepoint.
+Tested with 4.19.9.
 
-This commit fixes the bug.
+v2: Changed from CXT_FIXUP_MUTE_LED_GPIO to CXT_FIXUP_HP_DOCK because
+    that's what the existing fixups for EliteBooks use.
 
-Cc: <stable@vger.kernel.org> # v4.12+
-Fixes: b164d2fd6e49 ('ALSA: firewire_lib: add tracepoints for packets without CIP headers')
-Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Signed-off-by: Mantas Mikulėnas <grawity@gmail.com>
+Cc: <stable@vger.kernel.org>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/firewire/amdtp-stream-trace.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/pci/hda/patch_conexant.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/sound/firewire/amdtp-stream-trace.h
-+++ b/sound/firewire/amdtp-stream-trace.h
-@@ -169,7 +169,7 @@ TRACE_EVENT(out_packet_without_header,
- 		__entry->dest = fw_parent_device(s->unit)->node_id;
- 		__entry->payload_quadlets = payload_length / 4;
- 		__entry->data_blocks = data_blocks,
--		__entry->data_blocks = s->data_block_counter,
-+		__entry->data_block_counter = s->data_block_counter,
- 		__entry->packet_index = s->packet_index;
- 		__entry->irq = !!in_interrupt();
- 		__entry->index = index;
+--- a/sound/pci/hda/patch_conexant.c
++++ b/sound/pci/hda/patch_conexant.c
+@@ -961,6 +961,7 @@ static const struct snd_pci_quirk cxt506
+ 	SND_PCI_QUIRK(0x103c, 0x8079, "HP EliteBook 840 G3", CXT_FIXUP_HP_DOCK),
+ 	SND_PCI_QUIRK(0x103c, 0x807C, "HP EliteBook 820 G3", CXT_FIXUP_HP_DOCK),
+ 	SND_PCI_QUIRK(0x103c, 0x80FD, "HP ProBook 640 G2", CXT_FIXUP_HP_DOCK),
++	SND_PCI_QUIRK(0x103c, 0x828c, "HP EliteBook 840 G4", CXT_FIXUP_HP_DOCK),
+ 	SND_PCI_QUIRK(0x103c, 0x83b3, "HP EliteBook 830 G5", CXT_FIXUP_HP_DOCK),
+ 	SND_PCI_QUIRK(0x103c, 0x83d3, "HP ProBook 640 G4", CXT_FIXUP_HP_DOCK),
+ 	SND_PCI_QUIRK(0x103c, 0x8174, "HP Spectre x360", CXT_FIXUP_HP_SPECTRE),
 
 
