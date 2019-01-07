@@ -2,1151 +2,622 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UPPERCASE_50_75,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CF0EC43444
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 09:30:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E81EC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 09:30:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8ACD2070C
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 09:30:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 05ACF2070C
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 09:30:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726810AbfAGJae convert rfc822-to-8bit (ORCPT
+        id S1726822AbfAGJaq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 04:30:34 -0500
-Received: from skedge04.snt-world.com ([91.208.41.69]:39896 "EHLO
-        skedge04.snt-world.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726404AbfAGJ34 (ORCPT
+        Mon, 7 Jan 2019 04:30:46 -0500
+Received: from andre.telenet-ops.be ([195.130.132.53]:52210 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726404AbfAGJap (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 04:29:56 -0500
-Received: from sntmail14r.snt-is.com (unknown [10.203.32.184])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by skedge04.snt-world.com (Postfix) with ESMTPS id 2673B67A894;
-        Mon,  7 Jan 2019 10:29:48 +0100 (CET)
-Received: from sntmail12r.snt-is.com (10.203.32.182) by sntmail14r.snt-is.com
- (10.203.32.184) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1466.3; Mon, 7 Jan 2019
- 10:29:47 +0100
-Received: from sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305]) by
- sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305%5]) with mapi id
- 15.01.1466.003; Mon, 7 Jan 2019 10:29:47 +0100
-From:   Schrempf Frieder <frieder.schrempf@kontron.de>
-To:     "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "boris.brezillon@bootlin.com" <boris.brezillon@bootlin.com>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>, Han Xu <han.xu@nxp.com>
-CC:     "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "richard@nod.at" <richard@nod.at>,
-        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
-        "david.wolfe@nxp.com" <david.wolfe@nxp.com>,
-        "fabio.estevam@nxp.com" <fabio.estevam@nxp.com>,
-        "prabhakar.kushwaha@nxp.com" <prabhakar.kushwaha@nxp.com>,
-        "yogeshnarayan.gaur@nxp.com" <yogeshnarayan.gaur@nxp.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Schrempf Frieder <frieder.schrempf@kontron.de>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH v8 1/7] spi: Add a driver for the Freescale/NXP QuadSPI
- controller
-Thread-Topic: [PATCH v8 1/7] spi: Add a driver for the Freescale/NXP QuadSPI
- controller
-Thread-Index: AQHUpmuI+CP0FMoaPUCa4lADQ4m5mQ==
-Date:   Mon, 7 Jan 2019 09:29:47 +0000
-Message-ID: <20190107092823.11188-2-frieder.schrempf@kontron.de>
-References: <20190107092823.11188-1-frieder.schrempf@kontron.de>
-In-Reply-To: <20190107092823.11188-1-frieder.schrempf@kontron.de>
-Accept-Language: de-DE, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.25.9.42]
-x-c2processedorg: 51b406b7-48a2-4d03-b652-521f56ac89f3
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8BIT
-MIME-Version: 1.0
-X-SnT-MailScanner-Information: Please contact the ISP for more information
-X-SnT-MailScanner-ID: 2673B67A894.A128E
-X-SnT-MailScanner: Found to be clean
-X-SnT-MailScanner-SpamCheck: 
-X-SnT-MailScanner-From: frieder.schrempf@kontron.de
-X-SnT-MailScanner-To: bbrezillon@kernel.org, boris.brezillon@bootlin.com,
-        broonie@kernel.org, computersforpeace@gmail.com, david.wolfe@nxp.com,
-        dwmw2@infradead.org, fabio.estevam@nxp.com, han.xu@nxp.com,
-        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-spi@vger.kernel.org, marek.vasut@gmail.com,
-        miquel.raynal@bootlin.com, prabhakar.kushwaha@nxp.com,
-        richard@nod.at, shawnguo@kernel.org, yogeshnarayan.gaur@nxp.com
+        Mon, 7 Jan 2019 04:30:45 -0500
+Received: from ramsan ([84.194.111.163])
+        by andre.telenet-ops.be with bizsmtp
+        id MMWe1z0093XaVaC01MWeXs; Mon, 07 Jan 2019 10:30:38 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1ggRF0-0003Kp-56; Mon, 07 Jan 2019 10:30:38 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1ggRF0-0003tu-3P; Mon, 07 Jan 2019 10:30:38 +0100
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+To:     linux-m68k@lists.linux-m68k.org
+Cc:     linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH] m68k/defconfig: Drop NET_VENDOR_<FOO>=n
+Date:   Mon,  7 Jan 2019 10:30:37 +0100
+Message-Id: <20190107093037.14952-1-geert@linux-m68k.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Frieder Schrempf <frieder.schrempf@kontron.de>
+Enabling NET_VENDOR_* Kconfig options does not directly affect the
+kernel, so there is no need to explicitly disable them.
+The individual network drivers under them are still disabled.
 
-This driver is derived from the SPI NOR driver at
-mtd/spi-nor/fsl-quadspi.c. It uses the new SPI memory interface
-of the SPI framework to issue flash memory operations to up to
-four connected flash chips (2 buses with 2 CS each).
-
-The controller does not support generic SPI messages.
-
-This patch also disables the build of the "old" driver and reuses
-its Kconfig option CONFIG_SPI_FSL_QUADSPI to replace it.
-
-Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
-Acked-by: Han Xu <han.xu@nxp.com>
-Reviewed-by: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
-Tested-by: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
-Tested-by: Han Xu <han.xu@nxp.com>
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 ---
- drivers/mtd/spi-nor/Kconfig  |   9 -
- drivers/mtd/spi-nor/Makefile |   1 -
- drivers/spi/Kconfig          |  11 +
- drivers/spi/Makefile         |   1 +
- drivers/spi/spi-fsl-qspi.c   | 966 ++++++++++++++++++++++++++++++++++++++
- 5 files changed, 978 insertions(+), 10 deletions(-)
+ arch/m68k/configs/amcore_defconfig   | 20 -----------------
+ arch/m68k/configs/amiga_defconfig    | 32 ---------------------------
+ arch/m68k/configs/apollo_defconfig   | 29 ------------------------
+ arch/m68k/configs/atari_defconfig    | 28 -----------------------
+ arch/m68k/configs/bvme6000_defconfig | 28 -----------------------
+ arch/m68k/configs/hp300_defconfig    | 29 ------------------------
+ arch/m68k/configs/mac_defconfig      | 29 ------------------------
+ arch/m68k/configs/multi_defconfig    | 29 ------------------------
+ arch/m68k/configs/mvme147_defconfig  | 29 ------------------------
+ arch/m68k/configs/mvme16x_defconfig  | 28 -----------------------
+ arch/m68k/configs/q40_defconfig      | 33 ----------------------------
+ arch/m68k/configs/sun3_defconfig     | 28 -----------------------
+ arch/m68k/configs/sun3x_defconfig    | 29 ------------------------
+ 13 files changed, 371 deletions(-)
 
-diff --git a/drivers/mtd/spi-nor/Kconfig b/drivers/mtd/spi-nor/Kconfig
-index 44fe8018733c..b433e5f91069 100644
---- a/drivers/mtd/spi-nor/Kconfig
-+++ b/drivers/mtd/spi-nor/Kconfig
-@@ -50,15 +50,6 @@ config SPI_CADENCE_QUADSPI
- 	  device with a Cadence QSPI controller and want to access the
- 	  Flash as an MTD device.
- 
--config SPI_FSL_QUADSPI
--	tristate "Freescale Quad SPI controller"
--	depends on ARCH_MXC || SOC_LS1021A || ARCH_LAYERSCAPE || COMPILE_TEST
--	depends on HAS_IOMEM
--	help
--	  This enables support for the Quad SPI controller in master mode.
--	  This controller does not support generic SPI. It only supports
--	  SPI NOR.
--
- config SPI_HISI_SFC
- 	tristate "Hisilicon SPI-NOR Flash Controller(SFC)"
- 	depends on ARCH_HISI || COMPILE_TEST
-diff --git a/drivers/mtd/spi-nor/Makefile b/drivers/mtd/spi-nor/Makefile
-index a552efd22958..2adedbe07662 100644
---- a/drivers/mtd/spi-nor/Makefile
-+++ b/drivers/mtd/spi-nor/Makefile
-@@ -2,7 +2,6 @@
- obj-$(CONFIG_MTD_SPI_NOR)	+= spi-nor.o
- obj-$(CONFIG_SPI_ASPEED_SMC)	+= aspeed-smc.o
- obj-$(CONFIG_SPI_CADENCE_QUADSPI)	+= cadence-quadspi.o
--obj-$(CONFIG_SPI_FSL_QUADSPI)	+= fsl-quadspi.o
- obj-$(CONFIG_SPI_HISI_SFC)	+= hisi-sfc.o
- obj-$(CONFIG_MTD_MT81xx_NOR)    += mtk-quadspi.o
- obj-$(CONFIG_SPI_NXP_SPIFI)	+= nxp-spifi.o
-diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
-index 9f89cb134549..e22fc233ed07 100644
---- a/drivers/spi/Kconfig
-+++ b/drivers/spi/Kconfig
-@@ -268,6 +268,17 @@ config SPI_FSL_LPSPI
- 	help
- 	  This enables Freescale i.MX LPSPI controllers in master mode.
- 
-+config SPI_FSL_QUADSPI
-+	tristate "Freescale QSPI controller"
-+	depends on ARCH_MXC || SOC_LS1021A || ARCH_LAYERSCAPE || COMPILE_TEST
-+	depends on HAS_IOMEM
-+	help
-+	  This enables support for the Quad SPI controller in master mode.
-+	  Up to four flash chips can be connected on two buses with two
-+	  chipselects each.
-+	  This controller does not support generic SPI messages. It only
-+	  supports the high-level SPI memory interface.
-+
- config SPI_GPIO
- 	tristate "GPIO-based bitbanging SPI Master"
- 	depends on GPIOLIB || COMPILE_TEST
-diff --git a/drivers/spi/Makefile b/drivers/spi/Makefile
-index f29627040dfb..2a857cb9aa81 100644
---- a/drivers/spi/Makefile
-+++ b/drivers/spi/Makefile
-@@ -45,6 +45,7 @@ obj-$(CONFIG_SPI_FSL_DSPI)		+= spi-fsl-dspi.o
- obj-$(CONFIG_SPI_FSL_LIB)		+= spi-fsl-lib.o
- obj-$(CONFIG_SPI_FSL_ESPI)		+= spi-fsl-espi.o
- obj-$(CONFIG_SPI_FSL_LPSPI)		+= spi-fsl-lpspi.o
-+obj-$(CONFIG_SPI_FSL_QUADSPI)		+= spi-fsl-qspi.o
- obj-$(CONFIG_SPI_FSL_SPI)		+= spi-fsl-spi.o
- obj-$(CONFIG_SPI_GPIO)			+= spi-gpio.o
- obj-$(CONFIG_SPI_IMG_SPFI)		+= spi-img-spfi.o
-diff --git a/drivers/spi/spi-fsl-qspi.c b/drivers/spi/spi-fsl-qspi.c
-new file mode 100644
-index 000000000000..f0a340026ba4
---- /dev/null
-+++ b/drivers/spi/spi-fsl-qspi.c
-@@ -0,0 +1,966 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+
-+/*
-+ * Freescale QuadSPI driver.
-+ *
-+ * Copyright (C) 2013 Freescale Semiconductor, Inc.
-+ * Copyright (C) 2018 Bootlin
-+ * Copyright (C) 2018 exceet electronics GmbH
-+ * Copyright (C) 2018 Kontron Electronics GmbH
-+ *
-+ * Transition to SPI MEM interface:
-+ * Authors:
-+ *     Boris Brezillion <boris.brezillon@bootlin.com>
-+ *     Frieder Schrempf <frieder.schrempf@kontron.de>
-+ *     Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
-+ *     Suresh Gupta <suresh.gupta@nxp.com>
-+ *
-+ * Based on the original fsl-quadspi.c spi-nor driver:
-+ * Author: Freescale Semiconductor, Inc.
-+ *
-+ */
-+
-+#include <linux/bitops.h>
-+#include <linux/clk.h>
-+#include <linux/completion.h>
-+#include <linux/delay.h>
-+#include <linux/err.h>
-+#include <linux/errno.h>
-+#include <linux/interrupt.h>
-+#include <linux/io.h>
-+#include <linux/iopoll.h>
-+#include <linux/jiffies.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/mutex.h>
-+#include <linux/of.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_qos.h>
-+#include <linux/sizes.h>
-+
-+#include <linux/spi/spi.h>
-+#include <linux/spi/spi-mem.h>
-+
-+/*
-+ * The driver only uses one single LUT entry, that is updated on
-+ * each call of exec_op(). Index 0 is preset at boot with a basic
-+ * read operation, so let's use the last entry (15).
-+ */
-+#define	SEQID_LUT			15
-+
-+/* Registers used by the driver */
-+#define QUADSPI_MCR			0x00
-+#define QUADSPI_MCR_RESERVED_MASK	GENMASK(19, 16)
-+#define QUADSPI_MCR_MDIS_MASK		BIT(14)
-+#define QUADSPI_MCR_CLR_TXF_MASK	BIT(11)
-+#define QUADSPI_MCR_CLR_RXF_MASK	BIT(10)
-+#define QUADSPI_MCR_DDR_EN_MASK		BIT(7)
-+#define QUADSPI_MCR_END_CFG_MASK	GENMASK(3, 2)
-+#define QUADSPI_MCR_SWRSTHD_MASK	BIT(1)
-+#define QUADSPI_MCR_SWRSTSD_MASK	BIT(0)
-+
-+#define QUADSPI_IPCR			0x08
-+#define QUADSPI_IPCR_SEQID(x)		((x) << 24)
-+
-+#define QUADSPI_BUF3CR			0x1c
-+#define QUADSPI_BUF3CR_ALLMST_MASK	BIT(31)
-+#define QUADSPI_BUF3CR_ADATSZ(x)	((x) << 8)
-+#define QUADSPI_BUF3CR_ADATSZ_MASK	GENMASK(15, 8)
-+
-+#define QUADSPI_BFGENCR			0x20
-+#define QUADSPI_BFGENCR_SEQID(x)	((x) << 12)
-+
-+#define QUADSPI_BUF0IND			0x30
-+#define QUADSPI_BUF1IND			0x34
-+#define QUADSPI_BUF2IND			0x38
-+#define QUADSPI_SFAR			0x100
-+
-+#define QUADSPI_SMPR			0x108
-+#define QUADSPI_SMPR_DDRSMP_MASK	GENMASK(18, 16)
-+#define QUADSPI_SMPR_FSDLY_MASK		BIT(6)
-+#define QUADSPI_SMPR_FSPHS_MASK		BIT(5)
-+#define QUADSPI_SMPR_HSENA_MASK		BIT(0)
-+
-+#define QUADSPI_RBCT			0x110
-+#define QUADSPI_RBCT_WMRK_MASK		GENMASK(4, 0)
-+#define QUADSPI_RBCT_RXBRD_USEIPS	BIT(8)
-+
-+#define QUADSPI_TBDR			0x154
-+
-+#define QUADSPI_SR			0x15c
-+#define QUADSPI_SR_IP_ACC_MASK		BIT(1)
-+#define QUADSPI_SR_AHB_ACC_MASK		BIT(2)
-+
-+#define QUADSPI_FR			0x160
-+#define QUADSPI_FR_TFF_MASK		BIT(0)
-+
-+#define QUADSPI_SPTRCLR			0x16c
-+#define QUADSPI_SPTRCLR_IPPTRC		BIT(8)
-+#define QUADSPI_SPTRCLR_BFPTRC		BIT(0)
-+
-+#define QUADSPI_SFA1AD			0x180
-+#define QUADSPI_SFA2AD			0x184
-+#define QUADSPI_SFB1AD			0x188
-+#define QUADSPI_SFB2AD			0x18c
-+#define QUADSPI_RBDR(x)			(0x200 + ((x) * 4))
-+
-+#define QUADSPI_LUTKEY			0x300
-+#define QUADSPI_LUTKEY_VALUE		0x5AF05AF0
-+
-+#define QUADSPI_LCKCR			0x304
-+#define QUADSPI_LCKER_LOCK		BIT(0)
-+#define QUADSPI_LCKER_UNLOCK		BIT(1)
-+
-+#define QUADSPI_RSER			0x164
-+#define QUADSPI_RSER_TFIE		BIT(0)
-+
-+#define QUADSPI_LUT_BASE		0x310
-+#define QUADSPI_LUT_OFFSET		(SEQID_LUT * 4 * 4)
-+#define QUADSPI_LUT_REG(idx) \
-+	(QUADSPI_LUT_BASE + QUADSPI_LUT_OFFSET + (idx) * 4)
-+
-+/* Instruction set for the LUT register */
-+#define LUT_STOP		0
-+#define LUT_CMD			1
-+#define LUT_ADDR		2
-+#define LUT_DUMMY		3
-+#define LUT_MODE		4
-+#define LUT_MODE2		5
-+#define LUT_MODE4		6
-+#define LUT_FSL_READ		7
-+#define LUT_FSL_WRITE		8
-+#define LUT_JMP_ON_CS		9
-+#define LUT_ADDR_DDR		10
-+#define LUT_MODE_DDR		11
-+#define LUT_MODE2_DDR		12
-+#define LUT_MODE4_DDR		13
-+#define LUT_FSL_READ_DDR	14
-+#define LUT_FSL_WRITE_DDR	15
-+#define LUT_DATA_LEARN		16
-+
-+/*
-+ * The PAD definitions for LUT register.
-+ *
-+ * The pad stands for the number of IO lines [0:3].
-+ * For example, the quad read needs four IO lines,
-+ * so you should use LUT_PAD(4).
-+ */
-+#define LUT_PAD(x) (fls(x) - 1)
-+
-+/*
-+ * Macro for constructing the LUT entries with the following
-+ * register layout:
-+ *
-+ *  ---------------------------------------------------
-+ *  | INSTR1 | PAD1 | OPRND1 | INSTR0 | PAD0 | OPRND0 |
-+ *  ---------------------------------------------------
-+ */
-+#define LUT_DEF(idx, ins, pad, opr)					\
-+	((((ins) << 10) | ((pad) << 8) | (opr)) << (((idx) % 2) * 16))
-+
-+/* Controller needs driver to swap endianness */
-+#define QUADSPI_QUIRK_SWAP_ENDIAN	BIT(0)
-+
-+/* Controller needs 4x internal clock */
-+#define QUADSPI_QUIRK_4X_INT_CLK	BIT(1)
-+
-+/*
-+ * TKT253890, the controller needs the driver to fill the txfifo with
-+ * 16 bytes at least to trigger a data transfer, even though the extra
-+ * data won't be transferred.
-+ */
-+#define QUADSPI_QUIRK_TKT253890		BIT(2)
-+
-+/* TKT245618, the controller cannot wake up from wait mode */
-+#define QUADSPI_QUIRK_TKT245618		BIT(3)
-+
-+/*
-+ * Controller adds QSPI_AMBA_BASE (base address of the mapped memory)
-+ * internally. No need to add it when setting SFXXAD and SFAR registers
-+ */
-+#define QUADSPI_QUIRK_BASE_INTERNAL	BIT(4)
-+
-+struct fsl_qspi_devtype_data {
-+	unsigned int rxfifo;
-+	unsigned int txfifo;
-+	unsigned int ahb_buf_size;
-+	unsigned int quirks;
-+	bool little_endian;
-+};
-+
-+static const struct fsl_qspi_devtype_data vybrid_data = {
-+	.rxfifo = SZ_128,
-+	.txfifo = SZ_64,
-+	.ahb_buf_size = SZ_1K,
-+	.quirks = QUADSPI_QUIRK_SWAP_ENDIAN,
-+	.little_endian = true,
-+};
-+
-+static const struct fsl_qspi_devtype_data imx6sx_data = {
-+	.rxfifo = SZ_128,
-+	.txfifo = SZ_512,
-+	.ahb_buf_size = SZ_1K,
-+	.quirks = QUADSPI_QUIRK_4X_INT_CLK | QUADSPI_QUIRK_TKT245618,
-+	.little_endian = true,
-+};
-+
-+static const struct fsl_qspi_devtype_data imx7d_data = {
-+	.rxfifo = SZ_512,
-+	.txfifo = SZ_512,
-+	.ahb_buf_size = SZ_1K,
-+	.quirks = QUADSPI_QUIRK_TKT253890 | QUADSPI_QUIRK_4X_INT_CLK,
-+	.little_endian = true,
-+};
-+
-+static const struct fsl_qspi_devtype_data imx6ul_data = {
-+	.rxfifo = SZ_128,
-+	.txfifo = SZ_512,
-+	.ahb_buf_size = SZ_1K,
-+	.quirks = QUADSPI_QUIRK_TKT253890 | QUADSPI_QUIRK_4X_INT_CLK,
-+	.little_endian = true,
-+};
-+
-+static const struct fsl_qspi_devtype_data ls1021a_data = {
-+	.rxfifo = SZ_128,
-+	.txfifo = SZ_64,
-+	.ahb_buf_size = SZ_1K,
-+	.quirks = 0,
-+	.little_endian = false,
-+};
-+
-+static const struct fsl_qspi_devtype_data ls2080a_data = {
-+	.rxfifo = SZ_128,
-+	.txfifo = SZ_64,
-+	.ahb_buf_size = SZ_1K,
-+	.quirks = QUADSPI_QUIRK_TKT253890 | QUADSPI_QUIRK_BASE_INTERNAL,
-+	.little_endian = true,
-+};
-+
-+struct fsl_qspi {
-+	void __iomem *iobase;
-+	void __iomem *ahb_addr;
-+	u32 memmap_phy;
-+	struct clk *clk, *clk_en;
-+	struct device *dev;
-+	struct completion c;
-+	const struct fsl_qspi_devtype_data *devtype_data;
-+	struct mutex lock;
-+	struct pm_qos_request pm_qos_req;
-+	int selected;
-+};
-+
-+static inline int needs_swap_endian(struct fsl_qspi *q)
-+{
-+	return q->devtype_data->quirks & QUADSPI_QUIRK_SWAP_ENDIAN;
-+}
-+
-+static inline int needs_4x_clock(struct fsl_qspi *q)
-+{
-+	return q->devtype_data->quirks & QUADSPI_QUIRK_4X_INT_CLK;
-+}
-+
-+static inline int needs_fill_txfifo(struct fsl_qspi *q)
-+{
-+	return q->devtype_data->quirks & QUADSPI_QUIRK_TKT253890;
-+}
-+
-+static inline int needs_wakeup_wait_mode(struct fsl_qspi *q)
-+{
-+	return q->devtype_data->quirks & QUADSPI_QUIRK_TKT245618;
-+}
-+
-+static inline int needs_amba_base_offset(struct fsl_qspi *q)
-+{
-+	return !(q->devtype_data->quirks & QUADSPI_QUIRK_BASE_INTERNAL);
-+}
-+
-+/*
-+ * An IC bug makes it necessary to rearrange the 32-bit data.
-+ * Later chips, such as IMX6SLX, have fixed this bug.
-+ */
-+static inline u32 fsl_qspi_endian_xchg(struct fsl_qspi *q, u32 a)
-+{
-+	return needs_swap_endian(q) ? __swab32(a) : a;
-+}
-+
-+/*
-+ * R/W functions for big- or little-endian registers:
-+ * The QSPI controller's endianness is independent of
-+ * the CPU core's endianness. So far, although the CPU
-+ * core is little-endian the QSPI controller can use
-+ * big-endian or little-endian.
-+ */
-+static void qspi_writel(struct fsl_qspi *q, u32 val, void __iomem *addr)
-+{
-+	if (q->devtype_data->little_endian)
-+		iowrite32(val, addr);
-+	else
-+		iowrite32be(val, addr);
-+}
-+
-+static u32 qspi_readl(struct fsl_qspi *q, void __iomem *addr)
-+{
-+	if (q->devtype_data->little_endian)
-+		return ioread32(addr);
-+
-+	return ioread32be(addr);
-+}
-+
-+static irqreturn_t fsl_qspi_irq_handler(int irq, void *dev_id)
-+{
-+	struct fsl_qspi *q = dev_id;
-+	u32 reg;
-+
-+	/* clear interrupt */
-+	reg = qspi_readl(q, q->iobase + QUADSPI_FR);
-+	qspi_writel(q, reg, q->iobase + QUADSPI_FR);
-+
-+	if (reg & QUADSPI_FR_TFF_MASK)
-+		complete(&q->c);
-+
-+	dev_dbg(q->dev, "QUADSPI_FR : 0x%.8x:0x%.8x\n", 0, reg);
-+	return IRQ_HANDLED;
-+}
-+
-+static int fsl_qspi_check_buswidth(struct fsl_qspi *q, u8 width)
-+{
-+	switch (width) {
-+	case 1:
-+	case 2:
-+	case 4:
-+		return 0;
-+	}
-+
-+	return -ENOTSUPP;
-+}
-+
-+static bool fsl_qspi_supports_op(struct spi_mem *mem,
-+				 const struct spi_mem_op *op)
-+{
-+	struct fsl_qspi *q = spi_controller_get_devdata(mem->spi->master);
-+	int ret;
-+
-+	ret = fsl_qspi_check_buswidth(q, op->cmd.buswidth);
-+
-+	if (op->addr.nbytes)
-+		ret |= fsl_qspi_check_buswidth(q, op->addr.buswidth);
-+
-+	if (op->dummy.nbytes)
-+		ret |= fsl_qspi_check_buswidth(q, op->dummy.buswidth);
-+
-+	if (op->data.nbytes)
-+		ret |= fsl_qspi_check_buswidth(q, op->data.buswidth);
-+
-+	if (ret)
-+		return false;
-+
-+	/*
-+	 * The number of instructions needed for the op, needs
-+	 * to fit into a single LUT entry.
-+	 */
-+	if (op->addr.nbytes +
-+	   (op->dummy.nbytes ? 1:0) +
-+	   (op->data.nbytes ? 1:0) > 6)
-+		return false;
-+
-+	/* Max 64 dummy clock cycles supported */
-+	if (op->dummy.nbytes &&
-+	    (op->dummy.nbytes * 8 / op->dummy.buswidth > 64))
-+		return false;
-+
-+	/* Max data length, check controller limits and alignment */
-+	if (op->data.dir == SPI_MEM_DATA_IN &&
-+	    (op->data.nbytes > q->devtype_data->ahb_buf_size ||
-+	     (op->data.nbytes > q->devtype_data->rxfifo - 4 &&
-+	      !IS_ALIGNED(op->data.nbytes, 8))))
-+		return false;
-+
-+	if (op->data.dir == SPI_MEM_DATA_OUT &&
-+	    op->data.nbytes > q->devtype_data->txfifo)
-+		return false;
-+
-+	return true;
-+}
-+
-+static void fsl_qspi_prepare_lut(struct fsl_qspi *q,
-+				 const struct spi_mem_op *op)
-+{
-+	void __iomem *base = q->iobase;
-+	u32 lutval[4] = {};
-+	int lutidx = 1, i;
-+
-+	lutval[0] |= LUT_DEF(0, LUT_CMD, LUT_PAD(op->cmd.buswidth),
-+			     op->cmd.opcode);
-+
-+	/*
-+	 * For some unknown reason, using LUT_ADDR doesn't work in some
-+	 * cases (at least with only one byte long addresses), so
-+	 * let's use LUT_MODE to write the address bytes one by one
-+	 */
-+	for (i = 0; i < op->addr.nbytes; i++) {
-+		u8 addrbyte = op->addr.val >> (8 * (op->addr.nbytes - i - 1));
-+
-+		lutval[lutidx / 2] |= LUT_DEF(lutidx, LUT_MODE,
-+					      LUT_PAD(op->addr.buswidth),
-+					      addrbyte);
-+		lutidx++;
-+	}
-+
-+	if (op->dummy.nbytes) {
-+		lutval[lutidx / 2] |= LUT_DEF(lutidx, LUT_DUMMY,
-+					      LUT_PAD(op->dummy.buswidth),
-+					      op->dummy.nbytes * 8 /
-+					      op->dummy.buswidth);
-+		lutidx++;
-+	}
-+
-+	if (op->data.nbytes) {
-+		lutval[lutidx / 2] |= LUT_DEF(lutidx,
-+					      op->data.dir == SPI_MEM_DATA_IN ?
-+					      LUT_FSL_READ : LUT_FSL_WRITE,
-+					      LUT_PAD(op->data.buswidth),
-+					      0);
-+		lutidx++;
-+	}
-+
-+	lutval[lutidx / 2] |= LUT_DEF(lutidx, LUT_STOP, 0, 0);
-+
-+	/* unlock LUT */
-+	qspi_writel(q, QUADSPI_LUTKEY_VALUE, q->iobase + QUADSPI_LUTKEY);
-+	qspi_writel(q, QUADSPI_LCKER_UNLOCK, q->iobase + QUADSPI_LCKCR);
-+
-+	/* fill LUT */
-+	for (i = 0; i < ARRAY_SIZE(lutval); i++)
-+		qspi_writel(q, lutval[i], base + QUADSPI_LUT_REG(i));
-+
-+	/* lock LUT */
-+	qspi_writel(q, QUADSPI_LUTKEY_VALUE, q->iobase + QUADSPI_LUTKEY);
-+	qspi_writel(q, QUADSPI_LCKER_LOCK, q->iobase + QUADSPI_LCKCR);
-+}
-+
-+static int fsl_qspi_clk_prep_enable(struct fsl_qspi *q)
-+{
-+	int ret;
-+
-+	ret = clk_prepare_enable(q->clk_en);
-+	if (ret)
-+		return ret;
-+
-+	ret = clk_prepare_enable(q->clk);
-+	if (ret) {
-+		clk_disable_unprepare(q->clk_en);
-+		return ret;
-+	}
-+
-+	if (needs_wakeup_wait_mode(q))
-+		pm_qos_add_request(&q->pm_qos_req, PM_QOS_CPU_DMA_LATENCY, 0);
-+
-+	return 0;
-+}
-+
-+static void fsl_qspi_clk_disable_unprep(struct fsl_qspi *q)
-+{
-+	if (needs_wakeup_wait_mode(q))
-+		pm_qos_remove_request(&q->pm_qos_req);
-+
-+	clk_disable_unprepare(q->clk);
-+	clk_disable_unprepare(q->clk_en);
-+}
-+
-+/*
-+ * If we have changed the content of the flash by writing or erasing, or if we
-+ * read from flash with a different offset into the page buffer, we need to
-+ * invalidate the AHB buffer. If we do not do so, we may read out the wrong
-+ * data. The spec tells us reset the AHB domain and Serial Flash domain at
-+ * the same time.
-+ */
-+static void fsl_qspi_invalidate(struct fsl_qspi *q)
-+{
-+	u32 reg;
-+
-+	reg = qspi_readl(q, q->iobase + QUADSPI_MCR);
-+	reg |= QUADSPI_MCR_SWRSTHD_MASK | QUADSPI_MCR_SWRSTSD_MASK;
-+	qspi_writel(q, reg, q->iobase + QUADSPI_MCR);
-+
-+	/*
-+	 * The minimum delay : 1 AHB + 2 SFCK clocks.
-+	 * Delay 1 us is enough.
-+	 */
-+	udelay(1);
-+
-+	reg &= ~(QUADSPI_MCR_SWRSTHD_MASK | QUADSPI_MCR_SWRSTSD_MASK);
-+	qspi_writel(q, reg, q->iobase + QUADSPI_MCR);
-+}
-+
-+static void fsl_qspi_select_mem(struct fsl_qspi *q, struct spi_device *spi)
-+{
-+	unsigned long rate = spi->max_speed_hz;
-+	int ret;
-+
-+	if (q->selected == spi->chip_select)
-+		return;
-+
-+	if (needs_4x_clock(q))
-+		rate *= 4;
-+
-+	fsl_qspi_clk_disable_unprep(q);
-+
-+	ret = clk_set_rate(q->clk, rate);
-+	if (ret)
-+		return;
-+
-+	ret = fsl_qspi_clk_prep_enable(q);
-+	if (ret)
-+		return;
-+
-+	q->selected = spi->chip_select;
-+
-+	fsl_qspi_invalidate(q);
-+}
-+
-+static void fsl_qspi_read_ahb(struct fsl_qspi *q, const struct spi_mem_op *op)
-+{
-+	memcpy_fromio(op->data.buf.in,
-+		      q->ahb_addr + q->selected * q->devtype_data->ahb_buf_size,
-+		      op->data.nbytes);
-+}
-+
-+static void fsl_qspi_fill_txfifo(struct fsl_qspi *q,
-+				 const struct spi_mem_op *op)
-+{
-+	void __iomem *base = q->iobase;
-+	int i;
-+	u32 val;
-+
-+	for (i = 0; i < ALIGN_DOWN(op->data.nbytes, 4); i += 4) {
-+		memcpy(&val, op->data.buf.out + i, 4);
-+		val = fsl_qspi_endian_xchg(q, val);
-+		qspi_writel(q, val, base + QUADSPI_TBDR);
-+	}
-+
-+	if (i < op->data.nbytes) {
-+		memcpy(&val, op->data.buf.out + i, op->data.nbytes - i);
-+		val = fsl_qspi_endian_xchg(q, val);
-+		qspi_writel(q, val, base + QUADSPI_TBDR);
-+	}
-+
-+	if (needs_fill_txfifo(q)) {
-+		for (i = op->data.nbytes; i < 16; i += 4)
-+			qspi_writel(q, 0, base + QUADSPI_TBDR);
-+	}
-+}
-+
-+static void fsl_qspi_read_rxfifo(struct fsl_qspi *q,
-+			  const struct spi_mem_op *op)
-+{
-+	void __iomem *base = q->iobase;
-+	int i;
-+	u8 *buf = op->data.buf.in;
-+	u32 val;
-+
-+	for (i = 0; i < ALIGN_DOWN(op->data.nbytes, 4); i += 4) {
-+		val = qspi_readl(q, base + QUADSPI_RBDR(i / 4));
-+		val = fsl_qspi_endian_xchg(q, val);
-+		memcpy(buf + i, &val, 4);
-+	}
-+
-+	if (i < op->data.nbytes) {
-+		val = qspi_readl(q, base + QUADSPI_RBDR(i / 4));
-+		val = fsl_qspi_endian_xchg(q, val);
-+		memcpy(buf + i, &val, op->data.nbytes - i);
-+	}
-+}
-+
-+static int fsl_qspi_do_op(struct fsl_qspi *q, const struct spi_mem_op *op)
-+{
-+	void __iomem *base = q->iobase;
-+	int err = 0;
-+
-+	init_completion(&q->c);
-+
-+	/*
-+	 * Always start the sequence at the same index since we update
-+	 * the LUT at each exec_op() call. And also specify the DATA
-+	 * length, since it's has not been specified in the LUT.
-+	 */
-+	qspi_writel(q, op->data.nbytes | QUADSPI_IPCR_SEQID(SEQID_LUT),
-+		    base + QUADSPI_IPCR);
-+
-+	/* Wait for the interrupt. */
-+	if (!wait_for_completion_timeout(&q->c, msecs_to_jiffies(1000)))
-+		err = -ETIMEDOUT;
-+
-+	if (!err && op->data.nbytes && op->data.dir == SPI_MEM_DATA_IN)
-+		fsl_qspi_read_rxfifo(q, op);
-+
-+	return err;
-+}
-+
-+static int fsl_qspi_readl_poll_tout(struct fsl_qspi *q, void __iomem *base,
-+				    u32 mask, u32 delay_us, u32 timeout_us)
-+{
-+	u32 reg;
-+
-+	if (!q->devtype_data->little_endian)
-+		mask = (u32)cpu_to_be32(mask);
-+
-+	return readl_poll_timeout(base, reg, !(reg & mask), delay_us,
-+				  timeout_us);
-+}
-+
-+static int fsl_qspi_exec_op(struct spi_mem *mem, const struct spi_mem_op *op)
-+{
-+	struct fsl_qspi *q = spi_controller_get_devdata(mem->spi->master);
-+	void __iomem *base = q->iobase;
-+	u32 addr_offset = 0;
-+	int err = 0;
-+
-+	mutex_lock(&q->lock);
-+
-+	/* wait for the controller being ready */
-+	fsl_qspi_readl_poll_tout(q, base + QUADSPI_SR, (QUADSPI_SR_IP_ACC_MASK |
-+				 QUADSPI_SR_AHB_ACC_MASK), 10, 1000);
-+
-+	fsl_qspi_select_mem(q, mem->spi);
-+
-+	if (needs_amba_base_offset(q))
-+		addr_offset = q->memmap_phy;
-+
-+	qspi_writel(q,
-+		    q->selected * q->devtype_data->ahb_buf_size + addr_offset,
-+		    base + QUADSPI_SFAR);
-+
-+	qspi_writel(q, qspi_readl(q, base + QUADSPI_MCR) |
-+		    QUADSPI_MCR_CLR_RXF_MASK | QUADSPI_MCR_CLR_TXF_MASK,
-+		    base + QUADSPI_MCR);
-+
-+	qspi_writel(q, QUADSPI_SPTRCLR_BFPTRC | QUADSPI_SPTRCLR_IPPTRC,
-+		    base + QUADSPI_SPTRCLR);
-+
-+	fsl_qspi_prepare_lut(q, op);
-+
-+	/*
-+	 * If we have large chunks of data, we read them through the AHB bus
-+	 * by accessing the mapped memory. In all other cases we use
-+	 * IP commands to access the flash.
-+	 */
-+	if (op->data.nbytes > (q->devtype_data->rxfifo - 4) &&
-+	    op->data.dir == SPI_MEM_DATA_IN) {
-+		fsl_qspi_read_ahb(q, op);
-+	} else {
-+		qspi_writel(q, QUADSPI_RBCT_WMRK_MASK |
-+			    QUADSPI_RBCT_RXBRD_USEIPS, base + QUADSPI_RBCT);
-+
-+		if (op->data.nbytes && op->data.dir == SPI_MEM_DATA_OUT)
-+			fsl_qspi_fill_txfifo(q, op);
-+
-+		err = fsl_qspi_do_op(q, op);
-+	}
-+
-+	/* Invalidate the data in the AHB buffer. */
-+	fsl_qspi_invalidate(q);
-+
-+	mutex_unlock(&q->lock);
-+
-+	return err;
-+}
-+
-+static int fsl_qspi_adjust_op_size(struct spi_mem *mem, struct spi_mem_op *op)
-+{
-+	struct fsl_qspi *q = spi_controller_get_devdata(mem->spi->master);
-+
-+	if (op->data.dir == SPI_MEM_DATA_OUT) {
-+		if (op->data.nbytes > q->devtype_data->txfifo)
-+			op->data.nbytes = q->devtype_data->txfifo;
-+	} else {
-+		if (op->data.nbytes > q->devtype_data->ahb_buf_size)
-+			op->data.nbytes = q->devtype_data->ahb_buf_size;
-+		else if (op->data.nbytes > (q->devtype_data->rxfifo - 4))
-+			op->data.nbytes = ALIGN_DOWN(op->data.nbytes, 8);
-+	}
-+
-+	return 0;
-+}
-+
-+static int fsl_qspi_default_setup(struct fsl_qspi *q)
-+{
-+	void __iomem *base = q->iobase;
-+	u32 reg, addr_offset = 0;
-+	int ret;
-+
-+	/* disable and unprepare clock to avoid glitch pass to controller */
-+	fsl_qspi_clk_disable_unprep(q);
-+
-+	/* the default frequency, we will change it later if necessary. */
-+	ret = clk_set_rate(q->clk, 66000000);
-+	if (ret)
-+		return ret;
-+
-+	ret = fsl_qspi_clk_prep_enable(q);
-+	if (ret)
-+		return ret;
-+
-+	/* Reset the module */
-+	qspi_writel(q, QUADSPI_MCR_SWRSTSD_MASK | QUADSPI_MCR_SWRSTHD_MASK,
-+		    base + QUADSPI_MCR);
-+	udelay(1);
-+
-+	/* Disable the module */
-+	qspi_writel(q, QUADSPI_MCR_MDIS_MASK | QUADSPI_MCR_RESERVED_MASK,
-+		    base + QUADSPI_MCR);
-+
-+	reg = qspi_readl(q, base + QUADSPI_SMPR);
-+	qspi_writel(q, reg & ~(QUADSPI_SMPR_FSDLY_MASK
-+			| QUADSPI_SMPR_FSPHS_MASK
-+			| QUADSPI_SMPR_HSENA_MASK
-+			| QUADSPI_SMPR_DDRSMP_MASK), base + QUADSPI_SMPR);
-+
-+	/* We only use the buffer3 for AHB read */
-+	qspi_writel(q, 0, base + QUADSPI_BUF0IND);
-+	qspi_writel(q, 0, base + QUADSPI_BUF1IND);
-+	qspi_writel(q, 0, base + QUADSPI_BUF2IND);
-+
-+	qspi_writel(q, QUADSPI_BFGENCR_SEQID(SEQID_LUT),
-+		    q->iobase + QUADSPI_BFGENCR);
-+	qspi_writel(q, QUADSPI_RBCT_WMRK_MASK, base + QUADSPI_RBCT);
-+	qspi_writel(q, QUADSPI_BUF3CR_ALLMST_MASK |
-+		    QUADSPI_BUF3CR_ADATSZ(q->devtype_data->ahb_buf_size / 8),
-+		    base + QUADSPI_BUF3CR);
-+
-+	if (needs_amba_base_offset(q))
-+		addr_offset = q->memmap_phy;
-+
-+	/*
-+	 * In HW there can be a maximum of four chips on two buses with
-+	 * two chip selects on each bus. We use four chip selects in SW
-+	 * to differentiate between the four chips.
-+	 * We use ahb_buf_size for each chip and set SFA1AD, SFA2AD, SFB1AD,
-+	 * SFB2AD accordingly.
-+	 */
-+	qspi_writel(q, q->devtype_data->ahb_buf_size + addr_offset,
-+		    base + QUADSPI_SFA1AD);
-+	qspi_writel(q, q->devtype_data->ahb_buf_size * 2 + addr_offset,
-+		    base + QUADSPI_SFA2AD);
-+	qspi_writel(q, q->devtype_data->ahb_buf_size * 3 + addr_offset,
-+		    base + QUADSPI_SFB1AD);
-+	qspi_writel(q, q->devtype_data->ahb_buf_size * 4 + addr_offset,
-+		    base + QUADSPI_SFB2AD);
-+
-+	q->selected = -1;
-+
-+	/* Enable the module */
-+	qspi_writel(q, QUADSPI_MCR_RESERVED_MASK | QUADSPI_MCR_END_CFG_MASK,
-+		    base + QUADSPI_MCR);
-+
-+	/* clear all interrupt status */
-+	qspi_writel(q, 0xffffffff, q->iobase + QUADSPI_FR);
-+
-+	/* enable the interrupt */
-+	qspi_writel(q, QUADSPI_RSER_TFIE, q->iobase + QUADSPI_RSER);
-+
-+	return 0;
-+}
-+
-+static const char *fsl_qspi_get_name(struct spi_mem *mem)
-+{
-+	struct fsl_qspi *q = spi_controller_get_devdata(mem->spi->master);
-+	struct device *dev = &mem->spi->dev;
-+	const char *name;
-+
-+	/*
-+	 * In order to keep mtdparts compatible with the old MTD driver at
-+	 * mtd/spi-nor/fsl-quadspi.c, we set a custom name derived from the
-+	 * platform_device of the controller.
-+	 */
-+	if (of_get_available_child_count(q->dev->of_node) == 1)
-+		return dev_name(q->dev);
-+
-+	name = devm_kasprintf(dev, GFP_KERNEL,
-+			      "%s-%d", dev_name(q->dev),
-+			      mem->spi->chip_select);
-+
-+	if (!name) {
-+		dev_err(dev, "failed to get memory for custom flash name\n");
-+		return ERR_PTR(-ENOMEM);
-+	}
-+
-+	return name;
-+}
-+
-+static const struct spi_controller_mem_ops fsl_qspi_mem_ops = {
-+	.adjust_op_size = fsl_qspi_adjust_op_size,
-+	.supports_op = fsl_qspi_supports_op,
-+	.exec_op = fsl_qspi_exec_op,
-+	.get_name = fsl_qspi_get_name,
-+};
-+
-+static int fsl_qspi_probe(struct platform_device *pdev)
-+{
-+	struct spi_controller *ctlr;
-+	struct device *dev = &pdev->dev;
-+	struct device_node *np = dev->of_node;
-+	struct resource *res;
-+	struct fsl_qspi *q;
-+	int ret;
-+
-+	ctlr = spi_alloc_master(&pdev->dev, sizeof(*q));
-+	if (!ctlr)
-+		return -ENOMEM;
-+
-+	ctlr->mode_bits = SPI_RX_DUAL | SPI_RX_QUAD |
-+			  SPI_TX_DUAL | SPI_TX_QUAD;
-+
-+	q = spi_controller_get_devdata(ctlr);
-+	q->dev = dev;
-+	q->devtype_data = of_device_get_match_data(dev);
-+	if (!q->devtype_data) {
-+		ret = -ENODEV;
-+		goto err_put_ctrl;
-+	}
-+
-+	platform_set_drvdata(pdev, q);
-+
-+	/* find the resources */
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "QuadSPI");
-+	q->iobase = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(q->iobase)) {
-+		ret = PTR_ERR(q->iobase);
-+		goto err_put_ctrl;
-+	}
-+
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
-+					"QuadSPI-memory");
-+	q->ahb_addr = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(q->ahb_addr)) {
-+		ret = PTR_ERR(q->ahb_addr);
-+		goto err_put_ctrl;
-+	}
-+
-+	q->memmap_phy = res->start;
-+
-+	/* find the clocks */
-+	q->clk_en = devm_clk_get(dev, "qspi_en");
-+	if (IS_ERR(q->clk_en)) {
-+		ret = PTR_ERR(q->clk_en);
-+		goto err_put_ctrl;
-+	}
-+
-+	q->clk = devm_clk_get(dev, "qspi");
-+	if (IS_ERR(q->clk)) {
-+		ret = PTR_ERR(q->clk);
-+		goto err_put_ctrl;
-+	}
-+
-+	ret = fsl_qspi_clk_prep_enable(q);
-+	if (ret) {
-+		dev_err(dev, "can not enable the clock\n");
-+		goto err_put_ctrl;
-+	}
-+
-+	/* find the irq */
-+	ret = platform_get_irq(pdev, 0);
-+	if (ret < 0) {
-+		dev_err(dev, "failed to get the irq: %d\n", ret);
-+		goto err_disable_clk;
-+	}
-+
-+	ret = devm_request_irq(dev, ret,
-+			fsl_qspi_irq_handler, 0, pdev->name, q);
-+	if (ret) {
-+		dev_err(dev, "failed to request irq: %d\n", ret);
-+		goto err_disable_clk;
-+	}
-+
-+	mutex_init(&q->lock);
-+
-+	ctlr->bus_num = -1;
-+	ctlr->num_chipselect = 4;
-+	ctlr->mem_ops = &fsl_qspi_mem_ops;
-+
-+	fsl_qspi_default_setup(q);
-+
-+	ctlr->dev.of_node = np;
-+
-+	ret = spi_register_controller(ctlr);
-+	if (ret)
-+		goto err_destroy_mutex;
-+
-+	return 0;
-+
-+err_destroy_mutex:
-+	mutex_destroy(&q->lock);
-+
-+err_disable_clk:
-+	fsl_qspi_clk_disable_unprep(q);
-+
-+err_put_ctrl:
-+	spi_controller_put(ctlr);
-+
-+	dev_err(dev, "Freescale QuadSPI probe failed\n");
-+	return ret;
-+}
-+
-+static int fsl_qspi_remove(struct platform_device *pdev)
-+{
-+	struct fsl_qspi *q = platform_get_drvdata(pdev);
-+
-+	/* disable the hardware */
-+	qspi_writel(q, QUADSPI_MCR_MDIS_MASK, q->iobase + QUADSPI_MCR);
-+	qspi_writel(q, 0x0, q->iobase + QUADSPI_RSER);
-+
-+	fsl_qspi_clk_disable_unprep(q);
-+
-+	mutex_destroy(&q->lock);
-+
-+	return 0;
-+}
-+
-+static int fsl_qspi_suspend(struct device *dev)
-+{
-+	return 0;
-+}
-+
-+static int fsl_qspi_resume(struct device *dev)
-+{
-+	struct fsl_qspi *q = dev_get_drvdata(dev);
-+
-+	fsl_qspi_default_setup(q);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id fsl_qspi_dt_ids[] = {
-+	{ .compatible = "fsl,vf610-qspi", .data = &vybrid_data, },
-+	{ .compatible = "fsl,imx6sx-qspi", .data = &imx6sx_data, },
-+	{ .compatible = "fsl,imx7d-qspi", .data = &imx7d_data, },
-+	{ .compatible = "fsl,imx6ul-qspi", .data = &imx6ul_data, },
-+	{ .compatible = "fsl,ls1021a-qspi", .data = &ls1021a_data, },
-+	{ .compatible = "fsl,ls2080a-qspi", .data = &ls2080a_data, },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, fsl_qspi_dt_ids);
-+
-+static const struct dev_pm_ops fsl_qspi_pm_ops = {
-+	.suspend	= fsl_qspi_suspend,
-+	.resume		= fsl_qspi_resume,
-+};
-+
-+static struct platform_driver fsl_qspi_driver = {
-+	.driver = {
-+		.name	= "fsl-quadspi",
-+		.of_match_table = fsl_qspi_dt_ids,
-+		.pm =   &fsl_qspi_pm_ops,
-+	},
-+	.probe          = fsl_qspi_probe,
-+	.remove		= fsl_qspi_remove,
-+};
-+module_platform_driver(fsl_qspi_driver);
-+
-+MODULE_DESCRIPTION("Freescale QuadSPI Controller Driver");
-+MODULE_AUTHOR("Freescale Semiconductor Inc.");
-+MODULE_AUTHOR("Boris Brezillion <boris.brezillon@bootlin.com>");
-+MODULE_AUTHOR("Frieder Schrempf <frieder.schrempf@kontron.de>");
-+MODULE_AUTHOR("Yogesh Gaur <yogeshnarayan.gaur@nxp.com>");
-+MODULE_AUTHOR("Suresh Gupta <suresh.gupta@nxp.com>");
-+MODULE_LICENSE("GPL v2");
+diff --git a/arch/m68k/configs/amcore_defconfig b/arch/m68k/configs/amcore_defconfig
+index 131b4101ae5df2e6..1ba10d57ddb14fec 100644
+--- a/arch/m68k/configs/amcore_defconfig
++++ b/arch/m68k/configs/amcore_defconfig
+@@ -55,27 +55,7 @@ CONFIG_MTD_UCLINUX=y
+ CONFIG_MTD_PLATRAM=y
+ CONFIG_BLK_DEV_RAM=y
+ CONFIG_NETDEVICES=y
+-# CONFIG_NET_VENDOR_AMAZON is not set
+-# CONFIG_NET_VENDOR_ARC is not set
+-# CONFIG_NET_CADENCE is not set
+-# CONFIG_NET_VENDOR_BROADCOM is not set
+ CONFIG_DM9000=y
+-# CONFIG_NET_VENDOR_EZCHIP is not set
+-# CONFIG_NET_VENDOR_INTEL is not set
+-# CONFIG_NET_VENDOR_MARVELL is not set
+-# CONFIG_NET_VENDOR_MICREL is not set
+-# CONFIG_NET_VENDOR_NATSEMI is not set
+-# CONFIG_NET_VENDOR_NETRONOME is not set
+-# CONFIG_NET_VENDOR_QUALCOMM is not set
+-# CONFIG_NET_VENDOR_RENESAS is not set
+-# CONFIG_NET_VENDOR_ROCKER is not set
+-# CONFIG_NET_VENDOR_SAMSUNG is not set
+-# CONFIG_NET_VENDOR_SEEQ is not set
+-# CONFIG_NET_VENDOR_SMSC is not set
+-# CONFIG_NET_VENDOR_STMICRO is not set
+-# CONFIG_NET_VENDOR_SYNOPSYS is not set
+-# CONFIG_NET_VENDOR_VIA is not set
+-# CONFIG_NET_VENDOR_WIZNET is not set
+ # CONFIG_WLAN is not set
+ # CONFIG_INPUT is not set
+ # CONFIG_SERIO is not set
+diff --git a/arch/m68k/configs/amiga_defconfig b/arch/m68k/configs/amiga_defconfig
+index de88ccaeb92ab5fe..525421ae277d6ebc 100644
+--- a/arch/m68k/configs/amiga_defconfig
++++ b/arch/m68k/configs/amiga_defconfig
+@@ -396,44 +396,12 @@ CONFIG_MACSEC=m
+ CONFIG_NETCONSOLE=m
+ CONFIG_NETCONSOLE_DYNAMIC=y
+ CONFIG_VETH=m
+-# CONFIG_NET_VENDOR_3COM is not set
+-# CONFIG_NET_VENDOR_ALACRITECH is not set
+-# CONFIG_NET_VENDOR_AMAZON is not set
+ CONFIG_A2065=y
+ CONFIG_ARIADNE=y
+-# CONFIG_NET_VENDOR_AQUANTIA is not set
+-# CONFIG_NET_VENDOR_ARC is not set
+-# CONFIG_NET_VENDOR_AURORA is not set
+-# CONFIG_NET_VENDOR_BROADCOM is not set
+-# CONFIG_NET_VENDOR_CADENCE is not set
+-# CONFIG_NET_VENDOR_CAVIUM is not set
+-# CONFIG_NET_VENDOR_CIRRUS is not set
+-# CONFIG_NET_VENDOR_CORTINA is not set
+-# CONFIG_NET_VENDOR_EZCHIP is not set
+-# CONFIG_NET_VENDOR_HP is not set
+-# CONFIG_NET_VENDOR_HUAWEI is not set
+-# CONFIG_NET_VENDOR_INTEL is not set
+-# CONFIG_NET_VENDOR_MARVELL is not set
+-# CONFIG_NET_VENDOR_MICREL is not set
+-# CONFIG_NET_VENDOR_MICROSEMI is not set
+-# CONFIG_NET_VENDOR_NETRONOME is not set
+-# CONFIG_NET_VENDOR_NI is not set
+ CONFIG_XSURF100=y
+ CONFIG_HYDRA=y
+ CONFIG_APNE=y
+ CONFIG_ZORRO8390=y
+-# CONFIG_NET_VENDOR_QUALCOMM is not set
+-# CONFIG_NET_VENDOR_RENESAS is not set
+-# CONFIG_NET_VENDOR_ROCKER is not set
+-# CONFIG_NET_VENDOR_SAMSUNG is not set
+-# CONFIG_NET_VENDOR_SEEQ is not set
+-# CONFIG_NET_VENDOR_SOLARFLARE is not set
+-# CONFIG_NET_VENDOR_SMSC is not set
+-# CONFIG_NET_VENDOR_SOCIONEXT is not set
+-# CONFIG_NET_VENDOR_STMICRO is not set
+-# CONFIG_NET_VENDOR_SYNOPSYS is not set
+-# CONFIG_NET_VENDOR_VIA is not set
+-# CONFIG_NET_VENDOR_WIZNET is not set
+ CONFIG_PPP=m
+ CONFIG_PPP_BSDCOMP=m
+ CONFIG_PPP_DEFLATE=m
+diff --git a/arch/m68k/configs/apollo_defconfig b/arch/m68k/configs/apollo_defconfig
+index 87b0f7f3973df2d9..db0e654a88d537d0 100644
+--- a/arch/m68k/configs/apollo_defconfig
++++ b/arch/m68k/configs/apollo_defconfig
+@@ -375,35 +375,6 @@ CONFIG_MACSEC=m
+ CONFIG_NETCONSOLE=m
+ CONFIG_NETCONSOLE_DYNAMIC=y
+ CONFIG_VETH=m
+-# CONFIG_NET_VENDOR_ALACRITECH is not set
+-# CONFIG_NET_VENDOR_AMAZON is not set
+-# CONFIG_NET_VENDOR_AQUANTIA is not set
+-# CONFIG_NET_VENDOR_ARC is not set
+-# CONFIG_NET_VENDOR_AURORA is not set
+-# CONFIG_NET_VENDOR_BROADCOM is not set
+-# CONFIG_NET_VENDOR_CADENCE is not set
+-# CONFIG_NET_VENDOR_CAVIUM is not set
+-# CONFIG_NET_VENDOR_CORTINA is not set
+-# CONFIG_NET_VENDOR_EZCHIP is not set
+-# CONFIG_NET_VENDOR_HUAWEI is not set
+-# CONFIG_NET_VENDOR_INTEL is not set
+-# CONFIG_NET_VENDOR_MARVELL is not set
+-# CONFIG_NET_VENDOR_MICREL is not set
+-# CONFIG_NET_VENDOR_MICROSEMI is not set
+-# CONFIG_NET_VENDOR_NATSEMI is not set
+-# CONFIG_NET_VENDOR_NETRONOME is not set
+-# CONFIG_NET_VENDOR_NI is not set
+-# CONFIG_NET_VENDOR_QUALCOMM is not set
+-# CONFIG_NET_VENDOR_RENESAS is not set
+-# CONFIG_NET_VENDOR_ROCKER is not set
+-# CONFIG_NET_VENDOR_SAMSUNG is not set
+-# CONFIG_NET_VENDOR_SEEQ is not set
+-# CONFIG_NET_VENDOR_SOLARFLARE is not set
+-# CONFIG_NET_VENDOR_SOCIONEXT is not set
+-# CONFIG_NET_VENDOR_STMICRO is not set
+-# CONFIG_NET_VENDOR_SYNOPSYS is not set
+-# CONFIG_NET_VENDOR_VIA is not set
+-# CONFIG_NET_VENDOR_WIZNET is not set
+ CONFIG_PPP=m
+ CONFIG_PPP_BSDCOMP=m
+ CONFIG_PPP_DEFLATE=m
+diff --git a/arch/m68k/configs/atari_defconfig b/arch/m68k/configs/atari_defconfig
+index 07c6c3febff77861..95b4a399feb75b91 100644
+--- a/arch/m68k/configs/atari_defconfig
++++ b/arch/m68k/configs/atari_defconfig
+@@ -391,37 +391,9 @@ CONFIG_MACSEC=m
+ CONFIG_NETCONSOLE=m
+ CONFIG_NETCONSOLE_DYNAMIC=y
+ CONFIG_VETH=m
+-# CONFIG_NET_VENDOR_ALACRITECH is not set
+-# CONFIG_NET_VENDOR_AMAZON is not set
+ CONFIG_ATARILANCE=y
+-# CONFIG_NET_VENDOR_AQUANTIA is not set
+-# CONFIG_NET_VENDOR_ARC is not set
+-# CONFIG_NET_VENDOR_AURORA is not set
+-# CONFIG_NET_VENDOR_BROADCOM is not set
+-# CONFIG_NET_VENDOR_CADENCE is not set
+-# CONFIG_NET_VENDOR_CAVIUM is not set
+-# CONFIG_NET_VENDOR_CORTINA is not set
+-# CONFIG_NET_VENDOR_EZCHIP is not set
+-# CONFIG_NET_VENDOR_HUAWEI is not set
+-# CONFIG_NET_VENDOR_INTEL is not set
+-# CONFIG_NET_VENDOR_MARVELL is not set
+-# CONFIG_NET_VENDOR_MICREL is not set
+-# CONFIG_NET_VENDOR_MICROSEMI is not set
+-# CONFIG_NET_VENDOR_NETRONOME is not set
+-# CONFIG_NET_VENDOR_NI is not set
+ CONFIG_NE2000=y
+-# CONFIG_NET_VENDOR_QUALCOMM is not set
+-# CONFIG_NET_VENDOR_RENESAS is not set
+-# CONFIG_NET_VENDOR_ROCKER is not set
+-# CONFIG_NET_VENDOR_SAMSUNG is not set
+-# CONFIG_NET_VENDOR_SEEQ is not set
+-# CONFIG_NET_VENDOR_SOLARFLARE is not set
+ CONFIG_SMC91X=y
+-# CONFIG_NET_VENDOR_SOCIONEXT is not set
+-# CONFIG_NET_VENDOR_STMICRO is not set
+-# CONFIG_NET_VENDOR_SYNOPSYS is not set
+-# CONFIG_NET_VENDOR_VIA is not set
+-# CONFIG_NET_VENDOR_WIZNET is not set
+ CONFIG_PPP=m
+ CONFIG_PPP_BSDCOMP=m
+ CONFIG_PPP_DEFLATE=m
+diff --git a/arch/m68k/configs/bvme6000_defconfig b/arch/m68k/configs/bvme6000_defconfig
+index 152f621df393d3ca..b0d3609f5bb3c77f 100644
+--- a/arch/m68k/configs/bvme6000_defconfig
++++ b/arch/m68k/configs/bvme6000_defconfig
+@@ -373,35 +373,7 @@ CONFIG_MACSEC=m
+ CONFIG_NETCONSOLE=m
+ CONFIG_NETCONSOLE_DYNAMIC=y
+ CONFIG_VETH=m
+-# CONFIG_NET_VENDOR_ALACRITECH is not set
+-# CONFIG_NET_VENDOR_AMAZON is not set
+-# CONFIG_NET_VENDOR_AQUANTIA is not set
+-# CONFIG_NET_VENDOR_ARC is not set
+-# CONFIG_NET_VENDOR_AURORA is not set
+-# CONFIG_NET_VENDOR_BROADCOM is not set
+-# CONFIG_NET_VENDOR_CADENCE is not set
+-# CONFIG_NET_VENDOR_CAVIUM is not set
+-# CONFIG_NET_VENDOR_CORTINA is not set
+-# CONFIG_NET_VENDOR_EZCHIP is not set
+-# CONFIG_NET_VENDOR_HUAWEI is not set
+ CONFIG_BVME6000_NET=y
+-# CONFIG_NET_VENDOR_MARVELL is not set
+-# CONFIG_NET_VENDOR_MICREL is not set
+-# CONFIG_NET_VENDOR_MICROSEMI is not set
+-# CONFIG_NET_VENDOR_NATSEMI is not set
+-# CONFIG_NET_VENDOR_NETRONOME is not set
+-# CONFIG_NET_VENDOR_NI is not set
+-# CONFIG_NET_VENDOR_QUALCOMM is not set
+-# CONFIG_NET_VENDOR_RENESAS is not set
+-# CONFIG_NET_VENDOR_ROCKER is not set
+-# CONFIG_NET_VENDOR_SAMSUNG is not set
+-# CONFIG_NET_VENDOR_SEEQ is not set
+-# CONFIG_NET_VENDOR_SOLARFLARE is not set
+-# CONFIG_NET_VENDOR_SOCIONEXT is not set
+-# CONFIG_NET_VENDOR_STMICRO is not set
+-# CONFIG_NET_VENDOR_SYNOPSYS is not set
+-# CONFIG_NET_VENDOR_VIA is not set
+-# CONFIG_NET_VENDOR_WIZNET is not set
+ CONFIG_PPP=m
+ CONFIG_PPP_BSDCOMP=m
+ CONFIG_PPP_DEFLATE=m
+diff --git a/arch/m68k/configs/hp300_defconfig b/arch/m68k/configs/hp300_defconfig
+index b450d5bfe2a930c6..4ed7c151347cdc13 100644
+--- a/arch/m68k/configs/hp300_defconfig
++++ b/arch/m68k/configs/hp300_defconfig
+@@ -374,36 +374,7 @@ CONFIG_MACSEC=m
+ CONFIG_NETCONSOLE=m
+ CONFIG_NETCONSOLE_DYNAMIC=y
+ CONFIG_VETH=m
+-# CONFIG_NET_VENDOR_ALACRITECH is not set
+-# CONFIG_NET_VENDOR_AMAZON is not set
+ CONFIG_HPLANCE=y
+-# CONFIG_NET_VENDOR_AQUANTIA is not set
+-# CONFIG_NET_VENDOR_ARC is not set
+-# CONFIG_NET_VENDOR_AURORA is not set
+-# CONFIG_NET_VENDOR_BROADCOM is not set
+-# CONFIG_NET_VENDOR_CADENCE is not set
+-# CONFIG_NET_VENDOR_CAVIUM is not set
+-# CONFIG_NET_VENDOR_CORTINA is not set
+-# CONFIG_NET_VENDOR_EZCHIP is not set
+-# CONFIG_NET_VENDOR_HUAWEI is not set
+-# CONFIG_NET_VENDOR_INTEL is not set
+-# CONFIG_NET_VENDOR_MARVELL is not set
+-# CONFIG_NET_VENDOR_MICREL is not set
+-# CONFIG_NET_VENDOR_MICROSEMI is not set
+-# CONFIG_NET_VENDOR_NATSEMI is not set
+-# CONFIG_NET_VENDOR_NETRONOME is not set
+-# CONFIG_NET_VENDOR_NI is not set
+-# CONFIG_NET_VENDOR_QUALCOMM is not set
+-# CONFIG_NET_VENDOR_RENESAS is not set
+-# CONFIG_NET_VENDOR_ROCKER is not set
+-# CONFIG_NET_VENDOR_SAMSUNG is not set
+-# CONFIG_NET_VENDOR_SEEQ is not set
+-# CONFIG_NET_VENDOR_SOLARFLARE is not set
+-# CONFIG_NET_VENDOR_SOCIONEXT is not set
+-# CONFIG_NET_VENDOR_STMICRO is not set
+-# CONFIG_NET_VENDOR_SYNOPSYS is not set
+-# CONFIG_NET_VENDOR_VIA is not set
+-# CONFIG_NET_VENDOR_WIZNET is not set
+ CONFIG_PPP=m
+ CONFIG_PPP_BSDCOMP=m
+ CONFIG_PPP_DEFLATE=m
+diff --git a/arch/m68k/configs/mac_defconfig b/arch/m68k/configs/mac_defconfig
+index 3777ed55064cd283..0dc544e1ce1fb02a 100644
+--- a/arch/m68k/configs/mac_defconfig
++++ b/arch/m68k/configs/mac_defconfig
+@@ -390,39 +390,10 @@ CONFIG_MACSEC=m
+ CONFIG_NETCONSOLE=m
+ CONFIG_NETCONSOLE_DYNAMIC=y
+ CONFIG_VETH=m
+-# CONFIG_NET_VENDOR_ALACRITECH is not set
+-# CONFIG_NET_VENDOR_AMAZON is not set
+ CONFIG_MACMACE=y
+-# CONFIG_NET_VENDOR_AQUANTIA is not set
+-# CONFIG_NET_VENDOR_ARC is not set
+-# CONFIG_NET_VENDOR_AURORA is not set
+-# CONFIG_NET_VENDOR_BROADCOM is not set
+-# CONFIG_NET_VENDOR_CADENCE is not set
+-# CONFIG_NET_VENDOR_CAVIUM is not set
+ CONFIG_MAC89x0=y
+-# CONFIG_NET_VENDOR_CORTINA is not set
+-# CONFIG_NET_VENDOR_EZCHIP is not set
+-# CONFIG_NET_VENDOR_HUAWEI is not set
+-# CONFIG_NET_VENDOR_INTEL is not set
+-# CONFIG_NET_VENDOR_MARVELL is not set
+-# CONFIG_NET_VENDOR_MICREL is not set
+-# CONFIG_NET_VENDOR_MICROSEMI is not set
+ CONFIG_MACSONIC=y
+-# CONFIG_NET_VENDOR_NETRONOME is not set
+-# CONFIG_NET_VENDOR_NI is not set
+ CONFIG_MAC8390=y
+-# CONFIG_NET_VENDOR_QUALCOMM is not set
+-# CONFIG_NET_VENDOR_RENESAS is not set
+-# CONFIG_NET_VENDOR_ROCKER is not set
+-# CONFIG_NET_VENDOR_SAMSUNG is not set
+-# CONFIG_NET_VENDOR_SEEQ is not set
+-# CONFIG_NET_VENDOR_SOLARFLARE is not set
+-# CONFIG_NET_VENDOR_SMSC is not set
+-# CONFIG_NET_VENDOR_SOCIONEXT is not set
+-# CONFIG_NET_VENDOR_STMICRO is not set
+-# CONFIG_NET_VENDOR_SYNOPSYS is not set
+-# CONFIG_NET_VENDOR_VIA is not set
+-# CONFIG_NET_VENDOR_WIZNET is not set
+ CONFIG_PPP=m
+ CONFIG_PPP_BSDCOMP=m
+ CONFIG_PPP_DEFLATE=m
+diff --git a/arch/m68k/configs/multi_defconfig b/arch/m68k/configs/multi_defconfig
+index 2d7e1c4330671c51..5a7b7b0d6e72e293 100644
+--- a/arch/m68k/configs/multi_defconfig
++++ b/arch/m68k/configs/multi_defconfig
+@@ -434,9 +434,6 @@ CONFIG_MACSEC=m
+ CONFIG_NETCONSOLE=m
+ CONFIG_NETCONSOLE_DYNAMIC=y
+ CONFIG_VETH=m
+-# CONFIG_NET_VENDOR_3COM is not set
+-# CONFIG_NET_VENDOR_ALACRITECH is not set
+-# CONFIG_NET_VENDOR_AMAZON is not set
+ CONFIG_A2065=y
+ CONFIG_ARIADNE=y
+ CONFIG_ATARILANCE=y
+@@ -444,43 +441,17 @@ CONFIG_HPLANCE=y
+ CONFIG_MVME147_NET=y
+ CONFIG_SUN3LANCE=y
+ CONFIG_MACMACE=y
+-# CONFIG_NET_VENDOR_AQUANTIA is not set
+-# CONFIG_NET_VENDOR_ARC is not set
+-# CONFIG_NET_VENDOR_AURORA is not set
+-# CONFIG_NET_VENDOR_BROADCOM is not set
+-# CONFIG_NET_VENDOR_CADENCE is not set
+-# CONFIG_NET_VENDOR_CAVIUM is not set
+ CONFIG_MAC89x0=y
+-# CONFIG_NET_VENDOR_CORTINA is not set
+-# CONFIG_NET_VENDOR_EZCHIP is not set
+-# CONFIG_NET_VENDOR_HP is not set
+-# CONFIG_NET_VENDOR_HUAWEI is not set
+ CONFIG_BVME6000_NET=y
+ CONFIG_MVME16x_NET=y
+-# CONFIG_NET_VENDOR_MARVELL is not set
+-# CONFIG_NET_VENDOR_MICREL is not set
+-# CONFIG_NET_VENDOR_MICROSEMI is not set
+ CONFIG_MACSONIC=y
+-# CONFIG_NET_VENDOR_NETRONOME is not set
+-# CONFIG_NET_VENDOR_NI is not set
+ CONFIG_XSURF100=y
+ CONFIG_HYDRA=y
+ CONFIG_MAC8390=y
+ CONFIG_NE2000=y
+ CONFIG_APNE=y
+ CONFIG_ZORRO8390=y
+-# CONFIG_NET_VENDOR_QUALCOMM is not set
+-# CONFIG_NET_VENDOR_RENESAS is not set
+-# CONFIG_NET_VENDOR_ROCKER is not set
+-# CONFIG_NET_VENDOR_SAMSUNG is not set
+-# CONFIG_NET_VENDOR_SEEQ is not set
+-# CONFIG_NET_VENDOR_SOLARFLARE is not set
+ CONFIG_SMC91X=y
+-# CONFIG_NET_VENDOR_SOCIONEXT is not set
+-# CONFIG_NET_VENDOR_STMICRO is not set
+-# CONFIG_NET_VENDOR_SYNOPSYS is not set
+-# CONFIG_NET_VENDOR_VIA is not set
+-# CONFIG_NET_VENDOR_WIZNET is not set
+ CONFIG_PLIP=m
+ CONFIG_PPP=m
+ CONFIG_PPP_BSDCOMP=m
+diff --git a/arch/m68k/configs/mvme147_defconfig b/arch/m68k/configs/mvme147_defconfig
+index 0be202bb4553d5ac..71eb9be1803b1006 100644
+--- a/arch/m68k/configs/mvme147_defconfig
++++ b/arch/m68k/configs/mvme147_defconfig
+@@ -372,36 +372,7 @@ CONFIG_MACSEC=m
+ CONFIG_NETCONSOLE=m
+ CONFIG_NETCONSOLE_DYNAMIC=y
+ CONFIG_VETH=m
+-# CONFIG_NET_VENDOR_ALACRITECH is not set
+-# CONFIG_NET_VENDOR_AMAZON is not set
+ CONFIG_MVME147_NET=y
+-# CONFIG_NET_VENDOR_AQUANTIA is not set
+-# CONFIG_NET_VENDOR_ARC is not set
+-# CONFIG_NET_VENDOR_AURORA is not set
+-# CONFIG_NET_VENDOR_BROADCOM is not set
+-# CONFIG_NET_VENDOR_CADENCE is not set
+-# CONFIG_NET_VENDOR_CAVIUM is not set
+-# CONFIG_NET_VENDOR_CORTINA is not set
+-# CONFIG_NET_VENDOR_EZCHIP is not set
+-# CONFIG_NET_VENDOR_HUAWEI is not set
+-# CONFIG_NET_VENDOR_INTEL is not set
+-# CONFIG_NET_VENDOR_MARVELL is not set
+-# CONFIG_NET_VENDOR_MICREL is not set
+-# CONFIG_NET_VENDOR_MICROSEMI is not set
+-# CONFIG_NET_VENDOR_NATSEMI is not set
+-# CONFIG_NET_VENDOR_NETRONOME is not set
+-# CONFIG_NET_VENDOR_NI is not set
+-# CONFIG_NET_VENDOR_QUALCOMM is not set
+-# CONFIG_NET_VENDOR_RENESAS is not set
+-# CONFIG_NET_VENDOR_ROCKER is not set
+-# CONFIG_NET_VENDOR_SAMSUNG is not set
+-# CONFIG_NET_VENDOR_SEEQ is not set
+-# CONFIG_NET_VENDOR_SOLARFLARE is not set
+-# CONFIG_NET_VENDOR_SOCIONEXT is not set
+-# CONFIG_NET_VENDOR_STMICRO is not set
+-# CONFIG_NET_VENDOR_SYNOPSYS is not set
+-# CONFIG_NET_VENDOR_VIA is not set
+-# CONFIG_NET_VENDOR_WIZNET is not set
+ CONFIG_PPP=m
+ CONFIG_PPP_BSDCOMP=m
+ CONFIG_PPP_DEFLATE=m
+diff --git a/arch/m68k/configs/mvme16x_defconfig b/arch/m68k/configs/mvme16x_defconfig
+index c5cd30c455135193..ea2ebd4241c03992 100644
+--- a/arch/m68k/configs/mvme16x_defconfig
++++ b/arch/m68k/configs/mvme16x_defconfig
+@@ -373,35 +373,7 @@ CONFIG_MACSEC=m
+ CONFIG_NETCONSOLE=m
+ CONFIG_NETCONSOLE_DYNAMIC=y
+ CONFIG_VETH=m
+-# CONFIG_NET_VENDOR_ALACRITECH is not set
+-# CONFIG_NET_VENDOR_AMAZON is not set
+-# CONFIG_NET_VENDOR_AQUANTIA is not set
+-# CONFIG_NET_VENDOR_ARC is not set
+-# CONFIG_NET_VENDOR_AURORA is not set
+-# CONFIG_NET_VENDOR_BROADCOM is not set
+-# CONFIG_NET_VENDOR_CADENCE is not set
+-# CONFIG_NET_VENDOR_CAVIUM is not set
+-# CONFIG_NET_VENDOR_CORTINA is not set
+-# CONFIG_NET_VENDOR_EZCHIP is not set
+-# CONFIG_NET_VENDOR_HUAWEI is not set
+ CONFIG_MVME16x_NET=y
+-# CONFIG_NET_VENDOR_MARVELL is not set
+-# CONFIG_NET_VENDOR_MICREL is not set
+-# CONFIG_NET_VENDOR_MICROSEMI is not set
+-# CONFIG_NET_VENDOR_NATSEMI is not set
+-# CONFIG_NET_VENDOR_NETRONOME is not set
+-# CONFIG_NET_VENDOR_NI is not set
+-# CONFIG_NET_VENDOR_QUALCOMM is not set
+-# CONFIG_NET_VENDOR_RENESAS is not set
+-# CONFIG_NET_VENDOR_ROCKER is not set
+-# CONFIG_NET_VENDOR_SAMSUNG is not set
+-# CONFIG_NET_VENDOR_SEEQ is not set
+-# CONFIG_NET_VENDOR_SOLARFLARE is not set
+-# CONFIG_NET_VENDOR_SOCIONEXT is not set
+-# CONFIG_NET_VENDOR_STMICRO is not set
+-# CONFIG_NET_VENDOR_SYNOPSYS is not set
+-# CONFIG_NET_VENDOR_VIA is not set
+-# CONFIG_NET_VENDOR_WIZNET is not set
+ CONFIG_PPP=m
+ CONFIG_PPP_BSDCOMP=m
+ CONFIG_PPP_DEFLATE=m
+diff --git a/arch/m68k/configs/q40_defconfig b/arch/m68k/configs/q40_defconfig
+index fbfda56bd3cb9e3b..cef6dc47c7250d32 100644
+--- a/arch/m68k/configs/q40_defconfig
++++ b/arch/m68k/configs/q40_defconfig
+@@ -380,40 +380,7 @@ CONFIG_MACSEC=m
+ CONFIG_NETCONSOLE=m
+ CONFIG_NETCONSOLE_DYNAMIC=y
+ CONFIG_VETH=m
+-# CONFIG_NET_VENDOR_3COM is not set
+-# CONFIG_NET_VENDOR_ALACRITECH is not set
+-# CONFIG_NET_VENDOR_AMAZON is not set
+-# CONFIG_NET_VENDOR_AMD is not set
+-# CONFIG_NET_VENDOR_AQUANTIA is not set
+-# CONFIG_NET_VENDOR_ARC is not set
+-# CONFIG_NET_VENDOR_AURORA is not set
+-# CONFIG_NET_VENDOR_BROADCOM is not set
+-# CONFIG_NET_VENDOR_CADENCE is not set
+-# CONFIG_NET_VENDOR_CAVIUM is not set
+-# CONFIG_NET_VENDOR_CIRRUS is not set
+-# CONFIG_NET_VENDOR_CORTINA is not set
+-# CONFIG_NET_VENDOR_EZCHIP is not set
+-# CONFIG_NET_VENDOR_HP is not set
+-# CONFIG_NET_VENDOR_HUAWEI is not set
+-# CONFIG_NET_VENDOR_INTEL is not set
+-# CONFIG_NET_VENDOR_MARVELL is not set
+-# CONFIG_NET_VENDOR_MICREL is not set
+-# CONFIG_NET_VENDOR_MICROSEMI is not set
+-# CONFIG_NET_VENDOR_NETRONOME is not set
+-# CONFIG_NET_VENDOR_NI is not set
+ CONFIG_NE2000=y
+-# CONFIG_NET_VENDOR_QUALCOMM is not set
+-# CONFIG_NET_VENDOR_RENESAS is not set
+-# CONFIG_NET_VENDOR_ROCKER is not set
+-# CONFIG_NET_VENDOR_SAMSUNG is not set
+-# CONFIG_NET_VENDOR_SEEQ is not set
+-# CONFIG_NET_VENDOR_SOLARFLARE is not set
+-# CONFIG_NET_VENDOR_SMSC is not set
+-# CONFIG_NET_VENDOR_SOCIONEXT is not set
+-# CONFIG_NET_VENDOR_STMICRO is not set
+-# CONFIG_NET_VENDOR_SYNOPSYS is not set
+-# CONFIG_NET_VENDOR_VIA is not set
+-# CONFIG_NET_VENDOR_WIZNET is not set
+ CONFIG_PLIP=m
+ CONFIG_PPP=m
+ CONFIG_PPP_BSDCOMP=m
+diff --git a/arch/m68k/configs/sun3_defconfig b/arch/m68k/configs/sun3_defconfig
+index 49b3a38a08c3334b..69f2282dc4e9cafa 100644
+--- a/arch/m68k/configs/sun3_defconfig
++++ b/arch/m68k/configs/sun3_defconfig
+@@ -370,36 +370,8 @@ CONFIG_MACSEC=m
+ CONFIG_NETCONSOLE=m
+ CONFIG_NETCONSOLE_DYNAMIC=y
+ CONFIG_VETH=m
+-# CONFIG_NET_VENDOR_ALACRITECH is not set
+-# CONFIG_NET_VENDOR_AMAZON is not set
+ CONFIG_SUN3LANCE=y
+-# CONFIG_NET_VENDOR_AQUANTIA is not set
+-# CONFIG_NET_VENDOR_ARC is not set
+-# CONFIG_NET_VENDOR_AURORA is not set
+-# CONFIG_NET_VENDOR_CADENCE is not set
+-# CONFIG_NET_VENDOR_CAVIUM is not set
+-# CONFIG_NET_VENDOR_CORTINA is not set
+-# CONFIG_NET_VENDOR_EZCHIP is not set
+-# CONFIG_NET_VENDOR_HUAWEI is not set
+ CONFIG_SUN3_82586=y
+-# CONFIG_NET_VENDOR_MARVELL is not set
+-# CONFIG_NET_VENDOR_MICREL is not set
+-# CONFIG_NET_VENDOR_MICROSEMI is not set
+-# CONFIG_NET_VENDOR_NATSEMI is not set
+-# CONFIG_NET_VENDOR_NETRONOME is not set
+-# CONFIG_NET_VENDOR_NI is not set
+-# CONFIG_NET_VENDOR_QUALCOMM is not set
+-# CONFIG_NET_VENDOR_RENESAS is not set
+-# CONFIG_NET_VENDOR_ROCKER is not set
+-# CONFIG_NET_VENDOR_SAMSUNG is not set
+-# CONFIG_NET_VENDOR_SEEQ is not set
+-# CONFIG_NET_VENDOR_SOLARFLARE is not set
+-# CONFIG_NET_VENDOR_SOCIONEXT is not set
+-# CONFIG_NET_VENDOR_STMICRO is not set
+-# CONFIG_NET_VENDOR_SUN is not set
+-# CONFIG_NET_VENDOR_SYNOPSYS is not set
+-# CONFIG_NET_VENDOR_VIA is not set
+-# CONFIG_NET_VENDOR_WIZNET is not set
+ CONFIG_PPP=m
+ CONFIG_PPP_BSDCOMP=m
+ CONFIG_PPP_DEFLATE=m
+diff --git a/arch/m68k/configs/sun3x_defconfig b/arch/m68k/configs/sun3x_defconfig
+index d8acd36e45b110dc..e91267e868b2dd37 100644
+--- a/arch/m68k/configs/sun3x_defconfig
++++ b/arch/m68k/configs/sun3x_defconfig
+@@ -370,36 +370,7 @@ CONFIG_MACSEC=m
+ CONFIG_NETCONSOLE=m
+ CONFIG_NETCONSOLE_DYNAMIC=y
+ CONFIG_VETH=m
+-# CONFIG_NET_VENDOR_ALACRITECH is not set
+-# CONFIG_NET_VENDOR_AMAZON is not set
+ CONFIG_SUN3LANCE=y
+-# CONFIG_NET_VENDOR_AQUANTIA is not set
+-# CONFIG_NET_VENDOR_ARC is not set
+-# CONFIG_NET_VENDOR_AURORA is not set
+-# CONFIG_NET_VENDOR_BROADCOM is not set
+-# CONFIG_NET_VENDOR_CADENCE is not set
+-# CONFIG_NET_VENDOR_CAVIUM is not set
+-# CONFIG_NET_VENDOR_CORTINA is not set
+-# CONFIG_NET_VENDOR_EZCHIP is not set
+-# CONFIG_NET_VENDOR_HUAWEI is not set
+-# CONFIG_NET_VENDOR_INTEL is not set
+-# CONFIG_NET_VENDOR_MARVELL is not set
+-# CONFIG_NET_VENDOR_MICREL is not set
+-# CONFIG_NET_VENDOR_MICROSEMI is not set
+-# CONFIG_NET_VENDOR_NATSEMI is not set
+-# CONFIG_NET_VENDOR_NETRONOME is not set
+-# CONFIG_NET_VENDOR_NI is not set
+-# CONFIG_NET_VENDOR_QUALCOMM is not set
+-# CONFIG_NET_VENDOR_RENESAS is not set
+-# CONFIG_NET_VENDOR_ROCKER is not set
+-# CONFIG_NET_VENDOR_SAMSUNG is not set
+-# CONFIG_NET_VENDOR_SEEQ is not set
+-# CONFIG_NET_VENDOR_SOLARFLARE is not set
+-# CONFIG_NET_VENDOR_SOCIONEXT is not set
+-# CONFIG_NET_VENDOR_STMICRO is not set
+-# CONFIG_NET_VENDOR_SYNOPSYS is not set
+-# CONFIG_NET_VENDOR_VIA is not set
+-# CONFIG_NET_VENDOR_WIZNET is not set
+ CONFIG_PPP=m
+ CONFIG_PPP_BSDCOMP=m
+ CONFIG_PPP_DEFLATE=m
 -- 
 2.17.1
+
