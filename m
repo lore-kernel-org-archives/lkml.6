@@ -2,89 +2,103 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45C0FC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 20:29:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1A7AC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 20:32:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 052262147C
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 20:29:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546892960;
-	bh=PSYzZGwsIKxDAd0hEW3WVjrSic8PfPmA2bfYTvD7d5o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=vb+TT5IPxljY4GZ4/X1klRUjDNqKhG3DE40JPvfnQ2v7YuaA6P+HqLmAXsUapQBtX
-	 zP8nssiz57Wcp2Faw4NS6Z4+WK8lnISX0+NXhRwHWHxa13kMby1ydwczSZIM6Yvm95
-	 h0pnaYWOrU1Fb3L2RGjLhFV3EtcbNyASZky6/2Ys=
+	by mail.kernel.org (Postfix) with ESMTP id 6E25A2173C
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 20:32:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726886AbfAGU3T convert rfc822-to-8bit (ORCPT
+        id S1726923AbfAGUcY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 15:29:19 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:40775 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726392AbfAGU3T (ORCPT
+        Mon, 7 Jan 2019 15:32:24 -0500
+Received: from gateway23.websitewelcome.com ([192.185.48.104]:31304 "EHLO
+        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726392AbfAGUcY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 15:29:19 -0500
-Received: by mail-ed1-f67.google.com with SMTP id g22so2133429edr.7;
-        Mon, 07 Jan 2019 12:29:17 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=NLh9TviOHL95KaLbs99nNqTK8EJIAJzILq5WanPkzlA=;
-        b=odsHdT9P/VPIx18JZ65iDbFA7U6/TDNS8ijE4qwu4RBjBDFG2UplIstEFbjHPs2vih
-         fN3dZHJzLNSBOgxipXkaBxAxOGzMNx+Ui5A81Ja3DyJIKGya1lTIGuS5mNDq936pAufj
-         C6TGt3tb8J2B4rdD43sHaDDyKlCsCX6XfTPlR2FJi9CHEczrF8oS92/YIZ4Pr6RWCbYY
-         R0RQZYqemQV6TXWuBKHZiVFm8dOWgidthpa3jvZN+HPxNe9FVS5NqXuhFX+TqKK4NiII
-         3FSRGY3nIKFhaTXI22IFDMMRkFI+V09RlL11QKcUeKDgAvsirz71a3x/PDfQb43g29DW
-         /3ow==
-X-Gm-Message-State: AA+aEWaUcKk5dS9t2xvKLla7+258J2I0KfmPR/U3c7F+XqaTXIeWXowm
-        y5l8+wPjRpu50GlMc7Oad0o=
-X-Google-Smtp-Source: AFSGD/VkPfTwc73TNzvTWivUfKtcLdLV9NeBpvpnKj/APJW+eu4Vj+t+n7uckkcgOOyrO2Y4/P3YuA==
-X-Received: by 2002:a50:b623:: with SMTP id b32mr55094679ede.55.1546892956823;
-        Mon, 07 Jan 2019 12:29:16 -0800 (PST)
-Received: from kozik-lap ([194.230.155.148])
-        by smtp.googlemail.com with ESMTPSA id m14sm38643638edc.27.2019.01.07.12.29.15
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 07 Jan 2019 12:29:16 -0800 (PST)
-Date:   Mon, 7 Jan 2019 21:29:13 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>
-Cc:     inki.dae@samsung.com, airlied@linux.ie, jy0922.shim@samsung.com,
-        sw0312.kim@samsung.com, kyungmin.park@samsung.com,
-        kgene@kernel.org, dri-devel@lists.freedesktop.org,
+        Mon, 7 Jan 2019 15:32:24 -0500
+Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
+        by gateway23.websitewelcome.com (Postfix) with ESMTP id 3B424CA0C
+        for <linux-kernel@vger.kernel.org>; Mon,  7 Jan 2019 14:32:23 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id gbZPgYKU3dnCegbZPgeUWK; Mon, 07 Jan 2019 14:32:23 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.130.205] (port=51050 helo=[192.168.43.131])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1ggbZO-00451U-Ll; Mon, 07 Jan 2019 14:32:22 -0600
+Subject: Re: [PATCH] ARM: mach-s3c24xx: Fix boolean expressions in
+ osiris_dvs_notify
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Ben Dooks <ben@simtec.co.uk>, Kukjin Kim <kgene@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] ARM: dts: s5pv210: Add node for exynos-rotator
-Message-ID: <20190107202913.GB21920@kozik-lap>
-References: <20181228151904.12079-1-pawel.mikolaj.chmiel@gmail.com>
- <20181228151904.12079-4-pawel.mikolaj.chmiel@gmail.com>
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190103201408.GA27754@embeddedor>
+ <20190107194324.GC3313@kozik-lap>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Message-ID: <1abcd26c-aa10-9481-ed53-3c3654842757@embeddedor.com>
+Date:   Mon, 7 Jan 2019 14:32:20 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <20181228151904.12079-4-pawel.mikolaj.chmiel@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190107194324.GC3313@kozik-lap>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.130.205
+X-Source-L: No
+X-Exim-ID: 1ggbZO-00451U-Ll
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.43.131]) [189.250.130.205]:51050
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 8
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 28, 2018 at 04:19:04PM +0100, Paweł Chmiel wrote:
-> This commit adds node for Exynos Rorator device,
-> so it can be used on all s5pv210 based devices.
+Hi Krzysztof,
+
+On 1/7/19 1:43 PM, Krzysztof Kozlowski wrote:
+> On Thu, Jan 03, 2019 at 02:14:08PM -0600, Gustavo A. R. Silva wrote:
+>> Fix boolean expressions by using logical AND operator '&&'
+>> instead of bitwise operator '&'.
+>>
+>> This issue was detected with the help of Coccinelle.
+>>
+>> Fixes: 4fa084af28ca ("ARM: OSIRIS: DVS (Dynamic Voltage Scaling) supoort.")
+>> Cc: stable@vger.kernel.org
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+>> ---
+>>   arch/arm/mach-s3c24xx/mach-osiris-dvs.c | 8 ++++----
 > 
-> Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
-> ---
->  arch/arm/boot/dts/s5pv210.dtsi | 9 +++++++++
+> Thanks, applied with fixing up -Wparentheses warning. I think you should
+> update your GCC.
+> 
 
-Thanks, applied.
+Thanks for that.
 
-Best regards,
-Krzysztof
+I wonder if you could take these too:
 
+https://lore.kernel.org/lkml/418252fcd77472413ce15ac3df167e448a4defe9.1546667177.git.gustavo@embeddedor.com/
+https://lore.kernel.org/lkml/2795c5ba939fe23dda6c86135d56e68433f7d68a.1546667177.git.gustavo@embeddedor.com/
+
+Thanks
+--
+Gustavo
