@@ -2,84 +2,99 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B2F4C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 16:57:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B2F4C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 16:59:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDE062147C
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 16:57:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E56D2147C
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 16:59:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546880366;
+	bh=Yx/CXCGumEO0HdcC+giwxPW8SUYoXFX0P7uH20hhv6Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=zoB+NurOwI0YeN8VoJJhmu3qjVsPvQ/r3D2oW10wCfsvn0xIfBGjRjkRnzRZUOQkO
+	 6qKK9P6LJHZmCM+bXVp+iq8ZFQdYLtg8THBO/eNAXYUTxDnd2Oz6D79aGUfuvfG86d
+	 /qbu2ELfBQ1qbf6tITBvf3ChBcNtiqJhm9T5uDa0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728092AbfAGQ51 (ORCPT
+        id S1728125AbfAGQ7Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 11:57:27 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:37482 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727002AbfAGQ50 (ORCPT
+        Mon, 7 Jan 2019 11:59:25 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:38752 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726811AbfAGQ7Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 11:57:26 -0500
-Received: by mail-pf1-f193.google.com with SMTP id y126so448811pfb.4;
-        Mon, 07 Jan 2019 08:57:26 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=XJdMPYu/0NflhcvSrMuMBq305Eo6Gc5EGRok8Qlozkc=;
-        b=A0HaXVlZeebk3aNnwG/DzifJk9EFHoUyaZwiaUGeIoaN9LV+1GxQCQw7vVLC2KMb9w
-         2lTBc5mzBi5ynOzG2JX0CigI0zN1WurndQGnTo9RjQVCGoMJQEE1T27t6ILcCrmwaMiO
-         qkB/LLw7GPbvmVbowHxnWGI8krEotT/oF8OMVCNrWh+CwYSB5ZDZl+wSSIwXMna2e5mD
-         IhtWmIyZAmnZYyYIbkSnIyrQmQDhVFntrMlqm4bPDvv4YSWTmqm0vUoGB6UynvcLs0lA
-         T2eaDXAWfUWJZjbNoZ2wh9w/waNUGRecgfLm6wD0HR2QCtUyxA6kkpRaHAok9NASZEGh
-         DdcQ==
-X-Gm-Message-State: AJcUukfG4Dd2Q66CkqFCWJjkmzizYzTOlsKurEHW9EmUkburTdW4axuY
-        W7ofuJCxPcobFfOobvvX8IVkRjIkvDU=
-X-Google-Smtp-Source: ALg8bN51+8jGvchV8wVaYDHPtDaIaH47x/vA6ifZyBFKGmQlng7FT7fHFKvhlO4wqElQfhxTmlzXLQ==
-X-Received: by 2002:a63:1408:: with SMTP id u8mr7275502pgl.271.1546880245656;
-        Mon, 07 Jan 2019 08:57:25 -0800 (PST)
-Received: from ?IPv6:2620:15c:2cd:203:5cdc:422c:7b28:ebb5? ([2620:15c:2cd:203:5cdc:422c:7b28:ebb5])
-        by smtp.gmail.com with ESMTPSA id i193sm114975922pgc.22.2019.01.07.08.57.24
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 07 Jan 2019 08:57:24 -0800 (PST)
-Message-ID: <1546880243.83374.12.camel@acm.org>
-Subject: Re: [PATCH] scsi: sd: Make protection lookup tables static
-From:   Bart Van Assche <bvanassche@acm.org>
-To:     John Garry <john.garry@huawei.com>, jejb@linux.vnet.ibm.com,
-        martin.petersen@oracle.com
-Cc:     linuxarm@huawei.com, linux-kernel@vger.kernel.org,
-        linux-scsi@vger.kernel.org
-Date:   Mon, 07 Jan 2019 08:57:23 -0800
-In-Reply-To: <1546872111-5627-1-git-send-email-john.garry@huawei.com>
-References: <1546872111-5627-1-git-send-email-john.garry@huawei.com>
-Content-Type: text/plain; charset="UTF-7"
-X-Mailer: Evolution 3.26.2-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Mon, 7 Jan 2019 11:59:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Yx/CXCGumEO0HdcC+giwxPW8SUYoXFX0P7uH20hhv6Q=; b=nzDTK5HGQbQJWF9aYVi2dsr4q
+        w+GE9FJcq6ajDRUjcXCYXjsju2FhKlDfOULCex3Thg4Kr6+90ZAVBlLC42wLIqJErPcDO+h3eh4LX
+        VclyVFpUrUOICxz5eGRPGC+PwAiQuf94gkKnYedTSKdUJ8J/9lev8zqWnDiGxktX9YQIc=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1ggYEV-0007VS-5A; Mon, 07 Jan 2019 16:58:35 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 6CF8F1127491; Mon,  7 Jan 2019 16:58:34 +0000 (GMT)
+Date:   Mon, 7 Jan 2019 16:58:34 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Yizhuo <yzhai003@ucr.edu>
+Cc:     csong@cs.ucr.edu, zhiyunq@cs.ucr.edu,
+        Bard Liao <bardliao@realtek.com>,
+        Oder Chiou <oder_chiou@realtek.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ASoC: rt274: Variable "buf" in function
+ rt274_jack_detect() could be uninitialized
+Message-ID: <20190107165834.GL9570@sirena.org.uk>
+References: <20190104202708.14759-1-yzhai003@ucr.edu>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="UK1lfQXsnwKrySH9"
+Content-Disposition: inline
+In-Reply-To: <20190104202708.14759-1-yzhai003@ucr.edu>
+X-Cookie: NOBODY EXPECTS THE SPANISH INQUISITION!
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-01-07 at 22:41 +-0800, John Garry wrote:
-+AD4 Currently the protection lookup tables in sd+AF8-prot+AF8-flag+AF8-mask() and
-+AD4 sd+AF8-prot+AF8-op() are declared non-static. As such, they will be rebuilt for
-+AD4 each respective function call.
-+AD4 
-+AD4 Optimise by making them static.
-+AD4 
-+AD4 This saves +AH4-100B object code for sd.c:
-+AD4 
-+AD4 Before:
-+AD4    text	   data	    bss	    dec	    hex	filename
-+AD4   25403	   1024	     16	  26443	   674b	drivers/scsi/sd.o
-+AD4 
-+AD4 After:
-+AD4   text	   data	    bss	    dec	    hex	filename
-+AD4   25299	   1024	     16	  26339	   66e3	drivers/scsi/sd.o
 
-Since the sd+AF8-prot+AF8-op() function only has a single caller, please move it from sd.h
-into sd.c.
+--UK1lfQXsnwKrySH9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Thanks,
+On Fri, Jan 04, 2019 at 12:27:08PM -0800, Yizhuo wrote:
+> In function rt274_jack_detect(), local variable "buf" could
+> be uninitialized if function regmap_read() returns -EINVAL.
+> However, it will be used to calculate "hp" and "mic" and
+> make their value unpredictable while those value are used
+> in the caller. This is potentially unsafe.
 
-Bart.
+This doesn't apply against current code, please check and resend.
+
+--UK1lfQXsnwKrySH9
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlwzhTkACgkQJNaLcl1U
+h9BfYAf9HvrQb91OEUf4LOhKH18sRQCLgHXtlFFN/H7s1ST+zIQONgvRr0X3UrHT
+iiMU0dGygbKV4KNin/sZqJSrHEKJkXc2gSAV1S8iSEgb2VZOMb3kPu2uTbIEQYGA
+GqYkrSTcMawcOpD7XWn+9/UIe7+pYzqhrWpsdFw2bTvHFskfqesBAa19lnMKTW+6
+wj4CCSLrCPw1/xaiK4rTkbeX7eax2okHyqjnNamaiBIgFU7bcN76kblxhVBXIBfs
+zuTZGqiYj2XktV57oOEr2g3mNyd6eRV/qVZbj7/MIrldAaAGmVixIBbzLQUZwG4E
+PVXRn4S0NeolG+Rwa6ttkqi34nelIw==
+=6AXx
+-----END PGP SIGNATURE-----
+
+--UK1lfQXsnwKrySH9--
