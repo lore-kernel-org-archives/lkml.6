@@ -4,51 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB47CC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:47:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BEFAC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:47:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A3D3206BB
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:47:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0763F206BB
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:47:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546865251;
-	bh=QzBfkEBnitIhCocG0m3nlOP9zF+0tHluGRK7xzuCqJE=;
+	s=default; t=1546865259;
+	bh=S3JopAQCGQ845T2xv0GWi6bxBe6dAsZGwCAs3OXysmQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=l8qbUMtMcapeNdZ3XBBP419IwolNmDusCQkZv3C6y/kd+45SPc4M7GHZweAdwVlzI
-	 h6PKZupfDuVgXwmdZagvpeJjIZdtU6PWzeNTmj08qfg+sXziNxrMH6tdKCOn9NSVF8
-	 rV72VxGWlBsj8QdvLY2j+NAw7GeweD22BCprUyMM=
+	b=s3RdJMBfskyhqaKitF9i9NmTlgHTqNg4o4BY9NMSCmEZvNJmzd/UleIMBmRD3sw9X
+	 h46yPQ8eBBzvNXc2dajAx+7bfduIpI1/ltvquxuxU8T6VygB8KLOXLRWd9+SpfodPR
+	 bL1Hz6X0xawc3HhxSIoi8u5Q1aCq0NqVUBO2qN1M=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728673AbfAGMra (ORCPT
+        id S1728710AbfAGMri (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:47:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37584 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:47:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37686 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727959AbfAGMrY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:47:24 -0500
+        id S1728047AbfAGMr2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:47:28 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D6D8B20651;
-        Mon,  7 Jan 2019 12:47:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 28476206BB;
+        Mon,  7 Jan 2019 12:47:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865243;
-        bh=QzBfkEBnitIhCocG0m3nlOP9zF+0tHluGRK7xzuCqJE=;
+        s=default; t=1546865247;
+        bh=S3JopAQCGQ845T2xv0GWi6bxBe6dAsZGwCAs3OXysmQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZwN6Rvrne7fzpC8LQXWAcQc6uKHrgrmsxoa6o+q5MJGyvyAOoHRp1gDndFToeeUgS
-         vgSDZl0/Cw8GihgJjru6ePYTNn47kdzaIX1Ud7qIDvJVyfBD6Fups7Ukw0NLAT00yG
-         4K67yPnCIdAxnAI5fy6dHsaT3MShcDudhAuhaj1A=
+        b=oBe91+5WLmjzbZzqxrKUSxd3wKTCGMnmyM7JIGmmRA0dQuktL7xGXu8rPZcP7s2wE
+         EPP8SxaAmMFiioW7/54Tvv9EU1mWMhZ9W2aATBrU97JtTcsxEGOfAsa5HkAvssuZUv
+         Ql9y26BmYJNOlTjL3moQ8paErf8X5EyA3I9DNu4A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        stable@vger.kernel.org,
+        syzbot+10a9db47c3a0e13eb31c@syzkaller.appspotmail.com,
+        Ying Xue <ying.xue@windriver.com>,
+        Jon Maloy <jon.maloy@ericsson.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 032/170] tcp: fix a race in inet_diag_dump_icsk()
-Date:   Mon,  7 Jan 2019 13:30:59 +0100
-Message-Id: <20190107104456.945619931@linuxfoundation.org>
+Subject: [PATCH 4.19 033/170] tipc: check tsk->group in tipc_wait_for_cond()
+Date:   Mon,  7 Jan 2019 13:31:00 +0100
+Message-Id: <20190107104457.113585261@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104452.953560660@linuxfoundation.org>
 References: <20190107104452.953560660@linuxfoundation.org>
@@ -67,122 +69,128 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-[ Upstream commit f0c928d878e7d01b613c9ae5c971a6b1e473a938 ]
+[ Upstream commit 143ece654f9f5b37bedea252a990be37e48ae3a5 ]
 
-Alexei reported use after frees in inet_diag_dump_icsk() [1]
+tipc_wait_for_cond() drops socket lock before going to sleep,
+but tsk->group could be freed right after that release_sock().
+So we have to re-check and reload tsk->group after it wakes up.
 
-Because we use refcount_set() when various sockets are setup and
-inserted into ehash, we also need to make sure inet_diag_dump_icsk()
-wont race with the refcount_set() operations.
+After this patch, tipc_wait_for_cond() returns -ERESTARTSYS when
+tsk->group is NULL, instead of continuing with the assumption of
+a non-NULL tsk->group.
 
-Jonathan Lemon sent a patch changing net_twsk_hashdance() but
-other spots would need risky changes.
+(It looks like 'dsts' should be re-checked and reloaded too, but
+it is a different bug.)
 
-Instead, fix inet_diag_dump_icsk() as this bug came with
-linux-4.10 only.
+Similar for tipc_send_group_unicast() and tipc_send_group_anycast().
 
-[1] Quoting Alexei :
-
-First something iterating over sockets finds already freed tw socket:
-
-refcount_t: increment on 0; use-after-free.
-WARNING: CPU: 2 PID: 2738 at lib/refcount.c:153 refcount_inc+0x26/0x30
-RIP: 0010:refcount_inc+0x26/0x30
-RSP: 0018:ffffc90004c8fbc0 EFLAGS: 00010282
-RAX: 000000000000002b RBX: 0000000000000000 RCX: 0000000000000000
-RDX: ffff88085ee9d680 RSI: ffff88085ee954c8 RDI: ffff88085ee954c8
-RBP: ffff88010ecbd2c0 R08: 0000000000000000 R09: 000000000000174c
-R10: ffffffff81e7c5a0 R11: 0000000000000000 R12: 0000000000000000
-R13: ffff8806ba9bf210 R14: ffffffff82304600 R15: ffff88010ecbd328
-FS:  00007f81f5a7d700(0000) GS:ffff88085ee80000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f81e2a95000 CR3: 000000069b2eb006 CR4: 00000000003606e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- inet_diag_dump_icsk+0x2b3/0x4e0 [inet_diag]  // sock_hold(sk); in net/ipv4/inet_diag.c:1002
- ? kmalloc_large_node+0x37/0x70
- ? __kmalloc_node_track_caller+0x1cb/0x260
- ? __alloc_skb+0x72/0x1b0
- ? __kmalloc_reserve.isra.40+0x2e/0x80
- __inet_diag_dump+0x3b/0x80 [inet_diag]
- netlink_dump+0x116/0x2a0
- netlink_recvmsg+0x205/0x3c0
- sock_read_iter+0x89/0xd0
- __vfs_read+0xf7/0x140
- vfs_read+0x8a/0x140
- SyS_read+0x3f/0xa0
- do_syscall_64+0x5a/0x100
-
-then a minute later twsk timer fires and hits two bad refcnts
-for this freed socket:
-
-refcount_t: decrement hit 0; leaking memory.
-WARNING: CPU: 31 PID: 0 at lib/refcount.c:228 refcount_dec+0x2e/0x40
-Modules linked in:
-RIP: 0010:refcount_dec+0x2e/0x40
-RSP: 0018:ffff88085f5c3ea8 EFLAGS: 00010296
-RAX: 000000000000002c RBX: ffff88010ecbd2c0 RCX: 000000000000083f
-RDX: 0000000000000000 RSI: 00000000000000f6 RDI: 000000000000003f
-RBP: ffffc90003c77280 R08: 0000000000000000 R09: 00000000000017d3
-R10: ffffffff81e7c5a0 R11: 0000000000000000 R12: ffffffff82ad2d80
-R13: ffffffff8182de00 R14: ffff88085f5c3ef8 R15: 0000000000000000
-FS:  0000000000000000(0000) GS:ffff88085f5c0000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fbe42685250 CR3: 0000000002209001 CR4: 00000000003606e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <IRQ>
- inet_twsk_kill+0x9d/0xc0  // inet_twsk_bind_unhash(tw, hashinfo);
- call_timer_fn+0x29/0x110
- run_timer_softirq+0x36b/0x3a0
-
-refcount_t: underflow; use-after-free.
-WARNING: CPU: 31 PID: 0 at lib/refcount.c:187 refcount_sub_and_test+0x46/0x50
-RIP: 0010:refcount_sub_and_test+0x46/0x50
-RSP: 0018:ffff88085f5c3eb8 EFLAGS: 00010296
-RAX: 0000000000000026 RBX: ffff88010ecbd2c0 RCX: 000000000000083f
-RDX: 0000000000000000 RSI: 00000000000000f6 RDI: 000000000000003f
-RBP: ffff88010ecbd358 R08: 0000000000000000 R09: 000000000000185b
-R10: ffffffff81e7c5a0 R11: 0000000000000000 R12: ffff88010ecbd358
-R13: ffffffff8182de00 R14: ffff88085f5c3ef8 R15: 0000000000000000
-FS:  0000000000000000(0000) GS:ffff88085f5c0000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fbe42685250 CR3: 0000000002209001 CR4: 00000000003606e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <IRQ>
- inet_twsk_put+0x12/0x20  // inet_twsk_put(tw);
- call_timer_fn+0x29/0x110
- run_timer_softirq+0x36b/0x3a0
-
-Fixes: 67db3e4bfbc9 ("tcp: no longer hold ehash lock while calling tcp_get_info()")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: Alexei Starovoitov <ast@kernel.org>
-Cc: Jonathan Lemon <jonathan.lemon@gmail.com>
-Acked-by: Jonathan Lemon <jonathan.lemon@gmail.com>
+Reported-by: syzbot+10a9db47c3a0e13eb31c@syzkaller.appspotmail.com
+Fixes: b7d42635517f ("tipc: introduce flow control for group broadcast messages")
+Fixes: ee106d7f942d ("tipc: introduce group anycast messaging")
+Fixes: 27bd9ec027f3 ("tipc: introduce group unicast messaging")
+Cc: Ying Xue <ying.xue@windriver.com>
+Cc: Jon Maloy <jon.maloy@ericsson.com>
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Acked-by: Ying Xue <ying.xue@windriver.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/inet_diag.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ net/tipc/socket.c |   25 ++++++++++++++-----------
+ 1 file changed, 14 insertions(+), 11 deletions(-)
 
---- a/net/ipv4/inet_diag.c
-+++ b/net/ipv4/inet_diag.c
-@@ -998,7 +998,9 @@ next_chunk:
- 			if (!inet_diag_bc_sk(bc, sk))
- 				goto next_normal;
+--- a/net/tipc/socket.c
++++ b/net/tipc/socket.c
+@@ -878,7 +878,6 @@ static int tipc_send_group_unicast(struc
+ 	DECLARE_SOCKADDR(struct sockaddr_tipc *, dest, m->msg_name);
+ 	int blks = tsk_blocks(GROUP_H_SIZE + dlen);
+ 	struct tipc_sock *tsk = tipc_sk(sk);
+-	struct tipc_group *grp = tsk->group;
+ 	struct net *net = sock_net(sk);
+ 	struct tipc_member *mb = NULL;
+ 	u32 node, port;
+@@ -892,7 +891,9 @@ static int tipc_send_group_unicast(struc
+ 	/* Block or return if destination link or member is congested */
+ 	rc = tipc_wait_for_cond(sock, &timeout,
+ 				!tipc_dest_find(&tsk->cong_links, node, 0) &&
+-				!tipc_group_cong(grp, node, port, blks, &mb));
++				tsk->group &&
++				!tipc_group_cong(tsk->group, node, port, blks,
++						 &mb));
+ 	if (unlikely(rc))
+ 		return rc;
  
--			sock_hold(sk);
-+			if (!refcount_inc_not_zero(&sk->sk_refcnt))
-+				goto next_normal;
+@@ -922,7 +923,6 @@ static int tipc_send_group_anycast(struc
+ 	struct tipc_sock *tsk = tipc_sk(sk);
+ 	struct list_head *cong_links = &tsk->cong_links;
+ 	int blks = tsk_blocks(GROUP_H_SIZE + dlen);
+-	struct tipc_group *grp = tsk->group;
+ 	struct tipc_msg *hdr = &tsk->phdr;
+ 	struct tipc_member *first = NULL;
+ 	struct tipc_member *mbr = NULL;
+@@ -939,9 +939,10 @@ static int tipc_send_group_anycast(struc
+ 	type = msg_nametype(hdr);
+ 	inst = dest->addr.name.name.instance;
+ 	scope = msg_lookup_scope(hdr);
+-	exclude = tipc_group_exclude(grp);
+ 
+ 	while (++lookups < 4) {
++		exclude = tipc_group_exclude(tsk->group);
 +
- 			num_arr[accum] = num;
- 			sk_arr[accum] = sk;
- 			if (++accum == SKARR_SZ)
+ 		first = NULL;
+ 
+ 		/* Look for a non-congested destination member, if any */
+@@ -950,7 +951,8 @@ static int tipc_send_group_anycast(struc
+ 						 &dstcnt, exclude, false))
+ 				return -EHOSTUNREACH;
+ 			tipc_dest_pop(&dsts, &node, &port);
+-			cong = tipc_group_cong(grp, node, port, blks, &mbr);
++			cong = tipc_group_cong(tsk->group, node, port, blks,
++					       &mbr);
+ 			if (!cong)
+ 				break;
+ 			if (mbr == first)
+@@ -969,7 +971,8 @@ static int tipc_send_group_anycast(struc
+ 		/* Block or return if destination link or member is congested */
+ 		rc = tipc_wait_for_cond(sock, &timeout,
+ 					!tipc_dest_find(cong_links, node, 0) &&
+-					!tipc_group_cong(grp, node, port,
++					tsk->group &&
++					!tipc_group_cong(tsk->group, node, port,
+ 							 blks, &mbr));
+ 		if (unlikely(rc))
+ 			return rc;
+@@ -1004,8 +1007,7 @@ static int tipc_send_group_bcast(struct
+ 	struct sock *sk = sock->sk;
+ 	struct net *net = sock_net(sk);
+ 	struct tipc_sock *tsk = tipc_sk(sk);
+-	struct tipc_group *grp = tsk->group;
+-	struct tipc_nlist *dsts = tipc_group_dests(grp);
++	struct tipc_nlist *dsts = tipc_group_dests(tsk->group);
+ 	struct tipc_mc_method *method = &tsk->mc_method;
+ 	bool ack = method->mandatory && method->rcast;
+ 	int blks = tsk_blocks(MCAST_H_SIZE + dlen);
+@@ -1018,8 +1020,9 @@ static int tipc_send_group_bcast(struct
+ 		return -EHOSTUNREACH;
+ 
+ 	/* Block or return if any destination link or member is congested */
+-	rc = tipc_wait_for_cond(sock, &timeout,	!tsk->cong_link_cnt &&
+-				!tipc_group_bc_cong(grp, blks));
++	rc = tipc_wait_for_cond(sock, &timeout,
++				!tsk->cong_link_cnt && tsk->group &&
++				!tipc_group_bc_cong(tsk->group, blks));
+ 	if (unlikely(rc))
+ 		return rc;
+ 
+@@ -1034,7 +1037,7 @@ static int tipc_send_group_bcast(struct
+ 	msg_set_hdr_sz(hdr, GROUP_H_SIZE);
+ 	msg_set_destport(hdr, 0);
+ 	msg_set_destnode(hdr, 0);
+-	msg_set_grp_bc_seqno(hdr, tipc_group_bc_snd_nxt(grp));
++	msg_set_grp_bc_seqno(hdr, tipc_group_bc_snd_nxt(tsk->group));
+ 
+ 	/* Avoid getting stuck with repeated forced replicasts */
+ 	msg_set_grp_bc_ack_req(hdr, ack);
 
 
