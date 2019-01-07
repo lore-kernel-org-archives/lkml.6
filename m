@@ -7,46 +7,50 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A10E4C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:08:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8E75C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:08:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67C4A2147C
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:08:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 991122147C
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:08:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546866483;
-	bh=9d4h/uRT3sy6WNZQYIo4Mcv7btmBl9wVS85S6miaQ3E=;
+	s=default; t=1546866486;
+	bh=k3Mdbvy3dgSllS5Y4ZdVs88fDKdwWHdeyY9Hw0O/w6o=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=BvP/X9vggepa7MV2CE62L/IOfJ2Lmn5J6m2uXBOlt6NzzCsofMZ2A9bRuC42Lo8XA
-	 OLnjlWZjTdorehN3Drq1P1Bxl/t2QxIkxMN5IcgrZJ1Qf7JZnp0H3J48dmBBLe0pdg
-	 wRyodBYvkOZx/deQuz4xGgPZ5rF+t7BTShQvYj00=
+	b=HzCzPyaP4MxiT0CMvoqDfD9NGNjqeiPwH79Qd1aOc/iA5OH0M0z0IMEf0OeIc5Wak
+	 vL/f7jRjQklHKZ0EU28TWTG9MFBL9D08/ofVpqp3K9aljkGPmpN22iTobqyYYBHaE5
+	 fQdaS3oDsDdep/ijZT4vnf9CQhrmf0VKRc1tFcLI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731588AbfAGNIC (ORCPT
+        id S1731066AbfAGNIF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:08:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55014 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:08:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55076 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729751AbfAGNH7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:07:59 -0500
+        id S1731586AbfAGNIC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:08:02 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 33C662147C;
-        Mon,  7 Jan 2019 13:07:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0DF7D2089F;
+        Mon,  7 Jan 2019 13:08:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546866478;
-        bh=9d4h/uRT3sy6WNZQYIo4Mcv7btmBl9wVS85S6miaQ3E=;
+        s=default; t=1546866481;
+        bh=k3Mdbvy3dgSllS5Y4ZdVs88fDKdwWHdeyY9Hw0O/w6o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oRfa5Phw5IktRof2LiTgjYB5ZiEeOdRk6SO8sqNNP/QmMFL6yjQ56iM97IvTTpvYa
-         oMwoKXlwaOdVPTJhUnZBw9EUd8tN6QkSWih+86BRBn60T5PladkBU5zflKLkKGJcWq
-         1Ih0Oxgvg7a+AOU0OU5I682hzANyYUWj1s2K33GM=
+        b=mclMAXJs1h3o/VtFC/hzmazBAbPMPMv5hYFHcXJDE/WPDPyZm2SDzDhlwMjxXFbyr
+         WYdujYO65YpZaTeU7Pcgw+4BljFMfLv/xeSb6DBg7DAd0Q2dALVTKN24yh0MbWResX
+         dVyTaztw5CLCXZcM9BtXUEBdF1u7OU4d8MYGlAm8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Miquel Raynal <miquel.raynal@bootlin.com>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Subject: [PATCH 4.9 44/71] platform-msi: Free descriptors in platform_msi_domain_free()
-Date:   Mon,  7 Jan 2019 13:33:13 +0100
-Message-Id: <20190107105335.265952752@linuxfoundation.org>
+        stable@vger.kernel.org, Ben Hutchings <ben@decadent.org.uk>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 4.9 45/71] perf pmu: Suppress potential format-truncation warning
+Date:   Mon,  7 Jan 2019 13:33:14 +0100
+Message-Id: <20190107105335.303632776@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107105330.280153213@linuxfoundation.org>
 References: <20190107105330.280153213@linuxfoundation.org>
@@ -65,87 +69,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Miquel Raynal <miquel.raynal@bootlin.com>
+From: Ben Hutchings <ben@decadent.org.uk>
 
-commit 81b1e6e6a8590a19257e37a1633bec098d499c57 upstream.
+commit 11a64a05dc649815670b1be9fe63d205cb076401 upstream.
 
-Since the addition of platform MSI support, there were two helpers
-supposed to allocate/free IRQs for a device:
+Depending on which functions are inlined in util/pmu.c, the snprintf()
+calls in perf_pmu__parse_{scale,unit,per_pkg,snapshot}() might trigger a
+warning:
 
-    platform_msi_domain_alloc_irqs()
-    platform_msi_domain_free_irqs()
+  util/pmu.c: In function 'pmu_aliases':
+  util/pmu.c:178:31: error: '%s' directive output may be truncated writing up to 255 bytes into a region of size between 0 and 4095 [-Werror=format-truncation=]
+    snprintf(path, PATH_MAX, "%s/%s.unit", dir, name);
+                               ^~
 
-In these helpers, IRQ descriptors are allocated in the "alloc" routine
-while they are freed in the "free" one.
+I found this when trying to build perf from Linux 3.16 with gcc 8.
+However I can reproduce the problem in mainline if I force
+__perf_pmu__new_alias() to be inlined.
 
-Later, two other helpers have been added to handle IRQ domains on top
-of MSI domains:
+Suppress this by using scnprintf() as has been done elsewhere in perf.
 
-    platform_msi_domain_alloc()
-    platform_msi_domain_free()
-
-Seen from the outside, the logic is pretty close with the former
-helpers and people used it with the same logic as before: a
-platform_msi_domain_alloc() call should be balanced with a
-platform_msi_domain_free() call. While this is probably what was
-intended to do, the platform_msi_domain_free() does not remove/free
-the IRQ descriptor(s) created/inserted in
-platform_msi_domain_alloc().
-
-One effect of such situation is that removing a module that requested
-an IRQ will let one orphaned IRQ descriptor (with an allocated MSI
-entry) in the device descriptors list. Next time the module will be
-inserted back, one will observe that the allocation will happen twice
-in the MSI domain, one time for the remaining descriptor, one time for
-the new one. It also has the side effect to quickly overshoot the
-maximum number of allocated MSI and then prevent any module requesting
-an interrupt in the same domain to be inserted anymore.
-
-This situation has been met with loops of insertion/removal of the
-mvpp2.ko module (requesting 15 MSIs each time).
-
-Fixes: 552c494a7666 ("platform-msi: Allow creation of a MSI-based stacked irq domain")
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: stable@vger.kernel.org
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Link: http://lkml.kernel.org/r/20181111184524.fux4taownc6ndbx6@decadent.org.uk
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/base/platform-msi.c |    6 ++++--
- include/linux/msi.h         |    2 ++
- 2 files changed, 6 insertions(+), 2 deletions(-)
+ tools/perf/util/pmu.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/drivers/base/platform-msi.c
-+++ b/drivers/base/platform-msi.c
-@@ -375,14 +375,16 @@ void platform_msi_domain_free(struct irq
- 			      unsigned int nvec)
- {
- 	struct platform_msi_priv_data *data = domain->host_data;
--	struct msi_desc *desc;
--	for_each_msi_entry(desc, data->dev) {
-+	struct msi_desc *desc, *tmp;
-+	for_each_msi_entry_safe(desc, tmp, data->dev) {
- 		if (WARN_ON(!desc->irq || desc->nvec_used != 1))
- 			return;
- 		if (!(desc->irq >= virq && desc->irq < (virq + nvec)))
- 			continue;
+--- a/tools/perf/util/pmu.c
++++ b/tools/perf/util/pmu.c
+@@ -103,7 +103,7 @@ static int perf_pmu__parse_scale(struct
+ 	char path[PATH_MAX];
+ 	char *lc;
  
- 		irq_domain_free_irqs_common(domain, desc->irq, 1);
-+		list_del(&desc->list);
-+		free_msi_entry(desc);
- 	}
- }
+-	snprintf(path, PATH_MAX, "%s/%s.scale", dir, name);
++	scnprintf(path, PATH_MAX, "%s/%s.scale", dir, name);
  
---- a/include/linux/msi.h
-+++ b/include/linux/msi.h
-@@ -108,6 +108,8 @@ struct msi_desc {
- 	list_first_entry(dev_to_msi_list((dev)), struct msi_desc, list)
- #define for_each_msi_entry(desc, dev)	\
- 	list_for_each_entry((desc), dev_to_msi_list((dev)), list)
-+#define for_each_msi_entry_safe(desc, tmp, dev)	\
-+	list_for_each_entry_safe((desc), (tmp), dev_to_msi_list((dev)), list)
+ 	fd = open(path, O_RDONLY);
+ 	if (fd == -1)
+@@ -163,7 +163,7 @@ static int perf_pmu__parse_unit(struct p
+ 	ssize_t sret;
+ 	int fd;
  
- #ifdef CONFIG_PCI_MSI
- #define first_pci_msi_entry(pdev)	first_msi_entry(&(pdev)->dev)
+-	snprintf(path, PATH_MAX, "%s/%s.unit", dir, name);
++	scnprintf(path, PATH_MAX, "%s/%s.unit", dir, name);
+ 
+ 	fd = open(path, O_RDONLY);
+ 	if (fd == -1)
+@@ -193,7 +193,7 @@ perf_pmu__parse_per_pkg(struct perf_pmu_
+ 	char path[PATH_MAX];
+ 	int fd;
+ 
+-	snprintf(path, PATH_MAX, "%s/%s.per-pkg", dir, name);
++	scnprintf(path, PATH_MAX, "%s/%s.per-pkg", dir, name);
+ 
+ 	fd = open(path, O_RDONLY);
+ 	if (fd == -1)
+@@ -211,7 +211,7 @@ static int perf_pmu__parse_snapshot(stru
+ 	char path[PATH_MAX];
+ 	int fd;
+ 
+-	snprintf(path, PATH_MAX, "%s/%s.snapshot", dir, name);
++	scnprintf(path, PATH_MAX, "%s/%s.snapshot", dir, name);
+ 
+ 	fd = open(path, O_RDONLY);
+ 	if (fd == -1)
 
 
