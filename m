@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DA09C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:06:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF9F9C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:06:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DCFA21736
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:06:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F4DC217D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:06:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546866369;
-	bh=/cQLdfcbFfz7bxFsx5gOpWgoqOQKLzd3C/yqgA37hbM=;
+	s=default; t=1546866375;
+	bh=GoO3tHLEJE/PyU4HfTecTt4CwqMKgOl3yz9tEr56Opw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=gPPU0ZOJJQkkSy+Rd5xvJGTW1HTBTnFRpE5Z9A+BF5+oduG2O1JVjzPZki4uEchtM
-	 kGtMsnpBLY9WVDYXwb2nmsqza3/59H394X8RAQ2wNjYNYQ40JPkWIwkRIA2DVOfsM3
-	 xoXO34/rbDa6GQySJIavKoiTmEQNKH9LYRzARCPY=
+	b=FfezOcCvJCs+H+5QwbMhTNklE54cr1sS7md20Ym+kUQNJpEhVBqY5Kch1Eqo/ECc8
+	 vb3pv7UnWbswK4xoyipbSPesSJVL/oVqjWRjZUbbPST7pUHNEvhbE16ZeQP+IRFZRz
+	 dFskaSFdMeKHq6FwsbD4DnciWQ61+sbVZHioKkgg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731526AbfAGNGI (ORCPT
+        id S1731534AbfAGNGO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:06:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53588 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:06:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53662 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727252AbfAGNGH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:06:07 -0500
+        id S1727252AbfAGNGN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:06:13 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 543B021736;
-        Mon,  7 Jan 2019 13:06:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0A17821736;
+        Mon,  7 Jan 2019 13:06:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546866366;
-        bh=/cQLdfcbFfz7bxFsx5gOpWgoqOQKLzd3C/yqgA37hbM=;
+        s=default; t=1546866372;
+        bh=GoO3tHLEJE/PyU4HfTecTt4CwqMKgOl3yz9tEr56Opw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EWuk1WRNEUAYbch3+icpR86WYBSa8dhn6+YiJ898pMsFGEL+EuqAC+3ei85eSt/0B
-         0INd70/0Bhw+yboAXZqlRYlMH5IiXTh0xvlMzKLTF1Hkshbk0zWsrH/qUgMY5tY39n
-         vB3ZPqnnd8hK7li/79e3P1v63yyZRHozz9WIXkpg=
+        b=jX1gdKZn6R7nne9BzT2qtuEJ4XrJ/kB8tGwC+FQYo2kHkajZNwmMnJ0e5YTjl/qfl
+         op2xG9g74lptpB82WWIeD9aF85Nk29uFiXRwIKP5dHGHc5T6MMJ6SSJYfcX2nBXrhb
+         /wVDUkcM4iHnulBwI/n6gbsJd5AI+FMj/A97Nw+Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Cong Wang <xiyou.wangcong@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        syzbot+ae6bb869cbed29b29040@syzkaller.appspotmail.com
-Subject: [PATCH 4.9 06/71] ax25: fix a use-after-free in ax25_fillin_cb()
-Date:   Mon,  7 Jan 2019 13:32:35 +0100
-Message-Id: <20190107105330.681072921@linuxfoundation.org>
+        stable@vger.kernel.org, Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 07/71] ibmveth: fix DMA unmap error in ibmveth_xmit_start error path
+Date:   Mon,  7 Jan 2019 13:32:36 +0100
+Message-Id: <20190107105330.747485049@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107105330.280153213@linuxfoundation.org>
 References: <20190107105330.280153213@linuxfoundation.org>
@@ -66,73 +65,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Cong Wang <xiyou.wangcong@gmail.com>
+From: Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
 
-[ Upstream commit c433570458e49bccea5c551df628d058b3526289 ]
+[ Upstream commit 756af9c642329d54f048bac2a62f829b391f6944 ]
 
-There are multiple issues here:
+Commit 33a48ab105a7 ("ibmveth: Fix DMA unmap error") fixed an issue in the
+normal code path of ibmveth_xmit_start() that was originally introduced by
+Commit 6e8ab30ec677 ("ibmveth: Add scatter-gather support"). This original
+fix missed the error path where dma_unmap_page is wrongly called on the
+header portion in descs[0] which was mapped with dma_map_single. As a
+result a failure to DMA map any of the frags results in a dmesg warning
+when CONFIG_DMA_API_DEBUG is enabled.
 
-1. After freeing dev->ax25_ptr, we need to set it to NULL otherwise
-   we may use a dangling pointer.
+------------[ cut here ]------------
+DMA-API: ibmveth 30000002: device driver frees DMA memory with wrong function
+  [device address=0x000000000a430000] [size=172 bytes] [mapped as page] [unmapped as single]
+WARNING: CPU: 1 PID: 8426 at kernel/dma/debug.c:1085 check_unmap+0x4fc/0xe10
+...
+<snip>
+...
+DMA-API: Mapped at:
+ibmveth_start_xmit+0x30c/0xb60
+dev_hard_start_xmit+0x100/0x450
+sch_direct_xmit+0x224/0x490
+__qdisc_run+0x20c/0x980
+__dev_queue_xmit+0x1bc/0xf20
 
-2. There is a race between ax25_setsockopt() and device notifier as
-   reported by syzbot. Close it by holding RTNL lock.
+This fixes the API misuse by unampping descs[0] with dma_unmap_single.
 
-3. We need to test if dev->ax25_ptr is NULL before using it.
-
-Reported-and-tested-by: syzbot+ae6bb869cbed29b29040@syzkaller.appspotmail.com
-Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Fixes: 6e8ab30ec677 ("ibmveth: Add scatter-gather support")
+Signed-off-by: Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ax25/af_ax25.c  |   11 +++++++++--
- net/ax25/ax25_dev.c |    2 ++
- 2 files changed, 11 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/ibm/ibmveth.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/net/ax25/af_ax25.c
-+++ b/net/ax25/af_ax25.c
-@@ -654,15 +654,22 @@ static int ax25_setsockopt(struct socket
- 			break;
- 		}
+--- a/drivers/net/ethernet/ibm/ibmveth.c
++++ b/drivers/net/ethernet/ibm/ibmveth.c
+@@ -1162,11 +1162,15 @@ out:
  
--		dev = dev_get_by_name(&init_net, devname);
-+		rtnl_lock();
-+		dev = __dev_get_by_name(&init_net, devname);
- 		if (!dev) {
-+			rtnl_unlock();
- 			res = -ENODEV;
- 			break;
- 		}
+ map_failed_frags:
+ 	last = i+1;
+-	for (i = 0; i < last; i++)
++	for (i = 1; i < last; i++)
+ 		dma_unmap_page(&adapter->vdev->dev, descs[i].fields.address,
+ 			       descs[i].fields.flags_len & IBMVETH_BUF_LEN_MASK,
+ 			       DMA_TO_DEVICE);
  
- 		ax25->ax25_dev = ax25_dev_ax25dev(dev);
-+		if (!ax25->ax25_dev) {
-+			rtnl_unlock();
-+			res = -ENODEV;
-+			break;
-+		}
- 		ax25_fillin_cb(ax25, ax25->ax25_dev);
--		dev_put(dev);
-+		rtnl_unlock();
- 		break;
- 
- 	default:
---- a/net/ax25/ax25_dev.c
-+++ b/net/ax25/ax25_dev.c
-@@ -116,6 +116,7 @@ void ax25_dev_device_down(struct net_dev
- 	if ((s = ax25_dev_list) == ax25_dev) {
- 		ax25_dev_list = s->next;
- 		spin_unlock_bh(&ax25_dev_lock);
-+		dev->ax25_ptr = NULL;
- 		dev_put(dev);
- 		kfree(ax25_dev);
- 		return;
-@@ -125,6 +126,7 @@ void ax25_dev_device_down(struct net_dev
- 		if (s->next == ax25_dev) {
- 			s->next = ax25_dev->next;
- 			spin_unlock_bh(&ax25_dev_lock);
-+			dev->ax25_ptr = NULL;
- 			dev_put(dev);
- 			kfree(ax25_dev);
- 			return;
++	dma_unmap_single(&adapter->vdev->dev,
++			 descs[0].fields.address,
++			 descs[0].fields.flags_len & IBMVETH_BUF_LEN_MASK,
++			 DMA_TO_DEVICE);
+ map_failed:
+ 	if (!firmware_has_feature(FW_FEATURE_CMO))
+ 		netdev_err(netdev, "tx: unable to map xmit buffer\n");
 
 
