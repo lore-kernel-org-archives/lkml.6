@@ -2,122 +2,153 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 098EDC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 04:00:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7BA4C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 04:01:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFAA520859
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 04:00:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="r33pNFk1"
+	by mail.kernel.org (Postfix) with ESMTP id 9ED1C20859
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 04:01:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726478AbfAGEAn (ORCPT
+        id S1726509AbfAGEBb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 6 Jan 2019 23:00:43 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:53168 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726246AbfAGEAn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Jan 2019 23:00:43 -0500
-Received: by mail-it1-f193.google.com with SMTP id g76so8865445itg.2
-        for <linux-kernel@vger.kernel.org>; Sun, 06 Jan 2019 20:00:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=msYUTA8V1LXBK1Dwj8cMNbE1LfVrLU3s4S15xbngTn8=;
-        b=r33pNFk1u438go9RUKJYNJgu2KrI4kvpbVkX72e2athiU0QMtP4Jk2JPi+adf6NecF
-         HCQt05PnHLzQ39wugrqqHuKeKf6CfDTmmPmP9iYpi75aERE5j0CnZplVW7eJyP4ffsrk
-         SXW3iOyp0vyLK5EkZOnSchhpimV6I+1C/DGKMTmWhcuWiBH6lgwuNeru7YKRPqtpfV3f
-         MDBadvnJRLig2+wyHyCNNT3lCTTCe+WYzZiO16qkfwawUUOpNf7whE8g1OJbfOB6LDD1
-         G8JoQH4hEDgTwshN5u9+DYiKQJFiG7BsQ8ePzrFpoRsnqSYFP7bSCeUfasEWYHvDJ/sz
-         A7Dg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=msYUTA8V1LXBK1Dwj8cMNbE1LfVrLU3s4S15xbngTn8=;
-        b=jLlcDI3ym/06U2DgUUO6Fz2GycoSs+kPGwq4uy5dJJtZTvBAh8MfeODTipmG+QRidV
-         iXL/N8QGBUL+TmMbt8WiMpVV2T2ZHDYzAVnF3akZ525avqPLqOdWCOuDilDNAiuV45/H
-         +CZhUcKhQzxe8cx03KvIHzZ3OA8ZnWUmMLSXYs5SS036yhkh3frkt4TqqlaZZ4lVGlYC
-         0bvNJxIHhPqTn2LWQPeOB+n1APOnEKAyXXi4fV9E2BX4cDFktfkZRkcnMTuigompgvsR
-         5UhT2HQptp/sqKhbw9MDeUzK+eV/IGGJYu9ekzOmiqRLVhNK1Wo6uJ8JouHP3rRpsILG
-         ermg==
-X-Gm-Message-State: AJcUukcuW/GAuigZv3RyRsF/BAQyHLij4tLylYDaHKwStUKEAFaoDdpT
-        w8HGZfBLD8S2v5gtfhGMgRBSHTA/JhC51rC5
-X-Google-Smtp-Source: ALg8bN4x9hvRFacRi/eG3kaRkz0f4odCXWqXGlyWHEUjvtcjz/2mjmdSAhXNKlJCzr6AbSRzGqekUg==
-X-Received: by 2002:a24:af0a:: with SMTP id t10mr6882810ite.159.1546833642022;
-        Sun, 06 Jan 2019 20:00:42 -0800 (PST)
-Received: from google.com ([2620:15c:183:0:a0c3:519e:9276:fc96])
-        by smtp.gmail.com with ESMTPSA id d2sm12754033ioc.69.2019.01.06.20.00.40
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 06 Jan 2019 20:00:41 -0800 (PST)
-Date:   Sun, 6 Jan 2019 21:00:38 -0700
-From:   Yu Zhao <yuzhao@google.com>
-To:     Michel =?iso-8859-1?Q?D=E4nzer?= <michel@daenzer.net>
-Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        David Zhou <David1.Zhou@amd.com>,
-        Daniel Stone <daniels@collabora.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        amd-gfx@lists.freedesktop.org, Samuel Li <Samuel.Li@amd.com>,
-        Junwei Zhang <Jerry.Zhang@amd.com>, stable@vger.kernel.org,
-        Harry Wentland <harry.wentland@amd.com>
-Subject: Re: [PATCH v5 1/2] drm/amd: validate user pitch alignment
-Message-ID: <20190107040038.GA180037@google.com>
-References: <20181223215239.173339-2-yuzhao@google.com>
- <20181230010021.196990-1-yuzhao@google.com>
- <75d5f1d6-b259-6944-6ee0-8cc68cb1af0e@daenzer.net>
+        Sun, 6 Jan 2019 23:01:31 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:45300 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726246AbfAGEBb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Jan 2019 23:01:31 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D775A821CC;
+        Mon,  7 Jan 2019 04:01:30 +0000 (UTC)
+Received: from redhat.com (ovpn-120-33.rdu2.redhat.com [10.10.120.33])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4409760C44;
+        Mon,  7 Jan 2019 04:01:24 +0000 (UTC)
+Date:   Sun, 6 Jan 2019 23:01:23 -0500
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, maxime.coquelin@redhat.com,
+        tiwei.bie@intel.com, wexu@redhat.com, jfreimann@redhat.com,
+        "David S. Miller" <davem@davemloft.net>,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org
+Subject: Re: [PATCH RFC 1/2] virtio-net: bql support
+Message-ID: <20190106225951-mutt-send-email-mst@kernel.org>
+References: <20181205225323.12555-2-mst@redhat.com>
+ <21384cb5-99a6-7431-1039-b356521e1bc3@redhat.com>
+ <20181226101528-mutt-send-email-mst@kernel.org>
+ <0fa99d9b-e510-d7eb-db1b-831bd7610ce9@redhat.com>
+ <20181230134106-mutt-send-email-mst@kernel.org>
+ <b4f06d11-4761-dabb-f641-5fc05c1c34fc@redhat.com>
+ <20190102085457-mutt-send-email-mst@kernel.org>
+ <17d2ab21-1c9a-2bb9-166f-2863d019cb0b@redhat.com>
+ <20190106221506-mutt-send-email-mst@kernel.org>
+ <aea2fd16-ec5b-64b5-2095-9a37044223f6@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <75d5f1d6-b259-6944-6ee0-8cc68cb1af0e@daenzer.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <aea2fd16-ec5b-64b5-2095-9a37044223f6@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Mon, 07 Jan 2019 04:01:30 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 03, 2019 at 05:33:19PM +0100, Michel D�nzer wrote:
-> On 2018-12-30 2:00 a.m., Yu Zhao wrote:
-> > Userspace may request pitch alignment that is not supported by GPU.
-> > Some requests 32, but GPU ignores it and uses default 64 when cpp is
-> > 4. If GEM object is allocated based on the smaller alignment, GPU
-> > DMA will go out of bound.
-> > 
-> > Cc: stable@vger.kernel.org # v4.2+
-> > Signed-off-by: Yu Zhao <yuzhao@google.com>
-> > ---
-> >  drivers/gpu/drm/amd/amdgpu/amdgpu_display.c | 16 ++++++++++++++++
-> >  1 file changed, 16 insertions(+)
-> > 
-> > diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
-> > index 15ce7e681d67..16af80ccd0a0 100644
-> > --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
-> > +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
-> > @@ -527,6 +527,22 @@ amdgpu_display_user_framebuffer_create(struct drm_device *dev,
-> >  	struct drm_gem_object *obj;
-> >  	struct amdgpu_framebuffer *amdgpu_fb;
-> >  	int ret;
-> > +	struct amdgpu_device *adev = dev->dev_private;
-> > +	int cpp = drm_format_plane_cpp(mode_cmd->pixel_format, 0);
-> > +	int pitch = mode_cmd->pitches[0] / cpp;
-> > +
-> > +	if (pitch < mode_cmd->width) {
-> > +		DRM_DEBUG_KMS("Expecting pitch(%d)/cpp(%d) >= width(%d)\n",
-> > +			      mode_cmd->pitches[0], cpp, mode_cmd->width);
-> > +		return ERR_PTR(-EINVAL);
-> > +	}
+On Mon, Jan 07, 2019 at 11:51:55AM +0800, Jason Wang wrote:
 > 
-> This should possibly be tested in drm_internal_framebuffer_create instead.
+> On 2019/1/7 上午11:17, Michael S. Tsirkin wrote:
+> > On Mon, Jan 07, 2019 at 10:14:37AM +0800, Jason Wang wrote:
+> > > On 2019/1/2 下午9:59, Michael S. Tsirkin wrote:
+> > > > On Wed, Jan 02, 2019 at 11:28:43AM +0800, Jason Wang wrote:
+> > > > > On 2018/12/31 上午2:45, Michael S. Tsirkin wrote:
+> > > > > > On Thu, Dec 27, 2018 at 06:00:36PM +0800, Jason Wang wrote:
+> > > > > > > On 2018/12/26 下午11:19, Michael S. Tsirkin wrote:
+> > > > > > > > On Thu, Dec 06, 2018 at 04:17:36PM +0800, Jason Wang wrote:
+> > > > > > > > > On 2018/12/6 上午6:54, Michael S. Tsirkin wrote:
+> > > > > > > > > > When use_napi is set, let's enable BQLs.  Note: some of the issues are
+> > > > > > > > > > similar to wifi.  It's worth considering whether something similar to
+> > > > > > > > > > commit 36148c2bbfbe ("mac80211: Adjust TSQ pacing shift") might be
+> > > > > > > > > > benefitial.
+> > > > > > > > > I've played a similar patch several days before. The tricky part is the mode
+> > > > > > > > > switching between napi and no napi. We should make sure when the packet is
+> > > > > > > > > sent and trakced by BQL,  it should be consumed by BQL as well. I did it by
+> > > > > > > > > tracking it through skb->cb.  And deal with the freeze by reset the BQL
+> > > > > > > > > status. Patch attached.
+> > > > > > > > > 
+> > > > > > > > > But when testing with vhost-net, I don't very a stable performance,
+> > > > > > > > So how about increasing TSQ pacing shift then?
+> > > > > > > I can test this. But changing default TCP value is much more than a
+> > > > > > > virtio-net specific thing.
+> > > > > > Well same logic as wifi applies. Unpredictable latencies related
+> > > > > > to radio in one case, to host scheduler in the other.
+> > > > > > 
+> > > > > > > > > it was
+> > > > > > > > > probably because we batch the used ring updating so tx interrupt may come
+> > > > > > > > > randomly. We probably need to implement time bounded coalescing mechanism
+> > > > > > > > > which could be configured from userspace.
+> > > > > > > > I don't think it's reasonable to expect userspace to be that smart ...
+> > > > > > > > Why do we need time bounded? used ring is always updated when ring
+> > > > > > > > becomes empty.
+> > > > > > > We don't add used when means BQL may not see the consumed packet in time.
+> > > > > > > And the delay varies based on the workload since we count packets not bytes
+> > > > > > > or time before doing the batched updating.
+> > > > > > > 
+> > > > > > > Thanks
+> > > > > > Sorry I still don't get it.
+> > > > > > When nothing is outstanding then we do update the used.
+> > > > > > So if BQL stops userspace from sending packets then
+> > > > > > we get an interrupt and packets start flowing again.
+> > > > > Yes, but how about the cases of multiple flows. That's where I see unstable
+> > > > > results.
+> > > > > 
+> > > > > 
+> > > > > > It might be suboptimal, we might need to tune it but I doubt running
+> > > > > > timers is a solution, timer interrupts cause VM exits.
+> > > > > Probably not a timer but a time counter (or event byte counter) in vhost to
+> > > > > add used and signal guest if it exceeds a value instead of waiting the
+> > > > > number of packets.
+> > > > > 
+> > > > > 
+> > > > > Thanks
+> > > > Well we already have VHOST_NET_WEIGHT - is it too big then?
+> > > 
+> > > I'm not sure, it might be too big.
+> > > 
+> > > 
+> > > > And maybe we should expose the "MORE" flag in the descriptor -
+> > > > do you think that will help?
+> > > > 
+> > > I don't know. But how a "more" flag can help here?
+> > > 
+> > > Thanks
+> > It sounds like we should be a bit more aggressive in updating used ring.
+> > But if we just do it naively we will harm performance for sure as that
+> > is how we are doing batching right now.
+> 
+> 
+> I agree but the problem is to balance the PPS and throughput. More batching
+> helps for PPS but may damage TCP throughput.
 
-It seems to me drm_format_info_min_pitch() in framebuffer_check()
-already does it. We could just remove the check here?
+That is what more flag is supposed to be I think - it is only set if
+there's a socket that actually needs the skb freed in order to go on.
+
+> 
+> >   Instead we could make guest
+> > control batching using the more flag - if that's not set we write out
+> > the used ring.
+> 
+> 
+> It's under the control of guest, so I'm afraid we still need some more guard
+> (e.g time/bytes counters) on host.
+> 
+> Thanks
+
+Point is if guest does not care about the skb being freed, then there is no
+rush host side to mark buffer used.
+
+
+> 
+> > 
