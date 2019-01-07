@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D1E5C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:14:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1C93C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:15:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C77E2089F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:14:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F18F217D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:15:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546866883;
-	bh=Is6cF+fbPMUnLMQJB3E3J5+BB0US/QHIGdx5U/ADh8E=;
+	s=default; t=1546866903;
+	bh=I1aT4ebsSEIyXdVW4XUuw4JdkiEopFoYaohNR8afd7M=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=gQ7rjKtVajTED0G04e+fRg/Q6Tq4bLrqUgR31qlzzVW4mWAhJXTZDoKZmWdZB63sF
-	 6NYCS533VT902XTGyz1z7uCiytZ5K5MuoMypvohasjmUTMqWAI64S4G7Te7a4CL6t3
-	 icdcrHdwHck9DLukTJhUQK2mklN0atvW2LIgxxlQ=
+	b=sAFRLGXiHP4P25ZWRgSdNkBF4MtFZplkL9H7tJCR6LGrmVUlKsYnGY3XmEX0UrrAr
+	 1daTM6xTCfPABwOeNDv1QqWxrFb0u8ylemP1mwhEQh1uv+6u3CaBIwLMp8TNdiZIyx
+	 9go4rQZJnyB4OOUb+Mx1s5hWjmiPLpTQIQ+tWn6s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731394AbfAGNOm (ORCPT
+        id S1731113AbfAGNPC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:14:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50232 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:15:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49812 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727576AbfAGNCn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:02:43 -0500
+        id S1729789AbfAGNCT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:02:19 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E3BB52089F;
-        Mon,  7 Jan 2019 13:02:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CE844206BB;
+        Mon,  7 Jan 2019 13:02:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546866162;
-        bh=Is6cF+fbPMUnLMQJB3E3J5+BB0US/QHIGdx5U/ADh8E=;
+        s=default; t=1546866138;
+        bh=I1aT4ebsSEIyXdVW4XUuw4JdkiEopFoYaohNR8afd7M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=c0V3NjlfWDN1fgWe1ACH8pOVm1Zwr2k/T1/P5vRdwGl1VWnI8c8vZXmPZVKPdNVyw
-         WeaZjAdSdBGtvqfG+hgQreW2LCC6zkSofAap0g+RwwJUQPBK4lRCa+Ppgd1g/xRsuf
-         vSet5WRAGG2uU/z62k9nxhDx9eAAIhfDoOpn1oAs=
+        b=QQEqqXLs/tMTa9pSSdngxTkfL4GcLh5dEQkU3ml84owYrYFz9XEJfJ25vvdJ5Slm2
+         j/R97MAEbmueBBySJViRVUnfwcNTMzQ/sSc/U+fMMFyGSgWAAIYHSmGRpVytuWGFeF
+         hr4N02Iy45XsagW3x8gNYKleBm3NhWxNzjO6dAnM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Steve Graham <stgraham2000@gmail.com>,
-        Theodore Tso <tytso@mit.edu>, stable@kernel.org
-Subject: [PATCH 4.14 066/101] ext4: include terminating u32 in size of xattr entries when expanding inodes
-Date:   Mon,  7 Jan 2019 13:32:54 +0100
-Message-Id: <20190107105336.558682968@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.14 041/101] ALSA: emux: Fix potential Spectre v1 vulnerabilities
+Date:   Mon,  7 Jan 2019 13:32:29 +0100
+Message-Id: <20190107105335.153209841@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107105330.372621917@linuxfoundation.org>
 References: <20190107105330.372621917@linuxfoundation.org>
@@ -65,37 +66,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Theodore Ts'o <tytso@mit.edu>
+From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-commit a805622a757b6d7f65def4141d29317d8e37b8a1 upstream.
+commit 4aea96f4237cea0c51a8bc87c0db31f0f932f1f0 upstream.
 
-In ext4_expand_extra_isize_ea(), we calculate the total size of the
-xattr header, plus the xattr entries so we know how much of the
-beginning part of the xattrs to move when expanding the inode extra
-size.  We need to include the terminating u32 at the end of the xattr
-entries, or else if there is uninitialized, non-zero bytes after the
-xattr entries and before the xattr values, the list of xattr entries
-won't be properly terminated.
+info.mode and info.port are indirectly controlled by user-space,
+hence leading to a potential exploitation of the Spectre variant 1
+vulnerability.
 
-Reported-by: Steve Graham <stgraham2000@gmail.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@kernel.org
+These issues were detected with the help of Smatch:
+
+sound/synth/emux/emux_hwdep.c:72 snd_emux_hwdep_misc_mode() warn: potential spectre issue 'emu->portptrs[i]->ctrls' [w] (local cap)
+sound/synth/emux/emux_hwdep.c:75 snd_emux_hwdep_misc_mode() warn: potential spectre issue 'emu->portptrs' [w] (local cap)
+sound/synth/emux/emux_hwdep.c:75 snd_emux_hwdep_misc_mode() warn: potential spectre issue 'emu->portptrs[info.port]->ctrls' [w] (local cap)
+
+Fix this by sanitizing both info.mode and info.port before using them
+to index emu->portptrs[i]->ctrls, emu->portptrs[info.port]->ctrls and
+emu->portptrs.
+
+Notice that given that speculation windows are large, the policy is
+to kill the speculation on the first load and not worry if it can be
+completed with a dependent load/store [1].
+
+[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/xattr.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/synth/emux/emux_hwdep.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/fs/ext4/xattr.c
-+++ b/fs/ext4/xattr.c
-@@ -2724,7 +2724,7 @@ retry:
- 	base = IFIRST(header);
- 	end = (void *)raw_inode + EXT4_SB(inode->i_sb)->s_inode_size;
- 	min_offs = end - base;
--	total_ino = sizeof(struct ext4_xattr_ibody_header);
-+	total_ino = sizeof(struct ext4_xattr_ibody_header) + sizeof(u32);
+--- a/sound/synth/emux/emux_hwdep.c
++++ b/sound/synth/emux/emux_hwdep.c
+@@ -22,9 +22,9 @@
+ #include <sound/core.h>
+ #include <sound/hwdep.h>
+ #include <linux/uaccess.h>
++#include <linux/nospec.h>
+ #include "emux_voice.h"
  
- 	error = xattr_check_inode(inode, header, end);
- 	if (error)
+-
+ #define TMP_CLIENT_ID	0x1001
+ 
+ /*
+@@ -66,13 +66,16 @@ snd_emux_hwdep_misc_mode(struct snd_emux
+ 		return -EFAULT;
+ 	if (info.mode < 0 || info.mode >= EMUX_MD_END)
+ 		return -EINVAL;
++	info.mode = array_index_nospec(info.mode, EMUX_MD_END);
+ 
+ 	if (info.port < 0) {
+ 		for (i = 0; i < emu->num_ports; i++)
+ 			emu->portptrs[i]->ctrls[info.mode] = info.value;
+ 	} else {
+-		if (info.port < emu->num_ports)
++		if (info.port < emu->num_ports) {
++			info.port = array_index_nospec(info.port, emu->num_ports);
+ 			emu->portptrs[info.port]->ctrls[info.mode] = info.value;
++		}
+ 	}
+ 	return 0;
+ }
 
 
