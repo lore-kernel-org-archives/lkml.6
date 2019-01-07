@@ -2,146 +2,104 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5752C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 21:00:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E904C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 21:04:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89C712089F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 21:00:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4998A2089F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 21:04:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546895080;
+	bh=fqUgkZCO8NwjdpjcV77f6IGZIEMqltxXOFqnLSY+ObI=;
+	h=Subject:Cc:To:In-Reply-To:From:References:Date:List-ID:From;
+	b=An/cXbnXzeGd86jy7UmZlnXC8tnXk1p0SRejkoNr6duRa2x+BiR/8EZZuB68FZtWb
+	 HmrRg7Rfakm/BU9+7z65GwrY8Ys6TaP/HKBCiK6zSV5ijvjtV5c177DnPWmHtv+wzK
+	 QRZ1SaLsMZd/Txiw4qYmqK5Z9BZOn2AyNWTtJ4Bw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727137AbfAGVAf (ORCPT
+        id S1727071AbfAGVEj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 16:00:35 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:59607 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726946AbfAGVAf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 16:00:35 -0500
-Received: from fsav301.sakura.ne.jp (fsav301.sakura.ne.jp [153.120.85.132])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x07KxpNT027499;
-        Tue, 8 Jan 2019 05:59:51 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav301.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav301.sakura.ne.jp);
- Tue, 08 Jan 2019 05:59:51 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav301.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x07KxoBJ027495
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Tue, 8 Jan 2019 05:59:51 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [PATCH 2/2] memcg: do not report racy no-eligible OOM tasks
-To:     Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Michal Hocko <mhocko@suse.com>
-References: <20190107143802.16847-1-mhocko@kernel.org>
- <20190107143802.16847-3-mhocko@kernel.org>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <fa8892d1-4a38-dccd-9597-923924aa0a66@i-love.sakura.ne.jp>
-Date:   Tue, 8 Jan 2019 05:59:49 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Mon, 7 Jan 2019 16:04:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35570 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726767AbfAGVEj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 16:04:39 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 515DE2089F;
+        Mon,  7 Jan 2019 21:04:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1546895078;
+        bh=fqUgkZCO8NwjdpjcV77f6IGZIEMqltxXOFqnLSY+ObI=;
+        h=Subject:Cc:To:In-Reply-To:From:References:Date:From;
+        b=x/HHxvk05N+Iym1BHoyHbye+Mdd8Y5ypUyAkL+6Xz15hhvMjASbSzJ6znX9JkN++X
+         7Wd7yDvPP0OT3qrWyI5P+APDVlbT5u3PBDd/zaqBfDsvuYssWS2amCH+8bWOMdv0RM
+         +IsLOoRdIhmU0Fb0xV162oP+pUYru3rv/C47hs3M=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20190107143802.16847-3-mhocko@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v1] clk: qcom: lpass: Add CLK_IGNORE_UNUSED for lpass clocks
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <tdas@codeaurora.org>
+In-Reply-To: <b6397ef1-a6df-0040-9dcc-c491b76a2f8f@codeaurora.org>
+From:   Stephen Boyd <sboyd@kernel.org>
+User-Agent: alot/0.8
+References: <1545306385-31240-1-git-send-email-tdas@codeaurora.org> <154533989563.79149.10213938035592547726@swboyd.mtv.corp.google.com> <b6397ef1-a6df-0040-9dcc-c491b76a2f8f@codeaurora.org>
+Message-ID: <154689507747.15366.6553307032295093169@swboyd.mtv.corp.google.com>
+Date:   Mon, 07 Jan 2019 13:04:37 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/01/07 23:38, Michal Hocko wrote:
-> From: Michal Hocko <mhocko@suse.com>
-> 
-> Tetsuo has reported [1] that a single process group memcg might easily
-> swamp the log with no-eligible oom victim reports due to race between
-> the memcg charge and oom_reaper
+Quoting Taniya Das (2019-01-06 22:26:00)
+> Hello Stephen,
+>=20
+> On 12/21/2018 2:34 AM, Stephen Boyd wrote:
+> > Quoting Taniya Das (2018-12-20 03:46:25)
+> >> The LPASS clocks has a dependency on the GCC lpass clocks to be enabled
+> >> before accessing them and that was the reason to mark the gcc lpass cl=
+ocks
+> >> as critical. But in the case where the lpass subsystem would require a
+> >> restart, toggling the lpass reset would from HW clear the SW enable bi=
+ts
+> >> of the GCC lpass clocks. Thus the next time bringing up the lpass subs=
+ystem
+> >> out of reset would fail.
+> >>
+> >> Allow the lpass clock driver to enable/disable the gcc lpass clocks and
+> >> mark the lpass clocks not be accessed during late_init if no client vo=
+te.
+> >=20
+> > You need to add more details here. It feels like you wrote the beginning
+> > of a paragraph and then stopped abruptly, leaving the reader hanging for
+> > the whole story. Why is late_init important? Why do we need to leave
+> > them on from the bootloader? What if the bootloader doesn't leave them
+> > enabled? This is all rather hacky so I'm deeply confused. Does the lpass
+> > driver need to get these gcc clks and enable/prepare them during probe?
+> > But then it needs to also allow a reset happen and change the clk state?
+> >=20
+> > I suspect this situation is circling a larger problem where a reset is
+> > toggled and that changes some clk state without the clk framework
+> > knowing. There's not much we can do about that besides having some
+> > mechanism for the clks to know that their state is now out of sync. If
+> > that can be done on the provider driver side then we should have an
+> > easier time not needing to write a bunch of framework code to handle
+> > this. OMAP folks are dealing with the same problems from what I recall.
+> >=20
+>=20
+> Hmm, if I mark the CLK_IS_CRITICAL, I don't see a way to handle it in=20
+> provider. Please suggest if you think provider could handle it.
 
-This explanation is outdated. I reported that one memcg OOM killer can
-kill all processes in that memcg. I expect the changelog to be updated.
-
-> 
-> Thread 1		Thread2				oom_reaper
-> try_charge		try_charge
-> 			  mem_cgroup_out_of_memory
-> 			    mutex_lock(oom_lock)
->   mem_cgroup_out_of_memory
->     mutex_lock(oom_lock)
-> 			      out_of_memory
-> 			        select_bad_process
-> 				oom_kill_process(current)
-> 				  wake_oom_reaper
-> 							  oom_reap_task
-> 							  MMF_OOM_SKIP->victim
-> 			    mutex_unlock(oom_lock)
->     out_of_memory
->       select_bad_process # no task
-> 
-> If Thread1 didn't race it would bail out from try_charge and force the
-> charge. We can achieve the same by checking tsk_is_oom_victim inside
-> the oom_lock and therefore close the race.
-> 
-> [1] http://lkml.kernel.org/r/bb2074c0-34fe-8c2c-1c7d-db71338f1e7f@i-love.sakura.ne.jp
-> Signed-off-by: Michal Hocko <mhocko@suse.com>
-> ---
->  mm/memcontrol.c | 14 +++++++++++++-
->  1 file changed, 13 insertions(+), 1 deletion(-)
-> 
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index af7f18b32389..90eb2e2093e7 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -1387,10 +1387,22 @@ static bool mem_cgroup_out_of_memory(struct mem_cgroup *memcg, gfp_t gfp_mask,
->  		.gfp_mask = gfp_mask,
->  		.order = order,
->  	};
-> -	bool ret;
-> +	bool ret = true;
->  
->  	mutex_lock(&oom_lock);
-
-And because of "[PATCH 1/2] mm, oom: marks all killed tasks as oom
-victims", mark_oom_victim() will be called on current thread even if
-we used mutex_lock_killable(&oom_lock) here, like you said
-
-  mutex_lock_killable would take care of exiting task already. I would
-  then still prefer to check for mark_oom_victim because that is not racy
-  with the exit path clearing signals. I can update my patch to use
-  _killable lock variant if we are really going with the memcg specific
-  fix.
-
-. If current thread is not yet killed by the OOM killer but can terminate
-without invoking the OOM killer, using mutex_lock_killable(&oom_lock) here
-saves some processes. What is the race you are referring by "racy with the
-exit path clearing signals" ?
-
-> +
-> +	/*
-> +	 * multi-threaded tasks might race with oom_reaper and gain
-> +	 * MMF_OOM_SKIP before reaching out_of_memory which can lead
-> +	 * to out_of_memory failure if the task is the last one in
-> +	 * memcg which would be a false possitive failure reported
-> +	 */
-
-Not only out_of_memory() failure. Current thread needlessly tries to
-select next OOM victim. out_of_memory() failure is nothing but a result
-of no eligible candidate case.
-
-> +	if (tsk_is_oom_victim(current))
-> +		goto unlock;
-> +
->  	ret = out_of_memory(&oc);
-> +
-> +unlock:
->  	mutex_unlock(&oom_lock);
->  	return ret;
->  }
-> 
+As far as I know, I'm not suggesting the use of CLK_IS_CRITICAL here.
+But removing CLK_IS_CRITICAL and relying on some random bootloader
+behavior also looks wrong. Can you clarify what's going on?
 
