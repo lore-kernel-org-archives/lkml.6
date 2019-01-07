@@ -2,94 +2,166 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0D82C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 14:48:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01D47C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 14:49:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E2022183E
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 14:48:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ReSvf8lO"
+	by mail.kernel.org (Postfix) with ESMTP id C0A7A2087F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 14:49:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729185AbfAGOsr (ORCPT
+        id S1729191AbfAGOtI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 09:48:47 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:37535 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727399AbfAGOsr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 09:48:47 -0500
-Received: by mail-wm1-f68.google.com with SMTP id g67so1170240wmd.2;
-        Mon, 07 Jan 2019 06:48:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=KXKqXHgYEUwxzGo3BNl0g5sl1ukNP7c8KeS+9jPHfCY=;
-        b=ReSvf8lOQxCj1dndtWSzNQFV/vZc5iG5cp0YWncVIACUC2e8Njs00QmHQzuptmuXk3
-         HAfj6ISV/Z4Kiu65zgCRZjXZ3YJVo+vrvhcO3oB74pc+kWiwJmWOh6CF7Ukk6dOJxB4p
-         /mSbTf1kw9YQpjoaUUvN7cpupLdxggZexkTmhHIyY+U4pKlBfxVMyB3pPDCj2w55eA81
-         03hz4Yf7O3i/+SsZg3/fYxWFpwyrGGETyikzgK4hrFUCs8K+0G/ZcFX155QYTuaR8cAW
-         AwD+O0SoIcEAIA+3LLHSvS8VXwted9956ZkExZ7M2+dDESClrIodd1VHRip1q77snvPt
-         nMfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=KXKqXHgYEUwxzGo3BNl0g5sl1ukNP7c8KeS+9jPHfCY=;
-        b=MHsDnueL5EbaWgWCcObcYCs3WNlbFptBxkO16n1I0dETOGhkQtB2wYig6axaN7hO5l
-         SoP3AjCdHLBQLp5bgKim2qgCr+IPYSapYtLrvYwvBFWRthmA4rawDlZnEGRY42PHaDRi
-         OO9icvLzinqqoqCYtrZlD3XLQyzOi39LIvbd6c2gDlb14KnTP/NJJ3rrdQHTgs0X2xmi
-         lpMLyNYJPn5iqXZet8IYY7iYK/N4Q0laKnNHjjJ8XNSKub0bob6t8b1+d1Vhxz4OeRXU
-         spiMjq5j7CGerqxADGvt+jILxgZtCEgrVKziWb4SiaSfDtnFjdixe1kRzOLFNxxBIPlg
-         t7Zg==
-X-Gm-Message-State: AJcUukexcv30+LSg3yBFQ1OrtUYoDoYFsQoY/UXY2D7j8FRVtAJlvJ2O
-        EZZL3ReHge9R7e+ZSefg9qw=
-X-Google-Smtp-Source: ALg8bN5n4WgOs6Sx9ICatFiJaI8P8GRYyfCUfWJwSsEJvg9SuQxhGOeTJbEAWHL9ycNGqeUmJEXC5A==
-X-Received: by 2002:a1c:a3c3:: with SMTP id m186mr8909009wme.16.1546872525236;
-        Mon, 07 Jan 2019 06:48:45 -0800 (PST)
-Received: from localhost.localdomain ([185.140.29.250])
-        by smtp.gmail.com with ESMTPSA id y145sm6973542wmd.30.2019.01.07.06.48.44
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 07 Jan 2019 06:48:44 -0800 (PST)
-Date:   Mon, 7 Jan 2019 15:48:42 +0100
-From:   =?iso-8859-1?Q?J=FAlius?= Milan <jmilan.dev@gmail.com>
-To:     Ajay.Kathat@microchip.com
-Cc:     Larry.Finger@lwfinger.net, linux-kernel@vger.kernel.org,
-        devel@driverdev.osuosl.org, linux-wireless@vger.kernel.org,
-        gregkh@linuxfoundation.org, Adham.Abozaeid@microchip.com
-Subject: Re: [PATCH v2] staging: wilc1000: fix cast to restricted __le32
-Message-ID: <20190107144842.GA14681@localhost.localdomain>
-References: <20190105091025.GA28917@localhost.localdomain>
- <61a272a5-3c6f-4e69-2ce9-b7c58b427750@lwfinger.net>
- <CAP=P++DRiM8Rb8vg9hBJ-N2uhfL0Rrj+njYwgZW80yQZ4jQH4g@mail.gmail.com>
- <1c5c8efb-055f-31b2-b25f-18d3f6e64226@microchip.com>
+        Mon, 7 Jan 2019 09:49:08 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:48374 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727318AbfAGOtH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 09:49:07 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 03609C059B89;
+        Mon,  7 Jan 2019 14:49:06 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-223.bos.redhat.com [10.18.17.223])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 301392DE66;
+        Mon,  7 Jan 2019 14:49:04 +0000 (UTC)
+Subject: Re: [RFC PATCH] x86/speculation: Don't inherit TIF_SSBD on execve()
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        Jonathan Corbet <corbet@lwn.net>
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Jiri Kosina <jikos@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        KarimAllah Ahmed <karahmed@amazon.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+References: <1545246590-12704-1-git-send-email-longman@redhat.com>
+From:   Waiman Long <longman@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ weim8xU=
+Organization: Red Hat
+Message-ID: <f163b0e5-b69b-071e-6ba9-220b9b90eaec@redhat.com>
+Date:   Mon, 7 Jan 2019 09:49:03 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1c5c8efb-055f-31b2-b25f-18d3f6e64226@microchip.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <1545246590-12704-1-git-send-email-longman@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Mon, 07 Jan 2019 14:49:06 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 07, 2019 at 06:06:55AM +0000, Ajay.Kathat@microchip.com wrote:
-Hi Ajay,
+On 12/19/2018 02:09 PM, Waiman Long wrote:
+> With the default SPEC_STORE_BYPASS_SECCOMP/SPEC_STORE_BYPASS_PRCTL mode,
+> the TIF_SSBD bit will be inherited when a new task is fork'ed or cloned.
+>
+> As only certain class of applications (like Java) requires disabling
+> speculative store bypass for security purpose, it may not make sense to
+> allow the TIF_SSBD bit to be inherited across execve() boundary where the
+> new application may not need SSBD at all and is probably not aware that
+> SSBD may have been turned on. This may cause an unnecessary performance
+> loss of up to 20% in some cases.
+>
+> The arch_setup_new_exec() function is updated to clear the TIF_SSBD
+> bit unless it has been force-disabled.
+>
+> Signed-off-by: Waiman Long <longman@redhat.com>
+> ---
+>  Documentation/userspace-api/spec_ctrl.rst |  3 +++
+>  arch/x86/kernel/process.c                 | 10 ++++++++++
+>  2 files changed, 13 insertions(+)
+>
+> diff --git a/Documentation/userspace-api/spec_ctrl.rst b/Documentation/userspace-api/spec_ctrl.rst
+> index c4dbe6f..226aed5 100644
+> --- a/Documentation/userspace-api/spec_ctrl.rst
+> +++ b/Documentation/userspace-api/spec_ctrl.rst
+> @@ -55,6 +55,9 @@ is selected by arg2 of :manpage:`prctl(2)` per task. arg3 is used to hand
+>  in the control value, i.e. either PR_SPEC_ENABLE or PR_SPEC_DISABLE or
+>  PR_SPEC_FORCE_DISABLE.
+>  
+> +When mitigation is enabled, its state will not be inherited on
+> +:manpage:`execve(2)` unless it is force-disabled.
+> +
+>  Common error codes
+>  ------------------
+>  ======= =================================================================
+> diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
+> index 7d31192..f207f4d 100644
+> --- a/arch/x86/kernel/process.c
+> +++ b/arch/x86/kernel/process.c
+> @@ -252,6 +252,16 @@ void arch_setup_new_exec(void)
+>  	/* If cpuid was previously disabled for this task, re-enable it. */
+>  	if (test_thread_flag(TIF_NOCPUID))
+>  		enable_cpuid();
+> +
+> +	/*
+> +	 * Don't inherit TIF_SSBD across exec boundary unless speculative
+> +	 * store bypass is force-disabled (e.g. seccomp on).
+> +	 */
+> +	if (test_thread_flag(TIF_SSBD) &&
+> +	   !task_spec_ssb_force_disable(current)) {
+> +		clear_thread_flag(TIF_SSBD);
+> +		task_clear_spec_ssb_disable(current);
+> +	}
+>  }
+>  
+>  static inline void switch_to_bitmap(struct thread_struct *prev,
 
-> Please resubmit the patch by changing 'frame_type' type to '__le16' in
-> 'wilc_reg_frame' struct.
+Ping! Any comments of objections?
 
-Done, sent patch version 4.
+Cheers,
+Longman
 
-Message subject changed to:
-"[PATCH v4] staging: wilc1000: fix registration frame size"
-to fit v4 patch content.
-
-Thank you for your review,
-
-Julius
