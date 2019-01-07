@@ -2,60 +2,58 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0316AC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:40:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48B8DC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:41:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5717206B7
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:40:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16477206B7
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:41:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727942AbfAGNko (ORCPT
+        id S1728023AbfAGNlG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:40:44 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33846 "EHLO
+        Mon, 7 Jan 2019 08:41:06 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57838 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727200AbfAGNko (ORCPT
+        by vger.kernel.org with ESMTP id S1727200AbfAGNlF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:40:44 -0500
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x07DeUgZ030042
-        for <linux-kernel@vger.kernel.org>; Mon, 7 Jan 2019 08:40:43 -0500
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2pv6w4k6m7-1
+        Mon, 7 Jan 2019 08:41:05 -0500
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x07DenkH129585
+        for <linux-kernel@vger.kernel.org>; Mon, 7 Jan 2019 08:41:04 -0500
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2pv7d19hrp-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 08:40:41 -0500
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 08:40:58 -0500
 Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <borntraeger@de.ibm.com>;
-        Mon, 7 Jan 2019 13:39:49 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Mon, 7 Jan 2019 13:40:27 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 7 Jan 2019 13:39:46 -0000
+        Mon, 7 Jan 2019 13:40:24 -0000
 Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x07Ddj7a49283198
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x07DeOKV12320990
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 7 Jan 2019 13:39:45 GMT
+        Mon, 7 Jan 2019 13:40:24 GMT
 Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B396FAE051;
-        Mon,  7 Jan 2019 13:39:45 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id E44D3AE05F;
+        Mon,  7 Jan 2019 13:40:23 +0000 (GMT)
 Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 83870AE045;
-        Mon,  7 Jan 2019 13:39:45 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 84A44AE057;
+        Mon,  7 Jan 2019 13:40:23 +0000 (GMT)
 Received: from oc7455500831.ibm.com (unknown [9.152.224.141])
         by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon,  7 Jan 2019 13:39:45 +0000 (GMT)
-Subject: Re: [PATCH 4.20 005/145] tap: call skb_probe_transport_header after
- setting skb->dev
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     stable@vger.kernel.org, Willem de Bruijn <willemb@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-References: <20190107104437.308206189@linuxfoundation.org>
- <20190107104438.019339514@linuxfoundation.org>
+        Mon,  7 Jan 2019 13:40:23 +0000 (GMT)
+Subject: Re: [PATCH v3 0/3] virtio-balloon: tweak config_changed
+To:     Wei Wang <wei.w.wang@intel.com>, virtio-dev@lists.oasis-open.org,
+        linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
+        mst@redhat.com, cohuck@redhat.com
+Cc:     pbonzini@redhat.com, dgilbert@redhat.com, pasic@linux.ibm.com
+References: <1546844466-38079-1-git-send-email-wei.w.wang@intel.com>
 From:   Christian Borntraeger <borntraeger@de.ibm.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
@@ -101,80 +99,56 @@ Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
  RGIN40QWFVlZvkKIEkzlzqpAyGaRLhXJPv/6tpoQaCQQoSAc5Z9kM/wEd9e2zMeojcWjUXgg
  oWj8A/wY4UXExGBu+UCzzP/6sQRpBiPFgmqPTytrDo/gsUGqjOudLiHQcMU+uunULYQxVghC
  syiRa+UVlsKmx1hsEg==
-Date:   Mon, 7 Jan 2019 14:39:45 +0100
+Date:   Mon, 7 Jan 2019 14:40:23 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20190107104438.019339514@linuxfoundation.org>
+In-Reply-To: <1546844466-38079-1-git-send-email-wei.w.wang@intel.com>
 Content-Language: en-US
 X-TM-AS-GCONF: 00
-x-cbid: 19010713-4275-0000-0000-000002FB50F5
+x-cbid: 19010713-0016-0000-0000-0000024158D2
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19010713-4276-0000-0000-00003809588C
-Message-Id: <e5c618da-2abc-f50d-b31a-29f17f7ce1dd@de.ibm.com>
+x-cbparentid: 19010713-0017-0000-0000-0000329B667A
+Message-Id: <8eaba95f-5d3f-f225-31bf-65e6425330be@de.ibm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-07_06:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=879 adultscore=0 classifier=spam adjust=0 reason=mlx
+ mlxlogscore=774 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1810050000 definitions=main-1901070121
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Can you please cc stable? Right now 4.20 does not work under KVM.
 
 
-On 07.01.2019 13:30, Greg Kroah-Hartman wrote:
-> 4.20-stable review patch.  If anyone has any objections, please let me know.
-> 
-> ------------------
-> 
-> From: Willem de Bruijn <willemb@google.com>
-> 
-> [ Upstream commit 8c76e77f9069f10505c08e02646c3ee11ad79038 ]
-> 
-> The BPF flow dissector expects either skb->sk or skb->dev set on
-> all skbs. Delay flow dissection until after skb->dev is set.
-> 
-> This requires calling from within an rcu read-side critical section.
-> That is fine, see also the call from tun_xdp_one.
-> 
-> Fixes: d0e13a1488ad ("flow_dissector: lookup netns by skb->sk if skb->dev is NULL")
-> Reported-by: Christian Borntraeger <borntraeger@de.ibm.com>
-> Signed-off-by: Willem de Bruijn <willemb@google.com>
-> Signed-off-by: David S. Miller <davem@davemloft.net>
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-I can confirm that this fixes my issue.
-
-Tested-by: Christian Borntraeger <borntraeger@de.ibm.com>
-> ---
->  drivers/net/tap.c |    3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+On 07.01.2019 08:01, Wei Wang wrote:
+> Since virtio-ccw doesn't work with accessing to the config space
+> inside an interrupt context, this patch series avoids that issue by
+> moving the config register accesses to the related workqueue contexts.
 > 
-> --- a/drivers/net/tap.c
-> +++ b/drivers/net/tap.c
-> @@ -1177,8 +1177,6 @@ static int tap_get_user_xdp(struct tap_q
->  			goto err_kfree;
->  	}
->  
-> -	skb_probe_transport_header(skb, ETH_HLEN);
-> -
->  	/* Move network header to the right position for VLAN tagged packets */
->  	if ((skb->protocol == htons(ETH_P_8021Q) ||
->  	     skb->protocol == htons(ETH_P_8021AD)) &&
-> @@ -1189,6 +1187,7 @@ static int tap_get_user_xdp(struct tap_q
->  	tap = rcu_dereference(q->tap);
->  	if (tap) {
->  		skb->dev = tap->dev;
-> +		skb_probe_transport_header(skb, ETH_HLEN);
->  		dev_queue_xmit(skb);
->  	} else {
->  		kfree_skb(skb);
+> v2->v3 ChangeLog:
+>     - rename cmd_id_received to cmd_id_received_cache, and have call sites
+>       read the latest value via virtio_balloon_cmd_id_received. (Still
+>       kept Cornelia and Halil's reviewed-by as it's a minor change)
+>     - remove zeroing vb->num_free_page_blocks in probe since vb is
+>       allocated via kzalloc.
+> v1->v2 ChangeLog:
+>     - add config_read_bitmap to indicate to the workqueue callbacks about
+>       the necessity of reading the related config fields.
 > 
+> Wei Wang (3):
+>   virtio-balloon: tweak config_changed implementation
+>   virtio-balloon: improve update_balloon_size_func
+>   virtio_balloon: remove the unnecessary 0-initialization
+> 
+>  drivers/virtio/virtio_balloon.c | 104 ++++++++++++++++++++++++++--------------
+>  1 file changed, 69 insertions(+), 35 deletions(-)
 > 
 
