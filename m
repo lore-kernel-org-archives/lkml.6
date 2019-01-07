@@ -2,101 +2,97 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0527AC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 23:48:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06699C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 23:48:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C55452087F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 23:48:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE27E2183E
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 23:48:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727306AbfAGXsP (ORCPT
+        id S1727342AbfAGXs5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 18:48:15 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:52505 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726667AbfAGXsO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 18:48:14 -0500
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1ggecs-0005aI-0z; Mon, 07 Jan 2019 23:48:10 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Arjun Vynipadath <arjun@chelsio.com>,
-        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] net: cxgb4: fix various indentation issues
-Date:   Mon,  7 Jan 2019 23:48:09 +0000
-Message-Id: <20190107234809.14373-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.19.1
+        Mon, 7 Jan 2019 18:48:57 -0500
+Received: from nautica.notk.org ([91.121.71.147]:35419 "EHLO nautica.notk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726667AbfAGXs5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 18:48:57 -0500
+Received: by nautica.notk.org (Postfix, from userid 1001)
+        id 258CFC01B; Tue,  8 Jan 2019 00:48:54 +0100 (CET)
+Date:   Tue, 8 Jan 2019 00:48:39 +0100
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     Pavel Tatashin <pasha.tatashin@soleen.com>
+Cc:     Salvatore Bonaccorso <carnil@debian.org>,
+        Steven Sistare <steven.sistare@oracle.com>,
+        Pavel Tatashin <pavel.tatashin@microsoft.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        linux@armlinux.org.uk, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, John Stultz <john.stultz@linaro.org>,
+        sboyd@codeaurora.org, x86@kernel.org,
+        LKML <linux-kernel@vger.kernel.org>, mingo@redhat.com,
+        Thomas Gleixner <tglx@linutronix.de>, hpa@zytor.com,
+        douly.fnst@cn.fujitsu.com, Peter Zijlstra <peterz@infradead.org>,
+        prarit@redhat.com, feng.tang@intel.com,
+        Petr Mladek <pmladek@suse.com>, gnomes@lxorguk.ukuu.org.uk,
+        linux-s390@vger.kernel.org, boris.ostrovsky@oracle.com,
+        jgross@suse.com, pbonzini@redhat.com,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
+        qemu-devel@nongnu.org
+Subject: Re: [PATCH v15 23/26] sched: early boot clock
+Message-ID: <20190107234839.GA15269@nautica>
+References: <20180719205545.16512-1-pasha.tatashin@oracle.com>
+ <20180719205545.16512-24-pasha.tatashin@oracle.com>
+ <20181106054212.GA31768@nautica>
+ <95c3920e-bf80-0c7e-7854-01a1c3189c23@oracle.com>
+ <20190102202032.GA1034@eldamar.local>
+ <CA+CK2bC70pnL0Wimb0xt99J4nNfi8W3zuUHgAk-jsPuOP9jpHA@mail.gmail.com>
+ <20190103234339.GA17457@nautica>
+ <CA+CK2bDj1f=VpT+k-e8kSSaoLJ3W9-JPPq9udFdDwd6ijXi28g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CA+CK2bDj1f=VpT+k-e8kSSaoLJ3W9-JPPq9udFdDwd6ijXi28g@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Pavel Tatashin wrote on Mon, Jan 07, 2019:
+> I could not reproduce the problem. Did you suspend to memory between
+> wake ups? Does this time jump happen every time, even if your laptop
+> sleeps for a minute?
 
-There are some lines that have indentation issues, fix these.
+I'm not sure I understand "suspend to memory between the wake ups".
+The full sequence is:
+ - start a VM (just in case, I let it boot till the end)
+ - suspend to memory (aka systemctl suspend) the host
+ - after resuming the host, soft reboot the VM (login through
+serial/ssh/whatever and reboot or in the qemu console 'system_reset')
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/ethernet/chelsio/cxgb4/cxgb4_ptp.c | 8 ++++----
- drivers/net/ethernet/chelsio/cxgb4/cxgb4_uld.c | 2 +-
- drivers/net/ethernet/chelsio/cxgb4/t4_hw.c     | 2 +-
- 3 files changed, 6 insertions(+), 6 deletions(-)
+I've just slept exactly one minute and reproduced again with the fedora
+stock kernel now (4.19.13-300.fc29.x86_64) in the VM.
 
-diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_ptp.c b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_ptp.c
-index 9f9d6cae39d5..58a039c3224a 100644
---- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_ptp.c
-+++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_ptp.c
-@@ -378,10 +378,10 @@ static void cxgb4_init_ptp_timer(struct adapter *adapter)
- 	int err;
- 
- 	memset(&c, 0, sizeof(c));
--		c.op_to_portid = cpu_to_be32(FW_CMD_OP_V(FW_PTP_CMD) |
--					     FW_CMD_REQUEST_F |
--					     FW_CMD_WRITE_F |
--					     FW_PTP_CMD_PORTID_V(0));
-+	c.op_to_portid = cpu_to_be32(FW_CMD_OP_V(FW_PTP_CMD) |
-+				     FW_CMD_REQUEST_F |
-+				     FW_CMD_WRITE_F |
-+				     FW_PTP_CMD_PORTID_V(0));
- 	c.retval_len16 = cpu_to_be32(FW_CMD_LEN16_V(sizeof(c) / 16));
- 	c.u.scmd.sc = FW_PTP_SC_INIT_TIMER;
- 
-diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_uld.c b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_uld.c
-index 9a6065a3fa46..c041f44324db 100644
---- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_uld.c
-+++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_uld.c
-@@ -78,7 +78,7 @@ static void free_msix_idx_in_bmap(struct adapter *adap, unsigned int msix_idx)
- 	unsigned long flags;
- 
- 	spin_lock_irqsave(&bmap->lock, flags);
--	 __clear_bit(msix_idx, bmap->msix_bmap);
-+	__clear_bit(msix_idx, bmap->msix_bmap);
- 	spin_unlock_irqrestore(&bmap->lock, flags);
- }
- 
-diff --git a/drivers/net/ethernet/chelsio/cxgb4/t4_hw.c b/drivers/net/ethernet/chelsio/cxgb4/t4_hw.c
-index e8c34292a0ec..2b03f6187a24 100644
---- a/drivers/net/ethernet/chelsio/cxgb4/t4_hw.c
-+++ b/drivers/net/ethernet/chelsio/cxgb4/t4_hw.c
-@@ -3794,7 +3794,7 @@ int t4_load_phy_fw(struct adapter *adap,
- 	/* If we have version number support, then check to see if the adapter
- 	 * already has up-to-date PHY firmware loaded.
- 	 */
--	 if (phy_fw_version) {
-+	if (phy_fw_version) {
- 		new_phy_fw_vers = phy_fw_version(phy_fw_data, phy_fw_size);
- 		ret = t4_phy_fw_ver(adap, &cur_phy_fw_ver);
- 		if (ret < 0)
+Interestingly I'm not getting the same offset between multiple reboots
+now despite not suspending again; but if I don't suspend I cannot seem
+to get it to give an offset at all (only tried for a few minutes; this
+might not be true) ; OTOH I pushed my luck further and even with a five
+seconds sleep I'm getting a noticeable offset on first VM reboot after
+resume:
+
+[    0.000000] Hypervisor detected: KVM
+[    0.000000] kvm-clock: Using msrs 4b564d01 and 4b564d00
+[  179.362163] kvm-clock: cpu 0, msr 13c01001, primary cpu clock
+[  179.362163] clocksource: kvm-clock: mask: 0xffffffffffffffff max_cycles: 0x1cd42e4dffb, max_idle_ns: 881590591483 ns
+
+Honestly not sure what more information I could give, I'll try on some
+other hardware than my laptop (if I can get a server to resume after
+suspend through ipmi or wake on lan); but I don't have anything I could
+install ubuntu on to try their qemu's version... although I really don't
+want to believe that's the difference...
+
+Thanks,
 -- 
-2.19.1
-
+Dominique
