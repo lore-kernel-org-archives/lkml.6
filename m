@@ -7,50 +7,50 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 988F8C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:17:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED763C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:17:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69AFC217D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:17:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE96B2089F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:17:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546867023;
-	bh=hVG+p684V4bZ4JBIFAYqFmQbmT+u5VF7CFJYbb3TsEk=;
+	s=default; t=1546867031;
+	bh=Vt+zEP5+mEuBzrbSOPRjfwnVdfeNgdjVvI1XiNB38Qk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=XkTDRgaPXvI9IjZ9K9Jw+5FPegKF9DoUSd7Mt7AHf5v04KoRXR8ULcw50N/h4XAZa
-	 o+VW4UdwLs8ANYWeMABE+/nH9C30/BIOe3n3G1UuXZbhHI+ApFEi+lWCiS4rp6JSB/
-	 qBm+tO32MvOSt79T/6Pdxfz0O41L1CLjUiakOrSQ=
+	b=eLCxSyykWjQl4I0wltPJWmcNLw8k4lpHyB4fyzhB4LawMbuo54l/X0T5d1KmVkJul
+	 HPjwVXxmjQ78VUQ/xDaTtXHgJq3mS6yZ9zRYS83Rv+dH5RYH6pfOgLL0cfVUOna1QW
+	 CApv27ihw1lPbwza0c3s2jkD2UL1gDLYKQVWzrLQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730433AbfAGNAS (ORCPT
+        id S1730617AbfAGNRK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:00:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46882 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:17:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47782 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730139AbfAGM7P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:59:15 -0500
+        id S1727696AbfAGNAP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:00:15 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9DED42089F;
-        Mon,  7 Jan 2019 12:59:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2D0A5206BB;
+        Mon,  7 Jan 2019 13:00:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865954;
-        bh=hVG+p684V4bZ4JBIFAYqFmQbmT+u5VF7CFJYbb3TsEk=;
+        s=default; t=1546866014;
+        bh=Vt+zEP5+mEuBzrbSOPRjfwnVdfeNgdjVvI1XiNB38Qk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eY+CpKTAxS6era1cEm4DiPtHiVGogAG6Gd4KGaQAIwlj97mzE5yFAc5O/I0QwhgLt
-         nmyII5KtehKQGgOU1RhXoSzoFVXoXAzYnWER7ShJEzAUjMAm17osE0XCZbR4l69FKU
-         ARPiVcVdBEyHQIxo9Y9Pl3ijk9Pw+IU/durkR4IE=
+        b=h26AtFYwAKx4CRPbtJ55t/nwOT4aoDbVTdxGpaHvf80h8YE0t9ADwYSo7PJeMQuC/
+         pjVeqjgreWu3HAN09XDbZi3UXwqrrkSPazDAlm9zDXeQEU8FTHlz61/Q9JY0m9Bv0A
+         nn7nHZ/BMQ/iuqFkE5QSsf5oLtfxum2p1ZudpXL8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dave Martin <Dave.Martin@arm.com>,
-        Pi-Hsun Shih <pihsun@chromium.org>,
-        Will Deacon <will.deacon@arm.com>
-Subject: [PATCH 4.19 168/170] arm64: compat: Avoid sending SIGILL for unallocated syscall numbers
-Date:   Mon,  7 Jan 2019 13:33:15 +0100
-Message-Id: <20190107104512.806132750@linuxfoundation.org>
+        stable@vger.kernel.org, Ido Schimmel <idosch@idosch.org>,
+        Willem de Bruijn <willemb@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 018/101] packet: validate address length if non-zero
+Date:   Mon,  7 Jan 2019 13:32:06 +0100
+Message-Id: <20190107105333.904842408@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190107104452.953560660@linuxfoundation.org>
-References: <20190107104452.953560660@linuxfoundation.org>
+In-Reply-To: <20190107105330.372621917@linuxfoundation.org>
+References: <20190107105330.372621917@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -62,70 +62,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.19-stable review patch.  If anyone has any objections, please let me know.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Will Deacon <will.deacon@arm.com>
+From: Willem de Bruijn <willemb@google.com>
 
-commit 169113ece0f29ebe884a6cfcf57c1ace04d8a36a upstream.
+[ Upstream commit 6b8d95f1795c42161dc0984b6863e95d6acf24ed ]
 
-The ARM Linux kernel handles the EABI syscall numbers as follows:
+Validate packet socket address length if a length is given. Zero
+length is equivalent to not setting an address.
 
-  0           - NR_SYSCALLS-1	: Invoke syscall via syscall table
-  NR_SYSCALLS - 0xeffff		: -ENOSYS (to be allocated in future)
-  0xf0000     - 0xf07ff		: Private syscall or -ENOSYS if not allocated
-  > 0xf07ff			: SIGILL
-
-Our compat code gets this wrong and ends up sending SIGILL in response
-to all syscalls greater than NR_SYSCALLS which have a value greater
-than 0x7ff in the bottom 16 bits.
-
-Fix this by defining the end of the ARM private syscall region and
-checking the syscall number against that directly. Update the comment
-while we're at it.
-
-Cc: <stable@vger.kernel.org>
-Cc: Dave Martin <Dave.Martin@arm.com>
-Reported-by: Pi-Hsun Shih <pihsun@chromium.org>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+Fixes: 99137b7888f4 ("packet: validate address length")
+Reported-by: Ido Schimmel <idosch@idosch.org>
+Signed-off-by: Willem de Bruijn <willemb@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/arm64/include/asm/unistd.h |    5 +++--
- arch/arm64/kernel/sys_compat.c  |    4 ++--
- 2 files changed, 5 insertions(+), 4 deletions(-)
+ net/packet/af_packet.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/arm64/include/asm/unistd.h
-+++ b/arch/arm64/include/asm/unistd.h
-@@ -40,8 +40,9 @@
-  * The following SVCs are ARM private.
-  */
- #define __ARM_NR_COMPAT_BASE		0x0f0000
--#define __ARM_NR_compat_cacheflush	(__ARM_NR_COMPAT_BASE+2)
--#define __ARM_NR_compat_set_tls		(__ARM_NR_COMPAT_BASE+5)
-+#define __ARM_NR_compat_cacheflush	(__ARM_NR_COMPAT_BASE + 2)
-+#define __ARM_NR_compat_set_tls		(__ARM_NR_COMPAT_BASE + 5)
-+#define __ARM_NR_COMPAT_END		(__ARM_NR_COMPAT_BASE + 0x800)
- 
- #define __NR_compat_syscalls		399
- #endif
---- a/arch/arm64/kernel/sys_compat.c
-+++ b/arch/arm64/kernel/sys_compat.c
-@@ -102,12 +102,12 @@ long compat_arm_syscall(struct pt_regs *
- 
- 	default:
- 		/*
--		 * Calls 9f00xx..9f07ff are defined to return -ENOSYS
-+		 * Calls 0xf0xxx..0xf07ff are defined to return -ENOSYS
- 		 * if not implemented, rather than raising SIGILL. This
- 		 * way the calling program can gracefully determine whether
- 		 * a feature is supported.
- 		 */
--		if ((no & 0xffff) <= 0x7ff)
-+		if (no < __ARM_NR_COMPAT_END)
- 			return -ENOSYS;
- 		break;
- 	}
+--- a/net/packet/af_packet.c
++++ b/net/packet/af_packet.c
+@@ -2663,7 +2663,7 @@ static int tpacket_snd(struct packet_soc
+ 						sll_addr)))
+ 			goto out;
+ 		proto	= saddr->sll_protocol;
+-		addr	= saddr->sll_addr;
++		addr	= saddr->sll_halen ? saddr->sll_addr : NULL;
+ 		dev = dev_get_by_index(sock_net(&po->sk), saddr->sll_ifindex);
+ 		if (addr && dev && saddr->sll_halen < dev->addr_len)
+ 			goto out;
+@@ -2863,7 +2863,7 @@ static int packet_snd(struct socket *soc
+ 		if (msg->msg_namelen < (saddr->sll_halen + offsetof(struct sockaddr_ll, sll_addr)))
+ 			goto out;
+ 		proto	= saddr->sll_protocol;
+-		addr	= saddr->sll_addr;
++		addr	= saddr->sll_halen ? saddr->sll_addr : NULL;
+ 		dev = dev_get_by_index(sock_net(sk), saddr->sll_ifindex);
+ 		if (addr && dev && saddr->sll_halen < dev->addr_len)
+ 			goto out;
 
 
