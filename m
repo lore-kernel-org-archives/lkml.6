@@ -7,48 +7,47 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4594C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:20:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7781C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:21:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7169A21736
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:20:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C230217D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:21:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546867250;
-	bh=KjW24aSySuhgySqJdoDNd6ojO+ordbvwqJMfN6mmk9g=;
+	s=default; t=1546867264;
+	bh=1e5ZPhKeCwFvf8qjegy3JCamvlqAdW22zX8QO9AklYY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=PZeGfbuFtC6CbvtG78VJvm0+a38ujJqYFVtF8i3RiKzqMzO+fYibAjWynBoOKXvn7
-	 Vj+rg7YCHLBjZ4NCOFJLo4g26sO2XjkRnodkR1TMZMMC516OF33v/TWFZkRtbEl0z2
-	 ELpH4Il3IkJOEctamo9iYwNAjDjvQxo6srDWgxI4=
+	b=LMFaaO+6XXjKoItBuym5b4tWVbwGHiaWov2p6uIHLnuBz7EaFlYo08dVsZCObW4dp
+	 KrVOXji9z1LwTilFCRjdz+j7f8QuG59cCWFDj05qVxeiitozrFHxQLIHWeI6RrJ/IN
+	 T50WDElHBjafYKTORTG10psk3o8eNqXamZ0AkLkA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730210AbfAGNUt (ORCPT
+        id S1730037AbfAGNVD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:20:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35032 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:21:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34654 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728884AbfAGMph (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:45:37 -0500
+        id S1728844AbfAGMpZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:45:25 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A8220218A1;
-        Mon,  7 Jan 2019 12:45:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9E27C218A1;
+        Mon,  7 Jan 2019 12:45:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865136;
-        bh=KjW24aSySuhgySqJdoDNd6ojO+ordbvwqJMfN6mmk9g=;
+        s=default; t=1546865125;
+        bh=1e5ZPhKeCwFvf8qjegy3JCamvlqAdW22zX8QO9AklYY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HMVJtq/UdbWsVAMQdIWkPtp7um+vPPVomupkSCYLbEM/AZd66AHGL/sWNJJZTz81t
-         ekO1Lj2H2cz+TVryqj4GXDL9HC9SlsXxzweopMwydJGh8FFK56Of84jeKR4UJ0qebi
-         UKJuPFKyPW+uyCez5n4FIgchQFI9GEq6vWVf1IDU=
+        b=Y4NJAHhZLcv3dqrya4ubf5DH/J2QYFz7L+ASx4duV4XThqz/2Iwsm1yDB3KMEaj+L
+         2Nm0k7uuewbhRTMm+psxXao++/cU+pa24wyW2bQ362EawOJaZaExX7c2oZUdwrexqN
+         ClCgle3+l0YZRvgJYGOYmIi/RaIphCkZlAN+ccPc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Sergey Matyukevich <geomatsi@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 015/170] net: macb: restart tx after tx used bit read
-Date:   Mon,  7 Jan 2019 13:30:42 +0100
-Message-Id: <20190107104454.832732956@linuxfoundation.org>
+Subject: [PATCH 4.19 011/170] net: clear skb->tstamp in forwarding paths
+Date:   Mon,  7 Jan 2019 13:30:38 +0100
+Message-Id: <20190107104454.359398850@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104452.953560660@linuxfoundation.org>
 References: <20190107104452.953560660@linuxfoundation.org>
@@ -67,71 +66,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Claudiu Beznea <claudiu.beznea@microchip.com>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit 4298388574dae6168fa8940b3edc7ba965e8a7ab ]
+[ Upstream commit 8203e2d844d34af247a151d8ebd68553a6e91785 ]
 
-On some platforms (currently detected only on SAMA5D4) TX might stuck
-even the pachets are still present in DMA memories and TX start was
-issued for them. This happens due to race condition between MACB driver
-updating next TX buffer descriptor to be used and IP reading the same
-descriptor. In such a case, the "TX USED BIT READ" interrupt is asserted.
-GEM/MACB user guide specifies that if a "TX USED BIT READ" interrupt
-is asserted TX must be restarted. Restart TX if used bit is read and
-packets are present in software TX queue. Packets are removed from software
-TX queue if TX was successful for them (see macb_tx_interrupt()).
+Sergey reported that forwarding was no longer working
+if fq packet scheduler was used.
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+This is caused by the recent switch to EDT model, since incoming
+packets might have been timestamped by __net_timestamp()
+
+__net_timestamp() uses ktime_get_real(), while fq expects packets
+using CLOCK_MONOTONIC base.
+
+The fix is to clear skb->tstamp in forwarding paths.
+
+Fixes: 80b14dee2bea ("net: Add a new socket option for a future transmit time.")
+Fixes: fb420d5d91c1 ("tcp/fq: move back to CLOCK_MONOTONIC")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: Sergey Matyukevich <geomatsi@gmail.com>
+Tested-by: Sergey Matyukevich <geomatsi@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/cadence/macb_main.c |   21 ++++++++++++++++++++-
- 1 file changed, 20 insertions(+), 1 deletion(-)
+ net/ipv4/ip_forward.c |    1 +
+ net/ipv6/ip6_output.c |    1 +
+ 2 files changed, 2 insertions(+)
 
---- a/drivers/net/ethernet/cadence/macb_main.c
-+++ b/drivers/net/ethernet/cadence/macb_main.c
-@@ -61,7 +61,8 @@
- #define MACB_TX_ERR_FLAGS	(MACB_BIT(ISR_TUND)			\
- 					| MACB_BIT(ISR_RLE)		\
- 					| MACB_BIT(TXERR))
--#define MACB_TX_INT_FLAGS	(MACB_TX_ERR_FLAGS | MACB_BIT(TCOMP))
-+#define MACB_TX_INT_FLAGS	(MACB_TX_ERR_FLAGS | MACB_BIT(TCOMP)	\
-+					| MACB_BIT(TXUBR))
+--- a/net/ipv4/ip_forward.c
++++ b/net/ipv4/ip_forward.c
+@@ -72,6 +72,7 @@ static int ip_forward_finish(struct net
+ 	if (unlikely(opt->optlen))
+ 		ip_forward_options(skb);
  
- /* Max length of transmit frame must be a multiple of 8 bytes */
- #define MACB_TX_LEN_ALIGN	8
-@@ -1313,6 +1314,21 @@ static void macb_hresp_error_task(unsign
- 	netif_tx_start_all_queues(dev);
++	skb->tstamp = 0;
+ 	return dst_output(net, sk, skb);
  }
  
-+static void macb_tx_restart(struct macb_queue *queue)
-+{
-+	unsigned int head = queue->tx_head;
-+	unsigned int tail = queue->tx_tail;
-+	struct macb *bp = queue->bp;
-+
-+	if (bp->caps & MACB_CAPS_ISR_CLEAR_ON_WRITE)
-+		queue_writel(queue, ISR, MACB_BIT(TXUBR));
-+
-+	if (head == tail)
-+		return;
-+
-+	macb_writel(bp, NCR, macb_readl(bp, NCR) | MACB_BIT(TSTART));
-+}
-+
- static irqreturn_t macb_interrupt(int irq, void *dev_id)
- {
- 	struct macb_queue *queue = dev_id;
-@@ -1370,6 +1386,9 @@ static irqreturn_t macb_interrupt(int ir
- 		if (status & MACB_BIT(TCOMP))
- 			macb_tx_interrupt(queue);
+--- a/net/ipv6/ip6_output.c
++++ b/net/ipv6/ip6_output.c
+@@ -378,6 +378,7 @@ static inline int ip6_forward_finish(str
+ 	__IP6_INC_STATS(net, ip6_dst_idev(dst), IPSTATS_MIB_OUTFORWDATAGRAMS);
+ 	__IP6_ADD_STATS(net, ip6_dst_idev(dst), IPSTATS_MIB_OUTOCTETS, skb->len);
  
-+		if (status & MACB_BIT(TXUBR))
-+			macb_tx_restart(queue);
-+
- 		/* Link change detection isn't possible with RMII, so we'll
- 		 * add that if/when we get our hands on a full-blown MII PHY.
- 		 */
++	skb->tstamp = 0;
+ 	return dst_output(net, sk, skb);
+ }
+ 
 
 
