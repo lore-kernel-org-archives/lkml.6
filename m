@@ -7,47 +7,48 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A33FAC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:47:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB47CC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:47:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 673EE206BB
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:47:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A3D3206BB
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:47:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546865245;
-	bh=XQ4bDL8QOtY3q/l8Svb57V2H7TDJ4zk2e9klQAPRtr4=;
+	s=default; t=1546865251;
+	bh=QzBfkEBnitIhCocG0m3nlOP9zF+0tHluGRK7xzuCqJE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=XmgHrMGhHspM+UCLh8L0asithTlZiCYtCRbZqgTYz9T5g4eWyHPsoFxenl9sVBo7k
-	 o+foU9zQyLvr/omolYqQ5My3J3ILNAiyxoFFuz/dhgX8oe2kh1shiYE0rDv20YqEx9
-	 ZMwE1x3BKzy6/txSMso+wxUFZwN/fu/NeFjwZP7Q=
+	b=l8qbUMtMcapeNdZ3XBBP419IwolNmDusCQkZv3C6y/kd+45SPc4M7GHZweAdwVlzI
+	 h6PKZupfDuVgXwmdZagvpeJjIZdtU6PWzeNTmj08qfg+sXziNxrMH6tdKCOn9NSVF8
+	 rV72VxGWlBsj8QdvLY2j+NAw7GeweD22BCprUyMM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728932AbfAGMpr (ORCPT
+        id S1728673AbfAGMra (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:45:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35214 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:47:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37584 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728914AbfAGMpm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:45:42 -0500
+        id S1727959AbfAGMrY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:47:24 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2A78C2183E;
-        Mon,  7 Jan 2019 12:45:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D6D8B20651;
+        Mon,  7 Jan 2019 12:47:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865141;
-        bh=XQ4bDL8QOtY3q/l8Svb57V2H7TDJ4zk2e9klQAPRtr4=;
+        s=default; t=1546865243;
+        bh=QzBfkEBnitIhCocG0m3nlOP9zF+0tHluGRK7xzuCqJE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yHCM1Wz6xS9TUSTRVqIZKFWfhcJ9qmbzg0HR6ssms1ez7kSnhU9I7372hfvuSVnjx
-         SCuFRUtvGDBvr46yplfAGlpa40pdP9bx+5sj0oIF9bsGllIr00WmDVt8BN2lAwZVqG
-         EFzzafza1R3ulloEEjv0/WDYOZK4dSlknQevKlmE=
+        b=ZwN6Rvrne7fzpC8LQXWAcQc6uKHrgrmsxoa6o+q5MJGyvyAOoHRp1gDndFToeeUgS
+         vgSDZl0/Cw8GihgJjru6ePYTNn47kdzaIX1Ud7qIDvJVyfBD6Fups7Ukw0NLAT00yG
+         4K67yPnCIdAxnAI5fy6dHsaT3MShcDudhAuhaj1A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Heiner Kallweit <hkallweit1@gmail.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 017/170] net: phy: Fix the issue that netif always links up after resuming
-Date:   Mon,  7 Jan 2019 13:30:44 +0100
-Message-Id: <20190107104455.068553047@linuxfoundation.org>
+Subject: [PATCH 4.19 032/170] tcp: fix a race in inet_diag_dump_icsk()
+Date:   Mon,  7 Jan 2019 13:30:59 +0100
+Message-Id: <20190107104456.945619931@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104452.953560660@linuxfoundation.org>
 References: <20190107104452.953560660@linuxfoundation.org>
@@ -66,51 +67,122 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit 8742beb50f2db903d3b6d69ddd81d67ce9914453 ]
+[ Upstream commit f0c928d878e7d01b613c9ae5c971a6b1e473a938 ]
 
-Even though the link is down before entering hibernation,
-there is an issue that the network interface always links up after resuming
-from hibernation.
+Alexei reported use after frees in inet_diag_dump_icsk() [1]
 
-If the link is still down before enabling the network interface,
-and after resuming from hibernation, the phydev->state is forcibly set
-to PHY_UP in mdio_bus_phy_restore(), and the link becomes up.
+Because we use refcount_set() when various sockets are setup and
+inserted into ehash, we also need to make sure inet_diag_dump_icsk()
+wont race with the refcount_set() operations.
 
-In suspend sequence, only if the PHY is attached, mdio_bus_phy_suspend()
-calls phy_stop_machine(), and mdio_bus_phy_resume() calls
-phy_start_machine().
-In resume sequence, it's enough to do the same as mdio_bus_phy_resume()
-because the state has been preserved.
+Jonathan Lemon sent a patch changing net_twsk_hashdance() but
+other spots would need risky changes.
 
-This patch fixes the issue by calling phy_start_machine() in
-mdio_bus_phy_restore() in the same way as mdio_bus_phy_resume().
+Instead, fix inet_diag_dump_icsk() as this bug came with
+linux-4.10 only.
 
-Fixes: bc87922ff59d ("phy: Move PHY PM operations into phy_device")
-Suggested-by: Heiner Kallweit <hkallweit1@gmail.com>
-Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+[1] Quoting Alexei :
+
+First something iterating over sockets finds already freed tw socket:
+
+refcount_t: increment on 0; use-after-free.
+WARNING: CPU: 2 PID: 2738 at lib/refcount.c:153 refcount_inc+0x26/0x30
+RIP: 0010:refcount_inc+0x26/0x30
+RSP: 0018:ffffc90004c8fbc0 EFLAGS: 00010282
+RAX: 000000000000002b RBX: 0000000000000000 RCX: 0000000000000000
+RDX: ffff88085ee9d680 RSI: ffff88085ee954c8 RDI: ffff88085ee954c8
+RBP: ffff88010ecbd2c0 R08: 0000000000000000 R09: 000000000000174c
+R10: ffffffff81e7c5a0 R11: 0000000000000000 R12: 0000000000000000
+R13: ffff8806ba9bf210 R14: ffffffff82304600 R15: ffff88010ecbd328
+FS:  00007f81f5a7d700(0000) GS:ffff88085ee80000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f81e2a95000 CR3: 000000069b2eb006 CR4: 00000000003606e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ inet_diag_dump_icsk+0x2b3/0x4e0 [inet_diag]  // sock_hold(sk); in net/ipv4/inet_diag.c:1002
+ ? kmalloc_large_node+0x37/0x70
+ ? __kmalloc_node_track_caller+0x1cb/0x260
+ ? __alloc_skb+0x72/0x1b0
+ ? __kmalloc_reserve.isra.40+0x2e/0x80
+ __inet_diag_dump+0x3b/0x80 [inet_diag]
+ netlink_dump+0x116/0x2a0
+ netlink_recvmsg+0x205/0x3c0
+ sock_read_iter+0x89/0xd0
+ __vfs_read+0xf7/0x140
+ vfs_read+0x8a/0x140
+ SyS_read+0x3f/0xa0
+ do_syscall_64+0x5a/0x100
+
+then a minute later twsk timer fires and hits two bad refcnts
+for this freed socket:
+
+refcount_t: decrement hit 0; leaking memory.
+WARNING: CPU: 31 PID: 0 at lib/refcount.c:228 refcount_dec+0x2e/0x40
+Modules linked in:
+RIP: 0010:refcount_dec+0x2e/0x40
+RSP: 0018:ffff88085f5c3ea8 EFLAGS: 00010296
+RAX: 000000000000002c RBX: ffff88010ecbd2c0 RCX: 000000000000083f
+RDX: 0000000000000000 RSI: 00000000000000f6 RDI: 000000000000003f
+RBP: ffffc90003c77280 R08: 0000000000000000 R09: 00000000000017d3
+R10: ffffffff81e7c5a0 R11: 0000000000000000 R12: ffffffff82ad2d80
+R13: ffffffff8182de00 R14: ffff88085f5c3ef8 R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffff88085f5c0000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fbe42685250 CR3: 0000000002209001 CR4: 00000000003606e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <IRQ>
+ inet_twsk_kill+0x9d/0xc0  // inet_twsk_bind_unhash(tw, hashinfo);
+ call_timer_fn+0x29/0x110
+ run_timer_softirq+0x36b/0x3a0
+
+refcount_t: underflow; use-after-free.
+WARNING: CPU: 31 PID: 0 at lib/refcount.c:187 refcount_sub_and_test+0x46/0x50
+RIP: 0010:refcount_sub_and_test+0x46/0x50
+RSP: 0018:ffff88085f5c3eb8 EFLAGS: 00010296
+RAX: 0000000000000026 RBX: ffff88010ecbd2c0 RCX: 000000000000083f
+RDX: 0000000000000000 RSI: 00000000000000f6 RDI: 000000000000003f
+RBP: ffff88010ecbd358 R08: 0000000000000000 R09: 000000000000185b
+R10: ffffffff81e7c5a0 R11: 0000000000000000 R12: ffff88010ecbd358
+R13: ffffffff8182de00 R14: ffff88085f5c3ef8 R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffff88085f5c0000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fbe42685250 CR3: 0000000002209001 CR4: 00000000003606e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <IRQ>
+ inet_twsk_put+0x12/0x20  // inet_twsk_put(tw);
+ call_timer_fn+0x29/0x110
+ run_timer_softirq+0x36b/0x3a0
+
+Fixes: 67db3e4bfbc9 ("tcp: no longer hold ehash lock while calling tcp_get_info()")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: Alexei Starovoitov <ast@kernel.org>
+Cc: Jonathan Lemon <jonathan.lemon@gmail.com>
+Acked-by: Jonathan Lemon <jonathan.lemon@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/phy/phy_device.c |    7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ net/ipv4/inet_diag.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/net/phy/phy_device.c
-+++ b/drivers/net/phy/phy_device.c
-@@ -164,11 +164,8 @@ static int mdio_bus_phy_restore(struct d
- 	if (ret < 0)
- 		return ret;
+--- a/net/ipv4/inet_diag.c
++++ b/net/ipv4/inet_diag.c
+@@ -998,7 +998,9 @@ next_chunk:
+ 			if (!inet_diag_bc_sk(bc, sk))
+ 				goto next_normal;
  
--	/* The PHY needs to renegotiate. */
--	phydev->link = 0;
--	phydev->state = PHY_UP;
--
--	phy_start_machine(phydev);
-+	if (phydev->attached_dev && phydev->adjust_link)
-+		phy_start_machine(phydev);
- 
- 	return 0;
- }
+-			sock_hold(sk);
++			if (!refcount_inc_not_zero(&sk->sk_refcnt))
++				goto next_normal;
++
+ 			num_arr[accum] = num;
+ 			sk_arr[accum] = sk;
+ 			if (++accum == SKARR_SZ)
 
 
