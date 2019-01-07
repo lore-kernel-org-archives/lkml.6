@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93802C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:57:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECD6DC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:58:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DFB521855
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:57:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B9F44206B7
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:58:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546887477;
-	bh=AJ/IyquWk17TXt70HtYyrbQkj+SmZTsIKd2j2+/zIjg=;
+	s=default; t=1546887481;
+	bh=fAhFiTz8XD0Fce+MsSeGG4cErF4gl4Km8/qR9DRX+Vs=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=e1XPbSMm8nGPgCihtYIxzrcfQhOJBs9JqmsOF5rjexSSO4C51HtQNv4cFMzt4E1Xv
-	 GbYnRKIARDr/Xd6+SioCg3tYU6Jtp0cxvhEZ7UesNSoGPFcavoEY1QJisRXKVSlDhu
-	 KwtH8qNX8U6wpyfZbLWkk28VLLLutEx2HCM4016w=
+	b=UinVgvu2CTRSy63NqDmx/GaLpyiPoz5uoGncxXSo8Rx5Y+n4Zq2xmTmHxSmL+fddR
+	 yaXAqavT2+vQNLkswpTiHK3uvlLwb7H9tFiyVdzAaVztat5+0sh575K1WMC7IEEXRU
+	 YnE7RHFgtiwfbZxJQWHPySvfUJBX/vRYSp5WVK0k=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727748AbfAGS54 (ORCPT
+        id S1728188AbfAGS6A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 13:57:56 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40108 "EHLO
+        Mon, 7 Jan 2019 13:58:00 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40142 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727215AbfAGS54 (ORCPT
+        with ESMTP id S1727228AbfAGS54 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 7 Jan 2019 13:57:56 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -34,16 +34,16 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=DXbnSKGu2zi+vy+okpd9odJIcZMqT7wN5wV78tIganE=; b=s6OAfqGYZ02X
-        AKlyW7H14X0osi1SdkuluXGSvCZI165jxXnmJfa31xQ+OmpwD1ni+2Ay9ZE3QnIr3rmL3jnGkchXw
-        p8bxD8bOQy1f05nCYNsL1sylHdUrLWBqiFzyp2QUBihJH9Tf3+UrtI8gVjaqTIykchyercsGp+eyp
-        DUv9o=;
+        List-Archive; bh=ZeeKJbXY+PtlLSFSqvZ/6Qdr3OBdTj8OLT5IZjfgqHg=; b=enhOCcCAh1KN
+        P4oBGUQAtiy0mqcUUCbciosYonfkwnuHeGZfbGbSFojgNwhUPR78tWiJ48+q+iMpaD2cnFd6a3wyu
+        P3uBQcHZ/nA3XX+nhLJSFrzDvldCDbHT0Hq859BUOcQOoZHp4sfBS6qHOKT4/OiJ7unfavBBHFXTj
+        JpkWk=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gga5o-0007kX-3k; Mon, 07 Jan 2019 18:57:44 +0000
+        id 1gga5r-0007km-Q4; Mon, 07 Jan 2019 18:57:47 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id B90241127491; Mon,  7 Jan 2019 18:57:43 +0000 (GMT)
+        id 6B9541127491; Mon,  7 Jan 2019 18:57:47 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
 To:     Maruthi Srinivas Bayyavarapu 
         <maruthi.srinivas.bayyavarapu@xilinx.com>
@@ -59,11 +59,11 @@ Cc:     Mark Brown <broonie@kernel.org>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
         alsa-devel@alsa-project.org
-Subject: Applied "ASoC: xlnx: enable SPDIF driver build" to the asoc tree
-In-Reply-To:  <1546538993-55473-4-git-send-email-maruthi.srinivas.bayyavarapu@xilinx.com>
+Subject: Applied "dt-bindings: ASoC: xlnx, spdif: Document spdif bindings" to the asoc tree
+In-Reply-To:  <1546538993-55473-2-git-send-email-maruthi.srinivas.bayyavarapu@xilinx.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190107185743.B90241127491@debutante.sirena.org.uk>
-Date:   Mon,  7 Jan 2019 18:57:43 +0000 (GMT)
+Message-Id: <20190107185747.6B9541127491@debutante.sirena.org.uk>
+Date:   Mon,  7 Jan 2019 18:57:47 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -71,7 +71,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: xlnx: enable SPDIF driver build
+   dt-bindings: ASoC: xlnx, spdif: Document spdif bindings
 
 has been applied to the asoc tree at
 
@@ -96,45 +96,54 @@ to this mail.
 Thanks,
 Mark
 
-From 47caf048a017ecc95cdd0802bc3b015a1559e601 Mon Sep 17 00:00:00 2001
+From 2f00f7715e624d04e25d9cb8bb0f53884d3bcb59 Mon Sep 17 00:00:00 2001
 From: Maruthi Srinivas Bayyavarapu <maruthi.srinivas.bayyavarapu@xilinx.com>
-Date: Thu, 3 Jan 2019 23:39:53 +0530
-Subject: [PATCH] ASoC: xlnx: enable SPDIF driver build
+Date: Thu, 3 Jan 2019 23:39:51 +0530
+Subject: [PATCH] dt-bindings: ASoC: xlnx, spdif: Document spdif bindings
 
-Added SPDIF driver build related changes.
+Added documentation for SPDIF IP DT bindings.
 
 Signed-off-by: Maruthi Srinivas Bayyavarapu <maruthi.srinivas.bayyavarapu@xilinx.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/xilinx/Kconfig  | 7 +++++++
- sound/soc/xilinx/Makefile | 2 ++
- 2 files changed, 9 insertions(+)
+ .../devicetree/bindings/sound/xlnx,spdif.txt  | 28 +++++++++++++++++++
+ 1 file changed, 28 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/xlnx,spdif.txt
 
-diff --git a/sound/soc/xilinx/Kconfig b/sound/soc/xilinx/Kconfig
-index ac48d6a00c36..47f606b924e4 100644
---- a/sound/soc/xilinx/Kconfig
-+++ b/sound/soc/xilinx/Kconfig
-@@ -13,3 +13,10 @@ config SND_SOC_XILINX_AUDIO_FORMATTER
-           Select this option to enable Xilinx audio formatter
-           support. This provides DMA platform device support for
-           audio functionality.
+diff --git a/Documentation/devicetree/bindings/sound/xlnx,spdif.txt b/Documentation/devicetree/bindings/sound/xlnx,spdif.txt
+new file mode 100644
+index 000000000000..15c2d64d247c
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/xlnx,spdif.txt
+@@ -0,0 +1,28 @@
++Device-Tree bindings for Xilinx SPDIF IP
 +
-+config SND_SOC_XILINX_SPDIF
-+        tristate "Audio support for the the Xilinx SPDIF"
-+        help
-+          Select this option to enable Xilinx SPDIF Audio.
-+          This provides playback and capture of SPDIF audio in
-+          AES format.
-diff --git a/sound/soc/xilinx/Makefile b/sound/soc/xilinx/Makefile
-index 432693b1cc79..d79fd38b094b 100644
---- a/sound/soc/xilinx/Makefile
-+++ b/sound/soc/xilinx/Makefile
-@@ -2,3 +2,5 @@ snd-soc-xlnx-i2s-objs      := xlnx_i2s.o
- obj-$(CONFIG_SND_SOC_XILINX_I2S) += snd-soc-xlnx-i2s.o
- snd-soc-xlnx-formatter-pcm-objs := xlnx_formatter_pcm.o
- obj-$(CONFIG_SND_SOC_XILINX_AUDIO_FORMATTER) += snd-soc-xlnx-formatter-pcm.o
-+snd-soc-xlnx-spdif-objs := xlnx_spdif.o
-+obj-$(CONFIG_SND_SOC_XILINX_SPDIF) += snd-soc-xlnx-spdif.o
++The IP supports playback and capture of SPDIF audio
++
++Required properties:
++ - compatible: "xlnx,spdif-2.0"
++ - clock-names: List of input clocks.
++   Required elements: "s_axi_aclk", "aud_clk_i"
++ - clocks: Input clock specifier. Refer to common clock bindings.
++ - reg: Base address and address length of the IP core instance.
++ - interrupts-parent: Phandle for interrupt controller.
++ - interrupts: List of Interrupt numbers.
++ - xlnx,spdif-mode: 0 :- receiver mode
++		    1 :- transmitter mode
++ - xlnx,aud_clk_i: input audio clock value.
++
++Example:
++	spdif_0: spdif@80010000 {
++		clock-names = "aud_clk_i", "s_axi_aclk";
++		clocks = <&misc_clk_0>, <&clk 71>;
++		compatible = "xlnx,spdif-2.0";
++		interrupt-names = "spdif_interrupt";
++		interrupt-parent = <&gic>;
++		interrupts = <0 91 4>;
++		reg = <0x0 0x80010000 0x0 0x10000>;
++		xlnx,spdif-mode = <1>;
++		xlnx,aud_clk_i = <49152913>;
++	};
 -- 
 2.20.1
 
