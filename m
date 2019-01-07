@@ -2,136 +2,181 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 901A0C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 15:42:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70113C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 15:42:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DB492173C
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 15:42:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="0Y2GbiAx"
+	by mail.kernel.org (Postfix) with ESMTP id 3F5172089F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 15:42:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730181AbfAGPmB (ORCPT
+        id S1730224AbfAGPmN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 10:42:01 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:37551 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730139AbfAGPmA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 10:42:00 -0500
-Received: by mail-it1-f195.google.com with SMTP id b5so1591318iti.2
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 07:41:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=65pTjOwvERfOhCME2vOI3ySk9gqLIB4TjiOb1MI/TjY=;
-        b=0Y2GbiAx7UcXDit8afl9RzmdQvVb52gV6e9fE86QoDSlwEcGmHEIIFzheE1+ye7HLC
-         9ZasuZ3wh0VKspTWeDsKow2KCxipLx7IadjO14LVmp83pD8Bhq0FWj9osdEbaY1O9ISo
-         kY8MvSv3Z5EpSXOeNRXxl149S+y4qPfwUXPrpPOJdjZ8M5FVX2cZhcq9WLZIE4sULpSJ
-         URJ7r59XELp0g3gu9D33eCM5NI3RMMeDAY7c8jEDBtvA8bSTjmOgEazfNYh/Q1PHOUqz
-         JQ9hfe6eqq9WRNzo+5zGpuHkN11cKcmuY4/ylqvK6pREIOvjW1a7JMw4sSL9Ge9GBklI
-         j5NQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=65pTjOwvERfOhCME2vOI3ySk9gqLIB4TjiOb1MI/TjY=;
-        b=DDnQ++A+NgWv88Z1qiAwdW8DzE8FFgTvqrMTXbN1O4l+sBEsRP4e7466+CD+DNSW/k
-         1KqA+k4eFZvSQ8WC1CeDk42mjv7rXlAgr8XIis8bT2rj2ZqycZrLz2l4IIJvlhKwarKd
-         5jMEO6bosTVp1ZwDqiQ7wsbL+lH6HsiLbctH1/GJcZO9QjAQ+C4EgjmxnW0ZcC/oXebS
-         aB3KzThC9mjT8DCWSvYz8Kmx+q6byyLyGZjG7/hQfb259mtiw4CMPKAlkigvdhrx3bbQ
-         2bCwG/mLeucX9eYokGhpFdUNb/gZPxWaGV+2EgfpT8ssyx4qcGCVagj25cdMX5sgOA+G
-         cZqQ==
-X-Gm-Message-State: AJcUukdn2j/S1PTyG5NSBZo2w6tysuwZhR/x31t5qqm59IZtoYUj42lT
-        DaIplgrGaRF2jpocjksa4dk1DoVPt3D4hw==
-X-Google-Smtp-Source: ALg8bN5QRV00sjYacG+ksrltR9LfjsTNsjClFMFWG2vX21h6MVwBlzwmriCIKlNCPUFRVWYnGN4kFQ==
-X-Received: by 2002:a02:4c9:: with SMTP id 192mr33327577jab.2.1546875718837;
-        Mon, 07 Jan 2019 07:41:58 -0800 (PST)
-Received: from [192.168.1.56] ([216.160.245.98])
-        by smtp.gmail.com with ESMTPSA id o63sm4738091ita.8.2019.01.07.07.41.56
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 07 Jan 2019 07:41:57 -0800 (PST)
-Subject: Re: [PATCH v5 02/11] ata: pata_acpi: Make PCI dependency explicit
-To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Sinan Kaya <okaya@kernel.org>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        "open list:LIBATA SUBSYSTEM (Serial and Parallel ATA drivers)" 
-        <linux-ide@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20190102181038.4418-1-okaya@kernel.org>
- <20190102181038.4418-3-okaya@kernel.org>
- <CAJZ5v0gkGaxgr+-CzsabqrfVFQFo_R+G3VEg3qF_sGWa6bT-Dg@mail.gmail.com>
- <CGME20190107141740eucas1p15f2975c3d87e7a8fce9daeaea41525d4@eucas1p1.samsung.com>
- <7d6b9323-7760-944d-daa4-6fc663a32481@samsung.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <aa5ecfd1-fbb5-1f7a-500b-9eaee1cd8e0a@kernel.dk>
-Date:   Mon, 7 Jan 2019 08:41:56 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 7 Jan 2019 10:42:13 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:42072 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727305AbfAGPmN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 10:42:13 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 3AF9D20797; Mon,  7 Jan 2019 16:42:11 +0100 (CET)
+Received: from windsurf (aaubervilliers-681-1-29-148.w90-88.abo.wanadoo.fr [90.88.149.148])
+        by mail.bootlin.com (Postfix) with ESMTPSA id D4B7D20714;
+        Mon,  7 Jan 2019 16:42:10 +0100 (CET)
+Date:   Mon, 7 Jan 2019 16:42:10 +0100
+From:   Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+To:     Michal Simek <michal.simek@xilinx.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     Nava kishore Manne <navam@xilinx.com>,
+        Josh Cartwright <josh.cartwright@ni.com>,
+        "monstr@monstr.eu" <monstr@monstr.eu>,
+        Peter Crosthwaite <peter.crosthwaite@xilinx.com>,
+        Borsodi Petr <Petr.Borsodi@i.cz>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Rob Herring <robherring2@gmail.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Steffen Trumtrar <s.trumtrar@pengutronix.de>,
+        =?UTF-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>,
+        Shubhrajyoti Datta <shubhraj@xilinx.com>
+Subject: Re: [PATCH 2/8] gpio: zynq: Wakeup gpio controller when it is used
+ as IRQ controller
+Message-ID: <20190107164210.3ecf37e8@windsurf>
+In-Reply-To: <6da5fd79-fbc8-b613-954f-dcbe2ef8d6c5@xilinx.com>
+References: <cover.1502103715.git.michal.simek@xilinx.com>
+        <72d3cd83bed792a23ab60cf9b6d51b618f5aa084.1502103715.git.michal.simek@xilinx.com>
+        <CACRpkdZE-Edr7fWZY5VQM1_65iw7MYGP-iDa2ExZsPxpM0rurQ@mail.gmail.com>
+        <6da5fd79-fbc8-b613-954f-dcbe2ef8d6c5@xilinx.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <7d6b9323-7760-944d-daa4-6fc663a32481@samsung.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/7/19 7:17 AM, Bartlomiej Zolnierkiewicz wrote:
-> 
-> On 01/07/2019 12:12 PM, Rafael J. Wysocki wrote:
->> On Wed, Jan 2, 2019 at 7:11 PM Sinan Kaya <okaya@kernel.org> wrote:
->>>
->>> After 'commit 5d32a66541c4 ("PCI/ACPI: Allow ACPI to be built without
->>> CONFIG_PCI set")' dependencies on CONFIG_PCI that previously were
->>> satisfied implicitly through dependencies on CONFIG_ACPI have to be
->>> specified directly. PATA_ACPI is a PCI device driver but the PCI
->>> dependency has not been explicitly called out.
->>>
->>> Fixes: 5d32a66541c46 ("PCI/ACPI: Allow ACPI to be built without CONFIG_PCI set")
->>> Signed-off-by: Sinan Kaya <okaya@kernel.org>
->>> ---
->>>  drivers/ata/Kconfig | 2 +-
->>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/ata/Kconfig b/drivers/ata/Kconfig
->>> index 4ca7a6b4eaae..8218db17ebdb 100644
->>> --- a/drivers/ata/Kconfig
->>> +++ b/drivers/ata/Kconfig
->>> @@ -1091,7 +1091,7 @@ comment "Generic fallback / legacy drivers"
->>>
->>>  config PATA_ACPI
->>>         tristate "ACPI firmware driver for PATA"
->>> -       depends on ATA_ACPI && ATA_BMDMA
->>> +       depends on ATA_ACPI && ATA_BMDMA && PCI
->>>         help
->>>           This option enables an ACPI method driver which drives
->>>           motherboard PATA controller interfaces through the ACPI
->>> --
->>
->> Any objections against this one from anyone?
-> 
-> Patch looks correct to me (pata_acpi is indeed a PCI driver):
-> 
-> Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> 
-> but it is best to wait for Jens' ACK if you want to merge it
-> through ACPI tree..
+Hello,
 
-You can add my:
+I am reviving this old thread, because the proposed patch (almost)
+solves the problem I recently reported with the bad interaction of
+runtime PM with the Zynq GPIO driver (see
+https://www.spinics.net/lists/linux-gpio/msg35437.html).
 
-Reviewed-by: Jens Axboe <axboe@kernel.dk>
+On Mon, 14 Aug 2017 16:33:09 +0200, Michal Simek wrote:
 
-if you want to merge it through the ACPI tree.
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index 9568708a550b..a08a044fa4aa 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -1647,14 +1647,22 @@ static void gpiochip_irq_unmap(struct irq_domain
+> *d, unsigned int irq)
+>  static int gpiochip_irq_reqres(struct irq_data *d)
+>  {
+>         struct gpio_chip *chip = irq_data_get_irq_chip_data(d);
+> +       int ret;
+> 
+>         if (!try_module_get(chip->gpiodev->owner))
+>                 return -ENODEV;
+> 
+> +       ret = pm_runtime_get_sync(chip->parent);
+> +       if (ret < 0) {
+> +               module_put(chip->gpiodev->owner);
+> +               return ret;
+> +       }
+> +
+>         if (gpiochip_lock_as_irq(chip, d->hwirq)) {
+>                 chip_err(chip,
+>                         "unable to lock HW IRQ %lu for IRQ\n",
+>                         d->hwirq);
+> +               pm_runtime_put(chip->parent);
+>                 module_put(chip->gpiodev->owner);
+>                 return -EINVAL;
+>         }
+> @@ -1666,6 +1674,7 @@ static void gpiochip_irq_relres(struct irq_data *d)
+>         struct gpio_chip *chip = irq_data_get_irq_chip_data(d);
+> 
+>         gpiochip_unlock_as_irq(chip, d->hwirq);
+> +       pm_runtime_put(chip->parent);
+>         module_put(chip->gpiodev->owner);
+>  }
 
+This patch almost solves the problem. It doesn't work as-is, because it
+assumes that runtime PM is used by all GPIO controllers, which is not
+the case. When runtime PM is not enabled, pm_runtime_get_sync() fails
+with -EACCES, and the whole gpiochip_irq_reqres() function aborts.
+
+The following patch works fine in my case (a MMC card detect signal is
+connected to a pin of a PCA GPIO expander over I2C, whose INT# pin is
+itself connected to a GPIO pin of the Zynq SoC).
+
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 20887c62fbb3..bd9a81fc8d56 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -27,6 +27,7 @@
+ #include <linux/kfifo.h>
+ #include <linux/poll.h>
+ #include <linux/timekeeping.h>
++#include <linux/pm_runtime.h>
+ #include <uapi/linux/gpio.h>
+ 
+ #include "gpiolib.h"
+@@ -3540,12 +3541,23 @@ int gpiochip_reqres_irq(struct gpio_chip *chip, unsigned int offset)
+        if (!try_module_get(chip->gpiodev->owner))
+                return -ENODEV;
+ 
++       if (pm_runtime_enabled(chip->parent)) {
++               ret = pm_runtime_get_sync(chip->parent);
++               if (ret < 0) {
++                       module_put(chip->gpiodev->owner);
++                       return ret;
++               }
++       }
++
+        ret = gpiochip_lock_as_irq(chip, offset);
+        if (ret) {
+                chip_err(chip, "unable to lock HW IRQ %u for IRQ\n", offset);
++               if (pm_runtime_enabled(chip->parent))
++                       pm_runtime_put(chip->parent);
+                module_put(chip->gpiodev->owner);
+                return ret;
+        }
++
+        return 0;
+ }
+ EXPORT_SYMBOL_GPL(gpiochip_reqres_irq);
+@@ -3553,6 +3565,8 @@ EXPORT_SYMBOL_GPL(gpiochip_reqres_irq);
+ void gpiochip_relres_irq(struct gpio_chip *chip, unsigned int offset)
+ {
+        gpiochip_unlock_as_irq(chip, offset);
++       if (pm_runtime_enabled(chip->parent))
++               pm_runtime_put(chip->parent);
+        module_put(chip->gpiodev->owner);
+ }
+ EXPORT_SYMBOL_GPL(gpiochip_relres_irq);
+
+However, I must say that from a design perspective, I am not a big fan
+of this solution. Indeed for the normal GPIO ->request() and ->free()
+hooks, it is currently the GPIO driver itself that is responsible for
+runtime PM get/put, so it would be weird to have the runtime PM get/put
+for the IRQ request/free be done by the GPIO core.
+
+I believe that either the GPIO core should be in charge of the entire
+runtime PM interaction, or it should entirely be the responsibility of
+each GPIO controller driver. Having a mixed solution seems very
+confusing.
+
+Let me know which direction should be taken so that I can submit a
+proper patch to hopefully resolve this issue.
+
+Best regards,
+
+Thomas
 -- 
-Jens Axboe
-
+Thomas Petazzoni, CTO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
