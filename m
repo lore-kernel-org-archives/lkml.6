@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-13.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E240C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 06:44:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DC5BC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 06:44:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BCEA2085A
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 06:44:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F20102085A
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 06:44:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="MBObeyt6"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="f5Om/+st"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726723AbfAGGoc (ORCPT
+        id S1726741AbfAGGoj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 01:44:32 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:39046 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726602AbfAGGn6 (ORCPT
+        Mon, 7 Jan 2019 01:44:39 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:41164 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726490AbfAGGoh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 01:43:58 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x076hdpd055394;
-        Mon, 7 Jan 2019 00:43:39 -0600
+        Mon, 7 Jan 2019 01:44:37 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x076hMd2058992;
+        Mon, 7 Jan 2019 00:43:22 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1546843419;
-        bh=JHufpCFiR5hyFNaIpQ75Q1+qFFkM6nzfAJw54s+6OLU=;
+        s=ti-com-17Q1; t=1546843402;
+        bh=fGpp7AJSp2QJ3b2BXU0YJ9gjYR4vq9hY+xl5l1GvJjg=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=MBObeyt6dnvi1vJS559IYKSldAfq7ColwoeIx5+OqlXRnlffir47/KGV+Zer1iQiJ
-         1xC3DsidrE0ec8VBZkNZ3M83NFMD2TL3xkHpI0QKA9vRXUHXTJxaYqjC/sPmnmmybl
-         j7tClpnbpereIioUcSwrkRglhWQBGzuy1K+Onw/g=
-Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x076hdtF038724
+        b=f5Om/+st/MScAiW6ANrI7uGL8EEKLXfvgxV1PXOPZBmZ1ZALX0nPsQNvoVFRPq3oO
+         OiSi7bNNF3HWc1dBLNCGdwRIZg2E3JxcamMfKZm2LuRHxsyTYp8t2XpxbR5rN3gqjw
+         bCOiyNlqhbm8He6cFjPPT/CHm7MKowBYuKiGAqec=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x076hMSs021096
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 7 Jan 2019 00:43:39 -0600
-Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+        Mon, 7 Jan 2019 00:43:22 -0600
+Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 7
- Jan 2019 00:43:39 -0600
-Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_0,
+ Jan 2019 00:43:22 -0600
+Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_0,
  cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Mon, 7 Jan 2019 00:43:39 -0600
+ Mon, 7 Jan 2019 00:43:22 -0600
 Received: from a0393678ub.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x076gfo9002672;
-        Mon, 7 Jan 2019 00:43:35 -0600
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x076gfo5002672;
+        Mon, 7 Jan 2019 00:43:18 -0600
 From:   Kishon Vijay Abraham I <kishon@ti.com>
 To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         Bjorn Helgaas <bhelgaas@google.com>,
@@ -62,9 +62,9 @@ CC:     Jingoo Han <jingoohan1@gmail.com>,
         <linux-kernel@vger.kernel.org>,
         <linux-rockchip@lists.infradead.org>,
         <linux-arm-kernel@lists.infradead.org>, <kishon@ti.com>
-Subject: [PATCH 12/15] PCI: cadence: Remove pci_epf_linkup from Cadence EP driver
-Date:   Mon, 7 Jan 2019 12:11:45 +0530
-Message-ID: <20190107064148.10152-13-kishon@ti.com>
+Subject: [PATCH 08/15] PCI: endpoint: Fix pci_epf_alloc_space to set correct MEM TYPE flags
+Date:   Mon, 7 Jan 2019 12:11:41 +0530
+Message-ID: <20190107064148.10152-9-kishon@ti.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190107064148.10152-1-kishon@ti.com>
 References: <20190107064148.10152-1-kishon@ti.com>
@@ -76,39 +76,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-pci_epf_linkup is intended to be invoked if the EPC supports linkup
-notification. Now that pci-epf-test uses get_features callback, which
-indicates Cadence EP driver doesn't support linkup notification, remove
-pci_epf_linkup from Cadence EP driver.
+pci_epf_alloc_space() sets the MEM TYPE flags to indicate a 32-bit
+Base Address Register irrespective of the size. Fix it here to indicate
+64-bit BAR if the size is > 2GB.
 
 Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 ---
- drivers/pci/controller/pcie-cadence-ep.c | 12 ------------
- 1 file changed, 12 deletions(-)
+ drivers/pci/endpoint/pci-epf-core.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/pci/controller/pcie-cadence-ep.c b/drivers/pci/controller/pcie-cadence-ep.c
-index 14c2545bb17e..def7820cb824 100644
---- a/drivers/pci/controller/pcie-cadence-ep.c
-+++ b/drivers/pci/controller/pcie-cadence-ep.c
-@@ -396,18 +396,6 @@ static int cdns_pcie_ep_start(struct pci_epc *epc)
- 		cfg |= BIT(epf->func_no);
- 	cdns_pcie_writel(pcie, CDNS_PCIE_LM_EP_FUNC_CFG, cfg);
+diff --git a/drivers/pci/endpoint/pci-epf-core.c b/drivers/pci/endpoint/pci-epf-core.c
+index 825fa24427a3..cd395cb7dfd9 100644
+--- a/drivers/pci/endpoint/pci-epf-core.c
++++ b/drivers/pci/endpoint/pci-epf-core.c
+@@ -132,6 +132,9 @@ void *pci_epf_alloc_space(struct pci_epf *epf, size_t size, enum pci_barno bar)
+ 	epf->bar[bar].size = size;
+ 	epf->bar[bar].barno = bar;
+ 	epf->bar[bar].flags = PCI_BASE_ADDRESS_SPACE_MEMORY;
++	epf->bar[bar].flags |= upper_32_bits(size) ?
++				PCI_BASE_ADDRESS_MEM_TYPE_64 :
++				PCI_BASE_ADDRESS_MEM_TYPE_32;
  
--	/*
--	 * The PCIe links are automatically established by the controller
--	 * once for all at powerup: the software can neither start nor stop
--	 * those links later at runtime.
--	 *
--	 * Then we only have to notify the EP core that our links are already
--	 * established. However we don't call directly pci_epc_linkup() because
--	 * we've already locked the epc->lock.
--	 */
--	list_for_each_entry(epf, &epc->pci_epf, list)
--		pci_epf_linkup(epf);
--
- 	return 0;
+ 	return space;
  }
- 
 -- 
 2.17.1
 
