@@ -2,213 +2,177 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A68C5C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 16:31:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF796C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 16:31:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 769972183E
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 16:31:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B6C342089F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 16:31:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="VSFaGOsa"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QnCXZXfk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727614AbfAGQbG (ORCPT
+        id S1728291AbfAGQbf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 11:31:06 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:45625 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727159AbfAGQbE (ORCPT
+        Mon, 7 Jan 2019 11:31:35 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:55841 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726589AbfAGQbe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 11:31:04 -0500
-Received: by mail-lj1-f193.google.com with SMTP id s5-v6so826709ljd.12
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 08:31:02 -0800 (PST)
+        Mon, 7 Jan 2019 11:31:34 -0500
+Received: by mail-wm1-f68.google.com with SMTP id y139so1436127wmc.5;
+        Mon, 07 Jan 2019 08:31:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=UW2WZmeMtUaU2nXUV/7Mo8+YZpT2Xc7AWu8kKBjtZUY=;
-        b=VSFaGOsa75OWwHWhMUcRIuCvtUOXn9KBxk6riS+F8lig6FRfz0N/UTrqfShr8PYMdS
-         tZdeZLjrc+Oy7VUwDtXXgF2wHoMuSfvFKaEEW6nOBXPYn8r8Rm2+s9SfFOg8phHeSnx4
-         Gdw+YbMxol0Q+saNmDDU2eJsMjIaMM4H8SCKM=
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:openpgp:autocrypt:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=GPOJES5qnX2HYZzDdnk4+E3UMi/vV5yzwvnCTfzBvJI=;
+        b=QnCXZXfkbRBvMk1rrNbP43DtXfmvpZ797WYnE3w9TJWPYkFq226/jshUNviskq2Qb9
+         7UIX1MHAkMWCU6BRzVPGmmaisSthp8VPQtsKFMM6ROVqwPkT7vAlW63oNtf9cGdE8XQq
+         QdcsjX+eas1k1utgoJiAO4f84LyunfU/ejjOspa9tkjRc7V2QgsNwkcc9t+L3L4vtdrp
+         rgUfAj29NrAwmTVY3CDN/zMlBIMqTr99q2AciwzON0FfBlCf0d+gM6bYlaiD91/T1x61
+         I/fdtHOynPMOPfneOGSTUmhPdyThAqmWRah9J3tDE26l3jUqQfYSUa8YG3FKzaP/7+CT
+         Vz+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=UW2WZmeMtUaU2nXUV/7Mo8+YZpT2Xc7AWu8kKBjtZUY=;
-        b=OeX3cQ9VXVbITKEaUg0IlAma73EAlBubpyZmC39n2iT5xWNq/WdLu2lhkAVXojNVWB
-         SicgJAi70An4e/Yz2h8lJMReoAQD0+91I3clz7N7VazVz3SmYcUz3MjG5xjutwr0+CB+
-         hRKS777xHPSMBL6QuQ12YmJgl4pxgE0dQH+dkiSzcVgUI7sYt9z6+3X9YYUUNLxLOxO1
-         4mfn01W5lFlq+5hhOFmkFfoU3rWNmoMrE2tt5qQ7O8pqbS584UwwHkIXTS2gxdSvA8nJ
-         Y8aGA5LJWo9ytjioJ3nicKhD87zjcZDDqosUCwdxWnr2PGxN7Prj5xRapcpMMO+0PpiB
-         stqg==
-X-Gm-Message-State: AJcUukd6KZyAJkqpx2WX4ZsNp0CrHkC625hPX68HmbF8RBLYuPmH5RQu
-        cFGfeivPgkHRbFerDAGd4saqrA==
-X-Google-Smtp-Source: ALg8bN7RKzJaWDklm5eX8FW4jArXuCPLokUc6KgbZlHM8G+18lrvRl4jiEluxZUknUst1pCkz7ftgg==
-X-Received: by 2002:a2e:9017:: with SMTP id h23-v6mr29188406ljg.71.1546878661297;
-        Mon, 07 Jan 2019 08:31:01 -0800 (PST)
-Received: from localhost.localdomain (c-ae7b71d5.014-348-6c756e10.bbcust.telenor.se. [213.113.123.174])
-        by smtp.gmail.com with ESMTPSA id b69sm12936594lfl.28.2019.01.07.08.30.59
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 07 Jan 2019 08:31:00 -0800 (PST)
-From:   Linus Walleij <linus.walleij@linaro.org>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 5/5 v8] regulator: core: Only support passing enable GPIO descriptors
-Date:   Mon,  7 Jan 2019 17:27:46 +0100
-Message-Id: <20190107162746.4444-5-linus.walleij@linaro.org>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20190107162746.4444-1-linus.walleij@linaro.org>
-References: <20190107162746.4444-1-linus.walleij@linaro.org>
+        h=x-gm-message-state:sender:subject:to:cc:references:from:openpgp
+         :autocrypt:message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=GPOJES5qnX2HYZzDdnk4+E3UMi/vV5yzwvnCTfzBvJI=;
+        b=tPWYGJelyvYFeleycD3p9D379jZ5QVH6H/XPD9uw2ZBQMusSXizFwY92+Ui+Cmchvz
+         EzQVPAIUivSIecvtvZBrC52Bk4+IBMWfU+MSuB6uoG2+lLPd9LltJIvhCyM/Hvceo8A3
+         CNGipVwCyafaRh5ifqjmAATfE7rlH4oElZaRAPhK0RwDytrar59Uo6fkTb+HmlTL2dei
+         u5PLFHGZ8BJkDnKe97tr94ylx3uRaf0Os1ezokMHNQEItcAiNxmk62Nuk2geUtA+3Gjy
+         WmcuaVcclMASndM/jzCqebSnqysmzJ/OoWjS11EJasjyS0iKqO6UvGHJUmKltJBHasZM
+         vbkA==
+X-Gm-Message-State: AJcUukfKCLxgPGtPD9IpA3GO7zhr7thhg2gNLupOzdg5bORAq5G6pLDH
+        Uo4igb+J9MoC5h5MfWdGjkw=
+X-Google-Smtp-Source: ALg8bN5ADjpDYdJHk0OzsTZtZ0KaozMrr0oRj6UePHq1PUaoXlEqlFwIKlBN/cO0/kmS9xn7HwBe6g==
+X-Received: by 2002:a1c:dc86:: with SMTP id t128mr9938586wmg.42.1546878692191;
+        Mon, 07 Jan 2019 08:31:32 -0800 (PST)
+Received: from ?IPv6:2001:b07:6468:f312:3473:41cf:8b30:f2e1? ([2001:b07:6468:f312:3473:41cf:8b30:f2e1])
+        by smtp.googlemail.com with ESMTPSA id h16sm121470739wrb.62.2019.01.07.08.31.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 07 Jan 2019 08:31:31 -0800 (PST)
+Subject: Re: [PATCH 11/11] KVM/MMU: Flush tlb in the kvm_age_rmapp()
+To:     Tianyu Lan <lantianyu1986@gmail.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Lan Tianyu <Tianyu.Lan@microsoft.com>,
+        Radim Krcmar <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, bp@alien8.de,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        kvm <kvm@vger.kernel.org>,
+        "linux-kernel@vger kernel org" <linux-kernel@vger.kernel.org>,
+        michael.h.kelley@microsoft.com, kys@microsoft.com,
+        vkuznets@redhat.com, linux@armlinux.org.uk
+References: <20190104085405.40356-1-Tianyu.Lan@microsoft.com>
+ <20190104085405.40356-12-Tianyu.Lan@microsoft.com>
+ <20190104161235.GB11288@linux.intel.com>
+ <CAOLK0pzPe3agXCFrvHt9Qa_kRVfdtYeKorbRL2waOo29f5wcyw@mail.gmail.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; keydata=
+ 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
+ uUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
+Message-ID: <d434edb8-5f09-7331-c89d-9b78907e896a@redhat.com>
+Date:   Mon, 7 Jan 2019 17:31:26 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOLK0pzPe3agXCFrvHt9Qa_kRVfdtYeKorbRL2waOo29f5wcyw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that we changed all providers to pass descriptors into the core
-for enable GPIOs instead of a global GPIO number, delete the support
-for passing GPIO numbers in, and we get a cleanup and size reduction
-in the core, and from a GPIO point of view we use the modern, cleaner
-interface.
+On 07/01/19 04:42, Tianyu Lan wrote:
+>> I'm assuming you're
+>> clearing young to avoid the flush in kvm_mmu_notifier_clear_flush_young(),
+>> but keeping that flush is silly since it will never be invoked.  Just
+>> squash this patch with patch 10/11 so that you can remove the unnecessary
+>> flush in kvm_mmu_notifier_clear_flush_young() and preserve young.
+>>
+> The platform may provide tlb flush with address range as granularity. My changes
+> are to use range flush when it's available. kvm_mmu_notifier_clear_flush_young()
+> is common function for all platforms and most platforms still need the
+> flush in the
+> kvm_mmu_notifier_clear_flush_young(). I think it's better to separate
+> flush request and
+> "young" from return value of kvm_age_hva(). New flush parameter I
+> added in the patch 10
+> can be changed to a pointer and kvm_age_hva() can use it to return
+> flush request.
 
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
-ChangeLog v7->v8:
-- Rebase on v5.0-rc1.
-ChangeLog v6->v7:
-- Resend with the rest.
-ChangeLog v4->v6:
-- Rebase on top of the other changes.
-- Renumber to fit the rest of the series.
-ChangeLog v3->v4:
-- Also drop ena_gpio_invert from driver data
-ChangeLog v2->v3:
-- Resending.
-ChangeLog v1->v2:
-- Rebase the patch on the other changes.
----
- drivers/regulator/core.c         | 32 ++++++--------------------------
- include/linux/regulator/driver.h | 12 +-----------
- 2 files changed, 7 insertions(+), 37 deletions(-)
+There are two possibilities:
 
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index 48baa03ff3d8..bb688125ebd4 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -23,7 +23,6 @@
- #include <linux/mutex.h>
- #include <linux/suspend.h>
- #include <linux/delay.h>
--#include <linux/gpio.h>
- #include <linux/gpio/consumer.h>
- #include <linux/of.h>
- #include <linux/regmap.h>
-@@ -2236,35 +2235,19 @@ static int regulator_ena_gpio_request(struct regulator_dev *rdev,
- {
- 	struct regulator_enable_gpio *pin;
- 	struct gpio_desc *gpiod;
--	int ret;
- 
--	if (config->ena_gpiod)
--		gpiod = config->ena_gpiod;
--	else
--		gpiod = gpio_to_desc(config->ena_gpio);
-+	gpiod = config->ena_gpiod;
- 
- 	list_for_each_entry(pin, &regulator_ena_gpio_list, list) {
- 		if (pin->gpiod == gpiod) {
--			rdev_dbg(rdev, "GPIO %d is already used\n",
--				config->ena_gpio);
-+			rdev_dbg(rdev, "GPIO is already used\n");
- 			goto update_ena_gpio_to_rdev;
- 		}
- 	}
- 
--	if (!config->ena_gpiod) {
--		ret = gpio_request_one(config->ena_gpio,
--				       GPIOF_DIR_OUT | config->ena_gpio_flags,
--				       rdev_get_name(rdev));
--		if (ret)
--			return ret;
--	}
--
- 	pin = kzalloc(sizeof(struct regulator_enable_gpio), GFP_KERNEL);
--	if (pin == NULL) {
--		if (!config->ena_gpiod)
--			gpio_free(config->ena_gpio);
-+	if (pin == NULL)
- 		return -ENOMEM;
--	}
- 
- 	pin->gpiod = gpiod;
- 	list_add(&pin->list, &regulator_ena_gpio_list);
-@@ -2287,7 +2270,6 @@ static void regulator_ena_gpio_free(struct regulator_dev *rdev)
- 		if (pin->gpiod == rdev->ena_pin->gpiod) {
- 			if (pin->request_count <= 1) {
- 				pin->request_count = 0;
--				gpiod_put(pin->gpiod);
- 				list_del(&pin->list);
- 				kfree(pin);
- 				rdev->ena_pin = NULL;
-@@ -4971,15 +4953,13 @@ regulator_register(const struct regulator_desc *regulator_desc,
- 			goto clean;
- 	}
- 
--	if (config->ena_gpiod ||
--	    ((config->ena_gpio || config->ena_gpio_initialized) &&
--	     gpio_is_valid(config->ena_gpio))) {
-+	if (config->ena_gpiod) {
- 		mutex_lock(&regulator_list_mutex);
- 		ret = regulator_ena_gpio_request(rdev, config);
- 		mutex_unlock(&regulator_list_mutex);
- 		if (ret != 0) {
--			rdev_err(rdev, "Failed to request enable GPIO%d: %d\n",
--				 config->ena_gpio, ret);
-+			rdev_err(rdev, "Failed to request enable GPIO: %d\n",
-+				 ret);
- 			goto clean;
- 		}
- 		/* The regulator core took over the GPIO descriptor */
-diff --git a/include/linux/regulator/driver.h b/include/linux/regulator/driver.h
-index 389bcaf7900f..e511e9d1cc86 100644
---- a/include/linux/regulator/driver.h
-+++ b/include/linux/regulator/driver.h
-@@ -401,13 +401,7 @@ struct regulator_desc {
-  *           NULL).
-  * @regmap: regmap to use for core regmap helpers if dev_get_regmap() is
-  *          insufficient.
-- * @ena_gpio_initialized: GPIO controlling regulator enable was properly
-- *                        initialized, meaning that >= 0 is a valid gpio
-- *                        identifier and < 0 is a non existent gpio.
-- * @ena_gpio: GPIO controlling regulator enable.
-- * @ena_gpiod: GPIO descriptor controlling regulator enable.
-- * @ena_gpio_invert: Sense for GPIO enable control.
-- * @ena_gpio_flags: Flags to use when calling gpio_request_one()
-+ * @ena_gpiod: GPIO controlling regulator enable.
-  */
- struct regulator_config {
- 	struct device *dev;
-@@ -416,11 +410,7 @@ struct regulator_config {
- 	struct device_node *of_node;
- 	struct regmap *regmap;
- 
--	bool ena_gpio_initialized;
--	int ena_gpio;
- 	struct gpio_desc *ena_gpiod;
--	unsigned int ena_gpio_invert:1;
--	unsigned int ena_gpio_flags;
- };
- 
- /*
--- 
-2.19.2
+- pass a "bool *flush".  If NULL, kvm_age_hva should not flush.  If not
+NULL, kvm_age_hva should receive a true *flush, and should change it to
+false if kvm_age_hva takes care of the flush
 
+- pass a "bool flush".  In patch 10, change all kvm_age_hva
+implementation to do the flush if they return 1.
+
+I think I prefer the latter, in this case the small code duplication is
+offset by a simpler API.
+
+Paolo
