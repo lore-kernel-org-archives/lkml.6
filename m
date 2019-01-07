@@ -2,134 +2,101 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E223C43612
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:03:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80119C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:03:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F41B2085A
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:03:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iZFDFEQT"
+	by mail.kernel.org (Postfix) with ESMTP id 5955C2085A
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:03:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727701AbfAGSDZ (ORCPT
+        id S1727840AbfAGSDo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 13:03:25 -0500
-Received: from mail-pl1-f182.google.com ([209.85.214.182]:45000 "EHLO
-        mail-pl1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726521AbfAGSDY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 13:03:24 -0500
-Received: by mail-pl1-f182.google.com with SMTP id e11so490196plt.11;
-        Mon, 07 Jan 2019 10:03:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=4l3/EEEPrjDxklMgQd7+F5n1Ykrv7354eEA2Q45rKZY=;
-        b=iZFDFEQTXet3rI6R9G2HM8AUTWbFC3XFTd2cFDOrm1/HNoOisP0yBuELNNnh7yPMev
-         HfoxtdWJJu7e2ODuIzUJRIXAee2Lk6GvAZ6dUyLryl4Yg4suttPmoOXd8guIYCcj5YoL
-         jB3C3dx3QSsD7q9DY8jPnhOvwpaMDPLhbE/weXswIhVIjIo/OXP184ZqcsUfjO7BDZoP
-         CchP+cQ+E15041Me5Ho5Fuqhr7Bl9o+3dG7B9v6lHmfSm+2l47DUbjwQ1zUC2EljEuoB
-         /7xAEt5wC0Z6Ax8nsGJuIazfSZrlrUKETrluBhgR38eiwqe+/ZBCvoz2JizJ+zfLgC8o
-         N2DQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=4l3/EEEPrjDxklMgQd7+F5n1Ykrv7354eEA2Q45rKZY=;
-        b=gjCr2nSGP6V8Ceqeo/Fwq56Mcvuxa/Bn/AKkn7A4wgyCzX9kGM37rBEXeIy8OcajCL
-         Mip7xfiCmdese3ZE3CRmHib3ed1PNgnNz9Lp+pT2foAKHpGTO4/G9lhw+Zdb5srHQkK7
-         pAXuzTryqcLC9Lxhw7L3ky5DgB/sQ3HYSehRpQjUGAIxZvtmyA+0Y9OVEOTeF+MQKcWI
-         hO2PTg1VpP+PqFiyXZAklI2xFhaPT19RwAYIpJAjuJ7W2lAYav1/WWB7ijLAsH29MbKk
-         R4lg8bK6lQoEW/JhvWcITYtMYxq5AG1JrGzioPaf94DtQcVGHN62QwSHg8qGiOjEMQtd
-         rnRA==
-X-Gm-Message-State: AJcUukfIRPHxl2Xv7J8LAxqkQEumM/6c94/cGkJEJhVNRFPxOmJjIWqd
-        Lu89+D9NBTy1JzlhS9nZrps=
-X-Google-Smtp-Source: ALg8bN4d8exK/ejJW9EBduWEwjEAERTSpf9+GmVNzff6ChIAluyCoApBMJKaGG/Nt9axK7Cl1PXE5A==
-X-Received: by 2002:a17:902:6946:: with SMTP id k6mr63400653plt.101.1546884203720;
-        Mon, 07 Jan 2019 10:03:23 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id l70sm75545933pgd.20.2019.01.07.10.03.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 07 Jan 2019 10:03:22 -0800 (PST)
-Date:   Mon, 7 Jan 2019 10:03:21 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 4.19 000/170] 4.19.14-stable review
-Message-ID: <20190107180321.GA11134@roeck-us.net>
-References: <20190107104452.953560660@linuxfoundation.org>
+        Mon, 7 Jan 2019 13:03:44 -0500
+Received: from mout.gmx.net ([212.227.15.18]:35455 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726521AbfAGSDn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 13:03:43 -0500
+Received: from longitude ([109.90.232.48]) by mail.gmx.com (mrgmx002
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 0Lm3H7-1hFM1t2jBp-00ZfnU; Mon, 07
+ Jan 2019 19:03:16 +0100
+From:   =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+To:     linux-kernel@vger.kernel.org
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Jann Horn <jannh@google.com>, Kees Cook <keescook@chromium.org>
+Subject: [PATCH] kernel/sys.c: Fix UNAME26 for 5.0
+Date:   Mon,  7 Jan 2019 19:03:05 +0100
+Message-Id: <20190107180306.16602-1-j.neuschaefer@gmx.net>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190107104452.953560660@linuxfoundation.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Provags-ID: V03:K1:fIChN7/aDKLvZxRBnmZ8CjdCsvqvgJYUhKWLMoMEjCS5TLiIOK0
+ YPgOOnV0DKlxU4vKbmMV39NNA0HzX0eFbtjd2pnEVUiT3yq/tFCIhc96mCjWN5cS47So8bZ
+ 9jfbgM8xv+uDax7gQB7qI8cwQA6Qt4Rz0WOPmYM49jWrVEp3+HxXvfKTBNfXMvMlU/7kMUO
+ xuLyVMiEqTlSKgi2oIQcQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:kFYT2+Mbpbg=:sK+Gfi8qc0EDgPLT9WjeMG
+ F4eTNbO3GWtuZWs+RKcosAiE1tkZPJ0LjFf0DVV8UEuyBBDrC73+AAIOzd/q6HLD5D1w0fvOi
+ 9R4jAmGeTfVikqAvwqRkfQYegxrwColflXeJPmd5dvikSf/s6qqf220Icar/jWh05U27O5SdM
+ TkjGk2xjmbuYUM5JeD5+eKky77j7ujvrYb7GJR0PkDEwd5mYXHGuem5LKUxXtU8jiA0/csqZj
+ 0Ea/WL82t6M2pOu0F+djJP7ZG+l80QXAlp1yW8nL0X2POMSi1c9FmjRMqGHl1Mw7wUSrzN+nP
+ gifZY6IukZamFYNrWT3L3FBF58rczrKcz06AC72YN/GBWX6IZcvwXfEx29PD9jim2sGK3HcJ/
+ QVW4zNOVgwWZORUnqSZUEyfyijOdJj4wWWzEXoLHgAzi1WwThxW3oEVqW5j6nSre0EulijLi/
+ XPri8Ru6BbDoEAx1G30krGosJJpISrdIotfG9JPQN7HQoQ/t407th1oHMX5u2k6he9azSwRqg
+ KZL9wU858k8tmoU+AgTSaqhwi8YngyFI3aN3aqvMgFdDc2aYziLrKaQ89azQsXWeEIhJETA9f
+ XruJAbidMg0mqhwiZ85uHvGurIcK7+4gaRAiIp4R342/KBiF6jSeetQoLw2tK8HbsNPS8yjw3
+ gxwOHVsJadUDOkL3fI21jKDSoEiTc1HXb0CXBRoSoZA0WKFpjmA0eL7uDhXUbFLTFcmF2pDYO
+ WuYjuLz9l0+7IrJpUM/NLmxAUIOqGaR5gWVJ7ucLtGD4q8aazWkqluwzrBc896gioVbTXGX13
+ F+nGh3nWZMtB1j+Bco4dlAsMCrP7I0L9zKRW73exYT0DZYTj7WNMMfI4LZ1jtyUq/i3nYTtB3
+ ghYEDR9QOp2Zi2FLPwXnHPwPNQSsQYF9MO9rWi7ydDsfKGNNt6lXqQjKXJxjB+jKNL5Q4R9ot
+ 9K+foWBR5jw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 07, 2019 at 01:30:27PM +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.19.14 release.
-> There are 170 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Wed Jan  9 10:43:54 UTC 2019.
-> Anything received after that time might be too late.
-> 
+UNAME26 is a mechanism to report Linux's version as 2.6.x, for
+compatibility with old/broken software. Because of the way it is
+implemented, it needs to be adjusted to handle version 5.0.
 
-[ partial results; qemu tests incomplete ]
+Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
+---
+ kernel/sys.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Build results:
-	total: 155 pass: 148 fail: 7
-Failed builds: 
-	arm:allmodconfig 
-	mips:allmodconfig 
-	parisc:allmodconfig 
-	powerpc:ppc64e_defconfig 
-	powerpc:cell_defconfig 
-	powerpc:maple_defconfig 
-	xtensa:allmodconfig 
-Qemu test results:
-	total: 332 pass: 331 fail: 1
-Failed tests: 
-	mipsel64:fuloong2e_defconfig:fulong2e:rootfs
+diff --git a/kernel/sys.c b/kernel/sys.c
+index a48cbf1414b8..479f4ecdb405 100644
+--- a/kernel/sys.c
++++ b/kernel/sys.c
+@@ -1208,6 +1208,7 @@ DECLARE_RWSEM(uts_sem);
+  * Work around broken programs that cannot handle "Linux 3.0".
+  * Instead we map 3.x to 2.6.40+x, so e.g. 3.0 would be 2.6.40
+  * And we map 4.x to 2.6.60+x, so 4.0 would be 2.6.60.
++ * We map 5.x to 2.6.81+x, so 5.0 would be 2.6.81.
+  */
+ static int override_release(char __user *release, size_t len)
+ {
+@@ -1227,7 +1228,7 @@ static int override_release(char __user *release, size_t len)
+ 				break;
+ 			rest++;
+ 		}
+-		v = ((LINUX_VERSION_CODE >> 8) & 0xff) + 60;
++		v = ((LINUX_VERSION_CODE >> 8) & 0xff) + 81;
+ 		copy = clamp_t(size_t, len, 1, sizeof(buf));
+ 		copy = scnprintf(buf, copy, "2.6.%u%s", v, rest);
+ 		ret = copy_to_user(release, buf, copy + 1);
+-- 
+2.20.1
 
-Depending on the architecture, different variants of the same error.
-
-ERROR: "__bad_cmpxchg" [drivers/spi/spi-bcm2835.ko] undefined!
-ERROR: "__cmpxchg_small" [drivers/spi/spi-bcm2835.ko] undefined!
-ERROR: "__cmpxchg_called_with_bad_pointer" [drivers/spi/spi-bcm2835.ko] undefined!
-
-v4.4 and v4.20 are also affected by this problem. The impact differs
-from release to release; for example, sparc64 is affected in v4.4.y,
-but not in v4.19.y / v4.20.y. I suspect that the problem is also seen
-in v4.9.y and v4.14.y, but the compilation doesn't get there
-due to the other problems in those releases.
-
-Also, for powerpc builds:
-
-arch/powerpc/kernel/signal_64.c: In function ‘sys_rt_sigreturn’:
-arch/powerpc/kernel/signal_64.c:761:21: error: ‘msr’ undeclared
-
-and for mips64:
-
-Building mipsel64:fuloong2e_defconfig:fulong2e:rootfs ... failed
-------------
-Error log:
-In file included from ./arch/mips/include/asm/mmzone.h:10:0,
-                 from ./arch/mips/include/asm/r4kcache.h:23,
-		 from arch/mips/mm/c-r4k.c:33:
-./arch/mips/include/asm/mach-loongson64/mmzone.h:48:0: error: "NODE_DATA" redefined [-Werror]
-
-Guenter
