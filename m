@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51307C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:38:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33388C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:38:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2356D206BB
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:38:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0485620859
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:38:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546864727;
-	bh=H22Qzxd6vyy8GOgYVSzR3/SNwTEbfRL7G6OhVjtcC9w=;
+	s=default; t=1546864732;
+	bh=SU+tvD2ohfF6Eh4ZFbWDwlWnFOnEJGT1g5O6zvQ/aSk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=zV5J3EghT2scHMUTRe/Wzb0INU8RC/cf7JmZSBquJ946E8Jy/CqoRI+2ZolCoCMVB
-	 2qS6hApx73rdHZpPwzFGWTmvL/UUUXFoXV23RC2rhUcaGbD+G1KQ4jN7RvgbwPhnwa
-	 rR5FEPxQ+hDAROxE1FhsPJIQqytUUnztFX/6+LOo=
+	b=vaIYIMOiOSA4M42EFl2ZwEYNeYOmeI/FgjsZGBPibyDDeBDWQeHaOcs02LJqzvEXr
+	 X4RQ4owk30wnYY1f4Qdpr/zrpGbkBNbkYy3bKr6s1tCuCNpgwFYi8fYX32qSHrpZeY
+	 9RV+v0LgWar1v8UCQj/AjWLGujiefrJ+I7EOZHkM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727984AbfAGMiq (ORCPT
+        id S1727995AbfAGMiu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:38:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53882 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:38:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54002 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727318AbfAGMio (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:38:44 -0500
+        id S1727318AbfAGMit (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:38:49 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 02C5921736;
-        Mon,  7 Jan 2019 12:38:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 85D03206BB;
+        Mon,  7 Jan 2019 12:38:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546864723;
-        bh=H22Qzxd6vyy8GOgYVSzR3/SNwTEbfRL7G6OhVjtcC9w=;
+        s=default; t=1546864728;
+        bh=SU+tvD2ohfF6Eh4ZFbWDwlWnFOnEJGT1g5O6zvQ/aSk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Uy+YHXhOFL+MhJeafA8CS3c4X3pEhhYF8PjCYAbH4HN+KdUEOlzRnHcSpQY5aGAr+
-         HAR171NOjqtWtDUN2myPD9r3ZROHoGvecvHfrQWqMu4+86QnjOz0z5FM+3+1zXsTzw
-         8qe/prac7TJ9B7pf5R8uH5ig2Z7+MzRepVTkgR3w=
+        b=C2i+Bs+gJAkKvWSE7BA+d6FU8HOcHPs+5Oqg4Cr0C1usGXGxIfXRD1Z9id3hDyP/t
+         jzunn+AnSqQgFL0U6iDYcY6RfSd7RqzS7RDGM4CMqe89edncavpgLai36jXfq8Hj/V
+         c4nBmzODeTVG7qc92QgoePe077nzeHQCY9xCBEPk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Maurizio Lombardi <mlombard@redhat.com>,
-        Theodore Tso <tytso@mit.edu>, stable@kernel.org
-Subject: [PATCH 4.20 074/145] ext4: missing unlock/put_page() in ext4_try_to_write_inline_data()
-Date:   Mon,  7 Jan 2019 13:31:51 +0100
-Message-Id: <20190107104446.934284390@linuxfoundation.org>
+        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
+        =?UTF-8?q?ruippan=20 ?= <ruippan@tencent.com>,
+        stable@kernel.org
+Subject: [PATCH 4.20 075/145] ext4: fix EXT4_IOC_GROUP_ADD ioctl
+Date:   Mon,  7 Jan 2019 13:31:52 +0100
+Message-Id: <20190107104447.083544885@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104437.308206189@linuxfoundation.org>
 References: <20190107104437.308206189@linuxfoundation.org>
@@ -65,37 +66,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Maurizio Lombardi <mlombard@redhat.com>
+From: ruippan (潘睿) <ruippan@tencent.com>
 
-commit 132d00becb31e88469334e1e62751c81345280e0 upstream.
+commit e647e29196b7f802f8242c39ecb7cc937f5ef217 upstream.
 
-In case of error, ext4_try_to_write_inline_data() should unlock
-and release the page it holds.
+Commit e2b911c53584 ("ext4: clean up feature test macros with
+predicate functions") broke the EXT4_IOC_GROUP_ADD ioctl.  This was
+not noticed since only very old versions of resize2fs (before
+e2fsprogs 1.42) use this ioctl.  However, using a new kernel with an
+enterprise Linux userspace will cause attempts to use online resize to
+fail with "No reserved GDT blocks".
 
-Fixes: f19d5870cbf7 ("ext4: add normal write support for inline data")
-Cc: stable@kernel.org # 3.8
-Signed-off-by: Maurizio Lombardi <mlombard@redhat.com>
+Fixes: e2b911c53584 ("ext4: clean up feature test macros with predicate...")
+Cc: stable@kernel.org # v4.4
 Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Signed-off-by: ruippan (潘睿) <ruippan@tencent.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/inline.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ fs/ext4/resize.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/ext4/inline.c
-+++ b/fs/ext4/inline.c
-@@ -705,8 +705,11 @@ int ext4_try_to_write_inline_data(struct
- 
- 	if (!PageUptodate(page)) {
- 		ret = ext4_read_inline_page(inode, page);
--		if (ret < 0)
-+		if (ret < 0) {
-+			unlock_page(page);
-+			put_page(page);
- 			goto out_up_read;
-+		}
+--- a/fs/ext4/resize.c
++++ b/fs/ext4/resize.c
+@@ -1631,7 +1631,7 @@ int ext4_group_add(struct super_block *s
  	}
  
- 	ret = 1;
+ 	if (reserved_gdb || gdb_off == 0) {
+-		if (ext4_has_feature_resize_inode(sb) ||
++		if (!ext4_has_feature_resize_inode(sb) ||
+ 		    !le16_to_cpu(es->s_reserved_gdt_blocks)) {
+ 			ext4_warning(sb,
+ 				     "No reserved GDT blocks, can't resize");
 
 
