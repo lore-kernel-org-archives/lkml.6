@@ -2,287 +2,193 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED4C3C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 10:11:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BC9CC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 10:11:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B45CE20859
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 10:11:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 33A6B20859
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 10:11:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Vm7aBqHL";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="OAiOATMv"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="DZct6zBL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726893AbfAGKK2 (ORCPT
+        id S1727038AbfAGKLZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 05:10:28 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:56092 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726873AbfAGKKY (ORCPT
+        Mon, 7 Jan 2019 05:11:25 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:34668 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726878AbfAGKK2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 05:10:24 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 2B30B60A37; Mon,  7 Jan 2019 10:10:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1546855823;
-        bh=yQ4FheJC5BDW+Q/FeprIjkBhVrkPTT8oY993ejs2JKo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Vm7aBqHLhuOmBOs46DTffiYatXV3dNdoeBe0CBvBdPY2VtCR1mjeyDMlFyWTjPgqN
-         JMYUq/FxrWKkgYQOV/eC0BswfauN2moL2XImbrmV/6BZgGIIOwKDgZ0nDUr/HZU+hg
-         3tMVNIXs915a0eajMhmkFyuFkh3VwNAYI8vh+j9c=
-Received: from blr-ubuntu-173.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: rnayak@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id CACD9609C6;
-        Mon,  7 Jan 2019 10:10:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1546855819;
-        bh=yQ4FheJC5BDW+Q/FeprIjkBhVrkPTT8oY993ejs2JKo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OAiOATMvvPn6f7dZ2IcO/WIz8oyExLcmjR2occX7TNd5Qnn1WFHIZWWqgNGHdsoLO
-         Wb+S1q7A27dU0JOJI8C1k8PlIhmXe0A8KSuu7aADYxmDlythgixQkXuR7Uh8XOhe5o
-         tFZD9Ueavizt3y9NbQHTMJ86UfhTcuAQkq22PwKk=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CACD9609C6
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
-From:   Rajendra Nayak <rnayak@codeaurora.org>
-To:     andy.gross@linaro.org, robh@kernel.org, viresh.kumar@linaro.org,
-        sboyd@kernel.org, ulf.hansson@linaro.org, collinsd@codeaurora.org,
-        mka@chromium.org
-Cc:     devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, henryc.chen@mediatek.com,
-        Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH v9 02/10] dt-bindings: power: Add qcom rpm power domain driver bindings
-Date:   Mon,  7 Jan 2019 15:39:51 +0530
-Message-Id: <20190107100959.14528-3-rnayak@codeaurora.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190107100959.14528-1-rnayak@codeaurora.org>
-References: <20190107100959.14528-1-rnayak@codeaurora.org>
+        Mon, 7 Jan 2019 05:10:28 -0500
+Received: by mail-ed1-f67.google.com with SMTP id b3so334639ede.1
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 02:10:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=qUkbCEmsntdfIG+umww963vUUwTtYgwvxVwPjf2SD/8=;
+        b=DZct6zBL6cO8bvOVvbgRzCoic5h4bzwzfjIDjukSlHsl9iCEC/r7y+qPl0mZkDmJaw
+         pUhf5jZ1bSGT2eP1G+ROOHv4+96/8QuuJ0O1EjTVw42j/f4S3aYsLLkZkngcFVu807Lh
+         aGWpsa+ltf8mm4tN7ZXhQluGA/cM56qbyFPIc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=qUkbCEmsntdfIG+umww963vUUwTtYgwvxVwPjf2SD/8=;
+        b=SAzmZnWoaJ9tcRxc4fX8OZGzTZqhEeM9Ca0MSoTmXuH310b0upDXkea7jQy1xzbk/x
+         RW4ycHyAD6G6A/gNj2EZzjzelcVNniW1SWRtvf+yNWp73xTlYDJjgFjxpNMkRvIc8Kan
+         lcqnRqY2RYP68sUaw1IGRQJ7NRhSNW6tOtpQNFyq4Efry5INIoKELXyDL6WiacfHIdD/
+         S7TRk+FN3/BO0UmJOZgvWmzo6iMyml++r/ysCgu9vTWlgN9P53GepkwFr7b0uggTX/UV
+         8lK3kXv6kjxbbR5/JCyxeKCPaLRKKmwK8Py79Ema4UB/3igOsLG1TKjvtN8DINA+Xe8U
+         hsTQ==
+X-Gm-Message-State: AA+aEWa58TDI0UVm0n/7VlCiGir/Qnh2bphy2VQhjxaolBghrHkhbinQ
+        ov3MgP31b+pySt/lZtIJGtpaVg==
+X-Google-Smtp-Source: AFSGD/VqFIUBl/04MXobmMi8biGDuv7a5G4jej4blWUGGAxq4r16hsTLTmab7RbPAdfRZXkfdKr96g==
+X-Received: by 2002:a17:906:6a9b:: with SMTP id p27-v6mr47172326ejr.235.1546855825787;
+        Mon, 07 Jan 2019 02:10:25 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id gk8-v6sm19867143ejb.42.2019.01.07.02.10.24
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 07 Jan 2019 02:10:25 -0800 (PST)
+Date:   Mon, 7 Jan 2019 11:10:22 +0100
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Ivan Mironov <mironov.ivan@gmail.com>
+Cc:     Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        saahriktu <mail@saahriktu.org>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Subject: Re: [PATCH v1 2/2] drm/fb-helper: Ignore the value of
+ fb_var_screeninfo.pixclock
+Message-ID: <20190107101022.GA21184@phenom.ffwll.local>
+Mail-Followup-To: Ivan Mironov <mironov.ivan@gmail.com>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        saahriktu <mail@saahriktu.org>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+References: <20181227231308.16904-1-mironov.ivan@gmail.com>
+ <20181227231308.16904-3-mironov.ivan@gmail.com>
+ <20181228120652.GR9058@dvetter-linux.ger.corp.intel.com>
+ <b9f21efe2fe2d0a71ad6672fbe9155df52ac5e02.camel@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b9f21efe2fe2d0a71ad6672fbe9155df52ac5e02.camel@gmail.com>
+X-Operating-System: Linux phenom 4.18.0-2-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add DT bindings to describe the rpm/rpmh power domains found on Qualcomm
-Technologies, Inc. SoCs. These power domains communicate a performance
-state to RPM/RPMh, which then translates it into corresponding voltage on a
-PMIC rail.
+On Sat, Jan 05, 2019 at 09:21:21PM +0500, Ivan Mironov wrote:
+> On Fri, 2018-12-28 at 13:06 +0100, Daniel Vetter wrote:
+> > On Fri, Dec 28, 2018 at 04:13:08AM +0500, Ivan Mironov wrote:
+> > > Strict requirement of pixclock to be zero breaks support of SDL 1.2
+> > > which contains hardcoded table of supported video modes with non-zero
+> > > pixclock values[1].
+> > > 
+> > > To better understand which pixclock values are considered valid and how
+> > > driver should handle these values, I briefly examined few existing fbdev
+> > > drivers and documentation in Documentation/fb/. And it looks like there
+> > > are no strict rules on that and actual behaviour varies:
+> > > 
+> > > 	* some drivers treat (pixclock == 0) as "use defaults" (uvesafb.c);
+> > > 	* some treat (pixclock == 0) as invalid value which leads to
+> > > 	  -EINVAL (clps711x-fb.c);
+> > > 	* some pass converted pixclock value to hardware (uvesafb.c);
+> > > 	* some are trying to find nearest value from predefined table
+> > >           (vga16fb.c, video_gx.c).
+> > > 
+> > > Given this, I believe that it should be safe to just ignore this value if
+> > > changing is not supported. It seems that any portable fbdev application
+> > > which was not written only for one specific device working under one
+> > > specific kernel version should not rely on any particular behaviour of
+> > > pixclock anyway.
+> > > 
+> > > However, while enabling SDL1 applications to work out of the box when
+> > > there is no /etc/fb.modes with valid settings, this change affects the
+> > > video mode choosing logic in SDL. Depending on current screen
+> > > resolution, contents of /etc/fb.modes and resolution requested by
+> > > application, this may lead to user-visible difference (not always):
+> > > image will be displayed in a right way, but it will be aligned to the
+> > > left instead of center. There is no "right behaviour" here as well, as
+> > > emulated fbdev, opposing to old fbdev drivers, simply ignores any
+> > > requsts of video mode changes with resolutions smaller than current.
+> > > 
+> > > Feel free to NAK this patch if you think that it causes breakage of
+> > > user-space =).
+> > 
+> > It's a regression, we don't nack regression fixes :-)
+> > 
+> > > The easiest way to reproduce this problem is to install sdl-sopwith[2],
+> > > remove /etc/fb.modes file if it exists, and then try to run sopwith
+> > > from console without X. At least in Fedora 29, sopwith may be simply
+> > > installed from standard repositories.
+> > > 
+> > > [1] SDL 1.2.15 source code, src/video/fbcon/SDL_fbvideo.c, vesa_timings
+> > > [2] http://sdl-sopwith.sourceforge.net/
+> > > 
+> > > Signed-off-by: Ivan Mironov <mironov.ivan@gmail.com>
+> > 
+> > I thought this is also a regression fix, so also needs Fixes: and cc:
+> > stable?
+> > -Daniel
+> 
+> This particular patch fixes a bug that existed for 10 years unnoticed.
+> Are "Fixes:" and "Cc: stable" really required?
+> 
+> "pixclock != 0" check was introduced in this file by 785b93ef8c309
+> ("drm/kms: move driver specific fb common code to helper functions
+> (v2)"). But actually similar code existed in the device-specific
+> drivers even earlier.
 
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- .../devicetree/bindings/power/qcom,rpmpd.txt  | 145 ++++++++++++++++++
- include/dt-bindings/power/qcom-rpmpd.h        |  39 +++++
- 2 files changed, 184 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/power/qcom,rpmpd.txt
- create mode 100644 include/dt-bindings/power/qcom-rpmpd.h
+Afaui 785b93ef8c309 broke existing userspace. Broken userspace, but
+existing userspace, and hence we need to fix this regression. That's the
+rules with linux upstream, existing userspace is never allowed to break,
+even if it does really stupid things. Hence Cc: stable.
+-Daniel
 
-diff --git a/Documentation/devicetree/bindings/power/qcom,rpmpd.txt b/Documentation/devicetree/bindings/power/qcom,rpmpd.txt
-new file mode 100644
-index 000000000000..2f0764298d86
---- /dev/null
-+++ b/Documentation/devicetree/bindings/power/qcom,rpmpd.txt
-@@ -0,0 +1,145 @@
-+Qualcomm RPM/RPMh Power domains
-+
-+For RPM/RPMh Power domains, we communicate a performance state to RPM/RPMh
-+which then translates it into a corresponding voltage on a rail
-+
-+Required Properties:
-+ - compatible: Should be one of the following
-+	* qcom,msm8996-rpmpd: RPM Power domain for the msm8996 family of SoC
-+	* qcom,sdm845-rpmhpd: RPMh Power domain for the sdm845 family of SoC
-+ - #power-domain-cells: number of cells in Power domain specifier
-+	must be 1.
-+ - operating-points-v2: Phandle to the OPP table for the Power domain.
-+	Refer to Documentation/devicetree/bindings/power/power_domain.txt
-+	and Documentation/devicetree/bindings/opp/opp-level.txt for more details
-+
-+Refer to <dt-bindings/power/qcom-rpmpd.h> for the level values for
-+various OPPs for different platforms as well as Power domain indexes
-+
-+Example: rpmh power domain controller and OPP table
-+
-+#include <dt-bindings/power/qcom-rpmhpd.h>
-+
-+opp-level values specified in the OPP tables for RPMh power domains
-+should use the RPMH_REGULATOR_LEVEL_* constants from
-+<dt-bindings/power/qcom-rpmhpd.h>
-+
-+	rpmhpd: power-controller {
-+		compatible = "qcom,sdm845-rpmhpd";
-+		#power-domain-cells = <1>;
-+		operating-points-v2 = <&rpmhpd_opp_table>;
-+
-+		rpmhpd_opp_table: opp-table {
-+			compatible = "operating-points-v2-level";
-+
-+			rpmhpd_opp_ret: opp1 {
-+				opp-level = <RPMH_REGULATOR_LEVEL_RETENTION>;
-+			};
-+
-+			rpmhpd_opp_min_svs: opp2 {
-+				opp-level = <RPMH_REGULATOR_LEVEL_MIN_SVS>;
-+			};
-+
-+			rpmhpd_opp_low_svs: opp3 {
-+				opp-level = <RPMH_REGULATOR_LEVEL_LOW_SVS>;
-+			};
-+
-+			rpmhpd_opp_svs: opp4 {
-+				opp-level = <RPMH_REGULATOR_LEVEL_SVS>;
-+			};
-+
-+			rpmhpd_opp_svs_l1: opp5 {
-+				opp-level = <RPMH_REGULATOR_LEVEL_SVS_L1>;
-+			};
-+
-+			rpmhpd_opp_nom: opp6 {
-+				opp-level = <RPMH_REGULATOR_LEVEL_NOM>;
-+			};
-+
-+			rpmhpd_opp_nom_l1: opp7 {
-+				opp-level = <RPMH_REGULATOR_LEVEL_NOM_L1>;
-+			};
-+
-+			rpmhpd_opp_nom_l2: opp8 {
-+				opp-level = <RPMH_REGULATOR_LEVEL_NOM_L2>;
-+			};
-+
-+			rpmhpd_opp_turbo: opp9 {
-+				opp-level = <RPMH_REGULATOR_LEVEL_TURBO>;
-+			};
-+
-+			rpmhpd_opp_turbo_l1: opp10 {
-+				opp-level = <RPMH_REGULATOR_LEVEL_TURBO_L1>;
-+			};
-+		};
-+	};
-+
-+Example: rpm power domain controller and OPP table
-+
-+	rpmpd: power-controller {
-+		compatible = "qcom,msm8996-rpmpd";
-+		#power-domain-cells = <1>;
-+		operating-points-v2 = <&rpmpd_opp_table>;
-+
-+		rpmpd_opp_table: opp-table {
-+			compatible = "operating-points-v2-level";
-+
-+			rpmpd_opp_low: opp1 {
-+				opp-level = <1>;
-+			};
-+
-+			rpmpd_opp_ret: opp2 {
-+				opp-level = <2>;
-+			};
-+
-+			rpmpd_opp_svs: opp3 {
-+				opp-level = <3>;
-+			};
-+
-+			rpmpd_opp_normal: opp4 {
-+				opp-level = <4>;
-+			};
-+
-+			rpmpd_opp_high: opp5 {
-+				opp-level = <5>;
-+			};
-+
-+			rpmpd_opp_turbo: opp6 {
-+				opp-level = <6>;
-+			};
-+		};
-+	};
-+
-+Example: Client/Consumer device using OPP table
-+
-+	leaky-device0@12350000 {
-+		compatible = "foo,i-leak-current";
-+		reg = <0x12350000 0x1000>;
-+		power-domains = <&rpmhpd SDM845_MX>;
-+		operating-points-v2 = <&leaky_opp_table>;
-+	};
-+
-+
-+	leaky_opp_table: opp-table {
-+		compatible = "operating-points-v2";
-+
-+		opp1 {
-+			opp-hz = /bits/ 64 <144000>;
-+			required-opps = <&rpmhpd_opp_low>;
-+		};
-+
-+		opp2 {
-+			opp-hz = /bits/ 64 <400000>;
-+			required-opps = <&rpmhpd_opp_ret>;
-+		};
-+
-+		opp3 {
-+			opp-hz = /bits/ 64 <20000000>;
-+			required-opps = <&rpmpd_opp_svs>;
-+		};
-+
-+		opp4 {
-+			opp-hz = /bits/ 64 <25000000>;
-+			required-opps = <&rpmpd_opp_normal>;
-+		};
-+	};
-diff --git a/include/dt-bindings/power/qcom-rpmpd.h b/include/dt-bindings/power/qcom-rpmpd.h
-new file mode 100644
-index 000000000000..87d9c6611682
---- /dev/null
-+++ b/include/dt-bindings/power/qcom-rpmpd.h
-@@ -0,0 +1,39 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/* Copyright (c) 2018, The Linux Foundation. All rights reserved. */
-+
-+#ifndef _DT_BINDINGS_POWER_QCOM_RPMPD_H
-+#define _DT_BINDINGS_POWER_QCOM_RPMPD_H
-+
-+/* SDM845 Power Domain Indexes */
-+#define SDM845_EBI	0
-+#define SDM845_MX	1
-+#define SDM845_MX_AO	2
-+#define SDM845_CX	3
-+#define SDM845_CX_AO	4
-+#define SDM845_LMX	5
-+#define SDM845_LCX	6
-+#define SDM845_GFX	7
-+#define SDM845_MSS	8
-+
-+/* SDM845 Power Domain performance levels */
-+#define RPMH_REGULATOR_LEVEL_RETENTION	16
-+#define RPMH_REGULATOR_LEVEL_MIN_SVS	48
-+#define RPMH_REGULATOR_LEVEL_LOW_SVS	64
-+#define RPMH_REGULATOR_LEVEL_SVS	128
-+#define RPMH_REGULATOR_LEVEL_SVS_L1	192
-+#define RPMH_REGULATOR_LEVEL_NOM	256
-+#define RPMH_REGULATOR_LEVEL_NOM_L1	320
-+#define RPMH_REGULATOR_LEVEL_NOM_L2	336
-+#define RPMH_REGULATOR_LEVEL_TURBO	384
-+#define RPMH_REGULATOR_LEVEL_TURBO_L1	416
-+
-+/* MSM8996 Power Domain Indexes */
-+#define MSM8996_VDDCX		0
-+#define MSM8996_VDDCX_AO	1
-+#define MSM8996_VDDCX_VFC	2
-+#define MSM8996_VDDMX		3
-+#define MSM8996_VDDMX_AO	4
-+#define MSM8996_VDDSSCX		5
-+#define MSM8996_VDDSSCX_VFC	6
-+
-+#endif
+> 
+> > 
+> > > ---
+> > >  drivers/gpu/drm/drm_fb_helper.c | 7 ++++++-
+> > >  1 file changed, 6 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
+> > > index aff576c3c4fb..b95a0c23c7c8 100644
+> > > --- a/drivers/gpu/drm/drm_fb_helper.c
+> > > +++ b/drivers/gpu/drm/drm_fb_helper.c
+> > > @@ -1690,9 +1690,14 @@ int drm_fb_helper_check_var(struct fb_var_screeninfo *var,
+> > >  	struct drm_fb_helper *fb_helper = info->par;
+> > >  	struct drm_framebuffer *fb = fb_helper->fb;
+> > >  
+> > > -	if (var->pixclock != 0 || in_dbg_master())
+> > > +	if (in_dbg_master())
+> > >  		return -EINVAL;
+> > >  
+> > > +	if (var->pixclock != 0) {
+> > > +		DRM_DEBUG("fbdev emulation doesn't support changing the pixel clock, value of pixclock is ignored\n");
+> > > +		var->pixclock = 0;
+> > > +	}
+> > > +
+> > >  	if ((drm_format_info_block_width(fb->format, 0) > 1) ||
+> > >  	    (drm_format_info_block_height(fb->format, 0) > 1))
+> > >  		return -EINVAL;
+> > > -- 
+> > > 2.20.1
+> > > 
+> 
+
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
-
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
