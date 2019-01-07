@@ -7,47 +7,48 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6B3CC43612
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:57:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91DF1C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:58:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E41121736
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:57:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5660B21736
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:58:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546865877;
-	bh=0KRYN1g7F2yW53jyNintLME+ziWjMVNRZifU0vsZNZ4=;
+	s=default; t=1546865881;
+	bh=gKdpVSocoltwi2f1fVTfpaRQ40B0sfpGLCzKGayUAJM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=0A26DAPlO8Ggjp+DUKyCEFK/SOeb+ZNQ3DfviuYmlzLUrG42Mrn/GzB8S6ETz0Thw
-	 InQ25NPC3/UB7nkUVrQzL7mhIXSCqrylNQoRKHjm+DtJMoTa71bKAp7ZZButAA8PiY
-	 /ouFnSWHYTeC1HkXMgOUKi0QGL0iaKaGlcIy+d8w=
+	b=aIxcsyZKjNJ5mdzvjGb/D6MAqx5JG6NnHTcXygrVPS+uR8yz8Tj04wO8xN7Fy8j/q
+	 yK89Vq3wRizFEeD3bubgOQaLKyQ0o2Q/etimjVmiIVDwn2Loqhz3/TX4h2JPl15gIK
+	 13yfbbv4pHSTvlcOkg2RjKk8tGr7TjNA6E329t3U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729906AbfAGM54 (ORCPT
+        id S1729431AbfAGM6A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:57:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45438 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:58:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45502 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729175AbfAGM5y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:57:54 -0500
+        id S1727856AbfAGM55 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:57:57 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5378F206BB;
-        Mon,  7 Jan 2019 12:57:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D70FE2089F;
+        Mon,  7 Jan 2019 12:57:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865873;
-        bh=0KRYN1g7F2yW53jyNintLME+ziWjMVNRZifU0vsZNZ4=;
+        s=default; t=1546865877;
+        bh=gKdpVSocoltwi2f1fVTfpaRQ40B0sfpGLCzKGayUAJM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sTQcpuivEXWTN9PiAAyqLe5SJUW7MOSfqnAQR27vTFbILbytvANrYyKipbHY6+A9j
-         zXDfzd3V+7ra+viVwvE5zoMd6YFhC+boyZgXyMS1m8asKZ9jWt0sKH0kQKs8fAlFxU
-         Ekq6fexU+LodSbV2LSTR8L4rLcvdB3aL0Tau67NI=
+        b=y8TLt5yrkjHbfuRZFht8ZoFuEy7o+pNUnguBtqqWctVPOs/UEdRhzk5Jf/nWAtY7S
+         qp85KvKQK6iHKgCFzTvU4Um4iGTXgpebJGnkm8XCUCDu3EtdN0X9U2HgBWjZrs5jYl
+         qEGEHffpe4T6CHbjeZDxROztojeVLqstR8N06nhM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Greg Kurz <groug@kaod.org>,
+        Frederic Barrat <fbarrat@linux.ibm.com>,
         Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
         Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.19 105/170] ocxl: Fix endiannes bug in ocxl_link_update_pe()
-Date:   Mon,  7 Jan 2019 13:32:12 +0100
-Message-Id: <20190107104505.352778208@linuxfoundation.org>
+Subject: [PATCH 4.19 106/170] ocxl: Fix endiannes bug in read_afu_name()
+Date:   Mon,  7 Jan 2019 13:32:13 +0100
+Message-Id: <20190107104505.452710786@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104452.953560660@linuxfoundation.org>
 References: <20190107104452.953560660@linuxfoundation.org>
@@ -68,37 +69,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Greg Kurz <groug@kaod.org>
 
-commit e1e71e201703500f708bdeaf64660a2a178cb6a0 upstream.
+commit 2f07229f02d4c55affccd11a61af4fd4b94dc436 upstream.
 
-All fields in the PE are big-endian. Use cpu_to_be32() like everywhere
-else something is written to the PE. Otherwise a wrong TID will be used
-by the NPU. If this TID happens to point to an existing thread sharing
-the same mm, it could be woken up by error. This is highly improbable
-though. The likely outcome of this is the NPU not finding the target
-thread and forcing the AFU into sending an interrupt, which userspace
-is supposed to handle anyway.
+The AFU Descriptor Template in the PCI config space has a Name Space
+field which is a 24 Byte ASCII character string of descriptive name
+space for the AFU. The OCXL driver read the string four characters at
+a time with pci_read_config_dword().
 
-Fixes: e948e06fc63a ("ocxl: Expose the thread_id needed for wait on POWER9")
-Cc: stable@vger.kernel.org      # v4.18
+This optimization is valid on a little-endian system since this is PCI,
+but a big-endian system ends up with each subset of four characters in
+reverse order.
+
+This could be fixed by switching to read characters one by one. Another
+option is to swap the bytes if we're big-endian.
+
+Go for the latter with le32_to_cpu().
+
+Cc: stable@vger.kernel.org      # v4.16
 Signed-off-by: Greg Kurz <groug@kaod.org>
+Acked-by: Frederic Barrat <fbarrat@linux.ibm.com>
 Acked-by: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/misc/ocxl/link.c |    2 +-
+ drivers/misc/ocxl/config.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/misc/ocxl/link.c
-+++ b/drivers/misc/ocxl/link.c
-@@ -566,7 +566,7 @@ int ocxl_link_update_pe(void *link_handl
- 
- 	mutex_lock(&spa->spa_lock);
- 
--	pe->tid = tid;
-+	pe->tid = cpu_to_be32(tid);
- 
- 	/*
- 	 * The barrier makes sure the PE is updated
+--- a/drivers/misc/ocxl/config.c
++++ b/drivers/misc/ocxl/config.c
+@@ -318,7 +318,7 @@ static int read_afu_name(struct pci_dev
+ 		if (rc)
+ 			return rc;
+ 		ptr = (u32 *) &afu->name[i];
+-		*ptr = val;
++		*ptr = le32_to_cpu((__force __le32) val);
+ 	}
+ 	afu->name[OCXL_AFU_NAME_SZ - 1] = '\0'; /* play safe */
+ 	return 0;
 
 
