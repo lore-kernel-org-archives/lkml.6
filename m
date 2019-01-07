@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F0E2C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:00:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7AB2C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:01:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2771F2173C
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:00:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B92D3217D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:01:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546866058;
-	bh=KPhGRQnJzl8KMR+LAEILhkKJLdOot7X/qQie31YqZuM=;
+	s=default; t=1546866061;
+	bh=LuscC0At5+BEPE8NzD6yBUUYVuiDAWNWCGezwq/aQgo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=W0u70FtknckImu2sA4nJm1lf9q2eogu5EOt+lqxMSLekmCQue9M4wNasDOT1ndbEu
-	 F+VleQtBHUHsEF9lFE3Sp05rA/o93jP+siVrmbqdUDigCB1Y8OSU9/CP8z6gCysa4H
-	 MMUC6JTb6ZY7wMsFqZ/R1VxA5SjVhxXBkUBNwxuw=
+	b=m6X2qVIE9Ib8YiRdVJ6nRmcNv4rskHhiCEiCePG+XvR+f8WGuIwY6xJsMRwLCKwey
+	 O8qrg2xVfaCv2HHY4yHckft/8utrTh7uPVsLa9XB5O9blQ7lEL++k0BRKOBp2tsfNQ
+	 8lVSBYg4Z8yVEFysFl3hbB3RS2OT2TNlgjXrfg5U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730504AbfAGNA4 (ORCPT
+        id S1730515AbfAGNBA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:00:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48374 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:01:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48424 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730490AbfAGNAy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:00:54 -0500
+        id S1727514AbfAGNA5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:00:57 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 839732089F;
-        Mon,  7 Jan 2019 13:00:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 58C082089F;
+        Mon,  7 Jan 2019 13:00:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546866054;
-        bh=KPhGRQnJzl8KMR+LAEILhkKJLdOot7X/qQie31YqZuM=;
+        s=default; t=1546866056;
+        bh=LuscC0At5+BEPE8NzD6yBUUYVuiDAWNWCGezwq/aQgo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ofzYlRySsVExxHM/cuWNoNrGJjpofriWDmn1js2ENV9UxL44kkjSq71cIMDyBTQcU
-         wpIK1GmE+LOqg3iKJmXJxEncYW9qnTaAS3PA8OkVvAh/o1R2AObzLWmm/gOHNJKR6F
-         pVcF+S55UnVNLD6bEX2TzzRj2sWSwkd3RR9uenbg=
+        b=EFhyYYo78puYEY8fVwIyh9YaUlgetASag6V1zlZzSlAuU4U0l3fLN8JrVOjWJ25TC
+         FPtDz1+ia9/oTuEf9/Venm3zfkB4boGBo4YexLwXjVwE9b+wOtmkW7o2WPzp0x1RBL
+         StXBlh8+C3gU8y38r1vW8qcu1grW1yVMNCc9gULE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alaa Hleihel <alaa@mellanox.com>,
-        Tariq Toukan <tariqt@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>
-Subject: [PATCH 4.14 030/101] net/mlx5e: Remove the false indication of software timestamping support
-Date:   Mon,  7 Jan 2019 13:32:18 +0100
-Message-Id: <20190107105334.553774970@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 004/101] ip6mr: Fix potential Spectre v1 vulnerability
+Date:   Mon,  7 Jan 2019 13:31:52 +0100
+Message-Id: <20190107105330.654145256@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107105330.372621917@linuxfoundation.org>
 References: <20190107105330.372621917@linuxfoundation.org>
@@ -66,48 +66,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alaa Hleihel <alaa@mellanox.com>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 
-[ Upstream commit 4765420439e758bfa4808392d18b0a4cb6f06065 ]
+[ Upstream commit 69d2c86766da2ded2b70281f1bf242cb0d58a778 ]
 
-mlx5 driver falsely advertises support of software timestamping.
-Fix it by removing the false indication.
+vr.mifi is indirectly controlled by user-space, hence leading to
+a potential exploitation of the Spectre variant 1 vulnerability.
 
-Fixes: ef9814deafd0 ("net/mlx5e: Add HW timestamping (TS) support")
-Signed-off-by: Alaa Hleihel <alaa@mellanox.com>
-Reviewed-by: Tariq Toukan <tariqt@mellanox.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+This issue was detected with the help of Smatch:
+
+net/ipv6/ip6mr.c:1845 ip6mr_ioctl() warn: potential spectre issue 'mrt->vif_table' [r] (local cap)
+net/ipv6/ip6mr.c:1919 ip6mr_compat_ioctl() warn: potential spectre issue 'mrt->vif_table' [r] (local cap)
+
+Fix this by sanitizing vr.mifi before using it to index mrt->vif_table'
+
+Notice that given that speculation windows are large, the policy is
+to kill the speculation on the first load and not worry if it can be
+completed with a dependent load/store [1].
+
+[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c |   12 +++---------
- 1 file changed, 3 insertions(+), 9 deletions(-)
+ net/ipv6/ip6mr.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c
-@@ -1417,21 +1417,15 @@ static int mlx5e_set_pauseparam(struct n
- int mlx5e_ethtool_get_ts_info(struct mlx5e_priv *priv,
- 			      struct ethtool_ts_info *info)
- {
--	int ret;
--
--	ret = ethtool_op_get_ts_info(priv->netdev, info);
--	if (ret)
--		return ret;
--
- 	info->phc_index = priv->tstamp.ptp ?
- 			  ptp_clock_index(priv->tstamp.ptp) : -1;
+--- a/net/ipv6/ip6mr.c
++++ b/net/ipv6/ip6mr.c
+@@ -72,6 +72,8 @@ struct mr6_table {
+ #endif
+ };
  
- 	if (!MLX5_CAP_GEN(priv->mdev, device_frequency_khz))
- 		return 0;
- 
--	info->so_timestamping |= SOF_TIMESTAMPING_TX_HARDWARE |
--				 SOF_TIMESTAMPING_RX_HARDWARE |
--				 SOF_TIMESTAMPING_RAW_HARDWARE;
-+	info->so_timestamping = SOF_TIMESTAMPING_TX_HARDWARE |
-+				SOF_TIMESTAMPING_RX_HARDWARE |
-+				SOF_TIMESTAMPING_RAW_HARDWARE;
- 
- 	info->tx_types = BIT(HWTSTAMP_TX_OFF) |
- 			 BIT(HWTSTAMP_TX_ON);
++#include <linux/nospec.h>
++
+ struct ip6mr_rule {
+ 	struct fib_rule		common;
+ };
+@@ -1883,6 +1885,7 @@ int ip6mr_ioctl(struct sock *sk, int cmd
+ 			return -EFAULT;
+ 		if (vr.mifi >= mrt->maxvif)
+ 			return -EINVAL;
++		vr.mifi = array_index_nospec(vr.mifi, mrt->maxvif);
+ 		read_lock(&mrt_lock);
+ 		vif = &mrt->vif6_table[vr.mifi];
+ 		if (MIF_EXISTS(mrt, vr.mifi)) {
+@@ -1957,6 +1960,7 @@ int ip6mr_compat_ioctl(struct sock *sk,
+ 			return -EFAULT;
+ 		if (vr.mifi >= mrt->maxvif)
+ 			return -EINVAL;
++		vr.mifi = array_index_nospec(vr.mifi, mrt->maxvif);
+ 		read_lock(&mrt_lock);
+ 		vif = &mrt->vif6_table[vr.mifi];
+ 		if (MIF_EXISTS(mrt, vr.mifi)) {
 
 
