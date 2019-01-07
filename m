@@ -4,51 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACAC7C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:21:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 014D3C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:21:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DCA4217D4
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:21:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF52C21736
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:21:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546867302;
-	bh=8+Zfdi0LI3U38ikvTScbj/Nfv/G0afZsWPcvHMnPffE=;
+	s=default; t=1546867312;
+	bh=3dj2VOo390HEGcj9n0sFkKJul1F+9lTk6dA/4fUCia4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=EVimBpHc2HCHXvqrAstPIh5rooWstR48FEKjEILQETx3x08jmnJtOVVp/WVkPcpRo
-	 xm4Id/U/Q0V1pycvPXE+YKCkcXi1G4fLfvHB98YMIP63TYSj1gVo32sDeVU3bAoufo
-	 oQ52TP0eGohR8i5jD28qARJ1+Y77TFGZIZAZQpTM=
+	b=OvwhnURvBHGQm+E7qgIsW45j6SaLiRwdUr//P/AhuXNPBTtIaSYlUrco0oQSeR1H5
+	 H8leVFQyxuuTtECmO0K+DBWaz7bry/QXEySx1G1yZHT2u4Ry0QQROcdixJO4XAGtab
+	 dR4CFW3Z6hyRBDGqJxRLT7ejoiOWccvtiKzk0q7U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729961AbfAGNVl (ORCPT
+        id S1730259AbfAGNVw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:21:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33692 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:21:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33458 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728560AbfAGMov (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:44:51 -0500
+        id S1728625AbfAGMon (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:44:43 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6E8FA20449;
-        Mon,  7 Jan 2019 12:44:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1A48E20449;
+        Mon,  7 Jan 2019 12:44:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865090;
-        bh=8+Zfdi0LI3U38ikvTScbj/Nfv/G0afZsWPcvHMnPffE=;
+        s=default; t=1546865082;
+        bh=3dj2VOo390HEGcj9n0sFkKJul1F+9lTk6dA/4fUCia4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rZvr47R7QZJCaDNW6ULb58nnEfpVJOPDBQZYOOnScQUfZbvzeqm1nrKH/e6iULls8
-         g78i/PheDNBpmTVN/HUgMwTGvGGs+8Fz8hEC4/GISF8D3c14ahy5wWjzspD7so8uaf
-         lp56x2YdlDePeIkyoLCABv0dZKMM3B/tkEg5xCqA=
+        b=przdI4Pp9S/icJbklgnEiyDG+sdOj2LvXdidhxBPLMwSlqdpKa9wk9E5gLs20ZWcR
+         CaaAyZ5PxQh9x8N8DJrvaG8f4FwpI4xOpWYXMo9Yhmh0hM2zQm+fRPmaWfbv7EUuf2
+         Ppqpy/tAJvHukgYY1bcO7bZJmRtYGJ9+GAceBgqw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nayna Jain <nayna@linux.vnet.ibm.com>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Subject: [PATCH 4.20 145/145] tpm: tpm_i2c_nuvoton: use correct command duration for TPM 2.x
-Date:   Mon,  7 Jan 2019 13:33:02 +0100
-Message-Id: <20190107104456.117336005@linuxfoundation.org>
+        stable@vger.kernel.org, Pi-Hsun Shih <pihsun@chromium.org>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Subject: [PATCH 4.20 142/145] arm64: compat: Dont pull syscall number from regs in arm_compat_syscall
+Date:   Mon,  7 Jan 2019 13:32:59 +0100
+Message-Id: <20190107104455.739374594@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104437.308206189@linuxfoundation.org>
 References: <20190107104437.308206189@linuxfoundation.org>
@@ -67,54 +66,89 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tomas Winkler <tomas.winkler@intel.com>
+From: Will Deacon <will.deacon@arm.com>
 
-commit 2ba5780ce30549cf57929b01d8cba6fe656e31c5 upstream.
+commit 53290432145a8eb143fe29e06e9c1465d43dc723 upstream.
 
-tpm_i2c_nuvoton calculated commands duration using TPM 1.x
-values via tpm_calc_ordinal_duration() also for TPM 2.x chips.
-Call tpm2_calc_ordinal_duration() for retrieving ordinal
-duration for TPM 2.X chips.
+The syscall number may have been changed by a tracer, so we should pass
+the actual number in from the caller instead of pulling it from the
+saved r7 value directly.
 
-Cc: stable@vger.kernel.org
-Cc: Nayna Jain <nayna@linux.vnet.ibm.com>
-Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-Reviewed-by: Nayna Jain <nayna@linux.ibm.com>
-Tested-by: Nayna Jain <nayna@linux.ibm.com> (For TPM 2.0)
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc: <stable@vger.kernel.org>
+Cc: Pi-Hsun Shih <pihsun@chromium.org>
+Reviewed-by: Dave Martin <Dave.Martin@arm.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/char/tpm/tpm_i2c_nuvoton.c |   11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ arch/arm64/kernel/sys_compat.c |    9 ++++-----
+ arch/arm64/kernel/syscall.c    |    9 ++++-----
+ 2 files changed, 8 insertions(+), 10 deletions(-)
 
---- a/drivers/char/tpm/tpm_i2c_nuvoton.c
-+++ b/drivers/char/tpm/tpm_i2c_nuvoton.c
-@@ -369,6 +369,7 @@ static int i2c_nuvoton_send(struct tpm_c
- 	struct device *dev = chip->dev.parent;
- 	struct i2c_client *client = to_i2c_client(dev);
- 	u32 ordinal;
-+	unsigned long duration;
- 	size_t count = 0;
- 	int burst_count, bytes2write, retries, rc = -EIO;
+--- a/arch/arm64/kernel/sys_compat.c
++++ b/arch/arm64/kernel/sys_compat.c
+@@ -66,12 +66,11 @@ do_compat_cache_op(unsigned long start,
+ /*
+  * Handle all unrecognised system calls.
+  */
+-long compat_arm_syscall(struct pt_regs *regs)
++long compat_arm_syscall(struct pt_regs *regs, int scno)
+ {
+-	unsigned int no = regs->regs[7];
+ 	void __user *addr;
  
-@@ -455,10 +456,12 @@ static int i2c_nuvoton_send(struct tpm_c
- 		return rc;
+-	switch (no) {
++	switch (scno) {
+ 	/*
+ 	 * Flush a region from virtual address 'r0' to virtual address 'r1'
+ 	 * _exclusive_.  There is no alignment requirement on either address;
+@@ -107,7 +106,7 @@ long compat_arm_syscall(struct pt_regs *
+ 		 * way the calling program can gracefully determine whether
+ 		 * a feature is supported.
+ 		 */
+-		if (no < __ARM_NR_COMPAT_END)
++		if (scno < __ARM_NR_COMPAT_END)
+ 			return -ENOSYS;
+ 		break;
  	}
- 	ordinal = be32_to_cpu(*((__be32 *) (buf + 6)));
--	rc = i2c_nuvoton_wait_for_data_avail(chip,
--					     tpm_calc_ordinal_duration(chip,
--								       ordinal),
--					     &priv->read_queue);
-+	if (chip->flags & TPM_CHIP_FLAG_TPM2)
-+		duration = tpm2_calc_ordinal_duration(chip, ordinal);
-+	else
-+		duration = tpm_calc_ordinal_duration(chip, ordinal);
-+
-+	rc = i2c_nuvoton_wait_for_data_avail(chip, duration, &priv->read_queue);
- 	if (rc) {
- 		dev_err(dev, "%s() timeout command duration\n", __func__);
- 		i2c_nuvoton_ready(chip);
+@@ -116,6 +115,6 @@ long compat_arm_syscall(struct pt_regs *
+ 		(compat_thumb_mode(regs) ? 2 : 4);
+ 
+ 	arm64_notify_die("Oops - bad compat syscall(2)", regs,
+-			 SIGILL, ILL_ILLTRP, addr, no);
++			 SIGILL, ILL_ILLTRP, addr, scno);
+ 	return 0;
+ }
+--- a/arch/arm64/kernel/syscall.c
++++ b/arch/arm64/kernel/syscall.c
+@@ -13,16 +13,15 @@
+ #include <asm/thread_info.h>
+ #include <asm/unistd.h>
+ 
+-long compat_arm_syscall(struct pt_regs *regs);
+-
++long compat_arm_syscall(struct pt_regs *regs, int scno);
+ long sys_ni_syscall(void);
+ 
+-asmlinkage long do_ni_syscall(struct pt_regs *regs)
++static long do_ni_syscall(struct pt_regs *regs, int scno)
+ {
+ #ifdef CONFIG_COMPAT
+ 	long ret;
+ 	if (is_compat_task()) {
+-		ret = compat_arm_syscall(regs);
++		ret = compat_arm_syscall(regs, scno);
+ 		if (ret != -ENOSYS)
+ 			return ret;
+ 	}
+@@ -47,7 +46,7 @@ static void invoke_syscall(struct pt_reg
+ 		syscall_fn = syscall_table[array_index_nospec(scno, sc_nr)];
+ 		ret = __invoke_syscall(regs, syscall_fn);
+ 	} else {
+-		ret = do_ni_syscall(regs);
++		ret = do_ni_syscall(regs, scno);
+ 	}
+ 
+ 	regs->regs[0] = ret;
 
 
