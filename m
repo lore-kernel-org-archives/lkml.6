@@ -2,178 +2,143 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9684CC43444
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 19:32:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 496A9C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 19:34:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6739A2085A
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 19:32:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 125D52085A
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 19:34:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a2ykPIAo"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="JvC019wk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728340AbfAGTca (ORCPT
+        id S1727736AbfAGTe4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 14:32:30 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:34366 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727106AbfAGTca (ORCPT
+        Mon, 7 Jan 2019 14:34:56 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:40942 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726888AbfAGTez (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 14:32:30 -0500
-Received: by mail-pl1-f194.google.com with SMTP id w4so626351plz.1;
-        Mon, 07 Jan 2019 11:32:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=k9Zm2zLLTG+FgZqASlSTT+P/5IN9Lxy3p1LmClfLLK4=;
-        b=a2ykPIAoav8CA0bfAoMkV/kY/5ulAbVbjg4ui8IXYw8EqzEpQJE1yQ4YS9s2h4sp/E
-         H5YUGH+xSdUmisblsMJ2dX1PA2IXC7oLqFIUIOdm+7ZLRisE8Iruyj5pIpkNIDeymNFE
-         NUUOWa5RzH0IQ9cpczVSZ/OENik3jZcYiEMLN+jFgqohTDUVlq6stCO/gL4ZdCr/lf8o
-         YAa+CDZrFXqDQp6D2XGKOXtAQaJBeVMWl8c3IpA4byuiGd4tsIB4JvEN8WlBLdLo9UGN
-         LgVEtJtgn5+fBMgS3DWVrTnyOGIkafgiOkY82xJMSXVLfzir2r3VCdAEK1VJimJjILmp
-         gluw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=k9Zm2zLLTG+FgZqASlSTT+P/5IN9Lxy3p1LmClfLLK4=;
-        b=Jl5Nx93CPIE0vM7t7v2HwRKI9GVAQYAL5XHN7UiRHKN0Ff9i1kmywHgMFqRYhFoGqZ
-         XwnAbW1Xa7QDByVIERR/jARAU/exW06ZyJVNTaYul6ZLn4AoZF1pgXyIgeZsLwNLykMY
-         ZsMZWtPrdwXATXOsGXbPQk08BbaAL3aUUQcr9hUuwqFaEk/agv9XLTHmk6wX34cqDkfo
-         KDtM7rUud/bEBU0kSoQ6+J1MFnpbxDdjKHR1NYFM9JTf1apb+q8PTrAReQS9UjHAj2jG
-         3/kmhml3tudEWbowDtyCBjCNsbI1dvkgCbm0EEmZMlGq6A5ALy0icyuTS78HWa5h0uPP
-         MLUQ==
-X-Gm-Message-State: AJcUukfteaHM7qUZBtnq16te/6qubaQNtJ5c0GCR43Dl2pGthdbL6cwJ
-        VDju1cBRtESaeYOA8h+ldaM=
-X-Google-Smtp-Source: ALg8bN5FFGQFx5Fy6b33H/T8FSMY5XEvJgtuV8IgNh41BJgR10T/iuY+uO63LBzZKUjONwvCaK1hsw==
-X-Received: by 2002:a17:902:7c85:: with SMTP id y5mr62118791pll.63.1546889549245;
-        Mon, 07 Jan 2019 11:32:29 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id m3sm85827098pgl.69.2019.01.07.11.32.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 07 Jan 2019 11:32:28 -0800 (PST)
-Date:   Mon, 7 Jan 2019 11:32:27 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Eddie James <eajames@linux.vnet.ibm.com>,
-        Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] hwmon (occ): Fix potential integer overflow
-Message-ID: <20190107193227.GA10660@roeck-us.net>
-References: <20190107183431.GA12428@embeddedor>
+        Mon, 7 Jan 2019 14:34:55 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x07JYmj8047926;
+        Mon, 7 Jan 2019 13:34:48 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1546889688;
+        bh=Uy/ZcWTFNH5HLyh0tMS0s1Tk/lSNmTrCtVDE8O3s9KE=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=JvC019wko1NuEkSWDb/8HrV+Dl8yVp8uaeC5vvlcG/vv36TY7n+iHss9SyBOJz67m
+         068r7ZUV0SteYaQXwaVw/knHoCtxwv6JsxDxNzVI2aIv5xO7As0WC+VeQNali1bm7c
+         n+9DxQapaCd4M9QNg4cKksL1lkb8XoE9rB3PWLBM=
+Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x07JYmxb034850
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 7 Jan 2019 13:34:48 -0600
+Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 7
+ Jan 2019 13:34:48 -0600
+Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Mon, 7 Jan 2019 13:34:48 -0600
+Received: from [172.22.110.219] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x07JYl4U016113;
+        Mon, 7 Jan 2019 13:34:47 -0600
+Subject: Re: [PATCH 2/2] leds: lp5024: Add the LP5024/18 RGB LED driver
+To:     =?UTF-8?B?VmVzYSBKw6TDpHNrZWzDpGluZW4=?= <dachaac@gmail.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>
+CC:     <robh+dt@kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-leds@vger.kernel.org>
+References: <8740cfd6-a6b5-ad27-313b-984a9febf18a@ti.com>
+ <20181219201047.GA23448@amd> <fd624cc1-9997-1cd5-c5cc-62e6897997cf@ti.com>
+ <54f28115-0a7d-8e9c-3bec-6e91fb3981ec@gmail.com>
+ <cd90f179-6c16-823f-496f-27f141e9c322@ti.com>
+ <a72c11c0-949b-bdbc-df2c-4490e04a1065@gmail.com>
+ <986b5105-2fdb-bd25-7c8a-ca8fd1ade821@gmail.com>
+ <7f205102-e854-f1cb-cc03-1307d1cddc87@gmail.com>
+ <c9f8965a-90f4-b456-8225-c70694c9f071@gmail.com>
+ <cf6c0025-36e7-197b-b27a-1f31fb45cc38@gmail.com> <20190104201256.GA2931@amd>
+ <a4e3a782-de76-ba91-3727-4db69cf27c3a@gmail.com>
+ <90a2ed79-b437-af14-4538-430d8723cc6b@gmail.com>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <d73aa021-509d-ad34-5871-76560e868d03@ti.com>
+Date:   Mon, 7 Jan 2019 13:34:39 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190107183431.GA12428@embeddedor>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <90a2ed79-b437-af14-4538-430d8723cc6b@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 07, 2019 at 12:34:31PM -0600, Gustavo A. R. Silva wrote:
-> Cast get_unaligned_be32(...) to u64 in order to give the compiler
-> complete information about the proper arithmetic to use and avoid
-> a potential integer overflow.
-> 
-> Notice that such function call is used in contexts that expect
-> expressions of type u64 (64 bits, unsigned); and the following
-> expressions are currently being evaluated using 32-bit
-> arithmetic:
-> 
-> val = get_unaligned_be32(&power->update_tag) *
->                         occ->powr_sample_time_us;
-> 
-> val = get_unaligned_be32(&power->vdn.update_tag) *
->                         occ->powr_sample_time_us;
-> 
-> Addresses-Coverity-ID: 1442357 ("Unintentional integer overflow")
-> Addresses-Coverity-ID: 1442476 ("Unintentional integer overflow")
-> Addresses-Coverity-ID: 1442508 ("Unintentional integer overflow")
-> Fixes: ff692d80b2e2 ("hwmon (occ): Add sensor types and versions")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Vesa
 
-Applied.
-
-Thanks,
-Guenter
-
-> ---
->  drivers/hwmon/occ/common.c | 24 ++++++++++++------------
->  1 file changed, 12 insertions(+), 12 deletions(-)
+On 1/4/19 6:39 PM, Vesa Jääskeläinen wrote:
+> Hi Jacek,
 > 
-> diff --git a/drivers/hwmon/occ/common.c b/drivers/hwmon/occ/common.c
-> index 423903f87955..391118c8aae8 100644
-> --- a/drivers/hwmon/occ/common.c
-> +++ b/drivers/hwmon/occ/common.c
-> @@ -380,8 +380,8 @@ static ssize_t occ_show_power_1(struct device *dev,
->  		val *= 1000000ULL;
->  		break;
->  	case 2:
-> -		val = get_unaligned_be32(&power->update_tag) *
-> -			occ->powr_sample_time_us;
-> +		val = (u64)get_unaligned_be32(&power->update_tag) *
-> +			   occ->powr_sample_time_us;
->  		break;
->  	case 3:
->  		val = get_unaligned_be16(&power->value) * 1000000ULL;
-> @@ -425,8 +425,8 @@ static ssize_t occ_show_power_2(struct device *dev,
->  				       &power->update_tag);
->  		break;
->  	case 2:
-> -		val = get_unaligned_be32(&power->update_tag) *
-> -			occ->powr_sample_time_us;
-> +		val = (u64)get_unaligned_be32(&power->update_tag) *
-> +			   occ->powr_sample_time_us;
->  		break;
->  	case 3:
->  		val = get_unaligned_be16(&power->value) * 1000000ULL;
-> @@ -463,8 +463,8 @@ static ssize_t occ_show_power_a0(struct device *dev,
->  				       &power->system.update_tag);
->  		break;
->  	case 2:
-> -		val = get_unaligned_be32(&power->system.update_tag) *
-> -			occ->powr_sample_time_us;
-> +		val = (u64)get_unaligned_be32(&power->system.update_tag) *
-> +			   occ->powr_sample_time_us;
->  		break;
->  	case 3:
->  		val = get_unaligned_be16(&power->system.value) * 1000000ULL;
-> @@ -477,8 +477,8 @@ static ssize_t occ_show_power_a0(struct device *dev,
->  				       &power->proc.update_tag);
->  		break;
->  	case 6:
-> -		val = get_unaligned_be32(&power->proc.update_tag) *
-> -			occ->powr_sample_time_us;
-> +		val = (u64)get_unaligned_be32(&power->proc.update_tag) *
-> +			   occ->powr_sample_time_us;
->  		break;
->  	case 7:
->  		val = get_unaligned_be16(&power->proc.value) * 1000000ULL;
-> @@ -491,8 +491,8 @@ static ssize_t occ_show_power_a0(struct device *dev,
->  				       &power->vdd.update_tag);
->  		break;
->  	case 10:
-> -		val = get_unaligned_be32(&power->vdd.update_tag) *
-> -			occ->powr_sample_time_us;
-> +		val = (u64)get_unaligned_be32(&power->vdd.update_tag) *
-> +			   occ->powr_sample_time_us;
->  		break;
->  	case 11:
->  		val = get_unaligned_be16(&power->vdd.value) * 1000000ULL;
-> @@ -505,8 +505,8 @@ static ssize_t occ_show_power_a0(struct device *dev,
->  				       &power->vdn.update_tag);
->  		break;
->  	case 14:
-> -		val = get_unaligned_be32(&power->vdn.update_tag) *
-> -			occ->powr_sample_time_us;
-> +		val = (u64)get_unaligned_be32(&power->vdn.update_tag) *
-> +			   occ->powr_sample_time_us;
->  		break;
->  	case 15:
->  		val = get_unaligned_be16(&power->vdn.value) * 1000000ULL;
+> On 04/01/2019 23.37, Jacek Anaszewski wrote:
+>> But, aside from that hypothetic issue, we need a solution for
+>> LEDn_BRIGHTNESS feature of lp5024, i.e. setting color intensity
+>> via a single register write. How would you propose to address that?
+> 
+> You could model it to something like this in device tree:
+> 
+> led-module @ <i2c-address> {
+>     compatible = "lp5024";
+> 
+>     // There is in hardware setup to use either linear or
+>     // logarithmic scaling:
+>     //enable-logarithmic-brightness;
+> 
+>     led0 {
+>         // this will create led instance for LED0 in lp5024
+>         label = "lp-led0";
+>        
+>         // This specifies LED number within lp5024
+>         led-index = <0>;   // set output-base as 0*3 == 0
+>        
+>         element-red {
+>             // refers to OUT0
+>             output-offset = <0>;
+>         };
+>        
+>         element-green {
+>             // refers to OUT1
+>             output-offset = <1>;
+>         };
+>        
+>         element-blue {
+>             // refers to OUT2
+>             output-offset = <2>;
+>         };
+>        
+>     };   
+> 
+>     led1 {
+>         // this will create led instance for LED1 in lp5024
+>         label = "lp-led1";
+>        
+>         // This specifies LED number within lp5024
+>         led-index = <1>;   // set output-base as 1*3 == 3
+> 
+
+Can we not use led-sources like I have done already?
+I really like to keep the DT nodes simple and re-use nodes that exist if possible.
+
+My code already maps and groups the outputs into the associated banks
+
+Dan
+<snip>
+
+-- 
+------------------
+Dan Murphy
