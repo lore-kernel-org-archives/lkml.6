@@ -4,50 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25F74C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:01:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE6ECC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:01:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E178721736
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:01:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9CFFA21736
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:01:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546866074;
-	bh=wCG6wpE9PN9P3bLOtHejkDTlNNVQFM+qFPy9SasVbNI=;
+	s=default; t=1546866077;
+	bh=lUWo0EtSXupqH0UIsVqEbeM/sokqqcCiTWQsMvuhFvc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=08y5vMQCIqPKxipEI6FNmUv2jTybdL3JolxBGvUyfg3Q5WypVUIs9LeyphDKeIYwi
-	 3z69P4OvEsObFQ3eIHpSuGpu8PHH8WJTa/6iqfWLntei5mdnb6Ni53ueJI2TlqQNJ9
-	 MxfIdmr32WIbO6b7J6Gyonugoacvxadwtc8csqgw=
+	b=x+idaieGCeka9lr+UqUSrLKbAEyFHeJxjsTlDidfw+M+dSLmydLNdEQzEZQYMtuvN
+	 HMbF1le4uQAFnPGaG1DDLH+27in26VpU1/7NAgfHmmHl37f1YJmEDw+Cp8snHnX/jr
+	 KqwMCYmyaatk64guuSM5q4rvjxvPO/A5cHdn6J+0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730558AbfAGNBM (ORCPT
+        id S1730570AbfAGNBQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:01:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48634 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:01:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48698 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730544AbfAGNBI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:01:08 -0500
+        id S1730553AbfAGNBM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:01:12 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EE26C2089F;
-        Mon,  7 Jan 2019 13:01:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 055A12089F;
+        Mon,  7 Jan 2019 13:01:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546866068;
-        bh=wCG6wpE9PN9P3bLOtHejkDTlNNVQFM+qFPy9SasVbNI=;
+        s=default; t=1546866071;
+        bh=lUWo0EtSXupqH0UIsVqEbeM/sokqqcCiTWQsMvuhFvc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pU0LI4/F24qYGLQaseYHq6Io3+M8UZraJp7L4wSj+1qud30YQwkiTW0yRNt5SuPFZ
-         CnoETeK4dXEXKqFJTxDeX7CAPuMfemSJ8pXYLhGt8jD5CkHuxcRNS6Kt9uzcMw81oO
-         hABHM0cMEtiGZCrh8wPEcai8cZlB4gyI+Hcsvvpg=
+        b=M3fFAWL+Crq60t12GPF1GPpIF3BDwF1VJ4wb4p/Tf4vQpoup1SM0hUaQx9aNVgErl
+         SZ54lurqDlRVW3s23MEuE17IB5nMyuxCiBEEn/H9XPFgJhk2z5blJCe5F+GMQgartU
+         ke515eBZ486t6R/sToHkb6E04Y7g/wO5gGDeHgfI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        =?UTF-8?q?J=C3=B6rgen=20Storvist?= <jorgen.storvist@gmail.com>,
+        syzbot+0bf2e01269f1274b4b03@syzkaller.appspotmail.com,
+        syzbot+e3132895630f957306bc@syzkaller.appspotmail.com,
+        Myungho Jung <mhjungk@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 034/101] qmi_wwan: Add support for Fibocom NL678 series
-Date:   Mon,  7 Jan 2019 13:32:22 +0100
-Message-Id: <20190107105334.787018519@linuxfoundation.org>
+Subject: [PATCH 4.14 035/101] net/smc: fix TCP fallback socket release
+Date:   Mon,  7 Jan 2019 13:32:23 +0100
+Message-Id: <20190107105334.842604218@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107105330.372621917@linuxfoundation.org>
 References: <20190107105330.372621917@linuxfoundation.org>
@@ -66,29 +68,84 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jörgen Storvist <jorgen.storvist@gmail.com>
+From: Myungho Jung <mhjungk@gmail.com>
 
-[ Upstream commit 7c3db4105ce8d69bcb5c04bfa9acd1e9119af8d5 ]
+[ Upstream commit 78abe3d0dfad196959b1246003366e2610775ea6 ]
 
-Added support for Fibocom NL678 series cellular module QMI interface.
-Using QMI_QUIRK_SET_DTR required for Qualcomm MDM9x40 series chipsets.
+clcsock can be released while kernel_accept() references it in TCP
+listen worker. Also, clcsock needs to wake up before released if TCP
+fallback is used and the clcsock is blocked by accept. Add a lock to
+safely release clcsock and call kernel_sock_shutdown() to wake up
+clcsock from accept in smc_release().
 
-Signed-off-by: Jörgen Storvist <jorgen.storvist@gmail.com>
+Reported-by: syzbot+0bf2e01269f1274b4b03@syzkaller.appspotmail.com
+Reported-by: syzbot+e3132895630f957306bc@syzkaller.appspotmail.com
+Signed-off-by: Myungho Jung <mhjungk@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/usb/qmi_wwan.c |    1 +
- 1 file changed, 1 insertion(+)
+ net/smc/af_smc.c |   14 ++++++++++++--
+ net/smc/smc.h    |    4 ++++
+ 2 files changed, 16 insertions(+), 2 deletions(-)
 
---- a/drivers/net/usb/qmi_wwan.c
-+++ b/drivers/net/usb/qmi_wwan.c
-@@ -1258,6 +1258,7 @@ static const struct usb_device_id produc
- 	{QMI_QUIRK_SET_DTR(0x2c7c, 0x0191, 4)},	/* Quectel EG91 */
- 	{QMI_FIXED_INTF(0x2c7c, 0x0296, 4)},	/* Quectel BG96 */
- 	{QMI_QUIRK_SET_DTR(0x2c7c, 0x0306, 4)},	/* Quectel EP06 Mini PCIe */
-+	{QMI_QUIRK_SET_DTR(0x2cb7, 0x0104, 4)},	/* Fibocom NL678 series */
+--- a/net/smc/af_smc.c
++++ b/net/smc/af_smc.c
+@@ -133,8 +133,14 @@ static int smc_release(struct socket *so
+ 		sk->sk_shutdown |= SHUTDOWN_MASK;
+ 	}
+ 	if (smc->clcsock) {
++		if (smc->use_fallback && sk->sk_state == SMC_LISTEN) {
++			/* wake up clcsock accept */
++			rc = kernel_sock_shutdown(smc->clcsock, SHUT_RDWR);
++		}
++		mutex_lock(&smc->clcsock_release_lock);
+ 		sock_release(smc->clcsock);
+ 		smc->clcsock = NULL;
++		mutex_unlock(&smc->clcsock_release_lock);
+ 	}
  
- 	/* 4. Gobi 1000 devices */
- 	{QMI_GOBI1K_DEVICE(0x05c6, 0x9212)},	/* Acer Gobi Modem Device */
+ 	/* detach socket */
+@@ -184,6 +190,7 @@ static struct sock *smc_sock_alloc(struc
+ 	INIT_DELAYED_WORK(&smc->sock_put_work, smc_close_sock_put_work);
+ 	sk->sk_prot->hash(sk);
+ 	sk_refcnt_debug_inc(sk);
++	mutex_init(&smc->clcsock_release_lock);
+ 
+ 	return sk;
+ }
+@@ -577,7 +584,7 @@ static int smc_clcsock_accept(struct smc
+ 	struct sock *sk = &lsmc->sk;
+ 	struct socket *new_clcsock;
+ 	struct sock *new_sk;
+-	int rc;
++	int rc = -EINVAL;
+ 
+ 	release_sock(&lsmc->sk);
+ 	new_sk = smc_sock_alloc(sock_net(sk), NULL);
+@@ -590,7 +597,10 @@ static int smc_clcsock_accept(struct smc
+ 	}
+ 	*new_smc = smc_sk(new_sk);
+ 
+-	rc = kernel_accept(lsmc->clcsock, &new_clcsock, 0);
++	mutex_lock(&lsmc->clcsock_release_lock);
++	if (lsmc->clcsock)
++		rc = kernel_accept(lsmc->clcsock, &new_clcsock, 0);
++	mutex_unlock(&lsmc->clcsock_release_lock);
+ 	lock_sock(&lsmc->sk);
+ 	if  (rc < 0) {
+ 		lsmc->sk.sk_err = -rc;
+--- a/net/smc/smc.h
++++ b/net/smc/smc.h
+@@ -185,6 +185,10 @@ struct smc_sock {				/* smc sock contain
+ 						 * started, waiting for unsent
+ 						 * data to be sent
+ 						 */
++	struct mutex            clcsock_release_lock;
++						/* protects clcsock of a listen
++						 * socket
++						 * */
+ };
+ 
+ static inline struct smc_sock *smc_sk(const struct sock *sk)
 
 
