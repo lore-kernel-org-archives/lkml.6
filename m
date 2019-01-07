@@ -2,71 +2,78 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9A53C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 17:10:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A7F4C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 17:11:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71BAF2147C
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 17:10:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D80EC218AF
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 17:11:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fOxssP5O"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727139AbfAGRKd (ORCPT
+        id S1727188AbfAGRLG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 12:10:33 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:58676 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726893AbfAGRKd (ORCPT
+        Mon, 7 Jan 2019 12:11:06 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:45582 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726893AbfAGRLG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 12:10:33 -0500
-Received: from localhost (unknown [144.121.20.163])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 5E99C1015DD06;
-        Mon,  7 Jan 2019 09:10:32 -0800 (PST)
-Date:   Mon, 07 Jan 2019 09:10:31 -0800 (PST)
-Message-Id: <20190107.091031.100384065611982323.davem@davemloft.net>
-To:     kchen@synology.com
-Cc:     nikolay@cumulusnetworks.com, netdev@vger.kernel.org,
+        Mon, 7 Jan 2019 12:11:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=uRkjJxjV/WgS4eUCRtQonlei5iRDdbZzr4L4TH1FUTo=; b=fOxssP5OmGTIGUjgLPVYndcBY
+        QQm5rpMleiJWqcuX0VsokRrQ5bIq4wOK5QZIramzmb3MYUN95v0GK1pPL86gM2ke3ffXY552ltLro
+        0QcXrbL+wUSIZyiMMBUNehcg8p9CF/GVkhuX30K2x5zM6igHqvfqiU5Tv3xpFiSZeIiGvXlIHgLAt
+        Hv6KdxWoFJo4AMYwyxJjeRrS019zLasmYE8REj+N7rsu6AyIkY7SbkidhLIDsv1U2b9zAWy3FX+9K
+        HPS2xbhpLMTNfAlGgW8dodqVUnbKaE07L14YIGIA5VLBHuTc6Z7B9ODblAB2Vu6ZV+vdZJrAgSlrR
+        tNgxbkWSg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1ggYQa-0007KA-L2; Mon, 07 Jan 2019 17:11:04 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 3B0F6201411A4; Mon,  7 Jan 2019 18:11:01 +0100 (CET)
+Date:   Mon, 7 Jan 2019 18:11:01 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Kangjie Lu <kjlu@umn.edu>
+Cc:     pakki001@umn.edu, Ingo Molnar <mingo@redhat.com>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] net: bridge: fix a bug on using a neighbour cache
- entry without checking its state
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <1546745293-5678-1-git-send-email-kchen@synology.com>
-References: <1546745293-5678-1-git-send-email-kchen@synology.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 07 Jan 2019 09:10:32 -0800 (PST)
+Subject: Re: [PATCH] sched: fix a potential double-fetch bug in
+ sched_copy_attr
+Message-ID: <20190107171101.GI14122@hirez.programming.kicks-ass.net>
+References: <20181225221648.70069-1-kjlu@umn.edu>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181225221648.70069-1-kjlu@umn.edu>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: kchen <kchen@synology.com>
-Date: Sun,  6 Jan 2019 11:28:13 +0800
+On Tue, Dec 25, 2018 at 04:16:47PM -0600, Kangjie Lu wrote:
+> "uattr->size" is copied in from user space and checked. However, it is
+> copied in again after the security check. A malicious user may race to
+> change it. The fix checks if uattr->size is ever changed after the
+> check.
+> 
+> Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+> ---
 
-> From: JianJhen Chen <kchen@synology.com>
-> 
-> When handling DNAT'ed packets on a bridge device, the neighbour cache entry
-> from lookup was used without checking its state. It means that a cache entry
-> in the NUD_STALE state will be used directly instead of entering the NUD_DELAY
-> state to confirm the reachability of the neighbor.
-> 
-> This problem becomes worse after commit 2724680bceee ("neigh: Keep neighbour
-> cache entries if number of them is small enough."), since all neighbour cache
-> entries in the NUD_STALE state will be kept in the neighbour table as long as
-> the number of cache entries does not exceed the value specified in gc_thresh1.
-> 
-> This commit validates the state of a neighbour cache entry before using
-> the entry.
-> 
-> Signed-off-by: JianJhen Chen <kchen@synology.com>
-> Reviewed-by: JinLin Chen <jlchen@synology.com>
+> +	/* Sanity check if size was changed in user space */
+> +	if (attr->size != size)
+> +		return -EINVAL;
+> +
 
-Indeed, this looks correct.
+What perf_copy_attr() does (from whence we copied this code) is:
 
-Applied and queued up for -stable, thanks.
+	attr->size = size;
+
+Would that not also fix things?
