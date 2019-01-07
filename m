@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00FC6C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:07:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0BD6C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:07:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C64D221736
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:07:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B73C32089F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:07:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546866421;
-	bh=HWipk9tTY4oM6WAuP2ZaKvGYa7jx2R1G7yZz6QMYU2o=;
+	s=default; t=1546866426;
+	bh=lCbzVanza381aZjm1prDEJxoALCM4HIuhtojJLJ0jxs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=aNRANew7Tb9GI5PgstSBM5u2GzXm6luaZe/KDyLZnQ7zVpUzmGsBhYqvqRNyrPRot
-	 HVq2NQJf3f3H52jAW6uZddBDnA9UI8JxPHzrpioyW4V5gO5LnsIYwForVUYJXz9WCE
-	 9ew1jcZZXcD8pPFJpeI2uzeiHpdnBggEoKZM8mxg=
+	b=eIDYGC6bOfbvrIaZG7881rmpc+uksOKvufiHCswnUDfMejl1p+HUl/Fz7b01b3Nfz
+	 qthdtlCx3NEgfEUSh5kFitkrDoI64QYvhZ8EwjG9rVOXR9FR3tlWfXybxYRKeuTiQf
+	 QNoHNGhE84Y1mEr85kD5XyNcT77gmPfQ8hqrQbUk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731266AbfAGNHA (ORCPT
+        id S1731285AbfAGNHG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:07:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54206 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:07:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54258 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727362AbfAGNG6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:06:58 -0500
+        id S1727362AbfAGNHE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:07:04 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EBDA4206BB;
-        Mon,  7 Jan 2019 13:06:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 23C442089F;
+        Mon,  7 Jan 2019 13:07:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546866417;
-        bh=HWipk9tTY4oM6WAuP2ZaKvGYa7jx2R1G7yZz6QMYU2o=;
+        s=default; t=1546866423;
+        bh=lCbzVanza381aZjm1prDEJxoALCM4HIuhtojJLJ0jxs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xZpKLDTDvuQHpfPycSllpMv8yFgberuL422DgWfDZEcTqm4cjhrQ2f+xFvqXYAFYP
-         7bpLOWKtlwjRK7qXmWHFOtdUSJaDHYTy/wukDjcpp0Vygb46b6m5ZNrenMhRrVO4/F
-         UI6Zdmx3su++bCZLZXybRrVK9Kw0NphGvhA1SJkg=
+        b=OfUUmwDrDpg+OLxTMGwyXtdXaUogtyxYJtVVhMcyC5lpTldAOsrW+fgt3b6jSiG4x
+         Wz1LQa44cr0REx2RIzFXltJGmJ4U3wgxqUbc8O8VB59XSC4dXaGN+FFH4d7uLe+04O
+         C7LzeLOXTmE+U1dGKskCGdk0xLssNs1ClXoRONIE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.9 33/71] ALSA: emux: Fix potential Spectre v1 vulnerabilities
-Date:   Mon,  7 Jan 2019 13:33:02 +0100
-Message-Id: <20190107105334.647008182@linuxfoundation.org>
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 4.9 34/71] mtd: atmel-quadspi: disallow building on ebsa110
+Date:   Mon,  7 Jan 2019 13:33:03 +0100
+Message-Id: <20190107105334.709470586@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107105330.280153213@linuxfoundation.org>
 References: <20190107105330.280153213@linuxfoundation.org>
@@ -66,69 +66,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Gustavo A. R. Silva <gustavo@embeddedor.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit 4aea96f4237cea0c51a8bc87c0db31f0f932f1f0 upstream.
+commit 2a9d92fb3a1282a4659f1bb6d5684018846537b7 upstream.
 
-info.mode and info.port are indirectly controlled by user-space,
-hence leading to a potential exploitation of the Spectre variant 1
-vulnerability.
+I ran into a link-time error with the atmel-quadspi driver on the
+EBSA110 platform:
 
-These issues were detected with the help of Smatch:
+drivers/mtd/built-in.o: In function `atmel_qspi_run_command':
+:(.text+0x1ee3c): undefined reference to `_memcpy_toio'
+:(.text+0x1ee48): undefined reference to `_memcpy_fromio'
 
-sound/synth/emux/emux_hwdep.c:72 snd_emux_hwdep_misc_mode() warn: potential spectre issue 'emu->portptrs[i]->ctrls' [w] (local cap)
-sound/synth/emux/emux_hwdep.c:75 snd_emux_hwdep_misc_mode() warn: potential spectre issue 'emu->portptrs' [w] (local cap)
-sound/synth/emux/emux_hwdep.c:75 snd_emux_hwdep_misc_mode() warn: potential spectre issue 'emu->portptrs[info.port]->ctrls' [w] (local cap)
+The problem is that _memcpy_toio/_memcpy_fromio are not available on
+that platform, and we have to prevent building the driver there.
 
-Fix this by sanitizing both info.mode and info.port before using them
-to index emu->portptrs[i]->ctrls, emu->portptrs[info.port]->ctrls and
-emu->portptrs.
+In case we want to backport this to older kernels: between linux-4.8
+and linux-4.20, the Kconfig entry was in drivers/mtd/spi-nor/Kconfig
+but had the same problem.
 
-Notice that given that speculation windows are large, the policy is
-to kill the speculation on the first load and not worry if it can be
-completed with a dependent load/store [1].
-
-[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Link: https://lore.kernel.org/patchwork/patch/812860/
+Fixes: 161aaab8a067 ("mtd: atmel-quadspi: add driver for Atmel QSPI controller")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Cc: stable@vger.kernel.org
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/synth/emux/emux_hwdep.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/mtd/spi-nor/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/sound/synth/emux/emux_hwdep.c
-+++ b/sound/synth/emux/emux_hwdep.c
-@@ -22,9 +22,9 @@
- #include <sound/core.h>
- #include <sound/hwdep.h>
- #include <linux/uaccess.h>
-+#include <linux/nospec.h>
- #include "emux_voice.h"
+--- a/drivers/mtd/spi-nor/Kconfig
++++ b/drivers/mtd/spi-nor/Kconfig
+@@ -31,7 +31,7 @@ config MTD_SPI_NOR_USE_4K_SECTORS
  
--
- #define TMP_CLIENT_ID	0x1001
- 
- /*
-@@ -66,13 +66,16 @@ snd_emux_hwdep_misc_mode(struct snd_emux
- 		return -EFAULT;
- 	if (info.mode < 0 || info.mode >= EMUX_MD_END)
- 		return -EINVAL;
-+	info.mode = array_index_nospec(info.mode, EMUX_MD_END);
- 
- 	if (info.port < 0) {
- 		for (i = 0; i < emu->num_ports; i++)
- 			emu->portptrs[i]->ctrls[info.mode] = info.value;
- 	} else {
--		if (info.port < emu->num_ports)
-+		if (info.port < emu->num_ports) {
-+			info.port = array_index_nospec(info.port, emu->num_ports);
- 			emu->portptrs[info.port]->ctrls[info.mode] = info.value;
-+		}
- 	}
- 	return 0;
- }
+ config SPI_ATMEL_QUADSPI
+ 	tristate "Atmel Quad SPI Controller"
+-	depends on ARCH_AT91 || (ARM && COMPILE_TEST)
++	depends on ARCH_AT91 || (ARM && COMPILE_TEST && !ARCH_EBSA110)
+ 	depends on OF && HAS_IOMEM
+ 	help
+ 	  This enables support for the Quad SPI controller in master mode.
 
 
