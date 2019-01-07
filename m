@@ -8,64 +8,64 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4316AC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:54:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CB0CC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:54:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 111832085A
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:54:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 415372147C
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:54:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MUjx7LlY"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DOuNbKzo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728393AbfAGSyT (ORCPT
+        id S1728446AbfAGSyV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 13:54:19 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:46226 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728254AbfAGSyP (ORCPT
+        Mon, 7 Jan 2019 13:54:21 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:37970 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727434AbfAGSyR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 13:54:15 -0500
-Received: by mail-lj1-f193.google.com with SMTP id v15-v6so1218679ljh.13;
-        Mon, 07 Jan 2019 10:54:13 -0800 (PST)
+        Mon, 7 Jan 2019 13:54:17 -0500
+Received: by mail-lf1-f66.google.com with SMTP id a8so1080479lfk.5;
+        Mon, 07 Jan 2019 10:54:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=PDHMr/fiYRXHunVviW84NpOBn4IvlCGGXSsFuynM5YY=;
-        b=MUjx7LlYA3CmLu1+6uDKq8/02Cz388/IhEAw4lX7xrpO+JJmihZrCRHrdTkgO89naM
-         50tf1Fd/pSeFSDf/t/uj+AJiCiSPKDEbPN82WSnR6SFe/3MjoT6yfCiQKTzq/0k/oHtV
-         GbWWB6uOfbrJBXwGwWB8+HkORR1kQY2JubgptuXCeKRP/egZqvcxBBsSqLRqwTWyUna+
-         apabiBykcC30nn+gSGIHcAJnrLSo9PmccLloO0u9pLAE9LT3F8eeuvVONIvIx40NA2st
-         fL2vPOfLsY7qBg84ztunF+wRzyWpJxQCZkjjjr/AtB2LLTctOtdYaq16Dh0Af+LVo+8E
-         dNxw==
+        bh=L4bb9ndCPhJNyXeb/1qH8VH7BbvWrL2P/9iDLwRWQao=;
+        b=DOuNbKzoEJ4J2WByL1LbHQ6BAwdFPdYnrvmg5arzhf6wbMqN7br8UaCx83hWLBGUhc
+         Lf6WLg1iQ9tTRXYU843vm5hg7UTyi9TaMM1jBVEtQxcv93ANTpnz9v6VD2Ro2RHDoq+4
+         9a/iHl3jew/l/rYfy5kDGR7om65Grxijf7e1dZlNATvaRW18Ayte6iV8MLkGNyXPGvVC
+         yd2qs8IyWvtNwDdlraFJFATutR0USTYkK4vFrkhVCMAy/8DTfOZz6ISKsvobJltYSkVE
+         Yv8WPIwj8HsuqN82X94pd/CPpe/AcJEhYTGc1pVeZ/VKtp/WGa/t/jJlS716FQppRcAN
+         GvEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=PDHMr/fiYRXHunVviW84NpOBn4IvlCGGXSsFuynM5YY=;
-        b=pJ/C0TfycbUXGmyPCtP26+9FZeXCzYYhuPvII/CqG8j69cBc9KthTJMpYnuvAraaDr
-         Hsos/VrBThRlgNOuAQ4zvHMS1eMgmOVmD8v9r+lP0IFKoRb1zRlxxZ8G0fMk6LwgtCIp
-         2VoH5n9/VB6RpCs0Kyy5g3Q4DKCThBWvVasEDxLyy+H6AhkdoxkLr+hS9kX1BWlaPfJM
-         qLbaqSEpsJOiFkZ4SdTaaNPck4XVMckXtwP7aw7tzyHH5koAK7PBYnRrf+Ns7r3/Cb/6
-         QTSZmQvNP9awaCkB7td6sYC2yILs57d2Hf3JFAHipAFVJYbThvwqlV22RzLKREooJLpa
-         /UgQ==
-X-Gm-Message-State: AJcUukeKMIMhaufzE0spIkGNc5z4f+ytcQ/31a8G1UC6Rmq6yIsQggiM
-        TKHw7iFoDOFIVidsckjeYRI=
-X-Google-Smtp-Source: ALg8bN6jymLTId+oLs5XuW1fhzw+GHD7NNJCYuiWbTP9PgU06np0XNegP7VMENDyklVLT7UeWlA7UQ==
-X-Received: by 2002:a2e:1f01:: with SMTP id f1-v6mr33064543ljf.129.1546887252979;
-        Mon, 07 Jan 2019 10:54:12 -0800 (PST)
+        bh=L4bb9ndCPhJNyXeb/1qH8VH7BbvWrL2P/9iDLwRWQao=;
+        b=nI3kjRzfWJYGeTAmcJemwDms1UFvqrts++7rimUfhvHN13sV55F5aFaZb0sZzdFUM/
+         f9J+RLNYDma6HxOBDT5odX2QEpdGopUnVZEAqLrxm3UATQMp57rptZENnA6c9c8YZIZD
+         jXlk+Udqe5aBnGZcNyLJVM3XqtHP6vJMLD9VA9XNm4m39cdVmDnDd6/z8BqM6iwDcnVK
+         4qDnqVY8slm3wD8Z4GXf4TxtBl6/aq+gmf7/KhZFpW+tUghc5LcKZBvWcnM8is/q5+vq
+         azg1SSf0oR4C0eurwPFxSvenLALLX7DNoe84X39X7R/H1XAjCtW+CWccMffDnlEBCPd/
+         LQqQ==
+X-Gm-Message-State: AA+aEWaFrSl9Bp7eCwxCZlhhlJPBxlJ3n5hpl9BQv6rHPU5rA/IyPRtL
+        9OZ4KNjH7ZlrKZ4MdzLt/rc=
+X-Google-Smtp-Source: AFSGD/VBySk+MsMdzrrfiAepo+XTanHwE4mhojMVa1Rny72WvW6WppS6u0zLKImuj0Boz/vwfisRkA==
+X-Received: by 2002:a19:d90c:: with SMTP id q12mr29896473lfg.24.1546887254272;
+        Mon, 07 Jan 2019 10:54:14 -0800 (PST)
 Received: from localhost.localdomain ([2a02:a315:5445:5300:c050:d453:6c2:1d01])
-        by smtp.googlemail.com with ESMTPSA id h203sm12825007lfe.44.2019.01.07.10.54.11
+        by smtp.googlemail.com with ESMTPSA id h203sm12825007lfe.44.2019.01.07.10.54.13
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 07 Jan 2019 10:54:12 -0800 (PST)
+        Mon, 07 Jan 2019 10:54:13 -0800 (PST)
 From:   =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
 To:     dmitry.torokhov@gmail.com
 Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
         devicetree@vger.kernel.org, linux-input@vger.kernel.org,
         linux-kernel@vger.kernel.org, pawel.mikolaj.chmiel@gmail.com,
         xc-racer2@live.ca, simon@lineageos.org
-Subject: [PATCH v3 5/7] Input: dt-bindings: tm2-touchkey: Document new keycodes property
-Date:   Mon,  7 Jan 2019 19:53:44 +0100
-Message-Id: <20190107185346.30184-6-pawel.mikolaj.chmiel@gmail.com>
+Subject: [PATCH v3 6/7] Input: tm2-touchkey: Add support for aries touchkey variant
+Date:   Mon,  7 Jan 2019 19:53:45 +0100
+Message-Id: <20190107185346.30184-7-pawel.mikolaj.chmiel@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190107185346.30184-1-pawel.mikolaj.chmiel@gmail.com>
 References: <20190107185346.30184-1-pawel.mikolaj.chmiel@gmail.com>
@@ -79,41 +79,137 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jonathan Bakker <xc-racer2@live.ca>
 
-Document new optional property for setting custom keycodes.
+The touchkey variant found on aries board is slighty different,
+it uses a fixed regulator and writes/read to the same place
 
 Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
 Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
 ---
-Changes from v2:
-  - Change property name from keycodes to linux,keycodes
+ drivers/input/keyboard/tm2-touchkey.c | 53 +++++++++++++++++++++++----
+ 1 file changed, 46 insertions(+), 7 deletions(-)
 
-Changes from v1:
-  - Because key codes could be bigger than 255, use ints for keycodes
----
- .../devicetree/bindings/input/cypress,tm2-touchkey.txt        | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/input/cypress,tm2-touchkey.txt b/Documentation/devicetree/bindings/input/cypress,tm2-touchkey.txt
-index dfb3b9f0ee40..8ef1517c0220 100644
---- a/Documentation/devicetree/bindings/input/cypress,tm2-touchkey.txt
-+++ b/Documentation/devicetree/bindings/input/cypress,tm2-touchkey.txt
-@@ -10,6 +10,9 @@ Required properties:
- - vcc-supply : internal regulator output. 1.8V
- - vdd-supply : power supply for IC 3.3V
+diff --git a/drivers/input/keyboard/tm2-touchkey.c b/drivers/input/keyboard/tm2-touchkey.c
+index b55faf597d8a..7dbef96559d2 100644
+--- a/drivers/input/keyboard/tm2-touchkey.c
++++ b/drivers/input/keyboard/tm2-touchkey.c
+@@ -28,6 +28,8 @@
  
-+Optional properties:
-+- linux,keycodes: array of keycodes (max 4), default KEY_PHONE and KEY_BACK
+ #define TM2_TOUCHKEY_DEV_NAME		"tm2-touchkey"
+ 
++#define ARIES_TOUCHKEY_CMD_LED_ON	0x1
++#define ARIES_TOUCHKEY_CMD_LED_OFF	0x2
+ #define TM2_TOUCHKEY_CMD_LED_ON		0x10
+ #define TM2_TOUCHKEY_CMD_LED_OFF	0x20
+ #define TM2_TOUCHKEY_BIT_PRESS_EV	BIT(3)
+@@ -38,6 +40,10 @@
+ struct touchkey_variant {
+ 	u8 keycode_reg;
+ 	u8 base_reg;
++	u8 cmd_led_on;
++	u8 cmd_led_off;
++	bool no_reg;
++	bool fixed_regulator;
+ };
+ 
+ struct tm2_touchkey_data {
+@@ -54,11 +60,22 @@ struct tm2_touchkey_data {
+ static const struct touchkey_variant tm2_touchkey_variant = {
+ 	.keycode_reg = 0x03,
+ 	.base_reg = 0x00,
++	.cmd_led_on = TM2_TOUCHKEY_CMD_LED_ON,
++	.cmd_led_off = TM2_TOUCHKEY_CMD_LED_OFF,
+ };
+ 
+ static const struct touchkey_variant midas_touchkey_variant = {
+ 	.keycode_reg = 0x00,
+ 	.base_reg = 0x00,
++	.cmd_led_on = TM2_TOUCHKEY_CMD_LED_ON,
++	.cmd_led_off = TM2_TOUCHKEY_CMD_LED_OFF,
++};
 +
- [0]: Documentation/devicetree/bindings/interrupt-controller/interrupts.txt
++static struct touchkey_variant aries_touchkey_variant = {
++	.no_reg = true,
++	.fixed_regulator = true,
++	.cmd_led_on = ARIES_TOUCHKEY_CMD_LED_ON,
++	.cmd_led_off = ARIES_TOUCHKEY_CMD_LED_OFF,
+ };
  
- Example:
-@@ -23,5 +26,6 @@ Example:
- 			interrupts = <2 IRQ_TYPE_EDGE_FALLING>;
- 			vcc-supply=<&ldo32_reg>;
- 			vdd-supply=<&ldo33_reg>;
-+			linux,keycodes = <KEY_PHONE KEY_BACK>;
- 		};
- 	};
+ static void tm2_touchkey_led_brightness_set(struct led_classdev *led_dev,
+@@ -71,15 +88,20 @@ static void tm2_touchkey_led_brightness_set(struct led_classdev *led_dev,
+ 
+ 	if (brightness == LED_OFF) {
+ 		volt = TM2_TOUCHKEY_LED_VOLTAGE_MIN;
+-		data = TM2_TOUCHKEY_CMD_LED_OFF;
++		data = touchkey->variant->cmd_led_off;
+ 	} else {
+ 		volt = TM2_TOUCHKEY_LED_VOLTAGE_MAX;
+-		data = TM2_TOUCHKEY_CMD_LED_ON;
++		data = touchkey->variant->cmd_led_on;
+ 	}
+ 
+-	regulator_set_voltage(touchkey->vdd, volt, volt);
+-	i2c_smbus_write_byte_data(touchkey->client,
+-				  touchkey->variant->base_reg, data);
++	if (!touchkey->variant->fixed_regulator)
++		regulator_set_voltage(touchkey->vdd, volt, volt);
++
++	if (touchkey->variant->no_reg)
++		i2c_smbus_write_byte(touchkey->client, data);
++	else
++		i2c_smbus_write_byte_data(touchkey->client,
++					  touchkey->variant->base_reg, data);
+ }
+ 
+ static int tm2_touchkey_power_enable(struct tm2_touchkey_data *touchkey)
+@@ -112,8 +134,11 @@ static irqreturn_t tm2_touchkey_irq_handler(int irq, void *devid)
+ 	int index;
+ 	int i;
+ 
+-	data = i2c_smbus_read_byte_data(touchkey->client,
+-					touchkey->variant->keycode_reg);
++	if (touchkey->variant->no_reg)
++		data = i2c_smbus_read_byte(touchkey->client);
++	else
++		data = i2c_smbus_read_byte_data(touchkey->client,
++						touchkey->variant->keycode_reg);
+ 	if (data < 0) {
+ 		dev_err(&touchkey->client->dev,
+ 			"failed to read i2c data: %d\n", data);
+@@ -139,6 +164,14 @@ static irqreturn_t tm2_touchkey_irq_handler(int irq, void *devid)
+ 	input_sync(touchkey->input_dev);
+ 
+ out:
++	if (touchkey->variant->fixed_regulator &&
++				data & TM2_TOUCHKEY_BIT_PRESS_EV) {
++		/* touch turns backlight on, so make sure we're in sync */
++		if (touchkey->led_dev.brightness == LED_OFF)
++			tm2_touchkey_led_brightness_set(&touchkey->led_dev,
++							LED_OFF);
++	}
++
+ 	return IRQ_HANDLED;
+ }
+ 
+@@ -246,6 +279,9 @@ static int tm2_touchkey_probe(struct i2c_client *client,
+ 		return error;
+ 	}
+ 
++	if (touchkey->variant->fixed_regulator)
++		tm2_touchkey_led_brightness_set(&touchkey->led_dev, LED_ON);
++
+ 	return 0;
+ }
+ 
+@@ -291,6 +327,9 @@ static const struct of_device_id tm2_touchkey_of_match[] = {
+ 	}, {
+ 		.compatible = "cypress,midas-touchkey",
+ 		.data = &midas_touchkey_variant,
++	}, {
++		.compatible = "cypress,aries-touchkey",
++		.data = &aries_touchkey_variant,
+ 	},
+ 	{ },
+ };
 -- 
 2.17.1
 
