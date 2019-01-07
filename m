@@ -7,54 +7,59 @@ X-Spam-Status: No, score=-16.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B196C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:59:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65B97C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:59:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C32A206B7
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:59:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 369362183E
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:59:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546887575;
-	bh=XQ7/bmf2WoG2IlCfRCIEJwKS22WYlpiKHUazdEInegg=;
+	s=default; t=1546887582;
+	bh=k2wL+0O3lrerHgZWuZjxT3VdTEaFIlEWHmxp3/mVwgs=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=m6a57+nlAo6Qy2u+ev95/RBCNjno98Peno02SsUegh2jVr4V17BU2tOTdM+OOqohI
-	 y44wwyeuzhXPAqN+AzlWd+OCqiQkVMcJL1lRbeGC8uk9dXVeM69ASD+Qi8XObUwETc
-	 S+ZFeCndhYlAvueZzEyvdVt+GEVLOi4PYwl+HWUY=
+	b=SlPzm+ekjQUE6ASoYuLb8UCT9SXNXL4MclNnYLzVVov4sVHFJdRrIDFD0K1Lq70IL
+	 0Nt98RuONtsZmigoQISOJLLabnrX3OeWS6ssJTePbEFg7lViV8XqeO/b9ME3wGX+gI
+	 dh+TkWNINk+IfbCe5KN5ef4uhTZROpgv+8gwY8rQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729077AbfAGS7d (ORCPT
+        id S1729100AbfAGS7l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 13:59:33 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:43194 "EHLO
+        Mon, 7 Jan 2019 13:59:41 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:43158 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729040AbfAGS7Z (ORCPT
+        with ESMTP id S1729035AbfAGS7Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 13:59:25 -0500
+        Mon, 7 Jan 2019 13:59:24 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=nytVJz4a237Wu+Vo/dsPkYC0xGwVUSyO4uH6gbLoCp0=; b=hvRkJmGwk4Yp
-        UnIeEkq4LtQHeHDuD0jwq/yCF3La/po8kzWnh33I3HtlhJ9cxBjYlpCCvcBhuOpwuH0Gp8VZW9dXw
-        mUFkXQez4E8fILYyiYlvoNrDcZ+WhN21oSjild1ggI5V01BF+Vkd3eJpVfYy8DTGpwyjRkPF00JbV
-        s5kD4=;
+        List-Archive; bh=DA2s2RemSz1pcvHSbWHLwFv5bZiSM+AMu9DabOL4r1Q=; b=NEHLjoUzEOnV
+        aaJ6mFInYQzkA+/aS7B5bgRcKo70QH+PuOJPMxQuMhBTwxHWWNcStdUqrxEMDGVyBaeQzDJ3EfQV/
+        9Uc8MmqNseUczskJFd64lf63fYK5spLoL3sfkcLhrZq3luU8GTDEO4dvFjgpxmkhX6/2jxpYUep+6
+        dI5Fw=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gga7M-0007rt-Oi; Mon, 07 Jan 2019 18:59:20 +0000
+        id 1gga7K-0007rh-QX; Mon, 07 Jan 2019 18:59:18 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 562411127491; Mon,  7 Jan 2019 18:59:20 +0000 (GMT)
+        id 7ACEA1127491; Mon,  7 Jan 2019 18:59:18 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
-To:     shaftarger <sholchen@gmail.com>
-Cc:     shaftarger <shol@livemail.tw>, Mark Brown <broonie@kernel.org>,
-        Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, shaftarger <shol@livemail.tw>,
-        linux-spi@vger.kernel.org
-Subject: Applied "spi: dw: fix potential variable assignment error" to the spi tree
-In-Reply-To:  <20181228083312.14928-1-shol@livemail.tw>
+To:     Cezary Gapinski <cezary.gapinski@gmail.com>
+Cc:     Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        linux-spi@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        Amelie Delaunay <amelie.delaunay@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Mark Rutland <mark.rutland@arm.com>, linux-spi@vger.kernel.org
+Subject: Applied "spi: stm32: switch to SPDX identifier" to the spi tree
+In-Reply-To:  <1545688840-23992-2-git-send-email-cezary.gapinski@gmail.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190107185920.562411127491@debutante.sirena.org.uk>
-Date:   Mon,  7 Jan 2019 18:59:20 +0000 (GMT)
+Message-Id: <20190107185918.7ACEA1127491@debutante.sirena.org.uk>
+Date:   Mon,  7 Jan 2019 18:59:18 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -62,7 +67,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   spi: dw: fix potential variable assignment error
+   spi: stm32: switch to SPDX identifier
 
 has been applied to the spi tree at
 
@@ -87,39 +92,55 @@ to this mail.
 Thanks,
 Mark
 
-From e1bc204894eae69b153eb63d9fd65414466fb639 Mon Sep 17 00:00:00 2001
-From: shaftarger <sholchen@gmail.com>
-Date: Fri, 28 Dec 2018 16:33:12 +0800
-Subject: [PATCH] spi: dw: fix potential variable assignment error
+From d57a984ff7aa1f8aac617c5ccfcd4cca061d2eb3 Mon Sep 17 00:00:00 2001
+From: Cezary Gapinski <cezary.gapinski@gmail.com>
+Date: Mon, 24 Dec 2018 23:00:27 +0100
+Subject: [PATCH] spi: stm32: switch to SPDX identifier
 
-spi::mode is defined by framework for several SPI capabilities,
-such as polarity, phase, bit-endian, wire number. Directly use this
-variable for setting controller's polarity and phase causes other
-bit in register being set. Since SPI framework has its definition,
-SPI_CPOL and SPI_CPHA offset may be changed by framwork change.
-Instead of just mask off the relevant bits,
-fetch required bit in spi::mode and set to register.
+Adopt the SPDX license identifier headers to ease license compliance
+management.
 
-Signed-off-by: shaftarger <shol@livemail.tw>
+Signed-off-by: Cezary Gapinski <cezary.gapinski@gmail.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/spi/spi-dw.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/spi/spi-stm32.c | 27 +++++++--------------------
+ 1 file changed, 7 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/spi/spi-dw.c b/drivers/spi/spi-dw.c
-index 2e822a56576a..a945fad3db62 100644
---- a/drivers/spi/spi-dw.c
-+++ b/drivers/spi/spi-dw.c
-@@ -317,7 +317,8 @@ static int dw_spi_transfer_one(struct spi_controller *master,
- 	/* Default SPI mode is SCPOL = 0, SCPH = 0 */
- 	cr0 = (transfer->bits_per_word - 1)
- 		| (chip->type << SPI_FRF_OFFSET)
--		| (spi->mode << SPI_MODE_OFFSET)
-+		| ((((spi->mode & SPI_CPOL) ? 1 : 0) << SPI_SCOL_OFFSET) |
-+			(((spi->mode & SPI_CPHA) ? 1 : 0) << SPI_SCPH_OFFSET))
- 		| (chip->tmode << SPI_TMOD_OFFSET);
- 
- 	/*
+diff --git a/drivers/spi/spi-stm32.c b/drivers/spi/spi-stm32.c
+index ad1e55d3d5d5..5f30578a4224 100644
+--- a/drivers/spi/spi-stm32.c
++++ b/drivers/spi/spi-stm32.c
+@@ -1,23 +1,10 @@
+-/*
+- * STMicroelectronics STM32 SPI Controller driver (master mode only)
+- *
+- * Copyright (C) 2017, STMicroelectronics - All Rights Reserved
+- * Author(s): Amelie Delaunay <amelie.delaunay@st.com> for STMicroelectronics.
+- *
+- * License terms: GPL V2.0.
+- *
+- * spi_stm32 driver is free software; you can redistribute it and/or modify it
+- * under the terms of the GNU General Public License version 2 as published by
+- * the Free Software Foundation.
+- *
+- * spi_stm32 driver is distributed in the hope that it will be useful, but
+- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+- * details.
+- *
+- * You should have received a copy of the GNU General Public License along with
+- * spi_stm32 driver. If not, see <http://www.gnu.org/licenses/>.
+- */
++// SPDX-License-Identifier: GPL-2.0
++//
++// STMicroelectronics STM32 SPI Controller driver (master mode only)
++//
++// Copyright (C) 2017, STMicroelectronics - All Rights Reserved
++// Author(s): Amelie Delaunay <amelie.delaunay@st.com> for STMicroelectronics.
++
+ #include <linux/debugfs.h>
+ #include <linux/clk.h>
+ #include <linux/delay.h>
 -- 
 2.20.1
 
