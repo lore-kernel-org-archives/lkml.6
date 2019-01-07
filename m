@@ -6,37 +6,38 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2454C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 02:53:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBBF5C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 02:53:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFAA120838
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 02:53:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3C0E20838
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 02:53:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726507AbfAGCxD (ORCPT
+        id S1726525AbfAGCxI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 6 Jan 2019 21:53:03 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:54180 "EHLO
+        Sun, 6 Jan 2019 21:53:08 -0500
+Received: from vmicros1.altlinux.org ([194.107.17.57]:54290 "EHLO
         vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726180AbfAGCxD (ORCPT
+        with ESMTP id S1726180AbfAGCxH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Jan 2019 21:53:03 -0500
+        Sun, 6 Jan 2019 21:53:07 -0500
 Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 0B05F72CC6C;
-        Mon,  7 Jan 2019 05:52:58 +0300 (MSK)
+        by vmicros1.altlinux.org (Postfix) with ESMTP id CB1D172CC70;
+        Mon,  7 Jan 2019 05:53:05 +0300 (MSK)
 Received: by mua.local.altlinux.org (Postfix, from userid 508)
-        id 014A28E5C51; Mon,  7 Jan 2019 05:52:57 +0300 (MSK)
-Date:   Mon, 7 Jan 2019 05:52:57 +0300
+        id C1AC28E5C51; Mon,  7 Jan 2019 05:53:05 +0300 (MSK)
+Date:   Mon, 7 Jan 2019 05:53:05 +0300
 From:   "Dmitry V. Levin" <ldv@altlinux.org>
-To:     Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>
+To:     linux-kernel@vger.kernel.org
 Cc:     Elvira Khabirova <lineprinter@altlinux.org>,
         Eugene Syromyatnikov <esyr@redhat.com>,
         Oleg Nesterov <oleg@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>, linux-alpha@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v7 03/22] alpha: define remaining syscall_get_* functions
-Message-ID: <20190107025257.GC1207@altlinux.org>
+        Andy Lutomirski <luto@kernel.org>,
+        Vineet Gupta <vgupta@synopsys.com>,
+        Alexey Brodkin <alexey.brodkin@synopsys.com>,
+        linux-snps-arc@lists.infradead.org
+Subject: [PATCH v7 04/22] Move EM_ARCOMPACT and EM_ARCV2 to
+ uapi/linux/elf-em.h
+Message-ID: <20190107025305.GD1207@altlinux.org>
 References: <20190107025101.GA1182@altlinux.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -46,76 +47,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syscall_get_* functions are required to be implemented on all
-architectures in order to extend the generic ptrace API with
-PTRACE_GET_SYSCALL_INFO request.
+These should never have been defined in the arch tree to begin with, and
+now uapi/linux/audit.h header is going to use EM_ARCOMPACT and EM_ARCV2
+in order to define AUDIT_ARCH_ARCOMPACT and AUDIT_ARCH_ARCV2 which are
+needed to implement syscall_get_arch() which in turn is required to
+extend the generic ptrace API with PTRACE_GET_SYSCALL_INFO request.
 
-This adds remaining 4 syscall_get_* functions as documented
-in asm-generic/syscall.h: syscall_get_nr, syscall_get_arguments,
-syscall_get_error, and syscall_get_return_value.
-
-Cc: Richard Henderson <rth@twiddle.net>
-Cc: Ivan Kokshaysky <ink@jurassic.park.msu.ru>
-Cc: Matt Turner <mattst88@gmail.com>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Cc: Andy Lutomirski <luto@kernel.org>
+Acked-by: Vineet Gupta <vgupta@synopsys.com>
 Cc: Elvira Khabirova <lineprinter@altlinux.org>
 Cc: Eugene Syromyatnikov <esyr@redhat.com>
-Cc: linux-alpha@vger.kernel.org
+Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Alexey Brodkin <alexey.brodkin@synopsys.com>
+Cc: linux-snps-arc@lists.infradead.org
 Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
 ---
 
 Notes:
     v7: unchanged
-    v6: use asm-generic/syscall.h
-    v5: initial revision
+    v6: unchanged
+    v5: added Cc
+    v2: added Acked-by
 
- arch/alpha/include/asm/syscall.h | 31 ++++++++++++++++++++++++++++++-
- 1 file changed, 30 insertions(+), 1 deletion(-)
+ arch/arc/include/asm/elf.h  | 6 +-----
+ include/uapi/linux/elf-em.h | 2 ++
+ 2 files changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/arch/alpha/include/asm/syscall.h b/arch/alpha/include/asm/syscall.h
-index d73a6fcb519c..c67d6a69d7c8 100644
---- a/arch/alpha/include/asm/syscall.h
-+++ b/arch/alpha/include/asm/syscall.h
-@@ -2,9 +2,38 @@
- #ifndef _ASM_ALPHA_SYSCALL_H
- #define _ASM_ALPHA_SYSCALL_H
+diff --git a/arch/arc/include/asm/elf.h b/arch/arc/include/asm/elf.h
+index aa2d6da9d187..2b80c184c9c8 100644
+--- a/arch/arc/include/asm/elf.h
++++ b/arch/arc/include/asm/elf.h
+@@ -10,13 +10,9 @@
+ #define __ASM_ARC_ELF_H
  
-+#include <asm/ptrace.h>
-+#include <asm-generic/syscall.h>
- #include <uapi/linux/audit.h>
+ #include <linux/types.h>
++#include <linux/elf-em.h>
+ #include <uapi/asm/elf.h>
  
--static inline int syscall_get_arch(void)
-+static inline int
-+syscall_get_nr(struct task_struct *task, struct pt_regs *regs)
-+{
-+	return regs->r0;
-+}
-+
-+static inline void
-+__syscall_get_arguments(struct task_struct *task, struct pt_regs *regs,
-+			unsigned int i, unsigned int n, unsigned long *args)
-+{
-+	BUILD_BUG_ON(sizeof(regs->r16) != sizeof(args[0]));
-+	memcpy(args, &regs->r16 + i, n * sizeof(args[0]));
-+}
-+
-+static inline long
-+syscall_get_error(struct task_struct *task, struct pt_regs *regs)
-+{
-+	return regs->r19 ? -regs->r0 : 0;
-+}
-+
-+static inline long
-+syscall_get_return_value(struct task_struct *task, struct pt_regs *regs)
-+{
-+	return regs->r0;
-+}
-+
-+static inline int
-+syscall_get_arch(void)
- {
- 	return AUDIT_ARCH_ALPHA;
- }
+-/* These ELF defines belong to uapi but libc elf.h already defines them */
+-#define EM_ARCOMPACT		93
+-
+-#define EM_ARCV2		195	/* ARCv2 Cores */
+-
+ #define EM_ARC_INUSE		(IS_ENABLED(CONFIG_ISA_ARCOMPACT) ? \
+ 					EM_ARCOMPACT : EM_ARCV2)
+ 
+diff --git a/include/uapi/linux/elf-em.h b/include/uapi/linux/elf-em.h
+index 0c3000faedba..081675ed89cb 100644
+--- a/include/uapi/linux/elf-em.h
++++ b/include/uapi/linux/elf-em.h
+@@ -34,6 +34,7 @@
+ #define EM_M32R		88	/* Renesas M32R */
+ #define EM_MN10300	89	/* Panasonic/MEI MN10300, AM33 */
+ #define EM_OPENRISC     92     /* OpenRISC 32-bit embedded processor */
++#define EM_ARCOMPACT	93	/* ARCompact processor */
+ #define EM_XTENSA	94	/* Tensilica Xtensa Architecture */
+ #define EM_BLACKFIN     106     /* ADI Blackfin Processor */
+ #define EM_ALTERA_NIOS2	113	/* Altera Nios II soft-core processor */
+@@ -42,6 +43,7 @@
+ #define EM_TILEPRO	188	/* Tilera TILEPro */
+ #define EM_MICROBLAZE	189	/* Xilinx MicroBlaze */
+ #define EM_TILEGX	191	/* Tilera TILE-Gx */
++#define EM_ARCV2	195	/* ARCv2 Cores */
+ #define EM_RISCV	243	/* RISC-V */
+ #define EM_BPF		247	/* Linux BPF - in-kernel virtual machine */
+ #define EM_CSKY		252	/* C-SKY */
 -- 
 ldv
