@@ -7,50 +7,47 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC898C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:40:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3451EC43444
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:40:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98C512183E
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:40:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 044AD2183F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:40:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546864841;
-	bh=lBgs3AQnMe0zN+iXblwyGSK7VBQ9ALzBa6m1VGDx3IA=;
+	s=default; t=1546864847;
+	bh=5Tp1Kv1q+hw5D0VosRq/pgDJccykAFJDZ6uU14VpnCw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=yrDe0lhXF6yWwXqks7mn3Dm6UKC82yW3t0XH0HyIAaWj+IwjeSTuQl9jeo1zY3QbZ
-	 oHAfB6q3kDbQ/1EtwlBRKjyOIDDlLFLL4CD9mdTOWh+z4mDSpOx+aASBvORPSBaycv
-	 0RpNByJe0F26oIZvleGA/7ptItqetz8xDNJC4tEs=
+	b=SyS4rtYYj8kEC+s8mIgzAhgEIuGbuamV77epnyUSPEmnieDwcrwdtkqiBUxb/Si5T
+	 UhsNk7dkTecPdNQ01BjgFEErA28F5aNnGEDZ52taeZ8jRQPTXwhZLgGvI3otszYBBv
+	 gnd4lsGK3VtK0l5jEQiIorFqdZQoW8120y12z+l4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728030AbfAGMkk (ORCPT
+        id S1727251AbfAGMeb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:40:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55588 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:34:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46786 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727477AbfAGMki (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:40:38 -0500
+        id S1726963AbfAGMe2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:34:28 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AE2042173C;
-        Mon,  7 Jan 2019 12:40:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E7B5E2183F;
+        Mon,  7 Jan 2019 12:34:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546864837;
-        bh=lBgs3AQnMe0zN+iXblwyGSK7VBQ9ALzBa6m1VGDx3IA=;
+        s=default; t=1546864467;
+        bh=5Tp1Kv1q+hw5D0VosRq/pgDJccykAFJDZ6uU14VpnCw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uBjb3s3i4zOfCkby2H3bYY4oIhSI+KLQGqnU5FaRcoC339ReQdfjgwZGo6HB0TjKw
-         cZHEypqgf48SyYGvW2aywbybzxQWRkHndhaNh52dsEMVHRkA31SDJ14lI7UPc7TBA6
-         31CBTmEHW6DYTYguvPsvYZGfH0dLvnA+OhM21Omk=
+        b=w6gmEUePS39DZFFfPpLOfKcN0xLLpKRx6IsDceTUTa7ODUfxm/g7g608WcnC7eC3l
+         tpqqzcZBVmIIi4oXyYUr84ygfEivob0AOdLHv+dAJx9OAqkP/uhtTya4y5U0vHqiHi
+         peKK+A9apoQozEyAR7wOmv6U4HywTNnJgK8NZ80A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
-        Mathias Duckeck <m.duckeck@kunbus.de>,
-        Frank Pavlic <f.pavlic@kunbus.de>,
-        Martin Sperl <kernel@martin.sperl.org>,
-        =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.20 082/145] spi: bcm2835: Avoid finishing transfer prematurely in IRQ mode
-Date:   Mon,  7 Jan 2019 13:31:59 +0100
-Message-Id: <20190107104447.944106075@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.20 021/145] ALSA: rme9652: Fix potential Spectre v1 vulnerability
+Date:   Mon,  7 Jan 2019 13:30:58 +0100
+Message-Id: <20190107104440.082737456@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104437.308206189@linuxfoundation.org>
 References: <20190107104437.308206189@linuxfoundation.org>
@@ -69,57 +66,71 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lukas Wunner <lukas@wunner.de>
+From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-commit 56c1723426d3cfd4723bfbfce531d7b38bae6266 upstream.
+commit 0b84304ef5da92add8dc75a1b07879c5374cdb05 upstream.
 
-The IRQ handler bcm2835_spi_interrupt() first reads as much as possible
-from the RX FIFO, then writes as much as possible to the TX FIFO.
-Afterwards it decides whether the transfer is finished by checking if
-the TX FIFO is empty.
+info->channel is indirectly controlled by user-space, hence leading to
+a potential exploitation of the Spectre variant 1 vulnerability.
 
-If very few bytes were written to the TX FIFO, they may already have
-been transmitted by the time the FIFO's emptiness is checked.  As a
-result, the transfer will be declared finished and the chip will be
-reset without reading the corresponding received bytes from the RX FIFO.
+This issue was detected with the help of Smatch:
 
-The odds of this happening increase with a high clock frequency (such
-that the TX FIFO drains quickly) and either passing "threadirqs" on the
-command line or enabling CONFIG_PREEMPT_RT_BASE (such that the IRQ
-handler may be preempted between filling the TX FIFO and checking its
-emptiness).
+sound/pci/rme9652/hdsp.c:4100 snd_hdsp_channel_info() warn: potential spectre issue 'hdsp->channel_map' [r] (local cap)
 
-Fix by instead checking whether rx_len has reached zero, which means
-that the transfer has been received in full.  This is also more
-efficient as it avoids one bus read access per interrupt.  Note that
-bcm2835_spi_transfer_one_poll() likewise uses rx_len to determine
-whether the transfer has finished.
+Fix this by sanitizing info->channel before using it to index hdsp->channel_map
 
-Signed-off-by: Lukas Wunner <lukas@wunner.de>
-Fixes: e34ff011c70e ("spi: bcm2835: move to the transfer_one driver model")
-Cc: stable@vger.kernel.org # v4.1+
-Cc: Mathias Duckeck <m.duckeck@kunbus.de>
-Cc: Frank Pavlic <f.pavlic@kunbus.de>
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Cc: Noralf Trønnes <noralf@tronnes.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Notice that given that speculation windows are large, the policy is
+to kill the speculation on the first load and not worry if it can be
+completed with a dependent load/store [1].
+
+Also, notice that I refactored the code a bit in order to get rid of the
+following checkpatch warning:
+
+ERROR: do not use assignment in if condition
+FILE: sound/pci/rme9652/hdsp.c:4103:
+	if ((mapped_channel = hdsp->channel_map[info->channel]) < 0)
+
+[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/spi/spi-bcm2835.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ sound/pci/rme9652/hdsp.c |   10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
---- a/drivers/spi/spi-bcm2835.c
-+++ b/drivers/spi/spi-bcm2835.c
-@@ -155,8 +155,7 @@ static irqreturn_t bcm2835_spi_interrupt
- 	/* Write as many bytes as possible to FIFO */
- 	bcm2835_wr_fifo(bs);
+--- a/sound/pci/rme9652/hdsp.c
++++ b/sound/pci/rme9652/hdsp.c
+@@ -30,6 +30,7 @@
+ #include <linux/math64.h>
+ #include <linux/vmalloc.h>
+ #include <linux/io.h>
++#include <linux/nospec.h>
  
--	/* based on flags decide if we can finish the transfer */
--	if (bcm2835_rd(bs, BCM2835_SPI_CS) & BCM2835_SPI_CS_DONE) {
-+	if (!bs->rx_len) {
- 		/* Transfer complete - reset SPI HW */
- 		bcm2835_spi_reset_hw(master);
- 		/* wake up the framework */
+ #include <sound/core.h>
+ #include <sound/control.h>
+@@ -4092,15 +4093,16 @@ static int snd_hdsp_channel_info(struct
+ 				    struct snd_pcm_channel_info *info)
+ {
+ 	struct hdsp *hdsp = snd_pcm_substream_chip(substream);
+-	int mapped_channel;
++	unsigned int channel = info->channel;
+ 
+-	if (snd_BUG_ON(info->channel >= hdsp->max_channels))
++	if (snd_BUG_ON(channel >= hdsp->max_channels))
+ 		return -EINVAL;
++	channel = array_index_nospec(channel, hdsp->max_channels);
+ 
+-	if ((mapped_channel = hdsp->channel_map[info->channel]) < 0)
++	if (hdsp->channel_map[channel] < 0)
+ 		return -EINVAL;
+ 
+-	info->offset = mapped_channel * HDSP_CHANNEL_BUFFER_BYTES;
++	info->offset = hdsp->channel_map[channel] * HDSP_CHANNEL_BUFFER_BYTES;
+ 	info->first = 0;
+ 	info->step = 32;
+ 	return 0;
 
 
