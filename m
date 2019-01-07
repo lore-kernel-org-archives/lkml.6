@@ -7,59 +7,62 @@ X-Spam-Status: No, score=-16.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61402C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:58:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEBCCC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:58:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2949D2183F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:58:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 891022183F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 18:58:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546887515;
-	bh=kaHprC45OJ/3EicTBRnS1DpxjoB1xUiZ94DMHILhPvQ=;
+	s=default; t=1546887517;
+	bh=MTC1OzUKTjCjkN2Axb2VFIRbbHTErEbqeMah1Wo4WI0=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=EvC9KSb2jJkz1oy1653jgnXQzVUJaRcPuFQXmfqTn1o34jr7TEMiDREGCO9Mvps7f
-	 jVGjdLrsv6fKXxtkoz32iRVP4N+uzxqycROuG6tQInJLhrdNqg+doXOArNJDEGDoRP
-	 00giRVgZygz6zi3mkBoi8k1wHALIULnemdX6xjYw=
+	b=wFqJhLey1t1BeVQBxsgiGB59I7z1Jj3NaFm77kdHoaCWHeX+cmIE4/PUjIk0HywzC
+	 MV6aLdn8RvMo9fOSMvey6tuSIOGciSP6YtFEKS9axAemIIkWZmmdzDUr8vuX4+keQl
+	 SVpl/loApzqgEv9Vj+WVv/pso2Iz4xNNtVgT8ydU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728735AbfAGS6e (ORCPT
+        id S1728750AbfAGS6g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 13:58:34 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41386 "EHLO
+        Mon, 7 Jan 2019 13:58:36 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41528 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728683AbfAGS6a (ORCPT
+        with ESMTP id S1728731AbfAGS6e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 13:58:30 -0500
+        Mon, 7 Jan 2019 13:58:34 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=SH9kzvDJH067a+jq/JKApncj8HjPoGjRz+kBcD04Yr4=; b=wJMfH635Vb++
-        FCCbqNc7Bwd4qVe0QAs4b8YjgEngEspsMwvCZm8tu3I783hCVHgeUUfdZF8zpq1WfPuzJcg5O/QBs
-        82RH1mmurrJo6LS3aUyMmrby0YtkKzVzuJLfHIGyFA4viIgW3NdmMo5YVestn7DgBf6iopIOgGnbH
-        a/DpM=;
+        List-Archive; bh=n4CR0s/sAHX3Jmyo1rxud2rBl816iwSwZ6KU31f6RcU=; b=rPilN5hJDcvl
+        jhkU3KO/crUK74Iuze5mEp8Df3p8BLKFBoPPI6yLqINpxOguifN5uVid8YLT20rrYmee+Nt9aKKyA
+        rohH+iRdApUFaiHm3OSa6q+WD2/Ta3mUMsanluNbccSQMtlEnsRH29pKsGbAs6WFf2mX9dSBr+bzj
+        LcZRw=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gga6S-0007o6-QW; Mon, 07 Jan 2019 18:58:24 +0000
+        id 1gga6F-0007mQ-3H; Mon, 07 Jan 2019 18:58:11 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 62D671127491; Mon,  7 Jan 2019 18:58:24 +0000 (GMT)
+        id B04001127491; Mon,  7 Jan 2019 18:58:05 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
-To:     Bard liao <yung-chuan.liao@linux.intel.com>
-Cc:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org,
-        Oder Chiou <oder_chiou@realtek.com>, tiwai@suse.de,
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc:     Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org,
+        Liam Girdwood <lgirdwood@gmail.com>, tiwai@suse.de,
         open list <linux-kernel@vger.kernel.org>,
-        Takashi Iwai <tiwai@suse.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        liam.r.girdwood@linux.intel.com, broonie@kernel.org,
-        Bard Liao <bardliao@realtek.com>, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: rt5670: remove unused mux/mixer define" to the asoc tree
-In-Reply-To:  <20190105020249.8639-7-pierre-louis.bossart@linux.intel.com>
+        Takashi Iwai <tiwai@suse.com>, liam.r.girdwood@linux.intel.com,
+        broonie@kernel.org, Wei Yongjun <weiyongjun1@huawei.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Kai Chieh Chuang <kaichieh.chuang@mediatek.com>,
+        alsa-devel@alsa-project.org
+Subject: Applied "ASoC: mt6351: remove unneeded variable" to the asoc tree
+In-Reply-To:  <20190105020249.8639-18-pierre-louis.bossart@linux.intel.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190107185824.62D671127491@debutante.sirena.org.uk>
-Date:   Mon,  7 Jan 2019 18:58:24 +0000 (GMT)
+Message-Id: <20190107185805.B04001127491@debutante.sirena.org.uk>
+Date:   Mon,  7 Jan 2019 18:58:05 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -67,7 +70,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: rt5670: remove unused mux/mixer define
+   ASoC: mt6351: remove unneeded variable
 
 has been applied to the asoc tree at
 
@@ -92,106 +95,42 @@ to this mail.
 Thanks,
 Mark
 
-From 6606f9df60bcb632e047e0f8a268e327cebcc3db Mon Sep 17 00:00:00 2001
-From: Bard liao <yung-chuan.liao@linux.intel.com>
-Date: Fri, 4 Jan 2019 20:02:34 -0600
-Subject: [PATCH] ASoC: rt5670: remove unused mux/mixer define
+From d61780c155e8bef8dceb3ac98d29f79c24e264eb Mon Sep 17 00:00:00 2001
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Date: Fri, 4 Jan 2019 20:02:45 -0600
+Subject: [PATCH] ASoC: mt6351: remove unneeded variable
 
-Some mux/mixer are not used. Remove them from the driver.
+Reported by Coccinelle:
+mt6351.c:1418:5-8: Unneeded variable: "ret". Return "0" on line 1437
 
-Signed-off-by: Bard liao <yung-chuan.liao@linux.intel.com>
 Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/rt5670.c | 54 ---------------------------------------
- 1 file changed, 54 deletions(-)
+ sound/soc/codecs/mt6351.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/sound/soc/codecs/rt5670.c b/sound/soc/codecs/rt5670.c
-index 453328c988c0..9a037108b1ae 100644
---- a/sound/soc/codecs/rt5670.c
-+++ b/sound/soc/codecs/rt5670.c
-@@ -1057,20 +1057,6 @@ static const struct snd_kcontrol_new rt5670_lout_mix[] = {
- 			RT5670_M_OV_R_LM_SFT, 1, 1),
- };
+diff --git a/sound/soc/codecs/mt6351.c b/sound/soc/codecs/mt6351.c
+index f73dcd753584..4b3ce01c5a93 100644
+--- a/sound/soc/codecs/mt6351.c
++++ b/sound/soc/codecs/mt6351.c
+@@ -1415,8 +1415,6 @@ static const struct snd_soc_dapm_route mt6351_dapm_routes[] = {
  
--static const struct snd_kcontrol_new rt5670_hpl_mix[] = {
--	SOC_DAPM_SINGLE("DAC L1 Switch", RT5670_HPO_MIXER,
--			RT5670_M_DACL1_HML_SFT, 1, 1),
--	SOC_DAPM_SINGLE("INL1 Switch", RT5670_HPO_MIXER,
--			RT5670_M_INL1_HML_SFT, 1, 1),
--};
+ static int mt6351_codec_init_reg(struct snd_soc_component *cmpnt)
+ {
+-	int ret = 0;
 -
--static const struct snd_kcontrol_new rt5670_hpr_mix[] = {
--	SOC_DAPM_SINGLE("DAC R1 Switch", RT5670_HPO_MIXER,
--			RT5670_M_DACR1_HMR_SFT, 1, 1),
--	SOC_DAPM_SINGLE("INR1 Switch", RT5670_HPO_MIXER,
--			RT5670_M_INR1_HMR_SFT, 1, 1),
--};
--
- static const struct snd_kcontrol_new lout_l_enable_control =
- 	SOC_DAPM_SINGLE_AUTODISABLE("Switch", RT5670_LOUT1,
- 		RT5670_L_MUTE_SFT, 1, 1);
-@@ -1196,24 +1182,6 @@ static SOC_ENUM_SINGLE_DECL(rt5670_stereo2_adc2_enum, RT5670_STO2_ADC_MIXER,
- static const struct snd_kcontrol_new rt5670_sto2_adc_2_mux =
- 	SOC_DAPM_ENUM("Stereo2 ADC 2 Mux", rt5670_stereo2_adc2_enum);
+ 	/* Disable CLKSQ 26MHz */
+ 	regmap_update_bits(cmpnt->regmap, MT6351_TOP_CLKSQ, 0x0001, 0x0);
+ 	/* disable AUDGLB */
+@@ -1434,7 +1432,7 @@ static int mt6351_codec_init_reg(struct snd_soc_component *cmpnt)
+ 	/* Reverse the PMIC clock*/
+ 	regmap_update_bits(cmpnt->regmap, MT6351_AFE_PMIC_NEWIF_CFG2,
+ 			   0x8000, 0x8000);
+-	return ret;
++	return 0;
+ }
  
--
--/* MX-27 MX26 [10] */
--static const char * const rt5670_stereo_adc_src[] = {
--	"ADC1L ADC2R", "ADC3"
--};
--
--static SOC_ENUM_SINGLE_DECL(rt5670_stereo1_adc_enum, RT5670_STO1_ADC_MIXER,
--	RT5670_ADC_SRC_SFT, rt5670_stereo_adc_src);
--
--static const struct snd_kcontrol_new rt5670_sto_adc_mux =
--	SOC_DAPM_ENUM("Stereo1 ADC source", rt5670_stereo1_adc_enum);
--
--static SOC_ENUM_SINGLE_DECL(rt5670_stereo2_adc_enum, RT5670_STO2_ADC_MIXER,
--	RT5670_ADC_SRC_SFT, rt5670_stereo_adc_src);
--
--static const struct snd_kcontrol_new rt5670_sto2_adc_mux =
--	SOC_DAPM_ENUM("Stereo2 ADC source", rt5670_stereo2_adc_enum);
--
- /* MX-27 MX-26 [9:8] */
- static const char * const rt5670_stereo_dmic_src[] = {
- 	"DMIC1", "DMIC2", "DMIC3"
-@@ -1231,17 +1199,6 @@ static SOC_ENUM_SINGLE_DECL(rt5670_stereo2_dmic_enum, RT5670_STO2_ADC_MIXER,
- static const struct snd_kcontrol_new rt5670_sto2_dmic_mux =
- 	SOC_DAPM_ENUM("Stereo2 DMIC source", rt5670_stereo2_dmic_enum);
- 
--/* MX-27 [0] */
--static const char * const rt5670_stereo_dmic3_src[] = {
--	"DMIC3", "PDM ADC"
--};
--
--static SOC_ENUM_SINGLE_DECL(rt5670_stereo_dmic3_enum, RT5670_STO1_ADC_MIXER,
--	RT5670_DMIC3_SRC_SFT, rt5670_stereo_dmic3_src);
--
--static const struct snd_kcontrol_new rt5670_sto_dmic3_mux =
--	SOC_DAPM_ENUM("Stereo DMIC3 source", rt5670_stereo_dmic3_enum);
--
- /* Mono ADC source */
- /* MX-28 [12] */
- static const char * const rt5670_mono_adc_l1_src[] = {
-@@ -1334,17 +1291,6 @@ static SOC_ENUM_SINGLE_DECL(rt5670_if2_adc_in_enum, RT5670_DIG_INF1_DATA,
- static const struct snd_kcontrol_new rt5670_if2_adc_in_mux =
- 	SOC_DAPM_ENUM("IF2 ADC IN source", rt5670_if2_adc_in_enum);
- 
--/* MX-30 [5:4] */
--static const char * const rt5670_if4_adc_in_src[] = {
--	"IF_ADC1", "IF_ADC2", "IF_ADC3"
--};
--
--static SOC_ENUM_SINGLE_DECL(rt5670_if4_adc_in_enum, RT5670_DIG_INF2_DATA,
--	RT5670_IF4_ADC_IN_SFT, rt5670_if4_adc_in_src);
--
--static const struct snd_kcontrol_new rt5670_if4_adc_in_mux =
--	SOC_DAPM_ENUM("IF4 ADC IN source", rt5670_if4_adc_in_enum);
--
- /* MX-31 [15] [13] [11] [9] */
- static const char * const rt5670_pdm_src[] = {
- 	"Mono DAC", "Stereo DAC"
+ static int mt6351_codec_probe(struct snd_soc_component *cmpnt)
 -- 
 2.20.1
 
