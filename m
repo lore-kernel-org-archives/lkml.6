@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8585DC43612
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:36:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98888C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:36:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B3472089F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:36:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A58E20859
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:36:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546864564;
-	bh=UAxpufE2GhHCNlV03/R+jHXwwtJoSqSJCuOucvszEDM=;
+	s=default; t=1546864569;
+	bh=48m3W4I/Z2xtT6vdpyvtsZdEz1T9d8GlhZsvt7A4Yls=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=z9W6GUmG8CsQAJ2fVqtOGUeHdUoWYJwtdhtBAIecuaKfqkA3zdEKUtiTC8iVJhoVY
-	 fXrxRraKmAHHaI38H+yxf32aisgK7N46m+RVkPntnzNfhCmMPLsjEA1wtrwt5PPBPq
-	 c+lV/Gr/LQ/d/YIyDkD+zOQ3jBYDq6T0s8fwK65k=
+	b=R4Vf88wNUsFjDGqxlynEoAY/xM7b9Sbly+d8qf48KRTVqQd9Ts96ye7Dm7gqUCSK5
+	 wUkhj/vO1vd7jzOE8JphqIqBYc3awMZiMGFS91ArO28d1Hhuhiq/AlArjkDlFctVn8
+	 5/jjBp+7LnebIIo/LIeKnvLz1DjXZpx6KQ7eJL1s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727667AbfAGMgD (ORCPT
+        id S1727680AbfAGMgI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:36:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50208 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:36:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50710 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727634AbfAGMfv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:35:51 -0500
+        id S1727242AbfAGMgH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:36:07 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F33EC20859;
-        Mon,  7 Jan 2019 12:35:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 16EB020859;
+        Mon,  7 Jan 2019 12:36:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546864551;
-        bh=UAxpufE2GhHCNlV03/R+jHXwwtJoSqSJCuOucvszEDM=;
+        s=default; t=1546864567;
+        bh=48m3W4I/Z2xtT6vdpyvtsZdEz1T9d8GlhZsvt7A4Yls=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=y9ennBvU6EqXmDfdcN/Hma63VBEBNSu3M/VPuEBmM2Be9WoU/2ah3+siam6HHHgT5
-         lviYLTaMjQC/t2n1wfHyBvuju/eV4sx3gop1d5/p8FutKkz+/qucw4Jv3ILWdoPLuL
-         jxWORrOxDXubO951naMWm8o+LVhajMDaH8IM8CnE=
+        b=iP7LP6+SrftO62NGlUhn4J82Kb2KReo/z37UfBHT9BSbx1ya5MZnRSERFcX2pmc5R
+         VWoMq8XpJ3oQoA0i+hfFxYPq7xshe6KM7IWfUsvLIcpBxTHBiXvDRjrp1b3eM2Gi21
+         C5cxjyh6gXRAT6Pw+fJfHev2hwKKDby3IwbvraRY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        Ajay Singh <ajay.kathat@microchip.com>
-Subject: [PATCH 4.20 047/145] staging: wilc1000: fix missing read_write setting when reading data
-Date:   Mon,  7 Jan 2019 13:31:24 +0100
-Message-Id: <20190107104443.593812291@linuxfoundation.org>
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 4.20 049/145] ASoC: intel: cht_bsw_max98090_ti: Add pmc_plt_clk_0 quirk for Chromebook Clapper
+Date:   Mon,  7 Jan 2019 13:31:26 +0100
+Message-Id: <20190107104443.822763932@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104437.308206189@linuxfoundation.org>
 References: <20190107104437.308206189@linuxfoundation.org>
@@ -65,35 +66,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
-commit c58eef061dda7d843dcc0ad6fea7e597d4c377c0 upstream.
+commit 984bfb398a3af6fa9b7e80165e524933b0616686 upstream.
 
-Currently the cmd.read_write setting is not initialized so it contains
-garbage from the stack.  Fix this by setting it to 0 to indicate a
-read is required.
+The Clapper model Chromebook uses pmc_plt_clk_0 instead of pmc_plt_clk_3
+for the mclk, just like the Swanky model.
 
-Detected by CoverityScan, CID#1357925 ("Uninitialized scalar variable")
+This commit adds a DMI based quirk for this.
 
-Fixes: c5c77ba18ea6 ("staging: wilc1000: Add SDIO/SPI 802.11 driver")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Cc: stable <stable@vger.kernel.org>
-Acked-by: Ajay Singh <ajay.kathat@microchip.com>
+This fixing audio no longer working on these devices after
+commit 648e921888ad ("clk: x86: Stop marking clocks as CLK_IS_CRITICAL")
+that commit fixes us unnecessary keeping unused clocks on, but in case of
+the Clapper that was breaking audio support since we were not using the
+right clock in the cht_bsw_max98090_ti machine driver.
+
+Cc: stable@vger.kernel.org
+Fixes: 648e921888ad ("clk: x86: Stop marking clocks as CLK_IS_CRITICAL")
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/wilc1000/wilc_sdio.c |    1 +
- 1 file changed, 1 insertion(+)
+ sound/soc/intel/boards/cht_bsw_max98090_ti.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/drivers/staging/wilc1000/wilc_sdio.c
-+++ b/drivers/staging/wilc1000/wilc_sdio.c
-@@ -841,6 +841,7 @@ static int sdio_read_int(struct wilc *wi
- 	if (!sdio_priv->irq_gpio) {
- 		int i;
+--- a/sound/soc/intel/boards/cht_bsw_max98090_ti.c
++++ b/sound/soc/intel/boards/cht_bsw_max98090_ti.c
+@@ -390,6 +390,13 @@ static struct snd_soc_card snd_soc_card_
  
-+		cmd.read_write = 0;
- 		cmd.function = 1;
- 		cmd.address = 0x04;
- 		cmd.data = 0;
+ static const struct dmi_system_id cht_max98090_quirk_table[] = {
+ 	{
++		/* Clapper model Chromebook */
++		.matches = {
++			DMI_MATCH(DMI_PRODUCT_NAME, "Clapper"),
++		},
++		.driver_data = (void *)QUIRK_PMC_PLT_CLK_0,
++	},
++	{
+ 		/* Swanky model Chromebook (Toshiba Chromebook 2) */
+ 		.matches = {
+ 			DMI_MATCH(DMI_PRODUCT_NAME, "Swanky"),
 
 
