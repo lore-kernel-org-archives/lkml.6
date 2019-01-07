@@ -4,87 +4,92 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA5C9C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 14:48:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0D82C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 14:48:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD9432183E
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 14:48:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E2022183E
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 14:48:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k2VMm/GI"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ReSvf8lO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729168AbfAGOsP (ORCPT
+        id S1729185AbfAGOsr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 09:48:15 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:35285 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727399AbfAGOsP (ORCPT
+        Mon, 7 Jan 2019 09:48:47 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:37535 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727399AbfAGOsr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 09:48:15 -0500
-Received: by mail-pf1-f194.google.com with SMTP id z9so277648pfi.2;
-        Mon, 07 Jan 2019 06:48:14 -0800 (PST)
+        Mon, 7 Jan 2019 09:48:47 -0500
+Received: by mail-wm1-f68.google.com with SMTP id g67so1170240wmd.2;
+        Mon, 07 Jan 2019 06:48:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
+        h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=JiRNgDqLcXa6QXy2/b0Y3bhC1VyiNB/lPe/tkkAhYiM=;
-        b=k2VMm/GISBT9LqqZ7PKcNNVtnkWslHBidoDW6YIZ3fRt8vrZjA20jCVxGhEOpcZdEX
-         SSygT+fhsiiWo4xRyFMr2LYbQSJBz6GgCXBDYiR7+eySglMQXHaSQ40ZeGUR5L8ABVwz
-         fHqEawrXlb7ioZp4W3MSfU8pfJkPONusJd3jCty5Ksdhuc6WIpdRyOKMj0HdRmUeslf2
-         Kr5JfYKtQDLPPEeo5MFlFyEr5kbSIf/EP/+seXe2TLbUCweFGXw/ND2ebvIZiSPOou/Z
-         hDo2FK+i4euo1HUJMJf21WWSbTIZoVSgxLyAxzD2Umh8gGa9iiFuhWVoP0r0S6mHjzUe
-         eEig==
+        bh=KXKqXHgYEUwxzGo3BNl0g5sl1ukNP7c8KeS+9jPHfCY=;
+        b=ReSvf8lOQxCj1dndtWSzNQFV/vZc5iG5cp0YWncVIACUC2e8Njs00QmHQzuptmuXk3
+         HAfj6ISV/Z4Kiu65zgCRZjXZ3YJVo+vrvhcO3oB74pc+kWiwJmWOh6CF7Ukk6dOJxB4p
+         /mSbTf1kw9YQpjoaUUvN7cpupLdxggZexkTmhHIyY+U4pKlBfxVMyB3pPDCj2w55eA81
+         03hz4Yf7O3i/+SsZg3/fYxWFpwyrGGETyikzgK4hrFUCs8K+0G/ZcFX155QYTuaR8cAW
+         AwD+O0SoIcEAIA+3LLHSvS8VXwted9956ZkExZ7M2+dDESClrIodd1VHRip1q77snvPt
+         nMfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=JiRNgDqLcXa6QXy2/b0Y3bhC1VyiNB/lPe/tkkAhYiM=;
-        b=YW3raB/Kv7b36FwTVK9b9e5fdo4h+ONzEHcJ9P2WFyJ/NV5ycloW5Z6X/nIY5C33RD
-         bgpKCZvpxdzJZnzqu2aPl+EqOFUzjV0ymfCfKkbdh5/esVwsxrFJd0rURIrvz7G+nK+q
-         IsgZPorCEAuMPr5nMQxIsN26rPNEiAAQG+BJVPbDU6YEtQhSznTu7VShU8FlqzjG5VE+
-         yx+Kxwe8qfYQ5z527vnNYaS8DoAafbZwqLuR5q33tcJBFsx3UhKKrxklLLMBWt54qL+T
-         vZK8xUaFH5hF4hkM+ILSjHBI6A2DxMkw7eitILpy/OHLriizd+9/Mrvc3Jk0WcZyVIpA
-         T3qw==
-X-Gm-Message-State: AJcUukfGA/+Ej2ouXRpooIU3/stVVNK+wWNbI9CnYR5gzDSEaj+Mgx1Y
-        j8GOMPGnqA3+eqmSFGi0dWY=
-X-Google-Smtp-Source: ALg8bN5zpka1L9RApT0epFIsIhndGfemXNYGNmH+t2NJbg/Yxk2yaGfMu5M4wYpQTU/SbXZNqT7v6w==
-X-Received: by 2002:a63:fd0a:: with SMTP id d10mr11302613pgh.164.1546872494325;
-        Mon, 07 Jan 2019 06:48:14 -0800 (PST)
-Received: from localhost ([121.137.63.184])
-        by smtp.gmail.com with ESMTPSA id 6sm140792297pfv.30.2019.01.07.06.48.12
+        bh=KXKqXHgYEUwxzGo3BNl0g5sl1ukNP7c8KeS+9jPHfCY=;
+        b=MHsDnueL5EbaWgWCcObcYCs3WNlbFptBxkO16n1I0dETOGhkQtB2wYig6axaN7hO5l
+         SoP3AjCdHLBQLp5bgKim2qgCr+IPYSapYtLrvYwvBFWRthmA4rawDlZnEGRY42PHaDRi
+         OO9icvLzinqqoqCYtrZlD3XLQyzOi39LIvbd6c2gDlb14KnTP/NJJ3rrdQHTgs0X2xmi
+         lpMLyNYJPn5iqXZet8IYY7iYK/N4Q0laKnNHjjJ8XNSKub0bob6t8b1+d1Vhxz4OeRXU
+         spiMjq5j7CGerqxADGvt+jILxgZtCEgrVKziWb4SiaSfDtnFjdixe1kRzOLFNxxBIPlg
+         t7Zg==
+X-Gm-Message-State: AJcUukexcv30+LSg3yBFQ1OrtUYoDoYFsQoY/UXY2D7j8FRVtAJlvJ2O
+        EZZL3ReHge9R7e+ZSefg9qw=
+X-Google-Smtp-Source: ALg8bN5n4WgOs6Sx9ICatFiJaI8P8GRYyfCUfWJwSsEJvg9SuQxhGOeTJbEAWHL9ycNGqeUmJEXC5A==
+X-Received: by 2002:a1c:a3c3:: with SMTP id m186mr8909009wme.16.1546872525236;
+        Mon, 07 Jan 2019 06:48:45 -0800 (PST)
+Received: from localhost.localdomain ([185.140.29.250])
+        by smtp.gmail.com with ESMTPSA id y145sm6973542wmd.30.2019.01.07.06.48.44
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 07 Jan 2019 06:48:13 -0800 (PST)
-From:   Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-X-Google-Original-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Date:   Mon, 7 Jan 2019 23:48:09 +0900
-To:     kbuild test robot <lkp@intel.com>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        kbuild-all@01.org, Tony Luck <tony.luck@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>, linux-ia64@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [PATCH] ia64: tweak BREAK_LOGLEVEL and RESTORE_LOGLEVEL
-Message-ID: <20190107144809.GA968@tigerII.localdomain>
-References: <20190107095433.6497-1-sergey.senozhatsky@gmail.com>
- <201901072128.HGGbw9UZ%fengguang.wu@intel.com>
+        Mon, 07 Jan 2019 06:48:44 -0800 (PST)
+Date:   Mon, 7 Jan 2019 15:48:42 +0100
+From:   =?iso-8859-1?Q?J=FAlius?= Milan <jmilan.dev@gmail.com>
+To:     Ajay.Kathat@microchip.com
+Cc:     Larry.Finger@lwfinger.net, linux-kernel@vger.kernel.org,
+        devel@driverdev.osuosl.org, linux-wireless@vger.kernel.org,
+        gregkh@linuxfoundation.org, Adham.Abozaeid@microchip.com
+Subject: Re: [PATCH v2] staging: wilc1000: fix cast to restricted __le32
+Message-ID: <20190107144842.GA14681@localhost.localdomain>
+References: <20190105091025.GA28917@localhost.localdomain>
+ <61a272a5-3c6f-4e69-2ce9-b7c58b427750@lwfinger.net>
+ <CAP=P++DRiM8Rb8vg9hBJ-N2uhfL0Rrj+njYwgZW80yQZ4jQH4g@mail.gmail.com>
+ <1c5c8efb-055f-31b2-b25f-18d3f6e64226@microchip.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <201901072128.HGGbw9UZ%fengguang.wu@intel.com>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+In-Reply-To: <1c5c8efb-055f-31b2-b25f-18d3f6e64226@microchip.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (01/07/19 21:26), kbuild test robot wrote:
-> Hi Sergey,
-> 
-> I love your patch! Yet something to improve:
+On Mon, Jan 07, 2019 at 06:06:55AM +0000, Ajay.Kathat@microchip.com wrote:
+Hi Ajay,
 
-Well well well, guess who didn't compile test his patch; again.
-Thanks for the report! I will fix it up and resend. Sorry!
+> Please resubmit the patch by changing 'frame_type' type to '__le16' in
+> 'wilc_reg_frame' struct.
 
-	-ss
+Done, sent patch version 4.
+
+Message subject changed to:
+"[PATCH v4] staging: wilc1000: fix registration frame size"
+to fit v4 patch content.
+
+Thank you for your review,
+
+Julius
