@@ -2,183 +2,130 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53DD5C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 21:47:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A0EDC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 21:49:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0487D2183F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 21:47:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 307A22183F
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 21:49:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Aez9kVa9"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SGqAF4yv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727084AbfAGVrm (ORCPT
+        id S1727112AbfAGVtY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 16:47:42 -0500
-Received: from mail-vk1-f195.google.com ([209.85.221.195]:46835 "EHLO
-        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726638AbfAGVrk (ORCPT
+        Mon, 7 Jan 2019 16:49:24 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:41085 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726535AbfAGVtY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 16:47:40 -0500
-Received: by mail-vk1-f195.google.com with SMTP id j23so423200vke.13
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 13:47:39 -0800 (PST)
+        Mon, 7 Jan 2019 16:49:24 -0500
+Received: by mail-pl1-f195.google.com with SMTP id u6so771537plm.8;
+        Mon, 07 Jan 2019 13:49:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=YQ7FpZSVRYgjz4zvMXV7TjL2RDg8LfVCTLWfBdLl6o8=;
-        b=Aez9kVa9X4UBUMcv7J5Gknz6PmFvqpxeK3rtNkfeQ7wczvXCSsAYhYs+9lTBQl/qRx
-         DL1MyN/+3FZiT8Bm2SrtYSLKpWbMwlVezwynkKiW7rCGL249ITSeU5A09NqRlUTK5AP4
-         VI5MU2pZQl+rMrAA3WpRMqYVux8f75t666KOY=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=p8QDgmF5hWQbM1FPsPHmky74xeeRc06CUZN469xsWiA=;
+        b=SGqAF4yvF01kc3E6aC/4n3E5TW+fFkStsEjxi/K5DrKGzgXrQLY0N/DkGPwRfoV4W+
+         gN5PHqNlLPIoQ68HmqMajXsXwJuR0H0O6DcHt4sZtTc/WT7VUlixyWzzU/Hq9WullsR9
+         OLo4J7A9uWhGUyHL1NxQNmz7VZou9m1mcP0aTvzDnK8vClCqtmUoO52yQ7jOo/arpShP
+         MV5axduRx/PFxpJ/Lc4WUTfYWyH0IHDSYPVF8D9fNZajjE0sEdYX94s/sBeOvNt8lhfi
+         RZVkfnrq5rb1LGFSkRVkjPqmEkgyn2ClStXrheoa7O4FeYNcy0EieJ6gBP6E+EvQd6Zz
+         a1vg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YQ7FpZSVRYgjz4zvMXV7TjL2RDg8LfVCTLWfBdLl6o8=;
-        b=All7yqiEfgqlqdYGEgKPPt8TizPYBa93w1DqUaer4/0DEbFlSbMfg819Sdc/0tnOX5
-         u9aOxg+X3wInRkSIc7Nr6qObIM7LPPTEz6BP5VTY80xj5divsZGFG0MmWelKywY7hx+x
-         3YPdHZoAR7SKo2PwkUJAp86w2tvaq6S3rekoyN8tat0IvAS8WgQhs8d066GLc6vj+YRe
-         nNYL29esWMSO26CXrbZyLWbHU8C1Y7/StWdvhmGhhVSaANuCIEUlUWF/YjN5uPe7gw8p
-         xpO33h4QVvPZl+dScU92KQEwjwLqY0wa8CkQW0ncnSWwjKkeI4FcRXc5RlItXN2FLZwS
-         ehRw==
-X-Gm-Message-State: AJcUukd/INGXkKTatOpQv/2MWXKZrJwPQiNzpzTMxQUUu4USfYIQBbrN
-        kH3qKiNSStdVlsBJMfxmZI/k99vbei4=
-X-Google-Smtp-Source: ALg8bN5ZK7spoIjRJGBvhKyF8ilyqEfQVbyMV/ppQGDW3hvTqK2KpvOA/R9bjP5jNMKlMSGux55iPA==
-X-Received: by 2002:a1f:2cb:: with SMTP id 194mr23995506vkc.19.1546897658664;
-        Mon, 07 Jan 2019 13:47:38 -0800 (PST)
-Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com. [209.85.221.174])
-        by smtp.gmail.com with ESMTPSA id m89sm33846898vsh.22.2019.01.07.13.47.36
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 07 Jan 2019 13:47:36 -0800 (PST)
-Received: by mail-vk1-f174.google.com with SMTP id 197so439666vkf.4
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 13:47:36 -0800 (PST)
-X-Received: by 2002:a1f:e7c5:: with SMTP id e188mr21439180vkh.92.1546897655846;
- Mon, 07 Jan 2019 13:47:35 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=p8QDgmF5hWQbM1FPsPHmky74xeeRc06CUZN469xsWiA=;
+        b=nvJ1R5G4xaUhX4pyHG/sih4t0nJlpfaCvbN0u8Mt/Nem4MhBS25VmXwDagAOyN6JFD
+         x8T2Jm+X/CrOUF9i58Fn05vsmHZ+gx7Cajhr1CSnEUx7ENIED9Az45CjbhrHKDU7DkQo
+         grjLX8PQdo4L5Skfyz2II/siLOfmi1MvYr3sSkSOUiBzWy6mKOle0NQ2Ni4+ZYuL1mAl
+         11oksR7H8BYykks+ep3xtcUEe7R73aL9Y6jswKRooMUpiCI0QK7oe+Zg9SmxQqk14YTy
+         GPWKyxyDk2lARTO4iTyYlVmBvckBCuHHtjLOcuUawir6AUTaeyXLh+oNBMNFWQUYv864
+         WC+g==
+X-Gm-Message-State: AJcUuke0eM4WYJLUr6TxmYdXmxhVUHadPJNNaPvcV1Dz2KzaC6Bk+BZK
+        BPuAvrVUf44mBWxEHtlun8Y=
+X-Google-Smtp-Source: ALg8bN5a/ZKpxXYIoZ7ha3dW54bhk5Vgcugr71nSi29cbzO0m9vmL9TyI8mBccomZH9+mmcMb/LhQg==
+X-Received: by 2002:a17:902:7896:: with SMTP id q22mr63887096pll.280.1546897763148;
+        Mon, 07 Jan 2019 13:49:23 -0800 (PST)
+Received: from localhost (g206.124-44-15.ppp.wakwak.ne.jp. [124.44.15.206])
+        by smtp.gmail.com with ESMTPSA id x12sm88232620pgr.55.2019.01.07.13.49.21
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 07 Jan 2019 13:49:22 -0800 (PST)
+Date:   Tue, 8 Jan 2019 06:49:19 +0900
+From:   Stafford Horne <shorne@gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Guenter Roeck <linux@roeck-us.net>,
+        Matt Turner <mattst88@gmail.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Paul Burton <paul.burton@mips.com>,
+        Greentime Hu <green.hu@gmail.com>,
+        Ley Foon Tan <lftan@altera.com>,
+        Jonas Bonn <jonas@southpole.se>,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        Chris Zankel <chris@zankel.net>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] make 'user_access_begin()' do 'access_ok()'
+Message-ID: <20190107214919.GO3235@lianli.shorne-pla.net>
+References: <20190106180927.GA11993@roeck-us.net>
+ <CAHk-=whyNbpBtPyoS=wh4nVgBtUBpihcOT+LFdEw369kYjATaQ@mail.gmail.com>
+ <CAHk-=wiSVm6j1Ga8gra6hSQQSK8WF5bW4DtRi4V7mCtCUkTaQw@mail.gmail.com>
+ <78e3717b-0604-3d5f-38b8-c523e392fc76@roeck-us.net>
+ <CAHk-=wg45nXe50ORC7reBJqsFGUPELtbk5p7ijkE9=fs1wGLAQ@mail.gmail.com>
+ <CAHk-=wgnLcrL8PbS0Dz3nprCXvR5iFCKjVvJmN_EbZW88i4L7w@mail.gmail.com>
 MIME-Version: 1.0
-References: <1546862462-19640-1-git-send-email-liaoweixiong@allwinnertech.com>
-In-Reply-To: <1546862462-19640-1-git-send-email-liaoweixiong@allwinnertech.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Mon, 7 Jan 2019 13:47:24 -0800
-X-Gmail-Original-Message-ID: <CAGXu5jKrEHkogWsNW0rui8fBbdGin0syWzdfhVhw1V9tTRy0+A@mail.gmail.com>
-Message-ID: <CAGXu5jKrEHkogWsNW0rui8fBbdGin0syWzdfhVhw1V9tTRy0+A@mail.gmail.com>
-Subject: Re: [RFC v5 0/4] pstore/block: new support logger for block devices
-To:     liaoweixiong <liaoweixiong@allwinnertech.com>
-Cc:     Anton Vorontsov <anton@enomsg.org>,
-        Colin Cross <ccross@android.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wgnLcrL8PbS0Dz3nprCXvR5iFCKjVvJmN_EbZW88i4L7w@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 7, 2019 at 4:01 AM liaoweixiong
-<liaoweixiong@allwinnertech.com> wrote:
->
-> Why should we need pstore_block?
-> 1. Most embedded intelligent equipment have no persistent ram, which
-> increases costs. We perfer to cheaper solutions, like block devices.
-> In fast, there is already a sample for block device logger in driver
-> MTD (drivers/mtd/mtdoops.c).
-> 2. Do not any equipment have battery, which means that it lost all data
-> on general ram if power failure. Pstore has little to do for these
-> equipments.
+On Mon, Jan 07, 2019 at 10:05:12AM -0800, Linus Torvalds wrote:
+> Gaah. Re-sending this for the kernel mailing list just for posterity.
+> I keep replying to emails that had the mailing list address wrong, and
+> then my reply will have it wrong too.
+> 
+> I will learn to fix up the address just in time for this thread to die
+> out, I suspect.
+> 
+>                 Linus
+> 
+> On Mon, Jan 7, 2019 at 10:02 AM Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+> >
+> > On Sun, Jan 6, 2019 at 8:05 PM Guenter Roeck <linux@roeck-us.net> wrote:
+> > >
+> > > Of the above, my test system boots images for the following architectures
+> > > in qemu.
+> > >
+> > > - mips (32/64 bit, big/little endian)
+> > > - nios2
+> > > - openrisc
+> > > - xtensa (mmu and nommu)
+> >
+> > So most of those are "only" the "macro arguments used twice" problem
+> > (although openrisc also does the "arguments not quoted right"). That
+> > doesn't cause problems with the new commit, it's an independent issue
+> > that could cause random problems elsewhere
 
-I'm catching up from being off over the holidays, but I just wanted to
-say that I like the general idea here.
+Linus,  Thanks for pointing this out and Guenter thanks for testing.
 
-> [PATCH v5]
-> On patch 1:
-> 1. rename pstore/rom to pstore/blk
+I ack the issue on OpenRISC and will send a patch for review in a day or so.
+I'll also do an audit of openrisc to see if we have similar issues.
 
-Thanks! The earlier name seemed wrong. :)
+Next to access_ok() is __addr_ok() which seems to have the similar quoting
+issue, but I don't see it being used anywhere, it's also defined and not
+used on: arm, x86 and csky.   It is used on SH.
 
-> 2. Do not allocate any memory in the write path of panic. So, use local
-> array instead in function romz_recover_dmesg_meta.
-> 3. Add C header file "linux/fs.h" to fix implicit declaration of function
->    'filp_open','kernel_read'...
-> On patch 3:
-> 1. If panic, do not recover pmsg but flush if it is dirty.
-> 2. Fix erase pmsg failed.
-> On patch 4:
-> 1. Create a document for pstore/blk
+OK to remove __addr_ok()?
 
-Overall, I wonder if more of the ram backend code could get reused for
-the blk backend? I'd much rather be able to share that, since much of
-the logic is the same.
-
-I'll get to a more detailed review in the coming days. Thanks for sending this!
-
--Kees
-
->
-> [PATCH v4]
-> On patch 1:
-> 1. Fix always true condition '(--i >= 0) => (0-u32max >= 0)' in function
->    romz_init_zones by defining variable i to 'int' rahter than
->    'unsigned int'.
-> 2. To make codes more easily to read, we use macro READ_NEXT_ZONE for
->    return value of romz_dmesg_read if it need to read next zone.
->    Moveover, we assign READ_NEXT_ZONE -1024 rather than 0.
-> 3. Add 'FLUSH_META' to 'enum romz_flush_mode' and rename 'NOT_FLUSH' to
->    'FLUSH_NONE'
-> 4. Function romz_zone_write work badly with FLUSH_PART mode as badly
->    address and offset to write.
-> On patch 3:
-> NEW SUPPORT psmg for pstore_rom.
->
-> [PATCH v3]
-> On patch 1:
-> Fix build as module error for undefined 'vfs_read' and 'vfs_write'
-> Both of 'vfs_read' and 'vfs_write' haven't be exproted yet, so we use
-> 'kernel_read' and 'kernel_write' instead.
->
-> [PATCH v2]
-> On patch 1:
-> Fix build as module error for redefinition of 'romz_unregister' and
-> 'romz_register'
->
-> [PATCH v1]
-> On patch 1:
-> Core codes of pstore_rom, which works well on allwinner(sunxi) platform.
-> On patch 2:
-> A sample for pstore_rom, using general ram rather than block device.
->
-> liaoweixiong (4):
->   pstore/blk: new support logger for block devices
->   pstore/blk: add sample for pstore_blk
->   pstore/blk: support pmsg for pstore block
->   Documentation: pstore/blk: create document for pstore_blk
->
->  Documentation/admin-guide/pstore-block.rst |  226 ++++++
->  MAINTAINERS                                |    1 +
->  fs/pstore/Kconfig                          |   20 +
->  fs/pstore/Makefile                         |    5 +
->  fs/pstore/blkbuf.c                         |   46 ++
->  fs/pstore/blkzone.c                        | 1168 ++++++++++++++++++++++++++++
->  include/linux/pstore_blk.h                 |   62 ++
->  7 files changed, 1528 insertions(+)
->  create mode 100644 Documentation/admin-guide/pstore-block.rst
->  create mode 100644 fs/pstore/blkbuf.c
->  create mode 100644 fs/pstore/blkzone.c
->  create mode 100644 include/linux/pstore_blk.h
->
-> --
-> 1.9.1
->
-
-
--- 
-Kees Cook
+-Stafford
