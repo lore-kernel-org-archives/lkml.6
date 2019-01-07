@@ -2,249 +2,128 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 342BEC43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 09:54:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB7E5C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 09:54:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED3FD2089F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 09:54:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0C4A20859
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 09:54:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726861AbfAGJyF (ORCPT
+        id S1726877AbfAGJyJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 04:54:05 -0500
-Received: from mail-it1-f200.google.com ([209.85.166.200]:39469 "EHLO
-        mail-it1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726615AbfAGJyE (ORCPT
+        Mon, 7 Jan 2019 04:54:09 -0500
+Received: from mail.netline.ch ([148.251.143.178]:47176 "EHLO
+        netline-mail3.netline.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726615AbfAGJyI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 04:54:04 -0500
-Received: by mail-it1-f200.google.com with SMTP id k133so109903ite.4
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 01:54:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=6x5JpZ7JVZsZD87xGwKkCF9sqy4UR9h0bKDHP+hyd6I=;
-        b=CJcpOjkHB/L6+UaujKcSDqIIm/SFtFc0dr1IyCEpUbHtm4KsMfIJda4b7LZXi8ispt
-         2T9sMpKGq5uy4UPVXIQH5kji4VdlTEx9xyzsWgQ9/FvYEv2ySes3F7qonIi5YMqtylVI
-         Ak5YglrIFrxiDbjE1EppwnV0rKQ8iwTEVmX6Q3GufCwzw8N5amNd/sz9XdS+k5q+pmS5
-         s8w+aoz1iaTIXcqRqoKm77LQOmbpDHqfaYLlAt9KjRKDQfQlodIHDnetjSe+7Y0IP/Lg
-         IRS6A6L/6aVAhDle1FkwqH3831EE0MnjsUD76aSrUYBxo7GvmgSlVEtyp0GBMn/b0iyP
-         RSuQ==
-X-Gm-Message-State: AJcUukdycLhwtpJbu8TOXwoj5g4rvfMLwmVYPWfMNY3H+NNpPlr4icgT
-        kGVrtl6zqVzZq+8uEmfl6HxwDUlifbmC/OBnG3AUXEy13Z25
-X-Google-Smtp-Source: ALg8bN7nVgjS5n216kvxfdPkjJstVVdFalICtEWBC746+E3EiqVZ6C7r6YKu9AX68tkQJYaAhYi569wBSYx52/TFIQEKKyru92sP
+        Mon, 7 Jan 2019 04:54:08 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by netline-mail3.netline.ch (Postfix) with ESMTP id CC11E2A605C;
+        Mon,  7 Jan 2019 10:54:05 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at netline-mail3.netline.ch
+Received: from netline-mail3.netline.ch ([127.0.0.1])
+        by localhost (netline-mail3.netline.ch [127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id 8VKbOFZTIySn; Mon,  7 Jan 2019 10:54:05 +0100 (CET)
+Received: from thor (39.1.199.178.dynamic.wline.res.cust.swisscom.ch [178.199.1.39])
+        by netline-mail3.netline.ch (Postfix) with ESMTPSA id 008BD2A605B;
+        Mon,  7 Jan 2019 10:54:04 +0100 (CET)
+Received: from localhost ([::1])
+        by thor with esmtp (Exim 4.92-RC3)
+        (envelope-from <michel@daenzer.net>)
+        id 1ggRbg-00006f-EA; Mon, 07 Jan 2019 10:54:04 +0100
+Subject: Re: [PATCH v5 1/2] drm/amd: validate user pitch alignment
+To:     Yu Zhao <yuzhao@google.com>
+Cc:     David Zhou <David1.Zhou@amd.com>,
+        Daniel Stone <daniels@collabora.com>,
+        David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org,
+        Junwei Zhang <Jerry.Zhang@amd.com>,
+        amd-gfx@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        stable@vger.kernel.org, Harry Wentland <harry.wentland@amd.com>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        Samuel Li <Samuel.Li@amd.com>
+References: <20181223215239.173339-2-yuzhao@google.com>
+ <20181230010021.196990-1-yuzhao@google.com>
+ <75d5f1d6-b259-6944-6ee0-8cc68cb1af0e@daenzer.net>
+ <20190107040038.GA180037@google.com>
+From:   =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>
+Openpgp: preference=signencrypt
+Autocrypt: addr=michel@daenzer.net; prefer-encrypt=mutual; keydata=
+ mQGiBDsehS8RBACbsIQEX31aYSIuEKxEnEX82ezMR8z3LG8ktv1KjyNErUX9Pt7AUC7W3W0b
+ LUhu8Le8S2va6hi7GfSAifl0ih3k6Bv1Itzgnd+7ZmSrvCN8yGJaHNQfAevAuEboIb+MaVHo
+ 9EMJj4ikOcRZCmQWw7evu/D9uQdtkCnRY9iJiAGxbwCguBHtpoGMxDOINCr5UU6qt+m4O+UD
+ /355ohBBzzyh49lTj0kTFKr0Ozd20G2FbcqHgfFL1dc1MPyigej2gLga2osu2QY0ObvAGkOu
+ WBi3LTY8Zs8uqFGDC4ZAwMPoFy3yzu3ne6T7d/68rJil0QcdQjzzHi6ekqHuhst4a+/+D23h
+ Za8MJBEcdOhRhsaDVGAJSFEQB1qLBACOs0xN+XblejO35gsDSVVk8s+FUUw3TSWJBfZa3Imp
+ V2U2tBO4qck+wqbHNfdnU/crrsHahjzBjvk8Up7VoY8oT+z03sal2vXEonS279xN2B92Tttr
+ AgwosujguFO/7tvzymWC76rDEwue8TsADE11ErjwaBTs8ZXfnN/uAANgPLQjTWljaGVsIERh
+ ZW56ZXIgPG1pY2hlbEBkYWVuemVyLm5ldD6IXgQTEQIAHgUCQFXxJgIbAwYLCQgHAwIDFQID
+ AxYCAQIeAQIXgAAKCRBaga+OatuyAIrPAJ9ykonXI3oQcX83N2qzCEStLNW47gCeLWm/QiPY
+ jqtGUnnSbyuTQfIySkK5AQ0EOx6FRRAEAJZkcvklPwJCgNiw37p0GShKmFGGqf/a3xZZEpjI
+ qNxzshFRFneZze4f5LhzbX1/vIm5+ZXsEWympJfZzyCmYPw86QcFxyZflkAxHx9LeD+89Elx
+ bw6wT0CcLvSv8ROfU1m8YhGbV6g2zWyLD0/naQGVb8e4FhVKGNY2EEbHgFBrAAMGA/0VktFO
+ CxFBdzLQ17RCTwCJ3xpyP4qsLJH0yCoA26rH2zE2RzByhrTFTYZzbFEid3ddGiHOBEL+bO+2
+ GNtfiYKmbTkj1tMZJ8L6huKONaVrASFzLvZa2dlc2zja9ZSksKmge5BOTKWgbyepEc5qxSju
+ YsYrX5xfLgTZC5abhhztpYhGBBgRAgAGBQI7HoVFAAoJEFqBr45q27IAlscAn2Ufk2d6/3p4
+ Cuyz/NX7KpL2dQ8WAJ9UD5JEakhfofed8PSqOM7jOO3LCA==
+Message-ID: <14420828-884e-df3e-3b41-5b87203a20a3@daenzer.net>
+Date:   Mon, 7 Jan 2019 10:54:03 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-X-Received: by 2002:a5d:8599:: with SMTP id f25mr10379417ioj.14.1546854843220;
- Mon, 07 Jan 2019 01:54:03 -0800 (PST)
-Date:   Mon, 07 Jan 2019 01:54:03 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000730ebf057edb3569@google.com>
-Subject: KASAN: slab-out-of-bounds Read in dst_dev_put
-From:   syzbot <syzbot+a47c5f4c6c00fc1ed16e@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, dsahern@gmail.com,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        pablo@netfilter.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <20190107040038.GA180037@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-CA
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On 2019-01-07 5:00 a.m., Yu Zhao wrote:
+> On Thu, Jan 03, 2019 at 05:33:19PM +0100, Michel Dänzer wrote:
+>> On 2018-12-30 2:00 a.m., Yu Zhao wrote:
+>>> Userspace may request pitch alignment that is not supported by GPU.
+>>> Some requests 32, but GPU ignores it and uses default 64 when cpp is
+>>> 4. If GEM object is allocated based on the smaller alignment, GPU
+>>> DMA will go out of bound.
+>>>
+>>> Cc: stable@vger.kernel.org # v4.2+
+>>> Signed-off-by: Yu Zhao <yuzhao@google.com>
+>>> ---
+>>>  drivers/gpu/drm/amd/amdgpu/amdgpu_display.c | 16 ++++++++++++++++
+>>>  1 file changed, 16 insertions(+)
+>>>
+>>> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
+>>> index 15ce7e681d67..16af80ccd0a0 100644
+>>> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
+>>> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
+>>> @@ -527,6 +527,22 @@ amdgpu_display_user_framebuffer_create(struct drm_device *dev,
+>>>  	struct drm_gem_object *obj;
+>>>  	struct amdgpu_framebuffer *amdgpu_fb;
+>>>  	int ret;
+>>> +	struct amdgpu_device *adev = dev->dev_private;
+>>> +	int cpp = drm_format_plane_cpp(mode_cmd->pixel_format, 0);
+>>> +	int pitch = mode_cmd->pitches[0] / cpp;
+>>> +
+>>> +	if (pitch < mode_cmd->width) {
+>>> +		DRM_DEBUG_KMS("Expecting pitch(%d)/cpp(%d) >= width(%d)\n",
+>>> +			      mode_cmd->pitches[0], cpp, mode_cmd->width);
+>>> +		return ERR_PTR(-EINVAL);
+>>> +	}
+>>
+>> This should possibly be tested in drm_internal_framebuffer_create instead.
+> 
+> It seems to me drm_format_info_min_pitch() in framebuffer_check()
+> already does it. We could just remove the check here?
 
-syzbot found the following crash on:
-
-HEAD commit:    f1c2f8857c5a Merge tag 'powerpc-4.21-2' of git://git.kerne..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16b0484f400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=47c29c309c47af16
-dashboard link: https://syzkaller.appspot.com/bug?extid=a47c5f4c6c00fc1ed16e
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-
-Unfortunately, I don't have any reproducer for this crash yet.
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+a47c5f4c6c00fc1ed16e@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KASAN: slab-out-of-bounds in dst_dev_put+0x219/0x290 net/core/dst.c:168
-Read of size 8 at addr ffff88803291eca8 by task syz-executor0/15230
-
-CPU: 1 PID: 15230 Comm: syz-executor0 Not tainted 4.20.0+ #11
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  <IRQ>
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1db/0x2d0 lib/dump_stack.c:113
-  print_address_description.cold+0x7c/0x20d mm/kasan/report.c:187
-  kasan_report.cold+0x1b/0x40 mm/kasan/report.c:317
-  __asan_report_load8_noabort+0x14/0x20 mm/kasan/generic_report.c:135
-  dst_dev_put+0x219/0x290 net/core/dst.c:168
-  rt_fibinfo_free_cpus net/ipv4/fib_semantics.c:200 [inline]
-  free_fib_info_rcu+0x2f4/0x4a0 net/ipv4/fib_semantics.c:217
-  __rcu_reclaim kernel/rcu/rcu.h:240 [inline]
-  rcu_do_batch kernel/rcu/tree.c:2452 [inline]
-  invoke_rcu_callbacks kernel/rcu/tree.c:2773 [inline]
-  rcu_process_callbacks+0xc4a/0x1680 kernel/rcu/tree.c:2754
-  __do_softirq+0x30b/0xb11 kernel/softirq.c:292
-  invoke_softirq kernel/softirq.c:373 [inline]
-  irq_exit+0x180/0x1d0 kernel/softirq.c:413
-  exiting_irq arch/x86/include/asm/apic.h:536 [inline]
-  smp_apic_timer_interrupt+0x1b7/0x760 arch/x86/kernel/apic/apic.c:1062
-  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:807
-  </IRQ>
-RIP: 0010:PageSwapBacked include/linux/page-flags.h:307 [inline]
-RIP: 0010:PageSwapCache include/linux/page-flags.h:352 [inline]
-RIP: 0010:free_swap_cache mm/swap_state.c:266 [inline]
-RIP: 0010:free_pages_and_swap_cache+0x214/0x6a0 mm/swap_state.c:294
-Code: 42 43 c4 ff 48 8b b5 d0 fe ff ff 4c 89 e7 48 8b 85 c8 fe ff ff 48 85  
-f6 0f 85 28 03 00 00 48 89 bd d0 fe ff ff e8 7c 41 c4 ff <48> 8b bd d0 fe  
-ff ff 48 89 f8 48 c1 e8 03 80 3c 18 00 0f 85 70 03
-tls_set_device_offload_rx: netdev lo with no TLS offload
-RSP: 0018:ffff88809fabeef0 EFLAGS: 00000293 ORIG_RAX: ffffffffffffff13
-RAX: ffff88808b6de5c0 RBX: dffffc0000000000 RCX: ffffffff81bdb6ee
-RDX: 0000000000000000 RSI: ffffffff81bdb714 RDI: ffffea00027ccc40
-RBP: ffff88809fabf040 R08: ffff88808b6de5c0 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: ffffea00027ccc40
-R13: ffffea00027ccc40 R14: ffffea00027ccc48 R15: ffff88809fabf018
-  tlb_flush_mmu_free+0x4e/0x120 mm/mmu_gather.c:74
-  zap_pte_range mm/memory.c:1157 [inline]
-  zap_pmd_range mm/memory.c:1192 [inline]
-  zap_pud_range mm/memory.c:1221 [inline]
-  zap_p4d_range mm/memory.c:1242 [inline]
-  unmap_page_range+0x1c49/0x25a0 mm/memory.c:1263
-  unmap_single_vma+0x19d/0x300 mm/memory.c:1308
-  unmap_vmas+0x17c/0x310 mm/memory.c:1339
-  exit_mmap+0x2d4/0x5d0 mm/mmap.c:3140
-  __mmput kernel/fork.c:1046 [inline]
-  mmput+0x240/0x640 kernel/fork.c:1067
-tls_set_device_offload_rx: netdev lo with no TLS offload
-  exit_mm kernel/exit.c:545 [inline]
-  do_exit+0x9d3/0x2650 kernel/exit.c:854
-  do_group_exit+0x177/0x430 kernel/exit.c:970
-  get_signal+0x8b4/0x19b0 kernel/signal.c:2517
-  do_signal+0x91/0x1ea0 arch/x86/kernel/signal.c:816
-tls_set_device_offload_rx: netdev lo with no TLS offload
-  exit_to_usermode_loop+0x2f7/0x3b0 arch/x86/entry/common.c:162
-  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
-  do_syscall_64+0x696/0x800 arch/x86/entry/common.c:293
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x457ec9
-Code: Bad RIP value.
-RSP: 002b:00007fa0c9fcfc78 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: fffffffffffffff2 RBX: 0000000000000003 RCX: 0000000000457ec9
-RDX: 00000000200001c0 RSI: 0020000000008912 RDI: 0000000000000005
-RBP: 000000000073bfa0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007fa0c9fd06d4
-R13: 00000000004bf0f5 R14: 00000000004d06d0 R15: 00000000ffffffff
-tls_set_device_offload_rx: netdev lo with no TLS offload
-
-Allocated by task 15139:
-  save_stack+0x45/0xd0 mm/kasan/common.c:73
-  set_track mm/kasan/common.c:85 [inline]
-  kasan_kmalloc mm/kasan/common.c:482 [inline]
-  kasan_kmalloc+0xcf/0xe0 mm/kasan/common.c:455
-  kasan_slab_alloc+0xf/0x20 mm/kasan/common.c:397
-  kmem_cache_alloc_node+0x144/0x710 mm/slab.c:3631
-  __alloc_skb+0xf4/0x730 net/core/skbuff.c:196
-  alloc_skb include/linux/skbuff.h:1011 [inline]
-  nlmsg_new include/net/netlink.h:654 [inline]
-  rtmsg_ifinfo_build_skb+0x74/0x1a0 net/core/rtnetlink.c:3407
-  rtmsg_ifinfo_event.part.0+0x43/0xe0 net/core/rtnetlink.c:3443
-  rtmsg_ifinfo_event net/core/rtnetlink.c:3454 [inline]
-  rtmsg_ifinfo+0x8d/0xa0 net/core/rtnetlink.c:3452
-  __dev_notify_flags+0x2e9/0x470 net/core/dev.c:7601
-  dev_change_flags+0x10d/0x170 net/core/dev.c:7643
-  do_setlink+0x17f5/0x3e10 net/core/rtnetlink.c:2492
-  __rtnl_newlink+0xd58/0x1a70 net/core/rtnetlink.c:3115
-  rtnl_newlink+0x69/0xa0 net/core/rtnetlink.c:3240
-  rtnetlink_rcv_msg+0x481/0xc30 net/core/rtnetlink.c:5130
-  netlink_rcv_skb+0x17d/0x410 net/netlink/af_netlink.c:2477
-  rtnetlink_rcv+0x1d/0x30 net/core/rtnetlink.c:5148
-  netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
-  netlink_unicast+0x574/0x770 net/netlink/af_netlink.c:1336
-  netlink_sendmsg+0xa05/0xf90 net/netlink/af_netlink.c:1917
-  sock_sendmsg_nosec net/socket.c:621 [inline]
-  sock_sendmsg+0xdd/0x130 net/socket.c:631
-  __sys_sendto+0x387/0x5f0 net/socket.c:1788
-  __do_sys_sendto net/socket.c:1800 [inline]
-  __se_sys_sendto net/socket.c:1796 [inline]
-  __x64_sys_sendto+0xe1/0x1a0 net/socket.c:1796
-  do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Freed by task 15139:
-  save_stack+0x45/0xd0 mm/kasan/common.c:73
-  set_track mm/kasan/common.c:85 [inline]
-  __kasan_slab_free+0x102/0x150 mm/kasan/common.c:444
-  kasan_slab_free+0xe/0x10 mm/kasan/common.c:452
-  __cache_free mm/slab.c:3485 [inline]
-  kmem_cache_free+0x86/0x260 mm/slab.c:3747
-  kfree_skbmem net/core/skbuff.c:585 [inline]
-  kfree_skbmem+0x14e/0x230 net/core/skbuff.c:579
-  __kfree_skb net/core/skbuff.c:642 [inline]
-  consume_skb net/core/skbuff.c:701 [inline]
-  consume_skb+0x194/0x550 net/core/skbuff.c:695
-  netlink_broadcast_filtered+0x6e7/0x16f0 net/netlink/af_netlink.c:1512
-  netlink_broadcast net/netlink/af_netlink.c:1534 [inline]
-  nlmsg_multicast include/net/netlink.h:734 [inline]
-  nlmsg_notify+0x93/0x1c0 net/netlink/af_netlink.c:2520
-  rtnl_notify net/core/rtnetlink.c:742 [inline]
-  rtmsg_ifinfo_send net/core/rtnetlink.c:3431 [inline]
-  rtmsg_ifinfo_event.part.0+0xb0/0xe0 net/core/rtnetlink.c:3446
-  rtmsg_ifinfo_event net/core/rtnetlink.c:3454 [inline]
-  rtmsg_ifinfo+0x8d/0xa0 net/core/rtnetlink.c:3452
-  __dev_notify_flags+0x2e9/0x470 net/core/dev.c:7601
-  dev_change_flags+0x10d/0x170 net/core/dev.c:7643
-  do_setlink+0x17f5/0x3e10 net/core/rtnetlink.c:2492
-  __rtnl_newlink+0xd58/0x1a70 net/core/rtnetlink.c:3115
-  rtnl_newlink+0x69/0xa0 net/core/rtnetlink.c:3240
-  rtnetlink_rcv_msg+0x481/0xc30 net/core/rtnetlink.c:5130
-  netlink_rcv_skb+0x17d/0x410 net/netlink/af_netlink.c:2477
-  rtnetlink_rcv+0x1d/0x30 net/core/rtnetlink.c:5148
-  netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
-  netlink_unicast+0x574/0x770 net/netlink/af_netlink.c:1336
-  netlink_sendmsg+0xa05/0xf90 net/netlink/af_netlink.c:1917
-  sock_sendmsg_nosec net/socket.c:621 [inline]
-  sock_sendmsg+0xdd/0x130 net/socket.c:631
-  __sys_sendto+0x387/0x5f0 net/socket.c:1788
-  __do_sys_sendto net/socket.c:1800 [inline]
-  __se_sys_sendto net/socket.c:1796 [inline]
-  __x64_sys_sendto+0xe1/0x1a0 net/socket.c:1796
-  do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-The buggy address belongs to the object at ffff88803291eb80
-  which belongs to the cache skbuff_head_cache of size 224
-The buggy address is located 72 bytes to the right of
-  224-byte region [ffff88803291eb80, ffff88803291ec60)
-The buggy address belongs to the page:
-page:ffffea0000ca4780 count:1 mapcount:0 mapping:ffff8880aa16a040 index:0x0
-flags: 0x1fffc0000000200(slab)
-raw: 01fffc0000000200 ffffea0001b18448 ffffea0001a2cbc8 ffff8880aa16a040
-raw: 0000000000000000 ffff88803291e040 000000010000000c 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff88803291eb80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff88803291ec00: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
-> ffff88803291ec80: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
-                                   ^
-  ffff88803291ed00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff88803291ed80: fb fb fb fb fc fc fc fc fc fc fc fc fc fc fc fc
-==================================================================
+Yeah, looks like that should be fine.
 
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
+-- 
+Earthling Michel Dänzer               |               http://www.amd.com
+Libre software enthusiast             |             Mesa and X developer
