@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81C45C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:53:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51712C43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:53:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51C7020665
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:53:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22F0020665
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 12:53:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546865618;
-	bh=rj1yTAsWEwFHCf0bEqXlYqEbpvWrVlm22kQrzepPKTM=;
+	s=default; t=1546865626;
+	bh=aahJLRCTlG61pPUQnFgnHxckOQTWPWzZC5YoWALE3Jw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=f9DpvyX14KefskwenC7TnMNnPxl8it6bNfGj0UVulJ9BOyaH0xynFxScPWWy1iroa
-	 EzoCces5bTJsRIkqX1IRKeP4KOXSqRjhbMHWQn30pqgW/V6arRKYAsKtybkiC1sTL8
-	 0NORZPP4SCDRq5rJznulYRkSCBrYIibuzH8PdiG0=
+	b=zPSHetTezJ7kcShI4Jhu03fwLtV0RQUvbwWToxcfkpAydXU5du8jyknAzWAFjtPzT
+	 2cSUhro//ByEK2AtmWznQXH4ncjtbjSEvwD8U/SFKsap9Zod1HAAFLq1ooKdQRovkt
+	 Ai5/0w2j5F/6ETu8nqnuPwwIvPiuMMG7RT/dELyU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727750AbfAGMxh (ORCPT
+        id S1728539AbfAGMxp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 07:53:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42818 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 07:53:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42874 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727726AbfAGMxf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 07:53:35 -0500
+        id S1727919AbfAGMxk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 07:53:40 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B55FB20651;
-        Mon,  7 Jan 2019 12:53:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 49C2F20651;
+        Mon,  7 Jan 2019 12:53:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546865615;
-        bh=rj1yTAsWEwFHCf0bEqXlYqEbpvWrVlm22kQrzepPKTM=;
+        s=default; t=1546865619;
+        bh=aahJLRCTlG61pPUQnFgnHxckOQTWPWzZC5YoWALE3Jw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=j0UPkT1DZ1zpxEuaHoTkFBToVHDODAsadokCdk0MSdOvxKwYC6DOCq9mLcPhdiiyd
-         LRG/ALIr9JhX1iQp9UyiRuq+b2WSV112F6IZTYEWdp8wQjX1QT6s8Z6BQNwxkm9JWs
-         uB1/JLcEg5Lr6hPQzk4KjUHg5K8Ix5QJi4kFI1Yo=
+        b=QhsO8PWENCmFxOGgPw46tCau3UhesiPD1Wg/pU289eMbIIzOlCpdx6RDilVtIjTrZ
+         k2R6RmPoE8/hZaJASx6eWQDUJPjrcFWpIYHjDNgYgHtLDICq/ywQLFNSDCTKhuT4aH
+         9+nxhZO19YLqO3rbX60psHZ7OZwWFV6Ox9gLMDqo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Diana Craciun <diana.craciun@nxp.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.19 064/170] powerpc/fsl: Fix spectre_v2 mitigations reporting
-Date:   Mon,  7 Jan 2019 13:31:31 +0100
-Message-Id: <20190107104500.587001267@linuxfoundation.org>
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 4.19 065/170] mtd: atmel-quadspi: disallow building on ebsa110
+Date:   Mon,  7 Jan 2019 13:31:32 +0100
+Message-Id: <20190107104500.716089708@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107104452.953560660@linuxfoundation.org>
 References: <20190107104452.953560660@linuxfoundation.org>
@@ -65,37 +66,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Diana Craciun <diana.craciun@nxp.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit 7d8bad99ba5a22892f0cad6881289fdc3875a930 upstream.
+commit 2a9d92fb3a1282a4659f1bb6d5684018846537b7 upstream.
 
-Currently for CONFIG_PPC_FSL_BOOK3E the spectre_v2 file is incorrect:
+I ran into a link-time error with the atmel-quadspi driver on the
+EBSA110 platform:
 
-  $ cat /sys/devices/system/cpu/vulnerabilities/spectre_v2
-  "Mitigation: Software count cache flush"
+drivers/mtd/built-in.o: In function `atmel_qspi_run_command':
+:(.text+0x1ee3c): undefined reference to `_memcpy_toio'
+:(.text+0x1ee48): undefined reference to `_memcpy_fromio'
 
-Which is wrong. Fix it to report vulnerable for now.
+The problem is that _memcpy_toio/_memcpy_fromio are not available on
+that platform, and we have to prevent building the driver there.
 
-Fixes: ee13cb249fab ("powerpc/64s: Add support for software count cache flush")
-Cc: stable@vger.kernel.org # v4.19+
-Signed-off-by: Diana Craciun <diana.craciun@nxp.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+In case we want to backport this to older kernels: between linux-4.8
+and linux-4.20, the Kconfig entry was in drivers/mtd/spi-nor/Kconfig
+but had the same problem.
+
+Link: https://lore.kernel.org/patchwork/patch/812860/
+Fixes: 161aaab8a067 ("mtd: atmel-quadspi: add driver for Atmel QSPI controller")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/kernel/security.c |    2 +-
+ drivers/mtd/spi-nor/Kconfig |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/powerpc/kernel/security.c
-+++ b/arch/powerpc/kernel/security.c
-@@ -22,7 +22,7 @@ enum count_cache_flush_type {
- 	COUNT_CACHE_FLUSH_SW	= 0x2,
- 	COUNT_CACHE_FLUSH_HW	= 0x4,
- };
--static enum count_cache_flush_type count_cache_flush_type;
-+static enum count_cache_flush_type count_cache_flush_type = COUNT_CACHE_FLUSH_NONE;
+--- a/drivers/mtd/spi-nor/Kconfig
++++ b/drivers/mtd/spi-nor/Kconfig
+@@ -41,7 +41,7 @@ config SPI_ASPEED_SMC
  
- bool barrier_nospec_enabled;
- static bool no_nospec;
+ config SPI_ATMEL_QUADSPI
+ 	tristate "Atmel Quad SPI Controller"
+-	depends on ARCH_AT91 || (ARM && COMPILE_TEST)
++	depends on ARCH_AT91 || (ARM && COMPILE_TEST && !ARCH_EBSA110)
+ 	depends on OF && HAS_IOMEM
+ 	help
+ 	  This enables support for the Quad SPI controller in master mode.
 
 
