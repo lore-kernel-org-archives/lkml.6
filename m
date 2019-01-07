@@ -2,121 +2,95 @@ Return-Path: <SRS0=PvM2=PP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76F8EC43612
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 21:17:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 892F8C43612
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 21:18:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44B102183F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 21:17:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C82C206BB
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 21:18:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rVmcYUT6"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aVBu7oTj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726989AbfAGVRx (ORCPT
+        id S1727072AbfAGVR7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 16:17:53 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:39264 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726535AbfAGVRx (ORCPT
+        Mon, 7 Jan 2019 16:17:59 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:40938 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726535AbfAGVR7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 16:17:53 -0500
-Received: by mail-pl1-f196.google.com with SMTP id 101so739401pld.6;
-        Mon, 07 Jan 2019 13:17:52 -0800 (PST)
+        Mon, 7 Jan 2019 16:17:59 -0500
+Received: by mail-oi1-f195.google.com with SMTP id t204so1571012oie.7;
+        Mon, 07 Jan 2019 13:17:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=XlPsn6r23XxSclxH61s3k7oJGYMlYJfuWwARzOKEY30=;
-        b=rVmcYUT6BrVPARKK3AXfG0wAMzYGMUEYO0s74e58aDI/ACDp2509GjGBQzc8TDkjC5
-         AyPF+gdNqGYKciynkxYIFy316IynxaWo2IgqGdfRRhcjgykrlTt1R8G2hkZnvY3actAb
-         gHS4mRlPDFI75T7DCRcubYo+chMzGRqU4sKPrGzYKlborx92Hsz98K17r0Xxx4/Oc/qj
-         bJBc7i5nt8fgPr1QazhzNJsHtWkHAJnd4vdF64jxtUd8DGyAF4GAYioRyPn4wUjQvW12
-         CQ7fS1F4iwaCYipqEpGgruvTUTrGTqAz5YIRearPwuhd88NOafMD0yBR9meMLe1yqFfy
-         uM9A==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=i44JmbD6rHkIj+9YO90goURwALDU3LQBJjgKFO0pFJ4=;
+        b=aVBu7oTj/6H+j7NAqXMrOygDDBL+Fzv4KVuUkZkO/RmMP4TaR3DtcETkdQJxwj1EYo
+         Fepuz/FJ0K3PZ7zIT7Pp8hFsvRahw2cUeeNypPjKqqmuAfA5AtK3hSjBdvOhGWrL1DWu
+         MYtmrgHBLnvLoQ7RYPxUbfCqYptHVSJFEIotiQZY+5PurrGfPgLlR5woyBDuJVCrKUUW
+         dJv05sI85sJzKD2VOd2IIqIsDB+w0T31TS/bM/L6ppxm/s4o2baToIMp1hgBlqsO/fxC
+         F1nY1rDEvyV5hk9SV3UUWkSBycE0dHMLuX6Tg14F97IdRYCN21Az31Bwmpzo/nVyLXKS
+         +72A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=XlPsn6r23XxSclxH61s3k7oJGYMlYJfuWwARzOKEY30=;
-        b=jskQJ0oo/F4AsTMq6md2bfl2jINYm204gZdwDy6hqhDcRjtoh+n4SUutOH6to2hdrK
-         qdhocA5v/0sEUkRI+W6oLkYPfnopwybzm8Z8FEeVugzydfPgcqhLPSiyOzBbiq+w9/xe
-         qqj6BM9EvFzBOWimyb1Dq8HkVKPGCV1EwGCGYUk0xd2hEvzfrKuGeGhyZUgyI56dRW+s
-         YdCgJtp/Vuzwm9voImYe1CHF7gV9yUf4jyowo/FCP604YI55D98zN3PrV+b/yzhpu6vY
-         ba1dvPDq1x7hWOtRKD91Q8sIlDrGaeVOX8dDQNKcF+lKruFy3pC2vu7jcob0q5iQXfh6
-         6GPg==
-X-Gm-Message-State: AJcUukfFKgQvliXHk3mshB7q8gTwpyS8fc1fFD3Wv8hhAoibSY61zn+K
-        F0lH72RyHXFxpB211cW4PzU=
-X-Google-Smtp-Source: ALg8bN7UC+waEX+z+0ZAUh8DnhMlP2ZaiY6R5Cogqi/6MN38vehfsgyydtjGuETHiS2Xvqt9wW37TA==
-X-Received: by 2002:a17:902:b48b:: with SMTP id y11mr60682574plr.200.1546895872295;
-        Mon, 07 Jan 2019 13:17:52 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id o1sm102570318pgn.63.2019.01.07.13.17.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 07 Jan 2019 13:17:51 -0800 (PST)
-Date:   Mon, 7 Jan 2019 13:17:49 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 4.20 000/145] 4.20.1-stable review
-Message-ID: <20190107211749.GA12835@roeck-us.net>
-References: <20190107104437.308206189@linuxfoundation.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=i44JmbD6rHkIj+9YO90goURwALDU3LQBJjgKFO0pFJ4=;
+        b=lJSR9A6wS5Ic0NGV4SE9HH0m5j/109RTf8UZVvcANaNqvmk3IwH0Ajng0rLsZlbAIp
+         Y8UrtMl7O0Bt3v7vJgvuj8K73kt508aBl1UbRmAAW7e2EF0FUOy8PGT8Ta9CKL/dvCap
+         4ULeRKerZVD/mPOBQPVOdyNEJ5MXmo8ocLnONEpOq+ZEuvKjMLPhswy8h5yrJ1uqvbFQ
+         kyzvDdzbrflNMOxZ4vM613qmx6fjtQY7WQsoqVB6aITJ5dDLYCxAyx7o3TSMwQjd0Qzb
+         MCe7kOFm3n2Oy3rG9RG4RAJtw6OgfhBC7XZC77tfLyqI4VMu3sncBuEofYZ/beZRjteL
+         pHrg==
+X-Gm-Message-State: AJcUukcd9eiM7SsKkeFrqTn3xiOPHwpJ8CD1lv08xJScqFJn8pND7fAb
+        z3zU2hTsNot7OqIPHZfXQyC5lQ5AGrKQR72O1MU=
+X-Google-Smtp-Source: ALg8bN7NkHWFBqTNHgZ1vTDBoWhOAJoNOGCJXkoZbaenZj/vxl6fjR3L1rWjY50QciviKI1Eu+XKZ8OrORiOy/sXbDk=
+X-Received: by 2002:aca:4b4f:: with SMTP id y76mr9409099oia.88.1546895878432;
+ Mon, 07 Jan 2019 13:17:58 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190107104437.308206189@linuxfoundation.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <20190107105330.372621917@linuxfoundation.org> <20190107105337.790421457@linuxfoundation.org>
+In-Reply-To: <20190107105337.790421457@linuxfoundation.org>
+From:   Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Date:   Mon, 7 Jan 2019 21:17:22 +0000
+Message-ID: <CADVatmNw3X2WuUXSY9hP_n7ar2Hi8xUCh+BovQz2=c8RGRnwkQ@mail.gmail.com>
+Subject: Re: [PATCH 4.14 090/101] MIPS: c-r4k: Add r4k_blast_scache_node for Loongson-3
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Stable <stable@vger.kernel.org>, Huacai Chen <chenhc@lemote.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <james.hogan@mips.com>,
+        "Steven J . Hill" <Steven.Hill@cavium.com>,
+        linux-mips@linux-mips.org, Fuxin Zhang <zhangfx@lemote.com>,
+        Zhangjin Wu <wuzhangjin@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 07, 2019 at 01:30:37PM +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.20.1 release.
-> There are 145 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Wed Jan  9 10:43:39 UTC 2019.
-> Anything received after that time might be too late.
-> 
+Hi Greg,
 
-Build results:
-	total: 158 pass: 154 fail: 4
-Failed builds: 
-	arm:allmodconfig 
-	mips:allmodconfig 
-	parisc:allmodconfig 
-	xtensa:allmodconfig 
-Qemu test results:
-	total: 332 pass: 327 fail: 5
-Failed tests: 
-	mipsel64:fuloong2e_defconfig:fulong2e:rootfs
-	sh:rts7751r2dplus_defconfig:nvme:rootfs 
-	sh:rts7751r2dplus_defconfig:usb:rootfs 
-	sh:rts7751r2dplus_defconfig:usb-hub:rootfs 
-	sh:rts7751r2dplus_defconfig:usb-ohci:rootfs
+On Mon, Jan 7, 2019 at 1:14 PM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> 4.14-stable review patch.  If anyone has any objections, please let me know.
+>
+> ------------------
+>
+> From: Huacai Chen <chenhc@lemote.com>
+>
+> commit bb53fdf395eed103f85061bfff3b116cee123895 upstream.
 
----
-Build errors:
+This has been fixed by 66a4059ba72c ("MIPS: Only include mmzone.h when
+CONFIG_NEED_MULTIPLE_NODES=y")
 
-ERROR: "__bad_cmpxchg" [drivers/spi/spi-bcm2835.ko] undefined!
 
-Qemu errors:
-
-Building mipsel64:fuloong2e_defconfig:fulong2e:rootfs ... failed
-------------
-Error log:
-In file included from ./arch/mips/include/asm/mmzone.h:10:0,
-                 from ./arch/mips/include/asm/r4kcache.h:23,
-		 from arch/mips/mm/c-r4k.c:33:
-./arch/mips/include/asm/mach-loongson64/mmzone.h:48:0: error: "NODE_DATA" redefined
-
-sh images fail silently. That may be a recently introduced spurious problem.
-I'll try to track that down.
-
-Guenter
+-- 
+Regards
+Sudip
