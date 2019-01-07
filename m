@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ED30C43387
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:09:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4EFEC43387
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:09:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7C242089F
-	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:09:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C049217D4
+	for <linux-kernel@archiver.kernel.org>; Mon,  7 Jan 2019 13:09:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546866541;
-	bh=UpIGB/l+CXp+NcEdglo5aecU91CMEVQQOThksQjsfYc=;
+	s=default; t=1546866545;
+	bh=KHkNQR7JfX4o9VhPkM4yFPyzG8zF5ud6rW5wgNQLmP4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=lBsEVQnsDv0avdvNjq1kmwiMdHJGfEx8mAFxQ0x8pRnROboCoNd1eKeK0o+pmopwY
-	 qFyzjwwddbq/XWtSi6JJ5VrSfJHSQXV0Zg2iW2by//XxubzAqk+cZoIXF+aki8VrCM
-	 XlUel1GMuBWWKrJxLvuPIZwMT20aoQ0Ktx4fSaPQ=
+	b=UU+OWgCecDqS7k7E24ASI2cmHWu+Mk46yiS5d2KWRlAZbL1GymG9J/QbU1aVPwIt+
+	 ksRx7Lpy6Og8VqYCsC9NjDSiBzUV25cbsIML+rYpwdBU3YZZmJVM3XzXm/hD9u0Pxf
+	 dW3ACCGy14kEU4+32MsONjOnRxxbrztAh/Usrf6Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731755AbfAGNJB (ORCPT
+        id S1731766AbfAGNJE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 08:09:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56026 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 08:09:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56062 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731146AbfAGNI6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 08:08:58 -0500
+        id S1731146AbfAGNJB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 08:09:01 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 679432089F;
-        Mon,  7 Jan 2019 13:08:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7DC6A217D4;
+        Mon,  7 Jan 2019 13:09:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546866537;
-        bh=UpIGB/l+CXp+NcEdglo5aecU91CMEVQQOThksQjsfYc=;
+        s=default; t=1546866541;
+        bh=KHkNQR7JfX4o9VhPkM4yFPyzG8zF5ud6rW5wgNQLmP4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=D3Zy5s+pKajyTlxQya5an6cPsizKKk/k33/fL4OhKYrmq7zA3nOu3RhpmB0q7KEuf
-         f90RRkm21oox7kwT8r+ewMbclB1Ca3ZucvsJf7JpxhTLX5CxS6B/j1HwHXGf2Pt4dQ
-         Nya/6NuErdg5jFeG6yYbnXV1epRCyx4EUMFsAjH0=
+        b=FdDtHQaIZ+w1cMwedh48q3mkqmCdyh542PxAFLs0A3AFYO1W9PNgJOv9Rcq8yw72r
+         eRqMME36FRNHy0IGEn2C2a9/GB9acl5BM2NMiRsZwJ1QVRkHZwUlDTISkusWo6BoiI
+         CgYgR8Ywq7E67Hua4Reygpd4vqzl0y3Njm7qvUh0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alaa Hleihel <alaa@mellanox.com>,
-        Tariq Toukan <tariqt@mellanox.com>,
+        stable@vger.kernel.org, Yuval Avnery <yuvalav@mellanox.com>,
+        Daniel Jurgens <danielj@mellanox.com>,
         Saeed Mahameed <saeedm@mellanox.com>
-Subject: [PATCH 4.9 26/71] net/mlx5e: Remove the false indication of software timestamping support
-Date:   Mon,  7 Jan 2019 13:32:55 +0100
-Message-Id: <20190107105334.273824922@linuxfoundation.org>
+Subject: [PATCH 4.9 27/71] net/mlx5: Typo fix in del_sw_hw_rule
+Date:   Mon,  7 Jan 2019 13:32:56 +0100
+Message-Id: <20190107105334.325206885@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190107105330.280153213@linuxfoundation.org>
 References: <20190107105330.280153213@linuxfoundation.org>
@@ -66,48 +66,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alaa Hleihel <alaa@mellanox.com>
+From: Yuval Avnery <yuvalav@mellanox.com>
 
-[ Upstream commit 4765420439e758bfa4808392d18b0a4cb6f06065 ]
+[ Upstream commit f0337889147c956721696553ffcc97212b0948fe ]
 
-mlx5 driver falsely advertises support of software timestamping.
-Fix it by removing the false indication.
+Expression terminated with "," instead of ";", resulted in
+set_fte getting bad value for modify_enable_mask field.
 
-Fixes: ef9814deafd0 ("net/mlx5e: Add HW timestamping (TS) support")
-Signed-off-by: Alaa Hleihel <alaa@mellanox.com>
-Reviewed-by: Tariq Toukan <tariqt@mellanox.com>
+Fixes: bd5251dbf156 ("net/mlx5_core: Introduce flow steering destination of type counter")
+Signed-off-by: Yuval Avnery <yuvalav@mellanox.com>
+Reviewed-by: Daniel Jurgens <danielj@mellanox.com>
 Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c |   11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
+ drivers/net/ethernet/mellanox/mlx5/core/fs_core.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c
-@@ -1167,11 +1167,6 @@ static int mlx5e_get_ts_info(struct net_
- 			     struct ethtool_ts_info *info)
- {
- 	struct mlx5e_priv *priv = netdev_priv(dev);
--	int ret;
--
--	ret = ethtool_op_get_ts_info(dev, info);
--	if (ret)
--		return ret;
- 
- 	info->phc_index = priv->tstamp.ptp ?
- 			  ptp_clock_index(priv->tstamp.ptp) : -1;
-@@ -1179,9 +1174,9 @@ static int mlx5e_get_ts_info(struct net_
- 	if (!MLX5_CAP_GEN(priv->mdev, device_frequency_khz))
- 		return 0;
- 
--	info->so_timestamping |= SOF_TIMESTAMPING_TX_HARDWARE |
--				 SOF_TIMESTAMPING_RX_HARDWARE |
--				 SOF_TIMESTAMPING_RAW_HARDWARE;
-+	info->so_timestamping = SOF_TIMESTAMPING_TX_HARDWARE |
-+				SOF_TIMESTAMPING_RX_HARDWARE |
-+				SOF_TIMESTAMPING_RAW_HARDWARE;
- 
- 	info->tx_types = BIT(HWTSTAMP_TX_OFF) |
- 			 BIT(HWTSTAMP_TX_ON);
+--- a/drivers/net/ethernet/mellanox/mlx5/core/fs_core.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/fs_core.c
+@@ -390,7 +390,7 @@ static void del_rule(struct fs_node *nod
+ 	}
+ 	if ((fte->action & MLX5_FLOW_CONTEXT_ACTION_FWD_DEST) &&
+ 	    --fte->dests_size) {
+-		modify_mask = BIT(MLX5_SET_FTE_MODIFY_ENABLE_MASK_DESTINATION_LIST),
++		modify_mask = BIT(MLX5_SET_FTE_MODIFY_ENABLE_MASK_DESTINATION_LIST);
+ 		err = mlx5_cmd_update_fte(dev, ft,
+ 					  fg->id,
+ 					  modify_mask,
 
 
