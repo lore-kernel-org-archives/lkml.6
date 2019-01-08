@@ -2,200 +2,100 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA962C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:53:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37A8BC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:56:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B03F82087F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:53:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 03F7C20883
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:56:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mUwKQM/t"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SpltlmxD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728688AbfAHQxP (ORCPT
+        id S1728593AbfAHQ4L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 11:53:15 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:33432 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728535AbfAHQxP (ORCPT
+        Tue, 8 Jan 2019 11:56:11 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:34688 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727484AbfAHQ4K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 11:53:15 -0500
-Received: by mail-lj1-f194.google.com with SMTP id v1-v6so4018864ljd.0;
-        Tue, 08 Jan 2019 08:53:12 -0800 (PST)
+        Tue, 8 Jan 2019 11:56:10 -0500
+Received: by mail-lf1-f67.google.com with SMTP id p6so3471162lfc.1;
+        Tue, 08 Jan 2019 08:56:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=fLC8xP95XjKGKpur7tchfnAoZqhWli1WpKDNedamUH0=;
-        b=mUwKQM/t9UWAJrx0/NjmVv6wD6xEDFa8v9So03SgRKTJcNyLnQpD8I/EmTE+iwr/wV
-         /Sd1dGMzpiq+YYRl82wEtHRN8w5ZqRkudSxGB5Q5zmWl/MtfslerlffPJKBmKe/G0e7g
-         w6d/HUVWFHLGlIY6k2mUlTVsIcB1GTf1i4K+3TKaSvEskTCveFXLgfxk37foqhQfDQGX
-         Z/BbJu5XT32QzNspceDyXErg7L3v62WUdUffJUHarBcVB9M8PRDSwFJSCKQHWdwJ5vk+
-         qBsQUDpuvoIt8dg8jaKfB2iJ6fvfypENjNr7DTTNlGnsmWqA2yWuVVTNvmydAe2H35Io
-         rXfQ==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=RrC5TbkM7ooSeY1gmY25cHG+Xb4rV68ii2Clgc+hyVg=;
+        b=SpltlmxDe1/qv4NwrTcqa96yZqYlpC5J/0wPhg89FJmH+mu2uOJZiBx4MdHNTHdkNn
+         VeQLRPyR3MP6GYugfrGyj8+H0YM0P/B03hZcjY19hl7ufxKUjmol2pV9dDWeF6q+B4Lo
+         R9OyN1qQejV+TBT11pESrH9YTFjqsDggbYorsL1uLpSgg6q2oMv+nsEH6F0AohWxb/LM
+         4WuY5tA+QiRtBOVXRQRS5atI45RPuc8hOdgn0FfFn964vAgbwBWV/tjbeLXLTzfDXAZ9
+         PUcn/vJ4EUOa2ivieJF1SDKVa9e3mZwtVQa57UwNHAkfz6DW2zx9piNqxJyt8NHEdJkd
+         OXBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=fLC8xP95XjKGKpur7tchfnAoZqhWli1WpKDNedamUH0=;
-        b=KAhGQ5pGFGX1tgFH7vPO3uYNQ5elGx+4udSOqkV8lOG7xW21LAP3tZpfg8WQWBCafR
-         gSNO1ysytUlHXf0JfU7q36NQIN5l132XQSVLpwPLa6Ai6w3PIg2q1Ayrexz89xrGkJqk
-         bVZGAM7iNYA/JAT1bcYEBMZiQ20tVQiU4d7TZ70l8s3dftGKO6SGcwHsib3jrH80/Rzk
-         XuqPBQYiqrQiOvuLgqCIDh8FaP12qSTroHdZwaY1WoeCfnTRGrGd3avvhkoZDwCmpJrI
-         5u1E4cdrUB8nFQVgUSWFltErxjugS/D4xcYewHGWpfONtmH+Uv6vzAySJ/i45ATlUmKY
-         XO7A==
-X-Gm-Message-State: AJcUukeIOxCnVCenqxCN3wU9WLNqk4D1zbL93yeeCRjRtGflACrcd9YF
-        ioRFa9/uuFxNpTNf1CUpq4k=
-X-Google-Smtp-Source: ALg8bN58gxOsEGjGm2+0wNnx47qrnBxpebtsrC6ucTdhFNjQXeOGnerFIliO8eDpl/Qmnavo9Tyvbw==
-X-Received: by 2002:a2e:9849:: with SMTP id e9-v6mr1514187ljj.9.1546966391546;
-        Tue, 08 Jan 2019 08:53:11 -0800 (PST)
-Received: from acerlaptop.localnet ([2a02:a315:5445:5300:d033:e708:8ec7:810d])
-        by smtp.gmail.com with ESMTPSA id k21-v6sm14229459ljc.15.2019.01.08.08.53.09
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 08 Jan 2019 08:53:10 -0800 (PST)
-From:   =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=RrC5TbkM7ooSeY1gmY25cHG+Xb4rV68ii2Clgc+hyVg=;
+        b=lOZsmWIlkILCSBFl0uazRhL7JGEs/2P2rLs8E1bBqx4GGHEe8evuFnwNqbO1/+BFHd
+         o9k03yZHz11yWueoQWkwiYVw2aG/VPAu97fTnZ/ZtgcWwXvTYO9bDwSV3S6wpmlWl3aq
+         8bijGyVgn1xPZwDo2lAK0xb5WAk4lyT88UaaEjCY3fE5Ue0l+azm/QOdI9RHb8165okC
+         bTeAxHANndGHJkMh8QCgPNHkgq8rO/lb7XDkblKIk2KEiBj9yByNr3lMSjhwF0Ct3zZl
+         kg19ZOXx5DsHgKZLt8tG9aNK8g78pmrxWNqC1kH+ZsBltcCTogThurqeru5+eK/9SZfP
+         hwzQ==
+X-Gm-Message-State: AJcUuker5cudDiFSorhF84A8Bep51Q5TsjeM1H0VEbxNCOu2rRT/TB6a
+        g8hp+u8xCNJl7ER5zlnlueU=
+X-Google-Smtp-Source: ALg8bN6M3Gd0kPYa9j9AQFE1qNP5Qra/Fr13PN2WFE4WNWuQlDYjzfl2K2VkssnNHzvKcudU8YNSqQ==
+X-Received: by 2002:a19:645b:: with SMTP id b27mr1512410lfj.14.1546966567298;
+        Tue, 08 Jan 2019 08:56:07 -0800 (PST)
+Received: from localhost.localdomain ([2a02:a315:5445:5300:d033:e708:8ec7:810d])
+        by smtp.googlemail.com with ESMTPSA id f8sm14687989lfe.72.2019.01.08.08.56.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 08 Jan 2019 08:56:06 -0800 (PST)
+From:   =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+To:     krzk@kernel.org
 Cc:     kgene@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux@armlinux.org.uk, xc-racer2@live.ca,
-        linux-arm-kernel@lists.infradead.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org,
+        linux@armlinux.org.uk, pawel.mikolaj.chmiel@gmail.com,
+        xc-racer2@live.ca, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/6] ARM: dts: s5pv210: aries: Support for more devices present on Aries
-Date:   Tue, 08 Jan 2019 17:53:09 +0100
-Message-ID: <2674227.8dsLnzbNuO@acerlaptop>
-In-Reply-To: <CAJKOXPf3Z9=mjq_UWyD1oVEapvnNR71cDfyJP1Y_VLkXkFcyew@mail.gmail.com>
-References: <20181228161819.18931-1-pawel.mikolaj.chmiel@gmail.com> <20181228161819.18931-6-pawel.mikolaj.chmiel@gmail.com> <CAJKOXPf3Z9=mjq_UWyD1oVEapvnNR71cDfyJP1Y_VLkXkFcyew@mail.gmail.com>
+Subject: [PATCH v2 0/4] ARM: dts: s5pv210: aries: Enable more drivers present on Samsung Aries based devices
+Date:   Tue,  8 Jan 2019 17:55:57 +0100
+Message-Id: <20190108165601.25708-1-pawel.mikolaj.chmiel@gmail.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dnia poniedzia=C5=82ek, 31 grudnia 2018 14:35:55 CET Krzysztof Kozlowski pi=
-sze:
-> On Fri, 28 Dec 2018 at 17:18, Pawe=C5=82 Chmiel
-> <pawel.mikolaj.chmiel@gmail.com> wrote:
-> >
-> > From: Jonathan Bakker <xc-racer2@live.ca>
-> >
-> > This commit enables following devices present on Aries based phones:
-> > - pwm-vibrator attached to PWM 1
-> > - poweroff support
-> > - Atmel maXTouch touchscreen. It's connected to i2c2
-> > - Broadcom BCM4329 bluetooth over uart0
-> >
-> > Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
-> > Signed-off-by: Pawe=C5=82 Chmiel <pawel.mikolaj.chmiel@gmail.com>
-> > ---
-> >  arch/arm/boot/dts/s5pv210-aries.dtsi | 68 ++++++++++++++++++++++++++++
-> >  1 file changed, 68 insertions(+)
-> >
-> > diff --git a/arch/arm/boot/dts/s5pv210-aries.dtsi b/arch/arm/boot/dts/s=
-5pv210-aries.dtsi
-> > index 35ba009a1a33..b7246f879648 100644
-> > --- a/arch/arm/boot/dts/s5pv210-aries.dtsi
-> > +++ b/arch/arm/boot/dts/s5pv210-aries.dtsi
-> > @@ -41,6 +41,13 @@
-> >                 };
-> >         };
-> >
-> > +       vibrator_pwr: regulator-fixed-0 {
-> > +               compatible =3D "regulator-fixed";
-> > +               regulator-name =3D "vibrator-en";
-> > +               enable-active-high;
-> > +               gpio =3D <&gpj1 1 GPIO_ACTIVE_HIGH>;
-> > +       };
-> > +
-> >         wifi_pwrseq: wifi-pwrseq {
-> >                 compatible =3D "mmc-pwrseq-simple";
-> >                 reset-gpios =3D <&gpg1 2 GPIO_ACTIVE_LOW>;
-> > @@ -314,6 +321,22 @@
-> >                         reg =3D <0x36>;
-> >                 };
-> >         };
-> > +
-> > +       vibrator: pwm-vibrator {
-> > +               compatible =3D "pwm-vibrator";
-> > +               pwms =3D <&pwm 1 44642 0>;
-> > +               pwm-names =3D "enable";
-> > +               vcc-supply =3D <&vibrator_pwr>;
-> > +               pinctrl-names =3D "default";
-> > +               pinctrl-0 =3D <&pwm1_out>;
-> > +       };
-> > +
-> > +       poweroff: syscon-poweroff {
-> > +               compatible =3D "syscon-poweroff";
-> > +               regmap =3D <&pmu_syscon>;
-> > +               offset =3D <0x681c>; /* PS_HOLD_CONTROL */
-> > +               value =3D <0x5200>;
-> > +       };
-> >  };
-> >
-> >  &fimd {
-> > @@ -347,6 +370,23 @@
-> >         status =3D "okay";
-> >  };
-> >
-> > +&i2c2 {
-> > +       samsung,i2c-sda-delay =3D <100>;
-> > +       samsung,i2c-max-bus-freq =3D <400000>;
-> > +       samsung,i2c-slave-addr =3D <0x10>;
-> > +       status =3D "okay";
-> > +
-> > +       touchscreen@4a {
-> > +               compatible =3D "atmel,maxtouch";
-> > +               reg =3D <0x4a>;
-> > +               interrupt-parent =3D <&gpj0>;
-> > +               interrupts =3D <5 IRQ_TYPE_LEVEL_LOW>;
-> > +               pinctrl-names =3D "default";
-> > +               pinctrl-0 =3D <&ts_irq>;
-> > +               reset-gpios =3D <&gpj1 3 GPIO_ACTIVE_HIGH>;
-> > +       };
-> > +};
-> > +
-> >  &mfc {
-> >         memory-region =3D <&mfc_left>, <&mfc_right>;
-> >  };
-> > @@ -372,6 +412,13 @@
-> >                 samsung,pin-drv =3D <EXYNOS4_PIN_DRV_LV1>;
-> >         };
-> >
-> > +       bt_host_wake: bt-host-wake {
-> > +               samsung,pins =3D "gph2-5";
-> > +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_INPUT>;
-> > +               samsung,pin-pud =3D <S3C64XX_PIN_PULL_DOWN>;
-> > +               samsung,pin-drv =3D <EXYNOS4_PIN_DRV_LV1>;
-> > +       };
-> > +
-> >         tf_detect: tf-detect {
-> >                 samsung,pins =3D "gph3-4";
-> >                 samsung,pin-function =3D <EXYNOS_PIN_FUNC_INPUT>;
-> > @@ -384,6 +431,17 @@
-> >                 samsung,pin-function =3D <EXYNOS_PIN_FUNC_OUTPUT>;
-> >                 samsung,pin-pud =3D <S3C64XX_PIN_PULL_NONE>;
-> >         };
-> > +
-> > +       ts_irq: ts-irq {
-> > +               samsung,pins =3D "gpj0-5";
-> > +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_INPUT>;
-> > +               samsung,pin-pud =3D <S3C64XX_PIN_PULL_UP>;
->=20
-> It seems there is a difference here between Aries and Fascinate. At
-> least in vendor kernel. One disables pull and second pulls down.
-> Anyway neither of them pulls it up.
-=46ixed with all other issues in v2.
-Thanks
+This patchset enables more drivers for devices present on
+ Samsung Aries based devices.
 
->=20
-> Best regards,
-> Krzysztof
+Changes from v1:
+  - Removed already applied patches
+  - Fixed name of mfc memory reservation nodes
+  - Added separate patch with savedefconfig result
+  - Fixed configuration of touchscreen
 
+Jonathan Bakker (1):
+  ARM: dts: s5pv210: aries: Support for more devices present on Aries
 
+Paweł Chmiel (3):
+  ARM: dts: s5pv210: aries: Add reserved memory for mfc
+  ARM: defconfig: s5pv210: Run make savedefconfig
+  ARM: defconfig: s5pv210: Enable more drivers present on Samsung Aries
 
+ arch/arm/boot/dts/s5pv210-aries.dtsi | 90 ++++++++++++++++++++++++++++
+ arch/arm/configs/s5pv210_defconfig   | 41 +++++++++----
+ 2 files changed, 120 insertions(+), 11 deletions(-)
+
+-- 
+2.17.1
 
