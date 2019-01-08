@@ -2,106 +2,83 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27F06C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 14:52:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BC4AC43444
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 14:53:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7DB7206BB
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 14:52:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B4F0205F4
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 14:53:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546959171;
-	bh=PlorBsu+z/7u2piHFIruGyaQiakExf3P+uehUkSU1xw=;
+	s=default; t=1546959180;
+	bh=hv2fI+mwltR8/+uc3DtB8rK+o0WK2z6fjEEIPRKlpjY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=KUTcpb3n9lhaIXkAZb3vb09R0n8QkSyzKMmFzIfCj46VleVPObcl//e4djOsnfAaJ
-	 nAWtZPlD2KJSGL/NaHCEHsNqgTwu1mQfkm5RuGpJBNvSJyry0LRnULldgU07FUiATY
-	 g8cShUh18ER74mA0hsbUKn88TkX9IxvwnZokPBRw=
+	b=O6VKTjy2wwvMaiCwY9eMrwg62Oy/8qigvCGx+AO95gfiuoXnLj4e5a0s73VcB8eFI
+	 Xsf0HseOgy6AnseuUVkKQ9qdECkr9pPVC2oaMJ79zsSmVlb27mGema+w2cBNCY6iNk
+	 SkeV2PnASnM4Q8Avg9olpnyQ7NEoH41BeYdHxDb8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729016AbfAHOwu (ORCPT
+        id S1729034AbfAHOw7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 09:52:50 -0500
-Received: from mx2.suse.de ([195.135.220.15]:54482 "EHLO mx1.suse.de"
+        Tue, 8 Jan 2019 09:52:59 -0500
+Received: from mx2.suse.de ([195.135.220.15]:54542 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728604AbfAHOws (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 09:52:48 -0500
+        id S1728226AbfAHOw6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 09:52:58 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A4E96B0B1;
-        Tue,  8 Jan 2019 14:52:46 +0000 (UTC)
-Date:   Tue, 8 Jan 2019 15:52:45 +0100
+        by mx1.suse.de (Postfix) with ESMTP id C85CDB0B6;
+        Tue,  8 Jan 2019 14:52:56 +0000 (UTC)
+Date:   Tue, 8 Jan 2019 15:52:56 +0100
 From:   Michal Hocko <mhocko@kernel.org>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        cgroups@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH] mm: memcontrol: use struct_size() in kmalloc()
-Message-ID: <20190108145245.GW31793@dhcp22.suse.cz>
-References: <20190104183726.GA6374@embeddedor>
+To:     Jonathan Cameron <jonathan.cameron@huawei.com>
+Cc:     Fengguang Wu <fengguang.wu@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        kvm@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Fan Du <fan.du@intel.com>, Yao Yuan <yuan.yao@intel.com>,
+        Peng Dong <dongx.peng@intel.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Liu Jingqi <jingqi.liu@intel.com>,
+        Dong Eddie <eddie.dong@intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Zhang Yi <yi.z.zhang@linux.intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Mel Gorman <mgorman@suse.de>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        linux-accelerators@lists.ozlabs.org
+Subject: Re: [RFC][PATCH v2 00/21] PMEM NUMA node and hotness
+ accounting/migration
+Message-ID: <20190108145256.GX31793@dhcp22.suse.cz>
+References: <20181226131446.330864849@intel.com>
+ <20181227203158.GO16738@dhcp22.suse.cz>
+ <20181228050806.ewpxtwo3fpw7h3lq@wfg-t540p.sh.intel.com>
+ <20181228084105.GQ16738@dhcp22.suse.cz>
+ <20181228094208.7lgxhha34zpqu4db@wfg-t540p.sh.intel.com>
+ <20181228121515.GS16738@dhcp22.suse.cz>
+ <20181228133111.zromvopkfcg3m5oy@wfg-t540p.sh.intel.com>
+ <20181228195224.GY16738@dhcp22.suse.cz>
+ <20190102122110.00000206@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190104183726.GA6374@embeddedor>
+In-Reply-To: <20190102122110.00000206@huawei.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Cc Andrew (original patch is here http://lkml.kernel.org/r/20190104183726.GA6374@embeddedor)
+On Wed 02-01-19 12:21:10, Jonathan Cameron wrote:
+[...]
+> So ideally I'd love this set to head in a direction that helps me tick off
+> at least some of the above usecases and hopefully have some visibility on
+> how to address the others moving forwards,
 
-On Fri 04-01-19 12:37:26, Gustavo A. R. Silva wrote:
-> One of the more common cases of allocation size calculations is finding
-> the size of a structure that has a zero-sized array at the end, along
-> with memory for some number of elements for that array. For example:
-> 
-> struct foo {
->     int stuff;
->     void *entry[];
-> };
-> 
-> instance = kmalloc(sizeof(struct foo) + sizeof(void *) * count, GFP_KERNEL);
-> 
-> Instead of leaving these open-coded and prone to type mistakes, we can
-> now use the new struct_size() helper:
-> 
-> instance = kmalloc(struct_size(instance, entry, count), GFP_KERNEL);
-
-This looks indeed neater
-
-> This code was detected with the help of Coccinelle.
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-
-Acked-by: Michal Hocko <mhocko@suse.com>
-
-Thanks
-
-> ---
->  mm/memcontrol.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index af7f18b32389..ad256cf7da47 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -3626,8 +3626,7 @@ static int __mem_cgroup_usage_register_event(struct mem_cgroup *memcg,
->  	size = thresholds->primary ? thresholds->primary->size + 1 : 1;
->  
->  	/* Allocate memory for new array of thresholds */
-> -	new = kmalloc(sizeof(*new) + size * sizeof(struct mem_cgroup_threshold),
-> -			GFP_KERNEL);
-> +	new = kmalloc(struct_size(new, entries, size), GFP_KERNEL);
->  	if (!new) {
->  		ret = -ENOMEM;
->  		goto unlock;
-> -- 
-> 2.20.1
-
+Is it sufficient to have such a memory marked as movable (aka only have
+ZONE_MOVABLE)? That should rule out most of the kernel allocations and
+it fits the "balance by migration" concept.
 -- 
 Michal Hocko
 SUSE Labs
