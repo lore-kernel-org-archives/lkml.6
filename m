@@ -2,151 +2,102 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14B18C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:45:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91676C43612
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:46:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFF262087F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:45:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F80020883
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:46:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="bQBkUWm/";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="mZ2iv9r4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728794AbfAHQpS (ORCPT
+        id S1728905AbfAHQqU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 11:45:18 -0500
-Received: from foss.arm.com ([217.140.101.70]:56050 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728075AbfAHQpS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 11:45:18 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BD04AA78;
-        Tue,  8 Jan 2019 08:45:17 -0800 (PST)
-Received: from e103592.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 832BC3F5AF;
-        Tue,  8 Jan 2019 08:45:15 -0800 (PST)
-Date:   Tue, 8 Jan 2019 16:45:13 +0000
-From:   Dave Martin <Dave.Martin@arm.com>
-To:     Marc Zyngier <marc.zyngier@arm.com>
-Cc:     Julien Thierry <julien.thierry@arm.com>, mark.rutland@arm.com,
-        daniel.thompson@linaro.org,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, christoffer.dall@arm.com,
-        james.morse@arm.com, Oleg Nesterov <oleg@redhat.com>,
-        joel@joelfernandes.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v8 12/26] arm64: irqflags: Use ICC_PMR_EL1 for interrupt
- masking
-Message-ID: <20190108164510.GB5840@e103592.cambridge.arm.com>
-References: <1546956464-48825-1-git-send-email-julien.thierry@arm.com>
- <1546956464-48825-13-git-send-email-julien.thierry@arm.com>
- <20190108153957.GA5840@e103592.cambridge.arm.com>
- <8cae8016-d2c7-3c86-9832-f4278d42ea21@arm.com>
+        Tue, 8 Jan 2019 11:46:20 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:59780 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728228AbfAHQqT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 11:46:19 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id E7FAA60DB0; Tue,  8 Jan 2019 16:46:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1546965978;
+        bh=qqddlqz6euhtNtXTU3NIRjytHFmphV/nYiU4l5c4wO8=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=bQBkUWm/Z/R5vU5MOSqJCM4Xa26V2XzdIS6IjK9Y7mdvUaH+kcVt/nf+lQId6EGnO
+         Z7H1vNcoc9yL5pgs/MVPkvbZCNyFI2wMHtf2sX3ye2Gn57+wWH5WJlAU4ny+S4wh93
+         sFKe624zGo9Ga+tkLGVSAUu/b5x6aIzFDhOz0bUA=
+Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 7A16460DA8;
+        Tue,  8 Jan 2019 16:46:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1546965976;
+        bh=qqddlqz6euhtNtXTU3NIRjytHFmphV/nYiU4l5c4wO8=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=mZ2iv9r4W0iiTdinVFmLMnUbTEM2Dsnf57D1mf4tYZVUwC6o3+SwgHhBZNSWHMIKi
+         f0JZIUoJ4HCpygIjKdHn756bLpinVb2TcKQxh+xUpkHcaX+FQPQrwjZFkiMModWllG
+         Va3AfurgXe2mt5Twnm3ALEHQLsA50FTBEhZvhnlg=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7A16460DA8
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From:   Kalle Valo <kvalo@codeaurora.org>
+To:     Kangjie Lu <kjlu@umn.edu>
+Cc:     pakki001@umn.edu, "David S. Miller" <davem@davemloft.net>,
+        libertas-dev@lists.infradead.org, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] wireless: marvell: add checks for the return value of sysfs_create_group
+References: <20181226034305.73411-1-kjlu@umn.edu>
+Date:   Tue, 08 Jan 2019 18:46:11 +0200
+In-Reply-To: <20181226034305.73411-1-kjlu@umn.edu> (Kangjie Lu's message of
+        "Tue, 25 Dec 2018 21:43:03 -0600")
+Message-ID: <87va2zqer0.fsf@kamboji.qca.qualcomm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8cae8016-d2c7-3c86-9832-f4278d42ea21@arm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 08, 2019 at 03:51:18PM +0000, Marc Zyngier wrote:
-> On 08/01/2019 15:40, Dave Martin wrote:
-> > On Tue, Jan 08, 2019 at 02:07:30PM +0000, Julien Thierry wrote:
-> >> Instead disabling interrupts by setting the PSR.I bit, use a priority
-> >> higher than the one used for interrupts to mask them via PMR.
-> >>
-> >> When using PMR to disable interrupts, the value of PMR will be used
-> >> instead of PSR.[DAIF] for the irqflags.
-> >>
-> >> Signed-off-by: Julien Thierry <julien.thierry@arm.com>
-> >> Suggested-by: Daniel Thompson <daniel.thompson@linaro.org>
-> >> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> >> Cc: Will Deacon <will.deacon@arm.com>
-> >> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> >> Cc: Oleg Nesterov <oleg@redhat.com>
-> >> ---
-> >>  arch/arm64/include/asm/efi.h      |  11 ++++
-> >>  arch/arm64/include/asm/irqflags.h | 123 +++++++++++++++++++++++++++++---------
-> >>  2 files changed, 106 insertions(+), 28 deletions(-)
-> > 
-> > [...]
-> > 
-> >> diff --git a/arch/arm64/include/asm/irqflags.h b/arch/arm64/include/asm/irqflags.h
-> >> index 24692ed..fa3b06f 100644
-> >> --- a/arch/arm64/include/asm/irqflags.h
-> >> +++ b/arch/arm64/include/asm/irqflags.h
-> >> @@ -18,7 +18,9 @@
-> > 
-> > [...]
-> > 
-> >>  static inline void arch_local_irq_enable(void)
-> >>  {
-> >> -	asm volatile(
-> >> -		"msr	daifclr, #2		// arch_local_irq_enable"
-> >> -		:
-> >> +	unsigned long unmasked = GIC_PRIO_IRQON;
-> >> +
-> >> +	asm volatile(ALTERNATIVE(
-> >> +		"msr	daifclr, #2		// arch_local_irq_enable\n"
-> >> +		"nop",
-> >> +		"msr_s  " __stringify(SYS_ICC_PMR_EL1) ",%0\n"
-> >> +		"dsb	sy",
-> > 
-> > I'm still not convinced these dsbs are needed.
-> > 
-> > Without the dsb, we are probably not guaranteed to take a pending
-> > interrupt _immediately_ on unmasking, but I'm not sure that's a
-> > problem.
-> > 
-> > What goes wrong if we omit them?
-> 
-> Then the GIC doesn't know it can now deliver interrupts of a lower
-> priority. Only a dsb can guarantee that the GIC's view of PMR will get
-> updated.
-> 
-> See 9.1.6 (Observability of the effects of accesses to the GIC
-> registers), which states:
-> 
-> <quote>
-> Architectural execution of a DSB instruction guarantees that
-> — The last value written to ICC_PMR_EL1 or GICC_PMR is observed by the
-> associated Redistributor.
-> </quote>
-> 
-> So yes, DSB is required.
+Kangjie Lu <kjlu@umn.edu> writes:
 
-But it says neither what is means for the PMR write to be "observed by
-the redistributor", nor whether the DSB is required for the
-redistributor to observe the write at all.  (So, is an implementation
-allowed to cached in the CPU interface indefinitely until forcibly
-flushed to the redistributor by a DSB, and in any case can the write's
-reaching the distributor in finite time or not have any effect that we
-care about in this case?).
+> sysfs_create_group() could fail, so let's check its return values and
+> issue error messages if it fails.
+>
+> Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+> ---
+>  drivers/net/wireless/marvell/libertas/mesh.c | 4 ++++
 
+The correct prefix is "libertas: ".
 
-My reason for querying this is that temporary local masking of classes
-of interrupts seems an obvious use case for the PMR, and the DSB
-requirement flies rather in the face of this.
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches#commit_title_is_wrong
 
+> --- a/drivers/net/wireless/marvell/libertas/mesh.c
+> +++ b/drivers/net/wireless/marvell/libertas/mesh.c
+> @@ -797,7 +797,11 @@ static void lbs_persist_config_init(struct net_device *dev)
+>  {
+>  	int ret;
+>  	ret = sysfs_create_group(&(dev->dev.kobj), &boot_opts_group);
+> +	if (ret)
+> +		pr_err("failed to create boot_opts_group.\n");
 
-Have we seen hardware where interrupts may stall forever upstream of the
-CPU interface after a PMR write, until a dsb is executed by the CPU?
+Please add an empty line here for readability and resend the patch as
+v2.
 
-If so that is sad, but I guess we have to live with it.
+>  	ret = sysfs_create_group(&(dev->dev.kobj), &mesh_ie_group);
+> +	if (ret)
+> +		pr_err("failed to create mesh_ie_group.\n");
+>  }
+>  
+>  static void lbs_persist_config_remove(struct net_device *dev)
 
-Also, is it ever important in Linux that a pending interrupt be taken
-immediately upon unmasking (and how do we know that said interrupt is
-pending)?  If not, we don't care precisely when such interrupts are
-pended to the PE, just that such an interrupt cannot be taken before
-the PMR write that unmasks it.  It would be insane for the self-
-synchronization of PMR writes to lack this guarantee (and a DSB after
-the PMR write would do no good anyway in that case).
-
-Happy to be put right -- I'm doubtless showing my ignorance here!
-
-Cheers
----Dave
+-- 
+Kalle Valo
