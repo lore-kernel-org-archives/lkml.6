@@ -2,117 +2,123 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3F30C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 18:00:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF7BBC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 18:01:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF316206A3
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 18:00:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C50ED20827
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 18:01:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="EMCw8XFe"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729658AbfAHSAZ (ORCPT
+        id S1729334AbfAHSBg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 13:00:25 -0500
-Received: from shell.v3.sk ([90.176.6.54]:49934 "EHLO shell.v3.sk"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727484AbfAHR6p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 12:58:45 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id E819310005D;
-        Tue,  8 Jan 2019 18:58:42 +0100 (CET)
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id KM3uynEug4gh; Tue,  8 Jan 2019 18:58:33 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id A8496100053;
-        Tue,  8 Jan 2019 18:58:26 +0100 (CET)
-X-Virus-Scanned: amavisd-new at zimbra.v3.sk
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id yraUJQQp2QYp; Tue,  8 Jan 2019 18:58:23 +0100 (CET)
-Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id E58E6100051;
-        Tue,  8 Jan 2019 18:58:22 +0100 (CET)
-From:   Lubomir Rintel <lkundrak@v3.sk>
-To:     Andy Shevchenko <andy@infradead.org>,
-        Darren Hart <dvhart@infradead.org>,
-        platform-driver-x86@vger.kernel.org,
-        Russell King <linux@armlinux.org.uk>
-Cc:     James Cameron <quozl@laptop.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>, x86@kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH v4 02/15] dt-bindings: olpc,xo1.75-ec: Add OLPC XO-1.75 EC bindings
-Date:   Tue,  8 Jan 2019 18:58:05 +0100
-Message-Id: <20190108175818.705110-3-lkundrak@v3.sk>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190108175818.705110-1-lkundrak@v3.sk>
-References: <20190108175818.705110-1-lkundrak@v3.sk>
+        Tue, 8 Jan 2019 13:01:36 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:36263 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728587AbfAHSBg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 13:01:36 -0500
+Received: by mail-lj1-f193.google.com with SMTP id g11-v6so4196460ljk.3
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 10:01:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=W/JHyziTXYBZgKuarJJ+NDCvRCIPz6dL/9BbolzPVrs=;
+        b=EMCw8XFewXGueYaj9qtzkX6ek0b6RZUBiLrNSBGscpVfgjmfHO8I0Zcp+9zFdvmmEe
+         c2xh/HQ+On3H3TSOak2Mc+gZcDMR4Hmt5lDt+QRQDFkVzro/3z4pV9ut8gQTJyKdBI45
+         HYmYlhjsAI9dA98iwTXqP68zDqDrakq5cQvas=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=W/JHyziTXYBZgKuarJJ+NDCvRCIPz6dL/9BbolzPVrs=;
+        b=H7FYHSudjuLSVWHsaU51CmcnrNmFHcp4fJ3A80GY7Lj5KFi2F7QqwNJfJo/38p+pvx
+         DG2uGcmPYH+6j1NM69oEy0rYMbpEKBiFZMdHT5vOQ0whFwDEmomwV2lQTjnU9YMA5h4c
+         NwDvVO59+3Fr45z5K1mtA5LplNtMFkD53YN+dEo2ksZDU0WM0ldwx+2Z2I0tJUBEh+yr
+         Z5IfaXk/F4IZ/S95cPFRSNdq76KgRV3izcuW8SB0Y0KFcFlhl7sFsM19r35oww8zCsS2
+         XnGZUfJsLajzjlPxdG144HLpt1cqjhnpYo01daKJfmu+FB6YshnmntKFDSWtyvblkd9H
+         SPCQ==
+X-Gm-Message-State: AJcUukc68X8OcffuM8rnD2pS+2hbYOFRoFeRDUOyGdBNYDPNJ2jgXdcH
+        LSx3RnF/lWzsUDtZnktZT1AzhVkLDwHMzQ==
+X-Google-Smtp-Source: ALg8bN6hN28RjBzhnd1aB+KeRx7UpDUIZDPotkidd2YWhubjXgvd0nWCh4uj6GgT6na+pfiQZKDF+w==
+X-Received: by 2002:a2e:974a:: with SMTP id f10-v6mr1819219ljj.61.1546970493206;
+        Tue, 08 Jan 2019 10:01:33 -0800 (PST)
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com. [209.85.208.174])
+        by smtp.gmail.com with ESMTPSA id g17sm13381311lfg.78.2019.01.08.10.01.31
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 08 Jan 2019 10:01:32 -0800 (PST)
+Received: by mail-lj1-f174.google.com with SMTP id k15-v6so4169855ljc.8
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 10:01:31 -0800 (PST)
+X-Received: by 2002:a2e:95c6:: with SMTP id y6-v6mr1600815ljh.59.1546970491265;
+ Tue, 08 Jan 2019 10:01:31 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+References: <02bfc577-32a5-66be-64bf-d476b7d447d2@kernel.dk>
+ <20181121063609.GA109082@gmail.com> <48e27a3a-2bb2-ff41-3512-8aeb3fd59e57@kernel.dk>
+ <26eff539-7de7-784c-0c88-f1d30753299d@redhat.com> <7ea44458b90b4d41a08ba9012818d273@AcuMS.aculab.com>
+ <CAHk-=wjLNuNpHRfuVTb6awstC9OOmSb3S8aP51ufep-Th4dXKw@mail.gmail.com>
+ <CALCETrW=hMZLUM_nPEEgUW9x9Bmhm2LZ6ZRDiRRguxVT=-_BWA@mail.gmail.com>
+ <CAHk-=wiEUVpSU-GxpKDvN9wnH2yDxkJgE7Vqh46A+fmnvhubyw@mail.gmail.com>
+ <cd11d9423c8b46ecbf97753f8317c294@AcuMS.aculab.com> <64fd67993af04579b5262c270a7a4694@AcuMS.aculab.com>
+ <CAHk-=wj9DA-mH8jahuEPUWxO4EgbCcPRgdOJAQD58DBtCCrHcQ@mail.gmail.com>
+ <a3ebeca68de1493f876467f57575be74@AcuMS.aculab.com> <CAHk-=wiFoyd-L2f0sdyKDiBQ67b4VHjw9jO34ChYJxwqm1YhCA@mail.gmail.com>
+ <dbb32dfaebee4bcb8ec3372bc7a27032@AcuMS.aculab.com> <CAHk-=wg02_--Xbf9HQw0g5-0k_uY+ksbxfBHK45BKDnPjz9OXw@mail.gmail.com>
+ <9e479981e09b4bebaaf6bc7f81c7bb59@AcuMS.aculab.com>
+In-Reply-To: <9e479981e09b4bebaaf6bc7f81c7bb59@AcuMS.aculab.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 8 Jan 2019 10:01:15 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjFoLfXct8RdMQRGn_B7RFfpZib403CLORZrex1KbAAqg@mail.gmail.com>
+Message-ID: <CAHk-=wjFoLfXct8RdMQRGn_B7RFfpZib403CLORZrex1KbAAqg@mail.gmail.com>
+Subject: Re: [PATCH] x86: only use ERMS for user copies for larger sizes
+To:     David Laight <David.Laight@aculab.com>
+Cc:     Andrew Lutomirski <luto@kernel.org>,
+        "dvlasenk@redhat.com" <dvlasenk@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>,
+        Peter Anvin <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        "brgerst@gmail.com" <brgerst@gmail.com>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        "pabeni@redhat.com" <pabeni@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The OLPC XO-1.75 Embedded Controller is a SPI master that uses extra
-signals for handshaking. It needs to know when is the slave (Linux)
-side's TX FIFO ready for transfer (the ready-gpio signal on the SPI
-controller node) and when does it wish to respond with a command (the
-cmd-gpio property).
+On Tue, Jan 8, 2019 at 1:10 AM David Laight <David.Laight@aculab.com> wrote:
+> >
+> > It will never work for memcpy_fromio(). Any driver that thinks it will
+> > copy from io space to user space absolutely *has* to do it by hand. No
+> > questions, and no exceptions. Some loop like
+> >
+> >    for (..)
+> >       put_user(readl(iomem++), uaddr++);
+> >
+> > because neither copy_to_user() nor memcpy_fromio() will *ever* handle
+> > that correctly.
+> >
+> > They might randomly happen to work on x86, but absolutely nowhere else.
+>
+> Actually they tend to handle it on a lot of systems.
 
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-Acked-by: Pavel Machek <pavel@ucw.cz>
+Not with memcpy_fromio(), at least.
 
----
-Changes since v1:
-- s/cmd-gpio/cmd-gpios/
-- s/ready-gpio/ready-gpios/ in the documentation paragraph
-- Remove status =3D "okay" from the example
+That doesn't work even on x86. Try it. If the user space page is
+swapped out (or not mapped), you'd get a kernel page fault.
 
- .../bindings/misc/olpc,xo1.75-ec.txt          | 23 +++++++++++++++++++
- 1 file changed, 23 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/misc/olpc,xo1.75-ec=
-.txt
+And if you do "copy_to_user()" from a mmio region, you get what you
+get. If somebody complains about it doing a byte-at-a-time copy, I'll
+laugh in their face and tell them to fix their broken driver. It might
+work on about half the architectures out there, but it's still
+complete garbage, and it's not a bug in copy_to_user().
 
-diff --git a/Documentation/devicetree/bindings/misc/olpc,xo1.75-ec.txt b/=
-Documentation/devicetree/bindings/misc/olpc,xo1.75-ec.txt
-new file mode 100644
-index 000000000000..8c4d649cdd8f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/misc/olpc,xo1.75-ec.txt
-@@ -0,0 +1,23 @@
-+OLPC XO-1.75 Embedded Controller
-+
-+Required properties:
-+- compatible: Should be "olpc,xo1.75-ec".
-+- cmd-gpios: gpio specifier of the CMD pin
-+
-+The embedded controller requires the SPI controller driver to signal rea=
-diness
-+to receive a transfer (that is, when TX FIFO contains the response data)=
- by
-+strobing the ACK pin with the ready signal. See the "ready-gpios" proper=
-ty of the
-+SSP binding as documented in:
-+<Documentation/devicetree/bindings/spi/spi-pxa2xx.txt>.
-+
-+Example:
-+	&ssp3 {
-+		spi-slave;
-+		ready-gpios =3D <&gpio 125 GPIO_ACTIVE_HIGH>;
-+
-+		slave {
-+			compatible =3D "olpc,xo1.75-ec";
-+			spi-cpha;
-+			cmd-gpios =3D <&gpio 155 GPIO_ACTIVE_HIGH>;
-+		};
-+	};
---=20
-2.20.1
-
+               Linus
