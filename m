@@ -2,136 +2,469 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7180C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 13:37:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8C1FC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 13:40:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96DBB20850
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 13:37:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B16120827
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 13:40:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vg7h82xf"
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="Nuy5sVBS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728474AbfAHNhx (ORCPT
+        id S1727947AbfAHNkZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 08:37:53 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:34963 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727677AbfAHNht (ORCPT
+        Tue, 8 Jan 2019 08:40:25 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:40715 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727587AbfAHNkZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 08:37:49 -0500
-Received: by mail-it1-f194.google.com with SMTP id p197so5968714itp.0
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 05:37:48 -0800 (PST)
+        Tue, 8 Jan 2019 08:40:25 -0500
+Received: by mail-it1-f193.google.com with SMTP id h193so5960644ita.5
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 05:40:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=+vtvXi/AF3uGMIGzxHpWmRmtXtWc5UOkdkgrZJyivlg=;
-        b=vg7h82xfmR3yGZArbZVQLM9+1TOC2JRIbgzJD/GMS/mwLioOXkg5HY95mO8l8D4nH2
-         eJyWyFzaaLKPai7IjmZHy70piv2M5oIUX5BaHV102+FubItwYQyBx0/620D0jlAqY7to
-         7CqIAiO4pg+BtKgXZP2Yj2HmtK5E/bbj3IMddqcHh6RmWo/Wf0I6jt2FGrrmc+/S6rLt
-         rQYjM1WQV77xl7f9lfpmjy+7/fPnM0WaoeHfIuzZxhAGdxlmU3dnKqCR2Tdo7W14GMhE
-         CB0m4kaZPlcDAH7kffhjvrlM3h7+T7HRrSEZFdg4AfQQQPMm9HSblBS0b1qDn2B/Wob8
-         J24A==
+        d=ffwll.ch; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4onoqCSToNVGrYjRWjlDOAhpaH6n03TQ3sEGHq0EMec=;
+        b=Nuy5sVBSyc4JaqS5aRPib2VRu1CBkdw3BDoSWeG0/OdptcMrmvqXA7wBSoTu3qH9vz
+         a2RErxagtdEyK0i98dyAM2oPQxpV+esCs4XKD643GHD9cfVrobTU8Z5sHnSweejmoTGR
+         O3IQ60dk4rQdJI6kQTUiANRrGn0Pr/p7rXpwY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=+vtvXi/AF3uGMIGzxHpWmRmtXtWc5UOkdkgrZJyivlg=;
-        b=PqZmu5f1VonzSPdPe6ZdbcaYHdjpT/Oz4cpd30QrhTQoTYJ17uBA9c/cYJlWBGdUE0
-         iU2sDehkM4lT/kdEVHz6wvpxIStz3J0hpwUZRwqH7dFG4JLoTNyWfTvbE+l9feuY//Ka
-         6pErfvxdYu35091ft2rolL0k8hLgF5M+gFtmLV1J8oqOtcWBFdJ1ciQgCTqRE6PWxGT/
-         2sf59qbK33RWkAhBfpMqtIN1f2II4/2ZlaBYHif4PTHOPp9sEEKkcvgzO3LUqqh4BVtb
-         tf9NyOprhmhAX7lq5TPlRIcF8zizyei5fSHU8856aIOfmqeWGZYv9Tl56LCcrLullMqe
-         mvcQ==
-X-Gm-Message-State: AJcUukcSuPokhbboNWbO2xv9vbp9/HxrGb7BN0KozQxEdHxedRBtF4f6
-        BvJCQSaOwE1FgP/qZI+mey3nD2OzJl97M198G+U=
-X-Google-Smtp-Source: ALg8bN6ERUT7Wb9pBXpFLlisplPc/biY8FGj8cKjvNYHR7NGGRLRB3IOSrM63B5gjs6BRG0nQmzk42SjZdy/M3vY+as=
-X-Received: by 2002:a24:6e14:: with SMTP id w20mr1235341itc.69.1546954667932;
- Tue, 08 Jan 2019 05:37:47 -0800 (PST)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4onoqCSToNVGrYjRWjlDOAhpaH6n03TQ3sEGHq0EMec=;
+        b=X1Ns8ZuQpWEuTr3CaigSkrLjMyWqzDjmYO7NinqqU05wOXtfIvyu/Enaq0pcZ74M+4
+         RwTz7w2BHEXTifsvR8J9/cX60y9FhtTZTMjSyY5Ly9xRTJzqANIfmWtDPkFE2X1zG6EF
+         prPJjq/oFOC0wjOUUSqoy7nQetbNSRgqNOD3XDRAt2dEOEJF/WTZk9qzGYVtz+y2fPSU
+         L3jl5V/qngNjNbNCFq/bGNjZjDPP9O9SOZoZOrNe0XyQ2JQt/kLZJP9wr+fY4I+6llbk
+         zfEEsFu9fXPbziFSZbrYkd4lqbpbk17KSqE+oW07ZcEfvxsQndT/JkT4PCZ8g/MCAScY
+         uy3w==
+X-Gm-Message-State: AJcUuke9RsCdmLzXGEQyiQpNSjNHRlF1eh/GPM82t3q98y/dPNpbVuGb
+        3ytx0u7AaZP0OO2kTySQ+9r+GrOqNqwc8Vr/cOuhcA==
+X-Google-Smtp-Source: ALg8bN42nU0XSQ+Qy7OKjQPHSyEV193sJF2hbZlOMPDgJ3pZ34fhFwYzkuIyDDvn1x8Nktq3Dkf6OBUlKFKV6d1Icoc=
+X-Received: by 2002:a24:6115:: with SMTP id s21mr1375166itc.62.1546954823416;
+ Tue, 08 Jan 2019 05:40:23 -0800 (PST)
 MIME-Version: 1.0
-From:   Kyungtae Kim <kt0755@gmail.com>
-Date:   Tue, 8 Jan 2019 08:37:37 -0500
-Message-ID: <CAEAjamunJjFFJ8Yd-DQAv64MxYiiktsTUWex=boAOdc0+7h+uQ@mail.gmail.com>
-Subject: general protection fault in spk_ttyio_ldisc_close
-To:     w.d.hubbs@gmail.com, chris@the-brannons.com, kirk@reisers.ca,
-        samuel.thibault@ens-lyon.org
-Cc:     Byoungyoung Lee <lifeasageek@gmail.com>,
-        DaeRyong Jeong <threeearcat@gmail.com>,
-        gregkh@linuxfoundation.org, speakup@linux-speakup.org,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        syzkaller@googlegroups.com
+References: <20190102084917.4049-1-frank-w@public-files.de> <20190107103640.GH21184@phenom.ffwll.local>
+In-Reply-To: <20190107103640.GH21184@phenom.ffwll.local>
+From:   Daniel Vetter <daniel@ffwll.ch>
+Date:   Tue, 8 Jan 2019 14:40:12 +0100
+Message-ID: <CAKMK7uEqxz4TAt_iwEC+dMWboVxCeCduyABsSwD0Ns7k=Z_UWA@mail.gmail.com>
+Subject: Re: [PATCH] drm/mediatek: Add MTK Framebuffer-Device (mt7623)
+To:     Frank Wunderlich <frank-w@public-files.de>
+Cc:     CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+        David Airlie <airlied@linux.ie>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        Alexander Ryabchenko <d3adme4t@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We report a bug in linux-4.20: "general protection fault in
-spk_ttyio_ldisc_close"
+On Mon, Jan 7, 2019 at 11:36 AM Daniel Vetter <daniel@ffwll.ch> wrote:
+>
+> On Wed, Jan 02, 2019 at 09:49:17AM +0100, Frank Wunderlich wrote:
+> > From: CK Hu <ck.hu@mediatek.com>
+> >
+> > This patch adds Framebuffer-Driver for Mediatek
+> >
+> > currently tested on mt7623, maybe works on other platforms
+> > MTK-FBDev written by CK Hu and ported from 4.4
+> >
+> > based on patchset drm/hdmi for 7623 v5 (except last part included in 4.20)
+> >   https://patchwork.kernel.org/project/linux-mediatek/list/?series=25989
+> >
+> > depends on
+> >   dts-patch (resend of 5/5, parts 1-4 already in 4.20):
+> >     "arm: dts: mt7623: add display subsystem related device nodes"
+> >     https://patchwork.kernel.org/patch/10588951/
+> >   2 bugfix-patches from bibby hsieh
+> >     fix-boot-up-for-720-and-480-but-1080
+> >     using-different-round-rate-for-mt7623
+> >   1 Patch from Ryder Lee
+> >     http://forum.banana-pi.org/t/kernel-4-19-rc1-for-testers/6618/52
+> >
+> > full working tree here for reference:
+> > https://github.com/frank-w/BPI-R2-4.14/commits/4.20-hdmiv5
+> >
+> > Signed-off-by: CK Hu <ck.hu@mediatek.com>
+> > Signed-off-by: Alexander Ryabchenko <d3adme4t@gmail.com>
+> > Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
+> > Tested-by: Frank Wunderlich <frank-w@public-files.de>
+>
+> Would be good to use the new generic fbdev emulation code here, for even
+> less code. Or at least know why this isn't possible to use for mtk (and
+> maybe address that in the core code). Hand-rolling fbdev code shouldn't be
+> needed anymore.
 
-kernel config: https://kt0755.github.io/etc/config_v4.20_stable
-repro: https://kt0755.github.io/etc/repro.a670e.c
+Back on the mailing list, no private replies please:
 
-This occurs when the function kfree is about to execute
-(driver/staging/speakup/spk_ttyio.c:68).
-Particularly, kfree takes the argument like speakup_tty->disc_data.
-But speakup_tty is invalid, so the pointer dereference causes GPF.
-At a glance, it seems that speakup_tty was deallocated somewhere ahead of kfree.
+For examples please grep for drm_fbdev_generic_setup(). There's also a
+still in-flight series from Gerd Hoffmann to convert over bochs. That,
+plus all the kerneldoc linked from there should get you started.
+-Daniel
 
-=========================================
-general protection fault: 0000 [#1] PREEMPT SMP KASAN PTI
-CPU: 0 PID: 13246 Comm: syz-executor7 Not tainted 4.20.0-rc2 #1
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Bochs 01/01/2011
-RIP: 0010:spk_ttyio_ldisc_close+0x3f/0x80 drivers/staging/speakup/spk_ttyio.c:68
-Code: 35 95 8c e8 43 03 60 01 48 8b 1d dc 2e 3f 07 48 ba 00 00 00 00
-00 fc ff df 48 8d bb 70 05 00 00 48 89 f8 48 c1 e8 03 48 01 d0 <80> 38
-00 75 26 48 8b bb 70 05 00 00 e8 a0 68 4f fa 48 c7 c7 c0 35
-RSP: 0018:ffff88810e6f7960 EFLAGS: 00010282
-RAX: dffffc00000000ae RBX: 0000000000000000 RCX: 1ffff11021cdef00
-RDX: dffffc0000000000 RSI: 0000000000000008 RDI: 0000000000000570
-RBP: ffff88810e6f7968 R08: fffffbfff192a6b9 R09: fffffbfff192a6b9
-R10: ffff88810e6f7950 R11: fffffbfff192a6b8 R12: ffff8881063ee6b0
-R13: ffffffff87471020 R14: ffff8881063eeea8 R15: ffff888116ec7b80
-FS:  00007f607f746700(0000) GS:ffff88811a000000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000006fb2e0 CR3: 000000010f186000 CR4: 00000000000006f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- tty_ldisc_close drivers/tty/tty_ldisc.c:477 [inline]
- tty_ldisc_kill+0xef/0x1a0 drivers/tty/tty_ldisc.c:623
- tty_ldisc_release+0x111/0x230 drivers/tty/tty_ldisc.c:790
- tty_release_struct+0x1f/0x60 drivers/tty/tty_io.c:1595
- tty_release+0xb80/0x11c0 drivers/tty/tty_io.c:1768
- __fput+0x2b8/0x7a0 fs/file_table.c:278
- ____fput+0x1a/0x20 fs/file_table.c:309
- task_work_run+0x15b/0x1e0 kernel/task_work.c:113
- exit_task_work include/linux/task_work.h:22 [inline]
- do_exit+0x8d6/0x30d0 kernel/exit.c:867
- do_group_exit+0x13d/0x370 kernel/exit.c:970
- get_signal+0x6bb/0x1890 kernel/signal.c:2517
- do_signal+0x8c/0x1a10 arch/x86/kernel/signal.c:816
- exit_to_usermode_loop+0x186/0x1d0 arch/x86/entry/common.c:162
- prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
- syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
- do_syscall_64+0x445/0x4f0 arch/x86/entry/common.c:293
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x4497b9
-Code: e8 8c 9f 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48
-89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d
-01 f0 ff ff 0f 83 9b 6b fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f607f745ce8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
-RAX: fffffffffffffe00 RBX: 000000000071bf80 RCX: 00000000004497b9
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 000000000071bf80
-RBP: 000000000071bf80 R08: 0000000000000000 R09: 000000000071bf58
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f607f7469c0 R15: 00007f607f746700
-Modules linked in:
-Dumping ftrace buffer:
-   (ftrace buffer empty)
-=========================================
 
-Thanks,
-Kyungtae Kim
+> -Daniel
+> > ---
+> >  drivers/gpu/drm/mediatek/Makefile        |   1 +
+> >  drivers/gpu/drm/mediatek/mtk_drm_drv.c   |   6 +
+> >  drivers/gpu/drm/mediatek/mtk_drm_drv.h   |   4 +
+> >  drivers/gpu/drm/mediatek/mtk_drm_fb.c    |  13 ++
+> >  drivers/gpu/drm/mediatek/mtk_drm_fb.h    |   3 +
+> >  drivers/gpu/drm/mediatek/mtk_drm_fbdev.c | 178 +++++++++++++++++++++++
+> >  drivers/gpu/drm/mediatek/mtk_drm_fbdev.h |  25 ++++
+> >  7 files changed, 230 insertions(+)
+> >  create mode 100644 drivers/gpu/drm/mediatek/mtk_drm_fbdev.c
+> >  create mode 100644 drivers/gpu/drm/mediatek/mtk_drm_fbdev.h
+> >
+> > diff --git a/drivers/gpu/drm/mediatek/Makefile b/drivers/gpu/drm/mediatek/Makefile
+> > index 82ae49c64221..d71e57dea77a 100644
+> > --- a/drivers/gpu/drm/mediatek/Makefile
+> > +++ b/drivers/gpu/drm/mediatek/Makefile
+> > @@ -14,6 +14,7 @@ mediatek-drm-y := mtk_disp_color.o \
+> >                 mtk_mipi_tx.o \
+> >                 mtk_dpi.o
+> >
+> > +mediatek-drm-$(CONFIG_DRM_FBDEV_EMULATION) += mtk_drm_fbdev.o
+> >  obj-$(CONFIG_DRM_MEDIATEK) += mediatek-drm.o
+> >
+> >  mediatek-drm-hdmi-objs := mtk_cec.o \
+> > diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+> > index 7800822b4db1..51f1ec3412d3 100644
+> > --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+> > +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+> > @@ -32,6 +32,7 @@
+> >  #include "mtk_drm_ddp_comp.h"
+> >  #include "mtk_drm_drv.h"
+> >  #include "mtk_drm_fb.h"
+> > +#include "mtk_drm_fbdev.h"
+> >  #include "mtk_drm_gem.h"
+> >
+> >  #define DRIVER_NAME "mediatek"
+> > @@ -299,6 +300,10 @@ static int mtk_drm_kms_init(struct drm_device *drm)
+> >       drm_kms_helper_poll_init(drm);
+> >       drm_mode_config_reset(drm);
+> >
+> > +     ret = mtk_fbdev_init(drm);
+> > +     if (ret)
+> > +             goto err_component_unbind;
+> > +
+> >       return 0;
+> >
+> >  err_component_unbind:
+> > @@ -311,6 +316,7 @@ static int mtk_drm_kms_init(struct drm_device *drm)
+> >
+> >  static void mtk_drm_kms_deinit(struct drm_device *drm)
+> >  {
+> > +     mtk_fbdev_fini(drm);
+> >       drm_kms_helper_poll_fini(drm);
+> >
+> >       component_unbind_all(drm->dev, drm);
+> > diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.h b/drivers/gpu/drm/mediatek/mtk_drm_drv.h
+> > index 256a3ff2e66e..56129a21fb2b 100644
+> > --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.h
+> > +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.h
+> > @@ -14,6 +14,7 @@
+> >  #ifndef MTK_DRM_DRV_H
+> >  #define MTK_DRM_DRV_H
+> >
+> > +#include <drm/drm_fb_helper.h>
+> >  #include <linux/io.h>
+> >  #include "mtk_drm_ddp_comp.h"
+> >
+> > @@ -43,6 +44,7 @@ struct mtk_drm_private {
+> >       struct drm_device *drm;
+> >       struct device *dma_dev;
+> >
+> > +     struct drm_crtc *crtc[MAX_CRTC];
+> >       unsigned int num_pipes;
+> >
+> >       struct device_node *mutex_node;
+> > @@ -59,6 +61,8 @@ struct mtk_drm_private {
+> >       } commit;
+> >
+> >       struct drm_atomic_state *suspend_state;
+> > +     struct drm_fb_helper fb_helper;
+> > +     struct drm_gem_object *fbdev_bo;
+> >  };
+> >
+> >  extern struct platform_driver mtk_ddp_driver;
+> > diff --git a/drivers/gpu/drm/mediatek/mtk_drm_fb.c b/drivers/gpu/drm/mediatek/mtk_drm_fb.c
+> > index be5f6f1daf55..7533aa4733d2 100644
+> > --- a/drivers/gpu/drm/mediatek/mtk_drm_fb.c
+> > +++ b/drivers/gpu/drm/mediatek/mtk_drm_fb.c
+> > @@ -56,6 +56,19 @@ static struct drm_framebuffer *mtk_drm_framebuffer_init(struct drm_device *dev,
+> >       return fb;
+> >  }
+> >
+> > +struct drm_framebuffer *mtk_drm_framebuffer_create(struct drm_device *dev,
+> > +                                     const struct drm_mode_fb_cmd2 *mode,
+> > +                                     struct drm_gem_object *obj)
+> > +{
+> > +     struct drm_framebuffer *mtk_fb;
+> > +
+> > +     mtk_fb = mtk_drm_framebuffer_init(dev, mode, obj);
+> > +     if (IS_ERR(mtk_fb))
+> > +             return ERR_CAST(mtk_fb);
+> > +
+> > +     return mtk_fb;
+> > +}
+> > +
+> >  /*
+> >   * Wait for any exclusive fence in fb's gem object's reservation object.
+> >   *
+> > diff --git a/drivers/gpu/drm/mediatek/mtk_drm_fb.h b/drivers/gpu/drm/mediatek/mtk_drm_fb.h
+> > index 7f976b196a15..e49e015380d0 100644
+> > --- a/drivers/gpu/drm/mediatek/mtk_drm_fb.h
+> > +++ b/drivers/gpu/drm/mediatek/mtk_drm_fb.h
+> > @@ -18,5 +18,8 @@ int mtk_fb_wait(struct drm_framebuffer *fb);
+> >  struct drm_framebuffer *mtk_drm_mode_fb_create(struct drm_device *dev,
+> >                                              struct drm_file *file,
+> >                                              const struct drm_mode_fb_cmd2 *cmd);
+> > +struct drm_framebuffer *mtk_drm_framebuffer_create(struct drm_device *dev,
+> > +             const struct drm_mode_fb_cmd2 *mode,
+> > +             struct drm_gem_object *obj);
+> >
+> >  #endif /* MTK_DRM_FB_H */
+> > diff --git a/drivers/gpu/drm/mediatek/mtk_drm_fbdev.c b/drivers/gpu/drm/mediatek/mtk_drm_fbdev.c
+> > new file mode 100644
+> > index 000000000000..9670f50d1247
+> > --- /dev/null
+> > +++ b/drivers/gpu/drm/mediatek/mtk_drm_fbdev.c
+> > @@ -0,0 +1,178 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * Copyright (c) 2018 MediaTek Inc.
+> > + * Author: CK Hu <ck.hu@mediatek.com>
+> > + */
+> > +
+> > +#include <drm/drmP.h>
+> > +#include <drm/drm_crtc_helper.h>
+> > +#include <drm/drm_fb_helper.h>
+> > +#include <drm/drm_gem.h>
+> > +
+> > +#include "mtk_drm_drv.h"
+> > +#include "mtk_drm_fb.h"
+> > +#include "mtk_drm_gem.h"
+> > +#include "mtk_drm_fbdev.h"
+> > +
+> > +#define to_drm_private(x) \
+> > +             container_of(x, struct mtk_drm_private, fb_helper)
+> > +
+> > +static int mtk_drm_fbdev_mmap(struct fb_info *info, struct vm_area_struct *vma)
+> > +{
+> > +     struct drm_fb_helper *helper = info->par;
+> > +     struct mtk_drm_private *private = to_drm_private(helper);
+> > +
+> > +     return mtk_drm_gem_mmap_buf(private->fbdev_bo, vma);
+> > +}
+> > +
+> > +static struct fb_ops mtk_fbdev_ops = {
+> > +     .owner = THIS_MODULE,
+> > +     DRM_FB_HELPER_DEFAULT_OPS,
+> > +     .fb_fillrect = drm_fb_helper_cfb_fillrect,
+> > +     .fb_copyarea = drm_fb_helper_cfb_copyarea,
+> > +     .fb_imageblit = drm_fb_helper_cfb_imageblit,
+> > +     .fb_check_var = drm_fb_helper_check_var,
+> > +     .fb_set_par = drm_fb_helper_set_par,
+> > +     .fb_blank = drm_fb_helper_blank,
+> > +     .fb_pan_display = drm_fb_helper_pan_display,
+> > +     .fb_setcmap = drm_fb_helper_setcmap,
+> > +     .fb_mmap = mtk_drm_fbdev_mmap,
+> > +};
+> > +
+> > +static int mtk_fbdev_probe(struct drm_fb_helper *helper,
+> > +                        struct drm_fb_helper_surface_size *sizes)
+> > +{
+> > +     struct drm_device *dev = helper->dev;
+> > +     struct mtk_drm_private *private = to_drm_private(helper);
+> > +     struct drm_mode_fb_cmd2 mode = { 0 };
+> > +     struct mtk_drm_gem_obj *mtk_gem;
+> > +     struct fb_info *info;
+> > +     struct drm_framebuffer *fb;
+> > +     unsigned int bytes_per_pixel;
+> > +     unsigned long offset;
+> > +     size_t size;
+> > +     int err = 0;
+> > +
+> > +     bytes_per_pixel = DIV_ROUND_UP(sizes->surface_bpp, 8);
+> > +
+> > +     mode.width = sizes->surface_width;
+> > +     mode.height = sizes->surface_height;
+> > +     mode.pitches[0] = sizes->surface_width * bytes_per_pixel;
+> > +     mode.pixel_format = drm_mode_legacy_fb_format(sizes->surface_bpp,
+> > +                                                   sizes->surface_depth);
+> > +
+> > +     size = mode.pitches[0] * mode.height;
+> > +
+> > +     mtk_gem = mtk_drm_gem_create(dev, size, true);
+> > +     if (IS_ERR(mtk_gem))
+> > +             return PTR_ERR(mtk_gem);
+> > +
+> > +     private->fbdev_bo = &mtk_gem->base;
+> > +
+> > +     info = drm_fb_helper_alloc_fbi(helper);
+> > +     if (IS_ERR(info)) {
+> > +             DRM_DEV_ERROR(dev->dev,
+> > +                     "failed to allocate framebuffer info, %d\n",
+> > +                     err);
+> > +             err = PTR_ERR(info);
+> > +             goto out;
+> > +     }
+> > +
+> > +     fb = mtk_drm_framebuffer_create(dev, &mode, private->fbdev_bo);
+> > +     if (IS_ERR(fb)) {
+> > +             DRM_DEV_ERROR(dev->dev,
+> > +                     "failed to allocate DRM framebuffer, %d\n",
+> > +                     err);
+> > +             err = PTR_ERR(fb);
+> > +             goto out;
+> > +     }
+> > +     helper->fb = fb;
+> > +
+> > +     info->par = helper;
+> > +     info->flags = FBINFO_FLAG_DEFAULT;
+> > +     info->fbops = &mtk_fbdev_ops;
+> > +
+> > +     drm_fb_helper_fill_fix(info, fb->pitches[0], fb->format->depth);
+> > +     drm_fb_helper_fill_var(info, helper, sizes->fb_width, sizes->fb_height);
+> > +
+> > +     offset = info->var.xoffset * bytes_per_pixel;
+> > +     offset += info->var.yoffset * fb->pitches[0];
+> > +
+> > +     dev->mode_config.fb_base = 0;
+> > +     info->screen_base = mtk_gem->kvaddr + offset;
+> > +     info->screen_size = size;
+> > +     info->fix.smem_len = size;
+> > +
+> > +     DRM_DEBUG_KMS("FB [%ux%u]-%u offset=%lu size=%zd\n",
+> > +                   fb->width, fb->height, fb->format->depth, offset, size);
+> > +
+> > +     info->skip_vt_switch = true;
+> > +
+> > +     return 0;
+> > +
+> > +out:
+> > +
+> > +
+> > +     mtk_drm_gem_free_object(&mtk_gem->base);
+> > +     return err;
+> > +}
+> > +
+> > +static const struct drm_fb_helper_funcs mtk_drm_fb_helper_funcs = {
+> > +     .fb_probe = mtk_fbdev_probe,
+> > +};
+> > +
+> > +int mtk_fbdev_init(struct drm_device *dev)
+> > +{
+> > +     struct mtk_drm_private *priv = dev->dev_private;
+> > +     struct drm_fb_helper *helper = &priv->fb_helper;
+> > +     int ret;
+> > +
+> > +     if (!dev->mode_config.num_crtc || !dev->mode_config.num_connector)
+> > +             return -EINVAL;
+> > +
+> > +     drm_fb_helper_prepare(dev, helper, &mtk_drm_fb_helper_funcs);
+> > +
+> > +     ret = drm_fb_helper_init(dev, helper, dev->mode_config.num_connector);
+> > +     if (ret < 0) {
+> > +             DRM_DEV_ERROR(dev->dev,
+> > +                     "failed to initialize DRM FB helper, %d\n",
+> > +                     ret);
+> > +//           goto fini;
+> > +             return ret;
+> > +     }
+> > +
+> > +     ret = drm_fb_helper_single_add_all_connectors(helper);
+> > +     if (ret < 0) {
+> > +             DRM_DEV_ERROR(dev->dev, "failed to add connectors, %d\n", ret);
+> > +             goto fini;
+> > +     }
+> > +
+> > +     ret = drm_fb_helper_initial_config(helper, 32);
+> > +     if (ret < 0) {
+> > +             DRM_DEV_ERROR(dev->dev,
+> > +                     "failed to set initial configuration, %d\n",
+> > +                     ret);
+> > +             goto fini;
+> > +     }
+> > +
+> > +     return 0;
+> > +
+> > +fini:
+> > +     drm_fb_helper_fini(helper);
+> > +     return ret;
+> > +}
+> > +
+> > +void mtk_fbdev_fini(struct drm_device *dev)
+> > +{
+> > +     struct mtk_drm_private *priv = dev->dev_private;
+> > +     struct drm_fb_helper *helper = &priv->fb_helper;
+> > +
+> > +     drm_fb_helper_unregister_fbi(helper);
+> > +
+> > +     if (helper->fb) {
+> > +             drm_framebuffer_unregister_private(helper->fb);
+> > +             drm_framebuffer_remove(helper->fb);
+> > +     }
+> > +
+> > +     drm_fb_helper_fini(helper);
+> > +}
+> > diff --git a/drivers/gpu/drm/mediatek/mtk_drm_fbdev.h b/drivers/gpu/drm/mediatek/mtk_drm_fbdev.h
+> > new file mode 100644
+> > index 000000000000..45717b642dc5
+> > --- /dev/null
+> > +++ b/drivers/gpu/drm/mediatek/mtk_drm_fbdev.h
+> > @@ -0,0 +1,25 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 */
+> > +/*
+> > + * Copyright (c) 2018 MediaTek Inc.
+> > + * Author: CK Hu <ck.hu@mediatek.com>
+> > + */
+> > +
+> > +#ifndef MTK_DRM_FBDEV_H
+> > +#define MTK_DRM_FBDEV_H
+> > +
+> > +#ifdef CONFIG_DRM_FBDEV_EMULATION
+> > +int mtk_fbdev_init(struct drm_device *dev);
+> > +void mtk_fbdev_fini(struct drm_device *dev);
+> > +#else
+> > +int mtk_fbdev_init(struct drm_device *dev)
+> > +{
+> > +     return 0;
+> > +}
+> > +
+> > +void mtk_fbdev_fini(struct drm_device *dev)
+> > +{
+> > +
+> > +}
+> > +#endif /* CONFIG_DRM_FBDEV_EMULATION */
+> > +
+> > +#endif /* MTK_DRM_FBDEV_H */
+> > --
+> > 2.17.1
+> >
+>
+> --
+> Daniel Vetter
+> Software Engineer, Intel Corporation
+> http://blog.ffwll.ch
+
+
+
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
