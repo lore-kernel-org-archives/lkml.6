@@ -2,133 +2,125 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D48F0C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 06:37:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D67BEC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 06:38:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E8FA2087E
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 06:37:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AEC7E2087E
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 06:38:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727881AbfAHGhZ (ORCPT
+        id S1727933AbfAHGiJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 01:37:25 -0500
-Received: from mx2.suse.de ([195.135.220.15]:59846 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727538AbfAHGhZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 01:37:25 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id C3670AEC7;
-        Tue,  8 Jan 2019 06:37:22 +0000 (UTC)
-Subject: Re: [RFC PATCH 4/4] x86/mm: remove bottom-up allocation style for
- x86_64
-To:     Pingfan Liu <kernelfans@gmail.com>,
-        Dave Hansen <dave.hansen@intel.com>
-Cc:     x86@kernel.org, linux-acpi@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>, linux-kernel@vger.kernel.org
-References: <1546849485-27933-1-git-send-email-kernelfans@gmail.com>
- <1546849485-27933-5-git-send-email-kernelfans@gmail.com>
- <57ca63ef-ac5b-edd7-710b-f7ee698207c9@intel.com>
- <CAFgQCTudfQDAzKGYLAo_TuoEaEExzGn018mRewQ_LZvZbVDU+A@mail.gmail.com>
-From:   Juergen Gross <jgross@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <bf696c7a-e0d2-2e1e-e177-6e260c7129c2@suse.com>
-Date:   Tue, 8 Jan 2019 07:37:19 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Tue, 8 Jan 2019 01:38:09 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:55830 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727706AbfAHGiG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 01:38:06 -0500
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x086Y1fA033223
+        for <linux-kernel@vger.kernel.org>; Tue, 8 Jan 2019 01:38:05 -0500
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2pvpcmh0qn-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 01:38:05 -0500
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
+        Tue, 8 Jan 2019 06:38:03 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 8 Jan 2019 06:38:00 -0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x086bwf957081972
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 8 Jan 2019 06:37:59 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C0060AE056;
+        Tue,  8 Jan 2019 06:37:58 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 70354AE053;
+        Tue,  8 Jan 2019 06:37:58 +0000 (GMT)
+Received: from osiris (unknown [9.152.212.95])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Tue,  8 Jan 2019 06:37:58 +0000 (GMT)
+Date:   Tue, 8 Jan 2019 07:37:57 +0100
+From:   Heiko Carstens <heiko.carstens@de.ibm.com>
+To:     pmorel@linux.ibm.com
+Cc:     Michael Mueller <mimu@linux.ibm.com>,
+        KVM Mailing List <kvm@vger.kernel.org>,
+        Linux-S390 Mailing List <linux-s390@vger.kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Halil Pasic <pasic@linux.ibm.com>
+Subject: Re: [PATCH v5 13/15] KVM: s390: add function process_gib_alert_list()
+References: <20181219191756.57973-1-mimu@linux.ibm.com>
+ <20181219191756.57973-14-mimu@linux.ibm.com>
+ <645d74cf-7448-f143-c899-bdcf290dac59@linux.ibm.com>
+ <ae479e60-d235-acf3-55cc-afd875644a19@linux.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <CAFgQCTudfQDAzKGYLAo_TuoEaEExzGn018mRewQ_LZvZbVDU+A@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <ae479e60-d235-acf3-55cc-afd875644a19@linux.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 19010806-0028-0000-0000-00000335C09C
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19010806-0029-0000-0000-000023F2CC85
+Message-Id: <20190108063757.GA3766@osiris>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-08_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=964 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901080052
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/01/2019 07:13, Pingfan Liu wrote:
-> On Tue, Jan 8, 2019 at 1:42 AM Dave Hansen <dave.hansen@intel.com> wrote:
->>
->> On 1/7/19 12:24 AM, Pingfan Liu wrote:
->>> There are two acheivements by this patch.
->>> -1st. keep the subtree of pgtable away from movable node.
->>> Background about the defect of the current bottom-up allocation style, take
->>> the following scenario:
->>>   |  unmovable node |     movable node                           |
->>>      | kaslr-kernel |subtree of pgtable for phy<->virt |
->>
->>
->>
->>> Although kaslr-kernel can avoid to stain the movable node. [1] But the
->>> pgtable can still stain the movable node. That is a probability problem,
->>> with low probability, but still exist. This patch tries to eliminate the
->>> probability. With the previous patch, at the point of init_mem_mapping(),
->>> memblock allocator can work with the knowledge of acpi memory hotmovable
->>> info, and avoid to stain the movable node. As a result,
->>> memory_map_bottom_up() is not needed any more.
->>>
->>> -2nd. simplify the logic of memory_map_top_down()
->>> Thanks to the help of early_make_pgtable(), x86_64 can directly set up the
->>> subtree of pgtable at any place, hence the careful iteration in
->>> memory_map_top_down() can be discard.
->>
->>>  void __init init_mem_mapping(void)
->>>  {
->>>       unsigned long end;
->>> @@ -663,6 +540,7 @@ void __init init_mem_mapping(void)
->>>
->>>  #ifdef CONFIG_X86_64
->>>       end = max_pfn << PAGE_SHIFT;
->>> +     set_alloc_range(0x100000, end);
->>>  #else
->>
->> Why is this 0x100000 open-coded?  Why is this needed *now*?
->>
+On Mon, Jan 07, 2019 at 08:19:26PM +0100, Michael Mueller wrote:
 > 
-> Memory under 1MB should be used by BIOS. For x86_64, after
+> On 03.01.19 15:43, Pierre Morel wrote:
+> >On 19/12/2018 20:17, Michael Mueller wrote:
+> >>This function processes the Gib Alert List (GAL). It is required
+> >>to run when either a gib alert interruption has been received or
+> >>a gisa that is in the alert list is cleared or dropped.
+> >>
+> >>The GAL is build up by millicode, when the respective ISC bit is
+> >>set in the Interruption Alert Mask (IAM) and an interruption of
+> >>that class is observed.
+> >>
+> >>Signed-off-by: Michael Mueller <mimu@linux.ibm.com>
+> >>---
+> >>  arch/s390/kvm/interrupt.c | 140
+> >>++++++++++++++++++++++++++++++++++++++++++++++
+> >>  1 file changed, 140 insertions(+)
+> >>
+> >>diff --git a/arch/s390/kvm/interrupt.c b/arch/s390/kvm/interrupt.c
+> >>index 48a93f5e5333..03e7ba4f215a 100644
+> >>--- a/arch/s390/kvm/interrupt.c
+> >>+++ b/arch/s390/kvm/interrupt.c
+> >>@@ -2941,6 +2941,146 @@ int kvm_s390_get_irq_state(struct kvm_vcpu
+> >>*vcpu, __u8 __user *buf, int len)
+> >>      return n;
+> >>  }
+> >>  +static int __try_airqs_kick(struct kvm *kvm, u8 ipm)
+> >
+> >static inline ?
 
-Xen PV- and PVH-guests don't have that BIOS restriction.
+Why?
 
+In general it is a good idea to leave it up to the compiler to decide
+if it is worth to inline a function or not, unless you have a good
+reason to force inlining.
 
-Juergen
