@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3341AC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:47:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA8AAC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:47:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02B882063F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:47:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 888632063F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:47:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546976838;
-	bh=FgN41ZidZn0S8+fYBimfTMAcfkDiGbqg5QctOExARao=;
+	s=default; t=1546976847;
+	bh=0hoNIVo64XE+aPHkFrmc8ZvPslS6uqudaR38VNGcItc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=KTDKdnUcln/ONpJJzNmeemy/0oOyKi2Aci1E8eUB/H80A1JGP+ABeW+XFv0fYzFuR
-	 smpBgCSh7p1VHk8h20CM0nLdNFypXaBlTGvWgLCjIljZt4R+u3e8CdMMW+i6KgAmKE
-	 HvGfz2RrWXdF9PjzwgUgaudnu9/ah7Ugz5asD7B0=
+	b=OETjnwmGFZylme1M1XbvoS+G7QvQoFemebGiCbgvsJyBWz+wofX6rTQbm+A8zaEB6
+	 EY5MnL3KkafqBZzBECoKCp/4kdn/c5VSJ+OXeTHbbxBiRW+e5CtE4JoiPf4UVPF6YJ
+	 hZp8hAVS3M2TYFt4EfRNnF5nUUVl9xkLeER5qMl4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732274AbfAHTrR (ORCPT
+        id S1732763AbfAHTr1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:47:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41562 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:47:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41470 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731452AbfAHTcv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:32:51 -0500
+        id S1730394AbfAHTcq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:32:46 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D9C9120665;
-        Tue,  8 Jan 2019 19:32:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 556342070B;
+        Tue,  8 Jan 2019 19:32:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975970;
-        bh=FgN41ZidZn0S8+fYBimfTMAcfkDiGbqg5QctOExARao=;
+        s=default; t=1546975966;
+        bh=0hoNIVo64XE+aPHkFrmc8ZvPslS6uqudaR38VNGcItc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fuhKFJj7kYNOxhVl+pXPLn4oWzWhdDqpfT4eZRQVRyUZpNoO9HfiYzLFRx9mrkMvt
-         WoMTO4IWXGkcMyeRIMUSIaC3gVpLkMH1kOYL2zKmsPCbEtXOkrpvI9z/8462Bc5ILu
-         yJ1V/GYTdDCm3SzZsBVZatrbK0KOybtq1YJy0mjs=
+        b=aJNhuyijpTm5+BevSnmib68DewAw1Gu636yUFSZg+BWDtCOSn4jUHExa/+LlXpA8v
+         7zDqY1bSjsTKHf07qK0Y1Pv+Cuno+onFSm8WSNG7fZxiTjhKkYWYggniCBqn/+dro/
+         5CLTvXNKLLJHKdp0n9KeQg7TmsUymwUV5Uy1nCew=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Daniel Santos <daniel.santos@pobox.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Sasha Levin <sashal@kernel.org>, linux-mtd@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.14 15/53] jffs2: Fix use of uninitialized delayed_work, lockdep breakage
-Date:   Tue,  8 Jan 2019 14:31:43 -0500
-Message-Id: <20190108193222.123316-15-sashal@kernel.org>
+Cc:     Ondrej Mosnacek <omosnace@redhat.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Sasha Levin <sashal@kernel.org>, selinux@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 12/53] selinux: always allow mounting submounts
+Date:   Tue,  8 Jan 2019 14:31:40 -0500
+Message-Id: <20190108193222.123316-12-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108193222.123316-1-sashal@kernel.org>
 References: <20190108193222.123316-1-sashal@kernel.org>
@@ -57,69 +57,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Santos <daniel.santos@pobox.com>
+From: Ondrej Mosnacek <omosnace@redhat.com>
 
-[ Upstream commit a788c5272769ddbcdbab297cf386413eeac04463 ]
+[ Upstream commit 2cbdcb882f97a45f7475c67ac6257bbc16277dfe ]
 
-jffs2_sync_fs makes the assumption that if CONFIG_JFFS2_FS_WRITEBUFFER
-is defined then a write buffer is available and has been initialized.
-However, this does is not the case when the mtd device has no
-out-of-band buffer:
+If a superblock has the MS_SUBMOUNT flag set, we should always allow
+mounting it. These mounts are done automatically by the kernel either as
+part of mounting some parent mount (e.g. debugfs always mounts tracefs
+under "tracing" for compatibility) or they are mounted automatically as
+needed on subdirectory accesses (e.g. NFS crossmnt mounts). Since such
+automounts are either an implicit consequence of the parent mount (which
+is already checked) or they can happen during regular accesses (where it
+doesn't make sense to check against the current task's context), the
+mount permission check should be skipped for them.
 
-int jffs2_nand_flash_setup(struct jffs2_sb_info *c)
-{
-        if (!c->mtd->oobsize)
-                return 0;
-...
+Without this patch, attempts to access contents of an automounted
+directory can cause unexpected SELinux denials.
 
-The resulting call to cancel_delayed_work_sync passing a uninitialized
-(but zeroed) delayed_work struct forces lockdep to become disabled.
+In the current kernel tree, the MS_SUBMOUNT flag is set only via
+vfs_submount(), which is called only from the following places:
+ - AFS, when automounting special "symlinks" referencing other cells
+ - CIFS, when automounting "referrals"
+ - NFS, when automounting subtrees
+ - debugfs, when automounting tracefs
 
-[   90.050639] overlayfs: upper fs does not support tmpfile.
-[   90.652264] INFO: trying to register non-static key.
-[   90.662171] the code is fine but needs lockdep annotation.
-[   90.673090] turning off the locking correctness validator.
-[   90.684021] CPU: 0 PID: 1762 Comm: mount_root Not tainted 4.14.63 #0
-[   90.696672] Stack : 00000000 00000000 80d8f6a2 00000038 805f0000 80444600 8fe364f4 805dfbe7
-[   90.713349]         80563a30 000006e2 8068370c 00000001 00000000 00000001 8e2fdc48 ffffffff
-[   90.730020]         00000000 00000000 80d90000 00000000 00000106 00000000 6465746e 312e3420
-[   90.746690]         6b636f6c 03bf0000 f8000000 20676e69 00000000 80000000 00000000 8e2c2a90
-[   90.763362]         80d90000 00000001 00000000 8e2c2a90 00000003 80260dc0 08052098 80680000
-[   90.780033]         ...
-[   90.784902] Call Trace:
-[   90.789793] [<8000f0d8>] show_stack+0xb8/0x148
-[   90.798659] [<8005a000>] register_lock_class+0x270/0x55c
-[   90.809247] [<8005cb64>] __lock_acquire+0x13c/0xf7c
-[   90.818964] [<8005e314>] lock_acquire+0x194/0x1dc
-[   90.828345] [<8003f27c>] flush_work+0x200/0x24c
-[   90.837374] [<80041dfc>] __cancel_work_timer+0x158/0x210
-[   90.847958] [<801a8770>] jffs2_sync_fs+0x20/0x54
-[   90.857173] [<80125cf4>] iterate_supers+0xf4/0x120
-[   90.866729] [<80158fc4>] sys_sync+0x44/0x9c
-[   90.875067] [<80014424>] syscall_common+0x34/0x58
+In all cases the submounts are meant to be transparent to the user and
+it makes sense that if mounting the master is allowed, then so should be
+the automounts. Note that CAP_SYS_ADMIN capability checking is already
+skipped for (SB_KERNMOUNT|SB_SUBMOUNT) in:
+ - sget_userns() in fs/super.c:
+	if (!(flags & (SB_KERNMOUNT|SB_SUBMOUNT)) &&
+	    !(type->fs_flags & FS_USERNS_MOUNT) &&
+	    !capable(CAP_SYS_ADMIN))
+		return ERR_PTR(-EPERM);
+ - sget() in fs/super.c:
+        /* Ensure the requestor has permissions over the target filesystem */
+        if (!(flags & (SB_KERNMOUNT|SB_SUBMOUNT)) && !ns_capable(user_ns, CAP_SYS_ADMIN))
+                return ERR_PTR(-EPERM);
 
-Signed-off-by: Daniel Santos <daniel.santos@pobox.com>
-Reviewed-by: Hou Tao <houtao1@huawei.com>
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Verified internally on patched RHEL 7.6 with a reproducer using
+NFS+httpd and selinux-tesuite.
+
+Fixes: 93faccbbfa95 ("fs: Better permission checking for submounts")
+Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+Signed-off-by: Paul Moore <paul@paul-moore.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/jffs2/super.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ security/selinux/hooks.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/jffs2/super.c b/fs/jffs2/super.c
-index bc00cc385b77..83340496645b 100644
---- a/fs/jffs2/super.c
-+++ b/fs/jffs2/super.c
-@@ -101,7 +101,8 @@ static int jffs2_sync_fs(struct super_block *sb, int wait)
- 	struct jffs2_sb_info *c = JFFS2_SB_INFO(sb);
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index f5d304736852..d6b9ed34ceae 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -2820,7 +2820,7 @@ static int selinux_sb_kern_mount(struct super_block *sb, int flags, void *data)
+ 		return rc;
  
- #ifdef CONFIG_JFFS2_FS_WRITEBUFFER
--	cancel_delayed_work_sync(&c->wbuf_dwork);
-+	if (jffs2_is_writebuffered(c))
-+		cancel_delayed_work_sync(&c->wbuf_dwork);
- #endif
+ 	/* Allow all mounts performed by the kernel */
+-	if (flags & MS_KERNMOUNT)
++	if (flags & (MS_KERNMOUNT | MS_SUBMOUNT))
+ 		return 0;
  
- 	mutex_lock(&c->alloc_sem);
+ 	ad.type = LSM_AUDIT_DATA_DENTRY;
 -- 
 2.19.1
 
