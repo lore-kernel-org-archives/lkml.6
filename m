@@ -2,208 +2,131 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05ACEC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:17:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 041DBC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:24:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BDA6220675
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:17:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B9E8F20675
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:24:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="ccoBiJs8"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d7cMwU83"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729026AbfAHURW (ORCPT
+        id S1728984AbfAHUYd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 15:17:22 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:44644 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728015AbfAHURW (ORCPT
+        Tue, 8 Jan 2019 15:24:33 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:52470 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728469AbfAHUYd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 15:17:22 -0500
-Received: by mail-pf1-f193.google.com with SMTP id u6so2442083pfh.11
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 12:17:21 -0800 (PST)
+        Tue, 8 Jan 2019 15:24:33 -0500
+Received: by mail-it1-f196.google.com with SMTP id g76so8279970itg.2
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 12:24:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
-         :content-transfer-encoding;
-        bh=NHq73EOC6P/EZP1zXEp3GS6Y59Bi8cZdKMfq30ztJos=;
-        b=ccoBiJs8wGFBxd3eVhWoT4x7W5UbDJzMJjhybyEKr3HV1C9N5aoNa+32WD/aAozvRY
-         HUhoWeV5zUkRnhZQujj3dHj/700AzDITCf91nEy9Pet1C+UOkZUuUPa52DfRyW78wKEq
-         bIZK8K3yaNa9ZqBhmdwnUSrZ95OUhnGWjl7RmWodjmb8sDMNvloCJqrVbFuuYFeDeN6n
-         wvUY85xIaj7QieU9Qchaj1J1Kkr2R219UI/gxiSw3CcHxyg1pNjpdiWcrwugg2feZi8g
-         MjWJ+Jaq9Uh9NpShSUAAAmYeD7NlnPxAbnVUqHcahXYE2vnuzjfQjcX6uwy7C+bDOb0c
-         4+BA==
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=QDWN+7ZLpwusz/BXRAdEnr9dOQwx/6MpShvxa5PuqTg=;
+        b=d7cMwU83HxIH7kq02wdjuaDcZeQatPdKxPhMHuocvBQeGqFuY4E5+8VAxosmZ8BRMx
+         e1sYC+QAOaDOQXD+tvNKQoTHhiI0F3Mjts+5DHkd/SwSeDGnInVKfKR1DWzt4mhZVb+C
+         ymu6i8+iJqf5oFmk+eE7Q5Gm9h3VTiuESG3LDkXf7dD8g4lmQUMWFNCLa8JmX0yq3OzC
+         oedrvHUeHf44qp4P+2wB5wP0Yx2Llvhk+blP8Mn16gwXkvtYKoctAGwIcG7R33qwz9UE
+         dvRIusn5zE3sIm+MeY70eO8kuhFYbrzhk4tZFVzjuj4WH2dHvxOW9V299KENmCW1q9k2
+         9Vvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
-         :mime-version:content-transfer-encoding;
-        bh=NHq73EOC6P/EZP1zXEp3GS6Y59Bi8cZdKMfq30ztJos=;
-        b=sydqWqEVJMj2tRnRDuRUKZoS3IxNkP+PdhjpfGbAN9ficBzeZlTFLUWDB43CgzG9Wg
-         eSs3YB6EgV+Bsrq9VW/EcI2t/pbzkjJdyrGwOwP9+zkRznpKXHUxBA9wMIlhxm+J3MQ/
-         RrSDVSapPRJgZw2XQgDlThoiBSY0IhzG/wBm9GDWn5TodSIvAU/npS061o0yxRfgGciX
-         Dx6KiCedN2l9Xst7cO53pbazTWkLXREUuNAEZbxPyQ36vDfuDoJbmPDh0aVSXnvpPFC/
-         cqOjrV/gqwG84zJ1AIMihoZREMvmolpxHJ7gpPlGu9QeBt7X5bDapvurIOVU4nUB+n3q
-         plqQ==
-X-Gm-Message-State: AJcUukeqoLwCRwkd6IdIFZgxN1sLOPTAuNhh4cWWkeMBeZmknl64kRaC
-        7OxjrVgEoXIvVa1zz3/je/iwIw==
-X-Google-Smtp-Source: ALg8bN72u4US66UDBZ4SNoRsySPsovguRSvPDE066b/Oi8EEF/GdrakryNTJZhCRogu2wmpDuElM3g==
-X-Received: by 2002:a63:5455:: with SMTP id e21mr2814758pgm.316.1546978640863;
-        Tue, 08 Jan 2019 12:17:20 -0800 (PST)
-Received: from localhost ([12.206.222.5])
-        by smtp.gmail.com with ESMTPSA id i72sm104704585pfe.181.2019.01.08.12.17.19
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 08 Jan 2019 12:17:19 -0800 (PST)
-Date:   Tue, 08 Jan 2019 12:17:19 -0800 (PST)
-X-Google-Original-Date: Tue, 08 Jan 2019 12:16:42 PST (-0800)
-Subject:     Re: [PATCH] riscv: remove redundant kernel-space generic-y
-In-Reply-To: <CAK7LNAT+5eOFc64SG2SKCOThVVsz6S2NPBpemdcjCcZX_zds2Q@mail.gmail.com>
-CC:     aou@eecs.berkeley.edu, linux-riscv@lists.infradead.org,
-        alankao@andestech.com, deepa.kernel@gmail.com,
-        linux-kernel@vger.kernel.org, Jim Wilson <jimw@sifive.com>,
-        geert@linux-m68k.org
-From:   Palmer Dabbelt <palmer@sifive.com>
-To:     yamada.masahiro@socionext.com
-Message-ID: <mhng-aacb9594-f17b-4728-91f7-e2804e6a3dbc@palmer-si-x1c4>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=QDWN+7ZLpwusz/BXRAdEnr9dOQwx/6MpShvxa5PuqTg=;
+        b=jZzRLQyCgFJGEyGVJvdu9fs/n7R7ULROR4ltZXCvtGKaqnF5W6lvlWy1EHz4BFYS6o
+         0lmDkX7PIuS4WIaM62y6unwAdQzTwG3d6LxW2U92PJ9p/Yf1czjZkAmBukFWke3ocSYv
+         H+N5+yDawnUG9q31toJmuPE+o2xJae6uHrjOlP1nsTIPwxuzVh3xcuJBOFKdZrkSN5D5
+         E/QywFFjD7KjYsdUY9vAXWB4+pEmedtifxUb1j/9gQqJ72Pgv08iKAyB3FEraWCVi+j3
+         mCkWSEkDxY7c+eTx2oOsq+NFN2w6+uS7xzmEPe/IUpjxuOkKNOhShgOBPaUujt1YbpPE
+         +4gA==
+X-Gm-Message-State: AJcUukd0EJ8QcACIkIliDMwvtdZXqxZlVvzn6Ffvi1MceaoqcH6Vg3vN
+        YGSwlUM46MmP1edlivhEWRfSzlALhCvTEioIRQE=
+X-Google-Smtp-Source: ALg8bN4qC/q4JF+mSdKzZs1Z/lIlrGCcp6hG35u3vCtXvoeRcFAQKfLHj9h5fjDAmvuQtPpzdn0xmd6kWmO0SC/gPkc=
+X-Received: by 2002:a24:c705:: with SMTP id t5mr2233931itg.60.1546979071961;
+ Tue, 08 Jan 2019 12:24:31 -0800 (PST)
+MIME-Version: 1.0
+From:   Kyungtae Kim <kt0755@gmail.com>
+Date:   Tue, 8 Jan 2019 15:24:21 -0500
+Message-ID: <CAEAjamus+rx1idSZrfHERXvbeWeUC3Fiy5UNL_pbp_-ZbafEjQ@mail.gmail.com>
+Subject: UBSAN: Undefined behaviour in drivers/pps/pps.c
+To:     giometti@enneenne.com
+Cc:     Byoungyoung Lee <lifeasageek@gmail.com>,
+        DaeRyong Jeong <threeearcat@gmail.com>,
+        syzkaller@googlegroups.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 04 Jan 2019 07:03:20 PST (-0800), yamada.masahiro@socionext.com wrote:
-> On Fri, Jan 4, 2019 at 11:16 AM Palmer Dabbelt <palmer@sifive.com> wrote:
->>
->> On Sun, 16 Dec 2018 06:11:11 PST (-0800), yamada.masahiro@socionext.com wrote:
->> > This commit removes redundant generic-y defines in
->> > arch/riscv/include/asm/Kbuild.
->> >
->> > [1] It is redundant to define the same generic-y in both
->> >     arch/$(ARCH)/include/asm/Kbuild and
->> >     arch/$(ARCH)/include/uapi/asm/Kbuild.
->> >
->> >     Remove the following generic-y:
->> >
->> >       errno.h
->> >       fcntl.h
->> >       ioctl.h
->> >       ioctls.h
->> >       ipcbuf.h
->> >       mman.h
->> >       msgbuf.h
->> >       param.h
->> >       poll.h
->> >       posix_types.h
->> >       resource.h
->> >       sembuf.h
->> >       setup.h
->> >       shmbuf.h
->> >       signal.h
->> >       socket.h
->> >       sockios.h
->> >       stat.h
->> >       statfs.h
->> >       swab.h
->> >       termbits.h
->> >       termios.h
->> >       types.h
->> >
->> > [2] It is redundant to define generic-y when arch-specific
->> >     implementation exists in arch/$(ARCH)/include/asm/*.h
->> >
->> >     Remove the following generic-y:
->> >
->> >       cacheflush.h
->> >       dma-mapping.h
->> >       module.h
->> >
->> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
->> > ---
->> >
->> >  arch/riscv/include/asm/Kbuild | 26 --------------------------
->> >  1 file changed, 26 deletions(-)
->> >
->> > diff --git a/arch/riscv/include/asm/Kbuild b/arch/riscv/include/asm/Kbuild
->> > index 6a646d9..f7068f3 100644
->> > --- a/arch/riscv/include/asm/Kbuild
->> > +++ b/arch/riscv/include/asm/Kbuild
->> > @@ -1,5 +1,4 @@
->> >  generic-y += bugs.h
->> > -generic-y += cacheflush.h
->> >  generic-y += checksum.h
->> >  generic-y += compat.h
->> >  generic-y += cputime.h
->> > @@ -7,18 +6,12 @@ generic-y += device.h
->> >  generic-y += div64.h
->> >  generic-y += dma.h
->> >  generic-y += dma-contiguous.h
->> > -generic-y += dma-mapping.h
->> >  generic-y += emergency-restart.h
->> > -generic-y += errno.h
->> >  generic-y += exec.h
->> >  generic-y += fb.h
->> > -generic-y += fcntl.h
->> >  generic-y += hardirq.h
->> >  generic-y += hash.h
->> >  generic-y += hw_irq.h
->> > -generic-y += ioctl.h
->> > -generic-y += ioctls.h
->> > -generic-y += ipcbuf.h
->> >  generic-y += irq_regs.h
->> >  generic-y += irq_work.h
->> >  generic-y += kdebug.h
->> > @@ -27,34 +20,15 @@ generic-y += kvm_para.h
->> >  generic-y += local.h
->> >  generic-y += local64.h
->> >  generic-y += mm-arch-hooks.h
->> > -generic-y += mman.h
->> > -generic-y += module.h
->> > -generic-y += msgbuf.h
->> >  generic-y += mutex.h
->> > -generic-y += param.h
->> >  generic-y += percpu.h
->> > -generic-y += poll.h
->> > -generic-y += posix_types.h
->> >  generic-y += preempt.h
->> > -generic-y += resource.h
->> >  generic-y += scatterlist.h
->> >  generic-y += sections.h
->> > -generic-y += sembuf.h
->> >  generic-y += serial.h
->> > -generic-y += setup.h
->> > -generic-y += shmbuf.h
->> >  generic-y += shmparam.h
->> > -generic-y += signal.h
->> > -generic-y += socket.h
->> > -generic-y += sockios.h
->> > -generic-y += stat.h
->> > -generic-y += statfs.h
->> > -generic-y += swab.h
->> > -generic-y += termbits.h
->> > -generic-y += termios.h
->> >  generic-y += topology.h
->> >  generic-y += trace_clock.h
->> > -generic-y += types.h
->> >  generic-y += unaligned.h
->> >  generic-y += user.h
->> >  generic-y += vga.h
->>
->> Thanks.  These just sort of collected there because I hadn't trimmed them.  Is
->> there a script that checks these?
->
->
-> No script is available for now, but
-> I'd like to turn on warnings to catch some cases:
-> https://patchwork.kernel.org/patch/10746823/
->
->
-> BTW, can I apply this to my tree
-> along with other cleanups?
+We report a bug in linux-4.20: "UBSAN: Undefined behaviour in drivers/pps/pps.c"
 
-Acked-by: Palmer Dabbelt <palmer@sifive.com>
+kernel config: https://kt0755.github.io/etc/config_v4.20_stable
+repro: https://kt0755.github.io/etc/repro.a6372.c
 
-Thanks!
+pps_cdev_pps_fetch() lacks the bounds checking for computing
+fdata->timeout.sec * HZ, that causes such integer overflow when the result
+is larger than the boundary.
+The  patch below checks the possibility of overflow right before the
+multiplication.
+
+=========================================
+UBSAN: Undefined behaviour in drivers/pps/pps.c:82:30
+signed integer overflow:
+-7557201428062104791 * 100 cannot be represented in type 'long long int'
+CPU: 0 PID: 10159 Comm: syz-executor6 Not tainted 4.20.0 #1
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Bochs 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0xb1/0x118 lib/dump_stack.c:113
+ ubsan_epilogue+0x12/0x94 lib/ubsan.c:159
+ handle_overflow+0x1cf/0x21a lib/ubsan.c:190
+ __ubsan_handle_mul_overflow+0x2a/0x35 lib/ubsan.c:214
+ pps_cdev_pps_fetch+0x575/0x5b0 drivers/pps/pps.c:82
+ pps_cdev_ioctl+0x567/0x910 drivers/pps/pps.c:191
+ vfs_ioctl fs/ioctl.c:46 [inline]
+ do_vfs_ioctl+0x1aa/0x1160 fs/ioctl.c:698
+ ksys_ioctl+0x9e/0xb0 fs/ioctl.c:713
+ __do_sys_ioctl fs/ioctl.c:720 [inline]
+ __se_sys_ioctl fs/ioctl.c:718 [inline]
+ __x64_sys_ioctl+0x7e/0xc0 fs/ioctl.c:718
+ do_syscall_64+0xbe/0x4f0 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x4497b9
+Code: e8 8c 9f 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48
+89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d
+01 f0 ff ff 0f 83 9b 6b fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f8cf875bc68 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007f8cf875c6cc RCX: 00000000004497b9
+RDX: 0000000020000240 RSI: 00000000c00870a4 RDI: 0000000000000014
+RBP: 000000000071bea0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 0000000000005c10 R14: 00000000006eecb0 R15: 00007f8cf875c700
+=========================================
+
+---
+ drivers/pps/pps.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/pps/pps.c b/drivers/pps/pps.c
+index 8febacb..66002e1 100644
+--- a/drivers/pps/pps.c
++++ b/drivers/pps/pps.c
+@@ -79,6 +79,8 @@ static int pps_cdev_pps_fetch(struct pps_device
+*pps, struct pps_fdata *fdata)
+                dev_dbg(pps->dev, "timeout %lld.%09d\n",
+                                (long long) fdata->timeout.sec,
+                                fdata->timeout.nsec);
++               if (fdata->timeout.sec > S64_MAX / HZ)
++                               return -EINVAL;
+                ticks = fdata->timeout.sec * HZ;
+                ticks += fdata->timeout.nsec / (NSEC_PER_SEC / HZ);
+
+Thanks,
+Kyungtae Kim
