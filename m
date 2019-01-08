@@ -2,92 +2,82 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ED08C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 14:23:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 848E9C43612
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 14:24:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FA6620827
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 14:23:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 54E7A20827
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 14:24:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728736AbfAHOX6 (ORCPT
+        id S1728807AbfAHOYI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 09:23:58 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43332 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727662AbfAHOX6 (ORCPT
+        Tue, 8 Jan 2019 09:24:08 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60750 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727662AbfAHOYH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 09:23:58 -0500
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x08EKu0Q142059
-        for <linux-kernel@vger.kernel.org>; Tue, 8 Jan 2019 09:23:56 -0500
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2pvva94h1b-1
+        Tue, 8 Jan 2019 09:24:07 -0500
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x08EJgLn080107
+        for <linux-kernel@vger.kernel.org>; Tue, 8 Jan 2019 09:24:06 -0500
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2pvtkw2hn7-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 09:23:56 -0500
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 09:24:05 -0500
 Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Tue, 8 Jan 2019 14:23:52 -0000
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pasic@linux.ibm.com>;
+        Tue, 8 Jan 2019 14:24:03 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 8 Jan 2019 14:23:46 -0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x08ENjnw56295606
+        Tue, 8 Jan 2019 14:24:00 -0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x08ENwhB32374968
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 8 Jan 2019 14:23:45 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3B191A4054;
-        Tue,  8 Jan 2019 14:23:45 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4B5E5A405C;
-        Tue,  8 Jan 2019 14:23:43 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.8.241])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Tue,  8 Jan 2019 14:23:43 +0000 (GMT)
-Date:   Tue, 8 Jan 2019 16:23:41 +0200
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>, linux-sh@vger.kernel.org,
-        Heiko Carstens <heiko.carstens@de.ibm.com>, linux-mm@kvack.org,
-        Rich Felker <dalias@libc.org>,
-        Paul Mackerras <paulus@samba.org>, sparclinux@vger.kernel.org,
-        Vincent Chen <deanbo422@gmail.com>,
-        Jonas Bonn <jonas@southpole.se>, linux-s390@vger.kernel.org,
-        linux-c6x-dev@linux-c6x.org,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Russell King <linux@armlinux.org.uk>,
-        Mark Salter <msalter@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
-        openrisc@lists.librecores.org, Greentime Hu <green.hu@gmail.com>,
-        Stafford Horne <shorne@gmail.com>,
-        Guan Xuetao <gxt@pku.edu.cn>,
-        linux-arm-kernel@lists.infradead.org,
-        Michal Simek <monstr@monstr.eu>, linux-kernel@vger.kernel.org,
+        Tue, 8 Jan 2019 14:23:59 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D057B52051;
+        Tue,  8 Jan 2019 14:23:58 +0000 (GMT)
+Received: from oc2783563651 (unknown [9.152.224.86])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 732A152050;
+        Tue,  8 Jan 2019 14:23:58 +0000 (GMT)
+Date:   Tue, 8 Jan 2019 15:23:57 +0100
+From:   Halil Pasic <pasic@linux.ibm.com>
+To:     Cornelia Huck <cohuck@redhat.com>
+Cc:     Michael Mueller <mimu@linux.ibm.com>,
+        Pierre Morel <pmorel@linux.ibm.com>,
+        KVM Mailing List <kvm@vger.kernel.org>,
+        Linux-S390 Mailing List <linux-s390@vger.kernel.org>,
+        linux-kernel@vger.kernel.org,
         Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org,
-        "David S. Miller" <davem@davemloft.net>
-Subject: Re: [PATCH v4 1/6] powerpc: prefer memblock APIs returning virtual
- address
-References: <1546248566-14910-1-git-send-email-rppt@linux.ibm.com>
- <1546248566-14910-2-git-send-email-rppt@linux.ibm.com>
- <282fd5d1-24b5-81ac-b7ff-7329fe3c0fe1@c-s.fr>
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH v5 10/15] KVM: s390: add functions to (un)register GISC
+ with GISA
+In-Reply-To: <20190108144135.3fe5c23b.cohuck@redhat.com>
+References: <20181219191756.57973-1-mimu@linux.ibm.com>
+        <20181219191756.57973-11-mimu@linux.ibm.com>
+        <bd1a6082-cb73-5ef7-f2b6-8cbd7d8c7136@linux.ibm.com>
+        <20190104141836.0ca98a77.cohuck@redhat.com>
+        <b001fc9b-c174-644f-a9fa-e60ff5b4aa58@linux.ibm.com>
+        <20190108113444.56e76f13.cohuck@redhat.com>
+        <20190108143613.2ca1a9d3@oc2783563651>
+        <20190108144135.3fe5c23b.cohuck@redhat.com>
+Organization: IBM
+X-Mailer: Claws Mail 3.11.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <282fd5d1-24b5-81ac-b7ff-7329fe3c0fe1@c-s.fr>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-TM-AS-GCONF: 00
-x-cbid: 19010814-0012-0000-0000-000002E3F66B
+x-cbid: 19010814-0016-0000-0000-00000241FEF0
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19010814-0013-0000-0000-0000211B03C6
-Message-Id: <20190108142341.GA14063@rapoport-lnx>
+x-cbparentid: 19010814-0017-0000-0000-0000329C12F9
+Message-Id: <20190108152357.39fea477@oc2783563651>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-08_07:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -100,306 +90,86 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Tue, 8 Jan 2019 14:41:35 +0100
+Cornelia Huck <cohuck@redhat.com> wrote:
 
-On Tue, Jan 08, 2019 at 11:02:24AM +0100, Christophe Leroy wrote:
+> On Tue, 8 Jan 2019 14:36:13 +0100
+> Halil Pasic <pasic@linux.ibm.com> wrote:
 > 
-> Le 31/12/2018 à 10:29, Mike Rapoport a écrit :
-> >There are a several places that allocate memory using memblock APIs that
-> >return a physical address, convert the returned address to the virtual
-> >address and frequently also memset(0) the allocated range.
-> >
-> >Update these places to use memblock allocators already returning a virtual
-> >address. Use memblock functions that clear the allocated memory instead of
-> >calling memset(0) where appropriate.
-> >
-> >The calls to memblock_alloc_base() that were not followed by memset(0) are
-> >replaced with memblock_alloc_try_nid_raw(). Since the latter does not
-> >panic() when the allocation fails, the appropriate panic() calls are added
-> >to the call sites.
-> >
-> >Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
-> >---
-> >  arch/powerpc/kernel/paca.c             | 16 ++++++----------
-> >  arch/powerpc/kernel/setup_64.c         | 24 ++++++++++--------------
-> >  arch/powerpc/mm/hash_utils_64.c        |  6 +++---
-> >  arch/powerpc/mm/pgtable-book3e.c       |  8 ++------
-> >  arch/powerpc/mm/pgtable-book3s64.c     |  5 +----
-> >  arch/powerpc/mm/pgtable-radix.c        | 25 +++++++------------------
-> >  arch/powerpc/platforms/pasemi/iommu.c  |  5 +++--
-> >  arch/powerpc/platforms/pseries/setup.c | 18 ++++++++++++++----
-> >  arch/powerpc/sysdev/dart_iommu.c       |  7 +++++--
-> >  9 files changed, 51 insertions(+), 63 deletions(-)
-> >
-> >diff --git a/arch/powerpc/kernel/paca.c b/arch/powerpc/kernel/paca.c
-> >index 913bfca..276d36d4 100644
-> >--- a/arch/powerpc/kernel/paca.c
-> >+++ b/arch/powerpc/kernel/paca.c
-> >@@ -27,7 +27,7 @@
-> >  static void *__init alloc_paca_data(unsigned long size, unsigned long align,
-> >  				unsigned long limit, int cpu)
-> >  {
-> >-	unsigned long pa;
-> >+	void *ptr;
-> >  	int nid;
-> >  	/*
-> >@@ -42,17 +42,15 @@ static void *__init alloc_paca_data(unsigned long size, unsigned long align,
-> >  		nid = early_cpu_to_node(cpu);
-> >  	}
-> >-	pa = memblock_alloc_base_nid(size, align, limit, nid, MEMBLOCK_NONE);
-> >-	if (!pa) {
-> >-		pa = memblock_alloc_base(size, align, limit);
-> >-		if (!pa)
-> >-			panic("cannot allocate paca data");
-> >-	}
-> >+	ptr = memblock_alloc_try_nid(size, align, MEMBLOCK_LOW_LIMIT,
-> >+				     limit, nid);
-> >+	if (!ptr)
-> >+		panic("cannot allocate paca data");
+> > On Tue, 8 Jan 2019 11:34:44 +0100
+> > Cornelia Huck <cohuck@redhat.com> wrote:
+> > 
+> > > > >>      
+> > > > >>> +	spin_unlock(&kvm->arch.iam_ref_lock);
+> > > > >>> +
+> > > > >>> +	return gib->nisc;
+> > > > >>> +}
+> > > > >>> +EXPORT_SYMBOL_GPL(kvm_s390_gisc_register);
+> > > > >>> +
+> > > > >>> +int kvm_s390_gisc_unregister(struct kvm *kvm, u32 gisc)
+> > > > >>> +{
+> > > > >>> +	int rc = 0;
+> > > > >>> +
+> > > > >>> +	if (!kvm->arch.gib_in_use)
+> > > > >>> +		return -ENODEV;
+> > > > >>> +	if (gisc > MAX_ISC)
+> > > > >>> +		return -ERANGE;
+> > > > >>> +
+> > > > >>> +	spin_lock(&kvm->arch.iam_ref_lock);
+> > > > >>> +	if (kvm->arch.iam_ref_count[gisc] == 0) {
+> > > > >>> +		rc = -EINVAL;
+> > > > >>> +		goto out;
+> > > > >>> +	}
+> > > > >>> +	kvm->arch.iam_ref_count[gisc]--;
+> > > > >>> +	if (kvm->arch.iam_ref_count[gisc] == 0) {
+> > > > >>> +		kvm->arch.iam &= ~(0x80 >> gisc);
+> > > > >>> +		set_iam(kvm->arch.gisa, kvm->arch.iam);      
+> > > > > 
+> > > > > Any chance of this function failing here? If yes, would there be any
+> > > > > implications?      
+> > > > 
+> > > > It is the same here.    
+> > > 
+> > > I'm not sure that I follow: This is the reverse operation
+> > > (unregistering the gisc). Can we rely on get_ipm() to do any fixup
+> > > later? Is that a problem for the caller?  
+> > 
+> > IMHO gib alerts are all about not loosing initiative. I.e. avoiding
+> > substantially delayed delivery of interrupts due to vCPUs in wait
+> > state.
+> > 
+> > Thus we must avoid letting go before setting up stuff (gisa.iam under
+> > consideration of gisa ipm, gisa.next_alert, and gib.alert_list_origin)
+> > so that we can react on the next interrupt (if necessary).
+> > 
+> > On the other hand, getting more gisa alerts than necessary is not
+> > fatal -- better avoided if not too much hassle of course.
 > 
-> AFAIKS, memblock_alloc_try_nid() panics if memblock_alloc_internal() returns
-> NULL, so the above panic is useless, isn't it ?
- 
-My plan is to make all memblock_alloc() APIs to return NULL rather then
-panic and then get rid of _nopanic variants. It's currently WIP and
-hopefully I'll have the patches ready next week.
+> Yes, unless the caller does not expect any more alerts after
+> unregistering (I guess that's what you're saying?)
 
-> >  	if (cpu == boot_cpuid)
-> >  		memblock_set_bottom_up(false);
-> >-	return __va(pa);
-> >+	return ptr;
-> >  }
-> >  #ifdef CONFIG_PPC_PSERIES
-> >@@ -118,7 +116,6 @@ static struct slb_shadow * __init new_slb_shadow(int cpu, unsigned long limit)
-> >  	}
-> >  	s = alloc_paca_data(sizeof(*s), L1_CACHE_BYTES, limit, cpu);
-> >-	memset(s, 0, sizeof(*s));
-> >  	s->persistent = cpu_to_be32(SLB_NUM_BOLTED);
-> >  	s->buffer_length = cpu_to_be32(sizeof(*s));
-> >@@ -222,7 +219,6 @@ void __init allocate_paca(int cpu)
-> >  	paca = alloc_paca_data(sizeof(struct paca_struct), L1_CACHE_BYTES,
-> >  				limit, cpu);
-> >  	paca_ptrs[cpu] = paca;
-> >-	memset(paca, 0, sizeof(struct paca_struct));
-> >  	initialise_paca(paca, cpu);
-> >  #ifdef CONFIG_PPC_PSERIES
-> >diff --git a/arch/powerpc/kernel/setup_64.c b/arch/powerpc/kernel/setup_64.c
-> >index 236c115..3dcd779 100644
-> >--- a/arch/powerpc/kernel/setup_64.c
-> >+++ b/arch/powerpc/kernel/setup_64.c
-> >@@ -634,19 +634,17 @@ __init u64 ppc64_bolted_size(void)
-> >  static void *__init alloc_stack(unsigned long limit, int cpu)
-> >  {
-> >-	unsigned long pa;
-> >+	void *ptr;
-> >  	BUILD_BUG_ON(STACK_INT_FRAME_SIZE % 16);
-> >-	pa = memblock_alloc_base_nid(THREAD_SIZE, THREAD_SIZE, limit,
-> >-					early_cpu_to_node(cpu), MEMBLOCK_NONE);
-> >-	if (!pa) {
-> >-		pa = memblock_alloc_base(THREAD_SIZE, THREAD_SIZE, limit);
-> >-		if (!pa)
-> >-			panic("cannot allocate stacks");
-> >-	}
-> >+	ptr = memblock_alloc_try_nid(THREAD_SIZE, THREAD_SIZE,
-> >+				     MEMBLOCK_LOW_LIMIT, limit,
-> >+				     early_cpu_to_node(cpu));
-> >+	if (!ptr)
-> >+		panic("cannot allocate stacks");
+Just to make sure, the caller, which I guess would probably be some
+sort of a driver, does not process the alerts. It is kvm that does.
+
+But you are right, the properties of unregister need do be considered in
+the cleanup code (e.g. resets). Sure, we must avoid the
+process_gib_alert_list() (which is common, i.e. ain't tied to any
+VM) poking dead GISAs. Frankly, I've my hands full with the normal
+operation scenario, and I did not pay much attention to the cleanup yet. 
+
 > 
-> Same ?
+> > 
+> > Bottom line is, while it may be critical that the IAM changes implied
+> > by register take place immediately, unregister is a different story.
 > 
-> Christophe
-> 
-> >-	return __va(pa);
-> >+	return ptr;
-> >  }
-> >  void __init irqstack_early_init(void)
-> >@@ -739,20 +737,17 @@ void __init emergency_stack_init(void)
-> >  		struct thread_info *ti;
-> >  		ti = alloc_stack(limit, i);
-> >-		memset(ti, 0, THREAD_SIZE);
-> >  		emerg_stack_init_thread_info(ti, i);
-> >  		paca_ptrs[i]->emergency_sp = (void *)ti + THREAD_SIZE;
-> >  #ifdef CONFIG_PPC_BOOK3S_64
-> >  		/* emergency stack for NMI exception handling. */
-> >  		ti = alloc_stack(limit, i);
-> >-		memset(ti, 0, THREAD_SIZE);
-> >  		emerg_stack_init_thread_info(ti, i);
-> >  		paca_ptrs[i]->nmi_emergency_sp = (void *)ti + THREAD_SIZE;
-> >  		/* emergency stack for machine check exception handling. */
-> >  		ti = alloc_stack(limit, i);
-> >-		memset(ti, 0, THREAD_SIZE);
-> >  		emerg_stack_init_thread_info(ti, i);
-> >  		paca_ptrs[i]->mc_emergency_sp = (void *)ti + THREAD_SIZE;
-> >  #endif
-> >@@ -933,8 +928,9 @@ static void __ref init_fallback_flush(void)
-> >  	 * hardware prefetch runoff. We don't have a recipe for load patterns to
-> >  	 * reliably avoid the prefetcher.
-> >  	 */
-> >-	l1d_flush_fallback_area = __va(memblock_alloc_base(l1d_size * 2, l1d_size, limit));
-> >-	memset(l1d_flush_fallback_area, 0, l1d_size * 2);
-> >+	l1d_flush_fallback_area = memblock_alloc_try_nid(l1d_size * 2,
-> >+						l1d_size, MEMBLOCK_LOW_LIMIT,
-> >+						limit, NUMA_NO_NODE);
-> >  	for_each_possible_cpu(cpu) {
-> >  		struct paca_struct *paca = paca_ptrs[cpu];
-> >diff --git a/arch/powerpc/mm/hash_utils_64.c b/arch/powerpc/mm/hash_utils_64.c
-> >index 0cc7fbc..bc6be44 100644
-> >--- a/arch/powerpc/mm/hash_utils_64.c
-> >+++ b/arch/powerpc/mm/hash_utils_64.c
-> >@@ -908,9 +908,9 @@ static void __init htab_initialize(void)
-> >  #ifdef CONFIG_DEBUG_PAGEALLOC
-> >  	if (debug_pagealloc_enabled()) {
-> >  		linear_map_hash_count = memblock_end_of_DRAM() >> PAGE_SHIFT;
-> >-		linear_map_hash_slots = __va(memblock_alloc_base(
-> >-				linear_map_hash_count, 1, ppc64_rma_size));
-> >-		memset(linear_map_hash_slots, 0, linear_map_hash_count);
-> >+		linear_map_hash_slots = memblock_alloc_try_nid(
-> >+				linear_map_hash_count, 1, MEMBLOCK_LOW_LIMIT,
-> >+				ppc64_rma_size,	NUMA_NO_NODE);
-> >  	}
-> >  #endif /* CONFIG_DEBUG_PAGEALLOC */
-> >diff --git a/arch/powerpc/mm/pgtable-book3e.c b/arch/powerpc/mm/pgtable-book3e.c
-> >index e0ccf36..53cbc7d 100644
-> >--- a/arch/powerpc/mm/pgtable-book3e.c
-> >+++ b/arch/powerpc/mm/pgtable-book3e.c
-> >@@ -57,12 +57,8 @@ void vmemmap_remove_mapping(unsigned long start,
-> >  static __ref void *early_alloc_pgtable(unsigned long size)
-> >  {
-> >-	void *pt;
-> >-
-> >-	pt = __va(memblock_alloc_base(size, size, __pa(MAX_DMA_ADDRESS)));
-> >-	memset(pt, 0, size);
-> >-
-> >-	return pt;
-> >+	return memblock_alloc_try_nid(size, size, MEMBLOCK_LOW_LIMIT,
-> >+				      __pa(MAX_DMA_ADDRESS), NUMA_NO_NODE);
-> >  }
-> >  /*
-> >diff --git a/arch/powerpc/mm/pgtable-book3s64.c b/arch/powerpc/mm/pgtable-book3s64.c
-> >index f3c31f5..55876b7 100644
-> >--- a/arch/powerpc/mm/pgtable-book3s64.c
-> >+++ b/arch/powerpc/mm/pgtable-book3s64.c
-> >@@ -195,11 +195,8 @@ void __init mmu_partition_table_init(void)
-> >  	unsigned long ptcr;
-> >  	BUILD_BUG_ON_MSG((PATB_SIZE_SHIFT > 36), "Partition table size too large.");
-> >-	partition_tb = __va(memblock_alloc_base(patb_size, patb_size,
-> >-						MEMBLOCK_ALLOC_ANYWHERE));
-> >-
-> >  	/* Initialize the Partition Table with no entries */
-> >-	memset((void *)partition_tb, 0, patb_size);
-> >+	partition_tb = memblock_alloc(patb_size, patb_size);
-> >  	/*
-> >  	 * update partition table control register,
-> >diff --git a/arch/powerpc/mm/pgtable-radix.c b/arch/powerpc/mm/pgtable-radix.c
-> >index 9311560..29bcea5 100644
-> >--- a/arch/powerpc/mm/pgtable-radix.c
-> >+++ b/arch/powerpc/mm/pgtable-radix.c
-> >@@ -51,26 +51,15 @@ static int native_register_process_table(unsigned long base, unsigned long pg_sz
-> >  static __ref void *early_alloc_pgtable(unsigned long size, int nid,
-> >  			unsigned long region_start, unsigned long region_end)
-> >  {
-> >-	unsigned long pa = 0;
-> >-	void *pt;
-> >+	phys_addr_t min_addr = MEMBLOCK_LOW_LIMIT;
-> >+	phys_addr_t max_addr = MEMBLOCK_ALLOC_ANYWHERE;
-> >-	if (region_start || region_end) /* has region hint */
-> >-		pa = memblock_alloc_range(size, size, region_start, region_end,
-> >-						MEMBLOCK_NONE);
-> >-	else if (nid != -1) /* has node hint */
-> >-		pa = memblock_alloc_base_nid(size, size,
-> >-						MEMBLOCK_ALLOC_ANYWHERE,
-> >-						nid, MEMBLOCK_NONE);
-> >+	if (region_start)
-> >+		min_addr = region_start;
-> >+	if (region_end)
-> >+		max_addr = region_end;
-> >-	if (!pa)
-> >-		pa = memblock_alloc_base(size, size, MEMBLOCK_ALLOC_ANYWHERE);
-> >-
-> >-	BUG_ON(!pa);
-> >-
-> >-	pt = __va(pa);
-> >-	memset(pt, 0, size);
-> >-
-> >-	return pt;
-> >+	return memblock_alloc_try_nid(size, size, min_addr, max_addr, nid);
-> >  }
-> >  static int early_map_kernel_page(unsigned long ea, unsigned long pa,
-> >diff --git a/arch/powerpc/platforms/pasemi/iommu.c b/arch/powerpc/platforms/pasemi/iommu.c
-> >index f297152..f62930f 100644
-> >--- a/arch/powerpc/platforms/pasemi/iommu.c
-> >+++ b/arch/powerpc/platforms/pasemi/iommu.c
-> >@@ -208,7 +208,9 @@ static int __init iob_init(struct device_node *dn)
-> >  	pr_debug(" -> %s\n", __func__);
-> >  	/* For 2G space, 8x64 pages (2^21 bytes) is max total l2 size */
-> >-	iob_l2_base = (u32 *)__va(memblock_alloc_base(1UL<<21, 1UL<<21, 0x80000000));
-> >+	iob_l2_base = memblock_alloc_try_nid_raw(1UL << 21, 1UL << 21,
-> >+					MEMBLOCK_LOW_LIMIT, 0x80000000,
-> >+					NUMA_NO_NODE);
-> >  	pr_info("IOBMAP L2 allocated at: %p\n", iob_l2_base);
-> >@@ -269,4 +271,3 @@ void __init iommu_init_early_pasemi(void)
-> >  	pasemi_pci_controller_ops.dma_bus_setup = pci_dma_bus_setup_pasemi;
-> >  	set_pci_dma_ops(&dma_iommu_ops);
-> >  }
-> >-
-> >diff --git a/arch/powerpc/platforms/pseries/setup.c b/arch/powerpc/platforms/pseries/setup.c
-> >index 41f62ca2..e4f0dfd 100644
-> >--- a/arch/powerpc/platforms/pseries/setup.c
-> >+++ b/arch/powerpc/platforms/pseries/setup.c
-> >@@ -130,8 +130,13 @@ static void __init fwnmi_init(void)
-> >  	 * It will be used in real mode mce handler, hence it needs to be
-> >  	 * below RMA.
-> >  	 */
-> >-	mce_data_buf = __va(memblock_alloc_base(RTAS_ERROR_LOG_MAX * nr_cpus,
-> >-					RTAS_ERROR_LOG_MAX, ppc64_rma_size));
-> >+	mce_data_buf = memblock_alloc_try_nid_raw(RTAS_ERROR_LOG_MAX * nr_cpus,
-> >+					RTAS_ERROR_LOG_MAX, MEMBLOCK_LOW_LIMIT,
-> >+					ppc64_rma_size, NUMA_NO_NODE);
-> >+	if (!mce_data_buf)
-> >+		panic("Failed to allocate %d bytes below %pa for MCE buffer\n",
-> >+		      RTAS_ERROR_LOG_MAX * nr_cpus, &ppc64_rma_size);
-> >+
-> >  	for_each_possible_cpu(i) {
-> >  		paca_ptrs[i]->mce_data_buf = mce_data_buf +
-> >  						(RTAS_ERROR_LOG_MAX * i);
-> >@@ -140,8 +145,13 @@ static void __init fwnmi_init(void)
-> >  #ifdef CONFIG_PPC_BOOK3S_64
-> >  	/* Allocate per cpu slb area to save old slb contents during MCE */
-> >  	size = sizeof(struct slb_entry) * mmu_slb_size * nr_cpus;
-> >-	slb_ptr = __va(memblock_alloc_base(size, sizeof(struct slb_entry),
-> >-					   ppc64_rma_size));
-> >+	slb_ptr = memblock_alloc_try_nid_raw(size, sizeof(struct slb_entry),
-> >+					MEMBLOCK_LOW_LIMIT, ppc64_rma_size,
-> >+					NUMA_NO_NODE);
-> >+	if (!slb_ptr)
-> >+		panic("Failed to allocate %zu bytes below %pa for slb area\n",
-> >+		      size, &ppc64_rma_size);
-> >+
-> >  	for_each_possible_cpu(i)
-> >  		paca_ptrs[i]->mce_faulty_slbs = slb_ptr + (mmu_slb_size * i);
-> >  #endif
-> >diff --git a/arch/powerpc/sysdev/dart_iommu.c b/arch/powerpc/sysdev/dart_iommu.c
-> >index a5b40d1..25bc25f 100644
-> >--- a/arch/powerpc/sysdev/dart_iommu.c
-> >+++ b/arch/powerpc/sysdev/dart_iommu.c
-> >@@ -251,8 +251,11 @@ static void allocate_dart(void)
-> >  	 * 16MB (1 << 24) alignment. We allocate a full 16Mb chuck since we
-> >  	 * will blow up an entire large page anyway in the kernel mapping.
-> >  	 */
-> >-	dart_tablebase = __va(memblock_alloc_base(1UL<<24,
-> >-						  1UL<<24, 0x80000000L));
-> >+	dart_tablebase = memblock_alloc_try_nid_raw(SZ_16M, SZ_16M,
-> >+					MEMBLOCK_LOW_LIMIT, SZ_2G,
-> >+					NUMA_NO_NODE);
-> >+	if (!dart_tablebase)
-> >+		panic("Failed to allocate 16MB below 2GB for DART table\n");
-> >  	/* There is no point scanning the DART space for leaks*/
-> >  	kmemleak_no_scan((void *)dart_tablebase);
-> >
+> It does feel a bit weird, though. But maybe I just have trouble
+> grasping the design :/
 > 
 
--- 
-Sincerely yours,
-Mike.
+You are on the only one. I have extreme difficulties following some of
+the discussion here -- despite of the fact that I have quite some
+confidence in my understanding of the GISA/GIB architecture.
+
+Regards,
+Halil
 
