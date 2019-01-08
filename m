@@ -2,148 +2,264 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C744DC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:45:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2378CC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:46:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 886ED2070B
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:45:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D61362070B
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:46:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="efjbNIgK";
-	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="GA2tJO5y"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eo58r4fh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729502AbfAHUpz (ORCPT
+        id S1729593AbfAHUqa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 15:45:55 -0500
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:41040 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728723AbfAHUpz (ORCPT
+        Tue, 8 Jan 2019 15:46:30 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:45354 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728723AbfAHUq3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 15:45:55 -0500
-Received: from pps.filterd (m0001255.ppops.net [127.0.0.1])
-        by mx0b-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x08Kb7AN023428;
-        Tue, 8 Jan 2019 12:45:24 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=facebook;
- bh=XSg3vuTFrc7QLeVh9twoJ7MBZtBF7cAQMHeTx6wOV0Q=;
- b=efjbNIgK31awvY9IMELCxmCso6APWBNUjAm0I0R8aR8SFtYsXfINQUcGrZCk5xXuO4z7
- KX6p7xKsZPjnF4gsZAZsuY3TUrnrSwnkPzHxC1dI1kZLhmDhQcNkIELwoZlQl1F7yAXz
- gpglRiyMSq3DlXSgsHO9dp/pMId5pI3PlqU= 
-Received: from mail.thefacebook.com ([199.201.64.23])
-        by mx0b-00082601.pphosted.com with ESMTP id 2pw1hrrbx9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Tue, 08 Jan 2019 12:45:24 -0800
-Received: from prn-mbx03.TheFacebook.com (2620:10d:c081:6::17) by
- prn-hub06.TheFacebook.com (2620:10d:c081:35::130) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.1.1531.3; Tue, 8 Jan 2019 12:45:23 -0800
-Received: from prn-hub01.TheFacebook.com (2620:10d:c081:35::125) by
- prn-mbx03.TheFacebook.com (2620:10d:c081:6::17) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.1.1531.3; Tue, 8 Jan 2019 12:45:22 -0800
-Received: from NAM03-DM3-obe.outbound.protection.outlook.com (192.168.54.28)
- by o365-in.thefacebook.com (192.168.16.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1531.3
- via Frontend Transport; Tue, 8 Jan 2019 12:45:22 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector1-fb-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XSg3vuTFrc7QLeVh9twoJ7MBZtBF7cAQMHeTx6wOV0Q=;
- b=GA2tJO5yoMbg0f8Z5A5RcBVV0bdiL7UMXqZ/YbJRVuSy9b9tqKJhB/kItYCsexk64mtLTHzzurXsIdugJkYtSBP1WLv48VQYkh8OPDaAv7bIN2SZlZheou2KHUfoIoohUpdPnrJYENXb7ygRK3O3STmFnE6y/R+zi3hT+MGxLK4=
-Received: from BYAPR15MB2501.namprd15.prod.outlook.com (52.135.196.11) by
- BYAPR15MB2231.namprd15.prod.outlook.com (52.135.196.158) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1495.6; Tue, 8 Jan 2019 20:45:19 +0000
-Received: from BYAPR15MB2501.namprd15.prod.outlook.com
- ([fe80::e12c:c450:3e9f:4ef6]) by BYAPR15MB2501.namprd15.prod.outlook.com
- ([fe80::e12c:c450:3e9f:4ef6%4]) with mapi id 15.20.1495.011; Tue, 8 Jan 2019
- 20:45:19 +0000
-From:   Alexei Starovoitov <ast@fb.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Song Liu <songliubraving@fb.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "acme@kernel.org" <acme@kernel.org>,
-        "ast@kernel.org" <ast@kernel.org>,
-        "daniel@iogearbox.net" <daniel@iogearbox.net>,
-        Kernel Team <Kernel-team@fb.com>
-Subject: Re: [PATCH v5 perf, bpf-next 3/7] perf, bpf: introduce
- PERF_RECORD_BPF_EVENT
-Thread-Topic: [PATCH v5 perf, bpf-next 3/7] perf, bpf: introduce
- PERF_RECORD_BPF_EVENT
-Thread-Index: AQHUmJHzTcneBvFiJEmnpKLooFaM96Wl8IGAgAAEeQA=
-Date:   Tue, 8 Jan 2019 20:45:19 +0000
-Message-ID: <dd3ca24b-4da5-b0b1-9d1c-e5ed3fe297d2@fb.com>
-References: <20181220182904.4193196-1-songliubraving@fb.com>
- <20181220182904.4193196-4-songliubraving@fb.com>
- <20190108202915.GE30894@hirez.programming.kicks-ass.net>
-In-Reply-To: <20190108202915.GE30894@hirez.programming.kicks-ass.net>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: MW2PR2101CA0032.namprd21.prod.outlook.com
- (2603:10b6:302:1::45) To BYAPR15MB2501.namprd15.prod.outlook.com
- (2603:10b6:a02:88::11)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [2620:10d:c090:200::7:958e]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BYAPR15MB2231;20:pk35UwuCpwtvA8EeUY2Ce/+11iPCFbk0OaW4pc0a/amr1KmLSqmlD7+kOTrk82ZlQ7B0/pOgsveW5/f72ja0gAlle+Q4/D6dMBOOF4ShZFrAnRLaojpNPVm+Q/b2IkpWCKjJWDL9pkR5NeGSqk8zUbkqxqWynaRuSGWYL1dxOlc=
-x-ms-office365-filtering-correlation-id: 5932dd50-b011-48cd-be42-08d675aa33d8
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(2017052603328)(7153060)(7193020);SRVR:BYAPR15MB2231;
-x-ms-traffictypediagnostic: BYAPR15MB2231:
-x-microsoft-antispam-prvs: <BYAPR15MB223181524FD344849633BE7BD78A0@BYAPR15MB2231.namprd15.prod.outlook.com>
-x-forefront-prvs: 0911D5CE78
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(39860400002)(346002)(136003)(376002)(366004)(189003)(199004)(478600001)(31696002)(99286004)(6246003)(316002)(31686004)(575784001)(86362001)(229853002)(105586002)(76176011)(6506007)(14454004)(6512007)(36756003)(7736002)(305945005)(4326008)(52116002)(53936002)(110136005)(54906003)(25786009)(6486002)(106356001)(6436002)(2616005)(53546011)(11346002)(446003)(6116002)(8676002)(2906002)(386003)(81166006)(81156014)(71190400001)(71200400001)(8936002)(6636002)(486006)(256004)(476003)(5660300001)(97736004)(68736007)(46003)(102836004)(186003);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR15MB2231;H:BYAPR15MB2501.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: XgNyjwZeXIBwspQyU3Jf+4eKWCq003BE1MGbHvUTd/XhGvU8g6ELjmHNHaabAmXB7M+q1UbaH+lP1Ronw7RO8z7ra0w/o3j5i/tfOlqsOG2b6ZBCw5wYQ2+p7MzVr9Y2U3Ongu2tFkpmLxbHJcoEItxsJAKJSuzFCyVMP0cHWJkcHGYwbM+TDTW0UomlHt7U3z/eGQKvUb066Mpcum4ZTc7dfu2cIXygyqv+/Fi6o+5d2RjV9l04lidxPDkwc5BbgHQ4DHte/o+kulgBDTlwu8dDLCzYjQu/Cw++o8Kh4AAoHVXojiN8Nrc2gu8XOSUv
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <EF1A7043D2CE3C4EB102CF4FF1A30F60@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Tue, 8 Jan 2019 15:46:29 -0500
+Received: by mail-pg1-f195.google.com with SMTP id y4so2230399pgc.12
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 12:46:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=LusyIAyjb0RJtn/ST8iJUYesxIhGya7nyXVh7SKbByQ=;
+        b=eo58r4fhxqIBQvHyNhUfYczeSbuFV5vCUPXwL8b2YZgr4w06DW5Dci6B4nSH7Cvs7m
+         8uH0cif6ucn4e4TTIbyC+M1EVWALhiQzwxlfhr1KtkqU68MFRXjgof8HsPftqNvYZzzf
+         eKljH1yjFpgbiwU8tBgBGjY74gUOIVEhbRt7tcqZft7VNvNsJlarU9B/Gveek2ycQgYy
+         jHsRcRTwr/mCtATXX9mtbNe/FD6WZaD6b0kK5/LlW7zW1IxhjAeaeRktHnzWlHguvS3F
+         dUZdaTHRsMNkyF8XJolOTOOQKgNYCnR1gN+dnMC36yENMY8B2G95n3TYeXeFsN3yJ8t1
+         u8XQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=LusyIAyjb0RJtn/ST8iJUYesxIhGya7nyXVh7SKbByQ=;
+        b=aHPttxNfz+A+RzMmBJzS2YaxXo5TkQASAvOo5gJIrwzymSBofxlNInWnGXvDF/HLJH
+         RbKzuFqwoiMWADKwBhcKMZej/o57JiNCue+fNNGkaCynmFcjBWf5sKUkog8tdRQJOCR8
+         g61O8Llf5qtwmNjQEl5TmZ083BK/o6Ta06YPspWim9ZYGrKEi7PZKLcqkPYT0nMjh1+D
+         vEfk7JIjAHKMXMFtSLhSGjsRrO1NdvMwpNDSGOJeWUHiEvr+KrHRHsuCivvszOlagWeb
+         k1l9YiravN6DaceLa2a+9ttetk4LtaiUfaP/YeX2gLv3L8HIZ+dwek3G4RxLYNyLD38s
+         5smA==
+X-Gm-Message-State: AJcUukcB3/O+Ahpof0jH/5yh0sNAp3iq2DOT41kmHGXd5gJyquV1RkeQ
+        mSSjOw0Mppi4TUHsJwEwqFEebuItQYRzXtp6w1E0qQ==
+X-Google-Smtp-Source: ALg8bN7Y40WSHIUv36xMPIajhFMJlubfdLGYcYdtUymkHGbHMPSfaQlrNzTX7LAPLJqLqFtwkXi7KgRmTv51U6/erSo=
+X-Received: by 2002:a62:2c81:: with SMTP id s123mr3191929pfs.174.1546980388107;
+ Tue, 08 Jan 2019 12:46:28 -0800 (PST)
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5932dd50-b011-48cd-be42-08d675aa33d8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Jan 2019 20:45:19.7048
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB2231
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-08_11:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+References: <20181210222635.80886-1-trong@android.com> <CAKwvOdkb0_hxwnO2T_F34i-MYN_MJksg973Yu1hfb8HeRCXMMQ@mail.gmail.com>
+ <CAKwvOd=0=r7oNVZW6VHNjB8PvMF0Etn6fgRbrFdaQKeKHXyexQ@mail.gmail.com>
+ <CANA+-vBcxF7P1C+zddnqshKwMGuCSb97JC-=3==TwFeEGZP05w@mail.gmail.com>
+ <1545132839351.85480@accesssoftek.com> <CANA+-vCHXbmor5ha6kew+997CZwftYjxfovdYxhkPHGGj8_DmA@mail.gmail.com>
+ <CANA+-vCq6-RBAxqZO0yFXm5Vq7qRRzsZbX=OsgcaxasEbZcV6w@mail.gmail.com>
+In-Reply-To: <CANA+-vCq6-RBAxqZO0yFXm5Vq7qRRzsZbX=OsgcaxasEbZcV6w@mail.gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Tue, 8 Jan 2019 12:46:16 -0800
+Message-ID: <CAKwvOd=5QTE=cwkvgfxsUnv4A1dQcZDyiM=PWGCh7_uAd1vwKA@mail.gmail.com>
+Subject: Re: [RFC PATCH] x86_64: Add "-m elf_i386" when linking i386 object files.
+To:     "bp@alien8.de" <bp@alien8.de>
+Cc:     George Rimar <grimar@accesssoftek.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        Dmitry Golovin <dima@golovin.in>,
+        Bill Wendling <morbo@google.com>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "ruiu@google.com" <ruiu@google.com>, Tri Vo <trong@android.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMS84LzE5IDEyOjI5IFBNLCBQZXRlciBaaWpsc3RyYSB3cm90ZToNCj4gT24gVGh1LCBEZWMg
-MjAsIDIwMTggYXQgMTA6Mjk6MDBBTSAtMDgwMCwgU29uZyBMaXUgd3JvdGU6DQo+PiBUaGUgZm9s
-bG93aW5nIGV4YW1wbGUgc2hvd3Mga2VybmVsIHN5bWJvbHMgZm9yIGEgQlBGIHByb2dyYW0gd2l0
-aCA3DQo+PiBzdWIgcHJvZ3JhbXM6DQo+Pg0KPj4gICAgICBmZmZmZmZmZmEwMjU3Y2Y5IHQgYnBm
-X3Byb2dfYjA3Y2NiODkyNjdjZjI0Ml9GDQo+PiAgICAgIGZmZmZmZmZmYTAyNTkyZTEgdCBicGZf
-cHJvZ18yZGNlY2MxODA3MjYyM2ZjX0YNCj4+ICAgICAgZmZmZmZmZmZhMDI1YjBlOSB0IGJwZl9w
-cm9nX2JiN2E0MDVlYmFlYzVkNWNfRg0KPj4gICAgICBmZmZmZmZmZmEwMjVkZDJjIHQgYnBmX3By
-b2dfYTc1NDBkNGEzOWVjMWZjN19GDQo+PiAgICAgIGZmZmZmZmZmYTAyNWZjY2EgdCBicGZfcHJv
-Z18wNTc2MmQ0YWRlMGUzNzM3X0YNCj4+ICAgICAgZmZmZmZmZmZhMDI2MTA4ZiB0IGJwZl9wcm9n
-X2RiNGJkMTFlMzVkZjkwZDRfRg0KPj4gICAgICBmZmZmZmZmZmEwMjYzZjAwIHQgYnBmX3Byb2df
-ODlkNjRlNGFiZjBmMDEyNl9GDQo+PiAgICAgIGZmZmZmZmZmYTAyNTdjZjkgdCBicGZfcHJvZ19h
-ZTMxNjI5MzIyYzRiMDE4X19kdW1teV90cmFjZXBvaQ0KPiANCj4gV2Ugc2hvdWxkIHByb2JhYmx5
-IHNwZWNpZnkgc29tZXdoZXJlIHRoYXQgdGhlIG5hbWUgY2FuIGluY2x1ZGUgYQ0KPiAnW21vZHVs
-ZV0nIHBhcnQganVzdCBsaWtlIG5vcm1hbCBrYWxsc3ltcy4gRXZlbiB0aG91Z2ggeW91IGRvbid0
-DQo+IGN1cnJlbnRseSB1c2UgdGhhdC4NCg0KdGhlcmUgaXMgbm8gW21vZHVsZV0gZXF1aXZhbGVu
-dCBpbiBicGYgbGFuZC4NClRoZSBwcm9ncyBsb2FkZWQgYnkgZGlmZmVyZW50IHVzZXJzIGNhbiBi
-ZSBzaGFyZWQuDQpUaGVyZSBpcyBubyBzdHJpY3QgdHJlZSBoaWVyYXJjaHkgKGxpa2UgaW4gbW9k
-dWxlcykNCndoZXJlIHRoZXJlIGlzIG9uZSByb290IGFuZCBhIGJ1bmNoIG9mIGZ1bmN0aW9uIHVu
-ZGVybmVhdGguDQpJbiBicGYgYWxsIHRoZXNlIGZ1bmN0aW9ucyBmb3JtIGEgZ3JhcGggYW5kIGNh
-biBjYWxsIGVhY2ggb3RoZXIuDQpTYW1lIHdpdGggbWFwcyB0aGF0IGFyZSBzaGFyZWQgYnkgZGlm
-ZmVyZW50IHByb2dzIG9mIGRpZmZlcmVudCB0eXBlcy4NCkxpa2UgbmV0d29ya2luZyBwcm9nIGFu
-ZCB0cmFjaW5nIHByb2cgY2FuIHNoYXJlIGNvbW1vbiBtYXAuDQo=
+> On Mon, Jan 7, 2019 at 3:11 PM Tri Vo <trong@android.com> wrote:
+> >
+> > Hello, hope everyone's had great holidays.
+> > Could someone review at this patch?
+
+Boris,
+I assume Tri meant to post this to you in the To: line?  I'm happy
+with this patch, and am happy to add my reviewed by tag (in addition
+to my tested-by below), but I think Tri meant to ask you.  WDYT?
+
+> >
+> > On Tue, Dec 18, 2018 at 3:39 AM George Rimar <grimar@accesssoftek.com> =
+wrote:
+> >>
+> >> Added Rui, an LLD code owner.
+> >>
+> >> This patch contains the approach we discussed earlier during LLD devel=
+opment when
+> >> faced this issue first time (and as a result of the discussion,
+> >> the same fix was suggested: https://bugzilla.kernel.org/show_bug.cgi?i=
+d=3D194091#c0),
+> >> so I think it is fine.
+> >>
+> >> Best regards,
+> >> George | Developer | Access Softek, Inc
+> >>
+> >> ________________________________________
+> >> =D0=9E=D1=82: Tri Vo <trong@android.com>
+> >> =D0=9E=D1=82=D0=BF=D1=80=D0=B0=D0=B2=D0=BB=D0=B5=D0=BD=D0=BE: 12 =D0=
+=B4=D0=B5=D0=BA=D0=B0=D0=B1=D1=80=D1=8F 2018 =D0=B3. 22:48
+> >> =D0=9A=D0=BE=D0=BC=D1=83: Nick Desaulniers
+> >> =D0=9A=D0=BE=D0=BF=D0=B8=D1=8F: bp@alien8.de; x86@kernel.org; tglx@lin=
+utronix.de; mingo@redhat.com; George Rimar; Dmitry Golovin; Bill Wendling; =
+hpa@zytor.com; linux-kernel@vger.kernel.org
+> >> =D0=A2=D0=B5=D0=BC=D0=B0: Re: [RFC PATCH] x86_64: Add "-m elf_i386" wh=
+en linking i386 object files.
+> >>
+> >> CAUTION: This email originated from outside of the organization. Do no=
+t click links or open attachments unless you recognize the sender and know =
+the content is safe.
+> >>
+> >> Adding appropriate people, lists.
+> >> On Tue, Dec 11, 2018 at 1:07 PM Nick Desaulniers
+> >> <ndesaulniers@google.com> wrote:
+> >> >
+> >> > On Mon, Dec 10, 2018 at 2:50 PM Nick Desaulniers
+> >> > <ndesaulniers@google.com> wrote:
+> >> > >
+> >> > > On Mon, Dec 10, 2018 at 2:26 PM Tri Vo <trong@android.com> wrote:
+> >> > > >
+> >> > > > From: George Rimar <grimar@accesssoftek.com>
+> >> > > >
+> >> > > > Linux kernel uses OUTPUT_FORMAT in it's linker scripts. Most of =
+the time
+> >> > > > -m option is passed to the linker with correct architecture, but
+> >> > > > sometimes (at least for x86_64) the -m option contradicts OUTPUT=
+_FORMAT
+> >> > > > directive. Specifically, arch/x86/boot and arch/x86/realmode/rm =
+modules
+> >> > > > have i386 object files, but are linked with -m elf_x86_64 linker=
+ flag
+> >> > > > when building for x86_64.
+> >> > > >
+> >> > > > BFD and Gold linkers are OK with this, but lld fails:
+> >> > > > ld.lld: error: arch/x86/realmode/rm/header.o is incompatible wit=
+h elf_x86_64
+> >> > > >
+> >> > > > Suggested fix: just add correct -m after incorrect one (it overr=
+ides
+> >> > > > it), so the linker invocation looks like this: ld -m elf_x86_64 =
+-z
+> >> > > > max-page-size=3D0x200000 -m elf_i386 --emit-relocs -T realmode.l=
+ds
+> >> > > > header.o trampoline_64.o stack.o reboot.o -o realmode.elf (it wi=
+ll also
+> >> > > > work with GNU ld, because it supports OUTPUT_FORMAT and just ign=
+ores -m
+> >> > > > options if this directive is in the linker script).
+> >> > > >
+> >> > > > Tested by building x86_64 kernel with GNU gcc/ld toolchain and b=
+ooting
+> >> > > > it in QEMU.
+> >> > > >
+> >> > > > Suggested-by: Dmitry Golovin <dima@golovin.in>
+> >> > > > Signed-off-by: Tri Vo <trong@android.com>
+> >> > > > Tested-by: Tri Vo <trong@android.com>
+> >> > >
+> >> > > This fixes the following linkage error I observe when linking an x=
+86
+> >> > > kernel with LLD:
+> >> > >
+> >> > > ```
+> >> > >   LD      arch/x86/realmode/rm/realmode.elf
+> >> > > ld.lld: error: arch/x86/realmode/rm/header.o is incompatible with =
+elf_x86_64
+> >> > > ld.lld: error: arch/x86/realmode/rm/trampoline_64.o is incompatibl=
+e
+> >> > > with elf_x86_64
+> >> > > ld.lld: error: arch/x86/realmode/rm/stack.o is incompatible with e=
+lf_x86_64
+> >> > > ld.lld: error: arch/x86/realmode/rm/reboot.o is incompatible with =
+elf_x86_64
+> >> > > ld.lld: error: arch/x86/realmode/rm/wakeup_asm.o is incompatible w=
+ith elf_x86_64
+> >> > > ld.lld: error: arch/x86/realmode/rm/wakemain.o is incompatible wit=
+h elf_x86_64
+> >> > > ld.lld: error: arch/x86/realmode/rm/video-mode.o is incompatible w=
+ith elf_x86_64
+> >> > > ld.lld: error: arch/x86/realmode/rm/copy.o is incompatible with el=
+f_x86_64
+> >> > > ld.lld: error: arch/x86/realmode/rm/bioscall.o is incompatible wit=
+h elf_x86_64
+> >> > > ld.lld: error: arch/x86/realmode/rm/regs.o is incompatible with el=
+f_x86_64
+> >> > > ld.lld: error: arch/x86/realmode/rm/video-vga.o is incompatible wi=
+th elf_x86_64
+> >> > > ld.lld: error: arch/x86/realmode/rm/video-vesa.o is incompatible w=
+ith elf_x86_64
+> >> > > ld.lld: error: arch/x86/realmode/rm/video-bios.o is incompatible w=
+ith elf_x86_64
+> >> > > arch/x86/realmode/rm/Makefile:55: recipe for target
+> >> > > 'arch/x86/realmode/rm/realmode.elf' failed
+> >> > > ```
+> >> > > Tested-by: Nick Desaulniers <ndesaulniers@google.com>
+> >> > >
+> >> > > Looks like we still have a few other (unrelated) issues to track d=
+own
+> >> > > with LLD, but this gets us one step closer.
+> >> > >
+> >> > > Thanks for sending this, Tri!
+> >> >
+> >> > Just some additional thoughts on this:
+> >> >
+> >> > The kernel is adding -m elf_x86_64 to the linker command line
+> >> > parameters, but then relying on binutils tie-breaking-behavior by
+> >> > specifying a different architecture via linker script. So it's
+> >> > ambiguous which arch the kernel is trying to link for, and the kerne=
+l
+> >> > gets lucky/relies on the way ld.bfd happens to resolve this ambiguit=
+y
+> >> > without warning. An alternative fix may be to just filter out/remove
+> >> > the -m elf_x86_64 for this target's linker flags.
+> >> >
+> >> > >
+> >> > > > ---
+> >> > > >  arch/x86/boot/Makefile        | 2 +-
+> >> > > >  arch/x86/realmode/rm/Makefile | 2 +-
+> >> > > >  2 files changed, 2 insertions(+), 2 deletions(-)
+> >> > > >
+> >> > > > diff --git a/arch/x86/boot/Makefile b/arch/x86/boot/Makefile
+> >> > > > index 9b5adae9cc40..e2839b5c246c 100644
+> >> > > > --- a/arch/x86/boot/Makefile
+> >> > > > +++ b/arch/x86/boot/Makefile
+> >> > > > @@ -100,7 +100,7 @@ $(obj)/zoffset.h: $(obj)/compressed/vmlinux =
+FORCE
+> >> > > >  AFLAGS_header.o +=3D -I$(objtree)/$(obj)
+> >> > > >  $(obj)/header.o: $(obj)/zoffset.h
+> >> > > >
+> >> > > > -LDFLAGS_setup.elf      :=3D -T
+> >> > > > +LDFLAGS_setup.elf      :=3D -m elf_i386 -T
+> >> > > >  $(obj)/setup.elf: $(src)/setup.ld $(SETUP_OBJS) FORCE
+> >> > > >         $(call if_changed,ld)
+> >> > > >
+> >> > > > diff --git a/arch/x86/realmode/rm/Makefile b/arch/x86/realmode/r=
+m/Makefile
+> >> > > > index 4463fa72db94..96cb20de08af 100644
+> >> > > > --- a/arch/x86/realmode/rm/Makefile
+> >> > > > +++ b/arch/x86/realmode/rm/Makefile
+> >> > > > @@ -47,7 +47,7 @@ $(obj)/pasyms.h: $(REALMODE_OBJS) FORCE
+> >> > > >  targets +=3D realmode.lds
+> >> > > >  $(obj)/realmode.lds: $(obj)/pasyms.h
+> >> > > >
+> >> > > > -LDFLAGS_realmode.elf :=3D --emit-relocs -T
+> >> > > > +LDFLAGS_realmode.elf :=3D -m elf_i386 --emit-relocs -T
+> >> > > >  CPPFLAGS_realmode.lds +=3D -P -C -I$(objtree)/$(obj)
+> >> > > >
+> >> > > >  targets +=3D realmode.elf
+> >> > > > --
+> >> > > > 2.20.0.rc2.403.gdbc3b29805-goog
+
+--=20
+Thanks,
+~Nick Desaulniers
