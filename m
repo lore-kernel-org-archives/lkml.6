@@ -2,165 +2,163 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 820D6C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 22:54:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01D4FC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 22:59:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E89B214C6
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 22:54:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546988068;
-	bh=NvnqUoU7GQoUtzti/SECPxKN/zJMy7RNxrC1smn7wuo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=ClphsOAf1y6hZCfnQForB7YcvtcilPh3CyJ41efzWaw6U6JwtqqvlC/FslnlVnBm9
-	 +LtwjgLWHDaezILdAF8mmPCyuE4cKwbKiTjEl9cjtFo6tMyvt/qcaThF7E19oV/Vx4
-	 PEJ2+5WgpKMGs633HJQ33G/O76moCGjdO54Jm7FA=
+	by mail.kernel.org (Postfix) with ESMTP id C597520883
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 22:59:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729076AbfAHWy1 (ORCPT
+        id S1728973AbfAHW74 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 17:54:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45576 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728348AbfAHWy0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 17:54:26 -0500
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3E1E7218AF
-        for <linux-kernel@vger.kernel.org>; Tue,  8 Jan 2019 22:54:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546988065;
-        bh=NvnqUoU7GQoUtzti/SECPxKN/zJMy7RNxrC1smn7wuo=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=V32W80jWKdBWuOamkTVWXO+AnsFYfhIlaWyrIocmOolyBDT3LZVcLhKRZpSsEXgu6
-         YkUh5GZQdtEt607W9ykMS0vMxIbXdY+nSVmw1g7/i2VkHSDpkW84hQbh/B/IkFT8GD
-         FC5EQvDO66Xx3vGublmpJpC3Zzt0muCBPlqoTpyk=
-Received: by mail-wr1-f42.google.com with SMTP id t6so5713272wrr.12
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 14:54:25 -0800 (PST)
-X-Gm-Message-State: AJcUukdmOlTUZ9v2/JwwkJicG0WctzQD0Cb8FrTmaYEnX4V/nNyo336H
-        Y5U9iZI1Ef9H/BsWSCRRILSeUO4poq6C+/dCUFK5CQ==
-X-Google-Smtp-Source: ALg8bN6VZreit8qM/R1pOv2/qkZQ8jwXuSp8U893lvRHD0kTsH66VeWi/m+Y9AHzjOgVlNtgT26KeF2o/0gJoIvEubw=
-X-Received: by 2002:adf:8323:: with SMTP id 32mr2737350wrd.176.1546988063578;
- Tue, 08 Jan 2019 14:54:23 -0800 (PST)
+        Tue, 8 Jan 2019 17:59:56 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:37897 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727772AbfAHW74 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 17:59:56 -0500
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 93E92807FE; Tue,  8 Jan 2019 23:59:47 +0100 (CET)
+Date:   Tue, 8 Jan 2019 23:59:52 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc:     Vesa =?iso-8859-1?B?SuTkc2tlbORpbmVu?= <dachaac@gmail.com>,
+        Dan Murphy <dmurphy@ti.com>, robh+dt@kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-leds@vger.kernel.org
+Subject: Re: Generic RGB LED support was Re: [PATCH 2/2] leds: lp5024: Add
+ the LP5024/18 RGB LED driver
+Message-ID: <20190108225952.GA13299@amd>
+References: <c9f8965a-90f4-b456-8225-c70694c9f071@gmail.com>
+ <cf6c0025-36e7-197b-b27a-1f31fb45cc38@gmail.com>
+ <20190104201256.GA2931@amd>
+ <a4e3a782-de76-ba91-3727-4db69cf27c3a@gmail.com>
+ <20190104220726.GA12395@amd>
+ <4cf79414-578e-eea7-4f46-fc8789206988@gmail.com>
+ <20190105123146.GA16354@amd>
+ <8044cdd9-b9b3-fddd-6106-184b906859e2@gmail.com>
+ <20190105221254.GA22322@amd>
+ <dac50714-9caf-2496-3208-fb62f886e31f@gmail.com>
 MIME-Version: 1.0
-References: <20181214215729.4221-1-sean.j.christopherson@intel.com>
- <7706b2aa71312e1f0009958bcab24e1e9d8d1237.camel@linux.intel.com>
- <598cd050-f0b5-d18c-96a0-915f02525e3e@fortanix.com> <20181219091148.GA5121@linux.intel.com>
- <613c6814-4e71-38e5-444a-545f0e286df8@fortanix.com> <20181219144515.GA30909@linux.intel.com>
- <CALCETrW_8LnitFamYUU7POHFOJFxLO7ESFUdS=aeG_SOvHVPkw@mail.gmail.com>
- <20181221162825.GB26865@linux.intel.com> <105F7BF4D0229846AF094488D65A0989355A45B6@PGSMSX112.gar.corp.intel.com>
- <20190108220946.GA30462@linux.intel.com>
-In-Reply-To: <20190108220946.GA30462@linux.intel.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Tue, 8 Jan 2019 14:54:11 -0800
-X-Gmail-Original-Message-ID: <CALCETrU7Zb8L8eTYZg3bAB1Gfw1orUfeQmXjVy1_R-kfBeweVA@mail.gmail.com>
-Message-ID: <CALCETrU7Zb8L8eTYZg3bAB1Gfw1orUfeQmXjVy1_R-kfBeweVA@mail.gmail.com>
-Subject: Re: x86/sgx: uapi change proposal
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     "Huang, Kai" <kai.huang@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "x86@kernel.org" <x86@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        "Dr . Greg Wettstein" <greg@enjellic.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="envbJBWh7q8WU6mo"
+Content-Disposition: inline
+In-Reply-To: <dac50714-9caf-2496-3208-fb62f886e31f@gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 8, 2019 at 2:09 PM Sean Christopherson
-<sean.j.christopherson@intel.com> wrote:
->
-> On Tue, Jan 08, 2019 at 11:27:11AM -0800, Huang, Kai wrote:
-> > > >
-> > > > Can one of you explain why SGX_ENCLAVE_CREATE is better than just
-> > > > opening a new instance of /dev/sgx for each encalve?
-> > >
-> > > Directly associating /dev/sgx with an enclave means /dev/sgx can't be used
-> > > to provide ioctl()'s for other SGX-related needs, e.g. to mmap() raw EPC and
-> > > expose it a VM.  Proposed layout in the link below.  I'll also respond to
-> > > Jarkko's question about exposing EPC through /dev/sgx instead of having
-> > > KVM allocate it on behalf of the VM.
-> > >
-> > > https://lkml.kernel.org/r/20181218185349.GC30082@linux.intel.com
+
+--envbJBWh7q8WU6mo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi!
+
+> >>>Grab yourself an RGB LED and play with it; you'll see what the
+> >>>problems are. It is hard to explain colors over email...
+> >>
+> >>Video [0] gives some overview of lp5024 capabilities.
+> >>
+> >>I don't see any problems in exposing separate red,green,blue
+> >>files and brightness for the devices with hardware support for
+> >>that.
 > >
-> > Hi Sean,
+> >Well, that's what we do today, as three separate LEDs, right?
+>=20
+> No. It doesn't allow for setting color intensity by having
+> the color fixed beforehand. Below is relevant excerpt from
+> the lp5024 documentation. This is not something that can be
+> mapped to RGB color space, but rather to HSV/HSL, with the
+> reservation that the hardware implementation uses PWM
+> for setting color intensity.
+
+So they have feature where they have independent controls for each
+channel, then one common control per three channels. Other chips have
+common control for all the LEDs, for example. We don't support that
+currently; lets focus on the RGB thing first.
+
+> >I don't have problem with that, either; other drivers already do
+> >that. He's free to use existing same interface.
 > >
-> > Sorry for replying to old email. But IMHO it is not a must that Qemu
-> > needs to open some /dev/sgx and allocate/mmap EPC for guest's virtual
-> > EPC slot, instead, KVM could create private slot, which is not visible
-> > to Qemu, for virtual EPC, and KVM could call core-SGX EPC allocation
-> > API directly.
->
-> That's possible, but it has several downsides.
->
->   - Duplicates a lot of code in KVM for managing memory regions.
->   - Artificially restricts userspace to a single EPC region, unless
->     even more code is duplicated to handle multiple private regions.
->   - Requires additional ioctls() or capabilities to probe EPC support
->   - Does not fit with Qemu/KVM's memory model, e.g. all other types of
->     memory are exposed to a guest through KVM_SET_USER_MEMORY_REGION.
->   - Prevents userspace from debugging a guest's enclave.  I'm not saying
->     this is a likely scenario, but I also don't think we should preclude
->     it without good reason.
->   - KVM is now responsible for managing the lifecycle of EPC, e.g. what
->     happens if an EPC cgroup limit is lowered on a running VM and
->     KVM can't gracefully reclaim EPC?  The userspace hypervisor should
->     ultimately decide how to handle such an event.
->   - SGX logic is split between SGX and KVM, e.g. VA page management for
->     oversubscription will likely be common to SGX and KVM.  From a long
->     term maintenance perspective, this means that changes to the EPC
->     management could potentially need to be Acked by KVM, and vice versa.
->
-> > I am not sure what's the good of allowing userspace to alloc/mmap a
-> > raw EPC region? Userspace is not allowed to touch EPC anyway, expect
-> > enclave code.
+> >But that is insufficient, as it does not allow simple stuff, such as
+> >turning led "white".
 > >
-> > To me KVM creates private EPC slot is cleaner than exposing /dev/sgx/epc
-> > and allowing userspace to map some raw EPC region.
->
-> Cleaner in the sense that it's faster to get basic support up and running
-> since there are fewer touchpoints, but there are long term ramifications
-> to cramming EPC management in KVM.
->
-> And at this point I'm not stating any absolutes, e.g. how EPC will be
-> handled by KVM.  What I'm pushing for is to not eliminate the possibility
-> of having the SGX subsystem own all EPC management, e.g. don't tie
-> /dev/sgx to a single enclave.
+> >So... perhaps we should agree on requirements, first, and then we can
+> >discuss solutions?
+> >
+> >Requirements for RGB LED interface:
+> >
+> >1) Userspace should be able to set the white color
+> >
+> >2) Userspace should be able to arbitrary color from well known list
+> >and it should approximately match what would CRT, LCD or OLED monitor di=
+splay
+>=20
+> The difference is that monitor display driver is pre-calibrated
+> for given display by the manufacturer. With the LED controllers the
+> manufacturer has no control over what LEDs will be connected to the
+> iouts. Therefore it should be not surprising that colors produced
+> by custom LEDs are not as user would expect when comparing to
+> the RGB color displayed on the monitor display.
 
-I haven't gone and re-read all the relevant SDM bits, so I'll just
-ask: what, if anything, are the actual semantics of mapping "raw EPC"
-like this?  You can't actually do anything with the mapping from user
-mode unless you actually get an enclave created and initialized in it
-and have it mapped at the correct linear address, right?  I still
-think you have the right idea, but it is a bit unusual.
+It is true that _chip_ manufacturer can not know what LEDs will be
+connected. But _system_ manufacturer can and should know that, and
+should tell be able to tell us in the dts.
 
-I do think it makes sense to have QEMU delegate the various ENCLS
-operations (especially EINIT) to the regular SGX interface, which will
-mean that VM guests will have exactly the same access controls applied
-as regular user programs, which is probably what we want.  If so,
-there will need to be a way to get INITTOKEN privilege for the purpose
-of running non-Linux OSes in the VM, which isn't the end of the world.
-We might still want the actual ioctl to do EINIT using an actual
-explicit token to be somehow restricted in a way that strongly
-discourages its use by anything other than a hypervisor.  Or I suppose
-we could just straight-up ignore the guest-provided init token.
+> This renders your requirement 2) infeasible with use of custom LEDs
+> any fixed algorithm, since the final effect will always heavily depend
+> on the LED circuit design.
 
---Andy
+Depending on LED circuit design and actual LEDs connected is okay.. we
+just need to get information from _system_ designer (not chip
+designer), and pass it to a place where color is computed.
 
-P.S. Is Intel ever going to consider a way to make guests get their
-own set of keys that are different from the host's keys and other
-guests' keys?
+> >a) RGB LEDs are usually not balanced. Setting 100% PWM on
+> >red/green/blue channels will result in nothing close to white
+> >light. In fact, to get white light on N900, blue and green channel's
+> >PWM needs to be set pretty low, as in 5%.
+> >
+> >b) LED class does not define any relation between "brightness" in
+> >sysfs and ammount of light in lumens. Some drivers use close to linear
+> >relation, some use exponential relation. Human eyes percieve logarithm
+> >of lumens. RGB color model uses even more complex function.
+>=20
+> One general question: do you have any solutions in store?
+
+I played with LEDs on N900 over the weekend, yes.
+
+And getting reasonable colors seems to be possible, when a) and b) are
+solved... a) seems to be more important than b).
+
+Now... this does not tell us how we should design kernel<->user
+interface, but it should tell us that main goals - 1) and 2) are
+possible.
+
+Best regards,
+
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--envbJBWh7q8WU6mo
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlw1K2cACgkQMOfwapXb+vJssgCdECJUPj0Ru8PJgm0ldaRU90TT
+GYUAmwTaWvDbd+1OXIli2bRoOI4qIjjb
+=SrHH
+-----END PGP SIGNATURE-----
+
+--envbJBWh7q8WU6mo--
