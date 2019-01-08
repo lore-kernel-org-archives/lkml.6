@@ -2,162 +2,123 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47F6DC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 22:20:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1725FC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 22:20:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11C3D20883
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 22:20:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D677520883
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 22:20:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="eSElZoQn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729754AbfAHWUP convert rfc822-to-8bit (ORCPT
+        id S1729883AbfAHWUY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 17:20:15 -0500
-Received: from mail-oln040092068058.outbound.protection.outlook.com ([40.92.68.58]:21568
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728015AbfAHWUO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 17:20:14 -0500
-Received: from HE1EUR02FT025.eop-EUR02.prod.protection.outlook.com
- (10.152.10.59) by HE1EUR02HT083.eop-EUR02.prod.protection.outlook.com
- (10.152.11.232) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1471.13; Tue, 8 Jan
- 2019 22:20:10 +0000
-Received: from AM6PR07MB5608.eurprd07.prod.outlook.com (10.152.10.60) by
- HE1EUR02FT025.mail.protection.outlook.com (10.152.10.79) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.1471.13 via Frontend Transport; Tue, 8 Jan 2019 22:20:10 +0000
-Received: from AM6PR07MB5608.eurprd07.prod.outlook.com
- ([fe80::68b1:73c3:455d:de2a]) by AM6PR07MB5608.eurprd07.prod.outlook.com
- ([fe80::68b1:73c3:455d:de2a%2]) with mapi id 15.20.1516.010; Tue, 8 Jan 2019
- 22:20:10 +0000
-From:   Bernd Edlinger <bernd.edlinger@hotmail.de>
-To:     Kalle Valo <kvalo@codeaurora.org>
-CC:     Ping-Ke Shih <pkshih@realtek.com>,
-        Larry Finger <Larry.Finger@lwfinger.net>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH v3 1/4] rtl8723ae: Take the FW LPS mode handling out
-Thread-Topic: [PATCH v3 1/4] rtl8723ae: Take the FW LPS mode handling out
-Thread-Index: AQHUpVMW1dQwmrtP7EOElJ7UgzyQKqWlpGO9gABRlgA=
-Date:   Tue, 8 Jan 2019 22:20:10 +0000
-Message-ID: <AM6PR07MB5608485F4D295B7DE5E00A0DE48A0@AM6PR07MB5608.eurprd07.prod.outlook.com>
-References: <DB7PR07MB535316A20C8447096DBC822DE4880@DB7PR07MB5353.eurprd07.prod.outlook.com>
- <875zuzqctc.fsf@kamboji.qca.qualcomm.com>
-In-Reply-To: <875zuzqctc.fsf@kamboji.qca.qualcomm.com>
-Accept-Language: en-US, en-GB, de-DE
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: AM5P190CA0036.EURP190.PROD.OUTLOOK.COM
- (2603:10a6:206:14::49) To AM6PR07MB5608.eurprd07.prod.outlook.com
- (2603:10a6:20b:6f::21)
-x-incomingtopheadermarker: OriginalChecksum:957DD6C58A6FAD965940A81D39EABDD8F1B652FB7212EC848CB4C6C09821CF4E;UpperCasedChecksum:8745FE5092B997B585FCD429DC97297067141C2AD048BA2E959539BEA9AC3230;SizeAsReceived:8956;Count:65
-x-ms-exchange-messagesentrepresentingtype: 1
-x-tmn:  [J/sOYt11xHoPHK5fRRtJa+VMfEeo+LZt]
-x-microsoft-original-message-id: <193bd17c-8f12-aa33-74a7-c9fa9a90246f@hotmail.de>
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;HE1EUR02HT083;6:KPLH69ctTezlkJ133pPDBwDDaeXrKqMGQ6aUpPpvf2X/mBM8ZC1dDd7SmlHjDz8xhpVdZ1k7K2641dM/+ucv1VnpjoYTbmdCNlukn2zLYw63vEDpPI21B63u3UHCtswitS/H/k+jzHirkitZ8TptiylBQY90GTSEZlTTp6Dnr2AQ1E7YdxZ3LPVpGbmRX34PMdLrN21nbxKUDYiW8JTqdRnK+674dB1fMu06ByAVGHE/x6ey/1l6O79wShysuL6CcQ6BcpAr2DoUBz/HHKoeGUYk1GkFq623pRp/rx6XS+TZz87xf/ES8ccaiqdszgm83Z1ZS3SuXwOHqCDznhc4n6SZy5v7Wld3X1+RD4OGyfeSiIGOYPpS1H46dOGdEl99TO+K3TTk1BvxgENp2SsI2T/K7YsdsRJmGDasf8H2+mbiH2HQy29shC+tFWZVmcAr5OuE6PkXhkodABVYcGvyVw==;5:DF6T8gJUl7DHZv1dldn8vFWGHqYUOdPnX28m91larEievcQG9bwoaxun2blBpRI7EYet5fbwkAyYQU8In2t88+6Nj/jHFuurYS/TxERCMfs0wm7oys0GwdQwNVzRSfLH760LJ5suk7ysgDoTKcGk6U9E3rwYnTL4KiD77OkGbA0=;7:GsfIXAMCeBq3fGhd+jDEE0nVX7gucb4WkFVYsS5VVpDLhaQGtsXSd3YGtijioRZgeJE9bPt0vBHqAxgPC4nlx/WK1qz0nK2btkOQsjVA2KUa0n4okLKYGJWRpfWdIeisQlnVV/CgNcrE8UAbG3Wplg==
-x-incomingheadercount: 65
-x-eopattributedmessage: 0
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(201702061078)(5061506573)(5061507331)(1603103135)(2017031320274)(2017031323274)(2017031324274)(2017031322404)(1601125500)(1603101475)(1701031045);SRVR:HE1EUR02HT083;
-x-ms-traffictypediagnostic: HE1EUR02HT083:
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(4566010)(82015058);SRVR:HE1EUR02HT083;BCL:0;PCL:0;RULEID:;SRVR:HE1EUR02HT083;
-x-microsoft-antispam-message-info: bGTMq1lAuyp2nlMuYloPfmwsocgSEGss2Bd0iukbEOdlRCSjQ8cNKez2cM5CAtN0
-Content-Type: text/plain; charset="Windows-1252"
-Content-ID: <8F1AEF01D7017547B6C1DF8E5F67BC06@eurprd07.prod.outlook.com>
-Content-Transfer-Encoding: 8BIT
+        Tue, 8 Jan 2019 17:20:24 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:46210 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729288AbfAHWUX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 17:20:23 -0500
+Received: by mail-ot1-f68.google.com with SMTP id w25so4947415otm.13;
+        Tue, 08 Jan 2019 14:20:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3FszoKRoii4/tLSRpYfFx7gzdLe873cr0aXmZDyBbvM=;
+        b=eSElZoQn2DIH72z1EWOtHQjqzOkOhH5QnFfqy7b9Hhs3Ok5QLq26EFK7TQXK9PIeNc
+         dRkbSaZRdX31zO07z4sYC53kT2ixhtlWrUrK/6qXWo0pGq74ijj9KxcsHSl3CAX+dzqr
+         HcTPexMTO25vmu0T1YzJU2W+lHmnlQOiML/fXxEeo5VnCsUMFO6x2cho4XNJN/fDrf19
+         kle0rtYJ/UzUtk6TD2E+brpt86zSh0i2LipeHeexFeB1rl+9tvD9Ta8uVraqWz82b6Fn
+         Z6BUBkv0WiMgf7Ix1kZqlmFmV6Y+Q0OI7mDhbRQyy4ln3DR9gbXBHfHssCq6ni2dTUq/
+         PORA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3FszoKRoii4/tLSRpYfFx7gzdLe873cr0aXmZDyBbvM=;
+        b=h/yjbe8BQdhyUnkifXdxU6WgXGibCqY2Sf3Mg7YpJUEk42CwGdZ0ZYyB3KCVIEK/L9
+         Ds8NYWRdAqiVk2auRmLiVq31agERWTHW0lfvK26/rYBNiAZJTBlXFFLPhOOUSea2z59d
+         mO9FBIzOGboObViAcNj83e/+OU257RH1nhLZ3XxZB95ZsftoaZ+FyPvMiVowyq8B1yho
+         zR6zqpvRaQ0WlbOS+fNykhRFsi5zLOwLiIlYWlhycpUWnhFIHcVrUzsaM9zDzjjHmswd
+         +Is3e4ZqGFxpUqa83X+VcLfgwZCs3x0kQblsf3MfbUQmCkFVEtUjrNzCsFzX/4UUtKbu
+         JKNQ==
+X-Gm-Message-State: AJcUukcNWXxGMGAO27r8lqvBC27ONtnETXitb7NgH1qDFsxMAlbI5gIe
+        P5mSQTzQVDIsLMoN6jMG/ut3PX8Ugffz6NEIDPQ=
+X-Google-Smtp-Source: ALg8bN69o9Zg29FBhXVFYmT+twlXqMLAu0kW630fZwzdzoS2zn+fub1h/543Z5T3yGcYcFHhyySw1fLgxs1GKQQL230=
+X-Received: by 2002:a9d:a48:: with SMTP id 66mr2392346otg.308.1546986022444;
+ Tue, 08 Jan 2019 14:20:22 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: d4d70346-2c10-4f39-8c00-e767963926d9
-X-MS-Exchange-CrossTenant-Network-Message-Id: e4296a1f-4885-4b53-bec9-08d675b773a1
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: d4d70346-2c10-4f39-8c00-e767963926d9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Jan 2019 22:20:09.5266
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Internet
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1EUR02HT083
+References: <20190101194414.24766-1-martin.blumenstingl@googlemail.com>
+ <20190101194414.24766-2-martin.blumenstingl@googlemail.com> <CACRpkda8cSt7J8+2P1xpOn13KkS_xmeO1MBRR9dXZcWXgzpQwQ@mail.gmail.com>
+In-Reply-To: <CACRpkda8cSt7J8+2P1xpOn13KkS_xmeO1MBRR9dXZcWXgzpQwQ@mail.gmail.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Tue, 8 Jan 2019 23:20:11 +0100
+Message-ID: <CAFBinCDj-CpaQb2wfreJOCkFVj6ysV7943mqTs3xSvMfhy3yGw@mail.gmail.com>
+Subject: Re: [PATCH 1/1] mmc: core: don't override the CD GPIO level when
+ "cd-inverted" is set
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/8/19 6:27 PM, Kalle Valo wrote:
-> Bernd Edlinger <bernd.edlinger@hotmail.de> writes:
-> 
->> This appears to trigger a firmware bug and causes severe
->> problems with rtl8723ae PCI devices.
->>
->> When the power save mode is activated for longer periods
->> of time the firmware stops to receive any packets.
->>
->> This problem was exposed by commit 873ffe154ae0 ("rtlwifi:
->> Fix logic error in enter/exit power-save mode").
->>
->> Previously the power save mode was only active rarely and
->> only for a short time so that the problem was not noticeable.
->>
->> Signed-off-by: Bernd Edlinger <bernd.edlinger@hotmail.de>
->> ---
->> v2: Adjust the defaults of swlps and fwlps module
->> parameters to match the firmware capabilities instead of removing
->> the whole code, so it can be easily re-activated once a firmware
->> update is available.
->>
->> v3: Make the title fit in one line.
-> 
-> hotmail.de made me suspicious and indeed my Spidey sense was right:
-> 
-> Applying: rtl8723ae: Take the FW LPS mode handling out
-> Using index info to reconstruct a base tree...
-> .git/rebase-apply/patch:22: trailing whitespace.
->         .swctrl_lps = true,
-> .git/rebase-apply/patch:23: trailing whitespace.
->         .fwctrl_lps = false,
-> .git/rebase-apply/patch:33: trailing whitespace.
-> MODULE_PARM_DESC(swlps, "Set to 1 to use SW control power save (default 1)\n");
-> .git/rebase-apply/patch:34: trailing whitespace.
-> MODULE_PARM_DESC(fwlps, "Set to 1 to use FW control power save (default 0)\n");
-> error: patch failed: drivers/net/wireless/realtek/rtlwifi/rtl8723ae/sw.c:266
-> error: drivers/net/wireless/realtek/rtlwifi/rtl8723ae/sw.c: patch does not apply
-> error: Did you hand edit your patch?
-> It does not apply to blobs recorded in its index.
-> Patch failed at 0001 rtl8723ae: Take the FW LPS mode handling out
-> 
-> Did you use Outlook to send this patch or what? Anyway, it's strongly
-> suggested to use git to submit the patches (and not use Outlook servers
-> either as they are notorious in breaking our patches):
-> 
+Hi Linus,
 
-No, I did use firefox with the settings which I found at
-https://www.kernel.org/doc/html/latest/process/email-clients.html#email-clients
+On Thu, Jan 3, 2019 at 11:06 PM Linus Walleij <linus.walleij@linaro.org> wrote:
+>
+> On Tue, Jan 1, 2019 at 8:44 PM Martin Blumenstingl
+> <martin.blumenstingl@googlemail.com> wrote:
+>
+> > Since commit 89a5e15bcba87d ("gpio/mmc/of: Respect polarity in the device
+> > tree") gpiolib-of parses the "cd-gpios" property and flips the polarity
+> > if "cd-inverted" is also set. This results in the "cd-inverted" property
+> > being evaluated twice, which effectively makes it a no-op:
+> > - first in drivers/gpio/gpiolib-of.c (of_xlate_and_get_gpiod_flags) when
+> >   setting up the CD GPIO
+> > - then again in drivers/mmc/core/slot-gpio.c (mmc_gpio_get_cd) when
+> >   reading the CD GPIO value at runtime
+> >
+> > On boards which are using device-tree with the "cd-inverted" property
+> > being set any inserted card are not detected anymore. This is due to the
+> > MMC core treating the CD GPIO with the wrong polarity.
+> >
+> > Disable "override_cd_active_level" for the card detection GPIO which is
+> > parsed using mmc_of_parse. This fixes SD card detection on the boards
+> > which are currently using the "cd-inverted" device-tree property (tested
+> > on Meson8b Odroid-C1 and Meson8b EC-100).
+> >
+> > This does not remove the CD GPIO inversion logic from the MMC core
+> > because there's at least one driver (sdhci-pci-core for Intel BayTrail
+> > based boards) which still passes "override_cd_active_level = true" to
+> > mmc_gpiod_request_cd(). Due to lack of hardware for testing this is left
+> > untouched.
+> > In the future the GPIO inversion logic for both, card and read-only
+> > detection can be removed once no driver is using it anymore.
+> >
+> > Fixes: 89a5e15bcba87d ("gpio/mmc/of: Respect polarity in the device tree")
+> > Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+>
+> OK two steps forward, one step back, that's a good fix for now, I
+> can fix it properly for v4.22.
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+great, thanks for reviewing this!
 
-I think all that is wrong with the message body is it is base64 encoded, and all the
-lines end with CRLF, and it seems the CR is the trailing whitespace.
-
-I think the Character Encoding/UTF-8 does not work right with
-Exchange Servers.
-
-What Character Encoding would git send-email use?  UTF-8?
-
-So I will try to send the patches again, with 7-bit encoded message bodies.
-Actually it will be quoted-printable, but I do not use any umlauts.
+feel free to keep me CC'ed on the "cleanup patches". I can review them
+if you don't mind that I usually need a few days to do that
 
 
-So for the records, I did open about:config in the firefox preferences,
-and change:
-
-mailnews.send_default_charset from UTF-8 to ISO-8859-1
-
-that I have already done before, but it was not sufficient:
-
-mailnews.send_plaintext_flowed from true to false
-mailnews.wraplength from 72 to 0
-
-
-Thanks
-Bernd.
+Regards
+Martin
