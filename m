@@ -2,73 +2,177 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09684C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:44:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6AACC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:44:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC06F206BB
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:43:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WNbbiha+"
+	by mail.kernel.org (Postfix) with ESMTP id 740472063F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:44:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546976646;
+	bh=ZjCqVSWGjmz9JxvfnOvW6HhZvvb9pmAOXA7jU0if3b8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=yoGzJVZC1V1A4D+LjUGcof7/smEfy8JguyegTVYUOY6mCF68I6pfFlsqVDJH5QG/c
+	 hfH/oGl2hsnKgXty5qkMCmuP0INVy8IAeImg/4FjVlW8GUrAY/ZfC8Ct7yKassMoHP
+	 5yp4EECzjEzSpFqxinbYtHDLxvc8W32+C15ApuMA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732700AbfAHTn6 (ORCPT
+        id S1731131AbfAHTds (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:43:58 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:49870 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731283AbfAHTnt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:43:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=kAcpKixWtHGEPESaLO1jfQIkKD8g3uluyYQMkCQxYT4=; b=WNbbiha+WCx7XuYFvQE2Fllvi
-        Kzjd9oeL8X5tW8rp99y2IebzMzDBEOUuO8MqSWMMB5HH+0Skn1AW1Gvtke+y5igEFO/nx5m/A1nZx
-        6N7k5G34MqMrOZH3/en6Wl2mGRWZj0c4whPgLtGjdMo/kkUVQpZ0oXFO3enTgdtV6OhyKbIQIMP1K
-        LA8ILDWYV7SkrrgTvR9z5kSnQfYQ4rpYWg8Iizm+hFNNDqsbFmnghWaOSR7XB5PJG8b2s4yv7scT6
-        VCswykby70e1+zmLsIOrkDH+/4OGqTM8XYpDRrbc6LrbJKmx8Rcnv3TuWMFbFLQLUx9k0EkRTKypX
-        NK0W1jyNQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1ggxHu-0005w5-1o; Tue, 08 Jan 2019 19:43:46 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 22EA520280199; Tue,  8 Jan 2019 20:43:43 +0100 (CET)
-Date:   Tue, 8 Jan 2019 20:43:43 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Song Liu <songliubraving@fb.com>
-Cc:     lkml <linux-kernel@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Kernel Team <Kernel-team@fb.com>
-Subject: Re: [PATCH v5 perf, bpf-next 1/7] perf, bpf: Introduce
- PERF_RECORD_KSYMBOL
-Message-ID: <20190108194343.GE1900@hirez.programming.kicks-ass.net>
-References: <20181220182904.4193196-1-songliubraving@fb.com>
- <20181220182904.4193196-2-songliubraving@fb.com>
- <20190108183127.GB30894@hirez.programming.kicks-ass.net>
- <A7A11A44-FDF0-4FB5-98B6-3E47A35E7120@fb.com>
+        Tue, 8 Jan 2019 14:33:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42438 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730513AbfAHTdj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:33:39 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6FFF3205C9;
+        Tue,  8 Jan 2019 19:33:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1546976018;
+        bh=ZjCqVSWGjmz9JxvfnOvW6HhZvvb9pmAOXA7jU0if3b8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=sP3USNRqHBZlAAd5MF2xX51qKwINOy/gZ7JUQ58fIe3rvge2jh64xC9tijA1OKRyM
+         7mZDpVDRbI8MfV60ub/ENwbEdvm8J0Ksr1xXUfHNdhJHgBzSTEqwWDx8P/7PuBeba3
+         NBTAhU/6WeS6ZJk+lZk/K1OAK7iCr2eegx6mYO38=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Qian Cai <cai@lca.pw>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>,
+        megaraidlinux.pdl@broadcom.com, linux-scsi@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 49/53] scsi: megaraid: fix out-of-bound array accesses
+Date:   Tue,  8 Jan 2019 14:32:17 -0500
+Message-Id: <20190108193222.123316-49-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190108193222.123316-1-sashal@kernel.org>
+References: <20190108193222.123316-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <A7A11A44-FDF0-4FB5-98B6-3E47A35E7120@fb.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 08, 2019 at 06:56:19PM +0000, Song Liu wrote:
-> I don't think we need u64 length. 32 bit should be more than enough. 
-> 
-> How about we revise it as:
+From: Qian Cai <cai@lca.pw>
 
-Yep, works. Although I would not introduce types we're not yet
-generating. We can add those easily enough when needed.
+[ Upstream commit c7a082e4242fd8cd21a441071e622f87c16bdacc ]
+
+UBSAN reported those with MegaRAID SAS-3 3108,
+
+[   77.467308] UBSAN: Undefined behaviour in drivers/scsi/megaraid/megaraid_sas_fp.c:117:32
+[   77.475402] index 255 is out of range for type 'MR_LD_SPAN_MAP [1]'
+[   77.481677] CPU: 16 PID: 333 Comm: kworker/16:1 Not tainted 4.20.0-rc5+ #1
+[   77.488556] Hardware name: Huawei TaiShan 2280 /BC11SPCD, BIOS 1.50 06/01/2018
+[   77.495791] Workqueue: events work_for_cpu_fn
+[   77.500154] Call trace:
+[   77.502610]  dump_backtrace+0x0/0x2c8
+[   77.506279]  show_stack+0x24/0x30
+[   77.509604]  dump_stack+0x118/0x19c
+[   77.513098]  ubsan_epilogue+0x14/0x60
+[   77.516765]  __ubsan_handle_out_of_bounds+0xfc/0x13c
+[   77.521767]  mr_update_load_balance_params+0x150/0x158 [megaraid_sas]
+[   77.528230]  MR_ValidateMapInfo+0x2cc/0x10d0 [megaraid_sas]
+[   77.533825]  megasas_get_map_info+0x244/0x2f0 [megaraid_sas]
+[   77.539505]  megasas_init_adapter_fusion+0x9b0/0xf48 [megaraid_sas]
+[   77.545794]  megasas_init_fw+0x1ab4/0x3518 [megaraid_sas]
+[   77.551212]  megasas_probe_one+0x2c4/0xbe0 [megaraid_sas]
+[   77.556614]  local_pci_probe+0x7c/0xf0
+[   77.560365]  work_for_cpu_fn+0x34/0x50
+[   77.564118]  process_one_work+0x61c/0xf08
+[   77.568129]  worker_thread+0x534/0xa70
+[   77.571882]  kthread+0x1c8/0x1d0
+[   77.575114]  ret_from_fork+0x10/0x1c
+
+[   89.240332] UBSAN: Undefined behaviour in drivers/scsi/megaraid/megaraid_sas_fp.c:117:32
+[   89.248426] index 255 is out of range for type 'MR_LD_SPAN_MAP [1]'
+[   89.254700] CPU: 16 PID: 95 Comm: kworker/u130:0 Not tainted 4.20.0-rc5+ #1
+[   89.261665] Hardware name: Huawei TaiShan 2280 /BC11SPCD, BIOS 1.50 06/01/2018
+[   89.268903] Workqueue: events_unbound async_run_entry_fn
+[   89.274222] Call trace:
+[   89.276680]  dump_backtrace+0x0/0x2c8
+[   89.280348]  show_stack+0x24/0x30
+[   89.283671]  dump_stack+0x118/0x19c
+[   89.287167]  ubsan_epilogue+0x14/0x60
+[   89.290835]  __ubsan_handle_out_of_bounds+0xfc/0x13c
+[   89.295828]  MR_LdRaidGet+0x50/0x58 [megaraid_sas]
+[   89.300638]  megasas_build_io_fusion+0xbb8/0xd90 [megaraid_sas]
+[   89.306576]  megasas_build_and_issue_cmd_fusion+0x138/0x460 [megaraid_sas]
+[   89.313468]  megasas_queue_command+0x398/0x3d0 [megaraid_sas]
+[   89.319222]  scsi_dispatch_cmd+0x1dc/0x8a8
+[   89.323321]  scsi_request_fn+0x8e8/0xdd0
+[   89.327249]  __blk_run_queue+0xc4/0x158
+[   89.331090]  blk_execute_rq_nowait+0xf4/0x158
+[   89.335449]  blk_execute_rq+0xdc/0x158
+[   89.339202]  __scsi_execute+0x130/0x258
+[   89.343041]  scsi_probe_and_add_lun+0x2fc/0x1488
+[   89.347661]  __scsi_scan_target+0x1cc/0x8c8
+[   89.351848]  scsi_scan_channel.part.3+0x8c/0xc0
+[   89.356382]  scsi_scan_host_selected+0x130/0x1f0
+[   89.361002]  do_scsi_scan_host+0xd8/0xf0
+[   89.364927]  do_scan_async+0x9c/0x320
+[   89.368594]  async_run_entry_fn+0x138/0x420
+[   89.372780]  process_one_work+0x61c/0xf08
+[   89.376793]  worker_thread+0x13c/0xa70
+[   89.380546]  kthread+0x1c8/0x1d0
+[   89.383778]  ret_from_fork+0x10/0x1c
+
+This is because when populating Driver Map using firmware raid map, all
+non-existing VDs set their ldTgtIdToLd to 0xff, so it can be skipped later.
+
+From drivers/scsi/megaraid/megaraid_sas_base.c ,
+memset(instance->ld_ids, 0xff, MEGASAS_MAX_LD_IDS);
+
+From drivers/scsi/megaraid/megaraid_sas_fp.c ,
+/* For non existing VDs, iterate to next VD*/
+if (ld >= (MAX_LOGICAL_DRIVES_EXT - 1))
+	continue;
+
+However, there are a few places that failed to skip those non-existing VDs
+due to off-by-one errors. Then, those 0xff leaked into MR_LdRaidGet(0xff,
+map) and triggered the out-of-bound accesses.
+
+Fixes: 51087a8617fe ("megaraid_sas : Extended VD support")
+Signed-off-by: Qian Cai <cai@lca.pw>
+Acked-by: Sumit Saxena <sumit.saxena@broadcom.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/scsi/megaraid/megaraid_sas_fp.c     | 2 +-
+ drivers/scsi/megaraid/megaraid_sas_fusion.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/scsi/megaraid/megaraid_sas_fp.c b/drivers/scsi/megaraid/megaraid_sas_fp.c
+index f2ffde430ec1..9a2a62e39e4c 100644
+--- a/drivers/scsi/megaraid/megaraid_sas_fp.c
++++ b/drivers/scsi/megaraid/megaraid_sas_fp.c
+@@ -1266,7 +1266,7 @@ void mr_update_load_balance_params(struct MR_DRV_RAID_MAP_ALL *drv_map,
+ 
+ 	for (ldCount = 0; ldCount < MAX_LOGICAL_DRIVES_EXT; ldCount++) {
+ 		ld = MR_TargetIdToLdGet(ldCount, drv_map);
+-		if (ld >= MAX_LOGICAL_DRIVES_EXT) {
++		if (ld >= MAX_LOGICAL_DRIVES_EXT - 1) {
+ 			lbInfo[ldCount].loadBalanceFlag = 0;
+ 			continue;
+ 		}
+diff --git a/drivers/scsi/megaraid/megaraid_sas_fusion.c b/drivers/scsi/megaraid/megaraid_sas_fusion.c
+index 06a2e3d9fc5b..7be2b9e11332 100644
+--- a/drivers/scsi/megaraid/megaraid_sas_fusion.c
++++ b/drivers/scsi/megaraid/megaraid_sas_fusion.c
+@@ -2529,7 +2529,7 @@ static void megasas_build_ld_nonrw_fusion(struct megasas_instance *instance,
+ 		device_id < instance->fw_supported_vd_count)) {
+ 
+ 		ld = MR_TargetIdToLdGet(device_id, local_map_ptr);
+-		if (ld >= instance->fw_supported_vd_count)
++		if (ld >= instance->fw_supported_vd_count - 1)
+ 			fp_possible = 0;
+ 		else {
+ 			raid = MR_LdRaidGet(ld, local_map_ptr);
+-- 
+2.19.1
+
