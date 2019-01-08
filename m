@@ -3,96 +3,135 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FB91C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 11:25:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2F31C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 11:25:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF30D2087E
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 11:25:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B34A20850
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 11:25:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728812AbfAHLZr (ORCPT
+        id S1728791AbfAHLZp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 06:25:47 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:47738 "EHLO mx1.redhat.com"
+        Tue, 8 Jan 2019 06:25:45 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:57328 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728644AbfAHLZ2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728686AbfAHLZ2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 8 Jan 2019 06:25:28 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C021363144;
+        by mx1.redhat.com (Postfix) with ESMTPS id E9A24C062C97;
         Tue,  8 Jan 2019 11:25:27 +0000 (UTC)
 Received: from sirius.home.kraxel.org (ovpn-116-98.ams2.redhat.com [10.36.116.98])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A9E53189E3;
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A3F1D68364;
         Tue,  8 Jan 2019 11:25:24 +0000 (UTC)
 Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 472C75EE4; Tue,  8 Jan 2019 12:25:21 +0100 (CET)
+        id 070975EE2; Tue,  8 Jan 2019 12:25:21 +0100 (CET)
 From:   Gerd Hoffmann <kraxel@redhat.com>
 To:     dri-devel@lists.freedesktop.org, David Airlie <airlied@redhat.com>
 Cc:     andr2000@gmail.com, Gerd Hoffmann <kraxel@redhat.com>,
         David Airlie <airlied@linux.ie>,
         virtualization@lists.linux-foundation.org (open list:DRM DRIVER FOR
         BOCHS VIRTUAL GPU), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2 12/15] drm/bochs: switch to generic drm fbdev emulation
-Date:   Tue,  8 Jan 2019 12:25:16 +0100
-Message-Id: <20190108112519.27473-13-kraxel@redhat.com>
+Subject: [PATCH v2 10/15] drm/bochs: drop unused gpu_addr arg from bochs_bo_pin()
+Date:   Tue,  8 Jan 2019 12:25:14 +0100
+Message-Id: <20190108112519.27473-11-kraxel@redhat.com>
 In-Reply-To: <20190108112519.27473-1-kraxel@redhat.com>
 References: <20190108112519.27473-1-kraxel@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Tue, 08 Jan 2019 11:25:27 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Tue, 08 Jan 2019 11:25:28 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
----
- drivers/gpu/drm/bochs/bochs_drv.c | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
+It's always NULL, so just remove it.
 
-diff --git a/drivers/gpu/drm/bochs/bochs_drv.c b/drivers/gpu/drm/bochs/bochs_drv.c
-index a9c7140e3b..350e34cf2c 100644
---- a/drivers/gpu/drm/bochs/bochs_drv.c
-+++ b/drivers/gpu/drm/bochs/bochs_drv.c
-@@ -16,10 +16,6 @@ static int bochs_modeset = -1;
- module_param_named(modeset, bochs_modeset, int, 0444);
- MODULE_PARM_DESC(modeset, "enable/disable kernel modesetting");
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+Reviewed-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+---
+ drivers/gpu/drm/bochs/bochs.h       |  2 +-
+ drivers/gpu/drm/bochs/bochs_fbdev.c |  2 +-
+ drivers/gpu/drm/bochs/bochs_kms.c   |  2 +-
+ drivers/gpu/drm/bochs/bochs_mm.c    | 11 +----------
+ 4 files changed, 4 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/gpu/drm/bochs/bochs.h b/drivers/gpu/drm/bochs/bochs.h
+index 4dc1b6384e..d0d474e06f 100644
+--- a/drivers/gpu/drm/bochs/bochs.h
++++ b/drivers/gpu/drm/bochs/bochs.h
+@@ -142,7 +142,7 @@ int bochs_dumb_create(struct drm_file *file, struct drm_device *dev,
+ int bochs_dumb_mmap_offset(struct drm_file *file, struct drm_device *dev,
+ 			   uint32_t handle, uint64_t *offset);
  
--static bool enable_fbdev = true;
--module_param_named(fbdev, enable_fbdev, bool, 0444);
--MODULE_PARM_DESC(fbdev, "register fbdev device");
+-int bochs_bo_pin(struct bochs_bo *bo, u32 pl_flag, u64 *gpu_addr);
++int bochs_bo_pin(struct bochs_bo *bo, u32 pl_flag);
+ int bochs_bo_unpin(struct bochs_bo *bo);
+ 
+ /* bochs_kms.c */
+diff --git a/drivers/gpu/drm/bochs/bochs_fbdev.c b/drivers/gpu/drm/bochs/bochs_fbdev.c
+index d9f3d42999..92feb817ff 100644
+--- a/drivers/gpu/drm/bochs/bochs_fbdev.c
++++ b/drivers/gpu/drm/bochs/bochs_fbdev.c
+@@ -81,7 +81,7 @@ static int bochsfb_create(struct drm_fb_helper *helper,
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = bochs_bo_pin(bo, TTM_PL_FLAG_VRAM, NULL);
++	ret = bochs_bo_pin(bo, TTM_PL_FLAG_VRAM);
+ 	if (ret) {
+ 		DRM_ERROR("failed to pin fbcon\n");
+ 		ttm_bo_unreserve(&bo->bo);
+diff --git a/drivers/gpu/drm/bochs/bochs_kms.c b/drivers/gpu/drm/bochs/bochs_kms.c
+index 85ada2d097..fc856a02a2 100644
+--- a/drivers/gpu/drm/bochs/bochs_kms.c
++++ b/drivers/gpu/drm/bochs/bochs_kms.c
+@@ -96,7 +96,7 @@ static int bochs_plane_prepare_fb(struct drm_plane *plane,
+ 	if (!new_state->fb)
+ 		return 0;
+ 	bo = gem_to_bochs_bo(new_state->fb->obj[0]);
+-	return bochs_bo_pin(bo, TTM_PL_FLAG_VRAM, NULL);
++	return bochs_bo_pin(bo, TTM_PL_FLAG_VRAM);
+ }
+ 
+ static void bochs_plane_cleanup_fb(struct drm_plane *plane,
+diff --git a/drivers/gpu/drm/bochs/bochs_mm.c b/drivers/gpu/drm/bochs/bochs_mm.c
+index 0980411e41..5a0e092847 100644
+--- a/drivers/gpu/drm/bochs/bochs_mm.c
++++ b/drivers/gpu/drm/bochs/bochs_mm.c
+@@ -210,20 +210,13 @@ static void bochs_ttm_placement(struct bochs_bo *bo, int domain)
+ 	bo->placement.num_busy_placement = c;
+ }
+ 
+-static inline u64 bochs_bo_gpu_offset(struct bochs_bo *bo)
+-{
+-	return bo->bo.offset;
+-}
 -
- /* ---------------------------------------------------------------------- */
- /* drm interface                                                          */
- 
-@@ -27,7 +23,6 @@ static void bochs_unload(struct drm_device *dev)
+-int bochs_bo_pin(struct bochs_bo *bo, u32 pl_flag, u64 *gpu_addr)
++int bochs_bo_pin(struct bochs_bo *bo, u32 pl_flag)
  {
- 	struct bochs_device *bochs = dev->dev_private;
+ 	struct ttm_operation_ctx ctx = { false, false };
+ 	int i, ret;
  
--	bochs_fbdev_fini(bochs);
- 	bochs_kms_fini(bochs);
- 	bochs_mm_fini(bochs);
- 	bochs_hw_fini(dev);
-@@ -58,9 +53,6 @@ static int bochs_load(struct drm_device *dev)
- 	if (ret)
- 		goto err;
+ 	if (bo->pin_count) {
+ 		bo->pin_count++;
+-		if (gpu_addr)
+-			*gpu_addr = bochs_bo_gpu_offset(bo);
+ 		return 0;
+ 	}
  
--	if (enable_fbdev)
--		bochs_fbdev_init(bochs);
--
+@@ -235,8 +228,6 @@ int bochs_bo_pin(struct bochs_bo *bo, u32 pl_flag, u64 *gpu_addr)
+ 		return ret;
+ 
+ 	bo->pin_count = 1;
+-	if (gpu_addr)
+-		*gpu_addr = bochs_bo_gpu_offset(bo);
  	return 0;
+ }
  
- err:
-@@ -178,6 +170,7 @@ static int bochs_pci_probe(struct pci_dev *pdev,
- 	if (ret)
- 		goto err_unload;
- 
-+	drm_fbdev_generic_setup(dev, 32);
- 	return ret;
- 
- err_unload:
 -- 
 2.9.3
 
