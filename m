@@ -4,51 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88AA0C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:33:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93845C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:33:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DE3820645
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:33:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 57BA920827
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:33:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546975990;
-	bh=wzfe/EoPghBKyalS9shaSTP0YvyrDP48iFgofp/CYis=;
+	s=default; t=1546976000;
+	bh=y9poZcvpZiIiGWg94evkl8KnA5COysPDKq/WTrmkBK0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=JafW9DSxPauZj3ldVFFQVw0Y9bmVWltRk6EGDvMwIwD8Qrdaack8h8rPOevOivZTK
-	 ZtOyil+4VRtL5IsRSh0vOzRjyt2pFDFRrHgfsqiS4aCU0hOaNGXNeLjFo/gwDsBnN3
-	 aol/hepV9hQ905Vqjtf+rokEtRSwn+qv3pIzqYRc=
+	b=PWKGBgnzBXYL76ZBB17sPoLrMRchI9fOMRGl/uS3KvbMJ97TyKnUzMczSFSIorV/G
+	 p5kWYLr0cDTT2DDD61ICsZAvFRFdJnAD3G+mRj6+deZwrwNWUMiPo4ZAgn9oQRIaHX
+	 RDYH0Lsv4kwHWrzu8hJPD4zKpTEXbZfuuRmBs0vQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731591AbfAHTdJ (ORCPT
+        id S1731656AbfAHTdT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:33:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41908 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:33:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42046 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731571AbfAHTdH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:33:07 -0500
+        id S1731610AbfAHTdO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:33:14 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4C3FD205C9;
-        Tue,  8 Jan 2019 19:33:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5DD2B205C9;
+        Tue,  8 Jan 2019 19:33:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975986;
-        bh=wzfe/EoPghBKyalS9shaSTP0YvyrDP48iFgofp/CYis=;
+        s=default; t=1546975994;
+        bh=y9poZcvpZiIiGWg94evkl8KnA5COysPDKq/WTrmkBK0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uMSF03hFDmmw4he1XnUS1AcNor8MKyE8vQjyKhywX6FWnmsHqLrX7ye62oXaBj+Gq
-         8v1wfbxzblhmpZ1t+bKnWCRXMPbx8ns4HkRtscv5X1VvcrUsaa62JrJAa5XKzR+rSK
-         FlhaOTSTXePl+xD21EB5Fg0qyFk8kLR6Dn+D7X24=
+        b=MypMykxBXEjiAVjQF3cD9dW/UuiIIWSS9j6YfvxCsPCNPpVAOWbTd6SwnEaH0PbJe
+         QYS4klMeoACmUzgu5AJkshHm7dAjQzRCmCyHfibToVNtaSXgXQSUrr6uOSejbdgOH0
+         iCdr4HFP8LdPQG/L6XbKLBDznKh7bLRx/sVlNg1E=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     "Dmitry V. Levin" <ldv@altlinux.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Will Drewry <wad@chromium.org>,
-        linux-kselftest@vger.kernel.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 26/53] selftests: do not macro-expand failed assertion expressions
-Date:   Tue,  8 Jan 2019 14:31:54 -0500
-Message-Id: <20190108193222.123316-26-sashal@kernel.org>
+Cc:     Johannes Thumshirn <jthumshirn@suse.de>,
+        David Sterba <dsterba@suse.com>,
+        Sasha Levin <sashal@kernel.org>, linux-btrfs@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 32/53] btrfs: improve error handling of btrfs_add_link
+Date:   Tue,  8 Jan 2019 14:32:00 -0500
+Message-Id: <20190108193222.123316-32-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108193222.123316-1-sashal@kernel.org>
 References: <20190108193222.123316-1-sashal@kernel.org>
@@ -60,243 +57,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Dmitry V. Levin" <ldv@altlinux.org>
+From: Johannes Thumshirn <jthumshirn@suse.de>
 
-[ Upstream commit b708a3cc9600390ccaa2b68a88087dd265154b2b ]
+[ Upstream commit 1690dd41e0cb1dade80850ed8a3eb0121b96d22f ]
 
-I've stumbled over the current macro-expand behaviour of the test
-harness:
+In the error handling block, err holds the return value of either
+btrfs_del_root_ref() or btrfs_del_inode_ref() but it hasn't been checked
+since it's introduction with commit fe66a05a0679 (Btrfs: improve error
+handling for btrfs_insert_dir_item callers) in 2012.
 
-$ gcc -Wall -xc - <<'__EOF__'
-TEST(macro) {
-	int status = 0;
-	ASSERT_TRUE(WIFSIGNALED(status));
-}
-TEST_HARNESS_MAIN
-__EOF__
-$ ./a.out
-[==========] Running 1 tests from 1 test cases.
-[ RUN      ] global.macro
-<stdin>:4:global.macro:Expected 0 (0) != (((signed char) (((status) & 0x7f) + 1) >> 1) > 0) (0)
-global.macro: Test terminated by assertion
-[     FAIL ] global.macro
-[==========] 0 / 1 tests passed.
-[  FAILED  ]
+If the error handling in the error handling fails, there's not much left
+to do and the abort either happened earlier in the callees or is
+necessary here.
 
-With this change the output of the same test looks much more
-comprehensible:
+So if one of btrfs_del_root_ref() or btrfs_del_inode_ref() failed, abort
+the transaction, but still return the original code of the failure
+stored in 'ret' as this will be reported to the user.
 
-[==========] Running 1 tests from 1 test cases.
-[ RUN      ] global.macro
-<stdin>:4:global.macro:Expected 0 (0) != WIFSIGNALED(status) (0)
-global.macro: Test terminated by assertion
-[     FAIL ] global.macro
-[==========] 0 / 1 tests passed.
-[  FAILED  ]
-
-The issue is very similar to the bug fixed in glibc assert(3)
-three years ago:
-https://sourceware.org/bugzilla/show_bug.cgi?id=18604
-
-Cc: Shuah Khan <shuah@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Andy Lutomirski <luto@amacapital.net>
-Cc: Will Drewry <wad@chromium.org>
-Cc: linux-kselftest@vger.kernel.org
-Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
-Acked-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Shuah Khan <shuah@kernel.org>
+Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/kselftest_harness.h | 42 ++++++++++-----------
- 1 file changed, 21 insertions(+), 21 deletions(-)
+ fs/btrfs/inode.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/kselftest_harness.h b/tools/testing/selftests/kselftest_harness.h
-index e81bd28bdd89..8f32d699d6c5 100644
---- a/tools/testing/selftests/kselftest_harness.h
-+++ b/tools/testing/selftests/kselftest_harness.h
-@@ -330,7 +330,7 @@
-  * ASSERT_EQ(expected, measured): expected == measured
-  */
- #define ASSERT_EQ(expected, seen) \
--	__EXPECT(expected, seen, ==, 1)
-+	__EXPECT(expected, #expected, seen, #seen, ==, 1)
+diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+index 1c340d6c8568..997ed98ce8cb 100644
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -6582,14 +6582,19 @@ int btrfs_add_link(struct btrfs_trans_handle *trans,
+ 		err = btrfs_del_root_ref(trans, fs_info, key.objectid,
+ 					 root->root_key.objectid, parent_ino,
+ 					 &local_index, name, name_len);
+-
++		if (err)
++			btrfs_abort_transaction(trans, err);
+ 	} else if (add_backref) {
+ 		u64 local_index;
+ 		int err;
  
- /**
-  * ASSERT_NE(expected, seen)
-@@ -341,7 +341,7 @@
-  * ASSERT_NE(expected, measured): expected != measured
-  */
- #define ASSERT_NE(expected, seen) \
--	__EXPECT(expected, seen, !=, 1)
-+	__EXPECT(expected, #expected, seen, #seen, !=, 1)
+ 		err = btrfs_del_inode_ref(trans, root, name, name_len,
+ 					  ino, parent_ino, &local_index);
++		if (err)
++			btrfs_abort_transaction(trans, err);
+ 	}
++
++	/* Return the original error code */
+ 	return ret;
+ }
  
- /**
-  * ASSERT_LT(expected, seen)
-@@ -352,7 +352,7 @@
-  * ASSERT_LT(expected, measured): expected < measured
-  */
- #define ASSERT_LT(expected, seen) \
--	__EXPECT(expected, seen, <, 1)
-+	__EXPECT(expected, #expected, seen, #seen, <, 1)
- 
- /**
-  * ASSERT_LE(expected, seen)
-@@ -363,7 +363,7 @@
-  * ASSERT_LE(expected, measured): expected <= measured
-  */
- #define ASSERT_LE(expected, seen) \
--	__EXPECT(expected, seen, <=, 1)
-+	__EXPECT(expected, #expected, seen, #seen, <=, 1)
- 
- /**
-  * ASSERT_GT(expected, seen)
-@@ -374,7 +374,7 @@
-  * ASSERT_GT(expected, measured): expected > measured
-  */
- #define ASSERT_GT(expected, seen) \
--	__EXPECT(expected, seen, >, 1)
-+	__EXPECT(expected, #expected, seen, #seen, >, 1)
- 
- /**
-  * ASSERT_GE(expected, seen)
-@@ -385,7 +385,7 @@
-  * ASSERT_GE(expected, measured): expected >= measured
-  */
- #define ASSERT_GE(expected, seen) \
--	__EXPECT(expected, seen, >=, 1)
-+	__EXPECT(expected, #expected, seen, #seen, >=, 1)
- 
- /**
-  * ASSERT_NULL(seen)
-@@ -395,7 +395,7 @@
-  * ASSERT_NULL(measured): NULL == measured
-  */
- #define ASSERT_NULL(seen) \
--	__EXPECT(NULL, seen, ==, 1)
-+	__EXPECT(NULL, "NULL", seen, #seen, ==, 1)
- 
- /**
-  * ASSERT_TRUE(seen)
-@@ -405,7 +405,7 @@
-  * ASSERT_TRUE(measured): measured != 0
-  */
- #define ASSERT_TRUE(seen) \
--	ASSERT_NE(0, seen)
-+	__EXPECT(0, "0", seen, #seen, !=, 1)
- 
- /**
-  * ASSERT_FALSE(seen)
-@@ -415,7 +415,7 @@
-  * ASSERT_FALSE(measured): measured == 0
-  */
- #define ASSERT_FALSE(seen) \
--	ASSERT_EQ(0, seen)
-+	__EXPECT(0, "0", seen, #seen, ==, 1)
- 
- /**
-  * ASSERT_STREQ(expected, seen)
-@@ -448,7 +448,7 @@
-  * EXPECT_EQ(expected, measured): expected == measured
-  */
- #define EXPECT_EQ(expected, seen) \
--	__EXPECT(expected, seen, ==, 0)
-+	__EXPECT(expected, #expected, seen, #seen, ==, 0)
- 
- /**
-  * EXPECT_NE(expected, seen)
-@@ -459,7 +459,7 @@
-  * EXPECT_NE(expected, measured): expected != measured
-  */
- #define EXPECT_NE(expected, seen) \
--	__EXPECT(expected, seen, !=, 0)
-+	__EXPECT(expected, #expected, seen, #seen, !=, 0)
- 
- /**
-  * EXPECT_LT(expected, seen)
-@@ -470,7 +470,7 @@
-  * EXPECT_LT(expected, measured): expected < measured
-  */
- #define EXPECT_LT(expected, seen) \
--	__EXPECT(expected, seen, <, 0)
-+	__EXPECT(expected, #expected, seen, #seen, <, 0)
- 
- /**
-  * EXPECT_LE(expected, seen)
-@@ -481,7 +481,7 @@
-  * EXPECT_LE(expected, measured): expected <= measured
-  */
- #define EXPECT_LE(expected, seen) \
--	__EXPECT(expected, seen, <=, 0)
-+	__EXPECT(expected, #expected, seen, #seen, <=, 0)
- 
- /**
-  * EXPECT_GT(expected, seen)
-@@ -492,7 +492,7 @@
-  * EXPECT_GT(expected, measured): expected > measured
-  */
- #define EXPECT_GT(expected, seen) \
--	__EXPECT(expected, seen, >, 0)
-+	__EXPECT(expected, #expected, seen, #seen, >, 0)
- 
- /**
-  * EXPECT_GE(expected, seen)
-@@ -503,7 +503,7 @@
-  * EXPECT_GE(expected, measured): expected >= measured
-  */
- #define EXPECT_GE(expected, seen) \
--	__EXPECT(expected, seen, >=, 0)
-+	__EXPECT(expected, #expected, seen, #seen, >=, 0)
- 
- /**
-  * EXPECT_NULL(seen)
-@@ -513,7 +513,7 @@
-  * EXPECT_NULL(measured): NULL == measured
-  */
- #define EXPECT_NULL(seen) \
--	__EXPECT(NULL, seen, ==, 0)
-+	__EXPECT(NULL, "NULL", seen, #seen, ==, 0)
- 
- /**
-  * EXPECT_TRUE(seen)
-@@ -523,7 +523,7 @@
-  * EXPECT_TRUE(measured): 0 != measured
-  */
- #define EXPECT_TRUE(seen) \
--	EXPECT_NE(0, seen)
-+	__EXPECT(0, "0", seen, #seen, !=, 0)
- 
- /**
-  * EXPECT_FALSE(seen)
-@@ -533,7 +533,7 @@
-  * EXPECT_FALSE(measured): 0 == measured
-  */
- #define EXPECT_FALSE(seen) \
--	EXPECT_EQ(0, seen)
-+	__EXPECT(0, "0", seen, #seen, ==, 0)
- 
- /**
-  * EXPECT_STREQ(expected, seen)
-@@ -573,7 +573,7 @@
- 	if (_metadata->passed && _metadata->step < 255) \
- 		_metadata->step++;
- 
--#define __EXPECT(_expected, _seen, _t, _assert) do { \
-+#define __EXPECT(_expected, _expected_str, _seen, _seen_str, _t, _assert) do { \
- 	/* Avoid multiple evaluation of the cases */ \
- 	__typeof__(_expected) __exp = (_expected); \
- 	__typeof__(_seen) __seen = (_seen); \
-@@ -582,8 +582,8 @@
- 		unsigned long long __exp_print = (uintptr_t)__exp; \
- 		unsigned long long __seen_print = (uintptr_t)__seen; \
- 		__TH_LOG("Expected %s (%llu) %s %s (%llu)", \
--			 #_expected, __exp_print, #_t, \
--			 #_seen, __seen_print); \
-+			 _expected_str, __exp_print, #_t, \
-+			 _seen_str, __seen_print); \
- 		_metadata->passed = 0; \
- 		/* Ensure the optional handler is triggered */ \
- 		_metadata->trigger = 1; \
 -- 
 2.19.1
 
