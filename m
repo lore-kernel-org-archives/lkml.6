@@ -4,53 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF604C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:54:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 936C3C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:54:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78A5D206BB
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:54:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5CAC6206BB
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:54:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546977293;
-	bh=FnzdZ44KrUWf5TtceLddhclQOHbLfdDkUcf+v8L3Wpc=;
+	s=default; t=1546977298;
+	bh=y9fdjQkjE9+c7DaqTjZtjZlUqNLD3HLgD3TVbXbmaKE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=DtgRKXNnkMkztShn5PIxeQqTYxQ58wUc1tFSzL5u8evhY5V0/VM9p73DRysFYXQkv
-	 cvDlkCwHQ0+UTPX586e3yPXjQe/qKUOszExX7sAmK/s5ToPRx/CFKIOWbzM5LaBoNn
-	 eCr5eoYAYE7qgSN4G/5b2gMsFrT9eLlHzWAlWCiw=
+	b=QF5naq7PPpOv1qZDilXP1iRzCS1bNl/3ZNOxOOlEKm8pRYwuww6jPFCm1vaQ13DWD
+	 cHvKtOExkvQwvE+f0rXgI71TWtIiVo4rVU7skrwi4QfhKG/9hv6zjbUQ42BsphNq1a
+	 sxzCpxulygh7dSmk5qJMBEeF3pfJUGTj6MAre2O4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730780AbfAHTa1 (ORCPT
+        id S1732984AbfAHTy4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:30:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38062 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:54:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38216 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730719AbfAHTaU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:30:20 -0500
+        id S1730768AbfAHTa1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:30:27 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D8CC62176F;
-        Tue,  8 Jan 2019 19:30:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9F49520883;
+        Tue,  8 Jan 2019 19:30:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975819;
-        bh=FnzdZ44KrUWf5TtceLddhclQOHbLfdDkUcf+v8L3Wpc=;
+        s=default; t=1546975826;
+        bh=y9fdjQkjE9+c7DaqTjZtjZlUqNLD3HLgD3TVbXbmaKE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rdox/wihtRhvZf2MA2oQiwyvnIzWHXmgWVfu1pyY1oeNsw4Zt3gjN/Vu37J44nVS/
-         a9UeCIw9qlfrIjPo/V59hucdMhhzroDO9OaOOx0kEpU1ZiHgKHBwuPQd1aAMEfz14b
-         abQ/dAMQFH8XntoAh1BSPu4ytHjq+P9cT/3YdVVU=
+        b=HuJQKAHa0DR351EDtHF2zQ+D/7XdrwdTvK6zXvZYBIEguzjciFi01J7YRYZU0w4CO
+         w/RNsaDsIG9woxaxi8MCV8uMaUE9SbuKnaijKp28Ol8ce8UDtSp+90w+Wsz9hvzYdp
+         7S7EMmPPKlaBG8od/SIxDURUI89OzEvTftY5LmWk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nikolaj Fogh <nikolajfogh@gmail.com>,
-        Johan Hovold <johan@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 19/97] USB: serial: ftdi_sio: use rounding when calculating baud rate divisors
-Date:   Tue,  8 Jan 2019 14:28:28 -0500
-Message-Id: <20190108192949.122407-19-sashal@kernel.org>
+Cc:     Anatolij Gustschin <agust@denx.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>, linux-fpga@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 24/97] fpga: altera-cvp: fix probing for multiple FPGAs on the bus
+Date:   Tue,  8 Jan 2019 14:28:33 -0500
+Message-Id: <20190108192949.122407-24-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192949.122407-1-sashal@kernel.org>
 References: <20190108192949.122407-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -58,77 +58,110 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nikolaj Fogh <nikolajfogh@gmail.com>
+From: Anatolij Gustschin <agust@denx.de>
 
-[ Upstream commit 6abd837104a3a8e1cda64fc4d7675f6c3ece9d8b ]
+[ Upstream commit 30522a951f9d02f261d0697c35cb42205b1fae17 ]
 
-Improve baud-rate generation by using rounding-to-closest instead of
-truncation in divisor calculation.
+Currently registering CvP managers works only for first probed CvP
+device, for all other devices it is refused due to duplicated chkcfg
+sysfs entry:
 
-Results have been verified by logic analyzer on an FT232RT (232BM) chip.
-The following table shows the wanted baud rate, the baud rate obtained
-with the old method (truncation), with the new method (rounding) and the
-baud rate generated by the windows 10 driver. The numbers in parentheses
-is the error.
+fpga_manager fpga3: Altera CvP FPGA Manager @0000:0c:00.0 registered
+sysfs: cannot create duplicate filename '/bus/pci/drivers/altera-cvp/chkcfg'
+CPU: 0 PID: 3808 Comm: bash Tainted: G           O      4.19.0-custom+ #5
+Call Trace:
+  dump_stack+0x46/0x5b
+  sysfs_warn_dup+0x53/0x60
+  sysfs_add_file_mode_ns+0x16d/0x180
+  sysfs_create_file_ns+0x51/0x60
+  altera_cvp_probe+0x16f/0x2a0 [altera_cvp]
+  local_pci_probe+0x3f/0xa0
+  ? pci_match_device+0xb1/0xf0
+  pci_device_probe+0x116/0x170
+  really_probe+0x21b/0x2c0
+  driver_probe_device+0x4b/0xe0
+  bind_store+0xcb/0x130
+  kernfs_fop_write+0xfd/0x180
+  __vfs_write+0x21/0x150
+  ? selinux_file_permission+0xdc/0x130
+  vfs_write+0xa8/0x1a0
+  ? find_vma+0xd/0x60
+  ksys_write+0x3d/0x90
+  do_syscall_64+0x44/0xf0
+  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+  ...
+ altera-cvp 0000:0c:00.0: Can't create sysfs chkcfg file
+ fpga_manager fpga3: fpga_mgr_unregister Altera CvP FPGA Manager @0000:0c:00.0
 
-+- Wanted --+------ Old -------+------ New -------+------ Win -------+
-|    9600   |    9600 (0.00%)  |    9604 (0.05%)  |    9605 (0.05%)  |
-|   19200   |   19200 (0.00%)  |   19199 (0.01%)  |   19198 (0.01%)  |
-|   38400   |   38395 (0.01%)  |   38431 (0.08%)  |   38394 (0.02%)  |
-|   57600   |   57725 (0.22%)  |   57540 (0.10%)  |   57673 (0.13%)  |
-|  115200   |  115307 (0.09%)  |  115330 (0.11%)  |  115320 (0.10%)  |
-|  921600   |  919963 (0.18%)  |  920386 (0.13%)  |  920810 (0.09%)  |
-|  961200   |  996512 (3.67%)  |  956480 (0.49%)  |  956937 (0.44%)  |
-+-----------+------------------+------------------+------------------+
+Move chkcfg creation to module init as suggested by Alan.
 
-The error due to noise in the measurements is in the order of a few
-tenths of a %. As can be seen, the baud rate is significantly improved
-for some rates (e.g. 961200), and corresponds to the output given by the
-windows driver.
-
-The theoretical baud rate has been calculated for all baud rates from 1
-to 3M, and as expected, the error is centered around 0, with a triangle
-shape instead of a sawtooth, so the maximum error is decreased to half.
-
-Signed-off-by: Nikolaj Fogh <nikolajfogh@gmail.com>
-[ johan: edit commit message slightly ]
-Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Anatolij Gustschin <agust@denx.de>
+Acked-by: Alan Tull <atull@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/serial/ftdi_sio.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/fpga/altera-cvp.c | 34 ++++++++++++++++++++++++----------
+ 1 file changed, 24 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/usb/serial/ftdi_sio.c b/drivers/usb/serial/ftdi_sio.c
-index b5cef322826f..97101f666e07 100644
---- a/drivers/usb/serial/ftdi_sio.c
-+++ b/drivers/usb/serial/ftdi_sio.c
-@@ -1114,7 +1114,7 @@ static unsigned short int ftdi_232am_baud_base_to_divisor(int baud, int base)
- {
- 	unsigned short int divisor;
- 	/* divisor shifted 3 bits to the left */
--	int divisor3 = base / 2 / baud;
-+	int divisor3 = DIV_ROUND_CLOSEST(base, 2 * baud);
- 	if ((divisor3 & 0x7) == 7)
- 		divisor3++; /* round x.7/8 up to x+1 */
- 	divisor = divisor3 >> 3;
-@@ -1140,7 +1140,7 @@ static u32 ftdi_232bm_baud_base_to_divisor(int baud, int base)
- 	static const unsigned char divfrac[8] = { 0, 3, 2, 4, 1, 5, 6, 7 };
- 	u32 divisor;
- 	/* divisor shifted 3 bits to the left */
--	int divisor3 = base / 2 / baud;
-+	int divisor3 = DIV_ROUND_CLOSEST(base, 2 * baud);
- 	divisor = divisor3 >> 3;
- 	divisor |= (u32)divfrac[divisor3 & 0x7] << 14;
- 	/* Deal with special cases for highest baud rates. */
-@@ -1163,7 +1163,7 @@ static u32 ftdi_2232h_baud_base_to_divisor(int baud, int base)
- 	int divisor3;
+diff --git a/drivers/fpga/altera-cvp.c b/drivers/fpga/altera-cvp.c
+index 7fa793672a7a..68e4b2b98c8f 100644
+--- a/drivers/fpga/altera-cvp.c
++++ b/drivers/fpga/altera-cvp.c
+@@ -468,14 +468,6 @@ static int altera_cvp_probe(struct pci_dev *pdev,
+ 		goto err_unmap;
+ 	}
  
- 	/* hi-speed baud rate is 10-bit sampling instead of 16-bit */
--	divisor3 = base * 8 / (baud * 10);
-+	divisor3 = DIV_ROUND_CLOSEST(8 * base, 10 * baud);
+-	ret = driver_create_file(&altera_cvp_driver.driver,
+-				 &driver_attr_chkcfg);
+-	if (ret) {
+-		dev_err(&pdev->dev, "Can't create sysfs chkcfg file\n");
+-		fpga_mgr_unregister(mgr);
+-		goto err_unmap;
+-	}
+-
+ 	return 0;
  
- 	divisor = divisor3 >> 3;
- 	divisor |= (u32)divfrac[divisor3 & 0x7] << 14;
+ err_unmap:
+@@ -493,7 +485,6 @@ static void altera_cvp_remove(struct pci_dev *pdev)
+ 	struct altera_cvp_conf *conf = mgr->priv;
+ 	u16 cmd;
+ 
+-	driver_remove_file(&altera_cvp_driver.driver, &driver_attr_chkcfg);
+ 	fpga_mgr_unregister(mgr);
+ 	pci_iounmap(pdev, conf->map);
+ 	pci_release_region(pdev, CVP_BAR);
+@@ -502,7 +493,30 @@ static void altera_cvp_remove(struct pci_dev *pdev)
+ 	pci_write_config_word(pdev, PCI_COMMAND, cmd);
+ }
+ 
+-module_pci_driver(altera_cvp_driver);
++static int __init altera_cvp_init(void)
++{
++	int ret;
++
++	ret = pci_register_driver(&altera_cvp_driver);
++	if (ret)
++		return ret;
++
++	ret = driver_create_file(&altera_cvp_driver.driver,
++				 &driver_attr_chkcfg);
++	if (ret)
++		pr_warn("Can't create sysfs chkcfg file\n");
++
++	return 0;
++}
++
++static void __exit altera_cvp_exit(void)
++{
++	driver_remove_file(&altera_cvp_driver.driver, &driver_attr_chkcfg);
++	pci_unregister_driver(&altera_cvp_driver);
++}
++
++module_init(altera_cvp_init);
++module_exit(altera_cvp_exit);
+ 
+ MODULE_LICENSE("GPL v2");
+ MODULE_AUTHOR("Anatolij Gustschin <agust@denx.de>");
 -- 
 2.19.1
 
