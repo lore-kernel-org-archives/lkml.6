@@ -2,302 +2,104 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E3EBC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:05:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9DAEC43444
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:05:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 503FA20827
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:05:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546977916;
-	bh=rv7fyLA/ZEffG1ge608eYiwJVTdoGKiwUeibeUsXPHY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=uZD+smZ1k4WeLI0BsIc8RSDU+CMbXR33Cncjvb0/Qg2E/I490nRaSWloCn2VpmLsy
-	 AdaNfDWHz93BGXrWPA9HklPwdkuGmCBn4OWIhOwEUIjcGm7j1AbASJojM1300Jr325
-	 6afZKTmJiOs5CIlameHqi+XX0CY4IID1MXgqn6EM=
+	by mail.kernel.org (Postfix) with ESMTP id A5D2E20827
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:05:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fiw5KuHK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731250AbfAHUFP (ORCPT
+        id S1730198AbfAHUF1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 15:05:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35208 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729324AbfAHT2Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:28:16 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8C4E920645;
-        Tue,  8 Jan 2019 19:28:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975695;
-        bh=rv7fyLA/ZEffG1ge608eYiwJVTdoGKiwUeibeUsXPHY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OkqVDf8X2usqpJBeEArPS4OX0ENJgbFSqSFHCNDLu5vf09TB1DaKwHF/AbxqcHkDX
-         JlENSs8kgYswdLpcLRfW75ib+nEbgPM0zNQQ3k3gC+SxbA8gmtbO4y3r4qvmHnRUZD
-         mZZqwFf8xceO1zV+6gBeYOF5QB4vtaHAL0B5dxI4=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     "Dmitry V. Levin" <ldv@altlinux.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Will Drewry <wad@chromium.org>,
-        linux-kselftest@vger.kernel.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.20 060/117] selftests: do not macro-expand failed assertion expressions
-Date:   Tue,  8 Jan 2019 14:25:28 -0500
-Message-Id: <20190108192628.121270-60-sashal@kernel.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190108192628.121270-1-sashal@kernel.org>
-References: <20190108192628.121270-1-sashal@kernel.org>
+        Tue, 8 Jan 2019 15:05:27 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:45262 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728593AbfAHUFY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 15:05:24 -0500
+Received: by mail-lf1-f65.google.com with SMTP id b20so3870745lfa.12;
+        Tue, 08 Jan 2019 12:05:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=SJBrkvQYfWOzoaWTTYjdTw7rzq10zKkZT5MK8UrU/IU=;
+        b=fiw5KuHKyyeVAPm/A/5GyeW05jMOybQc/EdvDw9m69+fnmlovM8+iDvQHB9z+Z8Kqb
+         ROYNY6gPBpcagApXBd8S21nHUStCJGUSaMJOUUQXx5YMXDe7C/uAy9wFaUbcwuor27og
+         QzrbJqJ3WS3IoH+3ixfJL7djeO1iHD7J+o46oTrwpKLCzI4cyhrhgI+Ls/D6gwGda2km
+         ni3ImA0Zj0aV65QywyGohA3FbID9T/5WEijK4roR09J81XUW6KLRWcLxbd6cDkCyr1FN
+         Waw5nMb7Sal35izZZBRMJOKuUb2NYBO6IBJsFZoILfXVdwHiV969v+FQeVDmZ0/6/Fi0
+         IQRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=SJBrkvQYfWOzoaWTTYjdTw7rzq10zKkZT5MK8UrU/IU=;
+        b=XGOIu8BDyZJsTdd941TLqf0ElRw4g1uKQWSBZlfiqdDQ0awuFaCnQNZ6cyzMCVWqqv
+         UNSCfLDq46LwK8baT0tBnJSkEEjckyI4r+FI6Jwi4zwIrcv8sjsqox7ps8Ua6OK7iAWO
+         XSdUbIucLttQl410x2mvnf+I07UlqvLz+oTW/3dgDm9atMKgzzYjmv/xQbuJmWPlvy5e
+         xUEnT70n4zW5IfbyGuTrBOqvsHmH9Py5qJo7DhkLoxGqhSJj95MCCDR0tbS473yVfRfp
+         z+gBkYinYVKvMoYsjgDyEEBBlWj9sD/EFm+4mOoi35JiWf5amgkqKYJix/rwAA4+kDzq
+         x2ww==
+X-Gm-Message-State: AJcUukdLOvEN/i07gFHKncsSicosk8Zj36KA+1NXyzO5+ctAx67bQSVX
+        TOiNdo0G4LlhURTXOS/1tMQ=
+X-Google-Smtp-Source: ALg8bN5syWz6qOlfHuQJsIssj/34FsoXEDQ+ynEG9KcCWM4a6yhNGwBXde77cF54JsBiC8KQYpHfbA==
+X-Received: by 2002:a19:5394:: with SMTP id h20mr1909869lfl.75.1546977921665;
+        Tue, 08 Jan 2019 12:05:21 -0800 (PST)
+Received: from localhost.localdomain ([2a02:a315:5445:5300:d033:e708:8ec7:810d])
+        by smtp.googlemail.com with ESMTPSA id y23-v6sm14486768ljk.95.2019.01.08.12.05.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 08 Jan 2019 12:05:20 -0800 (PST)
+From:   =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+To:     kgene@kernel.org
+Cc:     krzk@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux@armlinux.org.uk, viresh.kumar@linaro.org, rjw@rjwysocki.net,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+Subject: [PATCH 0/4] ARM: dts: s5pv210: Enable cpufreq support
+Date:   Tue,  8 Jan 2019 21:05:05 +0100
+Message-Id: <20190108200509.30494-1-pawel.mikolaj.chmiel@gmail.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-X-Patchwork-Hint: Ignore
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Dmitry V. Levin" <ldv@altlinux.org>
+This patchset enables cpufreq support using s5pv210-cpufreq driver.
 
-[ Upstream commit b708a3cc9600390ccaa2b68a88087dd265154b2b ]
+First patch adds missing dmc nodes, which are required by driver.
 
-I've stumbled over the current macro-expand behaviour of the test
-harness:
+Second patch is cosmetic, it stops driver from flooding kernel log with
+ messages, after every change of freq.
 
-$ gcc -Wall -xc - <<'__EOF__'
-TEST(macro) {
-	int status = 0;
-	ASSERT_TRUE(WIFSIGNALED(status));
-}
-TEST_HARNESS_MAIN
-__EOF__
-$ ./a.out
-[==========] Running 1 tests from 1 test cases.
-[ RUN      ] global.macro
-<stdin>:4:global.macro:Expected 0 (0) != (((signed char) (((status) & 0x7f) + 1) >> 1) > 0) (0)
-global.macro: Test terminated by assertion
-[     FAIL ] global.macro
-[==========] 0 / 1 tests passed.
-[  FAILED  ]
+Third patch adds defer probe support for regulators, needed by driver.
+It was observed, that those regulators can be no yet initialized, when
+ driver is probed, so we should wait till we can get them.
 
-With this change the output of the same test looks much more
-comprehensible:
+Last patch enables required kernel config options.
 
-[==========] Running 1 tests from 1 test cases.
-[ RUN      ] global.macro
-<stdin>:4:global.macro:Expected 0 (0) != WIFSIGNALED(status) (0)
-global.macro: Test terminated by assertion
-[     FAIL ] global.macro
-[==========] 0 / 1 tests passed.
-[  FAILED  ]
+Paweł Chmiel (4):
+  ARM: dts: s5pv210: Add dmc nodes
+  cpufreq: s5pv210: Don't flood kernel log after cpufreq change
+  cpufreq: s5pv210: Defer probe if getting regulators fail
+  ARM: defconfig: s5pv210: Add cpufreq support
 
-The issue is very similar to the bug fixed in glibc assert(3)
-three years ago:
-https://sourceware.org/bugzilla/show_bug.cgi?id=18604
+ arch/arm/boot/dts/s5pv210.dtsi     | 12 ++++++++++
+ arch/arm/configs/s5pv210_defconfig |  6 +++++
+ drivers/cpufreq/s5pv210-cpufreq.c  | 35 ++++++++++++++++++------------
+ 3 files changed, 39 insertions(+), 14 deletions(-)
 
-Cc: Shuah Khan <shuah@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Andy Lutomirski <luto@amacapital.net>
-Cc: Will Drewry <wad@chromium.org>
-Cc: linux-kselftest@vger.kernel.org
-Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
-Acked-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Shuah Khan <shuah@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- tools/testing/selftests/kselftest_harness.h | 42 ++++++++++-----------
- 1 file changed, 21 insertions(+), 21 deletions(-)
-
-diff --git a/tools/testing/selftests/kselftest_harness.h b/tools/testing/selftests/kselftest_harness.h
-index 6ae3730c4ee3..76d654ef3234 100644
---- a/tools/testing/selftests/kselftest_harness.h
-+++ b/tools/testing/selftests/kselftest_harness.h
-@@ -354,7 +354,7 @@
-  * ASSERT_EQ(expected, measured): expected == measured
-  */
- #define ASSERT_EQ(expected, seen) \
--	__EXPECT(expected, seen, ==, 1)
-+	__EXPECT(expected, #expected, seen, #seen, ==, 1)
- 
- /**
-  * ASSERT_NE(expected, seen)
-@@ -365,7 +365,7 @@
-  * ASSERT_NE(expected, measured): expected != measured
-  */
- #define ASSERT_NE(expected, seen) \
--	__EXPECT(expected, seen, !=, 1)
-+	__EXPECT(expected, #expected, seen, #seen, !=, 1)
- 
- /**
-  * ASSERT_LT(expected, seen)
-@@ -376,7 +376,7 @@
-  * ASSERT_LT(expected, measured): expected < measured
-  */
- #define ASSERT_LT(expected, seen) \
--	__EXPECT(expected, seen, <, 1)
-+	__EXPECT(expected, #expected, seen, #seen, <, 1)
- 
- /**
-  * ASSERT_LE(expected, seen)
-@@ -387,7 +387,7 @@
-  * ASSERT_LE(expected, measured): expected <= measured
-  */
- #define ASSERT_LE(expected, seen) \
--	__EXPECT(expected, seen, <=, 1)
-+	__EXPECT(expected, #expected, seen, #seen, <=, 1)
- 
- /**
-  * ASSERT_GT(expected, seen)
-@@ -398,7 +398,7 @@
-  * ASSERT_GT(expected, measured): expected > measured
-  */
- #define ASSERT_GT(expected, seen) \
--	__EXPECT(expected, seen, >, 1)
-+	__EXPECT(expected, #expected, seen, #seen, >, 1)
- 
- /**
-  * ASSERT_GE(expected, seen)
-@@ -409,7 +409,7 @@
-  * ASSERT_GE(expected, measured): expected >= measured
-  */
- #define ASSERT_GE(expected, seen) \
--	__EXPECT(expected, seen, >=, 1)
-+	__EXPECT(expected, #expected, seen, #seen, >=, 1)
- 
- /**
-  * ASSERT_NULL(seen)
-@@ -419,7 +419,7 @@
-  * ASSERT_NULL(measured): NULL == measured
-  */
- #define ASSERT_NULL(seen) \
--	__EXPECT(NULL, seen, ==, 1)
-+	__EXPECT(NULL, "NULL", seen, #seen, ==, 1)
- 
- /**
-  * ASSERT_TRUE(seen)
-@@ -429,7 +429,7 @@
-  * ASSERT_TRUE(measured): measured != 0
-  */
- #define ASSERT_TRUE(seen) \
--	ASSERT_NE(0, seen)
-+	__EXPECT(0, "0", seen, #seen, !=, 1)
- 
- /**
-  * ASSERT_FALSE(seen)
-@@ -439,7 +439,7 @@
-  * ASSERT_FALSE(measured): measured == 0
-  */
- #define ASSERT_FALSE(seen) \
--	ASSERT_EQ(0, seen)
-+	__EXPECT(0, "0", seen, #seen, ==, 1)
- 
- /**
-  * ASSERT_STREQ(expected, seen)
-@@ -472,7 +472,7 @@
-  * EXPECT_EQ(expected, measured): expected == measured
-  */
- #define EXPECT_EQ(expected, seen) \
--	__EXPECT(expected, seen, ==, 0)
-+	__EXPECT(expected, #expected, seen, #seen, ==, 0)
- 
- /**
-  * EXPECT_NE(expected, seen)
-@@ -483,7 +483,7 @@
-  * EXPECT_NE(expected, measured): expected != measured
-  */
- #define EXPECT_NE(expected, seen) \
--	__EXPECT(expected, seen, !=, 0)
-+	__EXPECT(expected, #expected, seen, #seen, !=, 0)
- 
- /**
-  * EXPECT_LT(expected, seen)
-@@ -494,7 +494,7 @@
-  * EXPECT_LT(expected, measured): expected < measured
-  */
- #define EXPECT_LT(expected, seen) \
--	__EXPECT(expected, seen, <, 0)
-+	__EXPECT(expected, #expected, seen, #seen, <, 0)
- 
- /**
-  * EXPECT_LE(expected, seen)
-@@ -505,7 +505,7 @@
-  * EXPECT_LE(expected, measured): expected <= measured
-  */
- #define EXPECT_LE(expected, seen) \
--	__EXPECT(expected, seen, <=, 0)
-+	__EXPECT(expected, #expected, seen, #seen, <=, 0)
- 
- /**
-  * EXPECT_GT(expected, seen)
-@@ -516,7 +516,7 @@
-  * EXPECT_GT(expected, measured): expected > measured
-  */
- #define EXPECT_GT(expected, seen) \
--	__EXPECT(expected, seen, >, 0)
-+	__EXPECT(expected, #expected, seen, #seen, >, 0)
- 
- /**
-  * EXPECT_GE(expected, seen)
-@@ -527,7 +527,7 @@
-  * EXPECT_GE(expected, measured): expected >= measured
-  */
- #define EXPECT_GE(expected, seen) \
--	__EXPECT(expected, seen, >=, 0)
-+	__EXPECT(expected, #expected, seen, #seen, >=, 0)
- 
- /**
-  * EXPECT_NULL(seen)
-@@ -537,7 +537,7 @@
-  * EXPECT_NULL(measured): NULL == measured
-  */
- #define EXPECT_NULL(seen) \
--	__EXPECT(NULL, seen, ==, 0)
-+	__EXPECT(NULL, "NULL", seen, #seen, ==, 0)
- 
- /**
-  * EXPECT_TRUE(seen)
-@@ -547,7 +547,7 @@
-  * EXPECT_TRUE(measured): 0 != measured
-  */
- #define EXPECT_TRUE(seen) \
--	EXPECT_NE(0, seen)
-+	__EXPECT(0, "0", seen, #seen, !=, 0)
- 
- /**
-  * EXPECT_FALSE(seen)
-@@ -557,7 +557,7 @@
-  * EXPECT_FALSE(measured): 0 == measured
-  */
- #define EXPECT_FALSE(seen) \
--	EXPECT_EQ(0, seen)
-+	__EXPECT(0, "0", seen, #seen, ==, 0)
- 
- /**
-  * EXPECT_STREQ(expected, seen)
-@@ -597,7 +597,7 @@
- 	if (_metadata->passed && _metadata->step < 255) \
- 		_metadata->step++;
- 
--#define __EXPECT(_expected, _seen, _t, _assert) do { \
-+#define __EXPECT(_expected, _expected_str, _seen, _seen_str, _t, _assert) do { \
- 	/* Avoid multiple evaluation of the cases */ \
- 	__typeof__(_expected) __exp = (_expected); \
- 	__typeof__(_seen) __seen = (_seen); \
-@@ -606,8 +606,8 @@
- 		unsigned long long __exp_print = (uintptr_t)__exp; \
- 		unsigned long long __seen_print = (uintptr_t)__seen; \
- 		__TH_LOG("Expected %s (%llu) %s %s (%llu)", \
--			 #_expected, __exp_print, #_t, \
--			 #_seen, __seen_print); \
-+			 _expected_str, __exp_print, #_t, \
-+			 _seen_str, __seen_print); \
- 		_metadata->passed = 0; \
- 		/* Ensure the optional handler is triggered */ \
- 		_metadata->trigger = 1; \
 -- 
-2.19.1
+2.17.1
 
