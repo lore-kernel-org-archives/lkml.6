@@ -2,80 +2,70 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 893B5C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 07:05:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99C2AC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 07:05:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D8AB2087F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 07:05:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="UTRPgSdd"
+	by mail.kernel.org (Postfix) with ESMTP id 717B22089F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 07:05:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727748AbfAHHFm (ORCPT
+        id S1727746AbfAHHFw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 02:05:42 -0500
-Received: from m12-12.163.com ([220.181.12.12]:39861 "EHLO m12-12.163.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727435AbfAHHFl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 02:05:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=From:Subject:Date:Message-Id; bh=dnt+lEkM4qUxeXELPt
-        yNtc9tBbvuc3ElsgZSfjdQa+I=; b=UTRPgSddjUbVY/8BGkQQW6VjBPnI3h4Oe6
-        I+fziQEfqM7xePd95RjLe023aX684arMWBVCMKRjMrzSe9BdxjGGV29pGQnEZ8bN
-        bbjN9nwMmGFeT9FGL7txBrAzHvpShOPGNAI1UUuZaj2bBkLpEtTfNW/15AWAfAEP
-        7SyyqZlIE=
-Received: from localhost.localdomain (unknown [222.212.97.202])
-        by smtp8 (Coremail) with SMTP id DMCowAA3hrDASzRcRVU+JA--.51699S2;
-        Tue, 08 Jan 2019 15:05:36 +0800 (CST)
-From:   wangbo <wdjjwb@163.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     sameo@linux.intel.com, linux-wireless@vger.kernel.org,
-        wang.bo116@zte.com.cn, wangbo <wdjjwb@163.com>
-Subject: [PATCH] NFC: fdp: Use signed max_size to catch fail
-Date:   Tue,  8 Jan 2019 15:05:33 +0800
-Message-Id: <1546931133-27462-1-git-send-email-wdjjwb@163.com>
-X-Mailer: git-send-email 2.7.4
-X-CM-TRANSID: DMCowAA3hrDASzRcRVU+JA--.51699S2
-X-Coremail-Antispam: 1Uf129KBjvdXoWrKF47ur18Cw47tw1fCw1ftFb_yoW3WrcEkr
-        y5Wr13Wr1YkFnavry7Wryavryj9r17XFs5WF1YgasrAayDAF43uF4qvryfWr1fW340v3W3
-        KwnrJr4rAr4qgjkaLaAFLSUrUUUUxb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU5cvtJUUUUU==
-X-Originating-IP: [222.212.97.202]
-X-CM-SenderInfo: xzgmy4re6rljoofrz/xtbBEgE2GVZX-qQLEAAAs8
+        Tue, 8 Jan 2019 02:05:52 -0500
+Received: from isilmar-4.linta.de ([136.243.71.142]:38430 "EHLO
+        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727435AbfAHHFv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 02:05:51 -0500
+Received: from light.dominikbrodowski.net (isilmar.linta [10.0.0.1])
+        by isilmar-4.linta.de (Postfix) with ESMTPS id C803A200944;
+        Tue,  8 Jan 2019 07:05:48 +0000 (UTC)
+Received: by light.dominikbrodowski.net (Postfix, from userid 1000)
+        id AEA1E20484; Tue,  8 Jan 2019 08:01:10 +0100 (CET)
+Date:   Tue, 8 Jan 2019 08:01:10 +0100
+From:   Dominik Brodowski <linux@dominikbrodowski.net>
+To:     Christian Brauner <christian@brauner.io>
+Cc:     akpm@linux-foundation.org, keescook@chromium.org,
+        linux-kernel@vger.kernel.org, ebiederm@xmission.com,
+        mcgrof@kernel.org, joe.lawrence@redhat.com, longman@redhat.com,
+        viro@zeniv.linux.org.uk, adobriyan@gmail.com,
+        linux-api@vger.kernel.org
+Subject: Re: [RESEND PATCH v3 2/2] sysctl: handle overflow for file-max
+Message-ID: <20190108070110.GA7998@light.dominikbrodowski.net>
+References: <20190107222700.15954-1-christian@brauner.io>
+ <20190107222700.15954-3-christian@brauner.io>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190107222700.15954-3-christian@brauner.io>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The variable max_size's type is unsigned char,can not catch error number,
-change it to signed int.
+On Mon, Jan 07, 2019 at 11:27:00PM +0100, Christian Brauner wrote:
+> @@ -2833,6 +2836,10 @@ static int __do_proc_doulongvec_minmax(void *data, struct ctl_table *table, int
+>  				break;
+>  			if (neg)
+>  				continue;
+> +			if ((max && val > *max) || (min && val < *min)) {
+> +				err = -EINVAL;
+> +				break;
+> +			}
+>  			val = convmul * val / convdiv;
+>  			if ((min && val < *min) || (max && val > *max))
+>  				continue;
 
-Signed-off-by: wangbo <wang.bo116@zte.com.cn>
----
- drivers/nfc/fdp/fdp.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+This is a generic change which affects all users of
+do_proc_doulongvec_minmax() that have extra1 or extra2 set. In sysctl.c, I
+do not see another user of proc_doulongvec_minmax() that has extra1 or
+extra2 set. However, have you verified whether your patch changes the
+behaviour for other files that make use of proc_doulongvec_minmax() or
+proc_doulongvec_ms_jiffies_minmax(), and not only of the file-max sysctl?
 
-diff --git a/drivers/nfc/fdp/fdp.c b/drivers/nfc/fdp/fdp.c
-index d5784a4..ba32a59 100644
---- a/drivers/nfc/fdp/fdp.c
-+++ b/drivers/nfc/fdp/fdp.c
-@@ -192,8 +192,9 @@ static int fdp_nci_send_patch(struct nci_dev *ndev, u8 conn_id, u8 type)
- 	const struct firmware *fw;
- 	struct sk_buff *skb;
- 	unsigned long len;
--	u8 max_size, payload_size;
-+	u8  payload_size;
- 	int rc = 0;
-+	int max_size = 0;
- 
- 	if ((type == NCI_PATCH_TYPE_OTP && !info->otp_patch) ||
- 	    (type == NCI_PATCH_TYPE_RAM && !info->ram_patch))
--- 
-2.7.4
-
-
+Thanks,
+	Dominik
