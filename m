@@ -7,47 +7,48 @@ X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A756AC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:53:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE695C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:53:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79543206BB
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:53:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C82520827
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:53:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546977210;
-	bh=n2Q9X+KnpsyaIgG65JlRgw+7QxeI0SOwQuzJC2O3280=;
+	s=default; t=1546977223;
+	bh=xAxDl5gVabg/8waNC08baTXxsRCiq5C57RZnnEqhLbA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=nv0szUS2ws+7TDQ9uUeKAjw7ca1ErRwtvWH0r6V6ueUhRP5ty0O6AuNjW88Q82E7a
-	 rQ9eF7tKmUZiG3d0Z8Bv2vb/4ltIts4j9TjQvyFZ5pTnwTHm0NMC0zeV5Vgawu9dwE
-	 S1BtlK1ZIHDTsuwhW2RjlKJdodfC4Ilmq0Q+1238=
+	b=F4sLu6HEvt0uWITo/hmzTrf+VktSCE51V+/kLr0IH5RUdOOV8bhFv0UxfsGZ/vDs/
+	 StG+iPRDKmPtBGMcFM7kJxdps7U+/mpwrufzQD4tKzDtZrKE7XvvXlMVBQ8/QsRCvK
+	 dnP1IQ8jxKuPP4UOlwWBWfOwsQIo9vK4tn7jOBjc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729415AbfAHTx2 (ORCPT
+        id S1731444AbfAHTxm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:53:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38962 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:53:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38828 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730943AbfAHTbA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:31:00 -0500
+        id S1730193AbfAHTa4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:30:56 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 605342070B;
-        Tue,  8 Jan 2019 19:30:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 104122070B;
+        Tue,  8 Jan 2019 19:30:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975860;
-        bh=n2Q9X+KnpsyaIgG65JlRgw+7QxeI0SOwQuzJC2O3280=;
+        s=default; t=1546975855;
+        bh=xAxDl5gVabg/8waNC08baTXxsRCiq5C57RZnnEqhLbA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KDMs23Q2MTtlsfN5k/BQLb5Go24r7cBVKRIhPO7zYBfpgIU0FPv4NTezlPKm3WtiJ
-         pdHgDNM/+26MRwTJkXEl42iIOzIFUBap0fWiFskPfS/DLYEv6xU+horPR0zm8SNdrj
-         w1HrJ2r+VibVEQRWIIXwdEQjzf8J4c9RkKKZwvkA=
+        b=2XwzFX3jQSAEZSo8Y8asE8f0gNC2K1Ofnu/KwQwAOqi6OxjbXEDfcLQ198rn0JRlV
+         7cwLY21MmVhH61yDFs3gywKXTKLiTZHD6D1ngX/zKVsFACsD88fkXsNG6GcHGFo7Ou
+         prK8ShCqdrzPVz5iusX1kFOxe5g29w0etvPwGFAc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     "Michael J. Ruhl" <michael.j.ruhl@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Sasha Levin <sashal@kernel.org>, linux-rdma@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 42/97] IB/hfi1: Incorrect sizing of sge for PIO will OOPs
-Date:   Tue,  8 Jan 2019 14:28:51 -0500
-Message-Id: <20190108192949.122407-42-sashal@kernel.org>
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Peter Smith <peter.smith@linaro.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 39/97] arm64: relocatable: fix inconsistencies in linker script and options
+Date:   Tue,  8 Jan 2019 14:28:48 -0500
+Message-Id: <20190108192949.122407-39-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192949.122407-1-sashal@kernel.org>
 References: <20190108192949.122407-1-sashal@kernel.org>
@@ -59,58 +60,100 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Michael J. Ruhl" <michael.j.ruhl@intel.com>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
-[ Upstream commit dbc2970caef74e8ff41923d302aa6fb5a4812d0e ]
+[ Upstream commit 3bbd3db86470c701091fb1d67f1fab6621debf50 ]
 
-An incorrect sge sizing in the HFI PIO path will cause an OOPs similar to
-this:
+readelf complains about the section layout of vmlinux when building
+with CONFIG_RELOCATABLE=y (for KASLR):
 
-BUG: unable to handle kernel NULL pointer dereference at (null)
-IP: [] hfi1_verbs_send_pio+0x3d8/0x530 [hfi1]
-PGD 0
-Oops: 0000 1 SMP
- Call Trace:
- ? hfi1_verbs_send_dma+0xad0/0xad0 [hfi1]
- hfi1_verbs_send+0xdf/0x250 [hfi1]
- ? make_rc_ack+0xa80/0xa80 [hfi1]
- hfi1_do_send+0x192/0x430 [hfi1]
- hfi1_do_send_from_rvt+0x10/0x20 [hfi1]
- rvt_post_send+0x369/0x820 [rdmavt]
- ib_uverbs_post_send+0x317/0x570 [ib_uverbs]
- ib_uverbs_write+0x26f/0x420 [ib_uverbs]
- ? security_file_permission+0x21/0xa0
- vfs_write+0xbd/0x1e0
- ? mntput+0x24/0x40
- SyS_write+0x7f/0xe0
- system_call_fastpath+0x16/0x1b
+  readelf: Warning: [21]: Link field (0) should index a symtab section.
+  readelf: Warning: [21]: Info field (0) should index a relocatable section.
 
-Fix by adding the missing sizing check to correctly determine the sge
-length.
+Also, it seems that our use of '-pie -shared' is contradictory, and
+thus ambiguous. In general, the way KASLR is wired up at the moment
+is highly tailored to how ld.bfd happens to implement (and conflate)
+PIE executables and shared libraries, so given the current effort to
+support other toolchains, let's fix some of these issues as well.
 
-Fixes: 7724105686e7 ("IB/hfi1: add driver files")
-Reviewed-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
-Signed-off-by: Michael J. Ruhl <michael.j.ruhl@intel.com>
-Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+- Drop the -pie linker argument and just leave -shared. In ld.bfd,
+  the differences between them are unclear (except for the ELF type
+  of the produced image [0]) but lld chokes on seeing both at the
+  same time.
+
+- Rename the .rela output section to .rela.dyn, as is customary for
+  shared libraries and PIE executables, so that it is not misidentified
+  by readelf as a static relocation section (producing the warnings
+  above).
+
+- Pass the -z notext and -z norelro options to explicitly instruct the
+  linker to permit text relocations, and to omit the RELRO program
+  header (which requires a certain section layout that we don't adhere
+  to in the kernel). These are the defaults for current versions of
+  ld.bfd.
+
+- Discard .eh_frame and .gnu.hash sections to avoid them from being
+  emitted between .head.text and .text, screwing up the section layout.
+
+These changes only affect the ELF image, and produce the same binary
+image.
+
+[0] b9dce7f1ba01 ("arm64: kernel: force ET_DYN ELF type for ...")
+
+Cc: Nick Desaulniers <ndesaulniers@google.com>
+Cc: Peter Smith <peter.smith@linaro.org>
+Tested-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/hw/hfi1/verbs.c | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm64/Makefile             | 2 +-
+ arch/arm64/kernel/vmlinux.lds.S | 9 +++++----
+ 2 files changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/infiniband/hw/hfi1/verbs.c b/drivers/infiniband/hw/hfi1/verbs.c
-index 3dfb4cf2f8c9..48692adbe811 100644
---- a/drivers/infiniband/hw/hfi1/verbs.c
-+++ b/drivers/infiniband/hw/hfi1/verbs.c
-@@ -1141,6 +1141,8 @@ int hfi1_verbs_send_pio(struct rvt_qp *qp, struct hfi1_pkt_state *ps,
+diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
+index 106039d25e2f..35649ee8ad56 100644
+--- a/arch/arm64/Makefile
++++ b/arch/arm64/Makefile
+@@ -18,7 +18,7 @@ ifeq ($(CONFIG_RELOCATABLE), y)
+ # Pass --no-apply-dynamic-relocs to restore pre-binutils-2.27 behaviour
+ # for relative relocs, since this leads to better Image compression
+ # with the relocation offsets always being zero.
+-LDFLAGS_vmlinux		+= -pie -shared -Bsymbolic \
++LDFLAGS_vmlinux		+= -shared -Bsymbolic -z notext -z norelro \
+ 			$(call ld-option, --no-apply-dynamic-relocs)
+ endif
  
- 				if (slen > len)
- 					slen = len;
-+				if (slen > ss->sge.sge_length)
-+					slen = ss->sge.sge_length;
- 				rvt_update_sge(ss, slen, false);
- 				seg_pio_copy_mid(pbuf, addr, slen);
- 				len -= slen;
+diff --git a/arch/arm64/kernel/vmlinux.lds.S b/arch/arm64/kernel/vmlinux.lds.S
+index 605d1b60469c..74e469f8a850 100644
+--- a/arch/arm64/kernel/vmlinux.lds.S
++++ b/arch/arm64/kernel/vmlinux.lds.S
+@@ -99,7 +99,8 @@ SECTIONS
+ 		*(.discard)
+ 		*(.discard.*)
+ 		*(.interp .dynamic)
+-		*(.dynsym .dynstr .hash)
++		*(.dynsym .dynstr .hash .gnu.hash)
++		*(.eh_frame)
+ 	}
+ 
+ 	. = KIMAGE_VADDR + TEXT_OFFSET;
+@@ -176,12 +177,12 @@ SECTIONS
+ 
+ 	PERCPU_SECTION(L1_CACHE_BYTES)
+ 
+-	.rela : ALIGN(8) {
++	.rela.dyn : ALIGN(8) {
+ 		*(.rela .rela*)
+ 	}
+ 
+-	__rela_offset	= ABSOLUTE(ADDR(.rela) - KIMAGE_VADDR);
+-	__rela_size	= SIZEOF(.rela);
++	__rela_offset	= ABSOLUTE(ADDR(.rela.dyn) - KIMAGE_VADDR);
++	__rela_size	= SIZEOF(.rela.dyn);
+ 
+ 	. = ALIGN(SEGMENT_ALIGN);
+ 	__initdata_end = .;
 -- 
 2.19.1
 
