@@ -2,123 +2,137 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69CC8C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:22:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AB34C43612
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:24:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 437052087F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:22:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 448E62087F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:24:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729414AbfAHQWU (ORCPT
+        id S1729282AbfAHQYs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 11:22:20 -0500
-Received: from iolanthe.rowland.org ([192.131.102.54]:53562 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1728394AbfAHQWT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 11:22:19 -0500
-Received: (qmail 1690 invoked by uid 2102); 8 Jan 2019 11:22:19 -0500
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 8 Jan 2019 11:22:19 -0500
-Date:   Tue, 8 Jan 2019 11:22:19 -0500 (EST)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To:     Ran Wang <ran.wang_1@nxp.com>
-cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Yinbo Zhu <yinbo.zhu@nxp.com>
-Subject: Re: [PATCH 3/3] drivers: usb :fsl: Remove USB Errata checking code
-In-Reply-To: <20190108060426.11581-3-ran.wang_1@nxp.com>
-Message-ID: <Pine.LNX.4.44L0.1901081120580.1355-100000@iolanthe.rowland.org>
+        Tue, 8 Jan 2019 11:24:48 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:44823 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728211AbfAHQYs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 11:24:48 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 1325D209D7; Tue,  8 Jan 2019 17:24:45 +0100 (CET)
+Received: from localhost.localdomain (aaubervilliers-681-1-45-241.w90-88.abo.wanadoo.fr [90.88.163.241])
+        by mail.bootlin.com (Postfix) with ESMTPSA id A4EDE207A3;
+        Tue,  8 Jan 2019 17:24:44 +0100 (CET)
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Gregory Clement <gregory.clement@bootlin.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Cc:     <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        linux-pci@vger.kernel.org, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        Nadav Haklai <nadavh@marvell.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Subject: [PATCH v3 00/15] Bring suspend to RAM support to PCIe Aardvark driver
+Date:   Tue,  8 Jan 2019 17:24:25 +0100
+Message-Id: <20190108162441.5278-1-miquel.raynal@bootlin.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 8 Jan 2019, Ran Wang wrote:
+Hello,
 
-> From: yinbo.zhu <yinbo.zhu@nxp.com>
-> 
-> Remove USB errata checking code from driver. Applicability of erratum
-> is retrieved by reading corresponding property in device tree.
-> This property is written during device tree fixup.
-> 
-> Signed-off-by: Ramneek Mehresh <ramneek.mehresh@freescale.com>
-> Signed-off-by: Nikhil Badola <nikhil.badola@freescale.com>
-> Signed-off-by: yinbo.zhu <yinbo.zhu@nxp.com>
-> Signed-off-by: Ran Wang <ran.wang_1@nxp.com>
-> ---
->  drivers/usb/host/ehci-fsl.c      |    7 +------
->  drivers/usb/host/fsl-mph-dr-of.c |    6 ++++++
->  include/linux/fsl_devices.h      |    7 ++++---
->  3 files changed, 11 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/usb/host/ehci-fsl.c b/drivers/usb/host/ehci-fsl.c
-> index 59ebe1b..2aa408a 100644
-> --- a/drivers/usb/host/ehci-fsl.c
-> +++ b/drivers/usb/host/ehci-fsl.c
-> @@ -304,14 +304,9 @@ static int ehci_fsl_usb_setup(struct ehci_hcd *ehci)
->  			return -EINVAL;
->  
->  	if (pdata->operating_mode == FSL_USB2_MPH_HOST) {
-> -		unsigned int chip, rev, svr;
-> -
-> -		svr = mfspr(SPRN_SVR);
-> -		chip = svr >> 16;
-> -		rev = (svr >> 4) & 0xf;
->  
->  		/* Deal with USB Erratum #14 on MPC834x Rev 1.0 & 1.1 chips */
-> -		if ((rev == 1) && (chip >= 0x8050) && (chip <= 0x8055))
-> +		if (pdata->has_fsl_erratum_14 == 1)
->  			ehci->has_fsl_port_bug = 1;
->  
->  		if (pdata->port_enables & FSL_USB2_PORT0_ENABLED)
-> diff --git a/drivers/usb/host/fsl-mph-dr-of.c b/drivers/usb/host/fsl-mph-dr-of.c
-> index 677f9d5..4f8b8a0 100644
-> --- a/drivers/usb/host/fsl-mph-dr-of.c
-> +++ b/drivers/usb/host/fsl-mph-dr-of.c
-> @@ -225,6 +225,12 @@ static int fsl_usb2_mph_dr_of_probe(struct platform_device *ofdev)
->  	pdata->has_fsl_erratum_a005697 =
->  		of_property_read_bool(np, "fsl,usb_erratum-a005697");
->  
-> +	if (of_get_property(np, "fsl,usb_erratum_14", NULL))
-> +		pdata->has_fsl_erratum_14 = 1;
-> +	else
-> +		pdata->has_fsl_erratum_14 = 0;
-> +
-> +
->  	/*
->  	 * Determine whether phy_clk_valid needs to be checked
->  	 * by reading property in device tree
-> diff --git a/include/linux/fsl_devices.h b/include/linux/fsl_devices.h
-> index 60cef82..7aa51bc 100644
-> --- a/include/linux/fsl_devices.h
-> +++ b/include/linux/fsl_devices.h
-> @@ -98,10 +98,11 @@ struct fsl_usb2_platform_data {
->  
->  	unsigned	suspended:1;
->  	unsigned	already_suspended:1;
-> -	unsigned        has_fsl_erratum_a007792:1;
-> -	unsigned        has_fsl_erratum_a005275:1;
-> +	unsigned    has_fsl_erratum_a007792:1;
-> +	unsigned    has_fsl_erratum_14:1;
-> +	unsigned    has_fsl_erratum_a005275:1;
->  	unsigned	has_fsl_erratum_a005697:1;
-> -	unsigned        check_phy_clk_valid:1;
-> +	unsigned    check_phy_clk_valid:1;
+As part of an effort to bring suspend to RAM support to Armada 3700
+SoCs (main target: ESPRESSObin), this series handles the work around
+the PCIe IP.
 
-You are using spaces here instead of tabs, which alters the alignment.  
-Don't do that.
+First, more configuration is done in the 'setup' helper as inspired
+from the U-Boot driver. This is needed to entirely initialize the IP
+during future resume operation (patch 1).
 
-Alan Stern
+Then, reset GPIO, PHY and clock support are introduced (patch 2-4). As
+current device trees do not provide the corresponding properties, not
+finding one of these properties is not an error and just produces a
+warning. However, if the property is present, an error during PHY
+initialization will fail the probe of the driver.
 
->  
->  	/* register save area for suspend/resume */
->  	u32		pm_command;
+Note: To be sure the clock will be resumed before this driver, a first
+series adding links between clocks and consumers has been submitted,
+see [1]. Anyway, having the clock series applied first is not needed.
+
+Patch 5 adds suspend/resume hooks, re-using all the above.
+
+Finally, bindings and device trees are updated to reflect the hardware
+(patch 6-12). While the clock depends on the SoC, the reset GPIO and
+the PHY depends on the board so the clock is added in the
+armada-37xx.dtsi file while the two other properties are added in
+armada-3720-espressobin.dts.
+
+[1] http://lists.infradead.org/pipermail/linux-arm-kernel/2019-January/623885.html
+
+Thanks,
+Miquèl
+
+
+Changes since v2:
+=================
+* Minor patches reordering.
+* Added pinctrl patches from Gregory Clement fixing the PCIe pins. His
+  changes implied modifications in the DT/bindings patches adding PCIe
+  reset pin support.
+* Added a new patch that enlarges the PIO timeout of the driver
+  (explanations in the commit log).
+* With the timeout changed, removed the "experimental delay" that was
+  needed at resume time before accessing any register.
+
+Changes since v1:
+=================
+* Change the capitalization in commit titles to follow the PCI
+  subsystem rules.
+* Added Suggested-by tag to the patch adding PHY support and to the
+  patch adding the PHY property in the DT.
+* Added Rob's Reviewed-by tags on bindings.
+* I am following the discussion about calling functions that might
+  sleep in a NOIRQ context. As there is no real problem yet (as per my
+  understanding), I did not change anything on this regard.
+
+
+Miquel Raynal (15):
+  PCI: aardvark: Enlarge PIO timeout
+  PCI: aardvark: Configure more registers in the configuration helper
+  PCI: aardvark: Add clock support
+  PCI: aardvark: Add PHY support
+  PCI: aardvark: Add PCIe warm reset support
+  PCI: aardvark: Add external reset GPIO support
+  PCI: aardvark: Add suspend to RAM support
+  dt-bindings: PCI: aardvark: Describe the clocks property
+  dt-bindings: PCI: aardvark: Describe the PHY property
+  dt-bindings: PCI: aardvark: Describe the PCIe endpoint card reset pins
+  dt-bindings: PCI: aardvark: Describe the reset-gpios property
+  ARM64: dts: marvell: armada-37xx: declare PCIe clock
+  ARM64: dts: marvell: armada-3720-espressobin: declare PCIe PHY
+  ARM64: dts: marvell: armada-37xx: declare PCIe reset pin
+  ARM64: dts: marvell: armada-3720-espressobin: declare PCIe warm reset
+    pin
+
+ .../devicetree/bindings/pci/aardvark-pci.txt  |  14 ++
+ .../dts/marvell/armada-3720-espressobin.dts   |   3 +
+ arch/arm64/boot/dts/marvell/armada-37xx.dtsi  |  10 +
+ drivers/pci/controller/pci-aardvark.c         | 217 +++++++++++++++++-
+ 4 files changed, 243 insertions(+), 1 deletion(-)
+
+-- 
+2.19.1
 
