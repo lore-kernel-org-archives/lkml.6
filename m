@@ -2,136 +2,128 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1471C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 22:08:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2954DC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 22:09:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DEDC2146F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 22:08:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F20552146F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 22:09:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729915AbfAHWIp (ORCPT
+        id S1730281AbfAHWJt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 17:08:45 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:41315 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728041AbfAHWIo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 17:08:44 -0500
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1ggzY8-0001yS-Cz; Tue, 08 Jan 2019 23:08:40 +0100
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1ggzY6-0002vf-Ug; Tue, 08 Jan 2019 23:08:38 +0100
-Date:   Tue, 8 Jan 2019 23:08:38 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Claudiu.Beznea@microchip.com
-Cc:     linux-pwm@vger.kernel.org, alexandre.belloni@bootlin.com,
-        corbet@lwn.net, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Ludovic.Desroches@microchip.com,
-        thierry.reding@gmail.com, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v8 1/6] pwm: extend PWM framework with PWM modes
-Message-ID: <20190108220838.amrun6jsa24yeisg@pengutronix.de>
-References: <1546522081-23659-1-git-send-email-claudiu.beznea@microchip.com>
- <1546522081-23659-2-git-send-email-claudiu.beznea@microchip.com>
- <20190105210522.ho2o2a4gc7r7ijeq@pengutronix.de>
- <67e881c5-0ea7-3d2f-5910-534729097d11@microchip.com>
- <20190107221040.uos5qlnkjmcayv73@pengutronix.de>
- <0ef0b4f1-45c3-0280-c1f0-6d499957f74c@microchip.com>
+        Tue, 8 Jan 2019 17:09:49 -0500
+Received: from mga04.intel.com ([192.55.52.120]:47409 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728041AbfAHWJs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 17:09:48 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jan 2019 14:09:47 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,455,1539673200"; 
+   d="scan'208";a="308699544"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
+  by fmsmga006.fm.intel.com with ESMTP; 08 Jan 2019 14:09:47 -0800
+Date:   Tue, 8 Jan 2019 14:09:47 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     "Huang, Kai" <kai.huang@intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "x86@kernel.org" <x86@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        "Dr . Greg Wettstein" <greg@enjellic.com>
+Subject: Re: x86/sgx: uapi change proposal
+Message-ID: <20190108220946.GA30462@linux.intel.com>
+References: <20181214215729.4221-1-sean.j.christopherson@intel.com>
+ <7706b2aa71312e1f0009958bcab24e1e9d8d1237.camel@linux.intel.com>
+ <598cd050-f0b5-d18c-96a0-915f02525e3e@fortanix.com>
+ <20181219091148.GA5121@linux.intel.com>
+ <613c6814-4e71-38e5-444a-545f0e286df8@fortanix.com>
+ <20181219144515.GA30909@linux.intel.com>
+ <CALCETrW_8LnitFamYUU7POHFOJFxLO7ESFUdS=aeG_SOvHVPkw@mail.gmail.com>
+ <20181221162825.GB26865@linux.intel.com>
+ <105F7BF4D0229846AF094488D65A0989355A45B6@PGSMSX112.gar.corp.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <0ef0b4f1-45c3-0280-c1f0-6d499957f74c@microchip.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <105F7BF4D0229846AF094488D65A0989355A45B6@PGSMSX112.gar.corp.intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 08, 2019 at 09:21:34AM +0000, Claudiu.Beznea@microchip.com wrote:
-> Hi Uwe,
+On Tue, Jan 08, 2019 at 11:27:11AM -0800, Huang, Kai wrote:
+> > >
+> > > Can one of you explain why SGX_ENCLAVE_CREATE is better than just
+> > > opening a new instance of /dev/sgx for each encalve?
+> > 
+> > Directly associating /dev/sgx with an enclave means /dev/sgx can't be used
+> > to provide ioctl()'s for other SGX-related needs, e.g. to mmap() raw EPC and
+> > expose it a VM.  Proposed layout in the link below.  I'll also respond to
+> > Jarkko's question about exposing EPC through /dev/sgx instead of having
+> > KVM allocate it on behalf of the VM.
+> > 
+> > https://lkml.kernel.org/r/20181218185349.GC30082@linux.intel.com
 > 
-> On 08.01.2019 00:10, Uwe Kleine-König wrote:
-> > Hello Claudiu,
-> > 
-> > On Mon, Jan 07, 2019 at 09:30:55AM +0000, Claudiu.Beznea@microchip.com wrote:
-> >> On 05.01.2019 23:05, Uwe Kleine-König wrote:
-> >>> On Thu, Jan 03, 2019 at 01:29:44PM +0000, Claudiu.Beznea@microchip.com wrote:
-> >>>> From: Claudiu Beznea <claudiu.beznea@microchip.com>
-> >>>>
-> >>>> Add basic PWM modes: normal and complementary. These modes should
-> >>>> differentiate the single output PWM channels from two outputs PWM
-> >>>> channels. These modes could be set as follow:
-> >>>> 1. PWM channels with one output per channel:
-> >>>> - normal mode
-> >>>> 2. PWM channels with two outputs per channel:
-> >>>> - normal mode
-> >>>> - complementary mode
-> >>>> Since users could use a PWM channel with two output as one output PWM
-> >>>> channel, the PWM normal mode is allowed to be set for PWM channels with
-> >>>> two outputs; in fact PWM normal mode should be supported by all PWMs.
-> >>>
-> >>> I still think that my suggestion that I sent in reply to your v5 using
-> >>> .alt_duty_cycle and .alt_offset is the better one as it is more generic.
-> >>
-> >> I like it better my way, I explained myself why.
-> > 
-> > I couldn't really follow your argument though. You seemed to acknowledge
-> > that using .alt_duty_cycle and .alt_offset is more generic.
+> Hi Sean,
 > 
-> True it is more generic in the way that it gives the possibility to
-> configure all kind of waveforms. But not all controllers supports this.
-> The use case of this would be to have dead-times with any values, right?
+> Sorry for replying to old email. But IMHO it is not a must that Qemu
+> needs to open some /dev/sgx and allocate/mmap EPC for guest's virtual
+> EPC slot, instead, KVM could create private slot, which is not visible
+> to Qemu, for virtual EPC, and KVM could call core-SGX EPC allocation
+> API directly.
 
-Well, I didn't target that. The model I suggested is just a generic set
-of parameters that are able to describe the wave forms for all three
-modes you suggested. That it allows to express dead-times is just a nice
-by-product.
+That's possible, but it has several downsides.
 
-> >>> I fail to see the upside of storing the mode as 2^mode instead of a
-> >>> plain enum pwm_mode. Given that struct pwm_state is visible for pwm
-> >>> users a plain pwm_mode would at least be more intuitive.
-> >>
-> >> To have all modes supported by a controller grouped in pwm_caps::modes_msk.
-> > 
-> > My question was not about struct pwm_caps::modes_msk but about
-> > struct pwm_state::modebit. As struct pwm_state has visibility even
-> > outside of the pwm API (i.e. it is used by consumers) it is beneficial
-> > to keep that simple. Letting a consumer pass in the mode he wants is
-> > easier to explain than setting a single bit. Also error checking with a
-> > plain enum is easier because you just do:
-> > 
-> > 	if (mode >= MODE_CNT)
-> > 		error()
-> > 
-> > which is easy to grasp. Compare that to
-> > 
-> > 	if (!is_power_of_two(modebit) || modebit >= PWM_MODE_BIT(CNT))
-> > 		error()
-> > 
-> > (modulo syntactical correctness).
+  - Duplicates a lot of code in KVM for managing memory regions.
+  - Artificially restricts userspace to a single EPC region, unless
+    even more code is duplicated to handle multiple private regions.
+  - Requires additional ioctls() or capabilities to probe EPC support
+  - Does not fit with Qemu/KVM's memory model, e.g. all other types of
+    memory are exposed to a guest through KVM_SET_USER_MEMORY_REGION. 
+  - Prevents userspace from debugging a guest's enclave.  I'm not saying
+    this is a likely scenario, but I also don't think we should preclude
+    it without good reason.
+  - KVM is now responsible for managing the lifecycle of EPC, e.g. what
+    happens if an EPC cgroup limit is lowered on a running VM and
+    KVM can't gracefully reclaim EPC?  The userspace hypervisor should
+    ultimately decide how to handle such an event.
+  - SGX logic is split between SGX and KVM, e.g. VA page management for
+    oversubscription will likely be common to SGX and KVM.  From a long
+    term maintenance perspective, this means that changes to the EPC
+    management could potentially need to be Acked by KVM, and vice versa.
+
+> I am not sure what's the good of allowing userspace to alloc/mmap a
+> raw EPC region? Userspace is not allowed to touch EPC anyway, expect
+> enclave code.
+>
+> To me KVM creates private EPC slot is cleaner than exposing /dev/sgx/epc
+> and allowing userspace to map some raw EPC region.
+
+Cleaner in the sense that it's faster to get basic support up and running
+since there are fewer touchpoints, but there are long term ramifications
+to cramming EPC management in KVM.
+
+And at this point I'm not stating any absolutes, e.g. how EPC will be
+handled by KVM.  What I'm pushing for is to not eliminate the possibility
+of having the SGX subsystem own all EPC management, e.g. don't tie
+/dev/sgx to a single enclave.
+
 > 
-> The reason I choose to have it as bit was the memcmp() at the beginning of
-> pwm_apply_state() and to avoid starting enum pwm_mode from 1 and to avoid
-> having bit 0 of pwm_caps::modes_msk unused (in the driver I'm using
-> PWM_MODE_BIT() macro to fill in the driver's supported modes).
-
-Does that mean you are convinced by my argument?
-
-Best regards
-Uwe
-
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+> Thanks,
+> -Kai
