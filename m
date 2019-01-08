@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3AB9C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:58:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFC9BC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:58:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A69A120660
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:58:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8CA9D20827
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:58:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546977513;
-	bh=KKE87vKhUUlTRn2Ex7cq6LzrtuakMaOHZ96sDL95GGU=;
+	s=default; t=1546977525;
+	bh=f1MsrB64D5ogQt73dYUl6yOvYVFSpjYIz/QsTbS/Beo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=HsWWkjFt+Bc7uffbEx6p852U5olPgV2g41egIu1LlD24cgdoPuPuZO4ql+U6OiHzX
-	 J32e59bi+dxkSZrLx6C4jbSm03QzcJBmZrObHQPRcON/FQtsDytu7k3tuVYrNfNL6e
-	 uAOeFyNc5AzP96UuS+RrigfMbrfrnyJ1C0ImuSLw=
+	b=fCzuexFmpGR27I1gVcQ6BShNq2xJBjk4uk4r6eBTRyXVWMZ7BuUcy+59bIKHQD3hW
+	 Fx3NIAQK+LIM38+qFfGQNnO+iPDyHcoULlezDVbWUpaGKePqEF6kAHku4jSOvMP2EJ
+	 KlycVi4UHPRumFA9MQB4fgDJJu2dejnbLMOZnV28=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732342AbfAHT6c (ORCPT
+        id S1730745AbfAHT6o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:58:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37012 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:58:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36932 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730431AbfAHT3e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:29:34 -0500
+        id S1730399AbfAHT3a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:29:30 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D698620827;
-        Tue,  8 Jan 2019 19:29:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 454C52183F;
+        Tue,  8 Jan 2019 19:29:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975773;
-        bh=KKE87vKhUUlTRn2Ex7cq6LzrtuakMaOHZ96sDL95GGU=;
+        s=default; t=1546975769;
+        bh=f1MsrB64D5ogQt73dYUl6yOvYVFSpjYIz/QsTbS/Beo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=u1rH9mBzomm7a4jJI72KjfFjHE7Zj8E4EsDrDIQTwpFUfHQVWzOU5/ZehrB4I+K9j
-         GErmxZgU2ZK3tsrFVW5QETyb6/nVus9j5lZluQwWORtXD/XyCa9BaKKuuQOsP+LaBF
-         6dN4mhCjAm5XTqhDHh9NoBVS/MPoipJ2C9/Lm8uk=
+        b=nwlKDcIHJf7IOvgdlFWzXbGQBcJK8NUa75jzdLJhQ/ZPFfOdkujF6u6Qj2iMw0ng2
+         zb0DJVvHxuvcomJFbyK7tf4nnXAdjdClkoNHqkJAlCkxySyawV3pEIp00Plp5yMd+6
+         Mqe5x6/r6gall2F9qGWy0grxKX8N2bVf4oT7xgac=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Brian Foster <bfoster@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-mm@kvack.org
-Subject: [PATCH AUTOSEL 4.20 113/117] mm/page-writeback.c: don't break integrity writeback on ->writepage() error
-Date:   Tue,  8 Jan 2019 14:26:21 -0500
-Message-Id: <20190108192628.121270-113-sashal@kernel.org>
+Cc:     Eric Sandeen <sandeen@redhat.com>,
+        Eric Sandeen <sandeen@sandeen.net>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 110/117] iomap: don't search past page end in iomap_is_partially_uptodate
+Date:   Tue,  8 Jan 2019 14:26:18 -0500
+Message-Id: <20190108192628.121270-110-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192628.121270-1-sashal@kernel.org>
 References: <20190108192628.121270-1-sashal@kernel.org>
@@ -59,108 +59,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Brian Foster <bfoster@redhat.com>
+From: Eric Sandeen <sandeen@redhat.com>
 
-[ Upstream commit 3fa750dcf29e8606e3969d13d8e188cc1c0f511d ]
+[ Upstream commit 3cc31fa65d85610574c0f6a474e89f4c419923d5 ]
 
-write_cache_pages() is used in both background and integrity writeback
-scenarios by various filesystems.  Background writeback is mostly
-concerned with cleaning a certain number of dirty pages based on various
-mm heuristics.  It may not write the full set of dirty pages or wait for
-I/O to complete.  Integrity writeback is responsible for persisting a set
-of dirty pages before the writeback job completes.  For example, an
-fsync() call must perform integrity writeback to ensure data is on disk
-before the call returns.
+iomap_is_partially_uptodate() is intended to check wither blocks within
+the selected range of a not-uptodate page are uptodate; if the range we
+care about is up to date, it's an optimization.
 
-write_cache_pages() unconditionally breaks out of its processing loop in
-the event of a ->writepage() error.  This is fine for background
-writeback, which had no strict requirements and will eventually come
-around again.  This can cause problems for integrity writeback on
-filesystems that might need to clean up state associated with failed page
-writeouts.  For example, XFS performs internal delayed allocation
-accounting before returning a ->writepage() error, where applicable.  If
-the current writeback happens to be associated with an unmount and
-write_cache_pages() completes the writeback prematurely due to error, the
-filesystem is unmounted in an inconsistent state if dirty+delalloc pages
-still exist.
+However, the iomap implementation continues to check all blocks up to
+from+count, which is beyond the page, and can even be well beyond the
+iop->uptodate bitmap.
 
-To handle this problem, update write_cache_pages() to always process the
-full set of pages for integrity writeback regardless of ->writepage()
-errors.  Save the first encountered error and return it to the caller once
-complete.  This facilitates XFS (or any other fs that expects integrity
-writeback to process the entire set of dirty pages) to clean up its
-internal state completely in the event of persistent mapping errors.
-Background writeback continues to exit on the first error encountered.
+I think the worst that will happen is that we may eventually find a zero
+bit and return "not partially uptodate" when it would have otherwise
+returned true, and skip the optimization.  Still, it's clearly an invalid
+memory access that must be fixed.
 
-[akpm@linux-foundation.org: fix typo in comment]
-Link: http://lkml.kernel.org/r/20181116134304.32440-1-bfoster@redhat.com
-Signed-off-by: Brian Foster <bfoster@redhat.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+So: fix this by limiting the search to within the page as is done in the
+non-iomap variant, block_is_partially_uptodate().
+
+Zorro noticed thiswhen KASAN went off for 512 byte blocks on a 64k
+page system:
+
+ BUG: KASAN: slab-out-of-bounds in iomap_is_partially_uptodate+0x1a0/0x1e0
+ Read of size 8 at addr ffff800120c3a318 by task fsstress/22337
+
+Reported-by: Zorro Lang <zlang@redhat.com>
+Signed-off-by: Eric Sandeen <sandeen@redhat.com>
+Signed-off-by: Eric Sandeen <sandeen@sandeen.net>
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/page-writeback.c | 35 +++++++++++++++++++++--------------
- 1 file changed, 21 insertions(+), 14 deletions(-)
+ fs/iomap.c | 17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
 
-diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-index 3f690bae6b78..7d1010453fb9 100644
---- a/mm/page-writeback.c
-+++ b/mm/page-writeback.c
-@@ -2154,6 +2154,7 @@ int write_cache_pages(struct address_space *mapping,
+diff --git a/fs/iomap.c b/fs/iomap.c
+index d6bc98ae8d35..ce837d962d47 100644
+--- a/fs/iomap.c
++++ b/fs/iomap.c
+@@ -492,16 +492,29 @@ iomap_readpages(struct address_space *mapping, struct list_head *pages,
+ }
+ EXPORT_SYMBOL_GPL(iomap_readpages);
+ 
++/*
++ * iomap_is_partially_uptodate checks whether blocks within a page are
++ * uptodate or not.
++ *
++ * Returns true if all blocks which correspond to a file portion
++ * we want to read within the page are uptodate.
++ */
+ int
+ iomap_is_partially_uptodate(struct page *page, unsigned long from,
+ 		unsigned long count)
  {
- 	int ret = 0;
- 	int done = 0;
-+	int error;
- 	struct pagevec pvec;
- 	int nr_pages;
- 	pgoff_t uninitialized_var(writeback_index);
-@@ -2227,25 +2228,31 @@ int write_cache_pages(struct address_space *mapping,
- 				goto continue_unlock;
+ 	struct iomap_page *iop = to_iomap_page(page);
+ 	struct inode *inode = page->mapping->host;
+-	unsigned first = from >> inode->i_blkbits;
+-	unsigned last = (from + count - 1) >> inode->i_blkbits;
++	unsigned len, first, last;
+ 	unsigned i;
  
- 			trace_wbc_writepage(wbc, inode_to_bdi(mapping->host));
--			ret = (*writepage)(page, wbc, data);
--			if (unlikely(ret)) {
--				if (ret == AOP_WRITEPAGE_ACTIVATE) {
-+			error = (*writepage)(page, wbc, data);
-+			if (unlikely(error)) {
-+				/*
-+				 * Handle errors according to the type of
-+				 * writeback. There's no need to continue for
-+				 * background writeback. Just push done_index
-+				 * past this page so media errors won't choke
-+				 * writeout for the entire file. For integrity
-+				 * writeback, we must process the entire dirty
-+				 * set regardless of errors because the fs may
-+				 * still have state to clear for each page. In
-+				 * that case we continue processing and return
-+				 * the first error.
-+				 */
-+				if (error == AOP_WRITEPAGE_ACTIVATE) {
- 					unlock_page(page);
--					ret = 0;
--				} else {
--					/*
--					 * done_index is set past this page,
--					 * so media errors will not choke
--					 * background writeout for the entire
--					 * file. This has consequences for
--					 * range_cyclic semantics (ie. it may
--					 * not be suitable for data integrity
--					 * writeout).
--					 */
-+					error = 0;
-+				} else if (wbc->sync_mode != WB_SYNC_ALL) {
-+					ret = error;
- 					done_index = page->index + 1;
- 					done = 1;
- 					break;
- 				}
-+				if (!ret)
-+					ret = error;
- 			}
- 
- 			/*
++	/* Limit range to one page */
++	len = min_t(unsigned, PAGE_SIZE - from, count);
++
++	/* First and last blocks in range within page */
++	first = from >> inode->i_blkbits;
++	last = (from + len - 1) >> inode->i_blkbits;
++
+ 	if (iop) {
+ 		for (i = first; i <= last; i++)
+ 			if (!test_bit(i, iop->uptodate))
 -- 
 2.19.1
 
