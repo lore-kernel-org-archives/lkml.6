@@ -2,85 +2,136 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40791C43612
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 07:37:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D80F3C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 07:37:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03E9A218A1
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 07:37:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546933035;
-	bh=RAiJVbPdYaMOeZ7D/Jyak8u6RdKJwSBuaImwPCOQ05Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Omd2haQfVRh2hWw2fIrUrAtpQhmERpM/TaKz64qGKKzpFmOs/1DtC+FqpXriGFMrw
-	 sG8AnXzso5sBDd+PUOqAcKr5bhy5FEqwCs9SKJJ7B8qAWeLAu1OndpnA6d6H47V7MJ
-	 fgNAWyA1cwms6RsabgM6oxswjf+bhCM0Ph0lnzsA=
+	by mail.kernel.org (Postfix) with ESMTP id AFFC7218A1
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 07:37:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727655AbfAHHhO (ORCPT
+        id S1727734AbfAHHhs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 02:37:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44398 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 02:37:48 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:11671 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727295AbfAHHhN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 02:37:13 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BFE822087F;
-        Tue,  8 Jan 2019 07:37:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546933033;
-        bh=RAiJVbPdYaMOeZ7D/Jyak8u6RdKJwSBuaImwPCOQ05Q=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=XhFN75tc3JmQ3e24DCiDzO4boxezJyoYDMKB7S8tVq3nNE2Jd/VMgK3l3lOg/xhti
-         DM4CMBCg8kJp6rmzYRy1GtxFp/xO/8y6t8gc2CgKHC983FmgDM9fddyaSLC8ZYBNir
-         +VN4vdIi3HT9jqYMleTRaVLtqVmlnBYmCApFcyR8=
-Date:   Tue, 8 Jan 2019 08:37:10 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Stable <stable@vger.kernel.org>, Lukas Wunner <lukas@wunner.de>,
-        Mathias Duckeck <m.duckeck@kunbus.de>,
-        Frank Pavlic <f.pavlic@kunbus.de>,
-        Martin Sperl <kernel@martin.sperl.org>,
-        Noralf =?iso-8859-1?Q?Tr=F8nnes?= <noralf@tronnes.org>,
-        Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 4.14 069/101] spi: bcm2835: Fix race on DMA termination
-Message-ID: <20190108073710.GB2102@kroah.com>
-References: <20190107105330.372621917@linuxfoundation.org>
- <20190107105336.765968953@linuxfoundation.org>
- <CADVatmNmc1mkcaJ4wKjufFcTwE_6=iMUTR811Gdcop9y0_LLVg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CADVatmNmc1mkcaJ4wKjufFcTwE_6=iMUTR811Gdcop9y0_LLVg@mail.gmail.com>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+        id S1727368AbfAHHhs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 02:37:48 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 43Ykcn4BkMz9txMg;
+        Tue,  8 Jan 2019 08:37:45 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id kvvQgho76Xec; Tue,  8 Jan 2019 08:37:45 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 43Ykcn3f97z9txMf;
+        Tue,  8 Jan 2019 08:37:45 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 688678B794;
+        Tue,  8 Jan 2019 08:37:46 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id SbDgLRF0y1hn; Tue,  8 Jan 2019 08:37:46 +0100 (CET)
+Received: from po16846vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 3311B8B754;
+        Tue,  8 Jan 2019 08:37:46 +0100 (CET)
+Received: by localhost.localdomain (Postfix, from userid 0)
+        id 5FE5F69A7C; Tue,  8 Jan 2019 07:37:44 +0000 (UTC)
+Message-Id: <0b0db24e18063076e9d9f4e376994af83da05456.1546932949.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH v2 1/2] mm: add probe_user_read()
+To:     Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Mike Rapoport <rppt@linux.ibm.com>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-mm@kvack.org
+Date:   Tue,  8 Jan 2019 07:37:44 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 07, 2019 at 09:15:20PM +0000, Sudip Mukherjee wrote:
-> HI Greg,
-> 
-> On Mon, Jan 7, 2019 at 1:15 PM Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > 4.14-stable review patch.  If anyone has any objections, please let me know.
-> >
-> > ------------------
-> >
-> > From: Lukas Wunner <lukas@wunner.de>
-> >
-> > commit e82b0b3828451c1cd331d9f304c6078fcd43b62e upstream.
-> 
-> This has been fixed later by 29bdedfd9cf4 ("spi: bcm2835: Unbreak the
-> build of esoteric configs")
+In powerpc code, there are several places implementing safe
+access to user data. This is sometimes implemented using
+probe_kernel_address() with additional access_ok() verification,
+sometimes with get_user() enclosed in a pagefault_disable()/enable()
+pair, etc. :
+    show_user_instructions()
+    bad_stack_expansion()
+    p9_hmi_special_emu()
+    fsl_pci_mcheck_exception()
+    read_user_stack_64()
+    read_user_stack_32() on PPC64
+    read_user_stack_32() on PPC32
+    power_pmu_bhrb_to()
 
-Thanks for this, now queued up.
+In the same spirit as probe_kernel_read(), this patch adds
+probe_user_read().
 
-greg k-h
+probe_user_read() does the same as probe_kernel_read() but
+first checks that it is really a user address.
+
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ v2: Added "Returns:" comment and removed probe_user_address()
+
+ Changes since RFC: Made a static inline function instead of weak function as recommended by Kees.
+
+ include/linux/uaccess.h | 34 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
+
+diff --git a/include/linux/uaccess.h b/include/linux/uaccess.h
+index 37b226e8df13..07f4f0ed69bc 100644
+--- a/include/linux/uaccess.h
++++ b/include/linux/uaccess.h
+@@ -263,6 +263,40 @@ extern long strncpy_from_unsafe(char *dst, const void *unsafe_addr, long count);
+ #define probe_kernel_address(addr, retval)		\
+ 	probe_kernel_read(&retval, addr, sizeof(retval))
+ 
++/**
++ * probe_user_read(): safely attempt to read from a user location
++ * @dst: pointer to the buffer that shall take the data
++ * @src: address to read from
++ * @size: size of the data chunk
++ *
++ * Returns: 0 on success, -EFAULT on error.
++ *
++ * Safely read from address @src to the buffer at @dst.  If a kernel fault
++ * happens, handle that and return -EFAULT.
++ *
++ * We ensure that the copy_from_user is executed in atomic context so that
++ * do_page_fault() doesn't attempt to take mmap_sem.  This makes
++ * probe_user_read() suitable for use within regions where the caller
++ * already holds mmap_sem, or other locks which nest inside mmap_sem.
++ */
++
++#ifndef probe_user_read
++static __always_inline long probe_user_read(void *dst, const void __user *src,
++					    size_t size)
++{
++	long ret;
++
++	if (!access_ok(src, size))
++		return -EFAULT;
++
++	pagefault_disable();
++	ret = __copy_from_user_inatomic(dst, src, size);
++	pagefault_enable();
++
++	return ret ? -EFAULT : 0;
++}
++#endif
++
+ #ifndef user_access_begin
+ #define user_access_begin(ptr,len) access_ok(ptr, len)
+ #define user_access_end() do { } while (0)
+-- 
+2.13.3
+
