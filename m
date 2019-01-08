@@ -2,88 +2,272 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACD2CC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 15:01:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E38C5C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 15:03:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C1B520827
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 15:01:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AAAF820827
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 15:03:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546959802;
+	bh=Kz6oMtput567fnF2L59t+1q2FdKhZLUqdRjCbS/569M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=1494VV5b1afkX9cuyFwlaTqX9G/o6cmHQgKedMKSIOJS83SpHsQkQzzOZv/Cy45ro
+	 2s324Jf2TyuxvmCEFdAazawR6IaqFSrE+XjXq0LtvFE0aZoqcOml6QPJktmKeRhFvI
+	 OZPHcbA3E1gTqC/sPldTQlEdv2QKVInuRXYWV2po=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728456AbfAHPBm (ORCPT
+        id S1728172AbfAHPDV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 10:01:42 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:51981 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727764AbfAHPBl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 10:01:41 -0500
-Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1ggssn-0004Dy-Q8; Tue, 08 Jan 2019 16:01:33 +0100
-Date:   Tue, 8 Jan 2019 16:01:33 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Linus Walleij <linus.walleij@linaro.org>
-cc:     Leonard Crestez <cdleonard@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Daniel Kurtz <djkurtz@chromium.org>,
-        Nehal Shah <Nehal-bakulchandra.Shah@amd.com>,
-        Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
-        Daniel Drake <drake@endlessm.com>,
-        Nitesh Kumar Agrawal <Nitesh-kumar.Agrawal@amd.com>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Hans de Goede <hdegoede@redhat.com>
-Subject: Re: Interrupt storm from pinctrl-amd on Acer AN515-42
-In-Reply-To: <CACRpkdaDT9xZe6r3pJvYqubrvHh4+PkV8D38yYMEbv8fhdHMKQ@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.1901081558460.10743@nanos.tec.linutronix.de>
-References: <4085fc648ff5086bd6e6237d74d2a11e945a617b.camel@gmail.com> <CACRpkdaDT9xZe6r3pJvYqubrvHh4+PkV8D38yYMEbv8fhdHMKQ@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Tue, 8 Jan 2019 10:03:21 -0500
+Received: from mx2.suse.de ([195.135.220.15]:57132 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727295AbfAHPDV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 10:03:21 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 27958AF6F;
+        Tue,  8 Jan 2019 15:03:18 +0000 (UTC)
+Date:   Tue, 8 Jan 2019 16:03:17 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Shakeel Butt <shakeelb@google.com>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Roman Gushchin <guro@fb.com>, linux-mm@kvack.org,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] memcg: localize memcg_kmem_enabled() check
+Message-ID: <20190108150317.GA31793@dhcp22.suse.cz>
+References: <20190103161203.162375-1-shakeelb@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190103161203.162375-1-shakeelb@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 28 Dec 2018, Linus Walleij wrote:
+On Thu 03-01-19 08:12:03, Shakeel Butt wrote:
+> Move the memcg_kmem_enabled() checks into memcg kmem charge/uncharge
+> functions, so, the users don't have to explicitly check that condition.
+> This is purely code cleanup patch without any functional change. Only
+> the order of checks in memcg_charge_slab() can potentially be changed
+> but the functionally it will be same. This should not matter as
+> memcg_charge_slab() is not in the hot path.
 
-> On Fri, Dec 28, 2018 at 12:02 AM Leonard Crestez <cdleonard@gmail.com> wrote:
+Looks good to me
+
 > 
-> > Digging a little deeper it seems the touchpad interrupt is active on
-> > boot and since it's configured as "level" and no touchpad driver is
-> > available yet there does not seem to be any way to clear it.
+> Signed-off-by: Shakeel Butt <shakeelb@google.com>
+
+Acked-by: Michal Hocko <mhocko@suse.com>
+
+> ---
+> Changelog since v1:
+> - Fixed the build when CONFIG_MEMCG is not set
 > 
-> I think these are called "spurious interrupts".
+>  fs/pipe.c                  |  3 +--
+>  include/linux/memcontrol.h | 37 +++++++++++++++++++++++++++++++++----
+>  mm/memcontrol.c            | 16 ++++++++--------
+>  mm/page_alloc.c            |  4 ++--
+>  mm/slab.h                  |  4 ----
+>  5 files changed, 44 insertions(+), 20 deletions(-)
 > 
-> > I don't know how this should be handled, booting with an active enabled but
-> > unclearable interrupt seems like a platform bug to me. There is even an
-> > option to set touchpad to "basic" which does some sort of ps2 emulation
-> > but the IRQ issue still happens!
-> >
-> > One workaround is to explicitly disable the interrupt from the handler
-> > if no mapping is found; this will keep it disabled until
-> > amd_gpio_irq_set_type is called later.
-> 
-> I don't know how x86 and ACPI systems usually deal with this stuff
-> so I'm kind of lost. On the embedded systems that I develop on,
-> I would just disable all interrupts on probe() (usually writing 0x0 in
-> some interrupt enable register) and then they will get enabled
-> once consumers need them.
+> diff --git a/fs/pipe.c b/fs/pipe.c
+> index bdc5d3c0977d..51d5fd8840ab 100644
+> --- a/fs/pipe.c
+> +++ b/fs/pipe.c
+> @@ -140,8 +140,7 @@ static int anon_pipe_buf_steal(struct pipe_inode_info *pipe,
+>  	struct page *page = buf->page;
+>  
+>  	if (page_count(page) == 1) {
+> -		if (memcg_kmem_enabled())
+> -			memcg_kmem_uncharge(page, 0);
+> +		memcg_kmem_uncharge(page, 0);
+>  		__SetPageLocked(page);
+>  		return 0;
+>  	}
+> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+> index 83ae11cbd12c..b0eb29ea0d9c 100644
+> --- a/include/linux/memcontrol.h
+> +++ b/include/linux/memcontrol.h
+> @@ -1273,12 +1273,12 @@ static inline bool mem_cgroup_under_socket_pressure(struct mem_cgroup *memcg)
+>  
+>  struct kmem_cache *memcg_kmem_get_cache(struct kmem_cache *cachep);
+>  void memcg_kmem_put_cache(struct kmem_cache *cachep);
+> -int memcg_kmem_charge_memcg(struct page *page, gfp_t gfp, int order,
+> -			    struct mem_cgroup *memcg);
+>  
+>  #ifdef CONFIG_MEMCG_KMEM
+> -int memcg_kmem_charge(struct page *page, gfp_t gfp, int order);
+> -void memcg_kmem_uncharge(struct page *page, int order);
+> +int __memcg_kmem_charge(struct page *page, gfp_t gfp, int order);
+> +void __memcg_kmem_uncharge(struct page *page, int order);
+> +int __memcg_kmem_charge_memcg(struct page *page, gfp_t gfp, int order,
+> +			      struct mem_cgroup *memcg);
+>  
+>  extern struct static_key_false memcg_kmem_enabled_key;
+>  extern struct workqueue_struct *memcg_kmem_cache_wq;
+> @@ -1300,6 +1300,26 @@ static inline bool memcg_kmem_enabled(void)
+>  	return static_branch_unlikely(&memcg_kmem_enabled_key);
+>  }
+>  
+> +static inline int memcg_kmem_charge(struct page *page, gfp_t gfp, int order)
+> +{
+> +	if (memcg_kmem_enabled())
+> +		return __memcg_kmem_charge(page, gfp, order);
+> +	return 0;
+> +}
+> +
+> +static inline void memcg_kmem_uncharge(struct page *page, int order)
+> +{
+> +	if (memcg_kmem_enabled())
+> +		__memcg_kmem_uncharge(page, order);
+> +}
+> +
+> +static inline int memcg_kmem_charge_memcg(struct page *page, gfp_t gfp,
+> +					  int order, struct mem_cgroup *memcg)
+> +{
+> +	if (memcg_kmem_enabled())
+> +		return __memcg_kmem_charge_memcg(page, gfp, order, memcg);
+> +	return 0;
+> +}
+>  /*
+>   * helper for accessing a memcg's index. It will be used as an index in the
+>   * child cache array in kmem_cache, and also to derive its name. This function
+> @@ -1325,6 +1345,15 @@ static inline void memcg_kmem_uncharge(struct page *page, int order)
+>  {
+>  }
+>  
+> +static inline int __memcg_kmem_charge(struct page *page, gfp_t gfp, int order)
+> +{
+> +	return 0;
+> +}
+> +
+> +static inline void __memcg_kmem_uncharge(struct page *page, int order)
+> +{
+> +}
+> +
+>  #define for_each_memcg_cache_index(_idx)	\
+>  	for (; NULL; )
+>  
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index 4afd5971f2d4..e8ca09920d71 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -2557,7 +2557,7 @@ void memcg_kmem_put_cache(struct kmem_cache *cachep)
+>  }
+>  
+>  /**
+> - * memcg_kmem_charge_memcg: charge a kmem page
+> + * __memcg_kmem_charge_memcg: charge a kmem page
+>   * @page: page to charge
+>   * @gfp: reclaim mode
+>   * @order: allocation order
+> @@ -2565,7 +2565,7 @@ void memcg_kmem_put_cache(struct kmem_cache *cachep)
+>   *
+>   * Returns 0 on success, an error code on failure.
+>   */
+> -int memcg_kmem_charge_memcg(struct page *page, gfp_t gfp, int order,
+> +int __memcg_kmem_charge_memcg(struct page *page, gfp_t gfp, int order,
+>  			    struct mem_cgroup *memcg)
+>  {
+>  	unsigned int nr_pages = 1 << order;
+> @@ -2588,24 +2588,24 @@ int memcg_kmem_charge_memcg(struct page *page, gfp_t gfp, int order,
+>  }
+>  
+>  /**
+> - * memcg_kmem_charge: charge a kmem page to the current memory cgroup
+> + * __memcg_kmem_charge: charge a kmem page to the current memory cgroup
+>   * @page: page to charge
+>   * @gfp: reclaim mode
+>   * @order: allocation order
+>   *
+>   * Returns 0 on success, an error code on failure.
+>   */
+> -int memcg_kmem_charge(struct page *page, gfp_t gfp, int order)
+> +int __memcg_kmem_charge(struct page *page, gfp_t gfp, int order)
+>  {
+>  	struct mem_cgroup *memcg;
+>  	int ret = 0;
+>  
+> -	if (mem_cgroup_disabled() || memcg_kmem_bypass())
+> +	if (memcg_kmem_bypass())
+>  		return 0;
+>  
+>  	memcg = get_mem_cgroup_from_current();
+>  	if (!mem_cgroup_is_root(memcg)) {
+> -		ret = memcg_kmem_charge_memcg(page, gfp, order, memcg);
+> +		ret = __memcg_kmem_charge_memcg(page, gfp, order, memcg);
+>  		if (!ret)
+>  			__SetPageKmemcg(page);
+>  	}
+> @@ -2613,11 +2613,11 @@ int memcg_kmem_charge(struct page *page, gfp_t gfp, int order)
+>  	return ret;
+>  }
+>  /**
+> - * memcg_kmem_uncharge: uncharge a kmem page
+> + * __memcg_kmem_uncharge: uncharge a kmem page
+>   * @page: page to uncharge
+>   * @order: allocation order
+>   */
+> -void memcg_kmem_uncharge(struct page *page, int order)
+> +void __memcg_kmem_uncharge(struct page *page, int order)
+>  {
+>  	struct mem_cgroup *memcg = page->mem_cgroup;
+>  	unsigned int nr_pages = 1 << order;
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index 0634fbdef078..d65c337d2257 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -1053,7 +1053,7 @@ static __always_inline bool free_pages_prepare(struct page *page,
+>  	if (PageMappingFlags(page))
+>  		page->mapping = NULL;
+>  	if (memcg_kmem_enabled() && PageKmemcg(page))
+> -		memcg_kmem_uncharge(page, order);
+> +		__memcg_kmem_uncharge(page, order);
+>  	if (check_free)
+>  		bad += free_pages_check(page);
+>  	if (bad)
+> @@ -4667,7 +4667,7 @@ __alloc_pages_nodemask(gfp_t gfp_mask, unsigned int order, int preferred_nid,
+>  
+>  out:
+>  	if (memcg_kmem_enabled() && (gfp_mask & __GFP_ACCOUNT) && page &&
+> -	    unlikely(memcg_kmem_charge(page, gfp_mask, order) != 0)) {
+> +	    unlikely(__memcg_kmem_charge(page, gfp_mask, order) != 0)) {
+>  		__free_pages(page, order);
+>  		page = NULL;
+>  	}
+> diff --git a/mm/slab.h b/mm/slab.h
+> index 4190c24ef0e9..cde51d7f631f 100644
+> --- a/mm/slab.h
+> +++ b/mm/slab.h
+> @@ -276,8 +276,6 @@ static __always_inline int memcg_charge_slab(struct page *page,
+>  					     gfp_t gfp, int order,
+>  					     struct kmem_cache *s)
+>  {
+> -	if (!memcg_kmem_enabled())
+> -		return 0;
+>  	if (is_root_cache(s))
+>  		return 0;
+>  	return memcg_kmem_charge_memcg(page, gfp, order, s->memcg_params.memcg);
+> @@ -286,8 +284,6 @@ static __always_inline int memcg_charge_slab(struct page *page,
+>  static __always_inline void memcg_uncharge_slab(struct page *page, int order,
+>  						struct kmem_cache *s)
+>  {
+> -	if (!memcg_kmem_enabled())
+> -		return;
+>  	memcg_kmem_uncharge(page, order);
+>  }
+>  
+> -- 
+> 2.20.1.415.g653613c723-goog
 
-That's the right thing to do.
-
-> But I have come to understand that maybe ACPI systems are
-> not so happy about drivers doing things like that?
-
-Each driver has to invoke a request_irq() variant, which enables the
-interrupt line. So there should be no problem when disabling all interrupts
-on probe.
-
-Thanks,
-
-	tglx
-
+-- 
+Michal Hocko
+SUSE Labs
