@@ -4,53 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40109C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:39:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 273B7C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:39:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1026F20645
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:39:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB4FC2063F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:39:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546976387;
-	bh=Fp/3IexuKra1Nl1j5qF+MnglTqqAxKg8m+jq2MdT018=;
+	s=default; t=1546976395;
+	bh=0GNCiHYFanepbz8TCTWacRzM4gSL/apdrL9D5rUIvQ0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=AXuQCrV0rBpT751YQ4c8R632IOkFcm3TohBU1Q6FklUxzV4VNAXk/r9nrDJtUq7CC
-	 MgNJI5RSBYKkBUf8wVymOGBxGvI0nBre7lv+JKGRJIwhGsUwidLJkdR5oXFrxPANqq
-	 cfaaK+NHFVMy1FWRKT+5MZIVisUtzN9UXnbdJcRE=
+	b=xJAFyCHHKYJX5WU+ARBbmbBXzvjxse/F7nr+7tWWn5Y387gGa1/lyaMUJc1Qd95FE
+	 jv4vXdgnAfehmBOmJJV92CSUHxZB+938GLU8mG7B9bziZB5f70RqRPjsDiBL6PAcnM
+	 0G31CG8hv/oWORsimhZPG4BBVVYkIoJ36fucMhog=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732582AbfAHTjq (ORCPT
+        id S1732593AbfAHTjy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:39:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43768 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:39:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43740 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731496AbfAHTe6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:34:58 -0500
+        id S1732092AbfAHTe5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:34:57 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9748620645;
-        Tue,  8 Jan 2019 19:34:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 957A0217D9;
+        Tue,  8 Jan 2019 19:34:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546976097;
-        bh=Fp/3IexuKra1Nl1j5qF+MnglTqqAxKg8m+jq2MdT018=;
+        s=default; t=1546976096;
+        bh=0GNCiHYFanepbz8TCTWacRzM4gSL/apdrL9D5rUIvQ0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cMHSoJrDhZk5vYZVp1VQ8sjXr7rxk7B4waPb1A3tAjkJd9QS2gGfzCzTak9ijO8jd
-         mccFdiSG1tesEDL2NmFl6oKiknf0Wt1Up8mAvbWa4uEXlLcXnAGB095bT8FBC8P+Tm
-         HWnBwMCebT/4bhJ5hja5AicDGbmZLO5y/szlnNVs=
+        b=M0PqnARWllL5pXtZQ66I8V9wa0C4Py2omTY/OGROjYFKkdLPfxekRwPmHfaoaAcZg
+         EgDP6UNMk309exC3ECE0D7Y0sIRac5Nc8rwaBKxv3cGg9PKkNG6AFSFtSSV+o/lCXz
+         5wxv5oD5Jdk7UzzbhleB/drK9bM316DjARoQ1VjU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nikolaj Fogh <nikolajfogh@gmail.com>,
-        Johan Hovold <johan@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 06/28] USB: serial: ftdi_sio: use rounding when calculating baud rate divisors
-Date:   Tue,  8 Jan 2019 14:34:23 -0500
-Message-Id: <20190108193445.124251-6-sashal@kernel.org>
+Cc:     Anders Roxell <anders.roxell@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Will Deacon <will.deacon@arm.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 05/28] arm64: perf: set suppress_bind_attrs flag to true
+Date:   Tue,  8 Jan 2019 14:34:22 -0500
+Message-Id: <20190108193445.124251-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108193445.124251-1-sashal@kernel.org>
 References: <20190108193445.124251-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -58,77 +59,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nikolaj Fogh <nikolajfogh@gmail.com>
+From: Anders Roxell <anders.roxell@linaro.org>
 
-[ Upstream commit 6abd837104a3a8e1cda64fc4d7675f6c3ece9d8b ]
+[ Upstream commit 81e9fa8bab381f8b6eb04df7cdf0f71994099bd4 ]
 
-Improve baud-rate generation by using rounding-to-closest instead of
-truncation in divisor calculation.
+The armv8_pmuv3 driver doesn't have a remove function, and when the test
+'CONFIG_DEBUG_TEST_DRIVER_REMOVE=y' is enabled, the following Call trace
+can be seen.
 
-Results have been verified by logic analyzer on an FT232RT (232BM) chip.
-The following table shows the wanted baud rate, the baud rate obtained
-with the old method (truncation), with the new method (rounding) and the
-baud rate generated by the windows 10 driver. The numbers in parentheses
-is the error.
+[    1.424287] Failed to register pmu: armv8_pmuv3, reason -17
+[    1.424870] WARNING: CPU: 0 PID: 1 at ../kernel/events/core.c:11771 perf_event_sysfs_init+0x98/0xdc
+[    1.425220] Modules linked in:
+[    1.425531] CPU: 0 PID: 1 Comm: swapper/0 Tainted: G        W         4.19.0-rc7-next-20181012-00003-ge7a97b1ad77b-dirty #35
+[    1.425951] Hardware name: linux,dummy-virt (DT)
+[    1.426212] pstate: 80000005 (Nzcv daif -PAN -UAO)
+[    1.426458] pc : perf_event_sysfs_init+0x98/0xdc
+[    1.426720] lr : perf_event_sysfs_init+0x98/0xdc
+[    1.426908] sp : ffff00000804bd50
+[    1.427077] x29: ffff00000804bd50 x28: ffff00000934e078
+[    1.427429] x27: ffff000009546000 x26: 0000000000000007
+[    1.427757] x25: ffff000009280710 x24: 00000000ffffffef
+[    1.428086] x23: ffff000009408000 x22: 0000000000000000
+[    1.428415] x21: ffff000009136008 x20: ffff000009408730
+[    1.428744] x19: ffff80007b20b400 x18: 000000000000000a
+[    1.429075] x17: 0000000000000000 x16: 0000000000000000
+[    1.429418] x15: 0000000000000400 x14: 2e79726f74636572
+[    1.429748] x13: 696420656d617320 x12: 656874206e692065
+[    1.430060] x11: 6d616e20656d6173 x10: 2065687420687469
+[    1.430335] x9 : ffff00000804bd50 x8 : 206e6f7361657220
+[    1.430610] x7 : 2c3376756d705f38 x6 : ffff00000954d7ce
+[    1.430880] x5 : 0000000000000000 x4 : 0000000000000000
+[    1.431226] x3 : 0000000000000000 x2 : ffffffffffffffff
+[    1.431554] x1 : 4d151327adc50b00 x0 : 0000000000000000
+[    1.431868] Call trace:
+[    1.432102]  perf_event_sysfs_init+0x98/0xdc
+[    1.432382]  do_one_initcall+0x6c/0x1a8
+[    1.432637]  kernel_init_freeable+0x1bc/0x280
+[    1.432905]  kernel_init+0x18/0x160
+[    1.433115]  ret_from_fork+0x10/0x18
+[    1.433297] ---[ end trace 27fd415390eb9883 ]---
 
-+- Wanted --+------ Old -------+------ New -------+------ Win -------+
-|    9600   |    9600 (0.00%)  |    9604 (0.05%)  |    9605 (0.05%)  |
-|   19200   |   19200 (0.00%)  |   19199 (0.01%)  |   19198 (0.01%)  |
-|   38400   |   38395 (0.01%)  |   38431 (0.08%)  |   38394 (0.02%)  |
-|   57600   |   57725 (0.22%)  |   57540 (0.10%)  |   57673 (0.13%)  |
-|  115200   |  115307 (0.09%)  |  115330 (0.11%)  |  115320 (0.10%)  |
-|  921600   |  919963 (0.18%)  |  920386 (0.13%)  |  920810 (0.09%)  |
-|  961200   |  996512 (3.67%)  |  956480 (0.49%)  |  956937 (0.44%)  |
-+-----------+------------------+------------------+------------------+
+Rework to set suppress_bind_attrs flag to avoid removing the device when
+CONFIG_DEBUG_TEST_DRIVER_REMOVE=y, since there's no real reason to
+remove the armv8_pmuv3 driver.
 
-The error due to noise in the measurements is in the order of a few
-tenths of a %. As can be seen, the baud rate is significantly improved
-for some rates (e.g. 961200), and corresponds to the output given by the
-windows driver.
-
-The theoretical baud rate has been calculated for all baud rates from 1
-to 3M, and as expected, the error is centered around 0, with a triangle
-shape instead of a sawtooth, so the maximum error is decreased to half.
-
-Signed-off-by: Nikolaj Fogh <nikolajfogh@gmail.com>
-[ johan: edit commit message slightly ]
-Signed-off-by: Johan Hovold <johan@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Co-developed-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/serial/ftdi_sio.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/arm64/kernel/perf_event.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/usb/serial/ftdi_sio.c b/drivers/usb/serial/ftdi_sio.c
-index 3e5b189a79b4..49d4ca167bf3 100644
---- a/drivers/usb/serial/ftdi_sio.c
-+++ b/drivers/usb/serial/ftdi_sio.c
-@@ -1119,7 +1119,7 @@ static unsigned short int ftdi_232am_baud_base_to_divisor(int baud, int base)
- {
- 	unsigned short int divisor;
- 	/* divisor shifted 3 bits to the left */
--	int divisor3 = base / 2 / baud;
-+	int divisor3 = DIV_ROUND_CLOSEST(base, 2 * baud);
- 	if ((divisor3 & 0x7) == 7)
- 		divisor3++; /* round x.7/8 up to x+1 */
- 	divisor = divisor3 >> 3;
-@@ -1145,7 +1145,7 @@ static __u32 ftdi_232bm_baud_base_to_divisor(int baud, int base)
- 	static const unsigned char divfrac[8] = { 0, 3, 2, 4, 1, 5, 6, 7 };
- 	__u32 divisor;
- 	/* divisor shifted 3 bits to the left */
--	int divisor3 = base / 2 / baud;
-+	int divisor3 = DIV_ROUND_CLOSEST(base, 2 * baud);
- 	divisor = divisor3 >> 3;
- 	divisor |= (__u32)divfrac[divisor3 & 0x7] << 14;
- 	/* Deal with special cases for highest baud rates. */
-@@ -1168,7 +1168,7 @@ static __u32 ftdi_2232h_baud_base_to_divisor(int baud, int base)
- 	int divisor3;
- 
- 	/* hi-speed baud rate is 10-bit sampling instead of 16-bit */
--	divisor3 = base * 8 / (baud * 10);
-+	divisor3 = DIV_ROUND_CLOSEST(8 * base, 10 * baud);
- 
- 	divisor = divisor3 >> 3;
- 	divisor |= (__u32)divfrac[divisor3 & 0x7] << 14;
+diff --git a/arch/arm64/kernel/perf_event.c b/arch/arm64/kernel/perf_event.c
+index 62d3dc60ca09..e99a0ed7e66b 100644
+--- a/arch/arm64/kernel/perf_event.c
++++ b/arch/arm64/kernel/perf_event.c
+@@ -670,6 +670,7 @@ static struct platform_driver armv8_pmu_driver = {
+ 	.driver		= {
+ 		.name	= "armv8-pmu",
+ 		.of_match_table = armv8_pmu_of_device_ids,
++		.suppress_bind_attrs = true,
+ 	},
+ 	.probe		= armv8_pmu_device_probe,
+ };
 -- 
 2.19.1
 
