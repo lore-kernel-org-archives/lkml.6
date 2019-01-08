@@ -7,52 +7,50 @@ X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9CFDC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:57:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF8CCC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:57:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8952720827
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:57:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8EAA520827
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:57:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546977445;
-	bh=TY4SbTUWqg9OnF3tkdzAY1H+lbUBwhMKkD6ior+qITc=;
+	s=default; t=1546977450;
+	bh=cOYgWFAVkKy0Tm5xkckzFCNnbsUu/726dQAXQF7jnd4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=hpvtdvqYMUO4E0aODl91i3+7WlsFsfuqa5swvJD2cQOdbfnWbNbP0ZiYFBAv6geA8
-	 ZmW70EtI0+FjgyWXy1g8KoPx9EcDNPSzgoYWFSIBWQWXo8m2vBcB++vIhRrP7yBddx
-	 hwkAStcC0gkUwYAwjHXmS9bL5fNk0Qwivp7u2OwE=
+	b=JIRFlODxcXvzqA3m4gxnFJufxt+khmtDndOC7KLg0KhYN53rULaFp5fhyQwdLVDRM
+	 t4SdPzUCff/C7mAVfhBh9ubi/eDDU1Y/Ms3GJ/HLRiVrMgbqmJs592VSbaKcVkGaE5
+	 kWDqmGeIjQ/EM/+DEMdp9D6k/SQDeRJvSE0EdeCQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732131AbfAHT5Y (ORCPT
+        id S1730839AbfAHT5X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:57:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37514 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:57:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37530 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730523AbfAHT36 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1729865AbfAHT36 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 8 Jan 2019 14:29:58 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3D7C22070B;
-        Tue,  8 Jan 2019 19:29:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5639E20665;
+        Tue,  8 Jan 2019 19:29:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975797;
-        bh=TY4SbTUWqg9OnF3tkdzAY1H+lbUBwhMKkD6ior+qITc=;
+        s=default; t=1546975798;
+        bh=cOYgWFAVkKy0Tm5xkckzFCNnbsUu/726dQAXQF7jnd4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dHMlMxyWZxFgJIAAsqjPWeuQVns6F/vqzWe1seG0F1hmBm4XvaW3K26/YSA2slOEZ
-         Nc+Pg8Q+WxQwgD+G0jJJ9dBi326mR4V3sQf68pvUnvAxLW4RsLFJDh+qKTOJ9PgIlV
-         cEfjFCEQTwaMNLPQzs6TghVTUFCoGYEarEkfS/kw=
+        b=u23gvFhiDjws8VuS1FhUxOyOLMGMtvVm6tNSmyn6G+0JWXsOhPeadv2y98tOmEkCM
+         adl0AaxCz804bIqPZhEzX3HMg4hsbDy3pE+LQSAVkrX5YUBZz5hEkQi5yfhe6nJmKd
+         Y6gkZ75hB3KbtO0O0ABo9aRAPZYeLLmW+x3nPJlU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sasha Levin <sashal@kernel.org>,
-        dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.19 04/97] drm/amdkfd: fix interrupt spin lock
-Date:   Tue,  8 Jan 2019 14:28:13 -0500
-Message-Id: <20190108192949.122407-4-sashal@kernel.org>
+Cc:     Shannon Nelson <shannon.nelson@oracle.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 05/97] ixgbe: allow IPsec Tx offload in VEPA mode
+Date:   Tue,  8 Jan 2019 14:28:14 -0500
+Message-Id: <20190108192949.122407-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192949.122407-1-sashal@kernel.org>
 References: <20190108192949.122407-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -60,80 +58,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christian König <christian.koenig@amd.com>
+From: Shannon Nelson <shannon.nelson@oracle.com>
 
-[ Upstream commit 2383a767c0ca06f96534456d8313909017c6c8d0 ]
+[ Upstream commit 7fa57ca443cffe81ce8416b57966bfb0370678a1 ]
 
-Vega10 has multiple interrupt rings, so this can be called from multiple
-calles at the same time resulting in:
+When it's possible that the PF might end up trying to send a
+packet to one of its own VFs, we have to forbid IPsec offload
+because the device drops the packets into a black hole.
+See commit 47b6f50077e6 ("ixgbe: disallow IPsec Tx offload
+when in SR-IOV mode") for more info.
 
-[   71.779334] ================================
-[   71.779406] WARNING: inconsistent lock state
-[   71.779478] 4.19.0-rc1+ #44 Tainted: G        W
-[   71.779565] --------------------------------
-[   71.779637] inconsistent {IN-HARDIRQ-W} -> {HARDIRQ-ON-W} usage.
-[   71.779740] kworker/6:1/120 [HC0[0]:SC0[0]:HE1:SE1] takes:
-[   71.779832] 00000000ad761971 (&(&kfd->interrupt_lock)->rlock){?...},
-at: kgd2kfd_interrupt+0x75/0x100 [amdgpu]
-[   71.780058] {IN-HARDIRQ-W} state was registered at:
-[   71.780115]   _raw_spin_lock+0x2c/0x40
-[   71.780180]   kgd2kfd_interrupt+0x75/0x100 [amdgpu]
-[   71.780248]   amdgpu_irq_callback+0x6c/0x150 [amdgpu]
-[   71.780315]   amdgpu_ih_process+0x88/0x100 [amdgpu]
-[   71.780380]   amdgpu_irq_handler+0x20/0x40 [amdgpu]
-[   71.780409]   __handle_irq_event_percpu+0x49/0x2a0
-[   71.780436]   handle_irq_event_percpu+0x30/0x70
-[   71.780461]   handle_irq_event+0x37/0x60
-[   71.780484]   handle_edge_irq+0x83/0x1b0
-[   71.780506]   handle_irq+0x1f/0x30
-[   71.780526]   do_IRQ+0x53/0x110
-[   71.780544]   ret_from_intr+0x0/0x22
-[   71.780566]   cpuidle_enter_state+0xaa/0x330
-[   71.780591]   do_idle+0x203/0x280
-[   71.780610]   cpu_startup_entry+0x6f/0x80
-[   71.780634]   start_secondary+0x1b0/0x200
-[   71.780657]   secondary_startup_64+0xa4/0xb0
+This really is only necessary when the device is in the default
+VEB mode.  If instead the device is running in VEPA mode,
+the packets will go through the encryption engine and out the
+MAC/PHY as normal, and get "hairpinned" as needed by the switch.
 
-Fix this by always using irq save spin locks.
+So let's not block IPsec offload when in VEPA mode.  To get
+there with the ixgbe device, use the handy 'bridge' command:
+	bridge link set dev eth1 hwmode vepa
 
-Signed-off-by: Christian König <christian.koenig@amd.com>
-Acked-by: Alex Deucher <alexander.deucher@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Shannon Nelson <shannon.nelson@oracle.com>
+Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/amdkfd/kfd_device.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/intel/ixgbe/ixgbe_ipsec.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_device.c b/drivers/gpu/drm/amd/amdkfd/kfd_device.c
-index 1427675d0e5a..5aba50f63ac6 100644
---- a/drivers/gpu/drm/amd/amdkfd/kfd_device.c
-+++ b/drivers/gpu/drm/amd/amdkfd/kfd_device.c
-@@ -661,6 +661,7 @@ void kgd2kfd_interrupt(struct kfd_dev *kfd, const void *ih_ring_entry)
- {
- 	uint32_t patched_ihre[KFD_MAX_RING_ENTRY_SIZE];
- 	bool is_patched = false;
-+	unsigned long flags;
+diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_ipsec.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_ipsec.c
+index add124e0381d..b27f7a968820 100644
+--- a/drivers/net/ethernet/intel/ixgbe/ixgbe_ipsec.c
++++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_ipsec.c
+@@ -4,6 +4,7 @@
+ #include "ixgbe.h"
+ #include <net/xfrm.h>
+ #include <crypto/aead.h>
++#include <linux/if_bridge.h>
  
- 	if (!kfd->init_complete)
- 		return;
-@@ -670,7 +671,7 @@ void kgd2kfd_interrupt(struct kfd_dev *kfd, const void *ih_ring_entry)
- 		return;
- 	}
+ /**
+  * ixgbe_ipsec_set_tx_sa - set the Tx SA registers
+@@ -676,7 +677,8 @@ static int ixgbe_ipsec_add_sa(struct xfrm_state *xs)
+ 	} else {
+ 		struct tx_sa tsa;
  
--	spin_lock(&kfd->interrupt_lock);
-+	spin_lock_irqsave(&kfd->interrupt_lock, flags);
+-		if (adapter->num_vfs)
++		if (adapter->num_vfs &&
++		    adapter->bridge_mode != BRIDGE_MODE_VEPA)
+ 			return -EOPNOTSUPP;
  
- 	if (kfd->interrupts_active
- 	    && interrupt_is_wanted(kfd, ih_ring_entry,
-@@ -679,7 +680,7 @@ void kgd2kfd_interrupt(struct kfd_dev *kfd, const void *ih_ring_entry)
- 				     is_patched ? patched_ihre : ih_ring_entry))
- 		queue_work(kfd->ih_wq, &kfd->interrupt_work);
- 
--	spin_unlock(&kfd->interrupt_lock);
-+	spin_unlock_irqrestore(&kfd->interrupt_lock, flags);
- }
- 
- int kgd2kfd_quiesce_mm(struct mm_struct *mm)
+ 		/* find the first unused index */
 -- 
 2.19.1
 
