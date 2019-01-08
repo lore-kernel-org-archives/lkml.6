@@ -2,53 +2,50 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D580CC43444
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:49:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5D1AC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:49:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A488620827
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:49:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8169C206BB
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:49:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546976973;
-	bh=yt2ADpJ27iJ5VaQVAWSybk9h3WZL9IZoQw1Yw1SeJ1Y=;
+	s=default; t=1546976977;
+	bh=4KDyV6Tr/hzbahdDpdDWXcytxgu+hpS2PZymXEMzkfg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=sKYq647UNsSOqAUIsRjFznD7mRLZwspb4WRBMA7ATMYnq75h5q02FA6AUwGsnze6j
-	 eAsepN2/s+OTGgXCtiD0QQTpccJ+IvhYUhKdbITL+fppesBaCYbo6F+Oil8B0/DxeW
-	 Si5pgr7q9yczhUDsb1dpeQSeukaD/8vq7mLm0CKM=
+	b=ELD1ixpzJgpiY4Dm1qyTmnpfOCugoYL98K4SfHi0GCs+wxnfUQKWeUtUqyAaiOVFg
+	 lyKuqWKjlcDtlpuZmCDipO7nFPlknWDs9L8hZ1/V6xn2MWfyau34gTEvoGVlGPHwtx
+	 DjHcfhsIVwlr6/VHEJgEb84AWTBHVhRmofgNGGYI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731259AbfAHTcC (ORCPT
+        id S1732804AbfAHTtg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:32:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40136 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:49:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40342 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731222AbfAHTbx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:31:53 -0500
+        id S1731242AbfAHTcB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:32:01 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8540020665;
-        Tue,  8 Jan 2019 19:31:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C621C20827;
+        Tue,  8 Jan 2019 19:31:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975913;
-        bh=yt2ADpJ27iJ5VaQVAWSybk9h3WZL9IZoQw1Yw1SeJ1Y=;
+        s=default; t=1546975920;
+        bh=4KDyV6Tr/hzbahdDpdDWXcytxgu+hpS2PZymXEMzkfg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=w88UoC3sw/7P6YMtGlmzdTGkdFh8i2kNDsTBTHZM+eHZmbk0ok25rVfhQRj8tr8pY
-         Vs1p6Ybm6WfxrIlg4TNaMNfhU4AP2wC/8Nd9hj+vaRDDnZRRT7b9RNpSveRaqYipt0
-         hXD01DeWURmAtysjpORsAKqghX6iouxm1a7V8bPA=
+        b=TCQV7a5ZOhVuiF0MewP5AWrvpQ2czNxPy34kVxbTWmnjRUXZsRhWZAbkY4s1IJeYK
+         U5m31DTuL9gYMCttSLWMZdxkepktmAFamvIizKpB+i9AJDFUmXv5WT/7vHNJ+a2RaD
+         YcpXrJx65+oIxvz0WosHlCZw4sItt6FTG0D0l2Jc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 78/97] perf tools: Add missing sigqueue() prototype for systems lacking it
-Date:   Tue,  8 Jan 2019 14:29:27 -0500
-Message-Id: <20190108192949.122407-78-sashal@kernel.org>
+Cc:     Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+        Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 84/97] ALSA: bebob: fix model-id of unit for Apogee Ensemble
+Date:   Tue,  8 Jan 2019 14:29:33 -0500
+Message-Id: <20190108192949.122407-84-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192949.122407-1-sashal@kernel.org>
 References: <20190108192949.122407-1-sashal@kernel.org>
@@ -60,67 +57,93 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 
-[ Upstream commit 748fe0889c1ff12d378946bd5326e8ee8eacf5cf ]
+[ Upstream commit 644b2e97405b0b74845e1d3c2b4fe4c34858062b ]
 
-There are systems such as the Android NDK API level 24 has the
-sigqueue() function but doesn't provide a prototype, adding noise to the
-build:
+This commit fixes hard-coded model-id for an unit of Apogee Ensemble with
+a correct value. This unit uses DM1500 ASIC produced ArchWave AG (formerly
+known as BridgeCo AG).
 
-  util/evlist.c: In function 'perf_evlist__prepare_workload':
-  util/evlist.c:1494:4: warning: implicit declaration of function 'sigqueue' [-Wimplicit-function-declaration]
-      if (sigqueue(getppid(), SIGUSR1, val))
-      ^
-  util/evlist.c:1494:4: warning: nested extern declaration of 'sigqueue' [-Wnested-externs]
+I note that this model supports three modes in the number of data channels
+in tx/rx streams; 8 ch pairs, 10 ch pairs, 18 ch pairs. The mode is
+switched by Vendor-dependent AV/C command, like:
 
-Define a LACKS_SIGQUEUE_PROTOTYPE define so that code needing that can
-get a prototype.
+$ cd linux-firewire-utils
+$ ./firewire-request /dev/fw1 fcp 0x00ff000003dbeb0600000000 (8ch pairs)
+$ ./firewire-request /dev/fw1 fcp 0x00ff000003dbeb0601000000 (10ch pairs)
+$ ./firewire-request /dev/fw1 fcp 0x00ff000003dbeb0602000000 (18ch pairs)
 
-Checked in the bionic git repo to be available since level 23:
+When switching between different mode, the unit disappears from IEEE 1394
+bus, then appears on the bus with different combination of stream formats.
+In a mode of 18 ch pairs, available sampling rate is up to 96.0 kHz, else
+up to 192.0 kHz.
 
-https://android.googlesource.com/platform/bionic/+/master/libc/include/signal.h#123
+$ ./hinawa-config-rom-printer /dev/fw1
+{ 'bus-info': { 'adj': False,
+                'bmc': True,
+                'chip_ID': 21474898341,
+                'cmc': True,
+                'cyc_clk_acc': 100,
+                'generation': 2,
+                'imc': True,
+                'isc': True,
+                'link_spd': 2,
+                'max_ROM': 1,
+                'max_rec': 512,
+                'name': '1394',
+                'node_vendor_ID': 987,
+                'pmc': False},
+  'root-directory': [ ['HARDWARE_VERSION', 19],
+                      [ 'NODE_CAPABILITIES',
+                        { 'addressing': {'64': True, 'fix': True, 'prv': False},
+                          'misc': {'int': False, 'ms': False, 'spt': True},
+                          'state': { 'atn': False,
+                                     'ded': False,
+                                     'drq': True,
+                                     'elo': False,
+                                     'init': False,
+                                     'lst': True,
+                                     'off': False},
+                          'testing': {'bas': False, 'ext': False}}],
+                      ['VENDOR', 987],
+                      ['DESCRIPTOR', 'Apogee Electronics'],
+                      ['MODEL', 126702],
+                      ['DESCRIPTOR', 'Ensemble'],
+                      ['VERSION', 5297],
+                      [ 'UNIT',
+                        [ ['SPECIFIER_ID', 41005],
+                          ['VERSION', 65537],
+                          ['MODEL', 126702],
+                          ['DESCRIPTOR', 'Ensemble']]],
+                      [ 'DEPENDENT_INFO',
+                        [ ['SPECIFIER_ID', 2037],
+                          ['VERSION', 1],
+                          [(58, 'IMMEDIATE'), 16777159],
+                          [(59, 'IMMEDIATE'), 1048576],
+                          [(60, 'IMMEDIATE'), 16777159],
+                          [(61, 'IMMEDIATE'), 6291456]]]]}
 
-  int sigqueue(pid_t __pid, int __signal, const union sigval __value) __INTRODUCED_IN(23);
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-lmhpev1uni9kdrv7j29glyov@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/Makefile.config | 1 +
- tools/perf/util/evlist.c   | 4 ++++
- 2 files changed, 5 insertions(+)
+ sound/firewire/bebob/bebob.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-index e30d20fb482d..ff7a753cc487 100644
---- a/tools/perf/Makefile.config
-+++ b/tools/perf/Makefile.config
-@@ -294,6 +294,7 @@ ifndef NO_BIONIC
-   $(call feature_check,bionic)
-   ifeq ($(feature-bionic), 1)
-     BIONIC := 1
-+    CFLAGS += -DLACKS_SIGQUEUE_PROTOTYPE
-     EXTLIBS := $(filter-out -lrt,$(EXTLIBS))
-     EXTLIBS := $(filter-out -lpthread,$(EXTLIBS))
-   endif
-diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
-index be440df29615..819aa4491b53 100644
---- a/tools/perf/util/evlist.c
-+++ b/tools/perf/util/evlist.c
-@@ -34,6 +34,10 @@
- #include <linux/log2.h>
- #include <linux/err.h>
- 
-+#ifdef LACKS_SIGQUEUE_PROTOTYPE
-+int sigqueue(pid_t pid, int sig, const union sigval value);
-+#endif
-+
- #define FD(e, x, y) (*(int *)xyarray__entry(e->fd, x, y))
- #define SID(e, x, y) xyarray__entry(e->sample_id, x, y)
- 
+diff --git a/sound/firewire/bebob/bebob.c b/sound/firewire/bebob/bebob.c
+index 93676354f87f..de4af8a41ff0 100644
+--- a/sound/firewire/bebob/bebob.c
++++ b/sound/firewire/bebob/bebob.c
+@@ -434,7 +434,7 @@ static const struct ieee1394_device_id bebob_id_table[] = {
+ 	/* Apogee Electronics, DA/AD/DD-16X (X-FireWire card) */
+ 	SND_BEBOB_DEV_ENTRY(VEN_APOGEE, 0x00010048, &spec_normal),
+ 	/* Apogee Electronics, Ensemble */
+-	SND_BEBOB_DEV_ENTRY(VEN_APOGEE, 0x00001eee, &spec_normal),
++	SND_BEBOB_DEV_ENTRY(VEN_APOGEE, 0x01eeee, &spec_normal),
+ 	/* ESI, Quatafire610 */
+ 	SND_BEBOB_DEV_ENTRY(VEN_ESI, 0x00010064, &spec_normal),
+ 	/* AcousticReality, eARMasterOne */
 -- 
 2.19.1
 
