@@ -4,51 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBA35C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:32:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 069E1C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:33:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA5702070B
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:32:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C14442176F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:33:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546975976;
-	bh=+apJMKxbZ20lG+Sqi2LU4XLodGyrcE5VCHqUJWbZ0wA=;
+	s=default; t=1546975981;
+	bh=I6sIGRbLxUoN5H26RkCyWXo10trpRo76osjr4rXjLag=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=NnUdmTiG9SzIHLqtdgP6XMPBedpVm+bdFBIadkC5/3dsLcJcehgrYVVjxwhsdPHTC
-	 /mwtbZgtaVNc6UsEn1wUQjIaLGHCt979MRvjJHWE1bunU0vMO/Aw3cqnPNt5FrCP9Q
-	 Pliz+sQHroVqYa27XUzme1+GMrsqGpoPfLYQgrAM=
+	b=h8acJIVEUOR41mqwuGBa3LFrFHvsGG/oq86ItryA50ZFT7cINqFJOTLB2jK8tkFbY
+	 SmLNFfzR0jI/TN8/8NCFt+F990gf7VUicmsf6Z7eKDL68E9NS7pVhOYFKqPhMuyaHX
+	 9d7YGDJNj2exqymPqNhNLJzo+ZTkAd0Z1jkwY2/A=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731507AbfAHTc4 (ORCPT
+        id S1731479AbfAHTdA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:32:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41620 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:33:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41656 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729621AbfAHTcx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1731488AbfAHTcx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 8 Jan 2019 14:32:53 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EDCC320883;
-        Tue,  8 Jan 2019 19:32:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3A1BC20645;
+        Tue,  8 Jan 2019 19:32:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975971;
-        bh=+apJMKxbZ20lG+Sqi2LU4XLodGyrcE5VCHqUJWbZ0wA=;
+        s=default; t=1546975972;
+        bh=I6sIGRbLxUoN5H26RkCyWXo10trpRo76osjr4rXjLag=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=E2dyUsoUHQ2/Ssv70DdEiCpDhguLrPHnsEKXeU25QxrfD9qj4nPfivpNX2WVZtbSH
-         sRIUDqFx7Jp/qSrTPsfUuvxEKV3DylecvIxcfrIpFoPne+3+6tzEjsp+TOA8dukLM6
-         JjaCGfkRKcPABJGbVuCWSVetLOZVH4blHA68VGb0=
+        b=xnRXw4x0qnb7bm4UEDpKZpBj4TH/EMm3oeDQvtECwvlHogQWE7/1t2LjM/hg7Ln5c
+         YMWWjQyNGyeWRabcN/6jvYIAGC7jGFixJ+0QwTn+b3qVYcDMkXDNxbgHen9qOXW5yA
+         7i+5esikW3BBw9UtBEgiNjir7BoJLGwsHwyEz8JY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     "A.s. Dong" <aisheng.dong@nxp.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 16/53] clk: imx: make mux parent strings const
-Date:   Tue,  8 Jan 2019 14:31:44 -0500
-Message-Id: <20190108193222.123316-16-sashal@kernel.org>
+Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        Kees Cook <keescook@chromium.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 17/53] pstore/ram: Do not treat empty buffers as valid
+Date:   Tue,  8 Jan 2019 14:31:45 -0500
+Message-Id: <20190108193222.123316-17-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108193222.123316-1-sashal@kernel.org>
 References: <20190108193222.123316-1-sashal@kernel.org>
@@ -60,127 +57,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "A.s. Dong" <aisheng.dong@nxp.com>
+From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
 
-[ Upstream commit 9e5ef7a57ca75a1b9411c46caeeb6881124284a3 ]
+[ Upstream commit 30696378f68a9e3dad6bfe55938b112e72af00c2 ]
 
-As the commit 2893c379461a ("clk: make strings in parent name arrays
-const"), let's make the parent strings const, otherwise we may meet
-the following warning when compiling:
+The ramoops backend currently calls persistent_ram_save_old() even
+if a buffer is empty. While this appears to work, it is does not seem
+like the right thing to do and could lead to future bugs so lets avoid
+that. It also prevents misleading prints in the logs which claim the
+buffer is valid.
 
-drivers/clk/imx/clk-imx7ulp.c: In function 'imx7ulp_clocks_init':
-drivers/clk/imx/clk-imx7ulp.c:73:35: warning: passing argument 5 of
-	'imx_clk_mux_flags' discards 'const' qualifier from pointer target type
+I got something like:
 
-  clks[IMX7ULP_CLK_APLL_PRE_SEL] = imx_clk_mux_flags("apll_pre_sel", base + 0x508, 0,
-	1, pll_pre_sels, ARRAY_SIZE(pll_pre_sels), CLK_SET_PARENT_GATE);
-                                   ^
-In file included from drivers/clk/imx/clk-imx7ulp.c:23:0:
-drivers/clk/imx/clk.h:200:27: note: expected 'const char **' but argument is
- of type 'const char * const*'
-...
+	found existing buffer, size 0, start 0
 
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+When I was expecting:
+
+	no valid data in buffer (sig = ...)
+
+This bails out early (and reports with pr_debug()), since it's an
+acceptable state.
+
+Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+Co-developed-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Kees Cook <keescook@chromium.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/imx/clk-busy.c      |  2 +-
- drivers/clk/imx/clk-fixup-mux.c |  2 +-
- drivers/clk/imx/clk.h           | 18 +++++++++++-------
- 3 files changed, 13 insertions(+), 9 deletions(-)
+ fs/pstore/ram_core.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/clk/imx/clk-busy.c b/drivers/clk/imx/clk-busy.c
-index 5cc99590f9a3..097625c5715c 100644
---- a/drivers/clk/imx/clk-busy.c
-+++ b/drivers/clk/imx/clk-busy.c
-@@ -154,7 +154,7 @@ static struct clk_ops clk_busy_mux_ops = {
+diff --git a/fs/pstore/ram_core.c b/fs/pstore/ram_core.c
+index ecdb3baa1283..11e558efd61e 100644
+--- a/fs/pstore/ram_core.c
++++ b/fs/pstore/ram_core.c
+@@ -488,6 +488,11 @@ static int persistent_ram_post_init(struct persistent_ram_zone *prz, u32 sig,
+ 	sig ^= PERSISTENT_RAM_SIG;
  
- struct clk *imx_clk_busy_mux(const char *name, void __iomem *reg, u8 shift,
- 			     u8 width, void __iomem *busy_reg, u8 busy_shift,
--			     const char **parent_names, int num_parents)
-+			     const char * const *parent_names, int num_parents)
- {
- 	struct clk_busy_mux *busy;
- 	struct clk *clk;
-diff --git a/drivers/clk/imx/clk-fixup-mux.c b/drivers/clk/imx/clk-fixup-mux.c
-index c9b327e0a8dd..44817c1b0b88 100644
---- a/drivers/clk/imx/clk-fixup-mux.c
-+++ b/drivers/clk/imx/clk-fixup-mux.c
-@@ -70,7 +70,7 @@ static const struct clk_ops clk_fixup_mux_ops = {
- };
- 
- struct clk *imx_clk_fixup_mux(const char *name, void __iomem *reg,
--			      u8 shift, u8 width, const char **parents,
-+			      u8 shift, u8 width, const char * const *parents,
- 			      int num_parents, void (*fixup)(u32 *val))
- {
- 	struct clk_fixup_mux *fixup_mux;
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index d69c4bbf3597..b03fbd502528 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -63,14 +63,14 @@ struct clk *imx_clk_busy_divider(const char *name, const char *parent_name,
- 
- struct clk *imx_clk_busy_mux(const char *name, void __iomem *reg, u8 shift,
- 			     u8 width, void __iomem *busy_reg, u8 busy_shift,
--			     const char **parent_names, int num_parents);
-+			     const char * const *parent_names, int num_parents);
- 
- struct clk *imx_clk_fixup_divider(const char *name, const char *parent,
- 				  void __iomem *reg, u8 shift, u8 width,
- 				  void (*fixup)(u32 *val));
- 
- struct clk *imx_clk_fixup_mux(const char *name, void __iomem *reg,
--			      u8 shift, u8 width, const char **parents,
-+			      u8 shift, u8 width, const char * const *parents,
- 			      int num_parents, void (*fixup)(u32 *val));
- 
- static inline struct clk *imx_clk_fixed(const char *name, int rate)
-@@ -79,7 +79,8 @@ static inline struct clk *imx_clk_fixed(const char *name, int rate)
- }
- 
- static inline struct clk *imx_clk_mux_ldb(const char *name, void __iomem *reg,
--		u8 shift, u8 width, const char **parents, int num_parents)
-+			u8 shift, u8 width, const char * const *parents,
-+			int num_parents)
- {
- 	return clk_register_mux(NULL, name, parents, num_parents,
- 			CLK_SET_RATE_NO_REPARENT | CLK_SET_RATE_PARENT, reg,
-@@ -178,7 +179,8 @@ static inline struct clk *imx_clk_gate4(const char *name, const char *parent,
- }
- 
- static inline struct clk *imx_clk_mux(const char *name, void __iomem *reg,
--		u8 shift, u8 width, const char **parents, int num_parents)
-+			u8 shift, u8 width, const char * const *parents,
-+			int num_parents)
- {
- 	return clk_register_mux(NULL, name, parents, num_parents,
- 			CLK_SET_RATE_NO_REPARENT, reg, shift,
-@@ -186,7 +188,8 @@ static inline struct clk *imx_clk_mux(const char *name, void __iomem *reg,
- }
- 
- static inline struct clk *imx_clk_mux2(const char *name, void __iomem *reg,
--		u8 shift, u8 width, const char **parents, int num_parents)
-+			u8 shift, u8 width, const char * const *parents,
-+			int num_parents)
- {
- 	return clk_register_mux(NULL, name, parents, num_parents,
- 			CLK_SET_RATE_NO_REPARENT | CLK_OPS_PARENT_ENABLE,
-@@ -194,8 +197,9 @@ static inline struct clk *imx_clk_mux2(const char *name, void __iomem *reg,
- }
- 
- static inline struct clk *imx_clk_mux_flags(const char *name,
--		void __iomem *reg, u8 shift, u8 width, const char **parents,
--		int num_parents, unsigned long flags)
-+			void __iomem *reg, u8 shift, u8 width,
-+			const char * const *parents, int num_parents,
-+			unsigned long flags)
- {
- 	return clk_register_mux(NULL, name, parents, num_parents,
- 			flags | CLK_SET_RATE_NO_REPARENT, reg, shift, width, 0,
+ 	if (prz->buffer->sig == sig) {
++		if (buffer_size(prz) == 0) {
++			pr_debug("found existing empty buffer\n");
++			return 0;
++		}
++
+ 		if (buffer_size(prz) > prz->buffer_size ||
+ 		    buffer_start(prz) > buffer_size(prz))
+ 			pr_info("found existing invalid buffer, size %zu, start %zu\n",
 -- 
 2.19.1
 
