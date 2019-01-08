@@ -2,50 +2,53 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBCD7C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:01:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B3D6C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:01:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93A8820660
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:01:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 249DC20660
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:01:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546977710;
-	bh=beRbsczkUxHkzhjeJLWFxYs6SBuZLzj+U1vI20ydLpE=;
+	s=default; t=1546977718;
+	bh=XUS7PF6pZ50B8RMHl+TuW+6xE/bctCgX4LVNPTtm69g=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=PSNv5GjGKwEPIIojQeQIkW7MQkMy4cEk1p4z9EiiDCIQt/vMHKwk4r6bEBqVM+eKO
-	 JrzvIDG5umAxB1Qk+g72AgU0v15m+714GKRYKvJXpyN/CsZjuEW5Qfv3IasnuXK98z
-	 tccTQEJawfWHYmRDsV3VNc3CXauxGyYxrQhZVqmk=
+	b=AZGAg2vmwT4D9LbmZhRr6O5FnRZWF6R4SiSBLkUyfcAgq65Zp98LBE2iBu+TCgVgh
+	 9xXpfN03hd2sa2GojR5PpCgWMo54OvxxpkwCIRD9hOa4JNijRLd928dyeZisqlDoIS
+	 POLva2vUyH2mRLKBDg//NsMuHlt4oFTdFPETTI7Q=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731105AbfAHUBt (ORCPT
+        id S1730979AbfAHUB5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 15:01:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36484 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 15:01:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36404 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730332AbfAHT3N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:29:13 -0500
+        id S1730323AbfAHT3K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:29:10 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 91FC4218A1;
-        Tue,  8 Jan 2019 19:29:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 59C7120645;
+        Tue,  8 Jan 2019 19:29:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975752;
-        bh=beRbsczkUxHkzhjeJLWFxYs6SBuZLzj+U1vI20ydLpE=;
+        s=default; t=1546975750;
+        bh=XUS7PF6pZ50B8RMHl+TuW+6xE/bctCgX4LVNPTtm69g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1htkWzzSNPbZMlTx/3xrZhN53JaVgpNIQJCRK+FldDI2CmvOCpMfuJXiA44yQNuty
-         V97lhCva7M8mI2gtcOi3hxLzJFuefltktxgrZagKyFgFmgsoFQmO3L5mnZdcHfwjZQ
-         0SikMSDxGWWTpDSAO161HzzFu2YXn1I40j6bGVBY=
+        b=L0V92El14jxTBZoNiMR89nMkHMGUGTIeAYPf01INW1cCuYWEysX1V8VWonIv+u4fr
+         dY2y77wzwaK3BEVMrbzKeWhGAhTIL/TXv4jhW/7mLPIoCuGjYwXzr1b+xxFXQJIlz4
+         LL1U46sqUjrV42lY8skXloBSwAEYYcIdDGj8+FqU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Javier Barrio <javier.barrio.mart@gmail.com>,
-        Jan Kara <jack@suse.cz>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.20 096/117] quota: Lock s_umount in exclusive mode for Q_XQUOTA{ON,OFF} quotactls.
-Date:   Tue,  8 Jan 2019 14:26:04 -0500
-Message-Id: <20190108192628.121270-96-sashal@kernel.org>
+Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 094/117] perf tools: Add missing sigqueue() prototype for systems lacking it
+Date:   Tue,  8 Jan 2019 14:26:02 -0500
+Message-Id: <20190108192628.121270-94-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192628.121270-1-sashal@kernel.org>
 References: <20190108192628.121270-1-sashal@kernel.org>
@@ -57,86 +60,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Javier Barrio <javier.barrio.mart@gmail.com>
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-[ Upstream commit 41c4f85cdac280d356df1f483000ecec4a8868be ]
+[ Upstream commit 748fe0889c1ff12d378946bd5326e8ee8eacf5cf ]
 
-Commit 1fa5efe3622db58cb8c7b9a50665e9eb9a6c7e97 (ext4: Use generic helpers for quotaon
-and quotaoff) made possible to call quotactl(Q_XQUOTAON/OFF) on ext4 filesystems
-with sysfile quota support. This leads to calling dquot_enable/disable without s_umount
-held in excl. mode, because quotactl_cmd_onoff checks only for Q_QUOTAON/OFF.
+There are systems such as the Android NDK API level 24 has the
+sigqueue() function but doesn't provide a prototype, adding noise to the
+build:
 
-The following WARN_ON_ONCE triggers (in this case for dquot_enable, ext4, latest Linus' tree):
+  util/evlist.c: In function 'perf_evlist__prepare_workload':
+  util/evlist.c:1494:4: warning: implicit declaration of function 'sigqueue' [-Wimplicit-function-declaration]
+      if (sigqueue(getppid(), SIGUSR1, val))
+      ^
+  util/evlist.c:1494:4: warning: nested extern declaration of 'sigqueue' [-Wnested-externs]
 
-[  117.807056] EXT4-fs (dm-0): mounted filesystem with ordered data mode. Opts: quota,prjquota
+Define a LACKS_SIGQUEUE_PROTOTYPE define so that code needing that can
+get a prototype.
 
-[...]
+Checked in the bionic git repo to be available since level 23:
 
-[  155.036847] WARNING: CPU: 0 PID: 2343 at fs/quota/dquot.c:2469 dquot_enable+0x34/0xb9
-[  155.036851] Modules linked in: quota_v2 quota_tree ipv6 af_packet joydev mousedev psmouse serio_raw pcspkr i2c_piix4 intel_agp intel_gtt e1000 ttm drm_kms_helper drm agpgart fb_sys_fops syscopyarea sysfillrect sysimgblt i2c_core input_leds kvm_intel kvm irqbypass qemu_fw_cfg floppy evdev parport_pc parport button crc32c_generic dm_mod ata_generic pata_acpi ata_piix libata loop ext4 crc16 mbcache jbd2 usb_storage usbcore sd_mod scsi_mod
-[  155.036901] CPU: 0 PID: 2343 Comm: qctl Not tainted 4.20.0-rc6-00025-gf5d582777bcb #9
-[  155.036903] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
-[  155.036911] RIP: 0010:dquot_enable+0x34/0xb9
-[  155.036915] Code: 41 56 41 55 41 54 55 53 4c 8b 6f 28 74 02 0f 0b 4d 8d 7d 70 49 89 fc 89 cb 41 89 d6 89 f5 4c 89 ff e8 23 09 ea ff 85 c0 74 0a <0f> 0b 4c 89 ff e8 8b 09 ea ff 85 db 74 6a 41 8b b5 f8 00 00 00 0f
-[  155.036918] RSP: 0018:ffffb09b00493e08 EFLAGS: 00010202
-[  155.036922] RAX: 0000000000000001 RBX: 0000000000000008 RCX: 0000000000000008
-[  155.036924] RDX: 0000000000000001 RSI: 0000000000000002 RDI: ffff9781b67cd870
-[  155.036926] RBP: 0000000000000002 R08: 0000000000000000 R09: 61c8864680b583eb
-[  155.036929] R10: ffffb09b00493e48 R11: ffffffffff7ce7d4 R12: ffff9781b7ee8d78
-[  155.036932] R13: ffff9781b67cd800 R14: 0000000000000004 R15: ffff9781b67cd870
-[  155.036936] FS:  00007fd813250b88(0000) GS:ffff9781ba000000(0000) knlGS:0000000000000000
-[  155.036939] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  155.036942] CR2: 00007fd812ff61d6 CR3: 000000007c882000 CR4: 00000000000006b0
-[  155.036951] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[  155.036953] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[  155.036955] Call Trace:
-[  155.037004]  dquot_quota_enable+0x8b/0xd0
-[  155.037011]  kernel_quotactl+0x628/0x74e
-[  155.037027]  ? do_mprotect_pkey+0x2a6/0x2cd
-[  155.037034]  __x64_sys_quotactl+0x1a/0x1d
-[  155.037041]  do_syscall_64+0x55/0xe4
-[  155.037078]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-[  155.037105] RIP: 0033:0x7fd812fe1198
-[  155.037109] Code: 02 77 0d 48 89 c1 48 c1 e9 3f 75 04 48 8b 04 24 48 83 c4 50 5b c3 48 83 ec 08 49 89 ca 48 63 d2 48 63 ff b8 b3 00 00 00 0f 05 <48> 89 c7 e8 c1 eb ff ff 5a c3 48 63 ff b8 bb 00 00 00 0f 05 48 89
-[  155.037112] RSP: 002b:00007ffe8cd7b050 EFLAGS: 00000206 ORIG_RAX: 00000000000000b3
-[  155.037116] RAX: ffffffffffffffda RBX: 00007ffe8cd7b148 RCX: 00007fd812fe1198
-[  155.037119] RDX: 0000000000000000 RSI: 00007ffe8cd7cea9 RDI: 0000000000580102
-[  155.037121] RBP: 00007ffe8cd7b0f0 R08: 000055fc8eba8a9d R09: 0000000000000000
-[  155.037124] R10: 00007ffe8cd7b074 R11: 0000000000000206 R12: 00007ffe8cd7b168
-[  155.037126] R13: 000055fc8eba8897 R14: 0000000000000000 R15: 0000000000000000
-[  155.037131] ---[ end trace 210f864257175c51 ]---
+https://android.googlesource.com/platform/bionic/+/master/libc/include/signal.h#123
 
-and then the syscall proceeds without s_umount locking.
+  int sigqueue(pid_t __pid, int __signal, const union sigval __value) __INTRODUCED_IN(23);
 
-This patch locks the superblock ->s_umount sem. in exclusive mode for all Q_XQUOTAON/OFF
-quotactls too in addition to Q_QUOTAON/OFF.
-
-AFAICT, other than ext4, only xfs and ocfs2 are affected by this change.
-The VFS will now call in xfs_quota_* functions with s_umount held, which wasn't the case
-before. This looks good to me but I can not say for sure. Ext4 and ocfs2 where already
-beeing called with s_umount exclusive via quota_quotaon/off which is basically the same.
-
-Signed-off-by: Javier Barrio <javier.barrio.mart@gmail.com>
-Signed-off-by: Jan Kara <jack@suse.cz>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Link: https://lkml.kernel.org/n/tip-lmhpev1uni9kdrv7j29glyov@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/quota/quota.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ tools/perf/Makefile.config | 1 +
+ tools/perf/util/evlist.c   | 4 ++++
+ 2 files changed, 5 insertions(+)
 
-diff --git a/fs/quota/quota.c b/fs/quota/quota.c
-index f0cbf58ad4da..fd5dd806f1b9 100644
---- a/fs/quota/quota.c
-+++ b/fs/quota/quota.c
-@@ -791,7 +791,8 @@ static int quotactl_cmd_write(int cmd)
- /* Return true if quotactl command is manipulating quota on/off state */
- static bool quotactl_cmd_onoff(int cmd)
- {
--	return (cmd == Q_QUOTAON) || (cmd == Q_QUOTAOFF);
-+	return (cmd == Q_QUOTAON) || (cmd == Q_QUOTAOFF) ||
-+		 (cmd == Q_XQUOTAON) || (cmd == Q_XQUOTAOFF);
- }
+diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+index a0e8c23f9125..e106e7ce6933 100644
+--- a/tools/perf/Makefile.config
++++ b/tools/perf/Makefile.config
+@@ -294,6 +294,7 @@ ifndef NO_BIONIC
+   $(call feature_check,bionic)
+   ifeq ($(feature-bionic), 1)
+     BIONIC := 1
++    CFLAGS += -DLACKS_SIGQUEUE_PROTOTYPE
+     EXTLIBS := $(filter-out -lrt,$(EXTLIBS))
+     EXTLIBS := $(filter-out -lpthread,$(EXTLIBS))
+   endif
+diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
+index 668d2a9ef0f4..8a806b0758b0 100644
+--- a/tools/perf/util/evlist.c
++++ b/tools/perf/util/evlist.c
+@@ -34,6 +34,10 @@
+ #include <linux/log2.h>
+ #include <linux/err.h>
  
- /*
++#ifdef LACKS_SIGQUEUE_PROTOTYPE
++int sigqueue(pid_t pid, int sig, const union sigval value);
++#endif
++
+ #define FD(e, x, y) (*(int *)xyarray__entry(e->fd, x, y))
+ #define SID(e, x, y) xyarray__entry(e->sample_id, x, y)
+ 
 -- 
 2.19.1
 
