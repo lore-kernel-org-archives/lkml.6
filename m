@@ -2,134 +2,126 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38BA8C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 18:28:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2BCDC43612
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 18:29:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 091C020827
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 18:28:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A6E3320660
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 18:29:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lelDa/4M"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GFMnF9LY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729355AbfAHS2H (ORCPT
+        id S1729405AbfAHS3m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 13:28:07 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:45373 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728752AbfAHS2H (ORCPT
+        Tue, 8 Jan 2019 13:29:42 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:37233 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728752AbfAHS3m (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 13:28:07 -0500
-Received: by mail-pf1-f195.google.com with SMTP id g62so2306289pfd.12
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 10:28:06 -0800 (PST)
+        Tue, 8 Jan 2019 13:29:42 -0500
+Received: by mail-pg1-f194.google.com with SMTP id c25so2095337pgb.4;
+        Tue, 08 Jan 2019 10:29:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=IgxxlltM/YqbmfuqUTo2lubz3lYM7XgPxxZCMRDDDTU=;
-        b=lelDa/4Ms0BXyqG/l2s/e93o5TSTiyMnUw2sE3LCru82utmF6n8E+XPb8rCqZE8Kvz
-         XhoUXyUbM7fhOuDp4mc1+5gKSt63upQIamlQeGXAkTAHvm2Tn14ckflT8Xwv9g09s1Cm
-         sePXPY1HfTE7TaSH1rEtiw0eYygCbumRtFcyE0+CHOh/pin5jb8ud3NGdCAGHrh1A6Qm
-         4/3aUJ8JJwzxeaO8vmy2sJGpn6XCoFWgDSrYdIq5ZsA23e2Aqz4odgL5s4UsaqIr/lHe
-         PkcAMpTBMpEEaYc885GTxVihX9sYmD4fqif76YLQ7N5sX5XlkWoVVmcAQ7kpmtUu+e0J
-         VDcA==
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=Or1+LsmwXOhdlXOg4PaWBuuDIOICfOPtOzEPnnkQ8is=;
+        b=GFMnF9LY1zQeUGJIlkbVTeWNyjfaJM+26mb2nT6iADcJZdUS4cpaeEPFyFgNW6KcSG
+         1DjwehAR+fHqHmPj1hWje6rUsZIG/6DZAfqDvgCrAhK0OW29l6iqo5t8fbON6E9vzUja
+         96kx/BrHw75LvYAgMbspYSBKn8pw1qYvfCCwNDHwJguPbi2SCEgYDGBxKhtz/dx9tSIU
+         Zb8h4NJZduh51KfEzvwetu2CtwVrVFYwqdRIuUS0/UwC9lfruvghMx6Mnoq0ba5t/0cC
+         8+xMiiB+sZu3zr0RaOxvZXJXJxNxg157WRBQ72AkEKVm3hUW5Y7frzvuhBIB2GkVdV0J
+         Tiew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=IgxxlltM/YqbmfuqUTo2lubz3lYM7XgPxxZCMRDDDTU=;
-        b=hnayPXtz1SS63H4dsSmaF1R/9byPOtaKEFu01xfAucnkIh1yH5zmo8GMilUkSvK8ec
-         TL7DAWVPraahuGDfzgl8hWqNffNOJg4KL3rbQLyJi7ulOMhPrgAE4p2AByZHY8PXQJDW
-         E/C2b5Bs29PfoMk4goyqujy3EGQBF9G+tlahPTfM7HXarmMlZ9hWEZD/qwrP6F62m7ia
-         MtwFcJF06wgXO+qNa+FZXsZ7TyPMqcQtFP8MaTKnfR8pGh6ByqMAzV4PAvKq6XHPi65b
-         wPpR2hXkdFvpatRit2Z6TkmUGUnOsVDr2ASicpPG7zw4ciuMJlpf7kI3/ipKUY/Wn6J9
-         enJQ==
-X-Gm-Message-State: AJcUukfe/CHWVtnnPScHmNoPFY3qd1G3BHYOYugcJiqjpogEv5GMLO1n
-        yhsSJAfTmsMUBFSI+aomQ9A=
-X-Google-Smtp-Source: ALg8bN6v2BFvao+7PoyU4QHgK22cx2uNJsSzt0W+QZmhfIp29Lj2dhm7XUEshX4o4fZ1xlLFIMQAew==
-X-Received: by 2002:a63:ff16:: with SMTP id k22mr2504152pgi.244.1546972086123;
-        Tue, 08 Jan 2019 10:28:06 -0800 (PST)
-Received: from [10.2.13.140] ([208.91.2.1])
-        by smtp.gmail.com with ESMTPSA id z62sm119969940pfl.33.2019.01.08.10.28.03
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=Or1+LsmwXOhdlXOg4PaWBuuDIOICfOPtOzEPnnkQ8is=;
+        b=eu4fDyaa7HtYHDAmck+Rhpio9a36vzPwFvZW4zQiSGBhLF2V+0auTMSqM4PJAJYL8y
+         vA9ct893GOCk/FrFDDl6VYGA6jdo+eMCRixzpohFQx6Zg2pGISuhj03pHqu+md8f/iT4
+         YpXmzBI7Q+ZnbSng1SxuhQNibiMk0N/vuHhOBCnUcL3ZbOd6G4fEvCSQg4+NOw26ngFC
+         DORbtqdSsb0C38ErtRMphil6BidtbP9OtAxssE5kmj2w/uNFVJJAip5dTZR6l1XQ2/cN
+         gDcd82F25RYclxHYRtWxjbGmfd/1flS9y6mdBK1HjxegLahiEAeUM7jEAA85abiBKLmE
+         Eocg==
+X-Gm-Message-State: AJcUukf8l61Hm4e/r+yo0jBHxFExEjBfjpqA07WlN5II9ZuQmav1uYZw
+        trlErhQl5s67Djqo6E44nn5m6fyN
+X-Google-Smtp-Source: ALg8bN5Q/RcCo/hEWQqHd/mBx6XVqTKfvKipNxl9nMqvLNusiVVF5UdkL1fNbfDuFajgGflg0DZuqQ==
+X-Received: by 2002:a62:35c7:: with SMTP id c190mr2902253pfa.76.1546972180738;
+        Tue, 08 Jan 2019 10:29:40 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 125sm90371058pfg.39.2019.01.08.10.29.38
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 08 Jan 2019 10:28:04 -0800 (PST)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
-Subject: Re: [RFC v2 0/6] x86: dynamic indirect branch promotion
-From:   Nadav Amit <nadav.amit@gmail.com>
-In-Reply-To: <20190108172721.GN6118@tassilo.jf.intel.com>
-Date:   Tue, 8 Jan 2019 10:28:02 -0800
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Edward Cree <ecree@solarflare.com>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        songliubraving@fb.com
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <D1A153D5-D23B-45E6-9E7A-EB9CBAE84B7E@gmail.com>
-References: <20181231072112.21051-1-namit@vmware.com>
- <87zhshe66w.fsf@linux.intel.com>
- <20190107163227.GH14122@hirez.programming.kicks-ass.net>
- <c4e836e8-1949-27f5-f6a0-ed860f590ec5@intel.com>
- <20190108092559.GA6808@hirez.programming.kicks-ass.net>
- <306d38fb-7ce6-a3ec-a351-6c117559ebaa@intel.com>
- <20190108101058.GB6808@hirez.programming.kicks-ass.net>
- <20190108172721.GN6118@tassilo.jf.intel.com>
-To:     Andi Kleen <ak@linux.intel.com>
-X-Mailer: Apple Mail (2.3445.102.3)
+        Tue, 08 Jan 2019 10:29:39 -0800 (PST)
+Date:   Tue, 8 Jan 2019 10:29:38 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Breno Leitao <leitao@debian.org>, linux-kernel@vger.kernel.org,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 4.19 000/170] 4.19.14-stable review
+Message-ID: <20190108182938.GA19265@roeck-us.net>
+References: <20190107104452.953560660@linuxfoundation.org>
+ <20190108172503.GA28031@roeck-us.net>
+ <20190108175640.GA2461@kroah.com>
+ <20190108180951.GB28031@roeck-us.net>
+ <20190108181322.GA4194@kroah.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190108181322.GA4194@kroah.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> On Jan 8, 2019, at 9:27 AM, Andi Kleen <ak@linux.intel.com> wrote:
->=20
-> On Tue, Jan 08, 2019 at 11:10:58AM +0100, Peter Zijlstra wrote:
->> On Tue, Jan 08, 2019 at 12:01:11PM +0200, Adrian Hunter wrote:
->>> The problem is that the jitted code gets freed from memory, which is =
-why I
->>> suggested the ability to pin it for a while.
->>=20
->> Then what do you tell the guy that keeps PT running for a day and =
-runs
->> out of memory because he likes to JIT a lot?
->=20
-> It only would need to be saved until the next kcore dump, so they =
-would
-> need to do regular kcore dumps, after each of which the JIT code could =
-be freed.
->=20
-> In a sense it would be like RCU for code.
->=20
-> You would somehow need to tell the kernel when that happens though
-> so it can schedule the frees.
->=20
-> It doesn't work when the code is modified in place, like the
-> patch in the $SUBJECT.
+On Tue, Jan 08, 2019 at 07:13:22PM +0100, Greg Kroah-Hartman wrote:
+> On Tue, Jan 08, 2019 at 10:09:51AM -0800, Guenter Roeck wrote:
+> > On Tue, Jan 08, 2019 at 06:56:40PM +0100, Greg Kroah-Hartman wrote:
+> > > On Tue, Jan 08, 2019 at 09:25:03AM -0800, Guenter Roeck wrote:
+> > > > On Mon, Jan 07, 2019 at 01:30:27PM +0100, Greg Kroah-Hartman wrote:
+> > > > > This is the start of the stable review cycle for the 4.19.14 release.
+> > > > > There are 170 patches in this series, all will be posted as a response
+> > > > > to this one.  If anyone has any issues with these being applied, please
+> > > > > let me know.
+> > > > > 
+> > > > > Responses should be made by Wed Jan  9 10:43:54 UTC 2019.
+> > > > > Anything received after that time might be too late.
+> > > > > 
+> > > > 
+> > > > Still (for v4.19.13-171-gc68ce175c3b8):
+> > > > 
+> > > > arch/powerpc/kernel/signal_64.c: In function ‘sys_rt_sigreturn’:
+> > > > arch/powerpc/kernel/signal_64.c:761:21: error: ‘msr’ undeclared 
+> > > > 
+> > > > AFAICS commit 5c784c8414fba ("powerpc/tm: Remove msr_tm_active()") is missing.
+> > > 
+> > > Breno on this thread just said that this patch should not be applied,
+> > > and another one will be submitted upstream instead to solve the problem
+> > > correctly and then we can backport it.
+> > > 
+> > > So we can live with this build issue for now.
+> > > 
+> > 
+> > I think you should drop the offending patch in this case. It doesn't make
+> > sense to keep it - all it accomplishes is to break various builds. What is
+> > the point of doing that ? Is that somehow better than living with the bug
+> > it is supposed to fix ?
+> 
+> That's what the developers involved seem to say.
+> 
+That will prevent anyone affected from actually using 4.19.14, and earlier
+kernels will still have the problem people are now so concerned about.
+In other words, this will accomplish exactly nothig except confirm the
+notion that stable releases are not well tested. I _really_ don't get
+the point, sorry.
 
-Excuse my ignorance - can you be more concrete what will break where?
-
-I am looking at perf-with-kcore, and intuitively the main thing that is
-required is to take text_mutex while kcore is copied, to get a =
-point-in-time
-snapshot.
-
-Is it really that important for debugging to get the instructions at the
-time of execution? Wouldn=E2=80=99t it be easier to annotate the =
-instructions that
-might change? After all, it is not as if any instruction can change to =
-any
-other instruction.
-
+Guenter
