@@ -2,122 +2,140 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-21.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 881ADC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 21:12:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D744C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 21:12:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5EBD320675
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 21:12:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 04AA22173C
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 21:12:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="m1jQUEw6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729856AbfAHVMF (ORCPT
+        id S1729898AbfAHVMK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 16:12:05 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:35622 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729768AbfAHVLz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 16:11:55 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B7143E3E1C;
-        Tue,  8 Jan 2019 21:11:54 +0000 (UTC)
-Received: from malachite.bss.redhat.com (dhcp-10-20-1-11.bss.redhat.com [10.20.1.11])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E3C2519492;
-        Tue,  8 Jan 2019 21:11:52 +0000 (UTC)
-From:   Lyude Paul <lyude@redhat.com>
-To:     dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org
-Cc:     Harry Wentland <harry.wentland@amd.com>,
-        Jerry Zuo <Jerry.Zuo@amd.com>, stable@vger.kernel.org,
-        Leo Li <sunpeng.li@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Tony Cheng <Tony.Cheng@amd.com>,
-        David Francis <David.Francis@amd.com>,
-        Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
-        Mikita Lipski <mikita.lipski@amd.com>,
-        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
-        Anthony Koo <Anthony.Koo@amd.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/3] drm/amdgpu: Don't fail resume process if resuming atomic state fails
-Date:   Tue,  8 Jan 2019 16:11:28 -0500
-Message-Id: <20190108211133.32564-3-lyude@redhat.com>
-In-Reply-To: <20190108211133.32564-1-lyude@redhat.com>
-References: <20190108211133.32564-1-lyude@redhat.com>
+        Tue, 8 Jan 2019 16:12:10 -0500
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:42257 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729768AbfAHVMH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 16:12:07 -0500
+Received: by mail-vs1-f67.google.com with SMTP id b74so3406315vsd.9
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 13:12:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=d3yd9D37qc6JkHvOXsqsDpNI+Gs7w2ansAKhkfNPYkQ=;
+        b=m1jQUEw6q81E5DJnpX9Bi50bdMo3bQ783+zQzPbIDROzuE2KV/3MSJjqJc16ITLvHP
+         mp98HXB0eok6EICYWssiLxSUYqtYFqtW9mPPvxrVe/Xsp//AWIIUp6FOjFqCyjpeJKcL
+         ImzuG+niwzj4xxJzZt6f12U8av3gGFfgqmdoo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=d3yd9D37qc6JkHvOXsqsDpNI+Gs7w2ansAKhkfNPYkQ=;
+        b=rOFpqeNY3PXRr+LAwxcfv3gcFm+U9d3JZW6py3xrzH+5Phhr006tkHLArFX3jBwTrp
+         o8cXtFyUS78rbSAU8FP+rBWtk7IHJghDDvLvWBSrFkgmG3BwJYkMH1ykuiPDg9xzqW6L
+         fyA7vLroFn9e0Fhu25/KRdf1+4m7eQbkBn3J/DQSTcBfkKHXgTMnbo9mWzuAyhQW88a5
+         +RRd5U8AgpnEDunQpVmBXhXZcLpZe5MttsC/dTaYhYfogTomwKjAjO3TTNJ0sGRDf7ju
+         cNj7GnHrq3PTd8Cav7bTKkFuPEjYBsbbKyj0ohAZC7EbrOf0dsmHicrEZGZai0J8JpiM
+         nDCQ==
+X-Gm-Message-State: AJcUukfyZ2Tnl1p1sE79RtxdNWveDiqrUUMuWWlnzA12ipXI05i80mWo
+        oP02mLs/WZW6FINy8vqhkCJ44Zt+G3Q=
+X-Google-Smtp-Source: ALg8bN7YiYl1rqK7ntef6M2oCN8t6yootcP8XPOFlYLRxu9IDr3SZS3kXe4pY+FPXL6IQY0I3zVTLA==
+X-Received: by 2002:a67:b44:: with SMTP id 65mr1372440vsl.77.1546981924885;
+        Tue, 08 Jan 2019 13:12:04 -0800 (PST)
+Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com. [209.85.217.45])
+        by smtp.gmail.com with ESMTPSA id j95sm34836942uad.6.2019.01.08.13.12.03
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 08 Jan 2019 13:12:03 -0800 (PST)
+Received: by mail-vs1-f45.google.com with SMTP id p74so3430453vsc.0
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 13:12:03 -0800 (PST)
+X-Received: by 2002:a67:e15e:: with SMTP id o30mr1425746vsl.66.1546981922995;
+ Tue, 08 Jan 2019 13:12:02 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Tue, 08 Jan 2019 21:11:55 +0000 (UTC)
+References: <alpine.LRH.2.21.1901090803120.24546@namei.org>
+In-Reply-To: <alpine.LRH.2.21.1901090803120.24546@namei.org>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Tue, 8 Jan 2019 13:11:51 -0800
+X-Gmail-Original-Message-ID: <CAGXu5j+wvi9t-oHf4cX999aYWMhmTJ1zA1mKuNQEB_n5ixiC5w@mail.gmail.com>
+Message-ID: <CAGXu5j+wvi9t-oHf4cX999aYWMhmTJ1zA1mKuNQEB_n5ixiC5w@mail.gmail.com>
+Subject: Re: [GIT PULL] seccomp: build fix for v5.0-rc2
+To:     James Morris <jmorris@namei.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Ingo Molnar <mingo@elte.hu>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an ugly one unfortunately. Currently, all DRM drivers supporting
-atomic modesetting will save the state that userspace had set before
-suspending, then attempt to restore that state on resume. This probably
-worked very well at one point, like many other things, until DP MST came
-into the picture. While it's easy to restore state on normal display
-connectors that were disconnected during suspend regardless of their
-state post-resume, this can't really be done with MST because of the
-fact that setting up a downstream sink requires performing sideband
-transactions between the source and the MST hub, sending out the ACT
-packets, etc.
+This was already picked up by x86-urgent...
 
-Because of this, there isn't really a guarantee that we can restore the
-atomic state we had before suspend once we've resumed. This sucks pretty
-bad, but so far I haven't run into any compositors that this actually
-causes serious issues with. Most compositors will notice the hotplug we
-send afterwards, and then reprobe state.
+-Kees
 
-Since nouveau and i915 also don't fail the suspend/resume process due to
-failing to restore the atomic state, let's make amdgpu match this
-behavior. Better to resume the GPU properly, then to stop the process
-half way because of a potentially unavoidable atomic commit failure.
+On Tue, Jan 8, 2019 at 1:04 PM James Morris <jmorris@namei.org> wrote:
+>
+> Please pull this fix for a build regression in seccomp.
+>
+> The following changes since commit 7b55851367136b1efd84d98fea81ba57a98304cf:
+>
+>   fork: record start_time late (2019-01-08 09:40:53 -0800)
+>
+> are available in the Git repository at:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git fixes-v5.0-rc1
+>
+> for you to fetch changes up to cba54b44d0be4eb66dbc7709e1f3f0d65e851f69:
+>
+>   samples/seccomp: fix 32-bit build (2019-01-08 13:00:00 -0800)
+>
+> ----------------------------------------------------------------
+>
+> Tycho Andersen (1):
+>       samples/seccomp: fix 32-bit build
+>
+>  samples/seccomp/Makefile | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> ---
+>
+> commit cba54b44d0be4eb66dbc7709e1f3f0d65e851f69
+> Author: Tycho Andersen <tycho@tycho.ws>
+> Date:   Mon Jan 7 14:46:34 2019 -0700
+>
+>     samples/seccomp: fix 32-bit build
+>
+>     Both the .o and the actual executable need to be built with -m32 in order
+>     to link correctly.
+>
+>     Fixes: fec7b6690541 ("samples: add an example of seccomp user trap")
+>
+>     Signed-off-by: Tycho Andersen <tycho@tycho.ws>
+>     Reported-by: Ingo Molnar <mingo@kernel.org>
+>     Signed-off-by: James Morris <james.morris@microsoft.com>
+>
+> diff --git a/samples/seccomp/Makefile b/samples/seccomp/Makefile
+> index 4920903c8009..a5607668a5c7 100644
+> --- a/samples/seccomp/Makefile
+> +++ b/samples/seccomp/Makefile
+> @@ -37,6 +37,7 @@ HOSTCFLAGS_bpf-fancy.o += $(MFLAG)
+>  HOSTLDLIBS_bpf-direct += $(MFLAG)
+>  HOSTLDLIBS_bpf-fancy += $(MFLAG)
+>  HOSTLDLIBS_dropper += $(MFLAG)
+> +HOSTLDLIBS_user-trap.o += $(MFLAG)
+>  HOSTLDLIBS_user-trap += $(MFLAG)
+>  endif
+>  always := $(hostprogs-m)
 
-Eventually, we'll have a real fix for this problem on the DRM level. But
-we've got some more important low-hanging fruit to deal with first.
 
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Reviewed-by: Harry Wentland <harry.wentland@amd.com>
-Cc: Jerry Zuo <Jerry.Zuo@amd.com>
-Cc: <stable@vger.kernel.org> # v4.15+
----
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-index 3f326a2c513b..a3e65e457348 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-@@ -912,7 +912,6 @@ static int dm_resume(void *handle)
- 	struct drm_plane_state *new_plane_state;
- 	struct dm_plane_state *dm_new_plane_state;
- 	enum dc_connection_type new_connection_type = dc_connection_none;
--	int ret;
- 	int i;
- 
- 	/* power on hardware */
-@@ -985,13 +984,13 @@ static int dm_resume(void *handle)
- 		}
- 	}
- 
--	ret = drm_atomic_helper_resume(ddev, dm->cached_state);
-+	drm_atomic_helper_resume(ddev, dm->cached_state);
- 
- 	dm->cached_state = NULL;
- 
- 	amdgpu_dm_irq_resume_late(adev);
- 
--	return ret;
-+	return 0;
- }
- 
- /**
 -- 
-2.20.1
-
+Kees Cook
