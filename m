@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95E36C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:42:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73C45C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:42:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 630CE2063F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:42:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3AEB92063F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:42:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546976538;
-	bh=4rw7+ge4/L0GRib9VFKi6K99yN4ldJFuk/trYEiU3AA=;
+	s=default; t=1546976546;
+	bh=1uAFkiBROQ8jM2iNyBJR21aRUVNkwuA3a/6KKjj/MAY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=RWBe7ZHI8zfEDANWwfgZxd7fdAYhE/KOyDQ1Hz1EJtojX+mNYbIQiIBncYox6in5q
-	 N+cytihwhjjvtacvO1yeva3cgLzlTyjrVznewSTxGEDy247jvFWqQjblE6P6lRig2z
-	 fKvQH5kkqlYWkDmkSTaFhBYlMdkRyO7kGJAGlvEU=
+	b=ym+pBerRSGXhssXVszoV/3gvL1V3hvqHxhvq7+6n43E/ELEwsqP1fm8+Ib3KnyHXJ
+	 2JKRscHHGqGYZKGOxkyfpUYAE5h3s2bR3Lvl+SS7dS28Z4bnIOS3C4NJu6efelUZVn
+	 dKAWq/2eJUWjbaAoeRCZfPfdkMxuLxmSxAZofhnw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732376AbfAHTmR (ORCPT
+        id S1732643AbfAHTmZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:42:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42860 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:42:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42820 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731891AbfAHTeJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:34:09 -0500
+        id S1731877AbfAHTeH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:34:07 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CC510205C9;
-        Tue,  8 Jan 2019 19:34:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AF76A2063F;
+        Tue,  8 Jan 2019 19:34:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546976048;
-        bh=4rw7+ge4/L0GRib9VFKi6K99yN4ldJFuk/trYEiU3AA=;
+        s=default; t=1546976046;
+        bh=1uAFkiBROQ8jM2iNyBJR21aRUVNkwuA3a/6KKjj/MAY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SM81DHlQtvMmrd4KSVNhrxt9l8Q9IsIYPdqqryEmrwpK2QmTTjGs1KyPL7raeDuH5
-         kaZbI9wHvVnAGWbtTFkfu+K9LSeFOSmS0pIQNCttgvW+5jCwWeMBLDyG+IeBhAPxek
-         l/bBg7b1m/fXytVAjGmAN06bjqelB279TsggQVwo=
+        b=GKckTDjHuxG+gZOZJrpCh4N2HTng269I+FtNfE7Sul2BseAvwFvi+xm7o6NbpoIpf
+         SFYcUZQGlNhEx6+zzw1e7FI/6o1mJOGsLSmG6+Srd42YZcWv/t2g/gYP28YepFj7Q/
+         vc6I8dowtqIV/8wYUGJfpsuFXfw5g39R9rrNU2lk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Daniel Santos <daniel.santos@pobox.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Sasha Levin <sashal@kernel.org>, linux-mtd@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.9 12/36] jffs2: Fix use of uninitialized delayed_work, lockdep breakage
-Date:   Tue,  8 Jan 2019 14:33:24 -0500
-Message-Id: <20190108193348.123880-12-sashal@kernel.org>
+Cc:     Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 4.9 10/36] drm/amdgpu: Correct get_crtc_scanoutpos behavior when vpos >= vtotal
+Date:   Tue,  8 Jan 2019 14:33:22 -0500
+Message-Id: <20190108193348.123880-10-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108193348.123880-1-sashal@kernel.org>
 References: <20190108193348.123880-1-sashal@kernel.org>
@@ -58,69 +59,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Santos <daniel.santos@pobox.com>
+From: Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
 
-[ Upstream commit a788c5272769ddbcdbab297cf386413eeac04463 ]
+[ Upstream commit 520f08df45fbe300ed650da786a74093d658b7e1 ]
 
-jffs2_sync_fs makes the assumption that if CONFIG_JFFS2_FS_WRITEBUFFER
-is defined then a write buffer is available and has been initialized.
-However, this does is not the case when the mtd device has no
-out-of-band buffer:
+When variable refresh rate is active the hardware counter can return
+a position >= vtotal. This results in a vpos being returned from
+amdgpu_display_get_crtc_scanoutpos that's a positive value. The
+positive value indicates to the caller that the display is
+currently in scanout when the display is actually still in vblank.
 
-int jffs2_nand_flash_setup(struct jffs2_sb_info *c)
-{
-        if (!c->mtd->oobsize)
-                return 0;
-...
+This is because the vfront porch duration is unknown with variable
+refresh active and will end when either a page flip occurs or the
+timeout specified by the driver/display is reached.
 
-The resulting call to cancel_delayed_work_sync passing a uninitialized
-(but zeroed) delayed_work struct forces lockdep to become disabled.
+The behavior of the amdgpu_display_get_crtc_scanoutpos remains the
+same when the position is below vtotal. When the position is above
+vtotal the function will return a value that is effectively -vbl_end,
+the size of the vback porch.
 
-[   90.050639] overlayfs: upper fs does not support tmpfile.
-[   90.652264] INFO: trying to register non-static key.
-[   90.662171] the code is fine but needs lockdep annotation.
-[   90.673090] turning off the locking correctness validator.
-[   90.684021] CPU: 0 PID: 1762 Comm: mount_root Not tainted 4.14.63 #0
-[   90.696672] Stack : 00000000 00000000 80d8f6a2 00000038 805f0000 80444600 8fe364f4 805dfbe7
-[   90.713349]         80563a30 000006e2 8068370c 00000001 00000000 00000001 8e2fdc48 ffffffff
-[   90.730020]         00000000 00000000 80d90000 00000000 00000106 00000000 6465746e 312e3420
-[   90.746690]         6b636f6c 03bf0000 f8000000 20676e69 00000000 80000000 00000000 8e2c2a90
-[   90.763362]         80d90000 00000001 00000000 8e2c2a90 00000003 80260dc0 08052098 80680000
-[   90.780033]         ...
-[   90.784902] Call Trace:
-[   90.789793] [<8000f0d8>] show_stack+0xb8/0x148
-[   90.798659] [<8005a000>] register_lock_class+0x270/0x55c
-[   90.809247] [<8005cb64>] __lock_acquire+0x13c/0xf7c
-[   90.818964] [<8005e314>] lock_acquire+0x194/0x1dc
-[   90.828345] [<8003f27c>] flush_work+0x200/0x24c
-[   90.837374] [<80041dfc>] __cancel_work_timer+0x158/0x210
-[   90.847958] [<801a8770>] jffs2_sync_fs+0x20/0x54
-[   90.857173] [<80125cf4>] iterate_supers+0xf4/0x120
-[   90.866729] [<80158fc4>] sys_sync+0x44/0x9c
-[   90.875067] [<80014424>] syscall_common+0x34/0x58
+The only caller affected by this change is the DRM helper for
+calculating vblank timestamps. This change corrects behavior for
+calculating the page flip timestamp from being the previous timestamp
+to the calculation to the next timestamp when position >= vtotal.
 
-Signed-off-by: Daniel Santos <daniel.santos@pobox.com>
-Reviewed-by: Hou Tao <houtao1@huawei.com>
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Signed-off-by: Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
+Reviewed-by: Harry Wentland <harry.wentland@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/jffs2/super.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_display.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/fs/jffs2/super.c b/fs/jffs2/super.c
-index 79b0de846f21..226640563df3 100644
---- a/fs/jffs2/super.c
-+++ b/fs/jffs2/super.c
-@@ -101,7 +101,8 @@ static int jffs2_sync_fs(struct super_block *sb, int wait)
- 	struct jffs2_sb_info *c = JFFS2_SB_INFO(sb);
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
+index 15a2d8f3725d..5042ae072386 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
+@@ -856,7 +856,12 @@ int amdgpu_get_crtc_scanoutpos(struct drm_device *dev, unsigned int pipe,
+ 	/* Inside "upper part" of vblank area? Apply corrective offset if so: */
+ 	if (in_vbl && (*vpos >= vbl_start)) {
+ 		vtotal = mode->crtc_vtotal;
+-		*vpos = *vpos - vtotal;
++
++		/* With variable refresh rate displays the vpos can exceed
++		 * the vtotal value. Clamp to 0 to return -vbl_end instead
++		 * of guessing the remaining number of lines until scanout.
++		 */
++		*vpos = (*vpos < vtotal) ? (*vpos - vtotal) : 0;
+ 	}
  
- #ifdef CONFIG_JFFS2_FS_WRITEBUFFER
--	cancel_delayed_work_sync(&c->wbuf_dwork);
-+	if (jffs2_is_writebuffered(c))
-+		cancel_delayed_work_sync(&c->wbuf_dwork);
- #endif
- 
- 	mutex_lock(&c->alloc_sem);
+ 	/* Correct for shifted end of vbl at vbl_end. */
 -- 
 2.19.1
 
