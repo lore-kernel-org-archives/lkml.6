@@ -7,50 +7,46 @@ X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F101FC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:03:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E1D4C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:03:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C07DF20660
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:03:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F7EC20827
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:03:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546977803;
-	bh=71bZYqIvrgLKtNHcvSBPT2C7oSSe2PEcWzz8UMCPeaE=;
+	s=default; t=1546977811;
+	bh=nv6A0KI3Ex7MTJsyYVsRAqFnTj5BI3eAyG5r3BuIiIs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=m/ilc+qmpseX2JN6jCevVhESicFMxsQZHcpVTO7PYpDBD7i6rHEg4cSpGalwZn6Sp
-	 3i/E/C2779OHvLlgLJRsFECzDJIS2TSNp7VI6YofXyEIxLs31HPQsYdaf8FmrUZGnb
-	 So2+OHSL36/yzdFjMsgQG13FmYLFCtEQLRupSKCw=
+	b=GU1qJmMDuNiixG00zc3uwCT0/zmrWUZ1SIJrLxZQ5DUr6oJtJihB64slggSQq6Qxb
+	 OLMMcyd+BIQ4ENazzW1wnCUivOtip6uNHYnCjVwAfBTw0YOOE3X9/YupWcoW0DIrG7
+	 jlEbIIfnv/kWN4NRmXrww8uu5JwXRDKFfymtZ0LI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730860AbfAHUDX (ORCPT
+        id S1729454AbfAHT2n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 15:03:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35920 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:28:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35774 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729492AbfAHT2s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:28:48 -0500
+        id S1730116AbfAHT2j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:28:39 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 443ED20827;
-        Tue,  8 Jan 2019 19:28:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 67633217D9;
+        Tue,  8 Jan 2019 19:28:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975727;
-        bh=71bZYqIvrgLKtNHcvSBPT2C7oSSe2PEcWzz8UMCPeaE=;
+        s=default; t=1546975719;
+        bh=nv6A0KI3Ex7MTJsyYVsRAqFnTj5BI3eAyG5r3BuIiIs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Xw0Hq702SNWxzh9RRDdRemYEnxF8i6IuJ2g8dvLKJOJxWYQ6wgUYcJosLs+DAKR8I
-         9UWTw64oqCrA2OZYEoCcxG7t7IAmX3+mjxm1l4TadTd+rDTJRuCW4752LrZgYrabBW
-         LjzcMzMdfeWw/q0sZkyYNqKxkXg9qOSc9OiThp1I=
+        b=lwqy4DklT7bUiSlAh59ZQI2nlnXes3KCXbslzWDEat8MN4OSA28G7Y7sKXmEfOH8r
+         4xpljsVM6OJN3GbNsV77orBGo06HIYmNT7OStrNq6x0kmjDJMzvNgWoXGye6V/4qbF
+         cSDkssFiMTBheFDBisXe1/f83w2V0HvkzDmbnCrU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.20 080/117] perf tests ARM: Disable breakpoint tests 32-bit
-Date:   Tue,  8 Jan 2019 14:25:48 -0500
-Message-Id: <20190108192628.121270-80-sashal@kernel.org>
+Cc:     Johannes Thumshirn <jthumshirn@suse.de>,
+        David Sterba <dsterba@suse.com>,
+        Sasha Levin <sashal@kernel.org>, linux-btrfs@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 076/117] btrfs: improve error handling of btrfs_add_link
+Date:   Tue,  8 Jan 2019 14:25:44 -0500
+Message-Id: <20190108192628.121270-76-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192628.121270-1-sashal@kernel.org>
 References: <20190108192628.121270-1-sashal@kernel.org>
@@ -62,70 +58,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Florian Fainelli <f.fainelli@gmail.com>
+From: Johannes Thumshirn <jthumshirn@suse.de>
 
-[ Upstream commit 24f967337f6d6bce931425769c0f5ff5cf2d212e ]
+[ Upstream commit 1690dd41e0cb1dade80850ed8a3eb0121b96d22f ]
 
-The breakpoint tests on the ARM 32-bit kernel are broken in several
-ways.
+In the error handling block, err holds the return value of either
+btrfs_del_root_ref() or btrfs_del_inode_ref() but it hasn't been checked
+since it's introduction with commit fe66a05a0679 (Btrfs: improve error
+handling for btrfs_insert_dir_item callers) in 2012.
 
-The breakpoint length requested does not necessarily match whether the
-function address has the Thumb bit (bit 0) set or not, and this does
-matter to the ARM kernel hw_breakpoint infrastructure. See [1] for
-background.
+If the error handling in the error handling fails, there's not much left
+to do and the abort either happened earlier in the callees or is
+necessary here.
 
-[1]: https://lkml.org/lkml/2018/11/15/205
+So if one of btrfs_del_root_ref() or btrfs_del_inode_ref() failed, abort
+the transaction, but still return the original code of the failure
+stored in 'ret' as this will be reported to the user.
 
-As Will indicated, the overflow handling would require single-stepping
-which is not supported at the moment. Just disable those tests for the
-ARM 32-bit platforms and update the comment above to explain these
-limitations.
-
-Co-developed-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Acked-by: Jiri Olsa <jolsa@redhat.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20181203191138.2419-1-f.fainelli@gmail.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/tests/bp_signal.c | 20 ++++++++++++++------
- 1 file changed, 14 insertions(+), 6 deletions(-)
+ fs/btrfs/inode.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/tests/bp_signal.c b/tools/perf/tests/bp_signal.c
-index a467615c5a0e..910e25e64188 100644
---- a/tools/perf/tests/bp_signal.c
-+++ b/tools/perf/tests/bp_signal.c
-@@ -291,12 +291,20 @@ int test__bp_signal(struct test *test __maybe_unused, int subtest __maybe_unused
+diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+index 9ea4c6f0352f..ff9268a60eaf 100644
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -6406,14 +6406,19 @@ int btrfs_add_link(struct btrfs_trans_handle *trans,
+ 		err = btrfs_del_root_ref(trans, key.objectid,
+ 					 root->root_key.objectid, parent_ino,
+ 					 &local_index, name, name_len);
+-
++		if (err)
++			btrfs_abort_transaction(trans, err);
+ 	} else if (add_backref) {
+ 		u64 local_index;
+ 		int err;
  
- bool test__bp_signal_is_supported(void)
- {
--/*
-- * The powerpc so far does not have support to even create
-- * instruction breakpoint using the perf event interface.
-- * Once it's there we can release this.
-- */
--#if defined(__powerpc__) || defined(__s390x__)
-+	/*
-+	 * PowerPC and S390 do not support creation of instruction
-+	 * breakpoints using the perf_event interface.
-+	 *
-+	 * ARM requires explicit rounding down of the instruction
-+	 * pointer in Thumb mode, and then requires the single-step
-+	 * to be handled explicitly in the overflow handler to avoid
-+	 * stepping into the SIGIO handler and getting stuck on the
-+	 * breakpointed instruction.
-+	 *
-+	 * Just disable the test for these architectures until these
-+	 * issues are resolved.
-+	 */
-+#if defined(__powerpc__) || defined(__s390x__) || defined(__arm__)
- 	return false;
- #else
- 	return true;
+ 		err = btrfs_del_inode_ref(trans, root, name, name_len,
+ 					  ino, parent_ino, &local_index);
++		if (err)
++			btrfs_abort_transaction(trans, err);
+ 	}
++
++	/* Return the original error code */
+ 	return ret;
+ }
+ 
 -- 
 2.19.1
 
