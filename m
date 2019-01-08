@@ -2,150 +2,136 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D03BC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 06:40:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B25AC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 06:40:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C0E02087E
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 06:40:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 463D421855
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 06:40:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ozSWl/R0";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="pDNpVsFL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727996AbfAHGkE (ORCPT
+        id S1728022AbfAHGka (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 01:40:04 -0500
-Received: from mail-it1-f198.google.com ([209.85.166.198]:35386 "EHLO
-        mail-it1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727961AbfAHGkD (ORCPT
+        Tue, 8 Jan 2019 01:40:30 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:54594 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727899AbfAHGka (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 01:40:03 -0500
-Received: by mail-it1-f198.google.com with SMTP id v188so2897915ita.0
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 22:40:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=N7MAIkCdjy9BI09dEx01pMPuwa7sPa8Pwqcod+00hfM=;
-        b=IH+5lLuF5ejWyAqhkqqiMwsl1Iz/Bacj9yC7t5nIUm2PaH7X6kwTCoquNn3RNEkMof
-         KGk4zMU/9s2RP5TVWkymkaQOt7nsq8ngKj40hRt0XMzHqgSsWH7nU8kXKjiLv2y02VCY
-         h1Cvdb26oOgO8P7vdOnI/fzQ/SWnD1SDGjvBFFJT67RTn4DQL9jvzGC0vZmB4FzT/EJo
-         mBQldUUp1mra4FWRDjgIAmH0FwMfgz55yZULJBGesyMOVjpz2q2xD9gAt9aGnhtgl3n9
-         QrHuy0hXtpWHmLUqY4CvyR12I8F/KHQQmm2b5JLhP3UyG17Lj2A/AZ4z31njfcM2XDsP
-         bPtw==
-X-Gm-Message-State: AJcUukf9cUzCLythcCgrtpfgnTjG3/aesO6DGlWLLSDbPmLw+Ezj3mIm
-        NWVOnLUb3nsDzFKeNJ08zB+4dGVIvP3vWwwJvPabNmCIRIa+
-X-Google-Smtp-Source: ALg8bN4VSYmnZd90mvn+4unAAhpyQVwV6+RE4vaIDrri51goqzy0VlFyaakM45vj07Uh5fKzcIeWfdYHQPZMOgT+avyEhon+O3hZ
+        Tue, 8 Jan 2019 01:40:30 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 2E9276050D; Tue,  8 Jan 2019 06:40:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1546929629;
+        bh=MVho/2/pXvIxyi4LGk2mgoq1NAd6U9SihzBAlNuyaDg=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=ozSWl/R0Cm6bPzhE48ONLCm53kmIFs1q5aPrDdRT+CheWQkqTr+sMPfFZR8YH3BGe
+         YGRRODwQ4WIIvUv8QXkjXCI0pvfSSi79c7WvaeNz13SgJA9lgqQQHeJQKgKc/DVVYJ
+         MEkAH7ai0PTY1NzjcLMMPIHAYTSUT3F39GZLFYs0=
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 91C9160300;
+        Tue,  8 Jan 2019 06:40:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1546929628;
+        bh=MVho/2/pXvIxyi4LGk2mgoq1NAd6U9SihzBAlNuyaDg=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=pDNpVsFL3XxdPJJYrV9tUmIE8Edh5IVn8S5xqEJ+no/Ax92N61usvBGk9Xe4ZOC5b
+         NXCFZJG4UASetqs4+EfmGzVaRlo1aMjQYJY5dwTgsBxYqr9c+R38qQBekA9YFfBMPz
+         VxZJsvlKVizyzDY6xQmmtsS1+iOySlqyCqaW7qKk=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 91C9160300
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
+Received: by mail-qt1-f182.google.com with SMTP id d19so3251517qtq.9;
+        Mon, 07 Jan 2019 22:40:28 -0800 (PST)
+X-Gm-Message-State: AJcUukc3Pj1nKcJtaxEBRYtu4hJUljEAZgyDrRID/F3Iiwdl8CKhy+AT
+        FD004YnynBJgoMKofIvU1O0ryaDUyfc+odseJXw=
+X-Google-Smtp-Source: ALg8bN7JKOJGBkXuVixk+XPqI4grgmRa656yTrecUF1fMcVoBF0nQ+tm0tVehoP7dgGPpeSKw3wO2wdglJMFqKTxnOY=
+X-Received: by 2002:a0c:afd1:: with SMTP id t17mr516684qvc.93.1546929627882;
+ Mon, 07 Jan 2019 22:40:27 -0800 (PST)
 MIME-Version: 1.0
-X-Received: by 2002:a24:4e4b:: with SMTP id r72mr565050ita.18.1546929602763;
- Mon, 07 Jan 2019 22:40:02 -0800 (PST)
-Date:   Mon, 07 Jan 2019 22:40:02 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000077264c057eec9ddd@google.com>
-Subject: general protection fault in ax25_send_control
-From:   syzbot <syzbot+d0b03d6dbe11a950e0ce@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, linux-hams@vger.kernel.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        ralf@linux-mips.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+References: <20190103103538.30970-1-mgautam@codeaurora.org>
+In-Reply-To: <20190103103538.30970-1-mgautam@codeaurora.org>
+From:   Vivek Gautam <vivek.gautam@codeaurora.org>
+Date:   Tue, 8 Jan 2019 12:10:16 +0530
+X-Gmail-Original-Message-ID: <CAFp+6iGDz4WGHyMYP1W0XbSJnL7s-sGBdb1YZ4+iaO59tBqUuA@mail.gmail.com>
+Message-ID: <CAFp+6iGDz4WGHyMYP1W0XbSJnL7s-sGBdb1YZ4+iaO59tBqUuA@mail.gmail.com>
+Subject: Re: [PATCH v1] arm64: dts: qcom: msm8996: Disable USB2 PHY suspend by core
+To:     Manu Gautam <mgautam@codeaurora.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Thu, Jan 3, 2019 at 6:18 PM Manu Gautam <mgautam@codeaurora.org> wrote:
+>
+> QUSB2 PHY on msm8996 doesn't work well when autosuspend by
+> dwc3 core using USB2PHYCFG register is enabled. One of the
+> issue seen is that PHY driver reports PLL lock failure and
+> fails phy_init() if dwc3 core has USB2 PHY suspend enabled.
+> Fix this by using quirks to disable USB2 PHY LPM/suspend and
+> dwc3 core already takes care of explicitly suspending PHY
+> during suspend if quirks are specified.
+>
+> Signed-off-by: Manu Gautam <mgautam@codeaurora.org>
+> ---
 
-syzbot found the following crash on:
+This works well for db820c [1].
+Tested-by: Vivek Gautam <vivek.gautam@codeaurora.org>
 
-HEAD commit:    b71acb0e3721 Merge branch 'linus' of git://git.kernel.org/..
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=174ccdbb400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b03c5892bb940c76
-dashboard link: https://syzkaller.appspot.com/bug?extid=d0b03d6dbe11a950e0ce
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+[1] https://github.com/vivekgautam1/linux/commits/origin/v4.20-rc5/db820c
 
-Unfortunately, I don't have any reproducer for this crash yet.
+Best regards
+Vivek
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+d0b03d6dbe11a950e0ce@syzkaller.appspotmail.com
-
-ax25_connect(): syz-executor5 uses autobind, please contact jreuter@yaina.de
-ax25_connect(): syz-executor4 uses autobind, please contact jreuter@yaina.de
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] PREEMPT SMP KASAN
-kobject: 'loop5' (000000000a8c8c40): kobject_uevent_env
-CPU: 0 PID: 13309 Comm: syz-executor0 Not tainted 4.20.0+ #3
-kobject: 'loop5' (000000000a8c8c40): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:ax25_send_control+0x5a/0x560 net/ax25/ax25_subr.c:155
-Code: ff df 48 c1 ea 03 80 3c 02 00 0f 85 b1 04 00 00 48 b8 00 00 00 00 00  
-fc ff df 4d 8b 65 28 49 8d 7c 24 08 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f  
-85 83 04 00 00 48 b8 00 00 00 00 00 fc ff df 4d 8b
-RSP: 0018:ffff888042c377f8 EFLAGS: 00010202
-RAX: dffffc0000000000 RBX: 0000000000000043 RCX: ffffc90005de9000
-RDX: 0000000000000001 RSI: ffffffff87058725 RDI: 0000000000000008
-RBP: ffff888042c37830 R08: ffff888064a5c380 R09: ffff888064a5cc48
-R10: ffff888064a5c380 R11: 0000000000000000 R12: 0000000000000000
-kobject: 'loop4' (000000005a2eed4e): kobject_uevent_env
-R13: ffff88808baaa040 R14: 0000000000000001 R15: ffff88808baaa068
-FS:  00007f25a1e3a700(0000) GS:ffff8880ae600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000001f01e80 CR3: 00000000a4311000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-kobject: 'loop4' (000000005a2eed4e): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  ax25_release+0x503/0x680 net/ax25/af_ax25.c:974
-  __sock_release+0xd3/0x250 net/socket.c:579
-  sock_close+0x1b/0x30 net/socket.c:1141
-  __fput+0x3c5/0xaf0 fs/file_table.c:278
-  ____fput+0x16/0x20 fs/file_table.c:309
-  task_work_run+0x1f4/0x2b0 kernel/task_work.c:113
-  get_signal+0x168d/0x19b0 kernel/signal.c:2347
-  do_signal+0x91/0x1e80 arch/x86/kernel/signal.c:816
-  exit_to_usermode_loop+0x2f7/0x3b0 arch/x86/entry/common.c:162
-  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
-  do_syscall_64+0x696/0x800 arch/x86/entry/common.c:293
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x457ec9
-Code: 6d b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 3b b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f25a1e39c78 EFLAGS: 00000246 ORIG_RAX: 000000000000002a
-RAX: 0000000000000000 RBX: 0000000000000003 RCX: 0000000000457ec9
-RDX: 0000000000000048 RSI: 0000000020000140 RDI: 0000000000000004
-RBP: 000000000073bf00 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f25a1e3a6d4
-R13: 00000000004be2ae R14: 00000000004ce648 R15: 00000000ffffffff
-Modules linked in:
----[ end trace dcff9655958a2d47 ]---
-RIP: 0010:ax25_send_control+0x5a/0x560 net/ax25/ax25_subr.c:155
-Code: ff df 48 c1 ea 03 80 3c 02 00 0f 85 b1 04 00 00 48 b8 00 00 00 00 00  
-fc ff df 4d 8b 65 28 49 8d 7c 24 08 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f  
-85 83 04 00 00 48 b8 00 00 00 00 00 fc ff df 4d 8b
-RSP: 0018:ffff888042c377f8 EFLAGS: 00010202
-RAX: dffffc0000000000 RBX: 0000000000000043 RCX: ffffc90005de9000
-RDX: 0000000000000001 RSI: ffffffff87058725 RDI: 0000000000000008
-RBP: ffff888042c37830 R08: ffff888064a5c380 R09: ffff888064a5cc48
-R10: ffff888064a5c380 R11: 0000000000000000 R12: 0000000000000000
-R13: ffff88808baaa040 R14: 0000000000000001 R15: ffff88808baaa068
-FS:  00007f25a1e3a700(0000) GS:ffff8880ae600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ff3c6de5db8 CR3: 00000000a4311000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>  arch/arm64/boot/dts/qcom/msm8996.dtsi | 4 ++++
+>  1 file changed, 4 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+> index b29fe80d7288..1f14ca35afc2 100644
+> --- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+> @@ -911,6 +911,8 @@
+>                                 interrupts = <0 138 IRQ_TYPE_LEVEL_HIGH>;
+>                                 phys = <&hsusb_phy2>;
+>                                 phy-names = "usb2-phy";
+> +                               snps,dis_u2_susphy_quirk;
+> +                               snps,dis_enblslpm_quirk;
+>                         };
+>                 };
+>
+> @@ -940,6 +942,8 @@
+>                                 interrupts = <0 131 IRQ_TYPE_LEVEL_HIGH>;
+>                                 phys = <&hsusb_phy1>, <&ssusb_phy_0>;
+>                                 phy-names = "usb2-phy", "usb3-phy";
+> +                               snps,dis_u2_susphy_quirk;
+> +                               snps,dis_enblslpm_quirk;
+>                         };
+>                 };
+>
+> --
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+>
 
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
