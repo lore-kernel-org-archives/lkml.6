@@ -2,52 +2,53 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA9DEC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:02:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DDF6C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:02:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6EDB720660
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:02:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41D8C20660
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:02:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546977749;
-	bh=Z8MumRHjEYYAs2Zm5KUZdX9CeyWPAbUkAtQM98nDZhY=;
+	s=default; t=1546977759;
+	bh=IrNXA9x2tMabqe/pwKtnWzB0UscfhI+RYax52idFOQ0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Kj0StpZ8xJe6wOl8Q9yBRFqGl2ARf6yKdCvYJ6warPxmQ1K1Qhg1E14CJlmXjyT1c
-	 0/fKKxwRMsbKXN6HFenJ2o75Y9fYkEukuMm6O63lYrZ2YxXBdNASc1i3P3sMJKnG1H
-	 VOSk87laMp3rBQ3JvTMS7rhQj75WEveHW7Nxr+nU=
+	b=KWKw4OjYXCCUHsftmoBX+/gorOHPnaI8v8wMxN/6lyPVXIrpEukbh56+4C+z8iu7B
+	 BuR8hAUqAS/+xL4MrMkxseDh+iNj4eTrMtDp3s7P7JPRFLxgPeI3CpMPAejfp/GP6+
+	 f1wt97VcDT11enEYKLvctI4ojoIXP+fD3JL07SwQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730599AbfAHUCW (ORCPT
+        id S1730672AbfAHUCi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 15:02:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36254 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 15:02:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36162 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730268AbfAHT3D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:29:03 -0500
+        id S1730245AbfAHT27 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:28:59 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A3EE22183F;
-        Tue,  8 Jan 2019 19:29:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 34164218A1;
+        Tue,  8 Jan 2019 19:28:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975742;
-        bh=Z8MumRHjEYYAs2Zm5KUZdX9CeyWPAbUkAtQM98nDZhY=;
+        s=default; t=1546975738;
+        bh=IrNXA9x2tMabqe/pwKtnWzB0UscfhI+RYax52idFOQ0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=scLC5Tei6Gb4XmtK2V9lun0DUS1xHGN6vp+SB38lBf6FtelV8asGbQ2U8W2sq7eyD
-         MdUZ+w/hZDuIiM9nt5tUfWEJh/ef8xuhx/T1NYX+35V/i4d6v7pKcHu3MrL6+zJlAg
-         GRfMVdzzeK+HlGyXRh4ub4DlWjAda0B9azvGj+/8=
+        b=isYOOzPkCtGSb6K9fW+GZ4C+uHKAH0FiZZITy+o5ZA9KAV+e+uj8crfJCdf83OWgb
+         ivUytY4CkD7/b3wxQMwfbQz4nkeQUMlGdFqmdblrJMLnodXnx/IoljVvzCWFU4+QHr
+         +Iw8VGE4JeO5cfVZkAK09jdarS0kFuooX1F5mlnc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nikos Tsironis <ntsironis@arrikto.com>,
-        Ilias Tsitsimpis <iliastsi@arrikto.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.20 089/117] dm kcopyd: Fix bug causing workqueue stalls
-Date:   Tue,  8 Jan 2019 14:25:57 -0500
-Message-Id: <20190108192628.121270-89-sashal@kernel.org>
+Cc:     Taehee Yoo <ap420073@gmail.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Sasha Levin <sashal@kernel.org>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 086/117] netfilter: ipt_CLUSTERIP: fix deadlock in netns exit routine
+Date:   Tue,  8 Jan 2019 14:25:54 -0500
+Message-Id: <20190108192628.121270-86-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192628.121270-1-sashal@kernel.org>
 References: <20190108192628.121270-1-sashal@kernel.org>
@@ -59,159 +60,418 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nikos Tsironis <ntsironis@arrikto.com>
+From: Taehee Yoo <ap420073@gmail.com>
 
-[ Upstream commit d7e6b8dfc7bcb3f4f3a18313581f67486a725b52 ]
+[ Upstream commit 5a86d68bcf02f2d1e9a5897dd482079fd5f75e7f ]
 
-When using kcopyd to run callbacks through dm_kcopyd_do_callback() or
-submitting copy jobs with a source size of 0, the jobs are pushed
-directly to the complete_jobs list, which could be under processing by
-the kcopyd thread. As a result, the kcopyd thread can continue running
-completed jobs indefinitely, without releasing the CPU, as long as
-someone keeps submitting new completed jobs through the aforementioned
-paths. Processing of work items, queued for execution on the same CPU as
-the currently running kcopyd thread, is thus stalled for excessive
-amounts of time, hurting performance.
+When network namespace is destroyed, cleanup_net() is called.
+cleanup_net() holds pernet_ops_rwsem then calls each ->exit callback.
+So that clusterip_tg_destroy() is called by cleanup_net().
+And clusterip_tg_destroy() calls unregister_netdevice_notifier().
 
-Running the following test, from the device mapper test suite [1],
+But both cleanup_net() and clusterip_tg_destroy() hold same
+lock(pernet_ops_rwsem). hence deadlock occurrs.
 
-  dmtest run --suite snapshot -n parallel_io_to_many_snaps_N
+After this patch, only 1 notifier is registered when module is inserted.
+And all of configs are added to per-net list.
 
-, with 8 active snapshots, we get, in dmesg, messages like the
-following:
+test commands:
+   %ip netns add vm1
+   %ip netns exec vm1 bash
+   %ip link set lo up
+   %iptables -A INPUT -p tcp -i lo -d 192.168.0.5 --dport 80 \
+	-j CLUSTERIP --new --hashmode sourceip \
+	--clustermac 01:00:5e:00:00:20 --total-nodes 2 --local-node 1
+   %exit
+   %ip netns del vm1
 
-[68899.948523] BUG: workqueue lockup - pool cpus=0 node=0 flags=0x0 nice=0 stuck for 95s!
-[68899.949282] Showing busy workqueues and worker pools:
-[68899.949288] workqueue events: flags=0x0
-[68899.949295]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=2/256
-[68899.949306]     pending: vmstat_shepherd, cache_reap
-[68899.949331] workqueue mm_percpu_wq: flags=0x8
-[68899.949337]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/256
-[68899.949345]     pending: vmstat_update
-[68899.949387] workqueue dm_bufio_cache: flags=0x8
-[68899.949392]   pwq 4: cpus=2 node=0 flags=0x0 nice=0 active=1/256
-[68899.949400]     pending: work_fn [dm_bufio]
-[68899.949423] workqueue kcopyd: flags=0x8
-[68899.949429]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/256
-[68899.949437]     pending: do_work [dm_mod]
-[68899.949452] workqueue kcopyd: flags=0x8
-[68899.949458]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=2/256
-[68899.949466]     in-flight: 13:do_work [dm_mod]
-[68899.949474]     pending: do_work [dm_mod]
-[68899.949487] workqueue kcopyd: flags=0x8
-[68899.949493]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/256
-[68899.949501]     pending: do_work [dm_mod]
-[68899.949515] workqueue kcopyd: flags=0x8
-[68899.949521]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/256
-[68899.949529]     pending: do_work [dm_mod]
-[68899.949541] workqueue kcopyd: flags=0x8
-[68899.949547]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/256
-[68899.949555]     pending: do_work [dm_mod]
-[68899.949568] pool 0: cpus=0 node=0 flags=0x0 nice=0 hung=95s workers=4 idle: 27130 27223 1084
+splat looks like:
+[  341.809674] ============================================
+[  341.809674] WARNING: possible recursive locking detected
+[  341.809674] 4.19.0-rc5+ #16 Tainted: G        W
+[  341.809674] --------------------------------------------
+[  341.809674] kworker/u4:2/87 is trying to acquire lock:
+[  341.809674] 000000005da2d519 (pernet_ops_rwsem){++++}, at: unregister_netdevice_notifier+0x8c/0x460
+[  341.809674]
+[  341.809674] but task is already holding lock:
+[  341.809674] 000000005da2d519 (pernet_ops_rwsem){++++}, at: cleanup_net+0x119/0x900
+[  341.809674]
+[  341.809674] other info that might help us debug this:
+[  341.809674]  Possible unsafe locking scenario:
+[  341.809674]
+[  341.809674]        CPU0
+[  341.809674]        ----
+[  341.809674]   lock(pernet_ops_rwsem);
+[  341.809674]   lock(pernet_ops_rwsem);
+[  341.809674]
+[  341.809674]  *** DEADLOCK ***
+[  341.809674]
+[  341.809674]  May be due to missing lock nesting notation
+[  341.809674]
+[  341.809674] 3 locks held by kworker/u4:2/87:
+[  341.809674]  #0: 00000000d9df6c92 ((wq_completion)"%s""netns"){+.+.}, at: process_one_work+0xafe/0x1de0
+[  341.809674]  #1: 00000000c2cbcee2 (net_cleanup_work){+.+.}, at: process_one_work+0xb60/0x1de0
+[  341.809674]  #2: 000000005da2d519 (pernet_ops_rwsem){++++}, at: cleanup_net+0x119/0x900
+[  341.809674]
+[  341.809674] stack backtrace:
+[  341.809674] CPU: 1 PID: 87 Comm: kworker/u4:2 Tainted: G        W         4.19.0-rc5+ #16
+[  341.809674] Workqueue: netns cleanup_net
+[  341.809674] Call Trace:
+[ ... ]
+[  342.070196]  down_write+0x93/0x160
+[  342.070196]  ? unregister_netdevice_notifier+0x8c/0x460
+[  342.070196]  ? down_read+0x1e0/0x1e0
+[  342.070196]  ? sched_clock_cpu+0x126/0x170
+[  342.070196]  ? find_held_lock+0x39/0x1c0
+[  342.070196]  unregister_netdevice_notifier+0x8c/0x460
+[  342.070196]  ? register_netdevice_notifier+0x790/0x790
+[  342.070196]  ? __local_bh_enable_ip+0xe9/0x1b0
+[  342.070196]  ? __local_bh_enable_ip+0xe9/0x1b0
+[  342.070196]  ? clusterip_tg_destroy+0x372/0x650 [ipt_CLUSTERIP]
+[  342.070196]  ? trace_hardirqs_on+0x93/0x210
+[  342.070196]  ? __bpf_trace_preemptirq_template+0x10/0x10
+[  342.070196]  ? clusterip_tg_destroy+0x372/0x650 [ipt_CLUSTERIP]
+[  342.123094]  clusterip_tg_destroy+0x3ad/0x650 [ipt_CLUSTERIP]
+[  342.123094]  ? clusterip_net_init+0x3d0/0x3d0 [ipt_CLUSTERIP]
+[  342.123094]  ? cleanup_match+0x17d/0x200 [ip_tables]
+[  342.123094]  ? xt_unregister_table+0x215/0x300 [x_tables]
+[  342.123094]  ? kfree+0xe2/0x2a0
+[  342.123094]  cleanup_entry+0x1d5/0x2f0 [ip_tables]
+[  342.123094]  ? cleanup_match+0x200/0x200 [ip_tables]
+[  342.123094]  __ipt_unregister_table+0x9b/0x1a0 [ip_tables]
+[  342.123094]  iptable_filter_net_exit+0x43/0x80 [iptable_filter]
+[  342.123094]  ops_exit_list.isra.10+0x94/0x140
+[  342.123094]  cleanup_net+0x45b/0x900
+[ ... ]
 
-Fix this by splitting the complete_jobs list into two parts: A user
-facing part, named callback_jobs, and one used internally by kcopyd,
-retaining the name complete_jobs. dm_kcopyd_do_callback() and
-dispatch_job() now push their jobs to the callback_jobs list, which is
-spliced to the complete_jobs list once, every time the kcopyd thread
-wakes up. This prevents kcopyd from hogging the CPU indefinitely and
-causing workqueue stalls.
-
-Re-running the aforementioned test:
-
-  * Workqueue stalls are eliminated
-  * The maximum writing time among all targets is reduced from 09m37.10s
-    to 06m04.85s and the total run time of the test is reduced from
-    10m43.591s to 7m19.199s
-
-[1] https://github.com/jthornber/device-mapper-test-suite
-
-Signed-off-by: Nikos Tsironis <ntsironis@arrikto.com>
-Signed-off-by: Ilias Tsitsimpis <iliastsi@arrikto.com>
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Fixes: 202f59afd441 ("netfilter: ipt_CLUSTERIP: do not hold dev")
+Signed-off-by: Taehee Yoo <ap420073@gmail.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/md/dm-kcopyd.c | 19 ++++++++++++++-----
- 1 file changed, 14 insertions(+), 5 deletions(-)
+ net/ipv4/netfilter/ipt_CLUSTERIP.c | 155 ++++++++++++++++-------------
+ 1 file changed, 87 insertions(+), 68 deletions(-)
 
-diff --git a/drivers/md/dm-kcopyd.c b/drivers/md/dm-kcopyd.c
-index 2fc4213e02b5..671c24332802 100644
---- a/drivers/md/dm-kcopyd.c
-+++ b/drivers/md/dm-kcopyd.c
-@@ -56,15 +56,17 @@ struct dm_kcopyd_client {
- 	atomic_t nr_jobs;
+diff --git a/net/ipv4/netfilter/ipt_CLUSTERIP.c b/net/ipv4/netfilter/ipt_CLUSTERIP.c
+index 33491cb6b9d1..fb1e7f237f53 100644
+--- a/net/ipv4/netfilter/ipt_CLUSTERIP.c
++++ b/net/ipv4/netfilter/ipt_CLUSTERIP.c
+@@ -57,17 +57,14 @@ struct clusterip_config {
+ 	enum clusterip_hashmode hash_mode;	/* which hashing mode */
+ 	u_int32_t hash_initval;			/* hash initialization */
+ 	struct rcu_head rcu;
+-
++	struct net *net;			/* netns for pernet list */
+ 	char ifname[IFNAMSIZ];			/* device ifname */
+-	struct notifier_block notifier;		/* refresh c->ifindex in it */
+ };
  
- /*
-- * We maintain three lists of jobs:
-+ * We maintain four lists of jobs:
-  *
-  * i)   jobs waiting for pages
-  * ii)  jobs that have pages, and are waiting for the io to be issued.
-- * iii) jobs that have completed.
-+ * iii) jobs that don't need to do any IO and just run a callback
-+ * iv) jobs that have completed.
-  *
-- * All three of these are protected by job_lock.
-+ * All four of these are protected by job_lock.
-  */
- 	spinlock_t job_lock;
-+	struct list_head callback_jobs;
- 	struct list_head complete_jobs;
- 	struct list_head io_jobs;
- 	struct list_head pages_jobs;
-@@ -625,6 +627,7 @@ static void do_work(struct work_struct *work)
- 	struct dm_kcopyd_client *kc = container_of(work,
- 					struct dm_kcopyd_client, kcopyd_work);
- 	struct blk_plug plug;
-+	unsigned long flags;
+ #ifdef CONFIG_PROC_FS
+ static const struct file_operations clusterip_proc_fops;
+ #endif
  
- 	/*
- 	 * The order that these are called is *very* important.
-@@ -633,6 +636,10 @@ static void do_work(struct work_struct *work)
- 	 * list.  io jobs call wake when they complete and it all
- 	 * starts again.
- 	 */
-+	spin_lock_irqsave(&kc->job_lock, flags);
-+	list_splice_tail_init(&kc->callback_jobs, &kc->complete_jobs);
-+	spin_unlock_irqrestore(&kc->job_lock, flags);
+-static unsigned int clusterip_net_id __read_mostly;
+-
+ struct clusterip_net {
+ 	struct list_head configs;
+ 	/* lock protects the configs list */
+@@ -78,16 +75,30 @@ struct clusterip_net {
+ #endif
+ };
+ 
++static unsigned int clusterip_net_id __read_mostly;
++static inline struct clusterip_net *clusterip_pernet(struct net *net)
++{
++	return net_generic(net, clusterip_net_id);
++}
 +
- 	blk_start_plug(&plug);
- 	process_jobs(&kc->complete_jobs, kc, run_complete_job);
- 	process_jobs(&kc->pages_jobs, kc, run_pages_job);
-@@ -650,7 +657,7 @@ static void dispatch_job(struct kcopyd_job *job)
- 	struct dm_kcopyd_client *kc = job->kc;
- 	atomic_inc(&kc->nr_jobs);
- 	if (unlikely(!job->source.count))
--		push(&kc->complete_jobs, job);
-+		push(&kc->callback_jobs, job);
- 	else if (job->pages == &zero_page_list)
- 		push(&kc->io_jobs, job);
- 	else
-@@ -858,7 +865,7 @@ void dm_kcopyd_do_callback(void *j, int read_err, unsigned long write_err)
- 	job->read_err = read_err;
- 	job->write_err = write_err;
- 
--	push(&kc->complete_jobs, job);
-+	push(&kc->callback_jobs, job);
- 	wake(kc);
+ static inline void
+ clusterip_config_get(struct clusterip_config *c)
+ {
+ 	refcount_inc(&c->refcount);
  }
- EXPORT_SYMBOL(dm_kcopyd_do_callback);
-@@ -888,6 +895,7 @@ struct dm_kcopyd_client *dm_kcopyd_client_create(struct dm_kcopyd_throttle *thro
+ 
+-
+ static void clusterip_config_rcu_free(struct rcu_head *head)
+ {
+-	kfree(container_of(head, struct clusterip_config, rcu));
++	struct clusterip_config *config;
++	struct net_device *dev;
++
++	config = container_of(head, struct clusterip_config, rcu);
++	dev = dev_get_by_name(config->net, config->ifname);
++	if (dev) {
++		dev_mc_del(dev, config->clustermac);
++		dev_put(dev);
++	}
++	kfree(config);
+ }
+ 
+ static inline void
+@@ -101,9 +112,9 @@ clusterip_config_put(struct clusterip_config *c)
+  * entry(rule) is removed, remove the config from lists, but don't free it
+  * yet, since proc-files could still be holding references */
+ static inline void
+-clusterip_config_entry_put(struct net *net, struct clusterip_config *c)
++clusterip_config_entry_put(struct clusterip_config *c)
+ {
+-	struct clusterip_net *cn = net_generic(net, clusterip_net_id);
++	struct clusterip_net *cn = clusterip_pernet(c->net);
+ 
+ 	local_bh_disable();
+ 	if (refcount_dec_and_lock(&c->entries, &cn->lock)) {
+@@ -118,8 +129,6 @@ clusterip_config_entry_put(struct net *net, struct clusterip_config *c)
+ 		spin_unlock(&cn->lock);
+ 		local_bh_enable();
+ 
+-		unregister_netdevice_notifier(&c->notifier);
+-
+ 		return;
+ 	}
+ 	local_bh_enable();
+@@ -129,7 +138,7 @@ static struct clusterip_config *
+ __clusterip_config_find(struct net *net, __be32 clusterip)
+ {
+ 	struct clusterip_config *c;
+-	struct clusterip_net *cn = net_generic(net, clusterip_net_id);
++	struct clusterip_net *cn = clusterip_pernet(net);
+ 
+ 	list_for_each_entry_rcu(c, &cn->configs, list) {
+ 		if (c->clusterip == clusterip)
+@@ -181,32 +190,37 @@ clusterip_netdev_event(struct notifier_block *this, unsigned long event,
+ 		       void *ptr)
+ {
+ 	struct net_device *dev = netdev_notifier_info_to_dev(ptr);
++	struct net *net = dev_net(dev);
++	struct clusterip_net *cn = clusterip_pernet(net);
+ 	struct clusterip_config *c;
+ 
+-	c = container_of(this, struct clusterip_config, notifier);
+-	switch (event) {
+-	case NETDEV_REGISTER:
+-		if (!strcmp(dev->name, c->ifname)) {
+-			c->ifindex = dev->ifindex;
+-			dev_mc_add(dev, c->clustermac);
+-		}
+-		break;
+-	case NETDEV_UNREGISTER:
+-		if (dev->ifindex == c->ifindex) {
+-			dev_mc_del(dev, c->clustermac);
+-			c->ifindex = -1;
+-		}
+-		break;
+-	case NETDEV_CHANGENAME:
+-		if (!strcmp(dev->name, c->ifname)) {
+-			c->ifindex = dev->ifindex;
+-			dev_mc_add(dev, c->clustermac);
+-		} else if (dev->ifindex == c->ifindex) {
+-			dev_mc_del(dev, c->clustermac);
+-			c->ifindex = -1;
++	spin_lock_bh(&cn->lock);
++	list_for_each_entry_rcu(c, &cn->configs, list) {
++		switch (event) {
++		case NETDEV_REGISTER:
++			if (!strcmp(dev->name, c->ifname)) {
++				c->ifindex = dev->ifindex;
++				dev_mc_add(dev, c->clustermac);
++			}
++			break;
++		case NETDEV_UNREGISTER:
++			if (dev->ifindex == c->ifindex) {
++				dev_mc_del(dev, c->clustermac);
++				c->ifindex = -1;
++			}
++			break;
++		case NETDEV_CHANGENAME:
++			if (!strcmp(dev->name, c->ifname)) {
++				c->ifindex = dev->ifindex;
++				dev_mc_add(dev, c->clustermac);
++			} else if (dev->ifindex == c->ifindex) {
++				dev_mc_del(dev, c->clustermac);
++				c->ifindex = -1;
++			}
++			break;
+ 		}
+-		break;
+ 	}
++	spin_unlock_bh(&cn->lock);
+ 
+ 	return NOTIFY_DONE;
+ }
+@@ -215,30 +229,44 @@ static struct clusterip_config *
+ clusterip_config_init(struct net *net, const struct ipt_clusterip_tgt_info *i,
+ 		      __be32 ip, const char *iniface)
+ {
+-	struct clusterip_net *cn = net_generic(net, clusterip_net_id);
++	struct clusterip_net *cn = clusterip_pernet(net);
+ 	struct clusterip_config *c;
++	struct net_device *dev;
+ 	int err;
+ 
++	if (iniface[0] == '\0') {
++		pr_info("Please specify an interface name\n");
++		return ERR_PTR(-EINVAL);
++	}
++
+ 	c = kzalloc(sizeof(*c), GFP_ATOMIC);
+ 	if (!c)
  		return ERR_PTR(-ENOMEM);
  
- 	spin_lock_init(&kc->job_lock);
-+	INIT_LIST_HEAD(&kc->callback_jobs);
- 	INIT_LIST_HEAD(&kc->complete_jobs);
- 	INIT_LIST_HEAD(&kc->io_jobs);
- 	INIT_LIST_HEAD(&kc->pages_jobs);
-@@ -939,6 +947,7 @@ void dm_kcopyd_client_destroy(struct dm_kcopyd_client *kc)
- 	/* Wait for completion of all jobs submitted by this client. */
- 	wait_event(kc->destroyq, !atomic_read(&kc->nr_jobs));
+-	strcpy(c->ifname, iniface);
+-	c->ifindex = -1;
+-	c->clusterip = ip;
++	dev = dev_get_by_name(net, iniface);
++	if (!dev) {
++		pr_info("no such interface %s\n", iniface);
++		kfree(c);
++		return ERR_PTR(-ENOENT);
++	}
++	c->ifindex = dev->ifindex;
++	strcpy(c->ifname, dev->name);
+ 	memcpy(&c->clustermac, &i->clustermac, ETH_ALEN);
++	dev_mc_add(dev, c->clustermac);
++	dev_put(dev);
++
++	c->clusterip = ip;
+ 	c->num_total_nodes = i->num_total_nodes;
+ 	clusterip_config_init_nodelist(c, i);
+ 	c->hash_mode = i->hash_mode;
+ 	c->hash_initval = i->hash_initval;
++	c->net = net;
+ 	refcount_set(&c->refcount, 1);
  
-+	BUG_ON(!list_empty(&kc->callback_jobs));
- 	BUG_ON(!list_empty(&kc->complete_jobs));
- 	BUG_ON(!list_empty(&kc->io_jobs));
- 	BUG_ON(!list_empty(&kc->pages_jobs));
+ 	spin_lock_bh(&cn->lock);
+ 	if (__clusterip_config_find(net, ip)) {
+-		spin_unlock_bh(&cn->lock);
+-		kfree(c);
+-
+-		return ERR_PTR(-EBUSY);
++		err = -EBUSY;
++		goto out_config_put;
+ 	}
+ 
+ 	list_add_rcu(&c->list, &cn->configs);
+@@ -260,22 +288,17 @@ clusterip_config_init(struct net *net, const struct ipt_clusterip_tgt_info *i,
+ 	}
+ #endif
+ 
+-	c->notifier.notifier_call = clusterip_netdev_event;
+-	err = register_netdevice_notifier(&c->notifier);
+-	if (!err) {
+-		refcount_set(&c->entries, 1);
+-		return c;
+-	}
++	refcount_set(&c->entries, 1);
++	return c;
+ 
+ #ifdef CONFIG_PROC_FS
+-	proc_remove(c->pde);
+ err:
+ #endif
+ 	spin_lock_bh(&cn->lock);
+ 	list_del_rcu(&c->list);
++out_config_put:
+ 	spin_unlock_bh(&cn->lock);
+ 	clusterip_config_put(c);
+-
+ 	return ERR_PTR(err);
+ }
+ 
+@@ -475,21 +498,6 @@ static int clusterip_tg_check(const struct xt_tgchk_param *par)
+ 				&e->ip.dst.s_addr);
+ 			return -EINVAL;
+ 		} else {
+-			struct net_device *dev;
+-
+-			if (e->ip.iniface[0] == '\0') {
+-				pr_info("Please specify an interface name\n");
+-				return -EINVAL;
+-			}
+-
+-			dev = dev_get_by_name(par->net, e->ip.iniface);
+-			if (!dev) {
+-				pr_info("no such interface %s\n",
+-					e->ip.iniface);
+-				return -ENOENT;
+-			}
+-			dev_put(dev);
+-
+ 			config = clusterip_config_init(par->net, cipinfo,
+ 						       e->ip.dst.s_addr,
+ 						       e->ip.iniface);
+@@ -503,7 +511,7 @@ static int clusterip_tg_check(const struct xt_tgchk_param *par)
+ 	if (ret < 0) {
+ 		pr_info("cannot load conntrack support for proto=%u\n",
+ 			par->family);
+-		clusterip_config_entry_put(par->net, config);
++		clusterip_config_entry_put(config);
+ 		clusterip_config_put(config);
+ 		return ret;
+ 	}
+@@ -525,7 +533,7 @@ static void clusterip_tg_destroy(const struct xt_tgdtor_param *par)
+ 
+ 	/* if no more entries are referencing the config, remove it
+ 	 * from the list and destroy the proc entry */
+-	clusterip_config_entry_put(par->net, cipinfo->config);
++	clusterip_config_entry_put(cipinfo->config);
+ 
+ 	clusterip_config_put(cipinfo->config);
+ 
+@@ -807,7 +815,7 @@ static const struct file_operations clusterip_proc_fops = {
+ 
+ static int clusterip_net_init(struct net *net)
+ {
+-	struct clusterip_net *cn = net_generic(net, clusterip_net_id);
++	struct clusterip_net *cn = clusterip_pernet(net);
+ 	int ret;
+ 
+ 	INIT_LIST_HEAD(&cn->configs);
+@@ -832,7 +840,7 @@ static int clusterip_net_init(struct net *net)
+ 
+ static void clusterip_net_exit(struct net *net)
+ {
+-	struct clusterip_net *cn = net_generic(net, clusterip_net_id);
++	struct clusterip_net *cn = clusterip_pernet(net);
+ #ifdef CONFIG_PROC_FS
+ 	proc_remove(cn->procdir);
+ 	cn->procdir = NULL;
+@@ -847,6 +855,10 @@ static struct pernet_operations clusterip_net_ops = {
+ 	.size = sizeof(struct clusterip_net),
+ };
+ 
++struct notifier_block cip_netdev_notifier = {
++	.notifier_call = clusterip_netdev_event
++};
++
+ static int __init clusterip_tg_init(void)
+ {
+ 	int ret;
+@@ -859,11 +871,17 @@ static int __init clusterip_tg_init(void)
+ 	if (ret < 0)
+ 		goto cleanup_subsys;
+ 
++	ret = register_netdevice_notifier(&cip_netdev_notifier);
++	if (ret < 0)
++		goto unregister_target;
++
+ 	pr_info("ClusterIP Version %s loaded successfully\n",
+ 		CLUSTERIP_VERSION);
+ 
+ 	return 0;
+ 
++unregister_target:
++	xt_unregister_target(&clusterip_tg_reg);
+ cleanup_subsys:
+ 	unregister_pernet_subsys(&clusterip_net_ops);
+ 	return ret;
+@@ -873,6 +891,7 @@ static void __exit clusterip_tg_exit(void)
+ {
+ 	pr_info("ClusterIP Version %s unloading\n", CLUSTERIP_VERSION);
+ 
++	unregister_netdevice_notifier(&cip_netdev_notifier);
+ 	xt_unregister_target(&clusterip_tg_reg);
+ 	unregister_pernet_subsys(&clusterip_net_ops);
+ 
 -- 
 2.19.1
 
