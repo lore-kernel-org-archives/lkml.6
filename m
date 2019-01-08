@@ -2,229 +2,127 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42E7AC43612
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 13:05:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D47F2C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 13:05:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B0152087E
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 13:05:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9CEB72087F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 13:05:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hNLPwfjj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728127AbfAHNFD (ORCPT
+        id S1728181AbfAHNFI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 08:05:03 -0500
-Received: from mga07.intel.com ([134.134.136.100]:31757 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727473AbfAHNFC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 08:05:02 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jan 2019 05:05:02 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,454,1539673200"; 
-   d="scan'208";a="132646411"
-Received: from paasikivi.fi.intel.com ([10.237.72.42])
-  by fmsmga002.fm.intel.com with ESMTP; 08 Jan 2019 05:04:58 -0800
-Received: by paasikivi.fi.intel.com (Postfix, from userid 1000)
-        id C377F20948; Tue,  8 Jan 2019 15:04:57 +0200 (EET)
-Date:   Tue, 8 Jan 2019 15:04:57 +0200
-From:   Sakari Ailus <sakari.ailus@linux.intel.com>
-To:     Vishal Sagar <vishal.sagar@xilinx.com>
-Cc:     hyun.kwon@xilinx.com, laurent.pinchart@ideasonboard.com,
-        michal.simek@xilinx.com, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, hans.verkuil@cisco.com,
-        mchehab@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        dineshk@xilinx.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] media: dt-bindings: media: xilinx: Add Xilinx MIPI
- CSI-2 Rx Subsystem
-Message-ID: <20190108130457.syjuq7u7vep3km3h@paasikivi.fi.intel.com>
-References: <1527620084-94864-1-git-send-email-vishal.sagar@xilinx.com>
- <1527620084-94864-2-git-send-email-vishal.sagar@xilinx.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1527620084-94864-2-git-send-email-vishal.sagar@xilinx.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Tue, 8 Jan 2019 08:05:08 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:36888 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727473AbfAHNFI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 08:05:08 -0500
+Received: by mail-pg1-f195.google.com with SMTP id c25so1723777pgb.4;
+        Tue, 08 Jan 2019 05:05:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=PxXkslBAlSJzljYoz5a9XaC/5ylc7ABn3sw1j74NO/w=;
+        b=hNLPwfjjeJc7N7ii8wHPmq2rB+7ctOa30BRtL91KeMN4wP2Ph2HlBsHzC5pKAJLdL2
+         q1eBKQ92XBr9rwBkmsyp55UMZCWefxIx429aIzs7OheTnWqVkuydQSWBI7CY0YxlgaOB
+         TRP6nxuLS6/B+eNL1PntPxZYLNjNw/5jZCkoIauQJFQEzF2SUW0PNCI0Wl1KiuKrInGe
+         J1aBY72abjbrk3Hx4g5mL5gzjvQG2C2Mvs6pK+2v9tH5TpTHw0xNxnOHtA2QqtKbBR4a
+         FbgYji6DqPWsmycefzfVjkquuN+MfAS/UAeVpPucFfoDk7dE9KyaKP08NMtjIJLNTtTH
+         irSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=PxXkslBAlSJzljYoz5a9XaC/5ylc7ABn3sw1j74NO/w=;
+        b=ocVaCfvMypfCZ3zs7cw94vq8fscnAupJfYTYUL0OpgWInQlDUveygMhC0kUE7eqrTV
+         d59ZCY9IXG5qQyPWeR0/UcqjJ4iaiBwIytEMg5mwwqWB32dxI36M0u0fsL2Udc8SnUV/
+         UfZIvkj+sFKBuQjgKEw8enPJkr49KGPV6S00AEm3lASQz60A1ykmeAPn42Eg+UqzYmCr
+         WqPX/MNMc/z3g/Ub/tVuosia/G2cOoDrNNcks90Xfomuh2zNoXfa3cFy9eIQbXnuj/IU
+         ZoMXmDLntZT0Jhw4Iq/HEEa7aVQ4dZ+iywEU31vigswTANpzbdEpgT/uFSn/a/GCgRCj
+         VlkQ==
+X-Gm-Message-State: AJcUukeW9GO9Nbz7fe7QI+h9YBoDb3GWzIr5mDcoJm/P9zjD+VZH9J4f
+        3wUdUtiBQxzF1jSS/QvKYWE=
+X-Google-Smtp-Source: ALg8bN5wNMRSoEFdWSxsVcCtuwm34hfaKlZeWDjKz2rECCn9hTpS+RPpakDI7oqb6foOZRsiWRURjA==
+X-Received: by 2002:a62:442:: with SMTP id 63mr1645432pfe.156.1546952707326;
+        Tue, 08 Jan 2019 05:05:07 -0800 (PST)
+Received: from localhost.localdomain ([2402:f000:1:4414:811b:a348:3027:e3a0])
+        by smtp.gmail.com with ESMTPSA id s190sm101281486pfb.103.2019.01.08.05.05.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 08 Jan 2019 05:05:06 -0800 (PST)
+From:   Jia-Ju Bai <baijiaju1990@gmail.com>
+To:     isdn@linux-pingi.de, viro@zeniv.linux.org.uk, davem@davemloft.net,
+        linux@roeck-us.net
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH] isdn: i4l: isdn_tty: Fix some concurrency double-free bugs
+Date:   Tue,  8 Jan 2019 21:04:48 +0800
+Message-Id: <20190108130448.22102-1-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vishal,
+The functions isdn_tty_tiocmset() and isdn_tty_set_termios() may be
+concurrently executed.
 
-The patchset hard escaped me somehow earlier and your reply to Rob made me
-notice it again. Thanks. :-)
+isdn_tty_tiocmset
+  isdn_tty_modem_hup
+    line 719: kfree(info->dtmf_state);
+    line 721: kfree(info->silence_state);
+    line 723: kfree(info->adpcms);
+    line 725: kfree(info->adpcmr);
 
-On Wed, May 30, 2018 at 12:24:43AM +0530, Vishal Sagar wrote:
-> Add bindings documentation for Xilinx MIPI CSI-2 Rx Subsystem.
-> 
-> The Xilinx MIPI CSI-2 Rx Subsystem consists of a DPHY, CSI-2 Rx, an
-> optional I2C controller and an optional Video Format Bridge (VFB). The
-> active lanes can be configured at run time if enabled in the IP. The
-> DPHY register interface may also be enabled.
-> 
-> Signed-off-by: Vishal Sagar <vishal.sagar@xilinx.com>
-> ---
->  .../bindings/media/xilinx/xlnx,csi2rxss.txt        | 117 +++++++++++++++++++++
->  1 file changed, 117 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/media/xilinx/xlnx,csi2rxss.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/media/xilinx/xlnx,csi2rxss.txt b/Documentation/devicetree/bindings/media/xilinx/xlnx,csi2rxss.txt
-> new file mode 100644
-> index 0000000..31ed721
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/xilinx/xlnx,csi2rxss.txt
-> @@ -0,0 +1,117 @@
-> +
+isdn_tty_set_termios
+  isdn_tty_modem_hup
+    line 719: kfree(info->dtmf_state);
+    line 721: kfree(info->silence_state);
+    line 723: kfree(info->adpcms);
+    line 725: kfree(info->adpcmr);
 
-Extra newline.
+Thus, some concurrency double-free bugs may occur.
 
-> +Xilinx MIPI CSI2 Receiver Subsystem Device Tree Bindings
-> +--------------------------------------------------------
-> +
-> +The Xilinx MIPI CSI2 Receiver Subsystem is used to capture MIPI CSI2 traffic
-> +from compliant camera sensors and send the output as AXI4 Stream video data
-> +for image processing.
-> +
-> +The subsystem consists of a MIPI DPHY in slave mode which captures the
-> +data packets. This is passed along the MIPI CSI2 Rx IP which extracts the
-> +packet data. This data is taken in by the Video Format Bridge (VFB),
-> +if selected, and converted into AXI4 Stream video data at selected
-> +pixels per clock as per AXI4-Stream Video IP and System Design UG934.
-> +
-> +For more details, please refer to PG232 MIPI CSI-2 Receiver Subsystem.
-> +https://www.xilinx.com/support/documentation/ip_documentation/mipi_csi2_rx_subsystem/v3_0/pg232-mipi-csi2-rx.pdf
-> +
-> +Required properties:
-> +
-> +- compatible: Must contain "xlnx,mipi-csi2-rx-subsystem-2.0" or
-> +  "xlnx,mipi-csi2-rx-subsystem-3.0"
-> +
-> +- reg: Physical base address and length of the registers set for the device.
-> +
-> +- interrupt-parent: specifies the phandle to the parent interrupt controller
-> +
-> +- interrupts: Property with a value describing the interrupt number.
-> +
-> +- xlnx,max-lanes: Maximum active lanes in the design.
-> +
-> +- xlnx,vc: Virtual Channel, specifies virtual channel number to be filtered.
-> +  If this is 4 then all virtual channels are allowed.
+These possible bugs are found by a static tool written by myself and 
+my manual code review.
 
-This seems like something a driver should configure, based on the
-configuration of the connected device.
+To fix these possible bugs, the mutex lock "modem_info_mutex" used in
+isdn_tty_tiocmset() is added in isdn_tty_set_termios().
 
-> +
-> +- xlnx,csi-pxl-format: This denotes the CSI Data type selected in hw design.
-> +  Packets other than this data type (except for RAW8 and User defined data
-> +  types) will be filtered out. Possible values are RAW6, RAW7, RAW8, RAW10,
-> +  RAW12, RAW14, RGB444, RGB555, RGB565, RGB666, RGB888 and YUV4228bit.
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+---
+ drivers/isdn/i4l/isdn_tty.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-This should be configured at runtime instead through V4L2 sub-device
-interface; it's not a property of the hardware.
-
-> +
-> +- xlnx,axis-tdata-width: AXI Stream width, This denotes the AXI Stream width.
-> +  It depends on Data type chosen, Video Format Bridge enabled/disabled and
-> +  pixels per clock. If VFB is disabled then its value is either 0x20 (32 bit)
-> +  or 0x40(64 bit) width.
-> +
-> +- xlnx,video-format, xlnx,video-width: Video format and width, as defined in
-> +  video.txt.
-
-Ditto.
-
-> +
-> +- port: Video port, using the DT bindings defined in ../video-interfaces.txt.
-> +  The CSI 2 Rx Subsystem has a two ports, one input port for connecting to
-> +  camera sensor and other is output port.
-> +
-> +- data-lanes: The number of data lanes through which CSI2 Rx Subsystem is
-> +  connected to the camera sensor as per video-interfaces.txt
-
-This is somewhat different from the documentation in video-interfaces.txt.
-Could you align the two? I don't think there's a need to document standard
-properties in device binding files elaborately; rather just the hardware
-specific bits.
-
-> +
-> +Optional properties:
-> +
-> +- xlnx,en-active-lanes: Enable Active lanes configuration in Protocol
-> +  Configuration Register.
-> +
-> +- xlnx,dphy-present: This is equivalent to whether DPHY register interface is
-> +  enabled or not.
-> +
-> +- xlnx,iic-present: This shows whether subsystem's IIC is present or not. This
-> +  affects the base address of the DPHY.
-> +
-> +- xlnx,vfb: Video Format Bridge, Denotes if Video Format Bridge is selected
-> +  so that output is as per AXI stream documented in UG934.
-> +
-> +- xlnx,ppc: Pixels per clock, Number of pixels to be transferred per pixel
-> +  clock. This is valid only if xlnx,vfb property is present.
-> +
-> +Example:
-> +
-> +       csiss_1: csiss@a0020000 {
-> +               compatible = "xlnx,mipi-csi2-rx-subsystem-3.0";
-> +               reg = <0x0 0xa0020000 0x0 0x20000>;
-> +               interrupt-parent = <&gic>;
-> +               interrupts = <0 95 4>;
-> +
-> +               xlnx,max-lanes = <0x4>;
-> +               xlnx,en-active-lanes;
-> +               xlnx,dphy-present;
-> +               xlnx,iic-present;
-> +               xlnx,vc = <0x4>;
-> +               xlnx,csi-pxl-format = "RAW8";
-> +               xlnx,vfb;
-> +               xlnx,ppc = <0x4>;
-> +               xlnx,axis-tdata-width = <0x20>;
-> +
-> +               ports {
-> +                       #address-cells = <1>;
-> +                       #size-cells = <0>;
-> +
-> +                       port@0 {
-> +                               reg = <0>;
-> +
-> +                               xlnx,video-format = <XVIP_VF_YUV_422>;
-> +                               xlnx,video-width = <8>;
-> +                               csiss_out: endpoint {
-> +                                       remote-endpoint = <&vcap_csiss_in>;
-> +                               };
-> +                       };
-> +                       port@1 {
-> +                               reg = <1>;
-> +
-> +                               xlnx,video-format = <XVIP_VF_YUV_422>;
-> +                               xlnx,video-width = <8>;
-> +
-> +                               csiss_in: endpoint {
-> +                                       data-lanes = <1 2 3 4>;
-> +                                       /* MIPI CSI2 Camera handle */
-> +                                       remote-endpoint = <&vs2016_out>;
-> +                               };
-> +
-> +                       };
-> +
-> +               };
-> +       };
-> --
-> 2.7.4
-> 
-> This email and any attachments are intended for the sole use of the named recipient(s) and contain(s) confidential information that may be proprietary, privileged or copyrighted under applicable law. If you are not the intended recipient, do not read, copy, or forward this email message or any attachments. Delete this email message and any attachments immediately.
-
-Could you drop this from v2?
-
+diff --git a/drivers/isdn/i4l/isdn_tty.c b/drivers/isdn/i4l/isdn_tty.c
+index 1b2239c1d569..dc1cded716c1 100644
+--- a/drivers/isdn/i4l/isdn_tty.c
++++ b/drivers/isdn/i4l/isdn_tty.c
+@@ -1437,15 +1437,19 @@ isdn_tty_set_termios(struct tty_struct *tty, struct ktermios *old_termios)
+ {
+ 	modem_info *info = (modem_info *) tty->driver_data;
+ 
++	mutex_lock(&modem_info_mutex);
+ 	if (!old_termios)
+ 		isdn_tty_change_speed(info);
+ 	else {
+ 		if (tty->termios.c_cflag == old_termios->c_cflag &&
+ 		    tty->termios.c_ispeed == old_termios->c_ispeed &&
+-		    tty->termios.c_ospeed == old_termios->c_ospeed)
++		    tty->termios.c_ospeed == old_termios->c_ospeed) {
++			mutex_unlock(&modem_info_mutex);
+ 			return;
++		}
+ 		isdn_tty_change_speed(info);
+ 	}
++	mutex_unlock(&modem_info_mutex);
+ }
+ 
+ /*
 -- 
-Regards,
+2.17.0
 
-Sakari Ailus
-sakari.ailus@linux.intel.com
