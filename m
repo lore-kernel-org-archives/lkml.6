@@ -2,110 +2,82 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC591C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:47:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE1A9C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:47:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9EAD6218AE
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:47:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A72782087F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:47:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="eqcDhZRb"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="RT8LQv5M";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="HPrQVL2f"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728790AbfAHQr3 (ORCPT
+        id S1728964AbfAHQrr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 11:47:29 -0500
-Received: from mail-oi1-f176.google.com ([209.85.167.176]:45314 "EHLO
-        mail-oi1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728186AbfAHQr2 (ORCPT
+        Tue, 8 Jan 2019 11:47:47 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:60314 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728238AbfAHQrq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 11:47:28 -0500
-Received: by mail-oi1-f176.google.com with SMTP id y1so3816377oie.12
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 08:47:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=5F7KowujNYJoSVlUhp9UqsX5YDaMPUUHUAaZe8ONM5k=;
-        b=eqcDhZRbYaeVwlzixdGGfAHbhGbOKHCK+3VHRPwaI6U0bZGMzTElUwAZjp+hQSuJ0Q
-         d5r748jpi34H6hp/FSZZZQgMku8WEo7f7lZXbLUN29kXrZ4/MN5yxCD1O5mfojDO7ruJ
-         r5/fpXQH2hsc+/kldGiiZ/GN1JwFpp9+9XQHg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=5F7KowujNYJoSVlUhp9UqsX5YDaMPUUHUAaZe8ONM5k=;
-        b=NxxsoeAdrHXCLpKWxwDwDrkHJntUIz7xLacdCVH3CLy5aZmcE8f/pPQ/N8huZkOrWq
-         uoCZXuM+YzywHX3oFR+kmbt/ao0rgKYZyonas4L8PgJGSrR6aco3SIjXb0Yli6gGomFO
-         v72MNkH+AYUrbWinxSx3vvayM5Z9BemO+lAOK5b/w3r9V9k605UzZC21m1FSxaBCDjMO
-         WJe6WphuC/XF9RHxMMqh+MVEF+BySWJSClSpsS9u/QgAnQJEog6mq7qLzLq6EGh16WIB
-         MLLuyycFjvSaMYWu4eKRgYJ17MLyppy7TtHKHbLelzna4myEEooPEGcVERfqJXyoAz0a
-         0B7w==
-X-Gm-Message-State: AJcUukf0h3QvneLGuV/rwU7J/i5b3kL+JhEim0ULiNCIs+Ycd7yuj/nI
-        E1iHaSizd9YPAgmb7Mk2JzX8cbJFmVKTUVrchktKRiCY
-X-Google-Smtp-Source: ALg8bN4KzUjnINnZZqABPJEyY+FWeKnG0G4FkY40Z3pZZumj5ySAuSVurt4aHFNvfq529lM3BwjzHXHJIe1M1gHVkVU=
-X-Received: by 2002:aca:ac56:: with SMTP id v83mr1512859oie.265.1546966047661;
- Tue, 08 Jan 2019 08:47:27 -0800 (PST)
+        Tue, 8 Jan 2019 11:47:46 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id C53EC609C3; Tue,  8 Jan 2019 16:47:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1546966066;
+        bh=xPLPICHJjcYTSuDHaMnI7hYtEDaQuYyW1Ye7JT0LB6o=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=RT8LQv5MFM83TgxImfQuOXhHzFKoCWrDQW9OT1CgnFUV2cvTyZQf92blKF+hbzArF
+         ptYmtlqkEfB/HslMme4gvT3ftXAbkiTiIwSCvEwDsifBz3dSPtfMdkWJ3wHPmC3E2y
+         xCrtp4VlGdoYX685MDijO8JHJXVBANyI1knDOrAE=
+Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 7C2AA609C3;
+        Tue,  8 Jan 2019 16:47:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1546966064;
+        bh=xPLPICHJjcYTSuDHaMnI7hYtEDaQuYyW1Ye7JT0LB6o=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=HPrQVL2fbiD4tA5ZSzBjrvBgx8j9rqndLiRmTjl2thl8gu4n9jWwAWmw2ulpcQblV
+         7DyLXA5abmnpxMFasJ9O/Zf+4WtbHbdOC74G1bHX5efixtsoqE4Df11f6jmHNRN0bP
+         cVj9bC5t5V8k+fYBiFLo9ERKvLgwsTG9WeANU4To=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7C2AA609C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From:   Kalle Valo <kvalo@codeaurora.org>
+To:     Kangjie Lu <kjlu@umn.edu>
+Cc:     pakki001@umn.edu, "David S. Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] wireless: ath: return error code upstream
+References: <20181226064328.75897-1-kjlu@umn.edu>
+Date:   Tue, 08 Jan 2019 18:47:39 +0200
+In-Reply-To: <20181226064328.75897-1-kjlu@umn.edu> (Kangjie Lu's message of
+        "Wed, 26 Dec 2018 00:43:28 -0600")
+Message-ID: <87r2dnqeok.fsf@kamboji.qca.qualcomm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-References: <20181230174838.32330-13-sam@ravnborg.org> <ab7424bd-dcaf-3dbd-9ade-9067831550b3@tronnes.org>
-In-Reply-To: <ab7424bd-dcaf-3dbd-9ade-9067831550b3@tronnes.org>
-From:   Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Date:   Tue, 8 Jan 2019 17:47:16 +0100
-Message-ID: <CA+M3ks7_zvDxK8e5M9L24hcw3oyczmLOfH5PZ_RtdxjkGV83gQ@mail.gmail.com>
-Subject: Re: [PATCH v2 12/14] drm/stm: do not reply on drmP.h from drm_gem_cma_helper.h
-To:     =?UTF-8?Q?Noralf_Tr=C3=B8nnes?= <noralf@tronnes.org>
-Cc:     Sam Ravnborg <sam@ravnborg.org>, Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>,
-        David Lechner <david@lechnology.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ML dri-devel <dri-devel@lists.freedesktop.org>,
-        Yannick Fertre <yannick.fertre@st.com>,
-        Vincent Abriou <vincent.abriou@st.com>,
-        Philippe Cornu <philippe.cornu@st.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Le lun. 7 janv. 2019 =C3=A0 16:59, Noralf Tr=C3=B8nnes <noralf@tronnes.org>=
- a =C3=A9crit :
->
->
->
-> Den 30.12.2018 18.48, skrev Sam Ravnborg:
-> > drmP.h was the only header file in the past and a lot
-> > of files rely on that drmP.h defines everything.
-> > The goal is to one day to delete drmP.h and
-> > as a step towards this it will no longer be included in the
-> > headers files in include/drm/
-> >
-> > To prepare stm/ for this add dependencies that
-> > othwewise was pulled in by drmP.h from drm_gem_cma_helper.h
-> >
-> > Sort the include list when we anyway modify it.
-> >
-> > Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
-> > Cc: Yannick Fertre <yannick.fertre@st.com>
-> > Cc: Philippe Cornu <philippe.cornu@st.com>
-> > Cc: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-> > Cc: Vincent Abriou <vincent.abriou@st.com>
-> > Cc: David Airlie <airlied@linux.ie>
-> > Cc: Daniel Vetter <daniel@ffwll.ch>
-> > ---
->
-> Acked-by: Noralf Tr=C3=B8nnes <noralf@tronnes.org>
+Kangjie Lu <kjlu@umn.edu> writes:
 
-Acked-by: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+> ath6kl_wmi_cmd_send could fail, so let's return its error code upstream.
+>
+> Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+> ---
+>  drivers/net/wireless/ath/ath6kl/wmi.c | 4 +---
 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+The correct prefix is "ath6kl: " but I can fix that.
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches#commit_title_is_wrong
+
+-- 
+Kalle Valo
