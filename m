@@ -4,49 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AC11C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:27:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A382C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:27:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B0F120827
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:27:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A96720827
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:27:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546964821;
-	bh=64GvxRqalkwbJOhimS3MRy6tLjHfLjrlLw1hDaevgfk=;
+	s=default; t=1546964828;
+	bh=GnBTm+DeAfY68Ta9VlAGebfCzp0Ny1jRJ1P4AuotXPA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=tx7vuxYUvWtH80qTDFgf066OftuvV5ELQCkpRRPfF9yHZ19UKkRjE0Abn0n5N/kGW
-	 tj4yYZ23QVIiMCjKy+cpFLfMsURvs/Hg2/SMDtvDNDmB47SCPrXMGGxHQ1EgSJ7j2S
-	 6mcMbaVSZ/SyhVn+PBTFtpcdWCL3/FMWPsYQ35ds=
+	b=LZTGhmWVAaag9ZjbaQKp2qi/OGLbRrpEvqotrvPZy+MngA8mcOcg3AN3vg0FwIE3D
+	 T7M+/ELvO45eG0ZEtcHR2iNwTGqFANl8MRqNI6Iwuw+58NbQWqLUJbdEOyI7lvM+GA
+	 uDVvlLTPoxmQD0p0i7fvBnz7QSWlklw3Y7rYMUzA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729485AbfAHQ1A (ORCPT
+        id S1729574AbfAHQ1H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 11:27:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36054 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 11:27:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36170 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729389AbfAHQ06 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 11:26:58 -0500
+        id S1728238AbfAHQ1F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 11:27:05 -0500
 Received: from localhost.localdomain (unknown [218.0.237.216])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AC26E214C6;
-        Tue,  8 Jan 2019 16:26:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A4BC92171F;
+        Tue,  8 Jan 2019 16:26:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546964817;
-        bh=64GvxRqalkwbJOhimS3MRy6tLjHfLjrlLw1hDaevgfk=;
+        s=default; t=1546964824;
+        bh=GnBTm+DeAfY68Ta9VlAGebfCzp0Ny1jRJ1P4AuotXPA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ik0Uq1AXQVkkDjwU180gQlZhzVcb3ext6eWYjmHiUGnTN3gpuqn62LWoPsd5ylwRw
-         cPTOU3NuDpxSrOSxMh+sbNaksEtDZowPdJ1nbhKDTxsKBcfkFv+FTCfPOM8oWXQmK5
-         BOlZfkKUOBHwfU+IWLyVBTlsqHwAdZNduHfx3kWI=
+        b=djCln0PCaBSjTR1zoj/eW6jWwlQ03soI02jRdbtCtrjnhGM6BEYpxJ76d+SDzXtwN
+         ESlNlW+CdbKCOTLNAXJMuz0b2C2yXtve5BTy1Fv4hsBOn7KQDSgRhGFVyVpCuZf53T
+         h6BmQ2yU+KUBB/JKvlptZJHQEA2XrfJJ13ry/yLI=
 From:   guoren@kernel.org
 To:     tglx@linutronix.de, marc.zyngier@arm.com, arnd@arndb.de
 Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arch@vger.kernel.org, mhocko@kernel.org,
         torvalds@linux-foundation.org, linux@roeck-us.net,
-        Guo Ren <ren_guo@c-sky.com>, Hui Kai <huikai@acoinfo.com>
-Subject: [PATCH 2/5] csky: fixup relocation error with 807 & 860
-Date:   Wed,  9 Jan 2019 00:26:35 +0800
-Message-Id: <1546964798-30067-2-git-send-email-guoren@kernel.org>
+        Guo Ren <ren_guo@c-sky.com>,
+        Lu Baoquan <lu.baoquan@intellif.com>
+Subject: [PATCH 3/5] csky: fixup CACHEV1 store instruction fast retire
+Date:   Wed,  9 Jan 2019 00:26:36 +0800
+Message-Id: <1546964798-30067-3-git-send-email-guoren@kernel.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1546964798-30067-1-git-send-email-guoren@kernel.org>
 References: <1546964798-30067-1-git-send-email-guoren@kernel.org>
@@ -57,86 +59,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Guo Ren <ren_guo@c-sky.com>
 
-810 doesn't support jsri instruction and csky-as will leave
-jsri + nop for relocation. Module-probe need replace them with
-lrw + jsr.
+For I/O access, 810/807 store instruction fast retire will cause wrong
+primitive. For example:
+
+	stw (clear interrupt source)
+	stw (unmask interrupt controller)
+	enable interrupt
+
+stw is fast retire instruction. When PC is run at enable interrupt
+stage, the clear interrupt source hasn't finished. It will cause another
+wrong irq-enter.
+
+So use mb() to prevent above.
 
 Signed-off-by: Guo Ren <ren_guo@c-sky.com>
-Cc: Hui Kai <huikai@acoinfo.com>
+Cc: Lu Baoquan <lu.baoquan@intellif.com>
 ---
- arch/csky/kernel/module.c | 38 ++++++++++++++++++++++----------------
- 1 file changed, 22 insertions(+), 16 deletions(-)
+ arch/csky/include/asm/io.h | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-diff --git a/arch/csky/kernel/module.c b/arch/csky/kernel/module.c
-index 65abab0..0b028ee 100644
---- a/arch/csky/kernel/module.c
-+++ b/arch/csky/kernel/module.c
-@@ -12,7 +12,7 @@
- #include <linux/spinlock.h>
- #include <asm/pgtable.h>
+diff --git a/arch/csky/include/asm/io.h b/arch/csky/include/asm/io.h
+index ecae6b3..c1dfa9c 100644
+--- a/arch/csky/include/asm/io.h
++++ b/arch/csky/include/asm/io.h
+@@ -15,6 +15,31 @@ extern void iounmap(void *addr);
+ extern int remap_area_pages(unsigned long address, phys_addr_t phys_addr,
+ 		size_t size, unsigned long flags);
  
--#if defined(__CSKYABIV2__)
-+#ifdef CONFIG_CPU_CK810
- #define IS_BSR32(hi16, lo16)		(((hi16) & 0xFC00) == 0xE000)
- #define IS_JSRI32(hi16, lo16)		((hi16) == 0xEAE0)
- 
-@@ -25,6 +25,26 @@
- 	*(uint16_t *)(addr) = 0xE8Fa;		\
- 	*((uint16_t *)(addr) + 1) = 0x0000;	\
- } while (0)
++/*
++ * I/O memory access primitives. Reads are ordered relative to any
++ * following Normal memory access. Writes are ordered relative to any prior
++ * Normal memory access.
++ *
++ * For CACHEV1 (807, 810), store instruction could fast retire, so we need
++ * another mb() to prevent st fast retire.
++ *
++ * For CACHEV2 (860), store instruction with PAGE_ATTR_NO_BUFFERABLE won't
++ * fast retire.
++ */
++#define readb(c)		({ u8  __v = readb_relaxed(c); rmb(); __v; })
++#define readw(c)		({ u16 __v = readw_relaxed(c); rmb(); __v; })
++#define readl(c)		({ u32 __v = readl_relaxed(c); rmb(); __v; })
 +
-+static void jsri_2_lrw_jsr(uint32_t *location)
-+{
-+	uint16_t location_tmp = (uint16_t *)location;
-+
-+	if (IS_BSR32(*location_tmp, *(location_tmp + 1)))
-+		return;
-+
-+	if (IS_JSRI32(*location_tmp, *(location_tmp + 1))) {
-+		/* jsri 0x...  --> lrw r26, 0x... */
-+		CHANGE_JSRI_TO_LRW(location);
-+		/* lsli r0, r0 --> jsr r26 */
-+		SET_JSR32_R26(location + 1);
-+	}
-+}
++#ifdef CONFIG_CPU_HAS_CACHEV2
++#define writeb(v,c)		({ wmb(); writeb_relaxed((v),(c)); })
++#define writew(v,c)		({ wmb(); writew_relaxed((v),(c)); })
++#define writel(v,c)		({ wmb(); writel_relaxed((v),(c)); })
 +#else
-+static void inline jsri_2_lrw_jsr(uint32_t *location)
-+{
-+	return;
-+}
- #endif
- 
- int apply_relocate_add(Elf32_Shdr *sechdrs, const char *strtab,
-@@ -35,9 +55,6 @@ int apply_relocate_add(Elf32_Shdr *sechdrs, const char *strtab,
- 	Elf32_Sym	*sym;
- 	uint32_t	*location;
- 	short		*temp;
--#if defined(__CSKYABIV2__)
--	uint16_t	*location_tmp;
--#endif
- 
- 	for (i = 0; i < sechdrs[relsec].sh_size / sizeof(*rel); i++) {
- 		/* This is where to make the change */
-@@ -59,18 +76,7 @@ int apply_relocate_add(Elf32_Shdr *sechdrs, const char *strtab,
- 		case R_CSKY_PCRELJSR_IMM11BY2:
- 			break;
- 		case R_CSKY_PCRELJSR_IMM26BY2:
--#if defined(__CSKYABIV2__)
--			location_tmp = (uint16_t *)location;
--			if (IS_BSR32(*location_tmp, *(location_tmp + 1)))
--				break;
--
--			if (IS_JSRI32(*location_tmp, *(location_tmp + 1))) {
--				/* jsri 0x...  --> lrw r26, 0x... */
--				CHANGE_JSRI_TO_LRW(location);
--				/* lsli r0, r0 --> jsr r26 */
--				SET_JSR32_R26(location + 1);
--			}
--#endif
-+			jsri_2_lrw_jsr(location);
- 			break;
- 		case R_CSKY_ADDR_HI16:
- 			temp = ((short  *)location) + 1;
++#define writeb(v,c)		({ wmb(); writeb_relaxed((v),(c)); mb(); })
++#define writew(v,c)		({ wmb(); writew_relaxed((v),(c)); mb(); })
++#define writel(v,c)		({ wmb(); writel_relaxed((v),(c)); mb(); })
++#endif
++
+ #define ioremap_nocache(phy, sz)	ioremap(phy, sz)
+ #define ioremap_wc ioremap_nocache
+ #define ioremap_wt ioremap_nocache
 -- 
 2.7.4
 
