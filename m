@@ -6,24 +6,24 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36338C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:25:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 946B6C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:25:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F260A2087F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:25:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 65F5D2087F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:25:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729493AbfAHQZM (ORCPT
+        id S1729533AbfAHQZU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 11:25:12 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:44918 "EHLO mail.bootlin.com"
+        Tue, 8 Jan 2019 11:25:20 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:44913 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729370AbfAHQYv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1729364AbfAHQYv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 8 Jan 2019 11:24:51 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id CE1D620A32; Tue,  8 Jan 2019 17:24:49 +0100 (CET)
+        id 6DA8B20A31; Tue,  8 Jan 2019 17:24:49 +0100 (CET)
 Received: from localhost.localdomain (aaubervilliers-681-1-45-241.w90-88.abo.wanadoo.fr [90.88.163.241])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 62428209C2;
-        Tue,  8 Jan 2019 17:24:49 +0100 (CET)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 0076C207A3;
+        Tue,  8 Jan 2019 17:24:48 +0100 (CET)
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     Gregory Clement <gregory.clement@bootlin.com>,
         Jason Cooper <jason@lakedaemon.net>,
@@ -40,9 +40,9 @@ Cc:     <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
         Maxime Chevallier <maxime.chevallier@bootlin.com>,
         Nadav Haklai <nadavh@marvell.com>,
         Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH v3 13/15] ARM64: dts: marvell: armada-3720-espressobin: declare PCIe PHY
-Date:   Tue,  8 Jan 2019 17:24:38 +0100
-Message-Id: <20190108162441.5278-14-miquel.raynal@bootlin.com>
+Subject: [PATCH v3 12/15] ARM64: dts: marvell: armada-37xx: declare PCIe clock
+Date:   Tue,  8 Jan 2019 17:24:37 +0100
+Message-Id: <20190108162441.5278-13-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108162441.5278-1-miquel.raynal@bootlin.com>
 References: <20190108162441.5278-1-miquel.raynal@bootlin.com>
@@ -53,26 +53,25 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The PCIe node is wired to the second PHY of the COMPHY IP.
+The PCIe IP is fed by a gated clock.
 
-Suggested-by: Grzegorz Jaszczyk <jaz@semihalf.com>
 Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 ---
- arch/arm64/boot/dts/marvell/armada-3720-espressobin.dts | 1 +
+ arch/arm64/boot/dts/marvell/armada-37xx.dtsi | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/marvell/armada-3720-espressobin.dts b/arch/arm64/boot/dts/marvell/armada-3720-espressobin.dts
-index 094994a9c68e..c5c72902c647 100644
---- a/arch/arm64/boot/dts/marvell/armada-3720-espressobin.dts
-+++ b/arch/arm64/boot/dts/marvell/armada-3720-espressobin.dts
-@@ -46,6 +46,7 @@
- /* J9 */
- &pcie0 {
- 	status = "okay";
-+	phys = <&comphy1 0>;
- };
- 
- /* J6 */
+diff --git a/arch/arm64/boot/dts/marvell/armada-37xx.dtsi b/arch/arm64/boot/dts/marvell/armada-37xx.dtsi
+index 65bf774516ec..f6f8d2b3b2c1 100644
+--- a/arch/arm64/boot/dts/marvell/armada-37xx.dtsi
++++ b/arch/arm64/boot/dts/marvell/armada-37xx.dtsi
+@@ -414,6 +414,7 @@
+ 			#address-cells = <3>;
+ 			#size-cells = <2>;
+ 			bus-range = <0x00 0xff>;
++			clocks = <&sb_periph_clk 13>;
+ 			interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
+ 			#interrupt-cells = <1>;
+ 			msi-parent = <&pcie0>;
 -- 
 2.19.1
 
