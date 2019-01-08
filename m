@@ -2,99 +2,119 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5811BC43612
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 15:33:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77E34C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 15:33:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 288CD20883
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 15:33:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F8C920883
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 15:33:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MIdzqI4z"
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="nfYLxhyg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728541AbfAHPdL (ORCPT
+        id S1728348AbfAHPdR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 10:33:11 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:46926 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727906AbfAHPdL (ORCPT
+        Tue, 8 Jan 2019 10:33:17 -0500
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:50648 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727906AbfAHPdQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 10:33:11 -0500
-Received: by mail-pf1-f196.google.com with SMTP id c73so2071134pfe.13;
-        Tue, 08 Jan 2019 07:33:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=FGk5RZmfmPt1xkmRzBtKE3trE9Sxmrlvu+fkpWw0lRc=;
-        b=MIdzqI4zaFL8Ti3gNI939pQV1bW+rJ0lTx56KI9Ip6ix7MQ9iSGu9m8cN0jyM/vm8f
-         jTSUtOKDpkCnDzFtaRUVNBOwr+gA36CJg4t7gctoaaQOdx1293PkUuhQEZSS6jiyf3YA
-         JzQfgDEKfbYyjDIw4TBZZevA1NAVpvNrKhyyX9Ykv8l6Za5mqvOnjLpksZ7K9MHNE+pD
-         wFOfzNgTpdE+yoVanMAGdOjesPGYjZxLAyFpjpv+P+sp5fWyoy+2cFURE6nPcD1r5LsY
-         oNCkluQWVSYI6pyK6dz/rgOeX9XkyJQzlIlBDO4hDB9Ye7jSaDLWJ1cWBTmTuUBIxJlR
-         WBMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=FGk5RZmfmPt1xkmRzBtKE3trE9Sxmrlvu+fkpWw0lRc=;
-        b=mSe9W4CoE7S5/OkyGtwyxnBLKQ+/IeX76LhrXgN//Wbjshivm4I/upvprLvLcbazNi
-         u+ubVSoO8huNzuJVRIXen3NT4kd5XiFZyP+6q1rj077X4ExzzCgdz3SFy/mn5oFw8wYd
-         9BmCEshL5QcqUxvWa0n4Pg2xATYXD1CCPsN6RNERKnGuH5hUYD1exy8yVvyCQndJpXhM
-         KnaUTEZDFGTjjnaaS1OW+hN9IChagp5FtI+FClfIOpUY0ZCmfSj9ldvXBm3vYn6z25OE
-         kbBGmNHT7Q6N9b4eQf/etlK91eHGYyY7k+j7KPWsNkCL3zjDiYqVV33ffzTaGh5gAHN5
-         Xzvg==
-X-Gm-Message-State: AJcUukd/SYCmWsHqL73uhmdXuAD1mFXG+f1hevH+Lkyuw8a5TGDT2K0w
-        bqg0Xbntjeb1WeC+LBEGkSRsuW+aAOisRprFUBk=
-X-Google-Smtp-Source: ALg8bN4C3FJRlaN4gbMxFWyYXXmLMxmfLs4PdUKkKcJRaS7F/tQIJv59Scd5qJnijKCVJiG/0Cddlz+v77CyYnBYatA=
-X-Received: by 2002:a63:20e:: with SMTP id 14mr1906156pgc.161.1546961590274;
- Tue, 08 Jan 2019 07:33:10 -0800 (PST)
+        Tue, 8 Jan 2019 10:33:16 -0500
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48]) (authenticated)
+        by conssluserg-02.nifty.com with ESMTP id x08FX5Wm020694;
+        Wed, 9 Jan 2019 00:33:05 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com x08FX5Wm020694
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1546961586;
+        bh=LQPAha78p1HdGEOw/+HOSVmjiCEBVHG9OH8+5nRjDXM=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=nfYLxhygb44lhetpxe6J0JzMmmwr41+VdNBBM5vEJ3/FuUDHsxhdzlKNhjEFVmBLX
+         /zbCfbPeruPPLAq9SJMLh8VK3J3uKfKQSNAW2x/PyQYj6rLtwcgR97QOOrtRsiZtuo
+         AyWYcw6YlX8sqSIm36EkqIJUgth7BNL9lrFPVyZp1Saw5dl67ObIyPOYAatJoKWuzj
+         jHUkeBlp9YUduVcQkbAJFKvANUrLhHuqekBQa0o1WFy4jv8fIVcDHF/hevu7Tn32Jt
+         xGFJcFRNq0dkGixKw41lR1mdtP4JrddmCxklqy1diO8bU2GfXHoga3v5l5zH7cZ9yc
+         bHBdQH7vexjRw==
+X-Nifty-SrcIP: [209.85.217.48]
+Received: by mail-vs1-f48.google.com with SMTP id x1so2686551vsc.10;
+        Tue, 08 Jan 2019 07:33:05 -0800 (PST)
+X-Gm-Message-State: AJcUukfMoSrRh/PYGaM/JcSF2o2xrXPwR/QVWEtJi/rfB4jabXYv+vqi
+        bUiQWXZzlNN9E0sw72+HqBAyoO2Nr0IbhHYmS/c=
+X-Google-Smtp-Source: ALg8bN4zwJf60tEd8jwfN7+Nb1jFcxO+xLEgXSz53PG8ujjktkHKI+pGN4SaRdDw6eAdTUUVDLjnKur14xYyNJ5b8Q8=
+X-Received: by 2002:a67:a858:: with SMTP id r85mr862339vse.215.1546961584270;
+ Tue, 08 Jan 2019 07:33:04 -0800 (PST)
 MIME-Version: 1.0
-References: <20180929084038.an6pfhnsd6tblejl@pali> <20181002081654.jxesr3kj62snzez5@pali>
- <510499199.34825028.1538469850257.JavaMail.zimbra@redhat.com>
- <20181012091941.o22srnhse4kzqjhf@fatal.se> <20181114113341.yx2wlzqku5yh3k4h@pali>
- <CAPXf_qN66-Mi+o+9ENGqCDe-_2tHaf9uM3moRcCGNvmxwH3ExQ@mail.gmail.com>
- <20181206083828.4bp3oypkto2ngobu@pali> <20181212135736.xtb57r2eatqsgenb@pali>
- <20181217095004.c6c6itvyfp7cf3ta@pali> <20181227221748.zsz6bwqqia7ybfwj@pali>
-In-Reply-To: <20181227221748.zsz6bwqqia7ybfwj@pali>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Tue, 8 Jan 2019 17:32:55 +0200
-Message-ID: <CAHp75VfJpy572t8swsEsz0kPKfpOE-v0SZVxM2aakX0hkjX4=Q@mail.gmail.com>
-Subject: Re: Future of dosfstools project (FAT)
-To:     =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>
-Cc:     Andreas Bombe <andreas.bombe@gmail.com>,
-        Andreas Henriksson <andreas@fatal.se>,
-        Jaroslav Skarvada <jskarvad@redhat.com>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        util-linux@vger.kernel.org,
+References: <1546904307-11124-1-git-send-email-yamada.masahiro@socionext.com> <20190108111032.GP3235@lianli.shorne-pla.net>
+In-Reply-To: <20190108111032.GP3235@lianli.shorne-pla.net>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Wed, 9 Jan 2019 00:32:28 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAS+grgqHM-ht0CCTmZHp+JRvr=Q+sJOo0URqRgTAYRs0w@mail.gmail.com>
+Message-ID: <CAK7LNAS+grgqHM-ht0CCTmZHp+JRvr=Q+sJOo0URqRgTAYRs0w@mail.gmail.com>
+Subject: Re: [PATCH] arch: unexport asm/shmparam.h for all architectures
+To:     Stafford Horne <shorne@gmail.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Michal Simek <monstr@monstr.eu>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Richard Kuo <rkuo@codeaurora.org>,
+        linux-hexagon@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Guan Xuetao <gxt@pku.edu.cn>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Aurelien Jacquiot <jacquiot.aurelien@gmail.com>,
+        linux-riscv@lists.infradead.org, Greentime Hu <green.hu@gmail.com>,
+        linux-c6x-dev@linux-c6x.org, Guo Ren <guoren@kernel.org>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        "moderated list:H8/300 ARCHITECTURE" 
+        <uclinux-h8-devel@lists.sourceforge.jp>,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        openrisc@lists.librecores.org, Mark Salter <msalter@redhat.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Jonas Bonn <jonas@southpole.se>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        mpluskal@suse.com, base-system@gentoo.org,
-        Karel Zak <kzak@redhat.com>, Andreas Bombe <aeb@debian.org>,
-        Andreas Dilger <adilger@dilger.ca>,
-        Richard Weinberger <richard.weinberger@gmail.com>
+        Vincent Chen <deanbo422@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 28, 2018 at 12:18 AM Pali Roh=C3=A1r <pali.rohar@gmail.com> wro=
-te:
-> On Monday 17 December 2018 10:50:04 Pali Roh=C3=A1r wrote:
-> > On Wednesday 12 December 2018 14:57:36 Pali Roh=C3=A1r wrote:
+Hi Stafford,
 
-> > Thanks for review of #94! As next you can take #92 from list.
+
+
+On Tue, Jan 8, 2019 at 8:12 PM Stafford Horne <shorne@gmail.com> wrote:
 >
-> Andreas, can you look at next pull requests?
+> What is this patch based on?  I tried to apply it to 5.0-rc1 and am having an
+> issue with applying the arch/openrisc/include/uapi/asm/Kbuild part.
 
-Looking from a side how slow this is being processed I think the best
-option to fork and abandon the old project if author / maintainer by
-some reason wouldn't like to give a push rights.
 
---=20
-With Best Regards,
-Andy Shevchenko
+Based on Linus' latest tree.
+(commit 3bd6e94be)
+
+v5.0-rc1 is NOT the latest.
+
+
+
+> It seems shmparam.h is not there. It was removed with the others in your
+> ("d6e4b3e326d8") arch: remove redundant UAPI generic-y defines, commit a few
+> days ago.
+>
+> Note, I can't compile 5.0-rc1 without the first part of this patch.  So please
+> get it merged asap :)
+
+
+I notice the breakage of several arches after v5.0-rc1 release,
+so I asked Linus to pick up 3d6e94be.
+
+I had already noticed
+having shmparam.h in uapi is werid,
+but I decided to fix the build errors first.
+
+
+-- 
+Best Regards
+Masahiro Yamada
