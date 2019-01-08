@@ -2,212 +2,94 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E04CC43444
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:42:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E222C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:43:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E5DE2063F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:42:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546976568;
-	bh=unSZY3hQSh0HH1m7GPd2nhjnvNOjHZxaS/fUqlk4/So=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=13lg9bb0MkPE1fr1bXTNVj5bJqwqXlkvt6zmTmNUSYwBr7xzT8uzso2DksE42yc3I
-	 ugC/EBXLELXu6o+ppPcwz/B6/mIF/SR9lgTvPMJA8dPz7IemVC0TXa4x7CKEPROOPj
-	 9/bVwxiEzCL8OCKxBcT3lMulHtZLygr6MBChQf2c=
+	by mail.kernel.org (Postfix) with ESMTP id 49E5F206BB
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:43:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gDfKWdW0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732660AbfAHTmr (ORCPT
+        id S1732659AbfAHTnA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:42:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42746 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730486AbfAHTeC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:34:02 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 373EE205C9;
-        Tue,  8 Jan 2019 19:34:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546976041;
-        bh=unSZY3hQSh0HH1m7GPd2nhjnvNOjHZxaS/fUqlk4/So=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yjEfbe2M9SregWbJo/hJ0mEbjaYNIrSyyh9uC/TM69BPC90MHNHxkKO02LpWq3zZu
-         5c1AyLSKtXv29PZ0LFQWUf+kqtlVGXT6NeA0WuS2mmaU+yhWHdHoDl4+Sl6XMLjEz6
-         ek/+WXWFc7LTZ3veIhz2rAvrEc1Iww/n0dXWOYqQ=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     "Maciej W. Rozycki" <macro@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
-        Sasha Levin <sashal@kernel.org>, linux-mips@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 06/36] MIPS: SiByte: Enable swiotlb for SWARM, LittleSur and BigSur
-Date:   Tue,  8 Jan 2019 14:33:18 -0500
-Message-Id: <20190108193348.123880-6-sashal@kernel.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190108193348.123880-1-sashal@kernel.org>
-References: <20190108193348.123880-1-sashal@kernel.org>
+        Tue, 8 Jan 2019 14:43:00 -0500
+Received: from mail-ua1-f53.google.com ([209.85.222.53]:36609 "EHLO
+        mail-ua1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731824AbfAHTdx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:33:53 -0500
+Received: by mail-ua1-f53.google.com with SMTP id j3so1659982uap.3
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 11:33:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=hHgjSR+cFz9cVJF2AiQcA/E5dfRyPx4pM1LbWcyflfs=;
+        b=gDfKWdW0lqlrLLLrqdDzCMLtCb8AjYetd4Vk23ASrEWs1qKuABGK1/mK33z7x9vFPb
+         22OWP4HWo+s/avWZLHY7L5vBntK1MB6SA3an9PvDSzNykH+LlRkB80kx5meN/ISKUZJE
+         SnWFmp+tjECaE8XtZFTA+2WKKVcsmdbnMWVXSzIV1G3bEYGzoa4eGW0MPoTAXJliOQaS
+         64RAwtPViHTdmkiCtBclRzE3LHlcMCPKgDn/LPuQcU4l1PFtA4p1LCXORuWMhl8xULKe
+         W700pRZ+Q0eCebFojIsBxG1IeuZ1aRC0WhgGVk7dI+iiegG0sS/AtT2NUCLZUvM63mqU
+         JHZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=hHgjSR+cFz9cVJF2AiQcA/E5dfRyPx4pM1LbWcyflfs=;
+        b=oIL777NvVN9nt6X+V35gctEzHeU6OHZ8XBGttI69adtd+cMgTN78QRFnILoU5EGP5/
+         JPUkiEggk9s8mI9WpsBV28xOm5RFMH+1VVK5ZGojg3Z/m0QS8AKTGagUn+lElHyQ7oub
+         LAafuCcGVKBKxMBZmHL00bppFjBbSrN6ZpB4K0Z9QUXo0YH6utWYWN3xL9hpfKFcqln+
+         15YLPdX5Ta2PqA21YXFF59s57jVtoigM7lf2KOY/QGfDGzsF6T+CK2Ww8vqrj7xxHY3S
+         RQj6njxIIzvHriAfBraF/KGC5K3TkIB+QtuiEtB8+eQzmNSabGqrBompI36UrWkygadc
+         +mmg==
+X-Gm-Message-State: AJcUukfd6vHAqH31FAg6sw50A/1uEU4setK+Uxx3b8+tBvfmG0bUAlBO
+        lJDJpjZ5cXLhZ2V6Xmj0CtIfPL3Sg6DUnp+QHJk=
+X-Google-Smtp-Source: ALg8bN6vuPmtlIecQq+SAOsllXHIkImZowdrJmWLz8yt5x00lwrnYSQ5x9ArEHwMt74sry2Aug/zRiWW9fp5sMfISKQ=
+X-Received: by 2002:ab0:9d4:: with SMTP id e20mr1068521uah.22.1546976031529;
+ Tue, 08 Jan 2019 11:33:51 -0800 (PST)
 MIME-Version: 1.0
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+From:   Anatol Pomozov <anatol.pomozov@gmail.com>
+Date:   Tue, 8 Jan 2019 11:33:39 -0800
+Message-ID: <CAOMFOmU=t9YbE68YpoQn0Ug0XN1F+0iuJp9J=htCRRrbdaPSVA@mail.gmail.com>
+Subject: seqcount usage in xt_replace_table()
+To:     fw@strlen.de, Dmitry Vyukov <dvyukov@google.com>,
+        paulmck@linux.ibm.com, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Maciej W. Rozycki" <macro@linux-mips.org>
+Hello folks,
 
-[ Upstream commit e4849aff1e169b86c561738daf8ff020e9de1011 ]
+A bit of context what I am doing. I am trying to port KTSAN (Kernel
+Thread Sanitizer) tool to v4.20. That tool tracks shared data usage
+and makes sure it is accessed in a thread-safe manner.
 
-The Broadcom SiByte BCM1250, BCM1125, and BCM1125H SOCs have an onchip
-DRAM controller that supports memory amounts of up to 16GiB, and due to
-how the address decoder has been wired in the SOC any memory beyond 1GiB
-is actually mapped starting from 4GiB physical up, that is beyond the
-32-bit addressable limit[1].  Consequently if the maximum amount of
-memory has been installed, then it will span up to 19GiB.
+seqlock is a synchronization primitive used by Linux kernel. KTSAN
+annotates read_seqbegin()/read_seqretry() and tracks what data been
+accessed in its critical section.
 
-Many of the evaluation boards we support that are based on one of these
-SOCs have their memory soldered and the amount present fits in the
-32-bit address range.  The BCM91250A SWARM board however has actual DIMM
-slots and accepts, depending on the peripherals revision of the SOC, up
-to 4GiB or 8GiB of memory in commercially available JEDEC modules[2].
-I believe this is also the case with the BCM91250C2 LittleSur board.
-This means that up to either 3GiB or 7GiB of memory requires 64-bit
-addressing to access.
+During KTSAN port I found and interesting seqcount usage introduced in
+commit 80055dab5de0c8677bc148c4717ddfc753a9148e
 
-I believe the BCM91480B BigSur board, which has the BCM1480 SOC instead,
-accepts at least as much memory, although I have no documentation or
-actual hardware available to verify that.
+If I read this commit correctly xt_replace_table() does not use
+seqlock in a canonical way to specify a critical section. Instead the
+code reads the counter and waits until it gets to a specific value.
 
-Both systems have PCI slots installed for use by any PCI option boards,
-including ones that only support 32-bit addressing (additionally the
-32-bit PCI host bridge of the BCM1250, BCM1125, and BCM1125H SOCs limits
-addressing to 32-bits), and there is no IOMMU available.  Therefore for
-PCI DMA to work in the presence of memory beyond enable swiotlb for the
-affected systems.
+Now I want KTSAN to play with this code nicely. I need to tell KTSAN
+something like "this raw_read_seqcount() does not start a critical
+section, just ignore it". So temporary I introduced
+raw_read_seqcount_nocritical() function that is ignored by KTSAN. Is
+it a good solution?
 
-All the other SOC onchip DMA devices use 40-bit addressing and therefore
-can address the whole memory, so only enable swiotlb if PCI support and
-support for DMA beyond 4GiB have been both enabled in the configuration
-of the kernel.
+Or maybe xt_replace_table() can be enhanced? When I hear that
+something waits until an event happens on all CPUs I think about
+wait_event() function. Would it be better for xt_replace_table() to
+introduce an atomic counter that is decremented by CPUs, and the main
+CPU waits until the counter gets zero?
 
-This shows up as follows:
-
-Broadcom SiByte BCM1250 B2 @ 800 MHz (SB1 rev 2)
-Board type: SiByte BCM91250A (SWARM)
-Determined physical RAM map:
- memory: 000000000fe7fe00 @ 0000000000000000 (usable)
- memory: 000000001ffffe00 @ 0000000080000000 (usable)
- memory: 000000000ffffe00 @ 00000000c0000000 (usable)
- memory: 0000000087fffe00 @ 0000000100000000 (usable)
-software IO TLB: mapped [mem 0xcbffc000-0xcfffc000] (64MB)
-
-in the bootstrap log and removes failures like these:
-
-defxx 0000:02:00.0: dma_direct_map_page: overflow 0x0000000185bc6080+4608 of device mask ffffffff bus mask 0
-fddi0: Receive buffer allocation failed
-fddi0: Adapter open failed!
-IP-Config: Failed to open fddi0
-defxx 0000:09:08.0: dma_direct_map_page: overflow 0x0000000185bc6080+4608 of device mask ffffffff bus mask 0
-fddi1: Receive buffer allocation failed
-fddi1: Adapter open failed!
-IP-Config: Failed to open fddi1
-
-when memory beyond 4GiB is handed out to devices that can only do 32-bit
-addressing.
-
-This updates commit cce335ae47e2 ("[MIPS] 64-bit Sibyte kernels need
-DMA32.").
-
-References:
-
-[1] "BCM1250/BCM1125/BCM1125H User Manual", Revision 1250_1125-UM100-R,
-    Broadcom Corporation, 21 Oct 2002, Section 3: "System Overview",
-    "Memory Map", pp. 34-38
-
-[2] "BCM91250A User Manual", Revision 91250A-UM100-R, Broadcom
-    Corporation, 18 May 2004, Section 3: "Physical Description",
-    "Supported DRAM", p. 23
-
-Signed-off-by: Maciej W. Rozycki <macro@linux-mips.org>
-[paul.burton@mips.com: Remove GPL text from dma.c; SPDX tag covers it]
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Patchwork: https://patchwork.linux-mips.org/patch/21108/
-References: cce335ae47e2 ("[MIPS] 64-bit Sibyte kernels need DMA32.")
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@linux-mips.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- arch/mips/Kconfig                |  3 +++
- arch/mips/sibyte/common/Makefile |  1 +
- arch/mips/sibyte/common/dma.c    | 14 ++++++++++++++
- 3 files changed, 18 insertions(+)
- create mode 100644 arch/mips/sibyte/common/dma.c
-
-diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
-index 34fbbf8fdeaa..d26f531b92a9 100644
---- a/arch/mips/Kconfig
-+++ b/arch/mips/Kconfig
-@@ -791,6 +791,7 @@ config SIBYTE_SWARM
- 	select SYS_SUPPORTS_HIGHMEM
- 	select SYS_SUPPORTS_LITTLE_ENDIAN
- 	select ZONE_DMA32 if 64BIT
-+	select SWIOTLB if ARCH_DMA_ADDR_T_64BIT && PCI
- 
- config SIBYTE_LITTLESUR
- 	bool "Sibyte BCM91250C2-LittleSur"
-@@ -813,6 +814,7 @@ config SIBYTE_SENTOSA
- 	select SYS_HAS_CPU_SB1
- 	select SYS_SUPPORTS_BIG_ENDIAN
- 	select SYS_SUPPORTS_LITTLE_ENDIAN
-+	select SWIOTLB if ARCH_DMA_ADDR_T_64BIT && PCI
- 
- config SIBYTE_BIGSUR
- 	bool "Sibyte BCM91480B-BigSur"
-@@ -826,6 +828,7 @@ config SIBYTE_BIGSUR
- 	select SYS_SUPPORTS_HIGHMEM
- 	select SYS_SUPPORTS_LITTLE_ENDIAN
- 	select ZONE_DMA32 if 64BIT
-+	select SWIOTLB if ARCH_DMA_ADDR_T_64BIT && PCI
- 
- config SNI_RM
- 	bool "SNI RM200/300/400"
-diff --git a/arch/mips/sibyte/common/Makefile b/arch/mips/sibyte/common/Makefile
-index b3d6bf23a662..3ef3fb658136 100644
---- a/arch/mips/sibyte/common/Makefile
-+++ b/arch/mips/sibyte/common/Makefile
-@@ -1,4 +1,5 @@
- obj-y := cfe.o
-+obj-$(CONFIG_SWIOTLB)			+= dma.o
- obj-$(CONFIG_SIBYTE_BUS_WATCHER)	+= bus_watcher.o
- obj-$(CONFIG_SIBYTE_CFE_CONSOLE)	+= cfe_console.o
- obj-$(CONFIG_SIBYTE_TBPROF)		+= sb_tbprof.o
-diff --git a/arch/mips/sibyte/common/dma.c b/arch/mips/sibyte/common/dma.c
-new file mode 100644
-index 000000000000..eb47a94f3583
---- /dev/null
-+++ b/arch/mips/sibyte/common/dma.c
-@@ -0,0 +1,14 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ *	DMA support for Broadcom SiByte platforms.
-+ *
-+ *	Copyright (c) 2018  Maciej W. Rozycki
-+ */
-+
-+#include <linux/swiotlb.h>
-+#include <asm/bootinfo.h>
-+
-+void __init plat_swiotlb_setup(void)
-+{
-+	swiotlb_init(1);
-+}
--- 
-2.19.1
-
+WDYT?
