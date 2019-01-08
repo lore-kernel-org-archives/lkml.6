@@ -2,173 +2,190 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4FFCC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:29:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 402F0C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:29:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A368420665
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:29:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="imwrOBDI"
+	by mail.kernel.org (Postfix) with ESMTP id 0E354217D9
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:29:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546975796;
+	bh=1flXoYz3wjULUj+PBOzW2SY0n8DFOypLvWXKvU9ZOmw=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=nTRGOvXzuntzcKOASCl2rrDXqOPRqqRoV9/WinZYtYtMrKnYFoOLDBhhk0uJRwViw
+	 S1bAH7ZDh/5CMwJfmJsO3PfYroynXKdrbSec8ed2ZzVqdgGHUG6UdLTKtFxiQL1oR1
+	 3SLivAv/P1zXig50Q6VbWfapAVxSGyH+tqhAbQbk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730493AbfAHT3t (ORCPT
+        id S1730516AbfAHT3z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:29:49 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:39217 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728913AbfAHT3s (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:29:48 -0500
-Received: by mail-lf1-f68.google.com with SMTP id n18so3828567lfh.6
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 11:29:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id;
-        bh=/dCl7bQ7GmuZ0Qe+DsKMNf8SxYTup9k/YGufaXp3sAs=;
-        b=imwrOBDIeJxtP0JanSDOyYzHg2wr3CkA54F1PlHRYG65qa9F0n+YuUrPoNUCvO4dYj
-         YTa/KG/5pLAu3xzXAHgZl6UR3RlBfvFd958ntCXyFdlailVOKfp3C64IbpV1WwopQ4a0
-         OhqNgraYFF058zJD61TLogaJr6TGJacnKXKWeUmqU0jj1nVWxfTgJic2/XZ110LDl2Ta
-         LJNsdAPrcDkIw4Lp6X51q7fNjKYraik1dzTOkzAp3WXs9GqlBdaCpU+mClZ+DYCHGLJq
-         QIyhzThgozMvhSmC/TDlU4tpiG58KB6rldpRFy61NUH8tZ0zIqMCyV/yT6neU3294SN+
-         HZpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
-        bh=/dCl7bQ7GmuZ0Qe+DsKMNf8SxYTup9k/YGufaXp3sAs=;
-        b=m7qvlnPjT1VfO+OAsCoYplsCjyguiayJ7IYj+b1P/E70isL3MMbh/OShd4FDcvt3o4
-         1udOlfRWY8n4xPJLHKO2maJb8EoZ38+vLqQxOVf0lvth4FB3VGdyxkPRybBkukbtLSPt
-         FNmOPmFbVa9rZt41jM1Z2K/L/JvgekmWhm16xc2P9wkeuDzWCCpAStabkAfI6YHwnwCi
-         Fk7S1HNdgqb/ReegIFQByh4zdu9hWvGHFSgETb50CZiR0vAp7WGL8sinZh4bBxO11K7g
-         wQE7saM0CbwvOhnk8m46jQnleAohjBUhSY2Lk9CZIVTbmyaW5ln2pLgboLlFh/eoQWDz
-         SaWQ==
-X-Gm-Message-State: AJcUukdon/310bJp1x2sinXxzI394PSMFve+Iw6cgZWIXO0byp0pIN/K
-        k8CYhCS1KPwls+3SKuEfLC8=
-X-Google-Smtp-Source: ALg8bN5XF99trmruzRORjBrNxGx7wZzqhcSJmoEid2rTFThZV2eKQe+fiwbD7uPbgRkRGNyL2DMjWQ==
-X-Received: by 2002:a19:f813:: with SMTP id a19mr1708969lff.67.1546975786420;
-        Tue, 08 Jan 2019 11:29:46 -0800 (PST)
-Received: from jupiter.lan (18.158-248-194.customer.lyse.net. [158.248.194.18])
-        by smtp.gmail.com with ESMTPSA id q128-v6sm9122246ljq.14.2019.01.08.11.29.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 08 Jan 2019 11:29:45 -0800 (PST)
-From:   Sam Ravnborg <sam@ravnborg.org>
-To:     Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>,
-        David Lechner <david@lechnology.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc:     Sam Ravnborg <sam@ravnborg.org>
-Subject: [PATCH v3 0/12] drm: minimize drmP.h dependencies
-Date:   Tue,  8 Jan 2019 20:29:27 +0100
-Message-Id: <20190108192939.15255-1-sam@ravnborg.org>
-X-Mailer: git-send-email 2.12.0
+        Tue, 8 Jan 2019 14:29:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37412 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728913AbfAHT3w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:29:52 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 553D920645;
+        Tue,  8 Jan 2019 19:29:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1546975791;
+        bh=1flXoYz3wjULUj+PBOzW2SY0n8DFOypLvWXKvU9ZOmw=;
+        h=From:To:Cc:Subject:Date:From;
+        b=LtLzLuLUCO/4UFODG1iwrjxGcEY2gn/VYavDJe/ekMMONJfcI82fNRlkWsNGrPyTd
+         7kmrZR7kRf1CyiFBdbEImvP5lpqAR6hBjnh4WhZcEKR65StqaEwwRASbvy6EW6r25W
+         QEwwbGbxuCZIGmWkReaegs89DsdsqGttsIgFbPoo=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Stefano Brivio <sbrivio@redhat.com>,
+        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        Sasha Levin <sashal@kernel.org>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 01/97] netfilter: ipset: Allow matching on destination MAC address for mac and ipmac sets
+Date:   Tue,  8 Jan 2019 14:28:10 -0500
+Message-Id: <20190108192949.122407-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+MIME-Version: 1.0
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-- drmP.h is now stripped down to include files and forward declarations.
-- All header files in include/drm/ no longer include drmP.h.
+From: Stefano Brivio <sbrivio@redhat.com>
 
-The series was made on top of drm-misc-next
-Build tested using arm and x86 all{yes,mod}config
+[ Upstream commit 8cc4ccf58379935f3ad456cc34e61c4e4c921d0e ]
 
-The patches are trivial but touches a lot of files,
-so a lot of people on cc: for the individual patches.
+There doesn't seem to be any reason to restrict MAC address
+matching to source MAC addresses in set types bitmap:ipmac,
+hash:ipmac and hash:mac. With this patch, and this setup:
 
-I expect the full series to be applied to drm-misc-next
+  ip netns add A
+  ip link add veth1 type veth peer name veth2 netns A
+  ip addr add 192.0.2.1/24 dev veth1
+  ip -net A addr add 192.0.2.2/24 dev veth2
+  ip link set veth1 up
+  ip -net A link set veth2 up
 
-There are still ~700 uses of drmP.h so a long way ahead of
-us to get rid of it.
+  ip netns exec A ipset create test hash:mac
+  dst=$(ip netns exec A cat /sys/class/net/veth2/address)
+  ip netns exec A ipset add test ${dst}
+  ip netns exec A iptables -P INPUT DROP
+  ip netns exec A iptables -I INPUT -m set --match-set test dst -j ACCEPT
 
-The kernel-doc parts that I authored in the following
-may require some extra info as I know too little about
-DRM to be able to write something really useful.
-Or at least review by someone with knowledge of DRM,
-but that goes for everything.
+ipset will match packets based on destination MAC address:
 
-v3:
-- Added Acks/Reviewed annotations (thanks!)
-- Add forward of drm_gem_object to drm_framebuffer.h (Noralf)
-- Drop "drm: move DRM_IF_VERSION to drm_internal.h" as it is applied to drm-misc
-- Drop "drm: make drm_file.h self contained" as Jan made a similar patch that was appleid to drm-misc
-- Rebased on top of drm-misc-next
+  # ping -c1 192.0.2.2 >/dev/null
+  # echo $?
+  0
 
-v2:
-- DRM_SWITCH_POWER as enum (Daniel Vetter)
-- Prefer forward decalration over includes (Laurent Pinchart)
-- Updated drm_device to use kerneldoc style (Daniel Vetter)
-- Improved commit messages (David Lechner)
-- Split up patch when removing drmP.h from drm_gem_cma_helper.h
-- rebased on top of drm-misc-next
-- dropped patch already applied
-- added reviewed-by from Laurent Pinchart (Laurent Pinchart)
-- add drm_framebuffer.h patch
-- add kernel-doc comments to drm_util.h
-- moved EXPORT_SYMBOL_FOR_TESTS_ONLY to drm_util.h
-- added note to drmP.h not to add new stuff and not to use in new files
+Reported-by: Yi Chen <yiche@redhat.com>
+Signed-off-by: Stefano Brivio <sbrivio@redhat.com>
+Signed-off-by: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ net/netfilter/ipset/ip_set_bitmap_ipmac.c | 10 +++++-----
+ net/netfilter/ipset/ip_set_hash_ipmac.c   | 16 ++++++++++------
+ net/netfilter/ipset/ip_set_hash_mac.c     | 10 +++++-----
+ 3 files changed, 20 insertions(+), 16 deletions(-)
 
-	Sam
-
-Sam Ravnborg (12):
-      drm: drm_device.h: update comments to kernel-doc style
-      drm: move DRM_SWITCH_POWER defines to drm_device.h
-      drm: make drm_framebuffer.h self contained
-      drm: move drm_can_sleep() to drm_util.h
-      drm: move EXPORT_SYMBOL_FOR_TESTS_ONLY to drm_util.h
-      drm: remove include of drmP.h from bridge/dw_hdmi.h
-      drm: remove include of drmP.h from drm_encoder_slave.h
-      drm: remove include of drmP.h from drm_modeset_helper.h
-      drm/arc: do not reply on drmP.h from drm_gem_cma_helper.h
-      drm/stm: do not reply on drmP.h from drm_gem_cma_helper.h
-      drm/tinydrm: do not reply on drmP.h from drm_gem_cma_helper.h
-      drm: remove drmP.h from drm_gem_cma_helper.h
-
- drivers/gpu/drm/amd/amdgpu/atom.c                  |   2 +
- drivers/gpu/drm/arc/arcpgu_crtc.c                  |   2 +
- drivers/gpu/drm/arc/arcpgu_drv.c                   |   6 +
- drivers/gpu/drm/arc/arcpgu_sim.c                   |   1 +
- drivers/gpu/drm/ast/ast_fb.c                       |   2 +
- drivers/gpu/drm/bridge/cdns-dsi.c                  |   2 +
- .../gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c    |   4 +
- drivers/gpu/drm/cirrus/cirrus_fbdev.c              |   1 +
- drivers/gpu/drm/drm_flip_work.c                    |   1 +
- drivers/gpu/drm/drm_framebuffer.c                  |   1 +
- drivers/gpu/drm/drm_modeset_helper.c               |   2 +
- drivers/gpu/drm/mgag200/mgag200_fb.c               |   1 +
- drivers/gpu/drm/msm/disp/mdp5/mdp5_smp.c           |   1 +
- drivers/gpu/drm/omapdrm/omap_fbdev.c               |   1 +
- drivers/gpu/drm/qxl/qxl_cmd.c                      |   2 +
- drivers/gpu/drm/radeon/atom.c                      |   2 +
- drivers/gpu/drm/radeon/radeon_legacy_encoders.c    |   1 +
- drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c             |   1 +
- drivers/gpu/drm/rcar-du/rcar_lvds.c                |   1 +
- drivers/gpu/drm/stm/drv.c                          |   6 +-
- drivers/gpu/drm/stm/ltdc.c                         |   9 +-
- drivers/gpu/drm/tinydrm/core/tinydrm-core.c        |   3 +
- drivers/gpu/drm/tinydrm/core/tinydrm-pipe.c        |   3 +
- drivers/gpu/drm/tinydrm/hx8357d.c                  |   1 +
- drivers/gpu/drm/tinydrm/ili9225.c                  |   2 +
- drivers/gpu/drm/tinydrm/ili9341.c                  |   1 +
- drivers/gpu/drm/tinydrm/mi0283qt.c                 |   1 +
- drivers/gpu/drm/tinydrm/mipi-dbi.c                 |   3 +
- drivers/gpu/drm/tinydrm/repaper.c                  |   1 +
- drivers/gpu/drm/tinydrm/st7586.c                   |   1 +
- drivers/gpu/drm/tinydrm/st7735r.c                  |   1 +
- drivers/gpu/drm/vc4/vc4_drv.h                      |   1 +
- include/drm/bridge/dw_hdmi.h                       |   6 +-
- include/drm/drmP.h                                 |  24 +--
- include/drm/drm_device.h                           | 228 +++++++++++++++------
- include/drm/drm_encoder_slave.h                    |   1 -
- include/drm/drm_framebuffer.h                      |  10 +-
- include/drm/drm_gem_cma_helper.h                   |   5 +-
- include/drm/drm_modeset_helper.h                   |   6 +-
- include/drm/drm_util.h                             |  52 ++++-
- 40 files changed, 304 insertions(+), 95 deletions(-)
-
+diff --git a/net/netfilter/ipset/ip_set_bitmap_ipmac.c b/net/netfilter/ipset/ip_set_bitmap_ipmac.c
+index c00b6a2e8e3c..13ade5782847 100644
+--- a/net/netfilter/ipset/ip_set_bitmap_ipmac.c
++++ b/net/netfilter/ipset/ip_set_bitmap_ipmac.c
+@@ -219,10 +219,6 @@ bitmap_ipmac_kadt(struct ip_set *set, const struct sk_buff *skb,
+ 	struct ip_set_ext ext = IP_SET_INIT_KEXT(skb, opt, set);
+ 	u32 ip;
+ 
+-	/* MAC can be src only */
+-	if (!(opt->flags & IPSET_DIM_TWO_SRC))
+-		return 0;
+-
+ 	ip = ntohl(ip4addr(skb, opt->flags & IPSET_DIM_ONE_SRC));
+ 	if (ip < map->first_ip || ip > map->last_ip)
+ 		return -IPSET_ERR_BITMAP_RANGE;
+@@ -233,7 +229,11 @@ bitmap_ipmac_kadt(struct ip_set *set, const struct sk_buff *skb,
+ 		return -EINVAL;
+ 
+ 	e.id = ip_to_id(map, ip);
+-	memcpy(e.ether, eth_hdr(skb)->h_source, ETH_ALEN);
++
++	if (opt->flags & IPSET_DIM_ONE_SRC)
++		ether_addr_copy(e.ether, eth_hdr(skb)->h_source);
++	else
++		ether_addr_copy(e.ether, eth_hdr(skb)->h_dest);
+ 
+ 	return adtfn(set, &e, &ext, &opt->ext, opt->cmdflags);
+ }
+diff --git a/net/netfilter/ipset/ip_set_hash_ipmac.c b/net/netfilter/ipset/ip_set_hash_ipmac.c
+index 1ab5ed2f6839..fd87de3ed55b 100644
+--- a/net/netfilter/ipset/ip_set_hash_ipmac.c
++++ b/net/netfilter/ipset/ip_set_hash_ipmac.c
+@@ -103,7 +103,11 @@ hash_ipmac4_kadt(struct ip_set *set, const struct sk_buff *skb,
+ 	    (skb_mac_header(skb) + ETH_HLEN) > skb->data)
+ 		return -EINVAL;
+ 
+-	memcpy(e.ether, eth_hdr(skb)->h_source, ETH_ALEN);
++	if (opt->flags & IPSET_DIM_ONE_SRC)
++		ether_addr_copy(e.ether, eth_hdr(skb)->h_source);
++	else
++		ether_addr_copy(e.ether, eth_hdr(skb)->h_dest);
++
+ 	if (ether_addr_equal(e.ether, invalid_ether))
+ 		return -EINVAL;
+ 
+@@ -211,15 +215,15 @@ hash_ipmac6_kadt(struct ip_set *set, const struct sk_buff *skb,
+ 	};
+ 	struct ip_set_ext ext = IP_SET_INIT_KEXT(skb, opt, set);
+ 
+-	 /* MAC can be src only */
+-	if (!(opt->flags & IPSET_DIM_TWO_SRC))
+-		return 0;
+-
+ 	if (skb_mac_header(skb) < skb->head ||
+ 	    (skb_mac_header(skb) + ETH_HLEN) > skb->data)
+ 		return -EINVAL;
+ 
+-	memcpy(e.ether, eth_hdr(skb)->h_source, ETH_ALEN);
++	if (opt->flags & IPSET_DIM_ONE_SRC)
++		ether_addr_copy(e.ether, eth_hdr(skb)->h_source);
++	else
++		ether_addr_copy(e.ether, eth_hdr(skb)->h_dest);
++
+ 	if (ether_addr_equal(e.ether, invalid_ether))
+ 		return -EINVAL;
+ 
+diff --git a/net/netfilter/ipset/ip_set_hash_mac.c b/net/netfilter/ipset/ip_set_hash_mac.c
+index f9d5a2a1e3d0..4fe5f243d0a3 100644
+--- a/net/netfilter/ipset/ip_set_hash_mac.c
++++ b/net/netfilter/ipset/ip_set_hash_mac.c
+@@ -81,15 +81,15 @@ hash_mac4_kadt(struct ip_set *set, const struct sk_buff *skb,
+ 	struct hash_mac4_elem e = { { .foo[0] = 0, .foo[1] = 0 } };
+ 	struct ip_set_ext ext = IP_SET_INIT_KEXT(skb, opt, set);
+ 
+-	 /* MAC can be src only */
+-	if (!(opt->flags & IPSET_DIM_ONE_SRC))
+-		return 0;
+-
+ 	if (skb_mac_header(skb) < skb->head ||
+ 	    (skb_mac_header(skb) + ETH_HLEN) > skb->data)
+ 		return -EINVAL;
+ 
+-	ether_addr_copy(e.ether, eth_hdr(skb)->h_source);
++	if (opt->flags & IPSET_DIM_ONE_SRC)
++		ether_addr_copy(e.ether, eth_hdr(skb)->h_source);
++	else
++		ether_addr_copy(e.ether, eth_hdr(skb)->h_dest);
++
+ 	if (is_zero_ether_addr(e.ether))
+ 		return -EINVAL;
+ 	return adtfn(set, &e, &ext, &opt->ext, opt->cmdflags);
+-- 
+2.19.1
 
