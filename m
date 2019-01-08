@@ -3,113 +3,103 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_LOCAL_NOVOWEL,
-	HEADER_FROM_DIFFERENT_DOMAINS,HK_RANDOM_FROM,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B62F5C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 04:47:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16B79C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 04:47:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DCB12087F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 04:47:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CFC072087F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 04:47:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j977q82v"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DnMRl0TK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727689AbfAHErS (ORCPT
+        id S1727701AbfAHEr0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 23:47:18 -0500
-Received: from mail-yb1-f193.google.com ([209.85.219.193]:40090 "EHLO
-        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727368AbfAHErS (ORCPT
+        Mon, 7 Jan 2019 23:47:26 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:45006 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727368AbfAHErY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 23:47:18 -0500
-Received: by mail-yb1-f193.google.com with SMTP id x201so1087319ybg.7;
-        Mon, 07 Jan 2019 20:47:17 -0800 (PST)
+        Mon, 7 Jan 2019 23:47:24 -0500
+Received: by mail-pf1-f195.google.com with SMTP id u6so1276697pfh.11;
+        Mon, 07 Jan 2019 20:47:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=iwEkgDQSJTeLUzK1szAoyZh+UnfbSE7vRq05ds6HCvI=;
-        b=j977q82vS/Hlt+Aa2ymjSyMPSqvJSYDE4vtpxfWQ34FMXf/VPjufqqYeHcOnLcjUWI
-         OOkVsofx/XFlbQkikFCbE2Nq6Uj54KEbv0wxB7sQkX7+2oV4XT86bbECJOz7pUrlXrpY
-         VuN3yHCyIbbjeOD0raB7ZP24/m0GBnRjONRaiOjeIXjKoY4xco+caXf+yEp4hqhF5O4+
-         8bj/yFwXhIi1AyUfgzSfDSPhogRL8/60teC41QPmbw4ZV54TzwMmvHyNo0DINbZqCQSA
-         c3QLiJ7ei0IkTfOVRuckp2mdu0QDowbQpGusWFfpACp7oYecDwPKRu/lemn6eDxrFOL7
-         ogrQ==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=xmEBXxr8tgGn0uAttO01eUtf0eTF6IJNY6XPXurik/s=;
+        b=DnMRl0TK71zt4HxzxIECDI3ovxU8s1nPDeEErqgYhAMRJQwFAlKYxgA4tgBaRSGqLG
+         VRF4HkeqIm1Q9SM/dNnjwDrD3u3t9dsR14XP+0jkhhUM1xpZ73PwutDWx+hjwrargHJf
+         8mTNlCl4HX5tFWe4Zwgfq0+XYn9xksBtVwC7TeNfhdZmEcmNU7nUTM2JuBJ1eRQK47Sx
+         ZQcNRSQWYxSGM8iAqKNZvd7maiBALXEuVM9tiTXv0klIYyCScYHjWppMu/ej7vraPqZE
+         IgyDdm2TiA2j+VALNMMynWdNt0zjKDwEskGclLp3bvxw4b3F1vNRltCrLgb1xhJHsEKK
+         fv0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=iwEkgDQSJTeLUzK1szAoyZh+UnfbSE7vRq05ds6HCvI=;
-        b=U+CKwCQYwOy5df3d0GgDo4wso4hwKh5GHyrNgDPIERxQtpgC3wmStwktJza2/IDLE3
-         IXJLOYSRSn/kc8EUhoYHySFtOKG+9ikiLW6mN6/3nYcZ8AvYSLFBDBnVWNiaLRWcdBkW
-         LPvSwZSw6KT75ynARolYhJ2VTHsR6QXNX1u4eSwlvmoDt22y3Ot/vrKC5nUVUY8RwXE6
-         uZdYo7ufNcEyOcMqRNyeOisBo2ie9CWWsgrgr2lNI2La3YeBm5qRTFxSmQz18J7dl6Nm
-         70eXvWeR70sGguN0D6fvAdnvgfukuRfo7fwbVXAI3gxvImFSVtVczrrneWWjwsNiJcVZ
-         pZKg==
-X-Gm-Message-State: AJcUukeXuQhmDQb1bJzYg+14LKxay1h637yKFXjnH/xo6dIGCdUZbIII
-        Ow7Oet0fGWKeOReKfA7WPCuyXXG3husZepzY9Po=
-X-Google-Smtp-Source: ALg8bN6nwJjBj8Jll+7gH2KVRHX6bkM2K13Fi0kr6NzrKlfiouazLjcw1UvPTazPIr+VKh7LMCLFjAmB1fqjdrwKFoI=
-X-Received: by 2002:a5b:902:: with SMTP id a2mr193481ybq.445.1546922836980;
- Mon, 07 Jan 2019 20:47:16 -0800 (PST)
-MIME-Version: 1.0
-References: <20190108032657.8331-1-deepa.kernel@gmail.com> <20190108032657.8331-2-deepa.kernel@gmail.com>
-In-Reply-To: <20190108032657.8331-2-deepa.kernel@gmail.com>
-From:   Max Filippov <jcmvbkbc@gmail.com>
-Date:   Mon, 7 Jan 2019 20:47:05 -0800
-Message-ID: <CAMo8Bf+BA-Z78E-VQ3QNPrQVFD0kJrhJdmUZw=ZchfP6iYg_dA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/8] arch: Use asm-generic/socket.h when possible
-To:     Deepa Dinamani <deepa.kernel@gmail.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        LKML <linux-kernel@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Chris Zankel <chris@zankel.net>,
-        Fenghua Yu <fenghua.yu@intel.com>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=xmEBXxr8tgGn0uAttO01eUtf0eTF6IJNY6XPXurik/s=;
+        b=Nf1adwdTWJs6lTJRpfzLWQ/5D7cHdTAdyPhIY7nGho4xzL1J/H5IeoNBx8Ey3tMssq
+         GFW//dauwrhTcsZVHypk6X7h6Rm7QSPcuuONNsjpTDwbLuKxzkD6gNyZ8TFHC9tLpOC5
+         uham47z4cQuMiYN0SKI6ln67Oi2LGtgqZmcZJWIiDBQ9rC3B0HjBiPmoSanWUDkLpQix
+         sOQjwYbYwuwWFNABj5Ypik5vrWHm7TaVIOysoT3aVWIzjFXCQF5bkwFWjtioO5/XmeOV
+         oiGBWCgeSBiuUVm/+vQ3Y4mkrsD77nYqdF/HmjivMEF0/0ahujZFFLXszxiU0KkwqeI4
+         Y/fA==
+X-Gm-Message-State: AJcUukftZeKds1gg5tPK8zVCtjQMLPL20VdNTBzQYzRkb+HceZqG+BQp
+        2dHUYw4Zu/zSDpLGHkCtCWk=
+X-Google-Smtp-Source: ALg8bN7qf5lPIEcMJDl9qTk4M2FVEhh5ojBPq1oYKoKvmR9eYmToey3WSXWwy/wa6IfHjnstOzPLdw==
+X-Received: by 2002:a63:a30a:: with SMTP id s10mr236594pge.234.1546922843732;
+        Mon, 07 Jan 2019 20:47:23 -0800 (PST)
+Received: from localhost ([39.7.51.153])
+        by smtp.gmail.com with ESMTPSA id g185sm95159728pfc.174.2019.01.07.20.47.22
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 07 Jan 2019 20:47:22 -0800 (PST)
+Date:   Tue, 8 Jan 2019 13:47:19 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        linux-kernel@vger.kernel.org,
+        linux-rt-users <linux-rt-users@vger.kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        "open list:IA64 (Itanium) PL..." <linux-ia64@vger.kernel.org>,
-        linux-xtensa@linux-xtensa.org,
-        linux-s390 <linux-s390@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Carsten Emde <C.Emde@osadl.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        John Kacur <jkacur@redhat.com>,
+        Paul Gortmaker <paul.gortmaker@windriver.com>,
+        Julia Cartwright <julia@ni.com>,
+        Daniel Wagner <daniel.wagner@siemens.com>,
+        tom.zanussi@linux.intel.com
+Subject: Re: [PATCH RT 01/13] work-simple: drop a shit statement in
+ SWORK_EVENT_PENDING
+Message-ID: <20190108044719.GA19275@jagdpanzerIV>
+References: <20190107195252.599921907@goodmis.org>
+ <20190107195331.608898679@goodmis.org>
+ <20190108030623.GA6619@jagdpanzerIV>
+ <20190107222634.381bfbd0@vmware.local.home>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190107222634.381bfbd0@vmware.local.home>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 7, 2019 at 7:28 PM Deepa Dinamani <deepa.kernel@gmail.com> wrote:
->
-> Many architectures maintain an arch specific copy of the
-> file even though there are no differences with the asm-generic
-> one. Allow these architectures to use the generic one instead.
->
-> Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
-> Cc: chris@zankel.net
-> Cc: fenghua.yu@intel.com
-> Cc: tglx@linutronix.de
-> Cc: schwidefsky@de.ibm.com
-> Cc: linux-ia64@vger.kernel.org
-> Cc: linux-xtensa@linux-xtensa.org
-> Cc: linux-s390@vger.kernel.org
-> ---
->  arch/ia64/include/uapi/asm/Kbuild     |   1 +
->  arch/ia64/include/uapi/asm/socket.h   | 120 -------------------------
->  arch/s390/include/uapi/asm/Kbuild     |   1 +
->  arch/s390/include/uapi/asm/socket.h   | 117 ------------------------
->  arch/x86/include/uapi/asm/Kbuild      |   1 +
->  arch/x86/include/uapi/asm/socket.h    |   1 -
->  arch/xtensa/include/asm/Kbuild        |   1 +
->  arch/xtensa/include/uapi/asm/Kbuild   |   1 +
->  arch/xtensa/include/uapi/asm/socket.h | 122 --------------------------
->  9 files changed, 5 insertions(+), 360 deletions(-)
->  delete mode 100644 arch/ia64/include/uapi/asm/socket.h
->  delete mode 100644 arch/s390/include/uapi/asm/socket.h
->  delete mode 100644 arch/x86/include/uapi/asm/socket.h
->  delete mode 100644 arch/xtensa/include/uapi/asm/socket.h
+On (01/07/19 22:26), Steven Rostedt wrote:
+> > On (01/07/19 14:52), Steven Rostedt wrote:
+> > > Subject: [PATCH RT 01/13] work-simple: drop a shit statement in SWORK_EVENT_PENDING  
+> > 
+> > 						shift?
+> 
+> Yes. And I noticed this typo after I sent out the list. It appears that
+> Sebastian's keyboard has a faulty 'f' key, as he has made this typo
+> more than once.
 
-For xtensa:
-Acked-by: Max Filippov <jcmvbkbc@gmail.com>
+I think Sebastian can configure his emacs to interpret a long
+spacebar hold as 'f' key [0].
 
--- 
-Thanks.
--- Max
+[0] https://imgs.xkcd.com/comics/workflow.png
+
+	-ss
