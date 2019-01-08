@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C22BC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:09:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 545C7C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:10:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E49B520827
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:09:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2628120827
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:10:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546978194;
-	bh=EH/QPtomh6b7QJcI2pryTrIFc7ULXL+VOCKdJYr4uQ4=;
+	s=default; t=1546978201;
+	bh=HkM9043lStGDH3UILF6n4HWAV5IcMSXu9LrCFF+VHPs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=vR/F1yoccmwEsQVYETkKh8tOw9LZuYileGJ2r0nqV+TfEaSyirxMMJxZHJ5GiDEZ7
-	 pXPpDmzQWeKjr36hzBhpwozMSLIgNYXx+W3wV6F/HydppJq+6+mkpxULKG629SRanH
-	 f1ZK5NKXWTCMsK4DLv8joMJfKAZOMogaVDJgfOk0=
+	b=Zu3exWaDnVMvAz3MG1TKTeZGo2AtEsFtAvsrEv+2NT4/KaB4FCalhzxTC0IzbAeTn
+	 yrDN6i0TTm3vIPVxpOAc9XypB2SsERkwmL5TiqX4g8kERZpHCdgt5KNXAHgq3J2X+I
+	 Efd4VXzr7gi2wFs0oA0v19vzxb8aEwlLQmmzz5gM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733105AbfAHUJw (ORCPT
+        id S1733110AbfAHUJ7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 15:09:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60968 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 15:09:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60950 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729301AbfAHT0y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:26:54 -0500
+        id S1729277AbfAHT0w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:26:52 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7A02B214C6;
-        Tue,  8 Jan 2019 19:26:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5D2C02087F;
+        Tue,  8 Jan 2019 19:26:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975613;
-        bh=EH/QPtomh6b7QJcI2pryTrIFc7ULXL+VOCKdJYr4uQ4=;
+        s=default; t=1546975612;
+        bh=HkM9043lStGDH3UILF6n4HWAV5IcMSXu9LrCFF+VHPs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mihZ0GgbI6c+lr+u5hif7TkZinkyIP1BtyUusszJKVgVW6smmV7zTHWDi2olmyHwS
-         RCB6fRl3z+e3+7eQYcO+Oym+rNhwLQmcQrfaer4uebDEXptN6R7FX0cmvqfmG7FF5t
-         Hwalpq4T0jbXe0d5Foq4qgQgqyu/RsNcA2x61sOQ=
+        b=tRWfaq9R0GerKEQveJVEDWlZSAW6mFAxC42rCFeAMMCkjQDO1PJWXjkCfSv06OhQU
+         cMNDgfMSNeK3tfTrn/oktDamRjHx7OIb5yCYOzgcelqhm6Ow5YsFzAjCVXw7xaHUhq
+         0v7JoxF/x31Cf7At7KynDR5Gs3dThzk38mvJ7lpA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Anders Roxell <anders.roxell@linaro.org>,
         Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-serial@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 014/117] serial: set suppress_bind_attrs flag only if builtin
-Date:   Tue,  8 Jan 2019 14:24:42 -0500
-Message-Id: <20190108192628.121270-14-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 013/117] writeback: don't decrement wb->refcnt if !wb->bdi
+Date:   Tue,  8 Jan 2019 14:24:41 -0500
+Message-Id: <20190108192628.121270-13-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192628.121270-1-sashal@kernel.org>
 References: <20190108192628.121270-1-sashal@kernel.org>
@@ -61,124 +61,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Anders Roxell <anders.roxell@linaro.org>
 
-[ Upstream commit 646097940ad35aa2c1f2012af932d55976a9f255 ]
+[ Upstream commit 347a28b586802d09604a149c1a1f6de5dccbe6fa ]
 
-When the test 'CONFIG_DEBUG_TEST_DRIVER_REMOVE=y' is enabled,
-arch_initcall(pl011_init) came before subsys_initcall(default_bdi_init).
-devtmpfs gets killed because we try to remove a file and decrement the
-wb reference count before the noop_backing_device_info gets initialized.
+This happened while running in qemu-system-aarch64, the AMBA PL011 UART
+driver when enabling CONFIG_DEBUG_TEST_DRIVER_REMOVE.
+arch_initcall(pl011_init) came before subsys_initcall(default_bdi_init),
+devtmpfs' handle_remove() crashes because the reference count is a NULL
+pointer only because wb->bdi hasn't been initialized yet.
 
-[    0.332075] Serial: AMBA PL011 UART driver
-[    0.485276] 9000000.pl011: ttyAMA0 at MMIO 0x9000000 (irq = 39, base_baud = 0) is a PL011 rev1
-[    0.502382] console [ttyAMA0] enabled
-[    0.515710] Unable to handle kernel paging request at virtual address 0000800074c12000
-[    0.516053] Mem abort info:
-[    0.516222]   ESR = 0x96000004
-[    0.516417]   Exception class = DABT (current EL), IL = 32 bits
-[    0.516641]   SET = 0, FnV = 0
-[    0.516826]   EA = 0, S1PTW = 0
-[    0.516984] Data abort info:
-[    0.517149]   ISV = 0, ISS = 0x00000004
-[    0.517339]   CM = 0, WnR = 0
-[    0.517553] [0000800074c12000] user address but active_mm is swapper
-[    0.517928] Internal error: Oops: 96000004 [#1] PREEMPT SMP
-[    0.518305] Modules linked in:
-[    0.518839] CPU: 0 PID: 13 Comm: kdevtmpfs Not tainted 4.19.0-rc5-next-20180928-00002-g2ba39ab0cd01-dirty #82
-[    0.519307] Hardware name: linux,dummy-virt (DT)
-[    0.519681] pstate: 80000005 (Nzcv daif -PAN -UAO)
-[    0.519959] pc : __destroy_inode+0x94/0x2a8
-[    0.520212] lr : __destroy_inode+0x78/0x2a8
-[    0.520401] sp : ffff0000098c3b20
-[    0.520590] x29: ffff0000098c3b20 x28: 00000000087a3714
-[    0.520904] x27: 0000000000002000 x26: 0000000000002000
-[    0.521179] x25: ffff000009583000 x24: 0000000000000000
-[    0.521467] x23: ffff80007bb52000 x22: ffff80007bbaa7c0
-[    0.521737] x21: ffff0000093f9338 x20: 0000000000000000
-[    0.522033] x19: ffff80007bbb05d8 x18: 0000000000000400
-[    0.522376] x17: 0000000000000000 x16: 0000000000000000
-[    0.522727] x15: 0000000000000400 x14: 0000000000000400
-[    0.523068] x13: 0000000000000001 x12: 0000000000000001
-[    0.523421] x11: 0000000000000000 x10: 0000000000000970
-[    0.523749] x9 : ffff0000098c3a60 x8 : ffff80007bbab190
-[    0.524017] x7 : ffff80007bbaa880 x6 : 0000000000000c88
-[    0.524305] x5 : ffff0000093d96c8 x4 : 61c8864680b583eb
-[    0.524567] x3 : ffff0000093d6180 x2 : ffffffffffffffff
-[    0.524872] x1 : 0000800074c12000 x0 : 0000800074c12000
-[    0.525207] Process kdevtmpfs (pid: 13, stack limit = 0x(____ptrval____))
-[    0.525529] Call trace:
-[    0.525806]  __destroy_inode+0x94/0x2a8
-[    0.526108]  destroy_inode+0x34/0x88
-[    0.526370]  evict+0x144/0x1c8
-[    0.526636]  iput+0x184/0x230
-[    0.526871]  dentry_unlink_inode+0x118/0x130
-[    0.527152]  d_delete+0xd8/0xe0
-[    0.527420]  vfs_unlink+0x240/0x270
-[    0.527665]  handle_remove+0x1d8/0x330
-[    0.527875]  devtmpfsd+0x138/0x1c8
-[    0.528085]  kthread+0x14c/0x158
-[    0.528291]  ret_from_fork+0x10/0x18
-[    0.528720] Code: 92800002 aa1403e0 d538d081 8b010000 (c85f7c04)
-[    0.529367] ---[ end trace 5a3dee47727f877c ]---
+Rework so that wb_put have an extra check if wb->bdi before decrement
+wb->refcnt and also add a WARN_ON_ONCE to get a warning if it happens again
+in other drivers.
 
-Rework to set suppress_bind_attrs flag to avoid removing the device when
-CONFIG_DEBUG_TEST_DRIVER_REMOVE=y. This applies for pic32_uart and
-xilinx_uartps as well.
-
+Fixes: 52ebea749aae ("writeback: make backing_dev_info host cgroup-specific bdi_writebacks")
 Co-developed-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/serial/amba-pl011.c    | 2 ++
- drivers/tty/serial/pic32_uart.c    | 1 +
- drivers/tty/serial/xilinx_uartps.c | 1 +
- 3 files changed, 4 insertions(+)
+ include/linux/backing-dev-defs.h | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/tty/serial/amba-pl011.c b/drivers/tty/serial/amba-pl011.c
-index ebd33c0232e6..89ade213a1a9 100644
---- a/drivers/tty/serial/amba-pl011.c
-+++ b/drivers/tty/serial/amba-pl011.c
-@@ -2780,6 +2780,7 @@ static struct platform_driver arm_sbsa_uart_platform_driver = {
- 		.name	= "sbsa-uart",
- 		.of_match_table = of_match_ptr(sbsa_uart_of_match),
- 		.acpi_match_table = ACPI_PTR(sbsa_uart_acpi_match),
-+		.suppress_bind_attrs = IS_BUILTIN(CONFIG_SERIAL_AMBA_PL011),
- 	},
- };
- 
-@@ -2808,6 +2809,7 @@ static struct amba_driver pl011_driver = {
- 	.drv = {
- 		.name	= "uart-pl011",
- 		.pm	= &pl011_dev_pm_ops,
-+		.suppress_bind_attrs = IS_BUILTIN(CONFIG_SERIAL_AMBA_PL011),
- 	},
- 	.id_table	= pl011_ids,
- 	.probe		= pl011_probe,
-diff --git a/drivers/tty/serial/pic32_uart.c b/drivers/tty/serial/pic32_uart.c
-index fd80d999308d..0bdf1687983f 100644
---- a/drivers/tty/serial/pic32_uart.c
-+++ b/drivers/tty/serial/pic32_uart.c
-@@ -919,6 +919,7 @@ static struct platform_driver pic32_uart_platform_driver = {
- 	.driver		= {
- 		.name	= PIC32_DEV_NAME,
- 		.of_match_table	= of_match_ptr(pic32_serial_dt_ids),
-+		.suppress_bind_attrs = IS_BUILTIN(CONFIG_SERIAL_PIC32),
- 	},
- };
- 
-diff --git a/drivers/tty/serial/xilinx_uartps.c b/drivers/tty/serial/xilinx_uartps.c
-index 57c66d2c3471..379242b96790 100644
---- a/drivers/tty/serial/xilinx_uartps.c
-+++ b/drivers/tty/serial/xilinx_uartps.c
-@@ -1719,6 +1719,7 @@ static struct platform_driver cdns_uart_platform_driver = {
- 		.name = CDNS_UART_NAME,
- 		.of_match_table = cdns_uart_of_match,
- 		.pm = &cdns_uart_dev_pm_ops,
-+		.suppress_bind_attrs = IS_BUILTIN(CONFIG_SERIAL_XILINX_PS_UART),
- 		},
- };
- 
+diff --git a/include/linux/backing-dev-defs.h b/include/linux/backing-dev-defs.h
+index 9a6bc0951cfa..c31157135598 100644
+--- a/include/linux/backing-dev-defs.h
++++ b/include/linux/backing-dev-defs.h
+@@ -258,6 +258,14 @@ static inline void wb_get(struct bdi_writeback *wb)
+  */
+ static inline void wb_put(struct bdi_writeback *wb)
+ {
++	if (WARN_ON_ONCE(!wb->bdi)) {
++		/*
++		 * A driver bug might cause a file to be removed before bdi was
++		 * initialized.
++		 */
++		return;
++	}
++
+ 	if (wb != &wb->bdi->wb)
+ 		percpu_ref_put(&wb->refcnt);
+ }
 -- 
 2.19.1
 
