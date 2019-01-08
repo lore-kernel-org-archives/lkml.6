@@ -2,167 +2,73 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB808C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:43:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09684C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:44:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 771C3206BB
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:43:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546976632;
-	bh=FU5PxOAS6uLgSrB0oaCi5ak1bZU3mija9SpLeuQ8SWE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Y5vsik3miKnYxdeIk2SzQBdx3m82zUNBlxoOToM7sHNJp2DHtMgkjNzh3KpoYCi3Q
-	 rw/phou9vcU8zYQwf9uW7NYe3mod+LoqhCdll2Z9wLObJsys5GlrbuEH1MJM9HlOeP
-	 REAGNujh9TIKzd1ru5QUJI9DORlT/FseodHmo3Lo=
+	by mail.kernel.org (Postfix) with ESMTP id BC06F206BB
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:43:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WNbbiha+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732423AbfAHTnv (ORCPT
+        id S1732700AbfAHTn6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:43:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42618 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731806AbfAHTdt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:33:49 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B2EA62063F;
-        Tue,  8 Jan 2019 19:33:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546976027;
-        bh=FU5PxOAS6uLgSrB0oaCi5ak1bZU3mija9SpLeuQ8SWE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=B/Hh9GYQ1pz5IQh5ff8+vbM09LaWWxfyvwjm9sTmA8Gg1PqjYyfHxbW+1ZEysRkoS
-         d3V6Y6F/37KASnPQf+TY1Z2nXPw8m9L+cOjt6sh7aAA+hO3aiBoPTa9kFo9WgxyUUG
-         vpf5dI2ZeGlEQHKhWfzzkkIBIbY8F/VrhwRu4ocY=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Michal Hocko <mhocko@suse.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        David Rientjes <rientjes@google.com>,
-        Paul Oppenheimer <bepvte@gmail.com>,
-        William Kucharski <william.kucharski@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org,
-        linux-doc@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 53/53] mm, proc: be more verbose about unstable VMA flags in /proc/<pid>/smaps
-Date:   Tue,  8 Jan 2019 14:32:21 -0500
-Message-Id: <20190108193222.123316-53-sashal@kernel.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190108193222.123316-1-sashal@kernel.org>
-References: <20190108193222.123316-1-sashal@kernel.org>
+        Tue, 8 Jan 2019 14:43:58 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:49870 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731283AbfAHTnt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:43:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=kAcpKixWtHGEPESaLO1jfQIkKD8g3uluyYQMkCQxYT4=; b=WNbbiha+WCx7XuYFvQE2Fllvi
+        Kzjd9oeL8X5tW8rp99y2IebzMzDBEOUuO8MqSWMMB5HH+0Skn1AW1Gvtke+y5igEFO/nx5m/A1nZx
+        6N7k5G34MqMrOZH3/en6Wl2mGRWZj0c4whPgLtGjdMo/kkUVQpZ0oXFO3enTgdtV6OhyKbIQIMP1K
+        LA8ILDWYV7SkrrgTvR9z5kSnQfYQ4rpYWg8Iizm+hFNNDqsbFmnghWaOSR7XB5PJG8b2s4yv7scT6
+        VCswykby70e1+zmLsIOrkDH+/4OGqTM8XYpDRrbc6LrbJKmx8Rcnv3TuWMFbFLQLUx9k0EkRTKypX
+        NK0W1jyNQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1ggxHu-0005w5-1o; Tue, 08 Jan 2019 19:43:46 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 22EA520280199; Tue,  8 Jan 2019 20:43:43 +0100 (CET)
+Date:   Tue, 8 Jan 2019 20:43:43 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Song Liu <songliubraving@fb.com>
+Cc:     lkml <linux-kernel@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Kernel Team <Kernel-team@fb.com>
+Subject: Re: [PATCH v5 perf, bpf-next 1/7] perf, bpf: Introduce
+ PERF_RECORD_KSYMBOL
+Message-ID: <20190108194343.GE1900@hirez.programming.kicks-ass.net>
+References: <20181220182904.4193196-1-songliubraving@fb.com>
+ <20181220182904.4193196-2-songliubraving@fb.com>
+ <20190108183127.GB30894@hirez.programming.kicks-ass.net>
+ <A7A11A44-FDF0-4FB5-98B6-3E47A35E7120@fb.com>
 MIME-Version: 1.0
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <A7A11A44-FDF0-4FB5-98B6-3E47A35E7120@fb.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michal Hocko <mhocko@suse.com>
+On Tue, Jan 08, 2019 at 06:56:19PM +0000, Song Liu wrote:
+> I don't think we need u64 length. 32 bit should be more than enough. 
+> 
+> How about we revise it as:
 
-[ Upstream commit 7550c6079846a24f30d15ac75a941c8515dbedfb ]
-
-Patch series "THP eligibility reporting via proc".
-
-This series of three patches aims at making THP eligibility reporting much
-more robust and long term sustainable.  The trigger for the change is a
-regression report [2] and the long follow up discussion.  In short the
-specific application didn't have good API to query whether a particular
-mapping can be backed by THP so it has used VMA flags to workaround that.
-These flags represent a deep internal state of VMAs and as such they
-should be used by userspace with a great deal of caution.
-
-A similar has happened for [3] when users complained that VM_MIXEDMAP is
-no longer set on DAX mappings.  Again a lack of a proper API led to an
-abuse.
-
-The first patch in the series tries to emphasise that that the semantic of
-flags might change and any application consuming those should be really
-careful.
-
-The remaining two patches provide a more suitable interface to address [2]
-and provide a consistent API to query the THP status both for each VMA and
-process wide as well.  [1]
-
-http://lkml.kernel.org/r/20181120103515.25280-1-mhocko@kernel.org [2]
-http://lkml.kernel.org/r/http://lkml.kernel.org/r/alpine.DEB.2.21.1809241054050.224429@chino.kir.corp.google.com
-[3] http://lkml.kernel.org/r/20181002100531.GC4135@quack2.suse.cz
-
-This patch (of 3):
-
-Even though vma flags exported via /proc/<pid>/smaps are explicitly
-documented to be not guaranteed for future compatibility the warning
-doesn't go far enough because it doesn't mention semantic changes to those
-flags.  And they are important as well because these flags are a deep
-implementation internal to the MM code and the semantic might change at
-any time.
-
-Let's consider two recent examples:
-http://lkml.kernel.org/r/20181002100531.GC4135@quack2.suse.cz
-: commit e1fb4a086495 "dax: remove VM_MIXEDMAP for fsdax and device dax" has
-: removed VM_MIXEDMAP flag from DAX VMAs. Now our testing shows that in the
-: mean time certain customer of ours started poking into /proc/<pid>/smaps
-: and looks at VMA flags there and if VM_MIXEDMAP is missing among the VMA
-: flags, the application just fails to start complaining that DAX support is
-: missing in the kernel.
-
-http://lkml.kernel.org/r/alpine.DEB.2.21.1809241054050.224429@chino.kir.corp.google.com
-: Commit 1860033237d4 ("mm: make PR_SET_THP_DISABLE immediately active")
-: introduced a regression in that userspace cannot always determine the set
-: of vmas where thp is ineligible.
-: Userspace relies on the "nh" flag being emitted as part of /proc/pid/smaps
-: to determine if a vma is eligible to be backed by hugepages.
-: Previous to this commit, prctl(PR_SET_THP_DISABLE, 1) would cause thp to
-: be disabled and emit "nh" as a flag for the corresponding vmas as part of
-: /proc/pid/smaps.  After the commit, thp is disabled by means of an mm
-: flag and "nh" is not emitted.
-: This causes smaps parsing libraries to assume a vma is eligible for thp
-: and ends up puzzling the user on why its memory is not backed by thp.
-
-In both cases userspace was relying on a semantic of a specific VMA flag.
-The primary reason why that happened is a lack of a proper interface.
-While this has been worked on and it will be fixed properly, it seems that
-our wording could see some refinement and be more vocal about semantic
-aspect of these flags as well.
-
-Link: http://lkml.kernel.org/r/20181211143641.3503-2-mhocko@kernel.org
-Signed-off-by: Michal Hocko <mhocko@suse.com>
-Acked-by: Jan Kara <jack@suse.cz>
-Acked-by: Dan Williams <dan.j.williams@intel.com>
-Acked-by: David Rientjes <rientjes@google.com>
-Acked-by: Mike Rapoport <rppt@linux.ibm.com>
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: David Rientjes <rientjes@google.com>
-Cc: Paul Oppenheimer <bepvte@gmail.com>
-Cc: William Kucharski <william.kucharski@oracle.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- Documentation/filesystems/proc.txt | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/filesystems/proc.txt b/Documentation/filesystems/proc.txt
-index adba21b5ada7..4cee34ce496e 100644
---- a/Documentation/filesystems/proc.txt
-+++ b/Documentation/filesystems/proc.txt
-@@ -494,7 +494,9 @@ manner. The codes are the following:
- 
- Note that there is no guarantee that every flag and associated mnemonic will
- be present in all further kernel releases. Things get changed, the flags may
--be vanished or the reverse -- new added.
-+be vanished or the reverse -- new added. Interpretation of their meaning
-+might change in future as well. So each consumer of these flags has to
-+follow each specific kernel version for the exact semantic.
- 
- This file is only present if the CONFIG_MMU kernel configuration option is
- enabled.
--- 
-2.19.1
-
+Yep, works. Although I would not introduce types we're not yet
+generating. We can add those easily enough when needed.
