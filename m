@@ -2,231 +2,152 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FFFDC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:27:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A218EC43612
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:28:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1485D2070B
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:27:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546964837;
-	bh=sjMO5BLgh676qwtvz87F45K6lqAOzKaFO1AQwjEmyd8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=rjzCdXnAwO55EIxtyQRHx9pHHVGCkq+jim3+y8kH49Q+2UCoNVDEFu5MuAzDeyU6N
-	 cb1H+19KEwUQSE1mIFdazeKiNO64hjswlp+vymS8AVQkZ/RvcieqE2yQ8L5G3oIaMz
-	 uKCpLYKrUKO6RqYuPIwiR67votIgvMgODpC/lTIo=
+	by mail.kernel.org (Postfix) with ESMTP id 5ED0F2070B
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:28:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YHjwHpO9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729680AbfAHQ1Q (ORCPT
+        id S1729548AbfAHQ2M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 11:27:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36310 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729279AbfAHQ1P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 11:27:15 -0500
-Received: from localhost.localdomain (unknown [218.0.237.216])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0CDC02183F;
-        Tue,  8 Jan 2019 16:27:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546964834;
-        bh=sjMO5BLgh676qwtvz87F45K6lqAOzKaFO1AQwjEmyd8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1svmLRdKTA5Cin0exnT6FykgD7jRY62B4QE5p10Kul094JtaPYn/DQC1OcQrJ+fes
-         Z2Ootx+ErO9PRwIg0+pWFauV4u8L7NUriD8VCIS0TJoZfLa1Yg8toCb+gI8w/qbmts
-         jkO14n1qs7FyL8Pnncl2m1Na/5OwMkIDPXhm2X+Y=
-From:   guoren@kernel.org
-To:     tglx@linutronix.de, marc.zyngier@arm.com, arnd@arndb.de
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, mhocko@kernel.org,
-        torvalds@linux-foundation.org, linux@roeck-us.net,
-        Guo Ren <ren_guo@c-sky.com>,
-        Lu Baoquan <lu.baoquan@intellif.com>
-Subject: [PATCH 5/5] irqchip/csky: fixup handle_irq_perbit break irq
-Date:   Wed,  9 Jan 2019 00:26:38 +0800
-Message-Id: <1546964798-30067-5-git-send-email-guoren@kernel.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1546964798-30067-1-git-send-email-guoren@kernel.org>
-References: <1546964798-30067-1-git-send-email-guoren@kernel.org>
+        Tue, 8 Jan 2019 11:28:12 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:34739 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729218AbfAHQ2L (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 11:28:11 -0500
+Received: by mail-ed1-f68.google.com with SMTP id b3so4845673ede.1;
+        Tue, 08 Jan 2019 08:28:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=qWRbL3N32mSE6w4dNJPwmsnCu5CZYMQLMJ8ea9T1CAI=;
+        b=YHjwHpO9rP7gC2YmJ7aHZkgAx4paxCZ9zZC2UwhIjiCnF6f44nTKb92BTf8TNRACtM
+         xwuH8GFJ0+fRUCe/ZrjrLm/CpYATKR4TZainCrc2vhb9WIM+uCJLuPqYFQhLqM1b4E7s
+         cMlNhB0g6eGkzOFiVnPQYbBs4f5XCp3mRW2FQ4QpzT7YfoW6uzDA//2OIu18lJmhISCf
+         2h7R9t/zKZgn6L2GGT4NEE1mA/IuEwSt9EGG53gQhxSWq+hNFT59+pgiLpxPO7+wxDa7
+         6bS+FolkjNF++OQbZFbQ7gcxSCWrQ9L52+RWPZWNPu0TXQoRdLL7VD1taFQckYUKlmTa
+         3LwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=qWRbL3N32mSE6w4dNJPwmsnCu5CZYMQLMJ8ea9T1CAI=;
+        b=qTevw6x7uEmiyTFnVtmTJt1DzwRJTLONQTFD9LclALHJku3OhQisYd80iabtC18+5B
+         dZ6Vnu93ByNS8gQGK1dXbnI7lw9o3gayLOQLvOuxVPbU4446ywoKAxkiaslvRjbz2mZ4
+         FEqH66550zEPFBAJoEkq3PqoAfHTzFPyBwQrbmSYj6owf4+sJwb3RRv899V/Q8goNG93
+         HW/8r1SuDe8umQehgDbm/Kh72/olncCHUYKUClhvbTVchwrbCTaJJSz7zanYx1hp3EVo
+         l1dFCQfnN/EjRHdG4buqDUMkfGWp89AFG36FkrwnzELuvVoSIx2JQcUuYK0Q3dM6xgCM
+         0v6g==
+X-Gm-Message-State: AJcUukdJZ0ogEI+0QsrZW6yjKsQ2xsll+AVvsDaSIrOn4/J6KPmovRDX
+        u8zp47rVzQ1SaIbLxdzqhUk=
+X-Google-Smtp-Source: ALg8bN4M3CFB+tuwUvspBFC6pUvXIDMR2da43xyuNJGcYeL5MULHl0I/l9Epz4HGoZr1mdZ6nHy17A==
+X-Received: by 2002:a17:906:cd2:: with SMTP id l18-v6mr2390658ejh.97.1546964888289;
+        Tue, 08 Jan 2019 08:28:08 -0800 (PST)
+Received: from [192.168.0.61] (xd520f268.cust.hiper.dk. [213.32.242.104])
+        by smtp.gmail.com with ESMTPSA id j8sm120853ede.55.2019.01.08.08.28.06
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 08 Jan 2019 08:28:07 -0800 (PST)
+Subject: Re: [PATCH] KVM: validate userspace input in
+ kvm_clear_dirty_log_protect()
+To:     Paolo Bonzini <pbonzini@redhat.com>, rkrcmar@redhat.com,
+        kvm@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, syzkaller@googlegroups.com
+References: <20190102172937.28741-1-tomasbortoli@gmail.com>
+ <99de332c-d4e3-0628-8ad1-982032e67690@redhat.com>
+From:   Tomas Bortoli <tomasbortoli@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=tomasbortoli@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <8418f6c8-0fc8-e22c-c39a-bfcaee7471e2@gmail.com>
+Date:   Tue, 8 Jan 2019 17:28:05 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <99de332c-d4e3-0628-8ad1-982032e67690@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Guo Ren <ren_guo@c-sky.com>
+Hi Paolo,
 
-The handle_irq_perbit function loop every bit in hwirq local variable.
+On 1/7/19 11:42 PM, Paolo Bonzini wrote:
+> On 02/01/19 18:29, Tomas Bortoli wrote:
+>>  	n = kvm_dirty_bitmap_bytes(memslot);
+>> +
+>> +	if (n << 3 < log->num_pages || log->first_page > log->num_pages)
+>> +		return -EINVAL;
+>> +
+> 
+> This should be
+> 
+> 	if (log->first_page > memslot->npages ||
+> 	    log->num_pages > memslot->npages - log->first_page)
+> 		return -EINVAL;
+> 
+> i.e. the comparison should check the last page in the range, not the
+> number of pages.  In addition, using "n" is unnecessary since we do have
+> the memslot.  I'll do the changes myself if you prefer, but an ack would
+> be nice.
+> 
+> 
 
-handle_irq_perbit(hwirq) {
-  for_everyt_bit_in(hwirq) {
-	handle_domain_irq()
-		->irq_exit()
-		->invoke_softirq()
-		->__do_softirq()
-		->local_irq_enable() // Here will cause new interrupt.
-  }
-}
 
-When new interrupt coming at local_irq_enable, it will finish another
-interrupt handler and pull down the interrupt source. But hwirq is the
-local variable for handle_irq_perbit(), it can't get new interrupt
-controller pending reg status. So we need update hwirq with pending reg
-in every loop.
+Yeah, I agree. Thanks for the reply and sure you can do the changes, np :)
 
-Also change write_relax to writel could prevent stw from fast retire.
-When local_irq is enabled, intc regs is really set-in.
-
-Signed-off-by: Guo Ren <ren_guo@c-sky.com>
-Cc: Lu Baoquan <lu.baoquan@intellif.com>
----
- drivers/irqchip/irq-csky-apb-intc.c | 77 ++++++++++++++++++++-----------------
- 1 file changed, 42 insertions(+), 35 deletions(-)
-
-diff --git a/drivers/irqchip/irq-csky-apb-intc.c b/drivers/irqchip/irq-csky-apb-intc.c
-index 2543bab..5a2ec43 100644
---- a/drivers/irqchip/irq-csky-apb-intc.c
-+++ b/drivers/irqchip/irq-csky-apb-intc.c
-@@ -95,7 +95,7 @@ static inline void setup_irq_channel(u32 magic, void __iomem *reg_addr)
- 
- 	/* Setup 64 channel slots */
- 	for (i = 0; i < INTC_IRQS; i += 4)
--		writel_relaxed(build_channel_val(i, magic), reg_addr + i);
-+		writel(build_channel_val(i, magic), reg_addr + i);
- }
- 
- static int __init
-@@ -135,16 +135,10 @@ ck_intc_init_comm(struct device_node *node, struct device_node *parent)
- static inline bool handle_irq_perbit(struct pt_regs *regs, u32 hwirq,
- 				     u32 irq_base)
- {
--	u32 irq;
--
- 	if (hwirq == 0)
- 		return 0;
- 
--	while (hwirq) {
--		irq = __ffs(hwirq);
--		hwirq &= ~BIT(irq);
--		handle_domain_irq(root_domain, irq_base + irq, regs);
--	}
-+	handle_domain_irq(root_domain, irq_base + __fls(hwirq), regs);
- 
- 	return 1;
- }
-@@ -154,12 +148,16 @@ static void gx_irq_handler(struct pt_regs *regs)
- {
- 	bool ret;
- 
--	do {
--		ret  = handle_irq_perbit(regs,
--				readl_relaxed(reg_base + GX_INTC_PEN31_00), 0);
--		ret |= handle_irq_perbit(regs,
--				readl_relaxed(reg_base + GX_INTC_PEN63_32), 32);
--	} while (ret);
-+retry:
-+	ret = handle_irq_perbit(regs,
-+			readl(reg_base + GX_INTC_PEN63_32), 32);
-+	if (ret)
-+		goto retry;
-+
-+	ret = handle_irq_perbit(regs,
-+			readl(reg_base + GX_INTC_PEN31_00), 0);
-+	if (ret)
-+		goto retry;
- }
- 
- static int __init
-@@ -174,14 +172,14 @@ gx_intc_init(struct device_node *node, struct device_node *parent)
- 	/*
- 	 * Initial enable reg to disable all interrupts
- 	 */
--	writel_relaxed(0x0, reg_base + GX_INTC_NEN31_00);
--	writel_relaxed(0x0, reg_base + GX_INTC_NEN63_32);
-+	writel(0x0, reg_base + GX_INTC_NEN31_00);
-+	writel(0x0, reg_base + GX_INTC_NEN63_32);
- 
- 	/*
- 	 * Initial mask reg with all unmasked, because we only use enalbe reg
- 	 */
--	writel_relaxed(0x0, reg_base + GX_INTC_NMASK31_00);
--	writel_relaxed(0x0, reg_base + GX_INTC_NMASK63_32);
-+	writel(0x0, reg_base + GX_INTC_NMASK31_00);
-+	writel(0x0, reg_base + GX_INTC_NMASK63_32);
- 
- 	setup_irq_channel(0x03020100, reg_base + GX_INTC_SOURCE);
- 
-@@ -204,20 +202,29 @@ static void ck_irq_handler(struct pt_regs *regs)
- 	void __iomem *reg_pen_lo = reg_base + CK_INTC_PEN31_00;
- 	void __iomem *reg_pen_hi = reg_base + CK_INTC_PEN63_32;
- 
--	do {
--		/* handle 0 - 31 irqs */
--		ret  = handle_irq_perbit(regs, readl_relaxed(reg_pen_lo), 0);
--		ret |= handle_irq_perbit(regs, readl_relaxed(reg_pen_hi), 32);
-+retry:
-+	/* handle 0 - 63 irqs */
-+	ret = handle_irq_perbit(regs, readl(reg_pen_hi), 32);
-+	if (ret)
-+		goto retry;
- 
--		if (nr_irq == INTC_IRQS)
--			continue;
-+	ret = handle_irq_perbit(regs, readl(reg_pen_lo), 0);
-+	if (ret)
-+		goto retry;
-+
-+	if (nr_irq == INTC_IRQS)
-+		return;
- 
--		/* handle 64 - 127 irqs */
--		ret |= handle_irq_perbit(regs,
--			readl_relaxed(reg_pen_lo + CK_INTC_DUAL_BASE), 64);
--		ret |= handle_irq_perbit(regs,
--			readl_relaxed(reg_pen_hi + CK_INTC_DUAL_BASE), 96);
--	} while (ret);
-+	/* handle 64 - 127 irqs */
-+	ret = handle_irq_perbit(regs,
-+			readl(reg_pen_hi + CK_INTC_DUAL_BASE), 96);
-+	if (ret)
-+		goto retry;
-+
-+	ret = handle_irq_perbit(regs,
-+			readl(reg_pen_lo + CK_INTC_DUAL_BASE), 64);
-+	if (ret)
-+		goto retry;
- }
- 
- static int __init
-@@ -230,11 +237,11 @@ ck_intc_init(struct device_node *node, struct device_node *parent)
- 		return ret;
- 
- 	/* Initial enable reg to disable all interrupts */
--	writel_relaxed(0, reg_base + CK_INTC_NEN31_00);
--	writel_relaxed(0, reg_base + CK_INTC_NEN63_32);
-+	writel(0, reg_base + CK_INTC_NEN31_00);
-+	writel(0, reg_base + CK_INTC_NEN63_32);
- 
- 	/* Enable irq intc */
--	writel_relaxed(BIT(31), reg_base + CK_INTC_ICR);
-+	writel(BIT(31), reg_base + CK_INTC_ICR);
- 
- 	ck_set_gc(node, reg_base, CK_INTC_NEN31_00, 0);
- 	ck_set_gc(node, reg_base, CK_INTC_NEN63_32, 32);
-@@ -260,8 +267,8 @@ ck_dual_intc_init(struct device_node *node, struct device_node *parent)
- 		return ret;
- 
- 	/* Initial enable reg to disable all interrupts */
--	writel_relaxed(0, reg_base + CK_INTC_NEN31_00 + CK_INTC_DUAL_BASE);
--	writel_relaxed(0, reg_base + CK_INTC_NEN63_32 + CK_INTC_DUAL_BASE);
-+	writel(0, reg_base + CK_INTC_NEN31_00 + CK_INTC_DUAL_BASE);
-+	writel(0, reg_base + CK_INTC_NEN63_32 + CK_INTC_DUAL_BASE);
- 
- 	ck_set_gc(node, reg_base + CK_INTC_DUAL_BASE, CK_INTC_NEN31_00, 64);
- 	ck_set_gc(node, reg_base + CK_INTC_DUAL_BASE, CK_INTC_NEN63_32, 96);
--- 
-2.7.4
-
+Tomas
