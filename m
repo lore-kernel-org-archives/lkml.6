@@ -4,48 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C62FC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:26:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B6DFC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:26:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59360214C6
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:26:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5CED720827
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:26:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546975596;
-	bh=P939VIZKA0hygcKOeVt7XPRsSJUCw6frQNLRP8KLso4=;
+	s=default; t=1546975600;
+	bh=BfITsfKVEzIBv5ZFLuCIf/RvT3/pfGqkxNOQuwROUmw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=CRj/slMcsP3kS9ADRPYVSrzQBPH7j+TWYUS49+CdBzi0DM2gAt5e30CyeRC9S6ZMo
-	 l3xrBKEAMo2rB2frFBvpx1C+7yThD224RiTd06QP8+jk+ASkLfy0c823BVENvsO16h
-	 drYJcq1nQEoPehPEENdhOh1KkcJfnydmPWmSfmp0=
+	b=lyhFYiPoNte30snR3z0EmrsyfwaqDjT87ZpWUveiYcjNNjqgn8wYQefl/43ej3v4u
+	 8aFlsyCY6XKAQV5jYvIs+dQUfWoWcDvEZreeuv6Sy620EQBvfBTKrkxg/cxuMhGbul
+	 z+5yfGxk/5VRUb8SL6EQNOwUSo2pKfjz1gGmak5g=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728945AbfAHT0f (ORCPT
+        id S1728987AbfAHT0j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:26:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60434 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:26:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60514 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728138AbfAHT0c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:26:32 -0500
+        id S1728138AbfAHT0g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:26:36 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AC92F20883;
-        Tue,  8 Jan 2019 19:26:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EE3D42087F;
+        Tue,  8 Jan 2019 19:26:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975591;
-        bh=P939VIZKA0hygcKOeVt7XPRsSJUCw6frQNLRP8KLso4=;
+        s=default; t=1546975595;
+        bh=BfITsfKVEzIBv5ZFLuCIf/RvT3/pfGqkxNOQuwROUmw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dkkuacZ5DvmuemckQZe8dn88MW8Xk61XJKyOQX4tXV3qR13HU1BcEUJzHeiC/UuZL
-         oG9ksyQP7sITMt7ycT9G69SJmedLe9k6f/2aHgq2g/RBS/6408Se148ga6rVNcaYDD
-         ZuYv6jRB0WJHWxaLyU/Fm4UQwQENzcstptC0d7II=
+        b=TSUme6H/blVvUHFvqev9i+RPRvlcF1yjndhvwCKn8eHEH4Ip8Rq2s4hmyODXTf92d
+         Yolt2ETcGmXH17ZA+whjD7qkSBJheqQfCGmdThWSHmBlyq6CFtZ959iHkd7sDuZz9P
+         P8NxYpH96E8zj3o2VbT8inv9kFTroP+AdLwNa4wI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 002/117] gpio: pl061: Move irq_chip definition inside struct pl061
-Date:   Tue,  8 Jan 2019 14:24:30 -0500
-Message-Id: <20190108192628.121270-2-sashal@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, patches@opensource.cirrus.com
+Subject: [PATCH AUTOSEL 4.20 003/117] ASoC: wm97xx: fix uninitialized regmap pointer problem
+Date:   Tue,  8 Jan 2019 14:24:31 -0500
+Message-Id: <20190108192628.121270-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192628.121270-1-sashal@kernel.org>
 References: <20190108192628.121270-1-sashal@kernel.org>
@@ -57,86 +57,175 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit ed8dce4c6f726b7f3c6bf40859b92a9e32f189c1 ]
+[ Upstream commit 576ce4075bfa0f03e0e91a89eecc539b3b828b08 ]
 
-Keeping the irq_chip definition static will make it shared with multiple
-giochips in the system. This practice is considered to be bad and now we
-will get the below warning from gpiolib core:
+gcc notices that without either the ac97 bus or the pdata, we never
+initialize the regmap pointer, which leads to an uninitialized variable
+access:
 
-"detected irqchip that is shared with multiple gpiochips: please fix the
-driver."
+sound/soc/codecs/wm9712.c: In function 'wm9712_soc_probe':
+sound/soc/codecs/wm9712.c:666:2: error: 'regmap' may be used uninitialized in this function [-Werror=maybe-uninitialized]
 
-Hence, move the irq_chip definition from static to `struct pl061` for
-using a unique irq_chip for each gpiochip.
+Since that configuration is invalid, it's better to return an error
+here. I tried to avoid adding complexity to the conditions, and turned
+the #ifdef into a regular if(IS_ENABLED()) check for readability.
+This in turn requires moving some header file declarations out of
+an #ifdef.
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+The same code is used in three drivers, all of which I'm changing
+the same way.
+
+Fixes: 2ed1a8e0ce8d ("ASoC: wm9712: add ac97 new bus support")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpio/gpio-pl061.c | 21 ++++++++++-----------
- 1 file changed, 10 insertions(+), 11 deletions(-)
+ include/sound/soc.h       |  2 +-
+ sound/soc/codecs/wm9705.c | 10 ++++------
+ sound/soc/codecs/wm9712.c | 10 ++++------
+ sound/soc/codecs/wm9713.c | 10 ++++------
+ 4 files changed, 13 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/gpio/gpio-pl061.c b/drivers/gpio/gpio-pl061.c
-index 2afd9de84a0d..dc42571e6fdc 100644
---- a/drivers/gpio/gpio-pl061.c
-+++ b/drivers/gpio/gpio-pl061.c
-@@ -54,6 +54,7 @@ struct pl061 {
+diff --git a/include/sound/soc.h b/include/sound/soc.h
+index 70c10a8f3e90..3e0ac310a3df 100644
+--- a/include/sound/soc.h
++++ b/include/sound/soc.h
+@@ -553,12 +553,12 @@ static inline void snd_soc_jack_free_gpios(struct snd_soc_jack *jack, int count,
+ }
+ #endif
  
- 	void __iomem		*base;
- 	struct gpio_chip	gc;
-+	struct irq_chip		irq_chip;
- 	int			parent_irq;
+-#ifdef CONFIG_SND_SOC_AC97_BUS
+ struct snd_ac97 *snd_soc_alloc_ac97_component(struct snd_soc_component *component);
+ struct snd_ac97 *snd_soc_new_ac97_component(struct snd_soc_component *component,
+ 	unsigned int id, unsigned int id_mask);
+ void snd_soc_free_ac97_component(struct snd_ac97 *ac97);
  
- #ifdef CONFIG_PM
-@@ -281,15 +282,6 @@ static int pl061_irq_set_wake(struct irq_data *d, unsigned int state)
- 	return irq_set_irq_wake(pl061->parent_irq, state);
++#ifdef CONFIG_SND_SOC_AC97_BUS
+ int snd_soc_set_ac97_ops(struct snd_ac97_bus_ops *ops);
+ int snd_soc_set_ac97_ops_of_reset(struct snd_ac97_bus_ops *ops,
+ 		struct platform_device *pdev);
+diff --git a/sound/soc/codecs/wm9705.c b/sound/soc/codecs/wm9705.c
+index ccdf088461b7..54c306707c02 100644
+--- a/sound/soc/codecs/wm9705.c
++++ b/sound/soc/codecs/wm9705.c
+@@ -325,8 +325,7 @@ static int wm9705_soc_probe(struct snd_soc_component *component)
+ 	if (wm9705->mfd_pdata) {
+ 		wm9705->ac97 = wm9705->mfd_pdata->ac97;
+ 		regmap = wm9705->mfd_pdata->regmap;
+-	} else {
+-#ifdef CONFIG_SND_SOC_AC97_BUS
++	} else if (IS_ENABLED(CONFIG_SND_SOC_AC97_BUS)) {
+ 		wm9705->ac97 = snd_soc_new_ac97_component(component, WM9705_VENDOR_ID,
+ 						      WM9705_VENDOR_ID_MASK);
+ 		if (IS_ERR(wm9705->ac97)) {
+@@ -339,7 +338,8 @@ static int wm9705_soc_probe(struct snd_soc_component *component)
+ 			snd_soc_free_ac97_component(wm9705->ac97);
+ 			return PTR_ERR(regmap);
+ 		}
+-#endif
++	} else {
++		return -ENXIO;
+ 	}
+ 
+ 	snd_soc_component_set_drvdata(component, wm9705->ac97);
+@@ -350,14 +350,12 @@ static int wm9705_soc_probe(struct snd_soc_component *component)
+ 
+ static void wm9705_soc_remove(struct snd_soc_component *component)
+ {
+-#ifdef CONFIG_SND_SOC_AC97_BUS
+ 	struct wm9705_priv *wm9705 = snd_soc_component_get_drvdata(component);
+ 
+-	if (!wm9705->mfd_pdata) {
++	if (IS_ENABLED(CONFIG_SND_SOC_AC97_BUS) && !wm9705->mfd_pdata) {
+ 		snd_soc_component_exit_regmap(component);
+ 		snd_soc_free_ac97_component(wm9705->ac97);
+ 	}
+-#endif
  }
  
--static struct irq_chip pl061_irqchip = {
--	.name		= "pl061",
--	.irq_ack	= pl061_irq_ack,
--	.irq_mask	= pl061_irq_mask,
--	.irq_unmask	= pl061_irq_unmask,
--	.irq_set_type	= pl061_irq_type,
--	.irq_set_wake	= pl061_irq_set_wake,
--};
--
- static int pl061_probe(struct amba_device *adev, const struct amba_id *id)
+ static const struct snd_soc_component_driver soc_component_dev_wm9705 = {
+diff --git a/sound/soc/codecs/wm9712.c b/sound/soc/codecs/wm9712.c
+index e873baa9e778..01949eaba4fd 100644
+--- a/sound/soc/codecs/wm9712.c
++++ b/sound/soc/codecs/wm9712.c
+@@ -642,8 +642,7 @@ static int wm9712_soc_probe(struct snd_soc_component *component)
+ 	if (wm9712->mfd_pdata) {
+ 		wm9712->ac97 = wm9712->mfd_pdata->ac97;
+ 		regmap = wm9712->mfd_pdata->regmap;
+-	} else {
+-#ifdef CONFIG_SND_SOC_AC97_BUS
++	} else if (IS_ENABLED(CONFIG_SND_SOC_AC97_BUS)) {
+ 		int ret;
+ 
+ 		wm9712->ac97 = snd_soc_new_ac97_component(component, WM9712_VENDOR_ID,
+@@ -660,7 +659,8 @@ static int wm9712_soc_probe(struct snd_soc_component *component)
+ 			snd_soc_free_ac97_component(wm9712->ac97);
+ 			return PTR_ERR(regmap);
+ 		}
+-#endif
++	} else {
++		return -ENXIO;
+ 	}
+ 
+ 	snd_soc_component_init_regmap(component, regmap);
+@@ -673,14 +673,12 @@ static int wm9712_soc_probe(struct snd_soc_component *component)
+ 
+ static void wm9712_soc_remove(struct snd_soc_component *component)
  {
- 	struct device *dev = &adev->dev;
-@@ -328,6 +320,13 @@ static int pl061_probe(struct amba_device *adev, const struct amba_id *id)
- 	/*
- 	 * irq_chip support
- 	 */
-+	pl061->irq_chip.name = dev_name(dev);
-+	pl061->irq_chip.irq_ack	= pl061_irq_ack;
-+	pl061->irq_chip.irq_mask = pl061_irq_mask;
-+	pl061->irq_chip.irq_unmask = pl061_irq_unmask;
-+	pl061->irq_chip.irq_set_type = pl061_irq_type;
-+	pl061->irq_chip.irq_set_wake = pl061_irq_set_wake;
-+
- 	writeb(0, pl061->base + GPIOIE); /* disable irqs */
- 	irq = adev->irq[0];
- 	if (irq < 0) {
-@@ -336,14 +335,14 @@ static int pl061_probe(struct amba_device *adev, const struct amba_id *id)
- 	}
- 	pl061->parent_irq = irq;
+-#ifdef CONFIG_SND_SOC_AC97_BUS
+ 	struct wm9712_priv *wm9712 = snd_soc_component_get_drvdata(component);
  
--	ret = gpiochip_irqchip_add(&pl061->gc, &pl061_irqchip,
-+	ret = gpiochip_irqchip_add(&pl061->gc, &pl061->irq_chip,
- 				   0, handle_bad_irq,
- 				   IRQ_TYPE_NONE);
- 	if (ret) {
- 		dev_info(&adev->dev, "could not add irqchip\n");
- 		return ret;
+-	if (!wm9712->mfd_pdata) {
++	if (IS_ENABLED(CONFIG_SND_SOC_AC97_BUS) && !wm9712->mfd_pdata) {
+ 		snd_soc_component_exit_regmap(component);
+ 		snd_soc_free_ac97_component(wm9712->ac97);
  	}
--	gpiochip_set_chained_irqchip(&pl061->gc, &pl061_irqchip,
-+	gpiochip_set_chained_irqchip(&pl061->gc, &pl061->irq_chip,
- 				     irq, pl061_irq_handler);
+-#endif
+ }
  
- 	amba_set_drvdata(adev, pl061);
+ static const struct snd_soc_component_driver soc_component_dev_wm9712 = {
+diff --git a/sound/soc/codecs/wm9713.c b/sound/soc/codecs/wm9713.c
+index 643863bb32e0..5a2fdf4f69bf 100644
+--- a/sound/soc/codecs/wm9713.c
++++ b/sound/soc/codecs/wm9713.c
+@@ -1214,8 +1214,7 @@ static int wm9713_soc_probe(struct snd_soc_component *component)
+ 	if (wm9713->mfd_pdata) {
+ 		wm9713->ac97 = wm9713->mfd_pdata->ac97;
+ 		regmap = wm9713->mfd_pdata->regmap;
+-	} else {
+-#ifdef CONFIG_SND_SOC_AC97_BUS
++	} else if (IS_ENABLED(CONFIG_SND_SOC_AC97_BUS)) {
+ 		wm9713->ac97 = snd_soc_new_ac97_component(component, WM9713_VENDOR_ID,
+ 						      WM9713_VENDOR_ID_MASK);
+ 		if (IS_ERR(wm9713->ac97))
+@@ -1225,7 +1224,8 @@ static int wm9713_soc_probe(struct snd_soc_component *component)
+ 			snd_soc_free_ac97_component(wm9713->ac97);
+ 			return PTR_ERR(regmap);
+ 		}
+-#endif
++	} else {
++		return -ENXIO;
+ 	}
+ 
+ 	snd_soc_component_init_regmap(component, regmap);
+@@ -1238,14 +1238,12 @@ static int wm9713_soc_probe(struct snd_soc_component *component)
+ 
+ static void wm9713_soc_remove(struct snd_soc_component *component)
+ {
+-#ifdef CONFIG_SND_SOC_AC97_BUS
+ 	struct wm9713_priv *wm9713 = snd_soc_component_get_drvdata(component);
+ 
+-	if (!wm9713->mfd_pdata) {
++	if (IS_ENABLED(CONFIG_SND_SOC_AC97_BUS) && !wm9713->mfd_pdata) {
+ 		snd_soc_component_exit_regmap(component);
+ 		snd_soc_free_ac97_component(wm9713->ac97);
+ 	}
+-#endif
+ }
+ 
+ static const struct snd_soc_component_driver soc_component_dev_wm9713 = {
 -- 
 2.19.1
 
