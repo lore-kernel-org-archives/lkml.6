@@ -2,123 +2,204 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF7BBC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 18:01:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69B33C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 18:01:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C50ED20827
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 18:01:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="EMCw8XFe"
+	by mail.kernel.org (Postfix) with ESMTP id 3B7B720883
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 18:01:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729334AbfAHSBg (ORCPT
+        id S1729410AbfAHSBz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 13:01:36 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:36263 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728587AbfAHSBg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 13:01:36 -0500
-Received: by mail-lj1-f193.google.com with SMTP id g11-v6so4196460ljk.3
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 10:01:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=W/JHyziTXYBZgKuarJJ+NDCvRCIPz6dL/9BbolzPVrs=;
-        b=EMCw8XFewXGueYaj9qtzkX6ek0b6RZUBiLrNSBGscpVfgjmfHO8I0Zcp+9zFdvmmEe
-         c2xh/HQ+On3H3TSOak2Mc+gZcDMR4Hmt5lDt+QRQDFkVzro/3z4pV9ut8gQTJyKdBI45
-         HYmYlhjsAI9dA98iwTXqP68zDqDrakq5cQvas=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=W/JHyziTXYBZgKuarJJ+NDCvRCIPz6dL/9BbolzPVrs=;
-        b=H7FYHSudjuLSVWHsaU51CmcnrNmFHcp4fJ3A80GY7Lj5KFi2F7QqwNJfJo/38p+pvx
-         DG2uGcmPYH+6j1NM69oEy0rYMbpEKBiFZMdHT5vOQ0whFwDEmomwV2lQTjnU9YMA5h4c
-         NwDvVO59+3Fr45z5K1mtA5LplNtMFkD53YN+dEo2ksZDU0WM0ldwx+2Z2I0tJUBEh+yr
-         Z5IfaXk/F4IZ/S95cPFRSNdq76KgRV3izcuW8SB0Y0KFcFlhl7sFsM19r35oww8zCsS2
-         XnGZUfJsLajzjlPxdG144HLpt1cqjhnpYo01daKJfmu+FB6YshnmntKFDSWtyvblkd9H
-         SPCQ==
-X-Gm-Message-State: AJcUukc68X8OcffuM8rnD2pS+2hbYOFRoFeRDUOyGdBNYDPNJ2jgXdcH
-        LSx3RnF/lWzsUDtZnktZT1AzhVkLDwHMzQ==
-X-Google-Smtp-Source: ALg8bN6hN28RjBzhnd1aB+KeRx7UpDUIZDPotkidd2YWhubjXgvd0nWCh4uj6GgT6na+pfiQZKDF+w==
-X-Received: by 2002:a2e:974a:: with SMTP id f10-v6mr1819219ljj.61.1546970493206;
-        Tue, 08 Jan 2019 10:01:33 -0800 (PST)
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com. [209.85.208.174])
-        by smtp.gmail.com with ESMTPSA id g17sm13381311lfg.78.2019.01.08.10.01.31
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 08 Jan 2019 10:01:32 -0800 (PST)
-Received: by mail-lj1-f174.google.com with SMTP id k15-v6so4169855ljc.8
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 10:01:31 -0800 (PST)
-X-Received: by 2002:a2e:95c6:: with SMTP id y6-v6mr1600815ljh.59.1546970491265;
- Tue, 08 Jan 2019 10:01:31 -0800 (PST)
+        Tue, 8 Jan 2019 13:01:55 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:57710 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728587AbfAHSBy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 13:01:54 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 02538A78;
+        Tue,  8 Jan 2019 10:01:54 -0800 (PST)
+Received: from e103592.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BBDEE3F5AF;
+        Tue,  8 Jan 2019 10:01:51 -0800 (PST)
+Date:   Tue, 8 Jan 2019 18:01:49 +0000
+From:   Dave Martin <Dave.Martin@arm.com>
+To:     Marc Zyngier <marc.zyngier@arm.com>
+Cc:     mark.rutland@arm.com, daniel.thompson@linaro.org,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        catalin.marinas@arm.com, Julien Thierry <julien.thierry@arm.com>,
+        will.deacon@arm.com, linux-kernel@vger.kernel.org,
+        christoffer.dall@arm.com, james.morse@arm.com,
+        Oleg Nesterov <oleg@redhat.com>, joel@joelfernandes.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v8 12/26] arm64: irqflags: Use ICC_PMR_EL1 for interrupt
+ masking
+Message-ID: <20190108180149.GC5840@e103592.cambridge.arm.com>
+References: <1546956464-48825-1-git-send-email-julien.thierry@arm.com>
+ <1546956464-48825-13-git-send-email-julien.thierry@arm.com>
+ <20190108153957.GA5840@e103592.cambridge.arm.com>
+ <8cae8016-d2c7-3c86-9832-f4278d42ea21@arm.com>
+ <20190108164510.GB5840@e103592.cambridge.arm.com>
+ <64a0dc42-0398-95ac-2c28-88797f969cef@arm.com>
 MIME-Version: 1.0
-References: <02bfc577-32a5-66be-64bf-d476b7d447d2@kernel.dk>
- <20181121063609.GA109082@gmail.com> <48e27a3a-2bb2-ff41-3512-8aeb3fd59e57@kernel.dk>
- <26eff539-7de7-784c-0c88-f1d30753299d@redhat.com> <7ea44458b90b4d41a08ba9012818d273@AcuMS.aculab.com>
- <CAHk-=wjLNuNpHRfuVTb6awstC9OOmSb3S8aP51ufep-Th4dXKw@mail.gmail.com>
- <CALCETrW=hMZLUM_nPEEgUW9x9Bmhm2LZ6ZRDiRRguxVT=-_BWA@mail.gmail.com>
- <CAHk-=wiEUVpSU-GxpKDvN9wnH2yDxkJgE7Vqh46A+fmnvhubyw@mail.gmail.com>
- <cd11d9423c8b46ecbf97753f8317c294@AcuMS.aculab.com> <64fd67993af04579b5262c270a7a4694@AcuMS.aculab.com>
- <CAHk-=wj9DA-mH8jahuEPUWxO4EgbCcPRgdOJAQD58DBtCCrHcQ@mail.gmail.com>
- <a3ebeca68de1493f876467f57575be74@AcuMS.aculab.com> <CAHk-=wiFoyd-L2f0sdyKDiBQ67b4VHjw9jO34ChYJxwqm1YhCA@mail.gmail.com>
- <dbb32dfaebee4bcb8ec3372bc7a27032@AcuMS.aculab.com> <CAHk-=wg02_--Xbf9HQw0g5-0k_uY+ksbxfBHK45BKDnPjz9OXw@mail.gmail.com>
- <9e479981e09b4bebaaf6bc7f81c7bb59@AcuMS.aculab.com>
-In-Reply-To: <9e479981e09b4bebaaf6bc7f81c7bb59@AcuMS.aculab.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 8 Jan 2019 10:01:15 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wjFoLfXct8RdMQRGn_B7RFfpZib403CLORZrex1KbAAqg@mail.gmail.com>
-Message-ID: <CAHk-=wjFoLfXct8RdMQRGn_B7RFfpZib403CLORZrex1KbAAqg@mail.gmail.com>
-Subject: Re: [PATCH] x86: only use ERMS for user copies for larger sizes
-To:     David Laight <David.Laight@aculab.com>
-Cc:     Andrew Lutomirski <luto@kernel.org>,
-        "dvlasenk@redhat.com" <dvlasenk@redhat.com>,
-        Jens Axboe <axboe@kernel.dk>, Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>,
-        Peter Anvin <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        "brgerst@gmail.com" <brgerst@gmail.com>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        "pabeni@redhat.com" <pabeni@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <64a0dc42-0398-95ac-2c28-88797f969cef@arm.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 8, 2019 at 1:10 AM David Laight <David.Laight@aculab.com> wrote:
-> >
-> > It will never work for memcpy_fromio(). Any driver that thinks it will
-> > copy from io space to user space absolutely *has* to do it by hand. No
-> > questions, and no exceptions. Some loop like
-> >
-> >    for (..)
-> >       put_user(readl(iomem++), uaddr++);
-> >
-> > because neither copy_to_user() nor memcpy_fromio() will *ever* handle
-> > that correctly.
-> >
-> > They might randomly happen to work on x86, but absolutely nowhere else.
->
-> Actually they tend to handle it on a lot of systems.
+On Tue, Jan 08, 2019 at 05:16:43PM +0000, Marc Zyngier wrote:
+> On 08/01/2019 16:45, Dave Martin wrote:
+> > On Tue, Jan 08, 2019 at 03:51:18PM +0000, Marc Zyngier wrote:
+> >> On 08/01/2019 15:40, Dave Martin wrote:
+> >>> On Tue, Jan 08, 2019 at 02:07:30PM +0000, Julien Thierry wrote:
+> >>>> Instead disabling interrupts by setting the PSR.I bit, use a priority
+> >>>> higher than the one used for interrupts to mask them via PMR.
+> >>>>
+> >>>> When using PMR to disable interrupts, the value of PMR will be used
+> >>>> instead of PSR.[DAIF] for the irqflags.
+> >>>>
+> >>>> Signed-off-by: Julien Thierry <julien.thierry@arm.com>
+> >>>> Suggested-by: Daniel Thompson <daniel.thompson@linaro.org>
+> >>>> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> >>>> Cc: Will Deacon <will.deacon@arm.com>
+> >>>> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> >>>> Cc: Oleg Nesterov <oleg@redhat.com>
+> >>>> ---
+> >>>>  arch/arm64/include/asm/efi.h      |  11 ++++
+> >>>>  arch/arm64/include/asm/irqflags.h | 123 +++++++++++++++++++++++++++++---------
+> >>>>  2 files changed, 106 insertions(+), 28 deletions(-)
+> >>>
+> >>> [...]
+> >>>
+> >>>> diff --git a/arch/arm64/include/asm/irqflags.h b/arch/arm64/include/asm/irqflags.h
+> >>>> index 24692ed..fa3b06f 100644
+> >>>> --- a/arch/arm64/include/asm/irqflags.h
+> >>>> +++ b/arch/arm64/include/asm/irqflags.h
+> >>>> @@ -18,7 +18,9 @@
+> >>>
+> >>> [...]
+> >>>
+> >>>>  static inline void arch_local_irq_enable(void)
+> >>>>  {
+> >>>> -	asm volatile(
+> >>>> -		"msr	daifclr, #2		// arch_local_irq_enable"
+> >>>> -		:
+> >>>> +	unsigned long unmasked = GIC_PRIO_IRQON;
+> >>>> +
+> >>>> +	asm volatile(ALTERNATIVE(
+> >>>> +		"msr	daifclr, #2		// arch_local_irq_enable\n"
+> >>>> +		"nop",
+> >>>> +		"msr_s  " __stringify(SYS_ICC_PMR_EL1) ",%0\n"
+> >>>> +		"dsb	sy",
+> >>>
+> >>> I'm still not convinced these dsbs are needed.
+> >>>
+> >>> Without the dsb, we are probably not guaranteed to take a pending
+> >>> interrupt _immediately_ on unmasking, but I'm not sure that's a
+> >>> problem.
+> >>>
+> >>> What goes wrong if we omit them?
+> >>
+> >> Then the GIC doesn't know it can now deliver interrupts of a lower
+> >> priority. Only a dsb can guarantee that the GIC's view of PMR will get
+> >> updated.
+> >>
+> >> See 9.1.6 (Observability of the effects of accesses to the GIC
+> >> registers), which states:
+> >>
+> >> <quote>
+> >> Architectural execution of a DSB instruction guarantees that
+> >> — The last value written to ICC_PMR_EL1 or GICC_PMR is observed by the
+> >> associated Redistributor.
+> >> </quote>
+> >>
+> >> So yes, DSB is required.
+> > 
+> > But it says neither what is means for the PMR write to be "observed by
+> > the redistributor", nor whether the DSB is required for the
+> > redistributor to observe the write at all.
+> 
+> Well, it seems pretty clear to me that if the redistributor doesn't
+> observe the PMR value, it is unlikely to change its interpretation of
+> it· And conversely, the redistributor is allowed to sit pretty and not
+> give you any interrupt until you are actually telling it that something
+> has changed.
+> 
+> I really think that for once, the spec is pretty unambiguous about what
+> is required.
 
-Not with memcpy_fromio(), at least.
+I think that there is some scope for clarification, but it sounds like
+that doesn't impact this series.
 
-That doesn't work even on x86. Try it. If the user space page is
-swapped out (or not mapped), you'd get a kernel page fault.
+> > (So, is an implementation
+> > allowed to cached in the CPU interface indefinitely until forcibly
+> > flushed to the redistributor by a DSB, and in any case can the write's
+> > reaching the distributor in finite time or not have any effect that we
+> > care about in this case?).
+> 
+> Nothing in the spec says that the system register write will magically
+> trickle down to the redistributor in the absence of a DSB.
+> 
+> > My reason for querying this is that temporary local masking of classes
+> > of interrupts seems an obvious use case for the PMR, and the DSB
+> > requirement flies rather in the face of this.
+> 
+> Are you implying that the GIC architecture should have any form of
+> sanity and be useful for general purpose software? Think again! ;-)
+> 
+> The PMR behavior you are describing only works in a single direction
+> (from low to high priority), because the CPU interface has to perform
+> some filtering. In the opposite direction, you need the big hammer.
+> 
+> > Have we seen hardware where interrupts may stall forever upstream of the
+> > CPU interface after a PMR write, until a dsb is executed by the CPU?
+> 
+> Yes. You even have to have a DSB right after a read of IAR to avoid
+> loosing interrupts. The short story is that there is hardly any
+> synchronization between redistributor and CPU interface. Implementations
+> are allowed a more closely coupled design, but that's not what the
+> architecture mandates.
 
-And if you do "copy_to_user()" from a mmio region, you get what you
-get. If somebody complains about it doing a byte-at-a-time copy, I'll
-laugh in their face and tell them to fix their broken driver. It might
-work on about half the architectures out there, but it's still
-complete garbage, and it's not a bug in copy_to_user().
+Well I guess that pretty much wraps it up!
 
-               Linus
+If implementations require it, then we obviously need to have it.
+
+> > Also, is it ever important in Linux that a pending interrupt be taken
+> > immediately upon unmasking (and how do we know that said interrupt is
+> > pending)?  If not, we don't care precisely when such interrupts are
+> > pended to the PE, just that such an interrupt cannot be taken before
+> > the PMR write that unmasks it.  It would be insane for the self-
+> > synchronization of PMR writes to lack this guarantee (and a DSB after
+> > the PMR write would do no good anyway in that case).
+> 
+> RT folks are usually quite picky on when they see their interrupts
+> firing. I can also imagine the following scenario:
+> 
+> 	set_pmr(allow all interrupts)
+> 	WFI
+> 
+> where things stop rather abruptly if this is the only CPU in the system.
+
+This is a rather special case (and this case is indeed handled specially
+by this series).  Here we don't need to expedite interrupt delivery,
+but we want to make sure that the logic that will wake us back up knows
+what it's supposed to be doing before we start powering things off.
+
+However, I can see that for RT purposes explicit synchronisation on
+interrupt unmasking may provided a more bounded interrupt blackout that
+simply waiting for synchronisation to happen in the background (though
+that might have better throughput).  Anyway, this is academic since
+we have to have the synchyronisation anyway.
+
+I will consider myself corrected and stop trolling...
+
+Cheers
+---Dave
