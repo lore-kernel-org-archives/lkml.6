@@ -7,52 +7,49 @@ X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 741D8C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:28:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56825C43444
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:28:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 321AC20645
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:28:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B2362070B
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:28:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546975711;
-	bh=8f48xnXwT00hMoT5H9kMZxf3mbQ6SF0A/uKZOc6hmLo=;
+	s=default; t=1546975717;
+	bh=e8IlupckPtBUD+8a3YHBDl0qfMRnd3VTioKWkHIT/ME=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=I6Fas/dWwHZL5bcba1ZMldN89NiVG+rGNT5GycQecX1GFbCdd0xu/T0YhKkU44Ef5
-	 WZITkvr9FroTWOjmuUGP2dDetwe7P8zVwmgSdtIYg6EejVHd5SPNRHMzzhl1puvdyo
-	 EQyBh/E4mftzDUE1KsgLiZGVIOp3UGulr35JFLzw=
+	b=RIYgrZ5BwKzrFEgYOO0+ydFTfpRXRFkz0xNJf0rYyl8O0XfqnkpagEdzTTl40ru4u
+	 cfFQjYanUJpBju1XphDgjfjlaX+WSE4FqFGneHl2XT/y32IoJ0l53uA49OXtw3uoIR
+	 CYyMi4Vlg1oHojSIFJr/qfPoSBY2zTp0b0ohj58w=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730061AbfAHT2a (ORCPT
+        id S1730091AbfAHT2f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:28:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35414 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:28:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35528 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730006AbfAHT2Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:28:24 -0500
+        id S1730040AbfAHT21 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:28:27 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BDB0E20827;
-        Tue,  8 Jan 2019 19:28:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 766DE2176F;
+        Tue,  8 Jan 2019 19:28:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975703;
-        bh=8f48xnXwT00hMoT5H9kMZxf3mbQ6SF0A/uKZOc6hmLo=;
+        s=default; t=1546975707;
+        bh=e8IlupckPtBUD+8a3YHBDl0qfMRnd3VTioKWkHIT/ME=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SOSqHb1FgQ18LWqYrmmvwJWkIUURVQq5YVWSnRGidCE80GpRR3FuIvlHBSa1EvMqG
-         se5Eq7gbKMj31yPXsSqntDa6SO0ex8I5XqLNn22+yiEdsRhlK4psgBNM0fvKk/8YhA
-         UjbnBV5TSxJoGW7KAoJcBeXlvRQi6CXTiyAUhRP4=
+        b=V5/Y0s/ZxGrTU0TSDkkZRcjBixf1/dUpYe7vyMZGgDRb3a3tixIdYeh0rOrNkI4+5
+         y/OffcEYEYu3j8pR4ZF4JW7Aqrs20CTWdXivGHf1n780jnYJopDIJTQlYxJpGHbrku
+         881kWoA/Yb4HlZ0gX3pDaaJMwypAEuXvQuleg/aE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Minas Harutyunyan <minas.harutyunyan@synopsys.com>,
-        Minas Harutyunyan <hminas@synopsys.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
-        Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 065/117] usb: dwc2: Fix disable all EP's on disconnect
-Date:   Tue,  8 Jan 2019 14:25:33 -0500
-Message-Id: <20190108192628.121270-65-sashal@kernel.org>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Sasha Levin <sashal@kernel.org>, linux-kbuild@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 068/117] kconfig: fix memory leak when EOF is encountered in quotation
+Date:   Tue,  8 Jan 2019 14:25:36 -0500
+Message-Id: <20190108192628.121270-68-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192628.121270-1-sashal@kernel.org>
 References: <20190108192628.121270-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -60,154 +57,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Minas Harutyunyan <minas.harutyunyan@synopsys.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-[ Upstream commit 4fe4f9fecc36956fd53c8edf96dd0c691ef98ff9 ]
+[ Upstream commit fbac5977d81cb2b2b7e37b11c459055d9585273c ]
 
-Disabling all EP's allow to reset EP's to initial state.
-Introduced new function dwc2_hsotg_ep_disable_lock() which
-before calling dwc2_hsotg_ep_disable() function acquire
-hsotg->lock and release on exiting.
-From dwc2_hsotg_ep_disable() function removed acquiring
-hsotg->lock.
-In dwc2_hsotg_core_init_disconnected() function when USB
-reset interrupt asserted disabling all ep’s by
-dwc2_hsotg_ep_disable() function.
-This updates eliminating sparse imbalance warnings.
+An unterminated string literal followed by new line is passed to the
+parser (with "multi-line strings not supported" warning shown), then
+handled properly there.
 
-Reverted changes in dwc2_hostg_disconnect() function.
-Introduced new function dwc2_hsotg_ep_disable_lock().
-Changed dwc2_hsotg_ep_ops. Now disable point to
-dwc2_hsotg_ep_disable_lock() function.
-In functions dwc2_hsotg_udc_stop() and dwc2_hsotg_suspend()
-dwc2_hsotg_ep_disable() function replaced by
-dwc2_hsotg_ep_disable_lock() function.
-In dwc2_hsotg_ep_disable() function removed acquiring
-of hsotg->lock.
+On the other hand, an unterminated string literal at end of file is
+never passed to the parser, then results in memory leak.
 
-Fixes: dccf1bad4be7 ("usb: dwc2: Disable all EP's on disconnect")
-Signed-off-by: Minas Harutyunyan <hminas@synopsys.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+[Test Code]
+
+  ----------(Kconfig begin)----------
+  source "Kconfig.inc"
+
+  config A
+          bool "a"
+  -----------(Kconfig end)-----------
+
+  --------(Kconfig.inc begin)--------
+  config B
+          bool "b\No new line at end of file
+  ---------(Kconfig.inc end)---------
+
+[Summary from Valgrind]
+
+  Before the fix:
+
+    LEAK SUMMARY:
+       definitely lost: 16 bytes in 1 blocks
+       ...
+
+  After the fix:
+
+    LEAK SUMMARY:
+       definitely lost: 0 bytes in 0 blocks
+       ...
+
+Eliminate the memory leak path by handling this case. Of course, such
+a Kconfig file is wrong already, so I will add an error message later.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/dwc2/gadget.c | 41 ++++++++++++++++++++++-----------------
- 1 file changed, 23 insertions(+), 18 deletions(-)
+ scripts/kconfig/zconf.l | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/usb/dwc2/gadget.c b/drivers/usb/dwc2/gadget.c
-index 2d6d2c8244de..a00a56b4ae79 100644
---- a/drivers/usb/dwc2/gadget.c
-+++ b/drivers/usb/dwc2/gadget.c
-@@ -3165,8 +3165,6 @@ static void kill_all_requests(struct dwc2_hsotg *hsotg,
- 		dwc2_hsotg_txfifo_flush(hsotg, ep->fifo_index);
+diff --git a/scripts/kconfig/zconf.l b/scripts/kconfig/zconf.l
+index eeac64ccc730..c2f577d71964 100644
+--- a/scripts/kconfig/zconf.l
++++ b/scripts/kconfig/zconf.l
+@@ -221,6 +221,8 @@ n	[A-Za-z0-9_-]
+ 	}
+ 	<<EOF>>	{
+ 		BEGIN(INITIAL);
++		yylval.string = text;
++		return T_WORD_QUOTE;
+ 	}
  }
- 
--static int dwc2_hsotg_ep_disable(struct usb_ep *ep);
--
- /**
-  * dwc2_hsotg_disconnect - disconnect service
-  * @hsotg: The device state.
-@@ -3188,9 +3186,11 @@ void dwc2_hsotg_disconnect(struct dwc2_hsotg *hsotg)
- 	/* all endpoints should be shutdown */
- 	for (ep = 0; ep < hsotg->num_of_eps; ep++) {
- 		if (hsotg->eps_in[ep])
--			dwc2_hsotg_ep_disable(&hsotg->eps_in[ep]->ep);
-+			kill_all_requests(hsotg, hsotg->eps_in[ep],
-+					  -ESHUTDOWN);
- 		if (hsotg->eps_out[ep])
--			dwc2_hsotg_ep_disable(&hsotg->eps_out[ep]->ep);
-+			kill_all_requests(hsotg, hsotg->eps_out[ep],
-+					  -ESHUTDOWN);
- 	}
- 
- 	call_gadget(hsotg, disconnect);
-@@ -3234,6 +3234,7 @@ static void dwc2_hsotg_irq_fifoempty(struct dwc2_hsotg *hsotg, bool periodic)
- 			GINTSTS_PTXFEMP |  \
- 			GINTSTS_RXFLVL)
- 
-+static int dwc2_hsotg_ep_disable(struct usb_ep *ep);
- /**
-  * dwc2_hsotg_core_init - issue softreset to the core
-  * @hsotg: The device state
-@@ -4069,10 +4070,8 @@ static int dwc2_hsotg_ep_disable(struct usb_ep *ep)
- 	struct dwc2_hsotg *hsotg = hs_ep->parent;
- 	int dir_in = hs_ep->dir_in;
- 	int index = hs_ep->index;
--	unsigned long flags;
- 	u32 epctrl_reg;
- 	u32 ctrl;
--	int locked;
- 
- 	dev_dbg(hsotg->dev, "%s(ep %p)\n", __func__, ep);
- 
-@@ -4088,10 +4087,6 @@ static int dwc2_hsotg_ep_disable(struct usb_ep *ep)
- 
- 	epctrl_reg = dir_in ? DIEPCTL(index) : DOEPCTL(index);
- 
--	locked = spin_is_locked(&hsotg->lock);
--	if (!locked)
--		spin_lock_irqsave(&hsotg->lock, flags);
--
- 	ctrl = dwc2_readl(hsotg, epctrl_reg);
- 
- 	if (ctrl & DXEPCTL_EPENA)
-@@ -4114,12 +4109,22 @@ static int dwc2_hsotg_ep_disable(struct usb_ep *ep)
- 	hs_ep->fifo_index = 0;
- 	hs_ep->fifo_size = 0;
- 
--	if (!locked)
--		spin_unlock_irqrestore(&hsotg->lock, flags);
--
- 	return 0;
- }
- 
-+static int dwc2_hsotg_ep_disable_lock(struct usb_ep *ep)
-+{
-+	struct dwc2_hsotg_ep *hs_ep = our_ep(ep);
-+	struct dwc2_hsotg *hsotg = hs_ep->parent;
-+	unsigned long flags;
-+	int ret;
-+
-+	spin_lock_irqsave(&hsotg->lock, flags);
-+	ret = dwc2_hsotg_ep_disable(ep);
-+	spin_unlock_irqrestore(&hsotg->lock, flags);
-+	return ret;
-+}
-+
- /**
-  * on_list - check request is on the given endpoint
-  * @ep: The endpoint to check.
-@@ -4267,7 +4272,7 @@ static int dwc2_hsotg_ep_sethalt_lock(struct usb_ep *ep, int value)
- 
- static const struct usb_ep_ops dwc2_hsotg_ep_ops = {
- 	.enable		= dwc2_hsotg_ep_enable,
--	.disable	= dwc2_hsotg_ep_disable,
-+	.disable	= dwc2_hsotg_ep_disable_lock,
- 	.alloc_request	= dwc2_hsotg_ep_alloc_request,
- 	.free_request	= dwc2_hsotg_ep_free_request,
- 	.queue		= dwc2_hsotg_ep_queue_lock,
-@@ -4407,9 +4412,9 @@ static int dwc2_hsotg_udc_stop(struct usb_gadget *gadget)
- 	/* all endpoints should be shutdown */
- 	for (ep = 1; ep < hsotg->num_of_eps; ep++) {
- 		if (hsotg->eps_in[ep])
--			dwc2_hsotg_ep_disable(&hsotg->eps_in[ep]->ep);
-+			dwc2_hsotg_ep_disable_lock(&hsotg->eps_in[ep]->ep);
- 		if (hsotg->eps_out[ep])
--			dwc2_hsotg_ep_disable(&hsotg->eps_out[ep]->ep);
-+			dwc2_hsotg_ep_disable_lock(&hsotg->eps_out[ep]->ep);
- 	}
- 
- 	spin_lock_irqsave(&hsotg->lock, flags);
-@@ -4857,9 +4862,9 @@ int dwc2_hsotg_suspend(struct dwc2_hsotg *hsotg)
- 
- 		for (ep = 0; ep < hsotg->num_of_eps; ep++) {
- 			if (hsotg->eps_in[ep])
--				dwc2_hsotg_ep_disable(&hsotg->eps_in[ep]->ep);
-+				dwc2_hsotg_ep_disable_lock(&hsotg->eps_in[ep]->ep);
- 			if (hsotg->eps_out[ep])
--				dwc2_hsotg_ep_disable(&hsotg->eps_out[ep]->ep);
-+				dwc2_hsotg_ep_disable_lock(&hsotg->eps_out[ep]->ep);
- 		}
- 	}
  
 -- 
 2.19.1
