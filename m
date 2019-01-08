@@ -2,90 +2,104 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 948CAC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 18:12:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 801E8C43444
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 18:13:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6979A205F4
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 18:12:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A4142070B
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 18:13:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546971179;
-	bh=iTeIBg8m5CalfDLbBTyuXyAJBuK+9/zsJWikhWNbRt4=;
-	h=References:In-Reply-To:From:Date:Subject:To:List-ID:From;
-	b=VqnBp385o1lb13BH1Q65EFttvMnk07kLacaq9NvKYdZYU/7aszXSfLA7tDQ2xTiES
-	 3PYvaVE69r+WDsVn1ieAEjRpK/452gSUgKC04WpnorMSMpBqf49TEQj5SSmOkEsi9P
-	 rl1bI43xRxtgBmECBeA7/ljS4gcpyH2ezhTYdkfQ=
+	s=default; t=1546971206;
+	bh=fxuCelbzDrO/ReyDYo4jWPz/eXJn0lr9yCggSP4OI4Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=2tHgXOtQrDlx82XdAfeTNC9u16dIggKYXYjnxOpHXT9399WS5jwJIeREV6FH0NPhv
+	 NCXUN0htw7q/1DixPTRi/JmnSRHfG+WMV6YM3OV4PtA88YxFd71rXFGo/VQW2K4ofe
+	 OcQLVp8fBSjCOyp8SXOTmI0efDlYnfe3DJgrniCc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729381AbfAHSM6 (ORCPT
+        id S1729401AbfAHSNZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 13:12:58 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:43027 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727484AbfAHSM5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 13:12:57 -0500
-Received: by mail-ot1-f65.google.com with SMTP id a11so4304954otr.10
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 10:12:57 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=/LEZbyrwpQwK3zVuHr1t2qbnhLXWjst40t4Frr+TtLU=;
-        b=qhUiNf9DrOmuAwO0JF1IJ69VNMz2DDedejRWoYlUQ+Nkf3ZjkE3zRZ6s7OihrGWbMz
-         j+CC9yc1jeAV24h5WyvdceK36UL3hHoRU4i2hzno0VHWP2trmrrtnusW/AxgY76ZEj1l
-         KuLK/P5YFMIuYAbqMw17Dm4ZgHnS0wsTUBGplsUtKd2WZ/AYDPAoRA6jmoBPgBUI0prJ
-         FTqEypQdzj5WeXLlEbfkAzyv55VC1O8R16lmjZCwjJNeTV6dDo0bJ0SeDb4wALkE06K3
-         xstbIKlOaoPz126dkI4dSoaVAc+fhF3dmA5zWiXNoZf4x+IW+GLjy9aXB3/vuplXI4Z1
-         J2xw==
-X-Gm-Message-State: AJcUukdpdRtXBKKoeamVDkpbxzgh4GASM7ygct6maVXozehdFJQ69iMS
-        0ilJMB8HGnbbo9fm28PompHNtSz4PNgYuBqwpro=
-X-Google-Smtp-Source: ALg8bN5E0h3XbYXj/NP+59ELGTbE6LVgA2bXWO0lB1VithxDMWtyfnDUwyTenFJunlpvjLW6Z8F0SC/6mvjvT6DZMDE=
-X-Received: by 2002:a9d:588c:: with SMTP id x12mr1928345otg.139.1546971176902;
- Tue, 08 Jan 2019 10:12:56 -0800 (PST)
+        Tue, 8 Jan 2019 13:13:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51610 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727484AbfAHSNZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 13:13:25 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E286F20645;
+        Tue,  8 Jan 2019 18:13:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1546971204;
+        bh=fxuCelbzDrO/ReyDYo4jWPz/eXJn0lr9yCggSP4OI4Y=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=lbyoJvnqhsi6eN6IdFBvRx+v5y2C2g4QPZojCiI4NVy7Uzl6rm+XwfcMy5K6GTD0o
+         eEiTZiMpDRgZ8kEF0F08HFhrC9vBfVTfWD2V5750sA1uuWCfuKaFlCbXdh/R96vuVE
+         guE+orQIoG0Ei6ZurFJy6aT3eXtyb+QeIvHoi2Yk=
+Date:   Tue, 8 Jan 2019 19:13:22 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Guenter Roeck <linux@roeck-us.net>,
+        Breno Leitao <leitao@debian.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 4.19 000/170] 4.19.14-stable review
+Message-ID: <20190108181322.GA4194@kroah.com>
+References: <20190107104452.953560660@linuxfoundation.org>
+ <20190108172503.GA28031@roeck-us.net>
+ <20190108175640.GA2461@kroah.com>
+ <20190108180951.GB28031@roeck-us.net>
 MIME-Version: 1.0
-References: <cover.1546915794.git.tsu.yubo@gmail.com> <8c73ad4b2b29bda53f2dfb6624b8b7984b52e307.1546915794.git.tsu.yubo@gmail.com>
- <CAJZ5v0iiPKNVz3SE1oumOUDPGTrCHd5-hEoe6O=SsqSKD39XNg@mail.gmail.com> <20190108125355.yc7ryyl34s2me4z7@yubo-2>
-In-Reply-To: <20190108125355.yc7ryyl34s2me4z7@yubo-2>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Tue, 8 Jan 2019 19:12:45 +0100
-Message-ID: <CAJZ5v0gntQsDjqs17g=165if4g9rYR3C2vzKkXnjzt6b87kE+A@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] kobject: use pr_warn to replace printk
-To:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Joe Perches <joe@perches.com>, yuzibode@126.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190108180951.GB28031@roeck-us.net>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 8, 2019 at 1:54 PM YU Bo <tsu.yubo@gmail.com> wrote:
->
-> Hi,
-> On Tue, Jan 08, 2019 at 10:39:57AM +0100, Rafael J. Wysocki wrote:
-> >On Tue, Jan 8, 2019 at 4:11 AM Bo YU <tsu.yubo@gmail.com> wrote:
-> >>
-> >> This is a fix to replace printk with pr_warn
-> >
-> >You call it a "fix", but what exactly is wrong with the code as is?
-> Is there any differentions between pr_* and printk?
-> If they were the same with functionial, i think it  would be better
-> to use pr_* to replace printk.There are two lines code with printk only
-> and others are pr_* in kobject_uevent.c.
-> In fact,as you know, the code is fine.I just want to keep consistency with
-> looks like
+On Tue, Jan 08, 2019 at 10:09:51AM -0800, Guenter Roeck wrote:
+> On Tue, Jan 08, 2019 at 06:56:40PM +0100, Greg Kroah-Hartman wrote:
+> > On Tue, Jan 08, 2019 at 09:25:03AM -0800, Guenter Roeck wrote:
+> > > On Mon, Jan 07, 2019 at 01:30:27PM +0100, Greg Kroah-Hartman wrote:
+> > > > This is the start of the stable review cycle for the 4.19.14 release.
+> > > > There are 170 patches in this series, all will be posted as a response
+> > > > to this one.  If anyone has any issues with these being applied, please
+> > > > let me know.
+> > > > 
+> > > > Responses should be made by Wed Jan  9 10:43:54 UTC 2019.
+> > > > Anything received after that time might be too late.
+> > > > 
+> > > 
+> > > Still (for v4.19.13-171-gc68ce175c3b8):
+> > > 
+> > > arch/powerpc/kernel/signal_64.c: In function ‘sys_rt_sigreturn’:
+> > > arch/powerpc/kernel/signal_64.c:761:21: error: ‘msr’ undeclared 
+> > > 
+> > > AFAICS commit 5c784c8414fba ("powerpc/tm: Remove msr_tm_active()") is missing.
+> > 
+> > Breno on this thread just said that this patch should not be applied,
+> > and another one will be submitted upstream instead to solve the problem
+> > correctly and then we can backport it.
+> > 
+> > So we can live with this build issue for now.
+> > 
+> 
+> I think you should drop the offending patch in this case. It doesn't make
+> sense to keep it - all it accomplishes is to break various builds. What is
+> the point of doing that ? Is that somehow better than living with the bug
+> it is supposed to fix ?
 
-OK, so please don't call it a "fix" as doing so suggests a functional
-defect in the current code that is addressed by your patch which is
-not the case.
+That's what the developers involved seem to say.
 
-You can write something like
+Breno, should I drop the offending patch now, or wait for your fix to
+land and then fix up the build then?
 
-"Replace printk() with pr_warn() in kobject_synth_uevent() to make it
-consistent with the other code in kobject_uevent.c."
+thanks,
 
-in the changelog which would be clear enough IMO.
+greg k-h
