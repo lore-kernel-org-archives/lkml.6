@@ -2,142 +2,147 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6707C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:04:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8535C43444
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:04:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9157320660
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:04:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 966D920827
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:04:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546977862;
+	bh=V4xGP7AvQceKMyoNwU1chVCiS2JZFGNHAF3N1QNWmWY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=obzzlBheMVKr+pn+6VEl+JqrENUJm09xui+xiK0j7KZ5GwmLe4DvceXqo+N5r35XN
+	 jkNrxK6r2m3Sfad4KMF5N6mDDMkQPaUcRPC7zRLTyi+ALMUbg2wMM0GBoux+V6wQqC
+	 ozYGgWw9d+vGIAGp2d/Cd2Gag5BNg7sZueZT4gQ0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733019AbfAHUEN (ORCPT
+        id S1730076AbfAHT2d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 15:04:13 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:39699 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728913AbfAHUEK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 15:04:10 -0500
-Received: by mail-qt1-f196.google.com with SMTP id u47so5820435qtj.6;
-        Tue, 08 Jan 2019 12:04:08 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=CkW7W76SxHhQT+R7Cgs1jTueM/y+bXON9Vp9PBD6KUk=;
-        b=HyIIKg3rLtociAvCtiL4+W5F3RCEUAMnAlh/+qveGzgNHNSY7ucXD0BIkig2rCKHBg
-         hLbL8rW/A8BVC0WDDZdvpzm/TQe5uwuN5DBgfbikoqjCvg5Kb+kbsGfpyqef+3GLcSFW
-         R47kmUjQ1g7fGRCIe5wAhQgm8/67yWyYFeEmCrpJPZA5D/k/g2BQqY1ibkn6IsGUgEI4
-         Xk/Mwn4ospq9Sxjuqi6+lvRQb3IvzMm9SzqvoMGeNc6Ow/2f/i+EST2SnDPCkjDy2X7L
-         4ZYUh2Trj/N4F73RKaz+kytIzMonwMrkbQMyq3VPrdoZcKfeaz9oPaF5mB1zvhoYKf1M
-         g8QQ==
-X-Gm-Message-State: AJcUukeMWQRYL+0a+UaBmHhoi0+zzy2wV2QTvLdwzJMIP6lAYdmV0hjs
-        l/fwPNEBmwhb10jrr0gKhG3jmsW4hZVs1lvpY0M=
-X-Google-Smtp-Source: ALg8bN5tuqki2dVs4i6/g+wZOfwMue6nI3pGVupEcrtN/5VTklHmEP3RtEfeqtDa92ooEaFfMQvnuR6VEWedHRQyI4o=
-X-Received: by 2002:ac8:1d12:: with SMTP id d18mr2955555qtl.343.1546977848238;
- Tue, 08 Jan 2019 12:04:08 -0800 (PST)
+        Tue, 8 Jan 2019 14:28:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35464 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730025AbfAHT20 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:28:26 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E5D7220883;
+        Tue,  8 Jan 2019 19:28:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1546975705;
+        bh=V4xGP7AvQceKMyoNwU1chVCiS2JZFGNHAF3N1QNWmWY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=beJvIWWYFN1ZPzPG5mu5f8GhagaTkXE0O0tXyObtvvey8jTf7S/ftiAhOQUNnOJgm
+         ITyzT9lPkJ+UKI7DFtcN25taPt+l6HdSbstmlP75syKyK3NqEaLYirMYnhGPrJBfDC
+         yiLly917iYdV8672IvuU+52/ifrE1NqJJhpSvuxM=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Reinette Chatre <reinette.chatre@intel.com>,
+        Borislav Petkov <bp@suse.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tony Luck <tony.luck@intel.com>, fenghua.yu@intel.com,
+        gavin.hindman@intel.com, jithu.joseph@intel.com,
+        x86-ml <x86@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 066/117] x86/resctrl: Fix rdt_find_domain() return value and checks
+Date:   Tue,  8 Jan 2019 14:25:34 -0500
+Message-Id: <20190108192628.121270-66-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190108192628.121270-1-sashal@kernel.org>
+References: <20190108192628.121270-1-sashal@kernel.org>
 MIME-Version: 1.0
-References: <20190108052255.10699-1-deepa.kernel@gmail.com> <20190108052255.10699-3-deepa.kernel@gmail.com>
-In-Reply-To: <20190108052255.10699-3-deepa.kernel@gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 8 Jan 2019 21:03:49 +0100
-Message-ID: <CAK8P3a2T=dWgD1mvi77fbdKEsm=ZUwsQENv-btjhECjf+Y5wcg@mail.gmail.com>
-Subject: Re: [PATCH 2/3] socket: Rename SO_RCVTIMEO/ SO_SNDTIMEO with _OLD suffixes
-To:     Deepa Dinamani <deepa.kernel@gmail.com>
-Cc:     David Miller <davem@davemloft.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Networking <netdev@vger.kernel.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        ccaulfie@redhat.com, Helge Deller <deller@gmx.de>,
-        Paul Mackerras <paulus@samba.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Richard Henderson <rth@twiddle.net>, cluster-devel@redhat.com,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-alpha@vger.kernel.org,
-        linux-arch <linux-arch@vger.kernel.org>,
-        linux-mips@vger.kernel.org,
-        Parisc List <linux-parisc@vger.kernel.org>,
-        sparclinux <sparclinux@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 8, 2019 at 6:24 AM Deepa Dinamani <deepa.kernel@gmail.com> wrote:
->
-> SO_RCVTIMEO and SO_SNDTIMEO socket options use struct timeval
-> as the time format. struct timeval is not y2038 safe.
-> The subsequent patches in the series add support for new socket
-> timeout options with _NEW suffix that are y2038 safe.
-> Rename the existing options with _OLD suffix forms so that the
-> right option is enabled for userspace applications according
-> to the architecture and time_t definition of libc.
->
-> Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
+From: Reinette Chatre <reinette.chatre@intel.com>
 
-Looks good overall. A few minor concerns:
+[ Upstream commit 52eb74339a6233c69f4e3794b69ea7c98eeeae1b ]
 
-The description above makes it sound like there is a bug with y2038-safety
-in this particular interface, which I think is just not what you meant,
-as the change is only needed for compatiblity with new C libraries
-that work around the y2038 problem in general by changing their
-timeval definition.
+rdt_find_domain() returns an ERR_PTR() that is generated from a provided
+domain id when the value is negative.
 
-> diff --git a/fs/dlm/lowcomms.c b/fs/dlm/lowcomms.c
-> index 76976d6e50f9..c98ad9777ad9 100644
-> --- a/fs/dlm/lowcomms.c
-> +++ b/fs/dlm/lowcomms.c
-> @@ -1089,12 +1089,12 @@ static void sctp_connect_to_sock(struct connection *con)
->          * since O_NONBLOCK argument in connect() function does not work here,
->          * then, we should restore the default value of this attribute.
->          */
-> -       kernel_setsockopt(sock, SOL_SOCKET, SO_SNDTIMEO, (char *)&tv,
-> +       kernel_setsockopt(sock, SOL_SOCKET, SO_SNDTIMEO_OLD, (char *)&tv,
->                           sizeof(tv));
->         result = sock->ops->connect(sock, (struct sockaddr *)&daddr, addr_len,
->                                    0);
->         memset(&tv, 0, sizeof(tv));
-> -       kernel_setsockopt(sock, SOL_SOCKET, SO_SNDTIMEO, (char *)&tv,
-> +       kernel_setsockopt(sock, SOL_SOCKET, SO_SNDTIMEO_OLD, (char *)&tv,
->                           sizeof(tv));
->
->         if (result == -EINPROGRESS)
+Care needs to be taken when creating an ERR_PTR() from this value
+because a subsequent check using IS_ERR() expects the error to
+be within the MAX_ERRNO range. Using an invalid domain id as an
+ERR_PTR() does work at this time since this is currently always -1.
+Using this undocumented assumption is fragile since future users of
+rdt_find_domain() may not be aware of thus assumption.
 
-It took me a bit to realize there that this is safe as well even if
-we don't use SO_SNDTIMEO_NEW, for the same reason.
+Two related issues are addressed:
 
-> --- a/net/compat.c
-> +++ b/net/compat.c
-> @@ -378,7 +378,7 @@ static int compat_sock_setsockopt(struct socket *sock, int level, int optname,
->                 return do_set_attach_filter(sock, level, optname,
->                                             optval, optlen);
->         if (!COMPAT_USE_64BIT_TIME &&
-> -           (optname == SO_RCVTIMEO || optname == SO_SNDTIMEO))
-> +           (optname == SO_RCVTIMEO_OLD || optname == SO_SNDTIMEO_OLD))
->                 return do_set_sock_timeout(sock, level, optname, optval, optlen);
->
->         return sock_setsockopt(sock, level, optname, optval, optlen);
-> @@ -450,7 +450,7 @@ static int compat_sock_getsockopt(struct socket *sock, int level, int optname,
->                                 char __user *optval, int __user *optlen)
->  {
->         if (!COMPAT_USE_64BIT_TIME &&
-> -           (optname == SO_RCVTIMEO || optname == SO_SNDTIMEO))
-> +           (optname == SO_RCVTIMEO_OLD || optname == SO_SNDTIMEO_OLD))
->                 return do_get_sock_timeout(sock, level, optname, optval, optlen);
->         return sock_getsockopt(sock, level, optname, optval, optlen);
->  }
+- Ensure that rdt_find_domain() always returns a valid error value by
+forcing the error to be -ENODEV when a negative domain id is provided.
 
-I looked at the original code and noticed that it's horrible, which of course
-is not your fault, but I wonder if we should just fix it now to avoid that
-get_fs()/set_fs() hack, since that code mostly implements what you
-also have in your patch 3 (which is done more nicely).
+- In a few instances the return value of rdt_find_domain() is just
+checked for NULL - fix these to include a check of ERR_PTR.
 
-I'll follow up with a patch to demonstrate what I mean here. Your third
-patch will then just have to add another code path so we can handle
-all of old_timespec32 (for existing 32-bit user space), __kernel_old_timespec
-(for sparc64) and __kernel_sock_timeval (for everything else).
+Fixes: d89b7379015f ("x86/intel_rdt/cqm: Add mon_data")
+Fixes: 521348b011d6 ("x86/intel_rdt: Introduce utility to obtain CDP peer")
+Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: fenghua.yu@intel.com
+Cc: gavin.hindman@intel.com
+Cc: jithu.joseph@intel.com
+Cc: x86-ml <x86@kernel.org>
+Link: https://lkml.kernel.org/r/b88cd4ff6a75995bf8db9b0ea546908fe50f69f3.1544479852.git.reinette.chatre@intel.com
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ arch/x86/kernel/cpu/intel_rdt.c             | 2 +-
+ arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c | 2 +-
+ arch/x86/kernel/cpu/intel_rdt_rdtgroup.c    | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-       Arnd
+diff --git a/arch/x86/kernel/cpu/intel_rdt.c b/arch/x86/kernel/cpu/intel_rdt.c
+index 44272b7107ad..2d0a565fd0bb 100644
+--- a/arch/x86/kernel/cpu/intel_rdt.c
++++ b/arch/x86/kernel/cpu/intel_rdt.c
+@@ -421,7 +421,7 @@ struct rdt_domain *rdt_find_domain(struct rdt_resource *r, int id,
+ 	struct list_head *l;
+ 
+ 	if (id < 0)
+-		return ERR_PTR(id);
++		return ERR_PTR(-ENODEV);
+ 
+ 	list_for_each(l, &r->domains) {
+ 		d = list_entry(l, struct rdt_domain, list);
+diff --git a/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c b/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
+index efa4a519f5e5..c8b72aff55e0 100644
+--- a/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
++++ b/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
+@@ -467,7 +467,7 @@ int rdtgroup_mondata_show(struct seq_file *m, void *arg)
+ 
+ 	r = &rdt_resources_all[resid];
+ 	d = rdt_find_domain(r, domid, NULL);
+-	if (!d) {
++	if (IS_ERR_OR_NULL(d)) {
+ 		ret = -ENOENT;
+ 		goto out;
+ 	}
+diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
+index f27b8115ffa2..951c61367688 100644
+--- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
++++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
+@@ -1029,7 +1029,7 @@ static int rdt_cdp_peer_get(struct rdt_resource *r, struct rdt_domain *d,
+ 	 * peer RDT CDP resource. Hence the WARN.
+ 	 */
+ 	_d_cdp = rdt_find_domain(_r_cdp, d->id, NULL);
+-	if (WARN_ON(!_d_cdp)) {
++	if (WARN_ON(IS_ERR_OR_NULL(_d_cdp))) {
+ 		_r_cdp = NULL;
+ 		ret = -EINVAL;
+ 	}
+-- 
+2.19.1
+
