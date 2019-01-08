@@ -7,45 +7,47 @@ X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76532C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:30:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29850C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:30:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 416C8217D9
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:30:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE2AE2176F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:30:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546975819;
-	bh=D1YlaMD8yC8AL8uiGDr3XxEhnarR+sPXAWFwaMZQUJk=;
+	s=default; t=1546975826;
+	bh=UyuG+mvMzQt2zRN7FIuJCF69QmsxcHhrEJcp6tZC0mQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=i8NiaWSwTUGyguIjF69LsYQLhbyTySA7y65riVmefI4LoQFbV0brjvwKaJuaXmYAS
-	 /T0A3/lb4RBaBEMGYetF3McsUCqKKK/etNS0YXXhBYowX/FPeorcQdKoXlG76dz2ix
-	 C9spM1wOIwltj+oeIBztNL/6ozO95WaRraAadDkg=
+	b=wQEFV4A3rRw7sCVpcujaHfXq5L3jwVi/flyBBrB0iuvbeze3r8bdTTl9GCK8BDvYq
+	 5i5gj58mg53TGJo4Pzz99V3VPZ255ohM6Sa2GoxvCnUK1veYSXNNh2J7Y0OrB1BSLd
+	 lgvplvQhF11O3UDZT4JWw+idnlaYhYXMjvK/U2pw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730706AbfAHTaS (ORCPT
+        id S1730757AbfAHTaZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:30:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37744 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:30:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37978 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730633AbfAHTaJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:30:09 -0500
+        id S1730700AbfAHTaS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:30:18 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 37C7320827;
-        Tue,  8 Jan 2019 19:30:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B2AD420665;
+        Tue,  8 Jan 2019 19:30:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975807;
-        bh=D1YlaMD8yC8AL8uiGDr3XxEhnarR+sPXAWFwaMZQUJk=;
+        s=default; t=1546975817;
+        bh=UyuG+mvMzQt2zRN7FIuJCF69QmsxcHhrEJcp6tZC0mQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xb3G8xX0yZGgs4g4qIAI+REUs9eOvSIdxbn+D7v6jXHYaRINOLyMpgZhUg4BNMQAH
-         xejRWZ1aTwrMTAUfxdrDb+IhcWslaSrdlw3Rt0PQiMD6hXla9F85zxrohhcwJj83LV
-         v78XZtWjpIXu9acYfwOI7aeryrQTpiavb3WY3z6Q=
+        b=Pnvz3mmzg40nkwGlelhMc9y/CrSu1xuoJp7oRgmA1CBISR/n/hZNVGRqA49zfyfuA
+         SzAswsxxknF51vLmfNgcbk2gopfQwuslm7VYe1HXjGGG9/YwSQB6DjjtQsFPwQgsZh
+         2UnJwgQzsBKZv531r0OD1EtKtliTxtOojiMClOnE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Andrey Ignatov <rdna@fb.com>, Alexei Starovoitov <ast@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 13/97] bpf: Allow narrow loads with offset > 0
-Date:   Tue,  8 Jan 2019 14:28:22 -0500
-Message-Id: <20190108192949.122407-13-sashal@kernel.org>
+Cc:     Vitaly Chikunov <vt@altlinux.org>,
+        kernel-hardening@lists.openwall.com,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Sasha Levin <sashal@kernel.org>, linux-crypto@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 17/97] crypto: ecc - regularize scalar for scalar multiplication
+Date:   Tue,  8 Jan 2019 14:28:26 -0500
+Message-Id: <20190108192949.122407-17-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192949.122407-1-sashal@kernel.org>
 References: <20190108192949.122407-1-sashal@kernel.org>
@@ -57,149 +59,84 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrey Ignatov <rdna@fb.com>
+From: Vitaly Chikunov <vt@altlinux.org>
 
-[ Upstream commit 46f53a65d2de3e1591636c22b626b09d8684fd71 ]
+[ Upstream commit 3da2c1dfdb802b184eea0653d1e589515b52d74b ]
 
-Currently BPF verifier allows narrow loads for a context field only with
-offset zero. E.g. if there is a __u32 field then only the following
-loads are permitted:
-  * off=0, size=1 (narrow);
-  * off=0, size=2 (narrow);
-  * off=0, size=4 (full).
+ecc_point_mult is supposed to be used with a regularized scalar,
+otherwise, it's possible to deduce the position of the top bit of the
+scalar with timing attack. This is important when the scalar is a
+private key.
 
-On the other hand LLVM can generate a load with offset different than
-zero that make sense from program logic point of view, but verifier
-doesn't accept it.
+ecc_point_mult is already using a regular algorithm (i.e. having an
+operation flow independent of the input scalar) but regularization step
+is not implemented.
 
-E.g. tools/testing/selftests/bpf/sendmsg4_prog.c has code:
+Arrange scalar to always have fixed top bit by adding a multiple of the
+curve order (n).
 
-  #define DST_IP4			0xC0A801FEU /* 192.168.1.254 */
-  ...
-  	if ((ctx->user_ip4 >> 24) == (bpf_htonl(DST_IP4) >> 24) &&
+References:
+The constant time regularization step is based on micro-ecc by Kenneth
+MacKay and also referenced in the literature (Bernstein, D. J., & Lange,
+T. (2017). Montgomery curves and the Montgomery ladder. (Cryptology
+ePrint Archive; Vol. 2017/293). s.l.: IACR. Chapter 4.6.2.)
 
-where ctx is struct bpf_sock_addr.
-
-Some versions of LLVM can produce the following byte code for it:
-
-       8:       71 12 07 00 00 00 00 00         r2 = *(u8 *)(r1 + 7)
-       9:       67 02 00 00 18 00 00 00         r2 <<= 24
-      10:       18 03 00 00 00 00 00 fe 00 00 00 00 00 00 00 00         r3 = 4261412864 ll
-      12:       5d 32 07 00 00 00 00 00         if r2 != r3 goto +7 <LBB0_6>
-
-where `*(u8 *)(r1 + 7)` means narrow load for ctx->user_ip4 with size=1
-and offset=3 (7 - sizeof(ctx->user_family) = 3). This load is currently
-rejected by verifier.
-
-Verifier code that rejects such loads is in bpf_ctx_narrow_access_ok()
-what means any is_valid_access implementation, that uses the function,
-works this way, e.g. bpf_skb_is_valid_access() for __sk_buff or
-sock_addr_is_valid_access() for bpf_sock_addr.
-
-The patch makes such loads supported. Offset can be in [0; size_default)
-but has to be multiple of load size. E.g. for __u32 field the following
-loads are supported now:
-  * off=0, size=1 (narrow);
-  * off=1, size=1 (narrow);
-  * off=2, size=1 (narrow);
-  * off=3, size=1 (narrow);
-  * off=0, size=2 (narrow);
-  * off=2, size=2 (narrow);
-  * off=0, size=4 (full).
-
-Reported-by: Yonghong Song <yhs@fb.com>
-Signed-off-by: Andrey Ignatov <rdna@fb.com>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
+Cc: kernel-hardening@lists.openwall.com
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/filter.h | 16 +---------------
- kernel/bpf/verifier.c  | 21 ++++++++++++++++-----
- 2 files changed, 17 insertions(+), 20 deletions(-)
+ crypto/ecc.c | 16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
 
-diff --git a/include/linux/filter.h b/include/linux/filter.h
-index 6791a0ac0139..ec90d5255cf7 100644
---- a/include/linux/filter.h
-+++ b/include/linux/filter.h
-@@ -665,24 +665,10 @@ static inline u32 bpf_ctx_off_adjust_machine(u32 size)
- 	return size;
- }
+diff --git a/crypto/ecc.c b/crypto/ecc.c
+index 8facafd67802..adcce310f646 100644
+--- a/crypto/ecc.c
++++ b/crypto/ecc.c
+@@ -842,15 +842,23 @@ static void xycz_add_c(u64 *x1, u64 *y1, u64 *x2, u64 *y2, u64 *curve_prime,
  
--static inline bool bpf_ctx_narrow_align_ok(u32 off, u32 size_access,
--					   u32 size_default)
--{
--	size_default = bpf_ctx_off_adjust_machine(size_default);
--	size_access  = bpf_ctx_off_adjust_machine(size_access);
--
--#ifdef __LITTLE_ENDIAN
--	return (off & (size_default - 1)) == 0;
--#else
--	return (off & (size_default - 1)) + size_access == size_default;
--#endif
--}
--
- static inline bool
- bpf_ctx_narrow_access_ok(u32 off, u32 size, u32 size_default)
+ static void ecc_point_mult(struct ecc_point *result,
+ 			   const struct ecc_point *point, const u64 *scalar,
+-			   u64 *initial_z, u64 *curve_prime,
++			   u64 *initial_z, const struct ecc_curve *curve,
+ 			   unsigned int ndigits)
  {
--	return bpf_ctx_narrow_align_ok(off, size, size_default) &&
--	       size <= size_default && (size & (size - 1)) == 0;
-+	return size <= size_default && (size & (size - 1)) == 0;
- }
- 
- #define bpf_classic_proglen(fprog) (fprog->len * sizeof(fprog->filter[0]))
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index 2954e4b3abd5..89cea3ed535d 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -5341,10 +5341,10 @@ static int convert_ctx_accesses(struct bpf_verifier_env *env)
- 	int i, cnt, size, ctx_field_size, delta = 0;
- 	const int insn_cnt = env->prog->len;
- 	struct bpf_insn insn_buf[16], *insn;
-+	u32 target_size, size_default, off;
- 	struct bpf_prog *new_prog;
- 	enum bpf_access_type type;
- 	bool is_narrower_load;
--	u32 target_size;
- 
- 	if (ops->gen_prologue) {
- 		cnt = ops->gen_prologue(insn_buf, env->seen_direct_write,
-@@ -5421,9 +5421,9 @@ static int convert_ctx_accesses(struct bpf_verifier_env *env)
- 		 * we will apply proper mask to the result.
- 		 */
- 		is_narrower_load = size < ctx_field_size;
-+		size_default = bpf_ctx_off_adjust_machine(ctx_field_size);
-+		off = insn->off;
- 		if (is_narrower_load) {
--			u32 size_default = bpf_ctx_off_adjust_machine(ctx_field_size);
--			u32 off = insn->off;
- 			u8 size_code;
- 
- 			if (type == BPF_WRITE) {
-@@ -5451,12 +5451,23 @@ static int convert_ctx_accesses(struct bpf_verifier_env *env)
- 		}
- 
- 		if (is_narrower_load && size < target_size) {
--			if (ctx_field_size <= 4)
-+			u8 shift = (off & (size_default - 1)) * 8;
+ 	/* R0 and R1 */
+ 	u64 rx[2][ECC_MAX_DIGITS];
+ 	u64 ry[2][ECC_MAX_DIGITS];
+ 	u64 z[ECC_MAX_DIGITS];
++	u64 sk[2][ECC_MAX_DIGITS];
++	u64 *curve_prime = curve->p;
+ 	int i, nb;
+-	int num_bits = vli_num_bits(scalar, ndigits);
++	int num_bits;
++	int carry;
 +
-+			if (ctx_field_size <= 4) {
-+				if (shift)
-+					insn_buf[cnt++] = BPF_ALU32_IMM(BPF_RSH,
-+									insn->dst_reg,
-+									shift);
- 				insn_buf[cnt++] = BPF_ALU32_IMM(BPF_AND, insn->dst_reg,
- 								(1 << size * 8) - 1);
--			else
-+			} else {
-+				if (shift)
-+					insn_buf[cnt++] = BPF_ALU64_IMM(BPF_RSH,
-+									insn->dst_reg,
-+									shift);
- 				insn_buf[cnt++] = BPF_ALU64_IMM(BPF_AND, insn->dst_reg,
- 								(1 << size * 8) - 1);
-+			}
- 		}
++	carry = vli_add(sk[0], scalar, curve->n, ndigits);
++	vli_add(sk[1], sk[0], curve->n, ndigits);
++	scalar = sk[!carry];
++	num_bits = sizeof(u64) * ndigits * 8 + 1;
  
- 		new_prog = bpf_patch_insn_data(env, i + delta, insn_buf, cnt);
+ 	vli_set(rx[1], point->x, ndigits);
+ 	vli_set(ry[1], point->y, ndigits);
+@@ -1004,7 +1012,7 @@ int ecc_make_pub_key(unsigned int curve_id, unsigned int ndigits,
+ 		goto out;
+ 	}
+ 
+-	ecc_point_mult(pk, &curve->g, priv, NULL, curve->p, ndigits);
++	ecc_point_mult(pk, &curve->g, priv, NULL, curve, ndigits);
+ 	if (ecc_point_is_zero(pk)) {
+ 		ret = -EAGAIN;
+ 		goto err_free_point;
+@@ -1090,7 +1098,7 @@ int crypto_ecdh_shared_secret(unsigned int curve_id, unsigned int ndigits,
+ 		goto err_alloc_product;
+ 	}
+ 
+-	ecc_point_mult(product, pk, priv, rand_z, curve->p, ndigits);
++	ecc_point_mult(product, pk, priv, rand_z, curve, ndigits);
+ 
+ 	ecc_swap_digits(product->x, secret, ndigits);
+ 
 -- 
 2.19.1
 
