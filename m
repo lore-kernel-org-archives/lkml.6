@@ -2,187 +2,168 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7AEDC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 15:49:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B573EC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 15:51:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B46E721019
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 15:49:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8915321019
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 15:51:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729119AbfAHPtI (ORCPT
+        id S1729076AbfAHPvX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 10:49:08 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43812 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727906AbfAHPtI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 10:49:08 -0500
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x08FfZh2013566
-        for <linux-kernel@vger.kernel.org>; Tue, 8 Jan 2019 10:49:07 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2pvvwgpqax-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 10:49:06 -0500
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Tue, 8 Jan 2019 15:49:03 -0000
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 8 Jan 2019 15:48:56 -0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x08FmtNF27656282
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 8 Jan 2019 15:48:55 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A6DE952057;
-        Tue,  8 Jan 2019 15:48:55 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.8.241])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTPS id 2796C5204E;
-        Tue,  8 Jan 2019 15:48:54 +0000 (GMT)
-Date:   Tue, 8 Jan 2019 17:48:52 +0200
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Baoquan He <bhe@redhat.com>
-Cc:     Pingfan Liu <kernelfans@gmail.com>, linux-mm@kvack.org,
-        kexec@lists.infradead.org, Tang Chen <tangchen@cn.fujitsu.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Yaowei Bai <baiyaowei@cmss.chinamobile.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Daniel Vacek <neelx@redhat.com>,
-        Mathieu Malaterre <malat@debian.org>,
-        Stefan Agner <stefan@agner.ch>, Dave Young <dyoung@redhat.com>,
-        yinghai@kernel.org, vgoyal@redhat.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv5] x86/kdump: bugfix, make the behavior of crashkernel=X
- consistent with kaslr
-References: <1546848299-23628-1-git-send-email-kernelfans@gmail.com>
- <20190108080538.GB4396@rapoport-lnx>
- <20190108090138.GB18718@MiWiFi-R3L-srv>
+        Tue, 8 Jan 2019 10:51:23 -0500
+Received: from foss.arm.com ([217.140.101.70]:54672 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727906AbfAHPvW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 10:51:22 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 20DC380D;
+        Tue,  8 Jan 2019 07:51:22 -0800 (PST)
+Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 06FA03F5AF;
+        Tue,  8 Jan 2019 07:51:19 -0800 (PST)
+Subject: Re: [PATCH v8 12/26] arm64: irqflags: Use ICC_PMR_EL1 for interrupt
+ masking
+To:     Dave Martin <Dave.Martin@arm.com>,
+        Julien Thierry <julien.thierry@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com,
+        daniel.thompson@linaro.org, catalin.marinas@arm.com,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        will.deacon@arm.com, linux-kernel@vger.kernel.org,
+        christoffer.dall@arm.com, james.morse@arm.com,
+        Oleg Nesterov <oleg@redhat.com>, joel@joelfernandes.org
+References: <1546956464-48825-1-git-send-email-julien.thierry@arm.com>
+ <1546956464-48825-13-git-send-email-julien.thierry@arm.com>
+ <20190108153957.GA5840@e103592.cambridge.arm.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
+ mQINBE6Jf0UBEADLCxpix34Ch3kQKA9SNlVQroj9aHAEzzl0+V8jrvT9a9GkK+FjBOIQz4KE
+ g+3p+lqgJH4NfwPm9H5I5e3wa+Scz9wAqWLTT772Rqb6hf6kx0kKd0P2jGv79qXSmwru28vJ
+ t9NNsmIhEYwS5eTfCbsZZDCnR31J6qxozsDHpCGLHlYym/VbC199Uq/pN5gH+5JHZyhyZiNW
+ ozUCjMqC4eNW42nYVKZQfbj/k4W9xFfudFaFEhAf/Vb1r6F05eBP1uopuzNkAN7vqS8XcgQH
+ qXI357YC4ToCbmqLue4HK9+2mtf7MTdHZYGZ939OfTlOGuxFW+bhtPQzsHiW7eNe0ew0+LaL
+ 3wdNzT5abPBscqXWVGsZWCAzBmrZato+Pd2bSCDPLInZV0j+rjt7MWiSxEAEowue3IcZA++7
+ ifTDIscQdpeKT8hcL+9eHLgoSDH62SlubO/y8bB1hV8JjLW/jQpLnae0oz25h39ij4ijcp8N
+ t5slf5DNRi1NLz5+iaaLg4gaM3ywVK2VEKdBTg+JTg3dfrb3DH7ctTQquyKun9IVY8AsxMc6
+ lxl4HxrpLX7HgF10685GG5fFla7R1RUnW5svgQhz6YVU33yJjk5lIIrrxKI/wLlhn066mtu1
+ DoD9TEAjwOmpa6ofV6rHeBPehUwMZEsLqlKfLsl0PpsJwov8TQARAQABtCNNYXJjIFp5bmdp
+ ZXIgPG1hcmMuenluZ2llckBhcm0uY29tPokCOwQTAQIAJQIbAwYLCQgHAwIGFQgCCQoLBBYC
+ AwECHgECF4AFAk6NvYYCGQEACgkQI9DQutE9ekObww/+NcUATWXOcnoPflpYG43GZ0XjQLng
+ LQFjBZL+CJV5+1XMDfz4ATH37cR+8gMO1UwmWPv5tOMKLHhw6uLxGG4upPAm0qxjRA/SE3LC
+ 22kBjWiSMrkQgv5FDcwdhAcj8A+gKgcXBeyXsGBXLjo5UQOGvPTQXcqNXB9A3ZZN9vS6QUYN
+ TXFjnUnzCJd+PVI/4jORz9EUVw1q/+kZgmA8/GhfPH3xNetTGLyJCJcQ86acom2liLZZX4+1
+ 6Hda2x3hxpoQo7pTu+XA2YC4XyUstNDYIsE4F4NVHGi88a3N8yWE+Z7cBI2HjGvpfNxZnmKX
+ 6bws6RQ4LHDPhy0yzWFowJXGTqM/e79c1UeqOVxKGFF3VhJJu1nMlh+5hnW4glXOoy/WmDEM
+ UMbl9KbJUfo+GgIQGMp8mwgW0vK4HrSmevlDeMcrLdfbbFbcZLNeFFBn6KqxFZaTd+LpylIH
+ bOPN6fy1Dxf7UZscogYw5Pt0JscgpciuO3DAZo3eXz6ffj2NrWchnbj+SpPBiH4srfFmHY+Y
+ LBemIIOmSqIsjoSRjNEZeEObkshDVG5NncJzbAQY+V3Q3yo9og/8ZiaulVWDbcpKyUpzt7pv
+ cdnY3baDE8ate/cymFP5jGJK++QCeA6u6JzBp7HnKbngqWa6g8qDSjPXBPCLmmRWbc5j0lvA
+ 6ilrF8m5Ag0ETol/RQEQAM/2pdLYCWmf3rtIiP8Wj5NwyjSL6/UrChXtoX9wlY8a4h3EX6E3
+ 64snIJVMLbyr4bwdmPKULlny7T/R8dx/mCOWu/DztrVNQiXWOTKJnd/2iQblBT+W5W8ep/nS
+ w3qUIckKwKdplQtzSKeE+PJ+GMS+DoNDDkcrVjUnsoCEr0aK3cO6g5hLGu8IBbC1CJYSpple
+ VVb/sADnWF3SfUvJ/l4K8Uk4B4+X90KpA7U9MhvDTCy5mJGaTsFqDLpnqp/yqaT2P7kyMG2E
+ w+eqtVIqwwweZA0S+tuqput5xdNAcsj2PugVx9tlw/LJo39nh8NrMxAhv5aQ+JJ2I8UTiHLX
+ QvoC0Yc/jZX/JRB5r4x4IhK34Mv5TiH/gFfZbwxd287Y1jOaD9lhnke1SX5MXF7eCT3cgyB+
+ hgSu42w+2xYl3+rzIhQqxXhaP232t/b3ilJO00ZZ19d4KICGcakeiL6ZBtD8TrtkRiewI3v0
+ o8rUBWtjcDRgg3tWx/PcJvZnw1twbmRdaNvsvnlapD2Y9Js3woRLIjSAGOijwzFXSJyC2HU1
+ AAuR9uo4/QkeIrQVHIxP7TJZdJ9sGEWdeGPzzPlKLHwIX2HzfbdtPejPSXm5LJ026qdtJHgz
+ BAb3NygZG6BH6EC1NPDQ6O53EXorXS1tsSAgp5ZDSFEBklpRVT3E0NrDABEBAAGJAh8EGAEC
+ AAkFAk6Jf0UCGwwACgkQI9DQutE9ekMLBQ//U+Mt9DtFpzMCIHFPE9nNlsCm75j22lNiw6mX
+ mx3cUA3pl+uRGQr/zQC5inQNtjFUmwGkHqrAw+SmG5gsgnM4pSdYvraWaCWOZCQCx1lpaCOl
+ MotrNcwMJTJLQGc4BjJyOeSH59HQDitKfKMu/yjRhzT8CXhys6R0kYMrEN0tbe1cFOJkxSbV
+ 0GgRTDF4PKyLT+RncoKxQe8lGxuk5614aRpBQa0LPafkirwqkUtxsPnarkPUEfkBlnIhAR8L
+ kmneYLu0AvbWjfJCUH7qfpyS/FRrQCoBq9QIEcf2v1f0AIpA27f9KCEv5MZSHXGCdNcbjKw1
+ 39YxYZhmXaHFKDSZIC29YhQJeXWlfDEDq6nIhvurZy3mSh2OMQgaIoFexPCsBBOclH8QUtMk
+ a3jW/qYyrV+qUq9Wf3SKPrXf7B3xB332jFCETbyZQXqmowV+2b3rJFRWn5hK5B+xwvuxKyGq
+ qDOGjof2dKl2zBIxbFgOclV7wqCVkhxSJi/QaOj2zBqSNPXga5DWtX3ekRnJLa1+ijXxmdjz
+ hApihi08gwvP5G9fNGKQyRETePEtEAWt0b7dOqMzYBYGRVr7uS4uT6WP7fzOwAJC4lU7ZYWZ
+ yVshCa0IvTtp1085RtT3qhh9mobkcZ+7cQOY+Tx2RGXS9WeOh2jZjdoWUv6CevXNQyOUXMM=
+Organization: ARM Ltd
+Message-ID: <8cae8016-d2c7-3c86-9832-f4278d42ea21@arm.com>
+Date:   Tue, 8 Jan 2019 15:51:18 +0000
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190108090138.GB18718@MiWiFi-R3L-srv>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 19010815-0020-0000-0000-000003030B9B
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19010815-0021-0000-0000-000021541D92
-Message-Id: <20190108154852.GC14063@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-08_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901080128
+In-Reply-To: <20190108153957.GA5840@e103592.cambridge.arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 08, 2019 at 05:01:38PM +0800, Baoquan He wrote:
-> Hi Mike,
+On 08/01/2019 15:40, Dave Martin wrote:
+> On Tue, Jan 08, 2019 at 02:07:30PM +0000, Julien Thierry wrote:
+>> Instead disabling interrupts by setting the PSR.I bit, use a priority
+>> higher than the one used for interrupts to mask them via PMR.
+>>
+>> When using PMR to disable interrupts, the value of PMR will be used
+>> instead of PSR.[DAIF] for the irqflags.
+>>
+>> Signed-off-by: Julien Thierry <julien.thierry@arm.com>
+>> Suggested-by: Daniel Thompson <daniel.thompson@linaro.org>
+>> Cc: Catalin Marinas <catalin.marinas@arm.com>
+>> Cc: Will Deacon <will.deacon@arm.com>
+>> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+>> Cc: Oleg Nesterov <oleg@redhat.com>
+>> ---
+>>  arch/arm64/include/asm/efi.h      |  11 ++++
+>>  arch/arm64/include/asm/irqflags.h | 123 +++++++++++++++++++++++++++++---------
+>>  2 files changed, 106 insertions(+), 28 deletions(-)
 > 
-> On 01/08/19 at 10:05am, Mike Rapoport wrote:
-> > I'm not thrilled by duplicating this code (yet again).
-> > I liked the v3 of this patch [1] more, assuming we allow bottom-up mode to
-> > allocate [0, kernel_start) unconditionally. 
-> > I'd just replace you first patch in v3 [2] with something like:
+> [...]
 > 
-> In initmem_init(), we will restore the top-down allocation style anyway.
-> While reserve_crashkernel() is called after initmem_init(), it's not
-> appropriate to adjust memblock_find_in_range_node(), and we really want
-> to find region bottom up for crashkernel reservation, no matter where
-> kernel is loaded, better call __memblock_find_range_bottom_up().
+>> diff --git a/arch/arm64/include/asm/irqflags.h b/arch/arm64/include/asm/irqflags.h
+>> index 24692ed..fa3b06f 100644
+>> --- a/arch/arm64/include/asm/irqflags.h
+>> +++ b/arch/arm64/include/asm/irqflags.h
+>> @@ -18,7 +18,9 @@
 > 
-> Create a wrapper to do the necessary handling, then call
-> __memblock_find_range_bottom_up() directly, looks better.
-
-What bothers me is 'the necessary handling' which is already done in
-several places in memblock in a similar, but yet slightly different way.
-
-memblock_find_in_range() and memblock_phys_alloc_nid() retry with different
-MEMBLOCK_MIRROR, but memblock_phys_alloc_try_nid() does that only when
-allocating from the specified node and does not retry when it falls back to
-any node. And memblock_alloc_internal() has yet another set of fallbacks. 
-
-So what should be the necessary handling in the wrapper for
-__memblock_find_range_bottom_up() ?
-
-BTW, even without any memblock modifications, retrying allocation in
-reserve_crashkerenel() for different ranges, like the proposal at [1] would
-also work, wouldn't it?
-
-[1] http://lists.infradead.org/pipermail/kexec/2017-October/019571.html
- 
-> Thanks
-> Baoquan
+> [...]
 > 
-> > 
-> > diff --git a/mm/memblock.c b/mm/memblock.c
-> > index 7df468c..d1b30b9 100644
-> > --- a/mm/memblock.c
-> > +++ b/mm/memblock.c
-> > @@ -274,24 +274,14 @@ phys_addr_t __init_memblock memblock_find_in_range_node(phys_addr_t size,
-> >  	 * try bottom-up allocation only when bottom-up mode
-> >  	 * is set and @end is above the kernel image.
-> >  	 */
-> > -	if (memblock_bottom_up() && end > kernel_end) {
-> > -		phys_addr_t bottom_up_start;
-> > -
-> > -		/* make sure we will allocate above the kernel */
-> > -		bottom_up_start = max(start, kernel_end);
-> > -
-> > +	if (memblock_bottom_up()) {
-> >  		/* ok, try bottom-up allocation first */
-> > -		ret = __memblock_find_range_bottom_up(bottom_up_start, end,
-> > +		ret = __memblock_find_range_bottom_up(start, end,
-> >  						      size, align, nid, flags);
-> >  		if (ret)
-> >  			return ret;
-> >  
-> >  		/*
-> > -		 * we always limit bottom-up allocation above the kernel,
-> > -		 * but top-down allocation doesn't have the limit, so
-> > -		 * retrying top-down allocation may succeed when bottom-up
-> > -		 * allocation failed.
-> > -		 *
-> >  		 * bottom-up allocation is expected to be fail very rarely,
-> >  		 * so we use WARN_ONCE() here to see the stack trace if
-> >  		 * fail happens.
-> > 
-> > [1] https://lore.kernel.org/lkml/1545966002-3075-3-git-send-email-kernelfans@gmail.com/
-> > [2] https://lore.kernel.org/lkml/1545966002-3075-2-git-send-email-kernelfans@gmail.com/
-> > 
-> > > +
-> > > +	return ret;
-> > > +}
-> > > +
-> > >  /**
-> > >   * __memblock_find_range_top_down - find free area utility, in top-down
-> > >   * @start: start of candidate range
-> > > -- 
-> > > 2.7.4
-> > > 
-> > 
-> > -- 
-> > Sincerely yours,
-> > Mike.
-> > 
+>>  static inline void arch_local_irq_enable(void)
+>>  {
+>> -	asm volatile(
+>> -		"msr	daifclr, #2		// arch_local_irq_enable"
+>> -		:
+>> +	unsigned long unmasked = GIC_PRIO_IRQON;
+>> +
+>> +	asm volatile(ALTERNATIVE(
+>> +		"msr	daifclr, #2		// arch_local_irq_enable\n"
+>> +		"nop",
+>> +		"msr_s  " __stringify(SYS_ICC_PMR_EL1) ",%0\n"
+>> +		"dsb	sy",
 > 
+> I'm still not convinced these dsbs are needed.
+> 
+> Without the dsb, we are probably not guaranteed to take a pending
+> interrupt _immediately_ on unmasking, but I'm not sure that's a
+> problem.
+> 
+> What goes wrong if we omit them?
 
+Then the GIC doesn't know it can now deliver interrupts of a lower
+priority. Only a dsb can guarantee that the GIC's view of PMR will get
+updated.
+
+See 9.1.6 (Observability of the effects of accesses to the GIC
+registers), which states:
+
+<quote>
+Architectural execution of a DSB instruction guarantees that
+— The last value written to ICC_PMR_EL1 or GICC_PMR is observed by the
+associated Redistributor.
+</quote>
+
+So yes, DSB is required.
+
+Thanks,
+
+	M.
 -- 
-Sincerely yours,
-Mike.
-
+Jazz is not dead. It just smells funny...
