@@ -2,181 +2,133 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB0EEC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 06:34:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D48F0C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 06:37:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E9FE2087E
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 06:34:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="EZlFwg9d"
+	by mail.kernel.org (Postfix) with ESMTP id 9E8FA2087E
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 06:37:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727840AbfAHGeE (ORCPT
+        id S1727881AbfAHGhZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 01:34:04 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:45258 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727538AbfAHGeE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 01:34:04 -0500
-Received: by mail-ot1-f68.google.com with SMTP id 32so2555451ota.12
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 22:34:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=5se9eY7y1Ym3hFdOMq25vpueA+u0CSGdgKEFNkPduC8=;
-        b=EZlFwg9drOm9lYYarTO0yDRZt6A5nSZavlsxxTbNY3d2aFBHx6ettvSprbgLDWMMNc
-         8Bh52f2GhPgxN+HDTg5UecEZ6ybhyrjGvLUd95D0BqSeGwuEEq3BP1Kc1MQbygRnh/MK
-         XW4SlUit3Cfvq6zjlT/n/Xh85ZnOjwgnmNMOs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=5se9eY7y1Ym3hFdOMq25vpueA+u0CSGdgKEFNkPduC8=;
-        b=B9Cx8FX/2+L+Zrpb5Z8+/GfdVa4c6sHoVU99tiXvO//CLb1X4aVZpV4eyPSLrw7swK
-         POz9T6IBIBIM9VtCCfz6Yp85mzf9keV2I+umeEOGjp/nm0GH9Qys/fZH2ItYONH+i2et
-         ZTclmlGo6IOQr7uwJiE+CzvQ64SBYikwfRLacW/hLDGMYGrDkxEOEsWVLHXK0mmP2xuw
-         KkPejp2BKtrnHUQopU1ypT3424vX2ikby7/BCR2+DHM0R7IWApg8DalJtMSt86HzYR+N
-         acv9SylUJEFkxM2Z6kA/qItPXmjaB/TVOtdCMQUzZefw1n7fm+MVTV9LggEJgwKAKnI+
-         c+FA==
-X-Gm-Message-State: AJcUukcwlXxlRxzuWK4r0BqUMv5E/BKwItqR2u+yTL/DPkjTdVGNX/ub
-        Qfn5W6t7e+GzRy60eOcKtUoRBRu9drHdVw==
-X-Google-Smtp-Source: ALg8bN44YcQ72fnEtxL90+5W8DB7MEwWqjklVVk3p+XDSTYp3oIZbN41a90TZJ9Nr0THhbdNucFG2g==
-X-Received: by 2002:a9d:6c94:: with SMTP id c20mr359007otr.251.1546929242656;
-        Mon, 07 Jan 2019 22:34:02 -0800 (PST)
-Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com. [209.85.167.182])
-        by smtp.gmail.com with ESMTPSA id r203sm32012282oih.11.2019.01.07.22.33.59
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 07 Jan 2019 22:34:00 -0800 (PST)
-Received: by mail-oi1-f182.google.com with SMTP id i6so2466494oia.6
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 22:33:59 -0800 (PST)
-X-Received: by 2002:aca:b882:: with SMTP id i124mr369829oif.127.1546929239276;
- Mon, 07 Jan 2019 22:33:59 -0800 (PST)
+        Tue, 8 Jan 2019 01:37:25 -0500
+Received: from mx2.suse.de ([195.135.220.15]:59846 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727538AbfAHGhZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 01:37:25 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id C3670AEC7;
+        Tue,  8 Jan 2019 06:37:22 +0000 (UTC)
+Subject: Re: [RFC PATCH 4/4] x86/mm: remove bottom-up allocation style for
+ x86_64
+To:     Pingfan Liu <kernelfans@gmail.com>,
+        Dave Hansen <dave.hansen@intel.com>
+Cc:     x86@kernel.org, linux-acpi@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>, linux-kernel@vger.kernel.org
+References: <1546849485-27933-1-git-send-email-kernelfans@gmail.com>
+ <1546849485-27933-5-git-send-email-kernelfans@gmail.com>
+ <57ca63ef-ac5b-edd7-710b-f7ee698207c9@intel.com>
+ <CAFgQCTudfQDAzKGYLAo_TuoEaEExzGn018mRewQ_LZvZbVDU+A@mail.gmail.com>
+From:   Juergen Gross <jgross@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
+ xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
+ ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
+ dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
+ NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
+ XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
+ AAHNHkp1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmRlPsLAeQQTAQIAIwUCU4xw6wIbAwcL
+ CQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJELDendYovxMvi4UH/Ri+OXlObzqMANruTd4N
+ zmVBAZgx1VW6jLc8JZjQuJPSsd/a+bNr3BZeLV6lu4Pf1Yl2Log129EX1KWYiFFvPbIiq5M5
+ kOXTO8Eas4CaScCvAZ9jCMQCgK3pFqYgirwTgfwnPtxFxO/F3ZcS8jovza5khkSKL9JGq8Nk
+ czDTruQ/oy0WUHdUr9uwEfiD9yPFOGqp4S6cISuzBMvaAiC5YGdUGXuPZKXLpnGSjkZswUzY
+ d9BVSitRL5ldsQCg6GhDoEAeIhUC4SQnT9SOWkoDOSFRXZ+7+WIBGLiWMd+yKDdRG5RyP/8f
+ 3tgGiB6cyuYfPDRGsELGjUaTUq3H2xZgIPfOwE0EU4xwFgEIAMsx+gDjgzAY4H1hPVXgoLK8
+ B93sTQFN9oC6tsb46VpxyLPfJ3T1A6Z6MVkLoCejKTJ3K9MUsBZhxIJ0hIyvzwI6aYJsnOew
+ cCiCN7FeKJ/oA1RSUemPGUcIJwQuZlTOiY0OcQ5PFkV5YxMUX1F/aTYXROXgTmSaw0aC1Jpo
+ w7Ss1mg4SIP/tR88/d1+HwkJDVW1RSxC1PWzGizwRv8eauImGdpNnseneO2BNWRXTJumAWDD
+ pYxpGSsGHXuZXTPZqOOZpsHtInFyi5KRHSFyk2Xigzvh3b9WqhbgHHHE4PUVw0I5sIQt8hJq
+ 5nH5dPqz4ITtCL9zjiJsExHuHKN3NZsAEQEAAcLAXwQYAQIACQUCU4xwFgIbDAAKCRCw3p3W
+ KL8TL0P4B/9YWver5uD/y/m0KScK2f3Z3mXJhME23vGBbMNlfwbr+meDMrJZ950CuWWnQ+d+
+ Ahe0w1X7e3wuLVODzjcReQ/v7b4JD3wwHxe+88tgB9byc0NXzlPJWBaWV01yB2/uefVKryAf
+ AHYEd0gCRhx7eESgNBe3+YqWAQawunMlycsqKa09dBDL1PFRosF708ic9346GLHRc6Vj5SRA
+ UTHnQqLetIOXZm3a2eQ1gpQK9MmruO86Vo93p39bS1mqnLLspVrL4rhoyhsOyh0Hd28QCzpJ
+ wKeHTd0MAWAirmewHXWPco8p1Wg+V+5xfZzuQY0f4tQxvOpXpt4gQ1817GQ5/Ed/wsDtBBgB
+ CAAgFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAlrd8NACGwIAgQkQsN6d1ii/Ey92IAQZFggA
+ HRYhBFMtsHpB9jjzHji4HoBcYbtP2GO+BQJa3fDQAAoJEIBcYbtP2GO+TYsA/30H/0V6cr/W
+ V+J/FCayg6uNtm3MJLo4rE+o4sdpjjsGAQCooqffpgA+luTT13YZNV62hAnCLKXH9n3+ZAgJ
+ RtAyDWk1B/0SMDVs1wxufMkKC3Q/1D3BYIvBlrTVKdBYXPxngcRoqV2J77lscEvkLNUGsu/z
+ W2pf7+P3mWWlrPMJdlbax00vevyBeqtqNKjHstHatgMZ2W0CFC4hJ3YEetuRBURYPiGzuJXU
+ pAd7a7BdsqWC4o+GTm5tnGrCyD+4gfDSpkOT53S/GNO07YkPkm/8J4OBoFfgSaCnQ1izwgJQ
+ jIpcG2fPCI2/hxf2oqXPYbKr1v4Z1wthmoyUgGN0LPTIm+B5vdY82wI5qe9uN6UOGyTH2B3p
+ hRQUWqCwu2sqkI3LLbTdrnyDZaixT2T0f4tyF5Lfs+Ha8xVMhIyzNb1byDI5FKCb
+Message-ID: <bf696c7a-e0d2-2e1e-e177-6e260c7129c2@suse.com>
+Date:   Tue, 8 Jan 2019 07:37:19 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-References: <20190105183150.20266-1-ayaka@soulik.info> <20190105183150.20266-5-ayaka@soulik.info>
- <50db3bc3faea97182b7fe18b4d9677f7e1563eaa.camel@collabora.com>
- <CAC7DE03-A74C-4154-9443-BC91E6CED02E@soulik.info> <f3dcd25bb1c3f0544cb7eedd0b27633d923c0d27.camel@collabora.com>
- <C53B5CFA-2F9C-41E1-BBA8-D63819D0AC3D@soulik.info> <CAAEAJfCLxvJWrC1CNiSyLV9y=pOjzUBik5SUD0ZVUcnA-+HobQ@mail.gmail.com>
- <85C6CA4D-CC54-422B-BC2B-25EA10701696@soulik.info>
-In-Reply-To: <85C6CA4D-CC54-422B-BC2B-25EA10701696@soulik.info>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Tue, 8 Jan 2019 15:33:48 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5AaVonqn92F=Oa_s_5fkn566+xubO5ijqHmnjg7d4j-8A@mail.gmail.com>
-Message-ID: <CAAFQd5AaVonqn92F=Oa_s_5fkn566+xubO5ijqHmnjg7d4j-8A@mail.gmail.com>
-Subject: Re: [PATCH 4/4] arm64: dts: rockchip: add video codec for rk3399
-To:     Ayaka <ayaka@soulik.info>
-Cc:     Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-        myy@miouyouyou.fr,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media <linux-media@vger.kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Heiko Stuebner <heiko@sntech.de>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAFgQCTudfQDAzKGYLAo_TuoEaEExzGn018mRewQ_LZvZbVDU+A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 7, 2019 at 2:30 AM Ayaka <ayaka@soulik.info> wrote:
->
-> Hello Ezequiel
->
-> Sent from my iPad
->
-> > On Jan 7, 2019, at 1:21 AM, Ezequiel Garcia <ezequiel@vanguardiasur.com=
-.ar> wrote:
-> >
-> >> On Sun, 6 Jan 2019 at 13:16, Ayaka <ayaka@soulik.info> wrote:
-> >>
-> >>
-> >>
-> >> Sent from my iPad
-> >>
-> >>> On Jan 7, 2019, at 12:04 AM, Ezequiel Garcia <ezequiel@collabora.com>=
- wrote:
-> >>>
-> >>> On Sun, 2019-01-06 at 23:05 +0800, Ayaka wrote:
-> >>>>> On Jan 6, 2019, at 10:22 PM, Ezequiel Garcia <ezequiel@collabora.co=
-m> wrote:
-> >>>>>
-> >>>>> Hi Randy,
-> >>>>>
-> >>>>> Thanks a lot for this patches. They are really useful
-> >>>>> to provide more insight into the VPU hardware.
-> >>>>>
-> >>>>> This change will make the vpu encoder and vpu decoder
-> >>>>> completely independent, can they really work in parallel?
-> >>>> As I said it depends on the platform, but with this patch, the user =
-space would think they can work at the same time.
-> >>>
-> >>>
-> >>> I think there is some confusion.
-> >>>
-> >>> The devicetree is one thing: it is a hardware representation,
-> >>> a way to describe the hardware, for the kernel/bootloader to
-> >>> parse.
-> >>>
-> >>> The userspace view will depend on the driver implementation.
-> >>>
-> >>> The current devicetree and driver (without your patches),
-> >>> model the VPU as a single piece of hardware, exposing a decoder
-> >>> and an encoder.
-> >>>
-> >>> The V4L driver will then create two video devices, i.e. /dev/videoX
-> >>> and /dev/videoY. So userspace sees an independent view of the
-> >>> devices.
-> >>>
-> >> I knew that, the problem is that the driver should not always create a=
- decoder and encoder pair, they may not exist at some platforms, even some =
-platforms doesn=E2=80=99t have a encoder. You may have a look on the rk3328=
- I post on the first email as example.
-> >
-> > That is correct. But that still doesn't tackle my question: is the
-> > hardware able to run a decoding and an encoding job in parallel?
-> >
-> For rk3328, yes, you see I didn=E2=80=99t draw them in the same box.
-> > If not, then it's wrong to describe them as independent entities.
-> >
-> >>> However, they are internally connected, and thus we can
-> >>> easily avoid two jobs running in parallel.
-> >>>
-> >> That is what the mpp service did in my patches, handing the relationsh=
-ip between each devices. And it is not a easy work, maybe a 4k decoder woul=
-d be blocked by another high frame rate encoding work or another decoder se=
-ssion. The vendor kernel have more worry about this,  but not in this versi=
-on.
-> >
-> > Right. That is one way to design it. Another way is having a single
-> > devicetree node for the VPU encoder/decoder "complex".
-> No, you can=E2=80=99t assume which one is in the combo group, it can be v=
-arious. you see, in the rk3328, the vdpu is paired with an avs+ decoder. Th=
-at is why I use a virtual device standing for scheduler.
+On 08/01/2019 07:13, Pingfan Liu wrote:
+> On Tue, Jan 8, 2019 at 1:42 AM Dave Hansen <dave.hansen@intel.com> wrote:
+>>
+>> On 1/7/19 12:24 AM, Pingfan Liu wrote:
+>>> There are two acheivements by this patch.
+>>> -1st. keep the subtree of pgtable away from movable node.
+>>> Background about the defect of the current bottom-up allocation style, take
+>>> the following scenario:
+>>>   |  unmovable node |     movable node                           |
+>>>      | kaslr-kernel |subtree of pgtable for phy<->virt |
+>>
+>>
+>>
+>>> Although kaslr-kernel can avoid to stain the movable node. [1] But the
+>>> pgtable can still stain the movable node. That is a probability problem,
+>>> with low probability, but still exist. This patch tries to eliminate the
+>>> probability. With the previous patch, at the point of init_mem_mapping(),
+>>> memblock allocator can work with the knowledge of acpi memory hotmovable
+>>> info, and avoid to stain the movable node. As a result,
+>>> memory_map_bottom_up() is not needed any more.
+>>>
+>>> -2nd. simplify the logic of memory_map_top_down()
+>>> Thanks to the help of early_make_pgtable(), x86_64 can directly set up the
+>>> subtree of pgtable at any place, hence the careful iteration in
+>>> memory_map_top_down() can be discard.
+>>
+>>>  void __init init_mem_mapping(void)
+>>>  {
+>>>       unsigned long end;
+>>> @@ -663,6 +540,7 @@ void __init init_mem_mapping(void)
+>>>
+>>>  #ifdef CONFIG_X86_64
+>>>       end = max_pfn << PAGE_SHIFT;
+>>> +     set_alloc_range(0x100000, end);
+>>>  #else
+>>
+>> Why is this 0x100000 open-coded?  Why is this needed *now*?
+>>
+> 
+> Memory under 1MB should be used by BIOS. For x86_64, after
 
-First of all, thanks for all the input. Having more understanding of
-the hardware and shortcomings of the current V4L2 APIs is really
-important to let us further evolve the API and make sure that it works
-for further use cases.
+Xen PV- and PVH-guests don't have that BIOS restriction.
 
-As for the Device Tree itself, it doesn't always describe the hardware
-in 100%. Most of the time it's just the necessary information to
-choose and instantiate the right drivers and bind to the right
-hardware resources. The information on which hardware instances on the
-SoC can work independently can of course be described in DT (e.g. by
-sub-nodes of a video-codec complex OR a set of phandles, e.g.
-rockchip,shared-instances), but it's also perfectly fine to defer this
-kind of knowledge to the drivers themselves.
 
-Best regards,
-Tomasz
+Juergen
