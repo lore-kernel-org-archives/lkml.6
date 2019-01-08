@@ -2,158 +2,115 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EE37C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:28:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C0CCC43612
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:28:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A7B52176F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:28:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F00D420827
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:28:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546975685;
-	bh=ommgPjTwp6yBaFXM5KrZY5NkRGZVA/h1whw3hiPBCOw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=NbXdp3ENYmjY3ir5SZ5lggyuwgXTZ847y4S2Ra52mtNgLiIS8ATEoOdfdUOo9Cqkn
-	 fMWt3kvOlrkDSTOzgtpvjxd3O0zoMpddiKdlG2OT4woT7c+mKHv8YEHX6Bdq4xz8m6
-	 IQtcMpJMGWq9688lBgRzyv6ocszmwiGh9tdF02xU=
+	s=default; t=1546975687;
+	bh=VsCLYAm+CafoFhM0L1/+hpueaKDfj6J79TTWPqJHGow=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=sWN/j9LXPjCeQGRN4Oo4gA5lO4623cD6/UqWsJ5bQRLBT00gpzef1aH/mWA8UfqTV
+	 L1aXri1aIrpAF4KCyZ1AQFTgeDoW/5jOJ97E92oKwh5RBvKSB4E8uv4JfknPmFnqz6
+	 nTrnNN45BI93GeDIYq5rN42+3blmsWHVzv+AsZ1c=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729879AbfAHT2D (ORCPT
+        id S1729896AbfAHT2G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:28:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34608 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:28:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34818 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729858AbfAHT2B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:28:01 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        id S1729324AbfAHT2D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:28:03 -0500
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7B8BA20645;
-        Tue,  8 Jan 2019 19:27:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 059F620645;
+        Tue,  8 Jan 2019 19:28:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975680;
-        bh=ommgPjTwp6yBaFXM5KrZY5NkRGZVA/h1whw3hiPBCOw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jHCG8F8ponqUyyGvcBhi/y/ERCDB8vdBDMO+OstfglcQ5TfDzGBhvWgR2UW5EnNAj
-         ihEj+W7GKVEMriu5jhlIIcNQGY1W8flLeP/Nwetg+ZoekD2mxHFMumIxnXZ2dIPYzb
-         qdYjLOq6TFIWrcEizqg22s3eQ7rUEE+h3sPxjGQY=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Peter Smith <peter.smith@linaro.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.20 049/117] arm64: relocatable: fix inconsistencies in linker script and options
-Date:   Tue,  8 Jan 2019 14:25:17 -0500
-Message-Id: <20190108192628.121270-49-sashal@kernel.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190108192628.121270-1-sashal@kernel.org>
-References: <20190108192628.121270-1-sashal@kernel.org>
+        s=default; t=1546975683;
+        bh=VsCLYAm+CafoFhM0L1/+hpueaKDfj6J79TTWPqJHGow=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=sd6o7INQyi4T6Nn0Pd5mmqsyeeMOYQH1Pw97BKKQZOPHd3mNLNqHTrfp9WvacyISP
+         iJa/D7nQH2GilnSwiwMqNPLws2rUFBdCwyt85U+x6qoII3QFPmyNr6JFl7YhP2XNHq
+         x3vXjNTkQj3kd95VjyM1eOejF/j+NeamTbBGFRFA=
+Received: by mail-wr1-f49.google.com with SMTP id r10so5214873wrs.10;
+        Tue, 08 Jan 2019 11:28:02 -0800 (PST)
+X-Gm-Message-State: AJcUukePb+iFS5aT1JoxKrS+w9btteYfU7KCLgEdmjIgS5NjoNnabJoO
+        T23AVsE+tRwfMK2lhqiAKy9OldbIl+LN69g4U8M=
+X-Google-Smtp-Source: ALg8bN6fvK9f9HUj4dXlagiLnTQUWuzG2yB+iTPbtaupNPjiAu5uGcvXHwEZPEHf/mCO7fPbVzMK2GZoNpBogJoi3Zk=
+X-Received: by 2002:adf:f28d:: with SMTP id k13mr2501964wro.78.1546975681453;
+ Tue, 08 Jan 2019 11:28:01 -0800 (PST)
 MIME-Version: 1.0
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+References: <20190108160526.18928-1-frank-w@public-files.de>
+ <7acce775-4ab7-c867-c801-25ee004f6b38@gmail.com> <trinity-4ceb1d55-424f-46b8-b8e7-989770b249a2-1546974413848@3c-app-gmx-bs35>
+In-Reply-To: <trinity-4ceb1d55-424f-46b8-b8e7-989770b249a2-1546974413848@3c-app-gmx-bs35>
+From:   Sean Wang <sean.wang@kernel.org>
+Date:   Tue, 8 Jan 2019 11:29:14 -0800
+X-Gmail-Original-Message-ID: <CAGp9LzrUK=QWJsDwiTVG7vD7v8=jFp6bAm9ZiOh3c2dQk029uA@mail.gmail.com>
+Message-ID: <CAGp9LzrUK=QWJsDwiTVG7vD7v8=jFp6bAm9ZiOh3c2dQk029uA@mail.gmail.com>
+Subject: Re: Re: [PATCH] net: ethernet: mediatek: fix warning in phy_start_aneg
+To:     Frank Wunderlich <frank-w@public-files.de>
+Cc:     Heiner Kallweit <hkallweit1@gmail.com>,
+        Felix Fietkau <nbd@openwrt.org>,
+        John Crispin <john@phrozen.org>,
+        Nelson Chang <nelson.chang@mediatek.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+On Tue, Jan 8, 2019 at 11:07 AM Frank Wunderlich
+<frank-w@public-files.de> wrote:
+>
+>
+> > In mtk_phy_connect() I would say this complete block can be removed.
+> > All this is handled internally by phylib.
+> >
+> >       dev->phydev->autoneg = AUTONEG_ENABLE;
+> >       dev->phydev->speed = 0;
+> >       dev->phydev->duplex = 0;
+> >
+> >       phy_set_max_speed(dev->phydev, SPEED_1000);
+> >       phy_support_asym_pause(dev->phydev);
+> >       linkmode_copy(dev->phydev->advertising, dev->phydev->supported);
+> >       linkmode_set_bit(ETHTOOL_LINK_MODE_Autoneg_BIT,
+> >                        dev->phydev->advertising);
+> >       phy_start_aneg(dev->phydev);
+> >
+> > Could you please test this?
+>
+> seems to work well, no warning in dmesg
+>
+> traffic 940Mbit sending, 900 receive
+>
 
-[ Upstream commit 3bbd3db86470c701091fb1d67f1fab6621debf50 ]
+The change to phy initialized valve determined by phylib looks good to
+me and simplify the mac driver a lot. You could have it in v2.
 
-readelf complains about the section layout of vmlinux when building
-with CONFIG_RELOCATABLE=y (for KASLR):
+> > And a further proposal:
+> > Instead of the open-coded dev_info() in mtk_phy_connect_node()
+> > you could use phy_attached_info().
+>
+> have not tried this yet...because it's only an info-message and needs different parameters...have to look how i can convert it
 
-  readelf: Warning: [21]: Link field (0) should index a symtab section.
-  readelf: Warning: [21]: Info field (0) should index a relocatable section.
+I think it can be done in a separate patch
 
-Also, it seems that our use of '-pie -shared' is contradictory, and
-thus ambiguous. In general, the way KASLR is wired up at the moment
-is highly tailored to how ld.bfd happens to implement (and conflate)
-PIE executables and shared libraries, so given the current effort to
-support other toolchains, let's fix some of these issues as well.
-
-- Drop the -pie linker argument and just leave -shared. In ld.bfd,
-  the differences between them are unclear (except for the ELF type
-  of the produced image [0]) but lld chokes on seeing both at the
-  same time.
-
-- Rename the .rela output section to .rela.dyn, as is customary for
-  shared libraries and PIE executables, so that it is not misidentified
-  by readelf as a static relocation section (producing the warnings
-  above).
-
-- Pass the -z notext and -z norelro options to explicitly instruct the
-  linker to permit text relocations, and to omit the RELRO program
-  header (which requires a certain section layout that we don't adhere
-  to in the kernel). These are the defaults for current versions of
-  ld.bfd.
-
-- Discard .eh_frame and .gnu.hash sections to avoid them from being
-  emitted between .head.text and .text, screwing up the section layout.
-
-These changes only affect the ELF image, and produce the same binary
-image.
-
-[0] b9dce7f1ba01 ("arm64: kernel: force ET_DYN ELF type for ...")
-
-Cc: Nick Desaulniers <ndesaulniers@google.com>
-Cc: Peter Smith <peter.smith@linaro.org>
-Tested-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- arch/arm64/Makefile             | 2 +-
- arch/arm64/kernel/vmlinux.lds.S | 9 +++++----
- 2 files changed, 6 insertions(+), 5 deletions(-)
-
-diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
-index 6cb9fc7e9382..8978f60779c4 100644
---- a/arch/arm64/Makefile
-+++ b/arch/arm64/Makefile
-@@ -18,7 +18,7 @@ ifeq ($(CONFIG_RELOCATABLE), y)
- # Pass --no-apply-dynamic-relocs to restore pre-binutils-2.27 behaviour
- # for relative relocs, since this leads to better Image compression
- # with the relocation offsets always being zero.
--LDFLAGS_vmlinux		+= -pie -shared -Bsymbolic \
-+LDFLAGS_vmlinux		+= -shared -Bsymbolic -z notext -z norelro \
- 			$(call ld-option, --no-apply-dynamic-relocs)
- endif
- 
-diff --git a/arch/arm64/kernel/vmlinux.lds.S b/arch/arm64/kernel/vmlinux.lds.S
-index 03b00007553d..7fa008374907 100644
---- a/arch/arm64/kernel/vmlinux.lds.S
-+++ b/arch/arm64/kernel/vmlinux.lds.S
-@@ -99,7 +99,8 @@ SECTIONS
- 		*(.discard)
- 		*(.discard.*)
- 		*(.interp .dynamic)
--		*(.dynsym .dynstr .hash)
-+		*(.dynsym .dynstr .hash .gnu.hash)
-+		*(.eh_frame)
- 	}
- 
- 	. = KIMAGE_VADDR + TEXT_OFFSET;
-@@ -192,12 +193,12 @@ SECTIONS
- 
- 	PERCPU_SECTION(L1_CACHE_BYTES)
- 
--	.rela : ALIGN(8) {
-+	.rela.dyn : ALIGN(8) {
- 		*(.rela .rela*)
- 	}
- 
--	__rela_offset	= ABSOLUTE(ADDR(.rela) - KIMAGE_VADDR);
--	__rela_size	= SIZEOF(.rela);
-+	__rela_offset	= ABSOLUTE(ADDR(.rela.dyn) - KIMAGE_VADDR);
-+	__rela_size	= SIZEOF(.rela.dyn);
- 
- 	. = ALIGN(SEGMENT_ALIGN);
- 	__initdata_end = .;
--- 
-2.19.1
-
+>
+> > Calling phy_start() in the ndo_open callback is fine, you can leave
+> > it there.
+>
+> have it re-added
+>
+> pushed to my repo: https://github.com/frank-w/BPI-R2-4.14/commits/5.0-rc
+>
+> regards Frank
