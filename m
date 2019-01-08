@@ -2,94 +2,150 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3880AC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 10:05:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B060C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 10:05:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 132692087E
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 10:05:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A881218AE
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 10:05:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728305AbfAHKFJ (ORCPT
+        id S1728523AbfAHKFQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 05:05:09 -0500
-Received: from mx2.suse.de ([195.135.220.15]:59340 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727001AbfAHKFJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 05:05:09 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 566C1B0DF;
-        Tue,  8 Jan 2019 10:05:08 +0000 (UTC)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 08 Jan 2019 11:05:08 +0100
-From:   Roman Penyaev <rpenyaev@suse.de>
-To:     Dmitry Vyukov <dvyukov@google.com>
+        Tue, 8 Jan 2019 05:05:16 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:32488 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727001AbfAHKFP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 05:05:15 -0500
+Received: from fsav110.sakura.ne.jp (fsav110.sakura.ne.jp [27.133.134.237])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x08A4CBY056031;
+        Tue, 8 Jan 2019 19:04:12 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav110.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav110.sakura.ne.jp);
+ Tue, 08 Jan 2019 19:04:12 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav110.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x08A47CH056010
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Tue, 8 Jan 2019 19:04:12 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: INFO: task hung in generic_file_write_iter
+To:     Jan Kara <jack@suse.cz>
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: WARNING in ep_poll_callback
-In-Reply-To: <CACT4Y+aFQgqYuq9ws8vJk-f9uafx8B8hYKtMwUgjcrTGAL_spQ@mail.gmail.com>
-References: <000000000000d8bec0057eec0a92@google.com>
- <CACT4Y+aFQgqYuq9ws8vJk-f9uafx8B8hYKtMwUgjcrTGAL_spQ@mail.gmail.com>
-Message-ID: <a4eae0108088505de523b301b1db9663@suse.de>
-X-Sender: rpenyaev@suse.de
-User-Agent: Roundcube Webmail
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        syzbot <syzbot+9933e4476f365f5d5a1b@syzkaller.appspotmail.com>,
+        linux-mm@kvack.org, mgorman@techsingularity.net,
+        Michal Hocko <mhocko@kernel.org>, ak@linux.intel.com,
+        jlayton@redhat.com, linux-kernel@vger.kernel.org,
+        mawilcox@microsoft.com, syzkaller-bugs@googlegroups.com,
+        tim.c.chen@linux.intel.com,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <0000000000009ce88d05714242a8@google.com>
+ <4b349bff-8ad4-6410-250d-593b13d8d496@I-love.SAKURA.ne.jp>
+ <9b9fcdda-c347-53ee-fdbb-8a7d11cf430e@I-love.SAKURA.ne.jp>
+ <20180720130602.f3d6dc4c943558875a36cb52@linux-foundation.org>
+ <a2df1f24-f649-f5d8-0b2d-66d45b6cb61f@i-love.sakura.ne.jp>
+ <20180806100928.x7anab3c3y5q4ssa@quack2.suse.cz>
+ <e8a23623-feaf-7730-5492-b329cb0daa21@i-love.sakura.ne.jp>
+ <20190102144015.GA23089@quack2.suse.cz>
+ <275523c6-f750-44c2-a8a4-f3825eeab788@i-love.sakura.ne.jp>
+ <20190102172636.GA29127@quack2.suse.cz>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <bf209c90-3624-68cd-c0db-86a91210f873@i-love.sakura.ne.jp>
+Date:   Tue, 8 Jan 2019 19:04:06 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <20190102172636.GA29127@quack2.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-01-08 07:00, Dmitry Vyukov wrote:
-> On Tue, Jan 8, 2019 at 6:59 AM syzbot
-> <syzbot+aea82bf9ee6ffd9a79d9@syzkaller.appspotmail.com> wrote:
->> 
->> Hello,
->> 
->> syzbot found the following crash on:
->> 
->> HEAD commit:    139287cc2cc0 Add linux-next specific files for 
->> 20190108
->> git tree:       linux-next
->> console output: 
->> https://syzkaller.appspot.com/x/log.txt?x=16f563d7400000
->> kernel config:  
->> https://syzkaller.appspot.com/x/.config?x=1521b074ff5a5bdf
->> dashboard link: 
->> https://syzkaller.appspot.com/bug?extid=aea82bf9ee6ffd9a79d9
->> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
->> 
->> Unfortunately, I don't have any reproducer for this crash yet.
+On 2019/01/03 2:26, Jan Kara wrote:
+> On Thu 03-01-19 01:07:25, Tetsuo Handa wrote:
+>> On 2019/01/02 23:40, Jan Kara wrote:
+>>> I had a look into this and the only good explanation for this I have is
+>>> that sb->s_blocksize is different from (1 << sb->s_bdev->bd_inode->i_blkbits).
+>>> If that would happen, we'd get exactly the behavior syzkaller observes
+>>> because grow_buffers() would populate different page than
+>>> __find_get_block() then looks up.
+>>>
+>>> However I don't see how that's possible since the filesystem has the block
+>>> device open exclusively and blkdev_bszset() makes sure we also have
+>>> exclusive access to the block device before changing the block device size.
+>>> So changing block device block size after filesystem gets access to the
+>>> device should be impossible. 
+>>>
+>>> Anyway, could you perhaps add to your debug patch a dump of 'size' passed
+>>> to __getblk_slow() and bdev->bd_inode->i_blkbits? That should tell us
+>>> whether my theory is right or not. Thanks!
+>>>
+
+Got two reports. 'size' is 512 while bdev->bd_inode->i_blkbits is 12.
+
+https://syzkaller.appspot.com/text?tag=CrashLog&x=1237c3ab400000
+
+[  385.723941][  T439] kworker/u4:3(439): getblk(): executed=9 bh_count=0 bh_state=0 bdev_super_blocksize=512 size=512 bdev_super_blocksize_bits=9 bdev_inode_blkbits=12
+(...snipped...)
+[  568.159544][  T439] kworker/u4:3(439): getblk(): executed=9 bh_count=0 bh_state=0 bdev_super_blocksize=512 size=512 bdev_super_blocksize_bits=9 bdev_inode_blkbits=12
+
+https://syzkaller.appspot.com/text?tag=CrashLog&x=143383d7400000
+
+[ 1355.681513][ T6893] syz-executor0(6893): getblk(): executed=9 bh_count=0 bh_state=0 bdev_super_blocksize=512 size=512 bdev_super_blocksize_bits=9 bdev_inode_blkbits=12
+[ 1358.274585][T15649] kworker/u4:17(15649): getblk(): executed=9 bh_count=0 bh_state=0 bdev_super_blocksize=512 size=512 bdev_super_blocksize_bits=9 bdev_inode_blkbits=12
+(...snipped...)
+[ 1455.341572][ T6893] syz-executor0(6893): getblk(): executed=9 bh_count=0 bh_state=0 bdev_super_blocksize=512 size=512 bdev_super_blocksize_bits=9 bdev_inode_blkbits=12
+[ 1455.541457][T15649] kworker/u4:17(15649): getblk(): executed=9 bh_count=0 bh_state=0 bdev_super_blocksize=512 size=512 bdev_super_blocksize_bits=9 bdev_inode_blkbits=12
+
+>>
+>> OK. Andrew, will you add (or fold into) this change?
+>>
+>> From e6f334380ad2c87457bfc2a4058316c47f75824a Mon Sep 17 00:00:00 2001
+>> From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+>> Date: Thu, 3 Jan 2019 01:03:35 +0900
+>> Subject: [PATCH] fs/buffer.c: dump more info for __getblk_gfp() stall problem
+>>
+>> We need to dump more variables on top of
+>> "fs/buffer.c: add debug print for __getblk_gfp() stall problem".
+>>
+>> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+>> Cc: Jan Kara <jack@suse.cz>
+>> ---
+>>  fs/buffer.c | 9 +++++++--
+>>  1 file changed, 7 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/fs/buffer.c b/fs/buffer.c
+>> index 580fda0..a50acac 100644
+>> --- a/fs/buffer.c
+>> +++ b/fs/buffer.c
+>> @@ -1066,9 +1066,14 @@ static sector_t blkdev_max_block(struct block_device *bdev, unsigned int size)
+>>  #ifdef CONFIG_DEBUG_AID_FOR_SYZBOT
+>>  		if (!time_after(jiffies, current->getblk_stamp + 3 * HZ))
+>>  			continue;
+>> -		printk(KERN_ERR "%s(%u): getblk(): executed=%x bh_count=%d bh_state=%lx\n",
+>> +		printk(KERN_ERR "%s(%u): getblk(): executed=%x bh_count=%d bh_state=%lx "
+>> +		       "bdev_super_blocksize=%lu size=%u "
+>> +		       "bdev_super_blocksize_bits=%u bdev_inode_blkbits=%u\n",
+>>  		       current->comm, current->pid, current->getblk_executed,
+>> -		       current->getblk_bh_count, current->getblk_bh_state);
+>> +		       current->getblk_bh_count, current->getblk_bh_state,
+>> +		       bdev->bd_super->s_blocksize, size,
+>> +		       bdev->bd_super->s_blocksize_bits,
+>> +		       bdev->bd_inode->i_blkbits);
 > 
-> Looks like caused by:
+> Well, bd_super may be NULL if there's no filesystem mounted so it would be
+> safer to check for this rather than blindly dereferencing it... Otherwise
+> the change looks good to me.
 > 
-> commit f92cacf118171208f62519d92502a8dd0341286d
-> Author: Roman Penyaev
-> Date:   Tue Jan 8 12:15:44 2019 +1100
+> 								Honza
 > 
->     epoll: loosen irq safety in ep_poll_callback()
-
-Yes, that was my wrong assumption that all drivers disable irqs before
-waking up a wait queue.  Of course for drivers like fuse this is not
-a case. Thanks for reporting.
-
-The fix is simple: just remove wrong assert line :)  The whole logic
-stays correct: epoll always locks rwlock with irqs disabled and by
-itself does not call from interrupt, thus it is up to driver how to
-call wake_up_locked(), because if driver does not handle any interrupts
-it is safe on its side to take a simple spin_lock.
-
-Patch is sent:
-https://lore.kernel.org/lkml/20190108100121.20247-1-rpenyaev@suse.de
-
---
-Roman
 
