@@ -4,54 +4,56 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD7EEC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:48:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DEA9C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:48:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DDA5206BB
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:48:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A39720827
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:48:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546976927;
-	bh=/It8ZbyjOQ9tUIauPntqHJlqGq3/61Y/mLlP9UCNWfc=;
+	s=default; t=1546976936;
+	bh=AS5xXNXcfHKv46JrTTW1YEaqp9QqX381pcJ1aiZGhfg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=srSCUzPeNF+4XsxpStlTwkecmZkQKCPaWGzwhrp3KGRArWTk+Y4hMePxfqgY6Uem1
-	 DTCcDw3HFZgYHyL3fqIwrvszwWLIFm72MfvnawNXE9TSXzuXK0+oiLWtN8wMcchj6r
-	 oNlAnwCGSyH/wPc3LGjaMjl8toxxVwt3C82dNLTA=
+	b=QlFKfSxGgpnCnQN4yDWaYiRDX7fNWv3g4N2gHuWBVCc5qEkehCzpRv5z4cur+eOIs
+	 o2rDdiXtRmBiKMOU9DlBdBD4HBrxMnF9oRa+lKI79OjZMk36SG9DKnUHBi5PJPeyPR
+	 fkkXw9d4Sv3KIjekNI8R39ehF8j6JitHwBKEf9sQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731901AbfAHTsq (ORCPT
+        id S1731301AbfAHTcL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:48:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40626 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:32:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40446 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731317AbfAHTcO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:32:14 -0500
+        id S1731274AbfAHTcG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:32:06 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A6E5220665;
-        Tue,  8 Jan 2019 19:32:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 86A752070B;
+        Tue,  8 Jan 2019 19:32:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975933;
-        bh=/It8ZbyjOQ9tUIauPntqHJlqGq3/61Y/mLlP9UCNWfc=;
+        s=default; t=1546975925;
+        bh=AS5xXNXcfHKv46JrTTW1YEaqp9QqX381pcJ1aiZGhfg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Yd7teMg6HiAXrtjjfMaSxrV37hQf4LLwkREkJwonKxz5sqn8Fop1zm+MRSQmYMu4p
-         fBfQ+s0HXlagdsWQoxf/1X27f+N+9tNNv5armBXZwIcdpM8+ZMNNXI7I7//ch0rbk/
-         zE5T1XjoUybOXP5bsw5S+OIyuCGD6BksNcyo+LSw=
+        b=UI9RHe3JK4re9a+I0SEoyu2r7Khm+tVOaeNFYR1O109ScPAwzew4t4tfGNNzaSkW7
+         vfxBROpU4VjYh/q3L/NvJED1PtdxpRvcruwS8I0J+Z7aBPIWdzDNK11k1F67YNosyG
+         Wjb2sUsiMmsQNHCuqnG9adrXom/hudAns64f9S0Y=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Brian Foster <bfoster@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-mm@kvack.org
-Subject: [PATCH AUTOSEL 4.19 94/97] mm/page-writeback.c: don't break integrity writeback on ->writepage() error
-Date:   Tue,  8 Jan 2019 14:29:43 -0500
-Message-Id: <20190108192949.122407-94-sashal@kernel.org>
+Cc:     Kevin Barnett <kevin.barnett@microsemi.com>,
+        Don Brace <don.brace@microsemi.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>, esc.storagedev@microsemi.com,
+        linux-scsi@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 88/97] scsi: smartpqi: correct lun reset issues
+Date:   Tue,  8 Jan 2019 14:29:37 -0500
+Message-Id: <20190108192949.122407-88-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192949.122407-1-sashal@kernel.org>
 References: <20190108192949.122407-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -59,108 +61,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Brian Foster <bfoster@redhat.com>
+From: Kevin Barnett <kevin.barnett@microsemi.com>
 
-[ Upstream commit 3fa750dcf29e8606e3969d13d8e188cc1c0f511d ]
+[ Upstream commit 2ba55c9851d74eb015a554ef69ddf2ef061d5780 ]
 
-write_cache_pages() is used in both background and integrity writeback
-scenarios by various filesystems.  Background writeback is mostly
-concerned with cleaning a certain number of dirty pages based on various
-mm heuristics.  It may not write the full set of dirty pages or wait for
-I/O to complete.  Integrity writeback is responsible for persisting a set
-of dirty pages before the writeback job completes.  For example, an
-fsync() call must perform integrity writeback to ensure data is on disk
-before the call returns.
+Problem:
+The Linux kernel takes a logical volume offline after a LUN reset.  This is
+generally accompanied by this message in the dmesg output:
 
-write_cache_pages() unconditionally breaks out of its processing loop in
-the event of a ->writepage() error.  This is fine for background
-writeback, which had no strict requirements and will eventually come
-around again.  This can cause problems for integrity writeback on
-filesystems that might need to clean up state associated with failed page
-writeouts.  For example, XFS performs internal delayed allocation
-accounting before returning a ->writepage() error, where applicable.  If
-the current writeback happens to be associated with an unmount and
-write_cache_pages() completes the writeback prematurely due to error, the
-filesystem is unmounted in an inconsistent state if dirty+delalloc pages
-still exist.
+Device offlined - not ready after error recovery
 
-To handle this problem, update write_cache_pages() to always process the
-full set of pages for integrity writeback regardless of ->writepage()
-errors.  Save the first encountered error and return it to the caller once
-complete.  This facilitates XFS (or any other fs that expects integrity
-writeback to process the entire set of dirty pages) to clean up its
-internal state completely in the event of persistent mapping errors.
-Background writeback continues to exit on the first error encountered.
+Root Cause:
+The root cause is a "quirk" in the timeout handling in the Linux SCSI
+layer. The Linux kernel places a 30-second timeout on most media access
+commands (reads and writes) that it send to device drivers.  When a media
+access command times out, the Linux kernel goes into error recovery mode
+for the LUN that was the target of the command that timed out. Every
+command that timed out is kept on a list inside of the Linux kernel to be
+retried later. The kernel attempts to recover the command(s) that timed out
+by issuing a LUN reset followed by a TEST UNIT READY. If the LUN reset and
+TEST UNIT READY commands are successful, the kernel retries the command(s)
+that timed out.
 
-[akpm@linux-foundation.org: fix typo in comment]
-Link: http://lkml.kernel.org/r/20181116134304.32440-1-bfoster@redhat.com
-Signed-off-by: Brian Foster <bfoster@redhat.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Each SCSI command issued by the kernel has a result field associated with
+it. This field indicates the final result of the command (success or
+error). When a command times out, the kernel places a value in this result
+field indicating that the command timed out.
+
+The "quirk" is that after the LUN reset and TEST UNIT READY commands are
+completed, the kernel checks each command on the timed-out command list
+before retrying it. If the result field is still "timed out", the kernel
+treats that command as not having been successfully recovered for a
+retry. If the number of commands that are in this state are greater than
+two, the kernel takes the LUN offline.
+
+Fix:
+When our RAIDStack receives a LUN reset, it simply waits until all
+outstanding commands complete. Generally, all of these outstanding commands
+complete successfully. Therefore, the fix in the smartpqi driver is to
+always set the command result field to indicate success when a request
+completes successfully. This normally isn’t necessary because the result
+field is always initialized to success when the command is submitted to the
+driver. So when the command completes successfully, the result field is
+left untouched. But in this case, the kernel changes the result field
+behind the driver’s back and then expects the field to be changed by the
+driver as the commands that timed-out complete.
+
+Reviewed-by: Dave Carroll <david.carroll@microsemi.com>
+Reviewed-by: Scott Teel <scott.teel@microsemi.com>
+Signed-off-by: Kevin Barnett <kevin.barnett@microsemi.com>
+Signed-off-by: Don Brace <don.brace@microsemi.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/page-writeback.c | 35 +++++++++++++++++++++--------------
- 1 file changed, 21 insertions(+), 14 deletions(-)
+ drivers/scsi/smartpqi/smartpqi_init.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-index 84ae9bf5858a..ea4fd3af3b4b 100644
---- a/mm/page-writeback.c
-+++ b/mm/page-writeback.c
-@@ -2156,6 +2156,7 @@ int write_cache_pages(struct address_space *mapping,
- {
- 	int ret = 0;
- 	int done = 0;
-+	int error;
- 	struct pagevec pvec;
- 	int nr_pages;
- 	pgoff_t uninitialized_var(writeback_index);
-@@ -2236,25 +2237,31 @@ int write_cache_pages(struct address_space *mapping,
- 				goto continue_unlock;
- 
- 			trace_wbc_writepage(wbc, inode_to_bdi(mapping->host));
--			ret = (*writepage)(page, wbc, data);
--			if (unlikely(ret)) {
--				if (ret == AOP_WRITEPAGE_ACTIVATE) {
-+			error = (*writepage)(page, wbc, data);
-+			if (unlikely(error)) {
-+				/*
-+				 * Handle errors according to the type of
-+				 * writeback. There's no need to continue for
-+				 * background writeback. Just push done_index
-+				 * past this page so media errors won't choke
-+				 * writeout for the entire file. For integrity
-+				 * writeback, we must process the entire dirty
-+				 * set regardless of errors because the fs may
-+				 * still have state to clear for each page. In
-+				 * that case we continue processing and return
-+				 * the first error.
-+				 */
-+				if (error == AOP_WRITEPAGE_ACTIVATE) {
- 					unlock_page(page);
--					ret = 0;
--				} else {
--					/*
--					 * done_index is set past this page,
--					 * so media errors will not choke
--					 * background writeout for the entire
--					 * file. This has consequences for
--					 * range_cyclic semantics (ie. it may
--					 * not be suitable for data integrity
--					 * writeout).
--					 */
-+					error = 0;
-+				} else if (wbc->sync_mode != WB_SYNC_ALL) {
-+					ret = error;
- 					done_index = page->index + 1;
- 					done = 1;
- 					break;
- 				}
-+				if (!ret)
-+					ret = error;
- 			}
- 
- 			/*
+diff --git a/drivers/scsi/smartpqi/smartpqi_init.c b/drivers/scsi/smartpqi/smartpqi_init.c
+index 2112ea6723c6..c62df3eefd5a 100644
+--- a/drivers/scsi/smartpqi/smartpqi_init.c
++++ b/drivers/scsi/smartpqi/smartpqi_init.c
+@@ -2720,6 +2720,9 @@ static unsigned int pqi_process_io_intr(struct pqi_ctrl_info *ctrl_info,
+ 		switch (response->header.iu_type) {
+ 		case PQI_RESPONSE_IU_RAID_PATH_IO_SUCCESS:
+ 		case PQI_RESPONSE_IU_AIO_PATH_IO_SUCCESS:
++			if (io_request->scmd)
++				io_request->scmd->result = 0;
++			/* fall through */
+ 		case PQI_RESPONSE_IU_GENERAL_MANAGEMENT:
+ 			break;
+ 		case PQI_RESPONSE_IU_TASK_MANAGEMENT:
 -- 
 2.19.1
 
