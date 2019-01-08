@@ -2,95 +2,115 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4D63C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 14:57:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C526C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 14:59:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DA8820827
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 14:57:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA0C420827
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 14:59:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546959423;
-	bh=ermArLtvls1wgNieOXTgJ3O6kO3RHBy5b15Gt5oH92U=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=zIUl1sBO4w+0MWaZHAsg8vjyJEmUbQUA8MR5TdWZSBnuNv6MAwmnjO1pzLEjPPoJP
-	 hNqndyOtkwfD83+BOughBh8lw8+zh3VYL35U5oDryHylfXidss2Xoe7I1txnkaWmi5
-	 DRaNimzLoo6LWhDb543opxPEcfGze/8ikG4syZsU=
+	s=default; t=1546959586;
+	bh=Mje+PYvn9ol6akJLrh00PZbUSBsR/DCuS5jvzzuDizM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=P03E5/qkZ7XbN/1h7BePJPu5SGqSyNz1jUEdqiMGQDg2m9h/fudG/G0W3deuelfgK
+	 KccJ3UB1O8l+4yAuCLmnwWAbzjP1S4SaJZMEdLOrlmXF2P6oB73scfTSthpHK0VNsG
+	 cKhJUXu+nS/0rF8gzIEJQwuxtZxu1oodkMKWUE00=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728112AbfAHO5C (ORCPT
+        id S1728211AbfAHO7p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 09:57:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39484 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727662AbfAHO5C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 09:57:02 -0500
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 55DC621019;
-        Tue,  8 Jan 2019 14:57:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546959421;
-        bh=ermArLtvls1wgNieOXTgJ3O6kO3RHBy5b15Gt5oH92U=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=GpUQ6y2ek6S+NtAqULX25wso+Zx9r5VH60GM1xJvBV8IY1YsNv3HA2T364NsHU4QF
-         tFBGvFCuhfp8K1jXv8hHujG+C4Un9VOLmz2puBM3s9oZ7xKAc/AdZj6HQ+E8n1njIO
-         n0WNGeRKdxx3H1uziedWt+1L75JEF5jUAjqFEhD4=
-Received: by mail-qt1-f174.google.com with SMTP id n32so4585279qte.11;
-        Tue, 08 Jan 2019 06:57:01 -0800 (PST)
-X-Gm-Message-State: AJcUukc6XwWct9b4SCTTnAJ9b4MU3yegZnHJPwQ6AOA5rqWSO+tG07oc
-        syaK/6ro9B9/4i4wcrszJh3KwhVnY8wERCLQ2w==
-X-Google-Smtp-Source: ALg8bN4DTMPwuqi6GrKoOjHsoXa/AUhAr7ZBhJzYYrOtIh6+jPTcCnmr+EZ6HYQtZevVA99ege7oDhlPWDFgZ6rKDiE=
-X-Received: by 2002:aed:29a6:: with SMTP id o35mr1882981qtd.257.1546959420549;
- Tue, 08 Jan 2019 06:57:00 -0800 (PST)
+        Tue, 8 Jan 2019 09:59:45 -0500
+Received: from mx2.suse.de ([195.135.220.15]:56178 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727785AbfAHO7o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 09:59:44 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 68197ABB1;
+        Tue,  8 Jan 2019 14:59:43 +0000 (UTC)
+Date:   Tue, 8 Jan 2019 15:59:42 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Shakeel Butt <shakeelb@google.com>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] memcg: schedule high reclaim for remote memcgs on
+ high_work
+Message-ID: <20190108145942.GZ31793@dhcp22.suse.cz>
+References: <20190103015638.205424-1-shakeelb@google.com>
 MIME-Version: 1.0
-References: <1545144107-88378-1-git-send-email-michal.vokac@ysoft.com>
- <20181228232556.GA14277@bogus> <49371bd4-6ab9-31c3-dd48-800becac17e3@ysoft.com>
-In-Reply-To: <49371bd4-6ab9-31c3-dd48-800becac17e3@ysoft.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Tue, 8 Jan 2019 08:56:49 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJyZt=VCv2bX1YYFQt91BcFqDWfeAqkJVcF7eFD0_JM1g@mail.gmail.com>
-Message-ID: <CAL_JsqJyZt=VCv2bX1YYFQt91BcFqDWfeAqkJVcF7eFD0_JM1g@mail.gmail.com>
-Subject: Re: [PATCH v2] ARM: dts: imx: Add Y Soft IOTA Draco, Hydra and Ursa boards
-To:     =?UTF-8?B?Vm9rw6HEjSBNaWNoYWw=?= <Michal.Vokac@ysoft.com>
-Cc:     Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Andrew Lunn <andrew@lunn.ch>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190103015638.205424-1-shakeelb@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 8, 2019 at 5:43 AM Vok=C3=A1=C4=8D Michal <Michal.Vokac@ysoft.c=
-om> wrote:
->
-> On 29.12.2018 00:25, Rob Herring wrote:
-> > On Tue, Dec 18, 2018 at 02:42:11PM +0000, Vok=C3=A1=C4=8D Michal wrote:
-> >> These are i.MX6S/DL based SBCs embedded in various Y Soft products.
-> >> All share the same board design but have slightly different HW
-> >> configuration.
+On Wed 02-01-19 17:56:38, Shakeel Butt wrote:
+> If a memcg is over high limit, memory reclaim is scheduled to run on
+> return-to-userland. However it is assumed that the memcg is the current
+> process's memcg. With remote memcg charging for kmem or swapping in a
+> page charged to remote memcg, current process can trigger reclaim on
+> remote memcg. So, schduling reclaim on return-to-userland for remote
+> memcgs will ignore the high reclaim altogether. So, punt the high
+> reclaim of remote memcgs to high_work.
 
-[...]
+Have you seen this happening in real life workloads? And is this
+offloading what we really want to do? I mean it is clearly the current
+task that has triggered the remote charge so why should we offload that
+work to a system? Is there any reason we cannot reclaim on the remote
+memcg from the return-to-userland path?
 
-> >> +/ {
-> >> +    model =3D "Y Soft IOTA Draco i.MX6Solo board";
-> >> +    compatible =3D "ysoft,imx6dl-yapp4-draco", "fsl,imx6dl";
-> >
-> > All compatible strings should be documented, not just SoC vendor boards=
-.
->
-> OK, I will add a Documentation/devicetree/bindings/arm/ysoft.yaml file fo=
-r that.
+> Signed-off-by: Shakeel Butt <shakeelb@google.com>
+> ---
+>  mm/memcontrol.c | 20 ++++++++++++--------
+>  1 file changed, 12 insertions(+), 8 deletions(-)
+> 
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index e9db1160ccbc..47439c84667a 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -2302,19 +2302,23 @@ static int try_charge(struct mem_cgroup *memcg, gfp_t gfp_mask,
+>  	 * reclaim on returning to userland.  We can perform reclaim here
+>  	 * if __GFP_RECLAIM but let's always punt for simplicity and so that
+>  	 * GFP_KERNEL can consistently be used during reclaim.  @memcg is
+> -	 * not recorded as it most likely matches current's and won't
+> -	 * change in the meantime.  As high limit is checked again before
+> -	 * reclaim, the cost of mismatch is negligible.
+> +	 * not recorded as the return-to-userland high reclaim will only reclaim
+> +	 * from current's memcg (or its ancestor). For other memcgs we punt them
+> +	 * to work queue.
+>  	 */
+>  	do {
+>  		if (page_counter_read(&memcg->memory) > memcg->high) {
+> -			/* Don't bother a random interrupted task */
+> -			if (in_interrupt()) {
+> +			/*
+> +			 * Don't bother a random interrupted task or if the
+> +			 * memcg is not current's memcg's ancestor.
+> +			 */
+> +			if (in_interrupt() ||
+> +			    !mm_match_cgroup(current->mm, memcg)) {
+>  				schedule_work(&memcg->high_work);
+> -				break;
+> +			} else {
+> +				current->memcg_nr_pages_over_high += batch;
+> +				set_notify_resume(current);
+>  			}
+> -			current->memcg_nr_pages_over_high += batch;
+> -			set_notify_resume(current);
+>  			break;
+>  		}
+>  	} while ((memcg = parent_mem_cgroup(memcg)));
+> -- 
+> 2.20.1.415.g653613c723-goog
+> 
 
-Actually, it should go in fsl.yaml. The file for every board vendor is
-gone. i.MX was pretty much the only platform doing that.
-
-Rob
+-- 
+Michal Hocko
+SUSE Labs
