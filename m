@@ -2,110 +2,110 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4D81C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 01:29:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56798C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 01:30:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7297C2070B
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 01:29:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ed5Qgup3"
+	by mail.kernel.org (Postfix) with ESMTP id 2DE632070B
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 01:30:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727283AbfAHB3j (ORCPT
+        id S1727343AbfAHBa2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 20:29:39 -0500
-Received: from mail-ua1-f67.google.com ([209.85.222.67]:37334 "EHLO
-        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727084AbfAHB3j (ORCPT
+        Mon, 7 Jan 2019 20:30:28 -0500
+Received: from Mailgw01.mediatek.com ([1.203.163.78]:36656 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727052AbfAHBa1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 20:29:39 -0500
-Received: by mail-ua1-f67.google.com with SMTP id u19so776158uae.4
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 17:29:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=aTdBtTEZCH/4iLJe/wIuUIn2iqxr4uAZKAK+z38oRWo=;
-        b=ed5Qgup3bl3nLcXUfRsdaHxDIHgv0UGGfg13G694FdL30YmQZTKYrWx1Mxcpo0P7Nj
-         rgF6F8IR0SRhpRCy7RIciGWGpNb74NNdQ5dvKg7E0ncvussiYxVlZazzYN9kx0wUWTK3
-         qfDC6G91dqkfO630DzyjXfDSllYU4GhBEsJPY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=aTdBtTEZCH/4iLJe/wIuUIn2iqxr4uAZKAK+z38oRWo=;
-        b=rxVTFr8z7mQygUGUmE6s2098TNCxwW/lo6xlXnQKhRfaEoxDXDLOo8qhvztPTB+pqv
-         P9utTfOszHk7c6Cq1CiIvMhFbxsF+cMGzVEaldKCrhmP6MmlIffOVm/eBskFcDLM2kGn
-         tw5YMy+ZpALDCgMOEIWiXDsNFBCeoAYnWR8Tcy9/2Dz+aVIKSlusoNiy4dIe7hB0p+r1
-         yLN1xkOMHDH1xyat8fFxgz2Q9lJTRGlyouIo20n0uY40EhakxzU/sW5CAAa0QQpW8UwU
-         j7ojYVBmvG/LZQ58GXgPIamy/JA3wfWnfhmgeR3iirqglNjZ/dqjQzGScZom4kvneXc4
-         Bpkg==
-X-Gm-Message-State: AJcUukccqeSJf9jxCvyIbI9aus2wRZTi9TGFYJbCyq4Zv6FD+RvloVMx
-        XhiK7C/FSCB9S55LOT351wp3iyTdonw=
-X-Google-Smtp-Source: ALg8bN4SRJdMqouTR39JEz3II2dBTRxcUTFafFYfuRyQ3U9KZv5jy05oM0p1105Phz2I828029VvGA==
-X-Received: by 2002:ab0:6190:: with SMTP id h16mr24351309uan.94.1546910977406;
-        Mon, 07 Jan 2019 17:29:37 -0800 (PST)
-Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com. [209.85.217.45])
-        by smtp.gmail.com with ESMTPSA id q7sm16347968uao.16.2019.01.07.17.29.34
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 07 Jan 2019 17:29:35 -0800 (PST)
-Received: by mail-vs1-f45.google.com with SMTP id x28so1462179vsh.12
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 17:29:34 -0800 (PST)
-X-Received: by 2002:a67:2c13:: with SMTP id s19mr24442833vss.172.1546910974212;
- Mon, 07 Jan 2019 17:29:34 -0800 (PST)
-MIME-Version: 1.0
-References: <50db058a-7dde-441b-a7f9-f6837fe8b69f@schaufler-ca.com>
- <CAGXu5jLUJYM3nDDhFeBOKkTnyCR-tXAv-rteBJFMBn_J7kVkqA@mail.gmail.com>
- <alpine.LRH.2.21.1812120556040.11653@namei.org> <CAGXu5j+bx7nJBMdFYigYnJFRyCvz0NAxfiWF8yP9EhRESLnn+Q@mail.gmail.com>
-In-Reply-To: <CAGXu5j+bx7nJBMdFYigYnJFRyCvz0NAxfiWF8yP9EhRESLnn+Q@mail.gmail.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Mon, 7 Jan 2019 17:29:21 -0800
-X-Gmail-Original-Message-ID: <CAGXu5jJOGKAFrFF7HSPnqLpLz0no2Ae_z0TkWPeRt1WWqhqFOA@mail.gmail.com>
-Message-ID: <CAGXu5jJOGKAFrFF7HSPnqLpLz0no2Ae_z0TkWPeRt1WWqhqFOA@mail.gmail.com>
-Subject: Re: [PATCH v5 00/38] LSM: Module stacking for SARA and Landlock
-To:     James Morris <jmorris@namei.org>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        SE Linux <selinux@tycho.nsa.gov>,
-        John Johansen <john.johansen@canonical.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Paul Moore <paul@paul-moore.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
-        Salvatore Mesoraca <s.mesoraca16@gmail.com>
+        Mon, 7 Jan 2019 20:30:27 -0500
+X-UUID: 1ed5fad60fd94c0589b0554bf52740ee-20190108
+X-UUID: 1ed5fad60fd94c0589b0554bf52740ee-20190108
+Received: from mtkcas35.mediatek.inc [(172.27.4.250)] by mailgw01.mediatek.com
+        (envelope-from <min.guo@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 824470936; Tue, 08 Jan 2019 09:30:16 +0800
+Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS31DR.mediatek.inc
+ (172.27.6.102) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 8 Jan
+ 2019 09:30:15 +0800
+Received: from [10.17.3.153] (10.17.3.153) by MTKCAS32.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Tue, 8 Jan 2019 09:30:14 +0800
+Message-ID: <1546911014.4433.27.camel@mhfsdcap03>
+Subject: Re: [PATCH 1/4] dt-bindings: usb: musb: Add support for MediaTek
+ musb controller
+From:   Min Guo <min.guo@mediatek.com>
+To:     Bin Liu <b-liu@ti.com>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "Matthias Brugger" <matthias.bgg@gmail.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        <chunfeng.yun@mediatek.com>, <linux-usb@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>
+Date:   Tue, 8 Jan 2019 09:30:14 +0800
+In-Reply-To: <20190107204015.GF25910@uda0271908>
+References: <1545896066-897-1-git-send-email-min.guo@mediatek.com>
+         <1545896066-897-2-git-send-email-min.guo@mediatek.com>
+         <20190107204015.GF25910@uda0271908>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 11, 2018 at 1:19 PM Kees Cook <keescook@chromium.org> wrote:
->
-> On Tue, Dec 11, 2018 at 10:57 AM James Morris <jmorris@namei.org> wrote:
-> >
-> > On Tue, 4 Dec 2018, Kees Cook wrote:
-> >
-> > > On Mon, Nov 26, 2018 at 3:22 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> > > > v5: Include Kees Cook's rework of the lsm command
-> > > >     line interface. Stacking is not conditional.
-> > >
-> > > Can you resend this series with corrected "From:" lines in the body, etc?
-> > >
-> > > Beyond that, I obviously like it. James, what's needed for this to move forward?
-> >
-> > If there are no outstanding issues, I plan to merge this for 4.21.
->
-> Yeah, it looks good to me. (Excepting getting the authorship sorted.)
+On Mon, 2019-01-07 at 14:40 -0600, Bin Liu wrote:
+> Hi,
+> 
+> On Thu, Dec 27, 2018 at 03:34:23PM +0800, min.guo@mediatek.com wrote:
+> > From: Min Guo <min.guo@mediatek.com>
+> > 
+> > This adds support for MediaTek musb controller in
+> > host, peripheral and otg mode
+> > 
+> > Signed-off-by: Min Guo <min.guo@mediatek.com>
+> > ---
+> >  .../devicetree/bindings/usb/mediatek,musb.txt      | 49 ++++++++++++++++++++++
+> >  1 file changed, 49 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/usb/mediatek,musb.txt
+> > 
+> > diff --git a/Documentation/devicetree/bindings/usb/mediatek,musb.txt b/Documentation/devicetree/bindings/usb/mediatek,musb.txt
+> > new file mode 100644
+> > index 0000000..e899c9b
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/usb/mediatek,musb.txt
+> > @@ -0,0 +1,49 @@
+> > +MediaTek musb DRC/OTG controller
+> 
+> s/DRC/DRD/
 
-I didn't see this actually get merged? Was there something that needed
-fixing? Should I send you a direct pull request for v5.1?
+I will modify it in next patch.
 
--- 
-Kees Cook
+> > +-------------------------------------------
+> > +
+> > +Required properties:
+> 
+> [snip]
+> 
+> > +Example:
+> > +
+> > +usb2: usb@11200000 {
+> > +	compatible = "mediatek,mt2701-musb";
+> 
+> s/;/,/
+
+I will modify it in next patch.
+
+> > +		"mediatek,mtk-musb";
+> 
+> Regards,
+> -Bin.
+
+
