@@ -2,115 +2,152 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C0CCC43612
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:28:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B9E4C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:28:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F00D420827
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:28:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9B6D20665
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:28:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546975687;
-	bh=VsCLYAm+CafoFhM0L1/+hpueaKDfj6J79TTWPqJHGow=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=sWN/j9LXPjCeQGRN4Oo4gA5lO4623cD6/UqWsJ5bQRLBT00gpzef1aH/mWA8UfqTV
-	 L1aXri1aIrpAF4KCyZ1AQFTgeDoW/5jOJ97E92oKwh5RBvKSB4E8uv4JfknPmFnqz6
-	 nTrnNN45BI93GeDIYq5rN42+3blmsWHVzv+AsZ1c=
+	s=default; t=1546975692;
+	bh=w9i95yBLuR3TpkuAGgeQD60hGiwEjkqcWeyfpQ0nvPQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=QUcGkBAr4XsnJY446RJ71IEOSwpJd4iBqJn7GXWpSTJj6iWyvTrObgw80dZoZaO0G
+	 fCUtzCnjG16ziEc7WMlwXg26mxfPKJri+1aTYNDeEQfaOUaCysFKsDIVYpcz22bZS1
+	 CwvDo7vfTC0HUbvHtviQPLvFLiHRq3KQ2dnrVHRU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729896AbfAHT2G (ORCPT
+        id S1729935AbfAHT2K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:28:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34818 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:28:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34964 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729324AbfAHT2D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:28:03 -0500
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+        id S1729324AbfAHT2I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:28:08 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 059F620645;
-        Tue,  8 Jan 2019 19:28:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 51B7620665;
+        Tue,  8 Jan 2019 19:28:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975683;
-        bh=VsCLYAm+CafoFhM0L1/+hpueaKDfj6J79TTWPqJHGow=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=sd6o7INQyi4T6Nn0Pd5mmqsyeeMOYQH1Pw97BKKQZOPHd3mNLNqHTrfp9WvacyISP
-         iJa/D7nQH2GilnSwiwMqNPLws2rUFBdCwyt85U+x6qoII3QFPmyNr6JFl7YhP2XNHq
-         x3vXjNTkQj3kd95VjyM1eOejF/j+NeamTbBGFRFA=
-Received: by mail-wr1-f49.google.com with SMTP id r10so5214873wrs.10;
-        Tue, 08 Jan 2019 11:28:02 -0800 (PST)
-X-Gm-Message-State: AJcUukePb+iFS5aT1JoxKrS+w9btteYfU7KCLgEdmjIgS5NjoNnabJoO
-        T23AVsE+tRwfMK2lhqiAKy9OldbIl+LN69g4U8M=
-X-Google-Smtp-Source: ALg8bN6fvK9f9HUj4dXlagiLnTQUWuzG2yB+iTPbtaupNPjiAu5uGcvXHwEZPEHf/mCO7fPbVzMK2GZoNpBogJoi3Zk=
-X-Received: by 2002:adf:f28d:: with SMTP id k13mr2501964wro.78.1546975681453;
- Tue, 08 Jan 2019 11:28:01 -0800 (PST)
+        s=default; t=1546975687;
+        bh=w9i95yBLuR3TpkuAGgeQD60hGiwEjkqcWeyfpQ0nvPQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=HJ/YdZKVt2IVzsUlrc+4NMq1vhrcwkfbvMaJ+S++nfd73/W324YZVQslXEv6LPex5
+         El7WDHdnjkbPJnXaCg20B1Fr/skzZlgnoAuZH1CaZo+k7t6jbUHfDzZLoFpC5cVKbZ
+         TctCq7YsMtl0dSV2mhm2bfbBa/pmIHLQ02UYKo/A=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 054/117] media: venus: core: Set dma maximum segment size
+Date:   Tue,  8 Jan 2019 14:25:22 -0500
+Message-Id: <20190108192628.121270-54-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190108192628.121270-1-sashal@kernel.org>
+References: <20190108192628.121270-1-sashal@kernel.org>
 MIME-Version: 1.0
-References: <20190108160526.18928-1-frank-w@public-files.de>
- <7acce775-4ab7-c867-c801-25ee004f6b38@gmail.com> <trinity-4ceb1d55-424f-46b8-b8e7-989770b249a2-1546974413848@3c-app-gmx-bs35>
-In-Reply-To: <trinity-4ceb1d55-424f-46b8-b8e7-989770b249a2-1546974413848@3c-app-gmx-bs35>
-From:   Sean Wang <sean.wang@kernel.org>
-Date:   Tue, 8 Jan 2019 11:29:14 -0800
-X-Gmail-Original-Message-ID: <CAGp9LzrUK=QWJsDwiTVG7vD7v8=jFp6bAm9ZiOh3c2dQk029uA@mail.gmail.com>
-Message-ID: <CAGp9LzrUK=QWJsDwiTVG7vD7v8=jFp6bAm9ZiOh3c2dQk029uA@mail.gmail.com>
-Subject: Re: Re: [PATCH] net: ethernet: mediatek: fix warning in phy_start_aneg
-To:     Frank Wunderlich <frank-w@public-files.de>
-Cc:     Heiner Kallweit <hkallweit1@gmail.com>,
-        Felix Fietkau <nbd@openwrt.org>,
-        John Crispin <john@phrozen.org>,
-        Nelson Chang <nelson.chang@mediatek.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 8, 2019 at 11:07 AM Frank Wunderlich
-<frank-w@public-files.de> wrote:
->
->
-> > In mtk_phy_connect() I would say this complete block can be removed.
-> > All this is handled internally by phylib.
-> >
-> >       dev->phydev->autoneg = AUTONEG_ENABLE;
-> >       dev->phydev->speed = 0;
-> >       dev->phydev->duplex = 0;
-> >
-> >       phy_set_max_speed(dev->phydev, SPEED_1000);
-> >       phy_support_asym_pause(dev->phydev);
-> >       linkmode_copy(dev->phydev->advertising, dev->phydev->supported);
-> >       linkmode_set_bit(ETHTOOL_LINK_MODE_Autoneg_BIT,
-> >                        dev->phydev->advertising);
-> >       phy_start_aneg(dev->phydev);
-> >
-> > Could you please test this?
->
-> seems to work well, no warning in dmesg
->
-> traffic 940Mbit sending, 900 receive
->
+From: Vivek Gautam <vivek.gautam@codeaurora.org>
 
-The change to phy initialized valve determined by phylib looks good to
-me and simplify the mac driver a lot. You could have it in v2.
+[ Upstream commit de2563bce7a157f5296bab94f3843d7d64fb14b4 ]
 
-> > And a further proposal:
-> > Instead of the open-coded dev_info() in mtk_phy_connect_node()
-> > you could use phy_attached_info().
->
-> have not tried this yet...because it's only an info-message and needs different parameters...have to look how i can convert it
+Turning on CONFIG_DMA_API_DEBUG_SG results in the following error:
 
-I think it can be done in a separate patch
+[  460.308650] ------------[ cut here ]------------
+[  460.313490] qcom-venus aa00000.video-codec: DMA-API: mapping sg segment longer than device claims to support [len=4194304] [max=65536]
+[  460.326017] WARNING: CPU: 3 PID: 3555 at src/kernel/dma/debug.c:1301 debug_dma_map_sg+0x174/0x254
+[  460.338888] Modules linked in: venus_dec venus_enc videobuf2_dma_sg videobuf2_memops hci_uart btqca bluetooth venus_core v4l2_mem2mem videobuf2_v4l2 videobuf2_common ath10k_snoc ath10k_core ath lzo lzo_compress zramjoydev
+[  460.375811] CPU: 3 PID: 3555 Comm: V4L2DecoderThre Tainted: G        W         4.19.1 #82
+[  460.384223] Hardware name: Google Cheza (rev1) (DT)
+[  460.389251] pstate: 60400009 (nZCv daif +PAN -UAO)
+[  460.394191] pc : debug_dma_map_sg+0x174/0x254
+[  460.398680] lr : debug_dma_map_sg+0x174/0x254
+[  460.403162] sp : ffffff80200c37d0
+[  460.406583] x29: ffffff80200c3830 x28: 0000000000010000
+[  460.412056] x27: 00000000ffffffff x26: ffffffc0f785ea80
+[  460.417532] x25: 0000000000000000 x24: ffffffc0f4ea1290
+[  460.423001] x23: ffffffc09e700300 x22: ffffffc0f4ea1290
+[  460.428470] x21: ffffff8009037000 x20: 0000000000000001
+[  460.433936] x19: ffffff80091b0000 x18: 0000000000000000
+[  460.439411] x17: 0000000000000000 x16: 000000000000f251
+[  460.444885] x15: 0000000000000006 x14: 0720072007200720
+[  460.450354] x13: ffffff800af536e0 x12: 0000000000000000
+[  460.455822] x11: 0000000000000000 x10: 0000000000000000
+[  460.461288] x9 : 537944d9c6c48d00 x8 : 537944d9c6c48d00
+[  460.466758] x7 : 0000000000000000 x6 : ffffffc0f8d98f80
+[  460.472230] x5 : 0000000000000000 x4 : 0000000000000000
+[  460.477703] x3 : 000000000000008a x2 : ffffffc0fdb13948
+[  460.483170] x1 : ffffffc0fdb0b0b0 x0 : 000000000000007a
+[  460.488640] Call trace:
+[  460.491165]  debug_dma_map_sg+0x174/0x254
+[  460.495307]  vb2_dma_sg_alloc+0x260/0x2dc [videobuf2_dma_sg]
+[  460.501150]  __vb2_queue_alloc+0x164/0x374 [videobuf2_common]
+[  460.507076]  vb2_core_reqbufs+0xfc/0x23c [videobuf2_common]
+[  460.512815]  vb2_reqbufs+0x44/0x5c [videobuf2_v4l2]
+[  460.517853]  v4l2_m2m_reqbufs+0x44/0x78 [v4l2_mem2mem]
+[  460.523144]  v4l2_m2m_ioctl_reqbufs+0x1c/0x28 [v4l2_mem2mem]
+[  460.528976]  v4l_reqbufs+0x30/0x40
+[  460.532480]  __video_do_ioctl+0x36c/0x454
+[  460.536610]  video_usercopy+0x25c/0x51c
+[  460.540572]  video_ioctl2+0x38/0x48
+[  460.544176]  v4l2_ioctl+0x60/0x74
+[  460.547602]  do_video_ioctl+0x948/0x3520
+[  460.551648]  v4l2_compat_ioctl32+0x60/0x98
+[  460.555872]  __arm64_compat_sys_ioctl+0x134/0x20c
+[  460.560718]  el0_svc_common+0x9c/0xe4
+[  460.564498]  el0_svc_compat_handler+0x2c/0x38
+[  460.568982]  el0_svc_compat+0x8/0x18
+[  460.572672] ---[ end trace ce209b87b2f3af88 ]---
 
->
-> > Calling phy_start() in the ndo_open callback is fine, you can leave
-> > it there.
->
-> have it re-added
->
-> pushed to my repo: https://github.com/frank-w/BPI-R2-4.14/commits/5.0-rc
->
-> regards Frank
+>From above warning one would deduce that the sg segment will overflow
+the device's capacity. In reality, the hardware can accommodate larger
+sg segments.
+So, initialize the max segment size properly to weed out this warning.
+
+Based on a similar patch sent by Sean Paul for mdss:
+https://patchwork.kernel.org/patch/10671457/
+
+Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+Acked-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/media/platform/qcom/venus/core.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/drivers/media/platform/qcom/venus/core.c b/drivers/media/platform/qcom/venus/core.c
+index bb6add9d340e..5b8350e87e75 100644
+--- a/drivers/media/platform/qcom/venus/core.c
++++ b/drivers/media/platform/qcom/venus/core.c
+@@ -264,6 +264,14 @@ static int venus_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
+ 
++	if (!dev->dma_parms) {
++		dev->dma_parms = devm_kzalloc(dev, sizeof(*dev->dma_parms),
++					      GFP_KERNEL);
++		if (!dev->dma_parms)
++			return -ENOMEM;
++	}
++	dma_set_max_seg_size(dev, DMA_BIT_MASK(32));
++
+ 	INIT_LIST_HEAD(&core->instances);
+ 	mutex_init(&core->lock);
+ 	INIT_DELAYED_WORK(&core->work, venus_sys_error_handler);
+-- 
+2.19.1
+
