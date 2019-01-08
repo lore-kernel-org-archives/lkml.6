@@ -2,240 +2,239 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F074C43612
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 10:00:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04DDCC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 10:01:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DA712087E
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 10:00:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C08482089F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 10:01:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728448AbfAHKA0 convert rfc822-to-8bit (ORCPT
+        id S1728485AbfAHKBc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 05:00:26 -0500
-Received: from kozue.soulik.info ([108.61.200.231]:41322 "EHLO
-        kozue.soulik.info" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727001AbfAHKA0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 05:00:26 -0500
-Received: from [192.168.10.231] (unknown [103.29.142.67])
-        by kozue.soulik.info (Postfix) with ESMTPSA id 58647100F71;
-        Tue,  8 Jan 2019 19:01:07 +0900 (JST)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: [linux-sunxi] [PATCH v2 1/2] media: v4l: Add definitions for the HEVC slice format and controls
-From:   Ayaka <ayaka@soulik.info>
-X-Mailer: iPad Mail (16A404)
-In-Reply-To: <f982ef378a8ade075bc7077b93640e20ecebf9f4.camel@bootlin.com>
-Date:   Tue, 8 Jan 2019 18:00:21 +0800
-Cc:     Randy Li <randy.li@rock-chips.com>,
-        =?utf-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@gmail.com>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devel@driverdev.osuosl.org, linux-arm-kernel@lists.infradead.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-rockchip@lists.infradead.org
-Content-Transfer-Encoding: 8BIT
-Message-Id: <82FA0C3F-BC54-4D89-AECB-90D81B89B1CE@soulik.info>
-References: <20181123130209.11696-1-paul.kocialkowski@bootlin.com> <20181123130209.11696-2-paul.kocialkowski@bootlin.com> <5515174.7lFZcYkk85@jernej-laptop> <ffe9c81db34b599f675ca5bbf02de360bf0a1608.camel@bootlin.com> <776e63c9-d4a5-342a-e0f7-200ef144ffc4@rock-chips.com> <64c793e08d61181b78125b3956ec38623fa5d261.camel@bootlin.com> <D8005130-F7FD-4CBD-8396-1BB08BB08E81@soulik.info> <f982ef378a8ade075bc7077b93640e20ecebf9f4.camel@bootlin.com>
-To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+        Tue, 8 Jan 2019 05:01:32 -0500
+Received: from mx2.suse.de ([195.135.220.15]:58350 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727367AbfAHKBc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 05:01:32 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 49423B0DD;
+        Tue,  8 Jan 2019 10:01:29 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 698531E157A; Tue,  8 Jan 2019 11:01:28 +0100 (CET)
+Date:   Tue, 8 Jan 2019 11:01:28 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Orion Poplawski <orion@nwra.com>
+Cc:     linux-fsdevel@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
+        linux-kernel@vger.kernel.org, Vivek Trivedi <t.vivek@samsung.com>,
+        Jan Kara <jack@suse.com>
+Subject: Re: [PATCH] fanotify: allow freeze on suspend when waiting for
+ response from userspace
+Message-ID: <20190108100128.GB8076@quack2.suse.cz>
+References: <c1bb16b7-9eee-9cea-2c96-a512d8b3b9c7@nwra.com>
+ <dfcfb136-7030-86d8-9462-f5ab96051009@nwra.com>
+ <41fc7839-f2f1-22d8-b038-5f5ed577ac3b@nwra.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <41fc7839-f2f1-22d8-b038-5f5ed577ac3b@nwra.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sat 29-12-18 21:00:28, Orion Poplawski wrote:
+> On 12/29/18 3:34 PM, Orion Poplawski wrote:
+> > On 12/29/18 3:04 PM, Orion Poplawski wrote:
+> > > > On Thu 22-02-18 15:14:54, Kunal Shubham wrote:
+> > > > > >> On Fri 16-02-18 15:14:40, t.vivek@samsung.com wrote:
+> > > > > >> From: Vivek Trivedi <t.vivek@samsung.com>
+> > > > > >> >> If fanotify userspace response server thread is frozen first,
+> > > > > >> it may fail to send response from userspace to kernel
+> > > > > space listener.
+> > > > > >> In this scenario, fanotify response listener will never get response
+> > > > > >> from userepace and fail to suspend.
+> > > > > >> >> Use freeze-friendly wait API to handle this issue.
+> > > > > >> >> Same problem was reported here:
+> > > > > >> https://bbs.archlinux.org/viewtopic.php?id=232270
+> > > > > >> >> Freezing of tasks failed after 20.005 seconds
+> > > > > >> (1 tasks refusing to freeze, wq_busy=0)
+> > > > > >> >> Backtrace:
+> > > > > >> [<c0582f80>] (__schedule) from [<c05835d0>] (schedule+0x4c/0xa4)
+> > > > > >> [<c0583584>] (schedule) from [<c01cb648>]
+> > > > > (fanotify_handle_event+0x1c8/0x218)
+> > > > > >> [<c01cb480>] (fanotify_handle_event) from [<c01c8238>]
+> > > > > (fsnotify+0x17c/0x38c)
+> > > > > >> [<c01c80bc>] (fsnotify) from [<c02676dc>]
+> > > > > (security_file_open+0x88/0x8c)
+> > > > > >> [<c0267654>] (security_file_open) from [<c01854b0>]
+> > > > > (do_dentry_open+0xc0/0x338)
+> > > > > >> [<c01853f0>] (do_dentry_open) from [<c0185a38>] (vfs_open+0x54/0x58)
+> > > > > >> [<c01859e4>] (vfs_open) from [<c0195480>]
+> > > > > (do_last.isra.10+0x45c/0xcf8)
+> > > > > >> [<c0195024>] (do_last.isra.10) from [<c0196140>]
+> > > > > (path_openat+0x424/0x600)
+> > > > > >> [<c0195d1c>] (path_openat) from [<c0197498>]
+> > > > > (do_filp_open+0x3c/0x98)
+> > > > > >> [<c019745c>] (do_filp_open) from [<c0186b44>]
+> > > > > (do_sys_open+0x120/0x1e4)
+> > > > > >> [<c0186a24>] (do_sys_open) from [<c0186c30>] (SyS_open+0x28/0x2c)
+> > > > > >> [<c0186c08>] (SyS_open) from [<c0010200>]
+> > > > > (__sys_trace_return+0x0/0x20)
+> > > > > >
+> > > > > > Yeah, good catch.
+> > > > > >
+> > > > > >> @@ -63,7 +64,9 @@ static int fanotify_get_response(struct
+> > > > > fsnotify_group *group,
+> > > > > >> >>      pr_debug("%s: group=%p event=%p\n", __func__, group, event);
+> > > > > >> >> -    wait_event(group->fanotify_data.access_waitq,
+> > > > > event->response);
+> > > > > >> +    while (!event->response)
+> > > > > >> +        wait_event_freezable(group->fanotify_data.access_waitq,
+> > > > > >> +                     event->response);
+> > > > > >
+> > > > > > But if the process gets a signal while waiting, we will
+> > > > > just livelock the
+> > > > > > kernel in this loop as wait_event_freezable() will keep returning
+> > > > > > ERESTARTSYS. So you need to be a bit more clever here...
+> > > > > 
+> > > > > Hi Jack,
+> > > > > Thanks for the quick review.
+> > > > > To avoid livelock issue, is it fine to use below change? If
+> > > > > agree, I will send v2 patch.
+> > > > > 
+> > > > > @@ -63,7 +64,11 @@ static int fanotify_get_response(struct
+> > > > > fsnotify_group *group,
+> > > > > 
+> > > > >         pr_debug("%s: group=%p event=%p\n", __func__, group, event);
+> > > > > 
+> > > > > -       wait_event(group->fanotify_data.access_waitq, event->response);
+> > > > > +       while (!event->response) {
+> > > > > +               if
+> > > > > (wait_event_freezable(group->fanotify_data.access_waitq,
+> > > > > +                                       event->response))
+> > > > > +                       flush_signals(current);
+> > > > > +       }
+> > > > 
+> > > > Hum, I don't think this is correct either as this way if any signal was
+> > > > delivered while waiting for fanotify response, we'd just lose it while
+> > > > previously it has been properly handled. So what I think needs
+> > > > to be done
+> > > > is that we just use wait_event_freezable() and propagate non-zero return
+> > > > value (-ERESTARTSYS) up to the caller to handle the signal and
+> > > > restart the
+> > > > syscall as necessary.
+> > > > 
+> > > >                                 Honza
+> > > > -- 
+> > > > Jan Kara <jack@suse.com>
+> > > > SUSE Labs, CR
+> > > 
+> > > Is there any progress here?  This has become a real pain for us
+> > > while running BitDefender on EL7 laptops.  I tried applying the
+> > > following to the EL7 kernel:
+> > > 
+> > > diff -up
+> > > linux-3.10.0-957.1.3.el7.x86_64/fs/notify/fanotify/fanotify.c.orig kernel-3.10.0-957.1.3.el7/linux-3.10.0-957.1.3.el7.x86_64/fs/notify/fanotify/fanotify.c
+> > > 
+> > > ---
+> > > linux-3.10.0-957.1.3.el7.x86_64/fs/notify/fanotify/fanotify.c.orig
+> > > 2018-11-15 10:07:13.000000000 -0700
+> > > +++ linux-3.10.0-957.1.3.el7.x86_64/fs/notify/fanotify/fanotify.c
+> > > 2018-12-28 15:44:26.452895337 -0700
+> > > @@ -9,6 +9,7 @@
+> > >   #include <linux/types.h>
+> > >   #include <linux/wait.h>
+> > >   #include <linux/audit.h>
+> > > +#include <linux/freezer.h>
+> > > 
+> > >   #include "fanotify.h"
+> > > 
+> > > @@ -64,7 +65,12 @@ static int fanotify_get_response(struct
+> > > 
+> > >          pr_debug("%s: group=%p event=%p\n", __func__, group, event);
+> > > 
+> > > -       wait_event(group->fanotify_data.access_waitq, event->response);
+> > > +       while (!event->response) {
+> > > +               ret =
+> > > wait_event_freezable(group->fanotify_data.access_waitq,
+> > > +                                          event->response);
+> > > +               if (ret < 0)
+> > > +                       return ret;
+> > > +       }
+> > > 
+> > >          /* userspace responded, convert to something usable */
+> > >          switch (event->response & ~FAN_AUDIT) {
+> > > 
+> > > but I get a kernel panic shortly after logging in to the system.
+> > > 
+> 
+> I tried a slightly different patch to see if setting event->response = 0
+> helps and to confirm the return value of wait_event_freezable:
+> 
+> --- linux-3.10.0-957.1.3.el7/fs/notify/fanotify/fanotify.c 2018-11-15
+> 10:07:13.000000000 -0700
+> +++ linux-3.10.0-957.1.3.el7.fanotify.x86_64/fs/notify/fanotify/fanotify.c
+> 2018-12-29 16:05:53.451125868 -0700
+> @@ -9,6 +9,7 @@
+>  #include <linux/types.h>
+>  #include <linux/wait.h>
+>  #include <linux/audit.h>
+> +#include <linux/freezer.h>
+> 
+>  #include "fanotify.h"
+> 
+> @@ -64,7 +65,15 @@
+> 
+>         pr_debug("%s: group=%p event=%p\n", __func__, group, event);
+> 
+> -       wait_event(group->fanotify_data.access_waitq, event->response);
+> +       while (!event->response) {
+> +               ret =
+> wait_event_freezable(group->fanotify_data.access_waitq,
+> +                                          event->response);
+> +               if (ret < 0) {
+> +                       pr_debug("%s: group=%p event=%p about to return
+> ret=%d\n", __func__,
+> +                                group, event, ret);
+> +                       goto finish;
+> +               }
+> +       }
+> 
+>         /* userspace responded, convert to something usable */
+>         switch (event->response & ~FAN_AUDIT) {
+> @@ -75,7 +84,7 @@
+>         default:
+>                 ret = -EPERM;
+>         }
+> -
+> +finish:
+>         /* Check if the response should be audited */
+>         if (event->response & FAN_AUDIT)
+>                 audit_fanotify(event->response & ~FAN_AUDIT);
+> 
+> 
+> and I enabled the pr_debug.  This does indeed trigger the panic:
+> 
+> 
+> [ 4181.113781] fanotify_get_response: group=ffff9e3af9952b00
+> event=ffff9e3aea426c80 about to return ret=-512
+> [ 4181.113788] ------------[ cut here ]------------
+> [ 4181.113804] WARNING: CPU: 0 PID: 24290 at fs/notify/notification.c:84
+> fsnotify_destroy_event+0x6b/0x70
+> 
+> So it appears that the notify system cannot handle simply passing
+> -ERESTARTSYS back up the stack here.
 
+Yeah, the solution needs to be more involved than this and I didn't get to
+it so far. I'll have a look now if I can come up with something usable...
 
-Sent from my iPad
-
-> On Jan 8, 2019, at 4:38 PM, Paul Kocialkowski <paul.kocialkowski@bootlin.com> wrote:
-> 
-> Hi,
-> 
->> On Tue, 2019-01-08 at 09:16 +0800, Ayaka wrote:
->> 
->> Sent from my iPad
->> 
->>> On Jan 7, 2019, at 5:57 PM, Paul Kocialkowski <paul.kocialkowski@bootlin.com> wrote:
->>> 
->>> Hi,
->>> 
->>>>> On Mon, 2019-01-07 at 11:49 +0800, Randy Li wrote:
->>>>> On 12/12/18 8:51 PM, Paul Kocialkowski wrote:
->>>>> Hi,
->>>>> 
->>>>> On Wed, 2018-12-05 at 21:59 +0100, Jernej Å krabec wrote:
->>>>> 
->>>>>>> +
->>>>>>> +#define V4L2_HEVC_DPB_ENTRY_RPS_ST_CURR_BEFORE    0x01
->>>>>>> +#define V4L2_HEVC_DPB_ENTRY_RPS_ST_CURR_AFTER    0x02
->>>>>>> +#define V4L2_HEVC_DPB_ENTRY_RPS_LT_CURR        0x03
->>>>>>> +
->>>>>>> +#define V4L2_HEVC_DPB_ENTRIES_NUM_MAX        16
->>>>>>> +
->>>>>>> +struct v4l2_hevc_dpb_entry {
->>>>>>> +    __u32    buffer_tag;
->>>>>>> +    __u8    rps;
->>>>>>> +    __u8    field_pic;
->>>>>>> +    __u16    pic_order_cnt[2];
->>>>>>> +};
->>>> 
->>>> Please add a property for reference index, if that rps is not used for 
->>>> this, some device would request that(not the rockchip one). And 
->>>> Rockchip's VDPU1 and VDPU2 for AVC would request a similar property.
->>> 
->>> What exactly is that reference index? Is it a bitstream element or
->>> something deduced from the bitstream?
->>> 
->> picture order count(POC) for HEVC and frame_num in AVC. I think it is
->> the number used in list0(P slice and B slice) and list1(B slice).
-> 
-> The picture order count is already the last field of the DPB entry
-> structure. There is one for each field picture.
-As we are not sure whether there is a field coded slice or CTU, I would hold this part and else about the field.
-> 
->>>> Adding another buffer_tag for referring the memory of the motion vectors 
->>>> for each frames. Or a better method is add a meta data to echo picture 
->>>> buffer,  since the picture output is just the same as the original, 
->>>> display won't care whether the motion vectors are written the button of 
->>>> picture or somewhere else.
->>> 
->>> The motion vectors are passed as part of the raw bitstream data, in the
->>> slices. Is there a case where the motion vectors are coded differently?
->> No, it is an additional cache for decoder, even FFmpeg having such
->> data, I think allwinner must output it into somewhere.
-> 
-> Ah yes I see what you mean! This is handled internally by our driver
-> and not exposed to userspace. I don't think it would be a good idea to
-> expose this cache or request that userspace allocates it like a video
-> buffer.
-> 
-No, usually the driver should allocate, as the user space have no idea on size of each devices.
-But for advantage user, application can fix a broken picture with a proper data or analysis a object motion from that.
-So I would suggest attaching this information to a picture buffer as a meta data. 
->>>>>>> +
->>>>>>> +struct v4l2_hevc_pred_weight_table {
->>>>>>> +    __u8    luma_log2_weight_denom;
->>>>>>> +    __s8    delta_chroma_log2_weight_denom;
->>>>>>> +
->>>>>>> +    __s8    delta_luma_weight_l0[V4L2_HEVC_DPB_ENTRIES_NUM_MAX];
->>>>>>> +    __s8    luma_offset_l0[V4L2_HEVC_DPB_ENTRIES_NUM_MAX];
->>>>>>> +    __s8    delta_chroma_weight_l0[V4L2_HEVC_DPB_ENTRIES_NUM_MAX][2];
->>>>>>> +    __s8    chroma_offset_l0[V4L2_HEVC_DPB_ENTRIES_NUM_MAX][2];
->>>>>>> +
->>>>>>> +    __s8    delta_luma_weight_l1[V4L2_HEVC_DPB_ENTRIES_NUM_MAX];
->>>>>>> +    __s8    luma_offset_l1[V4L2_HEVC_DPB_ENTRIES_NUM_MAX];
->>>>>>> +    __s8    delta_chroma_weight_l1[V4L2_HEVC_DPB_ENTRIES_NUM_MAX][2];
->>>>>>> +    __s8    chroma_offset_l1[V4L2_HEVC_DPB_ENTRIES_NUM_MAX][2];
->>>>>>> +};
->>>>>>> +
->>>> Those properties I think are not necessary are applying for the 
->>>> Rockchip's device, may not work for the others.
->>> 
->>> Yes, it's possible that some of the elements are not necessary for some
->>> decoders. What we want is to cover all the elements that might be
->>> required for a decoder.
->> I wonder whether allwinner need that, those sao flag usually ignored
->> by decoder in design. But more is better than less, it is hard to
->> extend a v4l2 structure  in the future, maybe a new HEVC profile
->> would bring a new property, it is still too early for HEVC.
-> 
-> Yes this is used by our decoder. The idea is to have all the basic
-> bitstream elements in the structures (even if some decoders don't use
-> them all) and add others for extension as separate controls later.
-> 
->>>>>>> +struct v4l2_ctrl_hevc_slice_params {
->>>>>>> +    __u32    bit_size;
->>>>>>> +    __u32    data_bit_offset;
->>>>>>> +
->>>>>>> +    /* ISO/IEC 23008-2, ITU-T Rec. H.265: NAL unit header */
->>>>>>> +    __u8    nal_unit_type;
->>>>>>> +    __u8    nuh_temporal_id_plus1;
->>>>>>> +
->>>>>>> +    /* ISO/IEC 23008-2, ITU-T Rec. H.265: General slice segment header */
->>>>>>> +    __u8    slice_type;
->>>>>>> +    __u8    colour_plane_id;
->>>> ----------------------------------------------------------------------------
->>>>>>> +    __u16    slice_pic_order_cnt;
->>>>>>> +    __u8    slice_sao_luma_flag;
->>>>>>> +    __u8    slice_sao_chroma_flag;
->>>>>>> +    __u8    slice_temporal_mvp_enabled_flag;
->>>>>>> +    __u8    num_ref_idx_l0_active_minus1;
->>>>>>> +    __u8    num_ref_idx_l1_active_minus1;
->>>> Rockchip's decoder doesn't use this part.
->>>>>>> +    __u8    mvd_l1_zero_flag;
->>>>>>> +    __u8    cabac_init_flag;
->>>>>>> +    __u8    collocated_from_l0_flag;
->>>>>>> +    __u8    collocated_ref_idx;
->>>>>>> +    __u8    five_minus_max_num_merge_cand;
->>>>>>> +    __u8    use_integer_mv_flag;
->>>>>>> +    __s8    slice_qp_delta;
->>>>>>> +    __s8    slice_cb_qp_offset;
->>>>>>> +    __s8    slice_cr_qp_offset;
->>>>>>> +    __s8    slice_act_y_qp_offset;
->>>>>>> +    __s8    slice_act_cb_qp_offset;
->>>>>>> +    __s8    slice_act_cr_qp_offset;
->>>>>>> +    __u8    slice_deblocking_filter_disabled_flag;
->>>>>>> +    __s8    slice_beta_offset_div2;
->>>>>>> +    __s8    slice_tc_offset_div2;
->>>>>>> +    __u8    slice_loop_filter_across_slices_enabled_flag;
->>>>>>> +
->>>>>>> +    /* ISO/IEC 23008-2, ITU-T Rec. H.265: Picture timing SEI message */
->>>>>>> +    __u8    pic_struct;
->>>> I think the decoder doesn't care about this, it is used for display.
->>> 
->>> The purpose of this field is to indicate whether the current picture is
->>> a progressive frame or an interlaced field picture, which is useful for
->>> decoding.
->>> 
->>> At least our decoder has a register field to indicate frame/top
->>> field/bottom field, so we certainly need to keep the info around.
->>> Looking at the spec and the ffmpeg implementation, it looks like this
->>> flag of the bitstream is the usual way to report field coding.
->> It depends whether the decoder cares about scan type or more, I
->> wonder prefer general_interlaced_source_flag for just scan type, it
->> would be better than reading another SEL.
-> 
-> Well we still need a way to indicate if the current data is top or
-> bottom field for interlaced. I don't think that knowing that the whole
-> video is interlaced would be precise enough.
-> 
-> Cheers,
-> 
-> Paul
-> 
->>>>>>> +
->>>>>>> +    /* ISO/IEC 23008-2, ITU-T Rec. H.265: General slice segment header */
->>>>>>> +    struct v4l2_hevc_dpb_entry dpb[V4L2_HEVC_DPB_ENTRIES_NUM_MAX];
->>>>>>> +    __u8    num_active_dpb_entries;
->>>>>>> +    __u8    ref_idx_l0[V4L2_HEVC_DPB_ENTRIES_NUM_MAX];
->>>>>>> +    __u8    ref_idx_l1[V4L2_HEVC_DPB_ENTRIES_NUM_MAX];
->>>>>>> +
->>>>>>> +    __u8    num_rps_poc_st_curr_before;
->>>>>>> +    __u8    num_rps_poc_st_curr_after;
->>>>>>> +    __u8    num_rps_poc_lt_curr;
->>>>>>> +
->>>>>>> +    /* ISO/IEC 23008-2, ITU-T Rec. H.265: Weighted prediction parameter */
->>>>>>> +    struct v4l2_hevc_pred_weight_table pred_weight_table;
->>>>>>> +};
->>>>>>> +
->>>>>>> #endif
->>> -- 
->>> Paul Kocialkowski, Bootlin (formerly Free Electrons)
->>> Embedded Linux and kernel engineering
->>> https://bootlin.com
->>> 
-> -- 
-> Paul Kocialkowski, Bootlin (formerly Free Electrons)
-> Embedded Linux and kernel engineering
-> https://bootlin.com
-> 
-
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
