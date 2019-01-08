@@ -4,49 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52815C43612
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:47:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3341AC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:47:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1794E214C6
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:47:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 02B882063F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:47:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546976833;
-	bh=DWGJoATIIqVC6FQOgIArwgQGAOAFlVV3PBH6xjbDvT4=;
+	s=default; t=1546976838;
+	bh=FgN41ZidZn0S8+fYBimfTMAcfkDiGbqg5QctOExARao=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=A/eNDPsI+6kpx+x1kapHpyXZhObyB+cjVns5NXoU0bQltUG5qxrFaUKaq9YQsac1X
-	 Y1tt7PCYG1tRzDpNm4zHjSaN3FHywPL1X4Akhjz7wG+qMoVGG8+vT2V5BVkZZTbvbw
-	 yx4/FQCYuMy/0pjAy1K1Ce7m4OuO7JDsMRXw8vQ0=
+	b=KTDKdnUcln/ONpJJzNmeemy/0oOyKi2Aci1E8eUB/H80A1JGP+ABeW+XFv0fYzFuR
+	 smpBgCSh7p1VHk8h20CM0nLdNFypXaBlTGvWgLCjIljZt4R+u3e8CdMMW+i6KgAmKE
+	 HvGfz2RrWXdF9PjzwgUgaudnu9/ah7Ugz5asD7B0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731493AbfAHTcx (ORCPT
+        id S1732274AbfAHTrR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:32:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41546 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:47:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41562 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731470AbfAHTcu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:32:50 -0500
+        id S1731452AbfAHTcv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:32:51 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D6E5820827;
-        Tue,  8 Jan 2019 19:32:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D9C9120665;
+        Tue,  8 Jan 2019 19:32:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975969;
-        bh=DWGJoATIIqVC6FQOgIArwgQGAOAFlVV3PBH6xjbDvT4=;
+        s=default; t=1546975970;
+        bh=FgN41ZidZn0S8+fYBimfTMAcfkDiGbqg5QctOExARao=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ovXASatRTziEKpiB/ZNkuCY0ojr4AXeWd8cX4rozOifznt2TwXfPVa4qs18O8WzgV
-         QHaTpf3IlaX7J4/Ne10MoTt+wP2oPXyb0hQtdlr/ZwGby5QhXoM/2gY98NiNNaEESc
-         GnV3F1wJDQIopH7TfZAVEVNjIVA4MTvnTisaT+2o=
+        b=fuhKFJj7kYNOxhVl+pXPLn4oWzWhdDqpfT4eZRQVRyUZpNoO9HfiYzLFRx9mrkMvt
+         WoMTO4IWXGkcMyeRIMUSIaC3gVpLkMH1kOYL2zKmsPCbEtXOkrpvI9z/8462Bc5ILu
+         yJ1V/GYTdDCm3SzZsBVZatrbK0KOybtq1YJy0mjs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Chuck Lever <chuck.lever@oracle.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Sasha Levin <sashal@kernel.org>, linux-rdma@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 14/53] rxe: IB_WR_REG_MR does not capture MR's iova field
-Date:   Tue,  8 Jan 2019 14:31:42 -0500
-Message-Id: <20190108193222.123316-14-sashal@kernel.org>
+Cc:     Daniel Santos <daniel.santos@pobox.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Sasha Levin <sashal@kernel.org>, linux-mtd@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.14 15/53] jffs2: Fix use of uninitialized delayed_work, lockdep breakage
+Date:   Tue,  8 Jan 2019 14:31:43 -0500
+Message-Id: <20190108193222.123316-15-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108193222.123316-1-sashal@kernel.org>
 References: <20190108193222.123316-1-sashal@kernel.org>
@@ -58,47 +57,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chuck Lever <chuck.lever@oracle.com>
+From: Daniel Santos <daniel.santos@pobox.com>
 
-[ Upstream commit b024dd0eba6e6d568f69d63c5e3153aba94c23e3 ]
+[ Upstream commit a788c5272769ddbcdbab297cf386413eeac04463 ]
 
-FRWR memory registration is done with a series of calls and WRs.
-1. ULP invokes ib_dma_map_sg()
-2. ULP invokes ib_map_mr_sg()
-3. ULP posts an IB_WR_REG_MR on the Send queue
+jffs2_sync_fs makes the assumption that if CONFIG_JFFS2_FS_WRITEBUFFER
+is defined then a write buffer is available and has been initialized.
+However, this does is not the case when the mtd device has no
+out-of-band buffer:
 
-Step 2 generates an iova. It is permissible for ULPs to change this
-iova (with certain restrictions) between steps 2 and 3.
+int jffs2_nand_flash_setup(struct jffs2_sb_info *c)
+{
+        if (!c->mtd->oobsize)
+                return 0;
+...
 
-rxe_map_mr_sg captures the MR's iova but later when rxe processes the
-REG_MR WR, it ignores the MR's iova field. If a ULP alters the MR's iova
-after step 2 but before step 3, rxe never captures that change.
+The resulting call to cancel_delayed_work_sync passing a uninitialized
+(but zeroed) delayed_work struct forces lockdep to become disabled.
 
-When the remote sends an RDMA Read targeting that MR, rxe looks up the
-R_key, but the altered iova does not match the iova stored in the MR,
-causing the RDMA Read request to fail.
+[   90.050639] overlayfs: upper fs does not support tmpfile.
+[   90.652264] INFO: trying to register non-static key.
+[   90.662171] the code is fine but needs lockdep annotation.
+[   90.673090] turning off the locking correctness validator.
+[   90.684021] CPU: 0 PID: 1762 Comm: mount_root Not tainted 4.14.63 #0
+[   90.696672] Stack : 00000000 00000000 80d8f6a2 00000038 805f0000 80444600 8fe364f4 805dfbe7
+[   90.713349]         80563a30 000006e2 8068370c 00000001 00000000 00000001 8e2fdc48 ffffffff
+[   90.730020]         00000000 00000000 80d90000 00000000 00000106 00000000 6465746e 312e3420
+[   90.746690]         6b636f6c 03bf0000 f8000000 20676e69 00000000 80000000 00000000 8e2c2a90
+[   90.763362]         80d90000 00000001 00000000 8e2c2a90 00000003 80260dc0 08052098 80680000
+[   90.780033]         ...
+[   90.784902] Call Trace:
+[   90.789793] [<8000f0d8>] show_stack+0xb8/0x148
+[   90.798659] [<8005a000>] register_lock_class+0x270/0x55c
+[   90.809247] [<8005cb64>] __lock_acquire+0x13c/0xf7c
+[   90.818964] [<8005e314>] lock_acquire+0x194/0x1dc
+[   90.828345] [<8003f27c>] flush_work+0x200/0x24c
+[   90.837374] [<80041dfc>] __cancel_work_timer+0x158/0x210
+[   90.847958] [<801a8770>] jffs2_sync_fs+0x20/0x54
+[   90.857173] [<80125cf4>] iterate_supers+0xf4/0x120
+[   90.866729] [<80158fc4>] sys_sync+0x44/0x9c
+[   90.875067] [<80014424>] syscall_common+0x34/0x58
 
-Reported-by: Anna Schumaker <schumaker.anna@gmail.com>
-Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
-Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Daniel Santos <daniel.santos@pobox.com>
+Reviewed-by: Hou Tao <houtao1@huawei.com>
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/sw/rxe/rxe_req.c | 1 +
- 1 file changed, 1 insertion(+)
+ fs/jffs2/super.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/infiniband/sw/rxe/rxe_req.c b/drivers/infiniband/sw/rxe/rxe_req.c
-index de853bcc2384..08ae4f3a6a37 100644
---- a/drivers/infiniband/sw/rxe/rxe_req.c
-+++ b/drivers/infiniband/sw/rxe/rxe_req.c
-@@ -640,6 +640,7 @@ int rxe_requester(void *arg)
- 			rmr->access = wqe->wr.wr.reg.access;
- 			rmr->lkey = wqe->wr.wr.reg.key;
- 			rmr->rkey = wqe->wr.wr.reg.key;
-+			rmr->iova = wqe->wr.wr.reg.mr->iova;
- 			wqe->state = wqe_state_done;
- 			wqe->status = IB_WC_SUCCESS;
- 		} else {
+diff --git a/fs/jffs2/super.c b/fs/jffs2/super.c
+index bc00cc385b77..83340496645b 100644
+--- a/fs/jffs2/super.c
++++ b/fs/jffs2/super.c
+@@ -101,7 +101,8 @@ static int jffs2_sync_fs(struct super_block *sb, int wait)
+ 	struct jffs2_sb_info *c = JFFS2_SB_INFO(sb);
+ 
+ #ifdef CONFIG_JFFS2_FS_WRITEBUFFER
+-	cancel_delayed_work_sync(&c->wbuf_dwork);
++	if (jffs2_is_writebuffered(c))
++		cancel_delayed_work_sync(&c->wbuf_dwork);
+ #endif
+ 
+ 	mutex_lock(&c->alloc_sem);
 -- 
 2.19.1
 
