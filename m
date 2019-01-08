@@ -7,65 +7,66 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE6E6C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 12:23:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7785C43444
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 12:23:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 859C420850
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 12:23:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 87108206BB
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 12:23:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cadence.com header.i=@cadence.com header.b="aJy+XLXA";
-	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="YhMh+7F6"
+	dkim=pass (2048-bit key) header.d=cadence.com header.i=@cadence.com header.b="UqyDYHGZ";
+	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="SGecylje"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729067AbfAHMXY (ORCPT
+        id S1729089AbfAHMX2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 07:23:24 -0500
-Received: from mx0a-0014ca01.pphosted.com ([208.84.65.235]:45840 "EHLO
+        Tue, 8 Jan 2019 07:23:28 -0500
+Received: from mx0a-0014ca01.pphosted.com ([208.84.65.235]:45852 "EHLO
         mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728604AbfAHMXW (ORCPT
+        by vger.kernel.org with ESMTP id S1729058AbfAHMX1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 07:23:22 -0500
+        Tue, 8 Jan 2019 07:23:27 -0500
 Received: from pps.filterd (m0042385.ppops.net [127.0.0.1])
-        by mx0a-0014ca01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x08CLmJU030724;
-        Tue, 8 Jan 2019 04:23:00 -0800
+        by mx0a-0014ca01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x08CLg66030682;
+        Tue, 8 Jan 2019 04:23:02 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-type; s=proofpoint;
- bh=NWesqUfIA+mE3K755IgmJw4x7JF/WyTASlo64KlCvxg=;
- b=aJy+XLXAl77ROM3RUtgAor+p7mycVGbdSsxRm4AvumoYisjmbngs9hHWq7EL0/mWoxAp
- h8RUGjItfMHYJNfAYhOa9bh8Z+bRctAkYsuRYBS2R3ikj+uD9GBVAR6tW3qQ7/4lbv2C
- 2qaEHkXbAXaRoBhQ5LDr5uKDScEWwaOyvrOSQJmqhdzHiniQKxPNg69FyTvDd2Rpa3ec
- l1u93iv2rKkt3013hdnh64JD75+q0sY5GqyqDlA7WW6Open3StAL+r7mpe6wie64kcj5
- +2KFBZrHwbVcPyxpyUEeB3Ji8rJNlw1huLQ7oECjfQQAcwJWWRl/OvVoJqoRJtWAZgGT Pw== 
+ bh=CSZ1EONgELlLgD/Dr30Tx7inAHcxidV0rYfjWl4s5M8=;
+ b=UqyDYHGZD2apir4TORKpA/RQ2XazVUkhPo+dSnM2pu+q0d+pFthJ5tgYLipIATvXKBDf
+ yv5rt1xyb98HzgDfISyFEoIrRN4YmMBOQa2fq17Rs3nSYH185OEcqnI5W9+2N5O76qgY
+ 0WKl2FYjSEhOLRIvT+UxciqF/Ukb0NgiaAved5T8+TgmhAL6U+kjdh0DfrokgiquqQ9U
+ M8Fhyzb4Y17e3ta08IprLZeFLs4XOp50n7pa6Dc8L8Zn8Trk+tsUm8swziM6gIM9ylgy
+ Zbe2Gm+zTjUc+D8gDtiSZARnGQV4SKuGx8Cp7v5YA9BcbYjiRvbo18tga7T7rLz67ebu IQ== 
 Authentication-Results: cadence.com;
         spf=pass smtp.mailfrom=jank@cadence.com
-Received: from nam03-dm3-obe.outbound.protection.outlook.com (mail-dm3nam03lp2053.outbound.protection.outlook.com [104.47.41.53])
-        by mx0a-0014ca01.pphosted.com with ESMTP id 2pu6xwkeup-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 08 Jan 2019 04:22:59 -0800
+Received: from nam04-sn1-obe.outbound.protection.outlook.com (mail-sn1nam04lp2055.outbound.protection.outlook.com [104.47.44.55])
+        by mx0a-0014ca01.pphosted.com with ESMTP id 2pu6xwkeut-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Tue, 08 Jan 2019 04:23:01 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NWesqUfIA+mE3K755IgmJw4x7JF/WyTASlo64KlCvxg=;
- b=YhMh+7F6Z3oNH5eiYCz5HVwCcvCdkARFV41XOypaKhhuobZQsRYb6TUf8b4zvxD7g9sMlk9yF2Y2kg/RXpLwv5lymIBIXmIFwtxTuR2TsQTHTrNgi5uJhzppJ/XqFGb+yPwQOOrPbUyB1WaReTgX4r/dg0LENKVeKaLDqoyhIMM=
-Received: from DM5PR07CA0057.namprd07.prod.outlook.com (2603:10b6:4:ad::22) by
- DM6PR07MB4412.namprd07.prod.outlook.com (2603:10b6:5:bf::30) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1495.6; Tue, 8 Jan 2019 12:22:57 +0000
-Received: from BY2NAM05FT052.eop-nam05.prod.protection.outlook.com
- (2a01:111:f400:7e52::209) by DM5PR07CA0057.outlook.office365.com
- (2603:10b6:4:ad::22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1516.13 via Frontend
- Transport; Tue, 8 Jan 2019 12:22:57 +0000
+ bh=CSZ1EONgELlLgD/Dr30Tx7inAHcxidV0rYfjWl4s5M8=;
+ b=SGecyljeBtJ7aXei4PnG9WlhtfroNbDvqH1SqiZ7yyB4d2DwY3TreSv59RIUoptexGdlhwEFppyI4vBtZh8ehVHqbi2IeWmypTIpLwhn0yleqYVmkvl4PC1LzEI5okjQqWulZQISkcbJN/m39D1ku3/Vm1/3/xLyAYCIk55eNME=
+Received: from BYAPR07CA0105.namprd07.prod.outlook.com (2603:10b6:a03:12b::46)
+ by CY1PR07MB2167.namprd07.prod.outlook.com (2a01:111:e400:59d7::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1495.7; Tue, 8 Jan
+ 2019 12:22:58 +0000
+Received: from BY2NAM05FT024.eop-nam05.prod.protection.outlook.com
+ (2a01:111:f400:7e52::205) by BYAPR07CA0105.outlook.office365.com
+ (2603:10b6:a03:12b::46) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1495.7 via Frontend
+ Transport; Tue, 8 Jan 2019 12:22:58 +0000
 Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
  cadence.com discourages use of 199.43.4.28 as permitted sender)
 Received: from rmmaillnx1.cadence.com (199.43.4.28) by
- BY2NAM05FT052.mail.protection.outlook.com (10.152.100.189) with Microsoft
+ BY2NAM05FT024.mail.protection.outlook.com (10.152.100.161) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.1471.7 via Frontend Transport; Tue, 8 Jan 2019 12:22:56 +0000
+ 15.20.1471.7 via Frontend Transport; Tue, 8 Jan 2019 12:22:57 +0000
 Received: from maileu3.global.cadence.com (maileu3.cadence.com [10.160.88.99])
-        by rmmaillnx1.cadence.com (8.14.4/8.14.4) with ESMTP id x08CMpDL022959
+        by rmmaillnx1.cadence.com (8.14.4/8.14.4) with ESMTP id x08CMpDN022959
         (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
-        Tue, 8 Jan 2019 07:22:53 -0500
+        Tue, 8 Jan 2019 07:22:56 -0500
 X-CrossPremisesHeadersFilteredBySendConnector: maileu3.global.cadence.com
 Received: from maileu3.global.cadence.com (10.160.88.99) by
  maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
@@ -74,19 +75,19 @@ Received: from lvloginb.cadence.com (10.165.177.11) by
  maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
  15.0.1367.3 via Frontend Transport; Tue, 8 Jan 2019 13:22:51 +0100
 Received: from lvloginb.cadence.com (localhost [127.0.0.1])
-        by lvloginb.cadence.com (8.14.4/8.14.4) with ESMTP id x08CMom7012680;
+        by lvloginb.cadence.com (8.14.4/8.14.4) with ESMTP id x08CMou2012685;
         Tue, 8 Jan 2019 12:22:50 GMT
 Received: (from jank@localhost)
-        by lvloginb.cadence.com (8.14.4/8.14.4/Submit) id x08CMojL012679;
+        by lvloginb.cadence.com (8.14.4/8.14.4/Submit) id x08CMo5x012683;
         Tue, 8 Jan 2019 12:22:50 GMT
 From:   Jan Kotas <jank@cadence.com>
 To:     <a.zummo@towertech.it>, <alexandre.belloni@bootlin.com>,
         <robh+dt@kernel.org>, <mark.rutland@arm.com>
 CC:     <linux-rtc@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, Jan Kotas <jank@cadence.com>
-Subject: [PATCH 1/2] dt-bindings: rtc: Add bindings for Cadence RTC
-Date:   Tue, 8 Jan 2019 12:22:41 +0000
-Message-ID: <20190108122242.12411-2-jank@cadence.com>
+Subject: [PATCH 2/2] rtc: Add Cadence RTC driver
+Date:   Tue, 8 Jan 2019 12:22:42 +0000
+Message-ID: <20190108122242.12411-3-jank@cadence.com>
 X-Mailer: git-send-email 2.15.0
 In-Reply-To: <20190108122242.12411-1-jank@cadence.com>
 References: <20190108122242.12411-1-jank@cadence.com>
@@ -94,52 +95,53 @@ MIME-Version: 1.0
 Content-Type: text/plain
 X-OrganizationHeadersPreserved: maileu3.global.cadence.com
 X-EOPAttributedMessage: 0
-X-Forefront-Antispam-Report: CIP:199.43.4.28;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(136003)(39860400002)(376002)(396003)(346002)(2980300002)(36092001)(199004)(189003)(1076003)(478600001)(47776003)(50226002)(305945005)(68736007)(356004)(6666004)(86362001)(106466001)(48376002)(8676002)(76176011)(105596002)(50466002)(69596002)(81166006)(81156014)(316002)(16586007)(42186006)(51416003)(110136005)(54906003)(336012)(446003)(53936002)(26005)(126002)(476003)(87636003)(2616005)(4326008)(36756003)(426003)(97736004)(11346002)(5660300001)(107886003)(2906002)(8936002)(186003)(486006)(2101003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR07MB4412;H:rmmaillnx1.cadence.com;FPR:;SPF:SoftFail;LANG:en;PTR:InfoDomainNonexistent;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: 1;BY2NAM05FT052;1:SQc40NzsA1B6++IsMqedfkeTh1hIadPUSWytotUFN7iWqBYEzdJ3qzjHf6IQovu2lGFXaKA6O+ZO5BFh9X4+usxwu48/V4oBXkf5MCZxYf++K8/4zXV8yVScK95x0c7O
+X-Forefront-Antispam-Report: CIP:199.43.4.28;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(39860400002)(346002)(376002)(136003)(396003)(2980300002)(36092001)(189003)(199004)(8936002)(107886003)(81166006)(8676002)(81156014)(356004)(6666004)(68736007)(76176011)(53936002)(14444005)(4744004)(476003)(126002)(486006)(575784001)(1076003)(86362001)(4326008)(2906002)(186003)(446003)(478600001)(426003)(87636003)(2616005)(97736004)(36756003)(48376002)(11346002)(26005)(336012)(50466002)(42186006)(16586007)(316002)(69596002)(51416003)(110136005)(50226002)(106466001)(105596002)(305945005)(5660300001)(47776003)(54906003)(2101003);DIR:OUT;SFP:1101;SCL:1;SRVR:CY1PR07MB2167;H:rmmaillnx1.cadence.com;FPR:;SPF:SoftFail;LANG:en;PTR:InfoDomainNonexistent;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: 1;BY2NAM05FT024;1:bYizF7HGAHlsKUDatbLN11cVS+/ow9yQjNw+ydbEt8L91ztOnAcEjDqKMJ8fYVDBMmMyFbEQsunxVxSdvRMT9lYFluGCV1eoAj4bMbwGuP3HPkPNvyEMlDPIMc/h5yhg
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: bbb15a04-efdb-4857-e53d-08d675640560
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(2017052603328)(7153060);SRVR:DM6PR07MB4412;
-X-Microsoft-Exchange-Diagnostics: 1;DM6PR07MB4412;3:GRuQbQgZp0yWSEqIA83u3peUbBZIRd1wqJfv41iLcOqQ8czyK7Ly9VrDrcUnrUJ1C+DbejfOjK+f/qaYUl0VSM6ndCAKeNwYsPi+iIsOX6m4DwyBblXDFhEOlZ++2yulF8eV8yvzPxN2zZg9k3d8rDSdTVZ3hguX2iNbW06g6UexJHhVIOK3z5rhuL2+P132HQcF1u+4AqSGmh9SSWb9e97qKiM60dYj2/9byDZeEyUlT366wXZbjXWcQakMQz7wFaSm3Nab5gfXyuRVXJwsvOWLk9VRCrjoMpkbqjvH4BF7+hjFphu8KABw2ITa+hhcUP7kmNsuybPabp9RO7oLaBWJ5HbGN58Y/xfjqEiR488l1nDVGWv5BojXnhQVeF3L;25:ucowNCLgvrTlHXTrUVLK3j5/P/L504IgT8oDzHWmb4eMhhpk73eIQvcFTVV3jlHCcul6KjKXp+lw1S3zeSFhu1RITVItO5g/iuey2L/WAv17GKqF5qrC0LA6d1mgulfeHHUu+HHb8XV2H653YsmEsxl70SeNE9B0+IdBzF0w6QHrGMH9bkQIXR/9QfgwWIW4nLqumNxS5hgoJruVNIVJGTAbR1nQWONDrAu8EeSjcVEXSTQW9zwL+7vG9Av4yNVXYWnooIJbN4cG8fNtgJsHVh7PCcGiQufL2Z8w/nKq0BbBEFQ8YVWucv8/3Zcd806z5mTKIPcNJOlPkErKcq23gg==
-X-MS-TrafficTypeDiagnostic: DM6PR07MB4412:
-X-Microsoft-Exchange-Diagnostics: 1;DM6PR07MB4412;31:bn9U5+IP3Ose8S0n9Q7EgcV3dutpICOk+5+e8XLTlrCm2litcSGw7B8e3nJe8U36lVCM+1ndGjjsGuUwNZRiHF9hL6DqdnlC6CksUSqyiERFrNtaNhjyffzySRDUYydTcIsCCWEQfSEHIN4khztfy/y4aoiDKGLpSK22I6/LM7xIAy6HSrt7TJUtphXxAOx6G5qbrE2Xdefa9jwyFem2wCwqxTCSRVxlkPPummTGM/U=;20:65K/RiYFUIlzhiTQMXuIdwWhI9RrLyRWGC18SPlD7cxVXqwDup3JSGd25PXfdBoqd8sJrQGBaq5I8UFIlrZyWOIWa9OKvMikhoAvcmqE3WABSxHfMP6roegI4wXLVB638FY2UrobGRyfqsT92YVNRgR27BH6txoMuDIfws9SwabgfNt+Hf9n2LhuAJxhPcoGy8/Cp8YK0g7bKwzPJ8rYbJxr/eE4EvpcWLo1+GopnLhLf7xSY/o6i+2qOwGeYvy0YGzyJx/mfvRWKhvOx2uJdLRk/sNnyQkChkGcSzAMZQWH5k6xiWBjFPAMXGTBGibLS1aveHDM//+ydvEz/X/nE4/XzljAC4ixygKGqPKft3VhiKLGrb4ANUtStae+J3Dz+856Ai3DoTFufsRaeALApgk6kmSKKr8KiZPiDENLtDcxmns4392K+vCrrk/kgigSBzYQ+FX7i3AADNM8ZgMp1/dYWmxyU8KjSz60xl1vGvI3P5HmOmz5di9KrlsRqdHS
-X-Microsoft-Antispam-PRVS: <DM6PR07MB44120A5EC3EB3C327007FE19D08A0@DM6PR07MB4412.namprd07.prod.outlook.com>
-X-Microsoft-Exchange-Diagnostics: 1;DM6PR07MB4412;4:pyBlMiUkpelkQByynvTM/nL5GZ9LnqMcAuB16tJPuYf6+GD/f8sy3xyHw3vK2LfBuFPF6VOsDmtadrCEIAPCwAKr5B9joNMYH0elIAL20rXJTh9ynPwVmXP+GlsK0qtux6OirrG+KxNQTmCqcjNusDMxpVVWIB9EABXGgMqkCliHiwTsRiBMakJEMQCBbOP0EKGsIbTEaL5Z+Rfh4EjMM/zPq/UNgX06MoDAnWRzTcHY1TUhNClidMx9gHrmpyNTNvZtHxnGWo/D0iaVdHxuQpBnDOLCGFj0zwCenCWtqP5t2cOV0ThWeDintEoJouUm
+X-MS-Office365-Filtering-Correlation-Id: fdf20adf-dfa8-435f-60f8-08d675640644
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(2017052603328)(7153060);SRVR:CY1PR07MB2167;
+X-Microsoft-Exchange-Diagnostics: 1;CY1PR07MB2167;3:vhcezWZA1hTEoWU2N4GYb6rvk8JSdt9qmmDbGklpecSrWQiC3zqCtfcB87mxCiKxWZxsI7PUe7/95NlmtmeB3kx/eB0nLXf3SOBvl9h73LdYCh1gQ3qd8/y5/rP2Bo3OVCdJx7T29XVRgc3eIEjM3NlRAiUw798Ue5E4Om/6QpX5AhCK+ehZjN5ZngBWK7LXZAIX8wxOrfZbt5K6O0YnhZd4jr0VEIiqrt5Qy/z419MbrwnZMIt6lDcwpjJlg5x/6t/wrR5qoVXr7J2tPvzPDOXq2xli4bP0oKxzZRHNsMSsuboiymul7WtiBS4qyx0utMdR/a5/wzCJKPskzcrT/+6o8YdRgZMlWxw7WFQe3pHiZpS3OE3X85Pfs6L5L0fO;25:BZv4gVPQ7qtWT/ZEqwQ4DXJz2PAr83yAADm3RYrPvyjOcpBQxJd/iLSAc0Ncm6B815bRIuNG2myRMFJvbEyVvdcDpq2L1aRk/3qZPqdqQDA1+3iheWIU/cqzNyD2/3TkMRVqhXOLB+A5ljtfYx/ErS2K9N/CoMysYtIukMfYDioh25NncYIPZgBj2XNOR2njNoKBCXVqQOWFf/PwojnGBwmNy5Hew101ktBRI/4r3AH7Fr6HkjIvOxXU8b7QGp7woobRX7V/W5iO/BjKW79X0zulUZC/MUpVLOOJW1MonrG9iS8vLJL5D8JPGrIBjJQUWZ/DbpxPVkzAy357QTe1kA==
+X-MS-TrafficTypeDiagnostic: CY1PR07MB2167:
+X-Microsoft-Exchange-Diagnostics: 1;CY1PR07MB2167;31:ptpck1mCe9tKo3tseeRQLau9Y9GBcfKWJEXfCMO/5eu2PpQ989XeO8+3TB7k3rJAp0x79pPaO9o+wSZduvte/uUEriWM4Gc9ySJV6M01ji2eOPDLRMtdoyjIhii5ndni2tAqOL6Osv+gO8fkNnjp6pcqyGEhE0IMDpRO5IdPyHcmK3LZAvfkTPPOkpEraHawtC+rjlm/kpVQRx9tWifnKXrsLu5TSP+KrTiMZEJVbwI=;20:YC4SR3rhFFezUJ/1AklgDY7R0QfDxwO9iA6tyw0Ib84Dn+9Az0ASr2YUsYlW5VYtrCzZtYmq6evXi0pHigTJnclbtAX3FCPPuDTXcdT9yhDqKoGot0Yc6M0pyWY/zkVKP3ycbHk2naOaYsojBCRrtNx4W1oeMiff9020GRpUsVzG3MpmPzAXd7qugBRcI5ufwukoOEw6hacQKA9q0t1xz3WRgy3EKknlrBfYzi3LSRB8HNH/iEbP2wgng49vFNvXB8aUOyxMPvIgSNvEVULNQgO64fDhjNzGljUkpEa/IAGh+jV9s/p1XdbBr/6SoFN1tTtuU7X1tKezhstOf+kh6fSZ0FiJELJCO1EXSKhv88TPdNFbN3yJhc6BrqYn+fuHDe9FCqMMzcJgWusQPui+bMfqU2BMbxatqPzqvLtD4OzeZ/VOdF1uh/UAhdTnjG5prpjuIkBq65Q2oA0nGZ1j5R+hnYdIBKRt5czFeqHpz2XO1F4hrDsztkjFcg5TSNCV
+X-Microsoft-Antispam-PRVS: <CY1PR07MB2167E0DC8E2F14BF3127B155D08A0@CY1PR07MB2167.namprd07.prod.outlook.com>
+X-Microsoft-Exchange-Diagnostics: 1;CY1PR07MB2167;4:qxlZiGbHaon52Z2rchQWZ5p17DCoOHbPHBs5juyNLIHey5cZ2jJ/UyufRk9GtPuoNKjDCf95TRC+3KygdAd0NP01HIxdbk+0ddpcS2gx+QCTkjx+pxWkx2TpPc3wRPTjq9Y/VBfLNizAyhs2RDuL0JWAQQOJnG2sist5fNPGSKxJXnPA025vmsb0SbrDwrDjxmDom3wY27g5soyCtXrxnOXAfdnNJ9b/uSdtdT/56xWVmUwty0ij6vnJAEeh1sHiEyDeG2F2Rjn3+a/SLiCI/JQZ2Kx/gpFgLlOv5iEzdsXoE3c6Ea1RGvG8QN/4MY7k
 X-Forefront-PRVS: 0911D5CE78
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DM6PR07MB4412;23:Pg+oWBECxpJfSnpPz2DRwDmpw4ztsDfqxK8NB97jw?=
- =?us-ascii?Q?b1MvnIzKMaFhtpLxoMEFLZGO+Ehqd/+eGaVXwBLCOZq4XgPGcacL06rqcE2+?=
- =?us-ascii?Q?hUDgMIt/dGBz6OaBAq4f9WtN9Epf5nDF9cOr/GramMl8ldSC7hVEWUxeJBwt?=
- =?us-ascii?Q?PlERJ0v+My2jtTf+hZT3qldBf79zspkgKPZGgHPj2LhmEme5ovNJ8V2WKOHu?=
- =?us-ascii?Q?hwqabKzRPasAk/oKLKRGW6moJAY0xrtDnQg0bB3ilZNZ5eNK7680BFsIJvFB?=
- =?us-ascii?Q?317iCFJpZIpmhBkk4VzZefipTejYvlolEzAvPFrYGLJ9Dgv5V/R2nFX/H/Cz?=
- =?us-ascii?Q?lP8lHq1856ngzd62dy6FAhNzU5ONSGC6vQXWJp24AYgD9fFF1SswpcjmJ648?=
- =?us-ascii?Q?2Z+j0ElWqxyTKAohZhBwpH7LTpkbkReu0CVnoDNCVuDSL7/NywZRItUfq5JB?=
- =?us-ascii?Q?6tD750Mjdz5nePwLNdCKyDQIcLXvWEAWd+QePNx7OcIlD26Vdu9dzeczBE2R?=
- =?us-ascii?Q?ZT79Y5HmfOGPT6PL8FzHmTEgAUkO64SC5X8675jLe7mNkcn2EY0sN9KcQFCQ?=
- =?us-ascii?Q?Dtef2FAzz41913uzj68/DbOyZLH/5In0tE+y7IjVTyC7wIHq/4eQhwT1xMTC?=
- =?us-ascii?Q?wJxKjd+u/zEF0akFeYbz1wpsY/W+kg0Hlk45fCOAfJl/LHpSJCxNN38AeIth?=
- =?us-ascii?Q?bokUkjpr8hCnuTmbuPHr/gih3u8S74uumJ5T7YypV6WeSEGZlYJS3Z4MH7X6?=
- =?us-ascii?Q?8sg+pJAQArqy2oNPd4d85+JYdHVHHyvcYICSYQ4QqWpr5yEmYC8cf2ujX+EP?=
- =?us-ascii?Q?Lw8TXx6jQGe/kkEhXeX3RZ6Mr5VxcjiNz0D80WWsldJAGtVg75NbYpt49KEB?=
- =?us-ascii?Q?VM8MuJehimd9kcB1OwijoVWYFLMRmkmf2EL91UGbsDX1sAU3+JSOiWnEabCk?=
- =?us-ascii?Q?OslKBm6nzfvMBpgeY6Uu6mhjyd3QjpyD69I3hvod7TOLazreZM1V/YXcH+su?=
- =?us-ascii?Q?e+tpOESXX83AvoVP5YZ9q3ofR5T5UqDzN77PFqm78cGJXieJnO/I5dy2GDgQ?=
- =?us-ascii?Q?Iy6uA1f3tv8SXyUiip6OgspteFLIdMKp2QmC3Rez9pWI1p2HA2d6kArNYle1?=
- =?us-ascii?Q?9VvdvgvcVw/BGsHI1GyvjEgH76xctYr61KrFbzXTRyHvZFMaWfe7JzkuguHC?=
- =?us-ascii?Q?lPMF81NXTdwEWI=3D?=
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;CY1PR07MB2167;23:QdYqYINAlzoH2fLlsKKqdi5CcAbpenC0IKP65xIl1?=
+ =?us-ascii?Q?ygXExERuSs6EKLHhlf8IDbqWsgKaAKcBrGe5Z0LKB3+gx01JKltY8YIXPn8T?=
+ =?us-ascii?Q?FkitbzpZSWT50QHq0SvaUxg+5xXHCnGE+9b8xllCpLIwu1LVbeifGyKrW/Og?=
+ =?us-ascii?Q?SZ3y1umzAu9qKryIQa4o82HlGUtFOgxAul+niUtTi0nlr1Me987Vugv7oQIS?=
+ =?us-ascii?Q?x5V/27GR08t3VeuluQDH8v38NU9bsBTrMHaYh9WrcdiR4tA3labMisyrAfLd?=
+ =?us-ascii?Q?c4s9WfPVjtKZmNMLyd0fQAZxYASjNS4cvZTOzXc8VLjcYuZScYAOeo3jmiie?=
+ =?us-ascii?Q?+b/zBeMhJteFCNKRTlVu39c6kveOWvD8/qvrvSDtK7CIF6WNh1NUNJBrTlmT?=
+ =?us-ascii?Q?WLkM7LpQGZcGb7S9XusO3Ya0vic95y8Lvga5SVDgTBj6bqEVoHYeJZDbCFMm?=
+ =?us-ascii?Q?h5+XHV3d5JvSgQvrADOi6/5pezJqQZHrCDNF9fhN+4BBb8+dRis5GiBBr4U0?=
+ =?us-ascii?Q?UXHh9aq85zeDO475Al2BrguzvStlNyEvebtL9yWJOhYBMDKNpOnpoTujgWCz?=
+ =?us-ascii?Q?zP2TkEHcEb/xtIcp7aDtiRkIGPYXT1AS9RFCHAScCrh6+kMIEE+ocslkqoT/?=
+ =?us-ascii?Q?t35DfVixSW2CazHV7Rida8RkZY46lFywImihA6UUSZsaAeHv9gzDSefGcwM0?=
+ =?us-ascii?Q?ZeTWQKtM+ozJ/Ezkl0M8RI6uTDTWJ/vL2fhZ6CTZmOHZqJT6tfA5U6VFesds?=
+ =?us-ascii?Q?SzNY5HPbSU6/fiJM4BPtLyl0TlZlH+i6NaFuzCdQxm4VSCWBNQscw/hz2s9D?=
+ =?us-ascii?Q?xV/cB4xSUJzwQkAStJE4s2dIKh3630BARzRgPcxBNKrUXgIDJOqNmf8eYZf+?=
+ =?us-ascii?Q?KsCYw+U7n8/rRH+UxpCx5kQanMC5pXqObPXvPL3p1xBxUjh0TbIWYifoJDMi?=
+ =?us-ascii?Q?YFxXkxPfVOSO1T2hckWHOptvvEm9oUyqvrEGfqanTyF571QA9+p5bUt+1l+p?=
+ =?us-ascii?Q?Ipc78HfllABqYH8uF0dHdEyy1hD7Haek7Pq9G7MJjZqCsOWUxlrn5+5WfYxf?=
+ =?us-ascii?Q?gUxI5KFP/g93lYMNetqTqQvsEHOMpU9yMktdxngcZZButaBdDXsBnefIwi6U?=
+ =?us-ascii?Q?L2bALtXNDVdAYFzSjwoSa9vt6k5qLjK2D08C12NRIHLPEhlG57Xw8U1wM0OX?=
+ =?us-ascii?Q?hO75lErx0jJDUolfZPijRq5OEYIBP6CxTu5ROVF4dzRYAcrF/sGJpdXJoL8a?=
+ =?us-ascii?Q?Y1w14GU0UYbeVs0YPo=3D?=
 X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Message-Info: 4Sw1ZP6Npr0qH9TpUaK9sj1rLqcW9IDjJRYGmHrD07um6O3uJ757NDTN9H85hPsrBslEikpsf3op7c42o+sENv61fv1fyHmWW3cpGvej19Zk4lv373nc0z4q33Dve5jvLsrLAVfjNmtvEuDrjB3BIg7+cQZaHye10NiVxapDCKbfKB+XiWBO5UIUaDiDzQC5bNnyiT5I9dEZ08P3ZUuyqLZMmM5uU9eeEjICetNsPKND+WZChfTNsRETQjOKMwhvGKkBK869xnbSiBWeFTWq5/YxCPN9t39dnHg7DubdH00fdL6wZ1XyqF/VkoEr39ly
-X-Microsoft-Exchange-Diagnostics: 1;DM6PR07MB4412;6:hn/tbrT4yMl1MCzDFewKQ9kO+gODe7NNawIClbWJYY3bT5WpkmBQCJdPoF15oiRDwKpSIsYt9zoK4hF2WcfKu7VHTtQr0QjPvUPkEpifBeZLt9LmEUoFuhNOBOcGjA50m1Nc5qa1mDgky/faNNgXXuXA8jY61YlPAbF1zmA+g5delT9OEdI2ipwc2c0mr0a9xLqxjQIBjOllpwGWqFbQ5h6WIZABSpiHCT0ZiRuLY9klhQRPCXKH+wZzEcxzgg6gp9gbjX5RnvPgbSgWKQVxX5boWDELzuaMNDQmsgxXOpuTVghZ68OF1Bdp+N4mcW9jtNqsohCCXTM5fwQoGrD3owlxMEvz+NV/yB5Iry/iySLDB5V6K4llM8NARmwsDwgDvFPqPZaKy2BaGEeV0rQr3yi1LfbFz4k9Rz2jNHGCaKXXM0+KKriWX61S8aUyIpp66R6mAkRis9H5JmOY77fhWQ==;5:CaQwFd7YWQ5BH97gaUQeReAi4YYZEHYqTb041N3FeY//N64oUAaWZEiaTM1S/Ylcyh0b6WXoWnONpNHlJqeBKiyRR0TVrb+XpFDfvZcu0HR3NM/tRU2ONpY3p8JVBhesvDYbJrvDl7Rgq9Pd9viCvdB9bjyv2bg+KO/MQv17OxFlm7D55N8iSnlVIbOKWZXK8GpOizoaU+Yvsjwk5q/Ezw==;7:9Q3GW/0v9jdWCPdvRB6wszkVCepScne8QSUXHxo6aBM6xaUzNO6yTDMg8YivH877VHUS6bxADrrxlHV0tsNPPdmlc+ECQBNTSLB/4wuoUw3//DJ51fBZRQtkeOnoSYPhiCpDnE7OSxPQvwSBamSE+g==
+X-Microsoft-Antispam-Message-Info: d9ZaeDaN0xeNFFiqkfhJMWh0L6ND+OLcyBWaXMpUmndougMTDt8VKvax8/dPJXdpjhpAyECI7Z0IzuA0xZ10lQyb8ywBN5JB7e56Eb2be5Qnl/A0vlSewQJnzIxUOhdVBMFfsack4SJzZMSIpo0xTXV0iG2iWNlhcKm8wGgfAl5Ss02SESIySfEgidoxHqe0piJYl8V0hO6I+U29FPx+W6u/L7SentB/A1tljXT4GJCg6FQe3rFdLC0n0DemfGem8Tc782F2qv6Yu/EGN+v3ADDMwxsb0Rv24GnGZ0+K5p1duNYPSp7cgFNSrF5zjkSA
+X-Microsoft-Exchange-Diagnostics: 1;CY1PR07MB2167;6:mi3Bd3MBPfOdQtY1BEn+ZBPsd8a3FRx6uPR0nfoyMipgC98xxQdHabviaY4ERBCcMkdpeBnuJ84LBRaDIVE5+vfezoWlBqrH9Wj3i2q1jbxWWX/Qiq1qkq8lVIqXRkPfjZ1WSeQAqLREZiNNnjKBSRYndEt35XUwROa+xaBXSNCd0y0Y63l+cVJOIbohziQSueEJVINIfY9PCpvBaR6RImLUS32jFRS5yyrli2H1cN8iyQU7xWiCd1aA3zgJDB4C7goc3wJhZBn2bzKgza7Oy5JfYuf582jVD4Q3eyyAWiF5HUHVhditRSYWpSrKjh8/YDhzYR2rasfAN04rhue9CUvn4AGzcYL9lO5V655Ys66abh1RtvsJeq0EVPgpqshGQHQw49RUS5t9SCoUbL5LhxGt4QaT/zUyVSFqpCLahCWzhhmpqXtfSlVezO4UEQI59Fu03t/puogxHqIVyMZ8JQ==;5:06wAmhI2ZPdNt2YY6qy6S2hCOq5E2anpSpogJ0LhPAWlLo/qOk9g57Q0+55slBTJOCvqIScfgqFutKVqyD/E7UTMKMV4FfUwca0pbBZl+FIf48TLt+4Lg0g4O6QOxJHYh1LO5ys8Ls5REnjxlYuj5RgfF3Ht32NBz79eS7Lvt6YkMFfLgqj0WJGN1/GItMzaURnXLl0wVCjANrUIeC/Z0Q==;7:8tZh50NCWYI3GKhpO6S8YvRdkM0hQZvh4Xe3dBvwG3sFOS86qBp7t+akip8DMBMJjQX6DoZpbdh74V1aYClaAYkGwdWv9RVsAtX3BOskJUuSyHbUhTc4RM7kKK/OEvZdG9ZCMf068yIL3dLyYdLSng==
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;DM6PR07MB4412;20:DUIGJD+37jxcbumWWVXI9pI6baL7a21JQKQ6D82otKvVNsoybpwH30wxlmgJOLwYrLWMhxu3UaUO0EYE421NlFerEx0fVJo84elOFngY1wWhZMS7GxHYjvLzVZYznfKkErgG1JhVy3a6StqE9H1XVJQmjvTF4goDhk6e/70YlcshlWo8o9xDmxdHGwl/6klI0tFpexqm5s7u/IypHm1ETf/2rq88M931IY/R/NnMXTChPNBa9CmtU1V89O1AogW7
+X-Microsoft-Exchange-Diagnostics: 1;CY1PR07MB2167;20:PRsKO0fyciV/QHA9mYTjfxjXR+FKUDLgAjTusEX4VSRmpGkVJXSTRe6tPsIiWogoUzz9m5hUSEUAJxyYGm5YgMPDcYXXtjEdWTaG4SELQl3gedFM40qZiZcbozD8fN0a96F/vOomVj2Vz1pNAtm4xxCbu/hXpFec7A6TrSBRaDNQ7EtM/6r+Gmnk1NU976oBa4ZEuDmMawj5fEbBPdbne0/HUeUuUnk3QmIFdYEhSd/DRaXjRi2vDIISrrR6gcdh
 X-OriginatorOrg: cadence.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jan 2019 12:22:56.4263
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jan 2019 12:22:57.9171
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: bbb15a04-efdb-4857-e53d-08d675640560
+X-MS-Exchange-CrossTenant-Network-Message-Id: fdf20adf-dfa8-435f-60f8-08d675640644
 X-MS-Exchange-CrossTenant-Id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=d36035c5-6ce6-4662-a3dc-e762e61ae4c9;Ip=[199.43.4.28];Helo=[rmmaillnx1.cadence.com]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR07MB4412
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR07MB2167
 X-Proofpoint-SPF-Result: pass
 X-Proofpoint-SPF-Record: v=spf1 include:_spf.salesforce.com include:mktomail.com
  include:spf-0014ca01.pphosted.com include:spf.protection.outlook.com
@@ -148,54 +150,470 @@ X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0
  priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0
- spamscore=0 clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=670 adultscore=0 classifier=spam adjust=0 reason=mlx
+ spamscore=0 clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1810050000 definitions=main-1901080102
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds a DT binding documentation for
-Cadence RTC controller.
+This patch adds a driver for Cadence RTC controller.
+
+It can be enabled with RTC_DRV_CADENCE Kconfig option.
+It supports waking system from sleep modes.
 
 Signed-off-by: Jan Kotas <jank@cadence.com>
 ---
- Documentation/devicetree/bindings/rtc/cdns,rtc.txt | 25 ++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/rtc/cdns,rtc.txt
+ drivers/rtc/Kconfig       |  10 ++
+ drivers/rtc/Makefile      |   1 +
+ drivers/rtc/rtc-cadence.c | 404 ++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 415 insertions(+)
+ create mode 100644 drivers/rtc/rtc-cadence.c
 
-diff --git a/Documentation/devicetree/bindings/rtc/cdns,rtc.txt b/Documentation/devicetree/bindings/rtc/cdns,rtc.txt
+diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
+index 225b0b851..0aba341ad 100644
+--- a/drivers/rtc/Kconfig
++++ b/drivers/rtc/Kconfig
+@@ -1508,6 +1508,16 @@ config RTC_DRV_ARMADA38X
+ 	  This driver can also be built as a module. If so, the module
+ 	  will be called armada38x-rtc.
+ 
++config RTC_DRV_CADENCE
++	tristate "Cadence RTC driver"
++	depends on OF && HAS_IOMEM
++	help
++	  If you say Y here you will get access to Cadence RTC IP
++	  found on certain SOCs.
++
++	  To compile this driver as a module, choose M here: the
++	  module will be called rtc-cadence.
++
+ config RTC_DRV_FTRTC010
+ 	tristate "Faraday Technology FTRTC010 RTC"
+ 	depends on HAS_IOMEM
+diff --git a/drivers/rtc/Makefile b/drivers/rtc/Makefile
+index df022d820..5adb41b45 100644
+--- a/drivers/rtc/Makefile
++++ b/drivers/rtc/Makefile
+@@ -39,6 +39,7 @@ obj-$(CONFIG_RTC_DRV_AU1XXX)	+= rtc-au1xxx.o
+ obj-$(CONFIG_RTC_DRV_BQ32K)	+= rtc-bq32k.o
+ obj-$(CONFIG_RTC_DRV_BQ4802)	+= rtc-bq4802.o
+ obj-$(CONFIG_RTC_DRV_BRCMSTB)	+= rtc-brcmstb-waketimer.o
++obj-$(CONFIG_RTC_DRV_CADENCE)	+= rtc-cadence.o
+ obj-$(CONFIG_RTC_DRV_CMOS)	+= rtc-cmos.o
+ obj-$(CONFIG_RTC_DRV_COH901331)	+= rtc-coh901331.o
+ obj-$(CONFIG_RTC_DRV_CPCAP)	+= rtc-cpcap.o
+diff --git a/drivers/rtc/rtc-cadence.c b/drivers/rtc/rtc-cadence.c
 new file mode 100644
-index 000000000..40713bbbe
+index 000000000..18fc3f8e3
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/rtc/cdns,rtc.txt
-@@ -0,0 +1,25 @@
-+Cadence Real Time Clock
++++ b/drivers/rtc/rtc-cadence.c
+@@ -0,0 +1,404 @@
++// SPDX-License-Identifier: GPL-2.0
 +
-+The Cadence RTC controller with date, time and alarm capabilities.
-+The alarm may wake the system from low-power state.
++/*
++ * Copyright 2019 Cadence
++ *
++ * Authors:
++ *  Jan Kotas <jank@cadence.com>
++ */
 +
-+Required properties:
-+- compatible: Should be "cdns,rtc-r109v3"
-+- reg: Specifies base physical address and size of the register area.
-+- interrupts: A single interrupt specifier.
-+- clocks: Must contain two entries:
-+	- pclk: APB registers clock
-+	- ref_clk: reference 1Hz of 100Hz clock, depending on IP configuration
-+	See ../clocks/clock-bindings.txt for details.
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/of.h>
++#include <linux/io.h>
++#include <linux/rtc.h>
++#include <linux/clk.h>
++#include <linux/bcd.h>
++#include <linux/bitfield.h>
++#include <linux/interrupt.h>
++#include <linux/pm_wakeirq.h>
 +
-+Example:
-+        rtc0: rtc@fd080000 {
-+        	compatible = "cdns,rtc-r109v3";
-+        	reg = <0xfd080000 0x1000>;
++/* Registers */
++#define CDNS_RTC_CTLR		0x00
++#define CDNS_RTC_HMR		0x04
++#define CDNS_RTC_TIMR		0x08
++#define CDNS_RTC_CALR		0x0C
++#define CDNS_RTC_TIMAR		0x10
++#define CDNS_RTC_CALAR		0x14
++#define CDNS_RTC_AENR		0x18
++#define CDNS_RTC_EFLR		0x1C
++#define CDNS_RTC_IENR		0x20
++#define CDNS_RTC_IDISR		0x24
++#define CDNS_RTC_IMSKR		0x28
++#define CDNS_RTC_STSR		0x2C
++#define CDNS_RTC_KRTCR		0x30
 +
-+        	clock-names = "pclk", "ref_clk";
-+        	clocks = <&sysclock>, <&refclock>;
++/* Control */
++#define CDNS_RTC_CTLR_TIME	BIT(0)
++#define CDNS_RTC_CTLR_CAL	BIT(1)
++#define CDNS_RTC_CTLR_TIME_CAL	(CDNS_RTC_CTLR_TIME | CDNS_RTC_CTLR_CAL)
 +
-+        	interrupt-parent = <&gic>;
-+        	interrupts = <0 6 IRQ_TYPE_LEVEL_HIGH>;
-+        };
++/* Status */
++#define CDNS_RTC_STSR_VT	BIT(0)
++#define CDNS_RTC_STSR_VC	BIT(1)
++#define CDNS_RTC_STSR_VTA	BIT(2)
++#define CDNS_RTC_STSR_VCA	BIT(3)
++#define CDNS_RTC_STSR_VT_VC	(CDNS_RTC_STSR_VT | CDNS_RTC_STSR_VC)
++#define CDNS_RTC_STSR_VTA_VCA	(CDNS_RTC_STSR_VTA | CDNS_RTC_STSR_VCA)
++
++/* Keep RTC */
++#define CDNS_RTC_KRTCR_KRTC	BIT(0)
++
++/* Alarm, Event, Interrupt */
++#define CDNS_RTC_AEI_HOS	BIT(0)
++#define CDNS_RTC_AEI_SEC	BIT(1)
++#define CDNS_RTC_AEI_MIN	BIT(2)
++#define CDNS_RTC_AEI_HOUR	BIT(3)
++#define CDNS_RTC_AEI_DATE	BIT(4)
++#define CDNS_RTC_AEI_MNTH	BIT(5)
++#define CDNS_RTC_AEI_ALRM	BIT(6)
++
++/* Time */
++#define CDNS_RTC_TIME_H		GENMASK(7, 0)
++#define CDNS_RTC_TIME_S		GENMASK(14, 8)
++#define CDNS_RTC_TIME_M		GENMASK(22, 16)
++#define CDNS_RTC_TIME_HR	GENMASK(29, 24)
++#define CDNS_RTC_TIME_PM	BIT(30)
++#define CDNS_RTC_TIME_CH	BIT(31)
++
++/* Calendar */
++#define CDNS_RTC_CAL_DAY	GENMASK(2, 0)
++#define CDNS_RTC_CAL_M		GENMASK(7, 3)
++#define CDNS_RTC_CAL_D		GENMASK(13, 8)
++#define CDNS_RTC_CAL_Y		GENMASK(23, 16)
++#define CDNS_RTC_CAL_C		GENMASK(29, 24)
++#define CDNS_RTC_CAL_CH		BIT(31)
++
++#define CDNS_RTC_MAX_REGS_TRIES	3
++
++struct cdns_rtc {
++	struct rtc_device *rtc_dev;
++	struct clk *pclk;
++	struct clk *ref_clk;
++	void __iomem *regs;
++	int irq;
++};
++
++static void cdns_rtc_set_enabled(struct cdns_rtc *crtc, bool enabled)
++{
++	u32 reg = enabled ? 0x0 : CDNS_RTC_CTLR_TIME_CAL;
++
++	writel(reg, crtc->regs + CDNS_RTC_CTLR);
++}
++
++static irqreturn_t cdns_rtc_irq_handler(int irq, void *id)
++{
++	struct device *dev = id;
++	struct cdns_rtc *crtc = dev_get_drvdata(dev);
++
++	/* Reading the register clears it */
++	if (!(readl(crtc->regs + CDNS_RTC_EFLR) & CDNS_RTC_AEI_ALRM))
++		return IRQ_NONE;
++
++	rtc_update_irq(crtc->rtc_dev, 1, RTC_IRQF | RTC_AF);
++	return IRQ_HANDLED;
++}
++
++static u32 cdns_rtc_time2reg(struct rtc_time *tm)
++{
++	return FIELD_PREP(CDNS_RTC_TIME_S,  bin2bcd(tm->tm_sec))
++	     | FIELD_PREP(CDNS_RTC_TIME_M,  bin2bcd(tm->tm_min))
++	     | FIELD_PREP(CDNS_RTC_TIME_HR, bin2bcd(tm->tm_hour));
++}
++
++static void cdns_rtc_reg2time(u32 reg, struct rtc_time *tm)
++{
++	tm->tm_sec  = bcd2bin(FIELD_GET(CDNS_RTC_TIME_S, reg));
++	tm->tm_min  = bcd2bin(FIELD_GET(CDNS_RTC_TIME_M, reg));
++	tm->tm_hour = bcd2bin(FIELD_GET(CDNS_RTC_TIME_HR, reg));
++}
++
++static int cdns_rtc_read_time(struct device *dev, struct rtc_time *tm)
++{
++	struct cdns_rtc *crtc = dev_get_drvdata(dev);
++	u32 reg;
++
++	cdns_rtc_set_enabled(crtc, false);
++
++	reg = readl(crtc->regs + CDNS_RTC_TIMR);
++	cdns_rtc_reg2time(reg, tm);
++
++	reg = readl(crtc->regs + CDNS_RTC_CALR);
++	tm->tm_mday = bcd2bin(FIELD_GET(CDNS_RTC_CAL_D, reg));
++	tm->tm_mon  = bcd2bin(FIELD_GET(CDNS_RTC_CAL_M, reg)) - 1;
++	tm->tm_year = bcd2bin(FIELD_GET(CDNS_RTC_CAL_Y, reg))
++		    + bcd2bin(FIELD_GET(CDNS_RTC_CAL_C, reg)) * 100 - 1900;
++	tm->tm_wday = bcd2bin(FIELD_GET(CDNS_RTC_CAL_DAY, reg)) - 1;
++
++	cdns_rtc_set_enabled(crtc, true);
++	return 0;
++}
++
++static int cdns_rtc_set_time(struct device *dev, struct rtc_time *tm)
++{
++	struct cdns_rtc *crtc = dev_get_drvdata(dev);
++	u32 timr, calr, stsr;
++	int ret = -EIO;
++	int year = tm->tm_year + 1900;
++	int tries;
++
++	cdns_rtc_set_enabled(crtc, false);
++
++	timr = cdns_rtc_time2reg(tm);
++
++	calr = FIELD_PREP(CDNS_RTC_CAL_D, bin2bcd(tm->tm_mday))
++	     | FIELD_PREP(CDNS_RTC_CAL_M, bin2bcd(tm->tm_mon + 1))
++	     | FIELD_PREP(CDNS_RTC_CAL_Y, bin2bcd(year % 100))
++	     | FIELD_PREP(CDNS_RTC_CAL_C, bin2bcd(year / 100))
++	     | FIELD_PREP(CDNS_RTC_CAL_DAY, tm->tm_wday + 1);
++
++	/* Update registers, check valid flags */
++	for (tries = 0; tries < CDNS_RTC_MAX_REGS_TRIES; tries++) {
++		writel(timr, crtc->regs + CDNS_RTC_TIMR);
++		writel(calr, crtc->regs + CDNS_RTC_CALR);
++		stsr = readl(crtc->regs + CDNS_RTC_STSR);
++
++		if ((stsr & CDNS_RTC_STSR_VT_VC) == CDNS_RTC_STSR_VT_VC) {
++			ret = 0;
++			break;
++		}
++	}
++
++	cdns_rtc_set_enabled(crtc, true);
++	return ret;
++}
++
++static int cdns_rtc_alarm_irq_enable(struct device *dev, unsigned int enabled)
++{
++	struct cdns_rtc *crtc = dev_get_drvdata(dev);
++
++	if (enabled) {
++		writel((CDNS_RTC_AEI_SEC | CDNS_RTC_AEI_MIN | CDNS_RTC_AEI_HOUR
++			| CDNS_RTC_AEI_DATE | CDNS_RTC_AEI_SEC),
++		       crtc->regs + CDNS_RTC_AENR);
++		writel(CDNS_RTC_AEI_ALRM, crtc->regs + CDNS_RTC_IENR);
++	} else {
++		writel(0, crtc->regs + CDNS_RTC_AENR);
++		writel(CDNS_RTC_AEI_ALRM, crtc->regs + CDNS_RTC_IDISR);
++	}
++
++	return 0;
++}
++
++static int cdns_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alarm)
++{
++	struct cdns_rtc *crtc = dev_get_drvdata(dev);
++	u32 reg;
++
++	reg = readl(crtc->regs + CDNS_RTC_TIMAR);
++	cdns_rtc_reg2time(reg, &alarm->time);
++
++	reg = readl(crtc->regs + CDNS_RTC_CALAR);
++	alarm->time.tm_mday = bcd2bin(FIELD_GET(CDNS_RTC_CAL_D, reg));
++	alarm->time.tm_mon  = bcd2bin(FIELD_GET(CDNS_RTC_CAL_M, reg)) - 1;
++
++	return 0;
++}
++
++static int cdns_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alarm)
++{
++	struct cdns_rtc *crtc = dev_get_drvdata(dev);
++	int ret = -EIO;
++	int tries;
++	u32 timar, calar, stsr;
++
++	cdns_rtc_alarm_irq_enable(dev, 0);
++
++	timar = cdns_rtc_time2reg(&alarm->time);
++	calar = FIELD_PREP(CDNS_RTC_CAL_D, bin2bcd(alarm->time.tm_mday))
++	      | FIELD_PREP(CDNS_RTC_CAL_M, bin2bcd(alarm->time.tm_mon + 1));
++
++	/* Update registers, check valid alarm flags */
++	for (tries = 0; tries < CDNS_RTC_MAX_REGS_TRIES; tries++) {
++		writel(timar, crtc->regs + CDNS_RTC_TIMAR);
++		writel(calar, crtc->regs + CDNS_RTC_CALAR);
++		stsr = readl(crtc->regs + CDNS_RTC_STSR);
++
++		if ((stsr & CDNS_RTC_STSR_VTA_VCA) == CDNS_RTC_STSR_VTA_VCA) {
++			ret = 0;
++			break;
++		}
++	}
++
++	if (!ret)
++		cdns_rtc_alarm_irq_enable(dev, alarm->enabled);
++	return ret;
++}
++
++static const struct rtc_class_ops cdns_rtc_ops = {
++	.read_time	= cdns_rtc_read_time,
++	.set_time	= cdns_rtc_set_time,
++	.read_alarm	= cdns_rtc_read_alarm,
++	.set_alarm	= cdns_rtc_set_alarm,
++	.alarm_irq_enable = cdns_rtc_alarm_irq_enable,
++};
++
++static int cdns_rtc_probe(struct platform_device *pdev)
++{
++	struct cdns_rtc *crtc;
++	struct resource *res;
++	int ret;
++	unsigned long ref_clk_freq;
++
++	crtc = devm_kzalloc(&pdev->dev, sizeof(*crtc), GFP_KERNEL);
++	if (!crtc)
++		return -ENOMEM;
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	crtc->regs = devm_ioremap_resource(&pdev->dev, res);
++	if (IS_ERR(crtc->regs))
++		return PTR_ERR(crtc->regs);
++
++	crtc->irq = platform_get_irq(pdev, 0);
++	if (crtc->irq < 0)
++		return -EINVAL;
++
++	crtc->pclk = devm_clk_get(&pdev->dev, "pclk");
++	if (IS_ERR(crtc->pclk)) {
++		ret = PTR_ERR(crtc->pclk);
++		dev_err(&pdev->dev,
++			"Failed to retrieve the peripheral clock, %d\n", ret);
++		return ret;
++	}
++
++	crtc->ref_clk = devm_clk_get(&pdev->dev, "ref_clk");
++	if (IS_ERR(crtc->ref_clk)) {
++		ret = PTR_ERR(crtc->ref_clk);
++		dev_err(&pdev->dev,
++			"Failed to retrieve the reference clock, %d\n", ret);
++		return ret;
++	}
++
++	ret = clk_prepare_enable(crtc->pclk);
++	if (ret) {
++		dev_err(&pdev->dev,
++			"Failed to enable the peripheral clock, %d\n", ret);
++		return ret;
++	}
++
++	ret = clk_prepare_enable(crtc->ref_clk);
++	if (ret) {
++		dev_err(&pdev->dev,
++			"Failed to enable the reference clock, %d\n", ret);
++		goto err_disable_pclk;
++	}
++
++	ref_clk_freq = clk_get_rate(crtc->ref_clk);
++	if ((ref_clk_freq != 1) && (ref_clk_freq != 100)) {
++		dev_err(&pdev->dev,
++			"Invalid reference clock frequency %lu Hz.\n",
++			ref_clk_freq);
++		ret = -EINVAL;
++		goto err_disable_ref_clk;
++	}
++
++	ret = devm_request_irq(&pdev->dev, crtc->irq,
++			       cdns_rtc_irq_handler, 0,
++			       dev_name(&pdev->dev), &pdev->dev);
++	if (ret) {
++		dev_err(&pdev->dev,
++			"Unable to request interrupt for the device, %d\n",
++			ret);
++		goto err_disable_ref_clk;
++	}
++
++	/* Always use 24-hour mode */
++	writel(0, crtc->regs + CDNS_RTC_HMR);
++
++	device_init_wakeup(&pdev->dev, 1);
++	platform_set_drvdata(pdev, crtc);
++	cdns_rtc_set_enabled(crtc, true);
++
++	crtc->rtc_dev = devm_rtc_device_register(&pdev->dev,
++						 dev_name(&pdev->dev),
++						 &cdns_rtc_ops,
++						 THIS_MODULE);
++	if (IS_ERR(crtc->rtc_dev)) {
++		ret = PTR_ERR(crtc->rtc_dev);
++		dev_err(&pdev->dev, "Unable to register the rtc device, %d\n",
++			ret);
++		goto err_stop_rtc;
++	}
++
++	return 0;
++
++err_stop_rtc:
++	cdns_rtc_set_enabled(crtc, false);
++
++err_disable_ref_clk:
++	clk_disable_unprepare(crtc->ref_clk);
++
++err_disable_pclk:
++	clk_disable_unprepare(crtc->pclk);
++
++	return ret;
++}
++
++static int cdns_rtc_remove(struct platform_device *pdev)
++{
++	struct cdns_rtc *crtc = platform_get_drvdata(pdev);
++
++	cdns_rtc_alarm_irq_enable(&pdev->dev, 0);
++	device_init_wakeup(&pdev->dev, 0);
++
++	clk_disable_unprepare(crtc->pclk);
++	clk_disable_unprepare(crtc->ref_clk);
++
++	return 0;
++}
++
++#ifdef CONFIG_PM_SLEEP
++static int cdns_rtc_suspend(struct device *dev)
++{
++	struct cdns_rtc *crtc = dev_get_drvdata(dev);
++
++	if (device_may_wakeup(dev))
++		enable_irq_wake(crtc->irq);
++
++	return 0;
++}
++
++static int cdns_rtc_resume(struct device *dev)
++{
++	struct cdns_rtc *crtc = dev_get_drvdata(dev);
++
++	if (device_may_wakeup(dev))
++		disable_irq_wake(crtc->irq);
++
++	return 0;
++}
++#endif
++
++static SIMPLE_DEV_PM_OPS(cdns_rtc_pm_ops, cdns_rtc_suspend, cdns_rtc_resume);
++
++static const struct of_device_id cdns_rtc_of_match[] = {
++	{ .compatible = "cdns,rtc-r109v3" },
++	{ },
++};
++MODULE_DEVICE_TABLE(of, cdns_rtc_of_match);
++
++static struct platform_driver cdns_rtc_driver = {
++	.driver = {
++		.name = "cdns-rtc",
++		.of_match_table = cdns_rtc_of_match,
++		.pm = &cdns_rtc_pm_ops,
++	},
++	.probe = cdns_rtc_probe,
++	.remove = cdns_rtc_remove,
++};
++module_platform_driver(cdns_rtc_driver);
++
++MODULE_AUTHOR("Jan Kotas <jank@cadence.com>");
++MODULE_DESCRIPTION("Cadence RTC driver");
++MODULE_LICENSE("GPL v2");
++MODULE_ALIAS("platform:cdns-rtc");
 -- 
 2.15.0
 
