@@ -2,204 +2,116 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D2B9C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 13:14:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B71AC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 13:15:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36AAE20850
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 13:14:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 07191206B6
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 13:15:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yi6YCFrK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728398AbfAHNOr (ORCPT
+        id S1728456AbfAHNP2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 08:14:47 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:43448 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726129AbfAHNOq (ORCPT
+        Tue, 8 Jan 2019 08:15:28 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:35422 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727473AbfAHNP1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 08:14:46 -0500
-Received: by mail-oi1-f193.google.com with SMTP id u18so3227164oie.10
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 05:14:45 -0800 (PST)
+        Tue, 8 Jan 2019 08:15:27 -0500
+Received: by mail-pf1-f194.google.com with SMTP id z9so1938185pfi.2
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 05:15:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ekuhxggFWt9tfhBqsa6b8OQpmTzdH0pSdOcMdL9c37o=;
+        b=Yi6YCFrKJqCiE71ZOS0yHMXtqdajGwq9WMUV+PhS+th/QTan3PeD2mYuP0I/CEdDdC
+         hzC+MgSvgpcO4d2g4+9XY6KvloHilpa2g1whZ+92su2olV9dYJp5CO53lXsdlQP3DvU7
+         M4vgiPb7dXCdxU54qcWszB4fEQ0C4lEtSNCiTVyOoLGQMJwxO3swyvPYR7/Tf0ONJKrP
+         gzpPW8VN9GBXnAIsb1w8r21X8sdDMSLW5gavM7VGxNV28KZckuifbH0X8UfjDn2suKaS
+         eTuiQVVh3HocaA0nJM8Ml0ZBX9fjMBOU68udxC2rOtVleQOOABGd/82sQlznEgbU42lu
+         /IrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WYEF5+XH43vTB+Sq1dBw4b1yLT9tAwcPrEaf7WgKZv0=;
-        b=AtzzMegAJ7qxdyeWCjglkYTn4I/pBONih8jTGOvkQ1FZj8IJ50RWrrWV2IhRdyNCYB
-         U9ZuAZFRxIHK0Lh0NdnQU6WM8HpjVQRuzIU0pZyfnQizkdUFdKYiixacWCsPvzrLKLz5
-         oJbWhvnezck8xQqoo/ffDIhyoe52yi85D5N3xaNgR8bFI9Zru//AfPdjLwCM8zFKeGlx
-         INyB7gLH55olMV4HqDGozdJC2AGor17BV9sd3Z8O8sJjboOX69PnYxgHlI8bGeI9VIAV
-         KwJamoDQ6CXi8US/qtLxsgKDHoTzvCbuiRPceCcRZe8i7JFLSMkAoX0DgfpyhEZZ4NgD
-         pLDw==
-X-Gm-Message-State: AJcUukdbhGf/J67VcQeOGIKYb48SW22fBkqgcn6I6la4/30PCgJyVUBk
-        xcDkQYI64vTgzJB7tQG6j1Ubfjdb+wo3dgS/QTrtwg==
-X-Google-Smtp-Source: ALg8bN6IEvWBsZz1bIxnsX4BZGPzD8B5SBB2c02DRgbnIbHPK7hDFUDfA2jAlx2649pO6BeOKzhe15uXJulTr6KFKt8=
-X-Received: by 2002:aca:7546:: with SMTP id q67mr1156350oic.300.1546953285342;
- Tue, 08 Jan 2019 05:14:45 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ekuhxggFWt9tfhBqsa6b8OQpmTzdH0pSdOcMdL9c37o=;
+        b=dJVaNriFLr/F0WA9q1OJXbcx0fNO6aErgzM1hxB+yvkSbH/1sjB1/fyaHGNvoBW7g9
+         1TYOaAg1f57Aix+XI6Gekg62YIik71rSFAgj4fgWJu0SSZnSqZSBWUGWzN+/szDW6RmR
+         eCP4sj6jA1VXGVCIJoQ0Nz2+G6sGeL6KXoDvyficQ5MDdt6BJicCINM3Cd+/t3rzs1jR
+         /cnypR3l4nBgRn2QrNm2njb7UGsNaRPveFSi7aLB4fAJhdCq71tjeoKR/hnh7Aj0t/og
+         eOFOPhT04f7izvMIA3cs2lK6x7HUaq/rYuaUkvGTakIE3Nyy7D29zxtsZid3E7GaKOWT
+         aqGg==
+X-Gm-Message-State: AJcUukexQdyGFaQcMDGxQDsMkJ+PRpPr+3KAAPn1WIKNJk2+JIVd4HY+
+        u9SIMJz9NffOfI4AqAA2up94Ty10
+X-Google-Smtp-Source: ALg8bN5dhQDMFQc+GsAZnxiUtZJ3Jt7/yaoQXy2IHxWavbvJWtfMArUkdgSdM3E7cNEmX5Zik8hq1Q==
+X-Received: by 2002:a63:658:: with SMTP id 85mr1465556pgg.373.1546953326182;
+        Tue, 08 Jan 2019 05:15:26 -0800 (PST)
+Received: from localhost (g206.124-44-15.ppp.wakwak.ne.jp. [124.44.15.206])
+        by smtp.gmail.com with ESMTPSA id l22sm119860345pfj.179.2019.01.08.05.15.25
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 08 Jan 2019 05:15:25 -0800 (PST)
+From:   Stafford Horne <shorne@gmail.com>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     Stafford Horne <shorne@gmail.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jonas Bonn <jonas@southpole.se>,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        openrisc@lists.librecores.org
+Subject: [PATCH] arch/openrisc: Fix issues with access_ok()
+Date:   Tue,  8 Jan 2019 22:15:15 +0900
+Message-Id: <20190108131516.27903-1-shorne@gmail.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-References: <1541437840-29293-1-git-send-email-neelx@redhat.com> <tip-a786ef152cdcfebc923a67f63c7815806eefcf81@git.kernel.org>
-In-Reply-To: <tip-a786ef152cdcfebc923a67f63c7815806eefcf81@git.kernel.org>
-From:   Daniel Vacek <neelx@redhat.com>
-Date:   Tue, 8 Jan 2019 14:14:17 +0100
-Message-ID: <CACjP9X-ax44OxjRmVPJaAu93ZJJySuuFO9mtsvSc6Lfpipzspw@mail.gmail.com>
-Subject: Re: [tip:x86/timers] x86/tsc: Make calibration refinement more robust
-To:     Thomas Gleixner <tglx@linutronix.de>, mingo@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>
-Cc:     linux-tip-commits@vger.kernel.org,
-        open list <linux-kernel@vger.kernel.org>,
-        Borislav Petkov <bp@alien8.de>, Daniel Vacek <neelx@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thomas, Ingo, Peter.
+The commit 594cc251fdd0 ("make 'user_access_begin()' do 'access_ok()'")
+exposed incorrect implementations of access_ok() macro in several
+architectures.  This change fixes 2 issues found in OpenRISC.
 
-I'm wondering, was x86/timers branch of tip tree merged to linus' tree
-for v5.0-rc1? Somehow I do not see this patch make it through...
+OpenRISC was not properly using parenthesis for arguments and also using
+arguments twice.  This patch fixes those 2 issues.
 
-Am I doing something wrong?
+I test booted this patch with v5.0-rc1 on qemu and it's working fine.
 
---nX
+Cc: Guenter Roeck <linux@roeck-us.net>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Stafford Horne <shorne@gmail.com>
+---
+ arch/openrisc/include/asm/uaccess.h | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-On Tue, Nov 6, 2018 at 9:58 PM tip-bot for Daniel Vacek
-<tipbot@zytor.com> wrote:
->
-> Commit-ID:  a786ef152cdcfebc923a67f63c7815806eefcf81
-> Gitweb:     https://git.kernel.org/tip/a786ef152cdcfebc923a67f63c7815806eefcf81
-> Author:     Daniel Vacek <neelx@redhat.com>
-> AuthorDate: Mon, 5 Nov 2018 18:10:40 +0100
-> Committer:  Thomas Gleixner <tglx@linutronix.de>
-> CommitDate: Tue, 6 Nov 2018 21:53:15 +0100
->
-> x86/tsc: Make calibration refinement more robust
->
-> The threshold in tsc_read_refs() is constant which may favor slower CPUs
-> but may not be optimal for simple reading of reference on faster ones.
->
-> Hence make it proportional to tsc_khz when available to compensate for
-> this. The threshold guards against any disturbance like IRQs, NMIs, SMIs
-> or CPU stealing by host on guest systems so rename it accordingly and
-> fix comments as well.
->
-> Also on some systems there is noticeable DMI bus contention at some point
-> during boot keeping the readout failing (observed with about one in ~300
-> boots when testing). In that case retry also the second readout instead of
-> simply bailing out unrefined. Usually the next second the readout returns
-> fast just fine without any issues.
->
-> Signed-off-by: Daniel Vacek <neelx@redhat.com>
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Borislav Petkov <bp@alien8.de>
-> Cc: "H. Peter Anvin" <hpa@zytor.com>
-> Link: https://lkml.kernel.org/r/1541437840-29293-1-git-send-email-neelx@redhat.com
->
-> ---
->  arch/x86/kernel/tsc.c | 30 ++++++++++++++++--------------
->  1 file changed, 16 insertions(+), 14 deletions(-)
->
-> diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
-> index e9f777bfed40..3fae23834069 100644
-> --- a/arch/x86/kernel/tsc.c
-> +++ b/arch/x86/kernel/tsc.c
-> @@ -297,15 +297,16 @@ static int __init tsc_setup(char *str)
->
->  __setup("tsc=", tsc_setup);
->
-> -#define MAX_RETRIES     5
-> -#define SMI_TRESHOLD    50000
-> +#define MAX_RETRIES            5
-> +#define TSC_DEFAULT_THRESHOLD  0x20000
->
->  /*
-> - * Read TSC and the reference counters. Take care of SMI disturbance
-> + * Read TSC and the reference counters. Take care of any disturbances
->   */
->  static u64 tsc_read_refs(u64 *p, int hpet)
->  {
->         u64 t1, t2;
-> +       u64 thresh = tsc_khz ? tsc_khz >> 5 : TSC_DEFAULT_THRESHOLD;
->         int i;
->
->         for (i = 0; i < MAX_RETRIES; i++) {
-> @@ -315,7 +316,7 @@ static u64 tsc_read_refs(u64 *p, int hpet)
->                 else
->                         *p = acpi_pm_read_early();
->                 t2 = get_cycles();
-> -               if ((t2 - t1) < SMI_TRESHOLD)
-> +               if ((t2 - t1) < thresh)
->                         return t2;
->         }
->         return ULLONG_MAX;
-> @@ -703,15 +704,15 @@ static unsigned long pit_hpet_ptimer_calibrate_cpu(void)
->          * zero. In each wait loop iteration we read the TSC and check
->          * the delta to the previous read. We keep track of the min
->          * and max values of that delta. The delta is mostly defined
-> -        * by the IO time of the PIT access, so we can detect when a
-> -        * SMI/SMM disturbance happened between the two reads. If the
-> +        * by the IO time of the PIT access, so we can detect when
-> +        * any disturbance happened between the two reads. If the
->          * maximum time is significantly larger than the minimum time,
->          * then we discard the result and have another try.
->          *
->          * 2) Reference counter. If available we use the HPET or the
->          * PMTIMER as a reference to check the sanity of that value.
->          * We use separate TSC readouts and check inside of the
-> -        * reference read for a SMI/SMM disturbance. We dicard
-> +        * reference read for any possible disturbance. We dicard
->          * disturbed values here as well. We do that around the PIT
->          * calibration delay loop as we have to wait for a certain
->          * amount of time anyway.
-> @@ -744,7 +745,7 @@ static unsigned long pit_hpet_ptimer_calibrate_cpu(void)
->                 if (ref1 == ref2)
->                         continue;
->
-> -               /* Check, whether the sampling was disturbed by an SMI */
-> +               /* Check, whether the sampling was disturbed */
->                 if (tsc1 == ULLONG_MAX || tsc2 == ULLONG_MAX)
->                         continue;
->
-> @@ -1268,7 +1269,7 @@ static DECLARE_DELAYED_WORK(tsc_irqwork, tsc_refine_calibration_work);
->   */
->  static void tsc_refine_calibration_work(struct work_struct *work)
->  {
-> -       static u64 tsc_start = -1, ref_start;
-> +       static u64 tsc_start = ULLONG_MAX, ref_start;
->         static int hpet;
->         u64 tsc_stop, ref_stop, delta;
->         unsigned long freq;
-> @@ -1283,14 +1284,15 @@ static void tsc_refine_calibration_work(struct work_struct *work)
->          * delayed the first time we expire. So set the workqueue
->          * again once we know timers are working.
->          */
-> -       if (tsc_start == -1) {
-> +       if (tsc_start == ULLONG_MAX) {
-> +restart:
->                 /*
->                  * Only set hpet once, to avoid mixing hardware
->                  * if the hpet becomes enabled later.
->                  */
->                 hpet = is_hpet_enabled();
-> -               schedule_delayed_work(&tsc_irqwork, HZ);
->                 tsc_start = tsc_read_refs(&ref_start, hpet);
-> +               schedule_delayed_work(&tsc_irqwork, HZ);
->                 return;
->         }
->
-> @@ -1300,9 +1302,9 @@ static void tsc_refine_calibration_work(struct work_struct *work)
->         if (ref_start == ref_stop)
->                 goto out;
->
-> -       /* Check, whether the sampling was disturbed by an SMI */
-> -       if (tsc_start == ULLONG_MAX || tsc_stop == ULLONG_MAX)
-> -               goto out;
-> +       /* Check, whether the sampling was disturbed */
-> +       if (tsc_stop == ULLONG_MAX)
-> +               goto restart;
->
->         delta = tsc_stop - tsc_start;
->         delta *= 1000000LL;
+diff --git a/arch/openrisc/include/asm/uaccess.h b/arch/openrisc/include/asm/uaccess.h
+index bc8191a34db7..a44682c8adc3 100644
+--- a/arch/openrisc/include/asm/uaccess.h
++++ b/arch/openrisc/include/asm/uaccess.h
+@@ -58,8 +58,12 @@
+ /* Ensure that addr is below task's addr_limit */
+ #define __addr_ok(addr) ((unsigned long) addr < get_fs())
+ 
+-#define access_ok(addr, size) \
+-	__range_ok((unsigned long)addr, (unsigned long)size)
++#define access_ok(addr, size)						\
++({ 									\
++	unsigned long __ao_addr = (unsigned long)(addr);		\
++	unsigned long __ao_size = (unsigned long)(size);		\
++	__range_ok(__ao_addr, __ao_size);				\
++})
+ 
+ /*
+  * These are the main single-value transfer routines.  They automatically
+-- 
+2.19.1
+
