@@ -2,245 +2,269 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D97B5C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 14:34:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E1B3C43444
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 14:34:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A26DE2087F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 14:34:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9B9020850
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 14:34:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546958087;
+	bh=LyTjLc5LHg1Q4pYFn5vaZerwZ0bmeofdcypb8zhDmpM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=2ZvRTtDucyi/gNGLq1BFM8gW7PFV8GpoHu5/qpR3joqOhXNG8TKAwDRCBxkzUmsAj
+	 MZ+opqn2Tict/z9v7L8qXAUdQoxt8e/5l+8FLMbdZJQMcqWsVJJBQMH4luJXcoeKPT
+	 mXx68jm8nn3d8L2VIpN3uYA9NbIVde91Ab0vOeLM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728881AbfAHOek (ORCPT
+        id S1728938AbfAHOeq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 09:34:40 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49866 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728846AbfAHOej (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 09:34:39 -0500
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x08EUa8a151480
-        for <linux-kernel@vger.kernel.org>; Tue, 8 Jan 2019 09:34:38 -0500
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2pvva451vh-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 09:34:37 -0500
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Tue, 8 Jan 2019 14:34:35 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 8 Jan 2019 14:34:32 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x08EYVFx59768884
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 8 Jan 2019 14:34:31 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 63E2B4C050;
-        Tue,  8 Jan 2019 14:34:31 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C43764C040;
-        Tue,  8 Jan 2019 14:34:30 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.8.241])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Tue,  8 Jan 2019 14:34:30 +0000 (GMT)
-Date:   Tue, 8 Jan 2019 16:34:29 +0200
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v12 01/10] powerpc/irq: use memblock functions returning
- virtual address
-References: <cover.1546954233.git.christophe.leroy@c-s.fr>
- <ec01a9be000c2305eec61bb1e2c44df2f917c1a6.1546954236.git.christophe.leroy@c-s.fr>
+        Tue, 8 Jan 2019 09:34:46 -0500
+Received: from mx2.suse.de ([195.135.220.15]:50716 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728846AbfAHOeo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 09:34:44 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 25857B081;
+        Tue,  8 Jan 2019 14:34:41 +0000 (UTC)
+Date:   Tue, 8 Jan 2019 15:34:40 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Pingfan Liu <kernelfans@gmail.com>
+Cc:     Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: Re: [PATCH] mm/alloc: fallback to first node if the wanted node
+ offline
+Message-ID: <20190108143440.GU31793@dhcp22.suse.cz>
+References: <CAFgQCTuu54oZWKq_ppEvZFb4Mz31gVmsa37gTap+e9KbE=T0aQ@mail.gmail.com>
+ <20181207155627.GG1286@dhcp22.suse.cz>
+ <20181210123738.GN1286@dhcp22.suse.cz>
+ <CAFgQCTupPc1rKv2SrmWD+eJ0H6PRaizPBw3+AG67_PuLA2SKFw@mail.gmail.com>
+ <20181212115340.GQ1286@dhcp22.suse.cz>
+ <CAFgQCTuhW6sPtCNFmnz13p30v3owE3Rty5WJNgtqgz8XaZT-aQ@mail.gmail.com>
+ <CAFgQCTtFZ8ku7W_7rcmrbmH4Qvsv7zgOSHKfPSpNSkVjYkPfBg@mail.gmail.com>
+ <20181217132926.GM30879@dhcp22.suse.cz>
+ <CAFgQCTubm9B1_zM+oc1GLfOChu+XY9N4OcjyeDgk6ggObRtMKg@mail.gmail.com>
+ <20181220091934.GC14234@dhcp22.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ec01a9be000c2305eec61bb1e2c44df2f917c1a6.1546954236.git.christophe.leroy@c-s.fr>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 19010814-0028-0000-0000-00000335FC81
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19010814-0029-0000-0000-000023F30A09
-Message-Id: <20190108143428.GB14063@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-08_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901080120
+In-Reply-To: <20181220091934.GC14234@dhcp22.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On Tue, Jan 08, 2019 at 01:43:09PM +0000, Christophe Leroy wrote:
-> Since only the virtual address of allocated blocks is used,
-> lets use functions returning directly virtual address.
+On Thu 20-12-18 10:19:34, Michal Hocko wrote:
+> On Thu 20-12-18 15:19:39, Pingfan Liu wrote:
+> > Hi Michal,
+> > 
+> > WIth this patch applied on the old one, I got the following message.
+> > Please get it from attachment.
+> [...]
+> > [    0.409637] NUMA: Node 1 [mem 0x00000000-0x0009ffff] + [mem 0x00100000-0x7fffffff] -> [mem 0x00000000-0x7fffffff]
+> > [    0.419858] NUMA: Node 1 [mem 0x00000000-0x7fffffff] + [mem 0x100000000-0x47fffffff] -> [mem 0x00000000-0x47fffffff]
+> > [    0.430356] NODE_DATA(0) allocated [mem 0x87efd4000-0x87effefff]
+> > [    0.436325]     NODE_DATA(0) on node 5
+> > [    0.440092] Initmem setup node 0 [mem 0x0000000000000000-0x0000000000000000]
+> > [    0.447078] node[0] zonelist: 
+> > [    0.450106] NODE_DATA(1) allocated [mem 0x47ffd5000-0x47fffffff]
+> > [    0.456114] NODE_DATA(2) allocated [mem 0x87efa9000-0x87efd3fff]
+> > [    0.462064]     NODE_DATA(2) on node 5
+> > [    0.465852] Initmem setup node 2 [mem 0x0000000000000000-0x0000000000000000]
+> > [    0.472813] node[2] zonelist: 
+> > [    0.475846] NODE_DATA(3) allocated [mem 0x87ef7e000-0x87efa8fff]
+> > [    0.481827]     NODE_DATA(3) on node 5
+> > [    0.485590] Initmem setup node 3 [mem 0x0000000000000000-0x0000000000000000]
+> > [    0.492575] node[3] zonelist: 
+> > [    0.495608] NODE_DATA(4) allocated [mem 0x87ef53000-0x87ef7dfff]
+> > [    0.501587]     NODE_DATA(4) on node 5
+> > [    0.505349] Initmem setup node 4 [mem 0x0000000000000000-0x0000000000000000]
+> > [    0.512334] node[4] zonelist: 
+> > [    0.515370] NODE_DATA(5) allocated [mem 0x87ef28000-0x87ef52fff]
+> > [    0.521384] NODE_DATA(6) allocated [mem 0x87eefd000-0x87ef27fff]
+> > [    0.527329]     NODE_DATA(6) on node 5
+> > [    0.531091] Initmem setup node 6 [mem 0x0000000000000000-0x0000000000000000]
+> > [    0.538076] node[6] zonelist: 
+> > [    0.541109] NODE_DATA(7) allocated [mem 0x87eed2000-0x87eefcfff]
+> > [    0.547090]     NODE_DATA(7) on node 5
+> > [    0.550851] Initmem setup node 7 [mem 0x0000000000000000-0x0000000000000000]
+> > [    0.557836] node[7] zonelist: 
 > 
-> Those functions have the advantage of also zeroing the block.
+> OK, so it is clear that building zonelists this early is not going to
+> fly. We do not have the complete information yet. I am not sure when do
+> we get that at this moment but I suspect the we either need to move that
+> initialization to a sooner stage or we have to reconsider whether the
+> phase when we build zonelists really needs to consider only online numa
+> nodes.
 > 
-> Suggested-by: Mike Rapoport <rppt@linux.ibm.com>
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-> ---
->  @Mike: Part of this is taken from your serie.
+> [...]
+> > [    1.067658] percpu: Embedded 46 pages/cpu @(____ptrval____) s151552 r8192 d28672 u262144
+> > [    1.075692] node[1] zonelist: 1:Normal 1:DMA32 1:DMA 5:Normal 
+> > [    1.081376] node[5] zonelist: 5:Normal 1:Normal 1:DMA32 1:DMA 
+> 
+> I hope to get to this before I leave for christmas vacation, if not I
+> will stare into it after then.
 
-It seems you've found some places I've missed :)
-Note that my series was merged to mmotm, so you may get a conflict with it.
+I am sorry but I didn't get to this sooner. But I've got another idea. I
+concluded that the whole dance is simply bogus and we should treat
+memory less nodes, well, as nodes with no memory ranges rather than
+special case them. Could you give the following a spin please?
 
->  I was not sure how to include you in the commit log, I used
->  Suggested-by: but could use any other property, so if you prefer
->  something different just tell me. Also, if you could review this patch,
->  it would be nice.
-
-Suggested-by sounds reasonable.
+---
+diff --git a/arch/x86/mm/numa.c b/arch/x86/mm/numa.c
+index 1308f5408bf7..0e79445cfd85 100644
+--- a/arch/x86/mm/numa.c
++++ b/arch/x86/mm/numa.c
+@@ -216,8 +216,6 @@ static void __init alloc_node_data(int nid)
  
->  arch/powerpc/kernel/irq.c      |  5 -----
->  arch/powerpc/kernel/setup_32.c | 15 +++++----------
->  arch/powerpc/kernel/setup_64.c | 16 ++--------------
->  3 files changed, 7 insertions(+), 29 deletions(-)
-> 
-> diff --git a/arch/powerpc/kernel/irq.c b/arch/powerpc/kernel/irq.c
-> index 916ddc4aac44..4a44bc395fbc 100644
-> --- a/arch/powerpc/kernel/irq.c
-> +++ b/arch/powerpc/kernel/irq.c
-> @@ -725,18 +725,15 @@ void exc_lvl_ctx_init(void)
->  #endif
->  #endif
->  
-> -		memset((void *)critirq_ctx[cpu_nr], 0, THREAD_SIZE);
->  		tp = critirq_ctx[cpu_nr];
->  		tp->cpu = cpu_nr;
->  		tp->preempt_count = 0;
->  
->  #ifdef CONFIG_BOOKE
-> -		memset((void *)dbgirq_ctx[cpu_nr], 0, THREAD_SIZE);
->  		tp = dbgirq_ctx[cpu_nr];
->  		tp->cpu = cpu_nr;
->  		tp->preempt_count = 0;
->  
-> -		memset((void *)mcheckirq_ctx[cpu_nr], 0, THREAD_SIZE);
->  		tp = mcheckirq_ctx[cpu_nr];
->  		tp->cpu = cpu_nr;
->  		tp->preempt_count = HARDIRQ_OFFSET;
-> @@ -754,12 +751,10 @@ void irq_ctx_init(void)
->  	int i;
->  
->  	for_each_possible_cpu(i) {
-> -		memset((void *)softirq_ctx[i], 0, THREAD_SIZE);
->  		tp = softirq_ctx[i];
->  		tp->cpu = i;
->  		klp_init_thread_info(tp);
->  
-> -		memset((void *)hardirq_ctx[i], 0, THREAD_SIZE);
->  		tp = hardirq_ctx[i];
->  		tp->cpu = i;
->  		klp_init_thread_info(tp);
-> diff --git a/arch/powerpc/kernel/setup_32.c b/arch/powerpc/kernel/setup_32.c
-> index 947f904688b0..bfe1b46a26dc 100644
-> --- a/arch/powerpc/kernel/setup_32.c
-> +++ b/arch/powerpc/kernel/setup_32.c
-> @@ -203,10 +203,8 @@ void __init irqstack_early_init(void)
->  	/* interrupt stacks must be in lowmem, we get that for free on ppc32
->  	 * as the memblock is limited to lowmem by default */
->  	for_each_possible_cpu(i) {
-> -		softirq_ctx[i] = (struct thread_info *)
-> -			__va(memblock_phys_alloc(THREAD_SIZE, THREAD_SIZE));
-> -		hardirq_ctx[i] = (struct thread_info *)
-> -			__va(memblock_phys_alloc(THREAD_SIZE, THREAD_SIZE));
-> +		softirq_ctx[i] = memblock_alloc(THREAD_SIZE, THREAD_SIZE);
-> +		hardirq_ctx[i] = memblock_alloc(THREAD_SIZE, THREAD_SIZE);
->  	}
->  }
->  
-> @@ -224,13 +222,10 @@ void __init exc_lvl_early_init(void)
->  		hw_cpu = 0;
->  #endif
->  
-> -		critirq_ctx[hw_cpu] = (struct thread_info *)
-> -			__va(memblock_phys_alloc(THREAD_SIZE, THREAD_SIZE));
-> +		critirq_ctx[hw_cpu] = memblock_alloc(THREAD_SIZE, THREAD_SIZE);
->  #ifdef CONFIG_BOOKE
-> -		dbgirq_ctx[hw_cpu] = (struct thread_info *)
-> -			__va(memblock_phys_alloc(THREAD_SIZE, THREAD_SIZE));
-> -		mcheckirq_ctx[hw_cpu] = (struct thread_info *)
-> -			__va(memblock_phys_alloc(THREAD_SIZE, THREAD_SIZE));
-> +		dbgirq_ctx[hw_cpu] = memblock_alloc(THREAD_SIZE, THREAD_SIZE);
-> +		mcheckirq_ctx[hw_cpu] = memblock_alloc(THREAD_SIZE, THREAD_SIZE);
->  #endif
->  	}
->  }
-> diff --git a/arch/powerpc/kernel/setup_64.c b/arch/powerpc/kernel/setup_64.c
-> index 236c1151a3a7..943503f1e2c0 100644
-> --- a/arch/powerpc/kernel/setup_64.c
-> +++ b/arch/powerpc/kernel/setup_64.c
-> @@ -634,19 +634,10 @@ __init u64 ppc64_bolted_size(void)
->  
->  static void *__init alloc_stack(unsigned long limit, int cpu)
->  {
-> -	unsigned long pa;
-> -
->  	BUILD_BUG_ON(STACK_INT_FRAME_SIZE % 16);
->  
-> -	pa = memblock_alloc_base_nid(THREAD_SIZE, THREAD_SIZE, limit,
-> -					early_cpu_to_node(cpu), MEMBLOCK_NONE);
-> -	if (!pa) {
-> -		pa = memblock_alloc_base(THREAD_SIZE, THREAD_SIZE, limit);
-> -		if (!pa)
-> -			panic("cannot allocate stacks");
-> -	}
-> -
-> -	return __va(pa);
-> +	return memblock_alloc_try_nid(THREAD_SIZE, THREAD_SIZE, MEMBLOCK_LOW_LIMIT,
-> +				      limit, early_cpu_to_node(cpu));
-
-I'd prefer if you would keep the return value check and panic() here, as
-I'm working on removing the panic() from memblock_alloc*().
-
-Other than that, everything seems right, at least from the memblock
-perspective. So, with panic retained feel free to add
-
-Acked-by: Mike Rapoport <rppt@linux.ibm.com>
-
->  }
->  
->  void __init irqstack_early_init(void)
-> @@ -739,20 +730,17 @@ void __init emergency_stack_init(void)
->  		struct thread_info *ti;
->  
->  		ti = alloc_stack(limit, i);
-> -		memset(ti, 0, THREAD_SIZE);
->  		emerg_stack_init_thread_info(ti, i);
->  		paca_ptrs[i]->emergency_sp = (void *)ti + THREAD_SIZE;
->  
->  #ifdef CONFIG_PPC_BOOK3S_64
->  		/* emergency stack for NMI exception handling. */
->  		ti = alloc_stack(limit, i);
-> -		memset(ti, 0, THREAD_SIZE);
->  		emerg_stack_init_thread_info(ti, i);
->  		paca_ptrs[i]->nmi_emergency_sp = (void *)ti + THREAD_SIZE;
->  
->  		/* emergency stack for machine check exception handling. */
->  		ti = alloc_stack(limit, i);
-> -		memset(ti, 0, THREAD_SIZE);
->  		emerg_stack_init_thread_info(ti, i);
->  		paca_ptrs[i]->mc_emergency_sp = (void *)ti + THREAD_SIZE;
->  #endif
-> -- 
-> 2.13.3
-> 
-
+ 	node_data[nid] = nd;
+ 	memset(NODE_DATA(nid), 0, sizeof(pg_data_t));
+-
+-	node_set_online(nid);
+ }
+ 
+ /**
+@@ -535,6 +533,7 @@ static int __init numa_register_memblks(struct numa_meminfo *mi)
+ 	/* Account for nodes with cpus and no memory */
+ 	node_possible_map = numa_nodes_parsed;
+ 	numa_nodemask_from_meminfo(&node_possible_map, mi);
++	pr_info("parsed=%*pbl, possible=%*pbl\n", nodemask_pr_args(&numa_nodes_parsed), nodemask_pr_args(&node_possible_map));
+ 	if (WARN_ON(nodes_empty(node_possible_map)))
+ 		return -EINVAL;
+ 
+@@ -570,7 +569,7 @@ static int __init numa_register_memblks(struct numa_meminfo *mi)
+ 		return -EINVAL;
+ 
+ 	/* Finally register nodes. */
+-	for_each_node_mask(nid, node_possible_map) {
++	for_each_node_mask(nid, numa_nodes_parsed) {
+ 		u64 start = PFN_PHYS(max_pfn);
+ 		u64 end = 0;
+ 
+@@ -581,9 +580,6 @@ static int __init numa_register_memblks(struct numa_meminfo *mi)
+ 			end = max(mi->blk[i].end, end);
+ 		}
+ 
+-		if (start >= end)
+-			continue;
+-
+ 		/*
+ 		 * Don't confuse VM with a node that doesn't have the
+ 		 * minimum amount of memory:
+@@ -592,6 +588,8 @@ static int __init numa_register_memblks(struct numa_meminfo *mi)
+ 			continue;
+ 
+ 		alloc_node_data(nid);
++		if (end)
++			node_set_online(nid);
+ 	}
+ 
+ 	/* Dump memblock with node info and return. */
+@@ -721,21 +719,6 @@ void __init x86_numa_init(void)
+ 	numa_init(dummy_numa_init);
+ }
+ 
+-static void __init init_memory_less_node(int nid)
+-{
+-	unsigned long zones_size[MAX_NR_ZONES] = {0};
+-	unsigned long zholes_size[MAX_NR_ZONES] = {0};
+-
+-	/* Allocate and initialize node data. Memory-less node is now online.*/
+-	alloc_node_data(nid);
+-	free_area_init_node(nid, zones_size, 0, zholes_size);
+-
+-	/*
+-	 * All zonelists will be built later in start_kernel() after per cpu
+-	 * areas are initialized.
+-	 */
+-}
+-
+ /*
+  * Setup early cpu_to_node.
+  *
+@@ -763,9 +746,6 @@ void __init init_cpu_to_node(void)
+ 		if (node == NUMA_NO_NODE)
+ 			continue;
+ 
+-		if (!node_online(node))
+-			init_memory_less_node(node);
+-
+ 		numa_set_node(cpu, node);
+ 	}
+ }
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 2ec9cc407216..52e54d16662a 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -5234,6 +5234,8 @@ static void build_zonelists(pg_data_t *pgdat)
+ 	int node, load, nr_nodes = 0;
+ 	nodemask_t used_mask;
+ 	int local_node, prev_node;
++	struct zone *zone;
++	struct zoneref *z;
+ 
+ 	/* NUMA-aware ordering of nodes */
+ 	local_node = pgdat->node_id;
+@@ -5259,6 +5261,11 @@ static void build_zonelists(pg_data_t *pgdat)
+ 
+ 	build_zonelists_in_node_order(pgdat, node_order, nr_nodes);
+ 	build_thisnode_zonelists(pgdat);
++
++	pr_info("node[%d] zonelist: ", pgdat->node_id);
++	for_each_zone_zonelist(zone, z, &pgdat->node_zonelists[ZONELIST_FALLBACK], MAX_NR_ZONES-1)
++		pr_cont("%d:%s ", zone_to_nid(zone), zone->name);
++	pr_cont("\n");
+ }
+ 
+ #ifdef CONFIG_HAVE_MEMORYLESS_NODES
+@@ -5361,10 +5368,11 @@ static void __build_all_zonelists(void *data)
+ 	if (self && !node_online(self->node_id)) {
+ 		build_zonelists(self);
+ 	} else {
+-		for_each_online_node(nid) {
++		for_each_node(nid) {
+ 			pg_data_t *pgdat = NODE_DATA(nid);
+ 
+-			build_zonelists(pgdat);
++			if (pgdat)
++				build_zonelists(pgdat);
+ 		}
+ 
+ #ifdef CONFIG_HAVE_MEMORYLESS_NODES
+@@ -6644,10 +6652,8 @@ static unsigned long __init find_min_pfn_for_node(int nid)
+ 	for_each_mem_pfn_range(i, nid, &start_pfn, NULL, NULL)
+ 		min_pfn = min(min_pfn, start_pfn);
+ 
+-	if (min_pfn == ULONG_MAX) {
+-		pr_warn("Could not find start_pfn for node %d\n", nid);
++	if (min_pfn == ULONG_MAX)
+ 		return 0;
+-	}
+ 
+ 	return min_pfn;
+ }
+@@ -6991,8 +6997,12 @@ void __init free_area_init_nodes(unsigned long *max_zone_pfn)
+ 	mminit_verify_pageflags_layout();
+ 	setup_nr_node_ids();
+ 	zero_resv_unavail();
+-	for_each_online_node(nid) {
++	for_each_node(nid) {
+ 		pg_data_t *pgdat = NODE_DATA(nid);
++
++		if (!pgdat)
++			continue;
++
+ 		free_area_init_node(nid, NULL,
+ 				find_min_pfn_for_node(nid), NULL);
+ 
 -- 
-Sincerely yours,
-Mike.
-
+Michal Hocko
+SUSE Labs
