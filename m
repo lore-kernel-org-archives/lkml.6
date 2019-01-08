@@ -4,48 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED3B4C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:06:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C3A1C43444
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:06:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B83F720660
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:06:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF38220660
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:06:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546977977;
-	bh=g2lipeqmxBLVZO2Od5R3b/UbIc2gUb0QSaP0sqUkxSQ=;
+	s=default; t=1546977985;
+	bh=oolFVc6pPT7lKrKvgCCxG9n+ztWUNckEjXO1ArBVLNk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=fc1UcnQ4IP+IGYQsFdf2GNKfpOh3fPLkLy0sq8u5imILVthGBvL1Gu6gYo9XD9X2x
-	 naLG5Eg8qISNBQszGIEvdll2H5yQXTkDwXhho5ZdTVruC3Dtn08PbYMVVKYfErIlYd
-	 o8VovjH8s/RZXWO0GCtHAjnfldQU+UhED2ivXlSI=
+	b=BRrvj0ViMUBe8BcDFvn60J3yPYOyNnpZV5srcLZ8mt6uylUKJmiOSCZUzJf4she90
+	 ubQM4PX58ANhVzbNTVxMJyzAGslHxf7luxaueeNR7tPiUOILZkuFOURJvDvs5/+BhS
+	 v+b/J+TMi/wKxyRkECwy3qsem44w0LzG+ts3O0xw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730480AbfAHUGQ (ORCPT
+        id S1730083AbfAHUGY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 15:06:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35008 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 15:06:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34982 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729921AbfAHT2K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:28:10 -0500
+        id S1729905AbfAHT2J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:28:09 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9CE4720645;
-        Tue,  8 Jan 2019 19:28:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7CA8E20827;
+        Tue,  8 Jan 2019 19:28:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975689;
-        bh=g2lipeqmxBLVZO2Od5R3b/UbIc2gUb0QSaP0sqUkxSQ=;
+        s=default; t=1546975688;
+        bh=oolFVc6pPT7lKrKvgCCxG9n+ztWUNckEjXO1ArBVLNk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jmelBLiNxGFRnXC+9A58xu/flH1jr1WQKgzN9NaPcMdoRrlYj0yiy86Ewwz1Sp1/R
-         LQTBb1Y7ywkndmXs/dhfkyZGUi2NahkUnwoHjmmbHPy51nlAxGkEN9AbIBVMq1f6kj
-         jQWk2wVJfr9kexFa+cTvtnwVLLWbGLGBkTipJ2Ds=
+        b=sY1ewdJhlB8EZBbfYhzkkGrD1tXUxS5Vjios6WAXKdRmnY7Tqnh6uGvFYSbrwTO1a
+         FW3qZux117nsOfilwdi0Y4xAZaIRt/7NAUnCk07V4rOVRXaxIQYs9+AQi/U/eTzi0s
+         el6CvAC+t/rorQzsBRElwSPuyz73OdWi4Fcq/TmU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org,
+Cc:     Gao Xiang <gaoxiang25@huawei.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>, linux-erofs@lists.ozlabs.org,
         devel@driverdev.osuosl.org
-Subject: [PATCH AUTOSEL 4.20 056/117] media: cedrus: don't initialize pointers with zero
-Date:   Tue,  8 Jan 2019 14:25:24 -0500
-Message-Id: <20190108192628.121270-56-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 055/117] staging: erofs: fix use-after-free of on-stack `z_erofs_vle_unzip_io'
+Date:   Tue,  8 Jan 2019 14:25:23 -0500
+Message-Id: <20190108192628.121270-55-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192628.121270-1-sashal@kernel.org>
 References: <20190108192628.121270-1-sashal@kernel.org>
@@ -57,94 +59,87 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+From: Gao Xiang <gaoxiang25@huawei.com>
 
-[ Upstream commit e4d7b113fdccde1acf8638c5879f2a450d492303 ]
+[ Upstream commit 848bd9acdcd00c164b42b14aacec242949ecd471 ]
 
-A common mistake is to assume that initializing a var with:
-	struct foo f = { 0 };
+The root cause is the race as follows:
+ Thread #0                         Thread #1
 
-Would initialize a zeroed struct. Actually, what this does is
-to initialize the first element of the struct to zero.
+ z_erofs_vle_unzip_kickoff         z_erofs_submit_and_unzip
 
-According to C99 Standard 6.7.8.21:
+                                    struct z_erofs_vle_unzip_io io[]
+   atomic_add_return()
+                                    wait_event()
+                                    [end of function]
+   wake_up()
 
-    "If there are fewer initializers in a brace-enclosed
-     list than there are elements or members of an aggregate,
-     or fewer characters in a string literal used to initialize
-     an array of known size than there are elements in the array,
-     the remainder of the aggregate shall be initialized implicitly
-     the same as objects that have static storage duration."
+Fix it by taking the waitqueue lock between atomic_add_return and
+wake_up to close such the race.
 
-So, in practice, it could zero the entire struct, but, if the
-first element is not an integer, it will produce warnings:
+kernel message:
 
-	drivers/staging/media/sunxi/cedrus/cedrus.c:drivers/staging/media/sunxi/cedrus/cedrus.c:78:49:  warning: Using plain integer as NULL pointer
-	drivers/staging/media/sunxi/cedrus/cedrus_dec.c:drivers/staging/media/sunxi/cedrus/cedrus_dec.c:29:35:  warning: Using plain integer as NULL pointer
+Unable to handle kernel paging request at virtual address 97f7052caa1303dc
+...
+Workqueue: kverityd verity_work
+task: ffffffe32bcb8000 task.stack: ffffffe3298a0000
+PC is at __wake_up_common+0x48/0xa8
+LR is at __wake_up+0x3c/0x58
+...
+Call trace:
+...
+[<ffffff94a08ff648>] __wake_up_common+0x48/0xa8
+[<ffffff94a08ff8b8>] __wake_up+0x3c/0x58
+[<ffffff94a0c11b60>] z_erofs_vle_unzip_kickoff+0x40/0x64
+[<ffffff94a0c118e4>] z_erofs_vle_read_endio+0x94/0x134
+[<ffffff94a0c83c9c>] bio_endio+0xe4/0xf8
+[<ffffff94a1076540>] dec_pending+0x134/0x32c
+[<ffffff94a1076f28>] clone_endio+0x90/0xf4
+[<ffffff94a0c83c9c>] bio_endio+0xe4/0xf8
+[<ffffff94a1095024>] verity_work+0x210/0x368
+[<ffffff94a08c4150>] process_one_work+0x188/0x4b4
+[<ffffff94a08c45bc>] worker_thread+0x140/0x458
+[<ffffff94a08cad48>] kthread+0xec/0x108
+[<ffffff94a0883ab4>] ret_from_fork+0x10/0x1c
+Code: d1006273 54000260 f9400804 b9400019 (b85fc081)
+---[ end trace be9dde154f677cd1 ]---
 
-As the right initialization would be, instead:
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-	struct foo f = { NULL };
-
-Another way to initialize it with gcc is to use:
-
-	struct foo f = {};
-
-That seems to be a gcc extension, but clang also does the right thing,
-and that's a clean way for doing it.
-
-Anyway, I decided to check upstream what's the most commonly pattern.
-The "= {}" pattern has about 2000 entries:
-
-	$ git grep -E "=\s*\{\s*\}"|wc -l
-	1951
-
-The standard-C compliant pattern has about 2500 entries:
-
-	$ git grep -E "=\s*\{\s*NULL\s*\}"|wc -l
-	137
-	$ git grep -E "=\s*\{\s*0\s*\}"|wc -l
-	2323
-
-Meaning that developers have split options on that.
-
-So, let's opt to the simpler form.
-
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Acked-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/staging/media/sunxi/cedrus/cedrus.c     | 2 +-
- drivers/staging/media/sunxi/cedrus/cedrus_dec.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/staging/erofs/unzip_vle.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/staging/media/sunxi/cedrus/cedrus.c b/drivers/staging/media/sunxi/cedrus/cedrus.c
-index c912c70b3ef7..f18077e8810a 100644
---- a/drivers/staging/media/sunxi/cedrus/cedrus.c
-+++ b/drivers/staging/media/sunxi/cedrus/cedrus.c
-@@ -75,7 +75,7 @@ static int cedrus_init_ctrls(struct cedrus_dev *dev, struct cedrus_ctx *ctx)
- 	memset(ctx->ctrls, 0, ctrl_size);
+diff --git a/drivers/staging/erofs/unzip_vle.c b/drivers/staging/erofs/unzip_vle.c
+index 79d3ba62b298..45e88bada907 100644
+--- a/drivers/staging/erofs/unzip_vle.c
++++ b/drivers/staging/erofs/unzip_vle.c
+@@ -717,13 +717,18 @@ static void z_erofs_vle_unzip_kickoff(void *ptr, int bios)
+ 	struct z_erofs_vle_unzip_io *io = tagptr_unfold_ptr(t);
+ 	bool background = tagptr_unfold_tags(t);
  
- 	for (i = 0; i < CEDRUS_CONTROLS_COUNT; i++) {
--		struct v4l2_ctrl_config cfg = { 0 };
-+		struct v4l2_ctrl_config cfg = {};
+-	if (atomic_add_return(bios, &io->pending_bios))
++	if (!background) {
++		unsigned long flags;
++
++		spin_lock_irqsave(&io->u.wait.lock, flags);
++		if (!atomic_add_return(bios, &io->pending_bios))
++			wake_up_locked(&io->u.wait);
++		spin_unlock_irqrestore(&io->u.wait.lock, flags);
+ 		return;
++	}
  
- 		cfg.elem_size = cedrus_controls[i].elem_size;
- 		cfg.id = cedrus_controls[i].id;
-diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_dec.c b/drivers/staging/media/sunxi/cedrus/cedrus_dec.c
-index e40180a33951..f10c25f5460e 100644
---- a/drivers/staging/media/sunxi/cedrus/cedrus_dec.c
-+++ b/drivers/staging/media/sunxi/cedrus/cedrus_dec.c
-@@ -26,7 +26,7 @@ void cedrus_device_run(void *priv)
- {
- 	struct cedrus_ctx *ctx = priv;
- 	struct cedrus_dev *dev = ctx->dev;
--	struct cedrus_run run = { 0 };
-+	struct cedrus_run run = {};
- 	struct media_request *src_req;
- 	unsigned long flags;
+-	if (background)
++	if (!atomic_add_return(bios, &io->pending_bios))
+ 		queue_work(z_erofs_workqueue, &io->u.work);
+-	else
+-		wake_up(&io->u.wait);
+ }
  
+ static inline void z_erofs_vle_read_endio(struct bio *bio)
 -- 
 2.19.1
 
