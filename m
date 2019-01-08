@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2D44C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:08:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6C40C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:08:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A8B2218A1
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:08:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 767B320660
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:08:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546978105;
-	bh=exOdumN0C2PF8JoA5PMFCzQtuoOBYUn3QSmwFjSgcwg=;
+	s=default; t=1546978107;
+	bh=nNUQS+Zyd1GTaVeaV69DmcD+c03QvLiOHbuNMj3FFkk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=mamUJo+Rl1OuvgekkDZlUQUAGKk/CbbJQKQYAh4grvekvs2CfCXRh2hYa3oGt0EHx
-	 n+8QUoMq3c1+BXs1Zfzzjvow8ak981fG6bizts2TmR2zGylC2KxQVhezWM/aFfhpxZ
-	 wQg/V+uuz8JidOhIDiBMf050zqxswCRY9aaYEphE=
+	b=cpwx6ad6yBcUXrcda6CY+NrSd0zUsIVsircB6MxMYgDY+ku0O5NQNxAFTSUIJ239t
+	 abmNfUMxwwD7cGWdgTErz/11q4vuslIpdP/ePeLGiTgKq3R6dCyOm2TjBfIjPAwl/H
+	 qKCatLnvaMt4C2PjOoa9ATjtTDHHwZ2UXoxiyzdE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733187AbfAHUIY (ORCPT
+        id S1732981AbfAHUI0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 15:08:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33686 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 15:08:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33656 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729685AbfAHT12 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1729669AbfAHT12 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 8 Jan 2019 14:27:28 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 11C5B2087F;
-        Tue,  8 Jan 2019 19:27:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0C18A2070B;
+        Tue,  8 Jan 2019 19:27:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975647;
-        bh=exOdumN0C2PF8JoA5PMFCzQtuoOBYUn3QSmwFjSgcwg=;
+        s=default; t=1546975646;
+        bh=nNUQS+Zyd1GTaVeaV69DmcD+c03QvLiOHbuNMj3FFkk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JgVwdqXCSVtcxMEGJ58y6vKI2d32ZBXsZsRkaBZc+cqZQoLB0lH2e+kdRVZEC4IMg
-         VZxK09GVx+HEIIRJKPAG+LBS7nx6mKeihPALThBf/u+L1X8avmpFTZfBp4xJHv4awg
-         6G6nfypsqcdO5OAATv/XC1OOVHNp3u+uj7mhsH4c=
+        b=bn6SpQuLAbwtMQUcd/Cv2uIQ+zdJoal2+m0J5V/IhSQxjg3NgCwauxB9znN1KwzMU
+         793umgAA0k1+RDAXyxA265ztMRHt0Uh1e6lilmO+IzApnIGr+F8tUB4AQvXmDayqXo
+         e/c3swKCN7zkKzMnzfK20j/N9t0V5ZcPYhQShDng=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Ondrej Mosnacek <omosnace@redhat.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Sasha Levin <sashal@kernel.org>, selinux@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 032/117] selinux: always allow mounting submounts
-Date:   Tue,  8 Jan 2019 14:25:00 -0500
-Message-Id: <20190108192628.121270-32-sashal@kernel.org>
+Cc:     Anatolij Gustschin <agust@denx.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>, linux-fpga@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 031/117] fpga: altera-cvp: fix probing for multiple FPGAs on the bus
+Date:   Tue,  8 Jan 2019 14:24:59 -0500
+Message-Id: <20190108192628.121270-31-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192628.121270-1-sashal@kernel.org>
 References: <20190108192628.121270-1-sashal@kernel.org>
@@ -58,68 +58,110 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ondrej Mosnacek <omosnace@redhat.com>
+From: Anatolij Gustschin <agust@denx.de>
 
-[ Upstream commit 2cbdcb882f97a45f7475c67ac6257bbc16277dfe ]
+[ Upstream commit 30522a951f9d02f261d0697c35cb42205b1fae17 ]
 
-If a superblock has the MS_SUBMOUNT flag set, we should always allow
-mounting it. These mounts are done automatically by the kernel either as
-part of mounting some parent mount (e.g. debugfs always mounts tracefs
-under "tracing" for compatibility) or they are mounted automatically as
-needed on subdirectory accesses (e.g. NFS crossmnt mounts). Since such
-automounts are either an implicit consequence of the parent mount (which
-is already checked) or they can happen during regular accesses (where it
-doesn't make sense to check against the current task's context), the
-mount permission check should be skipped for them.
+Currently registering CvP managers works only for first probed CvP
+device, for all other devices it is refused due to duplicated chkcfg
+sysfs entry:
 
-Without this patch, attempts to access contents of an automounted
-directory can cause unexpected SELinux denials.
+fpga_manager fpga3: Altera CvP FPGA Manager @0000:0c:00.0 registered
+sysfs: cannot create duplicate filename '/bus/pci/drivers/altera-cvp/chkcfg'
+CPU: 0 PID: 3808 Comm: bash Tainted: G           O      4.19.0-custom+ #5
+Call Trace:
+  dump_stack+0x46/0x5b
+  sysfs_warn_dup+0x53/0x60
+  sysfs_add_file_mode_ns+0x16d/0x180
+  sysfs_create_file_ns+0x51/0x60
+  altera_cvp_probe+0x16f/0x2a0 [altera_cvp]
+  local_pci_probe+0x3f/0xa0
+  ? pci_match_device+0xb1/0xf0
+  pci_device_probe+0x116/0x170
+  really_probe+0x21b/0x2c0
+  driver_probe_device+0x4b/0xe0
+  bind_store+0xcb/0x130
+  kernfs_fop_write+0xfd/0x180
+  __vfs_write+0x21/0x150
+  ? selinux_file_permission+0xdc/0x130
+  vfs_write+0xa8/0x1a0
+  ? find_vma+0xd/0x60
+  ksys_write+0x3d/0x90
+  do_syscall_64+0x44/0xf0
+  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+  ...
+ altera-cvp 0000:0c:00.0: Can't create sysfs chkcfg file
+ fpga_manager fpga3: fpga_mgr_unregister Altera CvP FPGA Manager @0000:0c:00.0
 
-In the current kernel tree, the MS_SUBMOUNT flag is set only via
-vfs_submount(), which is called only from the following places:
- - AFS, when automounting special "symlinks" referencing other cells
- - CIFS, when automounting "referrals"
- - NFS, when automounting subtrees
- - debugfs, when automounting tracefs
+Move chkcfg creation to module init as suggested by Alan.
 
-In all cases the submounts are meant to be transparent to the user and
-it makes sense that if mounting the master is allowed, then so should be
-the automounts. Note that CAP_SYS_ADMIN capability checking is already
-skipped for (SB_KERNMOUNT|SB_SUBMOUNT) in:
- - sget_userns() in fs/super.c:
-	if (!(flags & (SB_KERNMOUNT|SB_SUBMOUNT)) &&
-	    !(type->fs_flags & FS_USERNS_MOUNT) &&
-	    !capable(CAP_SYS_ADMIN))
-		return ERR_PTR(-EPERM);
- - sget() in fs/super.c:
-        /* Ensure the requestor has permissions over the target filesystem */
-        if (!(flags & (SB_KERNMOUNT|SB_SUBMOUNT)) && !ns_capable(user_ns, CAP_SYS_ADMIN))
-                return ERR_PTR(-EPERM);
-
-Verified internally on patched RHEL 7.6 with a reproducer using
-NFS+httpd and selinux-tesuite.
-
-Fixes: 93faccbbfa95 ("fs: Better permission checking for submounts")
-Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
-Signed-off-by: Paul Moore <paul@paul-moore.com>
+Signed-off-by: Anatolij Gustschin <agust@denx.de>
+Acked-by: Alan Tull <atull@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- security/selinux/hooks.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/fpga/altera-cvp.c | 34 ++++++++++++++++++++++++----------
+ 1 file changed, 24 insertions(+), 10 deletions(-)
 
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index a67459eb62d5..0f27db6d94a9 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -2934,7 +2934,7 @@ static int selinux_sb_kern_mount(struct super_block *sb, int flags, void *data)
- 		return rc;
+diff --git a/drivers/fpga/altera-cvp.c b/drivers/fpga/altera-cvp.c
+index 610a1558e0ed..d9fa7d4bf11f 100644
+--- a/drivers/fpga/altera-cvp.c
++++ b/drivers/fpga/altera-cvp.c
+@@ -466,14 +466,6 @@ static int altera_cvp_probe(struct pci_dev *pdev,
+ 	if (ret)
+ 		goto err_unmap;
  
- 	/* Allow all mounts performed by the kernel */
--	if (flags & MS_KERNMOUNT)
-+	if (flags & (MS_KERNMOUNT | MS_SUBMOUNT))
- 		return 0;
+-	ret = driver_create_file(&altera_cvp_driver.driver,
+-				 &driver_attr_chkcfg);
+-	if (ret) {
+-		dev_err(&pdev->dev, "Can't create sysfs chkcfg file\n");
+-		fpga_mgr_unregister(mgr);
+-		goto err_unmap;
+-	}
+-
+ 	return 0;
  
- 	ad.type = LSM_AUDIT_DATA_DENTRY;
+ err_unmap:
+@@ -491,7 +483,6 @@ static void altera_cvp_remove(struct pci_dev *pdev)
+ 	struct altera_cvp_conf *conf = mgr->priv;
+ 	u16 cmd;
+ 
+-	driver_remove_file(&altera_cvp_driver.driver, &driver_attr_chkcfg);
+ 	fpga_mgr_unregister(mgr);
+ 	pci_iounmap(pdev, conf->map);
+ 	pci_release_region(pdev, CVP_BAR);
+@@ -500,7 +491,30 @@ static void altera_cvp_remove(struct pci_dev *pdev)
+ 	pci_write_config_word(pdev, PCI_COMMAND, cmd);
+ }
+ 
+-module_pci_driver(altera_cvp_driver);
++static int __init altera_cvp_init(void)
++{
++	int ret;
++
++	ret = pci_register_driver(&altera_cvp_driver);
++	if (ret)
++		return ret;
++
++	ret = driver_create_file(&altera_cvp_driver.driver,
++				 &driver_attr_chkcfg);
++	if (ret)
++		pr_warn("Can't create sysfs chkcfg file\n");
++
++	return 0;
++}
++
++static void __exit altera_cvp_exit(void)
++{
++	driver_remove_file(&altera_cvp_driver.driver, &driver_attr_chkcfg);
++	pci_unregister_driver(&altera_cvp_driver);
++}
++
++module_init(altera_cvp_init);
++module_exit(altera_cvp_exit);
+ 
+ MODULE_LICENSE("GPL v2");
+ MODULE_AUTHOR("Anatolij Gustschin <agust@denx.de>");
 -- 
 2.19.1
 
