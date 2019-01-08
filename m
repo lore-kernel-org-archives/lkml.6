@@ -2,100 +2,127 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D421EC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 21:29:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C9B5C43612
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 21:30:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88F3B2173C
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 21:29:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 480B82070B
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 21:30:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qyg7o4mV"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="bind6z0U"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730207AbfAHV3U (ORCPT
+        id S1730135AbfAHVan (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 16:29:20 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:37144 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729415AbfAHV3U (ORCPT
+        Tue, 8 Jan 2019 16:30:43 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:43700 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728913AbfAHVan (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 16:29:20 -0500
-Received: by mail-io1-f66.google.com with SMTP id g8so4362880iok.4;
-        Tue, 08 Jan 2019 13:29:19 -0800 (PST)
+        Tue, 8 Jan 2019 16:30:43 -0500
+Received: by mail-io1-f67.google.com with SMTP id b23so4337108ios.10
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 13:30:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=AjS78uQSbCdKCPygo0CoQj9gYIa5n4/romkv0n456+Y=;
-        b=Qyg7o4mVqxawxBe4EdUFL8t/+X0LIBjR+JsHbwPd4l3Z+vmPATWIB59hpJiCBMydC8
-         SKW9spP+0tNfpVYcy82Z5dESPcfxlob9rEHguF0roulT7lyvt/ILd6wKGZ33ksfvgq0u
-         kVmiYVIMwRkRUM7FSi1ayrMZUh9bGHqC22tuqZmfhj4691aF8kPqVKzm5nfxxzYHqD/u
-         Sz/8hc0o7YAcUeSCDIpIVcQ+VU/aftIxsK0reQx+7ya+owJ9xh095LUI3bAFrjfU8b8f
-         LQpmA+kJKfUWi6LeUXFuEW9LpMNrVQB2dwaq6ox6WZSTnP5nRawvmxx5/QrNEQNMs6Gs
-         nUdg==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=GTPRWlanFQfEpyiJDqi1SxvDYh4Pf0VcEum9gF01aaE=;
+        b=bind6z0U3eNgDyDvJGBeGb9gkfHDVJBScwaPME18fn7Z9zmQ2rdIG5ue+V2PLBKbKi
+         RSFYKnTy0rkCi37HUmihGE3/QUwhJ5tGTesphZxS4FoYcAp0knhXxZ+DOir0M1j0sQHo
+         zXcB6ZYSGO4M6+xyhl3oCjdNrLPdvJLIE2htNIW4lXmEYP02po2HEjZwGjjXfDmN/kx2
+         +mXL9NsITvFUf2B7TnnRspFO8wE4hjlXgG1XolQ8iJ9CUIIa298PytBAISuDjgpXh5yp
+         ri65MNJV7whUzmEqy0HQNnfcRkFW2sr5lou+yoPM14bdTPon7kape1rb5eJiemkzuJHM
+         jTDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=AjS78uQSbCdKCPygo0CoQj9gYIa5n4/romkv0n456+Y=;
-        b=bcnNwSprseTLLt2ma0YeiMjKOsEtaAE2izmreI0EGqRWVKTblCbKqnSgjZWsrGgum1
-         6wiUDK7G6Xmr1JUM5TbgY7tUpukAs1TA4HGS21LnePqRN9kXWeKHNsSBQq5HSwqjegjM
-         SI9eSdC8D40ZeHXo7AS8aOFcx3H67PajbgrrJxoPssXoYS80xzrqcoy5NQD22hES46xc
-         Am8q1JvdFnE4BxmrH01LnsToTDllOsS4wNlM9z+3g+hfo1MFa4up4hxgBgmi3Mbr6CsV
-         AiGRSpjbSqoBC1fw0YBHBoVWkAPPLuFHswmd/l9QrKeohyGQkKpAFiiXCuzFX8Fr7cet
-         GEuA==
-X-Gm-Message-State: AJcUukf09a4DGIzzIQZV0PYfosvi5u7TrOvdfQ0QzTxiupZMFLHhREVk
-        tscItu9DReUd4RsnIMmNAgj6KRy04lLAhvlBmwU=
-X-Google-Smtp-Source: ALg8bN5SW1k1cSp+b8s5Z3lPIKWAfapgdrB+ci7GO15oZ8FdL206oogHrlJ7RwN11610nK7mA22HPpd56e+aazMhpXU=
-X-Received: by 2002:a6b:8b4e:: with SMTP id n75mr2015591iod.184.1546982958943;
- Tue, 08 Jan 2019 13:29:18 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=GTPRWlanFQfEpyiJDqi1SxvDYh4Pf0VcEum9gF01aaE=;
+        b=Qv4p2qYcTmBrfjnXLHEjT3Sluuq74VZIUKSHhO+WbwOnDg2uzwW7PfSvLD+3xbQSAV
+         ywAY0IG+JoaxmEbzb2n2HwV4AL8NWYpOKOi2IuNp6jZDG7rkGHd7XymuTMwNSiSDlcZy
+         N97RFW5S5dLJNycZ0E0ngmiiViV6NDLOEEBb9BGGsZwhoIHGmxu2aMHfe4FeESQ0pedL
+         JpOiYqjweegDLtcjpCsh/PFw/sGQsZ4jwrcP98E663BboWVe4FjEGmuzB7o3UJ/ga1sL
+         I1CLvuPX9sUT8t+ppwpRRFbWgt4auTMplJnh8IRHHqIzDloyLCpdnkhwQ7keGkn71etU
+         lrUg==
+X-Gm-Message-State: AJcUukcT4MoFCYPN02hC0Zfxx6CNdIaPlVKHRY6uDVjwiCdKStsQ0Wri
+        pJdiFDAM1PHGCEE2rcLtWBhBjg==
+X-Google-Smtp-Source: ALg8bN6WjVdCkRpWik/d77rdhn0+PeDhSG8oGaHkb1Qbz4bAe7VSe/6hEcWXQ5euDKaGVh6KZeBNDA==
+X-Received: by 2002:a6b:5b12:: with SMTP id v18mr2282292ioh.157.1546983042201;
+        Tue, 08 Jan 2019 13:30:42 -0800 (PST)
+Received: from [192.168.1.56] ([216.160.245.98])
+        by smtp.gmail.com with ESMTPSA id m7sm5133381itk.38.2019.01.08.13.30.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 08 Jan 2019 13:30:41 -0800 (PST)
+Subject: Re: [PATCH] scsi: isci: initialize shost fully before calling
+ scsi_add_host()
+To:     Logan Gunthorpe <logang@deltatee.com>, linux-scsi@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Intel SCU Linux support <intel-linux-scu@intel.com>,
+        Artur Paszkiewicz <artur.paszkiewicz@intel.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Christoph Hellwig <hch@lst.de>, Jeff Moyer <jmoyer@redhat.com>
+References: <20190108205043.3122-1-logang@deltatee.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <0d986fa7-b510-07d0-02bd-cf4da11fd84e@kernel.dk>
+Date:   Tue, 8 Jan 2019 14:30:36 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <CAK8P3a2T=dWgD1mvi77fbdKEsm=ZUwsQENv-btjhECjf+Y5wcg@mail.gmail.com>
- <20190108200959.1686520-1-arnd@arndb.de>
-In-Reply-To: <20190108200959.1686520-1-arnd@arndb.de>
-From:   Deepa Dinamani <deepa.kernel@gmail.com>
-Date:   Tue, 8 Jan 2019 13:29:09 -0800
-Message-ID: <CABeXuvpprn_AXF0ama9CsHyZ1yb8FuUH25MXauLzHyahxr+Vwg@mail.gmail.com>
-Subject: Re: [PATCH] socket: move compat timeout handling into sock.c
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     David Miller <davem@davemloft.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Networking <netdev@vger.kernel.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        ccaulfie@redhat.com, Helge Deller <deller@gmx.de>,
-        Paul Mackerras <paulus@samba.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Richard Henderson <rth@twiddle.net>,
-        cluster-devel <cluster-devel@redhat.com>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-alpha@vger.kernel.org,
-        linux-arch <linux-arch@vger.kernel.org>,
-        linux-mips@vger.kernel.org,
-        Parisc List <linux-parisc@vger.kernel.org>,
-        sparclinux <sparclinux@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190108205043.3122-1-logang@deltatee.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 8, 2019 at 12:10 PM Arnd Bergmann <arnd@arndb.de> wrote:
->
-> This is a cleanup to prepare for the addition of 64-bit time_t
-> in O_SNDTIMEO/O_RCVTIMEO. The existing compat handler seems
-> unnecessarily complex and error-prone, moving it all into the
-> main setsockopt()/getsockopt() implementation requires half
-> as much code and is easier to extend.
->
-> 32-bit user space can now use old_timeval32 on both 32-bit
-> and 64-bit machines, while 64-bit code can use
-> __old_kernel_timeval.
->
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+On 1/8/19 1:50 PM, Logan Gunthorpe wrote:
+> scsi_mq_setup_tags(), which is called by scsi_add_host(), calculates
+> the command size to allocate based on the prot_capabilities. In the
+> isci driver, scsi_host_set_prot() is called after scsi_add_host()
+> so the command size gets calculated to be smaller than it needs to be.
+> Eventually, scsi_mq_init_request() locates the 'prot_sdb' after the command
+> assuming it was sized correctly and a buffer overrun may occur.
+> 
+> However, seeing blk_mq_alloc_rqs() rounds up to the nearest cache line
+> size, the mistake can go unnoticed.
+> 
+> The bug was noticed after the struct request size was reduced by
+> commit 9d037ad707ed ("block: remove req->timeout_list")
+> 
+> Which likely reduced the allocated space for the request by an entire
+> cache line, enough that the overflow could be hit and it caused a panic,
+> on boot, at:
+> 
+>   RIP: 0010:t10_pi_complete+0x77/0x1c0
+>   Call Trace:
+>     <IRQ>
+>     sd_done+0xf5/0x340
+>     scsi_finish_command+0xc3/0x120
+>     blk_done_softirq+0x83/0xb0
+>     __do_softirq+0xa1/0x2e6
+>     irq_exit+0xbc/0xd0
+>     call_function_single_interrupt+0xf/0x20
+>     </IRQ>
+> 
+> sd_done() would call scsi_prot_sg_count() which reads the number of
+> entities in 'prot_sdb', but seeing 'prot_sdb' is located after the end of
+> the allocated space it reads a garbage number and erroneously calls
+> t10_pi_complete().
+> 
+> To prevent this, the calls to scsi_host_set_prot() are moved into
+> isci_host_alloc() before the call to scsi_add_host(). Out of caution,
+> also move the similar call to scsi_host_set_guard().
 
-This will make the other series so much nicer. Thank you.
+Nice work!
 
-Acked-by: Deepa Dinamani <deepa.kernel@gmail.com>
+Reviewed-by: Jens Axboe <axboe@kernel.dk>
+
+-- 
+Jens Axboe
+
