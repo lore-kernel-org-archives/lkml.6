@@ -2,117 +2,284 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA99AC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 12:57:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40E46C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 12:59:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90B6A20850
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 12:57:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FQWhCyc9"
+	by mail.kernel.org (Postfix) with ESMTP id F418E2087E
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 12:59:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728036AbfAHM5T (ORCPT
+        id S1727992AbfAHM7b convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 07:57:19 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:33239 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727473AbfAHM5T (ORCPT
+        Tue, 8 Jan 2019 07:59:31 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44338 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727558AbfAHM7a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 07:57:19 -0500
-Received: by mail-pf1-f194.google.com with SMTP id c123so1924605pfb.0;
-        Tue, 08 Jan 2019 04:57:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=Ct+vC2YU8GpAw05IcANMMWtSRlijHvSbhvy81WFotpA=;
-        b=FQWhCyc9PeU1oOqEsrbpxWVYO0P9hzzQKVL6vZwmxZMA1Lio8I5jMgFJEdu/aZ8Nyh
-         jucRxUkIXAxwpT2/MvR1+IVjAX8UP81l+i4NZbNPEh9vAi4yUxTLVL5dZBsVCEAUsQ5r
-         RRGmzVcKvIBykA+iAWZ8yrGzyToD0irck87qhPT5ZnqedTTn+GSwOrGm0m6HxpR/pxZC
-         XbzEmUxLZ91ETTDmvKd1u0h2Irlwp+lslEbs8uUNVKPZiP92bjvvk/LNmsHq/FEtbfxG
-         +Uf+w+WSKynASD4qtrREL+r0vNKcMvFSWmnz0cUKCYagPzgwJjFOKfwCspPqSj5UT+9/
-         CJPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=Ct+vC2YU8GpAw05IcANMMWtSRlijHvSbhvy81WFotpA=;
-        b=eq7dw6I98Tb+XQsk36JKKIOV67gqc+O+h6G05jaWTohcAhxdO1KjdtjIw8p2tfHtLI
-         LivU95juOi8rgzbpajynJmgWMsWDNyo6pToJS0xS7tbpQcFhG+DYJfQ5PQMC3fpqOJFl
-         8dO0+qL8J+jUEUSa5403U1vVYYFsPx98klgVcUfeXcF+EOMsEZzQwcor4iKOzRresAlB
-         NA2myTJ/+//uId0xGJEAOLIoDfiP95IYHKGchxyN75TqCd20JMPoLJsSgXKueQgGrq6f
-         lmemkPy7rcHXxWHgBuTXeJ4ED/HMR9bH4UH7ByW3fGGN2mg0Pb0RI2FBRrp9IgZFrmB2
-         sDBg==
-X-Gm-Message-State: AJcUukcdL+3FfQ5ccBEQlz/OvXuYFQp5EVerMV85Zd5kO6pjqVTmsc+D
-        BEKu0GW9vVcDqrLi0UaqO7rtAWAW
-X-Google-Smtp-Source: ALg8bN4RkTwvvMWapfRZAiMg4IDxo1orXpIZ+5vH4fYGi4Dc95Ua9gkEuvY7eGKT2n2QNjBZqr74+w==
-X-Received: by 2002:a63:cc12:: with SMTP id x18mr1430990pgf.33.1546952238457;
-        Tue, 08 Jan 2019 04:57:18 -0800 (PST)
-Received: from ?IPv6:2402:f000:1:1501:200:5efe:166.111.71.59? ([2402:f000:1:1501:200:5efe:a66f:473b])
-        by smtp.gmail.com with ESMTPSA id w88sm121006670pfk.11.2019.01.08.04.57.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 08 Jan 2019 04:57:17 -0800 (PST)
-Subject: Re: [PATCH] net: nvidia: forcedeth: Fix two possible concurrency
- use-after-free bugs
-To:     Zhu Yanjun <yanjun.zhu@oracle.com>, davem@davemloft.net,
-        keescook@chromium.org
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190108124518.21986-1-baijiaju1990@gmail.com>
- <27392ae0-2c0f-f099-05d8-f9cdbfbd313e@oracle.com>
-From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-Message-ID: <f9ab7ba3-573c-6703-1b01-37a9e0a9b769@gmail.com>
-Date:   Tue, 8 Jan 2019 20:57:14 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Tue, 8 Jan 2019 07:59:30 -0500
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x08CxFgn032184
+        for <linux-kernel@vger.kernel.org>; Tue, 8 Jan 2019 07:59:28 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2pvthbp9tj-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 07:59:28 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pasic@linux.ibm.com>;
+        Tue, 8 Jan 2019 12:59:26 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 8 Jan 2019 12:59:22 -0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x08CxLbw2228674
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 8 Jan 2019 12:59:21 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1380F11C05C;
+        Tue,  8 Jan 2019 12:59:21 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AE1E111C04A;
+        Tue,  8 Jan 2019 12:59:20 +0000 (GMT)
+Received: from oc2783563651 (unknown [9.152.224.86])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue,  8 Jan 2019 12:59:20 +0000 (GMT)
+Date:   Tue, 8 Jan 2019 13:59:19 +0100
+From:   Halil Pasic <pasic@linux.ibm.com>
+To:     Michael Mueller <mimu@linux.ibm.com>
+Cc:     KVM Mailing List <kvm@vger.kernel.org>,
+        Linux-S390 Mailing List <linux-s390@vger.kernel.org>,
+        linux-kernel@vger.kernel.org,
+        kvm390-list@tuxmaker.boeblingen.de.ibm.com,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Pierre Morel <pmorel@linux.ibm.com>
+Subject: Re: [PATCH v5 13/15] KVM: s390: add function
+ process_gib_alert_list()
+In-Reply-To: <20181219191756.57973-14-mimu@linux.ibm.com>
+References: <20181219191756.57973-1-mimu@linux.ibm.com>
+        <20181219191756.57973-14-mimu@linux.ibm.com>
+Organization: IBM
+X-Mailer: Claws Mail 3.11.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <27392ae0-2c0f-f099-05d8-f9cdbfbd313e@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
+X-TM-AS-GCONF: 00
+x-cbid: 19010812-0008-0000-0000-000002ACE790
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19010812-0009-0000-0000-00002218F587
+Message-Id: <20190108135919.18048dd4@oc2783563651>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-08_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901080107
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, 19 Dec 2018 20:17:54 +0100
+Michael Mueller <mimu@linux.ibm.com> wrote:
 
+> This function processes the Gib Alert List (GAL). It is required
+> to run when either a gib alert interruption has been received or
+> a gisa that is in the alert list is cleared or dropped.
+> 
+> The GAL is build up by millicode, when the respective ISC bit is
+> set in the Interruption Alert Mask (IAM) and an interruption of
+> that class is observed.
+> 
+> Signed-off-by: Michael Mueller <mimu@linux.ibm.com>
+> ---
+>  arch/s390/kvm/interrupt.c | 140 ++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 140 insertions(+)
+> 
+> diff --git a/arch/s390/kvm/interrupt.c b/arch/s390/kvm/interrupt.c
+> index 48a93f5e5333..03e7ba4f215a 100644
+> --- a/arch/s390/kvm/interrupt.c
+> +++ b/arch/s390/kvm/interrupt.c
+> @@ -2941,6 +2941,146 @@ int kvm_s390_get_irq_state(struct kvm_vcpu *vcpu, __u8 __user *buf, int len)
+>  	return n;
+>  }
+>  
+> +static int __try_airqs_kick(struct kvm *kvm, u8 ipm)
+> +{
+> +	struct kvm_s390_float_interrupt *fi = &kvm->arch.float_int;
+> +	struct kvm_vcpu *vcpu = NULL, *kick_vcpu[MAX_ISC + 1];
+> +	int online_vcpus = atomic_read(&kvm->online_vcpus);
+> +	u8 ioint_mask, isc_mask, kick_mask = 0x00;
+> +	int vcpu_id, kicked = 0;
+> +
+> +	/* Loop over vcpus in WAIT state. */
+> +	for (vcpu_id = find_first_bit(fi->idle_mask, online_vcpus);
+> +	     /* Until all pending ISCs have a vcpu open for airqs. */
+> +	     (~kick_mask & ipm) && vcpu_id < online_vcpus;
+> +	     vcpu_id = find_next_bit(fi->idle_mask, online_vcpus, vcpu_id)) {
+> +		vcpu = kvm_get_vcpu(kvm, vcpu_id);
+> +		if (psw_ioint_disabled(vcpu))
+> +			continue;
+> +		ioint_mask = (u8)(vcpu->arch.sie_block->gcr[6] >> 24);
+> +		for (isc_mask = 0x80; isc_mask; isc_mask >>= 1) {
+> +			/* ISC pending in IPM ? */
+> +			if (!(ipm & isc_mask))
+> +				continue;
+> +			/* vcpu for this ISC already found ? */
+> +			if (kick_mask & isc_mask)
+> +				continue;
+> +			/* vcpu open for airq of this ISC ? */
+> +			if (!(ioint_mask & isc_mask))
+> +				continue;
+> +			/* use this vcpu (for all ISCs in ioint_mask) */
+> +			kick_mask |= ioint_mask;
+> +			kick_vcpu[kicked++] = vcpu;
 
-On 2019/1/8 20:54, Zhu Yanjun wrote:
->
-> 在 2019/1/8 20:45, Jia-Ju Bai 写道:
->> In drivers/net/ethernet/nvidia/forcedeth.c, the functions
->> nv_start_xmit() and nv_start_xmit_optimized() can be concurrently
->> executed with nv_poll_controller().
->>
->> nv_start_xmit
->>    line 2321: prev_tx_ctx->skb = skb;
->>
->> nv_start_xmit_optimized
->>    line 2479: prev_tx_ctx->skb = skb;
->>
->> nv_poll_controller
->>    nv_do_nic_poll
->>      line 4134: spin_lock(&np->lock);
->>      nv_drain_rxtx
->>        nv_drain_tx
->>          nv_release_txskb
->>            line 2004: dev_kfree_skb_any(tx_skb->skb);
->>
->> Thus, two possible concurrency use-after-free bugs may occur.
->>
->> To fix these possible bugs,
->
->
-> Does this really occur? Can you reproduce this ?
+Assuming that the vcpu can/will take all ISCs it's currently open for
+does not seem right. We kind of rely on this assumption here, or?
 
-This bug is not found by the real execution.
-It is found by a static tool written by myself, and then I check it by 
-manual code review.
+> +		}
+> +	}
+> +
+> +	if (vcpu && ~kick_mask & ipm)
+> +		VM_EVENT(kvm, 4, "gib alert undeliverable isc mask
+> 0x%02x",
+> +			 ~kick_mask & ipm);
+> +
+> +	for (vcpu_id = 0; vcpu_id < kicked; vcpu_id++)
+> +		kvm_s390_vcpu_wakeup(kick_vcpu[vcpu_id]);
+> +
+> +	return (online_vcpus != 0) ? kicked : -ENODEV;
+> +}
+> +
+> +static void __floating_airqs_kick(struct kvm *kvm)
+> +{
+> +	struct kvm_s390_float_interrupt *fi = &kvm->arch.float_int;
+> +	int online_vcpus, kicked;
+> +	u8 ipm_t0, ipm;
+> +
+> +	/* Get IPM and return if clean, IAM has been restored. */
+> +	ipm = get_ipm(kvm->arch.gisa, IRQ_FLAG_IAM);
+> +	if (!ipm)
+> +		return;
+> +retry:
+> +	ipm_t0 = ipm;
+> +
+> +	/* Try to kick some vcpus in WAIT state. */
+> +	kicked = __try_airqs_kick(kvm, ipm);
+> +	if (kicked < 0)
+> +		return;
+> +
+> +	/* Get IPM and return if clean, IAM has been restored. */
+> +	ipm = get_ipm(kvm->arch.gisa, IRQ_FLAG_IAM);
+> +	if (!ipm)
+> +		return;
+> +
+> +	/* Start over, if new ISC bits are pending in IPM. */
+> +	if ((ipm_t0 ^ ipm) & ~ipm_t0)
+> +		goto retry;
+> +
 
+<MARK A>
 
-Best wishes,
-Jia-Ju Bai
+> +	/*
+> +	 * Return as we just kicked at least one vcpu in WAIT state
+> +	 * open for airqs. The IAM will be restored latest when one
+> +	 * of them goes into WAIT or STOP state.
+> +	 */
+> +	if (kicked > 0)
+> +		return;
+
+</MARK A>
+
+> +
+> +	/*
+> +	 * No vcpu was kicked either because no vcpu was in WAIT state
+> +	 * or none of the vcpus in WAIT state are open for airqs.
+> +	 * Return immediately if no vcpus are in WAIT state.
+> +	 * There are vcpus in RUN state. They will process the airqs
+> +	 * if not closed for airqs as well. In that case the system will
+> +	 * delay airqs until a vcpu decides to take airqs again.
+> +	 */
+> +	online_vcpus = atomic_read(&kvm->online_vcpus);
+> +	if (!bitmap_weight(fi->idle_mask, online_vcpus))
+> +		return;
+> +
+> +	/*
+> +	 * None of the vcpus in WAIT state take airqs and we might
+> +	 * have no running vcpus as at least one vcpu is in WAIT state
+> +	 * and IPM is dirty.
+> +	 */
+> +	set_iam(kvm->arch.gisa, kvm->arch.iam);
+> +}
+> +
+> +#define NULL_GISA_ADDR 0x00000000UL
+> +#define NONE_GISA_ADDR 0x00000001UL
+> +#define GISA_ADDR_MASK 0xfffff000UL
+> +
+> +static void __maybe_unused process_gib_alert_list(void)
+> +{
+> +	u32 final, next_alert, origin = 0UL;
+> +	struct kvm_s390_gisa *gisa;
+> +	struct kvm *kvm;
+> +
+> +	do {
+> +		/*
+> +		 * If the NONE_GISA_ADDR is still stored in the alert list
+> +		 * origin, we will leave the outer loop. No further GISA has
+> +		 * been added to the alert list by millicode while processing
+> +		 * the current alert list.
+> +		 */
+> +		final = (origin & NONE_GISA_ADDR);
+> +		/*
+> +		 * Cut off the alert list and store the NONE_GISA_ADDR in the
+> +		 * alert list origin to avoid further GAL interruptions.
+> +		 * A new alert list can be build up by millicode in parallel
+> +		 * for guests not in the yet cut-off alert list. When in the
+> +		 * final loop, store the NULL_GISA_ADDR instead. This will re-
+> +		 * enable GAL interruptions on the host again.
+> +		 */
+> +		origin = xchg(&gib->alert_list_origin,
+> +			      (!final) ? NONE_GISA_ADDR : NULL_GISA_ADDR);
+> +		/* Loop through the just cut-off alert list. */
+> +		while (origin & GISA_ADDR_MASK) {
+> +			gisa = (struct kvm_s390_gisa *)(u64)origin;
+> +			next_alert = gisa->next_alert;
+> +			/* Unlink the GISA from the alert list. */
+> +			gisa->next_alert = origin;
+> +			kvm = container_of(gisa, struct sie_page2, gisa)->kvm;
+> +			/* Kick suitable vcpus */
+> +			__floating_airqs_kick(kvm);
+
+We may finish handling the alerted gisa with iam not set e.g.
+via some vcpus kicked but ipm still dirty and some vcpus still in wait,
+or? 
+
+From the comments it seems we speculate on being in a safe state, as
+these are supposed to return to wait or stop soon-ish, and we will set
+iam then (See <MARK A>). I don't quite understand.
+
+According to my current understanding we might end up loosing initiative
+in this scenario. Or am I wrong?
+
+Regards,
+Halil
+
+> +			origin = next_alert;
+> +		}
+> +	} while (!final);
+> +}
+> +
+>  static void nullify_gisa(struct kvm_s390_gisa *gisa)
+>  {
+>  	memset(gisa, 0, sizeof(struct kvm_s390_gisa));
+
