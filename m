@@ -2,91 +2,75 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29EEDC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 13:47:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E9AAC43612
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 13:49:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB9BF206BB
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 13:47:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 497B4206BB
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 13:49:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728325AbfAHNrp convert rfc822-to-8bit (ORCPT
+        id S1728318AbfAHNtL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 08:47:45 -0500
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:47072 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727678AbfAHNro (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 08:47:44 -0500
-Received: by mail-vs1-f66.google.com with SMTP id n10so2439068vso.13
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 05:47:44 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=WBUZT9Z47xJ0v26hgKzNQ/uM79+cRBVZ6rsn7QRff8c=;
-        b=cSUcq+nxLoRDd/bC7FnSO1QOAWn+5P/5ogTrPY1obaF25Ndb7FdF7Ej8LY95MK6l+M
-         MZN9xfk7pLNdEn1HU8xmv2qxvJlmvEWTH6l0TSCl3LzFv7LDT7iUg0gQHA8LPtkTIP35
-         RnZpAzUoWVrUAkcLVKHtBkeywQ6Vvp4DaaTZfdaJ+BpOg0AF7UK17Nwh2t0jnPFzrRqm
-         ctlUfOgf68XEEBWHcWZvPnm5Gbvd4ivZwicIXRsvDzuMddjFh8jqWBYV64hiTFTArnsn
-         JH+lQzhuBJkoLEjBUVbOgVRShzbioGW6zkgfF++JBHqS7EocE/19vr5FcRoKdi9EDBEc
-         X8WQ==
-X-Gm-Message-State: AJcUukeqsvcxbksluDlmeZU5cCVGBECrhICZM8NSvp2kMUa0MdB6H5GB
-        3jNbmw4kJ2GpsKDQ7zBu2MDwMewv/6ckt0sXloQONPCoD0A=
-X-Google-Smtp-Source: ALg8bN5nT6dkGO27ISiuCj8kq5AHkQlMOWDR6dCu300EmfZ3YeZq2ZFXyjxy4N8V2u2DBK9WgWzvTck/pXtgpzGXvMU=
-X-Received: by 2002:a67:3885:: with SMTP id n5mr632584vsi.96.1546955263557;
- Tue, 08 Jan 2019 05:47:43 -0800 (PST)
+        Tue, 8 Jan 2019 08:49:11 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:57394 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727236AbfAHNtL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 08:49:11 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 03D9341A59;
+        Tue,  8 Jan 2019 13:49:11 +0000 (UTC)
+Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 51BB45ED53;
+        Tue,  8 Jan 2019 13:49:10 +0000 (UTC)
+From:   Jeff Moyer <jmoyer@redhat.com>
+To:     Logan Gunthorpe <logang@deltatee.com>
+Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        "linux-block\@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: Regression in v5.0-rc1: Panic at boot
+References: <da851333-eadd-163a-8c78-e1f4ec5ec857@deltatee.com>
+X-PGP-KeyID: 1F78E1B4
+X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
+Date:   Tue, 08 Jan 2019 08:49:07 -0500
+In-Reply-To: <da851333-eadd-163a-8c78-e1f4ec5ec857@deltatee.com> (Logan
+        Gunthorpe's message of "Mon, 7 Jan 2019 12:41:06 -0700")
+Message-ID: <x49y37v8dkc.fsf@segfault.boston.devel.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-References: <20190107092952.14691-1-geert@linux-m68k.org> <CAK8P3a35ZwkrE-zxRVbwvNEs4RZTuV+-eu3uRD2OaSnVnBG3EQ@mail.gmail.com>
-In-Reply-To: <CAK8P3a35ZwkrE-zxRVbwvNEs4RZTuV+-eu3uRD2OaSnVnBG3EQ@mail.gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 8 Jan 2019 14:47:31 +0100
-Message-ID: <CAMuHMdWG_s3Oc4DH=70CAKRCGn-bLwO+Gq2UsBd1reeqWE7_Cg@mail.gmail.com>
-Subject: Re: [PATCH] m68k/atari: Avoid VLA use in atari_switches_setup()
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Tue, 08 Jan 2019 13:49:11 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnd,
+Hi, Logan,
 
-On Tue, Jan 8, 2019 at 2:25 PM Arnd Bergmann <arnd@arndb.de> wrote:
-> On Mon, Jan 7, 2019 at 10:29 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > With gcc 7.3.0:
-> >
-> >     arch/m68k/atari/config.c: In function ‘atari_switches_setup’:
-> >     arch/m68k/atari/config.c:151:2: warning: ISO C90 forbids variable length array ‘switches’ [-Wvla]
-> >       char switches[strlen(str) + 1];
-> >       ^~~~
-> >
-> > Replace the variable size by the maximum kernel command line size (512
-> > bytes), which is an upper limit for all suboptions.
-> >
-> > Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Logan Gunthorpe <logang@deltatee.com> writes:
+
+> Hey,
 >
-> Seems fine as long as COMMAND_LINE_SIZE never grows a lot. Some
+> I found a regression in v5.0-rc1 this morning. My system panics on boot.
+> I've attached a log of the panic.
+>
+> I bisected to find the problematic commit is:
+>
+> Fixes: 9d037ad707ed ("block: remove req->timeout_list")
+>
+> But it makes no sense to me why this commit would cause a problem like
+> this. I've attached a bisect log. I've also tested v5.0-rc1 with this
+> commit reverted and that boots fine.
+>
+> The traceback seems to indicate the problem is on the bip_get_seed()
+> line in t10_pi_complete(). Which suggests that bio_integrity() is
+> returning NULL.
 
-If that ever happens, it will be caught by -Wframe-larger-than=1024.
+Does your hardware actually support protection information?
 
-> architectures use 1024 or 2048, but m68k currently has 256 (you write
-> 512 here).
-
-Thanks for noticing, will fix!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-Jeff
