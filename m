@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 607A9C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:59:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3B82C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:59:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3130220827
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:59:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 94D5820660
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:59:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546977540;
-	bh=zpKBx+Mr14lsVMT+rVCB0LfSUJmnEFxpb6RSAuLos4Y=;
+	s=default; t=1546977550;
+	bh=ut/ZKF3iyuvn9FFdCEt+kJWQ6RFeWjzeCWezC/N+LNo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=q0/jVeDOqTIAWhun9JfSmqEt2FtuzWx6leQqwlUGC4lYoltia/+oZTMaRxrrHz/30
-	 njSB8vSu5PYucaD8lTImn2U33HCPFQOfG5bYl2R+cVXd3I+Ne+Mn5NzLP7PDpQ6jlT
-	 qlh4y5JRMJeTj5FbDFXSGz+QmDU7Q869p5jXbkpk=
+	b=jXPT4o+4F3qFtDsGeUtcZ2AmTYgfzsouqrLXq8MTYI+4lHqvv2JEoX+kdT+nOpLK3
+	 rLyAZGWjLmdVXCuIdoiPqE8xCXU08CS1hkKuB7eW+HiVh4vEALTFbyPdEv5usvwcfT
+	 t3IR/j9yg6kocorjUEyjI09f8BqBlKkCccQuKBaQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731360AbfAHT6y (ORCPT
+        id S1732964AbfAHT7J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:58:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36896 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:59:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36790 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730391AbfAHT31 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:29:27 -0500
+        id S1730372AbfAHT3Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:29:24 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 09A75217D9;
-        Tue,  8 Jan 2019 19:29:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 97D5020883;
+        Tue,  8 Jan 2019 19:29:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975766;
-        bh=zpKBx+Mr14lsVMT+rVCB0LfSUJmnEFxpb6RSAuLos4Y=;
+        s=default; t=1546975763;
+        bh=ut/ZKF3iyuvn9FFdCEt+kJWQ6RFeWjzeCWezC/N+LNo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SpFC4CugkqmPKPAVlEurMKIGmTyJ2r/Wl4v+bpgRX7tQlS2jENpE2NwYUbFuMo5ih
-         V3cqWOosPVPWv6V0bcjXF0AXRMtfx5YqwE9onIeZXi2znmuFOysoa8lnrB4XhlcTcC
-         ghh6MnlWX+pflUnDAZDaiLdeAgM7kRw+LFW/0muQ=
+        b=Cg5GwEIkgXyEZGPOlJHQ308OTV/zveprMIyVQiCJLufwWlzE6va6p+yT8+h1El6wf
+         GPJosHQy+doDOMfkn8oTFuHoD0mvYVnZazxyD5XGp04tGk3zAzwf971nnjgeQC9EzV
+         Z9w0r9/l/gLPUVEERixRZLEl5Ah4uUzfZsrWkf1E=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Suraj Jitindar Singh <sjitindarsingh@gmail.com>,
-        Paul Mackerras <paulus@ozlabs.org>,
-        Sasha Levin <sashal@kernel.org>, kvm-ppc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH AUTOSEL 4.20 108/117] KVM: PPC: Book3S HV: Apply combination of host and l1 pte rc for nested guest
-Date:   Tue,  8 Jan 2019 14:26:16 -0500
-Message-Id: <20190108192628.121270-108-sashal@kernel.org>
+Cc:     Zhi Chen <zhichen@codeaurora.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <sashal@kernel.org>, ath10k@lists.infradead.org,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 105/117] ath10k: fix peer stats null pointer dereference
+Date:   Tue,  8 Jan 2019 14:26:13 -0500
+Message-Id: <20190108192628.121270-105-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192628.121270-1-sashal@kernel.org>
 References: <20190108192628.121270-1-sashal@kernel.org>
@@ -59,48 +59,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Suraj Jitindar Singh <sjitindarsingh@gmail.com>
+From: Zhi Chen <zhichen@codeaurora.org>
 
-[ Upstream commit 8b23eee4e55a32a2b51a180dfd27a8d214acc7a1 ]
+[ Upstream commit 2d3b55853b123c177037cf534c5aaa2650310094 ]
 
-The shadow page table contains ptes for translations from nested guest
-address to host address. Currently when creating these ptes we take the
-rc bits from the pte for the L1 guest address to host address
-translation. This is incorrect as we must also factor in the rc bits
-from the pte for the nested guest address to L1 guest address
-translation (as contained in the L1 guest partition table for the nested
-guest).
+There was a race condition in SMP that an ath10k_peer was created but its
+member sta was null. Following are procedures of ath10k_peer creation and
+member sta access in peer statistics path.
 
-By not calculating these bits correctly L1 may not have been correctly
-notified when it needed to update its rc bits in the partition table it
-maintains for its nested guest.
+    1. Peer creation:
+        ath10k_peer_create()
+            =>ath10k_wmi_peer_create()
+                =>ath10k_wait_for_peer_created()
+                ...
 
-Modify the code so that the rc bits in the resultant pte for the L2->L0
-translation are the 'and' of the rc bits in the L2->L1 pte and the L1->L0
-pte, also accounting for whether this was a write access when setting
-the dirty bit.
+        # another kernel path, RX from firmware
+        ath10k_htt_t2h_msg_handler()
+        =>ath10k_peer_map_event()
+                =>wake_up()
+                # ar->peer_map[id] = peer //add peer to map
 
-Signed-off-by: Suraj Jitindar Singh <sjitindarsingh@gmail.com>
-Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
+        #wake up original path from waiting
+                ...
+                # peer->sta = sta //sta assignment
+
+    2.  RX path of statistics
+        ath10k_htt_t2h_msg_handler()
+            =>ath10k_update_per_peer_tx_stats()
+                =>ath10k_htt_fetch_peer_stats()
+                # peer->sta //sta accessing
+
+Any access of peer->sta after peer was added to peer_map but before sta was
+assigned could cause a null pointer issue. And because these two steps are
+asynchronous, no proper lock can protect them. So both peer and sta need to
+be checked before access.
+
+Tested: QCA9984 with firmware ver 10.4-3.9.0.1-00005
+Signed-off-by: Zhi Chen <zhichen@codeaurora.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/kvm/book3s_hv_nested.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/net/wireless/ath/ath10k/debugfs_sta.c | 2 +-
+ drivers/net/wireless/ath/ath10k/htt_rx.c      | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/powerpc/kvm/book3s_hv_nested.c b/arch/powerpc/kvm/book3s_hv_nested.c
-index fc64535e4c00..f8176ae3a5a7 100644
---- a/arch/powerpc/kvm/book3s_hv_nested.c
-+++ b/arch/powerpc/kvm/book3s_hv_nested.c
-@@ -1229,6 +1229,9 @@ static long int __kvmhv_nested_page_fault(struct kvm_vcpu *vcpu,
- 	perm |= gpte.may_read ? 0UL : _PAGE_READ;
- 	perm |= gpte.may_write ? 0UL : _PAGE_WRITE;
- 	perm |= gpte.may_execute ? 0UL : _PAGE_EXEC;
-+	/* Only set accessed/dirty (rc) bits if set in host and l1 guest ptes */
-+	perm |= (gpte.rc & _PAGE_ACCESSED) ? 0UL : _PAGE_ACCESSED;
-+	perm |= ((gpte.rc & _PAGE_DIRTY) && writing) ? 0UL : _PAGE_DIRTY;
- 	pte = __pte(pte_val(pte) & ~perm);
+diff --git a/drivers/net/wireless/ath/ath10k/debugfs_sta.c b/drivers/net/wireless/ath/ath10k/debugfs_sta.c
+index b09cdc699c69..38afbbd9fb44 100644
+--- a/drivers/net/wireless/ath/ath10k/debugfs_sta.c
++++ b/drivers/net/wireless/ath/ath10k/debugfs_sta.c
+@@ -71,7 +71,7 @@ void ath10k_sta_update_rx_tid_stats_ampdu(struct ath10k *ar, u16 peer_id, u8 tid
+ 	spin_lock_bh(&ar->data_lock);
  
- 	/* What size pte can we insert? */
+ 	peer = ath10k_peer_find_by_id(ar, peer_id);
+-	if (!peer)
++	if (!peer || !peer->sta)
+ 		goto out;
+ 
+ 	arsta = (struct ath10k_sta *)peer->sta->drv_priv;
+diff --git a/drivers/net/wireless/ath/ath10k/htt_rx.c b/drivers/net/wireless/ath/ath10k/htt_rx.c
+index ffec98f7be50..2c2761d04d01 100644
+--- a/drivers/net/wireless/ath/ath10k/htt_rx.c
++++ b/drivers/net/wireless/ath/ath10k/htt_rx.c
+@@ -2832,7 +2832,7 @@ static void ath10k_htt_fetch_peer_stats(struct ath10k *ar,
+ 	rcu_read_lock();
+ 	spin_lock_bh(&ar->data_lock);
+ 	peer = ath10k_peer_find_by_id(ar, peer_id);
+-	if (!peer) {
++	if (!peer || !peer->sta) {
+ 		ath10k_warn(ar, "Invalid peer id %d peer stats buffer\n",
+ 			    peer_id);
+ 		goto out;
+@@ -2885,7 +2885,7 @@ static void ath10k_fetch_10_2_tx_stats(struct ath10k *ar, u8 *data)
+ 	rcu_read_lock();
+ 	spin_lock_bh(&ar->data_lock);
+ 	peer = ath10k_peer_find_by_id(ar, peer_id);
+-	if (!peer) {
++	if (!peer || !peer->sta) {
+ 		ath10k_warn(ar, "Invalid peer id %d in peer stats buffer\n",
+ 			    peer_id);
+ 		goto out;
 -- 
 2.19.1
 
