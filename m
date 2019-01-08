@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C871C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:30:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26EACC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:30:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A54F20827
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:30:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E551B20645
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:30:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546975846;
-	bh=U4OoqIiJ4QuP7dXlysjRbWTqkuQ7rETP9U1UxyBPDj0=;
+	s=default; t=1546975852;
+	bh=HywN864SVKIN2CpUdBZL26z4S1wjWXTSoW4kReZv2Os=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=rl4bFcVVUEw4g77/U96y+zwbNc3mHw5O4RfcbYX3sICtj7rDL6OSCL/fkMTOZwmst
-	 mQmhUNLOz7+rpTUxPaTgkgcpbIwnj+EovC722J4KwOVzKA2DelQXpD/I9T1D7c1Fcy
-	 lnBCFlr7cmVwirDaHOwnSW6nTY/ty5ITcApAkQHI=
+	b=TC4avVjBoBbms9BTuS7cEpcoLC70Nw7l3I3lFRMQG1ljisJg0lpE/+c8CVAxJp2fd
+	 gWPks5G+JK6M73ZQIPzEOJRqU/JwxdGrYEGhT8wy97DOiaWTvJ6xQGWzN4Q461BQlC
+	 suJKTTZb2WF5QQzxb7P6NSZf4TpMd2bDzSzWws2U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730835AbfAHTap (ORCPT
+        id S1730898AbfAHTav (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:30:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38316 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:30:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38630 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730792AbfAHTad (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:30:33 -0500
+        id S1730869AbfAHTar (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:30:47 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4183F20665;
-        Tue,  8 Jan 2019 19:30:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 62DB2217D9;
+        Tue,  8 Jan 2019 19:30:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975831;
-        bh=U4OoqIiJ4QuP7dXlysjRbWTqkuQ7rETP9U1UxyBPDj0=;
+        s=default; t=1546975847;
+        bh=HywN864SVKIN2CpUdBZL26z4S1wjWXTSoW4kReZv2Os=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=A6nOfR6AWhzxEgs3IOONbFWPNJpLyyqf2eC8NmPJgoyNpIT2taA192NIQUPKIzDNO
-         1Bx7vgVVnHQaiDZ/ynhpmcryy4uW5Bu84bYTnXUol4C2nLdA2zXBb+g1cpaXKDWh9G
-         gAYCiPSqD5N3+6kdZ1YB9Dp9V52K2rUpSSUQlclY=
+        b=zactgIkUB+/0Nx9SXN5dhdw7/nKr4/0tJ3ETQRvKPnWgz2yFJiYi6tRtUxOUqPa/u
+         F5H+Qk6erwaEVR7C1Uk2EJ3U9KytwhGuRBrLHNgc/333p8l6ixye2sH4vRozlwn+sy
+         JIOWHAn7/CIYxQBzV0T+wCfIQgM8lLMPa0tjYcxY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Yufen Yu <yuyufen@huawei.com>, Jens Axboe <axboe@kernel.dk>,
-        Sasha Levin <sashal@kernel.org>, linux-block@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 27/97] block: use rcu_work instead of call_rcu to avoid sleep in softirq
-Date:   Tue,  8 Jan 2019 14:28:36 -0500
-Message-Id: <20190108192949.122407-27-sashal@kernel.org>
+Cc:     Daniel Santos <daniel.santos@pobox.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Sasha Levin <sashal@kernel.org>, linux-mtd@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.19 33/97] jffs2: Fix use of uninitialized delayed_work, lockdep breakage
+Date:   Tue,  8 Jan 2019 14:28:42 -0500
+Message-Id: <20190108192949.122407-33-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192949.122407-1-sashal@kernel.org>
 References: <20190108192949.122407-1-sashal@kernel.org>
@@ -57,119 +58,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yufen Yu <yuyufen@huawei.com>
+From: Daniel Santos <daniel.santos@pobox.com>
 
-[ Upstream commit 94a2c3a32b62e868dc1e3d854326745a7f1b8c7a ]
+[ Upstream commit a788c5272769ddbcdbab297cf386413eeac04463 ]
 
-We recently got a stack by syzkaller like this:
+jffs2_sync_fs makes the assumption that if CONFIG_JFFS2_FS_WRITEBUFFER
+is defined then a write buffer is available and has been initialized.
+However, this does is not the case when the mtd device has no
+out-of-band buffer:
 
-BUG: sleeping function called from invalid context at mm/slab.h:361
-in_atomic(): 1, irqs_disabled(): 0, pid: 6644, name: blkid
-INFO: lockdep is turned off.
-CPU: 1 PID: 6644 Comm: blkid Not tainted 4.4.163-514.55.6.9.x86_64+ #76
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
- 0000000000000000 5ba6a6b879e50c00 ffff8801f6b07b10 ffffffff81cb2194
- 0000000041b58ab3 ffffffff833c7745 ffffffff81cb2080 5ba6a6b879e50c00
- 0000000000000000 0000000000000001 0000000000000004 0000000000000000
-Call Trace:
- <IRQ>  [<ffffffff81cb2194>] __dump_stack lib/dump_stack.c:15 [inline]
- <IRQ>  [<ffffffff81cb2194>] dump_stack+0x114/0x1a0 lib/dump_stack.c:51
- [<ffffffff8129a981>] ___might_sleep+0x291/0x490 kernel/sched/core.c:7675
- [<ffffffff8129ac33>] __might_sleep+0xb3/0x270 kernel/sched/core.c:7637
- [<ffffffff81794c13>] slab_pre_alloc_hook mm/slab.h:361 [inline]
- [<ffffffff81794c13>] slab_alloc_node mm/slub.c:2610 [inline]
- [<ffffffff81794c13>] slab_alloc mm/slub.c:2692 [inline]
- [<ffffffff81794c13>] kmem_cache_alloc_trace+0x2c3/0x5c0 mm/slub.c:2709
- [<ffffffff81cbe9a7>] kmalloc include/linux/slab.h:479 [inline]
- [<ffffffff81cbe9a7>] kzalloc include/linux/slab.h:623 [inline]
- [<ffffffff81cbe9a7>] kobject_uevent_env+0x2c7/0x1150 lib/kobject_uevent.c:227
- [<ffffffff81cbf84f>] kobject_uevent+0x1f/0x30 lib/kobject_uevent.c:374
- [<ffffffff81cbb5b9>] kobject_cleanup lib/kobject.c:633 [inline]
- [<ffffffff81cbb5b9>] kobject_release+0x229/0x440 lib/kobject.c:675
- [<ffffffff81cbb0a2>] kref_sub include/linux/kref.h:73 [inline]
- [<ffffffff81cbb0a2>] kref_put include/linux/kref.h:98 [inline]
- [<ffffffff81cbb0a2>] kobject_put+0x72/0xd0 lib/kobject.c:692
- [<ffffffff8216f095>] put_device+0x25/0x30 drivers/base/core.c:1237
- [<ffffffff81c4cc34>] delete_partition_rcu_cb+0x1d4/0x2f0 block/partition-generic.c:232
- [<ffffffff813c08bc>] __rcu_reclaim kernel/rcu/rcu.h:118 [inline]
- [<ffffffff813c08bc>] rcu_do_batch kernel/rcu/tree.c:2705 [inline]
- [<ffffffff813c08bc>] invoke_rcu_callbacks kernel/rcu/tree.c:2973 [inline]
- [<ffffffff813c08bc>] __rcu_process_callbacks kernel/rcu/tree.c:2940 [inline]
- [<ffffffff813c08bc>] rcu_process_callbacks+0x59c/0x1c70 kernel/rcu/tree.c:2957
- [<ffffffff8120f509>] __do_softirq+0x299/0xe20 kernel/softirq.c:273
- [<ffffffff81210496>] invoke_softirq kernel/softirq.c:350 [inline]
- [<ffffffff81210496>] irq_exit+0x216/0x2c0 kernel/softirq.c:391
- [<ffffffff82c2cd7b>] exiting_irq arch/x86/include/asm/apic.h:652 [inline]
- [<ffffffff82c2cd7b>] smp_apic_timer_interrupt+0x8b/0xc0 arch/x86/kernel/apic/apic.c:926
- [<ffffffff82c2bc25>] apic_timer_interrupt+0xa5/0xb0 arch/x86/entry/entry_64.S:746
- <EOI>  [<ffffffff814cbf40>] ? audit_kill_trees+0x180/0x180
- [<ffffffff8187d2f7>] fd_install+0x57/0x80 fs/file.c:626
- [<ffffffff8180989e>] do_sys_open+0x45e/0x550 fs/open.c:1043
- [<ffffffff818099c2>] SYSC_open fs/open.c:1055 [inline]
- [<ffffffff818099c2>] SyS_open+0x32/0x40 fs/open.c:1050
- [<ffffffff82c299e1>] entry_SYSCALL_64_fastpath+0x1e/0x9a
+int jffs2_nand_flash_setup(struct jffs2_sb_info *c)
+{
+        if (!c->mtd->oobsize)
+                return 0;
+...
 
-In softirq context, we call rcu callback function delete_partition_rcu_cb(),
-which may allocate memory by kzalloc with GFP_KERNEL flag. If the
-allocation cannot be satisfied, it may sleep. However, That is not allowed
-in softirq contex.
+The resulting call to cancel_delayed_work_sync passing a uninitialized
+(but zeroed) delayed_work struct forces lockdep to become disabled.
 
-Although we found this problem on linux 4.4, the latest kernel version
-seems to have this problem as well. And it is very similar to the
-previous one:
-	https://lkml.org/lkml/2018/7/9/391
+[   90.050639] overlayfs: upper fs does not support tmpfile.
+[   90.652264] INFO: trying to register non-static key.
+[   90.662171] the code is fine but needs lockdep annotation.
+[   90.673090] turning off the locking correctness validator.
+[   90.684021] CPU: 0 PID: 1762 Comm: mount_root Not tainted 4.14.63 #0
+[   90.696672] Stack : 00000000 00000000 80d8f6a2 00000038 805f0000 80444600 8fe364f4 805dfbe7
+[   90.713349]         80563a30 000006e2 8068370c 00000001 00000000 00000001 8e2fdc48 ffffffff
+[   90.730020]         00000000 00000000 80d90000 00000000 00000106 00000000 6465746e 312e3420
+[   90.746690]         6b636f6c 03bf0000 f8000000 20676e69 00000000 80000000 00000000 8e2c2a90
+[   90.763362]         80d90000 00000001 00000000 8e2c2a90 00000003 80260dc0 08052098 80680000
+[   90.780033]         ...
+[   90.784902] Call Trace:
+[   90.789793] [<8000f0d8>] show_stack+0xb8/0x148
+[   90.798659] [<8005a000>] register_lock_class+0x270/0x55c
+[   90.809247] [<8005cb64>] __lock_acquire+0x13c/0xf7c
+[   90.818964] [<8005e314>] lock_acquire+0x194/0x1dc
+[   90.828345] [<8003f27c>] flush_work+0x200/0x24c
+[   90.837374] [<80041dfc>] __cancel_work_timer+0x158/0x210
+[   90.847958] [<801a8770>] jffs2_sync_fs+0x20/0x54
+[   90.857173] [<80125cf4>] iterate_supers+0xf4/0x120
+[   90.866729] [<80158fc4>] sys_sync+0x44/0x9c
+[   90.875067] [<80014424>] syscall_common+0x34/0x58
 
-Fix it by using RCU workqueue, which allows sleep.
-
-Reviewed-by: Paul E. McKenney <paulmck@linux.ibm.com>
-Signed-off-by: Yufen Yu <yuyufen@huawei.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Daniel Santos <daniel.santos@pobox.com>
+Reviewed-by: Hou Tao <houtao1@huawei.com>
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- block/partition-generic.c | 8 +++++---
- include/linux/genhd.h     | 2 +-
- 2 files changed, 6 insertions(+), 4 deletions(-)
+ fs/jffs2/super.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/block/partition-generic.c b/block/partition-generic.c
-index d3d14e81fb12..5f8db5c5140f 100644
---- a/block/partition-generic.c
-+++ b/block/partition-generic.c
-@@ -249,9 +249,10 @@ struct device_type part_type = {
- 	.uevent		= part_uevent,
- };
+diff --git a/fs/jffs2/super.c b/fs/jffs2/super.c
+index 902a7dd10e5c..bb6ae387469f 100644
+--- a/fs/jffs2/super.c
++++ b/fs/jffs2/super.c
+@@ -101,7 +101,8 @@ static int jffs2_sync_fs(struct super_block *sb, int wait)
+ 	struct jffs2_sb_info *c = JFFS2_SB_INFO(sb);
  
--static void delete_partition_rcu_cb(struct rcu_head *head)
-+static void delete_partition_work_fn(struct work_struct *work)
- {
--	struct hd_struct *part = container_of(head, struct hd_struct, rcu_head);
-+	struct hd_struct *part = container_of(to_rcu_work(work), struct hd_struct,
-+					rcu_work);
- 
- 	part->start_sect = 0;
- 	part->nr_sects = 0;
-@@ -262,7 +263,8 @@ static void delete_partition_rcu_cb(struct rcu_head *head)
- void __delete_partition(struct percpu_ref *ref)
- {
- 	struct hd_struct *part = container_of(ref, struct hd_struct, ref);
--	call_rcu(&part->rcu_head, delete_partition_rcu_cb);
-+	INIT_RCU_WORK(&part->rcu_work, delete_partition_work_fn);
-+	queue_rcu_work(system_wq, &part->rcu_work);
- }
- 
- /*
-diff --git a/include/linux/genhd.h b/include/linux/genhd.h
-index 25c08c6c7f99..f767293b00e6 100644
---- a/include/linux/genhd.h
-+++ b/include/linux/genhd.h
-@@ -129,7 +129,7 @@ struct hd_struct {
- 	struct disk_stats dkstats;
+ #ifdef CONFIG_JFFS2_FS_WRITEBUFFER
+-	cancel_delayed_work_sync(&c->wbuf_dwork);
++	if (jffs2_is_writebuffered(c))
++		cancel_delayed_work_sync(&c->wbuf_dwork);
  #endif
- 	struct percpu_ref ref;
--	struct rcu_head rcu_head;
-+	struct rcu_work rcu_work;
- };
  
- #define GENHD_FL_REMOVABLE			1
+ 	mutex_lock(&c->alloc_sem);
 -- 
 2.19.1
 
