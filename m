@@ -2,175 +2,151 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F34EC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 10:22:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F2ABC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 10:24:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48CC92089F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 10:22:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 454ED2087F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 10:24:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="X/o8nAEp";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="mnoNs2SQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728566AbfAHKWD (ORCPT
+        id S1728616AbfAHKYI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 05:22:03 -0500
-Received: from mail1.bemta25.messagelabs.com ([195.245.230.1]:5201 "EHLO
-        mail1.bemta25.messagelabs.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727001AbfAHKWD (ORCPT
+        Tue, 8 Jan 2019 05:24:08 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:32968 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727001AbfAHKYH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 05:22:03 -0500
-Received: from [46.226.52.98] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
-        by server-1.bemta.az-a.eu-west-1.aws.symcld.net id F0/8A-19156-7C9743C5; Tue, 08 Jan 2019 10:21:59 +0000
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrKKsWRWlGSWpSXmKPExsVy8IPnUd3jlSY
-  xBrOdLKY+fMJm8ezWXiaL5sXr2Swu75rDZrH92yM2izlLT7BYzP0yldmB3eP30cfsHjtn3WX3
-  2LSqk83j0OEORo/9c9ewe3zeJBfAFsWamZeUX5HAmvFz3hKmgg0mFbsPz2RqYLxh3MXIxSEks
-  JRR4s+Bf6xdjJwcbAKGEvPevGcEsUUEkiX2LTvNDGIzC8xhkni+wxLEFhYIlthy9iE7RE2IxI
-  Rt54DqOYBsI4kvp+VBwiwCKhJbTs8FG8krECAxZ+oNJohdDYwS3Rd3g83kFAiUWLVxL5jNKCA
-  r8aVxNdQucYlbT+YzgdgSAgISS/acZ4awRSVePoa4U0JAXuLumiVQNfYSr++9Y4Gw9SUePX7E
-  CGEbSqyadgAqbi7xce5RdpA7mQU0Jdbv0odYpSgxpRviFV4BQYmTM5+wTGAUn4XkilkIHbOQd
-  MxC0rGAkWUVo0VSUWZ6RkluYmaOrqGBga6hoZGuoSUQW5jrJVbpJuqlluqWpxaX6BrqJZYX6x
-  VX5ibnpOjlpZZsYgRGeUrBgd07GN93pR9ilORgUhLlnRtlEiPEl5SfUpmRWJwRX1Sak1p8iFG
-  Gg0NJgjeyGCgnWJSanlqRlpkDTDcwaQkOHiURXqEKoDRvcUFibnFmOkTqFKMux5UznTOYhVjy
-  8vNSpcR5U8uBigRAijJK8+BGwFLfJUZZKWFeRgYGBiGegtSi3MwSVPlXjOIcjErCvH0gU3gy8
-  0rgNr0COoIJ6IhDjGBHlCQipKQaGLl0HCeENZbxPPgS9/PH2zmLKhZr/Ddfl+F7M9Rwd+upBf
-  1bS82OB0zo2ix7q+rap1+NhvKPVCo5ylxn3u19nt568fJyvdjeH+JMZXKlLt7bCi6fytjJndh
-  e2R26Za9qf67hw1ccs1pf+fMXaWwJ+nVvQaDF1Ozv55hz0pkP3HPfYPwu5aq1nRJLcUaioRZz
-  UXEiADmbLER4AwAA
-X-Env-Sender: stwiss.opensource@diasemi.com
-X-Msg-Ref: server-22.tower-262.messagelabs.com!1546942916!1110385!1
-X-Originating-IP: [193.240.73.197]
-X-SYMC-ESS-Client-Auth: outbound-route-from=pass
-X-StarScan-Received: 
-X-StarScan-Version: 9.31.5; banners=-,-,-
-X-VirusChecked: Checked
-Received: (qmail 2310 invoked from network); 8 Jan 2019 10:21:57 -0000
-Received: from unknown (HELO sw-ex-cashub02.diasemi.com) (193.240.73.197)
-  by server-22.tower-262.messagelabs.com with AES128-SHA256 encrypted SMTP; 8 Jan 2019 10:21:57 -0000
-Received: from SW-EX-MBX02.diasemi.com ([169.254.4.193]) by
- sw-ex-cashub02.diasemi.com ([10.20.16.142]) with mapi id 14.03.0382.000; Tue,
- 8 Jan 2019 10:21:55 +0000
-From:   Steve Twiss <stwiss.opensource@diasemi.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-CC:     "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Support Opensource <Support.Opensource@diasemi.com>
-Subject: RE: [PATCH] regmap: regmap-irq: silently ignore unsupported type
- settings
-Thread-Topic: [PATCH] regmap: regmap-irq: silently ignore unsupported type
- settings
-Thread-Index: AQHUn2eRGEaG3Adhikys+xUg2f+AdKWlL49A
-Date:   Tue, 8 Jan 2019 10:21:54 +0000
-Message-ID: <6ED8E3B22081A4459DAC7699F3695FB7022179F236@SW-EX-MBX02.diasemi.com>
-References: <20181227084443.GA23991@localhost.localdomain>
- <CAMuHMdUg=C+pNrbauM-f7LchXRnwu1ufYyUSp=jO+8hs_SrgXQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdUg=C+pNrbauM-f7LchXRnwu1ufYyUSp=jO+8hs_SrgXQ@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.20.27.87]
-x-kse-attachmentfiltering-interceptor-info: protection disabled
-x-kse-serverinfo: sw-ex-cashub02.diasemi.com, 9
-x-kse-antivirus-interceptor-info: scan successful
-x-kse-antivirus-info: Clean, bases: 08/01/2019 07:43:00
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Tue, 8 Jan 2019 05:24:07 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 95E2B6063A; Tue,  8 Jan 2019 10:24:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1546943046;
+        bh=oK4JGaZaybYHB7ww6FPJp4LuGZnEPIesoOH+Ya9ZdDg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=X/o8nAEpFEG/uqLZjdKIsd/FOsv8G8Lp5yBaPktRHmS3aUWagQEBkZW4JBjBamVT8
+         lfHIHtDOdl6BCw2VADe4qr/2DhvVS19dcWiBbrFm3/HEtsz2ET47xdWvM2SEpekwXR
+         hPPHvydrxA48E0MYmyrWcU5UAq+Iff4AKSdusmBc=
+Received: from blr-ubuntu-87.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: sibis@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 73648601EA;
+        Tue,  8 Jan 2019 10:24:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1546943045;
+        bh=oK4JGaZaybYHB7ww6FPJp4LuGZnEPIesoOH+Ya9ZdDg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=mnoNs2SQlwTIG5JPf/ClBxZUO3aF20+gDFP24HKx0qq34QUsjhNSZrwKA2n+6kUbA
+         3R6A5BAU4fUXUvWtRgJ/8lEkwcXh6F31PCjJeNFMjczFAsfNx9J1HSc5jWSMxYGw7n
+         7Q2ecEmkWtnYZyWVs8x5MglsaVUykLNwBV1+6dVA=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 73648601EA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sibis@codeaurora.org
+From:   Sibi Sankar <sibis@codeaurora.org>
+To:     bjorn.andersson@linaro.org
+Cc:     robh+dt@kernel.org, andy.gross@linaro.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        tsoni@codeaurora.org, clew@codeaurora.org, akdwived@codeaurora.org,
+        ohad@wizery.com, mark.rutland@arm.com,
+        linux-remoteproc@vger.kernel.org, dianders@chromium.org,
+        Sibi Sankar <sibis@codeaurora.org>
+Subject: [PATCH v3 1/3] dt-bindings: remoteproc: qcom: Introduce shutdown-ack irq for Q6V5
+Date:   Tue,  8 Jan 2019 15:53:42 +0530
+Message-Id: <20190108102344.28451-1-sibis@codeaurora.org>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgR2VlcnQsDQoNCk9uIDI5IERlY2VtYmVyIDIwMTggMTE6MTQgR2VlcnQgVXl0dGVyaG9ldmVu
-IHdyb3RlOg0KDQo+IFRvOiBNYXR0aSBWYWl0dGluZW4gPG1hdHRpLnZhaXR0aW5lbkBmaS5yb2ht
-ZXVyb3BlLmNvbT4NCj4gQ2M6IG1henppZXNhY2NvdW50QGdtYWlsLmNvbTsgTWFyayBCcm93biA8
-YnJvb25pZUBrZXJuZWwub3JnPjsgR3JlZyBLSA0KPiA8Z3JlZ2toQGxpbnV4Zm91bmRhdGlvbi5v
-cmc+OyBSYWZhZWwgSi4gV3lzb2NraSA8cmFmYWVsQGtlcm5lbC5vcmc+OyBMaW51eA0KPiBLZXJu
-ZWwgTWFpbGluZyBMaXN0IDxsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnPjsgU3VwcG9ydCBP
-cGVuc291cmNlDQo+IDxTdXBwb3J0Lk9wZW5zb3VyY2VAZGlhc2VtaS5jb20+DQo+IFN1YmplY3Q6
-IFJlOiBbUEFUQ0hdIHJlZ21hcDogcmVnbWFwLWlycTogc2lsZW50bHkgaWdub3JlIHVuc3VwcG9y
-dGVkIHR5cGUNCj4gc2V0dGluZ3MNCj4gDQo+IEhpIE1hdHRpLA0KPiANCj4gT24gVGh1LCBEZWMg
-MjcsIDIwMTggYXQgOTo0NCBBTSBNYXR0aSBWYWl0dGluZW4NCj4gPG1hdHRpLnZhaXR0aW5lbkBm
-aS5yb2htZXVyb3BlLmNvbT4gd3JvdGU6DQo+ID4gRG8gbm90IHJldHVybiBlcnJvciBpZiBpcnEt
-dHlwZSBzZXR0aW5nIGlzIHJlcXVlc3RlZCBmb3INCj4gPiBjb250cm9sbG9lciB3aGljaCBkb2Vz
-IG5vdCBzdXBwb3J0IHRoaXMuIFRoaXMgaXMgaG93DQo+ID4gcmVnbWFwLWlycSBoYXMgcHJldmlv
-dXNseSBoYW5kbGVkIHRoZSB1bmR1cHBvcnRlZCB0eXBlDQo+ID4gc2V0dGluZ3MgYW5kIGV4aXN0
-aW5nIGRyaXZlcnMgc2VlbSB0byBiZSB1cHNldCBpZiBmYWlsdXJlDQo+ID4gaXMgbm93IHJlcG9y
-dGVkLg0KPiA+DQo+ID4gRml4ZXM6IDFjMjkyOGUzZTMyMSAoInJlZ21hcDogcmVnbWFwLWlycS9n
-cGlvLW1heDc3NjIwOiBhZGQgbGV2ZWwtaXJxIHN1cHBvcnQiKQ0KPiA+IFNpZ25lZC1vZmYtYnk6
-IE1hdHRpIFZhaXR0aW5lbiA8bWF0dGkudmFpdHRpbmVuQGZpLnJvaG1ldXJvcGUuY29tPg0KPiAN
-Cj4gUmVwb3J0ZWQtYnk6IEdlZXJ0IFV5dHRlcmhvZXZlbiA8Z2VlcnQrcmVuZXNhc0BnbGlkZXIu
-YmU+DQo+IA0KPiA+IC0tLQ0KPiA+DQo+ID4gR2VlcnQgcmVwb3J0ZWQgdGhhdCAxYzI5MjhlM2Uz
-MjEgYnJlYWtzIGRhOTA2My1ydGMgb24gdGhlIFJlbmVzYXMNCj4gPiBLb2Vsc2NoIGJvYXJkOg0K
-PiA+DQo+ID4NCj4gaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvbGttbC8yMDE4MTIyNzA3NTY0OC5H
-QjI0NjFAbG9jYWxob3N0LmxvY2FsZG9tYWluL1QvIw0KPiBtMTk0NjE2Y2M4OGQ3YjRjMmE3OGY3
-Y2UwNzkwNzYwOGZkYjY0YTA5Mg0KPiA+DQo+ID4gR2VlcnQsIGRvIHlvdSBrbm93IGlmIGFueW9u
-ZSB2b3VsZCB0byB0ZXN0IHRoaXM/DQo+IA0KPiBUaGFua3MsIHRoYXQgc2VlbXMgdG8gZml4IHRo
-ZSBpc3N1ZSB3aXRoIGRhOTA2My1ydGMuDQo+IA0KPiBJIGRvbid0IGtub3cgaG93IHRvIHRyaWdn
-ZXIgYW4gYWN0dWFsIGludGVycnVwdCwgdGhvdWdoLg0KPiANCj4gPiAtLS0gYS9kcml2ZXJzL2Jh
-c2UvcmVnbWFwL3JlZ21hcC1pcnEuYw0KPiA+ICsrKyBiL2RyaXZlcnMvYmFzZS9yZWdtYXAvcmVn
-bWFwLWlycS5jDQo+ID4gQEAgLTI1OCw3ICsyNTgsNyBAQCBzdGF0aWMgaW50IHJlZ21hcF9pcnFf
-c2V0X3R5cGUoc3RydWN0IGlycV9kYXRhICpkYXRhLA0KPiB1bnNpZ25lZCBpbnQgdHlwZSkNCj4g
-PiAgICAgICAgIGNvbnN0IHN0cnVjdCByZWdtYXBfaXJxX3R5cGUgKnQgPSAmaXJxX2RhdGEtPnR5
-cGU7DQo+ID4NCj4gPiAgICAgICAgIGlmICgodC0+dHlwZXNfc3VwcG9ydGVkICYgdHlwZSkgIT0g
-dHlwZSkNCj4gPiAtICAgICAgICAgICAgICAgcmV0dXJuIC1FTk9UU1VQUDsNCj4gPiArICAgICAg
-ICAgICAgICAgcmV0dXJuIDA7DQo+ID4NCj4gPiAgICAgICAgIHJlZyA9IHQtPnR5cGVfcmVnX29m
-ZnNldCAvIG1hcC0+cmVnX3N0cmlkZTsNCj4gPg0KPiA+IC0tDQo+ID4gMi4xNC4zDQo+IA0KDQpJ
-J3ZlIHJ1biB0aGlzIHBhdGNoIG9uIHRoZSBEQTkwNjMgc2V0LXVwIEkgaGF2ZSBoZXJlLiBBbmQg
-dGhpcyBmaXhlcyB0aGUNCnByb2JsZW0uDQoNCkFja2VkLWJ5OiBTdGV2ZSBUd2lzcyA8c3R3aXNz
-Lm9wZW5zb3VyY2VAZGlhc2VtaS5jb20+DQpUZXN0ZWQtYnk6IFN0ZXZlIFR3aXNzIDxzdHdpc3Mu
-b3BlbnNvdXJjZUBkaWFzZW1pLmNvbT4NCg0KUmVnYXJkcywNClN0ZXZlDQoNCk15IHByZXZpb3Vz
-IHJlcG9ydCB1c2luZyB0aGUgdW5tb2RpZmllZCB2NS4wLXJjMSBMaW51eCBrZXJuZWwgaXMgaGVy
-ZToNCmh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2xrbWwvNkVEOEUzQjIyMDgxQTQ0NTlEQUM3Njk5
-RjM2OTVGQjcwMjIxNzlGMDE4QFNXLUVYLU1CWDAyLmRpYXNlbWkuY29tDQoNClRoaXMgdjUuMC1y
-YzEgTGludXgga2VybmVsIGZhaWxlZCB0byBhbGxvdyBJUlFzIGZvciB0aGUgTUZEIGNlbGxzIGlu
-IHRoZQ0KREE5MDYzLiBCdXQsIGFsdGVyaW5nIHRoZSB2NS4wLXJjMSBrZXJuZWwgd2l0aCB0aGUg
-cGF0Y2ggZ2l2ZW4gYWJvdmUgKHRvDQpyZXR1cm4gMCBpbnN0ZWFkIG9mIC1FTk9UU1VQUCBpbiBy
-ZWdtYXAtaXJxLmMpLCBmaXhlcyB0aGUgcHJvYmxlbS4NCg0KQSBjdXQtZG93biBjb25zb2xlIG91
-dHB1dCBmb3IgdGhpcyByZXN1bHQgaXMgZ2l2ZW4gYmVsb3cuDQoNCi0tLSA4PCAtLS0NClsuLi5d
-DQpkYTkwNjMgMS0wMDU4OiBEZXZpY2UgZGV0ZWN0ZWQgKGNoaXAtSUQ6IDB4NjEsIHZhci1JRDog
-MHg2MCkNClsuLi5dDQpkYTkwNjMtb25rZXkgZGE5MDYzLW9ua2V5OiBETUEgbWFzayBub3Qgc2V0
-DQppbnB1dDogZGE5MDYzLW9ua2V5IGFzIC9kZXZpY2VzL3NvYzAvc29jLzIxMDAwMDAuYWlwcy1i
-dXMvMjFhNDAwMC5pMmMvaTJjLTEvMS0wMDU4L2RhOTA2My1vbmtleS9pbnB1dC9pbnB1dDINCmRh
-OTA2My1ydGMgZGE5MDYzLXJ0YzogRE1BIG1hc2sgbm90IHNldA0KZGE5MDYzLXJ0YyBkYTkwNjMt
-cnRjOiByZWdpc3RlcmVkIGFzIHJ0YzANClsuLi5dDQpkYTkwNjMtd2F0Y2hkb2cgZGE5MDYzLXdh
-dGNoZG9nOiBETUEgbWFzayBub3Qgc2V0DQpbLi4uXQ0KZGE5MDYzLXJ0YyBkYTkwNjMtcnRjOiBz
-ZXR0aW5nIHN5c3RlbSBjbG9jayB0byAyMDAwLTAxLTAxVDAwOjAwOjAwIFVUQyAoOTQ2Njg0ODAw
-KQ0KWy4uLl0NCi0tLSA4PCAtLS0NCg0KYW5kIHRoZSByZXN1bHRzIG9mIHNldHRpbmcgYW4gUlRD
-IGFsYXJtIGFuZCB3YWl0aW5nIGZvciB0aGUgaW50ZXJydXB0IG91dHB1dHMNCnRoZSBmb2xsb3dp
-bmc6DQoNCi0tLSA4PCAtLS0NCj4gY2F0ICoucmVzDQpbUEFTU10gU2V0IFJUQyBhbGFybXMgZnVu
-Y3Rpb25hbCB0ZXN0IGZvciBURVNUIHdpdGggREE5MDYzLVRFU1QNCltQQVNTXSBTZXR0aW5nIHRl
-c3QgdHlwZSB0byB1c2UgQkIgUlRDIGFsYXJtIGZ1bmN0aW9uYWwgdGVzdCBmb3IgVEVTVCB3aXRo
-IERBOTA2My1URVNUDQpbUEFTU10gUnVubmluZyBzZXQgYWxhcm0gdGVzdHMgZm9yIFJUQyB7IDEg
-fQ0KW1BBU1NdIFJ1bm5pbmcgdGVzdCBmb3IgdGVzdF9ydGNfcHJvZ19zZXRfc2ltcGxlX2FsYXJt
-X3NlY29uZHMoKQ0KW1BBU1NdIFNldHRpbmcgdGhlIGN1cnJlbnQgZGF0ZSBhbmQgdGltZSBmcm9t
-IHRoZSBkYTkwNjMtcnRjIGFzIDIwMDAtMDEtMDEgMDA6MDA6MDANCltQQVNTXSBTZXR0aW5nIHRo
-ZSBhbGFybSBkYXRlIGFuZCB0aW1lIGZyb20gdGhlIGRhOTA2My1ydGMgYXMgMjAwMC0wMS0wMSAw
-MDowMDowNSAoKzUgc2VjcyBpbnRvIHRoZSBmdXR1cmUpDQpbUEFTU10gU2V0dGluZyB0aGUgbGlz
-dGVuZXIgb24gZGE5MDYzLXJ0YyB0aGVuIHdhaXRpbmcgZm9yIGVsYXBzZWQgdGltZW91dCBvZiAx
-NSBzZWNvbmRzLi4uDQpbUEFTU10gVGhlIGFsYXJtIHdhcyB0cmlnZ2VyZWQgb24gZGE5MDYzLXJ0
-YyB3aXRoaW4gdGhlIGV4cGVjdGVkIHRpbWUgYW5kIHRoZSBhbGFybSBoYXBwZW5lZCBhdCAyMDAw
-LTAxLTAxIDAwOjAwOjA1DQpbUEFTU10gUnVubmluZyB0ZXN0IGZvciB0ZXN0X3J0Y19wcm9nX3Nl
-dF9zaW1wbGVfYWxhcm1fc2Vjb25kcygpDQpbUEFTU10gU2V0dGluZyB0aGUgY3VycmVudCBkYXRl
-IGFuZCB0aW1lIGZyb20gdGhlIGRhOTA2My1ydGMgYXMgMjAwMC0wMS0wMSAwMDowMDowMA0KW1BB
-U1NdIFNldHRpbmcgdGhlIGFsYXJtIGRhdGUgYW5kIHRpbWUgZnJvbSB0aGUgZGE5MDYzLXJ0YyBh
-cyAyMDAwLTAxLTAxIDAwOjAwOjE1ICgrMTUgc2VjcyBpbnRvIHRoZSBmdXR1cmUpDQpbUEFTU10g
-U2V0dGluZyB0aGUgbGlzdGVuZXIgb24gZGE5MDYzLXJ0YyB0aGVuIHdhaXRpbmcgZm9yIGVsYXBz
-ZWQgdGltZW91dCBvZiAyNSBzZWNvbmRzLi4uDQpbUEFTU10gVGhlIGFsYXJtIHdhcyB0cmlnZ2Vy
-ZWQgb24gZGE5MDYzLXJ0YyB3aXRoaW4gdGhlIGV4cGVjdGVkIHRpbWUgYW5kIHRoZSBhbGFybSBo
-YXBwZW5lZCBhdCAyMDAwLTAxLTAxIDAwOjAwOjE1DQpbUEFTU10gRmluaXNoZWQgcnVubmluZyBE
-QTkwNjMgc2V0IGFsYXJtIHRlc3RzIGZvciBSVEMgeyAxIH0gb24gVEVTVA0KPiBjYXQgL3Byb2Mv
-aW50ZXJydXB0cyB8IGdyZXAgZGE5MDYzDQoyNDk6ICAgICAgICAgIDIgICAgICAgICAgMCAgICAg
-ICAgICAwICAgICAgICAgIDAgIGdwaW8tbXhjICAxMSBMZXZlbCAgICAgZGE5MDYzLWlycQ0KMzAy
-OiAgICAgICAgICAwICAgICAgICAgIDAgICAgICAgICAgMCAgICAgICAgICAwICBkYTkwNjMtaXJx
-ICAgMCBMZXZlbCAgICAgT05LRVkNCjMwMzogICAgICAgICAgMCAgICAgICAgICAwICAgICAgICAg
-IDAgICAgICAgICAgMiAgZGE5MDYzLWlycSAgIDEgTGV2ZWwgICAgIEFMQVJNDQozMTA6ICAgICAg
-ICAgIDAgICAgICAgICAgMCAgICAgICAgICAwICAgICAgICAgIDAgIGRhOTA2My1pcnEgICA4IExl
-dmVsICAgICBMRE9fTElNDQo+IHVuYW1lIC1hDQpMaW51eCB0ZXN0IDUuMC4wLXJjMSAjMSBTTVAg
-VHVlIEphbiA4IDA5OjM5OjMwIEdNVCAyMDE5IGFybXY3bCBHTlUvTGludXgNCi0tLSA4PCAtLS0N
-Cg0K
+Introduce shutdown-irq binding required for sysmon shutdown for Q6V5 MSS
+on SDM845/MSM8996 SoCs and for WCSS Q6V5 on QCS404 SoC.
+
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+---
+
+v2:
+  * Make shutdown-ack mandatory for MSS on SDM845/MSM8996 and
+    for WCSS on QCS404 (Dropping Rob's reviewed-by due to this)
+
+ .../bindings/remoteproc/qcom,adsp.txt           | 17 ++++++++++++++---
+ .../bindings/remoteproc/qcom,q6v5.txt           | 15 ++++++++++++---
+ 2 files changed, 26 insertions(+), 6 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
+index 60ee0f73071a..292dfda9770d 100644
+--- a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
++++ b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
+@@ -19,13 +19,24 @@ on the Qualcomm ADSP Hexagon core.
+ - interrupts-extended:
+ 	Usage: required
+ 	Value type: <prop-encoded-array>
+-	Definition: must list the watchdog, fatal IRQs ready, handover and
+-		    stop-ack IRQs
++	Definition: reference to the interrupts that match interrupt-names
+ 
+ - interrupt-names:
+ 	Usage: required
+ 	Value type: <stringlist>
+-	Definition: must be "wdog", "fatal", "ready", "handover", "stop-ack"
++	Definition: The interrupts needed depends on the compatible
++		    string:
++	qcom,msm8974-adsp-pil:
++	qcom,msm8996-adsp-pil:
++	qcom,msm8996-slpi-pil:
++	qcom,qcs404-adsp-pas:
++	qcom,qcs404-cdsp-pas:
++	qcom,sdm845-adsp-pas:
++	qcom,sdm845-cdsp-pas:
++		    must be "wdog", "fatal", "ready", "handover", "stop-ack"
++	qcom,qcs404-wcss-pas:
++		    must be "wdog", "fatal", "ready", "handover", "stop-ack",
++		    "shutdown-ack"
+ 
+ - firmware-name:
+ 	Usage: optional
+diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
+index 401e49ebee39..41ca5df5be5a 100644
+--- a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
++++ b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
+@@ -28,13 +28,22 @@ on the Qualcomm Hexagon core.
+ - interrupts-extended:
+ 	Usage: required
+ 	Value type: <prop-encoded-array>
+-	Definition: must list the watchdog, fatal IRQs ready, handover and
+-		    stop-ack IRQs
++	Definition: reference to the interrupts that match interrupt-names
+ 
+ - interrupt-names:
+ 	Usage: required
+ 	Value type: <stringlist>
+-	Definition: must be "wdog", "fatal", "ready", "handover", "stop-ack"
++	Definition: The interrupts needed depends on the the compatible
++		    string:
++	qcom,q6v5-pil:
++	qcom,ipq8074-wcss-pil:
++	qcom,msm8916-mss-pil:
++	qcom,msm8974-mss-pil:
++		    must be "wdog", "fatal", "ready", "handover", "stop-ack"
++	qcom,msm8996-mss-pil:
++	qcom,sdm845-mss-pil:
++		    must be "wdog", "fatal", "ready", "handover", "stop-ack",
++		    "shutdown-ack"
+ 
+ - firmware-name:
+ 	Usage: optional
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
