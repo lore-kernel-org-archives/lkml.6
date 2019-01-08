@@ -4,54 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4885FC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:39:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40109C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:39:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FDF92063F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:39:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1026F20645
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:39:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546976376;
-	bh=56K9mydgi8e49eIcVM3IAft7Oeyp227BstZjrkTFaCU=;
+	s=default; t=1546976387;
+	bh=Fp/3IexuKra1Nl1j5qF+MnglTqqAxKg8m+jq2MdT018=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=JBF+lBl/jsC1Q8x1yF7/TJc1NATBP+BSCDOorsul4dCiuyV8wzyMI/XDoLPSQmXqG
-	 g6Wx0wIy4aPvJVi4bwq3tH7k8tno+hzLxTXTBQotGp5+YxA9QyaRLbSkb0VUYXi3HF
-	 wqYk1zJ7/fhc3gRrKPMKxmeeJHceEoQHEJjjJjm4=
+	b=AXuQCrV0rBpT751YQ4c8R632IOkFcm3TohBU1Q6FklUxzV4VNAXk/r9nrDJtUq7CC
+	 MgNJI5RSBYKkBUf8wVymOGBxGvI0nBre7lv+JKGRJIwhGsUwidLJkdR5oXFrxPANqq
+	 cfaaK+NHFVMy1FWRKT+5MZIVisUtzN9UXnbdJcRE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732305AbfAHTjf (ORCPT
+        id S1732582AbfAHTjq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:39:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43868 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:39:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43768 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732132AbfAHTfD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:35:03 -0500
+        id S1731496AbfAHTe6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:34:58 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E55102063F;
-        Tue,  8 Jan 2019 19:35:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9748620645;
+        Tue,  8 Jan 2019 19:34:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546976102;
-        bh=56K9mydgi8e49eIcVM3IAft7Oeyp227BstZjrkTFaCU=;
+        s=default; t=1546976097;
+        bh=Fp/3IexuKra1Nl1j5qF+MnglTqqAxKg8m+jq2MdT018=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OnEtcfxP+WHb3y4rTiQUIbdKmWJaNcgEz/BL6E2kjM/27C+++KH2uojoyo6CTR2fA
-         4TcSwuKJavB7wrkttCPgtIeGW0ZGVAyfZT8fXnoJoLaWXeqg4yMESPo1u5BIn6ZNk5
-         PBGFG7lhpWlG9HQTtsfxHsPz6VeFV83FLjx/cXhA=
+        b=cMHSoJrDhZk5vYZVp1VQ8sjXr7rxk7B4waPb1A3tAjkJd9QS2gGfzCzTak9ijO8jd
+         mccFdiSG1tesEDL2NmFl6oKiknf0Wt1Up8mAvbWa4uEXlLcXnAGB095bT8FBC8P+Tm
+         HWnBwMCebT/4bhJ5hja5AicDGbmZLO5y/szlnNVs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Breno Leitao <leitao@debian.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Sasha Levin <sashal@kernel.org>, linux-pm@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH AUTOSEL 4.4 10/28] powerpc/pseries/cpuidle: Fix preempt warning
-Date:   Tue,  8 Jan 2019 14:34:27 -0500
-Message-Id: <20190108193445.124251-10-sashal@kernel.org>
+Cc:     Nikolaj Fogh <nikolajfogh@gmail.com>,
+        Johan Hovold <johan@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.4 06/28] USB: serial: ftdi_sio: use rounding when calculating baud rate divisors
+Date:   Tue,  8 Jan 2019 14:34:23 -0500
+Message-Id: <20190108193445.124251-6-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108193445.124251-1-sashal@kernel.org>
 References: <20190108193445.124251-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -59,68 +58,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Breno Leitao <leitao@debian.org>
+From: Nikolaj Fogh <nikolajfogh@gmail.com>
 
-[ Upstream commit 2b038cbc5fcf12a7ee1cc9bfd5da1e46dacdee87 ]
+[ Upstream commit 6abd837104a3a8e1cda64fc4d7675f6c3ece9d8b ]
 
-When booting a pseries kernel with PREEMPT enabled, it dumps the
-following warning:
+Improve baud-rate generation by using rounding-to-closest instead of
+truncation in divisor calculation.
 
-   BUG: using smp_processor_id() in preemptible [00000000] code: swapper/0/1
-   caller is pseries_processor_idle_init+0x5c/0x22c
-   CPU: 13 PID: 1 Comm: swapper/0 Not tainted 4.20.0-rc3-00090-g12201a0128bc-dirty #828
-   Call Trace:
-   [c000000429437ab0] [c0000000009c8878] dump_stack+0xec/0x164 (unreliable)
-   [c000000429437b00] [c0000000005f2f24] check_preemption_disabled+0x154/0x160
-   [c000000429437b90] [c000000000cab8e8] pseries_processor_idle_init+0x5c/0x22c
-   [c000000429437c10] [c000000000010ed4] do_one_initcall+0x64/0x300
-   [c000000429437ce0] [c000000000c54500] kernel_init_freeable+0x3f0/0x500
-   [c000000429437db0] [c0000000000112dc] kernel_init+0x2c/0x160
-   [c000000429437e20] [c00000000000c1d0] ret_from_kernel_thread+0x5c/0x6c
+Results have been verified by logic analyzer on an FT232RT (232BM) chip.
+The following table shows the wanted baud rate, the baud rate obtained
+with the old method (truncation), with the new method (rounding) and the
+baud rate generated by the windows 10 driver. The numbers in parentheses
+is the error.
 
-This happens because the code calls get_lppaca() which calls
-get_paca() and it checks if preemption is disabled through
-check_preemption_disabled().
++- Wanted --+------ Old -------+------ New -------+------ Win -------+
+|    9600   |    9600 (0.00%)  |    9604 (0.05%)  |    9605 (0.05%)  |
+|   19200   |   19200 (0.00%)  |   19199 (0.01%)  |   19198 (0.01%)  |
+|   38400   |   38395 (0.01%)  |   38431 (0.08%)  |   38394 (0.02%)  |
+|   57600   |   57725 (0.22%)  |   57540 (0.10%)  |   57673 (0.13%)  |
+|  115200   |  115307 (0.09%)  |  115330 (0.11%)  |  115320 (0.10%)  |
+|  921600   |  919963 (0.18%)  |  920386 (0.13%)  |  920810 (0.09%)  |
+|  961200   |  996512 (3.67%)  |  956480 (0.49%)  |  956937 (0.44%)  |
++-----------+------------------+------------------+------------------+
 
-Preemption should be disabled because the per CPU variable may make no
-sense if there is a preemption (and a CPU switch) after it reads the
-per CPU data and when it is used.
+The error due to noise in the measurements is in the order of a few
+tenths of a %. As can be seen, the baud rate is significantly improved
+for some rates (e.g. 961200), and corresponds to the output given by the
+windows driver.
 
-In this device driver specifically, it is not a problem, because this
-code just needs to have access to one lppaca struct, and it does not
-matter if it is the current per CPU lppaca struct or not (i.e. when
-there is a preemption and a CPU migration).
+The theoretical baud rate has been calculated for all baud rates from 1
+to 3M, and as expected, the error is centered around 0, with a triangle
+shape instead of a sawtooth, so the maximum error is decreased to half.
 
-That said, the most appropriate fix seems to be related to avoiding
-the debug_smp_processor_id() call at get_paca(), instead of calling
-preempt_disable() before get_paca().
-
-Signed-off-by: Breno Leitao <leitao@debian.org>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Nikolaj Fogh <nikolajfogh@gmail.com>
+[ johan: edit commit message slightly ]
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/cpuidle/cpuidle-pseries.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/usb/serial/ftdi_sio.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/cpuidle/cpuidle-pseries.c b/drivers/cpuidle/cpuidle-pseries.c
-index 07135e009d8b..601a6c3acc7f 100644
---- a/drivers/cpuidle/cpuidle-pseries.c
-+++ b/drivers/cpuidle/cpuidle-pseries.c
-@@ -240,7 +240,13 @@ static int pseries_idle_probe(void)
- 		return -ENODEV;
+diff --git a/drivers/usb/serial/ftdi_sio.c b/drivers/usb/serial/ftdi_sio.c
+index 3e5b189a79b4..49d4ca167bf3 100644
+--- a/drivers/usb/serial/ftdi_sio.c
++++ b/drivers/usb/serial/ftdi_sio.c
+@@ -1119,7 +1119,7 @@ static unsigned short int ftdi_232am_baud_base_to_divisor(int baud, int base)
+ {
+ 	unsigned short int divisor;
+ 	/* divisor shifted 3 bits to the left */
+-	int divisor3 = base / 2 / baud;
++	int divisor3 = DIV_ROUND_CLOSEST(base, 2 * baud);
+ 	if ((divisor3 & 0x7) == 7)
+ 		divisor3++; /* round x.7/8 up to x+1 */
+ 	divisor = divisor3 >> 3;
+@@ -1145,7 +1145,7 @@ static __u32 ftdi_232bm_baud_base_to_divisor(int baud, int base)
+ 	static const unsigned char divfrac[8] = { 0, 3, 2, 4, 1, 5, 6, 7 };
+ 	__u32 divisor;
+ 	/* divisor shifted 3 bits to the left */
+-	int divisor3 = base / 2 / baud;
++	int divisor3 = DIV_ROUND_CLOSEST(base, 2 * baud);
+ 	divisor = divisor3 >> 3;
+ 	divisor |= (__u32)divfrac[divisor3 & 0x7] << 14;
+ 	/* Deal with special cases for highest baud rates. */
+@@ -1168,7 +1168,7 @@ static __u32 ftdi_2232h_baud_base_to_divisor(int baud, int base)
+ 	int divisor3;
  
- 	if (firmware_has_feature(FW_FEATURE_SPLPAR)) {
--		if (lppaca_shared_proc(get_lppaca())) {
-+		/*
-+		 * Use local_paca instead of get_lppaca() since
-+		 * preemption is not disabled, and it is not required in
-+		 * fact, since lppaca_ptr does not need to be the value
-+		 * associated to the current CPU, it can be from any CPU.
-+		 */
-+		if (lppaca_shared_proc(local_paca->lppaca_ptr)) {
- 			cpuidle_state_table = shared_states;
- 			max_idle_state = ARRAY_SIZE(shared_states);
- 		} else {
+ 	/* hi-speed baud rate is 10-bit sampling instead of 16-bit */
+-	divisor3 = base * 8 / (baud * 10);
++	divisor3 = DIV_ROUND_CLOSEST(8 * base, 10 * baud);
+ 
+ 	divisor = divisor3 >> 3;
+ 	divisor |= (__u32)divfrac[divisor3 & 0x7] << 14;
 -- 
 2.19.1
 
