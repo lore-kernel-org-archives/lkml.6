@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49B64C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:07:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D71CDC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:07:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1392E20660
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:07:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B99720660
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:07:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546978025;
-	bh=AOKM9aP3K91DApiEOhrPC6XBXVCx80u9YSho/Ff4azY=;
+	s=default; t=1546978032;
+	bh=XUxiVeOZDM6uhBtX/vgb1svOnm7nDIu09V4UUXtei8E=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ZBKSwMBxYnmQ+RrtM0axlYhiFxFgnv+2lmbe3xUxH92ZLIa55F8afHRmYazzllSFQ
-	 /FZZZ+kr6BBXTb/cGdcmIRvUM5zPqARFKQ8bg+t75HBTJmRYYgyASJ6HQOAp4aCKjH
-	 73MTjPGQb27vohhqvCMwSepMmGphZHmolJDx2mcY=
+	b=ZAjM7CNRGHauVV5ZaBKwNesnSLBzLm1iWoHIVuW9jLRGuDyNQ+sPmtA1Z/JMOkrIq
+	 uF+oQwICZE5AFpA5YKQsSITUNiHnvgXIUTkgJsrE5PSosQ0MbeAbCVacr7HMoHo2y4
+	 WwAsLUknlgiVAPeaCASmJgX+cyj0CPT2Hgg2FP+4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730887AbfAHUHE (ORCPT
+        id S1733078AbfAHUHL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 15:07:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34544 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 15:07:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34458 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729115AbfAHT16 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:27:58 -0500
+        id S1729832AbfAHT1z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:27:55 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5DE1D20578;
-        Tue,  8 Jan 2019 19:27:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2FBDF2070B;
+        Tue,  8 Jan 2019 19:27:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975678;
-        bh=AOKM9aP3K91DApiEOhrPC6XBXVCx80u9YSho/Ff4azY=;
+        s=default; t=1546975674;
+        bh=XUxiVeOZDM6uhBtX/vgb1svOnm7nDIu09V4UUXtei8E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IYrSi9TBrzQ85r9/UZtQOs94Ys6KPQvUFvELlV/+IYjE2YLf7X8H6gUYFylxdgrs0
-         BAYgQ77p9MFIx5NzBsgXOJGSlhJWk9ZE8rEFQObBukIVbbiFyr28tvD9oZkpc31u7H
-         RMZArqre+3yM2/jzAlu2jjPRKmtoM0ljij6npQKI=
+        b=BhtYJrZKA7Dy3aSv8RT9aSicdNlSIFS38nZMrNnlaxCM2quezi0NWGaeP4SjND8A4
+         Hem+Pv++SmlasrfjnRjJ84X3h+Jjms1lX/GWjHWXX8fHk+IaKkrM+/FDZqFKsQsqGk
+         BU00OBT2mZbMKD4jO28A6FoeV3uM4C3z9423hLQ4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Breno Leitao <leitao@debian.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Sasha Levin <sashal@kernel.org>, linux-pm@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH AUTOSEL 4.20 048/117] powerpc/pseries/cpuidle: Fix preempt warning
-Date:   Tue,  8 Jan 2019 14:25:16 -0500
-Message-Id: <20190108192628.121270-48-sashal@kernel.org>
+Cc:     Daniel Axtens <dja@axtens.net>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 046/117] media: uvcvideo: Refactor teardown of uvc on USB disconnect
+Date:   Tue,  8 Jan 2019 14:25:14 -0500
+Message-Id: <20190108192628.121270-46-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192628.121270-1-sashal@kernel.org>
 References: <20190108192628.121270-1-sashal@kernel.org>
@@ -59,68 +59,185 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Breno Leitao <leitao@debian.org>
+From: Daniel Axtens <dja@axtens.net>
 
-[ Upstream commit 2b038cbc5fcf12a7ee1cc9bfd5da1e46dacdee87 ]
+[ Upstream commit 10e1fdb95809ed21406f53b5b4f064673a1b9ceb ]
 
-When booting a pseries kernel with PREEMPT enabled, it dumps the
-following warning:
+Currently, disconnecting a USB webcam while it is in use prints out a
+number of warnings, such as:
 
-   BUG: using smp_processor_id() in preemptible [00000000] code: swapper/0/1
-   caller is pseries_processor_idle_init+0x5c/0x22c
-   CPU: 13 PID: 1 Comm: swapper/0 Not tainted 4.20.0-rc3-00090-g12201a0128bc-dirty #828
-   Call Trace:
-   [c000000429437ab0] [c0000000009c8878] dump_stack+0xec/0x164 (unreliable)
-   [c000000429437b00] [c0000000005f2f24] check_preemption_disabled+0x154/0x160
-   [c000000429437b90] [c000000000cab8e8] pseries_processor_idle_init+0x5c/0x22c
-   [c000000429437c10] [c000000000010ed4] do_one_initcall+0x64/0x300
-   [c000000429437ce0] [c000000000c54500] kernel_init_freeable+0x3f0/0x500
-   [c000000429437db0] [c0000000000112dc] kernel_init+0x2c/0x160
-   [c000000429437e20] [c00000000000c1d0] ret_from_kernel_thread+0x5c/0x6c
+WARNING: CPU: 2 PID: 3118 at /build/linux-ezBi1T/linux-4.8.0/fs/sysfs/group.c:237 sysfs_remove_group+0x8b/0x90
+sysfs group ffffffffa7cd0780 not found for kobject 'event13'
 
-This happens because the code calls get_lppaca() which calls
-get_paca() and it checks if preemption is disabled through
-check_preemption_disabled().
+This has been noticed before. [0]
 
-Preemption should be disabled because the per CPU variable may make no
-sense if there is a preemption (and a CPU switch) after it reads the
-per CPU data and when it is used.
+This is because of the order in which things are torn down.
 
-In this device driver specifically, it is not a problem, because this
-code just needs to have access to one lppaca struct, and it does not
-matter if it is the current per CPU lppaca struct or not (i.e. when
-there is a preemption and a CPU migration).
+If there are no streams active during a USB disconnect:
 
-That said, the most appropriate fix seems to be related to avoiding
-the debug_smp_processor_id() call at get_paca(), instead of calling
-preempt_disable() before get_paca().
+ - uvc_disconnect() is invoked via device_del() through the bus
+   notifier mechanism.
 
-Signed-off-by: Breno Leitao <leitao@debian.org>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+ - this calls uvc_unregister_video().
+
+ - uvc_unregister_video() unregisters the video device for each
+   stream,
+
+ - because there are no streams open, it calls uvc_delete()
+
+ - uvc_delete() calls uvc_status_cleanup(), which cleans up the status
+   input device.
+
+ - uvc_delete() calls media_device_unregister(), which cleans up the
+   media device
+
+ - uvc_delete(), uvc_unregister_video() and uvc_disconnect() all
+   return, and we end up back in device_del().
+
+ - device_del() then cleans up the sysfs folder for the camera with
+   dpm_sysfs_remove(). Because uvc_status_cleanup() and
+   media_device_unregister() have already been called, this all works
+   nicely.
+
+If, on the other hand, there *are* streams active during a USB disconnect:
+
+ - uvc_disconnect() is invoked
+
+ - this calls uvc_unregister_video()
+
+ - uvc_unregister_video() unregisters the video device for each
+   stream,
+
+ - uvc_unregister_video() and uvc_disconnect() return, and we end up
+   back in device_del().
+
+ - device_del() then cleans up the sysfs folder for the camera with
+   dpm_sysfs_remove(). Because the status input device and the media
+   device are children of the USB device, this also deletes their
+   sysfs folders.
+
+ - Sometime later, the final stream is closed, invoking uvc_release().
+
+ - uvc_release() calls uvc_delete()
+
+ - uvc_delete() calls uvc_status_cleanup(), which cleans up the status
+   input device. Because the sysfs directory has already been removed,
+   this causes a WARNing.
+
+ - uvc_delete() calls media_device_unregister(), which cleans up the
+   media device. Because the sysfs directory has already been removed,
+   this causes another WARNing.
+
+To fix this, we need to make sure the devices are always unregistered
+before the end of uvc_disconnect(). To this, move the unregistration
+into the disconnect path:
+
+ - split uvc_status_cleanup() into two parts, one on disconnect that
+   unregisters and one on delete that frees.
+
+ - move v4l2_device_unregister() and media_device_unregister() into
+   the disconnect path.
+
+[0]: https://lkml.org/lkml/2016/12/8/657
+
+[Renamed uvc_input_cleanup() to uvc_input_unregister()]
+
+Signed-off-by: Daniel Axtens <dja@axtens.net>
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/cpuidle/cpuidle-pseries.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/media/usb/uvc/uvc_driver.c | 13 +++++++++----
+ drivers/media/usb/uvc/uvc_status.c | 12 ++++++++----
+ drivers/media/usb/uvc/uvcvideo.h   |  1 +
+ 3 files changed, 18 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/cpuidle/cpuidle-pseries.c b/drivers/cpuidle/cpuidle-pseries.c
-index 9e56bc411061..74c247972bb3 100644
---- a/drivers/cpuidle/cpuidle-pseries.c
-+++ b/drivers/cpuidle/cpuidle-pseries.c
-@@ -247,7 +247,13 @@ static int pseries_idle_probe(void)
- 		return -ENODEV;
+diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
+index bc369a0934a3..76dc3ee8ca21 100644
+--- a/drivers/media/usb/uvc/uvc_driver.c
++++ b/drivers/media/usb/uvc/uvc_driver.c
+@@ -1824,11 +1824,7 @@ static void uvc_delete(struct kref *kref)
+ 	usb_put_intf(dev->intf);
+ 	usb_put_dev(dev->udev);
  
- 	if (firmware_has_feature(FW_FEATURE_SPLPAR)) {
--		if (lppaca_shared_proc(get_lppaca())) {
-+		/*
-+		 * Use local_paca instead of get_lppaca() since
-+		 * preemption is not disabled, and it is not required in
-+		 * fact, since lppaca_ptr does not need to be the value
-+		 * associated to the current CPU, it can be from any CPU.
-+		 */
-+		if (lppaca_shared_proc(local_paca->lppaca_ptr)) {
- 			cpuidle_state_table = shared_states;
- 			max_idle_state = ARRAY_SIZE(shared_states);
- 		} else {
+-	if (dev->vdev.dev)
+-		v4l2_device_unregister(&dev->vdev);
+ #ifdef CONFIG_MEDIA_CONTROLLER
+-	if (media_devnode_is_registered(dev->mdev.devnode))
+-		media_device_unregister(&dev->mdev);
+ 	media_device_cleanup(&dev->mdev);
+ #endif
+ 
+@@ -1885,6 +1881,15 @@ static void uvc_unregister_video(struct uvc_device *dev)
+ 
+ 		uvc_debugfs_cleanup_stream(stream);
+ 	}
++
++	uvc_status_unregister(dev);
++
++	if (dev->vdev.dev)
++		v4l2_device_unregister(&dev->vdev);
++#ifdef CONFIG_MEDIA_CONTROLLER
++	if (media_devnode_is_registered(dev->mdev.devnode))
++		media_device_unregister(&dev->mdev);
++#endif
+ }
+ 
+ int uvc_register_video_device(struct uvc_device *dev,
+diff --git a/drivers/media/usb/uvc/uvc_status.c b/drivers/media/usb/uvc/uvc_status.c
+index 0722dc684378..883e4cab45e7 100644
+--- a/drivers/media/usb/uvc/uvc_status.c
++++ b/drivers/media/usb/uvc/uvc_status.c
+@@ -54,7 +54,7 @@ static int uvc_input_init(struct uvc_device *dev)
+ 	return ret;
+ }
+ 
+-static void uvc_input_cleanup(struct uvc_device *dev)
++static void uvc_input_unregister(struct uvc_device *dev)
+ {
+ 	if (dev->input)
+ 		input_unregister_device(dev->input);
+@@ -71,7 +71,7 @@ static void uvc_input_report_key(struct uvc_device *dev, unsigned int code,
+ 
+ #else
+ #define uvc_input_init(dev)
+-#define uvc_input_cleanup(dev)
++#define uvc_input_unregister(dev)
+ #define uvc_input_report_key(dev, code, value)
+ #endif /* CONFIG_USB_VIDEO_CLASS_INPUT_EVDEV */
+ 
+@@ -292,12 +292,16 @@ int uvc_status_init(struct uvc_device *dev)
+ 	return 0;
+ }
+ 
+-void uvc_status_cleanup(struct uvc_device *dev)
++void uvc_status_unregister(struct uvc_device *dev)
+ {
+ 	usb_kill_urb(dev->int_urb);
++	uvc_input_unregister(dev);
++}
++
++void uvc_status_cleanup(struct uvc_device *dev)
++{
+ 	usb_free_urb(dev->int_urb);
+ 	kfree(dev->status);
+-	uvc_input_cleanup(dev);
+ }
+ 
+ int uvc_status_start(struct uvc_device *dev, gfp_t flags)
+diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
+index c0cbd833d0a4..1db6634b2455 100644
+--- a/drivers/media/usb/uvc/uvcvideo.h
++++ b/drivers/media/usb/uvc/uvcvideo.h
+@@ -757,6 +757,7 @@ int uvc_register_video_device(struct uvc_device *dev,
+ 
+ /* Status */
+ int uvc_status_init(struct uvc_device *dev);
++void uvc_status_unregister(struct uvc_device *dev);
+ void uvc_status_cleanup(struct uvc_device *dev);
+ int uvc_status_start(struct uvc_device *dev, gfp_t flags);
+ void uvc_status_stop(struct uvc_device *dev);
 -- 
 2.19.1
 
