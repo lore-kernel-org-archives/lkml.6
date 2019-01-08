@@ -2,52 +2,51 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 341E8C43444
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:39:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66506C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:39:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 008E72063F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:39:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2DB7F2063F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:39:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546976343;
-	bh=O6WPsUUdmPAiKNJs5fr30n9PFybE3SdHauvmgV0VgZg=;
+	s=default; t=1546976348;
+	bh=6cOhFqO/9x5iVXUnGkodK93GH/+rI2u5VVHZ4Oba+Yw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=OOyFX1HwAPZlHqua7RWII4Aw2cG5NkaGzeEllUBMqrigF/0ZGni2WgVylr4GvcnMh
-	 Y+Xd/F8d3M80ZCA82VEuUgvZPgykSTv3NXVM1Qlc36EDMn8mTckKM067NsGytmGKu5
-	 5kjGLTn9YV+Kgi5rk/EA6ySrGTZ54LD8eBhnN/aM=
+	b=ZnTZ+rvaWUXPRzURsDYcSayAbVl5+SAgYr9LKAq8I3IzeIAC1ucjo9lNAUGGhAA9M
+	 NTTZJ9rp4lWsAutJiUeU8TZcmSPOfqcxE/sKv34OAei8I8V7vU1DPhalWLjBSpKzdm
+	 yKY3WqOQfb2rUA/lo6qd4a8upguvRQecv0vq1n1M=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732187AbfAHTfJ (ORCPT
+        id S1732492AbfAHTjH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:35:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43882 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:39:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43930 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732144AbfAHTfE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:35:04 -0500
+        id S1732171AbfAHTfI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:35:08 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1BB9320645;
-        Tue,  8 Jan 2019 19:35:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 69E342063F;
+        Tue,  8 Jan 2019 19:35:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546976103;
-        bh=O6WPsUUdmPAiKNJs5fr30n9PFybE3SdHauvmgV0VgZg=;
+        s=default; t=1546976108;
+        bh=6cOhFqO/9x5iVXUnGkodK93GH/+rI2u5VVHZ4Oba+Yw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XCZ6PfGDLT12jVnxUgjdK6RvFZb87btPCpuFeb92VbEzzdrj8BvqAoNu5iuGBKTiD
-         /pSS3ZoUgcMKAVMzoHnAOcsF6nOwjJFow6Q2hWO7XkL1E9EscBS6E0b6IDyr268ugj
-         iYPFTCF8VDeYHNJzhkqb5dCjGX1sCkFvkciD4z6Y=
+        b=EmV33uABKgbAeeH97GbnflAjaAyB9ss2xoe7cXDB1mWWer2odq3e23OFexhmkCZD9
+         HkWLDs0RwUdBc2biZaHFklL+xk4K8mNz2C6tCA4lGU0B2JiH09FONHRVrNit6SQ2SH
+         pu8WXTAI3NUA0g5DSNNsOZFQfvRaiEgMvokm7U3I=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org,
-        linux1394-devel@lists.sourceforge.net
-Subject: [PATCH AUTOSEL 4.4 11/28] media: firewire: Fix app_info parameter type in avc_ca{,_app}_info
-Date:   Tue,  8 Jan 2019 14:34:28 -0500
-Message-Id: <20190108193445.124251-11-sashal@kernel.org>
+Cc:     Lucas Stach <l.stach@pengutronix.de>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.4 14/28] clk: imx6q: reset exclusive gates on init
+Date:   Tue,  8 Jan 2019 14:34:31 -0500
+Message-Id: <20190108193445.124251-14-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108193445.124251-1-sashal@kernel.org>
 References: <20190108193445.124251-1-sashal@kernel.org>
@@ -59,89 +58,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Lucas Stach <l.stach@pengutronix.de>
 
-[ Upstream commit b2e9a4eda11fd2cb1e6714e9ad3f455c402568ff ]
+[ Upstream commit f7542d817733f461258fd3a47d77da35b2d9fc81 ]
 
-Clang warns:
+The exclusive gates may be set up in the wrong way by software running
+before the clock driver comes up. In that case the exclusive setup is
+locked in its initial state, as the complementary function can't be
+activated without disabling the initial setup first.
 
-drivers/media/firewire/firedtv-avc.c:999:45: warning: implicit
-conversion from 'int' to 'char' changes value from 159 to -97
-[-Wconstant-conversion]
-        app_info[0] = (EN50221_TAG_APP_INFO >> 16) & 0xff;
-                    ~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
-drivers/media/firewire/firedtv-avc.c:1000:45: warning: implicit
-conversion from 'int' to 'char' changes value from 128 to -128
-[-Wconstant-conversion]
-        app_info[1] = (EN50221_TAG_APP_INFO >>  8) & 0xff;
-                    ~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
-drivers/media/firewire/firedtv-avc.c:1040:44: warning: implicit
-conversion from 'int' to 'char' changes value from 159 to -97
-[-Wconstant-conversion]
-        app_info[0] = (EN50221_TAG_CA_INFO >> 16) & 0xff;
-                    ~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
-drivers/media/firewire/firedtv-avc.c:1041:44: warning: implicit
-conversion from 'int' to 'char' changes value from 128 to -128
-[-Wconstant-conversion]
-        app_info[1] = (EN50221_TAG_CA_INFO >>  8) & 0xff;
-                    ~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
-4 warnings generated.
+To avoid this lock situation, reset the exclusive gates to the off
+state and allow the kernel to provide the proper setup.
 
-Change app_info's type to unsigned char to match the type of the
-member msg in struct ca_msg, which is the only thing passed into the
-app_info parameter in this function.
-
-Link: https://github.com/ClangBuiltLinux/linux/issues/105
-
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+Reviewed-by: Dong Aisheng <Aisheng.dong@nxp.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/firewire/firedtv-avc.c | 6 ++++--
- drivers/media/firewire/firedtv.h     | 6 ++++--
- 2 files changed, 8 insertions(+), 4 deletions(-)
+ drivers/clk/imx/clk-imx6q.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/firewire/firedtv-avc.c b/drivers/media/firewire/firedtv-avc.c
-index 251a556112a9..280b5ffea592 100644
---- a/drivers/media/firewire/firedtv-avc.c
-+++ b/drivers/media/firewire/firedtv-avc.c
-@@ -968,7 +968,8 @@ static int get_ca_object_length(struct avc_response_frame *r)
- 	return r->operand[7];
- }
+diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
+index a0df83e6b84b..46c05c9a9354 100644
+--- a/drivers/clk/imx/clk-imx6q.c
++++ b/drivers/clk/imx/clk-imx6q.c
+@@ -239,8 +239,12 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
+ 	 * lvds1_gate and lvds2_gate are pseudo-gates.  Both can be
+ 	 * independently configured as clock inputs or outputs.  We treat
+ 	 * the "output_enable" bit as a gate, even though it's really just
+-	 * enabling clock output.
++	 * enabling clock output. Initially the gate bits are cleared, as
++	 * otherwise the exclusive configuration gets locked in the setup done
++	 * by software running before the clock driver, with no way to change
++	 * it.
+ 	 */
++	writel(readl(base + 0x160) & ~0x3c00, base + 0x160);
+ 	clk[IMX6QDL_CLK_LVDS1_GATE] = imx_clk_gate_exclusive("lvds1_gate", "lvds1_sel", base + 0x160, 10, BIT(12));
+ 	clk[IMX6QDL_CLK_LVDS2_GATE] = imx_clk_gate_exclusive("lvds2_gate", "lvds2_sel", base + 0x160, 11, BIT(13));
  
--int avc_ca_app_info(struct firedtv *fdtv, char *app_info, unsigned int *len)
-+int avc_ca_app_info(struct firedtv *fdtv, unsigned char *app_info,
-+		    unsigned int *len)
- {
- 	struct avc_command_frame *c = (void *)fdtv->avc_data;
- 	struct avc_response_frame *r = (void *)fdtv->avc_data;
-@@ -1009,7 +1010,8 @@ int avc_ca_app_info(struct firedtv *fdtv, char *app_info, unsigned int *len)
- 	return ret;
- }
- 
--int avc_ca_info(struct firedtv *fdtv, char *app_info, unsigned int *len)
-+int avc_ca_info(struct firedtv *fdtv, unsigned char *app_info,
-+		unsigned int *len)
- {
- 	struct avc_command_frame *c = (void *)fdtv->avc_data;
- 	struct avc_response_frame *r = (void *)fdtv->avc_data;
-diff --git a/drivers/media/firewire/firedtv.h b/drivers/media/firewire/firedtv.h
-index 345d1eda8c05..5b18a08c6285 100644
---- a/drivers/media/firewire/firedtv.h
-+++ b/drivers/media/firewire/firedtv.h
-@@ -124,8 +124,10 @@ int avc_lnb_control(struct firedtv *fdtv, char voltage, char burst,
- 		    struct dvb_diseqc_master_cmd *diseqcmd);
- void avc_remote_ctrl_work(struct work_struct *work);
- int avc_register_remote_control(struct firedtv *fdtv);
--int avc_ca_app_info(struct firedtv *fdtv, char *app_info, unsigned int *len);
--int avc_ca_info(struct firedtv *fdtv, char *app_info, unsigned int *len);
-+int avc_ca_app_info(struct firedtv *fdtv, unsigned char *app_info,
-+		    unsigned int *len);
-+int avc_ca_info(struct firedtv *fdtv, unsigned char *app_info,
-+		unsigned int *len);
- int avc_ca_reset(struct firedtv *fdtv);
- int avc_ca_pmt(struct firedtv *fdtv, char *app_info, int length);
- int avc_ca_get_time_date(struct firedtv *fdtv, int *interval);
 -- 
 2.19.1
 
