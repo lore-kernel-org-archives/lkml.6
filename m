@@ -2,70 +2,109 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B64CC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 00:36:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D75E0C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 00:39:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 311892085A
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 00:36:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A5ED62085A
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 00:39:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727295AbfAHAg3 (ORCPT
+        id S1727177AbfAHAjC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 19:36:29 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:36068 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726667AbfAHAg2 (ORCPT
+        Mon, 7 Jan 2019 19:39:02 -0500
+Received: from smtprelay0148.hostedemail.com ([216.40.44.148]:51165 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726667AbfAHAjB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 19:36:28 -0500
-Received: from localhost (50-203-107-150-static.hfc.comcastbusiness.net [50.203.107.150])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 8F29514C72D26;
-        Mon,  7 Jan 2019 16:36:27 -0800 (PST)
-Date:   Mon, 07 Jan 2019 16:36:26 -0800 (PST)
-Message-Id: <20190107.163626.191499249014206114.davem@davemloft.net>
-To:     sudipm.mukherjee@gmail.com
-Cc:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, gustavo@embeddedor.com
-Subject: Re: [PATCH 4.14 002/101] net: core: Fix Spectre v1 vulnerability
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <CADVatmOxZngMs8foHj0mOTjC5NhAZvZyxRJXREkEsKvG-6z6Ug@mail.gmail.com>
-References: <20190107105330.372621917@linuxfoundation.org>
-        <20190107105330.528127680@linuxfoundation.org>
-        <CADVatmOxZngMs8foHj0mOTjC5NhAZvZyxRJXREkEsKvG-6z6Ug@mail.gmail.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
+        Mon, 7 Jan 2019 19:39:01 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay06.hostedemail.com (Postfix) with ESMTP id D05CA18224943;
+        Tue,  8 Jan 2019 00:39:00 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: silk14_87efa7f585553
+X-Filterd-Recvd-Size: 3023
+Received: from XPS-9350 (unknown [172.56.44.85])
+        (Authenticated sender: joe@perches.com)
+        by omf11.hostedemail.com (Postfix) with ESMTPA;
+        Tue,  8 Jan 2019 00:38:53 +0000 (UTC)
+Message-ID: <9bc80bb861899633ba93e6c81d36d2201b05936b.camel@perches.com>
+Subject: Re: [PATCH v3] coding-style: Clarify the expectations around bool
+From:   Joe Perches <joe@perches.com>
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Gal Pressman <galpress@amazon.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Stephen Warren <swarren@wwwdotorg.org>,
+        Tariq Toukan <tariqt@mellanox.com>, xavier.huwei@huawei.com,
+        netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+        Doug Ledford <dledford@redhat.com>,
+        Stephen Warren <swarren@nvidia.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org
+Date:   Mon, 07 Jan 2019 16:38:50 -0800
+In-Reply-To: <20190107232513.GA5336@ziepe.ca>
+References: <20190107211117.GA24142@ziepe.ca>
+         <8ec3603317f477fe9923b87499a33da7a2cf81ff.camel@perches.com>
+         <20190107232513.GA5336@ziepe.ca>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 07 Jan 2019 16:36:28 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Date: Mon, 7 Jan 2019 21:13:06 +0000
-
-> Hi Greg,
+On Mon, 2019-01-07 at 16:25 -0700, Jason Gunthorpe wrote:
+> On Mon, Jan 07, 2019 at 02:10:22PM -0800, Joe Perches wrote:
+> > On Mon, 2019-01-07 at 14:11 -0700, Jason Gunthorpe wrote:
+> > > There has been some confusion since checkpatch started warning about bool
+> > > use in structures, and people have been avoiding using it.
+> > > 
+> > > Many people feel there is still a legitimate place for bool in structures,
+> > > so provide some guidance on bool usage derived from the entire thread that
+> > > spawned the checkpatch warning.
+> > 
+> > Thanks Jason.
+> > 
+> > It'd be nice to combine this with some better checkpatch warning or
+> > even a removal of that misleading warning from checkpatch
+> > altogether.
 > 
-> On Mon, Jan 7, 2019 at 1:00 PM Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
->>
->> 4.14-stable review patch.  If anyone has any objections, please let me know.
->>
->> ------------------
->>
->> From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
->>
->> [ Upstream commit 50d5258634aee2e62832aa086d2fb0de00e72b91 ]
-> 
-> This has been reverted upstream by f2ab95814103 ("net: Revert recent
-> Spectre-v1 patches.")
+> Okay, do you have a preference?
 
-Greg please drop this too.
+Yes.
+---
+ scripts/checkpatch.pl | 13 -------------
+ 1 file changed, 13 deletions(-)
 
-Thanks Sudip for spotting this.
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index 155fa9305166..cfe0396c9845 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -6370,19 +6370,6 @@ sub process {
+ 			}
+ 		}
+ 
+-# check for bool bitfields
+-		if ($sline =~ /^.\s+bool\s*$Ident\s*:\s*\d+\s*;/) {
+-			WARN("BOOL_BITFIELD",
+-			     "Avoid using bool as bitfield.  Prefer bool bitfields as unsigned int or u<8|16|32>\n" . $herecurr);
+-		}
+-
+-# check for bool use in .h files
+-		if ($realfile =~ /\.h$/ &&
+-		    $sline =~ /^.\s+bool\s*$Ident\s*(?::\s*d+\s*)?;/) {
+-			CHK("BOOL_MEMBER",
+-			    "Avoid using bool structure members because of possible alignment issues - see: https://lkml.org/lkml/2017/11/21/384\n" . $herecurr);
+-		}
+-
+ # check for semaphores initialized locked
+ 		if ($line =~ /^.\s*sema_init.+,\W?0\W?\)/) {
+ 			WARN("CONSIDER_COMPLETION",
+
+
