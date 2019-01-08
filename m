@@ -3,65 +3,102 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CB29C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 08:00:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 557EAC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 08:02:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 552D0218A3
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 08:00:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2FCB2218A3
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 08:02:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727992AbfAHIAd (ORCPT
+        id S1728007AbfAHIC3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 03:00:33 -0500
-Received: from mail-wr1-f41.google.com ([209.85.221.41]:46903 "EHLO
-        mail-wr1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727473AbfAHIAc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 03:00:32 -0500
-Received: by mail-wr1-f41.google.com with SMTP id l9so2981604wrt.13
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 00:00:31 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=nWpDQmZNg8zKVk12QskQ7NNS05C4fI/JmZBKLdKyu8Q=;
-        b=syrzYwWuhtGu+MRtp/4oGBHKOgFgYtYyODXTX3W8REsrVt3oETCf//cBRomCbRdtzJ
-         46Y/Y4dq60tBhsIMhg/uYZ9KOhnC7bbjezxqsNG3/Dx7HgMrI1xScUhBbt4Zr4eQqH+n
-         VCjdGYbsqWBvzJiHQV27PAiKmIXAZEp3V3Fr3lZcVFLMHZr2ruH6MsIcu4sMKZ6UdcBX
-         JOWaigcyfrv3G56TTb/R8awtY2sxy1ZPriMy/oxrLYRRMTjaJeqQrgsqSMHQXQB/4c9G
-         mq8PB8E5Tlcwd3Ly85c+QVzBle+8PeSl2PLLb3lpO3Rkpm2/9egmlqvwMZ05/Ytaz3Ns
-         3eJg==
-X-Gm-Message-State: AJcUukclvzUKnBS6sq/qXaLAHik5pC+37BUqLsFi7MiCNfzCoIBAtGZg
-        fobRlbV4I2BZCTphVAsr2d8Y65IE
-X-Google-Smtp-Source: ALg8bN65yTEwq785rTcewgn+OLoeP9ar1oEZjHRs3NGpgwYIX3megPpIKtyGzd/wPYxr3CUMLw7f2Q==
-X-Received: by 2002:adf:dd06:: with SMTP id a6mr647992wrm.2.1546934430995;
-        Tue, 08 Jan 2019 00:00:30 -0800 (PST)
-Received: from ?IPv6:2601:647:4800:973f:782d:2af2:5049:76cb? ([2601:647:4800:973f:782d:2af2:5049:76cb])
-        by smtp.gmail.com with ESMTPSA id g67sm16056292wmd.38.2019.01.08.00.00.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 08 Jan 2019 00:00:30 -0800 (PST)
-Subject: Re: [PATCH] nvme-core: don't initlialize ctrl->cntlid twice
-To:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        linux-nvme@lists.infradead.org
-Cc:     Keith Busch <keith.busch@intel.com>, Jens Axboe <axboe@fb.com>,
-        Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org
-References: <20190108030849.12870-1-andrew.smirnov@gmail.com>
-From:   Sagi Grimberg <sagi@grimberg.me>
-Message-ID: <c5c91840-185c-87bb-976d-6603411c6e29@grimberg.me>
-Date:   Tue, 8 Jan 2019 00:00:26 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 8 Jan 2019 03:02:29 -0500
+Received: from ozlabs.org ([203.11.71.1]:39727 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727473AbfAHIC2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 03:02:28 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43Yl9F5nTqz9sD9;
+        Tue,  8 Jan 2019 19:02:25 +1100 (AEDT)
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Alex Williamson <alex.williamson@redhat.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Cornelia Huck <cohuck@redhat.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Alexey Kardashevskiy <aik@ozlabs.ru>, kvm@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] vfio_pci: Add local source directory as include
+In-Reply-To: <20190107131341.00581863@x1.home>
+References: <20190104195714.30045-1-labbott@redhat.com> <874lakc09x.fsf@concordia.ellerman.id.au> <CAK7LNAQLEYc=czrJvzK8UXeXYm08TuLB62uMN2kFedkcW9b1pw@mail.gmail.com> <20190107120716.51d95854.cohuck@redhat.com> <CAK7LNAQtsW5KoOQmOB4uSv2zHM80azmHnEMj=2BunikhJQEpig@mail.gmail.com> <20190107131341.00581863@x1.home>
+Date:   Tue, 08 Jan 2019 19:02:23 +1100
+Message-ID: <87pnt7tw4w.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-In-Reply-To: <20190108030849.12870-1-andrew.smirnov@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
+Alex Williamson <alex.williamson@redhat.com> writes:
+...
+>
+> Numbering options for clarity:
+>
+> 1)
+>> ccflags-y += -I$(src)
+>> would add the header search path for all files in drivers/vfio/pci/
+>> whereas only the drivers/vfio/pci/vfio_pci_nvlink2.c needs it.
+>> 
+>
+> 2)
+>> CFLAGS_vfio_pci_nvlink2.o += -I$(src)
+>> is a bit better.
+>> However, it is not obvious why this extra header search path is needed
+>> until you find vfio_pci_nvlink2.c including trace.h
+>> 
+>
+> 3)
+>> #define TRACE_INCLUDE_PATH ../../drivers/vfio/pci
+>> clarifies the intention because the related code is all placed in trace.h
+ 
+Good summary.
+
+>> From the comment in include/trace/define_trace.h
+>> TRACE_INCLUDE_PATH is relative to include/trace/define_trace.h
+>
+> In my scan of the tree, the most common solution seems to be 2) as this
+> is essentially recommended in the sample file.  3) is well represented,
+> with much fewer examples of 1), though it might depend how liberally
+> we grep out or examine the use cases.
+
+It seems to me that 1 and 2 is overwhelmingly used:
+
+$ git grep -F "#define TRACE_INCLUDE_PATH" | wc -l
+133
+
+That counts all definitions of TRACE_INCLUDE_PATH.
+
+$ git grep -F "#define TRACE_INCLUDE_PATH ." | wc -l
+122
+
+That's all files using '.', so only 11 locations use the relative path
+method (3).
+
+
+Which is unsurprising given that the sample uses '.'.
+
+And people often look at existing code for an example, so they're also
+going to tend to use '.'.
+
+
+I agree with Masahiro that adding include paths to the Makefile for
+this is a bit gross, and method 3 is much more preferable.
+
+Fixing all the existing code to use method 3 would be a good beginner
+project :)
+
+cheers
