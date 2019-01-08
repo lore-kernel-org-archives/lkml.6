@@ -4,55 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51702C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:29:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C924C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:29:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F2B32070B
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:29:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C1AD20883
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:29:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546975785;
-	bh=+V65MindRhoSnsW+P21tyvTfAWRlw7ukVetCcTGzEGk=;
+	s=default; t=1546975787;
+	bh=xxfrKVFK4+INIlF6rCwPWKplFrmYURb2A5IovYoXsqU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=fgBQ7SU2G1aFfH0QwY5jyJXbnVBKScrgBOqS1M8AuPi7g6AGjpq8cXXaAEm51K21X
-	 9eUoRKo7SlyYI3gFsjSjH04SHZlIPm2y82tb/ewmC5nAY/U7GrZQDhoTqGYdyaYe6N
-	 V0pDOh0xfzQfMBWGnZzzsmQiaQIf2xRn4YAgjgvw=
+	b=CN1j2mC/dpI4pt+Q9qv6eq9PYoScbIsXNZzJlhq5NICp4KtMV5EcS8C+2XFXrqBlt
+	 JsmUqqUCsYIZ3kQ3e7iSiVKuds9v2SztOQsX2ZZDF8NqeddJSJwK1YE4CTjIKK7JUm
+	 5pbpnkwFq8RmhSzXtxMJT9mmDKaCT+FOwlW1BxWY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730470AbfAHT3o (ORCPT
+        id S1730481AbfAHT3q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:29:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37126 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:29:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37094 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730449AbfAHT3j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:29:39 -0500
+        id S1728913AbfAHT3i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:29:38 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 95D0720827;
-        Tue,  8 Jan 2019 19:29:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5100A2070B;
+        Tue,  8 Jan 2019 19:29:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975778;
-        bh=+V65MindRhoSnsW+P21tyvTfAWRlw7ukVetCcTGzEGk=;
+        s=default; t=1546975777;
+        bh=xxfrKVFK4+INIlF6rCwPWKplFrmYURb2A5IovYoXsqU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SN2s3RpjuZ57kYUQVim8imxYV3WgoFUyVYjnajkwNitZ8/swHlvuIBNyXOpwMj+3g
-         iZgxZXO1z6jU5LxHkiJfL5/RdDBkX0kTuLulOYvTk7pVW7oTdEfe+w7JhprgkjOORd
-         p2rJdq12aEHAFVHU/dhh0EcqvtYfBlR+K6HQHGBY=
+        b=lyRsITDRV7/43VhEThZ1mtfMF2JHgZW0E+I/40WUEFTQ2F+UQ9J/EEJXkqNE3zNyt
+         Ddo9UnDMbrcHxlXNrUPK8eEC2U1GwGBPxccRFkC8pq/77UVf3vUtKU6nNBs9zRfINm
+         ceMf4Yo5SZdL/8z9FVuuzQafwcg25TBUShP7iKh4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Peter Xu <peterx@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Hugh Dickins <hughd@google.com>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Pravin Shedge <pravin.shedge4linux@gmail.com>,
+Cc:     Aaron Lu <aaron.lu@intel.com>, Vasily Averin <vvs@virtuozzo.com>,
+        Huang Ying <ying.huang@intel.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 115/117] userfaultfd: clear flag if remap event not enabled
-Date:   Tue,  8 Jan 2019 14:26:23 -0500
-Message-Id: <20190108192628.121270-115-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, linux-mm@kvack.org
+Subject: [PATCH AUTOSEL 4.20 114/117] mm/swap: use nr_node_ids for avail_lists in swap_info_struct
+Date:   Tue,  8 Jan 2019 14:26:22 -0500
+Message-Id: <20190108192628.121270-114-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192628.121270-1-sashal@kernel.org>
 References: <20190108192628.121270-1-sashal@kernel.org>
@@ -64,58 +60,94 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Xu <peterx@redhat.com>
+From: Aaron Lu <aaron.lu@intel.com>
 
-[ Upstream commit 3cfd22be0ad663248fadfc8f6ffa3e255c394552 ]
+[ Upstream commit 66f71da9dd38af17dc17209cdde7987d4679a699 ]
 
-When the process being tracked does mremap() without
-UFFD_FEATURE_EVENT_REMAP on the corresponding tracking uffd file handle,
-we should not generate the remap event, and at the same time we should
-clear all the uffd flags on the new VMA.  Without this patch, we can still
-have the VM_UFFD_MISSING|VM_UFFD_WP flags on the new VMA even the fault
-handling process does not even know the existance of the VMA.
+Since a2468cc9bfdf ("swap: choose swap device according to numa node"),
+avail_lists field of swap_info_struct is changed to an array with
+MAX_NUMNODES elements.  This made swap_info_struct size increased to 40KiB
+and needs an order-4 page to hold it.
 
-Link: http://lkml.kernel.org/r/20181211053409.20317-1-peterx@redhat.com
-Signed-off-by: Peter Xu <peterx@redhat.com>
-Reviewed-by: Andrea Arcangeli <aarcange@redhat.com>
-Acked-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
-Reviewed-by: William Kucharski <william.kucharski@oracle.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
-Cc: Kirill A. Shutemov <kirill@shutemov.name>
-Cc: Hugh Dickins <hughd@google.com>
-Cc: Pavel Emelyanov <xemul@virtuozzo.com>
-Cc: Pravin Shedge <pravin.shedge4linux@gmail.com>
+This is not optimal in that:
+1 Most systems have way less than MAX_NUMNODES(1024) nodes so it
+  is a waste of memory;
+2 It could cause swapon failure if the swap device is swapped on
+  after system has been running for a while, due to no order-4
+  page is available as pointed out by Vasily Averin.
+
+Solve the above two issues by using nr_node_ids(which is the actual
+possible node number the running system has) for avail_lists instead of
+MAX_NUMNODES.
+
+nr_node_ids is unknown at compile time so can't be directly used when
+declaring this array.  What I did here is to declare avail_lists as zero
+element array and allocate space for it when allocating space for
+swap_info_struct.  The reason why keep using array but not pointer is
+plist_for_each_entry needs the field to be part of the struct, so pointer
+will not work.
+
+This patch is on top of Vasily Averin's fix commit.  I think the use of
+kvzalloc for swap_info_struct is still needed in case nr_node_ids is
+really big on some systems.
+
+Link: http://lkml.kernel.org/r/20181115083847.GA11129@intel.com
+Signed-off-by: Aaron Lu <aaron.lu@intel.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Cc: Vasily Averin <vvs@virtuozzo.com>
+Cc: Huang Ying <ying.huang@intel.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/userfaultfd.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ include/linux/swap.h | 11 ++++++++++-
+ mm/swapfile.c        |  3 ++-
+ 2 files changed, 12 insertions(+), 2 deletions(-)
 
-diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-index 7a85e609fc27..d8b8323e80f4 100644
---- a/fs/userfaultfd.c
-+++ b/fs/userfaultfd.c
-@@ -736,10 +736,18 @@ void mremap_userfaultfd_prep(struct vm_area_struct *vma,
- 	struct userfaultfd_ctx *ctx;
+diff --git a/include/linux/swap.h b/include/linux/swap.h
+index d8a07a4f171d..3d3630b3f63d 100644
+--- a/include/linux/swap.h
++++ b/include/linux/swap.h
+@@ -233,7 +233,6 @@ struct swap_info_struct {
+ 	unsigned long	flags;		/* SWP_USED etc: see above */
+ 	signed short	prio;		/* swap priority of this type */
+ 	struct plist_node list;		/* entry in swap_active_head */
+-	struct plist_node avail_lists[MAX_NUMNODES];/* entry in swap_avail_heads */
+ 	signed char	type;		/* strange name for an index */
+ 	unsigned int	max;		/* extent of the swap_map */
+ 	unsigned char *swap_map;	/* vmalloc'ed array of usage counts */
+@@ -274,6 +273,16 @@ struct swap_info_struct {
+ 					 */
+ 	struct work_struct discard_work; /* discard worker */
+ 	struct swap_cluster_list discard_clusters; /* discard clusters list */
++	struct plist_node avail_lists[0]; /*
++					   * entries in swap_avail_heads, one
++					   * entry per node.
++					   * Must be last as the number of the
++					   * array is nr_node_ids, which is not
++					   * a fixed value so have to allocate
++					   * dynamically.
++					   * And it has to be an array so that
++					   * plist_for_each_* can work.
++					   */
+ };
  
- 	ctx = vma->vm_userfaultfd_ctx.ctx;
--	if (ctx && (ctx->features & UFFD_FEATURE_EVENT_REMAP)) {
-+
-+	if (!ctx)
-+		return;
-+
-+	if (ctx->features & UFFD_FEATURE_EVENT_REMAP) {
- 		vm_ctx->ctx = ctx;
- 		userfaultfd_ctx_get(ctx);
- 		WRITE_ONCE(ctx->mmap_changing, true);
-+	} else {
-+		/* Drop uffd context if remap feature not enabled */
-+		vma->vm_userfaultfd_ctx = NULL_VM_UFFD_CTX;
-+		vma->vm_flags &= ~(VM_UFFD_WP | VM_UFFD_MISSING);
- 	}
- }
+ #ifdef CONFIG_64BIT
+diff --git a/mm/swapfile.c b/mm/swapfile.c
+index 8688ae65ef58..6e06821623f6 100644
+--- a/mm/swapfile.c
++++ b/mm/swapfile.c
+@@ -2812,8 +2812,9 @@ static struct swap_info_struct *alloc_swap_info(void)
+ 	struct swap_info_struct *p;
+ 	unsigned int type;
+ 	int i;
++	int size = sizeof(*p) + nr_node_ids * sizeof(struct plist_node);
+ 
+-	p = kvzalloc(sizeof(*p), GFP_KERNEL);
++	p = kvzalloc(size, GFP_KERNEL);
+ 	if (!p)
+ 		return ERR_PTR(-ENOMEM);
  
 -- 
 2.19.1
