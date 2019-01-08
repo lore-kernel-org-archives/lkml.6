@@ -2,129 +2,230 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0EA8C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:04:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C926C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:04:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FD2620883
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:04:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D48E220827
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:04:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546977882;
-	bh=jefd0SMZoClnZVEyGbhMRSDXSwZCy3m/IjA7jlRT7sE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=iIHg5xCVJIQAgPS3A6oVi6yiEZli2xUZ+S9p4RMxTRP72J1nyTKUWSWcQHEbV0goT
-	 DM6hby92nw/HxVfgXUHn4TYp4YsH/dF9oYpkjuW4yKI7nEiqw+EnbsnOT6jtWG4B7R
-	 UHVtOzUMP39/xUwmgvJ2wfiF050X8b+zfoRvB+AA=
+	s=default; t=1546977886;
+	bh=BbmwG5Kau5CQADckG8l39n9OOrxtz3pb85ITskBNdBg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=KRnPuOxvJdDYrG6lTnE9uCc9uFthakwiOwYOdsVeKnSt3ji1FmpdUrzmfOAe/C27r
+	 784yfZjIvDlP4ZGTYzf8TMQvUBWqcK5RCnP50y9te8d2cn21YK7sWO8A3N9TjaitJK
+	 ij1+Zo6Q/Ng+viCnFcUn5dNBmMlzDiGP/ydtt0Xo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730455AbfAHUEl (ORCPT
+        id S1730050AbfAHT22 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 15:04:41 -0500
-Received: from mx2.suse.de ([195.135.220.15]:34722 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729043AbfAHUEj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 15:04:39 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id AF595AEE7;
-        Tue,  8 Jan 2019 20:04:37 +0000 (UTC)
-Date:   Tue, 8 Jan 2019 21:04:36 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Alexander Duyck <alexander.h.duyck@linux.intel.com>
-Cc:     Arun KS <arunks@codeaurora.org>, arunks.linux@gmail.com,
-        akpm@linux-foundation.org, vbabka@suse.cz, osalvador@suse.de,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        getarunks@gmail.com
-Subject: Re: [PATCH v7] mm/page_alloc.c: memory_hotplug: free pages as higher
- order
-Message-ID: <20190108200436.GK31793@dhcp22.suse.cz>
-References: <1546578076-31716-1-git-send-email-arunks@codeaurora.org>
- <37498672d5b2345b1435477e78251282af42742b.camel@linux.intel.com>
+        Tue, 8 Jan 2019 14:28:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35370 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730001AbfAHT2X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:28:23 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9F50720645;
+        Tue,  8 Jan 2019 19:28:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1546975702;
+        bh=BbmwG5Kau5CQADckG8l39n9OOrxtz3pb85ITskBNdBg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ScLwrzmT1SWEZGdGkUPBIYbSpB32c/9O+yfbwOCZCicrUqQl/E/DvrBu2ygMkzXTg
+         96pWkqtVGgsgNzOZBrSl8fHCqodyYoJyJSrLeUNTsdTvh33dpDvJ7Hw8iSO95A0BFu
+         PiNam5U8YriJyyPOTvUJRxGJmdsH8bz1Ot3EhE74=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Jiong Wang <jiong.wang@netronome.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
+        linux-kselftest@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 064/117] bpf: relax verifier restriction on BPF_MOV | BPF_ALU
+Date:   Tue,  8 Jan 2019 14:25:32 -0500
+Message-Id: <20190108192628.121270-64-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190108192628.121270-1-sashal@kernel.org>
+References: <20190108192628.121270-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <37498672d5b2345b1435477e78251282af42742b.camel@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 08-01-19 10:40:18, Alexander Duyck wrote:
-> On Fri, 2019-01-04 at 10:31 +0530, Arun KS wrote:
-> > When freeing pages are done with higher order, time spent on coalescing
-> > pages by buddy allocator can be reduced.  With section size of 256MB, hot
-> > add latency of a single section shows improvement from 50-60 ms to less
-> > than 1 ms, hence improving the hot add latency by 60 times.  Modify
-> > external providers of online callback to align with the change.
-> > 
-> > Signed-off-by: Arun KS <arunks@codeaurora.org>
-> > Acked-by: Michal Hocko <mhocko@suse.com>
-> > Reviewed-by: Oscar Salvador <osalvador@suse.de>
-> 
-> After running into my initial issue I actually had a few more questions
-> about this patch.
-> 
-> > [...]
-> > +static int online_pages_blocks(unsigned long start, unsigned long nr_pages)
-> > +{
-> > +	unsigned long end = start + nr_pages;
-> > +	int order, ret, onlined_pages = 0;
-> > +
-> > +	while (start < end) {
-> > +		order = min(MAX_ORDER - 1,
-> > +			get_order(PFN_PHYS(end) - PFN_PHYS(start)));
-> > +
-> > +		ret = (*online_page_callback)(pfn_to_page(start), order);
-> > +		if (!ret)
-> > +			onlined_pages += (1UL << order);
-> > +		else if (ret > 0)
-> > +			onlined_pages += ret;
-> > +
-> > +		start += (1UL << order);
-> > +	}
-> > +	return onlined_pages;
-> >  }
-> >  
-> 
-> Should the limit for this really be MAX_ORDER - 1 or should it be
-> pageblock_order? In some cases this will be the same value, but I seem
-> to recall that for x86 MAX_ORDER can be several times larger than
-> pageblock_order.
+From: Jiong Wang <jiong.wang@netronome.com>
 
-Does it make any difference when we are in fact trying to onine nr_pages
-and we clamp to it properly?
+[ Upstream commit e434b8cdf788568ba65a0a0fd9f3cb41f3ca1803 ]
 
-> >  static int online_pages_range(unsigned long start_pfn, unsigned long nr_pages,
-> >  			void *arg)
-> >  {
-> > -	unsigned long i;
-> >  	unsigned long onlined_pages = *(unsigned long *)arg;
-> > -	struct page *page;
-> >  
-> >  	if (PageReserved(pfn_to_page(start_pfn)))
-> 
-> I'm not sure we even really need this check. Getting back to the
-> discussion I have been having with Michal in regards to the need for
-> the DAX pages to not have the reserved bit cleared I was originally
-> wondering if we could replace this check with a call to
-> online_section_nr since the section shouldn't be online until we set
-> the bit below in online_mem_sections.
-> 
-> However after doing some further digging it looks like this could
-> probably be dropped entirely since we only call this function from
-> online_pages and that function is only called by memory_block_action if
-> pages_correctly_probed returns true. However pages_correctly_probed
-> should return false if any of the sections contained in the page range
-> is already online.
+Currently, the destination register is marked as unknown for 32-bit
+sub-register move (BPF_MOV | BPF_ALU) whenever the source register type is
+SCALAR_VALUE.
 
-Yes you are right but I guess it would be better to address in a
-separate patch that deals with PageReserved manipulation in general.
-I do not think we want to remove the check silently. People who might be
-interested in backporting this for whatever reason might screatch their
-head why the test is not needed anymore.
+This is too conservative that some valid cases will be rejected.
+Especially, this may turn a constant scalar value into unknown value that
+could break some assumptions of verifier.
+
+For example, test_l4lb_noinline.c has the following C code:
+
+    struct real_definition *dst
+
+1:  if (!get_packet_dst(&dst, &pckt, vip_info, is_ipv6))
+2:    return TC_ACT_SHOT;
+3:
+4:  if (dst->flags & F_IPV6) {
+
+get_packet_dst is responsible for initializing "dst" into valid pointer and
+return true (1), otherwise return false (0). The compiled instruction
+sequence using alu32 will be:
+
+  412: (54) (u32) r7 &= (u32) 1
+  413: (bc) (u32) r0 = (u32) r7
+  414: (95) exit
+
+insn 413, a BPF_MOV | BPF_ALU, however will turn r0 into unknown value even
+r7 contains SCALAR_VALUE 1.
+
+This causes trouble when verifier is walking the code path that hasn't
+initialized "dst" inside get_packet_dst, for which case 0 is returned and
+we would then expect verifier concluding line 1 in the above C code pass
+the "if" check, therefore would skip fall through path starting at line 4.
+Now, because r0 returned from callee has became unknown value, so verifier
+won't skip analyzing path starting at line 4 and "dst->flags" requires
+dereferencing the pointer "dst" which actually hasn't be initialized for
+this path.
+
+This patch relaxed the code marking sub-register move destination. For a
+SCALAR_VALUE, it is safe to just copy the value from source then truncate
+it into 32-bit.
+
+A unit test also included to demonstrate this issue. This test will fail
+before this patch.
+
+This relaxation could let verifier skipping more paths for conditional
+comparison against immediate. It also let verifier recording a more
+accurate/strict value for one register at one state, if this state end up
+with going through exit without rejection and it is used for state
+comparison later, then it is possible an inaccurate/permissive value is
+better. So the real impact on verifier processed insn number is complex.
+But in all, without this fix, valid program could be rejected.
+
+>From real benchmarking on kernel selftests and Cilium bpf tests, there is
+no impact on processed instruction number when tests ares compiled with
+default compilation options. There is slightly improvements when they are
+compiled with -mattr=+alu32 after this patch.
+
+Also, test_xdp_noinline/-mattr=+alu32 now passed verification. It is
+rejected before this fix.
+
+Insn processed before/after this patch:
+
+                        default     -mattr=+alu32
+
+Kernel selftest
+
+===
+test_xdp.o              371/371      369/369
+test_l4lb.o             6345/6345    5623/5623
+test_xdp_noinline.o     2971/2971    rejected/2727
+test_tcp_estates.o      429/429      430/430
+
+Cilium bpf
+===
+bpf_lb-DLB_L3.o:        2085/2085     1685/1687
+bpf_lb-DLB_L4.o:        2287/2287     1986/1982
+bpf_lb-DUNKNOWN.o:      690/690       622/622
+bpf_lxc.o:              95033/95033   N/A
+bpf_netdev.o:           7245/7245     N/A
+bpf_overlay.o:          2898/2898     3085/2947
+
+NOTE:
+  - bpf_lxc.o and bpf_netdev.o compiled by -mattr=+alu32 are rejected by
+    verifier due to another issue inside verifier on supporting alu32
+    binary.
+  - Each cilium bpf program could generate several processed insn number,
+    above number is sum of them.
+
+v1->v2:
+ - Restrict the change on SCALAR_VALUE.
+ - Update benchmark numbers on Cilium bpf tests.
+
+Signed-off-by: Jiong Wang <jiong.wang@netronome.com>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ kernel/bpf/verifier.c                       | 16 ++++++++++++----
+ tools/testing/selftests/bpf/test_verifier.c | 13 +++++++++++++
+ 2 files changed, 25 insertions(+), 4 deletions(-)
+
+diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+index a81f52b2c92e..eedc7bd4185d 100644
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -3571,12 +3571,15 @@ static int check_alu_op(struct bpf_verifier_env *env, struct bpf_insn *insn)
+ 			return err;
+ 
+ 		if (BPF_SRC(insn->code) == BPF_X) {
++			struct bpf_reg_state *src_reg = regs + insn->src_reg;
++			struct bpf_reg_state *dst_reg = regs + insn->dst_reg;
++
+ 			if (BPF_CLASS(insn->code) == BPF_ALU64) {
+ 				/* case: R1 = R2
+ 				 * copy register state to dest reg
+ 				 */
+-				regs[insn->dst_reg] = regs[insn->src_reg];
+-				regs[insn->dst_reg].live |= REG_LIVE_WRITTEN;
++				*dst_reg = *src_reg;
++				dst_reg->live |= REG_LIVE_WRITTEN;
+ 			} else {
+ 				/* R1 = (u32) R2 */
+ 				if (is_pointer_value(env, insn->src_reg)) {
+@@ -3584,9 +3587,14 @@ static int check_alu_op(struct bpf_verifier_env *env, struct bpf_insn *insn)
+ 						"R%d partial copy of pointer\n",
+ 						insn->src_reg);
+ 					return -EACCES;
++				} else if (src_reg->type == SCALAR_VALUE) {
++					*dst_reg = *src_reg;
++					dst_reg->live |= REG_LIVE_WRITTEN;
++				} else {
++					mark_reg_unknown(env, regs,
++							 insn->dst_reg);
+ 				}
+-				mark_reg_unknown(env, regs, insn->dst_reg);
+-				coerce_reg_to_size(&regs[insn->dst_reg], 4);
++				coerce_reg_to_size(dst_reg, 4);
+ 			}
+ 		} else {
+ 			/* case: R = imm
+diff --git a/tools/testing/selftests/bpf/test_verifier.c b/tools/testing/selftests/bpf/test_verifier.c
+index f8eac4a544f4..444f49176a2d 100644
+--- a/tools/testing/selftests/bpf/test_verifier.c
++++ b/tools/testing/selftests/bpf/test_verifier.c
+@@ -2903,6 +2903,19 @@ static struct bpf_test tests[] = {
+ 		.result_unpriv = REJECT,
+ 		.result = ACCEPT,
+ 	},
++	{
++		"alu32: mov u32 const",
++		.insns = {
++			BPF_MOV32_IMM(BPF_REG_7, 0),
++			BPF_ALU32_IMM(BPF_AND, BPF_REG_7, 1),
++			BPF_MOV32_REG(BPF_REG_0, BPF_REG_7),
++			BPF_JMP_IMM(BPF_JEQ, BPF_REG_0, 0, 1),
++			BPF_LDX_MEM(BPF_DW, BPF_REG_0, BPF_REG_7, 0),
++			BPF_EXIT_INSN(),
++		},
++		.result = ACCEPT,
++		.retval = 0,
++	},
+ 	{
+ 		"unpriv: partial copy of pointer",
+ 		.insns = {
 -- 
-Michal Hocko
-SUSE Labs
+2.19.1
+
