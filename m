@@ -4,41 +4,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D4A4C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:59:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AE33C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:59:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21F67217D9
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:59:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 65911218A1
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:59:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546977593;
-	bh=Hufxlwi6tD44CoDQIMALZZB9Ry/As4iRr5ebwX5EQs4=;
+	s=default; t=1546977596;
+	bh=HW0eXZKriWSuuUtZHylVKD8H9nrRmLv65WRIlzbWZG8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=mYDVN0KsgwR0eyUlwSaCc2yHTebtiFo6grwLh44bJpk40NneaWfj9oF3IlKhLhlHg
-	 F+/RxluPL3WzX+XP+bhMVksi+O4NlzTS4AiT5BGJDgCpjgo+PL9TQay+lUuNEfzzxD
-	 5A/utUfEEYcAovcoy7UPXKZhLWsOqXkvOA85wAi0=
+	b=WnwQapJWNm+o2mnHYo1UfeGBc+WiEhbtOfUV4GRZ2slTahLvLD1w31WWOvr8a2Sjr
+	 WtSi7CcMqzw1tE8FMweZK+S0dXeGOrtLYbyO28w/RPOxCBxzMAlL9QD1BMVTmR1JS0
+	 k7WnYcdWaDGBLLbQLGTedps2ymErYxLwap8iNSrY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732990AbfAHT7v (ORCPT
+        id S1733011AbfAHT7z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:59:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56770 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:59:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56822 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729987AbfAHT7t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:59:49 -0500
+        id S1732957AbfAHT7v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:59:51 -0500
 Received: from quaco.ghostprotocols.net (unknown [177.135.9.49])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 21EEC20883;
-        Tue,  8 Jan 2019 19:59:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4EFC420660;
+        Tue,  8 Jan 2019 19:59:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546977587;
-        bh=Hufxlwi6tD44CoDQIMALZZB9Ry/As4iRr5ebwX5EQs4=;
+        s=default; t=1546977590;
+        bh=HW0eXZKriWSuuUtZHylVKD8H9nrRmLv65WRIlzbWZG8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=t2+4/g1IffNb2rH1RkVu4mBx8vsuIIBzL5VeD+SNe0faOxVHPDaFMnkrCnxSvwSsH
-         ZWhAlyFsz+BQHqa02NKwG8kYO3CGdcXtP3ov2M7MrIX8JQ6dJv685IfDrD9ziXOEnP
-         tkxHs7CERoXrErukj72Yn+Zu92YAgSqwxtMPrI04=
+        b=M+1Tl4MSG2w2aj+ZfZyWSPBWQlut8q6cVyulqhgFvjOKxXgaFUbfTbbBfqXicH46s
+         6CDWtCSmJIN/r7M8ioqdP9xnGM5PagrIpglrn562Duol1vTCecP14+qh44fi6QdWRK
+         Am5bFK06sKzAYpO/hoJZb8YqO/kyUGb2eqCmHmXQ=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
@@ -49,9 +48,9 @@ Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         Namhyung Kim <namhyung@kernel.org>,
         Steven Rostedt <rostedt@goodmis.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 07/16] tools lib traceevent: Rename struct cmdline to struct tep_cmdline
-Date:   Tue,  8 Jan 2019 16:59:01 -0300
-Message-Id: <20190108195910.17726-8-acme@kernel.org>
+Subject: [PATCH 08/16] tools lib traceevent: Changed return logic of trace_seq_printf() and trace_seq_vprintf() APIs
+Date:   Tue,  8 Jan 2019 16:59:02 -0300
+Message-Id: <20190108195910.17726-9-acme@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190108195910.17726-1-acme@kernel.org>
 References: <20190108195910.17726-1-acme@kernel.org>
@@ -64,176 +63,78 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Tzvetomir Stoyanov <tstoyanov@vmware.com>
 
-In order to make libtraceevent a proper library, variables, data
-structures and functions should have a unique prefix to prevent name
-space conflicts. That prefix will be "tep_".
+In order to make libtraceevent into a proper library, its API should be
+straightforward.
 
-This patch renames 'struct cmdline' to 'struct tep_cmdline'.
+The trace_seq_printf() and trace_seq_vprintf() APIs have inconsistent
+returned values with the other trace_seq_* APIs.
+
+This path changes the return logic of trace_seq_printf() and
+trace_seq_vprintf() to return the number of printed characters, as the
+other trace_seq_* related APIs.
 
 Signed-off-by: Tzvetomir Stoyanov <tstoyanov@vmware.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Link: http://lkml.kernel.org/r/20181201040852.358871851@goodmis.org
+Link: http://lkml.kernel.org/r/20181201040852.485792891@goodmis.org
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/lib/traceevent/event-parse-local.h |  4 +--
- tools/lib/traceevent/event-parse.c       | 36 ++++++++++++------------
- tools/lib/traceevent/event-parse.h       |  8 +++---
- 3 files changed, 24 insertions(+), 24 deletions(-)
+ tools/lib/traceevent/trace-seq.c | 17 ++++++++++++-----
+ 1 file changed, 12 insertions(+), 5 deletions(-)
 
-diff --git a/tools/lib/traceevent/event-parse-local.h b/tools/lib/traceevent/event-parse-local.h
-index 9a092dd4a86d..35833ee32d6c 100644
---- a/tools/lib/traceevent/event-parse-local.h
-+++ b/tools/lib/traceevent/event-parse-local.h
-@@ -7,7 +7,7 @@
- #ifndef _PARSE_EVENTS_INT_H
- #define _PARSE_EVENTS_INT_H
+diff --git a/tools/lib/traceevent/trace-seq.c b/tools/lib/traceevent/trace-seq.c
+index 8ff1d55954d1..8d5ecd2bf877 100644
+--- a/tools/lib/traceevent/trace-seq.c
++++ b/tools/lib/traceevent/trace-seq.c
+@@ -100,7 +100,8 @@ static void expand_buffer(struct trace_seq *s)
+  * @fmt: printf format string
+  *
+  * It returns 0 if the trace oversizes the buffer's free
+- * space, 1 otherwise.
++ * space, the number of characters printed, or a negative
++ * value in case of an error.
+  *
+  * The tracer may use either sequence operations or its own
+  * copy to user routines. To simplify formating of a trace
+@@ -129,9 +130,10 @@ trace_seq_printf(struct trace_seq *s, const char *fmt, ...)
+ 		goto try_again;
+ 	}
  
--struct cmdline;
-+struct tep_cmdline;
- struct cmdline_list;
- struct func_map;
- struct func_list;
-@@ -36,7 +36,7 @@ struct tep_handle {
- 	int long_size;
- 	int page_size;
+-	s->len += ret;
++	if (ret > 0)
++		s->len += ret;
  
--	struct cmdline *cmdlines;
-+	struct tep_cmdline *cmdlines;
- 	struct cmdline_list *cmdlist;
- 	int cmdline_count;
- 
-diff --git a/tools/lib/traceevent/event-parse.c b/tools/lib/traceevent/event-parse.c
-index 44b80471b024..a850342baf86 100644
---- a/tools/lib/traceevent/event-parse.c
-+++ b/tools/lib/traceevent/event-parse.c
-@@ -124,15 +124,15 @@ struct tep_print_arg *alloc_arg(void)
- 	return calloc(1, sizeof(struct tep_print_arg));
- }
- 
--struct cmdline {
-+struct tep_cmdline {
- 	char *comm;
- 	int pid;
- };
- 
- static int cmdline_cmp(const void *a, const void *b)
- {
--	const struct cmdline *ca = a;
--	const struct cmdline *cb = b;
-+	const struct tep_cmdline *ca = a;
-+	const struct tep_cmdline *cb = b;
- 
- 	if (ca->pid < cb->pid)
- 		return -1;
-@@ -152,7 +152,7 @@ static int cmdline_init(struct tep_handle *pevent)
- {
- 	struct cmdline_list *cmdlist = pevent->cmdlist;
- 	struct cmdline_list *item;
--	struct cmdline *cmdlines;
-+	struct tep_cmdline *cmdlines;
- 	int i;
- 
- 	cmdlines = malloc(sizeof(*cmdlines) * pevent->cmdline_count);
-@@ -179,8 +179,8 @@ static int cmdline_init(struct tep_handle *pevent)
- 
- static const char *find_cmdline(struct tep_handle *pevent, int pid)
- {
--	const struct cmdline *comm;
--	struct cmdline key;
-+	const struct tep_cmdline *comm;
-+	struct tep_cmdline key;
- 
- 	if (!pid)
- 		return "<idle>";
-@@ -208,8 +208,8 @@ static const char *find_cmdline(struct tep_handle *pevent, int pid)
-  */
- int tep_pid_is_registered(struct tep_handle *pevent, int pid)
- {
--	const struct cmdline *comm;
--	struct cmdline key;
-+	const struct tep_cmdline *comm;
-+	struct tep_cmdline key;
- 
- 	if (!pid)
- 		return 1;
-@@ -235,9 +235,9 @@ int tep_pid_is_registered(struct tep_handle *pevent, int pid)
- static int add_new_comm(struct tep_handle *pevent,
- 			const char *comm, int pid, bool override)
- {
--	struct cmdline *cmdlines = pevent->cmdlines;
--	struct cmdline *cmdline;
--	struct cmdline key;
-+	struct tep_cmdline *cmdlines = pevent->cmdlines;
-+	struct tep_cmdline *cmdline;
-+	struct tep_cmdline key;
- 	char *new_comm;
- 
- 	if (!pid)
-@@ -5331,8 +5331,8 @@ const char *tep_data_comm_from_pid(struct tep_handle *pevent, int pid)
- 	return comm;
- }
- 
--static struct cmdline *
--pid_from_cmdlist(struct tep_handle *pevent, const char *comm, struct cmdline *next)
-+static struct tep_cmdline *
-+pid_from_cmdlist(struct tep_handle *pevent, const char *comm, struct tep_cmdline *next)
- {
- 	struct cmdline_list *cmdlist = (struct cmdline_list *)next;
- 
-@@ -5344,7 +5344,7 @@ pid_from_cmdlist(struct tep_handle *pevent, const char *comm, struct cmdline *ne
- 	while (cmdlist && strcmp(cmdlist->comm, comm) != 0)
- 		cmdlist = cmdlist->next;
- 
--	return (struct cmdline *)cmdlist;
-+	return (struct tep_cmdline *)cmdlist;
+-	return 1;
++	return ret;
  }
  
  /**
-@@ -5360,10 +5360,10 @@ pid_from_cmdlist(struct tep_handle *pevent, const char *comm, struct cmdline *ne
-  * next pid.
-  * Also, it does a linear search, so it may be slow.
-  */
--struct cmdline *tep_data_pid_from_comm(struct tep_handle *pevent, const char *comm,
--				       struct cmdline *next)
-+struct tep_cmdline *tep_data_pid_from_comm(struct tep_handle *pevent, const char *comm,
-+					   struct tep_cmdline *next)
- {
--	struct cmdline *cmdline;
-+	struct tep_cmdline *cmdline;
+@@ -139,6 +141,10 @@ trace_seq_printf(struct trace_seq *s, const char *fmt, ...)
+  * @s: trace sequence descriptor
+  * @fmt: printf format string
+  *
++ * It returns 0 if the trace oversizes the buffer's free
++ * space, the number of characters printed, or a negative
++ * value in case of an error.
++ * *
+  * The tracer may use either sequence operations or its own
+  * copy to user routines. To simplify formating of a trace
+  * trace_seq_printf is used to store strings into a special
+@@ -163,9 +169,10 @@ trace_seq_vprintf(struct trace_seq *s, const char *fmt, va_list args)
+ 		goto try_again;
+ 	}
  
- 	/*
- 	 * If the cmdlines have not been converted yet, then use
-@@ -5402,7 +5402,7 @@ struct cmdline *tep_data_pid_from_comm(struct tep_handle *pevent, const char *co
-  * Returns the pid for a give cmdline. If @cmdline is NULL, then
-  * -1 is returned.
-  */
--int tep_cmdline_pid(struct tep_handle *pevent, struct cmdline *cmdline)
-+int tep_cmdline_pid(struct tep_handle *pevent, struct tep_cmdline *cmdline)
- {
- 	struct cmdline_list *cmdlist = (struct cmdline_list *)cmdline;
+-	s->len += ret;
++	if (ret > 0)
++		s->len += ret;
  
-diff --git a/tools/lib/traceevent/event-parse.h b/tools/lib/traceevent/event-parse.h
-index e6f4249910e6..77a4a1dd4b4d 100644
---- a/tools/lib/traceevent/event-parse.h
-+++ b/tools/lib/traceevent/event-parse.h
-@@ -526,10 +526,10 @@ int tep_data_pid(struct tep_handle *pevent, struct tep_record *rec);
- int tep_data_preempt_count(struct tep_handle *pevent, struct tep_record *rec);
- int tep_data_flags(struct tep_handle *pevent, struct tep_record *rec);
- const char *tep_data_comm_from_pid(struct tep_handle *pevent, int pid);
--struct cmdline;
--struct cmdline *tep_data_pid_from_comm(struct tep_handle *pevent, const char *comm,
--				       struct cmdline *next);
--int tep_cmdline_pid(struct tep_handle *pevent, struct cmdline *cmdline);
-+struct tep_cmdline;
-+struct tep_cmdline *tep_data_pid_from_comm(struct tep_handle *pevent, const char *comm,
-+					   struct tep_cmdline *next);
-+int tep_cmdline_pid(struct tep_handle *pevent, struct tep_cmdline *cmdline);
+-	return len;
++	return ret;
+ }
  
- void tep_print_field(struct trace_seq *s, void *data,
- 		     struct tep_format_field *field);
+ /**
 -- 
 2.20.1
 
