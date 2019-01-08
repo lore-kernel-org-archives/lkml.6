@@ -2,120 +2,95 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE2AEC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:42:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 324A0C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:43:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A12152087F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:42:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546940521;
-	bh=cDT2Ih3wTMws+wDRKH7Dx52/MQWyBH4CUcYhUnw69yM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=McM3OghKFWcJCz/Ctxi1fvoCayK/K2X8mZOb/DLNCcPet00zYyik3epGGiXeqLPvQ
-	 +tlgjg190RKeMrj1IMVZXVNOeLu+IcP1iuU53QdPdBOJz5I6nFXn1vy9z26DVTfa7a
-	 tU88a7ye9F8mLHvxcKxvjUuo0hQASrGF2oISeu94=
+	by mail.kernel.org (Postfix) with ESMTP id 07838206C0
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:43:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727818AbfAHJmA (ORCPT
+        id S1728004AbfAHJnI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 04:42:00 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:38962 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727295AbfAHJmA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 04:42:00 -0500
-Received: by mail-ot1-f68.google.com with SMTP id n8so2938397otl.6
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 01:41:59 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vGc1jTQhyM25nf+TjaC46ic6uVxzRFFNtDt1Z+8If7Y=;
-        b=uQn1MzeO3X8DernbBQ2/njwxPvzTGbI/pf7l580R79I7KmxYUB9JH2TAes8m1686Ja
-         YWagam5sbGg+sWS9vwiIlbUjBg6vMlcIgeE0ENzPjgS61mc3SW/Ln/G+c4IRqLC/KB2J
-         CCcY5X/zqjX+0kQqD4Ci17GZ6MjBIs6Oo3kkYH2+++7vB2tmhE3vMo/VQUIxuCcthR6K
-         zhJVsH0dyxjGJnwptTtkYG4FCTXgVAsGAd3uOqdVHqXDRXDQebiFXzXnW3B0tN4eKRQV
-         e3IcdhkH8urQil5yv3z5e9CnZmm5g8NsP46RCIkTc8HEeBVWSCb/+ZzLufEQB/rEqp4I
-         QPqw==
-X-Gm-Message-State: AJcUukeKNOY4Yr+Tz7xEZFRro+22bZq+kYnpPssaZiu/HifJPmOIEvpH
-        BLjqx9vlF/eWlAYbWv9Z97shdV+FEJ+SE14bNzE=
-X-Google-Smtp-Source: ALg8bN4oKhiyVpl9QLDpXrs/6xEWTkVpKLMMcDPXe6uViXvLnU+eFl3tZTRKvWQH/4ErNv6uW9b2P69Y0+2Rm3wvp9Q=
-X-Received: by 2002:a9d:2062:: with SMTP id n89mr682319ota.244.1546940519184;
- Tue, 08 Jan 2019 01:41:59 -0800 (PST)
+        Tue, 8 Jan 2019 04:43:08 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:34734 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727107AbfAHJnI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 04:43:08 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id CC08EA10DA;
+        Tue,  8 Jan 2019 09:43:07 +0000 (UTC)
+Received: from vitty.brq.redhat.com.redhat.com (unknown [10.34.248.165])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id AAA945D756;
+        Tue,  8 Jan 2019 09:42:58 +0000 (UTC)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     David Hildenbrand <david@redhat.com>, devel@linuxdriverproject.org
+Cc:     Sasha Levin <sashal@kernel.org>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        linux-kernel@vger.kernel.org, Dexuan Cui <decui@microsoft.com>
+Subject: Re: [PATCH] hv_balloon: avoid touching uninitialized struct page during tail onlining
+In-Reply-To: <39a3ac32-6569-d19f-c87c-da6d72251748@redhat.com>
+References: <20190104141942.19126-1-vkuznets@redhat.com> <2ea7e975-6aae-de71-83e5-9302518802ef@redhat.com> <87d0p837lt.fsf@vitty.brq.redhat.com> <39a3ac32-6569-d19f-c87c-da6d72251748@redhat.com>
+Date:   Tue, 08 Jan 2019 10:42:56 +0100
+Message-ID: <877eff32ov.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
-References: <cover.1546915794.git.tsu.yubo@gmail.com> <2ba5177197f8b40e399867ea1f1aee2920c3cb49.1546915794.git.tsu.yubo@gmail.com>
-In-Reply-To: <2ba5177197f8b40e399867ea1f1aee2920c3cb49.1546915794.git.tsu.yubo@gmail.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Tue, 8 Jan 2019 10:41:48 +0100
-Message-ID: <CAJZ5v0hCRYwLx5iqb7jY5VArSqN9sWg4rWw0kvUph7biLYeLtQ@mail.gmail.com>
-Subject: Re: [PATCH v4 2/2] kobject: drop newline from msg string
-To:     Bo YU <tsu.yubo@gmail.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Joe Perches <joe@perches.com>, yuzibode@126.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Tue, 08 Jan 2019 09:43:08 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 8, 2019 at 4:11 AM Bo YU <tsu.yubo@gmail.com> wrote:
->
-> There is currently a missing terminating newline in non-switch case
-> match,when msg == NULL
->
-> Signed-off-by: Bo YU <tsu.yubo@gmail.com>
+David Hildenbrand <david@redhat.com> writes:
 
-Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> On 07.01.19 14:44, Vitaly Kuznetsov wrote:
+>> David Hildenbrand <david@redhat.com> writes:
+>> 
+...
+>>> On 04.01.19 15:19, Vitaly Kuznetsov wrote:
+>>>>  			if (start_pfn > has->start_pfn &&
+>>>> -			    !PageReserved(pfn_to_page(start_pfn - 1)))
+>>>> +			    online_section_nr(pfn_to_section_nr(start_pfn)))
+>>>>  				hv_bring_pgs_online(has, start_pfn, pgs_ol);
+>>>>  
+>>>>  		}
+>>>>
+>>>
+>>> I wonder if you should use pfn_to_online_page() and check for PageOffline().
+>>>
+>>> (I guess online_section_nr() should also do the trick)
+>> 
+>> I'm worried a bit about racing with mm code here as we're not doing
+>> mem_hotplug_begin()/done() so I'd slightly prefer keeping
+>> online_section_nr() (pfn_to_online_page() also uses it but then it gets
+>> to the particular struct page). Moreover, with pfn_to_online_page() we
+>> will be looking at some other pfn - because the start_pfn is definitelly
+>> offline (pre-patch we were looking at start_pfn-1). Just looking at the
+>> whole section seems cleaner.
+>
+> Fine with me. I guess the section can never be offlined as it still
+> contains reserved pages if not fully "fake-onlined" by HV code already.
+>
+> But we could still consider mem_hotplug_begin()/done() as we could have
+> a online section although online_pages() has not completed yet. So we
+> could actually touch some "semi onlined section".
 
-> ---
-> Changes in V4:
-> Recovery  originly declaration, requested by Greg.
+Yes, exactly, if we race with section onlining here we may never online
+the tail so it will remain 'semi onlined'. I'm going to propose
+exporting mem_hotplug_begin()/done() to modules to fix this (in a
+separate patch because I anticipate some pushback :-)
+
 >
-> Changes in V3:
-> Improve the commit log, requested by rafael.
+> Acked-by: David Hildenbrand <david@redhat.com>
 >
-> Changes in V2:
-> According to Joe's suggestion, drop newline from msg string
-> ---
->  lib/kobject_uevent.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/lib/kobject_uevent.c b/lib/kobject_uevent.c
-> index 499dfcdafcb0..118226a02707 100644
-> --- a/lib/kobject_uevent.c
-> +++ b/lib/kobject_uevent.c
-> @@ -200,7 +200,7 @@ int kobject_synth_uevent(struct kobject *kobj, const char *buf, size_t count)
->
->         r = kobject_action_type(buf, count, &action, &action_args);
->         if (r) {
-> -               msg = "unknown uevent action string\n";
-> +               msg = "unknown uevent action string";
->                 goto out;
->         }
->
-> @@ -212,7 +212,7 @@ int kobject_synth_uevent(struct kobject *kobj, const char *buf, size_t count)
->         r = kobject_action_args(action_args,
->                                 count - (action_args - buf), &env);
->         if (r == -EINVAL) {
-> -               msg = "incorrect uevent action arguments\n";
-> +               msg = "incorrect uevent action arguments";
->                 goto out;
->         }
->
-> @@ -224,7 +224,7 @@ int kobject_synth_uevent(struct kobject *kobj, const char *buf, size_t count)
->  out:
->         if (r) {
->                 devpath = kobject_get_path(kobj, GFP_KERNEL);
-> -               pr_warn("synth uevent: %s: %s",
-> +               pr_warn("synth uevent: %s: %s\n",
->                        devpath ?: "unknown device",
->                        msg ?: "failed to send uevent");
->                 kfree(devpath);
-> --
-> 2.11.0
->
+
+Thanks!
+
+-- 
+Vitaly
