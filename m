@@ -4,48 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71C88C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:07:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 600E7C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:07:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B52320660
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:07:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 25AE720827
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:07:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546978060;
-	bh=HIisMEjQA6JVHd99i5FGXqSmtQzT7TqWLBW92oGECkU=;
+	s=default; t=1546978066;
+	bh=A86IBNVvdyb6qecsWjezAxHTH7QPuOAQ4Ot8Qqtd6OQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=OpfPs8snnYV/867WR900MI0zPfUU34b/kWRW5/lphWX1NRt3ENelILpeWHgJlmx6s
-	 /UaqPmRKOmdtjt1NtjALgI15z/JLJYLchu7V4uq/ZhrLDzT0drJkS6onm9b4KgDvUh
-	 ADaOsIDc51ggvBilggg569USzs+e8UEMgQjQ8ZhM=
+	b=K4c2olXFZs+JJPysny6dbGNa08kM/MyqSnWo3PS0SplYIDX51Eimt6hWkcDdLJswi
+	 GizXjWDaE2BnkU86j2lZikN7vQGJeqkBKFMgws2780JBDkG0Ntvh8jcuIkCfzPg/B6
+	 NBdlZHhs4bOHoHjDVuKKVCAj4DtF9Gy3EiolT8zQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729791AbfAHT1s (ORCPT
+        id S1732519AbfAHUHp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:27:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33916 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 15:07:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34148 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729733AbfAHT1i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:27:38 -0500
+        id S1729777AbfAHT1q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:27:46 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8F1FE2183F;
-        Tue,  8 Jan 2019 19:27:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 045EC218A1;
+        Tue,  8 Jan 2019 19:27:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975657;
-        bh=HIisMEjQA6JVHd99i5FGXqSmtQzT7TqWLBW92oGECkU=;
+        s=default; t=1546975665;
+        bh=A86IBNVvdyb6qecsWjezAxHTH7QPuOAQ4Ot8Qqtd6OQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZWUb4+RKUMHEV6KwPSssNuThC8jxPXZbiAAYiBGb1MilXWTqdGjj/lGVXfY/dE8Fz
-         N/iMWO2rAXX6Di2IQRh2yEs2/FnBZ0Hpxos/g+0rqPO96yWISnHgHWlDVzc0kLOMQV
-         qObWLLpzgdZwaE+YrZaOVXc9blxXAq1r/6SKGXL8=
+        b=v/4NAeDtqZcLJCnQbsnSb1hVCdHFDeBmVddHlG9V5Wwy0ZrLO6JV+EfHIJdQVg+ed
+         pVk82zrRzCyhasJJ38OShofLV82/Q8xgwi7er+3nDtp/cMhwwtw9nC+R6tY9j9WPf1
+         C+cmc5uaigslhaOvKCNY7DeXlORj/dIt5gSR9nfs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Manish Rangankar <manish.rangankar@cavium.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 037/117] scsi: qedi: Check for session online before getting iSCSI TLV data.
-Date:   Tue,  8 Jan 2019 14:25:05 -0500
-Message-Id: <20190108192628.121270-37-sashal@kernel.org>
+Cc:     Chuck Lever <chuck.lever@oracle.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Sasha Levin <sashal@kernel.org>, linux-rdma@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 040/117] rxe: IB_WR_REG_MR does not capture MR's iova field
+Date:   Tue,  8 Jan 2019 14:25:08 -0500
+Message-Id: <20190108192628.121270-40-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192628.121270-1-sashal@kernel.org>
 References: <20190108192628.121270-1-sashal@kernel.org>
@@ -57,66 +57,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Manish Rangankar <manish.rangankar@cavium.com>
+From: Chuck Lever <chuck.lever@oracle.com>
 
-[ Upstream commit d5632b11f0a17efa6356311e535ae135d178438d ]
+[ Upstream commit b024dd0eba6e6d568f69d63c5e3153aba94c23e3 ]
 
-The kernel panic was observed after switch side perturbation,
+FRWR memory registration is done with a series of calls and WRs.
+1. ULP invokes ib_dma_map_sg()
+2. ULP invokes ib_map_mr_sg()
+3. ULP posts an IB_WR_REG_MR on the Send queue
 
-BUG: unable to handle kernel NULL pointer dereference at (null)
-     IP: [<ffffffff8132b5a0>] strcmp+0x20/0x40
-     PGD 0 Oops: 0000 [#1] SMP
-CPU: 8 PID: 647 Comm: kworker/8:1 Tainted: G        W  OE  ------------   3.10.0-693.el7.x86_64 #1
-Hardware name: HPE ProLiant DL380 Gen10/ProLiant DL380 Gen10, BIOS U30 06/20/2018
-Workqueue: slowpath-13:00. qed_slowpath_task [qed]
-task: ffff880429eb8fd0 ti: ffff880429190000 task.ti: ffff880429190000
-RIP: 0010:[<ffffffff8132b5a0>]  [<ffffffff8132b5a0>] strcmp+0x20/0x40
-RSP: 0018:ffff880429193c68  EFLAGS: 00010202
-RAX: 000000000000000a RBX: 0000000000000002 RCX: 0000000000000000
-RDX: 0000000000000001 RSI: 0000000000000001 RDI: ffff88042bda7a41
-RBP: ffff880429193c68 R08: 000000000000ffff R09: 000000000000ffff
-R10: 0000000000000007 R11: ffff88042b3af338 R12: ffff880420b007a0
-R13: ffff88081aa56af8 R14: 0000000000000001 R15: ffff88081aa50410
-FS:  0000000000000000(0000) GS:ffff88042fe00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000000000 CR3: 00000000019f2000 CR4: 00000000003407e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Stack:
-ffff880429193d20 ffffffffc02a0c90 ffffc90004b32000 ffff8803fd3ec600
-ffff88042bda7800 ffff88042bda7a00 ffff88042bda7840 ffff88042bda7a40
-0000000129193d10 2e3836312e323931 ff000a342e363232 ffffffffc01ad99d
-Call Trace:
-[<ffffffffc02a0c90>] qedi_get_protocol_tlv_data+0x270/0x470 [qedi]
-[<ffffffffc01ad99d>] ? qed_mfw_process_tlv_req+0x24d/0xbf0 [qed]
-[<ffffffffc01653ae>] qed_mfw_fill_tlv_data+0x5e/0xd0 [qed]
-[<ffffffffc01ad9b9>] qed_mfw_process_tlv_req+0x269/0xbf0 [qed]
+Step 2 generates an iova. It is permissible for ULPs to change this
+iova (with certain restrictions) between steps 2 and 3.
 
-Fix kernel NULL pointer deref by checking for session is online before
-getting iSCSI TLV data.
+rxe_map_mr_sg captures the MR's iova but later when rxe processes the
+REG_MR WR, it ignores the MR's iova field. If a ULP alters the MR's iova
+after step 2 but before step 3, rxe never captures that change.
 
-Signed-off-by: Manish Rangankar <manish.rangankar@cavium.com>
-Reviewed-by: Lee Duncan <lduncan@suse.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+When the remote sends an RDMA Read targeting that MR, rxe looks up the
+R_key, but the altered iova does not match the iova stored in the MR,
+causing the RDMA Read request to fail.
+
+Reported-by: Anna Schumaker <schumaker.anna@gmail.com>
+Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/qedi/qedi_main.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/infiniband/sw/rxe/rxe_req.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/scsi/qedi/qedi_main.c b/drivers/scsi/qedi/qedi_main.c
-index 105b0e4d7818..5d7d018dad6e 100644
---- a/drivers/scsi/qedi/qedi_main.c
-+++ b/drivers/scsi/qedi/qedi_main.c
-@@ -952,6 +952,9 @@ static int qedi_find_boot_info(struct qedi_ctx *qedi,
- 		cls_sess = iscsi_conn_to_session(cls_conn);
- 		sess = cls_sess->dd_data;
- 
-+		if (!iscsi_is_session_online(cls_sess))
-+			continue;
-+
- 		if (pri_ctrl_flags) {
- 			if (!strcmp(pri_tgt->iscsi_name, sess->targetname) &&
- 			    !strcmp(pri_tgt->ip_addr, ep_ip_addr)) {
+diff --git a/drivers/infiniband/sw/rxe/rxe_req.c b/drivers/infiniband/sw/rxe/rxe_req.c
+index 6c361d70d7cd..46f62f71cd28 100644
+--- a/drivers/infiniband/sw/rxe/rxe_req.c
++++ b/drivers/infiniband/sw/rxe/rxe_req.c
+@@ -643,6 +643,7 @@ int rxe_requester(void *arg)
+ 			rmr->access = wqe->wr.wr.reg.access;
+ 			rmr->lkey = wqe->wr.wr.reg.key;
+ 			rmr->rkey = wqe->wr.wr.reg.key;
++			rmr->iova = wqe->wr.wr.reg.mr->iova;
+ 			wqe->state = wqe_state_done;
+ 			wqe->status = IB_WC_SUCCESS;
+ 		} else {
 -- 
 2.19.1
 
