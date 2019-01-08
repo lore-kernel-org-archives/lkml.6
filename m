@@ -6,183 +6,139 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AEE2C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 11:26:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B073C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 11:26:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BDE920850
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 11:26:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 21E492087E
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 11:26:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728849AbfAHLZ7 (ORCPT
+        id S1728864AbfAHL0G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 06:25:59 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:57340 "EHLO mx1.redhat.com"
+        Tue, 8 Jan 2019 06:26:06 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:57266 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728700AbfAHLZ2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 06:25:28 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        id S1728652AbfAHLZZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 06:25:25 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 02E87C05D3E4;
-        Tue,  8 Jan 2019 11:25:28 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 56E6BC0BEAB8;
+        Tue,  8 Jan 2019 11:25:25 +0000 (UTC)
 Received: from sirius.home.kraxel.org (ovpn-116-98.ams2.redhat.com [10.36.116.98])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A72C6601A7;
+        by smtp.corp.redhat.com (Postfix) with ESMTP id F0B0B5C257;
         Tue,  8 Jan 2019 11:25:24 +0000 (UTC)
 Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 2E89F5EE3; Tue,  8 Jan 2019 12:25:21 +0100 (CET)
+        id A06E25EE6; Tue,  8 Jan 2019 12:25:21 +0100 (CET)
 From:   Gerd Hoffmann <kraxel@redhat.com>
 To:     dri-devel@lists.freedesktop.org, David Airlie <airlied@redhat.com>
 Cc:     andr2000@gmail.com, Gerd Hoffmann <kraxel@redhat.com>,
         David Airlie <airlied@linux.ie>,
+        linux-kernel@vger.kernel.org (open list),
         virtualization@lists.linux-foundation.org (open list:DRM DRIVER FOR
-        BOCHS VIRTUAL GPU), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2 11/15] drm/bochs: add basic prime support
-Date:   Tue,  8 Jan 2019 12:25:15 +0100
-Message-Id: <20190108112519.27473-12-kraxel@redhat.com>
+        BOCHS VIRTUAL GPU)
+Subject: [PATCH v2 14/15] drm/bochs: move remaining fb bits to kms
+Date:   Tue,  8 Jan 2019 12:25:18 +0100
+Message-Id: <20190108112519.27473-15-kraxel@redhat.com>
 In-Reply-To: <20190108112519.27473-1-kraxel@redhat.com>
 References: <20190108112519.27473-1-kraxel@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Tue, 08 Jan 2019 11:25:28 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Tue, 08 Jan 2019 11:25:25 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Generic framebuffer emulation needs this.
+bochs_fbdev.c is almost empty now.  Move the remaining framebuffer bits
+over to bochs_kms.c.  Pure code motion. No functional change.
 
 Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
 Reviewed-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 ---
- drivers/gpu/drm/bochs/bochs.h     | 11 +++++++
- drivers/gpu/drm/bochs/bochs_drv.c | 15 +++++++++-
- drivers/gpu/drm/bochs/bochs_mm.c  | 63 +++++++++++++++++++++++++++++++++++++++
- 3 files changed, 88 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/bochs/bochs_fbdev.c | 29 -----------------------------
+ drivers/gpu/drm/bochs/bochs_kms.c   | 17 +++++++++++++++++
+ drivers/gpu/drm/bochs/Makefile      |  2 +-
+ 3 files changed, 18 insertions(+), 30 deletions(-)
+ delete mode 100644 drivers/gpu/drm/bochs/bochs_fbdev.c
 
-diff --git a/drivers/gpu/drm/bochs/bochs.h b/drivers/gpu/drm/bochs/bochs.h
-index d0d474e06f..df9ff6425d 100644
---- a/drivers/gpu/drm/bochs/bochs.h
-+++ b/drivers/gpu/drm/bochs/bochs.h
-@@ -145,6 +145,17 @@ int bochs_dumb_mmap_offset(struct drm_file *file, struct drm_device *dev,
- int bochs_bo_pin(struct bochs_bo *bo, u32 pl_flag);
- int bochs_bo_unpin(struct bochs_bo *bo);
+diff --git a/drivers/gpu/drm/bochs/bochs_fbdev.c b/drivers/gpu/drm/bochs/bochs_fbdev.c
+deleted file mode 100644
+index 7cac3f5253..0000000000
+--- a/drivers/gpu/drm/bochs/bochs_fbdev.c
++++ /dev/null
+@@ -1,29 +0,0 @@
+-/*
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- */
+-
+-#include "bochs.h"
+-#include <drm/drm_atomic_helper.h>
+-#include <drm/drm_gem_framebuffer_helper.h>
+-
+-/* ---------------------------------------------------------------------- */
+-
+-static struct drm_framebuffer *
+-bochs_gem_fb_create(struct drm_device *dev, struct drm_file *file,
+-		    const struct drm_mode_fb_cmd2 *mode_cmd)
+-{
+-	if (mode_cmd->pixel_format != DRM_FORMAT_XRGB8888 &&
+-	    mode_cmd->pixel_format != DRM_FORMAT_BGRX8888)
+-		return ERR_PTR(-EINVAL);
+-
+-	return drm_gem_fb_create(dev, file, mode_cmd);
+-}
+-
+-const struct drm_mode_config_funcs bochs_mode_funcs = {
+-	.fb_create = bochs_gem_fb_create,
+-	.atomic_check = drm_atomic_helper_check,
+-	.atomic_commit = drm_atomic_helper_commit,
+-};
+diff --git a/drivers/gpu/drm/bochs/bochs_kms.c b/drivers/gpu/drm/bochs/bochs_kms.c
+index fc856a02a2..e9d5dbc346 100644
+--- a/drivers/gpu/drm/bochs/bochs_kms.c
++++ b/drivers/gpu/drm/bochs/bochs_kms.c
+@@ -9,6 +9,7 @@
+ #include <drm/drm_atomic_helper.h>
+ #include <drm/drm_plane_helper.h>
+ #include <drm/drm_atomic_uapi.h>
++#include <drm/drm_gem_framebuffer_helper.h>
  
-+int bochs_gem_prime_pin(struct drm_gem_object *obj);
-+void bochs_gem_prime_unpin(struct drm_gem_object *obj);
-+struct sg_table *bochs_gem_prime_get_sg_table(struct drm_gem_object *obj);
-+struct drm_gem_object *bochs_gem_prime_import_sg_table(
-+	struct drm_device *dev, struct dma_buf_attachment *attach,
-+	struct sg_table *sgt);
-+void *bochs_gem_prime_vmap(struct drm_gem_object *obj);
-+void bochs_gem_prime_vunmap(struct drm_gem_object *obj, void *vaddr);
-+int bochs_gem_prime_mmap(struct drm_gem_object *obj,
-+			 struct vm_area_struct *vma);
-+
- /* bochs_kms.c */
- int bochs_kms_init(struct bochs_device *bochs);
- void bochs_kms_fini(struct bochs_device *bochs);
-diff --git a/drivers/gpu/drm/bochs/bochs_drv.c b/drivers/gpu/drm/bochs/bochs_drv.c
-index 278f9d2e7f..a9c7140e3b 100644
---- a/drivers/gpu/drm/bochs/bochs_drv.c
-+++ b/drivers/gpu/drm/bochs/bochs_drv.c
-@@ -81,7 +81,8 @@ static const struct file_operations bochs_fops = {
- };
- 
- static struct drm_driver bochs_driver = {
--	.driver_features	= DRIVER_GEM | DRIVER_MODESET | DRIVER_ATOMIC,
-+	.driver_features	= DRIVER_GEM | DRIVER_MODESET | DRIVER_ATOMIC |
-+				  DRIVER_PRIME,
- 	.fops			= &bochs_fops,
- 	.name			= "bochs-drm",
- 	.desc			= "bochs dispi vga interface (qemu stdvga)",
-@@ -91,6 +92,18 @@ static struct drm_driver bochs_driver = {
- 	.gem_free_object_unlocked = bochs_gem_free_object,
- 	.dumb_create            = bochs_dumb_create,
- 	.dumb_map_offset        = bochs_dumb_mmap_offset,
-+
-+	.prime_handle_to_fd = drm_gem_prime_handle_to_fd,
-+	.prime_fd_to_handle = drm_gem_prime_fd_to_handle,
-+	.gem_prime_export = drm_gem_prime_export,
-+	.gem_prime_import = drm_gem_prime_import,
-+	.gem_prime_pin = bochs_gem_prime_pin,
-+	.gem_prime_unpin = bochs_gem_prime_unpin,
-+	.gem_prime_get_sg_table = bochs_gem_prime_get_sg_table,
-+	.gem_prime_import_sg_table = bochs_gem_prime_import_sg_table,
-+	.gem_prime_vmap = bochs_gem_prime_vmap,
-+	.gem_prime_vunmap = bochs_gem_prime_vunmap,
-+	.gem_prime_mmap = bochs_gem_prime_mmap,
- };
- 
- /* ---------------------------------------------------------------------- */
-diff --git a/drivers/gpu/drm/bochs/bochs_mm.c b/drivers/gpu/drm/bochs/bochs_mm.c
-index 5a0e092847..cfe061c25f 100644
---- a/drivers/gpu/drm/bochs/bochs_mm.c
-+++ b/drivers/gpu/drm/bochs/bochs_mm.c
-@@ -387,3 +387,66 @@ int bochs_dumb_mmap_offset(struct drm_file *file, struct drm_device *dev,
- 	drm_gem_object_put_unlocked(obj);
- 	return 0;
+ static int defx = 1024;
+ static int defy = 768;
+@@ -256,6 +257,22 @@ static void bochs_connector_init(struct drm_device *dev)
+ 	}
  }
-+
-+/* ---------------------------------------------------------------------- */
-+
-+int bochs_gem_prime_pin(struct drm_gem_object *obj)
+ 
++static struct drm_framebuffer *
++bochs_gem_fb_create(struct drm_device *dev, struct drm_file *file,
++		    const struct drm_mode_fb_cmd2 *mode_cmd)
 +{
-+	struct bochs_bo *bo = gem_to_bochs_bo(obj);
++	if (mode_cmd->pixel_format != DRM_FORMAT_XRGB8888 &&
++	    mode_cmd->pixel_format != DRM_FORMAT_BGRX8888)
++		return ERR_PTR(-EINVAL);
 +
-+	return bochs_bo_pin(bo, TTM_PL_FLAG_VRAM);
++	return drm_gem_fb_create(dev, file, mode_cmd);
 +}
 +
-+void bochs_gem_prime_unpin(struct drm_gem_object *obj)
-+{
-+	struct bochs_bo *bo = gem_to_bochs_bo(obj);
-+
-+	bochs_bo_unpin(bo);
-+}
-+
-+struct sg_table *bochs_gem_prime_get_sg_table(struct drm_gem_object *obj)
-+{
-+	WARN_ONCE(1, "not implemented");
-+	return ERR_PTR(-ENODEV);
-+}
-+
-+struct drm_gem_object *bochs_gem_prime_import_sg_table(
-+	struct drm_device *dev, struct dma_buf_attachment *attach,
-+	struct sg_table *table)
-+{
-+	WARN_ONCE(1, "not implemented");
-+	return ERR_PTR(-ENODEV);
-+}
-+
-+void *bochs_gem_prime_vmap(struct drm_gem_object *obj)
-+{
-+	struct bochs_bo *bo = gem_to_bochs_bo(obj);
-+	bool is_iomem;
-+	int ret;
-+
-+	ret = bochs_bo_pin(bo, TTM_PL_FLAG_VRAM);
-+	if (ret)
-+		return NULL;
-+	ret = ttm_bo_kmap(&bo->bo, 0, bo->bo.num_pages, &bo->kmap);
-+	if (ret) {
-+		bochs_bo_unpin(bo);
-+		return NULL;
-+	}
-+	return ttm_kmap_obj_virtual(&bo->kmap, &is_iomem);
-+}
-+
-+void bochs_gem_prime_vunmap(struct drm_gem_object *obj, void *vaddr)
-+{
-+	struct bochs_bo *bo = gem_to_bochs_bo(obj);
-+
-+	ttm_bo_kunmap(&bo->kmap);
-+	bochs_bo_unpin(bo);
-+}
-+
-+int bochs_gem_prime_mmap(struct drm_gem_object *obj,
-+			 struct vm_area_struct *vma)
-+{
-+	struct bochs_bo *bo = gem_to_bochs_bo(obj);
-+
-+	return ttm_fbdev_mmap(vma, &bo->bo);
-+}
++const struct drm_mode_config_funcs bochs_mode_funcs = {
++	.fb_create = bochs_gem_fb_create,
++	.atomic_check = drm_atomic_helper_check,
++	.atomic_commit = drm_atomic_helper_commit,
++};
+ 
+ int bochs_kms_init(struct bochs_device *bochs)
+ {
+diff --git a/drivers/gpu/drm/bochs/Makefile b/drivers/gpu/drm/bochs/Makefile
+index 98ef60a19e..e9e0f8f5eb 100644
+--- a/drivers/gpu/drm/bochs/Makefile
++++ b/drivers/gpu/drm/bochs/Makefile
+@@ -1,3 +1,3 @@
+-bochs-drm-y := bochs_drv.o bochs_mm.o bochs_kms.o bochs_fbdev.o bochs_hw.o
++bochs-drm-y := bochs_drv.o bochs_mm.o bochs_kms.o bochs_hw.o
+ 
+ obj-$(CONFIG_DRM_BOCHS)	+= bochs-drm.o
 -- 
 2.9.3
 
