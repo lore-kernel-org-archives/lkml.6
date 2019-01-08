@@ -4,48 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB6A7C43612
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:28:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5D20C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:28:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C81B20883
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:28:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A832B20883
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:28:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546975727;
-	bh=NfVxzwrSNhaSiLqKRBHqUvhzWggS03DnWy4aqZyjnqE=;
+	s=default; t=1546975734;
+	bh=howNbSFbtqVdOUBLsx5cXHOFR5FDwJVSK/aN9VXMmro=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=beYXPl4sBf+OAlqaM+ElJBLD/a95FGxXbYnnUHJizyuSBXnMtLoeY+3Lp2bh3zljF
-	 M69xMATmakulzSKdzj378/E/yLHSnxJXVleepWgbUV50ZrMlgNraC0imY/VtzN5uPA
-	 jCAVBXkaRj6vf3bD8z/W5UZh5pQJA8aIvdZgHhoY=
+	b=M8ml2h7/Xrz/wX0btyxn4hq7KF21Up/CWYcS6Di9ZXf6rs+zmeaf5YR+UQr3Mvayl
+	 WSLK82cFPOijSLGUzEqawQJyri+HP0UnZWRal5DJMclkR/w6vsjg2iVQmiPf1zb91Y
+	 EmT3DFkZ6NYgZaRuI2VpCFQMjvFF4FvVGAOLP6OI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730159AbfAHT2q (ORCPT
+        id S1730205AbfAHT2x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:28:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35740 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:28:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35878 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730104AbfAHT2j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:28:39 -0500
+        id S1729461AbfAHT2p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:28:45 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6672420883;
-        Tue,  8 Jan 2019 19:28:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3E3F62070B;
+        Tue,  8 Jan 2019 19:28:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975718;
-        bh=NfVxzwrSNhaSiLqKRBHqUvhzWggS03DnWy4aqZyjnqE=;
+        s=default; t=1546975724;
+        bh=howNbSFbtqVdOUBLsx5cXHOFR5FDwJVSK/aN9VXMmro=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JPmBEdh2aUkVMmcJsr+Gv63oFbTlgmRx0kEspM10H8wFYWS4RkfykFhtbDvfGn+ps
-         1ksUOBgNib4cwyh7R5siA/aHvPskUL+pcKKyJy+utzkaF481/PO7/tgGv0MPOXQ69D
-         jYvpi6QMpuKLnx/Qu5QHT8Wi+QrpJOK+eKfyzQoA=
+        b=Y9KhVA0zklWyhE8bFCbYYUc8th/QC8ht/qYiq71/3Xj1DhmdwZM9AhaGzMC8dCcq0
+         lHrAR53G/ZvGlGX+s7A+ZUetB/X4A4Mwra4PqiY7Ap5aweOb4EWHan5rNomUIm7WQI
+         aV8+bIDzjQyhhDbv0cPDXt1zR4ZldM9ShoiiYPLQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Filipe Manana <fdmanana@suse.com>, David Sterba <dsterba@suse.com>,
-        Sasha Levin <sashal@kernel.org>, linux-btrfs@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 075/117] Btrfs: fix access to available allocation bits when starting balance
-Date:   Tue,  8 Jan 2019 14:25:43 -0500
-Message-Id: <20190108192628.121270-75-sashal@kernel.org>
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 079/117] perf intel-pt: Fix error with config term "pt=0"
+Date:   Tue,  8 Jan 2019 14:25:47 -0500
+Message-Id: <20190108192628.121270-79-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192628.121270-1-sashal@kernel.org>
 References: <20190108192628.121270-1-sashal@kernel.org>
@@ -57,102 +59,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Filipe Manana <fdmanana@suse.com>
+From: Adrian Hunter <adrian.hunter@intel.com>
 
-[ Upstream commit 5a8067c0d17feb7579db0476191417b441a8996e ]
+[ Upstream commit 1c6f709b9f96366cc47af23c05ecec9b8c0c392d ]
 
-The available allocation bits members from struct btrfs_fs_info are
-protected by a sequence lock, and when starting balance we access them
-incorrectly in two different ways:
+Users should never use 'pt=0', but if they do it may give a meaningless
+error:
 
-1) In the read sequence lock loop at btrfs_balance() we use the values we
-   read from fs_info->avail_*_alloc_bits and we can immediately do actions
-   that have side effects and can not be undone (printing a message and
-   jumping to a label). This is wrong because a retry might be needed, so
-   our actions must not have side effects and must be repeatable as long
-   as read_seqretry() returns a non-zero value. In other words, we were
-   essentially ignoring the sequence lock;
+	$ perf record -e intel_pt/pt=0/u uname
+	Error:
+	The sys_perf_event_open() syscall returned with 22 (Invalid argument) for
+	event (intel_pt/pt=0/u).
 
-2) Right below the read sequence lock loop, we were reading the values
-   from avail_metadata_alloc_bits and avail_data_alloc_bits without any
-   protection from concurrent writers, that is, reading them outside of
-   the read sequence lock critical section.
+Fix that by forcing 'pt=1'.
 
-So fix this by making sure we only read the available allocation bits
-while in a read sequence lock critical section and that what we do in the
-critical section is repeatable (has nothing that can not be undone) so
-that any eventual retry that is needed is handled properly.
+Committer testing:
 
-Fixes: de98ced9e743 ("Btrfs: use seqlock to protect fs_info->avail_{data, metadata, system}_alloc_bits")
-Fixes: 14506127979a ("btrfs: fix a bogus warning when converting only data or metadata")
-Reviewed-by: Nikolay Borisov <nborisov@suse.com>
-Signed-off-by: Filipe Manana <fdmanana@suse.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+  # perf record -e intel_pt/pt=0/u uname
+  Error:
+  The sys_perf_event_open() syscall returned with 22 (Invalid argument) for event (intel_pt/pt=0/u).
+  /bin/dmesg | grep -i perf may provide additional information.
+
+  # perf record -e intel_pt/pt=0/u uname
+  pt=0 doesn't make sense, forcing pt=1
+  Linux
+  [ perf record: Woken up 1 times to write data ]
+  [ perf record: Captured and wrote 0.020 MB perf.data ]
+  #
+
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Link: http://lkml.kernel.org/r/b7c5b4e5-9497-10e5-fd43-5f3e4a0fe51d@intel.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/btrfs/volumes.c | 39 +++++++++++++++++++++++----------------
- 1 file changed, 23 insertions(+), 16 deletions(-)
+ tools/perf/arch/x86/util/intel-pt.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
-index 1797a82eb7df..ea5fa9df9405 100644
---- a/fs/btrfs/volumes.c
-+++ b/fs/btrfs/volumes.c
-@@ -3724,6 +3724,7 @@ int btrfs_balance(struct btrfs_fs_info *fs_info,
- 	int ret;
- 	u64 num_devices;
- 	unsigned seq;
-+	bool reducing_integrity;
+diff --git a/tools/perf/arch/x86/util/intel-pt.c b/tools/perf/arch/x86/util/intel-pt.c
+index db0ba8caf5a2..ba8ecaf52200 100644
+--- a/tools/perf/arch/x86/util/intel-pt.c
++++ b/tools/perf/arch/x86/util/intel-pt.c
+@@ -524,10 +524,21 @@ static int intel_pt_validate_config(struct perf_pmu *intel_pt_pmu,
+ 				    struct perf_evsel *evsel)
+ {
+ 	int err;
++	char c;
  
- 	if (btrfs_fs_closing(fs_info) ||
- 	    atomic_read(&fs_info->balance_pause_req) ||
-@@ -3803,24 +3804,30 @@ int btrfs_balance(struct btrfs_fs_info *fs_info,
- 		     !(bctl->sys.target & allowed)) ||
- 		    ((bctl->meta.flags & BTRFS_BALANCE_ARGS_CONVERT) &&
- 		     (fs_info->avail_metadata_alloc_bits & allowed) &&
--		     !(bctl->meta.target & allowed))) {
--			if (bctl->flags & BTRFS_BALANCE_FORCE) {
--				btrfs_info(fs_info,
--				"balance: force reducing metadata integrity");
--			} else {
--				btrfs_err(fs_info,
--	"balance: reduces metadata integrity, use --force if you want this");
--				ret = -EINVAL;
--				goto out;
--			}
--		}
-+		     !(bctl->meta.target & allowed)))
-+			reducing_integrity = true;
-+		else
-+			reducing_integrity = false;
-+
-+		/* if we're not converting, the target field is uninitialized */
-+		meta_target = (bctl->meta.flags & BTRFS_BALANCE_ARGS_CONVERT) ?
-+			bctl->meta.target : fs_info->avail_metadata_alloc_bits;
-+		data_target = (bctl->data.flags & BTRFS_BALANCE_ARGS_CONVERT) ?
-+			bctl->data.target : fs_info->avail_data_alloc_bits;
- 	} while (read_seqretry(&fs_info->profiles_lock, seq));
+ 	if (!evsel)
+ 		return 0;
  
--	/* if we're not converting, the target field is uninitialized */
--	meta_target = (bctl->meta.flags & BTRFS_BALANCE_ARGS_CONVERT) ?
--		bctl->meta.target : fs_info->avail_metadata_alloc_bits;
--	data_target = (bctl->data.flags & BTRFS_BALANCE_ARGS_CONVERT) ?
--		bctl->data.target : fs_info->avail_data_alloc_bits;
-+	if (reducing_integrity) {
-+		if (bctl->flags & BTRFS_BALANCE_FORCE) {
-+			btrfs_info(fs_info,
-+				   "balance: force reducing metadata integrity");
-+		} else {
-+			btrfs_err(fs_info,
-+	  "balance: reduces metadata integrity, use --force if you want this");
-+			ret = -EINVAL;
-+			goto out;
-+		}
++	/*
++	 * If supported, force pass-through config term (pt=1) even if user
++	 * sets pt=0, which avoids senseless kernel errors.
++	 */
++	if (perf_pmu__scan_file(intel_pt_pmu, "format/pt", "%c", &c) == 1 &&
++	    !(evsel->attr.config & 1)) {
++		pr_warning("pt=0 doesn't make sense, forcing pt=1\n");
++		evsel->attr.config |= 1;
 +	}
 +
- 	if (btrfs_get_num_tolerated_disk_barrier_failures(meta_target) <
- 		btrfs_get_num_tolerated_disk_barrier_failures(data_target)) {
- 		int meta_index = btrfs_bg_flags_to_raid_index(meta_target);
+ 	err = intel_pt_val_config_term(intel_pt_pmu, "caps/cycle_thresholds",
+ 				       "cyc_thresh", "caps/psb_cyc",
+ 				       evsel->attr.config);
 -- 
 2.19.1
 
