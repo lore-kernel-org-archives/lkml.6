@@ -2,108 +2,202 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EFCCC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 18:49:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E71CC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 18:51:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5050D20827
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 18:49:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Uu/7bonv"
+	by mail.kernel.org (Postfix) with ESMTP id DA31B20827
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 18:51:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729473AbfAHStl (ORCPT
+        id S1729523AbfAHSvD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 13:49:41 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:50400 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727829AbfAHStl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 13:49:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=9EThvUedqwr9JLagw4SbqAFedU0AoJZ9CKdWwl7XKiA=; b=Uu/7bonv5ZaHGzI6QLfILzH9B
-        puh54QM8wm3H7+zKWLUgPsli0zU7U2sj4ZY8gDz+g1tyBdF4Xo6U6eBGsKezYjvqnhIBZKNtC228Z
-        mjGzNwbI/ic4qkyDTUSUrAuciBBzKhhlVnTGc/zIxj0ggVaOxfZAC9/mj6UxvDOOEQiDr3Y2xFdlK
-        snYv0/ZvaVrjGUtmfBj9ak+edbZ/9hi+/jApT37OBk9WJn5519c4gTVbS68ifn97QoyRIfmadth1K
-        Q8Y71bcS4buqpXGjXg8wnzbUs5DiONR9amO94TYHZn8ZEPRLlJxCgRPR/W8Ia9sI5WEQTS2cfzNgX
-        z2sT6TyHg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1ggwQw-0007W7-MF; Tue, 08 Jan 2019 18:49:02 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 1C99320289CC1; Tue,  8 Jan 2019 19:49:01 +0100 (CET)
-Date:   Tue, 8 Jan 2019 19:49:01 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc:     Andrew Murray <andrew.murray@arm.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>,
+        Tue, 8 Jan 2019 13:51:03 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:42178 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727947AbfAHSvD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 13:51:03 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8A6F589ACA;
+        Tue,  8 Jan 2019 18:51:02 +0000 (UTC)
+Received: from redhat.com (ovpn-126-25.rdu2.redhat.com [10.10.126.25])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 2CEA61A7D5;
+        Tue,  8 Jan 2019 18:50:59 +0000 (UTC)
+Date:   Tue, 8 Jan 2019 13:50:58 -0500
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Jason Wang <jasowang@redhat.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
         Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Russell King <linux@armlinux.org.uk>, suzuki.poulose@arm.com,
-        robin.murphy@arm.com, Michael Ellerman <mpe@ellerman.id.au>,
-        x86@kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-alpha@vger.kernel.org, jgross@suse.com
-Subject: Re: [PATCH v4 10/13] x86: perf/core: use PERF_PMU_CAP_NO_EXCLUDE for
- exclude incapable PMUs
-Message-ID: <20190108184901.GA1900@hirez.programming.kicks-ass.net>
-References: <1546878450-20341-1-git-send-email-andrew.murray@arm.com>
- <1546878450-20341-11-git-send-email-andrew.murray@arm.com>
- <20190108104841.GD6808@hirez.programming.kicks-ass.net>
- <7300f0af-b532-5546-a6f4-fec69cb91a0f@oracle.com>
+        Peter Zijlstra <peterz@infradead.org>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Akira Yokosawa <akiyks@gmail.com>,
+        Daniel Lustig <dlustig@nvidia.com>, linux-arch@vger.kernel.org,
+        netdev@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        Eli Friedman <efriedma@codeaurora.org>,
+        Joe Perches <joe@perches.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        linux-sparse@vger.kernel.org,
+        Eric Christopher <echristo@google.com>
+Subject: Re: [PATCH RFC 1/4] include/linux/compiler*.h: fix OPTIMIZER_HIDE_VAR
+Message-ID: <20190108134549-mutt-send-email-mst@kernel.org>
+References: <20190102205715.14054-1-mst@redhat.com>
+ <20190102205715.14054-2-mst@redhat.com>
+ <CAKwvOdk3b6mnpTEEyY-JFrej8K12w9oTMLqi7q5aNiRMyJo6Ow@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7300f0af-b532-5546-a6f4-fec69cb91a0f@oracle.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAKwvOdk3b6mnpTEEyY-JFrej8K12w9oTMLqi7q5aNiRMyJo6Ow@mail.gmail.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Tue, 08 Jan 2019 18:51:03 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 08, 2019 at 11:36:33AM -0500, Boris Ostrovsky wrote:
-> On 1/8/19 5:48 AM, Peter Zijlstra wrote:
+On Tue, Jan 08, 2019 at 09:44:28AM -0800, Nick Desaulniers wrote:
+> Thanks for the patch and sorry for the delay; was totally unplugged
+> for the holidays.
+> On Wed, Jan 2, 2019 at 12:57 PM Michael S. Tsirkin <mst@redhat.com> wrote:
+> >
+> > Since commit 815f0ddb346c ("include/linux/compiler*.h: make compiler-*.h
+> > mutually exclusive") clang no longer reuses the OPTIMIZER_HIDE_VAR macro
+> > from compiler-gcc - instead it gets the version in
+> > include/linux/compiler.h.  Unfortunately that version doesn't actually
+> > prevent compiler from optimizing out the variable.
+> 
+> Good catch. Did you find this via eyeballing the code, a test, or some
+> other way?
 
-> > On the various exclude options; they are as follows (IIUC):
-> >
-> >   - exclude_guest: we're a HV/host-kernel and we don't want the counter
-> >                    to run when we run a guest context.
-> >
-> >   - exclude_host: we're a HV/host-kernel and we don't want the counter
-> >                   to run when we run in host context.
-> >
-> >   - exclude_hv: we're a guest and don't want the counter to run in HV
-> >                 context.
-> >
-> > Now, KVM always implies exclude_hv afaict (for guests), I'm not sure
-> > what, if anything Xen does on x86 (IIRC Brendan Gregg once said perf
-> > works on Xen) -- nor quite sure who to ask, Boris, Jeurgen?
-> 
-> perf does work inside guests.
-> 
-> VPMU is managed by the Xen and it presents to the guest only samples
-> that are associated with the guest. So from that perspective exclude_hv
-> doesn't seem to be needed.
-> 
-> There is a VPMU mode that allows profiling whole system (host and
-> guests) from dom0, and this where exclude_hv might be useful. But this
-> mode, ahem, needs some work.
+eyeballing
 
-Thanks Boris!
+> >
+> > Fix up by moving the macro out from compiler-gcc.h to compiler.h.
+> > Compilers without incline asm support will keep working
+> > since it's protected by an ifdef.
+> >
+> > Also fix up comments to match reality since we are no longer overriding
+> > any macros.
+> >
+> > Build-tested with gcc and clang.
+> >
+> > Fixes: 815f0ddb346c ("include/linux/compiler*.h: make compiler-*.h mutually exclusive")
+> > Cc: Eli Friedman <efriedma@codeaurora.org>
+> > Cc: Joe Perches <joe@perches.com>
+> > Cc: Nick Desaulniers <ndesaulniers@google.com>
+> > Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> > Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+> 
+> Also for more context, see:
+> commit 7829fb09a2b4 ("lib: make memzero_explicit more robust against
+> dead store elimination")
+
+
+Interesting. That added this text:
+
+ * while gcc behavior gets along with a normal
+ * barrier(), llvm needs an explicit input variable to be assumed
+ * clobbered.
+
+however:
+#define barrier_data(ptr) __asm__ __volatile__("": :"r"(ptr) :"memory")
+
+So no explicit variable is clobbered.
+Weird isn't it?
+
+
+
+> > ---
+> >  include/linux/compiler-clang.h | 5 ++---
+> >  include/linux/compiler-gcc.h   | 4 ----
+> >  include/linux/compiler-intel.h | 4 +---
+> >  include/linux/compiler.h       | 4 +++-
+> >  4 files changed, 6 insertions(+), 11 deletions(-)
+> >
+> > diff --git a/include/linux/compiler-clang.h b/include/linux/compiler-clang.h
+> > index 3e7dafb3ea80..7ddaeb5182e3 100644
+> > --- a/include/linux/compiler-clang.h
+> > +++ b/include/linux/compiler-clang.h
+> > @@ -3,9 +3,8 @@
+> >  #error "Please don't include <linux/compiler-clang.h> directly, include <linux/compiler.h> instead."
+> >  #endif
+> >
+> > -/* Some compiler specific definitions are overwritten here
+> > - * for Clang compiler
+> > - */
+> > +/* Compiler specific definitions for Clang compiler */
+> > +
+> >  #define uninitialized_var(x) x = *(&(x))
+> >
+> >  /* same as gcc, this was present in clang-2.6 so we can assume it works
+> > diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
+> > index 2010493e1040..72054d9f0eaa 100644
+> > --- a/include/linux/compiler-gcc.h
+> > +++ b/include/linux/compiler-gcc.h
+> > @@ -58,10 +58,6 @@
+> >         (typeof(ptr)) (__ptr + (off));                                  \
+> >  })
+> >
+> > -/* Make the optimizer believe the variable can be manipulated arbitrarily. */
+> > -#define OPTIMIZER_HIDE_VAR(var)                                                \
+> > -       __asm__ ("" : "=r" (var) : "0" (var))
+> > -
+> >  /*
+> >   * A trick to suppress uninitialized variable warning without generating any
+> >   * code
+> > diff --git a/include/linux/compiler-intel.h b/include/linux/compiler-intel.h
+> > index 517bd14e1222..b17f3cd18334 100644
+> > --- a/include/linux/compiler-intel.h
+> > +++ b/include/linux/compiler-intel.h
+> > @@ -5,9 +5,7 @@
+> >
+> >  #ifdef __ECC
+> >
+> > -/* Some compiler specific definitions are overwritten here
+> > - * for Intel ECC compiler
+> > - */
+> > +/* Compiler specific definitions for Intel ECC compiler */
+> >
+> >  #include <asm/intrinsics.h>
+> >
+> > diff --git a/include/linux/compiler.h b/include/linux/compiler.h
+> > index 06396c1cf127..1ad367b4cd8d 100644
+> > --- a/include/linux/compiler.h
+> > +++ b/include/linux/compiler.h
+> > @@ -152,7 +152,9 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
+> >  #endif
+> >
+> >  #ifndef OPTIMIZER_HIDE_VAR
+> > -#define OPTIMIZER_HIDE_VAR(var) barrier()
+> > +/* Make the optimizer believe the variable can be manipulated arbitrarily. */
+> > +#define OPTIMIZER_HIDE_VAR(var)                                                \
+> > +       __asm__ ("" : "=r" (var) : "0" (var))
+> >  #endif
+> 
+> This should be fine, thanks for the cleanup!  For now, we're not yet
+> confident to turn on Clang's integrated assembler for the kernel, but
+> I'll make sure to revisit this should we, in case Clang is then able
+> to optimize this out.
+> + Eric, who might know of a better trick for what we're trying to
+> accomplish with this macro.
+> 
+> Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+> 
+> + Miguel
+> Miguel, would you mind taking this into your compiler-attributes tree?
+> -- 
+> Thanks,
+> ~Nick Desaulniers
