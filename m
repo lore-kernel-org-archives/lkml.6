@@ -2,100 +2,108 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 850C5C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 12:11:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B6E6C43612
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 12:12:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EF41206B7
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 12:11:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C68782087E
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 12:12:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546949509;
-	bh=HuWLDpyq2cRZMk9PjBnq72cbHH8Y0IMGSLixYa93YtA=;
+	s=default; t=1546949537;
+	bh=T6m0dKZVliUU9xNTgRDym74Y+URjNa0LaY6gqMtauaw=;
 	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=ySu2envurbIy6BHL/5MTQIAHcA/UnsZyzSVJ+B7RL9HsgGObOWRz7bTjXC7D1gGIS
-	 lYrvf48OJf/XtCydc2tJE5qv4aqmlErRdxFvl9d270EmQkMJ9yycuhwg97F0Og3voA
-	 Zhmtyf2eRd+5MFzhkkUdq994ZRvOmZiEMs4sO7FQ=
+	b=kfAxaZP+EjNknlxz8p1ZpetYD8gCe/i3OYBhoK2yNOXsCJjpdf7o1mAT+sRFHYQcX
+	 TwM81AYQRv4LrRZB8yr0LNkpqT+cGES0yCHo6nwK3l55NcN2P55hDbspThZ754gVBl
+	 DbSGWn+hsWTsrJYmu+vY3RMOVz47oD7Oc4fMxJrQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728904AbfAHMLs (ORCPT
+        id S1728942AbfAHMMR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 07:11:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34232 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 07:12:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34314 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727295AbfAHMLs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 07:11:48 -0500
-Received: from PC-kkoz.proceq.com (unknown [213.160.61.66])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        id S1727295AbfAHMMQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 07:12:16 -0500
+Received: from localhost.localdomain (unknown [37.223.143.46])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D3FFB20651;
-        Tue,  8 Jan 2019 12:11:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6A0EB206B7;
+        Tue,  8 Jan 2019 12:12:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546949507;
-        bh=HuWLDpyq2cRZMk9PjBnq72cbHH8Y0IMGSLixYa93YtA=;
+        s=default; t=1546949535;
+        bh=T6m0dKZVliUU9xNTgRDym74Y+URjNa0LaY6gqMtauaw=;
         h=From:To:Cc:Subject:Date:From;
-        b=Y5r0yx7/tRPdZtj45MKYmMTtrI2feXdAu2wdN9p/+TGD2sdzwdndAvkY2dDUzn/NG
-         wcZPpJKlfdAq4JWJccNwTuhDF+9vPxrTueHUuekFfLGS+Fo13YdJIHn0+z1RXGyot0
-         Nw/zaPtWvahDo8rczWXjzY49eBKcs0dH+LLWM2BI=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Jiri Kosina <trivial@kernel.org>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH] dt-bindings: soc: qcom: Fix trivial language typos
-Date:   Tue,  8 Jan 2019 13:11:40 +0100
-Message-Id: <1546949500-30044-1-git-send-email-krzk@kernel.org>
-X-Mailer: git-send-email 2.7.4
+        b=yHQqEDPDoeiOiVMz0fJsHLuTC/dibq+/EFQRS+n3dd9tAHv/DsblOZ9L0mzxT/ze/
+         BvK4ocVK4NLTvt/pC9SUYYe6x6QeckMmBUnUI+yPtbD35DwYH62XV8RccTJ1VY9s+4
+         BMhFmtJJXUzvTue2Dq+kHtVAh3j1vJAabHTHXkrk=
+From:   matthias.bgg@kernel.org
+To:     mturquette@baylibre.com, sboyd@kernel.org,
+        kevin-cw.chen@mediatek.com, mars.cheng@mediatek.com
+Cc:     sean.wang@mediatek.com, matthias.bgg@gmail.com, jasu@njomotys.info,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        Matthias Brugger <mbrugger@suse.com>
+Subject: [PATCH v3 0/3] Mark clocks as critical for MT6797
+Date:   Tue,  8 Jan 2019 13:12:05 +0100
+Message-Id: <20190108121208.2473-1-matthias.bgg@kernel.org>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix few trivial language typos in bindings.
+From: Matthias Brugger <mbrugger@suse.com>
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Jasper send this series some month ago. As there was no reaction from
+his side, I'll do a friendly take-over.
+I tested the patches on my Helios X20 boards and they fix the issue.
+I didn't add a Tested-by tag as I added my Signed-off-by.
+
+Changes since v2 (https://patchwork.kernel.org/patch/10686759/):
+- axi_sel is not needed, drop CLK_IS_CRITICAL for it.
+- update commit message
+- add Acked-by from Mars
+
+Changes since v1:
+- add a fixes tag.
+
 ---
- Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt | 2 +-
- Documentation/devicetree/bindings/soc/qcom/qcom,smp2p.txt | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt b/Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt
-index 587bb1ddc8cc..1214192847ac 100644
---- a/Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt
-+++ b/Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt
-@@ -60,7 +60,7 @@ of these nodes are defined by the individual bindings for the specific function
- = EXAMPLE
- The following example represents the GLINK RPM node on a MSM8996 device, with
- the function for the "rpm_request" channel defined, which is used for
--regualtors and root clocks.
-+regulators and root clocks.
- 
- 	apcs_glb: mailbox@9820000 {
- 		compatible = "qcom,msm8996-apcs-hmss-global";
-diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,smp2p.txt b/Documentation/devicetree/bindings/soc/qcom/qcom,smp2p.txt
-index a35af2dafdad..49e1d72d3648 100644
---- a/Documentation/devicetree/bindings/soc/qcom/qcom,smp2p.txt
-+++ b/Documentation/devicetree/bindings/soc/qcom/qcom,smp2p.txt
-@@ -41,12 +41,12 @@ processor ID) and a string identifier.
- - qcom,local-pid:
- 	Usage: required
- 	Value type: <u32>
--	Definition: specifies the identfier of the local endpoint of this edge
-+	Definition: specifies the identifier of the local endpoint of this edge
- 
- - qcom,remote-pid:
- 	Usage: required
- 	Value type: <u32>
--	Definition: specifies the identfier of the remote endpoint of this edge
-+	Definition: specifies the identifier of the remote endpoint of this edge
- 
- = SUBNODES
- Each SMP2P pair contain a set of inbound and outbound entries, these are
+Currently, DRAM-related clocks and the axi_sel MUX are not marked with
+CLK_IS_CRITICAL for MT6797. This causes memory corruption when the
+system is booted without clk_ignore_unused.
+
+This patchset
+
+1. Makes it possible to mark outputs of MUXes as critical by introducing
+   a new macro, MUX_FLAGS,
+2. Makes it possible to mark gates as critical by adding flags to
+   mtk_gate, and
+3. Marks axi_sel, ddrphycfg_sel, infra_dramc_f26m and infra_dramc_b_f26m
+   as critical.
+
+The addition of flags to mtk_gate also exists in the patch series "Add
+basic and clock support for Mediatek MT8183 SoC" [1].  The type of
+flags is unsigned int in that series, but the real type is unsigned
+long, so my patch differs from that patch.
+
+[1] https://patchwork.kernel.org/patch/10549953/
+
+Jasper Mattsson (3):
+  clk: mediatek: Add MUX_FLAGS macro
+  clk: mediatek: Add flags to mtk_gate
+  clk: mediatek: Mark bus and DRAM related clocks as critical
+
+ drivers/clk/mediatek/clk-gate.c   |  4 ++-
+ drivers/clk/mediatek/clk-gate.h   |  3 +-
+ drivers/clk/mediatek/clk-mt6797.c | 60 ++++++++++++++++++-------------
+ drivers/clk/mediatek/clk-mtk.c    |  2 +-
+ drivers/clk/mediatek/clk-mtk.h    |  9 +++--
+ 5 files changed, 48 insertions(+), 30 deletions(-)
+
 -- 
-2.7.4
+2.20.1
 
