@@ -2,232 +2,187 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A31DC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 00:19:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17528C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 00:24:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C162420827
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 00:19:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PU2wtqCV"
+	by mail.kernel.org (Postfix) with ESMTP id DA82C20827
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 00:24:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727284AbfAHAT1 (ORCPT
+        id S1727261AbfAHAYj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 19:19:27 -0500
-Received: from mail-vk1-f194.google.com ([209.85.221.194]:46972 "EHLO
-        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726714AbfAHAT1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 19:19:27 -0500
-Received: by mail-vk1-f194.google.com with SMTP id j23so498342vke.13
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 16:19:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=nyRkMTCT4Q4ldIHAI6MgR4h/O/fY9tefclaP6MuszEk=;
-        b=PU2wtqCVk/8/pzWVSwOtSDbyd6FYyy2Zrg5HMWq/5bsQXK4PpMWACun1WiOJrPtU6S
-         BF+FNhlNs5/3N3MN4xPGXZUeouPV1g+87XQSCyRZKoK1j9x2BkkUzZ7Lj7kWXP+poxwU
-         VtLyIFLw+NbrXg6V09k/l9P/l5x/fj6IlX7uc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nyRkMTCT4Q4ldIHAI6MgR4h/O/fY9tefclaP6MuszEk=;
-        b=DY1SwOHoKLknF4vAOBQrzWKSf01XyaN+1cKpqDdGwHpCjCL174c8rKPrCmuWRTDF3p
-         vG6pNeFHFsTJvRvQCP1z1RNTamwhC6UX5rNEvUZNsjk7t9eDTjJTJRjqCwjOpFHv8X+R
-         wMd5JWtFrErI0B58MV2aYBUsH/mJG3VruKsxYv4SoCwiQnPZUEfxGgVqzeNq4GhBIkn0
-         eP607jg88VXQTn+30pokoa2FX82x3b0wEw4vTeGxRj+8w+smMlrAvL5EDjACW5Cat9b2
-         2TELh0r4HkFu9CU1+j0jI/fq7TtGroro+6Vth4RNTRew9AH2XfvW+KpFWXUoilT+KWC7
-         5TOw==
-X-Gm-Message-State: AJcUukcNqKZ9zEvoMfRFUT/1MkIGOEYV7cOLHFMcLCMC1M/a3kmZFyBX
-        Eitx8LBBgsMRIXlt8bi1/SeKw8U81og=
-X-Google-Smtp-Source: ALg8bN7rgOYjIlwnbamwwkAxZvKg0hxnsUmYLRfvG5PJUqjPrNtSUqOhUAoQgwNo651+L+DBx6QuWA==
-X-Received: by 2002:a1f:2cb:: with SMTP id 194mr24157504vkc.19.1546906764881;
-        Mon, 07 Jan 2019 16:19:24 -0800 (PST)
-Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com. [209.85.222.52])
-        by smtp.gmail.com with ESMTPSA id l26sm23756140vsi.31.2019.01.07.16.19.23
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 07 Jan 2019 16:19:23 -0800 (PST)
-Received: by mail-ua1-f52.google.com with SMTP id z11so732886uaa.10
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 16:19:23 -0800 (PST)
-X-Received: by 2002:ab0:470d:: with SMTP id h13mr24710996uac.122.1546906762868;
- Mon, 07 Jan 2019 16:19:22 -0800 (PST)
+        Mon, 7 Jan 2019 19:24:39 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:59076 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726667AbfAHAYj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 19:24:39 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id DF99889AE4;
+        Tue,  8 Jan 2019 00:24:38 +0000 (UTC)
+Received: from x1.home (ovpn-116-25.phx2.redhat.com [10.3.116.25])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4952260CD0;
+        Tue,  8 Jan 2019 00:24:38 +0000 (UTC)
+Date:   Mon, 7 Jan 2019 17:24:37 -0700
+From:   Alex Williamson <alex.williamson@redhat.com>
+To:     Alexey Kardashevskiy <aik@ozlabs.ru>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Laura Abbott <labbott@redhat.com>, kvm@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] vfio_pci: Add local source directory as include
+Message-ID: <20190107172437.0f0b5331@x1.home>
+In-Reply-To: <4b9b6cf2-d39e-8dd2-9271-158489b03a61@ozlabs.ru>
+References: <20190104195714.30045-1-labbott@redhat.com>
+        <874lakc09x.fsf@concordia.ellerman.id.au>
+        <CAK7LNAQLEYc=czrJvzK8UXeXYm08TuLB62uMN2kFedkcW9b1pw@mail.gmail.com>
+        <20190107120716.51d95854.cohuck@redhat.com>
+        <CAK7LNAQtsW5KoOQmOB4uSv2zHM80azmHnEMj=2BunikhJQEpig@mail.gmail.com>
+        <20190107131341.00581863@x1.home>
+        <4b9b6cf2-d39e-8dd2-9271-158489b03a61@ozlabs.ru>
+Organization: Red Hat
 MIME-Version: 1.0
-References: <154690326478.676627.103843791978176914.stgit@dwillia2-desk3.amr.corp.intel.com>
- <154690328135.676627.5979130839159447106.stgit@dwillia2-desk3.amr.corp.intel.com>
-In-Reply-To: <154690328135.676627.5979130839159447106.stgit@dwillia2-desk3.amr.corp.intel.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Mon, 7 Jan 2019 16:19:11 -0800
-X-Gmail-Original-Message-ID: <CAGXu5jKGOMHoTf0ixKCr_KFprc1Z6S2f1LYdNgMuHsL2UEm-_Q@mail.gmail.com>
-Message-ID: <CAGXu5jKGOMHoTf0ixKCr_KFprc1Z6S2f1LYdNgMuHsL2UEm-_Q@mail.gmail.com>
-Subject: Re: [PATCH v7 3/3] mm: Maintain randomization of page free lists
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Linux-MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>, Mel Gorman <mgorman@suse.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Tue, 08 Jan 2019 00:24:38 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 7, 2019 at 3:34 PM Dan Williams <dan.j.williams@intel.com> wrote:
->
-> When freeing a page with an order >= shuffle_page_order randomly select
-> the front or back of the list for insertion.
->
-> While the mm tries to defragment physical pages into huge pages this can
-> tend to make the page allocator more predictable over time. Inject the
-> front-back randomness to preserve the initial randomness established by
-> shuffle_free_memory() when the kernel was booted.
->
-> The overhead of this manipulation is constrained by only being applied
-> for MAX_ORDER sized pages by default.
->
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+On Tue, 8 Jan 2019 10:52:43 +1100
+Alexey Kardashevskiy <aik@ozlabs.ru> wrote:
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+> On 08/01/2019 07:13, Alex Williamson wrote:
+> > On Mon, 7 Jan 2019 20:39:19 +0900
+> > Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
+> >   
+> >> On Mon, Jan 7, 2019 at 8:09 PM Cornelia Huck <cohuck@redhat.com> wrote:  
+> >>>
+> >>> On Mon, 7 Jan 2019 19:12:10 +0900
+> >>> Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
+> >>>    
+> >>>> On Mon, Jan 7, 2019 at 6:18 PM Michael Ellerman <mpe@ellerman.id.au> wrote:    
+> >>>>>
+> >>>>> Laura Abbott <labbott@redhat.com> writes:    
+> >>>>>> Commit 7f92891778df ("vfio_pci: Add NVIDIA GV100GL [Tesla V100 SXM2]
+> >>>>>> subdriver") introduced a trace.h file in the local directory but
+> >>>>>> missed adding the local include path, resulting in compilation
+> >>>>>> failures with tracepoints:
+> >>>>>>
+> >>>>>> In file included from drivers/vfio/pci/trace.h:102,
+> >>>>>>                  from drivers/vfio/pci/vfio_pci_nvlink2.c:29:
+> >>>>>> ./include/trace/define_trace.h:89:42: fatal error: ./trace.h: No such file or directory
+> >>>>>>  #include TRACE_INCLUDE(TRACE_INCLUDE_FILE)
+> >>>>>>
+> >>>>>> Fix this by adjusting the include path.
+> >>>>>>
+> >>>>>> Fixes: 7f92891778df ("vfio_pci: Add NVIDIA GV100GL [Tesla V100 SXM2] subdriver")
+> >>>>>> Signed-off-by: Laura Abbott <labbott@redhat.com>    
+> >>>
+> >>> (...)
+> >>>    
+> >>>>> Alex I assume you'll merge this fix via the vfio tree?
+> >>>>>
+> >>>>> cheers
+> >>>>>    
+> >>>>>> diff --git a/drivers/vfio/pci/Makefile b/drivers/vfio/pci/Makefile
+> >>>>>> index 9662c063a6b1..08d4676a8495 100644
+> >>>>>> --- a/drivers/vfio/pci/Makefile
+> >>>>>> +++ b/drivers/vfio/pci/Makefile
+> >>>>>> @@ -1,3 +1,4 @@
+> >>>>>> +ccflags-y                               += -I$(src)
+> >>>>>>
+> >>>>>>  vfio-pci-y := vfio_pci.o vfio_pci_intrs.o vfio_pci_rdwr.o vfio_pci_config.o
+> >>>>>>  vfio-pci-$(CONFIG_VFIO_PCI_IGD) += vfio_pci_igd.o
+> >>>>>> --
+> >>>>>> 2.20.1    
+> >>>>
+> >>>>
+> >>>> Hi.
+> >>>>
+> >>>> If I correctly understand the usage of TRACE_INCLUDE_PATH,
+> >>>> the correct fix should be like follows:
+> >>>>
+> >>>>
+> >>>> diff --git a/drivers/vfio/pci/trace.h b/drivers/vfio/pci/trace.h
+> >>>> index 228ccdb..4d13e51 100644
+> >>>> --- a/drivers/vfio/pci/trace.h
+> >>>> +++ b/drivers/vfio/pci/trace.h
+> >>>> @@ -94,7 +94,7 @@ TRACE_EVENT(vfio_pci_npu2_mmap,
+> >>>>  #endif /* _TRACE_VFIO_PCI_H */
+> >>>>
+> >>>>  #undef TRACE_INCLUDE_PATH
+> >>>> -#define TRACE_INCLUDE_PATH .
+> >>>> +#define TRACE_INCLUDE_PATH ../../drivers/vfio/pci
+> >>>>  #undef TRACE_INCLUDE_FILE
+> >>>>  #define TRACE_INCLUDE_FILE trace    
+> >>>
+> >>> Going from the comments in samples/trace_events/trace-events-sample.h,
+> >>> I think both approaches are possible, and I see both used in various
+> >>> places.
+> >>>
+> >>> Personally, I'd prefer Laura's patch, as it doesn't involve hardcoding
+> >>> a path.  
+> > 
+> > Numbering options for clarity:
+> > 
+> > 1)  
+> >> ccflags-y += -I$(src)
+> >> would add the header search path for all files in drivers/vfio/pci/
+> >> whereas only the drivers/vfio/pci/vfio_pci_nvlink2.c needs it.
+> >>  
+> > 
+> > 2)  
+> >> CFLAGS_vfio_pci_nvlink2.o += -I$(src)
+> >> is a bit better.
+> >> However, it is not obvious why this extra header search path is needed
+> >> until you find vfio_pci_nvlink2.c including trace.h
+> >>  
+> > 
+> > 3)  
+> >> #define TRACE_INCLUDE_PATH ../../drivers/vfio/pci
+> >> clarifies the intention because the related code is all placed in trace.h
+> >>
+> >>
+> >>
+> >> From the comment in include/trace/define_trace.h
+> >> TRACE_INCLUDE_PATH is relative to include/trace/define_trace.h  
+> > 
+> > In my scan of the tree, the most common solution seems to be 2) as this
+> > is essentially recommended in the sample file.  3) is well represented,
+> > with much fewer examples of 1), though it might depend how liberally
+> > we grep out or examine the use cases.  Choice 1) also seems to be the
+> > most shotgun approach, adding to the search path for all files.  
+> 
+> 
+> The shotgun approach is always used when compiling out of tree which is
+> what many people do anyway without realizing that there are additional
+> -I. Why do not we make in-tree behave the same way? Thanks,
 
--Kees
+Are you suggesting bandaging this individual leaf directory, as in
+choice 1), because it's no worse than what happens for an out-of-tree
+build anyway, or are you suggesting to fix the in-tree build behavior to
+be as inefficient as the out-of-tree behavior in general?  It appears
+to me that options 2) and 3) are the intended solutions for this issue
+while 1) is more of a workaround.  Thanks,
 
-> ---
->  include/linux/mmzone.h  |   10 ++++++++++
->  include/linux/shuffle.h |   12 ++++++++++++
->  mm/page_alloc.c         |   11 +++++++++--
->  mm/shuffle.c            |   16 ++++++++++++++++
->  4 files changed, 47 insertions(+), 2 deletions(-)
->
-> diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-> index b78a45e0b11c..c15f7f703be0 100644
-> --- a/include/linux/mmzone.h
-> +++ b/include/linux/mmzone.h
-> @@ -98,6 +98,8 @@ extern int page_group_by_mobility_disabled;
->  struct free_area {
->         struct list_head        free_list[MIGRATE_TYPES];
->         unsigned long           nr_free;
-> +       u64                     rand;
-> +       u8                      rand_bits;
->  };
->
->  /* Used for pages not on another list */
-> @@ -116,6 +118,14 @@ static inline void add_to_free_area_tail(struct page *page, struct free_area *ar
->         area->nr_free++;
->  }
->
-> +#ifdef CONFIG_SHUFFLE_PAGE_ALLOCATOR
-> +/* Used to preserve page allocation order entropy */
-> +void add_to_free_area_random(struct page *page, struct free_area *area,
-> +               int migratetype);
-> +#else
-> +#define add_to_free_area_random add_to_free_area
-> +#endif
-> +
->  /* Used for pages which are on another list */
->  static inline void move_to_free_area(struct page *page, struct free_area *area,
->                              int migratetype)
-> diff --git a/include/linux/shuffle.h b/include/linux/shuffle.h
-> index d109161f4a62..85b7f5f32867 100644
-> --- a/include/linux/shuffle.h
-> +++ b/include/linux/shuffle.h
-> @@ -30,6 +30,13 @@ static inline void shuffle_zone(struct zone *z, unsigned long start_pfn,
->                 return;
->         __shuffle_zone(z, start_pfn, end_pfn);
->  }
-> +
-> +static inline bool is_shuffle_order(int order)
-> +{
-> +       if (!static_branch_unlikely(&page_alloc_shuffle_key))
-> +                return false;
-> +       return order >= CONFIG_SHUFFLE_PAGE_ORDER;
-> +}
->  #else
->  static inline void shuffle_free_memory(pg_data_t *pgdat, unsigned long start_pfn,
->                 unsigned long end_pfn)
-> @@ -44,5 +51,10 @@ static inline void shuffle_zone(struct zone *z, unsigned long start_pfn,
->  static inline void page_alloc_shuffle(enum mm_shuffle_ctl ctl)
->  {
->  }
-> +
-> +static inline bool is_shuffle_order(int order)
-> +{
-> +       return false;
-> +}
->  #endif
->  #endif /* _MM_SHUFFLE_H */
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index 0b4791a2dd43..f3a859b66d70 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -43,6 +43,7 @@
->  #include <linux/mempolicy.h>
->  #include <linux/memremap.h>
->  #include <linux/stop_machine.h>
-> +#include <linux/random.h>
->  #include <linux/sort.h>
->  #include <linux/pfn.h>
->  #include <linux/backing-dev.h>
-> @@ -889,7 +890,8 @@ static inline void __free_one_page(struct page *page,
->          * so it's less likely to be used soon and more likely to be merged
->          * as a higher order page
->          */
-> -       if ((order < MAX_ORDER-2) && pfn_valid_within(buddy_pfn)) {
-> +       if ((order < MAX_ORDER-2) && pfn_valid_within(buddy_pfn)
-> +                       && !is_shuffle_order(order)) {
->                 struct page *higher_page, *higher_buddy;
->                 combined_pfn = buddy_pfn & pfn;
->                 higher_page = page + (combined_pfn - pfn);
-> @@ -903,7 +905,12 @@ static inline void __free_one_page(struct page *page,
->                 }
->         }
->
-> -       add_to_free_area(page, &zone->free_area[order], migratetype);
-> +       if (is_shuffle_order(order))
-> +               add_to_free_area_random(page, &zone->free_area[order],
-> +                               migratetype);
-> +       else
-> +               add_to_free_area(page, &zone->free_area[order], migratetype);
-> +
->  }
->
->  /*
-> diff --git a/mm/shuffle.c b/mm/shuffle.c
-> index 07961ff41a03..4cadf51c9b40 100644
-> --- a/mm/shuffle.c
-> +++ b/mm/shuffle.c
-> @@ -213,3 +213,19 @@ void __meminit __shuffle_free_memory(pg_data_t *pgdat, unsigned long start_pfn,
->         for (z = pgdat->node_zones; z < pgdat->node_zones + MAX_NR_ZONES; z++)
->                 shuffle_zone(z, start_pfn, end_pfn);
->  }
-> +
-> +void add_to_free_area_random(struct page *page, struct free_area *area,
-> +               int migratetype)
-> +{
-> +       if (area->rand_bits == 0) {
-> +               area->rand_bits = 64;
-> +               area->rand = get_random_u64();
-> +       }
-> +
-> +       if (area->rand & 1)
-> +               add_to_free_area(page, area, migratetype);
-> +       else
-> +               add_to_free_area_tail(page, area, migratetype);
-> +       area->rand_bits--;
-> +       area->rand >>= 1;
-> +}
->
+Alex
 
+> >  From a
+> > maintenance perspective I agree that 2) seems more error prone,
+> > especially when the build system only catches the error on in-tree
+> > builds, something I rarely do.  Therefore I'm leaning towards option
+> > 3).  The hardcoded path here doesn't seem much of an issue relative to
+> > the negatives of the other approaches (how often do we move these
+> > files?) and it keeps the trace support relatively self-contained.  Are
+> > there further arguments for or against these options?  Otherwise who
+> > wants to formally post the TRACE_INCLUDE_PATH version?  Thanks,  
+> 
 
--- 
-Kees Cook
