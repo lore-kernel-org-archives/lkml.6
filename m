@@ -2,114 +2,117 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8565C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 05:25:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AA95C43612
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 05:26:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 734B22087E
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 05:25:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 38A092089F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 05:26:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="WL94UFhP"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XZKoIwSK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727950AbfAHFZq (ORCPT
+        id S1727962AbfAHF0S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 00:25:46 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:55750 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727633AbfAHFZq (ORCPT
+        Tue, 8 Jan 2019 00:26:18 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:37575 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727687AbfAHF0R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 00:25:46 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x085Ph46097497;
-        Mon, 7 Jan 2019 23:25:43 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1546925143;
-        bh=heRgF3mrtp5ZQ2beqmQqhCjY1VBDmMHelHtTiXRr5xg=;
-        h=From:To:CC:Subject:Date;
-        b=WL94UFhPK4EYFeeaqGxZ/xzZn+W5ed1v8fbKySgs9qZcIOlgIeTez9tBLrc1CBQjq
-         ExgIysaTph7OC3lAcpmqSc5jqNGs8hpwtB9ELrjv+V9ds+ZFuGKwQiJZMmT1pB/8Ez
-         zPC7dTIfdbk6QTbzgq/eu37KM48tTLgsTANkVLh8=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x085PhAi023672
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 7 Jan 2019 23:25:43 -0600
-Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 7
- Jan 2019 23:25:43 -0600
-Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Mon, 7 Jan 2019 23:25:43 -0600
-Received: from a0132425.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x085Pecx011763;
-        Mon, 7 Jan 2019 23:25:40 -0600
-From:   Vignesh R <vigneshr@ti.com>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-CC:     Rob Herring <robh+dt@kernel.org>, Vignesh R <vigneshr@ti.com>,
-        <linux-input@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH v2] dt-bindings: input: ti-tsc-adc: Add new compatible for AM654 SoCs
-Date:   Tue, 8 Jan 2019 10:56:31 +0530
-Message-ID: <20190108052631.4169-1-vigneshr@ti.com>
-X-Mailer: git-send-email 2.20.1
+        Tue, 8 Jan 2019 00:26:17 -0500
+Received: by mail-pg1-f194.google.com with SMTP id c25so1200250pgb.4
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 21:26:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=uNzw5Mk6p5U5OxaVpQeJN5aDRHrWFdN2erFBwQa0hHs=;
+        b=XZKoIwSKfezjosQOu+ngF1GT0QEchy9/7Z+4W2HAe1x2qK98Jfe/dncW1ZnpSbvzJl
+         rwrVrYWFm+F7PJ170/SljVsKzTtwOoBFtEHIqqjNq4WHKLyrup1DK1v+MjNA7Ri/thmP
+         piRZ+o8FIEOlk0U5jnPV7lKIqGnh3FMc0zZB4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=uNzw5Mk6p5U5OxaVpQeJN5aDRHrWFdN2erFBwQa0hHs=;
+        b=XC4dqxe/MhGOOQt/f77qpmAZBkKNA9hFnhgFOg47PTyuKJWaKG+o/3SxeCNsvsyCGO
+         D4ugouT1Binyqj9YEOCukAeGXCDaAyTKIMDf/zWFOEEZNXJNtVPxCHLAnv5HA73gv5dB
+         u1LEOd5Xiq+J7OkTWfI2xvatAabpsmcNefE5ey/xzZsrURFs+9q+ai5XCWLAZ2xVVwi9
+         E3pn3RARU2kTtwjFrWyX5fqTtYaFb2vFWzmTV7Zx+aZ9Wgg42Z/DVhpHwkrWZ7KD+H5E
+         x4WBqmaHsIBngRbZjiGVpynqJAidMovcZkhUB2raed5iY6efNFJue9BMz0MGdDwAD0vT
+         9IZw==
+X-Gm-Message-State: AJcUukeoLvVJ/MmpDD0dQ1Uxp1Rp14+vJdsuIW4zG4fnTjjQN6adNCWn
+        kzaKnRKfejrkk0vW3wsdbGW+Xw==
+X-Google-Smtp-Source: ALg8bN6y+HgAeIq1CoUzGQS+QOmaCrHLWl3foL3n/aRE2RH9j1FMirVc1Z1h+eZtOpJ6XvgtOxkFLQ==
+X-Received: by 2002:a63:d252:: with SMTP id t18mr324509pgi.133.1546925176324;
+        Mon, 07 Jan 2019 21:26:16 -0800 (PST)
+Received: from pihsun-z840.tpe.corp.google.com ([2401:fa00:1:10:7889:7a43:f899:134c])
+        by smtp.googlemail.com with ESMTPSA id 64sm88106874pff.101.2019.01.07.21.26.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 07 Jan 2019 21:26:15 -0800 (PST)
+From:   Pi-Hsun Shih <pihsun@chromium.org>
+Cc:     Pi-Hsun Shih <pihsun@chromium.org>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Erin Lo <erin.lo@mediatek.com>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-remoteproc@vger.kernel.org (open list:REMOTE PROCESSOR
+        (REMOTEPROC) SUBSYSTEM),
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS),
+        linux-arm-kernel@lists.infradead.org (moderated list:ARM/Mediatek SoC
+        support),
+        linux-mediatek@lists.infradead.org (moderated list:ARM/Mediatek SoC
+        support), linux-kernel@vger.kernel.org (open list)
+Subject: [RFC v2 1/6] dt-bindings: Add a binding for Mediatek SCP
+Date:   Tue,  8 Jan 2019 13:26:01 +0800
+Message-Id: <20190108052606.59426-2-pihsun@chromium.org>
+X-Mailer: git-send-email 2.20.1.97.g81188d93c3-goog
+In-Reply-To: <20190108052606.59426-1-pihsun@chromium.org>
+References: <20190108052606.59426-1-pihsun@chromium.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-AM654 SoCs has ADC IP which is similar to AM335x, but without the
-touchscreen part. Add new compatible to handle AM654 SoCs. Also, it
-seems that existing compatible strings used in the kernel DTs were never
-documented. So, document them now.
+From: Erin Lo <erin.lo@mediatek.com>
 
-Signed-off-by: Vignesh R <vigneshr@ti.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
+Add a DT binding documentation of SCP for the
+MT8183 SoC from Mediatek.
+
+Signed-off-by: Erin Lo <erin.lo@mediatek.com>
 ---
-v2:
-Fix subject line to include subsystem name
-Rebase onto v5.0-rc1
-v1: https://lkml.org/lkml/2018/11/19/313
+Changes from v1:
+ - no change
+---
+ .../devicetree/bindings/remoteproc/mtk,scp.txt         | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
 
- .../devicetree/bindings/input/touchscreen/ti-tsc-adc.txt  | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/input/touchscreen/ti-tsc-adc.txt b/Documentation/devicetree/bindings/input/touchscreen/ti-tsc-adc.txt
-index b1163bf97146..aad5e34965eb 100644
---- a/Documentation/devicetree/bindings/input/touchscreen/ti-tsc-adc.txt
-+++ b/Documentation/devicetree/bindings/input/touchscreen/ti-tsc-adc.txt
-@@ -2,7 +2,12 @@
- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- 
- Required properties:
-+- mfd
-+	compatible: Should be
-+		"ti,am3359-tscadc" for AM335x/AM437x SoCs
-+		"ti,am654-tscadc", "ti,am3359-tscadc" for AM654 SoCs
- - child "tsc"
-+	compatible: Should be "ti,am3359-tsc".
- 	ti,wires: Wires refer to application modes i.e. 4/5/8 wire touchscreen
- 		  support on the platform.
- 	ti,x-plate-resistance: X plate resistance
-@@ -25,6 +30,9 @@ Required properties:
- 			AIN0 = 0, AIN1 = 1 and so on till AIN7 = 7.
- 			XP  = 0, XN = 1, YP = 2, YN = 3.
- - child "adc"
-+	compatible: Should be
-+		    "ti,am3359-adc" for AM335x/AM437x SoCs
-+		    "ti,am654-adc", "ti,am3359-adc" for AM654 SoCs
- 	ti,adc-channels: List of analog inputs available for ADC.
- 			 AIN0 = 0, AIN1 = 1 and so on till AIN7 = 7.
- 
+diff --git a/Documentation/devicetree/bindings/remoteproc/mtk,scp.txt b/Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
+new file mode 100644
+index 00000000000000..b07e5c4ca9af1d
+--- /dev/null
++++ b/Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
+@@ -0,0 +1,10 @@
++Mediatek SCP Bindings
++----------------------------------------
++
++This binding provides support for ARM Cortex M4 Co-processor found on some
++Mediatek SoCs.
++
++Required properties:
++- compatible		Should be "mediatek,mt8183-scp"
++- clocks		Clock for co-processor (See: ../clock/clock-bindings.txt)
++
 -- 
-2.20.1
+2.20.1.97.g81188d93c3-goog
 
