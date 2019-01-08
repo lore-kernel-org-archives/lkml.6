@@ -2,86 +2,105 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D862C43612
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 17:24:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF994C43444
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 17:24:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FA7A2070B
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 17:24:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A1EDB20827
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 17:24:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uRA9FLk3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728723AbfAHRY0 (ORCPT
+        id S1728801AbfAHRYc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 12:24:26 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:50344 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727484AbfAHRY0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 12:24:26 -0500
-Received: from guinness.priv.deltatee.com ([172.16.1.162])
-        by ale.deltatee.com with esmtp (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1ggv72-0002D1-MF; Tue, 08 Jan 2019 10:24:25 -0700
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <da851333-eadd-163a-8c78-e1f4ec5ec857@deltatee.com>
- <20190108131913.GA6677@lst.de>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <eee4c4b3-52c7-f9d0-8028-3cd136ae5491@deltatee.com>
-Date:   Tue, 8 Jan 2019 10:24:24 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Tue, 8 Jan 2019 12:24:32 -0500
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:34586 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727484AbfAHRYa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 12:24:30 -0500
+Received: by mail-yw1-f67.google.com with SMTP id g75so1852150ywb.1
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 09:24:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=GL7wYni0pGBI7aKT681Y9wbnQ+0L1OweM8XEjJxZKZE=;
+        b=uRA9FLk3Ovq2/XZxEHM2QLRek+WzIngFkYCX3CdbfBujIgMjYlURKFJTkCqMKnlg44
+         HcTyBZPM9hapyuyfqpFkC7th4LT/bgZ5Z1pLcrMinIB/7XaM91dypigXQH8QNmpDekRr
+         l5NYpZKQHiJXK+rRER9tN7yyPJf4hkW13NfxncUnNHR5/B3GePIGssO5C0QNI2ncf/Lu
+         COusA3Q5IxD60f5GjhqRawqlo496Ct8CEFgiLoiiDa5U99tvWPew1CYtIU/KCXc3E1fY
+         26LJa1uvTNSITIUauX+AUKpWxqWckosoZSoHybTkAWs9UrLKb6fEh+Dx4hdPthl7TqKM
+         uleQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GL7wYni0pGBI7aKT681Y9wbnQ+0L1OweM8XEjJxZKZE=;
+        b=rA9Yq406tG5XqT6K7cP9hzq04x+tJOIPhssNTsxg+d4+alYRfqgX6Qe2yjEI4Sdf6x
+         q9UxfsLftCkOIC279f51bTtgSr3qBqH8CCvMZwZineLP+hLzx+wpkjF1EqihiaLpVhEo
+         Uy4Nu2hbAWSs40+zrXwqzZJUJR84YbtnYGROljG5IFWKb3fAeGovyuGinwI0Oiztfq6/
+         O3r+WHC38lHO2p0Rsyy1jSgh/rkoFmzyW2FX4EmR+eIZgieDEy1nFnmSnA2Mvq2wxG7S
+         HnQJen0pMVR3mg+QBvUHt4aZ2BjEUkbNAcUVejKBS7iJ1QMvfHvwrxzz4xeH8F2V6Z/3
+         jgqQ==
+X-Gm-Message-State: AJcUukcsNB3QPX0vfDfxKgnTN+pWTdKMw3gJmnJ8V5+QfawEz55NsQHi
+        4LIqDy/+pUTmb0JqxmkX+7w4O9l+LU4WFjy4Wm731w==
+X-Google-Smtp-Source: ALg8bN7UwPvwt91L36Lu6AysokOtoUleNIpTS0we+Yx31UnfjEVTVhxicsUhuZFn25YXZr40gyokug0U4gubFkJENr4=
+X-Received: by 2002:a81:ee07:: with SMTP id l7mr2481282ywm.489.1546968269670;
+ Tue, 08 Jan 2019 09:24:29 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190108131913.GA6677@lst.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-block@vger.kernel.org, axboe@kernel.dk, hch@lst.de
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: Regression in v5.0-rc1: Panic at boot
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+References: <20190103015638.205424-1-shakeelb@google.com> <20190108145942.GZ31793@dhcp22.suse.cz>
+In-Reply-To: <20190108145942.GZ31793@dhcp22.suse.cz>
+From:   Shakeel Butt <shakeelb@google.com>
+Date:   Tue, 8 Jan 2019 09:24:18 -0800
+Message-ID: <CALvZod6sx6tA2EvnXZ_h=qZu6xtcL14uSMyp-gqxedy8T0L6qg@mail.gmail.com>
+Subject: Re: [PATCH] memcg: schedule high reclaim for remote memcgs on high_work
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Cgroups <cgroups@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Jan 8, 2019 at 6:59 AM Michal Hocko <mhocko@kernel.org> wrote:
+>
+> On Wed 02-01-19 17:56:38, Shakeel Butt wrote:
+> > If a memcg is over high limit, memory reclaim is scheduled to run on
+> > return-to-userland. However it is assumed that the memcg is the current
+> > process's memcg. With remote memcg charging for kmem or swapping in a
+> > page charged to remote memcg, current process can trigger reclaim on
+> > remote memcg. So, schduling reclaim on return-to-userland for remote
+> > memcgs will ignore the high reclaim altogether. So, punt the high
+> > reclaim of remote memcgs to high_work.
+>
+> Have you seen this happening in real life workloads?
 
+No, just during code review.
 
-On 2019-01-08 6:19 a.m., Christoph Hellwig wrote:
-> On Mon, Jan 07, 2019 at 12:41:06PM -0700, Logan Gunthorpe wrote:
->> Hey,
->>
->> I found a regression in v5.0-rc1 this morning. My system panics on boot.
->> I've attached a log of the panic.
->>
->> I bisected to find the problematic commit is:
->>
->> Fixes: 9d037ad707ed ("block: remove req->timeout_list")
->>
->> But it makes no sense to me why this commit would cause a problem like
->> this. I've attached a bisect log. I've also tested v5.0-rc1 with this
->> commit reverted and that boots fine.
->>
->> The traceback seems to indicate the problem is on the bip_get_seed()
->> line in t10_pi_complete(). Which suggests that bio_integrity() is
->> returning NULL.
-> 
-> Very odd.  Can you try an experiment?  Can you add padding the size
-> of struct timer_list to struct request to check if that makes the
-> problem go away?  Then move the padding from the where the field
-> was to the end and see if that still "helps"?
+> And is this offloading what we really want to do?
 
-Ok I tried these things and they all boot without panic:
+That's the question I am brainstorming nowadays. More generally how
+memcg-oom-kill should work in the remote memcg charging case.
 
-1) Add two void pointers to where 'timer_list' was
-2) Add two void pointer to the end of the struct
-3) Add one void pointer to the end of the struct
+> I mean it is clearly the current
+> task that has triggered the remote charge so why should we offload that
+> work to a system? Is there any reason we cannot reclaim on the remote
+> memcg from the return-to-userland path?
+>
 
-So it seems to be a struct size issue...
+The only reason I did this was the code was much simpler but I see
+that the current is charging the given memcg and maybe even
+reclaiming, so, why not do the high reclaim as well. I will update the
+patch.
 
-Logan
-
+thanks,
+Shakeel
