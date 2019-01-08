@@ -2,183 +2,264 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 177DCC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 21:59:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5827EC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 22:00:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF807214C6
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 21:59:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A1C6214C6
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 22:00:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="DFGCkZXx"
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="os1Wossw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730412AbfAHV7Q (ORCPT
+        id S1730421AbfAHWA1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 16:59:16 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:3196 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730296AbfAHV7O (ORCPT
+        Tue, 8 Jan 2019 17:00:27 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:36127 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728552AbfAHWA0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 16:59:14 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c351d250002>; Tue, 08 Jan 2019 13:59:01 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 08 Jan 2019 13:59:14 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 08 Jan 2019 13:59:14 -0800
-Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 8 Jan
- 2019 21:59:13 +0000
-Received: from HQMAIL106.nvidia.com (172.18.146.12) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 8 Jan
- 2019 21:59:13 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL106.nvidia.com
- (172.18.146.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
- Transport; Tue, 8 Jan 2019 21:59:13 +0000
-Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.102.151]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5c351d310000>; Tue, 08 Jan 2019 13:59:13 -0800
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <mkarthik@nvidia.com>, <smohammed@nvidia.com>, <talho@nvidia.com>
-CC:     <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-i2c@vger.kernel.org>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH V5] i2c: tegra: Fix Maximum transfer size
-Date:   Tue, 8 Jan 2019 13:59:10 -0800
-Message-ID: <1546984750-26199-2-git-send-email-skomatineni@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1546984750-26199-1-git-send-email-skomatineni@nvidia.com>
-References: <1546984750-26199-1-git-send-email-skomatineni@nvidia.com>
-X-NVConfidentiality: public
+        Tue, 8 Jan 2019 17:00:26 -0500
+Received: by mail-oi1-f193.google.com with SMTP id x23so4659245oix.3;
+        Tue, 08 Jan 2019 14:00:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=CSM1cwp7TQGD2Ez8ZUa/lIlRA7NNaBCN962+NJRpDIQ=;
+        b=os1WosswGnfSgzxpCybyH4jeEeaJ7zkwfBSe19K1866ogYyrR0t3G0+/H0uZoD0fz9
+         lyF7cI+8AemFRgrXpjmAVGo7TUne6qZWpob2kjRmmgz9NHSDMj/P6SPO6wQkBJHTDz3+
+         Fhp726E+JKKfCLXARImhcmxF/kFsfro+1CsrI1CIAffdNa2aQTNihEiGfhbraGh3tH6s
+         q1cJvczVTDi01+OP6dXi81w8HVLBsrAmhKrZzXQMmUKSHEcjJUzD0kKhCcTK9HVMSOXu
+         Fi3V1PyFgrX+mhiQA9MP5ATAy/xwmkigPDf1A7xIXBrRChz1tn2hVhYZEVBCqYS16Fvs
+         LZsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=CSM1cwp7TQGD2Ez8ZUa/lIlRA7NNaBCN962+NJRpDIQ=;
+        b=C2xb1AOscaGGy2geN4QPK2ztvQEvzGCnzITqyRqQIPcjQ5Ns0N80hfOUei7RDH9nw8
+         wII7sYbRMo4UxpN8y8CQH5H0BzZ+dOKyEpQgLA0a1dTyzyLBw40UsN+hrUvw4W95mmzo
+         blOAou4/89iGO9k1ihgGDsxUp7dHAbCSbcHAxzIy2PRLUBtFX8IMlEZRxkPV6a4bhMME
+         C38dgbFw2eDKgVy1yuRP27A6u3m9D2KnWpzy7BvIXzc4xIyknIRfpjaVGxZYacEwgDb7
+         Mn2NbjXeinwOZydwP3bY+pRzwCjqf4gqmC+DTRce0Q/PWyI0OsAO+NAbi7+QJWdKODE+
+         h8Yg==
+X-Gm-Message-State: AJcUukegCC2nOYqlLJ/TPDSC63ugEcaz8sra/VTGedCzAKXAKTN+FCS+
+        TOanDj8Ux06oZVyfZJhleXa3KzDPhw6nV5DnRto=
+X-Google-Smtp-Source: ALg8bN5KDa0Y94mBHqZOJ9i7Y3iibLrR0XlWmjwyqNALjZcRGKKRhavV9CvPA95n3zgcaFnnPUSI5wfrFdNQZx1uTiw=
+X-Received: by 2002:aca:e884:: with SMTP id f126mr2315643oih.181.1546984825046;
+ Tue, 08 Jan 2019 14:00:25 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1546984741; bh=RjFI7CP3jN2OG12DiWmEz8RAZB1zkeX4pm/KM9lcAWw=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
-         Content-Type;
-        b=DFGCkZXxlrp9d3V5cbffe2rklwmgrMJUz89oDXkUrOczsnenWqxxvQzSpEuVgbw7l
-         O3GHzQ3Bo5zKkHwGWudFL3XYvI2JiWn7djQrr5nBEq8scVjL4Fiie92p7TydElJNMD
-         4R4XeA3xw01EhziJg/BJWSmmdF/Amt8eMrvNgeSzi5krqJyle3oaNJ3+9h5ugnfFlp
-         JLdr3NPmDcWEpjm5JCeXy4poNcawLKdww/aYNoZj3lvMdc46G2itLKVroRAuySpiBL
-         krH2BRl6bqs3vNaeBnbSDlzcjvDJw0Cd/3woVzHxe+3rYpBf8uG+YNPy1jdso43vhu
-         LDEvGxAphlglw==
+References: <20181206151828.24417-1-jbrunet@baylibre.com> <CAFBinCCUO6ihxNWDup5ZVKWBc8+oiW_-j8OUxRhb+tjpGsUBkg@mail.gmail.com>
+ <db2580c8740ca202d02f37ef567be0e273eca6d7.camel@baylibre.com>
+In-Reply-To: <db2580c8740ca202d02f37ef567be0e273eca6d7.camel@baylibre.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Tue, 8 Jan 2019 23:00:13 +0100
+Message-ID: <CAFBinCApEio05u+Us9XUK4UMpGi8bGa5j6psz21-3ry10PV6pg@mail.gmail.com>
+Subject: Re: [PATCH 0/4] mmc: meson-gx: chained descriptor fixup and improvements
+To:     Jerome Brunet <jbrunet@baylibre.com>
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Carlo Caione <carlo@caione.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tegra194 supports maximum 64K Bytes transfer per packet.
-Tegra186 and prior supports maximum 4K Bytes transfer per packet.
+Hi Jerome,
 
-This patch fixes this payload difference between Tegra194 and prior
-tegra chipsets using separate i2c_adapter_quirks.
+On Wed, Jan 2, 2019 at 1:46 PM Jerome Brunet <jbrunet@baylibre.com> wrote:
+>
+> On Sat, 2018-12-22 at 18:28 +0100, Martin Blumenstingl wrote:
+> > Hi Jerome,
+> >
+> > On Thu, Dec 6, 2018 at 4:18 PM Jerome Brunet <jbrunet@baylibre.com> wrote:
+> > > The goal of the patchset was mainly to address the following warning:
+> > >
+> > > WARNING: CPU: 0 PID: 0 at /usr/src/kernel/drivers/mmc/host/meson-gx-
+> > > mmc.c:1025 meson_mmc_irq+0xc0/0x1e0
+> > > Modules linked in: crc32_ce crct10dif_ce ipv6 overlay
+> > > CPU: 0 PID: 0 Comm: swapper/0 Tainted: G        W         4.19.1 #1
+> > > Hardware name: Some A113 Board (DT)
+> > > pstate: 40000085 (nZcv daIf -PAN -UAO)
+> > > pc : meson_mmc_irq+0xc0/0x1e0
+> > > lr : __handle_irq_event_percpu+0x70/0x180
+> > > sp : ffff000008003980
+> > > x29: ffff000008003980 x28: 0000000000000000
+> > > [...]
+> > > x1 : ffff80001a71bd40 x0 : 0000000000000000
+> > > Call trace:
+> > >  meson_mmc_irq+0xc0/0x1e0
+> > >  __handle_irq_event_percpu+0x70/0x180
+> > >  handle_irq_event_percpu+0x34/0x88
+> > >  handle_irq_event+0x48/0x78
+> > >  handle_fasteoi_irq+0xa0/0x180
+> > >  generic_handle_irq+0x24/0x38
+> > >  __handle_domain_irq+0x5c/0xb8
+> > >  gic_handle_irq+0x58/0xa8
+> > >
+> > > This happens when using the chained descriptor mode. If there is an
+> > > error, we call mmc_request_done(), loosing any reference to the cmd. It
+> > > turns out that the chained descriptor does really stops when we do so, at
+> > > least not completly. Most of the time, it can be seen with this harmless
+> > > warning because the descriptor will raise another unexpected IRQ. On rare
+> > > occasion, it will completly break the MMC.
+> > >
+> > > This is mostly adressed by patch #1.
+> > > With this fixed, I took (yet) another look at the ultra-high speed modes
+> > > and the tuning.
+> > >
+> > > I came up with new settings in patch 3 and 4. I've tested them on eMMC,
+> > > sdcard and sdio on the following platforms:
+> > >  * gxbb p200
+> > >  * gxl p230, libretech (eMMC only), kvim.
+> > >  * axg s400
+> > >
+> > > So far, these new settings seems to be working great but I think it
+> > > would be nice if others could test this and provide their feedback.
+> > > This why  patch 3 and 4 are RFT tagged.
+> > >
+> > > Jerome Brunet (4):
+> > >   mmc: meson-gx: make sure the descriptor is stopped on errors
+> > >   mmc: meson-gx: remove useless lock
+> > >   mmc: meson-gx: align default phase on soc vendor tree
+> > >   mmc: meson-gx: add signal resampling
+> > I gave all four patches a go on my Khadas VIM2 Basic (16GB eMMC).
+> > regardless of whether I have your patch applied or not: eMMC
+> > sporadically fails tuning (if I reboot the board a few times it starts
+> > to work)
+> > [    4.172686] mmc1: tuning execution failed: -5
+> > [    4.182535] mmc1: error -5 whilst initialising MMC card
+>
+> Damn ...
+>
+> This particular device is set to use hs400 ATM. Could you try with hs200 only
+> ? (removing mmc-hs400-1_8v from meson-gxm-khadas-vim2.dts)
+I put that on my TODO-list to re-try it
+last year that "fixed" it for me, see [0]
 
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
----
- drivers/i2c/busses/i2c-tegra.c | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+> I might be wrong but I think tuning is supposed to be done with hs200, before
+> activating DDR mode to switch to hs400. In theory, removing hs400 should not
+> change anything (so I expect the tuning to still fail) but it is worth
+> checking.
+>
+> >
+> > I'm not sure if this issue is specific to my Khadas VIM2 so this is
+> > *not* a nack for your patches.
+>
+> I'll check if I can get my hands on this device.
+>
+> When cooking this series, I tried another trick which was cycling on the
+> resampling delays (see ADJUST_ADJ_DELAY_MASK). At the time, I could not see
+> any significant improvement while doing it, so I dropped it.
+>
+> If possible. could you check if any particular value in this field, between 0
+> and 5, makes things any better ?
+>
+> Alternatively, if you find another combination of phase for the mmc_clk and
+> tx_clk that works better for this device, feel free to let me know. Maybe we
+> can work something out.
+I booted whatever Android / Linux is on the eMMC of my Khadas VIM2:
+kvim2:/ $ dmesg | grep -i emmc
+[    2.605927@2] aml_sd_emmc_probe: line 3608
+[    2.609368@2] mmc driver version: 1.07, 2017-4-26: Support new emmc
+host controller for version 3
+[    2.618678@2] aml_sd_emmc_reg_init 1152
+[    2.647411@2] get property:                  pinname, str:emmc
+[    2.669798@2] emmc:pdata->caps = c0000d47
+[    2.673712@2] emmc:pdata->caps2 = 18060
+[    2.677509@2] emmc:pdata->pm_caps = 0
+[    2.725316@2] [aml_sd_emmc_probe] aml_sd_emmc_probe() success!
+[    2.725543@2] aml_sd_emmc_probe: line 3608
+[    2.729971@2] aml_sd_emmc_reg_init 1152
+[    2.845635@2] [aml_sd_emmc_probe] aml_sd_emmc_probe() success!
+[    2.845871@2] aml_sd_emmc_probe: line 3608
+[    2.850305@2] aml_sd_emmc_reg_init 1152
+[    2.890367@0] emmc: BKOPS_EN bit is not set
+[    2.896816@0] emmc: trying cali 0-th time(s)
+[    2.903969@0] emmc: delay[0]= 1000 padding= 4, bidx=1
+[    2.903971@0] emmc: delay[1]= 1000 padding= 4, bidx=1
+[    2.903973@0] emmc: delay[2]=  750 padding= 1, bidx=0
+[    2.903975@0] emmc: delay[3]= 1250 padding= 3, bidx=1
+[    2.903977@0] emmc: delay[4]= 1250 padding= 3, bidx=1
+[    2.903979@0] emmc: delay[5]= 1250 padding= 3, bidx=1
+[    2.903981@0] emmc: delay[6]= 1000 padding= 4, bidx=1
+[    2.903983@0] emmc: delay[7]= 1250 padding= 3, bidx=1
+[    2.903985@0] emmc: calibration result @ 0: max(1250), min(750)
+[    2.903988@0] emmc: line_delay =0x1000211, max_cal_result =1250
+[    2.903990@0] emmc: base_index_max 1, base_index_min 0
+[    2.903996@0] emmc: clk 100000000 SDR mode tuning start
+[    2.904428@0] emmc: rx_tuning_result[1] = 10
+[    2.904795@0] emmc: rx_tuning_result[2] = 10
+[    2.905159@0] emmc: rx_tuning_result[3] = 10
+[    2.905530@0] emmc: rx_tuning_result[4] = 10
+[    2.905896@0] emmc: rx_tuning_result[5] = 10
+[    2.906260@0] emmc: rx_tuning_result[6] = 10
+[    2.906626@0] emmc: rx_tuning_result[7] = 10
+[    2.906991@0] emmc: rx_tuning_result[8] = 10
+[    2.907357@0] emmc: rx_tuning_result[9] = 10
+[    2.907360@0] emmc: best_win_start =1, best_win_size =9
+[    2.907362@0] emmc:
+sd_emmc_regs->gclock=0x100024a,sd_emmc_regs->gadjust=0x52000
+[    2.907365@0] emmc: gclock =0x100024a, gdelay=0x1000211, gadjust=0x52000
+[    2.907506@0] emmc: support driver strength type 1
+[    2.907575@0] emmc: try set sd/emmc to DDR mode
+[    2.907579@0] emmc: try set sd/emmc to DDR mode
+[    2.907710@0] emmc: new HS400 MMC card at address 0001
+[    2.908238@1] emmc: clock 100000000, 8-bit-bus-width
+[    2.908239@1] mmcblk0: emmc:0001 AJNB4R 14.5 GiB
+[    2.908375@1] mmcblk0boot0: emmc:0001 AJNB4R partition 1 4.00 MiB
+[    2.908504@1] mmcblk0boot1: emmc:0001 AJNB4R partition 2 4.00 MiB
+[    2.908631@1] mmcblk0rpmb: emmc:0001 AJNB4R partition 3 4.00 MiB
+[    2.909793@0] [aml_sd_emmc_irq] emmc: warning... response
+crc,vstat:0xa1ff2400,virqc:3fff
+[    2.909801@0] [aml_host_bus_fsm_show] emmc: err: wait for irq
+service, bus_fsm:0x8
+[    2.909801@0] [mmc_cmd_LBA_show] emmc: cmd 18, arg 0x12000,
+operation is in [reserved] disk!
+[    2.909819@6] aml_sd_emmc_data_thread 2642 emmc: cmd:18
+[    2.909824@6] [aml_sd_emmc_data_thread] aml_sd_emmc_data_thread()
+2658: set 1st retry!
+[    2.909827@6] [aml_sd_emmc_data_thread] retry cmd 18 the 10-th time(s)
+[    2.909829@6] [aml_sd_emmc_data_thread] cmd_delay change to 2
+[    2.909840@0] [aml_sd_emmc_irq] emmc:
+resp_timeout,vstat:0xa1ff2800,virqc:3fff
+[    2.909858@6] aml_sd_emmc_data_thread : 2589
+[    2.910078@1] add_emmc_partition
+[    2.911868@0] emmc_key_init:527 emmc key lba_start:0x12020,lba_end:0x12220
+[    2.911870@0] emmc key: emmc_key_init:552 ok.
+[    2.916963@1] Exit aml_emmc_partition_ops OK.
+[    2.919073@1] clear_emmc_wait_flag
+[    3.355313@2] [aml_sd_emmc_probe] aml_sd_emmc_probe() success!
+[    9.546113@4] emmc_key_read:428, read ok
+[   19.016202@0] [aml_sd_emmc_irq] sdio:
+resp_timeout,vstat:0xa3ff2800,virqc:3fff
+[   19.028652@6] aml_sd_emmc_data_thread 2642 sdio: cmd:52
+[   19.035022@0] [aml_sd_emmc_irq] sdio:
+resp_timeout,vstat:0xa3ff2800,virqc:3fff
+[   19.048492@6] aml_sd_emmc_data_thread 2642 sdio: cmd:52
+[   19.058504@0] [aml_sd_emmc_irq] sdio:
+resp_timeout,vstat:0xa3ff2800,virqc:3fff
+[   19.068332@6] aml_sd_emmc_data_thread 2642 sdio: cmd:8
+[   19.251397@1] sdio:
+sd_emmc_regs->gclock=0x1000245,sd_emmc_regs->gadjust=0x32000
+[   20.509105@4] sdio:
+sd_emmc_regs->gclock=0x1000245,sd_emmc_regs->gadjust=0x32000
+[   21.970494@4] sdio:
+sd_emmc_regs->gclock=0x1000245,sd_emmc_regs->gadjust=0x32000
 
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index e417ebf7628c..c77adbbea0c7 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -155,6 +155,8 @@ enum msg_end_type {
-  * @has_mst_fifo: The I2C controller contains the new MST FIFO interface that
-  *		provides additional features and allows for longer messages to
-  *		be transferred in one go.
-+ * @quirks: i2c adapter quirks for limiting write/read transfer size and not
-+ *		allowing 0 length transfers.
-  */
- struct tegra_i2c_hw_feature {
- 	bool has_continue_xfer_support;
-@@ -167,6 +169,7 @@ struct tegra_i2c_hw_feature {
- 	bool has_multi_master_mode;
- 	bool has_slcg_override_reg;
- 	bool has_mst_fifo;
-+	const struct i2c_adapter_quirks *quirks;
- };
- 
- /**
-@@ -837,6 +840,10 @@ static const struct i2c_adapter_quirks tegra_i2c_quirks = {
- 	.max_write_len = 4096,
- };
- 
-+static const struct i2c_adapter_quirks tegra194_i2c_quirks = {
-+	.flags = I2C_AQ_NO_ZERO_LEN,
-+};
-+
- static const struct tegra_i2c_hw_feature tegra20_i2c_hw = {
- 	.has_continue_xfer_support = false,
- 	.has_per_pkt_xfer_complete_irq = false,
-@@ -848,6 +855,7 @@ static const struct tegra_i2c_hw_feature tegra20_i2c_hw = {
- 	.has_multi_master_mode = false,
- 	.has_slcg_override_reg = false,
- 	.has_mst_fifo = false,
-+	.quirks = &tegra_i2c_quirks,
- };
- 
- static const struct tegra_i2c_hw_feature tegra30_i2c_hw = {
-@@ -861,6 +869,7 @@ static const struct tegra_i2c_hw_feature tegra30_i2c_hw = {
- 	.has_multi_master_mode = false,
- 	.has_slcg_override_reg = false,
- 	.has_mst_fifo = false,
-+	.quirks = &tegra_i2c_quirks,
- };
- 
- static const struct tegra_i2c_hw_feature tegra114_i2c_hw = {
-@@ -874,6 +883,7 @@ static const struct tegra_i2c_hw_feature tegra114_i2c_hw = {
- 	.has_multi_master_mode = false,
- 	.has_slcg_override_reg = false,
- 	.has_mst_fifo = false,
-+	.quirks = &tegra_i2c_quirks,
- };
- 
- static const struct tegra_i2c_hw_feature tegra124_i2c_hw = {
-@@ -887,6 +897,7 @@ static const struct tegra_i2c_hw_feature tegra124_i2c_hw = {
- 	.has_multi_master_mode = false,
- 	.has_slcg_override_reg = true,
- 	.has_mst_fifo = false,
-+	.quirks = &tegra_i2c_quirks,
- };
- 
- static const struct tegra_i2c_hw_feature tegra210_i2c_hw = {
-@@ -900,6 +911,7 @@ static const struct tegra_i2c_hw_feature tegra210_i2c_hw = {
- 	.has_multi_master_mode = true,
- 	.has_slcg_override_reg = true,
- 	.has_mst_fifo = false,
-+	.quirks = &tegra_i2c_quirks,
- };
- 
- static const struct tegra_i2c_hw_feature tegra194_i2c_hw = {
-@@ -913,6 +925,7 @@ static const struct tegra_i2c_hw_feature tegra194_i2c_hw = {
- 	.has_multi_master_mode = true,
- 	.has_slcg_override_reg = true,
- 	.has_mst_fifo = true,
-+	.quirks = &tegra194_i2c_quirks,
- };
- 
- /* Match table for of_platform binding */
-@@ -964,7 +977,6 @@ static int tegra_i2c_probe(struct platform_device *pdev)
- 	i2c_dev->base = base;
- 	i2c_dev->div_clk = div_clk;
- 	i2c_dev->adapter.algo = &tegra_i2c_algo;
--	i2c_dev->adapter.quirks = &tegra_i2c_quirks;
- 	i2c_dev->irq = irq;
- 	i2c_dev->cont_id = pdev->id;
- 	i2c_dev->dev = &pdev->dev;
-@@ -980,6 +992,7 @@ static int tegra_i2c_probe(struct platform_device *pdev)
- 	i2c_dev->hw = of_device_get_match_data(&pdev->dev);
- 	i2c_dev->is_dvc = of_device_is_compatible(pdev->dev.of_node,
- 						  "nvidia,tegra20-i2c-dvc");
-+	i2c_dev->adapter.quirks = i2c_dev->hw->quirks;
- 	init_completion(&i2c_dev->msg_complete);
- 	spin_lock_init(&i2c_dev->xfer_lock);
- 
--- 
-2.7.4
+the register values of the clock, delay and adjust registers are
+printed by Amlogic's 3.14 kernel - in case that helps you
 
+
+Regards
+Martin
+
+
+[0] http://lists.infradead.org/pipermail/linux-amlogic/2018-January/006251.html
