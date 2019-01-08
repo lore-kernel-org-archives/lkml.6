@@ -2,319 +2,112 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9F7BC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 06:13:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68512C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 06:18:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C6B32089F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 06:13:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lTJFD8L2"
+	by mail.kernel.org (Postfix) with ESMTP id 38E6C2087F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 06:18:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727831AbfAHGNs (ORCPT
+        id S1727941AbfAHGSU convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 01:13:48 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:37072 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727592AbfAHGNr (ORCPT
+        Tue, 8 Jan 2019 01:18:20 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:60437 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727567AbfAHGST (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 01:13:47 -0500
-Received: by mail-io1-f65.google.com with SMTP id g8so2305305iok.4;
-        Mon, 07 Jan 2019 22:13:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6Ox64a/yC3qLLjF9n5uAx7+v1XSScVyOongunkuI6os=;
-        b=lTJFD8L2TtB2aoFFZKtYweTog9uLAUtPnOKT/dinKGbY9wnLgc9VL4LOwmejQs0c9V
-         jgiuUaEd/7I+vpFRHkj6gy7xUPdp8NQmGlbWSMHmYOTIvuCW86KNJs/MU7SlV89wQ1NC
-         ky+ICYV4mQJakzkE1hqPhJCTJKSb6v9LnquUml6jpcMMKZkhIKlWd6j1dA5/loNTvTgP
-         6GRCIK6FMSlAnWFVIQv15Mwy9hAwztH43Mz9484TbZUVb5JkbZi5UmA9otzSSK0F4L82
-         XAbAE9v2rAFcbNiN/NYoDjZFtwZDdT+rmy7eqp3HEul36r1CqbKn6NVmy4Owu5jjC+zT
-         Zjag==
+        Tue, 8 Jan 2019 01:18:19 -0500
+Received: from mail-pl1-f198.google.com ([209.85.214.198])
+        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <kai.heng.feng@canonical.com>)
+        id 1ggkiQ-0008SP-4i
+        for linux-kernel@vger.kernel.org; Tue, 08 Jan 2019 06:18:18 +0000
+Received: by mail-pl1-f198.google.com with SMTP id x7so1529639pll.23
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 22:18:18 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6Ox64a/yC3qLLjF9n5uAx7+v1XSScVyOongunkuI6os=;
-        b=BCgCGgwBnGKM1SB8EwVmlrucAssyjl3fT/3fPpGQNJp96Vv9VyyIP+rj2NMDMlwua1
-         Ddg2nJ4Vxk73fuNbp2cytxTLHrlBM5aXRTv6dGJDAdB1sM+LyzNVAKH29aLOppZMsBHu
-         QZn0jxvR4cJHZaXB9sDLFzQyunWH21bJpPAYt/EaARsMb1vBguxZ4JvBowHF4gILFqdg
-         /2FHvAL1FLLSH5Nztmsu4rRtzrw7IPS84YJDhHkDMcFjDldxRpFALOeI7NtOQ4JN5B+a
-         f0lbJ3gEySBieL6OgC62OwyPBqw9d3gsZi+wy++GWzhaz5n9aSBzFHXwMLX2CVgFQgwi
-         hdlw==
-X-Gm-Message-State: AJcUukcHTard54rgwY5oFsLgwDeFmN1NJxwPe9fw7dvovUT7xqKdc1xt
-        vh+Q7IVWTFdgYHGJhI7HezMQBxHbtZ1FsJ4prQ==
-X-Google-Smtp-Source: ALg8bN5Jdsd4SpnEPBJ1Ibg2ud5xc4CfqNe/OyJwnRt5rmwI0W8XWFZThP/3qQ0aYqNXpGNYfpLiJmxWDFG0jsY/0LY=
-X-Received: by 2002:a6b:39c6:: with SMTP id g189mr235158ioa.255.1546928026109;
- Mon, 07 Jan 2019 22:13:46 -0800 (PST)
-MIME-Version: 1.0
-References: <1546849485-27933-1-git-send-email-kernelfans@gmail.com>
- <1546849485-27933-5-git-send-email-kernelfans@gmail.com> <57ca63ef-ac5b-edd7-710b-f7ee698207c9@intel.com>
-In-Reply-To: <57ca63ef-ac5b-edd7-710b-f7ee698207c9@intel.com>
-From:   Pingfan Liu <kernelfans@gmail.com>
-Date:   Tue, 8 Jan 2019 14:13:34 +0800
-Message-ID: <CAFgQCTudfQDAzKGYLAo_TuoEaEExzGn018mRewQ_LZvZbVDU+A@mail.gmail.com>
-Subject: Re: [RFC PATCH 4/4] x86/mm: remove bottom-up allocation style for x86_64
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     x86@kernel.org, linux-acpi@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=Up8N7FQ/6xJBlzq81KS35U9QVvJAjRWhXzCViRUoYs4=;
+        b=DvJsMSSDmrHRU4grBgZuySxqEzWkwi6RKzuT1EZcRpoUh5JW8BzWHxXg3F5pkzUxSI
+         oyfsm2UHoIWBAiFsQeI24HGmAsP5OXnTLzK6XpGYAUPvvx8OdoxAWRt36tkhsxiVI1U4
+         Jhaqn6KY0fDLnnPd2zbHd0BObG9dvwh9HvLMRbDvEqaWEBMsvbfcyVF8PhG3Hs2HXCyS
+         eQDd132bSOFYOj25eoFoXVMPBbwHKeu9eoa6bt5rQFw6iY58KU8cxMQUoAhPgfGIw6u3
+         j2eiX5t1cSSESbcchFCW2WZf2LBbfsgTRdwU7Hl4Kev6rfie8EM+Tbpvl7nfHaK+6wsi
+         oWDw==
+X-Gm-Message-State: AJcUukcjhyO5/7WUfi9OGoUoEsZyf7/gqU2OtNCYKYKipa1HR1tiCvvl
+        1QjP4fKccKyADoaz09hBWxrTJr3NGZLDuWdr3Qm1S9hZl4f+VvRL7j7MA+zK84sHJf4jnHzpWmg
+        rLF62xfyw1hwlmhiAklYu+owQD7Xgo+ZzxmqcT6nHTw==
+X-Received: by 2002:a63:cc4e:: with SMTP id q14mr412209pgi.291.1546928296413;
+        Mon, 07 Jan 2019 22:18:16 -0800 (PST)
+X-Google-Smtp-Source: ALg8bN7X3gvd4t/++07hTdOTebE8tqCezCdoq//hVyewq+lW1NGGMPHbY9O64I/f4B9HdJi34JHo7g==
+X-Received: by 2002:a63:cc4e:: with SMTP id q14mr412200pgi.291.1546928296101;
+        Mon, 07 Jan 2019 22:18:16 -0800 (PST)
+Received: from 2001-b011-380f-3f3d-954c-1740-8790-dac9.dynamic-ip6.hinet.net (2001-b011-380f-3f3d-954c-1740-8790-dac9.dynamic-ip6.hinet.net. [2001:b011:380f:3f3d:954c:1740:8790:dac9])
+        by smtp.gmail.com with ESMTPSA id n68sm114721837pfb.62.2019.01.07.22.18.14
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 07 Jan 2019 22:18:15 -0800 (PST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
+Subject: Re: [PATCH v4] USB: Don't enable LPM if it's already enabled
+From:   Kai Heng Feng <kai.heng.feng@canonical.com>
+In-Reply-To: <20190107161620.GB2292@kroah.com>
+Date:   Tue, 8 Jan 2019 14:18:12 +0800
+Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8BIT
+Message-Id: <18B0565E-1B36-41AC-904A-CFCCFDAC6EAC@canonical.com>
+References: <20181203102643.22690-1-kai.heng.feng@canonical.com>
+ <20190107161620.GB2292@kroah.com>
+To:     Greg KH <gregkh@linuxfoundation.org>
+X-Mailer: Apple Mail (2.3445.102.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 8, 2019 at 1:42 AM Dave Hansen <dave.hansen@intel.com> wrote:
->
-> On 1/7/19 12:24 AM, Pingfan Liu wrote:
-> > There are two acheivements by this patch.
-> > -1st. keep the subtree of pgtable away from movable node.
-> > Background about the defect of the current bottom-up allocation style, take
-> > the following scenario:
-> >   |  unmovable node |     movable node                           |
-> >      | kaslr-kernel |subtree of pgtable for phy<->virt |
->
->
->
-> > Although kaslr-kernel can avoid to stain the movable node. [1] But the
-> > pgtable can still stain the movable node. That is a probability problem,
-> > with low probability, but still exist. This patch tries to eliminate the
-> > probability. With the previous patch, at the point of init_mem_mapping(),
-> > memblock allocator can work with the knowledge of acpi memory hotmovable
-> > info, and avoid to stain the movable node. As a result,
-> > memory_map_bottom_up() is not needed any more.
-> >
-> > -2nd. simplify the logic of memory_map_top_down()
-> > Thanks to the help of early_make_pgtable(), x86_64 can directly set up the
-> > subtree of pgtable at any place, hence the careful iteration in
-> > memory_map_top_down() can be discard.
->
-> >  void __init init_mem_mapping(void)
-> >  {
-> >       unsigned long end;
-> > @@ -663,6 +540,7 @@ void __init init_mem_mapping(void)
-> >
-> >  #ifdef CONFIG_X86_64
-> >       end = max_pfn << PAGE_SHIFT;
-> > +     set_alloc_range(0x100000, end);
-> >  #else
->
-> Why is this 0x100000 open-coded?  Why is this needed *now*?
->
 
-Memory under 1MB should be used by BIOS. For x86_64, after
-e820__memblock_setup(), the memblock allocator has already been ready
-to work. But there are two factors to in order to
-set_alloc_range(0x100000, end). The major one is to be compatible with
-x86_32, please refer to alloc_low_pages->memblock_find_in_range() uses
-[min_pfn_mapped, max_pfn_mapped] to limit the range, which is ready to
-be allocated from. The minor one is to prevent unexpected allocation
-from memblock allocator through allow_low_pages() at very early stage.
->
-> >       /*
-> >        * If the allocation is in bottom-up direction, we setup direct mapping
-> >        * in bottom-up, otherwise we setup direct mapping in top-down.
-> > @@ -692,13 +577,6 @@ void __init init_mem_mapping(void)
-> >       } else {
-> >               memory_map_top_down(ISA_END_ADDRESS, end);
-> >       }
-> > -
-> > -#ifdef CONFIG_X86_64
-> > -     if (max_pfn > max_low_pfn) {
-> > -             /* can we preseve max_low_pfn ?*/
-> > -             max_low_pfn = max_pfn;
-> > -     }
-> > -#else
-> >       early_ioremap_page_table_range_init();
-> >  #endif
-> >
-> > diff --git a/arch/x86/mm/init_32.c b/arch/x86/mm/init_32.c
-> > index 85c94f9..ecf7243 100644
-> > --- a/arch/x86/mm/init_32.c
-> > +++ b/arch/x86/mm/init_32.c
-> > @@ -58,6 +58,8 @@ unsigned long highstart_pfn, highend_pfn;
-> >
-> >  bool __read_mostly __vmalloc_start_set = false;
-> >
-> > +static unsigned long min_pfn_mapped;
-> > +
-> >  /*
-> >   * Creates a middle page table and puts a pointer to it in the
-> >   * given global directory entry. This only returns the gd entry
-> > @@ -516,6 +518,127 @@ void __init native_pagetable_init(void)
-> >       paging_init();
-> >  }
-> >
-> > +static unsigned long __init get_new_step_size(unsigned long step_size)
-> > +{
-> > +     /*
-> > +      * Initial mapped size is PMD_SIZE (2M).
-> > +      * We can not set step_size to be PUD_SIZE (1G) yet.
-> > +      * In worse case, when we cross the 1G boundary, and
-> > +      * PG_LEVEL_2M is not set, we will need 1+1+512 pages (2M + 8k)
-> > +      * to map 1G range with PTE. Hence we use one less than the
-> > +      * difference of page table level shifts.
-> > +      *
-> > +      * Don't need to worry about overflow in the top-down case, on 32bit,
-> > +      * when step_size is 0, round_down() returns 0 for start, and that
-> > +      * turns it into 0x100000000ULL.
-> > +      * In the bottom-up case, round_up(x, 0) returns 0 though too, which
-> > +      * needs to be taken into consideration by the code below.
-> > +      */
-> > +     return step_size << (PMD_SHIFT - PAGE_SHIFT - 1);
-> > +}
-> > +
-> > +/**
-> > + * memory_map_top_down - Map [map_start, map_end) top down
-> > + * @map_start: start address of the target memory range
-> > + * @map_end: end address of the target memory range
-> > + *
-> > + * This function will setup direct mapping for memory range
-> > + * [map_start, map_end) in top-down. That said, the page tables
-> > + * will be allocated at the end of the memory, and we map the
-> > + * memory in top-down.
-> > + */
-> > +void __init memory_map_top_down(unsigned long map_start,
-> > +                                    unsigned long map_end)
-> > +{
-> > +     unsigned long real_end, start, last_start;
-> > +     unsigned long step_size;
-> > +     unsigned long addr;
-> > +     unsigned long mapped_ram_size = 0;
-> > +
-> > +     /* xen has big range in reserved near end of ram, skip it at first.*/
-> > +     addr = memblock_find_in_range(map_start, map_end, PMD_SIZE, PMD_SIZE);
-> > +     real_end = addr + PMD_SIZE;
-> > +
-> > +     /* step_size need to be small so pgt_buf from BRK could cover it */
-> > +     step_size = PMD_SIZE;
-> > +     max_pfn_mapped = 0; /* will get exact value next */
-> > +     min_pfn_mapped = real_end >> PAGE_SHIFT;
-> > +     last_start = start = real_end;
-> > +
-> > +     /*
-> > +      * We start from the top (end of memory) and go to the bottom.
-> > +      * The memblock_find_in_range() gets us a block of RAM from the
-> > +      * end of RAM in [min_pfn_mapped, max_pfn_mapped) used as new pages
-> > +      * for page table.
-> > +      */
-> > +     while (last_start > map_start) {
-> > +             if (last_start > step_size) {
-> > +                     start = round_down(last_start - 1, step_size);
-> > +                     if (start < map_start)
-> > +                             start = map_start;
-> > +             } else
-> > +                     start = map_start;
-> > +             mapped_ram_size += init_range_memory_mapping(start,
-> > +                                                     last_start);
-> > +             set_alloc_range(min_pfn_mapped, max_pfn_mapped);
-> > +             last_start = start;
-> > +             min_pfn_mapped = last_start >> PAGE_SHIFT;
-> > +             if (mapped_ram_size >= step_size)
-> > +                     step_size = get_new_step_size(step_size);
-> > +     }
-> > +
-> > +     if (real_end < map_end) {
-> > +             init_range_memory_mapping(real_end, map_end);
-> > +             set_alloc_range(min_pfn_mapped, max_pfn_mapped);
-> > +     }
-> > +}
-> > +
-> > +/**
-> > + * memory_map_bottom_up - Map [map_start, map_end) bottom up
-> > + * @map_start: start address of the target memory range
-> > + * @map_end: end address of the target memory range
-> > + *
-> > + * This function will setup direct mapping for memory range
-> > + * [map_start, map_end) in bottom-up. Since we have limited the
-> > + * bottom-up allocation above the kernel, the page tables will
-> > + * be allocated just above the kernel and we map the memory
-> > + * in [map_start, map_end) in bottom-up.
-> > + */
-> > +void __init memory_map_bottom_up(unsigned long map_start,
-> > +                                     unsigned long map_end)
-> > +{
-> > +     unsigned long next, start;
-> > +     unsigned long mapped_ram_size = 0;
-> > +     /* step_size need to be small so pgt_buf from BRK could cover it */
-> > +     unsigned long step_size = PMD_SIZE;
-> > +
-> > +     start = map_start;
-> > +     min_pfn_mapped = start >> PAGE_SHIFT;
-> > +
-> > +     /*
-> > +      * We start from the bottom (@map_start) and go to the top (@map_end).
-> > +      * The memblock_find_in_range() gets us a block of RAM from the
-> > +      * end of RAM in [min_pfn_mapped, max_pfn_mapped) used as new pages
-> > +      * for page table.
-> > +      */
-> > +     while (start < map_end) {
-> > +             if (step_size && map_end - start > step_size) {
-> > +                     next = round_up(start + 1, step_size);
-> > +                     if (next > map_end)
-> > +                             next = map_end;
-> > +             } else {
-> > +                     next = map_end;
-> > +             }
-> > +
-> > +             mapped_ram_size += init_range_memory_mapping(start, next);
-> > +             set_alloc_range(min_pfn_mapped, max_pfn_mapped);
-> > +             start = next;
-> > +
-> > +             if (mapped_ram_size >= step_size)
-> > +                     step_size = get_new_step_size(step_size);
-> > +     }
-> > +}
->
-> One more suggestion:  Can you *move* the code in a separate patch?
-> Un-use it in this patch, but wait for one more patch to actually move it.
->
 
-Good suggestion. It will make it easier to review. I will do it in next version
-> >  /*
-> >   * Build a proper pagetable for the kernel mappings.  Up until this
-> >   * point, we've been running on some set of pagetables constructed by
-> > diff --git a/arch/x86/mm/mm_internal.h b/arch/x86/mm/mm_internal.h
-> > index 319bde3..28006de 100644
-> > --- a/arch/x86/mm/mm_internal.h
-> > +++ b/arch/x86/mm/mm_internal.h
-> > @@ -8,6 +8,13 @@ static inline void *alloc_low_page(void)
-> >       return alloc_low_pages(1);
-> >  }
-> >
-> > +unsigned long __init init_range_memory_mapping(unsigned long r_start,
-> > +     unsigned long r_end);
-> > +void set_alloc_range(unsigned long low, unsigned long high);
-> > +void __init memory_map_top_down(unsigned long map_start,
-> > +                                    unsigned long map_end);
-> > +void __init memory_map_bottom_up(unsigned long map_start,
-> > +                                     unsigned long map_end);
->
-> Is there a reason we can't just move all these calls into init_32.c?
->
-> Seems like we probably just want one, new function, like:
->
->         init_mem_mapping_x86_32(end);
->
-> And then we just export *that* instead of exporting all of these helpers
-> that only get used on x86_32.  It also makes init_mem_mapping() more
-> readable since the #ifdef's are shorter.
+> On Jan 8, 2019, at 00:16, Greg KH <gregkh@linuxfoundation.org> wrote:
+> 
+> On Mon, Dec 03, 2018 at 06:26:43PM +0800, Kai-Heng Feng wrote:
+>> USB Bluetooth controller QCA ROME (0cf3:e007) sometimes stops working
+>> after S3:
+>> [ 165.110742] Bluetooth: hci0: using NVM file: qca/nvm_usb_00000302.bin
+>> [ 168.432065] Bluetooth: hci0: Failed to send body at 4 of 1953 (-110)
+>> 
+>> After some experiments, I found that disabling LPM can workaround the
+>> issue.
+>> 
+>> On some platforms, the USB power is cut during S3, so the driver uses
+>> reset-resume to resume the device. During port resume, LPM gets enabled
+>> twice, by usb_reset_and_verify_device() and usb_port_resume().
+>> 
+>> So let's enable LPM for just once, as this solves the issue for the
+>> device in question.
+>> 
+>> Also consolidate USB2 LPM functions to usb_enable_usb2_hardware_lpm()
+>> and usb_disable_usb2_hardware_lpm().
+>> 
+>> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+> 
+> What kernel patch does this one "fix"?  Adding a "Fixes:" tag would be
+> good to try to figure out how far back in the kernel releases this
+> should be backported.
 
-Yes, I will do like this.
+Fixes: de68bab4fa96 ("usb: Don't enable USB 2.0 Link PM by default.”)
 
-Thanks for your kindly review.
+The usb_set_usb2_hardware_lpm() was added to usb_reset_and_verify_device()
+by this commit.
 
-Regards,
-Pingfan
+Kai-Heng
+
+> 
+> thanks,
+> 
+> greg k-h
+
