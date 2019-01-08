@@ -4,50 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C926C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:04:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 688F1C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:04:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D48E220827
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:04:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E9D020660
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:04:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546977886;
-	bh=BbmwG5Kau5CQADckG8l39n9OOrxtz3pb85ITskBNdBg=;
+	s=default; t=1546977891;
+	bh=qA+ZXobmVcIpgJuu+++TyxAlXb/AT9HGi40aXvqG8G0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=KRnPuOxvJdDYrG6lTnE9uCc9uFthakwiOwYOdsVeKnSt3ji1FmpdUrzmfOAe/C27r
-	 784yfZjIvDlP4ZGTYzf8TMQvUBWqcK5RCnP50y9te8d2cn21YK7sWO8A3N9TjaitJK
-	 ij1+Zo6Q/Ng+viCnFcUn5dNBmMlzDiGP/ydtt0Xo=
+	b=Ozxw1arvohSb7pKxXQVvuUpNkL9gXZOPBZym8NA++u4HYINyJDu3E9jbJEfMqJXQk
+	 hH81tloWh26gkNMcJiGmMBoOC0STjSTBCDgmQu7wBQXGuGGPY+IKHBznhEn9G6Hqao
+	 uClZKSBYE7pzhWnM3E34mXvFDo9hCt3nMWYtTPqA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730050AbfAHT22 (ORCPT
+        id S1730370AbfAHUEu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:28:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35370 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 15:04:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35500 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730001AbfAHT2X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:28:23 -0500
+        id S1730033AbfAHT21 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:28:27 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9F50720645;
-        Tue,  8 Jan 2019 19:28:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 88ED520645;
+        Tue,  8 Jan 2019 19:28:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975702;
-        bh=BbmwG5Kau5CQADckG8l39n9OOrxtz3pb85ITskBNdBg=;
+        s=default; t=1546975706;
+        bh=qA+ZXobmVcIpgJuu+++TyxAlXb/AT9HGi40aXvqG8G0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ScLwrzmT1SWEZGdGkUPBIYbSpB32c/9O+yfbwOCZCicrUqQl/E/DvrBu2ygMkzXTg
-         96pWkqtVGgsgNzOZBrSl8fHCqodyYoJyJSrLeUNTsdTvh33dpDvJ7Hw8iSO95A0BFu
-         PiNam5U8YriJyyPOTvUJRxGJmdsH8bz1Ot3EhE74=
+        b=ZPYffrRqkMMjh4BYVxCvj0suUgY5cYjoDi723AyqoqKtNRyDWcVUstUuB658fzuZl
+         KXaMCB8fuXOu09yd6NRK/I/oF0oWA0VRBi2UriBW25hRUeXb+IjtmWI1EXDdhrEXmU
+         YIGwlDFKi0tymrd3pTScXFlSNdl740o1+qgSQKpw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jiong Wang <jiong.wang@netronome.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 064/117] bpf: relax verifier restriction on BPF_MOV | BPF_ALU
-Date:   Tue,  8 Jan 2019 14:25:32 -0500
-Message-Id: <20190108192628.121270-64-sashal@kernel.org>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Sasha Levin <sashal@kernel.org>, linux-kbuild@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 067/117] kconfig: fix file name and line number of warn_ignored_character()
+Date:   Tue,  8 Jan 2019 14:25:35 -0500
+Message-Id: <20190108192628.121270-67-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192628.121270-1-sashal@kernel.org>
 References: <20190108192628.121270-1-sashal@kernel.org>
@@ -59,173 +57,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiong Wang <jiong.wang@netronome.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-[ Upstream commit e434b8cdf788568ba65a0a0fd9f3cb41f3ca1803 ]
+[ Upstream commit 77c1c0fa8b1477c5799bdad65026ea5ff676da44 ]
 
-Currently, the destination register is marked as unknown for 32-bit
-sub-register move (BPF_MOV | BPF_ALU) whenever the source register type is
-SCALAR_VALUE.
+Currently, warn_ignore_character() displays invalid file name and
+line number.
 
-This is too conservative that some valid cases will be rejected.
-Especially, this may turn a constant scalar value into unknown value that
-could break some assumptions of verifier.
+The lexer should use current_file->name and yylineno, while the parser
+should use zconf_curname() and zconf_lineno().
 
-For example, test_l4lb_noinline.c has the following C code:
+This difference comes from that the lexer is always going ahead
+of the parser. The parser needs to look ahead one token to make a
+shift/reduce decision, so the lexer is requested to scan more text
+from the input file.
 
-    struct real_definition *dst
+This commit fixes the warning message from warn_ignored_character().
 
-1:  if (!get_packet_dst(&dst, &pckt, vip_info, is_ipv6))
-2:    return TC_ACT_SHOT;
-3:
-4:  if (dst->flags & F_IPV6) {
+[Test Code]
 
-get_packet_dst is responsible for initializing "dst" into valid pointer and
-return true (1), otherwise return false (0). The compiled instruction
-sequence using alu32 will be:
+  ----(Kconfig begin)----
+  /
+  -----(Kconfig end)-----
 
-  412: (54) (u32) r7 &= (u32) 1
-  413: (bc) (u32) r0 = (u32) r7
-  414: (95) exit
+[Output]
 
-insn 413, a BPF_MOV | BPF_ALU, however will turn r0 into unknown value even
-r7 contains SCALAR_VALUE 1.
+  Before the fix:
 
-This causes trouble when verifier is walking the code path that hasn't
-initialized "dst" inside get_packet_dst, for which case 0 is returned and
-we would then expect verifier concluding line 1 in the above C code pass
-the "if" check, therefore would skip fall through path starting at line 4.
-Now, because r0 returned from callee has became unknown value, so verifier
-won't skip analyzing path starting at line 4 and "dst->flags" requires
-dereferencing the pointer "dst" which actually hasn't be initialized for
-this path.
+  <none>:0:warning: ignoring unsupported character '/'
 
-This patch relaxed the code marking sub-register move destination. For a
-SCALAR_VALUE, it is safe to just copy the value from source then truncate
-it into 32-bit.
+  After the fix:
 
-A unit test also included to demonstrate this issue. This test will fail
-before this patch.
+  Kconfig:1:warning: ignoring unsupported character '/'
 
-This relaxation could let verifier skipping more paths for conditional
-comparison against immediate. It also let verifier recording a more
-accurate/strict value for one register at one state, if this state end up
-with going through exit without rejection and it is used for state
-comparison later, then it is possible an inaccurate/permissive value is
-better. So the real impact on verifier processed insn number is complex.
-But in all, without this fix, valid program could be rejected.
-
->From real benchmarking on kernel selftests and Cilium bpf tests, there is
-no impact on processed instruction number when tests ares compiled with
-default compilation options. There is slightly improvements when they are
-compiled with -mattr=+alu32 after this patch.
-
-Also, test_xdp_noinline/-mattr=+alu32 now passed verification. It is
-rejected before this fix.
-
-Insn processed before/after this patch:
-
-                        default     -mattr=+alu32
-
-Kernel selftest
-
-===
-test_xdp.o              371/371      369/369
-test_l4lb.o             6345/6345    5623/5623
-test_xdp_noinline.o     2971/2971    rejected/2727
-test_tcp_estates.o      429/429      430/430
-
-Cilium bpf
-===
-bpf_lb-DLB_L3.o:        2085/2085     1685/1687
-bpf_lb-DLB_L4.o:        2287/2287     1986/1982
-bpf_lb-DUNKNOWN.o:      690/690       622/622
-bpf_lxc.o:              95033/95033   N/A
-bpf_netdev.o:           7245/7245     N/A
-bpf_overlay.o:          2898/2898     3085/2947
-
-NOTE:
-  - bpf_lxc.o and bpf_netdev.o compiled by -mattr=+alu32 are rejected by
-    verifier due to another issue inside verifier on supporting alu32
-    binary.
-  - Each cilium bpf program could generate several processed insn number,
-    above number is sum of them.
-
-v1->v2:
- - Restrict the change on SCALAR_VALUE.
- - Update benchmark numbers on Cilium bpf tests.
-
-Signed-off-by: Jiong Wang <jiong.wang@netronome.com>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/bpf/verifier.c                       | 16 ++++++++++++----
- tools/testing/selftests/bpf/test_verifier.c | 13 +++++++++++++
- 2 files changed, 25 insertions(+), 4 deletions(-)
+ scripts/kconfig/zconf.l | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index a81f52b2c92e..eedc7bd4185d 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -3571,12 +3571,15 @@ static int check_alu_op(struct bpf_verifier_env *env, struct bpf_insn *insn)
- 			return err;
+diff --git a/scripts/kconfig/zconf.l b/scripts/kconfig/zconf.l
+index 25bd2b89fe3f..eeac64ccc730 100644
+--- a/scripts/kconfig/zconf.l
++++ b/scripts/kconfig/zconf.l
+@@ -73,7 +73,7 @@ static void warn_ignored_character(char chr)
+ {
+ 	fprintf(stderr,
+ 	        "%s:%d:warning: ignoring unsupported character '%c'\n",
+-	        zconf_curname(), zconf_lineno(), chr);
++	        current_file->name, yylineno, chr);
+ }
+ %}
  
- 		if (BPF_SRC(insn->code) == BPF_X) {
-+			struct bpf_reg_state *src_reg = regs + insn->src_reg;
-+			struct bpf_reg_state *dst_reg = regs + insn->dst_reg;
-+
- 			if (BPF_CLASS(insn->code) == BPF_ALU64) {
- 				/* case: R1 = R2
- 				 * copy register state to dest reg
- 				 */
--				regs[insn->dst_reg] = regs[insn->src_reg];
--				regs[insn->dst_reg].live |= REG_LIVE_WRITTEN;
-+				*dst_reg = *src_reg;
-+				dst_reg->live |= REG_LIVE_WRITTEN;
- 			} else {
- 				/* R1 = (u32) R2 */
- 				if (is_pointer_value(env, insn->src_reg)) {
-@@ -3584,9 +3587,14 @@ static int check_alu_op(struct bpf_verifier_env *env, struct bpf_insn *insn)
- 						"R%d partial copy of pointer\n",
- 						insn->src_reg);
- 					return -EACCES;
-+				} else if (src_reg->type == SCALAR_VALUE) {
-+					*dst_reg = *src_reg;
-+					dst_reg->live |= REG_LIVE_WRITTEN;
-+				} else {
-+					mark_reg_unknown(env, regs,
-+							 insn->dst_reg);
- 				}
--				mark_reg_unknown(env, regs, insn->dst_reg);
--				coerce_reg_to_size(&regs[insn->dst_reg], 4);
-+				coerce_reg_to_size(dst_reg, 4);
- 			}
- 		} else {
- 			/* case: R = imm
-diff --git a/tools/testing/selftests/bpf/test_verifier.c b/tools/testing/selftests/bpf/test_verifier.c
-index f8eac4a544f4..444f49176a2d 100644
---- a/tools/testing/selftests/bpf/test_verifier.c
-+++ b/tools/testing/selftests/bpf/test_verifier.c
-@@ -2903,6 +2903,19 @@ static struct bpf_test tests[] = {
- 		.result_unpriv = REJECT,
- 		.result = ACCEPT,
- 	},
-+	{
-+		"alu32: mov u32 const",
-+		.insns = {
-+			BPF_MOV32_IMM(BPF_REG_7, 0),
-+			BPF_ALU32_IMM(BPF_AND, BPF_REG_7, 1),
-+			BPF_MOV32_REG(BPF_REG_0, BPF_REG_7),
-+			BPF_JMP_IMM(BPF_JEQ, BPF_REG_0, 0, 1),
-+			BPF_LDX_MEM(BPF_DW, BPF_REG_0, BPF_REG_7, 0),
-+			BPF_EXIT_INSN(),
-+		},
-+		.result = ACCEPT,
-+		.retval = 0,
-+	},
- 	{
- 		"unpriv: partial copy of pointer",
- 		.insns = {
 -- 
 2.19.1
 
