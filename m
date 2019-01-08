@@ -4,54 +4,66 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 018CEC43387
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC178C43612
 	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:17:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAE50214C6
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:17:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B07DB20883
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:17:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546964242;
-	bh=GIywFOz9iUrYtMsGKjs+5XTa7mboK+yFrEs+UaME8jk=;
+	s=default; t=1546964243;
+	bh=EvQ+/fYdjnESPmdsCc/Mpy3neMiK2IQe7rnD9c5lrOU=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=XDX/3315dV+lc8cTTHifOxCxRKKXrna0GAr+JmmWN9PI1b/YffUjd5iXevRQjcSDC
-	 9mpL0Qz1ALfVOpgvXY6u6SQB9n2SS3iHJg6P7l+5P2pPVAENorP0mrPB77SHbIkotb
-	 UJ66MtWwGXJMZCEZAQjG09LkS6FKMaVnAmH28+z4=
+	b=i3esIQwIAsJXo73GbS747k9TjQxW8N+m3Y1eYrpG+g8Hn1wszrQCJZkqTwb9oc1zZ
+	 CqtHc3c4mGuDc9dSSX8DpvLmWkdIvOJ2kbFTv6MEdU4bWyaCrEcZlPJE6WTeLIm1IQ
+	 bTCIt+XzpajKZ5meEh7nnptg+KXfNf00qKz4RRP8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729247AbfAHQRV (ORCPT
+        id S1729278AbfAHQRW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 11:17:21 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42858 "EHLO
+        Tue, 8 Jan 2019 11:17:22 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42890 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728211AbfAHQRV (ORCPT
+        with ESMTP id S1729200AbfAHQRW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 11:17:21 -0500
+        Tue, 8 Jan 2019 11:17:22 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=pdxPXtVDPul9GA7c1N+62WMM8DAKvJxRaCkGBQVpeuk=; b=kTc23aUdvVfx
-        knhVktJOXYzvJMfECdVtb64k9jG4o7k2ba+q4gIV8NDlqyWtTQDO7RAz0T7h6afbca4G3+f1cvnbM
-        WZxdquDj7kb1kAdaNXdy9ai4dd4KrsV4YWXDh8FqiVIyF8McE20xWL5JWmqp1X4xYC8mmGWq4kHy+
-        fRoYQ=;
+        List-Archive; bh=zOd3qz1OnpQ3ls4xKSUiIaKz/D+TnsJReOukCFs+99Q=; b=lhvwxO5B4MxA
+        zhiRC9xG7mFOqW6CDxgX/pQwkatDIlSneND+MoMQII/nwzDAO1f2zO6u365y/H7c7oDAoB9nM0+t4
+        SBZpQB/dMO6pJ6RM4KEgboEv9lI3y/4AVYcYutOb4ZWz3bgilvBFIReuwO8k0VSyB+8hsfelLbpvO
+        1kh8o=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1ggu45-0003QZ-PU; Tue, 08 Jan 2019 16:17:17 +0000
+        id 1ggu3y-0003QL-MX; Tue, 08 Jan 2019 16:17:10 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 6A499112778C; Tue,  8 Jan 2019 16:17:17 +0000 (GMT)
+        id 49B0C112778C; Tue,  8 Jan 2019 16:17:10 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Applied "regulator: Fix trivial language typos" to the regulator tree
-In-Reply-To: 
+To:     Agrawal@sirena.org.uk, Akshu <Akshu.Agrawal@amd.com>
+Cc:     Akshu Agrawal <akshu.agrawal@amd.com>,
+        Mark Brown <broonie@kernel.org>,
+        "moderated list:ANALOG DEVICES INC ASOC CODEC DRIVERS" 
+        <alsa-devel@alsa-project.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        open list <linux-kernel@vger.kernel.org>,
+        Takashi Iwai <tiwai@suse.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        "djkurtz@chromium.org" <djkurtz@chromium.org>,
+        "Agrawal,, Akshu" <Akshu.Agrawal@amd.com>,
+        Mark Brown <broonie@kernel.org>,
+        "Deucher,, Alexander" <Alexander.Deucher@amd.com>,
+        alsa-devel@alsa-project.org
+Subject: Applied "ASoC: ADAU7002: Add optional delay before start of capture" to the asoc tree
+In-Reply-To:  <1546942924-9428-1-git-send-email-akshu.agrawal@amd.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190108161717.6A499112778C@debutante.sirena.org.uk>
-Date:   Tue,  8 Jan 2019 16:17:17 +0000 (GMT)
+Message-Id: <20190108161710.49B0C112778C@debutante.sirena.org.uk>
+Date:   Tue,  8 Jan 2019 16:17:10 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -59,11 +71,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: Fix trivial language typos
+   ASoC: ADAU7002: Add optional delay before start of capture
 
-has been applied to the regulator tree at
+has been applied to the asoc tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -84,196 +96,98 @@ to this mail.
 Thanks,
 Mark
 
-From 48f1b4efd67c922eff113f247533cbe175b1491e Mon Sep 17 00:00:00 2001
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Tue, 8 Jan 2019 13:12:33 +0100
-Subject: [PATCH] regulator: Fix trivial language typos
+From 7b57085a33ce55e28616f04fd9877ba2ca7e79de Mon Sep 17 00:00:00 2001
+From: "Agrawal, Akshu" <Akshu.Agrawal@amd.com>
+Date: Tue, 8 Jan 2019 10:24:40 +0000
+Subject: [PATCH] ASoC: ADAU7002: Add optional delay before start of capture
 
-Fix few trivial language typos in core and drivers.
+On capture through some of dmic we observe a glitch at the
+start of record. This is because we start capturing even before
+dmic is ready to send out data.
+The optional delay will be applied after enabling the mic.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Akshu Agrawal <akshu.agrawal@amd.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- .../devicetree/bindings/regulator/pfuze100.txt   |  2 +-
- drivers/regulator/Kconfig                        |  8 ++++----
- drivers/regulator/core.c                         | 16 ++++++++--------
- drivers/regulator/lp8755.c                       |  4 ++--
- drivers/regulator/of_regulator.c                 |  4 ++--
- 5 files changed, 17 insertions(+), 17 deletions(-)
+ sound/soc/codecs/adau7002.c | 45 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 45 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/regulator/pfuze100.txt b/Documentation/devicetree/bindings/regulator/pfuze100.txt
-index f9be1acf891c..4d3b12b92cb3 100644
---- a/Documentation/devicetree/bindings/regulator/pfuze100.txt
-+++ b/Documentation/devicetree/bindings/regulator/pfuze100.txt
-@@ -8,7 +8,7 @@ Optional properties:
- - fsl,pfuze-support-disable-sw: Boolean, if present disable all unused switch
-   regulators to save power consumption. Attention, ensure that all important
-   regulators (e.g. DDR ref, DDR supply) has set the "regulator-always-on"
--  property. If not present, the switched regualtors are always on and can't be
-+  property. If not present, the switched regulators are always on and can't be
-   disabled. This binding is a workaround to keep backward compatibility with
-   old dtb's which rely on the fact that the switched regulators are always on
-   and don't mark them explicit as "regulator-always-on".
-diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
-index ee60a222f5eb..7fc1f88e27e7 100644
---- a/drivers/regulator/Kconfig
-+++ b/drivers/regulator/Kconfig
-@@ -484,7 +484,7 @@ config REGULATOR_MAX8925
- 	tristate "Maxim MAX8925 Power Management IC"
- 	depends on MFD_MAX8925
- 	help
--	  Say y here to support the voltage regulaltor of Maxim MAX8925 PMIC.
-+	  Say y here to support the voltage regulator of Maxim MAX8925 PMIC.
- 
- config REGULATOR_MAX8952
- 	tristate "Maxim MAX8952 Power Management IC"
-@@ -501,7 +501,7 @@ config REGULATOR_MAX8973
- 	select REGMAP_I2C
- 	help
- 	  The MAXIM MAX8973 high-efficiency. three phase, DC-DC step-down
--	  switching regulator delievers up to 9A of output current. Each
-+	  switching regulator delivers up to 9A of output current. Each
- 	  phase operates at a 2MHz fixed frequency with a 120 deg shift
- 	  from the adjacent phase, allowing the use of small magnetic component.
- 
-@@ -646,7 +646,7 @@ config REGULATOR_PCF50633
- 	tristate "NXP PCF50633 regulator driver"
- 	depends on MFD_PCF50633
- 	help
--	 Say Y here to support the voltage regulators and convertors
-+	 Say Y here to support the voltage regulators and converters
- 	 on PCF50633
- 
- config REGULATOR_PFUZE100
-@@ -924,7 +924,7 @@ config REGULATOR_TPS65132
- 	select REGMAP_I2C
- 	help
- 	  This driver supports TPS65132 single inductor - dual output
--	  power supply specifcally designed for display panels.
-+	  power supply specifically designed for display panels.
- 
- config REGULATOR_TPS65217
- 	tristate "TI TPS65217 Power regulators"
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index b9d7b45c7295..3f9d81b6e763 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -326,7 +326,7 @@ static int regulator_lock_recursive(struct regulator_dev *rdev,
-  * @rdev:			regulator source
-  * @ww_ctx:			w/w mutex acquire context
-  *
-- * Unlock all regulators related with rdev by coupling or suppling.
-+ * Unlock all regulators related with rdev by coupling or supplying.
+diff --git a/sound/soc/codecs/adau7002.c b/sound/soc/codecs/adau7002.c
+index fdff86878287..a8deb37fc78a 100644
+--- a/sound/soc/codecs/adau7002.c
++++ b/sound/soc/codecs/adau7002.c
+@@ -8,6 +8,7 @@
   */
- static void regulator_unlock_dependent(struct regulator_dev *rdev,
- 				       struct ww_acquire_ctx *ww_ctx)
-@@ -341,7 +341,7 @@ static void regulator_unlock_dependent(struct regulator_dev *rdev,
-  * @ww_ctx:			w/w mutex acquire context
-  *
-  * This function as a wrapper on regulator_lock_recursive(), which locks
-- * all regulators related with rdev by coupling or suppling.
-+ * all regulators related with rdev by coupling or supplying.
-  */
- static void regulator_lock_dependent(struct regulator_dev *rdev,
- 				     struct ww_acquire_ctx *ww_ctx)
-@@ -1003,7 +1003,7 @@ static int suspend_set_state(struct regulator_dev *rdev,
- 	if (rstate == NULL)
- 		return 0;
  
--	/* If we have no suspend mode configration don't set anything;
-+	/* If we have no suspend mode configuration don't set anything;
- 	 * only warn if the driver implements set_suspend_voltage or
- 	 * set_suspend_mode callback.
- 	 */
-@@ -1131,7 +1131,7 @@ static int machine_constraints_voltage(struct regulator_dev *rdev,
- 		int current_uV = _regulator_get_voltage(rdev);
+ #include <linux/acpi.h>
++#include <linux/delay.h>
+ #include <linux/init.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
+@@ -15,12 +16,55 @@
  
- 		if (current_uV == -ENOTRECOVERABLE) {
--			/* This regulator can't be read and must be initted */
-+			/* This regulator can't be read and must be initialized */
- 			rdev_info(rdev, "Setting %d-%duV\n",
- 				  rdev->constraints->min_uV,
- 				  rdev->constraints->max_uV);
-@@ -1780,7 +1780,7 @@ static int regulator_resolve_supply(struct regulator_dev *rdev)
- 	struct device *dev = rdev->dev.parent;
- 	int ret;
+ #include <sound/soc.h>
  
--	/* No supply to resovle? */
-+	/* No supply to resolve? */
- 	if (!rdev->supply_name)
- 		return 0;
++struct adau7002_priv {
++	int wakeup_delay;
++};
++
++static int adau7002_aif_event(struct snd_soc_dapm_widget *w,
++			      struct snd_kcontrol *kcontrol, int event)
++{
++	struct snd_soc_component *component =
++			snd_soc_dapm_to_component(w->dapm);
++	struct adau7002_priv *adau7002 =
++			snd_soc_component_get_drvdata(component);
++
++	switch (event) {
++	case SND_SOC_DAPM_POST_PMU:
++		if (adau7002->wakeup_delay)
++			msleep(adau7002->wakeup_delay);
++		break;
++	}
++
++	return 0;
++}
++
++static int adau7002_component_probe(struct snd_soc_component *component)
++{
++	struct adau7002_priv *adau7002;
++
++	adau7002 = devm_kzalloc(component->dev, sizeof(*adau7002),
++				GFP_KERNEL);
++	if (!adau7002)
++		return -ENOMEM;
++
++	device_property_read_u32(component->dev, "wakeup-delay-ms",
++				 &adau7002->wakeup_delay);
++
++	snd_soc_component_set_drvdata(component, adau7002);
++
++	return 0;
++}
++
+ static const struct snd_soc_dapm_widget adau7002_widgets[] = {
++	SND_SOC_DAPM_AIF_OUT_E("ADAU AIF", "Capture", 0,
++			       SND_SOC_NOPM, 0, 0, adau7002_aif_event,
++			       SND_SOC_DAPM_POST_PMU | SND_SOC_DAPM_POST_PMD),
+ 	SND_SOC_DAPM_INPUT("PDM_DAT"),
+ 	SND_SOC_DAPM_REGULATOR_SUPPLY("IOVDD", 0, 0),
+ };
  
-@@ -2409,7 +2409,7 @@ static int _regulator_do_enable(struct regulator_dev *rdev)
- 			 * timer wrapping.
- 			 * in case of multiple timer wrapping, either it can be
- 			 * detected by out-of-range remaining, or it cannot be
--			 * detected and we gets a panelty of
-+			 * detected and we get a penalty of
- 			 * _regulator_enable_delay().
- 			 */
- 			remaining = intended - start_jiffy;
-@@ -2809,7 +2809,7 @@ static void regulator_disable_work(struct work_struct *work)
- /**
-  * regulator_disable_deferred - disable regulator output with delay
-  * @regulator: regulator source
-- * @ms: miliseconds until the regulator is disabled
-+ * @ms: milliseconds until the regulator is disabled
-  *
-  * Execute regulator_disable() on the regulator after a delay.  This
-  * is intended for use with devices that require some time to quiesce.
-@@ -4943,7 +4943,7 @@ regulator_register(const struct regulator_desc *regulator_desc,
- 	 * device tree until we have handled it over to the core. If the
- 	 * config that was passed in to this function DOES NOT contain
- 	 * a descriptor, and the config after this call DOES contain
--	 * a descriptor, we definately got one from parsing the device
-+	 * a descriptor, we definitely got one from parsing the device
- 	 * tree.
- 	 */
- 	if (!cfg->ena_gpiod && config->ena_gpiod)
-diff --git a/drivers/regulator/lp8755.c b/drivers/regulator/lp8755.c
-index 244822bb63cd..6d229ad4ef3e 100644
---- a/drivers/regulator/lp8755.c
-+++ b/drivers/regulator/lp8755.c
-@@ -386,7 +386,7 @@ static irqreturn_t lp8755_irq_handler(int irq, void *data)
- 	if (ret < 0)
- 		goto err_i2c;
+ static const struct snd_soc_dapm_route adau7002_routes[] = {
++	{ "ADAU AIF", NULL, "PDM_DAT"},
+ 	{ "Capture", NULL, "PDM_DAT" },
+ 	{ "Capture", NULL, "IOVDD" },
+ };
+@@ -40,6 +84,7 @@ static struct snd_soc_dai_driver adau7002_dai = {
+ };
  
--	/* send OCP event to all regualtor devices */
-+	/* send OCP event to all regulator devices */
- 	if ((flag1 & 0x01) && (pchip->irqmask & 0x01))
- 		for (icnt = 0; icnt < LP8755_BUCK_MAX; icnt++)
- 			if (pchip->rdev[icnt] != NULL)
-@@ -394,7 +394,7 @@ static irqreturn_t lp8755_irq_handler(int irq, void *data)
- 							      LP8755_EVENT_OCP,
- 							      NULL);
- 
--	/* send OVP event to all regualtor devices */
-+	/* send OVP event to all regulator devices */
- 	if ((flag1 & 0x02) && (pchip->irqmask & 0x02))
- 		for (icnt = 0; icnt < LP8755_BUCK_MAX; icnt++)
- 			if (pchip->rdev[icnt] != NULL)
-diff --git a/drivers/regulator/of_regulator.c b/drivers/regulator/of_regulator.c
-index ffa5fc3724e4..7b6bf3536271 100644
---- a/drivers/regulator/of_regulator.c
-+++ b/drivers/regulator/of_regulator.c
-@@ -255,7 +255,7 @@ static void of_get_regulation_constraints(struct device_node *np,
-  * @desc: regulator description
-  *
-  * Populates regulator_init_data structure by extracting data from device
-- * tree node, returns a pointer to the populated struture or NULL if memory
-+ * tree node, returns a pointer to the populated structure or NULL if memory
-  * alloc fails.
-  */
- struct regulator_init_data *of_get_regulator_init_data(struct device *dev,
-@@ -547,7 +547,7 @@ bool of_check_coupling_data(struct regulator_dev *rdev)
- 							  NULL);
- 
- 		if (c_n_phandles != n_phandles) {
--			dev_err(&rdev->dev, "number of couped reg phandles mismatch\n");
-+			dev_err(&rdev->dev, "number of coupled reg phandles mismatch\n");
- 			ret = false;
- 			goto clean;
- 		}
+ static const struct snd_soc_component_driver adau7002_component_driver = {
++	.probe			= adau7002_component_probe,
+ 	.dapm_widgets		= adau7002_widgets,
+ 	.num_dapm_widgets	= ARRAY_SIZE(adau7002_widgets),
+ 	.dapm_routes		= adau7002_routes,
 -- 
 2.20.1
 
