@@ -2,101 +2,174 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEFFFC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:09:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FDC0C43612
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:09:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B817320660
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:09:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0DF5620660
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:09:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546978153;
+	bh=IRPOWe/6aYzrVVGq+urfv6B6FdjKWiCQTZVHs+aznx8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=NrMm71rTu8zor5XdgWhP1laUeZLt8WEx7+Q8u45WHVGCvNq6i4WeJ16n8m8Sz0dZm
+	 hrP0PqT67vMR5+Z5OJoK2iLsvkAGHwWeL/IHVPt7EmFkIvZRO3BwCzq7TTawD9UCNB
+	 I9OIS45TJAM1MZV5q+mxuqA97rqhTvnYwIJM3B5w=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730724AbfAHUJJ convert rfc822-to-8bit (ORCPT
+        id S1729703AbfAHT1a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 15:09:09 -0500
-Received: from mga18.intel.com ([134.134.136.126]:51772 "EHLO mga18.intel.com"
+        Tue, 8 Jan 2019 14:27:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33532 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729548AbfAHT1Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:27:16 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jan 2019 11:27:16 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,455,1539673200"; 
-   d="scan'208";a="113153477"
-Received: from kmsmsx153.gar.corp.intel.com ([172.21.73.88])
-  by fmsmga007.fm.intel.com with ESMTP; 08 Jan 2019 11:27:12 -0800
-Received: from pgsmsx112.gar.corp.intel.com ([169.254.3.246]) by
- KMSMSX153.gar.corp.intel.com ([169.254.5.199]) with mapi id 14.03.0415.000;
- Wed, 9 Jan 2019 03:27:11 +0800
-From:   "Huang, Kai" <kai.huang@intel.com>
-To:     "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        "Andy Lutomirski" <luto@kernel.org>
-CC:     Jethro Beekman <jethro@fortanix.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Ingo Molnar" <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "x86@kernel.org" <x86@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        "Dr . Greg Wettstein" <greg@enjellic.com>
-Subject: RE: x86/sgx: uapi change proposal
-Thread-Topic: x86/sgx: uapi change proposal
-Thread-Index: AQHUl3CouNmOMJQZHU2YX8Dh54+gQaWFODMAgAAIjACAAAbWAIAAVlWAgADM8wCAAnSJgIAc/6rw
-Date:   Tue, 8 Jan 2019 19:27:11 +0000
-Message-ID: <105F7BF4D0229846AF094488D65A0989355A45B6@PGSMSX112.gar.corp.intel.com>
-References: <20181214215729.4221-1-sean.j.christopherson@intel.com>
- <7706b2aa71312e1f0009958bcab24e1e9d8d1237.camel@linux.intel.com>
- <598cd050-f0b5-d18c-96a0-915f02525e3e@fortanix.com>
- <20181219091148.GA5121@linux.intel.com>
- <613c6814-4e71-38e5-444a-545f0e286df8@fortanix.com>
- <20181219144515.GA30909@linux.intel.com>
- <CALCETrW_8LnitFamYUU7POHFOJFxLO7ESFUdS=aeG_SOvHVPkw@mail.gmail.com>
- <20181221162825.GB26865@linux.intel.com>
-In-Reply-To: <20181221162825.GB26865@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNzEzZDI1NGYtMmQxZC00OTRmLThiOGQtZjRhZWQ5ZmQ2MDM4IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiekhcL01jWDNMM0drSkxwdW1xYVBTQXpWN3dFaldPd01EcVViSTFZSmIwOE9XNk5KN1hQejk5RWs2NGNFMHJNUnIifQ==
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [172.30.20.206]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1729619AbfAHT1Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:27:24 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 96F1C2176F;
+        Tue,  8 Jan 2019 19:27:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1546975643;
+        bh=IRPOWe/6aYzrVVGq+urfv6B6FdjKWiCQTZVHs+aznx8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=wsurmlxCPoIGqCwrzvRv7YfNAiwxxZJL322I+JsFmGjFa6aN2nnNgo/w0YuwNOusK
+         KMczkzW45cILxvbXNDWpket71X+ZlgaJYqcyFoYkgXcgVLdLi+sRJBfYgCEJwN9F6j
+         S13AoCvi4FL7skD1elhJQ94itOdWAd0RSw/w7mzc=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     "Daniel T. Lee" <danieltimlee@gmail.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 029/117] samples: bpf: fix: error handling regarding kprobe_events
+Date:   Tue,  8 Jan 2019 14:24:57 -0500
+Message-Id: <20190108192628.121270-29-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190108192628.121270-1-sashal@kernel.org>
+References: <20190108192628.121270-1-sashal@kernel.org>
 MIME-Version: 1.0
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> >
-> > Can one of you explain why SGX_ENCLAVE_CREATE is better than just
-> > opening a new instance of /dev/sgx for each encalve?
-> 
-> Directly associating /dev/sgx with an enclave means /dev/sgx can't be used
-> to provide ioctl()'s for other SGX-related needs, e.g. to mmap() raw EPC and
-> expose it a VM.  Proposed layout in the link below.  I'll also respond to
-> Jarkko's question about exposing EPC through /dev/sgx instead of having
-> KVM allocate it on behalf of the VM.
-> 
-> https://lkml.kernel.org/r/20181218185349.GC30082@linux.intel.com
+From: "Daniel T. Lee" <danieltimlee@gmail.com>
 
-Hi Sean,
+[ Upstream commit 5a863813216ce79e16a8c1503b2543c528b778b6 ]
 
-Sorry for replying to old email. But IMHO it is not a must that Qemu needs to open some /dev/sgx and allocate/mmap EPC for guest's virtual EPC slot, instead, KVM could create private slot, which is not visible to Qemu, for virtual EPC, and KVM could call core-SGX EPC allocation API directly.
+Currently, kprobe_events failure won't be handled properly.
+Due to calling system() indirectly to write to kprobe_events,
+it can't be identified whether an error is derived from kprobe or system.
 
-I am not sure what's the good of allowing userspace to alloc/mmap a raw EPC region? Userspace is not allowed to touch EPC anyway, expect enclave code.
+    // buf = "echo '%c:%s %s' >> /s/k/d/t/kprobe_events"
+    err = system(buf);
+    if (err < 0) {
+        printf("failed to create kprobe ..");
+        return -1;
+    }
 
-To me KVM creates private EPC slot is cleaner than exposing /dev/sgx/epc and allowing userspace to map some raw EPC region. 
+For example, running ./tracex7 sample in ext4 partition,
+"echo p:open_ctree open_ctree >> /s/k/d/t/kprobe_events"
+gets 256 error code system() failure.
+=> The error comes from kprobe, but it's not handled correctly.
 
-Thanks,
--Kai
+According to man of system(3), it's return value
+just passes the termination status of the child shell
+rather than treating the error as -1. (don't care success)
+
+Which means, currently it's not working as desired.
+(According to the upper code snippet)
+
+    ex) running ./tracex7 with ext4 env.
+    # Current Output
+    sh: echo: I/O error
+    failed to open event open_ctree
+
+    # Desired Output
+    failed to create kprobe 'open_ctree' error 'No such file or directory'
+
+The problem is, error can't be verified whether from child ps
+or system. But using write() directly can verify the command
+failure, and it will treat all error as -1. So I suggest using
+write() directly to 'kprobe_events' rather than calling system().
+
+Signed-off-by: Daniel T. Lee <danieltimlee@gmail.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ samples/bpf/bpf_load.c | 33 ++++++++++++++++++++++++---------
+ 1 file changed, 24 insertions(+), 9 deletions(-)
+
+diff --git a/samples/bpf/bpf_load.c b/samples/bpf/bpf_load.c
+index e6d7e0fe155b..96783207de4a 100644
+--- a/samples/bpf/bpf_load.c
++++ b/samples/bpf/bpf_load.c
+@@ -54,6 +54,23 @@ static int populate_prog_array(const char *event, int prog_fd)
+ 	return 0;
+ }
+ 
++static int write_kprobe_events(const char *val)
++{
++	int fd, ret, flags;
++
++	if ((val != NULL) && (val[0] == '\0'))
++		flags = O_WRONLY | O_TRUNC;
++	else
++		flags = O_WRONLY | O_APPEND;
++
++	fd = open("/sys/kernel/debug/tracing/kprobe_events", flags);
++
++	ret = write(fd, val, strlen(val));
++	close(fd);
++
++	return ret;
++}
++
+ static int load_and_attach(const char *event, struct bpf_insn *prog, int size)
+ {
+ 	bool is_socket = strncmp(event, "socket", 6) == 0;
+@@ -165,10 +182,9 @@ static int load_and_attach(const char *event, struct bpf_insn *prog, int size)
+ 
+ #ifdef __x86_64__
+ 		if (strncmp(event, "sys_", 4) == 0) {
+-			snprintf(buf, sizeof(buf),
+-				 "echo '%c:__x64_%s __x64_%s' >> /sys/kernel/debug/tracing/kprobe_events",
+-				 is_kprobe ? 'p' : 'r', event, event);
+-			err = system(buf);
++			snprintf(buf, sizeof(buf), "%c:__x64_%s __x64_%s",
++				is_kprobe ? 'p' : 'r', event, event);
++			err = write_kprobe_events(buf);
+ 			if (err >= 0) {
+ 				need_normal_check = false;
+ 				event_prefix = "__x64_";
+@@ -176,10 +192,9 @@ static int load_and_attach(const char *event, struct bpf_insn *prog, int size)
+ 		}
+ #endif
+ 		if (need_normal_check) {
+-			snprintf(buf, sizeof(buf),
+-				 "echo '%c:%s %s' >> /sys/kernel/debug/tracing/kprobe_events",
+-				 is_kprobe ? 'p' : 'r', event, event);
+-			err = system(buf);
++			snprintf(buf, sizeof(buf), "%c:%s %s",
++				is_kprobe ? 'p' : 'r', event, event);
++			err = write_kprobe_events(buf);
+ 			if (err < 0) {
+ 				printf("failed to create kprobe '%s' error '%s'\n",
+ 				       event, strerror(errno));
+@@ -519,7 +534,7 @@ static int do_load_bpf_file(const char *path, fixup_map_cb fixup_map)
+ 		return 1;
+ 
+ 	/* clear all kprobes */
+-	i = system("echo \"\" > /sys/kernel/debug/tracing/kprobe_events");
++	i = write_kprobe_events("");
+ 
+ 	/* scan over all elf sections to get license and map info */
+ 	for (i = 1; i < ehdr.e_shnum; i++) {
+-- 
+2.19.1
+
