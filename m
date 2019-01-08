@@ -7,48 +7,47 @@ X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6B8AC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:51:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5E97C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:51:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C7A8206BB
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:51:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 85E0A206BB
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:51:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546977063;
-	bh=PCsSG/5zDrhI1uJVcM7dVv5Df6v1erVi93DG8g9sxhY=;
+	s=default; t=1546977079;
+	bh=howNbSFbtqVdOUBLsx5cXHOFR5FDwJVSK/aN9VXMmro=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=LbHXPKPw87Ig6RnzMT0937sQUklHfqedYJSc6giQHJJnqZ4NTAcheCPb3/VnY9T1Y
-	 X7JSbe3Uf/AN5S1lSYMPfdKM5E2H2wWlcnmJYzIVVxN4u/R1DIHgRBlb3aIqDPC4cZ
-	 SjE0Wx5TsfgmJGdlcuN4J/Gp4z778OmAEW1EUn8A=
+	b=plTEYanRC+OvWG6UVlp76TBWaCxl9NfXxxl0NZWIEKulyrpQ1kSq5KgQ/FOnpl9hZ
+	 ByvsWCmmDDTQ5F8OtNwNDsdKXfN+gOSHhTdZiTA1QuZy6xxFfjIUP5mZ6p5oNm6kWN
+	 BykAdjhHCnGA6AAe7BrCFB8Lp13hHV3BO0Mf3mps=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731303AbfAHTvC (ORCPT
+        id S1732409AbfAHTvT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:51:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39842 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:51:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39610 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731139AbfAHTbj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:31:39 -0500
+        id S1729729AbfAHTb2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:31:28 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 04A2620883;
-        Tue,  8 Jan 2019 19:31:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 69B4D20645;
+        Tue,  8 Jan 2019 19:31:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975898;
-        bh=PCsSG/5zDrhI1uJVcM7dVv5Df6v1erVi93DG8g9sxhY=;
+        s=default; t=1546975888;
+        bh=howNbSFbtqVdOUBLsx5cXHOFR5FDwJVSK/aN9VXMmro=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=z+gFDlqnEufT02RDYEXejBBmbTWzIrmGAwV+hdMpv8GA+sN5ZNhoOfdqvXmG06T+e
-         cWryX/1KydWIHG8yetmHl8nZ6i/z0xFB+yRekvnfVRZhs1fAgwIsH4w/UUA9steKXG
-         CLKA4HduNrkVvEFdNIUm9III0OLXr8za5Wu7hHw4=
+        b=OqOPqlEb/uGHR85ypffZjq/somIFtJV9sqIjWqXIwn+RyzTT///bkExSBrnFm33Xf
+         uCh5rqLaprgYGpMZ1LTj2j2fRDPGJAkEf35kk4G0T322CyRzX5WLwDxIVYl+PE10H1
+         VEsxGT0b7NzDTyrNpq/MW765Pt00dxys3UtjumEs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Taehee Yoo <ap420073@gmail.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Sasha Levin <sashal@kernel.org>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 68/97] netfilter: ipt_CLUSTERIP: check MAC address when duplicate config is set
-Date:   Tue,  8 Jan 2019 14:29:17 -0500
-Message-Id: <20190108192949.122407-68-sashal@kernel.org>
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 63/97] perf intel-pt: Fix error with config term "pt=0"
+Date:   Tue,  8 Jan 2019 14:29:12 -0500
+Message-Id: <20190108192949.122407-63-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192949.122407-1-sashal@kernel.org>
 References: <20190108192949.122407-1-sashal@kernel.org>
@@ -60,46 +59,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Taehee Yoo <ap420073@gmail.com>
+From: Adrian Hunter <adrian.hunter@intel.com>
 
-[ Upstream commit 06aa151ad1fc74a49b45336672515774a678d78d ]
+[ Upstream commit 1c6f709b9f96366cc47af23c05ecec9b8c0c392d ]
 
-If same destination IP address config is already existing, that config is
-just used. MAC address also should be same.
-However, there is no MAC address checking routine.
-So that MAC address checking routine is added.
+Users should never use 'pt=0', but if they do it may give a meaningless
+error:
 
-test commands:
-   %iptables -A INPUT -p tcp -i lo -d 192.168.0.5 --dport 80 \
-	   -j CLUSTERIP --new --hashmode sourceip \
-	   --clustermac 01:00:5e:00:00:20 --total-nodes 2 --local-node 1
-   %iptables -A INPUT -p tcp -i lo -d 192.168.0.5 --dport 80 \
-	   -j CLUSTERIP --new --hashmode sourceip \
-	   --clustermac 01:00:5e:00:00:21 --total-nodes 2 --local-node 1
+	$ perf record -e intel_pt/pt=0/u uname
+	Error:
+	The sys_perf_event_open() syscall returned with 22 (Invalid argument) for
+	event (intel_pt/pt=0/u).
 
-After this patch, above commands are disallowed.
+Fix that by forcing 'pt=1'.
 
-Signed-off-by: Taehee Yoo <ap420073@gmail.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Committer testing:
+
+  # perf record -e intel_pt/pt=0/u uname
+  Error:
+  The sys_perf_event_open() syscall returned with 22 (Invalid argument) for event (intel_pt/pt=0/u).
+  /bin/dmesg | grep -i perf may provide additional information.
+
+  # perf record -e intel_pt/pt=0/u uname
+  pt=0 doesn't make sense, forcing pt=1
+  Linux
+  [ perf record: Woken up 1 times to write data ]
+  [ perf record: Captured and wrote 0.020 MB perf.data ]
+  #
+
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Link: http://lkml.kernel.org/r/b7c5b4e5-9497-10e5-fd43-5f3e4a0fe51d@intel.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/ipv4/netfilter/ipt_CLUSTERIP.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ tools/perf/arch/x86/util/intel-pt.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/net/ipv4/netfilter/ipt_CLUSTERIP.c b/net/ipv4/netfilter/ipt_CLUSTERIP.c
-index 2c8d313ae216..e40e6795bd20 100644
---- a/net/ipv4/netfilter/ipt_CLUSTERIP.c
-+++ b/net/ipv4/netfilter/ipt_CLUSTERIP.c
-@@ -496,7 +496,8 @@ static int clusterip_tg_check(const struct xt_tgchk_param *par)
- 			if (IS_ERR(config))
- 				return PTR_ERR(config);
- 		}
--	}
-+	} else if (memcmp(&config->clustermac, &cipinfo->clustermac, ETH_ALEN))
-+		return -EINVAL;
+diff --git a/tools/perf/arch/x86/util/intel-pt.c b/tools/perf/arch/x86/util/intel-pt.c
+index db0ba8caf5a2..ba8ecaf52200 100644
+--- a/tools/perf/arch/x86/util/intel-pt.c
++++ b/tools/perf/arch/x86/util/intel-pt.c
+@@ -524,10 +524,21 @@ static int intel_pt_validate_config(struct perf_pmu *intel_pt_pmu,
+ 				    struct perf_evsel *evsel)
+ {
+ 	int err;
++	char c;
  
- 	ret = nf_ct_netns_get(par->net, par->family);
- 	if (ret < 0) {
+ 	if (!evsel)
+ 		return 0;
+ 
++	/*
++	 * If supported, force pass-through config term (pt=1) even if user
++	 * sets pt=0, which avoids senseless kernel errors.
++	 */
++	if (perf_pmu__scan_file(intel_pt_pmu, "format/pt", "%c", &c) == 1 &&
++	    !(evsel->attr.config & 1)) {
++		pr_warning("pt=0 doesn't make sense, forcing pt=1\n");
++		evsel->attr.config |= 1;
++	}
++
+ 	err = intel_pt_val_config_term(intel_pt_pmu, "caps/cycle_thresholds",
+ 				       "cyc_thresh", "caps/psb_cyc",
+ 				       evsel->attr.config);
 -- 
 2.19.1
 
