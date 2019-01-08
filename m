@@ -2,52 +2,51 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E1F4C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:37:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80923C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:37:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6DA56205C9
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:37:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F8302063F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:37:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546976251;
-	bh=EFLKP2e2c8SXlFc0rCCbWnZNRG+2J58K4nGwMmynqBI=;
+	s=default; t=1546976262;
+	bh=Kzi6stnPKtV6dH/kYiC0VhbIM6yKIzk/tyV8FGyI/wg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Ush6KFTqUf6gyOAkUyHlUOFWClf8gKjwbf2Amb9hVubR8oysirIzL432In8R1uT/w
-	 OCGyuvQ1URu2G+9svA13T7W+pilX4x71cdZUG/9pHi3VfesBGv0+Sv7+rB3XQgJUkx
-	 a5SMCMwnhVIExciAZKdEiA5L1YXYyVDlwGbQsx/8=
+	b=yIN/xuVL1zRozVYngFBxpPZM5A9EDIIFtkCw4ybnbfd8yw607MySvlnGLnFHgp8Hh
+	 FIWdhyTxZzqjopixLOf5l+i9AzmuUq0oDkEH5x/9wcx6S+jcKfscJ3j4x91C8/PEdW
+	 x7790T1TOIRUOq2kxM9NIk1Eheb/5w6Jt4iks1ug=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732543AbfAHTha (ORCPT
+        id S1732554AbfAHThl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:37:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44582 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:37:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44502 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730069AbfAHTfn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:35:43 -0500
+        id S1731732AbfAHTfj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:35:39 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0A57C20827;
-        Tue,  8 Jan 2019 19:35:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E8676205C9;
+        Tue,  8 Jan 2019 19:35:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546976141;
-        bh=EFLKP2e2c8SXlFc0rCCbWnZNRG+2J58K4nGwMmynqBI=;
+        s=default; t=1546976138;
+        bh=Kzi6stnPKtV6dH/kYiC0VhbIM6yKIzk/tyV8FGyI/wg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=r8cqjoPW1H6cxlxlovh+4q0VbIjnrdnt/Yl5hxsPNKb9SdcYzbBH2BsiatkZAitoq
-         VoFNZrqjCq8myKKTgdQzYNFMS7OmbEFp6A+vh6o1Oq08Vznt1HGvnvZ7Cl2fMujkk/
-         cm4g+P3N8TkjXsNgCY/cmcvCemrmyt31E4dmZgTc=
+        b=xtXW+bVlu/eWVhIo4GQJ0oDV/b7jRpGgzi6phufNM6c9S3B7cUeP4bm+u9W9I9LYd
+         tWgKQki91be5eK2mrUJ2asO4J7tFymW0VBiYf0XmTFPqm3qyuhjfAzRFt+LPtHQ1Ud
+         k/OcnZNq1U7J3BXQPDnKNl9MWpVgRm7RnzmBElpo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org,
-        linux1394-devel@lists.sourceforge.net
-Subject: [PATCH AUTOSEL 3.18 06/19] media: firewire: Fix app_info parameter type in avc_ca{,_app}_info
-Date:   Tue,  8 Jan 2019 14:35:18 -0500
-Message-Id: <20190108193534.124555-6-sashal@kernel.org>
+Cc:     Daniel Santos <daniel.santos@pobox.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Sasha Levin <sashal@kernel.org>, linux-mtd@lists.infradead.org
+Subject: [PATCH AUTOSEL 3.18 03/19] jffs2: Fix use of uninitialized delayed_work, lockdep breakage
+Date:   Tue,  8 Jan 2019 14:35:15 -0500
+Message-Id: <20190108193534.124555-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108193534.124555-1-sashal@kernel.org>
 References: <20190108193534.124555-1-sashal@kernel.org>
@@ -59,89 +58,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Daniel Santos <daniel.santos@pobox.com>
 
-[ Upstream commit b2e9a4eda11fd2cb1e6714e9ad3f455c402568ff ]
+[ Upstream commit a788c5272769ddbcdbab297cf386413eeac04463 ]
 
-Clang warns:
+jffs2_sync_fs makes the assumption that if CONFIG_JFFS2_FS_WRITEBUFFER
+is defined then a write buffer is available and has been initialized.
+However, this does is not the case when the mtd device has no
+out-of-band buffer:
 
-drivers/media/firewire/firedtv-avc.c:999:45: warning: implicit
-conversion from 'int' to 'char' changes value from 159 to -97
-[-Wconstant-conversion]
-        app_info[0] = (EN50221_TAG_APP_INFO >> 16) & 0xff;
-                    ~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
-drivers/media/firewire/firedtv-avc.c:1000:45: warning: implicit
-conversion from 'int' to 'char' changes value from 128 to -128
-[-Wconstant-conversion]
-        app_info[1] = (EN50221_TAG_APP_INFO >>  8) & 0xff;
-                    ~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
-drivers/media/firewire/firedtv-avc.c:1040:44: warning: implicit
-conversion from 'int' to 'char' changes value from 159 to -97
-[-Wconstant-conversion]
-        app_info[0] = (EN50221_TAG_CA_INFO >> 16) & 0xff;
-                    ~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
-drivers/media/firewire/firedtv-avc.c:1041:44: warning: implicit
-conversion from 'int' to 'char' changes value from 128 to -128
-[-Wconstant-conversion]
-        app_info[1] = (EN50221_TAG_CA_INFO >>  8) & 0xff;
-                    ~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
-4 warnings generated.
+int jffs2_nand_flash_setup(struct jffs2_sb_info *c)
+{
+        if (!c->mtd->oobsize)
+                return 0;
+...
 
-Change app_info's type to unsigned char to match the type of the
-member msg in struct ca_msg, which is the only thing passed into the
-app_info parameter in this function.
+The resulting call to cancel_delayed_work_sync passing a uninitialized
+(but zeroed) delayed_work struct forces lockdep to become disabled.
 
-Link: https://github.com/ClangBuiltLinux/linux/issues/105
+[   90.050639] overlayfs: upper fs does not support tmpfile.
+[   90.652264] INFO: trying to register non-static key.
+[   90.662171] the code is fine but needs lockdep annotation.
+[   90.673090] turning off the locking correctness validator.
+[   90.684021] CPU: 0 PID: 1762 Comm: mount_root Not tainted 4.14.63 #0
+[   90.696672] Stack : 00000000 00000000 80d8f6a2 00000038 805f0000 80444600 8fe364f4 805dfbe7
+[   90.713349]         80563a30 000006e2 8068370c 00000001 00000000 00000001 8e2fdc48 ffffffff
+[   90.730020]         00000000 00000000 80d90000 00000000 00000106 00000000 6465746e 312e3420
+[   90.746690]         6b636f6c 03bf0000 f8000000 20676e69 00000000 80000000 00000000 8e2c2a90
+[   90.763362]         80d90000 00000001 00000000 8e2c2a90 00000003 80260dc0 08052098 80680000
+[   90.780033]         ...
+[   90.784902] Call Trace:
+[   90.789793] [<8000f0d8>] show_stack+0xb8/0x148
+[   90.798659] [<8005a000>] register_lock_class+0x270/0x55c
+[   90.809247] [<8005cb64>] __lock_acquire+0x13c/0xf7c
+[   90.818964] [<8005e314>] lock_acquire+0x194/0x1dc
+[   90.828345] [<8003f27c>] flush_work+0x200/0x24c
+[   90.837374] [<80041dfc>] __cancel_work_timer+0x158/0x210
+[   90.847958] [<801a8770>] jffs2_sync_fs+0x20/0x54
+[   90.857173] [<80125cf4>] iterate_supers+0xf4/0x120
+[   90.866729] [<80158fc4>] sys_sync+0x44/0x9c
+[   90.875067] [<80014424>] syscall_common+0x34/0x58
 
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Daniel Santos <daniel.santos@pobox.com>
+Reviewed-by: Hou Tao <houtao1@huawei.com>
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/firewire/firedtv-avc.c | 6 ++++--
- drivers/media/firewire/firedtv.h     | 6 ++++--
- 2 files changed, 8 insertions(+), 4 deletions(-)
+ fs/jffs2/super.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/firewire/firedtv-avc.c b/drivers/media/firewire/firedtv-avc.c
-index 251a556112a9..280b5ffea592 100644
---- a/drivers/media/firewire/firedtv-avc.c
-+++ b/drivers/media/firewire/firedtv-avc.c
-@@ -968,7 +968,8 @@ static int get_ca_object_length(struct avc_response_frame *r)
- 	return r->operand[7];
- }
+diff --git a/fs/jffs2/super.c b/fs/jffs2/super.c
+index f3194e5147fd..0bbc31d10857 100644
+--- a/fs/jffs2/super.c
++++ b/fs/jffs2/super.c
+@@ -101,7 +101,8 @@ static int jffs2_sync_fs(struct super_block *sb, int wait)
+ 	struct jffs2_sb_info *c = JFFS2_SB_INFO(sb);
  
--int avc_ca_app_info(struct firedtv *fdtv, char *app_info, unsigned int *len)
-+int avc_ca_app_info(struct firedtv *fdtv, unsigned char *app_info,
-+		    unsigned int *len)
- {
- 	struct avc_command_frame *c = (void *)fdtv->avc_data;
- 	struct avc_response_frame *r = (void *)fdtv->avc_data;
-@@ -1009,7 +1010,8 @@ int avc_ca_app_info(struct firedtv *fdtv, char *app_info, unsigned int *len)
- 	return ret;
- }
+ #ifdef CONFIG_JFFS2_FS_WRITEBUFFER
+-	cancel_delayed_work_sync(&c->wbuf_dwork);
++	if (jffs2_is_writebuffered(c))
++		cancel_delayed_work_sync(&c->wbuf_dwork);
+ #endif
  
--int avc_ca_info(struct firedtv *fdtv, char *app_info, unsigned int *len)
-+int avc_ca_info(struct firedtv *fdtv, unsigned char *app_info,
-+		unsigned int *len)
- {
- 	struct avc_command_frame *c = (void *)fdtv->avc_data;
- 	struct avc_response_frame *r = (void *)fdtv->avc_data;
-diff --git a/drivers/media/firewire/firedtv.h b/drivers/media/firewire/firedtv.h
-index c2ba085e0d20..54853159482e 100644
---- a/drivers/media/firewire/firedtv.h
-+++ b/drivers/media/firewire/firedtv.h
-@@ -124,8 +124,10 @@ int avc_lnb_control(struct firedtv *fdtv, char voltage, char burst,
- 		    struct dvb_diseqc_master_cmd *diseqcmd);
- void avc_remote_ctrl_work(struct work_struct *work);
- int avc_register_remote_control(struct firedtv *fdtv);
--int avc_ca_app_info(struct firedtv *fdtv, char *app_info, unsigned int *len);
--int avc_ca_info(struct firedtv *fdtv, char *app_info, unsigned int *len);
-+int avc_ca_app_info(struct firedtv *fdtv, unsigned char *app_info,
-+		    unsigned int *len);
-+int avc_ca_info(struct firedtv *fdtv, unsigned char *app_info,
-+		unsigned int *len);
- int avc_ca_reset(struct firedtv *fdtv);
- int avc_ca_pmt(struct firedtv *fdtv, char *app_info, int length);
- int avc_ca_get_time_date(struct firedtv *fdtv, int *interval);
+ 	mutex_lock(&c->alloc_sem);
 -- 
 2.19.1
 
