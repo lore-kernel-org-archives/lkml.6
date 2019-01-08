@@ -2,205 +2,134 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E07EBC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 17:44:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9BF0C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 17:46:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A80A82070B
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 17:44:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B453820883
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 17:46:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SqgBTcWV"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZzgDnZQt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729179AbfAHRol (ORCPT
+        id S1729170AbfAHRqO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 12:44:41 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:33154 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728446AbfAHRok (ORCPT
+        Tue, 8 Jan 2019 12:46:14 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:38914 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728854AbfAHRqO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 12:44:40 -0500
-Received: by mail-pl1-f194.google.com with SMTP id z23so2246992plo.0
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 09:44:40 -0800 (PST)
+        Tue, 8 Jan 2019 12:46:14 -0500
+Received: by mail-pf1-f196.google.com with SMTP id r136so2266779pfc.6;
+        Tue, 08 Jan 2019 09:46:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=lpwsRQZv8cZDXezM+/IdJvZruPLZk55CpGsFMCsUilU=;
-        b=SqgBTcWVm29Iw+KrjCqe7n2RW/81E879y88xZUt60txZAXWmVrF/f1mCCEeJ9xwg5W
-         Bno4DmX8P/wUpX3IHjYqSH5OjQibQrNjKRTXDwvyMtzDE6WHlId7MNjkNx/rmgGsI4MG
-         mNUP1V8jyZTKNn2hYKNbSh+V4jbt2r1F+F81kBKZxozyCH8xhg52+cmJE5BWAGtpT7J5
-         PNxZKzmnz/hoE3QX3k9me/V5PDulXHUMnEjygJR+k2kppBq4SgG8KPtj2dQ5YZ/LaPz0
-         JnUxuxGBIgF13zdK82QJ7VvmI8BZAHe0CWpKl3ZTVYU2P2vhB/tBzS0dknEjURkd5kkr
-         8HAQ==
+        bh=W/L9ECOJ+gNVi0fZmY/qUbjZOZMDvIrDn1W0N0mBT8k=;
+        b=ZzgDnZQtTTbfAFlh4Fj8/fXqYdu8R/tn5lCf3iPAbgqot9QnTJ3jiK2BiYOl7AV/lv
+         +zxUQTljv8iomevul5pmfrMntq97P7N4tHT92PUCiKZh8mJwylmAHbByqn/JEuDoi6eV
+         lBCPtI6wDhiE3Pt14va2xQFYBSR+chYTxDZQJuKTl/9lG6d/ZuEGctxc7ATBW892SbDt
+         VM4DymMH4S6J4MeTSyGM4j7p776JVXgqnAid0dDI/32r9WbHyPhYvV2kLSDDgnwnm1Zo
+         WkQT39EwYSOpHqwaJ6gEZy9obY6lwVjdK/x2qewdAVa0dd3GbZgjPzWEsCu3Xg0Tkapi
+         xc+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=lpwsRQZv8cZDXezM+/IdJvZruPLZk55CpGsFMCsUilU=;
-        b=ccbOGQEWgTWqnAwClnBarst+HY3/R0iQ/4g6WIQ9Fs/IZChGUmC3XY2vP1LTT7Jioo
-         lztEiy/Gj19SUi3dFZGVZgwgwk0HEh/IPVVZ2BaRfjCqk9nTL2+tKCJMI6QQJeJhgsfL
-         9ovErmA8kj7028clGpsdUgaPOGFC89oSMwexjbXQTKTNUretAu0mvEP/DpXCBohyE4UQ
-         GsslO0poWhUDbrI6SPxrKBrgXbqbiSKuiMPWXqM/Yl1u31RSIgHmsa3xvTj0aF3ZdZ5i
-         30lEetjn7SP4H0VGHsRXCJW5rGYBggwRY5CJUPdZFokicmwSjTVKPXegsdkEyFbVSqCC
-         oA9Q==
-X-Gm-Message-State: AJcUukeSyMqetjb+DQZqMfFG1HWBhXLtkKp4hqJbySPFyWl6LTkN2yRU
-        FvFDtg1JaE6I9OdXvhjGBEJTL+0NhQEMCGZzV6Vp78e83YbVdQ==
-X-Google-Smtp-Source: ALg8bN4+yjgv2TGbFKmAFCrQXJ+agtIXiOf2nUt66cJWYINDo10H7Geo695+YE/W5QbVzdhAFRrLFFG6wcqpWHZpkkc=
-X-Received: by 2002:a17:902:7b88:: with SMTP id w8mr2663380pll.320.1546969479337;
- Tue, 08 Jan 2019 09:44:39 -0800 (PST)
+        bh=W/L9ECOJ+gNVi0fZmY/qUbjZOZMDvIrDn1W0N0mBT8k=;
+        b=rK7pGa3oogAiNSt811aYCeQsaFG8SP7ktqvhBYaCPWy3LV7OOXv73TPvuhj9A/CCpg
+         NKmCUh56lCmJ2vw9C1sHzwpxtPvv8ZALrtgLm0CzdSRReR5e9bPs3LcXEQHMXJ9pC9WA
+         KSQMAAFp6RCkF28N7AyEmZ3sUhofvtNvKojezr/5fFDWsyAE2+VSzUpXxXF3v8247xB3
+         PZ6Q09azbMwksK65mCf8Ezd4jox/bdf4pxG1niuUvxGl+GZXZibeeED8QjpDhY4mCII1
+         wcO6R1k7+xcMkC/e4ZOhB0Z3aCNkYvr9zAKOWJGAvxj4EC9qQQakHtlTDRsQQFwIH/fb
+         /5IQ==
+X-Gm-Message-State: AJcUuketwlsfKLZKW8e909hpBBncE6+sGEqZQ6Ci9S5OcH0dGrMoy0qz
+        ejrNSTqSbVTDt+cUgd9W9zb9xOiB8s289J8j5/4=
+X-Google-Smtp-Source: ALg8bN6+q3ztn4hEo3se6tgbt7vajJ4ITl+PgRK/nhOctnWF/alxP/cdjYKzrXg32YNtIE2p4hHEIr05TNq1mzfqeQw=
+X-Received: by 2002:a62:8985:: with SMTP id n5mr2668133pfk.255.1546969572046;
+ Tue, 08 Jan 2019 09:46:12 -0800 (PST)
 MIME-Version: 1.0
-References: <20190102205715.14054-1-mst@redhat.com> <20190102205715.14054-2-mst@redhat.com>
-In-Reply-To: <20190102205715.14054-2-mst@redhat.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Tue, 8 Jan 2019 09:44:28 -0800
-Message-ID: <CAKwvOdk3b6mnpTEEyY-JFrej8K12w9oTMLqi7q5aNiRMyJo6Ow@mail.gmail.com>
-Subject: Re: [PATCH RFC 1/4] include/linux/compiler*.h: fix OPTIMIZER_HIDE_VAR
-To:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Jason Wang <jasowang@redhat.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Akira Yokosawa <akiyks@gmail.com>,
-        Daniel Lustig <dlustig@nvidia.com>, linux-arch@vger.kernel.org,
-        netdev@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        Eli Friedman <efriedma@codeaurora.org>,
-        Joe Perches <joe@perches.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        linux-sparse@vger.kernel.org,
-        Eric Christopher <echristo@google.com>
+References: <20190107171515.4537-1-colin.king@canonical.com>
+ <20190108094249.GF3200@kadam> <2f01add7-06f0-e312-2018-18b056405d6a@canonical.com>
+In-Reply-To: <2f01add7-06f0-e312-2018-18b056405d6a@canonical.com>
+From:   Steve French <smfrench@gmail.com>
+Date:   Tue, 8 Jan 2019 11:46:00 -0600
+Message-ID: <CAH2r5mtR_uoe8ovH=+RBSbS0oRFO7OS-kGwG6n6RBvQfgXaKGw@mail.gmail.com>
+Subject: Re: [PATCH] cifs: fix memory leak of an allocated cifs_ntsd structure
+To:     Colin Ian King <colin.king@canonical.com>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Steve French <sfrench@samba.org>,
+        CIFS <linux-cifs@vger.kernel.org>,
+        samba-technical <samba-technical@lists.samba.org>,
+        kernel-janitors <kernel-janitors@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks for the patch and sorry for the delay; was totally unplugged
-for the holidays.
+Yes - good point.  Will back this out temporarily, and also update
+Aurelien's (unrelated patch) to the later version
 
-On Wed, Jan 2, 2019 at 12:57 PM Michael S. Tsirkin <mst@redhat.com> wrote:
+On Tue, Jan 8, 2019 at 3:52 AM Colin Ian King <colin.king@canonical.com> wrote:
 >
-> Since commit 815f0ddb346c ("include/linux/compiler*.h: make compiler-*.h
-> mutually exclusive") clang no longer reuses the OPTIMIZER_HIDE_VAR macro
-> from compiler-gcc - instead it gets the version in
-> include/linux/compiler.h.  Unfortunately that version doesn't actually
-> prevent compiler from optimizing out the variable.
+> On 08/01/2019 09:42, Dan Carpenter wrote:
+> > On Mon, Jan 07, 2019 at 05:15:15PM +0000, Colin King wrote:
+> >> From: Colin Ian King <colin.king@canonical.com>
+> >>
+> >> The call to SMB2_queary_acl can allocate memory to pntsd and also
+> >> return a failure via a call to SMB2_query_acl (and then query_info).
+> >> This occurs when query_info allocates the structure and then in
+> >> query_info the call to smb2_validate_and_copy_iov fails. Currently the
+> >> failure just returns without kfree'ing pntsd hence causing a memory
+> >> leak.  Fix this by kfree'ing pntsd before returning.
+> >>
+> >> Detected by CoverityScan, CID#1457059 ("Resource Leak")
+> >>
+> >> Fixes: 2f1afe25997f ("cifs: Use smb 2 - 3 and cifsacl mount options getacl functions")
+> >> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> >> ---
+> >>  fs/cifs/smb2ops.c | 4 +++-
+> >>  1 file changed, 3 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/fs/cifs/smb2ops.c b/fs/cifs/smb2ops.c
+> >> index cf7eb891804f..6d71958ad2cb 100644
+> >> --- a/fs/cifs/smb2ops.c
+> >> +++ b/fs/cifs/smb2ops.c
+> >> @@ -2238,8 +2238,10 @@ get_smb2_acl_by_fid(struct cifs_sb_info *cifs_sb,
+> >>      cifs_put_tlink(tlink);
+> >>
+> >>      cifs_dbg(FYI, "%s: rc = %d ACL len %d\n", __func__, rc, *pacllen);
+> >> -    if (rc)
+> >> +    if (rc) {
+> >> +            kfree(pntsd);
+> >>              return ERR_PTR(rc);
+> >> +    }
+> >
+> > This is a layering violation.  The memory was allocated in query_info()
+> > so it should be freed there instead.  Also if the kmalloc() fails in
+> > query_info() then it should return -ENOMEM instead of success.
+> >
+> > This only affects code which calls SMB2_query_acl().  There are two
+> > callers.  You have fixed one but the other is also buggy because we're
+> > returning uninitialized memory in get_smb2_acl_by_path().
+> >
+> > regards,
+> > dan carpenter
+> >
+>
+> Eep. very true. NACK to my fixes and I'll sort out a correct fix later.
+>
+> Colin
 
-Good catch. Did you find this via eyeballing the code, a test, or some
-other way?
 
->
-> Fix up by moving the macro out from compiler-gcc.h to compiler.h.
-> Compilers without incline asm support will keep working
-> since it's protected by an ifdef.
->
-> Also fix up comments to match reality since we are no longer overriding
-> any macros.
->
-> Build-tested with gcc and clang.
->
-> Fixes: 815f0ddb346c ("include/linux/compiler*.h: make compiler-*.h mutually exclusive")
-> Cc: Eli Friedman <efriedma@codeaurora.org>
-> Cc: Joe Perches <joe@perches.com>
-> Cc: Nick Desaulniers <ndesaulniers@google.com>
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
 
-Also for more context, see:
-commit 7829fb09a2b4 ("lib: make memzero_explicit more robust against
-dead store elimination")
-
-> ---
->  include/linux/compiler-clang.h | 5 ++---
->  include/linux/compiler-gcc.h   | 4 ----
->  include/linux/compiler-intel.h | 4 +---
->  include/linux/compiler.h       | 4 +++-
->  4 files changed, 6 insertions(+), 11 deletions(-)
->
-> diff --git a/include/linux/compiler-clang.h b/include/linux/compiler-clang.h
-> index 3e7dafb3ea80..7ddaeb5182e3 100644
-> --- a/include/linux/compiler-clang.h
-> +++ b/include/linux/compiler-clang.h
-> @@ -3,9 +3,8 @@
->  #error "Please don't include <linux/compiler-clang.h> directly, include <linux/compiler.h> instead."
->  #endif
->
-> -/* Some compiler specific definitions are overwritten here
-> - * for Clang compiler
-> - */
-> +/* Compiler specific definitions for Clang compiler */
-> +
->  #define uninitialized_var(x) x = *(&(x))
->
->  /* same as gcc, this was present in clang-2.6 so we can assume it works
-> diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
-> index 2010493e1040..72054d9f0eaa 100644
-> --- a/include/linux/compiler-gcc.h
-> +++ b/include/linux/compiler-gcc.h
-> @@ -58,10 +58,6 @@
->         (typeof(ptr)) (__ptr + (off));                                  \
->  })
->
-> -/* Make the optimizer believe the variable can be manipulated arbitrarily. */
-> -#define OPTIMIZER_HIDE_VAR(var)                                                \
-> -       __asm__ ("" : "=r" (var) : "0" (var))
-> -
->  /*
->   * A trick to suppress uninitialized variable warning without generating any
->   * code
-> diff --git a/include/linux/compiler-intel.h b/include/linux/compiler-intel.h
-> index 517bd14e1222..b17f3cd18334 100644
-> --- a/include/linux/compiler-intel.h
-> +++ b/include/linux/compiler-intel.h
-> @@ -5,9 +5,7 @@
->
->  #ifdef __ECC
->
-> -/* Some compiler specific definitions are overwritten here
-> - * for Intel ECC compiler
-> - */
-> +/* Compiler specific definitions for Intel ECC compiler */
->
->  #include <asm/intrinsics.h>
->
-> diff --git a/include/linux/compiler.h b/include/linux/compiler.h
-> index 06396c1cf127..1ad367b4cd8d 100644
-> --- a/include/linux/compiler.h
-> +++ b/include/linux/compiler.h
-> @@ -152,7 +152,9 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
->  #endif
->
->  #ifndef OPTIMIZER_HIDE_VAR
-> -#define OPTIMIZER_HIDE_VAR(var) barrier()
-> +/* Make the optimizer believe the variable can be manipulated arbitrarily. */
-> +#define OPTIMIZER_HIDE_VAR(var)                                                \
-> +       __asm__ ("" : "=r" (var) : "0" (var))
->  #endif
-
-This should be fine, thanks for the cleanup!  For now, we're not yet
-confident to turn on Clang's integrated assembler for the kernel, but
-I'll make sure to revisit this should we, in case Clang is then able
-to optimize this out.
-+ Eric, who might know of a better trick for what we're trying to
-accomplish with this macro.
-
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-
-+ Miguel
-Miguel, would you mind taking this into your compiler-attributes tree?
 -- 
 Thanks,
-~Nick Desaulniers
+
+Steve
