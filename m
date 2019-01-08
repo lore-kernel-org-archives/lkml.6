@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B638C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 03:15:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4FC9C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 03:15:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D83852089F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 03:15:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9EDE22089F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 03:15:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727519AbfAHDPD (ORCPT
+        id S1727576AbfAHDPH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 22:15:03 -0500
-Received: from inva021.nxp.com ([92.121.34.21]:46412 "EHLO inva021.nxp.com"
+        Mon, 7 Jan 2019 22:15:07 -0500
+Received: from inva020.nxp.com ([92.121.34.13]:52450 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727433AbfAHDPA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 22:15:00 -0500
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 0BABE2002AB;
-        Tue,  8 Jan 2019 04:14:59 +0100 (CET)
+        id S1727521AbfAHDPF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 22:15:05 -0500
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 3BA1A1A04EA;
+        Tue,  8 Jan 2019 04:15:03 +0100 (CET)
 Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 1F357200011;
-        Tue,  8 Jan 2019 04:14:47 +0100 (CET)
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 4F7BF1A02A6;
+        Tue,  8 Jan 2019 04:14:51 +0100 (CET)
 Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id D4DB4402C8;
-        Tue,  8 Jan 2019 11:14:33 +0800 (SGT)
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 0FFC8402CA;
+        Tue,  8 Jan 2019 11:14:37 +0800 (SGT)
 From:   Xiaowei Bao <xiaowei.bao@nxp.com>
 To:     bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com,
         shawnguo@kernel.org, leoyang.li@nxp.com, kishon@ti.com,
@@ -40,9 +40,9 @@ To:     bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linuxppc-dev@lists.ozlabs.org
 Cc:     Xiaowei Bao <xiaowei.bao@nxp.com>
-Subject: [PATCHv4 2/4] arm64: dts: Add the PCIE EP node in dts
-Date:   Tue,  8 Jan 2019 11:09:20 +0800
-Message-Id: <20190108030922.24031-2-xiaowei.bao@nxp.com>
+Subject: [PATCHv4 4/4] misc: pci_endpoint_test: Add the layerscape EP device support
+Date:   Tue,  8 Jan 2019 11:09:22 +0800
+Message-Id: <20190108030922.24031-4-xiaowei.bao@nxp.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20190108030922.24031-1-xiaowei.bao@nxp.com>
 References: <20190108030922.24031-1-xiaowei.bao@nxp.com>
@@ -52,86 +52,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the PCIE EP node in dts for ls1046a.
+Add the layerscape EP device support in pci_endpoint_test driver.
 
 Signed-off-by: Xiaowei Bao <xiaowei.bao@nxp.com>
 ---
 v2:
- - Add the SoC specific compatibles. 
+ - no change
 v3:
  - no change
 v4:
- - no change
+ - delate the comments.
 
- arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi |   34 +++++++++++++++++++++++-
- 1 files changed, 33 insertions(+), 1 deletions(-)
+ drivers/misc/pci_endpoint_test.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
-index 9a2106e..e373826 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
-@@ -657,6 +657,17 @@
- 			status = "disabled";
- 		};
- 
-+		pcie_ep@3400000 {
-+			compatible = "fsl,ls1046a-pcie-ep","fsl,ls-pcie-ep";
-+			reg = <0x00 0x03400000 0x0 0x00100000
-+				0x40 0x00000000 0x8 0x00000000>;
-+			reg-names = "regs", "addr_space";
-+			num-ib-windows = <6>;
-+			num-ob-windows = <6>;
-+			num-lanes = <2>;
-+			status = "disabled";
-+		};
-+
- 		pcie@3500000 {
- 			compatible = "fsl,ls1046a-pcie";
- 			reg = <0x00 0x03500000 0x0 0x00100000   /* controller registers */
-@@ -683,6 +694,17 @@
- 			status = "disabled";
- 		};
- 
-+		pcie_ep@3500000 {
-+			compatible = "fsl,ls1046a-pcie-ep","fsl,ls-pcie-ep";
-+			reg = <0x00 0x03500000 0x0 0x00100000
-+				0x48 0x00000000 0x8 0x00000000>;
-+			reg-names = "regs", "addr_space";
-+			num-ib-windows = <6>;
-+			num-ob-windows = <6>;
-+			num-lanes = <2>;
-+			status = "disabled";
-+		};
-+
- 		pcie@3600000 {
- 			compatible = "fsl,ls1046a-pcie";
- 			reg = <0x00 0x03600000 0x0 0x00100000   /* controller registers */
-@@ -709,6 +731,17 @@
- 			status = "disabled";
- 		};
- 
-+		pcie_ep@3600000 {
-+			compatible = "fsl,ls1046a-pcie-ep", "fsl,ls-pcie-ep";
-+			reg = <0x00 0x03600000 0x0 0x00100000
-+				0x50 0x00000000 0x8 0x00000000>;
-+			reg-names = "regs", "addr_space";
-+			num-ib-windows = <6>;
-+			num-ob-windows = <6>;
-+			num-lanes = <2>;
-+			status = "disabled";
-+		};
-+
- 		qdma: dma-controller@8380000 {
- 			compatible = "fsl,ls1046a-qdma", "fsl,ls1021a-qdma";
- 			reg = <0x0 0x8380000 0x0 0x1000>, /* Controller regs */
-@@ -729,7 +762,6 @@
- 			queue-sizes = <64 64>;
- 			big-endian;
- 		};
--
- 	};
- 
- 	reserved-memory {
+diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
+index 896e2df..29582fe 100644
+--- a/drivers/misc/pci_endpoint_test.c
++++ b/drivers/misc/pci_endpoint_test.c
+@@ -788,6 +788,7 @@ static void pci_endpoint_test_remove(struct pci_dev *pdev)
+ static const struct pci_device_id pci_endpoint_test_tbl[] = {
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_TI, PCI_DEVICE_ID_TI_DRA74x) },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_TI, PCI_DEVICE_ID_TI_DRA72x) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_FREESCALE, 0x81c0) },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_SYNOPSYS, 0xedda) },
+ 	{ }
+ };
 -- 
 1.7.1
 
