@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 094D8C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:38:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E267C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:38:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF0D42063F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:38:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B35220645
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:38:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546976321;
-	bh=57fEOIFX5NnN90kJcDfeLEPddIBU6XrZ6J9a+ftwKtI=;
+	s=default; t=1546976331;
+	bh=D1Dd7SF8SGQME99NDwemuVXVFCjItX+VHGpIAy7eFi4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=DpJTBKD8lIUp9tuJR3GY9bzth2ctUcupac4yAnrAFYIe0ydRE7o1vT2G4EANOoh1S
-	 yWPu8VHS9gOPhFl0pDgHf9tqC9zw9OlKQVApZWIXxY77JRBXZr8ldJf8T4qQHQTcfJ
-	 SdWiVVIOPcroaIhq3/tfWILVgUBDjQ9mNoHNYDqY=
+	b=wjDjy2XP5ILYKtodnJfYmUmIae9HpgkprEmnES4rEBKBtoy4QO6dFJCEnusR2Y95E
+	 06M1g86P2hguAxxgpvEqK1U2bQx5wLfOU0dCCZIcPiEHQkXZAc3y+KQiDeumq/IbpU
+	 rf2U0L6aQei0gQcUyDD2A8MMQzk/l5SUmtsdLb8Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732221AbfAHTfR (ORCPT
+        id S1732356AbfAHTit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:35:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43982 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:38:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44020 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732200AbfAHTfL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:35:11 -0500
+        id S1732211AbfAHTfN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:35:13 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5081920883;
-        Tue,  8 Jan 2019 19:35:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 57C4820827;
+        Tue,  8 Jan 2019 19:35:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546976111;
-        bh=57fEOIFX5NnN90kJcDfeLEPddIBU6XrZ6J9a+ftwKtI=;
+        s=default; t=1546976113;
+        bh=D1Dd7SF8SGQME99NDwemuVXVFCjItX+VHGpIAy7eFi4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ENLB9ti3ldfPwSL986ghsqfUpvXEVA/x236mK6IrzHmmIGw0+LinVqgQgktDk3PTc
-         p0hJ6y0nl0jjTMkiaWYWIDSCDX7eeqZHWxCaU38YoTJpV4SHyAilzGC6jeCjlv2SjF
-         MMFs7an96HnVYhOl01r54np1XHvu5u9lAeN0g0gY=
+        b=jYp8V1KzEFQ1pCabcztIOZgL3E2BaHPLR48JhTYonzRpOTZKBtgk7CnXmvGE0dlB8
+         lajV4pJ4C9ewVtXlb66Q4HOl0j6/lhDxG1ZL9Z9I/7J7XGm4lni7EalqAx7Tjto8gy
+         /9m0pXZ7A9KdPkZVdr/mpZdmcXMJAU/o48qGYVXc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jonas Danielsson <jonas@orbital-systems.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Sasha Levin <sashal@kernel.org>, linux-mmc@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 17/28] mmc: atmel-mci: do not assume idle after atmci_request_end
-Date:   Tue,  8 Jan 2019 14:34:34 -0500
-Message-Id: <20190108193445.124251-17-sashal@kernel.org>
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 18/28] perf intel-pt: Fix error with config term "pt=0"
+Date:   Tue,  8 Jan 2019 14:34:35 -0500
+Message-Id: <20190108193445.124251-18-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108193445.124251-1-sashal@kernel.org>
 References: <20190108193445.124251-1-sashal@kernel.org>
@@ -58,68 +58,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jonas Danielsson <jonas@orbital-systems.com>
+From: Adrian Hunter <adrian.hunter@intel.com>
 
-[ Upstream commit ae460c115b7aa50c9a36cf78fced07b27962c9d0 ]
+[ Upstream commit 1c6f709b9f96366cc47af23c05ecec9b8c0c392d ]
 
-On our AT91SAM9260 board we use the same sdio bus for wifi and for the
-sd card slot. This caused the atmel-mci to give the following splat on
-the serial console:
+Users should never use 'pt=0', but if they do it may give a meaningless
+error:
 
-  ------------[ cut here ]------------
-  WARNING: CPU: 0 PID: 538 at drivers/mmc/host/atmel-mci.c:859 atmci_send_command+0x24/0x44
-  Modules linked in:
-  CPU: 0 PID: 538 Comm: mmcqd/0 Not tainted 4.14.76 #14
-  Hardware name: Atmel AT91SAM9
-  [<c000fccc>] (unwind_backtrace) from [<c000d3dc>] (show_stack+0x10/0x14)
-  [<c000d3dc>] (show_stack) from [<c0017644>] (__warn+0xd8/0xf4)
-  [<c0017644>] (__warn) from [<c0017704>] (warn_slowpath_null+0x1c/0x24)
-  [<c0017704>] (warn_slowpath_null) from [<c033bb9c>] (atmci_send_command+0x24/0x44)
-  [<c033bb9c>] (atmci_send_command) from [<c033e984>] (atmci_start_request+0x1f4/0x2dc)
-  [<c033e984>] (atmci_start_request) from [<c033f3b4>] (atmci_request+0xf0/0x164)
-  [<c033f3b4>] (atmci_request) from [<c0327108>] (mmc_start_request+0x280/0x2d0)
-  [<c0327108>] (mmc_start_request) from [<c032800c>] (mmc_start_areq+0x230/0x330)
-  [<c032800c>] (mmc_start_areq) from [<c03366f8>] (mmc_blk_issue_rw_rq+0xc4/0x310)
-  [<c03366f8>] (mmc_blk_issue_rw_rq) from [<c03372c4>] (mmc_blk_issue_rq+0x118/0x5ac)
-  [<c03372c4>] (mmc_blk_issue_rq) from [<c033781c>] (mmc_queue_thread+0xc4/0x118)
-  [<c033781c>] (mmc_queue_thread) from [<c002daf8>] (kthread+0x100/0x118)
-  [<c002daf8>] (kthread) from [<c000a580>] (ret_from_fork+0x14/0x34)
-  ---[ end trace 594371ddfa284bd6 ]---
+	$ perf record -e intel_pt/pt=0/u uname
+	Error:
+	The sys_perf_event_open() syscall returned with 22 (Invalid argument) for
+	event (intel_pt/pt=0/u).
 
-This is:
-  WARN_ON(host->cmd);
+Fix that by forcing 'pt=1'.
 
-This was fixed on our board by letting atmci_request_end determine what
-state we are in. Instead of unconditionally setting it to STATE_IDLE on
-STATE_END_REQUEST.
+Committer testing:
 
-Signed-off-by: Jonas Danielsson <jonas@orbital-systems.com>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+  # perf record -e intel_pt/pt=0/u uname
+  Error:
+  The sys_perf_event_open() syscall returned with 22 (Invalid argument) for event (intel_pt/pt=0/u).
+  /bin/dmesg | grep -i perf may provide additional information.
+
+  # perf record -e intel_pt/pt=0/u uname
+  pt=0 doesn't make sense, forcing pt=1
+  Linux
+  [ perf record: Woken up 1 times to write data ]
+  [ perf record: Captured and wrote 0.020 MB perf.data ]
+  #
+
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Link: http://lkml.kernel.org/r/b7c5b4e5-9497-10e5-fd43-5f3e4a0fe51d@intel.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mmc/host/atmel-mci.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ tools/perf/arch/x86/util/intel-pt.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/drivers/mmc/host/atmel-mci.c b/drivers/mmc/host/atmel-mci.c
-index bf62e429f7fc..98be9eb3184b 100644
---- a/drivers/mmc/host/atmel-mci.c
-+++ b/drivers/mmc/host/atmel-mci.c
-@@ -1840,13 +1840,14 @@ static void atmci_tasklet_func(unsigned long priv)
- 			}
+diff --git a/tools/perf/arch/x86/util/intel-pt.c b/tools/perf/arch/x86/util/intel-pt.c
+index c53f78767568..df21da796fa7 100644
+--- a/tools/perf/arch/x86/util/intel-pt.c
++++ b/tools/perf/arch/x86/util/intel-pt.c
+@@ -471,10 +471,21 @@ static int intel_pt_validate_config(struct perf_pmu *intel_pt_pmu,
+ 				    struct perf_evsel *evsel)
+ {
+ 	int err;
++	char c;
  
- 			atmci_request_end(host, host->mrq);
--			state = STATE_IDLE;
-+			goto unlock; /* atmci_request_end() sets host->state */
- 			break;
- 		}
- 	} while (state != prev_state);
+ 	if (!evsel)
+ 		return 0;
  
- 	host->state = state;
- 
-+unlock:
- 	spin_unlock(&host->lock);
- }
- 
++	/*
++	 * If supported, force pass-through config term (pt=1) even if user
++	 * sets pt=0, which avoids senseless kernel errors.
++	 */
++	if (perf_pmu__scan_file(intel_pt_pmu, "format/pt", "%c", &c) == 1 &&
++	    !(evsel->attr.config & 1)) {
++		pr_warning("pt=0 doesn't make sense, forcing pt=1\n");
++		evsel->attr.config |= 1;
++	}
++
+ 	err = intel_pt_val_config_term(intel_pt_pmu, "caps/cycle_thresholds",
+ 				       "cyc_thresh", "caps/psb_cyc",
+ 				       evsel->attr.config);
 -- 
 2.19.1
 
