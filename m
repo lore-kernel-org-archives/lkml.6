@@ -2,220 +2,80 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A36DEC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 15:14:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4798EC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 15:16:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71FE820685
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 15:14:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A70320685
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 15:16:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728265AbfAHPON (ORCPT
+        id S1728399AbfAHPQN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 10:14:13 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:34050 "EHLO huawei.com"
+        Tue, 8 Jan 2019 10:16:13 -0500
+Received: from mx2.suse.de ([195.135.220.15]:59020 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727764AbfAHPON (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 10:14:13 -0500
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 6BEFAD4D1CA368F306C2;
-        Tue,  8 Jan 2019 23:14:07 +0800 (CST)
-Received: from localhost.localdomain (10.67.212.75) by
- DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
- 14.3.408.0; Tue, 8 Jan 2019 23:13:58 +0800
-From:   John Garry <john.garry@huawei.com>
-To:     <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>
-CC:     <linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>,
-        <linux-scsi@vger.kernel.org>, John Garry <john.garry@huawei.com>
-Subject: [PATCH v2] scsi: sd: Make protection lookup tables static and relocate functions
-Date:   Tue, 8 Jan 2019 23:14:52 +0800
-Message-ID: <1546960492-218420-1-git-send-email-john.garry@huawei.com>
-X-Mailer: git-send-email 2.8.1
+        id S1727484AbfAHPQM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 10:16:12 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 5AE72AFD8;
+        Tue,  8 Jan 2019 15:16:11 +0000 (UTC)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Tue, 08 Jan 2019 07:16:10 -0800
+From:   Davidlohr Bueso <dbueso@suse.de>
+To:     Roman Penyaev <rpenyaev@suse.de>
+Cc:     Jason Baron <jbaron@akamai.com>, Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] epoll: remove wrong assert that ep_poll_callback is
+ always called with irqs off
+Organization: SUSE Labs
+In-Reply-To: <f582f40b9697dced81d16b3b35a4b071@suse.de>
+References: <20190108100121.20247-1-rpenyaev@suse.de>
+ <f582f40b9697dced81d16b3b35a4b071@suse.de>
+Message-ID: <725cdce88418c2ec62ef6014d388dbeb@suse.de>
+X-Sender: dbueso@suse.de
+User-Agent: Roundcube Webmail
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently the protection lookup tables in sd_prot_flag_mask() and
-sd_prot_op() are declared as non-static. As such, they will be rebuilt
-for each respective function call.
+On 2019-01-08 04:42, Roman Penyaev wrote:
+> What we can do:
+> 
+> a) disable irqs if we are not in interrupt.
+> b) revert the patch completely.
+> 
+> David, is it really crucial in terms of performance to avoid double
+> local_irq_save() on Xen on this ep_poll_callback() hot path?
 
-Optimise by making them static.
+Note that such optimizations are also relevant for baremetal, ie: x86 
+PUSHF + POPF can be pretty expensive because of insn dependencies.
 
-This saves ~100B object code for sd.c:
+> 
+> For example why not to do the following:
+> 
+>   if (!in_interrupt())
+>        local_irq_save(flags);
+>   read_lock(ep->lock);
+> 
+> with huge comment explaining performance number.
+> 
+> Or just give up and simply revert the original patch completely
+> and always call read_lock_irqsave().
 
-Before:
-   text	   data	    bss	    dec	    hex	filename
-  25403	   1024	     16	  26443	   674b	drivers/scsi/sd.o
+Yeah so the reason why I had done the other epoll lock irq optimizations 
+was because they were painfully obvious. ep_poll_callback(), however is 
+a different beast, as you've encountered. I vote for not shooting 
+ourselves in the foot and just dropping this patch -- most large 
+performance benefits will come from microbenches anyway.
 
-After:
-  text	   data	    bss	    dec	    hex	filename
-  25299	   1024	     16	  26339	   66e3	drivers/scsi/sd.o
-
-In addition, since those same functions are declared in sd.h, but each are
-only referenced in sd.c, relocate them to that same c file.
-
-The inline specifier is dropped also, since gcc should be able to make the
-decision to inline.
-
-Signed-off-by: John Garry <john.garry@huawei.com>
----
-
-Differences v1->v2:
-- relocate functions to sd.c and drop inline specifier
-
-diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
-index 3bb2b33..e7dcc02 100644
---- a/drivers/scsi/sd.c
-+++ b/drivers/scsi/sd.c
-@@ -658,6 +658,68 @@ static int sd_sec_submit(void *data, u16 spsp, u8 secp, void *buffer,
- }
- #endif /* CONFIG_BLK_SED_OPAL */
- 
-+/*
-+ * Look up the DIX operation based on whether the command is read or
-+ * write and whether dix and dif are enabled.
-+ */
-+static unsigned int sd_prot_op(bool write, bool dix, bool dif)
-+{
-+	/* Lookup table: bit 2 (write), bit 1 (dix), bit 0 (dif) */
-+	static const unsigned int ops[] = {	/* wrt dix dif */
-+		SCSI_PROT_NORMAL,		/*  0	0   0  */
-+		SCSI_PROT_READ_STRIP,		/*  0	0   1  */
-+		SCSI_PROT_READ_INSERT,		/*  0	1   0  */
-+		SCSI_PROT_READ_PASS,		/*  0	1   1  */
-+		SCSI_PROT_NORMAL,		/*  1	0   0  */
-+		SCSI_PROT_WRITE_INSERT,		/*  1	0   1  */
-+		SCSI_PROT_WRITE_STRIP,		/*  1	1   0  */
-+		SCSI_PROT_WRITE_PASS,		/*  1	1   1  */
-+	};
-+
-+	return ops[write << 2 | dix << 1 | dif];
-+}
-+
-+/*
-+ * Returns a mask of the protection flags that are valid for a given DIX
-+ * operation.
-+ */
-+static unsigned int sd_prot_flag_mask(unsigned int prot_op)
-+{
-+	static const unsigned int flag_mask[] = {
-+		[SCSI_PROT_NORMAL]		= 0,
-+
-+		[SCSI_PROT_READ_STRIP]		= SCSI_PROT_TRANSFER_PI |
-+						  SCSI_PROT_GUARD_CHECK |
-+						  SCSI_PROT_REF_CHECK |
-+						  SCSI_PROT_REF_INCREMENT,
-+
-+		[SCSI_PROT_READ_INSERT]		= SCSI_PROT_REF_INCREMENT |
-+						  SCSI_PROT_IP_CHECKSUM,
-+
-+		[SCSI_PROT_READ_PASS]		= SCSI_PROT_TRANSFER_PI |
-+						  SCSI_PROT_GUARD_CHECK |
-+						  SCSI_PROT_REF_CHECK |
-+						  SCSI_PROT_REF_INCREMENT |
-+						  SCSI_PROT_IP_CHECKSUM,
-+
-+		[SCSI_PROT_WRITE_INSERT]	= SCSI_PROT_TRANSFER_PI |
-+						  SCSI_PROT_REF_INCREMENT,
-+
-+		[SCSI_PROT_WRITE_STRIP]		= SCSI_PROT_GUARD_CHECK |
-+						  SCSI_PROT_REF_CHECK |
-+						  SCSI_PROT_REF_INCREMENT |
-+						  SCSI_PROT_IP_CHECKSUM,
-+
-+		[SCSI_PROT_WRITE_PASS]		= SCSI_PROT_TRANSFER_PI |
-+						  SCSI_PROT_GUARD_CHECK |
-+						  SCSI_PROT_REF_CHECK |
-+						  SCSI_PROT_REF_INCREMENT |
-+						  SCSI_PROT_IP_CHECKSUM,
-+	};
-+
-+	return flag_mask[prot_op];
-+}
-+
- static unsigned char sd_setup_protect_cmnd(struct scsi_cmnd *scmd,
- 					   unsigned int dix, unsigned int dif)
- {
-diff --git a/drivers/scsi/sd.h b/drivers/scsi/sd.h
-index 1d63f3a..6e68baf 100644
---- a/drivers/scsi/sd.h
-+++ b/drivers/scsi/sd.h
-@@ -188,68 +188,6 @@ static inline sector_t sectors_to_logical(struct scsi_device *sdev, sector_t sec
- 	return sector >> (ilog2(sdev->sector_size) - 9);
- }
- 
--/*
-- * Look up the DIX operation based on whether the command is read or
-- * write and whether dix and dif are enabled.
-- */
--static inline unsigned int sd_prot_op(bool write, bool dix, bool dif)
--{
--	/* Lookup table: bit 2 (write), bit 1 (dix), bit 0 (dif) */
--	const unsigned int ops[] = {	/* wrt dix dif */
--		SCSI_PROT_NORMAL,	/*  0	0   0  */
--		SCSI_PROT_READ_STRIP,	/*  0	0   1  */
--		SCSI_PROT_READ_INSERT,	/*  0	1   0  */
--		SCSI_PROT_READ_PASS,	/*  0	1   1  */
--		SCSI_PROT_NORMAL,	/*  1	0   0  */
--		SCSI_PROT_WRITE_INSERT, /*  1	0   1  */
--		SCSI_PROT_WRITE_STRIP,	/*  1	1   0  */
--		SCSI_PROT_WRITE_PASS,	/*  1	1   1  */
--	};
--
--	return ops[write << 2 | dix << 1 | dif];
--}
--
--/*
-- * Returns a mask of the protection flags that are valid for a given DIX
-- * operation.
-- */
--static inline unsigned int sd_prot_flag_mask(unsigned int prot_op)
--{
--	const unsigned int flag_mask[] = {
--		[SCSI_PROT_NORMAL]		= 0,
--
--		[SCSI_PROT_READ_STRIP]		= SCSI_PROT_TRANSFER_PI |
--						  SCSI_PROT_GUARD_CHECK |
--						  SCSI_PROT_REF_CHECK |
--						  SCSI_PROT_REF_INCREMENT,
--
--		[SCSI_PROT_READ_INSERT]		= SCSI_PROT_REF_INCREMENT |
--						  SCSI_PROT_IP_CHECKSUM,
--
--		[SCSI_PROT_READ_PASS]		= SCSI_PROT_TRANSFER_PI |
--						  SCSI_PROT_GUARD_CHECK |
--						  SCSI_PROT_REF_CHECK |
--						  SCSI_PROT_REF_INCREMENT |
--						  SCSI_PROT_IP_CHECKSUM,
--
--		[SCSI_PROT_WRITE_INSERT]	= SCSI_PROT_TRANSFER_PI |
--						  SCSI_PROT_REF_INCREMENT,
--
--		[SCSI_PROT_WRITE_STRIP]		= SCSI_PROT_GUARD_CHECK |
--						  SCSI_PROT_REF_CHECK |
--						  SCSI_PROT_REF_INCREMENT |
--						  SCSI_PROT_IP_CHECKSUM,
--
--		[SCSI_PROT_WRITE_PASS]		= SCSI_PROT_TRANSFER_PI |
--						  SCSI_PROT_GUARD_CHECK |
--						  SCSI_PROT_REF_CHECK |
--						  SCSI_PROT_REF_INCREMENT |
--						  SCSI_PROT_IP_CHECKSUM,
--	};
--
--	return flag_mask[prot_op];
--}
--
- #ifdef CONFIG_BLK_DEV_INTEGRITY
- 
- extern void sd_dif_config_host(struct scsi_disk *);
--- 
-1.9.1
-
+Thanks,
+Davidlohr
