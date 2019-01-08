@@ -2,171 +2,146 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-14.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15A2EC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 04:51:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0098CC43444
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 04:51:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E22A62087F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 04:51:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C15082087F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 04:51:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CGcrzugW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727662AbfAHEvb (ORCPT
+        id S1727694AbfAHEve (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 23:51:31 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55400 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727368AbfAHEva (ORCPT
+        Mon, 7 Jan 2019 23:51:34 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:37310 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727368AbfAHEvc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 23:51:30 -0500
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x084mreR010394
-        for <linux-kernel@vger.kernel.org>; Mon, 7 Jan 2019 23:51:29 -0500
-Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2pvhc7je13-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 23:51:28 -0500
-Received: from localhost
-        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <aneesh.kumar@linux.ibm.com>;
-        Tue, 8 Jan 2019 04:51:28 -0000
-Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
-        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 8 Jan 2019 04:51:25 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x084pO509175264
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 8 Jan 2019 04:51:24 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 29CCFB2068;
-        Tue,  8 Jan 2019 04:51:24 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BFC58B2065;
-        Tue,  8 Jan 2019 04:51:20 +0000 (GMT)
-Received: from skywalker.ibmuc.com (unknown [9.85.75.199])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue,  8 Jan 2019 04:51:20 +0000 (GMT)
-From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-To:     akpm@linux-foundation.org, Michal Hocko <mhocko@kernel.org>,
-        Alexey Kardashevskiy <aik@ozlabs.ru>,
-        David Gibson <david@gibson.dropbear.id.au>,
-        Andrea Arcangeli <aarcange@redhat.com>, mpe@ellerman.id.au
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-Subject: [PATCH V6 1/4] mm/cma: Add PF flag to force non cma alloc
-Date:   Tue,  8 Jan 2019 10:21:07 +0530
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190108045110.28597-1-aneesh.kumar@linux.ibm.com>
-References: <20190108045110.28597-1-aneesh.kumar@linux.ibm.com>
+        Mon, 7 Jan 2019 23:51:32 -0500
+Received: by mail-io1-f66.google.com with SMTP id g8so2197580iok.4
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 20:51:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=WzLE1kl1n8qfTCuciv1x7YgTzmk4xHvqyK6zizNAsLQ=;
+        b=CGcrzugWjzCZw5wd+yyC/qHn/OxPNIIQOiOTLkty4jiVxNtNQ/28SXXw4A8++QUkoL
+         k0CuF1r7v7NqlMBT6FdTAxNCkHKOZ1RvyWPqHU4QG0gnVd13dEfA/GnK0LnmmyWg29I4
+         a1BQpJAhruVWnN7bKqTly7Y1ac3/sx305nUFhx1POGxUWdqXSyRcS0QFCosJHXucsydC
+         +cYHGH0AvvI8lklaXlpaPd1vHRZA1dZ75stD8RsknCTJHkFfISX4GTgLvSHSdRVKinzI
+         FAsgm1D5fMjy9NvkoZMoC2Qv2vigf1vi8jY+fkVcBGQ7USC4JuSEiPnK5QYvWvSgo4Az
+         sTXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=WzLE1kl1n8qfTCuciv1x7YgTzmk4xHvqyK6zizNAsLQ=;
+        b=TZLAR7EPcLVkdhneTl3rq1tYWwANUKta78Zfq2fIFxYGd5cPfV+TXWEtsaILpOG1Tb
+         aidYcULUWbtdsmp+cD+ooTtnjv5nJp44DMA0bC4ga2mt6Xd3i4M+69dtaqh+zpurZxoP
+         K4Moaa1dbqn+wc8UDGz+a4aCTyoTbTMN/rb5W2ZbrB1I8VSizgBFTG5iG4XcAk7jdaSo
+         Gyz73DMPEfS2gs++4/LyaxOKAWOZicNm4/mE9nK9GB+IObcNq/qvCfJ/t06geuUSQPn7
+         E888ndI+kJVxQH7rM7rjKwd29KesqgDi7IbAgdlhDBQkuTu6ay0B1TNTpq+HfDN+4oH4
+         sVGw==
+X-Gm-Message-State: AJcUukdZ8H5oFmLU64qxXyOP0R0gszhXFIlqrWYWinJK6NIqBD0mxRQ9
+        U4Z8/RQY8pRNkDxZMdnwkD0xk8G2xNXpFhiFA5iqiA==
+X-Google-Smtp-Source: ALg8bN4sBBSAdKbPLoQEdQAzvStAUHALlV+Km6a/VTB/m4SrK593H6R74AvEFkxCfwGJ0vmLKRWcGWxRpMPH62W+Fy4=
+X-Received: by 2002:a6b:fa0e:: with SMTP id p14mr118472ioh.271.1546923091512;
+ Mon, 07 Jan 2019 20:51:31 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19010804-0040-0000-0000-000004AE3492
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010364; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000273; SDB=6.01143337; UDB=6.00593882; IPR=6.00923595;
- MB=3.00025025; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-08 04:51:27
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19010804-0041-0000-0000-000008B9376D
-Message-Id: <20190108045110.28597-2-aneesh.kumar@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-08_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=945 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901080036
+References: <20181211133453.2835077-1-arnd@arndb.de> <20190108022659.GA13470@flashbox>
+In-Reply-To: <20190108022659.GA13470@flashbox>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Tue, 8 Jan 2019 05:51:20 +0100
+Message-ID: <CACT4Y+a_LB6aVoLEcFVJhP40D9E4MM3T=7-0aBhFvBffXgNZmw@mail.gmail.com>
+Subject: Re: [PATCH] kasan: fix kasan_check_read/write definitions
+To:     Alexander Potapenko <glider@google.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Nathan Chancellor <natechancellor@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch add PF_MEMALLOC_NOCMA which make sure any allocation in that context
-is marked non movable and hence cannot be satisfied by CMA region.
+On Tue, Jan 8, 2019 at 3:27 AM Nathan Chancellor
+<natechancellor@gmail.com> wrote:
+>
+> On Tue, Dec 11, 2018 at 02:34:35PM +0100, Arnd Bergmann wrote:
+> > Building little-endian allmodconfig kernels on arm64 started failing
+> > with the generated atomic.h implementation, since we now try to call
+> > kasan helpers from the EFI stub:
+> >
+> > aarch64-linux-gnu-ld: drivers/firmware/efi/libstub/arm-stub.stub.o: in function `atomic_set':
+> > include/generated/atomic-instrumented.h:44: undefined reference to `__efistub_kasan_check_write'
+> >
+> > I suspect that we get similar problems in other files that explicitly
+> > disable KASAN for some reason but call atomic_t based helper functions.
+> >
+> > We can fix this by checking the predefined __SANITIZE_ADDRESS__ macro
+> > that the compiler sets instead of checking CONFIG_KASAN, but this in turn
+> > requires a small hack in mm/kasan/common.c so we do see the extern
+> > declaration there instead of the inline function.
+> >
+> > Fixes: b1864b828644 ("locking/atomics: build atomic headers as required")
+> > Reported-by: Anders Roxell <anders.roxell@linaro.org>
+> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> > ---
+> >  include/linux/kasan-checks.h | 2 +-
+> >  mm/kasan/common.c            | 2 ++
+> >  2 files changed, 3 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/include/linux/kasan-checks.h b/include/linux/kasan-checks.h
+> > index d314150658a4..a61dc075e2ce 100644
+> > --- a/include/linux/kasan-checks.h
+> > +++ b/include/linux/kasan-checks.h
+> > @@ -2,7 +2,7 @@
+> >  #ifndef _LINUX_KASAN_CHECKS_H
+> >  #define _LINUX_KASAN_CHECKS_H
+> >
+> > -#ifdef CONFIG_KASAN
+> > +#if defined(__SANITIZE_ADDRESS__) || defined(__KASAN_INTERNAL)
+> >  void kasan_check_read(const volatile void *p, unsigned int size);
+> >  void kasan_check_write(const volatile void *p, unsigned int size);
+> >  #else
+> > diff --git a/mm/kasan/common.c b/mm/kasan/common.c
+> > index 03d5d1374ca7..51a7932c33a3 100644
+> > --- a/mm/kasan/common.c
+> > +++ b/mm/kasan/common.c
+> > @@ -14,6 +14,8 @@
+> >   *
+> >   */
+> >
+> > +#define __KASAN_INTERNAL
+> > +
+> >  #include <linux/export.h>
+> >  #include <linux/interrupt.h>
+> >  #include <linux/init.h>
+> > --
+> > 2.20.0
+> >
+>
+> Hi all,
+>
+> Was there any other movement on this patch? I am noticing this fail as
+> well and I have applied this patch in the meantime; it would be nice for
+> it to be merged so I could drop it from my stack.
 
-This is useful with get_user_pages_cma_migrate where we take a page pin by
-migrating pages from CMA region. Marking the section PF_MEMALLOC_NOCMA ensures
-that we avoid uncessary page migration later.
-
-Suggested-by: Andrea Arcangeli <aarcange@redhat.com>
-Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
----
- include/linux/sched.h    |  1 +
- include/linux/sched/mm.h | 36 ++++++++++++++++++++++++++++--------
- 2 files changed, 29 insertions(+), 8 deletions(-)
-
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 89541d248893..047c8c469774 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -1406,6 +1406,7 @@ extern struct pid *cad_pid;
- #define PF_RANDOMIZE		0x00400000	/* Randomize virtual address space */
- #define PF_SWAPWRITE		0x00800000	/* Allowed to write to swap */
- #define PF_MEMSTALL		0x01000000	/* Stalled due to lack of memory */
-+#define PF_MEMALLOC_NOCMA	0x02000000	/* All allocation request will have _GFP_MOVABLE cleared */
- #define PF_NO_SETAFFINITY	0x04000000	/* Userland is not allowed to meddle with cpus_allowed */
- #define PF_MCE_EARLY		0x08000000      /* Early kill for mce process policy */
- #define PF_MUTEX_TESTER		0x20000000	/* Thread belongs to the rt mutex tester */
-diff --git a/include/linux/sched/mm.h b/include/linux/sched/mm.h
-index 3bfa6a0cbba4..b336e7e2ca49 100644
---- a/include/linux/sched/mm.h
-+++ b/include/linux/sched/mm.h
-@@ -148,17 +148,24 @@ static inline bool in_vfork(struct task_struct *tsk)
-  * Applies per-task gfp context to the given allocation flags.
-  * PF_MEMALLOC_NOIO implies GFP_NOIO
-  * PF_MEMALLOC_NOFS implies GFP_NOFS
-+ * PF_MEMALLOC_NOCMA implies no allocation from CMA region.
-  */
- static inline gfp_t current_gfp_context(gfp_t flags)
- {
--	/*
--	 * NOIO implies both NOIO and NOFS and it is a weaker context
--	 * so always make sure it makes precedence
--	 */
--	if (unlikely(current->flags & PF_MEMALLOC_NOIO))
--		flags &= ~(__GFP_IO | __GFP_FS);
--	else if (unlikely(current->flags & PF_MEMALLOC_NOFS))
--		flags &= ~__GFP_FS;
-+	if (unlikely(current->flags &
-+		     (PF_MEMALLOC_NOIO | PF_MEMALLOC_NOFS | PF_MEMALLOC_NOCMA))) {
-+		/*
-+		 * NOIO implies both NOIO and NOFS and it is a weaker context
-+		 * so always make sure it makes precedence
-+		 */
-+		if (current->flags & PF_MEMALLOC_NOIO)
-+			flags &= ~(__GFP_IO | __GFP_FS);
-+		else if (current->flags & PF_MEMALLOC_NOFS)
-+			flags &= ~__GFP_FS;
-+
-+		if (current->flags & PF_MEMALLOC_NOCMA)
-+			flags &= ~__GFP_MOVABLE;
-+	}
- 	return flags;
- }
- 
-@@ -248,6 +255,19 @@ static inline void memalloc_noreclaim_restore(unsigned int flags)
- 	current->flags = (current->flags & ~PF_MEMALLOC) | flags;
- }
- 
-+static inline unsigned int memalloc_nocma_save(void)
-+{
-+	unsigned int flags = current->flags & PF_MEMALLOC_NOCMA;
-+
-+	current->flags |= PF_MEMALLOC_NOCMA;
-+	return flags;
-+}
-+
-+static inline void memalloc_nocma_restore(unsigned int flags)
-+{
-+	current->flags = (current->flags & ~PF_MEMALLOC_NOCMA) | flags;
-+}
-+
- #ifdef CONFIG_MEMCG
- /**
-  * memalloc_use_memcg - Starts the remote memcg charging scope.
--- 
-2.20.1
-
+Alexander, ping, you wanted to double-check re KMSAN asm
+instrumentation and then decide on a common approach for KASAN and
+KMSAN.
