@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46FC3C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:55:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F31EC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:55:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1527E206BB
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:55:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B881206BB
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:55:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546977333;
-	bh=c/5/BBD30zJs1jNSOg/58QjlpuRjPQB2IAK2Yrd5BOg=;
+	s=default; t=1546977342;
+	bh=yHwjqXFmUxuAio/uS1fazaLslM/J6rCMCnoClbPbHe0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=E0NBz3XrWMXFlGJy7/66wlxrTXxKfIcsLvUJ8ZQnIjDnjcJsktS3WNZNXOF8fzCQP
-	 oxGv8PNwH8ftbd0REoM1jnrACvd61Xl/pWacer7H3OzNaq8/ue/XK+CpiPgKyTm07/
-	 LXHIHl9vUwXJArqtP2XnJ3bCH77LUfkEsiw0jKXQ=
+	b=y9fMRlc1aQe4JJHKc7wX9F0QEQm4RlDO9G+dVPocI9qJRfst7a+fM4x9f3XMcrdSe
+	 hXWH2UO9RSfvvy4D6HOzbIN9JmvzVln7y0D8aDj+/6vn6mUGajVQuTfVQa627t8TSX
+	 OCODu41z/1xOHZUfeVuMB+Xpd55NSwtejstzOzws=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731350AbfAHTzc (ORCPT
+        id S1731516AbfAHTzl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:55:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38008 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:55:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37950 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730633AbfAHTaT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:30:19 -0500
+        id S1730694AbfAHTaR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:30:17 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CE81720827;
-        Tue,  8 Jan 2019 19:30:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 84F1620645;
+        Tue,  8 Jan 2019 19:30:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975818;
-        bh=c/5/BBD30zJs1jNSOg/58QjlpuRjPQB2IAK2Yrd5BOg=;
+        s=default; t=1546975816;
+        bh=yHwjqXFmUxuAio/uS1fazaLslM/J6rCMCnoClbPbHe0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iSuAfBS49d2Gh9i+TlP9kNsEOOJLOkvrOOjxGaFMygY0qX02OXss4KttcY4nvu//J
-         RznyRhlYKXiPQE6GAyVB67NP8qDOrbqUryZBydAAQaHIWa52yf9FMmjpxhP0jU555x
-         6DTbXCg0aI+E2KEoSR0QjvH68fbjvglH9JmR3PXw=
+        b=nDJKtm4rvGVh1jN52deVZGyuvjJQxN82LEMpub8g/pEc605ZenLZohEF2BoI8wgrV
+         fVI3XHOOHgraA04EEhTwlcw5djmQLfJPiXIwTG3bTuZlQUlN99JQ6hyZav9MJD5OEq
+         3lYecVXBmXfcYmGfPVvXelNT6x+wMG01nfUnFnjU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Anders Roxell <anders.roxell@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 18/97] arm64: perf: set suppress_bind_attrs flag to true
-Date:   Tue,  8 Jan 2019 14:28:27 -0500
-Message-Id: <20190108192949.122407-18-sashal@kernel.org>
+Cc:     "Maciej W. Rozycki" <macro@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
+        Sasha Levin <sashal@kernel.org>, linux-mips@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 16/97] MIPS: SiByte: Enable swiotlb for SWARM, LittleSur and BigSur
+Date:   Tue,  8 Jan 2019 14:28:25 -0500
+Message-Id: <20190108192949.122407-16-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192949.122407-1-sashal@kernel.org>
 References: <20190108192949.122407-1-sashal@kernel.org>
@@ -59,71 +59,155 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anders Roxell <anders.roxell@linaro.org>
+From: "Maciej W. Rozycki" <macro@linux-mips.org>
 
-[ Upstream commit 81e9fa8bab381f8b6eb04df7cdf0f71994099bd4 ]
+[ Upstream commit e4849aff1e169b86c561738daf8ff020e9de1011 ]
 
-The armv8_pmuv3 driver doesn't have a remove function, and when the test
-'CONFIG_DEBUG_TEST_DRIVER_REMOVE=y' is enabled, the following Call trace
-can be seen.
+The Broadcom SiByte BCM1250, BCM1125, and BCM1125H SOCs have an onchip
+DRAM controller that supports memory amounts of up to 16GiB, and due to
+how the address decoder has been wired in the SOC any memory beyond 1GiB
+is actually mapped starting from 4GiB physical up, that is beyond the
+32-bit addressable limit[1].  Consequently if the maximum amount of
+memory has been installed, then it will span up to 19GiB.
 
-[    1.424287] Failed to register pmu: armv8_pmuv3, reason -17
-[    1.424870] WARNING: CPU: 0 PID: 1 at ../kernel/events/core.c:11771 perf_event_sysfs_init+0x98/0xdc
-[    1.425220] Modules linked in:
-[    1.425531] CPU: 0 PID: 1 Comm: swapper/0 Tainted: G        W         4.19.0-rc7-next-20181012-00003-ge7a97b1ad77b-dirty #35
-[    1.425951] Hardware name: linux,dummy-virt (DT)
-[    1.426212] pstate: 80000005 (Nzcv daif -PAN -UAO)
-[    1.426458] pc : perf_event_sysfs_init+0x98/0xdc
-[    1.426720] lr : perf_event_sysfs_init+0x98/0xdc
-[    1.426908] sp : ffff00000804bd50
-[    1.427077] x29: ffff00000804bd50 x28: ffff00000934e078
-[    1.427429] x27: ffff000009546000 x26: 0000000000000007
-[    1.427757] x25: ffff000009280710 x24: 00000000ffffffef
-[    1.428086] x23: ffff000009408000 x22: 0000000000000000
-[    1.428415] x21: ffff000009136008 x20: ffff000009408730
-[    1.428744] x19: ffff80007b20b400 x18: 000000000000000a
-[    1.429075] x17: 0000000000000000 x16: 0000000000000000
-[    1.429418] x15: 0000000000000400 x14: 2e79726f74636572
-[    1.429748] x13: 696420656d617320 x12: 656874206e692065
-[    1.430060] x11: 6d616e20656d6173 x10: 2065687420687469
-[    1.430335] x9 : ffff00000804bd50 x8 : 206e6f7361657220
-[    1.430610] x7 : 2c3376756d705f38 x6 : ffff00000954d7ce
-[    1.430880] x5 : 0000000000000000 x4 : 0000000000000000
-[    1.431226] x3 : 0000000000000000 x2 : ffffffffffffffff
-[    1.431554] x1 : 4d151327adc50b00 x0 : 0000000000000000
-[    1.431868] Call trace:
-[    1.432102]  perf_event_sysfs_init+0x98/0xdc
-[    1.432382]  do_one_initcall+0x6c/0x1a8
-[    1.432637]  kernel_init_freeable+0x1bc/0x280
-[    1.432905]  kernel_init+0x18/0x160
-[    1.433115]  ret_from_fork+0x10/0x18
-[    1.433297] ---[ end trace 27fd415390eb9883 ]---
+Many of the evaluation boards we support that are based on one of these
+SOCs have their memory soldered and the amount present fits in the
+32-bit address range.  The BCM91250A SWARM board however has actual DIMM
+slots and accepts, depending on the peripherals revision of the SOC, up
+to 4GiB or 8GiB of memory in commercially available JEDEC modules[2].
+I believe this is also the case with the BCM91250C2 LittleSur board.
+This means that up to either 3GiB or 7GiB of memory requires 64-bit
+addressing to access.
 
-Rework to set suppress_bind_attrs flag to avoid removing the device when
-CONFIG_DEBUG_TEST_DRIVER_REMOVE=y, since there's no real reason to
-remove the armv8_pmuv3 driver.
+I believe the BCM91480B BigSur board, which has the BCM1480 SOC instead,
+accepts at least as much memory, although I have no documentation or
+actual hardware available to verify that.
 
-Cc: Arnd Bergmann <arnd@arndb.de>
-Co-developed-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+Both systems have PCI slots installed for use by any PCI option boards,
+including ones that only support 32-bit addressing (additionally the
+32-bit PCI host bridge of the BCM1250, BCM1125, and BCM1125H SOCs limits
+addressing to 32-bits), and there is no IOMMU available.  Therefore for
+PCI DMA to work in the presence of memory beyond enable swiotlb for the
+affected systems.
+
+All the other SOC onchip DMA devices use 40-bit addressing and therefore
+can address the whole memory, so only enable swiotlb if PCI support and
+support for DMA beyond 4GiB have been both enabled in the configuration
+of the kernel.
+
+This shows up as follows:
+
+Broadcom SiByte BCM1250 B2 @ 800 MHz (SB1 rev 2)
+Board type: SiByte BCM91250A (SWARM)
+Determined physical RAM map:
+ memory: 000000000fe7fe00 @ 0000000000000000 (usable)
+ memory: 000000001ffffe00 @ 0000000080000000 (usable)
+ memory: 000000000ffffe00 @ 00000000c0000000 (usable)
+ memory: 0000000087fffe00 @ 0000000100000000 (usable)
+software IO TLB: mapped [mem 0xcbffc000-0xcfffc000] (64MB)
+
+in the bootstrap log and removes failures like these:
+
+defxx 0000:02:00.0: dma_direct_map_page: overflow 0x0000000185bc6080+4608 of device mask ffffffff bus mask 0
+fddi0: Receive buffer allocation failed
+fddi0: Adapter open failed!
+IP-Config: Failed to open fddi0
+defxx 0000:09:08.0: dma_direct_map_page: overflow 0x0000000185bc6080+4608 of device mask ffffffff bus mask 0
+fddi1: Receive buffer allocation failed
+fddi1: Adapter open failed!
+IP-Config: Failed to open fddi1
+
+when memory beyond 4GiB is handed out to devices that can only do 32-bit
+addressing.
+
+This updates commit cce335ae47e2 ("[MIPS] 64-bit Sibyte kernels need
+DMA32.").
+
+References:
+
+[1] "BCM1250/BCM1125/BCM1125H User Manual", Revision 1250_1125-UM100-R,
+    Broadcom Corporation, 21 Oct 2002, Section 3: "System Overview",
+    "Memory Map", pp. 34-38
+
+[2] "BCM91250A User Manual", Revision 91250A-UM100-R, Broadcom
+    Corporation, 18 May 2004, Section 3: "Physical Description",
+    "Supported DRAM", p. 23
+
+Signed-off-by: Maciej W. Rozycki <macro@linux-mips.org>
+[paul.burton@mips.com: Remove GPL text from dma.c; SPDX tag covers it]
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Patchwork: https://patchwork.linux-mips.org/patch/21108/
+References: cce335ae47e2 ("[MIPS] 64-bit Sibyte kernels need DMA32.")
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-mips@linux-mips.org
+Cc: linux-kernel@vger.kernel.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/kernel/perf_event.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/mips/Kconfig                |  3 +++
+ arch/mips/sibyte/common/Makefile |  1 +
+ arch/mips/sibyte/common/dma.c    | 14 ++++++++++++++
+ 3 files changed, 18 insertions(+)
+ create mode 100644 arch/mips/sibyte/common/dma.c
 
-diff --git a/arch/arm64/kernel/perf_event.c b/arch/arm64/kernel/perf_event.c
-index e213f8e867f6..8a91ac067d44 100644
---- a/arch/arm64/kernel/perf_event.c
-+++ b/arch/arm64/kernel/perf_event.c
-@@ -1274,6 +1274,7 @@ static struct platform_driver armv8_pmu_driver = {
- 	.driver		= {
- 		.name	= ARMV8_PMU_PDEV_NAME,
- 		.of_match_table = armv8_pmu_of_device_ids,
-+		.suppress_bind_attrs = true,
- 	},
- 	.probe		= armv8_pmu_device_probe,
- };
+diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
+index 35511999156a..b245e34bd97f 100644
+--- a/arch/mips/Kconfig
++++ b/arch/mips/Kconfig
+@@ -794,6 +794,7 @@ config SIBYTE_SWARM
+ 	select SYS_SUPPORTS_HIGHMEM
+ 	select SYS_SUPPORTS_LITTLE_ENDIAN
+ 	select ZONE_DMA32 if 64BIT
++	select SWIOTLB if ARCH_DMA_ADDR_T_64BIT && PCI
+ 
+ config SIBYTE_LITTLESUR
+ 	bool "Sibyte BCM91250C2-LittleSur"
+@@ -814,6 +815,7 @@ config SIBYTE_SENTOSA
+ 	select SYS_HAS_CPU_SB1
+ 	select SYS_SUPPORTS_BIG_ENDIAN
+ 	select SYS_SUPPORTS_LITTLE_ENDIAN
++	select SWIOTLB if ARCH_DMA_ADDR_T_64BIT && PCI
+ 
+ config SIBYTE_BIGSUR
+ 	bool "Sibyte BCM91480B-BigSur"
+@@ -826,6 +828,7 @@ config SIBYTE_BIGSUR
+ 	select SYS_SUPPORTS_HIGHMEM
+ 	select SYS_SUPPORTS_LITTLE_ENDIAN
+ 	select ZONE_DMA32 if 64BIT
++	select SWIOTLB if ARCH_DMA_ADDR_T_64BIT && PCI
+ 
+ config SNI_RM
+ 	bool "SNI RM200/300/400"
+diff --git a/arch/mips/sibyte/common/Makefile b/arch/mips/sibyte/common/Makefile
+index b3d6bf23a662..3ef3fb658136 100644
+--- a/arch/mips/sibyte/common/Makefile
++++ b/arch/mips/sibyte/common/Makefile
+@@ -1,4 +1,5 @@
+ obj-y := cfe.o
++obj-$(CONFIG_SWIOTLB)			+= dma.o
+ obj-$(CONFIG_SIBYTE_BUS_WATCHER)	+= bus_watcher.o
+ obj-$(CONFIG_SIBYTE_CFE_CONSOLE)	+= cfe_console.o
+ obj-$(CONFIG_SIBYTE_TBPROF)		+= sb_tbprof.o
+diff --git a/arch/mips/sibyte/common/dma.c b/arch/mips/sibyte/common/dma.c
+new file mode 100644
+index 000000000000..eb47a94f3583
+--- /dev/null
++++ b/arch/mips/sibyte/common/dma.c
+@@ -0,0 +1,14 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ *	DMA support for Broadcom SiByte platforms.
++ *
++ *	Copyright (c) 2018  Maciej W. Rozycki
++ */
++
++#include <linux/swiotlb.h>
++#include <asm/bootinfo.h>
++
++void __init plat_swiotlb_setup(void)
++{
++	swiotlb_init(1);
++}
 -- 
 2.19.1
 
